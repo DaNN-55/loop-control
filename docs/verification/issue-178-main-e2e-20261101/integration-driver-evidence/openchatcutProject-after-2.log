@@ -1,0 +1,69 @@
+
+ RUN  v3.2.7 /private/tmp/loop-control-main-e2e-20261101/integration-regression/source
+
+ ❯ src/worker/openchatcutProject.integration.test.ts (12 tests | 2 failed) 20318ms
+   × OpenChatCut real project reader integration > opens an independent dashboard, reuses concurrent launches, and preserves projects after restart 1921ms
+     → expected 404 to be 200 // Object.is equality
+   ✓ OpenChatCut real project reader integration > opens Studio and reads editable caption cues back from its project store  1362ms
+   ✓ OpenChatCut real project reader integration > keeps Studio edits mutable, warns before changed workbench input replaces them, and freezes new immutable revisions only on demand  5613ms
+   ✓ OpenChatCut real project reader integration > reads a stacked shot as two correctly transformed editable video layers backed by one asset 114ms
+   ✓ OpenChatCut real project reader integration > accepts migrated stable track ids when consecutive full-screen segments remain on the V1 alias 89ms
+   ✓ OpenChatCut real project reader integration > reads exactly one source-audio item when one material fills multiple visual slots 78ms
+   ✓ OpenChatCut real project reader integration > reads silent, BGM-follower, and independent-SFX semantics from the real runtime 165ms
+   ✓ OpenChatCut real project reader integration > reads disabled captions and independent manual cues through the real runtime 163ms
+   ✓ OpenChatCut real project reader integration > renders and probes a real synchronized proxy while preserving the editable project fingerprint  6598ms
+   × OpenChatCut real project reader integration > opens, edits, freezes, and renders one real Episode containing TTS split-screen, source-audio, and silent captioned shots 3725ms
+     → OpenChatCut 冻结工程与任务清单的大小或哈希不一致。
+   ✓ OpenChatCut real project reader integration > keeps an older project with a text caption item readable 112ms
+   ✓ OpenChatCut real project reader integration > blocks known invalid caption contracts after real OpenChatCut reading  378ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/worker/openchatcutProject.integration.test.ts > OpenChatCut real project reader integration > opens an independent dashboard, reuses concurrent launches, and preserves projects after restart
+AssertionError: expected 404 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 404
+
+ ❯ createStudioProject src/worker/openchatcutProject.integration.test.ts:369:26
+    367|     body: JSON.stringify({ operation: "project-document-write", key: `…
+    368|   });
+    369|   expect(created.status).toBe(200);
+       |                          ^
+    370|   expect((await created.json()).accepted).toBe(true);
+    371| }
+ ❯ src/worker/openchatcutProject.integration.test.ts:40:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/worker/openchatcutProject.integration.test.ts > OpenChatCut real project reader integration > opens, edits, freezes, and renders one real Episode containing TTS split-screen, source-audio, and silent captioned shots
+Error: OpenChatCut 冻结工程与任务清单的大小或哈希不一致。
+ ❯ readFrozenStudioProject src/worker/openchatcutRenderer.ts:110:126
+    108| ): Promise<OpenChatCutProject> {
+    109|   let contents:Buffer;
+    110|   try{contents=await verifyNativeFile(assetRoot,manifest.relativePath,…
+       |                                                                                                                              ^
+    111|   if (contents.byteLength !== manifest.fileSize || createHash("sha256"…
+    112|     throw new Error("OpenChatCut 冻结工程与任务清单的大小或哈希不一致。");
+ ❯ executeOpenChatCutRender src/worker/openchatcutRenderer.ts:48:7
+ ❯ src/worker/openchatcutProject.integration.test.ts:322:31
+
+Caused by: Error: 文件路径或大小已变化。
+ ❯ verifyNativeFile src/local-app/localFiles.ts:27:80
+ ❯ readFrozenStudioProject src/worker/openchatcutRenderer.ts:110:16
+ ❯ executeOpenChatCutRender src/worker/openchatcutRenderer.ts:48:7
+ ❯ src/worker/openchatcutProject.integration.test.ts:322:31
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { status: 409, preflight: undefined }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 10 passed (12)
+   Start at  06:06:50
+   Duration  20.76s (transform 200ms, setup 21ms, collect 265ms, tests 20.32s, environment 0ms, prepare 35ms)
+

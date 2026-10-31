@@ -1,0 +1,54 @@
+{
+  "version": "publish-package/v2",
+  "episodeId": "e724cd1b-eba5-466f-bbd6-61c35fc0e2a2",
+  "identity": {
+    "video": {
+      "sha256": "993d8043526c2f1152e451db10cc11b868d3bd953ab211a42f609af9b1c218d0",
+      "fileSize": 140662,
+      "artifactType": "final_render",
+      "relativePath": "未分系列--e32f2560-cd9b-4795-b8f4-81575b18d81a/正式新单--e724cd1b-eba5-466f-bbd6-61c35fc0e2a2/workspace-exports/9b4ea456-e68e-40cf-a42b-86e5a4624d57/993d8043526c2f1152e451db10cc11b868d3bd953ab211a42f609af9b1c218d0.mp4"
+    },
+    "project": {
+      "sha256": "ea7f08e474e1680d03e200768c05fb5225d9ce2af5eccdc6b4c7be52ac9c9241",
+      "fileSize": 13761,
+      "artifactType": "editable_project",
+      "relativePath": "未分系列--e32f2560-cd9b-4795-b8f4-81575b18d81a/正式新单--e724cd1b-eba5-466f-bbd6-61c35fc0e2a2/production-workspace/versions/ea7f08e474e1680d03e200768c05fb5225d9ce2af5eccdc6b4c7be52ac9c9241.json"
+    },
+    "exportId": "9b4ea456-e68e-40cf-a42b-86e5a4624d57",
+    "workspaceId": "104a7850-88aa-45dc-978d-27c3766c13ab",
+    "contentSha256": "af39acb6a029d3e5a535b0a04849807f2a0b058a6921d98bb9992a02bdfc9a6b",
+    "projectContentVersion": 6
+  },
+  "artifacts": [
+    {
+      "sha256": "993d8043526c2f1152e451db10cc11b868d3bd953ab211a42f609af9b1c218d0",
+      "fileSize": 140662,
+      "artifactType": "final_render",
+      "relativePath": "未分系列--e32f2560-cd9b-4795-b8f4-81575b18d81a/正式新单--e724cd1b-eba5-466f-bbd6-61c35fc0e2a2/workspace-exports/9b4ea456-e68e-40cf-a42b-86e5a4624d57/993d8043526c2f1152e451db10cc11b868d3bd953ab211a42f609af9b1c218d0.mp4"
+    },
+    {
+      "sha256": "ea7f08e474e1680d03e200768c05fb5225d9ce2af5eccdc6b4c7be52ac9c9241",
+      "fileSize": 13761,
+      "artifactType": "editable_project",
+      "relativePath": "未分系列--e32f2560-cd9b-4795-b8f4-81575b18d81a/正式新单--e724cd1b-eba5-466f-bbd6-61c35fc0e2a2/production-workspace/versions/ea7f08e474e1680d03e200768c05fb5225d9ce2af5eccdc6b4c7be52ac9c9241.json"
+    },
+    {
+      "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+      "fileSize": 1515,
+      "artifactType": "cover",
+      "relativePath": "未分系列--e32f2560-cd9b-4795-b8f4-81575b18d81a/正式新单--e724cd1b-eba5-466f-bbd6-61c35fc0e2a2/workspace-deliveries/56ace0fb-fe22-4b3a-b183-7e3e33b0a951/cover.png"
+    },
+    {
+      "sha256": "2d94bf7f1b6c82838b13a8a34caa36b78a2fc2803ef20911b0b8415a5a61a24b",
+      "fileSize": 1330,
+      "artifactType": "metadata",
+      "relativePath": "未分系列--e32f2560-cd9b-4795-b8f4-81575b18d81a/正式新单--e724cd1b-eba5-466f-bbd6-61c35fc0e2a2/workspace-deliveries/56ace0fb-fe22-4b3a-b183-7e3e33b0a951/metadata.json"
+    },
+    {
+      "sha256": "5190b1065b4cd933bd2ca05752a3d7d92e2dfe25cfbf902e91799683a8cc6810",
+      "fileSize": 2691,
+      "artifactType": "final_qc_report",
+      "relativePath": "未分系列--e32f2560-cd9b-4795-b8f4-81575b18d81a/正式新单--e724cd1b-eba5-466f-bbd6-61c35fc0e2a2/workspace-deliveries/56ace0fb-fe22-4b3a-b183-7e3e33b0a951/checks.json"
+    }
+  ]
+}

@@ -1,0 +1,296 @@
+{
+  "task": {
+    "id": "cc65f951-c2b1-4afc-864b-ee0ebee8bf61",
+    "task_type": "extract_embedded_audio",
+    "status": "completed",
+    "input_snapshot": {
+      "media": {
+        "adapter": "ffmpeg_extract_audio",
+        "embedded_audio": {
+          "start_seconds": 0,
+          "duration_seconds": 2,
+          "source_relative_path": "episodes/36dfeb3a-e092-4465-8b41-34a827f349ff/materials/89d213b664aa3f2c776ae42f175e610307c366b82cc422c35bdf3c4327f682e1-source.mp4"
+        }
+      },
+      "budget": {
+        "limit_cents": 0,
+        "max_attempts": 2
+      },
+      "output": {
+        "content_type": "audio/mpeg",
+        "review_stage": "production_ready",
+        "relative_path": "episodes/36dfeb3a-e092-4465-8b41-34a827f349ff/native-tasks/cc65f951-c2b1-4afc-864b-ee0ebee8bf61/f4104887-58ce-4518-b8bd-67d81c70ff9e.mp3",
+        "required_artifact_types": [
+          "shot_source_audio"
+        ]
+      },
+      "capability": "embedded_audio_extraction",
+      "audio_track": {
+        "kind": "source",
+        "cue_id": "shot-1",
+        "start_seconds": 0,
+        "duration_seconds": 0.001,
+        "source_review_package_id": "2f4a2dcb-4440-43ba-bc22-adf43d59798b"
+      },
+      "allowed_tools": [
+        "read",
+        "write"
+      ],
+      "input_artifacts": [
+        {
+          "sha256": "89d213b664aa3f2c776ae42f175e610307c366b82cc422c35bdf3c4327f682e1",
+          "fileSize": 44080,
+          "artifactType": "source_video",
+          "relativePath": "episodes/36dfeb3a-e092-4465-8b41-34a827f349ff/materials/89d213b664aa3f2c776ae42f175e610307c366b82cc422c35bdf3c4327f682e1-source.mp4"
+        }
+      ],
+      "workspace_audio": {
+        "preparation_id": "6e85eb2b-49d8-432e-8cb6-9e04b3b8c4f3",
+        "input_fingerprint": "3d98d3b58658e5c4a9932cc96ddfe2083827b6a8e89c61ba38ec723a92b1fb76"
+      },
+      "workspace_source": {
+        "sha256": "89d213b664aa3f2c776ae42f175e610307c366b82cc422c35bdf3c4327f682e1",
+        "fileSize": 44080,
+        "playbackRate": 1,
+        "relativePath": "episodes/36dfeb3a-e092-4465-8b41-34a827f349ff/materials/89d213b664aa3f2c776ae42f175e610307c366b82cc422c35bdf3c4327f682e1-source.mp4",
+        "startSeconds": 0,
+        "sourceInFrame": 0,
+        "durationSeconds": 2,
+        "sourceFrameRate": 30,
+        "visualDurationInFrames": 60
+      },
+      "configuration_hash": "3d98d3b58658e5c4a9932cc96ddfe2083827b6a8e89c61ba38ec723a92b1fb76-f4104887-58ce-4518-b8bd-67d81c70ff9e",
+      "runtime_constraints": {
+        "source": {
+          "worker_capacity": 1,
+          "adapter_safety_limit": 1,
+          "provider_or_connection_limit": null
+        },
+        "version": "worker-runtime/v1",
+        "resource_limits": [
+          {
+            "key": "adapter:unknown:ffmpeg_extract_audio",
+            "limit": 1
+          },
+          {
+            "key": "connection:unknown:ffmpeg_extract_audio:shared",
+            "limit": 1
+          },
+          {
+            "key": "provider:unknown",
+            "limit": 1
+          }
+        ],
+        "concurrency_group": "unknown:ffmpeg_extract_audio:shared",
+        "effective_concurrency": 1
+      },
+      "native_output_namespace": "cc65f951-c2b1-4afc-864b-ee0ebee8bf61",
+      "native_episode_relative_path": "episodes/36dfeb3a-e092-4465-8b41-34a827f349ff",
+      "storyboard_review_package_id": "2f4a2dcb-4440-43ba-bc22-adf43d59798b",
+      "native_episode_directory_identity": {
+        "inodeId": null,
+        "deviceId": null
+      }
+    },
+    "last_result": {
+      "retry": {
+        "reason": "Completed successfully.",
+        "shouldRetry": false
+      },
+      "status": "completed",
+      "taskId": "cc65f951-c2b1-4afc-864b-ee0ebee8bf61",
+      "version": "worker-result/v1",
+      "blockers": [],
+      "nextStep": "Await the next controlled production step.",
+      "artifacts": [
+        {
+          "sha256": "c2fac4488f7d9774df19ae5fdc74c4233bf8a42e98c1790796a07c5251cac568",
+          "fileSize": 9843,
+          "artifactType": "shot_source_audio",
+          "relativePath": "episodes/36dfeb3a-e092-4465-8b41-34a827f349ff/native-tasks/cc65f951-c2b1-4afc-864b-ee0ebee8bf61/f4104887-58ce-4518-b8bd-67d81c70ff9e.mp3"
+        }
+      ],
+      "preflight": {
+        "checks": [
+          {
+            "check": "command_availability",
+            "phase": "preflight",
+            "scope": "worker",
+            "action": "none",
+            "reason": "本地受控规划执行路径；不自动调用在线Provider。",
+            "status": "passed",
+            "capability": "embedded_audio_extraction"
+          }
+        ],
+        "version": "worker-preflight/v2"
+      },
+      "validation": {
+        "checks": [
+          {
+            "name": "controlled_media_output",
+            "detail": "已按冻结 ffmpeg 适配器生成并校验主产物。",
+            "passed": true
+          },
+          {
+            "name": "native_media_mode",
+            "detail": "本机媒体执行。",
+            "passed": true
+          }
+        ],
+        "passed": true
+      },
+      "actualCostCents": 0,
+      "audioDurationSeconds": 2
+    }
+  },
+  "runs": [
+    {
+      "id": "a9ba6d4d-2e97-46b6-b735-c547fb2d0658",
+      "task_id": "cc65f951-c2b1-4afc-864b-ee0ebee8bf61",
+      "attempt": 0,
+      "task_package": {
+        "task": {
+          "id": "cc65f951-c2b1-4afc-864b-ee0ebee8bf61",
+          "type": "extract_embedded_audio",
+          "attempt": 0
+        },
+        "media": {
+          "adapter": "ffmpeg_extract_audio",
+          "embedded_audio": {
+            "start_seconds": 0,
+            "duration_seconds": 2,
+            "source_relative_path": "episodes/36dfeb3a-e092-4465-8b41-34a827f349ff/materials/89d213b664aa3f2c776ae42f175e610307c366b82cc422c35bdf3c4327f682e1-source.mp4"
+          }
+        },
+        "budget": {
+          "attempt": 0,
+          "limit_cents": 0,
+          "max_attempts": 2
+        },
+        "output": {
+          "content_type": "audio/mpeg",
+          "review_stage": "production_ready",
+          "relative_path": "episodes/36dfeb3a-e092-4465-8b41-34a827f349ff/native-tasks/cc65f951-c2b1-4afc-864b-ee0ebee8bf61/f4104887-58ce-4518-b8bd-67d81c70ff9e.mp3",
+          "required_artifact_types": [
+            "shot_source_audio"
+          ]
+        },
+        "episode": {
+          "id": "36dfeb3a-e092-4465-8b41-34a827f349ff",
+          "title": "四步制作 T02 验收",
+          "account_id": "171bea91-a499-4896-940b-dd5bc5f896e3",
+          "blueprint_version_id": "171bea91-a499-4896-940b-dd5bc5f896e3"
+        },
+        "version": "worker-task/v1",
+        "capability": "embedded_audio_extraction",
+        "audio_track": {
+          "kind": "source",
+          "cue_id": "shot-1",
+          "start_seconds": 0,
+          "duration_seconds": 0.001,
+          "source_review_package_id": "2f4a2dcb-4440-43ba-bc22-adf43d59798b"
+        },
+        "lease_token": "7e421095-e063-410f-977e-d15846258783",
+        "allowed_tools": [
+          "read",
+          "write"
+        ],
+        "prompt_context": {
+          "hash": "a6acb311a217972848213d8e819898a3",
+          "version": "prompt-context/v1",
+          "episode_input": {
+            "media": {
+              "adapter": "ffmpeg_extract_audio",
+              "embedded_audio": {
+                "start_seconds": 0,
+                "duration_seconds": 2,
+                "source_relative_path": "episodes/36dfeb3a-e092-4465-8b41-34a827f349ff/materials/89d213b664aa3f2c776ae42f175e610307c366b82cc422c35bdf3c4327f682e1-source.mp4"
+              }
+            },
+            "input_artifacts": [
+              {
+                "sha256": "89d213b664aa3f2c776ae42f175e610307c366b82cc422c35bdf3c4327f682e1",
+                "fileSize": 44080,
+                "artifactType": "source_video",
+                "relativePath": "episodes/36dfeb3a-e092-4465-8b41-34a827f349ff/materials/89d213b664aa3f2c776ae42f175e610307c366b82cc422c35bdf3c4327f682e1-source.mp4"
+              }
+            ]
+          },
+          "account_defaults": {},
+          "blueprint_version_id": "171bea91-a499-4896-940b-dd5bc5f896e3",
+          "account_hard_constraints": {}
+        },
+        "input_artifacts": [
+          {
+            "sha256": "89d213b664aa3f2c776ae42f175e610307c366b82cc422c35bdf3c4327f682e1",
+            "fileSize": 44080,
+            "artifactType": "source_video",
+            "relativePath": "episodes/36dfeb3a-e092-4465-8b41-34a827f349ff/materials/89d213b664aa3f2c776ae42f175e610307c366b82cc422c35bdf3c4327f682e1-source.mp4"
+          }
+        ],
+        "forbidden_actions": [
+          "approve",
+          "publish",
+          "change_blueprint",
+          "change_episode_stage"
+        ],
+        "storyboard_review_package_id": "2f4a2dcb-4440-43ba-bc22-adf43d59798b"
+      },
+      "result": {
+        "retry": {
+          "reason": "Completed successfully.",
+          "shouldRetry": false
+        },
+        "status": "completed",
+        "taskId": "cc65f951-c2b1-4afc-864b-ee0ebee8bf61",
+        "version": "worker-result/v1",
+        "blockers": [],
+        "nextStep": "Await the next controlled production step.",
+        "artifacts": [
+          {
+            "sha256": "c2fac4488f7d9774df19ae5fdc74c4233bf8a42e98c1790796a07c5251cac568",
+            "fileSize": 9843,
+            "artifactType": "shot_source_audio",
+            "relativePath": "episodes/36dfeb3a-e092-4465-8b41-34a827f349ff/native-tasks/cc65f951-c2b1-4afc-864b-ee0ebee8bf61/f4104887-58ce-4518-b8bd-67d81c70ff9e.mp3"
+          }
+        ],
+        "preflight": {
+          "checks": [
+            {
+              "check": "command_availability",
+              "phase": "preflight",
+              "scope": "worker",
+              "action": "none",
+              "reason": "本地受控规划执行路径；不自动调用在线Provider。",
+              "status": "passed",
+              "capability": "embedded_audio_extraction"
+            }
+          ],
+          "version": "worker-preflight/v2"
+        },
+        "validation": {
+          "checks": [
+            {
+              "name": "controlled_media_output",
+              "detail": "已按冻结 ffmpeg 适配器生成并校验主产物。",
+              "passed": true
+            },
+            {
+              "name": "native_media_mode",
+              "detail": "本机媒体执行。",
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        "actualCostCents": 0,
+        "audioDurationSeconds": 2
+      },
+      "status": "completed",
+      "actual_cost_cents": 0,
+      "started_at": "2026-10-31T22:22:59.902Z",
+      "completed_at": "2026-10-31T22:23:00.278Z",
+      "lease_token": "7e421095-e063-410f-977e-d15846258783"
+    }
+  ]
+}

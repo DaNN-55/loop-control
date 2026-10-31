@@ -1,0 +1,110 @@
+{
+  "version": 3,
+  "loopControl": {
+    "version": "four-step-workspace/v1",
+    "inputFingerprint": "22c7b9b2-95fc-4b8c-9127-17f62fc7f9fe",
+    "transitionMode": "studio"
+  },
+  "assets": [
+    {
+      "id": "material-9bc97cf2-cc21-470b-9867-a480d176d266",
+      "name": "shot.mp4",
+      "kind": "video",
+      "src": "系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e/shot.mp4",
+      "durationInFrames": 60,
+      "width": 360,
+      "height": 640,
+      "sourceRevision": "9bc97cf2-cc21-470b-9867-a480d176d266",
+      "sourceContentHash": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da"
+    }
+  ],
+  "mediaFolders": [],
+  "activeTimelineId": "loop-control-c7bae16b-b989-4d28-9963-483cefb5e67e",
+  "timelines": [
+    {
+      "id": "loop-control-c7bae16b-b989-4d28-9963-483cefb5e67e",
+      "name": "整期剪辑",
+      "order": 0,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "fit": "contain",
+      "items": [
+        {
+          "id": "shot-shot-1-2068f7b7-b249-4fd3-b98a-fa386b73df1e",
+          "track": "V1",
+          "kind": "video",
+          "name": "shot-1",
+          "startFrame": 0,
+          "durationInFrames": 60,
+          "width": 360,
+          "height": 640,
+          "transform": {
+            "scale": 1,
+            "x": 0,
+            "y": 0,
+            "rotation": 0
+          },
+          "loopControlShot": {
+            "workspaceId": "22c7b9b2-95fc-4b8c-9127-17f62fc7f9fe",
+            "shotId": "shot-1",
+            "clipId": "2068f7b7-b249-4fd3-b98a-fa386b73df1e",
+            "text": "第一镜",
+            "provenance": {
+              "materialRevisionId": "9bc97cf2-cc21-470b-9867-a480d176d266",
+              "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+              "fileSize": 210288,
+              "kind": "video"
+            }
+          },
+          "src": "系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e/shot.mp4",
+          "sourceAssetId": "material-9bc97cf2-cc21-470b-9867-a480d176d266",
+          "sourceRevision": "9bc97cf2-cc21-470b-9867-a480d176d266",
+          "sourceContentHash": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-shot-2-59de61c3-bc9d-4d69-871a-7c52d6174887",
+          "track": "V1",
+          "kind": "text",
+          "name": "shot-2 · 待匹配画面",
+          "startFrame": 60,
+          "durationInFrames": 60,
+          "width": 1080,
+          "height": 1920,
+          "props": {
+            "text": "待匹配画面\nshot-2",
+            "fontSize": 64,
+            "color": "#a3acc2",
+            "align": "center"
+          },
+          "transform": {
+            "scale": 1,
+            "x": 0,
+            "y": 0,
+            "rotation": 0
+          },
+          "loopControlShot": {
+            "workspaceId": "22c7b9b2-95fc-4b8c-9127-17f62fc7f9fe",
+            "shotId": "shot-2",
+            "clipId": "59de61c3-bc9d-4d69-871a-7c52d6174887",
+            "text": "缺少素材的第二镜。"
+          }
+        }
+      ],
+      "trackOrder": [
+        "V1"
+      ],
+      "tracks": {
+        "V1": {
+          "kind": "video",
+          "name": "画面"
+        }
+      },
+      "transitions": [],
+      "selectedId": null,
+      "captionsHidden": false
+    }
+  ]
+}

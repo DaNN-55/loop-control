@@ -1,0 +1,394 @@
+{
+  "selectedImages": [],
+  "visualConfiguration": {
+    "imageModel": null,
+    "videoModel": null,
+    "videoProvider": null
+  },
+  "preparation": {
+    "origin": "script-segment",
+    "scriptRevisionId": "cc5518a4-ec66-4293-b5ac-e0f423aa6812",
+    "authorized": true,
+    "authorizationHash": "b0243b033d1604e26e7ecc0ba0c7ce22b5a994cf82997ae5d9d6aeddbaf90d00",
+    "shots": [
+      {
+        "shotId": "shot-01",
+        "origin": "script-segment",
+        "shotType": "b_roll"
+      }
+    ]
+  },
+  "pexels": {
+    "requests": []
+  },
+  "visualCandidates": [],
+  "visualTasks": [],
+  "visualTargets": [
+    {
+      "targetItemId": "shot-shot-01-63c019c3-e1da-4a69-b6f5-3ab0ec418fcc",
+      "width": 1080,
+      "height": 1920,
+      "provider": "",
+      "voiceMode": "none",
+      "durationSeconds": null,
+      "providerDurationSeconds": null,
+      "minimumSeconds": 2,
+      "maximumSeconds": 15
+    }
+  ],
+  "audio": {
+    "mix": {
+      "voices": [
+        {
+          "coverage": "none",
+          "startSeconds": null,
+          "durationSeconds": null,
+          "shotDurationSeconds": 2.4,
+          "sourceStartSeconds": null,
+          "sourceLabel": null,
+          "alignmentReady": false,
+          "shotId": "shot-01",
+          "mode": "none",
+          "gainDb": 0,
+          "ambienceGainDb": null,
+          "sourceItemId": null,
+          "sourceAssetId": null
+        }
+      ],
+      "sounds": [
+        {
+          "itemId": "workspace-bgm",
+          "kind": "bgm",
+          "gainDb": -12,
+          "duckDepthDb": 10,
+          "startSeconds": 0,
+          "durationSeconds": 2.4
+        }
+      ]
+    },
+    "preparations": [
+      {
+        "id": "a7efd73d-a9c4-4f18-96aa-bb5feef9b756",
+        "kind": "bgm",
+        "shotId": null,
+        "sourceItemId": null,
+        "sourceSha256": null,
+        "description": "受控背景音保持导出音频可验证",
+        "query": null,
+        "selection": null,
+        "connection": null,
+        "anchor": "absolute",
+        "offsetSeconds": 0,
+        "durationSeconds": 2.4,
+        "taskId": null,
+        "status": "ready",
+        "error": null,
+        "audioTrackId": null,
+        "relativePath": "未分系列--e32f2560-cd9b-4795-b8f4-81575b18d81a/正式新单--e724cd1b-eba5-466f-bbd6-61c35fc0e2a2/materials/9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100-controlled-narration-tone.mp3",
+        "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+        "fileSize": 19628,
+        "adoptedItemId": "workspace-bgm",
+        "source": {
+          "provider": "manual",
+          "materialRevisionId": "424890f0-4e3f-4014-9ccf-378e18da6a40"
+        }
+      }
+    ]
+  },
+  "deliveries": [
+    {
+      "id": "56ace0fb-fe22-4b3a-b183-7e3e33b0a951",
+      "exportId": "9b4ea456-e68e-40cf-a42b-86e5a4624d57",
+      "taskId": "56ace0fb-fe22-4b3a-b183-7e3e33b0a951",
+      "status": "ready",
+      "error": null,
+      "verified": false,
+      "artifacts": [],
+      "createdAt": "2026-10-31T22:02:19.691Z"
+    }
+  ],
+  "usedNarration": [],
+  "candidates": [
+    {
+      "speech": {
+        "selection": {
+          "model": "seed-tts-2.0",
+          "adapter": "volcengine_tts",
+          "provider": "volcengine_tts",
+          "capability": "speech",
+          "connectionVersionId": "cd2f473a-944d-48be-a658-814405b1605f"
+        },
+        "connectionName": "Controlled narration",
+        "voice": "zh_female_vv_uranus_bigtts",
+        "languageCode": "zh-CN",
+        "speakingRate": 1
+      },
+      "id": "c2fa12e5-0f68-4c16-9b06-9ceec66ca1b1",
+      "kind": "audio",
+      "shotId": "shot-01",
+      "clipId": "63c019c3-e1da-4a69-b6f5-3ab0ec418fcc",
+      "targetItemId": "workspace-narration-shot-shot-01",
+      "taskId": "f7e98386-c0b5-4fb6-a0ad-7a1e3130af76",
+      "inputFingerprint": "6f091bf20e553472e942de2b7d47be8e86c3e8ef3681841c840e3c96ec1da6fa",
+      "text": "这份已采用的口播在此导出中被明确静音。",
+      "mainScriptText": "填写本段完整口播。",
+      "audioTrackId": "c2fa12e5-0f68-4c16-9b06-9ceec66ca1b1",
+      "relativePath": "未分系列--e32f2560-cd9b-4795-b8f4-81575b18d81a/正式新单--e724cd1b-eba5-466f-bbd6-61c35fc0e2a2/native-tasks/f7e98386-c0b5-4fb6-a0ad-7a1e3130af76/shot-narration-shot-01-a321e5c4-6a40-4eff-9fef-5f35f27dbcd5.mp3",
+      "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+      "fileSize": 19628,
+      "durationSeconds": 2.4,
+      "pendingConfirmation": false,
+      "currentVoiceMode": "none",
+      "currentDurationSeconds": null,
+      "targetDurationSeconds": 2.4,
+      "durationImpact": {
+        "deltaSeconds": 0,
+        "overlapItemIds": []
+      },
+      "status": "available"
+    }
+  ],
+  "exports": [
+    {
+      "id": "9b4ea456-e68e-40cf-a42b-86e5a4624d57",
+      "projectContentVersion": 6,
+      "contentSha256": "af39acb6a029d3e5a535b0a04849807f2a0b058a6921d98bb9992a02bdfc9a6b",
+      "project": {
+        "sha256": "ea7f08e474e1680d03e200768c05fb5225d9ce2af5eccdc6b4c7be52ac9c9241",
+        "fileSize": 13761,
+        "relativePath": "未分系列--e32f2560-cd9b-4795-b8f4-81575b18d81a/正式新单--e724cd1b-eba5-466f-bbd6-61c35fc0e2a2/production-workspace/versions/ea7f08e474e1680d03e200768c05fb5225d9ce2af5eccdc6b4c7be52ac9c9241.json"
+      },
+      "status": "ready",
+      "artifact": {
+        "sha256": "993d8043526c2f1152e451db10cc11b868d3bd953ab211a42f609af9b1c218d0",
+        "fileSize": 140662,
+        "relativePath": "未分系列--e32f2560-cd9b-4795-b8f4-81575b18d81a/正式新单--e724cd1b-eba5-466f-bbd6-61c35fc0e2a2/workspace-exports/9b4ea456-e68e-40cf-a42b-86e5a4624d57/993d8043526c2f1152e451db10cc11b868d3bd953ab211a42f609af9b1c218d0.mp4"
+      },
+      "checks": [
+        {
+          "name": "used_content",
+          "detail": "已核对 3 个实际来源。",
+          "passed": true,
+          "sources": [
+            {
+              "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+              "fileSize": 1515,
+              "relativePath": "未分系列--e32f2560-cd9b-4795-b8f4-81575b18d81a/正式新单--e724cd1b-eba5-466f-bbd6-61c35fc0e2a2/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-still-striped.png"
+            },
+            {
+              "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+              "fileSize": 19628,
+              "relativePath": "未分系列--e32f2560-cd9b-4795-b8f4-81575b18d81a/正式新单--e724cd1b-eba5-466f-bbd6-61c35fc0e2a2/materials/9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100-controlled-narration-tone.mp3"
+            },
+            {
+              "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+              "fileSize": 19628,
+              "relativePath": "未分系列--e32f2560-cd9b-4795-b8f4-81575b18d81a/正式新单--e724cd1b-eba5-466f-bbd6-61c35fc0e2a2/native-tasks/f7e98386-c0b5-4fb6-a0ad-7a1e3130af76/shot-narration-shot-01-a321e5c4-6a40-4eff-9fef-5f35f27dbcd5.mp3"
+            }
+          ]
+        },
+        {
+          "name": "captions",
+          "detail": "已核对 0 组字幕时序，正文随最终文件一次确认。",
+          "passed": true,
+          "evidence": []
+        },
+        {
+          "name": "technical",
+          "detail": "实际 MP4 时长、画幅、音频及黑帧检查通过。",
+          "passed": true,
+          "inspection": {
+            "width": 1080,
+            "height": 1920,
+            "hasAudio": true,
+            "blackFrameCount": 0,
+            "durationSeconds": 2.453333
+          },
+          "videoFrames": 72,
+          "audioExpected": true,
+          "videoDurationSeconds": 2.4,
+          "expectedDurationSeconds": 2.4,
+          "containerDurationSeconds": 2.453333
+        },
+        {
+          "name": "representative_frame",
+          "detail": "已实际解码代表帧。",
+          "passed": true,
+          "artifact": {
+            "sha256": "7ef6e5873339b7a3f28e237ddf8d29f7179eeaf6ecd32bba416291e244b3ad77",
+            "fileSize": 37183,
+            "relativePath": "未分系列--e32f2560-cd9b-4795-b8f4-81575b18d81a/正式新单--e724cd1b-eba5-466f-bbd6-61c35fc0e2a2/workspace-exports/9b4ea456-e68e-40cf-a42b-86e5a4624d57/representative.jpg"
+          }
+        },
+        {
+          "name": "export_file",
+          "detail": "最终文件已按字节 SHA-256 与大小不可变登记。",
+          "passed": true
+        }
+      ],
+      "createdAt": "2026-10-31T22:02:19.411Z",
+      "confirmedAt": "2026-10-31T22:02:19.566Z",
+      "confirmed": true,
+      "current": true
+    }
+  ],
+  "exportIssues": [],
+  "captions": [
+    {
+      "clipId": "63c019c3-e1da-4a69-b6f5-3ab0ec418fcc",
+      "itemId": "shot-shot-01-63c019c3-e1da-4a69-b6f5-3ab0ec418fcc",
+      "shotId": "shot-01",
+      "durationMs": 2400,
+      "contract": {
+        "version": "shot-captions/v1",
+        "enabled": false,
+        "contentMode": "independent",
+        "text": "这份已采用的口播在此导出中被明确静音。",
+        "cues": [],
+        "spatial": {
+          "version": "shot-caption-space/v2",
+          "anchor": "bottom-center",
+          "safeArea": "title-safe",
+          "aspectRatio": "9:16",
+          "insets": {
+            "top": 0.08,
+            "right": 0.08,
+            "bottom": 0.18,
+            "left": 0.08
+          },
+          "maxLines": 2,
+          "maxCharactersPerLine": 16
+        }
+      },
+      "inputFingerprint": "e4c434d74dd7631b8f3e633d2bc66b3f8232c0fca1ac0cff542e1597504b49a7",
+      "timing": "missing",
+      "textConfirmed": false,
+      "audioTrackId": null,
+      "narrationText": null,
+      "taskId": null,
+      "alignmentInputVersion": null,
+      "detail": null
+    }
+  ],
+  "id": "104a7850-88aa-45dc-978d-27c3766c13ab",
+  "episodeId": "e724cd1b-eba5-466f-bbd6-61c35fc0e2a2",
+  "workflowVersion": "four-step/v1",
+  "scriptRevisionId": "cc5518a4-ec66-4293-b5ac-e0f423aa6812",
+  "storyboardPackageId": "248a3f6c-334d-4359-88e0-fd3f29024b28",
+  "revision": 6,
+  "contentSha256": "af39acb6a029d3e5a535b0a04849807f2a0b058a6921d98bb9992a02bdfc9a6b",
+  "nativeEditRevision": 4,
+  "narration": [
+    {
+      "windowWarning": null,
+      "selection": {
+        "model": "seed-tts-2.0",
+        "adapter": "volcengine_tts",
+        "provider": "volcengine_tts",
+        "capability": "speech",
+        "connectionVersionId": "cd2f473a-944d-48be-a658-814405b1605f"
+      },
+      "defaults": null,
+      "requiresCandidateAdoption": true,
+      "clipId": "63c019c3-e1da-4a69-b6f5-3ab0ec418fcc",
+      "shotId": "shot-01",
+      "mode": "tts",
+      "text": "这份已采用的口播在此导出中被明确静音。",
+      "voice": "zh_female_vv_uranus_bigtts",
+      "languageCode": "zh-CN",
+      "speakingRate": 1,
+      "override": true,
+      "inputFingerprint": "6f091bf20e553472e942de2b7d47be8e86c3e8ef3681841c840e3c96ec1da6fa",
+      "confirmed": true,
+      "taskId": "f7e98386-c0b5-4fb6-a0ad-7a1e3130af76",
+      "status": "completed",
+      "error": null,
+      "audioTrackId": "c2fa12e5-0f68-4c16-9b06-9ceec66ca1b1",
+      "artifactId": "6332085d-8aa6-408e-b3e0-7e19b183052f",
+      "relativePath": "未分系列--e32f2560-cd9b-4795-b8f4-81575b18d81a/正式新单--e724cd1b-eba5-466f-bbd6-61c35fc0e2a2/native-tasks/f7e98386-c0b5-4fb6-a0ad-7a1e3130af76/shot-narration-shot-01-a321e5c4-6a40-4eff-9fef-5f35f27dbcd5.mp3",
+      "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+      "fileSize": 19628,
+      "durationSeconds": 2.4,
+      "itemId": "workspace-narration-shot-shot-01",
+      "adoptedAudioTrackId": null
+    }
+  ],
+  "clips": [
+    {
+      "id": "63c019c3-e1da-4a69-b6f5-3ab0ec418fcc",
+      "text": "填写本段完整口播。",
+      "image": {
+        "fit": "contain",
+        "usage": "still",
+        "focusX": 0,
+        "focusY": 0,
+        "durationSeconds": 2.4
+      },
+      "itemId": "shot-shot-01-63c019c3-e1da-4a69-b6f5-3ab0ec418fcc",
+      "shotId": "shot-01",
+      "source": {
+        "kind": "image",
+        "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+        "fileSize": 1515,
+        "relativePath": "未分系列--e32f2560-cd9b-4795-b8f4-81575b18d81a/正式新单--e724cd1b-eba5-466f-bbd6-61c35fc0e2a2/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-still-striped.png",
+        "materialRevisionId": "aa912d3d-0a27-426c-9cbf-9efcf14fcefc"
+      }
+    }
+  ],
+  "project": {
+    "relativePath": "未分系列--e32f2560-cd9b-4795-b8f4-81575b18d81a/正式新单--e724cd1b-eba5-466f-bbd6-61c35fc0e2a2/production-workspace/versions/ea7f08e474e1680d03e200768c05fb5225d9ce2af5eccdc6b4c7be52ac9c9241.json",
+    "sha256": "ea7f08e474e1680d03e200768c05fb5225d9ce2af5eccdc6b4c7be52ac9c9241",
+    "fileSize": 13761,
+    "projectId": "loop-control-e724cd1b-eba5-466f-bbd6-61c35fc0e2a2"
+  },
+  "history": [
+    {
+      "revision": 6,
+      "sha256": "ea7f08e474e1680d03e200768c05fb5225d9ce2af5eccdc6b4c7be52ac9c9241",
+      "scriptRevisionId": "cc5518a4-ec66-4293-b5ac-e0f423aa6812",
+      "reason": "保存原生剪辑",
+      "createdAt": "2026-10-31T22:02:13.098Z"
+    },
+    {
+      "revision": 5,
+      "sha256": "69abe76186ca999df49ccb180cb441f063929c4249c44149e5dfdd28e804078f",
+      "scriptRevisionId": "cc5518a4-ec66-4293-b5ac-e0f423aa6812",
+      "reason": "采用配乐或音效",
+      "createdAt": "2026-10-31T22:02:10.808Z"
+    },
+    {
+      "revision": 4,
+      "sha256": "99ebc7734575776668215e3045b797699c8a28c46e51e893bd9d9fcd29d399c5",
+      "scriptRevisionId": "cc5518a4-ec66-4293-b5ac-e0f423aa6812",
+      "reason": "编辑字幕",
+      "createdAt": "2026-10-31T22:02:10.512Z"
+    },
+    {
+      "revision": 3,
+      "sha256": "b2d7997085a73ebb19a4da49dae491edf9a53803e2c773cd0bf1d997d4b0341d",
+      "scriptRevisionId": "cc5518a4-ec66-4293-b5ac-e0f423aa6812",
+      "reason": "匹配图片",
+      "createdAt": "2026-10-31T22:02:10.413Z"
+    },
+    {
+      "revision": 2,
+      "sha256": "d6860532739ebcd38241e7afcad1a334fc57a5fa583903558f303e70e9d030c4",
+      "scriptRevisionId": "cc5518a4-ec66-4293-b5ac-e0f423aa6812",
+      "reason": "采用局部口播候选",
+      "createdAt": "2026-10-31T22:02:10.223Z"
+    },
+    {
+      "revision": 1,
+      "sha256": "7639f795850437ab5a1a43e7c729aa5b9d25aaf9c064084d8e52a2c70958ef9f",
+      "scriptRevisionId": "cc5518a4-ec66-4293-b5ac-e0f423aa6812",
+      "reason": "首次组装",
+      "createdAt": "2026-10-31T22:02:09.620Z"
+    }
+  ],
+  "readiness": {
+    "deliverable": true,
+    "placeholders": [],
+    "missingSources": []
+  },
+  "stale": false
+}

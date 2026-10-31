@@ -1,0 +1,529 @@
+
+ RUN  v3.2.7 /private/tmp/loop-control-main-e2e-20261101/integration-regression/verification-source
+
+(node:6591) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ❯ src/local-app/formalWorkflow.delivery.integration.test.ts (1 test | 1 failed) 42266ms
+   × formal Owner workflow delivers exact native export with adopted text, mixed audio and traceable late unused results 42266ms
+     → promise resolved "Stats{ dev: 16777269, …(13) }" instead of rejecting
+ ❯ src/local-app/restorePublication.integration.test.ts (4 tests | 4 failed) 57980ms
+   × SIGKILL at restore journal retains verifiable publication proof and fresh application Owner file reads recover 14171ms
+     → Actual publication fault boundary: node:internal/errors:986
+  const err = new Error(message);
+              ^
+
+Error: Command failed: docker exec -i loop-control-178-test-postgres psql -XqAt -U postgres -d loop_t24_restore_d94a0ed2b938 -v ON_ERROR_STOP=1
+ERROR:  function "owned_studio_frozen_reference" already exists with same argument types
+
+    at genericNodeError (node:internal/errors:986:15)
+    at wrappedFn (node:internal/errors:540:14)
+    at checkExecSyncError (node:child_process:942:11)
+    at execFileSync (node:child_process:978:15)
+    at cp.execFileSync (file:///private/tmp/loop-t11-publication-qRWVJM/pause-publication.mjs:1:582)
+    at call (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/runtime-context.mjs:3:26)
+    at docker (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/runtime-context.mjs:4:480)
+    at Object.sql (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/runtime-context.mjs:4:875)
+    at sql (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/verification-source/src/local-app/nativeStorage.fixture.ts:18:116)
+    at restoreNativeBackup (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/verification-source/scripts/storage/restore.mjs:57:252) {
+  status: 3,
+  signal: null,
+  output: [
+    null,
+    '',
+    'ERROR:  function "owned_studio_frozen_reference" already exists with same argument types\n'
+  ],
+  pid: 26411,
+  stdout: '',
+  stderr: 'ERROR:  function "owned_studio_frozen_reference" already exists with same argument types\n'
+}
+
+Node.js v24.20.0
+: expected false to be true // Object.is equality
+   × SIGKILL at restore receipt retains verifiable publication proof and fresh application Owner file reads recover 14378ms
+     → Actual publication fault boundary: node:internal/errors:986
+  const err = new Error(message);
+              ^
+
+Error: Command failed: docker exec -i loop-control-178-test-postgres psql -XqAt -U postgres -d loop_t24_restore_4a88b36fdd3e -v ON_ERROR_STOP=1
+ERROR:  function "owned_studio_frozen_reference" already exists with same argument types
+
+    at genericNodeError (node:internal/errors:986:15)
+    at wrappedFn (node:internal/errors:540:14)
+    at checkExecSyncError (node:child_process:942:11)
+    at execFileSync (node:child_process:978:15)
+    at cp.execFileSync (file:///private/tmp/loop-t11-publication-Tk4S83/pause-publication.mjs:1:582)
+    at call (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/runtime-context.mjs:3:26)
+    at docker (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/runtime-context.mjs:4:480)
+    at Object.sql (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/runtime-context.mjs:4:875)
+    at sql (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/verification-source/src/local-app/nativeStorage.fixture.ts:18:116)
+    at restoreNativeBackup (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/verification-source/scripts/storage/restore.mjs:57:252) {
+  status: 3,
+  signal: null,
+  output: [
+    null,
+    '',
+    'ERROR:  function "owned_studio_frozen_reference" already exists with same argument types\n'
+  ],
+  pid: 35348,
+  stdout: '',
+  stderr: 'ERROR:  function "owned_studio_frozen_reference" already exists with same argument types\n'
+}
+
+Node.js v24.20.0
+: expected false to be true // Object.is equality
+   × SIGKILL at restore config retains verifiable publication proof and fresh application Owner file reads recover 15060ms
+     → Actual publication fault boundary: node:internal/errors:986
+  const err = new Error(message);
+              ^
+
+Error: Command failed: docker exec -i loop-control-178-test-postgres psql -XqAt -U postgres -d loop_t24_restore_0a6216f5945d -v ON_ERROR_STOP=1
+ERROR:  function "owned_studio_frozen_reference" already exists with same argument types
+
+    at genericNodeError (node:internal/errors:986:15)
+    at wrappedFn (node:internal/errors:540:14)
+    at checkExecSyncError (node:child_process:942:11)
+    at execFileSync (node:child_process:978:15)
+    at cp.execFileSync (file:///private/tmp/loop-t11-publication-WBY1Vj/pause-publication.mjs:1:574)
+    at call (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/runtime-context.mjs:3:26)
+    at docker (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/runtime-context.mjs:4:480)
+    at Object.sql (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/runtime-context.mjs:4:875)
+    at sql (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/verification-source/src/local-app/nativeStorage.fixture.ts:18:116)
+    at restoreNativeBackup (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/verification-source/scripts/storage/restore.mjs:57:252) {
+  status: 3,
+  signal: null,
+  output: [
+    null,
+    '',
+    'ERROR:  function "owned_studio_frozen_reference" already exists with same argument types\n'
+  ],
+  pid: 44520,
+  stdout: '',
+  stderr: 'ERROR:  function "owned_studio_frozen_reference" already exists with same argument types\n'
+}
+
+Node.js v24.20.0
+: expected false to be true // Object.is equality
+   × SIGKILL at restore ready retains verifiable publication proof and fresh application Owner file reads recover 14371ms
+     → Actual publication fault boundary: node:internal/errors:986
+  const err = new Error(message);
+              ^
+
+Error: Command failed: docker exec -i loop-control-178-test-postgres psql -XqAt -U postgres -d loop_t24_restore_bb4e37ff33cd -v ON_ERROR_STOP=1
+ERROR:  function "owned_studio_frozen_reference" already exists with same argument types
+
+    at genericNodeError (node:internal/errors:986:15)
+    at wrappedFn (node:internal/errors:540:14)
+    at checkExecSyncError (node:child_process:942:11)
+    at execFileSync (node:child_process:978:15)
+    at cp.execFileSync (file:///private/tmp/loop-t11-publication-tQTqHc/pause-publication.mjs:1:510)
+    at call (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/runtime-context.mjs:3:26)
+    at docker (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/runtime-context.mjs:4:480)
+    at Object.sql (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/runtime-context.mjs:4:875)
+    at sql (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/verification-source/src/local-app/nativeStorage.fixture.ts:18:116)
+    at restoreNativeBackup (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/verification-source/scripts/storage/restore.mjs:57:252) {
+  status: 3,
+  signal: null,
+  output: [
+    null,
+    '',
+    'ERROR:  function "owned_studio_frozen_reference" already exists with same argument types\n'
+  ],
+  pid: 53772,
+  stdout: '',
+  stderr: 'ERROR:  function "owned_studio_frozen_reference" already exists with same argument types\n'
+}
+
+Node.js v24.20.0
+: expected false to be true // Object.is equality
+ ✓ src/local-app/mediaRootExecutionNative.integration.test.ts (1 test) 61523ms
+   ✓ mixed accounts and native SQLite move across devices as one root, survive old production offline, and restore a real DB/media backup  61522ms
+stderr | src/local-app/episodeCollectionNative.integration.test.ts > all historical native coordinates remain usable after A→B→unassigned→A→B and a real database/media restore with original sources offline
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-t14-restore-MK6IO4/moved-browser-cache/deps/react-dom_client.js?v=f1012ec4 as it exceeds the max of 500KB.
+
+stderr | src/local-app/episodeCollectionNative.integration.test.ts > all historical native coordinates remain usable after A→B→unassigned→A→B and a real database/media restore with original sources offline
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-t14-restore-MK6IO4/runtime-145f1397-3f35-4898-94b6-ae14b535c2a9/restored-browser-cache/deps/react-dom_client.js?v=19e3aab7 as it exceeds the max of 500KB.
+
+ ✓ src/local-app/episodeCollectionNative.integration.test.ts (1 test) 77790ms
+   ✓ all historical native coordinates remain usable after A→B→unassigned→A→B and a real database/media restore with original sources offline  77789ms
+ ✓ src/local-app/legacyAdoptionNative.integration.test.ts (3 tests) 67561ms
+   ✓ native SQLite, immutable versions and original sources survive explicit adoption, source offline and fresh SDK save/reopen/export (legacy)  16698ms
+   ✓ native SQLite, immutable versions and original sources survive explicit adoption, source offline and fresh SDK save/reopen/export (recorded-prefix)  16091ms
+   ✓ adopted lineage is backed up and restored into a new database and root before a fresh application edits SQLite and exports with the source offline  34771ms
+ ❯ src/local-app/deletionBackupRestore.integration.test.ts (1 test | 1 failed) 21419ms
+   × real SQL115 prepared and committed deletion block backup while completed and rolled-back manifests restore unchanged after their source files disappear 21419ms
+     → Command failed: docker exec -i loop-control-178-test-postgres psql -XqAt -U postgres -d loop_t24_restore_e487debb7752 -v ON_ERROR_STOP=1
+ERROR:  function "owned_studio_frozen_reference" already exists with same argument types
+
+ ✓ src/local-app/mediaRootSettings.integration.test.ts (5 tests) 23065ms
+   ✓ Owner sees the adopted existing media root after native restart and cannot relocate its files through ordinary initialization  5174ms
+   ✓ empty workspace initialization persists authorization, reloads the actual service and Worker, and survives a fresh native process  4983ms
+   ✓ interrupted initialization reconciles private config with committed database metadata on the next real process start  4062ms
+   ✓ Owner initialization refuses overlapping, nonempty and low-space targets and recovers a controlled runtime reload failure  3750ms
+   ✓ an empty separately mounted volume can itself be the media root without adding a folder name  5094ms
+ ❯ src/local-app/accountDirectoryMigrationStorage.integration.test.ts (1 test | 1 failed) 13314ms
+   × a real backup and fresh restore retain migrated account location mappings and return original artifact bytes through Owner HTTP 13314ms
+     → Command failed: docker exec -i loop-control-178-test-postgres psql -XqAt -U postgres -d loop_t24_restore_1fa04e8f5835 -v ON_ERROR_STOP=1
+ERROR:  function "owned_studio_frozen_reference" already exists with same argument types
+
+ ✓ src/local-app/episodeCreation.integration.test.ts (3 tests) 16507ms
+   ✓ formal Owner creation places each production order directly in its registered series or unassigned container  3639ms
+   ✓ pending production-order creation reserves its account against deletion and backup until the same command completes  9506ms
+   ✓ Owner imports main script and material into a newly created ..alpha series at its registered location  3360ms
+ ❯ src/local-app/accountAssetRootsStorage.integration.test.ts (1 test | 1 failed) 13222ms
+   × a real backup and fresh restore preserve independent episode files and rebind account directory identity for Owner HTTP 13221ms
+     → Command failed: docker exec -i loop-control-178-test-postgres psql -XqAt -U postgres -d loop_t24_restore_ce14f70b7f13 -v ON_ERROR_STOP=1
+ERROR:  function "owned_studio_frozen_reference" already exists with same argument types
+
+stderr | src/local-app/managedMediaRestore.integration.test.ts > a restored native deployment restarts at the new root and saves, closes, reopens and exports the actual SDK project with the source offline (legacy)
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-t06-volume-1GSV7a/mounted/t11-storage/runtime/browser-vite-cache/deps/react-dom_client.js?v=7b89a82c as it exceeds the max of 500KB.
+
+stderr | src/local-app/managedMediaRestore.integration.test.ts > a restored native deployment restarts at the new root and saves, closes, reopens and exports the actual SDK project with the source offline (registered)
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-t06-volume-5g7wUt/mounted/t11-storage/runtime/browser-vite-cache/deps/react-dom_client.js?v=8ed44fa5 as it exceeds the max of 500KB.
+
+ ❯ src/local-app/managedMediaRestore.integration.test.ts (13 tests | 3 failed) 218989ms
+   ✓ a genuine new workspace backup restores its original media through Owner HTTP without manufacturing import evidence  20971ms
+   ✓ restored registered episode and empty series containers use target identities and completed creation replays with the source offline  16149ms
+   ✓ an unfinished physical creation reserves its source and refuses a complete backup  2466ms
+   ✓ a changed source retains explicit incomplete evidence and cannot publish a successful archive  4013ms
+   × a large production file is backed up and restored with bounded resident-memory growth 14220ms
+     → Command failed: docker exec -i loop-control-178-test-postgres psql -XqAt -U postgres -d loop_t24_restore_91d6fd98cdc5 -v ON_ERROR_STOP=1
+ERROR:  function "owned_studio_frozen_reference" already exists with same argument types
+
+   ✓ a restored native deployment restarts at the new root and saves, closes, reopens and exports the actual SDK project with the source offline (legacy)  44196ms
+   ✓ a restored native deployment restarts at the new root and saves, closes, reopens and exports the actual SDK project with the source offline (registered)  49152ms
+   ✓ a missing immutable workspace document prevents a complete backup even when ordinary artifact rows are intact  4448ms
+   × a rejected deployment publication retains the restored database pending and an explicit failed receipt 14618ms
+     → expected [Function] to throw error matching /deployment/i but got 'Command failed: docker exec -i loop-c…'
+   × registered platform cache and independent history inside a legacy media parent retain their own responsibilities 18856ms
+     → Command failed: docker exec -i loop-control-178-test-postgres psql -XqAt -U postgres -d loop_t24_restore_e8817d526b1d -v ON_ERROR_STOP=1
+ERROR:  function "owned_studio_frozen_reference" already exists with same argument types
+
+   ✓ the pinned legacy schema can be backed up before storage migrations and restored forward without touching its source  18697ms
+   ✓ restore never replaces an empty destination inserted after its initial check  6872ms
+   ✓ a same-byte replacement root cannot be laundered into a successful backup identity  4329ms
+ ✓ src/local-app/speechSelection.integration.test.ts (3 tests) 14171ms
+   ✓ speech requests freeze connection and voice while defaults change, and completed audio waits for explicit native adoption  3432ms
+   ✓ fresh formal speech adoption drives actual video duration and invalidates subtitle evidence when a longer voice is adopted  8316ms
+   ✓ speech validates actual choices, ownership and budget, and an unknown paid request cannot be sent again after restart  2422ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 11 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/accountAssetRootsStorage.integration.test.ts > a real backup and fresh restore preserve independent episode files and rebind account directory identity for Owner HTTP
+Error: Command failed: docker exec -i loop-control-178-test-postgres psql -XqAt -U postgres -d loop_t24_restore_ce14f70b7f13 -v ON_ERROR_STOP=1
+ERROR:  function "owned_studio_frozen_reference" already exists with same argument types
+
+ ❯ call ../runtime-context.mjs:3:38
+
+ ❯ docker ../runtime-context.mjs:4:480
+ ❯ Object.sql ../runtime-context.mjs:4:875
+ ❯ sql src/local-app/nativeStorage.fixture.ts:18:116
+ ❯ restoreNativeBackup scripts/storage/restore.mjs:57:252
+ ❯ src/local-app/accountAssetRootsStorage.integration.test.ts:23:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/11]⎯
+
+ FAIL  src/local-app/accountDirectoryMigrationStorage.integration.test.ts > a real backup and fresh restore retain migrated account location mappings and return original artifact bytes through Owner HTTP
+Error: Command failed: docker exec -i loop-control-178-test-postgres psql -XqAt -U postgres -d loop_t24_restore_1fa04e8f5835 -v ON_ERROR_STOP=1
+ERROR:  function "owned_studio_frozen_reference" already exists with same argument types
+
+ ❯ call ../runtime-context.mjs:3:38
+
+ ❯ docker ../runtime-context.mjs:4:480
+ ❯ Object.sql ../runtime-context.mjs:4:875
+ ❯ sql src/local-app/nativeStorage.fixture.ts:18:116
+ ❯ restoreNativeBackup scripts/storage/restore.mjs:57:252
+ ❯ src/local-app/accountDirectoryMigrationStorage.integration.test.ts:27:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/11]⎯
+
+ FAIL  src/local-app/deletionBackupRestore.integration.test.ts > real SQL115 prepared and committed deletion block backup while completed and rolled-back manifests restore unchanged after their source files disappear
+Error: Command failed: docker exec -i loop-control-178-test-postgres psql -XqAt -U postgres -d loop_t24_restore_e487debb7752 -v ON_ERROR_STOP=1
+ERROR:  function "owned_studio_frozen_reference" already exists with same argument types
+
+ ❯ call ../runtime-context.mjs:3:38
+
+ ❯ docker ../runtime-context.mjs:4:480
+ ❯ Object.sql ../runtime-context.mjs:4:875
+ ❯ sql src/local-app/nativeStorage.fixture.ts:18:116
+ ❯ restoreNativeBackup scripts/storage/restore.mjs:57:252
+ ❯ src/local-app/deletionBackupRestore.integration.test.ts:35:219
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/11]⎯
+
+ FAIL  src/local-app/formalWorkflow.delivery.integration.test.ts > formal Owner workflow delivers exact native export with adopted text, mixed audio and traceable late unused results
+AssertionError: promise resolved "Stats{ dev: 16777269, …(13) }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ Stats {
++   "atimeMs": 1793485396565.8142,
++   "birthtimeMs": 1793485360378.1558,
++   "blksize": 4096,
++   "blocks": 0,
++   "ctimeMs": 1793485394859.8828,
++   "dev": 16777269,
++   "gid": 20,
++   "ino": 32,
++   "mode": 16832,
++   "mtimeMs": 1793485394859.8828,
++   "nlink": 11,
++   "rdev": 0,
++   "size": 352,
++   "uid": 501,
+  }
+
+ ❯ src/local-app/formalWorkflow.delivery.integration.test.ts:85:215
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/11]⎯
+
+ FAIL  src/local-app/managedMediaRestore.integration.test.ts > a large production file is backed up and restored with bounded resident-memory growth
+Error: Command failed: docker exec -i loop-control-178-test-postgres psql -XqAt -U postgres -d loop_t24_restore_91d6fd98cdc5 -v ON_ERROR_STOP=1
+ERROR:  function "owned_studio_frozen_reference" already exists with same argument types
+
+ ❯ call ../runtime-context.mjs:3:38
+
+ ❯ docker ../runtime-context.mjs:4:480
+ ❯ Object.sql ../runtime-context.mjs:4:875
+ ❯ sql src/local-app/nativeStorage.fixture.ts:18:116
+ ❯ restoreNativeBackup scripts/storage/restore.mjs:57:252
+ ❯ src/local-app/managedMediaRestore.integration.test.ts:105:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/11]⎯
+
+ FAIL  src/local-app/managedMediaRestore.integration.test.ts > a rejected deployment publication retains the restored database pending and an explicit failed receipt
+AssertionError: expected [Function] to throw error matching /deployment/i but got 'Command failed: docker exec -i loop-c…'
+
+- Expected: 
+/deployment/i
+
++ Received: 
+"Command failed: docker exec -i loop-control-178-test-postgres psql -XqAt -U postgres -d loop_t24_restore_acab2ba50aba -v ON_ERROR_STOP=1
+ERROR:  function \"owned_studio_frozen_reference\" already exists with same argument types
+"
+
+ ❯ src/local-app/managedMediaRestore.integration.test.ts:164:3
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/11]⎯
+
+ FAIL  src/local-app/managedMediaRestore.integration.test.ts > registered platform cache and independent history inside a legacy media parent retain their own responsibilities
+Error: Command failed: docker exec -i loop-control-178-test-postgres psql -XqAt -U postgres -d loop_t24_restore_e8817d526b1d -v ON_ERROR_STOP=1
+ERROR:  function "owned_studio_frozen_reference" already exists with same argument types
+
+ ❯ call ../runtime-context.mjs:3:38
+
+ ❯ docker ../runtime-context.mjs:4:480
+ ❯ Object.sql ../runtime-context.mjs:4:875
+ ❯ sql src/local-app/nativeStorage.fixture.ts:18:116
+ ❯ restoreNativeBackup scripts/storage/restore.mjs:57:252
+ ❯ src/local-app/managedMediaRestore.integration.test.ts:177:64
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/11]⎯
+
+ FAIL  src/local-app/restorePublication.integration.test.ts > SIGKILL at restore journal retains verifiable publication proof and fresh application Owner file reads recover
+AssertionError: Actual publication fault boundary: node:internal/errors:986
+  const err = new Error(message);
+              ^
+
+Error: Command failed: docker exec -i loop-control-178-test-postgres psql -XqAt -U postgres -d loop_t24_restore_d94a0ed2b938 -v ON_ERROR_STOP=1
+ERROR:  function "owned_studio_frozen_reference" already exists with same argument types
+
+    at genericNodeError (node:internal/errors:986:15)
+    at wrappedFn (node:internal/errors:540:14)
+    at checkExecSyncError (node:child_process:942:11)
+    at execFileSync (node:child_process:978:15)
+    at cp.execFileSync (file:///private/tmp/loop-t11-publication-qRWVJM/pause-publication.mjs:1:582)
+    at call (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/runtime-context.mjs:3:26)
+    at docker (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/runtime-context.mjs:4:480)
+    at Object.sql (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/runtime-context.mjs:4:875)
+    at sql (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/verification-source/src/local-app/nativeStorage.fixture.ts:18:116)
+    at restoreNativeBackup (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/verification-source/scripts/storage/restore.mjs:57:252) {
+  status: 3,
+  signal: null,
+  output: [
+    null,
+    '',
+    'ERROR:  function "owned_studio_frozen_reference" already exists with same argument types\n'
+  ],
+  pid: 26411,
+  stdout: '',
+  stderr: 'ERROR:  function "owned_studio_frozen_reference" already exists with same argument types\n'
+}
+
+Node.js v24.20.0
+: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ cp.execFileSync ../../../loop-t11-publication-qRWVJM/pause-publication.mjs:1:582
+ ❯ call ../runtime-context.mjs:3:26
+
+ ❯ docker ../runtime-context.mjs:4:480
+ ❯ Object.sql ../runtime-context.mjs:4:875
+ ❯ sql src/local-app/nativeStorage.fixture.ts:18:116
+ ❯ src/local-app/restorePublication.integration.test.ts:28:203
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/11]⎯
+
+ FAIL  src/local-app/restorePublication.integration.test.ts > SIGKILL at restore receipt retains verifiable publication proof and fresh application Owner file reads recover
+AssertionError: Actual publication fault boundary: node:internal/errors:986
+  const err = new Error(message);
+              ^
+
+Error: Command failed: docker exec -i loop-control-178-test-postgres psql -XqAt -U postgres -d loop_t24_restore_4a88b36fdd3e -v ON_ERROR_STOP=1
+ERROR:  function "owned_studio_frozen_reference" already exists with same argument types
+
+    at genericNodeError (node:internal/errors:986:15)
+    at wrappedFn (node:internal/errors:540:14)
+    at checkExecSyncError (node:child_process:942:11)
+    at execFileSync (node:child_process:978:15)
+    at cp.execFileSync (file:///private/tmp/loop-t11-publication-Tk4S83/pause-publication.mjs:1:582)
+    at call (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/runtime-context.mjs:3:26)
+    at docker (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/runtime-context.mjs:4:480)
+    at Object.sql (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/runtime-context.mjs:4:875)
+    at sql (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/verification-source/src/local-app/nativeStorage.fixture.ts:18:116)
+    at restoreNativeBackup (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/verification-source/scripts/storage/restore.mjs:57:252) {
+  status: 3,
+  signal: null,
+  output: [
+    null,
+    '',
+    'ERROR:  function "owned_studio_frozen_reference" already exists with same argument types\n'
+  ],
+  pid: 35348,
+  stdout: '',
+  stderr: 'ERROR:  function "owned_studio_frozen_reference" already exists with same argument types\n'
+}
+
+Node.js v24.20.0
+: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ cp.execFileSync ../../../loop-t11-publication-Tk4S83/pause-publication.mjs:1:582
+ ❯ call ../runtime-context.mjs:3:26
+
+ ❯ docker ../runtime-context.mjs:4:480
+ ❯ Object.sql ../runtime-context.mjs:4:875
+ ❯ sql src/local-app/nativeStorage.fixture.ts:18:116
+ ❯ src/local-app/restorePublication.integration.test.ts:28:203
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/11]⎯
+
+ FAIL  src/local-app/restorePublication.integration.test.ts > SIGKILL at restore config retains verifiable publication proof and fresh application Owner file reads recover
+AssertionError: Actual publication fault boundary: node:internal/errors:986
+  const err = new Error(message);
+              ^
+
+Error: Command failed: docker exec -i loop-control-178-test-postgres psql -XqAt -U postgres -d loop_t24_restore_0a6216f5945d -v ON_ERROR_STOP=1
+ERROR:  function "owned_studio_frozen_reference" already exists with same argument types
+
+    at genericNodeError (node:internal/errors:986:15)
+    at wrappedFn (node:internal/errors:540:14)
+    at checkExecSyncError (node:child_process:942:11)
+    at execFileSync (node:child_process:978:15)
+    at cp.execFileSync (file:///private/tmp/loop-t11-publication-WBY1Vj/pause-publication.mjs:1:574)
+    at call (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/runtime-context.mjs:3:26)
+    at docker (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/runtime-context.mjs:4:480)
+    at Object.sql (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/runtime-context.mjs:4:875)
+    at sql (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/verification-source/src/local-app/nativeStorage.fixture.ts:18:116)
+    at restoreNativeBackup (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/verification-source/scripts/storage/restore.mjs:57:252) {
+  status: 3,
+  signal: null,
+  output: [
+    null,
+    '',
+    'ERROR:  function "owned_studio_frozen_reference" already exists with same argument types\n'
+  ],
+  pid: 44520,
+  stdout: '',
+  stderr: 'ERROR:  function "owned_studio_frozen_reference" already exists with same argument types\n'
+}
+
+Node.js v24.20.0
+: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ cp.execFileSync ../../../loop-t11-publication-WBY1Vj/pause-publication.mjs:1:574
+ ❯ call ../runtime-context.mjs:3:26
+
+ ❯ docker ../runtime-context.mjs:4:480
+ ❯ Object.sql ../runtime-context.mjs:4:875
+ ❯ sql src/local-app/nativeStorage.fixture.ts:18:116
+ ❯ src/local-app/restorePublication.integration.test.ts:28:203
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/11]⎯
+
+ FAIL  src/local-app/restorePublication.integration.test.ts > SIGKILL at restore ready retains verifiable publication proof and fresh application Owner file reads recover
+AssertionError: Actual publication fault boundary: node:internal/errors:986
+  const err = new Error(message);
+              ^
+
+Error: Command failed: docker exec -i loop-control-178-test-postgres psql -XqAt -U postgres -d loop_t24_restore_bb4e37ff33cd -v ON_ERROR_STOP=1
+ERROR:  function "owned_studio_frozen_reference" already exists with same argument types
+
+    at genericNodeError (node:internal/errors:986:15)
+    at wrappedFn (node:internal/errors:540:14)
+    at checkExecSyncError (node:child_process:942:11)
+    at execFileSync (node:child_process:978:15)
+    at cp.execFileSync (file:///private/tmp/loop-t11-publication-tQTqHc/pause-publication.mjs:1:510)
+    at call (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/runtime-context.mjs:3:26)
+    at docker (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/runtime-context.mjs:4:480)
+    at Object.sql (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/runtime-context.mjs:4:875)
+    at sql (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/verification-source/src/local-app/nativeStorage.fixture.ts:18:116)
+    at restoreNativeBackup (file:///private/tmp/loop-control-main-e2e-20261101/integration-regression/verification-source/scripts/storage/restore.mjs:57:252) {
+  status: 3,
+  signal: null,
+  output: [
+    null,
+    '',
+    'ERROR:  function "owned_studio_frozen_reference" already exists with same argument types\n'
+  ],
+  pid: 53772,
+  stdout: '',
+  stderr: 'ERROR:  function "owned_studio_frozen_reference" already exists with same argument types\n'
+}
+
+Node.js v24.20.0
+: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ cp.execFileSync ../../../loop-t11-publication-tQTqHc/pause-publication.mjs:1:510
+ ❯ call ../runtime-context.mjs:3:26
+
+ ❯ docker ../runtime-context.mjs:4:480
+ ❯ Object.sql ../runtime-context.mjs:4:875
+ ❯ sql src/local-app/nativeStorage.fixture.ts:18:116
+ ❯ src/local-app/restorePublication.integration.test.ts:28:203
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/11]⎯
+
+
+ Test Files  6 failed | 6 passed (12)
+      Tests  11 failed | 26 passed (37)
+   Start at  06:22:36
+   Duration  631.25s (transform 637ms, setup 19ms, collect 2.02s, tests 627.81s, environment 1ms, prepare 320ms)
+
+JSON report written to /Users/dan/Programs/loop-control/docs/verification/issue-178-main-e2e-20261101/integration-storage-recovery-results.json

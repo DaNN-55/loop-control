@@ -1,0 +1,48 @@
+
+ RUN  v3.2.7 /private/tmp/loop-control-main-e2e-20261101/integration-regression/source
+
+ ❯ src/worker/openchatcutProject.integration.test.ts (12 tests | 1 failed | 11 skipped) 4407ms
+   ↓ OpenChatCut real project reader integration > opens an independent dashboard, reuses concurrent launches, and preserves projects after restart
+   ↓ OpenChatCut real project reader integration > opens Studio and reads editable caption cues back from its project store
+   ↓ OpenChatCut real project reader integration > keeps Studio edits mutable, warns before changed workbench input replaces them, and freezes new immutable revisions only on demand
+   ↓ OpenChatCut real project reader integration > reads a stacked shot as two correctly transformed editable video layers backed by one asset
+   ↓ OpenChatCut real project reader integration > accepts migrated stable track ids when consecutive full-screen segments remain on the V1 alias
+   ↓ OpenChatCut real project reader integration > reads exactly one source-audio item when one material fills multiple visual slots
+   ↓ OpenChatCut real project reader integration > reads silent, BGM-follower, and independent-SFX semantics from the real runtime
+   ↓ OpenChatCut real project reader integration > reads disabled captions and independent manual cues through the real runtime
+   ↓ OpenChatCut real project reader integration > renders and probes a real synchronized proxy while preserving the editable project fingerprint
+   × OpenChatCut real project reader integration > opens, edits, freezes, and renders one real Episode containing TTS split-screen, source-audio, and silent captioned shots 4407ms
+     → OpenChatCut 冻结工程与任务清单的大小或哈希不一致。
+   ↓ OpenChatCut real project reader integration > keeps an older project with a text caption item readable
+   ↓ OpenChatCut real project reader integration > blocks known invalid caption contracts after real OpenChatCut reading
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/worker/openchatcutProject.integration.test.ts > OpenChatCut real project reader integration > opens, edits, freezes, and renders one real Episode containing TTS split-screen, source-audio, and silent captioned shots
+Error: OpenChatCut 冻结工程与任务清单的大小或哈希不一致。
+ ❯ readFrozenStudioProject src/worker/openchatcutRenderer.ts:110:126
+    108| ): Promise<OpenChatCutProject> {
+    109|   let contents:Buffer;
+    110|   try{contents=await verifyNativeFile(assetRoot,manifest.relativePath,…
+       |                                                                                                                              ^
+    111|   if (contents.byteLength !== manifest.fileSize || createHash("sha256"…
+    112|     throw new Error("OpenChatCut 冻结工程与任务清单的大小或哈希不一致。");
+ ❯ executeOpenChatCutRender src/worker/openchatcutRenderer.ts:48:7
+ ❯ src/worker/openchatcutProject.integration.test.ts:327:31
+
+Caused by: Error: 文件路径或大小已变化。
+ ❯ verifyNativeFile src/local-app/localFiles.ts:27:80
+ ❯ readFrozenStudioProject src/worker/openchatcutRenderer.ts:110:16
+ ❯ executeOpenChatCutRender src/worker/openchatcutRenderer.ts:48:7
+ ❯ src/worker/openchatcutProject.integration.test.ts:327:31
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { status: 409, preflight: undefined }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 11 skipped (12)
+   Start at  06:09:25
+   Duration  4.78s (transform 182ms, setup 10ms, collect 240ms, tests 4.41s, environment 0ms, prepare 37ms)
+

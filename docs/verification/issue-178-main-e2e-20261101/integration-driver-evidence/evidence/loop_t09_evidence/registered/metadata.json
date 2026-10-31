@@ -1,0 +1,42 @@
+{
+  "title": "T09 交付",
+  "description": "实际文件",
+  "tags": [
+    "测试"
+  ],
+  "exportId": "6cb9f0e5-c502-44de-916f-14958a166f9f",
+  "contentSha256": "739321d6f11491a79cee086527bc933eff30380d98b4cf1419cb3eeaeed8e86c",
+  "scriptRevisionId": "118b1f1e-89d2-447c-b2c1-c8583952c7cf",
+  "narration": [
+    {
+      "shotId": "shot-1",
+      "baselineText": "第一镜",
+      "sourceText": null,
+      "adoptedText": null,
+      "textCoverage": "no_recorded_text",
+      "windows": [],
+      "textSource": "not_recorded",
+      "sourceDiffersFromBaseline": null,
+      "differsFromBaseline": null,
+      "audioTrackId": null,
+      "sha256": null,
+      "itemId": null,
+      "source": null
+    },
+    {
+      "shotId": "shot-2",
+      "baselineText": "缺少素材的第二镜。",
+      "sourceText": null,
+      "adoptedText": null,
+      "textCoverage": "no_recorded_text",
+      "windows": [],
+      "textSource": "not_recorded",
+      "sourceDiffersFromBaseline": null,
+      "differsFromBaseline": null,
+      "audioTrackId": null,
+      "sha256": null,
+      "itemId": null,
+      "source": null
+    }
+  ]
+}

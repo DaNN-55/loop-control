@@ -1,0 +1,25 @@
+
+ RUN  v3.2.7 /private/tmp/loop-control-main-e2e-20261101/integration-regression/source
+
+ ❯ src/local-app/inputStorageLocation.integration.test.ts (4 tests | 1 failed) 13323ms
+   × Owner imports and confirms managed script bytes at the registered production location, retaining legacy previews after restart 4271ms
+     → Invalid Chai property: toStartWith
+   ✓ Owner reuses an approved series input as a self-contained managed copy with original source approval evidence  4089ms
+   ✓ input retries preserve immutable bytes and reject unsafe, foreign, interrupted and replaced-directory submissions  2523ms
+   ✓ receipted input publication survives an interrupted unlink and restart without overwriting unknown targets or trusting altered receipts  2440ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/inputStorageLocation.integration.test.ts > Owner imports and confirms managed script bytes at the registered production location, retaining legacy previews after restart
+Error: Invalid Chai property: toStartWith
+ ❯ src/local-app/inputStorageLocation.integration.test.ts:23:100
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  06:31:06
+   Duration  13.97s (transform 376ms, setup 8ms, collect 519ms, tests 13.32s, environment 0ms, prepare 31ms)
+

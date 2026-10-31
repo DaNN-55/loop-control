@@ -1,0 +1,619 @@
+{
+  "plan": {
+    "episodeId": "bb55142a-72bb-420d-9a94-e6cf867ffa59",
+    "title": "四步制作 T02 验收",
+    "path": "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable",
+    "stagingPath": "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable",
+    "paths": [
+      "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable"
+    ],
+    "stagingPaths": [
+      "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/board.json.loop-control-deletion",
+      "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/openchatcut-work/current/generated-project.json.loop-control-deletion",
+      "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/openchatcut-work/current/project.json.loop-control-deletion",
+      "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/openchatcut-work/current/runtime/media/uploads/20f671d32d9db5dc582d.mp4.loop-control-deletion",
+      "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/openchatcut-work/current/runtime/project-store-v1.json.loop-control-deletion",
+      "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/openchatcut-work/current/runtime/project-store-v1.sqlite3.loop-control-deletion",
+      "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/openchatcut-work/current/runtime/project-store-v1.sqlite3-shm.loop-control-deletion",
+      "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/openchatcut-work/current/runtime/project-store-v1.sqlite3-wal.loop-control-deletion",
+      "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/openchatcut-work/current/runtime/project-store-v1.sqlite3.receipt.json.loop-control-deletion",
+      "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/openchatcut-work/current/workspace.json.loop-control-deletion",
+      "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/production-workspace/versions/068a769a316db40763d3117ee9e9f59011fb4b3fdfc07c3166e6cb1854230e7e.json.loop-control-deletion",
+      "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/production-workspace/versions/3fb70cee957258e513e9181ca2c56de5ecb8be825cc076aacc6402153425bfa2.json.loop-control-deletion",
+      "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/production-workspace/versions/522a6f977d67c28b0b6d5dc0b70ae4bed277df1061238ac3495d96f476cc6069.json.loop-control-deletion",
+      "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/production-workspace/versions/96260f014502c7330c68e6d1078182934688451eba49bb8a7bd2ef0923a873db.json.loop-control-deletion",
+      "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/production-workspace/versions/f8fa6cde5a166519aada6c4c55dd1ed0b383233a410326b6cb2fab5ccae4c721.json.loop-control-deletion",
+      "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/script.md.loop-control-deletion",
+      "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/shot.mp4.loop-control-deletion",
+      "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/voice.mp3.loop-control-deletion"
+    ],
+    "files": [
+      {
+        "path": "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/board.json",
+        "bytes": 374,
+        "authority": "artifact:82507147-ed20-4823-b75e-71092d3f0c96"
+      },
+      {
+        "path": "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/openchatcut-work/current/generated-project.json",
+        "bytes": 8573,
+        "authority": "native-baseline:96bd7592-270e-4d06-8d5f-4d1042ce6120"
+      },
+      {
+        "path": "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/openchatcut-work/current/project.json",
+        "bytes": 8985,
+        "authority": "native-snapshot:96bd7592-270e-4d06-8d5f-4d1042ce6120"
+      },
+      {
+        "path": "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/openchatcut-work/current/runtime/media/uploads/20f671d32d9db5dc582d.mp4",
+        "bytes": 210288,
+        "authority": "native-upload:artifact:8918e49a-0e3e-4947-87c0-64ae71d2d72a"
+      },
+      {
+        "path": "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/openchatcut-work/current/runtime/project-store-v1.json",
+        "bytes": 9867,
+        "authority": "native-import:96bd7592-270e-4d06-8d5f-4d1042ce6120"
+      },
+      {
+        "path": "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/openchatcut-work/current/runtime/project-store-v1.sqlite3",
+        "bytes": 4096,
+        "authority": "native-sqlite:96bd7592-270e-4d06-8d5f-4d1042ce6120"
+      },
+      {
+        "path": "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/openchatcut-work/current/runtime/project-store-v1.sqlite3-shm",
+        "bytes": 32768,
+        "authority": "native-sqlite:96bd7592-270e-4d06-8d5f-4d1042ce6120"
+      },
+      {
+        "path": "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/openchatcut-work/current/runtime/project-store-v1.sqlite3-wal",
+        "bytes": 135992,
+        "authority": "native-sqlite:96bd7592-270e-4d06-8d5f-4d1042ce6120"
+      },
+      {
+        "path": "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/openchatcut-work/current/runtime/project-store-v1.sqlite3.receipt.json",
+        "bytes": 1099,
+        "authority": "native-sqlite-receipt:96bd7592-270e-4d06-8d5f-4d1042ce6120"
+      },
+      {
+        "path": "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/openchatcut-work/current/workspace.json",
+        "bytes": 373,
+        "authority": "native-host:96bd7592-270e-4d06-8d5f-4d1042ce6120"
+      },
+      {
+        "path": "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/production-workspace/versions/068a769a316db40763d3117ee9e9f59011fb4b3fdfc07c3166e6cb1854230e7e.json",
+        "bytes": 8573,
+        "authority": "workspace-version:96bd7592-270e-4d06-8d5f-4d1042ce6120"
+      },
+      {
+        "path": "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/production-workspace/versions/3fb70cee957258e513e9181ca2c56de5ecb8be825cc076aacc6402153425bfa2.json",
+        "bytes": 2467,
+        "authority": "workspace-version:96bd7592-270e-4d06-8d5f-4d1042ce6120"
+      },
+      {
+        "path": "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/production-workspace/versions/522a6f977d67c28b0b6d5dc0b70ae4bed277df1061238ac3495d96f476cc6069.json",
+        "bytes": 8985,
+        "authority": "workspace:96bd7592-270e-4d06-8d5f-4d1042ce6120"
+      },
+      {
+        "path": "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/production-workspace/versions/96260f014502c7330c68e6d1078182934688451eba49bb8a7bd2ef0923a873db.json",
+        "bytes": 3324,
+        "authority": "workspace-version:96bd7592-270e-4d06-8d5f-4d1042ce6120"
+      },
+      {
+        "path": "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/production-workspace/versions/f8fa6cde5a166519aada6c4c55dd1ed0b383233a410326b6cb2fab5ccae4c721.json",
+        "bytes": 3766,
+        "authority": "workspace-version:96bd7592-270e-4d06-8d5f-4d1042ce6120"
+      },
+      {
+        "path": "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/script.md",
+        "bytes": 52,
+        "authority": "material:ce63b639-60b2-4bcc-9380-d6971b9da995"
+      },
+      {
+        "path": "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/shot.mp4",
+        "bytes": 210288,
+        "authority": "artifact:8918e49a-0e3e-4947-87c0-64ae71d2d72a"
+      },
+      {
+        "path": "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/voice.mp3",
+        "bytes": 16556,
+        "authority": "frozen-input:aa93f2aa-434d-46a8-9a09-59b97f22f9de"
+      }
+    ],
+    "preserved": [
+      {
+        "path": "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/openchatcut-work/current/runtime/media/uploads/manual.png",
+        "reason": "未登记或无法证明属于本单的文件，保留。"
+      },
+      {
+        "path": "/private/tmp/loop-153-vjRGp2/account/系列 中文 %_[] #?/本期 stable/openchatcut-work/current/runtime/settings.env",
+        "reason": "未登记或无法证明属于本单的文件，保留。"
+      }
+    ],
+    "confirmation": "四步制作 T02 验收",
+    "archived": true,
+    "isTest": false,
+    "revision": "67124d1a0f5b440a53e3017d5880b9cd2eb11a848566f5218f6469e21751e67b"
+  },
+  "workingFingerprint": [
+    {
+      "path": "",
+      "device": "16777234",
+      "inode": "106634042",
+      "mode": "16877",
+      "links": "6",
+      "size": "192",
+      "modified": "1793484981085884975"
+    },
+    {
+      "path": "generated-project.json",
+      "device": "16777234",
+      "inode": "106634048",
+      "mode": "33188",
+      "links": "1",
+      "size": "8573",
+      "modified": "1793484979955966516",
+      "sha256": "068a769a316db40763d3117ee9e9f59011fb4b3fdfc07c3166e6cb1854230e7e"
+    },
+    {
+      "path": "project.json",
+      "device": "16777234",
+      "inode": "106634071",
+      "mode": "33188",
+      "links": "1",
+      "size": "8985",
+      "modified": "1793484982186703693",
+      "sha256": "522a6f977d67c28b0b6d5dc0b70ae4bed277df1061238ac3495d96f476cc6069"
+    },
+    {
+      "path": "runtime",
+      "device": "16777234",
+      "inode": "106634043",
+      "mode": "16877",
+      "links": "9",
+      "size": "288",
+      "modified": "1793484982438825831"
+    },
+    {
+      "path": "runtime/media",
+      "device": "16777234",
+      "inode": "106634044",
+      "mode": "16877",
+      "links": "3",
+      "size": "96",
+      "modified": "1793484979954593552"
+    },
+    {
+      "path": "runtime/media/uploads",
+      "device": "16777234",
+      "inode": "106634045",
+      "mode": "16877",
+      "links": "4",
+      "size": "128",
+      "modified": "1793484982499613742"
+    },
+    {
+      "path": "runtime/media/uploads/20f671d32d9db5dc582d.mp4",
+      "device": "16777234",
+      "inode": "106634046",
+      "mode": "33188",
+      "links": "1",
+      "size": "210288",
+      "modified": "1793484979955153638",
+      "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da"
+    },
+    {
+      "path": "runtime/media/uploads/manual.png",
+      "device": "16777234",
+      "inode": "106634384",
+      "mode": "33188",
+      "links": "1",
+      "size": "23",
+      "modified": "1793484982499737368",
+      "sha256": "0a2ca23107757c0d60359614463d06b2d09c901c3bbbf7c21c6fe3dd9e082482"
+    },
+    {
+      "path": "runtime/project-store-v1.json",
+      "device": "16777234",
+      "inode": "106634047",
+      "mode": "33188",
+      "links": "1",
+      "size": "9867",
+      "modified": "1793484979955645390",
+      "sha256": "1132226bc56033caa3125f7b24ed197cf94c6b2e8fedd4f54b3b01e5fc91caf3"
+    },
+    {
+      "path": "runtime/project-store-v1.sqlite3",
+      "device": "16777234",
+      "inode": "106634061",
+      "mode": "33188",
+      "links": "1",
+      "size": "4096",
+      "modified": "1793484980785703477",
+      "sha256": "97e8d54f8a7255106f66cf1b213c4a4d7b558d21310b1c2bfedc3d0d526dddda"
+    },
+    {
+      "path": "runtime/project-store-v1.sqlite3-shm",
+      "device": "16777234",
+      "inode": "106634064",
+      "mode": "33188",
+      "links": "1",
+      "size": "32768",
+      "modified": "1793484980785979687",
+      "sha256": "a09244b1ab689e2e3ea17ddfb51c16f512da0459655520dc21c8c0ec182ef1f1"
+    },
+    {
+      "path": "runtime/project-store-v1.sqlite3-wal",
+      "device": "16777234",
+      "inode": "106634063",
+      "mode": "33188",
+      "links": "1",
+      "size": "135992",
+      "modified": "1793484981949030820",
+      "sha256": "e6c82ab7505003f4abfac6d1166303e0c2d4c0f52675e22ad2fc00a42fa10a27"
+    },
+    {
+      "path": "runtime/project-store-v1.sqlite3.receipt.json",
+      "device": "16777234",
+      "inode": "106634065",
+      "mode": "33152",
+      "links": "1",
+      "size": "1099",
+      "modified": "1793484980788006736",
+      "sha256": "ea848f7565b492ad991a6f2c3329639165abd9ff9c2ab612e1190cff22bb57f3"
+    },
+    {
+      "path": "runtime/settings.env",
+      "device": "16777234",
+      "inode": "106634066",
+      "mode": "33152",
+      "links": "1",
+      "size": "23",
+      "modified": "1793484980809879783",
+      "sha256": "459811c1134a9866e14cb770787164c03512aa26ac18f5f0d5d86a25095db7f5"
+    },
+    {
+      "path": "workspace.json",
+      "device": "16777234",
+      "inode": "106634049",
+      "mode": "33188",
+      "links": "1",
+      "size": "373",
+      "modified": "1793484979956289893",
+      "sha256": "92149262cfc5bc3571098b2df39ed0a8b5e1dfa7a88ad51d0c7d0ad1754b49e0"
+    }
+  ],
+  "workspace": {
+    "selectedImages": [],
+    "visualConfiguration": {
+      "imageModel": null,
+      "videoModel": null,
+      "videoProvider": null
+    },
+    "preparation": {
+      "origin": "legacy-board",
+      "scriptRevisionId": "ce63b639-60b2-4bcc-9380-d6971b9da995",
+      "authorized": false,
+      "shots": [
+        {
+          "shotId": "shot-1",
+          "origin": "legacy-board",
+          "shotType": "a_roll"
+        },
+        {
+          "shotId": "shot-2",
+          "origin": "legacy-board",
+          "shotType": "a_roll"
+        }
+      ]
+    },
+    "pexels": {
+      "requests": []
+    },
+    "visualCandidates": [],
+    "visualTasks": [],
+    "visualTargets": [
+      {
+        "targetItemId": "shot-shot-1-43fb89cb-3cb0-4db1-8726-b176154d5ceb",
+        "width": 1080,
+        "height": 1920,
+        "provider": "",
+        "voiceMode": "none",
+        "durationSeconds": null,
+        "providerDurationSeconds": null,
+        "minimumSeconds": 2,
+        "maximumSeconds": 15
+      },
+      {
+        "targetItemId": "shot-shot-2-f33aa411-8cf7-4bc7-8e35-463032cca403",
+        "width": 1080,
+        "height": 1920,
+        "provider": "",
+        "voiceMode": "none",
+        "durationSeconds": null,
+        "providerDurationSeconds": null,
+        "minimumSeconds": 2,
+        "maximumSeconds": 15
+      }
+    ],
+    "audio": {
+      "mix": {
+        "voices": [
+          {
+            "coverage": "none",
+            "startSeconds": null,
+            "durationSeconds": null,
+            "shotDurationSeconds": 2,
+            "sourceStartSeconds": null,
+            "sourceLabel": null,
+            "alignmentReady": false,
+            "shotId": "shot-1",
+            "mode": "none",
+            "gainDb": 0,
+            "ambienceGainDb": null,
+            "sourceItemId": null,
+            "sourceAssetId": null
+          },
+          {
+            "coverage": "none",
+            "startSeconds": null,
+            "durationSeconds": null,
+            "shotDurationSeconds": 2,
+            "sourceStartSeconds": null,
+            "sourceLabel": null,
+            "alignmentReady": false,
+            "shotId": "shot-2",
+            "mode": "none",
+            "gainDb": 0,
+            "ambienceGainDb": null,
+            "sourceItemId": null,
+            "sourceAssetId": null
+          }
+        ],
+        "sounds": []
+      },
+      "preparations": []
+    },
+    "deliveries": [],
+    "usedNarration": [],
+    "candidates": [],
+    "exports": [],
+    "exportIssues": [],
+    "captions": [
+      {
+        "clipId": "43fb89cb-3cb0-4db1-8726-b176154d5ceb",
+        "itemId": "shot-shot-1-43fb89cb-3cb0-4db1-8726-b176154d5ceb",
+        "shotId": "shot-1",
+        "durationMs": 2000,
+        "contract": {
+          "version": "shot-captions/v1",
+          "enabled": true,
+          "contentMode": "independent",
+          "text": "第一镜",
+          "cues": [
+            {
+              "id": "initial-shot-1~0",
+              "text": "第一镜",
+              "startMs": 0,
+              "endMs": 2000
+            }
+          ],
+          "spatial": {
+            "version": "shot-caption-space/v2",
+            "anchor": "bottom-center",
+            "safeArea": "title-safe",
+            "aspectRatio": "9:16",
+            "insets": {
+              "top": 0.08,
+              "right": 0.08,
+              "bottom": 0.18,
+              "left": 0.08
+            },
+            "maxLines": 2,
+            "maxCharactersPerLine": 16
+          }
+        },
+        "inputFingerprint": "b920d15b2b9dbf61a6d21ac51cad5918745da2bfa61b2da1dddf5cc3140903fc",
+        "timing": "current",
+        "textConfirmed": false,
+        "audioTrackId": null,
+        "narrationText": null,
+        "taskId": null,
+        "alignmentInputVersion": null,
+        "detail": null
+      },
+      {
+        "clipId": "f33aa411-8cf7-4bc7-8e35-463032cca403",
+        "itemId": "shot-shot-2-f33aa411-8cf7-4bc7-8e35-463032cca403",
+        "shotId": "shot-2",
+        "durationMs": 2000,
+        "contract": {
+          "version": "shot-captions/v1",
+          "enabled": true,
+          "contentMode": "independent",
+          "text": "缺少素材的第二镜。",
+          "cues": [
+            {
+              "id": "initial-shot-2~0",
+              "text": "缺少素材的第二镜。",
+              "startMs": 0,
+              "endMs": 2000
+            }
+          ],
+          "spatial": {
+            "version": "shot-caption-space/v2",
+            "anchor": "bottom-center",
+            "safeArea": "title-safe",
+            "aspectRatio": "9:16",
+            "insets": {
+              "top": 0.08,
+              "right": 0.08,
+              "bottom": 0.18,
+              "left": 0.08
+            },
+            "maxLines": 2,
+            "maxCharactersPerLine": 16
+          }
+        },
+        "inputFingerprint": "a4bc4f994caad945f7ce8df5433eddba57324299e6b98ab3117b3a86cfa68899",
+        "timing": "current",
+        "textConfirmed": false,
+        "audioTrackId": null,
+        "narrationText": null,
+        "taskId": null,
+        "alignmentInputVersion": null,
+        "detail": null
+      }
+    ],
+    "id": "96bd7592-270e-4d06-8d5f-4d1042ce6120",
+    "episodeId": "bb55142a-72bb-420d-9a94-e6cf867ffa59",
+    "workflowVersion": "four-step/v1",
+    "scriptRevisionId": "ce63b639-60b2-4bcc-9380-d6971b9da995",
+    "storyboardPackageId": "f9593096-b44f-49de-8ebd-deedf0ab04df",
+    "revision": 5,
+    "contentSha256": "4a68db862a895f6e69119105ad7a7bc5165d4edc7c8b21292ba2807c068f070e",
+    "nativeEditRevision": 1,
+    "narration": [
+      {
+        "windowWarning": null,
+        "selection": null,
+        "defaults": null,
+        "requiresCandidateAdoption": true,
+        "clipId": "43fb89cb-3cb0-4db1-8726-b176154d5ceb",
+        "shotId": "shot-1",
+        "mode": "none",
+        "text": "第一镜",
+        "voice": null,
+        "languageCode": null,
+        "speakingRate": null,
+        "override": false,
+        "inputFingerprint": "d04b3143a4299e03a235f9e652abe602c7cb44807964df7a5f7eefbb4b4f5f68",
+        "confirmed": false,
+        "taskId": null,
+        "status": "pending",
+        "error": null,
+        "audioTrackId": null,
+        "artifactId": null,
+        "relativePath": null,
+        "sha256": null,
+        "fileSize": null,
+        "durationSeconds": null,
+        "itemId": "workspace-narration-shot-shot-1",
+        "adoptedAudioTrackId": null
+      },
+      {
+        "windowWarning": null,
+        "selection": null,
+        "defaults": null,
+        "requiresCandidateAdoption": true,
+        "clipId": "f33aa411-8cf7-4bc7-8e35-463032cca403",
+        "shotId": "shot-2",
+        "mode": "none",
+        "text": "缺少素材的第二镜。",
+        "voice": null,
+        "languageCode": null,
+        "speakingRate": null,
+        "override": false,
+        "inputFingerprint": "47ab648cf9510ca1b058428da9520d1cf8541e6710a87a82b75b7019cf8b9612",
+        "confirmed": false,
+        "taskId": null,
+        "status": "pending",
+        "error": null,
+        "audioTrackId": null,
+        "artifactId": null,
+        "relativePath": null,
+        "sha256": null,
+        "fileSize": null,
+        "durationSeconds": null,
+        "itemId": "workspace-narration-shot-shot-2",
+        "adoptedAudioTrackId": null
+      }
+    ],
+    "clips": [
+      {
+        "id": "43fb89cb-3cb0-4db1-8726-b176154d5ceb",
+        "text": "第一镜",
+        "itemId": "shot-shot-1-43fb89cb-3cb0-4db1-8726-b176154d5ceb",
+        "shotId": "shot-1",
+        "source": {
+          "kind": "video",
+          "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+          "fileSize": 210288,
+          "relativePath": "系列 中文 %_[] #?/本期 stable/shot.mp4",
+          "materialRevisionId": "0b4a4414-d6fe-404e-add1-64594f39656d"
+        }
+      },
+      {
+        "id": "f33aa411-8cf7-4bc7-8e35-463032cca403",
+        "text": "缺少素材的第二镜。",
+        "itemId": "shot-shot-2-f33aa411-8cf7-4bc7-8e35-463032cca403",
+        "shotId": "shot-2",
+        "source": {
+          "kind": "video",
+          "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+          "fileSize": 210288,
+          "relativePath": "系列 中文 %_[] #?/本期 stable/shot.mp4",
+          "materialRevisionId": "0b4a4414-d6fe-404e-add1-64594f39656d"
+        }
+      }
+    ],
+    "project": {
+      "relativePath": "系列 中文 %_[] #?/本期 stable/production-workspace/versions/522a6f977d67c28b0b6d5dc0b70ae4bed277df1061238ac3495d96f476cc6069.json",
+      "sha256": "522a6f977d67c28b0b6d5dc0b70ae4bed277df1061238ac3495d96f476cc6069",
+      "fileSize": 8985,
+      "projectId": "loop-control-bb55142a-72bb-420d-9a94-e6cf867ffa59"
+    },
+    "history": [
+      {
+        "revision": 5,
+        "sha256": "522a6f977d67c28b0b6d5dc0b70ae4bed277df1061238ac3495d96f476cc6069",
+        "scriptRevisionId": "ce63b639-60b2-4bcc-9380-d6971b9da995",
+        "reason": "保存原生剪辑",
+        "createdAt": "2026-10-31T22:16:22.156Z"
+      },
+      {
+        "revision": 4,
+        "sha256": "068a769a316db40763d3117ee9e9f59011fb4b3fdfc07c3166e6cb1854230e7e",
+        "scriptRevisionId": "ce63b639-60b2-4bcc-9380-d6971b9da995",
+        "reason": "更新工作版本",
+        "createdAt": "2026-10-31T22:16:21.073Z"
+      },
+      {
+        "revision": 3,
+        "sha256": "f8fa6cde5a166519aada6c4c55dd1ed0b383233a410326b6cb2fab5ccae4c721",
+        "scriptRevisionId": "ce63b639-60b2-4bcc-9380-d6971b9da995",
+        "reason": null,
+        "createdAt": "2026-10-31T22:16:19.596Z"
+      },
+      {
+        "revision": 2,
+        "sha256": "96260f014502c7330c68e6d1078182934688451eba49bb8a7bd2ef0923a873db",
+        "scriptRevisionId": "ce63b639-60b2-4bcc-9380-d6971b9da995",
+        "reason": null,
+        "createdAt": "2026-10-31T22:16:19.230Z"
+      },
+      {
+        "revision": 1,
+        "sha256": "3fb70cee957258e513e9181ca2c56de5ecb8be825cc076aacc6402153425bfa2",
+        "scriptRevisionId": "ce63b639-60b2-4bcc-9380-d6971b9da995",
+        "reason": "首次组装",
+        "createdAt": "2026-10-31T22:16:19.062Z"
+      }
+    ],
+    "readiness": {
+      "deliverable": false,
+      "placeholders": [],
+      "missingSources": []
+    },
+    "stale": false
+  },
+  "metadata": {
+    "baseProjectSha256": "8b5223797e91521a1395c57d1f9993b37273862b34ae7938c65a1e526f520cfc",
+    "inputFingerprint": "8267622021f4c4d83cbb0a2a1821e5dac70e6e9723596b301b6ff425eebad206",
+    "projectId": "loop-control-bb55142a-72bb-420d-9a94-e6cf867ffa59",
+    "reverseSources": {
+      "/media/uploads/20f671d32d9db5dc582d.mp4": "系列 中文 %_[] #?/本期 stable/shot.mp4"
+    }
+  },
+  "hostSha256": "522a6f977d67c28b0b6d5dc0b70ae4bed277df1061238ac3495d96f476cc6069",
+  "planReadOnly": true
+}

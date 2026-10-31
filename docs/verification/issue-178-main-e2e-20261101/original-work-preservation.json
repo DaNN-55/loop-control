@@ -1,0 +1,10 @@
+{
+  "originalHead": "8f134dc2c7835e503e5a9d35459f38479ff988bd",
+  "originalFiles": 62,
+  "byteIdentical": 61,
+  "intentionalChanged": [
+    "PLAN.md"
+  ],
+  "originalPlanRecoveryStash": "3fd211c88ea6c13655ff165c5be313dd223c3889",
+  "originalTwoStashesPreserved": true
+}

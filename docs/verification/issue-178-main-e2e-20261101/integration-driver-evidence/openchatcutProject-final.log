@@ -1,0 +1,16 @@
+
+ RUN  v3.2.7 /private/tmp/loop-control-main-e2e-20261101/integration-regression/source
+
+ ✓ src/worker/openchatcutProject.integration.test.ts (12 tests) 28706ms
+   ✓ OpenChatCut real project reader integration > opens an independent dashboard, reuses concurrent launches, and preserves projects after restart  3920ms
+   ✓ OpenChatCut real project reader integration > opens Studio and reads editable caption cues back from its project store  1391ms
+   ✓ OpenChatCut real project reader integration > keeps Studio edits mutable, warns before changed workbench input replaces them, and freezes new immutable revisions only on demand  5404ms
+   ✓ OpenChatCut real project reader integration > renders and probes a real synchronized proxy while preserving the editable project fingerprint  6177ms
+   ✓ OpenChatCut real project reader integration > opens, edits, freezes, and renders one real Episode containing TTS split-screen, source-audio, and silent captioned shots  10788ms
+   ✓ OpenChatCut real project reader integration > blocks known invalid caption contracts after real OpenChatCut reading  323ms
+
+ Test Files  1 passed (1)
+      Tests  12 passed (12)
+   Start at  06:10:15
+   Duration  29.18s (transform 205ms, setup 15ms, collect 270ms, tests 28.71s, environment 0ms, prepare 40ms)
+

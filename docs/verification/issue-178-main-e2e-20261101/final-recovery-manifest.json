@@ -1,0 +1,129 @@
+{
+  "database": "loop_live_e2e_202611010001",
+  "dumpSha256": "0c163e8d628fd1fc9a1a05212316e7182f66eb047c79851588c50ef0a7468bba",
+  "dumpBytes": 290346,
+  "providerPolicy": {
+    "version": 1,
+    "policySha256": "74617c9331061ca373d4ca700772db82947a977367e46e3860a42494d1cff702",
+    "used": 10,
+    "costMicrounits": 500000,
+    "byOperation": {
+      "volcengine_tts.generate": 2,
+      "bailian.generate": 1,
+      "bailian.poll": 4,
+      "bailian.download": 1,
+      "pexels.search": 1,
+      "pexels.download": 1
+    },
+    "halted": false,
+    "events": [
+      {
+        "operation": "volcengine_tts.generate",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "volcengine_tts.generate",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 13507
+      },
+      {
+        "operation": "volcengine_tts.generate",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "volcengine_tts.generate",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 22327
+      },
+      {
+        "operation": "bailian.generate",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "bailian.generate",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 137
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 220
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 220
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 220
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 891
+      },
+      {
+        "operation": "bailian.download",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "bailian.download",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 3315191
+      },
+      {
+        "operation": "pexels.search",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "pexels.search",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 39203
+      },
+      {
+        "operation": "pexels.download",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "pexels.download",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 2059154
+      }
+    ]
+  },
+  "at": "2026-10-31T22:13:50.531Z",
+  "mediaArchivePath": "/private/tmp/loop-control-main-e2e-20261101/final-recovery/live-media.tar.gz",
+  "mediaArchiveBytes": 65054720,
+  "mediaArchiveSha256": "c149821f26bf133267c74708e03f2bdd7cbee3f629284dddb5b18810e9889c08",
+  "mediaOpenFilesAtArchive": 0,
+  "ownedRuntimeStopped": true,
+  "dailyServiceStopped": false
+}

@@ -1,0 +1,16 @@
+
+ RUN  v3.2.7 /private/tmp/loop-control-main-e2e-20261101/integration-regression/verification-source
+
+ ✓ src/local-app/workspaceVisualStorage.integration.test.ts (5 tests) 18384ms
+   ✓ legacy production location owns image generation after rename/restart while request, fees and explicit adoption stay frozen  4105ms
+   ✓ registered production location owns image generation after rename/restart while request, fees and explicit adoption stay frozen  3225ms
+   ✓ registered production directory contains Pexels searches, downloads and adopted owned copies after preview and external source go offline  4835ms
+   ✓ registered video output resumes the frozen Provider task after restart without a second submission or namespace change  3451ms
+   ✓ replaced registered directory blocks new visual writes and an already queued task before any paid submission  2768ms
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  06:27:53
+   Duration  19.14s (transform 443ms, setup 8ms, collect 628ms, tests 18.38s, environment 0ms, prepare 26ms)
+
+JSON report written to /Users/dan/Programs/loop-control/docs/verification/issue-178-main-e2e-20261101/integration-visual-storage-after-results.json

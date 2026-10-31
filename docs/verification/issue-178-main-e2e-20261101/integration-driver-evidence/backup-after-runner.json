@@ -1,0 +1,40 @@
+{
+  "command": [
+    "npx",
+    "vitest",
+    "run",
+    "src/local-app/accountAssetRootsStorage.integration.test.ts",
+    "src/local-app/accountDirectoryMigrationStorage.integration.test.ts",
+    "src/local-app/deletionBackupRestore.integration.test.ts",
+    "src/local-app/managedMediaRestore.integration.test.ts",
+    "src/local-app/restorePublication.integration.test.ts",
+    "--testNamePattern",
+    "^(?:a\\ real\\ backup\\ and\\ fresh\\ restore\\ preserve\\ independent\\ episode\\ files\\ and\\ rebind\\ account\\ directory\\ identity\\ for\\ Owner\\ HTTP|a\\ real\\ backup\\ and\\ fresh\\ restore\\ retain\\ migrated\\ account\\ location\\ mappings\\ and\\ return\\ original\\ artifact\\ bytes\\ through\\ Owner\\ HTTP|real\\ SQL115\\ prepared\\ and\\ committed\\ deletion\\ block\\ backup\\ while\\ completed\\ and\\ rolled\\-back\\ manifests\\ restore\\ unchanged\\ after\\ their\\ source\\ files\\ disappear|a\\ large\\ production\\ file\\ is\\ backed\\ up\\ and\\ restored\\ with\\ bounded\\ resident\\-memory\\ growth|a\\ rejected\\ deployment\\ publication\\ retains\\ the\\ restored\\ database\\ pending\\ and\\ an\\ explicit\\ failed\\ receipt|registered\\ platform\\ cache\\ and\\ independent\\ history\\ inside\\ a\\ legacy\\ media\\ parent\\ retain\\ their\\ own\\ responsibilities|SIGKILL\\ at\\ restore\\ journal\\ retains\\ verifiable\\ publication\\ proof\\ and\\ fresh\\ application\\ Owner\\ file\\ reads\\ recover|SIGKILL\\ at\\ restore\\ receipt\\ retains\\ verifiable\\ publication\\ proof\\ and\\ fresh\\ application\\ Owner\\ file\\ reads\\ recover|SIGKILL\\ at\\ restore\\ config\\ retains\\ verifiable\\ publication\\ proof\\ and\\ fresh\\ application\\ Owner\\ file\\ reads\\ recover|SIGKILL\\ at\\ restore\\ ready\\ retains\\ verifiable\\ publication\\ proof\\ and\\ fresh\\ application\\ Owner\\ file\\ reads\\ recover)$",
+    "--maxWorkers=1",
+    "--fileParallelism=false",
+    "--reporter=default",
+    "--reporter=json",
+    "--outputFile=/Users/dan/Programs/loop-control/docs/verification/issue-178-main-e2e-20261101/integration-backup-after-results.json"
+  ],
+  "cwd": "/private/tmp/loop-control-main-e2e-20261101/integration-regression/verification-source",
+  "selectedTests": [
+    "a real backup and fresh restore preserve independent episode files and rebind account directory identity for Owner HTTP",
+    "a real backup and fresh restore retain migrated account location mappings and return original artifact bytes through Owner HTTP",
+    "real SQL115 prepared and committed deletion block backup while completed and rolled-back manifests restore unchanged after their source files disappear",
+    "a large production file is backed up and restored with bounded resident-memory growth",
+    "a rejected deployment publication retains the restored database pending and an explicit failed receipt",
+    "registered platform cache and independent history inside a legacy media parent retain their own responsibilities",
+    "SIGKILL at restore journal retains verifiable publication proof and fresh application Owner file reads recover",
+    "SIGKILL at restore receipt retains verifiable publication proof and fresh application Owner file reads recover",
+    "SIGKILL at restore config retains verifiable publication proof and fresh application Owner file reads recover",
+    "SIGKILL at restore ready retains verifiable publication proof and fresh application Owner file reads recover"
+  ],
+  "selectedFiles": [
+    "src/local-app/accountAssetRootsStorage.integration.test.ts",
+    "src/local-app/accountDirectoryMigrationStorage.integration.test.ts",
+    "src/local-app/deletionBackupRestore.integration.test.ts",
+    "src/local-app/managedMediaRestore.integration.test.ts",
+    "src/local-app/restorePublication.integration.test.ts"
+  ],
+  "filteredTestsDoNotAddToGlobalSkip": true
+}

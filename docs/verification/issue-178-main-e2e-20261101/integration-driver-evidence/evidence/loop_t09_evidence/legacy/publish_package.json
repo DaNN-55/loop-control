@@ -1,0 +1,54 @@
+{
+  "version": "publish-package/v2",
+  "episodeId": "eb09f46a-0ee3-4eb0-aa30-a997934e48f0",
+  "identity": {
+    "video": {
+      "sha256": "6ed62f5700544febe1e4d8439e230aebbd3f6ab21d64161acedb456725226b53",
+      "fileSize": 2549994,
+      "artifactType": "final_render",
+      "relativePath": "episodes/eb09f46a-0ee3-4eb0-aa30-a997934e48f0/workspace-exports/8d37a50e-2dd0-4a4b-98de-50e0a2479695/6ed62f5700544febe1e4d8439e230aebbd3f6ab21d64161acedb456725226b53.mp4"
+    },
+    "project": {
+      "sha256": "ad5b88d5051d2b3e9a467ae892a4d43c1daa6a6ccd2f04b2ec183a738494f548",
+      "fileSize": 9012,
+      "artifactType": "editable_project",
+      "relativePath": "episodes/eb09f46a-0ee3-4eb0-aa30-a997934e48f0/production-workspace/versions/ad5b88d5051d2b3e9a467ae892a4d43c1daa6a6ccd2f04b2ec183a738494f548.json"
+    },
+    "exportId": "8d37a50e-2dd0-4a4b-98de-50e0a2479695",
+    "workspaceId": "154d490f-15f4-4c25-8039-5d9b016c8c7b",
+    "contentSha256": "db5a3c3ae9198aa6b959cca407bb5c91deb8a9d00f1e78e2ad6cf58bb16fa6dd",
+    "projectContentVersion": 5
+  },
+  "artifacts": [
+    {
+      "sha256": "6ed62f5700544febe1e4d8439e230aebbd3f6ab21d64161acedb456725226b53",
+      "fileSize": 2549994,
+      "artifactType": "final_render",
+      "relativePath": "episodes/eb09f46a-0ee3-4eb0-aa30-a997934e48f0/workspace-exports/8d37a50e-2dd0-4a4b-98de-50e0a2479695/6ed62f5700544febe1e4d8439e230aebbd3f6ab21d64161acedb456725226b53.mp4"
+    },
+    {
+      "sha256": "ad5b88d5051d2b3e9a467ae892a4d43c1daa6a6ccd2f04b2ec183a738494f548",
+      "fileSize": 9012,
+      "artifactType": "editable_project",
+      "relativePath": "episodes/eb09f46a-0ee3-4eb0-aa30-a997934e48f0/production-workspace/versions/ad5b88d5051d2b3e9a467ae892a4d43c1daa6a6ccd2f04b2ec183a738494f548.json"
+    },
+    {
+      "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+      "fileSize": 1515,
+      "artifactType": "cover",
+      "relativePath": "episodes/eb09f46a-0ee3-4eb0-aa30-a997934e48f0/workspace-deliveries/cdaf9604-8f07-4780-9d14-5d7a2b921c2e/cover.png"
+    },
+    {
+      "sha256": "a6fa68bef81090de6f9bfd107d1bcca7967765357efa9bb91ca3a3fed816bdac",
+      "fileSize": 1123,
+      "artifactType": "metadata",
+      "relativePath": "episodes/eb09f46a-0ee3-4eb0-aa30-a997934e48f0/workspace-deliveries/cdaf9604-8f07-4780-9d14-5d7a2b921c2e/metadata.json"
+    },
+    {
+      "sha256": "ea4e369ae9fdd6149e2ff3f63639ceac294a0da40ceebd1ca6a093c4e54e3712",
+      "fileSize": 4514,
+      "artifactType": "final_qc_report",
+      "relativePath": "episodes/eb09f46a-0ee3-4eb0-aa30-a997934e48f0/workspace-deliveries/cdaf9604-8f07-4780-9d14-5d7a2b921c2e/checks.json"
+    }
+  ]
+}

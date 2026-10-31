@@ -1,0 +1,3 @@
+[
+  "69607 69606 /Users/dan/.agent-browser/browsers/chrome-153.0.8010.36/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing --remote-debugging-port=0 --no-first-run --no-default-browser-check --disable-background-networking --disable-backgrounding-occluded-windows --disable-component-update --disable-default-apps --disable-hang-monitor --disable-popup-blocking --disable-prompt-on-repost --disable-sync --disable-features=Translate --enable-features=NetworkService,NetworkServiceInProcess,WebMCPTesting,DevToolsWebMCPSupport --metrics-recording-only --enable-unsafe-webgpu --password-store=basic --use-mock-keychain --user-data-dir=/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/agent-browser-chrome-f6525b5d-115d-46ff-9cd8-223fc112dc75"
+]

@@ -1,0 +1,46 @@
+
+ RUN  v3.2.7 /private/tmp/loop-control-main-e2e-20261101/integration-regression/source
+
+ ❯ src/worker/openchatcutProject.integration.test.ts (12 tests | 1 failed | 11 skipped) 1885ms
+   × OpenChatCut real project reader integration > opens an independent dashboard, reuses concurrent launches, and preserves projects after restart 1884ms
+     → expected 404 to be 200 // Object.is equality
+   ↓ OpenChatCut real project reader integration > opens Studio and reads editable caption cues back from its project store
+   ↓ OpenChatCut real project reader integration > keeps Studio edits mutable, warns before changed workbench input replaces them, and freezes new immutable revisions only on demand
+   ↓ OpenChatCut real project reader integration > reads a stacked shot as two correctly transformed editable video layers backed by one asset
+   ↓ OpenChatCut real project reader integration > accepts migrated stable track ids when consecutive full-screen segments remain on the V1 alias
+   ↓ OpenChatCut real project reader integration > reads exactly one source-audio item when one material fills multiple visual slots
+   ↓ OpenChatCut real project reader integration > reads silent, BGM-follower, and independent-SFX semantics from the real runtime
+   ↓ OpenChatCut real project reader integration > reads disabled captions and independent manual cues through the real runtime
+   ↓ OpenChatCut real project reader integration > renders and probes a real synchronized proxy while preserving the editable project fingerprint
+   ↓ OpenChatCut real project reader integration > opens, edits, freezes, and renders one real Episode containing TTS split-screen, source-audio, and silent captioned shots
+   ↓ OpenChatCut real project reader integration > keeps an older project with a text caption item readable
+   ↓ OpenChatCut real project reader integration > blocks known invalid caption contracts after real OpenChatCut reading
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/worker/openchatcutProject.integration.test.ts > OpenChatCut real project reader integration > opens an independent dashboard, reuses concurrent launches, and preserves projects after restart
+AssertionError: expected 404 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 404
+
+ ❯ createStudioProject src/worker/openchatcutProject.integration.test.ts:369:56
+    367|     body: JSON.stringify({ operation: "project-document-write", key: `…
+    368|   });
+    369|   expect(created.status, await created.clone().text()).toBe(200);
+       |                                                        ^
+    370|   expect((await created.json()).accepted).toBe(true);
+    371| }
+ ❯ src/worker/openchatcutProject.integration.test.ts:40:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 11 skipped (12)
+   Start at  06:08:33
+   Duration  2.24s (transform 169ms, setup 11ms, collect 220ms, tests 1.88s, environment 0ms, prepare 37ms)
+

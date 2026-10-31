@@ -1,0 +1,140 @@
+{
+  "mix": {
+    "voices": [
+      {
+        "coverage": "full",
+        "startSeconds": 0,
+        "durationSeconds": 2,
+        "shotDurationSeconds": 2,
+        "sourceStartSeconds": 0,
+        "sourceLabel": "shot-1",
+        "alignmentReady": true,
+        "shotId": "shot-1",
+        "mode": "source",
+        "gainDb": -6,
+        "ambienceGainDb": null,
+        "sourceItemId": "shot-shot-1-9dc33803-446f-4245-a91c-84601558c236",
+        "sourceAssetId": "audio-track-7df55f57-25cb-4199-a55b-222c6e23b7e4"
+      },
+      {
+        "coverage": "none",
+        "startSeconds": null,
+        "durationSeconds": null,
+        "shotDurationSeconds": 2,
+        "sourceStartSeconds": null,
+        "sourceLabel": null,
+        "alignmentReady": false,
+        "shotId": "shot-2",
+        "mode": "none",
+        "gainDb": 0,
+        "ambienceGainDb": null,
+        "sourceItemId": null,
+        "sourceAssetId": null
+      }
+    ],
+    "sounds": [
+      {
+        "itemId": "workspace-bgm",
+        "kind": "bgm",
+        "gainDb": -12,
+        "duckDepthDb": 10,
+        "startSeconds": 0,
+        "durationSeconds": 4
+      },
+      {
+        "itemId": "workspace-sfx-c1d6da8a-618b-46b2-b1ff-4f836acd9758",
+        "kind": "sfx",
+        "gainDb": -6,
+        "duckDepthDb": 0,
+        "startSeconds": 1,
+        "durationSeconds": 0.4
+      }
+    ]
+  },
+  "captions": [
+    {
+      "clipId": "9dc33803-446f-4245-a91c-84601558c236",
+      "itemId": "shot-shot-1-9dc33803-446f-4245-a91c-84601558c236",
+      "shotId": "shot-1",
+      "durationMs": 2000,
+      "contract": {
+        "version": "shot-captions/v1",
+        "enabled": true,
+        "contentMode": "follow_tts",
+        "text": "第一镜",
+        "cues": [
+          {
+            "id": "initial-shot-1~0",
+            "text": "第一镜",
+            "startMs": 0,
+            "endMs": 2000
+          }
+        ],
+        "spatial": {
+          "version": "shot-caption-space/v2",
+          "anchor": "bottom-center",
+          "safeArea": "title-safe",
+          "aspectRatio": "9:16",
+          "insets": {
+            "top": 0.08,
+            "right": 0.08,
+            "bottom": 0.18,
+            "left": 0.08
+          },
+          "maxLines": 2,
+          "maxCharactersPerLine": 16
+        }
+      },
+      "inputFingerprint": "751dae3cfa15b6842154a5996a55989a2cf86ee17bcee899b595cbcb3018d506",
+      "timing": "current",
+      "textConfirmed": false,
+      "audioTrackId": "7df55f57-25cb-4199-a55b-222c6e23b7e4",
+      "narrationText": null,
+      "taskId": null,
+      "alignmentInputVersion": null,
+      "detail": null
+    },
+    {
+      "clipId": "ab16929e-7cb6-40bd-aa15-fc1d1ca8b94c",
+      "itemId": "shot-shot-2-ab16929e-7cb6-40bd-aa15-fc1d1ca8b94c",
+      "shotId": "shot-2",
+      "durationMs": 2000,
+      "contract": {
+        "version": "shot-captions/v1",
+        "enabled": true,
+        "contentMode": "follow_tts",
+        "text": "缺少素材的第二镜。",
+        "cues": [
+          {
+            "id": "initial-shot-2~0",
+            "text": "缺少素材的第二镜。",
+            "startMs": 0,
+            "endMs": 2000
+          }
+        ],
+        "spatial": {
+          "version": "shot-caption-space/v2",
+          "anchor": "bottom-center",
+          "safeArea": "title-safe",
+          "aspectRatio": "9:16",
+          "insets": {
+            "top": 0.08,
+            "right": 0.08,
+            "bottom": 0.18,
+            "left": 0.08
+          },
+          "maxLines": 2,
+          "maxCharactersPerLine": 16
+        }
+      },
+      "inputFingerprint": "b5b3ec082a8ba0f4bb3721ae79a6a6048f1029df10d585a1b83f8b31ca264118",
+      "timing": "current",
+      "textConfirmed": false,
+      "audioTrackId": null,
+      "narrationText": null,
+      "taskId": null,
+      "alignmentInputVersion": null,
+      "detail": null
+    }
+  ]
+}

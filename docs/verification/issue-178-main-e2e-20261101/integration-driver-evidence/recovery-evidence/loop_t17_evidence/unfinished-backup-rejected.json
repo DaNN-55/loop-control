@@ -1,0 +1,938 @@
+{
+  "pending": {
+    "id": "e393d1ba-3f9d-402d-9831-d7c1fd9376ab",
+    "status": "planned",
+    "kind": "move",
+    "sourceContainerId": "49b8b1c4-d662-4697-876f-cd9eba5537df",
+    "targetContainerId": "6a6a1bae-4e1e-4766-9d09-eedf7b981059",
+    "targetRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+    "targetIdentity": {
+      "path": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+      "device": "16777234",
+      "inode": "106656444"
+    },
+    "rootBinding": {
+      "path": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media",
+      "inodeId": "106656156",
+      "deviceId": "16777234",
+      "mountPath": "/"
+    },
+    "sources": [
+      {
+        "path": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "device": "16777234",
+        "inode": "106656444"
+      }
+    ],
+    "episodes": [
+      {
+        "id": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "title": "四步制作 T02 验收",
+        "seriesId": "6a6a1bae-4e1e-4766-9d09-eedf7b981059",
+        "seriesName": "收纳 A [100% #?]",
+        "targetPrefix": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab",
+        "managed": false,
+        "sources": [
+          {
+            "root": {
+              "path": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+              "device": "16777234",
+              "inode": "106656444"
+            },
+            "prefix": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2",
+            "directory": {
+              "path": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account/未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2",
+              "device": "16777234",
+              "inode": "106656454"
+            }
+          }
+        ]
+      }
+    ],
+    "containers": [
+      {
+        "id": "49b8b1c4-d662-4697-876f-cd9eba5537df",
+        "seriesId": null,
+        "name": "原收纳",
+        "prefix": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df",
+        "identity": {
+          "path": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account/未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df",
+          "device": "16777234",
+          "inode": "106656448"
+        }
+      },
+      {
+        "id": "6a6a1bae-4e1e-4766-9d09-eedf7b981059",
+        "seriesId": "6a6a1bae-4e1e-4766-9d09-eedf7b981059",
+        "name": "目标收纳",
+        "prefix": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059",
+        "identity": {
+          "path": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account/收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059",
+          "device": "16777234",
+          "inode": "106656450"
+        }
+      }
+    ],
+    "files": [
+      {
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/board.json",
+        "sha256": "ea0d2fb99bc3eca704bdf68c918e993ac4751599984ccdfe2acc02094e354120",
+        "fileSize": 374,
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/board.json"
+      },
+      {
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/materials/6d0682ec172901f2adf52536fd542ad1c4d58e64d22535ac0b57156fc95d676f-external-owner-note.md",
+        "sha256": "6d0682ec172901f2adf52536fd542ad1c4d58e64d22535ac0b57156fc95d676f",
+        "fileSize": 39,
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/materials/6d0682ec172901f2adf52536fd542ad1c4d58e64d22535ac0b57156fc95d676f-external-owner-note.md"
+      },
+      {
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/openchatcut-work/current/generated-project.json",
+        "sha256": "64ddc69cd58a6d0a834859e224d177d0e9c2cdf31558e1589022aff809f1154a",
+        "fileSize": 9011,
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/openchatcut-work/current/generated-project.json"
+      },
+      {
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/openchatcut-work/current/project.json",
+        "sha256": "64ddc69cd58a6d0a834859e224d177d0e9c2cdf31558e1589022aff809f1154a",
+        "fileSize": 9011,
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/openchatcut-work/current/project.json"
+      },
+      {
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/openchatcut-work/current/runtime/media/uploads/32f342fcba16e9f5b097.mp4",
+        "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+        "fileSize": 210288,
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/openchatcut-work/current/runtime/media/uploads/32f342fcba16e9f5b097.mp4"
+      },
+      {
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/openchatcut-work/current/runtime/project-store-v1.json",
+        "sha256": "94c62fd45b8043238b23b6597d16eec5a8dab704c19a4ab43b9fbfc19b9da43d",
+        "fileSize": 9867,
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/openchatcut-work/current/runtime/project-store-v1.json"
+      },
+      {
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/openchatcut-work/current/runtime/project-store-v1.sqlite3",
+        "sha256": "dade8c82f52796e05c3ca79a0ac6bbfa056c25ef1ecd1385451db626e5c26064",
+        "fileSize": 53248,
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/openchatcut-work/current/runtime/project-store-v1.sqlite3"
+      },
+      {
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/openchatcut-work/current/runtime/project-store-v1.sqlite3-shm",
+        "sha256": "98a8961f6be9491750140f46fbd5423ae78f462cc3ed5e6b9621d026bb2412a7",
+        "fileSize": 32768,
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/openchatcut-work/current/runtime/project-store-v1.sqlite3-shm"
+      },
+      {
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/openchatcut-work/current/runtime/project-store-v1.sqlite3-wal",
+        "sha256": "501f252d84a0f17507e6c7d1503cb531b8a05c9fa4b85f02c895d9f3881ac7c0",
+        "fileSize": 12392,
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/openchatcut-work/current/runtime/project-store-v1.sqlite3-wal"
+      },
+      {
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/openchatcut-work/current/runtime/project-store-v1.sqlite3.receipt.json",
+        "sha256": "bb9a8bc4dbd6c97bce0991a0e8c6e2944719447c97820d1877092c977c5428a8",
+        "fileSize": 1222,
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/openchatcut-work/current/runtime/project-store-v1.sqlite3.receipt.json"
+      },
+      {
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/openchatcut-work/current/runtime/settings.env",
+        "sha256": "459811c1134a9866e14cb770787164c03512aa26ac18f5f0d5d86a25095db7f5",
+        "fileSize": 23,
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/openchatcut-work/current/runtime/settings.env"
+      },
+      {
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/openchatcut-work/current/workspace.json",
+        "sha256": "aa774b1edb64733346c91ce7ff3c1deb9128e43a77e2543a1ae582d4f04a2ab9",
+        "fileSize": 383,
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/openchatcut-work/current/workspace.json"
+      },
+      {
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/production-workspace/versions/3454878a70dbd39cb0deb3b6d7dacc94fe8095ded9208c2b3cf5817c9b9e8695.json",
+        "sha256": "3454878a70dbd39cb0deb3b6d7dacc94fe8095ded9208c2b3cf5817c9b9e8695",
+        "fileSize": 3344,
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/production-workspace/versions/3454878a70dbd39cb0deb3b6d7dacc94fe8095ded9208c2b3cf5817c9b9e8695.json"
+      },
+      {
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/production-workspace/versions/64ddc69cd58a6d0a834859e224d177d0e9c2cdf31558e1589022aff809f1154a.json",
+        "sha256": "64ddc69cd58a6d0a834859e224d177d0e9c2cdf31558e1589022aff809f1154a",
+        "fileSize": 9011,
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/production-workspace/versions/64ddc69cd58a6d0a834859e224d177d0e9c2cdf31558e1589022aff809f1154a.json"
+      },
+      {
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/production-workspace/versions/79ac69d564e38efd993655ab36b64b0517c7b15248276372f9c4fc88dc3fb685.json",
+        "sha256": "79ac69d564e38efd993655ab36b64b0517c7b15248276372f9c4fc88dc3fb685",
+        "fileSize": 8603,
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/production-workspace/versions/79ac69d564e38efd993655ab36b64b0517c7b15248276372f9c4fc88dc3fb685.json"
+      },
+      {
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/production-workspace/versions/9fc295190f1af4232e1d30e69bbb885b1f58dd24f248ace5e6bfdf7efaaad191.json",
+        "sha256": "9fc295190f1af4232e1d30e69bbb885b1f58dd24f248ace5e6bfdf7efaaad191",
+        "fileSize": 9006,
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/production-workspace/versions/9fc295190f1af4232e1d30e69bbb885b1f58dd24f248ace5e6bfdf7efaaad191.json"
+      },
+      {
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/production-workspace/versions/f4b6fbef258956153867810aaee398ced45c1d0bb928d1392f8f7045ee497959.json",
+        "sha256": "f4b6fbef258956153867810aaee398ced45c1d0bb928d1392f8f7045ee497959",
+        "fileSize": 3796,
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/production-workspace/versions/f4b6fbef258956153867810aaee398ced45c1d0bb928d1392f8f7045ee497959.json"
+      },
+      {
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/production-workspace/versions/f6df1dd8dd28d0ff9b1dbf9642e9e572ac4517e5f0893279f9878413a82edd20.json",
+        "sha256": "f6df1dd8dd28d0ff9b1dbf9642e9e572ac4517e5f0893279f9878413a82edd20",
+        "fileSize": 2467,
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/production-workspace/versions/f6df1dd8dd28d0ff9b1dbf9642e9e572ac4517e5f0893279f9878413a82edd20.json"
+      },
+      {
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/script.md",
+        "sha256": "fc81cbf3666ffe9d11d8618d1973af50586e6e030934f2c44043e52f3c58778e",
+        "fileSize": 52,
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/script.md"
+      },
+      {
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/shot.mp4",
+        "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+        "fileSize": 210288,
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/shot.mp4"
+      },
+      {
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/voice.mp3",
+        "sha256": "21367e1bb28c3f86626206d5349933c1755207ff4e2bf770e59606432875899b",
+        "fileSize": 16556,
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/voice.mp3"
+      },
+      {
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/workspace-exports/6f64cb2f-012b-4a5e-b438-a57e6f12ea9d/6ed62f5700544febe1e4d8439e230aebbd3f6ab21d64161acedb456725226b53.mp4",
+        "sha256": "6ed62f5700544febe1e4d8439e230aebbd3f6ab21d64161acedb456725226b53",
+        "fileSize": 2549994,
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/workspace-exports/6f64cb2f-012b-4a5e-b438-a57e6f12ea9d/6ed62f5700544febe1e4d8439e230aebbd3f6ab21d64161acedb456725226b53.mp4"
+      },
+      {
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/workspace-exports/6f64cb2f-012b-4a5e-b438-a57e6f12ea9d/representative.jpg",
+        "sha256": "3a487de93a87d08674e8e8b8a5ba08cdbac0c495116104682990b951e41662f7",
+        "fileSize": 55432,
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/workspace-exports/6f64cb2f-012b-4a5e-b438-a57e6f12ea9d/representative.jpg"
+      }
+    ],
+    "references": [
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4",
+        "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/voice.mp3",
+        "sha256": "21367e1bb28c3f86626206d5349933c1755207ff4e2bf770e59606432875899b"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4",
+        "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+        "fileSize": 210288
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/voice.mp3",
+        "sha256": "21367e1bb28c3f86626206d5349933c1755207ff4e2bf770e59606432875899b",
+        "fileSize": 16556
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/board.json",
+        "sha256": "ea0d2fb99bc3eca704bdf68c918e993ac4751599984ccdfe2acc02094e354120",
+        "fileSize": 374
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4",
+        "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+        "fileSize": 210288
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/board.json"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4",
+        "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+        "fileSize": 210288
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/workspace-exports/6f64cb2f-012b-4a5e-b438-a57e6f12ea9d/representative.jpg",
+        "sha256": "3a487de93a87d08674e8e8b8a5ba08cdbac0c495116104682990b951e41662f7",
+        "fileSize": 55432
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/production-workspace/versions/64ddc69cd58a6d0a834859e224d177d0e9c2cdf31558e1589022aff809f1154a.json",
+        "sha256": "64ddc69cd58a6d0a834859e224d177d0e9c2cdf31558e1589022aff809f1154a",
+        "fileSize": 9011
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/workspace-exports/6f64cb2f-012b-4a5e-b438-a57e6f12ea9d/6ed62f5700544febe1e4d8439e230aebbd3f6ab21d64161acedb456725226b53.mp4",
+        "sha256": "6ed62f5700544febe1e4d8439e230aebbd3f6ab21d64161acedb456725226b53",
+        "fileSize": 2549994
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/production-workspace/versions/64ddc69cd58a6d0a834859e224d177d0e9c2cdf31558e1589022aff809f1154a.json",
+        "sha256": "64ddc69cd58a6d0a834859e224d177d0e9c2cdf31558e1589022aff809f1154a",
+        "fileSize": 9011
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4",
+        "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+        "fileSize": 210288
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4",
+        "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+        "fileSize": 210288
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/materials/6d0682ec172901f2adf52536fd542ad1c4d58e64d22535ac0b57156fc95d676f-external-owner-note.md",
+        "sha256": "6d0682ec172901f2adf52536fd542ad1c4d58e64d22535ac0b57156fc95d676f",
+        "fileSize": 39
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4",
+        "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+        "fileSize": 210288
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/script.md",
+        "sha256": "fc81cbf3666ffe9d11d8618d1973af50586e6e030934f2c44043e52f3c58778e",
+        "fileSize": 52
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/production-workspace/versions/3454878a70dbd39cb0deb3b6d7dacc94fe8095ded9208c2b3cf5817c9b9e8695.json",
+        "sha256": "3454878a70dbd39cb0deb3b6d7dacc94fe8095ded9208c2b3cf5817c9b9e8695",
+        "fileSize": 3344
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/production-workspace/versions/f4b6fbef258956153867810aaee398ced45c1d0bb928d1392f8f7045ee497959.json",
+        "sha256": "f4b6fbef258956153867810aaee398ced45c1d0bb928d1392f8f7045ee497959",
+        "fileSize": 3796
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/production-workspace/versions/9fc295190f1af4232e1d30e69bbb885b1f58dd24f248ace5e6bfdf7efaaad191.json",
+        "sha256": "9fc295190f1af4232e1d30e69bbb885b1f58dd24f248ace5e6bfdf7efaaad191",
+        "fileSize": 9006
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/production-workspace/versions/64ddc69cd58a6d0a834859e224d177d0e9c2cdf31558e1589022aff809f1154a.json",
+        "sha256": "64ddc69cd58a6d0a834859e224d177d0e9c2cdf31558e1589022aff809f1154a",
+        "fileSize": 9011
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/production-workspace/versions/79ac69d564e38efd993655ab36b64b0517c7b15248276372f9c4fc88dc3fb685.json",
+        "sha256": "79ac69d564e38efd993655ab36b64b0517c7b15248276372f9c4fc88dc3fb685",
+        "fileSize": 8603
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/production-workspace/versions/f6df1dd8dd28d0ff9b1dbf9642e9e572ac4517e5f0893279f9878413a82edd20.json",
+        "sha256": "f6df1dd8dd28d0ff9b1dbf9642e9e572ac4517e5f0893279f9878413a82edd20",
+        "fileSize": 2467
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      }
+    ],
+    "evidenceSha256": "97c2e5283856c79f12cd32ace974ecdbb7786d8e572fad29714e2143e540f4fc",
+    "businessEvidenceSha256": "d0aa28fd4e90427842230b9f07b0c70a435f18ef3143493d2e002cf02428d8f3",
+    "conflicts": [],
+    "totalBytes": 3207175,
+    "retained": [
+      "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account/未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2：原文件保留，不自动删除"
+    ],
+    "createdDirectories": [],
+    "temporaryFiles": []
+  },
+  "rolledBack": {
+    "id": "e393d1ba-3f9d-402d-9831-d7c1fd9376ab",
+    "status": "rolled_back",
+    "kind": "move",
+    "files": [
+      {
+        "sha256": "ea0d2fb99bc3eca704bdf68c918e993ac4751599984ccdfe2acc02094e354120",
+        "fileSize": 374,
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/board.json",
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/board.json"
+      },
+      {
+        "sha256": "6d0682ec172901f2adf52536fd542ad1c4d58e64d22535ac0b57156fc95d676f",
+        "fileSize": 39,
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/materials/6d0682ec172901f2adf52536fd542ad1c4d58e64d22535ac0b57156fc95d676f-external-owner-note.md",
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/materials/6d0682ec172901f2adf52536fd542ad1c4d58e64d22535ac0b57156fc95d676f-external-owner-note.md"
+      },
+      {
+        "sha256": "64ddc69cd58a6d0a834859e224d177d0e9c2cdf31558e1589022aff809f1154a",
+        "fileSize": 9011,
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/openchatcut-work/current/generated-project.json",
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/openchatcut-work/current/generated-project.json"
+      },
+      {
+        "sha256": "64ddc69cd58a6d0a834859e224d177d0e9c2cdf31558e1589022aff809f1154a",
+        "fileSize": 9011,
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/openchatcut-work/current/project.json",
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/openchatcut-work/current/project.json"
+      },
+      {
+        "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+        "fileSize": 210288,
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/openchatcut-work/current/runtime/media/uploads/32f342fcba16e9f5b097.mp4",
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/openchatcut-work/current/runtime/media/uploads/32f342fcba16e9f5b097.mp4"
+      },
+      {
+        "sha256": "94c62fd45b8043238b23b6597d16eec5a8dab704c19a4ab43b9fbfc19b9da43d",
+        "fileSize": 9867,
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/openchatcut-work/current/runtime/project-store-v1.json",
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/openchatcut-work/current/runtime/project-store-v1.json"
+      },
+      {
+        "sha256": "dade8c82f52796e05c3ca79a0ac6bbfa056c25ef1ecd1385451db626e5c26064",
+        "fileSize": 53248,
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/openchatcut-work/current/runtime/project-store-v1.sqlite3",
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/openchatcut-work/current/runtime/project-store-v1.sqlite3"
+      },
+      {
+        "sha256": "98a8961f6be9491750140f46fbd5423ae78f462cc3ed5e6b9621d026bb2412a7",
+        "fileSize": 32768,
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/openchatcut-work/current/runtime/project-store-v1.sqlite3-shm",
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/openchatcut-work/current/runtime/project-store-v1.sqlite3-shm"
+      },
+      {
+        "sha256": "501f252d84a0f17507e6c7d1503cb531b8a05c9fa4b85f02c895d9f3881ac7c0",
+        "fileSize": 12392,
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/openchatcut-work/current/runtime/project-store-v1.sqlite3-wal",
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/openchatcut-work/current/runtime/project-store-v1.sqlite3-wal"
+      },
+      {
+        "sha256": "bb9a8bc4dbd6c97bce0991a0e8c6e2944719447c97820d1877092c977c5428a8",
+        "fileSize": 1222,
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/openchatcut-work/current/runtime/project-store-v1.sqlite3.receipt.json",
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/openchatcut-work/current/runtime/project-store-v1.sqlite3.receipt.json"
+      },
+      {
+        "sha256": "459811c1134a9866e14cb770787164c03512aa26ac18f5f0d5d86a25095db7f5",
+        "fileSize": 23,
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/openchatcut-work/current/runtime/settings.env",
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/openchatcut-work/current/runtime/settings.env"
+      },
+      {
+        "sha256": "aa774b1edb64733346c91ce7ff3c1deb9128e43a77e2543a1ae582d4f04a2ab9",
+        "fileSize": 383,
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/openchatcut-work/current/workspace.json",
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/openchatcut-work/current/workspace.json"
+      },
+      {
+        "sha256": "3454878a70dbd39cb0deb3b6d7dacc94fe8095ded9208c2b3cf5817c9b9e8695",
+        "fileSize": 3344,
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/production-workspace/versions/3454878a70dbd39cb0deb3b6d7dacc94fe8095ded9208c2b3cf5817c9b9e8695.json",
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/production-workspace/versions/3454878a70dbd39cb0deb3b6d7dacc94fe8095ded9208c2b3cf5817c9b9e8695.json"
+      },
+      {
+        "sha256": "64ddc69cd58a6d0a834859e224d177d0e9c2cdf31558e1589022aff809f1154a",
+        "fileSize": 9011,
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/production-workspace/versions/64ddc69cd58a6d0a834859e224d177d0e9c2cdf31558e1589022aff809f1154a.json",
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/production-workspace/versions/64ddc69cd58a6d0a834859e224d177d0e9c2cdf31558e1589022aff809f1154a.json"
+      },
+      {
+        "sha256": "79ac69d564e38efd993655ab36b64b0517c7b15248276372f9c4fc88dc3fb685",
+        "fileSize": 8603,
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/production-workspace/versions/79ac69d564e38efd993655ab36b64b0517c7b15248276372f9c4fc88dc3fb685.json",
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/production-workspace/versions/79ac69d564e38efd993655ab36b64b0517c7b15248276372f9c4fc88dc3fb685.json"
+      },
+      {
+        "sha256": "9fc295190f1af4232e1d30e69bbb885b1f58dd24f248ace5e6bfdf7efaaad191",
+        "fileSize": 9006,
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/production-workspace/versions/9fc295190f1af4232e1d30e69bbb885b1f58dd24f248ace5e6bfdf7efaaad191.json",
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/production-workspace/versions/9fc295190f1af4232e1d30e69bbb885b1f58dd24f248ace5e6bfdf7efaaad191.json"
+      },
+      {
+        "sha256": "f4b6fbef258956153867810aaee398ced45c1d0bb928d1392f8f7045ee497959",
+        "fileSize": 3796,
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/production-workspace/versions/f4b6fbef258956153867810aaee398ced45c1d0bb928d1392f8f7045ee497959.json",
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/production-workspace/versions/f4b6fbef258956153867810aaee398ced45c1d0bb928d1392f8f7045ee497959.json"
+      },
+      {
+        "sha256": "f6df1dd8dd28d0ff9b1dbf9642e9e572ac4517e5f0893279f9878413a82edd20",
+        "fileSize": 2467,
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/production-workspace/versions/f6df1dd8dd28d0ff9b1dbf9642e9e572ac4517e5f0893279f9878413a82edd20.json",
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/production-workspace/versions/f6df1dd8dd28d0ff9b1dbf9642e9e572ac4517e5f0893279f9878413a82edd20.json"
+      },
+      {
+        "sha256": "fc81cbf3666ffe9d11d8618d1973af50586e6e030934f2c44043e52f3c58778e",
+        "fileSize": 52,
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/script.md",
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/script.md"
+      },
+      {
+        "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+        "fileSize": 210288,
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/shot.mp4",
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/shot.mp4"
+      },
+      {
+        "sha256": "21367e1bb28c3f86626206d5349933c1755207ff4e2bf770e59606432875899b",
+        "fileSize": 16556,
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/voice.mp3",
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/voice.mp3"
+      },
+      {
+        "sha256": "6ed62f5700544febe1e4d8439e230aebbd3f6ab21d64161acedb456725226b53",
+        "fileSize": 2549994,
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/workspace-exports/6f64cb2f-012b-4a5e-b438-a57e6f12ea9d/6ed62f5700544febe1e4d8439e230aebbd3f6ab21d64161acedb456725226b53.mp4",
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/workspace-exports/6f64cb2f-012b-4a5e-b438-a57e6f12ea9d/6ed62f5700544febe1e4d8439e230aebbd3f6ab21d64161acedb456725226b53.mp4"
+      },
+      {
+        "sha256": "3a487de93a87d08674e8e8b8a5ba08cdbac0c495116104682990b951e41662f7",
+        "fileSize": 55432,
+        "sourceRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/workspace-exports/6f64cb2f-012b-4a5e-b438-a57e6f12ea9d/representative.jpg",
+        "targetRelativePath": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab/workspace-exports/6f64cb2f-012b-4a5e-b438-a57e6f12ea9d/representative.jpg"
+      }
+    ],
+    "sources": [
+      {
+        "path": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+        "inode": "106656444",
+        "device": "16777234"
+      }
+    ],
+    "episodes": [
+      {
+        "id": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "title": "四步制作 T02 验收",
+        "managed": false,
+        "sources": [
+          {
+            "root": {
+              "path": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+              "inode": "106656444",
+              "device": "16777234"
+            },
+            "prefix": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2",
+            "directory": {
+              "path": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account/未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2",
+              "inode": "106656454",
+              "device": "16777234"
+            }
+          }
+        ],
+        "seriesId": "6a6a1bae-4e1e-4766-9d09-eedf7b981059",
+        "seriesName": "收纳 A [100% #?]",
+        "targetPrefix": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--e393d1ba-3f9d-402d-9831-d7c1fd9376ab"
+      }
+    ],
+    "retained": [
+      "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account/未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2：原文件保留，不自动删除"
+    ],
+    "conflicts": [],
+    "containers": [
+      {
+        "id": "49b8b1c4-d662-4697-876f-cd9eba5537df",
+        "name": "原收纳",
+        "prefix": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df",
+        "identity": {
+          "path": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account/未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df",
+          "inode": "106656448",
+          "device": "16777234"
+        },
+        "seriesId": null
+      },
+      {
+        "id": "6a6a1bae-4e1e-4766-9d09-eedf7b981059",
+        "name": "目标收纳",
+        "prefix": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059",
+        "identity": {
+          "path": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account/收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059",
+          "inode": "106656450",
+          "device": "16777234"
+        },
+        "seriesId": "6a6a1bae-4e1e-4766-9d09-eedf7b981059"
+      }
+    ],
+    "references": [
+      {
+        "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "sha256": "21367e1bb28c3f86626206d5349933c1755207ff4e2bf770e59606432875899b",
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/voice.mp3"
+      },
+      {
+        "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+        "fileSize": 210288,
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "sha256": "21367e1bb28c3f86626206d5349933c1755207ff4e2bf770e59606432875899b",
+        "fileSize": 16556,
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/voice.mp3"
+      },
+      {
+        "sha256": "ea0d2fb99bc3eca704bdf68c918e993ac4751599984ccdfe2acc02094e354120",
+        "fileSize": 374,
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/board.json"
+      },
+      {
+        "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+        "fileSize": 210288,
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/board.json"
+      },
+      {
+        "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+        "fileSize": 210288,
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "sha256": "3a487de93a87d08674e8e8b8a5ba08cdbac0c495116104682990b951e41662f7",
+        "fileSize": 55432,
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/workspace-exports/6f64cb2f-012b-4a5e-b438-a57e6f12ea9d/representative.jpg"
+      },
+      {
+        "sha256": "64ddc69cd58a6d0a834859e224d177d0e9c2cdf31558e1589022aff809f1154a",
+        "fileSize": 9011,
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/production-workspace/versions/64ddc69cd58a6d0a834859e224d177d0e9c2cdf31558e1589022aff809f1154a.json"
+      },
+      {
+        "sha256": "6ed62f5700544febe1e4d8439e230aebbd3f6ab21d64161acedb456725226b53",
+        "fileSize": 2549994,
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/workspace-exports/6f64cb2f-012b-4a5e-b438-a57e6f12ea9d/6ed62f5700544febe1e4d8439e230aebbd3f6ab21d64161acedb456725226b53.mp4"
+      },
+      {
+        "sha256": "64ddc69cd58a6d0a834859e224d177d0e9c2cdf31558e1589022aff809f1154a",
+        "fileSize": 9011,
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/production-workspace/versions/64ddc69cd58a6d0a834859e224d177d0e9c2cdf31558e1589022aff809f1154a.json"
+      },
+      {
+        "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+        "fileSize": 210288,
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+        "fileSize": 210288,
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "sha256": "6d0682ec172901f2adf52536fd542ad1c4d58e64d22535ac0b57156fc95d676f",
+        "fileSize": 39,
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/materials/6d0682ec172901f2adf52536fd542ad1c4d58e64d22535ac0b57156fc95d676f-external-owner-note.md"
+      },
+      {
+        "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+        "fileSize": 210288,
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "sha256": "fc81cbf3666ffe9d11d8618d1973af50586e6e030934f2c44043e52f3c58778e",
+        "fileSize": 52,
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/script.md"
+      },
+      {
+        "sha256": "3454878a70dbd39cb0deb3b6d7dacc94fe8095ded9208c2b3cf5817c9b9e8695",
+        "fileSize": 3344,
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/production-workspace/versions/3454878a70dbd39cb0deb3b6d7dacc94fe8095ded9208c2b3cf5817c9b9e8695.json"
+      },
+      {
+        "sha256": "f4b6fbef258956153867810aaee398ced45c1d0bb928d1392f8f7045ee497959",
+        "fileSize": 3796,
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/production-workspace/versions/f4b6fbef258956153867810aaee398ced45c1d0bb928d1392f8f7045ee497959.json"
+      },
+      {
+        "sha256": "9fc295190f1af4232e1d30e69bbb885b1f58dd24f248ace5e6bfdf7efaaad191",
+        "fileSize": 9006,
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/production-workspace/versions/9fc295190f1af4232e1d30e69bbb885b1f58dd24f248ace5e6bfdf7efaaad191.json"
+      },
+      {
+        "sha256": "64ddc69cd58a6d0a834859e224d177d0e9c2cdf31558e1589022aff809f1154a",
+        "fileSize": 9011,
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/production-workspace/versions/64ddc69cd58a6d0a834859e224d177d0e9c2cdf31558e1589022aff809f1154a.json"
+      },
+      {
+        "sha256": "79ac69d564e38efd993655ab36b64b0517c7b15248276372f9c4fc88dc3fb685",
+        "fileSize": 8603,
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/production-workspace/versions/79ac69d564e38efd993655ab36b64b0517c7b15248276372f9c4fc88dc3fb685.json"
+      },
+      {
+        "sha256": "f6df1dd8dd28d0ff9b1dbf9642e9e572ac4517e5f0893279f9878413a82edd20",
+        "fileSize": 2467,
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/production-workspace/versions/f6df1dd8dd28d0ff9b1dbf9642e9e572ac4517e5f0893279f9878413a82edd20.json"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      },
+      {
+        "episodeId": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+        "relativePath": "episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/shot.mp4"
+      }
+    ],
+    "targetRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+    "totalBytes": 3207175,
+    "rootBinding": {
+      "path": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media",
+      "inodeId": "106656156",
+      "deviceId": "16777234",
+      "mountPath": "/"
+    },
+    "evidenceSha256": "97c2e5283856c79f12cd32ace974ecdbb7786d8e572fad29714e2143e540f4fc",
+    "targetIdentity": {
+      "path": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+      "inode": "106656444",
+      "device": "16777234"
+    },
+    "temporaryFiles": [],
+    "sourceContainerId": "49b8b1c4-d662-4697-876f-cd9eba5537df",
+    "targetContainerId": "6a6a1bae-4e1e-4766-9d09-eedf7b981059",
+    "createdDirectories": [],
+    "businessEvidenceSha256": "d0aa28fd4e90427842230b9f07b0c70a435f18ef3143493d2e002cf02428d8f3",
+    "originalsRetained": true
+  },
+  "backupRejected": true
+}

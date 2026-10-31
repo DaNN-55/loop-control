@@ -1,0 +1,24 @@
+{
+  "layout": "registered",
+  "sourceDatabase": "loop_t24_restore_a6c1ac9bdbe8",
+  "targetDatabase": "loop_t24_restore_61517a1945ed",
+  "sourceOffline": true,
+  "archiveSha256": "7b65768dffd9e588ddf62aec8f7c3d43493ba67455543993dc5e317535ed761e",
+  "actualRoot": "/private/tmp/loop-t06-volume-5g7wUt/mounted/t11-storage/state/t24-native/media/account",
+  "episodeRelativePath": "系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e",
+  "nativeTimelineName": "T11 异地恢复后继续原生编辑",
+  "secondNativeProcessRestart": true,
+  "project": {
+    "relativePath": "系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e/production-workspace/versions/6d455d4170e6d6922b8dd31e289a3efc69c649fc35f8487872366d786796bbbe.json",
+    "sha256": "6d455d4170e6d6922b8dd31e289a3efc69c649fc35f8487872366d786796bbbe",
+    "fileSize": 9090,
+    "projectId": "loop-control-c7bae16b-b989-4d28-9963-483cefb5e67e"
+  },
+  "export": {
+    "sha256": "6ed62f5700544febe1e4d8439e230aebbd3f6ab21d64161acedb456725226b53",
+    "fileSize": 2549994,
+    "relativePath": "系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e/workspace-exports/fc52edaa-728d-477b-b698-b33859c3ee2b/6ed62f5700544febe1e4d8439e230aebbd3f6ab21d64161acedb456725226b53.mp4"
+  },
+  "ownerHttpExportSha256": "6ed62f5700544febe1e4d8439e230aebbd3f6ab21d64161acedb456725226b53",
+  "automaticBackups": false
+}

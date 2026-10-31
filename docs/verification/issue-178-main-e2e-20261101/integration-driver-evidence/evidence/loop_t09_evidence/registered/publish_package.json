@@ -1,0 +1,54 @@
+{
+  "version": "publish-package/v2",
+  "episodeId": "07797171-1f97-4813-8b16-14b82f75f0a1",
+  "identity": {
+    "video": {
+      "sha256": "6ed62f5700544febe1e4d8439e230aebbd3f6ab21d64161acedb456725226b53",
+      "fileSize": 2549994,
+      "artifactType": "final_render",
+      "relativePath": "系列 [T09]_百分%/生产单 空间/workspace-exports/6cb9f0e5-c502-44de-916f-14958a166f9f/6ed62f5700544febe1e4d8439e230aebbd3f6ab21d64161acedb456725226b53.mp4"
+    },
+    "project": {
+      "sha256": "2056a3e1557fda069080335c3c90c15f158995af10aa8dc9492944560d5eae73",
+      "fileSize": 8988,
+      "artifactType": "editable_project",
+      "relativePath": "系列 [T09]_百分%/生产单 空间/production-workspace/versions/2056a3e1557fda069080335c3c90c15f158995af10aa8dc9492944560d5eae73.json"
+    },
+    "exportId": "6cb9f0e5-c502-44de-916f-14958a166f9f",
+    "workspaceId": "eb6f8434-a519-442f-8dc8-80e20911aea0",
+    "contentSha256": "739321d6f11491a79cee086527bc933eff30380d98b4cf1419cb3eeaeed8e86c",
+    "projectContentVersion": 5
+  },
+  "artifacts": [
+    {
+      "sha256": "6ed62f5700544febe1e4d8439e230aebbd3f6ab21d64161acedb456725226b53",
+      "fileSize": 2549994,
+      "artifactType": "final_render",
+      "relativePath": "系列 [T09]_百分%/生产单 空间/workspace-exports/6cb9f0e5-c502-44de-916f-14958a166f9f/6ed62f5700544febe1e4d8439e230aebbd3f6ab21d64161acedb456725226b53.mp4"
+    },
+    {
+      "sha256": "2056a3e1557fda069080335c3c90c15f158995af10aa8dc9492944560d5eae73",
+      "fileSize": 8988,
+      "artifactType": "editable_project",
+      "relativePath": "系列 [T09]_百分%/生产单 空间/production-workspace/versions/2056a3e1557fda069080335c3c90c15f158995af10aa8dc9492944560d5eae73.json"
+    },
+    {
+      "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+      "fileSize": 1515,
+      "artifactType": "cover",
+      "relativePath": "系列 [T09]_百分%/生产单 空间/workspace-deliveries/381d3ec2-34fc-47f5-b5d9-48db6a265ad7/cover.png"
+    },
+    {
+      "sha256": "1a37f5861d8ba89eeb503fd8540e21b5468d9bcb389e00f08fe3503904e1705b",
+      "fileSize": 1123,
+      "artifactType": "metadata",
+      "relativePath": "系列 [T09]_百分%/生产单 空间/workspace-deliveries/381d3ec2-34fc-47f5-b5d9-48db6a265ad7/metadata.json"
+    },
+    {
+      "sha256": "945d3a8e4d7e183db9c79d666db8de10cdbf36249b4d7537286075401ebb7287",
+      "fileSize": 4498,
+      "artifactType": "final_qc_report",
+      "relativePath": "系列 [T09]_百分%/生产单 空间/workspace-deliveries/381d3ec2-34fc-47f5-b5d9-48db6a265ad7/checks.json"
+    }
+  ]
+}

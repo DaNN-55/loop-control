@@ -1,0 +1,9 @@
+{
+  "sourceStartSeconds": 1,
+  "expectedDurationSeconds": 1,
+  "observedDurationSeconds": 1,
+  "sha256": "3da3bf65ea1313022d955b59e3393ba55fd0890ce9bad2875be1007111d21023",
+  "hz440": 6.391943467030179e-06,
+  "hz660": 0.12504529208797296,
+  "hz880": 3.0224919572278263e-06
+}

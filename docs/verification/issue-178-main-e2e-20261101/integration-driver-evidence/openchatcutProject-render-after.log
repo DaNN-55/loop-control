@@ -1,0 +1,11 @@
+
+ RUN  v3.2.7 /private/tmp/loop-control-main-e2e-20261101/integration-regression/source
+
+ ✓ src/worker/openchatcutProject.integration.test.ts (12 tests | 11 skipped) 10663ms
+   ✓ OpenChatCut real project reader integration > opens, edits, freezes, and renders one real Episode containing TTS split-screen, source-audio, and silent captioned shots  10663ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 11 skipped (12)
+   Start at  06:09:54
+   Duration  10.99s (transform 152ms, setup 7ms, collect 200ms, tests 10.66s, environment 0ms, prepare 32ms)
+

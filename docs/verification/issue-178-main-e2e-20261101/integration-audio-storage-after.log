@@ -1,0 +1,36 @@
+
+ RUN  v3.2.7 /private/tmp/loop-control-main-e2e-20261101/integration-regression/source
+
+ ❯ src/local-app/workspaceAudioStorage.integration.test.ts (10 tests | 1 failed) 61501ms
+   × replaced production directory blocks speech submission before reserving fees or contacting the Provider 3826ms
+     → expected '工程快照不可用或指纹已变化，原始素材未修改。' to contain '身份'
+   ✓ legacy speech retains actual media, confirmed input and one paid submission after rename/restart  5026ms
+   ✓ registered speech retains actual media, confirmed input and one paid submission after rename/restart  2560ms
+   ✓ registered source video extracts only its actual selected audio window into this production  5776ms
+   ✓ registered music and effects retain frozen searches on retry and remain playable managed files after external originals disappear  6411ms
+   ✓ registered speech drives the actual alignment worker and preserves confirmed subtitle text and timing after restart  7391ms
+   ✓ legacy synchronized preview renders actual approved source audio and keeps the native project beside the proxy  12229ms
+   ✓ registered synchronized preview renders actual approved source audio and keeps the native project beside the proxy  10866ms
+   ✓ subtitle readback rejects a replaced production directory instead of reporting the old confirmed state as current  2719ms
+   ✓ uploaded narration music and effects keep owned snapshots at the registered location after all external originals are removed  4695ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workspaceAudioStorage.integration.test.ts > replaced production directory blocks speech submission before reserving fees or contacting the Provider
+AssertionError: expected '工程快照不可用或指纹已变化，原始素材未修改。' to contain '身份'
+
+Expected: "身份"
+Received: "工程快照不可用或指纹已变化，原始素材未修改。"
+
+ ❯ src/local-app/workspaceAudioStorage.integration.test.ts:14:178
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 9 passed (10)
+   Start at  06:09:55
+   Duration  62.87s (transform 818ms, setup 13ms, collect 1.20s, tests 61.50s, environment 0ms, prepare 32ms)
+
+JSON report written to /Users/dan/Programs/loop-control/docs/verification/issue-178-main-e2e-20261101/integration-audio-storage-after.json

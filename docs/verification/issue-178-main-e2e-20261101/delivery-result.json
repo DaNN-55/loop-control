@@ -1,0 +1,47 @@
+{
+  "id": "674793c4-9f39-4c46-b54c-d5e11102eb8b",
+  "exportId": "daff486b-7c01-44ca-9fb0-32d336bb71b9",
+  "taskId": "674793c4-9f39-4c46-b54c-d5e11102eb8b",
+  "status": "completed",
+  "error": null,
+  "verified": true,
+  "artifacts": [
+    {
+      "sha256": "89eb7a78c20bf32437fd55b986d88163203ea26ea7488887106a70d46690bb3b",
+      "fileSize": 1723245,
+      "artifactType": "cover",
+      "relativePath": "春日风景--dcd6550f-b229-4df0-8993-98efae2c3503/真实风景短片 · Pexels 与万相--c736a98b-49db-4a61-934c-ebb2db6c6a9d/workspace-deliveries/674793c4-9f39-4c46-b54c-d5e11102eb8b/cover.png"
+    },
+    {
+      "sha256": "45ded0f2d8fe8dfde8e8d1629318a8c94ef365032a8942d6fdbdd5a2e7fa13d3",
+      "fileSize": 2541,
+      "artifactType": "metadata",
+      "relativePath": "春日风景--dcd6550f-b229-4df0-8993-98efae2c3503/真实风景短片 · Pexels 与万相--c736a98b-49db-4a61-934c-ebb2db6c6a9d/workspace-deliveries/674793c4-9f39-4c46-b54c-d5e11102eb8b/metadata.json"
+    },
+    {
+      "sha256": "58e67c7e9a37752b1a2fccafdaf5a248fb9cdcc1140d667e4b4b0e9b30c18806",
+      "fileSize": 6447,
+      "artifactType": "final_qc_report",
+      "relativePath": "春日风景--dcd6550f-b229-4df0-8993-98efae2c3503/真实风景短片 · Pexels 与万相--c736a98b-49db-4a61-934c-ebb2db6c6a9d/workspace-deliveries/674793c4-9f39-4c46-b54c-d5e11102eb8b/checks.json"
+    },
+    {
+      "sha256": "8fe203689c6099fc44004b722044ba95ff0f1a2f5f1e92f1db5468952aa34de8",
+      "fileSize": 3237,
+      "artifactType": "publish_package",
+      "relativePath": "春日风景--dcd6550f-b229-4df0-8993-98efae2c3503/真实风景短片 · Pexels 与万相--c736a98b-49db-4a61-934c-ebb2db6c6a9d/workspace-deliveries/674793c4-9f39-4c46-b54c-d5e11102eb8b/manifest.json"
+    },
+    {
+      "sha256": "656edddab2b3d1f3d52ad3a9afdc10c9e4ddd72c08fac65d32925ee8e7907714",
+      "fileSize": 6035449,
+      "artifactType": "final_render",
+      "relativePath": "春日风景--dcd6550f-b229-4df0-8993-98efae2c3503/真实风景短片 · Pexels 与万相--c736a98b-49db-4a61-934c-ebb2db6c6a9d/workspace-exports/daff486b-7c01-44ca-9fb0-32d336bb71b9/656edddab2b3d1f3d52ad3a9afdc10c9e4ddd72c08fac65d32925ee8e7907714.mp4"
+    },
+    {
+      "sha256": "e6f0e4e2540164b46679a83884ae38b6535fe1d7c5ba898b938e9141db19c319",
+      "fileSize": 15463,
+      "artifactType": "editable_project",
+      "relativePath": "春日风景--dcd6550f-b229-4df0-8993-98efae2c3503/真实风景短片 · Pexels 与万相--c736a98b-49db-4a61-934c-ebb2db6c6a9d/production-workspace/versions/e6f0e4e2540164b46679a83884ae38b6535fe1d7c5ba898b938e9141db19c319.json"
+    }
+  ],
+  "createdAt": "2026-10-31T22:05:31.675Z"
+}

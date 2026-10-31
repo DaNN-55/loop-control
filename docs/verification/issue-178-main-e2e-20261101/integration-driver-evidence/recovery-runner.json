@@ -1,0 +1,40 @@
+{
+  "cwd": "/private/tmp/loop-control-main-e2e-20261101/integration-regression/verification-source",
+  "command": [
+    "npx",
+    "vitest",
+    "run",
+    "src/local-app/restorePublication.integration.test.ts",
+    "src/local-app/mediaRootExecutionNative.integration.test.ts",
+    "src/local-app/episodeCollectionNative.integration.test.ts",
+    "src/local-app/legacyAdoptionNative.integration.test.ts",
+    "src/local-app/deletionBackupRestore.integration.test.ts",
+    "src/local-app/accountDirectoryMigrationStorage.integration.test.ts",
+    "src/local-app/episodeCreation.integration.test.ts",
+    "src/local-app/accountAssetRootsStorage.integration.test.ts",
+    "src/local-app/managedMediaRestore.integration.test.ts",
+    "src/local-app/formalWorkflow.delivery.integration.test.ts",
+    "src/local-app/speechSelection.integration.test.ts",
+    "src/local-app/mediaRootSettings.integration.test.ts",
+    "--maxWorkers=1",
+    "--fileParallelism=false",
+    "--reporter=default",
+    "--reporter=json",
+    "--outputFile=/Users/dan/Programs/loop-control/docs/verification/issue-178-main-e2e-20261101/integration-storage-recovery-results.json"
+  ],
+  "context": "/private/tmp/loop-control-main-e2e-20261101/integration-regression/runtime-context.mjs",
+  "selected": [
+    "src/local-app/restorePublication.integration.test.ts",
+    "src/local-app/mediaRootExecutionNative.integration.test.ts",
+    "src/local-app/episodeCollectionNative.integration.test.ts",
+    "src/local-app/legacyAdoptionNative.integration.test.ts",
+    "src/local-app/deletionBackupRestore.integration.test.ts",
+    "src/local-app/accountDirectoryMigrationStorage.integration.test.ts",
+    "src/local-app/episodeCreation.integration.test.ts",
+    "src/local-app/accountAssetRootsStorage.integration.test.ts",
+    "src/local-app/managedMediaRestore.integration.test.ts",
+    "src/local-app/formalWorkflow.delivery.integration.test.ts",
+    "src/local-app/speechSelection.integration.test.ts",
+    "src/local-app/mediaRootSettings.integration.test.ts"
+  ]
+}

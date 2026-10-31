@@ -1,0 +1,68 @@
+
+ RUN  v3.2.7 /private/tmp/loop-control-main-e2e-20261101/integration-regression/source
+
+ ❯ src/local-app/inputStorageLocation.integration.test.ts (4 tests | 2 failed) 13827ms
+   × Owner imports and confirms managed script bytes at the registered production location, retaining legacy previews after restart 4696ms
+     → expected '系列 stable--f2ae1a07-81ab-49f3-96bb-ea…' to match /^系列 stable\/生产单 stable\/ma…/生产单 stable\
+   × Owner reuses an approved series input as a self-contained managed copy with original source approval evidence 4680ms
+     → expected undefined to match object { …(4) }
+   ✓ input retries preserve immutable bytes and reject unsafe, foreign, interrupted and replaced-directory submissions  2555ms
+   ✓ receipted input publication survives an interrupted unlink and restart without overwriting unknown targets or trusting altered receipts  1895ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/inputStorageLocation.integration.test.ts > Owner imports and confirms managed script bytes at the registered production location, retaining legacy previews after restart
+AssertionError: expected '系列 stable--f2ae1a07-81ab-49f3-96bb-ea…' to match /^系列 stable\/生产单 stable\/ma…/生产单 stable\
+
+- Expected: 
+/^系列 stable\/生产单 stable\/materials\/[a-f0-9]{64}-main.md$/
+
++ Received: 
+"系列 stable--f2ae1a07-81ab-49f3-96bb-ea925e7bcdc9/隔离 Studio153 验收--ec4900c6-6ae9-4b88-9fd8-458120abc1e9--8072a660-c99f-45c3-adae-29f172cfd498/materials/7a90db152c9ba4a9e5536f5fe54c1f730403956913c3cea3d2e7f902138f2628-main.md"
+
+ ❯ src/local-app/inputStorageLocation.integration.test.ts:23:102
+     21|   await writeFile(join(directory,'input','main.md'),productionScriptTe…
+     22|   const imported=await f.request('importMaterial',{sourceKind:'directo…
+     23|   expect(imported.status,JSON.stringify(imported.body)).toBe(200);expe…
+       |                                                                                                      ^
+     24|   await rename(join(directory,'input','main.md'),join(f.root,'source-m…
+     25|   const preview=async(path:string,sha:string)=>fetch(f.origin+`/_local…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/local-app/inputStorageLocation.integration.test.ts > Owner reuses an approved series input as a self-contained managed copy with original source approval evidence
+AssertionError: expected undefined to match object { …(4) }
+
+- Expected: 
+{
+  "episodeId": "1ac6fe2c-ee98-4d4a-9453-7384531e978c",
+  "path": StringContaining "Input reuse--2aa34306-3920-49e1-b731-d992bdaef96c/复用目标--1ac6fe2c-ee98-4d4a-9453-7384531e978c/materials/",
+  "provenance": {
+    "approvals": [
+      ObjectContaining {
+        "approved_by": "74057c01-73f6-4f38-b7d2-9b7b70c98b75",
+      },
+    ],
+    "source": {
+      "episode_id": "efb3e0de-9dde-4c9f-8fcd-6f3111e4a84b",
+      "id": "6bf475b0-3813-410b-bd51-381cb292896b",
+      "storage_path": "Input reuse--2aa34306-3920-49e1-b731-d992bdaef96c/隔离 Studio153 验收--efb3e0de-9dde-4c9f-8fcd-6f3111e4a84b--64094816-12f1-4776-8c46-a3f64f4bef75/materials/4d40d89f5c8de632684c3632b4c5607cba319bc9150d256a9ea4756046fb6cb6-shared.png",
+    },
+  },
+  "sha256": "4d40d89f5c8de632684c3632b4c5607cba319bc9150d256a9ea4756046fb6cb6",
+}
+
++ Received: 
+undefined
+
+ ❯ src/local-app/inputStorageLocation.integration.test.ts:56:88
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 2 passed (4)
+   Start at  06:30:33
+   Duration  14.48s (transform 377ms, setup 7ms, collect 519ms, tests 13.83s, environment 0ms, prepare 32ms)
+

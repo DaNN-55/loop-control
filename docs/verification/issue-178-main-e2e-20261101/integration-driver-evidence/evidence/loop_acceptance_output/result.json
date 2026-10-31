@@ -1,0 +1,26 @@
+{
+  "accountMetadataIndependent": true,
+  "ruleReadback": {
+    "extension": {
+      "keep": [
+        "account"
+      ]
+    },
+    "positioning": "未保存账号创作规则",
+    "restrictions": "不得虚构事实"
+  },
+  "seriesReadback": {
+    "extension": {
+      "keep": [
+        "series"
+      ]
+    },
+    "positioning": "更新系列定位"
+  },
+  "widths": [
+    1543,
+    1440,
+    1100,
+    390
+  ]
+}

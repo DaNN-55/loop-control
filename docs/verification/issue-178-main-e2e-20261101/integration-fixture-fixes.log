@@ -1,0 +1,51 @@
+
+ RUN  v3.2.7 /private/tmp/loop-control-main-e2e-20261101/integration-regression/verification-source
+
+ ✓ src/local-app/workspaceAudioStorage.integration.test.ts (10 tests) 55335ms
+   ✓ replaced production directory blocks speech submission before reserving fees or contacting the Provider  2547ms
+   ✓ legacy speech retains actual media, confirmed input and one paid submission after rename/restart  2183ms
+   ✓ registered speech retains actual media, confirmed input and one paid submission after rename/restart  2261ms
+   ✓ registered source video extracts only its actual selected audio window into this production  4566ms
+   ✓ registered music and effects retain frozen searches on retry and remain playable managed files after external originals disappear  5585ms
+   ✓ registered speech drives the actual alignment worker and preserves confirmed subtitle text and timing after restart  6084ms
+   ✓ legacy synchronized preview renders actual approved source audio and keeps the native project beside the proxy  11816ms
+   ✓ registered synchronized preview renders actual approved source audio and keeps the native project beside the proxy  11552ms
+   ✓ subtitle readback rejects a replaced production directory instead of reporting the old confirmed state as current  3050ms
+   ✓ uploaded narration music and effects keep owned snapshots at the registered location after all external originals are removed  5691ms
+ ❯ src/local-app/formalWorkflow.delivery.integration.test.ts (1 test | 1 failed) 5630ms
+   × formal Owner workflow delivers exact native export with adopted text, mixed audio and traceable late unused results 5630ms
+     → undefined {"last_result":{"retry":{"reason":"Owner action is required before retrying this task.","shouldRetry":false},"status":"blocked","taskId":"819a5715-b1b4-41e9-be5b-e9444ade1af8","version":"worker-result/v1","blockers":[{"code":"input_artifacts_invalid","detail":"产物不属于当前 Episode 目录：未分系列--20fdc130-9ea6-4c86-b749-ee20d052f425/正式新单--370145f6-4494-4e1c-8a4e-91cbc5499deb/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-still-striped.png"}],"nextStep":"Correct the task package and create a new task attempt.","artifacts":[],"validation":{"checks":[],"passed":false},"actualCostCents":1}}
+ ❯ src/local-app/formalWorkflow.integration.test.ts (6 tests | 1 failed) 23704ms
+   ✓ Owner confirms a fresh script before visual materials exist  3762ms
+   ✓ Owner builds a formal incomplete draft without old storyboard approvals  3678ms
+   ✓ first formal adoption preserves the latest unsubmitted legacy Studio document  3872ms
+   ✓ late legacy render reports retain artifacts without advancing or approving the adopted workspace  1868ms
+   × fresh formal and added shots generate through the real controlled Provider Worker without legacy approval 4623ms
+     → undefined {"last_result":{"retry":{"reason":"Owner action is required before retrying this task.","shouldRetry":false},"status":"blocked","taskId":"668eafe6-fa96-4b62-87a9-6cee7dc3591f","version":"worker-result/v1","blockers":[{"code":"input_artifacts_invalid","detail":"产物不属于当前 Episode 目录：未分系列--5d64cc7e-50f1-442d-9012-c7056005d80f/正式新单--69c0d7a5-2da6-4087-8eaf-1a561fca8cf3/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-local-first.png"}],"nextStep":"Correct the task package and create a new task attempt.","artifacts":[],"validation":{"checks":[],"passed":false},"actualCostCents":1}}
+   ✓ ordinary scripts use the selected real planner task and verified artifact before preparation confirmation  5899ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/formalWorkflow.delivery.integration.test.ts > formal Owner workflow delivers exact native export with adopted text, mixed audio and traceable late unused results
+Error: undefined {"last_result":{"retry":{"reason":"Owner action is required before retrying this task.","shouldRetry":false},"status":"blocked","taskId":"819a5715-b1b4-41e9-be5b-e9444ade1af8","version":"worker-result/v1","blockers":[{"code":"input_artifacts_invalid","detail":"产物不属于当前 Episode 目录：未分系列--20fdc130-9ea6-4c86-b749-ee20d052f425/正式新单--370145f6-4494-4e1c-8a4e-91cbc5499deb/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-still-striped.png"}],"nextStep":"Correct the task package and create a new task attempt.","artifacts":[],"validation":{"checks":[],"passed":false},"actualCostCents":1}}
+ ❯ Object.execute src/local-app/workspaceNarration.fixture.ts:61:105
+
+ ❯ src/local-app/formalWorkflow.delivery.integration.test.ts:30:564
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/local-app/formalWorkflow.integration.test.ts > fresh formal and added shots generate through the real controlled Provider Worker without legacy approval
+Error: undefined {"last_result":{"retry":{"reason":"Owner action is required before retrying this task.","shouldRetry":false},"status":"blocked","taskId":"668eafe6-fa96-4b62-87a9-6cee7dc3591f","version":"worker-result/v1","blockers":[{"code":"input_artifacts_invalid","detail":"产物不属于当前 Episode 目录：未分系列--5d64cc7e-50f1-442d-9012-c7056005d80f/正式新单--69c0d7a5-2da6-4087-8eaf-1a561fca8cf3/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-local-first.png"}],"nextStep":"Correct the task package and create a new task attempt.","artifacts":[],"validation":{"checks":[],"passed":false},"actualCostCents":1}}
+ ❯ Object.execute src/local-app/workspaceNarration.fixture.ts:61:105
+
+ ❯ src/local-app/formalWorkflow.integration.test.ts:73:399
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed | 1 passed (3)
+      Tests  2 failed | 15 passed (17)
+   Start at  06:15:21
+   Duration  86.37s (transform 720ms, setup 18ms, collect 1.26s, tests 84.67s, environment 0ms, prepare 106ms)
+
+JSON report written to /Users/dan/Programs/loop-control/docs/verification/issue-178-main-e2e-20261101/integration-fixture-fixes-results.json

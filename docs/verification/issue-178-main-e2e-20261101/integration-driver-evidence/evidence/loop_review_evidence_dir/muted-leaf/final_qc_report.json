@@ -1,0 +1,67 @@
+{
+  "passed": true,
+  "exportId": "cbf5aac4-51e1-4f6b-88b7-92c74f239714",
+  "contentSha256": "0bb19f7b1e678b3bc6ec3d71801ced1434c78d37df06ba192c1dcb1b25374d41",
+  "checks": [
+    {
+      "name": "used_content",
+      "detail": "已核对 3 个实际来源。",
+      "passed": true,
+      "sources": [
+        {
+          "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+          "fileSize": 1515,
+          "relativePath": "未分系列--47e6fb97-e8b8-4d6c-8016-9e9c89360e8b/正式新单--aa537620-3645-4dc6-bed5-67e4ab2b46a4/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-still-striped.png"
+        },
+        {
+          "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+          "fileSize": 19628,
+          "relativePath": "未分系列--47e6fb97-e8b8-4d6c-8016-9e9c89360e8b/正式新单--aa537620-3645-4dc6-bed5-67e4ab2b46a4/native-tasks/1828ba4c-6519-436d-95c6-38fe68e4ad59/shot-narration-shot-01-20b643df-be66-4273-b4d2-139e3d546ea7.mp3"
+        },
+        {
+          "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+          "fileSize": 19628,
+          "relativePath": "未分系列--47e6fb97-e8b8-4d6c-8016-9e9c89360e8b/正式新单--aa537620-3645-4dc6-bed5-67e4ab2b46a4/materials/9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100-controlled-narration-tone.mp3"
+        }
+      ]
+    },
+    {
+      "name": "captions",
+      "detail": "已核对 0 组字幕时序，正文随最终文件一次确认。",
+      "passed": true,
+      "evidence": []
+    },
+    {
+      "name": "technical",
+      "detail": "实际 MP4 时长、画幅、音频及黑帧检查通过。",
+      "passed": true,
+      "inspection": {
+        "width": 1080,
+        "height": 1920,
+        "hasAudio": true,
+        "blackFrameCount": 0,
+        "durationSeconds": 2.453333
+      },
+      "videoFrames": 72,
+      "audioExpected": true,
+      "videoDurationSeconds": 2.4,
+      "expectedDurationSeconds": 2.4,
+      "containerDurationSeconds": 2.453333
+    },
+    {
+      "name": "representative_frame",
+      "detail": "已实际解码代表帧。",
+      "passed": true,
+      "artifact": {
+        "sha256": "7ef6e5873339b7a3f28e237ddf8d29f7179eeaf6ecd32bba416291e244b3ad77",
+        "fileSize": 37183,
+        "relativePath": "未分系列--47e6fb97-e8b8-4d6c-8016-9e9c89360e8b/正式新单--aa537620-3645-4dc6-bed5-67e4ab2b46a4/workspace-exports/cbf5aac4-51e1-4f6b-88b7-92c74f239714/representative.jpg"
+      }
+    },
+    {
+      "name": "export_file",
+      "detail": "最终文件已按字节 SHA-256 与大小不可变登记。",
+      "passed": true
+    }
+  ]
+}

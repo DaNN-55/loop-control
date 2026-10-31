@@ -1,0 +1,47 @@
+
+ RUN  v3.2.7 /private/tmp/loop-control-main-e2e-20261101/integration-regression/source
+
+ ❯ src/local-app/inputStorageLocation.integration.test.ts (4 tests | 2 failed) 13377ms
+   × Owner imports and confirms managed script bytes at the registered production location, retaining legacy previews after restart 4493ms
+     → {"error":"文件引用缺少本生产单的完整位置迁移证明。"}: expected 409 to be 200 // Object.is equality
+   × Owner reuses an approved series input as a self-contained managed copy with original source approval evidence 4151ms
+     → {"error":"此系列尚未纳入统一目录。"}: expected 409 to be 200 // Object.is equality
+   ✓ input retries preserve immutable bytes and reject unsafe, foreign, interrupted and replaced-directory submissions  2469ms
+   ✓ receipted input publication survives an interrupted unlink and restart without overwriting unknown targets or trusting altered receipts  2263ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/inputStorageLocation.integration.test.ts > Owner imports and confirms managed script bytes at the registered production location, retaining legacy previews after restart
+AssertionError: {"error":"文件引用缺少本生产单的完整位置迁移证明。"}: expected 409 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 409
+
+ ❯ src/local-app/inputStorageLocation.integration.test.ts:38:156
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/local-app/inputStorageLocation.integration.test.ts > Owner reuses an approved series input as a self-contained managed copy with original source approval evidence
+AssertionError: {"error":"此系列尚未纳入统一目录。"}: expected 409 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 409
+
+ ❯ src/local-app/inputStorageLocation.integration.test.ts:53:169
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 2 passed (4)
+   Start at  06:28:03
+   Duration  14.19s (transform 479ms, setup 13ms, collect 674ms, tests 13.38s, environment 0ms, prepare 30ms)
+

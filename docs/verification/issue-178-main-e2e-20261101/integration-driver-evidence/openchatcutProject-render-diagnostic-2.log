@@ -1,0 +1,39 @@
+
+ RUN  v3.2.7 /private/tmp/loop-control-main-e2e-20261101/integration-regression/source
+
+ ❯ src/worker/openchatcutProject.integration.test.ts (12 tests | 1 failed | 11 skipped) 3769ms
+   ↓ OpenChatCut real project reader integration > opens an independent dashboard, reuses concurrent launches, and preserves projects after restart
+   ↓ OpenChatCut real project reader integration > opens Studio and reads editable caption cues back from its project store
+   ↓ OpenChatCut real project reader integration > keeps Studio edits mutable, warns before changed workbench input replaces them, and freezes new immutable revisions only on demand
+   ↓ OpenChatCut real project reader integration > reads a stacked shot as two correctly transformed editable video layers backed by one asset
+   ↓ OpenChatCut real project reader integration > accepts migrated stable track ids when consecutive full-screen segments remain on the V1 alias
+   ↓ OpenChatCut real project reader integration > reads exactly one source-audio item when one material fills multiple visual slots
+   ↓ OpenChatCut real project reader integration > reads silent, BGM-follower, and independent-SFX semantics from the real runtime
+   ↓ OpenChatCut real project reader integration > reads disabled captions and independent manual cues through the real runtime
+   ↓ OpenChatCut real project reader integration > renders and probes a real synchronized proxy while preserving the editable project fingerprint
+   × OpenChatCut real project reader integration > opens, edits, freezes, and renders one real Episode containing TTS split-screen, source-audio, and silent captioned shots 3768ms
+     → promise rejected "Error: 文件路径或大小已变化。 { status: 409, …(1) }" instead of resolving
+   ↓ OpenChatCut real project reader integration > keeps an older project with a text caption item readable
+   ↓ OpenChatCut real project reader integration > blocks known invalid caption contracts after real OpenChatCut reading
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/worker/openchatcutProject.integration.test.ts > OpenChatCut real project reader integration > opens, edits, freezes, and renders one real Episode containing TTS split-screen, source-audio, and silent captioned shots
+AssertionError: promise rejected "Error: 文件路径或大小已变化。 { status: 409, …(1) }" instead of resolving
+ ❯ src/worker/openchatcutProject.integration.test.ts:312:98
+
+
+Caused by: Error: 文件路径或大小已变化。
+ ❯ verifyNativeFile src/local-app/localFiles.ts:27:80
+ ❯ src/worker/openchatcutProject.integration.test.ts:312:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { status: 409, preflight: undefined }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 11 skipped (12)
+   Start at  06:09:39
+   Duration  4.09s (transform 150ms, setup 7ms, collect 200ms, tests 3.77s, environment 0ms, prepare 30ms)
+

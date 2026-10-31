@@ -1,0 +1,26 @@
+{
+  "source": "loop_t24_restore_cbf53292089c",
+  "target": "loop_t24_restore_a64381178cc5",
+  "episode": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+  "prefix": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2",
+  "actualRoot": "/private/tmp/loop-t16-restore-9lrLHT/state/t24-restored-98c05a65-1cd4-4af1-9a25-a41395823755/media/account",
+  "firstPid": 68520,
+  "secondPid": 68645,
+  "completedReadOnly": false,
+  "sourceOffline": true,
+  "historyPreserved": true,
+  "migrationHistoryPreserved": true,
+  "completedReplay": null,
+  "ownerSha256": "6ed62f5700544febe1e4d8439e230aebbd3f6ab21d64161acedb456725226b53",
+  "project": {
+    "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/production-workspace/versions/1e98bbc632719774ed75774851739c8d15cae6d23aedad54d3ade0b37992332c.json",
+    "sha256": "1e98bbc632719774ed75774851739c8d15cae6d23aedad54d3ade0b37992332c",
+    "fileSize": 9015,
+    "projectId": "loop-control-d0382929-f3c6-4cc9-b460-1efc16ee618a"
+  },
+  "export": {
+    "sha256": "6ed62f5700544febe1e4d8439e230aebbd3f6ab21d64161acedb456725226b53",
+    "fileSize": 2549994,
+    "relativePath": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2/workspace-exports/7654cd95-031a-455d-a85e-0efd1634ac8f/6ed62f5700544febe1e4d8439e230aebbd3f6ab21d64161acedb456725226b53.mp4"
+  }
+}

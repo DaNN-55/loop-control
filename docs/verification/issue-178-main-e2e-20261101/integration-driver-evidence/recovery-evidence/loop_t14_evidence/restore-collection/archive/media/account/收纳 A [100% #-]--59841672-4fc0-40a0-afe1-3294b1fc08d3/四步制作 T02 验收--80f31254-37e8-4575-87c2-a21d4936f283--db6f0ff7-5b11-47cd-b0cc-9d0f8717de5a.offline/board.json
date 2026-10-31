@@ -1,0 +1,24 @@
+{
+  "version": "storyboard/v1",
+  "shots": [
+    {
+      "id": "shot-1",
+      "scriptSegment": "第一镜",
+      "durationSeconds": 2,
+      "shotType": "a_roll",
+      "productionMethod": "全屏 TTS",
+      "inputBasis": [],
+      "targetSpec": "9:16"
+    },
+    {
+      "id": "shot-2",
+      "scriptSegment": "缺少素材的第二镜。",
+      "durationSeconds": 2,
+      "shotType": "a_roll",
+      "productionMethod": "全屏 TTS",
+      "inputBasis": [],
+      "targetSpec": "9:16"
+    }
+  ],
+  "audioCues": []
+}

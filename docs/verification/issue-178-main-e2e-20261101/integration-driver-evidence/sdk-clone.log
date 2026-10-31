@@ -1,0 +1,10 @@
+Cloning into '/private/tmp/loop-control-main-e2e-20261101/integration-regression/OpenChatCut'...
+warning: source repository is shallow, ignoring --local
+warning: --local is ignored
+remote: warning: lazy fetching disabled; some objects may not be available        
+remote: fatal: could not fetch 4aace4a45c1741fcd93214e3794dedf016f4a828 from promisor remote        
+error: git upload-pack: git-pack-objects died with error.
+fatal: git upload-pack: aborting due to possible repository corruption on the remote side.
+remote: aborting due to possible repository corruption on the remote side.
+fatal: early EOF
+fatal: fetch-pack: invalid index-pack output

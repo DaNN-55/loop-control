@@ -1,0 +1,96 @@
+{
+  "voice": {
+    "nominal": {
+      "hz": 330,
+      "seconds": 2.376
+    },
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "mp3",
+          "codec_type": "audio",
+          "sample_rate": "48000",
+          "start_time": "0.023021",
+          "duration": "2.376000"
+        }
+      ],
+      "format": {
+        "duration": "2.376000"
+      }
+    }
+  },
+  "bgm": {
+    "nominal": {
+      "hz": 110,
+      "seconds": 8
+    },
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "mp3",
+          "codec_type": "audio",
+          "sample_rate": "48000",
+          "start_time": "0.023021",
+          "duration": "8.000000"
+        }
+      ],
+      "format": {
+        "duration": "8.000000"
+      }
+    }
+  },
+  "sfx": {
+    "nominal": {
+      "hz": 880,
+      "seconds": 0.4
+    },
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "mp3",
+          "codec_type": "audio",
+          "sample_rate": "48000",
+          "start_time": "0.023021",
+          "duration": "0.400000"
+        }
+      ],
+      "format": {
+        "duration": "0.400000"
+      }
+    }
+  },
+  "video": {
+    "nominal": {
+      "hz": 440,
+      "seconds": 4
+    },
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "start_time": "0.000000",
+          "duration": "4.000000"
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "sample_rate": "48000",
+          "start_time": "0.000000",
+          "duration": "4.000000"
+        }
+      ],
+      "format": {
+        "duration": "4.000000"
+      }
+    }
+  }
+}

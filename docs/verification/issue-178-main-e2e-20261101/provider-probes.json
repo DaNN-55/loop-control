@@ -1,0 +1,72 @@
+[
+  {
+    "name": "minimax",
+    "provider": "minimax",
+    "version": "4f0f0cfa-1c07-48d8-8484-0ae2bb302dd5",
+    "outcome": "verified",
+    "attempted": true,
+    "code": "verified",
+    "detail": "连接验证通过；尚未执行内容生成。",
+    "httpStatus": 200
+  },
+  {
+    "name": "kling",
+    "provider": "kling",
+    "version": "2dc46417-5042-4db1-a44a-5fb25a256329",
+    "outcome": "verified",
+    "attempted": true,
+    "code": "verified",
+    "detail": "连接验证通过；尚未执行内容生成。",
+    "httpStatus": 200
+  },
+  {
+    "name": "百炼-万象",
+    "provider": "bailian",
+    "version": "0364ea9a-41c6-40f6-8178-191b3073efdd",
+    "outcome": "verified",
+    "attempted": true,
+    "code": "verified",
+    "detail": "连接验证通过；尚未执行内容生成。",
+    "httpStatus": 200
+  },
+  {
+    "name": "Pexels 素材连接",
+    "provider": "pexels",
+    "version": "9bf6f776-a439-4e17-8260-55fa2b060e79",
+    "outcome": "verified",
+    "attempted": true,
+    "code": "verified",
+    "detail": "连接验证通过；尚未执行内容生成。",
+    "httpStatus": 200
+  },
+  {
+    "name": "火山语音连接",
+    "provider": "volcengine_tts",
+    "version": "3e83d07f-dd79-4897-838f-41d82fc647ea",
+    "outcome": "verified",
+    "attempted": true,
+    "code": "verified",
+    "detail": "语音接口验证通过（固定短句）。",
+    "httpStatus": 200
+  },
+  {
+    "name": "seedance",
+    "provider": "volcengine",
+    "version": "0c7266ff-531d-4200-bb6a-78c4d1f263fd",
+    "outcome": "verified",
+    "attempted": true,
+    "code": "verified",
+    "detail": "连接验证通过；尚未执行内容生成。",
+    "httpStatus": 200
+  },
+  {
+    "name": "Freesound 本地",
+    "provider": "freesound",
+    "version": "e14175ec-984e-4690-8647-47be42df75cf",
+    "outcome": "verified",
+    "attempted": true,
+    "code": "verified",
+    "detail": "连接验证通过；尚未执行内容生成。",
+    "httpStatus": 200
+  }
+]

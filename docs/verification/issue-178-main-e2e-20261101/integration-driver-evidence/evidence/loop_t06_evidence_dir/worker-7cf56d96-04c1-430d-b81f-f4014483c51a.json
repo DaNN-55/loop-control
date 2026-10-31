@@ -1,0 +1,344 @@
+{
+  "task": {
+    "id": "7cf56d96-04c1-430d-b81f-f4014483c51a",
+    "task_type": "generate_soundtrack",
+    "status": "completed",
+    "input_snapshot": {
+      "media": {
+        "adapter": "freesound_preview",
+        "soundtrack": {
+          "cue": {
+            "id": "259aaa4e-8629-4640-9b36-1fb7a916bd92",
+            "kind": "bgm",
+            "description": "整期配乐",
+            "search_query": "ambient",
+            "start_seconds": 0,
+            "duration_seconds": 4
+          },
+          "query": "ambient",
+          "target_duration_seconds": 4
+        }
+      },
+      "budget": {
+        "limit_cents": 0,
+        "max_attempts": 1
+      },
+      "output": {
+        "content_type": "audio/mpeg",
+        "review_stage": "production_ready",
+        "relative_path": "episodes/82e8e306-8a2a-42c7-bb3a-964f803fdaff/native-tasks/7cf56d96-04c1-430d-b81f-f4014483c51a/b1bb1a19-e03f-473a-aec7-917a924ed859.mp3",
+        "required_artifact_types": [
+          "soundtrack_audio"
+        ]
+      },
+      "executor": {
+        "model": "freesound-preview-v1",
+        "adapter": "freesound_preview",
+        "provider": "freesound",
+        "prompt_version": "production-request-v1"
+      },
+      "capability": "soundtrack_generation",
+      "cost_basis": {
+        "kind": "freesound_preview_search",
+        "reservationCents": 0
+      },
+      "audio_track": {
+        "kind": "bgm",
+        "cue_id": "259aaa4e-8629-4640-9b36-1fb7a916bd92",
+        "start_seconds": 0,
+        "duration_seconds": 0.001,
+        "source_review_package_id": "03e781e7-fedb-43af-87b5-1267c354055b"
+      },
+      "allowed_tools": [
+        "read",
+        "write"
+      ],
+      "credential_ref": "78e2e17a-c17a-4e77-a15f-df11fa25d205",
+      "input_artifacts": [],
+      "workspace_audio": {
+        "preparation_id": "259aaa4e-8629-4640-9b36-1fb7a916bd92",
+        "input_fingerprint": "e7891c9565c3cd8cef6c7698dec6d7b3c53b56b0f474c839f57e89bb7ea1e564"
+      },
+      "workspace_target": {
+        "shotId": null,
+        "revision": "1",
+        "workspaceId": "79e5c8e7-4b92-429a-9d2c-5a5e41191733",
+        "projectSha256": "1d1910e6d45b7fb79c46b5dbbf84ceae983fa48d4fcae59dd9c7ec0d34a6dba8",
+        "scriptRevisionId": "ad1ee0c1-7052-43b1-9f02-2699612f3090"
+      },
+      "configuration_hash": "e7891c9565c3cd8cef6c7698dec6d7b3c53b56b0f474c839f57e89bb7ea1e564-b1bb1a19-e03f-473a-aec7-917a924ed859",
+      "production_context": {
+        "accountId": "0eca379e-0cda-4ec9-b69d-7330a439fae9",
+        "seriesRules": null,
+        "accountRules": {},
+        "seriesVersionId": null,
+        "blueprintVersionId": "0eca379e-0cda-4ec9-b69d-7330a439fae9"
+      },
+      "runtime_constraints": {
+        "source": {
+          "worker_capacity": 1,
+          "adapter_safety_limit": 1,
+          "provider_or_connection_limit": null
+        },
+        "version": "worker-runtime/v1",
+        "resource_limits": [
+          {
+            "key": "adapter:freesound:freesound_preview",
+            "limit": 1
+          },
+          {
+            "key": "connection:78e2e17a-c17a-4e77-a15f-df11fa25d205",
+            "limit": 1
+          },
+          {
+            "key": "host:download",
+            "limit": 1
+          },
+          {
+            "key": "provider:freesound",
+            "limit": 1
+          }
+        ],
+        "concurrency_group": "freesound:freesound_preview:78e2e17a-c17a-4e77-a15f-df11fa25d205",
+        "effective_concurrency": 1
+      },
+      "production_selection": {
+        "adapter": "freesound_preview",
+        "provider": "freesound",
+        "capability": "music_sound",
+        "connectionVersionId": "78e2e17a-c17a-4e77-a15f-df11fa25d205"
+      },
+      "native_output_namespace": "7cf56d96-04c1-430d-b81f-f4014483c51a",
+      "native_episode_relative_path": "episodes/82e8e306-8a2a-42c7-bb3a-964f803fdaff",
+      "storyboard_review_package_id": "03e781e7-fedb-43af-87b5-1267c354055b",
+      "native_episode_directory_identity": {
+        "inodeId": null,
+        "deviceId": null
+      }
+    },
+    "last_result": {
+      "retry": {
+        "reason": "Completed successfully.",
+        "shouldRetry": false
+      },
+      "status": "completed",
+      "taskId": "7cf56d96-04c1-430d-b81f-f4014483c51a",
+      "version": "worker-result/v1",
+      "blockers": [],
+      "nextStep": "Await the next controlled production step.",
+      "artifacts": [
+        {
+          "sha256": "9cf95bda0868c36f1eed2531de2f4cebb97821b29c27468f38e983c0c066e763",
+          "fileSize": 17996,
+          "artifactType": "soundtrack_audio",
+          "relativePath": "episodes/82e8e306-8a2a-42c7-bb3a-964f803fdaff/native-tasks/7cf56d96-04c1-430d-b81f-f4014483c51a/b1bb1a19-e03f-473a-aec7-917a924ed859.mp3"
+        }
+      ],
+      "preflight": {
+        "checks": [
+          {
+            "check": "command_availability",
+            "phase": "preflight",
+            "scope": "worker",
+            "action": "none",
+            "reason": "本地受控规划执行路径；不自动调用在线Provider。",
+            "status": "passed",
+            "capability": "soundtrack_generation"
+          }
+        ],
+        "version": "worker-preflight/v2"
+      },
+      "validation": {
+        "checks": [
+          {
+            "name": "controlled_media_output",
+            "detail": "已按冻结 freesound 适配器生成并校验主产物。",
+            "passed": true
+          },
+          {
+            "name": "native_media_mode",
+            "detail": "受控Provider响应和SecretStore替身；没有在线资格或在线生成证明。",
+            "passed": true
+          }
+        ],
+        "passed": true
+      },
+      "mediaSource": {
+        "title": "Controlled tone",
+        "creator": "fixture",
+        "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "provider": "freesound",
+        "sourceId": 1,
+        "sourceUrl": "https://freesound.org/people/fixture/sounds/1/",
+        "previewUrl": "https://cdn.freesound.org/previews/1/1.mp3"
+      },
+      "actualCostCents": 0,
+      "audioDurationSeconds": 4
+    }
+  },
+  "runs": [
+    {
+      "id": "fdf1ae51-10ba-44f1-b6fc-c3827fa6c802",
+      "task_id": "7cf56d96-04c1-430d-b81f-f4014483c51a",
+      "attempt": 0,
+      "task_package": {
+        "task": {
+          "id": "7cf56d96-04c1-430d-b81f-f4014483c51a",
+          "type": "generate_soundtrack",
+          "attempt": 0
+        },
+        "media": {
+          "adapter": "freesound_preview",
+          "soundtrack": {
+            "cue": {
+              "id": "259aaa4e-8629-4640-9b36-1fb7a916bd92",
+              "kind": "bgm",
+              "description": "整期配乐",
+              "search_query": "ambient",
+              "start_seconds": 0,
+              "duration_seconds": 4
+            },
+            "query": "ambient",
+            "target_duration_seconds": 4
+          }
+        },
+        "budget": {
+          "attempt": 0,
+          "limit_cents": 0,
+          "max_attempts": 1
+        },
+        "output": {
+          "content_type": "audio/mpeg",
+          "review_stage": "production_ready",
+          "relative_path": "episodes/82e8e306-8a2a-42c7-bb3a-964f803fdaff/native-tasks/7cf56d96-04c1-430d-b81f-f4014483c51a/b1bb1a19-e03f-473a-aec7-917a924ed859.mp3",
+          "required_artifact_types": [
+            "soundtrack_audio"
+          ]
+        },
+        "episode": {
+          "id": "82e8e306-8a2a-42c7-bb3a-964f803fdaff",
+          "title": "四步制作 T02 验收",
+          "account_id": "0eca379e-0cda-4ec9-b69d-7330a439fae9",
+          "blueprint_version_id": "0eca379e-0cda-4ec9-b69d-7330a439fae9"
+        },
+        "version": "worker-task/v1",
+        "executor": {
+          "model": "freesound-preview-v1",
+          "adapter": "freesound_preview",
+          "provider": "freesound",
+          "prompt_version": "production-request-v1"
+        },
+        "capability": "soundtrack_generation",
+        "audio_track": {
+          "kind": "bgm",
+          "cue_id": "259aaa4e-8629-4640-9b36-1fb7a916bd92",
+          "start_seconds": 0,
+          "duration_seconds": 0.001,
+          "source_review_package_id": "03e781e7-fedb-43af-87b5-1267c354055b"
+        },
+        "lease_token": "d15ef36f-fa7e-4b85-a488-1dd022c4e02a",
+        "allowed_tools": [
+          "read",
+          "write"
+        ],
+        "prompt_context": {
+          "hash": "00059f7e11e226658306e8824167b7a3",
+          "version": "prompt-context/v1",
+          "episode_input": {
+            "media": {
+              "adapter": "freesound_preview",
+              "soundtrack": {
+                "cue": {
+                  "id": "259aaa4e-8629-4640-9b36-1fb7a916bd92",
+                  "kind": "bgm",
+                  "description": "整期配乐",
+                  "search_query": "ambient",
+                  "start_seconds": 0,
+                  "duration_seconds": 4
+                },
+                "query": "ambient",
+                "target_duration_seconds": 4
+              }
+            },
+            "input_artifacts": []
+          },
+          "account_defaults": {},
+          "blueprint_version_id": "0eca379e-0cda-4ec9-b69d-7330a439fae9",
+          "account_hard_constraints": {}
+        },
+        "input_artifacts": [],
+        "forbidden_actions": [
+          "approve",
+          "publish",
+          "change_blueprint",
+          "change_episode_stage"
+        ],
+        "storyboard_review_package_id": "03e781e7-fedb-43af-87b5-1267c354055b"
+      },
+      "result": {
+        "retry": {
+          "reason": "Completed successfully.",
+          "shouldRetry": false
+        },
+        "status": "completed",
+        "taskId": "7cf56d96-04c1-430d-b81f-f4014483c51a",
+        "version": "worker-result/v1",
+        "blockers": [],
+        "nextStep": "Await the next controlled production step.",
+        "artifacts": [
+          {
+            "sha256": "9cf95bda0868c36f1eed2531de2f4cebb97821b29c27468f38e983c0c066e763",
+            "fileSize": 17996,
+            "artifactType": "soundtrack_audio",
+            "relativePath": "episodes/82e8e306-8a2a-42c7-bb3a-964f803fdaff/native-tasks/7cf56d96-04c1-430d-b81f-f4014483c51a/b1bb1a19-e03f-473a-aec7-917a924ed859.mp3"
+          }
+        ],
+        "preflight": {
+          "checks": [
+            {
+              "check": "command_availability",
+              "phase": "preflight",
+              "scope": "worker",
+              "action": "none",
+              "reason": "本地受控规划执行路径；不自动调用在线Provider。",
+              "status": "passed",
+              "capability": "soundtrack_generation"
+            }
+          ],
+          "version": "worker-preflight/v2"
+        },
+        "validation": {
+          "checks": [
+            {
+              "name": "controlled_media_output",
+              "detail": "已按冻结 freesound 适配器生成并校验主产物。",
+              "passed": true
+            },
+            {
+              "name": "native_media_mode",
+              "detail": "受控Provider响应和SecretStore替身；没有在线资格或在线生成证明。",
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        "mediaSource": {
+          "title": "Controlled tone",
+          "creator": "fixture",
+          "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+          "provider": "freesound",
+          "sourceId": 1,
+          "sourceUrl": "https://freesound.org/people/fixture/sounds/1/",
+          "previewUrl": "https://cdn.freesound.org/previews/1/1.mp3"
+        },
+        "actualCostCents": 0,
+        "audioDurationSeconds": 4
+      },
+      "status": "completed",
+      "actual_cost_cents": 0,
+      "started_at": "2026-10-31T21:58:50.779Z",
+      "completed_at": "2026-10-31T21:58:51.139Z",
+      "lease_token": "d15ef36f-fa7e-4b85-a488-1dd022c4e02a"
+    }
+  ]
+}

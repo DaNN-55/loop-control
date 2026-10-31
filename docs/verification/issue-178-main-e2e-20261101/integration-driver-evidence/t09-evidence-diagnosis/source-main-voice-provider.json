@@ -1,0 +1,146 @@
+{
+  "inputSnapshot": {
+    "shot": {
+      "id": "shot-1",
+      "shotType": "b_roll",
+      "inputBasis": [
+        {
+          "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+          "relativePath": "episodes/67499413-f016-4cd7-bbba-3ff4a33521a4/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-first.png"
+        }
+      ],
+      "targetSpec": "9:16",
+      "scriptSegment": "第一镜",
+      "durationSeconds": 2,
+      "productionMethod": "全屏 TTS"
+    },
+    "media": {
+      "adapter": "seedance_video",
+      "wan_video": {
+        "audio": false,
+        "prompt": "沿当前原声缓慢移动\n\n账号创作规则：{}\n系列创作规则：null",
+        "image_mime": "image/png",
+        "resolution": "720P",
+        "first_frame": {
+          "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+          "fileSize": 1515,
+          "artifactType": "wan_first_frame",
+          "relativePath": "episodes/67499413-f016-4cd7-bbba-3ff4a33521a4/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-first.png"
+        },
+        "duration_seconds": 5
+      }
+    },
+    "budget": {
+      "limit_cents": 90,
+      "max_attempts": 1
+    },
+    "output": {
+      "content_type": "video/mp4",
+      "review_stage": "production_ready",
+      "relative_path": "episodes/67499413-f016-4cd7-bbba-3ff4a33521a4/native-tasks/75dbf02d-147e-4217-abd9-665c8d28bc98/75dbf02d-147e-4217-abd9-665c8d28bc98.mp4",
+      "required_artifact_types": [
+        "b_roll_asset"
+      ]
+    },
+    "executor": {
+      "model": "doubao-seedance-2-0-260128",
+      "adapter": "seedance_video",
+      "provider": "volcengine",
+      "prompt_version": "production-request-v1"
+    },
+    "capability": "b_roll_generation",
+    "cost_basis": {
+      "kind": "owner-reservation",
+      "model": "doubao-seedance-2-0-260128",
+      "reservationCents": 90,
+      "providerDurationSeconds": 5
+    },
+    "requested_by": "25e530db-2e76-4e67-93f3-f7dce34d9ee8",
+    "allowed_tools": [
+      "read",
+      "write"
+    ],
+    "credential_ref": "ee55189c-8111-4482-bff7-2fb1f71e5a2c",
+    "wan_request_id": "f2688c34-7d44-4838-bcb3-f51d80f5f5ae",
+    "input_artifacts": [
+      {
+        "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+        "fileSize": 1515,
+        "artifactType": "wan_first_frame",
+        "relativePath": "episodes/67499413-f016-4cd7-bbba-3ff4a33521a4/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-first.png"
+      }
+    ],
+    "workspace_target": {
+      "shotId": "shot-1",
+      "targetItemId": "shot-shot-1-2ced0c05-30d7-47f5-ad7b-dbe997883700",
+      "projectSha256": "50b972345053a38b498d5f738ec308f5550ca5b61a7d6cf7e2a49439eb1ad687",
+      "scriptRevisionId": "813eb683-f97f-4867-ad25-5f7ee0b638e5",
+      "workspaceRevision": 7
+    },
+    "workspace_visual": {
+      "mode": "source",
+      "source": {
+        "id": "c49007c0-bd53-4a42-a853-f4d7ab338b2b",
+        "sha256": "6d6328dc46146484eee31dd196a6d15a1ccec526072f4c2fb61a30ac41405413",
+        "coverage": "full",
+        "fileSize": 22587,
+        "srcInFrame": 0,
+        "playbackRate": 1,
+        "relativePath": "episodes/67499413-f016-4cd7-bbba-3ff4a33521a4/native-tasks/1b0576e0-812d-4f87-ae38-0ba1a3322d59/7ab88dc9-6b82-4cac-9612-e800567827c2.mp3"
+      },
+      "identity": "{\"mode\":\"source\",\"id\":\"workspace-source-shot-shot-1\",\"src\":\"episodes/67499413-f016-4cd7-bbba-3ff4a33521a4/native-tasks/1b0576e0-812d-4f87-ae38-0ba1a3322d59/7ab88dc9-6b82-4cac-9612-e800567827c2.mp3\",\"sourceAssetId\":\"audio-track-c49007c0-bd53-4a42-a853-f4d7ab338b2b\",\"sha256\":null,\"startFrame\":0,\"durationInFrames\":150,\"srcInFrame\":0,\"playbackRate\":1,\"edits\":null,\"fps\":30}",
+      "windowDurationSeconds": 5
+    },
+    "configuration_hash": "f77454a8009bdacaa9ebd5d1c85edc57cfebe18119ce16275d15bb7f56c7097f",
+    "production_context": {
+      "accountId": "23434d03-26cb-4b29-8461-21b2069f0eb2",
+      "seriesRules": null,
+      "accountRules": {},
+      "seriesVersionId": null,
+      "blueprintVersionId": "23434d03-26cb-4b29-8461-21b2069f0eb2"
+    },
+    "production_selection": {
+      "model": "doubao-seedance-2-0-260128",
+      "adapter": "seedance_video",
+      "provider": "volcengine",
+      "capability": "video",
+      "connectionVersionId": "ee55189c-8111-4482-bff7-2fb1f71e5a2c"
+    },
+    "native_output_namespace": "75dbf02d-147e-4217-abd9-665c8d28bc98",
+    "workspace_visual_request_id": "f2688c34-7d44-4838-bcb3-f51d80f5f5ae",
+    "native_episode_relative_path": "episodes/67499413-f016-4cd7-bbba-3ff4a33521a4",
+    "storyboard_review_package_id": "beef01ca-b204-46d9-970e-355cb7c6f929",
+    "native_episode_directory_identity": {
+      "inodeId": null,
+      "deviceId": null
+    }
+  },
+  "actualProviderPost": {
+    "model": "doubao-seedance-2-0-260128",
+    "content": [
+      {
+        "type": "text",
+        "text": "沿当前原声缓慢移动\n\n账号创作规则：{}\n系列创作规则：null"
+      },
+      {
+        "type": "image_url",
+        "image_url": {
+          "url": "<MEDIA_DATA_ELIDED sha256=63ff5a206e14e1e2373e3a86e83b4482de49e853ed6c3f9dc9c3c679ee4faea6 characters=2042>"
+        },
+        "role": "first_frame"
+      }
+    ],
+    "duration": 5,
+    "ratio": "adaptive",
+    "resolution": "720p",
+    "generate_audio": false,
+    "watermark": false
+  },
+  "retainedMutedTts": {
+    "sourceSha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+    "durationSeconds": 2.4
+  },
+  "lateRouteAdoptionStatus": 409,
+  "unchangedProjectSha256": "543d1c8750a7e3f4be4603f4d1aef1684f7941f63800720a58d1473d4565c383",
+  "episodeStage": "storyboard_approved"
+}

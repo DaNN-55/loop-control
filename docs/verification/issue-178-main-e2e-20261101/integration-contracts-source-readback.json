@@ -1,0 +1,23 @@
+{
+  "source": "/private/tmp/loop-control-main-e2e-20261101/integration-regression/verification-source",
+  "files": [
+    {
+      "path": "src/local-app/embeddedStudio.integration.test.ts",
+      "beforeSha256": "acd30e1379c195ca83114bd90f786d1e8ce5213f51960bae443f4cbad3bf2989",
+      "afterSha256": "e29454fcf4eb3e8175a0e3ed7030534539982088bb39d9dfcbe9558aafaaa1a5",
+      "matchesVerifiedSource": true
+    },
+    {
+      "path": "src/local-app/workspaceFirstVideo.source.integration.test.ts",
+      "beforeSha256": "0472287e7e1422b28bbce1a55d0d19ac4007182f361221cf5dc65cc893ca998d",
+      "afterSha256": "59908925baf6b8818aa5ac0eba56fc7fc520d2f86904694f5323c5afdafa27ea",
+      "matchesVerifiedSource": true
+    },
+    {
+      "path": "src/local-app/blueprintReviewRetirement.integration.test.ts",
+      "beforeSha256": "e57c425ac01872aa34cf10e1358edb66b08212b25a9671f370d952543e654302",
+      "afterSha256": "6ed6a49f513058798977375d106e05ed16a420e770a8e9944ab0da6d3626cf39",
+      "matchesVerifiedSource": true
+    }
+  ]
+}

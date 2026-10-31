@@ -1,0 +1,22 @@
+{
+  "source": "/private/tmp/loop-t06-volume-UNPekp/mounted/loop-153-n7PjMM/account/episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/openchatcut-work/current/runtime/project-store-v1",
+  "count": 2,
+  "importedAt": "2026-10-31T22:24:22.735Z",
+  "phase": 2,
+  "keys": {
+    "projects": "94c62fd45b8043238b23b6597d16eec5a8dab704c19a4ab43b9fbfc19b9da43d",
+    "project:loop-control-d0382929-f3c6-4cc9-b460-1efc16ee618a": "94c62fd45b8043238b23b6597d16eec5a8dab704c19a4ab43b9fbfc19b9da43d"
+  },
+  "sources": {
+    "projects": {
+      "path": "/private/tmp/loop-t06-volume-UNPekp/mounted/loop-153-n7PjMM/account/episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/openchatcut-work/current/runtime/project-store-v1.json",
+      "sha256": "94c62fd45b8043238b23b6597d16eec5a8dab704c19a4ab43b9fbfc19b9da43d",
+      "kind": "project-store-monolith"
+    },
+    "project:loop-control-d0382929-f3c6-4cc9-b460-1efc16ee618a": {
+      "path": "/private/tmp/loop-t06-volume-UNPekp/mounted/loop-153-n7PjMM/account/episodes/d0382929-f3c6-4cc9-b460-1efc16ee618a/openchatcut-work/current/runtime/project-store-v1.json",
+      "sha256": "94c62fd45b8043238b23b6597d16eec5a8dab704c19a4ab43b9fbfc19b9da43d",
+      "kind": "project-store-monolith"
+    }
+  }
+}

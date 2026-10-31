@@ -1,0 +1,121 @@
+{
+  "pid": 99899,
+  "mountPath": "/private/tmp/loop-t06-volume-UHpDdE/mounted",
+  "source": "/private/tmp/loop-t06-volume-UHpDdE/mounted/loop-153-ggA240",
+  "before": {
+    "deviceId": "16777261",
+    "inodeId": "16"
+  },
+  "after": {
+    "exists": false
+  },
+  "statusBefore": {
+    "status": 200,
+    "body": {
+      "observedAt": "2026-10-31T22:05:18.118Z",
+      "automation": {
+        "stopped": false,
+        "lastScanAt": "2026-10-31T22:05:18.057Z",
+        "lastError": null,
+        "timezone": "Asia/Shanghai",
+        "hour": 9,
+        "intervalMs": 4000,
+        "n8nRequired": false,
+        "backupsEnabled": false
+      },
+      "plans": [
+        {
+          "kind": "health",
+          "timezone": "Asia/Shanghai",
+          "next_due_at": "2026-11-01T01:00:00.000Z"
+        }
+      ],
+      "jobs": [],
+      "operations": {
+        "notification": {
+          "latest": {
+            "passed": true,
+            "idle": true,
+            "detail": "没有新提醒；历史消费位置保留。",
+            "at": "2026-10-31T22:05:18.082Z"
+          },
+          "lastSuccess": {
+            "passed": true,
+            "idle": true,
+            "detail": "没有新提醒；历史消费位置保留。",
+            "at": "2026-10-31T22:05:18.082Z"
+          },
+          "lastFailure": null
+        }
+      },
+      "runtime": {
+        "observedAt": "2026-10-31T22:05:18.118Z",
+        "worker": {
+          "state": "healthy",
+          "heartbeatAt": "2026-10-31T22:05:18.056Z",
+          "lastScanAt": "2026-10-31T22:05:18.056Z",
+          "active": 0,
+          "capacity": 1,
+          "problem": null
+        },
+        "queue": {
+          "page": 1,
+          "items": [],
+          "total": 0,
+          "failed": 0,
+          "queued": 0,
+          "blocked": 0,
+          "running": 0,
+          "pageSize": 20
+        },
+        "resources": {
+          "cpuPercent": 63,
+          "memory": {
+            "totalBytes": 17179869184,
+            "freeBytes": 2459975680
+          },
+          "disk": {
+            "availableBytes": 46255181824,
+            "totalBytes": 245107195904
+          },
+          "media": {
+            "state": "healthy",
+            "availableBytes": 266592256,
+            "minimumFreeBytes": 0
+          }
+        }
+      },
+      "maintenanceAvailable": true
+    }
+  },
+  "statusAfter": {
+    "status": 409,
+    "body": {
+      "error": "媒体根不存在或不可读写，请恢复挂载和权限后重试。"
+    }
+  },
+  "bindingBefore": {
+    "path": "/private/tmp/loop-t06-volume-UHpDdE/mounted/loop-153-ggA240",
+    "inodeId": "16",
+    "deviceId": "16777261",
+    "mountPath": "/private/tmp/loop-t06-volume-UHpDdE/mounted"
+  },
+  "remounted": {
+    "deviceId": "16777261",
+    "inodeId": "16",
+    "binding": {
+      "path": "/private/tmp/loop-t06-volume-UHpDdE/mounted/loop-153-ggA240",
+      "inodeId": "16",
+      "deviceId": "16777261",
+      "mountPath": "/private/tmp/loop-t06-volume-UHpDdE/mounted"
+    },
+    "state": {
+      "migration": null,
+      "executing": false,
+      "path": "/private/tmp/loop-t06-volume-UHpDdE/mounted/loop-153-ggA240",
+      "canInitialize": false,
+      "status": "ready"
+    },
+    "mediaBytesUnchanged": true
+  }
+}

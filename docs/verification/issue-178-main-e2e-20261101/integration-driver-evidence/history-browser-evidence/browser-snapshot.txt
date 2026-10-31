@@ -1,0 +1,97 @@
+- generic [ref=e1] clickable [onclick]
+  - link "跳到主要内容" [ref=e2]
+  - complementary "主导航"
+    - image "Loop Control"
+    - navigation "工作区" [ref=e4]
+      - group "生产工作"
+        - button "工作台" [ref=e9]
+        - button "生产单" [ref=e10]
+      - group "账号管理"
+        - button "账号" [ref=e11]
+      - group "配置与资料"
+        - button "连接配置" [ref=e12]
+        - button "历史资料" [ref=e13]
+    - generic
+      - button "打开 OpenChatCut 独立剪辑" [ref=e6]
+      - button "系统状态：待确认" [expanded=false, ref=e14]
+      - button "收起侧栏" [ref=e7]
+  - region "平台工作台" [ref=e3]
+    - sectionheader
+      - navigation "当前位置" [ref=e8]
+        - strong
+          - StaticText "工作台"
+      - group "工作区工具"
+        - textbox "查找生产单、账号或素材" [ref=e30]
+        - button "待处理通知" [expanded=false, ref=e15]
+        - button "切换至深色模式" [ref=e16]
+        - button "所有者设置" [expanded=false, ref=e31]
+    - region "系列运营概览" [ref=e5]
+      - sectionheader
+        - heading "制作中的内容" [level=1, ref=e17]
+        - button "新建生产单" [ref=e18]
+          - StaticText "新建生产单"
+      - strong
+        - StaticText "当前审核已处理完毕"
+      - StaticText "可以继续制作，或新建生产单。"
+      - tablist "工作台状态筛选"
+        - tab "全部制作 0" [selected, ref=e19]
+          - StaticText "全部制作"
+          - StaticText "0"
+        - tab "待审核 0" [ref=e20]
+          - StaticText "待审核"
+          - StaticText "0"
+        - tab "制作中 0" [ref=e21]
+          - StaticText "制作中"
+          - StaticText "0"
+        - tab "需处理 0" [ref=e22]
+          - StaticText "需处理"
+          - StaticText "0"
+        - tab "已完成 0" [ref=e23]
+          - StaticText "已完成"
+          - StaticText "0"
+      - tabpanel "全部制作 0"
+        - search "搜索工作台生产单"
+          - textbox "搜索标题或编号" [ref=e32]
+        - combobox "工作台账号筛选" [expanded=false, ref=e33]: 全部账号
+          - MenuListPopup
+            - option "全部账号" [selected, ref=e40]
+        - combobox "运营系列筛选" [expanded=false, ref=e34]: 全部系列
+          - MenuListPopup
+            - option "全部系列" [selected, ref=e41]
+            - option "未归属系列" [ref=e42]
+            - option "关联系列不可用" [ref=e43]
+        - combobox "工作台排序" [expanded=false, ref=e35]: 最近更新
+          - MenuListPopup
+            - option "最近更新" [selected, ref=e44]
+            - option "最早更新" [ref=e45]
+            - option "标题顺序" [ref=e46]
+        - region "系列生产单" [ref=e24]
+          - heading "没有符合条件的生产单" [level=3, ref=e36]
+          - paragraph
+            - StaticText "调整筛选条件，或新建生产单。"
+        - sectionfooter
+          - StaticText "0"
+          - StaticText " 张生产单"
+          - button "查看全部" [ref=e37]
+            - StaticText "查看全部"
+  - dialog "本机存储"
+    - banner
+      - heading "本机存储" [level=2, ref=e25]
+      - button "关闭本机存储" [ref=e26]
+    - generic
+      - heading "媒体根目录" [level=3, ref=e27]
+      - StaticText "/private/tmp/loop-t06-volume-pbJyzv/mounted/chosen-library"
+      - button "复制媒体根路径" [ref=e28]
+      - button "打开文件夹" [ref=e29]
+        - StaticText "打开文件夹"
+      - form
+        - LabelText
+          - StaticText "初始化位置"
+          - group
+            - textbox "初始化位置" [ref=e47]: /private/tmp/loop-t06-volume-pbJyzv/mounted/chosen-library
+              - StaticText "/private/tmp/loop-t06-volume-pbJyzv/mounted/chosen-library"
+        - button "选择文件夹" [ref=e38]
+          - StaticText "选择文件夹"
+        - button "初始化媒体根" [disabled, ref=e39]
+          - StaticText "初始化媒体根"
+      - status

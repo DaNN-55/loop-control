@@ -1,0 +1,173 @@
+{
+  "version": 3,
+  "loopControl": {
+    "version": "four-step-workspace/v1",
+    "inputFingerprint": "ca067b4f-2c5b-46ff-a5b7-2fa0f0a8b5f7",
+    "transitionMode": "studio"
+  },
+  "assets": [
+    {
+      "id": "asset-1",
+      "name": "shot.mp4",
+      "kind": "video",
+      "src": "episodes/7dae64a3-c626-4435-b931-65a52b234aae/shot.mp4",
+      "durationInFrames": 60,
+      "sourceRevision": "source-v1-07yybk500uzgav"
+    },
+    {
+      "id": "asset-2",
+      "name": "voice.mp3",
+      "kind": "audio",
+      "src": "episodes/7dae64a3-c626-4435-b931-65a52b234aae/voice.mp3",
+      "durationInFrames": 60,
+      "sourceRevision": "source-v1--9ir4na06a7una"
+    },
+    {
+      "id": "audio-track-d814275c-01ac-435b-bbb6-2f0978dec0f1",
+      "name": "workspace-narration-shot-shot-1",
+      "kind": "audio",
+      "src": "episodes/7dae64a3-c626-4435-b931-65a52b234aae/native-tasks/7afa496d-6dff-488e-87f6-f35f13c0ffeb/shot-narration-shot-1-fed0d505-5766-45ed-bd8e-c4773d9c2f52.mp3",
+      "durationInFrames": 72
+    }
+  ],
+  "mediaFolders": [],
+  "timelines": [
+    {
+      "id": "loop-control-7dae64a3-c626-4435-b931-65a52b234aae",
+      "name": "生产单审核时间线",
+      "order": 0,
+      "fps": 30,
+      "width": 360,
+      "height": 640,
+      "fit": "cover",
+      "items": [
+        {
+          "id": "shot-shot-1-full",
+          "track": "track_loop-control-7dae64a3-c626-4435-b931-65a52b234aae_1",
+          "startFrame": 0,
+          "durationInFrames": 60,
+          "kind": "video",
+          "name": "shot-1 · 片段 1",
+          "src": "episodes/7dae64a3-c626-4435-b931-65a52b234aae/shot.mp4",
+          "sourceAssetId": "asset-1",
+          "srcInFrame": 0,
+          "volume": 0,
+          "transform": {
+            "scale": 1,
+            "x": 13,
+            "y": 0,
+            "rotation": 0
+          },
+          "sourceRevision": "source-v1-07yybk500uzgav",
+          "loopControlShot": {
+            "workspaceId": "ca067b4f-2c5b-46ff-a5b7-2fa0f0a8b5f7",
+            "shotId": "shot-1",
+            "clipId": "9ca6540d-61d9-40fe-90a4-af4b87291214",
+            "text": "第一镜",
+            "provenance": {
+              "materialRevisionId": "9be661f7-9fc1-4cc5-ba31-3bc530cd77c0",
+              "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+              "fileSize": 210288,
+              "kind": "video"
+            }
+          },
+          "loopControlAudio": {
+            "workspaceId": "ca067b4f-2c5b-46ff-a5b7-2fa0f0a8b5f7",
+            "shotId": "shot-1",
+            "voiceMode": "tts"
+          }
+        },
+        {
+          "id": "main-tts-narration-shot-1",
+          "track": "track_loop-control-7dae64a3-c626-4435-b931-65a52b234aae_2",
+          "startFrame": 0,
+          "durationInFrames": 60,
+          "kind": "audio",
+          "name": "narration:shot-1",
+          "src": "episodes/7dae64a3-c626-4435-b931-65a52b234aae/voice.mp3",
+          "volume": 1,
+          "sourceRevision": "source-v1--9ir4na06a7una"
+        },
+        {
+          "id": "workspace-narration-shot-shot-1",
+          "kind": "audio",
+          "name": "shot-1 口播",
+          "src": "episodes/7dae64a3-c626-4435-b931-65a52b234aae/native-tasks/7afa496d-6dff-488e-87f6-f35f13c0ffeb/shot-narration-shot-1-fed0d505-5766-45ed-bd8e-c4773d9c2f52.mp3",
+          "sourceAssetId": "audio-track-d814275c-01ac-435b-bbb6-2f0978dec0f1",
+          "srcInFrame": 0,
+          "startFrame": 0,
+          "durationInFrames": 72,
+          "volume": 1,
+          "track": "workspace-main-voice",
+          "loopControlAudio": {
+            "workspaceId": "ca067b4f-2c5b-46ff-a5b7-2fa0f0a8b5f7",
+            "shotId": "shot-1"
+          },
+          "sourceRevision": "source-sha256-9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+          "sourceContentHash": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+          "loopControlCandidate": {
+            "inputFingerprint": "7851d70a70c2aea44d6a29b7dd849ca6bb62058170a72e4998fa63ed9e58650c",
+            "sourceId": "audio-track-d814275c-01ac-435b-bbb6-2f0978dec0f1",
+            "durationPolicy": "use-candidate",
+            "startFrame": 0,
+            "durationInFrames": 72,
+            "shotWindow": {
+              "startFrame": 0,
+              "durationInFrames": 60
+            }
+          }
+        }
+      ],
+      "trackOrder": [
+        "track_loop-control-7dae64a3-c626-4435-b931-65a52b234aae_1",
+        "track_loop-control-7dae64a3-c626-4435-b931-65a52b234aae_2",
+        "track_loop-control-7dae64a3-c626-4435-b931-65a52b234aae_3",
+        "workspace-main-voice"
+      ],
+      "tracks": {
+        "track_loop-control-7dae64a3-c626-4435-b931-65a52b234aae_1": {
+          "kind": "video",
+          "name": "画面层 1"
+        },
+        "track_loop-control-7dae64a3-c626-4435-b931-65a52b234aae_2": {
+          "kind": "audio",
+          "name": "主声音",
+          "role": "anchor"
+        },
+        "track_loop-control-7dae64a3-c626-4435-b931-65a52b234aae_3": {
+          "kind": "caption",
+          "captions": {
+            "enabled": true,
+            "template": "plain",
+            "styleOverride": {
+              "fontFamily": "Noto Sans SC",
+              "color": "#ffffff",
+              "highlightColor": "#ffffff",
+              "strokeColor": "#000000",
+              "strokeWidth": 2.5,
+              "wholeLine": true,
+              "background": "transparent"
+            },
+            "pacing": "phrase",
+            "sourceMode": "item",
+            "sourceEntries": [],
+            "layoutPolicy": {
+              "mode": "manual-slots",
+              "slots": []
+            },
+            "perSource": {}
+          }
+        },
+        "workspace-main-voice": {
+          "kind": "audio",
+          "name": "主声音",
+          "role": "anchor"
+        }
+      },
+      "transitions": [],
+      "selectedId": null,
+      "captionsHidden": false
+    }
+  ],
+  "activeTimelineId": "loop-control-7dae64a3-c626-4435-b931-65a52b234aae"
+}

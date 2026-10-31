@@ -1,0 +1,255 @@
+[
+  {
+    "provider": "bailian",
+    "policySha256": "ea3a99f032a8b3ca96e595d99270bc610cfe405aed7ebf6b70e515f54b8fd166",
+    "approvalSha256": "85210d598f9a039848153af18726c463d04b5967c92ae077789c9483ce04aeef",
+    "priceEvidenceSha256": "a11a17b061aed3e77ec016e04637634664446ca8277cb5bed02637ad9dc50441",
+    "priceSnapshotShaVerified": true,
+    "policyCurrency": "CNY",
+    "maxCostMicrounits": 300000,
+    "networkReservedMicrounits": 300000,
+    "usedRequests": 11,
+    "byOperation": {
+      "bailian.generate": 1,
+      "bailian.poll": 9,
+      "bailian.download": 1
+    },
+    "halted": false,
+    "requestOutcomes": [
+      {
+        "operation": "bailian.generate",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "bailian.generate",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 137
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 220
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 220
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 220
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 220
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 220
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 220
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 220
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 220
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 731
+      },
+      {
+        "operation": "bailian.download",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "bailian.download",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 2823743
+      }
+    ],
+    "directory": "/private/tmp/loop-control-main-e2e-20261101/provider-samples/bailian-policy"
+  },
+  {
+    "provider": "kling",
+    "policySha256": "93dd57c31869f35f858dd250262eaa6103548fc688f4a5800e48c05174cc4cdb",
+    "approvalSha256": "85210d598f9a039848153af18726c463d04b5967c92ae077789c9483ce04aeef",
+    "priceEvidenceSha256": "d393e530aae128233553d71626b773a5c5923cc253cfdb321365ceebb478ce18",
+    "priceSnapshotShaVerified": true,
+    "policyCurrency": "USD",
+    "maxCostMicrounits": 252000,
+    "networkReservedMicrounits": 252000,
+    "usedRequests": 1,
+    "byOperation": {
+      "kling.generate": 1
+    },
+    "halted": true,
+    "requestOutcomes": [
+      {
+        "operation": "kling.generate",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "kling.generate",
+        "outcome": "failed",
+        "status": 429,
+        "bytes": 104
+      }
+    ],
+    "directory": "/private/tmp/loop-control-main-e2e-20261101/provider-samples/kling-policy"
+  },
+  {
+    "provider": "minimax",
+    "policySha256": "197efacaba48e3f7d892f89ab45293d4efaf121305a514d5f71be7ba1b6d87a4",
+    "approvalSha256": "85210d598f9a039848153af18726c463d04b5967c92ae077789c9483ce04aeef",
+    "priceEvidenceSha256": "49f89e8e0c894c6d77bebad7162821390f96774a7b67fa1e3ab542495e424935",
+    "priceSnapshotShaVerified": true,
+    "policyCurrency": "USD",
+    "maxCostMicrounits": 320000,
+    "networkReservedMicrounits": 320000,
+    "usedRequests": 1,
+    "byOperation": {
+      "minimax.generate": 1
+    },
+    "halted": true,
+    "requestOutcomes": [
+      {
+        "operation": "minimax.generate",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "minimax.generate",
+        "outcome": "failed",
+        "status": 402,
+        "bytes": 168
+      }
+    ],
+    "directory": "/private/tmp/loop-control-main-e2e-20261101/provider-samples/minimax-policy"
+  },
+  {
+    "provider": "pexels",
+    "policySha256": "1d1d6936cb68d5a04cc558ec51edfe07cf7372272cf9c294fa6b99e0733215d2",
+    "approvalSha256": "85210d598f9a039848153af18726c463d04b5967c92ae077789c9483ce04aeef",
+    "priceEvidenceSha256": "a11a17b061aed3e77ec016e04637634664446ca8277cb5bed02637ad9dc50441",
+    "priceSnapshotShaVerified": true,
+    "policyCurrency": "CNY",
+    "maxCostMicrounits": 1,
+    "networkReservedMicrounits": 0,
+    "usedRequests": 2,
+    "byOperation": {
+      "pexels.search": 1,
+      "pexels.download": 1
+    },
+    "halted": false,
+    "requestOutcomes": [
+      {
+        "operation": "pexels.search",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "pexels.search",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 43234
+      },
+      {
+        "operation": "pexels.download",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "pexels.download",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 904168
+      }
+    ],
+    "directory": "/private/tmp/loop-control-main-e2e-20261101/provider-samples/pexels-policy"
+  },
+  {
+    "provider": "volcengine",
+    "policySha256": "e9d4407a09416f40f326ed8edcc9aad5f181dccba4fd6570e6d67dd91f628876",
+    "approvalSha256": "85210d598f9a039848153af18726c463d04b5967c92ae077789c9483ce04aeef",
+    "priceEvidenceSha256": "d393e530aae128233553d71626b773a5c5923cc253cfdb321365ceebb478ce18",
+    "priceSnapshotShaVerified": true,
+    "policyCurrency": "CNY",
+    "maxCostMicrounits": 4500000,
+    "networkReservedMicrounits": 4500000,
+    "usedRequests": 1,
+    "byOperation": {
+      "volcengine.generate": 1
+    },
+    "halted": true,
+    "requestOutcomes": [
+      {
+        "operation": "volcengine.generate",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "volcengine.generate",
+        "outcome": "failed",
+        "status": 404,
+        "bytes": 275
+      }
+    ],
+    "directory": "/private/tmp/loop-control-main-e2e-20261101/provider-samples/volcengine-policy"
+  }
+]

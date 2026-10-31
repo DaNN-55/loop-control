@@ -1,0 +1,8 @@
+- button "取消" [ref=e2]
+- menu "所有者设置" [ref=e1] focusable [tabindex]
+  - menuitem "个人偏好" [ref=e4]
+  - menuitem "通知" [ref=e5]
+  - menuitem "登录与安全" [ref=e6]
+  - menuitem "本机存储" [ref=e7]
+  - menuitem "退出登录" [ref=e8]
+- button "取消" [ref=e3]

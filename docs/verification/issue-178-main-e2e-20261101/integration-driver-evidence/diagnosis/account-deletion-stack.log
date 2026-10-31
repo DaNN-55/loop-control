@@ -1,0 +1,121 @@
+
+ RUN  v3.2.7 /private/tmp/loop-control-main-e2e-20261101/integration-regression/source
+
+stderr | src/local-app/accountDeletion.integration.test.ts > empty: deletes an account through Owner HTTP, cleaning only empty exclusive roots and preserving history and deletion guards
+DIAG_LOCAL_ROUTE_UNHANDLED error: relation "local_identity.episode_creation_intents" does not exist
+    at /Users/dan/Programs/loop-control/node_modules/pg/lib/client.js:694:17
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at /private/tmp/loop-control-main-e2e-20261101/integration-regression/source/src/local-app/configurationCommands.ts:80:34
+    at ownerTransaction (/private/tmp/loop-control-main-e2e-20261101/integration-regression/source/src/local-app/ownerTransaction.ts:8:16)
+    at executeConfiguration (/private/tmp/loop-control-main-e2e-20261101/integration-regression/source/src/local-app/configurationCommands.ts:66:15)
+    at /private/tmp/loop-control-main-e2e-20261101/integration-regression/source/src/local-app/localRoute.ts:115:14 {
+  length: 138,
+  severity: 'ERROR',
+  code: '42P01',
+  detail: undefined,
+  hint: undefined,
+  position: '15',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '1428',
+  routine: 'parserOpenTable'
+}
+
+stderr | src/local-app/accountDeletion.integration.test.ts > nonempty: deletes an account through Owner HTTP, cleaning only empty exclusive roots and preserving history and deletion guards
+DIAG_LOCAL_ROUTE_UNHANDLED error: relation "local_identity.episode_creation_intents" does not exist
+    at /Users/dan/Programs/loop-control/node_modules/pg/lib/client.js:694:17
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at /private/tmp/loop-control-main-e2e-20261101/integration-regression/source/src/local-app/configurationCommands.ts:80:34
+    at ownerTransaction (/private/tmp/loop-control-main-e2e-20261101/integration-regression/source/src/local-app/ownerTransaction.ts:8:16)
+    at executeConfiguration (/private/tmp/loop-control-main-e2e-20261101/integration-regression/source/src/local-app/configurationCommands.ts:66:15)
+    at /private/tmp/loop-control-main-e2e-20261101/integration-regression/source/src/local-app/localRoute.ts:115:14 {
+  length: 138,
+  severity: 'ERROR',
+  code: '42P01',
+  detail: undefined,
+  hint: undefined,
+  position: '15',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '1428',
+  routine: 'parserOpenTable'
+}
+
+stderr | src/local-app/accountDeletion.integration.test.ts > shared: deletes an account through Owner HTTP, cleaning only empty exclusive roots and preserving history and deletion guards
+DIAG_LOCAL_ROUTE_UNHANDLED error: relation "local_identity.episode_creation_intents" does not exist
+    at /Users/dan/Programs/loop-control/node_modules/pg/lib/client.js:694:17
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at /private/tmp/loop-control-main-e2e-20261101/integration-regression/source/src/local-app/configurationCommands.ts:80:34
+    at ownerTransaction (/private/tmp/loop-control-main-e2e-20261101/integration-regression/source/src/local-app/ownerTransaction.ts:8:16)
+    at executeConfiguration (/private/tmp/loop-control-main-e2e-20261101/integration-regression/source/src/local-app/configurationCommands.ts:66:15)
+    at /private/tmp/loop-control-main-e2e-20261101/integration-regression/source/src/local-app/localRoute.ts:115:14 {
+  length: 138,
+  severity: 'ERROR',
+  code: '42P01',
+  detail: undefined,
+  hint: undefined,
+  position: '15',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '1428',
+  routine: 'parserOpenTable'
+}
+
+ ❯ src/local-app/accountDeletion.integration.test.ts (3 tests | 3 failed) 5241ms
+   × empty: deletes an account through Owner HTTP, cleaning only empty exclusive roots and preserving history and deletion guards 1428ms
+     → {"error":"本机服务暂不可用，请检查本机状态。"}: expected 503 to be 400 // Object.is equality
+   × nonempty: deletes an account through Owner HTTP, cleaning only empty exclusive roots and preserving history and deletion guards 1991ms
+     → {"error":"本机服务暂不可用，请检查本机状态。"}: expected 503 to be 400 // Object.is equality
+   × shared: deletes an account through Owner HTTP, cleaning only empty exclusive roots and preserving history and deletion guards 1821ms
+     → {"error":"本机服务暂不可用，请检查本机状态。"}: expected 503 to be 400 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/accountDeletion.integration.test.ts > empty: deletes an account through Owner HTTP, cleaning only empty exclusive roots and preserving history and deletion guards
+ FAIL  src/local-app/accountDeletion.integration.test.ts > nonempty: deletes an account through Owner HTTP, cleaning only empty exclusive roots and preserving history and deletion guards
+ FAIL  src/local-app/accountDeletion.integration.test.ts > shared: deletes an account through Owner HTTP, cleaning only empty exclusive roots and preserving history and deletion guards
+AssertionError: {"error":"本机服务暂不可用，请检查本机状态。"}: expected 503 to be 400 // Object.is equality
+
+- Expected
++ Received
+
+- 400
++ 503
+
+ ❯ src/local-app/accountDeletion.integration.test.ts:88:106
+     86|   expect((await remove(account,'Delete fixture',randomUUID(),false)).s…
+     87|   expect((await remove(foreign)).status).toBe(404);
+     88|   const wrong=await remove(account,'wrong confirmation');expect(wrong.…
+       |                                                                                                          ^
+     89|   expect((await remove(occupied)).status).toBe(409);
+     90|   // Reject the receipt insert after DELETE, proving rolled-back trans…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed (3)
+   Start at  06:27:52
+   Duration  5.81s (transform 330ms, setup 8ms, collect 453ms, tests 5.24s, environment 0ms, prepare 26ms)
+

@@ -1,0 +1,115 @@
+{
+  "mix": {
+    "voices": [
+      {
+        "coverage": "none",
+        "startSeconds": null,
+        "durationSeconds": null,
+        "shotDurationSeconds": 2,
+        "sourceStartSeconds": null,
+        "sourceLabel": null,
+        "alignmentReady": false,
+        "shotId": "shot-1",
+        "mode": "none",
+        "gainDb": 0,
+        "ambienceGainDb": null,
+        "sourceItemId": null,
+        "sourceAssetId": null
+      },
+      {
+        "coverage": "none",
+        "startSeconds": null,
+        "durationSeconds": null,
+        "shotDurationSeconds": 2,
+        "sourceStartSeconds": null,
+        "sourceLabel": null,
+        "alignmentReady": false,
+        "shotId": "shot-2",
+        "mode": "none",
+        "gainDb": 0,
+        "ambienceGainDb": null,
+        "sourceItemId": null,
+        "sourceAssetId": null
+      }
+    ],
+    "sounds": [
+      {
+        "itemId": "workspace-sfx-c1d6da8a-618b-46b2-b1ff-4f836acd9758",
+        "kind": "sfx",
+        "gainDb": -6,
+        "duckDepthDb": 0,
+        "startSeconds": 1,
+        "durationSeconds": 0.4
+      },
+      {
+        "itemId": "workspace-bgm",
+        "kind": "bgm",
+        "gainDb": -18,
+        "duckDepthDb": 14,
+        "startSeconds": 0.2,
+        "durationSeconds": 3
+      }
+    ]
+  },
+  "sounds": {
+    "items": [
+      {
+        "id": "workspace-bgm",
+        "kind": "audio",
+        "name": "bgm",
+        "track": "track_loop-control-c4b5ec4e-fc26-4c34-b6a2-1ba02a47d08d_3",
+        "src": "episodes/c4b5ec4e-fc26-4c34-b6a2-1ba02a47d08d/materials/64c3f3f39322f8391dc4a9f7cf3f9ba207be6319500db037d1a676d007267b92-bgm.mp3",
+        "sourceAssetId": "material-9f627738-3d78-4cfd-9a73-f31f21b5c30e",
+        "startFrame": 6,
+        "durationInFrames": 90,
+        "srcInFrame": 15,
+        "volume": 0.12589254117941673,
+        "loopControlAudio": {
+          "workspaceId": "db01262f-2c87-4c31-93bd-ff4bed69581d",
+          "kind": "bgm",
+          "preparationId": "89be4e60-bfa4-41fa-a678-ab05505196c0",
+          "anchor": "absolute"
+        },
+        "playbackRate": 1,
+        "fadeInFrames": 3,
+        "fadeOutFrames": 4,
+        "sourceContentHash": "64c3f3f39322f8391dc4a9f7cf3f9ba207be6319500db037d1a676d007267b92",
+        "sourceRevision": "source-sha256-64c3f3f39322f8391dc4a9f7cf3f9ba207be6319500db037d1a676d007267b92"
+      },
+      {
+        "id": "workspace-sfx-c1d6da8a-618b-46b2-b1ff-4f836acd9758",
+        "kind": "audio",
+        "name": "sfx",
+        "track": "track_loop-control-c4b5ec4e-fc26-4c34-b6a2-1ba02a47d08d_4",
+        "src": "episodes/c4b5ec4e-fc26-4c34-b6a2-1ba02a47d08d/materials/c356e719d06ca43078c2b6d75ab633f4591e70404f5a9a4ecb466650de97b8d0-sfx.mp3",
+        "sourceAssetId": "material-700c848b-9f90-4a78-9009-84007accece0",
+        "startFrame": 30,
+        "durationInFrames": 12,
+        "srcInFrame": 0,
+        "volume": 0.5011872336272722,
+        "loopControlAudio": {
+          "workspaceId": "db01262f-2c87-4c31-93bd-ff4bed69581d",
+          "kind": "sfx",
+          "preparationId": "c1d6da8a-618b-46b2-b1ff-4f836acd9758",
+          "anchor": "absolute"
+        },
+        "sourceContentHash": "c356e719d06ca43078c2b6d75ab633f4591e70404f5a9a4ecb466650de97b8d0",
+        "sourceRevision": "source-sha256-c356e719d06ca43078c2b6d75ab633f4591e70404f5a9a4ecb466650de97b8d0"
+      }
+    ],
+    "tracks": {
+      "track_loop-control-c4b5ec4e-fc26-4c34-b6a2-1ba02a47d08d_3": {
+        "kind": "audio",
+        "name": "整期配乐",
+        "role": "follower",
+        "audioRouting": {
+          "duckDepthDb": -14
+        }
+      },
+      "track_loop-control-c4b5ec4e-fc26-4c34-b6a2-1ba02a47d08d_4": {
+        "kind": "audio",
+        "name": "音效"
+      }
+    }
+  }
+}

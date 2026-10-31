@@ -1,0 +1,92 @@
+{
+  "version": 3,
+  "loopControl": {
+    "version": "four-step-workspace/v1",
+    "inputFingerprint": "a6447230-a41a-45ab-95f7-6b78289a7a82",
+    "transitionMode": "studio"
+  },
+  "assets": [],
+  "mediaFolders": [],
+  "activeTimelineId": "loop-control-23bef367-1b57-4d9a-b02e-ea5cbc92e3d7",
+  "timelines": [
+    {
+      "id": "loop-control-23bef367-1b57-4d9a-b02e-ea5cbc92e3d7",
+      "name": "整期剪辑",
+      "order": 0,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "fit": "contain",
+      "items": [
+        {
+          "id": "shot-shot-1-bf3f4736-60c2-4b85-b7b6-464e2b4e060b",
+          "track": "V1",
+          "kind": "text",
+          "name": "shot-1 · 待匹配画面",
+          "startFrame": 0,
+          "durationInFrames": 60,
+          "width": 1080,
+          "height": 1920,
+          "props": {
+            "text": "待匹配画面\nshot-1",
+            "fontSize": 64,
+            "color": "#a3acc2",
+            "align": "center"
+          },
+          "transform": {
+            "scale": 1,
+            "x": 0,
+            "y": 0,
+            "rotation": 0
+          },
+          "loopControlShot": {
+            "workspaceId": "a6447230-a41a-45ab-95f7-6b78289a7a82",
+            "shotId": "shot-1",
+            "clipId": "bf3f4736-60c2-4b85-b7b6-464e2b4e060b",
+            "text": "第一镜"
+          }
+        },
+        {
+          "id": "shot-shot-2-474f8086-40ef-4f88-b9fc-64cf4fafc89d",
+          "track": "V1",
+          "kind": "text",
+          "name": "shot-2 · 待匹配画面",
+          "startFrame": 60,
+          "durationInFrames": 60,
+          "width": 1080,
+          "height": 1920,
+          "props": {
+            "text": "待匹配画面\nshot-2",
+            "fontSize": 64,
+            "color": "#a3acc2",
+            "align": "center"
+          },
+          "transform": {
+            "scale": 1,
+            "x": 0,
+            "y": 0,
+            "rotation": 0
+          },
+          "loopControlShot": {
+            "workspaceId": "a6447230-a41a-45ab-95f7-6b78289a7a82",
+            "shotId": "shot-2",
+            "clipId": "474f8086-40ef-4f88-b9fc-64cf4fafc89d",
+            "text": "缺少素材的第二镜。"
+          }
+        }
+      ],
+      "trackOrder": [
+        "V1"
+      ],
+      "tracks": {
+        "V1": {
+          "kind": "video",
+          "name": "画面"
+        }
+      },
+      "transitions": [],
+      "selectedId": null,
+      "captionsHidden": false
+    }
+  ]
+}

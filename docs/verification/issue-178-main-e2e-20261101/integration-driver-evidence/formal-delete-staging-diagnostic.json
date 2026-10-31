@@ -1,0 +1,1574 @@
+{
+  "directory": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b",
+  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b",
+  "plan": {
+    "episodeId": "1e827181-0a3c-4a81-b75c-40ee9ded752b",
+    "title": "正式新单",
+    "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b",
+    "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b",
+    "paths": [
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b"
+    ],
+    "stagingPaths": [
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/materials/64c3f3f39322f8391dc4a9f7cf3f9ba207be6319500db037d1a676d007267b92-bgm.mp3.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/materials/7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6-landscape-red-blue.mp4.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/materials/7a90db152c9ba4a9e5536f5fe54c1f730403956913c3cea3d2e7f902138f2628-formal.md.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-still-striped.png.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/materials/c356e719d06ca43078c2b6d75ab633f4591e70404f5a9a4ecb466650de97b8d0-sfx.mp3.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/06c315b4-4ade-4c35-bf6b-6c976aeecced/shot-narration-shot-01-0e382461-c07f-400e-8836-df3e86413c59.mp3.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/0beab967-606e-4049-82c1-151a86a1fde3/c4ac3dc0-1127-4f71-8359-3f5c31d215c8.mp3.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/1874f25c-4422-4dc3-a81f-eb9b71703ff2/image.png.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/1b39d77f-9c3f-4018-b024-7be307bd2329/image.png.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/2384ea1c-30e5-4886-973a-2b48aba6b1b5/shot-narration-shot-01-a34e4116-81bc-4486-9d72-62eab0d851f3.mp3.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/2eb78b5d-0cc0-440d-ae53-755986fdd386/shot-narration-shot-01-47b8a2e0-db88-4745-baa1-1d5dcce34147.mp3.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/567aa378-16af-4437-badf-53542d079378/shot-narration-shot-01-24532b25-c70b-447b-8730-c58211e97925.mp3.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/5e832119-538c-44c8-a244-3cabad1bb628/shot-01-2993fc71fc5e46ee0940b12051f4194567f0e2384512be7b2f1fd9fecfb4f139.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/841c553b-1c02-41aa-a2b3-bfe959816f4e/841c553b-1c02-41aa-a2b3-bfe959816f4e.mp4.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/ba6db2af-d23f-440b-a46b-99769c3d6ef0/shot-01-2993fc71fc5e46ee0940b12051f4194567f0e2384512be7b2f1fd9fecfb4f139.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/df83adf5-0230-4242-87bb-47aa3c2c9c2c/7f0757e7-b612-4b92-b619-f9e782cd6433.mp3.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/generated-project.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/project.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/27e3fd31552ac8a36c19.png.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/3731486b63c360a4ab06.mp3.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/3904c79a67d7597c0e5a.mp3.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/47172852235a20ea1249.png.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/8de100fdc9484633d64b.mp3.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/96991d84efba2c271c1b.mp3.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/9a0940fb52354f78000f.mp3.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/a02ef640d34e801ab9f8.mp4.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/bec9da8552c5e8d9ad54.mp3.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/fb7ef3871dee0907b7f2.mp4.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/project-store-v1.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/project-store-v1.sqlite3.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/project-store-v1.sqlite3-shm.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/project-store-v1.sqlite3-wal.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/project-store-v1.sqlite3.receipt.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/workspace.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/preparation/0049239e-4cec-45f4-a580-7450c86adf5f.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/092a12b2cb51a02ef1ac51ced0eeb9a66e5f608082e803fe30d76a41ff0f56f0.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/1950a8e14720f7952e4804ca7bf56da8027d4efa60fcd56e2e3bd5b5bc40a4fb.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/1fedd2ccc39481b524ed0e8287b35de32d1d0495602a4ca336c0b58ec9fd770d.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/297d3fcc9579331fb30bf6a353f8ef2ab128bd40bff7e3d69e4eb018d39a33bf.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/2b55e7c049c2597f29a75916e3efb054518c03aef28e37bb674de392e3a991b0.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/2cdf9c709fdc9ae045f0fa6082bc1d7da79d2b8f135cd8362f8777b10fc51aba.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/2e9fdc765cef90cfef6cb853a8a700c0561056c6935fc65a8de7ef0fe0b6fe98.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/3cc2e5363e128ac13451169e4d915879b0b49e1f86f0badd064c3f22a6810b97.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/68d8844477c3fc72af1d961e9f125e1ff1a81be3715f249704d802ce3bca8977.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/732a37ee7c656a88cdff422d080cbf8140ce3682c8c6931dceb396ffb26d6870.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/77cec0214b4de1c81744563e6261760e9998c635dc18329fa9ccf77bbfe2b784.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/8491c94d65df80d5271841d3b4fe0e75f99afefc7dca2ebc57522f833983c893.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/89e6e33ddca5b900d04a8d25432f2aa9a7c82266804906036ad56dc99cfb7904.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/9c652ea8db19f341aa52f2418831e83670003e0790ce3491072d3f78816e54f1.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/a687cd7cfb2a887c9d06ee206491ba62f28583a2dccea72db4b42cc98ddbcb9d.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/a9915804a8a83ca1c4da31738f617094ec3aa7de21cf0638e9a575619b65dbba.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/b175af0f40d1337c3dcc4e8c84a4459cda9405c9381c46b948057ae7ffd8bb60.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/c2628c6e42b2d3e46f0d9cc39497cb8cefc5a193b93535bae246ceeeeb79ec5b.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/c869034131acf2801112333fbd8b7c18b2528fa66c391a90aee55a16eafe61f5.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/d01f6c1f5c4262addaf03d45824146acf777ac46be7a9958c6797f1cbd176e79.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/d6c004423f2b08fc37fb4ba042c5987e29dd68e57b8945ba582e0bb41170597e.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/df57df187627a89bd1a1cfc724d4972cf82a51fefa95c13cde26c2b4e30e0486.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/e17fc2a41e940e4e6873f4b6a0f287e40b1b614f3b996b6b4f70b1a99e247d75.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/e1dead001e12f144e1dfa8fcc0cba8d493c57b800aba76d544edb6d680cf2d64.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/e69fd8c59334fff34391baa9b3daa36c9235ce5f9d8da5a7e489e628bc7efa48.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/f00c2b5349933a24205ca65eff697d4cca668b18758732b8f09aecb48d0e7b51.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/workspace-deliveries/7e76efcb-c58a-4930-bb16-7738638406a8/checks.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/workspace-deliveries/7e76efcb-c58a-4930-bb16-7738638406a8/cover.png.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/workspace-deliveries/7e76efcb-c58a-4930-bb16-7738638406a8/manifest.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/workspace-deliveries/7e76efcb-c58a-4930-bb16-7738638406a8/metadata.json.loop-control-deletion",
+      "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/workspace-exports/ab3615be-7034-4620-a49d-4d84bb9c4301/cd90288b034f7784104663859ac9cdcb63d2b8f1df2054ab56867fe7d058bfb4.mp4.loop-control-deletion"
+    ],
+    "files": [
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/materials/64c3f3f39322f8391dc4a9f7cf3f9ba207be6319500db037d1a676d007267b92-bgm.mp3",
+        "bytes": 64556,
+        "authority": "material:1cd0f4eb-1e15-4469-84ca-9da006f163f8"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/materials/7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6-landscape-red-blue.mp4",
+        "bytes": 44148,
+        "authority": "material:25c8d5a0-17da-4ea9-a64b-eb36d11c4db0"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/materials/7a90db152c9ba4a9e5536f5fe54c1f730403956913c3cea3d2e7f902138f2628-formal.md",
+        "bytes": 889,
+        "authority": "material:10336652-8f0d-4bbd-9d94-12732bc3175f"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-still-striped.png",
+        "bytes": 1515,
+        "authority": "material:8ac397e8-23c0-41d4-be82-2bef4350abeb"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/materials/c356e719d06ca43078c2b6d75ab633f4591e70404f5a9a4ecb466650de97b8d0-sfx.mp3",
+        "bytes": 3692,
+        "authority": "material:95c88079-68c4-4af7-9312-5feefa6efa52"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/06c315b4-4ade-4c35-bf6b-6c976aeecced/shot-narration-shot-01-0e382461-c07f-400e-8836-df3e86413c59.mp3",
+        "bytes": 19628,
+        "authority": "artifact:098c1e0d-ec8f-4817-a5cb-962befcd7a88"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/0beab967-606e-4049-82c1-151a86a1fde3/c4ac3dc0-1127-4f71-8359-3f5c31d215c8.mp3",
+        "bytes": 2372,
+        "authority": "artifact:1d82d93d-7159-4406-b4b0-43f20b310865"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/1874f25c-4422-4dc3-a81f-eb9b71703ff2/image.png",
+        "bytes": 1515,
+        "authority": "artifact:0f562ad1-9b3a-4896-bc46-fbaae1a53ac1"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/1b39d77f-9c3f-4018-b024-7be307bd2329/image.png",
+        "bytes": 1515,
+        "authority": "artifact:d8987433-b9f5-4b90-9d32-faf82f5a23d5"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/2384ea1c-30e5-4886-973a-2b48aba6b1b5/shot-narration-shot-01-a34e4116-81bc-4486-9d72-62eab0d851f3.mp3",
+        "bytes": 19628,
+        "authority": "artifact:05b34775-ac71-4e5c-8716-6f8b2a3fa10d"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/2eb78b5d-0cc0-440d-ae53-755986fdd386/shot-narration-shot-01-47b8a2e0-db88-4745-baa1-1d5dcce34147.mp3",
+        "bytes": 19628,
+        "authority": "artifact:601b6cd1-ed91-4780-b936-563b679d2e12"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/567aa378-16af-4437-badf-53542d079378/shot-narration-shot-01-24532b25-c70b-447b-8730-c58211e97925.mp3",
+        "bytes": 19628,
+        "authority": "artifact:61f01bf1-7806-4eab-bc36-722b4e9e2372"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/5e832119-538c-44c8-a244-3cabad1bb628/shot-01-2993fc71fc5e46ee0940b12051f4194567f0e2384512be7b2f1fd9fecfb4f139.json",
+        "bytes": 713,
+        "authority": "artifact:e51dbc43-c7e5-4807-861a-073511323cf8"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/841c553b-1c02-41aa-a2b3-bfe959816f4e/841c553b-1c02-41aa-a2b3-bfe959816f4e.mp4",
+        "bytes": 44148,
+        "authority": "artifact:d7c7edf3-e842-40a5-bafe-9c5fd3154b65"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/ba6db2af-d23f-440b-a46b-99769c3d6ef0/shot-01-2993fc71fc5e46ee0940b12051f4194567f0e2384512be7b2f1fd9fecfb4f139.json",
+        "bytes": 713,
+        "authority": "artifact:8212d33a-c4d5-43fc-9327-0b41f72060e8"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/df83adf5-0230-4242-87bb-47aa3c2c9c2c/7f0757e7-b612-4b92-b619-f9e782cd6433.mp3",
+        "bytes": 9843,
+        "authority": "artifact:0eca8013-36e6-4bb1-94a0-3afdacef2123"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/generated-project.json",
+        "bytes": 24862,
+        "authority": "native-baseline:7bafa170-db83-4d93-adb9-b682215aa023"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/project.json",
+        "bytes": 24830,
+        "authority": "native-snapshot:7bafa170-db83-4d93-adb9-b682215aa023"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/27e3fd31552ac8a36c19.png",
+        "bytes": 1515,
+        "authority": "native-upload:artifact:0f562ad1-9b3a-4896-bc46-fbaae1a53ac1"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/3731486b63c360a4ab06.mp3",
+        "bytes": 64556,
+        "authority": "native-upload:material:1cd0f4eb-1e15-4469-84ca-9da006f163f8"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/3904c79a67d7597c0e5a.mp3",
+        "bytes": 3692,
+        "authority": "native-upload:material:95c88079-68c4-4af7-9312-5feefa6efa52"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/47172852235a20ea1249.png",
+        "bytes": 1515,
+        "authority": "native-upload:material:8ac397e8-23c0-41d4-be82-2bef4350abeb"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/8de100fdc9484633d64b.mp3",
+        "bytes": 2372,
+        "authority": "native-upload:artifact:1d82d93d-7159-4406-b4b0-43f20b310865"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/96991d84efba2c271c1b.mp3",
+        "bytes": 19628,
+        "authority": "native-upload:artifact:601b6cd1-ed91-4780-b936-563b679d2e12"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/9a0940fb52354f78000f.mp3",
+        "bytes": 9843,
+        "authority": "native-upload:artifact:0eca8013-36e6-4bb1-94a0-3afdacef2123"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/a02ef640d34e801ab9f8.mp4",
+        "bytes": 44148,
+        "authority": "native-upload:artifact:d7c7edf3-e842-40a5-bafe-9c5fd3154b65"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/bec9da8552c5e8d9ad54.mp3",
+        "bytes": 19628,
+        "authority": "native-upload:artifact:61f01bf1-7806-4eab-bc36-722b4e9e2372"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/fb7ef3871dee0907b7f2.mp4",
+        "bytes": 44148,
+        "authority": "native-upload:material:25c8d5a0-17da-4ea9-a64b-eb36d11c4db0"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/project-store-v1.json",
+        "bytes": 15129,
+        "authority": "native-import:7bafa170-db83-4d93-adb9-b682215aa023"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/project-store-v1.sqlite3",
+        "bytes": 69632,
+        "authority": "native-sqlite:7bafa170-db83-4d93-adb9-b682215aa023"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/project-store-v1.sqlite3-shm",
+        "bytes": 32768,
+        "authority": "native-sqlite:7bafa170-db83-4d93-adb9-b682215aa023"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/project-store-v1.sqlite3-wal",
+        "bytes": 57712,
+        "authority": "native-sqlite:7bafa170-db83-4d93-adb9-b682215aa023"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/project-store-v1.sqlite3.receipt.json",
+        "bytes": 1528,
+        "authority": "native-sqlite-receipt:7bafa170-db83-4d93-adb9-b682215aa023"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/workspace.json",
+        "bytes": 2716,
+        "authority": "native-host:7bafa170-db83-4d93-adb9-b682215aa023"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/preparation/0049239e-4cec-45f4-a580-7450c86adf5f.json",
+        "bytes": 683,
+        "authority": "artifact:07d955f5-3b42-4831-ae06-f80fe72887fd"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/092a12b2cb51a02ef1ac51ced0eeb9a66e5f608082e803fe30d76a41ff0f56f0.json",
+        "bytes": 19057,
+        "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/1950a8e14720f7952e4804ca7bf56da8027d4efa60fcd56e2e3bd5b5bc40a4fb.json",
+        "bytes": 28592,
+        "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/1fedd2ccc39481b524ed0e8287b35de32d1d0495602a4ca336c0b58ec9fd770d.json",
+        "bytes": 5409,
+        "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/297d3fcc9579331fb30bf6a353f8ef2ab128bd40bff7e3d69e4eb018d39a33bf.json",
+        "bytes": 24834,
+        "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/2b55e7c049c2597f29a75916e3efb054518c03aef28e37bb674de392e3a991b0.json",
+        "bytes": 14576,
+        "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/2cdf9c709fdc9ae045f0fa6082bc1d7da79d2b8f135cd8362f8777b10fc51aba.json",
+        "bytes": 24194,
+        "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/2e9fdc765cef90cfef6cb853a8a700c0561056c6935fc65a8de7ef0fe0b6fe98.json",
+        "bytes": 24184,
+        "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/3cc2e5363e128ac13451169e4d915879b0b49e1f86f0badd064c3f22a6810b97.json",
+        "bytes": 22383,
+        "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/68d8844477c3fc72af1d961e9f125e1ff1a81be3715f249704d802ce3bca8977.json",
+        "bytes": 9518,
+        "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/732a37ee7c656a88cdff422d080cbf8140ce3682c8c6931dceb396ffb26d6870.json",
+        "bytes": 3814,
+        "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/77cec0214b4de1c81744563e6261760e9998c635dc18329fa9ccf77bbfe2b784.json",
+        "bytes": 8888,
+        "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/8491c94d65df80d5271841d3b4fe0e75f99afefc7dca2ebc57522f833983c893.json",
+        "bytes": 7446,
+        "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/89e6e33ddca5b900d04a8d25432f2aa9a7c82266804906036ad56dc99cfb7904.json",
+        "bytes": 24830,
+        "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/9c652ea8db19f341aa52f2418831e83670003e0790ce3491072d3f78816e54f1.json",
+        "bytes": 22182,
+        "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/a687cd7cfb2a887c9d06ee206491ba62f28583a2dccea72db4b42cc98ddbcb9d.json",
+        "bytes": 25671,
+        "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/a9915804a8a83ca1c4da31738f617094ec3aa7de21cf0638e9a575619b65dbba.json",
+        "bytes": 24862,
+        "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/b175af0f40d1337c3dcc4e8c84a4459cda9405c9381c46b948057ae7ffd8bb60.json",
+        "bytes": 20551,
+        "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/c2628c6e42b2d3e46f0d9cc39497cb8cefc5a193b93535bae246ceeeeb79ec5b.json",
+        "bytes": 23822,
+        "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/c869034131acf2801112333fbd8b7c18b2528fa66c391a90aee55a16eafe61f5.json",
+        "bytes": 24839,
+        "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/d01f6c1f5c4262addaf03d45824146acf777ac46be7a9958c6797f1cbd176e79.json",
+        "bytes": 1637,
+        "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/d6c004423f2b08fc37fb4ba042c5987e29dd68e57b8945ba582e0bb41170597e.json",
+        "bytes": 26495,
+        "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/df57df187627a89bd1a1cfc724d4972cf82a51fefa95c13cde26c2b4e30e0486.json",
+        "bytes": 23147,
+        "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/e17fc2a41e940e4e6873f4b6a0f287e40b1b614f3b996b6b4f70b1a99e247d75.json",
+        "bytes": 16734,
+        "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/e1dead001e12f144e1dfa8fcc0cba8d493c57b800aba76d544edb6d680cf2d64.json",
+        "bytes": 6461,
+        "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/e69fd8c59334fff34391baa9b3daa36c9235ce5f9d8da5a7e489e628bc7efa48.json",
+        "bytes": 28592,
+        "authority": "workspace:7bafa170-db83-4d93-adb9-b682215aa023"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/f00c2b5349933a24205ca65eff697d4cca668b18758732b8f09aecb48d0e7b51.json",
+        "bytes": 24210,
+        "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/workspace-deliveries/7e76efcb-c58a-4930-bb16-7738638406a8/checks.json",
+        "bytes": 7520,
+        "authority": "artifact:673b16c8-2ca1-4d14-8d94-8b0dc44a0e06"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/workspace-deliveries/7e76efcb-c58a-4930-bb16-7738638406a8/cover.png",
+        "bytes": 1515,
+        "authority": "artifact:06909829-4a61-40c2-a6dd-6b80644e5164"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/workspace-deliveries/7e76efcb-c58a-4930-bb16-7738638406a8/manifest.json",
+        "bytes": 3050,
+        "authority": "artifact:f6a264d9-2de0-434f-95c6-c38df9db8e29"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/workspace-deliveries/7e76efcb-c58a-4930-bb16-7738638406a8/metadata.json",
+        "bytes": 2231,
+        "authority": "artifact:3c718f61-a8cd-457b-b09e-0030d90aa10d"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/workspace-exports/ab3615be-7034-4620-a49d-4d84bb9c4301/cd90288b034f7784104663859ac9cdcb63d2b8f1df2054ab56867fe7d058bfb4.mp4",
+        "bytes": 469632,
+        "authority": "frozen-input:7e76efcb-c58a-4930-bb16-7738638406a8"
+      }
+    ],
+    "preserved": [
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/.native-worker-attempts",
+        "reason": "未登记的空目录，保留。"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/input",
+        "reason": "未登记的空目录，保留。"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/settings.env",
+        "reason": "未登记或无法证明属于本单的文件，保留。"
+      },
+      {
+        "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/workspace-exports/ab3615be-7034-4620-a49d-4d84bb9c4301/representative.jpg",
+        "reason": "未登记或无法证明属于本单的文件，保留。"
+      }
+    ],
+    "confirmation": "正式新单",
+    "archived": true,
+    "isTest": false,
+    "revision": "d4f83621209696eecbf013b41ce6969e07dc3d25ce630767b238422776be3b2f"
+  },
+  "failed": {
+    "error": "本机服务暂不可用，请检查本机状态。"
+  },
+  "remainingEntries": [
+    ".native-worker-attempts",
+    "input",
+    "materials",
+    "native-tasks",
+    "openchatcut-work",
+    "preparation",
+    "production-workspace",
+    "workspace-deliveries",
+    "workspace-exports",
+    "workspace-exports/ab3615be-7034-4620-a49d-4d84bb9c4301",
+    "workspace-exports/ab3615be-7034-4620-a49d-4d84bb9c4301/cd90288b034f7784104663859ac9cdcb63d2b8f1df2054ab56867fe7d058bfb4.mp4",
+    "workspace-exports/ab3615be-7034-4620-a49d-4d84bb9c4301/representative.jpg",
+    "workspace-deliveries/7e76efcb-c58a-4930-bb16-7738638406a8",
+    "workspace-deliveries/7e76efcb-c58a-4930-bb16-7738638406a8/checks.json",
+    "workspace-deliveries/7e76efcb-c58a-4930-bb16-7738638406a8/cover.png",
+    "workspace-deliveries/7e76efcb-c58a-4930-bb16-7738638406a8/manifest.json",
+    "workspace-deliveries/7e76efcb-c58a-4930-bb16-7738638406a8/metadata.json",
+    "production-workspace/versions",
+    "production-workspace/versions/092a12b2cb51a02ef1ac51ced0eeb9a66e5f608082e803fe30d76a41ff0f56f0.json",
+    "production-workspace/versions/1950a8e14720f7952e4804ca7bf56da8027d4efa60fcd56e2e3bd5b5bc40a4fb.json",
+    "production-workspace/versions/1fedd2ccc39481b524ed0e8287b35de32d1d0495602a4ca336c0b58ec9fd770d.json",
+    "production-workspace/versions/297d3fcc9579331fb30bf6a353f8ef2ab128bd40bff7e3d69e4eb018d39a33bf.json",
+    "production-workspace/versions/2b55e7c049c2597f29a75916e3efb054518c03aef28e37bb674de392e3a991b0.json",
+    "production-workspace/versions/2cdf9c709fdc9ae045f0fa6082bc1d7da79d2b8f135cd8362f8777b10fc51aba.json",
+    "production-workspace/versions/2e9fdc765cef90cfef6cb853a8a700c0561056c6935fc65a8de7ef0fe0b6fe98.json",
+    "production-workspace/versions/3cc2e5363e128ac13451169e4d915879b0b49e1f86f0badd064c3f22a6810b97.json",
+    "production-workspace/versions/68d8844477c3fc72af1d961e9f125e1ff1a81be3715f249704d802ce3bca8977.json",
+    "production-workspace/versions/732a37ee7c656a88cdff422d080cbf8140ce3682c8c6931dceb396ffb26d6870.json",
+    "production-workspace/versions/77cec0214b4de1c81744563e6261760e9998c635dc18329fa9ccf77bbfe2b784.json",
+    "production-workspace/versions/8491c94d65df80d5271841d3b4fe0e75f99afefc7dca2ebc57522f833983c893.json",
+    "production-workspace/versions/89e6e33ddca5b900d04a8d25432f2aa9a7c82266804906036ad56dc99cfb7904.json",
+    "production-workspace/versions/9c652ea8db19f341aa52f2418831e83670003e0790ce3491072d3f78816e54f1.json",
+    "production-workspace/versions/a687cd7cfb2a887c9d06ee206491ba62f28583a2dccea72db4b42cc98ddbcb9d.json",
+    "production-workspace/versions/a9915804a8a83ca1c4da31738f617094ec3aa7de21cf0638e9a575619b65dbba.json",
+    "production-workspace/versions/b175af0f40d1337c3dcc4e8c84a4459cda9405c9381c46b948057ae7ffd8bb60.json",
+    "production-workspace/versions/c2628c6e42b2d3e46f0d9cc39497cb8cefc5a193b93535bae246ceeeeb79ec5b.json",
+    "production-workspace/versions/c869034131acf2801112333fbd8b7c18b2528fa66c391a90aee55a16eafe61f5.json",
+    "production-workspace/versions/d01f6c1f5c4262addaf03d45824146acf777ac46be7a9958c6797f1cbd176e79.json",
+    "production-workspace/versions/d6c004423f2b08fc37fb4ba042c5987e29dd68e57b8945ba582e0bb41170597e.json",
+    "production-workspace/versions/df57df187627a89bd1a1cfc724d4972cf82a51fefa95c13cde26c2b4e30e0486.json",
+    "production-workspace/versions/e17fc2a41e940e4e6873f4b6a0f287e40b1b614f3b996b6b4f70b1a99e247d75.json",
+    "production-workspace/versions/e1dead001e12f144e1dfa8fcc0cba8d493c57b800aba76d544edb6d680cf2d64.json",
+    "production-workspace/versions/e69fd8c59334fff34391baa9b3daa36c9235ce5f9d8da5a7e489e628bc7efa48.json",
+    "production-workspace/versions/f00c2b5349933a24205ca65eff697d4cca668b18758732b8f09aecb48d0e7b51.json",
+    "preparation/0049239e-4cec-45f4-a580-7450c86adf5f.json",
+    "openchatcut-work/current",
+    "openchatcut-work/current/generated-project.json",
+    "openchatcut-work/current/project.json",
+    "openchatcut-work/current/runtime",
+    "openchatcut-work/current/workspace.json",
+    "openchatcut-work/current/runtime/media",
+    "openchatcut-work/current/runtime/project-store-v1.json",
+    "openchatcut-work/current/runtime/project-store-v1.sqlite3",
+    "openchatcut-work/current/runtime/project-store-v1.sqlite3-shm",
+    "openchatcut-work/current/runtime/project-store-v1.sqlite3-wal",
+    "openchatcut-work/current/runtime/project-store-v1.sqlite3.receipt.json",
+    "openchatcut-work/current/runtime/settings.env",
+    "openchatcut-work/current/runtime/media/uploads",
+    "openchatcut-work/current/runtime/media/uploads/27e3fd31552ac8a36c19.png",
+    "openchatcut-work/current/runtime/media/uploads/3731486b63c360a4ab06.mp3",
+    "openchatcut-work/current/runtime/media/uploads/3904c79a67d7597c0e5a.mp3",
+    "openchatcut-work/current/runtime/media/uploads/47172852235a20ea1249.png",
+    "openchatcut-work/current/runtime/media/uploads/8de100fdc9484633d64b.mp3",
+    "openchatcut-work/current/runtime/media/uploads/96991d84efba2c271c1b.mp3",
+    "openchatcut-work/current/runtime/media/uploads/9a0940fb52354f78000f.mp3",
+    "openchatcut-work/current/runtime/media/uploads/a02ef640d34e801ab9f8.mp4",
+    "openchatcut-work/current/runtime/media/uploads/bec9da8552c5e8d9ad54.mp3",
+    "openchatcut-work/current/runtime/media/uploads/fb7ef3871dee0907b7f2.mp4",
+    "native-tasks/06c315b4-4ade-4c35-bf6b-6c976aeecced",
+    "native-tasks/0beab967-606e-4049-82c1-151a86a1fde3",
+    "native-tasks/1874f25c-4422-4dc3-a81f-eb9b71703ff2",
+    "native-tasks/1b39d77f-9c3f-4018-b024-7be307bd2329",
+    "native-tasks/2384ea1c-30e5-4886-973a-2b48aba6b1b5",
+    "native-tasks/2eb78b5d-0cc0-440d-ae53-755986fdd386",
+    "native-tasks/567aa378-16af-4437-badf-53542d079378",
+    "native-tasks/5e832119-538c-44c8-a244-3cabad1bb628",
+    "native-tasks/841c553b-1c02-41aa-a2b3-bfe959816f4e",
+    "native-tasks/ba6db2af-d23f-440b-a46b-99769c3d6ef0",
+    "native-tasks/df83adf5-0230-4242-87bb-47aa3c2c9c2c",
+    "native-tasks/df83adf5-0230-4242-87bb-47aa3c2c9c2c/7f0757e7-b612-4b92-b619-f9e782cd6433.mp3",
+    "native-tasks/ba6db2af-d23f-440b-a46b-99769c3d6ef0/shot-01-2993fc71fc5e46ee0940b12051f4194567f0e2384512be7b2f1fd9fecfb4f139.json",
+    "native-tasks/841c553b-1c02-41aa-a2b3-bfe959816f4e/841c553b-1c02-41aa-a2b3-bfe959816f4e.mp4",
+    "native-tasks/5e832119-538c-44c8-a244-3cabad1bb628/shot-01-2993fc71fc5e46ee0940b12051f4194567f0e2384512be7b2f1fd9fecfb4f139.json",
+    "native-tasks/567aa378-16af-4437-badf-53542d079378/shot-narration-shot-01-24532b25-c70b-447b-8730-c58211e97925.mp3",
+    "native-tasks/2eb78b5d-0cc0-440d-ae53-755986fdd386/shot-narration-shot-01-47b8a2e0-db88-4745-baa1-1d5dcce34147.mp3",
+    "native-tasks/2384ea1c-30e5-4886-973a-2b48aba6b1b5/shot-narration-shot-01-a34e4116-81bc-4486-9d72-62eab0d851f3.mp3",
+    "native-tasks/1b39d77f-9c3f-4018-b024-7be307bd2329/image.png",
+    "native-tasks/1874f25c-4422-4dc3-a81f-eb9b71703ff2/image.png",
+    "native-tasks/0beab967-606e-4049-82c1-151a86a1fde3/c4ac3dc0-1127-4f71-8359-3f5c31d215c8.mp3",
+    "native-tasks/06c315b4-4ade-4c35-bf6b-6c976aeecced/shot-narration-shot-01-0e382461-c07f-400e-8836-df3e86413c59.mp3",
+    "materials/64c3f3f39322f8391dc4a9f7cf3f9ba207be6319500db037d1a676d007267b92-bgm.mp3",
+    "materials/7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6-landscape-red-blue.mp4",
+    "materials/7a90db152c9ba4a9e5536f5fe54c1f730403956913c3cea3d2e7f902138f2628-formal.md",
+    "materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-still-striped.png",
+    "materials/c356e719d06ca43078c2b6d75ab633f4591e70404f5a9a4ecb466650de97b8d0-sfx.mp3"
+  ],
+  "originalTree": {
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/materials/64c3f3f39322f8391dc4a9f7cf3f9ba207be6319500db037d1a676d007267b92-bgm.mp3": "64c3f3f39322f8391dc4a9f7cf3f9ba207be6319500db037d1a676d007267b92",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/materials/7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6-landscape-red-blue.mp4": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/materials/7a90db152c9ba4a9e5536f5fe54c1f730403956913c3cea3d2e7f902138f2628-formal.md": "7a90db152c9ba4a9e5536f5fe54c1f730403956913c3cea3d2e7f902138f2628",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-still-striped.png": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/materials/c356e719d06ca43078c2b6d75ab633f4591e70404f5a9a4ecb466650de97b8d0-sfx.mp3": "c356e719d06ca43078c2b6d75ab633f4591e70404f5a9a4ecb466650de97b8d0",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/06c315b4-4ade-4c35-bf6b-6c976aeecced/shot-narration-shot-01-0e382461-c07f-400e-8836-df3e86413c59.mp3": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/0beab967-606e-4049-82c1-151a86a1fde3/c4ac3dc0-1127-4f71-8359-3f5c31d215c8.mp3": "8c82d3efbea7856794ffd2e59f3b3a8e3b60ef2beb48e326e6572cbe11cb03bd",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/1874f25c-4422-4dc3-a81f-eb9b71703ff2/image.png": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/1b39d77f-9c3f-4018-b024-7be307bd2329/image.png": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/2384ea1c-30e5-4886-973a-2b48aba6b1b5/shot-narration-shot-01-a34e4116-81bc-4486-9d72-62eab0d851f3.mp3": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/2eb78b5d-0cc0-440d-ae53-755986fdd386/shot-narration-shot-01-47b8a2e0-db88-4745-baa1-1d5dcce34147.mp3": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/567aa378-16af-4437-badf-53542d079378/shot-narration-shot-01-24532b25-c70b-447b-8730-c58211e97925.mp3": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/5e832119-538c-44c8-a244-3cabad1bb628/shot-01-2993fc71fc5e46ee0940b12051f4194567f0e2384512be7b2f1fd9fecfb4f139.json": "df9537bc76f377cfea75ada962285db5f4a5d45d157e8207c6013e2471b53d84",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/841c553b-1c02-41aa-a2b3-bfe959816f4e/841c553b-1c02-41aa-a2b3-bfe959816f4e.mp4": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/ba6db2af-d23f-440b-a46b-99769c3d6ef0/shot-01-2993fc71fc5e46ee0940b12051f4194567f0e2384512be7b2f1fd9fecfb4f139.json": "bb0db2a31967818922a0976dd844e1df38686d72ef8229a51b695be0dfc50192",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/df83adf5-0230-4242-87bb-47aa3c2c9c2c/7f0757e7-b612-4b92-b619-f9e782cd6433.mp3": "c2fac4488f7d9774df19ae5fdc74c4233bf8a42e98c1790796a07c5251cac568",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/generated-project.json": "a9915804a8a83ca1c4da31738f617094ec3aa7de21cf0638e9a575619b65dbba",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/project.json": "89e6e33ddca5b900d04a8d25432f2aa9a7c82266804906036ad56dc99cfb7904",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/27e3fd31552ac8a36c19.png": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/3731486b63c360a4ab06.mp3": "64c3f3f39322f8391dc4a9f7cf3f9ba207be6319500db037d1a676d007267b92",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/3904c79a67d7597c0e5a.mp3": "c356e719d06ca43078c2b6d75ab633f4591e70404f5a9a4ecb466650de97b8d0",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/47172852235a20ea1249.png": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/8de100fdc9484633d64b.mp3": "8c82d3efbea7856794ffd2e59f3b3a8e3b60ef2beb48e326e6572cbe11cb03bd",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/96991d84efba2c271c1b.mp3": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/9a0940fb52354f78000f.mp3": "c2fac4488f7d9774df19ae5fdc74c4233bf8a42e98c1790796a07c5251cac568",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/a02ef640d34e801ab9f8.mp4": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/bec9da8552c5e8d9ad54.mp3": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/fb7ef3871dee0907b7f2.mp4": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/project-store-v1.json": "e60a5878a053a1ef955546b2030b81b9711ed6636ab4b864615c1935ea6e98db",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/project-store-v1.sqlite3": "06de8d1473d1da1a4929df9655ee56065e13339854dda32c4a61f34f3488682c",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/project-store-v1.sqlite3-shm": "b68bccf979285d3d47415baa8db4e0e2af5127d5f423dcf886fb63832354ba70",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/project-store-v1.sqlite3-wal": "a0e5f68c3db1a05fbb7f34cf5630643cc5d39e41cca79a9ffcaa3c5623c9d3d5",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/project-store-v1.sqlite3.receipt.json": "31e9e75979fbf4aa12e577b858d249ee4f416492a73c45934effd328861731f6",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/settings.env": "459811c1134a9866e14cb770787164c03512aa26ac18f5f0d5d86a25095db7f5",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/workspace.json": "ff5adeca12cfc59254a3704ffcadcc3b224fb62c1a7f2d025f034d3b62e31aaa",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/preparation/0049239e-4cec-45f4-a580-7450c86adf5f.json": "cf2619ffb57e734cfc77d1ae242304822814e7aa33f0a399450e0fdc88853467",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/092a12b2cb51a02ef1ac51ced0eeb9a66e5f608082e803fe30d76a41ff0f56f0.json": "092a12b2cb51a02ef1ac51ced0eeb9a66e5f608082e803fe30d76a41ff0f56f0",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/1950a8e14720f7952e4804ca7bf56da8027d4efa60fcd56e2e3bd5b5bc40a4fb.json": "1950a8e14720f7952e4804ca7bf56da8027d4efa60fcd56e2e3bd5b5bc40a4fb",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/1fedd2ccc39481b524ed0e8287b35de32d1d0495602a4ca336c0b58ec9fd770d.json": "1fedd2ccc39481b524ed0e8287b35de32d1d0495602a4ca336c0b58ec9fd770d",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/297d3fcc9579331fb30bf6a353f8ef2ab128bd40bff7e3d69e4eb018d39a33bf.json": "297d3fcc9579331fb30bf6a353f8ef2ab128bd40bff7e3d69e4eb018d39a33bf",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/2b55e7c049c2597f29a75916e3efb054518c03aef28e37bb674de392e3a991b0.json": "2b55e7c049c2597f29a75916e3efb054518c03aef28e37bb674de392e3a991b0",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/2cdf9c709fdc9ae045f0fa6082bc1d7da79d2b8f135cd8362f8777b10fc51aba.json": "2cdf9c709fdc9ae045f0fa6082bc1d7da79d2b8f135cd8362f8777b10fc51aba",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/2e9fdc765cef90cfef6cb853a8a700c0561056c6935fc65a8de7ef0fe0b6fe98.json": "2e9fdc765cef90cfef6cb853a8a700c0561056c6935fc65a8de7ef0fe0b6fe98",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/3cc2e5363e128ac13451169e4d915879b0b49e1f86f0badd064c3f22a6810b97.json": "3cc2e5363e128ac13451169e4d915879b0b49e1f86f0badd064c3f22a6810b97",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/68d8844477c3fc72af1d961e9f125e1ff1a81be3715f249704d802ce3bca8977.json": "68d8844477c3fc72af1d961e9f125e1ff1a81be3715f249704d802ce3bca8977",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/732a37ee7c656a88cdff422d080cbf8140ce3682c8c6931dceb396ffb26d6870.json": "732a37ee7c656a88cdff422d080cbf8140ce3682c8c6931dceb396ffb26d6870",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/77cec0214b4de1c81744563e6261760e9998c635dc18329fa9ccf77bbfe2b784.json": "77cec0214b4de1c81744563e6261760e9998c635dc18329fa9ccf77bbfe2b784",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/8491c94d65df80d5271841d3b4fe0e75f99afefc7dca2ebc57522f833983c893.json": "8491c94d65df80d5271841d3b4fe0e75f99afefc7dca2ebc57522f833983c893",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/89e6e33ddca5b900d04a8d25432f2aa9a7c82266804906036ad56dc99cfb7904.json": "89e6e33ddca5b900d04a8d25432f2aa9a7c82266804906036ad56dc99cfb7904",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/9c652ea8db19f341aa52f2418831e83670003e0790ce3491072d3f78816e54f1.json": "9c652ea8db19f341aa52f2418831e83670003e0790ce3491072d3f78816e54f1",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/a687cd7cfb2a887c9d06ee206491ba62f28583a2dccea72db4b42cc98ddbcb9d.json": "a687cd7cfb2a887c9d06ee206491ba62f28583a2dccea72db4b42cc98ddbcb9d",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/a9915804a8a83ca1c4da31738f617094ec3aa7de21cf0638e9a575619b65dbba.json": "a9915804a8a83ca1c4da31738f617094ec3aa7de21cf0638e9a575619b65dbba",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/b175af0f40d1337c3dcc4e8c84a4459cda9405c9381c46b948057ae7ffd8bb60.json": "b175af0f40d1337c3dcc4e8c84a4459cda9405c9381c46b948057ae7ffd8bb60",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/c2628c6e42b2d3e46f0d9cc39497cb8cefc5a193b93535bae246ceeeeb79ec5b.json": "c2628c6e42b2d3e46f0d9cc39497cb8cefc5a193b93535bae246ceeeeb79ec5b",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/c869034131acf2801112333fbd8b7c18b2528fa66c391a90aee55a16eafe61f5.json": "c869034131acf2801112333fbd8b7c18b2528fa66c391a90aee55a16eafe61f5",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/d01f6c1f5c4262addaf03d45824146acf777ac46be7a9958c6797f1cbd176e79.json": "d01f6c1f5c4262addaf03d45824146acf777ac46be7a9958c6797f1cbd176e79",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/d6c004423f2b08fc37fb4ba042c5987e29dd68e57b8945ba582e0bb41170597e.json": "d6c004423f2b08fc37fb4ba042c5987e29dd68e57b8945ba582e0bb41170597e",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/df57df187627a89bd1a1cfc724d4972cf82a51fefa95c13cde26c2b4e30e0486.json": "df57df187627a89bd1a1cfc724d4972cf82a51fefa95c13cde26c2b4e30e0486",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/e17fc2a41e940e4e6873f4b6a0f287e40b1b614f3b996b6b4f70b1a99e247d75.json": "e17fc2a41e940e4e6873f4b6a0f287e40b1b614f3b996b6b4f70b1a99e247d75",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/e1dead001e12f144e1dfa8fcc0cba8d493c57b800aba76d544edb6d680cf2d64.json": "e1dead001e12f144e1dfa8fcc0cba8d493c57b800aba76d544edb6d680cf2d64",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/e69fd8c59334fff34391baa9b3daa36c9235ce5f9d8da5a7e489e628bc7efa48.json": "e69fd8c59334fff34391baa9b3daa36c9235ce5f9d8da5a7e489e628bc7efa48",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/f00c2b5349933a24205ca65eff697d4cca668b18758732b8f09aecb48d0e7b51.json": "f00c2b5349933a24205ca65eff697d4cca668b18758732b8f09aecb48d0e7b51",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/workspace-deliveries/7e76efcb-c58a-4930-bb16-7738638406a8/checks.json": "157b3618c9cef09b1e2161e9b8004a37401946c83ab59994cca2a7fab570ddb2",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/workspace-deliveries/7e76efcb-c58a-4930-bb16-7738638406a8/cover.png": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/workspace-deliveries/7e76efcb-c58a-4930-bb16-7738638406a8/manifest.json": "b412bc7f517141975896436fd967cd519846b67a3f28a73827507e4fff2c62e0",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/workspace-deliveries/7e76efcb-c58a-4930-bb16-7738638406a8/metadata.json": "1bd4f5bb3db5a5022b0d286bad24833dce2ca0203ca5c530eeda54fcbf25a108",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/workspace-exports/ab3615be-7034-4620-a49d-4d84bb9c4301/cd90288b034f7784104663859ac9cdcb63d2b8f1df2054ab56867fe7d058bfb4.mp4": "cd90288b034f7784104663859ac9cdcb63d2b8f1df2054ab56867fe7d058bfb4",
+    "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/workspace-exports/ab3615be-7034-4620-a49d-4d84bb9c4301/representative.jpg": "1c4265b7872ec6e26f68626a649774baf458a46f564b67295e696ed53f556c4b"
+  },
+  "intents": [
+    {
+      "value": {
+        "state": "rolled_back",
+        "manifest": {
+          "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b",
+          "title": "正式新单",
+          "targets": [
+            {
+              "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b",
+              "root": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0",
+              "files": [
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/materials/64c3f3f39322f8391dc4a9f7cf3f9ba207be6319500db037d1a676d007267b92-bgm.mp3",
+                  "bytes": 64556,
+                  "sha256": "64c3f3f39322f8391dc4a9f7cf3f9ba207be6319500db037d1a676d007267b92",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "156"
+                  },
+                  "authority": "material:1cd0f4eb-1e15-4469-84ca-9da006f163f8",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/materials/64c3f3f39322f8391dc4a9f7cf3f9ba207be6319500db037d1a676d007267b92-bgm.mp3.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/materials/7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6-landscape-red-blue.mp4",
+                  "bytes": 44148,
+                  "sha256": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "109"
+                  },
+                  "authority": "material:25c8d5a0-17da-4ea9-a64b-eb36d11c4db0",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/materials/7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6-landscape-red-blue.mp4.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/materials/7a90db152c9ba4a9e5536f5fe54c1f730403956913c3cea3d2e7f902138f2628-formal.md",
+                  "bytes": 889,
+                  "sha256": "7a90db152c9ba4a9e5536f5fe54c1f730403956913c3cea3d2e7f902138f2628",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "36"
+                  },
+                  "authority": "material:10336652-8f0d-4bbd-9d94-12732bc3175f",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/materials/7a90db152c9ba4a9e5536f5fe54c1f730403956913c3cea3d2e7f902138f2628-formal.md.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-still-striped.png",
+                  "bytes": 1515,
+                  "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "61"
+                  },
+                  "authority": "material:8ac397e8-23c0-41d4-be82-2bef4350abeb",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-still-striped.png.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/materials/c356e719d06ca43078c2b6d75ab633f4591e70404f5a9a4ecb466650de97b8d0-sfx.mp3",
+                  "bytes": 3692,
+                  "sha256": "c356e719d06ca43078c2b6d75ab633f4591e70404f5a9a4ecb466650de97b8d0",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "161"
+                  },
+                  "authority": "material:95c88079-68c4-4af7-9312-5feefa6efa52",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/materials/c356e719d06ca43078c2b6d75ab633f4591e70404f5a9a4ecb466650de97b8d0-sfx.mp3.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/06c315b4-4ade-4c35-bf6b-6c976aeecced/shot-narration-shot-01-0e382461-c07f-400e-8836-df3e86413c59.mp3",
+                  "bytes": 19628,
+                  "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "240"
+                  },
+                  "authority": "artifact:098c1e0d-ec8f-4817-a5cb-962befcd7a88",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/06c315b4-4ade-4c35-bf6b-6c976aeecced/shot-narration-shot-01-0e382461-c07f-400e-8836-df3e86413c59.mp3.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/0beab967-606e-4049-82c1-151a86a1fde3/c4ac3dc0-1127-4f71-8359-3f5c31d215c8.mp3",
+                  "bytes": 2372,
+                  "sha256": "8c82d3efbea7856794ffd2e59f3b3a8e3b60ef2beb48e326e6572cbe11cb03bd",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "176"
+                  },
+                  "authority": "artifact:1d82d93d-7159-4406-b4b0-43f20b310865",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/0beab967-606e-4049-82c1-151a86a1fde3/c4ac3dc0-1127-4f71-8359-3f5c31d215c8.mp3.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/1874f25c-4422-4dc3-a81f-eb9b71703ff2/image.png",
+                  "bytes": 1515,
+                  "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "77"
+                  },
+                  "authority": "artifact:0f562ad1-9b3a-4896-bc46-fbaae1a53ac1",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/1874f25c-4422-4dc3-a81f-eb9b71703ff2/image.png.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/1b39d77f-9c3f-4018-b024-7be307bd2329/image.png",
+                  "bytes": 1515,
+                  "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "90"
+                  },
+                  "authority": "artifact:d8987433-b9f5-4b90-9d32-faf82f5a23d5",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/1b39d77f-9c3f-4018-b024-7be307bd2329/image.png.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/2384ea1c-30e5-4886-973a-2b48aba6b1b5/shot-narration-shot-01-a34e4116-81bc-4486-9d72-62eab0d851f3.mp3",
+                  "bytes": 19628,
+                  "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "202"
+                  },
+                  "authority": "artifact:05b34775-ac71-4e5c-8716-6f8b2a3fa10d",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/2384ea1c-30e5-4886-973a-2b48aba6b1b5/shot-narration-shot-01-a34e4116-81bc-4486-9d72-62eab0d851f3.mp3.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/2eb78b5d-0cc0-440d-ae53-755986fdd386/shot-narration-shot-01-47b8a2e0-db88-4745-baa1-1d5dcce34147.mp3",
+                  "bytes": 19628,
+                  "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "58"
+                  },
+                  "authority": "artifact:601b6cd1-ed91-4780-b936-563b679d2e12",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/2eb78b5d-0cc0-440d-ae53-755986fdd386/shot-narration-shot-01-47b8a2e0-db88-4745-baa1-1d5dcce34147.mp3.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/567aa378-16af-4437-badf-53542d079378/shot-narration-shot-01-24532b25-c70b-447b-8730-c58211e97925.mp3",
+                  "bytes": 19628,
+                  "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "190"
+                  },
+                  "authority": "artifact:61f01bf1-7806-4eab-bc36-722b4e9e2372",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/567aa378-16af-4437-badf-53542d079378/shot-narration-shot-01-24532b25-c70b-447b-8730-c58211e97925.mp3.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/5e832119-538c-44c8-a244-3cabad1bb628/shot-01-2993fc71fc5e46ee0940b12051f4194567f0e2384512be7b2f1fd9fecfb4f139.json",
+                  "bytes": 713,
+                  "sha256": "df9537bc76f377cfea75ada962285db5f4a5d45d157e8207c6013e2471b53d84",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "222"
+                  },
+                  "authority": "artifact:e51dbc43-c7e5-4807-861a-073511323cf8",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/5e832119-538c-44c8-a244-3cabad1bb628/shot-01-2993fc71fc5e46ee0940b12051f4194567f0e2384512be7b2f1fd9fecfb4f139.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/841c553b-1c02-41aa-a2b3-bfe959816f4e/841c553b-1c02-41aa-a2b3-bfe959816f4e.mp4",
+                  "bytes": 44148,
+                  "sha256": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "106"
+                  },
+                  "authority": "artifact:d7c7edf3-e842-40a5-bafe-9c5fd3154b65",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/841c553b-1c02-41aa-a2b3-bfe959816f4e/841c553b-1c02-41aa-a2b3-bfe959816f4e.mp4.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/ba6db2af-d23f-440b-a46b-99769c3d6ef0/shot-01-2993fc71fc5e46ee0940b12051f4194567f0e2384512be7b2f1fd9fecfb4f139.json",
+                  "bytes": 713,
+                  "sha256": "bb0db2a31967818922a0976dd844e1df38686d72ef8229a51b695be0dfc50192",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "226"
+                  },
+                  "authority": "artifact:8212d33a-c4d5-43fc-9327-0b41f72060e8",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/ba6db2af-d23f-440b-a46b-99769c3d6ef0/shot-01-2993fc71fc5e46ee0940b12051f4194567f0e2384512be7b2f1fd9fecfb4f139.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/df83adf5-0230-4242-87bb-47aa3c2c9c2c/7f0757e7-b612-4b92-b619-f9e782cd6433.mp3",
+                  "bytes": 9843,
+                  "sha256": "c2fac4488f7d9774df19ae5fdc74c4233bf8a42e98c1790796a07c5251cac568",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "148"
+                  },
+                  "authority": "artifact:0eca8013-36e6-4bb1-94a0-3afdacef2123",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/df83adf5-0230-4242-87bb-47aa3c2c9c2c/7f0757e7-b612-4b92-b619-f9e782cd6433.mp3.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/generated-project.json",
+                  "bytes": 24862,
+                  "sha256": "a9915804a8a83ca1c4da31738f617094ec3aa7de21cf0638e9a575619b65dbba",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "125"
+                  },
+                  "authority": "native-baseline:7bafa170-db83-4d93-adb9-b682215aa023",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/generated-project.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/project.json",
+                  "bytes": 24830,
+                  "sha256": "89e6e33ddca5b900d04a8d25432f2aa9a7c82266804906036ad56dc99cfb7904",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "134"
+                  },
+                  "authority": "native-snapshot:7bafa170-db83-4d93-adb9-b682215aa023",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/project.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/27e3fd31552ac8a36c19.png",
+                  "bytes": 1515,
+                  "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "119"
+                  },
+                  "authority": "native-upload:artifact:0f562ad1-9b3a-4896-bc46-fbaae1a53ac1",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/27e3fd31552ac8a36c19.png.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/3731486b63c360a4ab06.mp3",
+                  "bytes": 64556,
+                  "sha256": "64c3f3f39322f8391dc4a9f7cf3f9ba207be6319500db037d1a676d007267b92",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "207"
+                  },
+                  "authority": "native-upload:material:1cd0f4eb-1e15-4469-84ca-9da006f163f8",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/3731486b63c360a4ab06.mp3.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/3904c79a67d7597c0e5a.mp3",
+                  "bytes": 3692,
+                  "sha256": "c356e719d06ca43078c2b6d75ab633f4591e70404f5a9a4ecb466650de97b8d0",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "208"
+                  },
+                  "authority": "native-upload:material:95c88079-68c4-4af7-9312-5feefa6efa52",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/3904c79a67d7597c0e5a.mp3.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/47172852235a20ea1249.png",
+                  "bytes": 1515,
+                  "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "122"
+                  },
+                  "authority": "native-upload:material:8ac397e8-23c0-41d4-be82-2bef4350abeb",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/47172852235a20ea1249.png.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/8de100fdc9484633d64b.mp3",
+                  "bytes": 2372,
+                  "sha256": "8c82d3efbea7856794ffd2e59f3b3a8e3b60ef2beb48e326e6572cbe11cb03bd",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "209"
+                  },
+                  "authority": "native-upload:artifact:1d82d93d-7159-4406-b4b0-43f20b310865",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/8de100fdc9484633d64b.mp3.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/96991d84efba2c271c1b.mp3",
+                  "bytes": 19628,
+                  "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "120"
+                  },
+                  "authority": "native-upload:artifact:601b6cd1-ed91-4780-b936-563b679d2e12",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/96991d84efba2c271c1b.mp3.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/9a0940fb52354f78000f.mp3",
+                  "bytes": 9843,
+                  "sha256": "c2fac4488f7d9774df19ae5fdc74c4233bf8a42e98c1790796a07c5251cac568",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "206"
+                  },
+                  "authority": "native-upload:artifact:0eca8013-36e6-4bb1-94a0-3afdacef2123",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/9a0940fb52354f78000f.mp3.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/a02ef640d34e801ab9f8.mp4",
+                  "bytes": 44148,
+                  "sha256": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "123"
+                  },
+                  "authority": "native-upload:artifact:d7c7edf3-e842-40a5-bafe-9c5fd3154b65",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/a02ef640d34e801ab9f8.mp4.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/bec9da8552c5e8d9ad54.mp3",
+                  "bytes": 19628,
+                  "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "210"
+                  },
+                  "authority": "native-upload:artifact:61f01bf1-7806-4eab-bc36-722b4e9e2372",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/bec9da8552c5e8d9ad54.mp3.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/fb7ef3871dee0907b7f2.mp4",
+                  "bytes": 44148,
+                  "sha256": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "121"
+                  },
+                  "authority": "native-upload:material:25c8d5a0-17da-4ea9-a64b-eb36d11c4db0",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads/fb7ef3871dee0907b7f2.mp4.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/project-store-v1.json",
+                  "bytes": 15129,
+                  "sha256": "e60a5878a053a1ef955546b2030b81b9711ed6636ab4b864615c1935ea6e98db",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "124"
+                  },
+                  "authority": "native-import:7bafa170-db83-4d93-adb9-b682215aa023",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/project-store-v1.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/project-store-v1.sqlite3",
+                  "bytes": 69632,
+                  "sha256": "06de8d1473d1da1a4929df9655ee56065e13339854dda32c4a61f34f3488682c",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "128"
+                  },
+                  "authority": "native-sqlite:7bafa170-db83-4d93-adb9-b682215aa023",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/project-store-v1.sqlite3.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/project-store-v1.sqlite3-shm",
+                  "bytes": 32768,
+                  "sha256": "b68bccf979285d3d47415baa8db4e0e2af5127d5f423dcf886fb63832354ba70",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "218"
+                  },
+                  "authority": "native-sqlite:7bafa170-db83-4d93-adb9-b682215aa023",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/project-store-v1.sqlite3-shm.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/project-store-v1.sqlite3-wal",
+                  "bytes": 57712,
+                  "sha256": "a0e5f68c3db1a05fbb7f34cf5630643cc5d39e41cca79a9ffcaa3c5623c9d3d5",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "217"
+                  },
+                  "authority": "native-sqlite:7bafa170-db83-4d93-adb9-b682215aa023",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/project-store-v1.sqlite3-wal.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/project-store-v1.sqlite3.receipt.json",
+                  "bytes": 1528,
+                  "sha256": "31e9e75979fbf4aa12e577b858d249ee4f416492a73c45934effd328861731f6",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "132"
+                  },
+                  "authority": "native-sqlite-receipt:7bafa170-db83-4d93-adb9-b682215aa023",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/project-store-v1.sqlite3.receipt.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/workspace.json",
+                  "bytes": 2716,
+                  "sha256": "ff5adeca12cfc59254a3704ffcadcc3b224fb62c1a7f2d025f034d3b62e31aaa",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "126"
+                  },
+                  "authority": "native-host:7bafa170-db83-4d93-adb9-b682215aa023",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/workspace.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/preparation/0049239e-4cec-45f4-a580-7450c86adf5f.json",
+                  "bytes": 683,
+                  "sha256": "cf2619ffb57e734cfc77d1ae242304822814e7aa33f0a399450e0fdc88853467",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "41"
+                  },
+                  "authority": "artifact:07d955f5-3b42-4831-ae06-f80fe72887fd",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/preparation/0049239e-4cec-45f4-a580-7450c86adf5f.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/092a12b2cb51a02ef1ac51ced0eeb9a66e5f608082e803fe30d76a41ff0f56f0.json",
+                  "bytes": 19057,
+                  "sha256": "092a12b2cb51a02ef1ac51ced0eeb9a66e5f608082e803fe30d76a41ff0f56f0",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "150"
+                  },
+                  "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/092a12b2cb51a02ef1ac51ced0eeb9a66e5f608082e803fe30d76a41ff0f56f0.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/1950a8e14720f7952e4804ca7bf56da8027d4efa60fcd56e2e3bd5b5bc40a4fb.json",
+                  "bytes": 28592,
+                  "sha256": "1950a8e14720f7952e4804ca7bf56da8027d4efa60fcd56e2e3bd5b5bc40a4fb",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "229"
+                  },
+                  "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/1950a8e14720f7952e4804ca7bf56da8027d4efa60fcd56e2e3bd5b5bc40a4fb.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/1fedd2ccc39481b524ed0e8287b35de32d1d0495602a4ca336c0b58ec9fd770d.json",
+                  "bytes": 5409,
+                  "sha256": "1fedd2ccc39481b524ed0e8287b35de32d1d0495602a4ca336c0b58ec9fd770d",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "65"
+                  },
+                  "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/1fedd2ccc39481b524ed0e8287b35de32d1d0495602a4ca336c0b58ec9fd770d.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/297d3fcc9579331fb30bf6a353f8ef2ab128bd40bff7e3d69e4eb018d39a33bf.json",
+                  "bytes": 24834,
+                  "sha256": "297d3fcc9579331fb30bf6a353f8ef2ab128bd40bff7e3d69e4eb018d39a33bf",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "223"
+                  },
+                  "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/297d3fcc9579331fb30bf6a353f8ef2ab128bd40bff7e3d69e4eb018d39a33bf.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/2b55e7c049c2597f29a75916e3efb054518c03aef28e37bb674de392e3a991b0.json",
+                  "bytes": 14576,
+                  "sha256": "2b55e7c049c2597f29a75916e3efb054518c03aef28e37bb674de392e3a991b0",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "135"
+                  },
+                  "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/2b55e7c049c2597f29a75916e3efb054518c03aef28e37bb674de392e3a991b0.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/2cdf9c709fdc9ae045f0fa6082bc1d7da79d2b8f135cd8362f8777b10fc51aba.json",
+                  "bytes": 24194,
+                  "sha256": "2cdf9c709fdc9ae045f0fa6082bc1d7da79d2b8f135cd8362f8777b10fc51aba",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "192"
+                  },
+                  "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/2cdf9c709fdc9ae045f0fa6082bc1d7da79d2b8f135cd8362f8777b10fc51aba.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/2e9fdc765cef90cfef6cb853a8a700c0561056c6935fc65a8de7ef0fe0b6fe98.json",
+                  "bytes": 24184,
+                  "sha256": "2e9fdc765cef90cfef6cb853a8a700c0561056c6935fc65a8de7ef0fe0b6fe98",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "205"
+                  },
+                  "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/2e9fdc765cef90cfef6cb853a8a700c0561056c6935fc65a8de7ef0fe0b6fe98.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/3cc2e5363e128ac13451169e4d915879b0b49e1f86f0badd064c3f22a6810b97.json",
+                  "bytes": 22383,
+                  "sha256": "3cc2e5363e128ac13451169e4d915879b0b49e1f86f0badd064c3f22a6810b97",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "179"
+                  },
+                  "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/3cc2e5363e128ac13451169e4d915879b0b49e1f86f0badd064c3f22a6810b97.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/68d8844477c3fc72af1d961e9f125e1ff1a81be3715f249704d802ce3bca8977.json",
+                  "bytes": 9518,
+                  "sha256": "68d8844477c3fc72af1d961e9f125e1ff1a81be3715f249704d802ce3bca8977",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "113"
+                  },
+                  "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/68d8844477c3fc72af1d961e9f125e1ff1a81be3715f249704d802ce3bca8977.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/732a37ee7c656a88cdff422d080cbf8140ce3682c8c6931dceb396ffb26d6870.json",
+                  "bytes": 3814,
+                  "sha256": "732a37ee7c656a88cdff422d080cbf8140ce3682c8c6931dceb396ffb26d6870",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "60"
+                  },
+                  "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/732a37ee7c656a88cdff422d080cbf8140ce3682c8c6931dceb396ffb26d6870.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/77cec0214b4de1c81744563e6261760e9998c635dc18329fa9ccf77bbfe2b784.json",
+                  "bytes": 8888,
+                  "sha256": "77cec0214b4de1c81744563e6261760e9998c635dc18329fa9ccf77bbfe2b784",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "108"
+                  },
+                  "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/77cec0214b4de1c81744563e6261760e9998c635dc18329fa9ccf77bbfe2b784.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/8491c94d65df80d5271841d3b4fe0e75f99afefc7dca2ebc57522f833983c893.json",
+                  "bytes": 7446,
+                  "sha256": "8491c94d65df80d5271841d3b4fe0e75f99afefc7dca2ebc57522f833983c893",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "93"
+                  },
+                  "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/8491c94d65df80d5271841d3b4fe0e75f99afefc7dca2ebc57522f833983c893.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/89e6e33ddca5b900d04a8d25432f2aa9a7c82266804906036ad56dc99cfb7904.json",
+                  "bytes": 24830,
+                  "sha256": "89e6e33ddca5b900d04a8d25432f2aa9a7c82266804906036ad56dc99cfb7904",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "220"
+                  },
+                  "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/89e6e33ddca5b900d04a8d25432f2aa9a7c82266804906036ad56dc99cfb7904.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/9c652ea8db19f341aa52f2418831e83670003e0790ce3491072d3f78816e54f1.json",
+                  "bytes": 22182,
+                  "sha256": "9c652ea8db19f341aa52f2418831e83670003e0790ce3491072d3f78816e54f1",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "165"
+                  },
+                  "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/9c652ea8db19f341aa52f2418831e83670003e0790ce3491072d3f78816e54f1.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/a687cd7cfb2a887c9d06ee206491ba62f28583a2dccea72db4b42cc98ddbcb9d.json",
+                  "bytes": 25671,
+                  "sha256": "a687cd7cfb2a887c9d06ee206491ba62f28583a2dccea72db4b42cc98ddbcb9d",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "227"
+                  },
+                  "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/a687cd7cfb2a887c9d06ee206491ba62f28583a2dccea72db4b42cc98ddbcb9d.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/a9915804a8a83ca1c4da31738f617094ec3aa7de21cf0638e9a575619b65dbba.json",
+                  "bytes": 24862,
+                  "sha256": "a9915804a8a83ca1c4da31738f617094ec3aa7de21cf0638e9a575619b65dbba",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "215"
+                  },
+                  "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/a9915804a8a83ca1c4da31738f617094ec3aa7de21cf0638e9a575619b65dbba.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/b175af0f40d1337c3dcc4e8c84a4459cda9405c9381c46b948057ae7ffd8bb60.json",
+                  "bytes": 20551,
+                  "sha256": "b175af0f40d1337c3dcc4e8c84a4459cda9405c9381c46b948057ae7ffd8bb60",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "160"
+                  },
+                  "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/b175af0f40d1337c3dcc4e8c84a4459cda9405c9381c46b948057ae7ffd8bb60.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/c2628c6e42b2d3e46f0d9cc39497cb8cefc5a193b93535bae246ceeeeb79ec5b.json",
+                  "bytes": 23822,
+                  "sha256": "c2628c6e42b2d3e46f0d9cc39497cb8cefc5a193b93535bae246ceeeeb79ec5b",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "178"
+                  },
+                  "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/c2628c6e42b2d3e46f0d9cc39497cb8cefc5a193b93535bae246ceeeeb79ec5b.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/c869034131acf2801112333fbd8b7c18b2528fa66c391a90aee55a16eafe61f5.json",
+                  "bytes": 24839,
+                  "sha256": "c869034131acf2801112333fbd8b7c18b2528fa66c391a90aee55a16eafe61f5",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "224"
+                  },
+                  "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/c869034131acf2801112333fbd8b7c18b2528fa66c391a90aee55a16eafe61f5.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/d01f6c1f5c4262addaf03d45824146acf777ac46be7a9958c6797f1cbd176e79.json",
+                  "bytes": 1637,
+                  "sha256": "d01f6c1f5c4262addaf03d45824146acf777ac46be7a9958c6797f1cbd176e79",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "44"
+                  },
+                  "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/d01f6c1f5c4262addaf03d45824146acf777ac46be7a9958c6797f1cbd176e79.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/d6c004423f2b08fc37fb4ba042c5987e29dd68e57b8945ba582e0bb41170597e.json",
+                  "bytes": 26495,
+                  "sha256": "d6c004423f2b08fc37fb4ba042c5987e29dd68e57b8945ba582e0bb41170597e",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "228"
+                  },
+                  "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/d6c004423f2b08fc37fb4ba042c5987e29dd68e57b8945ba582e0bb41170597e.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/df57df187627a89bd1a1cfc724d4972cf82a51fefa95c13cde26c2b4e30e0486.json",
+                  "bytes": 23147,
+                  "sha256": "df57df187627a89bd1a1cfc724d4972cf82a51fefa95c13cde26c2b4e30e0486",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "180"
+                  },
+                  "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/df57df187627a89bd1a1cfc724d4972cf82a51fefa95c13cde26c2b4e30e0486.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/e17fc2a41e940e4e6873f4b6a0f287e40b1b614f3b996b6b4f70b1a99e247d75.json",
+                  "bytes": 16734,
+                  "sha256": "e17fc2a41e940e4e6873f4b6a0f287e40b1b614f3b996b6b4f70b1a99e247d75",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "136"
+                  },
+                  "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/e17fc2a41e940e4e6873f4b6a0f287e40b1b614f3b996b6b4f70b1a99e247d75.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/e1dead001e12f144e1dfa8fcc0cba8d493c57b800aba76d544edb6d680cf2d64.json",
+                  "bytes": 6461,
+                  "sha256": "e1dead001e12f144e1dfa8fcc0cba8d493c57b800aba76d544edb6d680cf2d64",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "92"
+                  },
+                  "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/e1dead001e12f144e1dfa8fcc0cba8d493c57b800aba76d544edb6d680cf2d64.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/e69fd8c59334fff34391baa9b3daa36c9235ce5f9d8da5a7e489e628bc7efa48.json",
+                  "bytes": 28592,
+                  "sha256": "e69fd8c59334fff34391baa9b3daa36c9235ce5f9d8da5a7e489e628bc7efa48",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "230"
+                  },
+                  "authority": "workspace:7bafa170-db83-4d93-adb9-b682215aa023",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/e69fd8c59334fff34391baa9b3daa36c9235ce5f9d8da5a7e489e628bc7efa48.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/f00c2b5349933a24205ca65eff697d4cca668b18758732b8f09aecb48d0e7b51.json",
+                  "bytes": 24210,
+                  "sha256": "f00c2b5349933a24205ca65eff697d4cca668b18758732b8f09aecb48d0e7b51",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "204"
+                  },
+                  "authority": "workspace-version:7bafa170-db83-4d93-adb9-b682215aa023",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions/f00c2b5349933a24205ca65eff697d4cca668b18758732b8f09aecb48d0e7b51.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/workspace-deliveries/7e76efcb-c58a-4930-bb16-7738638406a8/checks.json",
+                  "bytes": 7520,
+                  "sha256": "157b3618c9cef09b1e2161e9b8004a37401946c83ab59994cca2a7fab570ddb2",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "250"
+                  },
+                  "authority": "artifact:673b16c8-2ca1-4d14-8d94-8b0dc44a0e06",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/workspace-deliveries/7e76efcb-c58a-4930-bb16-7738638406a8/checks.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/workspace-deliveries/7e76efcb-c58a-4930-bb16-7738638406a8/cover.png",
+                  "bytes": 1515,
+                  "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "248"
+                  },
+                  "authority": "artifact:06909829-4a61-40c2-a6dd-6b80644e5164",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/workspace-deliveries/7e76efcb-c58a-4930-bb16-7738638406a8/cover.png.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/workspace-deliveries/7e76efcb-c58a-4930-bb16-7738638406a8/manifest.json",
+                  "bytes": 3050,
+                  "sha256": "b412bc7f517141975896436fd967cd519846b67a3f28a73827507e4fff2c62e0",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "251"
+                  },
+                  "authority": "artifact:f6a264d9-2de0-434f-95c6-c38df9db8e29",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/workspace-deliveries/7e76efcb-c58a-4930-bb16-7738638406a8/manifest.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/workspace-deliveries/7e76efcb-c58a-4930-bb16-7738638406a8/metadata.json",
+                  "bytes": 2231,
+                  "sha256": "1bd4f5bb3db5a5022b0d286bad24833dce2ca0203ca5c530eeda54fcbf25a108",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "249"
+                  },
+                  "authority": "artifact:3c718f61-a8cd-457b-b09e-0030d90aa10d",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/workspace-deliveries/7e76efcb-c58a-4930-bb16-7738638406a8/metadata.json.loop-control-deletion"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/workspace-exports/ab3615be-7034-4620-a49d-4d84bb9c4301/cd90288b034f7784104663859ac9cdcb63d2b8f1df2054ab56867fe7d058bfb4.mp4",
+                  "bytes": 469632,
+                  "sha256": "cd90288b034f7784104663859ac9cdcb63d2b8f1df2054ab56867fe7d058bfb4",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "244"
+                  },
+                  "authority": "frozen-input:7e76efcb-c58a-4930-bb16-7738638406a8",
+                  "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/workspace-exports/ab3615be-7034-4620-a49d-4d84bb9c4301/cd90288b034f7784104663859ac9cdcb63d2b8f1df2054ab56867fe7d058bfb4.mp4.loop-control-deletion"
+                }
+              ],
+              "links": [],
+              "identity": {
+                "dev": "16777269",
+                "ino": "32"
+              },
+              "preserved": [
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/.native-worker-attempts",
+                  "reason": "未登记的空目录，保留。",
+                  "fingerprint": "16777269:46:16877"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/input",
+                  "reason": "未登记的空目录，保留。",
+                  "fingerprint": "16777269:34:16832"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/settings.env",
+                  "reason": "未登记或无法证明属于本单的文件，保留。",
+                  "fingerprint": "16777269:219:23:1793486293377587384:33152:459811c1134a9866e14cb770787164c03512aa26ac18f5f0d5d86a25095db7f5"
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/workspace-exports/ab3615be-7034-4620-a49d-4d84bb9c4301/representative.jpg",
+                  "reason": "未登记或无法证明属于本单的文件，保留。",
+                  "fingerprint": "16777269:245:47210:1793486307929534997:33188:1c4265b7872ec6e26f68626a649774baf458a46f564b67295e696ed53f556c4b"
+                }
+              ],
+              "directories": [
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "32"
+                  }
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/materials",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "35"
+                  }
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "56"
+                  }
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/06c315b4-4ade-4c35-bf6b-6c976aeecced",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "239"
+                  }
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/0beab967-606e-4049-82c1-151a86a1fde3",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "175"
+                  }
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/1874f25c-4422-4dc3-a81f-eb9b71703ff2",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "76"
+                  }
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/1b39d77f-9c3f-4018-b024-7be307bd2329",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "89"
+                  }
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/2384ea1c-30e5-4886-973a-2b48aba6b1b5",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "201"
+                  }
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/2eb78b5d-0cc0-440d-ae53-755986fdd386",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "57"
+                  }
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/567aa378-16af-4437-badf-53542d079378",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "189"
+                  }
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/5e832119-538c-44c8-a244-3cabad1bb628",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "221"
+                  }
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/841c553b-1c02-41aa-a2b3-bfe959816f4e",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "105"
+                  }
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/ba6db2af-d23f-440b-a46b-99769c3d6ef0",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "225"
+                  }
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/native-tasks/df83adf5-0230-4242-87bb-47aa3c2c9c2c",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "147"
+                  }
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "114"
+                  }
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "115"
+                  }
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "116"
+                  }
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "117"
+                  }
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/openchatcut-work/current/runtime/media/uploads",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "118"
+                  }
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/preparation",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "40"
+                  }
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "42"
+                  }
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/production-workspace/versions",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "43"
+                  }
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/workspace-deliveries",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "246"
+                  }
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/workspace-deliveries/7e76efcb-c58a-4930-bb16-7738638406a8",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "247"
+                  }
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/workspace-exports",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "242"
+                  }
+                },
+                {
+                  "path": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/未分系列--32d35e78-d79b-405c-96f6-bee3973edb64/正式新单--1e827181-0a3c-4a81-b75c-40ee9ded752b/workspace-exports/ab3615be-7034-4620-a49d-4d84bb9c4301",
+                  "identity": {
+                    "dev": "16777269",
+                    "ino": "243"
+                  }
+                }
+              ],
+              "stagingPath": "/private/tmp/loop-t06-volume-o0GzHc/mounted/loop-153-zTT7TF/新内容账号--f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0/episodes/.deletion-staging/1e827181-0a3c-4a81-b75c-40ee9ded752b",
+              "rootIdentity": {
+                "dev": "16777269",
+                "ino": "28"
+              },
+              "cleanupContainers": []
+            }
+          ],
+          "revision": "d4f83621209696eecbf013b41ce6969e07dc3d25ce630767b238422776be3b2f",
+          "accountId": "f1e3e2ea-c048-42c4-9eac-75e6d89cb4b0"
+        },
+        "owner_id": "843034bd-e78b-47ac-a436-1762cb648609",
+        "created_at": "2026-10-31T22:38:32.804749+00:00",
+        "episode_id": "1e827181-0a3c-4a81-b75c-40ee9ded752b",
+        "payload_hash": "7ca8c2b76b818226a9dd7c3326037eed9cc916ead09d08392dc4cbd3531ce536",
+        "idempotency_key": "96dd25e9-b2ef-4786-b479-50f3a68df956"
+      }
+    }
+  ]
+}

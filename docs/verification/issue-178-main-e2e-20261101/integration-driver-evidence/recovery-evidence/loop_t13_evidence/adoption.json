@@ -1,0 +1,206 @@
+{
+  "id": "ab7a3f45-48a1-46b9-ae78-558e9d4c0f23",
+  "status": "planned",
+  "kind": "adoption",
+  "targetRoot": "/private/tmp/loop-t13-restore-0ZL0Rz/state/loop-153-omKMHO/account",
+  "targetIdentity": {
+    "path": "/private/tmp/loop-t13-restore-0ZL0Rz/state/loop-153-omKMHO/account",
+    "device": "16777234",
+    "inode": "106671248"
+  },
+  "rootBinding": {
+    "path": "/private/tmp/loop-t13-restore-0ZL0Rz/state/loop-153-omKMHO",
+    "inodeId": "106671247",
+    "deviceId": "16777234",
+    "mountPath": "/"
+  },
+  "sources": [
+    {
+      "path": "/private/tmp/loop-t13-restore-0ZL0Rz/state/loop-153-omKMHO/account",
+      "device": "16777234",
+      "inode": "106671248"
+    }
+  ],
+  "episodes": [
+    {
+      "id": "1a93c993-9ef1-4aae-b466-af0c8b9b879d",
+      "title": "四步制作 T02 验收",
+      "seriesId": null,
+      "seriesName": null,
+      "targetPrefix": "未分系列--7d11a0a2-923d-4d4c-990c-dedddfcaa9e1/四步制作 T02 验收--1a93c993-9ef1-4aae-b466-af0c8b9b879d",
+      "managed": false,
+      "sources": [
+        {
+          "root": {
+            "path": "/private/tmp/loop-t13-restore-0ZL0Rz/state/loop-153-omKMHO/account",
+            "device": "16777234",
+            "inode": "106671248"
+          },
+          "prefix": "episodes/1a93c993-9ef1-4aae-b466-af0c8b9b879d",
+          "directory": {
+            "path": "/private/tmp/loop-t13-restore-0ZL0Rz/state/loop-153-omKMHO/account/episodes/1a93c993-9ef1-4aae-b466-af0c8b9b879d",
+            "device": "16777234",
+            "inode": "106671250"
+          }
+        }
+      ]
+    }
+  ],
+  "containers": [
+    {
+      "id": "7d11a0a2-923d-4d4c-990c-dedddfcaa9e1",
+      "seriesId": null,
+      "name": "未分系列",
+      "prefix": "未分系列--7d11a0a2-923d-4d4c-990c-dedddfcaa9e1",
+      "identity": null
+    }
+  ],
+  "files": [
+    {
+      "sourceRoot": "/private/tmp/loop-t13-restore-0ZL0Rz/state/loop-153-omKMHO/account",
+      "relativePath": "episodes/1a93c993-9ef1-4aae-b466-af0c8b9b879d/board.json",
+      "sha256": "ea0d2fb99bc3eca704bdf68c918e993ac4751599984ccdfe2acc02094e354120",
+      "fileSize": 374,
+      "targetRelativePath": "未分系列--7d11a0a2-923d-4d4c-990c-dedddfcaa9e1/四步制作 T02 验收--1a93c993-9ef1-4aae-b466-af0c8b9b879d/board.json"
+    },
+    {
+      "sourceRoot": "/private/tmp/loop-t13-restore-0ZL0Rz/state/loop-153-omKMHO/account",
+      "relativePath": "episodes/1a93c993-9ef1-4aae-b466-af0c8b9b879d/production-workspace/versions/9c47dd6b02730926e5ac386645ad0e24d3055a0deb70dec119460902e862d9ad.json",
+      "sha256": "9c47dd6b02730926e5ac386645ad0e24d3055a0deb70dec119460902e862d9ad",
+      "fileSize": 3796,
+      "targetRelativePath": "未分系列--7d11a0a2-923d-4d4c-990c-dedddfcaa9e1/四步制作 T02 验收--1a93c993-9ef1-4aae-b466-af0c8b9b879d/production-workspace/versions/9c47dd6b02730926e5ac386645ad0e24d3055a0deb70dec119460902e862d9ad.json"
+    },
+    {
+      "sourceRoot": "/private/tmp/loop-t13-restore-0ZL0Rz/state/loop-153-omKMHO/account",
+      "relativePath": "episodes/1a93c993-9ef1-4aae-b466-af0c8b9b879d/production-workspace/versions/ceb4244fccddcf2c5293623a05d5ab94469392b5b18123b274a08f2cf97c09cd.json",
+      "sha256": "ceb4244fccddcf2c5293623a05d5ab94469392b5b18123b274a08f2cf97c09cd",
+      "fileSize": 3344,
+      "targetRelativePath": "未分系列--7d11a0a2-923d-4d4c-990c-dedddfcaa9e1/四步制作 T02 验收--1a93c993-9ef1-4aae-b466-af0c8b9b879d/production-workspace/versions/ceb4244fccddcf2c5293623a05d5ab94469392b5b18123b274a08f2cf97c09cd.json"
+    },
+    {
+      "sourceRoot": "/private/tmp/loop-t13-restore-0ZL0Rz/state/loop-153-omKMHO/account",
+      "relativePath": "episodes/1a93c993-9ef1-4aae-b466-af0c8b9b879d/production-workspace/versions/ff55b1853ee6f39f58b8653991f592d6cc297345c73496d0800ffcaa6507dd20.json",
+      "sha256": "ff55b1853ee6f39f58b8653991f592d6cc297345c73496d0800ffcaa6507dd20",
+      "fileSize": 2467,
+      "targetRelativePath": "未分系列--7d11a0a2-923d-4d4c-990c-dedddfcaa9e1/四步制作 T02 验收--1a93c993-9ef1-4aae-b466-af0c8b9b879d/production-workspace/versions/ff55b1853ee6f39f58b8653991f592d6cc297345c73496d0800ffcaa6507dd20.json"
+    },
+    {
+      "sourceRoot": "/private/tmp/loop-t13-restore-0ZL0Rz/state/loop-153-omKMHO/account",
+      "relativePath": "episodes/1a93c993-9ef1-4aae-b466-af0c8b9b879d/script.md",
+      "sha256": "fc81cbf3666ffe9d11d8618d1973af50586e6e030934f2c44043e52f3c58778e",
+      "fileSize": 52,
+      "targetRelativePath": "未分系列--7d11a0a2-923d-4d4c-990c-dedddfcaa9e1/四步制作 T02 验收--1a93c993-9ef1-4aae-b466-af0c8b9b879d/script.md"
+    },
+    {
+      "sourceRoot": "/private/tmp/loop-t13-restore-0ZL0Rz/state/loop-153-omKMHO/account",
+      "relativePath": "episodes/1a93c993-9ef1-4aae-b466-af0c8b9b879d/shot.mp4",
+      "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+      "fileSize": 210288,
+      "targetRelativePath": "未分系列--7d11a0a2-923d-4d4c-990c-dedddfcaa9e1/四步制作 T02 验收--1a93c993-9ef1-4aae-b466-af0c8b9b879d/shot.mp4"
+    },
+    {
+      "sourceRoot": "/private/tmp/loop-t13-restore-0ZL0Rz/state/loop-153-omKMHO/account",
+      "relativePath": "episodes/1a93c993-9ef1-4aae-b466-af0c8b9b879d/voice.mp3",
+      "sha256": "21367e1bb28c3f86626206d5349933c1755207ff4e2bf770e59606432875899b",
+      "fileSize": 16556,
+      "targetRelativePath": "未分系列--7d11a0a2-923d-4d4c-990c-dedddfcaa9e1/四步制作 T02 验收--1a93c993-9ef1-4aae-b466-af0c8b9b879d/voice.mp3"
+    }
+  ],
+  "references": [
+    {
+      "episodeId": "1a93c993-9ef1-4aae-b466-af0c8b9b879d",
+      "relativePath": "episodes/1a93c993-9ef1-4aae-b466-af0c8b9b879d/shot.mp4",
+      "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da"
+    },
+    {
+      "episodeId": "1a93c993-9ef1-4aae-b466-af0c8b9b879d",
+      "relativePath": "episodes/1a93c993-9ef1-4aae-b466-af0c8b9b879d/voice.mp3",
+      "sha256": "21367e1bb28c3f86626206d5349933c1755207ff4e2bf770e59606432875899b"
+    },
+    {
+      "episodeId": "1a93c993-9ef1-4aae-b466-af0c8b9b879d",
+      "relativePath": "episodes/1a93c993-9ef1-4aae-b466-af0c8b9b879d/shot.mp4",
+      "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+      "fileSize": 210288
+    },
+    {
+      "episodeId": "1a93c993-9ef1-4aae-b466-af0c8b9b879d",
+      "relativePath": "episodes/1a93c993-9ef1-4aae-b466-af0c8b9b879d/voice.mp3",
+      "sha256": "21367e1bb28c3f86626206d5349933c1755207ff4e2bf770e59606432875899b",
+      "fileSize": 16556
+    },
+    {
+      "episodeId": "1a93c993-9ef1-4aae-b466-af0c8b9b879d",
+      "relativePath": "episodes/1a93c993-9ef1-4aae-b466-af0c8b9b879d/board.json",
+      "sha256": "ea0d2fb99bc3eca704bdf68c918e993ac4751599984ccdfe2acc02094e354120",
+      "fileSize": 374
+    },
+    {
+      "episodeId": "1a93c993-9ef1-4aae-b466-af0c8b9b879d",
+      "relativePath": "episodes/1a93c993-9ef1-4aae-b466-af0c8b9b879d/shot.mp4",
+      "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+      "fileSize": 210288
+    },
+    {
+      "episodeId": "1a93c993-9ef1-4aae-b466-af0c8b9b879d",
+      "relativePath": "episodes/1a93c993-9ef1-4aae-b466-af0c8b9b879d/board.json"
+    },
+    {
+      "episodeId": "1a93c993-9ef1-4aae-b466-af0c8b9b879d",
+      "relativePath": "episodes/1a93c993-9ef1-4aae-b466-af0c8b9b879d/production-workspace/versions/9c47dd6b02730926e5ac386645ad0e24d3055a0deb70dec119460902e862d9ad.json",
+      "sha256": "9c47dd6b02730926e5ac386645ad0e24d3055a0deb70dec119460902e862d9ad",
+      "fileSize": 3796
+    },
+    {
+      "episodeId": "1a93c993-9ef1-4aae-b466-af0c8b9b879d",
+      "relativePath": "episodes/1a93c993-9ef1-4aae-b466-af0c8b9b879d/shot.mp4",
+      "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+      "fileSize": 210288
+    },
+    {
+      "episodeId": "1a93c993-9ef1-4aae-b466-af0c8b9b879d",
+      "relativePath": "episodes/1a93c993-9ef1-4aae-b466-af0c8b9b879d/shot.mp4",
+      "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+      "fileSize": 210288
+    },
+    {
+      "episodeId": "1a93c993-9ef1-4aae-b466-af0c8b9b879d",
+      "relativePath": "episodes/1a93c993-9ef1-4aae-b466-af0c8b9b879d/script.md",
+      "sha256": "fc81cbf3666ffe9d11d8618d1973af50586e6e030934f2c44043e52f3c58778e",
+      "fileSize": 52
+    },
+    {
+      "episodeId": "1a93c993-9ef1-4aae-b466-af0c8b9b879d",
+      "relativePath": "episodes/1a93c993-9ef1-4aae-b466-af0c8b9b879d/shot.mp4",
+      "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+      "fileSize": 210288
+    },
+    {
+      "episodeId": "1a93c993-9ef1-4aae-b466-af0c8b9b879d",
+      "relativePath": "episodes/1a93c993-9ef1-4aae-b466-af0c8b9b879d/production-workspace/versions/ceb4244fccddcf2c5293623a05d5ab94469392b5b18123b274a08f2cf97c09cd.json",
+      "sha256": "ceb4244fccddcf2c5293623a05d5ab94469392b5b18123b274a08f2cf97c09cd",
+      "fileSize": 3344
+    },
+    {
+      "episodeId": "1a93c993-9ef1-4aae-b466-af0c8b9b879d",
+      "relativePath": "episodes/1a93c993-9ef1-4aae-b466-af0c8b9b879d/production-workspace/versions/9c47dd6b02730926e5ac386645ad0e24d3055a0deb70dec119460902e862d9ad.json",
+      "sha256": "9c47dd6b02730926e5ac386645ad0e24d3055a0deb70dec119460902e862d9ad",
+      "fileSize": 3796
+    },
+    {
+      "episodeId": "1a93c993-9ef1-4aae-b466-af0c8b9b879d",
+      "relativePath": "episodes/1a93c993-9ef1-4aae-b466-af0c8b9b879d/production-workspace/versions/ff55b1853ee6f39f58b8653991f592d6cc297345c73496d0800ffcaa6507dd20.json",
+      "sha256": "ff55b1853ee6f39f58b8653991f592d6cc297345c73496d0800ffcaa6507dd20",
+      "fileSize": 2467
+    }
+  ],
+  "evidenceSha256": "fefe3291e1f6185436fb50b990f7420e87d021b2ce938ad0cda75ddfbfc1a3bf",
+  "businessEvidenceSha256": "9206ae7d038f5a5b37b243002be292436ac525d35f7c95d36eb5b7c2dd6bc052",
+  "conflicts": [],
+  "totalBytes": 236877,
+  "retained": [
+    "/private/tmp/loop-t13-restore-0ZL0Rz/state/loop-153-omKMHO/account：旧源、未知及共享内容保留，不自动删除"
+  ],
+  "createdDirectories": [],
+  "temporaryFiles": []
+}

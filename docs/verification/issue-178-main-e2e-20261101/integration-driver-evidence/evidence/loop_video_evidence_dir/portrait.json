@@ -1,0 +1,51 @@
+{
+  "sourceHash": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+  "portraitHash": "97b1552e7f98b3819d89e303bddd8f4b4d24f479f008a8b54f63a119457008be",
+  "red": [
+    254,
+    0,
+    0
+  ],
+  "green": [
+    0,
+    109,
+    0
+  ],
+  "blue": [
+    0,
+    0,
+    254
+  ],
+  "projectSha256": "d6ba16e649e4ab76155b2d2125ee281be6f832d687adaaa5d6012fef7ee5c72b",
+  "width": 360,
+  "height": 640,
+  "items": [
+    {
+      "id": "shot-shot-1-1a3035da-d652-4651-89d7-e0c5cb9cc794",
+      "sourceRevision": "1584233d-fe03-4ac5-a3d1-2fd1811b2f69",
+      "srcInFrame": 0,
+      "durationInFrames": 30,
+      "loopControlVideo": {
+        "durationLocked": true
+      }
+    },
+    {
+      "id": "shot-shot-1-3b939318-9bad-44f2-9193-b83c73f0e836",
+      "sourceRevision": "dd302ca9-4a1a-41c9-b64d-01b821ba9bc8",
+      "srcInFrame": 30,
+      "durationInFrames": 30,
+      "loopControlVideo": {
+        "durationLocked": false
+      }
+    },
+    {
+      "id": "shot-shot-2-b985d402-9abe-47c1-aa15-ffe121410cde",
+      "sourceRevision": "1584233d-fe03-4ac5-a3d1-2fd1811b2f69",
+      "srcInFrame": 60,
+      "durationInFrames": 30,
+      "loopControlVideo": {
+        "durationLocked": true
+      }
+    }
+  ]
+}

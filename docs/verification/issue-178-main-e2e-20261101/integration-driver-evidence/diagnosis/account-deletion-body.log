@@ -1,0 +1,40 @@
+
+ RUN  v3.2.7 /private/tmp/loop-control-main-e2e-20261101/integration-regression/source
+
+ ❯ src/local-app/accountDeletion.integration.test.ts (3 tests | 3 failed) 4635ms
+   × empty: deletes an account through Owner HTTP, cleaning only empty exclusive roots and preserving history and deletion guards 1495ms
+     → {"error":"本机服务暂不可用，请检查本机状态。"}: expected 503 to be 400 // Object.is equality
+   × nonempty: deletes an account through Owner HTTP, cleaning only empty exclusive roots and preserving history and deletion guards 1365ms
+     → {"error":"本机服务暂不可用，请检查本机状态。"}: expected 503 to be 400 // Object.is equality
+   × shared: deletes an account through Owner HTTP, cleaning only empty exclusive roots and preserving history and deletion guards 1775ms
+     → {"error":"本机服务暂不可用，请检查本机状态。"}: expected 503 to be 400 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/accountDeletion.integration.test.ts > empty: deletes an account through Owner HTTP, cleaning only empty exclusive roots and preserving history and deletion guards
+ FAIL  src/local-app/accountDeletion.integration.test.ts > nonempty: deletes an account through Owner HTTP, cleaning only empty exclusive roots and preserving history and deletion guards
+ FAIL  src/local-app/accountDeletion.integration.test.ts > shared: deletes an account through Owner HTTP, cleaning only empty exclusive roots and preserving history and deletion guards
+AssertionError: {"error":"本机服务暂不可用，请检查本机状态。"}: expected 503 to be 400 // Object.is equality
+
+- Expected
++ Received
+
+- 400
++ 503
+
+ ❯ src/local-app/accountDeletion.integration.test.ts:88:106
+     86|   expect((await remove(account,'Delete fixture',randomUUID(),false)).s…
+     87|   expect((await remove(foreign)).status).toBe(404);
+     88|   const wrong=await remove(account,'wrong confirmation');expect(wrong.…
+       |                                                                                                          ^
+     89|   expect((await remove(occupied)).status).toBe(409);
+     90|   // Reject the receipt insert after DELETE, proving rolled-back trans…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed (3)
+   Start at  06:27:04
+   Duration  5.24s (transform 335ms, setup 8ms, collect 468ms, tests 4.63s, environment 0ms, prepare 30ms)
+

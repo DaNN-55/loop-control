@@ -1,0 +1,5 @@
+
+> loop-control@0.1.0 check
+> tsc -b --pretty false
+
+src/worker/openchatcutProject.integration.test.ts(45,109): error TS18048: 'project.loopControl' is possibly 'undefined'.

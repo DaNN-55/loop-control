@@ -1,0 +1,14 @@
+{
+  "firstPid": 27122,
+  "restartedPid": 27357,
+  "seriesId": "3947387a-f76a-46db-9528-c1a2d19f5dfd",
+  "versionId": "a7e6511f-34ae-4d99-8ebd-c9f04ce33338",
+  "directory": "/private/tmp/loop-t06-volume-Yr7Clj/mounted/loop-153-3zBwBI/account/同名-系列✨--3947387a-f76a-46db-9528-c1a2d19f5dfd",
+  "inode": "33",
+  "finderObservedAndClosed": "/private/tmp/loop-t06-volume-Yr7Clj/mounted/loop-153-3zBwBI/account/同名-系列✨--3947387a-f76a-46db-9528-c1a2d19f5dfd/",
+  "resumedContainerId": "7412b7cd-3b91-410f-8442-db1133cedd17",
+  "resumedDirectory": "/private/tmp/loop-t06-volume-Yr7Clj/mounted/loop-153-3zBwBI/account/crash-and-resume--7412b7cd-3b91-410f-8442-db1133cedd17",
+  "unknownBytesPreserved": true,
+  "frozenVersionsPreserved": true,
+  "concurrentSpecialNames": 7
+}

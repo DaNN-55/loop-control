@@ -1,0 +1,45 @@
+
+ RUN  v3.2.7 /private/tmp/loop-control-main-e2e-20261101/integration-regression/verification-source
+
+ ✓ src/local-app/formalWorkflow.integration.test.ts (6 tests) 24760ms
+   ✓ Owner confirms a fresh script before visual materials exist  3789ms
+   ✓ Owner builds a formal incomplete draft without old storyboard approvals  4262ms
+   ✓ first formal adoption preserves the latest unsubmitted legacy Studio document  4368ms
+   ✓ late legacy render reports retain artifacts without advancing or approving the adopted workspace  1916ms
+   ✓ fresh formal and added shots generate through the real controlled Provider Worker without legacy approval  5169ms
+   ✓ ordinary scripts use the selected real planner task and verified artifact before preparation confirmation  5255ms
+(node:37358) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ❯ src/local-app/formalWorkflow.delivery.integration.test.ts (1 test | 1 failed) 41539ms
+   × formal Owner workflow delivers exact native export with adopted text, mixed audio and traceable late unused results 41538ms
+     → ENOENT: no such file or directory, scandir '/private/tmp/loop-t06-volume-Yxibe2/mounted/loop-153-xdBx51/新内容账号--f7aadca3-c710-420a-9757-96a4a10c3de3/episodes/9b5312cd-4053-4af8-81be-4501898d97f2'
+ ✓ src/local-app/workspaceAudioStorage.integration.test.ts (10 tests) 47634ms
+   ✓ replaced production directory blocks speech submission before reserving fees or contacting the Provider  2559ms
+   ✓ legacy speech retains actual media, confirmed input and one paid submission after rename/restart  2687ms
+   ✓ registered speech retains actual media, confirmed input and one paid submission after rename/restart  2843ms
+   ✓ registered source video extracts only its actual selected audio window into this production  4337ms
+   ✓ registered music and effects retain frozen searches on retry and remain playable managed files after external originals disappear  5523ms
+   ✓ registered speech drives the actual alignment worker and preserves confirmed subtitle text and timing after restart  5748ms
+   ✓ legacy synchronized preview renders actual approved source audio and keeps the native project beside the proxy  9216ms
+   ✓ registered synchronized preview renders actual approved source audio and keeps the native project beside the proxy  8205ms
+   ✓ subtitle readback rejects a replaced production directory instead of reporting the old confirmed state as current  2056ms
+   ✓ uploaded narration music and effects keep owned snapshots at the registered location after all external originals are removed  4459ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/formalWorkflow.delivery.integration.test.ts > formal Owner workflow delivers exact native export with adopted text, mixed audio and traceable late unused results
+Error: ENOENT: no such file or directory, scandir '/private/tmp/loop-t06-volume-Yxibe2/mounted/loop-153-xdBx51/新内容账号--f7aadca3-c710-420a-9757-96a4a10c3de3/episodes/9b5312cd-4053-4af8-81be-4501898d97f2'
+ ❯ walk src/local-app/formalWorkflow.delivery.integration.test.ts:82:114
+
+ ❯ tree src/local-app/formalWorkflow.delivery.integration.test.ts:82:331
+ ❯ src/local-app/formalWorkflow.delivery.integration.test.ts:82:452
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 16 passed (17)
+   Start at  06:18:21
+   Duration  115.46s (transform 579ms, setup 9ms, collect 1.15s, tests 113.93s, environment 0ms, prepare 78ms)
+
+JSON report written to /Users/dan/Programs/loop-control/docs/verification/issue-178-main-e2e-20261101/integration-fixture-fixes-after-results.json

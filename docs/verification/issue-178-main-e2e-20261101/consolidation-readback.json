@@ -1,0 +1,20 @@
+{
+  "at": "2026-10-31T22:55:31.256489+00:00",
+  "independentlyVerified": true,
+  "uniqueCases": 368,
+  "passedCasesWithMatchingExecutedJsonAssertion": 332,
+  "passedCasesProvedByWholeFilePassLogs": {
+    "integration-first-video-after.log": 3,
+    "integration-openchatcut-after.log": 12,
+    "integration-video-after.log": 6,
+    "integration-visual-candidates-after.log": 14
+  },
+  "enabledPassed": 367,
+  "failed": 0,
+  "manualSkipped": 1,
+  "selectedFiles": 97,
+  "allIntegrationFiles": 129,
+  "excludedFiles": 32,
+  "sourceConsolidatedSha256": "c7a2d3281a8d7263c4f0a58674c922efb8f9adeb2c6743aa4a0a42bd14d40666",
+  "filteredSkipsCountedAsPassing": false
+}

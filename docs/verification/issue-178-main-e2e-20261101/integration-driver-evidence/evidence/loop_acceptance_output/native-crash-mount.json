@@ -1,0 +1,9 @@
+{
+  "actualUnmountRemount": true,
+  "episodeId": "68259299-4c08-416f-85bb-62925313d14c",
+  "path": "/private/tmp/loop-t06-volume-mJ68k2/mounted/loop-153-ZUMwKa/source/Crash phases--b9cc7dbe-ef29-48f1-9de3-0f3b57825ea2/phases--88867126-35e6-4c2c-a7b5-7bad7f2c6f38/mount recovery--68259299-4c08-416f-85bb-62925313d14c",
+  "phases": [
+    "after-mkdir",
+    "after-commit"
+  ]
+}

@@ -1,0 +1,48 @@
+
+ RUN  v3.2.7 /private/tmp/loop-control-main-e2e-20261101/integration-regression/verification-source
+
+(node:36589) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ❯ src/local-app/formalWorkflow.delivery.integration.test.ts (1 test | 1 failed) 39987ms
+   × formal Owner workflow delivers exact native export with adopted text, mixed audio and traceable late unused results 39986ms
+     → promise resolved "Stats{ dev: 16777269, …(13) }" instead of rejecting
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/formalWorkflow.delivery.integration.test.ts > formal Owner workflow delivers exact native export with adopted text, mixed audio and traceable late unused results
+AssertionError: promise resolved "Stats{ dev: 16777269, …(13) }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ Stats {
++   "atimeMs": 1793486518939.5955,
++   "birthtimeMs": 1793486482308.9922,
++   "blksize": 4096,
++   "blocks": 0,
++   "ctimeMs": 1793486518939.4836,
++   "dev": 16777269,
++   "gid": 20,
++   "ino": 32,
++   "mode": 16832,
++   "mtimeMs": 1793486518939.4836,
++   "nlink": 6,
++   "rdev": 0,
++   "size": 192,
++   "uid": 501,
+  }
+
+ ❯ src/local-app/formalWorkflow.delivery.integration.test.ts:88:303
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  06:41:18
+   Duration  40.58s (transform 356ms, setup 7ms, collect 471ms, tests 39.99s, environment 0ms, prepare 24ms)
+
+JSON report written to /Users/dan/Programs/loop-control/docs/verification/issue-178-main-e2e-20261101/integration-formal-delivery-after-results.json

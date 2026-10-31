@@ -1,0 +1,553 @@
+{
+  "finalMainCommit": "9b31b31bb76afadac26854d3a5975a9262666cc8",
+  "files": [
+    {
+      "file": "src/local-app/accountAssetRoots.browser.integration.test.ts",
+      "selected": false,
+      "reason": "External browser driver/done marker required; test is a manual server fixture rather than self-executing browser"
+    },
+    {
+      "file": "src/local-app/accountAssetRoots.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/accountAssetRootsStorage.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/accountCreation.browser.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/accountCreation.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/accountDeletion.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/accountDeletionStorage.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/accountDirectoryMigration.browser.integration.test.ts",
+      "selected": false,
+      "reason": "External browser driver/done marker required; test is a manual server fixture rather than self-executing browser"
+    },
+    {
+      "file": "src/local-app/accountDirectoryMigration.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/accountDirectoryMigrationStorage.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/accountDirectoryMigrationSubmissions.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/accountWorkspace.browser.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/automationHistory.integration.test.ts",
+      "selected": false,
+      "reason": "Direct legacy runtime environment/deployment or Keychain boundary has no isolated context override"
+    },
+    {
+      "file": "src/local-app/blueprintContraction.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/blueprintReviewRetirement.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/catalogContract.integration.test.ts",
+      "selected": false,
+      "reason": "Requires separately approved historical private fixture or hard-coded daily container/database"
+    },
+    {
+      "file": "src/local-app/catalogFilters.integration.test.ts",
+      "selected": false,
+      "reason": "Requires separately approved historical private fixture or hard-coded daily container/database"
+    },
+    {
+      "file": "src/local-app/clipPreflight.integration.test.ts",
+      "selected": false,
+      "reason": "Requires separately approved historical private fixture or hard-coded daily container/database"
+    },
+    {
+      "file": "src/local-app/connectionCatalog.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/connectionLifecycle.integration.test.ts",
+      "selected": false,
+      "reason": "Direct legacy runtime environment/deployment or Keychain boundary has no isolated context override"
+    },
+    {
+      "file": "src/local-app/creativeStorageCompatibility.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/deletionBackupRestore.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/embeddedStudio.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/episodeArchive.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/episodeCollection.browser.integration.test.ts",
+      "selected": false,
+      "reason": "External browser driver/done marker required; test is a manual server fixture rather than self-executing browser"
+    },
+    {
+      "file": "src/local-app/episodeCollectionFaults.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/episodeCollectionMove.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/episodeCollectionNative.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/episodeCollectionProcess.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/episodeCollectionWorker.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/episodeCreation.browser.integration.test.ts",
+      "selected": false,
+      "reason": "External browser driver/done marker required; test is a manual server fixture rather than self-executing browser"
+    },
+    {
+      "file": "src/local-app/episodeCreation.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/episodeCreation.native.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/episodeCreationFaults.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/episodeDeletion.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/episodeDeletionNative.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/episodeDeletionRetainedSources.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/episodeDeletionStorage.browser.integration.test.ts",
+      "selected": false,
+      "reason": "External browser driver/done marker required; test is a manual server fixture rather than self-executing browser"
+    },
+    {
+      "file": "src/local-app/episodeDeletionStorage.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/episodeStorageLocation.browser.integration.test.ts",
+      "selected": false,
+      "reason": "External browser driver/done marker required; test is a manual server fixture rather than self-executing browser"
+    },
+    {
+      "file": "src/local-app/episodeStorageLocation.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/fixtureSchema.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/formalWorkflow.delivery.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/formalWorkflow.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/history.integration.test.ts",
+      "selected": false,
+      "reason": "Direct legacy runtime environment/deployment or Keychain boundary has no isolated context override"
+    },
+    {
+      "file": "src/local-app/historyEpisodeDeletion.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/historyOrganization.integration.test.ts",
+      "selected": false,
+      "reason": "Direct legacy runtime environment/deployment or Keychain boundary has no isolated context override"
+    },
+    {
+      "file": "src/local-app/inputPublicationOwnership.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/inputStorageLocation.browser.integration.test.ts",
+      "selected": false,
+      "reason": "External browser driver/done marker required; test is a manual server fixture rather than self-executing browser"
+    },
+    {
+      "file": "src/local-app/inputStorageLocation.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/inputStorageMigration.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/legacyAdoption.browser.integration.test.ts",
+      "selected": false,
+      "reason": "External browser driver/done marker required; test is a manual server fixture rather than self-executing browser"
+    },
+    {
+      "file": "src/local-app/legacyAdoption.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/legacyAdoptionNative.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/legacyAdoptionProcess.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/legacyAdoptionVolumes.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/legacyAdoptionWorker.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/legacyHtmlWorkspace.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/legacyStudioProject.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/legacyWorkspaceEditing.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/legacyWorkspaceEntry.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/managedMediaRestore.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/mediaRootExecution.browser.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/mediaRootExecution.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/mediaRootExecutionFaults.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/mediaRootExecutionNative.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/mediaRootExecutionProcess.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/mediaRootExecutionWorker.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/mediaRootMigration.browser.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/mediaRootMigration.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/mediaRootMigrationBlockers.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/mediaRootMigrationNative.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/mediaRootMigrationProcess.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/mediaRootPublication.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/mediaRootSettings.browser.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/mediaRootSettings.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/nativeStorageSql.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/nativeStudioPrimary.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/nativeTtsOptIn.integration.test.ts",
+      "selected": false,
+      "reason": "Requires separately approved historical private fixture or hard-coded daily container/database"
+    },
+    {
+      "file": "src/local-app/nativeWan.integration.test.ts",
+      "selected": false,
+      "reason": "Direct legacy runtime environment/deployment or Keychain boundary has no isolated context override"
+    },
+    {
+      "file": "src/local-app/notificationStatus.integration.test.ts",
+      "selected": false,
+      "reason": "Direct legacy runtime environment/deployment or Keychain boundary has no isolated context override"
+    },
+    {
+      "file": "src/local-app/officialVideo.integration.test.ts",
+      "selected": false,
+      "reason": "Direct legacy runtime environment/deployment or Keychain boundary has no isolated context override"
+    },
+    {
+      "file": "src/local-app/ownerPreferences.integration.test.ts",
+      "selected": false,
+      "reason": "Direct legacy runtime environment/deployment or Keychain boundary has no isolated context override"
+    },
+    {
+      "file": "src/local-app/ownerRls.integration.test.ts",
+      "selected": false,
+      "reason": "Requires separately approved historical private fixture or hard-coded daily container/database"
+    },
+    {
+      "file": "src/local-app/productionRevisions.integration.test.ts",
+      "selected": false,
+      "reason": "Direct legacy runtime environment/deployment or Keychain boundary has no isolated context override"
+    },
+    {
+      "file": "src/local-app/productionSelection.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/productionWorkspace.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/providerRetirement.integration.test.ts",
+      "selected": false,
+      "reason": "Direct legacy runtime environment/deployment or Keychain boundary has no isolated context override"
+    },
+    {
+      "file": "src/local-app/restorePublication.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/runtimeStatus.integration.test.ts",
+      "selected": false,
+      "reason": "Direct legacy runtime environment/deployment or Keychain boundary has no isolated context override"
+    },
+    {
+      "file": "src/local-app/scriptProduction.integration.test.ts",
+      "selected": false,
+      "reason": "Requires separately approved historical private fixture or hard-coded daily container/database"
+    },
+    {
+      "file": "src/local-app/secretAdministration.integration.test.ts",
+      "selected": false,
+      "reason": "Direct legacy runtime environment/deployment or Keychain boundary has no isolated context override"
+    },
+    {
+      "file": "src/local-app/seriesDirectories.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/seriesDirectories.native.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/seriesDirectoryFaults.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/speechSelection.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/workspaceAudio.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/workspaceAudio.ui.integration.test.ts",
+      "selected": false,
+      "reason": "Manual browser fixture waits for external human/done marker; live formal UI owned by parent"
+    },
+    {
+      "file": "src/local-app/workspaceAudioProjection.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/workspaceAudioSelection.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/workspaceAudioStorage.browser.integration.test.ts",
+      "selected": false,
+      "reason": "External browser driver/done marker required; test is a manual server fixture rather than self-executing browser"
+    },
+    {
+      "file": "src/local-app/workspaceAudioStorage.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/workspaceCandidates.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/workspaceCaptions.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/workspaceCatalog.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/workspaceDelivery.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/workspaceExport.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/workspaceFirstVideo.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/workspaceFirstVideo.source.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/workspaceImageGeneration.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/workspaceImages.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/workspaceNarration.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/workspaceNarration.ui.integration.test.ts",
+      "selected": false,
+      "reason": "Manual browser fixture waits for external human/done marker; live formal UI owned by parent"
+    },
+    {
+      "file": "src/local-app/workspaceNativeStorage.browser.integration.test.ts",
+      "selected": false,
+      "reason": "External browser driver/done marker required; test is a manual server fixture rather than self-executing browser"
+    },
+    {
+      "file": "src/local-app/workspaceNativeStorage.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/workspacePexels.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/workspaceReviewFixes.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/workspaceScriptResume.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/workspaceShots.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/workspaceVideo.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/workspaceVideoSelection.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/workspaceVisualBrowser.integration.test.ts",
+      "selected": false,
+      "reason": "Manual browser fixture waits for external human/done marker; live formal UI owned by parent"
+    },
+    {
+      "file": "src/local-app/workspaceVisualCandidates.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/local-app/workspaceVisualStorage.browser.integration.test.ts",
+      "selected": false,
+      "reason": "External browser driver/done marker required; test is a manual server fixture rather than self-executing browser"
+    },
+    {
+      "file": "src/local-app/workspaceVisualStorage.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/worker/openchatcutProject.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/worker/openchatcutStudio.media-cache.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/worker/openchatcutStudio.storage.integration.test.ts",
+      "selected": true
+    },
+    {
+      "file": "src/worker/openchatcutStudio.validation.integration.test.ts",
+      "selected": true
+    }
+  ]
+}

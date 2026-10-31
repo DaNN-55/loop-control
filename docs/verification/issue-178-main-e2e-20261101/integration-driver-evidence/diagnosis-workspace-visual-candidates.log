@@ -1,0 +1,24 @@
+
+ RUN  v3.2.7 /private/tmp/loop-control-main-e2e-20261101/integration-regression/verification-source
+
+ ✓ src/local-app/workspaceVisualCandidates.integration.test.ts (14 tests) 42977ms
+   ✓ Owner registers a local visual candidate and replaces only one source instance  2778ms
+   ✓ Owner locally fills a placeholder with a registered still image without video generation  2119ms
+   ✓ Owner locally fills a placeholder with a registered pan-zoom image without video generation  2120ms
+   ✓ Owner registers new media into the existing live pool and can save and reopen it  6937ms
+   ✓ Owner creates a controlled Provider visual candidate during editing without changing Episode stage  2407ms
+   ✓ visual generation freezes the actual source voice window instead of retained muted TTS and rejects a later route change  6891ms
+   ✓ unknown paid visual submissions cannot be bypassed by retry or a new prompt  2147ms
+   ✓ a visual task with a saved Provider ID resumes polling without a second paid submission  2513ms
+   ✓ short visual source requires an explicit duration decision without repeating or moving other clips  2430ms
+   ✓ voice gain and BGM edits do not stale a visual request or overwrite the new mix  4197ms
+   ✓ an unavailable unused visual candidate does not prevent editing and cannot be adopted  1893ms
+   ✓ added shots accept registered local visuals and explicitly selected generation and changed target input blocks a new paid POST  2492ms
+   ✓ manual video adoption preserves the selected source interval and refuses a short range  1988ms
+   ✓ video generation freezes and applies the first-frame composition without changing the source image  2064ms
+
+ Test Files  1 passed (1)
+      Tests  14 passed (14)
+   Start at  06:21:24
+   Duration  43.83s (transform 478ms, setup 15ms, collect 652ms, tests 42.98s, environment 0ms, prepare 43ms)
+

@@ -1,0 +1,31 @@
+{
+  "at": "2026-10-31T23:07:35.400517+00:00",
+  "productCommit": "9b31b31bb76afadac26854d3a5975a9262666cc8",
+  "default": {
+    "files": 177,
+    "passed": 1157,
+    "failed": 0,
+    "evidence": "full-default-final.log"
+  },
+  "integration": {
+    "selectedFiles": 97,
+    "passed": 367,
+    "failed": 0,
+    "manualSkipped": 1,
+    "excludedFiles": 32,
+    "totalFiles": 129,
+    "evidence": "integration-consolidated.json",
+    "independentReadback": "consolidation-readback.json"
+  },
+  "realWorkflow": {
+    "accountCreatedThroughPage": true,
+    "workerTasksCompleted": 8,
+    "deliveryFilesByteVerified": 6,
+    "artifact": "final.mp4"
+  },
+  "openaiLiveCalls": 0,
+  "openaiCredentialReuseAwaitingAnswer": true,
+  "dailyRuntimeUpgraded": false,
+  "rawToolWhitespacePreservedForEvidenceHashes": true,
+  "stagedMarkdownWhitespaceCheckExit": 0
+}

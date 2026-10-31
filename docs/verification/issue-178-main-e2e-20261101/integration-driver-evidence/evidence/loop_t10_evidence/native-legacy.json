@@ -1,0 +1,619 @@
+{
+  "plan": {
+    "episodeId": "3f76fa3b-3a3d-48f5-a006-114788679085",
+    "title": "四步制作 T02 验收",
+    "path": "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085",
+    "stagingPath": "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085",
+    "paths": [
+      "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085"
+    ],
+    "stagingPaths": [
+      "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/board.json.loop-control-deletion",
+      "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/openchatcut-work/current/generated-project.json.loop-control-deletion",
+      "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/openchatcut-work/current/project.json.loop-control-deletion",
+      "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/openchatcut-work/current/runtime/media/uploads/34ba5906a8bceaa2c207.mp4.loop-control-deletion",
+      "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/openchatcut-work/current/runtime/project-store-v1.json.loop-control-deletion",
+      "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/openchatcut-work/current/runtime/project-store-v1.sqlite3.loop-control-deletion",
+      "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/openchatcut-work/current/runtime/project-store-v1.sqlite3-shm.loop-control-deletion",
+      "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/openchatcut-work/current/runtime/project-store-v1.sqlite3-wal.loop-control-deletion",
+      "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/openchatcut-work/current/runtime/project-store-v1.sqlite3.receipt.json.loop-control-deletion",
+      "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/openchatcut-work/current/workspace.json.loop-control-deletion",
+      "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/production-workspace/versions/07c3b27a2bc0a693c2a4507cccebb2930ebf87786aac894ac02df194c4085a3e.json.loop-control-deletion",
+      "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/production-workspace/versions/330648eb0bd7039796b62471c10b520dba5628367c735c707dc90181ae989f4b.json.loop-control-deletion",
+      "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/production-workspace/versions/5aa041ebfa9f4f36565bd26d61dc18cd305769e8904046f2f86e91373fd13bea.json.loop-control-deletion",
+      "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/production-workspace/versions/72fd069abd3964c54696bf95db049050da97db466e3eb51bcdc83c355bcad621.json.loop-control-deletion",
+      "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/production-workspace/versions/d44d4afed9687fd592cdf13e144081cb1bb9908832686a3bfe38bbb0c95f2e95.json.loop-control-deletion",
+      "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/script.md.loop-control-deletion",
+      "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/shot.mp4.loop-control-deletion",
+      "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/voice.mp3.loop-control-deletion"
+    ],
+    "files": [
+      {
+        "path": "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/board.json",
+        "bytes": 374,
+        "authority": "artifact:7ba83e4b-0ff1-45b5-91ec-69a4ba9fd594"
+      },
+      {
+        "path": "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/openchatcut-work/current/generated-project.json",
+        "bytes": 8603,
+        "authority": "native-baseline:925449fa-2be9-4c87-a6c8-a4b053fef5a2"
+      },
+      {
+        "path": "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/openchatcut-work/current/project.json",
+        "bytes": 9015,
+        "authority": "native-snapshot:925449fa-2be9-4c87-a6c8-a4b053fef5a2"
+      },
+      {
+        "path": "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/openchatcut-work/current/runtime/media/uploads/34ba5906a8bceaa2c207.mp4",
+        "bytes": 210288,
+        "authority": "native-upload:artifact:6c19cb4a-2dc5-4466-a022-3e9a531e0246"
+      },
+      {
+        "path": "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/openchatcut-work/current/runtime/project-store-v1.json",
+        "bytes": 9867,
+        "authority": "native-import:925449fa-2be9-4c87-a6c8-a4b053fef5a2"
+      },
+      {
+        "path": "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/openchatcut-work/current/runtime/project-store-v1.sqlite3",
+        "bytes": 4096,
+        "authority": "native-sqlite:925449fa-2be9-4c87-a6c8-a4b053fef5a2"
+      },
+      {
+        "path": "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/openchatcut-work/current/runtime/project-store-v1.sqlite3-shm",
+        "bytes": 32768,
+        "authority": "native-sqlite:925449fa-2be9-4c87-a6c8-a4b053fef5a2"
+      },
+      {
+        "path": "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/openchatcut-work/current/runtime/project-store-v1.sqlite3-wal",
+        "bytes": 135992,
+        "authority": "native-sqlite:925449fa-2be9-4c87-a6c8-a4b053fef5a2"
+      },
+      {
+        "path": "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/openchatcut-work/current/runtime/project-store-v1.sqlite3.receipt.json",
+        "bytes": 1129,
+        "authority": "native-sqlite-receipt:925449fa-2be9-4c87-a6c8-a4b053fef5a2"
+      },
+      {
+        "path": "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/openchatcut-work/current/workspace.json",
+        "bytes": 383,
+        "authority": "native-host:925449fa-2be9-4c87-a6c8-a4b053fef5a2"
+      },
+      {
+        "path": "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/production-workspace/versions/07c3b27a2bc0a693c2a4507cccebb2930ebf87786aac894ac02df194c4085a3e.json",
+        "bytes": 3344,
+        "authority": "workspace-version:925449fa-2be9-4c87-a6c8-a4b053fef5a2"
+      },
+      {
+        "path": "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/production-workspace/versions/330648eb0bd7039796b62471c10b520dba5628367c735c707dc90181ae989f4b.json",
+        "bytes": 2467,
+        "authority": "workspace-version:925449fa-2be9-4c87-a6c8-a4b053fef5a2"
+      },
+      {
+        "path": "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/production-workspace/versions/5aa041ebfa9f4f36565bd26d61dc18cd305769e8904046f2f86e91373fd13bea.json",
+        "bytes": 3796,
+        "authority": "workspace-version:925449fa-2be9-4c87-a6c8-a4b053fef5a2"
+      },
+      {
+        "path": "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/production-workspace/versions/72fd069abd3964c54696bf95db049050da97db466e3eb51bcdc83c355bcad621.json",
+        "bytes": 9015,
+        "authority": "workspace:925449fa-2be9-4c87-a6c8-a4b053fef5a2"
+      },
+      {
+        "path": "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/production-workspace/versions/d44d4afed9687fd592cdf13e144081cb1bb9908832686a3bfe38bbb0c95f2e95.json",
+        "bytes": 8603,
+        "authority": "workspace-version:925449fa-2be9-4c87-a6c8-a4b053fef5a2"
+      },
+      {
+        "path": "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/script.md",
+        "bytes": 52,
+        "authority": "material:6618cc0c-beb3-496f-9482-f128d9354165"
+      },
+      {
+        "path": "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/shot.mp4",
+        "bytes": 210288,
+        "authority": "artifact:6c19cb4a-2dc5-4466-a022-3e9a531e0246"
+      },
+      {
+        "path": "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/voice.mp3",
+        "bytes": 16556,
+        "authority": "frozen-input:e00200c8-f768-4607-9325-d6a66ee01a19"
+      }
+    ],
+    "preserved": [
+      {
+        "path": "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/openchatcut-work/current/runtime/media/uploads/manual.png",
+        "reason": "未登记或无法证明属于本单的文件，保留。"
+      },
+      {
+        "path": "/private/tmp/loop-153-XSWpO0/account/episodes/3f76fa3b-3a3d-48f5-a006-114788679085/openchatcut-work/current/runtime/settings.env",
+        "reason": "未登记或无法证明属于本单的文件，保留。"
+      }
+    ],
+    "confirmation": "四步制作 T02 验收",
+    "archived": true,
+    "isTest": false,
+    "revision": "bb44ed255589bd869d5dceb18630e9d423c529f34f11690e824d4e398c2322e7"
+  },
+  "workingFingerprint": [
+    {
+      "path": "",
+      "device": "16777234",
+      "inode": "106632456",
+      "mode": "16877",
+      "links": "6",
+      "size": "192",
+      "modified": "1793484974970510891"
+    },
+    {
+      "path": "generated-project.json",
+      "device": "16777234",
+      "inode": "106632462",
+      "mode": "33188",
+      "links": "1",
+      "size": "8603",
+      "modified": "1793484973888072039",
+      "sha256": "d44d4afed9687fd592cdf13e144081cb1bb9908832686a3bfe38bbb0c95f2e95"
+    },
+    {
+      "path": "project.json",
+      "device": "16777234",
+      "inode": "106633724",
+      "mode": "33188",
+      "links": "1",
+      "size": "9015",
+      "modified": "1793484976289035108",
+      "sha256": "72fd069abd3964c54696bf95db049050da97db466e3eb51bcdc83c355bcad621"
+    },
+    {
+      "path": "runtime",
+      "device": "16777234",
+      "inode": "106632457",
+      "mode": "16877",
+      "links": "9",
+      "size": "288",
+      "modified": "1793484976584505921"
+    },
+    {
+      "path": "runtime/media",
+      "device": "16777234",
+      "inode": "106632458",
+      "mode": "16877",
+      "links": "3",
+      "size": "96",
+      "modified": "1793484973886546033"
+    },
+    {
+      "path": "runtime/media/uploads",
+      "device": "16777234",
+      "inode": "106632459",
+      "mode": "16877",
+      "links": "4",
+      "size": "128",
+      "modified": "1793484976639209307"
+    },
+    {
+      "path": "runtime/media/uploads/34ba5906a8bceaa2c207.mp4",
+      "device": "16777234",
+      "inode": "106632460",
+      "mode": "33188",
+      "links": "1",
+      "size": "210288",
+      "modified": "1793484973887341828",
+      "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da"
+    },
+    {
+      "path": "runtime/media/uploads/manual.png",
+      "device": "16777234",
+      "inode": "106633931",
+      "mode": "33188",
+      "links": "1",
+      "size": "23",
+      "modified": "1793484976639397350",
+      "sha256": "0a2ca23107757c0d60359614463d06b2d09c901c3bbbf7c21c6fe3dd9e082482"
+    },
+    {
+      "path": "runtime/project-store-v1.json",
+      "device": "16777234",
+      "inode": "106632461",
+      "mode": "33188",
+      "links": "1",
+      "size": "9867",
+      "modified": "1793484973887871955",
+      "sha256": "e7c4be96e8bb9407fe5e002eb0ac0793d8522493e12667451062f430193982ba"
+    },
+    {
+      "path": "runtime/project-store-v1.sqlite3",
+      "device": "16777234",
+      "inode": "106633696",
+      "mode": "33188",
+      "links": "1",
+      "size": "4096",
+      "modified": "1793484974746031947",
+      "sha256": "97e8d54f8a7255106f66cf1b213c4a4d7b558d21310b1c2bfedc3d0d526dddda"
+    },
+    {
+      "path": "runtime/project-store-v1.sqlite3-shm",
+      "device": "16777234",
+      "inode": "106633699",
+      "mode": "33188",
+      "links": "1",
+      "size": "32768",
+      "modified": "1793484974746301906",
+      "sha256": "edcb45fa4e1af430a5769357e58acff7fa03a0ab9e0eeef60cadf911aa3e8b95"
+    },
+    {
+      "path": "runtime/project-store-v1.sqlite3-wal",
+      "device": "16777234",
+      "inode": "106633698",
+      "mode": "33188",
+      "links": "1",
+      "size": "135992",
+      "modified": "1793484975616383904",
+      "sha256": "0972e9d7fd13914adc4791f8f3ef035839c3fbd005d0ac8c3a2dffba41f5dd33"
+    },
+    {
+      "path": "runtime/project-store-v1.sqlite3.receipt.json",
+      "device": "16777234",
+      "inode": "106633700",
+      "mode": "33152",
+      "links": "1",
+      "size": "1129",
+      "modified": "1793484974748425831",
+      "sha256": "549975e47bcd83b7a875c2fd636c00b2d1110f81d1d28a8ed4f5508b73652b8a"
+    },
+    {
+      "path": "runtime/settings.env",
+      "device": "16777234",
+      "inode": "106633701",
+      "mode": "33152",
+      "links": "1",
+      "size": "23",
+      "modified": "1793484974777990867",
+      "sha256": "459811c1134a9866e14cb770787164c03512aa26ac18f5f0d5d86a25095db7f5"
+    },
+    {
+      "path": "workspace.json",
+      "device": "16777234",
+      "inode": "106632463",
+      "mode": "33188",
+      "links": "1",
+      "size": "383",
+      "modified": "1793484973888235457",
+      "sha256": "2d761eb1e233d9dd563065790111176b991265a6dd8354b21e144f887ef3e22b"
+    }
+  ],
+  "workspace": {
+    "selectedImages": [],
+    "visualConfiguration": {
+      "imageModel": null,
+      "videoModel": null,
+      "videoProvider": null
+    },
+    "preparation": {
+      "origin": "legacy-board",
+      "scriptRevisionId": "6618cc0c-beb3-496f-9482-f128d9354165",
+      "authorized": false,
+      "shots": [
+        {
+          "shotId": "shot-1",
+          "origin": "legacy-board",
+          "shotType": "a_roll"
+        },
+        {
+          "shotId": "shot-2",
+          "origin": "legacy-board",
+          "shotType": "a_roll"
+        }
+      ]
+    },
+    "pexels": {
+      "requests": []
+    },
+    "visualCandidates": [],
+    "visualTasks": [],
+    "visualTargets": [
+      {
+        "targetItemId": "shot-shot-1-1a00d035-558b-4085-a4b4-b368b487ac1d",
+        "width": 1080,
+        "height": 1920,
+        "provider": "",
+        "voiceMode": "none",
+        "durationSeconds": null,
+        "providerDurationSeconds": null,
+        "minimumSeconds": 2,
+        "maximumSeconds": 15
+      },
+      {
+        "targetItemId": "shot-shot-2-97bc98b9-5a4d-44ef-a458-47fad9261ee2",
+        "width": 1080,
+        "height": 1920,
+        "provider": "",
+        "voiceMode": "none",
+        "durationSeconds": null,
+        "providerDurationSeconds": null,
+        "minimumSeconds": 2,
+        "maximumSeconds": 15
+      }
+    ],
+    "audio": {
+      "mix": {
+        "voices": [
+          {
+            "coverage": "none",
+            "startSeconds": null,
+            "durationSeconds": null,
+            "shotDurationSeconds": 2,
+            "sourceStartSeconds": null,
+            "sourceLabel": null,
+            "alignmentReady": false,
+            "shotId": "shot-1",
+            "mode": "none",
+            "gainDb": 0,
+            "ambienceGainDb": null,
+            "sourceItemId": null,
+            "sourceAssetId": null
+          },
+          {
+            "coverage": "none",
+            "startSeconds": null,
+            "durationSeconds": null,
+            "shotDurationSeconds": 2,
+            "sourceStartSeconds": null,
+            "sourceLabel": null,
+            "alignmentReady": false,
+            "shotId": "shot-2",
+            "mode": "none",
+            "gainDb": 0,
+            "ambienceGainDb": null,
+            "sourceItemId": null,
+            "sourceAssetId": null
+          }
+        ],
+        "sounds": []
+      },
+      "preparations": []
+    },
+    "deliveries": [],
+    "usedNarration": [],
+    "candidates": [],
+    "exports": [],
+    "exportIssues": [],
+    "captions": [
+      {
+        "clipId": "1a00d035-558b-4085-a4b4-b368b487ac1d",
+        "itemId": "shot-shot-1-1a00d035-558b-4085-a4b4-b368b487ac1d",
+        "shotId": "shot-1",
+        "durationMs": 2000,
+        "contract": {
+          "version": "shot-captions/v1",
+          "enabled": true,
+          "contentMode": "independent",
+          "text": "第一镜",
+          "cues": [
+            {
+              "id": "initial-shot-1~0",
+              "text": "第一镜",
+              "startMs": 0,
+              "endMs": 2000
+            }
+          ],
+          "spatial": {
+            "version": "shot-caption-space/v2",
+            "anchor": "bottom-center",
+            "safeArea": "title-safe",
+            "aspectRatio": "9:16",
+            "insets": {
+              "top": 0.08,
+              "right": 0.08,
+              "bottom": 0.18,
+              "left": 0.08
+            },
+            "maxLines": 2,
+            "maxCharactersPerLine": 16
+          }
+        },
+        "inputFingerprint": "c1b5ff514d5deb1a23d9cd0921450b5ae591d93df4f91dfec09752e13018d0a3",
+        "timing": "current",
+        "textConfirmed": false,
+        "audioTrackId": null,
+        "narrationText": null,
+        "taskId": null,
+        "alignmentInputVersion": null,
+        "detail": null
+      },
+      {
+        "clipId": "97bc98b9-5a4d-44ef-a458-47fad9261ee2",
+        "itemId": "shot-shot-2-97bc98b9-5a4d-44ef-a458-47fad9261ee2",
+        "shotId": "shot-2",
+        "durationMs": 2000,
+        "contract": {
+          "version": "shot-captions/v1",
+          "enabled": true,
+          "contentMode": "independent",
+          "text": "缺少素材的第二镜。",
+          "cues": [
+            {
+              "id": "initial-shot-2~0",
+              "text": "缺少素材的第二镜。",
+              "startMs": 0,
+              "endMs": 2000
+            }
+          ],
+          "spatial": {
+            "version": "shot-caption-space/v2",
+            "anchor": "bottom-center",
+            "safeArea": "title-safe",
+            "aspectRatio": "9:16",
+            "insets": {
+              "top": 0.08,
+              "right": 0.08,
+              "bottom": 0.18,
+              "left": 0.08
+            },
+            "maxLines": 2,
+            "maxCharactersPerLine": 16
+          }
+        },
+        "inputFingerprint": "d4153a72223deb451bb4b538c72bcabb847073ba8a0be5ebc5b5171318ee871a",
+        "timing": "current",
+        "textConfirmed": false,
+        "audioTrackId": null,
+        "narrationText": null,
+        "taskId": null,
+        "alignmentInputVersion": null,
+        "detail": null
+      }
+    ],
+    "id": "925449fa-2be9-4c87-a6c8-a4b053fef5a2",
+    "episodeId": "3f76fa3b-3a3d-48f5-a006-114788679085",
+    "workflowVersion": "four-step/v1",
+    "scriptRevisionId": "6618cc0c-beb3-496f-9482-f128d9354165",
+    "storyboardPackageId": "bcf257f4-6d80-498d-aa6c-acc77f0ff72b",
+    "revision": 5,
+    "contentSha256": "70aee0713e2263c8430f274af5475c5ad89945f4406310fdd3d10199cdff1a7e",
+    "nativeEditRevision": 1,
+    "narration": [
+      {
+        "windowWarning": null,
+        "selection": null,
+        "defaults": null,
+        "requiresCandidateAdoption": true,
+        "clipId": "1a00d035-558b-4085-a4b4-b368b487ac1d",
+        "shotId": "shot-1",
+        "mode": "none",
+        "text": "第一镜",
+        "voice": null,
+        "languageCode": null,
+        "speakingRate": null,
+        "override": false,
+        "inputFingerprint": "3bb0ff92bc09c3edba44c273facb47f0197092b3f054f8a47b3fcf61fc0b96d0",
+        "confirmed": false,
+        "taskId": null,
+        "status": "pending",
+        "error": null,
+        "audioTrackId": null,
+        "artifactId": null,
+        "relativePath": null,
+        "sha256": null,
+        "fileSize": null,
+        "durationSeconds": null,
+        "itemId": "workspace-narration-shot-shot-1",
+        "adoptedAudioTrackId": null
+      },
+      {
+        "windowWarning": null,
+        "selection": null,
+        "defaults": null,
+        "requiresCandidateAdoption": true,
+        "clipId": "97bc98b9-5a4d-44ef-a458-47fad9261ee2",
+        "shotId": "shot-2",
+        "mode": "none",
+        "text": "缺少素材的第二镜。",
+        "voice": null,
+        "languageCode": null,
+        "speakingRate": null,
+        "override": false,
+        "inputFingerprint": "5c35a7f5af41dcde65b98642582b5b3cf5e6560f4b6e7e9dcfecb381f14522a0",
+        "confirmed": false,
+        "taskId": null,
+        "status": "pending",
+        "error": null,
+        "audioTrackId": null,
+        "artifactId": null,
+        "relativePath": null,
+        "sha256": null,
+        "fileSize": null,
+        "durationSeconds": null,
+        "itemId": "workspace-narration-shot-shot-2",
+        "adoptedAudioTrackId": null
+      }
+    ],
+    "clips": [
+      {
+        "id": "1a00d035-558b-4085-a4b4-b368b487ac1d",
+        "text": "第一镜",
+        "itemId": "shot-shot-1-1a00d035-558b-4085-a4b4-b368b487ac1d",
+        "shotId": "shot-1",
+        "source": {
+          "kind": "video",
+          "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+          "fileSize": 210288,
+          "relativePath": "episodes/3f76fa3b-3a3d-48f5-a006-114788679085/shot.mp4",
+          "materialRevisionId": "e3afa37c-39f9-40c8-af94-6d2963c709f1"
+        }
+      },
+      {
+        "id": "97bc98b9-5a4d-44ef-a458-47fad9261ee2",
+        "text": "缺少素材的第二镜。",
+        "itemId": "shot-shot-2-97bc98b9-5a4d-44ef-a458-47fad9261ee2",
+        "shotId": "shot-2",
+        "source": {
+          "kind": "video",
+          "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+          "fileSize": 210288,
+          "relativePath": "episodes/3f76fa3b-3a3d-48f5-a006-114788679085/shot.mp4",
+          "materialRevisionId": "e3afa37c-39f9-40c8-af94-6d2963c709f1"
+        }
+      }
+    ],
+    "project": {
+      "relativePath": "episodes/3f76fa3b-3a3d-48f5-a006-114788679085/production-workspace/versions/72fd069abd3964c54696bf95db049050da97db466e3eb51bcdc83c355bcad621.json",
+      "sha256": "72fd069abd3964c54696bf95db049050da97db466e3eb51bcdc83c355bcad621",
+      "fileSize": 9015,
+      "projectId": "loop-control-3f76fa3b-3a3d-48f5-a006-114788679085"
+    },
+    "history": [
+      {
+        "revision": 5,
+        "sha256": "72fd069abd3964c54696bf95db049050da97db466e3eb51bcdc83c355bcad621",
+        "scriptRevisionId": "6618cc0c-beb3-496f-9482-f128d9354165",
+        "reason": "保存原生剪辑",
+        "createdAt": "2026-10-31T22:16:16.271Z"
+      },
+      {
+        "revision": 4,
+        "sha256": "d44d4afed9687fd592cdf13e144081cb1bb9908832686a3bfe38bbb0c95f2e95",
+        "scriptRevisionId": "6618cc0c-beb3-496f-9482-f128d9354165",
+        "reason": "更新工作版本",
+        "createdAt": "2026-10-31T22:16:14.965Z"
+      },
+      {
+        "revision": 3,
+        "sha256": "5aa041ebfa9f4f36565bd26d61dc18cd305769e8904046f2f86e91373fd13bea",
+        "scriptRevisionId": "6618cc0c-beb3-496f-9482-f128d9354165",
+        "reason": null,
+        "createdAt": "2026-10-31T22:16:13.429Z"
+      },
+      {
+        "revision": 2,
+        "sha256": "07c3b27a2bc0a693c2a4507cccebb2930ebf87786aac894ac02df194c4085a3e",
+        "scriptRevisionId": "6618cc0c-beb3-496f-9482-f128d9354165",
+        "reason": null,
+        "createdAt": "2026-10-31T22:16:13.125Z"
+      },
+      {
+        "revision": 1,
+        "sha256": "330648eb0bd7039796b62471c10b520dba5628367c735c707dc90181ae989f4b",
+        "scriptRevisionId": "6618cc0c-beb3-496f-9482-f128d9354165",
+        "reason": "首次组装",
+        "createdAt": "2026-10-31T22:16:12.972Z"
+      }
+    ],
+    "readiness": {
+      "deliverable": false,
+      "placeholders": [],
+      "missingSources": []
+    },
+    "stale": false
+  },
+  "metadata": {
+    "baseProjectSha256": "908d80657dd4d4ca60838e32c83e59d2adde9edb439782f833b71a9b7eeec4b0",
+    "inputFingerprint": "6bd82dac0bc07b21eed86f5a812fa663bc7b9cc65c404cbee322139e5667f4af",
+    "projectId": "loop-control-3f76fa3b-3a3d-48f5-a006-114788679085",
+    "reverseSources": {
+      "/media/uploads/34ba5906a8bceaa2c207.mp4": "episodes/3f76fa3b-3a3d-48f5-a006-114788679085/shot.mp4"
+    }
+  },
+  "hostSha256": "72fd069abd3964c54696bf95db049050da97db466e3eb51bcdc83c355bcad621",
+  "planReadOnly": true
+}

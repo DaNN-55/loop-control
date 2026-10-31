@@ -1,0 +1,51 @@
+{
+  "observed": {
+    "durationSeconds": 2.048,
+    "width": 1080,
+    "height": 1920,
+    "hasAudio": true,
+    "blackFrameCount": 0
+  },
+  "artifacts": [
+    {
+      "id": "484f0251-b02f-4ef7-88a7-7f146f7f457b",
+      "episode_id": "3eb08870-d5e4-4de3-9eb4-49337bca2f67",
+      "artifact_type": "shot_preview_proxy",
+      "relative_path": "episodes/3eb08870-d5e4-4de3-9eb4-49337bca2f67/native-tasks/474c2183-ff25-4b48-90d9-d7445f0bc85d/proxy.mp4",
+      "sha256": "64d85b080cbaf8876c9d29e8e56545aefe7337ac7ef0af0d4ee004be329fa4d2",
+      "file_size": "90656",
+      "producer_task_id": "474c2183-ff25-4b48-90d9-d7445f0bc85d",
+      "created_at": "2026-10-31T22:20:01.192Z"
+    },
+    {
+      "id": "f779df06-7c19-4dba-84bd-a4614bb66530",
+      "episode_id": "3eb08870-d5e4-4de3-9eb4-49337bca2f67",
+      "artifact_type": "shot_editable_project",
+      "relative_path": "episodes/3eb08870-d5e4-4de3-9eb4-49337bca2f67/native-tasks/474c2183-ff25-4b48-90d9-d7445f0bc85d/project.json",
+      "sha256": "8b73f4924117030a3241abb36f4adb4e7a8c7cddfc319115d8d347ef14e713f2",
+      "file_size": "2750",
+      "producer_task_id": "474c2183-ff25-4b48-90d9-d7445f0bc85d",
+      "created_at": "2026-10-31T22:20:01.192Z"
+    },
+    {
+      "id": "4b59abbb-f3fb-4775-9724-2a2e205a27d0",
+      "episode_id": "3eb08870-d5e4-4de3-9eb4-49337bca2f67",
+      "artifact_type": "shot_preview_runtime",
+      "relative_path": "episodes/3eb08870-d5e4-4de3-9eb4-49337bca2f67/native-tasks/474c2183-ff25-4b48-90d9-d7445f0bc85d/openchatcut-runtime.json",
+      "sha256": "88c0bd65cff707c2113ea8f63d9cc5965a397f4bc14c35de28269ceaf6d08cd7",
+      "file_size": "42",
+      "producer_task_id": "474c2183-ff25-4b48-90d9-d7445f0bc85d",
+      "created_at": "2026-10-31T22:20:01.192Z"
+    },
+    {
+      "id": "eaf98120-4d46-4a00-8147-065597c9020d",
+      "episode_id": "3eb08870-d5e4-4de3-9eb4-49337bca2f67",
+      "artifact_type": "shot_preview_qc_report",
+      "relative_path": "episodes/3eb08870-d5e4-4de3-9eb4-49337bca2f67/native-tasks/474c2183-ff25-4b48-90d9-d7445f0bc85d/qc-report.json",
+      "sha256": "94f23a975f2c72c8598a4955f8279292f7a2672b245fd94d504b8f8061e65fa7",
+      "file_size": "859",
+      "producer_task_id": "474c2183-ff25-4b48-90d9-d7445f0bc85d",
+      "created_at": "2026-10-31T22:20:01.192Z"
+    }
+  ]
+}

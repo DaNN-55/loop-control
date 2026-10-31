@@ -1,0 +1,9 @@
+{
+  "ownedContainersAbsent": [
+    "ee8ba236529e708f1a50cd85f059b372a2101e63c6620db8555a2acacee4d5ba",
+    "1b92a552001aa4bef909e0f90410db947fc53f286a9a0216979779ec10833dda"
+  ],
+  "dailyPostgresRunning": true,
+  "normalDailyServicePid": 71478,
+  "noDailyStopOrMigrationPerformed": true
+}

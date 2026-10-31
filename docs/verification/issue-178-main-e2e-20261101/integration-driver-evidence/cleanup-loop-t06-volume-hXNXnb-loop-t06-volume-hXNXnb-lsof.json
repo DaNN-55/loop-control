@@ -1,0 +1,6 @@
+{
+  "path": "/private/tmp/loop-t06-volume-hXNXnb",
+  "exitCode": 1,
+  "stdout": "COMMAND     PID USER   FD   TYPE DEVICE SIZE/OFF      NODE NAME\ndiskimage 27700  dan    3u   REG   1,18  8392704 106636631 /private/tmp/loop-t06-volume-hXNXnb/media.sparseimage\n",
+  "stderr": ""
+}

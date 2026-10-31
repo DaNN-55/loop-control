@@ -1,0 +1,62 @@
+{
+  "title": "留住春日的风景",
+  "description": "真实流程验收：万相生成画面、Pexels 湖边素材与豆包旁白。",
+  "tags": [
+    "自然",
+    "风景",
+    "测试"
+  ],
+  "exportId": "daff486b-7c01-44ca-9fb0-32d336bb71b9",
+  "contentSha256": "2b6e1ffd923934edb83a9b9a3e9709d0d4152845a02f41cd68d782aaeacc5135",
+  "scriptRevisionId": "f68029ac-7840-4892-8996-f0d22f29a122",
+  "narration": [
+    {
+      "shotId": "shot-01",
+      "baselineText": "风吹过湖面。",
+      "sourceText": "风吹过湖面。",
+      "adoptedText": "风吹过湖面。",
+      "textCoverage": "complete_source",
+      "windows": [
+        {
+          "srcInFrame": 0,
+          "usedDurationSeconds": 1.2333333333333334,
+          "sourceDurationSeconds": 1.2333333333333334,
+          "playbackRate": 1,
+          "fps": 30,
+          "audible": true
+        }
+      ],
+      "textSource": "owner_adoption",
+      "sourceDiffersFromBaseline": false,
+      "differsFromBaseline": false,
+      "audioTrackId": "9d6fe65d-5a76-45bb-ab58-cfab7d064d7b",
+      "sha256": "5e66133d120c430799330fe4e7a5f27b5ff8f0214267edbaa8a4dfc83b6ee4a5",
+      "itemId": "workspace-narration-shot-shot-01",
+      "source": "春日风景--dcd6550f-b229-4df0-8993-98efae2c3503/真实风景短片 · Pexels 与万相--c736a98b-49db-4a61-934c-ebb2db6c6a9d/native-tasks/27978b73-d246-48d2-b771-da484b589784/shot-narration-shot-01-5e777e02-f77a-4f33-abdd-74382b0d9723.mp3"
+    },
+    {
+      "shotId": "shot-02",
+      "baselineText": "把这一刻，留给自然。",
+      "sourceText": "把这一刻，留给自然。",
+      "adoptedText": "把这一刻，留给自然。",
+      "textCoverage": "complete_source",
+      "windows": [
+        {
+          "srcInFrame": 0,
+          "usedDurationSeconds": 2.066666666666667,
+          "sourceDurationSeconds": 2.066666666666667,
+          "playbackRate": 1,
+          "fps": 30,
+          "audible": true
+        }
+      ],
+      "textSource": "owner_adoption",
+      "sourceDiffersFromBaseline": false,
+      "differsFromBaseline": false,
+      "audioTrackId": "d8824a1e-2de2-49f5-853a-f19849566dc1",
+      "sha256": "a2ec1cdbec5f237c209eaafac7025595de2396680da3b8ac456286c2e71c26db",
+      "itemId": "workspace-narration-shot-shot-02",
+      "source": "春日风景--dcd6550f-b229-4df0-8993-98efae2c3503/真实风景短片 · Pexels 与万相--c736a98b-49db-4a61-934c-ebb2db6c6a9d/native-tasks/38bc7e03-3351-45f4-b33f-04acec7dd749/shot-narration-shot-02-7421f833-c75a-4694-b57c-df0e68bc3cff.mp3"
+    }
+  ]
+}

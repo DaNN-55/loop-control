@@ -1,0 +1,34 @@
+{
+  "title": "静音元数据核对",
+  "description": "",
+  "tags": [],
+  "exportId": "9b4ea456-e68e-40cf-a42b-86e5a4624d57",
+  "contentSha256": "af39acb6a029d3e5a535b0a04849807f2a0b058a6921d98bb9992a02bdfc9a6b",
+  "scriptRevisionId": "cc5518a4-ec66-4293-b5ac-e0f423aa6812",
+  "narration": [
+    {
+      "shotId": "shot-01",
+      "baselineText": "填写本段完整口播。",
+      "sourceText": "这份已采用的口播在此导出中被明确静音。",
+      "adoptedText": null,
+      "textCoverage": "partial_or_retimed_unverified",
+      "windows": [
+        {
+          "srcInFrame": 0,
+          "usedDurationSeconds": 2.4,
+          "sourceDurationSeconds": 2.4,
+          "playbackRate": 1,
+          "fps": 30,
+          "audible": false
+        }
+      ],
+      "textSource": "owner_adoption",
+      "sourceDiffersFromBaseline": true,
+      "differsFromBaseline": null,
+      "audioTrackId": "c2fa12e5-0f68-4c16-9b06-9ceec66ca1b1",
+      "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+      "itemId": "workspace-narration-shot-shot-01",
+      "source": "未分系列--e32f2560-cd9b-4795-b8f4-81575b18d81a/正式新单--e724cd1b-eba5-466f-bbd6-61c35fc0e2a2/native-tasks/f7e98386-c0b5-4fb6-a0ad-7a1e3130af76/shot-narration-shot-01-a321e5c4-6a40-4eff-9fef-5f35f27dbcd5.mp3"
+    }
+  ]
+}

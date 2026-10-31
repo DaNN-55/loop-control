@@ -1,0 +1,16 @@
+
+ RUN  v3.2.7 /private/tmp/loop-control-main-e2e-20261101/integration-regression/source
+
+ ✓ src/local-app/workspaceVideo.integration.test.ts (6 tests) 40373ms
+   ✓ Owner prepares independent exact ranges from one source across multiple shots  2100ms
+   ✓ Owner renders many-to-many exact video ranges in native Studio (landscape=false)  11351ms
+   ✓ Owner renders many-to-many exact video ranges in native Studio (landscape=true)  12611ms
+   ✓ Owner moves a locked range by exactly one frame in real native output  6032ms
+   ✓ Owner boundaries reject stale, foreign, invalid, tampered and active-editor range writes  5919ms
+   ✓ Owner cannot select audio-only tail beyond the video stream  2358ms
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  06:15:42
+   Duration  41.21s (transform 429ms, setup 8ms, collect 711ms, tests 40.37s, environment 0ms, prepare 27ms)
+

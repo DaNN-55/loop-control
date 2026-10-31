@@ -1,0 +1,119 @@
+{
+  "fault": "root-before-commit-kill",
+  "planId": "8d1f7b91-d45a-4b26-9537-0f971ae2ec4f",
+  "manifestSha256": "a1c7d150fee8a1b8cb71915eca18b83f1ebbf9b16db1db56c46cafaf1dba6658",
+  "beforeConfig": {
+    "storageOwnerId": "f279dfc4-9bb3-4076-9cc0-4acfb560f72c",
+    "runtimeRoot": "/private/tmp/loop-t06-volume-rNLnp1/mounted/loop-153-WKpaVR/runtime",
+    "projectRoot": "/private/tmp/loop-control-main-e2e-20261101/integration-regression/source",
+    "home": "/Users/dan",
+    "stateDirectory": "/private/tmp/loop-t06-volume-rNLnp1/mounted/loop-153-WKpaVR/runtime/state",
+    "mediaRoot": "/private/tmp/loop-t06-volume-rNLnp1/mounted/chosen-library",
+    "backupRoot": "/private/tmp/loop-t06-volume-rNLnp1/mounted/loop-153-WKpaVR/runtime/backups",
+    "automaticBackups": false,
+    "controlledNotifications": true,
+    "database": {
+      "host": "127.0.0.1",
+      "port": 64256,
+      "user": "loop_app",
+      "database": "loop_studio_153_e4ac38e405ad",
+      "password": "<REDACTED>"
+    },
+    "workerDatabase": {
+      "host": "127.0.0.1",
+      "port": 64256,
+      "user": "loop_worker",
+      "database": "loop_studio_153_e4ac38e405ad",
+      "password": "<REDACTED>"
+    },
+    "worker": {
+      "mountPath": "/private/tmp/loop-t06-volume-rNLnp1/mounted",
+      "minimumFreeBytes": 0,
+      "visualCommand": [
+        "/usr/bin/true"
+      ],
+      "alignment": {
+        "python": "/usr/bin/true",
+        "cacheDirectory": "/private/tmp/loop-t06-volume-rNLnp1/mounted/loop-153-WKpaVR/whisperx-models",
+        "runnerSha256": "eeaa65e96de8289382b7e794fbb86d20c6cc05bd63d112f2a621506f8e5693d7",
+        "cacheBinding": {
+          "path": "/private/tmp/loop-t06-volume-rNLnp1/mounted/loop-153-WKpaVR/whisperx-models",
+          "deviceId": "16777261",
+          "inodeId": "26",
+          "mountPath": "/private/tmp/loop-t06-volume-rNLnp1/mounted"
+        }
+      },
+      "concurrency": 1,
+      "actualCostCents": 0
+    },
+    "publicationFaultTarget": "/private/tmp/loop-t06-volume-rNLnp1/mounted/chosen-library",
+    "mediaRootBinding": {
+      "path": "/private/tmp/loop-t06-volume-rNLnp1/mounted/chosen-library",
+      "inodeId": "24",
+      "deviceId": "16777261",
+      "mountPath": "/private/tmp/loop-t06-volume-rNLnp1/mounted"
+    }
+  },
+  "beforeJournal": {
+    "version": 1,
+    "database": "loop_studio_153_e4ac38e405ad",
+    "previousSettings": "{\"storageOwnerId\":\"f279dfc4-9bb3-4076-9cc0-4acfb560f72c\",\"runtimeRoot\":\"/private/tmp/loop-t06-volume-rNLnp1/mounted/loop-153-WKpaVR/runtime\",\"projectRoot\":\"/private/tmp/loop-control-main-e2e-20261101/integration-regression/source\",\"home\":\"/Users/dan\",\"stateDirectory\":\"/private/tmp/loop-t06-volume-rNLnp1/mounted/loop-153-WKpaVR/runtime/state\",\"mediaRoot\":\"/private/tmp/loop-t06-volume-rNLnp1/mounted/loop-153-WKpaVR\",\"backupRoot\":\"/private/tmp/loop-t06-volume-rNLnp1/mounted/loop-153-WKpaVR/runtime/backups\",\"automaticBackups\":false,\"controlledNotifications\":true,\"database\":{\"host\":\"127.0.0.1\",\"port\":64256,\"user\":\"loop_app\",\"database\":\"loop_studio_153_e4ac38e405ad\",\"password\":\"synthetic-unused-unix-trust\"},\"workerDatabase\":{\"host\":\"127.0.0.1\",\"port\":64256,\"user\":\"loop_worker\",\"database\":\"loop_studio_153_e4ac38e405ad\",\"password\":\"synthetic-unused-unix-trust\"},\"worker\":{\"mountPath\":\"/private/tmp/loop-t06-volume-rNLnp1/mounted\",\"minimumFreeBytes\":0,\"visualCommand\":[\"/usr/bin/true\"],\"alignment\":{\"python\":\"/usr/bin/true\",\"cacheDirectory\":\"/private/tmp/loop-t06-volume-rNLnp1/mounted/loop-153-WKpaVR/whisperx-models\",\"runnerSha256\":\"eeaa65e96de8289382b7e794fbb86d20c6cc05bd63d112f2a621506f8e5693d7\"},\"concurrency\":1,\"actualCostCents\":0},\"publicationFaultTarget\":\"/private/tmp/loop-t06-volume-rNLnp1/mounted/chosen-library\"}",
+    "previousReceipt": null,
+    "target": {
+      "path": "/private/tmp/loop-t06-volume-rNLnp1/mounted/chosen-library",
+      "inodeId": "24",
+      "deviceId": "16777261",
+      "mountPath": "/private/tmp/loop-t06-volume-rNLnp1/mounted"
+    },
+    "publication": {
+      "operation": "migration",
+      "planId": "8d1f7b91-d45a-4b26-9537-0f971ae2ec4f",
+      "manifestSha256": "a1c7d150fee8a1b8cb71915eca18b83f1ebbf9b16db1db56c46cafaf1dba6658",
+      "storageOwnerId": "f279dfc4-9bb3-4076-9cc0-4acfb560f72c"
+    },
+    "targetSettings": "{\n  \"storageOwnerId\": \"f279dfc4-9bb3-4076-9cc0-4acfb560f72c\",\n  \"runtimeRoot\": \"/private/tmp/loop-t06-volume-rNLnp1/mounted/loop-153-WKpaVR/runtime\",\n  \"projectRoot\": \"/private/tmp/loop-control-main-e2e-20261101/integration-regression/source\",\n  \"home\": \"/Users/dan\",\n  \"stateDirectory\": \"/private/tmp/loop-t06-volume-rNLnp1/mounted/loop-153-WKpaVR/runtime/state\",\n  \"mediaRoot\": \"/private/tmp/loop-t06-volume-rNLnp1/mounted/chosen-library\",\n  \"backupRoot\": \"/private/tmp/loop-t06-volume-rNLnp1/mounted/loop-153-WKpaVR/runtime/backups\",\n  \"automaticBackups\": false,\n  \"controlledNotifications\": true,\n  \"database\": {\n    \"host\": \"127.0.0.1\",\n    \"port\": 64256,\n    \"user\": \"loop_app\",\n    \"database\": \"loop_studio_153_e4ac38e405ad\",\n    \"password\": \"synthetic-unused-unix-trust\"\n  },\n  \"workerDatabase\": {\n    \"host\": \"127.0.0.1\",\n    \"port\": 64256,\n    \"user\": \"loop_worker\",\n    \"database\": \"loop_studio_153_e4ac38e405ad\",\n    \"password\": \"synthetic-unused-unix-trust\"\n  },\n  \"worker\": {\n    \"mountPath\": \"/private/tmp/loop-t06-volume-rNLnp1/mounted\",\n    \"minimumFreeBytes\": 0,\n    \"visualCommand\": [\n      \"/usr/bin/true\"\n    ],\n    \"alignment\": {\n      \"python\": \"/usr/bin/true\",\n      \"cacheDirectory\": \"/private/tmp/loop-t06-volume-rNLnp1/mounted/loop-153-WKpaVR/whisperx-models\",\n      \"runnerSha256\": \"eeaa65e96de8289382b7e794fbb86d20c6cc05bd63d112f2a621506f8e5693d7\",\n      \"cacheBinding\": {\n        \"path\": \"/private/tmp/loop-t06-volume-rNLnp1/mounted/loop-153-WKpaVR/whisperx-models\",\n        \"deviceId\": \"16777261\",\n        \"inodeId\": \"26\",\n        \"mountPath\": \"/private/tmp/loop-t06-volume-rNLnp1/mounted\"\n      }\n    },\n    \"concurrency\": 1,\n    \"actualCostCents\": 0\n  },\n  \"publicationFaultTarget\": \"/private/tmp/loop-t06-volume-rNLnp1/mounted/chosen-library\",\n  \"mediaRootBinding\": {\n    \"path\": \"/private/tmp/loop-t06-volume-rNLnp1/mounted/chosen-library\",\n    \"inodeId\": \"24\",\n    \"deviceId\": \"16777261\",\n    \"mountPath\": \"/private/tmp/loop-t06-volume-rNLnp1/mounted\"\n  }\n}\n",
+    "targetReceipt": "{\"version\":1,\"operation\":\"migration\",\"planId\":\"8d1f7b91-d45a-4b26-9537-0f971ae2ec4f\",\"manifestSha256\":\"a1c7d150fee8a1b8cb71915eca18b83f1ebbf9b16db1db56c46cafaf1dba6658\",\"storageOwnerId\":\"f279dfc4-9bb3-4076-9cc0-4acfb560f72c\",\"database\":\"loop_studio_153_e4ac38e405ad\",\"binding\":{\"path\":\"/private/tmp/loop-t06-volume-rNLnp1/mounted/chosen-library\",\"inodeId\":\"24\",\"deviceId\":\"16777261\",\"mountPath\":\"/private/tmp/loop-t06-volume-rNLnp1/mounted\"},\"publicationFence\":true}\n"
+  },
+  "recovered": {
+    "storageOwnerId": "f279dfc4-9bb3-4076-9cc0-4acfb560f72c",
+    "runtimeRoot": "/private/tmp/loop-t06-volume-rNLnp1/mounted/loop-153-WKpaVR/runtime",
+    "projectRoot": "/private/tmp/loop-control-main-e2e-20261101/integration-regression/source",
+    "home": "/Users/dan",
+    "stateDirectory": "/private/tmp/loop-t06-volume-rNLnp1/mounted/loop-153-WKpaVR/runtime/state",
+    "mediaRoot": "/private/tmp/loop-t06-volume-rNLnp1/mounted/loop-153-WKpaVR",
+    "backupRoot": "/private/tmp/loop-t06-volume-rNLnp1/mounted/loop-153-WKpaVR/runtime/backups",
+    "automaticBackups": false,
+    "controlledNotifications": true,
+    "database": {
+      "host": "127.0.0.1",
+      "port": 64256,
+      "user": "loop_app",
+      "database": "loop_studio_153_e4ac38e405ad",
+      "password": "<REDACTED>"
+    },
+    "workerDatabase": {
+      "host": "127.0.0.1",
+      "port": 64256,
+      "user": "loop_worker",
+      "database": "loop_studio_153_e4ac38e405ad",
+      "password": "<REDACTED>"
+    },
+    "worker": {
+      "mountPath": "/private/tmp/loop-t06-volume-rNLnp1/mounted",
+      "minimumFreeBytes": 0,
+      "visualCommand": [
+        "/usr/bin/true"
+      ],
+      "alignment": {
+        "python": "/usr/bin/true",
+        "cacheDirectory": "/private/tmp/loop-t06-volume-rNLnp1/mounted/loop-153-WKpaVR/whisperx-models",
+        "runnerSha256": "eeaa65e96de8289382b7e794fbb86d20c6cc05bd63d112f2a621506f8e5693d7"
+      },
+      "concurrency": 1,
+      "actualCostCents": 0
+    },
+    "publicationFaultTarget": "/private/tmp/loop-t06-volume-rNLnp1/mounted/chosen-library"
+  },
+  "tamperRejected": false,
+  "secretHydrationInvoked": false
+}

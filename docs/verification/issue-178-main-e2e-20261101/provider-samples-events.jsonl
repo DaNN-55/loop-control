@@ -1,0 +1,44 @@
+{"at":"2026-10-31T21:49:52.113Z","event":"request","provider":"pexels","method":"GET","host":"api.pexels.com","path":"/v1/videos/search"}
+{"at":"2026-10-31T21:49:53.498Z","event":"response","provider":"pexels","httpStatus":200,"elapsedMs":1385}
+{"at":"2026-10-31T21:49:53.516Z","event":"request","provider":"pexels","method":"GET","host":"videos.pexels.com","path":"/video-files/28830547/12488809_720_1280_50fps.mp4"}
+{"at":"2026-10-31T21:49:55.311Z","event":"response","provider":"pexels","httpStatus":200,"elapsedMs":1795}
+{"at":"2026-10-31T21:49:56.396Z","event":"artifact","provider":"pexels","path":"/private/tmp/loop-control-main-e2e-20261101/provider-samples/pexels-source.mp4","bytes":904168,"sha256":"b72e65982976866522fcabe5e0ecaf1c2daaee01ca7f30b866b3d7458fc20498","media":{"programs":[],"stream_groups":[],"streams":[{"codec_name":"h264","width":720,"height":1280,"r_frame_rate":"50/1"}],"format":{"duration":"4.560000","size":"904168"}}}
+{"at":"2026-10-31T21:49:56.409Z","event":"sample.start","provider":"bailian","model":"wan2.6-i2v-flash","durationSeconds":2,"budgetReservation":{"currency":"CNY","microunits":300000}}
+{"at":"2026-10-31T21:49:56.421Z","event":"request","provider":"bailian","method":"POST","host":"ws-hpypdfzw9mbovl42.cn-beijing.maas.aliyuncs.com","path":"/api/v1/services/aigc/video-generation/video-synthesis"}
+{"at":"2026-10-31T21:49:56.866Z","event":"response","provider":"bailian","httpStatus":200,"elapsedMs":445}
+{"at":"2026-10-31T21:49:56.875Z","event":"submitted","provider":"bailian","taskId":"7c019f96-1782-4b4d-af9a-41be00d92f1b"}
+{"at":"2026-10-31T21:49:56.881Z","event":"request","provider":"bailian","method":"GET","host":"ws-hpypdfzw9mbovl42.cn-beijing.maas.aliyuncs.com","path":"/api/v1/tasks/7c019f96-1782-4b4d-af9a-41be00d92f1b"}
+{"at":"2026-10-31T21:49:56.946Z","event":"response","provider":"bailian","httpStatus":200,"elapsedMs":65}
+{"at":"2026-10-31T21:50:01.966Z","event":"request","provider":"bailian","method":"GET","host":"ws-hpypdfzw9mbovl42.cn-beijing.maas.aliyuncs.com","path":"/api/v1/tasks/7c019f96-1782-4b4d-af9a-41be00d92f1b"}
+{"at":"2026-10-31T21:50:02.110Z","event":"response","provider":"bailian","httpStatus":200,"elapsedMs":144}
+{"at":"2026-10-31T21:50:08.130Z","event":"request","provider":"bailian","method":"GET","host":"ws-hpypdfzw9mbovl42.cn-beijing.maas.aliyuncs.com","path":"/api/v1/tasks/7c019f96-1782-4b4d-af9a-41be00d92f1b"}
+{"at":"2026-10-31T21:50:08.259Z","event":"response","provider":"bailian","httpStatus":200,"elapsedMs":129}
+{"at":"2026-10-31T21:50:15.309Z","event":"request","provider":"bailian","method":"GET","host":"ws-hpypdfzw9mbovl42.cn-beijing.maas.aliyuncs.com","path":"/api/v1/tasks/7c019f96-1782-4b4d-af9a-41be00d92f1b"}
+{"at":"2026-10-31T21:50:15.448Z","event":"response","provider":"bailian","httpStatus":200,"elapsedMs":139}
+{"at":"2026-10-31T21:50:23.479Z","event":"request","provider":"bailian","method":"GET","host":"ws-hpypdfzw9mbovl42.cn-beijing.maas.aliyuncs.com","path":"/api/v1/tasks/7c019f96-1782-4b4d-af9a-41be00d92f1b"}
+{"at":"2026-10-31T21:50:23.612Z","event":"response","provider":"bailian","httpStatus":200,"elapsedMs":133}
+{"at":"2026-10-31T21:50:32.631Z","event":"request","provider":"bailian","method":"GET","host":"ws-hpypdfzw9mbovl42.cn-beijing.maas.aliyuncs.com","path":"/api/v1/tasks/7c019f96-1782-4b4d-af9a-41be00d92f1b"}
+{"at":"2026-10-31T21:50:32.756Z","event":"response","provider":"bailian","httpStatus":200,"elapsedMs":125}
+{"at":"2026-10-31T21:50:42.774Z","event":"request","provider":"bailian","method":"GET","host":"ws-hpypdfzw9mbovl42.cn-beijing.maas.aliyuncs.com","path":"/api/v1/tasks/7c019f96-1782-4b4d-af9a-41be00d92f1b"}
+{"at":"2026-10-31T21:50:42.901Z","event":"response","provider":"bailian","httpStatus":200,"elapsedMs":127}
+{"at":"2026-10-31T21:50:52.920Z","event":"request","provider":"bailian","method":"GET","host":"ws-hpypdfzw9mbovl42.cn-beijing.maas.aliyuncs.com","path":"/api/v1/tasks/7c019f96-1782-4b4d-af9a-41be00d92f1b"}
+{"at":"2026-10-31T21:50:53.070Z","event":"response","provider":"bailian","httpStatus":200,"elapsedMs":150}
+{"at":"2026-10-31T21:51:03.090Z","event":"request","provider":"bailian","method":"GET","host":"ws-hpypdfzw9mbovl42.cn-beijing.maas.aliyuncs.com","path":"/api/v1/tasks/7c019f96-1782-4b4d-af9a-41be00d92f1b"}
+{"at":"2026-10-31T21:51:03.239Z","event":"response","provider":"bailian","httpStatus":200,"elapsedMs":149}
+{"at":"2026-10-31T21:51:03.257Z","event":"request","provider":"bailian","method":"GET","host":"dashscope-a717.oss-accelerate.aliyuncs.com","path":"/1d/dc/20261101/87ff3641/3b8f98d0644746bdad17b6eeea3ddc5c-metadata_cb340dfe395fc1be.mp4"}
+{"at":"2026-10-31T21:51:03.587Z","event":"response","provider":"bailian","httpStatus":200,"elapsedMs":330}
+{"at":"2026-10-31T21:51:03.942Z","event":"artifact","provider":"bailian","path":"/private/tmp/loop-control-main-e2e-20261101/provider-samples/bailian-sample.mp4","bytes":2823743,"sha256":"7cc17e17abe1b0360931ecb995571ed83f26556ea19dedc5a363310f29e72c91","media":{"programs":[],"stream_groups":[],"streams":[{"codec_name":"h264","width":720,"height":1280,"r_frame_rate":"30/1"}],"format":{"duration":"2.000000","size":"2823743"}}}
+{"at":"2026-10-31T21:51:03.958Z","event":"sample.start","provider":"minimax","model":"MiniMax-H3","durationSeconds":4,"budgetReservation":{"currency":"USD","microunits":320000}}
+{"at":"2026-10-31T21:51:03.971Z","event":"request","provider":"minimax","method":"POST","host":"api.minimax.io","path":"/v2/video_generation"}
+{"at":"2026-10-31T21:51:08.026Z","event":"response","provider":"minimax","httpStatus":402,"elapsedMs":4055,"detail":{"message":"insufficient balance (1008)","requestId":"073595c991ece6a2d4e1714800fd13e2"}}
+{"at":"2026-10-31T21:51:08.041Z","event":"sample.error","provider":"minimax","error":"视频接口请求失败：HTTP 402。"}
+{"at":"2026-10-31T21:51:08.042Z","event":"samples.complete","providers":[{"provider":"pexels","outcome":"downloaded"},{"provider":"bailian","outcome":"generated"},{"provider":"minimax","outcome":"generation_failed"}]}
+{"at":"2026-10-31T21:51:20.398Z","event":"sample.start","provider":"volcengine","model":"doubao-seedance-2-0-260128","durationSeconds":4,"budgetReservation":{"currency":"CNY","microunits":4500000}}
+{"at":"2026-10-31T21:51:20.410Z","event":"request","provider":"volcengine","method":"POST","host":"ark.cn-beijing.volces.com","path":"/api/v3/contents/generations/tasks"}
+{"at":"2026-10-31T21:51:20.819Z","event":"response","provider":"volcengine","httpStatus":404,"elapsedMs":409,"detail":{"code":"ModelNotOpen","message":"Your account <REDACTED_ACCOUNT> has not activated the model doubao-seedance-2-0-260128. Please activate the model service in the Ark Console. Request id: 021793483480497a4e0bfe9b623ca70f9090a72d521bae2630bff"}}
+{"at":"2026-10-31T21:51:20.828Z","event":"sample.error","provider":"volcengine","error":"视频接口请求失败：HTTP 404。"}
+{"at":"2026-10-31T21:51:20.843Z","event":"sample.start","provider":"kling","model":"kling-v3","durationSeconds":3,"budgetReservation":{"currency":"USD","microunits":252000}}
+{"at":"2026-10-31T21:51:20.856Z","event":"request","provider":"kling","method":"POST","host":"api-singapore.klingai.com","path":"/v1/videos/image2video"}
+{"at":"2026-10-31T21:51:23.907Z","event":"response","provider":"kling","httpStatus":429,"elapsedMs":3051,"detail":{"code":"1102","message":"Account balance not enough","requestId":"d1388ef3-c50c-49ac-9d4b-6ab114862d0d"}}
+{"at":"2026-10-31T21:51:23.919Z","event":"sample.error","provider":"kling","error":"视频接口请求失败：HTTP 429。"}
+{"at":"2026-10-31T21:51:23.921Z","event":"samples.complete","providers":[{"provider":"pexels","outcome":"downloaded"},{"provider":"bailian","outcome":"generated"},{"provider":"minimax","outcome":"generation_failed"},{"provider":"volcengine","outcome":"generation_failed"},{"provider":"kling","outcome":"generation_failed"}]}

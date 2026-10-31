@@ -1,0 +1,37 @@
+{
+  "formalOwnerPage": true,
+  "nativeProcess": 75276,
+  "root": "/private/tmp/loop-t06-volume-pbJyzv/mounted/chosen-library",
+  "clipboardWriteCompleted": true,
+  "clipboardReadback": "unverified: isolated browser denied read permission; see retained failure logs",
+  "nativeFolderOpened": true,
+  "errorPreserved": true,
+  "widths": [
+    {
+      "dialogClientWidth": 560,
+      "dialogWidth": 560,
+      "documentWidth": 1440,
+      "left": 440,
+      "right": 1000,
+      "width": 1440
+    },
+    {
+      "dialogClientWidth": 560,
+      "dialogWidth": 560,
+      "documentWidth": 1100,
+      "left": 270,
+      "right": 830,
+      "width": 1100
+    },
+    {
+      "dialogClientWidth": 390,
+      "dialogWidth": 390,
+      "documentWidth": 390,
+      "left": 0,
+      "right": 390,
+      "width": 390
+    }
+  ],
+  "beforeFeatureAccountWidth390": 390,
+  "refreshReadback": true
+}

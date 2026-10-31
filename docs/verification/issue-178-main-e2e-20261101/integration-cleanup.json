@@ -1,0 +1,92 @@
+{
+  "at": "2026-10-31T22:58:54.015454+00:00",
+  "events": [
+    {
+      "action": "normal-detach-and-remove-owned-empty-guard-volume",
+      "path": "/private/tmp/loop-t06-volume-hXNXnb",
+      "openMountedReferences": 0,
+      "output": "\"disk14\" ejected.",
+      "removed": true
+    },
+    {
+      "action": "normal-detach-and-remove-owned-empty-guard-volume",
+      "path": "/private/tmp/loop-t06-volume-zbxrKj",
+      "openMountedReferences": 0,
+      "output": "\"disk16\" ejected.",
+      "removed": true
+    },
+    {
+      "action": "normal-stop-and-remove-owned-container",
+      "name": "loop-control-main-e2e-20261101",
+      "id": "ee8ba236529e708f1a50cd85f059b372a2101e63c6620db8555a2acacee4d5ba",
+      "label": "main-e2e-20261101",
+      "stop": "Flag --time has been deprecated, use --timeout instead\nloop-control-main-e2e-20261101",
+      "removed": "loop-control-main-e2e-20261101"
+    },
+    {
+      "action": "normal-stop-and-remove-owned-container",
+      "name": "loop-control-178-test-postgres",
+      "id": "1b92a552001aa4bef909e0f90410db947fc53f286a9a0216979779ec10833dda",
+      "label": "main-e2e-regression-20261101",
+      "stop": "Flag --time has been deprecated, use --timeout instead\nloop-control-178-test-postgres",
+      "removed": "loop-control-178-test-postgres"
+    }
+  ],
+  "protectedOriginalVolumesStillMounted": [
+    "/private/tmp/loop-t06-volume-AAg5mf/media.sparseimage",
+    "/private/tmp/loop-t06-volume-Eiezi0/media.sparseimage",
+    "/private/tmp/loop-t06-volume-PQgqhE/media.sparseimage"
+  ],
+  "dailyDatabaseContainerNotSelected": "loop-control-local-postgres",
+  "forcedDetachOrRemove": false,
+  "sourceCleanup": [
+    {
+      "path": "/private/tmp/loop-control-main-e2e-20261101/integration-regression/source",
+      "allocatedKiBBefore": 324816,
+      "openReferences": 0,
+      "privateGit": null,
+      "removed": true,
+      "sharedNodeModulesSymlinkNotFollowed": true
+    },
+    {
+      "path": "/private/tmp/loop-control-main-e2e-20261101/integration-regression/verification-source",
+      "allocatedKiBBefore": 13400,
+      "openReferences": 0,
+      "privateGit": {
+        "privateGitCommonDir": "/private/tmp/loop-control-main-e2e-20261101/integration-regression/verification-source/.git",
+        "head": "a30c74e386f41eb6967755b683240be365d15a1c"
+      },
+      "removed": true,
+      "sharedNodeModulesSymlinkNotFollowed": true
+    },
+    {
+      "path": "/private/tmp/loop-control-main-e2e-20261101/integration-regression/OpenChatCut",
+      "allocatedKiBBefore": 141936,
+      "openReferences": 0,
+      "privateGit": {
+        "privateGitCommonDir": "/private/tmp/loop-control-main-e2e-20261101/integration-regression/OpenChatCut/.git",
+        "head": "72ddb3300cda4ed31cbd0bccbfc94fb29b8cffca"
+      },
+      "removed": true,
+      "sharedNodeModulesSymlinkNotFollowed": true
+    }
+  ],
+  "removedSourceAllocatedKiB": 480152,
+  "sharedDependenciesRetainedWithSameDirectoryIdentity": {
+    "/Users/dan/Programs/loop-control/node_modules": {
+      "device": 16777234,
+      "inode": 75322410
+    },
+    "/Users/dan/Programs/loop-control/.loop-control/local/OpenChatCut/node_modules": {
+      "device": 16777234,
+      "inode": 104656748
+    }
+  },
+  "parentLiveSourceRetained": "/private/tmp/loop-control-main-e2e-20261101/source",
+  "dailyServicePidStillPresent": 71478,
+  "dailyDatabaseContainerStillRunning": true,
+  "mainCommitAfterCleanup": "9b31b31bb76afadac26854d3a5975a9262666cc8",
+  "finishedAt": "2026-10-31T23:02:54.026989+00:00",
+  "retainedPrivateBinaryTestProof": "/private/tmp/loop-control-main-e2e-20261101/integration-regression/evidence",
+  "noForceDetachOrForceRemove": true
+}

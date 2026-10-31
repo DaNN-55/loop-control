@@ -1,0 +1,142 @@
+{
+  "passed": true,
+  "exportId": "6cb9f0e5-c502-44de-916f-14958a166f9f",
+  "contentSha256": "739321d6f11491a79cee086527bc933eff30380d98b4cf1419cb3eeaeed8e86c",
+  "checks": [
+    {
+      "name": "used_content",
+      "detail": "已核对 1 个实际来源。",
+      "passed": true,
+      "sources": [
+        {
+          "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+          "fileSize": 210288,
+          "relativePath": "系列 [T09]_百分%/生产单 空间/shot.mp4"
+        }
+      ]
+    },
+    {
+      "name": "captions",
+      "detail": "已核对 2 组字幕时序，正文随最终文件一次确认。",
+      "passed": true,
+      "evidence": [
+        {
+          "clipId": "32ca1ae0-3fac-4d9f-9ab4-9532b7417358",
+          "detail": null,
+          "itemId": "shot-shot-1-32ca1ae0-3fac-4d9f-9ab4-9532b7417358",
+          "shotId": "shot-1",
+          "taskId": null,
+          "timing": "current",
+          "contract": {
+            "cues": [
+              {
+                "id": "initial-shot-1~0",
+                "text": "第一镜",
+                "endMs": 2000,
+                "startMs": 0
+              }
+            ],
+            "text": "第一镜",
+            "enabled": true,
+            "spatial": {
+              "anchor": "bottom-center",
+              "insets": {
+                "top": 0.08,
+                "left": 0.08,
+                "right": 0.08,
+                "bottom": 0.18
+              },
+              "version": "shot-caption-space/v2",
+              "maxLines": 2,
+              "safeArea": "title-safe",
+              "aspectRatio": "9:16",
+              "maxCharactersPerLine": 16
+            },
+            "version": "shot-captions/v1",
+            "contentMode": "independent"
+          },
+          "durationMs": 2000,
+          "audioTrackId": null,
+          "narrationText": null,
+          "textConfirmed": false,
+          "inputFingerprint": "e669b5e3399dbee084729c569c3236e3c6d1224753752f21ac876930c315d9fb",
+          "alignmentInputVersion": null
+        },
+        {
+          "clipId": "f792cf42-9c1b-481a-99a1-a0503f562a23",
+          "detail": null,
+          "itemId": "shot-shot-2-f792cf42-9c1b-481a-99a1-a0503f562a23",
+          "shotId": "shot-2",
+          "taskId": null,
+          "timing": "current",
+          "contract": {
+            "cues": [
+              {
+                "id": "initial-shot-2~0",
+                "text": "缺少素材的第二镜。",
+                "endMs": 2000,
+                "startMs": 0
+              }
+            ],
+            "text": "缺少素材的第二镜。",
+            "enabled": true,
+            "spatial": {
+              "anchor": "bottom-center",
+              "insets": {
+                "top": 0.08,
+                "left": 0.08,
+                "right": 0.08,
+                "bottom": 0.18
+              },
+              "version": "shot-caption-space/v2",
+              "maxLines": 2,
+              "safeArea": "title-safe",
+              "aspectRatio": "9:16",
+              "maxCharactersPerLine": 16
+            },
+            "version": "shot-captions/v1",
+            "contentMode": "independent"
+          },
+          "durationMs": 2000,
+          "audioTrackId": null,
+          "narrationText": null,
+          "textConfirmed": false,
+          "inputFingerprint": "3a6b96f0b837c818cc1b2e043600a86c04d8e65791aeaac21c3c3b8e7b8e19a5",
+          "alignmentInputVersion": null
+        }
+      ]
+    },
+    {
+      "name": "technical",
+      "detail": "实际 MP4 时长、画幅、音频及黑帧检查通过。",
+      "passed": true,
+      "inspection": {
+        "width": 1080,
+        "height": 1920,
+        "hasAudio": true,
+        "blackFrameCount": 0,
+        "durationSeconds": 4.053333
+      },
+      "videoFrames": 120,
+      "audioExpected": false,
+      "videoDurationSeconds": 4,
+      "expectedDurationSeconds": 4,
+      "containerDurationSeconds": 4.053333
+    },
+    {
+      "name": "representative_frame",
+      "detail": "已实际解码代表帧。",
+      "passed": true,
+      "artifact": {
+        "sha256": "3a487de93a87d08674e8e8b8a5ba08cdbac0c495116104682990b951e41662f7",
+        "fileSize": 55432,
+        "relativePath": "系列 [T09]_百分%/生产单 空间/workspace-exports/6cb9f0e5-c502-44de-916f-14958a166f9f/representative.jpg"
+      }
+    },
+    {
+      "name": "export_file",
+      "detail": "最终文件已按字节 SHA-256 与大小不可变登记。",
+      "passed": true
+    }
+  ]
+}

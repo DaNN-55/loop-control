@@ -1,0 +1,30 @@
+[
+  {
+    "episode_id": "0258bbc7-8299-41ab-be00-54af5037bcf9",
+    "root": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+    "directory_relative_path": "收纳 A [100% #-]--6a6a1bae-4e1e-4766-9d09-eedf7b981059/根迁移后新单--0258bbc7-8299-41ab-be00-54af5037bcf9",
+    "directory_device_id": "16777234",
+    "directory_inode_id": "106656557"
+  },
+  {
+    "episode_id": "35da5367-6d5b-4940-b3fb-681b877e2c87",
+    "root": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/跨设备另一账号--69037b40-82a8-44e2-8c45-3c0ad2b84d2e",
+    "directory_relative_path": "未分系列--c008bf35-5260-4eb8-b8ad-bef08360bd2f/未分系列混合单--35da5367-6d5b-4940-b3fb-681b877e2c87",
+    "directory_device_id": "16777234",
+    "directory_inode_id": "106656453"
+  },
+  {
+    "episode_id": "a5d384d8-13c0-4f03-b0cd-f5c7cc6acf01",
+    "root": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media",
+    "directory_relative_path": "episodes/a5d384d8-13c0-4f03-b0cd-f5c7cc6acf01",
+    "directory_device_id": "16777234",
+    "directory_inode_id": "106656446"
+  },
+  {
+    "episode_id": "d0382929-f3c6-4cc9-b460-1efc16ee618a",
+    "root": "/private/tmp/loop-t16-restore-9lrLHT/state/global-target/media/account",
+    "directory_relative_path": "未分系列--49b8b1c4-d662-4697-876f-cd9eba5537df/四步制作 T02 验收--d0382929-f3c6-4cc9-b460-1efc16ee618a--d174f161-4430-440d-a47c-aec8e422fcf2",
+    "directory_device_id": "16777234",
+    "directory_inode_id": "106656454"
+  }
+]

@@ -1,0 +1,10 @@
+{
+  "at": "2026-10-31T22:54:51.025547+00:00",
+  "path": "/private/tmp/loop-control-main-e2e-20261101/source/docs",
+  "files": 5984,
+  "logicalBytesRemoved": 301729694,
+  "reason": "Unused duplicate documentation snapshot after all live browser/runtime checks; originals and evidence remain in main",
+  "manifestAllHashesMatched": true,
+  "activeOpenReferences": 0,
+  "sourceCodeAndMediaPreserved": true
+}

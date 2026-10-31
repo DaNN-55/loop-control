@@ -1,0 +1,52 @@
+{
+  "data": {
+    "active": true,
+    "namespace": null,
+    "pid": 78237,
+    "runtime": {
+      "backgroundPid": 78237,
+      "browserLaunched": true,
+      "compatibilityStatus": "current",
+      "effectiveLaunch": {
+        "browserLaunched": true,
+        "engine": "chrome",
+        "launchHash": 11709685405216115000
+      },
+      "engine": "chrome",
+      "launchHash": 11709685405216115000,
+      "lifecycle": {
+        "effectiveLaunch": {
+          "browserLaunched": true,
+          "engine": "chrome",
+          "launchHash": 11709685405216115000
+        },
+        "launched": false,
+        "relaunchedBrowser": false,
+        "restartedBackground": false,
+        "restoreStatus": "not_configured",
+        "reused": false,
+        "saveStatus": "not_attempted"
+      },
+      "namespace": null,
+      "pageCount": 1,
+      "restoreCheckFn": null,
+      "restoreCheckText": null,
+      "restoreCheckUrl": null,
+      "restoreKey": null,
+      "restoreLoadedPath": null,
+      "restoreSave": "auto",
+      "restoreSavedPath": null,
+      "restoreStatus": "not_configured",
+      "restoreStatusDetail": null,
+      "restoreValidationPending": false,
+      "saveStatus": "not_attempted",
+      "session": "t11-restored-2908b0ce-81cf-4a41-923a-c8f188a6afc2",
+      "socketDir": "/Users/dan/.agent-browser"
+    },
+    "runtimeError": null,
+    "session": "t11-restored-2908b0ce-81cf-4a41-923a-c8f188a6afc2",
+    "socketDir": "/Users/dan/.agent-browser",
+    "version": "0.37.1"
+  },
+  "success": true
+}

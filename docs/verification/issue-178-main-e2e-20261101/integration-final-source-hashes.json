@@ -1,0 +1,97 @@
+{
+  "finalMainCommit": "9b31b31bb76afadac26854d3a5975a9262666cc8",
+  "verifiedAt": "2026-10-31T22:52:21.776397+00:00",
+  "sourceFixes": [
+    {
+      "path": "src/local-app/accountDeletion.integration.test.ts",
+      "sha256": "bb44bf7069f7fb2b1b5ae197ae565b055a80216fe9f74e69cf3223851562a8dc",
+      "workingTreeEqualsCommit": true
+    },
+    {
+      "path": "src/local-app/blueprintReviewRetirement.integration.test.ts",
+      "sha256": "6ed6a49f513058798977375d106e05ed16a420e770a8e9944ab0da6d3626cf39",
+      "workingTreeEqualsCommit": true
+    },
+    {
+      "path": "src/local-app/embeddedStudio.fixture.ts",
+      "sha256": "0e582e118ad227d358133024b74b7449c38b11bb434e4432296559865391317b",
+      "workingTreeEqualsCommit": true
+    },
+    {
+      "path": "src/local-app/embeddedStudio.integration.test.ts",
+      "sha256": "e29454fcf4eb3e8175a0e3ed7030534539982088bb39d9dfcbe9558aafaaa1a5",
+      "workingTreeEqualsCommit": true
+    },
+    {
+      "path": "src/local-app/episodeDeletion.integration.test.ts",
+      "sha256": "ecfe21ed25f7c3b7dc53d353e5a34e6ef6c0ec07ce44b45ec03ef4f9eaa96044",
+      "workingTreeEqualsCommit": true
+    },
+    {
+      "path": "src/local-app/formalWorkflow.delivery.integration.test.ts",
+      "sha256": "196561b8339aa6852c305ae514872fc8f4f5c2c4e9cf09a146bc67710a27d134",
+      "workingTreeEqualsCommit": true
+    },
+    {
+      "path": "src/local-app/formalWorkflow.fixture.ts",
+      "sha256": "c5b66546d795467d37ea4d7f06d8dc6d1c84f596d884874262ae606de54d2993",
+      "workingTreeEqualsCommit": true
+    },
+    {
+      "path": "src/local-app/inputStorageLocation.integration.test.ts",
+      "sha256": "1e5d117820ed88b2031591c1dbde0fc5fa1d9030ffa8286b06967a08907e48a2",
+      "workingTreeEqualsCommit": true
+    },
+    {
+      "path": "src/local-app/productionWorkspaceCommands.ts",
+      "sha256": "5f5f534726bbbb6ef75d31aea2f2c6936a26b29a61b5de214c1549236c4cb3ca",
+      "workingTreeEqualsCommit": true
+    },
+    {
+      "path": "src/local-app/workspaceAudio.fixture.ts",
+      "sha256": "d143f48c0e00e39cb67d9b765367e3801252d586b1b1c1ecccfc7957098b0009",
+      "workingTreeEqualsCommit": true
+    },
+    {
+      "path": "src/local-app/workspaceAudioStorage.integration.test.ts",
+      "sha256": "5b500fef388a54d9fbaea74f3b52a80dbb555f6b5ef604cc0fb3de4cff7f11d9",
+      "workingTreeEqualsCommit": true
+    },
+    {
+      "path": "src/local-app/workspaceFirstVideo.source.integration.test.ts",
+      "sha256": "59908925baf6b8818aa5ac0eba56fc7fc520d2f86904694f5323c5afdafa27ea",
+      "workingTreeEqualsCommit": true
+    },
+    {
+      "path": "src/local-app/workspaceImageGeneration.fixture.ts",
+      "sha256": "e8333ac4bcd5125987514985efc25c85d77481d749774034d6bc62ce2fd303a2",
+      "workingTreeEqualsCommit": true
+    },
+    {
+      "path": "src/local-app/workspaceNarration.fixture.ts",
+      "sha256": "784f8da0477223b5d7d754ce60d6c9ad07b168020b720018b1b6351d79f198f2",
+      "workingTreeEqualsCommit": true
+    },
+    {
+      "path": "src/local-app/workspacePexels.fixture.ts",
+      "sha256": "030ad757567359e4cc0e20d8df5efa216f18b380d5d742fc81a78c96dbcc1998",
+      "workingTreeEqualsCommit": true
+    },
+    {
+      "path": "src/local-app/workspaceVideo.integration.test.ts",
+      "sha256": "6e8819a469d898c76b2a488a42030725b5cb13d923282e42597bbcd0ae97c8a6",
+      "workingTreeEqualsCommit": true
+    },
+    {
+      "path": "src/local-app/workspaceVisualStorage.integration.test.ts",
+      "sha256": "70415df198b33559d25499f0f67b942a646cfce5b909de20feb9a1dd65d2f878",
+      "workingTreeEqualsCommit": true
+    },
+    {
+      "path": "src/worker/openchatcutProject.integration.test.ts",
+      "sha256": "daede8181b232db570a1a6fd9b850601edfb472df9726dffad158fa494f14861",
+      "workingTreeEqualsCommit": true
+    }
+  ],
+  "scope": "Files in the final maintenance commit. Unrelated pre-existing UI working-copy overlay is retained and represented separately by the parent preservation evidence."
+}

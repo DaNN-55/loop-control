@@ -1,0 +1,139 @@
+
+ RUN  v3.2.7 /private/tmp/loop-control-main-e2e-20261101/integration-regression/source
+
+ ❯ src/worker/openchatcutProject.integration.test.ts (12 tests | 1 failed | 11 skipped) 3824ms
+   × OpenChatCut real project reader integration > opens an independent dashboard, reuses concurrent launches, and preserves projects after restart 3824ms
+     → expected { version: 3, …(5) } to deeply equal { version: 3, …(5) }
+   ↓ OpenChatCut real project reader integration > opens Studio and reads editable caption cues back from its project store
+   ↓ OpenChatCut real project reader integration > keeps Studio edits mutable, warns before changed workbench input replaces them, and freezes new immutable revisions only on demand
+   ↓ OpenChatCut real project reader integration > reads a stacked shot as two correctly transformed editable video layers backed by one asset
+   ↓ OpenChatCut real project reader integration > accepts migrated stable track ids when consecutive full-screen segments remain on the V1 alias
+   ↓ OpenChatCut real project reader integration > reads exactly one source-audio item when one material fills multiple visual slots
+   ↓ OpenChatCut real project reader integration > reads silent, BGM-follower, and independent-SFX semantics from the real runtime
+   ↓ OpenChatCut real project reader integration > reads disabled captions and independent manual cues through the real runtime
+   ↓ OpenChatCut real project reader integration > renders and probes a real synchronized proxy while preserving the editable project fingerprint
+   ↓ OpenChatCut real project reader integration > opens, edits, freezes, and renders one real Episode containing TTS split-screen, source-audio, and silent captioned shots
+   ↓ OpenChatCut real project reader integration > keeps an older project with a text caption item readable
+   ↓ OpenChatCut real project reader integration > blocks known invalid caption contracts after real OpenChatCut reading
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/worker/openchatcutProject.integration.test.ts > OpenChatCut real project reader integration > opens an independent dashboard, reuses concurrent launches, and preserves projects after restart
+AssertionError: expected { version: 3, …(5) } to deeply equal { version: 3, …(5) }
+
+- Expected
++ Received
+
+@@ -4,17 +4,19 @@
+      {
+        "durationInFrames": 60,
+        "id": "asset-1",
+        "kind": "video",
+        "name": "shot.mp4",
++       "sourceRevision": "source-v1--x7optv0bxf66f",
+        "src": "episodes/e/shot.mp4",
+      },
+      {
+        "durationInFrames": 60,
+        "id": "asset-2",
+        "kind": "audio",
+        "name": "voice.mp3",
++       "sourceRevision": "source-v1--rxibeg-z1h0rm",
+        "src": "episodes/e/voice.mp3",
+      },
+    ],
+    "loopControl": {
+      "inputFingerprint": "11111111111111111111111111111111",
+@@ -34,14 +36,15 @@
+            "durationInFrames": 60,
+            "id": "shot-shot-1-full",
+            "kind": "video",
+            "name": "shot-1 · 片段 1",
+            "sourceAssetId": "asset-1",
++           "sourceRevision": "source-v1--x7optv0bxf66f",
+            "src": "episodes/e/shot.mp4",
+            "srcInFrame": 0,
+            "startFrame": 0,
+-           "track": "V1",
++           "track": "track_standalone-project_1",
+            "transform": {
+              "rotation": 0,
+              "scale": 1,
+              "x": 0,
+              "y": 0,
+@@ -51,31 +54,36 @@
+          {
+            "durationInFrames": 60,
+            "id": "main-tts-narration-shot-1",
+            "kind": "audio",
+            "name": "narration:shot-1",
++           "sourceRevision": "source-v1--rxibeg-z1h0rm",
+            "src": "episodes/e/voice.mp3",
+            "startFrame": 0,
+-           "track": "A1",
++           "track": "track_standalone-project_2",
+            "volume": 1,
+          },
+        ],
+        "name": "生产单审核时间线",
+        "order": 0,
+        "selectedId": null,
+        "trackOrder": [
+-         "V1",
+-         "A1",
+-         "C1",
++         "track_standalone-project_1",
++         "track_standalone-project_2",
++         "track_standalone-project_3",
+        ],
+        "tracks": {
+-         "A1": {
++         "track_standalone-project_1": {
++           "kind": "video",
++           "name": "画面层 1",
++         },
++         "track_standalone-project_2": {
+            "kind": "audio",
+            "name": "主声音",
+            "role": "anchor",
+          },
+-         "C1": {
++         "track_standalone-project_3": {
+            "captions": {
+              "enabled": true,
+              "layoutPolicy": {
+                "mode": "manual-slots",
+                "slots": [
+@@ -127,15 +135,10 @@
+                "wholeLine": true,
+              },
+              "template": "plain",
+            },
+            "kind": "caption",
+-           "name": "字幕",
+-         },
+-         "V1": {
+-           "kind": "video",
+-           "name": "画面层 1",
+          },
+        },
+        "transitions": [],
+        "width": 1080,
+      },
+
+ ❯ src/worker/openchatcutProject.integration.test.ts:44:21
+     42|       const reopened = await openStandaloneOpenChatCutStudio(dataDir, …
+     43|       const saved = await waitForStoredProject(new URL(reopened.studio…
+     44|       expect(saved).toEqual(JSON.parse(JSON.stringify(project)));
+       |                     ^
+     45|     } finally {
+     46|       await closeStandaloneOpenChatCutStudio(dataDir);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 11 skipped (12)
+   Start at  06:09:03
+   Duration  4.14s (transform 149ms, setup 7ms, collect 191ms, tests 3.82s, environment 0ms, prepare 25ms)
+

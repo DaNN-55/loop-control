@@ -1,0 +1,14 @@
+
+ RUN  v3.2.7 /private/tmp/loop-control-main-e2e-20261101/integration-regression/source
+
+ ✓ src/local-app/inputStorageLocation.integration.test.ts (4 tests) 15226ms
+   ✓ Owner imports and confirms managed script bytes at the registered production location, retaining legacy previews after restart  5699ms
+   ✓ Owner reuses an approved series input as a self-contained managed copy with original source approval evidence  4536ms
+   ✓ input retries preserve immutable bytes and reject unsafe, foreign, interrupted and replaced-directory submissions  2691ms
+   ✓ receipted input publication survives an interrupted unlink and restart without overwriting unknown targets or trusting altered receipts  2299ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  06:31:26
+   Duration  16.36s (transform 643ms, setup 18ms, collect 902ms, tests 15.23s, environment 0ms, prepare 47ms)
+

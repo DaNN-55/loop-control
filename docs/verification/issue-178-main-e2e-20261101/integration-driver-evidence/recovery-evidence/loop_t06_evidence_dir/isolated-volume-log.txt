@@ -1,0 +1,10 @@
+{
+  "root": "/private/tmp/loop-t06-volume-Bm1u7S",
+  "image": "/private/tmp/loop-t06-volume-Bm1u7S/media.sparseimage",
+  "mountPath": "/private/tmp/loop-t06-volume-Bm1u7S/mounted",
+  "log": [
+    "",
+    "/dev/disk18         \tGUID_partition_scheme          \t\n/dev/disk18s1       \tApple_APFS                     \t\n/dev/disk19         \tEF57347C-0000-11AA-AA11-0030654\t\n/dev/disk19s1       \t41504653-0000-11AA-AA11-0030654\t/private/tmp/loop-t06-volume-Bm1u7S/mounted\n",
+    "\"disk18\" ejected.\n"
+  ]
+}

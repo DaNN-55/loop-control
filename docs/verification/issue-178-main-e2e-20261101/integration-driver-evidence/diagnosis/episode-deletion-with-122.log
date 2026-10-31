@@ -1,0 +1,12 @@
+
+ RUN  v3.2.7 /private/tmp/loop-control-main-e2e-20261101/integration-regression/source
+
+ ✓ src/local-app/episodeDeletion.integration.test.ts (2 tests) 4393ms
+   ✓ managed=true: deletes an archived ordinary order and then its empty account through Owner HTTP, retaining deletion fences  2191ms
+   ✓ managed=false: deletes an archived ordinary order and then its empty account through Owner HTTP, retaining deletion fences  2202ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  06:28:49
+   Duration  4.96s (transform 320ms, setup 8ms, collect 439ms, tests 4.39s, environment 0ms, prepare 29ms)
+

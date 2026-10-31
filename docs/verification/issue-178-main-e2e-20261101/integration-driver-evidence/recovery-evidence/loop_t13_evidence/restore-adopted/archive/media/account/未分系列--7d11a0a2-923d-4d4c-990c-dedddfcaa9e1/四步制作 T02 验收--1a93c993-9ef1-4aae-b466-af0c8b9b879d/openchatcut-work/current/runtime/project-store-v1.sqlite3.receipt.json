@@ -1,0 +1,22 @@
+{
+  "source": "/private/tmp/loop-t13-restore-0ZL0Rz/state/loop-153-omKMHO/account/未分系列--7d11a0a2-923d-4d4c-990c-dedddfcaa9e1/四步制作 T02 验收--1a93c993-9ef1-4aae-b466-af0c8b9b879d/openchatcut-work/current/runtime/project-store-v1",
+  "count": 2,
+  "importedAt": "2026-10-31T22:27:14.162Z",
+  "phase": 2,
+  "keys": {
+    "projects": "5f7e99214683fa3bd312a5f7d7dd694ae596d05b576f7dee30429f4a76740832",
+    "project:loop-control-1a93c993-9ef1-4aae-b466-af0c8b9b879d": "5f7e99214683fa3bd312a5f7d7dd694ae596d05b576f7dee30429f4a76740832"
+  },
+  "sources": {
+    "projects": {
+      "path": "/private/tmp/loop-t13-restore-0ZL0Rz/state/loop-153-omKMHO/account/未分系列--7d11a0a2-923d-4d4c-990c-dedddfcaa9e1/四步制作 T02 验收--1a93c993-9ef1-4aae-b466-af0c8b9b879d/openchatcut-work/current/runtime/project-store-v1.json",
+      "sha256": "5f7e99214683fa3bd312a5f7d7dd694ae596d05b576f7dee30429f4a76740832",
+      "kind": "project-store-monolith"
+    },
+    "project:loop-control-1a93c993-9ef1-4aae-b466-af0c8b9b879d": {
+      "path": "/private/tmp/loop-t13-restore-0ZL0Rz/state/loop-153-omKMHO/account/未分系列--7d11a0a2-923d-4d4c-990c-dedddfcaa9e1/四步制作 T02 验收--1a93c993-9ef1-4aae-b466-af0c8b9b879d/openchatcut-work/current/runtime/project-store-v1.json",
+      "sha256": "5f7e99214683fa3bd312a5f7d7dd694ae596d05b576f7dee30429f4a76740832",
+      "kind": "project-store-monolith"
+    }
+  }
+}

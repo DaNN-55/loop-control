@@ -1,0 +1,70 @@
+{
+  "completed": [
+    {
+      "file": "src/worker/openchatcutProject.integration.test.ts",
+      "reported": "12 tests | 4 failed",
+      "elapsedMs": 32793,
+      "status": "failed"
+    },
+    {
+      "file": "src/local-app/restorePublication.integration.test.ts",
+      "reported": "4 tests | 4 failed",
+      "elapsedMs": 7,
+      "status": "failed"
+    },
+    {
+      "file": "src/local-app/mediaRootExecutionNative.integration.test.ts",
+      "reported": "1 test | 1 failed",
+      "elapsedMs": 5,
+      "status": "failed"
+    },
+    {
+      "file": "src/local-app/episodeCollectionNative.integration.test.ts",
+      "reported": "1 test | 1 failed",
+      "elapsedMs": 3,
+      "status": "failed"
+    },
+    {
+      "file": "src/local-app/legacyAdoptionNative.integration.test.ts",
+      "reported": "3 tests | 1 failed",
+      "elapsedMs": 38058,
+      "status": "failed"
+    },
+    {
+      "file": "src/local-app/workspaceAudio.integration.test.ts",
+      "reported": "8 tests",
+      "elapsedMs": 71048,
+      "status": "pass"
+    },
+    {
+      "file": "src/local-app/episodeDeletionStorage.integration.test.ts",
+      "reported": "15 tests",
+      "elapsedMs": 64168,
+      "status": "pass"
+    },
+    {
+      "file": "src/local-app/workspaceDelivery.integration.test.ts",
+      "reported": "4 tests",
+      "elapsedMs": 52140,
+      "status": "pass"
+    },
+    {
+      "file": "src/local-app/workspaceReviewFixes.integration.test.ts",
+      "reported": "7 tests",
+      "elapsedMs": 56722,
+      "status": "pass"
+    },
+    {
+      "file": "src/local-app/accountDirectoryMigration.integration.test.ts",
+      "reported": "7 tests",
+      "elapsedMs": 53629,
+      "status": "pass"
+    },
+    {
+      "file": "src/local-app/workspaceShots.integration.test.ts",
+      "reported": "10 tests",
+      "elapsedMs": 41756,
+      "status": "pass"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "firstPid": 11710,
+  "restartedPid": 11956,
+  "root": "/private/tmp/loop-t06-volume-d7rEUo/mounted/chosen-library",
+  "binding": {
+    "path": "/private/tmp/loop-t06-volume-d7rEUo/mounted/chosen-library",
+    "deviceId": "16777269",
+    "inodeId": "25",
+    "mountPath": "/private/tmp/loop-t06-volume-d7rEUo/mounted"
+  },
+  "worker": {
+    "state": "healthy",
+    "heartbeatAt": "2026-10-31T22:28:16.634Z",
+    "lastScanAt": "2026-10-31T22:28:16.720Z",
+    "active": 0,
+    "capacity": 1,
+    "problem": null
+  },
+  "media": {
+    "state": "healthy",
+    "availableBytes": 266797056,
+    "minimumFreeBytes": 0
+  },
+  "filePath": "/private/tmp/loop-t06-volume-d7rEUo/mounted/chosen-library/account/episodes/658e027f-19db-43dc-8e00-6eae056b3288/materials/52cca23fa377efd04deb6c53b0757216d10824c7592f2f3bdf5ef10de8e242e2-reference.txt",
+  "bytesVerified": true,
+  "nativeFolderOpened": true,
+  "foreignOwnerStatus": 403
+}

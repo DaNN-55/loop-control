@@ -1,0 +1,22 @@
+{
+  "source": "/private/tmp/loop-t14-restore-MK6IO4/state/loop-153-l9mFTI/account/episodes/80f31254-37e8-4575-87c2-a21d4936f283/openchatcut-work/current/runtime/project-store-v1",
+  "count": 2,
+  "importedAt": "2026-10-31T22:25:22.848Z",
+  "phase": 2,
+  "keys": {
+    "projects": "81255943cc79891e8a999ab4076ab86f56cd47a4a8f2bd6e8add66851e8dca2b",
+    "project:loop-control-80f31254-37e8-4575-87c2-a21d4936f283": "81255943cc79891e8a999ab4076ab86f56cd47a4a8f2bd6e8add66851e8dca2b"
+  },
+  "sources": {
+    "projects": {
+      "path": "/private/tmp/loop-t14-restore-MK6IO4/state/loop-153-l9mFTI/account/episodes/80f31254-37e8-4575-87c2-a21d4936f283/openchatcut-work/current/runtime/project-store-v1.json",
+      "sha256": "81255943cc79891e8a999ab4076ab86f56cd47a4a8f2bd6e8add66851e8dca2b",
+      "kind": "project-store-monolith"
+    },
+    "project:loop-control-80f31254-37e8-4575-87c2-a21d4936f283": {
+      "path": "/private/tmp/loop-t14-restore-MK6IO4/state/loop-153-l9mFTI/account/episodes/80f31254-37e8-4575-87c2-a21d4936f283/openchatcut-work/current/runtime/project-store-v1.json",
+      "sha256": "81255943cc79891e8a999ab4076ab86f56cd47a4a8f2bd6e8add66851e8dca2b",
+      "kind": "project-store-monolith"
+    }
+  }
+}

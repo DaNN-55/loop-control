@@ -1,0 +1,28 @@
+
+ RUN  v3.2.7 /private/tmp/loop-control-main-e2e-20261101/integration-regression/verification-source
+
+stdout | src/local-app/managedMediaRestore.integration.test.ts > a large production file is backed up and restored with bounded resident-memory growth
+T11 large-file memory evidence {"bytes":268435456,"baseline":166281216,"maxRSS":220135424,"growth":53854208}
+
+ ✓ src/local-app/managedMediaRestore.integration.test.ts (13 tests | 10 skipped) 44933ms
+   ✓ a large production file is backed up and restored with bounded resident-memory growth  15971ms
+   ✓ a rejected deployment publication retains the restored database pending and an explicit failed receipt  14482ms
+   ✓ registered platform cache and independent history inside a legacy media parent retain their own responsibilities  14480ms
+ ✓ src/local-app/restorePublication.integration.test.ts (4 tests) 103222ms
+   ✓ SIGKILL at restore journal retains verifiable publication proof and fresh application Owner file reads recover  31921ms
+   ✓ SIGKILL at restore receipt retains verifiable publication proof and fresh application Owner file reads recover  25815ms
+   ✓ SIGKILL at restore config retains verifiable publication proof and fresh application Owner file reads recover  26529ms
+   ✓ SIGKILL at restore ready retains verifiable publication proof and fresh application Owner file reads recover  18957ms
+ ✓ src/local-app/deletionBackupRestore.integration.test.ts (1 test) 21876ms
+   ✓ real SQL115 prepared and committed deletion block backup while completed and rolled-back manifests restore unchanged after their source files disappear  21875ms
+ ✓ src/local-app/accountDirectoryMigrationStorage.integration.test.ts (1 test) 16208ms
+   ✓ a real backup and fresh restore retain migrated account location mappings and return original artifact bytes through Owner HTTP  16207ms
+ ✓ src/local-app/accountAssetRootsStorage.integration.test.ts (1 test) 15716ms
+   ✓ a real backup and fresh restore preserve independent episode files and rebind account directory identity for Owner HTTP  15715ms
+
+ Test Files  5 passed (5)
+      Tests  10 passed | 10 skipped (20)
+   Start at  06:35:54
+   Duration  203.29s (transform 413ms, setup 10ms, collect 821ms, tests 201.95s, environment 0ms, prepare 114ms)
+
+JSON report written to /Users/dan/Programs/loop-control/docs/verification/issue-178-main-e2e-20261101/integration-backup-after-results.json

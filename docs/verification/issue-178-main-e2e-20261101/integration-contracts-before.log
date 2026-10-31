@@ -1,0 +1,77 @@
+
+ RUN  v3.2.7 /private/tmp/loop-control-main-e2e-20261101/integration-regression/verification-source
+
+ ❯ src/local-app/blueprintReviewRetirement.integration.test.ts (3 tests | 1 failed | 1 skipped) 14510ms
+   × Owner confirms a script and final file with every retired gate enabled and unused tools unavailable 11797ms
+     → expected { positioning: '保留创作规则' } to deeply equal { positioning: '保留创作规则', …(3) }
+   ✓ an old storyboard-review order continues without retroactive approval and retains read-only boundaries  2712ms
+   ↓ serves the formal blueprint page against an isolated Owner database
+ ❯ src/local-app/workspaceFirstVideo.source.integration.test.ts (1 test | 1 failed) 7961ms
+   × first video freezes the actual source main voice without requiring an unused TTS draft 7961ms
+     → {"error":"请选择本次制作服务。"}: expected 400 to be 200 // Object.is equality
+ ❯ src/local-app/embeddedStudio.integration.test.ts (1 test | 1 failed) 3843ms
+   × Owner opens the real Studio and saves its versioned workspace through native HTTP 3842ms
+     → ENOENT: no such file or directory, open '/private/tmp/loop-153-txlTxi/account/episodes/5d6aeb7a-4a2e-4716-9e03-c560ca7ec3ee/openchatcut-work/current/runtime/project-store-v1/project%3Aloop-control-5d6aeb7a-4a2e-4716-9e03-c560ca7ec3ee.json'
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/blueprintReviewRetirement.integration.test.ts > Owner confirms a script and final file with every retired gate enabled and unused tools unavailable
+AssertionError: expected { positioning: '保留创作规则' } to deeply equal { positioning: '保留创作规则', …(3) }
+
+- Expected
++ Received
+
+  {
+-   "a_roll": {
+-     "execution_path": "local",
+-   },
+-   "approval_gates": [
+-     "script",
+-     "visual",
+-     "storyboard",
+-     "qc",
+-     "publish",
+-   ],
+-   "asset_root": "/private/tmp/loop-t06-volume-dKPPxX/mounted/loop-153-202QEC/account",
+    "positioning": "保留创作规则",
+  }
+
+ ❯ src/local-app/blueprintReviewRetirement.integration.test.ts:34:122
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/local-app/embeddedStudio.integration.test.ts > Owner opens the real Studio and saves its versioned workspace through native HTTP
+Error: ENOENT: no such file or directory, open '/private/tmp/loop-153-txlTxi/account/episodes/5d6aeb7a-4a2e-4716-9e03-c560ca7ec3ee/openchatcut-work/current/runtime/project-store-v1/project%3Aloop-control-5d6aeb7a-4a2e-4716-9e03-c560ca7ec3ee.json'
+ ❯ src/local-app/embeddedStudio.integration.test.ts:33:20
+     31|     expect(stale.status,JSON.stringify(stale.body)).toBe(409);
+     32|     const runtimePath=join(f.assetRoot,`episodes/${f.episode}/openchat…
+     33|     const original=await readFile(runtimePath,'utf8'),candidate=JSON.p…
+       |                    ^
+     34|     candidate.assets.push({id:'unapproved',kind:'video',name:'unapprov…
+     35|     await writeFile(runtimePath,JSON.stringify(candidate));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/local-app/workspaceFirstVideo.source.integration.test.ts > first video freezes the actual source main voice without requiring an unused TTS draft
+AssertionError: {"error":"请选择本次制作服务。"}: expected 400 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 400
+
+ ❯ send src/local-app/workspaceFirstVideo.source.integration.test.ts:14:197
+
+ ❯ src/local-app/workspaceFirstVideo.source.integration.test.ts:24:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  3 failed (3)
+      Tests  3 failed | 1 passed | 1 skipped (5)
+   Start at  06:27:55
+   Duration  27.72s (transform 591ms, setup 10ms, collect 1.05s, tests 26.31s, environment 0ms, prepare 76ms)
+
+JSON report written to /private/tmp/loop-control-main-e2e-20261101/diagnosis/three-contract-results.json

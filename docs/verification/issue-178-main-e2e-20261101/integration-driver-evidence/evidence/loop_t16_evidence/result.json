@@ -1,0 +1,135 @@
+{
+  "firstPid": 97293,
+  "restartedPid": 98641,
+  "dimensions": [
+    {
+      "bottom": 900.484375,
+      "buttons": [
+        {
+          "disabled": false,
+          "name": "关闭本机存储"
+        },
+        {
+          "disabled": false,
+          "name": "复制媒体根路径"
+        },
+        {
+          "disabled": false,
+          "name": "打开文件夹"
+        },
+        {
+          "disabled": false,
+          "name": "选择文件夹"
+        },
+        {
+          "disabled": false,
+          "name": "盘点迁移"
+        },
+        {
+          "disabled": false,
+          "name": "取消计划"
+        },
+        {
+          "disabled": false,
+          "name": "开始迁移"
+        }
+      ],
+      "client": 560,
+      "height": 1000,
+      "left": 440,
+      "right": 1000,
+      "scroll": 560,
+      "top": 99.515625,
+      "width": 1440
+    },
+    {
+      "bottom": 850.484375,
+      "buttons": [
+        {
+          "disabled": false,
+          "name": "关闭本机存储"
+        },
+        {
+          "disabled": false,
+          "name": "复制媒体根路径"
+        },
+        {
+          "disabled": false,
+          "name": "打开文件夹"
+        },
+        {
+          "disabled": false,
+          "name": "选择文件夹"
+        },
+        {
+          "disabled": false,
+          "name": "盘点迁移"
+        },
+        {
+          "disabled": false,
+          "name": "取消计划"
+        },
+        {
+          "disabled": false,
+          "name": "开始迁移"
+        }
+      ],
+      "client": 560,
+      "height": 900,
+      "left": 270,
+      "right": 830,
+      "scroll": 560,
+      "top": 49.515625,
+      "width": 1100
+    },
+    {
+      "bottom": 840.3125,
+      "buttons": [
+        {
+          "disabled": false,
+          "name": "关闭本机存储"
+        },
+        {
+          "disabled": false,
+          "name": "复制媒体根路径"
+        },
+        {
+          "disabled": false,
+          "name": "打开文件夹"
+        },
+        {
+          "disabled": false,
+          "name": "选择文件夹"
+        },
+        {
+          "disabled": false,
+          "name": "盘点迁移"
+        },
+        {
+          "disabled": false,
+          "name": "取消计划"
+        },
+        {
+          "disabled": false,
+          "name": "开始迁移"
+        }
+      ],
+      "client": 379,
+      "height": 844,
+      "left": 0,
+      "right": 379,
+      "scroll": 379,
+      "top": 28,
+      "width": 390
+    }
+  ],
+  "rootFolder": 1,
+  "planId": "9ba0627d-5465-4b63-a7eb-32aeec133a34",
+  "manifestSha256": "e595804f2fd2cd641c5fe679a274c81741c9c93b1db0637c9406ffb4c8d941c4",
+  "target": "/private/tmp/loop-t16-browser-target-6u0pkq",
+  "ownerSha256": "6fb4d8260599cb5ce9ab7e5eb371bdd7957dc0cb17fcfe948e84c9a46e72cc89",
+  "progressSurvivedRefresh": true,
+  "failedThenResumed": true,
+  "nativeEditSurvivedRestart": true,
+  "oldProductionSourcesOffline": true
+}

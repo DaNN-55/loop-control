@@ -1,0 +1,104 @@
+{
+  "initialPid": 65167,
+  "restartedPid": 65212,
+  "intent": {
+    "owner_id": "83383db7-1e6a-4bb2-8d1d-3a0c1ce48843",
+    "idempotency_key": "79fb8419-d4dd-4573-b516-b36f3e35f9fc",
+    "payload_hash": "7a14d0f78cce3876e6924e21db377b9811bc105d34c581d2cf28cba8e8c8cb3c",
+    "payload": {
+      "title": "crash creation",
+      "accountId": "c7c0ed78-de41-4207-a8b9-cedf497cef5f",
+      "seriesVersionId": "a39b2a58-de4c-473d-94f6-3022d852a93f"
+    },
+    "episode_id": "4681d812-cfd9-4abb-93ef-7426f36dfff8",
+    "account_id": "c7c0ed78-de41-4207-a8b9-cedf497cef5f",
+    "blueprint_version_id": "83bc1669-4278-4fdb-b57a-90ccfef73c6d",
+    "series_version_id": "a39b2a58-de4c-473d-94f6-3022d852a93f",
+    "container_id": "9a6d9fab-48ec-4f71-8677-cd0dd5fc62d4",
+    "storage_series_id": "9a6d9fab-48ec-4f71-8677-cd0dd5fc62d4",
+    "directory_relative_path": "系列 原名%#---9a6d9fab-48ec-4f71-8677-cd0dd5fc62d4/crash creation--4681d812-cfd9-4abb-93ef-7426f36dfff8",
+    "account_root": "/private/tmp/loop-t06-volume-GHAH3E/mounted/loop-153-WSD7ai/source/自动账号✨--c7c0ed78-de41-4207-a8b9-cedf497cef5f",
+    "account_device_id": "16777269",
+    "account_inode_id": "34",
+    "container_relative_path": "系列 原名%#---9a6d9fab-48ec-4f71-8677-cd0dd5fc62d4",
+    "container_device_id": "16777269",
+    "container_inode_id": "36",
+    "root_binding": {
+      "path": "/private/tmp/loop-t06-volume-GHAH3E/mounted/loop-153-WSD7ai/source",
+      "inodeId": "24",
+      "deviceId": "16777269",
+      "mountPath": "/private/tmp/loop-t06-volume-GHAH3E/mounted"
+    },
+    "marker": "f967aef2-863a-449a-bcc3-08bf21e88625",
+    "device_id": "16777269",
+    "inode_id": "38",
+    "marker_device_id": "16777269",
+    "marker_inode_id": "39",
+    "cleanup_owned": true,
+    "result": null,
+    "created_at": "2026-10-31T22:20:34.780Z"
+  },
+  "created": {
+    "id": "4681d812-cfd9-4abb-93ef-7426f36dfff8",
+    "stage": "waiting_input",
+    "title": "crash creation",
+    "is_test": false,
+    "tts_voice": null,
+    "account_id": "c7c0ed78-de41-4207-a8b9-cedf497cef5f",
+    "created_at": "2026-10-31T22:20:35.135581+00:00",
+    "updated_at": "2026-10-31T22:20:35.135581+00:00",
+    "archived_at": null,
+    "script_source": "provided",
+    "audio_source_mode": "tts",
+    "series_version_id": "a39b2a58-de4c-473d-94f6-3022d852a93f",
+    "tts_language_code": null,
+    "tts_speaking_rate": null,
+    "worker_preflight_at": null,
+    "blueprint_version_id": "83bc1669-4278-4fdb-b57a-90ccfef73c6d",
+    "main_script_revision_id": null
+  },
+  "path": "/private/tmp/loop-t06-volume-GHAH3E/mounted/loop-153-WSD7ai/source/自动账号✨--c7c0ed78-de41-4207-a8b9-cedf497cef5f/系列 原名%#---9a6d9fab-48ec-4f71-8677-cd0dd5fc62d4/crash creation--4681d812-cfd9-4abb-93ef-7426f36dfff8",
+  "originalBlueprint": {
+    "id": "83bc1669-4278-4fdb-b57a-90ccfef73c6d",
+    "policy": {
+      "positioning": "原账号规则"
+    }
+  },
+  "originalSeries": {
+    "id": "a39b2a58-de4c-473d-94f6-3022d852a93f",
+    "rules": {
+      "extension": {
+        "keep": true
+      },
+      "positioning": "原系列规则"
+    },
+    "version": 1,
+    "series_id": "9a6d9fab-48ec-4f71-8677-cd0dd5fc62d4",
+    "account_id": "c7c0ed78-de41-4207-a8b9-cedf497cef5f",
+    "created_at": "2026-10-31T22:20:34.736129+00:00",
+    "created_by": "83383db7-1e6a-4bb2-8d1d-3a0c1ce48843"
+  },
+  "specialNames": 8,
+  "concurrent": {
+    "status": 200,
+    "body": {
+      "id": "748b7576-4b9c-426d-b2c0-47672356e6aa",
+      "stage": "waiting_input",
+      "title": "same key",
+      "is_test": false,
+      "tts_voice": null,
+      "account_id": "c7c0ed78-de41-4207-a8b9-cedf497cef5f",
+      "created_at": "2026-10-31T22:20:36.068832+00:00",
+      "updated_at": "2026-10-31T22:20:36.068832+00:00",
+      "archived_at": null,
+      "script_source": "provided",
+      "audio_source_mode": "tts",
+      "series_version_id": null,
+      "tts_language_code": null,
+      "tts_speaking_rate": null,
+      "worker_preflight_at": null,
+      "blueprint_version_id": "b8945d81-dd0c-4e50-8bf5-a3b42fda4c32",
+      "main_script_revision_id": null
+    }
+  }
+}

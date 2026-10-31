@@ -1,0 +1,256 @@
+{
+  "source": "/private/tmp/loop-t10-retained-source-smqwfq",
+  "before": [
+    {
+      "path": "",
+      "device": "16777234",
+      "inode": "106655889",
+      "mode": "16832",
+      "links": "5",
+      "size": "160",
+      "modified": "1793485454076231742"
+    },
+    {
+      "path": "account",
+      "device": "16777234",
+      "inode": "106655890",
+      "mode": "16877",
+      "links": "3",
+      "size": "96",
+      "modified": "1793485454074237693"
+    },
+    {
+      "path": "account/系列 中文 %_[] #?",
+      "device": "16777234",
+      "inode": "106655891",
+      "mode": "16877",
+      "links": "3",
+      "size": "96",
+      "modified": "1793485454074285443"
+    },
+    {
+      "path": "account/系列 中文 %_[] #?/本单 stable",
+      "device": "16777234",
+      "inode": "106655892",
+      "mode": "16877",
+      "links": "4",
+      "size": "128",
+      "modified": "1793485454075847907"
+    },
+    {
+      "path": "account/系列 中文 %_[] #?/本单 stable/shot.mp4",
+      "device": "16777234",
+      "inode": "106655893",
+      "mode": "33188",
+      "links": "1",
+      "size": "210288",
+      "modified": "1793485454074679194",
+      "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da"
+    },
+    {
+      "path": "account/系列 中文 %_[] #?/本单 stable/voice.mp3",
+      "device": "16777234",
+      "inode": "106655894",
+      "mode": "33188",
+      "links": "1",
+      "size": "16556",
+      "modified": "1793485454075920657",
+      "sha256": "21367e1bb28c3f86626206d5349933c1755207ff4e2bf770e59606432875899b"
+    },
+    {
+      "path": "manual.txt",
+      "device": "16777234",
+      "inode": "106655897",
+      "mode": "33188",
+      "links": "1",
+      "size": "24",
+      "modified": "1793485454076282951",
+      "sha256": "a9f914f02991e30a3457a60f41335ca190d793da941fa633ca926810a8739ce1"
+    },
+    {
+      "path": "other-account",
+      "device": "16777234",
+      "inode": "106655895",
+      "mode": "16877",
+      "links": "3",
+      "size": "96",
+      "modified": "1793485454076060075"
+    },
+    {
+      "path": "other-account/keep.txt",
+      "device": "16777234",
+      "inode": "106655896",
+      "mode": "33188",
+      "links": "1",
+      "size": "31",
+      "modified": "1793485454076144992",
+      "sha256": "a896270208037947b2c972a599984a2a76e68ebf95a0a740a65f0de23791c6b1"
+    }
+  ],
+  "after": [
+    {
+      "path": "",
+      "device": "16777234",
+      "inode": "106655889",
+      "mode": "16832",
+      "links": "5",
+      "size": "160",
+      "modified": "1793485454076231742"
+    },
+    {
+      "path": "account",
+      "device": "16777234",
+      "inode": "106655890",
+      "mode": "16877",
+      "links": "3",
+      "size": "96",
+      "modified": "1793485454074237693"
+    },
+    {
+      "path": "account/系列 中文 %_[] #?",
+      "device": "16777234",
+      "inode": "106655891",
+      "mode": "16877",
+      "links": "3",
+      "size": "96",
+      "modified": "1793485454074285443"
+    },
+    {
+      "path": "account/系列 中文 %_[] #?/本单 stable",
+      "device": "16777234",
+      "inode": "106655892",
+      "mode": "16877",
+      "links": "4",
+      "size": "128",
+      "modified": "1793485454075847907"
+    },
+    {
+      "path": "account/系列 中文 %_[] #?/本单 stable/shot.mp4",
+      "device": "16777234",
+      "inode": "106655893",
+      "mode": "33188",
+      "links": "1",
+      "size": "210288",
+      "modified": "1793485454074679194",
+      "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da"
+    },
+    {
+      "path": "account/系列 中文 %_[] #?/本单 stable/voice.mp3",
+      "device": "16777234",
+      "inode": "106655894",
+      "mode": "33188",
+      "links": "1",
+      "size": "16556",
+      "modified": "1793485454075920657",
+      "sha256": "21367e1bb28c3f86626206d5349933c1755207ff4e2bf770e59606432875899b"
+    },
+    {
+      "path": "manual.txt",
+      "device": "16777234",
+      "inode": "106655897",
+      "mode": "33188",
+      "links": "1",
+      "size": "24",
+      "modified": "1793485454076282951",
+      "sha256": "a9f914f02991e30a3457a60f41335ca190d793da941fa633ca926810a8739ce1"
+    },
+    {
+      "path": "other-account",
+      "device": "16777234",
+      "inode": "106655895",
+      "mode": "16877",
+      "links": "3",
+      "size": "96",
+      "modified": "1793485454076060075"
+    },
+    {
+      "path": "other-account/keep.txt",
+      "device": "16777234",
+      "inode": "106655896",
+      "mode": "33188",
+      "links": "1",
+      "size": "31",
+      "modified": "1793485454076144992",
+      "sha256": "a896270208037947b2c972a599984a2a76e68ebf95a0a740a65f0de23791c6b1"
+    }
+  ],
+  "plan": {
+    "episodeId": "3bc9f06b-3e74-4fef-8d7c-57c99d1a8c94",
+    "title": "隔离 Studio153 验收",
+    "path": "/private/tmp/loop-153-VynwTO/account/系列 中文 %_[] #?/本单 stable",
+    "stagingPath": "/private/tmp/loop-153-VynwTO/account/系列 中文 %_[] #?/本单 stable",
+    "paths": [
+      "/private/tmp/loop-153-VynwTO/account/系列 中文 %_[] #?/本单 stable"
+    ],
+    "stagingPaths": [
+      "/private/tmp/loop-153-VynwTO/account/系列 中文 %_[] #?/本单 stable/board.json.loop-control-deletion",
+      "/private/tmp/loop-153-VynwTO/account/系列 中文 %_[] #?/本单 stable/shot.mp4.loop-control-deletion",
+      "/private/tmp/loop-153-VynwTO/account/系列 中文 %_[] #?/本单 stable/voice.mp3.loop-control-deletion"
+    ],
+    "files": [
+      {
+        "path": "/private/tmp/loop-153-VynwTO/account/系列 中文 %_[] #?/本单 stable/board.json",
+        "bytes": 204,
+        "authority": "artifact:711c518c-8f01-42d5-b12f-d789777bda2d"
+      },
+      {
+        "path": "/private/tmp/loop-153-VynwTO/account/系列 中文 %_[] #?/本单 stable/shot.mp4",
+        "bytes": 210288,
+        "authority": "artifact:bbac5674-ddb2-4b80-9ee9-7d0435df1b75"
+      },
+      {
+        "path": "/private/tmp/loop-153-VynwTO/account/系列 中文 %_[] #?/本单 stable/voice.mp3",
+        "bytes": 16556,
+        "authority": "frozen-input:9a118400-d7d8-4f1f-99fc-bfb8dd2e8d0d"
+      }
+    ],
+    "preserved": [],
+    "confirmation": "隔离 Studio153 验收",
+    "archived": true,
+    "isTest": false,
+    "revision": "2ba246479d960b12603cfe9027203881c6ca4993419b8ea12dbb4b414785036a"
+  },
+  "result": {
+    "path": "/private/tmp/loop-153-VynwTO/account/系列 中文 %_[] #?/本单 stable",
+    "paths": [
+      "/private/tmp/loop-153-VynwTO/account/系列 中文 %_[] #?/本单 stable"
+    ],
+    "title": "隔离 Studio153 验收",
+    "summary": {
+      "title": "隔离 Studio153 验收",
+      "counts": {
+        "tasks": 1,
+        "approvals": 0,
+        "artifacts": 2,
+        "asset_locks": 0,
+        "experiments": 0,
+        "audio_tracks": 0,
+        "audit_events": 1,
+        "review_packages": 2,
+        "metric_snapshots": 0,
+        "state_transitions": 0,
+        "review_annotations": 0,
+        "audio_track_annotations": 0,
+        "production_dependencies": 0,
+        "production_invalidations": 0,
+        "pre_render_review_members": 0,
+        "production_material_revisions": 0,
+        "pre_render_review_member_decisions": 0,
+        "review_render_composition_revisions": 0
+      },
+      "account_id": "ab7dd433-7d5e-4e73-8740-3328b9061916",
+      "deleted_at": "2026-10-31T22:24:14.133085+00:00",
+      "episode_id": "3bc9f06b-3e74-4fef-8d7c-57c99d1a8c94"
+    },
+    "episodeId": "3bc9f06b-3e74-4fef-8d7c-57c99d1a8c94",
+    "cleanupKey": "4cd2daa1-deea-4873-aab9-7e591b22683f",
+    "stagingPath": "/private/tmp/loop-153-VynwTO/account/系列 中文 %_[] #?/本单 stable",
+    "localRemoved": true,
+    "stagingPaths": [
+      "/private/tmp/loop-153-VynwTO/account/系列 中文 %_[] #?/本单 stable/board.json.loop-control-deletion",
+      "/private/tmp/loop-153-VynwTO/account/系列 中文 %_[] #?/本单 stable/shot.mp4.loop-control-deletion",
+      "/private/tmp/loop-153-VynwTO/account/系列 中文 %_[] #?/本单 stable/voice.mp3.loop-control-deletion"
+    ],
+    "cleanupPending": false
+  }
+}

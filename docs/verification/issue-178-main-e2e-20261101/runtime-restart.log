@@ -1,0 +1,4 @@
+{"ready":true,"url":"http://127.0.0.1:59200","pid":13595,"metadataFile":"/private/tmp/loop-control-main-e2e-20261101/live-runtime.json"}
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-control-main-e2e-20261101/live-runtime/state/vite-cache/deps/react-dom_client.js?v=2f2e43c0 as it exceeds the max of 500KB.
+Worker调度扫描失败：Worker/编排程序未准备、已过期或产物损坏；请先运行 npm run runtime:prepare 并重启服务。
+{"ready":true,"url":"http://127.0.0.1:59200","pid":50739,"metadataFile":"/private/tmp/loop-control-main-e2e-20261101/live-runtime.json"}

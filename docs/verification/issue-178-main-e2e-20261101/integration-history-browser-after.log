@@ -1,0 +1,15 @@
+
+ RUN  v3.2.7 /private/tmp/loop-control-main-e2e-20261101/integration-regression/verification-source
+
+stderr | src/local-app/mediaRootSettings.browser.integration.test.ts > formal Owner storage settings initialize, copy and open the real root, preserve errors and read the same location after reload
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-t06-volume-pbJyzv/mounted/loop-153-ahhsxG/vite-cache/deps/react-dom_client.js?v=f850cf96 as it exceeds the max of 500KB.
+
+ ✓ src/local-app/mediaRootSettings.browser.integration.test.ts (1 test) 10110ms
+   ✓ formal Owner storage settings initialize, copy and open the real root, preserve errors and read the same location after reload  10110ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  06:37:08
+   Duration  10.33s (transform 407ms, setup 10ms, collect 83ms, tests 10.11s, environment 0ms, prepare 28ms)
+
+JSON report written to /Users/dan/Programs/loop-control/docs/verification/issue-178-main-e2e-20261101/integration-history-browser-after-results.json

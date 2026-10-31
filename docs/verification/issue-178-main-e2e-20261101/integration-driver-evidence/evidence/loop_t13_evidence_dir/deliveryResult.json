@@ -1,0 +1,66 @@
+{
+  "version": "worker-result/v1",
+  "taskId": "a21a20d7-3456-45f9-9114-7670d5db3b2f",
+  "status": "completed",
+  "deliveryIdentity": {
+    "video": {
+      "sha256": "fc40b586ec77c35c504f6fa8d2499b1a91a512adeaaa8f3d132b33b9ea562013",
+      "fileSize": 470495,
+      "artifactType": "final_render",
+      "relativePath": "未分系列--def35156-022d-49c1-8449-934fa0c65a10/正式新单--a2ddfa79-a11c-454f-89ce-76419583a554/workspace-exports/5b7320e8-a648-49fb-b515-c893423aa0c9/fc40b586ec77c35c504f6fa8d2499b1a91a512adeaaa8f3d132b33b9ea562013.mp4"
+    },
+    "project": {
+      "sha256": "4683f76255e221a8ad5329366428701c1f471d26c20dd3dbec5cfdcc17e4f2c3",
+      "fileSize": 28592,
+      "artifactType": "editable_project",
+      "relativePath": "未分系列--def35156-022d-49c1-8449-934fa0c65a10/正式新单--a2ddfa79-a11c-454f-89ce-76419583a554/production-workspace/versions/4683f76255e221a8ad5329366428701c1f471d26c20dd3dbec5cfdcc17e4f2c3.json"
+    },
+    "exportId": "5b7320e8-a648-49fb-b515-c893423aa0c9",
+    "workspaceId": "f1d54caa-911c-4433-8af6-40759514c453",
+    "contentSha256": "0b1ff03c24ed13ab882fb05c9c1a3887f0f0380cc7cb3ec2f22a381b8a90adca",
+    "projectContentVersion": 26
+  },
+  "artifacts": [
+    {
+      "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+      "fileSize": 1515,
+      "artifactType": "cover",
+      "relativePath": "未分系列--def35156-022d-49c1-8449-934fa0c65a10/正式新单--a2ddfa79-a11c-454f-89ce-76419583a554/workspace-deliveries/a21a20d7-3456-45f9-9114-7670d5db3b2f/cover.png"
+    },
+    {
+      "sha256": "00b3fc13d98db0766a9674d4017c74abc9a926ff7ffe9bff95dea7379b97ab17",
+      "fileSize": 2231,
+      "artifactType": "metadata",
+      "relativePath": "未分系列--def35156-022d-49c1-8449-934fa0c65a10/正式新单--a2ddfa79-a11c-454f-89ce-76419583a554/workspace-deliveries/a21a20d7-3456-45f9-9114-7670d5db3b2f/metadata.json"
+    },
+    {
+      "sha256": "b46bace37aeed9b2615c05fde23fb209ee6fc6f1fff2784a358443a65d633752",
+      "fileSize": 7520,
+      "artifactType": "final_qc_report",
+      "relativePath": "未分系列--def35156-022d-49c1-8449-934fa0c65a10/正式新单--a2ddfa79-a11c-454f-89ce-76419583a554/workspace-deliveries/a21a20d7-3456-45f9-9114-7670d5db3b2f/checks.json"
+    },
+    {
+      "artifactType": "publish_package",
+      "relativePath": "未分系列--def35156-022d-49c1-8449-934fa0c65a10/正式新单--a2ddfa79-a11c-454f-89ce-76419583a554/workspace-deliveries/a21a20d7-3456-45f9-9114-7670d5db3b2f/manifest.json",
+      "sha256": "479c91c3f6150de36a5da998185722981fb0fece3513517788d29a64820092c6",
+      "fileSize": 3050
+    }
+  ],
+  "validation": {
+    "passed": true,
+    "checks": [
+      {
+        "name": "exact_workspace_package",
+        "passed": true,
+        "detail": "已确认视频、完整工程、封面、元数据、检查证据及清单的归属、大小和 SHA-256 均通过。"
+      }
+    ]
+  },
+  "actualCostCents": 0,
+  "blockers": [],
+  "retry": {
+    "shouldRetry": false,
+    "reason": "交付包已验证。"
+  },
+  "nextStep": "下载已验证交付文件。"
+}

@@ -1,0 +1,231 @@
+{
+  "version": 3,
+  "loopControl": {
+    "version": "four-step-workspace/v1",
+    "inputFingerprint": "5fd0f6db-b51a-43a0-a8e6-63796aae38e2",
+    "transitionMode": "studio"
+  },
+  "assets": [
+    {
+      "id": "material-80b041f4-4754-4e4c-a0bc-904f3feae62b",
+      "name": "alignment-window.png",
+      "kind": "image",
+      "src": "未分系列--19c13a9a-4880-4b51-a3ab-6db104e59536/正式新单--ab8213f7-0e3d-4e43-8397-b0e72f5b0ac9/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-alignment-window.png",
+      "durationInFrames": 72
+    },
+    {
+      "id": "audio-track-6e29d1db-8c34-42da-b7bd-169563511202",
+      "name": "workspace-narration-shot-shot-02",
+      "kind": "audio",
+      "src": "未分系列--19c13a9a-4880-4b51-a3ab-6db104e59536/正式新单--ab8213f7-0e3d-4e43-8397-b0e72f5b0ac9/native-tasks/5d93eac9-c3b7-4037-b42b-ec7e5b4dccea/shot-narration-shot-02-d379d08c-8da8-4e39-8a3e-7f6147f6f26f.mp3",
+      "durationInFrames": 72
+    }
+  ],
+  "mediaFolders": [],
+  "activeTimelineId": "loop-control-ab8213f7-0e3d-4e43-8397-b0e72f5b0ac9",
+  "timelines": [
+    {
+      "id": "loop-control-ab8213f7-0e3d-4e43-8397-b0e72f5b0ac9",
+      "name": "整期剪辑",
+      "order": 0,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "fit": "contain",
+      "items": [
+        {
+          "id": "shot-shot-01-b8618702-f499-44b2-a4a3-4703ab98f71b",
+          "track": "V1",
+          "kind": "text",
+          "name": "shot-01 · 待匹配画面",
+          "startFrame": 0,
+          "durationInFrames": 150,
+          "width": 1080,
+          "height": 1920,
+          "props": {
+            "text": "待匹配画面\nshot-01",
+            "fontSize": 64,
+            "color": "#a3acc2",
+            "align": "center"
+          },
+          "transform": {
+            "scale": 1,
+            "x": 0,
+            "y": 0,
+            "rotation": 0
+          },
+          "loopControlShot": {
+            "workspaceId": "5fd0f6db-b51a-43a0-a8e6-63796aae38e2",
+            "shotId": "shot-01",
+            "clipId": "b8618702-f499-44b2-a4a3-4703ab98f71b",
+            "text": "填写本段完整口播。"
+          }
+        },
+        {
+          "id": "shot-shot-02-48c01b4b-981e-4fcb-ae04-ed3855fd4061",
+          "track": "V1",
+          "kind": "image",
+          "name": "shot-02",
+          "startFrame": 150,
+          "durationInFrames": 72,
+          "width": 640,
+          "height": 360,
+          "transform": {
+            "scale": 1,
+            "x": 0,
+            "y": 0,
+            "rotation": 0
+          },
+          "loopControlShot": {
+            "workspaceId": "5fd0f6db-b51a-43a0-a8e6-63796aae38e2",
+            "shotId": "shot-02",
+            "clipId": "48c01b4b-981e-4fcb-ae04-ed3855fd4061",
+            "text": "后镜内容和布局由Owner核对。",
+            "provenance": {
+              "materialRevisionId": "80b041f4-4754-4e4c-a0bc-904f3feae62b",
+              "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+              "fileSize": 1515,
+              "kind": "image"
+            }
+          },
+          "src": "未分系列--19c13a9a-4880-4b51-a3ab-6db104e59536/正式新单--ab8213f7-0e3d-4e43-8397-b0e72f5b0ac9/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-alignment-window.png",
+          "sourceAssetId": "material-80b041f4-4754-4e4c-a0bc-904f3feae62b",
+          "sourceRevision": "80b041f4-4754-4e4c-a0bc-904f3feae62b",
+          "sourceContentHash": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+          "sourceFilename": "alignment-window.png",
+          "fit": "contain",
+          "volume": 0,
+          "loopControlAudio": {
+            "workspaceId": "5fd0f6db-b51a-43a0-a8e6-63796aae38e2",
+            "shotId": "shot-02",
+            "voiceMode": "tts"
+          }
+        },
+        {
+          "id": "workspace-narration-shot-shot-02",
+          "kind": "audio",
+          "name": "shot-02 口播",
+          "src": "未分系列--19c13a9a-4880-4b51-a3ab-6db104e59536/正式新单--ab8213f7-0e3d-4e43-8397-b0e72f5b0ac9/native-tasks/5d93eac9-c3b7-4037-b42b-ec7e5b4dccea/shot-narration-shot-02-d379d08c-8da8-4e39-8a3e-7f6147f6f26f.mp3",
+          "sourceAssetId": "audio-track-6e29d1db-8c34-42da-b7bd-169563511202",
+          "srcInFrame": 0,
+          "startFrame": 150,
+          "durationInFrames": 72,
+          "volume": 1,
+          "track": "workspace-main-voice",
+          "loopControlAudio": {
+            "workspaceId": "5fd0f6db-b51a-43a0-a8e6-63796aae38e2",
+            "shotId": "shot-02"
+          },
+          "sourceRevision": "source-sha256-9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+          "sourceContentHash": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+          "loopControlCandidate": {
+            "inputFingerprint": "333686efa738b02a28b0928dfbeb5af7795181b1d9b463be454d3366dadd9f02",
+            "sourceId": "audio-track-6e29d1db-8c34-42da-b7bd-169563511202",
+            "durationPolicy": "use-candidate",
+            "startFrame": 150,
+            "durationInFrames": 72,
+            "shotWindow": {
+              "startFrame": 150,
+              "durationInFrames": 72
+            }
+          }
+        }
+      ],
+      "trackOrder": [
+        "V1",
+        "workspace-main-voice",
+        "workspace-captions"
+      ],
+      "tracks": {
+        "V1": {
+          "kind": "video",
+          "name": "画面"
+        },
+        "workspace-main-voice": {
+          "kind": "audio",
+          "name": "主声音",
+          "role": "anchor"
+        },
+        "workspace-captions": {
+          "kind": "caption",
+          "name": "字幕",
+          "captions": {
+            "enabled": true,
+            "template": "plain",
+            "pacing": "phrase",
+            "sourceMode": "item",
+            "sourceEntries": [
+              {
+                "id": "workspace-caption-shot-shot-02",
+                "itemId": "manual:workspace-caption-shot-shot-02",
+                "label": "字幕",
+                "slotId": "workspace-caption-shot-shot-02-slot",
+                "visible": true,
+                "anchor": "bottom-center",
+                "offsetXRatio": 0,
+                "offsetYRatio": 0.09999999999999999,
+                "widthRatio": 0.8400000000000001,
+                "heightRatio": 0.74,
+                "words": [
+                  {
+                    "id": "aligned~0",
+                    "text": "后镜字幕的绝对时间必须保留。",
+                    "start": 5120,
+                    "end": 5900
+                  }
+                ],
+                "style": {
+                  "fontFamily": "sans-serif",
+                  "fontWeight": 600,
+                  "color": "#ffffff",
+                  "fontSize": 0.02684659090909091,
+                  "wholeLine": true
+                },
+                "loopControl": {
+                  "version": "workspace-caption/v1",
+                  "contentMode": "independent",
+                  "text": "后镜字幕的绝对时间必须保留。",
+                  "spatial": {
+                    "version": "shot-caption-space/v2",
+                    "anchor": "bottom-center",
+                    "safeArea": "title-safe",
+                    "aspectRatio": "9:16",
+                    "insets": {
+                      "top": 0.08,
+                      "right": 0.08,
+                      "bottom": 0.18,
+                      "left": 0.08
+                    },
+                    "maxLines": 2,
+                    "maxCharactersPerLine": 16
+                  }
+                }
+              }
+            ],
+            "layoutPolicy": {
+              "mode": "manual-slots",
+              "slots": [
+                {
+                  "id": "workspace-caption-shot-shot-02-slot",
+                  "anchor": "bottom-center",
+                  "offsetXRatio": 0,
+                  "offsetYRatio": 0.09999999999999999,
+                  "widthRatio": 0.8400000000000001,
+                  "heightRatio": 0.74
+                }
+              ]
+            },
+            "perSource": {
+              "workspace-caption-shot-shot-02": {
+                "maxLines": 2
+              }
+            }
+          }
+        }
+      },
+      "transitions": [],
+      "selectedId": null,
+      "captionsHidden": false
+    }
+  ]
+}

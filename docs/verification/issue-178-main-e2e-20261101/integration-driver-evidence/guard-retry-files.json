@@ -1,0 +1,11 @@
+[
+  "src/local-app/restorePublication.integration.test.ts",
+  "src/local-app/mediaRootExecutionNative.integration.test.ts",
+  "src/local-app/episodeCollectionNative.integration.test.ts",
+  "src/local-app/legacyAdoptionNative.integration.test.ts",
+  "src/local-app/deletionBackupRestore.integration.test.ts",
+  "src/local-app/accountDirectoryMigrationStorage.integration.test.ts",
+  "src/local-app/episodeCreation.integration.test.ts",
+  "src/local-app/accountAssetRootsStorage.integration.test.ts",
+  "src/local-app/managedMediaRestore.integration.test.ts"
+]

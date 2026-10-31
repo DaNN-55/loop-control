@@ -1,0 +1,369 @@
+{
+  "version": 3,
+  "loopControl": {
+    "version": "four-step-workspace/v1",
+    "inputFingerprint": "05990503-86e4-4ffb-bb4c-e467ebf7437d",
+    "transitionMode": "studio"
+  },
+  "assets": [
+    {
+      "width": 720,
+      "height": 1280,
+      "id": "candidate-30a7edcf-0cff-4d0d-a1f1-5441a83686dc",
+      "name": "shot-01 · 待匹配画面",
+      "kind": "video",
+      "src": "春日风景--dcd6550f-b229-4df0-8993-98efae2c3503/真实风景短片 · Pexels 与万相--c736a98b-49db-4a61-934c-ebb2db6c6a9d/native-tasks/ffaf1bc5-7e02-406a-9707-012fad9770e3/ffaf1bc5-7e02-406a-9707-012fad9770e3.mp4",
+      "durationInFrames": 60,
+      "sourceContentHash": "2582d65af39bed2b816ada6c3160bb6a812ac36574814993e832f85f92af5269",
+      "sourceRevision": "source-sha256-2582d65af39bed2b816ada6c3160bb6a812ac36574814993e832f85f92af5269"
+    },
+    {
+      "width": 720,
+      "height": 1280,
+      "id": "candidate-c62be7d0-cb7d-4174-ae17-762ea46594f3",
+      "name": "shot-02 · 待匹配画面",
+      "kind": "video",
+      "src": "春日风景--dcd6550f-b229-4df0-8993-98efae2c3503/真实风景短片 · Pexels 与万相--c736a98b-49db-4a61-934c-ebb2db6c6a9d/materials/c07863d21f285d094cf2eaaa398e1a76f346615a600a951be35d4c3ace2346d4-pexels-36511980.mp4",
+      "durationInFrames": 190,
+      "sourceContentHash": "c07863d21f285d094cf2eaaa398e1a76f346615a600a951be35d4c3ace2346d4",
+      "sourceRevision": "source-sha256-c07863d21f285d094cf2eaaa398e1a76f346615a600a951be35d4c3ace2346d4"
+    },
+    {
+      "id": "audio-track-9d6fe65d-5a76-45bb-ab58-cfab7d064d7b",
+      "name": "workspace-narration-shot-shot-01",
+      "kind": "audio",
+      "src": "春日风景--dcd6550f-b229-4df0-8993-98efae2c3503/真实风景短片 · Pexels 与万相--c736a98b-49db-4a61-934c-ebb2db6c6a9d/native-tasks/27978b73-d246-48d2-b771-da484b589784/shot-narration-shot-01-5e777e02-f77a-4f33-abdd-74382b0d9723.mp3",
+      "durationInFrames": 37,
+      "sourceRevision": "source-v1-02w37k7-mry5jj"
+    },
+    {
+      "id": "audio-track-d8824a1e-2de2-49f5-853a-f19849566dc1",
+      "name": "workspace-narration-shot-shot-02",
+      "kind": "audio",
+      "src": "春日风景--dcd6550f-b229-4df0-8993-98efae2c3503/真实风景短片 · Pexels 与万相--c736a98b-49db-4a61-934c-ebb2db6c6a9d/native-tasks/38bc7e03-3351-45f4-b33f-04acec7dd749/shot-narration-shot-02-7421f833-c75a-4694-b57c-df0e68bc3cff.mp3",
+      "durationInFrames": 62,
+      "sourceRevision": "source-v1-0thznk1-sib6og"
+    }
+  ],
+  "mediaFolders": [],
+  "activeTimelineId": "loop-control-c736a98b-49db-4a61-934c-ebb2db6c6a9d",
+  "timelines": [
+    {
+      "id": "loop-control-c736a98b-49db-4a61-934c-ebb2db6c6a9d",
+      "name": "整期剪辑",
+      "order": 0,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "fit": "contain",
+      "items": [
+        {
+          "id": "shot-shot-01-5a2fb7f8-374c-4261-ab07-05836951c263",
+          "track": "track_loop-control-c736a98b-49db-4a61-934c-ebb2db6c6a9d_1",
+          "kind": "video",
+          "name": "shot-01 · 待匹配画面",
+          "startFrame": 0,
+          "durationInFrames": 37,
+          "width": 720,
+          "height": 1280,
+          "transform": {
+            "scale": 1,
+            "x": 0,
+            "y": 0,
+            "rotation": 0
+          },
+          "loopControlShot": {
+            "workspaceId": "05990503-86e4-4ffb-bb4c-e467ebf7437d",
+            "shotId": "shot-01",
+            "clipId": "5a2fb7f8-374c-4261-ab07-05836951c263",
+            "text": "风吹过湖面。"
+          },
+          "src": "春日风景--dcd6550f-b229-4df0-8993-98efae2c3503/真实风景短片 · Pexels 与万相--c736a98b-49db-4a61-934c-ebb2db6c6a9d/native-tasks/ffaf1bc5-7e02-406a-9707-012fad9770e3/ffaf1bc5-7e02-406a-9707-012fad9770e3.mp4",
+          "sourceAssetId": "candidate-30a7edcf-0cff-4d0d-a1f1-5441a83686dc",
+          "loopControlCandidate": {
+            "inputFingerprint": "965e80c57b664cfb792528f0eab401dcab21fe9041a060c0978c79fa7d41c2e5",
+            "sourceId": "candidate-30a7edcf-0cff-4d0d-a1f1-5441a83686dc",
+            "durationPolicy": "keep-target",
+            "startFrame": 0,
+            "durationInFrames": 60,
+            "shotWindow": {
+              "startFrame": 0,
+              "durationInFrames": 60
+            }
+          },
+          "srcInFrame": 0,
+          "volume": 0,
+          "loopControlAudio": {
+            "workspaceId": "05990503-86e4-4ffb-bb4c-e467ebf7437d",
+            "shotId": "shot-01",
+            "voiceMode": "tts"
+          },
+          "sourceContentHash": "2582d65af39bed2b816ada6c3160bb6a812ac36574814993e832f85f92af5269",
+          "sourceRevision": "source-sha256-2582d65af39bed2b816ada6c3160bb6a812ac36574814993e832f85f92af5269"
+        },
+        {
+          "id": "shot-shot-02-48079961-cc2f-48ba-b51c-601204e1769f",
+          "track": "track_loop-control-c736a98b-49db-4a61-934c-ebb2db6c6a9d_1",
+          "kind": "video",
+          "name": "shot-02 · 待匹配画面",
+          "startFrame": 37,
+          "durationInFrames": 62,
+          "width": 720,
+          "height": 1280,
+          "transform": {
+            "scale": 1,
+            "x": 0,
+            "y": 0,
+            "rotation": 0
+          },
+          "loopControlShot": {
+            "workspaceId": "05990503-86e4-4ffb-bb4c-e467ebf7437d",
+            "shotId": "shot-02",
+            "clipId": "48079961-cc2f-48ba-b51c-601204e1769f",
+            "text": "把这一刻，留给自然。"
+          },
+          "src": "春日风景--dcd6550f-b229-4df0-8993-98efae2c3503/真实风景短片 · Pexels 与万相--c736a98b-49db-4a61-934c-ebb2db6c6a9d/materials/c07863d21f285d094cf2eaaa398e1a76f346615a600a951be35d4c3ace2346d4-pexels-36511980.mp4",
+          "sourceAssetId": "candidate-c62be7d0-cb7d-4174-ae17-762ea46594f3",
+          "loopControlCandidate": {
+            "inputFingerprint": "1db436cf6fbf538d17b2ce9d929a1756895ee49e498c49b6e63792205f5660f1",
+            "sourceId": "candidate-c62be7d0-cb7d-4174-ae17-762ea46594f3",
+            "durationPolicy": "keep-target",
+            "startFrame": 60,
+            "durationInFrames": 120,
+            "shotWindow": {
+              "startFrame": 60,
+              "durationInFrames": 120
+            }
+          },
+          "srcInFrame": 0,
+          "volume": 0,
+          "loopControlAudio": {
+            "workspaceId": "05990503-86e4-4ffb-bb4c-e467ebf7437d",
+            "shotId": "shot-02",
+            "voiceMode": "tts"
+          },
+          "sourceContentHash": "c07863d21f285d094cf2eaaa398e1a76f346615a600a951be35d4c3ace2346d4",
+          "sourceRevision": "source-sha256-c07863d21f285d094cf2eaaa398e1a76f346615a600a951be35d4c3ace2346d4"
+        },
+        {
+          "id": "workspace-narration-shot-shot-01",
+          "kind": "audio",
+          "name": "shot-01 口播",
+          "src": "春日风景--dcd6550f-b229-4df0-8993-98efae2c3503/真实风景短片 · Pexels 与万相--c736a98b-49db-4a61-934c-ebb2db6c6a9d/native-tasks/27978b73-d246-48d2-b771-da484b589784/shot-narration-shot-01-5e777e02-f77a-4f33-abdd-74382b0d9723.mp3",
+          "sourceAssetId": "audio-track-9d6fe65d-5a76-45bb-ab58-cfab7d064d7b",
+          "srcInFrame": 0,
+          "startFrame": 0,
+          "durationInFrames": 37,
+          "volume": 1,
+          "track": "track_loop-control-c736a98b-49db-4a61-934c-ebb2db6c6a9d_2",
+          "loopControlAudio": {
+            "workspaceId": "05990503-86e4-4ffb-bb4c-e467ebf7437d",
+            "shotId": "shot-01"
+          },
+          "loopControlCandidate": {
+            "inputFingerprint": "bf13c088e98c117cb9832971ed70bdbec8f99ecc7155f5faeef0f839f04e5625",
+            "sourceId": "audio-track-9d6fe65d-5a76-45bb-ab58-cfab7d064d7b",
+            "durationPolicy": "keep-target",
+            "startFrame": 0,
+            "durationInFrames": 37,
+            "shotWindow": {
+              "startFrame": 0,
+              "durationInFrames": 60
+            }
+          },
+          "sourceContentHash": "5e66133d120c430799330fe4e7a5f27b5ff8f0214267edbaa8a4dfc83b6ee4a5",
+          "sourceRevision": "source-sha256-5e66133d120c430799330fe4e7a5f27b5ff8f0214267edbaa8a4dfc83b6ee4a5"
+        },
+        {
+          "id": "workspace-narration-shot-shot-02",
+          "kind": "audio",
+          "name": "shot-02 口播",
+          "src": "春日风景--dcd6550f-b229-4df0-8993-98efae2c3503/真实风景短片 · Pexels 与万相--c736a98b-49db-4a61-934c-ebb2db6c6a9d/native-tasks/38bc7e03-3351-45f4-b33f-04acec7dd749/shot-narration-shot-02-7421f833-c75a-4694-b57c-df0e68bc3cff.mp3",
+          "sourceAssetId": "audio-track-d8824a1e-2de2-49f5-853a-f19849566dc1",
+          "srcInFrame": 0,
+          "startFrame": 37,
+          "durationInFrames": 62,
+          "volume": 1,
+          "track": "track_loop-control-c736a98b-49db-4a61-934c-ebb2db6c6a9d_2",
+          "loopControlAudio": {
+            "workspaceId": "05990503-86e4-4ffb-bb4c-e467ebf7437d",
+            "shotId": "shot-02"
+          },
+          "loopControlCandidate": {
+            "inputFingerprint": "3bcf5f2c3b3408743dfa83ff0ba7b84162dfe1fe98376f38ef59f1f973b00f18",
+            "sourceId": "audio-track-d8824a1e-2de2-49f5-853a-f19849566dc1",
+            "durationPolicy": "keep-target",
+            "startFrame": 60,
+            "durationInFrames": 62,
+            "shotWindow": {
+              "startFrame": 60,
+              "durationInFrames": 120
+            }
+          },
+          "sourceContentHash": "a2ec1cdbec5f237c209eaafac7025595de2396680da3b8ac456286c2e71c26db",
+          "sourceRevision": "source-sha256-a2ec1cdbec5f237c209eaafac7025595de2396680da3b8ac456286c2e71c26db"
+        }
+      ],
+      "trackOrder": [
+        "track_loop-control-c736a98b-49db-4a61-934c-ebb2db6c6a9d_1",
+        "track_loop-control-c736a98b-49db-4a61-934c-ebb2db6c6a9d_2",
+        "track_loop-control-c736a98b-49db-4a61-934c-ebb2db6c6a9d_3"
+      ],
+      "tracks": {
+        "track_loop-control-c736a98b-49db-4a61-934c-ebb2db6c6a9d_1": {
+          "kind": "video",
+          "name": "画面"
+        },
+        "track_loop-control-c736a98b-49db-4a61-934c-ebb2db6c6a9d_2": {
+          "kind": "audio",
+          "name": "主声音",
+          "role": "anchor"
+        },
+        "track_loop-control-c736a98b-49db-4a61-934c-ebb2db6c6a9d_3": {
+          "kind": "caption",
+          "captions": {
+            "enabled": true,
+            "template": "plain",
+            "pacing": "phrase",
+            "sourceMode": "item",
+            "sourceEntries": [
+              {
+                "id": "workspace-caption-shot-shot-01",
+                "itemId": "manual:workspace-caption-shot-shot-01",
+                "label": "字幕",
+                "slotId": "workspace-caption-shot-shot-01-slot",
+                "visible": true,
+                "anchor": "bottom-center",
+                "offsetXRatio": 0,
+                "offsetYRatio": 0.09999999999999999,
+                "widthRatio": 0.8400000000000001,
+                "heightRatio": 0.74,
+                "words": [
+                  {
+                    "id": "phrase-1~0",
+                    "text": "风吹过湖面。",
+                    "start": 61,
+                    "end": 1204
+                  }
+                ],
+                "style": {
+                  "fontFamily": "sans-serif",
+                  "fontWeight": 600,
+                  "color": "#ffffff",
+                  "fontSize": 0.02684659090909091,
+                  "wholeLine": true
+                },
+                "loopControl": {
+                  "version": "workspace-caption/v1",
+                  "contentMode": "follow_tts",
+                  "text": "风吹过湖面。",
+                  "spatial": {
+                    "version": "shot-caption-space/v2",
+                    "anchor": "bottom-center",
+                    "safeArea": "title-safe",
+                    "aspectRatio": "9:16",
+                    "insets": {
+                      "top": 0.08,
+                      "right": 0.08,
+                      "bottom": 0.18,
+                      "left": 0.08
+                    },
+                    "maxLines": 2,
+                    "maxCharactersPerLine": 16
+                  }
+                }
+              },
+              {
+                "id": "workspace-caption-shot-shot-02",
+                "itemId": "manual:workspace-caption-shot-shot-02",
+                "label": "字幕",
+                "slotId": "workspace-caption-shot-shot-02-slot",
+                "visible": true,
+                "anchor": "bottom-center",
+                "offsetXRatio": 0,
+                "offsetYRatio": 0.09999999999999999,
+                "widthRatio": 0.8400000000000001,
+                "heightRatio": 0.74,
+                "words": [
+                  {
+                    "id": "phrase-1~0",
+                    "text": "把这一刻，",
+                    "start": 1314.3333333333333,
+                    "end": 2041.3333333333333
+                  },
+                  {
+                    "id": "phrase-2~0",
+                    "text": "留给自然。",
+                    "start": 2364.333333333333,
+                    "end": 3233.333333333333
+                  }
+                ],
+                "style": {
+                  "fontFamily": "sans-serif",
+                  "fontWeight": 600,
+                  "color": "#ffffff",
+                  "fontSize": 0.02684659090909091,
+                  "wholeLine": true
+                },
+                "loopControl": {
+                  "version": "workspace-caption/v1",
+                  "contentMode": "follow_tts",
+                  "text": "把这一刻，留给自然。",
+                  "spatial": {
+                    "version": "shot-caption-space/v2",
+                    "anchor": "bottom-center",
+                    "safeArea": "title-safe",
+                    "aspectRatio": "9:16",
+                    "insets": {
+                      "top": 0.08,
+                      "right": 0.08,
+                      "bottom": 0.18,
+                      "left": 0.08
+                    },
+                    "maxLines": 2,
+                    "maxCharactersPerLine": 16
+                  }
+                }
+              }
+            ],
+            "layoutPolicy": {
+              "mode": "manual-slots",
+              "slots": [
+                {
+                  "id": "workspace-caption-shot-shot-01-slot",
+                  "anchor": "bottom-center",
+                  "offsetXRatio": 0,
+                  "offsetYRatio": 0.09999999999999999,
+                  "widthRatio": 0.8400000000000001,
+                  "heightRatio": 0.74
+                },
+                {
+                  "id": "workspace-caption-shot-shot-02-slot",
+                  "anchor": "bottom-center",
+                  "offsetXRatio": 0,
+                  "offsetYRatio": 0.09999999999999999,
+                  "widthRatio": 0.8400000000000001,
+                  "heightRatio": 0.74
+                }
+              ]
+            },
+            "perSource": {
+              "workspace-caption-shot-shot-01": {
+                "maxLines": 2
+              },
+              "workspace-caption-shot-shot-02": {
+                "maxLines": 2
+              }
+            }
+          }
+        }
+      },
+      "transitions": [],
+      "selectedId": "shot-shot-01-5a2fb7f8-374c-4261-ab07-05836951c263",
+      "captionsHidden": false,
+      "selectedIds": [
+        "shot-shot-01-5a2fb7f8-374c-4261-ab07-05836951c263"
+      ]
+    }
+  ]
+}

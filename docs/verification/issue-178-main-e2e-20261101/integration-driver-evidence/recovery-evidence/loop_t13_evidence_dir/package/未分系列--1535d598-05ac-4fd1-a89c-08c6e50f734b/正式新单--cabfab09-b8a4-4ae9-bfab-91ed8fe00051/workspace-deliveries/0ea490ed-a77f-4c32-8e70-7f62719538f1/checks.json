@@ -1,0 +1,177 @@
+{
+  "passed": true,
+  "exportId": "26d1d093-1833-4797-850f-71be90fcc0d0",
+  "contentSha256": "f95aa7bbaa9cf254ecf6523d88e16dad1d437c6819ebe4b9b74f60861fdb315f",
+  "checks": [
+    {
+      "name": "used_content",
+      "detail": "已核对 8 个实际来源。",
+      "passed": true,
+      "sources": [
+        {
+          "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+          "fileSize": 1515,
+          "relativePath": "未分系列--1535d598-05ac-4fd1-a89c-08c6e50f734b/正式新单--cabfab09-b8a4-4ae9-bfab-91ed8fe00051/native-tasks/accbcaf6-1ecf-4faa-8617-08f9d8a64f66/image.png"
+        },
+        {
+          "sha256": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+          "fileSize": 44148,
+          "relativePath": "未分系列--1535d598-05ac-4fd1-a89c-08c6e50f734b/正式新单--cabfab09-b8a4-4ae9-bfab-91ed8fe00051/materials/7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6-landscape-red-blue.mp4"
+        },
+        {
+          "sha256": "c2fac4488f7d9774df19ae5fdc74c4233bf8a42e98c1790796a07c5251cac568",
+          "fileSize": 9843,
+          "relativePath": "未分系列--1535d598-05ac-4fd1-a89c-08c6e50f734b/正式新单--cabfab09-b8a4-4ae9-bfab-91ed8fe00051/native-tasks/04ac0fdc-aa50-4f89-9298-dfecdd325157/def3cc14-54f5-4574-be11-a1e3eecbb07a.mp3"
+        },
+        {
+          "sha256": "64c3f3f39322f8391dc4a9f7cf3f9ba207be6319500db037d1a676d007267b92",
+          "fileSize": 64556,
+          "relativePath": "未分系列--1535d598-05ac-4fd1-a89c-08c6e50f734b/正式新单--cabfab09-b8a4-4ae9-bfab-91ed8fe00051/materials/64c3f3f39322f8391dc4a9f7cf3f9ba207be6319500db037d1a676d007267b92-bgm.mp3"
+        },
+        {
+          "sha256": "c356e719d06ca43078c2b6d75ab633f4591e70404f5a9a4ecb466650de97b8d0",
+          "fileSize": 3692,
+          "relativePath": "未分系列--1535d598-05ac-4fd1-a89c-08c6e50f734b/正式新单--cabfab09-b8a4-4ae9-bfab-91ed8fe00051/materials/c356e719d06ca43078c2b6d75ab633f4591e70404f5a9a4ecb466650de97b8d0-sfx.mp3"
+        },
+        {
+          "sha256": "8c82d3efbea7856794ffd2e59f3b3a8e3b60ef2beb48e326e6572cbe11cb03bd",
+          "fileSize": 2372,
+          "relativePath": "未分系列--1535d598-05ac-4fd1-a89c-08c6e50f734b/正式新单--cabfab09-b8a4-4ae9-bfab-91ed8fe00051/native-tasks/4def06aa-dd65-4a9e-a180-32a888f02a1a/36d18973-6d1d-460d-aed0-83bf9a90c805.mp3"
+        },
+        {
+          "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+          "fileSize": 19628,
+          "relativePath": "未分系列--1535d598-05ac-4fd1-a89c-08c6e50f734b/正式新单--cabfab09-b8a4-4ae9-bfab-91ed8fe00051/native-tasks/f377578c-8fe1-4c15-af79-0974b72ab7a3/shot-narration-shot-01-8271f9bb-6391-4f3b-a0f2-1713d0aed957.mp3"
+        },
+        {
+          "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+          "fileSize": 1515,
+          "relativePath": "未分系列--1535d598-05ac-4fd1-a89c-08c6e50f734b/正式新单--cabfab09-b8a4-4ae9-bfab-91ed8fe00051/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-still-striped.png"
+        }
+      ]
+    },
+    {
+      "name": "captions",
+      "detail": "已核对 2 组字幕时序，正文随最终文件一次确认。",
+      "passed": true,
+      "evidence": [
+        {
+          "clipId": "b3240e1d-ba0f-457d-8060-d66c22314f50",
+          "detail": null,
+          "itemId": "shot-shot-01-b3240e1d-ba0f-457d-8060-d66c22314f50",
+          "shotId": "shot-01",
+          "taskId": null,
+          "timing": "current",
+          "contract": {
+            "cues": [
+              {
+                "id": "owner-adjusted~0",
+                "text": "这一版局部口播已明确采用。",
+                "endMs": 850,
+                "startMs": 0
+              }
+            ],
+            "text": "这一版局部口播已明确采用。",
+            "enabled": true,
+            "spatial": {
+              "anchor": "bottom-center",
+              "insets": {
+                "top": 0.08,
+                "left": 0.08,
+                "right": 0.08,
+                "bottom": 0.18
+              },
+              "version": "shot-caption-space/v2",
+              "maxLines": 2,
+              "safeArea": "title-safe",
+              "aspectRatio": "9:16",
+              "maxCharactersPerLine": 10
+            },
+            "version": "shot-captions/v1",
+            "contentMode": "follow_tts"
+          },
+          "durationMs": 2400,
+          "audioTrackId": "74eff53a-8845-4abb-a59b-2ffe15d131a6",
+          "narrationText": "这一版局部口播已明确采用。",
+          "textConfirmed": true,
+          "inputFingerprint": "f5df05262d603280f85ea1e27f96bf3114166c6292a6f72dfe91b836f4f9f7e5",
+          "alignmentInputVersion": null
+        },
+        {
+          "clipId": "6f73e59e-66f2-4b8e-a212-a2efc8093d26",
+          "detail": "原声仅覆盖部分镜头；字幕可独立校时，整段声学对齐不可用。",
+          "itemId": "shot-added-6f73e59e-66f2-4b8e-a212-a2efc8093d26-6f73e59e-66f2-4b8e-a212-a2efc8093d26",
+          "shotId": "added-6f73e59e-66f2-4b8e-a212-a2efc8093d26",
+          "taskId": null,
+          "timing": "current",
+          "contract": {
+            "cues": [
+              {
+                "id": "owner~0",
+                "text": "原声画面字幕由Owner核对",
+                "endMs": 900,
+                "startMs": 0
+              }
+            ],
+            "text": "原声画面字幕由Owner核对",
+            "enabled": true,
+            "spatial": {
+              "anchor": "bottom-center",
+              "insets": {
+                "top": 0.08,
+                "left": 0.08,
+                "right": 0.08,
+                "bottom": 0.18
+              },
+              "version": "shot-caption-space/v2",
+              "maxLines": 2,
+              "safeArea": "title-safe",
+              "aspectRatio": "9:16",
+              "maxCharactersPerLine": 10
+            },
+            "version": "shot-captions/v1",
+            "contentMode": "independent"
+          },
+          "durationMs": 4000,
+          "audioTrackId": "a7781a6e-8a77-45a8-adba-a0cc40994c07",
+          "narrationText": null,
+          "textConfirmed": true,
+          "inputFingerprint": "a3e6369474faa6516ed476238c04bf2d3dda420cb429f1aaa4a8fc4776995191",
+          "alignmentInputVersion": null
+        }
+      ]
+    },
+    {
+      "name": "technical",
+      "detail": "实际 MP4 时长、画幅、音频及黑帧检查通过。",
+      "passed": true,
+      "inspection": {
+        "width": 1080,
+        "height": 1920,
+        "hasAudio": true,
+        "blackFrameCount": 0,
+        "durationSeconds": 7.445333
+      },
+      "videoFrames": 222,
+      "audioExpected": true,
+      "videoDurationSeconds": 7.4,
+      "expectedDurationSeconds": 7.4,
+      "containerDurationSeconds": 7.445333
+    },
+    {
+      "name": "representative_frame",
+      "detail": "已实际解码代表帧。",
+      "passed": true,
+      "artifact": {
+        "sha256": "1c4265b7872ec6e26f68626a649774baf458a46f564b67295e696ed53f556c4b",
+        "fileSize": 47210,
+        "relativePath": "未分系列--1535d598-05ac-4fd1-a89c-08c6e50f734b/正式新单--cabfab09-b8a4-4ae9-bfab-91ed8fe00051/workspace-exports/26d1d093-1833-4797-850f-71be90fcc0d0/representative.jpg"
+      }
+    },
+    {
+      "name": "export_file",
+      "detail": "最终文件已按字节 SHA-256 与大小不可变登记。",
+      "passed": true
+    }
+  ]
+}

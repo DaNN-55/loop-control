@@ -1,0 +1,368 @@
+{
+  "tasks": [
+    {
+      "id": "27978b73-d246-48d2-b771-da484b589784",
+      "type": "generate_narration",
+      "status": "completed",
+      "attempt": 1,
+      "provider": "volcengine_tts",
+      "model": "seed-tts-2.0",
+      "promptVersion": "production-request-v1",
+      "createdAt": "2026-10-31T21:55:49.154906+00:00",
+      "completedAt": "2026-10-31T21:55:50.196031+00:00",
+      "inputSnapshotSha256": "f9eb3c3a566598fea23eed55f143ba279e5f61ab518cf69e1dd0def9d695331a",
+      "artifacts": [
+        {
+          "sha256": "5e66133d120c430799330fe4e7a5f27b5ff8f0214267edbaa8a4dfc83b6ee4a5",
+          "fileSize": 9837,
+          "artifactType": "narration_audio",
+          "relativePath": "春日风景--dcd6550f-b229-4df0-8993-98efae2c3503/真实风景短片 · Pexels 与万相--c736a98b-49db-4a61-934c-ebb2db6c6a9d/native-tasks/27978b73-d246-48d2-b771-da484b589784/shot-narration-shot-01-5e777e02-f77a-4f33-abdd-74382b0d9723.mp3"
+        }
+      ],
+      "validation": {
+        "checks": [
+          {
+            "name": "controlled_media_output",
+            "detail": "已按冻结 volcengine_tts 适配器生成并校验主产物。",
+            "passed": true
+          },
+          {
+            "name": "native_narration_mode",
+            "detail": "实际在线Provider执行。",
+            "passed": true
+          }
+        ],
+        "passed": true
+      },
+      "retry": {
+        "reason": "Completed successfully.",
+        "shouldRetry": false
+      },
+      "blockers": [],
+      "recordedActualCostCents": 0
+    },
+    {
+      "id": "38bc7e03-3351-45f4-b33f-04acec7dd749",
+      "type": "generate_narration",
+      "status": "completed",
+      "attempt": 1,
+      "provider": "volcengine_tts",
+      "model": "seed-tts-2.0",
+      "promptVersion": "production-request-v1",
+      "createdAt": "2026-10-31T21:56:05.353913+00:00",
+      "completedAt": "2026-10-31T21:56:07.063256+00:00",
+      "inputSnapshotSha256": "e79b2d62b3471fdcdf2fe809c52e9750517a35c0eab7a1c7f9170e824be45bd9",
+      "artifacts": [
+        {
+          "sha256": "a2ec1cdbec5f237c209eaafac7025595de2396680da3b8ac456286c2e71c26db",
+          "fileSize": 16365,
+          "artifactType": "narration_audio",
+          "relativePath": "春日风景--dcd6550f-b229-4df0-8993-98efae2c3503/真实风景短片 · Pexels 与万相--c736a98b-49db-4a61-934c-ebb2db6c6a9d/native-tasks/38bc7e03-3351-45f4-b33f-04acec7dd749/shot-narration-shot-02-7421f833-c75a-4694-b57c-df0e68bc3cff.mp3"
+        }
+      ],
+      "validation": {
+        "checks": [
+          {
+            "name": "controlled_media_output",
+            "detail": "已按冻结 volcengine_tts 适配器生成并校验主产物。",
+            "passed": true
+          },
+          {
+            "name": "native_narration_mode",
+            "detail": "实际在线Provider执行。",
+            "passed": true
+          }
+        ],
+        "passed": true
+      },
+      "retry": {
+        "reason": "Completed successfully.",
+        "shouldRetry": false
+      },
+      "blockers": [],
+      "recordedActualCostCents": 0
+    },
+    {
+      "id": "ffaf1bc5-7e02-406a-9707-012fad9770e3",
+      "type": "generate_b_roll",
+      "status": "completed",
+      "attempt": 1,
+      "provider": "bailian",
+      "model": "wan2.6-i2v-flash",
+      "promptVersion": "wan-video-v1",
+      "createdAt": "2026-10-31T21:56:05.649816+00:00",
+      "completedAt": "2026-10-31T21:56:27.238189+00:00",
+      "inputSnapshotSha256": "d87944d4331f813cbd21ff0eef6c2bfafe14a4f6c2b589ef78c5fee2cac27238",
+      "artifacts": [
+        {
+          "sha256": "2582d65af39bed2b816ada6c3160bb6a812ac36574814993e832f85f92af5269",
+          "fileSize": 3315191,
+          "artifactType": "b_roll_asset",
+          "relativePath": "春日风景--dcd6550f-b229-4df0-8993-98efae2c3503/真实风景短片 · Pexels 与万相--c736a98b-49db-4a61-934c-ebb2db6c6a9d/native-tasks/ffaf1bc5-7e02-406a-9707-012fad9770e3/ffaf1bc5-7e02-406a-9707-012fad9770e3.mp4"
+        }
+      ],
+      "validation": {
+        "checks": [
+          {
+            "name": "controlled_media_output",
+            "detail": "已按冻结 bailian 适配器生成并校验主产物。",
+            "passed": true
+          },
+          {
+            "name": "native_media_mode",
+            "detail": "在线执行路径。",
+            "passed": true
+          }
+        ],
+        "passed": true
+      },
+      "retry": {
+        "reason": "Completed successfully.",
+        "shouldRetry": false
+      },
+      "blockers": [],
+      "recordedActualCostCents": 0
+    },
+    {
+      "id": "0622f12e-3b78-4486-aa8c-1f6795784c35",
+      "type": "generate_b_roll",
+      "status": "completed",
+      "attempt": 1,
+      "provider": "pexels",
+      "model": "pexels-video-v1",
+      "promptVersion": "workspace-pexels-v1",
+      "createdAt": "2026-10-31T21:56:27.236505+00:00",
+      "completedAt": "2026-10-31T21:56:29.029936+00:00",
+      "inputSnapshotSha256": "b5636ce9773bf800a9f531beb689c0660690444efb3c127703f30daf36709825",
+      "artifacts": [
+        {
+          "sha256": "7a4488365b5373fd22e15a8c3643124a1c3cdb2c6db8042b4d7f949155e1733c",
+          "fileSize": 5080,
+          "artifactType": "pexels_search_results",
+          "relativePath": "春日风景--dcd6550f-b229-4df0-8993-98efae2c3503/真实风景短片 · Pexels 与万相--c736a98b-49db-4a61-934c-ebb2db6c6a9d/native-tasks/0622f12e-3b78-4486-aa8c-1f6795784c35/results.json"
+        }
+      ],
+      "validation": {
+        "checks": [
+          {
+            "name": "controlled_media_output",
+            "detail": "已按冻结 pexels 适配器生成并校验主产物。",
+            "passed": true
+          },
+          {
+            "name": "native_media_mode",
+            "detail": "在线执行路径。",
+            "passed": true
+          }
+        ],
+        "passed": true
+      },
+      "retry": {
+        "reason": "Completed successfully.",
+        "shouldRetry": false
+      },
+      "blockers": [],
+      "recordedActualCostCents": 0
+    },
+    {
+      "id": "bbfe6eea-f774-45d4-9f30-14b2246c8059",
+      "type": "generate_b_roll",
+      "status": "completed",
+      "attempt": 1,
+      "provider": "pexels",
+      "model": "pexels-video-v1",
+      "promptVersion": "workspace-pexels-v1",
+      "createdAt": "2026-10-31T21:57:05.05347+00:00",
+      "completedAt": "2026-10-31T21:57:10.87789+00:00",
+      "inputSnapshotSha256": "fd6569b9935196f20893db2050fed3386fa270c94ac1e7dcf60ec6f261be60a9",
+      "artifacts": [
+        {
+          "sha256": "c07863d21f285d094cf2eaaa398e1a76f346615a600a951be35d4c3ace2346d4",
+          "fileSize": 2059154,
+          "artifactType": "pexels_video_preview",
+          "relativePath": "春日风景--dcd6550f-b229-4df0-8993-98efae2c3503/真实风景短片 · Pexels 与万相--c736a98b-49db-4a61-934c-ebb2db6c6a9d/native-tasks/bbfe6eea-f774-45d4-9f30-14b2246c8059/preview.mp4"
+        }
+      ],
+      "validation": {
+        "checks": [
+          {
+            "name": "controlled_media_output",
+            "detail": "已按冻结 pexels 适配器生成并校验主产物。",
+            "passed": true
+          },
+          {
+            "name": "native_media_mode",
+            "detail": "在线执行路径。",
+            "passed": true
+          }
+        ],
+        "passed": true
+      },
+      "retry": {
+        "reason": "Completed successfully.",
+        "shouldRetry": false
+      },
+      "blockers": [],
+      "recordedActualCostCents": 0
+    },
+    {
+      "id": "d3de8620-d16a-464f-bbed-2d7655c8550b",
+      "type": "align_shot_captions",
+      "status": "completed",
+      "attempt": 1,
+      "provider": "whisperx",
+      "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+      "promptVersion": "whisperx-alignment-v1",
+      "createdAt": "2026-10-31T21:59:42.045547+00:00",
+      "completedAt": "2026-10-31T21:59:58.51554+00:00",
+      "inputSnapshotSha256": "34bb7399a5063a2517fff228eea9247e4e797d0ed13eb904eb262c70d5d21ad7",
+      "artifacts": [
+        {
+          "sha256": "4b9a5b6db92246e9914c03d795efe488e020ae94732c7e413d3625cd854d1a39",
+          "fileSize": 952,
+          "artifactType": "acoustic_alignment_evidence",
+          "relativePath": "春日风景--dcd6550f-b229-4df0-8993-98efae2c3503/真实风景短片 · Pexels 与万相--c736a98b-49db-4a61-934c-ebb2db6c6a9d/native-tasks/d3de8620-d16a-464f-bbed-2d7655c8550b/shot-01-a89ec4ee674284323f7fd24c8ac04516dbe0f8dcffd0b3b4788a991be0210f74.json"
+        }
+      ],
+      "validation": {
+        "checks": [
+          {
+            "name": "local_whisperx",
+            "detail": "真实本地模型返回与冻结正文对应的时序。",
+            "passed": true
+          }
+        ],
+        "passed": true
+      },
+      "retry": {
+        "reason": "Local alignment completed.",
+        "shouldRetry": false
+      },
+      "blockers": [],
+      "recordedActualCostCents": 0
+    },
+    {
+      "id": "908e31c2-25e0-45ef-be7c-b0c93a116625",
+      "type": "align_shot_captions",
+      "status": "completed",
+      "attempt": 1,
+      "provider": "whisperx",
+      "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+      "promptVersion": "whisperx-alignment-v1",
+      "createdAt": "2026-10-31T21:59:42.622042+00:00",
+      "completedAt": "2026-10-31T22:00:11.086274+00:00",
+      "inputSnapshotSha256": "ee08404d48b8b956551c7636b2b46099e79ffd3408596435ccde0821e33b2c76",
+      "artifacts": [
+        {
+          "sha256": "c4ef7f821cb03a349f12e5e10d3cb5e16d8becd883d6a093194ae440f6e7dd19",
+          "fileSize": 1089,
+          "artifactType": "acoustic_alignment_evidence",
+          "relativePath": "春日风景--dcd6550f-b229-4df0-8993-98efae2c3503/真实风景短片 · Pexels 与万相--c736a98b-49db-4a61-934c-ebb2db6c6a9d/native-tasks/908e31c2-25e0-45ef-be7c-b0c93a116625/shot-02-9d47c721b5f0a7769d9456ffb4805cd41aed2fe6e267ba8d24612d9b8ab8e688.json"
+        }
+      ],
+      "validation": {
+        "checks": [
+          {
+            "name": "local_whisperx",
+            "detail": "真实本地模型返回与冻结正文对应的时序。",
+            "passed": true
+          }
+        ],
+        "passed": true
+      },
+      "retry": {
+        "reason": "Local alignment completed.",
+        "shouldRetry": false
+      },
+      "blockers": [],
+      "recordedActualCostCents": 0
+    },
+    {
+      "id": "674793c4-9f39-4c46-b54c-d5e11102eb8b",
+      "type": "prepare_publish_package",
+      "status": "completed",
+      "attempt": 1,
+      "provider": "ffmpeg",
+      "model": "workspace-delivery/v2",
+      "promptVersion": "workspace-delivery/v2",
+      "createdAt": "2026-10-31T22:05:31.480229+00:00",
+      "completedAt": "2026-10-31T22:05:32.410217+00:00",
+      "inputSnapshotSha256": "05d829071ac0b6f3859517dcb2506d0b91dae5f464b702d9236be8dcc73bd7f0",
+      "artifacts": [
+        {
+          "sha256": "89eb7a78c20bf32437fd55b986d88163203ea26ea7488887106a70d46690bb3b",
+          "fileSize": 1723245,
+          "artifactType": "cover",
+          "relativePath": "春日风景--dcd6550f-b229-4df0-8993-98efae2c3503/真实风景短片 · Pexels 与万相--c736a98b-49db-4a61-934c-ebb2db6c6a9d/workspace-deliveries/674793c4-9f39-4c46-b54c-d5e11102eb8b/cover.png"
+        },
+        {
+          "sha256": "45ded0f2d8fe8dfde8e8d1629318a8c94ef365032a8942d6fdbdd5a2e7fa13d3",
+          "fileSize": 2541,
+          "artifactType": "metadata",
+          "relativePath": "春日风景--dcd6550f-b229-4df0-8993-98efae2c3503/真实风景短片 · Pexels 与万相--c736a98b-49db-4a61-934c-ebb2db6c6a9d/workspace-deliveries/674793c4-9f39-4c46-b54c-d5e11102eb8b/metadata.json"
+        },
+        {
+          "sha256": "58e67c7e9a37752b1a2fccafdaf5a248fb9cdcc1140d667e4b4b0e9b30c18806",
+          "fileSize": 6447,
+          "artifactType": "final_qc_report",
+          "relativePath": "春日风景--dcd6550f-b229-4df0-8993-98efae2c3503/真实风景短片 · Pexels 与万相--c736a98b-49db-4a61-934c-ebb2db6c6a9d/workspace-deliveries/674793c4-9f39-4c46-b54c-d5e11102eb8b/checks.json"
+        },
+        {
+          "sha256": "8fe203689c6099fc44004b722044ba95ff0f1a2f5f1e92f1db5468952aa34de8",
+          "fileSize": 3237,
+          "artifactType": "publish_package",
+          "relativePath": "春日风景--dcd6550f-b229-4df0-8993-98efae2c3503/真实风景短片 · Pexels 与万相--c736a98b-49db-4a61-934c-ebb2db6c6a9d/workspace-deliveries/674793c4-9f39-4c46-b54c-d5e11102eb8b/manifest.json"
+        }
+      ],
+      "validation": {
+        "checks": [
+          {
+            "name": "exact_workspace_package",
+            "detail": "已确认视频、完整工程、封面、元数据、检查证据及清单的归属、大小和 SHA-256 均通过。",
+            "passed": true
+          }
+        ],
+        "passed": true
+      },
+      "retry": {
+        "reason": "交付包已验证。",
+        "shouldRetry": false
+      },
+      "blockers": [],
+      "recordedActualCostCents": 0
+    }
+  ],
+  "reservations": [
+    {
+      "task_id": "27978b73-d246-48d2-b771-da484b589784",
+      "account_id": "e4a4a695-2d99-416a-ade7-2a2e2a5876d6",
+      "kind": "narration",
+      "reserved_cents": 10,
+      "provider_task_id": null,
+      "request_state": "succeeded",
+      "material_revision_id": null,
+      "created_at": "2026-10-31T21:55:49.617071+00:00"
+    },
+    {
+      "task_id": "38bc7e03-3351-45f4-b33f-04acec7dd749",
+      "account_id": "e4a4a695-2d99-416a-ade7-2a2e2a5876d6",
+      "kind": "narration",
+      "reserved_cents": 10,
+      "provider_task_id": null,
+      "request_state": "succeeded",
+      "material_revision_id": null,
+      "created_at": "2026-10-31T21:56:05.776172+00:00"
+    },
+    {
+      "task_id": "ffaf1bc5-7e02-406a-9707-012fad9770e3",
+      "account_id": "e4a4a695-2d99-416a-ade7-2a2e2a5876d6",
+      "kind": "video",
+      "reserved_cents": 30,
+      "provider_task_id": "5f34a997-811a-4516-a1d8-e3297c644c3c",
+      "request_state": "succeeded",
+      "material_revision_id": "91dea8f0-3005-454b-8add-c8628af53d18",
+      "created_at": "2026-10-31T21:56:07.511628+00:00"
+    }
+  ],
+  "recordedCostNotSupplierBilling": true
+}

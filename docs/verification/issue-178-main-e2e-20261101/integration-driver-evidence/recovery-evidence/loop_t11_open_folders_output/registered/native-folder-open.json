@@ -1,0 +1,76 @@
+{
+  "actualDefaultNativeOpen": true,
+  "calls": [
+    {
+      "command": "readAssetDirectory",
+      "status": 200,
+      "body": {
+        "assetRoot": "/private/tmp/loop-t06-volume-5g7wUt/mounted/t11-storage/state/t24-native/media/account",
+        "legacyRoots": [
+          "/private/tmp/loop-t06-volume-5g7wUt/mounted/t11-storage/state/t24-native/media/account"
+        ],
+        "status": "ready"
+      }
+    },
+    {
+      "command": "openAssetDirectory",
+      "status": 200,
+      "body": {
+        "opened": true
+      }
+    },
+    {
+      "command": "readSeriesDirectory",
+      "status": 200,
+      "body": {
+        "containerId": "1be3a0e5-bc62-4175-b65e-9e99ddf3fe98",
+        "accountId": "19480aa2-8d1b-4642-a8ba-0f2e65058cbb",
+        "seriesId": "1be3a0e5-bc62-4175-b65e-9e99ddf3fe98",
+        "kind": "series",
+        "assetRoot": "/private/tmp/loop-t06-volume-5g7wUt/mounted/t11-storage/state/t24-native/media/account",
+        "relativePath": "原生恢复空系列--1be3a0e5-bc62-4175-b65e-9e99ddf3fe98",
+        "directoryPath": "/private/tmp/loop-t06-volume-5g7wUt/mounted/t11-storage/state/t24-native/media/account/原生恢复空系列--1be3a0e5-bc62-4175-b65e-9e99ddf3fe98",
+        "deviceId": "16777269",
+        "inodeId": "98",
+        "status": "ready"
+      }
+    },
+    {
+      "command": "openSeriesDirectory",
+      "status": 200,
+      "body": {
+        "opened": true
+      }
+    },
+    {
+      "command": "openDirectory",
+      "status": 200,
+      "body": {
+        "opened": true,
+        "path": "/private/tmp/loop-t06-volume-5g7wUt/mounted/t11-storage/state/t24-native/media/account/系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e"
+      }
+    }
+  ],
+  "observations": [
+    {
+      "path": "/private/tmp/loop-t06-volume-5g7wUt/mounted/t11-storage/state/t24-native/media/account",
+      "observed": true,
+      "closed": true,
+      "readback": "/private/tmp/loop-t06-volume-5g7wUt/mounted/t11-storage/state/t24-native/media/account/"
+    },
+    {
+      "path": "/private/tmp/loop-t06-volume-5g7wUt/mounted/t11-storage/state/t24-native/media/account/原生恢复空系列--1be3a0e5-bc62-4175-b65e-9e99ddf3fe98",
+      "observed": true,
+      "closed": true,
+      "readback": "/private/tmp/loop-t06-volume-5g7wUt/mounted/t11-storage/state/t24-native/media/account/原生恢复空系列--1be3a0e5-bc62-4175-b65e-9e99ddf3fe98/"
+    },
+    {
+      "path": "/private/tmp/loop-t06-volume-5g7wUt/mounted/t11-storage/state/t24-native/media/account/系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e",
+      "observed": true,
+      "closed": true,
+      "readback": "/private/tmp/loop-t06-volume-5g7wUt/mounted/t11-storage/state/t24-native/media/account/系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e/"
+    }
+  ],
+  "cleanup": "closed=0,remaining=0",
+  "globalWindowCount": "not asserted; macOS desktop may be locked"
+}

@@ -1,0 +1,76 @@
+
+ RUN  v3.2.7 /private/tmp/loop-control-main-e2e-20261101/integration-regression/source
+
+ ❯ src/worker/openchatcutProject.integration.test.ts (12 tests | 3 failed) 11652ms
+   × OpenChatCut real project reader integration > opens an independent dashboard, reuses concurrent launches, and preserves projects after restart 1788ms
+     → expected 404 to be 200 // Object.is equality
+   ✓ OpenChatCut real project reader integration > opens Studio and reads editable caption cues back from its project store  1300ms
+   × OpenChatCut real project reader integration > keeps Studio edits mutable, warns before changed workbench input replaces them, and freezes new immutable revisions only on demand 1950ms
+     → Cannot read properties of undefined (reading 'captions')
+   ✓ OpenChatCut real project reader integration > reads a stacked shot as two correctly transformed editable video layers backed by one asset 82ms
+   ✓ OpenChatCut real project reader integration > accepts migrated stable track ids when consecutive full-screen segments remain on the V1 alias 82ms
+   ✓ OpenChatCut real project reader integration > reads exactly one source-audio item when one material fills multiple visual slots 79ms
+   ✓ OpenChatCut real project reader integration > reads silent, BGM-follower, and independent-SFX semantics from the real runtime 170ms
+   ✓ OpenChatCut real project reader integration > reads disabled captions and independent manual cues through the real runtime 164ms
+   ✓ OpenChatCut real project reader integration > renders and probes a real synchronized proxy while preserving the editable project fingerprint  4030ms
+   × OpenChatCut real project reader integration > opens, edits, freezes, and renders one real Episode containing TTS split-screen, source-audio, and silent captioned shots 1598ms
+     → Cannot read properties of undefined (reading 'captions')
+   ✓ OpenChatCut real project reader integration > keeps an older project with a text caption item readable 92ms
+   ✓ OpenChatCut real project reader integration > blocks known invalid caption contracts after real OpenChatCut reading  317ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/worker/openchatcutProject.integration.test.ts > OpenChatCut real project reader integration > opens an independent dashboard, reuses concurrent launches, and preserves projects after restart
+AssertionError: expected 404 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 404
+
+ ❯ createStudioProject src/worker/openchatcutProject.integration.test.ts:369:24
+    367|     body: JSON.stringify({ key: "projects", value: [{ id: projectId, n…
+    368|   });
+    369|   expect(index.status).toBe(200);
+       |                        ^
+    370|   const created = await fetch(`${baseUrl}/api/project-store/project-do…
+    371|     method: "POST",
+ ❯ src/worker/openchatcutProject.integration.test.ts:40:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/worker/openchatcutProject.integration.test.ts > OpenChatCut real project reader integration > keeps Studio edits mutable, warns before changed workbench input replaces them, and freezes new immutable revisions only on demand
+TypeError: Cannot read properties of undefined (reading 'captions')
+ ❯ src/worker/openchatcutProject.integration.test.ts:84:54
+     82|       const video = project.timelines[0].items.find((item: { kind: str…
+     83|       video.transform = { ...video.transform as Record<string, unknown…
+     84|       const caption = project.timelines[0].tracks.C1.captions!.sourceE…
+       |                                                      ^
+     85|       caption.text = "Studio 内继续编辑的字幕";
+     86|       const audio = project.timelines[0].items.find((item: { kind: str…
+ ❯ editStudioDocument src/local-app/studioDocument.fixture.ts:16:16
+ ❯ src/worker/openchatcutProject.integration.test.ts:81:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/worker/openchatcutProject.integration.test.ts > OpenChatCut real project reader integration > opens, edits, freezes, and renders one real Episode containing TTS split-screen, source-audio, and silent captioned shots
+TypeError: Cannot read properties of undefined (reading 'captions')
+ ❯ src/worker/openchatcutProject.integration.test.ts:293:60
+    291|       const visual = project.timelines[0].items.find((item: { id: stri…
+    292|       visual.transform = { ...visual.transform as Record<string, unkno…
+    293|       const sourceCaption = project.timelines[0].tracks.C1.captions!.s…
+       |                                                            ^
+    294|       sourceCaption.text = "OpenChatCut 修改后的原声字幕";
+    295|       sourceCaption.start += 50;
+ ❯ editStudioDocument src/local-app/studioDocument.fixture.ts:16:16
+ ❯ src/worker/openchatcutProject.integration.test.ts:290:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 9 passed (12)
+   Start at  06:06:23
+   Duration  12.02s (transform 174ms, setup 7ms, collect 236ms, tests 11.65s, environment 0ms, prepare 32ms)
+

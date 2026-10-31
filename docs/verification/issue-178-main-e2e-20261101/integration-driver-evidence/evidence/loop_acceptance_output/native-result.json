@@ -1,0 +1,38 @@
+{
+  "firstPid": 59388,
+  "restartedPid": 59538,
+  "firstAccountId": "12f5895b-053a-41e7-bc1e-4781611abfec",
+  "directory": "/private/tmp/loop-t06-volume-0S2zXS/mounted/loop-153-dxJc2N/source/首个账号--12f5895b-053a-41e7-bc1e-4781611abfec",
+  "crashedIntent": {
+    "owner_id": "cb5e15b7-a521-4814-ae4a-851e03bdf765",
+    "idempotency_key": "ebe2ddfb-f598-428a-a7a0-f3b1f451b295",
+    "payload_hash": "e43899bffd15ec97914c96a22c3544a8c1de79afefdb42955558baccd689e322",
+    "account_id": "e5e4e537-2a9f-4464-8fa0-37c676ba62df",
+    "path": "/private/tmp/loop-t06-volume-0S2zXS/mounted/loop-153-dxJc2N/source/中断恢复--e5e4e537-2a9f-4464-8fa0-37c676ba62df",
+    "root_binding": {
+      "path": "/private/tmp/loop-t06-volume-0S2zXS/mounted/loop-153-dxJc2N/source",
+      "inodeId": "24",
+      "deviceId": "16777273",
+      "mountPath": "/private/tmp/loop-t06-volume-0S2zXS/mounted"
+    },
+    "marker": "e79c66a4-18ab-473e-8705-9ea41abdc5e3",
+    "device_id": "16777273",
+    "inode_id": "37",
+    "marker_device_id": "16777273",
+    "marker_inode_id": "38",
+    "cleanup_owned": true,
+    "result": null,
+    "created_at": "2026-10-31T22:20:03.211Z"
+  },
+  "resumedAccount": {
+    "id": "e5e4e537-2a9f-4464-8fa0-37c676ba62df",
+    "name": "中断恢复",
+    "slug": "native-crash",
+    "timezone": "Asia/Shanghai",
+    "created_at": "2026-10-31T22:20:03.553936+00:00",
+    "archived_at": null,
+    "current_blueprint_version_id": "00459b97-b952-4a3f-8cb3-e40381310ac7"
+  },
+  "noImportHistory": true,
+  "previewBytesVerified": true
+}

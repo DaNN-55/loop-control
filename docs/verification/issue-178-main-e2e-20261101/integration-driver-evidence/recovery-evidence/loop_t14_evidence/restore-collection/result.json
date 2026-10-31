@@ -1,0 +1,26 @@
+{
+  "source": "loop_t24_restore_39fb9c4772cd",
+  "target": "loop_t24_restore_e6ad09f259a1",
+  "episode": "80f31254-37e8-4575-87c2-a21d4936f283",
+  "prefix": "..alpha 收纳 B _✨--1b51a011-ad92-4066-b41e-301705e314a6/四步制作 T02 验收--80f31254-37e8-4575-87c2-a21d4936f283--23552c9d-4a4e-4a8b-86e2-1008b5f92e5e",
+  "actualRoot": "/private/tmp/loop-t14-restore-MK6IO4/state/t24-restored-145f1397-3f35-4898-94b6-ae14b535c2a9/media/account",
+  "firstPid": 78007,
+  "secondPid": 78143,
+  "completedReadOnly": false,
+  "sourceOffline": true,
+  "historyPreserved": true,
+  "migrationHistoryPreserved": true,
+  "completedReplay": null,
+  "ownerSha256": "6ed62f5700544febe1e4d8439e230aebbd3f6ab21d64161acedb456725226b53",
+  "project": {
+    "relativePath": "..alpha 收纳 B _✨--1b51a011-ad92-4066-b41e-301705e314a6/四步制作 T02 验收--80f31254-37e8-4575-87c2-a21d4936f283--23552c9d-4a4e-4a8b-86e2-1008b5f92e5e/production-workspace/versions/0591efd5361fd1166fe4b21845ae82a3c966b8430130ce7a97d407acf874702b.json",
+    "sha256": "0591efd5361fd1166fe4b21845ae82a3c966b8430130ce7a97d407acf874702b",
+    "fileSize": 9152,
+    "projectId": "loop-control-80f31254-37e8-4575-87c2-a21d4936f283"
+  },
+  "export": {
+    "sha256": "6ed62f5700544febe1e4d8439e230aebbd3f6ab21d64161acedb456725226b53",
+    "fileSize": 2549994,
+    "relativePath": "..alpha 收纳 B _✨--1b51a011-ad92-4066-b41e-301705e314a6/四步制作 T02 验收--80f31254-37e8-4575-87c2-a21d4936f283--23552c9d-4a4e-4a8b-86e2-1008b5f92e5e/workspace-exports/0aafb65a-a48c-49f3-a3f9-5e460329bbc5/6ed62f5700544febe1e4d8439e230aebbd3f6ab21d64161acedb456725226b53.mp4"
+  }
+}

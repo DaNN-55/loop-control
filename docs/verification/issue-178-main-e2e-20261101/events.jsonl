@@ -1,0 +1,21 @@
+{"at":"2026-10-31T21:28:40.593Z","event":"provider.request","provider":"minimax","host":"api.minimax.io","path":"/v2/query/video_generation","method":"GET"}
+{"at":"2026-10-31T21:28:42.077Z","event":"provider.response","provider":"minimax","httpStatus":200,"elapsedMs":1484}
+{"at":"2026-10-31T21:28:42.080Z","event":"connection.probe","name":"minimax","provider":"minimax","version":"4f0f0cfa-1c07-48d8-8484-0ae2bb302dd5","outcome":"verified","attempted":true,"code":"verified","detail":"连接验证通过；尚未执行内容生成。","httpStatus":200}
+{"at":"2026-10-31T21:28:42.097Z","event":"provider.request","provider":"kling","host":"api-singapore.klingai.com","path":"/v1/videos/image2video","method":"GET"}
+{"at":"2026-10-31T21:28:43.846Z","event":"provider.response","provider":"kling","httpStatus":200,"elapsedMs":1749}
+{"at":"2026-10-31T21:28:43.848Z","event":"connection.probe","name":"kling","provider":"kling","version":"2dc46417-5042-4db1-a44a-5fb25a256329","outcome":"verified","attempted":true,"code":"verified","detail":"连接验证通过；尚未执行内容生成。","httpStatus":200}
+{"at":"2026-10-31T21:28:43.861Z","event":"provider.request","provider":"bailian","host":"ws-hpypdfzw9mbovl42.cn-beijing.maas.aliyuncs.com","path":"/api/v1/models","method":"GET"}
+{"at":"2026-10-31T21:28:44.057Z","event":"provider.response","provider":"bailian","httpStatus":200,"elapsedMs":196}
+{"at":"2026-10-31T21:28:44.058Z","event":"connection.probe","name":"百炼-万象","provider":"bailian","version":"0364ea9a-41c6-40f6-8178-191b3073efdd","outcome":"verified","attempted":true,"code":"verified","detail":"连接验证通过；尚未执行内容生成。","httpStatus":200}
+{"at":"2026-10-31T21:28:44.073Z","event":"provider.request","provider":"pexels","host":"api.pexels.com","path":"/v1/videos/search","method":"GET"}
+{"at":"2026-10-31T21:28:45.578Z","event":"provider.response","provider":"pexels","httpStatus":200,"elapsedMs":1505}
+{"at":"2026-10-31T21:28:45.581Z","event":"connection.probe","name":"Pexels 素材连接","provider":"pexels","version":"9bf6f776-a439-4e17-8260-55fa2b060e79","outcome":"verified","attempted":true,"code":"verified","detail":"连接验证通过；尚未执行内容生成。","httpStatus":200}
+{"at":"2026-10-31T21:28:45.600Z","event":"provider.request","provider":"volcengine_tts","host":"openspeech.bytedance.com","path":"/api/v3/tts/unidirectional/sse","method":"POST"}
+{"at":"2026-10-31T21:28:46.722Z","event":"provider.response","provider":"volcengine_tts","httpStatus":200,"elapsedMs":1122}
+{"at":"2026-10-31T21:28:46.805Z","event":"connection.probe","name":"火山语音连接","provider":"volcengine_tts","version":"3e83d07f-dd79-4897-838f-41d82fc647ea","outcome":"verified","attempted":true,"code":"verified","detail":"语音接口验证通过（固定短句）。","httpStatus":200}
+{"at":"2026-10-31T21:28:46.819Z","event":"provider.request","provider":"volcengine","host":"ark.cn-beijing.volces.com","path":"/api/v3/contents/generations/tasks","method":"GET"}
+{"at":"2026-10-31T21:28:47.012Z","event":"provider.response","provider":"volcengine","httpStatus":200,"elapsedMs":193}
+{"at":"2026-10-31T21:28:47.013Z","event":"connection.probe","name":"seedance","provider":"volcengine","version":"0c7266ff-531d-4200-bb6a-78c4d1f263fd","outcome":"verified","attempted":true,"code":"verified","detail":"连接验证通过；尚未执行内容生成。","httpStatus":200}
+{"at":"2026-10-31T21:28:47.026Z","event":"provider.request","provider":"freesound","host":"freesound.org","path":"/apiv2/search/","method":"GET"}
+{"at":"2026-10-31T21:28:48.690Z","event":"provider.response","provider":"freesound","httpStatus":200,"elapsedMs":1664}
+{"at":"2026-10-31T21:28:48.692Z","event":"connection.probe","name":"Freesound 本地","provider":"freesound","version":"e14175ec-984e-4690-8647-47be42df75cf","outcome":"verified","attempted":true,"code":"verified","detail":"连接验证通过；尚未执行内容生成。","httpStatus":200}

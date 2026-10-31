@@ -1,0 +1,86 @@
+[
+  {
+    "imagePath": "/private/tmp/loop-t06-volume-Eiezi0/media.sparseimage",
+    "entities": [
+      {
+        "devEntry": "/dev/disk8",
+        "mountPoint": null
+      },
+      {
+        "devEntry": "/dev/disk8s1",
+        "mountPoint": null
+      },
+      {
+        "devEntry": "/dev/disk9",
+        "mountPoint": null
+      },
+      {
+        "devEntry": "/dev/disk9s1",
+        "mountPoint": "/private/tmp/loop-t06-volume-Eiezi0/mounted"
+      }
+    ]
+  },
+  {
+    "imagePath": "/private/tmp/loop-t06-volume-AAg5mf/media.sparseimage",
+    "entities": [
+      {
+        "devEntry": "/dev/disk10",
+        "mountPoint": null
+      },
+      {
+        "devEntry": "/dev/disk10s1",
+        "mountPoint": null
+      },
+      {
+        "devEntry": "/dev/disk11",
+        "mountPoint": null
+      },
+      {
+        "devEntry": "/dev/disk11s1",
+        "mountPoint": "/private/tmp/loop-t06-volume-AAg5mf/mounted"
+      }
+    ]
+  },
+  {
+    "imagePath": "/private/tmp/loop-t06-volume-PQgqhE/media.sparseimage",
+    "entities": [
+      {
+        "devEntry": "/dev/disk12",
+        "mountPoint": null
+      },
+      {
+        "devEntry": "/dev/disk12s1",
+        "mountPoint": null
+      },
+      {
+        "devEntry": "/dev/disk13",
+        "mountPoint": null
+      },
+      {
+        "devEntry": "/dev/disk13s1",
+        "mountPoint": "/private/tmp/loop-t06-volume-PQgqhE/mounted"
+      }
+    ]
+  },
+  {
+    "imagePath": "/private/tmp/loop-t06-volume-IfTgW1/media.sparseimage",
+    "entities": [
+      {
+        "devEntry": "/dev/disk14",
+        "mountPoint": null
+      },
+      {
+        "devEntry": "/dev/disk14s1",
+        "mountPoint": null
+      },
+      {
+        "devEntry": "/dev/disk15",
+        "mountPoint": null
+      },
+      {
+        "devEntry": "/dev/disk15s1",
+        "mountPoint": "/private/tmp/loop-t06-volume-IfTgW1/mounted"
+      }
+    ]
+  }
+]

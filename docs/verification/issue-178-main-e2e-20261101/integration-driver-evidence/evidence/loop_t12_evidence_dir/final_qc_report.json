@@ -1,0 +1,57 @@
+{
+  "passed": true,
+  "exportId": "eb8b5e11-ddb3-448a-989a-93b2f71cf8b6",
+  "contentSha256": "dac1a320ec66d738df7701613541c45b8cd83062557088c89f20dc725fe273b1",
+  "checks": [
+    {
+      "name": "used_content",
+      "detail": "已核对 1 个实际来源。",
+      "passed": true,
+      "sources": [
+        {
+          "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+          "fileSize": 210288,
+          "relativePath": "episodes/be0f7670-5d8e-4aae-82b0-4ffcbc95f622/shot.mp4"
+        }
+      ]
+    },
+    {
+      "name": "captions",
+      "detail": "已核对 0 组字幕时序，正文随最终文件一次确认。",
+      "passed": true,
+      "evidence": []
+    },
+    {
+      "name": "technical",
+      "detail": "实际 MP4 时长、画幅、音频及黑帧检查通过。",
+      "passed": true,
+      "inspection": {
+        "width": 1080,
+        "height": 1920,
+        "hasAudio": true,
+        "blackFrameCount": 0,
+        "durationSeconds": 4.053333
+      },
+      "videoFrames": 120,
+      "audioExpected": false,
+      "videoDurationSeconds": 4,
+      "expectedDurationSeconds": 4,
+      "containerDurationSeconds": 4.053333
+    },
+    {
+      "name": "representative_frame",
+      "detail": "已实际解码代表帧。",
+      "passed": true,
+      "artifact": {
+        "sha256": "98d7563f529d694c0986cdea781b1d7b31072cbd66b47ce9bb38c31f9da1b99b",
+        "fileSize": 53074,
+        "relativePath": "episodes/be0f7670-5d8e-4aae-82b0-4ffcbc95f622/workspace-exports/eb8b5e11-ddb3-448a-989a-93b2f71cf8b6/representative.jpg"
+      }
+    },
+    {
+      "name": "export_file",
+      "detail": "最终文件已按字节 SHA-256 与大小不可变登记。",
+      "passed": true
+    }
+  ]
+}

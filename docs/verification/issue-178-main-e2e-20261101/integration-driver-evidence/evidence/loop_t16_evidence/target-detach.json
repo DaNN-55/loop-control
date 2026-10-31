@@ -1,0 +1,39 @@
+{
+  "pid": 24426,
+  "planId": "a21a6bea-1ed9-48fe-8878-326220d7f4cd",
+  "sourceBinding": {
+    "path": "/private/tmp/loop-t06-volume-O2DlwR/mounted/loop-153-v5gvLk",
+    "inodeId": "16",
+    "deviceId": "16777261",
+    "mountPath": "/private/tmp/loop-t06-volume-O2DlwR/mounted"
+  },
+  "targetBinding": {
+    "path": "/private/tmp/loop-t06-volume-VjoeBC/mounted/deep/chosen-library",
+    "inodeId": "17",
+    "deviceId": "16777265",
+    "mountPath": "/private/tmp/loop-t06-volume-VjoeBC/mounted"
+  },
+  "fallbackDevice": "16777234",
+  "normalDetach": true,
+  "before": [
+    "/private/tmp/loop-t06-volume-VjoeBC/mounted/deep/chosen-library/account",
+    "/private/tmp/loop-t06-volume-VjoeBC/mounted/deep/chosen-library/account/episodes",
+    "/private/tmp/loop-t06-volume-VjoeBC/mounted/deep/chosen-library/account/episodes/0b076432-e6a5-48a9-af33-0cf322624db8",
+    "/private/tmp/loop-t06-volume-VjoeBC/mounted/deep/chosen-library/manual.txt"
+  ],
+  "after": [
+    "/private/tmp/loop-t06-volume-VjoeBC/mounted/deep/chosen-library/account",
+    "/private/tmp/loop-t06-volume-VjoeBC/mounted/deep/chosen-library/account/episodes",
+    "/private/tmp/loop-t06-volume-VjoeBC/mounted/deep/chosen-library/account/episodes/0b076432-e6a5-48a9-af33-0cf322624db8",
+    "/private/tmp/loop-t06-volume-VjoeBC/mounted/deep/chosen-library/manual.txt"
+  ],
+  "manual": "host fallback must remain exactly unchanged",
+  "result": {
+    "status": 409,
+    "body": {
+      "error": "复制目标挂载或目录身份已变化，请恢复原位置。"
+    }
+  },
+  "oldSourceUnchanged": true,
+  "configAndDatabaseRoot": "/private/tmp/loop-t06-volume-O2DlwR/mounted/loop-153-v5gvLk"
+}

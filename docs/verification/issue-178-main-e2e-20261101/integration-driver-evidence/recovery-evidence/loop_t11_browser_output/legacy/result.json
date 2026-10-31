@@ -1,0 +1,11 @@
+{
+  "formalPage": true,
+  "restoredNativeApplication": true,
+  "session": "t11-restored-1d2fdc64-4a7c-46aa-b7f1-c1bef717f074",
+  "flags": [
+    "--headed",
+    "--webgpu"
+  ],
+  "playbackControlsExercised": true,
+  "screenshotsRequireVisualReview": true
+}

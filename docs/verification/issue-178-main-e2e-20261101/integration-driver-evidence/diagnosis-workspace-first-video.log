@@ -1,0 +1,13 @@
+
+ RUN  v3.2.7 /private/tmp/loop-control-main-e2e-20261101/integration-regression/verification-source
+
+ ✓ src/local-app/workspaceFirstVideo.integration.test.ts (3 tests) 13556ms
+   ✓ fresh authored first video uses current preparation without a legacy approval (actual voice=false)  4046ms
+   ✓ fresh authored first video uses current preparation without a legacy approval (actual voice=true)  4710ms
+   ✓ replanning discards current voice adoption without discarding historical decisions, then adopts the first new voice  4799ms
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  06:20:40
+   Duration  14.27s (transform 414ms, setup 7ms, collect 598ms, tests 13.56s, environment 0ms, prepare 26ms)
+

@@ -1,0 +1,81 @@
+[
+  {
+    "id": "92ff1fe1-1119-4ef6-bf12-1bb0f705b825",
+    "status": "completed",
+    "actual_cost_cents": 1,
+    "last_result": {
+      "retry": {
+        "reason": "Completed successfully.",
+        "shouldRetry": false
+      },
+      "status": "completed",
+      "taskId": "92ff1fe1-1119-4ef6-bf12-1bb0f705b825",
+      "version": "worker-result/v1",
+      "blockers": [],
+      "nextStep": "Await the next controlled production step.",
+      "artifacts": [
+        {
+          "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+          "fileSize": 19628,
+          "artifactType": "narration_audio",
+          "relativePath": "未分系列--def35156-022d-49c1-8449-934fa0c65a10/正式新单--a2ddfa79-a11c-454f-89ce-76419583a554/native-tasks/92ff1fe1-1119-4ef6-bf12-1bb0f705b825/shot-narration-shot-01-a36f5140-fdbe-40dc-a6ed-c67f10e3f497.mp3"
+        }
+      ],
+      "validation": {
+        "checks": [
+          {
+            "name": "controlled_media_output",
+            "detail": "已按冻结 volcengine_tts 适配器生成并校验主产物。",
+            "passed": true
+          },
+          {
+            "name": "native_narration_mode",
+            "detail": "受控响应及密钥存储替身；没有在线Provider请求或真实语音生成证明。",
+            "passed": true
+          }
+        ],
+        "passed": true
+      },
+      "actualCostCents": 1,
+      "audioDurationSeconds": 2.4
+    },
+    "run_status": "completed",
+    "run_result": {
+      "retry": {
+        "reason": "Completed successfully.",
+        "shouldRetry": false
+      },
+      "status": "completed",
+      "taskId": "92ff1fe1-1119-4ef6-bf12-1bb0f705b825",
+      "version": "worker-result/v1",
+      "blockers": [],
+      "nextStep": "Await the next controlled production step.",
+      "artifacts": [
+        {
+          "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+          "fileSize": 19628,
+          "artifactType": "narration_audio",
+          "relativePath": "未分系列--def35156-022d-49c1-8449-934fa0c65a10/正式新单--a2ddfa79-a11c-454f-89ce-76419583a554/native-tasks/92ff1fe1-1119-4ef6-bf12-1bb0f705b825/shot-narration-shot-01-a36f5140-fdbe-40dc-a6ed-c67f10e3f497.mp3"
+        }
+      ],
+      "validation": {
+        "checks": [
+          {
+            "name": "controlled_media_output",
+            "detail": "已按冻结 volcengine_tts 适配器生成并校验主产物。",
+            "passed": true
+          },
+          {
+            "name": "native_narration_mode",
+            "detail": "受控响应及密钥存储替身；没有在线Provider请求或真实语音生成证明。",
+            "passed": true
+          }
+        ],
+        "passed": true
+      },
+      "actualCostCents": 1,
+      "audioDurationSeconds": 2.4
+    },
+    "submission_outcome": "received"
+  }
+]

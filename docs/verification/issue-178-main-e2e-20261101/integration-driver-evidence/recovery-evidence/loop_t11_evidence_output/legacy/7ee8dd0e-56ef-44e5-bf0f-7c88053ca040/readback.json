@@ -1,0 +1,24 @@
+{
+  "layout": "legacy",
+  "sourceDatabase": "loop_t24_restore_d49f74ec2e86",
+  "targetDatabase": "loop_t24_restore_3e0912080ac9",
+  "sourceOffline": true,
+  "archiveSha256": "792da26f96838e3d4c5682cc87ca8d6d114a7c8e16acbf5f49f2da13acbf06e6",
+  "actualRoot": "/private/tmp/loop-t06-volume-1GSV7a/mounted/t11-storage/state/t24-native/media/account",
+  "episodeRelativePath": "episodes/23bef367-1b57-4d9a-b02e-ea5cbc92e3d7",
+  "nativeTimelineName": "T11 异地恢复后继续原生编辑",
+  "secondNativeProcessRestart": true,
+  "project": {
+    "relativePath": "episodes/23bef367-1b57-4d9a-b02e-ea5cbc92e3d7/production-workspace/versions/686581805b533ce07419f537962c006d51f1248ab2db7c562d661557d1d9ce48.json",
+    "sha256": "686581805b533ce07419f537962c006d51f1248ab2db7c562d661557d1d9ce48",
+    "fileSize": 9024,
+    "projectId": "loop-control-23bef367-1b57-4d9a-b02e-ea5cbc92e3d7"
+  },
+  "export": {
+    "sha256": "6ed62f5700544febe1e4d8439e230aebbd3f6ab21d64161acedb456725226b53",
+    "fileSize": 2549994,
+    "relativePath": "episodes/23bef367-1b57-4d9a-b02e-ea5cbc92e3d7/workspace-exports/3220ae00-d83d-4d7b-8540-69be8053c70f/6ed62f5700544febe1e4d8439e230aebbd3f6ab21d64161acedb456725226b53.mp4"
+  },
+  "ownerHttpExportSha256": "6ed62f5700544febe1e4d8439e230aebbd3f6ab21d64161acedb456725226b53",
+  "automaticBackups": false
+}

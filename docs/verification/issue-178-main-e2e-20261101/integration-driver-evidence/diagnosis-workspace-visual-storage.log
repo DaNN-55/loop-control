@@ -1,0 +1,99 @@
+
+ RUN  v3.2.7 /private/tmp/loop-control-main-e2e-20261101/integration-regression/verification-source
+
+ ❯ src/local-app/workspaceVisualStorage.integration.test.ts (5 tests | 4 failed) 9781ms
+   ✓ legacy production location owns image generation after rename/restart while request, fees and explicit adoption stay frozen  2636ms
+   × registered production location owns image generation after rename/restart while request, fees and explicit adoption stay frozen 1851ms
+     → Expected values to be strictly equal:
+
+409 !== 200
+
+   × registered production directory contains Pexels searches, downloads and adopted owned copies after preview and external source go offline 1682ms
+     → Expected values to be strictly equal:
+
+409 !== 200
+
+   × registered video output resumes the frozen Provider task after restart without a second submission or namespace change 1818ms
+     → {"error":"文件引用缺少本生产单的完整位置迁移证明。"}: expected 409 to be 200 // Object.is equality
+   × replaced registered directory blocks new visual writes and an already queued task before any paid submission 1795ms
+     → Expected values to be strictly equal:
+
+409 !== 200
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workspaceVisualStorage.integration.test.ts > registered production location owns image generation after rename/restart while request, fees and explicit adoption stay frozen
+AssertionError: Expected values to be strictly equal:
+
+409 !== 200
+
+
+- Expected
++ Received
+
+- 200
++ 409
+
+ ❯ Object.read src/local-app/workspaceNarration.fixture.ts:70:647
+
+ ❯ src/local-app/workspaceVisualStorage.integration.test.ts:12:8
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/local-app/workspaceVisualStorage.integration.test.ts > registered production directory contains Pexels searches, downloads and adopted owned copies after preview and external source go offline
+AssertionError: Expected values to be strictly equal:
+
+409 !== 200
+
+
+- Expected
++ Received
+
+- 200
++ 409
+
+ ❯ Object.read src/local-app/workspaceNarration.fixture.ts:70:647
+
+ ❯ src/local-app/workspaceVisualStorage.integration.test.ts:32:8
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/local-app/workspaceVisualStorage.integration.test.ts > registered video output resumes the frozen Provider task after restart without a second submission or namespace change
+AssertionError: {"error":"文件引用缺少本生产单的完整位置迁移证明。"}: expected 409 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 409
+
+ ❯ src/local-app/workspaceVisualStorage.integration.test.ts:52:285
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  src/local-app/workspaceVisualStorage.integration.test.ts > replaced registered directory blocks new visual writes and an already queued task before any paid submission
+AssertionError: Expected values to be strictly equal:
+
+409 !== 200
+
+
+- Expected
++ Received
+
+- 200
++ 409
+
+ ❯ Object.read src/local-app/workspaceNarration.fixture.ts:70:647
+
+ ❯ src/local-app/workspaceVisualStorage.integration.test.ts:61:8
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 1 passed (5)
+   Start at  06:20:57
+   Duration  10.45s (transform 401ms, setup 7ms, collect 547ms, tests 9.78s, environment 0ms, prepare 26ms)
+

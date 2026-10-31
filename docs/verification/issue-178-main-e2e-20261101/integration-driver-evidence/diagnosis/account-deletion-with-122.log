@@ -1,0 +1,13 @@
+
+ RUN  v3.2.7 /private/tmp/loop-control-main-e2e-20261101/integration-regression/source
+
+ ✓ src/local-app/accountDeletion.integration.test.ts (3 tests) 4140ms
+   ✓ empty: deletes an account through Owner HTTP, cleaning only empty exclusive roots and preserving history and deletion guards  1440ms
+   ✓ nonempty: deletes an account through Owner HTTP, cleaning only empty exclusive roots and preserving history and deletion guards  1417ms
+   ✓ shared: deletes an account through Owner HTTP, cleaning only empty exclusive roots and preserving history and deletion guards  1282ms
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  06:28:43
+   Duration  4.68s (transform 301ms, setup 7ms, collect 428ms, tests 4.14s, environment 0ms, prepare 26ms)
+

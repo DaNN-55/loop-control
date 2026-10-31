@@ -1,0 +1,51 @@
+{
+  "observed": {
+    "durationSeconds": 2.048,
+    "width": 1080,
+    "height": 1920,
+    "hasAudio": true,
+    "blackFrameCount": 0
+  },
+  "artifacts": [
+    {
+      "id": "bc028396-b509-4a99-ab5a-507cb30419ed",
+      "episode_id": "fc7bda43-313c-4d76-9d02-878b06fbe00d",
+      "artifact_type": "shot_preview_proxy",
+      "relative_path": "系列 audio/本期 audio/native-tasks/b0324e07-104a-436d-aa09-e885c7d2d520/proxy.mp4",
+      "sha256": "64d85b080cbaf8876c9d29e8e56545aefe7337ac7ef0af0d4ee004be329fa4d2",
+      "file_size": "90656",
+      "producer_task_id": "b0324e07-104a-436d-aa09-e885c7d2d520",
+      "created_at": "2026-10-31T22:20:09.416Z"
+    },
+    {
+      "id": "9b065b00-fba4-409f-a769-ebef34572ace",
+      "episode_id": "fc7bda43-313c-4d76-9d02-878b06fbe00d",
+      "artifact_type": "shot_editable_project",
+      "relative_path": "系列 audio/本期 audio/native-tasks/b0324e07-104a-436d-aa09-e885c7d2d520/project.json",
+      "sha256": "df3720743fef2ee05630bb9a169b6083334d11ccd050e8ee2d78fa0ac0ac98cb",
+      "file_size": "2690",
+      "producer_task_id": "b0324e07-104a-436d-aa09-e885c7d2d520",
+      "created_at": "2026-10-31T22:20:09.416Z"
+    },
+    {
+      "id": "10f61d1e-bd15-42e5-950b-63a7b930b053",
+      "episode_id": "fc7bda43-313c-4d76-9d02-878b06fbe00d",
+      "artifact_type": "shot_preview_runtime",
+      "relative_path": "系列 audio/本期 audio/native-tasks/b0324e07-104a-436d-aa09-e885c7d2d520/openchatcut-runtime.json",
+      "sha256": "88c0bd65cff707c2113ea8f63d9cc5965a397f4bc14c35de28269ceaf6d08cd7",
+      "file_size": "42",
+      "producer_task_id": "b0324e07-104a-436d-aa09-e885c7d2d520",
+      "created_at": "2026-10-31T22:20:09.416Z"
+    },
+    {
+      "id": "c9a5e364-fa62-4af7-a803-0a6874f16275",
+      "episode_id": "fc7bda43-313c-4d76-9d02-878b06fbe00d",
+      "artifact_type": "shot_preview_qc_report",
+      "relative_path": "系列 audio/本期 audio/native-tasks/b0324e07-104a-436d-aa09-e885c7d2d520/qc-report.json",
+      "sha256": "dfece90c636317474e75e403b3ac97518757f913bbc871662e31604fe277e0d9",
+      "file_size": "819",
+      "producer_task_id": "b0324e07-104a-436d-aa09-e885c7d2d520",
+      "created_at": "2026-10-31T22:20:09.416Z"
+    }
+  ]
+}

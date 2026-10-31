@@ -1,0 +1,12 @@
+[
+  "src/local-app/productionWorkspaceCommands.ts",
+  "src/local-app/embeddedStudio.fixture.ts",
+  "src/local-app/formalWorkflow.fixture.ts",
+  "src/local-app/formalWorkflow.delivery.integration.test.ts",
+  "src/local-app/workspaceAudio.fixture.ts",
+  "src/local-app/workspaceNarration.fixture.ts",
+  "src/local-app/workspaceAudioStorage.integration.test.ts",
+  "src/local-app/workspaceImageGeneration.fixture.ts",
+  "src/local-app/workspacePexels.fixture.ts",
+  "src/local-app/workspaceVisualStorage.integration.test.ts"
+]

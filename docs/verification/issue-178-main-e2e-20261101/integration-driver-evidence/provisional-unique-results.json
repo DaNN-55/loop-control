@@ -1,0 +1,2585 @@
+{
+  "counts": {
+    "passed": 348,
+    "failed": 19,
+    "skipped": 1
+  },
+  "cases": [
+    {
+      "file": "src/worker/openchatcutProject.integration.test.ts",
+      "test": "OpenChatCut real project reader integration opens an independent dashboard, reuses concurrent launches, and preserves projects after restart",
+      "status": "passed",
+      "end": 0,
+      "phase": "integration-openchatcut-after.log"
+    },
+    {
+      "file": "src/worker/openchatcutProject.integration.test.ts",
+      "test": "OpenChatCut real project reader integration opens Studio and reads editable caption cues back from its project store",
+      "status": "passed",
+      "end": 0,
+      "phase": "integration-openchatcut-after.log"
+    },
+    {
+      "file": "src/worker/openchatcutProject.integration.test.ts",
+      "test": "OpenChatCut real project reader integration keeps Studio edits mutable, warns before changed workbench input replaces them, and freezes new immutable revisions only on demand",
+      "status": "passed",
+      "end": 0,
+      "phase": "integration-openchatcut-after.log"
+    },
+    {
+      "file": "src/worker/openchatcutProject.integration.test.ts",
+      "test": "OpenChatCut real project reader integration reads a stacked shot as two correctly transformed editable video layers backed by one asset",
+      "status": "passed",
+      "end": 0,
+      "phase": "integration-openchatcut-after.log"
+    },
+    {
+      "file": "src/worker/openchatcutProject.integration.test.ts",
+      "test": "OpenChatCut real project reader integration accepts migrated stable track ids when consecutive full-screen segments remain on the V1 alias",
+      "status": "passed",
+      "end": 0,
+      "phase": "integration-openchatcut-after.log"
+    },
+    {
+      "file": "src/worker/openchatcutProject.integration.test.ts",
+      "test": "OpenChatCut real project reader integration reads exactly one source-audio item when one material fills multiple visual slots",
+      "status": "passed",
+      "end": 0,
+      "phase": "integration-openchatcut-after.log"
+    },
+    {
+      "file": "src/worker/openchatcutProject.integration.test.ts",
+      "test": "OpenChatCut real project reader integration reads silent, BGM-follower, and independent-SFX semantics from the real runtime",
+      "status": "passed",
+      "end": 0,
+      "phase": "integration-openchatcut-after.log"
+    },
+    {
+      "file": "src/worker/openchatcutProject.integration.test.ts",
+      "test": "OpenChatCut real project reader integration reads disabled captions and independent manual cues through the real runtime",
+      "status": "passed",
+      "end": 0,
+      "phase": "integration-openchatcut-after.log"
+    },
+    {
+      "file": "src/worker/openchatcutProject.integration.test.ts",
+      "test": "OpenChatCut real project reader integration renders and probes a real synchronized proxy while preserving the editable project fingerprint",
+      "status": "passed",
+      "end": 0,
+      "phase": "integration-openchatcut-after.log"
+    },
+    {
+      "file": "src/worker/openchatcutProject.integration.test.ts",
+      "test": "OpenChatCut real project reader integration opens, edits, freezes, and renders one real Episode containing TTS split-screen, source-audio, and silent captioned shots",
+      "status": "passed",
+      "end": 0,
+      "phase": "integration-openchatcut-after.log"
+    },
+    {
+      "file": "src/worker/openchatcutProject.integration.test.ts",
+      "test": "OpenChatCut real project reader integration keeps an older project with a text caption item readable",
+      "status": "passed",
+      "end": 0,
+      "phase": "integration-openchatcut-after.log"
+    },
+    {
+      "file": "src/worker/openchatcutProject.integration.test.ts",
+      "test": "OpenChatCut real project reader integration blocks known invalid caption contracts after real OpenChatCut reading",
+      "status": "passed",
+      "end": 0,
+      "phase": "integration-openchatcut-after.log"
+    },
+    {
+      "file": "src/worker/openchatcutStudio.media-cache.integration.test.ts",
+      "test": "keeps the real SDK waveform cache key and copied-source mtime across close/reopen when bytes match",
+      "status": "passed",
+      "end": 1793485260110.4062,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/worker/openchatcutStudio.media-cache.integration.test.ts",
+      "test": "repairs different copied bytes even when source and destination have equal size and mtime",
+      "status": "passed",
+      "end": 1793485260110.4062,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/worker/openchatcutStudio.media-cache.integration.test.ts",
+      "test": "still rejects an existing symlink media copy before considering content equality",
+      "status": "passed",
+      "end": 1793485260110.4062,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/worker/openchatcutStudio.media-cache.integration.test.ts",
+      "test": "still rejects an existing hardlink media copy before considering content equality",
+      "status": "passed",
+      "end": 1793485260110.4062,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/worker/openchatcutStudio.storage.integration.test.ts",
+      "test": "reads the latest offline SQLite edit and opens the exact new LC version instead of reimporting JSON backups",
+      "status": "passed",
+      "end": 1793485307844.095,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/worker/openchatcutStudio.storage.integration.test.ts",
+      "test": "recovers the latest SQLite edit for the same workspace baseline after the host exits, despite stale JSON backups",
+      "status": "passed",
+      "end": 1793485307844.095,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/worker/openchatcutStudio.storage.integration.test.ts",
+      "test": "preserves both versions instead of overwriting when the native store and host changed since their shared snapshot",
+      "status": "passed",
+      "end": 1793485307844.095,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/worker/openchatcutStudio.storage.integration.test.ts",
+      "test": "refuses stale JSON when a migrated SQLite database is missing",
+      "status": "passed",
+      "end": 1793485307844.095,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/worker/openchatcutStudio.validation.integration.test.ts",
+      "test": "retains both validators while reading the identical document once during each draft open",
+      "status": "passed",
+      "end": 1793485319544.3262,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/worker/openchatcutStudio.validation.integration.test.ts",
+      "test": "still rejects a source SHA change at the second validation when SDK evidence is reused",
+      "status": "passed",
+      "end": 1793485319544.3262,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/worker/openchatcutStudio.validation.integration.test.ts",
+      "test": "revalidates a changed native-store document instead of trusting the input fingerprint",
+      "status": "passed",
+      "end": 1793485319544.3262,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/accountAssetRoots.integration.test.ts",
+      "test": "Owner owns actual account directories independently of blueprint versions, and files remain isolated after restart",
+      "status": "passed",
+      "end": 1793484971017.695,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/accountAssetRoots.integration.test.ts",
+      "test": "Owner creates same-title productions and managed imports in two actual roots; rename, restart and invalid roots preserve isolation",
+      "status": "passed",
+      "end": 1793484971017.695,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/accountAssetRoots.integration.test.ts",
+      "test": "native SQLite project, actual exports and delivery Worker stay inside the owned root after blueprint root is absent",
+      "status": "passed",
+      "end": 1793484971017.695,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/accountAssetRootsStorage.integration.test.ts",
+      "test": "a real backup and fresh restore preserve independent episode files and rebind account directory identity for Owner HTTP",
+      "status": "failed",
+      "end": 1793485754089.4856,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/accountCreation.browser.integration.test.ts",
+      "test": "formal new-install account form creates the directory before displaying its read-only final metadata row",
+      "status": "passed",
+      "end": 1793485289197.5996,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/accountCreation.integration.test.ts",
+      "test": "first account on a native workspace without import history owns one persisted real directory and survives replay and rename",
+      "status": "passed",
+      "end": 1793485209429.8909,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/accountCreation.integration.test.ts",
+      "test": "real native new installation creates its first account without import data and resumes a killed creation in the same directory",
+      "status": "passed",
+      "end": 1793485209429.8909,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/accountCreation.integration.test.ts",
+      "test": "creation faults preserve unknown files, clean only owned empty folders and resume the pre-marker crash window",
+      "status": "passed",
+      "end": 1793485209429.8909,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/accountCreation.integration.test.ts",
+      "test": "creation cleanup preserves same-byte replacement markers and final registration refuses a replacement directory",
+      "status": "passed",
+      "end": 1793485209429.8909,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/accountDeletion.integration.test.ts",
+      "test": "empty: deletes an account through Owner HTTP, cleaning only empty exclusive roots and preserving history and deletion guards",
+      "status": "failed",
+      "end": 1793485444090.6736,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/accountDeletion.integration.test.ts",
+      "test": "nonempty: deletes an account through Owner HTTP, cleaning only empty exclusive roots and preserving history and deletion guards",
+      "status": "failed",
+      "end": 1793485444090.6736,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/accountDeletion.integration.test.ts",
+      "test": "shared: deletes an account through Owner HTTP, cleaning only empty exclusive roots and preserving history and deletion guards",
+      "status": "failed",
+      "end": 1793485444090.6736,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/accountDeletionStorage.integration.test.ts",
+      "test": "account deletion cleans only registered empty containers, retaining unknown parents and immutable completed creation history",
+      "status": "passed",
+      "end": 1793485402742.16,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/accountDeletionStorage.integration.test.ts",
+      "test": "a pending registered container creation reserves its account against parent deletion",
+      "status": "passed",
+      "end": 1793485402742.16,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/accountDeletionStorage.integration.test.ts",
+      "test": "a parent account cannot cascade an active, archived or completed production",
+      "status": "passed",
+      "end": 1793485402742.16,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/accountDirectoryMigration.integration.test.ts",
+      "test": "Owner inventories and verifies actual account files before an atomic move; original evidence remains readable after restart",
+      "status": "passed",
+      "end": 1793484222953.5027,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/accountDirectoryMigration.integration.test.ts",
+      "test": "migration mount failure preserves the old root and resumes from its durable receipt after restart; collisions and changed references never cut over",
+      "status": "passed",
+      "end": 1793484222953.5027,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/accountDirectoryMigration.integration.test.ts",
+      "test": "an actual interrupted streaming copy keeps originals and recovers the durable migration after restart",
+      "status": "passed",
+      "end": 1793484222953.5027,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/accountDirectoryMigration.integration.test.ts",
+      "test": "migrated native SQLite edits reopen, export, and deliver through the real Worker with originals offline",
+      "status": "passed",
+      "end": 1793484222953.5027,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/accountDirectoryMigration.integration.test.ts",
+      "test": "historical deployment roots and immutable references merge into the actual account folder; task and reference conflicts block cutover",
+      "status": "passed",
+      "end": 1793484222953.5027,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/accountDirectoryMigration.integration.test.ts",
+      "test": "a changed account directory invalidates an earlier empty-account inventory before cutover",
+      "status": "passed",
+      "end": 1793484222953.5027,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/accountDirectoryMigration.integration.test.ts",
+      "test": "Pexels managed adoption migrates with native edits, delivers with originals offline, and deletion rolls back then removes only owned copies",
+      "status": "passed",
+      "end": 1793484222953.5027,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/accountDirectoryMigrationStorage.integration.test.ts",
+      "test": "a real backup and fresh restore retain migrated account location mappings and return original artifact bytes through Owner HTTP",
+      "status": "failed",
+      "end": 1793485723961.7913,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/accountDirectoryMigrationSubmissions.integration.test.ts",
+      "test": "real Worker reject outcome controls directory migration after restart without erasing the paid ledger",
+      "status": "passed",
+      "end": 1793485421578.032,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/accountDirectoryMigrationSubmissions.integration.test.ts",
+      "test": "real Worker unknown outcome controls directory migration after restart without erasing the paid ledger",
+      "status": "passed",
+      "end": 1793485421578.032,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/accountWorkspace.browser.integration.test.ts",
+      "test": "edits account and series independently through the formal page and isolated Owner HTTP",
+      "status": "passed",
+      "end": 1793485110055.379,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/blueprintContraction.integration.test.ts",
+      "test": "Owner saves creative-only accounts without media connections and retains referenced legacy blueprint evidence",
+      "status": "passed",
+      "end": 1793485360966.8735,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/blueprintContraction.integration.test.ts",
+      "test": "ordinary planning drafts persist before workspace creation and failed retries retain their frozen selection",
+      "status": "passed",
+      "end": 1793485360966.8735,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/blueprintContraction.integration.test.ts",
+      "test": "v2 direct preparation needs no planner and new media requests require explicit service selection",
+      "status": "passed",
+      "end": 1793485360966.8735,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/blueprintReviewRetirement.integration.test.ts",
+      "test": "Owner confirms a script and final file with every retired gate enabled and unused tools unavailable",
+      "status": "passed",
+      "end": 1793485941429.427,
+      "phase": "integration-contracts-green.json"
+    },
+    {
+      "file": "src/local-app/blueprintReviewRetirement.integration.test.ts",
+      "test": "an old storyboard-review order continues without retroactive approval and retains read-only boundaries",
+      "status": "passed",
+      "end": 1793485941429.427,
+      "phase": "integration-contracts-green.json"
+    },
+    {
+      "file": "src/local-app/blueprintReviewRetirement.integration.test.ts",
+      "test": "serves the formal blueprint page against an isolated Owner database",
+      "status": "skipped",
+      "end": 1793485219988.3318,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/connectionCatalog.integration.test.ts",
+      "test": "exposes registered service groups and updates exact verified connection choices through Owner HTTP",
+      "status": "passed",
+      "end": 1793485469968.6821,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/creativeStorageCompatibility.integration.test.ts",
+      "test": "Owner creative extensions remain creative data while actual indexed file dependencies still block a root plan",
+      "status": "passed",
+      "end": 1793485411923.08,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/deletionBackupRestore.integration.test.ts",
+      "test": "real SQL115 prepared and committed deletion block backup while completed and rolled-back manifests restore unchanged after their source files disappear",
+      "status": "failed",
+      "end": 1793485687107.0728,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/embeddedStudio.integration.test.ts",
+      "test": "Owner opens the real Studio and saves its versioned workspace through native HTTP",
+      "status": "passed",
+      "end": 1793485926541.6575,
+      "phase": "integration-contracts-green.json"
+    },
+    {
+      "file": "src/local-app/episodeArchive.integration.test.ts",
+      "test": "restores an owned legacy order without enabling native production; retains ownership, history and CSRF fences",
+      "status": "passed",
+      "end": 1793485475807.306,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeCollectionFaults.integration.test.ts",
+      "test": "an old registered layout2 without a real container uses frozen-series compatibility until explicit adoption, while registered NULL means unassigned",
+      "status": "passed",
+      "end": 1793485138390.7964,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeCollectionFaults.integration.test.ts",
+      "test": "collection commands are idempotent, reject cross-account and client paths, and maintain archived/completed orders without unlocking content",
+      "status": "passed",
+      "end": 1793485138390.7964,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeCollectionFaults.integration.test.ts",
+      "test": "a real episode change across final SQL aborts the move without changing current authority or overwriting unknown data",
+      "status": "passed",
+      "end": 1793485138390.7964,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeCollectionFaults.integration.test.ts",
+      "test": "a real source-container change across final SQL aborts the move without changing current authority or overwriting unknown data",
+      "status": "passed",
+      "end": 1793485138390.7964,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeCollectionFaults.integration.test.ts",
+      "test": "a real target-container change across final SQL aborts the move without changing current authority or overwriting unknown data",
+      "status": "passed",
+      "end": 1793485138390.7964,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeCollectionFaults.integration.test.ts",
+      "test": "a real bytes change across final SQL aborts the move without changing current authority or overwriting unknown data",
+      "status": "passed",
+      "end": 1793485138390.7964,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeCollectionMove.integration.test.ts",
+      "test": "Owner moves an order from A to B without changing its frozen creative series or original material reference",
+      "status": "passed",
+      "end": 1793485436445.4995,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeCollectionNative.integration.test.ts",
+      "test": "all historical native coordinates remain usable after A→B→unassigned→A→B and a real database/media restore with original sources offline",
+      "status": "passed",
+      "end": 1793485597645.1987,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/episodeCollectionProcess.integration.test.ts",
+      "test": "a real SIGKILL after move temp identity commit allows resume from a new application PID using the same target",
+      "status": "passed",
+      "end": 1793485124402.7542,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeCollectionProcess.integration.test.ts",
+      "test": "a real SIGKILL after move temp identity commit allows rollback from a new application PID using the same target",
+      "status": "passed",
+      "end": 1793485124402.7542,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeCollectionProcess.integration.test.ts",
+      "test": "a copying move blocks archive, deletion and new production until its durable receipt finishes",
+      "status": "passed",
+      "end": 1793485124402.7542,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeCollectionWorker.integration.test.ts",
+      "test": "the compiled CLI retries the same frozen failed planner after five collection moves with all old sources offline",
+      "status": "passed",
+      "end": 1793484841086.5918,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeCollectionWorker.integration.test.ts",
+      "test": "real ready/running and unknown paid submissions block collection moves without changing source, current location or paid evidence",
+      "status": "passed",
+      "end": 1793484841086.5918,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeCollectionWorker.integration.test.ts",
+      "test": "a committed native attempt keeps its frozen inode, task, fee and Provider submission across five collection moves and source-offline publication recovery",
+      "status": "passed",
+      "end": 1793484841086.5918,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeCreation.integration.test.ts",
+      "test": "formal Owner creation places each production order directly in its registered series or unassigned container",
+      "status": "passed",
+      "end": 1793485740654.0012,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/episodeCreation.integration.test.ts",
+      "test": "pending production-order creation reserves its account against deletion and backup until the same command completes",
+      "status": "passed",
+      "end": 1793485740654.0012,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/episodeCreation.integration.test.ts",
+      "test": "Owner imports main script and material into a newly created ..alpha series at its registered location",
+      "status": "passed",
+      "end": 1793485740654.0012,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/episodeCreation.native.integration.test.ts",
+      "test": "fresh native process resumes one reserved episode with the original blueprint and series after SIGKILL and rule edits",
+      "status": "passed",
+      "end": 1793485241793.6885,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeCreation.native.integration.test.ts",
+      "test": "native crashes after mkdir and after COMMIT plus actual unmount/remount preserve one intent and physical directory",
+      "status": "passed",
+      "end": 1793485241793.6885,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeCreationFaults.integration.test.ts",
+      "test": "resumes mkdir/publication failures with one UUID and preserves unknown data and replaced identities",
+      "status": "passed",
+      "end": 1793485448453.8953,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeDeletion.integration.test.ts",
+      "test": "managed=true: deletes an archived ordinary order and then its empty account through Owner HTTP, retaining deletion fences",
+      "status": "failed",
+      "end": 1793485439339.1982,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeDeletion.integration.test.ts",
+      "test": "managed=false: deletes an archived ordinary order and then its empty account through Owner HTTP, retaining deletion fences",
+      "status": "failed",
+      "end": 1793485439339.1982,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeDeletionNative.integration.test.ts",
+      "test": "real native working files have exact deletion authority while unknown native neighbors remain (legacy)",
+      "status": "passed",
+      "end": 1793484992743.5764,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeDeletionNative.integration.test.ts",
+      "test": "real native working files have exact deletion authority while unknown native neighbors remain (registered)",
+      "status": "passed",
+      "end": 1793484992743.5764,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeDeletionNative.integration.test.ts",
+      "test": "delete awaits actual native shutdown and requires a fresh confirmation after that inventory changes",
+      "status": "passed",
+      "end": 1793484992743.5764,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeDeletionNative.integration.test.ts",
+      "test": "an extra native project keeps the entire unproven native store and its mapped source bytes",
+      "status": "passed",
+      "end": 1793484992743.5764,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeDeletionRetainedSources.integration.test.ts",
+      "test": "only current registered files are confirmed; online deployment sources remain outside deletion authority",
+      "status": "passed",
+      "end": 1793485456200.6733,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeDeletionRetainedSources.integration.test.ts",
+      "test": "only current registered files are confirmed; offline deployment sources remain outside deletion authority",
+      "status": "passed",
+      "end": 1793485456200.6733,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeDeletionStorage.integration.test.ts",
+      "test": "Owner confirms actual collection files while unknown manual files remain byte-identical",
+      "status": "passed",
+      "end": 1793484059651.8398,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeDeletionStorage.integration.test.ts",
+      "test": "another Owner business dependency blocks ordinary deletion before any file changes",
+      "status": "passed",
+      "end": 1793484059651.8398,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeDeletionStorage.integration.test.ts",
+      "test": "successful exact cleanup removes only reviewed title links to the deleted directory",
+      "status": "passed",
+      "end": 1793484059651.8398,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeDeletionStorage.integration.test.ts",
+      "test": "a retained manual document keeps its referenced owned bytes and unknown empty directory intact",
+      "status": "passed",
+      "end": 1793484059651.8398,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeDeletionStorage.integration.test.ts",
+      "test": "unknown paid submission blocks confirmed deletion without changing any registered file",
+      "status": "passed",
+      "end": 1793484059651.8398,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeDeletionStorage.integration.test.ts",
+      "test": "a safely rolled back confirmation releases its reservation for a newly reviewed inventory",
+      "status": "passed",
+      "end": 1793484059651.8398,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeDeletionStorage.integration.test.ts",
+      "test": "a new PID resumes link-before-unlink interruption using only the original durable scope",
+      "status": "passed",
+      "end": 1793484059651.8398,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeDeletionStorage.integration.test.ts",
+      "test": "a new PID resumes before-finalize interruption using only the original durable scope",
+      "status": "passed",
+      "end": 1793484059651.8398,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeDeletionStorage.integration.test.ts",
+      "test": "a new PID resumes after-first-finalize interruption using only the original durable scope",
+      "status": "passed",
+      "end": 1793484059651.8398,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeDeletionStorage.integration.test.ts",
+      "test": "a new PID resumes restore-uncommitted interruption using only the original durable scope",
+      "status": "passed",
+      "end": 1793484059651.8398,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeDeletionStorage.integration.test.ts",
+      "test": "an old cleanup receipt without exact file authority remains pending and explains its preserved staging files",
+      "status": "passed",
+      "end": 1793484059651.8398,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeDeletionStorage.integration.test.ts",
+      "test": "rollback preserves an unknown file inserted at the actual restore publication boundary",
+      "status": "passed",
+      "end": 1793484059651.8398,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeDeletionStorage.integration.test.ts",
+      "test": "staging never overwrites an unknown file inserted at the actual filesystem publication boundary",
+      "status": "passed",
+      "end": 1793484059651.8398,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeDeletionStorage.integration.test.ts",
+      "test": "a new Owner HTTP PID restores the exact staged files after SIGKILL and resumes the original confirmation",
+      "status": "passed",
+      "end": 1793484059651.8398,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeDeletionStorage.integration.test.ts",
+      "test": "a durable exact confirmation is committed before filesystem staging and survives business rollback",
+      "status": "passed",
+      "end": 1793484059651.8398,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeStorageLocation.integration.test.ts",
+      "test": "Owner opens the full production directory, including legacy archived productions, without creating input folders",
+      "status": "passed",
+      "end": 1793485336975.7822,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeStorageLocation.integration.test.ts",
+      "test": "persisted collection paths survive restart and rename; Owner HTTP preview/open reject foreign, missing and replaced locations",
+      "status": "passed",
+      "end": 1793485336975.7822,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeStorageLocation.integration.test.ts",
+      "test": "a repeated folder-open action rechecks location availability and reports actual permission failures",
+      "status": "passed",
+      "end": 1793485336975.7822,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/episodeStorageLocation.integration.test.ts",
+      "test": "desktop-open failure remains recoverable without starting production or changing files",
+      "status": "passed",
+      "end": 1793485336975.7822,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/fixtureSchema.integration.test.ts",
+      "test": "schema provisioning accepts both the pre-workspace and upgraded sources without replaying applied DDL",
+      "status": "passed",
+      "end": 1793485407425.3516,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/fixtureSchema.integration.test.ts",
+      "test": "an applied migration SHA mismatch refuses provisioning before writing the target schema",
+      "status": "passed",
+      "end": 1793485407425.3516,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/fixtureSchema.integration.test.ts",
+      "test": "schema and migration metadata retain one snapshot when the source upgrades during export",
+      "status": "passed",
+      "end": 1793485407425.3516,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/formalWorkflow.delivery.integration.test.ts",
+      "test": "formal Owner workflow delivers exact native export with adopted text, mixed audio and traceable late unused results",
+      "status": "failed",
+      "end": 1793485399492.7505,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/formalWorkflow.integration.test.ts",
+      "test": "Owner confirms a fresh script before visual materials exist",
+      "status": "passed",
+      "end": 1793485126981.739,
+      "phase": "integration-fixture-fixes-after-results.json"
+    },
+    {
+      "file": "src/local-app/formalWorkflow.integration.test.ts",
+      "test": "Owner builds a formal incomplete draft without old storyboard approvals",
+      "status": "passed",
+      "end": 1793485126981.739,
+      "phase": "integration-fixture-fixes-after-results.json"
+    },
+    {
+      "file": "src/local-app/formalWorkflow.integration.test.ts",
+      "test": "first formal adoption preserves the latest unsubmitted legacy Studio document",
+      "status": "passed",
+      "end": 1793485126981.739,
+      "phase": "integration-fixture-fixes-after-results.json"
+    },
+    {
+      "file": "src/local-app/formalWorkflow.integration.test.ts",
+      "test": "late legacy render reports retain artifacts without advancing or approving the adopted workspace",
+      "status": "passed",
+      "end": 1793485126981.739,
+      "phase": "integration-fixture-fixes-after-results.json"
+    },
+    {
+      "file": "src/local-app/formalWorkflow.integration.test.ts",
+      "test": "fresh formal and added shots generate through the real controlled Provider Worker without legacy approval",
+      "status": "passed",
+      "end": 1793485126981.739,
+      "phase": "integration-fixture-fixes-after-results.json"
+    },
+    {
+      "file": "src/local-app/formalWorkflow.integration.test.ts",
+      "test": "ordinary scripts use the selected real planner task and verified artifact before preparation confirmation",
+      "status": "passed",
+      "end": 1793485126981.739,
+      "phase": "integration-fixture-fixes-after-results.json"
+    },
+    {
+      "file": "src/local-app/historyEpisodeDeletion.integration.test.ts",
+      "test": "deletes only the confirmed history, live order and exclusive files through real Owner HTTP",
+      "status": "passed",
+      "end": 1793485329404.3508,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/inputPublicationOwnership.integration.test.ts",
+      "test": "Owner import preserves unknown replacement and original bytes after temporary-link failure",
+      "status": "passed",
+      "end": 1793485039933.4663,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/inputPublicationOwnership.integration.test.ts",
+      "test": "Owner import preserves unknown replacement and original bytes after receipt-link failure",
+      "status": "passed",
+      "end": 1793485039933.4663,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/inputPublicationOwnership.integration.test.ts",
+      "test": "Owner import preserves unknown replacement and original bytes after temporary-open failure",
+      "status": "passed",
+      "end": 1793485039933.4663,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/inputPublicationOwnership.integration.test.ts",
+      "test": "Owner import preserves unknown replacement and original bytes after receipt-open failure",
+      "status": "passed",
+      "end": 1793485039933.4663,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/inputPublicationOwnership.integration.test.ts",
+      "test": "Owner import preserves unknown replacement and original bytes after temporary-close failure",
+      "status": "passed",
+      "end": 1793485039933.4663,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/inputPublicationOwnership.integration.test.ts",
+      "test": "Owner import preserves unknown replacement and original bytes after receipt-close failure",
+      "status": "passed",
+      "end": 1793485039933.4663,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/inputPublicationOwnership.integration.test.ts",
+      "test": "Owner import preserves unknown replacement and original bytes after temporary-close-identical failure",
+      "status": "passed",
+      "end": 1793485039933.4663,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/inputPublicationOwnership.integration.test.ts",
+      "test": "Owner recovery preserves a receipt replaced during recovery-receipt-link and retries without deleting its unknown bytes",
+      "status": "passed",
+      "end": 1793485039933.4663,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/inputPublicationOwnership.integration.test.ts",
+      "test": "Owner recovery preserves a receipt replaced during recovery-receipt-link-identical and retries without deleting its unknown bytes",
+      "status": "passed",
+      "end": 1793485039933.4663,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/inputPublicationOwnership.integration.test.ts",
+      "test": "Owner recovery preserves a receipt replaced during legacy-receipt and retries without deleting its unknown bytes",
+      "status": "passed",
+      "end": 1793485039933.4663,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/inputStorageLocation.integration.test.ts",
+      "test": "Owner imports and confirms managed script bytes at the registered production location, retaining legacy previews after restart",
+      "status": "failed",
+      "end": 1793485270505.7524,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/inputStorageLocation.integration.test.ts",
+      "test": "Owner reuses an approved series input as a self-contained managed copy with original source approval evidence",
+      "status": "failed",
+      "end": 1793485270505.7524,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/inputStorageLocation.integration.test.ts",
+      "test": "input retries preserve immutable bytes and reject unsafe, foreign, interrupted and replaced-directory submissions",
+      "status": "passed",
+      "end": 1793485270505.7524,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/inputStorageLocation.integration.test.ts",
+      "test": "receipted input publication survives an interrupted unlink and restart without overwriting unknown targets or trusting altered receipts",
+      "status": "passed",
+      "end": 1793485270505.7524,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/inputStorageMigration.integration.test.ts",
+      "test": "input and visual storage migrations compose in either supported incremental order on isolated real schemas",
+      "status": "passed",
+      "end": 1793485459355.3474,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/legacyAdoption.integration.test.ts",
+      "test": "legacy global-root production stays readable and does not prevent a new isolated account (exact)",
+      "status": "passed",
+      "end": 1793485071088.384,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/legacyAdoption.integration.test.ts",
+      "test": "legacy global-root production stays readable and does not prevent a new isolated account (trailing-slash)",
+      "status": "passed",
+      "end": 1793485071088.384,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/legacyAdoption.integration.test.ts",
+      "test": "Owner explicitly adopts only owned legacy episode scopes and preserves frozen references when the old source is offline",
+      "status": "passed",
+      "end": 1793485071088.384,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/legacyAdoption.integration.test.ts",
+      "test": "a episode replacement while final SQL is paused rolls back the entire current switch and retains both generations",
+      "status": "passed",
+      "end": 1793485071088.384,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/legacyAdoption.integration.test.ts",
+      "test": "a container replacement while final SQL is paused rolls back the entire current switch and retains both generations",
+      "status": "passed",
+      "end": 1793485071088.384,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/legacyAdoption.integration.test.ts",
+      "test": "a account replacement while final SQL is paused rolls back the entire current switch and retains both generations",
+      "status": "passed",
+      "end": 1793485071088.384,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/legacyAdoption.integration.test.ts",
+      "test": "a file replacement while final SQL is paused rolls back the entire current switch and retains both generations",
+      "status": "passed",
+      "end": 1793485071088.384,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/legacyAdoption.integration.test.ts",
+      "test": "adoption history and retained sources survive current-only episode cleanup and deletion of the empty account",
+      "status": "passed",
+      "end": 1793485071088.384,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/legacyAdoptionNative.integration.test.ts",
+      "test": "native SQLite, immutable versions and original sources survive explicit adoption, source offline and fresh SDK save/reopen/export (legacy)",
+      "status": "passed",
+      "end": 1793485665456.6821,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/legacyAdoptionNative.integration.test.ts",
+      "test": "native SQLite, immutable versions and original sources survive explicit adoption, source offline and fresh SDK save/reopen/export (recorded-prefix)",
+      "status": "passed",
+      "end": 1793485665456.6821,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/legacyAdoptionNative.integration.test.ts",
+      "test": "adopted lineage is backed up and restored into a new database and root before a fresh application edits SQLite and exports with the source offline",
+      "status": "passed",
+      "end": 1793485665456.6821,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/legacyAdoptionProcess.integration.test.ts",
+      "test": "a paused native copy reserves an unregistered shared legacy source against archive and exact deletion",
+      "status": "passed",
+      "end": 1793485056187.6458,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/legacyAdoptionProcess.integration.test.ts",
+      "test": "SIGKILL after a durable temp identity permits resume of the same plan in a fresh process without a second active directory",
+      "status": "passed",
+      "end": 1793485056187.6458,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/legacyAdoptionProcess.integration.test.ts",
+      "test": "SIGKILL after a durable temp identity permits rollback of the same plan in a fresh process without a second active directory",
+      "status": "passed",
+      "end": 1793485056187.6458,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/legacyAdoptionProcess.integration.test.ts",
+      "test": "a real application preserves its old readable location and unknown target data when controlled capacity is exhausted",
+      "status": "passed",
+      "end": 1793485056187.6458,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/legacyAdoptionVolumes.integration.test.ts",
+      "test": "multiple owned legacy roots copy across an actual volume while mixed registered accounts, unknown files and frozen series remain intact",
+      "status": "passed",
+      "end": 1793485452234.1494,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/legacyAdoptionWorker.integration.test.ts",
+      "test": "a committed native attempt keeps its frozen inode, task, fee and Provider submission while adoption relocates publication recovery",
+      "status": "passed",
+      "end": 1793484925016.8105,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/legacyAdoptionWorker.integration.test.ts",
+      "test": "the compiled CLI retries the same frozen failed planner after adoption with its old source offline",
+      "status": "passed",
+      "end": 1793484925016.8105,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/legacyAdoptionWorker.integration.test.ts",
+      "test": "the compiled delivery Worker consumes the original queued manifest and publishes unchanged logical references after adoption and source offline",
+      "status": "passed",
+      "end": 1793484925016.8105,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/legacyHtmlWorkspace.integration.test.ts",
+      "test": "adopts frozen HTML over real HTTP/PG/SDK, permits per-shot replacement, saves and reopens without touching original records (legacy)",
+      "status": "passed",
+      "end": 1793485231377.1077,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/legacyHtmlWorkspace.integration.test.ts",
+      "test": "adopts frozen HTML over real HTTP/PG/SDK, permits per-shot replacement, saves and reopens without touching original records (registered)",
+      "status": "passed",
+      "end": 1793485231377.1077,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/legacyStudioProject.integration.test.ts",
+      "test": "Owner reads and downloads the exact saved legacy edit without adopting or rewriting it (legacy)",
+      "status": "passed",
+      "end": 1793485397340.8425,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/legacyStudioProject.integration.test.ts",
+      "test": "Owner reads and downloads the exact saved legacy edit without adopting or rewriting it (registered)",
+      "status": "passed",
+      "end": 1793485397340.8425,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/legacyWorkspaceEditing.integration.test.ts",
+      "test": "continues the exact original native project, saves a new immutable version and restores it after restart without generation (legacy)",
+      "status": "passed",
+      "end": 1793485022415.1252,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/legacyWorkspaceEditing.integration.test.ts",
+      "test": "continues the exact original native project, saves a new immutable version and restores it after restart without generation (registered)",
+      "status": "passed",
+      "end": 1793485022415.1252,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/legacyWorkspaceEditing.integration.test.ts",
+      "test": "prefers the most recently saved native edit and archives it before creating the working copy (legacy)",
+      "status": "passed",
+      "end": 1793485022415.1252,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/legacyWorkspaceEditing.integration.test.ts",
+      "test": "prefers the most recently saved native edit and archives it before creating the working copy (registered)",
+      "status": "passed",
+      "end": 1793485022415.1252,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/legacyWorkspaceEntry.integration.test.ts",
+      "test": "legacy orders enter four-step preparation only on an explicit owned command",
+      "status": "passed",
+      "end": 1793485389233.1006,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/legacyWorkspaceEntry.integration.test.ts",
+      "test": "legacy script revision uses the same explicit entry and failed imports leave no registration",
+      "status": "passed",
+      "end": 1793485389233.1006,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/legacyWorkspaceEntry.integration.test.ts",
+      "test": "legacy inspection stays read-only and completed, archived and historical orders are not enrolled",
+      "status": "passed",
+      "end": 1793485389233.1006,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/managedMediaRestore.integration.test.ts",
+      "test": "a genuine new workspace backup restores its original media through Owner HTTP without manufacturing import evidence",
+      "status": "passed",
+      "end": 1793485973277.8267,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/managedMediaRestore.integration.test.ts",
+      "test": "restored registered episode and empty series containers use target identities and completed creation replays with the source offline",
+      "status": "passed",
+      "end": 1793485973277.8267,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/managedMediaRestore.integration.test.ts",
+      "test": "an unfinished physical creation reserves its source and refuses a complete backup",
+      "status": "passed",
+      "end": 1793485973277.8267,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/managedMediaRestore.integration.test.ts",
+      "test": "a changed source retains explicit incomplete evidence and cannot publish a successful archive",
+      "status": "passed",
+      "end": 1793485973277.8267,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/managedMediaRestore.integration.test.ts",
+      "test": "a large production file is backed up and restored with bounded resident-memory growth",
+      "status": "failed",
+      "end": 1793485973277.8267,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/managedMediaRestore.integration.test.ts",
+      "test": "a restored native deployment restarts at the new root and saves, closes, reopens and exports the actual SDK project with the source offline (legacy)",
+      "status": "passed",
+      "end": 1793485973277.8267,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/managedMediaRestore.integration.test.ts",
+      "test": "a restored native deployment restarts at the new root and saves, closes, reopens and exports the actual SDK project with the source offline (registered)",
+      "status": "passed",
+      "end": 1793485973277.8267,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/managedMediaRestore.integration.test.ts",
+      "test": "a missing immutable workspace document prevents a complete backup even when ordinary artifact rows are intact",
+      "status": "passed",
+      "end": 1793485973277.8267,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/managedMediaRestore.integration.test.ts",
+      "test": "a rejected deployment publication retains the restored database pending and an explicit failed receipt",
+      "status": "failed",
+      "end": 1793485973277.8267,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/managedMediaRestore.integration.test.ts",
+      "test": "registered platform cache and independent history inside a legacy media parent retain their own responsibilities",
+      "status": "failed",
+      "end": 1793485973277.8267,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/managedMediaRestore.integration.test.ts",
+      "test": "the pinned legacy schema can be backed up before storage migrations and restored forward without touching its source",
+      "status": "passed",
+      "end": 1793485973277.8267,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/managedMediaRestore.integration.test.ts",
+      "test": "restore never replaces an empty destination inserted after its initial check",
+      "status": "passed",
+      "end": 1793485973277.8267,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/managedMediaRestore.integration.test.ts",
+      "test": "a same-byte replacement root cannot be laundered into a successful backup identity",
+      "status": "passed",
+      "end": 1793485973277.8267,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootExecution.browser.integration.test.ts",
+      "test": "formal storage UI resumes durable copy after refresh, recovers a failed cutover and reopens moving native media on the new root",
+      "status": "passed",
+      "end": 1793484314631.0525,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootExecution.integration.test.ts",
+      "test": "Owner executes the saved global plan and a fresh native process reads every original artifact from the new root",
+      "status": "passed",
+      "end": 1793485280360.5107,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootExecution.integration.test.ts",
+      "test": "completed root publication permits a later legitimate collection move and fresh native startup",
+      "status": "passed",
+      "end": 1793485280360.5107,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootExecutionFaults.integration.test.ts",
+      "test": "a real source-file change across final global SQL rolls back every current mapping and operation proof",
+      "status": "passed",
+      "end": 1793484494204.8843,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootExecutionFaults.integration.test.ts",
+      "test": "a real target-file change across final global SQL rolls back every current mapping and operation proof",
+      "status": "passed",
+      "end": 1793484494204.8843,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootExecutionFaults.integration.test.ts",
+      "test": "a real target-directory change across final global SQL rolls back every current mapping and operation proof",
+      "status": "passed",
+      "end": 1793484494204.8843,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootExecutionFaults.integration.test.ts",
+      "test": "a real source-directory change across final global SQL rolls back every current mapping and operation proof",
+      "status": "passed",
+      "end": 1793484494204.8843,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootExecutionFaults.integration.test.ts",
+      "test": "a real frozen-evidence change across final global SQL rolls back every current mapping and operation proof",
+      "status": "passed",
+      "end": 1793484494204.8843,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootExecutionFaults.integration.test.ts",
+      "test": "a planned target changed by empty-directory never acquires or overwrites unknown ownership",
+      "status": "passed",
+      "end": 1793484494204.8843,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootExecutionFaults.integration.test.ts",
+      "test": "a planned target changed by unknown-file never acquires or overwrites unknown ownership",
+      "status": "passed",
+      "end": 1793484494204.8843,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootExecutionFaults.integration.test.ts",
+      "test": "a planned target changed by replaced-target never acquires or overwrites unknown ownership",
+      "status": "passed",
+      "end": 1793484494204.8843,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootExecutionFaults.integration.test.ts",
+      "test": "a planned target changed by capacity never acquires or overwrites unknown ownership",
+      "status": "passed",
+      "end": 1793484494204.8843,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootExecutionFaults.integration.test.ts",
+      "test": "a detached target volume cannot write a host fallback tree at the same pathname",
+      "status": "passed",
+      "end": 1793484494204.8843,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootExecutionNative.integration.test.ts",
+      "test": "mixed accounts and native SQLite move across devices as one root, survive old production offline, and restore a real DB/media backup",
+      "status": "passed",
+      "end": 1793485519552.4285,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootExecutionProcess.integration.test.ts",
+      "test": "global copy SIGKILL retains same-plan recovery identities and permits resume from a fresh process",
+      "status": "passed",
+      "end": 1793484765282.5198,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootExecutionProcess.integration.test.ts",
+      "test": "global copy SIGKILL retains same-plan recovery identities and permits rollback from a fresh process",
+      "status": "passed",
+      "end": 1793484765282.5198,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootExecutionProcess.integration.test.ts",
+      "test": "a source replaced by FIFO at the actual copy open is refused promptly and preserves the original bytes",
+      "status": "passed",
+      "end": 1793484765282.5198,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootExecutionProcess.integration.test.ts",
+      "test": "disconnected Owner sees durable in-file byte progress and conflicting writes stay blocked until the same plan completes",
+      "status": "passed",
+      "end": 1793484765282.5198,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootExecutionProcess.integration.test.ts",
+      "test": "a previously admitted filesystem writer drains before the migration fence and its changed account scope prevents cutover",
+      "status": "passed",
+      "end": 1793484765282.5198,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootExecutionProcess.integration.test.ts",
+      "test": "an older executing plan stays visible over newer planned history and a failed fence prevents competing plans after restart",
+      "status": "passed",
+      "end": 1793484765282.5198,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootExecutionProcess.integration.test.ts",
+      "test": "a failed empty-workspace global plan prevents ordinary initialization from bypassing its durable fence",
+      "status": "passed",
+      "end": 1793484765282.5198,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootExecutionWorker.integration.test.ts",
+      "test": "the compiled CLI retries the same frozen failed planner after a cross-device global root migration with old production sources offline",
+      "status": "passed",
+      "end": 1793485375805.102,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootMigration.browser.integration.test.ts",
+      "test": "formal Owner storage settings persist a root plan, show conflicts and recover the same plan after a real process restart",
+      "status": "passed",
+      "end": 1793485177030.731,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootMigration.integration.test.ts",
+      "test": "an unreadable production file returns a recoverable storage reason and leaves its original bytes untouched",
+      "status": "passed",
+      "end": 1793485165772.969,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootMigration.integration.test.ts",
+      "test": "Owner persists a whole-workspace plan outside the old parent without changing active storage or source bytes",
+      "status": "passed",
+      "end": 1793485165772.969,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootMigration.integration.test.ts",
+      "test": "bounded scanning rejects excessive directory depth without touching either tree",
+      "status": "passed",
+      "end": 1793485165772.969,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootMigration.integration.test.ts",
+      "test": "durable creation, deletion and partial-copy records are inventoried as blockers while completed history stays inactive",
+      "status": "passed",
+      "end": 1793485165772.969,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootMigration.integration.test.ts",
+      "test": "a historical frozen native identity without a complete bridge is a plan conflict and its original snapshot stays unchanged",
+      "status": "passed",
+      "end": 1793485165772.969,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootMigration.integration.test.ts",
+      "test": "concurrent Owner retries preserve one plan and report target contents plus actual task blockers",
+      "status": "passed",
+      "end": 1793485165772.969,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootMigrationBlockers.integration.test.ts",
+      "test": "real queue claims and one unknown controlled Provider submission remain blockers without rewriting the task or fee",
+      "status": "passed",
+      "end": 1793485465896.672,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootMigrationNative.integration.test.ts",
+      "test": "a real SQLite project and original frozen references are inventoried through adoption and move lineage while an open Studio is a blocker",
+      "status": "passed",
+      "end": 1793485344587.9314,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootMigrationProcess.integration.test.ts",
+      "test": "retained platform state inside a mounted media root never rebuilds its host tree after detach",
+      "status": "passed",
+      "end": 1793484356812.2192,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootMigrationProcess.integration.test.ts",
+      "test": "a real detached source volume rejects planning without recreating the missing media tree",
+      "status": "passed",
+      "end": 1793484356812.2192,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootMigrationProcess.integration.test.ts",
+      "test": "a special filesystem entry fails promptly instead of blocking inventory or acquiring its ownership",
+      "status": "passed",
+      "end": 1793484356812.2192,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootMigrationProcess.integration.test.ts",
+      "test": "owned source insert at the final binding boundary invalidates a plan without any database change",
+      "status": "passed",
+      "end": 1793484356812.2192,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootMigrationProcess.integration.test.ts",
+      "test": "owned source rewrite at the final binding boundary invalidates a plan without any database change",
+      "status": "passed",
+      "end": 1793484356812.2192,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootMigrationProcess.integration.test.ts",
+      "test": "a real first-account reservation before mkdir blocks empty initialization and resumes the original request",
+      "status": "passed",
+      "end": 1793484356812.2192,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootMigrationProcess.integration.test.ts",
+      "test": "a target file inserted after the initial inventory is preserved and invalidates the saved plan",
+      "status": "passed",
+      "end": 1793484356812.2192,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootMigrationProcess.integration.test.ts",
+      "test": "large media hashing uses streams while an actual capacity boundary produces a readable reserve-space conflict",
+      "status": "passed",
+      "end": 1793484356812.2192,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootMigrationProcess.integration.test.ts",
+      "test": "native settings persist mixed accounts, empty series, unassigned and legacy scope with retained platform resources across a new process",
+      "status": "passed",
+      "end": 1793484356812.2192,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootMigrationProcess.integration.test.ts",
+      "test": "existing authorized media remains a production carve-out inside an ancestor runtime resource",
+      "status": "passed",
+      "end": 1793484356812.2192,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootPublication.integration.test.ts",
+      "test": "SIGKILL after private config publication but before database COMMIT restores source metadata and resumes the original plan",
+      "status": "passed",
+      "end": 1793484735333.0413,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootPublication.integration.test.ts",
+      "test": "root-commit-unknown retains committed plan authority and a fresh native process completes one consistent target",
+      "status": "passed",
+      "end": 1793484735333.0413,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootPublication.integration.test.ts",
+      "test": "root-activation-fail retains committed plan authority and a fresh native process completes one consistent target",
+      "status": "passed",
+      "end": 1793484735333.0413,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootPublication.integration.test.ts",
+      "test": "root-old-close-fail retains committed plan authority and a fresh native process completes one consistent target",
+      "status": "passed",
+      "end": 1793484735333.0413,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootPublication.integration.test.ts",
+      "test": "root-finalize-kill retains committed plan authority and a fresh native process completes one consistent target",
+      "status": "passed",
+      "end": 1793484735333.0413,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootPublication.integration.test.ts",
+      "test": "environment pre-secret recovery uses the same real plan proof for root-before-commit-kill and retains a tampered publication",
+      "status": "passed",
+      "end": 1793484735333.0413,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootPublication.integration.test.ts",
+      "test": "environment pre-secret recovery uses the same real plan proof for root-activation-fail and retains a tampered publication",
+      "status": "passed",
+      "end": 1793484735333.0413,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootSettings.browser.integration.test.ts",
+      "test": "formal Owner storage settings initialize, copy and open the real root, preserve errors and read the same location after reload",
+      "status": "failed",
+      "end": 1793485312750.934,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootSettings.integration.test.ts",
+      "test": "Owner sees the adopted existing media root after native restart and cannot relocate its files through ordinary initialization",
+      "status": "passed",
+      "end": 1793485710441.129,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootSettings.integration.test.ts",
+      "test": "empty workspace initialization persists authorization, reloads the actual service and Worker, and survives a fresh native process",
+      "status": "passed",
+      "end": 1793485710441.129,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootSettings.integration.test.ts",
+      "test": "interrupted initialization reconciles private config with committed database metadata on the next real process start",
+      "status": "passed",
+      "end": 1793485710441.129,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootSettings.integration.test.ts",
+      "test": "Owner initialization refuses overlapping, nonempty and low-space targets and recovers a controlled runtime reload failure",
+      "status": "passed",
+      "end": 1793485710441.129,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/mediaRootSettings.integration.test.ts",
+      "test": "an empty separately mounted volume can itself be the media root without adding a folder name",
+      "status": "passed",
+      "end": 1793485710441.129,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/nativeStorageSql.integration.test.ts",
+      "test": "effective SQL120 guards use literal owned prefixes and retain fixed publish identities",
+      "status": "passed",
+      "end": 1793485462870.922,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/nativeStorageSql.integration.test.ts",
+      "test": "fresh Owner Studio scope keeps exact frozen input and task namespace at a literal registered prefix",
+      "status": "passed",
+      "end": 1793485462870.922,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/nativeStudioPrimary.integration.test.ts",
+      "test": "native text, style and timing save once, final-file approval confirms captions and later edits invalidate it",
+      "status": "passed",
+      "end": 1793484884026.4248,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/productionSelection.integration.test.ts",
+      "test": "explicit image selections freeze two independent connections without blueprint image authority",
+      "status": "passed",
+      "end": 1793485352128.063,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/productionSelection.integration.test.ts",
+      "test": "rejects invalid choices, settings, references and budget; unknown submission cannot charge twice",
+      "status": "passed",
+      "end": 1793485352128.063,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/productionSelection.integration.test.ts",
+      "test": "legacy queued image snapshots execute unchanged after content-only saves and new requests still require a selection",
+      "status": "passed",
+      "end": 1793485352128.063,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/productionWorkspace.integration.test.ts",
+      "test": "Owner persists incomplete matches, gates native entry until visuals are ready and reopens safely",
+      "status": "passed",
+      "end": 1793485368405.2349,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/restorePublication.integration.test.ts",
+      "test": "SIGKILL at restore journal retains verifiable publication proof and fresh application Owner file reads recover",
+      "status": "failed",
+      "end": 1793485457723.1558,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/restorePublication.integration.test.ts",
+      "test": "SIGKILL at restore receipt retains verifiable publication proof and fresh application Owner file reads recover",
+      "status": "failed",
+      "end": 1793485457723.1558,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/restorePublication.integration.test.ts",
+      "test": "SIGKILL at restore config retains verifiable publication proof and fresh application Owner file reads recover",
+      "status": "failed",
+      "end": 1793485457723.1558,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/restorePublication.integration.test.ts",
+      "test": "SIGKILL at restore ready retains verifiable publication proof and fresh application Owner file reads recover",
+      "status": "failed",
+      "end": 1793485457723.1558,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/seriesDirectories.integration.test.ts",
+      "test": "creates a series and retrieves its exclusive physical container through Owner HTTP",
+      "status": "passed",
+      "end": 1793485298499.1987,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/seriesDirectories.integration.test.ts",
+      "test": "rejects client positions and exposes legacy/unassigned collection without read-time creation",
+      "status": "passed",
+      "end": 1793485298499.1987,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/seriesDirectories.integration.test.ts",
+      "test": "preserves replaced markers and rejects a directory swap during the final container INSERT",
+      "status": "passed",
+      "end": 1793485298499.1987,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/seriesDirectories.integration.test.ts",
+      "test": "read/open never recreate missing or replaced series directories and metadata rename leaves frozen versions intact",
+      "status": "passed",
+      "end": 1793485298499.1987,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/seriesDirectories.integration.test.ts",
+      "test": "refuses final commit when the account root changes even if the original child and marker are moved intact",
+      "status": "passed",
+      "end": 1793485298499.1987,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/seriesDirectories.native.integration.test.ts",
+      "test": "native runtime resumes killed series creation, preserves frozen rules and opens its actual registered Finder folder",
+      "status": "passed",
+      "end": 1793485416684.5654,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/seriesDirectoryFaults.integration.test.ts",
+      "test": "resumes mkdir and identity-publication interruptions and compensates only its own marker-only folder",
+      "status": "passed",
+      "end": 1793485472047.6665,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/speechSelection.integration.test.ts",
+      "test": "speech requests freeze connection and voice while defaults change, and completed audio waits for explicit native adoption",
+      "status": "passed",
+      "end": 1793485987731.3574,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/speechSelection.integration.test.ts",
+      "test": "fresh formal speech adoption drives actual video duration and invalidates subtitle evidence when a longer voice is adopted",
+      "status": "passed",
+      "end": 1793485987731.3574,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/speechSelection.integration.test.ts",
+      "test": "speech validates actual choices, ownership and budget, and an unknown paid request cannot be sent again after restart",
+      "status": "passed",
+      "end": 1793485987731.3574,
+      "phase": "integration-storage-recovery-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceAudio.integration.test.ts",
+      "test": "Owner prepares manual episode music, adopts actual audio and persists native independent mix",
+      "status": "passed",
+      "end": 1793483995232.786,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceAudio.integration.test.ts",
+      "test": "Freesound preparation traverses actual Worker lease and result, records attribution, retries failed work and restores after restart",
+      "status": "passed",
+      "end": 1793483995232.786,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceAudio.integration.test.ts",
+      "test": "source mode uses real native source extraction task without fabricating a legacy video-ready draft",
+      "status": "passed",
+      "end": 1793483995232.786,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceAudio.integration.test.ts",
+      "test": "actual native audio renders source, speech, ambience, music ducking and positioned sound without multiplying speech in parallel slots",
+      "status": "passed",
+      "end": 1793483995232.786,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceAudio.integration.test.ts",
+      "test": "real loop_worker planning never queues legacy soundtrack cues for an editable native workspace",
+      "status": "passed",
+      "end": 1793483995232.786,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceAudio.integration.test.ts",
+      "test": "real loop_worker planning retains the legacy soundtrack path outside native workspaces",
+      "status": "passed",
+      "end": 1793483995232.786,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceAudio.integration.test.ts",
+      "test": "nonzero source extraction freezes the selected native window and partial coverage cannot align an entire shot",
+      "status": "passed",
+      "end": 1793483995232.786,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceAudio.integration.test.ts",
+      "test": "explicit narration adoption advances the shared edit fence and late first results remain candidates",
+      "status": "passed",
+      "end": 1793483995232.786,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceAudioProjection.integration.test.ts",
+      "test": "native workspace projection follows audible source over muted prior speech and reports none without altering music or effects",
+      "status": "passed",
+      "end": 1793485197550.5024,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceAudioSelection.integration.test.ts",
+      "test": "independent audio searches freeze connection and query across blueprint changes, retries, audition and explicit native adoption",
+      "status": "passed",
+      "end": 1793485086080.3706,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceAudioSelection.integration.test.ts",
+      "test": "invalid audio selections do not enqueue and unavailable search never blocks uploaded music or original audio",
+      "status": "passed",
+      "end": 1793485086080.3706,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceAudioStorage.integration.test.ts",
+      "test": "replaced production directory blocks speech submission before reserving fees or contacting the Provider",
+      "status": "passed",
+      "end": 1793485216643.3748,
+      "phase": "integration-fixture-fixes-after-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceAudioStorage.integration.test.ts",
+      "test": "legacy speech retains actual media, confirmed input and one paid submission after rename/restart",
+      "status": "passed",
+      "end": 1793485216643.3748,
+      "phase": "integration-fixture-fixes-after-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceAudioStorage.integration.test.ts",
+      "test": "registered speech retains actual media, confirmed input and one paid submission after rename/restart",
+      "status": "passed",
+      "end": 1793485216643.3748,
+      "phase": "integration-fixture-fixes-after-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceAudioStorage.integration.test.ts",
+      "test": "registered source video extracts only its actual selected audio window into this production",
+      "status": "passed",
+      "end": 1793485216643.3748,
+      "phase": "integration-fixture-fixes-after-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceAudioStorage.integration.test.ts",
+      "test": "registered music and effects retain frozen searches on retry and remain playable managed files after external originals disappear",
+      "status": "passed",
+      "end": 1793485216643.3748,
+      "phase": "integration-fixture-fixes-after-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceAudioStorage.integration.test.ts",
+      "test": "registered speech drives the actual alignment worker and preserves confirmed subtitle text and timing after restart",
+      "status": "passed",
+      "end": 1793485216643.3748,
+      "phase": "integration-fixture-fixes-after-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceAudioStorage.integration.test.ts",
+      "test": "legacy synchronized preview renders actual approved source audio and keeps the native project beside the proxy",
+      "status": "passed",
+      "end": 1793485216643.3748,
+      "phase": "integration-fixture-fixes-after-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceAudioStorage.integration.test.ts",
+      "test": "registered synchronized preview renders actual approved source audio and keeps the native project beside the proxy",
+      "status": "passed",
+      "end": 1793485216643.3748,
+      "phase": "integration-fixture-fixes-after-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceAudioStorage.integration.test.ts",
+      "test": "subtitle readback rejects a replaced production directory instead of reporting the old confirmed state as current",
+      "status": "passed",
+      "end": 1793485216643.3748,
+      "phase": "integration-fixture-fixes-after-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceAudioStorage.integration.test.ts",
+      "test": "uploaded narration music and effects keep owned snapshots at the registered location after all external originals are removed",
+      "status": "passed",
+      "end": 1793485216643.3748,
+      "phase": "integration-fixture-fixes-after-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceCandidates.integration.test.ts",
+      "test": "completed local speech versions stay immutable and rejecting a candidate preserves the native project",
+      "status": "passed",
+      "end": 1793484451455.6997,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceCandidates.integration.test.ts",
+      "test": "explicit candidate duration changes only the stable main voice and stale attempts preserve the saved edit",
+      "status": "passed",
+      "end": 1793484451455.6997,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceCandidates.integration.test.ts",
+      "test": "prepared old speech and changed candidate bytes cannot overwrite a newer input",
+      "status": "passed",
+      "end": 1793484451455.6997,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceCandidates.integration.test.ts",
+      "test": "adopting actual speech expires only affected caption evidence and a late alignment cannot restore it",
+      "status": "passed",
+      "end": 1793484451455.6997,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceCandidates.integration.test.ts",
+      "test": "new registered speech enters the existing Studio media session before relink and cannot be finalized before native save",
+      "status": "passed",
+      "end": 1793484451455.6997,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceCandidates.integration.test.ts",
+      "test": "a saved native candidate can recover its missing adoption receipt after restart without regenerating speech",
+      "status": "passed",
+      "end": 1793484451455.6997,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceCandidates.integration.test.ts",
+      "test": "explicit main-voice candidate adoption switches source and none atomically while preserving native sounds",
+      "status": "passed",
+      "end": 1793484451455.6997,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceCaptions.integration.test.ts",
+      "test": "Owner edits only the chosen native caption lane and persists manual timing without shot approval",
+      "status": "passed",
+      "end": 1793484862425.3503,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceCaptions.integration.test.ts",
+      "test": "current native caption evidence follows the real alignment queue and rejects a late Worker result after a text edit",
+      "status": "passed",
+      "end": 1793484862425.3503,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceCaptions.integration.test.ts",
+      "test": "real landscape and portrait Remotion frames contain caption pixels inside the chosen safe area",
+      "status": "passed",
+      "end": 1793484862425.3503,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceCatalog.integration.test.ts",
+      "test": "Owner catalog projects only current workspace export and delivery evidence",
+      "status": "passed",
+      "end": 1793485474205.469,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceDelivery.integration.test.ts",
+      "test": "Owner delivery requires an exact confirmed export",
+      "status": "passed",
+      "end": 1793484112055.6265,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceDelivery.integration.test.ts",
+      "test": "real Worker verifies exact package, fences tamper and missing inputs, retries and survives restart",
+      "status": "passed",
+      "end": 1793484112055.6265,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceDelivery.integration.test.ts",
+      "test": "a queued package cannot complete or retry against a different final export",
+      "status": "passed",
+      "end": 1793484112055.6265,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceDelivery.integration.test.ts",
+      "test": "delivery records the used trimmed voice source and never substitutes an unadopted draft text",
+      "status": "passed",
+      "end": 1793484112055.6265,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceExport.integration.test.ts",
+      "test": "Owner checks actual used content before exporting and confirms exact final bytes",
+      "status": "passed",
+      "end": 1793484791322.0796,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceFirstVideo.integration.test.ts",
+      "test": "fresh authored first video uses current preparation without a legacy approval (actual voice=false)",
+      "status": "passed",
+      "end": 0,
+      "phase": "integration-first-video-after.log"
+    },
+    {
+      "file": "src/local-app/workspaceFirstVideo.integration.test.ts",
+      "test": "fresh authored first video uses current preparation without a legacy approval (actual voice=true)",
+      "status": "passed",
+      "end": 0,
+      "phase": "integration-first-video-after.log"
+    },
+    {
+      "file": "src/local-app/workspaceFirstVideo.integration.test.ts",
+      "test": "replanning discards current voice adoption without discarding historical decisions, then adopts the first new voice",
+      "status": "passed",
+      "end": 0,
+      "phase": "integration-first-video-after.log"
+    },
+    {
+      "file": "src/local-app/workspaceFirstVideo.source.integration.test.ts",
+      "test": "first video freezes the actual source main voice without requiring an unused TTS draft",
+      "status": "passed",
+      "end": 1793485951779.7515,
+      "phase": "integration-contracts-green.json"
+    },
+    {
+      "file": "src/local-app/workspaceImageGeneration.integration.test.ts",
+      "test": "HTTP → isolated queue → actual Worker publishes a reference-based image batch; selecting and adopting remain explicit",
+      "status": "passed",
+      "end": 1793485468824.282,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceImages.integration.test.ts",
+      "test": "Owner uploads and persists a native still image with duration and composition",
+      "status": "passed",
+      "end": 1793484819905.1638,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceImages.integration.test.ts",
+      "test": "Owner renders static and pan/zoom native images without external generation (landscape=false)",
+      "status": "passed",
+      "end": 1793484819905.1638,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceImages.integration.test.ts",
+      "test": "Owner renders static and pan/zoom native images without external generation (landscape=true)",
+      "status": "passed",
+      "end": 1793484819905.1638,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceImages.integration.test.ts",
+      "test": "Owner sees missing and changed image blockers without a replacement task or source",
+      "status": "passed",
+      "end": 1793484819905.1638,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceImages.integration.test.ts",
+      "test": "AI image generation retains the selected execution path and blocks when no registered connection exists",
+      "status": "passed",
+      "end": 1793484819905.1638,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceImages.integration.test.ts",
+      "test": "Owner first image videos preserve completed outputs and manual edit boundary (edited=false)",
+      "status": "passed",
+      "end": 1793484819905.1638,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceImages.integration.test.ts",
+      "test": "Owner first image videos preserve completed outputs and manual edit boundary (edited=true)",
+      "status": "passed",
+      "end": 1793484819905.1638,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceNarration.integration.test.ts",
+      "test": "Owner can prepare disabled narration before editing without queuing external tasks",
+      "status": "passed",
+      "end": 1793484541968.3445,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceNarration.integration.test.ts",
+      "test": "confirmed narration uses the real Worker, survives restart and assembles actual duration without duplicate submissions",
+      "status": "passed",
+      "end": 1793484541968.3445,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceNarration.integration.test.ts",
+      "test": "unknown paid submissions stay blocked across restart and input changes; definite rejection allows one explicit retry",
+      "status": "passed",
+      "end": 1793484541968.3445,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceNarration.integration.test.ts",
+      "test": "both first narration tracks assemble and crop an available source without invalidating the other shot",
+      "status": "passed",
+      "end": 1793484541968.3445,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceNarration.integration.test.ts",
+      "test": "a running task may register its immutable output but late speech cannot replace changed input or advance delivery",
+      "status": "passed",
+      "end": 1793484541968.3445,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceNarration.integration.test.ts",
+      "test": "manual narration and disabled modes never enqueue TTS, while short pictures preserve a recoverable conflict",
+      "status": "passed",
+      "end": 1793484541968.3445,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceNarration.integration.test.ts",
+      "test": "actual narration drives the paid video window and freezes speech provenance (changed=false)",
+      "status": "passed",
+      "end": 1793484541968.3445,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceNarration.integration.test.ts",
+      "test": "actual narration drives the paid video window and freezes speech provenance (changed=true)",
+      "status": "passed",
+      "end": 1793484541968.3445,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceNarration.integration.test.ts",
+      "test": "first speech remains a candidate after a real native save and never overwrites the edited project",
+      "status": "passed",
+      "end": 1793484541968.3445,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceNarration.integration.test.ts",
+      "test": "speech beyond the Provider maximum blocks a video submission without cutting words",
+      "status": "passed",
+      "end": 1793484541968.3445,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceNarration.integration.test.ts",
+      "test": "legacy narration already running before workspace activation cannot promote the new draft or delivery",
+      "status": "passed",
+      "end": 1793484541968.3445,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceNarration.integration.test.ts",
+      "test": "one shot with two visual ranges keeps one voice and its original task after deleting the first range",
+      "status": "passed",
+      "end": 1793484541968.3445,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceNarration.integration.test.ts",
+      "test": "registered completed task media resolve directly without a fake material and reject changed bytes",
+      "status": "passed",
+      "end": 1793484541968.3445,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceNativeStorage.integration.test.ts",
+      "test": "Owner edits, restarts, exports and delivers the sole native workspace (legacy)",
+      "status": "passed",
+      "end": 1793484660929.054,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceNativeStorage.integration.test.ts",
+      "test": "Owner edits, restarts, exports and delivers the sole native workspace (registered)",
+      "status": "passed",
+      "end": 1793484660929.054,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceNativeStorage.integration.test.ts",
+      "test": "an owned native child crash removes its private compiler cache and preserves the SQLite workspace",
+      "status": "passed",
+      "end": 1793484660929.054,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspacePexels.integration.test.ts",
+      "test": "Owner queries Pexels, previews an explicit result, imports and explicitly adopts managed bytes after restart",
+      "status": "passed",
+      "end": 1793484579750.451,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspacePexels.integration.test.ts",
+      "test": "Pexels failures stay recoverable, validate external URLs and bytes, and never generate or adopt automatically",
+      "status": "passed",
+      "end": 1793484579750.451,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspacePexels.integration.test.ts",
+      "test": "queued Pexels requests retain exact credentials across rotation and old candidates remain selectable after a new query",
+      "status": "passed",
+      "end": 1793484579750.451,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspacePexels.integration.test.ts",
+      "test": "a short Pexels video gives recoverable duration feedback and only an explicit duration choice changes the native window",
+      "status": "passed",
+      "end": 1793484579750.451,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspacePexels.integration.test.ts",
+      "test": "Pexels results and unimported previews for one shot survive many searches on another shot",
+      "status": "passed",
+      "end": 1793484579750.451,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceReviewFixes.integration.test.ts",
+      "test": "actual delivery does not claim narration muted by the leaf native track was spoken",
+      "status": "passed",
+      "end": 1793484169081.5784,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceReviewFixes.integration.test.ts",
+      "test": "actual delivery does not claim narration muted by the parent native track was spoken",
+      "status": "passed",
+      "end": 1793484169081.5784,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceReviewFixes.integration.test.ts",
+      "test": "first speech preserves Owner edits made before submission and requires the existing candidate decision",
+      "status": "passed",
+      "end": 1793484169081.5784,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceReviewFixes.integration.test.ts",
+      "test": "first speech preserves Owner edits made during submission and requires the existing candidate decision",
+      "status": "passed",
+      "end": 1793484169081.5784,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceReviewFixes.integration.test.ts",
+      "test": "first speech preserves Owner edits made captions submission and requires the existing candidate decision",
+      "status": "passed",
+      "end": 1793484169081.5784,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceReviewFixes.integration.test.ts",
+      "test": "first speech preserves Owner edits made locked submission and requires the existing candidate decision",
+      "status": "passed",
+      "end": 1793484169081.5784,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceReviewFixes.integration.test.ts",
+      "test": "preserved legacy native edits stay protected when their first workspace speech completes",
+      "status": "passed",
+      "end": 1793484169081.5784,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceScriptResume.integration.test.ts",
+      "test": "Owner confirms a formatting-only revision while preserving the exact edited project and old invalidated evidence",
+      "status": "passed",
+      "end": 1793485432099.6865,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceScriptResume.integration.test.ts",
+      "test": "substantive script edits cannot bypass the stale-project guard through formatting recovery",
+      "status": "passed",
+      "end": 1793485432099.6865,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceShots.integration.test.ts",
+      "test": "Owner reorders native shot instances without rewriting registered sources or storyboard history",
+      "status": "passed",
+      "end": 1793484265004.9941,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceShots.integration.test.ts",
+      "test": "a shot with two visual ranges owns one stable caption lane when its first range is removed",
+      "status": "passed",
+      "end": 1793484265004.9941,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceShots.integration.test.ts",
+      "test": "native range locks, frame steps and parallel composition preserve source instances through Owner persistence",
+      "status": "passed",
+      "end": 1793484265004.9941,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceShots.integration.test.ts",
+      "test": "two ranges retain one actual main voice and full following captions after deleting their first visual instance",
+      "status": "passed",
+      "end": 1793484265004.9941,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceShots.integration.test.ts",
+      "test": "reopening an actively edited native structure reuses its running Studio and latest project",
+      "status": "passed",
+      "end": 1793484265004.9941,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceShots.integration.test.ts",
+      "test": "upgrades duplicate legacy visual caption lanes into one shot lane without losing the complete body or cues",
+      "status": "passed",
+      "end": 1793484265004.9941,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceShots.integration.test.ts",
+      "test": "added native shots accept registered images and source video while the approved storyboard stays unchanged",
+      "status": "passed",
+      "end": 1793484265004.9941,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceShots.integration.test.ts",
+      "test": "native Owner save rejects deleting the last effective shot while retaining the recoverable document",
+      "status": "passed",
+      "end": 1793484265004.9941,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceShots.integration.test.ts",
+      "test": "initial all-placeholder drafts remain saved but cannot enter native editing",
+      "status": "passed",
+      "end": 1793484265004.9941,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceShots.integration.test.ts",
+      "test": "removes a selected shot, retains original media and historical projects, and protects the final shot after reopening",
+      "status": "passed",
+      "end": 1793484265004.9941,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceVideo.integration.test.ts",
+      "test": "Owner prepares independent exact ranges from one source across multiple shots",
+      "status": "passed",
+      "end": 0,
+      "phase": "integration-video-after.log"
+    },
+    {
+      "file": "src/local-app/workspaceVideo.integration.test.ts",
+      "test": "Owner renders many-to-many exact video ranges in native Studio (landscape=false)",
+      "status": "passed",
+      "end": 0,
+      "phase": "integration-video-after.log"
+    },
+    {
+      "file": "src/local-app/workspaceVideo.integration.test.ts",
+      "test": "Owner renders many-to-many exact video ranges in native Studio (landscape=true)",
+      "status": "passed",
+      "end": 0,
+      "phase": "integration-video-after.log"
+    },
+    {
+      "file": "src/local-app/workspaceVideo.integration.test.ts",
+      "test": "Owner moves a locked range by exactly one frame in real native output",
+      "status": "passed",
+      "end": 0,
+      "phase": "integration-video-after.log"
+    },
+    {
+      "file": "src/local-app/workspaceVideo.integration.test.ts",
+      "test": "Owner boundaries reject stale, foreign, invalid, tampered and active-editor range writes",
+      "status": "passed",
+      "end": 0,
+      "phase": "integration-video-after.log"
+    },
+    {
+      "file": "src/local-app/workspaceVideo.integration.test.ts",
+      "test": "Owner cannot select audio-only tail beyond the video stream",
+      "status": "passed",
+      "end": 0,
+      "phase": "integration-video-after.log"
+    },
+    {
+      "file": "src/local-app/workspaceVideoSelection.integration.test.ts",
+      "test": "video selections generate real independent candidates without blueprint tools or added-shot type",
+      "status": "passed",
+      "end": 1793485252870.961,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceVideoSelection.integration.test.ts",
+      "test": "video rejects invalid selection, input and budget before submission and preserves unknown-result protection across restart",
+      "status": "passed",
+      "end": 1793485252870.961,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceVideoSelection.integration.test.ts",
+      "test": "selected video model uses actual adopted source voice window, rejects overflow and protects against later voice changes",
+      "status": "passed",
+      "end": 1793485252870.961,
+      "phase": "integration-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceVisualCandidates.integration.test.ts",
+      "test": "Owner registers a local visual candidate and replaces only one source instance",
+      "status": "passed",
+      "end": 0,
+      "phase": "integration-visual-candidates-after.log"
+    },
+    {
+      "file": "src/local-app/workspaceVisualCandidates.integration.test.ts",
+      "test": "Owner locally fills a placeholder with a registered still image without video generation",
+      "status": "passed",
+      "end": 0,
+      "phase": "integration-visual-candidates-after.log"
+    },
+    {
+      "file": "src/local-app/workspaceVisualCandidates.integration.test.ts",
+      "test": "Owner locally fills a placeholder with a registered pan-zoom image without video generation",
+      "status": "passed",
+      "end": 0,
+      "phase": "integration-visual-candidates-after.log"
+    },
+    {
+      "file": "src/local-app/workspaceVisualCandidates.integration.test.ts",
+      "test": "Owner registers new media into the existing live pool and can save and reopen it",
+      "status": "passed",
+      "end": 0,
+      "phase": "integration-visual-candidates-after.log"
+    },
+    {
+      "file": "src/local-app/workspaceVisualCandidates.integration.test.ts",
+      "test": "Owner creates a controlled Provider visual candidate during editing without changing Episode stage",
+      "status": "passed",
+      "end": 0,
+      "phase": "integration-visual-candidates-after.log"
+    },
+    {
+      "file": "src/local-app/workspaceVisualCandidates.integration.test.ts",
+      "test": "visual generation freezes the actual source voice window instead of retained muted TTS and rejects a later route change",
+      "status": "passed",
+      "end": 0,
+      "phase": "integration-visual-candidates-after.log"
+    },
+    {
+      "file": "src/local-app/workspaceVisualCandidates.integration.test.ts",
+      "test": "unknown paid visual submissions cannot be bypassed by retry or a new prompt",
+      "status": "passed",
+      "end": 0,
+      "phase": "integration-visual-candidates-after.log"
+    },
+    {
+      "file": "src/local-app/workspaceVisualCandidates.integration.test.ts",
+      "test": "a visual task with a saved Provider ID resumes polling without a second paid submission",
+      "status": "passed",
+      "end": 0,
+      "phase": "integration-visual-candidates-after.log"
+    },
+    {
+      "file": "src/local-app/workspaceVisualCandidates.integration.test.ts",
+      "test": "short visual source requires an explicit duration decision without repeating or moving other clips",
+      "status": "passed",
+      "end": 0,
+      "phase": "integration-visual-candidates-after.log"
+    },
+    {
+      "file": "src/local-app/workspaceVisualCandidates.integration.test.ts",
+      "test": "voice gain and BGM edits do not stale a visual request or overwrite the new mix",
+      "status": "passed",
+      "end": 0,
+      "phase": "integration-visual-candidates-after.log"
+    },
+    {
+      "file": "src/local-app/workspaceVisualCandidates.integration.test.ts",
+      "test": "an unavailable unused visual candidate does not prevent editing and cannot be adopted",
+      "status": "passed",
+      "end": 0,
+      "phase": "integration-visual-candidates-after.log"
+    },
+    {
+      "file": "src/local-app/workspaceVisualCandidates.integration.test.ts",
+      "test": "added shots accept registered local visuals and explicitly selected generation and changed target input blocks a new paid POST",
+      "status": "passed",
+      "end": 0,
+      "phase": "integration-visual-candidates-after.log"
+    },
+    {
+      "file": "src/local-app/workspaceVisualCandidates.integration.test.ts",
+      "test": "manual video adoption preserves the selected source interval and refuses a short range",
+      "status": "passed",
+      "end": 0,
+      "phase": "integration-visual-candidates-after.log"
+    },
+    {
+      "file": "src/local-app/workspaceVisualCandidates.integration.test.ts",
+      "test": "video generation freezes and applies the first-frame composition without changing the source image",
+      "status": "passed",
+      "end": 0,
+      "phase": "integration-visual-candidates-after.log"
+    },
+    {
+      "file": "src/local-app/workspaceVisualStorage.integration.test.ts",
+      "test": "legacy production location owns image generation after rename/restart while request, fees and explicit adoption stay frozen",
+      "status": "passed",
+      "end": 1793485692869.711,
+      "phase": "integration-visual-storage-after-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceVisualStorage.integration.test.ts",
+      "test": "registered production location owns image generation after rename/restart while request, fees and explicit adoption stay frozen",
+      "status": "passed",
+      "end": 1793485692869.711,
+      "phase": "integration-visual-storage-after-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceVisualStorage.integration.test.ts",
+      "test": "registered production directory contains Pexels searches, downloads and adopted owned copies after preview and external source go offline",
+      "status": "passed",
+      "end": 1793485692869.711,
+      "phase": "integration-visual-storage-after-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceVisualStorage.integration.test.ts",
+      "test": "registered video output resumes the frozen Provider task after restart without a second submission or namespace change",
+      "status": "passed",
+      "end": 1793485692869.711,
+      "phase": "integration-visual-storage-after-results.json"
+    },
+    {
+      "file": "src/local-app/workspaceVisualStorage.integration.test.ts",
+      "test": "replaced registered directory blocks new visual writes and an already queued task before any paid submission",
+      "status": "passed",
+      "end": 1793485692869.711,
+      "phase": "integration-visual-storage-after-results.json"
+    }
+  ]
+}

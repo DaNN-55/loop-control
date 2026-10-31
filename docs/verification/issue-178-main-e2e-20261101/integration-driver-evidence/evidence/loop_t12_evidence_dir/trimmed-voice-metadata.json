@@ -1,0 +1,49 @@
+{
+  "title": "裁切正文证据",
+  "description": "",
+  "tags": [],
+  "exportId": "865c5aef-0887-4cb4-aaf6-d8e14da5ed64",
+  "contentSha256": "1a886d70dedc0216cf8f31c6c86e9b79a6b6ff01d9c8ae9be3b2840b41320af9",
+  "scriptRevisionId": "f2dc5fcb-1c18-4bf1-a70a-cf796b8ae7bf",
+  "narration": [
+    {
+      "shotId": "shot-1",
+      "baselineText": "第一镜",
+      "sourceText": "这份实际音轨保留不可变的原口播正文。",
+      "adoptedText": null,
+      "textCoverage": "partial_or_retimed_unverified",
+      "windows": [
+        {
+          "srcInFrame": 12,
+          "usedDurationSeconds": 2,
+          "sourceDurationSeconds": 2,
+          "playbackRate": 1,
+          "fps": 30,
+          "audible": true
+        }
+      ],
+      "textSource": "owner_adoption",
+      "sourceDiffersFromBaseline": true,
+      "differsFromBaseline": null,
+      "audioTrackId": "4dbc3c21-4e37-4489-babb-65925701e46f",
+      "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+      "itemId": "workspace-narration-shot-shot-1",
+      "source": "episodes/2f0755a6-3fa3-4738-aee4-8a0fa08032f3/native-tasks/d5432215-b464-4a9c-9c14-594667980615/shot-narration-shot-1-48638ec5-4c18-4bc4-9bc5-262daa349963.mp3"
+    },
+    {
+      "shotId": "shot-2",
+      "baselineText": "缺少素材的第二镜。",
+      "sourceText": null,
+      "adoptedText": null,
+      "textCoverage": "no_recorded_text",
+      "windows": [],
+      "textSource": "not_recorded",
+      "sourceDiffersFromBaseline": null,
+      "differsFromBaseline": null,
+      "audioTrackId": null,
+      "sha256": null,
+      "itemId": null,
+      "source": null
+    }
+  ]
+}

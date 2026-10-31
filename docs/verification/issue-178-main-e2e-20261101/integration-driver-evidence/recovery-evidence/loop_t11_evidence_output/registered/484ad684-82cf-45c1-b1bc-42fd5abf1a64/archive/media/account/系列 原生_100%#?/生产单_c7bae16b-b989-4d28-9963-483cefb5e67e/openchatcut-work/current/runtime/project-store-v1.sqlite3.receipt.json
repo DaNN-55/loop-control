@@ -1,0 +1,22 @@
+{
+  "source": "/private/tmp/loop-t06-volume-5g7wUt/mounted/t11-storage/state/loop-153-m7YLML/account/系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e/openchatcut-work/current/runtime/project-store-v1",
+  "count": 2,
+  "importedAt": "2026-10-31T22:31:00.466Z",
+  "phase": 2,
+  "keys": {
+    "projects": "c164d592a83c51fc049e7d0b42b3c0469cd21d883bef00c34599e4c83955deb2",
+    "project:loop-control-c7bae16b-b989-4d28-9963-483cefb5e67e": "c164d592a83c51fc049e7d0b42b3c0469cd21d883bef00c34599e4c83955deb2"
+  },
+  "sources": {
+    "projects": {
+      "path": "/private/tmp/loop-t06-volume-5g7wUt/mounted/t11-storage/state/loop-153-m7YLML/account/系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e/openchatcut-work/current/runtime/project-store-v1.json",
+      "sha256": "c164d592a83c51fc049e7d0b42b3c0469cd21d883bef00c34599e4c83955deb2",
+      "kind": "project-store-monolith"
+    },
+    "project:loop-control-c7bae16b-b989-4d28-9963-483cefb5e67e": {
+      "path": "/private/tmp/loop-t06-volume-5g7wUt/mounted/t11-storage/state/loop-153-m7YLML/account/系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e/openchatcut-work/current/runtime/project-store-v1.json",
+      "sha256": "c164d592a83c51fc049e7d0b42b3c0469cd21d883bef00c34599e4c83955deb2",
+      "kind": "project-store-monolith"
+    }
+  }
+}

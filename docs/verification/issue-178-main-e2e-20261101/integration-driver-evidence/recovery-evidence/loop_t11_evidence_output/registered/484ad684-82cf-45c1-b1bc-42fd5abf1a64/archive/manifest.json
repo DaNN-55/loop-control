@@ -1,0 +1,1173 @@
+{
+  "storageConfiguration": {
+    "storageOwnerId": "f93e417f-5d9b-47f5-9609-38dbb14e54f7",
+    "automaticBackups": false,
+    "retainedRoots": {
+      "backupRoot": "/private/tmp/loop-t06-volume-5g7wUt/mounted/t11-storage/backups/loop_t24_restore_a6c1ac9bdbe8",
+      "stateDirectory": "/private/tmp/loop-t06-volume-5g7wUt/mounted/t11-storage/runtime/state",
+      "programRoot": "/private/tmp/loop-control-main-e2e-20261101/integration-regression/OpenChatCut",
+      "modelCache": "/private/tmp/loop-t06-volume-5g7wUt/mounted/t11-storage/models"
+    }
+  },
+  "version": "loop-native-backup/v2",
+  "database": "loop_t24_restore_a6c1ac9bdbe8",
+  "jobId": "484ad684-82cf-45c1-b1bc-42fd5abf1a64",
+  "mediaRoot": "/private/tmp/loop-t06-volume-5g7wUt/mounted/t11-storage/state/loop-153-m7YLML",
+  "createdAt": "2026-10-31T22:31:05.798Z",
+  "consistency": "postgres-exported-snapshot; verified media copy with unchanged source inventory",
+  "archiveSha256": "7b65768dffd9e588ddf62aec8f7c3d43493ba67455543993dc5e317535ed761e",
+  "inventory": {
+    "public.tasks": {
+      "rows": 1
+    },
+    "public.series": {
+      "rows": 1
+    },
+    "public.accounts": {
+      "rows": 1
+    },
+    "public.episodes": {
+      "rows": 1
+    },
+    "public.approvals": {
+      "rows": 0
+    },
+    "public.artifacts": {
+      "rows": 2
+    },
+    "public.task_runs": {
+      "rows": 0
+    },
+    "public.asset_locks": {
+      "rows": 0
+    },
+    "public.audio_tracks": {
+      "rows": 0
+    },
+    "public.audit_events": {
+      "rows": 1
+    },
+    "local_identity.owners": {
+      "rows": 2
+    },
+    "public.prompt_versions": {
+      "rows": 3
+    },
+    "public.review_packages": {
+      "rows": 2
+    },
+    "public.series_versions": {
+      "rows": 1
+    },
+    "public.qc_review_issues": {
+      "rows": 0
+    },
+    "public.state_transitions": {
+      "rows": 0
+    },
+    "public.review_annotations": {
+      "rows": 0
+    },
+    "public.account_memberships": {
+      "rows": 1
+    },
+    "public.external_connections": {
+      "rows": 0
+    },
+    "public.worker_episode_turns": {
+      "rows": 0
+    },
+    "local_identity.history_files": {
+      "rows": 0
+    },
+    "local_identity.import_record": {
+      "rows": 1
+    },
+    "local_identity.input_episodes": {
+      "rows": 1
+    },
+    "local_identity.restore_record": {
+      "rows": 0
+    },
+    "public.episode_read_revisions": {
+      "rows": 7
+    },
+    "local_identity.automation_jobs": {
+      "rows": 0
+    },
+    "local_identity.history_sources": {
+      "rows": 0
+    },
+    "public.audio_track_annotations": {
+      "rows": 0
+    },
+    "public.production_dependencies": {
+      "rows": 0
+    },
+    "public.shot_preparation_drafts": {
+      "rows": 0
+    },
+    "public.storyboard_review_shots": {
+      "rows": 0
+    },
+    "local_identity.automation_plans": {
+      "rows": 0
+    },
+    "local_identity.command_receipts": {
+      "rows": 7
+    },
+    "local_identity.historical_tasks": {
+      "rows": 0
+    },
+    "local_identity.history_versions": {
+      "rows": 0
+    },
+    "public.production_invalidations": {
+      "rows": 0
+    },
+    "public.worker_resource_ceilings": {
+      "rows": 0
+    },
+    "local_identity.owner_preferences": {
+      "rows": 0
+    },
+    "local_identity.schema_migrations": {
+      "rows": 120
+    },
+    "local_identity.workspace_exports": {
+      "rows": 0
+    },
+    "public.pre_render_review_members": {
+      "rows": 0
+    },
+    "public.worker_scheduler_settings": {
+      "rows": 0
+    },
+    "local_identity.connection_intents": {
+      "rows": 0
+    },
+    "local_identity.media_root_binding": {
+      "rows": 1
+    },
+    "local_identity.script_productions": {
+      "rows": 0
+    },
+    "public.account_blueprint_versions": {
+      "rows": 1
+    },
+    "public.generation_account_budgets": {
+      "rows": 0
+    },
+    "local_identity.automation_attempts": {
+      "rows": 0
+    },
+    "local_identity.connection_bindings": {
+      "rows": 0
+    },
+    "local_identity.historical_episodes": {
+      "rows": 0
+    },
+    "local_identity.history_source_rows": {
+      "rows": 0
+    },
+    "local_identity.secret_access_audit": {
+      "rows": 0
+    },
+    "public.material_revision_approvals": {
+      "rows": 0
+    },
+    "public.notification_delivery_state": {
+      "rows": 0
+    },
+    "public.storyboard_audio_selections": {
+      "rows": 0
+    },
+    "local_identity.workspace_deliveries": {
+      "rows": 0
+    },
+    "local_identity.workspace_narrations": {
+      "rows": 0
+    },
+    "public.external_connection_versions": {
+      "rows": 0
+    },
+    "public.notification_delivery_events": {
+      "rows": 0
+    },
+    "public.paid_generation_reservations": {
+      "rows": 0
+    },
+    "local_identity.production_workspaces": {
+      "rows": 1
+    },
+    "local_identity.secret_access_windows": {
+      "rows": 0
+    },
+    "local_identity.workspace_shot_inputs": {
+      "rows": 2
+    },
+    "public.production_material_revisions": {
+      "rows": 2
+    },
+    "local_identity.history_retained_files": {
+      "rows": 0
+    },
+    "local_identity.workspace_preparations": {
+      "rows": 1
+    },
+    "local_identity.episode_asset_locations": {
+      "rows": 1
+    },
+    "local_identity.episode_storage_lineage": {
+      "rows": 0
+    },
+    "local_identity.historical_audit_events": {
+      "rows": 0
+    },
+    "local_identity.material_import_origins": {
+      "rows": 0
+    },
+    "local_identity.workspace_export_issues": {
+      "rows": 0
+    },
+    "local_identity.account_creation_intents": {
+      "rows": 0
+    },
+    "local_identity.episode_creation_intents": {
+      "rows": 0
+    },
+    "local_identity.episode_deletion_intents": {
+      "rows": 0
+    },
+    "local_identity.history_file_protections": {
+      "rows": 0
+    },
+    "local_identity.material_reference_names": {
+      "rows": 0
+    },
+    "local_identity.workspace_audio_requests": {
+      "rows": 0
+    },
+    "local_identity.workspace_image_requests": {
+      "rows": 0
+    },
+    "local_identity.account_asset_directories": {
+      "rows": 1
+    },
+    "local_identity.connection_probe_evidence": {
+      "rows": 0
+    },
+    "local_identity.connection_qualifications": {
+      "rows": 0
+    },
+    "local_identity.history_episode_deletions": {
+      "rows": 0
+    },
+    "local_identity.workspace_pexels_requests": {
+      "rows": 0
+    },
+    "public.external_connection_verifications": {
+      "rows": 0
+    },
+    "local_identity.account_storage_containers": {
+      "rows": 1
+    },
+    "local_identity.container_creation_intents": {
+      "rows": 1
+    },
+    "local_identity.historical_automation_jobs": {
+      "rows": 0
+    },
+    "local_identity.history_projection_results": {
+      "rows": 0
+    },
+    "local_identity.history_source_preferences": {
+      "rows": 0
+    },
+    "local_identity.workspace_caption_evidence": {
+      "rows": 2
+    },
+    "public.pre_render_review_member_decisions": {
+      "rows": 0
+    },
+    "local_identity.account_directory_locations": {
+      "rows": 0
+    },
+    "local_identity.episode_planning_selections": {
+      "rows": 1
+    },
+    "local_identity.historical_automation_plans": {
+      "rows": 0
+    },
+    "local_identity.history_episode_preferences": {
+      "rows": 0
+    },
+    "local_identity.storage_location_operations": {
+      "rows": 0
+    },
+    "local_identity.workspace_legacy_recoveries": {
+      "rows": 0
+    },
+    "local_identity.workspace_visual_candidates": {
+      "rows": 0
+    },
+    "public.review_render_composition_revisions": {
+      "rows": 0
+    },
+    "local_identity.account_directory_migrations": {
+      "rows": 0
+    },
+    "local_identity.workspace_audio_preparations": {
+      "rows": 0
+    },
+    "local_identity.workspace_narration_requests": {
+      "rows": 0
+    },
+    "local_identity.workspace_visual_submissions": {
+      "rows": 0
+    },
+    "local_identity.production_workspace_versions": {
+      "rows": 5
+    },
+    "local_identity.workspace_candidate_adoptions": {
+      "rows": 0
+    },
+    "local_identity.workspace_candidate_decisions": {
+      "rows": 0
+    },
+    "local_identity.historical_automation_attempts": {
+      "rows": 0
+    },
+    "local_identity.workspace_visual_image_choices": {
+      "rows": 0
+    },
+    "local_identity.workspace_narration_submissions": {
+      "rows": 0
+    }
+  },
+  "copyFingerprints": [
+    {
+      "table": "local_identity.account_asset_directories",
+      "columns": "account_id, actual_root, device_id, inode_id, updated_at",
+      "rows": 1,
+      "sha256": "7999cd4b53ae7e45e0bdb0b97d079309b3e19624a6043efd7e41893bc0c3b530"
+    },
+    {
+      "table": "local_identity.account_creation_intents",
+      "columns": "owner_id, idempotency_key, payload_hash, account_id, path, root_binding, marker, device_id, inode_id, marker_device_id, marker_inode_id, cleanup_owned, result, created_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.account_directory_locations",
+      "columns": "account_id, source_root, actual_root, migration_id",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.account_directory_migrations",
+      "columns": "id, account_id, status, manifest, error, created_at, updated_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.account_storage_containers",
+      "columns": "id, account_id, kind, series_id, directory_relative_path, device_id, inode_id, created_at",
+      "rows": 1,
+      "sha256": "f2f346d0c9669aa1604022fcb6220e03ee80c2b5767d4a026657160f77f380dd"
+    },
+    {
+      "table": "local_identity.automation_attempts",
+      "columns": "job_id, attempt, token, started_at, completed_at, status, passed, detail, checks",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.automation_jobs",
+      "columns": "id, kind, due_at, status, available_at, attempt, token, lease_until, completed_at, passed, detail, checks",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.automation_plans",
+      "columns": "kind, timezone, next_due_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.command_receipts",
+      "columns": "owner_id, idempotency_key, payload_hash, result, created_at",
+      "rows": 7,
+      "sha256": "403db995ccf98c1202b61a1143e981edb14ade7769a4ada04fba6ec7820d9581"
+    },
+    {
+      "table": "local_identity.connection_bindings",
+      "columns": "version_id, owner_id, secret_ref, store_mode, created_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.connection_intents",
+      "columns": "owner_id, idempotency_key, metadata, connection_id, version_id, secret_ref, store_mode, applied_at, result, created_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.connection_probe_evidence",
+      "columns": "id, version_id, owner_id, mode, outcome, created_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.connection_qualifications",
+      "columns": "version_id, owner_id, qualified, updated_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.container_creation_intents",
+      "columns": "owner_id, idempotency_key, payload_hash, container_id, account_id, kind, directory_relative_path, account_root, account_device_id, account_inode_id, root_binding, marker, device_id, inode_id, marker_device_id, marker_inode_id, cleanup_owned, result, created_at",
+      "rows": 1,
+      "sha256": "7ea20ca7b8ba53cf00af0ef8a34363238a396df80bdb50bff5ea3c21ddaee0f9"
+    },
+    {
+      "table": "local_identity.episode_asset_locations",
+      "columns": "episode_id, account_id, asset_root, created_at, directory_relative_path, directory_device_id, directory_inode_id, storage_series_id, layout_version",
+      "rows": 1,
+      "sha256": "39ca4034a62773b09af93f6843d6e8ca89887c4c5a1b72311956e5dbb7af5cdb"
+    },
+    {
+      "table": "local_identity.episode_creation_intents",
+      "columns": "owner_id, idempotency_key, payload_hash, payload, episode_id, account_id, blueprint_version_id, series_version_id, container_id, storage_series_id, directory_relative_path, account_root, account_device_id, account_inode_id, container_relative_path, container_device_id, container_inode_id, root_binding, marker, device_id, inode_id, marker_device_id, marker_inode_id, cleanup_owned, result, created_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.episode_deletion_intents",
+      "columns": "owner_id, idempotency_key, payload_hash, episode_id, manifest, state, created_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.episode_planning_selections",
+      "columns": "episode_id, selection, revision, updated_at",
+      "rows": 1,
+      "sha256": "f52bae7c155944d0a3da510a6e5c1becf38a16975062660ed09ebbebd376dfc8"
+    },
+    {
+      "table": "local_identity.episode_storage_lineage",
+      "columns": "id, operation_id, episode_id, account_id, source_root, source_prefix, source_device_id, source_inode_id, target_root, target_prefix, target_device_id, target_inode_id",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.historical_audit_events",
+      "columns": "event_id",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.historical_automation_attempts",
+      "columns": "job_id, attempt, token, started_at, completed_at, status, passed, detail",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.historical_automation_jobs",
+      "columns": "id, kind, due_at, status, available_at, attempt, token, lease_until, completed_at, passed, detail",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.historical_automation_plans",
+      "columns": "kind, timezone, next_due_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.historical_episodes",
+      "columns": "episode_id",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.historical_tasks",
+      "columns": "task_id",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.history_episode_deletions",
+      "columns": "owner_id, episode_id, deleted_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.history_episode_preferences",
+      "columns": "owner_id, episode_id, archived_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.history_file_protections",
+      "columns": "original_sha256, protected_sha256, protected_bytes, replacements, verified_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.history_files",
+      "columns": "source_id, logical_path, sha256, bytes, kind, metadata",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.history_projection_results",
+      "columns": "table_name, row_key, payload_sha256, status, detail, applied_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.history_retained_files",
+      "columns": "owner_id, logical_path, sha256, bytes, kind, metadata, retention_reason",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.history_source_preferences",
+      "columns": "source_id, owner_id, archived_at, updated_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.history_source_rows",
+      "columns": "source_id, table_name, row_key, payload_sha256",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.history_sources",
+      "columns": "id, owner_id, kind, label, metadata, imported_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.history_versions",
+      "columns": "table_name, row_key, payload_sha256, owner_id, payload",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.import_record",
+      "columns": "singleton, imported_at, source_created_at, archive_sha256, source_media_root, media_source_roots, historical_media_integrity",
+      "rows": 1,
+      "sha256": "223e7a7d4de610327f9f9286ab2f64d41accde124f9695317937049d8bdc1564"
+    },
+    {
+      "table": "local_identity.input_episodes",
+      "columns": "episode_id, owner_id, enabled, storyboard_enabled, narration_enabled, media_enabled, visual_media_enabled, alignment_enabled, preview_enabled, studio_enabled, delivery_enabled, script_template_version",
+      "rows": 1,
+      "sha256": "a35a65ee876687292cec12d3f0673219a6622878f74dc8d16abed8abcbf79da8"
+    },
+    {
+      "table": "local_identity.material_import_origins",
+      "columns": "material_id, provenance",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.material_reference_names",
+      "columns": "material_id, owner_id, name",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.media_root_binding",
+      "columns": "singleton, owner_id, path, device_id, inode_id, mount_path, updated_at",
+      "rows": 1,
+      "sha256": "58ea02bdba9eed72e1ee79427525baa3bc2fd78cd122454dbe5f5196ea79803d"
+    },
+    {
+      "table": "local_identity.owner_preferences",
+      "columns": "owner_id, preferences, updated_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.owners",
+      "columns": "id, email",
+      "rows": 2,
+      "sha256": "a2f04f6cc258d878bda4246446f217c8161a265b03867ab6685a138d19d5acbb"
+    },
+    {
+      "table": "local_identity.production_workspace_versions",
+      "columns": "workspace_id, episode_id, revision, script_revision_id, storyboard_package_id, project_path, project_sha256, project_size, content_sha256, reason, created_by, created_at",
+      "rows": 5,
+      "sha256": "c31cd863dca18efa7756f38fcc5fa3545e249160d6d0a760bbebf514984240a5"
+    },
+    {
+      "table": "local_identity.production_workspaces",
+      "columns": "id, episode_id, workflow_version, script_revision_id, storyboard_package_id, revision, bindings, project_path, project_sha256, content_sha256, project_size, created_at, updated_at, native_edit_revision, narration_defaults",
+      "rows": 1,
+      "sha256": "1e8967769df6e7f0efca46d1c3e30a1fb51a31a844abdec858c41af1ad505dbc"
+    },
+    {
+      "table": "local_identity.restore_record",
+      "columns": "singleton, archive_sha256, source_database, media_root, restored_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.schema_migrations",
+      "columns": "version, sha256",
+      "rows": 120,
+      "sha256": "764ea17cadb767cf23926595228cab29f36b09a507fd5b046f2f5db9d3feec40"
+    },
+    {
+      "table": "local_identity.script_productions",
+      "columns": "episode_id, owner_id, script_revision_id, script_sha256, plan, enabled, authorization_hash, authorized_at, progress, last_status, updated_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.secret_access_audit",
+      "columns": "id, actor_id, at, reference, operation, outcome, reason",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.secret_access_windows",
+      "columns": "owner_id, scope, started_at, requests",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.storage_location_operations",
+      "columns": "id, kind, migration_id, archive_sha256, proof, proof_sha256, created_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.workspace_audio_preparations",
+      "columns": "id, workspace_id, episode_id, kind, shot_id, source_item_id, source_sha256, description, query, anchor, offset_seconds, duration_seconds, material_revision_id, task_id, adopted_item_id, input_fingerprint, created_at, request_snapshot",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.workspace_audio_requests",
+      "columns": "task_id, preparation_id, workspace_id, episode_id, input_fingerprint, authorization_hash, created_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.workspace_candidate_adoptions",
+      "columns": "id, workspace_id, candidate_id, input_fingerprint, project_sha256, edit, created_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.workspace_candidate_decisions",
+      "columns": "workspace_id, candidate_id, decision, text_version, main_script_text, input_fingerprint, source_sha256, project_sha256, created_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.workspace_caption_evidence",
+      "columns": "workspace_id, clip_id, input_fingerprint, lane_fingerprint, method, task_id, alignment_input_version, confirmed_by, confirmed_at, shot_id",
+      "rows": 2,
+      "sha256": "852077ec00f46317808e799a98c87d741f6480f317c62d354e685115e1b957d4"
+    },
+    {
+      "table": "local_identity.workspace_deliveries",
+      "columns": "id, workspace_id, episode_id, export_id, task_id, created_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.workspace_export_issues",
+      "columns": "id, workspace_id, episode_id, export_id, reason, resolved_at, created_at, created_by",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.workspace_exports",
+      "columns": "id, workspace_id, episode_id, project_content_version, content_sha256, project, status, artifact, checks, created_at, created_by, confirmed_at, confirmed_by",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.workspace_image_requests",
+      "columns": "task_id, workspace_id, episode_id, clip_id, item_id, native_edit_revision, project_content_sha256, image_revision_id, image_sha256, duration_seconds, created_at, provider_duration_seconds, narration_target",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.workspace_legacy_recoveries",
+      "columns": "workspace_id, decision, relative_path, sha256, file_size, created_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.workspace_narration_requests",
+      "columns": "task_id, workspace_id, episode_id, clip_id, shot_id, input_fingerprint, authorization_hash, created_at, request_snapshot",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.workspace_narration_submissions",
+      "columns": "task_id, outcome, attempt, created_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.workspace_narrations",
+      "columns": "workspace_id, episode_id, clip_id, shot_id, mode, input_fingerprint, confirmed_fingerprint, confirmed_match_fingerprint, task_id, manual_audio_track_id, adopted_audio_track_id, requested_project_sha256, requested_native_edit_revision, selection",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.workspace_pexels_requests",
+      "columns": "id, workspace_id, episode_id, target_item_id, target_snapshot, request_snapshot, task_id, created_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.workspace_preparations",
+      "columns": "package_id, episode_id, script_revision_id, origin, confirmed_by, confirmed_at",
+      "rows": 1,
+      "sha256": "5278252bca6c91508bedeefd8eb389154bf7e10c7acdebf4498a92dc06c3c2c0"
+    },
+    {
+      "table": "local_identity.workspace_shot_inputs",
+      "columns": "workspace_id, preparation_id, shot_id, origin, baseline_text, shot_type, snapshot",
+      "rows": 2,
+      "sha256": "7fd0425d081f599e421a9c907cba5497cc2866ed934f21d9fd406cc8e0f7a68c"
+    },
+    {
+      "table": "local_identity.workspace_visual_candidates",
+      "columns": "id, workspace_id, episode_id, clip_id, shot_id, target_item_id, input_fingerprint, target_snapshot, request_snapshot, material_revision_id, task_id, created_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.workspace_visual_image_choices",
+      "columns": "workspace_id, target_item_id, candidate_id",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "local_identity.workspace_visual_submissions",
+      "columns": "task_id, outcome, created_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "public.account_blueprint_versions",
+      "columns": "id, account_id, version, policy, is_active, created_at, archived_at, is_snapshot",
+      "rows": 1,
+      "sha256": "45b4c5a44b4222b54579557662ad8952a5abb1588321851e10d5a4a1d23bb316"
+    },
+    {
+      "table": "public.account_memberships",
+      "columns": "account_id, user_id, role",
+      "rows": 1,
+      "sha256": "c9a0dc42f3f9228bebfafecb55aaeb7966af06456f6fbca27e64ebbb07b26fa7"
+    },
+    {
+      "table": "public.accounts",
+      "columns": "id, slug, name, timezone, current_blueprint_version_id, created_at, archived_at",
+      "rows": 1,
+      "sha256": "d50097249bdaca3e82993f6e72f14abfb77c096ba0b3b71dd372197763c51425"
+    },
+    {
+      "table": "public.approvals",
+      "columns": "id, episode_id, stage, decision, reason, actor_id, created_at, review_package_id",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "public.artifacts",
+      "columns": "id, episode_id, artifact_type, relative_path, sha256, file_size, producer_task_id, created_at",
+      "rows": 2,
+      "sha256": "fb5a6c4feda77296986f36e0c37017d53da087ae67fa075de7f3120328b3520f"
+    },
+    {
+      "table": "public.asset_locks",
+      "columns": "resource_key, episode_id, locked_at, expires_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "public.audio_track_annotations",
+      "columns": "id, audio_track_id, author_id, at_seconds, reason, created_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "public.audio_tracks",
+      "columns": "id, episode_id, source_task_id, source_artifact_id, source_review_package_id, track_kind, cue_id, relative_path, sha256, file_size, start_seconds, duration_seconds, created_at, source_material_revision_id",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "public.audit_events",
+      "columns": "id, account_id, episode_id, event_type, payload, actor_id, created_at",
+      "rows": 1,
+      "sha256": "2bb5cbc3a8befa835201d420cf4e61621ab5b29144abd7588e3f770af37729e4"
+    },
+    {
+      "table": "public.episode_read_revisions",
+      "columns": "episode_id, section, item_id, revision",
+      "rows": 7,
+      "sha256": "c9e7a13acfca1b755719d28f07524f8aed37cf4b23182641ffe19e972c62a5f9"
+    },
+    {
+      "table": "public.episodes",
+      "columns": "id, account_id, blueprint_version_id, title, stage, created_at, updated_at, series_version_id, main_script_revision_id, archived_at, is_test, script_source, worker_preflight_at, audio_source_mode, tts_language_code, tts_voice, tts_speaking_rate",
+      "rows": 1,
+      "sha256": "ad1848ab99dcc81d7911b798e9527d0841f6c9ca0d7f5461ed7bb15dbafd4370"
+    },
+    {
+      "table": "public.external_connection_verifications",
+      "columns": "id, connection_id, status, detail, created_at, connection_version_id",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "public.external_connection_versions",
+      "columns": "id, connection_id, version, vault_secret_id, created_at, provider, adapter, endpoint, revoked_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "public.external_connections",
+      "columns": "id, provider, adapter, name, status, last_verification_detail, last_verified_at, created_by, created_at, current_version_id, description, endpoint",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "public.generation_account_budgets",
+      "columns": "account_id, trial_video_limit_cents, total_limit_cents, full_generation_enabled, approved_by, approved_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "public.material_revision_approvals",
+      "columns": "id, material_revision_id, approved_by, approved_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "public.notification_delivery_events",
+      "columns": "event_id, outcome, delivery_token, reserved_at, completed_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "public.notification_delivery_state",
+      "columns": "singleton, initialized",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "public.paid_generation_reservations",
+      "columns": "task_id, account_id, kind, reserved_cents, provider_task_id, request_state, material_revision_id, created_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "public.pre_render_review_member_decisions",
+      "columns": "review_package_id, member_key, decision, reason, actor_id, inherited_from_review_package_id, created_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "public.pre_render_review_members",
+      "columns": "id, review_package_id, member_key, member_kind, source_task_id, artifact_id, audio_track_id, evidence_snapshot, created_at, source_material_revision_id",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "public.production_dependencies",
+      "columns": "id, episode_id, upstream_kind, upstream_id, downstream_kind, downstream_id, created_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "public.production_invalidations",
+      "columns": "id, episode_id, upstream_kind, upstream_id, target_kind, target_id, reason, created_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "public.production_material_revisions",
+      "columns": "id, episode_id, revision_number, material_type, source_kind, source_path, storage_path, mime_type, sha256, file_size, is_main_script, created_by, created_at, material_purpose",
+      "rows": 2,
+      "sha256": "8c8808b4b7f811fb851e0a678c90638cdc308ef8fe0277c8e2e19b2049c73aea"
+    },
+    {
+      "table": "public.prompt_versions",
+      "columns": "id, account_id, capability, version, slug, name, summary, instructions, is_active, created_by, created_at, content_hash",
+      "rows": 3,
+      "sha256": "8171db7e0381d1d7820eb77e0b196cdce618c313f8fb410f64d4781219122db3"
+    },
+    {
+      "table": "public.qc_review_issues",
+      "columns": "id, review_package_id, member_key, at_seconds, severity, reason, status, created_by, resolved_by, resolved_at, created_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "public.review_annotations",
+      "columns": "id, review_package_id, shot_id, reason, actor_id, created_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "public.review_packages",
+      "columns": "id, episode_id, task_id, task_run_id, artifact_id, stage, revision_number, context_snapshot, created_at, invalidated_at, invalidated_reason",
+      "rows": 2,
+      "sha256": "24f29ad6a563b786002cd0c2a44134365d3d886490e7659916c6f8cf2331fa9b"
+    },
+    {
+      "table": "public.review_render_composition_revisions",
+      "columns": "id, episode_id, pre_render_review_package_id, revision_number, caption_style, pacing, crop, transition, layout, reason, created_by, created_at, composition_config",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "public.series",
+      "columns": "id, account_id, name, created_at",
+      "rows": 1,
+      "sha256": "7c92e32965d2e575362a1551593c71363695efca1c51b5a4f0e87b84c3eccc12"
+    },
+    {
+      "table": "public.series_versions",
+      "columns": "id, account_id, series_id, version, rules, created_by, created_at",
+      "rows": 1,
+      "sha256": "cf99e372f0860de2a733b81bd1795973038a5d303d01d9af653328c4afae9e78"
+    },
+    {
+      "table": "public.shot_preparation_drafts",
+      "columns": "id, episode_id, review_package_id, shot_id, audio_mode, video_status, audio_status, confirmation_status, subtitle_text, subtitles_enabled, tts_voice, tts_speaking_rate, created_at, updated_at, tts_text, tts_language_code, current_audio_track_id, current_tts_task_id, pending_tts_task_id, tts_actual_duration_seconds, tts_error, selected_material_revision_id, clip_start_seconds, clip_end_seconds, current_video_artifact_id, current_video_task_id, pending_video_task_id, video_error, source_audio_duration_seconds, source_audio_error, pending_source_audio_task_id, video_duration_seconds, warning_decision, warning_reason, warning_accepted_at, warning_accepted_by, confirmation_reason, confirmed_at, confirmed_by, skipped_at, skipped_by, input_fingerprint, clip_segments, frozen_at, frozen_by, tts_override_voice, tts_override_speaking_rate, tts_text_confirmation_fingerprint, tts_text_confirmed_at, tts_text_confirmed_by, composition, caption_contract, preparation_contract, preparation_input_fingerprint, acoustic_alignment, pending_alignment_task_id, bgm_ducking_level, transition_mode, preview_status, current_preview_artifact_id, current_preview_project_artifact_id, current_preview_task_id, current_preview_input_fingerprint, pending_preview_task_id, preview_error, preparation_contract_status, source_video_duration_seconds, caption_text_confirmation, script_narration_gain_db, script_bgm_gain_db, script_sfx_gain_db",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "public.state_transitions",
+      "columns": "id, episode_id, from_stage, to_stage, reason, actor_id, created_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "public.storyboard_audio_selections",
+      "columns": "id, episode_id, review_package_id, target_kind, target_id, audio_kind, cue_id, material_revision_id, created_by, created_at, updated_at",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "public.storyboard_review_shots",
+      "columns": "review_package_id, shot_id",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "public.task_runs",
+      "columns": "id, task_id, attempt, task_package, result, status, actual_cost_cents, started_at, completed_at, lease_token",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "public.tasks",
+      "columns": "id, episode_id, task_type, status, input_snapshot, budget_limit_cents, max_attempts, created_at, attempt, provider, model, prompt_version, claimed_at, completed_at, actual_cost_cents, last_result, invalidated_at, invalidated_reason, lease_token, available_at",
+      "rows": 1,
+      "sha256": "de4ea071af4ed1c065f1071fdd2aa160e6bef78b19d120d10afe82d1d078eac9"
+    },
+    {
+      "table": "public.worker_episode_turns",
+      "columns": "episode_id, last_turn",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "public.worker_resource_ceilings",
+      "columns": "resource_key, capacity",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "public.worker_scheduler_settings",
+      "columns": "singleton, capacity, turn",
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "sequences": [
+    {
+      "name": "local_identity.episode_storage_lineage_id_seq",
+      "value": "1",
+      "isCalled": false
+    },
+    {
+      "name": "local_identity.input_dispatch_turn",
+      "value": "1",
+      "isCalled": false
+    },
+    {
+      "name": "local_identity.secret_access_audit_id_seq",
+      "value": "1",
+      "isCalled": false
+    }
+  ],
+  "securityInventory": {
+    "md5": "f175fe896d58a09d330dcc1d657d844b",
+    "count": 544
+  },
+  "extensions": [
+    {
+      "name": "pgcrypto",
+      "schema": "extensions",
+      "version": "1.3"
+    },
+    {
+      "name": "plpgsql",
+      "schema": "pg_catalog",
+      "version": "1.0"
+    }
+  ],
+  "mediaSourceRoots": [
+    "/private/tmp/loop-t06-volume-5g7wUt/mounted/t11-storage/state/loop-153-m7YLML"
+  ],
+  "excludedPlatformRoots": [],
+  "mediaDirectories": [
+    "account",
+    "account/原生恢复空系列--1be3a0e5-bc62-4175-b65e-9e99ddf3fe98",
+    "account/系列 原生_100%#?",
+    "account/系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e",
+    "account/系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e/openchatcut-work",
+    "account/系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e/openchatcut-work/current",
+    "account/系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e/openchatcut-work/current/runtime",
+    "account/系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e/openchatcut-work/current/runtime/media",
+    "account/系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e/openchatcut-work/current/runtime/media/uploads",
+    "account/系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e/production-workspace",
+    "account/系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e/production-workspace/versions"
+  ],
+  "episodeDirectoryIdentities": [
+    {
+      "inodeId": "21",
+      "deviceId": "16777269",
+      "accountId": "19480aa2-8d1b-4642-a8ba-0f2e65058cbb",
+      "episodeId": "c7bae16b-b989-4d28-9963-483cefb5e67e",
+      "logicalRoot": "/private/tmp/loop-t06-volume-5g7wUt/mounted/t11-storage/state/loop-153-m7YLML/account",
+      "relativePath": "系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e",
+      "sourceRoot": "/private/tmp/loop-t06-volume-5g7wUt/mounted/t11-storage/state/loop-153-m7YLML/account"
+    }
+  ],
+  "media": [
+    {
+      "path": "account/系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e/board.json",
+      "bytes": 374,
+      "sha256": "ea0d2fb99bc3eca704bdf68c918e993ac4751599984ccdfe2acc02094e354120"
+    },
+    {
+      "path": "account/系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e/openchatcut-work/current/generated-project.json",
+      "bytes": 8669,
+      "sha256": "676c75901baf7d9f4feca26465187d0015a9154e24a859fb2a426a8ca7a18e0b"
+    },
+    {
+      "path": "account/系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e/openchatcut-work/current/project.json",
+      "bytes": 9086,
+      "sha256": "1485617dff0d472d0dfe42888095cb82a69212d6948411b3925df6e577f7a5f1"
+    },
+    {
+      "path": "account/系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e/openchatcut-work/current/runtime/media/uploads/578198529ddf50228ceb.mp4",
+      "bytes": 210288,
+      "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da"
+    },
+    {
+      "path": "account/系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e/openchatcut-work/current/runtime/project-store-v1.json",
+      "bytes": 9867,
+      "sha256": "c164d592a83c51fc049e7d0b42b3c0469cd21d883bef00c34599e4c83955deb2"
+    },
+    {
+      "path": "account/系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e/openchatcut-work/current/runtime/project-store-v1.sqlite3",
+      "bytes": 4096,
+      "sha256": "97e8d54f8a7255106f66cf1b213c4a4d7b558d21310b1c2bfedc3d0d526dddda"
+    },
+    {
+      "path": "account/系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e/openchatcut-work/current/runtime/project-store-v1.sqlite3-shm",
+      "bytes": 32768,
+      "sha256": "6ff65971b8cb38ac2ffda4a4fe88d96588282462ef28fe8aaf98e930cfe48d3c"
+    },
+    {
+      "path": "account/系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e/openchatcut-work/current/runtime/project-store-v1.sqlite3-wal",
+      "bytes": 135992,
+      "sha256": "428c808aa3c9bb72be9feae10f6b5f504d9f5497fc531cce159b3e120c91ee8f"
+    },
+    {
+      "path": "account/系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e/openchatcut-work/current/runtime/project-store-v1.sqlite3.receipt.json",
+      "bytes": 1342,
+      "sha256": "ac7d953cfb951df34ab02612598573aae700e5eeea1c423ea4754c43e939aa1a"
+    },
+    {
+      "path": "account/系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e/openchatcut-work/current/runtime/settings.env",
+      "bytes": 23,
+      "sha256": "459811c1134a9866e14cb770787164c03512aa26ac18f5f0d5d86a25095db7f5"
+    },
+    {
+      "path": "account/系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e/openchatcut-work/current/workspace.json",
+      "bytes": 405,
+      "sha256": "926c3d8d9a8bdf49304654a922fcd5bdbbb380e82f42537d64bffba538718947"
+    },
+    {
+      "path": "account/系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e/production-workspace/versions/1485617dff0d472d0dfe42888095cb82a69212d6948411b3925df6e577f7a5f1.json",
+      "bytes": 9086,
+      "sha256": "1485617dff0d472d0dfe42888095cb82a69212d6948411b3925df6e577f7a5f1"
+    },
+    {
+      "path": "account/系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e/production-workspace/versions/676c75901baf7d9f4feca26465187d0015a9154e24a859fb2a426a8ca7a18e0b.json",
+      "bytes": 8669,
+      "sha256": "676c75901baf7d9f4feca26465187d0015a9154e24a859fb2a426a8ca7a18e0b"
+    },
+    {
+      "path": "account/系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e/production-workspace/versions/6a9b2a8fb7720b60fb33afbb6946fd87da8434ef1eac7c106bd81735a2ab4a35.json",
+      "bytes": 3862,
+      "sha256": "6a9b2a8fb7720b60fb33afbb6946fd87da8434ef1eac7c106bd81735a2ab4a35"
+    },
+    {
+      "path": "account/系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e/production-workspace/versions/76baf59162a594e4a8f59b34b81831a72ab8a0539fbc6d2f1c31a5acd23c5b00.json",
+      "bytes": 3388,
+      "sha256": "76baf59162a594e4a8f59b34b81831a72ab8a0539fbc6d2f1c31a5acd23c5b00"
+    },
+    {
+      "path": "account/系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e/production-workspace/versions/ad266938565c3f710e8e7d0481d334cc8120d0af0bcfdd152fce5e6302959535.json",
+      "bytes": 2467,
+      "sha256": "ad266938565c3f710e8e7d0481d334cc8120d0af0bcfdd152fce5e6302959535"
+    },
+    {
+      "path": "account/系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e/script.md",
+      "bytes": 52,
+      "sha256": "fc81cbf3666ffe9d11d8618d1973af50586e6e030934f2c44043e52f3c58778e"
+    },
+    {
+      "path": "account/系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e/shot.mp4",
+      "bytes": 210288,
+      "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da"
+    },
+    {
+      "path": "account/系列 原生_100%#?/生产单_c7bae16b-b989-4d28-9963-483cefb5e67e/voice.mp3",
+      "bytes": 16556,
+      "sha256": "21367e1bb28c3f86626206d5349933c1755207ff4e2bf770e59606432875899b"
+    }
+  ],
+  "referenceCoverageVersion": 2,
+  "mediaReferences": 10,
+  "historicalReferenceFailures": 0,
+  "excluded": [
+    "local Owner password digests",
+    "sessions and tokens",
+    "Keychain values",
+    "host database credentials",
+    "OS volume metadata directories"
+  ],
+  "restoreStatus": "Archive integrity verified. A successful restore receipt is required; Owner password reset and Keychain rebind are separate steps."
+}

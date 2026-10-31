@@ -1,0 +1,11 @@
+
+ RUN  v3.2.7 /private/tmp/loop-control-main-e2e-20261101/integration-regression/source
+
+ ✓ src/worker/openchatcutProject.integration.test.ts (12 tests | 11 skipped) 3765ms
+   ✓ OpenChatCut real project reader integration > opens an independent dashboard, reuses concurrent launches, and preserves projects after restart  3765ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 11 skipped (12)
+   Start at  06:10:08
+   Duration  4.17s (transform 165ms, setup 8ms, collect 250ms, tests 3.77s, environment 0ms, prepare 33ms)
+

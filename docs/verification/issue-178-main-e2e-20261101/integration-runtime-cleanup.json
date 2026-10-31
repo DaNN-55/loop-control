@@ -1,0 +1,42 @@
+{
+  "at": "2026-10-31T22:58:54.015454+00:00",
+  "events": [
+    {
+      "action": "normal-detach-and-remove-owned-empty-guard-volume",
+      "path": "/private/tmp/loop-t06-volume-hXNXnb",
+      "openMountedReferences": 0,
+      "output": "\"disk14\" ejected.",
+      "removed": true
+    },
+    {
+      "action": "normal-detach-and-remove-owned-empty-guard-volume",
+      "path": "/private/tmp/loop-t06-volume-zbxrKj",
+      "openMountedReferences": 0,
+      "output": "\"disk16\" ejected.",
+      "removed": true
+    },
+    {
+      "action": "normal-stop-and-remove-owned-container",
+      "name": "loop-control-main-e2e-20261101",
+      "id": "ee8ba236529e708f1a50cd85f059b372a2101e63c6620db8555a2acacee4d5ba",
+      "label": "main-e2e-20261101",
+      "stop": "Flag --time has been deprecated, use --timeout instead\nloop-control-main-e2e-20261101",
+      "removed": "loop-control-main-e2e-20261101"
+    },
+    {
+      "action": "normal-stop-and-remove-owned-container",
+      "name": "loop-control-178-test-postgres",
+      "id": "1b92a552001aa4bef909e0f90410db947fc53f286a9a0216979779ec10833dda",
+      "label": "main-e2e-regression-20261101",
+      "stop": "Flag --time has been deprecated, use --timeout instead\nloop-control-178-test-postgres",
+      "removed": "loop-control-178-test-postgres"
+    }
+  ],
+  "protectedOriginalVolumesStillMounted": [
+    "/private/tmp/loop-t06-volume-AAg5mf/media.sparseimage",
+    "/private/tmp/loop-t06-volume-Eiezi0/media.sparseimage",
+    "/private/tmp/loop-t06-volume-PQgqhE/media.sparseimage"
+  ],
+  "dailyDatabaseContainerNotSelected": "loop-control-local-postgres",
+  "forcedDetachOrRemove": false
+}

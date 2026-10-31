@@ -1,0 +1,137 @@
+[
+  {
+    "provider": "pexels",
+    "outcome": "downloaded",
+    "version": "9bf6f776-a439-4e17-8260-55fa2b060e79",
+    "source": {
+      "id": 28830547,
+      "fileId": 12488809,
+      "durationSeconds": 4,
+      "width": 720,
+      "height": 1280,
+      "creator": "iddea photo",
+      "creatorUrl": "https://www.pexels.com/@alena",
+      "sourceUrl": "https://www.pexels.com/video/majestic-forest-scene-with-ancient-trees-28830547/",
+      "downloadUrl": "https://videos.pexels.com/video-files/28830547/12488809_720_1280_50fps.mp4"
+    },
+    "artifact": {
+      "path": "/private/tmp/loop-control-main-e2e-20261101/provider-samples/pexels-source.mp4",
+      "bytes": 904168,
+      "sha256": "b72e65982976866522fcabe5e0ecaf1c2daaee01ca7f30b866b3d7458fc20498",
+      "media": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 720,
+            "height": 1280,
+            "r_frame_rate": "50/1"
+          }
+        ],
+        "format": {
+          "duration": "4.560000",
+          "size": "904168"
+        }
+      }
+    },
+    "network": {
+      "directory": "/private/tmp/loop-control-main-e2e-20261101/provider-samples/pexels-policy",
+      "policySha256": "1d1d6936cb68d5a04cc558ec51edfe07cf7372272cf9c294fa6b99e0733215d2"
+    },
+    "actualCost": 0
+  },
+  {
+    "provider": "bailian",
+    "version": "0364ea9a-41c6-40f6-8178-191b3073efdd",
+    "outcome": "generated",
+    "model": "wan2.6-i2v-flash",
+    "durationSeconds": 2,
+    "taskId": "7c019f96-1782-4b4d-af9a-41be00d92f1b",
+    "artifact": {
+      "path": "/private/tmp/loop-control-main-e2e-20261101/provider-samples/bailian-sample.mp4",
+      "bytes": 2823743,
+      "sha256": "7cc17e17abe1b0360931ecb995571ed83f26556ea19dedc5a363310f29e72c91",
+      "media": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 720,
+            "height": 1280,
+            "r_frame_rate": "30/1"
+          }
+        ],
+        "format": {
+          "duration": "2.000000",
+          "size": "2823743"
+        }
+      }
+    },
+    "network": {
+      "directory": "/private/tmp/loop-control-main-e2e-20261101/provider-samples/bailian-policy",
+      "policySha256": "ea3a99f032a8b3ca96e595d99270bc610cfe405aed7ebf6b70e515f54b8fd166"
+    },
+    "budgetReservation": {
+      "currency": "CNY",
+      "microunits": 300000
+    },
+    "actualCost": "unverified; inspect supplier bill",
+    "elapsedMs": 67533
+  },
+  {
+    "provider": "minimax",
+    "version": "4f0f0cfa-1c07-48d8-8484-0ae2bb302dd5",
+    "outcome": "generation_failed",
+    "model": "MiniMax-H3",
+    "durationSeconds": 4,
+    "error": "视频接口请求失败：HTTP 402。",
+    "network": {
+      "directory": "/private/tmp/loop-control-main-e2e-20261101/provider-samples/minimax-policy",
+      "policySha256": "197efacaba48e3f7d892f89ab45293d4efaf121305a514d5f71be7ba1b6d87a4"
+    },
+    "budgetReservation": {
+      "currency": "USD",
+      "microunits": 320000
+    },
+    "actualCost": "unverified; do not assume reservation equals charge",
+    "elapsedMs": 4084
+  },
+  {
+    "provider": "volcengine",
+    "version": "0c7266ff-531d-4200-bb6a-78c4d1f263fd",
+    "outcome": "generation_failed",
+    "model": "doubao-seedance-2-0-260128",
+    "durationSeconds": 4,
+    "error": "视频接口请求失败：HTTP 404。",
+    "network": {
+      "directory": "/private/tmp/loop-control-main-e2e-20261101/provider-samples/volcengine-policy",
+      "policySha256": "e9d4407a09416f40f326ed8edcc9aad5f181dccba4fd6570e6d67dd91f628876"
+    },
+    "budgetReservation": {
+      "currency": "CNY",
+      "microunits": 4500000
+    },
+    "actualCost": "unverified; do not assume reservation equals charge",
+    "elapsedMs": 431
+  },
+  {
+    "provider": "kling",
+    "version": "2dc46417-5042-4db1-a44a-5fb25a256329",
+    "outcome": "generation_failed",
+    "model": "kling-v3",
+    "durationSeconds": 3,
+    "error": "视频接口请求失败：HTTP 429。",
+    "network": {
+      "directory": "/private/tmp/loop-control-main-e2e-20261101/provider-samples/kling-policy",
+      "policySha256": "93dd57c31869f35f858dd250262eaa6103548fc688f4a5800e48c05174cc4cdb"
+    },
+    "budgetReservation": {
+      "currency": "USD",
+      "microunits": 252000
+    },
+    "actualCost": "unverified; do not assume reservation equals charge",
+    "elapsedMs": 3076
+  }
+]

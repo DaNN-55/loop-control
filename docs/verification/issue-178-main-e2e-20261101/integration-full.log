@@ -1,0 +1,1210 @@
+
+ RUN  v3.2.7 /private/tmp/loop-control-main-e2e-20261101/integration-regression/source
+
+ ❯ src/worker/openchatcutProject.integration.test.ts (12 tests | 4 failed) 32793ms
+   × OpenChatCut real project reader integration > opens an independent dashboard, reuses concurrent launches, and preserves projects after restart 18054ms
+     → OpenChatCut Studio 启动后未在 project-store 中导入测试工程。
+   × OpenChatCut real project reader integration > opens Studio and reads editable caption cues back from its project store 1455ms
+     → expected 'http://127.0.0.1:59951/?lcBridge=1#/e…' to contain '/#/editor/loop-control-00000000-0000-…'
+   × OpenChatCut real project reader integration > keeps Studio edits mutable, warns before changed workbench input replaces them, and freezes new immutable revisions only on demand 890ms
+     → ENOENT: no such file or directory, open '/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-control-openchatcut-boundary-test-lWMpRQ/episodes/00000000-0000-4000-8000-000000000105/openchatcut-work/current/runtime/project-store-v1/project%3Aloop-control-00000000-0000-4000-8000-000000000105.json'
+   ✓ OpenChatCut real project reader integration > reads a stacked shot as two correctly transformed editable video layers backed by one asset 73ms
+   ✓ OpenChatCut real project reader integration > accepts migrated stable track ids when consecutive full-screen segments remain on the V1 alias 74ms
+   ✓ OpenChatCut real project reader integration > reads exactly one source-audio item when one material fills multiple visual slots 75ms
+   ✓ OpenChatCut real project reader integration > reads silent, BGM-follower, and independent-SFX semantics from the real runtime 148ms
+   ✓ OpenChatCut real project reader integration > reads disabled captions and independent manual cues through the real runtime 147ms
+   ✓ OpenChatCut real project reader integration > renders and probes a real synchronized proxy while preserving the editable project fingerprint  9220ms
+   × OpenChatCut real project reader integration > opens, edits, freezes, and renders one real Episode containing TTS split-screen, source-audio, and silent captioned shots 2258ms
+     → ENOENT: no such file or directory, open '/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-control-issue-106-real-episode-rI7BAN/episodes/00000000-0000-4000-8000-000000000106/openchatcut-work/current/runtime/project-store-v1/project%3Aloop-control-00000000-0000-4000-8000-000000000106.json'
+   ✓ OpenChatCut real project reader integration > keeps an older project with a text caption item readable 79ms
+   ✓ OpenChatCut real project reader integration > blocks known invalid caption contracts after real OpenChatCut reading  320ms
+ ❯ src/local-app/restorePublication.integration.test.ts (4 tests | 4 failed) 7ms
+   × SIGKILL at restore journal retains verifiable publication proof and fresh application Owner file reads recover 4ms
+     → Storage fixture requires isolated owned databases
+   × SIGKILL at restore receipt retains verifiable publication proof and fresh application Owner file reads recover 2ms
+     → Storage fixture requires isolated owned databases
+   × SIGKILL at restore config retains verifiable publication proof and fresh application Owner file reads recover 0ms
+     → Storage fixture requires isolated owned databases
+   × SIGKILL at restore ready retains verifiable publication proof and fresh application Owner file reads recover 0ms
+     → Storage fixture requires isolated owned databases
+ ❯ src/local-app/mediaRootExecutionNative.integration.test.ts (1 test | 1 failed) 5ms
+   × mixed accounts and native SQLite move across devices as one root, survive old production offline, and restore a real DB/media backup 5ms
+     → Storage fixture requires isolated owned databases
+ ❯ src/local-app/episodeCollectionNative.integration.test.ts (1 test | 1 failed) 3ms
+   × all historical native coordinates remain usable after A→B→unassigned→A→B and a real database/media restore with original sources offline 3ms
+     → Storage fixture requires isolated owned databases
+ ❯ src/local-app/legacyAdoptionNative.integration.test.ts (3 tests | 1 failed) 38058ms
+   ✓ native SQLite, immutable versions and original sources survive explicit adoption, source offline and fresh SDK save/reopen/export (legacy)  20518ms
+   ✓ native SQLite, immutable versions and original sources survive explicit adoption, source offline and fresh SDK save/reopen/export (recorded-prefix)  17532ms
+   × adopted lineage is backed up and restored into a new database and root before a fresh application edits SQLite and exports with the source offline 7ms
+     → Storage fixture requires isolated owned databases
+ ✓ src/local-app/workspaceAudio.integration.test.ts (8 tests) 71048ms
+   ✓ Owner prepares manual episode music, adopts actual audio and persists native independent mix  2747ms
+   ✓ Freesound preparation traverses actual Worker lease and result, records attribution, retries failed work and restores after restart  4736ms
+   ✓ source mode uses real native source extraction task without fabricating a legacy video-ready draft  5168ms
+   ✓ actual native audio renders source, speech, ambience, music ducking and positioned sound without multiplying speech in parallel slots  34823ms
+   ✓ real loop_worker planning never queues legacy soundtrack cues for an editable native workspace  3666ms
+   ✓ real loop_worker planning retains the legacy soundtrack path outside native workspaces  3285ms
+   ✓ nonzero source extraction freezes the selected native window and partial coverage cannot align an entire shot  12129ms
+   ✓ explicit narration adoption advances the shared edit fence and late first results remain candidates  4492ms
+ ✓ src/local-app/episodeDeletionStorage.integration.test.ts (15 tests) 64168ms
+   ✓ Owner confirms actual collection files while unknown manual files remain byte-identical  2063ms
+   ✓ another Owner business dependency blocks ordinary deletion before any file changes  1952ms
+   ✓ successful exact cleanup removes only reviewed title links to the deleted directory  1881ms
+   ✓ a retained manual document keeps its referenced owned bytes and unknown empty directory intact  2096ms
+   ✓ unknown paid submission blocks confirmed deletion without changing any registered file  2002ms
+   ✓ a safely rolled back confirmation releases its reservation for a newly reviewed inventory  2013ms
+   ✓ a new PID resumes link-before-unlink interruption using only the original durable scope  3130ms
+   ✓ a new PID resumes before-finalize interruption using only the original durable scope  3067ms
+   ✓ a new PID resumes after-first-finalize interruption using only the original durable scope  2917ms
+   ✓ a new PID resumes restore-uncommitted interruption using only the original durable scope  2829ms
+   ✓ an old cleanup receipt without exact file authority remains pending and explains its preserved staging files  1646ms
+   ✓ rollback preserves an unknown file inserted at the actual restore publication boundary  1820ms
+   ✓ staging never overwrites an unknown file inserted at the actual filesystem publication boundary  1733ms
+   ✓ a new Owner HTTP PID restores the exact staged files after SIGKILL and resumes the original confirmation  33081ms
+   ✓ a durable exact confirmation is committed before filesystem staging and survives business rollback  1936ms
+ ✓ src/local-app/workspaceDelivery.integration.test.ts (4 tests) 52140ms
+   ✓ Owner delivery requires an exact confirmed export  1895ms
+   ✓ real Worker verifies exact package, fences tamper and missing inputs, retries and survives restart  19785ms
+   ✓ a queued package cannot complete or retry against a different final export  17259ms
+   ✓ delivery records the used trimmed voice source and never substitutes an unadopted draft text  13201ms
+ ✓ src/local-app/workspaceReviewFixes.integration.test.ts (7 tests) 56722ms
+   ✓ actual delivery does not claim narration muted by the leaf native track was spoken  14111ms
+   ✓ actual delivery does not claim narration muted by the parent native track was spoken  13955ms
+   ✓ first speech preserves Owner edits made before submission and requires the existing candidate decision  7515ms
+   ✓ first speech preserves Owner edits made during submission and requires the existing candidate decision  7235ms
+   ✓ first speech preserves Owner edits made captions submission and requires the existing candidate decision  5395ms
+   ✓ first speech preserves Owner edits made locked submission and requires the existing candidate decision  4154ms
+   ✓ preserved legacy native edits stay protected when their first workspace speech completes  4356ms
+ ✓ src/local-app/accountDirectoryMigration.integration.test.ts (7 tests) 53629ms
+   ✓ Owner inventories and verifies actual account files before an atomic move; original evidence remains readable after restart  3500ms
+   ✓ migration mount failure preserves the old root and resumes from its durable receipt after restart; collisions and changed references never cut over  2131ms
+   ✓ an actual interrupted streaming copy keeps originals and recovers the durable migration after restart  2067ms
+   ✓ migrated native SQLite edits reopen, export, and deliver through the real Worker with originals offline  15558ms
+   ✓ historical deployment roots and immutable references merge into the actual account folder; task and reference conflicts block cutover  2003ms
+   ✓ a changed account directory invalidates an earlier empty-account inventory before cutover  1920ms
+   ✓ Pexels managed adoption migrates with native edits, delivers with originals offline, and deletion rolls back then removes only owned copies  26450ms
+ ✓ src/local-app/workspaceShots.integration.test.ts (10 tests) 41756ms
+   ✓ Owner reorders native shot instances without rewriting registered sources or storyboard history  2020ms
+   ✓ a shot with two visual ranges owns one stable caption lane when its first range is removed  2220ms
+   ✓ native range locks, frame steps and parallel composition preserve source instances through Owner persistence  4247ms
+   ✓ two ranges retain one actual main voice and full following captions after deleting their first visual instance  10011ms
+   ✓ reopening an actively edited native structure reuses its running Studio and latest project  4458ms
+   ✓ upgrades duplicate legacy visual caption lanes into one shot lane without losing the complete body or cues  4884ms
+   ✓ added native shots accept registered images and source video while the approved storyboard stays unchanged  4703ms
+   ✓ native Owner save rejects deleting the last effective shot while retaining the recoverable document  4825ms
+   ✓ initial all-placeholder drafts remain saved but cannot enter native editing  1815ms
+   ✓ removes a selected shot, retains original media and historical projects, and protects the final shot after reopening  2571ms
+stderr | src/local-app/mediaRootExecution.browser.integration.test.ts > formal storage UI resumes durable copy after refresh, recovers a failed cutover and reopens moving native media on the new root
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-t06-volume-Ex5gr9/mounted/loop-153-atDxQG/runtime/vite-cache/deps/react-dom_client.js?v=0d3ed010 as it exceeds the max of 500KB.
+
+ ✓ src/local-app/mediaRootExecution.browser.integration.test.ts (1 test) 49333ms
+   ✓ formal storage UI resumes durable copy after refresh, recovers a failed cutover and reopens moving native media on the new root  49332ms
+ ✓ src/local-app/mediaRootMigrationProcess.integration.test.ts (10 tests) 41997ms
+   ✓ retained platform state inside a mounted media root never rebuilds its host tree after detach  8699ms
+   ✓ a real detached source volume rejects planning without recreating the missing media tree  3823ms
+   ✓ a special filesystem entry fails promptly instead of blocking inventory or acquiring its ownership  3489ms
+   ✓ owned source insert at the final binding boundary invalidates a plan without any database change  3594ms
+   ✓ owned source rewrite at the final binding boundary invalidates a plan without any database change  3587ms
+   ✓ a real first-account reservation before mkdir blocks empty initialization and resumes the original request  3547ms
+   ✓ a target file inserted after the initial inventory is preserved and invalidates the saved plan  3572ms
+   ✓ large media hashing uses streams while an actual capacity boundary produces a readable reserve-space conflict  3912ms
+   ✓ native settings persist mixed accounts, empty series, unassigned and legacy scope with retained platform resources across a new process  4269ms
+   ✓ existing authorized media remains a production carve-out inside an ancestor runtime resource  3503ms
+ ❯ src/local-app/workspaceAudioStorage.integration.test.ts (10 tests | 8 failed) 34195ms
+   × replaced production directory blocks speech submission before reserving fees or contacting the Provider 2011ms
+     → expected '工程快照不可用或指纹已变化，原始素材未修改。' to contain '身份'
+   ✓ legacy speech retains actual media, confirmed input and one paid submission after rename/restart  2094ms
+   × registered speech retains actual media, confirmed input and one paid submission after rename/restart 1732ms
+     → expected 409 to be 200 // Object.is equality
+   × registered source video extracts only its actual selected audio window into this production 3314ms
+     → {"error":"工程快照不可用或指纹已变化，原始素材未修改。"}: expected 409 to be 200 // Object.is equality
+   × registered music and effects retain frozen searches on retry and remain playable managed files after external originals disappear 3302ms
+     → {"error":"工程快照不可用或指纹已变化，原始素材未修改。"}: expected 409 to be 200 // Object.is equality
+   × registered speech drives the actual alignment worker and preserves confirmed subtitle text and timing after restart 3351ms
+     → {"error":"工程快照不可用或指纹已变化，原始素材未修改。"}: expected 409 to be 200 // Object.is equality
+   ✓ legacy synchronized preview renders actual approved source audio and keeps the native project beside the proxy  9738ms
+   × registered synchronized preview renders actual approved source audio and keeps the native project beside the proxy 3432ms
+     → {"error":"文件引用缺少本生产单的完整位置迁移证明。"}: expected 409 to be 200 // Object.is equality
+   × subtitle readback rejects a replaced production directory instead of reporting the old confirmed state as current 1817ms
+     → expected 409 to be 200 // Object.is equality
+   × uploaded narration music and effects keep owned snapshots at the registered location after all external originals are removed 3403ms
+     → {"error":"工程快照不可用或指纹已变化，原始素材未修改。"}: expected 409 to be 200 // Object.is equality
+(node:12244) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ✓ src/local-app/workspaceCandidates.integration.test.ts (7 tests) 59953ms
+   ✓ completed local speech versions stay immutable and rejecting a candidate preserves the native project  3583ms
+   ✓ explicit candidate duration changes only the stable main voice and stale attempts preserve the saved edit  16023ms
+   ✓ prepared old speech and changed candidate bytes cannot overwrite a newer input  3597ms
+   ✓ adopting actual speech expires only affected caption evidence and a late alignment cannot restore it  3889ms
+   ✓ new registered speech enters the existing Studio media session before relink and cannot be finalized before native save  8066ms
+   ✓ a saved native candidate can recover its missing adoption receipt after restart without regenerating speech  6475ms
+   ✓ explicit main-voice candidate adoption switches source and none atomically while preserving native sounds  18318ms
+ ✓ src/local-app/mediaRootExecutionFaults.integration.test.ts (10 tests) 42611ms
+   ✓ a real source-file change across final global SQL rolls back every current mapping and operation proof  4293ms
+   ✓ a real target-file change across final global SQL rolls back every current mapping and operation proof  4341ms
+   ✓ a real target-directory change across final global SQL rolls back every current mapping and operation proof  4281ms
+   ✓ a real source-directory change across final global SQL rolls back every current mapping and operation proof  4156ms
+   ✓ a real frozen-evidence change across final global SQL rolls back every current mapping and operation proof  4021ms
+   ✓ a planned target changed by empty-directory never acquires or overwrites unknown ownership  3948ms
+   ✓ a planned target changed by unknown-file never acquires or overwrites unknown ownership  4015ms
+   ✓ a planned target changed by replaced-target never acquires or overwrites unknown ownership  3954ms
+   ✓ a planned target changed by capacity never acquires or overwrites unknown ownership  4219ms
+   ✓ a detached target volume cannot write a host fallback tree at the same pathname  5381ms
+ ✓ src/local-app/workspaceNarration.integration.test.ts (13 tests) 47550ms
+   ✓ Owner can prepare disabled narration before editing without queuing external tasks  1851ms
+   ✓ confirmed narration uses the real Worker, survives restart and assembles actual duration without duplicate submissions  4330ms
+   ✓ unknown paid submissions stay blocked across restart and input changes; definite rejection allows one explicit retry  2472ms
+   ✓ both first narration tracks assemble and crop an available source without invalidating the other shot  3650ms
+   ✓ a running task may register its immutable output but late speech cannot replace changed input or advance delivery  2531ms
+   ✓ manual narration and disabled modes never enqueue TTS, while short pictures preserve a recoverable conflict  2776ms
+   ✓ actual narration drives the paid video window and freezes speech provenance (changed=false)  9758ms
+   ✓ actual narration drives the paid video window and freezes speech provenance (changed=true)  3327ms
+   ✓ first speech remains a candidate after a real native save and never overwrites the edited project  4757ms
+   ✓ speech beyond the Provider maximum blocks a video submission without cutting words  2562ms
+   ✓ legacy narration already running before workspace activation cannot promote the new draft or delivery  2396ms
+   ✓ one shot with two visual ranges keeps one voice and its original task after deleting the first range  5367ms
+   ✓ registered completed task media resolve directly without a fake material and reject changed bytes  1770ms
+(node:31984) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ✓ src/local-app/workspacePexels.integration.test.ts (5 tests) 37545ms
+   ✓ Owner queries Pexels, previews an explicit result, imports and explicitly adopts managed bytes after restart  13088ms
+   ✓ Pexels failures stay recoverable, validate external URLs and bytes, and never generate or adopt automatically  3586ms
+   ✓ queued Pexels requests retain exact credentials across rotation and old candidates remain selectable after a new query  3169ms
+   ✓ a short Pexels video gives recoverable duration feedback and only an explicit duration choice changes the native window  2649ms
+   ✓ Pexels results and unimported previews for one shot survive many searches on another shot  15052ms
+ ❯ src/local-app/workspaceVideo.integration.test.ts (6 tests | 1 failed) 36570ms
+   ✓ Owner prepares independent exact ranges from one source across multiple shots  2050ms
+   ✓ Owner renders many-to-many exact video ranges in native Studio (landscape=false)  10427ms
+   ✓ Owner renders many-to-many exact video ranges in native Studio (landscape=true)  13125ms
+   ✓ Owner moves a locked range by exactly one frame in real native output  6444ms
+   × Owner boundaries reject stale, foreign, invalid, tampered and active-editor range writes 2243ms
+     → expected 409 to be 200 // Object.is equality
+   ✓ Owner cannot select audio-only tail beyond the video stream  2281ms
+ ✓ src/local-app/workspaceNativeStorage.integration.test.ts (3 tests) 44148ms
+   ✓ Owner edits, restarts, exports and delivers the sole native workspace (legacy)  17889ms
+   ✓ Owner edits, restarts, exports and delivers the sole native workspace (registered)  20194ms
+   ✓ an owned native child crash removes its private compiler cache and preserves the SQLite workspace  6064ms
+ ❯ src/local-app/formalWorkflow.delivery.integration.test.ts (1 test | 1 failed) 3060ms
+   × formal Owner workflow delivers exact native export with adopted text, mixed audio and traceable late unused results 3060ms
+     → {"error":"新账号会自动建立专属目录；历史目录请在账号资料的恢复与迁移中处理。"}
+
+400 !== 200
+
+ ❯ src/local-app/workspaceVisualCandidates.integration.test.ts (14 tests | 1 failed) 39588ms
+   ✓ Owner registers a local visual candidate and replaces only one source instance  2350ms
+   ✓ Owner locally fills a placeholder with a registered still image without video generation  1963ms
+   ✓ Owner locally fills a placeholder with a registered pan-zoom image without video generation  1989ms
+   ✓ Owner registers new media into the existing live pool and can save and reopen it  5604ms
+   ✓ Owner creates a controlled Provider visual candidate during editing without changing Episode stage  2147ms
+   × visual generation freezes the actual source voice window instead of retained muted TTS and rejects a later route change 6380ms
+     → ENOENT: no such file or directory, open '/private/tmp/loop-control-main-e2e-20261101/integration-regression/evidence/loop_t09_evidence_dir/source-main-voice-provider.json'
+   ✓ unknown paid visual submissions cannot be bypassed by retry or a new prompt  1960ms
+   ✓ a visual task with a saved Provider ID resumes polling without a second paid submission  2396ms
+   ✓ short visual source requires an explicit duration decision without repeating or moving other clips  2260ms
+   ✓ voice gain and BGM edits do not stale a visual request or overwrite the new mix  3734ms
+   ✓ an unavailable unused visual candidate does not prevent editing and cannot be adopted  1839ms
+   ✓ added shots accept registered local visuals and explicitly selected generation and changed target input blocks a new paid POST  2654ms
+   ✓ manual video adoption preserves the selected source interval and refuses a short range  2020ms
+   ✓ video generation freezes and applies the first-frame composition without changing the source image  2291ms
+ ✓ src/local-app/mediaRootPublication.integration.test.ts (7 tests) 31216ms
+   ✓ SIGKILL after private config publication but before database COMMIT restores source metadata and resumes the original plan  4924ms
+   ✓ root-commit-unknown retains committed plan authority and a fresh native process completes one consistent target  4452ms
+   ✓ root-activation-fail retains committed plan authority and a fresh native process completes one consistent target  4420ms
+   ✓ root-old-close-fail retains committed plan authority and a fresh native process completes one consistent target  4581ms
+   ✓ root-finalize-kill retains committed plan authority and a fresh native process completes one consistent target  4438ms
+   ✓ environment pre-secret recovery uses the same real plan proof for root-before-commit-kill and retains a tampered publication  4305ms
+   ✓ environment pre-secret recovery uses the same real plan proof for root-activation-fail and retains a tampered publication  4094ms
+ ✓ src/local-app/mediaRootExecutionProcess.integration.test.ts (7 tests) 29813ms
+   ✓ global copy SIGKILL retains same-plan recovery identities and permits resume from a fresh process  5001ms
+   ✓ global copy SIGKILL retains same-plan recovery identities and permits rollback from a fresh process  4497ms
+   ✓ a source replaced by FIFO at the actual copy open is refused promptly and preserves the original bytes  4003ms
+   ✓ disconnected Owner sees durable in-file byte progress and conflicting writes stay blocked until the same plan completes  4143ms
+   ✓ a previously admitted filesystem writer drains before the migration fence and its changed account scope prevents cutover  4004ms
+   ✓ an older executing plan stays visible over newer planned history and a failed fence prevents competing plans after restart  4315ms
+   ✓ a failed empty-workspace global plan prevents ordinary initialization from bypassing its durable fence  3849ms
+ ✓ src/local-app/workspaceExport.integration.test.ts (1 test) 25814ms
+   ✓ Owner checks actual used content before exporting and confirms exact final bytes  25813ms
+ ✓ src/local-app/workspaceImages.integration.test.ts (7 tests) 28315ms
+   ✓ Owner uploads and persists a native still image with duration and composition  2451ms
+   ✓ Owner renders static and pan/zoom native images without external generation (landscape=false)  8631ms
+   ✓ Owner renders static and pan/zoom native images without external generation (landscape=true)  6913ms
+   ✓ Owner sees missing and changed image blockers without a replacement task or source  1955ms
+   ✓ AI image generation retains the selected execution path and blocks when no registered connection exists  1777ms
+   ✓ Owner first image videos preserve completed outputs and manual edit boundary (edited=false)  4140ms
+   ✓ Owner first image videos preserve completed outputs and manual edit boundary (edited=true)  2448ms
+ ✓ src/local-app/episodeCollectionWorker.integration.test.ts (3 tests) 20998ms
+   ✓ the compiled CLI retries the same frozen failed planner after five collection moves with all old sources offline  9611ms
+   ✓ real ready/running and unknown paid submissions block collection moves without changing source, current location or paid evidence  3020ms
+   ✓ a committed native attempt keeps its frozen inode, task, fee and Provider submission across five collection moves and source-offline publication recovery  8366ms
+ ✓ src/local-app/workspaceCaptions.integration.test.ts (3 tests) 21146ms
+   ✓ Owner edits only the chosen native caption lane and persists manual timing without shot approval  5277ms
+   ✓ current native caption evidence follows the real alignment queue and rejects a late Worker result after a text edit  2704ms
+   ✓ real landscape and portrait Remotion frames contain caption pixels inside the chosen safe area  13164ms
+ ✓ src/local-app/nativeStudioPrimary.integration.test.ts (1 test) 21379ms
+   ✓ native text, style and timing save once, final-file approval confirms captions and later edits invalidate it  21378ms
+ ❯ src/local-app/deletionBackupRestore.integration.test.ts (1 test | 1 failed) 3ms
+   × real SQL115 prepared and committed deletion block backup while completed and rolled-back manifests restore unchanged after their source files disappear 3ms
+     → Storage fixture requires isolated owned databases
+ ❯ src/local-app/mediaRootSettings.integration.test.ts (5 tests | 1 failed) 21280ms
+   ✓ Owner sees the adopted existing media root after native restart and cannot relocate its files through ordinary initialization  4270ms
+   × empty workspace initialization persists authorization, reloads the actual service and Worker, and survives a fresh native process 4175ms
+     → ENOENT: no such file or directory, open '/private/tmp/loop-control-main-e2e-20261101/integration-regression/evidence/loop_acceptance_output/native-result.json'
+   ✓ interrupted initialization reconciles private config with committed database metadata on the next real process start  4191ms
+   ✓ Owner initialization refuses overlapping, nonempty and low-space targets and recovers a controlled runtime reload failure  3702ms
+   ✓ an empty separately mounted volume can itself be the media root without adding a folder name  4940ms
+ ✓ src/local-app/legacyAdoptionWorker.integration.test.ts (3 tests) 19160ms
+   ✓ a committed native attempt keeps its frozen inode, task, fee and Provider submission while adoption relocates publication recovery  3472ms
+   ✓ the compiled CLI retries the same frozen failed planner after adoption with its old source offline  4939ms
+   ✓ the compiled delivery Worker consumes the original queued manifest and publishes unchanged logical references after adoption and source offline  10749ms
+ ❯ src/local-app/formalWorkflow.integration.test.ts (6 tests | 2 failed) 20924ms
+   ✓ Owner confirms a fresh script before visual materials exist  3265ms
+   ✓ Owner builds a formal incomplete draft without old storyboard approvals  3874ms
+   ✓ first formal adoption preserves the latest unsubmitted legacy Studio document  3834ms
+   ✓ late legacy render reports retain artifacts without advancing or approving the adopted workspace  1861ms
+   × fresh formal and added shots generate through the real controlled Provider Worker without legacy approval 4979ms
+     → undefined {"last_result":{"retry":{"reason":"Owner action is required before retrying this task.","shouldRetry":false},"status":"blocked","taskId":"86574e9d-2bd5-4793-b9b4-959876d1b45f","version":"worker-result/v1","blockers":[{"code":"input_artifacts_invalid","detail":"产物不属于当前 Episode 目录：未分系列--172e11ce-6760-4b17-947a-a9a847458c0d/正式新单--e025da3b-5ce2-49d0-a4c1-2d71318c5f1b/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-local-first.png"}],"nextStep":"Correct the task package and create a new task attempt.","artifacts":[],"validation":{"checks":[],"passed":false},"actualCostCents":1}}
+   × ordinary scripts use the selected real planner task and verified artifact before preparation confirmation 3111ms
+     → {"error":"新账号会自动建立专属目录；历史目录请在账号资料的恢复与迁移中处理。"}
+
+400 !== 200
+
+ ✓ src/local-app/accountAssetRoots.integration.test.ts (3 tests) 24584ms
+   ✓ Owner owns actual account directories independently of blueprint versions, and files remain isolated after restart  2437ms
+   ✓ Owner creates same-title productions and managed imports in two actual roots; rename, restart and invalid roots preserve isolation  6063ms
+   ✓ native SQLite project, actual exports and delivery Worker stay inside the owned root after blueprint root is absent  16083ms
+ ✓ src/local-app/episodeDeletionNative.integration.test.ts (4 tests) 21444ms
+   ✓ real native working files have exact deletion authority while unknown native neighbors remain (legacy)  5888ms
+   ✓ real native working files have exact deletion authority while unknown native neighbors remain (registered)  5824ms
+   ✓ delete awaits actual native shutdown and requires a fresh confirmation after that inventory changes  4950ms
+   ✓ an extra native project keeps the entire unproven native store and its mapped source bytes  4781ms
+ ❯ src/local-app/accountDirectoryMigrationStorage.integration.test.ts (1 test | 1 failed) 3ms
+   × a real backup and fresh restore retain migrated account location mappings and return original artifact bytes through Owner HTTP 3ms
+     → Storage fixture requires isolated owned databases
+ ❯ src/local-app/episodeCreation.integration.test.ts (3 tests | 1 failed) 10675ms
+   ✓ formal Owner creation places each production order directly in its registered series or unassigned container  3866ms
+   × pending production-order creation reserves its account against deletion and backup until the same command completes 3288ms
+     → Storage fixture requires isolated owned databases
+   ✓ Owner imports main script and material into a newly created ..alpha series at its registered location  3521ms
+ ✓ src/local-app/legacyWorkspaceEditing.integration.test.ts (4 tests) 18389ms
+   ✓ continues the exact original native project, saves a new immutable version and restores it after restart without generation (legacy)  7056ms
+   ✓ continues the exact original native project, saves a new immutable version and restores it after restart without generation (registered)  5404ms
+   ✓ prefers the most recently saved native edit and archives it before creating the working copy (legacy)  2949ms
+   ✓ prefers the most recently saved native edit and archives it before creating the working copy (registered)  2979ms
+ ✓ src/local-app/inputPublicationOwnership.integration.test.ts (10 tests) 17336ms
+   ✓ Owner import preserves unknown replacement and original bytes after temporary-link failure  1747ms
+   ✓ Owner import preserves unknown replacement and original bytes after receipt-link failure  1767ms
+   ✓ Owner import preserves unknown replacement and original bytes after temporary-open failure  1836ms
+   ✓ Owner import preserves unknown replacement and original bytes after receipt-open failure  1731ms
+   ✓ Owner import preserves unknown replacement and original bytes after temporary-close failure  1607ms
+   ✓ Owner import preserves unknown replacement and original bytes after receipt-close failure  1910ms
+   ✓ Owner import preserves unknown replacement and original bytes after temporary-close-identical failure  1682ms
+   ✓ Owner recovery preserves a receipt replaced during recovery-receipt-link and retries without deleting its unknown bytes  1677ms
+   ✓ Owner recovery preserves a receipt replaced during recovery-receipt-link-identical and retries without deleting its unknown bytes  1714ms
+   ✓ Owner recovery preserves a receipt replaced during legacy-receipt and retries without deleting its unknown bytes  1665ms
+ ✓ src/local-app/legacyAdoptionProcess.integration.test.ts (4 tests) 16140ms
+   ✓ a paused native copy reserves an unregistered shared legacy source against archive and exact deletion  3936ms
+   ✓ SIGKILL after a durable temp identity permits resume of the same plan in a fresh process without a second active directory  4134ms
+   ✓ SIGKILL after a durable temp identity permits rollback of the same plan in a fresh process without a second active directory  4019ms
+   ✓ a real application preserves its old readable location and unknown target data when controlled capacity is exhausted  4050ms
+ ❯ src/local-app/accountAssetRootsStorage.integration.test.ts (1 test | 1 failed) 3ms
+   × a real backup and fresh restore preserve independent episode files and rebind account directory identity for Owner HTTP 3ms
+     → Storage fixture requires isolated owned databases
+ ✓ src/local-app/legacyAdoption.integration.test.ts (8 tests) 14554ms
+   ✓ legacy global-root production stays readable and does not prevent a new isolated account (exact)  1779ms
+   ✓ legacy global-root production stays readable and does not prevent a new isolated account (trailing-slash)  1722ms
+   ✓ Owner explicitly adopts only owned legacy episode scopes and preserves frozen references when the old source is offline  2020ms
+   ✓ a episode replacement while final SQL is paused rolls back the entire current switch and retains both generations  1836ms
+   ✓ a container replacement while final SQL is paused rolls back the entire current switch and retains both generations  1798ms
+   ✓ a account replacement while final SQL is paused rolls back the entire current switch and retains both generations  1704ms
+   ✓ a file replacement while final SQL is paused rolls back the entire current switch and retains both generations  1755ms
+   ✓ adoption history and retained sources survive current-only episode cleanup and deletion of the empty account  1939ms
+ ✓ src/local-app/workspaceAudioSelection.integration.test.ts (2 tests) 14799ms
+   ✓ independent audio searches freeze connection and query across blueprint changes, retries, audition and explicit native adoption  9410ms
+   ✓ invalid audio selections do not enqueue and unavailable search never blocks uploaded music or original audio  5388ms
+ ❯ src/local-app/managedMediaRestore.integration.test.ts (13 tests | 13 failed) 2280ms
+   × a genuine new workspace backup restores its original media through Owner HTTP without manufacturing import evidence 4ms
+     → Storage fixture requires isolated owned databases
+   × restored registered episode and empty series containers use target identities and completed creation replays with the source offline 1ms
+     → Storage fixture requires isolated owned databases
+   × an unfinished physical creation reserves its source and refuses a complete backup 0ms
+     → Storage fixture requires isolated owned databases
+   × a changed source retains explicit incomplete evidence and cannot publish a successful archive 0ms
+     → Storage fixture requires isolated owned databases
+   × a large production file is backed up and restored with bounded resident-memory growth 0ms
+     → Storage fixture requires isolated owned databases
+   × a restored native deployment restarts at the new root and saves, closes, reopens and exports the actual SDK project with the source offline (legacy) 1133ms
+     → Storage fixture requires isolated owned databases
+   × a restored native deployment restarts at the new root and saves, closes, reopens and exports the actual SDK project with the source offline (registered) 1137ms
+     → Storage fixture requires isolated owned databases
+   × a missing immutable workspace document prevents a complete backup even when ordinary artifact rows are intact 1ms
+     → Storage fixture requires isolated owned databases
+   × a rejected deployment publication retains the restored database pending and an explicit failed receipt 0ms
+     → Storage fixture requires isolated owned databases
+   × registered platform cache and independent history inside a legacy media parent retain their own responsibilities 0ms
+     → Storage fixture requires isolated owned databases
+   × the pinned legacy schema can be backed up before storage migrations and restored forward without touching its source 1ms
+     → Storage fixture requires isolated owned databases
+   × restore never replaces an empty destination inserted after its initial check 0ms
+     → Storage fixture requires isolated owned databases
+   × a same-byte replacement root cannot be laundered into a successful backup identity 0ms
+     → Storage fixture requires isolated owned databases
+ ❯ src/local-app/speechSelection.integration.test.ts (3 tests | 1 failed) 9884ms
+   ✓ speech requests freeze connection and voice while defaults change, and completed audio waits for explicit native adoption  2996ms
+   × fresh formal speech adoption drives actual video duration and invalidates subtitle evidence when a longer voice is adopted 4524ms
+     → undefined {"last_result":{"retry":{"reason":"Owner action is required before retrying this task.","shouldRetry":false},"status":"blocked","taskId":"5377112a-f02a-4f4d-b5fb-bd4489ec0259","version":"worker-result/v1","blockers":[{"code":"input_artifacts_invalid","detail":"产物不属于当前 Episode 目录：未分系列--06945d28-9747-4dad-98fd-6bc76d76a607/正式新单--467f0d30-5ed6-4db1-ad1b-613ef01ad6c7/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-first.png"}],"nextStep":"Correct the task package and create a new task attempt.","artifacts":[],"validation":{"checks":[],"passed":false},"actualCostCents":1}}
+   ✓ speech validates actual choices, ownership and budget, and an unknown paid request cannot be sent again after restart  2363ms
+stderr | src/local-app/accountWorkspace.browser.integration.test.ts > edits account and series independently through the formal page and isolated Owner HTTP
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-153-LWVehU/vite-cache/deps/react-dom_client.js?v=3f6766c0 as it exceeds the max of 500KB.
+
+ ✓ src/local-app/accountWorkspace.browser.integration.test.ts (1 test) 11189ms
+   ✓ edits account and series independently through the formal page and isolated Owner HTTP  11188ms
+ ✓ src/local-app/episodeCollectionProcess.integration.test.ts (3 tests) 14193ms
+   ✓ a real SIGKILL after move temp identity commit allows resume from a new application PID using the same target  5383ms
+   ✓ a real SIGKILL after move temp identity commit allows rollback from a new application PID using the same target  4657ms
+   ✓ a copying move blocks archive, deletion and new production until its durable receipt finishes  4153ms
+ ✓ src/local-app/episodeCollectionFaults.integration.test.ts (6 tests) 13817ms
+   ✓ an old registered layout2 without a real container uses frozen-series compatibility until explicit adoption, while registered NULL means unassigned  2182ms
+   ✓ collection commands are idempotent, reject cross-account and client paths, and maintain archived/completed orders without unlocking content  2488ms
+   ✓ a real episode change across final SQL aborts the move without changing current authority or overwriting unknown data  2147ms
+   ✓ a real source-container change across final SQL aborts the move without changing current authority or overwriting unknown data  2130ms
+   ✓ a real target-container change across final SQL aborts the move without changing current authority or overwriting unknown data  2351ms
+   ✓ a real bytes change across final SQL aborts the move without changing current authority or overwriting unknown data  2518ms
+ ❯ src/local-app/workspaceFirstVideo.integration.test.ts (3 tests | 2 failed) 14127ms
+   × fresh authored first video uses current preparation without a legacy approval (actual voice=false) 3618ms
+     → undefined {"last_result":{"retry":{"reason":"Owner action is required before retrying this task.","shouldRetry":false},"status":"blocked","taskId":"bf146310-9287-4a5f-a27f-8f7c0e740fee","version":"worker-result/v1","blockers":[{"code":"input_artifacts_invalid","detail":"产物不属于当前 Episode 目录：未分系列--d08de583-4add-4c4b-9e8a-ecc1a2331fe2/正式新单--f479a523-1b16-4ab5-a1c2-eff199b2ce6e/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-first.png"}],"nextStep":"Correct the task package and create a new task attempt.","artifacts":[],"validation":{"checks":[],"passed":false},"actualCostCents":1}}
+   × fresh authored first video uses current preparation without a legacy approval (actual voice=true) 4471ms
+     → undefined {"last_result":{"retry":{"reason":"Owner action is required before retrying this task.","shouldRetry":false},"status":"blocked","taskId":"1f824088-1c82-4f6e-91b9-4cc47d1a0968","version":"worker-result/v1","blockers":[{"code":"input_artifacts_invalid","detail":"产物不属于当前 Episode 目录：未分系列--ab9faa6e-e56d-4df4-9b6c-3f43777a0ba7/正式新单--f50c5efe-3cd4-4c92-a02a-86607647cfe9/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-first.png"}],"nextStep":"Correct the task package and create a new task attempt.","artifacts":[],"validation":{"checks":[],"passed":false},"actualCostCents":1}}
+   ✓ replanning discards current voice adoption without discarding historical decisions, then adopts the first new voice  6038ms
+ ✓ src/local-app/mediaRootMigration.integration.test.ts (6 tests) 12726ms
+   ✓ an unreadable production file returns a recoverable storage reason and leaves its original bytes untouched  2219ms
+   ✓ Owner persists a whole-workspace plan outside the old parent without changing active storage or source bytes  1986ms
+   ✓ bounded scanning rejects excessive directory depth without touching either tree  1805ms
+   ✓ durable creation, deletion and partial-copy records are inventoried as blockers while completed history stays inactive  2050ms
+   ✓ a historical frozen native identity without a complete bridge is a plan conflict and its original snapshot stays unchanged  2529ms
+   ✓ concurrent Owner retries preserve one plan and report target contents plus actual task blockers  2136ms
+stderr | src/local-app/mediaRootMigration.browser.integration.test.ts > formal Owner storage settings persist a root plan, show conflicts and recover the same plan after a real process restart
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-t06-volume-1jQCnC/mounted/loop-153-VlvhVb/vite-cache/deps/react-dom_client.js?v=d66521e8 as it exceeds the max of 500KB.
+
+stderr | src/local-app/mediaRootMigration.browser.integration.test.ts > formal Owner storage settings persist a root plan, show conflicts and recover the same plan after a real process restart
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-t06-volume-1jQCnC/mounted/loop-153-VlvhVb/vite-cache/deps/react-dom_client.js?v=ee278f70 as it exceeds the max of 500KB.
+
+ ✓ src/local-app/mediaRootMigration.browser.integration.test.ts (1 test) 11070ms
+   ✓ formal Owner storage settings persist a root plan, show conflicts and recover the same plan after a real process restart  11070ms
+ ❯ src/local-app/workspaceVisualStorage.integration.test.ts (5 tests | 4 failed) 10102ms
+   ✓ legacy production location owns image generation after rename/restart while request, fees and explicit adoption stay frozen  2616ms
+   × registered production location owns image generation after rename/restart while request, fees and explicit adoption stay frozen 1770ms
+     → Expected values to be strictly equal:
+
+409 !== 200
+
+   × registered production directory contains Pexels searches, downloads and adopted owned copies after preview and external source go offline 2030ms
+     → Expected values to be strictly equal:
+
+409 !== 200
+
+   × registered video output resumes the frozen Provider task after restart without a second submission or namespace change 1917ms
+     → {"error":"工程快照不可用或指纹已变化，原始素材未修改。"}: expected 409 to be 200 // Object.is equality
+   × replaced registered directory blocks new visual writes and an already queued task before any paid submission 1769ms
+     → Expected values to be strictly equal:
+
+409 !== 200
+
+ ✓ src/local-app/workspaceAudioProjection.integration.test.ts (1 test) 9967ms
+   ✓ native workspace projection follows audible source over muted prior speech and reports none without altering music or effects  9967ms
+ ✓ src/local-app/accountCreation.integration.test.ts (4 tests) 11693ms
+   ✓ first account on a native workspace without import history owns one persisted real directory and survives replay and rename  2203ms
+   ✓ real native new installation creates its first account without import data and resumes a killed creation in the same directory  4148ms
+   ✓ creation faults preserve unknown files, clean only owned empty folders and resume the pre-marker crash window  2810ms
+   ✓ creation cleanup preserves same-byte replacement markers and final registration refuses a replacement directory  2530ms
+ ❯ src/local-app/blueprintReviewRetirement.integration.test.ts (3 tests | 1 failed | 1 skipped) 10303ms
+   × Owner confirms a script and final file with every retired gate enabled and unused tools unavailable 8543ms
+     → expected { positioning: '保留创作规则' } to deeply equal { positioning: '保留创作规则', …(3) }
+   ✓ an old storyboard-review order continues without retroactive approval and retains read-only boundaries  1759ms
+   ↓ serves the formal blueprint page against an isolated Owner database
+ ✓ src/local-app/legacyHtmlWorkspace.integration.test.ts (2 tests) 11204ms
+   ✓ adopts frozen HTML over real HTTP/PG/SDK, permits per-shot replacement, saves and reopens without touching original records (legacy)  5666ms
+   ✓ adopts frozen HTML over real HTTP/PG/SDK, permits per-shot replacement, saves and reopens without touching original records (registered)  5537ms
+ ✓ src/local-app/episodeCreation.native.integration.test.ts (2 tests) 10312ms
+   ✓ fresh native process resumes one reserved episode with the original blueprint and series after SIGKILL and rule edits  5082ms
+   ✓ native crashes after mkdir and after COMMIT plus actual unmount/remount preserve one intent and physical directory  5229ms
+(node:66164) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ✓ src/local-app/workspaceVideoSelection.integration.test.ts (3 tests) 10882ms
+   ✓ video selections generate real independent candidates without blueprint tools or added-shot type  4373ms
+   ✓ video rejects invalid selection, input and budget before submission and preserves unknown-result protection across restart  2387ms
+   ✓ selected video model uses actual adopted source voice window, rejects overflow and protects against later voice changes  4122ms
+stdout | src/worker/openchatcutStudio.media-cache.integration.test.ts > keeps the real SDK waveform cache key and copied-source mtime across close/reopen when bytes match
+{"name":"studio-waveform-reopen-cache","mtimeBefore":1790812800000,"mtimeAfter":1790812800000,"cacheKeyBefore":"ebeecaf7b023c70128af.mp3.preview-v3-2106-1790812800000000.peaks.json","cacheKeyAfter":"ebeecaf7b023c70128af.mp3.preview-v3-2106-1790812800000000.peaks.json"}
+
+ ✓ src/worker/openchatcutStudio.media-cache.integration.test.ts (4 tests) 7122ms
+   ✓ keeps the real SDK waveform cache key and copied-source mtime across close/reopen when bytes match  2931ms
+   ✓ repairs different copied bytes even when source and destination have equal size and mtime  1793ms
+   ✓ still rejects an existing symlink media copy before considering content equality  984ms
+   ✓ still rejects an existing hardlink media copy before considering content equality  1414ms
+ ❯ src/local-app/inputStorageLocation.integration.test.ts (4 tests | 2 failed) 10194ms
+   × Owner imports and confirms managed script bytes at the registered production location, retaining legacy previews after restart 3258ms
+     → expected 409 to be 200 // Object.is equality
+   × Owner reuses an approved series input as a self-contained managed copy with original source approval evidence 3252ms
+     → {"error":"此系列尚未纳入统一目录。"}: expected 409 to be 200 // Object.is equality
+   ✓ input retries preserve immutable bytes and reject unsafe, foreign, interrupted and replaced-directory submissions  1960ms
+   ✓ receipted input publication survives an interrupted unlink and restart without overwriting unknown targets or trusting altered receipts  1724ms
+ ✓ src/local-app/mediaRootExecution.integration.test.ts (2 tests) 9747ms
+   ✓ Owner executes the saved global plan and a fresh native process reads every original artifact from the new root  4772ms
+   ✓ completed root publication permits a later legitimate collection move and fresh native startup  4974ms
+stderr | src/local-app/accountCreation.browser.integration.test.ts > formal new-install account form creates the directory before displaying its read-only final metadata row
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-t06-volume-PBnyI8/mounted/loop-153-qqHzo4/vite-cache/deps/react-dom_client.js?v=e36d198f as it exceeds the max of 500KB.
+
+ ✓ src/local-app/accountCreation.browser.integration.test.ts (1 test) 8656ms
+   ✓ formal new-install account form creates the directory before displaying its read-only final metadata row  8656ms
+ ✓ src/local-app/seriesDirectories.integration.test.ts (5 tests) 9105ms
+   ✓ creates a series and retrieves its exclusive physical container through Owner HTTP  1874ms
+   ✓ rejects client positions and exposes legacy/unassigned collection without read-time creation  1753ms
+   ✓ preserves replaced markers and rejects a directory swap during the final container INSERT  1801ms
+   ✓ read/open never recreate missing or replaced series directories and metadata rename leaves frozen versions intact  1843ms
+   ✓ refuses final commit when the account root changes even if the original child and marker are moved intact  1833ms
+ ✓ src/worker/openchatcutStudio.storage.integration.test.ts (4 tests) 9212ms
+   ✓ reads the latest offline SQLite edit and opens the exact new LC version instead of reimporting JSON backups  2853ms
+   ✓ recovers the latest SQLite edit for the same workspace baseline after the host exits, despite stale JSON backups  3319ms
+   ✓ preserves both versions instead of overwriting when the native store and host changed since their shared snapshot  1555ms
+   ✓ refuses stale JSON when a migrated SQLite database is missing  1484ms
+ ❯ src/local-app/mediaRootSettings.browser.integration.test.ts (1 test | 1 failed) 4730ms
+   × formal Owner storage settings initialize, copy and open the real root, preserve errors and read the same location after reload 4730ms
+     → Command failed: git show 47c90f20:src/local-app/LocalCatalogApp.tsx
+fatal: not a git repository (or any of the parent directories): .git
+
+stdout | src/worker/openchatcutStudio.validation.integration.test.ts > retains both validators while reading the identical document once during each draft open
+{"name":"draft-open-validation","sdkReads":1,"validatorCalls":2,"readDurationsMs":[81],"elapsedMs":1145}
+
+ ✓ src/worker/openchatcutStudio.validation.integration.test.ts (3 tests) 6609ms
+   ✓ retains both validators while reading the identical document once during each draft open  1349ms
+   ✓ still rejects a source SHA change at the second validation when SDK evidence is reused  3308ms
+   ✓ revalidates a changed native-store document instead of trusting the input fingerprint  1951ms
+ ✓ src/local-app/historyEpisodeDeletion.integration.test.ts (1 test) 9693ms
+   ✓ deletes only the confirmed history, live order and exclusive files through real Owner HTTP  9692ms
+ ✓ src/local-app/episodeStorageLocation.integration.test.ts (4 tests) 7392ms
+   ✓ Owner opens the full production directory, including legacy archived productions, without creating input folders  1993ms
+   ✓ persisted collection paths survive restart and rename; Owner HTTP preview/open reject foreign, missing and replaced locations  2010ms
+   ✓ a repeated folder-open action rechecks location availability and reports actual permission failures  1737ms
+   ✓ desktop-open failure remains recoverable without starting production or changing files  1652ms
+ ✓ src/local-app/mediaRootMigrationNative.integration.test.ts (1 test) 7439ms
+   ✓ a real SQLite project and original frozen references are inventoried through adoption and move lineage while an open Studio is a blocker  7439ms
+ ✓ src/local-app/productionSelection.integration.test.ts (3 tests) 7361ms
+   ✓ explicit image selections freeze two independent connections without blueprint image authority  2825ms
+   ✓ rejects invalid choices, settings, references and budget; unknown submission cannot charge twice  2221ms
+   ✓ legacy queued image snapshots execute unchanged after content-only saves and new requests still require a selection  2314ms
+ ✓ src/local-app/blueprintContraction.integration.test.ts (3 tests) 8674ms
+   ✓ Owner saves creative-only accounts without media connections and retains referenced legacy blueprint evidence  1817ms
+   ✓ ordinary planning drafts persist before workspace creation and failed retries retain their frozen selection  3424ms
+   ✓ v2 direct preparation needs no planner and new media requests require explicit service selection  3432ms
+ ✓ src/local-app/productionWorkspace.integration.test.ts (1 test) 7252ms
+   ✓ Owner persists incomplete matches, gates native entry until visuals are ready and reopens safely  7251ms
+ ✓ src/local-app/mediaRootExecutionWorker.integration.test.ts (1 test) 7285ms
+   ✓ the compiled CLI retries the same frozen failed planner after a cross-device global root migration with old production sources offline  7284ms
+ ❯ src/local-app/workspaceFirstVideo.source.integration.test.ts (1 test | 1 failed) 7427ms
+   × first video freezes the actual source main voice without requiring an unused TTS draft 7427ms
+     → {"error":"请选择本次制作服务。"}: expected 400 to be 200 // Object.is equality
+ ✓ src/local-app/legacyWorkspaceEntry.integration.test.ts (3 tests) 5622ms
+   ✓ legacy orders enter four-step preparation only on an explicit owned command  1977ms
+   ✓ legacy script revision uses the same explicit entry and failed imports leave no registration  1704ms
+   ✓ legacy inspection stays read-only and completed, archived and historical orders are not enrolled  1940ms
+ ✓ src/local-app/legacyStudioProject.integration.test.ts (2 tests) 7936ms
+   ✓ Owner reads and downloads the exact saved legacy edit without adopting or rewriting it (legacy)  4074ms
+   ✓ Owner reads and downloads the exact saved legacy edit without adopting or rewriting it (registered)  3862ms
+ ✓ src/local-app/accountDeletionStorage.integration.test.ts (3 tests) 5219ms
+   ✓ account deletion cleans only registered empty containers, retaining unknown parents and immutable completed creation history  1796ms
+   ✓ a pending registered container creation reserves its account against parent deletion  1719ms
+   ✓ a parent account cannot cascade an active, archived or completed production  1703ms
+ ✓ src/local-app/fixtureSchema.integration.test.ts (3 tests) 4568ms
+   ✓ schema provisioning accepts both the pre-workspace and upgraded sources without replaying applied DDL  1961ms
+   ✓ an applied migration SHA mismatch refuses provisioning before writing the target schema  741ms
+   ✓ schema and migration metadata retain one snapshot when the source upgrades during export  1864ms
+ ✓ src/local-app/creativeStorageCompatibility.integration.test.ts (1 test) 4390ms
+   ✓ Owner creative extensions remain creative data while actual indexed file dependencies still block a root plan  4390ms
+ ✓ src/local-app/seriesDirectories.native.integration.test.ts (1 test) 4655ms
+   ✓ native runtime resumes killed series creation, preserves frozen rules and opens its actual registered Finder folder  4655ms
+ ✓ src/local-app/accountDirectoryMigrationSubmissions.integration.test.ts (2 tests) 4702ms
+   ✓ real Worker reject outcome controls directory migration after restart without erasing the paid ledger  2543ms
+   ✓ real Worker unknown outcome controls directory migration after restart without erasing the paid ledger  2158ms
+ ❯ src/local-app/embeddedStudio.integration.test.ts (1 test | 1 failed) 3765ms
+   × Owner opens the real Studio and saves its versioned workspace through native HTTP 3765ms
+     → ENOENT: no such file or directory, open '/private/tmp/loop-153-3VwdkA/account/episodes/4b0fbb17-d3b4-4934-b0e4-aa91b1e3eb17/openchatcut-work/current/runtime/project-store-v1/project%3Aloop-control-4b0fbb17-d3b4-4934-b0e4-aa91b1e3eb17.json'
+ ✓ src/local-app/workspaceScriptResume.integration.test.ts (2 tests) 6398ms
+   ✓ Owner confirms a formatting-only revision while preserving the exact edited project and old invalidated evidence  4314ms
+   ✓ substantive script edits cannot bypass the stale-project guard through formatting recovery  2084ms
+ ✓ src/local-app/episodeCollectionMove.integration.test.ts (1 test) 4164ms
+   ✓ Owner moves an order from A to B without changing its frozen creative series or original material reference  4163ms
+ ❯ src/local-app/episodeDeletion.integration.test.ts (2 tests | 2 failed) 2709ms
+   × managed=true: deletes an archived ordinary order and then its empty account through Owner HTTP, retaining deletion fences 1371ms
+     → expected 503 to be 409 // Object.is equality
+   × managed=false: deletes an archived ordinary order and then its empty account through Owner HTTP, retaining deletion fences 1337ms
+     → expected 503 to be 409 // Object.is equality
+ ❯ src/local-app/accountDeletion.integration.test.ts (3 tests | 3 failed) 4581ms
+   × empty: deletes an account through Owner HTTP, cleaning only empty exclusive roots and preserving history and deletion guards 1261ms
+     → expected 503 to be 400 // Object.is equality
+   × nonempty: deletes an account through Owner HTTP, cleaning only empty exclusive roots and preserving history and deletion guards 2033ms
+     → expected 503 to be 400 // Object.is equality
+   × shared: deletes an account through Owner HTTP, cleaning only empty exclusive roots and preserving history and deletion guards 1287ms
+     → expected 503 to be 400 // Object.is equality
+ ✓ src/local-app/episodeCreationFaults.integration.test.ts (1 test) 4153ms
+   ✓ resumes mkdir/publication failures with one UUID and preserves unknown data and replaced identities  4153ms
+ ✓ src/local-app/legacyAdoptionVolumes.integration.test.ts (1 test) 3599ms
+   ✓ multiple owned legacy roots copy across an actual volume while mixed registered accounts, unknown files and frozen series remain intact  3598ms
+ ✓ src/local-app/episodeDeletionRetainedSources.integration.test.ts (2 tests) 3768ms
+   ✓ only current registered files are confirmed; online deployment sources remain outside deletion authority  1879ms
+   ✓ only current registered files are confirmed; offline deployment sources remain outside deletion authority  1889ms
+ ✓ src/local-app/inputStorageMigration.integration.test.ts (1 test) 3018ms
+   ✓ input and visual storage migrations compose in either supported incremental order on isolated real schemas  3017ms
+ ✓ src/local-app/nativeStorageSql.integration.test.ts (2 tests) 3333ms
+   ✓ effective SQL120 guards use literal owned prefixes and retain fixed publish identities  1660ms
+   ✓ fresh Owner Studio scope keeps exact frozen input and task namespace at a literal registered prefix  1672ms
+ ✓ src/local-app/mediaRootMigrationBlockers.integration.test.ts (1 test) 2787ms
+   ✓ real queue claims and one unknown controlled Provider submission remain blockers without rewriting the task or fee  2787ms
+(node:56443) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ✓ src/local-app/workspaceImageGeneration.integration.test.ts (1 test) 2748ms
+   ✓ HTTP → isolated queue → actual Worker publishes a reference-based image batch; selecting and adopting remain explicit  2747ms
+ ✓ src/local-app/connectionCatalog.integration.test.ts (1 test) 971ms
+   ✓ exposes registered service groups and updates exact verified connection choices through Owner HTTP  971ms
+ ✓ src/local-app/seriesDirectoryFaults.integration.test.ts (1 test) 1885ms
+   ✓ resumes mkdir and identity-publication interruptions and compensates only its own marker-only folder  1885ms
+ ✓ src/local-app/workspaceCatalog.integration.test.ts (1 test) 1987ms
+   ✓ Owner catalog projects only current workspace export and delivery evidence  1986ms
+ ✓ src/local-app/episodeArchive.integration.test.ts (1 test) 1435ms
+   ✓ restores an owned legacy order without enabling native production; retains ownership, history and CSRF fences  1434ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 60 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/worker/openchatcutProject.integration.test.ts > OpenChatCut real project reader integration > opens an independent dashboard, reuses concurrent launches, and preserves projects after restart
+Error: OpenChatCut Studio 启动后未在 project-store 中导入测试工程。
+ ❯ waitForStoredProject src/worker/openchatcutProject.integration.test.ts:376:9
+    374|   const created = await fetch(`${origin}/api/project-store/project-doc…
+    375|     method: "POST",
+    376|     headers,
+       |         ^
+    377|     body: JSON.stringify({ operation: "project-document-write", key: `…
+    378|   });
+ ❯ src/worker/openchatcutProject.integration.test.ts:43:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/60]⎯
+
+ FAIL  src/worker/openchatcutProject.integration.test.ts > OpenChatCut real project reader integration > opens Studio and reads editable caption cues back from its project store
+AssertionError: expected 'http://127.0.0.1:59951/?lcBridge=1#/e…' to contain '/#/editor/loop-control-00000000-0000-…'
+
+Expected: "/#/editor/loop-control-00000000-0000-4000-8000-000000000096"
+Received: "http://127.0.0.1:59951/?lcBridge=1#/editor/loop-control-00000000-0000-4000-8000-000000000096"
+
+ ❯ src/worker/openchatcutProject.integration.test.ts:66:30
+     64| 
+     65|     const opened = await openOpenChatCutStudio(assetRoot, episodeId, r…
+     66|     if (!opened.studioUrl) throw new Error("测试未能打开 OpenChatCut Studio。…
+       |                              ^
+     67|     const stored = await waitForStoredProject(new URL(opened.studioUrl…
+     68|     const observation = await inspectOpenChatCutProjectWithRuntime(sto…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/60]⎯
+
+ FAIL  src/worker/openchatcutProject.integration.test.ts > OpenChatCut real project reader integration > keeps Studio edits mutable, warns before changed workbench input replaces them, and freezes new immutable revisions only on demand
+Error: ENOENT: no such file or directory, open '/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-control-openchatcut-boundary-test-lWMpRQ/episodes/00000000-0000-4000-8000-000000000105/openchatcut-work/current/runtime/project-store-v1/project%3Aloop-control-00000000-0000-4000-8000-000000000105.json'
+ ❯ src/worker/openchatcutProject.integration.test.ts:92:5
+     90|       const audio = project.timelines[0].items.find((item: { kind: str…
+     91|       audio.volume = 0.4;
+     92|       video.fadeInFrames = 15;
+       |     ^
+     93|     });
+     94|     await closeOpenChatCutStudio(episodeId);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/60]⎯
+
+ FAIL  src/worker/openchatcutProject.integration.test.ts > OpenChatCut real project reader integration > opens, edits, freezes, and renders one real Episode containing TTS split-screen, source-audio, and silent captioned shots
+Error: ENOENT: no such file or directory, open '/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-control-issue-106-real-episode-rI7BAN/episodes/00000000-0000-4000-8000-000000000106/openchatcut-work/current/runtime/project-store-v1/project%3Aloop-control-00000000-0000-4000-8000-000000000106.json'
+ ❯ src/worker/openchatcutProject.integration.test.ts:304:5
+    302|       narration.volume = 0.5;
+    303|     });
+    304|     await closeOpenChatCutStudio(episodeId);
+       |     ^
+    305|     const reopened = await openOpenChatCutStudio(assetRoot, episodeId,…
+    306|     if (!reopened.studioUrl) throw new Error("修改后的 OpenChatCut 工程未能重新打…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/60]⎯
+
+ FAIL  src/local-app/accountAssetRootsStorage.integration.test.ts > a real backup and fresh restore preserve independent episode files and rebind account directory identity for Owner HTTP
+Error: Storage fixture requires isolated owned databases
+ ❯ nativeStorageContext src/local-app/nativeStorage.fixture.ts:7:187
+
+ ❯ src/local-app/accountAssetRootsStorage.integration.test.ts:15:91
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/60]⎯
+
+ FAIL  src/local-app/accountDeletion.integration.test.ts > empty: deletes an account through Owner HTTP, cleaning only empty exclusive roots and preserving history and deletion guards
+ FAIL  src/local-app/accountDeletion.integration.test.ts > nonempty: deletes an account through Owner HTTP, cleaning only empty exclusive roots and preserving history and deletion guards
+ FAIL  src/local-app/accountDeletion.integration.test.ts > shared: deletes an account through Owner HTTP, cleaning only empty exclusive roots and preserving history and deletion guards
+AssertionError: expected 503 to be 400 // Object.is equality
+
+- Expected
++ Received
+
+- 400
++ 503
+
+ ❯ src/local-app/accountDeletion.integration.test.ts:88:63
+     86|   expect((await remove(account,'Delete fixture',randomUUID(),false)).s…
+     87|   expect((await remove(foreign)).status).toBe(404);
+     88|   expect((await remove(account,'wrong confirmation')).status).toBe(400…
+       |                                                               ^
+     89|   expect((await remove(occupied)).status).toBe(409);
+     90|   // Reject the receipt insert after DELETE, proving rolled-back trans…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/60]⎯
+
+ FAIL  src/local-app/accountDirectoryMigrationStorage.integration.test.ts > a real backup and fresh restore retain migrated account location mappings and return original artifact bytes through Owner HTTP
+Error: Storage fixture requires isolated owned databases
+ ❯ nativeStorageContext src/local-app/nativeStorage.fixture.ts:7:187
+
+ ❯ src/local-app/accountDirectoryMigrationStorage.integration.test.ts:16:91
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/60]⎯
+
+ FAIL  src/local-app/blueprintReviewRetirement.integration.test.ts > Owner confirms a script and final file with every retired gate enabled and unused tools unavailable
+AssertionError: expected { positioning: '保留创作规则' } to deeply equal { positioning: '保留创作规则', …(3) }
+
+- Expected
++ Received
+
+  {
+-   "a_roll": {
+-     "execution_path": "local",
+-   },
+-   "approval_gates": [
+-     "script",
+-     "visual",
+-     "storyboard",
+-     "qc",
+-     "publish",
+-   ],
+-   "asset_root": "/private/tmp/loop-t06-volume-wjOUDX/mounted/loop-153-JGaPY3/account",
+    "positioning": "保留创作规则",
+  }
+
+ ❯ src/local-app/blueprintReviewRetirement.integration.test.ts:34:122
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/60]⎯
+
+ FAIL  src/local-app/deletionBackupRestore.integration.test.ts > real SQL115 prepared and committed deletion block backup while completed and rolled-back manifests restore unchanged after their source files disappear
+Error: Storage fixture requires isolated owned databases
+ ❯ nativeStorageContext src/local-app/nativeStorage.fixture.ts:7:187
+
+ ❯ src/local-app/deletionBackupRestore.integration.test.ts:19:85
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/60]⎯
+
+ FAIL  src/local-app/embeddedStudio.integration.test.ts > Owner opens the real Studio and saves its versioned workspace through native HTTP
+Error: ENOENT: no such file or directory, open '/private/tmp/loop-153-3VwdkA/account/episodes/4b0fbb17-d3b4-4934-b0e4-aa91b1e3eb17/openchatcut-work/current/runtime/project-store-v1/project%3Aloop-control-4b0fbb17-d3b4-4934-b0e4-aa91b1e3eb17.json'
+ ❯ src/local-app/embeddedStudio.integration.test.ts:33:20
+     31|     expect(stale.status,JSON.stringify(stale.body)).toBe(409);
+     32|     const runtimePath=join(f.assetRoot,`episodes/${f.episode}/openchat…
+     33|     const original=await readFile(runtimePath,'utf8'),candidate=JSON.p…
+       |                    ^
+     34|     candidate.assets.push({id:'unapproved',kind:'video',name:'unapprov…
+     35|     await writeFile(runtimePath,JSON.stringify(candidate));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/60]⎯
+
+ FAIL  src/local-app/episodeCollectionNative.integration.test.ts > all historical native coordinates remain usable after A→B→unassigned→A→B and a real database/media restore with original sources offline
+Error: Storage fixture requires isolated owned databases
+ ❯ nativeStorageContext src/local-app/nativeStorage.fixture.ts:7:187
+
+ ❯ src/local-app/episodeCollectionNative.integration.test.ts:16:207
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/60]⎯
+
+ FAIL  src/local-app/episodeCreation.integration.test.ts > pending production-order creation reserves its account against deletion and backup until the same command completes
+Error: Storage fixture requires isolated owned databases
+ ❯ nativeStorageContext src/local-app/nativeStorage.fixture.ts:7:187
+
+ ❯ src/local-app/episodeCreation.integration.test.ts:46:199
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/60]⎯
+
+ FAIL  src/local-app/episodeDeletion.integration.test.ts > managed=true: deletes an archived ordinary order and then its empty account through Owner HTTP, retaining deletion fences
+ FAIL  src/local-app/episodeDeletion.integration.test.ts > managed=false: deletes an archived ordinary order and then its empty account through Owner HTTP, retaining deletion fences
+AssertionError: expected 503 to be 409 // Object.is equality
+
+- Expected
++ Received
+
+- 409
++ 503
+
+ ❯ src/local-app/episodeDeletion.integration.test.ts:96:42
+     94|   if(managed)expect((await post('archiveEpisode',{episodeId:episode,ar…
+     95|   else await asAdmin('UPDATE public.episodes SET archived_at=now() WHE…
+     96|   expect((await removeAccount()).status).toBe(409);
+       |                                          ^
+     97|   await asAdmin('INSERT INTO local_identity.historical_episodes(episod…
+     98|   expect((await post('planDeletion',{episodeId:episode})).status).toBe…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/60]⎯
+
+ FAIL  src/local-app/formalWorkflow.delivery.integration.test.ts > formal Owner workflow delivers exact native export with adopted text, mixed audio and traceable late unused results
+AssertionError: {"error":"新账号会自动建立专属目录；历史目录请在账号资料的恢复与迁移中处理。"}
+
+400 !== 200
+
+
+- Expected
++ Received
+
+- 200
++ 400
+
+ ❯ formalWorkflowFixture src/local-app/formalWorkflow.fixture.ts:16:538
+
+ ❯ src/local-app/formalWorkflow.delivery.integration.test.ts:14:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/60]⎯
+
+ FAIL  src/local-app/formalWorkflow.integration.test.ts > fresh formal and added shots generate through the real controlled Provider Worker without legacy approval
+Error: undefined {"last_result":{"retry":{"reason":"Owner action is required before retrying this task.","shouldRetry":false},"status":"blocked","taskId":"86574e9d-2bd5-4793-b9b4-959876d1b45f","version":"worker-result/v1","blockers":[{"code":"input_artifacts_invalid","detail":"产物不属于当前 Episode 目录：未分系列--172e11ce-6760-4b17-947a-a9a847458c0d/正式新单--e025da3b-5ce2-49d0-a4c1-2d71318c5f1b/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-local-first.png"}],"nextStep":"Correct the task package and create a new task attempt.","artifacts":[],"validation":{"checks":[],"passed":false},"actualCostCents":1}}
+ ❯ Object.execute src/local-app/workspaceNarration.fixture.ts:61:105
+
+ ❯ src/local-app/formalWorkflow.integration.test.ts:73:399
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/60]⎯
+
+ FAIL  src/local-app/formalWorkflow.integration.test.ts > ordinary scripts use the selected real planner task and verified artifact before preparation confirmation
+AssertionError: {"error":"新账号会自动建立专属目录；历史目录请在账号资料的恢复与迁移中处理。"}
+
+400 !== 200
+
+
+- Expected
++ Received
+
+- 200
++ 400
+
+ ❯ formalWorkflowFixture src/local-app/formalWorkflow.fixture.ts:16:538
+
+ ❯ src/local-app/formalWorkflow.integration.test.ts:78:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/60]⎯
+
+ FAIL  src/local-app/inputStorageLocation.integration.test.ts > Owner imports and confirms managed script bytes at the registered production location, retaining legacy previews after restart
+AssertionError: expected 409 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 409
+
+ ❯ src/local-app/inputStorageLocation.integration.test.ts:38:96
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/60]⎯
+
+ FAIL  src/local-app/inputStorageLocation.integration.test.ts > Owner reuses an approved series input as a self-contained managed copy with original source approval evidence
+AssertionError: {"error":"此系列尚未纳入统一目录。"}: expected 409 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 409
+
+ ❯ src/local-app/inputStorageLocation.integration.test.ts:53:169
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/60]⎯
+
+ FAIL  src/local-app/legacyAdoptionNative.integration.test.ts > adopted lineage is backed up and restored into a new database and root before a fresh application edits SQLite and exports with the source offline
+Error: Storage fixture requires isolated owned databases
+ ❯ nativeStorageContext src/local-app/nativeStorage.fixture.ts:7:187
+
+ ❯ src/local-app/legacyAdoptionNative.integration.test.ts:38:91
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/60]⎯
+
+ FAIL  src/local-app/managedMediaRestore.integration.test.ts > a genuine new workspace backup restores its original media through Owner HTTP without manufacturing import evidence
+Error: Storage fixture requires isolated owned databases
+ ❯ nativeStorageContext src/local-app/nativeStorage.fixture.ts:7:187
+
+ ❯ src/local-app/managedMediaRestore.integration.test.ts:17:91
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/60]⎯
+
+ FAIL  src/local-app/managedMediaRestore.integration.test.ts > restored registered episode and empty series containers use target identities and completed creation replays with the source offline
+Error: Storage fixture requires isolated owned databases
+ ❯ nativeStorageContext src/local-app/nativeStorage.fixture.ts:7:187
+
+ ❯ src/local-app/managedMediaRestore.integration.test.ts:46:91
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/60]⎯
+
+ FAIL  src/local-app/managedMediaRestore.integration.test.ts > an unfinished physical creation reserves its source and refuses a complete backup
+Error: Storage fixture requires isolated owned databases
+ ❯ nativeStorageContext src/local-app/nativeStorage.fixture.ts:7:187
+
+ ❯ src/local-app/managedMediaRestore.integration.test.ts:79:91
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/60]⎯
+
+ FAIL  src/local-app/managedMediaRestore.integration.test.ts > a changed source retains explicit incomplete evidence and cannot publish a successful archive
+Error: Storage fixture requires isolated owned databases
+ ❯ nativeStorageContext src/local-app/nativeStorage.fixture.ts:7:187
+
+ ❯ src/local-app/managedMediaRestore.integration.test.ts:89:91
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/60]⎯
+
+ FAIL  src/local-app/managedMediaRestore.integration.test.ts > a large production file is backed up and restored with bounded resident-memory growth
+Error: Storage fixture requires isolated owned databases
+ ❯ nativeStorageContext src/local-app/nativeStorage.fixture.ts:7:187
+
+ ❯ src/local-app/managedMediaRestore.integration.test.ts:100:91
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/60]⎯
+
+ FAIL  src/local-app/managedMediaRestore.integration.test.ts > a restored native deployment restarts at the new root and saves, closes, reopens and exports the actual SDK project with the source offline (legacy)
+ FAIL  src/local-app/managedMediaRestore.integration.test.ts > a restored native deployment restarts at the new root and saves, closes, reopens and exports the actual SDK project with the source offline (registered)
+Error: Storage fixture requires isolated owned databases
+ ❯ nativeStorageContext src/local-app/nativeStorage.fixture.ts:7:187
+
+ ❯ src/local-app/managedMediaRestore.integration.test.ts:114:201
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[25/60]⎯
+
+ FAIL  src/local-app/managedMediaRestore.integration.test.ts > a missing immutable workspace document prevents a complete backup even when ordinary artifact rows are intact
+Error: Storage fixture requires isolated owned databases
+ ❯ nativeStorageContext src/local-app/nativeStorage.fixture.ts:7:187
+
+ ❯ src/local-app/managedMediaRestore.integration.test.ts:149:196
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[26/60]⎯
+
+ FAIL  src/local-app/managedMediaRestore.integration.test.ts > a rejected deployment publication retains the restored database pending and an explicit failed receipt
+Error: Storage fixture requires isolated owned databases
+ ❯ nativeStorageContext src/local-app/nativeStorage.fixture.ts:7:187
+
+ ❯ src/local-app/managedMediaRestore.integration.test.ts:159:85
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[27/60]⎯
+
+ FAIL  src/local-app/managedMediaRestore.integration.test.ts > registered platform cache and independent history inside a legacy media parent retain their own responsibilities
+Error: Storage fixture requires isolated owned databases
+ ❯ nativeStorageContext src/local-app/nativeStorage.fixture.ts:7:187
+
+ ❯ src/local-app/managedMediaRestore.integration.test.ts:172:85
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[28/60]⎯
+
+ FAIL  src/local-app/managedMediaRestore.integration.test.ts > the pinned legacy schema can be backed up before storage migrations and restored forward without touching its source
+Error: Storage fixture requires isolated owned databases
+ ❯ nativeStorageContext src/local-app/nativeStorage.fixture.ts:7:187
+
+ ❯ src/local-app/managedMediaRestore.integration.test.ts:184:107
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[29/60]⎯
+
+ FAIL  src/local-app/managedMediaRestore.integration.test.ts > restore never replaces an empty destination inserted after its initial check
+Error: Storage fixture requires isolated owned databases
+ ❯ nativeStorageContext src/local-app/nativeStorage.fixture.ts:7:187
+
+ ❯ src/local-app/managedMediaRestore.integration.test.ts:197:85
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[30/60]⎯
+
+ FAIL  src/local-app/managedMediaRestore.integration.test.ts > a same-byte replacement root cannot be laundered into a successful backup identity
+Error: Storage fixture requires isolated owned databases
+ ❯ nativeStorageContext src/local-app/nativeStorage.fixture.ts:7:187
+
+ ❯ src/local-app/managedMediaRestore.integration.test.ts:208:85
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[31/60]⎯
+
+ FAIL  src/local-app/mediaRootExecutionNative.integration.test.ts > mixed accounts and native SQLite move across devices as one root, survive old production offline, and restore a real DB/media backup
+Error: Storage fixture requires isolated owned databases
+ ❯ nativeStorageContext src/local-app/nativeStorage.fixture.ts:7:187
+
+ ❯ src/local-app/mediaRootExecutionNative.integration.test.ts:20:91
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[32/60]⎯
+
+ FAIL  src/local-app/mediaRootSettings.browser.integration.test.ts > formal Owner storage settings initialize, copy and open the real root, preserve errors and read the same location after reload
+Error: Command failed: git show 47c90f20:src/local-app/LocalCatalogApp.tsx
+fatal: not a git repository (or any of the parent directories): .git
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[33/60]⎯
+
+ FAIL  src/local-app/mediaRootSettings.integration.test.ts > empty workspace initialization persists authorization, reloads the actual service and Worker, and survives a fresh native process
+Error: ENOENT: no such file or directory, open '/private/tmp/loop-control-main-e2e-20261101/integration-regression/evidence/loop_acceptance_output/native-result.json'
+ ❯ src/local-app/mediaRootSettings.integration.test.ts:55:41
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[34/60]⎯
+
+ FAIL  src/local-app/restorePublication.integration.test.ts > SIGKILL at restore journal retains verifiable publication proof and fresh application Owner file reads recover
+ FAIL  src/local-app/restorePublication.integration.test.ts > SIGKILL at restore receipt retains verifiable publication proof and fresh application Owner file reads recover
+ FAIL  src/local-app/restorePublication.integration.test.ts > SIGKILL at restore config retains verifiable publication proof and fresh application Owner file reads recover
+ FAIL  src/local-app/restorePublication.integration.test.ts > SIGKILL at restore ready retains verifiable publication proof and fresh application Owner file reads recover
+Error: Storage fixture requires isolated owned databases
+ ❯ nativeStorageContext src/local-app/nativeStorage.fixture.ts:7:187
+
+ ❯ src/local-app/restorePublication.integration.test.ts:16:85
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[35/60]⎯
+
+ FAIL  src/local-app/speechSelection.integration.test.ts > fresh formal speech adoption drives actual video duration and invalidates subtitle evidence when a longer voice is adopted
+Error: undefined {"last_result":{"retry":{"reason":"Owner action is required before retrying this task.","shouldRetry":false},"status":"blocked","taskId":"5377112a-f02a-4f4d-b5fb-bd4489ec0259","version":"worker-result/v1","blockers":[{"code":"input_artifacts_invalid","detail":"产物不属于当前 Episode 目录：未分系列--06945d28-9747-4dad-98fd-6bc76d76a607/正式新单--467f0d30-5ed6-4db1-ad1b-613ef01ad6c7/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-first.png"}],"nextStep":"Correct the task package and create a new task attempt.","artifacts":[],"validation":{"checks":[],"passed":false},"actualCostCents":1}}
+ ❯ Object.execute src/local-app/workspaceNarration.fixture.ts:61:105
+
+ ❯ src/local-app/speechSelection.integration.test.ts:57:434
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[36/60]⎯
+
+ FAIL  src/local-app/workspaceAudioStorage.integration.test.ts > replaced production directory blocks speech submission before reserving fees or contacting the Provider
+AssertionError: expected '工程快照不可用或指纹已变化，原始素材未修改。' to contain '身份'
+
+Expected: "身份"
+Received: "工程快照不可用或指纹已变化，原始素材未修改。"
+
+ ❯ src/local-app/workspaceAudioStorage.integration.test.ts:15:178
+     13|  const location=locationOf(f);await rename(location.path,location.path…
+     14|  const denied=await f.request('generateWorkspaceNarration',{...base,re…
+     15|  await expect(readFile(f.submissions)).rejects.toMatchObject({code:'EN…
+       |                                                                                                                                                                                  ^
+     16|  }finally{await f.close();}
+     17| },180000);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[37/60]⎯
+
+ FAIL  src/local-app/workspaceAudioStorage.integration.test.ts > registered speech retains actual media, confirmed input and one paid submission after rename/restart
+AssertionError: expected 409 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 409
+
+ ❯ src/local-app/workspaceAudioStorage.integration.test.ts:22:142
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[38/60]⎯
+
+ FAIL  src/local-app/workspaceAudioStorage.integration.test.ts > registered source video extracts only its actual selected audio window into this production
+AssertionError: {"error":"工程快照不可用或指纹已变化，原始素材未修改。"}: expected 409 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 409
+
+ ❯ src/local-app/workspaceAudioStorage.integration.test.ts:31:615
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[39/60]⎯
+
+ FAIL  src/local-app/workspaceAudioStorage.integration.test.ts > registered music and effects retain frozen searches on retry and remain playable managed files after external originals disappear
+AssertionError: {"error":"工程快照不可用或指纹已变化，原始素材未修改。"}: expected 409 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 409
+
+ ❯ send src/local-app/workspaceAudioStorage.integration.test.ts:39:167
+
+ ❯ src/local-app/workspaceAudioStorage.integration.test.ts:40:2
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[40/60]⎯
+
+ FAIL  src/local-app/workspaceAudioStorage.integration.test.ts > registered speech drives the actual alignment worker and preserves confirmed subtitle text and timing after restart
+AssertionError: {"error":"工程快照不可用或指纹已变化，原始素材未修改。"}: expected 409 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 409
+
+ ❯ send src/local-app/workspaceAudioStorage.integration.test.ts:48:310
+
+ ❯ src/local-app/workspaceAudioStorage.integration.test.ts:48:360
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[41/60]⎯
+
+ FAIL  src/local-app/workspaceAudioStorage.integration.test.ts > registered synchronized preview renders actual approved source audio and keeps the native project beside the proxy
+AssertionError: {"error":"文件引用缺少本生产单的完整位置迁移证明。"}: expected 409 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 409
+
+ ❯ src/local-app/workspaceAudioStorage.integration.test.ts:59:453
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[42/60]⎯
+
+ FAIL  src/local-app/workspaceAudioStorage.integration.test.ts > subtitle readback rejects a replaced production directory instead of reporting the old confirmed state as current
+AssertionError: expected 409 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 409
+
+ ❯ src/local-app/workspaceAudioStorage.integration.test.ts:69:344
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[43/60]⎯
+
+ FAIL  src/local-app/workspaceAudioStorage.integration.test.ts > uploaded narration music and effects keep owned snapshots at the registered location after all external originals are removed
+AssertionError: {"error":"工程快照不可用或指纹已变化，原始素材未修改。"}: expected 409 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 409
+
+ ❯ send src/local-app/workspaceAudioStorage.integration.test.ts:75:219
+
+ ❯ src/local-app/workspaceAudioStorage.integration.test.ts:77:545
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[44/60]⎯
+
+ FAIL  src/local-app/workspaceFirstVideo.integration.test.ts > fresh authored first video uses current preparation without a legacy approval (actual voice=false)
+Error: undefined {"last_result":{"retry":{"reason":"Owner action is required before retrying this task.","shouldRetry":false},"status":"blocked","taskId":"bf146310-9287-4a5f-a27f-8f7c0e740fee","version":"worker-result/v1","blockers":[{"code":"input_artifacts_invalid","detail":"产物不属于当前 Episode 目录：未分系列--d08de583-4add-4c4b-9e8a-ecc1a2331fe2/正式新单--f479a523-1b16-4ab5-a1c2-eff199b2ce6e/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-first.png"}],"nextStep":"Correct the task package and create a new task attempt.","artifacts":[],"validation":{"checks":[],"passed":false},"actualCostCents":1}}
+ ❯ Object.execute src/local-app/workspaceNarration.fixture.ts:61:105
+
+ ❯ src/local-app/workspaceFirstVideo.integration.test.ts:35:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[45/60]⎯
+
+ FAIL  src/local-app/workspaceFirstVideo.integration.test.ts > fresh authored first video uses current preparation without a legacy approval (actual voice=true)
+Error: undefined {"last_result":{"retry":{"reason":"Owner action is required before retrying this task.","shouldRetry":false},"status":"blocked","taskId":"1f824088-1c82-4f6e-91b9-4cc47d1a0968","version":"worker-result/v1","blockers":[{"code":"input_artifacts_invalid","detail":"产物不属于当前 Episode 目录：未分系列--ab9faa6e-e56d-4df4-9b6c-3f43777a0ba7/正式新单--f50c5efe-3cd4-4c92-a02a-86607647cfe9/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-first.png"}],"nextStep":"Correct the task package and create a new task attempt.","artifacts":[],"validation":{"checks":[],"passed":false},"actualCostCents":1}}
+ ❯ Object.execute src/local-app/workspaceNarration.fixture.ts:61:105
+
+ ❯ src/local-app/workspaceFirstVideo.integration.test.ts:35:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[46/60]⎯
+
+ FAIL  src/local-app/workspaceFirstVideo.source.integration.test.ts > first video freezes the actual source main voice without requiring an unused TTS draft
+AssertionError: {"error":"请选择本次制作服务。"}: expected 400 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 400
+
+ ❯ send src/local-app/workspaceFirstVideo.source.integration.test.ts:14:197
+
+ ❯ src/local-app/workspaceFirstVideo.source.integration.test.ts:24:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[47/60]⎯
+
+ FAIL  src/local-app/workspaceVideo.integration.test.ts > Owner boundaries reject stale, foreign, invalid, tampered and active-editor range writes
+AssertionError: expected 409 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 409
+
+ ❯ src/local-app/workspaceVideo.integration.test.ts:84:124
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[48/60]⎯
+
+ FAIL  src/local-app/workspaceVisualCandidates.integration.test.ts > visual generation freezes the actual source voice window instead of retained muted TTS and rejects a later route change
+Error: ENOENT: no such file or directory, open '/private/tmp/loop-control-main-e2e-20261101/integration-regression/evidence/loop_t09_evidence_dir/source-main-voice-provider.json'
+ ❯ src/local-app/workspaceVisualCandidates.integration.test.ts:68:292
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[49/60]⎯
+
+ FAIL  src/local-app/workspaceVisualStorage.integration.test.ts > registered production location owns image generation after rename/restart while request, fees and explicit adoption stay frozen
+AssertionError: Expected values to be strictly equal:
+
+409 !== 200
+
+
+- Expected
++ Received
+
+- 200
++ 409
+
+ ❯ Object.read src/local-app/workspaceNarration.fixture.ts:67:647
+
+ ❯ src/local-app/workspaceVisualStorage.integration.test.ts:12:8
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[50/60]⎯
+
+ FAIL  src/local-app/workspaceVisualStorage.integration.test.ts > registered production directory contains Pexels searches, downloads and adopted owned copies after preview and external source go offline
+AssertionError: Expected values to be strictly equal:
+
+409 !== 200
+
+
+- Expected
++ Received
+
+- 200
++ 409
+
+ ❯ Object.read src/local-app/workspaceNarration.fixture.ts:67:647
+
+ ❯ src/local-app/workspaceVisualStorage.integration.test.ts:32:8
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[51/60]⎯
+
+ FAIL  src/local-app/workspaceVisualStorage.integration.test.ts > registered video output resumes the frozen Provider task after restart without a second submission or namespace change
+AssertionError: {"error":"工程快照不可用或指纹已变化，原始素材未修改。"}: expected 409 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 409
+
+ ❯ src/local-app/workspaceVisualStorage.integration.test.ts:52:285
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[52/60]⎯
+
+ FAIL  src/local-app/workspaceVisualStorage.integration.test.ts > replaced registered directory blocks new visual writes and an already queued task before any paid submission
+AssertionError: Expected values to be strictly equal:
+
+409 !== 200
+
+
+- Expected
++ Received
+
+- 200
++ 409
+
+ ❯ Object.read src/local-app/workspaceNarration.fixture.ts:67:647
+
+ ❯ src/local-app/workspaceVisualStorage.integration.test.ts:61:8
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[53/60]⎯
+
+
+ Test Files  26 failed | 71 passed (97)
+      Tests  60 failed | 307 passed | 1 skipped (368)
+   Start at  05:57:31
+   Duration  1624.53s (transform 1.34s, setup 106ms, collect 9.04s, tests 1604.90s, environment 6ms, prepare 2.41s)
+
+JSON report written to /Users/dan/Programs/loop-control/docs/verification/issue-178-main-e2e-20261101/integration-results.json

@@ -1,0 +1,15 @@
+{
+  "name": "loop-control-main-e2e-20261101",
+  "id": "ee8ba236529e708f1a50cd85f059b372a2101e63c6620db8555a2acacee4d5ba",
+  "purposeLabel": "main-e2e-20261101",
+  "image": "sha256:00bc86618629af00d2937fdc5a5d63db3ff8450acf52f0636ec813c7f4902929",
+  "network": "none",
+  "mounts": [],
+  "databases": [
+    "loop_e2e_base",
+    "loop_e2e_baseline",
+    "loop_live_e2e_202611010001",
+    "postgres"
+  ],
+  "finalRecoverySavedByParent": true
+}

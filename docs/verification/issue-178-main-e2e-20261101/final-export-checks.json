@@ -1,0 +1,178 @@
+{
+  "id": "daff486b-7c01-44ca-9fb0-32d336bb71b9",
+  "projectContentVersion": 10,
+  "contentSha256": "2b6e1ffd923934edb83a9b9a3e9709d0d4152845a02f41cd68d782aaeacc5135",
+  "project": {
+    "sha256": "e6f0e4e2540164b46679a83884ae38b6535fe1d7c5ba898b938e9141db19c319",
+    "fileSize": 15463,
+    "relativePath": "春日风景--dcd6550f-b229-4df0-8993-98efae2c3503/真实风景短片 · Pexels 与万相--c736a98b-49db-4a61-934c-ebb2db6c6a9d/production-workspace/versions/e6f0e4e2540164b46679a83884ae38b6535fe1d7c5ba898b938e9141db19c319.json"
+  },
+  "status": "ready",
+  "artifact": {
+    "sha256": "656edddab2b3d1f3d52ad3a9afdc10c9e4ddd72c08fac65d32925ee8e7907714",
+    "fileSize": 6035449,
+    "relativePath": "春日风景--dcd6550f-b229-4df0-8993-98efae2c3503/真实风景短片 · Pexels 与万相--c736a98b-49db-4a61-934c-ebb2db6c6a9d/workspace-exports/daff486b-7c01-44ca-9fb0-32d336bb71b9/656edddab2b3d1f3d52ad3a9afdc10c9e4ddd72c08fac65d32925ee8e7907714.mp4"
+  },
+  "checks": [
+    {
+      "name": "used_content",
+      "detail": "已核对 4 个实际来源。",
+      "passed": true,
+      "sources": [
+        {
+          "sha256": "2582d65af39bed2b816ada6c3160bb6a812ac36574814993e832f85f92af5269",
+          "fileSize": 3315191,
+          "relativePath": "春日风景--dcd6550f-b229-4df0-8993-98efae2c3503/真实风景短片 · Pexels 与万相--c736a98b-49db-4a61-934c-ebb2db6c6a9d/native-tasks/ffaf1bc5-7e02-406a-9707-012fad9770e3/ffaf1bc5-7e02-406a-9707-012fad9770e3.mp4"
+        },
+        {
+          "sha256": "c07863d21f285d094cf2eaaa398e1a76f346615a600a951be35d4c3ace2346d4",
+          "fileSize": 2059154,
+          "relativePath": "春日风景--dcd6550f-b229-4df0-8993-98efae2c3503/真实风景短片 · Pexels 与万相--c736a98b-49db-4a61-934c-ebb2db6c6a9d/materials/c07863d21f285d094cf2eaaa398e1a76f346615a600a951be35d4c3ace2346d4-pexels-36511980.mp4"
+        },
+        {
+          "sha256": "5e66133d120c430799330fe4e7a5f27b5ff8f0214267edbaa8a4dfc83b6ee4a5",
+          "fileSize": 9837,
+          "relativePath": "春日风景--dcd6550f-b229-4df0-8993-98efae2c3503/真实风景短片 · Pexels 与万相--c736a98b-49db-4a61-934c-ebb2db6c6a9d/native-tasks/27978b73-d246-48d2-b771-da484b589784/shot-narration-shot-01-5e777e02-f77a-4f33-abdd-74382b0d9723.mp3"
+        },
+        {
+          "sha256": "a2ec1cdbec5f237c209eaafac7025595de2396680da3b8ac456286c2e71c26db",
+          "fileSize": 16365,
+          "relativePath": "春日风景--dcd6550f-b229-4df0-8993-98efae2c3503/真实风景短片 · Pexels 与万相--c736a98b-49db-4a61-934c-ebb2db6c6a9d/native-tasks/38bc7e03-3351-45f4-b33f-04acec7dd749/shot-narration-shot-02-7421f833-c75a-4694-b57c-df0e68bc3cff.mp3"
+        }
+      ]
+    },
+    {
+      "name": "captions",
+      "detail": "已核对 2 组字幕时序，正文随最终文件一次确认。",
+      "passed": true,
+      "evidence": [
+        {
+          "clipId": "5a2fb7f8-374c-4261-ab07-05836951c263",
+          "detail": null,
+          "itemId": "shot-shot-01-5a2fb7f8-374c-4261-ab07-05836951c263",
+          "shotId": "shot-01",
+          "taskId": "d3de8620-d16a-464f-bbed-2d7655c8550b",
+          "timing": "current",
+          "contract": {
+            "cues": [
+              {
+                "id": "phrase-1~0",
+                "text": "风吹过湖面。",
+                "endMs": 1204,
+                "startMs": 61
+              }
+            ],
+            "text": "风吹过湖面。",
+            "enabled": true,
+            "spatial": {
+              "anchor": "bottom-center",
+              "insets": {
+                "top": 0.08,
+                "left": 0.08,
+                "right": 0.08,
+                "bottom": 0.18
+              },
+              "version": "shot-caption-space/v2",
+              "maxLines": 2,
+              "safeArea": "title-safe",
+              "aspectRatio": "9:16",
+              "maxCharactersPerLine": 16
+            },
+            "version": "shot-captions/v1",
+            "contentMode": "follow_tts"
+          },
+          "durationMs": 1233,
+          "audioTrackId": "9d6fe65d-5a76-45bb-ab58-cfab7d064d7b",
+          "narrationText": "风吹过湖面。",
+          "textConfirmed": true,
+          "inputFingerprint": "aeeee25a7a526dda1ee903f4e703e136e08d2ec51b139a4b1f23e72d078d6491",
+          "alignmentInputVersion": "a89ec4ee674284323f7fd24c8ac04516dbe0f8dcffd0b3b4788a991be0210f74"
+        },
+        {
+          "clipId": "48079961-cc2f-48ba-b51c-601204e1769f",
+          "detail": null,
+          "itemId": "shot-shot-02-48079961-cc2f-48ba-b51c-601204e1769f",
+          "shotId": "shot-02",
+          "taskId": "908e31c2-25e0-45ef-be7c-b0c93a116625",
+          "timing": "current",
+          "contract": {
+            "cues": [
+              {
+                "id": "phrase-1~0",
+                "text": "把这一刻，",
+                "endMs": 808,
+                "startMs": 81
+              },
+              {
+                "id": "phrase-2~0",
+                "text": "留给自然。",
+                "endMs": 2000,
+                "startMs": 1131
+              }
+            ],
+            "text": "把这一刻，留给自然。",
+            "enabled": true,
+            "spatial": {
+              "anchor": "bottom-center",
+              "insets": {
+                "top": 0.08,
+                "left": 0.08,
+                "right": 0.08,
+                "bottom": 0.18
+              },
+              "version": "shot-caption-space/v2",
+              "maxLines": 2,
+              "safeArea": "title-safe",
+              "aspectRatio": "9:16",
+              "maxCharactersPerLine": 16
+            },
+            "version": "shot-captions/v1",
+            "contentMode": "follow_tts"
+          },
+          "durationMs": 2067,
+          "audioTrackId": "d8824a1e-2de2-49f5-853a-f19849566dc1",
+          "narrationText": "把这一刻，留给自然。",
+          "textConfirmed": true,
+          "inputFingerprint": "c97851236a2a9675f77b50e6c3394e4a1b0ca148de2adbc53be1b1d1f1203574",
+          "alignmentInputVersion": "9d47c721b5f0a7769d9456ffb4805cd41aed2fe6e267ba8d24612d9b8ab8e688"
+        }
+      ]
+    },
+    {
+      "name": "technical",
+      "detail": "实际 MP4 时长、画幅、音频及黑帧检查通过。",
+      "passed": true,
+      "inspection": {
+        "width": 1080,
+        "height": 1920,
+        "hasAudio": true,
+        "blackFrameCount": 0,
+        "durationSeconds": 3.349333
+      },
+      "videoFrames": 99,
+      "audioExpected": true,
+      "videoDurationSeconds": 3.3,
+      "expectedDurationSeconds": 3.3,
+      "containerDurationSeconds": 3.349333
+    },
+    {
+      "name": "representative_frame",
+      "detail": "已实际解码代表帧。",
+      "passed": true,
+      "artifact": {
+        "sha256": "881427f65361a16bf32a548f42816b4b419c9d8e4efff659cc65780bc8d2e40c",
+        "fileSize": 127772,
+        "relativePath": "春日风景--dcd6550f-b229-4df0-8993-98efae2c3503/真实风景短片 · Pexels 与万相--c736a98b-49db-4a61-934c-ebb2db6c6a9d/workspace-exports/daff486b-7c01-44ca-9fb0-32d336bb71b9/representative.jpg"
+      }
+    },
+    {
+      "name": "export_file",
+      "detail": "最终文件已按字节 SHA-256 与大小不可变登记。",
+      "passed": true
+    }
+  ],
+  "createdAt": "2026-10-31T22:03:34.989Z",
+  "confirmedAt": null,
+  "confirmed": false,
+  "current": true
+}

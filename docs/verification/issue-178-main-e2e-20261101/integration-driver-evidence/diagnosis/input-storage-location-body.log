@@ -1,0 +1,47 @@
+
+ RUN  v3.2.7 /private/tmp/loop-control-main-e2e-20261101/integration-regression/source
+
+ ❯ src/local-app/inputStorageLocation.integration.test.ts (4 tests | 2 failed) 10533ms
+   × Owner imports and confirms managed script bytes at the registered production location, retaining legacy previews after restart 3346ms
+     → expected 409 to be 200 // Object.is equality
+   × Owner reuses an approved series input as a self-contained managed copy with original source approval evidence 3197ms
+     → {"error":"此系列尚未纳入统一目录。"}: expected 409 to be 200 // Object.is equality
+   ✓ input retries preserve immutable bytes and reject unsafe, foreign, interrupted and replaced-directory submissions  2187ms
+   ✓ receipted input publication survives an interrupted unlink and restart without overwriting unknown targets or trusting altered receipts  1802ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/inputStorageLocation.integration.test.ts > Owner imports and confirms managed script bytes at the registered production location, retaining legacy previews after restart
+AssertionError: expected 409 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 409
+
+ ❯ src/local-app/inputStorageLocation.integration.test.ts:38:96
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/local-app/inputStorageLocation.integration.test.ts > Owner reuses an approved series input as a self-contained managed copy with original source approval evidence
+AssertionError: {"error":"此系列尚未纳入统一目录。"}: expected 409 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 409
+
+ ❯ src/local-app/inputStorageLocation.integration.test.ts:53:169
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 2 passed (4)
+   Start at  06:27:25
+   Duration  11.16s (transform 364ms, setup 7ms, collect 508ms, tests 10.53s, environment 0ms, prepare 26ms)
+

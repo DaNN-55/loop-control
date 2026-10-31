@@ -1,0 +1,14 @@
+{
+  "name": "loop-control-178-test-postgres",
+  "id": "1b92a552001aa4bef909e0f90410db947fc53f286a9a0216979779ec10833dda",
+  "purposeLabel": "main-e2e-regression-20261101",
+  "image": "sha256:00bc86618629af00d2937fdc5a5d63db3ff8450acf52f0636ec813c7f4902929",
+  "network": "none",
+  "mounts": [],
+  "databases": [
+    "loop_e2e_base",
+    "loop_e2e_baseline",
+    "postgres"
+  ],
+  "finalRecoverySavedByParent": false
+}

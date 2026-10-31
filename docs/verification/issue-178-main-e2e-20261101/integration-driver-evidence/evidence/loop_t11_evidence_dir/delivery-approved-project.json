@@ -1,0 +1,211 @@
+{
+  "version": 3,
+  "loopControl": {
+    "version": "four-step-workspace/v1",
+    "inputFingerprint": "dd3e4de0-2608-44f0-9e53-9da273b6fad7",
+    "transitionMode": "studio"
+  },
+  "assets": [
+    {
+      "id": "material-aa978dec-f4d7-4a80-a6ca-c670f0147db6",
+      "name": "shot.mp4",
+      "kind": "video",
+      "src": "episodes/be0f7670-5d8e-4aae-82b0-4ffcbc95f622/shot.mp4",
+      "durationInFrames": 60,
+      "width": 360,
+      "height": 640,
+      "sourceContentHash": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+      "sourceRevision": "source-sha256-a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da"
+    }
+  ],
+  "mediaFolders": [],
+  "activeTimelineId": "loop-control-be0f7670-5d8e-4aae-82b0-4ffcbc95f622",
+  "timelines": [
+    {
+      "id": "loop-control-be0f7670-5d8e-4aae-82b0-4ffcbc95f622",
+      "name": "整期剪辑",
+      "order": 0,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "fit": "contain",
+      "items": [
+        {
+          "id": "shot-shot-1-6d199a2f-ff2b-430e-9838-2af74cdcd0a5",
+          "track": "track_loop-control-be0f7670-5d8e-4aae-82b0-4ffcbc95f622_1",
+          "kind": "video",
+          "name": "shot-1",
+          "startFrame": 0,
+          "durationInFrames": 60,
+          "width": 360,
+          "height": 640,
+          "transform": {
+            "scale": 1,
+            "x": 0,
+            "y": 0,
+            "rotation": 0
+          },
+          "src": "episodes/be0f7670-5d8e-4aae-82b0-4ffcbc95f622/shot.mp4",
+          "sourceAssetId": "material-aa978dec-f4d7-4a80-a6ca-c670f0147db6",
+          "srcInFrame": 0,
+          "volume": 0,
+          "sourceContentHash": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+          "sourceRevision": "source-sha256-a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da"
+        },
+        {
+          "id": "shot-shot-2-ccf39b0b-5ee6-407e-b785-32554146a062",
+          "track": "track_loop-control-be0f7670-5d8e-4aae-82b0-4ffcbc95f622_1",
+          "kind": "video",
+          "name": "shot-2",
+          "startFrame": 60,
+          "durationInFrames": 60,
+          "width": 360,
+          "height": 640,
+          "transform": {
+            "scale": 1,
+            "x": 0,
+            "y": 0,
+            "rotation": 0
+          },
+          "src": "episodes/be0f7670-5d8e-4aae-82b0-4ffcbc95f622/shot.mp4",
+          "sourceAssetId": "material-aa978dec-f4d7-4a80-a6ca-c670f0147db6",
+          "srcInFrame": 0,
+          "volume": 0,
+          "sourceContentHash": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+          "sourceRevision": "source-sha256-a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da"
+        }
+      ],
+      "trackOrder": [
+        "track_loop-control-be0f7670-5d8e-4aae-82b0-4ffcbc95f622_1",
+        "track_loop-control-be0f7670-5d8e-4aae-82b0-4ffcbc95f622_2"
+      ],
+      "tracks": {
+        "track_loop-control-be0f7670-5d8e-4aae-82b0-4ffcbc95f622_1": {
+          "kind": "video",
+          "name": "画面"
+        },
+        "track_loop-control-be0f7670-5d8e-4aae-82b0-4ffcbc95f622_2": {
+          "kind": "caption",
+          "captions": {
+            "enabled": true,
+            "template": "plain",
+            "pacing": "phrase",
+            "sourceMode": "item",
+            "sourceEntries": [
+              {
+                "id": "workspace-caption-shot-shot-1",
+                "itemId": "manual:workspace-caption-shot-shot-1",
+                "label": "字幕",
+                "slotId": "workspace-caption-shot-shot-1-slot",
+                "visible": false,
+                "anchor": "bottom-center",
+                "offsetXRatio": 0,
+                "offsetYRatio": 0.09999999999999999,
+                "widthRatio": 0.8400000000000001,
+                "heightRatio": 0.74,
+                "words": [],
+                "style": {
+                  "fontFamily": "sans-serif",
+                  "fontWeight": 600,
+                  "color": "#ffffff",
+                  "fontSize": 0.02684659090909091,
+                  "wholeLine": true
+                },
+                "loopControl": {
+                  "version": "workspace-caption/v1",
+                  "contentMode": "independent",
+                  "text": "第一镜",
+                  "spatial": {
+                    "version": "shot-caption-space/v2",
+                    "anchor": "bottom-center",
+                    "safeArea": "title-safe",
+                    "aspectRatio": "9:16",
+                    "insets": {
+                      "top": 0.08,
+                      "right": 0.08,
+                      "bottom": 0.18,
+                      "left": 0.08
+                    },
+                    "maxLines": 2,
+                    "maxCharactersPerLine": 16
+                  }
+                }
+              },
+              {
+                "id": "workspace-caption-shot-shot-2",
+                "itemId": "manual:workspace-caption-shot-shot-2",
+                "label": "字幕",
+                "slotId": "workspace-caption-shot-shot-2-slot",
+                "visible": false,
+                "anchor": "bottom-center",
+                "offsetXRatio": 0,
+                "offsetYRatio": 0.09999999999999999,
+                "widthRatio": 0.8400000000000001,
+                "heightRatio": 0.74,
+                "words": [],
+                "style": {
+                  "fontFamily": "sans-serif",
+                  "fontWeight": 600,
+                  "color": "#ffffff",
+                  "fontSize": 0.02684659090909091,
+                  "wholeLine": true
+                },
+                "loopControl": {
+                  "version": "workspace-caption/v1",
+                  "contentMode": "independent",
+                  "text": "缺少素材的第二镜。",
+                  "spatial": {
+                    "version": "shot-caption-space/v2",
+                    "anchor": "bottom-center",
+                    "safeArea": "title-safe",
+                    "aspectRatio": "9:16",
+                    "insets": {
+                      "top": 0.08,
+                      "right": 0.08,
+                      "bottom": 0.18,
+                      "left": 0.08
+                    },
+                    "maxLines": 2,
+                    "maxCharactersPerLine": 16
+                  }
+                }
+              }
+            ],
+            "layoutPolicy": {
+              "mode": "manual-slots",
+              "slots": [
+                {
+                  "id": "workspace-caption-shot-shot-1-slot",
+                  "anchor": "bottom-center",
+                  "offsetXRatio": 0,
+                  "offsetYRatio": 0.09999999999999999,
+                  "widthRatio": 0.8400000000000001,
+                  "heightRatio": 0.74
+                },
+                {
+                  "id": "workspace-caption-shot-shot-2-slot",
+                  "anchor": "bottom-center",
+                  "offsetXRatio": 0,
+                  "offsetYRatio": 0.09999999999999999,
+                  "widthRatio": 0.8400000000000001,
+                  "heightRatio": 0.74
+                }
+              ]
+            },
+            "perSource": {
+              "workspace-caption-shot-shot-1": {
+                "maxLines": 2
+              },
+              "workspace-caption-shot-shot-2": {
+                "maxLines": 2
+              }
+            }
+          }
+        }
+      },
+      "transitions": [],
+      "selectedId": null,
+      "captionsHidden": false
+    }
+  ]
+}

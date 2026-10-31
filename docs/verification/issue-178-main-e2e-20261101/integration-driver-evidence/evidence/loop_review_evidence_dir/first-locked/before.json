@@ -1,0 +1,115 @@
+{
+  "version": 3,
+  "loopControl": {
+    "version": "four-step-workspace/v1",
+    "inputFingerprint": "faf0b92b-4015-4c62-b6cc-7618df3467f0",
+    "transitionMode": "studio"
+  },
+  "assets": [
+    {
+      "id": "material-db7a45ea-49c1-4eb8-8aaa-9af5f0ec3020",
+      "name": "locked-source.mp4",
+      "kind": "video",
+      "src": "未分系列--a70366b9-6da1-4735-b7b1-775b30100951/正式新单--0139b158-ffcf-440d-b08e-f6c891cda386/materials/7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6-locked-source.mp4",
+      "durationInFrames": 120,
+      "sourceRevision": "db7a45ea-49c1-4eb8-8aaa-9af5f0ec3020",
+      "sourceContentHash": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+      "sourceFilename": "locked-source.mp4",
+      "width": 640,
+      "height": 360
+    }
+  ],
+  "mediaFolders": [],
+  "activeTimelineId": "loop-control-0139b158-ffcf-440d-b08e-f6c891cda386",
+  "timelines": [
+    {
+      "id": "loop-control-0139b158-ffcf-440d-b08e-f6c891cda386",
+      "name": "整期剪辑",
+      "order": 0,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "fit": "contain",
+      "items": [
+        {
+          "id": "shot-shot-01-a22b002d-65dd-4aa9-93f4-825f31cf778e",
+          "track": "V1",
+          "kind": "video",
+          "name": "shot-01",
+          "startFrame": 0,
+          "durationInFrames": 30,
+          "width": 640,
+          "height": 360,
+          "transform": {
+            "scale": 1,
+            "x": 0,
+            "y": 0,
+            "rotation": 0
+          },
+          "loopControlShot": {
+            "workspaceId": "faf0b92b-4015-4c62-b6cc-7618df3467f0",
+            "shotId": "shot-01",
+            "clipId": "a22b002d-65dd-4aa9-93f4-825f31cf778e",
+            "text": "填写本段完整口播。",
+            "provenance": {
+              "materialRevisionId": "db7a45ea-49c1-4eb8-8aaa-9af5f0ec3020",
+              "sha256": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+              "fileSize": 44148,
+              "kind": "video"
+            }
+          },
+          "src": "未分系列--a70366b9-6da1-4735-b7b1-775b30100951/正式新单--0139b158-ffcf-440d-b08e-f6c891cda386/materials/7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6-locked-source.mp4",
+          "sourceAssetId": "material-db7a45ea-49c1-4eb8-8aaa-9af5f0ec3020",
+          "sourceRevision": "db7a45ea-49c1-4eb8-8aaa-9af5f0ec3020",
+          "sourceContentHash": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+          "sourceFilename": "locked-source.mp4",
+          "srcInFrame": 0,
+          "volume": 0,
+          "loopControlVideo": {
+            "durationLocked": true
+          }
+        },
+        {
+          "id": "shot-shot-02-9f8c075d-51bb-4164-a9d5-1a92bf39773d",
+          "track": "V1",
+          "kind": "text",
+          "name": "shot-02 · 待匹配画面",
+          "startFrame": 30,
+          "durationInFrames": 150,
+          "width": 1080,
+          "height": 1920,
+          "props": {
+            "text": "待匹配画面\nshot-02",
+            "fontSize": 64,
+            "color": "#a3acc2",
+            "align": "center"
+          },
+          "transform": {
+            "scale": 1,
+            "x": 0,
+            "y": 0,
+            "rotation": 0
+          },
+          "loopControlShot": {
+            "workspaceId": "faf0b92b-4015-4c62-b6cc-7618df3467f0",
+            "shotId": "shot-02",
+            "clipId": "9f8c075d-51bb-4164-a9d5-1a92bf39773d",
+            "text": "后镜内容和布局由Owner核对。"
+          }
+        }
+      ],
+      "trackOrder": [
+        "V1"
+      ],
+      "tracks": {
+        "V1": {
+          "kind": "video",
+          "name": "画面"
+        }
+      },
+      "transitions": [],
+      "selectedId": null,
+      "captionsHidden": false
+    }
+  ]
+}

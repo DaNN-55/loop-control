@@ -1,0 +1,37 @@
+
+ RUN  v3.2.7 /private/tmp/loop-control-main-e2e-20261101/integration-regression/source
+
+ ❯ src/local-app/episodeDeletion.integration.test.ts (2 tests | 2 failed) 2814ms
+   × managed=true: deletes an archived ordinary order and then its empty account through Owner HTTP, retaining deletion fences 1478ms
+     → {"error":"本机服务暂不可用，请检查本机状态。"}: expected 503 to be 409 // Object.is equality
+   × managed=false: deletes an archived ordinary order and then its empty account through Owner HTTP, retaining deletion fences 1335ms
+     → {"error":"本机服务暂不可用，请检查本机状态。"}: expected 503 to be 409 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/episodeDeletion.integration.test.ts > managed=true: deletes an archived ordinary order and then its empty account through Owner HTTP, retaining deletion fences
+ FAIL  src/local-app/episodeDeletion.integration.test.ts > managed=false: deletes an archived ordinary order and then its empty account through Owner HTTP, retaining deletion fences
+AssertionError: {"error":"本机服务暂不可用，请检查本机状态。"}: expected 503 to be 409 // Object.is equality
+
+- Expected
++ Received
+
+- 409
++ 503
+
+ ❯ src/local-app/episodeDeletion.integration.test.ts:96:91
+     94|   if(managed)expect((await post('archiveEpisode',{episodeId:episode,ar…
+     95|   else await asAdmin('UPDATE public.episodes SET archived_at=now() WHE…
+     96|   const blocked=await removeAccount();expect(blocked.status,JSON.strin…
+       |                                                                                           ^
+     97|   await asAdmin('INSERT INTO local_identity.historical_episodes(episod…
+     98|   expect((await post('planDeletion',{episodeId:episode})).status).toBe…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  06:27:20
+   Duration  3.41s (transform 317ms, setup 7ms, collect 474ms, tests 2.81s, environment 0ms, prepare 27ms)
+

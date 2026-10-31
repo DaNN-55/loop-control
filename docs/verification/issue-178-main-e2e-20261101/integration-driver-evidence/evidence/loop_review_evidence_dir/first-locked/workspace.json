@@ -1,0 +1,354 @@
+{
+  "selectedImages": [],
+  "visualConfiguration": {
+    "imageModel": null,
+    "videoModel": null,
+    "videoProvider": null
+  },
+  "preparation": {
+    "origin": "script-segment",
+    "scriptRevisionId": "1b87e350-4412-44e9-b930-aad69ce7f4a7",
+    "authorized": true,
+    "authorizationHash": "d8853725034fa5256a1872859c83287320f679c011bfbd86f41577b641ddf1d3",
+    "shots": [
+      {
+        "shotId": "shot-01",
+        "origin": "script-segment",
+        "shotType": "b_roll"
+      },
+      {
+        "shotId": "shot-02",
+        "origin": "script-segment",
+        "shotType": "b_roll"
+      }
+    ]
+  },
+  "pexels": {
+    "requests": []
+  },
+  "visualCandidates": [],
+  "visualTasks": [],
+  "visualTargets": [
+    {
+      "targetItemId": "shot-shot-01-a22b002d-65dd-4aa9-93f4-825f31cf778e",
+      "width": 1080,
+      "height": 1920,
+      "provider": "",
+      "voiceMode": "tts",
+      "durationSeconds": 2.4,
+      "providerDurationSeconds": 3,
+      "minimumSeconds": 2,
+      "maximumSeconds": 15
+    },
+    {
+      "targetItemId": "shot-shot-02-9f8c075d-51bb-4164-a9d5-1a92bf39773d",
+      "width": 1080,
+      "height": 1920,
+      "provider": "",
+      "voiceMode": "none",
+      "durationSeconds": null,
+      "providerDurationSeconds": null,
+      "minimumSeconds": 2,
+      "maximumSeconds": 15
+    }
+  ],
+  "audio": {
+    "mix": {
+      "voices": [
+        {
+          "coverage": "full",
+          "startSeconds": 0,
+          "durationSeconds": 2.4,
+          "shotDurationSeconds": 1,
+          "sourceStartSeconds": 0,
+          "sourceLabel": null,
+          "alignmentReady": true,
+          "shotId": "shot-01",
+          "mode": "tts",
+          "gainDb": 0,
+          "ambienceGainDb": null,
+          "sourceItemId": null,
+          "sourceAssetId": null
+        },
+        {
+          "coverage": "none",
+          "startSeconds": null,
+          "durationSeconds": null,
+          "shotDurationSeconds": 5,
+          "sourceStartSeconds": null,
+          "sourceLabel": null,
+          "alignmentReady": false,
+          "shotId": "shot-02",
+          "mode": "none",
+          "gainDb": 0,
+          "ambienceGainDb": null,
+          "sourceItemId": null,
+          "sourceAssetId": null
+        }
+      ],
+      "sounds": []
+    },
+    "preparations": []
+  },
+  "deliveries": [],
+  "usedNarration": [
+    {
+      "sourceInFrame": 0,
+      "durationInFrames": 72,
+      "fps": 30,
+      "fullSourceUsed": true,
+      "shotId": "shot-01",
+      "itemId": "workspace-narration-shot-shot-01",
+      "audioTrackId": "48e34090-ade0-4507-a96c-6026c1913777",
+      "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+      "taskId": "7aa2c6ca-4939-454b-b071-1dfcfb20145d",
+      "text": "填写本段完整口播。",
+      "mainScriptText": "填写本段完整口播。",
+      "inputFingerprint": "1f2235beaaa411387f08d25c7d4cb21d46e238dc19490258572f7ce36595a826",
+      "provenance": "owner_adoption"
+    }
+  ],
+  "candidates": [
+    {
+      "speech": {
+        "selection": {
+          "model": "seed-tts-2.0",
+          "adapter": "volcengine_tts",
+          "provider": "volcengine_tts",
+          "capability": "speech",
+          "connectionVersionId": "a5d6e0a3-a28a-47c1-90ab-aa153095f8a8"
+        },
+        "connectionName": "Controlled narration",
+        "voice": "zh_female_vv_uranus_bigtts",
+        "languageCode": "zh-CN",
+        "speakingRate": 1
+      },
+      "id": "48e34090-ade0-4507-a96c-6026c1913777",
+      "kind": "audio",
+      "shotId": "shot-01",
+      "clipId": "a22b002d-65dd-4aa9-93f4-825f31cf778e",
+      "targetItemId": "workspace-narration-shot-shot-01",
+      "taskId": "7aa2c6ca-4939-454b-b071-1dfcfb20145d",
+      "inputFingerprint": "1f2235beaaa411387f08d25c7d4cb21d46e238dc19490258572f7ce36595a826",
+      "text": "填写本段完整口播。",
+      "mainScriptText": "填写本段完整口播。",
+      "audioTrackId": "48e34090-ade0-4507-a96c-6026c1913777",
+      "relativePath": "未分系列--a70366b9-6da1-4735-b7b1-775b30100951/正式新单--0139b158-ffcf-440d-b08e-f6c891cda386/native-tasks/7aa2c6ca-4939-454b-b071-1dfcfb20145d/shot-narration-shot-01-3babdabc-4664-43eb-a66d-1dc8c81e6d1c.mp3",
+      "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+      "fileSize": 19628,
+      "durationSeconds": 2.4,
+      "pendingConfirmation": false,
+      "currentVoiceMode": "tts",
+      "currentDurationSeconds": 2.4,
+      "targetDurationSeconds": 2.4,
+      "durationImpact": {
+        "deltaSeconds": 0,
+        "overlapItemIds": []
+      },
+      "status": "adopted"
+    }
+  ],
+  "exports": [],
+  "exportIssues": [],
+  "captions": [
+    {
+      "clipId": "a22b002d-65dd-4aa9-93f4-825f31cf778e",
+      "itemId": "shot-shot-01-a22b002d-65dd-4aa9-93f4-825f31cf778e",
+      "shotId": "shot-01",
+      "durationMs": 1000,
+      "contract": {
+        "version": "shot-captions/v1",
+        "enabled": true,
+        "contentMode": "follow_tts",
+        "text": "填写本段完整口播。",
+        "cues": [],
+        "spatial": {
+          "version": "shot-caption-space/v2",
+          "anchor": "bottom-center",
+          "safeArea": "title-safe",
+          "aspectRatio": "9:16",
+          "insets": {
+            "top": 0.08,
+            "right": 0.08,
+            "bottom": 0.18,
+            "left": 0.08
+          },
+          "maxLines": 2,
+          "maxCharactersPerLine": 16
+        }
+      },
+      "inputFingerprint": "30516d581b83eb119e51aee6a2cd775a44b7a6c7e7718dc5ee0f59a3b8286935",
+      "timing": "missing",
+      "textConfirmed": false,
+      "audioTrackId": "48e34090-ade0-4507-a96c-6026c1913777",
+      "narrationText": "填写本段完整口播。",
+      "taskId": null,
+      "alignmentInputVersion": null,
+      "detail": null
+    },
+    {
+      "clipId": "9f8c075d-51bb-4164-a9d5-1a92bf39773d",
+      "itemId": "shot-shot-02-9f8c075d-51bb-4164-a9d5-1a92bf39773d",
+      "shotId": "shot-02",
+      "durationMs": 5000,
+      "contract": {
+        "version": "shot-captions/v1",
+        "enabled": true,
+        "contentMode": "independent",
+        "text": "后镜内容和布局由Owner核对。",
+        "cues": [],
+        "spatial": {
+          "version": "shot-caption-space/v2",
+          "anchor": "bottom-center",
+          "safeArea": "title-safe",
+          "aspectRatio": "9:16",
+          "insets": {
+            "top": 0.08,
+            "right": 0.08,
+            "bottom": 0.18,
+            "left": 0.08
+          },
+          "maxLines": 2,
+          "maxCharactersPerLine": 16
+        }
+      },
+      "inputFingerprint": "febf39835a5b524e7eaa6100d14d9a27fd061aedd3c239e833ce0a6b450ca17b",
+      "timing": "missing",
+      "textConfirmed": false,
+      "audioTrackId": null,
+      "narrationText": null,
+      "taskId": null,
+      "alignmentInputVersion": null,
+      "detail": null
+    }
+  ],
+  "id": "faf0b92b-4015-4c62-b6cc-7618df3467f0",
+  "episodeId": "0139b158-ffcf-440d-b08e-f6c891cda386",
+  "workflowVersion": "four-step/v1",
+  "scriptRevisionId": "1b87e350-4412-44e9-b930-aad69ce7f4a7",
+  "storyboardPackageId": "a1b9c3ed-781d-4ae0-b71b-f1ec2d9c6bfe",
+  "revision": 3,
+  "contentSha256": "38fd2f673c6ae2b1a37de535ec90a39e6b27f5577f7cff11a61ca424b37d5e51",
+  "nativeEditRevision": 1,
+  "narration": [
+    {
+      "windowWarning": "实际口播与画面窗口时长不同，请调整画面或拆镜，并重新核对字幕。",
+      "selection": {
+        "model": "seed-tts-2.0",
+        "adapter": "volcengine_tts",
+        "provider": "volcengine_tts",
+        "capability": "speech",
+        "connectionVersionId": "a5d6e0a3-a28a-47c1-90ab-aa153095f8a8"
+      },
+      "defaults": null,
+      "requiresCandidateAdoption": true,
+      "clipId": "a22b002d-65dd-4aa9-93f4-825f31cf778e",
+      "shotId": "shot-01",
+      "mode": "tts",
+      "text": "填写本段完整口播。",
+      "voice": "zh_female_vv_uranus_bigtts",
+      "languageCode": "zh-CN",
+      "speakingRate": 1,
+      "override": true,
+      "inputFingerprint": "1f2235beaaa411387f08d25c7d4cb21d46e238dc19490258572f7ce36595a826",
+      "confirmed": true,
+      "taskId": "7aa2c6ca-4939-454b-b071-1dfcfb20145d",
+      "status": "completed",
+      "error": null,
+      "audioTrackId": "48e34090-ade0-4507-a96c-6026c1913777",
+      "artifactId": "b09b493b-ccdd-4d78-aa10-9cac843b7129",
+      "relativePath": "未分系列--a70366b9-6da1-4735-b7b1-775b30100951/正式新单--0139b158-ffcf-440d-b08e-f6c891cda386/native-tasks/7aa2c6ca-4939-454b-b071-1dfcfb20145d/shot-narration-shot-01-3babdabc-4664-43eb-a66d-1dc8c81e6d1c.mp3",
+      "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+      "fileSize": 19628,
+      "durationSeconds": 2.4,
+      "itemId": "workspace-narration-shot-shot-01",
+      "adoptedAudioTrackId": "48e34090-ade0-4507-a96c-6026c1913777"
+    },
+    {
+      "windowWarning": null,
+      "selection": null,
+      "defaults": null,
+      "requiresCandidateAdoption": true,
+      "clipId": "9f8c075d-51bb-4164-a9d5-1a92bf39773d",
+      "shotId": "shot-02",
+      "mode": "none",
+      "text": "后镜内容和布局由Owner核对。",
+      "voice": null,
+      "languageCode": null,
+      "speakingRate": null,
+      "override": false,
+      "inputFingerprint": "5defc3c3fd8eaf5ec7e622f50b2d4e60ced37c397c44a6a1f7be389410c58c1d",
+      "confirmed": false,
+      "taskId": null,
+      "status": "pending",
+      "error": null,
+      "audioTrackId": null,
+      "artifactId": null,
+      "relativePath": null,
+      "sha256": null,
+      "fileSize": null,
+      "durationSeconds": null,
+      "itemId": "workspace-narration-shot-shot-02",
+      "adoptedAudioTrackId": null
+    }
+  ],
+  "clips": [
+    {
+      "id": "a22b002d-65dd-4aa9-93f4-825f31cf778e",
+      "text": "填写本段完整口播。",
+      "itemId": "shot-shot-01-a22b002d-65dd-4aa9-93f4-825f31cf778e",
+      "shotId": "shot-01",
+      "source": {
+        "kind": "video",
+        "sha256": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+        "fileSize": 44148,
+        "relativePath": "未分系列--a70366b9-6da1-4735-b7b1-775b30100951/正式新单--0139b158-ffcf-440d-b08e-f6c891cda386/materials/7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6-locked-source.mp4",
+        "materialRevisionId": "db7a45ea-49c1-4eb8-8aaa-9af5f0ec3020"
+      }
+    },
+    {
+      "id": "9f8c075d-51bb-4164-a9d5-1a92bf39773d",
+      "text": "后镜内容和布局由Owner核对。",
+      "itemId": "shot-shot-02-9f8c075d-51bb-4164-a9d5-1a92bf39773d",
+      "shotId": "shot-02",
+      "source": null
+    }
+  ],
+  "project": {
+    "relativePath": "未分系列--a70366b9-6da1-4735-b7b1-775b30100951/正式新单--0139b158-ffcf-440d-b08e-f6c891cda386/production-workspace/versions/a586282b51e4120aaeab97d3229d6d1ac69df7255c41ae11466ac9c6bcc30203.json",
+    "sha256": "a586282b51e4120aaeab97d3229d6d1ac69df7255c41ae11466ac9c6bcc30203",
+    "fileSize": 5997,
+    "projectId": "loop-control-0139b158-ffcf-440d-b08e-f6c891cda386"
+  },
+  "history": [
+    {
+      "revision": 3,
+      "sha256": "a586282b51e4120aaeab97d3229d6d1ac69df7255c41ae11466ac9c6bcc30203",
+      "scriptRevisionId": "1b87e350-4412-44e9-b930-aad69ce7f4a7",
+      "reason": "采用局部口播候选",
+      "createdAt": "2026-10-31T22:02:44.419Z"
+    },
+    {
+      "revision": 2,
+      "sha256": "5e66853c8d21458403847f025ec855ad46635d9d5019a5f3a4b28e5cbec62e2f",
+      "scriptRevisionId": "1b87e350-4412-44e9-b930-aad69ce7f4a7",
+      "reason": "准备视频区间",
+      "createdAt": "2026-10-31T22:02:43.789Z"
+    },
+    {
+      "revision": 1,
+      "sha256": "600a7d0dbb6f4df233415fc0324a7cf89960570236f8337b48da2dc8fa1b46e8",
+      "scriptRevisionId": "1b87e350-4412-44e9-b930-aad69ce7f4a7",
+      "reason": "首次组装",
+      "createdAt": "2026-10-31T22:02:43.583Z"
+    }
+  ],
+  "readiness": {
+    "deliverable": false,
+    "placeholders": [
+      "shot-shot-02-9f8c075d-51bb-4164-a9d5-1a92bf39773d"
+    ],
+    "missingSources": []
+  },
+  "stale": false
+}

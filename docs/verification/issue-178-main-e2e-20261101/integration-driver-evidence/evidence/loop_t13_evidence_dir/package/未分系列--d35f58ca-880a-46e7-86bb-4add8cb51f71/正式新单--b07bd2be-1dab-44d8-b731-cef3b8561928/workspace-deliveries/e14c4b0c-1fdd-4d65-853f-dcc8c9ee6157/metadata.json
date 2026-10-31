@@ -1,0 +1,66 @@
+{
+  "title": "正式四步整片交付",
+  "description": "Owner 已确认确切成片。",
+  "tags": [
+    "controlled"
+  ],
+  "exportId": "1823f347-ed8c-4b76-b8a6-c93363fa573f",
+  "contentSha256": "8c0e248283bf6fbd96bc745d0e7a732bd99bf43dd954b9edebf89a87fc8365ba",
+  "scriptRevisionId": "2af3b855-9252-4027-a227-ead5a4456cb6",
+  "narration": [
+    {
+      "shotId": "shot-01",
+      "baselineText": "填写本段完整口播。",
+      "sourceText": "这一版局部口播已明确采用。",
+      "adoptedText": "这一版局部口播已明确采用。",
+      "textCoverage": "complete_source",
+      "windows": [
+        {
+          "srcInFrame": 0,
+          "usedDurationSeconds": 2.4,
+          "sourceDurationSeconds": 2.4,
+          "playbackRate": 1,
+          "fps": 30,
+          "audible": true
+        }
+      ],
+      "textSource": "owner_adoption",
+      "sourceDiffersFromBaseline": true,
+      "differsFromBaseline": true,
+      "audioTrackId": "3706bb3f-4d6e-4e64-b0e6-4f2508bc0761",
+      "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+      "itemId": "workspace-narration-shot-shot-01",
+      "source": "未分系列--d35f58ca-880a-46e7-86bb-4add8cb51f71/正式新单--b07bd2be-1dab-44d8-b731-cef3b8561928/native-tasks/7c5bdf3b-6a4f-4aa6-9859-71a456179a25/shot-narration-shot-01-c28a85e7-8695-489e-8516-b69a0fc4fc30.mp3"
+    },
+    {
+      "shotId": "added-407a9267-e029-422a-b0d8-e34c442401c4",
+      "baselineText": "",
+      "sourceText": null,
+      "adoptedText": null,
+      "textCoverage": "no_recorded_text",
+      "windows": [],
+      "textSource": "not_recorded",
+      "sourceDiffersFromBaseline": null,
+      "differsFromBaseline": null,
+      "audioTrackId": null,
+      "sha256": null,
+      "itemId": null,
+      "source": null
+    },
+    {
+      "shotId": "added-260e806d-ec08-4a53-8140-f2a99b79dbea",
+      "baselineText": "",
+      "sourceText": null,
+      "adoptedText": null,
+      "textCoverage": "no_recorded_text",
+      "windows": [],
+      "textSource": "not_recorded",
+      "sourceDiffersFromBaseline": null,
+      "differsFromBaseline": null,
+      "audioTrackId": null,
+      "sha256": null,
+      "itemId": null,
+      "source": null
+    }
+  ]
+}
