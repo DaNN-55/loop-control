@@ -941,3 +941,19 @@ integration check → build → runtime:prepare → compiled assert 全通过；
 - Root read full independent MERGE-T16 report, core28 / units25 / formal1 logs and resources; personally viewed fresh moving native frames, refreshed disabled progress and error390, independently hashed fresh dump29c270f… and both Owner exports. Closed #194 and verified CLOSED. 16/17 children (#179–#194) complete; #178 remains open.
 - #195/T17 read-only preparation is complete and source freeze32/32 verified in own723ae5d9 worktree. Implementation / final combined acceptance is now released from latest integration. Root retains final fresh Standards+Spec review and one fresh implementer/merger for raised findings after all17.
 - Dedicated cleanup actor may remove only merged inactive clean T16 branch/worktree after fresh proof. Preserve active T17, integration/main, exact source/merger evidence, shared SDK/runtime and original unknown mounts. No main merge, push, deployment or daily-data operation.
+
+### #195 / T17 完整组合验收与兼容收尾
+
+基于已接受的 integration69bfe6db，在独立 t17 分支执行；最高 seam 为正式页面 → Owner HTTP → 隔离真实 DB / 文件 → Finder / 原生工程。外部 T17/PREPARATION.md 记录完整验收链和隔离限制。
+
+- [x] 真实复现旧夹具 RED，核保留目录 / 回执 / 身份；按历史 seed 和明确 selection 修复兼容设置，保留原业务 guards。
+- [x] 正式页面复现并修复已退役能力卡及窄窗实际超界，验证账号规则 / 资料独立保存、继承、历史、dirty guard、路径与键盘。
+- [x] 同一部署串联纳管 → 收纳移动 → global SIGKILL / 同计划新 PID 继续 → 原生产源离线 → 真备份 / fresh DB+root 恢复 → 原生双 PID 保存重开 / 可见帧与 Pause / 导出 Owner SHA。
+- [x] 精确回归、类型 / build / prepare、固定 schema / ledger 与自有资源收尾；ADR / CONTRACT / HANDOFF / clean freeze 交 fresh merger。最终双轴 review 和修复归 root。
+
+
+本轮实际最终证据：组合链1/1、零skip85.87s；正式系列／未分系列完整页面2/2、零skip187.05s；账号正式UI1/1、零skip13.84s（1543×953 / 1440 / 1100 / 390）；五文件units67/67、零skip8.85s。旧兼容分别accountRoots3及workspaceImages7在known-final通过，accountMigration7在account-migration-final通过；known-final整组仍如实记录16pass/1旧删除断言RED，不称全绿。相关seam15pass与creative-final1pass最终均通过；原组新测试曾捕捉scheduler正常resource_limits补全竞态，等待既有补全后仍比较全snapshot，没有削弱业务断言。
+
+亲看正式两布局红→蓝与组合链pre/postrestore0.23→1.23秒不同原生帧，实际Pause；恢复后正式path=登记path，Finder精确观察即关。独算最终组合dump6e702a5f…、28份archive媒体大小/SHA、两个196608B SQLite/header/只读clone integrity=ok/保存timeline、global6719→6776→7054及restore21216→21369、两次Owner export6ed62f57…；系列／未分系列四个真实恢复archive各45/49媒体与四个SQLite只读clone也通过。完成／回滚migration历史完整保持，未完成收纳使真实备份拒绝。
+
+freeze check/build/runtime:prepare/compiled assert全通过；SQL110–126原字节不变，未加migration。固定107/max109/0账号、schema1989a647/ledger4806437b和完整schema字节前后一致，仅base+baseline、pinned none-network/ports{}/volumes[]；原4卷、daily5174 PID71478、QuickLook39211/55969保持，无own runtime/cache/browser session。七个未知/tmp Finder fallback窗口缺乏归属证据，按root指示保留；本次新开均精确目标观察即关且有finally。完整命令、RED分类、截图、dump/媒体/SQLite/Owner回执与资源保留仓库外T17/HANDOFF、T17-CONTRACT及freeze。未付费、操作日常资料、merge main、push或部署；本段是实现交付，独立合并和最终全spec双轴审查由root接续。

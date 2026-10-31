@@ -107,29 +107,6 @@ describe("approval console", () => {
     expect(screen.getByRole("button", { name: "正在处理…" }).hasAttribute("disabled")).toBe(true);
   });
 
-  it("创建前明确展示本次会冻结的媒体能力", async () => {
-    const account = { current_blueprint_version_id: "blueprint-1", id: "account-1", name: "道工作室" } as Database["public"]["Tables"]["accounts"]["Row"];
-    const blueprint = { account_id: account.id, created_at: "2026-08-26T00:00:00.000Z", id: "blueprint-1", is_active: true, policy: { a_roll: { execution_path: "local", executor: { provider: "openchatcut", adapter: "openchatcut_card_video", model: "openchatcut@0.2.14", prompt_version: "card-video-v1" }, allowed_tools: ["read", "write"], max_attempts: 1 }, b_roll: { execution_path: "external", executor: { provider: "pexels", adapter: "pexels_video", model: "pexels-video-v1", prompt_version: "b-roll-v1" }, credential_ref: "11111111-1111-4111-8111-111111111111", allowed_tools: ["read", "write"], max_attempts: 1, max_concurrency: 1, provider_max_concurrency: 1 } }, version: 1 } as Database["public"]["Tables"]["account_blueprint_versions"]["Row"];
-
-    render(<EpisodeForm accounts={[account]} blueprints={[blueprint]} connectionVersions={[{ adapter: "pexels_video", connection_id: "11111111-1111-4111-8111-111111111111", created_at: "2026-08-26T00:00:00.000Z", endpoint: "https://api.pexels.com", id: "11111111-1111-4111-8111-111111111111", is_current: true, provider: "pexels", revoked_at: null, status: "verified", version: 1 }]} isPending={false} onClose={vi.fn()} onSubmit={vi.fn()} series={[]} seriesVersions={[]} />);
-
-    expect(screen.getByText("本单将冻结的生产能力")).toBeTruthy();
-    expect(screen.getByText("A-roll · 本地")).toBeTruthy();
-    expect(screen.getByText("B-roll · 外部")).toBeTruthy();
-    await userEvent.click(screen.getByRole("button", { name: "冻结的生产能力说明" }));
-    expect(await screen.findByRole("tooltip")).toHaveProperty("textContent", expect.stringContaining("只会冻结以下已启用且完整配置的能力"));
-  });
-
-  it("创建前不展示已失效的外部媒体连接", () => {
-    const account = { current_blueprint_version_id: "blueprint-1", id: "account-1", name: "道工作室" } as Database["public"]["Tables"]["accounts"]["Row"];
-    const blueprint = { account_id: account.id, created_at: "2026-08-26T00:00:00.000Z", id: "blueprint-1", is_active: true, policy: { b_roll: { execution_path: "external", executor: { provider: "pexels", adapter: "pexels_video", model: "pexels-video-v1", prompt_version: "b-roll-v1" }, credential_ref: "11111111-1111-4111-8111-111111111111", allowed_tools: ["read", "write"], max_attempts: 1, max_concurrency: 1, provider_max_concurrency: 1 } }, version: 1 } as Database["public"]["Tables"]["account_blueprint_versions"]["Row"];
-
-    render(<EpisodeForm accounts={[account]} blueprints={[blueprint]} connectionVersions={[{ adapter: "pexels_video", connection_id: "11111111-1111-4111-8111-111111111111", created_at: "2026-08-26T00:00:00.000Z", endpoint: "https://api.pexels.com", id: "11111111-1111-4111-8111-111111111111", is_current: true, provider: "pexels", revoked_at: "2026-08-26T00:00:00.000Z", status: "revoked", version: 1 }]} isPending={false} onClose={vi.fn()} onSubmit={vi.fn()} series={[]} seriesVersions={[]} />);
-
-    expect(screen.queryByText("B-roll · 外部")).toBeNull();
-    expect(screen.getByText("当前蓝图没有已完整配置的可选媒体能力。")).toBeTruthy();
-  });
-
   it("用明确的时区选项替代自由填写", () => {
     render(<TimezoneSelect value="Asia/Shanghai" onChange={vi.fn()} />);
 

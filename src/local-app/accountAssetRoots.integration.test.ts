@@ -6,6 +6,7 @@ import {join} from 'node:path';
 import {embeddedStudioFixture} from './embeddedStudio.fixture';
 import {workspaceAudioVolume} from './workspaceAudioVolume.fixture';
 import {csrfFor} from './sessions';
+import {insertHistoricalBlueprint} from './historicalBlueprint.fixture';
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner owns actual account directories independently of blueprint versions, and files remain isolated after restart',async()=>{
  const f=await embeddedStudioFixture({migrations:['db/local/105-account-asset-directories.sql']});
  try{
@@ -17,7 +18,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner owns actual accoun
  const createWithoutRoot=await fetch(f.origin+'/api/local/episode-commands',{method:'POST',headers:{Origin:f.origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+f.token,'X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command:'create',idempotencyKey:randomUUID(),data:{accountId:account,title:'必须先设置目录'}})});expect(createWithoutRoot.status).toBe(409);expect((await createWithoutRoot.json()).error).toContain('设置');
  const before=f.files[0],historic=await fetch(f.origin+`/_local-artifact?episode=${f.episode}&path=${encodeURIComponent(before.relativePath)}&sha256=${before.sha256}`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(historic.status).toBe(200);
  const legacyRoot=join(f.root,'other-legacy-root'),legacyBlueprint=randomUUID();await mkdir(legacyRoot);await writeFile(join(legacyRoot,'keep-original'),'旧目录原件');
- await f.c.query('INSERT INTO public.account_blueprint_versions(id,account_id,version,policy,is_active) VALUES($1,$2,2,$3,false)',[legacyBlueprint,account,{asset_root:legacyRoot}]);
+ await insertHistoricalBlueprint(f.c,legacyBlueprint,account,2,{asset_root:legacyRoot});
  expect((await call('readAssetDirectory',{accountId:account})).body.status).toBe('conflict');expect((await call('setAssetDirectory',{accountId:account,path:f.assetRoot})).status).toBe(409);expect(await readFile(join(legacyRoot,'keep-original'),'utf8')).toBe('旧目录原件');
  await f.c.query('DELETE FROM public.account_blueprint_versions WHERE id=$1',[legacyBlueprint]);
  const saved=await call('setAssetDirectory',{accountId:account,path:f.assetRoot});
@@ -49,28 +50,28 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner creates same-title
   const policy={positioning:'目录测试',allowed_tools:['read','write'],executors:{storyboard_planning:{provider:'codex',adapter:'codex',model:'gpt-5.6-luna',prompt_version:'storyboard-planning-v2',harness_id:harness.body.id}},budgets:{storyboard_planning_cents:0}};
   const saved=await call('configuration','updateBlueprint',{accountId:made.body.id,policy},{expectedRevision:catalog.blueprintRevisions[made.body.current_blueprint_version_id]});expect(saved.status,JSON.stringify(saved.body)).toBe(200);
  }
- const episodes=[];
+ const episodes=[],episodeDirectories:string[]=[];
  for(const [i,accountId]of [accounts[0],accounts[1],accounts[0]].entries()){
   const made=await call('episode-commands','create',{accountId,title:'同名生产单'});expect(made.status,JSON.stringify(made.body)).toBe(200);episodes.push(made.body.id);
   const text='独立正文 '+i+'，账号目录保存受管副本。',original=join(f.root,'original-'+i+'.txt');await writeFile(original,text);
   const imported=await call('episode-commands','importMaterial',{episodeId:made.body.id,sourceKind:'file',sourcePath:'reference.txt',materialType:'script',materialPurpose:'supplemental_script',mimeType:'text/plain',isMainScript:false,contentBase64:(await readFile(original)).toString('base64')});expect(imported.status,JSON.stringify(imported.body)).toBe(200);
   expect(await readFile(original,'utf8')).toBe(text);
   const root=i===1?roots[1]:roots[0];expect(await readFile(join(root,imported.body.storage_path),'utf8')).toBe(text);
-  const state=await(await fetch(f.origin+'/api/local/episodes/'+made.body.id,{headers:{Cookie:'loop_owner_session='+f.token}})).json();expect(state.sections.localAssetRoot).toBe(root);
+  const state=await(await fetch(f.origin+'/api/local/episodes/'+made.body.id,{headers:{Cookie:'loop_owner_session='+f.token}})).json();expect(state.sections.localAssetRoot).toBe(root);episodeDirectories.push(state.sections.localDirectoryPath);expect(state.sections.localDirectoryPath.startsWith(root+'/')).toBe(true);
   const file=await fetch(f.origin+`/_local-artifact?episode=${made.body.id}&path=${encodeURIComponent(imported.body.storage_path)}&sha256=${imported.body.sha256}`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(file.status).toBe(200);expect(await file.text()).toBe(text);
   const foreign=await fetch(f.origin+`/_local-artifact?episode=${made.body.id}&path=${encodeURIComponent(imported.body.storage_path)}&sha256=${imported.body.sha256}`,{headers:{Cookie:'loop_owner_session='+f.otherToken}});expect(foreign.status).toBe(404);
  }
  expect(new Set(episodes).size).toBe(3);
  expect((await call('episode-lifecycle','renameEpisode',{episodeId:episodes[0],title:'已改名生产单'})).status).toBe(200);
  expect((await call('configuration','renameAccount',{accountId:accounts[0],name:'已重命名'})).status).toBe(200);
- const deletionScope=await call('episode-lifecycle','planDeletion',{episodeId:episodes[0]});expect(deletionScope.status,JSON.stringify(deletionScope.body)).toBe(200);expect(deletionScope.body.path).toBe(join(roots[0],'episodes',episodes[0]));
+ const deletionScope=await call('episode-lifecycle','planDeletion',{episodeId:episodes[0]});expect(deletionScope.status,JSON.stringify(deletionScope.body)).toBe(200);expect(deletionScope.body.path).toBe(episodeDirectories[0]);
  const overlap=join(roots[0],'nested');await mkdir(overlap);
  expect((await call('account-commands','setAssetDirectory',{accountId:accounts[1],path:overlap})).status).toBe(409);
  const trickyOverlap=join(roots[0],'..owned-child');await mkdir(trickyOverlap);const emptyRoot=join(f.root,'..empty-account');await mkdir(emptyRoot);const emptyAccount=await call('configuration','createAccount',{name:'空账号隔离检查',slug:'empty-'+randomUUID(),timezone:'Asia/Shanghai',policy:{}});expect(emptyAccount.status).toBe(200);expect((await call('account-commands','setAssetDirectory',{accountId:emptyAccount.body.id,path:emptyRoot})).status).toBe(200);const refusedOverlap=await call('account-commands','setAssetDirectory',{accountId:emptyAccount.body.id,path:trickyOverlap});expect(refusedOverlap.status).toBe(409);expect(refusedOverlap.body.error).toContain('重叠');expect((await call('configuration','deleteAccount',{accountId:emptyAccount.body.id,confirmation:'空账号隔离检查'})).status).toBe(200);await expect(lstat(emptyRoot)).rejects.toMatchObject({code:'ENOENT'});
  const linked=join(f.root,'alias');await symlink(roots[0],linked);expect((await call('account-commands','setAssetDirectory',{accountId:accounts[1],path:linked})).status).toBe(400);
  expect((await call('account-commands','setAssetDirectory',{accountId:accounts[1],path:f.root})).status).toBe(400);
  await f.restart();
- for(const [i,episodeId]of episodes.entries()){const state=await(await fetch(f.origin+'/api/local/episodes/'+episodeId,{headers:{Cookie:'loop_owner_session='+f.token}})).json();expect(state.sections.localAssetRoot).toBe(i===1?roots[1]:roots[0]);}
+ for(const [i,episodeId]of episodes.entries()){const state=await(await fetch(f.origin+'/api/local/episodes/'+episodeId,{headers:{Cookie:'loop_owner_session='+f.token}})).json();expect(state.sections.localAssetRoot).toBe(i===1?roots[1]:roots[0]);expect(state.sections.localDirectoryPath).toBe(episodeDirectories[i]);}
  await rename(roots[1],roots[1]+'-offline');
  const fault=await call('episode-commands','importMaterial',{episodeId:episodes[1],sourceKind:'file',sourcePath:'broken.txt',materialType:'script',materialPurpose:'supplemental_script',mimeType:'text/plain',isMainScript:false,contentBase64:Buffer.from('不能写入回退目录').toString('base64')});expect(fault.status).not.toBe(200);expect((await call('account-commands','readAssetDirectory',{accountId:accounts[1]})).body.status).toBe('unavailable');
  await mkdir(roots[1]);expect((await call('account-commands','setAssetDirectory',{accountId:accounts[1],path:roots[1]})).status).toBe(409);await rename(roots[1],roots[1]+'-replacement');

@@ -37,6 +37,10 @@ export function references(evidence:unknown){const refs:Reference[]=[],workspace
  if(typeof row.src==='string'&&safeRelative(row.src))refs.push({episodeId,relativePath:row.src});
  if(row.reverseSources&&typeof row.reverseSources==='object')for(const source of Object.values(row.reverseSources))if(typeof source==='string'&&safeRelative(source))refs.push({episodeId,relativePath:source});
  for(const [key,x] of Object.entries(row)){
+  // These named protocol fields contain creative JSON, whose extension keys
+  // are not file contracts. Keep scanning the context's actual input evidence.
+  if(row.version==='prompt-context/v1'&&['account_hard_constraints','account_defaults','series_baseline'].includes(key))continue;
+  if(typeof row.accountId==='string'&&typeof row.blueprintVersionId==='string'&&['accountRules','seriesRules'].includes(key))continue;
   if(key==='input_snapshot'&&typeof row.task_type==='string'&&x&&typeof x==='object'){
    for(const [slot,entry] of Object.entries(x)){if(slot==='output')continue;if(['review_render','final_render'].includes(slot)&&entry&&typeof entry==='object')visit(Object.fromEntries(Object.entries(entry).filter(([field])=>field!=='project_relative_path')),episodeId);else visit(entry,episodeId);}
   }else visit(x,episodeId);

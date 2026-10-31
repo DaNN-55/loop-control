@@ -1,4 +1,5 @@
 .workspace-topbar-tools{display:flex;align-items:center;justify-content:flex-end;gap:8px;min-width:0;color:var(--lc-muted)}
+.impeccable-app .page-header-actions{flex:1;min-width:0}
 .workspace-topbar-tools .workspace-topbar-icon,.workspace-attention-dialog .workspace-topbar-icon,.workspace-search-dialog .workspace-topbar-icon{width:32px;min-width:32px;height:32px;padding:0;border-radius:6px}
 .workspace-topbar-tools .workspace-topbar-icon svg,.workspace-attention-dialog .workspace-topbar-icon svg,.workspace-search-dialog .workspace-topbar-icon svg{width:17px;height:17px;flex-shrink:0}
 .workspace-topbar-tools .workspace-global-search{height:32px;min-width:0;width:270px;justify-content:flex-start;padding:0 10px;border:1px solid var(--lc-line);border-radius:6px;background:var(--lc-surface);box-shadow:none;color:var(--lc-muted);font-size:12px}

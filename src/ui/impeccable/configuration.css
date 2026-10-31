@@ -128,8 +128,6 @@ html[data-interface="impeccable"] .product-ui .series-configuration-form > .form
 html[data-interface="impeccable"] .product-ui .series-version-history { border-top: 1px solid var(--lc-line); margin-top: 18px; padding: 18px 6px 0; }
 html[data-interface="impeccable"] .product-ui .series-version-history li { border: 0; border-bottom: 1px solid var(--lc-line); padding: 10px 0; }
 html[data-interface="impeccable"] .product-ui .episode-form-modal > header { margin-bottom: 4px; }
-html[data-interface="impeccable"] .product-ui .episode-form-modal .technical-policy-preview { margin: 8px 0; background: var(--lc-surface-2); border: 0; border-radius: 8px; padding: 16px; }
-html[data-interface="impeccable"] .product-ui .episode-form-modal .technical-policy-preview header strong { display: flex; align-items: center; gap: 6px; }
 html[data-interface="impeccable"] .product-ui .episode-title-limit { color: var(--lc-muted); font-variant-numeric: tabular-nums; font-size: 11px; }
 html[data-interface="impeccable"] .product-ui .account-identity-form { max-width: 540px; }
 @media (max-width: 1180px) {
