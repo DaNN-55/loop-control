@@ -1,5 +1,5 @@
 import type {PoolClient} from 'pg';
-import {access,lstat,realpath} from 'node:fs/promises';
+import {access,lstat,realpath,statfs} from 'node:fs/promises';
 import {constants} from 'node:fs';
 import {join} from 'node:path';
 import {ConfigurationError} from './configurationCommands.js';
@@ -49,4 +49,13 @@ export async function requireEpisodeStorageDirectory(c:Pick<PoolClient,'query'>,
   if(code==='EACCES'||code==='EPERM')throw new ConfigurationError(403,'没有读取生产单目录的权限，请在系统设置中恢复访问权限后重试。');
   throw new ConfigurationError(409,'生产单目录不可用，请检查存储位置后重试。');
  }
+}
+
+/** Write preflight shares the same persisted location and filesystem identity as reads. */
+export async function requireWritableEpisodeStorage(c:Pick<PoolClient,'query'>,assetRoot:string,episodeId:string,minimumFreeBytes=0){
+ const location=await episodeStorageLocationAtRoot(c,assetRoot,episodeId);
+ await requireEpisodeStorageDirectory(c,location);
+ try{await access(location.directoryPath,constants.W_OK);}catch{throw new ConfigurationError(403,'没有写入生产单目录的权限，请恢复访问权限后重试。');}
+ const fs=await statfs(location.directoryPath);if(fs.bavail*fs.bsize<minimumFreeBytes)throw new ConfigurationError(409,'生产单存储空间不足，请释放空间后重试。');
+ return location;
 }

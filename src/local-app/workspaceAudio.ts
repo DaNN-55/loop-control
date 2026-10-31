@@ -1,11 +1,11 @@
+import {episodeStorageLocationAtRoot,requireWritableEpisodeStorage} from './episodeStorageLocation.js';
 import {creativeAccountRules} from '../creativeAccountRules.js';
 import {createHash,randomUUID} from 'node:crypto';
-import {join} from 'node:path';
 import type {PoolClient} from 'pg';
 import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
 import {applyWorkspaceAudioMix,readWorkspaceAudioMix,type WorkspaceAudioEdit} from '../workspaceAudio.js';
 import {ConfigurationError} from './configurationCommands.js';
-import {verifyNativeFile} from './localFiles.js';
+import {verifyEpisodeFile,resolveEpisodeFileReference} from './episodeFiles.js';
 import {resolveWorkspaceSource} from './workspaceSources.js';
 import {probeMp3Artifact,inspectMp4Artifact} from '../worker/mediaTools.js';
 import {isOpenChatCutStudio} from '../worker/openchatcutStudio.js';
@@ -23,6 +23,7 @@ async function persistEdit(c:PoolClient,root:string,row:ProductionWorkspaceRecor
  return updateWorkspaceProject(c,root,row,after,row.bindings,reason,{nativeEdit:true});
 }
 export async function executeWorkspaceAudio(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,runtime:InputRuntime,command:string,data:Record<string,unknown>){
+ await requireWritableEpisodeStorage(c,root,row.episode_id);
  if(command==='refreshWorkspaceAudio')return;
  if(command==='prepareWorkspaceAudio'){
   if(!['bgm','sfx','source'].includes(String(data.kind)))throw new ConfigurationError(400,'音频类型无效。');
@@ -36,7 +37,7 @@ export async function executeWorkspaceAudio(c:PoolClient,root:string,row:Product
   if(data.kind==='source'){
    const clip=row.bindings.find(b=>b.itemId===sourceItemId&&(!shotId||b.shotId===shotId)),item=project.timelines.flatMap(t=>t.items).find(i=>i.id===sourceItemId);
    if(!clip||!item||item.kind!=='video'||typeof item.src!=='string')throw new ConfigurationError(409,'请选择当前工程中的原片画面。');
-   source=await resolveWorkspaceSource(c,root,row.episode_id,item.src);const observed=await inspectMp4Artifact(join(root,source.relative_path));if(!observed.hasAudio)throw new ConfigurationError(409,'所选原片没有音频流。');
+   source=await resolveWorkspaceSource(c,root,row.episode_id,item.src);const observed=await inspectMp4Artifact(await resolveEpisodeFileReference(c,await episodeStorageLocationAtRoot(c,root,row.episode_id),source.relative_path));if(!observed.hasAudio)throw new ConfigurationError(409,'所选原片没有音频流。');
    const timeline=project.timelines.find(t=>t.items.includes(item))!,rate=Number(item.playbackRate??1),start=Number(item.srcInFrame??0)/timeline.fps;duration=Number(item.durationInFrames)*rate/timeline.fps;if(!Number.isFinite(rate)||rate<=0||!Number.isFinite(start)||start<0||!Number.isFinite(duration)||duration<=0||start+duration>observed.durationSeconds+.025)throw new ConfigurationError(409,'所选原片使用窗口无效或超出实际源长。');sourceSha=source.sha256;shotId=clip.shotId;anchor='shot';offset=0;description=`${clip.shotId} 原片 ${start.toFixed(2)}–${(start+duration).toFixed(2)}s`;source={...source,duration,startSeconds:start,sourceInFrame:Number(item.srcInFrame??0),sourceFrameRate:timeline.fps,playbackRate:rate,visualDurationInFrames:Number(item.durationInFrames)};
   }
   if(typeof description!=='string'||!description.trim()||description.length>100||!Number.isFinite(duration)||duration<=0||duration>7200||!['absolute','shot'].includes(String(anchor))||!Number.isFinite(offset)||offset<0||anchor==='shot'&&!row.bindings.some(b=>b.shotId===shotId))throw new ConfigurationError(400,'音频说明、时长或位置无效。');
@@ -46,7 +47,7 @@ export async function executeWorkspaceAudio(c:PoolClient,root:string,row:Product
   if(data.materialRevisionId){
    const m=(await c.query("SELECT * FROM public.production_material_revisions WHERE id=$1 AND episode_id=$2 AND material_type='audio'",[data.materialRevisionId,row.episode_id])).rows[0];
    if(!m||m.material_purpose!==(data.kind==='bgm'?'background_music':'sound_effect'))throw new ConfigurationError(409,'请选择本期已登记的对应人工音频。');
-   await verifyNativeFile(root,m.storage_path,m.sha256,Number(m.file_size));if(await probeMp3Artifact(join(root,m.storage_path))+.05<duration)throw new ConfigurationError(409,'人工音频短于请求使用时长。');materialId=m.id;query=null;
+   await verifyEpisodeFile(c,root,row.episode_id,m.storage_path,m.sha256,Number(m.file_size));if(await probeMp3Artifact(await resolveEpisodeFileReference(c,await episodeStorageLocationAtRoot(c,root,row.episode_id),m.storage_path))+.05<duration)throw new ConfigurationError(409,'人工音频短于请求使用时长。');materialId=m.id;query=null;
   }else if(data.kind==='source')await audioRuntime(runtime,'source');else{
    const resolved=await resolveProductionSelection(c,data.selection,'music_sound');
    const max=resolved.choice.constraints.query?.maxLength??100;if(String(query).length>max)throw new ConfigurationError(400,`检索词不能超过 ${max} 字符。`);
@@ -76,7 +77,7 @@ export async function executeWorkspaceAudio(c:PoolClient,root:string,row:Product
  let path=p.relative_path,sha=p.sha256,size=Number(p.file_size),duration=Number(p.actual_duration),assetId=`audio-track-${p.audio_track_id}`;
  if(p.material_revision_id){const m=(await c.query('SELECT * FROM public.production_material_revisions WHERE episode_id=$1 AND id=$2',[row.episode_id,p.material_revision_id])).rows[0];if(!m)throw new ConfigurationError(409,'人工音频登记已变化。');path=m.storage_path;sha=m.sha256;size=Number(m.file_size);assetId=`material-${m.id}`;}
  if(!path)throw new ConfigurationError(409,'音频任务尚未成功完成，请刷新或重试。');
- await verifyNativeFile(root,path,sha,size);duration=await probeMp3Artifact(join(root,path));
+ await verifyEpisodeFile(c,root,row.episode_id,path,sha,size);duration=await probeMp3Artifact(await resolveEpisodeFileReference(c,await episodeStorageLocationAtRoot(c,root,row.episode_id),path));
  const timeline=project.timelines.find(t=>t.id===project.activeTimelineId)!;const next=structuredClone(project);let tl=next.timelines.find(t=>t.id===project.activeTimelineId)!;
  if(!next.assets.some(a=>a.id===assetId))next.assets.push({id:assetId,name:p.description,kind:'audio',src:path,durationInFrames:Math.floor(duration*timeline.fps)});
  let itemId:string;
