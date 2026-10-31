@@ -1,3 +1,4 @@
+import {requireVisualStorageLocation as requireWritableEpisodeStorage} from './workspaceVisualMedia.js';
 import {creativeAccountRules} from '../creativeAccountRules.js';
 import {createHash,randomUUID} from 'node:crypto';
 import {join} from 'node:path';
@@ -23,6 +24,7 @@ async function persistEdit(c:PoolClient,root:string,row:ProductionWorkspaceRecor
  return updateWorkspaceProject(c,root,row,after,row.bindings,reason,{nativeEdit:true});
 }
 export async function executeWorkspaceAudio(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,runtime:InputRuntime,command:string,data:Record<string,unknown>){
+ await requireWritableEpisodeStorage(c,root,row.episode_id);
  if(command==='refreshWorkspaceAudio')return;
  if(command==='prepareWorkspaceAudio'){
   if(!['bgm','sfx','source'].includes(String(data.kind)))throw new ConfigurationError(400,'音频类型无效。');

@@ -1,3 +1,4 @@
+import {requireVisualStorageLocation as requireWritableEpisodeStorage} from './workspaceVisualMedia.js';
 import {readUsedWorkspaceNarrationVersions} from './workspaceCandidates.js';
 import {resolveWorkspaceMainVoice} from '../workspaceAudio.js';
 import {readWorkspaceShotWindow} from '../workspaceShots.js';
@@ -87,6 +88,7 @@ export async function confirmWorkspaceCaptionTexts(c:PoolClient,root:string,row:
  }
 }
 export async function executeWorkspaceCaptionCommand(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,runtime:{postReady?(kind:'alignment'):Promise<void>;wake?(id:string):void},command:string,data:Record<string,unknown>){
+ await requireWritableEpisodeStorage(c,root,row.episode_id);
  let x=await captionContext(c,root,row,project,data.clipId);
  if(command==='saveWorkspaceCaptions'){
   if(!isValidShotCaptionContract(data.captionContract))throw new ConfigurationError(400,'字幕正文、布局或时序无效。');const contract=data.captionContract;

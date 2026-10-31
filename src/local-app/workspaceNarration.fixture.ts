@@ -12,8 +12,8 @@ import {executeNativeNarration} from './narrationWorker';
 import {prepareNativeAttemptOutput} from './nativeAttemptOutput';
 import {verifyArtifactIndex} from '../worker/mediaLibrary';
 import {productionWorkspaceFixture} from './productionWorkspace.fixture';
-export async function narrationFixture(origin?:string,onBase?:(f:Awaited<ReturnType<typeof productionWorkspaceFixture>>)=>void,videoConfiguration=false,skipWorkspace=false,options?:{voice:string;video:string;testRootParent?:string;mountPath?:string}|string[]){
- const controlledMedia=Array.isArray(options)?undefined:options,migrations=Array.isArray(options)?options:[];
+export async function narrationFixture(origin?:string,onBase?:(f:Awaited<ReturnType<typeof productionWorkspaceFixture>>)=>void,videoConfiguration=false,skipWorkspace=false,options?:{voice:string;video:string;testRootParent?:string;mountPath?:string;migrations?:string[]}|string[]){
+ const controlledMedia=Array.isArray(options)?undefined:options,migrations=Array.isArray(options)?options:options?.migrations??[];
  const f=await productionWorkspaceFixture({testRootParent:controlledMedia?.testRootParent,origin,migrations:['db/local/087-workspace-narration.sql',...migrations],runtime:{...(controlledMedia?.mountPath?{mountPath:controlledMedia.mountPath}:{}),postReady:async()=>{},mediaReady:async()=>{},narrationReady:async()=>{},checkReferences:async()=>{},wake(){}}});
  onBase?.(f);
  try{
