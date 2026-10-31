@@ -3,13 +3,16 @@
 export const localCatalogSql=` with owned as materialized (
   select e.* from public.episodes e where exists (
    select 1 from public.account_memberships m where m.account_id=e.account_id and m.user_id=$1::uuid and m.role='owner')
+ ), current_collections as materialized (
+  select e.id episode_id,c.container_id,c.series_id from owned e cross join lateral local_identity.episode_storage_collection(e.id) c
  ), scoped as materialized (
   select e.* from owned e left join public.series_versions v on v.id=e.series_version_id
   left join public.series s on s.id=v.series_id
+  left join current_collections collection on collection.episode_id=e.id
   where ($4::uuid is null or e.account_id=$4::uuid)
-   and ($5::text='all' or $5::text='unassigned' and e.series_version_id is null
-    or $5::text='unavailable' and e.series_version_id is not null and s.id is null
-    or s.id::text=$5::text)
+   and ($5::text='all' or $5::text='unassigned' and (collection.container_id is not null and collection.series_id is null or collection.container_id is null and e.series_version_id is null)
+    or $5::text='unavailable' and collection.container_id is null and e.series_version_id is not null and s.id is null
+    or case when collection.container_id is not null then collection.series_id else s.id end::text=$5::text)
    and ($6::text='all' or $6::text='active' and e.archived_at is null or $6::text='archived' and e.archived_at is not null)
    and ($2::text not in ('reviews','operations') or e.archived_at is null and not local_identity.is_historical_episode(e.id))
    and ($9::text='' or strpos(lower(e.title),lower($9::text))>0 or strpos(lower(e.id::text),lower($9::text))>0)
@@ -120,6 +123,7 @@ export const localCatalogSql=` with owned as materialized (
  )
  select jsonb_build_object(
   'episodes',coalesce((select jsonb_agg(to_jsonb(e) order by case when $10::text='title' then lower(e.title) end asc,case when $10::text='oldest' then e.updated_at end asc,e.updated_at desc,e.id) from page_rows e),'[]'),
+  'collections',coalesce((select jsonb_object_agg(c.episode_id,jsonb_build_object('containerId',c.container_id,'seriesId',c.series_id)) from current_collections c join page_rows e on e.id=c.episode_id),'{}'),
   'total',(select total from bounds),'page',(select page from bounds),'pageSize',20,
   'episodeCount',(select count(*) from owned),
   'accountCounts',coalesce((select jsonb_object_agg(account_id,n) from(select account_id,count(*) n from owned group by account_id)s),'{}'),

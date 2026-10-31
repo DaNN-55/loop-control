@@ -1,0 +1,15 @@
+.episode-collection-dialog { width: min(620px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); overflow-y: auto; }
+.episode-collection-dialog header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.episode-collection-dialog dl { display: grid; gap: 10px; margin: 16px 0; }
+.episode-collection-dialog dl > div { display: grid; grid-template-columns: 5em minmax(0, 1fr); gap: 12px; }
+.episode-collection-dialog dt { color: var(--lc-muted); }
+.episode-collection-dialog dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.episode-collection-dialog code { font-size: 12px; overflow-wrap: anywhere; }
+.episode-collection-plan { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--lc-line); }
+.episode-collection-plan ul { padding-inline-start: 20px; }
+.episode-collection-plan li { margin-block: 10px; overflow-wrap: anywhere; }
+.episode-collection-plan small { display: block; overflow-wrap: anywhere; }
+.episode-collection-dialog .modal-actions { flex-wrap: wrap; }
+
+html[data-interface="impeccable"] .impeccable-app.product-ui .modal-backdrop > .modal-card.episode-collection-dialog { width: min(620px, calc(100vw - 32px)); max-width: 620px; min-width: 0; box-sizing: border-box; }
+.episode-collection-plan dd code { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

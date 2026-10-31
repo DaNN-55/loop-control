@@ -1,3 +1,21 @@
+# 2026-11-01 #192 / T14 同账号跨系列收纳（实现验收完成，待独立合入）
+
+目标：在同账号系列与未分系列间真实迁移生产单文件，保留冻结创作基线、任务和费用；当前位置、列表、预览、原生工程与恢复保持一致。
+
+- [x] Owner HTTP 迁移公共边界 RED→GREEN，SQL124 / durable move 复用现有 coordinator。
+- [x] A→B→unassigned→A→B、源离线/重启、原冻结引用、同 task retry、故障及中断恢复。
+- [x] current collection 列表/筛选与正式 UI，completed/archived 内容只读。
+- [x] 实际 Finder/native 保存关闭重开播放导出、真实 DB+media 备份异地恢复。
+- [x] 定向回归、check/build/prepare、ADR19及外部证据。
+- [x] 源提交与最新 integration 同步，外部 HANDOFF 和契约就绪。
+- [ ] fresh merger 独立验收和 root 关闭 Issue。
+
+外部准备与证据：`/private/tmp/loop-control-178-20261031/T14/`。沿用户已确认正式页面→Owner HTTP→隔离真实 DB/files→native/系统打开验收；不碰日常数据/服务、付费Provider、main/push。T13源码3edf5f80已合入本工作树；SQL123保持原字节。重型资源已释放后完成验收，自己的窗口与测试资源用毕关闭。
+
+验证：本票五文件 14 项真实验收通过、零跳过；正式浏览器最终 1 项通过，含首次 HTTP 读取失败后成功重读、SQL 切换失败后恢复及完整往返／原生链路。T13 纳管与位置旧回归 12 项通过，SQL120 历史合同显式固定 pre-lineage fixture 后 2 项通过；18 项相关 UI／查询单测通过。最初将当前 fixture 默认推进123/124后，两个纯 SQL120 假引用旧断言曾失败；没有放宽123，原断言与历史 schema 验证保留。
+
+新原生恢复保留真实 dump、SQLite、项目与导出；旧源离线，新应用 PID57416→57584，Owner 导出 SHA 与实际文件匹配。固定 baseline 仍为107迁移/max109/0账号，schema与ledger SHA精确匹配。UI fresh只读review F1已实际RED→GREEN并判resolved/ship，仅限收纳表面；DESIGN不变。390 dialog适配，背景page408未归因，保留给T17。细节与命令见外部 T14/HANDOFF.md、T14-CONTRACT.md，尚不宣称独立merger通过。
+
 # #190 / T12：正式新生产单目录层级（独立验收通过，待主 Agent 关闭 Issue）
 
 干净源 `4b9115386826b849a0e6444c949c8acbf9f45b21` 已包含 integration `57d6240b`；以 no-ff 合入 `fd250c0bfbdbc4b186af4192315407e5f80b8447`，无冲突和产品补改。正式 Owner create 默认使用真实系列或未分系列的 layout2，旧直接 fixture 仍使用 legacy；完整请求、固定 UUID、创作引用及父子目录身份由持久 intent 保留，pending 阻止账号删除与备份。SQL122 为唯一新增迁移，107 条已应用迁移源码与冻结 bootstrap 全字节相同，115/121 未修改。
@@ -66,7 +84,7 @@ Confirmed acceptance: formal UI → Owner HTTP → isolated real database/files 
 | #189 | #183, #187 | Completed; independent acceptance passed and tracker closed |
 | #190 | #187, #188, #189 | Completed; independent acceptance passed and tracker closed |
 | #191 | #190 | Isolated TDD implementation starting |
-| #192 | #190 | Ready; scheduled after shared lineage interface from #191 |
+| #192 | #190 | Isolated TDD implementation in t14; T13 merged3edf5f80 |
 | #193 | #191 | Pending |
 | #194 | #193 | Pending |
 | #195 | #192, #194 | Pending |

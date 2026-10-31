@@ -6,7 +6,7 @@ import {join} from 'node:path';
 import {embeddedStudioFixture} from './embeddedStudio.fixture';
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('effective SQL120 guards use literal owned prefixes and retain fixed publish identities',async()=>{
- const f=await embeddedStudioFixture({episodeRelativePath:()=> '系列 [SQL]_100%/本期 空间',migrations:['db/local/118-visual-storage-locations.sql','db/local/119-audio-caption-storage-locations.sql','db/local/120-native-workspace-storage-locations.sql']});
+ const f=await embeddedStudioFixture({storageContract:'pre-lineage',episodeRelativePath:()=> '系列 [SQL]_100%/本期 空间',migrations:['db/local/118-visual-storage-locations.sql','db/local/119-audio-caption-storage-locations.sql','db/local/120-native-workspace-storage-locations.sql']});
  try{
   const signatures=['local_identity.scope_input_studio_task(uuid,text,jsonb)','public.generate_shot_review_video(uuid,uuid,jsonb,boolean,text)','public.request_review_render_revision(uuid,jsonb,text)','public.record_publish_input(uuid,text,text,text,bigint)','public.record_publish_package(uuid,text,text,bigint)','local_identity.queue_owned_final_render(uuid)'];
   const definitions=(await f.c.query('SELECT name,pg_get_functiondef(name::regprocedure) definition FROM unnest($1::text[]) name',[signatures])).rows;
@@ -37,7 +37,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('effective SQL120 guards 
 },120000);
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('fresh Owner Studio scope keeps exact frozen input and task namespace at a literal registered prefix',async()=>{
- const f=await embeddedStudioFixture({episodeRelativePath:()=> '系列 scope_[100%]/本期',migrations:['db/local/118-visual-storage-locations.sql','db/local/119-audio-caption-storage-locations.sql','db/local/120-native-workspace-storage-locations.sql']});
+ const f=await embeddedStudioFixture({storageContract:'pre-lineage',episodeRelativePath:()=> '系列 scope_[100%]/本期',migrations:['db/local/118-visual-storage-locations.sql','db/local/119-audio-caption-storage-locations.sql','db/local/120-native-workspace-storage-locations.sql']});
  try{
   const task=randomUUID(),reference={relative_path:`${f.episodeRelativePath}/openchatcut-frozen/${randomUUID()}/project.json`,sha256:'a'.repeat(64),file_size:123};
   await f.c.query('BEGIN');await f.c.query('UPDATE local_identity.input_episodes SET enabled=true,studio_enabled=true WHERE episode_id=$1',[f.episode]);

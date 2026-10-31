@@ -65,12 +65,13 @@ export function OperationsWorkspace({ catalogControls,isLoading=false,accounts=[
     const seriesById = new Map(series.map((item) => [item.id, item]));
     const seriesVersionsById = new Map(seriesVersions.map((item) => [item.id, item]));
     const items = new Map<string, SeriesOperation>(series.map((item) => [item.id, { id: item.id, name: item.name, episodes: [] }]));
-    const unassigned: SeriesOperation = { id: "unassigned", name: "未归属系列", episodes: [] };
+    const unassigned: SeriesOperation = { id: "unassigned", name: "未分系列", episodes: [] };
     const unavailable: SeriesOperation = { id: "unavailable", name: "关联系列不可用", episodes: [] };
 
     for (const episode of episodes.filter((item) => !item.archived_at)) {
       const version = episode.series_version_id ? seriesVersionsById.get(episode.series_version_id) : null;
-      const operation = version && seriesById.has(version.series_id) ? items.get(version.series_id) : episode.series_version_id ? unavailable : unassigned;
+      const collection=remote?.catalog.collections?.[episode.id];
+      const operation = collection?(collection.seriesId?items.get(collection.seriesId)??unavailable:unassigned):version && seriesById.has(version.series_id) ? items.get(version.series_id) : episode.series_version_id ? unavailable : unassigned;
       if (!operation) continue;
       const reviewPackage = currentReviewPackage(reviewPackages, episode);
       operation.episodes.push({
@@ -81,7 +82,7 @@ export function OperationsWorkspace({ catalogControls,isLoading=false,accounts=[
       });
     }
     return [...items.values(), ...(unassigned.episodes.length ? [unassigned] : []), ...(unavailable.episodes.length ? [unavailable] : [])];
-  }, [episodes, preRenderReviewMemberDecisions, preRenderReviewMembers, reviewPackages, series, seriesVersions, tasks]);
+  }, [episodes, remote?.catalog.collections, preRenderReviewMemberDecisions, preRenderReviewMembers, reviewPackages, series, seriesVersions, tasks]);
   const effectiveSeriesId = remote?.seriesId ?? selectedSeriesId;
   const selectedOperation = effectiveSeriesId === "all" ? null : operations.find((operation) => operation.id === effectiveSeriesId) ?? null;
   const visibleOperations = selectedOperation ? [selectedOperation] : operations;
