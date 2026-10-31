@@ -1,6 +1,7 @@
 import {parseProductionScript,segmentSettings,type ProductionScript,type ProductionSettings} from './productionScript.js';
 export interface ProductionMaterial {
  id:string;episodeId:string;seriesId:string|null;name:string;alias?:string;
+ provenance?:{source:Record<string,unknown>;approvals:Record<string,unknown>[]};
  type:string;purpose:string;mime:string;path:string;sha256:string;size:number;root?:string;
 }
 export interface MaterialResolution {reference:string;kind:'image'|'bgm'|'sfx'|'cover';status:'bound'|'missing'|'ambiguous'|'none';material?:ProductionMaterial;candidates:ProductionMaterial[]}
