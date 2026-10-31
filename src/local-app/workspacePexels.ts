@@ -10,7 +10,7 @@ import {workspaceCandidateTarget} from '../workspaceCandidates.js';
 import {ConfigurationError} from './configurationCommands.js';
 import {productionHash} from './scriptProductionStore.js';
 import {verifyNativeFile,snapshotInput} from './localFiles.js';
-import {inspectWorkspaceVisualFile} from './workspaceVisualMedia.js';
+import {inspectWorkspaceVisualFile,requireVisualStorageLocation} from './workspaceVisualMedia.js';
 import {resolveProductionSelection} from './productionSelection.js';
 import type {InputRuntime} from './episodeCommands.js';
 import type {ProductionWorkspaceRecord} from './productionWorkspaceCommands.js';
@@ -27,6 +27,7 @@ export async function readWorkspacePexels(c:PoolClient,root:string,row:Productio
  }));return{requests};
 }
 export async function executeWorkspacePexels(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,command:string,data:Record<string,unknown>,runtime:InputRuntime){
+ const location=await requireVisualStorageLocation(c,root,row.episode_id,runtime.minimumFreeBytes);
  const requestedId=command==='importWorkspacePexelsVideo'?data.previewId:command==='previewWorkspacePexelsVideo'?data.searchId:undefined;
  if(requestedId!==undefined&&(typeof requestedId!=='string'||!uuid.test(requestedId)))throw new ConfigurationError(400,'Pexels 请求标识无效。');
  const state=await readWorkspacePexels(c,root,row,requestedId as string|undefined);
@@ -36,7 +37,7 @@ export async function executeWorkspacePexels(c:PoolClient,root:string,row:Produc
   const record=(await c.query('SELECT * FROM local_identity.workspace_pexels_requests WHERE id=$1 AND workspace_id=$2',[preview.id,row.id])).rows[0],item=project.timelines.flatMap(t=>t.items).find(i=>i.id===preview.targetItemId),clip=row.bindings.find(b=>b.itemId===preview.targetItemId);
   if(!clip||!item||productionHash(workspaceCandidateTarget(item))!==productionHash(record.target_snapshot))throw new ConfigurationError(409,'目标画面已变化，请针对当前镜头重新检索。');
   const a=preview.preview,bytes=await verifyNativeFile(root,a.relativePath,a.sha256,a.fileSize),observed=await inspectWorkspaceVisualFile(root,a.relativePath,'video');
-  const stored=await snapshotInput(root,row.episode_id,{sourceKind:'file',sourcePath:`pexels-${preview.source.id}.mp4`,contentBase64:bytes.toString('base64')} as never);
+  const stored=await snapshotInput(root,row.episode_id,{sourceKind:'file',sourcePath:`pexels-${preview.source.id}.mp4`,contentBase64:bytes.toString('base64')} as never,location.relativePath);
   const material=(await c.query('SELECT to_jsonb(public.import_production_material($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)) result',[row.episode_id,'video','worker',stored.sourcePath,stored.storagePath,'video/mp4',stored.sha256,stored.fileSize,false,'b_roll'])).rows[0].result;
   const snapshot={kind:'video',usage:'video',durationSeconds:observed.durationSeconds,width:observed.width,height:observed.height,pexelsPreviewId:preview.id,source:preview.source,context:record.request_snapshot.context,target:record.request_snapshot.target};
   await c.query('INSERT INTO local_identity.workspace_visual_candidates(id,workspace_id,episode_id,clip_id,shot_id,target_item_id,input_fingerprint,target_snapshot,request_snapshot,material_revision_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',[randomUUID(),row.id,row.episode_id,clip.id,clip.shotId,item.id,productionHash({snapshot,sha256:stored.sha256,target:record.target_snapshot}),record.target_snapshot,snapshot,material.id]);return;
