@@ -1,0 +1,292 @@
+{
+  "repository": "DaNN-55/loop-control",
+  "parent": 178,
+  "parent_url": "https://github.com/DaNN-55/loop-control/issues/178",
+  "verified_at": "2026-10-31T07:36:13.995380+00:00",
+  "parent_title_body_state_unchanged": true,
+  "parent_body_sha256": "0554192301190bbe98f1b7ff2c0c54d7695803d3459ce73b30aee302be47156d",
+  "sub_issues": 17,
+  "native_blocking_edges": 22,
+  "acceptance_criteria": 96,
+  "initial_frontier": [
+    179,
+    180
+  ],
+  "tickets": [
+    {
+      "key": "T01",
+      "number": 179,
+      "url": "https://github.com/DaNN-55/loop-control/issues/179",
+      "title": "[账号目录 T01] 兼容新旧生产单位置",
+      "body_sha256": "639b65c8e7ee0dad37fc269084bdc80871bda49c47c02264ff5d7ae93e4f4113",
+      "acceptance_criteria": 6,
+      "blocked_by": [],
+      "parent": 178,
+      "labels": [
+        "ready-for-agent"
+      ],
+      "state": "open"
+    },
+    {
+      "key": "T02",
+      "number": 180,
+      "url": "https://github.com/DaNN-55/loop-control/issues/180",
+      "title": "[账号目录 T02] 重组账号工作区",
+      "body_sha256": "dc43d34b0c1ee25c8c51702b32de5076ee1edbfe93403b3b63ba52c0b08c9b72",
+      "acceptance_criteria": 6,
+      "blocked_by": [],
+      "parent": 178,
+      "labels": [
+        "ready-for-agent"
+      ],
+      "state": "open"
+    },
+    {
+      "key": "T03",
+      "number": 181,
+      "url": "https://github.com/DaNN-55/loop-control/issues/181",
+      "title": "[账号目录 T03] 全局媒体根设置与初始化",
+      "body_sha256": "3170430d4ebefe40d5046898cccb4034f452b8984a0a21a408b6e50e0ca4b7ac",
+      "acceptance_criteria": 6,
+      "blocked_by": [
+        179
+      ],
+      "parent": 178,
+      "labels": [
+        "ready-for-agent"
+      ],
+      "state": "open"
+    },
+    {
+      "key": "T04",
+      "number": 182,
+      "url": "https://github.com/DaNN-55/loop-control/issues/182",
+      "title": "[账号目录 T04] 创建账号自动建立专属目录",
+      "body_sha256": "d0e74562c708079cf73677fa907cc1c188a712655892e6889c72aeb296d6e265",
+      "acceptance_criteria": 6,
+      "blocked_by": [
+        180,
+        181
+      ],
+      "parent": 178,
+      "labels": [
+        "ready-for-agent"
+      ],
+      "state": "open"
+    },
+    {
+      "key": "T05",
+      "number": 183,
+      "url": "https://github.com/DaNN-55/loop-control/issues/183",
+      "title": "[账号目录 T05] 创建系列自动建立目录",
+      "body_sha256": "00a5aab2d3c755e7c3a24252c0353f06c60d9613b35a76596d2c3bc94455e1ef",
+      "acceptance_criteria": 6,
+      "blocked_by": [
+        182
+      ],
+      "parent": 178,
+      "labels": [
+        "ready-for-agent"
+      ],
+      "state": "open"
+    },
+    {
+      "key": "T06",
+      "number": 184,
+      "url": "https://github.com/DaNN-55/loop-control/issues/184",
+      "title": "[账号目录 T06] 脚本与导入素材兼容新位置",
+      "body_sha256": "91e7ee16bb8959924879380af61322400ede4fd292b89e27935a9f0c9f8920d6",
+      "acceptance_criteria": 5,
+      "blocked_by": [
+        179
+      ],
+      "parent": 178,
+      "labels": [
+        "ready-for-agent"
+      ],
+      "state": "open"
+    },
+    {
+      "key": "T07",
+      "number": 185,
+      "url": "https://github.com/DaNN-55/loop-control/issues/185",
+      "title": "[账号目录 T07] 图片与视频制作兼容新位置",
+      "body_sha256": "b4a77f950d4fb7ba84e7767e66f2a948995484ced9ce55e3b510c7608451b1e1",
+      "acceptance_criteria": 5,
+      "blocked_by": [
+        179
+      ],
+      "parent": 178,
+      "labels": [
+        "ready-for-agent"
+      ],
+      "state": "open"
+    },
+    {
+      "key": "T08",
+      "number": 186,
+      "url": "https://github.com/DaNN-55/loop-control/issues/186",
+      "title": "[账号目录 T08] 音频与字幕制作兼容新位置",
+      "body_sha256": "6a9e1ad9d52b127f666db81dd0bdbe3d86082408aca080b46f4170a5b14e34f1",
+      "acceptance_criteria": 5,
+      "blocked_by": [
+        179
+      ],
+      "parent": 178,
+      "labels": [
+        "ready-for-agent"
+      ],
+      "state": "open"
+    },
+    {
+      "key": "T09",
+      "number": 187,
+      "url": "https://github.com/DaNN-55/loop-control/issues/187",
+      "title": "[账号目录 T09] 剪辑工程与交付兼容新位置",
+      "body_sha256": "aea35b273a6eedcf7104fb27a82ccac7f74df41876add70966bacb1d2056457b",
+      "acceptance_criteria": 5,
+      "blocked_by": [
+        184,
+        185,
+        186
+      ],
+      "parent": 178,
+      "labels": [
+        "ready-for-agent"
+      ],
+      "state": "open"
+    },
+    {
+      "key": "T10",
+      "number": 188,
+      "url": "https://github.com/DaNN-55/loop-control/issues/188",
+      "title": "[账号目录 T10] 归档与删除适配新层级",
+      "body_sha256": "13cc32c2798d2a33b21ade0bede56d696e40638d5790581c1d5af6601f40fca4",
+      "acceptance_criteria": 5,
+      "blocked_by": [
+        183
+      ],
+      "parent": 178,
+      "labels": [
+        "ready-for-agent"
+      ],
+      "state": "open"
+    },
+    {
+      "key": "T11",
+      "number": 189,
+      "url": "https://github.com/DaNN-55/loop-control/issues/189",
+      "title": "[账号目录 T11] 新层级的真实备份与恢复",
+      "body_sha256": "43d209f7810db5290d0a2b1995631b81aa51a67d271193e98291b814b8652c84",
+      "acceptance_criteria": 5,
+      "blocked_by": [
+        183,
+        187
+      ],
+      "parent": 178,
+      "labels": [
+        "ready-for-agent"
+      ],
+      "state": "open"
+    },
+    {
+      "key": "T12",
+      "number": 190,
+      "url": "https://github.com/DaNN-55/loop-control/issues/190",
+      "title": "[账号目录 T12] 正式启用新生产单目录层级",
+      "body_sha256": "96d353376ede38f724543f2e43b0936822d72e94fc0ed7e834205d1c2f7b2e30",
+      "acceptance_criteria": 6,
+      "blocked_by": [
+        187,
+        188,
+        189
+      ],
+      "parent": 178,
+      "labels": [
+        "ready-for-agent"
+      ],
+      "state": "open"
+    },
+    {
+      "key": "T13",
+      "number": 191,
+      "url": "https://github.com/DaNN-55/loop-control/issues/191",
+      "title": "[账号目录 T13] 旧账号与生产单受控纳管",
+      "body_sha256": "bedc15c12d30019e07c9a7704f1677cc0be12ef01d0f2facae9a67e2f2d9b058",
+      "acceptance_criteria": 6,
+      "blocked_by": [
+        190
+      ],
+      "parent": 178,
+      "labels": [
+        "ready-for-agent"
+      ],
+      "state": "open"
+    },
+    {
+      "key": "T14",
+      "number": 192,
+      "url": "https://github.com/DaNN-55/loop-control/issues/192",
+      "title": "[账号目录 T14] 同账号跨系列收纳调整",
+      "body_sha256": "b9125317fa404ad5cf401a3bad2da4c3f6b53dc4945302f846a1094be7abfe9b",
+      "acceptance_criteria": 5,
+      "blocked_by": [
+        190
+      ],
+      "parent": 178,
+      "labels": [
+        "ready-for-agent"
+      ],
+      "state": "open"
+    },
+    {
+      "key": "T15",
+      "number": 193,
+      "url": "https://github.com/DaNN-55/loop-control/issues/193",
+      "title": "[账号目录 T15] 全局媒体根迁移盘点",
+      "body_sha256": "ef3a3eb59c40c3c615e960b18c0aa52f567de907f6f11471a53efd774b831248",
+      "acceptance_criteria": 5,
+      "blocked_by": [
+        191
+      ],
+      "parent": 178,
+      "labels": [
+        "ready-for-agent"
+      ],
+      "state": "open"
+    },
+    {
+      "key": "T16",
+      "number": 194,
+      "url": "https://github.com/DaNN-55/loop-control/issues/194",
+      "title": "[账号目录 T16] 全局媒体根迁移与中断恢复",
+      "body_sha256": "385ee00697970f647f5123f1d62b8cb78adcc1ca84e8aa0c2d0f65106d14cb5e",
+      "acceptance_criteria": 6,
+      "blocked_by": [
+        193
+      ],
+      "parent": 178,
+      "labels": [
+        "ready-for-agent"
+      ],
+      "state": "open"
+    },
+    {
+      "key": "T17",
+      "number": 195,
+      "url": "https://github.com/DaNN-55/loop-control/issues/195",
+      "title": "[账号目录 T17] 完整验收与兼容收尾",
+      "body_sha256": "88b4c93943b9226bfed8405fcad5f33ca6eb481fd5605012191d3448e231edaa",
+      "acceptance_criteria": 8,
+      "blocked_by": [
+        192,
+        194
+      ],
+      "parent": 178,
+      "labels": [
+        "ready-for-agent"
+      ],
+      "state": "open"
+    }
+  ]
+}

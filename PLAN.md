@@ -1,3 +1,37 @@
+# Active execution: issue 178
+
+Integration branch: `codex/issue-178-integration`; baseline `8f134dc2`. Main checkout and existing uncommitted work remain untouched. Spec: https://github.com/DaNN-55/loop-control/issues/178. All 17 ticket descriptions and the live-read graph are saved in `/private/tmp/loop-control-178-20261031`.
+
+Confirmed acceptance: formal UI → Owner HTTP → isolated real database/files → native project and system-folder-open. No paid calls, daily DB/media changes, main merge or remote push. Each ticket uses a fresh TDD implementer in a separate branch/worktree; merger subagents integrate completed commits. Close tickets only after their real acceptance succeeds; final code-review and T17 are required before closing the spec.
+
+| Ticket | Direct blockers | Status |
+|---|---|---|
+| #179 | None | Implementing |
+| #180 | None | Implementing |
+| #181 | #179 | Pending |
+| #182 | #180, #181 | Pending |
+| #183 | #182 | Pending |
+| #184 | #179 | Pending |
+| #185 | #179 | Pending |
+| #186 | #179 | Pending |
+| #187 | #184, #185, #186 | Pending |
+| #188 | #183 | Pending |
+| #189 | #183, #187 | Pending |
+| #190 | #187, #188, #189 | Pending |
+| #191 | #190 | Pending |
+| #192 | #190 | Pending |
+| #193 | #191 | Pending |
+| #194 | #193 | Pending |
+| #195 | #192, #194 | Pending |
+
+Runtime ready: independent `loop-control-178-test-postgres` container (network none, no host ports or persistent volumes, memory512MiB/cpu1) bootstrapped from repository baseline and all 107 numbered migrations through109; 0 source business accounts. Test context and independent tracked OpenChatCut source live under `/private/tmp/loop-control-178-20261031`. Keep baseline109 fixed; each test requests its needed forward migrations. No daily runtime context or credentials are used.
+
+Baseline verification: `npm run check` passed; default suite 174 files / 1144 tests passed (maxWorkers2). Log: external `baseline-default.log`. This is a pre-change baseline, not feature acceptance.
+
+Verification log and ticket handoffs: `/private/tmp/loop-control-178-20261031`. Preserve RED/GREEN, actual skip counts and any unresolved integration limitations.
+
+---
+
 # 2026-10-31 #166 合并 main 与过程清理（完成）
 
 本轮授权：将已验收的集成分支合入本地 `main`，清理本轮分支、工作树和无用途过程文件；保留日常服务、数据、既有 stash 与长期验收证据，不推送。
