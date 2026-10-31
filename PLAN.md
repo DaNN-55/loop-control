@@ -28,7 +28,7 @@ Confirmed acceptance: formal UI → Owner HTTP → isolated real database/files 
 | #185 | #179 | Integrated locally; acceptance passed; tracker closed |
 | #186 | #179 | Completed; independent acceptance passed and tracker closed |
 | #187 | #184, #185, #186 | Completed; independent acceptance passed and tracker closed |
-| #188 | #183 | Implementing in isolated worktree |
+| #188 | #183 | Integrated locally; independent acceptance passed; awaiting root tracker closure |
 | #189 | #183, #187 | Implementing in isolated worktree |
 | #190 | #187, #188, #189 | Pending |
 | #191 | #190 | Pending |
@@ -43,7 +43,7 @@ Baseline verification: `npm run check` passed; default suite 174 files / 1144 te
 
 Verification log and ticket handoffs: `/private/tmp/loop-control-178-20261031`. Preserve RED/GREEN, actual skip counts and any unresolved integration limitations.
 
-Tracker: #179 through #187 are completed after independent acceptance; 9/17 complete. T10/#188 and T11/#189 are active. Completed clean implementer worktrees are removed after ancestry/status/no-runtime-reference checks; recovery branches retained. Exact receipts and migration reservations remain in the shared external context.
+Tracker: #179 through #187 are completed after independent acceptance; 9/17 complete. T10/#188 is independently accepted locally and awaits root tracker closure; T11/#189 remains active. Completed clean implementer worktrees are removed after ancestry/status/no-runtime-reference checks; recovery branches retained. Exact receipts and migration reservations remain in the shared external context.
 
 Cross-ticket notes: T03 binds global storage to the persisted workspace Owner. T04 now creates the genuine first account through the trusted T03 binding without importing source metadata or broadening credentials. T07 owns shared producer namespaces/native output authority and mediaLibrary prefix checks; T06 owns input/planning guards and localFiles. Relative-prefix migration of frozen references remains a mandatory T13/T14 seam (external LOCATION-CALLERS.md), not solved by account-root-only mapping.
 
@@ -725,7 +725,7 @@ Owner 已选择通知同时作用于应用内和 macOS 桌面提醒。偏好按�
 
 本轮验证记录：真实 PG 验收首轮缺少合成 credential（sessions 的实际外键），第二轮以 loop_app 直接查投递账本被权限正确拦截；已补齐凭据，将账本断言限定为事务内 admin，HTTP/RLS 检查仍使用 loop_app。
 
-# #188 / T10：归档与精确永久删除（实现及隔离验收完成，待独立合并）
+# #188 / T10：归档与精确永久删除（独立合并验收通过，待主 Agent 关闭 Issue）
 
 目标：归档只改可见性；现有永久删除使用登记的实际位置，只处理已确认且身份与指纹相符的独占文件。未知、手放、共享、历史及其他账号文件保留；首次文件变更之前持久保存同一命令的精确清单，中断后按该清单恢复。
 
@@ -738,3 +738,6 @@ Owner 已选择通知同时作用于应用内和 macOS 桌面提醒。偏好按�
 - [x] 默认永久删除仅 current 实际位置；在线旧源完整指纹保留，离线旧卷不阻断；空账号仅 current 根，旧 blueprint / aliases 保留且仍参与引用检查。
 
 验收 seam 已确认：正式页面 → Owner HTTP → 隔离真实 PostgreSQL / 文件 → 适用 native / Finder。固定 baseline109 不升级，显式 forward、外部 SDK、maxWorkers1；不读日常配置，不操作日常数据或付费 Provider。
+
+
+T10/#188 独立合入 `4f465187`，来源 clean `22f3057d`，与原 integration `21828c57` 无冲突。独立 `npm run build`、`runtime:prepare`、5 文件23项单测、8 文件31项真实 HTTP/DB/文件/原生集成全部通过，31项零 skip。另独立正式恢复页通过1项，明确按名称过滤另1项 archive/delete browser case；不把过滤当通过。新进程 SIGKILL 的 prepared intent 经正式页恢复为 rolled_back；旧无精确清单回执重试仍 pending 且保留手放 inode/hash；归档和 production_completed 的列表入口均实际打开同一特殊字符 Finder 路径，核对4个文件后逐次关闭。1440/390 确认框截图亲看，390弹框388/388、三组路径356/356均无自身溢出；背景顶栏 document408/viewport390 为已有范围外问题。取消后 focus 落 body（继承入口行为，本票未改焦点），单独记录不扩展修复。实际 Finder Window 菜单0窗口条目并已取消，Ebuget1T桌面选择保留；自有 agent-browser 在 fixture close 前关闭，native/temp/随机DB无本票残留。固定源107迁移/max109与0账号保持；115 SHA与合同一致。详见仓库外 MERGE-T10.md、MERGE-T10-*.log、MERGE-T10/。未关闭Issue、清工作树、操作daily/main/push或付费。
