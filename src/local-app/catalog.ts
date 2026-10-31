@@ -13,8 +13,8 @@ export interface LocalCatalog extends EpisodeCatalog {
  seriesVersions: Row<'series_versions'>[];
  promptVersions: Row<'prompt_versions'>[];
  blueprintRevisions:Record<string,string>;
- importedAt: string;
- sourceCreatedAt: string;
+ importedAt: string|null;
+ sourceCreatedAt: string|null;
 }
 export function createLocalDatabase(config:PoolConfig){
  if(config.host!=='127.0.0.1' || config.user!=='loop_app')throw Error('Local database requires loopback and least-privilege app role');
@@ -46,7 +46,6 @@ export async function readLocalCatalog(pool:Pool,ownerId:string,query:CatalogQue
   const promptVersions=(await client.query('SELECT * FROM public.prompt_versions WHERE account_id=ANY($1::uuid[]) ORDER BY capability,version DESC,id',[ids])).rows;
   const revisions=(await client.query('SELECT id,md5(policy::text) revision FROM public.account_blueprint_versions WHERE account_id=ANY($1::uuid[])',[ids])).rows;
   const {rows:[record]}=await client.query('SELECT imported_at,source_created_at FROM local_identity.import_record');
-  if(!record)throw Error('Local import is not verified');
-  return {...catalog,accounts,blueprints,series,seriesVersions,promptVersions,blueprintRevisions:Object.fromEntries(revisions.map(r=>[r.id,r.revision])),importedAt:record.imported_at.toISOString(),sourceCreatedAt:record.source_created_at.toISOString()};
+  return {...catalog,accounts,blueprints,series,seriesVersions,promptVersions,blueprintRevisions:Object.fromEntries(revisions.map(r=>[r.id,r.revision])),importedAt:record?.imported_at.toISOString()??null,sourceCreatedAt:record?.source_created_at.toISOString()??null};
  });
 }
