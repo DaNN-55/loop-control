@@ -33,3 +33,32 @@
 - [T09-merge-blueprint-narrow.png](T09-merge-blueprint-narrow.png)
 - [T10-browser-planner-narrow.png](T10-browser-planner-narrow.png)
 - [T10-browser-blueprint-desktop.png](T10-browser-blueprint-desktop.png)
+
+## 最终证据
+
+旧失败记录保留，以 REPORT.md 中的最终结果为准。临时绝对路径仅记录当时运行位置。
+
+- [T11-handoff.md](T11-handoff.md)
+- [T11-merge.md](T11-merge.md)
+- [reviewfix-handoff.md](reviewfix-handoff.md)
+- [final-merge.md](final-merge.md)
+- [FINAL-STANDARDS.md](FINAL-STANDARDS.md)
+- [FINAL-SPEC.md](FINAL-SPEC.md)
+- [T11-browser-account-desktop.png](T11-browser-account-desktop.png)
+- [T11-browser-preparation-narrow.png](T11-browser-preparation-narrow.png)
+- [reviewfix-image-cleared-desktop.png](reviewfix-image-cleared-desktop.png)
+- [reviewfix-image-cleared-narrow.png](reviewfix-image-cleared-narrow.png)
+- [reviewfix-native-cleared-desktop.png](reviewfix-native-cleared-desktop.png)
+- [reviewfix-native-after-adoption.png](reviewfix-native-after-adoption.png)
+- [reviewfix-planner-desktop-final.png](reviewfix-planner-desktop-final.png)
+- [reviewfix-planner-narrow-final.png](reviewfix-planner-narrow-final.png)
+- [reviewfix-planner-narrow-scrolled.png](reviewfix-planner-narrow-scrolled.png)
+- [reviewfix-native-save-receipts.json](reviewfix-native-save-receipts.json)
+- [reviewfix-choice-no-tasks.json](reviewfix-choice-no-tasks.json)
+- [reviewfix-planner-scroll.json](reviewfix-planner-scroll.json)
+- [final-original-preservation.json](final-original-preservation.json)
+- [final-merge-migration-check.json](final-merge-migration-check.json)
+- [final-merge-source-hashes.json](final-merge-source-hashes.json)
+- [final-merge-pexels-cleanup-check.json](final-merge-pexels-cleanup-check.json)
+- [final-merge-browser-cleanup-check.json](final-merge-browser-cleanup-check.json)
+- [final-merge-db-cleanup-check.json](final-merge-db-cleanup-check.json)

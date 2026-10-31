@@ -1,0 +1,18 @@
+{
+  "sourceMerge": "1f8525d61691531f7305ed6c3f20da96482e5bd6",
+  "actual": {
+    "files": 23,
+    "passed": 110,
+    "skipped": 0
+  },
+  "default": {
+    "files": 174,
+    "passed": 1144
+  },
+  "build": 0,
+  "prepare": 0,
+  "check": 0,
+  "oldMigrationsUnchanged": 100,
+  "dailyDeployed": false,
+  "realPaidProviderUsed": false
+}

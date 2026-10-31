@@ -1,0 +1,10 @@
+{
+  "sourceRoot": "/private/tmp/loop-t06-volume-79p1EQ/mounted/loop-153-ghhIEf/account",
+  "sourceRootExists": false,
+  "targetRoot": "/private/tmp/loop-t06-volume-79p1EQ/mounted/loop-153-ghhIEf/pexels-migrated-account",
+  "targetRootExists": false,
+  "migrationStatus": "completed",
+  "originalsRetained": true,
+  "localRemoved": true,
+  "cleanupPending": false
+}

@@ -1,0 +1,14 @@
+{
+  "root": {
+    "path": "/private/tmp/loop-t06-volume-vYpuQt/mounted/loop-153-fs1wst",
+    "exists": false
+  },
+  "assetRoot": {
+    "path": "/private/tmp/loop-t06-volume-vYpuQt/mounted/loop-153-fs1wst/creative-account",
+    "exists": false
+  },
+  "mountPath": {
+    "path": "/private/tmp/loop-t06-volume-vYpuQt/mounted",
+    "exists": false
+  }
+}

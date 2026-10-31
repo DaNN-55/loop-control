@@ -1,0 +1,26 @@
+{
+  "head": "1f8525d61691531f7305ed6c3f20da96482e5bd6",
+  "sourceFiles": 154,
+  "outputFiles": 223,
+  "invalidPreparedFingerprints": [],
+  "reviewfixSourceDifferences": [],
+  "incomingTreeMatchesFinal": true,
+  "reviewfixFiles": {
+    "src/local-app/WorkspaceAudioPanel.test.tsx": "ffccc1b1e728d08f0dba386c890733febcb2ad166dad4cedd8e3fc278f4de974",
+    "src/local-app/WorkspaceAudioPanel.tsx": "bfb18a97694d022d7d243dd4fd6a5d8823aa21ecc3ce6c8008ccf73b1666f3bc",
+    "src/local-app/WorkspaceNarrationPanel.test.tsx": "62c500bd57e90c68966e5276bd0c98da18d0f1568ac2551c4431749b9bcf1726",
+    "src/local-app/WorkspaceNarrationPanel.tsx": "bcc3b5a8d6f11b4149044030dd084930086516e040f5a97d776c499f464013f9",
+    "src/local-app/WorkspacePexelsSearch.tsx": "4d4d7f60a09a001f706283a60eed5ca8a99cb300e03b42d05e82f668c30f4a54",
+    "src/local-app/WorkspacePlanningSelection.test.tsx": "0d827f8eaaf83fb4e2b0e0df235e6b7dc6a59c71a3bae9e61bd576c8253742bb",
+    "src/local-app/WorkspacePlanningSelection.tsx": "3b5d9ea0d917fccf788c4f6d84e573f24754ac5f351aa50f2af3808996525521",
+    "src/local-app/WorkspaceVisualCandidatesPanel.test.tsx": "86e2ee436dffd8b87eb55298f3770395e9b50d960d931b31ba0d24c404edeabb",
+    "src/local-app/WorkspaceVisualCandidatesPanel.tsx": "c2a2647e23ef07d375b8b47ae00ed8c39bb9e41a18a7b02327510d1f47b236f1",
+    "src/local-app/WorkspaceVisualPreparation.tsx": "b693fa727ff09542c3afd4f4254d98c53ebec1a5ddf972f83fd4f7cd2634c060",
+    "src/local-app/production-compact.css": "3cbb3e8750d0f2d8187bbc7f26d4b5a0a5d45b3123f7a9b9f03c4bfa08702c5c",
+    "src/local-app/productionModelSelection.ts": "d5893a1d05f0d01287a98b4a43d9da5369262fcc871de8f9894b6d3de7d7c4f4",
+    "src/local-app/productionWorkspaceCommands.ts": "13a2133c00daebb0b6d8cd852a32d88335eab96117a904fcede5d3c95a218a5a",
+    "src/local-app/workspaceCandidates.integration.test.ts": "b074c8b7edd30e6eb302a6edd1a3932e5830606f652a26d34b63d106bc9d9188",
+    "src/platform/ConfigurationForms.tsx": "128cbe8dbfa7a27bb86e62dcaa4e63e89b45fcda5973031e8b5311aa0df82261",
+    "src/workspaceShots.ts": "92202309e8f25bc11f1d5d85ddaea945e73a9d19f0ee1c34ae41f803bd544d51"
+  }
+}
