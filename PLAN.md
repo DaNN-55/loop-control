@@ -64,9 +64,9 @@ Confirmed acceptance: formal UI → Owner HTTP → isolated real database/files 
 | #187 | #184, #185, #186 | Completed; independent acceptance passed and tracker closed |
 | #188 | #183 | Completed; independent acceptance passed and tracker closed |
 | #189 | #183, #187 | Completed; independent acceptance passed and tracker closed |
-| #190 | #187, #188, #189 | Integrated locally; independent acceptance passed; awaiting root tracker closure |
-| #191 | #190 | Ready after #190 closure; not started |
-| #192 | #190 | Ready after #190 closure; not started |
+| #190 | #187, #188, #189 | Completed; independent acceptance passed and tracker closed |
+| #191 | #190 | Isolated TDD implementation starting |
+| #192 | #190 | Ready; scheduled after shared lineage interface from #191 |
 | #193 | #191 | Pending |
 | #194 | #193 | Pending |
 | #195 | #192, #194 | Pending |
@@ -77,7 +77,7 @@ Baseline verification: `npm run check` passed; default suite 174 files / 1144 te
 
 Verification log and ticket handoffs: `/private/tmp/loop-control-178-20261031`. Preserve RED/GREEN, actual skip counts and any unresolved integration limitations.
 
-Tracker: #179 through #189 are closed after independent acceptance; 11/17 closed. T12/#190 is now ready and starts isolated TDD implementation. Completed clean implementer worktrees and their merged ticket/process branches are removed after fresh ancestry/status/no-runtime-reference checks, with exact tips and deletion receipts retained outside the repo. The user explicitly authorized a dedicated cleanup subagent to free space; integration, active task worktrees, shared runtime/SDK and acceptance evidence stay available; completed T11 is released for proof-based cleanup. Exact receipts and migration reservations remain in the shared external context.
+Tracker: #179 through #190 are closed after independent acceptance; 12/17 closed. T13/#191 now starts isolated TDD implementation. T14/#192 is also graph-ready and is scheduled after the shared lineage interface to avoid overlapping writes; native blocking relations are unchanged. Completed clean implementer worktrees and their merged ticket/process branches are removed after fresh ancestry/status/no-runtime-reference checks, with exact tips and deletion receipts retained outside the repo. The user explicitly authorized a dedicated cleanup subagent to free space; integration, active task worktrees, shared runtime/SDK and acceptance evidence stay available; completed T12 is released for proof-based cleanup; T11 cleanup already removed its clean merged worktree/branch with all evidence preserved. Exact receipts and migration reservations remain in the shared external context.
 
 Cross-ticket notes: T03 binds global storage to the persisted workspace Owner. T04 now creates the genuine first account through the trusted T03 binding without importing source metadata or broadening credentials. T07 owns shared producer namespaces/native output authority and mediaLibrary prefix checks; T06 owns input/planning guards and localFiles. Relative-prefix migration of frozen references remains a mandatory T13/T14 seam (external LOCATION-CALLERS.md), not solved by account-root-only mapping.
 
@@ -790,3 +790,5 @@ T11/#189 tracker closure verified after root read the independent 20/20 real int
 - [x] 已合并最新 integration（57d6240b，Already up to date）；类型、build、runtime:prepare、34 项相关单测及 12 项旧账号／容器／native 回归通过。源码按本票提交，外部 T12-CONTRACT／HANDOFF 交独立 merger；未操作 main、日常数据、付费、push 或 Issue 状态。
 
 已确认 seam：正式页面 → Owner HTTP → 隔离真实 PostgreSQL / 文件 → 受控 Provider / 实际原生工程及 Finder。只用固定外部 context、随机 owned DB、外部 SDK；不碰 daily、秘密或付费。
+
+T12/#190 tracker CLOSED readback after root verified MERGE-T12 independent 5 actual creation/fault +2 full formal series/unassigned (184.84s), 34 units, all zero skip. Source extra12 legacy regressions were read and not repeated. Actual red/blue native frames, four true dumps/SQLite/OwnerSHA, old tree/frozen equality, exact archived deletion/manual retention and full baseline schema/ledger equality are evidenced. 390 background workbench width635 is a current observation with base attribution unverified; dialog bounds pass, T17/final spec review must assess relevant narrow-screen scope. No daily/main/push change.
