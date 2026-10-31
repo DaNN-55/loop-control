@@ -870,3 +870,11 @@ T14/#192 独立 merger 将 clean 冻结来源 `c158cd2f` 以 no-ff 合入 `64be9
 独立正式页面完整链 1/1、零 skip、45.95 s：首次 HTTP503→显式重读清旧 alert→plan→真实 SQL 故障→390错误/刷新恢复→B→NULL→A→B，每步旧源 offline/restart→精确 current EP Finder 观测即关→真实 SDK 水平0→1/save-close/服务重建/reopen→可见媒体播放/Pause→export+Owner SHA。本人亲看 1440/1100/390 plan 与390错误/恢复，dialog16..374、356client=scroll、全部主按钮 fit；亲看 native 彩色斜线/方块 .33→1.43 的不同实际帧与 Pause。背景 document408/viewport390 未做同数据归因，仍交 T17，不签全页响应式。
 
 独算 dump=manifest=receipt SHA8ebbe327…、本次实际122媒体 size/SHA、project SHA、SQLite53248真 header/只读 integrity=ok/真实保存 timeline、新 PID2873→3040、恢复后 Owner export SHA6ed62f57…；正式 browser2565316 B SHA6fb4d826…均匹配。固定源107/max109/0账号，完整 schema 字节与 ledger SHA 前后相同。own browser/native/Finder/process/cache/随机DB与mount已收尾；daily5174仍PID71478、daily卷及3个Oct30卷保留，active T15/main/sharedSDK/context不动。详见仓库外 MERGE-T14.md、MERGE-T14/commands.sh、logs、summary.json、verified-evidence.json 与 resources.json。本轮未改产品/测试源码、main、push、deploy或Issue状态，仅追加本收据；integration clean后写权交回 root。
+
+
+### #178 orchestration — T14 accepted, global-root frontier
+
+- #192/T14 closed after independent acceptance: no-ff `64be945a`, receipt `b5861bb7`; 18 unit, 14 real core, two explicit historical SQL120 contract cases and one full formal native flow all passed with no skips. Actual dump/122 media/SQLite/new process/Owner SHA and baseline/resources verified.
+- 14/17 children (#179–#192) complete; parent #178 remains open. #193/T15 is implementing global-root inventory in its own branch based on the verified T14 merge; final latest integration receipt must be merged before handoff. #194 follows #193, #195 follows #194 plus completed #192; final fresh two-axis review/fixes remains required.
+- Dedicated cleanup owns fresh-proof removal of completed T14 source branch/worktree; retain active T15, integration/main, shared runtime/SDK and all actual evidence. T17 retains the observed 390px background overflow and stale creation-capability UI findings; do not claim a whole-page responsive pass.
+- No main merge/push/deployment/daily-data migration or paid Provider execution.
