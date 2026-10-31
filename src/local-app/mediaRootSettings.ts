@@ -1,4 +1,5 @@
 import type {Pool} from 'pg';
+import {executeMediaRootMigration} from './mediaRootExecution.js';
 import {planMediaRootMigration,readMediaRootMigration,type StorageResource} from './mediaRootMigration.js';
 import {access,lstat,readdir,realpath,statfs} from 'node:fs/promises';
 import {constants} from 'node:fs';
@@ -14,8 +15,9 @@ export interface MediaRootBinding {path:string;deviceId:string;inodeId:string;mo
 export interface MediaRootRuntime {
  protectedRoots:string[];retainedRoots?:string[];resources?:StorageResource[];minimumFreeBytes:number;
  pendingOperations?:()=>Promise<{kind:string;reason:string}[]>;
- persist:(binding:MediaRootBinding)=>Promise<(()=>Promise<void>) & {commit?:()=>Promise<void>}>;
- activate:(binding:MediaRootBinding)=>Promise<void>;
+ quiesce?:()=>Promise<void>;releaseQuiescence?:()=>void;resumeMigration?:(id:string,sha:string)=>Promise<unknown>;
+ persist:(binding:MediaRootBinding,publication?:{operation:'migration';planId:string;manifestSha256:string;storageOwnerId:string})=>Promise<(()=>Promise<void>) & {commit?:()=>Promise<void>}>;
+ activate:(binding:MediaRootBinding,migration?:{planId:string;manifestSha256:string})=>Promise<void>;
 }
 const overlap=(a:string,b:string)=>a===b||assetPathWithin(a,b)||assetPathWithin(b,a);
 export async function inspectMediaRoot(path:unknown,minimumFreeBytes=0):Promise<MediaRootBinding>{
@@ -43,12 +45,18 @@ export class LocalMediaRootSettings{
    const row=(await c.query('SELECT local_identity.owner_id()=local_identity.media_root_owner() authorized,local_identity.media_workspace_empty() empty,local_identity.media_root_binding() binding')).rows[0];
    if(!row.authorized)throw new ConfigurationError(403,'仅工作区存储所有者可管理媒体根。');
    let reason:string|undefined;try{if(row.binding){if(row.binding.path!==this.mediaRoot)throw Error('服务与已提交媒体根不一致，请重启本机服务。');await verifyMediaRootBinding(row.binding,this.runtime?.minimumFreeBytes??0);}else await inspectMediaRoot(this.mediaRoot,this.runtime?.minimumFreeBytes??0);}catch(e){reason=e instanceof Error?e.message:'媒体根不可用。';}
-   return{migration:await readMediaRootMigration(c),path:row.binding?.path??this.mediaRoot,canInitialize:row.empty,status:reason?'unavailable':'ready',...(reason?{reason}:{})};
+   const migration=await readMediaRootMigration(c);
+   return{migration,executing:this.busy&&migration?.status==='copying',path:row.binding?.path??this.mediaRoot,canInitialize:row.empty,status:reason?'unavailable':'ready',...(reason?{reason}:{})};
   });
  }
  async execute(session:OwnerSession,body:Record<string,unknown>){
-  if(!['choose','open','initialize','planMigration'].includes(String(body.command))||Object.keys(body).some(k=>!['command','path','idempotencyKey'].includes(k))||typeof body.idempotencyKey!=='string'||!/^[a-f0-9-]{36}$/i.test(body.idempotencyKey)||!['initialize','planMigration'].includes(String(body.command))&&body.path!==undefined)throw new ConfigurationError(400,'本机存储请求无效。');
+  if(!['choose','open','initialize','planMigration','executeMigration','rollbackMigration'].includes(String(body.command))||Object.keys(body).some(k=>!['command','path','idempotencyKey','migrationId'].includes(k))||typeof body.idempotencyKey!=='string'||!/^[a-f0-9-]{36}$/i.test(body.idempotencyKey)||!['initialize','planMigration'].includes(String(body.command))&&body.path!==undefined)throw new ConfigurationError(400,'本机存储请求无效。');
   const state=await this.read(session);
+  if(['executeMigration','rollbackMigration'].includes(String(body.command))){
+   if(typeof body.migrationId!=='string'||!/^[a-f0-9-]{36}$/i.test(body.migrationId)||body.path!==undefined)throw new ConfigurationError(400,'请选择已保存的迁移计划。');
+   if(this.busy)throw new ConfigurationError(409,'媒体根迁移仍在进行，请查看同一计划进度。');this.busy=true;try{return await executeMediaRootMigration(this.pool,session,body.migrationId,body.command==='rollbackMigration',this.runtime);}finally{this.busy=false;}
+  }
+  if(body.migrationId!==undefined)throw new ConfigurationError(400,'本机存储请求无效。');
   if(body.command==='planMigration')return planMediaRootMigration(this.pool,session,this.mediaRoot,body.path,body.idempotencyKey,this.runtime);
   if(body.command==='open'){
    if(state.status!=='ready')throw new ConfigurationError(409,state.reason!);

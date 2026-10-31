@@ -73,6 +73,7 @@ export async function requireEpisodeStorageDirectory(c:Pick<PoolClient,'query'>,
 
 /** Write preflight shares the same persisted location and filesystem identity as reads. */
 export async function requireWritableEpisodeStorage(c:Pick<PoolClient,'query'>,assetRoot:string,episodeId:string,minimumFreeBytes=0){
+ if((await c.query("SELECT (local_identity.media_deployment()->>'writeBlocked')::boolean blocked")).rows[0].blocked)throw new ConfigurationError(409,'媒体根迁移尚未完成，请继续或回滚原计划。');
  const location=await episodeStorageLocationAtRoot(c,assetRoot,episodeId);
  if((await c.query("SELECT 1 FROM local_identity.account_directory_migrations WHERE account_id=$1 AND status='copying'",[location.accountId])).rowCount)throw new ConfigurationError(409,'账号目录正在迁移，请先恢复或回滚原操作。');
  await requireEpisodeStorageDirectory(c,location);

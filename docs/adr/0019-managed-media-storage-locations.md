@@ -115,3 +115,19 @@ SQL124 的可信完成函数核对 Owner、同账号生产单、当前完整来�
 全局盘点先按稳定顺序取得既有账号 session locks，再进入 global / ownership 事务锁；不能持 global 阻塞等待账号。首次账号预留与初始化共享 global 准入，空工作区判定包含未完成 account / container / episode 创建和活动删除、账号迁移。实际任务、lease、未知提交、Studio、待恢复复制、正式服务的活动备份及配置 publication 均进入阻塞清单；已完成历史与普通 `planned` 全局计划不永久阻止正常创建，之后的执行必须重新验证范围。
 
 保留平台状态位于旧媒体卷内时，卸载也不能在 host 同名路径重建状态树。Worker scheduler 与 native automation 在启动时绑定实际 state 目录身份，后续共用的 `recordOperation` 验证原 dev / inode，不递归重建缺失父目录，不在失败时重新绑定替代位置。后台继续运行并保留数据库中的状态；恢复原挂载及身份后才恢复该位置的写入。该保护针对平台状态记录，不扩大为新的媒体目录管理器。
+
+## T16：全局根执行与恢复
+
+全局迁移在 SQL125 原 `media_root_migrations` 行上执行，不接受新的 manifest 或客户端路径证明。SQL126 仅前向增加 `copying/failed/committed/completed/rolled_back`、实际字节进度、暂存文件身份和 publication 证明；原 manifest、Owner、请求和 SQL canonical SHA 保持不可变。`GET /api/local/media-root` 优先返回仍有持久屏障的计划，已失效的旧 `planned` 不能遮盖执行或完成回执；存在活动全局计划时不能另起竞争计划。普通计划不长期冻结创作。
+
+执行先暂停本机新写入并排空已经准入的请求，再按原账号锁与 global / ownership 锁重验范围、身份、引用、任务、Studio 和其他未完成操作。`copying/failed/committed` 共用数据库持久写屏障，覆盖任务、账号、生产单及 intent；空工作区的普通初始化也不能绕开该屏障。客户端断开不取消服务端复制，进度按实际 256 KiB 流读取累计并持久化。SIGKILL 后可由新进程继续同一计划，或将尚未提交计划标为回滚；原源与复制现场保留，不按目录名猜测清理权限。
+
+账号迁移、旧资料纳管、收纳移动和全局迁移共用 `copyStorageFile`。调用方传入原冻结目标 dev / inode，创建父目录、打开暂存文件、首次写入及发布前继续验证；句柄设备与实际路径须一致。目标卷脱挂后出现的 host 同名完整目录不获得授权，不写入该树。源使用 `NOFOLLOW | NONBLOCK` 打开后再核对普通独立文件，FIFO 替换不能挂住读取。暂存采用排他创建、身份回执、同步、SHA 校验及不覆盖的 link 发布。未知空目录也不能被全局迁移认作本次创建。
+
+完整复制后，在同一事务内更新全局根、账号、容器和生产单登记，并追加现有 `storage_location_operations` / `episode_storage_lineage` 的 `root_migration` 完成证明；最终 SQL 后、COMMIT 前再次核对源、目标和业务证据。部署配置沿用私有 `media-root-pending.json` journal，绑定原 planId / manifest SHA。COMMIT 回应丢失时保留 journal 与屏障，由新连接读取可信 SQL proof 决定恢复，不能盲目撤销配置。接管前失败保留旧实例；接管后关闭旧实例失败保留新实例与提交证明。协调器先释放旧 pool client，再激活 replacement，避免旧实例关闭等待自身连接。只有新实例建立、配置确认后才完成 ledger。
+
+直接 application 启动和 environment 的 secret hydration 前段共用同一 publication proof 验证。`committed` 要求当次全对象及文件仍完整一致；`completed` 保留不可变历史 authority，同时验证当前可达位置的合法 lineage，允许之后正常收纳移动、编辑或删除。历史完成不能永久固定生产单的 CURRENT 坐标。
+
+正式 Worker guard、Owner Studio 与 system status 从真实 `media_deployment().binding` 核验 dev / inode / mount；允许已授权的 host 深层媒体目录位于 `/` 文件系统，但系统根、未授权路径和身份错误继续拒绝。备份和恢复只在 SQL110 的精确生产单作用域支持 `asset_root === global root`，通用账号根映射仍要求严格子目录。平台缓存、运行状态、备份、历史库、秘密和未知资料保持原职责，旧源不自动删除。
+
+本机存储 dialog 提供真实进度、明确错误和同计划继续／回滚；正在执行的请求刷新后仍禁用重复动作。正式页面验收包含窄窗、键盘、真实 Finder、旧源离线后的原生保存重开、可见播放及导出。多账号混合布局通过不同父目录和不同设备的实际全局迁移、原任务 compiled CLI 重试及备份恢复；证据存于仓库外 T16 交接目录，日常数据与服务未迁移。

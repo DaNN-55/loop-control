@@ -1,4 +1,4 @@
-import {readMediaRootAuthorization,readPendingMediaRootDeployment,recoverMediaRootDeployment} from './media-root.mjs';
+import {readMediaRootAuthorization,readPendingMediaRootDeployment,recoverMediaRootDeployment,migrationProofQuery,verifyMediaRootMigrationProof} from './media-root.mjs';
 import{execFileSync}from'node:child_process';
 import{readFileSync,lstatSync,realpathSync,mkdirSync,writeFileSync,existsSync}from'node:fs';
 import{fileURLToPath}from'node:url';import{join,relative,isAbsolute,dirname,resolve}from'node:path';
@@ -20,7 +20,19 @@ export function validateDeployment(d){validateSettings(d);if(!Number.isInteger(d
  for(const[key,user]of[['database','loop_app'],['workerDatabase','loop_worker']]){const c=d[key];if(c?.host!=='127.0.0.1'||c.port!==54329||c.database!=='loop_control'||c.user!==user||typeof c.password!=='string'||!c.password||Object.keys(c).some(k=>!['host','port','database','user','password'].includes(k)))throw Error('Daily database binding mismatch');}
  if((d.mediaRootBinding?(d.mediaRoot!==d.mediaRootBinding.path||d.worker.mountPath!==d.mediaRootBinding.mountPath):(d.mediaRoot!==join(root,'volume/media')||d.worker.mountPath!==join(root,'volume')))||d.backupRoot!==join(root,'backups/loop_control')||d.openChatCut.root!==join(root,'OpenChatCut')||d.openChatCut.port!==5175||d.connections?.keychain?.runtimeRoot!==root)throw Error('Daily capabilities mismatch');
 return d;}
-export function readDeployment(){let settings=readSettings();if(readPendingMediaRootDeployment(settings)){const state=JSON.parse(runtimeContext().sql("SELECT jsonb_build_object('binding',local_identity.media_root_binding(),'restoreState',coalesce(nullif(current_setting('loop.restore_state',true),''),'ready'))"));recoverMediaRootDeployment({...settings,deploymentFile:deploymentFile()},state.binding,{restoreState:state.restoreState});settings=readSettings();}const d=validateDeployment(hydrateDeploymentSecrets(settings));
+/** The same pre-hydration storage admission is usable by isolated native
+ * deployments without invoking the daily reader, container or Keychain. */
+export function recoverDeploymentMediaRoot(settings,{sql,readSettings,deploymentFile}){
+ const pending=readPendingMediaRootDeployment(settings);
+ if(pending){
+  const migrationProof=pending.publication?.operation==='migration'?JSON.parse(sql(migrationProofQuery(pending.publication))):undefined;
+  const state=JSON.parse(sql("SELECT jsonb_build_object('binding',local_identity.media_root_binding(),'restoreState',coalesce(nullif(current_setting('loop.restore_state',true),''),'ready'))"));
+  recoverMediaRootDeployment({...settings,deploymentFile},state.binding,{restoreState:state.restoreState,migrationProof});settings=readSettings();
+ }
+ const authorization=readMediaRootAuthorization(settings);if(authorization?.operation==='migration')verifyMediaRootMigrationProof(JSON.parse(sql(migrationProofQuery(authorization))),authorization);
+ return settings;
+}
+export function readDeployment(){const settings=recoverDeploymentMediaRoot(readSettings(),{sql:text=>runtimeContext().sql(text),readSettings,deploymentFile:deploymentFile()});const d=validateDeployment(hydrateDeploymentSecrets(settings));
  for(const p of[...(d.mediaRootBinding?[]:[d.mediaRoot]),d.stateDirectory,...(d.automaticBackups===false?[]:[d.backupRoot]),d.openChatCut?.root,...(d.mediaRootBinding?[]:[d.worker?.mountPath]),d.worker?.alignment?.cacheDirectory]){if(typeof p!=='string')throw Error('Missing runtime path');assertPrivatePath(p);if(realpathSync(p)!==p)throw Error('Noncanonical runtime path');}
  const receipt=JSON.parse(readFileSync(d.restoreReceiptPath??join(root,'volume/restore-receipt.json')));if(receipt.passed!==true||receipt.database!==d.database.database||receipt.mediaRoot!==(d.restoreReceiptMediaRoot??(d.restoreReceiptPath?d.mediaRoot:d.mediaRootBinding?join(root,'volume/media'):d.mediaRoot))||receipt.publicationFence!==true)throw Error('Daily database/media restore not verified');
  readMediaRootAuthorization(d);

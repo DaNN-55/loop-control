@@ -2,10 +2,11 @@ import {verifyMediaRootBinding} from './mediaRootSettings.js';
 import type{Pool,PoolClient}from'pg';
 import{nativeAssetRoot}from'./localFiles.js';
 import{ConfigurationError}from'./configurationCommands.js';
-export async function readMediaDeployment(client:Pick<Pool|PoolClient,'query'>,mediaRoot:string):Promise<string[]>{
+export async function readMediaDeployment(client:Pick<Pool|PoolClient,'query'>,mediaRoot:string,writable=false):Promise<string[]>{
  const row=(await client.query("SELECT local_identity.media_deployment() config,coalesce(nullif(current_setting('loop.restore_state',true),''),'ready') state")).rows[0];
  if(row?.state!=='ready')throw new ConfigurationError(503,'恢复尚未完成，请先检查恢复回执。');const r=row.config;
  if(!r||r.targetRoot!==null&&r.targetRoot!==mediaRoot||!Array.isArray(r.sourceRoots)||r.sourceRoots.some((v:unknown)=>typeof v!=='string'))throw new ConfigurationError(503,'服务媒体目录与恢复部署不匹配。');
+ if(writable&&r.writeBlocked)throw new ConfigurationError(409,'媒体根迁移尚未完成，请继续或回滚原计划。');
  if(r.binding)await verifyMediaRootBinding(r.binding);
  return r.sourceRoots;
 }

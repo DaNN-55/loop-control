@@ -15,10 +15,10 @@ import {inventory,identity,references,fingerprint,type File,type Root} from './s
 export interface StorageResource{kind:'program'|'runtime'|'state'|'model-cache'|'history'|'backup'|'secrets';path?:string}
 interface PlanFile extends File{accountId:string;episodeId:string;targetRelativePath:string}
 const overlap=(a:string,b:string)=>a===b||assetPathWithin(a,b)||assetPathWithin(b,a);
-const rowPlan=(r:Record<string,unknown>)=>({id:r.id,status:r.status,manifest:r.manifest,manifestSha256:r.manifest_sha256,createdAt:r.created_at});
+const rowPlan=(r:Record<string,unknown>)=>({id:r.id,status:r.status,manifest:r.manifest,manifestSha256:r.manifest_sha256,createdAt:r.created_at,progress:r.progress,error:r.error,updatedAt:r.updated_at});
 export async function readMediaRootMigration(c:Pick<PoolClient,'query'>){
  if(!(await c.query("SELECT to_regclass('local_identity.media_root_migrations') IS NOT NULL present")).rows[0].present)return null;
- const row=(await c.query('SELECT * FROM local_identity.media_root_migrations ORDER BY created_at DESC,id DESC LIMIT 1')).rows[0];return row?rowPlan(row):null;
+ const row=(await c.query("SELECT * FROM local_identity.media_root_migrations WHERE status<>'planned' OR manifest->'sourceBinding'=local_identity.media_root_binding() ORDER BY (status IN ('copying','failed','committed')) DESC,created_at DESC,id DESC LIMIT 1")).rows[0];return row?rowPlan(row):null;
 }
 
 /** Plans never publish files, modify locations, persist deployment or wake production. */
@@ -28,7 +28,7 @@ export async function planMediaRootMigration(pool:Pool,session:OwnerSession,medi
   return await sessionTransaction(pool,session,async c=>{
    await c.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[session.id+':media-root-plan:'+key]);
    const old=(await c.query('SELECT * FROM local_identity.media_root_migrations WHERE idempotency_key=$1',[key])).rows[0];
-   if(old){if(old.request_sha256!==requestHash)throw new ConfigurationError(409,'同一操作标识不能用于不同位置。');return rowPlan(old);}
+   if(old){const active=(await c.query("SELECT id FROM local_identity.media_root_migrations WHERE status IN ('copying','failed','committed') LIMIT 1")).rows[0];if(active&&active.id!==old.id)throw new ConfigurationError(409,'存在未完成的全局媒体根迁移，请恢复或回滚原计划。');if(old.request_sha256!==requestHash)throw new ConfigurationError(409,'同一操作标识不能用于不同位置。');return rowPlan(old);}
    const target=await inspectMediaRoot(path);
    const accounts=(await c.query('SELECT * FROM local_identity.media_root_scope_accounts()')).rows as {id:string;name:string;owned:boolean}[];
    if(accounts.some(a=>!a.owned))throw new ConfigurationError(409,'工作区包含当前所有者无法维护的账号，请先核对工作区归属。');
@@ -36,6 +36,7 @@ export async function planMediaRootMigration(pool:Pool,session:OwnerSession,medi
    for(const account of accounts){const lock='account-directory-migration:'+account.id;if(!(await c.query('SELECT pg_try_advisory_lock(hashtextextended($1,0)) locked',[lock])).rows[0].locked)throw new ConfigurationError(409,'账号目录操作正在进行，请稍后重新盘点。');held.push(lock);}
    await c.query("SELECT pg_advisory_xact_lock(hashtextextended('global-media-root',0))");
    await c.query("SELECT pg_advisory_xact_lock(hashtextextended('account-asset-root-ownership',0))");
+   if((await c.query("SELECT 1 FROM local_identity.media_root_migrations WHERE status IN ('copying','failed','committed')")).rowCount)throw new ConfigurationError(409,'存在未完成的全局媒体根迁移，请恢复或回滚原计划。');
    if(fingerprint((await c.query('SELECT * FROM local_identity.media_root_scope_accounts()')).rows)!==fingerprint(accounts))throw new ConfigurationError(409,'账号范围已变化，请重新盘点。');
    for(const account of accounts)await c.query('SELECT local_identity.lock_account_directory_migration($1)',[account.id]);
    const source=(await c.query('SELECT local_identity.media_root_binding() binding')).rows[0].binding as MediaRootBinding;

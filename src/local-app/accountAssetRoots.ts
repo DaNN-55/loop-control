@@ -19,6 +19,7 @@ export async function validateAccountAssetLocation(c:Pick<PoolClient,'query'>,me
  return{path,device:String(stat.dev),inode:String(stat.ino)};
 }
 export async function requireAccountAssetRoot(c:Pick<PoolClient,'query'>,mediaRoot:string,accountId:string){
+ if((await c.query("SELECT (local_identity.media_deployment()->>'writeBlocked')::boolean blocked")).rows[0].blocked)throw new ConfigurationError(409,'媒体根迁移尚未完成，请继续或回滚原计划。');
  const row=(await c.query('SELECT * FROM local_identity.account_asset_directories WHERE account_id=$1',[accountId])).rows[0];
  if(!row)throw new ConfigurationError(409,'请先在账号配置中设置实际专属目录。');
  if((await c.query("SELECT 1 FROM local_identity.account_directory_migrations WHERE account_id=$1 AND status='copying'",[accountId])).rowCount)throw new ConfigurationError(409,'账号目录正在迁移，请完成或恢复迁移后继续制作。');

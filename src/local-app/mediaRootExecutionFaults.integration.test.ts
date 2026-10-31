@@ -1,0 +1,54 @@
+// @vitest-environment node
+import {it,expect} from 'vitest';
+import {randomUUID} from 'node:crypto';
+import {mkdir,readFile,writeFile,rename,lstat,readdir} from 'node:fs/promises';
+import {join,dirname} from 'node:path';
+import {workspaceAudioVolume} from './workspaceAudioVolume.fixture';
+import {nativeMediaRootFixture} from './mediaRootRuntime.fixture';
+import {csrfFor} from './sessions';
+const migrations=['db/local/121-restored-media-deployment.sql','db/local/125-global-media-root-plans.sql','db/local/126-global-media-root-execution.sql'];
+it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each(['source-file','target-file','target-directory','source-directory','frozen-evidence'] as const)('a real %s change across final global SQL rolls back every current mapping and operation proof',async phase=>{
+ const fixture=await nativeMediaRootFixture({existingData:true,migrations}),{f,source,target}=fixture;let pending:Promise<any>|undefined;
+ try{
+  const runtime=await fixture.launch(),call=async(command:string,data:Record<string,unknown>)=>{const r=await fetch(runtime.origin+'/api/local/media-root',{method:'POST',headers:{Cookie:'loop_owner_session='+f.token,Origin:runtime.origin,'Content-Type':'application/json','X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command,idempotencyKey:randomUUID(),...data})});return{status:r.status,body:await r.json()};};
+  const old=(await f.c.query('SELECT * FROM local_identity.episode_storage_location($1)',[f.episode])).rows[0],original=await readFile(join(f.assetRoot,f.videoPath)),plan=await call('planMigration',{path:target});expect(plan.status).toBe(200);
+  await f.c.query("CREATE FUNCTION public.pause_t16_cutover() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN PERFORM pg_advisory_xact_lock(17819416);RETURN NEW;END $$;CREATE TRIGGER pause_t16_cutover BEFORE UPDATE OF path ON local_identity.media_root_binding FOR EACH ROW EXECUTE FUNCTION public.pause_t16_cutover()");await f.c.query('SELECT pg_advisory_lock(17819416)');
+  if(phase==='frozen-evidence')await f.c.query("CREATE FUNCTION public.change_t16_evidence() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN UPDATE public.artifacts SET sha256=repeat('f',64) WHERE episode_id='"+f.episode+"';RETURN NEW;END $$;CREATE TRIGGER change_t16_evidence BEFORE UPDATE OF path ON local_identity.media_root_binding FOR EACH ROW EXECUTE FUNCTION public.change_t16_evidence()");
+  pending=call('executeMigration',{migrationId:plan.body.id});let blocked=false;for(let i=0;i<200;i++){blocked=Number((await f.c.query("SELECT count(*) n FROM pg_locks WHERE locktype='advisory' AND objid=17819416 AND NOT granted")).rows[0].n)>0;if(blocked)break;await new Promise(r=>setTimeout(r,20));}expect(blocked).toBe(true);
+  const file=plan.body.manifest.files.find((x:any)=>x.relativePath.endsWith('.mp4')),targetPath=join(target,file.targetRelativePath),directory=phase==='source-directory'?join(f.assetRoot,f.episodeRelativePath):join(target,plan.body.manifest.directories.find((x:any)=>x.kind==='episode').targetRelativePath);
+  if(phase==='source-file')await writeFile(join(file.sourceRoot,file.relativePath),'preserve changed source');if(phase==='target-file')await writeFile(targetPath,'preserve unknown target bytes');if(phase==='source-directory'||phase==='target-directory'){await rename(directory,directory+'.retained');await mkdir(directory);await writeFile(join(directory,'unknown.txt'),'preserve replacement identity');}
+  await f.c.query('SELECT pg_advisory_unlock(17819416)');const result=await pending;pending=undefined;expect(result.status,JSON.stringify(result.body)).toBe(409);expect((await f.c.query('SELECT local_identity.media_root_binding() binding')).rows[0].binding.path).toBe(source);expect((await f.c.query('SELECT * FROM local_identity.episode_storage_location($1)',[f.episode])).rows[0]).toEqual(old);expect((await f.c.query('SELECT count(*) FROM local_identity.storage_location_operations WHERE media_root_migration_id=$1',[plan.body.id])).rows[0].count).toBe('0');
+  if(phase==='source-file')expect(await readFile(join(file.sourceRoot,file.relativePath),'utf8')).toBe('preserve changed source');else if(phase==='source-directory')expect(await readFile(join(directory+'.retained',file.relativePath))).toEqual(original);else expect(await readFile(join(f.assetRoot,f.videoPath))).toEqual(original);
+  if(phase==='target-file')expect(await readFile(targetPath,'utf8')).toBe('preserve unknown target bytes');if(phase==='source-directory'||phase==='target-directory')expect(await readFile(join(directory,'unknown.txt'),'utf8')).toBe('preserve replacement identity');
+ }finally{await f.c.query('SELECT pg_advisory_unlock(17819416)').catch(()=>{});await pending?.catch(()=>{});await fixture.close();}
+},180000);
+
+it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each(['empty-directory','unknown-file','replaced-target','capacity'] as const)('a planned target changed by %s never acquires or overwrites unknown ownership',async change=>{
+ const fixture=await nativeMediaRootFixture({existingData:true,migrations}),{f,source,target}=fixture;
+ try{
+  let runtime=await fixture.launch();const call=async(command:string,data:Record<string,unknown>)=>{const r=await fetch(runtime.origin+'/api/local/media-root',{method:'POST',headers:{Cookie:'loop_owner_session='+f.token,Origin:runtime.origin,'Content-Type':'application/json','X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command,idempotencyKey:randomUUID(),...data})});return{status:r.status,body:await r.json()};};
+  const original=await readFile(join(f.assetRoot,f.videoPath)),plan=await call('planMigration',{path:target});expect(plan.status).toBe(200);let unknown:string|undefined,inode:string|undefined;
+  if(change==='empty-directory'){unknown=join(target,plan.body.manifest.directories.find((d:any)=>d.kind==='account').targetRelativePath);await mkdir(unknown);inode=(await lstat(unknown)).ino.toString();}if(change==='unknown-file'){unknown=join(target,'manual.txt');await writeFile(unknown,'keep manual target');}
+  if(change==='replaced-target'){await rename(target,target+'.retained');await mkdir(target);inode=(await lstat(target)).ino.toString();}
+  if(change==='capacity'){await fixture.stop();runtime=await fixture.launch('adoption-space');}
+  const result=await call('executeMigration',{migrationId:plan.body.id});expect(result.status,JSON.stringify(result.body)).toBe(409);expect((await f.c.query('SELECT local_identity.media_root_binding() binding')).rows[0].binding.path).toBe(source);expect(await readFile(join(f.assetRoot,f.videoPath))).toEqual(original);
+  if(change==='empty-directory'){expect((await lstat(unknown!)).ino.toString()).toBe(inode);expect(await readdir(unknown!)).toEqual([]);const p=(await f.c.query('SELECT progress FROM local_identity.media_root_migrations WHERE id=$1',[plan.body.id])).rows[0].progress;expect(p.createdDirectories.some((d:any)=>d.path===unknown)).toBe(false);}if(change==='unknown-file')expect(await readFile(unknown!,'utf8')).toBe('keep manual target');if(change==='replaced-target')expect((await lstat(target)).ino.toString()).toBe(inode);
+ }finally{await fixture.close();}
+},180000);
+
+
+it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('a detached target volume cannot write a host fallback tree at the same pathname',async()=>{
+ const fixture=await nativeMediaRootFixture({existingData:true,migrations}),targetVolume=await workspaceAudioVolume(),{f,source,runtimeRoot,configFile}=fixture;let pending:Promise<any>|undefined;
+ try{
+  const target=join(targetVolume.mountPath,'deep','chosen-library');await mkdir(target,{recursive:true});const runtime=await fixture.launch('root-target-detach');
+  const call=async(command:string,data:Record<string,unknown>)=>{const r=await fetch(runtime.origin+'/api/local/media-root',{method:'POST',headers:{Cookie:'loop_owner_session='+f.token,Origin:runtime.origin,'Content-Type':'application/json','X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command,idempotencyKey:randomUUID(),...data})});return{status:r.status,body:await r.json()};};
+  const original=await readFile(join(f.assetRoot,f.videoPath)),plan=await call('planMigration',{path:target});expect(plan.status).toBe(200);const file=plan.body.manifest.files[0];expect(plan.body.manifest.sourceBinding.deviceId).not.toBe(plan.body.manifest.targetBinding.deviceId);
+  const settings=JSON.parse(await readFile(configFile,'utf8'));await writeFile(configFile,JSON.stringify({...settings,detachSourceFile:join(file.sourceRoot,file.relativePath),detachTargetDirectory:dirname(join(target,file.targetRelativePath))}));
+  pending=call('executeMigration',{migrationId:plan.body.id});let marker:any;for(let i=0;i<300;i++){try{marker=JSON.parse(await readFile(join(runtimeRoot,'target-detach-paused.json'),'utf8'));break;}catch{}await new Promise(r=>setTimeout(r,20));}expect(marker?.pid).toBe(runtime.pid);
+  await targetVolume.unmount();await mkdir(target,{recursive:true});for(const d of plan.body.manifest.directories)await mkdir(join(target,d.targetRelativePath),{recursive:true});for(const f of plan.body.manifest.files)await mkdir(dirname(join(target,f.targetRelativePath)),{recursive:true});await writeFile(join(target,'manual.txt'),'host fallback must remain exactly unchanged');
+  async function tree(path:string):Promise<string[]>{const items:string[]=[];for(const name of (await readdir(path)).sort()){const full=join(path,name);items.push(full);if((await lstat(full)).isDirectory())items.push(...await tree(full));}return items;}
+  const before=await tree(target);await writeFile(join(runtimeRoot,'target-detach-resume'),'resume');const result=await pending;pending=undefined;
+  expect(result.status,JSON.stringify(result.body)).toBe(409);expect(await tree(target)).toEqual(before);expect(await readFile(join(target,'manual.txt'),'utf8')).toBe('host fallback must remain exactly unchanged');expect(await readFile(join(f.assetRoot,f.videoPath))).toEqual(original);expect((await f.c.query('SELECT local_identity.media_root_binding() binding')).rows[0].binding.path).toBe(source);expect(JSON.parse(await readFile(configFile,'utf8')).mediaRoot).toBe(source);
+  if(process.env.LOOP_T16_EVIDENCE){await mkdir(process.env.LOOP_T16_EVIDENCE,{recursive:true});await writeFile(join(process.env.LOOP_T16_EVIDENCE,'target-detach.json'),JSON.stringify({pid:runtime.pid,planId:plan.body.id,sourceBinding:plan.body.manifest.sourceBinding,targetBinding:plan.body.manifest.targetBinding,fallbackDevice:String((await lstat(target)).dev),normalDetach:true,before,after:await tree(target),manual:await readFile(join(target,'manual.txt'),'utf8'),result,oldSourceUnchanged:true,configAndDatabaseRoot:source},null,2));}
+ }finally{await writeFile(join(runtimeRoot,'target-detach-resume'),'resume').catch(()=>{});await pending?.catch(()=>{});await fixture.close();await targetVolume.close();}
+},180000);

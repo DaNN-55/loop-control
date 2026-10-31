@@ -104,7 +104,7 @@ export function createLocalHandler(options:LocalOptions){
     let body;try{body=await readBody(request);}catch{send(400,{error:'本机存储请求格式无效。'});return;}
     send(200,await mediaRootSettings.execute(session,body));return;
    }
-   await readMediaDeployment(options.pool,options.mediaRoot);
+   await readMediaDeployment(options.pool,options.mediaRoot,request.method!=='GET');
    if(url.pathname==='/api/local/account-commands'&&request.method==='POST'){
     let body;try{body=await readBody(request,16384);}catch{send(400,{error:'账号本机操作请求格式无效。'});return;}
     const controller=new AbortController(),closed=()=>{if(!response.writableEnded)controller.abort();};response.once('close',closed);
