@@ -3,19 +3,20 @@ import {it,expect} from 'vitest';
 import {createServer} from 'node:http';
 import {once} from 'node:events';
 import {randomUUID} from 'node:crypto';
-import {embeddedStudioFixture} from './embeddedStudio.fixture';
 import {createLocalHandler} from './localRoute';
 import {csrfFor} from './sessions';
-it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner sees the actual media root and cannot relocate an existing workspace through ordinary initialization',async()=>{
- const f=await embeddedStudioFixture({migrations:['db/local/111-global-media-root.sql']});let server:ReturnType<typeof createServer>|undefined;
+it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner sees the adopted existing media root after native restart and cannot relocate its files through ordinary initialization',async()=>{
+ const {nativeMediaRootFixture}=await import('./mediaRootRuntime.fixture');const {readFile}=await import('node:fs/promises');const {join}=await import('node:path');const fixture=await nativeMediaRootFixture({existingData:true}),{f,configFile,source}=fixture;
  try{
- let handler:ReturnType<typeof createLocalHandler>;server=createServer((q,r)=>handler(q,r));server.listen(0,'127.0.0.1');await once(server,'listening');const origin=`http://127.0.0.1:${(server.address() as {port:number}).port}`;handler=createLocalHandler({pool:f.pool,origin,mediaRoot:f.root});
- const url=origin+'/api/local/media-root',headers={Origin:origin,Cookie:'loop_owner_session='+f.token,'Content-Type':'application/json','X-CSRF-Token':csrfFor(f.token)};
- const read=await fetch(url,{headers});expect(read.status).toBe(200);expect(await read.json()).toMatchObject({path:f.root,canInitialize:false,status:'ready'});
- const change=await fetch(url,{method:'POST',headers,body:JSON.stringify({command:'initialize',path:f.root+'-other',idempotencyKey:randomUUID()})});expect(change.status).toBe(409);expect((await change.json()).error).toContain('迁移');
- expect((await fetch(url)).status).toBe(401);
- const foreign=await fetch(url,{method:'POST',headers:{...headers,Cookie:'loop_owner_session='+f.otherToken,'X-CSRF-Token':csrfFor(f.otherToken)},body:JSON.stringify({command:'initialize',path:f.root+'-foreign',idempotencyKey:randomUUID()})});expect(foreign.status).toBe(403);
- }finally{server?.closeAllConnections();if(server)await new Promise<void>(r=>server!.close(()=>r()));await f.close();}
+ const originalConfig=await readFile(configFile,'utf8');let runtime=await fixture.launch();
+ const headers=()=>({Origin:runtime.origin,Cookie:'loop_owner_session='+f.token,'Content-Type':'application/json','X-CSRF-Token':csrfFor(f.token)});
+ const read=await fetch(runtime.origin+'/api/local/media-root',{headers:headers()});expect(read.status).toBe(200);expect(await read.json()).toMatchObject({path:source,canInitialize:false,status:'ready'});
+ const change=await fetch(runtime.origin+'/api/local/media-root',{method:'POST',headers:headers(),body:JSON.stringify({command:'initialize',path:fixture.target,idempotencyKey:randomUUID()})});expect(change.status).toBe(409);expect((await change.json()).error).toContain('迁移');
+ expect((await fetch(runtime.origin+'/api/local/media-root')).status).toBe(401);
+ const foreign=await fetch(runtime.origin+'/api/local/media-root',{method:'POST',headers:{...headers(),Cookie:'loop_owner_session='+f.otherToken,'X-CSRF-Token':csrfFor(f.otherToken)},body:JSON.stringify({command:'initialize',path:fixture.target,idempotencyKey:randomUUID()})});expect(foreign.status).toBe(403);
+ await fixture.stop();runtime=await fixture.launch();const state=await fetch(runtime.origin+'/api/local/media-root',{headers:headers()});expect(await state.json()).toMatchObject({path:source,status:'ready',canInitialize:false});
+ const file=f.files[0],artifact=await fetch(runtime.origin+`/_local-artifact?episode=${f.episode}&path=${encodeURIComponent(file.relativePath)}&sha256=${file.sha256}`,{headers:headers()});expect(artifact.status).toBe(200);expect(Buffer.from(await artifact.arrayBuffer())).toEqual(await readFile(join(f.assetRoot,file.relativePath)));expect(await readFile(configFile,'utf8')).toBe(originalConfig);
+ }finally{await fixture.close();}
 },300000);
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('empty workspace initialization persists authorization, reloads the actual service and Worker, and survives a fresh native process',async()=>{
@@ -29,6 +30,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('empty workspace initiali
   expect((await call('initialize',target,false)).status).toBe(403);
   expect((await call('initialize',join(source,'nested'))).status).toBe(409);
   const foreign=await fetch(runtime.origin+'/api/local/media-root',{method:'POST',headers:{Origin:runtime.origin,Cookie:'loop_owner_session='+f.otherToken,'Content-Type':'application/json','X-CSRF-Token':csrfFor(f.otherToken)},body:JSON.stringify({command:'initialize',path:target,idempotencyKey:randomUUID()})});expect(foreign.status).toBe(403);
+  const sourceAliasSibling=join(f.root,'sibling-target');await mkdir(sourceAliasSibling);expect((await call('initialize',sourceAliasSibling)).status).toBe(400);await rm(sourceAliasSibling,{recursive:true});
   const alias=join(volume.mountPath,'alias');await symlink(target,alias);expect((await call('initialize',alias)).status).toBe(400);
   const result=await call('initialize',target);expect(result.status,JSON.stringify(result.body)).toBe(200);expect(result.body.path).toBe(target);
   const stored=JSON.parse(await readFile(configFile,'utf8'));expect(stored.mediaRoot).toBe(target);expect(stored.worker.mountPath).toBe(volume.mountPath);expect(stored.automaticBackups).toBe(false);expect(stored.worker.alignment.cacheDirectory).toBe(join(source,'whisperx-models'));expect(stored.worker.alignment.cacheBinding.path).toBe(join(source,'whisperx-models'));expect(await readFile(join(source,'whisperx-models/retained.txt'),'utf8')).toBe('Retained platform cache fixture');

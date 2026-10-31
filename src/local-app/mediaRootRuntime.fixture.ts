@@ -18,14 +18,14 @@ export async function mediaRootDatabaseTransport(f:{database:string}){
  return{database,close:async()=>{for(const child of bridges)child.kill();await new Promise<void>(done=>server.close(()=>done()));}};
 }
 
-export async function nativeMediaRootFixture(){
+export async function nativeMediaRootFixture(options:{existingData?:boolean}={}){
  const {embeddedStudioFixture}=await import('./embeddedStudio.fixture');
  const {workspaceAudioVolume}=await import('./workspaceAudioVolume.fixture');
  const {mkdir,writeFile,rm,readFile}=await import('node:fs/promises');const {createHash}=await import('node:crypto');
  const {join}=await import('node:path');const {spawn}=await import('node:child_process');
  const volume=await workspaceAudioVolume(),f=await embeddedStudioFixture({testRootParent:volume.mountPath,migrations:['db/local/111-global-media-root.sql']});
  const transport=await mediaRootDatabaseTransport(f);let child:ReturnType<typeof spawn>|undefined;
- const runtimeRoot=join(f.root,'runtime'),source=join(f.root,'source'),target=join(volume.mountPath,'chosen-library');
+ const runtimeRoot=join(f.root,'runtime'),source=options.existingData?f.root:join(f.root,'source'),target=join(volume.mountPath,'chosen-library');
  const configFile=join(runtimeRoot,'deployment.json');
  const launch=async()=>{
   const script=`import {readFile} from 'node:fs/promises';import {createServer} from 'node:http';import {once} from 'node:events';import {createNativeApplication} from ${JSON.stringify(join(process.cwd(),'scripts/runtime/application.mjs'))};const d=JSON.parse(await readFile(process.argv[1],'utf8'));d.deploymentFile=process.argv[1];let app;const server=createServer((q,r)=>app.handler(q,r));server.listen(0,'127.0.0.1');await once(server,'listening');d.port=server.address().port;app=await createNativeApplication(d);console.log(JSON.stringify({origin:'http://127.0.0.1:'+d.port,pid:process.pid}));process.on('SIGTERM',async()=>{server.closeAllConnections();await new Promise(r=>server.close(r));await app.close();process.exit(0);});`;
@@ -34,8 +34,8 @@ export async function nativeMediaRootFixture(){
  };
  const stop=async()=>{if(child&&child.exitCode===null){const done=once(child,'exit');child.kill();await done;}child=undefined;};
  try{
-  await f.c.query('TRUNCATE public.accounts CASCADE');await f.c.query('INSERT INTO public.worker_scheduler_settings(singleton,capacity) VALUES(true,1) ON CONFLICT(singleton) DO UPDATE SET capacity=1');await rm(f.assetRoot,{recursive:true});
-  for(const p of [runtimeRoot,source,target,join(runtimeRoot,'state')])await mkdir(p,{mode:0o700});
+  if(!options.existingData)await f.c.query('TRUNCATE public.accounts CASCADE');await f.c.query('INSERT INTO public.worker_scheduler_settings(singleton,capacity) VALUES(true,1) ON CONFLICT(singleton) DO UPDATE SET capacity=1');if(!options.existingData)await rm(f.assetRoot,{recursive:true});
+  for(const p of [runtimeRoot,source,target,join(runtimeRoot,'state')])await mkdir(p,{mode:0o700,recursive:true});
   const cacheDirectory=join(source,'whisperx-models');await mkdir(cacheDirectory,{mode:0o700});await writeFile(join(cacheDirectory,'retained.txt'),'Retained platform cache fixture');
   const database={...transport.database,user:'loop_app'};
   const initial={storageOwnerId:f.owner,runtimeRoot,projectRoot:process.cwd(),home:process.env.HOME,stateDirectory:join(runtimeRoot,'state'),mediaRoot:source,backupRoot:join(runtimeRoot,'backups'),automaticBackups:false,controlledNotifications:true,database,workerDatabase:transport.database,worker:{mountPath:volume.mountPath,minimumFreeBytes:0,visualCommand:['/usr/bin/true'],alignment:{python:'/usr/bin/true',cacheDirectory,runnerSha256:createHash('sha256').update(await readFile(join(process.cwd(),'scripts/whisperx-align.py'))).digest('hex')},concurrency:1,actualCostCents:0}};
