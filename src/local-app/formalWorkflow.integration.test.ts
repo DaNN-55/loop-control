@@ -26,9 +26,8 @@ it.skipIf(process.env.LOOP_FORMAL_ACCEPTANCE!=='1')('first formal adoption prese
  const f=await productionWorkspaceFixture();try{
  await f.c.query("UPDATE public.episodes SET stage='qc_review' WHERE id=$1",[f.episode]);
  const opened=await f.request('openStudio',{projectRelativePath:f.boardPath});expect(opened.status,JSON.stringify(opened.body)).toBe(200);
- const base=`${f.assetRoot}/episodes/${f.episode}/openchatcut-work/current/runtime`;let nativePath=base+'/project-store-v1.json',store:any,native:any;
- try{store=JSON.parse(await readFile(nativePath,'utf8'));native=store.entries[`project:${opened.body.workspace.projectId}`];}catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;nativePath=base+`/project-store-v1/${encodeURIComponent(`project:${opened.body.workspace.projectId}`)}.json`;native=JSON.parse(await readFile(nativePath,'utf8'));}
- native.timelines[0].items.find((i:any)=>i.kind==='video').transform.x=19;await (await import('node:fs/promises')).writeFile(nativePath,JSON.stringify(store??native));
+ const {editStudioDocument}=await import('./studioDocument.fixture');
+ await editStudioDocument(opened.body.studioUrl,opened.body.workspace.projectId,doc=>{doc.timelines[0].items.find((i:any)=>i.kind==='video').transform.x=19;});
  const data={reviewPackageId:f.board,expectedScriptRevisionId:f.script};const denied=await f.request('prepareWorkspace',data);expect(denied.status,JSON.stringify(denied.body)).toBe(409);
  const kept=await f.request('prepareWorkspace',{...data,legacyDecision:'preserve'});expect(kept.status,JSON.stringify(kept.body)).toBe(200);
  const doc=await fetch(`${f.origin}/api/local/episodes/${f.episode}/workspace/project?sha=${kept.body.project.sha256}`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(doc.status).toBe(200);expect((await doc.json()).project.timelines[0].items.find((i:any)=>i.kind==='video').transform.x).toBe(19);

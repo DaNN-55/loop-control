@@ -20,9 +20,10 @@ export async function formalWorkflowFixture(options:{origin?:string;controlled?:
  const response=await fetch(f.origin+'/api/local/episode-commands',{method:'POST',headers:{Origin:f.origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+f.token,'X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command:'create',idempotencyKey:randomUUID(),data:{accountId:account,title:'正式新单'}})});const created={status:response.status,body:await response.json()};assert.equal(created.status,200,JSON.stringify(created.body));assert.equal(created.body.stage,'waiting_input');
  const episodeId=created.body.id;
  const send=(command:string,data:Record<string,unknown>={})=>f.request(command,{episodeId,...data});
+ const chosenSend=(command:string,data:Record<string,unknown>={})=>options.controlled?(base as Awaited<ReturnType<typeof narrationFixture>>).chosenRequest(command,{episodeId,...data}):send(command,data);
  if(options.configurePlanning!==false&&options.scriptText&&!parseProductionScript(options.scriptText)){const selected=await send('saveWorkspacePlanningSelection',{expectedSelectionRevision:0,selection:{provider:'codex',adapter:'codex',model:'gpt-5.6-luna',harnessId:harness,budgetCents:0,allowedTools:['read','write']}});assert.equal(selected.status,200,JSON.stringify(selected.body));}
- if(options.blank)return{...f,assetRoot,controlled:options.controlled&&'execute'in base?base as Awaited<ReturnType<typeof narrationFixture>>:null,mountPath:volume.mountPath,send,newEpisode:episodeId,main:null};
+ if(options.blank)return{...f,assetRoot,controlled:options.controlled&&'execute'in base?base as Awaited<ReturnType<typeof narrationFixture>>:null,mountPath:volume.mountPath,send,chosenSend,newEpisode:episodeId,main:null};
  const imported=await send('importMaterial',{sourceKind:'file',sourcePath:'formal.md',materialType:'script',materialPurpose:'main_script',mimeType:'text/markdown',isMainScript:true,contentBase64:Buffer.from(options.scriptText??productionScriptTemplate).toString('base64')});assert.equal(imported.status,200,JSON.stringify(imported.body));
- return{...f,assetRoot,controlled:options.controlled&&'execute'in base?base as Awaited<ReturnType<typeof narrationFixture>>:null,mountPath:volume.mountPath,send,newEpisode:episodeId,main:imported.body.id};
+ return{...f,assetRoot,controlled:options.controlled&&'execute'in base?base as Awaited<ReturnType<typeof narrationFixture>>:null,mountPath:volume.mountPath,send,chosenSend,newEpisode:episodeId,main:imported.body.id};
  }catch(error){await f.close();throw error;}
 }

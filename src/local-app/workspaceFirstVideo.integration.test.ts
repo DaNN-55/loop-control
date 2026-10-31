@@ -1,3 +1,4 @@
+import {adoptInitialNarration} from './workspaceNarration.fixture';
 // @vitest-environment node
 import {it,expect} from 'vitest';
 import {readFile} from 'node:fs/promises';
@@ -11,7 +12,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each([false,true])('fresh
  try{
   expect((await f.send('start')).status).toBe(200);
   let r=await f.send('prepareWorkspace',{expectedScriptRevisionId:f.main});expect(r.status,JSON.stringify(r.body)).toBe(200);let w=r.body;
-  const send=async(command:string,data:Record<string,unknown>={})=>{const response=await f.send(command,{workspaceId:w.id,expectedRevision:w.revision,...data});if(response.status===200&&response.body.id===w.id)w=response.body;return response;};
+  await f.send('setWanBudget',{trialCents:300,totalCents:10000,full:false});const send=async(command:string,data:Record<string,unknown>={})=>{const response=await f.chosenSend(command,{workspaceId:w.id,expectedRevision:w.revision,...data});if(response.status===200&&response.body.id===w.id)w=response.body;return response;};
   const uploaded=await f.send('importMaterial',{sourceKind:'file',sourcePath:'first.png',materialType:'image',materialPurpose:'visual_reference',mimeType:'image/png',isMainScript:false,contentBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64')});expect(uploaded.status).toBe(200);
   expect((await f.send('setWanBudget',{trialCents:300,totalCents:1000,full:false})).status).toBe(200);
   const payload={clipId:w.clips[0].id,materialRevisionId:uploaded.body.id,prompt:'清晨山脊，缓慢推进。',durationSeconds:4,reservationCents:90};
@@ -23,7 +24,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each([false,true])('fresh
    expect((await send('confirmWorkspaceNarration',{clipId:w.clips[0].id})).status).toBe(200);
    expect((await send('generateWorkspaceNarration',{clipId:w.clips[0].id})).status).toBe(200);
    expect((await f.controlled!.execute(w.narration[0].taskId))?.status).toBe('completed');
-   expect((await send('refreshWorkspaceNarration')).status).toBe(200);
+   expect((await send('refreshWorkspaceNarration')).status).toBe(200);w=await adoptInitialNarration({request:(command,data)=>f.send(command,data)},w);
   }
   r=await send('generateWorkspaceImage',payload);expect(r.status,JSON.stringify(r.body)).toBe(200);
   expect(w.clips[0].image.providerDurationSeconds).toBe(4);if(withVoice)expect(w.clips[0].image.durationSeconds).toBeCloseTo(2.4);
@@ -46,17 +47,17 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('replanning discards curr
  try{
   expect((await f.send('start')).status).toBe(200);
   let r=await f.send('prepareWorkspace',{expectedScriptRevisionId:f.main});expect(r.status,JSON.stringify(r.body)).toBe(200);let w=r.body;
-  const send=async(command:string,data:Record<string,unknown>={})=>{const response=await f.send(command,{workspaceId:w.id,expectedRevision:w.revision,...data});expect(response.status,JSON.stringify(response.body)).toBe(200);if(response.body.id===w.id)w=response.body;return response;};
+  await f.send('setWanBudget',{trialCents:300,totalCents:10000,full:false});const send=async(command:string,data:Record<string,unknown>={})=>{const response=await f.chosenSend(command,{workspaceId:w.id,expectedRevision:w.revision,...data});expect(response.status,JSON.stringify(response.body)).toBe(200);if(response.body.id===w.id)w=response.body;return response;};
   await f.send('saveTtsSettings',{languageCode:'zh-CN',voice:'zh_female_vv_uranus_bigtts',speakingRate:1});
   const generate=async(text:string)=>{await send('authorizeWorkspacePreparation',{enabled:true});await send('saveWorkspaceNarration',{clipId:w.clips[0].id,mode:'tts',text});await send('confirmWorkspaceNarration',{clipId:w.clips[0].id});await send('generateWorkspaceNarration',{clipId:w.clips[0].id});expect((await f.controlled!.execute(w.narration[0].taskId))?.status).toBe('completed');};
-  await generate('重规划前的完整口播。');await send('refreshWorkspaceNarration');
+  await generate('重规划前的完整口播。');await send('refreshWorkspaceNarration');w=await adoptInitialNarration({request:(command,data)=>f.send(command,data)},w);
   const oldTrack=w.narration[0].audioTrackId;expect(w.narration[0].adoptedAudioTrackId).toBe(oldTrack);
   r=await f.send('reconfirmScript',{expectedScriptRevisionId:f.main,text:script.replace('填写本段完整口播。','重新规划后的主脚本完整口播。'),reason:'验收重新规划'});expect(r.status,JSON.stringify(r.body)).toBe(200);const revised=r.body.id;
   expect((await f.send('start')).status).toBe(200);
   await send('replanWorkspace',{expectedScriptRevisionId:revised,reason:'以新脚本重建初稿'});
   expect(w.narration[0].adoptedAudioTrackId).toBeNull();
   expect((await f.c.query("SELECT count(*)::int n FROM local_identity.workspace_candidate_decisions WHERE workspace_id=$1 AND candidate_id=$2 AND decision='adopted'",[w.id,oldTrack])).rows[0].n).toBe(1);
-  await generate('重新规划后的完整新口播。');await send('refreshWorkspaceNarration');
+  await generate('重新规划后的完整新口播。');await send('refreshWorkspaceNarration');w=await adoptInitialNarration({request:(command,data)=>f.send(command,data)},w);
   const current=w.narration[0];expect(current.audioTrackId).not.toBe(oldTrack);expect(current.adoptedAudioTrackId).toBe(current.audioTrackId);
   expect(w.candidates.find((c:any)=>c.id===oldTrack)?.status).not.toBe('adopted');expect(w.candidates.find((c:any)=>c.id===current.audioTrackId)?.status).toBe('adopted');
   const project=JSON.parse(await readFile(f.assetRoot+'/'+w.project.relativePath,'utf8'));expect(project.timelines.flatMap((t:any)=>t.items).find((i:any)=>i.id===current.itemId)?.sourceAssetId).toBe('audio-track-'+current.audioTrackId);

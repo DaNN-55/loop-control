@@ -10,7 +10,7 @@ it.skipIf(process.env.LOOP_LEGACY_WORKSPACE_ACCEPTANCE!=='1')('legacy orders ent
   const get=async(path:string,token=f.token)=>{const r=await fetch(f.origin+'/api/local/'+path,{headers:{Cookie:'loop_owner_session='+token}});return{status:r.status,body:await r.json()};};
   const registered=async()=>(await f.c.query('SELECT * FROM local_identity.input_episodes WHERE episode_id=$1',[f.episode])).rows;
   expect((await get(`episodes/${f.episode}`)).status).toBe(200);
-  expect(await get(`episodes/${f.episode}/workspace`)).toEqual({status:200,body:{workspace:null}});
+  expect(await get(`episodes/${f.episode}/workspace`)).toMatchObject({status:200,body:{workspace:null,planningSelection:{selection:null,revision:0}}});
   expect(await registered()).toHaveLength(0);
   const data={reviewPackageId:f.board,expectedScriptRevisionId:f.script};
   expect((await f.request('setAudioSourceMode',{audioSourceMode:'tts'})).status).toBe(404);

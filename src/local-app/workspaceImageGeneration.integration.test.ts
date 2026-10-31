@@ -8,7 +8,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('HTTP → isolated queue 
  const {f,ref,submissions}=await workspaceImageGenerationFixture();try{
  let w=await f.read();const sha=w.project.sha256;
  const missing=await f.request('openWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision});expect(missing.status).toBe(409);expect(missing.body.error).toContain('采用');
- const args={workspaceId:w.id,expectedRevision:w.revision,targetItemId:w.clips[0].itemId,model:'gpt-image-2',prompt:'保留参考图主体，改变背景。',settings:{size:'864x1536',quality:'high',count:4},referenceMaterialRevisionIds:[ref.body.id],reservationCents:100};
+ const args={workspaceId:w.id,expectedRevision:w.revision,targetItemId:w.clips[0].itemId,selection:{capability:'image',provider:'openai',adapter:'openai_images',model:'gpt-image-2',connectionVersionId:(await f.c.query("SELECT id FROM public.external_connection_versions WHERE adapter='openai_images'")).rows[0].id},prompt:'保留参考图主体，改变背景。',settings:{size:'864x1536',quality:'high',count:4},referenceMaterialRevisionIds:[ref.body.id],reservationCents:100};
  const queued=await f.request('requestWorkspaceImageCandidates',args);expect(queued.status,JSON.stringify(queued.body)).toBe(200);w=queued.body;
  expect(w.project.sha256).toBe(sha);expect(w.visualTasks[0].kind).toBe('image');expect(w.visualCandidates).toHaveLength(0);
  expect((await f.request('requestWorkspaceImageCandidates',args)).status).toBe(409);
