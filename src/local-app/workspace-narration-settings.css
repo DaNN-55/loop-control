@@ -7,3 +7,8 @@
 [data-compact-workflow] .workspace-narration-default-settings .workspace-narration-defaults input{width:100%;min-width:0}
 .workspace-narration-defaults>.workspace-narration-default-actions{display:flex;align-items:center;gap:8px;grid-column:1/-1}
 .workspace-narration-default-actions>span{font-size:11px;color:var(--lc-success,#167556)}
+
+.workspace-speech-candidate{min-width:0;padding:12px 0;border-top:1px solid var(--lc-line,#d8e1ee)}
+.workspace-speech-candidate p{margin:0 0 6px;overflow-wrap:anywhere}
+.workspace-speech-candidate audio{display:block;width:100%;max-width:360px;margin-bottom:8px}
+.workspace-speech-candidate [role=status]{font-size:12px;color:var(--lc-muted,#596b83);margin:8px 0 0}
