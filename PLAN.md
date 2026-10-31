@@ -1,3 +1,13 @@
+# #190 / T12：正式新生产单目录层级（独立验收通过，待主 Agent 关闭 Issue）
+
+干净源 `4b9115386826b849a0e6444c949c8acbf9f45b21` 已包含 integration `57d6240b`；以 no-ff 合入 `fd250c0bfbdbc4b186af4192315407e5f80b8447`，无冲突和产品补改。正式 Owner create 默认使用真实系列或未分系列的 layout2，旧直接 fixture 仍使用 legacy；完整请求、固定 UUID、创作引用及父子目录身份由持久 intent 保留，pending 阻止账号删除与备份。SQL122 为唯一新增迁移，107 条已应用迁移源码与冻结 bootstrap 全字节相同，115/121 未修改。
+
+merger 独立通过 check、build、runtime:prepare、34 项相关单测、5 项真实创建／故障验收及两种布局的正式页面完整链路（2/2，零跳过，184.84 秒）。两套新证据均亲看原生红→蓝媒体帧与 Pause；实际编辑保存、关闭重启重开、编译 Worker 交付、Owner 六文件 SHA、两阶段真实 dump／新库新根恢复、列表／详情 Finder、精确删除及手放文件保留通过。恢复 SQLite 与不可变工程均保留 x=1，编辑态恢复新应用 PID 及时间线编辑已核验；完成态仍拒绝编辑。旧树及冻结行保持相同。
+
+固定源保持 107 条迁移、最高 109、零账号；完整 schema SHA 与账本 SHA 前后不变，随机测试库已释放。自有浏览器／native／Finder 窗口、进程、APFS 挂载和 compiler cache 已释放；原有日常卷及 3 个 Oct30 未知用途测试卷保留。证据和精确命令见仓库外 `MERGE-T12.md`、`MERGE-T12/`。
+
+当前 tracker 仍为 11/17 已关闭（#179–189）；#190 独立验收通过待 root 关闭，#191/#192 为下一前沿、未开始。T13/T14 lineage、全局根迁移、已知旧 fixture 红项及最终全规格验收保持各自边界。390×844 创建 dialog 边界通过；背景完整页面截图宽 635，尚未在 base 同数据复现，不归因或宣称整页窄屏通过。未重复源已绿的 12 项旧回归，未跑默认全套或已知红组。未操作 main、push、部署、日常数据、秘密、付费服务或 GitHub Issue 状态。
+
 # #178 T11：真实备份与异地恢复（独立验收通过，待主 Agent 关闭 Issue）
 
 目标：沿现有 storage backup/restore 与登记位置链路，保存完整数据库和生产文件；恢复后全局根、账号、容器、生产单身份及部署配置一致，历史来源不改写。
@@ -54,9 +64,9 @@ Confirmed acceptance: formal UI → Owner HTTP → isolated real database/files 
 | #187 | #184, #185, #186 | Completed; independent acceptance passed and tracker closed |
 | #188 | #183 | Completed; independent acceptance passed and tracker closed |
 | #189 | #183, #187 | Completed; independent acceptance passed and tracker closed |
-| #190 | #187, #188, #189 | Ready; isolated TDD implementation starting |
-| #191 | #190 | Pending |
-| #192 | #190 | Pending |
+| #190 | #187, #188, #189 | Integrated locally; independent acceptance passed; awaiting root tracker closure |
+| #191 | #190 | Ready after #190 closure; not started |
+| #192 | #190 | Ready after #190 closure; not started |
 | #193 | #191 | Pending |
 | #194 | #193 | Pending |
 | #195 | #192, #194 | Pending |
