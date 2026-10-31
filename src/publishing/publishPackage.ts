@@ -130,7 +130,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function isDescendant(parent: string, child: string): boolean {
   const pathFromParent = relative(parent, child);
-  return pathFromParent.length > 0 && !pathFromParent.startsWith("..") && !pathFromParent.startsWith("/");
+  return pathFromParent.length > 0 && pathFromParent !== ".." && !pathFromParent.startsWith("../") && !pathFromParent.startsWith("/");
 }
 
 function isMissingFile(error: unknown): boolean {

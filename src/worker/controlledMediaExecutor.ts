@@ -86,7 +86,8 @@ async function mediaBytes(input: {
     const video = taskPackage.media.wanVideo;
     const path = await realpath(resolve(taskPackage.assets.allowedRoot, video.firstFrame.relativePath));
     const root = await realpath(taskPackage.assets.allowedRoot);
-    if (relative(root, path).startsWith("..") || isAbsolute(relative(root, path))) throw new Error("万相首帧路径越界。");
+    const fromRoot = relative(root, path);
+    if (fromRoot === ".." || fromRoot.startsWith("../") || isAbsolute(fromRoot)) throw new Error("万相首帧路径越界。");
     let image:Uint8Array = await readFile(path);
     if (image.byteLength !== video.firstFrame.fileSize || createHash("sha256").update(image).digest("hex") !== video.firstFrame.sha256) throw new Error("万相首帧与冻结输入不一致。");
     let imageMime=video.imageMime;
@@ -122,7 +123,7 @@ async function mediaBytes(input: {
   if (taskPackage.provider === "ffmpeg" && taskPackage.media?.adapter === "ffmpeg_extract_audio") {
     const sourcePath = resolve(taskPackage.assets.allowedRoot, taskPackage.media.embeddedAudio.sourceRelativePath);
     const fromRoot = relative(resolve(taskPackage.assets.allowedRoot), sourcePath);
-    if (isAbsolute(fromRoot) || fromRoot.startsWith("..")) throw new Error("冻结视频输入路径超出资产根目录。");
+    if (isAbsolute(fromRoot) || fromRoot === ".." || fromRoot.startsWith("../")) throw new Error("冻结视频输入路径超出资产根目录。");
     return { bytes: await (taskPackage.media.embeddedAudio.startSeconds===undefined?input.extractMp3(sourcePath,taskPackage.media.embeddedAudio.durationSeconds):input.extractMp3(sourcePath,taskPackage.media.embeddedAudio.durationSeconds,taskPackage.media.embeddedAudio.startSeconds)) };
   }
   if (taskPackage.provider === "ffmpeg" && taskPackage.media?.adapter === "ffmpeg_trim_video") {
@@ -130,7 +131,7 @@ async function mediaBytes(input: {
     if (!clip) throw new Error("冻结视频裁剪输入缺失。");
     const sourcePath = resolve(taskPackage.assets.allowedRoot, clip.sourceRelativePath);
     const fromRoot = relative(resolve(taskPackage.assets.allowedRoot), sourcePath);
-    if (isAbsolute(fromRoot) || fromRoot.startsWith("..")) throw new Error("冻结视频输入路径超出资产根目录。");
+    if (isAbsolute(fromRoot) || fromRoot === ".." || fromRoot.startsWith("../")) throw new Error("冻结视频输入路径超出资产根目录。");
     if (taskPackage.media.videoClips) {
       if (!input.trimMp4Segments) throw new Error("Worker 未配置多片段裁剪执行器。");
       return { bytes: await input.trimMp4Segments(sourcePath, taskPackage.media.videoClips.segments) };
@@ -218,7 +219,7 @@ export async function safeAssetOutputPath(allowedRoot: string, relativePath: str
   const assetRoot = await realpath(resolve(allowedRoot));
   const destination = resolve(assetRoot, relativePath);
   const fromRoot = relative(assetRoot, destination);
-  if (isAbsolute(fromRoot) || fromRoot.startsWith("..")) throw new Error("冻结媒体输出路径越出资产根目录。");
+  if (isAbsolute(fromRoot) || fromRoot === ".." || fromRoot.startsWith("../")) throw new Error("冻结媒体输出路径越出资产根目录。");
   let directory = assetRoot;
   for (const segment of dirname(relativePath).split(/[\\/]/)) {
     if (!segment || segment === ".") continue;

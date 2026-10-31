@@ -1,13 +1,12 @@
 import type {Pool,PoolClient} from 'pg';
 import {randomUUID,createHash} from 'node:crypto';
-import {mkdir,lstat,realpath,readFile,open,readdir,unlink,rmdir} from 'node:fs/promises';
 import {join} from 'node:path';
 import type {OwnerSession} from './sessions.js';
 import {sessionTransaction} from './ownerTransaction.js';
 import {ConfigurationError} from './configurationCommands.js';
 import {inspectMediaRoot,verifyMediaRootBinding,type MediaRootBinding} from './mediaRootSettings.js';
 import {requireAccountAssetRoot} from './accountAssetRoots.js';
-import {directoryName,ownsMarker} from './creationIdentity.js';
+import {directoryName,prepareCreationDirectory,matchesCreationDirectory,removeCreationMarker,removeCreatedDirectory} from './creationIdentity.js';
 import {resolveStorageContainer,requireStorageContainer,createStorageContainer} from './seriesDirectories.js';
 import {resolveEpisodeStorageLocation,requireEpisodeStorageDirectory} from './episodeStorageLocation.js';
 interface Intent{owner_id:string;idempotency_key:string;payload_hash:string;payload:{title:string;isTest:boolean};episode_id:string;account_id:string;blueprint_version_id:string;series_version_id:string|null;container_id:string;storage_series_id:string|null;directory_relative_path:string;account_root:string;account_device_id:string;account_inode_id:string;container_relative_path:string;container_device_id:string;container_inode_id:string;root_binding:MediaRootBinding;marker:string;device_id:string|null;inode_id:string|null;marker_device_id:string|null;marker_inode_id:string|null;cleanup_owned:boolean;result:Record<string,unknown>|null}
@@ -52,7 +51,7 @@ export async function createEpisodeDirectory(pool:Pool,session:OwnerSession,key:
   });
   if('receipt'in intent)return intent.receipt;
   if(intent.result){await transaction(async c=>{await requireEpisodeStorageDirectory(c,await resolveEpisodeStorageLocation(c,mediaRoot,intent.episode_id));});return intent.result;}
-  const path=join(intent.account_root,intent.directory_relative_path),markerPath=join(path,'.loop-control-creation.json'),marker=JSON.stringify({episodeId:intent.episode_id,token:intent.marker});
+  const path=join(intent.account_root,intent.directory_relative_path),marker=JSON.stringify({episodeId:intent.episode_id,token:intent.marker});
   const update=(c:PoolClient,sql:string,values:unknown[]=[])=>c.query(sql,[session.id,key,...values]);
   const validateParent=async(c:PoolClient)=>{
    await verifyMediaRootBinding(intent.root_binding,1024*1024);
@@ -65,14 +64,9 @@ export async function createEpisodeDirectory(pool:Pool,session:OwnerSession,key:
   };
   await transaction(validateParent);
   try{
-   let made=false;try{await mkdir(path,{mode:0o700});made=true;}catch(e){if((e as NodeJS.ErrnoException).code!=='EEXIST')throw e;}
-   let needsMarker=made;if(!made&&intent.device_id===null){await inspectMediaRoot(path);if((await readdir(path)).length===0)needsMarker=true;}
-   let markerDevice=intent.marker_device_id,markerInode=intent.marker_inode_id;
-   if(needsMarker){const file=await open(markerPath,'wx',0o600);try{await file.writeFile(marker);await file.sync();const s=await file.stat({bigint:true});markerDevice=String(s.dev);markerInode=String(s.ino);}finally{await file.close();}}
-   const actual=await inspectMediaRoot(path),markerStat=await lstat(markerPath,{bigint:true});
-   if(!markerStat.isFile()||markerStat.isSymbolicLink()||markerStat.nlink!==1n||markerDevice!==null&&(String(markerStat.dev)!==markerDevice||String(markerStat.ino)!==markerInode)||await realpath(markerPath)!==markerPath||await readFile(markerPath,'utf8')!==marker||intent.device_id!==null&&(actual.deviceId!==intent.device_id||actual.inodeId!==intent.inode_id))throw new ConfigurationError(409,'创建中的生产单目录或标记身份已变化，请保留现场后恢复。');
-   await transaction(c=>update(c,'UPDATE local_identity.episode_creation_intents SET device_id=$3,inode_id=$4,marker_device_id=$5,marker_inode_id=$6,cleanup_owned=cleanup_owned OR $7 WHERE owner_id=$1 AND idempotency_key=$2',[actual.deviceId,actual.inodeId,String(markerStat.dev),String(markerStat.ino),made]));
-   const verifyChild=async()=>{const now=await inspectMediaRoot(path);if(now.deviceId!==actual.deviceId||now.inodeId!==actual.inodeId||!await ownsMarker(markerPath,marker,String(markerStat.dev),String(markerStat.ino)))throw new ConfigurationError(409,'创建中的生产单目录或身份标记已变化，请保留现场后恢复。');};
+   const actual=await prepareCreationDirectory(path,marker,intent,'创建中的生产单目录或标记身份已变化，请保留现场后恢复。'),made=actual.made;
+   await transaction(c=>update(c,'UPDATE local_identity.episode_creation_intents SET device_id=$3,inode_id=$4,marker_device_id=$5,marker_inode_id=$6,cleanup_owned=cleanup_owned OR $7 WHERE owner_id=$1 AND idempotency_key=$2',[actual.deviceId,actual.inodeId,actual.markerDeviceId,actual.markerInodeId,made]));
+   const verifyChild=async()=>{if(!await matchesCreationDirectory(path,marker,actual))throw new ConfigurationError(409,'创建中的生产单目录或身份标记已变化，请保留现场后恢复。');};
    const result=await transaction(async c=>{
     await c.query("SELECT pg_advisory_xact_lock(hashtextextended('global-media-root',0))");await c.query("SELECT pg_advisory_xact_lock(hashtextextended('account-asset-root-ownership',0))");
     await validateParent(c);await verifyChild();
@@ -83,11 +77,11 @@ export async function createEpisodeDirectory(pool:Pool,session:OwnerSession,key:
     // Final receipt triggers may pause across a filesystem change as well.
     await validateParent(c);await verifyChild();return created;
    });
-   try{await transaction(validateParent);const now=await inspectMediaRoot(path);if(now.deviceId===actual.deviceId&&now.inodeId===actual.inodeId&&await ownsMarker(markerPath,marker,String(markerStat.dev),String(markerStat.ino)))await unlink(markerPath);}catch{/* Committed ownership does not depend on marker cleanup. */}
+   try{await transaction(validateParent);await removeCreationMarker(path,marker,actual);}catch{/* Committed ownership does not depend on marker cleanup. */}
    return result;
   }catch(error){
    const saved=await transaction(async c=>(await update(c,'SELECT * FROM local_identity.episode_creation_intents WHERE owner_id=$1 AND idempotency_key=$2')).rows[0] as Intent);
-   if(!saved.result&&saved.device_id&&saved.cleanup_owned)try{await transaction(validateParent);const actual=await inspectMediaRoot(path),names=await readdir(path);if(actual.deviceId===saved.device_id&&actual.inodeId===saved.inode_id&&names.length===1&&names[0]==='.loop-control-creation.json'&&await ownsMarker(markerPath,marker,saved.marker_device_id,saved.marker_inode_id)){await unlink(markerPath);await rmdir(path);await transaction(c=>update(c,'UPDATE local_identity.episode_creation_intents SET device_id=NULL,inode_id=NULL,marker_device_id=NULL,marker_inode_id=NULL,cleanup_owned=false WHERE owner_id=$1 AND idempotency_key=$2'));}}catch{/* Unknown files, replaced identities and inherited directories remain untouched. */}
+   if(!saved.result&&saved.device_id&&saved.cleanup_owned)try{await transaction(validateParent);if(await removeCreatedDirectory(path,marker,saved)){await transaction(c=>update(c,'UPDATE local_identity.episode_creation_intents SET device_id=NULL,inode_id=NULL,marker_device_id=NULL,marker_inode_id=NULL,cleanup_owned=false WHERE owner_id=$1 AND idempotency_key=$2'));}}catch{/* Unknown files, replaced identities and inherited directories remain untouched. */}
    if(error instanceof ConfigurationError)throw error;throw new ConfigurationError(409,'生产单目录创建未完成，请检查权限、挂载和空间后重试。');
   }
  }finally{if(accountLocked)await client.query('SELECT pg_advisory_unlock(hashtextextended($1,0))',[accountLock]).catch(()=>{});await client.query('SELECT pg_advisory_unlock(hashtextextended($1,0))',[keyLock]).catch(()=>{});client.release();}

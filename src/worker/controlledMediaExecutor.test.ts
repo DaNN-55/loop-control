@@ -1,6 +1,6 @@
 import { execFile } from "node:child_process";
 import { createHash } from "node:crypto";
-import { mkdir, mkdtemp, readFile, rm, symlink } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, writeFile, rm, symlink } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
@@ -30,8 +30,8 @@ describe("受控媒体执行器", () => {
   it.skipIf(!ffmpegAvailable)("使用真实 ffmpeg 裁剪带原声视频并提取当前片段原声", async () => {
     const root = await mkdtemp(join(tmpdir(), "controlled-media-ffmpeg-"));
     directories.push(root);
-    const sourcePath = join(root, "episodes/episode-1/materials/source.mp4");
-    await mkdir(join(root, "episodes/episode-1/materials"), { recursive: true });
+    const sourcePath = join(root, "..alpha series/episode-1/materials/source.mp4");
+    await mkdir(join(root, "..alpha series/episode-1/materials"), { recursive: true });
     await execFileAsync("ffmpeg", ["-nostdin", "-v", "error", "-f", "lavfi", "-i", "testsrc=size=320x240:rate=24", "-f", "lavfi", "-i", "sine=frequency=880:sample_rate=44100", "-t", "4", "-shortest", "-c:v", "libx264", "-c:a", "aac", "-pix_fmt", "yuv420p", sourcePath]);
 
     const realValidateMp4 = async (path: string, minimumDurationSeconds: number) => {
@@ -60,10 +60,10 @@ describe("受控媒体执行器", () => {
       return new Uint8Array(await readFile(outputPath));
     };
     const common = { fetcher: vi.fn(), googleTtsApiKey: undefined, pexelsApiKey: undefined, validateMp4: realValidateMp4, probeMp3: realProbeMp3, extractMp3: realExtractMp3, trimMp3: vi.fn(), trimMp4: realTrimMp4 };
-    const sourceArtifact = { artifactType: "source_video", relativePath: "episodes/episode-1/materials/source.mp4", sha256: "a".repeat(64), fileSize: 1 };
+    const sourceArtifact = { artifactType: "source_video", relativePath: "..alpha series/episode-1/materials/source.mp4", sha256: "a".repeat(64), fileSize: 1 };
     const clipPackage = await packageFor({
       task: { id: "task-real-clip", type: "generate_a_roll", attempt: 0, budgetLimitCents: 0, maxAttempts: 1, provider: "ffmpeg", model: "ffmpeg", promptVersion: "shot-clip-v1" },
-      capability: "shot_clip_preparation", output: { requiredArtifactTypes: ["a_roll_video"], contentType: "video/mp4", relativePath: "episodes/episode-1/shot-clips/shot-1.mp4", reviewStage: "production_ready" }, inputArtifacts: [sourceArtifact],
+      capability: "shot_clip_preparation", output: { requiredArtifactTypes: ["a_roll_video"], contentType: "video/mp4", relativePath: "..alpha series/episode-1/shot-clips/shot-1.mp4", reviewStage: "production_ready" }, inputArtifacts: [sourceArtifact],
       media: { adapter: "ffmpeg_trim_video", videoClip: { sourceRelativePath: sourceArtifact.relativePath, startSeconds: 1, endSeconds: 3, targetDurationSeconds: 2 } },
     }, root);
     const clipResult = JSON.parse(await executeControlledMediaTask({ ...common, taskPackage: clipPackage }));
@@ -75,7 +75,7 @@ describe("受控媒体执行器", () => {
 
     const audioPackage = await packageFor({
       task: { id: "task-real-audio", type: "extract_embedded_audio", attempt: 0, budgetLimitCents: 0, maxAttempts: 1, provider: "ffmpeg", model: "ffmpeg", promptVersion: "shot-source-audio-v1" },
-      capability: "embedded_audio_extraction", output: { requiredArtifactTypes: ["shot_source_audio"], contentType: "audio/mpeg", relativePath: "episodes/episode-1/audio/source.mp3", reviewStage: "production_ready" }, inputArtifacts: [sourceArtifact],
+      capability: "embedded_audio_extraction", output: { requiredArtifactTypes: ["shot_source_audio"], contentType: "audio/mpeg", relativePath: "..alpha series/episode-1/audio/source.mp3", reviewStage: "production_ready" }, inputArtifacts: [sourceArtifact],
       media: { adapter: "ffmpeg_extract_audio", embeddedAudio: { sourceRelativePath: sourceArtifact.relativePath, durationSeconds: 3 } },
     }, root);
     const audioResult = JSON.parse(await executeControlledMediaTask({ ...common, taskPackage: audioPackage }));
@@ -234,4 +234,18 @@ describe("受控媒体执行器", () => {
     expect(trimMp3).toHaveBeenCalledWith(new Uint8Array(Buffer.from("mp3-data")), 4);
     await expect(readFile(join(taskPackage.assets.allowedRoot, taskPackage.output.relativePath), "utf8")).resolves.toBe("trimmed-mp3");
   });
+});
+
+it('reads a fingerprinted first frame from a legal ..alpha series before generating controlled video',async()=>{
+ const image=await readFile(join(process.cwd(),'src/local-app/fixtures/workspace-media/still-striped.png'));
+ const frame={artifactType:'static_visual',relativePath:'..alpha series/episode-1/frame.png',sha256:createHash('sha256').update(image).digest('hex'),fileSize:image.length};
+ const taskPackage=await packageFor({
+  task:{id:'task-leading-dot',type:'generate_a_roll',attempt:0,budgetLimitCents:100,maxAttempts:1,provider:'bailian',model:'wan2.6-i2v-flash',promptVersion:'wan-v1'},
+  capability:'a_roll_generation',media:{adapter:'wan_video',wanVideo:{firstFrame:frame,prompt:'保持原图',durationSeconds:5,imageMime:'image/png'}},inputArtifacts:[frame],
+  output:{requiredArtifactTypes:['a_roll_video'],contentType:'video/mp4',relativePath:'..alpha series/episode-1/output.mp4',reviewStage:'production_ready'},
+ });
+ await mkdir(join(taskPackage.assets.allowedRoot,'..alpha series/episode-1'),{recursive:true});await writeFile(join(taskPackage.assets.allowedRoot,frame.relativePath),image);
+ const fetcher=vi.fn().mockResolvedValueOnce(new Response(JSON.stringify({output:{task_id:'controlled-task'}}))).mockResolvedValueOnce(new Response(JSON.stringify({output:{task_status:'SUCCEEDED',video_url:'https://dashscope-result-bj.oss-cn-beijing.aliyuncs.com/video.mp4'}}))).mockResolvedValueOnce(new Response('controlled-video',{headers:{'Content-Type':'video/mp4'}}));
+ const result=JSON.parse(await executeControlledMediaTask({taskPackage,fetcher,bailianCredentials:'test-only-key',reserveWan:async()=>({new:true}),recordWanSubmission:async()=>{},googleTtsApiKey:undefined,pexelsApiKey:undefined,validateMp4:async()=>{},probeMp3:vi.fn(),extractMp3:vi.fn(),trimMp3:vi.fn()}));
+ expect(result.status).toBe('completed');expect(await readFile(join(taskPackage.assets.allowedRoot,taskPackage.output.relativePath),'utf8')).toBe('controlled-video');
 });
