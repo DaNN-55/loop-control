@@ -6,14 +6,14 @@ Confirmed acceptance: formal UI → Owner HTTP → isolated real database/files 
 
 | Ticket | Direct blockers | Status |
 |---|---|---|
-| #179 | None | Integrated locally; acceptance passed, tracker remains open |
-| #180 | None | Integrated locally; acceptance passed, tracker remains open |
-| #181 | #179 | Integrated locally; independent acceptance passed; tracker remains open |
+| #179 | None | Integrated locally; acceptance passed; tracker closed |
+| #180 | None | Integrated locally; acceptance passed; tracker closed |
+| #181 | #179 | Integrated locally; independent acceptance passed; tracker closed |
 | #182 | #180, #181 | Pending |
 | #183 | #182 | Pending |
-| #184 | #179 | Integrated locally; publication ownership fix independently accepted; tracker remains open |
-| #185 | #179 | Integrated locally; acceptance passed, tracker remains open |
-| #186 | #179 | Pending |
+| #184 | #179 | Integrated locally; publication ownership fix independently accepted; tracker closed |
+| #185 | #179 | Integrated locally; acceptance passed; tracker closed |
+| #186 | #179 | Integrated locally; independent acceptance passed; tracker remains open |
 | #187 | #184, #185, #186 | Pending |
 | #188 | #183 | Pending |
 | #189 | #183, #187 | Pending |
@@ -30,7 +30,7 @@ Baseline verification: `npm run check` passed; default suite 174 files / 1144 te
 
 Verification log and ticket handoffs: `/private/tmp/loop-control-178-20261031`. Preserve RED/GREEN, actual skip counts and any unresolved integration limitations.
 
-Tracker: #179 and #180 closed after independent merger acceptance; 2/17 complete. T03/#181, T06/#184 and T07/#185 are integrated and independently verified, tracker remains open. T06's required publication ownership fix is now independently accepted. T01/T02 clean merged worktrees removed; recovery branches retained. Migration reservations live in external `MIGRATION-RESERVATIONS.json`.
+Tracker: #179, #180, #181, #184 and #185 closed after independent merger acceptance; 5/17 complete. T08/#186 is integrated and independently accepted; root owns its tracker closure. T06's required publication ownership fix is independently accepted. Clean merged T01/T02/T03/T06/T06-fix worktrees removed by root; recovery branches retained. Migration reservations live in external `MIGRATION-RESERVATIONS.json`.
 
 Cross-ticket notes: T03 binds global storage to the persisted workspace Owner. Existing zero-account create_account rejects first account via membership-only check; T04 owns fixing that through the trusted T03 binding, not broadening credentials. T07 owns shared producer namespaces/native output authority and mediaLibrary prefix checks; T06 owns input/planning guards and localFiles. Relative-prefix migration of frozen references remains a mandatory T13/T14 seam (external LOCATION-CALLERS.md), not solved by account-root-only mapping.
 
@@ -49,6 +49,8 @@ T06/#184 publication ownership fix merged without conflicts at `0f8cdfcd` from c
 
 
 T03/#181 integrated without conflicts at `ef1ed256` from clean source `5d407215` (implementation `5874c978`, adoption/shutdown/source guard `9fa9299e`, independent persisted Owner `cedfd309`; includes current integration `65ff8d78`). Merger independently ran `npm run check`, `npm run build`, `npm run runtime:prepare`, then six scoped files /28 tests, zero skips, maxWorkers1. Formal LocalCatalogApp account page → native Owner HTTP → isolated real DB/APFS → real system open verifies root initialize/copy/open/refresh, preserved invalid input and Escape focus. Actual service/Worker reload and a distinct fresh native PID preserve root configuration, identity and real material bytes; tests cover existing-root adoption without JSON rewrite, Owner/CSRF rejection, secret-admin independence, before/after-DB-commit journal recovery, controlled reload rollback, source/target unknown files, overlap/symlink/space failures, replaced root/cache identities and empty separate volume root. The shipped deployment reader is copied byte-for-byte into a disposable project and exercised in fresh processes. Cache authorization derives only from existing trusted configuration and preserves original cache/backup roles. Fresh screenshots at1440/1100/390 were personally inspected; document/dialog have no horizontal overflow. Fixed source baseline remains107 migrations/max109 and0 accounts; disposable fixtures explicitly add110/111/117 (112/118 are outside these exercised paths). No feature source correction was required. Full default suite was not repeated; native chooser selection/cancel and OS clipboard readback remain unverified. First-account membership403 and absent new-install import metadata remain T04 work; existing-data global migration/restore rebinding remains T10/T14. Evidence and exact command: external `MERGE-T03.md`, `MERGE-T03-*.log`, `MERGE-T03-browser/`. Browser/native processes and owned APFS fixtures closed; root handles remaining known test Finder windows. No tracker closure, push, daily service/data/config changes or paid calls.
+
+T08/#186 integrated without conflicts at `01c79c4f` from clean source `192d03b8` (implementation `80b2b736` and identity/readback fix `c77b2812`). Independent merger acceptance passed `npm run check`, `npm run runtime:prepare`, seven relevant unit files /32 tests and actual `workspaceAudioStorage.integration.test.ts` /10 tests, zero skips, maxWorkers1. The real Owner HTTP/database/files suite verifies new and legacy speech after rename/restart, Range206 and ffprobe, managed narration/music/effects after external originals disappear, frozen search/connection retry, actual compiled source extraction and alignment Worker, confirmed caption readback and both native synchronized-preview layouts with audio, all four artifacts and restart confirmation. Directory inode replacement blocks submission before fees/Provider contact and blocks old caption readback. SQL119 changes future audio/post-production constructors and the source guard through SQL110; no applied migration, frozen input or default layout is rewritten. Existing T03 independent `cacheBinding` and T06 publication ownership fix are byte-identical to integration parent. Source baseline remains107 migrations/max109 and0 accounts before/after; forward migrations are fixture-only. Prior formal browser1pass and actual MP3 playback evidence were read, not rerun; no new frontend implementation or merge concern required a repeat. Controlled services/model output verify routing and state, not paid quality. Full registered-coordinate native save/reopen/export remains T09; prefix relocation lineage remains T13/T14. No self-owned visible GUI windows were opened; actual Finder inventory after the suite is0 and Chrome/user-app window counts remain unchanged. Evidence and exact commands: external `MERGE-T08.md`, `MERGE-T08-*.log`, original `T08/HANDOFF.md`. No daily data/service change, paid calls, issue closure, push or worktree cleanup.
 
 ---
 
