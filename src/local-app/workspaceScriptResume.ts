@@ -1,3 +1,4 @@
+import {verifyEpisodeFile} from './episodeFiles.js';
 import type {PoolClient} from 'pg';
 import {verifyNativeFile} from './localFiles.js';
 import {ConfigurationError} from './configurationCommands.js';
@@ -12,7 +13,7 @@ export async function readWorkspaceScriptResume(c:PoolClient,root:string,row:Pro
  try{
   const materials=(await c.query('SELECT id,storage_path,sha256,file_size FROM public.production_material_revisions WHERE episode_id=$1 AND id=ANY($2::uuid[]) AND is_main_script',[row.episode_id,[row.script_revision_id,currentScript]])).rows;
   if(materials.length!==2)throw Error();
-  const texts=await Promise.all(materials.map(async m=>(await verifyNativeFile(root,m.storage_path,m.sha256,Number(m.file_size))).toString('utf8')));
+  const texts=await Promise.all(materials.map(async m=>(await verifyEpisodeFile(c,root,row.episode_id,m.storage_path,m.sha256,Number(m.file_size))).toString('utf8')));
   const canReuse=!!scriptBody(texts[0])&&scriptBody(texts[0])===scriptBody(texts[1]);
   return{canReuse,reason:canReuse?'脚本仅有排版变更，可确认修订并沿用原工程。':'脚本正文已变化，请确认脚本并核对素材规划；原工程仍保留。'};
  }catch{return{canReuse:false,reason:'脚本文件暂时无法核对，请检查素材文件后继续。'};}

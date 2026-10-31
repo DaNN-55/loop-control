@@ -1,16 +1,19 @@
+import type {EpisodeStorageLocation} from './episodeStorageLocation.js';
 import{mappedAssetPath}from'./mediaPaths.js';
-import {open,realpath} from 'node:fs/promises';
+import {open,realpath,lstat} from 'node:fs/promises';
 import {constants} from 'node:fs';
 import {resolve,relative,isAbsolute,extname} from 'node:path';
 import {createHash} from 'node:crypto';
 import {pipeline} from 'node:stream/promises';
 import type {ServerResponse} from 'node:http';
-interface ArtifactFile {relative_path:string;sha256:string;file_size:string|number;source_asset_root:string;source_media_root:string;source_media_roots?:string[];expected_media_root?:string|null}
+interface ArtifactFile {storage_location?:EpisodeStorageLocation;resolved_file_path?:string;relative_path:string;sha256:string;file_size:string|number;source_asset_root:string;source_media_root:string;source_media_roots?:string[];expected_media_root?:string|null}
 export async function serveOwnedArtifact(root:string,artifact:ArtifactFile,response:ServerResponse,rangeHeader?:string){
  if(!artifact.source_media_root||!isAbsolute(artifact.source_asset_root))throw Error('Missing deployment mapping');
  if(artifact.expected_media_root&&artifact.expected_media_root!==root)throw Error('Restored media deployment mismatch');
  const accountRoot=mappedAssetPath(root,artifact.source_asset_root,artifact.source_media_roots??[artifact.source_media_root]);
- const path=resolve(accountRoot,artifact.relative_path),rel=relative(accountRoot,path);
+ const location=artifact.storage_location;
+ if(location){const directory=await lstat(location.directoryPath,{bigint:true});if(location.assetRoot!==accountRoot||!directory.isDirectory()||directory.isSymbolicLink()||await realpath(location.directoryPath)!==location.directoryPath||location.deviceId!==null&&(String(directory.dev)!==location.deviceId||String(directory.ino)!==location.inodeId))throw Error('Production directory identity differs');}
+ const path=artifact.resolved_file_path??resolve(accountRoot,artifact.relative_path),rel=relative(accountRoot,path);
  if(!rel||isAbsolute(artifact.relative_path)||rel.startsWith('..')||await realpath(path)!==path)throw Error('Unsafe artifact path');
  const file=await open(path,constants.O_RDONLY|constants.O_NOFOLLOW);
  try{

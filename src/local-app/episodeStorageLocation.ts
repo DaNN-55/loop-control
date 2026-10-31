@@ -13,6 +13,15 @@ export async function resolveEpisodeStorageLocation(c:Pick<PoolClient,'query'>,m
  if(!row)throw new ConfigurationError(404,'生产单不可见。');
  let assetRoot:string;
  try{assetRoot=mappedAssetPath(mediaRoot,row.asset_root,await readMediaDeployment(c,mediaRoot));}catch(error){if(error instanceof ConfigurationError)throw error;throw new ConfigurationError(409,'生产单目录不在当前授权位置，请检查存储恢复回执。');}
+ return storageLocationAtRoot(row,assetRoot);
+}
+/** The caller supplies an already resolved, authorized account I/O root. */
+export async function episodeStorageLocationAtRoot(c:Pick<PoolClient,'query'>,assetRoot:string,episodeId:string){
+ const row=(await c.query('SELECT * FROM local_identity.episode_storage_location($1)',[episodeId])).rows[0];
+ if(!row)throw new ConfigurationError(404,'生产单不可见。');
+ return storageLocationAtRoot(row,assetRoot);
+}
+function storageLocationAtRoot(row:Record<string,unknown>,assetRoot:string){
  if(typeof row.directory_relative_path!=='string'||!safeRelative(row.directory_relative_path))throw new ConfigurationError(409,'生产单目录记录无效，请检查存储恢复回执。');
  const directoryPath=join(assetRoot,row.directory_relative_path);
  if(!assetPathWithin(assetRoot,directoryPath))throw new ConfigurationError(409,'生产单目录超出账号范围。');
