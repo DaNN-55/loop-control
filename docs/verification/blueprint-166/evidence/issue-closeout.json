@@ -1,0 +1,178 @@
+{
+  "parent": {
+    "closed_at": "2026-10-31T05:40:02Z",
+    "number": 166,
+    "state": "closed",
+    "state_reason": "completed"
+  },
+  "children": [
+    {
+      "number": 167,
+      "state": "closed",
+      "state_reason": "completed"
+    },
+    {
+      "number": 168,
+      "state": "closed",
+      "state_reason": "completed"
+    },
+    {
+      "number": 169,
+      "state": "closed",
+      "state_reason": "completed"
+    },
+    {
+      "number": 170,
+      "state": "closed",
+      "state_reason": "completed"
+    },
+    {
+      "number": 171,
+      "state": "closed",
+      "state_reason": "completed"
+    },
+    {
+      "number": 172,
+      "state": "closed",
+      "state_reason": "completed"
+    },
+    {
+      "number": 173,
+      "state": "closed",
+      "state_reason": "completed"
+    },
+    {
+      "number": 174,
+      "state": "closed",
+      "state_reason": "completed"
+    },
+    {
+      "number": 175,
+      "state": "closed",
+      "state_reason": "completed"
+    },
+    {
+      "number": 176,
+      "state": "closed",
+      "state_reason": "completed"
+    },
+    {
+      "number": 177,
+      "state": "closed",
+      "state_reason": "completed"
+    }
+  ],
+  "nativeDependencies": [
+    {
+      "number": 166,
+      "blockers": []
+    },
+    {
+      "number": 167,
+      "blockers": []
+    },
+    {
+      "number": 168,
+      "blockers": [
+        {
+          "number": 167,
+          "state": "closed"
+        }
+      ]
+    },
+    {
+      "number": 169,
+      "blockers": [
+        {
+          "number": 168,
+          "state": "closed"
+        }
+      ]
+    },
+    {
+      "number": 170,
+      "blockers": [
+        {
+          "number": 169,
+          "state": "closed"
+        }
+      ]
+    },
+    {
+      "number": 171,
+      "blockers": [
+        {
+          "number": 168,
+          "state": "closed"
+        }
+      ]
+    },
+    {
+      "number": 172,
+      "blockers": [
+        {
+          "number": 168,
+          "state": "closed"
+        }
+      ]
+    },
+    {
+      "number": 173,
+      "blockers": []
+    },
+    {
+      "number": 174,
+      "blockers": [
+        {
+          "number": 173,
+          "state": "closed"
+        }
+      ]
+    },
+    {
+      "number": 175,
+      "blockers": []
+    },
+    {
+      "number": 176,
+      "blockers": [
+        {
+          "number": 170,
+          "state": "closed"
+        },
+        {
+          "number": 171,
+          "state": "closed"
+        },
+        {
+          "number": 172,
+          "state": "closed"
+        },
+        {
+          "number": 173,
+          "state": "closed"
+        },
+        {
+          "number": 175,
+          "state": "closed"
+        }
+      ]
+    },
+    {
+      "number": 177,
+      "blockers": [
+        {
+          "number": 174,
+          "state": "closed"
+        },
+        {
+          "number": 176,
+          "state": "closed"
+        }
+      ]
+    }
+  ],
+  "edgeCount": 13,
+  "unchanged": true
+}
+

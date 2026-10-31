@@ -1,0 +1,139 @@
+{
+  "removed": [
+    {
+      "path": "/Users/dan/.codex/worktrees/blueprint-166/t01",
+      "sha": "0956e7cdc0dd4c3f99308acade77b6b8fbbd38f8",
+      "status": "clean",
+      "integrated": true,
+      "ignored": [
+        "dist/",
+        "node_modules"
+      ],
+      "removed": true
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/blueprint-166/t02",
+      "sha": "e468a9e2fb58a19c1dbb701b068e8e161f825a11",
+      "status": "clean",
+      "integrated": true,
+      "ignored": [
+        "dist/",
+        "node_modules"
+      ],
+      "removed": true
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/blueprint-166/t03",
+      "sha": "7c097f353a1228642cb9a8c3ff8d5b4ce5364c4a",
+      "status": "clean",
+      "integrated": true,
+      "ignored": [
+        "dist/",
+        "node_modules"
+      ],
+      "removed": true
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/blueprint-166/t04",
+      "sha": "f09f2d9445624e9577bd1667c828ec82391a7f62",
+      "status": "clean",
+      "integrated": true,
+      "ignored": [
+        "dist/",
+        "node_modules"
+      ],
+      "removed": true
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/blueprint-166/t05",
+      "sha": "42bc59fa95138c8d227104885d9fdcab31bea18b",
+      "status": "clean",
+      "integrated": true,
+      "ignored": [
+        "dist/",
+        "node_modules"
+      ],
+      "removed": true
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/blueprint-166/t06",
+      "sha": "1f3d9554bd9b332f09f7ca778ec05f59760c4630",
+      "status": "clean",
+      "integrated": true,
+      "ignored": [
+        "dist/",
+        "node_modules"
+      ],
+      "removed": true
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/blueprint-166/t07",
+      "sha": "286dee6e2923bd18f45a5c4dc4ddc9827be88d3e",
+      "status": "clean",
+      "integrated": true,
+      "ignored": [
+        "dist/",
+        "node_modules"
+      ],
+      "removed": true
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/blueprint-166/t08",
+      "sha": "8cf36d58cf1f3a2a1b4dd387ac7895842ff9124c",
+      "status": "clean",
+      "integrated": true,
+      "ignored": [
+        "dist/",
+        "node_modules"
+      ],
+      "removed": true
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/blueprint-166/t09",
+      "sha": "2db3a6d3277903628f7dfdf32eb3774dbd173481",
+      "status": "clean",
+      "integrated": true,
+      "ignored": [
+        "dist/",
+        "node_modules"
+      ],
+      "removed": true
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/blueprint-166/t10",
+      "sha": "df6d92e3743b2e5f9eab2e32cf36f2ef666305ed",
+      "status": "clean",
+      "integrated": true,
+      "ignored": [
+        "dist/",
+        "node_modules"
+      ],
+      "removed": true
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/blueprint-166/t11",
+      "sha": "eaecac7d80e69bdda42fc3b9170dea01f7eac085",
+      "status": "clean",
+      "integrated": true,
+      "ignored": [
+        "dist/",
+        "node_modules"
+      ],
+      "removed": true
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/blueprint-166/reviewfix",
+      "sha": "6fd02cbea0cac322ef6afa82f3971cd8f90b3539",
+      "status": "clean",
+      "integrated": true,
+      "ignored": [
+        "dist/",
+        "node_modules"
+      ],
+      "removed": true
+    }
+  ],
+  "keptIntegration": "/Users/dan/.codex/worktrees/blueprint-166/integration",
+  "branchRefsRetained": true,
+  "originalNodeModulesExists": true
+}
