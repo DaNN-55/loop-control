@@ -1,6 +1,6 @@
 import {lstat, realpath, readdir, readlink} from 'node:fs/promises';
 import {isAbsolute, join, relative, resolve} from 'node:path';
-import {mappedAssetPath} from './mediaPaths.js';
+import {mappedAssetPath,assetPathWithin} from './mediaPaths.js';
 
 interface Identity {dev:string;ino:string}
 export interface EpisodeDeletionTarget {
@@ -26,7 +26,7 @@ async function volumeAvailable(path:string){
 export async function episodeDeletionTargets(mediaRoot:string,root:string,episodeId:string,sources:readonly string[]):Promise<EpisodeDeletionTarget[]>{
  if(!/^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(episodeId))throw Error('生产单标识无效。');
  const suffix=relative(mediaRoot,root);
- if(!suffix||suffix.startsWith('..')||isAbsolute(suffix))throw Error('删除目录超出媒体部署范围。');
+ if(!assetPathWithin(mediaRoot,root))throw Error('删除目录超出媒体部署范围。');
  const roots=new Set([root]);
  for(const source of sources){
   if(source==='/'||!isAbsolute(source)||resolve(source)!==source)continue;

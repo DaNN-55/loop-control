@@ -2,7 +2,7 @@ import type {Pool,PoolClient} from 'pg';
 import {randomUUID,createHash} from 'node:crypto';
 import {constants} from 'node:fs';
 import {lstat,readdir,realpath,open,mkdir,rename,unlink,readFile,statfs} from 'node:fs/promises';
-import {join,relative,isAbsolute} from 'node:path';
+import {join,relative} from 'node:path';
 import {sessionTransaction} from './ownerTransaction.js';
 import type {OwnerSession} from './sessions.js';
 import {ConfigurationError} from './configurationCommands.js';
@@ -10,7 +10,7 @@ import {readMediaDeployment,resolveLocalAssetRoot} from './mediaDeployment.js';
 import {mappedAssetPath} from './mediaPaths.js';
 import {safeRelative} from './localFiles.js';
 import {hasActiveNativeStudio} from '../worker/openchatcutStudio.js';
-import {validateAccountAssetLocation} from './accountAssetRoots.js';
+import {validateAccountAssetLocation,accountAssetRootsOverlap as overlaps} from './accountAssetRoots.js';
 type Client=Pick<PoolClient,'query'>;
 interface File{sourceRoot:string;relativePath:string;sha256:string;fileSize:number}
 interface Root{path:string;device:string;inode:string}
@@ -18,7 +18,6 @@ interface Reference{relativePath:string;sha256?:string;fileSize?:number}
 interface Manifest{targetRoot:string;targetIdentity:Root;sources:Root[];logicalRoots:string[];episodes:{id:string;title:string}[];files:File[];references:Reference[];evidenceSha256:string;conflicts:string[];totalBytes:number}
 const ordered=(value:unknown):unknown=>Array.isArray(value)?value.map(ordered):value&&typeof value==='object'?Object.fromEntries(Object.entries(value).sort(([a],[b])=>a.localeCompare(b)).map(([key,item])=>[key,ordered(item)])):value;
 const fingerprint=(value:unknown)=>createHash('sha256').update(JSON.stringify(ordered(value))).digest('hex');
-const overlaps=(a:string,b:string)=>a===b||(!relative(a,b).startsWith('..')&&!isAbsolute(relative(a,b)))||(!relative(b,a).startsWith('..')&&!isAbsolute(relative(b,a)));
 async function identity(path:string):Promise<Root>{const s=await lstat(path,{bigint:true});if(!s.isDirectory()||await realpath(path)!==path)throw new ConfigurationError(409,'迁移目录不是安全的实际目录：'+path);return{path,device:String(s.dev),inode:String(s.ino)};}
 async function fileDigest(root:string,path:string){
  if(!safeRelative(path))throw new ConfigurationError(409,'迁移文件路径无效：'+path);
@@ -35,7 +34,7 @@ async function inventory(root:string):Promise<File[]>{const files:File[]=[];asyn
  if(s.isDirectory())await visit(rel);else files.push({sourceRoot:root,relativePath:rel,...await fileDigest(root,rel)});
  if(files.length>100000)throw new ConfigurationError(409,'文件超过本次迁移上限，请先整理目录。');
  }}await visit('');return files;}
-async function allInventory(roots:{path:string}[]){const files:File[]=[];for(const root of roots)files.push(...await inventory(root.path));return files;}
+async function allInventory(roots:{path:string}[]){const files:File[]=[];for(const root of roots){files.push(...await inventory(root.path));if(files.length>100000)throw new ConfigurationError(409,'迁移文件总数超过本次上限，请先整理目录。');}return files;}
 function references(evidence:unknown){const refs:Reference[]=[];function visit(value:unknown){if(!value||typeof value!=='object')return;if(Array.isArray(value)){for(const x of value)visit(x);return;}
  const row=value as Record<string,unknown>;for(const key of ['relative_path','storage_path','relativePath','project_relative_path','projectRelativePath','workspaceRelativePath','project_path']){
  const path=row[key];if(typeof path==='string'&&path){if(!safeRelative(path))throw new ConfigurationError(409,'文件引用不安全：'+path);refs.push({relativePath:path,...(typeof (row.sha256??row.project_sha256)==='string'&&/^[a-f0-9]{64}$/.test(String(row.sha256??row.project_sha256))?{sha256:String(row.sha256??row.project_sha256)}:{}),...(row.file_size!==undefined||row.fileSize!==undefined||key==='project_path'&&row.project_size!==undefined?{fileSize:Number(row.file_size??row.fileSize??row.project_size)}:{})});}}

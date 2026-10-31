@@ -40,7 +40,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner creates same-title
  const volume=await workspaceAudioVolume();const f=await embeddedStudioFixture({testRootParent:volume.mountPath,runtime:{wake(){},mountPath:volume.mountPath}});
  try{
  const call=async(endpoint:string,command:string,data:Record<string,unknown>,extra={})=>{const r=await fetch(f.origin+'/api/local/'+endpoint,{method:'POST',headers:{Origin:f.origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+f.token,'X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command,data,idempotencyKey:randomUUID(),...extra})});return{status:r.status,body:await r.json()};};
- const roots=[join(f.root,'alpha'),join(f.root,'beta')];for(const root of roots)await mkdir(root);
+ const roots=[join(f.root,'..alpha'),join(f.root,'beta')];for(const root of roots)await mkdir(root);
  const accounts=[];
  for(const [i,root]of roots.entries()){
   const made=await call('configuration','createAccount',{name:'目录账号'+i,slug:'roots-'+randomUUID(),timezone:'Asia/Shanghai',policy:{},assetRoot:root});expect(made.status,JSON.stringify(made.body)).toBe(200);accounts.push(made.body.id);
@@ -63,8 +63,10 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner creates same-title
  expect(new Set(episodes).size).toBe(3);
  expect((await call('episode-lifecycle','renameEpisode',{episodeId:episodes[0],title:'已改名生产单'})).status).toBe(200);
  expect((await call('configuration','renameAccount',{accountId:accounts[0],name:'已重命名'})).status).toBe(200);
+ const deletionScope=await call('episode-lifecycle','planDeletion',{episodeId:episodes[0]});expect(deletionScope.status,JSON.stringify(deletionScope.body)).toBe(200);expect(deletionScope.body.path).toBe(join(roots[0],'episodes',episodes[0]));
  const overlap=join(roots[0],'nested');await mkdir(overlap);
  expect((await call('account-commands','setAssetDirectory',{accountId:accounts[1],path:overlap})).status).toBe(409);
+ const trickyOverlap=join(roots[0],'..owned-child');await mkdir(trickyOverlap);const emptyRoot=join(f.root,'..empty-account');await mkdir(emptyRoot);const emptyAccount=await call('configuration','createAccount',{name:'空账号隔离检查',slug:'empty-'+randomUUID(),timezone:'Asia/Shanghai',policy:{},assetRoot:emptyRoot});expect(emptyAccount.status).toBe(200);const refusedOverlap=await call('account-commands','setAssetDirectory',{accountId:emptyAccount.body.id,path:trickyOverlap});expect(refusedOverlap.status).toBe(409);expect(refusedOverlap.body.error).toContain('重叠');expect((await call('configuration','deleteAccount',{accountId:emptyAccount.body.id,confirmation:'空账号隔离检查'})).status).toBe(200);await expect(lstat(emptyRoot)).rejects.toMatchObject({code:'ENOENT'});
  const linked=join(f.root,'alias');await symlink(roots[0],linked);expect((await call('account-commands','setAssetDirectory',{accountId:accounts[1],path:linked})).status).toBe(400);
  expect((await call('account-commands','setAssetDirectory',{accountId:accounts[1],path:f.root})).status).toBe(400);
  await f.restart();

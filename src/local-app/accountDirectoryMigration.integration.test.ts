@@ -41,6 +41,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('migration mount failure 
  const account=(await f.c.query('SELECT account_id FROM public.episodes WHERE id=$1',[f.episode])).rows[0].account_id,target=join(f.root,'recover-target');await mkdir(target);
  const call=async(command:string,data:Record<string,unknown>)=>{const r=await fetch(f.origin+'/api/local/account-commands',{method:'POST',headers:{Origin:f.origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+f.token,'X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command,data:{accountId:account,...data},idempotencyKey:randomUUID()})});return{status:r.status,body:await r.json()};};
  const nested=join(f.assetRoot,'bad-nested');await mkdir(nested);expect((await call('planAssetDirectoryMigration',{path:nested})).status).toBe(409);
+ const tricky=join(f.assetRoot,'..nested-target');await mkdir(tricky);expect((await call('planAssetDirectoryMigration',{path:tricky})).status).toBe(409);
  const alias=join(f.root,'bad-alias');await symlink(target,alias);expect((await call('planAssetDirectoryMigration',{path:alias})).status).toBe(400);
  const plan=await call('planAssetDirectoryMigration',{path:target});expect(plan.status,JSON.stringify(plan.body)).toBe(200);
  await rename(target,target+'-offline');
