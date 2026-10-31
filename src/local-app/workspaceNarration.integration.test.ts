@@ -1,4 +1,5 @@
 // @vitest-environment node
+import {editStudioDocument} from './studioDocument.fixture';
 import {workspaceTestMedia} from './workspaceTestMedia.fixture';
 import {it,expect} from 'vitest';
 import {writeFile,readFile} from 'node:fs/promises';
@@ -34,7 +35,8 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('confirmed narration uses
   const assembled=await f.request('refreshWorkspaceNarration',{workspaceId:w.id,expectedRevision:w.revision});expect(assembled.status,JSON.stringify(assembled.body)).toBe(200);expect(assembled.body.narration[0].adoptedAudioTrackId).toBe(ready.narration[0].audioTrackId);
   const project=JSON.parse(await readFile(join(f.assetRoot,assembled.body.project.relativePath),'utf8'));const item=project.timelines[0].items.find((i:any)=>i.id===ready.narration[0].itemId);expect(item.durationInFrames).toBe(72);expect(item.sourceAssetId).toBe('audio-track-'+ready.narration[0].audioTrackId);expect(project.timelines[0].items.find((i:any)=>i.id===w.clips[1].itemId).startFrame).toBe(72);
   expect((await readFile(f.submissions,'utf8')).trim().split('\n')).toHaveLength(1);
-  const opened=await f.request('openWorkspaceStudio',{workspaceId:w.id,expectedRevision:assembled.body.revision});expect(opened.status,JSON.stringify(opened.body)).toBe(200);await f.closeStudio();
+  const imported=await f.request('importMaterial',{sourceKind:'file',sourcePath:'matched.mp4',materialType:'video',materialPurpose:'a_roll',mimeType:'video/mp4',isMainScript:false,contentBase64:(await readFile(workspaceTestMedia('landscape-red-blue.mp4'))).toString('base64')});expect(imported.status).toBe(200);let matched=assembled.body;for(const clip of matched.clips){const m=await f.request('matchWorkspaceMaterial',{workspaceId:matched.id,expectedRevision:matched.revision,clipId:clip.id,materialRevisionId:imported.body.id});expect(m.status,JSON.stringify(m.body)).toBe(200);matched=m.body;}
+  const opened=await f.request('openWorkspaceStudio',{workspaceId:matched.id,expectedRevision:matched.revision});expect(opened.status,JSON.stringify(opened.body)).toBe(200);await f.closeStudio();
  }finally{await f.close();}
 },120_000);
 
@@ -108,7 +110,8 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each([false,true])('actua
    expect(fill.status,JSON.stringify(fill.body)).toBe(200);w=fill.body;
    const refresh=await f.request('refreshWorkspaceNarration',{workspaceId:w.id,expectedRevision:w.revision});expect(refresh.status,JSON.stringify(refresh.body)).toBe(200);w=refresh.body;
    const doc=JSON.parse(await readFile(join(f.assetRoot,w.project.relativePath),'utf8'));expect(doc.timelines[0].items.find((i:any)=>i.id===w.clips[0].itemId).durationInFrames).toBe(72);expect(doc.timelines[0].items.find((i:any)=>i.id===speech.itemId).durationInFrames).toBe(72);
-   const opened=await f.request('openWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision});expect(opened.status,JSON.stringify(opened.body)).toBe(200);await f.closeStudio();
+   w=await f.fillVisuals(w);
+  const opened=await f.request('openWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision});expect(opened.status,JSON.stringify(opened.body)).toBe(200);await f.closeStudio();
    const {execFile}=await import('node:child_process'),{promisify}=await import('node:util'),{inspectMp4Artifact}=await import('../worker/mediaTools');const spec=join(f.root,'narration-video-render.json'),output=join(f.root,'narration-video.mp4');
    await writeFile(spec,JSON.stringify({openchatcutRoot:f.runtime.root,assetRoot:f.assetRoot,outputPath:output,state:{...doc.timelines[0],width:180,height:320},sources:doc.assets.map((a:{src:string})=>({relativePath:a.src}))}));
    await promisify(execFile)(process.execPath,['scripts/openchatcut-render.mjs',spec],{timeout:120000,maxBuffer:4*1024*1024});const rendered=await inspectMp4Artifact(output);expect(rendered.hasAudio).toBe(true);expect(rendered.durationSeconds).toBeGreaterThanOrEqual(4.4);expect(rendered.durationSeconds).toBeLessThan(4.5);
@@ -121,8 +124,9 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each([false,true])('actua
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('first speech remains a candidate after a real native save and never overwrites the edited project',async()=>{
  const f=await narrationFixture();try{
   await f.authorize();let w=f.made;const base={workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[0].id};await f.request('saveWorkspaceNarration',{...base,mode:'tts',text:'手改后保留原工程。'});await f.request('confirmWorkspaceNarration',base);const queued=await f.request('generateWorkspaceNarration',base);
+  w=await f.fillVisuals(w);
   const opened=await f.request('openWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision});expect(opened.status,JSON.stringify(opened.body)).toBe(200);w=opened.body.productionWorkspace;
-  const nativePath=join(f.assetRoot,`episodes/${f.episode}/openchatcut-work/current/runtime/project-store-v1.json`),store=JSON.parse(await readFile(nativePath,'utf8'));store.entries[`project:${w.project.projectId}`].timelines[0].items[0].transform.x=17;await writeFile(nativePath,JSON.stringify(store));
+  await editStudioDocument(opened.body.studioUrl,w.project.projectId,doc=>{doc.timelines[0].items[0].transform.x=17;});
   const saved=await f.request('saveWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision,workspaceRelativePath:opened.body.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:opened.body.workspace.sha256});expect(saved.status,JSON.stringify(saved.body)).toBe(200);w=saved.body.productionWorkspace;await f.request('closeWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision});
   expect((await f.execute(queued.body.narration[0].taskId))?.status).toBe('completed');const refreshed=await f.request('refreshWorkspaceNarration',{workspaceId:w.id,expectedRevision:w.revision});expect(refreshed.status).toBe(200);expect(refreshed.body.project.sha256).toBe(w.project.sha256);expect(refreshed.body.narration[0].audioTrackId).toBeTruthy();expect(refreshed.body.narration[0].adoptedAudioTrackId).toBeNull();
   const doc=JSON.parse(await readFile(join(f.assetRoot,w.project.relativePath),'utf8'));expect(doc.timelines[0].items[0].transform.x).toBe(17);
