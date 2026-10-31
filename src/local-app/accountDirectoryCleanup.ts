@@ -9,6 +9,20 @@ export interface EmptyAccountDirectory {
  ino:string;
 }
 
+/** Only captured registrations can authorize empty child cleanup after FK removal. */
+export async function planRegisteredEmptyAccountDirectories(root:{actual_root:string;device_id:string;inode_id:string}|undefined,containers:{directory_relative_path:string;device_id:string;inode_id:string}[]):Promise<EmptyAccountDirectory[]>{
+ if(!root)return[];const targets:EmptyAccountDirectory[]=[];
+ try{
+  const identity=await safeDirectory(root.actual_root);if(identity.dev!==root.device_id||identity.ino!==root.inode_id)return[];
+  for(const container of containers){
+   const path=join(root.actual_root,container.directory_relative_path);if(!assetPathWithin(root.actual_root,path))continue;
+   try{const actual=await safeDirectory(path);if(actual.dev===container.device_id&&actual.ino===container.inode_id&&(await readdir(path)).length===0)targets.push({path,aliases:[path],...actual});}catch{/* Unavailable, replaced or nonempty containers stay. */}
+  }
+  const removable=new Set(targets.map(target=>target.path));if((await readdir(root.actual_root)).every(name=>removable.has(join(root.actual_root,name))))targets.push({path:root.actual_root,aliases:[root.actual_root],...identity});
+ }catch{/* Unavailable or replaced roots remain. */}
+ return targets.sort((a,b)=>b.path.split('/').length-a.path.split('/').length);
+}
+
 async function safeDirectory(path:string){
  const stat=await lstat(path,{bigint:true});
  if(!stat.isDirectory()||stat.isSymbolicLink()||await realpath(path)!==path)throw Error('账号目录不是独立目录。');

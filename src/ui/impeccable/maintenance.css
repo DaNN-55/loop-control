@@ -168,3 +168,4 @@ html[data-interface="impeccable"] .product-ui .secret-notices:empty {display:non
 html[data-interface="impeccable"] .product-ui .history-ui .history-content-only {align-items:center!important;align-self:end!important;min-height:36px!important;padding-bottom:0!important}
 
 html[data-interface="impeccable"] .product-ui .connection-workspace .dan-select-field {max-width:644px}
+html[data-interface="impeccable"] .product-ui .episode-deletion-paths small { display:block; margin-top:4px; color:var(--lc-muted); }

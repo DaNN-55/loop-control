@@ -1,5 +1,44 @@
 import * as fs from "node:fs/promises";
 import{resolve,relative,isAbsolute,parse}from"node:path";
+import {deletionFileFingerprint,verifyEpisodeDeletionTarget,type EpisodeDeletionTarget,type DeletionFile} from '../local-app/episodeDeletionTargets.js';
+
+async function exactFile(file:DeletionFile,path:string,links=1n){
+ const current=await deletionFileFingerprint(path,links);if(current.identity.dev!==file.identity.dev||current.identity.ino!==file.identity.ino||current.sha256!==file.sha256||current.bytes!==file.bytes)throw Error('删除文件身份或指纹已变化：'+path);
+}
+export async function stageConfirmedEpisodeFiles(target:EpisodeDeletionTarget){
+ await verifyEpisodeDeletionTarget(target,'original');
+ for(const file of target.files??[]){
+  const original=await optionalEntry(file.path),staged=await optionalEntry(file.stagingPath);
+  if(staged){if(original){await exactFile(file,file.path,2n);await exactFile(file,file.stagingPath,2n);await fs.unlink(file.path);}else await exactFile(file,file.stagingPath);continue;}
+  if(!original)throw Error('已确认文件缺失：'+file.path);await exactFile(file,file.path);
+  // Hard-link publication fails atomically if an unknown destination appears.
+  // The durable manifest also recovers the link-before-unlink crash window.
+  await fs.link(file.path,file.stagingPath);await exactFile(file,file.path,2n);await exactFile(file,file.stagingPath,2n);await fs.unlink(file.path);
+ }
+}
+export async function restoreConfirmedEpisodeFiles(target:EpisodeDeletionTarget){
+ await verifyEpisodeDeletionTarget(target,'staged');
+ for(const file of [...target.files??[]].reverse()){
+  if(!await optionalEntry(file.stagingPath))continue;
+  if(await optionalEntry(file.path)){
+   try{await exactFile(file,file.path);continue;}catch{/* A matching original plus an unknown staging conflict was never moved. */}
+   try{await exactFile(file,file.path,2n);await exactFile(file,file.stagingPath,2n);await fs.unlink(file.stagingPath);continue;}catch{throw Error('原文件位置已被占用，未覆盖：'+file.path);}
+  }
+  await exactFile(file,file.stagingPath);await fs.link(file.stagingPath,file.path);await exactFile(file,file.stagingPath,2n);await exactFile(file,file.path,2n);await fs.unlink(file.stagingPath);
+ }
+}
+export async function finalizeConfirmedEpisodeFiles(target:EpisodeDeletionTarget){
+ await verifyEpisodeDeletionTarget(target,'staged');
+ for(const file of target.files??[]){
+  if(await optionalEntry(file.path))throw Error('已删除文件原位置重新出现，未扩大清理范围。');
+  if(!await optionalEntry(file.stagingPath))continue;await exactFile(file,file.stagingPath);await fs.unlink(file.stagingPath);
+ }
+ for(const directory of [...target.directories??[]].reverse()){
+  const actual=await optionalEntry(directory.path);if(!actual)continue;
+  if(!actual.isDirectory()||actual.isSymbolicLink()||String(actual.dev)!==directory.identity.dev||String(actual.ino)!==directory.identity.ino)throw Error('已确认空目录身份已变化。');
+  await removeEmptyCleanupDirectory(directory.path);
+ }
+}
 const isEpisodeId=(id:string)=>/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
 function isDescendant(root:string,path:string){const r=relative(root,path);return !!r&&!r.startsWith("..")&&!isAbsolute(r);}
 function isFilesystemRoot(path:string){return parse(resolve(path)).root===resolve(path);}

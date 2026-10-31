@@ -11,15 +11,17 @@ import {tmpdir} from 'node:os';
 import {readFileSync,mkdtempSync,realpathSync,mkdirSync,writeFileSync,existsSync,rmSync,chmodSync,lstatSync} from 'node:fs';
 import {Pool,type PoolClient} from 'pg';
 import {createLocalHandler} from './localRoute';
+import {copyFixtureSchema} from './fixtureSchema';
 import {hashPassword} from './password';
 import {csrfFor,tokenHash,sessionCookie} from './sessions';
 
 it.skipIf(process.env.LOOP_ACCOUNT_DELETION_ACCEPTANCE!=='1').each(['empty','nonempty','shared'])('%s: deletes an account through Owner HTTP, cleaning only empty exclusive roots and preserving history and deletion guards',async(mode)=>{
- const {runtimeContext}=await import(join(process.cwd(),'scripts/runtime/environment.mjs')),context=runtimeContext();
- const database='loop_account_delete_test_'+randomBytes(8).toString('hex');
+ if(!process.env.LOOP_TEST_CONTEXT_MODULE)throw Error('Explicit isolated test context required');
+ const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MODULE),context=runtimeContext();context.assertDatabase();
+ const database='loop_account_delete_test_'+randomBytes(6).toString('hex');
  context.sql('CREATE DATABASE '+database+' TEMPLATE template0','postgres');
  try{
-  context.sql(context.docker(['exec',context.container,'pg_dump','-U','postgres','-d',context.database,'--schema-only']),database);
+  await copyFixtureSchema(context,database,['db/local/110-episode-storage-locations.sql','db/local/111-global-media-root.sql','db/local/112-series-extension-rules.sql','db/local/113-automatic-account-directories.sql','db/local/114-series-storage-containers.sql','db/local/115-exact-episode-deletion-intents.sql','db/local/117-input-storage-locations.sql','db/local/118-visual-storage-locations.sql','db/local/119-audio-caption-storage-locations.sql']);
  }catch(error){context.sql('DROP DATABASE '+database+' WITH (FORCE)','postgres');throw error;}
  const bridge=spawn('docker',['exec','-i',context.container,'perl','-MIO::Socket::UNIX','-MIO::Select','-MSocket=SOCK_STREAM','-e',"my $s=IO::Socket::UNIX->new(Type=>SOCK_STREAM,Peer=>'/var/run/postgresql/.s.PGSQL.5432') or die 'socket'; my $sel=IO::Select->new(\\*STDIN,$s); while(1){for my $f($sel->can_read){my $n=sysread($f,my $b,65536);exit unless $n;my $o=fileno($f)==0?$s:\\*STDOUT;while(length $b){my $w=syswrite($o,$b);die 'write' unless $w;substr($b,0,$w,'');}}}"],{env:context.env,stdio:['pipe','pipe','pipe']});
  const stream=Duplex.from({readable:bridge.stdout!,writable:bridge.stdin!});

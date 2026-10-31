@@ -11,12 +11,14 @@ import {tmpdir} from 'node:os';
 import {existsSync,chmodSync,mkdirSync,mkdtempSync,readFileSync,realpathSync,rmSync,writeFileSync,unlinkSync} from 'node:fs';
 import {Pool} from 'pg';
 import {createLocalHandler} from './localRoute';
+import {copyFixtureSchema} from './fixtureSchema';
 import {hashPassword} from './password';
 import {csrfFor,tokenHash,sessionCookie} from './sessions';
 
 it.skipIf(process.env.LOOP_HISTORY_DELETE_ACCEPTANCE!=='1')('deletes only the confirmed history, live order and exclusive files through real Owner HTTP',async()=>{
- const {runtimeContext}=await import(join(process.cwd(),'scripts/runtime/environment.mjs')),context=runtimeContext();
- const database='loop_history_delete_'+randomBytes(8).toString('hex');context.sql('CREATE DATABASE '+database+' TEMPLATE template0','postgres');
+ if(!process.env.LOOP_TEST_CONTEXT_MODULE)throw Error('Explicit isolated test context required');
+ const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MODULE),context=runtimeContext();context.assertDatabase();
+ const database='loop_history_delete_'+randomBytes(6).toString('hex');context.sql('CREATE DATABASE '+database+' TEMPLATE template0','postgres');
  const temporary=realpathSync(mkdtempSync(join(tmpdir(),'loop-history-delete-'))),media=join(temporary,'media'),root=join(media,'account'),historyRoot=join(temporary,'history');mkdirSync(root,{recursive:true});mkdirSync(historyRoot);
  const bridges:ChildProcess[]=[];
  function connection(){
@@ -34,7 +36,7 @@ it.skipIf(process.env.LOOP_HISTORY_DELETE_ACCEPTANCE!=='1')('deletes only the co
  const directory=join(root,'episodes',episode);mkdirSync(directory,{recursive:true});writeFileSync(join(directory,'output.bin'),contents[0]);writeFileSync(join(root,'keep.txt'),'unrelated original');
  const asAdmin=async(sql:string,values?:unknown[])=>{await pool.query('RESET SESSION AUTHORIZATION');try{return await pool.query(sql,values);}finally{await pool.query('SET SESSION AUTHORIZATION loop_app');}};
  try{
-  context.sql(context.docker(['exec',context.container,'pg_dump','-U','postgres','-d',context.database,'--schema-only']),database);
+  await copyFixtureSchema(context,database,['db/local/110-episode-storage-locations.sql','db/local/111-global-media-root.sql','db/local/112-series-extension-rules.sql','db/local/113-automatic-account-directories.sql','db/local/114-series-storage-containers.sql','db/local/115-exact-episode-deletion-intents.sql','db/local/117-input-storage-locations.sql','db/local/118-visual-storage-locations.sql','db/local/119-audio-caption-storage-locations.sql']);
   if(!(await pool.query("SELECT to_regclass('local_identity.history_episode_deletions') present")).rows[0].present)await pool.query(readFileSync('db/local/077-history-episode-deletion.sql','utf8'));
   await pool.query(readFileSync('db/local/078-history-deletion-child-ownership.sql','utf8'));
   await pool.query('INSERT INTO local_identity.owners(id,email)VALUES($1,$2),($3,$4)',[owner,'fixture-'+owner+'@example.invalid',other,'fixture-'+other+'@example.invalid']);
