@@ -86,11 +86,11 @@ describe("approval console", () => {
 
     await user.click(screen.getByRole("button", { name: "创建生产单" }));
 
-    expect(await screen.findByText("创建前可生产性检查：未通过（1）")).toBeTruthy();
-    const preflightDetails = screen.getByText("创建前可生产性检查：未通过（1）").closest("details");
+    expect(await screen.findByText("创建条件未满足（1）")).toBeTruthy();
+    const preflightDetails = screen.getByText("创建条件未满足（1）").closest("details");
     expect(preflightDetails).toBeTruthy();
     expect((preflightDetails as HTMLDetailsElement).open).toBe(false);
-    expect(screen.getByText("本次检查未通过，因此尚未创建生产单。处理下面的原因后，点击“创建生产单”重新检查。")).toBeTruthy();
+    expect(screen.getByText("生产单尚未创建。处理以下原因后重试。")).toBeTruthy();
     expect(screen.getByText("蓝图能力配置需要修复")).toBeTruthy();
     expect(onSubmit).toHaveBeenCalledWith({ accountId: account.id, isTest: false, seriesVersionId: null, title: "" });
   });
@@ -101,8 +101,8 @@ describe("approval console", () => {
     render(<EpisodeForm accounts={[account]} creationStartedAt={Date.now()} creationStep="preflight" isPending onClose={vi.fn()} onSubmit={vi.fn()} series={[]} seriesVersions={[]} />);
 
     expect(screen.getByRole("status").textContent).toContain("正在创建生产单");
-    expect(screen.getByText("检查生产条件")).toBeTruthy();
-    expect(screen.getByText(/验证当前蓝图、Worker、模型和已启用连接。 本阶段已等待 0 秒。/)).toBeTruthy();
+    expect(screen.getByText("创建生产单")).toBeTruthy();
+    expect(screen.getByText(/冻结当前蓝图和系列版本。 本阶段已等待 0 秒。/)).toBeTruthy();
     expect(screen.getByText("创建生产单")).toBeTruthy();
     expect(screen.getByRole("button", { name: "正在处理…" }).hasAttribute("disabled")).toBe(true);
   });
@@ -189,8 +189,8 @@ describe("approval console", () => {
     await user.click(screen.getByRole("tab", { name: "蓝图" }));
     await user.clear(screen.getByLabelText("账号定位"));
     await user.type(screen.getByLabelText("账号定位"), "新定位");
-    await user.click(screen.getByRole("button", { name: /保存蓝图|保存并检查/ }));
-    await user.click(screen.getByRole("button", { name: "确认保存并检查" }));
+    await user.click(screen.getByRole("button", { name: /保存蓝图|保存蓝图/ }));
+    await user.click(screen.getByRole("button", { name: "确认保存蓝图" }));
 
     await waitFor(() => expect(onUpdateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ positioning: "新定位", soundtrack: expect.objectContaining({ executor: expect.objectContaining({ adapter: "freesound_preview" }) }) })));
   });

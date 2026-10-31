@@ -7,7 +7,6 @@ import {sessionTransaction} from './ownerTransaction.js';
 import {ConfigurationError} from './configurationCommands.js';
 import {resolveLocalAssetRoot} from './mediaDeployment.js';
 import type {LocalEpisodeCommands} from './episodeCommands.js';
-import {workerPreflightVersion} from '../worker/contracts.js';
 const exec=promisify(execFile),uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export interface AccountDirectoryActions{choose(root:string,signal:AbortSignal):Promise<string|null>;open(path:string):Promise<void>}
 const nativeDirectories:AccountDirectoryActions={
@@ -22,7 +21,7 @@ export class LocalAccountCommands{
  private choosing=false;
  private chooserAbort?:AbortController;
  private closed=false;
- constructor(private pool:Pool,private mediaRoot:string,private episodes?:LocalEpisodeCommands,private directories:AccountDirectoryActions=nativeDirectories){}
+ constructor(private pool:Pool,private mediaRoot:string,_episodes?:LocalEpisodeCommands,private directories:AccountDirectoryActions=nativeDirectories){}
  close(){this.closed=true;this.chooserAbort?.abort();}
  private async account(c:PoolClient,session:OwnerSession,id:unknown){
   if(!(await c.query('SELECT local_identity.lock_owned_account_row($1) owned',[id])).rows[0].owned)throw new ConfigurationError(404,'账号不可见。');
@@ -31,15 +30,8 @@ export class LocalAccountCommands{
  }
  async execute(session:OwnerSession,body:Record<string,unknown>,signal?:AbortSignal){
   if(this.closed)throw new ConfigurationError(503,'本机服务正在退出。');
-  if(!['chooseAssetDirectory','openAssetDirectory','checkBlueprint'].includes(String(body.command))||Object.keys(body).some(k=>!['command','data','idempotencyKey'].includes(k))||typeof body.idempotencyKey!=='string'||!uuid.test(body.idempotencyKey)||!body.data||typeof body.data!=='object'||Array.isArray(body.data))throw new ConfigurationError(400,'账号本机操作无效。');
+  if(!['chooseAssetDirectory','openAssetDirectory'].includes(String(body.command))||Object.keys(body).some(k=>!['command','data','idempotencyKey'].includes(k))||typeof body.idempotencyKey!=='string'||!uuid.test(body.idempotencyKey)||!body.data||typeof body.data!=='object'||Array.isArray(body.data))throw new ConfigurationError(400,'账号本机操作无效。');
   const data=body.data as Record<string,unknown>,choose=body.command==='chooseAssetDirectory';
-  if(body.command==='checkBlueprint'){
-   if(Object.keys(data).some(k=>!['accountId','blueprintVersionId','expectedRevision'].includes(k))||typeof data.accountId!=='string'||!uuid.test(data.accountId)||typeof data.blueprintVersionId!=='string'||!uuid.test(data.blueprintVersionId)||typeof data.expectedRevision!=='string'||!/^[a-f0-9]{32}$/.test(data.expectedRevision))throw new ConfigurationError(400,'蓝图检查参数无效。');
-   return sessionTransaction(this.pool,session,async c=>{const a=await this.account(c,session,data.accountId);if(a.current_blueprint_version_id!==data.blueprintVersionId||a.revision!==data.expectedRevision)throw new ConfigurationError(409,'蓝图已变化，请刷新后重新检查。');
-    if(!this.episodes)return{version:workerPreflightVersion,checks:[{capability:'worker_runtime',check:'command_availability',phase:'preflight',status:'unavailable',reason:'本地 Worker 尚未配置；请检查批准的部署配置。',scope:'worker',action:'contact_environment_admin'}]};
-    return this.episodes.blueprintPreflight(c,a.id,a.policy);
-   });
-  }
   if(typeof data.accountId!=='string'||!uuid.test(data.accountId)||Object.keys(data).some(k=>!['accountId',...(choose?[]:['path'])].includes(k))||!choose&&(typeof data.path!=='string'||!data.path.trim()||data.path.length>4096))throw new ConfigurationError(400,'账号或目录参数无效。');
   if(choose){
    await sessionTransaction(this.pool,session,c=>this.account(c,session,data.accountId));

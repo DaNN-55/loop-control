@@ -31,7 +31,7 @@ export type MediaAdapterForm = {
 export interface BlueprintFormValues {
   positioning: string;
   assetRoot: string;
-  approvalGates: string[];
+  legacyApprovalGates?: Json;
   allowedTools: string[];
   enabledMediaAdapters?: ConfigurableMediaAdapterKey[];
   budgets: { scriptWritingCents: string; visualPlanningCents: string; storyboardPlanningCents: string };
@@ -244,7 +244,7 @@ export function blueprintPolicyToForm(policy: Json): BlueprintFormValues {
   return {
     positioning: stringValue(value.positioning),
     assetRoot: stringValue(value.asset_root),
-    approvalGates: Array.isArray(value.approval_gates) ? stringArray(value.approval_gates).filter((gate) => gate !== "publish") : ["script", "visual", "storyboard", "qc"],
+    legacyApprovalGates: value.approval_gates,
     allowedTools: fallbackMediaAdapterTools,
     enabledMediaAdapters,
     budgets: { scriptWritingCents: "0", visualPlanningCents: "0", storyboardPlanningCents: "0" },
@@ -275,7 +275,7 @@ export function blueprintFormToPolicy(form: BlueprintFormValues): Json {
     ...advanced,
     positioning: form.positioning.trim(),
     asset_root: form.assetRoot.trim(),
-    approval_gates: form.approvalGates,
+    ...(form.legacyApprovalGates === undefined ? {} : { approval_gates: form.legacyApprovalGates }),
     budgets: { script_writing_cents: 0, storyboard_planning_cents: 0 },
     executors: {
       ...existingExecutors,

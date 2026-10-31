@@ -14,7 +14,7 @@ describe("账号蓝图表单转换", () => {
   it("保留明确关闭的全部人工审批关卡", () => {
     const form = blueprintPolicyToForm({ approval_gates: [] });
 
-    expect(form.approvalGates).toEqual([]);
+    expect(form.legacyApprovalGates).toEqual([]);
     expect(blueprintFormToPolicy(form)).toMatchObject({ approval_gates: [] });
   });
 
@@ -177,7 +177,7 @@ describe("账号蓝图表单转换", () => {
     const result = blueprintFormToPolicy({
       positioning: "新的账号定位",
       assetRoot: "/Volumes/Media/new",
-      approvalGates: ["script", "publish"],
+      legacyApprovalGates: ["script", "publish"],
       allowedTools: ["read", "write", "network"],
       budgets: { scriptWritingCents: "10", visualPlanningCents: "20", storyboardPlanningCents: "30" },
       executors: {
