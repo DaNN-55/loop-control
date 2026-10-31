@@ -28,8 +28,8 @@ export async function createAccountDirectory(pool:Pool,session:OwnerSession,key:
   });
   if('legacyReceipt' in intent)return intent.legacyReceipt;
   const markerPath=join(intent.path,'.loop-control-creation.json'),marker=JSON.stringify({accountId:intent.account_id,token:intent.marker});
-  await verifyMediaRootBinding(intent.root_binding,intent.result?0:1024*1024);
-  if(intent.result){await transaction(c=>requireAccountAssetRoot(c,mediaRoot,intent.account_id));try{const directory=await inspectMediaRoot(intent.path);if(directory.deviceId===intent.device_id&&directory.inodeId===intent.inode_id&&await ownsMarker(markerPath,marker,intent.marker_device_id,intent.marker_inode_id))await unlink(markerPath);}catch{/* Missing or changed marker is not deletion authority. */}return intent.result;}
+  if(intent.result){await transaction(c=>requireAccountAssetRoot(c,mediaRoot,intent.account_id));return intent.result;}
+  await verifyMediaRootBinding(intent.root_binding,1024*1024);
   try{
    let made=false;
    try{await mkdir(intent.path,{mode:0o700});made=true;}catch(e){if((e as NodeJS.ErrnoException).code!=='EEXIST')throw e;}

@@ -12,7 +12,13 @@ export function readMediaRootAuthorization(d){
  if(binding.path!==d.mediaRoot||d.worker&&d.worker.mountPath!==binding.mountPath)throw Error('Media root configuration mismatch');
  const receiptPath=mediaRootReceiptPath(d),receiptStat=lstatSync(receiptPath);if(receiptStat.isSymbolicLink()||receiptStat.uid!==process.getuid?.()||(receiptStat.mode&0o077)!==0||realpathSync(receiptPath)!==receiptPath)throw Error('Media root receipt must be private and owned');
  const receipt=JSON.parse(readFileSync(receiptPath,'utf8'));
- if(receipt.operation!=='initialize'||receipt.database!==d.database.database||!sameBinding(receipt.binding,binding)||receipt.publicationFence!==true)throw Error('Media root initialization receipt mismatch');
+ if(!['initialize','restore'].includes(receipt.operation)||receipt.database!==d.database.database||!sameBinding(receipt.binding,binding)||receipt.publicationFence!==true)throw Error('Media root initialization receipt mismatch');
+ if(receipt.operation==='restore'){
+  if(!d.restoreReceiptPath||receipt.restoreReceiptPath!==d.restoreReceiptPath)throw Error('Restore receipt authorization mismatch');
+  const restoreStat=lstatSync(d.restoreReceiptPath);if(!restoreStat.isFile()||restoreStat.isSymbolicLink()||restoreStat.nlink!==1||restoreStat.uid!==process.getuid?.()||(restoreStat.mode&0o077)!==0||realpathSync(d.restoreReceiptPath)!==d.restoreReceiptPath)throw Error('Restore receipt must be private and owned');
+  const restored=JSON.parse(readFileSync(d.restoreReceiptPath,'utf8'));
+  if(restored.passed!==true||restored.publicationFence!==true||restored.database!==d.database.database||restored.mediaRoot!==d.mediaRoot||restored.archiveSha256!==receipt.archiveSha256||!sameBinding(restored.binding,binding))throw Error('Restored deployment receipt mismatch');
+ }
  const stat=lstatSync(binding.path,{bigint:true});
  if(!stat.isDirectory()||stat.isSymbolicLink()||stat.uid!==BigInt(process.getuid?.()??stat.uid)||realpathSync(binding.path)!==binding.path||String(stat.dev)!==binding.deviceId||String(stat.ino)!==binding.inodeId)throw Error('Media root identity changed');
  let mountPath=binding.path;while(dirname(mountPath)!==mountPath&&lstatSync(dirname(mountPath),{bigint:true}).dev===stat.dev)mountPath=dirname(mountPath);
@@ -49,16 +55,18 @@ export async function mediaRootWorkerSettings(d,binding){
  }
  return{...d.worker,mountPath:binding.mountPath,...(alignment?{alignment}:{})};
 }
-export async function persistMediaRootDeployment(d,binding){
+export async function persistMediaRootDeployment(d,binding,publication={operation:'initialize'}){
+ if(!['initialize','restore'].includes(publication.operation)||publication.operation==='restore'&&(!publication.restoreReceiptPath||!/^[a-f0-9]{64}$/.test(publication.archiveSha256??'')))throw Error('Invalid media publication authority');
  if(!d.deploymentFile)throw Error('Deployment configuration is not writable');
  for(const path of [d.deploymentFile,d.runtimeRoot]){const stat=await lstat(path);if(stat.isSymbolicLink()||stat.uid!==process.getuid?.()||(stat.mode&0o077)!==0||await realpath(path)!==path)throw Error('Deployment configuration must be private and owned');}
  const configBytes=await readFile(d.deploymentFile),settings=JSON.parse(configBytes.toString());
+ if(publication.operation==='restore'&&(settings.database?.database!==d.database.database||settings.workerDatabase?.database!==d.database.database||settings.storageOwnerId!==publication.storageOwnerId))throw Error('Restored deployment identity changed');
  if(settings.mediaRoot!==d.mediaRoot)throw Error('Deployment media root changed; reload before retry');
  const receiptPath=mediaRootReceiptPath(d),oldReceipt=await readFile(receiptPath).catch(error=>{if(error.code==='ENOENT')return null;throw error;});
  const pendingPath=mediaRootPendingPath(d);if(readPendingMediaRootDeployment(d))throw Error('Media initialization recovery required');
- const next={...settings,mediaRoot:binding.path,mediaRootBinding:binding,worker:await mediaRootWorkerSettings(settings,binding)};
+ const next={...settings,mediaRoot:binding.path,mediaRootBinding:binding,...(publication.operation==='restore'?{restoreReceiptPath:publication.restoreReceiptPath}:{}),worker:await mediaRootWorkerSettings(settings,binding)};
  const undo=async()=>{await atomicPrivateFile(d.deploymentFile,configBytes);if(oldReceipt)await atomicPrivateFile(receiptPath,oldReceipt);else await unlink(receiptPath).catch(error=>{if(error.code!=='ENOENT')throw error;});await unlink(pendingPath).catch(error=>{if(error.code!=='ENOENT')throw error;});};
- try{await atomicPrivateFile(pendingPath,JSON.stringify({version:1,database:d.database.database,previousSettings:configBytes.toString(),previousReceipt:oldReceipt?.toString()??null,target:binding})+'\n');await atomicPrivateFile(receiptPath,JSON.stringify({version:1,operation:'initialize',database:d.database.database,binding,publicationFence:true})+'\n');await atomicPrivateFile(d.deploymentFile,JSON.stringify(next,null,2)+'\n');}catch(error){await undo();throw error;}
+ try{await atomicPrivateFile(pendingPath,JSON.stringify({version:1,database:d.database.database,previousSettings:configBytes.toString(),previousReceipt:oldReceipt?.toString()??null,target:binding})+'\n');await atomicPrivateFile(receiptPath,JSON.stringify({version:1,...publication,database:d.database.database,binding,publicationFence:true})+'\n');await atomicPrivateFile(d.deploymentFile,JSON.stringify(next,null,2)+'\n');}catch(error){await undo();throw error;}
  undo.commit=async()=>{await unlink(pendingPath).catch(error=>{if(error.code!=='ENOENT')throw error;});};
  return undo;
 }

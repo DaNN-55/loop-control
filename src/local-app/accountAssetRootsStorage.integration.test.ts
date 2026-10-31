@@ -1,23 +1,21 @@
 // @vitest-environment node
 import {it,expect} from 'vitest';
 import {randomUUID} from 'node:crypto';
-import {mkdtemp,rm,readFile} from 'node:fs/promises';
-import {mkdirSync,realpathSync} from 'node:fs';
-import {join,relative,isAbsolute} from 'node:path';
+import {mkdtemp,rm,readFile,mkdir} from 'node:fs/promises';
+import {join} from 'node:path';
 import {createServer} from 'node:http';
 import {once} from 'node:events';
 import {Pool} from 'pg';
 import {embeddedStudioFixture} from './embeddedStudio.fixture';
+import {nativeStorageContext} from './nativeStorage.fixture';
 import {createLocalHandler} from './localRoute';
 import {hashPassword} from './password';
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('a real backup and fresh restore preserve independent episode files and rebind account directory identity for Owner HTTP',async()=>{
- const f=await embeddedStudioFixture(),storage=await mkdtemp('/private/tmp/loop-t07-storage-'),target='loop_t24_restore_t07_'+randomUUID().replaceAll('-','').slice(0,12);
- const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MODULE!);const context=runtimeContext();let restored=false,pool:Pool|undefined,server:ReturnType<typeof createServer>|undefined;
+ const storage=await mkdtemp('/private/tmp/loop-t07-storage-'),source='loop_t24_restore_'+randomUUID().replaceAll('-','').slice(0,12),target='loop_t24_restore_'+randomUUID().replaceAll('-','').slice(0,12);await mkdir(join(storage,'state'));
+ const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MODULE!);const context=nativeStorageContext(runtimeContext(),storage,source,target),f=await embeddedStudioFixture({databaseName:source,testRootParent:join(storage,'state')});let restored=false,pool:Pool|undefined,server:ReturnType<typeof createServer>|undefined;
  try{
  const {createNativeBackup}=await import(new URL('../../scripts/storage/backup.mjs',import.meta.url).href),{restoreNativeBackup}=await import(new URL('../../scripts/storage/restore.mjs',import.meta.url).href);
- // A real filesystem adapter restricted to this disposable storage fixture.
- const ensurePrivateDirectory=(path:string)=>{const rel=relative(storage,path);if(rel.startsWith('..')||isAbsolute(rel))throw Error('Fixture storage escape');mkdirSync(path,{recursive:true,mode:0o700});if(realpathSync(path)!==path)throw Error('Fixture storage alias');};
- const runtime={...context,root:storage,projectRoot:process.cwd(),database:f.database,mediaRoot:f.root,ensurePrivateDirectory};
+ const runtime={...context,mediaRoot:f.root};
  await f.c.query("UPDATE public.account_blueprint_versions SET policy=policy-'asset_root'");
  const jobId=randomUUID(),backupRoot=join(storage,'backups',f.database);
  const backup=await createNativeBackup({database:f.database,mediaRoot:f.root,projectRoot:process.cwd(),backupRoot,jobId},undefined,runtime);expect(backup.passed).toBe(true);

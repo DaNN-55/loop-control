@@ -1,3 +1,17 @@
+# #178 T11：真实备份与异地恢复（执行中）
+
+目标：沿现有 storage backup/restore 与登记位置链路，保存完整数据库和生产文件；恢复后全局根、账号、容器、生产单身份及部署配置一致，历史来源不改写。
+
+- [x] 真实零 import_record 备份→新库恢复→Owner HTTP 字节读回，以及恢复后再备份；真实 red→green。
+- [x] 256 KiB 文件 I/O、空目录清单、占用/递归保护、引用完整性及明确失败回执。
+- [x] 全局/账号/容器/Episode 身份重绑、原根离线的完成回执重放、实际部署新进程与缓存授权。
+- [x] 新旧、多账号/series/unassigned、原根离线、实际 SDK save-close-reopen-export；两个 headed+WebGPU 正式页面彩色播放，Finder 三层 exact target 已打开并关闭。
+- [ ] 等待最终 SQL115 集成后同步，实证删除 intent 活动/历史语义；最终复验、交接及 clean 提交。
+
+已读结果：存储整组 3 files/12 tests、既有创建/系列/媒体根 14 tests、runtime/reader/reference/adapter 18 tests 均通过且整组零跳过；额外真实旧 schema 升级前备份/恢复 forward 与完成容器重放亦通过。SQL115 尚未进入本分支，不能将兼容 guard 的静态存在写成其已验收。证据与契约位于 `/private/tmp/loop-control-178-20261031/T11-CONTRACT.md` 及 T11 日志。
+
+隔离：仅 pinned #178 test container、随机 loop_t24_restore_<12hex> DB 和本票根；baseline109 不升级；不开自动备份、不使用日常服务或付费 Provider。
+
 # 2026-10-31 #187 / T09 工程与交付位置兼容（独立验收通过，待主 Agent 关闭 Issue）
 
 - [x] 真实 Owner HTTP 新位置工程 red→green，保留外部日志。
