@@ -8,7 +8,7 @@ import{LocalAccountCommands}from'../../dist/local-app/local-app/accountCommands.
 import{appendFileSync}from'node:fs';import{join}from'node:path';
 import{createLocalDatabase}from'../../dist/local-app/local-app/catalog.js';import{createLocalHandler}from'../../dist/local-app/local-app/localRoute.js';import{readMediaDeployment}from'../../dist/local-app/local-app/mediaDeployment.js';import{startNativeWorkerService}from'../../dist/local-app/local-app/localWorkerService.js';import{LocalEpisodeCommands}from'../../dist/local-app/local-app/episodeCommands.js';import{LocalConnections}from'../../dist/local-app/local-app/connections.js';import{startNativeAutomation}from'../../dist/local-app/local-app/nativeAutomation.js';import{nativeBackup}from'../../dist/local-app/local-app/nativeBackup.js';
 export async function createNativeApplication(d){
- if(readPendingMediaRootDeployment(d)){const recovery=createLocalDatabase(d.database);try{d=recoverMediaRootDeployment(d,(await recovery.query('SELECT local_identity.media_root_binding() binding')).rows[0].binding);}finally{await recovery.end();}}
+ if(readPendingMediaRootDeployment(d)){const recovery=createLocalDatabase(d.database);try{const state=(await recovery.query("SELECT local_identity.media_root_binding() binding,coalesce(nullif(current_setting('loop.restore_state',true),''),'ready') restore_state")).rows[0];d=recoverMediaRootDeployment(d,state.binding,{restoreState:state.restore_state});}finally{await recovery.end();}}
  let current,active=d,closed=false;
  const activate=async binding=>{
   if(closed)throw Error('Native application is closing');

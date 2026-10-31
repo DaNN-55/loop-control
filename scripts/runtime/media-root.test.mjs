@@ -23,6 +23,12 @@ it('fresh processes read the shipped deployment reader with initialized external
   const binding=await inspectMediaRoot(target),undo=await persistMediaRootDeployment({...settings,deploymentFile},binding);
   await undo.commit();
   const readback=JSON.parse((await exec(process.execPath,['--input-type=module','-e',reader])).stdout);expect(readback).toEqual({mediaRoot:target,mountPath:binding.mountPath,cacheDirectory:settings.worker.alignment.cacheDirectory,backupRoot:settings.backupRoot});
+  const restoredReceiptPath=join(root,'state/restore-receipt.json'),archiveSha256='b'.repeat(64),restoredReceipt={passed:true,database:'loop_control',mediaRoot:target,binding,archiveSha256,publicationFence:true};
+  await writeFile(restoredReceiptPath,JSON.stringify(restoredReceipt),{mode:0o600});
+  const restoredSettings=JSON.parse(await readFile(deploymentFile,'utf8'));await writeFile(deploymentFile,JSON.stringify({...restoredSettings,restoreReceiptPath:restoredReceiptPath}),{mode:0o600});
+  await writeFile(join(root,'media-root-receipt.json'),JSON.stringify({operation:'restore',database:'loop_control',binding,restoreReceiptPath:restoredReceiptPath,archiveSha256,publicationFence:true}),{mode:0o600});
+  expect(JSON.parse((await exec(process.execPath,['--input-type=module','-e',reader])).stdout).mediaRoot).toBe(target);
+  await writeFile(restoredReceiptPath,JSON.stringify({...restoredReceipt,archiveSha256:'c'.repeat(64)}));await expect(exec(process.execPath,['--input-type=module','-e',reader])).rejects.toThrow('Restored deployment receipt mismatch');await writeFile(restoredReceiptPath,JSON.stringify(restoredReceipt));
   await rename(target,target+'-old');await mkdir(target,{mode:0o700});await expect(exec(process.execPath,['--input-type=module','-e',reader])).rejects.toThrow('Media root identity changed');await rm(target,{recursive:true});await rename(target+'-old',target);
   const receiptPath=join(root,'media-root-receipt.json'),receipt=JSON.parse(await readFile(receiptPath,'utf8'));await writeFile(receiptPath,JSON.stringify({...receipt,database:'foreign_database'}));await expect(exec(process.execPath,['--input-type=module','-e',reader])).rejects.toThrow('receipt mismatch');
   await undo();expect(JSON.parse((await exec(process.execPath,['--input-type=module','-e',reader])).stdout).mediaRoot).toBe(source);

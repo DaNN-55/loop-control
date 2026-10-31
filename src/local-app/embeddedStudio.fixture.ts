@@ -17,10 +17,11 @@ import { verifyOpenChatCutProject } from '../worker/openchatcutProjectReader';
 import { buildOpenChatCutProject } from '../worker/openchatcutProject';
 import { confirmedTtsRender } from '../worker/openchatcutProject.fixture';
 import { copyFixtureSchema } from './fixtureSchema';
+import {inspectMediaRoot} from './mediaRootSettings';
 const exec=promisify(execFile);
-export async function embeddedStudioFixture(options:{testRootParent?:string;origin?:string;landscape?:boolean;testContextModule?:string;openChatCutRoot?:string;migrations?:string[];episodeRelativePath?:(episodeId:string)=>string;runtime?:Partial<InputRuntime>}={}){
+export async function embeddedStudioFixture(options:{importRecord?:boolean;databaseName?:string;testRootParent?:string;origin?:string;landscape?:boolean;testContextModule?:string;openChatCutRoot?:string;migrations?:string[];episodeRelativePath?:(episodeId:string)=>string;runtime?:Partial<InputRuntime>}={}){
   const mod=options.testContextModule??process.env.LOOP_TEST_CONTEXT_MODULE??join(process.cwd(),'scripts/runtime/environment.mjs');const {runtimeContext}=await import(mod);const context=runtimeContext();context.assertDatabase();
-  const database='loop_studio_153_'+randomBytes(6).toString('hex');context.sql('CREATE DATABASE '+database+' TEMPLATE template0','postgres');
+  const database=options.databaseName??'loop_studio_153_'+randomBytes(6).toString('hex');if(!/^loop_[a-z0-9_]+_[a-f0-9]{12}$/.test(database))throw Error('Fixture database must have a random owned name');context.sql('CREATE DATABASE '+database+' TEMPLATE template0','postgres');
   try{
   await copyFixtureSchema(context,database,[...new Set([...(options.migrations??[]),'db/local/105-account-asset-directories.sql','db/local/106-account-directory-migrations.sql','db/local/110-episode-storage-locations.sql','db/local/111-global-media-root.sql','db/local/112-series-extension-rules.sql','db/local/113-automatic-account-directories.sql','db/local/114-series-storage-containers.sql','db/local/115-exact-episode-deletion-intents.sql','db/local/117-input-storage-locations.sql','db/local/118-visual-storage-locations.sql','db/local/119-audio-caption-storage-locations.sql'])].sort());
   }catch(error){context.sql('DROP DATABASE '+database+' WITH (FORCE)','postgres');throw error;}
@@ -68,10 +69,10 @@ export async function embeddedStudioFixture(options:{testRootParent?:string;orig
     await c.query("INSERT INTO public.tasks(id,episode_id,task_type,status,input_snapshot) VALUES($1,$2,'generate_review_render','completed',$3)",[task,episode,{capability:'review_rendering',review_render:frozen,input_artifacts:files}]);
     await c.query("INSERT INTO public.artifacts(id,episode_id,producer_task_id,artifact_type,relative_path,sha256,file_size) VALUES($1,$2,$3,'storyboard',$4,$5,$6),($7,$2,$3,'render',$8,$9,$10)",[boardArtifact,episode,task,boardPath,boardSha,boardBytes.length,videoArtifact,videoPath,files[0].sha256,files[0].fileSize]);
     await c.query("INSERT INTO public.review_packages(id,episode_id,stage,revision_number,artifact_id,task_id,context_snapshot) VALUES($1,$2,'storyboard_review',1,$3,$4,$5),($6,$2,'qc_review',1,$7,$4,$8)",[board,episode,boardArtifact,task,{worker_result:{storyboard:render.storyboard}},qc,videoArtifact,{project_relative_path:boardPath}]);
-    await c.query("INSERT INTO local_identity.import_record(imported_at,source_created_at,archive_sha256,source_media_root) VALUES(now(),now(),$1,$2)",['f'.repeat(64),root]);
+    if(options.importRecord!==false)await c.query("INSERT INTO local_identity.import_record(imported_at,source_created_at,archive_sha256,source_media_root) VALUES(now(),now(),$1,$2)",['f'.repeat(64),root]);
     if(options.episodeRelativePath){const identity=await lstat(join(assetRoot,episodeRelativePath),{bigint:true});await c.query('INSERT INTO local_identity.episode_asset_locations(episode_id,account_id,asset_root,directory_relative_path,directory_device_id,directory_inode_id,layout_version) VALUES($1,$2,$3,$4,$5,$6,2) ON CONFLICT(episode_id) DO UPDATE SET directory_relative_path=excluded.directory_relative_path,directory_device_id=excluded.directory_device_id,directory_inode_id=excluded.directory_inode_id,layout_version=2',[episode,account,assetRoot,episodeRelativePath,String(identity.dev),String(identity.ino)]);}
-    const rootStat=await lstat(root,{bigint:true});
-    await c.query('SELECT local_identity.bind_media_root($1,$2,$3,$4,false,$5)',[root,String(rootStat.dev),String(rootStat.ino),options.testRootParent??'/',owner]);
+    const rootBinding=await inspectMediaRoot(root);
+    await c.query('SELECT local_identity.bind_media_root($1,$2,$3,$4,false,$5)',[root,rootBinding.deviceId,rootBinding.inodeId,rootBinding.mountPath,owner]);
     await c.query('COMMIT');
 
     server.listen(0,'127.0.0.1');await once(server,'listening');started=true;const origin=options.origin??`http://127.0.0.1:${(server.address() as {port:number}).port}`;

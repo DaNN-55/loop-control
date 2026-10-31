@@ -1,3 +1,4 @@
+import{fingerprintFile}from'./file-io.mjs';
 import{readFileSync,lstatSync,realpathSync}from'node:fs';import{resolve,relative,isAbsolute,join}from'node:path';import{createHash}from'node:crypto';
 export const digest=b=>createHash('sha256').update(b).digest('hex');
 export function archiveCopies(text){
@@ -9,10 +10,13 @@ export function archiveSequences(text){return [...text.matchAll(/^SELECT pg_cata
 export function readNativeBackup(path,expected={}){
  if(realpathSync(path)!==path||!lstatSync(path).isDirectory())throw Error('Unsafe archive directory');
  for(const file of ['manifest.json','business.dump']){const p=join(path,file),s=lstatSync(p);if(!s.isFile()||s.isSymbolicLink()||s.nlink!==1||realpathSync(p)!==p)throw Error('Unsafe archive file');}
+ if(lstatSync(join(path,'manifest.json')).size>64*1024*1024)throw Error('Archive manifest exceeds 64 MiB');
  const m=JSON.parse(readFileSync(join(path,'manifest.json')));if(!['loop-native-backup/v1','loop-native-backup/v2'].includes(m.version)||!m.inventory||!Array.isArray(m.media)||!/^loop_[a-z0-9_]+$/.test(m.database)||!/^[0-9a-f-]{36}$/.test(m.jobId)||!isAbsolute(m.mediaRoot)||!m.archiveSha256?.match(/^[a-f0-9]{64}$/))throw Error('Archive format mismatch');
+ if(m.media.length+(m.mediaDirectories?.length??0)>20000)throw Error('Archive inventory exceeds 20000 entries');
  for(const[k,v]of Object.entries(expected))if(m[k]!==v)throw Error('Archive identity mismatch');
  for(const file of ['manifest.json','business.dump']){const s=lstatSync(join(path,file));if(!s.isFile()||s.isSymbolicLink()||s.nlink!==1)throw Error('Unsafe archive file');}
- if(digest(readFileSync(join(path,'business.dump')))!==m.archiveSha256)throw Error('Archive digest mismatch');
- const seen=new Set();for(const f of m.media){if(typeof f.path!=='string'||!f.path||isAbsolute(f.path)||f.path.split(/[\\/]/).some(s=>!s||s==='.'||s==='..')||seen.has(f.path)||!Number.isSafeInteger(f.bytes)||f.bytes<0||!/^[a-f0-9]{64}$/.test(f.sha256))throw Error('Unsafe media manifest');seen.add(f.path);const p=resolve(path,'media',f.path),rel=relative(join(path,'media'),p),s=lstatSync(p);if(rel.startsWith('..')||isAbsolute(rel)||realpathSync(p)!==p||!s.isFile()||s.nlink!==1||s.size!==f.bytes||digest(readFileSync(p))!==f.sha256)throw Error('Archived media mismatch');}
+ if(fingerprintFile(join(path,'business.dump')).sha256!==m.archiveSha256)throw Error('Archive digest mismatch');
+ const dirs=new Set();for(const directory of m.mediaDirectories??[]){if(typeof directory!=='string'||!directory||isAbsolute(directory)||directory.split(/[\\/]/).some(s=>!s||s==='.'||s==='..')||dirs.has(directory))throw Error('Unsafe directory manifest');dirs.add(directory);const actual=join(path,'media',directory);if(realpathSync(actual)!==actual||!lstatSync(actual).isDirectory())throw Error('Archived directory mismatch');}
+ const seen=new Set();for(const f of m.media){if(typeof f.path!=='string'||!f.path||isAbsolute(f.path)||f.path.split(/[\\/]/).some(s=>!s||s==='.'||s==='..')||seen.has(f.path)||!Number.isSafeInteger(f.bytes)||f.bytes<0||!/^[a-f0-9]{64}$/.test(f.sha256))throw Error('Unsafe media manifest');seen.add(f.path);const p=resolve(path,'media',f.path),rel=relative(join(path,'media'),p),s=lstatSync(p);if(rel.startsWith('..')||isAbsolute(rel)||realpathSync(p)!==p||!s.isFile()||s.nlink!==1||s.size!==f.bytes||fingerprintFile(p).sha256!==f.sha256)throw Error('Archived media mismatch');}
  return m;
 }
