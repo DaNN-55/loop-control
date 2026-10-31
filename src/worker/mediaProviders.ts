@@ -115,9 +115,12 @@ export async function searchPexelsVideo(input: { apiKey: string; fetcher: MediaF
   throw new Error("Pexels 未找到符合冻结时长的竖屏视频。");
 }
 
+/** Safe, locally authored search feedback; never includes Provider payloads or credentials. */
+export class FreesoundSearchError extends Error {}
+
 export async function searchFreesoundPreview(input: { apiKey: string; fetcher: MediaFetcher; query: string; targetDurationSeconds: number }): Promise<FreesoundPreview> {
-  if (!input.apiKey.trim() || !input.query.trim() || !Number.isFinite(input.targetDurationSeconds) || input.targetDurationSeconds <= 0) throw new Error("Freesound 检索配置无效。");
-  if (input.query.length > 100) throw new Error("Freesound 冻结检索词不能超过 100 个字符。");
+  if (!input.apiKey.trim() || !input.query.trim() || !Number.isFinite(input.targetDurationSeconds) || input.targetDurationSeconds <= 0) throw new FreesoundSearchError("Freesound 检索配置无效。");
+  if (input.query.length > 100) throw new FreesoundSearchError("Freesound 冻结检索词不能超过 100 个字符。");
   const endpoint = new URL("https://freesound.org/apiv2/search/");
   endpoint.searchParams.set("token", input.apiKey);
   endpoint.searchParams.set("query", input.query.replace(/\s+/g, " ").trim());
@@ -126,16 +129,16 @@ export async function searchFreesoundPreview(input: { apiKey: string; fetcher: M
   endpoint.searchParams.set("fields", "id,name,username,license,duration,url,previews");
   endpoint.searchParams.set("page_size", "50");
   const response = await input.fetcher(endpoint.toString());
+  if (!response.ok) throw new FreesoundSearchError(`Freesound 请求失败：HTTP ${response.status}。`);
   const payload: unknown = await response.json();
-  if (!response.ok) throw new Error(`Freesound 请求失败：HTTP ${response.status}。`);
-  if (!isRecord(payload) || !Array.isArray(payload.results)) throw new Error("Freesound 响应格式无效。");
+  if (!isRecord(payload) || !Array.isArray(payload.results)) throw new FreesoundSearchError("Freesound 响应格式无效。");
   for (const candidate of payload.results) {
     if (!isRecord(candidate) || typeof candidate.id !== "number" || !Number.isInteger(candidate.id) || candidate.id <= 0 || typeof candidate.name !== "string" || !candidate.name.trim() || typeof candidate.username !== "string" || !candidate.username.trim() || typeof candidate.license !== "string" || !candidate.license.trim() || typeof candidate.url !== "string" || !candidate.url || typeof candidate.duration !== "number" || !Number.isFinite(candidate.duration) || candidate.duration < input.targetDurationSeconds || !isRecord(candidate.previews)) continue;
     const previewUrl = candidate.previews["preview-hq-mp3"];
     if (typeof previewUrl !== "string" || !previewUrl) continue;
     return { id: candidate.id, title: candidate.name, creator: candidate.username, license: candidate.license, sourceUrl: candidate.url, previewUrl };
   }
-  throw new Error("Freesound 未找到符合冻结时长的 MP3 预览。");
+  throw new FreesoundSearchError("Freesound 未找到符合冻结时长的 MP3 预览。");
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
