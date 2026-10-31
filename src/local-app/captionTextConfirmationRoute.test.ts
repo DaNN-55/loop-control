@@ -28,9 +28,12 @@ async function fixture(){
   if(sql.includes('lock_owned_input_episode'))return{rows:[{owned:true}],rowCount:1};
   if(sql.includes('SELECT e.*,b.policy'))return{rows:[{id:episodeId,account_id:'account',policy:{asset_root:root},stage:'storyboard_approved',storyboard_enabled:true}],rowCount:1};
   if(sql.includes('local_identity.account_mapped_asset_root('))return{rows:[{root}],rowCount:1};
+  if(sql.includes('local_identity.episode_storage_location'))return{rows:[{account_id:'account',asset_root:root,directory_relative_path:dir,directory_device_id:null,directory_inode_id:null,storage_series_id:null,layout_version:1}],rowCount:1};
+  if(sql.includes("to_regprocedure('local_identity.storage_physical_root(text)')"))return{rows:[{present:false}],rowCount:1};
   if(sql.includes('FROM local_identity.account_directory_migrations'))return{rows:[],rowCount:0};
   if(sql.includes('local_identity.episode_asset_root('))return{rows:[{root}],rowCount:1};
   if(sql.includes('FROM local_identity.account_asset_directories'))return{rows:[{actual_root:root,device_id:String(directory.dev),inode_id:String(directory.ino)}],rowCount:1};
+  if(sql==="SELECT (local_identity.media_deployment()->>'writeBlocked')::boolean blocked")return{rows:[{blocked:false}],rowCount:1};
   if(sql.includes('media_deployment()'))return{rows:[{state:'ready',config:{targetRoot:mediaRoot,sourceRoots:[]}}],rowCount:1};
   if(sql.includes('FROM public.review_packages'))return{rows:[{id:reviewId,artifact_id:'review-file'}],rowCount:1};
   if(sql.includes('FROM public.artifacts')){const f=files[0];return{rows:[{...f,sha256:createHash('sha256').update(f.bytes).digest('hex'),file_size:f.bytes.length}],rowCount:1};}

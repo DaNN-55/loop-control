@@ -27,6 +27,7 @@ function database(activeAttempt:number,failReport=false,failCommit=false){
  const accepted:number[]=[],operations:string[]=[],discarded:boolean[]=[];
  const pool={async connect(){return{async query(sql:string,values?:unknown[]){
   operations.push(sql);
+  if(sql==="SELECT (local_identity.media_deployment()->>'writeBlocked')::boolean blocked")return{rows:[{blocked:false}],rowCount:1};
   if(sql.includes('episode_storage_location'))return{rows:[{account_id:'account',directory_relative_path:`episodes/${episodeId}`,directory_device_id:null,directory_inode_id:null,storage_series_id:null,layout_version:1}]};
   if(sql.includes('native_output_authority')){if(values?.[1]!==activeAttempt)throw Error('Lease expired');return{rows:[{authority:{output:frozenOutput,reviewProjectPath:null,finalProjectPath:null,status:'running',inputHash:'frozen-input',artifacts:[],conflicts:[]}}]};}
   if(sql==='COMMIT'&&failCommit)throw Error('Commit outcome unknown');

@@ -5,14 +5,16 @@ import {join} from 'node:path';
 import {tmpdir} from 'node:os';
 import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
-import {persistMediaRootDeployment} from './media-root.mjs';
-import {inspectMediaRoot} from '../../src/local-app/mediaRootSettings';
+import {pathToFileURL} from 'node:url';
 const exec=promisify(execFile);
 it('fresh processes read the shipped deployment reader with initialized external media, preserve private capabilities, and reject replaced roots or receipts',async()=>{
  const temp=await realpath(await mkdtemp(join(tmpdir(),'loop-root-reader-'))),projectRoot=join(temp,'project'),root=join(projectRoot,'.loop-control/local'),scripts=join(projectRoot,'scripts/runtime');
  try{
   await mkdir(scripts,{recursive:true,mode:0o700});await mkdir(root,{recursive:true,mode:0o700});
   for(const name of ['environment.mjs','keychain.mjs','media-root.mjs'])await cp(join(process.cwd(),'scripts/runtime',name),join(scripts,name));
+  await mkdir(join(projectRoot,'scripts/storage'),{recursive:true});await cp(join(process.cwd(),'scripts/storage/file-io.mjs'),join(projectRoot,'scripts/storage/file-io.mjs'));
+  await exec(process.execPath,[join(process.cwd(),'node_modules/typescript/bin/tsc'),'-p',join(process.cwd(),'tsconfig.local-app.json'),'--outDir',join(projectRoot,'dist/local-app')]);
+  const {persistMediaRootDeployment}=await import(pathToFileURL(join(scripts,'media-root.mjs')).href),{inspectMediaRoot}=await import(pathToFileURL(join(projectRoot,'dist/local-app/local-app/mediaRootSettings.js')).href);
   const source=join(root,'volume/media'),target=join(temp,'custom-library');
   for(const p of [source,target,join(root,'state'),join(root,'backups/loop_control'),join(root,'OpenChatCut'),join(source,'whisperx-models')])await mkdir(p,{recursive:true,mode:0o700});
   const database={host:'127.0.0.1',port:54329,database:'loop_control',password:'synthetic-unconnected'};
