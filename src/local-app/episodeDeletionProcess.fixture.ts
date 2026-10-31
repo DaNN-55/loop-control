@@ -14,7 +14,7 @@ if(!/^loop_studio_153_[a-f0-9]{12}$/.test(configuration.database)||!process.env.
 const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MODULE),context=runtimeContext();context.assertDatabase();
 if(configuration.crash){const unlink=fs.promises.unlink;fs.promises.unlink=async path=>{
  const staged=String(path).endsWith('.loop-control-deletion');
- if(configuration.crash==='before-finalize'&&staged||configuration.crash==='link-before-unlink'&&!staged&&String(path).startsWith(configuration.root+'/account/episodes/'))process.kill(process.pid,'SIGKILL');
+ if(configuration.crash==='before-finalize'&&staged||configuration.crash==='link-before-unlink'&&!staged&&String(path).startsWith(configuration.root+'/account/'))process.kill(process.pid,'SIGKILL');
  await unlink(path);if(configuration.crash==='after-first-finalize'&&staged)process.kill(process.pid,'SIGKILL');
 };syncBuiltinESMExports();}
 const {createLocalHandler}=await import('./localRoute');

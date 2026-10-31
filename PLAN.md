@@ -721,15 +721,16 @@ Owner 已选择通知同时作用于应用内和 macOS 桌面提醒。偏好按�
 
 本轮验证记录：真实 PG 验收首轮缺少合成 credential（sessions 的实际外键），第二轮以 loop_app 直接查投递账本被权限正确拦截；已补齐凭据，将账本断言限定为事务内 admin，HTTP/RLS 检查仍使用 loop_app。
 
-# #188 / T10：归档与精确永久删除（进行中）
+# #188 / T10：归档与精确永久删除（实现及隔离验收完成，待独立合并）
 
 目标：归档只改可见性；现有永久删除使用登记的实际位置，只处理已确认且身份与指纹相符的独占文件。未知、手放、共享、历史及其他账号文件保留；首次文件变更之前持久保存同一命令的精确清单，中断后按该清单恢复。
 
 - [x] 阅读 T01/T04/T05 合同及 T10 探索；四个旧集成夹具改为强制外部隔离 context、校验 schema ledger。
 - [x] 真实 Owner HTTP red→green：登记目录精确 owned 文件删除、未知保留与 plan revision；10 项 checkpoint 全部通过。
 - [x] SQL115 持久删除 intent；排他发布、rollback 与原确认范围 retry；stage / link 间隙 / COMMIT 后 / finalize 中实际 SIGKILL + 新 PID 恢复通过。
-- [ ] 空登记父容器/账号收尾及 completed intent 整行保留通过；继续补 pending creation、共享/历史/身份守卫。
-- [ ] 接入 T09 native close/精确所有权；正式页面范围/保留原因、归档/取消/确认与窄屏验收。
-- [ ] 同步最新 integration，完成相关复验、外部 T10-CONTRACT/HANDOFF、提交 clean 分支供独立合并。
+- [x] 空登记父容器/账号收尾；completed intent、command receipt 及历史表整行保留；pending creation、共享/历史/身份守卫通过。
+- [x] 接入 T09 真实 native close/精确所有权；正式页面范围/保留原因、归档/取消/确认、prepared 恢复与旧回执说明，1440/390 页面验收。
+- [ ] 同步最新 integration，最终复验并提交 clean 分支；外部 T10-CONTRACT/HANDOFF 供独立合并。
+- [x] 默认永久删除仅 current 实际位置；在线旧源完整指纹保留，离线旧卷不阻断；空账号仅 current 根，旧 blueprint / aliases 保留且仍参与引用检查。
 
 验收 seam 已确认：正式页面 → Owner HTTP → 隔离真实 PostgreSQL / 文件 → 适用 native / Finder。固定 baseline109 不升级，显式 forward、外部 SDK、maxWorkers1；不读日常配置，不操作日常数据或付费 Provider。

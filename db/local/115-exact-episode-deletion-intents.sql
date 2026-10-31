@@ -42,6 +42,18 @@ END $$;
 REVOKE ALL ON FUNCTION local_identity.episode_deletion_submission_unknown(uuid) FROM PUBLIC,loop_owner,loop_worker,loop_anonymous;
 GRANT EXECUTE ON FUNCTION local_identity.episode_deletion_submission_unknown(uuid) TO loop_app;
 
+CREATE FUNCTION local_identity.episode_deletion_has_dependencies(p_episode uuid) RETURNS boolean LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path='' AS $$
+BEGIN
+ IF NOT EXISTS(SELECT 1 FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id WHERE e.id=p_episode AND m.user_id=local_identity.owner_id() AND m.role='owner') THEN RAISE EXCEPTION 'Owned Episode required' USING ERRCODE='42501';END IF;
+ RETURN EXISTS(SELECT 1 FROM (
+  SELECT p_episode::text id UNION SELECT id::text FROM public.production_material_revisions WHERE episode_id=p_episode
+  UNION SELECT id::text FROM public.review_packages WHERE episode_id=p_episode UNION SELECT id::text FROM public.tasks WHERE episode_id=p_episode
+  UNION SELECT id::text FROM public.artifacts WHERE episode_id=p_episode
+ ) dependency WHERE local_identity.history_external_reference(dependency.id,p_episode::text));
+END $$;
+REVOKE ALL ON FUNCTION local_identity.episode_deletion_has_dependencies(uuid) FROM PUBLIC,loop_owner,loop_worker,loop_anonymous;
+GRANT EXECUTE ON FUNCTION local_identity.episode_deletion_has_dependencies(uuid) TO loop_app;
+
 -- Literal paths, including percent/underscore/Unicode, never become LIKE patterns.
 CREATE OR REPLACE FUNCTION local_identity.history_media_path_referenced(p_path text,p_episode text) RETURNS boolean LANGUAGE sql SECURITY DEFINER SET search_path='' AS $$
  SELECT local_identity.history_external_reference(p_path,p_episode)

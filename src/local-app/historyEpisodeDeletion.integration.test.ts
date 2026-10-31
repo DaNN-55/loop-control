@@ -44,7 +44,10 @@ it.skipIf(process.env.LOOP_HISTORY_DELETE_ACCEPTANCE!=='1')('deletes only the co
   await pool.query("INSERT INTO local_identity.sessions(token_hash,owner_id,expires_at)VALUES($1,$2,now()+interval '1 hour')",[tokenHash(token),owner]);
   await pool.query("INSERT INTO public.accounts(id,slug,name,timezone)VALUES($1,$2,'Fixture account','UTC')",[account,'fixture-'+account]);
   await pool.query("INSERT INTO public.account_memberships(account_id,user_id,role)VALUES($1,$2,'owner')",[account,owner]);
+  // Controlled pre108 history import fixture: retain the original frozen root evidence.
+  await pool.query('ALTER TABLE public.account_blueprint_versions DISABLE TRIGGER a_blueprint_creative_write');
   await pool.query('INSERT INTO public.account_blueprint_versions(id,account_id,version,policy,is_active)VALUES($1,$1,1,$2,true)',[account,{asset_root:root}]);await pool.query('UPDATE public.accounts SET current_blueprint_version_id=$1 WHERE id=$1',[account]);
+  await pool.query('ALTER TABLE public.account_blueprint_versions ENABLE TRIGGER a_blueprint_creative_write');
   await pool.query("INSERT INTO public.episodes(id,account_id,blueprint_version_id,title)VALUES($1,$2,$2,'Delete fixture')",[episode,account]);
   await pool.query('INSERT INTO local_identity.historical_episodes(episode_id)VALUES($1)',[episode]);
   await pool.query("INSERT INTO public.tasks(id,episode_id,task_type)VALUES($1,$2,'draft_brief')",[task,episode]);await pool.query('INSERT INTO local_identity.historical_tasks(task_id)VALUES($1)',[task]);
@@ -65,7 +68,7 @@ it.skipIf(process.env.LOOP_HISTORY_DELETE_ACCEPTANCE!=='1')('deletes only the co
   expect((await post('planHistoryDeletion',{episodeId:episode},randomUUID(),false)).status).toBe(403);
   expect((await post('planHistoryDeletion',{episodeId:episode},randomUUID(),true,'')).status).toBe(401);
   expect((await post('planHistoryDeletion',{episodeId:foreign})).status).toBe(404);
-  let p=await plan();expect(p.liveEpisode).toBe(true);expect(p.paths).toEqual([directory,oldDirectory]);expect(p.historyFiles).toBe(1);expect(p.preservedFiles).toBe(4);
+  let p=await plan();expect(p.liveEpisode).toBe(true);expect(p.paths).toEqual([directory]);expect(p.historyFiles).toBe(1);expect(p.preservedFiles).toBe(4);
   expect((await post('deleteHistoryEpisode',{...args(p),confirmation:'wrong'})).status).toBe(409);expect(existsSync(directory)).toBe(true);
   writeFileSync(join(directory,'new-unreviewed.txt'),'new local content');expect((await post('deleteHistoryEpisode',args(p))).status).toBe(409);expect(existsSync(join(directory,'new-unreviewed.txt'))).toBe(true);unlinkSync(join(directory,'new-unreviewed.txt'));p=await plan();
   await asAdmin("UPDATE public.tasks SET status='failed' WHERE id=$1",[task]);expect((await post('deleteHistoryEpisode',args(p))).status).toBe(409);p=await plan();
@@ -78,7 +81,7 @@ it.skipIf(process.env.LOOP_HISTORY_DELETE_ACCEPTANCE!=='1')('deletes only the co
   p=await plan();expect((await post('deleteHistoryEpisode',args(p))).status).not.toBe(200);expect(readFileSync(join(directory,'output.bin'),'utf8')).toBe(contents[0]);expect(readFileSync(join(oldDirectory,'output.bin'),'utf8')).toBe(contents[0]);expect((await asAdmin('SELECT count(*)::int n FROM public.episodes WHERE id=$1',[episode])).rows[0].n).toBe(1);
   await asAdmin('DROP TRIGGER reject_history_fixture ON public.episodes;DROP FUNCTION public.reject_history_fixture_delete()');
   p=await plan();const key=randomUUID(),deleted=await post('deleteHistoryEpisode',args(p),key);expect(deleted.status,JSON.stringify(deleted.body)).toBe(200);expect(deleted.body.cleanupPending).toBe(false);expect((await post('deleteHistoryEpisode',args(p),key)).body.cleanupPending).toBe(false);
-  expect(existsSync(directory)).toBe(false);expect(existsSync(oldDirectory)).toBe(false);expect(existsSync(join(historyRoot,hashes[0]))).toBe(false);for(const hash of hashes.slice(1))expect(existsSync(join(historyRoot,hash))).toBe(true);expect(readFileSync(join(root,'keep.txt'),'utf8')).toBe('unrelated original');
+  expect(existsSync(directory)).toBe(false);expect(readFileSync(join(oldDirectory,'output.bin'),'utf8')).toBe(contents[0]);expect(existsSync(join(historyRoot,hashes[0]))).toBe(false);for(const hash of hashes.slice(1))expect(existsSync(join(historyRoot,hash))).toBe(true);expect(readFileSync(join(root,'keep.txt'),'utf8')).toBe('unrelated original');
   expect((await asAdmin('SELECT count(*)::int n FROM public.episodes WHERE id=$1',[episode])).rows[0].n).toBe(0);expect((await asAdmin("SELECT count(*)::int n FROM local_identity.history_versions WHERE owner_id=$1 AND payload->>'id'=$2",[owner,episode])).rows[0].n).toBe(0);
   const list=await fetch(origin+'/api/local/history-episodes?contentOnly=false',{headers:{Cookie:sessionCookie+'='+token}});expect(list.status).toBe(200);expect((await list.json()).items.map((x:{episode_id:string})=>x.episode_id)).not.toContain(episode);
   // History-only rows use the same confirmation and retain other Owners' shared media.

@@ -1,6 +1,6 @@
 // @vitest-environment node
 import {it,expect,vi} from 'vitest';
-import {mkdir,copyFile,lstat,writeFile,readFile,access} from 'node:fs/promises';
+import {mkdir,copyFile,lstat,writeFile,readFile,access,symlink,readlink} from 'node:fs/promises';
 import {join} from 'node:path';
 import {randomUUID} from 'node:crypto';
 import {embeddedStudioFixture} from './embeddedStudio.fixture';
@@ -33,6 +33,35 @@ it.skipIf(process.env.LOOP_EPISODE_DELETION_ACCEPTANCE!=='1')('Owner confirms ac
  }finally{await f.close();}
 },300000);
 
+it.skipIf(process.env.LOOP_EPISODE_DELETION_ACCEPTANCE!=='1')('another Owner business dependency blocks ordinary deletion before any file changes',async()=>{
+ const f=await embeddedStudioFixture();
+ const post=async(command:string,data:Record<string,unknown>)=>{const response=await fetch(f.origin+'/api/local/episode-lifecycle',{method:'POST',headers:{Origin:f.origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+f.token,'X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command,idempotencyKey:randomUUID(),data})});return{status:response.status,body:await response.json()};};
+ try{
+  const account=randomUUID(),episode=randomUUID(),task=randomUUID(),root=join(f.root,'other-owner');await mkdir(root);await writeFile(join(root,'foreign.txt'),'other Owner original');const identity=await lstat(root,{bigint:true});
+  await f.c.query("INSERT INTO public.accounts(id,slug,name,timezone) VALUES($1,$2,'Foreign fixture','UTC')",[account,'foreign-'+account]);await f.c.query("INSERT INTO public.account_memberships(account_id,user_id,role) VALUES($1,$2,'owner')",[account,(await f.c.query('SELECT id FROM local_identity.owners WHERE id<>$1',[f.owner])).rows[0].id]);await f.c.query('INSERT INTO local_identity.account_asset_directories(account_id,actual_root,device_id,inode_id) VALUES($1,$2,$3,$4)',[account,root,String(identity.dev),String(identity.ino)]);await f.c.query("INSERT INTO public.account_blueprint_versions(id,account_id,version,policy,is_active) VALUES($1,$1,1,'{}',true)",[account]);await f.c.query("INSERT INTO public.episodes(id,account_id,blueprint_version_id,title) VALUES($1,$2,$2,'Foreign production')",[episode,account]);await f.c.query("INSERT INTO public.tasks(id,episode_id,task_type) VALUES($1,$2,'draft_brief')",[task,episode]);await f.c.query("INSERT INTO public.production_dependencies(episode_id,upstream_kind,upstream_id,downstream_kind,downstream_id) VALUES($1,'review_package',$2,'task',$3)",[episode,f.board,task]);
+  const {deletionFixtureFingerprint}=await import('./deletionFingerprint.fixture'),before=await deletionFixtureFingerprint(f.assetRoot),foreign=await deletionFixtureFingerprint(root);await post('archiveEpisode',{episodeId:f.episode,archived:true});const plan=await post('planDeletion',{episodeId:f.episode}),deleted=await post('deleteEpisode',{episodeId:f.episode,confirmation:plan.body.confirmation,expectedPath:plan.body.path,expectedPaths:plan.body.paths,expectedRevision:plan.body.revision});expect(deleted.status,JSON.stringify(deleted.body)).toBe(409);expect(deleted.body.error).toContain('引用');expect(await deletionFixtureFingerprint(f.assetRoot)).toEqual(before);expect(await deletionFixtureFingerprint(root)).toEqual(foreign);
+ }finally{await f.close();}
+},300000);
+
+it.skipIf(process.env.LOOP_EPISODE_DELETION_ACCEPTANCE!=='1')('successful exact cleanup removes only reviewed title links to the deleted directory',async()=>{
+ const f=await embeddedStudioFixture();
+ const post=async(command:string,data:Record<string,unknown>)=>{const response=await fetch(f.origin+'/api/local/episode-lifecycle',{method:'POST',headers:{Origin:f.origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+f.token,'X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command,idempotencyKey:randomUUID(),data})});return{status:response.status,body:await response.json()};};
+ try{
+  const navigation=join(f.assetRoot,'episodes/按标题浏览'),owned=join(navigation,'本单标题'),unknown=join(navigation,'其他失效标题');await mkdir(navigation);await symlink('../'+f.episode,owned);await symlink('../unknown',unknown);const before=await lstat(unknown,{bigint:true});
+  await post('archiveEpisode',{episodeId:f.episode,archived:true});const plan=await post('planDeletion',{episodeId:f.episode}),deleted=await post('deleteEpisode',{episodeId:f.episode,confirmation:plan.body.confirmation,expectedPath:plan.body.path,expectedPaths:plan.body.paths,expectedRevision:plan.body.revision});expect(deleted.status,JSON.stringify(deleted.body)).toBe(200);expect(deleted.body.cleanupPending).toBe(false);await expect(lstat(owned)).rejects.toMatchObject({code:'ENOENT'});expect(await readlink(unknown)).toBe('../unknown');expect((await lstat(unknown,{bigint:true})).ino).toBe(before.ino);
+ }finally{await f.close();}
+},300000);
+
+it.skipIf(process.env.LOOP_EPISODE_DELETION_ACCEPTANCE!=='1')('a retained manual document keeps its referenced owned bytes and unknown empty directory intact',async()=>{
+ const f=await embeddedStudioFixture();
+ const post=async(command:string,data:Record<string,unknown>)=>{const response=await fetch(f.origin+'/api/local/episode-lifecycle',{method:'POST',headers:{Origin:f.origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+f.token,'X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command,idempotencyKey:randomUUID(),data})});return{status:response.status,body:await response.json()};};
+ try{
+  const directory=join(f.assetRoot,f.episodeRelativePath),source=join(f.assetRoot,f.videoPath),manual=join(directory,'manual-project.json'),unknown=join(directory,'manual empty folder');await writeFile(manual,JSON.stringify({source}));await mkdir(unknown);const before=await readFile(source),identity=await lstat(unknown,{bigint:true});
+  await post('archiveEpisode',{episodeId:f.episode,archived:true});const plan=await post('planDeletion',{episodeId:f.episode});expect(plan.status,JSON.stringify(plan.body)).toBe(200);expect(plan.body.files.map((file:{path:string})=>file.path)).not.toContain(source);expect(plan.body.preserved).toEqual(expect.arrayContaining([expect.objectContaining({path:source,reason:expect.stringContaining('引用')}),expect.objectContaining({path:unknown})]));
+  const deleted=await post('deleteEpisode',{episodeId:f.episode,confirmation:plan.body.confirmation,expectedPath:plan.body.path,expectedPaths:plan.body.paths,expectedRevision:plan.body.revision});expect(deleted.status,JSON.stringify(deleted.body)).toBe(200);expect(deleted.body.cleanupPending).toBe(false);expect(await readFile(source)).toEqual(before);expect((await lstat(unknown,{bigint:true})).ino).toBe(identity.ino);
+ }finally{await f.close();}
+},300000);
+
 it.skipIf(process.env.LOOP_EPISODE_DELETION_ACCEPTANCE!=='1')('unknown paid submission blocks confirmed deletion without changing any registered file',async()=>{
  const f=await embeddedStudioFixture();
  const post=async(command:string,data:Record<string,unknown>)=>{const response=await fetch(f.origin+'/api/local/episode-lifecycle',{method:'POST',headers:{Origin:f.origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+f.token,'X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command,idempotencyKey:randomUUID(),data})});return{status:response.status,body:await response.json()};};
@@ -55,7 +84,7 @@ it.skipIf(process.env.LOOP_EPISODE_DELETION_ACCEPTANCE!=='1')('a safely rolled b
  }finally{await f.close();}
 },300000);
 
-it.skipIf(process.env.LOOP_EPISODE_DELETION_ACCEPTANCE!=='1').each(['link-before-unlink','before-finalize','after-first-finalize'] as const)('a new PID resumes %s interruption using only the original durable scope',async crash=>{
+it.skipIf(process.env.LOOP_EPISODE_DELETION_ACCEPTANCE!=='1').each(['link-before-unlink','before-finalize','after-first-finalize','restore-uncommitted'] as const)('a new PID resumes %s interruption using only the original durable scope',async crash=>{
  const f=await embeddedStudioFixture(),children:ChildProcess[]=[];
  const start=async(fault?:typeof crash)=>{
   const child=spawn(join(process.cwd(),'node_modules/.bin/vite-node'),['--config','src/local-app/episodeDeletionProcess.config.mjs','src/local-app/episodeDeletionProcess.fixture.ts'],{cwd:process.cwd(),env:process.env,stdio:['pipe','pipe','pipe']});children.push(child);let errors='';child.stderr!.on('data',bytes=>errors+=bytes);const lines=createInterface({input:child.stdout!});child.stdin!.end(JSON.stringify({database:f.database,root:f.root,crash:fault})+'\n');
@@ -64,10 +93,15 @@ it.skipIf(process.env.LOOP_EPISODE_DELETION_ACCEPTANCE!=='1').each(['link-before
  const post=async(origin:string,command:string,data:Record<string,unknown>,key=randomUUID())=>{const response=await fetch(origin+'/api/local/episode-lifecycle',{method:'POST',headers:{Origin:origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+f.token,'X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command,idempotencyKey:key,data})});return{status:response.status,body:await response.json()};};
  try{
   const manual=join(f.assetRoot,'episodes',f.episode,'manual.txt');await writeFile(manual,'preserved across process death');const before=await lstat(manual,{bigint:true});
-  const first=await start(crash);await post(first.origin,'archiveEpisode',{episodeId:f.episode,archived:true});const plan=await post(first.origin,'planDeletion',{episodeId:f.episode}),key=randomUUID(),args={episodeId:f.episode,confirmation:plan.body.confirmation,expectedPath:plan.body.path,expectedPaths:plan.body.paths,expectedRevision:plan.body.revision};
+  const first=await start(crash==='restore-uncommitted'?'link-before-unlink':crash);await post(first.origin,'archiveEpisode',{episodeId:f.episode,archived:true});const plan=await post(first.origin,'planDeletion',{episodeId:f.episode}),key=randomUUID(),args={episodeId:f.episode,confirmation:plan.body.confirmation,expectedPath:plan.body.path,expectedPaths:plan.body.paths,expectedRevision:plan.body.revision};
   const dead=once(first.child,'exit',{signal:AbortSignal.timeout(10000)});await post(first.origin,'deleteEpisode',args,key).catch(()=>null);await dead;
-  const intent=(await f.c.query('SELECT state FROM local_identity.episode_deletion_intents WHERE idempotency_key=$1',[key])).rows[0];expect(intent.state).toBe(crash==='link-before-unlink'?'prepared':'committed');
-  const second=await start();expect(second.pid).not.toBe(first.pid);const recovered=await post(second.origin,'deleteEpisode',args,key);expect(recovered.status,JSON.stringify(recovered.body)).toBe(200);expect(recovered.body.cleanupPending).toBe(false);expect(await readFile(manual,'utf8')).toBe('preserved across process death');expect((await lstat(manual,{bigint:true})).ino).toBe(before.ino);
+  const intent=(await f.c.query('SELECT state FROM local_identity.episode_deletion_intents WHERE idempotency_key=$1',[key])).rows[0];expect(intent.state).toBe(['link-before-unlink','restore-uncommitted'].includes(crash)?'prepared':'committed');
+  const second=await start();expect(second.pid).not.toBe(first.pid);
+  if(crash==='restore-uncommitted'){
+   const pending=await fetch(second.origin+'/api/local/deletion-cleanups',{headers:{Cookie:'loop_owner_session='+f.token}});expect(await pending.json()).toEqual(expect.arrayContaining([expect.objectContaining({cleanupKey:key,phase:'prepared'})]));
+   const recovered=await post(second.origin,'retryDeletionCleanup',{deletionKey:key});expect(recovered.status,JSON.stringify(recovered.body)).toBe(200);expect(recovered.body).toMatchObject({cleanupPending:false,recovered:true});await access(join(f.assetRoot,f.videoPath));
+  }else{const recovered=await post(second.origin,'deleteEpisode',args,key);expect(recovered.status,JSON.stringify(recovered.body)).toBe(200);expect(recovered.body.cleanupPending).toBe(false);}
+  expect(await readFile(manual,'utf8')).toBe('preserved across process death');expect((await lstat(manual,{bigint:true})).ino).toBe(before.ino);
  }finally{for(const child of children)if(child.exitCode===null&&child.signalCode===null){child.kill('SIGTERM');await once(child,'exit');}await f.close();}
 },300000);
 

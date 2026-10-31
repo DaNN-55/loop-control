@@ -1,3 +1,4 @@
+import {EpisodeDeletionScope,type DeletionFileScope} from '../workspace/EpisodeDeletionScope';
 import {useEffect,useRef,useState} from 'react';
 import {Trash2} from 'lucide-react';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
@@ -6,7 +7,7 @@ import {Checkbox} from '../ui/dan-ui/components/base/checkbox/checkbox';
 import {Disclosure} from '../ui/dan-ui/components/base/disclosure/disclosure';
 import {localCommand} from './client';
 import {historySize} from './historyPresentation';
-interface DeletionPlan {
+interface DeletionPlan extends DeletionFileScope {
  episodeId:string;title:string;confirmation:string;revision:string;liveEpisode:boolean;
  path:string;paths:string[];recordCount:number;fileLinks:number;historyFiles:number;historyBytes:number;historyPaths:string[];preservedFiles:number;
 }
@@ -33,7 +34,7 @@ export function HistoryDeleteAction({episodeId,onPendingChange,onDeleted,onPlanC
    <h4 ref={heading} tabIndex={-1}>确认永久删除「{plan.title}」</h4>
    <p>{plan.liveEpisode?'真实生产单、相关历史留存与下列独占文件将一并删除。':'将删除该条历史留存与下列独占文件。'}共用及仍有依赖的文件保留，此操作无法撤销。</p>
    <dl className="history-preview-counts"><div><dt>历史记录</dt><dd>{plan.recordCount.toLocaleString()} 项</dd></div><div><dt>独占历史文件</dt><dd>{plan.historyFiles.toLocaleString()} 个 · {historySize(plan.historyBytes)}</dd></div><div><dt>共用 / 依赖保留</dt><dd>{plan.preservedFiles.toLocaleString()} 份</dd></div></dl>
-   {plan.paths.length>0&&<div><strong>生产单目录（含独占媒体）</strong><ul className="history-delete-paths">{plan.paths.map(path=><li key={path}><code>{path}</code></li>)}</ul></div>}
+   {plan.paths.length>0&&<div><strong>已核查的生产单位置</strong><ul className="history-delete-paths">{plan.paths.map(path=><li key={path}><code>{path}</code></li>)}</ul></div>}<EpisodeDeletionScope files={plan.files} preserved={plan.preserved}/>
    {plan.historyPaths.length>0&&<Disclosure label={<>独占历史文件路径（{plan.historyFiles}）</>}><ul className="history-delete-paths">{plan.historyPaths.map(path=><li key={path}><code>{path}</code></li>)}</ul></Disclosure>}
    <Checkbox label="我已核对删除范围，理解永久删除无法恢复" isSelected={acknowledged} isDisabled={Boolean(pending)} onChange={setAcknowledged} size="sm"/>
    <Input label="输入完整名称以确认" placeholder={plan.confirmation} value={confirmation} onChange={setConfirmation} isDisabled={Boolean(pending)} size="sm" autoComplete="off"/>

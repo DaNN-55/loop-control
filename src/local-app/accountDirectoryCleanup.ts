@@ -33,7 +33,7 @@ async function safeDirectory(path:string){
  return{dev:String(stat.dev),ino:String(stat.ino)};
 }
 
-// Only exact blueprint roots and their registered deployment aliases are considered.
+// Deployment aliases participate in reference checks, never in filesystem deletion.
 // Nonempty or inaccessible directories never become deletion candidates.
 export async function planEmptyAccountDirectories(mediaRoot:string,assetRoots:unknown[],sources:readonly string[]):Promise<EmptyAccountDirectory[]>{
  const logical=new Set<string>();
@@ -48,7 +48,7 @@ export async function planEmptyAccountDirectories(mediaRoot:string,assetRoots:un
    const candidate=join(source,suffix);
    if(mappedAssetPath(mediaRoot,candidate,sources)===root)aliases.add(candidate);
   }
-  for(const path of aliases)try{
+  const path=root;try{
    const identity=await safeDirectory(path);
    if((await readdir(path)).length===0)targets.set(path,{path,aliases:[...aliases],...identity});
   }catch{/* Missing, linked or inaccessible locations are retained. */}

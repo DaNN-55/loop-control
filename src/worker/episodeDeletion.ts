@@ -19,7 +19,7 @@ export async function stageConfirmedEpisodeFiles(target:EpisodeDeletionTarget){
 export async function restoreConfirmedEpisodeFiles(target:EpisodeDeletionTarget){
  await verifyEpisodeDeletionTarget(target,'staged');
  for(const file of [...target.files??[]].reverse()){
-  if(!await optionalEntry(file.stagingPath))continue;
+  if(!await optionalEntry(file.stagingPath)){await exactFile(file,file.path);continue;}
   if(await optionalEntry(file.path)){
    try{await exactFile(file,file.path);continue;}catch{/* A matching original plus an unknown staging conflict was never moved. */}
    try{await exactFile(file,file.path,2n);await exactFile(file,file.stagingPath,2n);await fs.unlink(file.stagingPath);continue;}catch{throw Error('原文件位置已被占用，未覆盖：'+file.path);}
@@ -37,6 +37,14 @@ export async function finalizeConfirmedEpisodeFiles(target:EpisodeDeletionTarget
   const actual=await optionalEntry(directory.path);if(!actual)continue;
   if(!actual.isDirectory()||actual.isSymbolicLink()||String(actual.dev)!==directory.identity.dev||String(actual.ino)!==directory.identity.ino)throw Error('已确认空目录身份已变化。');
   await removeEmptyCleanupDirectory(directory.path);
+ }
+ if(!await optionalEntry(target.path)){
+  for(const link of target.links??[]){
+   const parent=await safeCleanupDirectory(link.parent),current=await optionalEntry(link.path);if(!current)continue;
+   if(!parent||String(parent.dev)!==link.parentIdentity.dev||String(parent.ino)!==link.parentIdentity.ino||!current.isSymbolicLink()||String(current.dev)!==link.identity.dev||String(current.ino)!==link.identity.ino||await fs.readlink(link.path)!==link.value)throw Error('已确认标题链接身份已变化，未清理。');
+   await fs.unlink(link.path);
+  }
+  for(const container of target.cleanupContainers??[]){const current=await safeCleanupDirectory(container.path);if(!current)continue;if(String(current.dev)!==container.identity.dev||String(current.ino)!==container.identity.ino)throw Error('已确认空容器身份已变化，未清理。');await removeEmptyCleanupDirectory(container.path);}
  }
 }
 const isEpisodeId=(id:string)=>/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
