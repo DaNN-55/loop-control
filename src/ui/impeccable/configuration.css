@@ -113,8 +113,8 @@ html[data-interface="impeccable"] .product-ui .series-current-layout > aside > b
 html[data-interface="impeccable"] .product-ui .series-current-layout > aside > button.is-active { background: var(--lc-accent-soft, var(--color-bg-brand-primary)); color: var(--lc-accent); }
 html[data-interface="impeccable"] .product-ui .series-current-layout > div { padding: 0; min-width: 0; overflow: hidden; border: 1px solid var(--lc-line); border-radius: 12px; background: var(--lc-surface); }
 html[data-interface="impeccable"] .product-ui .series-configuration-form { gap: 0; }
-html[data-interface="impeccable"] .product-ui .series-configuration-form > header { padding: 24px 28px; margin: 0; border-bottom: 1px solid var(--lc-line); }
-html[data-interface="impeccable"] .product-ui .series-configuration-form h2 { font-size: 18px; font-weight: 600; color: var(--lc-ink); margin: 0; overflow-wrap: anywhere; }
+html[data-interface="impeccable"] .product-ui .series-configuration-heading { padding: 24px 28px; margin: 0; border-bottom: 1px solid var(--lc-line); min-width:0; }
+html[data-interface="impeccable"] .product-ui .series-configuration-heading h2 { font-size: 18px; font-weight: 600; color: var(--lc-ink); margin: 0 0 12px; overflow-wrap: anywhere; }
 html[data-interface="impeccable"] .product-ui .series-current-version { font-size: 12px; font-weight: 400; color: var(--lc-muted); white-space: nowrap; }
 html[data-interface="impeccable"] .product-ui .series-configuration-form > fieldset { margin: 0; padding: 24px 28px; border: 0; border-bottom: 1px solid var(--lc-line); border-radius: 0; display: grid; gap: 16px; }
 html[data-interface="impeccable"] .product-ui .series-configuration-form > fieldset > legend { float: left; width: 100%; padding: 0; margin: 0; }
@@ -217,13 +217,13 @@ html[data-interface="impeccable"] .product-ui .account-blueprint-footer .configu
 html[data-interface="impeccable"] .product-ui .account-blueprint-footer .account-save-state { margin-right: 8px; }
 @media (max-width: 820px) {
   html[data-interface="impeccable"] .product-ui .series-baseline-grid { grid-template-columns: minmax(0,1fr); }
-  html[data-interface="impeccable"] .product-ui .series-configuration-form > header,
+  html[data-interface="impeccable"] .product-ui .series-configuration-heading,
   html[data-interface="impeccable"] .product-ui .series-configuration-form > fieldset,
   html[data-interface="impeccable"] .product-ui .series-name-field { padding: 20px; }
   html[data-interface="impeccable"] .product-ui .series-form-footer { padding: 18px 20px; flex-wrap: wrap; }
 }
 @media (max-width: 600px) {
-  html[data-interface="impeccable"] .product-ui .series-configuration-form > header,
+  html[data-interface="impeccable"] .product-ui .series-configuration-heading,
   html[data-interface="impeccable"] .product-ui .series-configuration-form > fieldset,
   html[data-interface="impeccable"] .product-ui .series-name-field { padding: 18px 16px; }
   html[data-interface="impeccable"] .product-ui .series-form-footer { padding: 16px; }
@@ -305,3 +305,7 @@ html[data-interface="impeccable"] .product-ui .account-metadata-facts dt { flex-
 .account-directory-path { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .account-directory-full-path code { display:block; overflow-wrap:anywhere; user-select:all; }
 .account-directory-full-path, .account-directory-repair { margin-block-start:8px; }
+
+html[data-interface="impeccable"] .product-ui .series-configuration-heading .account-metadata-form { margin-top:16px; }
+html[data-interface="impeccable"] .product-ui .account-workspace-layout nav > button { min-width:0; }
+html[data-interface="impeccable"] .product-ui .account-workspace-layout nav > button strong { white-space:normal; min-width:0; overflow-wrap:anywhere; }
