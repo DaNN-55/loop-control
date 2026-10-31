@@ -957,3 +957,13 @@ integration check → build → runtime:prepare → compiled assert 全通过；
 亲看正式两布局红→蓝与组合链pre/postrestore0.23→1.23秒不同原生帧，实际Pause；恢复后正式path=登记path，Finder精确观察即关。独算最终组合dump6e702a5f…、28份archive媒体大小/SHA、两个196608B SQLite/header/只读clone integrity=ok/保存timeline、global6719→6776→7054及restore21216→21369、两次Owner export6ed62f57…；系列／未分系列四个真实恢复archive各45/49媒体与四个SQLite只读clone也通过。完成／回滚migration历史完整保持，未完成收纳使真实备份拒绝。
 
 freeze check/build/runtime:prepare/compiled assert全通过；SQL110–126原字节不变，未加migration。固定107/max109/0账号、schema1989a647/ledger4806437b和完整schema字节前后一致，仅base+baseline、pinned none-network/ports{}/volumes[]；原4卷、daily5174 PID71478、QuickLook39211/55969保持，无own runtime/cache/browser session。七个未知/tmp Finder fallback窗口缺乏归属证据，按root指示保留；本次新开均精确目标观察即关且有finally。完整命令、RED分类、截图、dump/媒体/SQLite/Owner回执与资源保留仓库外T17/HANDOFF、T17-CONTRACT及freeze。未付费、操作日常资料、merge main、push或部署；本段是实现交付，独立合并和最终全spec双轴审查由root接续。
+
+### T17 独立合并验收收据（2026-11-01）
+
+冻结源码 `21c9beb614b9581d70d78b4b7a3af0fd5dcbb751` 从干净 `69bfe6dba47722ecb8a4164f7fec092d7d8b95b5` 普通 no-ff 合入，merge `482b2a675f62bcb9fb6170d64e05d8f9b3212242`。独立核验 source/integration 的 20 文件 SHA 与 SQL110–126 原 16 文件 SHA 完全相同。当前 check / build / runtime:prepare / prepared assert 全 exit0；组合主链 1/1、零 skip、85.38s，账号正式 main.tsx / StrictMode UI 1/1、零 skip、14.06s，历史兼容 3 suites 17/17、零 skip、92.15s，creative Owner 1/1、零 skip、5.00s，受影响 5 文件 units 67/67、零 skip、8.77s。未改产品、测试或验收断言。
+
+组合链实际纳管后三次收纳，跨设备 16777261→16777234，复制 SIGKILL 后同计划 `bb1ae873-ee50-47c8-b343-0fc702550c9e` / manifest `834934de…` 新 PID 40151→40208→40482 恢复；原生产源离线、原外部文件离线仍可读，恢复 54649→54810。独算真实 dump `c33032a0d09bf13ec89614369a4689f078fbbd376e4cba31029dfa6f6e3e6f10` 等于 manifest/receipt，29 个 archive 媒体 bytes/SHA、两份 196608B SQLite header/只读副本 integrity/saved timeline 和两份 Owner export `6ed62f57…` 均通过；未完成收纳阻止真实备份，显式回滚后成功备份，完成及回滚历史保留，automaticBackups=false。本人亲看 pre/postrestore 四帧 0.23→1.13 秒彩条斜线和方块变化，实际 Pause 后 Play 可见。
+
+正式账号 UI 在 1543/1440/1100/390 无 document 横溢出，path/open/copy 同排，独立保存、history、dirty guard、Enter/Escape 焦点、改名目录稳定及三层 Finder 通过。旧删除严格检查四个 managed 全 ENOENT、仅未知空 input 原 dev/inode 留存；Pexels 23 managed 全 ENOENT、8 retained 原 dev/inode/SHA 及精确集合保持。读取未变的 source 正式制作两布局完整 2/2 零 skip 187.05s 实证，独算四份 dump、188 个 archive 媒体、四个 SQLite integrity/x=1、12 个 Owner 交付文件 SHA，并亲看各布局红→蓝；按本轮边界不重复运行该已独立接受的完整流程。T16 未变故障组及 source 相关 seam 日志已读取，未计入本轮运行。
+
+资源独立核验固定 107/max109/0 账号、ledger4806437b/schema1989a647、完整 schema 字节及仅 base+baseline 不变；pinned isolated container none-network / ports{} / mounts[]，原四个挂载、daily5174 PID71478、QuickLook39211/55969 和七个未知 Finder IDs 保持；自有进程/浏览器/session/cache/临时根/随机 DB 已无残留。完整报告 `/private/tmp/loop-control-178-20261031/MERGE-T17.md`，命令、原始日志、逐字节证据、截图及资源收据在同级 `MERGE-T17/`。本次仅追加本收据；main/source 未写，未 push、部署、付费或操作日常资料；#195/#178 tracker 关闭及全规格 Standards/Spec review 由 root 接续。
