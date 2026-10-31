@@ -1,3 +1,5 @@
+import {editStudioDocument} from './studioDocument.fixture';
+import {adoptInitialNarration} from './workspaceNarration.fixture';
 // @vitest-environment node
 import {workspaceTestMedia} from './workspaceTestMedia.fixture';
 import {it,expect} from 'vitest';
@@ -26,6 +28,8 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('real Worker verifies exa
  const send=async(name:string,extra={})=>{const r=await f.request(name,{workspaceId:w.id,expectedRevision:w.revision,...extra});return r;};
  for(const clip of w.clips){const r=await send('matchWorkspaceMaterial',{clipId:clip.id,materialRevisionId:f.material});expect(r.status,JSON.stringify(r.body)).toBe(200);w=r.body;}
  for(const clip of w.clips){w=(await send('saveWorkspaceCaptions',{clipId:clip.id,captionContract:defaultShotCaptionContract(clip.text,'independent',false)})).body;}
+ // Seed the legacy document through the actual SQLite authority as well as its immutable JSON snapshot.
+ const baselineStudio=await send('openWorkspaceStudio');expect(baselineStudio.status).toBe(200);w=baselineStudio.body.productionWorkspace;await editStudioDocument(baselineStudio.body.studioUrl,w.project.projectId,doc=>{for(const timeline of doc.timelines)for(const item of timeline.items)delete item.loopControlShot;});const baselineSaved=await send('saveWorkspaceStudio',{workspaceRelativePath:baselineStudio.body.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:w.project.sha256});expect(baselineSaved.status,JSON.stringify(baselineSaved.body)).toBe(200);w=baselineSaved.body.productionWorkspace;w=(await send('closeWorkspaceStudio')).body;
  // Upgrade compatibility: a pre-095 snapshot has stable native IDs/bindings,
  // but no loopControlShot extension. No GET or approval is synthesized.
  const legacy=JSON.parse(await readFile(join(f.assetRoot,w.project.relativePath),'utf8'));for(const timeline of legacy.timelines)for(const item of timeline.items)delete item.loopControlShot;
@@ -36,11 +40,9 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('real Worker verifies exa
 
  const opened=await send('openWorkspaceStudio');expect(opened.status,JSON.stringify(opened.body)).toBe(200);w=opened.body.productionWorkspace;
  expect((await send('prepareWorkspaceDelivery',{exportId:approved.id,expectedExportSha256:approved.artifact.sha256,expectedContentSha256:w.contentSha256,title:'活跃编辑不可交付',description:'',tags:[],coverBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64')})).status).toBe(409);
- const base=join(f.assetRoot,`episodes/${f.episode}/openchatcut-work/current/runtime`);let path=join(base,'project-store-v1.json'),store:any,doc:any;
- try{store=JSON.parse(await readFile(path,'utf8'));doc=store.entries[`project:${w.project.projectId}`];}catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;path=join(base,'project-store-v1',`${encodeURIComponent(`project:${w.project.projectId}`)}.json`);doc=JSON.parse(await readFile(path,'utf8'));}
- doc.timelines[0].selectedId=w.clips[0].itemId;doc.timelines[0].selectedIds=[w.clips[0].itemId];await writeFile(path,JSON.stringify(store??doc));
+ await editStudioDocument(opened.body.studioUrl,w.project.projectId,doc=>{doc.timelines[0].selectedId=w.clips[0].itemId;doc.timelines[0].selectedIds=[w.clips[0].itemId];});
  const saved=await send('saveWorkspaceStudio',{workspaceRelativePath:opened.body.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:w.project.sha256});expect(saved.status,JSON.stringify(saved.body)).toBe(200);w=saved.body.productionWorkspace;
- w=(await send('closeWorkspaceStudio')).body;expect(w.revision).toBe(approved.projectContentVersion);expect(w.project.sha256).not.toBe(approvedProject.sha256);expect(w.exports[0].confirmed).toBe(true);
+ w=(await send('closeWorkspaceStudio')).body;if(process.env.LOOP_T11_EVIDENCE_DIR){const dir=process.env.LOOP_T11_EVIDENCE_DIR;await (await import('node:fs/promises')).mkdir(dir,{recursive:true});await writeFile(join(dir,'delivery-approved-project.json'),await readFile(join(f.assetRoot,approvedProject.relativePath)));await writeFile(join(dir,'delivery-selection-saved-project.json'),await readFile(join(f.assetRoot,w.project.relativePath)));}expect(w.revision).toBe(approved.projectContentVersion);expect(w.project.sha256).not.toBe(approvedProject.sha256);expect(w.exports[0].confirmed).toBe(true);
  const formWorkspace=structuredClone(w);
  const input={exportId:approved.id,expectedExportSha256:approved.artifact.sha256,expectedContentSha256:w.contentSha256,title:'交付验收',description:'真实文件',tags:['测试'],coverBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64')};
  expect((await send('prepareWorkspaceDelivery',{...input,expectedExportSha256:'0'.repeat(64)})).status).toBe(409);
@@ -110,16 +112,15 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('a queued package cannot 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('delivery records the used trimmed voice source and never substitutes an unadopted draft text',async()=>{
  const {narrationFixture}=await import('./workspaceNarration.fixture');const f=await narrationFixture();const worker=f.workerPool();
  try{
- await f.authorize();let w=f.made;const send=(name:string,extra={})=>f.request(name,{workspaceId:w.id,expectedRevision:w.revision,...extra});const clip=w.clips[0],sourceText='这份实际音轨保留不可变的原口播正文。';
+ await f.authorize();await f.request('setWanBudget',{trialCents:300,totalCents:10000,full:false});let w=f.made;const send=(name:string,extra={})=>f.chosenRequest(name,{workspaceId:w.id,expectedRevision:w.revision,...extra});const clip=w.clips[0],sourceText='这份实际音轨保留不可变的原口播正文。';
  let r=await send('saveWorkspaceNarration',{clipId:clip.id,mode:'tts',text:sourceText});expect(r.status,JSON.stringify(r.body)).toBe(200);w=r.body;
  await send('confirmWorkspaceNarration',{clipId:clip.id});const queued=await send('generateWorkspaceNarration',{clipId:clip.id});expect(queued.status,JSON.stringify(queued.body)).toBe(200);expect((await f.execute(queued.body.narration[0].taskId))?.status).toBe('completed');
- w=(await send('refreshWorkspaceNarration')).body;
+ w=(await send('refreshWorkspaceNarration')).body;w=await adoptInitialNarration(f,w);
  const uploaded=await f.request('importMaterial',{materialType:'image',sourceKind:'file',sourcePath:'still.png',mimeType:'image/png',contentBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64'),isMainScript:false,materialPurpose:'visual_reference'});expect(uploaded.status,JSON.stringify(uploaded.body)).toBe(200);
  for(const visual of w.clips){r=await send('matchWorkspaceImage',{clipId:visual.id,materialRevisionId:uploaded.body.id,usage:'still',durationSeconds:visual.shotId===clip.shotId?2.4:2,fit:'contain',focusX:.5,focusY:.5});expect(r.status,JSON.stringify(r.body)).toBe(200);w=r.body;}
  for(const visual of w.clips)w=(await send('saveWorkspaceCaptions',{clipId:visual.id,captionContract:defaultShotCaptionContract(visual.text,'independent',false)})).body;
  const opened=await send('openWorkspaceStudio');expect(opened.status).toBe(200);w=opened.body.productionWorkspace;
- const base=join(f.assetRoot,`episodes/${f.episode}/openchatcut-work/current/runtime`);let path=join(base,'project-store-v1.json'),store:any,doc:any;try{store=JSON.parse(await readFile(path,'utf8'));doc=store.entries[`project:${w.project.projectId}`];}catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;path=join(base,'project-store-v1',`${encodeURIComponent(`project:${w.project.projectId}`)}.json`);doc=JSON.parse(await readFile(path,'utf8'));}
- const voice=doc.timelines[0].items.find((i:any)=>i.id===`workspace-narration-shot-${clip.shotId}`);voice.srcInFrame=12;voice.durationInFrames=60;await writeFile(path,JSON.stringify(store??doc));
+ await editStudioDocument(opened.body.studioUrl,w.project.projectId,doc=>{const voice=doc.timelines[0].items.find((i:any)=>i.id===`workspace-narration-shot-${clip.shotId}`);voice.srcInFrame=12;voice.durationInFrames=60;});
  r=await send('saveWorkspaceStudio',{workspaceRelativePath:opened.body.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:w.project.sha256});expect(r.status,JSON.stringify(r.body)).toBe(200);w=r.body.productionWorkspace;w=(await send('closeWorkspaceStudio')).body;
  r=await send('saveWorkspaceNarration',{clipId:clip.id,mode:'tts',text:'尚未采用的新草稿，不应替换实际说词。'});expect(r.status,JSON.stringify(r.body)).toBe(200);w=r.body;
  w=(await send('exportWorkspace')).body;expect(w.exports[0].status,JSON.stringify(w.exports[0])).toBe('ready');w=(await send('confirmWorkspaceExport',{exportId:w.exports[0].id,expectedExportSha256:w.exports[0].artifact.sha256,expectedContentSha256:w.contentSha256})).body;

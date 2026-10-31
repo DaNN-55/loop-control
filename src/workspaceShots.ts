@@ -19,8 +19,9 @@ export function workspaceShotIdentity(item:Record<string,unknown>,workspaceId=''
  const match=String(item.id).match(/^shot-(.+)-([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})$/);
  return match?{workspaceId,shotId:match[1],clipId:match[2],text:String(item.name??match[1])}:null;
 }
+// The owned extension has one stable key position, including SDK documents that inserted it before source metadata.
 export function withWorkspaceShotMetadata(project:OpenChatCutProject,bindings:WorkspaceClip[]):OpenChatCutProject{
- const next=structuredClone(project);for(const timeline of next.timelines)for(const item of timeline.items){const binding=bindings.find(b=>b.itemId===item.id);if(binding)item.loopControlShot={workspaceId:next.loopControl?.inputFingerprint??'',shotId:binding.shotId,clipId:binding.id,text:binding.text,...(binding.source?{provenance:{materialRevisionId:binding.source.materialRevisionId,sha256:binding.source.sha256,fileSize:binding.source.fileSize,kind:binding.source.kind}}:{})};}return next;
+ const next=structuredClone(project);for(const timeline of next.timelines)for(const item of timeline.items){const binding=bindings.find(b=>b.itemId===item.id);if(binding){delete item.loopControlShot;item.loopControlShot={workspaceId:next.loopControl?.inputFingerprint??'',shotId:binding.shotId,clipId:binding.id,text:binding.text,...(binding.source?{provenance:{materialRevisionId:binding.source.materialRevisionId,sha256:binding.source.sha256,fileSize:binding.source.fileSize,kind:binding.source.kind}}:{})};}}return next;
 }
 export function readWorkspaceShots(project:OpenChatCutProject):WorkspaceShot[]{
  const shots:WorkspaceShot[]=[];for(const timeline of project.timelines){for(const item of [...timeline.items].sort((a,b)=>Number(a.startFrame)-Number(b.startFrame))){const meta=workspaceShotIdentity(item);if(!meta||!['video','image','text'].includes(String(item.kind)))continue;
