@@ -7,7 +7,8 @@
 - [x] current collection 列表/筛选与正式 UI，completed/archived 内容只读。
 - [x] 实际 Finder/native 保存关闭重开播放导出、真实 DB+media 备份异地恢复。
 - [x] 定向回归、check/build/prepare、ADR19及外部证据。
-- [ ] 源提交与最新 integration 同步、fresh merger 独立验收和 root 关闭 Issue。
+- [x] 源提交与最新 integration 同步，外部 HANDOFF 和契约就绪。
+- [ ] fresh merger 独立验收和 root 关闭 Issue。
 
 外部准备与证据：`/private/tmp/loop-control-178-20261031/T14/`。沿用户已确认正式页面→Owner HTTP→隔离真实 DB/files→native/系统打开验收；不碰日常数据/服务、付费Provider、main/push。T13源码3edf5f80已合入本工作树；SQL123保持原字节。重型资源已释放后完成验收，自己的窗口与测试资源用毕关闭。
 
