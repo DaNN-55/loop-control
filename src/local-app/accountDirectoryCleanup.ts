@@ -1,6 +1,6 @@
 import {lstat, realpath, readdir, rmdir} from 'node:fs/promises';
 import {isAbsolute, join, relative, resolve} from 'node:path';
-import {mappedAssetPath} from './mediaPaths.js';
+import {mappedAssetPath,assetPathWithin} from './mediaPaths.js';
 
 export interface EmptyAccountDirectory {
  path:string;
@@ -27,7 +27,7 @@ export async function planEmptyAccountDirectories(mediaRoot:string,assetRoots:un
  const targets=new Map<string,EmptyAccountDirectory>();
  for(const root of logical){
   const suffix=relative(mediaRoot,root);
-  if(!suffix||suffix.startsWith('..')||isAbsolute(suffix))continue;
+  if(!assetPathWithin(mediaRoot,root))continue;
   const aliases=new Set([root]);
   for(const source of sources){
    if(source==='/'||!isAbsolute(source)||resolve(source)!==source)continue;

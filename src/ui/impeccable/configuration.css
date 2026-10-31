@@ -234,3 +234,10 @@ html[data-interface="impeccable"] .product-ui .account-blueprint-footer .account
 html[data-interface="impeccable"] .account-menu-overlay [role="menuitem"] > div {justify-content:flex-start;gap:10px}
 html[data-interface="impeccable"] .account-menu-overlay [role="menuitem"] > div > span {flex:1 1 auto!important;text-align:left}
 html[data-interface="impeccable"] .account-menu-overlay [role="menuitem"] svg {margin-right:0!important}
+
+.account-directory-migration { margin-block-start: var(--space-16, 16px); padding-block-start: var(--space-16, 16px); border-block-start: 1px solid var(--lc-line); }
+.account-directory-migration dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 16px; margin-block: 12px; }
+.account-directory-migration dd { margin: 0; min-width: 0; }
+.account-directory-migration code { overflow-wrap: anywhere; word-break: break-word; }
+.account-directory-migration details > ul { max-height: 320px; overflow-y: auto; }
+.account-directory-migration .configuration-form-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-block-start: 12px; }

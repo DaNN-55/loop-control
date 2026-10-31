@@ -7,4 +7,4 @@ export async function readMediaDeployment(client:Pick<Pool|PoolClient,'query'>,m
  if(!r||r.targetRoot!==null&&r.targetRoot!==mediaRoot||!Array.isArray(r.sourceRoots)||r.sourceRoots.some((v:unknown)=>typeof v!=='string'))throw new ConfigurationError(503,'服务媒体目录与恢复部署不匹配。');
  return r.sourceRoots;
 }
-export async function resolveLocalAssetRoot(client:Pick<Pool|PoolClient,'query'>,mediaRoot:string,value:unknown){return nativeAssetRoot(mediaRoot,value,await readMediaDeployment(client,mediaRoot));}
+export async function resolveLocalAssetRoot(client:Pick<Pool|PoolClient,'query'>,mediaRoot:string,value:unknown){const mapped=(await client.query('SELECT local_identity.account_mapped_asset_root($1) root',[value])).rows[0]?.root??value;return nativeAssetRoot(mediaRoot,mapped,await readMediaDeployment(client,mediaRoot));}
