@@ -1,3 +1,4 @@
+import {creativeAccountRules} from '../creativeAccountRules.js';
 import {resolveProductionSelection} from './productionSelection.js';
 import {randomUUID} from 'node:crypto';
 import type {PoolClient} from 'pg';
@@ -18,11 +19,10 @@ export async function queueWorkspaceImageCandidates(c:PoolClient,root:string,row
   if(!Array.isArray(ids)||ids.length>16||new Set(ids).size!==ids.length||ids.some(id=>typeof id!=='string'||!/^[a-f0-9-]{36}$/.test(id)))throw new ConfigurationError(400,'参考图无效或超过 16 张。');
   const e=(await c.query('SELECT e.account_id,e.blueprint_version_id,e.series_version_id,b.policy,s.rules series_rules FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id LEFT JOIN public.series_versions s ON s.id=e.series_version_id WHERE e.id=$1',[row.episode_id])).rows[0];
   if(Object.keys(data.settings).some(key=>!['size','quality','count'].includes(key)))throw new ConfigurationError(400,'图片设置包含不支持的参数。');
-  const resolved=data.selection===undefined?null:await resolveProductionSelection(c,data.selection,'image');
-  const config=resolved?{...resolved.execution,budget_cents:data.reservationCents,max_attempts:1}:e.policy.static_visual;
-  if(!resolved&&(config?.execution_path!=='external'||config.executor?.provider!=='openai'||config.executor?.adapter!=='openai_images'||config.executor?.model!=='gpt-image-2'||data.model!==config.executor.model||!config.credential_ref))throw new ConfigurationError(409,'请先为本期配置 GPT Image 2 图片生成连接。');
+  const resolved=await resolveProductionSelection(c,data.selection,'image');
+  const config={...resolved.execution,budget_cents:data.reservationCents,max_attempts:1};
   const auth=(await c.query('SELECT * FROM local_identity.script_productions WHERE episode_id=$1 AND script_revision_id=$2 AND enabled AND authorized_at IS NOT NULL',[row.episode_id,row.script_revision_id])).rows[0];
-  if(!auth||!resolved&&auth.plan?.executionFingerprint!==productionHash(e.policy))throw new ConfigurationError(409,'请先允许本期在线制作。');
+  if(!auth)throw new ConfigurationError(409,'请先允许本期在线制作。');
   if(resolved){const constraints=resolved.choice.constraints,settings=data.settings;if(!constraints.sizes?.includes(settings.size)||!constraints.qualities?.includes(settings.quality)||!constraints.counts?.includes(settings.count)||ids.length>(constraints.referenceImages?.max??0))throw new ConfigurationError(400,'图片设置或参考图与所选模型不兼容。');}
   const references=[];let totalBytes=0;
   for(const id of ids){
@@ -32,11 +32,11 @@ export async function queueWorkspaceImageCandidates(c:PoolClient,root:string,row
     await verifyNativeFile(root,m.storage_path,m.sha256,Number(m.file_size));
     references.push({artifactType:'static_visual',relativePath:m.storage_path,sha256:m.sha256,fileSize:Number(m.file_size),mimeType:m.mime_type,materialRevisionId:m.id});
   }
-  await runtime.checkReferences(c,[config.credential_ref]);
+  await runtime.checkReferences(c,[resolved.selection.connectionVersionId!]);
   if(!runtime.mediaReady)throw new ConfigurationError(503,'图片 Worker 未配置。');
   await runtime.mediaReady({static_visual:config});
   const timeline=project.timelines.find(t=>t.items.includes(item))!,expected=workspaceCandidateTarget(item),id=randomUUID();
-  const creative=Object.fromEntries(Object.entries(e.policy).filter(([key])=>!['asset_root','static_visual','a_roll','b_roll','narration','soundtrack','review','approval_gates','budgets','executors','capabilities'].includes(key)));
+  const creative=creativeAccountRules(e.policy);
   const context={accountId:e.account_id,blueprintVersionId:e.blueprint_version_id,accountRules:creative,seriesVersionId:e.series_version_id,seriesRules:e.series_rules??null};
   const actualPrompt=resolved?`${data.prompt.trim()}\n\n账号创作规则：${JSON.stringify(creative)}\n系列创作规则：${JSON.stringify(context.seriesRules)}`:data.prompt.trim();
   if(resolved&&actualPrompt.length>(resolved.choice.constraints.prompt?.maxLength??1200))throw new ConfigurationError(400,'图片提示词与账号、系列规则合并后过长，请精简后提交。');

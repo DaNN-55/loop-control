@@ -20,6 +20,7 @@ export interface ProductionWorkspace {
  readiness:{deliverable:boolean;placeholders:string[];missingSources:string[]};stale:boolean;
 }
 export const productionWorkspaceFields:Record<string,string[]>={
+ saveWorkspacePlanningSelection:['episodeId','selection','expectedSelectionRevision'],
  resumeWorkspaceEditing:['episodeId','workspaceId','expectedRevision','expectedScriptRevisionId','expectedProjectSha256'],
  adoptLegacyWorkspace:['episodeId','artifactId','savedProjectSha256','expectedSourceSha256','expectedScriptRevisionId','reviewPackageId'],
  authorizeWorkspacePreparation:['episodeId','workspaceId','expectedRevision','enabled'],
@@ -40,10 +41,10 @@ export const productionWorkspaceFields:Record<string,string[]>={
  editWorkspaceStructure:['episodeId','workspaceId','expectedRevision','operation'],
  saveWorkspaceVideoRanges:['episodeId','workspaceId','expectedRevision','shotId','ranges'],
  ...workspaceCaptionFields,
- generateWorkspaceImage:['episodeId','workspaceId','expectedRevision','clipId','materialRevisionId','prompt','durationSeconds','reservationCents'],
+ generateWorkspaceImage:['selection','videoSettings','firstFrameFit','episodeId','workspaceId','expectedRevision','clipId','materialRevisionId','prompt','durationSeconds','reservationCents'],
  fillWorkspaceImageResult:['episodeId','workspaceId','expectedRevision','taskId'],
  matchWorkspaceImage:['episodeId','workspaceId','expectedRevision','clipId','materialRevisionId','usage','durationSeconds','fit','focusX','focusY'],
- replanWorkspace:['episodeId','workspaceId','expectedRevision','reviewPackageId','expectedScriptRevisionId','reason','legacyDecision'],
+ replanWorkspace:['planningTaskId','episodeId','workspaceId','expectedRevision','reviewPackageId','expectedScriptRevisionId','reason','legacyDecision'],
  retryWorkspacePlanning:['episodeId','expectedScriptRevisionId','taskId'],
  prepareWorkspace:['episodeId','reviewPackageId','expectedScriptRevisionId','legacyDecision'],
  matchWorkspaceMaterial:['episodeId','workspaceId','expectedRevision','clipId','materialRevisionId'],

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
-  blueprintFormToPolicy,
+  blueprintFormToPolicy as creativeBlueprintFormToPolicy,
+  legacyBlueprintFormToPolicy as blueprintFormToPolicy,
   blueprintPolicyToForm,
   mediaAdapterConfiguration,
   seriesFormToRules,
@@ -10,7 +11,8 @@ import {
   validateSeriesRules,
 } from "./configurationFormValues";
 
-describe("账号蓝图表单转换", () => {
+describe("历史生产单配置修复兼容转换", () => {
+  it("当前蓝图只保存创作规则，不从高级 JSON 重新引入技术配置",()=>{const form=blueprintPolicyToForm({positioning:"纪实",tone:"克制",asset_root:"/old",allowed_tools:["read"],approval_gates:[],executors:{},static_visual:{}});form.advancedJson=JSON.stringify({tone:"明亮",budgets:{storyboard_planning_cents:1},narration:{credential_ref:"old"}});expect(creativeBlueprintFormToPolicy(form)).toEqual({positioning:"纪实",tone:"明亮"});});
   it("保留明确关闭的全部人工审批关卡", () => {
     const form = blueprintPolicyToForm({ approval_gates: [] });
 
@@ -157,7 +159,8 @@ describe("账号蓝图表单转换", () => {
     expect(form.executors.script_writing).toMatchObject({ adapter: "codex", harnessId: "harness-2" });
     expect(form.advancedJson).not.toContain("soundtrack");
     expect(form.advancedJson).not.toContain("global_cap_cents");
-    expect(form.advancedJson).toContain("temperature");
+    expect(form.advancedJson).not.toContain("temperature");
+    expect((blueprintFormToPolicy(form) as any).executors.script_writing.temperature).toBe(0.2);
   });
 
   it("把媒体适配器从高级 JSON 提升为独立配置字段", () => {

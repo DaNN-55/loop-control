@@ -1,3 +1,4 @@
+import {creativeAccountRules} from '../creativeAccountRules.js';
 import {executeWorkspacePexels} from './workspacePexels.js';
 import {resolveProductionSelection} from './productionSelection.js';
 import {isWanGenerationSettings} from '../videoGenerationSettings.js';
@@ -8,7 +9,6 @@ import {join} from 'node:path';
 import {lstat} from 'node:fs/promises';
 import {resolveWorkspaceMainVoice} from '../workspaceAudio.js';
 import {isVideoProvider,videoProviders} from '../worker/videoProviderCatalog.js';
-import {productionHash} from './scriptProductionStore.js';
 import {workspaceVisualVoiceIdentity} from '../workspaceVisualCandidates.js';
 import {verifyNativeFile} from './localFiles.js';
 import type {InputRuntime} from './episodeCommands.js';
@@ -39,14 +39,14 @@ export async function readWorkspaceVisualCandidates(c:PoolClient,row:ProductionW
 }
 /** One real authorization, frozen input and private queue boundary for first fill and later candidates. */
 export async function queueWorkspaceVisualGeneration(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,data:Record<string,unknown>,runtime:InputRuntime,mode:'candidate'|'first'='candidate'){
-  const {clip,item,timeline}=target(row,project,data.targetItemId),resolved=data.selection===undefined?null:await resolveProductionSelection(c,data.selection,'video'),lineage=resolved?{shotType:'b_roll' as const}:await resolveWorkspaceVisualLineage(c,row,clip.shotId);
+  const {clip,item,timeline}=target(row,project,data.targetItemId),resolved=await resolveProductionSelection(c,data.selection,'video'),lineage={shotType:'b_roll' as const};
   if(resolved&&resolved.choice.mode!=='generation')throw new ConfigurationError(400,'请选择视频生成服务；素材检索请使用检索入口。');
   if(typeof data.firstFrameMaterialRevisionId!=='string'||!uuid.test(data.firstFrameMaterialRevisionId)||typeof data.prompt!=='string'||!data.prompt.trim()||data.prompt.length>1500)throw new ConfigurationError(400,'首帧或动作描述无效。');
-  const e=(await c.query('SELECT e.*,b.policy,s.rules series_rules FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id LEFT JOIN public.series_versions s ON s.id=e.series_version_id WHERE e.id=$1',[row.episode_id])).rows[0],config=resolved?{...resolved.execution,max_attempts:1}:e.policy[lineage.shotType],provider=config?.executor?.provider??'';
+  const e=(await c.query('SELECT e.*,b.policy,s.rules series_rules FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id LEFT JOIN public.series_versions s ON s.id=e.series_version_id WHERE e.id=$1',[row.episode_id])).rows[0],config={...resolved.execution,max_attempts:1},provider=config?.executor?.provider??'';
   if(!config?.credential_ref||!(provider==='bailian'&&config.executor?.adapter==='wan_video'||isVideoProvider(provider)&&config.executor?.adapter===videoProviders[provider].adapter))throw new ConfigurationError(409,'请为当前镜头选择既有视频连接。');
   if(data.videoSettings!==undefined&&(provider!=='bailian'||!isWanGenerationSettings(data.videoSettings)||Object.keys(data.videoSettings).some(key=>!['resolution','audio','promptExtend','shotType','watermark','negativePrompt','seed'].includes(key))))throw new ConfigurationError(400,'视频参数无效或不适用于当前模型。');
   if(data.firstFrameFit!==undefined&&!['contain','cover'].includes(String(data.firstFrameFit)))throw new ConfigurationError(400,'首帧构图无效。');
-  const authorized=(await c.query('SELECT * FROM local_identity.script_productions WHERE episode_id=$1 AND script_revision_id=$2 AND enabled AND authorized_at IS NOT NULL',[row.episode_id,row.script_revision_id])).rows[0];if(!authorized||!resolved&&authorized.plan?.executionFingerprint!==productionHash(e.policy))throw new ConfigurationError(409,'请先确认并授权当前制作计划。');
+  const authorized=(await c.query('SELECT * FROM local_identity.script_productions WHERE episode_id=$1 AND script_revision_id=$2 AND enabled AND authorized_at IS NOT NULL',[row.episode_id,row.script_revision_id])).rows[0];if(!authorized)throw new ConfigurationError(409,'请先确认并授权当前制作计划。');
   const first=(await c.query("SELECT * FROM public.production_material_revisions WHERE id=$1 AND episode_id=$2 AND material_type='image'",[data.firstFrameMaterialRevisionId,row.episode_id])).rows[0];if(!first)throw new ConfigurationError(404,'本期首帧图片不存在。');await verifyNativeFile(root,first.storage_path,first.sha256,Number(first.file_size));
   if(resolved){const input=resolved.choice.constraints.firstFrame;if(!input||!input.mimeTypes.includes(first.mime_type)||Number(first.file_size)>input.maxBytes)throw new ConfigurationError(400,'首帧格式或大小与所选模型不兼容。');}
   const mainVoice=await workspaceVisualMainVoice(c,root,row,project,clip.shotId),targetSeconds=mainVoice.windowDurationSeconds??Number(data.durationSeconds),bounds=resolved?{minDuration:resolved.choice.constraints.durationSeconds!.min,maxDuration:resolved.choice.constraints.durationSeconds!.max}:isVideoProvider(provider)?videoProviders[provider]:{minDuration:2,maxDuration:15},seconds=mainVoice.windowDurationSeconds!==null?Math.max(bounds.minDuration,Math.ceil(targetSeconds)):targetSeconds;
@@ -60,7 +60,7 @@ export async function queueWorkspaceVisualGeneration(c:PoolClient,root:string,ro
    for(const other of timeline.items)if(other.id!==item.id&&Number(other.startFrame)>=end)other.startFrame=Number(other.startFrame)+delta;
    item.durationInFrames=frames;
   }
-  const creative=Object.fromEntries(Object.entries(e.policy).filter(([key])=>!['asset_root','static_visual','a_roll','b_roll','narration','soundtrack','review','approval_gates','budgets','executors','capabilities'].includes(key))),context={accountId:e.account_id,blueprintVersionId:e.blueprint_version_id,accountRules:creative,seriesVersionId:e.series_version_id,seriesRules:e.series_rules??null},actualPrompt=resolved?`${data.prompt.trim()}\n\n账号创作规则：${JSON.stringify(creative)}\n系列创作规则：${JSON.stringify(context.seriesRules)}`:data.prompt.trim();
+  const creative=creativeAccountRules(e.policy),context={accountId:e.account_id,blueprintVersionId:e.blueprint_version_id,accountRules:creative,seriesVersionId:e.series_version_id,seriesRules:e.series_rules??null},actualPrompt=resolved?`${data.prompt.trim()}\n\n账号创作规则：${JSON.stringify(creative)}\n系列创作规则：${JSON.stringify(context.seriesRules)}`:data.prompt.trim();
   if(resolved&&actualPrompt.length>(resolved.choice.constraints.prompt?.maxLength??1500))throw new ConfigurationError(400,'动作描述与账号、系列规则合并后过长，请精简后提交。');
   const id=randomUUID(),expected=workspaceCandidateTarget(item),snapshot={...(resolved?{selectionVersion:1,selection:resolved.selection,connection:resolved.connection,context,actualPrompt,target:{targetItemId:item.id,shotId:clip.shotId,workspaceRevision:Number(row.revision),projectSha256:row.project_sha256,scriptRevisionId:row.script_revision_id},costBasis:{kind:'owner-reservation',reservationCents:data.reservationCents,model:resolved.selection.model,providerDurationSeconds:seconds}}:{}),origin:mode==='first'?'first-fill':'candidate',kind:'video',usage:'video',capability:lineage.shotType,execution:config,firstFrameId:first.id,firstFrameSha256:first.sha256,prompt:data.prompt.trim(),providerDurationSeconds:seconds,targetDurationSeconds:targetSeconds,reservationCents:data.reservationCents??null,authorizationHash:authorized.authorization_hash,nativeEditRevision:Number(row.native_edit_revision),expectedRevision:Number(row.revision),mainVoice,...(data.videoSettings?{videoSettings:data.videoSettings}:{}),...(data.firstFrameFit?{firstFrameComposition:{fit:data.firstFrameFit,width:timeline.width,height:timeline.height}}:{})};
   await c.query('INSERT INTO local_identity.workspace_visual_candidates(id,workspace_id,episode_id,clip_id,shot_id,target_item_id,input_fingerprint,target_snapshot,request_snapshot) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)',[id,row.id,row.episode_id,clip.id,clip.shotId,item.id,hash({expected,snapshot}),JSON.stringify(expected),JSON.stringify(snapshot)]);
