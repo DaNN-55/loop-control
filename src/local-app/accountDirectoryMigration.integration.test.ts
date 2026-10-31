@@ -18,12 +18,14 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner inventories and ve
  expect((await call('executeAssetDirectoryMigration',{accountId:account,migrationId:plan.body.id},f.otherToken)).status).toBe(404);
  expect((await call('executeAssetDirectoryMigration',{accountId:account,migrationId:plan.body.id},f.token,false)).status).toBe(403);
  const before=await readFile(join(f.assetRoot,f.videoPath));
+ const frozenBefore=(await f.c.query('SELECT policy,input_snapshot FROM public.account_blueprint_versions b JOIN public.episodes e ON e.blueprint_version_id=b.id JOIN public.tasks t ON t.episode_id=e.id WHERE e.id=$1',[f.episode])).rows[0];
  const moved=await call('executeAssetDirectoryMigration',{accountId:account,migrationId:plan.body.id});expect(moved.status,JSON.stringify(moved.body)).toBe(200);expect(moved.body).toMatchObject({status:'completed',originalsRetained:true});
  expect(await readFile(join(f.assetRoot,f.videoPath))).toEqual(before);expect(await readFile(join(target,f.videoPath))).toEqual(before);
  expect((await call('readAssetDirectory',{accountId:account})).body).toMatchObject({assetRoot:target,status:'ready'});
- const frozen=(await f.c.query('SELECT policy,input_snapshot FROM public.account_blueprint_versions b JOIN public.episodes e ON e.blueprint_version_id=b.id JOIN public.tasks t ON t.episode_id=e.id WHERE e.id=$1',[f.episode])).rows[0];expect(frozen.policy.asset_root).toBe(f.assetRoot);expect(frozen.input_snapshot.review_render.members[0].relative_path).toBe(f.videoPath);
+ const frozen=(await f.c.query('SELECT policy,input_snapshot FROM public.account_blueprint_versions b JOIN public.episodes e ON e.blueprint_version_id=b.id JOIN public.tasks t ON t.episode_id=e.id WHERE e.id=$1',[f.episode])).rows[0];expect(frozen).toEqual(frozenBefore);expect(frozen.input_snapshot.review_render.members[0].relative_path).toBe(f.videoPath);
  // Put the original root offline: actual HTTP reads and subsequent writes must use the copy.
  await rename(f.assetRoot,f.assetRoot+'-original-retained');await f.restart();
+ const openedDirectory=await f.request('openDirectory');expect(openedDirectory.status,JSON.stringify(openedDirectory.body)).toBe(200);expect(openedDirectory.body.path).toBe(join(target,'episodes',f.episode));
  const file=f.files[0],download=await fetch(f.origin+`/_local-artifact?episode=${f.episode}&path=${encodeURIComponent(file.relativePath)}&sha256=${file.sha256}`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(download.status).toBe(200);expect(Buffer.from(await download.arrayBuffer())).toEqual(before);
  const imported=await f.request('importMaterial',{sourceKind:'file',sourcePath:'after-move.txt',materialType:'script',materialPurpose:'supplemental_script',mimeType:'text/plain',isMainScript:false,contentBase64:Buffer.from('迁移后正式写入').toString('base64')});expect(imported.status,JSON.stringify(imported.body)).toBe(200);expect(await readFile(join(target,imported.body.storage_path),'utf8')).toBe('迁移后正式写入');
  expect((await call('readAssetDirectoryMigrations',{accountId:account})).body[0]).toMatchObject({id:plan.body.id,status:'completed'});
