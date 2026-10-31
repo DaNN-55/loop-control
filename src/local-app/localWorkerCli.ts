@@ -1,3 +1,4 @@
+import {requireAccountAssetRoot} from './accountAssetRoots.js';
 import {executeWorkspaceDeliveryWorker} from '../worker/workspaceDeliveryWorker.js';
 import{mappedAssetPath}from'./mediaPaths.js';
 import {executeScriptPlanning} from '../worker/scriptPlanning.js';
@@ -32,6 +33,7 @@ const heartbeat=setInterval(()=>{void port.rpc('refresh_worker_task_lease',args)
 try{
  await port.rpc('refresh_worker_task_lease',args);
  const roots=await readMediaDeployment(pool,config.mediaRoot),physicalRoot=mappedAssetPath(config.mediaRoot,task.allowed_asset_root,roots);
+ await requireAccountAssetRoot(pool,config.mediaRoot,String(task.account_id));
  if(task.task_type==='prepare_publish_package'&&(task.input_snapshot as Record<string,unknown>)?.capability==='workspace_delivery'){const result=await executeWorkspaceDeliveryWorker(pool,physicalRoot,task);process.stdout.write(JSON.stringify(result)+'\n');}else{
  if(typeof task.task_type!=='string'||!((task.task_type==='align_shot_captions'&&task.provider==='whisperx')||nativeMediaTask(task.task_type,String(task.provider))|| (task.task_type==='generate_narration'?['google_tts','volcengine_tts'].includes(String(task.provider)):['prepare_visual_brief','draft_storyboard','draft_storyboard_revision'].includes(task.task_type)&&task.provider==='codex')))throw Error('Task outside native input/storyboard/narration boundary');
  let outputs:Awaited<ReturnType<typeof prepareNativeAttemptOutput>>|undefined;

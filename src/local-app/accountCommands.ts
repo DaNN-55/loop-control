@@ -1,3 +1,4 @@
+import {readAccountAssetDirectory,setAccountAssetDirectory} from './accountAssetRoots.js';
 import type {Pool,PoolClient} from 'pg';
 import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
@@ -31,7 +32,7 @@ export class LocalAccountCommands{
  }
  async execute(session:OwnerSession,body:Record<string,unknown>,signal?:AbortSignal){
   if(this.closed)throw new ConfigurationError(503,'本机服务正在退出。');
-  if(!['chooseAssetDirectory','openAssetDirectory','checkBlueprint'].includes(String(body.command))||Object.keys(body).some(k=>!['command','data','idempotencyKey'].includes(k))||typeof body.idempotencyKey!=='string'||!uuid.test(body.idempotencyKey)||!body.data||typeof body.data!=='object'||Array.isArray(body.data))throw new ConfigurationError(400,'账号本机操作无效。');
+  if(!['chooseAssetDirectory','openAssetDirectory','checkBlueprint','setAssetDirectory','readAssetDirectory'].includes(String(body.command))||Object.keys(body).some(k=>!['command','data','idempotencyKey'].includes(k))||typeof body.idempotencyKey!=='string'||!uuid.test(body.idempotencyKey)||!body.data||typeof body.data!=='object'||Array.isArray(body.data))throw new ConfigurationError(400,'账号本机操作无效。');
   const data=body.data as Record<string,unknown>,choose=body.command==='chooseAssetDirectory';
   if(body.command==='checkBlueprint'){
    if(Object.keys(data).some(k=>!['accountId','blueprintVersionId','expectedRevision'].includes(k))||typeof data.accountId!=='string'||!uuid.test(data.accountId)||typeof data.blueprintVersionId!=='string'||!uuid.test(data.blueprintVersionId)||typeof data.expectedRevision!=='string'||!/^[a-f0-9]{32}$/.test(data.expectedRevision))throw new ConfigurationError(400,'蓝图检查参数无效。');
@@ -39,6 +40,10 @@ export class LocalAccountCommands{
     if(!this.episodes)return{version:workerPreflightVersion,checks:[{capability:'worker_runtime',check:'command_availability',phase:'preflight',status:'unavailable',reason:'本地 Worker 尚未配置；请检查批准的部署配置。',scope:'worker',action:'contact_environment_admin'}]};
     return this.episodes.blueprintPreflight(c,a.id,a.policy);
    });
+  }
+  if(['readAssetDirectory','setAssetDirectory'].includes(String(body.command))){
+   if(typeof data.accountId!=='string'||!uuid.test(data.accountId)||Object.keys(data).some(k=>!['accountId',...(body.command==='setAssetDirectory'?['path']:[])].includes(k)))throw new ConfigurationError(400,'账号目录参数无效。');
+   return sessionTransaction(this.pool,session,async c=>{await this.account(c,session,data.accountId);return body.command==='setAssetDirectory'?setAccountAssetDirectory(c,this.mediaRoot,String(data.accountId),data.path):readAccountAssetDirectory(c,this.mediaRoot,String(data.accountId));});
   }
   if(typeof data.accountId!=='string'||!uuid.test(data.accountId)||Object.keys(data).some(k=>!['accountId',...(choose?[]:['path'])].includes(k))||!choose&&(typeof data.path!=='string'||!data.path.trim()||data.path.length>4096))throw new ConfigurationError(400,'账号或目录参数无效。');
   if(choose){

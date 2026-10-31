@@ -80,6 +80,7 @@ it('keeps the relogged-in session check when an old session check returns late',
   if(path.endsWith('/logout'))return Response.json({});
   if(path.includes('/catalog?'))return Response.json(catalog());
   if(path.endsWith('/account-commands')){
+   if(JSON.parse(String(init?.body)).command!=='checkBlueprint')return Response.json({assetRoot:null,legacyRoots:[],status:'unset'});
    checks++;if(checks===1)return new Promise<Response>(resolve=>{finishOld=resolve;});
    expect(new Headers(init?.headers).get('X-CSRF-Token')).toBe('new-session');
    return Response.json({version:'worker-preflight/v2',checks:[{capability:'worker_runtime',check:'command_availability',phase:'preflight',status:'unavailable',scope:'worker',action:'contact_environment_admin',reason:'New session blocker'}]});
