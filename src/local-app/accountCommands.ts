@@ -1,3 +1,4 @@
+import {planAccountDirectoryMigration,readAccountDirectoryMigrations,executeAccountDirectoryMigration} from './accountDirectoryMigration.js';
 import {readAccountAssetDirectory,setAccountAssetDirectory} from './accountAssetRoots.js';
 import type {Pool,PoolClient} from 'pg';
 import {execFile} from 'node:child_process';
@@ -31,8 +32,15 @@ export class LocalAccountCommands{
  }
  async execute(session:OwnerSession,body:Record<string,unknown>,signal?:AbortSignal){
   if(this.closed)throw new ConfigurationError(503,'本机服务正在退出。');
-  if(!['chooseAssetDirectory','openAssetDirectory','setAssetDirectory','readAssetDirectory'].includes(String(body.command))||Object.keys(body).some(k=>!['command','data','idempotencyKey'].includes(k))||typeof body.idempotencyKey!=='string'||!uuid.test(body.idempotencyKey)||!body.data||typeof body.data!=='object'||Array.isArray(body.data))throw new ConfigurationError(400,'账号本机操作无效。');
+  if(!['chooseAssetDirectory','openAssetDirectory','setAssetDirectory','readAssetDirectory','planAssetDirectoryMigration','readAssetDirectoryMigrations','executeAssetDirectoryMigration','rollbackAssetDirectoryMigration'].includes(String(body.command))||Object.keys(body).some(k=>!['command','data','idempotencyKey'].includes(k))||typeof body.idempotencyKey!=='string'||!uuid.test(body.idempotencyKey)||!body.data||typeof body.data!=='object'||Array.isArray(body.data))throw new ConfigurationError(400,'账号本机操作无效。');
   const data=body.data as Record<string,unknown>,choose=body.command==='chooseAssetDirectory';
+  if(['planAssetDirectoryMigration','readAssetDirectoryMigrations','executeAssetDirectoryMigration','rollbackAssetDirectoryMigration'].includes(String(body.command))){
+   const planning=body.command==='planAssetDirectoryMigration',reading=body.command==='readAssetDirectoryMigrations';
+   if(typeof data.accountId!=='string'||!uuid.test(data.accountId)||Object.keys(data).some(k=>!['accountId',...(planning?['path']:reading?[]:['migrationId'])].includes(k))||!planning&&!reading&&(typeof data.migrationId!=='string'||!uuid.test(data.migrationId)))throw new ConfigurationError(400,'目录迁移参数无效。');
+   if(planning||reading)return sessionTransaction(this.pool,session,async c=>{await this.account(c,session,data.accountId);return planning?planAccountDirectoryMigration(c,this.mediaRoot,String(data.accountId),data.path):readAccountDirectoryMigrations(c,String(data.accountId));});
+   await sessionTransaction(this.pool,session,c=>this.account(c,session,data.accountId));
+   return executeAccountDirectoryMigration(this.pool,session,this.mediaRoot,String(data.accountId),String(data.migrationId),body.command==='rollbackAssetDirectoryMigration',signal);
+  }
   if(['readAssetDirectory','setAssetDirectory'].includes(String(body.command))){
    if(typeof data.accountId!=='string'||!uuid.test(data.accountId)||Object.keys(data).some(k=>!['accountId',...(body.command==='setAssetDirectory'?['path']:[])].includes(k)))throw new ConfigurationError(400,'账号目录参数无效。');
    return sessionTransaction(this.pool,session,async c=>{await this.account(c,session,data.accountId);return body.command==='setAssetDirectory'?setAccountAssetDirectory(c,this.mediaRoot,String(data.accountId),data.path):readAccountAssetDirectory(c,this.mediaRoot,String(data.accountId));});

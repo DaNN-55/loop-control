@@ -1,0 +1,143 @@
+// @vitest-environment node
+import {it,expect} from 'vitest';
+import {randomUUID,createHash} from 'node:crypto';
+import {mkdir,readFile,writeFile,rename,symlink,open,lstat} from 'node:fs/promises';
+import {join} from 'node:path';
+import {embeddedStudioFixture} from './embeddedStudio.fixture';
+import {csrfFor} from './sessions';
+it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner inventories and verifies actual account files before an atomic move; original evidence remains readable after restart',async()=>{
+ const f=await embeddedStudioFixture();
+ try{
+ const account=(await f.c.query('SELECT account_id FROM public.episodes WHERE id=$1',[f.episode])).rows[0].account_id;
+ const target=join(f.root,'moved-account');await mkdir(target);
+ const call=async(command:string,data:Record<string,unknown>,token=f.token,csrf=true)=>{const r=await fetch(f.origin+'/api/local/account-commands',{method:'POST',headers:{Origin:f.origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+token,...(csrf?{'X-CSRF-Token':csrfFor(token)}:{})},body:JSON.stringify({command,data,idempotencyKey:randomUUID()})});return{status:r.status,body:await r.json()};};
+ const plan=await call('planAssetDirectoryMigration',{accountId:account,path:target});
+ expect(plan.status,JSON.stringify(plan.body)).toBe(200);
+ expect(plan.body).toMatchObject({status:'planned',targetRoot:target,conflicts:[],episodes:[{id:f.episode}]});
+ expect(plan.body.files.map((file:any)=>file.relativePath)).toContain(f.videoPath);
+ expect((await call('executeAssetDirectoryMigration',{accountId:account,migrationId:plan.body.id},f.otherToken)).status).toBe(404);
+ expect((await call('executeAssetDirectoryMigration',{accountId:account,migrationId:plan.body.id},f.token,false)).status).toBe(403);
+ const before=await readFile(join(f.assetRoot,f.videoPath));
+ const moved=await call('executeAssetDirectoryMigration',{accountId:account,migrationId:plan.body.id});expect(moved.status,JSON.stringify(moved.body)).toBe(200);expect(moved.body).toMatchObject({status:'completed',originalsRetained:true});
+ expect(await readFile(join(f.assetRoot,f.videoPath))).toEqual(before);expect(await readFile(join(target,f.videoPath))).toEqual(before);
+ expect((await call('readAssetDirectory',{accountId:account})).body).toMatchObject({assetRoot:target,status:'ready'});
+ const frozen=(await f.c.query('SELECT policy,input_snapshot FROM public.account_blueprint_versions b JOIN public.episodes e ON e.blueprint_version_id=b.id JOIN public.tasks t ON t.episode_id=e.id WHERE e.id=$1',[f.episode])).rows[0];expect(frozen.policy.asset_root).toBe(f.assetRoot);expect(frozen.input_snapshot.review_render.members[0].relative_path).toBe(f.videoPath);
+ // Put the original root offline: actual HTTP reads and subsequent writes must use the copy.
+ await rename(f.assetRoot,f.assetRoot+'-original-retained');await f.restart();
+ const file=f.files[0],download=await fetch(f.origin+`/_local-artifact?episode=${f.episode}&path=${encodeURIComponent(file.relativePath)}&sha256=${file.sha256}`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(download.status).toBe(200);expect(Buffer.from(await download.arrayBuffer())).toEqual(before);
+ const imported=await f.request('importMaterial',{sourceKind:'file',sourcePath:'after-move.txt',materialType:'script',materialPurpose:'supplemental_script',mimeType:'text/plain',isMainScript:false,contentBase64:Buffer.from('迁移后正式写入').toString('base64')});expect(imported.status,JSON.stringify(imported.body)).toBe(200);expect(await readFile(join(target,imported.body.storage_path),'utf8')).toBe('迁移后正式写入');
+ expect((await call('readAssetDirectoryMigrations',{accountId:account})).body[0]).toMatchObject({id:plan.body.id,status:'completed'});
+ const lifecycle=async(command:string,data:Record<string,unknown>={})=>{const r=await fetch(f.origin+'/api/local/episode-lifecycle',{method:'POST',headers:{Origin:f.origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+f.token,'X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command,data:{episodeId:f.episode,...data},idempotencyKey:randomUUID()})});return{status:r.status,body:await r.json()};};
+ expect((await lifecycle('archiveEpisode',{archived:true})).status).toBe(200);const deletion=await lifecycle('planDeletion');expect(deletion.status).toBe(200);expect(deletion.body.paths).toEqual([join(target,'episodes',f.episode)]);
+ const removed=await lifecycle('deleteEpisode',{confirmation:deletion.body.confirmation,expectedPath:deletion.body.path,expectedPaths:deletion.body.paths,expectedRevision:deletion.body.revision});expect(removed.status,JSON.stringify(removed.body)).toBe(200);expect(removed.body.cleanupPending).toBe(false);await expect(lstat(join(target,'episodes',f.episode))).rejects.toMatchObject({code:'ENOENT'});expect(await readFile(join(f.assetRoot+'-original-retained',f.videoPath))).toEqual(before);
+
+
+ }finally{await f.close();}
+},300000);
+
+it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('migration mount failure preserves the old root and resumes from its durable receipt after restart; collisions and changed references never cut over',async()=>{
+ const f=await embeddedStudioFixture();
+ try{
+ const account=(await f.c.query('SELECT account_id FROM public.episodes WHERE id=$1',[f.episode])).rows[0].account_id,target=join(f.root,'recover-target');await mkdir(target);
+ const call=async(command:string,data:Record<string,unknown>)=>{const r=await fetch(f.origin+'/api/local/account-commands',{method:'POST',headers:{Origin:f.origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+f.token,'X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command,data:{accountId:account,...data},idempotencyKey:randomUUID()})});return{status:r.status,body:await r.json()};};
+ const nested=join(f.assetRoot,'bad-nested');await mkdir(nested);expect((await call('planAssetDirectoryMigration',{path:nested})).status).toBe(409);
+ const alias=join(f.root,'bad-alias');await symlink(target,alias);expect((await call('planAssetDirectoryMigration',{path:alias})).status).toBe(400);
+ const plan=await call('planAssetDirectoryMigration',{path:target});expect(plan.status,JSON.stringify(plan.body)).toBe(200);
+ await rename(target,target+'-offline');
+ const failed=await call('executeAssetDirectoryMigration',{migrationId:plan.body.id});expect(failed.status).not.toBe(200);
+ expect((await call('readAssetDirectory',{})).body).toMatchObject({assetRoot:f.assetRoot,status:'ready'});
+ expect((await call('readAssetDirectoryMigrations',{})).body[0]).toMatchObject({status:'failed'});
+ await f.restart();await rename(target+'-offline',target);
+ // A partial file left by a killed copy is receipt-scoped and can be recovered.
+ await mkdir(join(target,'episodes',f.episode),{recursive:true});await writeFile(join(target,f.videoPath+'.migration-'+plan.body.id),'interrupted-copy');
+ const resumed=await call('executeAssetDirectoryMigration',{migrationId:plan.body.id});expect(resumed.status,JSON.stringify(resumed.body)).toBe(200);expect(resumed.body.status).toBe('completed');
+ expect(await readFile(join(target,f.videoPath))).toEqual(await readFile(join(f.assetRoot,f.videoPath)));
+ const next=join(f.root,'collision-target');await mkdir(next);const p2=await call('planAssetDirectoryMigration',{path:next});expect(p2.status).toBe(200);
+ await mkdir(join(next,'episodes',f.episode),{recursive:true});await writeFile(join(next,f.videoPath),'foreign-content');
+ expect((await call('executeAssetDirectoryMigration',{migrationId:p2.body.id})).status).toBe(409);expect(await readFile(join(next,f.videoPath),'utf8')).toBe('foreign-content');expect((await call('readAssetDirectory',{})).body.assetRoot).toBe(target);
+ expect((await call('rollbackAssetDirectoryMigration',{migrationId:p2.body.id})).body.status).toBe('rolled_back');
+ }finally{await f.close();}
+},300000);
+
+it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('an actual interrupted streaming copy keeps originals and recovers the durable migration after restart',async()=>{
+ const f=await embeddedStudioFixture();
+ try{
+ const account=(await f.c.query('SELECT account_id FROM public.episodes WHERE id=$1',[f.episode])).rows[0].account_id,target=join(f.root,'copy-interruption');await mkdir(target);
+ const large=await open(join(f.assetRoot,'00-large-media.bin'),'wx');await large.truncate(32*1024*1024);await large.close();
+ const call=async(command:string,data:Record<string,unknown>)=>{const r=await fetch(f.origin+'/api/local/account-commands',{method:'POST',headers:{Origin:f.origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+f.token,'X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command,data:{accountId:account,...data},idempotencyKey:randomUUID()})});return{status:r.status,body:await r.json()};};
+ const plan=await call('planAssetDirectoryMigration',{path:target});expect(plan.status,JSON.stringify(plan.body)).toBe(200);
+ const migrating=call('executeAssetDirectoryMigration',{migrationId:plan.body.id});
+ const temporary=join(target,'00-large-media.bin.migration-'+plan.body.id);let interrupted=false;
+ for(let i=0;i<10000;i++){try{if((await lstat(temporary)).size>0){await expect(f.c.query("INSERT INTO public.tasks(id,episode_id,task_type,status) VALUES($1,$2,'generate_review_render','ready')",[randomUUID(),f.episode])).rejects.toThrow('账号目录正在迁移');await rename(target,target+'-disconnected');interrupted=true;break;}}catch{}await new Promise<void>(done=>setTimeout(done,1));}
+ expect(interrupted).toBe(true);const failure=await migrating;expect(failure.status).not.toBe(200);expect((await call('readAssetDirectory',{})).body.assetRoot).toBe(f.assetRoot);
+ expect((await lstat(join(f.assetRoot,'00-large-media.bin'))).size).toBe(32*1024*1024);
+ await f.restart();await rename(target+'-disconnected',target);
+ const recovered=await call('executeAssetDirectoryMigration',{migrationId:plan.body.id});expect(recovered.status,JSON.stringify(recovered.body)).toBe(200);expect(recovered.body.status).toBe('completed');
+ expect((await lstat(join(target,'00-large-media.bin'))).size).toBe(32*1024*1024);
+ }finally{await f.close();}
+},300000);
+it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('migrated native SQLite edits reopen, export, and deliver through the real Worker with originals offline',async()=>{
+ const {productionWorkspaceFixture}=await import('./productionWorkspace.fixture');
+ const {defaultShotCaptionContract}=await import('../shotCaptions');
+ const {nativeWorkerPort}=await import('./workerDatabase');
+ const {runWorkspaceDeliveryProcess}=await import('./workspaceDelivery.fixture');
+ const {workspaceTestMedia}=await import('./workspaceTestMedia.fixture');
+ const f=await productionWorkspaceFixture({runtime:{wake(){}}}),worker=f.workerPool();let actualRoot=f.assetRoot;
+ try{
+ // Fixture mutation removes the legacy source to prove that actual I/O uses
+ // the independent episode location; no existing production rows are changed.
+ await f.c.query("UPDATE public.account_blueprint_versions SET policy=policy-'asset_root'");
+ await f.c.query('INSERT INTO public.worker_scheduler_settings(singleton,capacity) VALUES(true,2)');
+ let w=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;
+ const send=async(command:string,data:Record<string,unknown>={})=>{const r=await f.request(command,{workspaceId:w.id,expectedRevision:w.revision,...data});expect(r.status,JSON.stringify(r.body)).toBe(200);return r.body;};
+ for(const clip of w.clips)w=await send('matchWorkspaceMaterial',{clipId:clip.id,materialRevisionId:f.material});
+ for(const clip of w.clips)w=await send('saveWorkspaceCaptions',{clipId:clip.id,captionContract:defaultShotCaptionContract(clip.text,'independent',false)});
+ const opened=await send('openWorkspaceStudio');w=opened.productionWorkspace;
+ const account=(await f.c.query('SELECT account_id FROM public.episodes WHERE id=$1',[f.episode])).rows[0].account_id,target=join(f.root,'native-migration');await mkdir(target);
+ const migrate=async(command:string,data:Record<string,unknown>={})=>{const r=await fetch(f.origin+'/api/local/account-commands',{method:'POST',headers:{Origin:f.origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+f.token,'X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command,data:{accountId:account,...data},idempotencyKey:randomUUID()})});return{status:r.status,body:await r.json()};};
+ const busy=await migrate('planAssetDirectoryMigration',{path:target});expect(busy.status,JSON.stringify(busy.body)).toBe(200);expect(busy.body.conflicts.join(' ')).toContain('Studio');expect((await migrate('executeAssetDirectoryMigration',{migrationId:busy.body.id})).status).toBe(409);await migrate('rollbackAssetDirectoryMigration',{migrationId:busy.body.id});
+
+ const sqlite=await readFile(join(f.assetRoot,`episodes/${f.episode}/openchatcut-work/current/runtime/project-store-v1.sqlite3`));expect(sqlite.subarray(0,16).toString()).toBe('SQLite format 3\u0000');
+ const {editStudioDocument}=await import('./studioDocument.fixture');await editStudioDocument(opened.studioUrl,w.project.projectId,doc=>{doc.timelines[0].name='T07 SQLite 原生编辑';});
+ const saved=await send('saveWorkspaceStudio',{workspaceRelativePath:opened.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:opened.workspace.sha256});w=saved.productionWorkspace;
+ w=await send('closeWorkspaceStudio');
+ const planned=await migrate('planAssetDirectoryMigration',{path:target});expect(planned.status,JSON.stringify(planned.body)).toBe(200);expect(planned.body.conflicts).toEqual([]);
+ const moved=await migrate('executeAssetDirectoryMigration',{migrationId:planned.body.id});expect(moved.status,JSON.stringify(moved.body)).toBe(200);actualRoot=target;
+ await rename(f.assetRoot,f.assetRoot+'-original-retained');await f.restart();
+ const reopened=await send('openWorkspaceStudio');w=reopened.productionWorkspace;const resaved=await send('saveWorkspaceStudio',{workspaceRelativePath:reopened.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:reopened.workspace.sha256});w=resaved.productionWorkspace;w=await send('closeWorkspaceStudio');
+
+ const resumed=await(await fetch(f.origin+`/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}})).json();expect(resumed.workspace.project.sha256).toBe(w.project.sha256);
+ const exactProject=JSON.parse(await readFile(join(actualRoot,resumed.workspace.project.relativePath),'utf8'));expect(exactProject.timelines[0].name).toBe('T07 SQLite 原生编辑');
+ w=await send('exportWorkspace');expect(w.exports[0].status,JSON.stringify(w.exports[0])).toBe('ready');
+ const exported=w.exports[0];expect((await readFile(join(actualRoot,exported.artifact.relativePath))).length).toBeGreaterThan(100);
+ w=await send('confirmWorkspaceExport',{exportId:exported.id,expectedExportSha256:exported.artifact.sha256,expectedContentSha256:w.contentSha256});
+ w=await send('prepareWorkspaceDelivery',{exportId:exported.id,expectedExportSha256:exported.artifact.sha256,expectedContentSha256:w.contentSha256,title:'独立账号目录交付',description:'',tags:[],coverBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64')});
+ const task=(await nativeWorkerPort(worker).rpc('claim_next_worker_task',{p_worker_capacity:2}))[0] as any;expect(task.allowed_asset_root).toBe(actualRoot);
+ const result=await runWorkspaceDeliveryProcess(f,task);expect(result.status,JSON.stringify(result)).toBe('completed');
+ for(const artifact of result.artifacts){expect((await readFile(join(actualRoot,artifact.relativePath))).length).toBe(Number(artifact.fileSize));const file=await fetch(f.origin+`/_local-artifact?episode=${f.episode}&path=${encodeURIComponent(artifact.relativePath)}&sha256=${artifact.sha256}`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(file.status,artifact.relativePath).toBe(200);}
+ }finally{await worker.end();await f.close();}
+},300000);
+
+it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('historical deployment roots and immutable references merge into the actual account folder; task and reference conflicts block cutover',async()=>{
+ const f=await embeddedStudioFixture();
+ try{
+ const account=(await f.c.query('SELECT account_id FROM public.episodes WHERE id=$1',[f.episode])).rows[0].account_id,legacy=join(f.root,'legacy-account'),target=join(f.root,'all-history'),blueprint=randomUUID(),episode=randomUUID(),task=randomUUID(),artifact=randomUUID();await mkdir(join(legacy,'episodes',episode),{recursive:true});await mkdir(target);
+ const path=`episodes/${episode}/historical.txt`,bytes=Buffer.from('部署前的历史正文与交付证据'),sha=createHash('sha256').update(bytes).digest('hex'),logical='/legacy-source/media/legacy-account';await writeFile(join(legacy,path),bytes);
+ await f.c.query("UPDATE local_identity.import_record SET media_source_roots=ARRAY['/legacy-source/media']");
+ await f.c.query('INSERT INTO public.account_blueprint_versions(id,account_id,version,policy,is_active) VALUES($1,$2,2,$3,false)',[blueprint,account,{asset_root:logical}]);
+ await f.c.query("INSERT INTO public.episodes(id,account_id,blueprint_version_id,title,stage) VALUES($1,$2,$3,'历史生产单','production_completed')",[episode,account,blueprint]);await f.c.query('UPDATE local_identity.episode_asset_locations SET asset_root=$2 WHERE episode_id=$1',[episode,logical]);
+ await f.c.query("INSERT INTO public.tasks(id,episode_id,task_type,status,input_snapshot) VALUES($1,$2,'generate_review_render','completed',$3)",[task,episode,{frozen_location:logical}]);await f.c.query("INSERT INTO public.artifacts(id,episode_id,producer_task_id,artifact_type,relative_path,sha256,file_size) VALUES($1,$2,$3,'render',$4,$5,$6)",[artifact,episode,task,path,sha,bytes.length]);
+ const call=async(command:string,data:Record<string,unknown>={})=>{const r=await fetch(f.origin+'/api/local/account-commands',{method:'POST',headers:{Origin:f.origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+f.token,'X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command,data:{accountId:account,...data},idempotencyKey:randomUUID()})});return{status:r.status,body:await r.json()};};
+ const blockingTask=randomUUID();await f.c.query("INSERT INTO public.tasks(id,episode_id,task_type,status) VALUES($1,$2,'generate_review_render','ready')",[blockingTask,f.episode]);
+ const busy=await call('planAssetDirectoryMigration',{path:target});expect(busy.status,JSON.stringify(busy.body)).toBe(200);expect(busy.body.conflicts.join(' ')).toContain('任务');expect((await call('executeAssetDirectoryMigration',{migrationId:busy.body.id})).status).toBe(409);await call('rollbackAssetDirectoryMigration',{migrationId:busy.body.id});
+ await f.c.query("UPDATE public.tasks SET status='failed' WHERE id=$1",[blockingTask]);await f.c.query("INSERT INTO public.paid_generation_reservations(task_id,account_id,kind,reserved_cents) VALUES($1,$2,'video',1)",[blockingTask,account]);
+ const unknown=await call('planAssetDirectoryMigration',{path:target});expect(unknown.body.conflicts.join(' ')).toContain('供应商');await call('rollbackAssetDirectoryMigration',{migrationId:unknown.body.id});
+ await f.c.query("UPDATE public.paid_generation_reservations SET request_state='succeeded' WHERE task_id=$1",[blockingTask]);
+ await f.c.query('UPDATE public.artifacts SET sha256=$2 WHERE id=$1',[artifact,'0'.repeat(64)]);
+ const invalid=await call('planAssetDirectoryMigration',{path:target});expect(invalid.body.conflicts.join(' ')).toContain('引用校验失败');await call('rollbackAssetDirectoryMigration',{migrationId:invalid.body.id});await f.c.query('UPDATE public.artifacts SET sha256=$2 WHERE id=$1',[artifact,sha]);
+ const plan=await call('planAssetDirectoryMigration',{path:target});expect(plan.status,JSON.stringify(plan.body)).toBe(200);expect(plan.body.sources.map((s:any)=>s.path).sort()).toEqual([f.assetRoot,legacy].sort());expect(plan.body.episodes).toHaveLength(2);expect(plan.body.conflicts).toEqual([]);
+ const moved=await call('executeAssetDirectoryMigration',{migrationId:plan.body.id});expect(moved.status,JSON.stringify(moved.body)).toBe(200);expect(await readFile(join(target,path))).toEqual(bytes);expect(await readFile(join(legacy,path))).toEqual(bytes);
+ await rename(legacy,legacy+'-original-retained');await f.restart();const download=await fetch(f.origin+`/_local-artifact?episode=${episode}&path=${encodeURIComponent(path)}&sha256=${sha}`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(download.status).toBe(200);expect(Buffer.from(await download.arrayBuffer())).toEqual(bytes);
+ expect((await f.c.query('SELECT policy FROM public.account_blueprint_versions WHERE id=$1',[blueprint])).rows[0].policy.asset_root).toBe(logical);expect((await f.c.query('SELECT input_snapshot FROM public.tasks WHERE id=$1',[task])).rows[0].input_snapshot.frozen_location).toBe(logical);
+ }finally{await f.close();}
+},300000);

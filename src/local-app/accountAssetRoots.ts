@@ -6,7 +6,7 @@ import {ConfigurationError} from './configurationCommands.js';
 import {mappedAssetPath} from './mediaPaths.js';
 import {readMediaDeployment,resolveLocalAssetRoot} from './mediaDeployment.js';
 const overlaps=(a:string,b:string)=>a===b||(!relative(a,b).startsWith('..')&&!isAbsolute(relative(a,b)))||(!relative(b,a).startsWith('..')&&!isAbsolute(relative(b,a)));
-async function location(c:Pick<PoolClient,'query'>,mediaRoot:string,path:unknown){
+export async function validateAccountAssetLocation(c:Pick<PoolClient,'query'>,mediaRoot:string,path:unknown){
  if(typeof path!=='string'||!path.trim()||path.length>4096||!isAbsolute(path)||resolve(path)!==path)throw new ConfigurationError(400,'请填写已授权范围内的实际目录。');
  const rel=relative(mediaRoot,path);
  if(!rel||rel.startsWith('..')||isAbsolute(rel)||['openchatcut','.loop-control','.deletion-staging'].includes(rel.split('/')[0]))throw new ConfigurationError(400,'请选择本机媒体授权根内的独立账号目录，不能使用平台目录。');
@@ -20,7 +20,8 @@ async function location(c:Pick<PoolClient,'query'>,mediaRoot:string,path:unknown
 export async function requireAccountAssetRoot(c:Pick<PoolClient,'query'>,mediaRoot:string,accountId:string){
  const row=(await c.query('SELECT * FROM local_identity.account_asset_directories WHERE account_id=$1',[accountId])).rows[0];
  if(!row)throw new ConfigurationError(409,'请先在账号配置中设置实际专属目录。');
- const valid=await location(c,mediaRoot,row.actual_root);
+ if((await c.query("SELECT 1 FROM local_identity.account_directory_migrations WHERE account_id=$1 AND status='copying'",[accountId])).rowCount)throw new ConfigurationError(409,'账号目录正在迁移，请完成或恢复迁移后继续制作。');
+ const valid=await validateAccountAssetLocation(c,mediaRoot,row.actual_root);
  if(valid.device!==row.device_id||valid.inode!==row.inode_id)throw new ConfigurationError(409,'账号目录所在位置已变化，请检查挂载或通过目录迁移恢复。');
  return valid.path;
 }
@@ -34,7 +35,7 @@ export async function readAccountAssetDirectory(c:Pick<PoolClient,'query'>,media
 export async function setAccountAssetDirectory(c:Pick<PoolClient,'query'>,mediaRoot:string,accountId:string,path:unknown){
  // Serialize all account claims, including accounts hidden by the current Owner's RLS.
  await c.query("SELECT pg_advisory_xact_lock(hashtextextended('account-asset-root-ownership',0))");
- const valid=await location(c,mediaRoot,path),state=await readAccountAssetDirectory(c,mediaRoot,accountId);
+ const valid=await validateAccountAssetLocation(c,mediaRoot,path),state=await readAccountAssetDirectory(c,mediaRoot,accountId);
  const claims=(await c.query('SELECT * FROM local_identity.account_asset_root_claims()')).rows,sources=await readMediaDeployment(c,mediaRoot);
  for(const claim of claims){if(claim.account_id===accountId)continue;let other:string;try{other=mappedAssetPath(mediaRoot,claim.asset_root,sources);}catch{other=claim.asset_root;}other=await realpath(other).catch(()=>other);if(overlaps(valid.path,other))throw new ConfigurationError(409,'该目录与其他账号的目录重叠，请选择独立位置。');}
  if(state.assetRoot===valid.path&&state.status==='unavailable')throw new ConfigurationError(409,state.reason??'目录身份已变化，请通过目录迁移恢复。');
