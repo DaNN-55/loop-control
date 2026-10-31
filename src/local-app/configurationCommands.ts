@@ -1,5 +1,5 @@
+import {createAccountDirectory} from './accountCreation.js';
 import {creativeAccountRules} from '../creativeAccountRules.js';
-import {setAccountAssetDirectory} from './accountAssetRoots.js';
 import {createHash} from 'node:crypto';
 import type {Pool,PoolClient} from 'pg';
 import {ownerTransaction} from './ownerTransaction.js';
@@ -58,13 +58,13 @@ export async function executeConfiguration(pool:Pool,session:OwnerSession,body:R
   else if(typeof value!=='string'||value.length>100000)throw new ConfigurationError(400,'配置字段无效。');
  }
  if(command==='createAccount'){try{new Intl.DateTimeFormat('en',{timeZone:String(data.timezone)});}catch{throw new ConfigurationError(400,'时区无效。');}}
+ if(command==='createAccount'){if(data.assetRoot!==undefined&&data.assetRoot!=='')throw new ConfigurationError(400,'新账号会自动建立专属目录；历史目录请在账号资料的恢复与迁移中处理。');return createAccountDirectory(pool,session,String(body.idempotencyKey),hash,data,mediaRoot,checkExternalReferences,validateConfigurationPolicy(data.policy,!!checkExternalReferences));}
  const result=await ownerTransaction(pool,session.id,false,async client=>{
   const valid=await client.query('SELECT token_hash FROM local_identity.sessions WHERE token_hash=$1 AND owner_id=$2 AND revoked_at IS NULL AND expires_at>clock_timestamp() FOR SHARE',[tokenHash(session.token),session.id]);
   if(!valid.rowCount)throw new ConfigurationError(401,'会话已失效。');
   await client.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[session.id+':'+body.idempotencyKey]);
   const receipt=await client.query('SELECT payload_hash,result FROM local_identity.command_receipts WHERE owner_id=$1 AND idempotency_key=$2',[session.id,body.idempotencyKey]);
   if(receipt.rowCount){if(receipt.rows[0].payload_hash!==hash)throw new ConfigurationError(409,'同一操作标识不能用于不同内容。');return receipt.rows[0].result;}
-  let externalPolicy=false;
   if(data.accountId){
    const locked=await client.query('SELECT local_identity.lock_owned_account_row($1) owned',[data.accountId]);
    if(!locked.rows[0].owned)throw new ConfigurationError(404,'账号不可见。');
@@ -76,15 +76,9 @@ export async function executeConfiguration(pool:Pool,session:OwnerSession,body:R
   const accountAssetRoots=command==='deleteAccount'?(await client.query("SELECT policy->>'asset_root' asset_root FROM public.account_blueprint_versions WHERE account_id=$1 UNION SELECT actual_root FROM local_identity.account_asset_directories WHERE account_id=$1 UNION SELECT asset_root FROM local_identity.episode_asset_locations WHERE account_id=$1",[data.accountId])).rows.map(row=>row.asset_root):[];
   if(data.policy){
    const refs=validateConfigurationPolicy(data.policy,!!checkExternalReferences);if(refs.length)await checkExternalReferences!(client,refs);
-   externalPolicy=refs.length>0;
 
   }
-  // create_account establishes membership after its initial blueprint insert.
-  // Attach external references only after membership exists, in this same transaction.
-  const attachAfterCreation=command==='createAccount'&&externalPolicy;
-  const {rows:[row]}=await client.query(definition.sql,definition.fields.map(f=>attachAfterCreation&&f==='policy'?{}:data[f]));
-  if(attachAfterCreation)await client.query('SELECT public.update_current_blueprint($1,$2)',[row.result.id,data.policy]);
-  if(command==='createAccount'&&data.assetRoot!==undefined&&data.assetRoot!=='')await setAccountAssetDirectory(client,mediaRoot,row.result.id,data.assetRoot);
+  const {rows:[row]}=await client.query(definition.sql,definition.fields.map(f=>data[f]));
   let value=row.result;
   if(command==='deleteAccount'){
    const candidates=await planEmptyAccountDirectories(mediaRoot,accountAssetRoots,accountAssetRoots.some(root=>typeof root==='string'&&root)?await readMediaDeployment(client,mediaRoot):[]),emptyAccountDirectories:EmptyAccountDirectory[]=[];
