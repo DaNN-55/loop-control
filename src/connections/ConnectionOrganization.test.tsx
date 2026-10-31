@@ -38,8 +38,8 @@ it('tests a stored connection directly without creating, updating or rotating cr
 it('combines capability and verification filters without inventing model values',()=>{
  const a=row('a','Pexels connection'),b={...row('b','Voice connection'),provider:'volcengine_tts',adapter:'volcengine_tts',status:'unverified' as const};
  render(<ConnectionWorkspace connections={[a,b]} onCreateConnection={vi.fn()} onTestConnection={vi.fn()}/>);
- fireEvent.change(screen.getByLabelText('生产能力'),{target:{value:'声音合成'}});
- const table=screen.getByRole('table');expect(within(table).queryByText(a.name)).toBeNull();expect(within(table).getByText(b.name)).toBeTruthy();const cells=within(table).getByText(b.name).closest('tr')!.querySelectorAll('td');expect(cells[1].textContent).toBe('声音合成');expect(cells[2].textContent).toBe('豆包语音 V3');expect(within(table).getAllByText('—')).toHaveLength(1);
+ fireEvent.change(screen.getByLabelText('生产能力'),{target:{value:'speech'}});
+ const table=screen.getByRole('table');expect(within(table).queryByText(a.name)).toBeNull();expect(within(table).getByText(b.name)).toBeTruthy();const cells=within(table).getByText(b.name).closest('tr')!.querySelectorAll('td');expect(cells[1].textContent).toBe('语音');expect(cells[2].textContent).toBe('volcengine_ttsseed-tts-2.0');expect(within(table).getAllByText('—')).toHaveLength(1);
  fireEvent.change(screen.getByLabelText('验证状态'),{target:{value:'verified'}});expect(within(table).queryByText(b.name)).toBeNull();
  fireEvent.click(screen.getByRole('button',{name:'清空筛选'}));expect(within(table).getByText(a.name)).toBeTruthy();expect(within(table).getByText(b.name)).toBeTruthy();
 });

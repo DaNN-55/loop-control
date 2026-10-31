@@ -1,3 +1,4 @@
+import {buildProductionServiceCatalog} from '../connections/serviceCatalog.js';
 import {isRetiredProvider,retiredProviderMessage} from '../worker/providerLifecycle.js';
 import {createHash,randomUUID} from 'node:crypto';
 import type {Pool,PoolClient} from 'pg';
@@ -80,7 +81,7 @@ export class LocalConnections {
     const last=latest.find(p=>p.connection_version_id===c.current_version_id);
     c.last_verification_detail=current?.secretState==='unbound'?'本机密钥未绑定，请显式重新录入。':this.store.mode!=='keychain'?'测试未开始：本机 Keychain 未启用。':this.probe.mode!=='live'?'测试未开始：当前仅配置模拟验证。':last?.status==='retryable'&&c.status==='verified'?'本次测试暂不可用；上次有效验证资格保留，生产前仍须检查。':c.status==='verified'?'已验证；运行时仍检查密钥可用性。':'需要在本机重新验证。';}
    const verificationByProvider=Object.fromEntries(['volcengine','minimax','kling','bailian','pexels','freesound','openai','volcengine_tts'].map(provider=>[provider,this.probe.verificationStatus?.(provider)??{available:this.networkAvailable,detail:this.networkAvailable?'可测试连接。':'在线验证未启用。'}]));
-   return {connections,versions:localVersions,pending,capabilities:{secrets:this.store.mode,verification:this.probe.mode,externalReady,networkAvailable:this.networkAvailable,verificationByProvider,verificationAvailable:Object.values(verificationByProvider).some(status=>status.available)}};
+   return {serviceCatalog:buildProductionServiceCatalog({connections,versions:localVersions,externalReady}),connections,versions:localVersions,pending,capabilities:{secrets:this.store.mode,verification:this.probe.mode,externalReady,networkAvailable:this.networkAvailable,verificationByProvider,verificationAvailable:Object.values(verificationByProvider).some(status=>status.available)}};
   });
  }
  async command(session:OwnerSession,body:Record<string,unknown>){

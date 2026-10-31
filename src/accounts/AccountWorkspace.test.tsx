@@ -4,7 +4,6 @@ import type { ComponentProps } from "react";
 import { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
 import type { Database, Json } from "../lib/database.types";
-import type { WorkerPreflightResult } from "../worker/contracts";
 import type { ExternalConnectionVersion } from "../connections/ConnectionWorkspace";
 import { AccountWorkspace } from "./AccountWorkspace";
 
@@ -60,7 +59,7 @@ describe("账号配置工作区", () => {
     expect(screen.getByLabelText("当前账号")).toBeTruthy();
     expect(screen.queryByRole("heading", { name: "蓝图配置" })).toBeNull();
     expect(screen.queryByRole("navigation", { name: "蓝图配置分区" })).toBeNull();
-    expect(screen.getByRole("complementary", { name: "账号默认配置检查" })).toBeTruthy();
+    expect(screen.queryByRole("complementary", { name: "账号默认配置检查" })).toBeNull();
     expect(screen.queryByText("蓝图版本")).toBeNull();
     expect(screen.queryByRole("button", { name: /激活|归档|停用/ })).toBeNull();
   });
@@ -89,10 +88,10 @@ describe("账号配置工作区", () => {
 
     await user.clear(screen.getByLabelText("账号定位"));
     await user.type(screen.getByLabelText("账号定位"), "新定位");
-    await user.click(screen.getByRole("button", { name: "保存并检查" }));
+    await user.click(screen.getByRole("button", { name: "保存蓝图" }));
     const dialog = screen.getByRole("dialog", { name: "确认保存蓝图" });
     expect(within(dialog).getByRole("region", { name: "本次保存影响" })).toBeTruthy();
-    await user.click(within(dialog).getByRole("button", { name: "确认保存并检查" }));
+    await user.click(within(dialog).getByRole("button", { name: "确认保存蓝图" }));
 
     expect(onUpdateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ positioning: "新定位" }));
   });
@@ -102,9 +101,9 @@ describe("账号配置工作区", () => {
     renderWorkspace({onUpdateBlueprint: vi.fn().mockResolvedValue(null)});
     await user.clear(screen.getByLabelText("账号定位"));
     await user.type(screen.getByLabelText("账号定位"), "失败后保留的草稿");
-    await user.click(screen.getByRole("button", {name: "保存并检查"}));
+    await user.click(screen.getByRole("button", {name: "保存蓝图"}));
     const dialog = screen.getByRole("dialog", {name: "确认保存蓝图"});
-    await user.click(within(dialog).getByRole("button", {name: "确认保存并检查"}));
+    await user.click(within(dialog).getByRole("button", {name: "确认保存蓝图"}));
     expect(await within(dialog).findByRole("alert")).toHaveProperty("textContent", "蓝图未保存，请处理错误后重试。");
     await user.click(within(dialog).getByRole("button", {name: "取消"}));
     expect(screen.getByLabelText("账号定位")).toHaveProperty("value", "失败后保留的草稿");
@@ -135,29 +134,15 @@ describe("账号配置工作区", () => {
     confirm.mockRestore();
   });
 
-  it("资产目录紧随定位，分镜并入能力表且保留审核设置", () => {
+  it("资产目录紧随定位，分镜并入能力表且不再显示审核设置", () => {
     renderWorkspace();
     const groups = screen.getAllByRole("group").filter(group => group.tagName === "FIELDSET");
-    expect(groups.map(group => group.querySelector("legend")?.textContent)).toEqual(["账号专属目录", "账号定位", "资产目录", "生产能力", "审核设置"]);
+    expect(groups.map(group => group.querySelector("legend")?.textContent)).toEqual(["账号专属目录", "账号定位", "资产目录", "生产能力"]);
     const matrix = screen.getByRole("table", { name: "生产能力配置矩阵" });
     const storyboard = within(matrix).getByRole("checkbox", { name: "分镜规划已启用" }) as HTMLInputElement;
     expect(storyboard.checked).toBe(true);
     expect(storyboard.disabled).toBe(true);
     expect(within(matrix).getByRole("button", { name: "修改分镜规划配置" })).toBeTruthy();
-  });
-
-  it("修改草稿时不沿用已保存配置的检查通过状态，撤销后可重新检查", async () => {
-    const user = userEvent.setup();
-    const onRefreshBlueprintPreflight = vi.fn().mockResolvedValue(undefined);
-    renderWorkspace({blueprintPreflight: {checks: [], ready: true} as unknown as WorkerPreflightResult, onRefreshBlueprintPreflight});
-    const readiness = screen.getByRole("complementary", {name: "账号默认配置检查"});
-    expect(within(readiness).getByText("账号检查通过")).toBeTruthy();
-    await user.type(screen.getByLabelText("账号定位"), "草稿");
-    expect(within(readiness).queryByText("账号检查通过")).toBeNull();
-    expect((within(readiness).getByRole("button", {name: "重新检查"}) as HTMLButtonElement).disabled).toBe(true);
-    await user.click(screen.getByRole("button", {name: "撤销修改"}));
-    await user.click(within(readiness).getByRole("button", {name: "重新检查"}));
-    expect(onRefreshBlueprintPreflight).toHaveBeenCalledOnce();
   });
 
   it("始终展示默认关闭的五项生产能力", () => {
@@ -192,8 +177,8 @@ describe("账号配置工作区", () => {
 
     await user.click(screen.getByRole("checkbox", { name: "启用图片生成" }));
     expect(screen.getByText("未配置")).toBeTruthy();
-    await user.click(screen.getByRole("button", { name: "保存并检查" }));
-    await user.click(screen.getByRole("button", { name: "确认保存并检查" }));
+    await user.click(screen.getByRole("button", { name: "保存蓝图" }));
+    await user.click(screen.getByRole("button", { name: "确认保存蓝图" }));
 
     expect(onUpdateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ static_visual: {} }));
   });
@@ -277,19 +262,6 @@ describe("账号配置工作区", () => {
     expect(screen.queryByText("试听当前音色")).toBeNull();
   });
 
-  it("用本地 Adapter 的完整身份识别就绪状态，并兼容旧检查", async () => {
-    const user = userEvent.setup();
-    const localBlueprint = { ...blueprint, policy: { ...(blueprint.policy as Record<string, Json>), a_roll: { execution_path: "local", executor: { provider: "openchatcut", adapter: "openchatcut_card_video", model: "openchatcut@0.2.14", prompt_version: "card-video-v1" }, allowed_tools: ["read", "write"] } } };
-    const check = { action: "none" as const, adapter: "openchatcut_card_video", capability: "a_roll_generation", check: "local_adapter_readiness", phase: "preflight" as const, provider: "openchatcut", reason: "OpenChatCut 已就绪。", scope: "worker" as const, status: "passed" as const };
-
-    for (const preflight of [{ version: "worker-preflight/v2" as const, checks: [check] }, { version: "worker-preflight/v2" as const, checks: [{ ...check, provider: undefined }] }]) {
-      const view = renderWorkspace({ blueprintPreflight: preflight, blueprints: [localBlueprint] });
-      await user.click(screen.getByRole("button", { name: "配置A-roll" }));
-      expect((within(screen.getByRole("dialog")).getByRole("option", { name: "本地" }) as HTMLOptionElement).disabled).toBe(false);
-      view.unmount();
-    }
-  });
-
   it("在 A-roll 尚未配置时，仍使用本机 OpenChatCut 状态开放本地路径", async () => {
     const user = userEvent.setup();
     const onUpdateBlueprint = vi.fn().mockResolvedValue(blueprint);
@@ -305,8 +277,8 @@ describe("账号配置工作区", () => {
     await user.selectOptions(screen.getByRole("combobox", { name: "A-roll 卡片预设" }), "card-video-v1");
     await user.type(screen.getByRole("spinbutton", { name: "最大尝试次数" }), "2");
     await user.click(screen.getByRole("button", { name: "完成" }));
-    await user.click(screen.getByRole("button", { name: "保存并检查" }));
-    await user.click(screen.getByRole("button", { name: "确认保存并检查" }));
+    await user.click(screen.getByRole("button", { name: "保存蓝图" }));
+    await user.click(screen.getByRole("button", { name: "确认保存蓝图" }));
 
     expect(onUpdateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ a_roll: expect.objectContaining({ execution_path: "local", executor: expect.objectContaining({ adapter: "openchatcut_card_video" }) }) }));
     expect(onUpdateBlueprint.mock.calls[0][0].a_roll).not.toHaveProperty("allowed_tools");
@@ -320,8 +292,8 @@ describe("账号配置工作区", () => {
 
     await user.click(screen.getByRole("button", { name: "修改分镜规划配置" }));
     await user.selectOptions(screen.getByRole("combobox", { name: "分镜规划 Prompt Harness" }), harness.id);
-    await user.click(screen.getByRole("button", { name: "保存并检查" }));
-    await user.click(screen.getByRole("button", { name: "确认保存并检查" }));
+    await user.click(screen.getByRole("button", { name: "保存蓝图" }));
+    await user.click(screen.getByRole("button", { name: "确认保存蓝图" }));
 
     expect(onUpdateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ executors: expect.objectContaining({ storyboard_planning: expect.objectContaining({ adapter: "codex", harness_id: harness.id, prompt_version: harness.slug }) }) }));
   });
@@ -397,54 +369,6 @@ describe("账号配置工作区", () => {
     expect(within(dialog).getByRole("button", { name: "管理 Prompt 版本" })).toBeTruthy();
     await user.click(within(dialog).getByRole("button", { name: "关闭分镜规划配置" }));
     expect(screen.queryByRole("dialog")).toBeNull();
-  });
-
-  it("展示真实 Worker 就绪检查并允许重新检查", async () => {
-    const user = userEvent.setup();
-    const onRefreshBlueprintPreflight = vi.fn().mockResolvedValue(undefined);
-    const preflight: WorkerPreflightResult = { version: "worker-preflight/v1", checks: [{ action: "contact_environment_admin", capability: "b_roll_generation", check: "credential_presence", phase: "preflight", reason: "缺少 PEXELS_API_KEY", scope: "worker", status: "unavailable" }] };
-    renderWorkspace({ blueprintPreflight: preflight, onRefreshBlueprintPreflight });
-
-    const rail = screen.getByRole("complementary", { name: "账号默认配置检查" });
-    expect(within(rail).getByText("1 项需要处理")).toBeTruthy();
-    expect(within(rail).getByText("缺少外部连接凭据")).toBeTruthy();
-    expect(within(rail).getByText("缺少 PEXELS_API_KEY")).toBeTruthy();
-    await user.click(within(rail).getByRole("button", { name: "重新检查" }));
-    expect(onRefreshBlueprintPreflight).toHaveBeenCalledOnce();
-  });
-
-  it("合并影响审核渲染和最终渲染的同一 OpenChatCut 环境故障", () => {
-    const preflight: WorkerPreflightResult = {
-      version: "worker-preflight/v2",
-      checks: [
-        { action: "contact_environment_admin", capability: "review_rendering", check: "command_availability", phase: "preflight", reason: "spawn openchatcut ENOENT", scope: "worker", status: "unavailable" },
-        { action: "contact_environment_admin", capability: "final_rendering", check: "command_availability", phase: "preflight", reason: "spawn openchatcut ENOENT", scope: "worker", status: "unavailable" },
-      ],
-    };
-
-    renderWorkspace({ blueprintPreflight: preflight });
-
-    const rail = screen.getByRole("complementary", { name: "账号默认配置检查" });
-    expect(within(rail).getByText("1 项需要处理")).toBeTruthy();
-    expect(within(rail).getByText("OpenChatCut 未就绪")).toBeTruthy();
-    expect(within(rail).getByText("影响阶段：审核渲染、最终渲染")).toBeTruthy();
-    expect(within(rail).getAllByText("spawn openchatcut ENOENT")).toHaveLength(1);
-  });
-
-  it("不在第一屏展示冗长的运行命令错误", () => {
-    const reason = `模型权限探测失败：${"Command failed ".repeat(20)}`;
-    const preflight: WorkerPreflightResult = { version: "worker-preflight/v1", checks: [{ action: "contact_environment_admin", capability: "script_writing", check: "model_permission", phase: "preflight", reason, scope: "worker", status: "unavailable" }] };
-    renderWorkspace({ blueprintPreflight: preflight });
-
-    expect(screen.getByText("运行环境检查未通过，请联系环境管理员。")).toBeTruthy();
-    expect(screen.queryByText(reason)).toBeNull();
-  });
-
-  it("不在第一屏展示冗长的接口错误", () => {
-    const error = `检查接口失败：${"server trace ".repeat(20)}`;
-    renderWorkspace({ blueprintPreflightError: error });
-    expect(screen.getByText("检查失败，请重试。")).toBeTruthy();
-    expect(screen.queryByText(error)).toBeNull();
   });
 
   it("系列页展示版本历史并通过新版本保存", async () => {

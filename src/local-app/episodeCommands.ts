@@ -25,7 +25,7 @@ import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
 import {dirname,join} from 'node:path';
 import {blueprintSelectionErrors} from '../worker/runtimePreflight.js';
-import {mediaCapabilityKeys,mediaCapabilityForKey} from '../worker/productionCapabilities.js';
+import {mediaCapabilityKeys} from '../worker/productionCapabilities.js';
 import {workerPreflightVersion,type WorkerPreflightCheck} from '../worker/contracts.js';
 import {verifyReportedStoryboardArtifact} from '../worker/storyboardArtifact.js';
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
@@ -41,12 +41,6 @@ export class LocalEpisodeCommands {
  closeStudio(episodeId:string){return Promise.all([this.studios.closeEpisode(episodeId),this.workspace.closeEpisode(episodeId)]).then(()=>{});}
  async close(){await this.continuation?.stop();await Promise.all([this.studios.close(),this.workspace.close(),...[...this.standaloneStudios].map(root=>closeStandaloneOpenChatCutStudio(root))]);this.standaloneStudios.clear();}
  constructor(private pool:Pool,private mediaRoot:string,private runtime:InputRuntime){this.scriptStore=new ScriptProductionStore(mediaRoot);}
- async blueprintPreflight(c:PoolClient,accountId:string,policy:Record<string,unknown>){
-  try{await this.preflight(c,accountId,policy,false);}
-  catch(error){if(error instanceof ConfigurationError&&error.preflight)return error.preflight;throw error;}
-  const capabilities=['worker_runtime','storyboard_planning',...mediaCapabilityKeys.filter(key=>policy[key]&&Object.keys(policy[key] as object).length).map(key=>mediaCapabilityForKey(key).capability)];
-  return{version:workerPreflightVersion,checks:capabilities.map(capability=>({capability,check:'local_adapter_readiness',phase:'preflight' as const,status:'passed' as const,reason:'本机运行前置条件已检查；实际 Provider 接受与产物仍由任务执行验证。',scope:'worker' as const,action:'none' as const}))};
- }
  async execute(session:OwnerSession,body:Record<string,unknown>){return this.executeCommand(session,body,run=>sessionTransaction(this.pool,session,run),false);}
  private async executeAutomatic(scope:ProductionScope,body:Record<string,unknown>){
   const allowed=['planStoryboard','applyScriptSettings','generateTts','generateWan','generateOfficialVideo','bindScriptVideo','generateClip','generateSourceAudio','requestAlignment','generateSyncPreview','renderScriptReview','prepareScriptPublish'];
@@ -101,7 +95,7 @@ export class LocalEpisodeCommands {
     const a=(await c.query('SELECT a.*,b.policy FROM public.accounts a JOIN public.account_memberships m ON m.account_id=a.id JOIN public.account_blueprint_versions b ON b.id=a.current_blueprint_version_id WHERE a.id=$1 AND m.user_id=$2 AND m.role=\'owner\' AND a.archived_at IS NULL',[data.accountId,session.id])).rows[0];
     if(!a)throw new ConfigurationError(404,'账号不可见。');if(typeof data.title!=='string'||data.title.length>200)throw new ConfigurationError(400,'标题无效。');
     const accountRoot=await requireAccountAssetRoot(c,this.mediaRoot,a.id);
-    await this.preflight(c,a.id,{...a.policy,asset_root:accountRoot},false);
+    await this.preflight(c,a.id,{...a.policy,asset_root:accountRoot},false,'input');
     value=(await c.query('SELECT to_jsonb(public.create_episode($1,$2,$3,$4,$5)) result',[a.id,a.current_blueprint_version_id,data.seriesVersionId??null,data.title.trim(),data.isTest===true])).rows[0].result;
     await ensureInputDirectories(accountRoot,value.id);
     await c.query('INSERT INTO local_identity.input_episodes(episode_id,owner_id) VALUES($1,$2)',[value.id,session.id]);
@@ -181,11 +175,10 @@ export class LocalEpisodeCommands {
     }else if(body.command==='setAudioSourceMode'){
      if(!['source','tts'].includes(String(data.audioSourceMode)))throw new ConfigurationError(400,'声音来源无效。');value=(await c.query('SELECT to_jsonb(public.set_episode_audio_source_mode($1,$2)) result',[e.id,data.audioSourceMode])).rows[0].result;
     }else if(body.command==='start'){
-     await this.preflight(c,e.account_id,inputPolicy,true);
+     await this.preflight(c,e.account_id,inputPolicy,true,'input');
      const materials=(await c.query('SELECT * FROM public.production_material_revisions WHERE episode_id=$1',[e.id])).rows;
      if(!e.main_script_revision_id)throw new ConfigurationError(409,'请先上传并确认主脚本。');
      for(const m of materials)await verifyNativeFile(root,m.storage_path,m.sha256,Number(m.file_size));
-     await c.query('SELECT public.record_episode_worker_preflight($1,$2)',[e.id,session.id]);
      value=(await c.query('SELECT to_jsonb(public.start_episode_production($1)) result',[e.id])).rows[0].result;
      await c.query('UPDATE local_identity.input_episodes SET enabled=false,visual_media_enabled=$2 WHERE episode_id=$1',[e.id,Boolean(inputPolicy.static_visual?.executor)]);
     }else if(['generateSourceAudio','requestAlignment','saveManualAlignment','confirmCaptionText','generateSyncPreview','confirmSyncPreview'].includes(String(body.command))){
@@ -336,11 +329,12 @@ export class LocalEpisodeCommands {
  private async requirePost(kind:'source'|'alignment'|'preview'){try{if(!this.runtime.postReady)throw Error();await this.runtime.postReady(kind);}catch{throw new ConfigurationError(503,'本地音频、对齐或同步预览执行环境尚未就绪。',{version:workerPreflightVersion,checks:[{capability:kind==='alignment'?'acoustic_alignment':kind==='preview'?'review_rendering':'embedded_audio_extraction',check:'command_availability',phase:'preflight',status:'unavailable',reason:'请检查本机执行配置、工具与缓存；不会下载模型或调用在线 Provider。',scope:'worker',action:'contact_environment_admin'}]});}}
  private async requireMedia(policy:Record<string,unknown>){try{if(!this.runtime.mediaReady)throw Error();await this.runtime.mediaReady(policy);}catch{throw new ConfigurationError(503,'本地媒体执行器尚未就绪。',{version:workerPreflightVersion,checks:[{capability:'worker_runtime',check:'local_adapter_readiness',phase:'preflight',status:'unavailable',reason:'媒体工具、连接密钥存储或本地Adapter未准备。',scope:'worker',action:'contact_environment_admin'}]});}}
  private async requireNarration(){try{if(!this.runtime.narrationReady)throw Error();await this.runtime.narrationReady();}catch{throw new ConfigurationError(503,'本地口播执行器、密钥存储或音频探测工具尚未就绪。',{version:workerPreflightVersion,checks:[{capability:'narration_generation',check:'command_availability',phase:'preflight',status:'unavailable',reason:'口播执行环境未准备。',scope:'worker',action:'contact_environment_admin'}]});}}
- private async preflight(c:PoolClient,accountId:string,policy:Record<string,unknown>,existing:boolean,scope:'blueprint'|'local_clip'='blueprint'){
+ private async preflight(c:PoolClient,accountId:string,policy:Record<string,unknown>,existing:boolean,scope:'blueprint'|'local_clip'|'input'='blueprint'){
   const failure=(reason:string,check:string,scope:WorkerPreflightCheck['scope'],action:WorkerPreflightCheck['action'],status=409)=>new ConfigurationError(status,reason,{version:workerPreflightVersion,checks:[{capability:'worker_runtime',check,phase:'preflight',status:scope==='worker'?'unavailable':'blocked',reason,action,scope}]});
-  try{await this.runtime.ready();}catch(e){throw failure(e instanceof Error?e.message:'本地Worker未准备。','command_availability','worker','contact_environment_admin',503);}
+  try{if(scope!=='input')await this.runtime.ready();}catch(e){throw failure(e instanceof Error?e.message:'本地Worker未准备。','command_availability','worker','contact_environment_admin',503);}
   let root:string;
   try{root=await resolveLocalAssetRoot(c,this.mediaRoot,policy.asset_root);await verifyMediaLibrary({assetRoot:root,mountPath:this.runtime.mountPath,minimumFreeBytes:this.runtime.minimumFreeBytes,requireEpisodesDirectory:existing});}catch(e){throw failure(e instanceof Error?e.message:'素材目录不可用。','asset_root','blueprint','edit_blueprint');}
+  if(scope==='input')return;
   const refs=validateConfigurationPolicy(policy,true);
   if(scope==='blueprint'&&refs.length)try{await this.runtime.checkReferences(c,refs);}catch(error){if(error instanceof ConfigurationError&&error.preflight)throw error;throw failure('连接版本未就绪，请检查本机绑定与验证资格。','credential_presence','connection','manage_connection');}
   const errors=blueprintSelectionErrors(policy);if(errors.length)throw failure(errors.join(' '),'blueprint_configuration','blueprint','edit_blueprint');

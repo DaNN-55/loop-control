@@ -17,8 +17,6 @@ import { ConfirmationModal } from "../ui/ConfirmationModal";
 import type { ExternalConnectionInput, ExternalConnectionVersion } from "../connections/ConnectionWorkspace";
 import type { LocalSystemStatusReport } from "../observability/SystemStatusPanel";
 import type { WorkerBlocker } from "../reviews/reviewSelectors";
-import type { WorkerPreflightCheck, WorkerPreflightResult } from "../worker/contracts";
-import { registeredAdapters } from "../worker/registeredAdapters";
 
 type Account = Database["public"]["Tables"]["accounts"]["Row"];
 type Blueprint = Database["public"]["Tables"]["account_blueprint_versions"]["Row"];
@@ -41,10 +39,7 @@ interface AccountWorkspaceProps {
   blueprints: Blueprint[];
   externalConnections?: ExternalConnection[];
   connectionVersions?: ExternalConnectionVersion[];
-  blueprintPreflight?: WorkerPreflightResult | null;
-  blueprintPreflightError?: string;
   blueprintRepairContext?: BlueprintRepairContext | null;
-  isBlueprintPreflightLoading?: boolean;
   isPending: string;
   onApplyEpisodeRepair?: (input: { context: BlueprintRepairContext; policy: Json }) => Promise<boolean>;
   onCreatePromptVersion?: (input: { capability: PromptVersion["capability"]; name: string; summary: string; instructions: string }) => Promise<PromptVersion | null>;
@@ -54,7 +49,6 @@ interface AccountWorkspaceProps {
   onDeleteAccount?: (id: string, confirmation: string) => Promise<boolean | void>;
   onDismissBlueprintRepair?: () => void;
   onDirtyChange?: (dirty: boolean) => void;
-  onRefreshBlueprintPreflight?: () => Promise<void>;
   onRefresh?: () => Promise<void>;
   onRenameAccount?: (id: string, name: string) => Promise<boolean | void>;
   onSetAccountArchived?: (id: string, archived: boolean) => Promise<boolean | void>;
@@ -69,53 +63,9 @@ interface AccountWorkspaceProps {
   systemStatus?: LocalSystemStatusReport | null;
 }
 
-const checkLabels: Record<string, string> = {
-  blueprint_configuration: "蓝图配置不完整",
-  capability_registration: "Worker 能力未接入",
-  command_availability: "运行命令不可用",
-  credential_presence: "缺少外部连接凭据",
-  credential_validity: "外部连接凭据无效",
-  local_adapter_readiness: "本地 Adapter 未就绪",
-  model_permission: "模型权限未通过",
-  network_connectivity: "供应商网络不可达",
-  tool_permission: "工具权限不足",
-};
-const readinessCapabilityLabels: Record<string, string> = {
-  final_rendering: "最终渲染",
-  review_rendering: "审核渲染",
-};
-
-function groupedReadinessFailures(checks: WorkerPreflightCheck[]) {
-  const groups = new Map<string, { capabilities: string[]; check: WorkerPreflightCheck }>();
-  for (const check of checks) {
-    const sharedCommandFailure = check.check === "command_availability";
-    const key = [sharedCommandFailure ? "shared" : check.capability, check.check, check.status, check.reason, check.action, check.scope].join("\u0000");
-    const group = groups.get(key);
-    if (group) {
-      if (!group.capabilities.includes(check.capability)) group.capabilities.push(check.capability);
-    } else {
-      groups.set(key, { capabilities: [check.capability], check });
-    }
-  }
-  return [...groups.values()];
-}
-
-function readinessFailureLabel(check: WorkerPreflightCheck, capabilities: string[]): string {
-  if (check.check === "command_availability" && capabilities.includes("review_rendering") && capabilities.includes("final_rendering")) return "OpenChatCut 未就绪";
-  return checkLabels[check.check] ?? "运行检查未通过";
-}
 const emptySeriesRules: Json = {};
-function BlueprintReadiness({ isDirty, isLoading, onRefresh, preflight, preflightError }: { isDirty: boolean; isLoading: boolean; onRefresh?: () => Promise<void>; preflight: WorkerPreflightResult | null; preflightError: string }) {
-  const failureGroups = groupedReadinessFailures(preflight?.checks.filter((check) => check.status !== "passed") ?? []);
-  const displayedError = preflightError.length > 120 ? "检查失败，请重试。" : preflightError;
-  return <aside aria-label="账号默认配置检查" className="account-blueprint-readiness">
-    <div className="account-readiness-summary"><strong className={isDirty ? "is-dirty" : failureGroups.length || preflightError ? "is-blocked" : preflight ? "is-ready" : ""} role="status">{isLoading ? "正在检查…" : isDirty ? "修改未保存" : preflightError ? "检查暂不可用" : failureGroups.length ? `${failureGroups.length} 项需要处理` : preflight ? "账号检查通过" : "等待运行检查"}</strong><HelpTip label="生产条件检查范围">只检查已保存的账号蓝图；选择系列后会再次检查。</HelpTip>{onRefresh ? <Button size="xs" color="secondary" isDisabled={isLoading || isDirty} onClick={() => void onRefresh()} type="button">{isLoading ? "检查中…" : "重新检查"}</Button> : null}</div>
-    {!isDirty && failureGroups.length ? <ul>{failureGroups.slice(0, 3).map(({ capabilities, check }) => <li key={`${capabilities.join("-")}-${check.check}`}><strong>{readinessFailureLabel(check, capabilities)}</strong>{capabilities.length > 1 ? <span>影响阶段：{capabilities.map((capability) => readinessCapabilityLabels[capability] ?? capability).join("、")}</span> : null}<span>{check.reason.length > 120 ? (check.action === "retry" ? "运行检查失败，请重新检查。" : "运行环境检查未通过，请联系环境管理员。") : check.reason}</span></li>)}</ul> : null}
-    {!isDirty && displayedError ? <p className="form-error">{displayedError}</p> : null}
-  </aside>;
-}
 
-export function AccountWorkspace({ actions, account, accountEpisodeCount = 0, accounts, blueprints, blueprintPreflight = null, blueprintPreflightError = "", blueprintRepairContext = null, connectionVersions = [], externalConnections = [], isBlueprintPreflightLoading = false, isPending, onApplyEpisodeRepair, onCreateConnection, onCreatePromptVersion, onCreateSeries = async () => {}, onCreateSeriesVersion = async () => {}, onDeleteAccount = async () => {}, onDismissBlueprintRepair, onDirtyChange, onRefresh, onRefreshBlueprintPreflight, onRenameAccount = async () => {}, onRotateConnection, onSelectAccount, onSetAccountArchived = async () => {}, onTestConnection, onUpdateBlueprint, onUpdateConnection, promptVersions = [], series = [], seriesVersions = [], systemStatus = null }: AccountWorkspaceProps) {
+export function AccountWorkspace({ actions, account, accountEpisodeCount = 0, accounts, blueprints, blueprintRepairContext = null, connectionVersions = [], externalConnections = [], isPending, onApplyEpisodeRepair, onCreateConnection, onCreatePromptVersion, onCreateSeries = async () => {}, onCreateSeriesVersion = async () => {}, onDeleteAccount = async () => {}, onDismissBlueprintRepair, onDirtyChange, onRefresh, onRenameAccount = async () => {}, onRotateConnection, onSelectAccount, onSetAccountArchived = async () => {}, onTestConnection, onUpdateBlueprint, onUpdateConnection, promptVersions = [], series = [], seriesVersions = [], systemStatus = null }: AccountWorkspaceProps) {
   const [activeSection, setActiveSection] = useState<"blueprints" | "series">("blueprints");
   const [configurationDirty, setConfigurationDirtyState] = useState(false);
   const [renameOpen, setRenameOpen] = useState(false);
@@ -140,14 +90,7 @@ export function AccountWorkspace({ actions, account, accountEpisodeCount = 0, ac
   if (!currentBlueprint) return <><div className="workspace-actions">{actions}</div><div className="empty-state">该账号没有可读取的蓝图配置。</div></>;
 
   const policy = currentBlueprint.policy ?? defaultBlueprintPolicy;
-  const localAdapterReadiness = Object.fromEntries([
-    ...(systemStatus?.dependencies.some((dependency) => dependency.name === "OpenChatCut" && dependency.state === "healthy") ? [["openchatcut:openchatcut_card_video", true] as const] : []),
-    ...(blueprintPreflight?.checks ?? []).flatMap((check) => {
-    if (check.check !== "local_adapter_readiness" || !check.adapter) return [];
-    const provider = check.provider ?? registeredAdapters.choicesFor({ capability: check.capability, executionPath: "local" }).find((choice) => choice.adapter === check.adapter)?.provider;
-    return provider ? [[`${provider}:${check.adapter}`, check.status === "passed"] as const] : [];
-    }),
-  ]);
+  const localAdapterReadiness: Record<string, boolean> = systemStatus?.dependencies.some((dependency) => dependency.name === "OpenChatCut" && dependency.state === "healthy") ? { "openchatcut:openchatcut_card_video": true } : {};
   function leaveConfiguration(action: () => void) {
     if (configurationDirty && !window.confirm("当前配置有未保存修改，确定放弃吗？")) return;
     setAccountActionsOpen(false);
@@ -162,7 +105,7 @@ export function AccountWorkspace({ actions, account, accountEpisodeCount = 0, ac
     {account.archived_at ? <p className="account-archived-note" role="status">此账号已归档，不会出现在新建生产单的账号列表中；恢复后可继续生产。</p> : null}
     {!blueprintRepairContext&&<AccountDirectoryPanel key={account.id} accountId={account.id} disabled={Boolean(account.archived_at)}/>}
     <Tabs selectedKey={activeSection} onSelectionChange={key => leaveConfiguration(() => setActiveSection(key as typeof activeSection))}><div className="account-tabs-heading"><Tabs.List aria-label="账号设置导航" type="underline" className="account-tabs"><Tabs.Item id="blueprints">蓝图</Tabs.Item><Tabs.Item id="series">系列</Tabs.Item></Tabs.List>{!blueprintRepairContext ? <div className="account-blueprint-scope">仅影响新生产单<HelpTip label={activeSection === "blueprints" ? "蓝图配置生效范围" : "系列规则生效范围"}>{activeSection === "blueprints" ? "保存后仅用于新生产单；已有生产单保持冻结配置，系列规则不变。" : "保存为新版本，已有生产单保持原版本；空字段不增加约束，主脚本仍需上传。"}</HelpTip></div> : null}</div><Tabs.Panel key={activeSection} id={activeSection}>
-    {activeSection === "blueprints" ? blueprintRepairContext ? <EpisodeConfigurationRepairForm blocker={blueprintRepairContext.blocker} initialPolicy={policy} isPending={isPending === `apply-episode-repair-${blueprintRepairContext.episodeId}`} onCancel={() => onDismissBlueprintRepair?.()} onSave={async (nextPolicy) => { if (onApplyEpisodeRepair) await onApplyEpisodeRepair({ context: blueprintRepairContext, policy: nextPolicy }); }} promptVersions={promptVersions} /> : <div className="account-configuration-form"><BlueprintConfigurationForm accountLayout saveState={<span className={`account-save-state${configurationDirty ? " is-dirty" : ""}`} role="status">{configurationDirty ? "有未保存更改" : "已保存"}</span>} footerStatus={<BlueprintReadiness isDirty={configurationDirty} isLoading={isBlueprintPreflightLoading} onRefresh={onRefreshBlueprintPreflight} preflight={blueprintPreflight} preflightError={blueprintPreflightError} />} accountId={account.id} connectionVersions={connectionVersions} externalConnections={externalConnections} initialAssetRoot={blueprintAssetRoot(policy)} initialPolicy={policy} isPending={isPending === "blueprint" || isPending === "prompt-version"} localAdapterReadiness={localAdapterReadiness} onCancel={() => {}} onCreateConnection={onCreateConnection} onCreatePromptVersion={onCreatePromptVersion} onDirtyChange={setConfigurationDirty} onRotateConnection={onRotateConnection} onSave={async (nextPolicy) => { if (onUpdateBlueprint && await onUpdateBlueprint(nextPolicy) === null) throw new Error("蓝图未保存，请处理错误后重试。"); }} onTestConnection={onTestConnection} onUpdateConnection={onUpdateConnection} promptVersions={promptVersions} /></div>
+    {activeSection === "blueprints" ? blueprintRepairContext ? <EpisodeConfigurationRepairForm blocker={blueprintRepairContext.blocker} initialPolicy={policy} isPending={isPending === `apply-episode-repair-${blueprintRepairContext.episodeId}`} onCancel={() => onDismissBlueprintRepair?.()} onSave={async (nextPolicy) => { if (onApplyEpisodeRepair) await onApplyEpisodeRepair({ context: blueprintRepairContext, policy: nextPolicy }); }} promptVersions={promptVersions} /> : <div className="account-configuration-form"><BlueprintConfigurationForm accountLayout saveState={<span className={`account-save-state${configurationDirty ? " is-dirty" : ""}`} role="status">{configurationDirty ? "有未保存更改" : "已保存"}</span>} accountId={account.id} connectionVersions={connectionVersions} externalConnections={externalConnections} initialAssetRoot={blueprintAssetRoot(policy)} initialPolicy={policy} isPending={isPending === "blueprint" || isPending === "prompt-version"} localAdapterReadiness={localAdapterReadiness} onCancel={() => {}} onCreateConnection={onCreateConnection} onCreatePromptVersion={onCreatePromptVersion} onDirtyChange={setConfigurationDirty} onRotateConnection={onRotateConnection} onSave={async (nextPolicy) => { if (onUpdateBlueprint && await onUpdateBlueprint(nextPolicy) === null) throw new Error("蓝图未保存，请处理错误后重试。"); }} onTestConnection={onTestConnection} onUpdateConnection={onUpdateConnection} promptVersions={promptVersions} /></div>
  : <div><SeriesSettings isPending={isPending} onCreate={onCreateSeries} onDirtyChange={setConfigurationDirty} onLeave={leaveConfiguration} onCreateVersion={onCreateSeriesVersion} series={series} seriesVersions={seriesVersions} /></div>}
     </Tabs.Panel></Tabs>
     {renameOpen ? <AccountRenameModal account={account} isPending={isPending === `rename-account-${account.id}`} onClose={() => setRenameOpen(false)} onSave={(name) => onRenameAccount(account.id, name)} /> : null}
