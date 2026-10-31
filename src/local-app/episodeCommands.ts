@@ -1,3 +1,4 @@
+import {resolveEpisodeStorageLocation,requireEpisodeStorageDirectory} from './episodeStorageLocation.js';
 import {requireAccountAssetRoot,resolveEpisodeAssetRoot} from './accountAssetRoots.js';
 import {productionWorkspaceFields} from '../productionWorkspace.js';
 import {ProductionWorkspaceCommands} from './productionWorkspaceCommands.js';
@@ -29,7 +30,7 @@ import {mediaCapabilityKeys} from '../worker/productionCapabilities.js';
 import {workerPreflightVersion,type WorkerPreflightCheck} from '../worker/contracts.js';
 import {verifyReportedStoryboardArtifact} from '../worker/storyboardArtifact.js';
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
-export interface InputRuntime {deliveryReady?():Promise<void>;studioRuntime?():Promise<OpenChatCutRuntimeConfig>;ready():Promise<void>;narrationReady?():Promise<void>;mediaReady?(policy:Record<string,unknown>):Promise<void>;localClipReady?():Promise<void>;postReady?(kind:'source'|'alignment'|'preview'):Promise<void>;wake(episodeId:string):void;mountPath:string;minimumFreeBytes:number;checkReferences(client:PoolClient,refs:string[]):Promise<void>}
+export interface InputRuntime {openDirectory?(path:string):Promise<void>;deliveryReady?():Promise<void>;studioRuntime?():Promise<OpenChatCutRuntimeConfig>;ready():Promise<void>;narrationReady?():Promise<void>;mediaReady?(policy:Record<string,unknown>):Promise<void>;localClipReady?():Promise<void>;postReady?(kind:'source'|'alignment'|'preview'):Promise<void>;wake(episodeId:string):void;mountPath:string;minimumFreeBytes:number;checkReferences(client:PoolClient,refs:string[]):Promise<void>}
 export class LocalEpisodeCommands {
  private workspace=new ProductionWorkspaceCommands();
  private studios=new NativeStudioCommands();
@@ -80,7 +81,7 @@ export class LocalEpisodeCommands {
   const result=await transaction(async c=>{
    await c.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[session.id+':'+body.idempotencyKey]);
    const old=(await c.query('SELECT payload_hash,result FROM local_identity.command_receipts WHERE owner_id=$1 AND idempotency_key=$2',[session.id,body.idempotencyKey])).rows[0];
-   if(old){if(old.payload_hash!==hash)throw new ConfigurationError(409,'同一操作标识不能用于不同内容。');if(!['openStudio','openStandaloneStudio','openWorkspaceStudio'].includes(body.command as string))return old.result;}
+   if(old){if(old.payload_hash!==hash)throw new ConfigurationError(409,'同一操作标识不能用于不同内容。');if(!['openDirectory','openStudio','openStandaloneStudio','openWorkspaceStudio'].includes(body.command as string))return old.result;}
    let value;
    if(body.command==='openStandaloneStudio'){
     if(!this.runtime.studioRuntime)throw new ConfigurationError(503,'本地 Studio 尚未配置。');
@@ -90,6 +91,14 @@ export class LocalEpisodeCommands {
     this.standaloneStudios.add(root);
     try{value=await openStandaloneOpenChatCutStudio(root,config);}
     catch{throw new ConfigurationError(503,'OpenChatCut 启动失败，请检查本机编辑器运行环境后重试。');}
+   }else if(body.command==='openDirectory'){
+    if(typeof data.episodeId!=='string'||!uuid.test(data.episodeId))throw new ConfigurationError(400,'生产单标识无效。');
+    if(!(await c.query('SELECT local_identity.lock_owned_episode_cleanup($1) owned',[data.episodeId])).rows[0]?.owned)throw new ConfigurationError(404,'生产单不可见。');
+    const location=await resolveEpisodeStorageLocation(c,this.mediaRoot,data.episodeId);
+    const path=await requireEpisodeStorageDirectory(c,location);
+    try{if(this.runtime.openDirectory)await this.runtime.openDirectory(path);else await promisify(execFile)('/usr/bin/open',[path],{env:{PATH:'/usr/bin:/bin'},timeout:5000});}
+    catch{throw new ConfigurationError(503,'系统未能打开文件夹，请复制路径后在访达中打开，或恢复桌面会话后重试。');}
+    value={opened:true,path};
    }else if(body.command==='create'){
     if(!(await c.query('SELECT local_identity.lock_owned_account_row($1) owned',[data.accountId])).rows[0].owned)throw new ConfigurationError(404,'账号不可见。');
     const a=(await c.query('SELECT a.*,b.policy FROM public.accounts a JOIN public.account_memberships m ON m.account_id=a.id JOIN public.account_blueprint_versions b ON b.id=a.current_blueprint_version_id WHERE a.id=$1 AND m.user_id=$2 AND m.role=\'owner\' AND a.archived_at IS NULL',[data.accountId,session.id])).rows[0];
@@ -295,8 +304,6 @@ export class LocalEpisodeCommands {
      const budget=e.policy.budgets?.storyboard_planning_cents;
      if(!Number.isSafeInteger(budget)||budget<0)throw new ConfigurationError(409,'蓝图分镜预算无效。');
      await c.query('UPDATE local_identity.input_episodes SET storyboard_enabled=true WHERE episode_id=$1',[e.id]);value={id:e.id,queued:true};
-    }else if(body.command==='openDirectory'){
-     await ensureInputDirectories(root,e.id);await promisify(execFile)('/usr/bin/open',[join(root,'episodes',e.id,'input')],{env:{PATH:'/usr/bin:/bin'},timeout:5000});value={opened:true};
     }else{
      if(typeof data.reason!=='string'||!data.reason.trim()||data.reason.length>5000)throw new ConfigurationError(400,'审核内容无效。');
      const storyboard=body.command!=='review'||String(data.toStage).startsWith('storyboard_');
@@ -321,7 +328,7 @@ export class LocalEpisodeCommands {
    if(!automatic&&['saveMediaDraft','saveTtsDraft'].includes(String(body.command)))await c.query("UPDATE local_identity.script_productions SET progress=progress||jsonb_build_object($2::text,true) WHERE episode_id=$1",[data.episodeId,'manual:'+data.reviewPackageId+':'+data.shotId]);
    await c.query('INSERT INTO local_identity.command_receipts(owner_id,idempotency_key,payload_hash,result) VALUES($1,$2,$3,$4) ON CONFLICT(owner_id,idempotency_key) DO NOTHING',[session.id,body.idempotencyKey,hash,value]);return value;
   });
-  if(['retryWorkspacePlanning','requestWorkspaceVisualCandidate','requestWorkspaceImageCandidates','retryWorkspaceVisualCandidate','prepareWorkspaceAudio','prepareWorkspaceDelivery','retryWorkspaceDelivery','requestWorkspaceCaptionAlignment','generateWorkspaceNarration','generateWorkspaceImage','configureScriptProduction','applyScriptSettings','bindScriptVideo','renderScriptReview','generateOfficialVideo','generateWan','resumeWan','requestQcMemberRevision','repairConnection','repairConfiguration','approveQc','retryFinalRender','generateReviewVideo','submitStudioRevision','requestStudioCompositionRevision','requestStudioStoryboardRevision','generateSourceAudio','requestAlignment','generateSyncPreview','start','planStoryboard','requestStructureRevision','review','generateTts','registerManualMedia','saveAudioSelection','planMedia','retryMedia','saveMediaDraft','generateClip'].includes(body.command)||['prepareWorkspace','replanWorkspace'].includes(body.command)&&(result as {planning?:boolean}).planning===true)this.runtime.wake(String(data.episodeId??result.id));void this.continuation?.wake();return result;
+  if(['retryWorkspacePlanning','requestWorkspaceVisualCandidate','requestWorkspaceImageCandidates','retryWorkspaceVisualCandidate','prepareWorkspaceAudio','prepareWorkspaceDelivery','retryWorkspaceDelivery','requestWorkspaceCaptionAlignment','generateWorkspaceNarration','generateWorkspaceImage','configureScriptProduction','applyScriptSettings','bindScriptVideo','renderScriptReview','generateOfficialVideo','generateWan','resumeWan','requestQcMemberRevision','repairConnection','repairConfiguration','approveQc','retryFinalRender','generateReviewVideo','submitStudioRevision','requestStudioCompositionRevision','requestStudioStoryboardRevision','generateSourceAudio','requestAlignment','generateSyncPreview','start','planStoryboard','requestStructureRevision','review','generateTts','registerManualMedia','saveAudioSelection','planMedia','retryMedia','saveMediaDraft','generateClip'].includes(body.command)||['prepareWorkspace','replanWorkspace'].includes(body.command)&&(result as {planning?:boolean}).planning===true)this.runtime.wake(String(data.episodeId??result.id));if(body.command!=='openDirectory')void this.continuation?.wake();return result;
  }
  private async requireCaptionTextReview(c:PoolClient,draft:{id:string;subtitles_enabled:boolean;audio_mode:string}){
   if(draft.subtitles_enabled&&draft.audio_mode!=='none'&&!(await c.query('SELECT local_identity.caption_text_is_confirmed($1) confirmed',[draft.id])).rows[0]?.confirmed)throw new ConfigurationError(409,'请先核对当前音频正文并保存确认。');
