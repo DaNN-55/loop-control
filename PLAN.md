@@ -12,6 +12,8 @@
 
 验证边界已由 Owner 确认：正式页面 / Owner HTTP、真实数据库和持久任务、受控 Provider / 原生工程、隔离目录实际文件；不真实付费、不迁移日常数据、不部署或推送。各票先 red 再 green；合入前同步集成 tip，合入后执行相关检查。已存原生 SQLite 文档优先于过期 JSON，不能回退覆盖。
 
+基线：类型、后台 / Worker 构建通过；173 文件 / 1168 默认测试通过。正式流程初轮 4 通过 / 2 失败：1 项旧测试修改已失去权威性的 JSON（需改为真实原生编辑，保留断言），1 项隔离 Worker 尚未构建（已构建后定向复验）。详见仓库外交接 `BASELINE.md`。
+
 共享交接、Issue 全文、依赖图和运行记录：`/private/tmp/loop-control-166-20261031/`。测试运行复用只读源 schema 与 SDK，随机隔离库通过现有 `LOOP_TEST_CONTEXT_MODULE` / `LOOP_TEST_OPENCHATCUT_ROOT` 接入；不复制凭据，不向日常库写入。
 
 ---
