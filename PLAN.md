@@ -1,13 +1,15 @@
-# 2026-10-31 #187 / T09 工程与交付位置兼容（实现完成，待独立验收）
+# 2026-10-31 #187 / T09 工程与交付位置兼容（独立验收通过，待主 Agent 关闭 Issue）
 
 - [x] 真实 Owner HTTP 新位置工程 red→green，保留外部日志。
 - [x] Studio 工作文件、恢复、工程版本、来源 I/O 和导出/交付复用持久位置；SQL120六函数兼容。
 - [x] 旧/新位置实际 SDK 编辑保存、关闭重启重开、播放导出和 compiled Worker 交付读回；身份/冲突保护回归。
-- [x] check/build/runtime:prepare、正式浏览器验收、T05 同步后 12 项原生/恢复及 2 项浏览器复验、child SIGKILL 与契约交接完成。
+- [x] 集成分支独立 check/build/runtime:prepare、13 项原生/恢复/SQL、25 项相关单测及 2 项正式浏览器流程通过；child SIGKILL 与契约交接完成。
 
 最终证据与限制见仓库外 `T09/HANDOFF.md` 和 `T09-CONTRACT.md`。完整相关回归 29 passed / 1 已独立复现的原有 platformBlueprint 夹具失败，原断言保留；本票未修改该断言或声称整组全绿。
 
 验收 seam 已授权：正式页 → Owner HTTP → 隔离真实 DB/files → 实际 SDK。外部证据 `/private/tmp/loop-control-178-20261031/T09`；不碰日常数据、默认布局、付费 Provider 或 main。
+
+独立合入与复验见仓库外 `MERGE-T09.md` 和 `MERGE-T09/`。默认 headless、未启用 WebGPU 的截帧中，原生时间码推进但媒体预览为黑色或透明；随后使用 `agent-browser --headed --webgpu` 在同类隔离特殊路径夹具中，亲看源画面、字幕及帧号 0→25→29，并验证实际播放和暂停。未单独隔离 headed、GPU 开关与首帧等待时间的影响。T17 原生画面验收须沿用支持 GPU 的浏览器配置并检查实际画面，不能只以时间码或最终导出播放替代原生预览。
 
 # Active execution: issue 178
 
@@ -25,7 +27,7 @@ Confirmed acceptance: formal UI → Owner HTTP → isolated real database/files 
 | #184 | #179 | Integrated locally; publication ownership fix independently accepted; tracker closed |
 | #185 | #179 | Integrated locally; acceptance passed; tracker closed |
 | #186 | #179 | Completed; independent acceptance passed and tracker closed |
-| #187 | #184, #185, #186 | Implementing in isolated worktree |
+| #187 | #184, #185, #186 | Integrated locally; independent acceptance passed; tracker closure pending root |
 | #188 | #183 | Implementing in isolated worktree |
 | #189 | #183, #187 | Pending |
 | #190 | #187, #188, #189 | Pending |
@@ -41,7 +43,7 @@ Baseline verification: `npm run check` passed; default suite 174 files / 1144 te
 
 Verification log and ticket handoffs: `/private/tmp/loop-control-178-20261031`. Preserve RED/GREEN, actual skip counts and any unresolved integration limitations.
 
-Tracker: #179 through #186 are completed after independent acceptance; 8/17 complete. T09/#187 and T10/#188 are active. Completed clean implementer worktrees are removed after ancestry/status/no-runtime-reference verification; recovery branches retained. Exact receipts and migration reservations remain in the shared external context.
+Tracker: #179 through #186 are closed after independent acceptance; 8/17 tracker-closed. T09/#187 is integrated and independently accepted, pending root tracker closure; T10/#188 remains active. Completed clean implementer worktrees are removed after ancestry/status/no-runtime-reference verification; recovery branches retained. Exact receipts and migration reservations remain in the shared external context.
 
 Cross-ticket notes: T03 binds global storage to the persisted workspace Owner. T04 now creates the genuine first account through the trusted T03 binding without importing source metadata or broadening credentials. T07 owns shared producer namespaces/native output authority and mediaLibrary prefix checks; T06 owns input/planning guards and localFiles. Relative-prefix migration of frozen references remains a mandatory T13/T14 seam (external LOCATION-CALLERS.md), not solved by account-root-only mapping.
 
