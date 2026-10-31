@@ -103,7 +103,7 @@ it.each([false,true])('cleanupPending=%s: confirms the actual directory and exac
  expect((confirm as HTMLButtonElement).disabled).toBe(true);
  expect(await within(modal).findByText('/fixture/episodes/'+episode)).toBeTruthy();
  expect(within(modal).getByText('/external/account/episodes/'+episode)).toBeTruthy();
- expect(within(modal).getByRole('list',{name:'将删除的生产单目录'}).children).toHaveLength(2);
+ expect(within(modal).getByRole('list',{name:'已核查的生产单目录'}).children).toHaveLength(2);
  await user.type(within(modal).getByLabelText('永久删除确认文本'),'错误标题');
  expect((confirm as HTMLButtonElement).disabled).toBe(true);expect(commands.map(c=>c.command)).toEqual(['planDeletion']);
  await user.clear(within(modal).getByLabelText('永久删除确认文本'));

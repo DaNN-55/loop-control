@@ -5,15 +5,15 @@ import {join} from 'node:path';
 import {tmpdir} from 'node:os';
 import {planEmptyAccountDirectories,cleanupEmptyAccountDirectories} from './accountDirectoryCleanup';
 
-it('removes only empty blueprint roots and registered copies, preserving directories with any contents',async()=>{
+it('removes only current empty roots and preserves deployment sources, preserving directories with any contents',async()=>{
  const temporary=await realpath(await mkdtemp(join(tmpdir(),'account-empty-'))),media=join(temporary,'media'),root=join(media,'account'),old=join(temporary,'old'),copy=join(old,'account'),nonempty=join(media,'nonempty'),outside=join(temporary,'history');
  try{
   for(const path of [root,copy,nonempty,outside])await mkdir(path,{recursive:true});
   await writeFile(join(nonempty,'.DS_Store'),'hidden metadata');await writeFile(join(outside,'keep.txt'),'history and other account data');
   const targets=await planEmptyAccountDirectories(media,[root,nonempty,outside],[old]);
-  expect(targets.map(t=>t.path)).toEqual([root,copy]);
-  expect((await cleanupEmptyAccountDirectories(targets,async()=>false)).map(r=>r.status)).toEqual(['removed','removed']);
-  for(const path of [root,copy])await expect(lstat(path)).rejects.toMatchObject({code:'ENOENT'});
+  expect(targets.map(t=>t.path)).toEqual([root]);
+  expect((await cleanupEmptyAccountDirectories(targets,async()=>false)).map(r=>r.status)).toEqual(['removed']);
+  await expect(lstat(root)).rejects.toMatchObject({code:'ENOENT'});expect((await lstat(copy)).isDirectory()).toBe(true);
   expect(await readFile(join(nonempty,'.DS_Store'),'utf8')).toBe('hidden metadata');
   expect(await readFile(join(outside,'keep.txt'),'utf8')).toBe('history and other account data');
   expect((await lstat(media)).isDirectory()).toBe(true);

@@ -6,16 +6,17 @@ import {once} from 'node:events';
 import {spawn,type ChildProcess} from 'node:child_process';
 import {Duplex} from 'node:stream';
 import {randomBytes,randomUUID} from 'node:crypto';
-import {join} from 'node:path';
 import {readFileSync} from 'node:fs';
 import {Pool} from 'pg';
 import {createLocalHandler} from './localRoute';
+import {copyFixtureSchema} from './fixtureSchema';
 import {hashPassword} from './password';
 import {csrfFor,tokenHash,sessionCookie} from './sessions';
 
 it.skipIf(process.env.LOOP_EPISODE_ARCHIVE_ACCEPTANCE!=='1')('restores an owned legacy order without enabling native production; retains ownership, history and CSRF fences',async()=>{
- const {runtimeContext}=await import(join(process.cwd(),'scripts/runtime/environment.mjs')),context=runtimeContext();
- const database='loop_archive_test_'+randomBytes(8).toString('hex');context.sql('CREATE DATABASE '+database+' TEMPLATE template0','postgres');
+ if(!process.env.LOOP_TEST_CONTEXT_MODULE)throw Error('Explicit isolated test context required');
+ const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MODULE),context=runtimeContext();context.assertDatabase();
+ const database='loop_archive_test_'+randomBytes(6).toString('hex');context.sql('CREATE DATABASE '+database+' TEMPLATE template0','postgres');
  const bridges:ChildProcess[]=[];
  function connection(){
   const bridge=spawn('docker',['exec','-i',context.container,'perl','-MIO::Socket::UNIX','-MIO::Select','-MSocket=SOCK_STREAM','-e',"my $s=IO::Socket::UNIX->new(Type=>SOCK_STREAM,Peer=>'/var/run/postgresql/.s.PGSQL.5432') or die 'socket'; my $sel=IO::Select->new(\\*STDIN,$s); while(1){for my $f($sel->can_read){my $n=sysread($f,my $b,65536);exit unless $n;my $o=fileno($f)==0?$s:\\*STDOUT;while(length $b){my $w=syswrite($o,$b);die 'write' unless $w;substr($b,0,$w,'');}}}"],{env:context.env,stdio:['pipe','pipe','pipe']});
@@ -26,7 +27,7 @@ it.skipIf(process.env.LOOP_EPISODE_ARCHIVE_ACCEPTANCE!=='1')('restores an owned 
  const owner=randomUUID(),other=randomUUID(),account=randomUUID(),foreign=randomUUID(),legacy=randomUUID(),managed=randomUUID(),historical=randomUUID(),outsider=randomUUID(),token=randomBytes(32).toString('hex');
  const admin=async(sql:string,values?:unknown[])=>{await pool.query('RESET SESSION AUTHORIZATION');try{return await pool.query(sql,values);}finally{await pool.query('SET SESSION AUTHORIZATION loop_app');}};
  try{
-  context.sql(context.docker(['exec',context.container,'pg_dump','-U','postgres','-d',context.database,'--schema-only']),database);
+  await copyFixtureSchema(context,database,['db/local/110-episode-storage-locations.sql','db/local/111-global-media-root.sql','db/local/112-series-extension-rules.sql','db/local/113-automatic-account-directories.sql','db/local/114-series-storage-containers.sql','db/local/115-exact-episode-deletion-intents.sql','db/local/117-input-storage-locations.sql','db/local/118-visual-storage-locations.sql','db/local/119-audio-caption-storage-locations.sql']);
   await pool.query(readFileSync('db/local/083-legacy-episode-archive.sql','utf8'));
   await pool.query('INSERT INTO local_identity.owners(id,email) VALUES($1,$2),($3,$4)',[owner,owner+'@example.invalid',other,other+'@example.invalid']);
   await pool.query('INSERT INTO local_identity.credentials(owner_id,password_digest) VALUES($1,$2)',[owner,await hashPassword('fixture-only-'+randomUUID())]);
