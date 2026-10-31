@@ -878,3 +878,17 @@ T14/#192 独立 merger 将 clean 冻结来源 `c158cd2f` 以 no-ff 合入 `64be9
 - 14/17 children (#179–#192) complete; parent #178 remains open. #193/T15 is implementing global-root inventory in its own branch based on the verified T14 merge; final latest integration receipt must be merged before handoff. #194 follows #193, #195 follows #194 plus completed #192; final fresh two-axis review/fixes remains required.
 - Dedicated cleanup owns fresh-proof removal of completed T14 source branch/worktree; retain active T15, integration/main, shared runtime/SDK and all actual evidence. T17 retains the observed 390px background overflow and stale creation-capability UI findings; do not claim a whole-page responsive pass.
 - No main merge/push/deployment/daily-data migration or paid Provider execution.
+## #193 / T15：全局媒体根迁移盘点
+
+目标：正式本机设置保存可恢复全局计划，覆盖多个账号、系列／未分系列、新旧生产单、真实文件／引用、位置证明和平台保留资源；不复制、不切根、不启动制作。在独立 t15 分支基于已合入 T14 的 integration 实施，最终合入最新行政收据。
+
+- [x] 真实 Owner HTTP plan400 RED→GREEN；SQL125唯一持久ledger、same-key并发重放，异步 inventory/hash/reference 最小提取共用。
+- [x] 首次账号 reserve-before-mkdir 与空初始化真实 RED→GREEN；global/account稳定锁序、pending历史过滤、真实task/Studio/unknown fee/partial目录与有界扫描。
+- [x] 可信资源分类和既有source carve-out；原布局真实卸载发现state后台host树重建，经共同state身份写边界修复；重挂原完整身份/API/字节不变。
+- [x] 最终4文件18/18真实核心、14/14相关单测、5文件24/24旧目录/创建/初始化回归，均零skip。
+- [x] 正式main+StrictMode页面最终1/1、11.26s：新目标/拒绝/范围和空间、明确再盘点新计划、旧根Finder exact1观察即关、390/1440、Escape焦点、真实PID25703→26382同计划/config/bytes读回。
+- [x] UI一次detector[]；fresh默认角色替代不可用finish reviewer/documenter，局部ship与设计一致性记录，DESIGN/PRODUCT/sidecar未改。
+- [x] 最终文档、合最新 integration13242495、类型/readiness断言与源码冻结；外部 HANDOFF/CONTRACT 交独立 merger。本票核心提交6808d658。
+
+固定baseline107/max109/0账号、schema1989a647/ledger4806437b保持；仅本票SQL125新增，历史SQL不改。证据在外部T15/与T15-CONTRACT；未merge main、push、部署、改日常数据或付费/Keychain。
+

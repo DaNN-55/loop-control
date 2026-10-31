@@ -1,5 +1,5 @@
 import type {Pool,PoolClient} from 'pg';
-import {randomUUID,createHash} from 'node:crypto';
+import {randomUUID} from 'node:crypto';
 import {constants} from 'node:fs';
 import {lstat,readdir,realpath,open,mkdir,link,unlink,readFile,statfs} from 'node:fs/promises';
 import {join,relative} from 'node:path';
@@ -8,7 +8,6 @@ import type {OwnerSession} from './sessions.js';
 import {ConfigurationError} from './configurationCommands.js';
 import {readMediaDeployment,resolveLocalAssetRoot} from './mediaDeployment.js';
 import {mappedAssetPath} from './mediaPaths.js';
-import {safeRelative} from './localFiles.js';
 import {hasActiveNativeStudio} from '../worker/openchatcutStudio.js';
 import {validateAccountAssetLocation,accountAssetRootsOverlap as overlaps} from './accountAssetRoots.js';
 import {directoryName} from './creationIdentity.js';
@@ -16,45 +15,10 @@ import {resolveEpisodeStorageLocation,requireEpisodeStorageDirectory,resolveEpis
 import {verifyMediaRootBinding,type MediaRootBinding} from './mediaRootSettings.js';
 import {episodeFileIO} from './episodeFiles.js';
 import {resolveStorageContainer,requireStorageContainer} from './seriesDirectories.js';
+import {identity,fileDigest,inventory,references,fingerprint,type File,type Root,type Reference} from './storageInventory.js';
 type Client=Pick<PoolClient,'query'>;
-interface File{sourceRoot:string;relativePath:string;sha256:string;fileSize:number;targetRelativePath?:string}
-interface Root{path:string;device:string;inode:string}
-interface Reference{episodeId?:string;relativePath:string;sha256?:string;fileSize?:number}
 interface Manifest{targetRoot:string;targetIdentity:Root;sources:Root[];logicalRoots:string[];episodes:{id:string;title:string}[];files:File[];references:Reference[];evidenceSha256:string;conflicts:string[];totalBytes:number}
-const ordered=(value:unknown):unknown=>Array.isArray(value)?value.map(ordered):value&&typeof value==='object'?Object.fromEntries(Object.entries(value).sort(([a],[b])=>a.localeCompare(b)).map(([key,item])=>[key,ordered(item)])):value;
-const fingerprint=(value:unknown)=>createHash('sha256').update(JSON.stringify(ordered(value))).digest('hex');
-async function identity(path:string):Promise<Root>{const s=await lstat(path,{bigint:true});if(!s.isDirectory()||await realpath(path)!==path)throw new ConfigurationError(409,'迁移目录不是安全的实际目录：'+path);return{path,device:String(s.dev),inode:String(s.ino)};}
-async function fileDigest(root:string,path:string){
- if(!safeRelative(path))throw new ConfigurationError(409,'迁移文件路径无效：'+path);
- const full=join(root,path);if(await realpath(full)!==full)throw new ConfigurationError(409,'迁移不接受符号链接：'+full);
- const handle=await open(full,constants.O_RDONLY|constants.O_NOFOLLOW);
- try{const before=await handle.stat({bigint:true});if(!before.isFile()||before.nlink!==1n)throw new ConfigurationError(409,'迁移仅接受独立普通文件：'+full);
- const hash=createHash('sha256');for await(const chunk of handle.createReadStream({autoClose:false}))hash.update(chunk);
- const after=await handle.stat({bigint:true});if(before.size!==after.size||before.mtimeNs!==after.mtimeNs||before.ino!==after.ino)throw new ConfigurationError(409,'复制期间文件已变化：'+full);
- if(after.size>BigInt(Number.MAX_SAFE_INTEGER))throw new ConfigurationError(409,'文件过大，无法安全记录大小。');return{sha256:hash.digest('hex'),fileSize:Number(after.size)};
- }finally{await handle.close();}
-}
-async function inventory(root:string):Promise<File[]>{const files:File[]=[];async function visit(path:string){for(const name of(await readdir(join(root,path))).sort()){
- const rel=path?path+'/'+name:name,full=join(root,rel),s=await lstat(full);if(s.isSymbolicLink()||await realpath(full)!==full)throw new ConfigurationError(409,'迁移不接受符号链接：'+full);
- if(s.isDirectory())await visit(rel);else files.push({sourceRoot:root,relativePath:rel,...await fileDigest(root,rel)});
- if(files.length>100000)throw new ConfigurationError(409,'文件超过本次迁移上限，请先整理目录。');
- }}await visit('');return files;}
 async function allInventory(roots:{path:string}[]){const files:File[]=[];for(const root of roots){files.push(...await inventory(root.path));if(files.length>100000)throw new ConfigurationError(409,'迁移文件总数超过本次上限，请先整理目录。');}return files;}
-function references(evidence:unknown){const refs:Reference[]=[],workspaces=new Map<string,string>();if(evidence&&typeof evidence==='object')for(const row of ((evidence as Record<string,unknown>)['local_identity.production_workspaces']??[]) as {id:string;episode_id:string}[])workspaces.set(row.id,row.episode_id);function visit(value:unknown,episodeId?:string){if(!value||typeof value!=='object')return;if(Array.isArray(value)){for(const x of value)visit(x,episodeId);return;}
- const row=value as Record<string,unknown>;episodeId??=typeof row.episode_id==='string'?row.episode_id:typeof row.workspace_id==='string'?workspaces.get(row.workspace_id):undefined;
- // Frozen output contracts describe promised files, not completed artifacts.
- if(Array.isArray(row.required_artifact_types)&&typeof row.content_type==='string'||Array.isArray(row.requiredArtifactTypes)&&typeof row.contentType==='string')return;
- for(const key of ['relative_path','storage_path','relativePath','project_relative_path','projectRelativePath','workspaceRelativePath','project_path']){
- const path=row[key];if(typeof path==='string'&&path){if(!safeRelative(path))throw new ConfigurationError(409,'文件引用不安全：'+path);refs.push({episodeId,relativePath:path,...(typeof (row.sha256??row.project_sha256)==='string'&&/^[a-f0-9]{64}$/.test(String(row.sha256??row.project_sha256))?{sha256:String(row.sha256??row.project_sha256)}:{}),...(row.file_size!==undefined||row.fileSize!==undefined||key==='project_path'&&row.project_size!==undefined?{fileSize:Number(row.file_size??row.fileSize??row.project_size)}:{})});}}
- if(typeof row.src==='string'&&safeRelative(row.src))refs.push({episodeId,relativePath:row.src});
- if(row.reverseSources&&typeof row.reverseSources==='object')for(const source of Object.values(row.reverseSources))if(typeof source==='string'&&safeRelative(source))refs.push({episodeId,relativePath:source});
- for(const [key,x] of Object.entries(row)){
-  if(key==='input_snapshot'&&typeof row.task_type==='string'&&x&&typeof x==='object'){
-   for(const [slot,entry] of Object.entries(x)){if(slot==='output')continue;if(['review_render','final_render'].includes(slot)&&entry&&typeof entry==='object')visit(Object.fromEntries(Object.entries(entry).filter(([field])=>field!=='project_relative_path')),episodeId);else visit(entry,episodeId);}
-  }else visit(x,episodeId);
- }
-
- }visit(evidence);return refs;}
 function verifyReferences(files:File[],refs:Reference[]){const byPath=new Map(files.map(f=>[f.relativePath,f]));for(const ref of refs){const f=byPath.get(ref.relativePath);if(!f||ref.sha256&&ref.sha256!==f.sha256||ref.fileSize!==undefined&&ref.fileSize!==f.fileSize)throw new ConfigurationError(409,'文件引用校验失败：'+ref.relativePath);}}
 async function lock(c:Client,account:string){if(!(await c.query("SELECT pg_try_advisory_xact_lock(hashtextextended($1,0)) locked",['account-directory-migration:'+account])).rows[0].locked)throw new ConfigurationError(409,'账号迁移正在执行，请稍后读取结果。');await c.query("SELECT pg_advisory_xact_lock(hashtextextended('account-asset-root-ownership',0))");await c.query('SELECT local_identity.lock_account_directory_migration($1)',[account]);}
 async function blockers(c:Client,account:string,episodes:{id:string}[],roots:string[]){const result=(await c.query('SELECT local_identity.account_directory_busy($1) reasons',[account])).rows[0].reasons as {reason:string}[];

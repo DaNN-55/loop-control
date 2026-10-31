@@ -1,4 +1,4 @@
-import { mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, renameSync, writeFileSync,lstatSync,realpathSync } from "node:fs";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
 import {readHealthChecks,type HealthCheck} from '../observability/healthChecks.js';
@@ -7,6 +7,13 @@ export interface OperationResult { at: string; passed: boolean; detail: string; 
 export interface OperationEvidence { latest: OperationResult; lastSuccess: OperationResult | null; lastFailure: OperationResult | null }
 export type OperationsEvidence = Partial<Record<Operation, OperationEvidence>>;
 const operations: Operation[] = ["schedule", "notification", "health", "backup", "snapshot"];
+export interface OperationDirectoryIdentity{path:string;deviceId:string;inodeId:string}
+/** Explicit service setup may create its leaf, never a missing mount's parents. */
+export function bindOperationDirectory(directory:string):OperationDirectoryIdentity{
+ try{mkdirSync(directory,{mode:0o700});}catch(error){if((error as NodeJS.ErrnoException).code!=='EEXIST')throw error;}
+ const stat=lstatSync(directory,{bigint:true});if(!stat.isDirectory()||stat.isSymbolicLink())throw Error('Operation evidence directory is not a real directory');
+ return{path:realpathSync(directory),deviceId:String(stat.dev),inodeId:String(stat.ino)};
+}
 function readResult(path: string, observedAt = new Date()): OperationResult | null {
   try {
     const value = JSON.parse(readFileSync(path, "utf8")) as OperationResult;
@@ -28,8 +35,9 @@ export async function readOperationsEvidence(directory: string, observedAt = new
   }
   return result;
 }
-export async function recordOperation(directory: string, operation: Operation, result: Omit<OperationResult, "at">): Promise<void> {
-  mkdirSync(directory, { recursive: true, mode: 0o700 });
+export async function recordOperation(directory: string, operation: Operation, result: Omit<OperationResult, "at">,binding?:OperationDirectoryIdentity): Promise<void> {
+  if(binding){const stat=lstatSync(directory,{bigint:true});if(!stat.isDirectory()||stat.isSymbolicLink()||realpathSync(directory)!==binding.path||String(stat.dev)!==binding.deviceId||String(stat.ino)!==binding.inodeId)throw Error('Operation evidence directory identity changed');}
+  else mkdirSync(directory, { recursive: true, mode: 0o700 });
   const previous = readResult(join(directory, `${operation}-result.json`));
   if (result.idle && result.passed && previous?.passed && previous.idle && previous.detail === result.detail) return;
   const latest = { ...result, at: new Date().toISOString() };
