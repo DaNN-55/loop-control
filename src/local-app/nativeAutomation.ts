@@ -5,7 +5,7 @@ import {promisify} from 'node:util';
 import {access,stat} from 'node:fs/promises';
 import {constants} from 'node:fs';
 import {consumeNotifications,notificationCategory,type ClaimedNotificationEvent,type EventNotification} from '../orchestration/notificationConsumer.js';
-import {recordOperation,readOperationsEvidence} from '../orchestration/operationsEvidence.js';
+import {recordOperation,readOperationsEvidence,bindOperationDirectory,type Operation,type OperationResult} from '../orchestration/operationsEvidence.js';
 import {assertPreparedRuntime} from '../orchestration/runtimeBuild.js';
 import {healthCheckLabels,readHealthChecks,type HealthCheck,type HealthResult} from '../observability/healthChecks.js';
 const exec=promisify(execFile);
@@ -41,6 +41,7 @@ export async function desktopNotification(message:EventNotification){await exec(
 export async function startNativeAutomation(options:NativeAutomationOptions){
  const kinds=options.backupsEnabled===false?['health']:['health','backup'];
  const {pool,stateDirectory}=options,now=options.now??(()=>new Date()),controller=new AbortController();
+ const evidenceBinding=bindOperationDirectory(stateDirectory),record=(operation:Operation,result:Omit<OperationResult,'at'>)=>recordOperation(stateDirectory,operation,result,evidenceBinding);
  let stopped=false,pump:Promise<void>|undefined,again=false,lastError:string|null=null,lastScanAt:string|null=null;
  const delivery={
   async enabled(event:ClaimedNotificationEvent){const category=notificationCategory(event);if(!category)return false;return (await pool.query('SELECT local_identity.native_notification_enabled($1,$2) enabled',[event.id,category])).rows[0]?.enabled===true;},
@@ -92,19 +93,19 @@ export async function startNativeAutomation(options:NativeAutomationOptions){
   ) UPDATE local_identity.automation_attempts a SET status=$7,passed=$5,detail=$6,checks=$8::jsonb,completed_at=$3
    FROM finished f WHERE a.job_id=f.id AND a.attempt=f.attempt AND a.token=$2 AND a.status='running' RETURNING a.job_id`,[job.id,job.token,at,interrupted?'ready':result.passed?'completed':'failed',interrupted?false:result.passed,detail,interrupted?'interrupted':result.passed?'completed':'failed',interrupted?null:JSON.stringify(result.checks??null)]);
   if(!r.rowCount)throw Error('Automation completion fence rejected');
-  await recordOperation(stateDirectory,job.kind,interrupted?{passed:false,detail}:result);
+  await record(job.kind,interrupted?{passed:false,detail}:result);
  }
  async function scan(){
   do{again=false;lastScanAt=now().toISOString();
-   try{await enqueue(now());lastError=null;if(options.recordSchedule!==false)await recordOperation(stateDirectory,'schedule',{passed:true,idle:true,detail:'本地自动化计划扫描完成。'});}catch{lastError='本地自动化计划读取或持久化失败。';await recordOperation(stateDirectory,'schedule',{passed:false,detail:lastError});return;}
+   try{await enqueue(now());lastError=null;if(options.recordSchedule!==false)await record('schedule',{passed:true,idle:true,detail:'本地自动化计划扫描完成。'});}catch{lastError='本地自动化计划读取或持久化失败。';await record('schedule',{passed:false,detail:lastError});return;}
    // A broken/uncertain notification never prevents health or backup work.
    try{const r=await consumeNotifications(delivery,options.send??desktopNotification),unknown=Number((await pool.query('SELECT local_identity.unresolved_native_notifications() count')).rows[0].count);
-    await recordOperation(stateDirectory,'notification',{passed:unknown===0,idle:r.notifications===0,detail:unknown?`有 ${unknown} 条提醒正在投递或结果未知；不会自动重发，请核对控制台队列。`:r.notifications?`桌面接口接受 ${r.notifications} 条新提醒；不代表可见或已读。`:'没有新提醒；历史消费位置保留。'});
-   }catch{await recordOperation(stateDirectory,'notification',{passed:false,detail:'提醒读取或投递结果未知；不自动重发，请核对控制台队列。'});}
+    await record('notification',{passed:unknown===0,idle:r.notifications===0,detail:unknown?`有 ${unknown} 条提醒正在投递或结果未知；不会自动重发，请核对控制台队列。`:r.notifications?`桌面接口接受 ${r.notifications} 条新提醒；不代表可见或已读。`:'没有新提醒；历史消费位置保留。'});
+   }catch{await record('notification',{passed:false,detail:'提醒读取或投递结果未知；不自动重发，请核对控制台队列。'});}
    for(let i=0;i<64&&!stopped;i++){const job=await claim(now());if(!job)break;await run(job);}
   }while(again&&!stopped);
  }
- function wake(){if(stopped)return Promise.resolve();again=true;if(!pump)pump=scan().catch(async()=>{lastError='本地自动化执行失败，请检查本机状态。';await recordOperation(stateDirectory,'schedule',{passed:false,detail:lastError}).catch(()=>{});}).finally(()=>{pump=undefined;if(again&&!stopped)void wake();});return pump;}
+ function wake(){if(stopped)return Promise.resolve();again=true;if(!pump)pump=scan().catch(async()=>{lastError='本地自动化执行失败，请检查本机状态。';await record('schedule',{passed:false,detail:lastError}).catch(()=>{});}).finally(()=>{pump=undefined;if(again&&!stopped)void wake();});return pump;}
  const interval=options.intervalMs??4000;if(!Number.isSafeInteger(interval)||interval<10)throw Error('Invalid automation interval');
  const timer=setInterval(()=>void wake(),interval);timer.unref?.();void wake();
  return{wake,status:async()=>{

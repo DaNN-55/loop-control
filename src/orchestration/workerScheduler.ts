@@ -1,10 +1,11 @@
 import { join } from "node:path";
-import { recordOperation } from "./operationsEvidence.js";
+import { recordOperation,bindOperationDirectory } from "./operationsEvidence.js";
 import { createWorkerTaskConsumer, type DispatchScope, type WorkerDispatchExecutor, type WorkerDispatchOptions } from "./workerDispatch.js";
 
 export async function startWorkerScheduler(options: WorkerDispatchOptions, executor: WorkerDispatchExecutor) {
   const evidenceDirectory = options.environment?.LOOP_STATE_DIR ?? process.env.LOOP_STATE_DIR ?? join(options.projectRoot, ".loop-control", "local", "state");
-  const recordScan = (passed: boolean) => recordOperation(evidenceDirectory, "schedule", {passed, idle: passed && consumer.activeCount() === 0, detail: passed ? "常驻调度检查完成；空闲结果仅在变化时保存。" : "常驻调度或规划失败，请检查本机日志。"}).catch(() => undefined);
+  const evidenceBinding=bindOperationDirectory(evidenceDirectory);
+  const recordScan = (passed: boolean) => recordOperation(evidenceDirectory, "schedule", {passed, idle: passed && consumer.activeCount() === 0, detail: passed ? "常驻调度检查完成；空闲结果仅在变化时保存。" : "常驻调度或规划失败，请检查本机日志。"},evidenceBinding).catch(() => undefined);
   const controller = new AbortController();
   const signal = options.signal ? AbortSignal.any([options.signal, controller.signal]) : controller.signal;
   let stopped = false, fast = false, global = false, scans = 0;

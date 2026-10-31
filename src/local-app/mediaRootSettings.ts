@@ -1,4 +1,5 @@
 import type {Pool} from 'pg';
+import {planMediaRootMigration,readMediaRootMigration,type StorageResource} from './mediaRootMigration.js';
 import {access,lstat,readdir,realpath,statfs} from 'node:fs/promises';
 import {constants} from 'node:fs';
 import {dirname,isAbsolute,resolve,join} from 'node:path';
@@ -11,7 +12,8 @@ import {assetPathWithin} from './mediaPaths.js';
 const exec=promisify(execFile);
 export interface MediaRootBinding {path:string;deviceId:string;inodeId:string;mountPath:string}
 export interface MediaRootRuntime {
- protectedRoots:string[];retainedRoots?:string[];minimumFreeBytes:number;
+ protectedRoots:string[];retainedRoots?:string[];resources?:StorageResource[];minimumFreeBytes:number;
+ pendingOperations?:()=>Promise<{kind:string;reason:string}[]>;
  persist:(binding:MediaRootBinding)=>Promise<(()=>Promise<void>) & {commit?:()=>Promise<void>}>;
  activate:(binding:MediaRootBinding)=>Promise<void>;
 }
@@ -41,17 +43,18 @@ export class LocalMediaRootSettings{
    const row=(await c.query('SELECT local_identity.owner_id()=local_identity.media_root_owner() authorized,local_identity.media_workspace_empty() empty,local_identity.media_root_binding() binding')).rows[0];
    if(!row.authorized)throw new ConfigurationError(403,'仅工作区存储所有者可管理媒体根。');
    let reason:string|undefined;try{if(row.binding){if(row.binding.path!==this.mediaRoot)throw Error('服务与已提交媒体根不一致，请重启本机服务。');await verifyMediaRootBinding(row.binding,this.runtime?.minimumFreeBytes??0);}else await inspectMediaRoot(this.mediaRoot,this.runtime?.minimumFreeBytes??0);}catch(e){reason=e instanceof Error?e.message:'媒体根不可用。';}
-   return{path:row.binding?.path??this.mediaRoot,canInitialize:row.empty,status:reason?'unavailable':'ready',...(reason?{reason}:{})};
+   return{migration:await readMediaRootMigration(c),path:row.binding?.path??this.mediaRoot,canInitialize:row.empty,status:reason?'unavailable':'ready',...(reason?{reason}:{})};
   });
  }
  async execute(session:OwnerSession,body:Record<string,unknown>){
-  if(!['choose','open','initialize'].includes(String(body.command))||Object.keys(body).some(k=>!['command','path','idempotencyKey'].includes(k))||typeof body.idempotencyKey!=='string'||!/^[a-f0-9-]{36}$/i.test(body.idempotencyKey)||body.command!=='initialize'&&body.path!==undefined)throw new ConfigurationError(400,'本机存储请求无效。');
+  if(!['choose','open','initialize','planMigration'].includes(String(body.command))||Object.keys(body).some(k=>!['command','path','idempotencyKey'].includes(k))||typeof body.idempotencyKey!=='string'||!/^[a-f0-9-]{36}$/i.test(body.idempotencyKey)||!['initialize','planMigration'].includes(String(body.command))&&body.path!==undefined)throw new ConfigurationError(400,'本机存储请求无效。');
   const state=await this.read(session);
+  if(body.command==='planMigration')return planMediaRootMigration(this.pool,session,this.mediaRoot,body.path,body.idempotencyKey,this.runtime);
   if(body.command==='open'){
    if(state.status!=='ready')throw new ConfigurationError(409,state.reason!);
    try{await exec(process.platform==='darwin'?'/usr/bin/open':process.platform==='win32'?'explorer.exe':'xdg-open',[state.path],{timeout:5000,maxBuffer:8192});}catch{throw new ConfigurationError(503,'无法打开本地文件夹，请检查本机桌面环境。');}return{opened:true,path:state.path};
   }
-  if(!state.canInitialize)throw new ConfigurationError(409,'工作区已有资料，更换媒体根需要受控迁移；当前请保留现址。');
+  if(body.command==='initialize'&&!state.canInitialize)throw new ConfigurationError(409,'工作区已有资料或待恢复操作，请保留现址并使用迁移盘点。');
   if(this.busy)throw new ConfigurationError(409,'本机存储操作进行中，请稍后重试。');this.busy=true;
   try{
    if(body.command==='choose'){
@@ -69,6 +72,7 @@ export class LocalMediaRootSettings{
    try{
     await sessionTransaction(this.pool,session,async c=>{
      await c.query("SELECT pg_advisory_xact_lock(hashtextextended('global-media-root',0))");
+     if(!(await c.query('SELECT local_identity.media_workspace_empty() empty')).rows[0].empty)throw new ConfigurationError(409,'工作区已有资料或未完成创建，请先恢复原操作。');
      previous=(await c.query('SELECT local_identity.media_root_binding() binding')).rows[0].binding;
      await c.query('SELECT local_identity.bind_media_root($1,$2,$3,$4,true)',[binding.path,binding.deviceId,binding.inodeId,binding.mountPath]);
      await verifyMediaRootBinding(binding,this.runtime!.minimumFreeBytes);

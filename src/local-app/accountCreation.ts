@@ -19,6 +19,7 @@ export async function createAccountDirectory(pool:Pool,session:OwnerSession,key:
    if(row){if(row.payload_hash!==hash)throw new ConfigurationError(409,'同一操作标识不能用于不同内容。');return row;}
    const receipt=(await c.query('SELECT payload_hash,result FROM local_identity.command_receipts WHERE owner_id=$1 AND idempotency_key=$2',[session.id,key])).rows[0];
    if(receipt){if(receipt.payload_hash!==hash)throw new ConfigurationError(409,'同一操作标识不能用于不同内容。');return{legacyReceipt:receipt.result};}
+   await c.query("SELECT pg_advisory_xact_lock(hashtextextended('global-media-root',0))");
    const binding=(await c.query('SELECT local_identity.media_root_binding() binding,local_identity.media_root_owner() owner')).rows[0];
    if(!binding.binding||binding.owner!==session.id)throw new ConfigurationError(403,'仅已绑定的工作区所有者可创建账号，请先初始化本机存储。');
    if(binding.binding.path!==mediaRoot)throw new ConfigurationError(409,'服务媒体根与登记位置不一致，请重启服务。');
