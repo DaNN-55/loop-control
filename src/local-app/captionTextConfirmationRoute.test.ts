@@ -2,7 +2,7 @@
 import {createServer} from 'node:http';
 import {once} from 'node:events';
 import {createHash,randomUUID} from 'node:crypto';
-import {mkdtemp,mkdir,writeFile,realpath,rm} from 'node:fs/promises';
+import {mkdtemp,mkdir,writeFile,realpath,rm,lstat} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import type {Pool} from 'pg';
@@ -16,6 +16,7 @@ const episodeId='10000000-0000-4000-8000-000000000001',reviewId='10000000-0000-4
 async function fixture(){
  const mediaRoot=await realpath(await mkdtemp(join(tmpdir(),'caption-text-'))),root=join(mediaRoot,'account'),dir=`episodes/${episodeId}`;
  await mkdir(join(root,dir),{recursive:true});
+ const directory=await lstat(root,{bigint:true});
  const files=[{id:'review-file',relative_path:dir+'/storyboard.json',bytes:Buffer.from('{}')},{id:'audio-file',relative_path:dir+'/audio.mp3',bytes:Buffer.from('synthetic-audio-file')}];
  for(const file of files)await writeFile(join(root,file.relative_path),file.bytes);
  const audioSha256=createHash('sha256').update(files[1].bytes).digest('hex'),text='当前正文',textFingerprint=createHash('sha256').update(text).digest('hex');
@@ -26,6 +27,8 @@ async function fixture(){
   if(sql.includes('token_hash FROM local_identity.sessions'))return{rows:[{token_hash:'fixture'}],rowCount:1};
   if(sql.includes('lock_owned_input_episode'))return{rows:[{owned:true}],rowCount:1};
   if(sql.includes('SELECT e.*,b.policy'))return{rows:[{id:episodeId,account_id:'account',policy:{asset_root:root},stage:'storyboard_approved',storyboard_enabled:true}],rowCount:1};
+  if(sql.includes('local_identity.episode_asset_root('))return{rows:[{root}],rowCount:1};
+  if(sql.includes('FROM local_identity.account_asset_directories'))return{rows:[{actual_root:root,device_id:String(directory.dev),inode_id:String(directory.ino)}],rowCount:1};
   if(sql.includes('media_deployment()'))return{rows:[{state:'ready',config:{targetRoot:mediaRoot,sourceRoots:[]}}],rowCount:1};
   if(sql.includes('FROM public.review_packages'))return{rows:[{id:reviewId,artifact_id:'review-file'}],rowCount:1};
   if(sql.includes('FROM public.artifacts')){const f=files[0];return{rows:[{...f,sha256:createHash('sha256').update(f.bytes).digest('hex'),file_size:f.bytes.length}],rowCount:1};}
