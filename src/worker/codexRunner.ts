@@ -517,10 +517,12 @@ function media(snapshot: Record<string, unknown>): WorkerTaskPackageInput["media
   }
   if (value.adapter === "pexels_video") {
     const bRoll = value.b_roll;
+    if(isRecord(bRoll)&&isRecord(bRoll.request))return {adapter:'pexels_video',bRoll:{query:requiredString(bRoll.query,'Pexels 任务缺少检索词。'),targetDurationSeconds:requiredPositiveNumber(bRoll.target_duration_seconds,'Pexels 任务缺少目标窗口。'),request:bRoll.request as unknown as import('./pexelsVideos.js').PexelsVideoRequest}};
     if (!isRecord(bRoll) || !isRecord(bRoll.shot) || !Array.isArray(bRoll.shot.inputBasis)) throw new Error("B-roll 任务冻结配置无效。");
     return {
       adapter: "pexels_video",
       bRoll: {
+        ...(bRoll.request ? {request:bRoll.request as import('./pexelsVideos.js').PexelsVideoRequest} : {}),
         query: requiredString(bRoll.query, "B-roll 任务缺少冻结检索词。"),
         targetDurationSeconds: requiredPositiveNumber(bRoll.target_duration_seconds, "B-roll 任务缺少有效时长。"),
         shot: {
