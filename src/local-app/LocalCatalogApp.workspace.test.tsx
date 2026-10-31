@@ -49,7 +49,7 @@ it('保留安全弹窗焦点，将维护入口统一为侧栏且跨页保留连�
  }));
  await act(async()=>{render(<LocalCatalogApp/>);});
  const owner=screen.getByRole('button',{name:'所有者设置'});
- await user.click(owner);expect(screen.getAllByRole('menuitem').map(item=>item.textContent)).toEqual(['个人偏好','通知','登录与安全','退出登录']);
+ await user.click(owner);expect(screen.getAllByRole('menuitem').map(item=>item.textContent)).toEqual(['个人偏好','通知','登录与安全','本机存储','退出登录']);
  await user.click(screen.getByRole('menuitem',{name:'登录与安全'}));
  const security=screen.getByRole('dialog',{name:'登录与安全'}),password=within(security).getByRole('form',{name:'登录与安全'});
  expect(within(security).getByRole('region',{name:'当前登录身份'}).textContent).toContain('owner@example.test');

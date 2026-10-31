@@ -1,3 +1,4 @@
+import {verifyMediaRootBinding,type MediaRootBinding} from './mediaRootSettings.js';
 import{access,readFile}from'node:fs/promises';
 import{constants}from'node:fs';
 import{createHash}from'node:crypto';
@@ -8,12 +9,14 @@ import{safeAssetOutputPath,writeSafeAssetFile}from'../worker/controlledMediaExec
 import{runLocalWhisperXAlignment,executeWhisperX}from'../worker/whisperxAlignment.js';
 import type{WorkerTaskPackage}from'../worker/contracts.js';
 export const localAlignmentModel='jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn';
-export interface NativeAlignmentConfiguration{python:string;cacheDirectory:string;runnerSha256:string}
+export interface NativeAlignmentConfiguration{python:string;cacheDirectory:string;runnerSha256:string;cacheBinding?:MediaRootBinding}
 export function alignmentEnvironment(cache:string):NodeJS.ProcessEnv{return{PATH:process.env.PATH,HOME:process.env.HOME,TMPDIR:process.env.TMPDIR,HF_HUB_OFFLINE:'1',TRANSFORMERS_OFFLINE:'1',HF_HUB_DISABLE_TELEMETRY:'1',DO_NOT_TRACK:'1',MPLCONFIGDIR:join(cache,'.matplotlib')};}
 export async function assertAlignmentConfigured(projectRoot:string,mediaRoot:string,c?:NativeAlignmentConfiguration){
  if(!c||!isAbsolute(c.python)||!isAbsolute(c.cacheDirectory)||!c.runnerSha256)throw Error('本地 WhisperX 执行配置尚未准备；不会下载依赖或模型。');
+ if(c.cacheBinding){if(c.cacheBinding.path!==c.cacheDirectory)throw Error('WhisperX 缓存授权与实际目录不一致。');await verifyMediaRootBinding(c.cacheBinding);}else{
  const rel=relative(mediaRoot,c.cacheDirectory);if(!rel||rel.startsWith('..')||isAbsolute(rel))throw Error('WhisperX 缓存超出隔离媒体目录。');
- await safeAssetOutputPath(mediaRoot,rel+'/.probe');await access(c.python,constants.X_OK);
+ await safeAssetOutputPath(mediaRoot,rel+'/.probe');}
+ await access(c.python,constants.X_OK);
  const runner=join(projectRoot,'scripts/whisperx-align.py');if(createHash('sha256').update(await readFile(runner)).digest('hex')!==c.runnerSha256)throw Error('WhisperX runner 已变化，请重新准备并重启本地 Worker。');return runner;
 }
 export async function assertAlignmentReady(projectRoot:string,mediaRoot:string,c?:NativeAlignmentConfiguration,model=localAlignmentModel){
