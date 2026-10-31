@@ -47,22 +47,45 @@ export async function snapshotInput(root:string,episodeId:string,input:{sourceKi
  await recoverInputPublication(root,storagePath,sha256,bytes.length);
  try{await lstat(join(root,storagePath));await verifyNativeFile(root,storagePath,sha256,bytes.length);}catch(e){
   if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;
-  try{await publishInputSnapshot(root,storagePath,bytes,sha256);}catch(error){const code=(error as NodeJS.ErrnoException).code;if(code==='EACCES'||code==='EPERM')throw new ConfigurationError(403,'没有写入输入快照的权限，请恢复权限后重试。');if(code==='ENOSPC'||code==='EIO')throw new ConfigurationError(409,'输入快照未完成，请检查存储空间与挂载后重试。');throw error;}
+  try{await publishInputSnapshot(root,storagePath,bytes,sha256);}catch(error){const code=(error as NodeJS.ErrnoException).code;if(code==='EACCES'||code==='EPERM')throw new ConfigurationError(403,'没有写入输入快照的权限，请恢复权限后重试。');if(code==='EEXIST')throw new ConfigurationError(409,'输入发布文件已变化，请检查恢复记录。');if(code==='ENOSPC'||code==='EIO')throw new ConfigurationError(409,'输入快照未完成，请检查存储空间与挂载后重试。');throw error;}
   await verifyNativeFile(root,storagePath,sha256,bytes.length);
  }
  return {sourcePath,storagePath,sha256,fileSize:bytes.length};
 }
 
+type PublicationFile={device:string;inode:string;bytes:Buffer};
+async function publicationFileIdentity(file:Awaited<ReturnType<typeof open>>,bytes:Buffer):Promise<PublicationFile>{
+ const stat=await file.stat({bigint:true});return{device:String(stat.dev),inode:String(stat.ino),bytes};
+}
+async function verifyPublicationFile(path:string,owned:PublicationFile){
+ const stat=await lstat(path,{bigint:true});
+ const matches=(s:typeof stat)=>s.isFile()&&!s.isSymbolicLink()&&String(s.dev)===owned.device&&String(s.ino)===owned.inode&&s.size===BigInt(owned.bytes.length);
+ if(!matches(stat)||await realpath(path)!==path)throw new ConfigurationError(409,'输入发布文件已变化，请检查恢复记录。');
+ const file=await open(path,'r');try{
+  if(!matches(await file.stat({bigint:true}))||!(await file.readFile()).equals(owned.bytes)||!matches(await lstat(path,{bigint:true})))throw new ConfigurationError(409,'输入发布文件已变化，请检查恢复记录。');
+ }finally{await file.close();}
+}
+async function removePublicationFile(path:string,owned:PublicationFile){
+ try{await verifyPublicationFile(path,owned);}catch(error){if((error as NodeJS.ErrnoException).code==='ENOENT')return;throw error;}
+ await unlink(path);
+}
 async function publishInputSnapshot(root:string,path:string,bytes:Buffer,sha256:string){
- const destination=await safeAssetOutputPath(root,path),token=randomUUID(),temporary=join(dirname(destination),`.input-${token}.part`),receipt=join(dirname(destination),`.input-${token}.receipt.json`);let receipted=false;
+ const destination=await safeAssetOutputPath(root,path),token=randomUUID(),temporary=join(dirname(destination),`.input-${token}.part`),receipt=join(dirname(destination),`.input-${token}.receipt.json`);
+ let tempOwned:PublicationFile|undefined,receiptOwned:PublicationFile|undefined;
  try{
-  const file=await open(temporary,'wx',0o600);try{await file.writeFile(bytes);await file.sync();}finally{await file.close();}
-  const stat=await lstat(temporary,{bigint:true}),record=await open(receipt,'wx',0o600);try{await record.writeFile(JSON.stringify({version:1,target:basename(path),sha256,size:bytes.length,device:String(stat.dev),inode:String(stat.ino)}));await record.sync();receipted=true;}finally{await record.close();}
+  const file=await open(temporary,'wx',0o600);try{tempOwned=await publicationFileIdentity(file,bytes);await file.writeFile(bytes);await file.sync();}finally{await file.close();}
+  const record=await open(receipt,'wx',0o600);try{
+   receiptOwned=await publicationFileIdentity(record,Buffer.alloc(0));
+   receiptOwned.bytes=Buffer.from(JSON.stringify({version:1,target:basename(path),sha256,size:bytes.length,device:tempOwned.device,inode:tempOwned.inode,receiptDevice:receiptOwned.device,receiptInode:receiptOwned.inode}));
+   await record.writeFile(receiptOwned.bytes);await record.sync();
+  }finally{await record.close();}
+  await verifyPublicationFile(temporary,tempOwned);await verifyPublicationFile(receipt,receiptOwned);
   try{await link(temporary,destination);}catch(error){if((error as NodeJS.ErrnoException).code!=='EEXIST')throw error;await verifyNativeFile(root,path,sha256,bytes.length);}
  }finally{
-  // If unlink fails the durable receipt remains, so restart can safely finish it.
-  await unlink(temporary).catch(error=>{if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;});
-  if(receipted)await unlink(receipt);
+  // Ownership comes from each exclusive creation handle, never a later path stat.
+  // Leave the receipt when temp cleanup fails so restart can safely recover.
+  if(tempOwned)await removePublicationFile(temporary,tempOwned);
+  if(receiptOwned)await removePublicationFile(receipt,receiptOwned);
  }
 }
 async function recoverInputPublication(root:string,path:string,sha256:string,size:number){
@@ -70,16 +93,26 @@ async function recoverInputPublication(root:string,path:string,sha256:string,siz
  for(const name of await readdir(directory)){
   const match=/^\.input-([0-9a-f-]{36})\.receipt\.json$/.exec(name);if(!match)continue;
   const receipt=join(directory,name),temporary=join(directory,`.input-${match[1]}.part`),target=join(root,path);
-  const r=await lstat(receipt);if(!r.isFile()||r.isSymbolicLink()||r.nlink!==1||r.size>4096||await realpath(receipt)!==receipt)continue;
-  let record;try{record=JSON.parse(await readFile(receipt,'utf8'));}catch{continue;}
+  const r=await lstat(receipt,{bigint:true});if(!r.isFile()||r.isSymbolicLink()||r.nlink!==1n||r.size>4096n||await realpath(receipt)!==receipt)continue;
+  const receiptFile=await open(receipt,'r');let receiptOwned:PublicationFile;
+  try{const bytes=await receiptFile.readFile();receiptOwned=await publicationFileIdentity(receiptFile,bytes);}finally{await receiptFile.close();}
+  if(receiptOwned.device!==String(r.dev)||receiptOwned.inode!==String(r.ino))throw new ConfigurationError(409,'输入发布记录已变化，请检查恢复记录。');
+  await verifyPublicationFile(receipt,receiptOwned);
+  let record;try{record=JSON.parse(receiptOwned.bytes.toString('utf8'));}catch{continue;}
   if(!record||typeof record!=='object'||record.version!==1||record.target!==basename(path)||record.sha256!==sha256||record.size!==size)continue;
+  // Older v1 receipts lack this identity; new receipts also bind themselves across restarts.
+  if(('receiptDevice' in record||'receiptInode' in record)&&(record.receiptDevice!==receiptOwned.device||record.receiptInode!==receiptOwned.inode))throw new ConfigurationError(409,'输入发布记录已变化，请检查恢复记录。');
   const temp=await lstat(temporary,{bigint:true}).catch(error=>{if((error as NodeJS.ErrnoException).code==='ENOENT')return null;throw error;});
-  if(!temp){await verifyNativeFile(root,path,sha256,size);await unlink(receipt);continue;}
-  if(!temp.isFile()||temp.isSymbolicLink()||await realpath(temporary)!==temporary||String(temp.dev)!==record.device||String(temp.ino)!==record.inode||Number(temp.size)!==size||createHash('sha256').update(await readFile(temporary)).digest('hex')!==sha256)throw new ConfigurationError(409,'输入发布记录或临时文件已变化，请检查恢复记录。');
+  if(!temp){await verifyNativeFile(root,path,sha256,size);await removePublicationFile(receipt,receiptOwned);continue;}
+  if(!temp.isFile()||temp.isSymbolicLink()||await realpath(temporary)!==temporary||String(temp.dev)!==record.device||String(temp.ino)!==record.inode||Number(temp.size)!==size)throw new ConfigurationError(409,'输入发布记录或临时文件已变化，请检查恢复记录。');
+  const tempBytes=await readFile(temporary),tempOwned={device:record.device,inode:record.inode,bytes:tempBytes};
+  if(createHash('sha256').update(tempBytes).digest('hex')!==sha256)throw new ConfigurationError(409,'输入发布记录或临时文件已变化，请检查恢复记录。');
+  await verifyPublicationFile(temporary,tempOwned);
   let final=await lstat(target,{bigint:true}).catch(error=>{if((error as NodeJS.ErrnoException).code==='ENOENT')return null;throw error;});
   if(!final){if(temp.nlink!==1n)throw new ConfigurationError(409,'输入发布临时文件链接已变化。');try{await link(temporary,target);}catch(error){if((error as NodeJS.ErrnoException).code!=='EEXIST')throw error;}final=await lstat(target,{bigint:true});}
   if(final.dev===temp.dev&&final.ino===temp.ino){if(temp.nlink>2n||final.nlink!==2n||await realpath(target)!==target)throw new ConfigurationError(409,'输入发布目标链接已变化。');}
   else{if(temp.nlink!==1n)throw new ConfigurationError(409,'输入发布临时文件链接已变化。');await verifyNativeFile(root,path,sha256,size);}
-  await unlink(temporary);await unlink(receipt);
+  await verifyPublicationFile(receipt,receiptOwned);
+  await removePublicationFile(temporary,tempOwned);await removePublicationFile(receipt,receiptOwned);
  }
 }
