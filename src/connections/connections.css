@@ -279,3 +279,10 @@ html .reference-connections-menu [role="menuitem"] svg {height:15px;width:15px;s
 html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(7){width:14.5%}
 html[data-interface="impeccable"] .product-ui .reference-connections :is(th,td):nth-child(n+6){padding-inline:8px;text-align:center;white-space:nowrap}
 html[data-interface="impeccable"] .product-ui .reference-connections .reference-connection-more>button{margin-inline:auto}
+
+.reference-connections .reference-connections-group td {
+  background: var(--lc-surface-2);
+  color: var(--lc-ink);
+  font-weight: 650;
+  padding-block: 8px;
+}
