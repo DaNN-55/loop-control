@@ -903,3 +903,10 @@ fresh原布局PID29640：真实detach后无host树、API409；重挂原dev167772
 正式页面实际登录/空输入/非法目标/非空目标冲突/明确新plan/Finder精确1观察即关/1440与390/展开/Escape焦点/新native PID46649→47327；最新计划d66fcb42…重启原样读回，config与17B目标内容不变。本人亲看5张截图，1440 client=scroll560、390 client=scroll379且横向bounds在viewport内；展开后内容延伸首屏之外，不签全站响应式或全部清单首屏可见。
 
 固定baseline107/max109/0账号、ledger4806437b/schema1989a647和完整schema bytes前后相同，隔离pinned container network none/无ports和volumes。own browser/native/Finder/process/cache/随机DB/mount均收尾；daily5174仍PID71478、daily及3个Oct30未知卷保留，main/T16/sharedSDK/runtime未动。外部MERGE-T15.md、MERGE-T15/logs/、verified-evidence.json、resources.json保留完整证据。本轮未改产品/测试、tracker/main/push/deploy/日常数据；仅追加本收据，commit且clean后明确释放integration写权给root。
+
+
+### #193 closure / next frontier
+
+- Root read independent MERGE-T15 report, exact logs and mount/browser receipts, personally viewed fresh1440 plan and390 restart. Closed #193 and verified CLOSED at2026-10-31T17:52:27Z. 15/17 children (#179–#193) complete; #178 remains open.
+- #194/T16 read-only preparation is complete in own clean worktree; implementation now released from latest accepted integration, extending the same SQL125 plan and publication journal. #195 depends on #194 plus already closed #192. Final fresh Standards/Spec review and fixes remain mandatory.
+- Dedicated cleanup actor may remove only clean merged inactive T15 branch/worktree after fresh proof. Keep active T16, integration/main, shared SDK/runtime, evidence and original unknown mounts. No main merge, push, deployment or daily-data operation.
