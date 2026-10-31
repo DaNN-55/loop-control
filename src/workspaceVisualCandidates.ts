@@ -4,7 +4,7 @@ import type {WorkspaceCandidate} from './workspaceCandidates.js';
 export interface WorkspaceVisualCandidate extends WorkspaceCandidate {usage:'video'|'still'|'pan-zoom';materialRevisionId?:string;generation?:{selection?:import('./productionSelection.js').ProductionSelection;connectionName?:string;prompt:string;firstFrameMaterialRevisionId:string;durationSeconds:number;imageSettings?:import('./imageGeneration.js').ImageGenerationSettings;referenceMaterialRevisionIds?:string[];videoSettings?:import('./videoGenerationSettings.js').WanGenerationSettings;firstFrameFit?:'contain'|'cover'};width:number;height:number}
 export interface WorkspaceVisualTask {id:string;taskId:string;shotId?:string;kind?:'image'|'video';status:string;error:string|null;canResume?:boolean}
 export const workspaceVisualFields:Record<string,string[]>={
- requestWorkspaceVisualCandidate:['episodeId','workspaceId','expectedRevision','targetItemId','firstFrameMaterialRevisionId','prompt','durationSeconds','reservationCents','videoSettings','firstFrameFit'],
+ requestWorkspaceVisualCandidate:['selection','episodeId','workspaceId','expectedRevision','targetItemId','firstFrameMaterialRevisionId','prompt','durationSeconds','reservationCents','videoSettings','firstFrameFit'],
  retainWorkspaceImageCandidate:['episodeId','workspaceId','expectedRevision','candidateId'],
  requestWorkspaceImageCandidates:['episodeId','workspaceId','expectedRevision','targetItemId','selection','model','prompt','settings','referenceMaterialRevisionIds','reservationCents'],
  retryWorkspaceVisualCandidate:['episodeId','workspaceId','expectedRevision','candidateId'],
@@ -15,7 +15,7 @@ export const workspaceVisualFields:Record<string,string[]>={
  rejectWorkspaceVisualCandidate:['episodeId','workspaceId','expectedRevision','candidateId'],
 };
 
-export interface WorkspaceVisualTarget {targetItemId:string;voiceMode:'source'|'tts'|'none';durationSeconds:number|null;providerDurationSeconds:number|null;minimumSeconds:number;maximumSeconds:number;model?:string;provider?:string;width?:number;height?:number}
+export interface WorkspaceVisualTarget {defaultSelection?:import('./productionSelection.js').ProductionSelection;targetItemId:string;voiceMode:'source'|'tts'|'none';durationSeconds:number|null;providerDurationSeconds:number|null;minimumSeconds:number;maximumSeconds:number;model?:string;provider?:string;width?:number;height?:number}
 
 /** Visual generation follows audible content/window, not independent gain or BGM edits. */
 export function workspaceVisualVoiceIdentity(project:OpenChatCutProject,shotId:string){

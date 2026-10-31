@@ -50,9 +50,9 @@ export async function authorizeWorkspacePreparation(c:PoolClient,row:ProductionW
  await c.query('SELECT local_identity.record_script_production_configuration($1,$2)',[row.episode_id,authorization]);
 }
 export async function readWorkspacePreparation(c:PoolClient,row:ProductionWorkspaceRecord){
- const prep=(await c.query('SELECT origin FROM local_identity.workspace_preparations WHERE package_id=$1',[row.storyboard_package_id])).rows[0],auth=(await c.query('SELECT enabled,authorization_hash,plan FROM local_identity.script_productions WHERE episode_id=$1 AND script_revision_id=$2 AND authorized_at IS NOT NULL',[row.episode_id,row.script_revision_id])).rows[0],e=(await c.query('SELECT b.policy FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE e.id=$1',[row.episode_id])).rows[0];
+ const prep=(await c.query('SELECT origin FROM local_identity.workspace_preparations WHERE package_id=$1',[row.storyboard_package_id])).rows[0],auth=(await c.query('SELECT enabled,authorization_hash,plan FROM local_identity.script_productions WHERE episode_id=$1 AND script_revision_id=$2 AND authorized_at IS NOT NULL',[row.episode_id,row.script_revision_id])).rows[0];
  const shots:Array<{shot_id:string;origin:string;shot_type:'a_roll'|'b_roll'|null}>=[];for(const clip of row.bindings){if(shots.some(s=>s.shot_id===clip.shotId))continue;const source=await resolveWorkspaceShotLineage(c,row,clip.shotId);shots.push({shot_id:clip.shotId,origin:source.origin,shot_type:source.shot_type});}
- return{origin:prep?.origin??'legacy-board',scriptRevisionId:row.script_revision_id,authorized:!!auth?.enabled&&auth.plan?.executionFingerprint===productionHash(e.policy),authorizationHash:auth?.authorization_hash,shots:shots.map(s=>({shotId:s.shot_id,origin:s.origin,shotType:s.shot_type}))};
+ return{origin:prep?.origin??'legacy-board',scriptRevisionId:row.script_revision_id,authorized:!!auth?.enabled,authorizationHash:auth?.authorization_hash,shots:shots.map(s=>({shotId:s.shot_id,origin:s.origin,shotType:s.shot_type}))};
 }
 
 export async function preserveLegacyWorkspace(_c:PoolClient,root:string,episodeId:string,decision:unknown){
