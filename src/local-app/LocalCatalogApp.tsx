@@ -144,6 +144,7 @@ export function LocalCatalogApp(){
  onUpdateConnection={async input=>{try{await connectionActions.command('update',input);}catch{/* Visible connection error. */}}}
  onUpdateBlueprint={async(policy:Json)=>{if(!account)return null;try{return await command<Blueprint>('blueprint','updateBlueprint',{accountId:account.id,policy},catalog.blueprintRevisions[account.current_blueprint_version_id??'']);}catch{return null;}}}
  onCreateSeries={async input=>{if(account)await command('series','createSeries',{accountId:account.id,...input});}}
+ onRenameSeries={async(id,name)=>{try{await command(`rename-series-${id}`,'renameSeries',{seriesId:id,name});return true;}catch{return false;}}}
  onCreateSeriesVersion={async input=>{await command(`series-version-${input.seriesId}`,'createSeriesVersion',input);}}
  onCreatePromptVersion={async input=>{if(!account)return null;try{return await command('prompt-version','createPromptVersion',{accountId:account.id,...input});}catch{return null;}}}
  onRenameAccount={async(id,name)=>{try{await command(`rename-account-${id}`,'renameAccount',{accountId:id,name});return true;}catch{return false;}}}

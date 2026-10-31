@@ -244,13 +244,14 @@ export function EpisodeConfigurationRepairForm({ blocker, initialPolicy, isPendi
   </form>;
 }
 
-export function SeriesConfigurationForm({ accountPolicy, currentVersion = 0, initialName, initialRules, isEditing, isPending, onCancel, onDirtyChange, onSave }: { accountPolicy?: Json; currentVersion?: number; initialName: string; initialRules: Json; isEditing: boolean; isPending: boolean; onCancel: () => void; onDirtyChange?: (dirty: boolean) => void; onSave: (name: string, rules: Json) => Promise<void> }) {
+export function SeriesConfigurationForm({ headingContent, accountPolicy, currentVersion = 0, initialName, initialRules, isEditing, isPending, onCancel, onDirtyChange, onSave }: { headingContent?: ReactNode; accountPolicy?: Json; currentVersion?: number; initialName: string; initialRules: Json; isEditing: boolean; isPending: boolean; onCancel: () => void; onDirtyChange?: (dirty: boolean) => void; onSave: (name: string, rules: Json) => Promise<void> }) {
   const [name, setName] = useState(initialName);
   const [form, setForm] = useState<SeriesFormValues>(() => seriesRulesToForm(initialRules));
   const [error, setError] = useState("");
   const [dirty, setDirty] = useState(false);
   const [saveConfirmationOpen, setSaveConfirmationOpen] = useState(false);
-  useEffect(() => { setName(initialName); setForm(seriesRulesToForm(initialRules)); setSaveConfirmationOpen(false); setDirty(false); onDirtyChange?.(false); }, [initialName, initialRules, onDirtyChange]);
+  const initialRulesKey=JSON.stringify(initialRules);
+  useEffect(() => { setName(initialName); setForm(seriesRulesToForm(initialRules)); setSaveConfirmationOpen(false); setDirty(false); onDirtyChange?.(false); }, [initialRulesKey, onDirtyChange]);
 
   function requestSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -290,10 +291,9 @@ export function SeriesConfigurationForm({ accountPolicy, currentVersion = 0, ini
 
   const accountDefaults = seriesRulesToForm(accountPolicy ?? {});
   const inheritedPlaceholder = (key: keyof SeriesFormValues) => accountPolicy === undefined ? undefined : accountDefaults[key] || "沿用账号通用规则";
-  return <form className="configuration-form series-configuration-form" onChangeCapture={() => {setDirty(true); onDirtyChange?.(true);}} onSubmit={requestSubmit}>
-    <header><h2>{isEditing ? <>{initialName}<span className="series-current-version"> · 当前 v{currentVersion}</span></> : "新建系列"}</h2></header>
+  return <><header className="series-configuration-heading"><h2>{isEditing ? <>{initialName}<span className="series-current-version"> · 当前 v{currentVersion}</span></> : "新建系列"}</h2>{headingContent}</header><form className="configuration-form series-configuration-form" onChangeCapture={() => {setDirty(true); onDirtyChange?.(true);}} onSubmit={requestSubmit}>
     {accountPolicy !== undefined ? <details className="series-account-rules"><summary>继承账号通用规则 · 账号硬约束始终生效</summary><p>空字段沿用账号默认值；填写字段仅覆盖对应创作偏好，限制与禁用内容叠加生效。</p><dl><dt>账号定位</dt><dd>{accountDefaults.positioning || "未设置"}</dd><dt>账号硬约束始终生效</dt><dd><pre>{JSON.stringify(accountPolicy, null, 2)}</pre></dd></dl></details> : null}
-    {!isEditing ? <div className="series-name-field"><label><FieldLabel help="创建后名称固定；后续通过新版本更新规则。">系列名称</FieldLabel><InputBase size="sm" aria-label="系列名称" onChange={(event) => setName(event.target.value)} placeholder="例如：城市观察短片" isRequired value={name} /></label></div> : null}
+    {!isEditing ? <div className="series-name-field"><label><FieldLabel help="名称可独立修改；规则保存为新版本。">系列名称</FieldLabel><InputBase size="sm" aria-label="系列名称" onChange={(event) => setName(event.target.value)} placeholder="例如：城市观察短片" isRequired value={name} /></label></div> : null}
     <fieldset><legend><FieldLabel help="系列的固定受众、主题和制作格式。">内容方向</FieldLabel></legend>
       <label><FieldLabel>系列定位</FieldLabel><TextAreaBase size="sm" aria-label="系列定位" onChange={(event) => setForm((current) => ({ ...current, positioning: event.target.value }))} placeholder={inheritedPlaceholder("positioning") ?? "受众、主题与内容方向"} rows={2} value={form.positioning} /></label>
       <label><FieldLabel>内容格式</FieldLabel><InputBase size="sm" aria-label="内容格式" onChange={(event) => setForm((current) => ({ ...current, format: event.target.value }))} placeholder={inheritedPlaceholder("format") ?? "例如：9:16 竖屏，中文旁白"} value={form.format} /></label>
@@ -309,5 +309,5 @@ export function SeriesConfigurationForm({ accountPolicy, currentVersion = 0, ini
     {error && !saveConfirmationOpen ? <p className="form-error" role="alert">{error}</p> : null}
     <footer className="series-form-footer"><span className={`account-save-state${dirty ? " is-dirty" : ""}`} role="status">{isPending ? "保存中…" : dirty ? "有未保存更改" : isEditing ? "已保存" : "未创建"}</span><div className="configuration-actions"><Button size="sm" color="secondary" className="button button-secondary" isDisabled={isPending} onClick={reset} type="button">{isEditing ? "撤销修改" : "取消"}</Button><Button size="sm" color="primary" className="button button-primary" isDisabled={isPending} type="submit">{isPending ? "保存中…" : isEditing ? `保存为 v${currentVersion + 1}` : "创建系列"}</Button></div></footer>
     {saveConfirmationOpen ? <ConfirmationModal confirmLabel={isEditing ? `确认保存为 v${currentVersion + 1}` : "确认创建系列"} isPending={isPending} onCancel={() => setSaveConfirmationOpen(false)} onConfirm={confirmSubmit} pendingLabel="保存中…" title={isEditing ? "确认保存系列版本" : "确认创建系列"}>{error ? <p className="form-error" role="alert">{error}</p> : null}<section aria-label="本次保存影响" className="configuration-impact"><p>{isEditing ? `创建系列 v${currentVersion + 1}，供之后新建生产单选择；已有生产单继续使用冻结版本。` : "创建系列 v1，之后可在新建生产单时选择；不会改动已有生产单。"}</p></section></ConfirmationModal> : null}
-  </form>;
+  </form></>;
 }

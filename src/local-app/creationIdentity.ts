@@ -1,0 +1,4 @@
+import {lstat,realpath,readFile} from 'node:fs/promises';
+// Full UUID avoids prefix collisions, including case/normalization-insensitive filesystems.
+export async function ownsMarker(path:string,content:string,device:string|null,inode:string|null){if(device===null||inode===null)return false;try{const s=await lstat(path,{bigint:true});return s.isFile()&&!s.isSymbolicLink()&&s.nlink===1n&&String(s.dev)===device&&String(s.ino)===inode&&await realpath(path)===path&&await readFile(path,'utf8')===content;}catch{return false;}}
+export function directoryName(name:string,id:string,fallback="账号"){let readable='';for(const c of name.normalize('NFC').replace(/[\x00-\x1f\x7f<>:"/\\|?*]/g,'-').trim().replace(/[. ]+$/g,'')){if(Buffer.byteLength(readable+c)>100)break;readable+=c;}if(/^(con|prn|aux|nul|com[0-9¹²³]|lpt[0-9¹²³])(?:\.|$)/iu.test(readable))readable=fallback+'-'+readable;return`${readable||fallback}--${id}`;}

@@ -1,3 +1,4 @@
+import {createStorageContainer} from './seriesDirectories.js';
 import {createAccountDirectory} from './accountCreation.js';
 import {creativeAccountRules} from '../creativeAccountRules.js';
 import {createHash} from 'node:crypto';
@@ -40,6 +41,7 @@ const commands={
  archiveAccount:{sql:'select to_jsonb(public.set_account_archived($1,$2)) result',fields:['accountId','archived']},
  deleteAccount:{sql:'select to_jsonb(public.delete_account($1,$2)) result',fields:['accountId','confirmation']},
  createSeries:{sql:'select to_jsonb(public.create_series($1,$2,$3)) result',fields:['accountId','name','rules']},
+ renameSeries:{sql:'select to_jsonb(public.rename_series($1,$2)) result',fields:['seriesId','name']},
  createSeriesVersion:{sql:'select to_jsonb(public.create_series_version($1,$2)) result',fields:['seriesId','rules']},
  createPromptVersion:{sql:'select to_jsonb(public.create_prompt_version($1,$2,$3,$4,$5)) result',fields:['accountId','capability','name','summary','instructions']},
 } as const;
@@ -59,6 +61,8 @@ export async function executeConfiguration(pool:Pool,session:OwnerSession,body:R
  }
  if(command==='createAccount'){try{new Intl.DateTimeFormat('en',{timeZone:String(data.timezone)});}catch{throw new ConfigurationError(400,'时区无效。');}}
  if(command==='createAccount'){if(data.assetRoot!==undefined&&data.assetRoot!=='')throw new ConfigurationError(400,'新账号会自动建立专属目录；历史目录请在账号资料的恢复与迁移中处理。');return createAccountDirectory(pool,session,String(body.idempotencyKey),hash,data,mediaRoot,checkExternalReferences,validateConfigurationPolicy(data.policy,!!checkExternalReferences));}
+ if((command==='createSeries'||command==='renameSeries')&&Object.keys(data).some(k=>!definition.fields.includes(k as never)))throw new ConfigurationError(400,'系列资料字段无效。');
+ if(command==='createSeries')return createStorageContainer(pool,session,String(body.idempotencyKey),hash,data,mediaRoot,'series');
  const result=await ownerTransaction(pool,session.id,false,async client=>{
   const valid=await client.query('SELECT token_hash FROM local_identity.sessions WHERE token_hash=$1 AND owner_id=$2 AND revoked_at IS NULL AND expires_at>clock_timestamp() FOR SHARE',[tokenHash(session.token),session.id]);
   if(!valid.rowCount)throw new ConfigurationError(401,'会话已失效。');
