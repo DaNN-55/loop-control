@@ -61,7 +61,11 @@ DECLARE f record;rows jsonb;result jsonb:='{}';BEGIN
   EXECUTE format('SELECT coalesce(jsonb_agg(to_jsonb(r) ORDER BY to_jsonb(r)::text),''[]'') FROM %I.%I r WHERE r.workspace_id::text IN (SELECT w.id::text FROM local_identity.production_workspaces w JOIN public.episodes e ON e.id=w.episode_id WHERE e.account_id=$1)',f.table_schema,f.table_name) INTO rows USING p_account;
   result:=result||jsonb_build_object(f.table_schema||'.'||f.table_name,rows);
  END LOOP;
- RETURN result;
+ RETURN result||jsonb_build_object(
+  'account_asset_directories',(SELECT coalesce(jsonb_agg(to_jsonb(d)),'[]') FROM local_identity.account_asset_directories d WHERE d.account_id=p_account),
+  'account_directory_locations',(SELECT coalesce(jsonb_agg(to_jsonb(l) ORDER BY l.source_root),'[]') FROM local_identity.account_directory_locations l WHERE l.account_id=p_account),
+  'blueprint_asset_roots',(SELECT coalesce(jsonb_agg(jsonb_build_object('id',b.id,'root',b.policy->>'asset_root') ORDER BY b.id),'[]') FROM public.account_blueprint_versions b WHERE b.account_id=p_account AND coalesce(b.policy->>'asset_root','')<>'')
+ );
 END $$;
 REVOKE ALL ON FUNCTION local_identity.account_directory_evidence(uuid) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION local_identity.account_directory_evidence(uuid) TO loop_app;

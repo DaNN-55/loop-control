@@ -142,3 +142,16 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('historical deployment ro
  expect((await f.c.query('SELECT policy FROM public.account_blueprint_versions WHERE id=$1',[blueprint])).rows[0].policy.asset_root).toBe(logical);expect((await f.c.query('SELECT input_snapshot FROM public.tasks WHERE id=$1',[task])).rows[0].input_snapshot.frozen_location).toBe(logical);
  }finally{await f.close();}
 },300000);
+
+it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('a changed account directory invalidates an earlier empty-account inventory before cutover',async()=>{
+ const f=await embeddedStudioFixture();
+ try{
+ const source=join(f.root,'empty-source'),target=join(f.root,'empty-target'),changed=join(f.root,'changed-source');for(const path of [source,target,changed])await mkdir(path);await writeFile(join(changed,'keep.txt'),'改根后新增的账号原件');
+ const call=async(endpoint:string,command:string,data:Record<string,unknown>)=>{const r=await fetch(f.origin+'/api/local/'+endpoint,{method:'POST',headers:{Origin:f.origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+f.token,'X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command,data,idempotencyKey:randomUUID()})});return{status:r.status,body:await r.json()};};
+ const made=await call('configuration','createAccount',{name:'盘点版本检查',slug:'scope-'+randomUUID(),timezone:'Asia/Shanghai',policy:{},assetRoot:source});expect(made.status).toBe(200);const accountId=made.body.id;
+ const planned=await call('account-commands','planAssetDirectoryMigration',{accountId,path:target});expect(planned.status).toBe(200);
+ const replaced=await call('account-commands','setAssetDirectory',{accountId,path:changed});expect(replaced.status,JSON.stringify(replaced.body)).toBe(200);
+ const stale=await call('account-commands','executeAssetDirectoryMigration',{accountId,migrationId:planned.body.id});expect(stale.status,JSON.stringify(stale.body)).toBe(409);expect((await call('account-commands','readAssetDirectory',{accountId})).body.assetRoot).toBe(changed);expect(await readFile(join(changed,'keep.txt'),'utf8')).toBe('改根后新增的账号原件');
+ await call('account-commands','rollbackAssetDirectoryMigration',{accountId,migrationId:planned.body.id});const fresh=await call('account-commands','planAssetDirectoryMigration',{accountId,path:target});expect(fresh.status).toBe(200);expect((await call('account-commands','executeAssetDirectoryMigration',{accountId,migrationId:fresh.body.id})).status).toBe(200);expect(await readFile(join(target,'keep.txt'),'utf8')).toBe('改根后新增的账号原件');expect(await readFile(join(changed,'keep.txt'),'utf8')).toBe('改根后新增的账号原件');
+ }finally{await f.close();}
+},300000);
