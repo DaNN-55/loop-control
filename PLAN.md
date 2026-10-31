@@ -24,7 +24,9 @@ Confirmed acceptance: formal UI → Owner HTTP → isolated real database/files 
 | #194 | #193 | Pending |
 | #195 | #192, #194 | Pending |
 
-Runtime: old #166 test-context file was cleaned up. Exploration is finding a reproducible isolated replacement; daily runtime context must not be borrowed. Current blockers are environmental prerequisites, not product-test success.
+Runtime ready: independent `loop-control-178-test-postgres` container (network none, no host ports or persistent volumes, memory512MiB/cpu1) bootstrapped from repository baseline and all 107 numbered migrations through109; 0 source business accounts. Test context and independent tracked OpenChatCut source live under `/private/tmp/loop-control-178-20261031`. Keep baseline109 fixed; each test requests its needed forward migrations. No daily runtime context or credentials are used.
+
+Baseline verification: `npm run check` passed; default suite 174 files / 1144 tests passed (maxWorkers2). Log: external `baseline-default.log`. This is a pre-change baseline, not feature acceptance.
 
 Verification log and ticket handoffs: `/private/tmp/loop-control-178-20261031`. Preserve RED/GREEN, actual skip counts and any unresolved integration limitations.
 
