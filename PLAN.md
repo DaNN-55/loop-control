@@ -12,7 +12,7 @@ Confirmed acceptance: formal UI → Owner HTTP → isolated real database/files 
 | #182 | #180, #181 | Pending |
 | #183 | #182 | Pending |
 | #184 | #179 | Implementing (T06; isolated worktree) |
-| #185 | #179 | Pending |
+| #185 | #179 | Implementing in isolated T07 worktree |
 | #186 | #179 | Pending |
 | #187 | #184, #185, #186 | Pending |
 | #188 | #183 | Pending |
@@ -29,6 +29,10 @@ Runtime ready: independent `loop-control-178-test-postgres` container (network n
 Baseline verification: `npm run check` passed; default suite 174 files / 1144 tests passed (maxWorkers2). Log: external `baseline-default.log`. This is a pre-change baseline, not feature acceptance.
 
 Verification log and ticket handoffs: `/private/tmp/loop-control-178-20261031`. Preserve RED/GREEN, actual skip counts and any unresolved integration limitations.
+
+Tracker: #179 and #180 closed after independent merger acceptance; 2/17 complete. T03/#181, T06/#184 and T07/#185 now implementing. T01/T02 clean merged worktrees removed; recovery branches retained. Migration reservations live in external `MIGRATION-RESERVATIONS.json`.
+
+Cross-ticket notes: T03 will bind global storage to the workspace Owner. Existing zero-account create_account rejects first account via membership-only check; T04 owns fixing that through the trusted T03 binding, not broadening credentials. T07 owns shared producer namespaces/native output authority and mediaLibrary prefix checks; T06 owns input/planning guards and localFiles. Relative-prefix migration of frozen references remains a mandatory T13/T14 seam (external LOCATION-CALLERS.md), not solved by account-root-only mapping.
 
 T01/#179 integrated without conflicts at `9ac31698` from clean source `33256ff8` (implementation `c6458f8b`, includes integration base `916f3f3f`). Merger verification passed: `npm run check`; four targeted catalog UI files / 25 tests; isolated real Owner HTTP/database/files `episodeStorageLocation.integration.test.ts` / 4 tests, zero skips, `--maxWorkers=1`. The HTTP run exercised actual system-folder opening, old bytes/preview, persisted new-layout identity, restart/rename, foreign Owner/CSRF/extra path rejection, missing/replaced/symlink/permission failures, repeat-receipt revalidation and controlled desktop-open failure. Root mapping and no-old-root-fallback review found no serious new issue. Logs and exact commands: external `MERGE-T01.md` and `MERGE-T01-*.log`. Worker evidence already covers default 175 files / 1145 tests, build/runtime preparation and one formal browser test; those were not repeated. Browser clipboard readback remains unverified. No daily data, shared baseline migration, paid calls, tracker closure, push or worktree cleanup.
 
