@@ -121,9 +121,9 @@ export class LocalEpisodeCommands {
     if(!(await c.query('SELECT local_identity.lock_owned_input_episode($1) owned',[data.episodeId])).rows[0].owned)throw new ConfigurationError(404,'本地生产单不可见。');
     const e=(await c.query('SELECT e.*,b.policy,i.storyboard_enabled,i.script_template_version FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id JOIN local_identity.input_episodes i ON i.episode_id=e.id WHERE e.id=$1 AND m.user_id=$2 AND m.role=\'owner\' AND i.owner_id=$2',[data.episodeId,session.id])).rows[0];
     if(!e)throw new ConfigurationError(404,'本地生产单不可见。');
-    const location=await resolveEpisodeStorageLocation(c,this.mediaRoot,e.id),inputIo=['importMaterial','reconfirmScript','start','configureScriptProduction','prepareWorkspace'].includes(String(body.command));
-    if(inputIo)await requireEpisodeStorageDirectory(c,location);
-    const root=inputIo?location.assetRoot:await resolveEpisodeAssetRoot(c,this.mediaRoot,e.id);
+    const inputIo=['importMaterial','reconfirmScript','start','configureScriptProduction','prepareWorkspace'].includes(String(body.command)),location=inputIo?await resolveEpisodeStorageLocation(c,this.mediaRoot,e.id):null;
+    if(location)await requireEpisodeStorageDirectory(c,location);
+    const root=location?.assetRoot??await resolveEpisodeAssetRoot(c,this.mediaRoot,e.id);
     if(body.command!=='openDirectory')await requireAccountAssetRoot(c,this.mediaRoot,e.account_id);
     const inputPolicy=e.script_template_version===2?{...e.policy,asset_root:root,static_visual:{execution_path:'manual'},soundtrack:{execution_path:'manual'}}:{...e.policy,asset_root:root};
     if(['reconfirmScript','requestStructureRevision'].includes(String(body.command))&&this.workspace.isOpen(e.id))throw new ConfigurationError(409,'请先保存并返回，再修订脚本或分镜。');
@@ -175,13 +175,13 @@ export class LocalEpisodeCommands {
       else{if(!data.policy||typeof data.policy!=='object'||Array.isArray(data.policy))throw new ConfigurationError(400,'配置修复内容无效。');await this.preflight(c,e.account_id,{...data.policy as Record<string,unknown>,asset_root:root},true);await c.query('SELECT public.record_episode_worker_preflight($1,$2)',[e.id,session.id]);value=(await c.query('SELECT public.apply_episode_configuration_repair_v2($1,$2,$3,$4) result',[e.id,JSON.stringify(data.policy),data.blockerCode,data.blockerDetail])).rows[0].result;}
      }
     }else if(body.command==='reconfirmScript'){
-     value=await reconfirmScript(c,root,e,data,location.relativePath);
+     value=await reconfirmScript(c,root,e,data,location!.relativePath);
     }else if(body.command==='importMaterial'){
      if(data.isMainScript&&(e.stage!=='waiting_input'||e.main_script_revision_id))throw new ConfigurationError(409,'主脚本已确认或制作已开始，不能替换。');
      const purposes=['main_script','supplemental_script','general_reference','visual_reference','a_roll','b_roll','narration','background_music','sound_effect','cover'];
      if(!purposes.includes(String(data.materialPurpose))||typeof data.materialType!=='string'||typeof data.mimeType!=='string'||typeof data.isMainScript!=='boolean')throw new ConfigurationError(400,'材料类型无效。');
      if(typeof data.sourceKind!=='string'||typeof data.sourcePath!=='string'||data.logicalName!==undefined&&typeof data.logicalName!=='string')throw new ConfigurationError(400,'材料路径无效。');
-     const snapshot=await snapshotInput(root,e.id,data as never,location.relativePath);
+     const snapshot=await snapshotInput(root,e.id,data as never,location!.relativePath);
      value=(await c.query('SELECT to_jsonb(public.import_production_material($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)) result',[e.id,data.materialType,data.sourceKind,snapshot.sourcePath,snapshot.storagePath,data.mimeType,snapshot.sha256,snapshot.fileSize,data.isMainScript,data.materialPurpose])).rows[0].result;
      if(data.isMainScript)await c.query('UPDATE local_identity.input_episodes SET script_template_version=$2 WHERE episode_id=$1',[e.id,parseProductionScript((await verifyEpisodeFile(c,root,e.id,snapshot.storagePath,snapshot.sha256,snapshot.fileSize)).toString('utf8'))?2:null]);
      if(!data.isMainScript)await this.scriptStore.alias(c,session.id,value.id,String(data.sourcePath));
