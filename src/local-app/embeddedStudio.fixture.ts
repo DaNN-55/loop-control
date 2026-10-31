@@ -5,7 +5,7 @@ import { promisify } from 'node:util';
 import { Duplex } from 'node:stream';
 import { once } from 'node:events';
 import { randomBytes, randomUUID, createHash } from 'node:crypto';
-import { mkdtemp, mkdir, writeFile, readFile, rm, realpath } from 'node:fs/promises';
+import { mkdtemp, mkdir, writeFile, readFile, rm, realpath, lstat } from 'node:fs/promises';
 import { join } from 'node:path';
 import { Pool } from 'pg';
 import { createLocalHandler } from './localRoute';
@@ -60,6 +60,7 @@ export async function embeddedStudioFixture(options:{testRootParent?:string;orig
     await c.query("INSERT INTO local_identity.sessions(token_hash,owner_id,expires_at) VALUES($1,$2,now()+interval '1 hour'),($3,$4,now()+interval '1 hour')",[tokenHash(token),owner,tokenHash(otherToken),other]);
     await c.query("INSERT INTO public.accounts(id,slug,name,timezone) VALUES($1,$2,'Studio153 fixture','Asia/Shanghai')",[account,'studio153-'+account]);
     await c.query("INSERT INTO public.account_memberships(account_id,user_id,role) VALUES($1,$2,'owner')",[account,owner]);
+    const directoryStat=await lstat(assetRoot,{bigint:true});await c.query('INSERT INTO local_identity.account_asset_directories(account_id,actual_root,device_id,inode_id) VALUES($1,$2,$3,$4)',[account,assetRoot,String(directoryStat.dev),String(directoryStat.ino)]);
     await c.query('INSERT INTO public.account_blueprint_versions(id,account_id,version,policy,is_active) VALUES($1,$1,1,$2,true)',[account,{asset_root:assetRoot}]);
     await c.query('UPDATE public.accounts SET current_blueprint_version_id=$1 WHERE id=$1',[account]);
     await c.query("INSERT INTO public.episodes(id,account_id,blueprint_version_id,title,stage) VALUES($1,$2,$2,'隔离 Studio153 验收','qc_review')",[episode,account]);

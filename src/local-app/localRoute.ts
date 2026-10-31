@@ -1,3 +1,4 @@
+import {readWorkspacePlanningSelection} from './planningSelectionStore.js';
 import {readProductionWorkspace,readWorkspaceVersion} from './productionWorkspaceCommands.js';
 import {readLegacyStudioProject} from './legacyStudioProject.js';
 import {resolveEpisodeAssetRoot} from './accountAssetRoots.js';
@@ -177,7 +178,7 @@ export function createLocalHandler(options:LocalOptions){
    const workspace=url.pathname.match(/^\/api\/local\/episodes\/([^/]+)\/workspace(?:\/project)?$/);
    if(workspace&&uuid.test(workspace[1])&&request.method==='GET'){
     if(url.pathname.endsWith('/project')&&(!/^[a-f0-9]{64}$/.test(url.searchParams.get('sha')??'')||url.searchParams.getAll('sha').length!==1))throw new ConfigurationError(400,'工程版本指纹无效。');
-    const value=await ownerTransaction(options.pool,session.id,true,async c=>{const e=(await c.query('SELECT e.id,b.policy FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE e.id=$1 AND m.user_id=$2 AND m.role=\'owner\'',[workspace[1],session.id])).rows[0];if(!e)throw new ConfigurationError(404,'生产单不可见。');const root=await resolveEpisodeAssetRoot(c,options.mediaRoot,e.id);return url.pathname.endsWith('/project')?readWorkspaceVersion(c,root,e.id,url.searchParams.get('sha')??''):readProductionWorkspace(c,e.id,root);});send(200,url.pathname.endsWith('/project')?{project:value}:{workspace:value});return;
+    const value=await ownerTransaction(options.pool,session.id,true,async c=>{const e=(await c.query('SELECT e.id,b.policy FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE e.id=$1 AND m.user_id=$2 AND m.role=\'owner\'',[workspace[1],session.id])).rows[0];if(!e)throw new ConfigurationError(404,'生产单不可见。');const root=await resolveEpisodeAssetRoot(c,options.mediaRoot,e.id);return url.pathname.endsWith('/project')?readWorkspaceVersion(c,root,e.id,url.searchParams.get('sha')??''):{workspace:await readProductionWorkspace(c,e.id,root),planningSelection:await readWorkspacePlanningSelection(c,e.id)};});send(200,url.pathname.endsWith('/project')?{project:value}:value);return;
    }
    const episode=url.pathname.match(/^\/api\/local\/episodes\/([^/]+)$/);
    if(episode&&uuid.test(episode[1])){

@@ -96,6 +96,7 @@ export async function runCodexWorker(dependencies: CodexWorkerDependencies): Pro
 
   await reportProgress(dependencies, task, "preflight", "正在检查执行器、模型、连接和本机依赖。");
   const preflight = dependencies.preflight && !taskPackage.storyboardRevision ? await runPreflight(dependencies.preflight, taskPackage) : undefined;
+  if(preflight)preflight.checks=preflight.checks.map(check=>currentRequestCheck(task,check));
   if (preflight) {
     if (preflight.checks.some((check) => check.status !== "passed")) {
       const result = createPreflightResult(taskPackage, dependencies.actualCostCents, preflight);
@@ -142,12 +143,18 @@ export async function runCodexWorker(dependencies: CodexWorkerDependencies): Pro
     await dependencies.reportResult(task.taskId, task.attempt, result);
     return { status: result.status, taskId: task.taskId };
   } catch (error) {
-    const executionCheck = executionPreflightCheck(taskPackage, error);
+    const failure = executionPreflightCheck(taskPackage, error);
+    const executionCheck = failure?currentRequestCheck(task,failure):undefined;
     const result = createFailedResult(taskPackage, dependencies.actualCostCents, error);
     if (executionCheck) result.blockers = [preflightBlocker(executionCheck)];
     await dependencies.reportResult(task.taskId, task.attempt, addPreflight(result, executionCheck ? appendPreflight(preflight, executionCheck) : preflight));
     return { status: result.status, taskId: task.taskId };
   }
+}
+
+function currentRequestCheck(task:ClaimedWorkerTask,check:WorkerPreflightCheck):WorkerPreflightCheck {
+ const snapshot=isRecord(task.inputSnapshot)?task.inputSnapshot:{};
+ return check.action==='edit_blueprint'&&(snapshot.production_selection||snapshot.workspace_preparation)?{...check,action:'select_production',scope:'episode'}:check;
 }
 
 async function reportProgress(dependencies: CodexWorkerDependencies, task: ClaimedWorkerTask, step: WorkerProgressStep, detail: string): Promise<void> {

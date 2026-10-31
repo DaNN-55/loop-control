@@ -17,7 +17,7 @@ export const missingVisualAssetAdapterMessage = "视觉资产准备没有导入�
 export type WorkerResultStatus = "completed" | "blocked" | "failed";
 export type WorkerPreflightPhase = "preflight" | "execution";
 export type WorkerPreflightStatus = "passed" | "blocked" | "retryable" | "unavailable";
-export type WorkerPreflightAction = "none" | "edit_blueprint" | "manage_connection" | "retry" | "contact_environment_admin";
+export type WorkerPreflightAction = "none" | "select_production" | "manage_account_directory" | "edit_blueprint" | "manage_connection" | "retry" | "contact_environment_admin";
 export type WorkerPreflightScope = "blueprint" | "connection" | "episode" | "worker";
 
 export interface WorkerPreflightCheck {
@@ -838,7 +838,7 @@ function isWorkerPreflightStatus(value: unknown): value is WorkerPreflightStatus
 }
 
 function isWorkerPreflightAction(value: unknown): value is WorkerPreflightAction {
-  return value === "none" || value === "edit_blueprint" || value === "manage_connection" || value === "retry" || value === "contact_environment_admin";
+  return value === "none" || value === "select_production" || value === "manage_account_directory" || value === "edit_blueprint" || value === "manage_connection" || value === "retry" || value === "contact_environment_admin";
 }
 
 function isWorkerPreflightScope(value: unknown): value is WorkerPreflightScope {

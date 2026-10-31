@@ -291,3 +291,8 @@ html[data-interface="impeccable"] .impeccable-app.product-ui [data-compact-workf
 html[data-interface="impeccable"] .impeccable-app.product-ui .lc-production-workspace [data-compact-workflow]>.production-workspace-title{align-items:flex-start}
 @media(max-width:1250px){html[data-interface="impeccable"] .impeccable-app.product-ui .lc-production-workspace:has([data-compact-workflow]){--workspace-page-gutter:24px}}
 @media(max-width:640px){html[data-interface="impeccable"] .impeccable-app.product-ui .lc-production-workspace:has([data-compact-workflow]){--workspace-page-gutter:16px}}
+.workspace-planning-selection{margin:12px 0;padding:12px;border:1px solid var(--lc-line);border-radius:8px;background:var(--lc-surface)}
+.workspace-planning-summary{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.workspace-planning-summary>span{flex:1;min-width:0;color:var(--lc-muted);overflow-wrap:anywhere}.workspace-planning-selection .configuration-form{margin-top:12px;max-width:100%}
+html[data-interface="impeccable"] .product-ui .workspace-planning-selection .stage-configuration-dialog.is-inline{padding:0;overflow:visible}
+html[data-interface="impeccable"] .product-ui .workspace-planning-selection .stage-configuration-dialog.is-inline>section{width:100%;max-width:none;margin:0;padding:0;background:transparent;box-shadow:none;border-radius:0}
+@media(max-width:640px){.workspace-planning-summary>span{flex-basis:100%;order:3}.workspace-planning-summary>button{margin-left:auto}}

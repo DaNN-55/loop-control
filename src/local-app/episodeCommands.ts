@@ -333,7 +333,7 @@ export class LocalEpisodeCommands {
   const failure=(reason:string,check:string,scope:WorkerPreflightCheck['scope'],action:WorkerPreflightCheck['action'],status=409)=>new ConfigurationError(status,reason,{version:workerPreflightVersion,checks:[{capability:'worker_runtime',check,phase:'preflight',status:scope==='worker'?'unavailable':'blocked',reason,action,scope}]});
   try{if(scope!=='input')await this.runtime.ready();}catch(e){throw failure(e instanceof Error?e.message:'本地Worker未准备。','command_availability','worker','contact_environment_admin',503);}
   let root:string;
-  try{root=await resolveLocalAssetRoot(c,this.mediaRoot,policy.asset_root);await verifyMediaLibrary({assetRoot:root,mountPath:this.runtime.mountPath,minimumFreeBytes:this.runtime.minimumFreeBytes,requireEpisodesDirectory:existing});}catch(e){throw failure(e instanceof Error?e.message:'素材目录不可用。','asset_root','blueprint','edit_blueprint');}
+  try{root=await resolveLocalAssetRoot(c,this.mediaRoot,policy.asset_root);await verifyMediaLibrary({assetRoot:root,mountPath:this.runtime.mountPath,minimumFreeBytes:this.runtime.minimumFreeBytes,requireEpisodesDirectory:existing});}catch(e){throw failure(e instanceof Error?e.message:'素材目录不可用。','asset_root','episode','manage_account_directory');}
   if(scope==='input')return;
   const refs=validateConfigurationPolicy(policy,true);
   if(scope==='blueprint'&&refs.length)try{await this.runtime.checkReferences(c,refs);}catch(error){if(error instanceof ConfigurationError&&error.preflight)throw error;throw failure('连接版本未就绪，请检查本机绑定与验证资格。','credential_presence','connection','manage_connection');}

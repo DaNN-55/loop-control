@@ -1,3 +1,4 @@
+import {saveWorkspacePlanningSelection} from './planningSelectionStore.js';
 import {readWorkspacePexels} from './workspacePexels.js';
 import {readWorkspaceScriptResume,resumeWorkspaceScript} from './workspaceScriptResume.js';
 import {prepareAuthoredWorkspace,readWorkspacePlanning,syncWorkspaceShotInputs,authorizeWorkspacePreparation,readWorkspacePreparation,preserveLegacyWorkspace,preserveLegacyDocument,recoverLegacyBindings} from './workspacePreparation.js';
@@ -68,6 +69,7 @@ export class ProductionWorkspaceCommands{
  async execute(c:PoolClient,e:Episode,root:string,runtime:InputRuntime,command:string,data:Record<string,unknown>){
   if(e.archived_at||e.stage==='production_completed'||(await c.query('SELECT local_identity.is_historical_episode($1) historical',[e.id])).rows[0].historical)throw new ConfigurationError(409,'历史或已完成生产单只读。');
   await c.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[e.id+':studio']);
+  if(command==='saveWorkspacePlanningSelection')return saveWorkspacePlanningSelection(c,e.id,data);
   let row=(await c.query('SELECT * FROM local_identity.production_workspaces WHERE episode_id=$1 FOR UPDATE',[e.id])).rows[0] as ProductionWorkspaceRecord|undefined;
   if(command==='adoptLegacyWorkspace'){
    if(row)throw new ConfigurationError(409,'已有可编辑工作版本，请刷新并继续该版本；不会覆盖已有编辑。');
@@ -130,6 +132,10 @@ export class ProductionWorkspaceCommands{
    if(!e.main_script_revision_id||e.main_script_revision_id!==data.expectedScriptRevisionId||row?.script_revision_id===e.main_script_revision_id)throw new ConfigurationError(409,'当前脚本或制作依据已变化。');
    if(typeof data.taskId!=='string'||!uuid.test(data.taskId))throw new ConfigurationError(400,'规划任务无效。');
    let taskId;try{taskId=(await c.query('SELECT local_identity.queue_workspace_planning($1,$2,$3) id',[e.id,e.main_script_revision_id,data.taskId])).rows[0].id;}catch(error){if((error as {code?:string}).code==='40001')throw new ConfigurationError(409,'规划任务已变化，请刷新当前结果。');throw error;}return readWorkspacePlanning(c,taskId);
+  }
+  if(command==='replanWorkspace'&&data.planningTaskId){
+   if(!e.main_script_revision_id||e.main_script_revision_id!==data.expectedScriptRevisionId||typeof data.planningTaskId!=='string'||!uuid.test(data.planningTaskId))throw new ConfigurationError(409,'当前脚本或规划任务已变化。');
+   try{const task=(await c.query('SELECT local_identity.replan_workspace_planning($1,$2,$3) id',[e.id,e.main_script_revision_id,data.planningTaskId])).rows[0].id;return readWorkspacePlanning(c,task);}catch(error){if((error as {code?:string}).code==='40001')throw new ConfigurationError(409,'规划任务已变化，请刷新后重试。');throw error;}
   }
   if(command==='prepareWorkspace'||command==='replanWorkspace'){
    if(!e.main_script_revision_id||e.main_script_revision_id!==data.expectedScriptRevisionId)throw new ConfigurationError(409,'脚本基准已变化，请先确认当前脚本。');

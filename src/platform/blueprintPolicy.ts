@@ -1,24 +1,7 @@
 import type { Json } from "../lib/database.types";
 import { assetRootFromPolicy } from "../worker/assetRoot";
 
-export const defaultBlueprintPolicy = {
-  positioning: "",
-  asset_root: "",
-  budgets: { script_writing_cents: 0, storyboard_planning_cents: 0 },
-  executors: {
-    script_writing: {
-      provider: "codex",
-      model: "gpt-5.6-luna",
-      prompt_version: "script-writing-v1",
-    },
-    storyboard_planning: {
-      provider: "codex",
-      adapter: "codex",
-      model: "gpt-5.6-luna",
-      prompt_version: "storyboard-planning-v1",
-    },
-  },
-};
+export const defaultBlueprintPolicy = { positioning: "" };
 
 export function parseBlueprintPolicy(source: string): Json {
   const parsed: unknown = JSON.parse(source);

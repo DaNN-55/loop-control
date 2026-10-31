@@ -1,46 +1,15 @@
-import {act,cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
+import {cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
 import {afterEach,it,expect,vi} from 'vitest';
-import {webcrypto} from 'node:crypto';
 import {BlueprintConfigurationForm} from './ConfigurationForms';
-import {localRequest} from '../local-app/client';
-vi.mock('../lib/backend',()=>({backend:'local'}));
-afterEach(()=>{cleanup();vi.unstubAllGlobals();sessionStorage.clear();});
-it('chooses an account directory through the local Owner command and only updates the unsaved draft',async()=>{
- let saved=0;vi.stubGlobal('crypto',webcrypto);
- const transport=vi.fn(async(path:string,init?:RequestInit)=>{
-  if(path.endsWith('/session'))return Response.json({csrfToken:'local-directory-csrf'});
-  expect(path).toBe('/api/local/account-commands');
-  expect(new Headers(init?.headers).get('X-CSRF-Token')).toBe('local-directory-csrf');
-  expect(JSON.parse(String(init?.body))).toMatchObject({command:'chooseAssetDirectory',data:{accountId:'10000000-0000-4000-8000-000000000001'}});
-  return Response.json({assetRoot:'/authorized/chosen'});
- });vi.stubGlobal('fetch',transport);await localRequest('session');
- render(<BlueprintConfigurationForm accountId="10000000-0000-4000-8000-000000000001" initialAssetRoot="/authorized/original" initialPolicy={{}} isPending={false} onCancel={()=>{}} onSave={async()=>{saved++;}}/>);
- await act(async()=>{fireEvent.click(screen.getByRole('button',{name:'选择文件夹'}));});
- await waitFor(()=>expect(screen.getByRole('textbox',{name:'资产目录'})).toHaveProperty('value','/authorized/chosen'));
- expect(saved).toBe(0);expect(screen.queryByText(/本地文件夹选择尚不可用/)).toBeNull();
+afterEach(cleanup);
+it('saves content rules without connected services or a planner and excludes legacy configuration',async()=>{
+ const save=vi.fn(async()=>{});render(<BlueprintConfigurationForm initialAssetRoot="/old" initialPolicy={{positioning:'事实',tone:'克制',asset_root:'/old',narration:{credential_ref:'old'},executors:{},allowed_tools:['read']}} isPending={false} onCancel={()=>{}} onSave={save}/>);
+ expect(screen.queryByRole('textbox',{name:'资产目录'})).toBeNull();expect(screen.queryByRole('table',{name:'生产能力配置矩阵'})).toBeNull();expect(screen.queryByRole('button',{name:'修改分镜规划配置'})).toBeNull();
+ fireEvent.change(screen.getByRole('textbox',{name:'账号定位'}),{target:{value:'原始事实'}});fireEvent.click(screen.getByRole('button',{name:'保存蓝图'}));fireEvent.click(screen.getByRole('button',{name:'确认保存蓝图'}));await waitFor(()=>expect(save).toHaveBeenCalledWith({positioning:'原始事实',tone:'克制'},true));
 });
-it('discards a directory selection returned after switching to a different account',async()=>{
- vi.stubGlobal('crypto',webcrypto);let finish!:(response:Response)=>void;
- vi.stubGlobal('fetch',vi.fn(async(path:string)=>path.endsWith('/session')?Response.json({csrfToken:'directory-generation'}):new Promise<Response>(r=>{finish=r;})));
- await localRequest('session');
- const props={initialPolicy:{},isPending:false,onCancel:()=>{},onSave:async()=>{}};
- const view=render(<BlueprintConfigurationForm {...props} accountId="10000000-0000-4000-8000-000000000001" initialAssetRoot="/authorized/first"/>);
- fireEvent.click(screen.getByRole('button',{name:'选择文件夹'}));await waitFor(()=>expect(finish).toBeTypeOf('function'));
- view.rerender(<BlueprintConfigurationForm {...props} accountId="10000000-0000-4000-8000-000000000002" initialAssetRoot="/authorized/second"/>);
- await act(async()=>{finish(Response.json({assetRoot:'/authorized/old-selection'}));});
- expect(screen.getByRole('textbox',{name:'资产目录'})).toHaveProperty('value','/authorized/second');
+it('shows invalid creative JSON and retains unsaved content for correction',()=>{
+ render(<BlueprintConfigurationForm initialAssetRoot="" initialPolicy={{}} isPending={false} onCancel={()=>{}} onSave={async()=>{}}/>);fireEvent.change(screen.getByRole('textbox',{name:'创作规则 JSON'}),{target:{value:'{broken'}});fireEvent.click(screen.getByRole('button',{name:'保存蓝图'}));expect(screen.getByRole('alert').textContent).toContain('JSON');expect(screen.queryByRole('dialog')).toBeNull();expect(screen.getByRole('textbox',{name:'创作规则 JSON'})).toHaveProperty('value','{broken');
 });
-it('keeps the draft and shows no error when the native folder dialog is cancelled',async()=>{
- vi.stubGlobal('crypto',webcrypto);vi.stubGlobal('fetch',vi.fn(async()=>Response.json({cancelled:true})));
- render(<BlueprintConfigurationForm accountId="10000000-0000-4000-8000-000000000001" initialAssetRoot="/authorized/original" initialPolicy={{}} isPending={false} onCancel={()=>{}} onSave={async()=>{}}/>);
- await act(async()=>{fireEvent.click(screen.getByRole('button',{name:'选择文件夹'}));});
- expect(screen.getByRole('textbox',{name:'资产目录'})).toHaveProperty('value','/authorized/original');expect(screen.queryByText(/未获取到有效/)).toBeNull();expect(screen.getByRole('button',{name:'选择文件夹'})).toHaveProperty('disabled',false);
-});
-it('opens the entered directory through Owner HTTP and preserves the draft on a rejected path',async()=>{
- vi.stubGlobal('crypto',webcrypto);vi.stubGlobal('fetch',vi.fn(async(path:string,init?:RequestInit)=>{
-  expect(path).toBe('/api/local/account-commands');expect(JSON.parse(String(init?.body))).toMatchObject({command:'openAssetDirectory',data:{accountId:'10000000-0000-4000-8000-000000000001',path:'/outside/rejected'}});return Response.json({error:'资产目录超出本机授权范围。'},{status:400});
- }));
- render(<BlueprintConfigurationForm accountId="10000000-0000-4000-8000-000000000001" initialAssetRoot="/outside/rejected" initialPolicy={{}} isPending={false} onCancel={()=>{}} onSave={async()=>{}}/>);
- await act(async()=>{fireEvent.click(screen.getByRole('button',{name:'打开文件夹'}));});
- expect(await screen.findByText('资产目录超出本机授权范围。')).toBeTruthy();expect(screen.getByRole('textbox',{name:'资产目录'})).toHaveProperty('value','/outside/rejected');
+it('historical creative rules are read-only and switching accounts resets the editable draft',()=>{
+ const props={initialAssetRoot:'',isPending:false,onCancel:()=>{},onSave:async()=>{}};const view=render(<BlueprintConfigurationForm {...props} initialPolicy={{positioning:'旧规则',tone:'克制'}} readOnly/>);expect(screen.getByRole('textbox',{name:'账号定位'})).toHaveProperty('disabled',true);expect(screen.queryByRole('button',{name:'保存蓝图'})).toBeNull();view.rerender(<BlueprintConfigurationForm {...props} initialPolicy={{positioning:'新账号'}}/>);expect(screen.getByRole('textbox',{name:'账号定位'})).toHaveProperty('value','新账号');
 });

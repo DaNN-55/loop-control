@@ -1,3 +1,4 @@
+import {creativeAccountRules} from '../creativeAccountRules.js';
 import {createHash,randomUUID} from 'node:crypto';
 import {join} from 'node:path';
 import type {PoolClient} from 'pg';
@@ -53,7 +54,7 @@ export async function executeWorkspaceAudio(c:PoolClient,root:string,row:Product
    if(!authorized)throw new ConfigurationError(409,'请先授权当前脚本制作。');
    const context=(await c.query('SELECT e.account_id,e.blueprint_version_id,e.series_version_id,b.policy,s.rules series_rules FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id LEFT JOIN public.series_versions s ON s.id=e.series_version_id WHERE e.id=$1',[row.episode_id])).rows[0];
    const execution={...resolved.execution,executor:{...resolved.execution.executor,model:'freesound-preview-v1'},allowed_tools:['read','write','network'],budget_cents:0,max_attempts:1};
-   requestSnapshot={selectionVersion:1,selection:resolved.selection,connection:resolved.connection,execution,query,description,parameters:{durationSeconds:duration,anchor,offsetSeconds:offset,shotId},context:{accountId:context.account_id,blueprintVersionId:context.blueprint_version_id,seriesVersionId:context.series_version_id,accountRules:Object.fromEntries(Object.entries(context.policy).filter(([key])=>!['asset_root','static_visual','a_roll','b_roll','narration','soundtrack','review','approval_gates','budgets','executors','capabilities'].includes(key))),seriesRules:context.series_rules},target:{workspaceId:row.id,scriptRevisionId:row.script_revision_id,projectSha256:row.project_sha256,revision:row.revision,shotId},costBasis:{kind:'freesound_preview_search',reservationCents:0},authorizationHash:authorized.authorization_hash};
+   requestSnapshot={selectionVersion:1,selection:resolved.selection,connection:resolved.connection,execution,query,description,parameters:{durationSeconds:duration,anchor,offsetSeconds:offset,shotId},context:{accountId:context.account_id,blueprintVersionId:context.blueprint_version_id,seriesVersionId:context.series_version_id,accountRules:creativeAccountRules(context.policy),seriesRules:context.series_rules},target:{workspaceId:row.id,scriptRevisionId:row.script_revision_id,projectSha256:row.project_sha256,revision:row.revision,shotId},costBasis:{kind:'freesound_preview_search',reservationCents:0},authorizationHash:authorized.authorization_hash};
    await audioRuntime(runtime,String(data.kind),{execution});await runtime.checkReferences(c,[resolved.connection!.id]);
   }
   const id=randomUUID(),fingerprint=hash([row.id,row.script_revision_id,data.kind,description,query,duration,anchor,offset,shotId,sourceItemId,sourceSha,source?.startSeconds??null,source?.playbackRate??null,materialId,requestSnapshot]);

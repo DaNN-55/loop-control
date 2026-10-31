@@ -1,3 +1,4 @@
+import {creativeAccountRules} from '../creativeAccountRules';
 import type { Json } from "../lib/database.types";
 import { mediaCapabilityForKey, mediaCapabilityKeys, type MediaCapabilityKey } from "../worker/productionCapabilities";
 import { executionPathKeys, registeredAdapters, type ExecutionPath } from "../worker/registeredAdapters";
@@ -30,6 +31,7 @@ export type MediaAdapterForm = {
 
 export interface BlueprintFormValues {
   positioning: string;
+  legacyPolicy?: Json;
   assetRoot: string;
   legacyApprovalGates?: Json;
   allowedTools: string[];
@@ -50,7 +52,6 @@ export interface SeriesFormValues {
   restrictions: string;
 }
 
-const blueprintKnownKeys = new Set(["positioning", "asset_root", "approval_gates", "allowed_tools", "budgets", "executors", ...mediaAdapterKeys]);
 const seriesKnownKeys = new Set(["positioning", "format", "characters", "locations", "visual_style", "narrative_structure", "restrictions"]);
 const executorKeys = ["script_writing", "storyboard_planning"] as const;
 const visibleToolKeys = new Set(["read", "write"]);
@@ -76,7 +77,8 @@ function stringArray(value: Json | undefined): string[] {
   return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
 }
 
-function blueprintAdvancedJson(value: JsonObject): string {
+const blueprintKnownKeys = new Set(["positioning", "asset_root", "approval_gates", "allowed_tools", "budgets", "executors", ...mediaAdapterKeys]);
+function legacyBlueprintAdvancedJson(value: JsonObject): string {
   const extra = Object.fromEntries(Object.entries(value).filter(([key]) => !blueprintKnownKeys.has(key)));
   const executors = objectValue(value.executors);
   const executorExtra: JsonObject = {};
@@ -98,6 +100,12 @@ function blueprintAdvancedJson(value: JsonObject): string {
     if (Object.keys(mediaAdapterExtra).length) extra[key] = mediaAdapterExtra;
   }
   return JSON.stringify(extra, null, 2);
+}
+
+
+function blueprintAdvancedJson(value: JsonObject): string {
+  const {positioning: _positioning, ...rules} = creativeAccountRules(value);
+  return JSON.stringify(rules, null, 2);
 }
 
 function parseAdvancedJson(source: string): JsonObject {
@@ -242,6 +250,7 @@ export function blueprintPolicyToForm(policy: Json): BlueprintFormValues {
   const fallbackMediaAdapterTools = accountAllowedTools.length ? accountAllowedTools : ["read", "write"];
   const enabledMediaAdapters = configurableMediaAdapterKeys.filter((key) => value[key] !== undefined && value[key] !== null);
   return {
+    legacyPolicy: policy,
     positioning: stringValue(value.positioning),
     assetRoot: stringValue(value.asset_root),
     legacyApprovalGates: value.approval_gates,
@@ -265,7 +274,11 @@ export function blueprintPolicyToForm(policy: Json): BlueprintFormValues {
 }
 
 export function blueprintFormToPolicy(form: BlueprintFormValues): Json {
-  const advanced = parseAdvancedJson(form.advancedJson);
+ return {...creativeAccountRules(parseAdvancedJson(form.advancedJson)),positioning:form.positioning.trim()} as Json;
+}
+
+export function legacyBlueprintFormToPolicy(form: BlueprintFormValues): Json {
+  const advanced = {...parseAdvancedJson(legacyBlueprintAdvancedJson(objectValue(form.legacyPolicy))),...parseAdvancedJson(form.advancedJson)};
   const existingExecutors = objectValue(advanced.executors);
   const existingMediaAdapters = Object.fromEntries(mediaAdapterKeys.map((key) => [key, objectValue(advanced[key])])) as Record<MediaAdapterKey, JsonObject>;
   delete advanced.budgets;

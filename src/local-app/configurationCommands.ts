@@ -1,7 +1,6 @@
+import {creativeAccountRules} from '../creativeAccountRules.js';
 import {setAccountAssetDirectory} from './accountAssetRoots.js';
 import {createHash} from 'node:crypto';
-import {relative,isAbsolute,resolve} from 'node:path';
-import {realpath} from 'node:fs/promises';
 import type {Pool,PoolClient} from 'pg';
 import {ownerTransaction} from './ownerTransaction.js';
 import {tokenHash,type OwnerSession} from './sessions.js';
@@ -24,6 +23,11 @@ export function validateConfigurationPolicy(value:unknown,allowExternal=false):s
  visit(value);
  return [...refs];
 }
+function validatePolicySecrets(value:unknown):void{
+ if(!value||typeof value!=='object'||Array.isArray(value))throw new ConfigurationError(400,'蓝图规则必须是对象。');
+ function visit(node:unknown):void{if(!node||typeof node!=='object')return;for(const[key,v]of Object.entries(node)){if(['secret','password','api_key','access_token','refresh_token'].includes(key))throw new ConfigurationError(400,'蓝图不能保存密钥。');visit(v);}}
+ visit(value);
+}
 export function canonical(value:unknown):unknown{return Array.isArray(value)?value.map(canonical):value&&typeof value==='object'?Object.fromEntries(Object.entries(value).sort().map(([k,v])=>[k,canonical(v)])):value;}
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const commands={
@@ -44,45 +48,36 @@ export async function executeConfiguration(pool:Pool,session:OwnerSession,body:R
  if(typeof body.idempotencyKey!=='string'||!uuid.test(body.idempotencyKey))throw new ConfigurationError(400,'缺少操作标识。');
  if(!body.data||typeof body.data!=='object'||Array.isArray(body.data))throw new ConfigurationError(400,'配置内容无效。');
  const data=body.data as Record<string,unknown>,command=body.command as keyof typeof commands,definition=commands[command];
+ const hash=createHash('sha256').update(JSON.stringify(canonical(body))).digest('hex');
  for(const field of definition.fields){
   const value=data[field];
   if(field.endsWith('Id')||field==='accountId'){if(typeof value!=='string'||!uuid.test(value))throw new ConfigurationError(400,'引用无效。');}
   else if(field==='archived'){if(typeof value!=='boolean')throw new ConfigurationError(400,'归档选项无效。');}
-  else if(field==='policy')validateConfigurationPolicy(value,!!checkExternalReferences);
+  else if(field==='policy'){validatePolicySecrets(value);data.policy=creativeAccountRules(value as Record<string,unknown>);validateConfigurationPolicy(data.policy,true);}
   else if(field==='rules'){if(!value||typeof value!=='object'||Array.isArray(value))throw new ConfigurationError(400,'系列规则必须是对象。');}
   else if(typeof value!=='string'||value.length>100000)throw new ConfigurationError(400,'配置字段无效。');
  }
  if(command==='createAccount'){try{new Intl.DateTimeFormat('en',{timeZone:String(data.timezone)});}catch{throw new ConfigurationError(400,'时区无效。');}}
- const hash=createHash('sha256').update(JSON.stringify(canonical(body))).digest('hex');
  const result=await ownerTransaction(pool,session.id,false,async client=>{
   const valid=await client.query('SELECT token_hash FROM local_identity.sessions WHERE token_hash=$1 AND owner_id=$2 AND revoked_at IS NULL AND expires_at>clock_timestamp() FOR SHARE',[tokenHash(session.token),session.id]);
   if(!valid.rowCount)throw new ConfigurationError(401,'会话已失效。');
   await client.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[session.id+':'+body.idempotencyKey]);
   const receipt=await client.query('SELECT payload_hash,result FROM local_identity.command_receipts WHERE owner_id=$1 AND idempotency_key=$2',[session.id,body.idempotencyKey]);
   if(receipt.rowCount){if(receipt.rows[0].payload_hash!==hash)throw new ConfigurationError(409,'同一操作标识不能用于不同内容。');return receipt.rows[0].result;}
-  let currentPolicy:Record<string,unknown>|undefined,externalPolicy=false;
+  let externalPolicy=false;
   if(data.accountId){
    const locked=await client.query('SELECT local_identity.lock_owned_account_row($1) owned',[data.accountId]);
    if(!locked.rows[0].owned)throw new ConfigurationError(404,'账号不可见。');
    const account=await client.query('SELECT a.current_blueprint_version_id,b.policy,md5(b.policy::text) revision FROM public.accounts a LEFT JOIN public.account_blueprint_versions b ON b.id=a.current_blueprint_version_id WHERE a.id=$1',[data.accountId]);
-   if(!account.rowCount)throw new ConfigurationError(404,'账号不可见。');currentPolicy=account.rows[0].policy;
+   if(!account.rowCount)throw new ConfigurationError(404,'账号不可见。');
    if(command==='updateBlueprint'&&body.expectedRevision!==account.rows[0].revision)throw new ConfigurationError(409,'蓝图已变化，请刷新后重试。');
-  }
-  if(command==='activateBlueprint'){
-   const selected=await client.query('SELECT policy FROM public.account_blueprint_versions WHERE account_id=$1 AND id=$2',[data.accountId,data.blueprintId]);
-   if(!selected.rowCount)throw new ConfigurationError(404,'蓝图不可见。');const refs=validateConfigurationPolicy(selected.rows[0].policy,!!checkExternalReferences);if(refs.length)await checkExternalReferences!(client,refs);
   }
   // Capture exact roots before their blueprints are deleted; filesystem writes wait for COMMIT.
   const accountAssetRoots=command==='deleteAccount'?(await client.query("SELECT policy->>'asset_root' asset_root FROM public.account_blueprint_versions WHERE account_id=$1 UNION SELECT actual_root FROM local_identity.account_asset_directories WHERE account_id=$1 UNION SELECT asset_root FROM local_identity.episode_asset_locations WHERE account_id=$1",[data.accountId])).rows.map(row=>row.asset_root):[];
   if(data.policy){
    const refs=validateConfigurationPolicy(data.policy,!!checkExternalReferences);if(refs.length)await checkExternalReferences!(client,refs);
    externalPolicy=refs.length>0;
-   const policy=data.policy as Record<string,unknown>,asset=policy.asset_root;
-   if(asset!==undefined&&typeof asset!=='string')throw new ConfigurationError(400,'素材目录无效。');
-   if(typeof asset==='string'&&asset.trim()&&asset!==currentPolicy?.asset_root){
-    const path=resolve(asset),rel=relative(mediaRoot,path);
-    if(!isAbsolute(asset)||rel.startsWith('..')||isAbsolute(rel)||await realpath(path).catch(()=>null)!==path)throw new ConfigurationError(400,'素材目录必须是已存在的本地授权目录。');
-   }
+
   }
   // create_account establishes membership after its initial blueprint insert.
   // Attach external references only after membership exists, in this same transaction.
