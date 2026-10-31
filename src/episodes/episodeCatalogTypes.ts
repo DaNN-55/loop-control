@@ -7,6 +7,7 @@ export type CatalogStatus = "all" | "review" | "running" | "blocked" | "done";
 export type CatalogSort = "updated" | "oldest" | "title";
 export type CatalogActionStatus = Exclude<CatalogStatus, "all"> | "draft";
 export interface EpisodeCatalog {
+  collections?: Record<string,{containerId:string;seriesId:string|null}>;
   episodes: Episode[]; page: number; total: number; pageSize: number; episodeCount: number;
   accountCounts: Record<string, number>; reviewCount: number; stages: Record<string, number>; artifactCounts: Record<string, number>;
   pending: { page: number; total: number; items: Array<Episode & { revision_number: number }> };

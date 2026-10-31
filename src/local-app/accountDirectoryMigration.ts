@@ -15,6 +15,7 @@ import {directoryName} from './creationIdentity.js';
 import {resolveEpisodeStorageLocation,requireEpisodeStorageDirectory,resolveEpisodeStorageCollection} from './episodeStorageLocation.js';
 import {verifyMediaRootBinding,type MediaRootBinding} from './mediaRootSettings.js';
 import {episodeFileIO} from './episodeFiles.js';
+import {resolveStorageContainer,requireStorageContainer} from './seriesDirectories.js';
 type Client=Pick<PoolClient,'query'>;
 interface File{sourceRoot:string;relativePath:string;sha256:string;fileSize:number;targetRelativePath?:string}
 interface Root{path:string;device:string;inode:string}
@@ -92,7 +93,7 @@ async function copy(root:string,f:File,id:string,signal?:AbortSignal,onTemporary
 }
 export async function executeAccountDirectoryMigration(pool:Pool,session:OwnerSession,mediaRoot:string,account:string,id:string,rollback:boolean,signal?:AbortSignal){
  const kind=await sessionTransaction(pool,session,async c=>(await c.query('SELECT manifest->>\'kind\' kind FROM local_identity.account_directory_migrations WHERE id=$1 AND account_id=$2',[id,account])).rows[0]?.kind);
- if(kind==='adoption')return executeStorageAdoption(pool,session,mediaRoot,account,id,rollback,signal);
+ if(kind==='adoption'||kind==='move')return executeStorageAdoption(pool,session,mediaRoot,account,id,rollback,signal);
  // Persist the resumable state before copying. A process exit leaves this receipt.
  await sessionTransaction(pool,session,async c=>{await lock(c,account);const row=(await c.query('SELECT status,manifest FROM local_identity.account_directory_migrations WHERE id=$1 AND account_id=$2',[id,account])).rows[0];if(!row)throw new ConfigurationError(404,'迁移记录不可见。');if(row.status==='completed'){if(rollback)throw new ConfigurationError(409,'已完成迁移请重新盘点迁回，原目录不会自动覆盖。');return;}
  if(rollback){await c.query("UPDATE local_identity.account_directory_migrations SET status='rolled_back',error=NULL,updated_at=clock_timestamp() WHERE id=$1",[id]);return;}
@@ -130,7 +131,7 @@ for(const actual of await inventory(m.targetRoot)){const f=expected.get(actual.r
 interface AdoptionSource{root:Root;prefix:string;directory:Root}
 interface AdoptionEpisode{id:string;title:string;seriesId:string|null;seriesName:string|null;targetPrefix:string;managed:boolean;sources:AdoptionSource[]}
 interface AdoptionContainer{id:string;seriesId:string|null;name:string;prefix:string;identity:Root|null}
-interface AdoptionManifest{kind:'adoption';targetRoot:string;targetIdentity:Root|null;rootBinding:MediaRootBinding;sources:Root[];episodes:AdoptionEpisode[];containers:AdoptionContainer[];files:File[];references:Reference[];evidenceSha256:string;businessEvidenceSha256:string;conflicts:string[];totalBytes:number;retained:string[];createdDirectories:Root[];temporaryFiles:{path:string;device:string;inode:string}[]}
+interface AdoptionManifest{kind:'adoption'|'move';sourceContainerId?:string;targetContainerId?:string;targetRoot:string;targetIdentity:Root|null;rootBinding:MediaRootBinding;sources:Root[];episodes:AdoptionEpisode[];containers:AdoptionContainer[];files:File[];references:Reference[];evidenceSha256:string;businessEvidenceSha256:string;conflicts:string[];totalBytes:number;retained:string[];createdDirectories:Root[];temporaryFiles:{path:string;device:string;inode:string}[]}
 function frozenAdoptionEvidence(value:unknown){return Object.fromEntries(Object.entries(value as Record<string,unknown>).filter(([key])=>!['account_asset_directories','local_identity.episode_asset_locations','local_identity.episode_storage_lineage'].includes(key)));}
 async function adoptionBlockers(c:Client,account:string){
  const result=(await c.query('SELECT local_identity.account_directory_busy($1) reasons',[account])).rows[0].reasons as {reason:string}[];
@@ -148,16 +149,17 @@ async function scopedInventory(episodes:AdoptionEpisode[]){
 }
 async function adoptionReferenceConflicts(c:Client,mediaRoot:string,episodes:AdoptionEpisode[],files:File[],refs:Reference[]){
  const conflicts:string[]=[],managed=new Map<string,Awaited<ReturnType<typeof episodeFileIO>>>();
- for(const episode of episodes.filter(e=>e.managed)){
+ for(const episode of episodes){
   const location=await resolveEpisodeStorageLocation(c,mediaRoot,episode.id),io=await episodeFileIO(c,location.assetRoot,episode.id);
-  if(location.relativePath!==episode.targetPrefix||(await resolveEpisodeStorageCollection(c,location)).status!=='registered')throw new ConfigurationError(409,'已纳管生产单位置改变，请重新盘点。');
+  if(episode.managed&&location.relativePath!==episode.targetPrefix)throw new ConfigurationError(409,'已纳管生产单位置改变，请重新盘点。');
+  if((await resolveEpisodeStorageCollection(c,location)).status!=='registered')continue;
   if(await hasActiveNativeStudio(location.assetRoot,episode.id,location.relativePath))conflicts.push('Studio 正在编辑，请先保存并返回。');
   managed.set(episode.id,io);
  }
  for(const ref of refs){
   const owned=episodes.filter(e=>!ref.episodeId||e.id===ref.episodeId),matches=files.filter(f=>f.relativePath===ref.relativePath&&owned.some(e=>f.targetRelativePath?.startsWith(e.targetPrefix+'/')));
   const fingerprints:{sha256:string;fileSize:number}[]=[...matches];
-  for(const episode of owned.filter(e=>e.managed)){const io=managed.get(episode.id)!;let path:string;try{path=await io.resolveReference(ref.relativePath);}catch{continue;}await io.assertValid();fingerprints.push(await fileDigest(io.assetRoot,relative(io.assetRoot,path)));}
+  for(const episode of owned.filter(e=>managed.has(e.id))){const io=managed.get(episode.id)!;let path:string;try{path=await io.resolveReference(ref.relativePath);}catch{continue;}await io.assertValid();fingerprints.push(await fileDigest(io.assetRoot,relative(io.assetRoot,path)));}
   if(!fingerprints.length)conflicts.push('文件引用缺失或不属于已确认旧源：'+ref.relativePath);
   else if(fingerprints.some(f=>ref.sha256&&f.sha256!==ref.sha256||ref.fileSize!==undefined&&f.fileSize!==ref.fileSize)||new Set(fingerprints.map(f=>f.sha256+':'+f.fileSize)).size!==1)conflicts.push('文件引用指纹不一致：'+ref.relativePath);
  }
@@ -219,6 +221,29 @@ export async function planLegacyStorageAdoption(c:Client,mediaRoot:string,accoun
  const manifest:AdoptionManifest={kind:'adoption',targetRoot,targetIdentity,rootBinding:binding,sources:[...new Map(episodes.flatMap(e=>e.sources).map(s=>[s.root.path,s.root])).values()],episodes,containers,files,references:refs,evidenceSha256:fingerprint(data),businessEvidenceSha256:fingerprint(frozenAdoptionEvidence(data)),conflicts:[...new Set(conflicts)],totalBytes:[...destinations.values()].reduce((n,f)=>n+f.fileSize,0),retained:[...roots].map(root=>root+'：旧源、未知及共享内容保留，不自动删除'),createdDirectories:[],temporaryFiles:[]};
  const id=randomUUID();await c.query("INSERT INTO local_identity.account_directory_migrations(id,account_id,status,manifest) VALUES($1,$2,'planned',$3)",[id,account,manifest]);return{id,status:'planned',...manifest};
 }
+/** Same durable migration coordinator, scoped to one registered production order.
+ * Every move gets a fresh target instance; retained sources are never overwritten. */
+export async function planEpisodeCollectionMove(c:Client,mediaRoot:string,episodeId:string,seriesId:string|null){
+ const episode=(await c.query('SELECT e.id,e.account_id,e.title FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id AND m.user_id=local_identity.owner_id() AND m.role=\'owner\' WHERE e.id=$1',[episodeId])).rows[0];
+ if(!episode)throw new ConfigurationError(404,'生产单不可见。');
+ const account=episode.account_id;await lock(c,account);
+ if((await c.query("SELECT 1 FROM local_identity.account_directory_migrations WHERE account_id=$1 AND status IN ('planned','copying','failed')",[account])).rowCount)throw new ConfigurationError(409,'请先恢复或回滚已有目录计划。');
+ const location=await resolveEpisodeStorageLocation(c,mediaRoot,episodeId);await requireEpisodeStorageDirectory(c,location);
+ const sourceCollection=await resolveEpisodeStorageCollection(c,location);if(sourceCollection.status!=='registered')throw new ConfigurationError(409,'请先在账号中盘点旧资料纳管，再调整收纳。');
+ if(sourceCollection.container.seriesId===seriesId)throw new ConfigurationError(409,'生产单已在此收纳位置。');
+ const container=await resolveStorageContainer(c,mediaRoot,account,seriesId);await requireStorageContainer(c,mediaRoot,container);
+ const binding=(await c.query('SELECT local_identity.media_root_binding() binding')).rows[0].binding as MediaRootBinding;await verifyMediaRootBinding(binding);
+ const targetRoot=location.assetRoot,targetIdentity=await identity(targetRoot),id=randomUUID(),source=sourceCollection.container;
+ const targetPrefix=container.relativePath+'/'+directoryName(episode.title,episodeId+'--'+id,'生产单');
+ const sourceDirectory=await identity(location.directoryPath),episodes:AdoptionEpisode[]=[{id:episodeId,title:episode.title,seriesId,seriesName:seriesId?(await c.query('SELECT name FROM public.series WHERE id=$1',[seriesId])).rows[0].name:null,targetPrefix,managed:false,sources:[{root:targetIdentity,prefix:location.relativePath,directory:sourceDirectory}]}];
+ const containers:AdoptionContainer[]=[{id:source.id,seriesId:source.seriesId,name:'原收纳',prefix:source.relativePath,identity:await identity(join(targetRoot,source.relativePath))},{id:container.containerId!,seriesId,name:'目标收纳',prefix:container.relativePath!,identity:await identity(container.directoryPath!)}];
+ const files=await scopedInventory(episodes),data=await evidence(c,account),refs=references(data).filter(ref=>ref.episodeId===episodeId);
+ for(const file of files.filter(f=>f.relativePath.endsWith('.json')&&f.fileSize<=32*1024*1024)){let document;try{document=JSON.parse(await readFile(join(file.sourceRoot,file.relativePath),'utf8'));}catch{continue;}refs.push(...references(document).map(ref=>({...ref,episodeId})));}
+ const conflicts=await adoptionBlockers(c,account);conflicts.push(...await adoptionReferenceConflicts(c,mediaRoot,episodes,files,refs));
+ try{await lstat(join(targetRoot,targetPrefix));conflicts.push('目标生产单目录已存在，请保留现场后重新盘点。');}catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;}
+ const manifest:AdoptionManifest={kind:'move',sourceContainerId:source.id,targetContainerId:container.containerId!,targetRoot,targetIdentity,rootBinding:binding,sources:[targetIdentity],episodes,containers,files,references:refs,evidenceSha256:fingerprint(data),businessEvidenceSha256:fingerprint(frozenAdoptionEvidence(data)),conflicts:[...new Set(conflicts)],totalBytes:files.reduce((sum,file)=>sum+file.fileSize,0),retained:[location.directoryPath+'：原文件保留，不自动删除'],createdDirectories:[],temporaryFiles:[]};
+ await c.query("INSERT INTO local_identity.account_directory_migrations(id,account_id,status,manifest) VALUES($1,$2,'planned',$3)",[id,account,manifest]);return{id,status:'planned',...manifest};
+}
 async function executeStorageAdoption(pool:Pool,session:OwnerSession,mediaRoot:string,account:string,id:string,rollback:boolean,signal?:AbortSignal){
  const client=await pool.connect(),key='account-directory-migration:'+account;
  const transaction=<T>(run:(c:PoolClient)=>Promise<T>)=>sessionTransaction(pool,session,run,client);
@@ -271,7 +296,7 @@ async function executeStorageAdoption(pool:Pool,session:OwnerSession,mediaRoot:s
    for(const container of m.containers){const actual=await identity(join(m.targetRoot,container.prefix));await c.query('INSERT INTO local_identity.account_storage_containers(id,account_id,kind,series_id,directory_relative_path,device_id,inode_id) VALUES($1,$2,$3,$4,$5,$6,$7) ON CONFLICT(id) DO NOTHING',[container.id,account,container.seriesId?'series':'unassigned',container.seriesId,container.prefix,actual.device,actual.inode]);}
    // Completion derives its edges from this durable manifest, never HTTP paths.
    const targets=[];for(const episode of m.episodes.filter(e=>!e.managed))targets.push({episodeId:episode.id,prefix:episode.targetPrefix,...await identity(join(m.targetRoot,episode.targetPrefix))});
-   await c.query('SELECT local_identity.complete_storage_adoption($1,$2)',[id,JSON.stringify(targets)]);
+   await c.query(m.kind==='move'?'SELECT local_identity.complete_storage_move($1,$2)':'SELECT local_identity.complete_storage_adoption($1,$2)',[id,JSON.stringify(targets)]);
    // A database trigger/registration can pause across external filesystem writes.
    // Recheck AFTER the final SQL and before COMMIT, including pre-existing parents.
    await verifyMediaRootBinding(m.rootBinding);
