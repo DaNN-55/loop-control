@@ -1,12 +1,12 @@
 import {resolveWorkspaceMainVoice} from './workspaceAudio.js';
 import type {OpenChatCutProject} from './worker/openchatcutProject.js';
 import type {WorkspaceCandidate} from './workspaceCandidates.js';
-export interface WorkspaceVisualCandidate extends WorkspaceCandidate {usage:'video'|'still'|'pan-zoom';materialRevisionId?:string;generation?:{prompt:string;firstFrameMaterialRevisionId:string;durationSeconds:number;imageSettings?:import('./imageGeneration.js').ImageGenerationSettings;referenceMaterialRevisionIds?:string[];videoSettings?:import('./videoGenerationSettings.js').WanGenerationSettings;firstFrameFit?:'contain'|'cover'};width:number;height:number}
+export interface WorkspaceVisualCandidate extends WorkspaceCandidate {usage:'video'|'still'|'pan-zoom';materialRevisionId?:string;generation?:{selection?:import('./productionSelection.js').ProductionSelection;connectionName?:string;prompt:string;firstFrameMaterialRevisionId:string;durationSeconds:number;imageSettings?:import('./imageGeneration.js').ImageGenerationSettings;referenceMaterialRevisionIds?:string[];videoSettings?:import('./videoGenerationSettings.js').WanGenerationSettings;firstFrameFit?:'contain'|'cover'};width:number;height:number}
 export interface WorkspaceVisualTask {id:string;taskId:string;shotId?:string;kind?:'image'|'video';status:string;error:string|null;canResume?:boolean}
 export const workspaceVisualFields:Record<string,string[]>={
  requestWorkspaceVisualCandidate:['episodeId','workspaceId','expectedRevision','targetItemId','firstFrameMaterialRevisionId','prompt','durationSeconds','reservationCents','videoSettings','firstFrameFit'],
  retainWorkspaceImageCandidate:['episodeId','workspaceId','expectedRevision','candidateId'],
- requestWorkspaceImageCandidates:['episodeId','workspaceId','expectedRevision','targetItemId','model','prompt','settings','referenceMaterialRevisionIds','reservationCents'],
+ requestWorkspaceImageCandidates:['episodeId','workspaceId','expectedRevision','targetItemId','selection','model','prompt','settings','referenceMaterialRevisionIds','reservationCents'],
  retryWorkspaceVisualCandidate:['episodeId','workspaceId','expectedRevision','candidateId'],
  prepareWorkspaceVisualPool:['episodeId','workspaceId','expectedRevision','materialRevisionId'],
  registerWorkspaceVisualCandidate:['episodeId','workspaceId','expectedRevision','targetItemId','materialRevisionId','usage','durationSeconds'],
