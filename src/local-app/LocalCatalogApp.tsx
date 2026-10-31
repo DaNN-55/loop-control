@@ -25,7 +25,6 @@ import {LocalMaintenancePanel} from './LocalMaintenancePanel';
 import {useConnectionActions} from './useConnectionActions';
 import type {ExternalConnection,ExternalConnectionVersion} from '../connections/ConnectionWorkspace';
 import type {Json} from '../lib/database.types';
-import type {WorkerPreflightResult} from '../worker/contracts';
 import type {LocalCatalog} from './catalog';
 import {localRequest,localCommand} from './client';
 type NativeView=NavigationItem|'connections'|'history';
@@ -44,8 +43,6 @@ export function LocalCatalogApp(){
  const [catalog,setCatalog]=useState<LocalCatalog|null>(null),[error,setError]=useState(''),[pending,setPending]=useState(''),[csrf,setCsrf]=useState('');
  const [email,setEmail]=useState(''),[password,setPassword]=useState(''),[selectedId,setSelectedId]=useState(''),[newAccount,setNewAccount]=useState(false),[view,setView]=useState<NativeView>(()=>new URLSearchParams(location.search).has('episode')?'episodes':'operations');
  const [connections,setConnections]=useState<ExternalConnection[]>([]),[connectionVersions,setConnectionVersions]=useState<ExternalConnectionVersion[]>([]);
- const [blueprintPreflight,setBlueprintPreflight]=useState<WorkerPreflightResult|null>(null),[blueprintPreflightError,setBlueprintPreflightError]=useState(''),[preflightLoading,setPreflightLoading]=useState(false);
- const preflightRequest=useRef(0),preflightTarget=useRef('');
  const[theme,setTheme]=useState<'light'|'dark'>(()=>localStorage.getItem('loop-control.theme.v1')==='dark'?'dark':'light');
  useEffect(()=>{document.documentElement.dataset.theme=theme;document.documentElement.dataset.interface='impeccable';return()=>{delete document.documentElement.dataset.theme;delete document.documentElement.dataset.interface;};},[theme]);
  const[collapsed,setCollapsed]=useState(()=>localStorage.getItem('loop-control.sidebar.v1')==='collapsed');
@@ -106,16 +103,6 @@ export function LocalCatalogApp(){
  }
  async function command<T>(label:string,name:string,data:unknown,revision?:string):Promise<T>{setPending(label);setError('');try{const result=await localCommand<T>(name,data,revision);try{await refresh();}catch{setError('配置已保存；目录读取失败，请重试。');}return result;}catch(e){setError(e instanceof Error?e.message:String(e));throw e;}finally{setPending('');}}
  const account=catalog?.accounts.find(a=>a.id===selectedId)??null;
- const blueprintTarget=account?`${account.id}:${account.current_blueprint_version_id}:${catalog?.blueprintRevisions[account.current_blueprint_version_id??'']??''}`:'';preflightTarget.current=blueprintTarget;
- useEffect(()=>{preflightRequest.current++;setBlueprintPreflight(null);setBlueprintPreflightError('');setPreflightLoading(false);},[blueprintTarget]);
- async function checkBlueprint(){
-  if(!authenticated.current||!account?.current_blueprint_version_id||!catalog)return;
-  const target=preflightTarget.current,session=sessionGeneration.current,request=++preflightRequest.current;
-  const current=()=>authenticated.current&&session===sessionGeneration.current&&target===preflightTarget.current&&request===preflightRequest.current;
-  setPreflightLoading(true);setBlueprintPreflight(null);setBlueprintPreflightError('');
-  try{const result=await localCommand<WorkerPreflightResult>('checkBlueprint',{accountId:account.id,blueprintVersionId:account.current_blueprint_version_id,expectedRevision:catalog.blueprintRevisions[account.current_blueprint_version_id]},undefined,'account-commands');if(current())setBlueprintPreflight(result);}
-  catch(error){if(current())setBlueprintPreflightError(error instanceof Error?error.message:'本机检查暂不可用。');}finally{if(current())setPreflightLoading(false);}
- }
  async function openSidebarStudio(){
   if(studio.current){studio.current();return;}
   if(!authenticated.current||studioOpeningRef.current)return;
@@ -148,7 +135,7 @@ export function LocalCatalogApp(){
  <section inert={Boolean(episodeId)} className="content-pane" id="main-content" aria-label="平台工作台" tabIndex={-1}><header className="page-header"><nav className="workspace-breadcrumbs" aria-label="当前位置"><span>个人工作区</span><ChevronRight size={14} aria-hidden="true"/><strong aria-current="page">{nativeNavigation.find(n=>n.id===view)?.label}</strong></nav><div className="page-header-actions">{!episodeId&&topbar}</div></header>{view!=='operations'&&<div className={`workspace-page-heading${view==='connections'||view==='history'?' is-maintenance':''}`}><h1>{nativeNavigation.find(n=>n.id===view)?.label}</h1>{view==='episodes'&&workspaceActions}</div>}
 
  {(view==='connections'||view==='history')?<LocalMaintenancePanel embedded activeTab={view} onTabChange={navigate} onClose={()=>navigate('operations')} revision={catalog}/>:view==='accounts'?<>
-<AccountWorkspace actions={workspaceActions} onRefresh={()=>refresh().catch(e=>setError(e instanceof Error?e.message:String(e)))} onDirtyChange={setAccountDirty} blueprintRepairContext={repair} onDismissBlueprintRepair={()=>{if(repair){setEpisodeId(repair.episodeId);setView('episodes');filter({view:'episodes'});}setRepair(null);}} onApplyEpisodeRepair={async input=>{try{await localCommand('repairConfiguration',{episodeId:input.context.episodeId,policy:input.policy,blockerCode:input.context.blocker.code,blockerDetail:input.context.blocker.detail},undefined,'episode-commands');await refresh();setRepair(null);setEpisodeId(input.context.episodeId);setView('episodes');filter({view:'episodes'});return true;}catch(e){setError(e instanceof Error?e.message:String(e));return false;}}} externalConnections={connections} connectionVersions={connectionVersions} account={account} accountEpisodeCount={catalog.accountCounts[account?.id??'']??0} accounts={catalog.accounts} blueprints={catalog.blueprints} blueprintPreflight={blueprintPreflight} blueprintPreflightError={blueprintPreflightError} isBlueprintPreflightLoading={preflightLoading} onRefreshBlueprintPreflight={checkBlueprint} isPending={connectionActions.pending?'connection':pending} onSelectAccount={id=>{setAccountDirty(false);setRepair(null);setSelectedId(id);}} promptVersions={catalog.promptVersions.filter(p=>p.account_id===account?.id)} series={catalog.series.filter(s=>s.account_id===account?.id)} seriesVersions={catalog.seriesVersions.filter(s=>s.account_id===account?.id)}
+<AccountWorkspace actions={workspaceActions} onRefresh={()=>refresh().catch(e=>setError(e instanceof Error?e.message:String(e)))} onDirtyChange={setAccountDirty} blueprintRepairContext={repair} onDismissBlueprintRepair={()=>{if(repair){setEpisodeId(repair.episodeId);setView('episodes');filter({view:'episodes'});}setRepair(null);}} onApplyEpisodeRepair={async input=>{try{await localCommand('repairConfiguration',{episodeId:input.context.episodeId,policy:input.policy,blockerCode:input.context.blocker.code,blockerDetail:input.context.blocker.detail},undefined,'episode-commands');await refresh();setRepair(null);setEpisodeId(input.context.episodeId);setView('episodes');filter({view:'episodes'});return true;}catch(e){setError(e instanceof Error?e.message:String(e));return false;}}} externalConnections={connections} connectionVersions={connectionVersions} account={account} accountEpisodeCount={catalog.accountCounts[account?.id??'']??0} accounts={catalog.accounts} blueprints={catalog.blueprints} isPending={connectionActions.pending?'connection':pending} onSelectAccount={id=>{setAccountDirty(false);setRepair(null);setSelectedId(id);}} promptVersions={catalog.promptVersions.filter(p=>p.account_id===account?.id)} series={catalog.series.filter(s=>s.account_id===account?.id)} seriesVersions={catalog.seriesVersions.filter(s=>s.account_id===account?.id)}
  onCreateConnection={async input=>{try{return (await connectionActions.command<{connection:ExternalConnection}>('create',input)).connection;}catch{return null;}}}
  onRotateConnection={async input=>{try{return (await connectionActions.command<{connection:ExternalConnection}>('rotate',input)).connection;}catch{return null;}}}
  onTestConnection={connectionId=>connectionActions.command('verify',{connectionId})}

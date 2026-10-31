@@ -137,7 +137,7 @@ export class ProductionWorkspaceCommands{
    if(p?.planning)return p;
    if(p?.context_snapshot?.workspace_preparation?.scriptRevisionId===e.main_script_revision_id){await verifyNativeFile(root,p.relative_path,p.sha256,Number(p.file_size));await verifyReportedStoryboardArtifact({assetRoot:root,relativePath:p.relative_path,frozenInputs:p.context_snapshot.input_artifacts,storyboard:p.context_snapshot.worker_result.storyboard});await c.query('SELECT local_identity.confirm_workspace_plan($1,$2,$3)',[e.id,e.main_script_revision_id,p.id]);}
    const formal=p&&(await c.query('SELECT 1 FROM local_identity.workspace_preparations WHERE package_id=$1 AND script_revision_id=$2',[p.id,e.main_script_revision_id])).rowCount;
-   if(!p||!formal&&!['storyboard_approved','production_ready','render_ready','qc_review','qc_passed'].includes(e.stage))throw new ConfigurationError(409,'请先确认脚本与分镜匹配基准。');
+   if(!p||!formal&&!['storyboard_review','storyboard_approved','production_ready','render_ready','qc_review','qc_passed'].includes(e.stage))throw new ConfigurationError(409,'请先确认脚本与分镜匹配基准。');
    if(row){
     const same=row.script_revision_id===e.main_script_revision_id&&row.storyboard_package_id===p.id;
     if(same){await syncWorkspaceShotInputs(c,row,row.bindings);return readProductionWorkspace(c,e.id,root);}
@@ -147,6 +147,7 @@ export class ProductionWorkspaceCommands{
    }else if(command==='replanWorkspace')throw new ConfigurationError(409,'原工程不存在，请先建立初稿。');
    const storyboard=JSON.parse((await verifyNativeFile(root,p.relative_path,p.sha256,Number(p.file_size))).toString('utf8'));
    if(!Array.isArray(storyboard.shots)||!storyboard.shots.length||new Set(storyboard.shots.map((s:{id:string})=>s.id)).size!==storyboard.shots.length)throw new ConfigurationError(409,'分镜基准无效。');
+   if(!formal)await c.query('SELECT local_identity.confirm_legacy_workspace_preparation($1,$2,$3)',[e.id,e.main_script_revision_id,p.id]);
    const recovery=!row?await preserveLegacyWorkspace(c,root,e.id,data.legacyDecision):null;
    const id=row?.id??randomUUID();let clips:WorkspaceClip[]=storyboard.shots.map((s:{id:string;scriptSegment:string})=>{if(typeof s.id!=='string'||typeof s.scriptSegment!=='string')throw new ConfigurationError(409,'分镜身份无效。');const clip=randomUUID();return{id:clip,itemId:`shot-${s.id}-${clip}`,shotId:s.id,text:s.scriptSegment,source:null};});
    const [width,height]=storyboard.shots[0].targetSpec==='16:9'?[1920,1080]:storyboard.shots[0].targetSpec==='1:1'?[1080,1080]:[1080,1920];
