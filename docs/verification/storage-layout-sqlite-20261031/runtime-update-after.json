@@ -1,0 +1,49 @@
+{
+  "at": "2026-10-31T01:10:55.878Z",
+  "row": {
+    "id": "80af0f97-b557-443d-852e-391307f47427",
+    "episode_id": "bbea3b57-061b-4341-9ba1-3bf65d28899f",
+    "revision": 7,
+    "native_edit_revision": 6,
+    "project_path": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/production-workspace/versions/8d7ee6b3d82b290fa8490b915f7d0132f78a4967f763407b836cd2527fb9696d.json",
+    "project_sha256": "8d7ee6b3d82b290fa8490b915f7d0132f78a4967f763407b836cd2527fb9696d",
+    "content_sha256": "57d16e124b5332474ea9ad4c6db3c2726a20070a34ea41875069cf4f3e9167ab"
+  },
+  "nativeProjects": [
+    {
+      "key": "project:loop-control-bbea3b57-061b-4341-9ba1-3bf65d28899f",
+      "sha256": "7fd418a5fec4a49b30ea9ab1a7991711668a2e9151c65d271fb47290a02cc6a9"
+    }
+  ],
+  "files": [
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/local/volume/media/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/openchatcut-work/current/project.json",
+      "sha256": "8d7ee6b3d82b290fa8490b915f7d0132f78a4967f763407b836cd2527fb9696d"
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/local/volume/media/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/openchatcut-work/current/workspace.json",
+      "sha256": "6c734584932c17d44a202546966a9b1788684d27d0ee3611488902afdbd0e837"
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/local/volume/media/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/openchatcut-work/current/generated-project.json",
+      "sha256": "8d7ee6b3d82b290fa8490b915f7d0132f78a4967f763407b836cd2527fb9696d"
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/local/volume/media/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/production-workspace/versions/8d7ee6b3d82b290fa8490b915f7d0132f78a4967f763407b836cd2527fb9696d.json",
+      "sha256": "8d7ee6b3d82b290fa8490b915f7d0132f78a4967f763407b836cd2527fb9696d"
+    }
+  ],
+  "nativeProjectsUnchanged": true,
+  "persistentJsonUnchanged": true,
+  "workspaceRecordUnchanged": true,
+  "runtimeManifestValid": true,
+  "newService": {
+    "pid": 32329,
+    "port": 5174,
+    "projectRoot": "/Users/dan/Programs/loop-control",
+    "deploymentFile": "/Users/dan/Programs/loop-control/.loop-control/local/deployment.json"
+  },
+  "workerObserved": "在线 · 空闲",
+  "existingAttention": "1 条最终渲染已阻塞；未重试、未修改该任务。",
+  "serviceHttpStatus": 200
+}

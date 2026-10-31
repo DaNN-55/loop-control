@@ -160,6 +160,28 @@ html[data-interface="impeccable"] .impeccable-app.product-ui [data-compact-workf
 .workspace-image-generation-fields>label:first-child{grid-column:1/-1}
 [data-compact-workflow] .workspace-image-generation-fields input{width:100%}
 .workspace-shot-table td:first-child button{overflow-wrap:normal;white-space:nowrap;font-size:11px;overflow:hidden;text-overflow:ellipsis}
+.workspace-table-caption h3>span{font-weight:400;margin-left:8px}
+.workspace-shot-table th:last-child{width:52px;padding-inline:8px;text-align:center}
+.workspace-shot-table .workspace-shot-table-actions-cell{padding-inline:8px;text-align:center}
+.workspace-shot-table tbody tr[draggable=true],.workspace-shot-table tbody tr[draggable=true] td:not(:last-child) button{cursor:grab}
+.workspace-shot-table tbody tr[draggable=true]:active{cursor:grabbing}
+.workspace-shot-table tbody tr:hover{background:var(--lc-surface-2,#f7f9fc)}
+.workspace-shot-table tbody tr[aria-selected=true]{background:var(--lc-accent-soft,#eaf0ff)}
+.workspace-shot-table tbody tr:focus-visible{outline:2px solid var(--lc-accent,#365fe0);outline-offset:-2px}
+.workspace-shot-table tr[data-drop=before] td{box-shadow:inset 0 2px var(--lc-accent,#365fe0)}
+.workspace-shot-table tr[data-drop=after] td{box-shadow:inset 0 -2px var(--lc-accent,#365fe0)}
+.workspace-shot-table .workspace-shot-menu-trigger{--lc-icon-control-size:30px;display:flex;align-items:center;justify-content:center;width:30px;min-width:30px;height:30px;margin-inline:auto;padding:0;text-align:center;border-radius:5px}
+.workspace-shot-table .workspace-shot-menu-trigger:hover,.workspace-shot-table .workspace-shot-menu-trigger[aria-expanded=true]{background:var(--lc-accent-soft,#eaf0ff);color:var(--lc-accent,#365fe0)}
+/* The shared dropdown color utilities use !important. Keep this override local. */
+html[data-interface="impeccable"] .workspace-shot-menu [role="menuitem"].menu-item-danger,html[data-interface="impeccable"] .workspace-shot-menu [role="menuitem"].menu-item-danger :is(span,svg){color:var(--lc-danger,#bd4147)!important}
+.workspace-shot-table tfoot .workspace-shot-insert-cell{padding:0;border:0;background:var(--lc-surface-2,#f7f9fc)}
+.workspace-shot-table .workspace-shot-add{display:flex;align-items:center;justify-content:center;width:100%;height:36px;padding:0;color:var(--lc-muted,#596b83)}
+.workspace-shot-table .workspace-shot-add:not(:disabled):is(:hover,:focus-visible,[data-hovered]){background-color:var(--lc-accent-soft,#eaf0ff)!important;color:var(--lc-accent,#365fe0)!important}
+.workspace-shot-insert-form{padding:12px 14px;border-top:1px solid var(--lc-line,#d8e1ee);background:var(--lc-surface-2,#f7f9fc)}
+.workspace-shot-insert-form label{display:block;font-size:12px;margin-bottom:6px}
+.workspace-shot-insert-form textarea{display:block;width:100%;resize:vertical;min-height:68px;padding:8px 10px;border:1px solid var(--lc-line-strong,#bdcadd);border-radius:5px;background:var(--lc-surface,#fff);color:var(--lc-ink,#17263e);font:inherit;line-height:1.5}
+.workspace-shot-insert-form>div{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
+.workspace-shot-table .workspace-shot-insert-form button{width:auto;padding:6px 10px}
 @media(max-width:900px){[data-compact-workflow] .workspace-preparation>header>div:last-child{flex-wrap:wrap;margin-left:0}}
 
 .workspace-readonly-fields{border:0;margin:0;padding:0;min-width:0}
@@ -248,6 +270,7 @@ html[data-interface="impeccable"] .impeccable-app.product-ui .lc-production-work
 html[data-interface="impeccable"] .impeccable-app.product-ui .lc-production-workspace:has([data-compact-workflow])>.local-episode-detail{display:block;flex:none;min-height:0;width:100%;max-width:none;margin:0;padding:28px 0 0}
 html[data-interface="impeccable"] .impeccable-app.product-ui .lc-production-workspace [data-compact-workflow]{display:flex;flex:none;flex-direction:column;min-height:0}
 html[data-interface="impeccable"] .impeccable-app.product-ui .lc-production-workspace [data-compact-workflow]>.production-workspace-body{display:flex;flex-direction:column;height:800px;min-height:0;max-height:none;flex:0 0 800px;overflow-anchor:none}
+@media(min-width:901px){html[data-interface="impeccable"] .impeccable-app.product-ui .lc-production-workspace [data-compact-workflow]>.production-workspace-body:has(>.workspace-preparation){height:900px;flex-basis:900px}}
 /* A single selector includes the original backup; both sources share one view action. */
 .workspace-history-toolbar{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;min-width:0}
 .workspace-history-toolbar>.dan-select-field{width:100%;min-width:0}

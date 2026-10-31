@@ -1,6 +1,7 @@
 import {useEffect,useId,useRef,useState,type ReactNode} from 'react';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {FileText} from 'lucide-react';
+import {MarkdownPreview} from '../ui/MarkdownPreview';
 import {ConfirmationModal} from '../ui/ConfirmationModal';
 import './workspace-compact-panels.css';
 
@@ -48,7 +49,7 @@ export function WorkspaceScriptPanel({episodeId,scriptRevisionId,script,stage,re
 
   <div className="workspace-script-layout">
    <div className="workspace-script-main">
-    {isEditing?<label className="workspace-script-text">主脚本<textarea ref={textInput} aria-label="主脚本" aria-required="true" aria-invalid={invalid==='script'||undefined} aria-describedby={invalid==='script'?errorId:undefined} value={text} disabled={pending||busy} onChange={event=>{setText(event.target.value);if(invalid==='script')setInvalid(null);}} placeholder="粘贴脚本，或上传 Markdown / TXT"/></label>:<div className="workspace-script-preview" role="document" aria-label="主脚本预览" tabIndex={0}>{preview||'正在读取主脚本…'}</div>}
+    {isEditing?<label className="workspace-script-text">主脚本<textarea ref={textInput} aria-label="主脚本" aria-required="true" aria-invalid={invalid==='script'||undefined} aria-describedby={invalid==='script'?errorId:undefined} value={text} disabled={pending||busy} onChange={event=>{setText(event.target.value);if(invalid==='script')setInvalid(null);}} placeholder="粘贴脚本，或上传 Markdown / TXT"/></label>:<div className="workspace-script-preview" role="document" aria-label="主脚本预览" tabIndex={0}>{preview?<MarkdownPreview content={preview}/>: '正在读取主脚本…'}</div>}
     <div className="workspace-script-statistics"><span>{(isEditing?text:preview).length.toLocaleString()} 字{isEditing&&changed?' · 有未确认修改':''}</span></div>
 
    </div>

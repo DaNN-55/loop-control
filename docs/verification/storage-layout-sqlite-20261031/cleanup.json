@@ -1,0 +1,22 @@
+{
+  "fixtureDatabase": "loop_studio_153_ba7d774315d2",
+  "databaseDropped": true,
+  "absenceVerified": true,
+  "fixtureRootRemoved": true,
+  "dailyServiceStopped": false,
+  "at": "2026-10-31T01:03:49.571Z",
+  "cleanupMethod": "Vite exited before its async SIGTERM cleanup finished; explicitly verified the recorded random DB and private tmp root, then removed only these fixture resources.",
+  "initialHarnessRetry": {
+    "database": "loop_studio_153_6dc2664a09b7",
+    "root": "/private/tmp/loop-153-ECSveb",
+    "absenceVerified": true,
+    "rootRemoved": true,
+    "ownershipEvidence": "Unique verification title, generated private tmp root, and current-task creation time matched before removal."
+  },
+  "isolatedSdkOrphanStoppedDuringAuthorizedUpdate": {
+    "pid": 30222,
+    "verifiedPort": 55984,
+    "verifiedTemporaryRoot": "/private/tmp/loop-153-I2XfTT",
+    "stopped": true
+  }
+}

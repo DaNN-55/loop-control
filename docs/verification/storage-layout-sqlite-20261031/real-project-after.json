@@ -1,0 +1,22 @@
+[
+  {
+    "path": "/Users/dan/Programs/loop-control/.loop-control/local/volume/media/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/openchatcut-work/current/project.json",
+    "size": 51849,
+    "sha256": "8d7ee6b3d82b290fa8490b915f7d0132f78a4967f763407b836cd2527fb9696d"
+  },
+  {
+    "path": "/Users/dan/Programs/loop-control/.loop-control/local/volume/media/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/openchatcut-work/current/workspace.json",
+    "size": 3738,
+    "sha256": "6c734584932c17d44a202546966a9b1788684d27d0ee3611488902afdbd0e837"
+  },
+  {
+    "path": "/Users/dan/Programs/loop-control/.loop-control/local/volume/media/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/openchatcut-work/current/generated-project.json",
+    "size": 51849,
+    "sha256": "8d7ee6b3d82b290fa8490b915f7d0132f78a4967f763407b836cd2527fb9696d"
+  },
+  {
+    "path": "/Users/dan/Programs/loop-control/.loop-control/local/volume/media/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/openchatcut-work/current/runtime/project-store-v1.sqlite3",
+    "size": 815104,
+    "sha256": "26c5a549199d4a498a2ec07c31917c29cdbf6b099236401ed6ba14768d2956d0"
+  }
+]

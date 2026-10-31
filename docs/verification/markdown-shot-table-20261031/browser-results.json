@@ -1,0 +1,25 @@
+{
+  "previewHeadingPixels": [
+    20,
+    16,
+    14
+  ],
+  "previewFontPixels": 14,
+  "previewLineHeightPixels": 21,
+  "editorLineHeight": 1.85,
+  "mobileViewport": 390,
+  "mobilePageWidth": 390,
+  "mobileTableWidth": 590,
+  "mobileTableContainerWidth": 281,
+  "insertSaved": true,
+  "deleteConfirmed": true,
+  "mouseDragFromScriptTextSaved": true,
+  "keyboardMoveSaved": true,
+  "reloadedOrder": [
+    "shot-1",
+    "shot-2"
+  ],
+  "dailySessionRestored": true,
+  "fixtureAuthenticationHost": "localhost",
+  "realEpisodeTestWrites": 0
+}

@@ -205,7 +205,10 @@ export class ProductionWorkspaceCommands{
 
    if((await c.query("SELECT 1 FROM local_identity.workspace_deliveries d JOIN public.tasks t ON t.id=d.task_id WHERE d.workspace_id=$1 AND t.status IN ('ready','running') LIMIT 1",[row.id])).rowCount)throw new ConfigurationError(409,'交付正在排队或校验，请等待结果后再编辑。');
    const editable=await assembleWorkspaceCaptions(c,root,row,migrateWorkspaceCaptionLanes(withWorkspaceShotMetadata(project,row.bindings))),paths=[...usedWorkspaceContent(editable).paths];for(const asset of editable.assets)if(!paths.includes(asset.src))try{await resolveWorkspaceSource(c,root,e.id,asset.src);paths.push(asset.src);}catch{/* Unused unavailable library media does not block editing. */}const opened=await openOpenChatCutDraftStudio(root,e.id,editable,paths,hash(JSON.stringify({id:row.id,scriptRevisionId:row.script_revision_id,storyboardPackageId:row.storyboard_package_id})),config,validate);
-   this.opened.add(e.id);const current=JSON.parse((await verifyNativeFile(root,opened.workspace.relativePath,opened.workspace.sha256,opened.workspace.fileSize)).toString('utf8')) as OpenChatCutProject;await updateWorkspaceProject(c,root,row,current,row.bindings);return{...opened,productionWorkspace:await readProductionWorkspace(c,e.id,root)};
+   this.opened.add(e.id);const current=JSON.parse((await verifyNativeFile(root,opened.workspace.relativePath,opened.workspace.sha256,opened.workspace.fileSize)).toString('utf8')) as OpenChatCutProject;
+   await updateWorkspaceProject(c,root,row,current,synchronizeWorkspaceBindings(current,row.bindings),opened.recoveredNativeEdits?'恢复原生剪辑':'更新工作版本',{nativeEdit:opened.recoveredNativeEdits===true});
+   if(opened.recoveredNativeEdits){const recoveredRow=(await c.query('SELECT * FROM local_identity.production_workspaces WHERE id=$1',[row.id])).rows[0] as ProductionWorkspaceRecord;await syncNativeWorkspaceCaptions(c,root,recoveredRow,current);}
+   return{...opened,productionWorkspace:await readProductionWorkspace(c,e.id,root)};
   }
   if(command==='closeWorkspaceStudio'){await this.closeEpisode(e.id);return readProductionWorkspace(c,e.id,root);}
   if(command==='saveWorkspaceStudio'){

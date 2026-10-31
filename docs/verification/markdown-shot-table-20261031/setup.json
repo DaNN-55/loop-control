@@ -1,0 +1,11 @@
+{
+  "origin": "http://127.0.0.1:5198",
+  "episode": "33a6f1ae-4393-4f53-b776-024ad14597a3",
+  "database": "loop_studio_153_c33fda5d1b14",
+  "initialShotIds": [
+    "shot-1",
+    "shot-2"
+  ],
+  "realBusinessDataCopied": false,
+  "providerUsed": false
+}

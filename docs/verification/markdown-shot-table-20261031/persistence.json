@@ -1,0 +1,15 @@
+{
+  "revision": 10,
+  "clips": [
+    {
+      "shotId": "shot-1",
+      "text": "第一镜"
+    },
+    {
+      "shotId": "shot-2",
+      "text": "缺少素材的第二镜。"
+    }
+  ],
+  "originalSourceUnchanged": true,
+  "storyboardHistoryUnchanged": true
+}

@@ -1,0 +1,32 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/worker/openchatcutStudio.storage.integration.test.ts (2 tests | 1 failed) 5925ms
+   ✓ reads the latest offline SQLite edit and opens the exact new LC version instead of reimporting JSON backups  3675ms
+   × recovers the latest SQLite edit for the same workspace baseline after the host exits, despite stale JSON backups 2250ms
+     → expected '生产单审核时间线' to be 'LATEST_SQLITE_RECOVERY' // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/worker/openchatcutStudio.storage.integration.test.ts > recovers the latest SQLite edit for the same workspace baseline after the host exits, despite stale JSON backups
+AssertionError: expected '生产单审核时间线' to be 'LATEST_SQLITE_RECOVERY' // Object.is equality
+
+Expected: "LATEST_SQLITE_RECOVERY"
+Received: "生产单审核时间线"
+
+ ❯ src/worker/openchatcutStudio.storage.integration.test.ts:40:93
+     38|   const reopened=await openOpenChatCutDraftStudio(root,episodeId,proje…
+     39|   const response=await fetch(new URL(`/api/project-store/entry?key=${e…
+     40|   expect(response.status).toBe(200);expect((await response.json()).val…
+       |                                                                                             ^
+     41|  }finally{await closeOpenChatCutStudio(episodeId);await rm(root,{recur…
+     42| },120000);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  08:47:18
+   Duration  6.15s (transform 66ms, setup 7ms, collect 74ms, tests 5.93s, environment 0ms, prepare 36ms)
+

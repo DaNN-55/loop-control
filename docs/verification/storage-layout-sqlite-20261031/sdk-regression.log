@@ -1,0 +1,29 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+stdout | src/worker/openchatcutStudio.validation.integration.test.ts > retains both validators while reading the identical document once during each draft open
+{"name":"draft-open-validation","sdkReads":1,"validatorCalls":2,"readDurationsMs":[138],"elapsedMs":1481}
+
+stdout | src/worker/openchatcutStudio.media-cache.integration.test.ts > keeps the real SDK waveform cache key and copied-source mtime across close/reopen when bytes match
+{"name":"studio-waveform-reopen-cache","mtimeBefore":1790812800000,"mtimeAfter":1790812800000,"cacheKeyBefore":"ebeecaf7b023c70128af.mp3.preview-v3-2106-1790812800000000.peaks.json","cacheKeyAfter":"ebeecaf7b023c70128af.mp3.preview-v3-2106-1790812800000000.peaks.json"}
+
+ ✓ src/worker/openchatcutStudio.validation.integration.test.ts (3 tests) 5958ms
+   ✓ retains both validators while reading the identical document once during each draft open  2649ms
+   ✓ still rejects a source SHA change at the second validation when SDK evidence is reused  1183ms
+   ✓ revalidates a changed native-store document instead of trusting the input fingerprint  2125ms
+ ✓ src/worker/openchatcutStudio.media-cache.integration.test.ts (4 tests) 9571ms
+   ✓ keeps the real SDK waveform cache key and copied-source mtime across close/reopen when bytes match  4003ms
+   ✓ repairs different copied bytes even when source and destination have equal size and mtime  2740ms
+   ✓ still rejects an existing symlink media copy before considering content equality  1393ms
+   ✓ still rejects an existing hardlink media copy before considering content equality  1435ms
+ ✓ src/worker/openchatcutStudio.storage.integration.test.ts (4 tests) 10589ms
+   ✓ reads the latest offline SQLite edit and opens the exact new LC version instead of reimporting JSON backups  3516ms
+   ✓ recovers the latest SQLite edit for the same workspace baseline after the host exits, despite stale JSON backups  2943ms
+   ✓ preserves both versions instead of overwriting when the native store and host changed since their shared snapshot  2156ms
+   ✓ refuses stale JSON when a migrated SQLite database is missing  1974ms
+
+ Test Files  3 passed (3)
+      Tests  11 passed (11)
+   Start at  08:56:43
+   Duration  10.81s (transform 258ms, setup 33ms, collect 415ms, tests 26.12s, environment 0ms, prepare 93ms)
+

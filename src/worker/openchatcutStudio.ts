@@ -31,6 +31,7 @@ export interface OpenChatCutStudioOpenResult {
   studioUrl?: string;
   workspace: OpenChatCutStudioSnapshot;
   replacementWarning?: OpenChatCutReplacementWarning;
+  recoveredNativeEdits?: boolean;
 }
 
 interface WorkspaceMetadata {
@@ -180,10 +181,10 @@ export async function openOpenChatCutDraftStudio(assetRoot:string,episodeId:stri
     await validateProject(current,JSON.stringify(current)===inspectedDocument?observation:undefined);
   }:undefined;
   await validateCurrent?.(project);
-  return openStudioDocument(assetRoot,episodeId,project,sourcePaths,inputFingerprint,undefined,runtimeConfig,{replaceWorkspace:true,validateProject:validateCurrent});
+  return openStudioDocument(assetRoot,episodeId,project,sourcePaths,inputFingerprint,undefined,runtimeConfig,{replaceWorkspace:true,recoverDraft:true,validateProject:validateCurrent});
 }
 
-async function openStudioDocument(assetRoot:string,episodeId:string,project:OpenChatCutProject,sourcePaths:string[],inputFingerprint:string,composition:Composition|undefined,runtimeConfig:OpenChatCutRuntimeConfig,options:{replaceWorkspace?:boolean;validateProject?:StudioProjectValidator},render?:ReviewRender):Promise<OpenChatCutStudioOpenResult>{
+async function openStudioDocument(assetRoot:string,episodeId:string,project:OpenChatCutProject,sourcePaths:string[],inputFingerprint:string,composition:Composition|undefined,runtimeConfig:OpenChatCutRuntimeConfig,options:{replaceWorkspace?:boolean;recoverDraft?:boolean;validateProject?:StudioProjectValidator},render?:ReviewRender):Promise<OpenChatCutStudioOpenResult>{
   const existing=sessions.get(episodeId),root=resolve(assetRoot),projectId=`loop-control-${episodeId}`;
   await assertStudioWorkspace(root,episodeId,projectId);
   if (existing) {
@@ -202,6 +203,20 @@ async function openStudioDocument(assetRoot:string,episodeId:string,project:Open
   const metadataPath = join(workRoot, "workspace.json");
   const storedMetadata = await readWorkspaceMetadata(metadataPath);
   const storedProject = await readStoredProject(join(dataDir, "project-store-v1.json"), projectId);
+  let recoverStored=false;
+  if(options.recoverDraft&&storedProject&&storedMetadata?.inputFingerprint===inputFingerprint){
+    // project.json is the last host snapshot, not the editable native store.
+    // A newer SQLite document must survive a host exit before "save version".
+    const hostBaseline=await readProject(join(workRoot,'project.json'));
+    if(!hostBaseline)throw Error('缺少上次工程快照，不能确认恢复基准；原生工程已保留。');
+    const nativeProject=structuredClone(storedProject);
+    rewriteSources(nativeProject,new Map(Object.entries(storedMetadata.reverseSources)));
+    const nativeChanged=projectSha256(nativeProject)!==projectSha256(hostBaseline);
+    const hostChanged=projectSha256(project)!==projectSha256(hostBaseline);
+    if(nativeChanged&&hostChanged)throw Error('原生工程和制作版本均有新修改，请先恢复原生编辑再采用新版本；两个版本均已保留。');
+    recoverStored=nativeChanged&&!hostChanged;
+    if(recoverStored)await options.validateProject?.(nativeProject);
+  }
   if (storedMetadata && storedProject && storedMetadata.inputFingerprint !== inputFingerprint && !options.replaceWorkspace) {
     const restoredProject = structuredClone(storedProject);
     rewriteSources(restoredProject, new Map(Object.entries(storedMetadata.reverseSources)));
@@ -212,7 +227,7 @@ async function openStudioDocument(assetRoot:string,episodeId:string,project:Open
   }
   const uploadDir = join(dataDir, "media", "uploads");
   await mkdir(uploadDir, { recursive: true });
-  const reverseSources = new Map<string, string>();
+  const reverseSources = new Map<string, string>(recoverStored?Object.entries(storedMetadata!.reverseSources):[]);
   sourcePaths = [...new Set(sourcePaths)];
   const copiedProject = structuredClone(project);
   for (const sourceRelativePath of sourcePaths) {
@@ -229,7 +244,7 @@ async function openStudioDocument(assetRoot:string,episodeId:string,project:Open
     reverseSources.set(`/media/uploads/${targetName}`, sourceRelativePath);
   }
   rewriteSources(copiedProject, new Map([...reverseSources].map(([remote, original]) => [original, remote])));
-  if (!storedProject || storedMetadata?.inputFingerprint !== inputFingerprint || options.replaceWorkspace) {
+  if (!storedProject || storedMetadata?.inputFingerprint !== inputFingerprint || options.replaceWorkspace&&!recoverStored) {
     const legacyStore = { version: 1, entries: { projects: [{ id: projectId, name: `生产单 ${episodeId}`, updatedAt: Date.now() }], [`project:${projectId}`]: copiedProject } };
     await writeStoredProject(dataDir, projectId, copiedProject, legacyStore);
     await writeFile(join(workRoot, "generated-project.json"), JSON.stringify(project, null, 2) + "\n");
@@ -262,7 +277,7 @@ async function openStudioDocument(assetRoot:string,episodeId:string,project:Open
     const session = { episodeId, projectId, baseUrl: `http://127.0.0.1:${port}`, dataDir, workspace, reverseSources, child, render, runtimeConfig, baseProject: project, inputFingerprint } satisfies Session;
     sessions.set(episodeId, session);
     child.once("close", () => { if (sessions.get(episodeId)?.child === child) sessions.delete(episodeId); });
-    return { studioUrl: `${session.baseUrl}/?lcBridge=1#/editor/${projectId}`, workspace };
+    return { studioUrl: `${session.baseUrl}/?lcBridge=1#/editor/${projectId}`, workspace, ...(recoverStored?{recoveredNativeEdits:true}:{}) };
   } catch (error) {
     child.kill("SIGTERM");
     if (validationError === error) throw error;
@@ -381,7 +396,11 @@ async function readWorkspaceMetadata(path: string): Promise<WorkspaceMetadata | 
 
 async function storedSqliteDatabase(dataDir:string,readOnly:boolean){
   const path=join(dataDir,'project-store-v1.sqlite3');
-  try { await lstat(path); } catch(error) { if((error as NodeJS.ErrnoException).code==='ENOENT')return null;throw error; }
+  try { await lstat(path); } catch(error) {
+    if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;
+    try { await lstat(path+'.receipt.json'); } catch(receiptError) { if((receiptError as NodeJS.ErrnoException).code==='ENOENT')return null;throw receiptError; }
+    throw Error('SQLite 工程文件缺失，请恢复数据库备份；不会读取旧 JSON 覆盖工程。');
+  }
   for(const suffix of ['', '-wal', '-shm']) {
     try { const stat=await lstat(path+suffix);if(!stat.isFile()||stat.isSymbolicLink()||stat.nlink!==1)throw Error('Studio 数据库不是安全普通文件。'); }
     catch(error) { if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error; }

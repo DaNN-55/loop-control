@@ -1,0 +1,9 @@
+{
+  "commands": [
+    "node node_modules/typescript/bin/tsc -p tsconfig.local-app.json --outDir .loop-control/verification/storage-20261031/build/local-app",
+    "node node_modules/typescript/bin/tsc -p tsconfig.worker.json --outDir .loop-control/verification/storage-20261031/build/worker"
+  ],
+  "exitCode": 0,
+  "dailyDistReplaced": false,
+  "dailyServiceReloaded": false
+}

@@ -1,0 +1,133 @@
+{
+  "label": "reopened-A",
+  "workspaceId": "7c0b80c8-482d-4997-9da1-abcc68e3be1e",
+  "revision": 5,
+  "projectSha256": "991e2a2a5fcfd8364555998d31df0ca054836782e0d8a17a747b8495dddd4af3",
+  "contentSha256": "2636e1305088d3d354a0668443e421f0d963fd8ff662e9a525ad11bd723223f7",
+  "nativeDocumentSha256": "991e2a2a5fcfd8364555998d31df0ca054836782e0d8a17a747b8495dddd4af3",
+  "timelines": [
+    {
+      "name": "整期剪辑",
+      "items": [
+        {
+          "id": "shot-shot-1-00569eb9-ce3d-4337-8d3b-d894ee5aa75e",
+          "kind": "video",
+          "startFrame": 0,
+          "durationInFrames": 60,
+          "transform": {
+            "scale": 1,
+            "x": 17,
+            "y": 0,
+            "rotation": 0
+          }
+        },
+        {
+          "id": "shot-shot-2-29ecc91d-4820-4acc-ab2d-c3fd7d4c6123",
+          "kind": "video",
+          "startFrame": 60,
+          "durationInFrames": 60,
+          "transform": {
+            "scale": 1,
+            "x": 0,
+            "y": 0,
+            "rotation": 0
+          }
+        }
+      ],
+      "captions": [
+        {
+          "id": "workspace-caption-shot-shot-1",
+          "itemId": "manual:workspace-caption-shot-shot-1",
+          "label": "字幕",
+          "slotId": "workspace-caption-shot-shot-1-slot",
+          "visible": true,
+          "anchor": "bottom-center",
+          "offsetXRatio": 0,
+          "offsetYRatio": 0.09999999999999999,
+          "widthRatio": 0.8400000000000001,
+          "heightRatio": 0.74,
+          "words": [
+            {
+              "id": "initial-shot-1~0",
+              "text": "第一镜",
+              "start": 0,
+              "end": 2000
+            }
+          ],
+          "style": {
+            "fontFamily": "sans-serif",
+            "fontWeight": 600,
+            "color": "#ffffff",
+            "fontSize": 0.02684659090909091,
+            "wholeLine": true
+          },
+          "loopControl": {
+            "version": "workspace-caption/v1",
+            "contentMode": "independent",
+            "text": "第一镜",
+            "spatial": {
+              "version": "shot-caption-space/v2",
+              "anchor": "bottom-center",
+              "safeArea": "title-safe",
+              "aspectRatio": "9:16",
+              "insets": {
+                "top": 0.08,
+                "right": 0.08,
+                "bottom": 0.18,
+                "left": 0.08
+              },
+              "maxLines": 2,
+              "maxCharactersPerLine": 16
+            }
+          }
+        },
+        {
+          "id": "workspace-caption-shot-shot-2",
+          "itemId": "manual:workspace-caption-shot-shot-2",
+          "label": "字幕",
+          "slotId": "workspace-caption-shot-shot-2-slot",
+          "visible": true,
+          "anchor": "bottom-center",
+          "offsetXRatio": 0,
+          "offsetYRatio": 0.09999999999999999,
+          "widthRatio": 0.8400000000000001,
+          "heightRatio": 0.74,
+          "words": [
+            {
+              "id": "initial-shot-2~0",
+              "text": "缺少素材的第二镜。",
+              "start": 2000,
+              "end": 4000
+            }
+          ],
+          "style": {
+            "fontFamily": "sans-serif",
+            "fontWeight": 600,
+            "color": "#ffffff",
+            "fontSize": 0.02684659090909091,
+            "wholeLine": true
+          },
+          "loopControl": {
+            "version": "workspace-caption/v1",
+            "contentMode": "independent",
+            "text": "缺少素材的第二镜。",
+            "spatial": {
+              "version": "shot-caption-space/v2",
+              "anchor": "bottom-center",
+              "safeArea": "title-safe",
+              "aspectRatio": "9:16",
+              "insets": {
+                "top": 0.08,
+                "right": 0.08,
+                "bottom": 0.18,
+                "left": 0.08
+              },
+              "maxLines": 2,
+              "maxCharactersPerLine": 16
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

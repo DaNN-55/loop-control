@@ -1,0 +1,13 @@
+{
+  "taskId": "5c7bb74d-afc0-491a-bdde-915959f7c8e0",
+  "voiceItemId": "workspace-narration-shot-shot-1",
+  "voiceTrackId": "ddf06c02-ee7a-42d6-a7b6-8f8dcfff775e",
+  "remainingVisualItemId": "shot-shot-1-31ea4423-f48c-4620-a34c-bc5ea30330c6",
+  "captionLaneId": "workspace-caption-shot-shot-1",
+  "cueText": "完整口播跟随字幕，删除首个画面也不会丢失。",
+  "cueEndMs": 2400,
+  "submissions": 1,
+  "sourceDb": -24.5,
+  "outputDb": -24.6,
+  "sha256": "edfb2bd9b616620a8b2b7fa706e12efc314eb25601dfb64ade21e3ef362f991e"
+}

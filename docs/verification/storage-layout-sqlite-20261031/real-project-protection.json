@@ -1,0 +1,5 @@
+{
+  "checkedPersistentFiles": 4,
+  "allUnchanged": true,
+  "note": "未执行任何指向真实工程的写操作；对比的是上次记录的4个持久文件，WAL/SHM的瞬时内容不在此次字节对比范围。"
+}
