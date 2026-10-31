@@ -47,7 +47,7 @@ export async function executeNativeMedia(pool:Pool,config:NativeMediaConfigurati
  };
  try{
   let output:string;
-  if(visualOutput!==undefined){if(!ports)throw new SecretStoreError('unavailable');output=await generateVisualAssets(p,visualOutput,resolve,ports.fetcher,`episodes/${p.episode.id}/native-tasks/${p.task.id}/visuals`);}
+  if(visualOutput!==undefined){if(!ports)throw new SecretStoreError('unavailable');output=await generateVisualAssets(p,visualOutput,resolve,ports.fetcher,`${p.assets.episodeRelativePath??`episodes/${p.episode.id}`}/native-tasks/${p.task.id}/visuals`);}
   else if(p.provider==='openchatcut'){
    if(!['generate_shot_sync_preview','generate_review_render','generate_final_render'].includes(p.task.type)&&p.aRoll?.adapter!=='openchatcut_card_video'&&p.media?.adapter!=='openchatcut_card_video')throw Error();
    output=await executeOpenChatCutRender({taskPackage:p,...(p.finalRender?{getApprovedReuseSource:async()=>{const result=(await pool.query('SELECT local_identity.input_final_reuse_source($1,$2,$3) result',[fence.p_task_id,fence.p_attempt,fence.p_lease_token])).rows[0]?.result;if(!result)throw Error('Final approval or lease unavailable');return result;}}:{}),validateMp4:validateMp4Artifact,inspectMp4:inspectMp4Artifact,async run(command,args){const invocation=runtimeCommandInvocation(command,args);await promisify(execFile)(invocation.command,invocation.argumentsList,{timeout:300000,maxBuffer:4*1024*1024});}});

@@ -13,23 +13,26 @@ import {verifyReportedStoryboardArtifact} from '../worker/storyboardArtifact.js'
 export interface NativeAttemptFence {p_task_id:string;p_attempt:number;p_lease_token:string}
 export async function prepareNativeAttemptOutput(taskPackage:WorkerTaskPackage,fence:NativeAttemptFence,additionalInputs:ArtifactManifest[]=[]){
  if(fence.p_task_id!==taskPackage.task.id||fence.p_attempt!==taskPackage.budget.attempt)throw Error('输出尝试与冻结任务不一致。');
+ const episodeRelativePath=taskPackage.assets.episodeRelativePath??`episodes/${taskPackage.episode.id}`;
+ const directory=join(await realpath(taskPackage.assets.allowedRoot),episodeRelativePath),details=await lstat(directory,{bigint:true}),expected=taskPackage.assets.episodeDirectoryIdentity;
+ if(!details.isDirectory()||details.isSymbolicLink()||await realpath(directory)!==directory||expected?.deviceId!=null&&(String(details.dev)!==expected.deviceId||String(details.ino)!==expected.inodeId))throw Error('生产单目录身份已变化，请恢复原位置后重试。');
  const identity=createHash('sha256').update(JSON.stringify(fence)).digest('hex');
- const marker=await safeAssetOutputPath(taskPackage.assets.allowedRoot,`.native-worker-attempts/${identity}/identity.json`);
+ const marker=await safeAssetOutputPath(taskPackage.assets.allowedRoot,`${episodeRelativePath}/.native-worker-attempts/${identity}/identity.json`);
  const stagingRoot=dirname(marker);
  await writeFile(marker,JSON.stringify({taskId:taskPackage.task.id,attempt:fence.p_attempt})+'\n',{flag:'wx',mode:0o600});
  const staged={...taskPackage,assets:{...taskPackage.assets,allowedRoot:stagingRoot}};
  const inputs=[...taskPackage.assets.inputs,...additionalInputs];
- await verifyArtifactIndex({assetRoot:taskPackage.assets.allowedRoot,episodeId:taskPackage.episode.id,artifacts:inputs});
+ await verifyArtifactIndex({assetRoot:taskPackage.assets.allowedRoot,episodeId:taskPackage.episode.id,episodeRelativePath,artifacts:inputs});
  for(const input of new Map(inputs.map(input=>[input.relativePath,input])).values()){
   const destination=await safeAssetOutputPath(stagingRoot,input.relativePath);
   await copyFile(join(taskPackage.assets.allowedRoot,input.relativePath),destination,constants.COPYFILE_FICLONE|constants.COPYFILE_EXCL);
  }
- await verifyArtifactIndex({assetRoot:stagingRoot,episodeId:taskPackage.episode.id,artifacts:inputs});
+ await verifyArtifactIndex({assetRoot:stagingRoot,episodeId:taskPackage.episode.id,episodeRelativePath,artifacts:inputs});
  // Normal planners may use an exclusive direct write rather than mkdir.
  // Prepare only the frozen parent path; the executor must create the file.
  await safeAssetOutputPath(stagingRoot,taskPackage.output.relativePath);
  async function verify(artifacts:ArtifactManifest[],storyboard?:WorkerResult['storyboard']){
-  await verifyArtifactIndex({assetRoot:stagingRoot,episodeId:taskPackage.episode.id,artifacts});
+  await verifyArtifactIndex({assetRoot:stagingRoot,episodeId:taskPackage.episode.id,episodeRelativePath,artifacts});
   if(storyboard)await verifyReportedStoryboardArtifact({assetRoot:stagingRoot,frozenInputs:taskPackage.assets.inputs,relativePath:taskPackage.output.relativePath,storyboard});
  }
  let uncertain=false;
@@ -51,7 +54,7 @@ export async function prepareNativeAttemptOutput(taskPackage:WorkerTaskPackage,f
    // These two existing executor outputs are physical diagnostics rather than
    // indexed artifacts. Preserve their established paths under the same fence.
    const auxiliary:string[]=[];
-   if(taskPackage.provider==='openchatcut'&&(taskPackage.aRoll?.adapter==='openchatcut_card_video'||taskPackage.media?.adapter==='openchatcut_card_video'))auxiliary.push(`episodes/${taskPackage.episode.id}/card-video/${taskPackage.task.id}/project.json`);
+   if(taskPackage.provider==='openchatcut'&&(taskPackage.aRoll?.adapter==='openchatcut_card_video'||taskPackage.media?.adapter==='openchatcut_card_video'))auxiliary.push(`${episodeRelativePath}/card-video/${taskPackage.task.id}/project.json`);
    if(taskPackage.finalRender)auxiliary.push(`${dirname(taskPackage.finalRender.projectRelativePath)}/openchatcut-runtime.json`);
    for(const path of auxiliary)if(!artifacts.has(path)){
     const bytes=await readFile(await safeAssetOutputPath(stagingRoot,path));
@@ -154,7 +157,9 @@ export async function recoverNativeAttemptOutput(pool:Pick<Pool,'connect'>,paths
  const fence=receipt.fence;
  if(receipt.version!==1||!fence||!Number.isSafeInteger(fence.p_attempt)||fence.p_attempt<0||receipt.result?.taskId!==fence.p_task_id||receipt.result.status!=='completed'||receipt.taskPackage.task.id!==fence.p_task_id||receipt.taskPackage.budget.attempt!==fence.p_attempt||await realpath(receipt.assetRoot)!==await realpath(paths.assetRoot))throw Error('私有发布凭据格式或资产目录不一致。');
  const identity=createHash('sha256').update(JSON.stringify(fence)).digest('hex');
- if(await realpath(paths.stagingRoot)!==join(await realpath(paths.assetRoot),'.native-worker-attempts',identity))throw Error('发布恢复目录不属于此任务尝试。');
+ const episodeRelativePath=receipt.taskPackage.assets.episodeRelativePath??`episodes/${receipt.taskPackage.episode.id}`;
+ const parents=[join(await realpath(paths.assetRoot),episodeRelativePath,'.native-worker-attempts',identity),...(!receipt.taskPackage.assets.episodeRelativePath?[join(await realpath(paths.assetRoot),'.native-worker-attempts',identity)]:[])];
+ if(!parents.includes(await realpath(paths.stagingRoot)))throw Error('发布恢复目录不属于此任务尝试。');
  const client=await pool.connect(),backupRoot=join(paths.stagingRoot,'.publication-backups');
  const files:PreparedPublication[]=[];
  let commitSent=false,modified=false,unknown=false;

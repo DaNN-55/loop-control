@@ -222,6 +222,8 @@ function createTaskPackage(task: ClaimedWorkerTask): WorkerTaskPackage {
     finalRender: finalRender(snapshot),
     allowedTools: stringArray(snapshot.allowed_tools, "任务允许工具清单格式无效。"),
     allowedAssetRoot: task.allowedAssetRoot,
+    ...(snapshot.native_episode_relative_path!==undefined?{episodeRelativePath:requiredString(snapshot.native_episode_relative_path,"冻结生产单目录无效。")} : {}),
+    ...(snapshot.native_episode_directory_identity!==undefined?{episodeDirectoryIdentity:snapshot.native_episode_directory_identity as WorkerTaskPackageInput['episodeDirectoryIdentity']}:{}),
     output,
     inputArtifacts: inputArtifacts(snapshot),
   });
