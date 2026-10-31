@@ -1,4 +1,4 @@
-# #178 T11：真实备份与异地恢复（执行中）
+# #178 T11：真实备份与异地恢复（实施完成，待独立合并验收）
 
 目标：沿现有 storage backup/restore 与登记位置链路，保存完整数据库和生产文件；恢复后全局根、账号、容器、生产单身份及部署配置一致，历史来源不改写。
 
@@ -6,9 +6,11 @@
 - [x] 256 KiB 文件 I/O、空目录清单、占用/递归保护、引用完整性及明确失败回执。
 - [x] 全局/账号/容器/Episode 身份重绑、原根离线的完成回执重放、实际部署新进程与缓存授权。
 - [x] 新旧、多账号/series/unassigned、原根离线、实际 SDK save-close-reopen-export；两个 headed+WebGPU 正式页面彩色播放，Finder 三层 exact target 已打开并关闭。
-- [ ] 等待最终 SQL115 集成后同步，实证删除 intent 活动/历史语义；最终复验、交接及 clean 提交。
+- [x] 已同步真实 SQL115，prepared/committed 两个真实删除中断均阻止备份，完成及回滚历史原行异地恢复不变。
+- [x] 最终存储／强停发布／115／旧存储五文件 20 项通过、零跳过；实际 dump、SQLite 完整依赖及 Owner 导出 SHA 留档并独立读回。
+- [ ] 最终文档同步、clean 提交与独立 merger 交接。
 
-已读结果：存储整组 3 files/12 tests、既有创建/系列/媒体根 14 tests、runtime/reader/reference/adapter 18 tests 均通过且整组零跳过；额外真实旧 schema 升级前备份/恢复 forward 与完成容器重放亦通过。SQL115 尚未进入本分支，不能将兼容 guard 的静态存在写成其已验收。证据与契约位于 `/private/tmp/loop-control-178-20261031/T11-CONTRACT.md` 及 T11 日志。
+已读结果：最终五文件 20 项真实测试通过，零跳过（339.75 秒）；runtime/reader/reference/窄 adapter 18 项通过；T03 五项含旧 initialize v1 两种中断恢复通过。此前既有创建/系列/媒体根 14 项契约通过。源同字节换 inode、未知目标、unknown config、文件及历史篡改拒绝、四个真实 SIGKILL 发布点已逐条留 red/green。两套实际归档、完整 closed native work、导出文件及 SQLite 原生编辑均已独立核验，见外部 `T11/final-evidence/verified-evidence.json`；精确交接见 `/private/tmp/loop-control-178-20261031/T11/HANDOFF.md`。
 
 隔离：仅 pinned #178 test container、随机 loop_t24_restore_<12hex> DB 和本票根；baseline109 不升级；不开自动备份、不使用日常服务或付费 Provider。
 
