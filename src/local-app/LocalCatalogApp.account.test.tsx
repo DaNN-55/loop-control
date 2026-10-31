@@ -12,6 +12,7 @@ it('the blueprint page offers creative configuration without review switches or 
  vi.stubGlobal('crypto',webcrypto);
  const fetcher=vi.fn(async(path:string,_init?:RequestInit)=>{
   if(path.endsWith('/session'))return Response.json({csrfToken:'blueprint-session'});
+  if(path.endsWith('/account-commands'))return Response.json({assetRoot:null,legacyRoots:[],status:'unset'});
   if(path.includes('/catalog?'))return Response.json(catalog());
   return Response.json({connections:[],versions:[],capabilities:{externalReady:false}});
  });vi.stubGlobal('fetch',fetcher);

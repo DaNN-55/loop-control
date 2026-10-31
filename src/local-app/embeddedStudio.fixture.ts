@@ -22,7 +22,7 @@ export async function embeddedStudioFixture(options:{testRootParent?:string;orig
   const mod=options.testContextModule??process.env.LOOP_TEST_CONTEXT_MODULE??join(process.cwd(),'scripts/runtime/environment.mjs');const {runtimeContext}=await import(mod);const context=runtimeContext();context.assertDatabase();
   const database='loop_studio_153_'+randomBytes(6).toString('hex');context.sql('CREATE DATABASE '+database+' TEMPLATE template0','postgres');
   try{
-  await copyFixtureSchema(context,database,options.migrations??[]);
+  await copyFixtureSchema(context,database,[...new Set([...(options.migrations??[]),'db/local/105-account-asset-directories.sql'])].sort());
   }catch(error){context.sql('DROP DATABASE '+database+' WITH (FORCE)','postgres');throw error;}
   const bridge=spawn('docker',['exec','-i',context.container,'perl','-MIO::Socket::UNIX','-MIO::Select','-MSocket=SOCK_STREAM','-e',"my $s=IO::Socket::UNIX->new(Type=>SOCK_STREAM,Peer=>'/var/run/postgresql/.s.PGSQL.5432') or die;my $sel=IO::Select->new(\\*STDIN,$s);while(1){for my $f($sel->can_read){my $n=sysread($f,my $b,65536);exit unless $n;my $o=fileno($f)==0?$s:\\*STDOUT;while(length $b){my $w=syswrite($o,$b);die unless $w;substr($b,0,$w,'');}}}"],{env:context.env,stdio:['pipe','pipe','pipe']});
   const stream=Duplex.from({readable:bridge.stdout!,writable:bridge.stdin!});
@@ -71,6 +71,7 @@ export async function embeddedStudioFixture(options:{testRootParent?:string;orig
     await c.query('COMMIT');
     server.listen(0,'127.0.0.1');await once(server,'listening');started=true;const origin=options.origin??`http://127.0.0.1:${(server.address() as {port:number}).port}`;
     handler=createLocalHandler({pool,origin,mediaRoot:root,episodes:commands});
+    const directory=await fetch(origin+'/api/local/account-commands',{method:'POST',headers:{Origin:origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+token,'X-CSRF-Token':csrfFor(token)},body:JSON.stringify({command:'setAssetDirectory',idempotencyKey:randomUUID(),data:{accountId:account,path:assetRoot}})});if(directory.status!==200)throw Error('Fixture account directory: '+JSON.stringify(await directory.json()));
     const request=async(command:string,data:Record<string,unknown>={},options:{token?:string;csrf?:boolean;origin?:string}={})=>{const session=options.token??token;const response=await fetch(origin+'/api/local/episode-commands',{method:'POST',headers:{Origin:options.origin??origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+session,...(options.csrf===false?{}:{'X-CSRF-Token':csrfFor(session)})},body:JSON.stringify({command,idempotencyKey:randomUUID(),data:{episodeId:episode,...data}})});return{status:response.status,body:await response.json()};};
     return{workerPool,root,assetRoot,database,episode,owner,email,password,token,otherToken,pool,c,origin,boardPath,board,task,videoPath,files,runtime,request,handler,restart:async()=>{await commands.close();commands=createCommands();handler=createLocalHandler({pool,origin,mediaRoot:root,episodes:commands});},closeStudio:()=>commands.closeStudio(episode),close};
   }catch(error){await close();throw error;}

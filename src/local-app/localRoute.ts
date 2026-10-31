@@ -1,6 +1,6 @@
 import {readProductionWorkspace,readWorkspaceVersion} from './productionWorkspaceCommands.js';
 import {readLegacyStudioProject} from './legacyStudioProject.js';
-import {resolveLocalAssetRoot} from './mediaDeployment.js';
+import {resolveEpisodeAssetRoot} from './accountAssetRoots.js';
 import{ownerTransaction}from'./ownerTransaction.js';
 import {readWorkspaceSearch} from './workspaceSearch.js';
 import {readOwnerPreferences,saveOwnerPreferences,readOwnerNotificationEvents} from './ownerPreferences.js';
@@ -168,7 +168,7 @@ export function createLocalHandler(options:LocalOptions){
     const value=await ownerTransaction(options.pool,session.id,true,async c=>{
      const e=(await c.query("SELECT e.id,b.policy FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE e.id=$1 AND m.user_id=$2 AND m.role='owner'",[legacyProject[1],session.id])).rows[0];
      if(!e)throw new ConfigurationError(404,'生产单不可见。');
-     return readLegacyStudioProject(await resolveLocalAssetRoot(c,options.mediaRoot,e.policy.asset_root),e.id);
+     return readLegacyStudioProject(await resolveEpisodeAssetRoot(c,options.mediaRoot,e.id),e.id);
     });
     if(download){if(!value||download!==value.sha256)throw new ConfigurationError(409,'已有工程已变化，请重新读取后下载。');response.writeHead(200,{'Content-Type':'application/json; charset=utf-8','Content-Disposition':`attachment; filename="${legacyProject[1]}-saved-project.json"`});response.end(value.document);}
     else send(200,value?{project:value.project,sha256:value.sha256}:{project:null});
@@ -177,7 +177,7 @@ export function createLocalHandler(options:LocalOptions){
    const workspace=url.pathname.match(/^\/api\/local\/episodes\/([^/]+)\/workspace(?:\/project)?$/);
    if(workspace&&uuid.test(workspace[1])&&request.method==='GET'){
     if(url.pathname.endsWith('/project')&&(!/^[a-f0-9]{64}$/.test(url.searchParams.get('sha')??'')||url.searchParams.getAll('sha').length!==1))throw new ConfigurationError(400,'工程版本指纹无效。');
-    const value=await ownerTransaction(options.pool,session.id,true,async c=>{const e=(await c.query('SELECT e.id,b.policy FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE e.id=$1 AND m.user_id=$2 AND m.role=\'owner\'',[workspace[1],session.id])).rows[0];if(!e)throw new ConfigurationError(404,'生产单不可见。');const root=await resolveLocalAssetRoot(c,options.mediaRoot,e.policy.asset_root);return url.pathname.endsWith('/project')?readWorkspaceVersion(c,root,e.id,url.searchParams.get('sha')??''):readProductionWorkspace(c,e.id,root);});send(200,url.pathname.endsWith('/project')?{project:value}:{workspace:value});return;
+    const value=await ownerTransaction(options.pool,session.id,true,async c=>{const e=(await c.query('SELECT e.id,b.policy FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE e.id=$1 AND m.user_id=$2 AND m.role=\'owner\'',[workspace[1],session.id])).rows[0];if(!e)throw new ConfigurationError(404,'生产单不可见。');const root=await resolveEpisodeAssetRoot(c,options.mediaRoot,e.id);return url.pathname.endsWith('/project')?readWorkspaceVersion(c,root,e.id,url.searchParams.get('sha')??''):readProductionWorkspace(c,e.id,root);});send(200,url.pathname.endsWith('/project')?{project:value}:{workspace:value});return;
    }
    const episode=url.pathname.match(/^\/api\/local\/episodes\/([^/]+)$/);
    if(episode&&uuid.test(episode[1])){

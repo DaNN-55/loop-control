@@ -1,3 +1,4 @@
+import {resolveEpisodeAssetRoot} from './accountAssetRoots.js';
 import{createHash}from'node:crypto';
 import{join}from'node:path';
 import type{Pool,PoolClient}from'pg';
@@ -19,7 +20,7 @@ export class LocalEpisodeLifecycle{
  private async episode(c:PoolClient,id:unknown,cleanup=false){
   if(typeof id!=='string'||!uuid.test(id))throw new ConfigurationError(400,'生产单标识无效。');
   if(!(await c.query(cleanup?'SELECT local_identity.lock_owned_episode_cleanup($1) owned':'SELECT local_identity.lock_owned_input_episode($1) owned',[id])).rows[0]?.owned)throw new ConfigurationError(404,'本地生产单不可见。');
-  const e=(await c.query('SELECT e.*,b.policy FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE e.id=$1',[id])).rows[0];const root=await resolveLocalAssetRoot(c,this.mediaRoot,e.policy.asset_root);return{e,root};
+  const e=(await c.query('SELECT e.*,b.policy FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE e.id=$1',[id])).rows[0];const root=await resolveEpisodeAssetRoot(c,this.mediaRoot,e.id);return{e,root};
  }
  private async plan(c:PoolClient,id:unknown){
   const{e,root}=await this.episode(c,id,true);let targets:EpisodeDeletionTarget[];
@@ -30,7 +31,7 @@ export class LocalEpisodeLifecycle{
 
  private async historyPlan(c:PoolClient,id:unknown,session:OwnerSession){
   const inventory=await historyDeleteInventory(c,id,session),aliases=await readMediaDeployment(c,this.mediaRoot);
-  const root=inventory.live?await resolveLocalAssetRoot(c,this.mediaRoot,inventory.live.policy.asset_root):this.mediaRoot;
+  const root=inventory.live?await resolveEpisodeAssetRoot(c,this.mediaRoot,inventory.episodeId):this.mediaRoot;
   const targets=inventory.live?await episodeDeletionTargets(this.mediaRoot,root,inventory.episodeId,aliases):[];
   const paths=targets.map(t=>t.path);await assertHistoryMediaUnshared(c,paths,inventory.episodeId);
   // Deployment source roots are aliases; only current media and confirmed live copies are scan roots.

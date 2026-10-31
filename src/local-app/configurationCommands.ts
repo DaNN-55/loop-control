@@ -1,3 +1,4 @@
+import {setAccountAssetDirectory} from './accountAssetRoots.js';
 import {createHash} from 'node:crypto';
 import {relative,isAbsolute,resolve} from 'node:path';
 import {realpath} from 'node:fs/promises';
@@ -72,7 +73,7 @@ export async function executeConfiguration(pool:Pool,session:OwnerSession,body:R
    if(!selected.rowCount)throw new ConfigurationError(404,'蓝图不可见。');const refs=validateConfigurationPolicy(selected.rows[0].policy,!!checkExternalReferences);if(refs.length)await checkExternalReferences!(client,refs);
   }
   // Capture exact roots before their blueprints are deleted; filesystem writes wait for COMMIT.
-  const accountAssetRoots=command==='deleteAccount'?(await client.query("SELECT policy->>'asset_root' asset_root FROM public.account_blueprint_versions WHERE account_id=$1",[data.accountId])).rows.map(row=>row.asset_root):[];
+  const accountAssetRoots=command==='deleteAccount'?(await client.query("SELECT policy->>'asset_root' asset_root FROM public.account_blueprint_versions WHERE account_id=$1 UNION SELECT actual_root FROM local_identity.account_asset_directories WHERE account_id=$1 UNION SELECT asset_root FROM local_identity.episode_asset_locations WHERE account_id=$1",[data.accountId])).rows.map(row=>row.asset_root):[];
   if(data.policy){
    const refs=validateConfigurationPolicy(data.policy,!!checkExternalReferences);if(refs.length)await checkExternalReferences!(client,refs);
    externalPolicy=refs.length>0;
@@ -88,6 +89,7 @@ export async function executeConfiguration(pool:Pool,session:OwnerSession,body:R
   const attachAfterCreation=command==='createAccount'&&externalPolicy;
   const {rows:[row]}=await client.query(definition.sql,definition.fields.map(f=>attachAfterCreation&&f==='policy'?{}:data[f]));
   if(attachAfterCreation)await client.query('SELECT public.update_current_blueprint($1,$2)',[row.result.id,data.policy]);
+  if(command==='createAccount'&&data.assetRoot!==undefined&&data.assetRoot!=='')await setAccountAssetDirectory(client,mediaRoot,row.result.id,data.assetRoot);
   let value=row.result;
   if(command==='deleteAccount'){
    const candidates=await planEmptyAccountDirectories(mediaRoot,accountAssetRoots,accountAssetRoots.some(root=>typeof root==='string'&&root)?await readMediaDeployment(client,mediaRoot):[]),emptyAccountDirectories:EmptyAccountDirectory[]=[];

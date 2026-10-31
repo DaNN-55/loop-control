@@ -1,3 +1,4 @@
+import {resolveEpisodeAssetRoot} from './accountAssetRoots.js';
 import type {PoolClient} from 'pg';
 import {createHash} from 'node:crypto';
 import {basename,join} from 'node:path';
@@ -17,7 +18,7 @@ export class ScriptProductionStore {
  async read(c:PoolClient,episodeId:string){
   const e=(await c.query("SELECT e.*,b.policy FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id JOIN public.account_memberships m ON m.account_id=e.account_id AND m.user_id=local_identity.owner_id() AND m.role='owner' WHERE e.id=$1",[episodeId])).rows[0] as ScriptEpisode|undefined;
   if(!e)throw new ConfigurationError(404,'本地生产单不可见。');
-  const root=await resolveLocalAssetRoot(c,this.mediaRoot,e.policy.asset_root),result=await this.inspect(c,e,root);
+  const root=await resolveEpisodeAssetRoot(c,this.mediaRoot,e.id),result=await this.inspect(c,e,root);
   return{v2:!!result.plan,inspection:result.plan,plan:result.record?.plan??result.plan,enabled:result.record?.enabled??false,authorizationHash:result.record?.authorization_hash,status:result.record?.last_status??'请核对素材与设置后保存制作计划'};
  }
  async alias(c:PoolClient,ownerId:string,materialId:string,name:string){
@@ -31,7 +32,7 @@ export class ScriptProductionStore {
   if(!parseProductionScript(text))return{plan:null,record:null,script:null};
   const rules=e.series_version_id?(await c.query('SELECT rules,series_id FROM public.series_versions WHERE id=$1 AND account_id=$2',[e.series_version_id,e.account_id])).rows[0]:null;
   const defaults=validateProductionDefaults(rules?.rules?.production_defaults??{});
-  const raw=(await c.query(`SELECT m.*,sv.series_id,b.policy->>'asset_root' asset_root,n.name reference_name
+  const raw=(await c.query(`SELECT m.*,sv.series_id,local_identity.episode_asset_root(e.id) asset_root,n.name reference_name
    FROM public.production_material_revisions m JOIN public.episodes e ON e.id=m.episode_id
    JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id
    LEFT JOIN public.series_versions sv ON sv.id=e.series_version_id

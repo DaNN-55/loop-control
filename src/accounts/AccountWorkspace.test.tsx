@@ -137,7 +137,7 @@ describe("账号配置工作区", () => {
   it("资产目录紧随定位，分镜并入能力表且不再显示审核设置", () => {
     renderWorkspace();
     const groups = screen.getAllByRole("group").filter(group => group.tagName === "FIELDSET");
-    expect(groups.map(group => group.querySelector("legend")?.textContent)).toEqual(["账号定位", "资产目录", "生产能力"]);
+    expect(groups.map(group => group.querySelector("legend")?.textContent)).toEqual(["账号专属目录", "账号定位", "资产目录", "生产能力"]);
     const matrix = screen.getByRole("table", { name: "生产能力配置矩阵" });
     const storyboard = within(matrix).getByRole("checkbox", { name: "分镜规划已启用" }) as HTMLInputElement;
     expect(storyboard.checked).toBe(true);

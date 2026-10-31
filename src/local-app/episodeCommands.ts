@@ -1,3 +1,4 @@
+import {requireAccountAssetRoot,resolveEpisodeAssetRoot} from './accountAssetRoots.js';
 import {productionWorkspaceFields} from '../productionWorkspace.js';
 import {ProductionWorkspaceCommands} from './productionWorkspaceCommands.js';
 import {reconfirmScript} from './scriptRevisionCommands.js';
@@ -51,7 +52,7 @@ export class LocalEpisodeCommands {
    const m=(await c.query('SELECT m.*,b.policy FROM public.production_material_revisions m JOIN public.episodes e ON e.id=m.episode_id JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE m.id=$1 AND m.episode_id=$2',[p.script_revision_id,scope.episode_id])).rows[0];
    if(!m||m.sha256!==p.script_sha256)throw new ConfigurationError(409,'主脚本版本已变化。');
    if(p.plan.executionFingerprint!==productionHash(m.policy))throw new ConfigurationError(409,'执行配置已变化，请暂停后重新确认制作计划。');
-   await verifyNativeFile(await resolveLocalAssetRoot(c,this.mediaRoot,m.policy.asset_root),m.storage_path,m.sha256,Number(m.file_size));
+   await verifyNativeFile(await resolveEpisodeAssetRoot(c,this.mediaRoot,scope.episode_id),m.storage_path,m.sha256,Number(m.file_size));
    const receipt=(await c.query('SELECT 1 FROM local_identity.command_receipts WHERE owner_id=$1 AND idempotency_key=$2',[scope.owner_id,body.idempotencyKey])).rowCount;
    if(!receipt){
     const state=await readContinuationSnapshot(c,scope),decision=state?nextScriptProductionAction(state):null;
@@ -93,9 +94,10 @@ export class LocalEpisodeCommands {
     if(!(await c.query('SELECT local_identity.lock_owned_account_row($1) owned',[data.accountId])).rows[0].owned)throw new ConfigurationError(404,'账号不可见。');
     const a=(await c.query('SELECT a.*,b.policy FROM public.accounts a JOIN public.account_memberships m ON m.account_id=a.id JOIN public.account_blueprint_versions b ON b.id=a.current_blueprint_version_id WHERE a.id=$1 AND m.user_id=$2 AND m.role=\'owner\' AND a.archived_at IS NULL',[data.accountId,session.id])).rows[0];
     if(!a)throw new ConfigurationError(404,'账号不可见。');if(typeof data.title!=='string'||data.title.length>200)throw new ConfigurationError(400,'标题无效。');
-    await this.preflight(c,a.id,a.policy,false,'input');
+    const accountRoot=await requireAccountAssetRoot(c,this.mediaRoot,a.id);
+    await this.preflight(c,a.id,{...a.policy,asset_root:accountRoot},false,'input');
     value=(await c.query('SELECT to_jsonb(public.create_episode($1,$2,$3,$4,$5)) result',[a.id,a.current_blueprint_version_id,data.seriesVersionId??null,data.title.trim(),data.isTest===true])).rows[0].result;
-    await ensureInputDirectories(await resolveLocalAssetRoot(c,this.mediaRoot,a.policy.asset_root),value.id);
+    await ensureInputDirectories(accountRoot,value.id);
     await c.query('INSERT INTO local_identity.input_episodes(episode_id,owner_id) VALUES($1,$2)',[value.id,session.id]);
    }else{
     // Older owned orders predate native execution registration. Enrol only at
@@ -108,8 +110,9 @@ export class LocalEpisodeCommands {
     }
     if(!(await c.query('SELECT local_identity.lock_owned_input_episode($1) owned',[data.episodeId])).rows[0].owned)throw new ConfigurationError(404,'本地生产单不可见。');
     const e=(await c.query('SELECT e.*,b.policy,i.storyboard_enabled,i.script_template_version FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id JOIN local_identity.input_episodes i ON i.episode_id=e.id WHERE e.id=$1 AND m.user_id=$2 AND m.role=\'owner\' AND i.owner_id=$2',[data.episodeId,session.id])).rows[0];
-    if(!e)throw new ConfigurationError(404,'本地生产单不可见。');const root=await resolveLocalAssetRoot(c,this.mediaRoot,e.policy.asset_root);
-    const inputPolicy=e.script_template_version===2?{...e.policy,static_visual:{execution_path:'manual'},soundtrack:{execution_path:'manual'}}:e.policy;
+    if(!e)throw new ConfigurationError(404,'本地生产单不可见。');const root=await resolveEpisodeAssetRoot(c,this.mediaRoot,e.id);
+    if(body.command!=='openDirectory')await requireAccountAssetRoot(c,this.mediaRoot,e.account_id);
+    const inputPolicy=e.script_template_version===2?{...e.policy,asset_root:root,static_visual:{execution_path:'manual'},soundtrack:{execution_path:'manual'}}:{...e.policy,asset_root:root};
     if(['reconfirmScript','requestStructureRevision'].includes(String(body.command))&&this.workspace.isOpen(e.id))throw new ConfigurationError(409,'请先保存并返回，再修订脚本或分镜。');
     if(['review','approveQc','retryFinalRender','preparePublishPackage','renderScriptReview','generateReviewVideo','submitStudioRevision','planStoryboard','confirmSyncPreview'].includes(String(body.command))&&(await c.query('SELECT 1 FROM local_identity.production_workspaces WHERE episode_id=$1',[e.id])).rowCount)throw new ConfigurationError(409,'此生产单使用四步制作，请在当前工程检查与交付。');
     if(Object.hasOwn(productionWorkspaceFields,String(body.command))){value=await this.workspace.execute(c,e,root,this.runtime,String(body.command),data);
@@ -156,7 +159,7 @@ export class LocalEpisodeCommands {
      }else{
       if(typeof data.blockerCode!=='string'||!data.blockerCode||data.blockerCode.length>200||typeof data.blockerDetail!=='string'||data.blockerDetail.length>4000)throw new ConfigurationError(400,'配置修复依据无效。');
       if(body.command==='repairConnection'){if(typeof data.versionId!=='string'||!uuid.test(data.versionId))throw new ConfigurationError(400,'连接版本无效。');await this.runtime.checkReferences(c,[data.versionId]);value=(await c.query('SELECT public.apply_external_connection_repair($1,$2,$3,$4) result',[e.id,data.versionId,data.blockerCode,data.blockerDetail])).rows[0].result;}
-      else{if(!data.policy||typeof data.policy!=='object'||Array.isArray(data.policy))throw new ConfigurationError(400,'配置修复内容无效。');await this.preflight(c,e.account_id,data.policy as Record<string,unknown>,true);await c.query('SELECT public.record_episode_worker_preflight($1,$2)',[e.id,session.id]);value=(await c.query('SELECT public.apply_episode_configuration_repair_v2($1,$2,$3,$4) result',[e.id,JSON.stringify(data.policy),data.blockerCode,data.blockerDetail])).rows[0].result;}
+      else{if(!data.policy||typeof data.policy!=='object'||Array.isArray(data.policy))throw new ConfigurationError(400,'配置修复内容无效。');await this.preflight(c,e.account_id,{...data.policy as Record<string,unknown>,asset_root:root},true);await c.query('SELECT public.record_episode_worker_preflight($1,$2)',[e.id,session.id]);value=(await c.query('SELECT public.apply_episode_configuration_repair_v2($1,$2,$3,$4) result',[e.id,JSON.stringify(data.policy),data.blockerCode,data.blockerDetail])).rows[0].result;}
      }
     }else if(body.command==='reconfirmScript'){
      value=await reconfirmScript(c,root,e,data);
