@@ -22,3 +22,5 @@
 
 - [ADR-0016：正式准备谱系](0016-formal-preparation-lineage.md)
 - [ADR-0017：旧HTML工程接入可编辑工作区](0017-legacy-html-editable-workspace.md)
+
+- [ADR-0018：制作按次选择与账号目录归属](0018-per-request-production-and-account-storage.md)
