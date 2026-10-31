@@ -6,7 +6,7 @@ import type {Pool,PoolClient} from 'pg';
 import {ownerTransaction} from './ownerTransaction.js';
 import {tokenHash,type OwnerSession} from './sessions.js';
 import {readMediaDeployment} from './mediaDeployment.js';
-import {planEmptyAccountDirectories,cleanupEmptyAccountDirectories,type EmptyAccountDirectory} from './accountDirectoryCleanup.js';
+import {planEmptyAccountDirectories,planRegisteredEmptyAccountDirectories,cleanupEmptyAccountDirectories,type EmptyAccountDirectory} from './accountDirectoryCleanup.js';
 import type {WorkerPreflightResult} from '../worker/contracts.js';
 export class ConfigurationError extends Error {constructor(public status:number,message:string,public preflight?:WorkerPreflightResult){super(message);}}
 export function validateConfigurationPolicy(value:unknown,allowExternal=false):string[]{
@@ -77,7 +77,10 @@ export async function executeConfiguration(pool:Pool,session:OwnerSession,body:R
    if(command==='updateBlueprint'&&body.expectedRevision!==account.rows[0].revision)throw new ConfigurationError(409,'蓝图已变化，请刷新后重试。');
   }
   // Capture exact roots before their blueprints are deleted; filesystem writes wait for COMMIT.
-  const accountAssetRoots=command==='deleteAccount'?(await client.query("SELECT policy->>'asset_root' asset_root FROM public.account_blueprint_versions WHERE account_id=$1 UNION SELECT actual_root FROM local_identity.account_asset_directories WHERE account_id=$1 UNION SELECT asset_root FROM local_identity.episode_asset_locations WHERE account_id=$1",[data.accountId])).rows.map(row=>row.asset_root):[];
+  if(command==='deleteAccount'&&(await client.query("SELECT 1 FROM local_identity.container_creation_intents WHERE account_id=$1 AND result IS NULL UNION ALL SELECT 1 FROM local_identity.account_creation_intents WHERE account_id=$1 AND result IS NULL UNION ALL SELECT 1 FROM local_identity.episode_deletion_intents i WHERE i.manifest->>'accountId'=$1::text AND i.state IN ('prepared','committed')",[data.accountId])).rowCount)throw new ConfigurationError(409,'账号有未完成的目录创建或删除操作，请先恢复原操作。');
+  const registeredAccountRoot=command==='deleteAccount'?(await client.query('SELECT actual_root,device_id,inode_id FROM local_identity.account_asset_directories WHERE account_id=$1',[data.accountId])).rows[0]:undefined;
+  const registeredContainers=command==='deleteAccount'?(await client.query('SELECT directory_relative_path,device_id,inode_id FROM local_identity.account_storage_containers WHERE account_id=$1',[data.accountId])).rows:[];
+  const accountAssetRoots=command==='deleteAccount'?(await client.query("SELECT COALESCE(d.actual_root,b.policy->>'asset_root') asset_root FROM public.accounts a LEFT JOIN public.account_blueprint_versions b ON b.id=a.current_blueprint_version_id LEFT JOIN local_identity.account_asset_directories d ON d.account_id=a.id WHERE a.id=$1",[data.accountId])).rows.map(row=>row.asset_root):[];
   if(data.policy){
    const refs=validateConfigurationPolicy(data.policy,!!checkExternalReferences);if(refs.length)await checkExternalReferences!(client,refs);
 
@@ -85,7 +88,7 @@ export async function executeConfiguration(pool:Pool,session:OwnerSession,body:R
   const {rows:[row]}=await client.query(definition.sql,definition.fields.map(f=>data[f]));
   let value=row.result;
   if(command==='deleteAccount'){
-   const candidates=await planEmptyAccountDirectories(mediaRoot,accountAssetRoots,accountAssetRoots.some(root=>typeof root==='string'&&root)?await readMediaDeployment(client,mediaRoot):[]),emptyAccountDirectories:EmptyAccountDirectory[]=[];
+   const candidates=[...await planRegisteredEmptyAccountDirectories(registeredAccountRoot,registeredContainers),...await planEmptyAccountDirectories(mediaRoot,accountAssetRoots,accountAssetRoots.some(root=>typeof root==='string'&&root)?await readMediaDeployment(client,mediaRoot):[])],emptyAccountDirectories:EmptyAccountDirectory[]=[];
    for(const target of candidates)if(!(await client.query('SELECT local_identity.account_directory_has_references($1::text[]) referenced',[target.aliases])).rows[0].referenced)emptyAccountDirectories.push(target);
    value={deletedAccountId:data.accountId,value:row.result,emptyAccountDirectories};
   }

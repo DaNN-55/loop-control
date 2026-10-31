@@ -11,15 +11,18 @@ import {tmpdir} from 'node:os';
 import {readFileSync,mkdtempSync,realpathSync,mkdirSync,writeFileSync,existsSync,rmSync,chmodSync,lstatSync} from 'node:fs';
 import {Pool,type PoolClient} from 'pg';
 import {createLocalHandler} from './localRoute';
+import {deletionFixtureFingerprint} from './deletionFingerprint.fixture';
+import {copyFixtureSchema} from './fixtureSchema';
 import {hashPassword} from './password';
 import {csrfFor,tokenHash,sessionCookie} from './sessions';
 
 it.skipIf(process.env.LOOP_ACCOUNT_DELETION_ACCEPTANCE!=='1').each(['empty','nonempty','shared'])('%s: deletes an account through Owner HTTP, cleaning only empty exclusive roots and preserving history and deletion guards',async(mode)=>{
- const {runtimeContext}=await import(join(process.cwd(),'scripts/runtime/environment.mjs')),context=runtimeContext();
- const database='loop_account_delete_test_'+randomBytes(8).toString('hex');
+ if(!process.env.LOOP_TEST_CONTEXT_MODULE)throw Error('Explicit isolated test context required');
+ const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MODULE),context=runtimeContext();context.assertDatabase();
+ const database='loop_account_delete_test_'+randomBytes(6).toString('hex');
  context.sql('CREATE DATABASE '+database+' TEMPLATE template0','postgres');
  try{
-  context.sql(context.docker(['exec',context.container,'pg_dump','-U','postgres','-d',context.database,'--schema-only']),database);
+  await copyFixtureSchema(context,database,['db/local/110-episode-storage-locations.sql','db/local/111-global-media-root.sql','db/local/112-series-extension-rules.sql','db/local/113-automatic-account-directories.sql','db/local/114-series-storage-containers.sql','db/local/115-exact-episode-deletion-intents.sql','db/local/117-input-storage-locations.sql','db/local/118-visual-storage-locations.sql','db/local/119-audio-caption-storage-locations.sql']);
  }catch(error){context.sql('DROP DATABASE '+database+' WITH (FORCE)','postgres');throw error;}
  const bridge=spawn('docker',['exec','-i',context.container,'perl','-MIO::Socket::UNIX','-MIO::Select','-MSocket=SOCK_STREAM','-e',"my $s=IO::Socket::UNIX->new(Type=>SOCK_STREAM,Peer=>'/var/run/postgresql/.s.PGSQL.5432') or die 'socket'; my $sel=IO::Select->new(\\*STDIN,$s); while(1){for my $f($sel->can_read){my $n=sysread($f,my $b,65536);exit unless $n;my $o=fileno($f)==0?$s:\\*STDOUT;while(length $b){my $w=syswrite($o,$b);die 'write' unless $w;substr($b,0,$w,'');}}}"],{env:context.env,stdio:['pipe','pipe','pipe']});
  const stream=Duplex.from({readable:bridge.stdout!,writable:bridge.stdin!});
@@ -52,8 +55,11 @@ it.skipIf(process.env.LOOP_ACCOUNT_DELETION_ACCEPTANCE!=='1').each(['empty','non
    await client.query("INSERT INTO public.account_blueprint_versions(id,account_id,version,policy,is_active) VALUES($1,$1,1,'{}',true)",[id]);
    await client.query('UPDATE public.accounts SET current_blueprint_version_id=$1 WHERE id=$1',[id]);
   }
+  // Controlled legacy import evidence, not a new post108 policy write.
+  await client.query('ALTER TABLE public.account_blueprint_versions DISABLE TRIGGER a_blueprint_creative_write');
   await client.query('UPDATE public.account_blueprint_versions SET policy=$2 WHERE account_id=$1',[account,{asset_root:root}]);
   if(mode==='shared')await client.query('UPDATE public.account_blueprint_versions SET policy=$2 WHERE account_id=$1',[foreign,{asset_root:copy}]);
+  await client.query('ALTER TABLE public.account_blueprint_versions ENABLE TRIGGER a_blueprint_creative_write');
   await client.query("INSERT INTO local_identity.import_record(singleton,imported_at,source_created_at,archive_sha256,source_media_root) VALUES(true,now(),now(),$1,$2)",['b'.repeat(64),oldMedia]);
   await client.query("INSERT INTO public.episodes(id,account_id,blueprint_version_id,title) VALUES($1,$1,$1,'Must retain production order')",[occupied]);
   await client.query("INSERT INTO public.audit_events(id,account_id,event_type) VALUES($1,$2,'account_created'),($3,$4,'account_created')",[event,account,otherEvent,foreign]);
@@ -85,6 +91,7 @@ it.skipIf(process.env.LOOP_ACCOUNT_DELETION_ACCEPTANCE!=='1').each(['empty','non
   await client.query('RESET SESSION AUTHORIZATION');
   await client.query("CREATE FUNCTION public.reject_account_delete_receipt() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NEW.result ? 'deletedAccountId' THEN RAISE EXCEPTION 'Synthetic receipt failure'; END IF; RETURN NEW; END $$; CREATE TRIGGER reject_account_delete_receipt BEFORE INSERT ON local_identity.command_receipts FOR EACH ROW EXECUTE FUNCTION public.reject_account_delete_receipt()");
   await client.query('SET SESSION AUTHORIZATION loop_app');
+  const retainedSourceBefore=await deletionFixtureFingerprint(copy);
   const rootInode=lstatSync(root).ino;
   expect((await remove()).status).toBe(503);expect(lstatSync(root).ino).toBe(rootInode);expect(existsSync(copy)).toBe(true);
   await client.query('RESET SESSION AUTHORIZATION');await client.query('DROP TRIGGER reject_account_delete_receipt ON local_identity.command_receipts; DROP FUNCTION public.reject_account_delete_receipt()');await client.query('SET SESSION AUTHORIZATION loop_app');
@@ -93,7 +100,7 @@ it.skipIf(process.env.LOOP_ACCOUNT_DELETION_ACCEPTANCE!=='1').each(['empty','non
   expect(deleted).toEqual({status:200,body:true});
   if(mode==='empty'){expect(existsSync(root)).toBe(true);chmodSync(media,0o700);}
   expect(await remove(account,'Delete fixture',key)).toEqual(deleted);
-  expect(existsSync(root)).toBe(mode!=='empty');expect(existsSync(copy)).toBe(mode==='shared');
+  expect(existsSync(root)).toBe(mode!=='empty');expect(existsSync(copy)).toBe(true);expect(await deletionFixtureFingerprint(copy)).toEqual(retainedSourceBefore);
   if(mode==='nonempty')expect(readFileSync(join(root,'.hidden-original'),'utf8')).toBe('original material');
   expect(readFileSync(join(foreignRoot,'keep.txt'),'utf8')).toBe('other account material');expect(readFileSync(historyFile,'utf8')).toBe('historical material');
   expect((await remove(account,'changed',key)).status).toBe(409);
