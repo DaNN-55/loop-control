@@ -1,8 +1,9 @@
 import type {EpisodeFileIO} from '../local-app/episodeFiles.js';
 import {safeAssetOutputPath} from "./controlledMediaExecutor.js";
 import { createHash, randomUUID } from "node:crypto";
+import {tmpdir} from "node:os";
 import { createReadStream } from "node:fs";
-import { copyFile, mkdir, readFile, writeFile, lstat, realpath, rename, unlink } from "node:fs/promises";
+import { copyFile, mkdir, mkdtemp, rm, readFile, writeFile, lstat, realpath, rename, unlink } from "node:fs/promises";
 import { spawn, spawnSync, type ChildProcess } from "node:child_process";
 import { createServer as createTcpServer, type Server } from "node:net";
 import { dirname, extname, isAbsolute, join, relative, resolve } from "node:path";
@@ -50,6 +51,7 @@ interface Session {
   workspace: OpenChatCutStudioSnapshot;
   reverseSources: Map<string, string>;
   child: ChildProcess;
+  cleanup:Promise<void>;
   render?: ReviewRender;
   runtimeConfig: OpenChatCutRuntimeConfig;
   baseProject: OpenChatCutProject;
@@ -126,12 +128,13 @@ export async function closeOpenChatCutStudio(episodeId: string): Promise<void> {
       session.child.kill('SIGTERM');
     });
   }
+  await session.cleanup;
   if(sessions.get(episodeId)===session)sessions.delete(episodeId);
 }
 
 export async function openOpenChatCutStudio(assetRoot: string, episodeId: string, render: ReviewRender, runtimeConfig: OpenChatCutRuntimeConfig = {}, options: { replaceWorkspace?: boolean; validateProject?: StudioProjectValidator; storage?:EpisodeFileIO } = {}): Promise<OpenChatCutStudioOpenResult> {
   await options.storage?.assertValid();
-  const root = resolve(assetRoot), projectId = `loop-control-${episodeId}`;
+  const root = await realpath(assetRoot), projectId = `loop-control-${episodeId}`;
   let project = buildOpenChatCutProject(render, projectId);
   if (render.studioProject) {
     const path = options.storage?await options.storage.resolveReference(render.studioProject.relativePath):resolve(root, render.studioProject.relativePath);
@@ -156,9 +159,9 @@ export async function hasActiveNativeStudio(root:string,episodeId:string,episode
 /** Register verified LC bytes in the live session before a local item relink. */
 /** Read the latest persisted native store, including legacy edits not submitted to LC. No writes. */
 export async function inspectOpenChatCutStoredProject(assetRoot:string,episodeId:string,storage?:EpisodeFileIO){
- const root=resolve(assetRoot),projectId=`loop-control-${episodeId}`;await storage?.assertValid();await assertStudioWorkspace(root,episodeId,projectId,storage?.relativePath);
+ const root=await realpath(assetRoot),projectId=`loop-control-${episodeId}`;await storage?.assertValid();await assertStudioWorkspace(root,episodeId,projectId,storage?.relativePath);
  const workRoot=join(root,storage?.relativePath??`episodes/${episodeId}`,'openchatcut-work','current'),metadata=await readWorkspaceMetadata(join(workRoot,'workspace.json'));
- const live=sessions.get(episodeId);if(live)return{project:await currentSessionProject(live),metadata:metadata??{reverseSources:Object.fromEntries(live.reverseSources)}};
+ const live=sessions.get(episodeId);if(live&&live.dataDir!==join(workRoot,'runtime'))throw Error('Studio 活动工程位置已变化，请先关闭原工程。');if(live)return{project:await currentSessionProject(live),metadata:metadata??{reverseSources:Object.fromEntries(live.reverseSources)}};
  const stored=await readStoredProject(join(workRoot,'runtime','project-store-v1.json'),projectId);if(!stored)return null;
  if(!metadata||metadata.projectId!==projectId)throw Error('旧剪辑来源映射不可用，请先恢复旧工程。');
  const project=structuredClone(stored);rewriteSources(project,new Map(Object.entries(metadata.reverseSources)));return{project,metadata};
@@ -167,7 +170,7 @@ export async function inspectOpenChatCutStoredProject(assetRoot:string,episodeId
 export async function registerOpenChatCutStudioSource(assetRoot:string,episodeId:string,relativePath:string,expectedSha256:string,expectedSize:number,storage?:EpisodeFileIO):Promise<string>{
  const session=sessions.get(episodeId);if(!session||session.child.exitCode!==null)throw Error('Studio 会话已失效。');
  await storage?.assertValid();
- const root=resolve(assetRoot),source=storage?await storage.resolveReference(relativePath):resolve(root,relativePath);
+ const root=await realpath(assetRoot);if(session.dataDir!==join(root,storage?.relativePath??`episodes/${episodeId}`,'openchatcut-work/current/runtime'))throw Error('Studio 活动工程位置已变化，请先关闭原工程。');const source=storage?await storage.resolveReference(relativePath):resolve(root,relativePath);
  if(!(relativePath.startsWith(`${storage?.relativePath??`episodes/${episodeId}`}/`)||relativePath.startsWith(`episodes/${episodeId}/`))||!isDescendant(root,source))throw Error('候选素材超出本期边界。');
  const stat=await lstat(source);if(!stat.isFile()||stat.isSymbolicLink()||stat.nlink!==1)throw Error('候选必须是安全普通文件。');
  const bytes=await readFile(source);if(bytes.length!==expectedSize||createHash('sha256').update(bytes).digest('hex')!==expectedSha256)throw Error('候选文件指纹已变化。');
@@ -195,7 +198,7 @@ export async function openOpenChatCutDraftStudio(assetRoot:string,episodeId:stri
 }
 
 async function openStudioDocument(assetRoot:string,episodeId:string,project:OpenChatCutProject,sourcePaths:string[],inputFingerprint:string,composition:Composition|undefined,runtimeConfig:OpenChatCutRuntimeConfig,options:{replaceWorkspace?:boolean;recoverDraft?:boolean;validateProject?:StudioProjectValidator;storage?:EpisodeFileIO},render?:ReviewRender):Promise<OpenChatCutStudioOpenResult>{
-  const existing=sessions.get(episodeId),root=resolve(assetRoot),projectId=`loop-control-${episodeId}`;
+  const existing=sessions.get(episodeId),root=await realpath(assetRoot),projectId=`loop-control-${episodeId}`;
   await options.storage?.assertValid();await assertStudioWorkspace(root,episodeId,projectId,options.storage?.relativePath);
   if (existing) {
     if(existing.dataDir!==join(root,options.storage?.relativePath??`episodes/${episodeId}`,"openchatcut-work/current/runtime"))throw Error("Studio 活动工程位置已变化，请先关闭原工程。");
@@ -271,31 +274,40 @@ async function openStudioDocument(assetRoot:string,episodeId:string,project:Open
   // A fresh embedded origin avoids a prior local app's service worker and keeps
   // document sessions separate from the fixed standalone Studio port.
   const port = await availablePort();
+  // Rebuildable program cache is private to this process, separate from all
+  // persisted project/SQLite/media files. Vite cannot use #/? in cache paths.
+  const cacheDirectory=await realpath(await mkdtemp(join(tmpdir(),'loop-openchatcut-vite-'))),cacheStat=await lstat(cacheDirectory,{bigint:true});
+  const cache={path:cacheDirectory,deviceId:String(cacheStat.dev),inodeId:String(cacheStat.ino)};
   const child = spawn(nodePath, [resolve("scripts/openchatcut-embedded.mjs"), String(port)], {
     cwd: openchatcutRoot,
-    env: { ...(runtimeConfig.environment ?? process.env), OPENCHATCUT_ROOT: openchatcutRoot, OPENCHATCUT_DATA_DIR: dataDir, OPENCHATCUT_DEV_PROFILE_ID: randomUUID(), OPENCHATCUT_DISABLE_HARDWARE_ENCODING: "1" },
+    env: { ...(runtimeConfig.environment ?? process.env), OPENCHATCUT_ROOT: openchatcutRoot, OPENCHATCUT_DATA_DIR: dataDir, LOOP_OPENCHATCUT_VITE_CACHE_DIR:cacheDirectory, OPENCHATCUT_DEV_PROFILE_ID: randomUUID(), OPENCHATCUT_DISABLE_HARDWARE_ENCODING: "1" },
     stdio: ["ignore", "pipe", "pipe"],
   });
+  const cleanup=new Promise<void>((done,reject)=>child.once("close",()=>{void (async()=>{
+    try{const actual=await lstat(cache.path,{bigint:true});if(actual.isDirectory()&&!actual.isSymbolicLink()&&await realpath(cache.path)===cache.path&&String(actual.dev)===cache.deviceId&&String(actual.ino)===cache.inodeId)await rm(cache.path,{recursive:true});}
+    catch(error){if((error as NodeJS.ErrnoException).code!=="ENOENT")throw error;}
+  })().then(done,reject);}));void cleanup.catch(()=>{});
   const processReceipt=join(dataDir,'.loop-control-studio-process.json');
-  await writeFile(processReceipt,JSON.stringify({pid:child.pid,episodeId}),{mode:0o600});
   child.once('close',()=>{void readFile(processReceipt,'utf8').then(raw=>{if(JSON.parse(raw).pid===child.pid)return unlink(processReceipt);}).catch(()=>{});});
   const logs: string[] = [];
   child.stdout?.on("data", (chunk) => { logs.push(String(chunk).slice(-4000)); if (logs.length > 8) logs.shift(); });
   child.stderr?.on("data", (chunk) => { logs.push(String(chunk).slice(-4000)); if (logs.length > 8) logs.shift(); });
   let validationError: unknown;
   try {
+    await writeFile(processReceipt,JSON.stringify({pid:child.pid,episodeId,cache}),{mode:0o600});
     await waitForServer(`http://127.0.0.1:${port}`, child, logs);
     const activeStoredProject = await readStoredProject(join(dataDir, "project-store-v1.json"), projectId) ?? copiedProject;
     const activeProject = structuredClone(activeStoredProject);
     rewriteSources(activeProject, reverseSources);
     try { await options.validateProject?.(activeProject); } catch (error) { validationError = error; throw error; }
     const workspace = await persistProject(root, workspaceRelativePath, activeProject, composition, projectId);
-    const session = { episodeId, projectId, baseUrl: `http://127.0.0.1:${port}`, dataDir, workspace, reverseSources, child, render, runtimeConfig, baseProject: project, inputFingerprint } satisfies Session;
+    const session = { episodeId, projectId, baseUrl: `http://127.0.0.1:${port}`, dataDir, workspace, reverseSources, child, cleanup, render, runtimeConfig, baseProject: project, inputFingerprint } satisfies Session;
     sessions.set(episodeId, session);
     child.once("close", () => { if (sessions.get(episodeId)?.child === child) sessions.delete(episodeId); });
     return { studioUrl: `${session.baseUrl}/?lcBridge=1#/editor/${projectId}`, workspace, ...(recoverStored?{recoveredNativeEdits:true}:{}) };
   } catch (error) {
     child.kill("SIGTERM");
+    await cleanup;
     if (validationError === error) throw error;
     throw new Error(`${error instanceof Error ? error.message : String(error)}${logs.length ? `\n${logs.join("").slice(-1000)}` : ""}`);
   }
@@ -305,19 +317,20 @@ export async function snapshotOpenChatCutStudio(assetRoot: string, episodeId: st
   const session = sessions.get(episodeId);
   if (!session) throw new Error("OpenChatCut 编辑器会话已失效，请重新打开生产单预览。");
   if (session.workspace.relativePath !== expectedWorkspaceRelativePath) throw new Error("OpenChatCut 工作版本与当前编辑器会话不一致，请重新打开后再生成。");
+  const root=await realpath(assetRoot);
   await storage?.assertValid();
-  if(session.dataDir!==join(resolve(assetRoot),storage?.relativePath??`episodes/${episodeId}`,"openchatcut-work/current/runtime"))throw Error("Studio 活动工程位置已变化。");
+  if(session.dataDir!==join(root,storage?.relativePath??`episodes/${episodeId}`,"openchatcut-work/current/runtime"))throw Error("Studio 活动工程位置已变化。");
   if(session.workspace.relativePath!==`${storage?.relativePath??`episodes/${episodeId}`}/openchatcut-work/current/project.json`)throw Error("Studio 工程位置已变化。");
-  await assertStudioWorkspace(resolve(assetRoot), episodeId, session.projectId,storage?.relativePath);
+  await assertStudioWorkspace(root, episodeId, session.projectId,storage?.relativePath);
   if (expectedSha256) {
-    const bytes = await readFile(resolve(assetRoot, session.workspace.relativePath));
+    const bytes = await readFile(resolve(root, session.workspace.relativePath));
     if (createHash('sha256').update(bytes).digest('hex') !== expectedSha256) throw Object.assign(new Error('工作版本已变化，请重新打开当前工程后保存。'), {status:409,code:'STUDIO_WORKSPACE_CHANGED'});
   }
   const project = await currentSessionProject(session);
   await validateProject?.(project);
   if (session.render?.confirmationMode === "shot_preparation") await verifyOpenChatCutProject(session.render, project, session.runtimeConfig, { requireConfirmedText: false, allowStudioEdits: true });
   await storage?.assertValid();
-  session.workspace = await persistProject(resolve(assetRoot), session.workspace.relativePath, project, session.workspace.composition, session.projectId);
+  session.workspace = await persistProject(root, session.workspace.relativePath, project, session.workspace.composition, session.projectId);
   return session.workspace;
 }
 

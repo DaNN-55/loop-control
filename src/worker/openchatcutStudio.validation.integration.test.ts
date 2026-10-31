@@ -1,9 +1,10 @@
+import {productionWorkspaceFixture} from '../local-app/productionWorkspace.fixture';
+import type {OpenChatCutProject} from './openchatcutProject';
 // @vitest-environment node
-import {mkdir,mkdtemp,realpath,rm,writeFile} from 'node:fs/promises';
+import {mkdtemp,readFile,rm,writeFile} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
-import {dirname,join} from 'node:path';
-import {createHash,randomUUID} from 'node:crypto';
-import type {PoolClient} from 'pg';
+import {join} from 'node:path';
+import {randomUUID} from 'node:crypto';
 import {expect,it,vi} from 'vitest';
 import {buildOpenChatCutProject} from './openchatcutProject';
 import {confirmedTtsRender} from './openchatcutProject.fixture';
@@ -47,28 +48,18 @@ it('retains both validators while reading the identical document once during eac
 },120_000);
 
 it('still rejects a source SHA change at the second validation when SDK evidence is reused',async()=>{
- const root=await realpath(await mkdtemp(join(tmpdir(),'loop-control-studio-validation-'))),episodeId=randomUUID();
- const runtime={root:sdk,nodePath:process.execPath},project=buildOpenChatCutProject(confirmedTtsRender(),`loop-control-${episodeId}`);
- const bytes=Buffer.alloc(8,1),sha256=createHash('sha256').update(bytes).digest('hex');
- const paths=[...new Set(project.assets.map(asset=>asset.src))];
- const query=vi.fn(async(sql:string,values:unknown[])=>{
-  expect(sql).toContain('public.production_material_revisions');
-  return{rows:paths.includes(String(values[1]))?[{id:String(values[1]),relative_path:values[1],sha256,file_size:bytes.length,kind:'video'}]:[]};
- });
- const client={query} as unknown as PoolClient;
- const reader=vi.mocked(inspectOpenChatCutProjectWithRuntime);reader.mockClear();
- let checks=0;
- const validate=vi.fn(async(doc:typeof project,observation?:OpenChatCutProjectObservation)=>{
-  await validateWorkspaceProject(client,root,episodeId,doc,runtime,undefined,observation);
-  if(++checks===1)await writeFile(join(root,paths[0]),Buffer.alloc(bytes.length,2));
- });
+ const f=await productionWorkspaceFixture(),root=f.assetRoot,episodeId=f.episode,runtime=f.runtime;
  try{
-  for(const path of paths){await mkdir(dirname(join(root,path)),{recursive:true});await writeFile(join(root,path),bytes);}
+  let workspace=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;workspace=await f.fillVisuals(workspace);
+  const project=JSON.parse(await readFile(join(root,workspace.project.relativePath),'utf8')) as OpenChatCutProject,paths=[...new Set(project.assets.map(asset=>asset.src))],bytes=await readFile(join(root,paths[0]));
+  const query=vi.spyOn(f.c,'query'),reader=vi.mocked(inspectOpenChatCutProjectWithRuntime);reader.mockClear();let checks=0;
+  const validate=vi.fn(async(doc:typeof project,observation?:OpenChatCutProjectObservation)=>{
+   await validateWorkspaceProject(f.c,root,episodeId,doc,runtime,undefined,observation);
+   if(++checks===1)await writeFile(join(root,paths[0]),Buffer.alloc(bytes.length,2));
+  });
   await expect(openOpenChatCutDraftStudio(root,episodeId,project,paths,'same-input',runtime,validate)).rejects.toThrow('文件指纹已变化');
-  expect(validate).toHaveBeenCalledTimes(2);
-  expect(reader).toHaveBeenCalledTimes(1);
-  expect(query.mock.calls.length).toBeGreaterThan(paths.length);
- }finally{await closeOpenChatCutStudio(episodeId);await rm(root,{recursive:true,force:true,maxRetries:5,retryDelay:100});}
+  expect(validate).toHaveBeenCalledTimes(2);expect(reader).toHaveBeenCalledTimes(1);expect(query.mock.calls.length).toBeGreaterThan(paths.length);
+ }finally{await closeOpenChatCutStudio(episodeId);await f.close();}
 },120_000);
 
 it('revalidates a changed native-store document instead of trusting the input fingerprint',async()=>{

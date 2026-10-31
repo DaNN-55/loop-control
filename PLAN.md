@@ -2,8 +2,8 @@
 
 - [x] 真实 Owner HTTP 新位置工程 red→green，保留外部日志。
 - [x] Studio 工作文件、恢复、工程版本、来源 I/O 和导出/交付复用持久位置；SQL120六函数兼容。
-- [ ] 旧/新位置实际 SDK 编辑保存、关闭重启重开、播放导出和 compiled Worker 交付读回；身份/冲突保护回归。
-- [ ] check/build/runtime:prepare、正式浏览器验收、同步 integration、提交与外部契约交接。
+- [x] 旧/新位置实际 SDK 编辑保存、关闭重启重开、播放导出和 compiled Worker 交付读回；身份/冲突保护回归。
+- [ ] check/build/runtime:prepare、正式浏览器验收已通过；同步最新 T05 后复验并完成契约交接。
 
 验收 seam 已授权：正式页 → Owner HTTP → 隔离真实 DB/files → 实际 SDK。外部证据 `/private/tmp/loop-control-178-20261031/T09`；不碰日常数据、默认布局、付费 Provider 或 main。
 

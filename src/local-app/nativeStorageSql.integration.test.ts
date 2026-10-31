@@ -35,3 +35,18 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('effective SQL120 guards 
   if(process.env.LOOP_T09_EVIDENCE){await mkdir(process.env.LOOP_T09_EVIDENCE,{recursive:true});await writeFile(join(process.env.LOOP_T09_EVIDENCE,'effective-sql120.json'),JSON.stringify(definitions,null,2));}
  }finally{await f.c.query('SET SESSION AUTHORIZATION DEFAULT');await f.close();}
 },120000);
+
+it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('fresh Owner Studio scope keeps exact frozen input and task namespace at a literal registered prefix',async()=>{
+ const f=await embeddedStudioFixture({episodeRelativePath:()=> '系列 scope_[100%]/本期',migrations:['db/local/118-visual-storage-locations.sql','db/local/119-audio-caption-storage-locations.sql','db/local/120-native-workspace-storage-locations.sql']});
+ try{
+  const task=randomUUID(),reference={relative_path:`${f.episodeRelativePath}/openchatcut-frozen/${randomUUID()}/project.json`,sha256:'a'.repeat(64),file_size:123};
+  await f.c.query('BEGIN');await f.c.query('UPDATE local_identity.input_episodes SET enabled=true,studio_enabled=true WHERE episode_id=$1',[f.episode]);
+  await f.c.query("INSERT INTO public.tasks(id,episode_id,task_type,status,input_snapshot) VALUES($1,$2,'generate_review_render','ready',$3)",[task,f.episode,{review_render:{adjustments:{studio_project:reference},project_relative_path:`${f.episodeRelativePath}/review-render/${task}/index.html`},output:{relative_path:`${f.episodeRelativePath}/review-render/${task}/review-render.mp4`}}]);
+  await f.c.query('SET SESSION AUTHORIZATION loop_app');await f.c.query("SELECT set_config('loop.owner_id',$1,true)",[f.owner]);
+  const scoped=(await f.c.query('SELECT to_jsonb(local_identity.scope_input_studio_task($1,$2,$3)) result',[task,'b'.repeat(64),reference])).rows[0].result;
+  expect(scoped.input_snapshot.review_render.adjustments.studio_project).toEqual(reference);expect(scoped.input_snapshot.input_artifacts[0]).toMatchObject({relativePath:reference.relative_path,sha256:reference.sha256,fileSize:123});
+  expect(scoped.input_snapshot.output.relative_path).toBe(`${f.episodeRelativePath}/native-tasks/${task}/review-render.mp4`);expect(scoped.input_snapshot.native_studio_fingerprint).toBe('b'.repeat(64));
+  await f.c.query('SAVEPOINT stale_frozen');await expect(f.c.query('SELECT local_identity.scope_input_studio_task($1,$2,$3)',[task,'b'.repeat(64),{...reference,sha256:'c'.repeat(64)}])).rejects.toThrow('Frozen Studio task differs');await f.c.query('ROLLBACK TO SAVEPOINT stale_frozen');
+  await f.c.query('SET SESSION AUTHORIZATION DEFAULT');await f.c.query('ROLLBACK');
+ }finally{await f.c.query('ROLLBACK');await f.c.query('SET SESSION AUTHORIZATION DEFAULT');await f.close();}
+},120000);

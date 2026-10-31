@@ -106,7 +106,8 @@ async function readFrozenStudioProject(
   assetRoot: string,
   manifest: NonNullable<NonNullable<WorkerTaskPackage["reviewRender"]>["studioProject"]>,
 ): Promise<OpenChatCutProject> {
-  const contents = await verifyNativeFile(assetRoot,manifest.relativePath,manifest.sha256,manifest.fileSize);
+  let contents:Buffer;
+  try{contents=await verifyNativeFile(assetRoot,manifest.relativePath,manifest.sha256,manifest.fileSize);}catch(error){throw new Error("OpenChatCut 冻结工程与任务清单的大小或哈希不一致。",{cause:error});}
   if (contents.byteLength !== manifest.fileSize || createHash("sha256").update(contents).digest("hex") !== manifest.sha256) {
     throw new Error("OpenChatCut 冻结工程与任务清单的大小或哈希不一致。");
   }

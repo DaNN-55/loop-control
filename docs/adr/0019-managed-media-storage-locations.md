@@ -32,4 +32,4 @@
 
 Studio 工作副本、SQLite 与恢复文件、不可变工程版本、冻结工程、导出及交付文件由同一 `episode_storage_location` 定位。`episodeFiles.episodeFileIO` 只适配该持久位置与原始引用读取边界；会话不持有已结束的数据库事务，后续命令传入当前事务的位置检查。工程 / 任务 / 审核中的原始来源引用和 SHA 保留，实际读取位置单独传给原生复制、渲染与包校验。Worker 的隔离 staging 按原始冻结坐标放置已核验输入，不改写工程或渲染指纹。SQLite 优先、缺库回执拒绝旧 JSON、工程双改冲突、Owner revision / SHA 比较及任务去重保持。
 
-SQL120 以字面登记 prefix 比较路径，只对固定后缀使用正则；历史 legacy 冻结工程还须匹配本单已登记不可变产物的路径、SHA 和大小。原生宿主对其 Vite 缓存的真实文件路径按 path component 序列化 URL，只改模块 lexer 识别的该缓存 import，不改磁盘位置、普通 JavaScript 文本或业务来源。默认 legacy 创建不提前启用新层级；生产单 prefix 迁移 / 恢复 lineage 仍由 T13 / T14 实施。
+SQL120 以字面登记 prefix 比较路径，只对固定后缀使用正则；历史 legacy 冻结工程还须匹配本单已登记不可变产物的路径、SHA 和大小。Vite 依赖编译缓存属于可重建的程序临时文件，每个原生进程独享一个系统临时目录，按创建时 device / inode 身份清理；不承载工程、SQLite、生产媒体或冻结证据。原始来源及其实际读取位置不因此变化。进程回执保留缓存身份；无法确认归属的异常残留不按猜测路径递归删除。默认 legacy 创建不提前启用新层级；生产单 prefix 迁移 / 恢复 lineage 仍由 T13 / T14 实施。
