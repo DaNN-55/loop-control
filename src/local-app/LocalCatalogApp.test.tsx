@@ -25,7 +25,7 @@ it('keeps a committed series save successful when its follow-up read fails',asyn
  }));
  // Open the real account workspace from the new home before checking its save semantics.
  await act(async()=>{render(<LocalCatalogApp/>);});
- fireEvent.click(await screen.findByRole('button',{name:'账号蓝图'}));fireEvent.click(await screen.findByRole('tab',{name:'系列'}));
+ fireEvent.click(await screen.findByRole('button',{name:'账号'}));fireEvent.click(await screen.findByRole('button',{name:'Fixture series'}));
  fireEvent.change(screen.getByRole('textbox',{name:'系列定位'}),{target:{value:'saved'}});
  fireEvent.click(screen.getByRole('button',{name:'保存为 v2'}));
  fireEvent.click(screen.getByRole('button',{name:'确认保存为 v2'}));

@@ -49,7 +49,7 @@ it('待审核合并到生产单，工作台审核入口使用真实目录筛选'
  const count=queries.length;
  for(const label of ['连接配置','历史资料']){fireEvent.click(nav().getByRole('button',{name:label}));await screen.findByRole('heading',{name:label,level:1});}
  expect(queries).toHaveLength(count);
- fireEvent.click(nav().getByRole('button',{name:'账号蓝图'}));await waitFor(()=>expect(lastQuery().get('view')).toBe('accounts'));
+ fireEvent.click(nav().getByRole('button',{name:'账号'}));await waitFor(()=>expect(lastQuery().get('view')).toBe('accounts'));
  expect(queries.every(q=>['accounts','episodes','operations'].includes(q.get('view')??''))).toBe(true);
  expect(queries.every(q=>Array.from(q.keys()).sort().join(',')==='accountId,blockedPage,page,pendingPage,q,seriesId,sort,status,view,visibility')).toBe(true);
 });
