@@ -9,6 +9,7 @@ import {hasActiveNativeStudio} from '../worker/openchatcutStudio.js';
 import {isDeepStrictEqual} from 'node:util';
 import {tmpdir} from 'node:os';
 import {safeRelative} from './localFiles.js';
+import {episodeFileIO} from './episodeFiles.js';
 
 interface Identity {dev:string;ino:string}
 export interface EpisodeDeletionTarget {
@@ -39,7 +40,8 @@ async function volumeAvailable(path:string){
 // aliases and retained migration/restore sources never expand this authority.
 export async function episodeDeletionTargets(mediaRoot:string,root:string,episodeId:string,_sources:readonly string[],location?:EpisodeStorageLocation):Promise<EpisodeDeletionTarget[]>{
  if(!/^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(episodeId))throw Error('生产单标识无效。');
- if(!assetPathWithin(mediaRoot,root)||location&&location.assetRoot!==root)throw Error('删除目录超出当前登记位置。');
+ const legacyGlobal=location?.layoutVersion===1&&location.assetRoot===mediaRoot&&location.relativePath==='episodes/'+episodeId;
+ if(!assetPathWithin(mediaRoot,root)&&!legacyGlobal||location&&location.assetRoot!==root)throw Error('删除目录超出当前登记位置。');
  await volumeAvailable(root);const rootIdentity=await directory(root);if(!rootIdentity)throw Error('当前账号资产目录不可访问。');
  const episodes=join(root,'episodes'),path=location?location.directoryPath:join(episodes,episodeId),stagingRoot=join(episodes,'.deletion-staging'),stagingPath=join(stagingRoot,episodeId);
  if(!assetPathWithin(root,path))throw Error('生产单目录超出当前账号范围。');
@@ -86,7 +88,8 @@ export async function inventoryEpisodeDeletion(c:PoolClient,target:EpisodeDeleti
  UNION ALL SELECT project_path,project_sha256,project_size,'workspace-version:'||workspace_id FROM local_identity.production_workspace_versions WHERE episode_id=$1
  UNION ALL SELECT r.relative_path,r.sha256,r.file_size,'legacy-recovery:'||r.workspace_id FROM local_identity.workspace_legacy_recoveries r JOIN local_identity.production_workspaces w ON w.id=r.workspace_id WHERE w.episode_id=$1
  UNION ALL SELECT coalesce(a->>'relative_path',a->>'relativePath'),a->>'sha256',coalesce(a->>'file_size',a->>'fileSize')::bigint,'frozen-input:'||t.id FROM public.tasks t CROSS JOIN LATERAL jsonb_array_elements(CASE WHEN jsonb_typeof(t.input_snapshot->'input_artifacts')='array' THEN t.input_snapshot->'input_artifacts' ELSE '[]'::jsonb END) a WHERE t.episode_id=$1 AND t.status='completed'`,[episodeId])).rows;
- const registered=new Map<string,typeof rows>();for(const row of rows){if(typeof row.path!=='string'||!safeRelative(row.path)||typeof row.sha256!=='string'||!/^[a-f0-9]{64}$/.test(row.sha256)||!Number.isSafeInteger(Number(row.bytes))||Number(row.bytes)<0)continue;const path=join(target.root,row.path);if(assetPathWithin(target.path,path))registered.set(path,[...(registered.get(path)??[]),row]);}
+ const storage=await episodeFileIO(c,target.root,episodeId),aliases=new Map<string,string[]>();
+ const registered=new Map<string,typeof rows>();for(const row of rows){if(typeof row.path!=='string'||!safeRelative(row.path)||typeof row.sha256!=='string'||!/^[a-f0-9]{64}$/.test(row.sha256)||!Number.isSafeInteger(Number(row.bytes))||Number(row.bytes)<0)continue;let path:string;try{path=await storage.resolveReference(row.path);}catch{continue;}if(assetPathWithin(target.path,path)){registered.set(path,[...(registered.get(path)??[]),row]);aliases.set(path,await storage.referenceAliases(row.path));}}
  for(const candidate of await nativeDeletionAuthorities(c,target,episodeId,rows))registered.set(candidate.path,[candidate]);
  const files:DeletionFile[]=[],preserved:NonNullable<EpisodeDeletionTarget['preserved']>=[],directories:NonNullable<EpisodeDeletionTarget['directories']>=[];
  async function visit(path:string){
@@ -99,14 +102,14 @@ export async function inventoryEpisodeDeletion(c:PoolClient,target:EpisodeDeleti
   if(stat.isSymbolicLink()){fingerprint+=':'+await readlink(path);reason='符号链接，保留。';}
   else if(stat.isFile()&&stat.nlink===1n){
    const actual=await deletionFileFingerprint(path);fingerprint+=':'+actual.sha256;const authority=registered.get(path)?.find(row=>row.sha256===actual.sha256&&Number(row.bytes)===actual.bytes);
-   if(authority){const shared=(await c.query('SELECT local_identity.history_media_path_referenced($1,$2) referenced',[path,episodeId])).rows[0].referenced||(await c.query('SELECT local_identity.history_media_path_referenced($1,$2) referenced',[relative(target.root,path),episodeId])).rows[0].referenced;
+   if(authority){let shared=false;for(const reference of aliases.get(path)??[path,relative(target.root,path)])if((await c.query('SELECT local_identity.history_media_path_referenced($1,$2) referenced',[reference,episodeId])).rows[0].referenced){shared=true;break;}
     if(!shared){files.push({path,stagingPath:path+'.loop-control-deletion',...actual,authority:authority.authority});return;}reason='其他生产单或历史资料仍引用，保留。';
    }else if(registered.has(path))reason='登记指纹与实际文件不符，保留。';
   }else if(stat.isFile())reason='存在硬链接或共享文件身份，保留。';
   preserved.push({path,reason,fingerprint});
  }
  if(target.identity)await visit(target.path);
- const references=new Set<string>(),patterns=files.map(file=>({file,values:[file.path,relative(target.root,file.path),file.sha256].map(value=>Buffer.from(value).toString('latin1'))})),carryLength=patterns.reduce((maximum,pattern)=>pattern.values.reduce((length,value)=>Math.max(length,value.length),maximum),64);
+ const references=new Set<string>(),patterns=files.map(file=>({file,values:[file.path,relative(target.root,file.path),file.sha256,...aliases.get(file.path)??[]].map(value=>Buffer.from(value).toString('latin1'))})),carryLength=patterns.reduce((maximum,pattern)=>pattern.values.reduce((length,value)=>Math.max(length,value.length),maximum),64);
  // Retained native/manual documents may reference otherwise owned bytes. Stream
  // them as literal bytes so UTF-8 and chunk boundaries cannot hide a dependency.
  const queue=preserved.map(file=>file.path),scanned=new Set<string>();

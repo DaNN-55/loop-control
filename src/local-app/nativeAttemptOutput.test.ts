@@ -1,6 +1,6 @@
 // @vitest-environment node
 import {afterEach,it,expect} from 'vitest';
-import {mkdtemp,mkdir,open,readFile,readdir,rm,symlink,writeFile} from 'node:fs/promises';
+import {mkdtemp,mkdir,open,readFile,readdir,realpath,rm,symlink,writeFile} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {createHash} from 'node:crypto';
@@ -19,7 +19,7 @@ const frozenOutput={relative_path:output,content_type:'application/json',review_
 const execute=promisify(execFile);
 function result(bytes:string):WorkerResult{return{version:'worker-result/v1',taskId,status:'completed',artifacts:[{artifactType:'visual_brief',relativePath:output,fileSize:Buffer.byteLength(bytes),sha256:createHash('sha256').update(bytes).digest('hex')}],validation:{passed:true,checks:[]},actualCostCents:0,blockers:[],retry:{shouldRetry:false,reason:'complete'},nextStep:'Owner review'};}
 async function taskPackage(attempt:number,root?:string){
- root??=await mkdtemp(join(tmpdir(),'native-attempt-'));if(!roots.includes(root))roots.push(root);
+ root??=await realpath(await mkdtemp(join(tmpdir(),'native-attempt-')));if(!roots.includes(root))roots.push(root);
  await mkdir(join(root,'episodes',episodeId),{recursive:true});
  return createWorkerTaskPackage({task:{id:taskId,type:'prepare_visual_brief',attempt,budgetLimitCents:0,maxAttempts:3,provider:'codex',model:'configured-model',promptVersion:'visual-v1'},episode:{id:episodeId,accountId:'account',blueprintVersionId:'blueprint',title:'Attempt isolation'},capability:'visual_asset_preparation',allowedTools:['read','write'],allowedAssetRoot:root,inputArtifacts:[],output:{requiredArtifactTypes:['visual_brief'],relativePath:output,contentType:'application/json',reviewStage:'visual_review'}});
 }
@@ -27,6 +27,7 @@ function database(activeAttempt:number,failReport=false,failCommit=false){
  const accepted:number[]=[],operations:string[]=[],discarded:boolean[]=[];
  const pool={async connect(){return{async query(sql:string,values?:unknown[]){
   operations.push(sql);
+  if(sql.includes('episode_storage_location'))return{rows:[{account_id:'account',directory_relative_path:`episodes/${episodeId}`,directory_device_id:null,directory_inode_id:null,storage_series_id:null,layout_version:1}]};
   if(sql.includes('native_output_authority')){if(values?.[1]!==activeAttempt)throw Error('Lease expired');return{rows:[{authority:{output:frozenOutput,reviewProjectPath:null,finalProjectPath:null,status:'running',inputHash:'frozen-input',artifacts:[],conflicts:[]}}]};}
   if(sql==='COMMIT'&&failCommit)throw Error('Commit outcome unknown');
   if(sql.includes('input_worker_call')){

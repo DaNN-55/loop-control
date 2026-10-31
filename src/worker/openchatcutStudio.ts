@@ -171,7 +171,7 @@ export async function registerOpenChatCutStudioSource(assetRoot:string,episodeId
  const session=sessions.get(episodeId);if(!session||session.child.exitCode!==null)throw Error('Studio 会话已失效。');
  await storage?.assertValid();
  const root=await realpath(assetRoot);if(session.dataDir!==join(root,storage?.relativePath??`episodes/${episodeId}`,'openchatcut-work/current/runtime'))throw Error('Studio 活动工程位置已变化，请先关闭原工程。');const source=storage?await storage.resolveReference(relativePath):resolve(root,relativePath);
- if(!(relativePath.startsWith(`${storage?.relativePath??`episodes/${episodeId}`}/`)||relativePath.startsWith(`episodes/${episodeId}/`))||!isDescendant(root,source))throw Error('候选素材超出本期边界。');
+ if(storage?!isDescendant(join(root,storage.relativePath),source):!relativePath.startsWith(`episodes/${episodeId}/`)||!isDescendant(root,source))throw Error('候选素材超出本期边界。');
  const stat=await lstat(source);if(!stat.isFile()||stat.isSymbolicLink()||stat.nlink!==1)throw Error('候选必须是安全普通文件。');
  const bytes=await readFile(source);if(bytes.length!==expectedSize||createHash('sha256').update(bytes).digest('hex')!==expectedSha256)throw Error('候选文件指纹已变化。');
  const name=`${createHash('sha256').update(relativePath).digest('hex').slice(0,20)}${extname(relativePath).toLowerCase()}`,url=`/media/uploads/${name}`;

@@ -79,7 +79,7 @@ async function verifyQcReport(assetRoot: string, episodeId: string, artifact: Ar
 
 export async function assetPath(assetRoot:string,episodeId:string,reference:string,storage?:EpisodeFileIO):Promise<string>{
   await storage?.assertValid();
-  if(!safeRelative(reference)||!(reference.startsWith(`${storage?.relativePath??`episodes/${episodeId}`}/`)||reference.startsWith(`episodes/${episodeId}/`)))throw Error('发布包产物不属于当前生产单。');
+  if(!safeRelative(reference)||!storage&&!reference.startsWith(`episodes/${episodeId}/`))throw Error('发布包产物不属于当前生产单。');
   const canonicalRoot=await realpath(assetRoot),path=storage?await storage.resolveReference(reference):resolve(canonicalRoot,reference);
   if(!isDescendant(canonicalRoot,path)||await realpath(path)!==path)throw Error('发布包路径身份无效。');
   const stat=await lstat(path);if(!stat.isFile()||stat.nlink!==1)throw Error('发布包文件身份无效。');return path;
@@ -87,8 +87,9 @@ export async function assetPath(assetRoot:string,episodeId:string,reference:stri
 async function packagePath(assetRoot:string,episodeId:string,reference:string,storage?:EpisodeFileIO):Promise<string>{
   await storage?.assertValid();
   const prefix=storage?.relativePath??`episodes/${episodeId}`;
-  if(!safeRelative(reference)||!reference.startsWith(prefix+'/'))throw Error('发布包路径不属于当前生产单。');
-  const {safeAssetOutputPath}=await import('../worker/controlledMediaExecutor.js');return safeAssetOutputPath(assetRoot,reference);
+  if(!safeRelative(reference)||!storage&&!reference.startsWith(prefix+'/'))throw Error('发布包路径不属于当前生产单。');
+  const physical=storage?relative(assetRoot,await storage.resolveReference(reference)):reference;
+  const {safeAssetOutputPath}=await import('../worker/controlledMediaExecutor.js');return safeAssetOutputPath(assetRoot,physical);
 }
 
 function isManifest(value: unknown, episodeId: string): value is PublishPackageManifest {

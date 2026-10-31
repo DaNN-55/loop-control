@@ -3,7 +3,7 @@ import {isVideoProvider,videoProviders} from "../worker/videoProviderCatalog.js"
 import type {PoolClient} from 'pg';
 import type {InputRuntime} from './episodeCommands.js';
 import {ConfigurationError} from './configurationCommands.js';
-import {verifyNativeFile} from './localFiles.js';
+import {verifyEpisodeFile} from './episodeFiles.js';
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 export async function executeWanCommand(c:PoolClient,e:{id:string;account_id:string;policy:Record<string,unknown>},root:string,runtime:InputRuntime,command:string,data:Record<string,unknown>,requestId:string){
  if(command==='setWanBudget'){
@@ -18,7 +18,7 @@ export async function executeWanCommand(c:PoolClient,e:{id:string;account_id:str
   if(!task)throw new ConfigurationError(404,'万相任务不可见。');
   if(!['failed','blocked'].includes(task.status)||!task.provider_task_id)throw new ConfigurationError(409,'只有已保存供应商任务 ID 的失败任务可以恢复；提交结果未知时请先核对供应商记录，不会重新收费提交。');
   await runtime.checkReferences(c,[task.input_snapshot.credential_ref]);
-  for(const f of task.input_snapshot.input_artifacts??[])await verifyNativeFile(root,f.relativePath,f.sha256,Number(f.fileSize));
+  for(const f of task.input_snapshot.input_artifacts??[])await verifyEpisodeFile(c,root,e.id,f.relativePath,f.sha256,Number(f.fileSize));
   await c.query('SELECT public.resume_wan_video_task($1)',[task.id]);taskId=task.id;
  }else{
   if(typeof data.reviewPackageId!=='string'||!uuid.test(data.reviewPackageId)||typeof data.firstFrameId!=='string'||!uuid.test(data.firstFrameId)||typeof data.shotId!=='string'||!data.shotId.trim()||data.shotId.length>200||typeof data.prompt!=='string'||!data.prompt.trim()||data.prompt.length>1500||!Number.isInteger(data.durationSeconds)||Number(data.durationSeconds)<2||Number(data.durationSeconds)>15)throw new ConfigurationError(400,'首帧、镜头动作或时长无效。');
@@ -32,9 +32,9 @@ export async function executeWanCommand(c:PoolClient,e:{id:string;account_id:str
   if(!official&&command==='generateOfficialVideo')throw new ConfigurationError(400,'视频执行方式已变化，请刷新。');
   await runtime.checkReferences(c,[config.credential_ref]);
   if(!runtime.mediaReady)throw new ConfigurationError(503,'本地媒体Worker尚未配置。');await runtime.mediaReady({[shot.shotType]:config});
-  await verifyNativeFile(root,rp.relative_path,rp.sha256,Number(rp.file_size));
+  await verifyEpisodeFile(c,root,e.id,rp.relative_path,rp.sha256,Number(rp.file_size));
   const image=(await c.query('SELECT * FROM public.production_material_revisions WHERE id=$1 AND episode_id=$2',[data.firstFrameId,e.id])).rows[0];
-  if(!image)throw new ConfigurationError(404,'首帧图片不可见。');await verifyNativeFile(root,image.storage_path,image.sha256,Number(image.file_size));
+  if(!image)throw new ConfigurationError(404,'首帧图片不可见。');await verifyEpisodeFile(c,root,e.id,image.storage_path,image.sha256,Number(image.file_size));
   // Opt in before INSERT so the existing output-namespace trigger isolates this
   // task. A rejected request rolls the opt-in back with the command transaction.
   await c.query('UPDATE local_identity.input_episodes SET media_enabled=true WHERE episode_id=$1',[e.id]);

@@ -5,6 +5,7 @@ import {isAbsolute,relative,resolve} from 'node:path';
 import {ConfigurationError} from './configurationCommands.js';
 import {mappedAssetPath,assetPathWithin} from './mediaPaths.js';
 import {readMediaDeployment,resolveLocalAssetRoot} from './mediaDeployment.js';
+import {resolveEpisodeStorageLocation} from './episodeStorageLocation.js';
 export const accountAssetRootsOverlap=(a:string,b:string)=>a===b||assetPathWithin(a,b)||assetPathWithin(b,a);
 export async function validateAccountAssetLocation(c:Pick<PoolClient,'query'>,mediaRoot:string,path:unknown){
  if(typeof path!=='string'||!path.trim()||path.length>4096||!isAbsolute(path)||resolve(path)!==path)throw new ConfigurationError(400,'请填写已授权范围内的实际目录。');
@@ -45,6 +46,5 @@ export async function setAccountAssetDirectory(c:Pick<PoolClient,'query'>,mediaR
  return readAccountAssetDirectory(c,mediaRoot,accountId);
 }
 export async function resolveEpisodeAssetRoot(c:Pick<PoolClient,'query'>,mediaRoot:string,episodeId:string){
- const row=(await c.query('SELECT local_identity.episode_asset_root($1) root',[episodeId])).rows[0];
- return resolveLocalAssetRoot(c,mediaRoot,row?.root);
+ return(await resolveEpisodeStorageLocation(c,mediaRoot,episodeId)).assetRoot;
 }

@@ -1,5 +1,5 @@
 import {createEpisodeDirectory} from './episodeCreation.js';
-import {verifyEpisodeFile,resolveEpisodeFileReference} from './episodeFiles.js';
+import {verifyEpisodeFile,episodeFileIO,resolveEpisodeFileReference} from './episodeFiles.js';
 import {episodeStorageLocationAtRoot,requireWritableEpisodeStorage,resolveEpisodeStorageLocation,requireEpisodeStorageDirectory} from './episodeStorageLocation.js';
 import {requireAccountAssetRoot,resolveEpisodeAssetRoot} from './accountAssetRoots.js';
 import {productionWorkspaceFields} from '../productionWorkspace.js';
@@ -22,11 +22,11 @@ import type {Pool,PoolClient} from 'pg';
 import type {OwnerSession} from './sessions.js';
 import {sessionTransaction,ownerTransaction} from './ownerTransaction.js';
 import {ConfigurationError,validateConfigurationPolicy,canonical} from './configurationCommands.js';
-import {snapshotInput,verifyNativeFile} from './localFiles.js';
+import {snapshotInput} from './localFiles.js';
 import {verifyMediaLibrary} from '../worker/mediaLibrary.js';
 import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
-import {dirname,join} from 'node:path';
+import {dirname} from 'node:path';
 import {blueprintSelectionErrors} from '../worker/runtimePreflight.js';
 import {mediaCapabilityKeys} from '../worker/productionCapabilities.js';
 import {workerPreflightVersion,type WorkerPreflightCheck} from '../worker/contracts.js';
@@ -117,7 +117,10 @@ export class LocalEpisodeCommands {
     const inputIo=['importMaterial','reconfirmScript','start','configureScriptProduction','prepareWorkspace'].includes(String(body.command)),location=inputIo?await resolveEpisodeStorageLocation(c,this.mediaRoot,e.id):null;
     if(location)await requireEpisodeStorageDirectory(c,location);
     const root=location?.assetRoot??await resolveEpisodeAssetRoot(c,this.mediaRoot,e.id);
-    if(body.command!=='openDirectory')await requireAccountAssetRoot(c,this.mediaRoot,e.account_id);
+    if(body.command!=='openDirectory'){
+     if((await c.query('SELECT 1 FROM local_identity.account_asset_directories WHERE account_id=$1',[e.account_id])).rowCount)await requireAccountAssetRoot(c,this.mediaRoot,e.account_id);
+     else{const legacy=location??await resolveEpisodeStorageLocation(c,this.mediaRoot,e.id);if(legacy.layoutVersion!==1)throw new ConfigurationError(409,'账号目录未登记，请先恢复存储位置。');await requireEpisodeStorageDirectory(c,legacy);if((await c.query("SELECT 1 FROM local_identity.account_directory_migrations WHERE account_id=$1 AND status='copying'",[e.account_id])).rowCount)throw new ConfigurationError(409,'账号正在纳管，请先恢复或回滚原操作。');}
+    }
     const inputPolicy=e.script_template_version===2?{...e.policy,asset_root:root,static_visual:{execution_path:'manual'},soundtrack:{execution_path:'manual'}}:{...e.policy,asset_root:root};
     if(['reconfirmScript','requestStructureRevision'].includes(String(body.command))&&this.workspace.isOpen(e.id))throw new ConfigurationError(409,'请先保存并返回，再修订脚本或分镜。');
     if(['review','approveQc','retryFinalRender','preparePublishPackage','renderScriptReview','generateReviewVideo','submitStudioRevision','planStoryboard','confirmSyncPreview'].includes(String(body.command))&&(await c.query('SELECT 1 FROM local_identity.production_workspaces WHERE episode_id=$1',[e.id])).rowCount)throw new ConfigurationError(409,'此生产单使用四步制作，请在当前工程检查与交付。');
@@ -131,13 +134,13 @@ export class LocalEpisodeCommands {
      const record=(await c.query('SELECT * FROM local_identity.script_productions WHERE episode_id=$1 AND script_revision_id=$2',[e.id,e.main_script_revision_id])).rows[0] as ScriptProductionRecord|undefined;
      if(!record)throw new ConfigurationError(409,'请先保存本期 v2 制作计划。');
      if(body.command==='prepareScriptPublish'){
-      const cover=record.plan.cover.material;if(!cover)throw new ConfigurationError(409,'请上传并绑定封面。');const bytes=await verifyNativeFile(root,cover.path,cover.sha256,cover.size);
+      const cover=record.plan.cover.material;if(!cover)throw new ConfigurationError(409,'请上传并绑定封面。');const bytes=await verifyEpisodeFile(c,root,e.id,cover.path,cover.sha256,cover.size);
       value=await this.delivery.execute(c,e,root,this.runtime,'preparePublishPackage',{title:record.plan.script.title,description:record.plan.segments.map(s=>s.narration).join(''),tags:[],coverBase64:bytes.toString('base64')});
      }else if(body.command==='applyScriptSettings')value=await this.scriptStore.appliedSettings(c,e,root,record,String(data.reviewPackageId));
      else if(body.command==='bindScriptVideo'){
       const segment=record.plan.segments.find(s=>s.id===data.shotId);if(!segment)throw new ConfigurationError(400,'脚本镜头不存在。');
       const m=(await c.query("SELECT * FROM public.production_material_revisions WHERE id=$1 AND episode_id=$2 AND material_type='video'",[data.materialRevisionId,e.id])).rows[0];if(!m)throw new ConfigurationError(404,'本期原片不存在。');
-      await verifyNativeFile(root,m.storage_path,m.sha256,Number(m.file_size));const video=await inspectMp4Artifact(join(root,m.storage_path));
+      await verifyEpisodeFile(c,root,e.id,m.storage_path,m.sha256,Number(m.file_size));const video=await inspectMp4Artifact(await (await episodeFileIO(c,root,e.id)).resolveReference(m.storage_path));
       const draft=(await c.query('SELECT * FROM public.shot_preparation_drafts WHERE episode_id=$1 AND review_package_id=$2 AND shot_id=$3',[e.id,data.reviewPackageId,data.shotId])).rows[0];
       if(!draft)throw new ConfigurationError(409,'请先应用镜头设置。');
       if(draft.selected_material_revision_id)value={preserved:true};
@@ -311,8 +314,8 @@ export class LocalEpisodeCommands {
      const p=(await c.query('SELECT * FROM public.review_packages WHERE episode_id=$1 AND stage=$2 AND invalidated_at IS NULL ORDER BY revision_number DESC LIMIT 1',[e.id,stage])).rows[0];
      if(!p||p.id!==data.reviewPackageId||storyboard&&!e.storyboard_enabled||(body.command==='requestStructureRevision'?!['storyboard_approved','production_ready','render_ready','qc_review'].includes(e.stage):e.stage!==stage))throw new ConfigurationError(409,'审核包已变化，请刷新后重新审核。');
      const files=(await c.query('SELECT * FROM public.artifacts WHERE episode_id=$1 AND id=$2',[e.id,p.artifact_id])).rows;
-     if(!files.length)throw new ConfigurationError(409,'审核产物缺失。');for(const f of files)await verifyNativeFile(root,f.relative_path,f.sha256,Number(f.file_size));
-     if(storyboard)try{await verifyReportedStoryboardArtifact({assetRoot:root,relativePath:files[0].relative_path,frozenInputs:p.context_snapshot.input_artifacts??[],storyboard:p.context_snapshot.worker_result?.storyboard});}catch{throw new ConfigurationError(409,'分镜产物与冻结审核依据不一致。');}
+     if(!files.length)throw new ConfigurationError(409,'审核产物缺失。');for(const f of files)await verifyEpisodeFile(c,root,e.id,f.relative_path,f.sha256,Number(f.file_size));
+     if(storyboard)try{await verifyReportedStoryboardArtifact({storage:await episodeFileIO(c,root,e.id),assetRoot:root,relativePath:files[0].relative_path,frozenInputs:p.context_snapshot.input_artifacts??[],storyboard:p.context_snapshot.worker_result?.storyboard});}catch{throw new ConfigurationError(409,'分镜产物与冻结审核依据不一致。');}
      if(body.command==='annotateStoryboard'){
       if(typeof data.shotId!=='string'||!data.shotId.trim())throw new ConfigurationError(400,'镜头标识无效。');
       value=(await c.query('SELECT to_jsonb(public.create_storyboard_annotation($1,$2,$3)) result',[p.id,data.shotId,data.reason.trim()])).rows[0].result;

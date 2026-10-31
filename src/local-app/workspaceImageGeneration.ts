@@ -8,7 +8,7 @@ import {workspaceCandidateTarget} from '../workspaceCandidates.js';
 import {isImageGenerationSettings} from '../imageGeneration.js';
 import {ConfigurationError} from './configurationCommands.js';
 import {productionHash} from './scriptProductionStore.js';
-import {verifyNativeFile} from './localFiles.js';
+import {verifyEpisodeFile} from './episodeFiles.js';
 import type {InputRuntime} from './episodeCommands.js';
 import type {ProductionWorkspaceRecord} from './productionWorkspaceCommands.js';
 
@@ -31,7 +31,7 @@ export async function queueWorkspaceImageCandidates(c:PoolClient,root:string,row
     const m=(await c.query("SELECT * FROM public.production_material_revisions WHERE id=$1 AND episode_id=$2 AND material_type='image'",[id,row.episode_id])).rows[0];
     if(!m||!['image/png','image/jpeg','image/webp'].includes(m.mime_type)||Number(m.file_size)>20*1024*1024)throw new ConfigurationError(400,'参考图须为本期 PNG、JPEG 或 WebP，每张不超过 20 MB。');
     totalBytes+=Number(m.file_size);if(totalBytes>40*1024*1024)throw new ConfigurationError(400,'参考图总大小不能超过 40 MB。');
-    await verifyNativeFile(root,m.storage_path,m.sha256,Number(m.file_size));
+    await verifyEpisodeFile(c,root,row.episode_id,m.storage_path,m.sha256,Number(m.file_size));
     references.push({artifactType:'static_visual',relativePath:m.storage_path,sha256:m.sha256,fileSize:Number(m.file_size),mimeType:m.mime_type,materialRevisionId:m.id});
   }
   await runtime.checkReferences(c,[resolved.selection.connectionVersionId!]);

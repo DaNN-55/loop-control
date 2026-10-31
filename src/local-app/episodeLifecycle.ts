@@ -52,6 +52,7 @@ export class LocalEpisodeLifecycle{
   return{e,root,targets,visible:{episodeId:e.id,title:e.title,path,stagingPath,paths,stagingPaths,files,preserved,confirmation:e.title.trim()||'DELETE',archived:Boolean(e.archived_at),isTest:e.is_test,revision:fingerprint({id:e.id,title:e.title,archivedAt:e.archived_at?new Date(e.archived_at).toISOString():null,updatedAt:new Date(e.updated_at).toISOString(),stage:e.stage,targets})}};
  }
  private async verifyStorageRoot(c:PoolClient,accountId:string,root:string){
+  if((await c.query("SELECT 1 FROM local_identity.account_directory_migrations WHERE account_id=$1 AND status='copying'",[accountId])).rowCount)throw new ConfigurationError(409,'账号资料正在迁移，请先完成、恢复或回滚原操作。');
   const binding=(await c.query('SELECT local_identity.media_root_binding() binding')).rows[0].binding;if(binding){if(binding.path!==this.mediaRoot)throw new ConfigurationError(409,'服务媒体根与登记位置不一致，请重启本机服务。');await verifyMediaRootBinding(binding);}
   const account=(await c.query('SELECT actual_root FROM local_identity.account_asset_directories WHERE account_id=$1',[accountId])).rows[0];if(account?.actual_root===root)await requireAccountAssetRoot(c,this.mediaRoot,accountId);
  }
@@ -134,6 +135,7 @@ export class LocalEpisodeLifecycle{
     if(typeof data.archived!=='boolean')throw new ConfigurationError(400,'归档状态无效。');
     if(typeof data.episodeId!=='string'||!uuid.test(data.episodeId))throw new ConfigurationError(400,'生产单标识无效。');
     if(!(await c.query('SELECT local_identity.lock_owned_episode_cleanup($1) owned',[data.episodeId])).rows[0]?.owned)throw new ConfigurationError(404,'生产单不存在、无管理权限或属于只读历史资料。');
+    if((await c.query("SELECT 1 FROM local_identity.account_directory_migrations m JOIN public.episodes e ON e.account_id=m.account_id WHERE e.id=$1 AND m.status='copying'",[data.episodeId])).rowCount)throw new ConfigurationError(409,'账号资料正在迁移，请先完成、恢复或回滚原操作。');
     value=(await c.query('SELECT to_jsonb(local_identity.archive_owned_input_episode($1,$2)) result',[data.episodeId,data.archived])).rows[0].result;
    }
    else if(command==='deleteHistoryEpisode'){

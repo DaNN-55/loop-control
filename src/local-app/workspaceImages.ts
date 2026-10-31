@@ -4,10 +4,9 @@ import {queueWorkspaceVisualGeneration} from './workspaceVisualCandidates.js';
 import {inspectMp4Artifact} from '../worker/mediaTools.js';
 import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
-import {join} from 'node:path';
 import type {PoolClient} from 'pg';
 import {ConfigurationError} from './configurationCommands.js';
-import {verifyNativeFile} from './localFiles.js';
+import {episodeFileIO,verifyEpisodeFile} from './episodeFiles.js';
 import {isOpenChatCutStudio} from '../worker/openchatcutStudio.js';
 import {lockProductionWorkspace,updateWorkspaceProject,workspaceContentSha256} from './productionWorkspaceCommands.js';
 const exec=promisify(execFile);
@@ -20,8 +19,8 @@ export async function matchWorkspaceImage(c:PoolClient,root:string,episodeId:str
  if(!['still','pan-zoom'].includes(String(data.usage))||typeof data.durationSeconds!=='number'||!Number.isFinite(data.durationSeconds)||data.durationSeconds<0.1||data.durationSeconds>120||!['contain','cover'].includes(String(data.fit))||typeof data.focusX!=='number'||!Number.isFinite(data.focusX)||Math.abs(data.focusX)>100||typeof data.focusY!=='number'||!Number.isFinite(data.focusY)||Math.abs(data.focusY)>100)throw new ConfigurationError(400,'图片使用方式、时长或构图无效。');
  if(typeof data.materialRevisionId!=='string'||!uuid.test(data.materialRevisionId))throw new ConfigurationError(400,'图片标识无效。');
  const material=(await c.query("SELECT * FROM public.production_material_revisions WHERE id=$1 AND episode_id=$2 AND material_type='image' AND mime_type IN ('image/png','image/jpeg','image/webp','image/bmp')",[data.materialRevisionId,episodeId])).rows[0];if(!material)throw new ConfigurationError(404,'本期图片不存在。');
- try{await verifyNativeFile(root,material.storage_path,material.sha256,Number(material.file_size));}catch{throw new ConfigurationError(409,'输入图片缺失或指纹已变化，请重新注册原图。');}
- let width:number,height:number;try{const {stdout}=await exec('ffprobe',['-v','error','-select_streams','v:0','-show_entries','stream=width,height','-of','json',join(root,material.storage_path)],{timeout:15000});const stream=JSON.parse(stdout).streams[0];width=Number(stream.width);height=Number(stream.height);if(!(width>0&&height>0))throw Error();}catch{throw new ConfigurationError(409,'输入图片无法读取。');}
+ try{await verifyEpisodeFile(c,root,episodeId,material.storage_path,material.sha256,Number(material.file_size));}catch{throw new ConfigurationError(409,'输入图片缺失或指纹已变化，请重新注册原图。');}
+ let width:number,height:number;try{const {stdout}=await exec('ffprobe',['-v','error','-select_streams','v:0','-show_entries','stream=width,height','-of','json',await (await episodeFileIO(c,root,episodeId)).resolveReference(material.storage_path)],{timeout:15000});const stream=JSON.parse(stdout).streams[0];width=Number(stream.width);height=Number(stream.height);if(!(width>0&&height>0))throw Error();}catch{throw new ConfigurationError(409,'输入图片无法读取。');}
  const timeline=project.timelines.find(t=>t.items.some(i=>i.id===clip.itemId)),item=timeline?.items.find(i=>i.id===clip.itemId);if(!timeline||!item||item.kind!=='text')throw new ConfigurationError(409,'占位已由剪辑修改，请在当前工程中操作。');
  const frames=Math.max(1,Math.round(data.durationSeconds*timeline.fps)),delta=frames-Number(item.durationInFrames),end=Number(item.startFrame)+Number(item.durationInFrames);
  for(const other of timeline.items)if(other.id!==item.id&&Number(other.startFrame)>=end)other.startFrame=Number(other.startFrame)+delta;
@@ -42,7 +41,7 @@ export async function generateWorkspaceImage(c:PoolClient,root:string,e:{id:stri
  const clip=row.bindings.find(b=>b.id===data.clipId);if(!clip||clip.source||clip.image)throw new ConfigurationError(409,'首次生成只填入尚未匹配的占位。');
  if(typeof data.materialRevisionId!=='string'||!uuid.test(data.materialRevisionId))throw new ConfigurationError(400,'首帧图片标识无效。');
  const image=(await c.query("SELECT * FROM public.production_material_revisions WHERE id=$1 AND episode_id=$2 AND material_type='image'",[data.materialRevisionId,e.id])).rows[0];if(!image)throw new ConfigurationError(409,'首帧图片不存在，请选择本期图片。');
- try{await verifyNativeFile(root,image.storage_path,image.sha256,Number(image.file_size));}catch{throw new ConfigurationError(409,'首帧图片缺失或指纹已变化。');}
+ try{await verifyEpisodeFile(c,root,e.id,image.storage_path,image.sha256,Number(image.file_size));}catch{throw new ConfigurationError(409,'首帧图片缺失或指纹已变化。');}
  const item=project.timelines.flatMap(t=>t.items).find(i=>i.id===clip.itemId);if(!item||item.kind!=='text')throw new ConfigurationError(409,'占位已由剪辑修改，不能首次生成覆盖。');
  // Prepare the existing first voice through the same guarded assembly used by refresh, then freeze the actual native route.
  if(await adoptFirstWorkspaceNarration(c,root,row,project,clip.shotId)){
@@ -74,9 +73,9 @@ export async function fillWorkspaceImageResult(c:PoolClient,root:string,episodeI
   if(current.audioTrackId!==frozen.audioTrackId||current.artifactId!==frozen.artifactId||current.sha256!==frozen.sha256||current.inputFingerprint!==frozen.inputFingerprint||current.durationSeconds!==frozen.durationSeconds)throw new ConfigurationError(409,'主声音输入或实际时长已变化，视频结果保留为候选。');
  }
  const source=(await c.query('SELECT * FROM public.production_material_revisions WHERE id=$1 AND episode_id=$2',[request.image_revision_id,episodeId])).rows[0];if(!source||source.sha256!==request.image_sha256)throw new ConfigurationError(409,'首帧图片身份已变化。');
- try{await verifyNativeFile(root,source.storage_path,source.sha256,Number(source.file_size));}catch{throw new ConfigurationError(409,'首帧图片缺失或指纹已变化。');}
+ try{await verifyEpisodeFile(c,root,episodeId,source.storage_path,source.sha256,Number(source.file_size));}catch{throw new ConfigurationError(409,'首帧图片缺失或指纹已变化。');}
  const material=(await c.query("SELECT * FROM public.production_material_revisions WHERE id=$1 AND episode_id=$2 AND material_type='video'",[request.material_revision_id,episodeId])).rows[0];if(!material)throw new ConfigurationError(409,'生成结果尚未登记。');
- let observed:Awaited<ReturnType<typeof inspectMp4Artifact>>;try{await verifyNativeFile(root,material.storage_path,material.sha256,Number(material.file_size));observed=await inspectMp4Artifact(join(root,material.storage_path));}catch{throw new ConfigurationError(409,'生成视频缺失、指纹已变化或无法读取。');}const timeline=project.timelines.find(t=>t.items.some(i=>i.id===item.id))!;
+ let observed:Awaited<ReturnType<typeof inspectMp4Artifact>>;try{await verifyEpisodeFile(c,root,episodeId,material.storage_path,material.sha256,Number(material.file_size));observed=await inspectMp4Artifact(await (await episodeFileIO(c,root,episodeId)).resolveReference(material.storage_path));}catch{throw new ConfigurationError(409,'生成视频缺失、指纹已变化或无法读取。');}const timeline=project.timelines.find(t=>t.items.some(i=>i.id===item.id))!;
  const duration=Math.max(1,Math.round(Number(request.duration_seconds)*timeline.fps));if(observed.durationSeconds+0.05<duration/timeline.fps)throw new ConfigurationError(409,'生成视频短于请求时长，结果保留为候选。');
  if(Number(item.durationInFrames)!==duration)throw new ConfigurationError(409,'占位时长已变化，结果保留为候选。');
  const assetId=`material-${material.id}`;project.assets.push({id:assetId,name:material.source_path,kind:'video',src:material.storage_path,durationInFrames:Math.round(observed.durationSeconds*timeline.fps)});

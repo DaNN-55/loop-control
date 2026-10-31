@@ -18,7 +18,7 @@ export async function createWorkspacePublishPackage(input:{assetRoot:string;epis
  const manifest:WorkspacePublishManifest={version:workspacePublishPackageVersion,episodeId:input.episodeId,identity:input.identity,artifacts:input.artifacts};
  await verifyWorkspaceManifest(input.assetRoot,input.episodeId,manifest,input.identity,input.storage);
  const bytes=Buffer.from(JSON.stringify(manifest,null,2)+'\n'),pack={relativePath:input.relativePath,sha256:createHash('sha256').update(bytes).digest('hex'),fileSize:bytes.length};
- await input.storage?.assertValid();const prefix=input.storage?.relativePath??`episodes/${input.episodeId}`;if(!pack.relativePath.startsWith(prefix+'/'))throw Error('发布包输出归属无效。');const path=await safeAssetOutputPath(input.assetRoot,pack.relativePath);try{await writeFile(path,bytes,{flag:'wx',mode:0o600});}catch(e){if((e as NodeJS.ErrnoException).code!=='EEXIST')throw e;await verifyNativeFile(input.assetRoot,pack.relativePath,pack.sha256,pack.fileSize);}
+ await input.storage?.assertValid();const prefix=input.storage?.relativePath??`episodes/${input.episodeId}`;if(!input.storage&&!pack.relativePath.startsWith(prefix+'/'))throw Error('发布包输出归属无效。');const physical=input.storage?relative(input.assetRoot,await input.storage.resolveReference(pack.relativePath)):pack.relativePath,path=await safeAssetOutputPath(input.assetRoot,physical);try{await writeFile(path,bytes,{flag:'wx',mode:0o600});}catch(e){if((e as NodeJS.ErrnoException).code!=='EEXIST')throw e;await verifyNativeFile(input.assetRoot,physical,pack.sha256,pack.fileSize);}
  return pack;
 }
 export async function verifyWorkspaceManifest(root:string,episodeId:string,value:unknown,expected?:WorkspaceDeliveryIdentity,storage?:EpisodeFileIO):Promise<void>{
