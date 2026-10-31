@@ -1,4 +1,5 @@
 import {isRetiredProvider,retiredProviderMessage} from './providerLifecycle.js';
+import {imageSizes} from '../imageGeneration.js';
 import {videoProviders} from "./videoProviderCatalog.js";
 export const executionPathKeys = ["external", "local", "manual"] as const;
 
@@ -17,6 +18,53 @@ export interface AcousticAlignmentCapabilities {
     granularity?: "character" | "word" | "phrase";
     detail: string;
   };
+}
+
+export const productionCapabilityLabels = {image: '图片', video: '视频', speech: '语音', music_sound: '音乐与音效'} as const;
+export type ProductionCapability = keyof typeof productionCapabilityLabels;
+export type ProductionInputMode = 'text' | 'reference_images' | 'first_frame' | 'query' | 'storyboard';
+export interface ProductionServiceConstraints {
+  prompt?: {maxLength: number};
+  query?: {maxLength: number};
+  durationSeconds?: {min: number; max: number; integer: boolean};
+  firstFrame?: {required: boolean; maxBytes: number; mimeTypes: readonly string[]};
+  referenceImages?: {max: number; maxBytes: number; mimeTypes: readonly string[]};
+  sizes?: readonly string[];
+  qualities?: readonly string[];
+  counts?: readonly number[];
+  resolutions?: readonly string[];
+  aspectRatios?: readonly string[];
+  orientation?: 'portrait';
+  speakingRate?: {min: number; max: number};
+}
+interface ProductionServiceDeclaration {
+  capability: ProductionCapability;
+  label: string;
+  mode: 'generation' | 'search' | 'local';
+  inputModes: readonly ProductionInputMode[];
+  constraints: ProductionServiceConstraints;
+}
+export interface RegisteredProductionChoice extends ProductionServiceDeclaration {
+  adapter: string;
+  provider: string;
+  identityKey: string;
+  executionPath: RegisteredExecutionPath;
+  connection: RegisteredAdapterChoice['connection'];
+  legacyCapabilities: readonly string[];
+  models: readonly string[];
+  presets: readonly string[];
+  voiceCatalog?: Readonly<Record<string, readonly string[]>>;
+}
+/** Read compatibility only: historical connection/task declarations are never rewritten. */
+export function normalizeProductionCapability(value: string): ProductionCapability | undefined {
+  if (Object.hasOwn(productionCapabilityLabels, value)) return value as ProductionCapability;
+  switch (value) {
+    case 'static_visual_generation': return 'image';
+    case 'a_roll_generation': case 'b_roll_generation': case 'video_generation': return 'video';
+    case 'narration_generation': return 'speech';
+    case 'soundtrack_generation': return 'music_sound';
+    default: return undefined;
+  }
 }
 
 export interface RegisteredAdapterCapability {
@@ -54,6 +102,7 @@ export type AdapterResolution =
 interface RegisteredAdapterDefinition {
   adapter: string;
   capabilities: readonly RegisteredAdapterCapability[];
+  production?: readonly ProductionServiceDeclaration[];
   connection: RegisteredAdapterChoice["connection"];
   execution: RegisteredAdapterChoice["execution"];
   executionPath: RegisteredExecutionPath;
@@ -67,10 +116,11 @@ const volcengineTtsAlignment: AcousticAlignmentCapabilities = {
 
 const manifest: readonly RegisteredAdapterDefinition[] = [
   ...Object.entries(videoProviders).map(([provider, definition]): RegisteredAdapterDefinition => ({
+    production: [{capability: 'video', label: definition.label, mode: 'generation', inputModes: ['text', 'first_frame'], constraints: {prompt: {maxLength: 1500}, durationSeconds: {min: definition.minDuration, max: definition.maxDuration, integer: true}, firstFrame: {required: true, maxBytes: 10*1024*1024, mimeTypes: ['image/png', 'image/jpeg']}, ...(provider==='kling'?{}:{resolutions: [provider === 'minimax' ? '768P' : '720p'], aspectRatios: ['adaptive']})}}],
     provider, adapter: definition.adapter, executionPath: "external", connection: {kind: "owner_managed", type: provider+"_video_api", endpoint: definition.endpoint}, execution: {kind: "controlled_media", safetyLimit: 1},
     capabilities: ["a_roll_generation", "b_roll_generation"].map(capability => ({capability, configurationFields: ["credential_ref", "max_attempts"], modelCatalog: definition.models, presetCatalog: ["official-video-v1"]})),
   })),
-  { provider: "bailian", adapter: "wan_video", executionPath: "external", connection: { kind: "owner_managed", type: "bailian_video_api", endpoint: "https://dashscope.aliyuncs.com" }, execution: { kind: "controlled_media", safetyLimit: 1 }, capabilities: [
+  { production: [{capability: 'video', label: '百炼万相视频', mode: 'generation', inputModes: ['text', 'first_frame'], constraints: {prompt: {maxLength: 1500}, durationSeconds: {min: 2, max: 15, integer: true}, firstFrame: {required: true, maxBytes: 20*1024*1024, mimeTypes: ['image/png', 'image/jpeg', 'image/webp', 'image/bmp']}, resolutions: ['720P','1080P'], aspectRatios: ['adaptive']}}], provider: "bailian", adapter: "wan_video", executionPath: "external", connection: { kind: "owner_managed", type: "bailian_video_api", endpoint: "https://dashscope.aliyuncs.com" }, execution: { kind: "controlled_media", safetyLimit: 1 }, capabilities: [
     { capability: "a_roll_generation", configurationFields: ["credential_ref", "max_attempts"], modelCatalog: ["wan2.6-i2v-flash"], presetCatalog: ["wan-video-v1"] },
     { capability: "b_roll_generation", configurationFields: ["credential_ref", "max_attempts"], modelCatalog: ["wan2.6-i2v-flash"], presetCatalog: ["wan-video-v1"] },
   ] },
@@ -79,16 +129,16 @@ const manifest: readonly RegisteredAdapterDefinition[] = [
     { capability: "visual_planning", configurationFields: ["model"], modelCatalog: [], presetCatalog: [] },
     { capability: "storyboard_planning", configurationFields: ["model", "prompt_harness"], modelCatalog: [], presetCatalog: [] },
   ] },
-  { provider: "openai", adapter: "openai_images", executionPath: "external", connection: { kind: "owner_managed", type: "openai_api" }, execution: { kind: "controlled_media", safetyLimit: 1 }, capabilities: [
+  { production: [{capability: 'image', label: 'OpenAI Images', mode: 'generation', inputModes: ['text', 'reference_images'], constraints: {sizes: imageSizes, qualities: ['auto','low','medium','high'], counts: [1,2,4], referenceImages: {max: 16, maxBytes: 20*1024*1024, mimeTypes: ['image/png','image/jpeg','image/webp']}}}], provider: "openai", adapter: "openai_images", executionPath: "external", connection: { kind: "owner_managed", type: "openai_api", endpoint: "https://api.openai.com/v1" }, execution: { kind: "controlled_media", safetyLimit: 1 }, capabilities: [
     { capability: "static_visual_generation", configurationFields: ["model", "credential_ref", "max_attempts"], modelCatalog: ["gpt-image-2"], presetCatalog: ["static-visual-v1"] },
   ] },
-  { provider: "pexels", adapter: "pexels_video", executionPath: "external", connection: { kind: "owner_managed", type: "pexels_api" }, execution: { kind: "controlled_media", safetyLimit: 3 }, capabilities: [
+  { production: [{capability: 'video', label: 'Pexels 素材检索', mode: 'search', inputModes: ['query'], constraints: {query: {maxLength: 100}, orientation: 'portrait'}}], provider: "pexels", adapter: "pexels_video", executionPath: "external", connection: { kind: "owner_managed", type: "pexels_api", endpoint: "https://api.pexels.com" }, execution: { kind: "controlled_media", safetyLimit: 3 }, capabilities: [
     { capability: "b_roll_generation", configurationFields: ["max_attempts"], modelCatalog: ["pexels-video-v1"], presetCatalog: ["b-roll-v1"] },
   ] },
-  { provider: "volcengine_tts", adapter: "volcengine_tts", executionPath: "external", connection: { kind: "owner_managed", type: "volcengine_tts_api", endpoint: "https://openspeech.bytedance.com/api/v3/tts/unidirectional/sse" }, execution: { kind: "controlled_media", safetyLimit: 2 }, capabilities: [
+  { production: [{capability: 'speech', label: '豆包语音 V3', mode: 'generation', inputModes: ['text'], constraints: {speakingRate: {min: 0.5, max: 2}}}], provider: "volcengine_tts", adapter: "volcengine_tts", executionPath: "external", connection: { kind: "owner_managed", type: "volcengine_tts_api", endpoint: "https://openspeech.bytedance.com/api/v3/tts/unidirectional/sse" }, execution: { kind: "controlled_media", safetyLimit: 2 }, capabilities: [
     { capability: "narration_generation", configurationFields: ["credential_ref", "max_attempts"], modelCatalog: ["seed-tts-2.0"], presetCatalog: ["narration-v1"], voiceCatalog: { "zh-CN": ["zh_female_vv_uranus_bigtts", "zh_male_m191_uranus_bigtts", "zh_male_taocheng_uranus_bigtts", "zh_female_xiaohe_uranus_bigtts", "zh_female_qingxinnvsheng_uranus_bigtts", "zh_male_huolixiaoge_uranus_bigtts", "zh_male_baqiqingshu_uranus_bigtts", "zh_female_mizai_uranus_bigtts", "ICL_uranus_zh_male_paoxiaoxiaoge_tob", "zh_male_xionger_uranus_bigtts"], "en-US": ["zh_female_vv_uranus_bigtts"], "ja-JP": ["zh_female_vv_uranus_bigtts"], "es-ES": ["zh_female_vv_uranus_bigtts"] }, acousticAlignment: volcengineTtsAlignment },
   ] },
-  { provider: "freesound", adapter: "freesound_preview", executionPath: "external", connection: { kind: "owner_managed", type: "freesound_api", endpoint: "https://freesound.org/apiv2" }, execution: { kind: "controlled_media", safetyLimit: 1 }, capabilities: [
+  { production: [{capability: 'music_sound', label: 'Freesound 配乐 / 音效', mode: 'search', inputModes: ['query'], constraints: {query: {maxLength: 100}}}], provider: "freesound", adapter: "freesound_preview", executionPath: "external", connection: { kind: "owner_managed", type: "freesound_api", endpoint: "https://freesound.org/apiv2" }, execution: { kind: "controlled_media", safetyLimit: 1 }, capabilities: [
     { capability: "soundtrack_generation", configurationFields: ["credential_ref", "max_attempts"], modelCatalog: ["freesound-preview-v1"], presetCatalog: ["soundtrack-v1"] },
   ] },
   { provider: "ffmpeg", adapter: "ffmpeg_extract_audio", executionPath: "internal", connection: { kind: "none" }, execution: { kind: "ffmpeg", safetyLimit: 1 }, capabilities: [
@@ -100,7 +150,7 @@ const manifest: readonly RegisteredAdapterDefinition[] = [
   { provider: "whisperx", adapter: "whisperx_local", executionPath: "local", connection: { kind: "none" }, execution: { kind: "whisperx", safetyLimit: 1 }, capabilities: [
     { capability: "acoustic_alignment", configurationFields: [], modelCatalog: ["large-v3", "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn"], presetCatalog: ["whisperx-alignment-v1"] },
   ] },
-  { provider: "openchatcut", adapter: "openchatcut_card_video", executionPath: "local", connection: { kind: "none" }, execution: { kind: "openchatcut", safetyLimit: 1 }, capabilities: [
+  { production: [{capability: 'video', label: 'OpenChatCut 卡片视频', mode: 'local', inputModes: ['storyboard'], constraints: {}}], provider: "openchatcut", adapter: "openchatcut_card_video", executionPath: "local", connection: { kind: "none" }, execution: { kind: "openchatcut", safetyLimit: 1 }, capabilities: [
     { capability: "a_roll_generation", configurationFields: ["max_attempts"], modelCatalog: ["openchatcut@0.2.14"], presetCatalog: ["card-video-v1"] },
     { capability: "b_roll_generation", configurationFields: ["max_attempts"], modelCatalog: ["openchatcut@0.2.14"], presetCatalog: ["card-video-v1"] },
   ] },
@@ -126,6 +176,9 @@ function validateManifest(definitions: readonly RegisteredAdapterDefinition[]): 
     for (const declaration of definition.capabilities) {
       if (capabilities.has(declaration.capability)) throw new Error(`Adapter ${identity} 重复声明能力 ${declaration.capability}。`);
       capabilities.add(declaration.capability);
+    }
+    for (const production of definition.production??[]) {
+      if (!definition.capabilities.some(declaration=>normalizeProductionCapability(declaration.capability)===production.capability)) throw new Error(`Adapter ${identity} 未声明制作功能 ${production.capability}。`);
     }
     identities.add(identity);
   }
@@ -158,4 +211,10 @@ function resolve(selection: AdapterSelection): AdapterResolution {
   return { kind: "registered", choice: { ...declaration, adapter, connection: definition.connection, execution: definition.execution, executionPath: definition.executionPath, identityKey: identityKey(provider, adapter), provider } };
 }
 
-export const registeredAdapters = Object.freeze({ choicesFor, resolve });
+function productionChoices(): readonly RegisteredProductionChoice[] {
+  return manifest.flatMap(definition => (definition.production??[]).map(production => {
+    const declarations = definition.capabilities.filter(declaration => normalizeProductionCapability(declaration.capability) === production.capability);
+    return {...production, provider: definition.provider, adapter: definition.adapter, identityKey: identityKey(definition.provider, definition.adapter), executionPath: definition.executionPath, connection: definition.connection, legacyCapabilities: declarations.map(declaration => declaration.capability), models: production.mode === 'search' ? [] : [...new Set(declarations.flatMap(declaration => declaration.modelCatalog))], presets: [...new Set(declarations.flatMap(declaration => declaration.presetCatalog))], ...(declarations[0]?.voiceCatalog ? {voiceCatalog: declarations[0].voiceCatalog} : {})};
+  }));
+}
+export const registeredAdapters = Object.freeze({ choicesFor, resolve, productionChoices });

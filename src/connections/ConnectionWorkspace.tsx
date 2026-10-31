@@ -9,7 +9,8 @@ import {NativeSelect} from '../ui/dan-ui/components/base/select/select-native';
 import {TextArea} from '../ui/dan-ui/components/base/textarea/textarea';
 import '../ui/dan-ui/styles/scoped.css';
 import './connections.css';
-import {videoProviders} from "../worker/videoProviderCatalog";
+import {registeredAdapters,productionCapabilityLabels} from '../worker/registeredAdapters';
+import {buildProductionServiceCatalog,type ProductionServiceCatalog} from './serviceCatalog';
 import { useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
 import type { Database } from "../lib/database.types";
@@ -38,9 +39,6 @@ export type ExternalConnectionVersion = {
   version: number;
   secretState?:'unbound'|'bound-unchecked';
 };
-
-const capabilityLabels:Record<string,string> = {pexels_video:'素材检索',freesound_preview:'配乐 / 音效',openai_images:'图片生成',workers_ai_images:'图片生成',google_tts:'声音合成',volcengine_tts:'声音合成',wan_video:'视频生成',seedance_video:'视频生成',minimax_video:'视频生成',kling_video:'视频生成'};
-const capabilityOf=(adapter:string)=>capabilityLabels[adapter]??adapter;
 
 const statusLabels: Record<ExternalConnection["status"] | ExternalConnectionVersion["status"], string> = {
   unverified: "未测试", verified: "已验证", invalid: "认证失败", retryable: "暂时失败", revoked: "已撤销",
@@ -133,17 +131,14 @@ export function ExternalConnectionPicker({ adapter, connections, isPending = fal
   </div>;
 }
 
-const connectionTypes = [
-  ...Object.entries(videoProviders).map(([provider, p]) => ({provider: provider as keyof typeof videoProviders, adapter: p.adapter, label: p.label, secretLabel: provider === "kling" ? "API Key（旧版可填 Access Key:Secret Key）" : p.label+" API Key"})),
-  { adapter: "wan_video", label: "百炼万相视频", provider: "bailian", secretLabel: "百炼 API Key" },
-  { adapter: "pexels_video", label: "Pexels B-roll", provider: "pexels", secretLabel: "Pexels API Key" },
-  { adapter: "freesound_preview", label: "Freesound 配乐 / 音效", provider: "freesound", secretLabel: "Freesound API Key" },
-  { adapter: "openai_images", label: "OpenAI Images", provider: "openai", secretLabel: "OpenAI API Key" },
-  { adapter: "volcengine_tts", label: "豆包语音 V3", provider: "volcengine_tts", secretLabel: "豆包语音 API Key" },
-] as const;
+const connectionTypes = [...new Map(registeredAdapters.productionChoices().filter(choice=>choice.connection.kind==='owner_managed').map(choice=>[choice.identityKey,choice])).values()].map(choice=>({
+  provider:choice.provider as ExternalConnectionInput['provider'],adapter:choice.adapter as ExternalConnectionInput['adapter'],label:choice.label,
+  secretLabel:choice.provider==='kling'?'API Key（旧版可填 Access Key:Secret Key）':choice.provider==='pexels'?'Pexels API Key':choice.provider==='volcengine_tts'?'豆包语音 API Key':choice.provider==='openai'?'OpenAI API Key':choice.provider==='bailian'?'百炼 API Key':choice.label+' API Key',
+}));
 
-export function ConnectionWorkspace({ connections, isPending = false, onCreateConnection, onDeleteVersion, onRevokeVersion, onRotateConnection, onTestConnection, onUpdateConnection, onRebindVersion, secretStorage='Vault', verificationEnabled=true, verificationByProvider, errorMessage='', showHeader=true, statusMessage='', onRefresh, versions = [] }: {
+export function ConnectionWorkspace({ serviceCatalog, connections, isPending = false, onCreateConnection, onDeleteVersion, onRevokeVersion, onRotateConnection, onTestConnection, onUpdateConnection, onRebindVersion, secretStorage='Vault', verificationEnabled=true, verificationByProvider, errorMessage='', showHeader=true, statusMessage='', onRefresh, versions = [] }: {
   connections: ExternalConnection[];
+  serviceCatalog?: ProductionServiceCatalog;
   isPending?: boolean;
   onCreateConnection: (input: ExternalConnectionInput) => Promise<ExternalConnection | null>;
   onDeleteVersion?: (versionId: string) => Promise<void>;
@@ -183,8 +178,14 @@ export function ConnectionWorkspace({ connections, isPending = false, onCreateCo
   const metadataChanged=Boolean(selected&&(name.trim()!==selected.name||description!==(selected.description??'')));
   const hasChanges=!selected||metadataChanged||Boolean(secret.trim());
   const busy=isPending||operation!=='';
-  const currentConnections=connections;
-  const matches=(connection:ExternalConnection)=>(capabilityFilter==='all'||capabilityOf(connection.adapter)===capabilityFilter)&&(!statusFilter||connection.status===statusFilter)&&[connection.name,connection.provider,connection.adapter,connection.description??''].join(' ').toLocaleLowerCase().includes(query.trim().toLocaleLowerCase());
+  const catalog=serviceCatalog??buildProductionServiceCatalog({connections,versions,externalReady:verificationEnabled});
+  const selectedServices=catalog.groups.flatMap(group=>group.services.filter(service=>service.connectionId===selected?.id));
+  const capabilityOf=(connection:ExternalConnection)=>catalog.groups.filter(group=>group.services.some(service=>service.connectionId===connection.id)).map(group=>group.label).join('、')||'未注册功能';
+  const tableGroups=[...catalog.groups.map(group=>({...group,entries:group.services.flatMap(service=>{
+    const connection=connections.find(connection=>connection.id===service.connectionId);
+    return connection?[{connection,service}]:[];
+  })})),{capability:'unsupported',label:'其他连接',entries:connections.filter(connection=>!catalog.groups.some(group=>group.services.some(service=>service.connectionId===connection.id))).map(connection=>({connection,service:null}))}];
+  const filteredGroups=tableGroups.filter(group=>capabilityFilter==='all'||group.capability===capabilityFilter).map(group=>({...group,entries:group.entries.filter(({connection,service})=>(!statusFilter||connection.status===statusFilter)&&[connection.name,connection.provider,connection.adapter,connection.description??'',...(service?.models??[]),...(service?.presets??[])].join(' ').toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()))}));
   const selectedVersions=versions.filter(version=>version.connection_id===selectedId);
   const selectedCurrentVersion=selectedVersions.find(version=>version.id===selected?.current_version_id)??selectedVersions.find(version=>version.is_current);
 
@@ -262,8 +263,7 @@ export function ConnectionWorkspace({ connections, isPending = false, onCreateCo
     {!operation && <span>{errorMessage || error || notice}</span>}
     {!operation && (errorMessage || error) && onRefresh && <Button color="secondary" size="sm" iconLeading={RefreshCw} isDisabled={busy} onPress={onRefresh}>重新读取连接</Button>}
   </div>;
-  const filteredConnections=currentConnections.filter(matches);
-  const capabilities=[...new Set([...connectionTypes.map(type=>capabilityOf(type.adapter)),...connections.map(connection=>capabilityOf(connection.adapter))])];
+  const filteredConnections=filteredGroups.flatMap(group=>group.entries);
   return <section className="dan-ui connection-workspace connection-management-workspace reference-connections" aria-label="外部连接管理">
     <header className="reference-connections-heading">
       <div>{showHeader&&<h2>外部连接</h2>}<p>管理生产能力使用的服务与凭据引用。</p></div>
@@ -271,31 +271,33 @@ export function ConnectionWorkspace({ connections, isPending = false, onCreateCo
     </header>
     <div className="reference-connections-toolbar">
       <Input aria-label="查找已存连接" size="sm" className="reference-connections-search" placeholder="名称、服务或适配器" onChange={setQuery} type="search" value={query}/>
-      <NativeSelect aria-label="生产能力" size="sm" value={capabilityFilter} onChange={event=>setCapabilityFilter(event.target.value)} options={[{value:'all',label:'全部能力'},...capabilities.map(value=>({value,label:value}))]}/>
+      <NativeSelect aria-label="生产能力" size="sm" value={capabilityFilter} onChange={event=>setCapabilityFilter(event.target.value)} options={[{value:'all',label:'全部能力'},...Object.entries(productionCapabilityLabels).map(([value,label])=>({value,label})),...(tableGroups.at(-1)!.entries.length?[{value:'unsupported',label:'其他连接'}]:[])]}/>
       <NativeSelect aria-label="验证状态" size="sm" value={statusFilter} onChange={event=>setStatusFilter(event.target.value)} options={[{value:'',label:'全部状态'},...(['verified','unverified','invalid','retryable']as const).map(value=>({value,label:statusLabels[value]}))]}/>
     </div>
     {!dialog&&operationResult}
     <section aria-label="连接列表" className="reference-connections-table-wrap">
       <table aria-label="已保存连接"><thead><tr><th scope="col">连接</th><th scope="col">能力</th><th scope="col">模型 / 服务</th><th scope="col">验证</th><th scope="col">凭据版本</th><th scope="col">测试</th><th scope="col"><span className="reference-connections-sr-only">更多操作</span></th></tr></thead>
-      <tbody>{filteredConnections.map(connection=>{
+      {filteredGroups.filter(group=>group.entries.length>0).map(group=><tbody key={group.capability} aria-label={group.label}>
+      {capabilityFilter==='all'&&<tr className="reference-connections-group"><td colSpan={7}>{group.label}</td></tr>}
+      {group.entries.map(({connection,service})=>{
         const current=versions.find(version=>version.id===connection.current_version_id)??versions.find(version=>version.connection_id===connection.id&&version.is_current);
         const canTest=verificationByProvider?.[connection.provider]?.available??verificationEnabled;
         return <tr key={connection.id}>
           <td><button type="button" className="reference-connection-name" disabled={busy} onClick={()=>openConnection(connection.id,'detail')}>{connection.name}</button>{connection.description&&<div className="reference-connection-secondary">{connection.description}</div>}</td>
-          <td>{capabilityOf(connection.adapter)}</td>
-          <td className="reference-connection-model">{connectionTypes.find(type=>type.adapter===connection.adapter)?.label??connection.adapter}</td>
-          <td><span className="reference-connection-status" data-status={connection.status}><i aria-hidden="true"/>{statusLabels[connection.status]}</span></td>
+          <td>{group.label}</td>
+          <td className="reference-connection-model"><span>{connection.provider}</span><div className="reference-connection-secondary">{service?.models.length?service.models.join('、'):service?.mode==='search'?service.label:service?.presets.join('、')||connection.adapter}</div>{service?.mode==='search'&&<small>素材检索</small>}</td>
+          <td><span className="reference-connection-status" data-status={connection.status}><i aria-hidden="true"/>{statusLabels[connection.status]}</span>{!service?.executable&&<div className="reference-connection-secondary">{service?.unavailableReason??'未注册或不支持当前制作功能。'}</div>}</td>
           <td>{current?`v${current.version}`:'—'}</td>
           <td className="reference-connection-test"><Button color="secondary" size="sm" iconLeading={Play} aria-label={`测试 ${connection.name}`} isLoading={testingId===connection.id} showTextWhileLoading isDisabled={busy||!canTest} onPress={()=>void testSelected(connection.id)}>{testingId===connection.id?'测试中…':'测试'}</Button></td><td className="reference-connection-more"><MenuTrigger><Button aria-label={`${connection.name} 连接操作`} color="tertiary" size="sm" iconLeading={MoreHorizontal} isDisabled={busy}/><Popover placement="bottom end" className="dan-ui reference-connections-menu"><Menu aria-label={`${connection.name} 操作`} onAction={key=>openConnection(connection.id,key==='edit'?'edit':'detail',key==='versions')}><MenuItem id="edit" textValue="编辑连接"><Pencil aria-hidden="true"/>编辑连接</MenuItem><MenuItem id="versions" textValue="版本详情"><History aria-hidden="true"/>版本详情</MenuItem></Menu></Popover></MenuTrigger></td>
         </tr>;
-      })}{!filteredConnections.length&&<tr><td colSpan={7}><div className="reference-connections-empty"><strong>{connections.length?'没有匹配的连接':'尚未添加连接'}</strong><p>{connections.length?'调整筛选条件，或创建新的服务连接。':'添加服务凭据后，验证其连接状态。'}</p>{connections.length>0&&<Button color="secondary" size="sm" onPress={()=>{setQuery('');setCapabilityFilter('all');setStatusFilter('');}}>清空筛选</Button>}</div></td></tr>}</tbody></table>
+      })}</tbody>)}{!filteredConnections.length&&<tbody><tr><td colSpan={7}><div className="reference-connections-empty"><strong>{connections.length?'没有匹配的连接':'尚未添加连接'}</strong><p>{connections.length?'调整筛选条件，或创建新的服务连接。':'添加服务凭据后，验证其连接状态。'}</p>{connections.length>0&&<Button color="secondary" size="sm" onPress={()=>{setQuery('');setCapabilityFilter('all');setStatusFilter('');}}>清空筛选</Button>}</div></td></tr></tbody>}</table>
     </section>
     <p className="reference-connections-note" role="status">{statusMessage||`凭据保存在 ${secretStorage}，不会回显。`}</p>
     <ModalOverlay className="product-ui reference-connections-overlay" isOpen={Boolean(dialog)} isDismissable={!busy} isKeyboardDismissDisabled={busy} onOpenChange={open=>{if(!open&&!busy)setDialog('');}}><Modal className="reference-connections-modal"><Dialog aria-label={dialog==='detail'?selected?.name:dialog==='new'?'新建连接':'编辑连接'} className="dan-ui connection-workspace reference-connections reference-connections-dialog">
       <header className="reference-connections-dialog-header"><h2>{dialog==='detail'?selected?.name:dialog==='new'?'新建连接':'编辑连接'}</h2><Button color="tertiary" size="sm" iconLeading={X} aria-label="关闭连接窗口" isDisabled={busy} onPress={()=>setDialog('')}/></header>
       {dialog==='detail'&&selected?<><div className="reference-connections-detail-body">
         <div className="reference-connection-summary" role="status" title={selected.last_verification_detail||undefined}><span className="reference-connection-status" data-status={selected.status}><i aria-hidden="true"/>{statusLabels[selected.status]}</span>{selectedCurrentVersion&&<span>v{selectedCurrentVersion.version}</span>}<span>{selected.last_verified_at?<>最近测试 <time dateTime={selected.last_verified_at}>{new Date(selected.last_verified_at).toLocaleString('zh-CN',{dateStyle:'short',timeStyle:'short'})}</time></>:'尚未测试'}</span></div>
-        <dl className="reference-connections-detail-list"><dt>生产能力</dt><dd>{capabilityOf(selected.adapter)}</dd><dt>服务提供方</dt><dd>{selected.provider}</dd><dt>适配器</dt><dd>{selected.adapter}</dd>{selected.endpoint&&<><dt>服务地址</dt><dd>{selected.endpoint}</dd></>}{selected.description&&<><dt>备注</dt><dd>{selected.description}</dd></>}{selected.usage&&(selected.usage.currentBlueprints+selected.usage.episodes+selected.usage.tasks)>0&&<><dt>使用范围</dt><dd>当前配置 {selected.usage.currentBlueprints} · 生产单 {selected.usage.episodes} · 任务 {selected.usage.tasks}</dd></>}</dl>
+        <dl className="reference-connections-detail-list"><dt>生产能力</dt><dd>{capabilityOf(selected)}</dd><dt>服务提供方</dt><dd>{selected.provider}</dd><dt>适配器</dt><dd>{selected.adapter}</dd><dt>模型 / 服务</dt><dd>{selectedServices.map(service=>service.models.length?service.models.join('、'):service.label).join('；')||'未注册或不支持当前制作功能。'}</dd>{selected.endpoint&&<><dt>服务地址</dt><dd>{selected.endpoint}</dd></>}{selected.description&&<><dt>备注</dt><dd>{selected.description}</dd></>}{selected.usage&&(selected.usage.currentBlueprints+selected.usage.episodes+selected.usage.tasks)>0&&<><dt>使用范围</dt><dd>当前配置 {selected.usage.currentBlueprints} · 生产单 {selected.usage.episodes} · 任务 {selected.usage.tasks}</dd></>}</dl>
         {!operationResult&&selected.status!=='verified'&&selected.last_verification_detail&&<p className="reference-connections-note form-error" role="alert">{selected.last_verification_detail}</p>}
         {operationResult}{versionDetails}
       </div><footer className="reference-connections-dialog-footer"><Button color="secondary" size="sm" isDisabled={busy} onPress={()=>setDialog('edit')}>编辑连接</Button><Button color="primary" size="sm" iconLeading={Play} isDisabled={busy||!canVerify} isLoading={operation==='testing'} showTextWhileLoading onPress={()=>void testSelected(selected.id)}>测试连接</Button></footer></>:<>
