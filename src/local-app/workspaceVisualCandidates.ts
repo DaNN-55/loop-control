@@ -1,3 +1,4 @@
+import {episodeFileIO} from './episodeFiles.js';
 import {creativeAccountRules} from '../creativeAccountRules.js';
 import {executeWorkspacePexels} from './workspacePexels.js';
 import {resolveProductionSelection} from './productionSelection.js';
@@ -91,7 +92,7 @@ export async function executeWorkspaceVisualCandidate(c:PoolClient,root:string,r
   const m=(await c.query("SELECT * FROM public.production_material_revisions WHERE id=$1 AND episode_id=$2 AND material_type IN ('video','image')",[data.materialRevisionId,row.episode_id])).rows[0];if(!m)throw new ConfigurationError(404,'本期视觉素材不存在；声音请从声音素材入口添加。');
   await resolveWorkspaceSource(c,root,row.episode_id,m.storage_path);const observed=await inspectWorkspaceVisualFile(root,m.storage_path,m.material_type),fps=project.timelines[0].fps;
   const asset={id:`material-${m.id}`,name:m.source_path.split('/').pop(),kind:m.material_type as 'video'|'image',src:m.storage_path,sourceRevision:`source-sha256-${m.sha256}`,sourceContentHash:m.sha256,durationInFrames:Math.ceil((observed.durationSeconds??3)*fps),width:observed.width,height:observed.height};
-  if(isOpenChatCutStudio(row.episode_id))return{asset:{...asset,src:await registerOpenChatCutStudioSource(root,row.episode_id,m.storage_path,m.sha256,Number(m.file_size))}};
+  if(isOpenChatCutStudio(row.episode_id))return{asset:{...asset,src:await registerOpenChatCutStudioSource(root,row.episode_id,m.storage_path,m.sha256,Number(m.file_size),await episodeFileIO(c,root,row.episode_id,true))}};
   if(!project.assets.some(a=>a.id===asset.id)){project.assets.push(asset);await updateWorkspaceProject(c,root,row,project,row.bindings,'登记补充视觉素材',{nativeEdit:true});}return{asset};
  }
  if(command==='registerWorkspaceVisualCandidate'){

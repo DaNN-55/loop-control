@@ -1,3 +1,14 @@
+# 2026-10-31 #187 / T09 工程与交付位置兼容（实现完成，待独立验收）
+
+- [x] 真实 Owner HTTP 新位置工程 red→green，保留外部日志。
+- [x] Studio 工作文件、恢复、工程版本、来源 I/O 和导出/交付复用持久位置；SQL120六函数兼容。
+- [x] 旧/新位置实际 SDK 编辑保存、关闭重启重开、播放导出和 compiled Worker 交付读回；身份/冲突保护回归。
+- [x] check/build/runtime:prepare、正式浏览器验收、T05 同步后 12 项原生/恢复及 2 项浏览器复验、child SIGKILL 与契约交接完成。
+
+最终证据与限制见仓库外 `T09/HANDOFF.md` 和 `T09-CONTRACT.md`。完整相关回归 29 passed / 1 已独立复现的原有 platformBlueprint 夹具失败，原断言保留；本票未修改该断言或声称整组全绿。
+
+验收 seam 已授权：正式页 → Owner HTTP → 隔离真实 DB/files → 实际 SDK。外部证据 `/private/tmp/loop-control-178-20261031/T09`；不碰日常数据、默认布局、付费 Provider 或 main。
+
 # Active execution: issue 178
 
 Integration branch: `codex/issue-178-integration`; baseline `8f134dc2`. Main checkout and existing uncommitted work remain untouched. Spec: https://github.com/DaNN-55/loop-control/issues/178. All 17 ticket descriptions and the live-read graph are saved in `/private/tmp/loop-control-178-20261031`.

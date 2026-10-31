@@ -1,3 +1,5 @@
+import {verifyNativeFile} from '../local-app/localFiles.js';
+import {resolve} from 'node:path';
 import { createHash } from "node:crypto";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
@@ -104,8 +106,8 @@ async function readFrozenStudioProject(
   assetRoot: string,
   manifest: NonNullable<NonNullable<WorkerTaskPackage["reviewRender"]>["studioProject"]>,
 ): Promise<OpenChatCutProject> {
-  const path = await safeAssetOutputPath(assetRoot, manifest.relativePath);
-  const contents = await readFile(path);
+  let contents:Buffer;
+  try{contents=await verifyNativeFile(assetRoot,manifest.relativePath,manifest.sha256,manifest.fileSize);}catch(error){throw new Error("OpenChatCut 冻结工程与任务清单的大小或哈希不一致。",{cause:error});}
   if (contents.byteLength !== manifest.fileSize || createHash("sha256").update(contents).digest("hex") !== manifest.sha256) {
     throw new Error("OpenChatCut 冻结工程与任务清单的大小或哈希不一致。");
   }
@@ -162,7 +164,8 @@ async function renderProject(
     outputPath,
     state: activeOpenChatCutState(project),
     project, timelineId: project.activeTimelineId,
-    sources,
+    // The attempt staging adapter materializes original frozen coordinates.
+    sources:sources.map(source=>({...source,sourcePath:resolve(input.taskPackage.assets.allowedRoot,source.relativePath)})),
   }, null, 2) + "\n");
   try {
     await input.run("openchatcut", [specPath]);

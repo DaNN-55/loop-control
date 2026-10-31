@@ -11,14 +11,14 @@ import {productionWorkspaceFixture} from './productionWorkspace.fixture';
 import {buildOpenChatCutProject} from '../worker/openchatcutProject';
 import {confirmedTtsRender} from '../worker/openchatcutProject.fixture';
 const hash=(s:Buffer|string)=>createHash('sha256').update(s).digest('hex');
-it.skipIf(process.env.LOOP_LEGACY_EDIT_ACCEPTANCE!=='1')('continues the exact original native project, saves a new immutable version and restores it after restart without generation',async()=>{
- const f=await productionWorkspaceFixture();
+it.skipIf(process.env.LOOP_LEGACY_EDIT_ACCEPTANCE!=='1').each(['legacy','registered'] as const)('continues the exact original native project, saves a new immutable version and restores it after restart without generation (%s)',async layout=>{
+ const f=await productionWorkspaceFixture({episodeRelativePath:layout==='registered'?()=> '恢复 [T09]_%/本单':undefined,migrations:['db/local/120-native-workspace-storage-locations.sql']});
  const unrelated=createServer((_q,s)=>s.end('<title>Other local app</title>'));unrelated.listen(0,'127.0.0.1');await once(unrelated,'listening');
  const occupiedPort=(unrelated.address() as {port:number}).port;(f.runtime as OpenChatCutRuntimeConfig).port=occupiedPort;
  try{
-  const render=confirmedTtsRender(false);render.preRenderReviewPackageId=f.board;render.members[0].relativePath=f.videoPath;render.members[1].relativePath=`episodes/${f.episode}/voice.mp3`;
+  const render=confirmedTtsRender(false);render.preRenderReviewPackageId=f.board;render.members[0].relativePath=f.videoPath;render.members[1].relativePath=`${f.episodeRelativePath}/voice.mp3`;
   const project=buildOpenChatCutProject(render,`loop-control-${f.episode}`);project.timelines[0].items.find(i=>i.kind==='video')!.transform={scale:1.13,x:23,y:9,rotation:4};project.timelines[0].name='原有剪辑不能重建';
-  const path=`episodes/${f.episode}/original-project.json`,bytes=Buffer.from(JSON.stringify(project,null,2)+'\n'),artifact=randomUUID();await writeFile(join(f.assetRoot,path),bytes);
+  const path=`${f.episodeRelativePath}/original-project.json`,bytes=Buffer.from(JSON.stringify(project,null,2)+'\n'),artifact=randomUUID();await writeFile(join(f.assetRoot,path),bytes);
   await f.c.query("INSERT INTO public.artifacts(id,episode_id,producer_task_id,artifact_type,relative_path,sha256,file_size) VALUES($1,$2,$3,'review_render_project',$4,$5,$6)",[artifact,f.episode,f.task,path,hash(bytes),bytes.length]);
   await f.c.query('DELETE FROM local_identity.input_episodes WHERE episode_id=$1',[f.episode]);
   const fingerprint=async()=>(await f.c.query("SELECT jsonb_build_object('episode',(SELECT to_jsonb(e) FROM public.episodes e WHERE id=$1),'tasks',(SELECT jsonb_agg(t ORDER BY id) FROM public.tasks t WHERE episode_id=$1),'approvals',(SELECT jsonb_agg(a ORDER BY id) FROM public.approvals a WHERE episode_id=$1),'materials',(SELECT jsonb_agg(m ORDER BY id) FROM public.production_material_revisions m WHERE episode_id=$1)) value",[f.episode])).rows[0].value;
@@ -28,7 +28,7 @@ it.skipIf(process.env.LOOP_LEGACY_EDIT_ACCEPTANCE!=='1')('continues the exact or
   expect((await f.request('adoptLegacyWorkspace',{...data,reviewPackageId:randomUUID()})).status).toBe(409);
   expect((await f.request('adoptLegacyWorkspace',{...data,expectedScriptRevisionId:randomUUID()})).status).toBe(409);
   expect((await f.c.query('SELECT count(*)::int n FROM local_identity.input_episodes')).rows[0].n).toBe(0);
-  const adopted=await f.request('adoptLegacyWorkspace',data);expect(adopted.status,JSON.stringify(adopted.body)).toBe(200);let w=adopted.body;
+  const adopted=await f.request('adoptLegacyWorkspace',data);expect(adopted.status,JSON.stringify(adopted.body)).toBe(200);let w=adopted.body;expect(w.recovery.relativePath.startsWith(f.episodeRelativePath+'/production-workspace/recoveries/')).toBe(true);
   expect((await f.request('adoptLegacyWorkspace',data)).status).toBe(409);
   expect(w.nativeEditRevision).toBeGreaterThan(0);expect(w.preparation.authorized).toBe(false);expect(w.readiness.placeholders).toEqual([]);
   const getProject=async(sha:string)=>{const r=await fetch(`${f.origin}/api/local/episodes/${f.episode}/workspace/project?sha=${sha}`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(r.status).toBe(200);return(await r.json()).project;};
@@ -47,8 +47,8 @@ it.skipIf(process.env.LOOP_LEGACY_EDIT_ACCEPTANCE!=='1')('continues the exact or
  }finally{await f.close();unrelated.closeAllConnections();await new Promise<void>(r=>unrelated.close(()=>r()));}
 },120000);
 
-it.skipIf(process.env.LOOP_LEGACY_EDIT_ACCEPTANCE!=='1')('prefers the most recently saved native edit and archives it before creating the working copy',async()=>{
- const f=await productionWorkspaceFixture();
+it.skipIf(process.env.LOOP_LEGACY_EDIT_ACCEPTANCE!=='1').each(['legacy','registered'] as const)('prefers the most recently saved native edit and archives it before creating the working copy (%s)',async layout=>{
+ const f=await productionWorkspaceFixture({episodeRelativePath:layout==='registered'?()=> '恢复 [T09]_%/本单':undefined,migrations:['db/local/120-native-workspace-storage-locations.sql']});
  try{
   await f.c.query("UPDATE public.episodes SET stage='qc_review' WHERE id=$1",[f.episode]);
   const opened=await f.request('openStudio',{projectRelativePath:f.boardPath});expect(opened.status,JSON.stringify(opened.body)).toBe(200);
@@ -57,7 +57,7 @@ it.skipIf(process.env.LOOP_LEGACY_EDIT_ACCEPTANCE!=='1')('prefers the most recen
   const data={expectedScriptRevisionId:f.script,reviewPackageId:f.board,savedProjectSha256:saved.sha256};
   expect((await f.request('adoptLegacyWorkspace',{...data,savedProjectSha256:'0'.repeat(64)})).status).toBe(409);
   expect((await f.request('adoptLegacyWorkspace',{expectedScriptRevisionId:f.script,reviewPackageId:f.board,artifactId:randomUUID(),expectedSourceSha256:'0'.repeat(64)})).status).toBe(409);
-  const result=await f.request('adoptLegacyWorkspace',data);expect(result.status,JSON.stringify(result.body)).toBe(200);
+  const result=await f.request('adoptLegacyWorkspace',data);expect(result.status,JSON.stringify(result.body)).toBe(200);expect(result.body.recovery.relativePath.startsWith(f.episodeRelativePath+'/production-workspace/recoveries/')).toBe(true);
   const archived=JSON.parse(await readFile(join(f.assetRoot,result.body.recovery.relativePath),'utf8'));expect(archived.project).toEqual(saved.project);
   const working=JSON.parse(await readFile(join(f.assetRoot,result.body.project.relativePath),'utf8'));expect(working.timelines[0].items.find((i:any)=>i.kind==='video').transform.x).toBe(37);
  }finally{await f.close();}

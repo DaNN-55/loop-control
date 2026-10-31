@@ -1,3 +1,4 @@
+import {editStudioDocument} from './studioDocument.fixture';
 // @vitest-environment node
 import {createHash} from 'node:crypto';
 import {readFile,writeFile,mkdir,copyFile,unlink} from 'node:fs/promises';
@@ -19,7 +20,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner checks actual used
   // Native project-store is the real editor persistence boundary; Owner save still performs CAS.
   async function nativeEdit(edit:(doc:any)=>void){
    const opened=await send('openWorkspaceStudio');expect(opened.status,JSON.stringify(opened.body)).toBe(200);w=opened.body.productionWorkspace;
-   const base=join(f.assetRoot,`episodes/${f.episode}/openchatcut-work/current/runtime`);let path=join(base,'project-store-v1.json'),store:any,doc:any;try{store=JSON.parse(await readFile(path,'utf8'));doc=store.entries[`project:${w.project.projectId}`];}catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;path=join(base,'project-store-v1',`${encodeURIComponent(`project:${w.project.projectId}`)}.json`);doc=JSON.parse(await readFile(path,'utf8'));}edit(doc);await writeFile(path,JSON.stringify(store??doc));
+   await editStudioDocument(opened.body.studioUrl,w.project.projectId,edit);
    const saved=await send('saveWorkspaceStudio',{workspaceRelativePath:opened.body.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:w.project.sha256});expect(saved.status,JSON.stringify(saved.body)).toBe(200);w=saved.body.productionWorkspace;
    const closed=await send('closeWorkspaceStudio');expect(closed.status,JSON.stringify(closed.body)).toBe(200);w=closed.body;
   }
