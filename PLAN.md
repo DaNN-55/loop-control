@@ -924,3 +924,13 @@ fresh原布局PID29640：真实detach后无host树、API409；重挂原dev167772
 完整组核心6files27/27、受影响5files24/24、原T15兼容4files18/18、units5files25/25通过；末次共享copy冻结身份修复后另跑copy/mount5files30/30及targeted actualdetach，并核原账号mount/interrupted2项。旧账号first末尾删除断言失败已在全未改9ec archive独立复现，单列KNOWN-BASELINES，不计全绿。正式browser最终1/1零skip45.98s。
 
 外部证据：`/private/tmp/loop-control-178-20261031/T16/`与`T16-CONTRACT.md`，完整命令与证据界限见HANDOFF。固定107/max109/0账号、schema1989a647/ledger4806437b；daily5174/QuickLook/main/sharedSDK保持，未push/部署/付费或处理日常数据。此为实现交付，不代表独立合并验收或关闭#194。
+
+### #194 / T16 独立合并验收收据
+
+fresh merger 在 root 明确 release 后，将 clean 冻结来源 `7ef09ab376046389e5b0035fb66560be85cc4715` 以 no-ff 合入 `723ae5d91c6630b8415d804a6d222d914c3709a0`。base/source/ancestor、32 文件 SHA 与字节长度、合并后与收据前全部冻结字节一致；仅 SQL126 新增，旧 SQL110–125 原字节不变。本轮未改产品或测试。
+
+integration check → build → runtime:prepare → compiled assert 全通过；六个当前核心 suite 28/28、零 skip、178.06 s，包含最后 actual target detach 的 faults10；五文件相关单测25/25、零 skip、1.33 s。正式 main.tsx + StrictMode browser1/1、零 skip、46.18 s：1440/1100/390、实际字节进度／刷新动作禁用、真实SQL切换故障与sameplan恢复、新根Finder1观测即关、旧生产源offline、新PID38179→40023、SDK滑块保存关闭重开、实际不同原生彩色动帧/Pause和Owner导出SHA。实际Chrome PID38249与own session daemon38239绑定，argv无headless且有WebGPU flag。仅签存储dialog，既有主页面overflow交T17。
+
+独算本轮真实dump29c270fd…=manifest=restore receipt、25项实际archive媒体大小/SHA、project45e3aeb1…、global与restore SQLite53248/header/独立只读clone integrity=ok/实际保存timeline、global native92861→93129及restore6213→6364、旧源offline/历史保持，global与restore Owner export6ed62f57…；browser实际2565316 B SHA6fb4d826…=Owner。compiledCLI原失败task/snapshot/model/budget重试，1本地0付费/无remoteID/旧prefix未重建。真实own第二target卷detach后host完整同名树/manual前后完全相同，409且source/config/DB binding原样。提前createFixture throw负例真实卷关闭、前后目录与mount plist相同、未到DB。
+
+来源24项相关、18项T15兼容及末次copy/mount30项日志已读，不机械重跑。旧accountDirectoryMigration first末尾lstat已知RED保持，未改断言或计绿。固定107/max109/0账号、ledger4806437b/schema1989a647与完整schema字节前后相同；DB只base+baseline、pinned container none-network/ports{}/volumes[]。own browser/native/Finder/process/cache/随机DB/mount均收尾，daily5174 PID71478、QuickLook与原4卷保留，main/sourceT16/T17/sharedSDK/context不动。完整报告与原始证据在外部 MERGE-T16.md、MERGE-T16/logs/、verified-evidence.json、resources.json。仅本收据提交且clean后释放integration写权与heavy资源给root；未关闭Issue、merge main、push、deploy或操作日常资料。
