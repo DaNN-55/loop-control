@@ -95,3 +95,7 @@ directory is not required before export. If target-path setup fails,
 nor visible error, so the available read-only evidence does not identify its
 early exit. The formal Loop Control step-4 `exportWorkspace` flow remains the
 appropriate delivery path; SDK export needs a separately instrumented repro.
+
+## Follow-up verification
+
+The Loop Control embedded and standalone adapters now preserve lane-qualified cue identity. Actual SDK component regressions and a browser edit persisted/reloaded through SQLite pass. SDK export success, missing-media failure feedback and retry were also verified. The historical no-job observation and process termination trigger remain unproven. See [follow-up report](../native-studio-fixes-20261101/REPORT.md). This does not modify or release the installed upstream SDK.

@@ -1,0 +1,7 @@
+{
+  "scripts/openchatcut-caption-identity.mjs": "05d3791d5a5003f3f8fd41d5bff0a007599ded7609a9cc4c7646ce9fde89b93e",
+  "scripts/openchatcut-embedded.mjs": "e139f3a048507478a874b8b95f56e5a4d1ccd9672a8655756d6aad7a5c2a1cb0",
+  "scripts/openchatcut-standalone.mjs": "bd8066a30458615c84bd6ee1eb0ef1b295d005760f496baf42bb0a12a56de3b5",
+  "scripts/openchatcut-caption-identity.integration.test.ts": "ae5f4c1f1255e2dfad69e8eba5148c193186e3b551d3a1e454ea94e4892061e3",
+  "scripts/runtime/start.test.mjs": "42dbf97e04e7982d34f6aadc5f7b2606dfbb2d44919cbe75434dc95d298438d5"
+}

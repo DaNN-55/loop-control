@@ -1,0 +1,38 @@
+failed to load config from /Users/dan/Programs/loop-control/.loop-control/local/OpenChatCut/config/vite.config.ts
+file:///Users/dan/Programs/loop-control/.loop-control/local/OpenChatCut/node_modules/.vite-temp/vite.config.ts.timestamp-1793490156173-d96cab80cea2f8.mjs:561
+	if (typeof value !== "string" || value !== value.trim() || !UUID_V4.test(value)) throw new Error(`${DEV_PROFILE_ID_ENV} must be a lowercase UUID v4`);
+	                                                                                       ^
+
+Error: OPENCHATCUT_DEV_PROFILE_ID must be a lowercase UUID v4
+    at configuredProfileId (file:///Users/dan/Programs/loop-control/.loop-control/local/OpenChatCut/node_modules/.vite-temp/vite.config.ts.timestamp-1793490156173-d96cab80cea2f8.mjs:561:89)
+    at resolveRuntimeProfile (file:///Users/dan/Programs/loop-control/.loop-control/local/OpenChatCut/node_modules/.vite-temp/vite.config.ts.timestamp-1793490156173-d96cab80cea2f8.mjs:587:20)
+    at file:///Users/dan/Programs/loop-control/.loop-control/local/OpenChatCut/node_modules/.vite-temp/vite.config.ts.timestamp-1793490156173-d96cab80cea2f8.mjs:627:18
+    at file:///Users/dan/Programs/loop-control/.loop-control/local/OpenChatCut/node_modules/.vite-temp/vite.config.ts.timestamp-1793490156173-d96cab80cea2f8.mjs:61:23
+    at file:///Users/dan/Programs/loop-control/.loop-control/local/OpenChatCut/node_modules/.vite-temp/vite.config.ts.timestamp-1793490156173-d96cab80cea2f8.mjs:1171:2
+    at file:///Users/dan/Programs/loop-control/.loop-control/local/OpenChatCut/node_modules/.vite-temp/vite.config.ts.timestamp-1793490156173-d96cab80cea2f8.mjs:61:23
+    at file:///Users/dan/Programs/loop-control/.loop-control/local/OpenChatCut/node_modules/.vite-temp/vite.config.ts.timestamp-1793490156173-d96cab80cea2f8.mjs:1182:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async loadConfigFromBundledFile (file:///Users/dan/Programs/loop-control/.loop-control/local/OpenChatCut/node_modules/vite/dist/node/chunks/node.js:36123:12)
+
+Node.js v24.20.0
+[OpenChatCut] isolated profile a61892c9-a866-4249-9e8e-1f873e104b18 · /private/tmp/loop-control-sdk-fixes-20261101/data
+`transformWithEsbuild` is deprecated and will be removed in the future. Please migrate to `transformWithOxc`.
+[media-dir] c2381014ea86b45bc659.mp4: Premature close
+[media-dir] c2381014ea86b45bc659.mp4: Premature close
+[media-dir] a2d365cc4b33546e5074.mp4: Premature close
+[media-dir] a2d365cc4b33546e5074.mp4: Premature close
+[media-dir] c2381014ea86b45bc659.mp4: Premature close
+[media-dir] c2381014ea86b45bc659.mp4: Premature close
+[media-dir] a2d365cc4b33546e5074.mp4: Premature close
+[media-dir] a2d365cc4b33546e5074.mp4: Premature close
+[media-dir] c2381014ea86b45bc659.mp4: Premature close
+[media-dir] c2381014ea86b45bc659.mp4: Premature close
+[media-dir] c2381014ea86b45bc659.mp4: Premature close
+[media-dir] a2d365cc4b33546e5074.mp4: Premature close
+[media-dir] a2d365cc4b33546e5074.mp4: Premature close
+[media-dir] c2381014ea86b45bc659.mp4: Premature close
+[media-dir] c2381014ea86b45bc659.mp4: Premature close
+[media-dir] c2381014ea86b45bc659.mp4: Premature close
+[media-dir] a2d365cc4b33546e5074.mp4: Premature close
+[media-dir] a2d365cc4b33546e5074.mp4: Premature close

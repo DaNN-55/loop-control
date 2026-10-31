@@ -1,0 +1,5 @@
+{
+  "feedback": "Export media preflight failed for 1 reference: missing_source: /media/uploads/c2381014ea86b45bc659.mp4 (Media source is not readable (HTTP 404): /media/uploads/c2381014ea86b45bc659.mp4)preflight · export_media_preflight_failed · not retryablecleanup: not-required浏览器下载目录/生产单 c736a98b-49db-4a61-934c-ebb2db6c6a9d.movshot-shot-01-5a2fb7f8-374c-4261-ab07-05836951c263: Media source is not readable (HTTP 404): /media/uploads/c2381014ea86b45bc659.mp4",
+  "jobs": "后台导出1生产单 c736a98b-49db-4a61-934c-ebb2db6c6a9d.mov · failed · 0%",
+  "hasAlert": true
+}

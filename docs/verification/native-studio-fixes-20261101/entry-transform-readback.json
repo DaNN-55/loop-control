@@ -1,0 +1,30 @@
+[
+  {
+    "entry": "embedded",
+    "module": "CaptionTrackLane.tsx",
+    "status": 200,
+    "laneAwareIdentity": true,
+    "sha256": "65e59ce60db49a7af0674a870ad160631a17c198ec891a2836f0aa22df3665fd"
+  },
+  {
+    "entry": "embedded",
+    "module": "useCaptionCueGestures.ts",
+    "status": 200,
+    "laneAwareIdentity": true,
+    "sha256": "a930bfef51fb53c91daef19d4691ce2c8620c6b6a6e1b2af688abe868371fe24"
+  },
+  {
+    "entry": "standalone",
+    "module": "CaptionTrackLane.tsx",
+    "status": 200,
+    "laneAwareIdentity": true,
+    "sha256": "46b566a8a2c476fe5b550988381dc983bca00721d46d333e1f39a4c0ec9fe310"
+  },
+  {
+    "entry": "standalone",
+    "module": "useCaptionCueGestures.ts",
+    "status": 200,
+    "laneAwareIdentity": true,
+    "sha256": "db5252f683473e3372908b955fc1aa56919133e5f9ba7307813844844fdcd9b5"
+  }
+]

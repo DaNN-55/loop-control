@@ -18,6 +18,8 @@ afterEach(()=>vi.restoreAllMocks());
 it('archives a record only after confirming its process exited, then starts normally',async()=>{
  await import('./start.mjs');
  expect(process.kill).toHaveBeenCalledWith(444,0);expect(ports.rename).toHaveBeenCalledWith('/fixture/runtime/app.json',expect.stringMatching(/app\.json\.stale-\d+$/));expect(ports.spawn).toHaveBeenCalledTimes(1);expect(ports.write).toHaveBeenCalledWith('/fixture/runtime/app.json',expect.stringContaining('999'),{exclusive:true});
+ expect(ports.spawn.mock.calls[0][2]).toMatchObject({detached:true,stdio:['ignore',10,10]});
+ expect(ports.spawn.mock.results[0].value.unref).toHaveBeenCalledOnce();
 });
 it('does not archive or stop a live process whose identity does not match',async()=>{
  process.kill.mockImplementation(()=>true);

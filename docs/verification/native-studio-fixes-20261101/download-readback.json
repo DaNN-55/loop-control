@@ -1,0 +1,14 @@
+[
+  {
+    "file": "standalone.mp4",
+    "size": 1241029,
+    "sha256": "498636996ba7bb62fa9ffb6d4075e05f5cfc4ad17f9bdb07ea6d31d99af95abf",
+    "observedDownloadMtime": "2026-11-01T07:45:01.926117"
+  },
+  {
+    "file": "embedded.mp4",
+    "size": 1241029,
+    "sha256": "eb7d0395e3fd2ab06c5517bb3b9ee0fae453a4b6f56d1b9455590681cbe50f1e",
+    "observedDownloadMtime": "2026-11-01T07:47:14.102515"
+  }
+]

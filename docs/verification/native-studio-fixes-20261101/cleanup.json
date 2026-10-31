@@ -1,0 +1,35 @@
+{
+  "ownedServicesStopped": [
+    {
+      "pid": 50210,
+      "port": 59301,
+      "commandIdentityChecked": true,
+      "signal": "SIGTERM",
+      "portClosed": true
+    },
+    {
+      "pid": 50516,
+      "port": 59302,
+      "commandIdentityChecked": true,
+      "signal": "SIGTERM",
+      "portClosed": true
+    },
+    {
+      "pid": 51780,
+      "port": 59305,
+      "commandIdentityChecked": true,
+      "signal": "SIGTERM",
+      "portClosed": true
+    }
+  ],
+  "ownedBrowserClosed": true,
+  "dailyServiceRestarted": false,
+  "newWorktreesOrBranches": false,
+  "removedProcessArtifactsRoot": "/private/tmp/loop-control-sdk-fixes-20261101",
+  "removedRegularFiles": 527,
+  "removedLogicalBytes": 157050942,
+  "openReferencesBeforeRemoval": 0,
+  "originalE2ERecoveryDirectoryPreserved": true,
+  "dailyHttpStatus": 200,
+  "installedSdkUnmodified": true
+}

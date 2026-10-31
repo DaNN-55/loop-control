@@ -1,0 +1,17 @@
+{
+  "at": "2026-10-31T22:05:51.112Z",
+  "type": "execution_session_completed",
+  "processId": "75977",
+  "nativePid": 60977,
+  "launchMode": "foreground-managed-exec",
+  "exitCode": -1,
+  "status": "failed",
+  "duration": {
+    "secs": 723,
+    "nanos": 492611250
+  },
+  "startedAtMs": 1793483627616,
+  "completedAtMs": 1793484351112,
+  "applicationFatalStackRecorded": false,
+  "exactSignalOrTerminatingActorKnown": false
+}

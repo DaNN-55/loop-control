@@ -1,0 +1,20 @@
+[
+  {
+    "mode": "foreground",
+    "parentPid": 51575,
+    "childPid": 51576,
+    "readyHttpStatus": 200,
+    "parentGroupTerminated": "SIGKILL",
+    "httpAfterParentGroupTerminated": 0,
+    "expected": true
+  },
+  {
+    "mode": "detached",
+    "parentPid": 51578,
+    "childPid": 51579,
+    "readyHttpStatus": 200,
+    "parentGroupTerminated": "SIGKILL",
+    "httpAfterParentGroupTerminated": 200,
+    "expected": true
+  }
+]
