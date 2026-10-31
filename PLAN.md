@@ -1,4 +1,4 @@
-# #178 T11：真实备份与异地恢复（实施完成，待独立合并验收）
+# #178 T11：真实备份与异地恢复（独立验收通过，待主 Agent 关闭 Issue）
 
 目标：沿现有 storage backup/restore 与登记位置链路，保存完整数据库和生产文件；恢复后全局根、账号、容器、生产单身份及部署配置一致，历史来源不改写。
 
@@ -8,11 +8,19 @@
 - [x] 新旧、多账号/series/unassigned、原根离线、实际 SDK save-close-reopen-export；两个 headed+WebGPU 正式页面彩色播放，Finder 三层 exact target 已打开并关闭。
 - [x] 已同步真实 SQL115，prepared/committed 两个真实删除中断均阻止备份，完成及回滚历史原行异地恢复不变。
 - [x] 最终存储／强停发布／115／旧存储五文件 20 项通过、零跳过；实际 dump、SQLite 完整依赖及 Owner 导出 SHA 留档并独立读回。
-- [ ] 最终文档同步、clean 提交与独立 merger 交接。
+- [x] 源分支 clean 提交、文档同步和独立 merger 验收完成；integration 保留合入与验收收据。
 
 已读结果：最终五文件 20 项真实测试通过，零跳过（339.75 秒）；runtime/reader/reference/窄 adapter 18 项通过；T03 五项含旧 initialize v1 两种中断恢复通过。此前既有创建/系列/媒体根 14 项契约通过。源同字节换 inode、未知目标、unknown config、文件及历史篡改拒绝、四个真实 SIGKILL 发布点已逐条留 red/green。两套实际归档、完整 closed native work、导出文件及 SQLite 原生编辑均已独立核验，见外部 `T11/final-evidence/verified-evidence.json`；精确交接见 `/private/tmp/loop-control-178-20261031/T11/HANDOFF.md`。
 
 隔离：仅 pinned #178 test container、随机 loop_t24_restore_<12hex> DB 和本票根；baseline109 不升级；不开自动备份、不使用日常服务或付费 Provider。
+
+独立合入：干净源 `4188575d` 已包含 integration `5a52a4b7`，以 no-ff 合入 `5d28c135`，无冲突和功能补改。merger 独立通过 `npm run check`、`npm run build`、`npm run runtime:prepare`、18 项相关单测，以及五文件 20 项真实存储验收（零跳过，366.97 秒）。T03 旧 initialize v1 的同一用例覆盖提交前回滚与提交后保留目标，定向 1 项通过，另 4 项按名称筛选未运行；不宣称 merger 全组 5/5。
+
+本次两种布局各保留真实 dump、完整 closed native work、SQLite、不可变项目与 2,549,994 字节导出；独立核验所有归档媒体、项目指纹、SQLite 最后编辑及 Owner HTTP 导出 SHA `6ed62f5700544febe1e4d8439e230aebbd3f6ab21d64161acedb456725226b53`。四个真实 SIGKILL 发布点、未知配置／文件／完成历史篡改、ready 后根 inode 替换、目标竞态及 SQL115 活动／历史状态均通过。固定源仍为 107 条迁移、最高 109、零账号，全部账本 SHA 与 bootstrap 相同；SQL115 原 SHA 不变。自己的测试 DB、进程、APFS 挂载和新原生缓存均已释放；本轮未开浏览器或 Finder，不重复声明全局窗口为零。
+
+证据与精确命令：仓库外 `MERGE-T11.md`、`MERGE-T11-commands.sh`、`MERGE-T11-*.log`、`MERGE-T11/evidence/verified-evidence.json`。此前两布局 headed+WebGPU 彩色播放和 Finder 三层目标证据已由 root 核验，本次无 UI 变更而未重复。20,000 条媒体清单、64 MiB 归档／manifest、128 MiB SQL 解码上限仍保留；T13/T14 lineage 与旧失败任务冻结身份解释仍待后续票。未跑默认全套或已知旧 baseline 红组，不操作 main、push、部署、日常数据或付费服务。
+
+用户已授权完成资源清理；此前 11 个合并分支及已完成工作树的清理收据见外部 `CLEANUP-COMPLETED-20261031.md`。本次源 T11 工作树保持干净并留待 root 验收后清理，merger 不删除源工作树、不关闭 GitHub Issue。
 
 # 2026-10-31 #187 / T09 工程与交付位置兼容（独立验收通过，待主 Agent 关闭 Issue）
 
@@ -45,7 +53,7 @@ Confirmed acceptance: formal UI → Owner HTTP → isolated real database/files 
 | #186 | #179 | Completed; independent acceptance passed and tracker closed |
 | #187 | #184, #185, #186 | Completed; independent acceptance passed and tracker closed |
 | #188 | #183 | Completed; independent acceptance passed and tracker closed |
-| #189 | #183, #187 | Implementing in isolated worktree |
+| #189 | #183, #187 | Integrated locally; independent acceptance passed; awaiting root tracker closure |
 | #190 | #187, #188, #189 | Pending |
 | #191 | #190 | Pending |
 | #192 | #190 | Pending |
@@ -59,7 +67,7 @@ Baseline verification: `npm run check` passed; default suite 174 files / 1144 te
 
 Verification log and ticket handoffs: `/private/tmp/loop-control-178-20261031`. Preserve RED/GREEN, actual skip counts and any unresolved integration limitations.
 
-Tracker: #179 through #188 are completed after independent acceptance; 10/17 complete. T11/#189 remains active. Completed clean implementer worktrees and their merged ticket/process branches are removed after fresh ancestry/status/no-runtime-reference checks, with exact tips and deletion receipts retained outside the repo. The user explicitly authorized a dedicated cleanup subagent to free space; integration, active T11, shared runtime/SDK and acceptance evidence stay available. Exact receipts and migration reservations remain in the shared external context.
+Tracker: #179 through #188 are closed after independent acceptance; 10/17 closed. T11/#189 is independently accepted locally, awaiting root tracker closure; T12/#190 remains pending. Completed clean implementer worktrees and their merged ticket/process branches are removed after fresh ancestry/status/no-runtime-reference checks, with exact tips and deletion receipts retained outside the repo. The user explicitly authorized a dedicated cleanup subagent to free space; integration, active T11, shared runtime/SDK and acceptance evidence stay available. Exact receipts and migration reservations remain in the shared external context.
 
 Cross-ticket notes: T03 binds global storage to the persisted workspace Owner. T04 now creates the genuine first account through the trusted T03 binding without importing source metadata or broadening credentials. T07 owns shared producer namespaces/native output authority and mediaLibrary prefix checks; T06 owns input/planning guards and localFiles. Relative-prefix migration of frozen references remains a mandatory T13/T14 seam (external LOCATION-CALLERS.md), not solved by account-root-only mapping.
 
