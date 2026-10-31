@@ -18,8 +18,8 @@ export function storageReferences(query,extended=true){
  return JSON.parse(query(`SELECT coalesce(jsonb_agg(r),'[]') FROM(${selections.join(' UNION ALL ')})r`));
 }
 /** Same persisted episode I/O seam as HTTP/native. Source coordinates remain evidence keys. */
-export async function storageReferencePath(query,assetRoot,episodeId,reference){
- if(query("SELECT to_regprocedure('local_identity.episode_storage_location(uuid)') IS NOT NULL")!=='t')return join(assetRoot,reference);
+export function storageReferenceResolver(query){
+ const registered=query("SELECT to_regprocedure('local_identity.episode_storage_location(uuid)') IS NOT NULL")==='t',locations=new Map();
  const client={query:async(text,values=[])=>{if(!/^SELECT\b/i.test(text))throw Error('Storage reference adapter is read-only');const statement=text.replace(/\$(\d+)/g,(_,index)=>{const value=values[Number(index)-1];if(value===null)return'NULL';if(!['string','number'].includes(typeof value))throw Error('Unsupported storage reference parameter');return quote(value);});return{rows:JSON.parse(query(`SELECT coalesce(jsonb_agg(r),'[]') FROM(${statement})r`))};}};
- const location=await episodeStorageLocationAtRoot(client,assetRoot,episodeId);return resolveEpisodeFileReference(client,location,reference);
+ return async(assetRoot,episodeId,reference)=>{if(!registered)return join(assetRoot,reference);const key=assetRoot+'\0'+episodeId;let location=locations.get(key);if(!location){location=await episodeStorageLocationAtRoot(client,assetRoot,episodeId);locations.set(key,location);}return resolveEpisodeFileReference(client,location,reference);};
 }

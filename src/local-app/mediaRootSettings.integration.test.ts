@@ -59,18 +59,20 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('empty workspace initiali
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('interrupted initialization reconciles private config with committed database metadata on the next real process start',async()=>{
  const {nativeMediaRootFixture}=await import('./mediaRootRuntime.fixture');const {inspectMediaRoot}=await import('./mediaRootSettings');
- const {readFile,access}=await import('node:fs/promises');const {join}=await import('node:path');const runtimeModule=join(process.cwd(),'scripts/runtime/media-root.mjs');const {persistMediaRootDeployment}=await import(runtimeModule);
+ const {readFile,writeFile,access}=await import('node:fs/promises');const {join}=await import('node:path');const runtimeModule=join(process.cwd(),'scripts/runtime/media-root.mjs');const {persistMediaRootDeployment}=await import(runtimeModule);
  const fixture=await nativeMediaRootFixture(),{f,source,target,configFile,launch,stop}=fixture;
  try{
   let runtime=await launch();await stop();
   const previous=JSON.parse(await readFile(configFile,'utf8')),binding=await inspectMediaRoot(target);
+  const legacyJournal=async()=>{const path=join(fixture.runtimeRoot,'media-root-pending.json'),journal=JSON.parse(await readFile(path,'utf8'));delete journal.publication;delete journal.targetSettings;delete journal.targetReceipt;await writeFile(path,JSON.stringify(journal),{mode:0o600});};
+  // Original initialize v1 journal: no restore-only publication or target document fields.
   // Controlled crash point: private files saved, DB transaction has not committed.
-  await persistMediaRootDeployment({...previous,deploymentFile:configFile},binding);
+  await persistMediaRootDeployment({...previous,deploymentFile:configFile},binding);await legacyJournal();
   runtime=await launch();expect(JSON.parse(await readFile(configFile,'utf8')).mediaRoot).toBe(source);
   const headers={Origin:runtime.origin,Cookie:'loop_owner_session='+f.token,'Content-Type':'application/json','X-CSRF-Token':csrfFor(f.token)};
   const recovered=await fetch(runtime.origin+'/api/local/media-root',{headers});expect(await recovered.json()).toMatchObject({path:source,status:'ready'});await stop();
   // Controlled crash point: DB and private files committed, activation receipt not finalized.
-  await persistMediaRootDeployment({...previous,deploymentFile:configFile},binding);
+  await persistMediaRootDeployment({...previous,deploymentFile:configFile},binding);await legacyJournal();
   await f.c.query('BEGIN');
   // Admin fixture writes only the exact isolated deployment table, representing a committed app transaction.
   await f.c.query('UPDATE local_identity.media_root_binding SET path=$1,device_id=$2,inode_id=$3,mount_path=$4',[binding.path,binding.deviceId,binding.inodeId,binding.mountPath]);await f.c.query('COMMIT');

@@ -10,6 +10,8 @@ it('the restore fixture rejects daily identity, foreign databases and expanded c
  expect(()=>context.docker(['exec',base.container,'psql','-d','loop_control'],'SELECT 1')).toThrow('Foreign');
  expect(()=>context.docker(['exec',base.container,'psql','-d','postgres'],'DROP DATABASE loop_control')).toThrow('Foreign');
  expect(()=>context.docker(['exec','loop-control-local-postgres','pg_restore','--file=-'])).toThrow('Foreign');
+ expect(()=>context.docker(['exec','foreign-container','echo',base.container,'pg_restore','--file=-'])).toThrow('Foreign');
+ expect(()=>context.docker(['exec',base.container,'pg_restore','--dbname=foreign_database'])).toThrow('Foreign');
  expect(base.sql).not.toHaveBeenCalled();expect(base.docker).not.toHaveBeenCalled();
  expect(context.sql(`SELECT count(*) FROM pg_database WHERE datname='${target}'`,'postgres')).toBe('0');expect(base.docker).toHaveBeenCalledOnce();
 });
