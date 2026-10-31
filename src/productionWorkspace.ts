@@ -31,9 +31,10 @@ export const productionWorkspaceFields:Record<string,string[]>={
  ...workspaceAudioFields,
  ...workspaceDeliveryFields,
  ...workspaceExportFields,
- saveWorkspaceNarration:['episodeId','workspaceId','expectedRevision','clipId','mode','text','voice','speakingRate','audioTrackId'],
+ saveWorkspaceNarrationDefaults:['episodeId','workspaceId','expectedRevision','selection','voice','speakingRate','languageCode'],
+ saveWorkspaceNarration:['episodeId','workspaceId','expectedRevision','clipId','mode','text','voice','speakingRate','audioTrackId','selection','languageCode'],
  confirmWorkspaceNarration:['episodeId','workspaceId','expectedRevision','clipId'],
- generateWorkspaceNarration:['episodeId','workspaceId','expectedRevision','clipId','retry'],
+ generateWorkspaceNarration:['episodeId','workspaceId','expectedRevision','clipId','retry','reservationCents'],
  adoptWorkspaceNarration:['episodeId','workspaceId','expectedRevision','clipId','inputFingerprint','audioTrackId'],
  refreshWorkspaceNarration:['episodeId','workspaceId','expectedRevision'],
  editWorkspaceStructure:['episodeId','workspaceId','expectedRevision','operation'],
@@ -51,4 +52,4 @@ export const productionWorkspaceFields:Record<string,string[]>={
  closeWorkspaceStudio:['episodeId','workspaceId','expectedRevision'],
 };
 
-export interface WorkspaceNarration {requiresCandidateAdoption?:boolean;videoWindow?:{durationSeconds:number;generationSeconds:number;maximumSeconds:number};clipId:string;shotId:string;mode:'tts'|'manual'|'none';text:string;voice:string|null;languageCode:string|null;speakingRate:number|null;override:boolean;inputFingerprint:string;confirmed:boolean;taskId:string|null;status:string;error:string|null;audioTrackId:string|null;artifactId:string|null;relativePath:string|null;sha256:string|null;fileSize:number|null;durationSeconds:number|null;itemId:string;adoptedAudioTrackId:string|null}
+export interface WorkspaceNarration {windowWarning?:string|null;selection?:import('./productionSelection.js').ProductionSelection|null;defaults?:{selection:import('./productionSelection.js').ProductionSelection;voice:string;languageCode:string;speakingRate:number}|null;requiresCandidateAdoption?:boolean;videoWindow?:{durationSeconds:number;generationSeconds:number;maximumSeconds:number};clipId:string;shotId:string;mode:'tts'|'manual'|'none';text:string;voice:string|null;languageCode:string|null;speakingRate:number|null;override:boolean;inputFingerprint:string;confirmed:boolean;taskId:string|null;status:string;error:string|null;audioTrackId:string|null;artifactId:string|null;relativePath:string|null;sha256:string|null;fileSize:number|null;durationSeconds:number|null;itemId:string;adoptedAudioTrackId:string|null}
