@@ -1,3 +1,4 @@
+import {createEpisodeDirectory} from './episodeCreation.js';
 import {verifyEpisodeFile,resolveEpisodeFileReference} from './episodeFiles.js';
 import {episodeStorageLocationAtRoot,requireWritableEpisodeStorage,resolveEpisodeStorageLocation,requireEpisodeStorageDirectory} from './episodeStorageLocation.js';
 import {requireAccountAssetRoot,resolveEpisodeAssetRoot} from './accountAssetRoots.js';
@@ -21,7 +22,7 @@ import type {Pool,PoolClient} from 'pg';
 import type {OwnerSession} from './sessions.js';
 import {sessionTransaction,ownerTransaction} from './ownerTransaction.js';
 import {ConfigurationError,validateConfigurationPolicy,canonical} from './configurationCommands.js';
-import {ensureInputDirectories,snapshotInput,verifyNativeFile} from './localFiles.js';
+import {snapshotInput,verifyNativeFile} from './localFiles.js';
 import {verifyMediaLibrary} from '../worker/mediaLibrary.js';
 import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
@@ -79,6 +80,7 @@ export class LocalEpisodeCommands {
   allowed.prepareScriptPublish=['episodeId'];allowed.configureScriptProduction=['episodeId','enabled','choices'];allowed.pauseScriptProduction=['episodeId'];allowed.applyScriptSettings=['episodeId','reviewPackageId'];allowed.bindScriptVideo=['episodeId','reviewPackageId','shotId','materialRevisionId'];allowed.renderScriptReview=['episodeId','reviewPackageId','projectRelativePath'];
   Object.assign(allowed,productionWorkspaceFields);
   if(Object.keys(data).some(k=>!allowed[body.command as string].includes(k)))throw new ConfigurationError(400,'Episode字段无效。');
+  if(body.command==='create')return createEpisodeDirectory(this.pool,session as OwnerSession,body.idempotencyKey,hash,data,this.mediaRoot,(c,account,policy)=>this.preflight(c,account,policy,false,'input'));
   const result=await transaction(async c=>{
    await c.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[session.id+':'+body.idempotencyKey]);
    const old=(await c.query('SELECT payload_hash,result FROM local_identity.command_receipts WHERE owner_id=$1 AND idempotency_key=$2',[session.id,body.idempotencyKey])).rows[0];
@@ -100,15 +102,6 @@ export class LocalEpisodeCommands {
     try{if(this.runtime.openDirectory)await this.runtime.openDirectory(path);else await promisify(execFile)('/usr/bin/open',[path],{env:{PATH:'/usr/bin:/bin'},timeout:5000});}
     catch{throw new ConfigurationError(503,'系统未能打开文件夹，请复制路径后在访达中打开，或恢复桌面会话后重试。');}
     value={opened:true,path};
-   }else if(body.command==='create'){
-    if(!(await c.query('SELECT local_identity.lock_owned_account_row($1) owned',[data.accountId])).rows[0].owned)throw new ConfigurationError(404,'账号不可见。');
-    const a=(await c.query('SELECT a.*,b.policy FROM public.accounts a JOIN public.account_memberships m ON m.account_id=a.id JOIN public.account_blueprint_versions b ON b.id=a.current_blueprint_version_id WHERE a.id=$1 AND m.user_id=$2 AND m.role=\'owner\' AND a.archived_at IS NULL',[data.accountId,session.id])).rows[0];
-    if(!a)throw new ConfigurationError(404,'账号不可见。');if(typeof data.title!=='string'||data.title.length>200)throw new ConfigurationError(400,'标题无效。');
-    const accountRoot=await requireAccountAssetRoot(c,this.mediaRoot,a.id);
-    await this.preflight(c,a.id,{...a.policy,asset_root:accountRoot},false,'input');
-    value=(await c.query('SELECT to_jsonb(public.create_episode($1,$2,$3,$4,$5)) result',[a.id,a.current_blueprint_version_id,data.seriesVersionId??null,data.title.trim(),data.isTest===true])).rows[0].result;
-    await ensureInputDirectories(accountRoot,value.id);
-    await c.query('INSERT INTO local_identity.input_episodes(episode_id,owner_id) VALUES($1,$2)',[value.id,session.id]);
    }else{
     // Older owned orders predate native execution registration. Enrol only at
     // an explicit four-step entry; failed commands roll this back with the rest.

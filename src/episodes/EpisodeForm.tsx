@@ -19,7 +19,7 @@ type SeriesVersion=Database['public']['Tables']['series_versions']['Row'];
 export type EpisodeCreationStep='idle'|'preflight'|'create'|'directory'|'refresh';
 const episodeCreationSteps: Array<{ id: Exclude<EpisodeCreationStep, "idle">; label: string; note: string }> = [
   { id: "create", label: "创建生产单", note: "冻结当前蓝图和系列版本。" },
-  { id: "directory", label: "准备本地材料目录", note: "创建 input 与 materials 目录。" },
+  { id: "directory", label: "准备本地材料目录", note: "建立本期独占目录。" },
   { id: "refresh", label: "打开生产单", note: "同步最新状态和待导入材料。" },
 ];
 
