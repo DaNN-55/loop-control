@@ -2,9 +2,9 @@
 CREATE TABLE local_identity.account_creation_intents(
  owner_id uuid NOT NULL REFERENCES local_identity.owners(id), idempotency_key uuid NOT NULL,
  payload_hash text NOT NULL, account_id uuid NOT NULL UNIQUE, path text NOT NULL UNIQUE,
- root_binding jsonb NOT NULL, marker uuid NOT NULL, device_id text, inode_id text, cleanup_owned boolean NOT NULL DEFAULT false,
+ root_binding jsonb NOT NULL, marker uuid NOT NULL, device_id text, inode_id text, marker_device_id text, marker_inode_id text, cleanup_owned boolean NOT NULL DEFAULT false,
  result jsonb, created_at timestamptz NOT NULL DEFAULT clock_timestamp(),
- PRIMARY KEY(owner_id,idempotency_key), CHECK((device_id IS NULL)=(inode_id IS NULL))
+ PRIMARY KEY(owner_id,idempotency_key), CHECK((device_id IS NULL)=(inode_id IS NULL)), CHECK((marker_device_id IS NULL)=(marker_inode_id IS NULL))
 );
 REVOKE ALL ON local_identity.account_creation_intents FROM PUBLIC,loop_owner,loop_worker,loop_anonymous;
 ALTER TABLE local_identity.account_creation_intents ENABLE ROW LEVEL SECURITY;

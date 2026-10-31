@@ -299,9 +299,9 @@ html[data-interface="impeccable"] .product-ui .account-metadata-facts dt { flex-
   html[data-interface="impeccable"] .product-ui .account-workspace-layout nav > header h2 { white-space: nowrap; font-size: 12px; }
 }
 
-.account-directory-row { display:flex; align-items:center; gap:8px; min-width:0; }
-.account-directory-row > .field-label { flex:none; }
+.account-directory-row { display:flex; flex-wrap:nowrap; align-items:center; gap:8px; min-width:0; }
+.account-directory-row > .field-label { flex:none; white-space:nowrap; }
+.account-directory-row > button { flex:none; }
 .account-directory-path { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .account-directory-full-path code { display:block; overflow-wrap:anywhere; user-select:all; }
 .account-directory-full-path, .account-directory-repair { margin-block-start:8px; }
-@media(max-width:640px) { .account-directory-row { flex-wrap:wrap; } .account-directory-path { flex-basis:calc(100% - 90px); } }
