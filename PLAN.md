@@ -892,3 +892,14 @@ T14/#192 独立 merger 将 clean 冻结来源 `c158cd2f` 以 no-ff 合入 `64be9
 
 固定baseline107/max109/0账号、schema1989a647/ledger4806437b保持；仅本票SQL125新增，历史SQL不改。证据在外部T15/与T15-CONTRACT；未merge main、push、部署、改日常数据或付费/Keychain。
 
+
+
+### #193 / T15 独立合并验收收据
+
+独立 merger 在 root 明确 release 后，将 clean 冻结来源 `2f66d7bb991454ca6a65afadb63cdc320eefef12` 以 no-ff 合入 `6027fc490f6812ca264331db96aec5bff42e9ffe`。前后20文件SHA/字节长度一致，仅SQL125新增、历史SQL不变。integration check/build/runtime:prepare/assertPreparedRuntime 全通过；相关3文件14/14单测、精确4文件18/18真实核心、正式main+StrictMode页面1/1均零skip，核心67.63s、页面11.70s。来源24项相关回归日志已读，不机械重跑或扩大宽泛integration。
+
+fresh原布局PID29640：真实detach后无host树、API409；重挂原dev16777261/inode16和DBbinding，Owner ready/原媒体bytes不变，scheduler+automation均在固定state身份边界拒绝失挂写入。Native exact case真实读取SQLite header、adoption→move两条lineage、旧源offline/原refs/Studio blocker/task整行不变；本票plan-only，无新增SQLite持久副本或全局迁移后导出。
+
+正式页面实际登录/空输入/非法目标/非空目标冲突/明确新plan/Finder精确1观察即关/1440与390/展开/Escape焦点/新native PID46649→47327；最新计划d66fcb42…重启原样读回，config与17B目标内容不变。本人亲看5张截图，1440 client=scroll560、390 client=scroll379且横向bounds在viewport内；展开后内容延伸首屏之外，不签全站响应式或全部清单首屏可见。
+
+固定baseline107/max109/0账号、ledger4806437b/schema1989a647和完整schema bytes前后相同，隔离pinned container network none/无ports和volumes。own browser/native/Finder/process/cache/随机DB/mount均收尾；daily5174仍PID71478、daily及3个Oct30未知卷保留，main/T16/sharedSDK/runtime未动。外部MERGE-T15.md、MERGE-T15/logs/、verified-evidence.json、resources.json保留完整证据。本轮未改产品/测试、tracker/main/push/deploy/日常数据；仅追加本收据，commit且clean后明确释放integration写权给root。
