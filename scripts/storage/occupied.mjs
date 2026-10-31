@@ -5,7 +5,7 @@ const quote=value=>"'"+value.replaceAll("'","''")+"'";
 /** Reuse persistent operation states and the existing task/paid/native guards. */
 export async function assertStorageUnoccupied(database,mediaRoot,sourceRoots,runtime){
  const query=text=>runtime.sql(text,database);
- for(const[table,predicate]of[['account_creation_intents','result IS NULL'],['container_creation_intents','result IS NULL'],['episode_deletion_intents',"state IN ('prepared','committed')"],['account_directory_migrations',"status IN ('planned','copying','failed')"]]){
+ for(const[table,predicate]of[['account_creation_intents','result IS NULL'],['container_creation_intents','result IS NULL'],['episode_creation_intents','result IS NULL'],['episode_deletion_intents',"state IN ('prepared','committed')"],['account_directory_migrations',"status IN ('planned','copying','failed')"]]){
   if(query(`SELECT to_regclass('local_identity.${table}') IS NOT NULL`)==='t'&&query(`SELECT count(*) FROM local_identity.${table} WHERE ${predicate}`)!=='0')throw Error('Storage occupied by an unfinished '+table);
  }
  if(query("SELECT to_regprocedure('local_identity.account_directory_busy(uuid)') IS NOT NULL")==='t'){

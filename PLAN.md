@@ -769,3 +769,14 @@ T10/#188 独立合入 `4f465187`，来源 clean `22f3057d`，与原 integration 
 T10/#188 tracker closure verified on 2026-10-31 after root read the independent 31/31 real integration, 23/23 unit and formal recovery browser results. Source and local integration remain recoverable through integrated commits. Cleanup ownership: issue178_completed_cleanup; only completed task resources with fresh proofs may be removed. No main merge, push or daily change.
 
 T11/#189 tracker closure verified after root read the independent 20/20 real integration, 18/18 units, old-v1 targeted1/4filtered and actual native/archive evidence. Independent merge5d28c135 and receipt15890b6c remain recoverable on integration. T12 starts only after #187/#188/#189 are all closed; no default-layout source change precedes this gate.
+
+# #190 / T12：正式新生产单目录层级
+
+目标：正式 Owner create 首次创建即拥有真实系列或未分系列目录，固定 UUID、创作引用与目录身份；中断重试不会更换冻结版本或重复创建。旧单及 helper 默认保持 legacy，所有制作、删除与备份继续使用现有唯一位置契约。
+
+- [x] 正式 Owner HTTP 的 layout1→layout2 RED 已留证；持久 creation intent、完整 payload／哈希与可信 fixed-ID 登记已实现。
+- [x] 5 项真实 HTTP／文件／native 故障验收通过，含真实 SIGKILL（mkdir 后、最终登记前、COMMIT 后）、原版本重试、实际卸载／重挂、权限／空间、替换与未知文件、无效布尔输入及改名。
+- [x] 正式页面选系列／未分系列 2/2、零跳过：受控制作、原生红蓝帧播放及新进程重开、编译 Worker 交付、两阶段实际 dump／新库新根恢复、列表／详情 Finder、归档后精确删除及手放资料保留；旧单全树和冻结行一致。
+- [x] 已合并最新 integration（57d6240b，Already up to date）；类型、build、runtime:prepare、34 项相关单测及 12 项旧账号／容器／native 回归通过。源码按本票提交，外部 T12-CONTRACT／HANDOFF 交独立 merger；未操作 main、日常数据、付费、push 或 Issue 状态。
+
+已确认 seam：正式页面 → Owner HTTP → 隔离真实 PostgreSQL / 文件 → 受控 Provider / 实际原生工程及 Finder。只用固定外部 context、随机 owned DB、外部 SDK；不碰 daily、秘密或付费。
