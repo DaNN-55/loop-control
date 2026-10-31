@@ -1,3 +1,4 @@
+import {verifyEpisodeFile} from './episodeFiles.js';
 import {resolveEpisodeStorageLocation,requireEpisodeStorageDirectory} from './episodeStorageLocation.js';
 import {requireAccountAssetRoot,resolveEpisodeAssetRoot} from './accountAssetRoots.js';
 import {productionWorkspaceFields} from '../productionWorkspace.js';
@@ -53,7 +54,7 @@ export class LocalEpisodeCommands {
    const m=(await c.query('SELECT m.*,b.policy FROM public.production_material_revisions m JOIN public.episodes e ON e.id=m.episode_id JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE m.id=$1 AND m.episode_id=$2',[p.script_revision_id,scope.episode_id])).rows[0];
    if(!m||m.sha256!==p.script_sha256)throw new ConfigurationError(409,'主脚本版本已变化。');
    if(p.plan.executionFingerprint!==productionHash(m.policy))throw new ConfigurationError(409,'执行配置已变化，请暂停后重新确认制作计划。');
-   await verifyNativeFile(await resolveEpisodeAssetRoot(c,this.mediaRoot,scope.episode_id),m.storage_path,m.sha256,Number(m.file_size));
+   await verifyEpisodeFile(c,(await resolveEpisodeStorageLocation(c,this.mediaRoot,scope.episode_id)).assetRoot,scope.episode_id,m.storage_path,m.sha256,Number(m.file_size));
    const receipt=(await c.query('SELECT 1 FROM local_identity.command_receipts WHERE owner_id=$1 AND idempotency_key=$2',[scope.owner_id,body.idempotencyKey])).rowCount;
    if(!receipt){
     const state=await readContinuationSnapshot(c,scope),decision=state?nextScriptProductionAction(state):null;
@@ -119,7 +120,10 @@ export class LocalEpisodeCommands {
     }
     if(!(await c.query('SELECT local_identity.lock_owned_input_episode($1) owned',[data.episodeId])).rows[0].owned)throw new ConfigurationError(404,'本地生产单不可见。');
     const e=(await c.query('SELECT e.*,b.policy,i.storyboard_enabled,i.script_template_version FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id JOIN local_identity.input_episodes i ON i.episode_id=e.id WHERE e.id=$1 AND m.user_id=$2 AND m.role=\'owner\' AND i.owner_id=$2',[data.episodeId,session.id])).rows[0];
-    if(!e)throw new ConfigurationError(404,'本地生产单不可见。');const root=await resolveEpisodeAssetRoot(c,this.mediaRoot,e.id);
+    if(!e)throw new ConfigurationError(404,'本地生产单不可见。');
+    const location=await resolveEpisodeStorageLocation(c,this.mediaRoot,e.id),inputIo=['importMaterial','reconfirmScript','start','configureScriptProduction','prepareWorkspace'].includes(String(body.command));
+    if(inputIo)await requireEpisodeStorageDirectory(c,location);
+    const root=inputIo?location.assetRoot:await resolveEpisodeAssetRoot(c,this.mediaRoot,e.id);
     if(body.command!=='openDirectory')await requireAccountAssetRoot(c,this.mediaRoot,e.account_id);
     const inputPolicy=e.script_template_version===2?{...e.policy,asset_root:root,static_visual:{execution_path:'manual'},soundtrack:{execution_path:'manual'}}:{...e.policy,asset_root:root};
     if(['reconfirmScript','requestStructureRevision'].includes(String(body.command))&&this.workspace.isOpen(e.id))throw new ConfigurationError(409,'请先保存并返回，再修订脚本或分镜。');
@@ -171,15 +175,15 @@ export class LocalEpisodeCommands {
       else{if(!data.policy||typeof data.policy!=='object'||Array.isArray(data.policy))throw new ConfigurationError(400,'配置修复内容无效。');await this.preflight(c,e.account_id,{...data.policy as Record<string,unknown>,asset_root:root},true);await c.query('SELECT public.record_episode_worker_preflight($1,$2)',[e.id,session.id]);value=(await c.query('SELECT public.apply_episode_configuration_repair_v2($1,$2,$3,$4) result',[e.id,JSON.stringify(data.policy),data.blockerCode,data.blockerDetail])).rows[0].result;}
      }
     }else if(body.command==='reconfirmScript'){
-     value=await reconfirmScript(c,root,e,data);
+     value=await reconfirmScript(c,root,e,data,location.relativePath);
     }else if(body.command==='importMaterial'){
      if(data.isMainScript&&(e.stage!=='waiting_input'||e.main_script_revision_id))throw new ConfigurationError(409,'主脚本已确认或制作已开始，不能替换。');
      const purposes=['main_script','supplemental_script','general_reference','visual_reference','a_roll','b_roll','narration','background_music','sound_effect','cover'];
      if(!purposes.includes(String(data.materialPurpose))||typeof data.materialType!=='string'||typeof data.mimeType!=='string'||typeof data.isMainScript!=='boolean')throw new ConfigurationError(400,'材料类型无效。');
      if(typeof data.sourceKind!=='string'||typeof data.sourcePath!=='string'||data.logicalName!==undefined&&typeof data.logicalName!=='string')throw new ConfigurationError(400,'材料路径无效。');
-     const snapshot=await snapshotInput(root,e.id,data as never);
+     const snapshot=await snapshotInput(root,e.id,data as never,location.relativePath);
      value=(await c.query('SELECT to_jsonb(public.import_production_material($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)) result',[e.id,data.materialType,data.sourceKind,snapshot.sourcePath,snapshot.storagePath,data.mimeType,snapshot.sha256,snapshot.fileSize,data.isMainScript,data.materialPurpose])).rows[0].result;
-     if(data.isMainScript)await c.query('UPDATE local_identity.input_episodes SET script_template_version=$2 WHERE episode_id=$1',[e.id,parseProductionScript((await verifyNativeFile(root,snapshot.storagePath,snapshot.sha256,snapshot.fileSize)).toString('utf8'))?2:null]);
+     if(data.isMainScript)await c.query('UPDATE local_identity.input_episodes SET script_template_version=$2 WHERE episode_id=$1',[e.id,parseProductionScript((await verifyEpisodeFile(c,root,e.id,snapshot.storagePath,snapshot.sha256,snapshot.fileSize)).toString('utf8'))?2:null]);
      if(!data.isMainScript)await this.scriptStore.alias(c,session.id,value.id,String(data.sourcePath));
     }else if(body.command==='setAudioSourceMode'){
      if(!['source','tts'].includes(String(data.audioSourceMode)))throw new ConfigurationError(400,'声音来源无效。');value=(await c.query('SELECT to_jsonb(public.set_episode_audio_source_mode($1,$2)) result',[e.id,data.audioSourceMode])).rows[0].result;
@@ -187,7 +191,7 @@ export class LocalEpisodeCommands {
      await this.preflight(c,e.account_id,inputPolicy,true,'input');
      const materials=(await c.query('SELECT * FROM public.production_material_revisions WHERE episode_id=$1',[e.id])).rows;
      if(!e.main_script_revision_id)throw new ConfigurationError(409,'请先上传并确认主脚本。');
-     for(const m of materials)await verifyNativeFile(root,m.storage_path,m.sha256,Number(m.file_size));
+     for(const m of materials)await verifyEpisodeFile(c,root,e.id,m.storage_path,m.sha256,Number(m.file_size));
      value=(await c.query('SELECT to_jsonb(public.start_episode_production($1)) result',[e.id])).rows[0].result;
      await c.query('UPDATE local_identity.input_episodes SET enabled=false,visual_media_enabled=$2 WHERE episode_id=$1',[e.id,Boolean(inputPolicy.static_visual?.executor)]);
     }else if(['generateSourceAudio','requestAlignment','saveManualAlignment','confirmCaptionText','generateSyncPreview','confirmSyncPreview'].includes(String(body.command))){
@@ -340,7 +344,7 @@ export class LocalEpisodeCommands {
   const failure=(reason:string,check:string,scope:WorkerPreflightCheck['scope'],action:WorkerPreflightCheck['action'],status=409)=>new ConfigurationError(status,reason,{version:workerPreflightVersion,checks:[{capability:'worker_runtime',check,phase:'preflight',status:scope==='worker'?'unavailable':'blocked',reason,action,scope}]});
   try{if(scope!=='input')await this.runtime.ready();}catch(e){throw failure(e instanceof Error?e.message:'本地Worker未准备。','command_availability','worker','contact_environment_admin',503);}
   let root:string;
-  try{root=await resolveLocalAssetRoot(c,this.mediaRoot,policy.asset_root);await verifyMediaLibrary({assetRoot:root,mountPath:this.runtime.mountPath,minimumFreeBytes:this.runtime.minimumFreeBytes,requireEpisodesDirectory:existing});}catch(e){throw failure(e instanceof Error?e.message:'素材目录不可用。','asset_root','episode','manage_account_directory');}
+  try{root=await resolveLocalAssetRoot(c,this.mediaRoot,policy.asset_root);await verifyMediaLibrary({assetRoot:root,mountPath:this.runtime.mountPath,minimumFreeBytes:this.runtime.minimumFreeBytes,requireEpisodesDirectory:existing&&scope!=='input'});}catch(e){throw failure(e instanceof Error?e.message:'素材目录不可用。','asset_root','episode','manage_account_directory');}
   if(scope==='input')return;
   const refs=validateConfigurationPolicy(policy,true);
   if(scope==='blueprint'&&refs.length)try{await this.runtime.checkReferences(c,refs);}catch(error){if(error instanceof ConfigurationError&&error.preflight)throw error;throw failure('连接版本未就绪，请检查本机绑定与验证资格。','credential_presence','connection','manage_connection');}
