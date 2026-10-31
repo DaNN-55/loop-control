@@ -38,7 +38,7 @@ DECLARE result jsonb;f record;pending boolean;BEGIN
  IF NOT EXISTS(SELECT 1 FROM public.account_memberships WHERE account_id=p_account AND user_id=local_identity.owner_id() AND role='owner') THEN RAISE EXCEPTION 'Owner required' USING ERRCODE='42501';END IF;
  SELECT coalesce(jsonb_agg(jsonb_build_object('taskId',t.id,'reason',CASE WHEN t.status IN ('ready','running') THEN '存在待执行或运行中的任务，请完成或明确处理后重新盘点。' ELSE '供应商提交结果尚未确认，请先恢复或核对已有请求。' END)),'[]') INTO result
  FROM public.tasks t JOIN public.episodes e ON e.id=t.episode_id LEFT JOIN public.paid_generation_reservations r ON r.task_id=t.id
- WHERE e.account_id=p_account AND (t.status IN ('ready','running') OR (r.request_state<>'succeeded' AND t.status<>'completed'));
+ WHERE e.account_id=p_account AND ((t.status IN ('ready','running') AND (t.invalidated_at IS NULL OR t.status='running')) OR (r.request_state<>'succeeded' AND t.status<>'completed'));
  FOR f IN SELECT c.table_name FROM information_schema.columns c WHERE c.table_schema='local_identity' AND c.column_name='outcome' AND c.table_name LIKE '%submissions' LOOP
   EXECUTE format('SELECT EXISTS(SELECT 1 FROM local_identity.%I s JOIN public.tasks t ON t.id=s.task_id JOIN public.episodes e ON e.id=t.episode_id WHERE e.account_id=$1 AND s.outcome IN (''started'',''received'') AND t.status<>''completed'')',f.table_name) INTO pending USING p_account;
   IF pending THEN result:=result||jsonb_build_array(jsonb_build_object('reason','供应商提交结果尚未确认，请先恢复或核对已有请求。'));END IF;

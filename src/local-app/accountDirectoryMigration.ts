@@ -51,9 +51,10 @@ async function plan(c:Client,mediaRoot:string,account:string,path:unknown):Promi
  const valid=await validateAccountAssetLocation(c,mediaRoot,path),targetIdentity=await identity(valid.path),deployment=await readMediaDeployment(c,mediaRoot);
  const episodes=(await c.query('SELECT id,title FROM public.episodes WHERE account_id=$1 ORDER BY id',[account])).rows as {id:string;title:string}[];
  const logicalRoots=(await c.query("SELECT actual_root root FROM local_identity.account_asset_directories WHERE account_id=$1 UNION SELECT asset_root FROM local_identity.episode_asset_locations WHERE account_id=$1 UNION SELECT policy->>'asset_root' FROM public.account_blueprint_versions WHERE account_id=$1 AND coalesce(policy->>'asset_root','')<>'' UNION SELECT source_root FROM local_identity.account_directory_locations WHERE account_id=$1",[account])).rows.map(r=>r.root) as string[];
- const roots=[...new Set(await Promise.all(logicalRoots.map(root=>resolveLocalAssetRoot(c,mediaRoot,root))))].sort();
+ const mappedRoots:string[]=[];for(const root of logicalRoots)mappedRoots.push(await resolveLocalAssetRoot(c,mediaRoot,root));const roots=[...new Set(mappedRoots)].sort();
  if(roots.length>128)throw new ConfigurationError(409,'历史目录过多，请先核对目录归属。');
  if(!roots.length)throw new ConfigurationError(409,'账号没有可盘点的当前或历史目录。');
+ for(const root of roots)if(['openchatcut','.loop-control','.deletion-staging'].includes(relative(mediaRoot,root).split('/')[0]))throw new ConfigurationError(409,'历史目录指向平台位置，请先核对归属，不能迁入账号目录。');
  for(const root of roots)if(overlaps(root,valid.path))throw new ConfigurationError(409,'迁移目标不能与任何当前或历史源目录重叠。');
  const claims=(await c.query('SELECT * FROM local_identity.account_asset_root_claims()')).rows;
  for(const claim of claims){if(claim.account_id===account)continue;const root=mappedAssetPath(mediaRoot,claim.asset_root,deployment);if(roots.some(source=>overlaps(source,root))||overlaps(valid.path,root))throw new ConfigurationError(409,'源或目标目录与其他账号重叠，无法明确归属。');}
