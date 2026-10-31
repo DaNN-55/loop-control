@@ -734,7 +734,7 @@ Owner 已选择通知同时作用于应用内和 macOS 桌面提醒。偏好按�
 - [x] SQL115 持久删除 intent；排他发布、rollback 与原确认范围 retry；stage / link 间隙 / COMMIT 后 / finalize 中实际 SIGKILL + 新 PID 恢复通过。
 - [x] 空登记父容器/账号收尾；completed intent、command receipt 及历史表整行保留；pending creation、共享/历史/身份守卫通过。
 - [x] 接入 T09 真实 native close/精确所有权；正式页面范围/保留原因、归档/取消/确认、prepared 恢复与旧回执说明，1440/390 页面验收。
-- [ ] 同步最新 integration，最终复验并提交 clean 分支；外部 T10-CONTRACT/HANDOFF 供独立合并。
+- [x] 同步 integration 21828c57；8 文件31项真实集成零 skip、5 文件23项单测、build 与 runtime:prepare 通过。外部 T10-CONTRACT/HANDOFF 已写，提交 clean 分支供独立合并。
 - [x] 默认永久删除仅 current 实际位置；在线旧源完整指纹保留，离线旧卷不阻断；空账号仅 current 根，旧 blueprint / aliases 保留且仍参与引用检查。
 
 验收 seam 已确认：正式页面 → Owner HTTP → 隔离真实 PostgreSQL / 文件 → 适用 native / Finder。固定 baseline109 不升级，显式 forward、外部 SDK、maxWorkers1；不读日常配置，不操作日常数据或付费 Provider。
