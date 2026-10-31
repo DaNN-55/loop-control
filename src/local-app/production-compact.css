@@ -296,3 +296,6 @@ html[data-interface="impeccable"] .impeccable-app.product-ui .lc-production-work
 html[data-interface="impeccable"] .product-ui .workspace-planning-selection .stage-configuration-dialog.is-inline{padding:0;overflow:visible}
 html[data-interface="impeccable"] .product-ui .workspace-planning-selection .stage-configuration-dialog.is-inline>section{width:100%;max-width:none;margin:0;padding:0;background:transparent;box-shadow:none;border-radius:0}
 @media(max-width:640px){.workspace-planning-summary>span{flex-basis:100%;order:3}.workspace-planning-summary>button{margin-left:auto}}
+html[data-interface="impeccable"] .product-ui .workspace-planning-selection .stage-configuration-fields label:has(> .dan-select-field){display:grid!important;grid-template-columns:124px minmax(0,1fr)!important;gap:18px!important;align-items:center}
+html[data-interface="impeccable"] .product-ui .workspace-planning-selection .stage-configuration-fields label>.field-label{position:static!important;font-size:12px!important;line-height:1.5!important;transform:none!important;margin:0}
+@media(max-width:640px){html[data-interface="impeccable"] .product-ui .workspace-planning-selection .stage-configuration-fields label:has(> .dan-select-field){grid-template-columns:minmax(0,1fr)!important;gap:6px!important}}

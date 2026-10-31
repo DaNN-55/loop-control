@@ -246,7 +246,9 @@ export async function updateWorkspaceProject(c:PoolClient,root:string,row:Produc
  // when only the already-bound shot metadata is added. Real metadata/source edits
  // still differ from this normalized previous document and invalidate confirmation.
  const previous=await readWorkspaceProject(root,row),normalizedPrevious=withWorkspaceShotMetadata(previous,row.bindings);project=withWorkspaceShotMetadata(project,bindings);
- const contentSha=workspaceContentSha256(normalizedPrevious)===workspaceContentSha256(project)?row.content_sha256:workspaceContentSha256(project);
+ // Compare the owned extension at a stable key position without changing SDK file bytes.
+ const normalizedCurrent=structuredClone(project);for(const comparable of [normalizedPrevious,normalizedCurrent])for(const timeline of comparable.timelines)for(const item of timeline.items){if(item.loopControlShot){const metadata=item.loopControlShot;delete item.loopControlShot;item.loopControlShot=metadata;}}
+ const contentSha=workspaceContentSha256(normalizedPrevious)===workspaceContentSha256(normalizedCurrent)?row.content_sha256:workspaceContentSha256(project);
  const file=await persistWorkspaceProject(root,row.episode_id,project);
  const changed=await c.query('UPDATE local_identity.production_workspaces SET native_edit_revision=native_edit_revision+CASE WHEN $9 AND content_sha256<>$6 THEN 1 ELSE 0 END,revision=revision+CASE WHEN content_sha256=$6 THEN 0 ELSE 1 END,content_sha256=$6,project_path=$3,project_sha256=$2,project_size=$4,bindings=$5,updated_at=clock_timestamp() WHERE id=$1 AND revision=$7 AND project_sha256=$8',[row.id,file.sha256,file.relativePath,file.fileSize,JSON.stringify(bindings),contentSha,row.revision,row.project_sha256,options.nativeEdit===true]);
  if(!changed.rowCount)throw new ConfigurationError(409,'工程版本已变化，请重新读取当前工程。');
