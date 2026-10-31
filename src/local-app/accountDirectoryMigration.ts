@@ -1,7 +1,7 @@
 import type {Pool,PoolClient} from 'pg';
 import {randomUUID,createHash} from 'node:crypto';
 import {constants} from 'node:fs';
-import {lstat,readdir,realpath,open,mkdir,rename,unlink,readFile,statfs} from 'node:fs/promises';
+import {lstat,readdir,realpath,open,mkdir,link,unlink,readFile,statfs} from 'node:fs/promises';
 import {join,relative} from 'node:path';
 import {sessionTransaction} from './ownerTransaction.js';
 import type {OwnerSession} from './sessions.js';
@@ -71,9 +71,10 @@ async function copy(root:string,f:File,id:string,signal?:AbortSignal){await safe
  const temp=dest+'.migration-'+id;await identity(root);if(await realpath(join(f.sourceRoot,f.relativePath))!==join(f.sourceRoot,f.relativePath))throw new ConfigurationError(409,'复制源路径已变化。');const input=await open(join(f.sourceRoot,f.relativePath),constants.O_RDONLY|constants.O_NOFOLLOW),output=await open(temp,constants.O_WRONLY|constants.O_CREAT|constants.O_EXCL|constants.O_NOFOLLOW,0o600);
  try{if(await realpath(temp)!==temp)throw new ConfigurationError(409,'复制目标路径已变化。');const stat=await input.stat();if(!stat.isFile()||stat.nlink!==1)throw new ConfigurationError(409,'复制源不是独立普通文件。');for await(const chunk of input.createReadStream({autoClose:false,highWaterMark:256*1024})){if(signal?.aborted)throw new ConfigurationError(409,'复制已中断，可恢复迁移；原位置仍有效。');const bytes=chunk as Buffer;let offset=0;while(offset<bytes.length){const written=await output.write(bytes,offset,bytes.length-offset);offset+=written.bytesWritten;}}await output.sync();}finally{await input.close();await output.close();}
  const copied=await fileDigest(root,relative(root,temp));if(copied.sha256!==f.sha256||copied.fileSize!==f.fileSize)throw new ConfigurationError(409,'复制文件指纹不一致：'+f.relativePath);
- // No source is renamed/deleted. A complete copied file is durable before publication.
+ // Exclusive publication never replaces a file created after the collision check.
+ // The receipt also recovers a crash between linking and removing this temp name.
  try{await lstat(dest);throw new ConfigurationError(409,'复制目标被其他操作占用：'+f.relativePath);}catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;}
- await rename(temp,dest);
+ await link(temp,dest);await unlink(temp);
 }
 export async function executeAccountDirectoryMigration(pool:Pool,session:OwnerSession,mediaRoot:string,account:string,id:string,rollback:boolean,signal?:AbortSignal){
  // Persist the resumable state before copying. A process exit leaves this receipt.
@@ -94,7 +95,7 @@ export async function executeAccountDirectoryMigration(pool:Pool,session:OwnerSe
  const current=await allInventory(m.sources);if(fingerprint(current)!==fingerprint(m.files))throw new ConfigurationError(409,'源文件已变化，请回滚并重新盘点。');
  const expected=new Map(m.files.map(f=>[f.relativePath,f]));
  // Only this receipt's partial outputs are disposable; all complete copies remain.
- for(const f of expected.values()){const temp=join(m.targetRoot,f.relativePath+'.migration-'+id);try{const stat=await lstat(temp);if(!stat.isFile()||stat.nlink!==1||await realpath(temp)!==temp)throw new ConfigurationError(409,'迁移暂存文件身份无效。');await unlink(temp);}catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;}}
+ for(const f of expected.values()){const temp=join(m.targetRoot,f.relativePath+'.migration-'+id);try{const stat=await lstat(temp);if(!stat.isFile()||await realpath(temp)!==temp)throw new ConfigurationError(409,'迁移暂存文件身份无效。');if(stat.nlink!==1){const published=await lstat(join(m.targetRoot,f.relativePath));if(stat.nlink!==2||!published.isFile()||published.dev!==stat.dev||published.ino!==stat.ino||await realpath(join(m.targetRoot,f.relativePath))!==join(m.targetRoot,f.relativePath))throw new ConfigurationError(409,'迁移暂存文件身份无效。');}await unlink(temp);}catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;}}
 for(const actual of await inventory(m.targetRoot)){const f=expected.get(actual.relativePath);if(!f||f.sha256!==actual.sha256||f.fileSize!==actual.fileSize)throw new ConfigurationError(409,'目标存在冲突文件，请保留副本并重新盘点。');}
  const capacity=await statfs(m.targetRoot,{bigint:true}),remaining=[...expected.values()].reduce((bytes,file)=>bytes+BigInt(file.fileSize),0n)-(await inventory(m.targetRoot)).reduce((bytes,file)=>bytes+BigInt(file.fileSize),0n);if(capacity.bavail*capacity.bsize<remaining)throw new ConfigurationError(409,'目标磁盘空间不足，请释放空间后恢复迁移。');
  for(const file of m.files){if(signal?.aborted)throw new ConfigurationError(409,'复制已中断，可恢复迁移；原位置仍有效。');await copy(m.targetRoot,file,id,signal);}
@@ -107,5 +108,5 @@ for(const actual of await inventory(m.targetRoot)){const f=expected.get(actual.r
  await c.query('UPDATE local_identity.account_directory_locations SET actual_root=$2,migration_id=$3 WHERE account_id=$1',[account,m.targetRoot,id]);
  await c.query('INSERT INTO local_identity.account_asset_directories(account_id,actual_root,device_id,inode_id) VALUES($1,$2,$3,$4) ON CONFLICT(account_id) DO UPDATE SET actual_root=excluded.actual_root,device_id=excluded.device_id,inode_id=excluded.inode_id,updated_at=clock_timestamp()',[account,m.targetRoot,m.targetIdentity.device,m.targetIdentity.inode]);
  await c.query("UPDATE local_identity.account_directory_migrations SET status='completed',error=NULL,updated_at=clock_timestamp() WHERE id=$1",[id]);return{id,status:'completed',...m,originalsRetained:true};
- });}catch(error){const code=(error as NodeJS.ErrnoException).code;if(['ENOSPC','ENOENT','EIO','EACCES','EPERM','EROFS'].includes(code??''))error=new ConfigurationError(409,code==='ENOSPC'?'目标磁盘空间不足，请释放空间后恢复迁移；原位置仍有效。':'迁移目录不可访问，请恢复挂载或读写权限后恢复迁移；原位置仍有效。');await sessionTransaction(pool,session,async c=>{await c.query("UPDATE local_identity.account_directory_migrations SET status='failed',error=$3,updated_at=clock_timestamp() WHERE id=$1 AND account_id=$2 AND status='copying'",[id,account,error instanceof Error?error.message:'迁移失败，原位置仍有效。']);});throw error;}
+ });}catch(error){const code=(error as NodeJS.ErrnoException).code;if(['EEXIST','ENOSPC','ENOENT','EIO','EACCES','EPERM','EROFS'].includes(code??''))error=new ConfigurationError(409,code==='EEXIST'?'复制目标出现同名文件，请保留副本并重新盘点；原位置仍有效。':code==='ENOSPC'?'目标磁盘空间不足，请释放空间后恢复迁移；原位置仍有效。':'迁移目录不可访问，请恢复挂载或读写权限后恢复迁移；原位置仍有效。');await sessionTransaction(pool,session,async c=>{await c.query("UPDATE local_identity.account_directory_migrations SET status='failed',error=$3,updated_at=clock_timestamp() WHERE id=$1 AND account_id=$2 AND status='copying'",[id,account,error instanceof Error?error.message:'迁移失败，原位置仍有效。']);});throw error;}
 }

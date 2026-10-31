@@ -1,7 +1,7 @@
 // @vitest-environment node
 import {it,expect} from 'vitest';
 import {randomUUID,createHash} from 'node:crypto';
-import {mkdir,readFile,writeFile,rename,symlink,open,lstat} from 'node:fs/promises';
+import {mkdir,readFile,writeFile,rename,symlink,open,lstat,link} from 'node:fs/promises';
 import {join} from 'node:path';
 import {embeddedStudioFixture} from './embeddedStudio.fixture';
 import {csrfFor} from './sessions';
@@ -73,6 +73,8 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('an actual interrupted st
  expect(interrupted).toBe(true);const failure=await migrating;expect(failure.status).not.toBe(200);expect((await call('readAssetDirectory',{})).body.assetRoot).toBe(f.assetRoot);
  expect((await lstat(join(f.assetRoot,'00-large-media.bin'))).size).toBe(32*1024*1024);
  await f.restart();await rename(target+'-disconnected',target);
+ // A process can stop between exclusive publication and removing its own temp link.
+ await link(temporary,join(target,'00-large-media.bin'));
  const recovered=await call('executeAssetDirectoryMigration',{migrationId:plan.body.id});expect(recovered.status,JSON.stringify(recovered.body)).toBe(200);expect(recovered.body.status).toBe('completed');
  expect((await lstat(join(target,'00-large-media.bin'))).size).toBe(32*1024*1024);
  }finally{await f.close();}
