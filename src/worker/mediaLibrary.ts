@@ -3,6 +3,7 @@ import { createHash } from "node:crypto";
 import { access, readFile, realpath, stat, statfs, lstat } from "node:fs/promises";
 import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 import type { ArtifactManifest } from "./contracts.js";
+import type {EpisodeFileIO} from "../local-app/episodeFiles.js";
 
 export interface MediaLibraryCheckInput {
   assetRoot: string;
@@ -23,7 +24,10 @@ export interface ArtifactIndexCheckInput {
   episodeId: string;
   /** Trusted persisted/frozen account-relative production directory, never client input. */
   episodeRelativePath?: string;
+  /** Runtime-only prefixes already proven by the episode I/O authority. */
+  episodeReferencePrefixes?: readonly string[];
   artifacts: readonly ArtifactManifest[];
+  storage?: EpisodeFileIO;
 }
 
 export async function verifyMediaLibrary(input: MediaLibraryCheckInput): Promise<MediaLibraryStatus> {
@@ -55,19 +59,22 @@ export async function verifyMediaLibrary(input: MediaLibraryCheckInput): Promise
 
 export async function verifyArtifactIndex(input: ArtifactIndexCheckInput): Promise<void> {
   if (!isSafePathSegment(input.episodeId)) throw new Error("Episode 标识不能用作媒体目录名。");
+  await input.storage?.assertValid();
   const assetRoot = await directoryPath(input.assetRoot, "媒体库账号目录");
   if (input.artifacts.length === 0) return;
-  const prefixes = [...new Set([`episodes/${input.episodeId}`, ...(input.episodeRelativePath ? [input.episodeRelativePath] : [])])];
+  const prefixes = [...new Set(input.episodeReferencePrefixes??[`episodes/${input.episodeId}`, ...(input.episodeRelativePath ? [input.episodeRelativePath] : [])])];
   if (prefixes.some(path => isAbsolute(path) || path.split(/[\\/]/).some(part => !part || part === "." || part === ".."))) throw new Error("当前 Episode 目录无效。");
 
   for (const artifact of input.artifacts) {
     if (isAbsolute(artifact.relativePath) || artifact.relativePath.split(/[\\/]/).some(part => !part || part === "." || part === "..")) throw new Error("产物不属于当前 Episode 目录。");
     const prefix = prefixes.find(prefix => artifact.relativePath.startsWith(prefix + "/"));
-    if (!prefix) throw new Error(`产物不属于当前 Episode 目录：${artifact.relativePath}`);
-    const episodeDirectory = await directoryPath(join(assetRoot, prefix), "当前 Episode 目录");
-    const declaredArtifactPath = resolve(assetRoot, artifact.relativePath);
+    if (!input.storage && !prefix) throw new Error(`产物不属于当前 Episode 目录：${artifact.relativePath}`);
+    await input.storage?.assertValid();
+    const physicalPrefix = input.storage?.relativePath ?? prefix!;
+    const episodeDirectory = await directoryPath(join(assetRoot, physicalPrefix), "当前 Episode 目录");
+    const declaredArtifactPath = input.storage ? await input.storage.resolveReference(artifact.relativePath) : resolve(assetRoot, artifact.relativePath);
     const artifactPath = await realpath(declaredArtifactPath);
-    if (episodeDirectory !== join(assetRoot,prefix) || artifactPath !== declaredArtifactPath || !isDescendant(episodeDirectory, artifactPath)) {
+    if (episodeDirectory !== join(assetRoot,physicalPrefix) || artifactPath !== declaredArtifactPath || !isDescendant(episodeDirectory, artifactPath)) {
       throw new Error(`产物不属于当前 Episode 目录：${artifact.relativePath}`);
     }
     const details = await lstat(artifactPath);

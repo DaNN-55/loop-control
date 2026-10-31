@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
+import type {EpisodeFileIO} from '../local-app/episodeFiles.js';
 import { validateStoryboardManifest, type ArtifactManifest, type StoryboardManifest } from "./contracts.js";
 
 export function addFrozenStoryboardBasis(storyboard: unknown, frozenInputs: ArtifactManifest[]): unknown {
@@ -32,8 +33,9 @@ export function refreshArtifactManifest(artifacts: unknown, relativePath: string
     : artifact);
 }
 
-export async function verifyReportedStoryboardArtifact(input: { assetRoot: string; frozenInputs: ArtifactManifest[]; relativePath: string; storyboard: StoryboardManifest }): Promise<void> {
-  const source = await readFile(join(input.assetRoot, input.relativePath), "utf8");
+export async function verifyReportedStoryboardArtifact(input: { assetRoot: string; frozenInputs: ArtifactManifest[]; relativePath: string; storyboard: StoryboardManifest;storage?:EpisodeFileIO }): Promise<void> {
+  await input.storage?.assertValid();
+  const source = await readFile(input.storage?await input.storage.resolveReference(input.relativePath):join(input.assetRoot, input.relativePath), "utf8");
   let artifactStoryboard: StoryboardManifest;
   try {
     artifactStoryboard = validateStoryboardManifest(JSON.parse(source), input.frozenInputs);

@@ -1,7 +1,8 @@
+import {episodeFileIO,verifyEpisodeFile} from './episodeFiles.js';
 import {creativeAccountRules} from '../creativeAccountRules.js';
 import {randomUUID} from 'node:crypto';
 import {lstat,realpath} from 'node:fs/promises';
-import {join} from 'node:path';
+import {relative} from 'node:path';
 import type {PoolClient} from 'pg';
 import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
 import type {WorkspacePexelsRequest,WorkspacePexelsState} from '../workspacePexels.js';
@@ -9,7 +10,7 @@ import {validatePexelsSource,type PexelsVideoParameters} from '../worker/pexelsV
 import {workspaceCandidateTarget} from '../workspaceCandidates.js';
 import {ConfigurationError} from './configurationCommands.js';
 import {productionHash} from './scriptProductionStore.js';
-import {verifyNativeFile,snapshotInput} from './localFiles.js';
+import {snapshotInput} from './localFiles.js';
 import {inspectWorkspaceVisualFile,requireVisualStorageLocation} from './workspaceVisualMedia.js';
 import {resolveProductionSelection} from './productionSelection.js';
 import type {InputRuntime} from './episodeCommands.js';
@@ -22,7 +23,7 @@ export async function readWorkspacePexels(c:PoolClient,root:string,row:Productio
  const rows=(await c.query(`${requestId?'':latest} SELECT r.*,t.status,t.last_result,t.invalidated_at,(SELECT v.id FROM local_identity.workspace_visual_candidates v WHERE v.workspace_id=r.workspace_id AND v.request_snapshot->>'pexelsPreviewId'=r.id::text LIMIT 1) candidate_id FROM local_identity.workspace_pexels_requests r JOIN public.tasks t ON t.id=r.task_id WHERE r.workspace_id=$1 AND ${selected} ORDER BY r.created_at DESC,r.id DESC`,requestId?[row.id,requestId]:[row.id])).rows;
  const requests:WorkspacePexelsRequest[]=await Promise.all(rows.map(async r=>{
   const s=r.request_snapshot;const request:WorkspacePexelsRequest={id:r.id,taskId:r.task_id,targetItemId:r.target_item_id,operation:s.operation,query:s.query,parameters:s.parameters,selection:s.selection,connectionName:s.connection.name,status:r.invalidated_at?'stale':r.status,error:['failed','blocked'].includes(r.status)?r.last_result?.blockers?.[0]?.detail??r.last_result?.retry?.reason??'Pexels 任务未完成，请重试。':null,...(s.source?{source:s.source}:{}),...(r.candidate_id?{candidateId:r.candidate_id}:{})};
-  if(r.status==='completed'&&!r.invalidated_at){try{const a=r.last_result.artifacts[0];if(Number(a.fileSize)>(s.operation==='search'?512*1024:100*1024*1024))throw Error();if(s.operation==='search'){const bytes=await verifyNativeFile(root,a.relativePath,a.sha256,Number(a.fileSize));const results:unknown=JSON.parse(bytes.toString('utf8'));if(!Array.isArray(results)||results.length>15)throw Error();request.results=results.map(validatePexelsSource);}else {const path=join(root,a.relativePath),file=await lstat(path);if(await realpath(path)!==path||!file.isFile()||file.nlink!==1||file.size!==Number(a.fileSize))throw Error();request.preview={relativePath:a.relativePath,sha256:a.sha256,fileSize:Number(a.fileSize)};}}catch{request.status='failed';request.error='Pexels 结果文件不可读取，请重新检索或预览。';}}
+  if(r.status==='completed'&&!r.invalidated_at){try{const a=r.last_result.artifacts[0];if(Number(a.fileSize)>(s.operation==='search'?512*1024:100*1024*1024))throw Error();if(s.operation==='search'){const bytes=await verifyEpisodeFile(c,root,row.episode_id,a.relativePath,a.sha256,Number(a.fileSize));const results:unknown=JSON.parse(bytes.toString('utf8'));if(!Array.isArray(results)||results.length>15)throw Error();request.results=results.map(validatePexelsSource);}else {const path=await (await episodeFileIO(c,root,row.episode_id)).resolveReference(a.relativePath),file=await lstat(path);if(await realpath(path)!==path||!file.isFile()||file.nlink!==1||file.size!==Number(a.fileSize))throw Error();request.preview={relativePath:a.relativePath,sha256:a.sha256,fileSize:Number(a.fileSize)};}}catch{request.status='failed';request.error='Pexels 结果文件不可读取，请重新检索或预览。';}}
   return request;
  }));return{requests};
 }
@@ -36,7 +37,7 @@ export async function executeWorkspacePexels(c:PoolClient,root:string,row:Produc
   if(preview.candidateId)return;
   const record=(await c.query('SELECT * FROM local_identity.workspace_pexels_requests WHERE id=$1 AND workspace_id=$2',[preview.id,row.id])).rows[0],item=project.timelines.flatMap(t=>t.items).find(i=>i.id===preview.targetItemId),clip=row.bindings.find(b=>b.itemId===preview.targetItemId);
   if(!clip||!item||productionHash(workspaceCandidateTarget(item))!==productionHash(record.target_snapshot))throw new ConfigurationError(409,'目标画面已变化，请针对当前镜头重新检索。');
-  const a=preview.preview,bytes=await verifyNativeFile(root,a.relativePath,a.sha256,a.fileSize),observed=await inspectWorkspaceVisualFile(root,a.relativePath,'video');
+  const a=preview.preview,bytes=await verifyEpisodeFile(c,root,row.episode_id,a.relativePath,a.sha256,a.fileSize),observed=await inspectWorkspaceVisualFile(root,relative(root,await (await episodeFileIO(c,root,row.episode_id)).resolveReference(a.relativePath)),'video');
   const stored=await snapshotInput(root,row.episode_id,{sourceKind:'file',sourcePath:`pexels-${preview.source.id}.mp4`,contentBase64:bytes.toString('base64')} as never,location.relativePath);
   const material=(await c.query('SELECT to_jsonb(public.import_production_material($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)) result',[row.episode_id,'video','worker',stored.sourcePath,stored.storagePath,'video/mp4',stored.sha256,stored.fileSize,false,'b_roll'])).rows[0].result;
   const snapshot={kind:'video',usage:'video',durationSeconds:observed.durationSeconds,width:observed.width,height:observed.height,pexelsPreviewId:preview.id,source:preview.source,context:record.request_snapshot.context,target:record.request_snapshot.target};
@@ -50,7 +51,7 @@ export async function executeWorkspacePexels(c:PoolClient,root:string,row:Produc
   if(typeof data.query!=='string'||!data.query.trim()||data.query.length>100)throw new ConfigurationError(400,'请输入 1～100 个字符的检索词。');
   const parameters={orientation:data.orientation??'portrait',size:data.size??'medium',page:data.page??1} as PexelsVideoParameters;if(!['portrait','landscape','square'].includes(parameters.orientation)||!['large','medium','small'].includes(parameters.size)||!Number.isInteger(parameters.page)||parameters.page<1||parameters.page>100)throw new ConfigurationError(400,'Pexels 检索参数无效。');
   await runtime.checkReferences(c,[resolved.connection!.id]);if(!runtime.mediaReady)throw new ConfigurationError(503,'媒体 Worker 未配置。');await runtime.mediaReady({b_roll:resolved.execution});
-  const e=(await c.query('SELECT e.account_id,e.blueprint_version_id,e.series_version_id,b.policy,s.rules FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id LEFT JOIN public.series_versions s ON s.id=e.series_version_id WHERE e.id=$1',[row.episode_id])).rows[0],script=(await c.query('SELECT * FROM public.production_material_revisions WHERE id=$1 AND episode_id=$2',[row.script_revision_id,row.episode_id])).rows[0];await verifyNativeFile(root,script.storage_path,script.sha256,Number(script.file_size));
+  const e=(await c.query('SELECT e.account_id,e.blueprint_version_id,e.series_version_id,b.policy,s.rules FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id LEFT JOIN public.series_versions s ON s.id=e.series_version_id WHERE e.id=$1',[row.episode_id])).rows[0],script=(await c.query('SELECT * FROM public.production_material_revisions WHERE id=$1 AND episode_id=$2',[row.script_revision_id,row.episode_id])).rows[0];await verifyEpisodeFile(c,root,row.episode_id,script.storage_path,script.sha256,Number(script.file_size));
   const inputs=[{artifactType:'main_script',relativePath:script.storage_path,sha256:script.sha256,fileSize:Number(script.file_size)}],seconds=Number(item.durationInFrames)/timeline.fps,query=data.query.replace(/\s+/g,' ').trim();
   expected=workspaceCandidateTarget(item);itemId=String(item.id);snapshot={operation:'search',query,parameters,selection:resolved.selection,connection:resolved.connection,execution:resolved.execution,inputs,targetDurationSeconds:seconds,context:{accountId:e.account_id,blueprintVersionId:e.blueprint_version_id,accountRules:creativeAccountRules(e.policy),seriesVersionId:e.series_version_id,seriesRules:e.rules??null},target:{targetItemId:itemId,shotId:clip.shotId,workspaceRevision:Number(row.revision),scriptRevisionId:row.script_revision_id,projectSha256:row.project_sha256}};
  }else{

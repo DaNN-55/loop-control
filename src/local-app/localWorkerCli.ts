@@ -2,7 +2,6 @@ import {episodeFileIO} from './episodeFiles.js';
 import {resolveEpisodeStorageLocation,requireEpisodeStorageDirectory} from './episodeStorageLocation.js';
 import {requireAccountAssetRoot} from './accountAssetRoots.js';
 import {executeWorkspaceDeliveryWorker} from '../worker/workspaceDeliveryWorker.js';
-import{mappedAssetPath}from'./mediaPaths.js';
 import {executeScriptPlanning} from '../worker/scriptPlanning.js';
 import{readMediaDeployment}from'./mediaDeployment.js';
 import{assertAlignmentReady,executeNativeAlignment}from'./alignmentWorker.js';
@@ -34,17 +33,18 @@ const pool=createWorkerDatabase(config.database),port=nativeWorkerPort(pool),arg
 const heartbeat=setInterval(()=>{void port.rpc('refresh_worker_task_lease',args).catch(()=>{});},5*60*1000);heartbeat.unref();
 try{
  await port.rpc('refresh_worker_task_lease',args);
- const roots=await readMediaDeployment(pool,config.mediaRoot),physicalRoot=mappedAssetPath(config.mediaRoot,task.allowed_asset_root,roots);
- await requireAccountAssetRoot(pool,config.mediaRoot,String(task.account_id));
- await requireEpisodeStorageDirectory(pool,await resolveEpisodeStorageLocation(pool,config.mediaRoot,String(task.episode_id)));
+ await readMediaDeployment(pool,config.mediaRoot);
+ const location=await resolveEpisodeStorageLocation(pool,config.mediaRoot,String(task.episode_id)),physicalRoot=location.assetRoot;
+ if((await pool.query('SELECT 1 FROM local_identity.account_asset_directories WHERE account_id=$1',[task.account_id])).rowCount)await requireAccountAssetRoot(pool,config.mediaRoot,String(task.account_id));
+ await requireEpisodeStorageDirectory(pool,location);
  if(task.task_type==='prepare_publish_package'&&(task.input_snapshot as Record<string,unknown>)?.capability==='workspace_delivery'){const result=await executeWorkspaceDeliveryWorker(pool,physicalRoot,task);process.stdout.write(JSON.stringify(result)+'\n');}else{
  if(typeof task.task_type!=='string'||!((task.task_type==='align_shot_captions'&&task.provider==='whisperx')||nativeMediaTask(task.task_type,String(task.provider))|| (task.task_type==='generate_narration'?['google_tts','volcengine_tts'].includes(String(task.provider)):['prepare_visual_brief','draft_storyboard','draft_storyboard_revision'].includes(task.task_type)&&task.provider==='codex')))throw Error('Task outside native input/storyboard/narration boundary');
  let outputs:Awaited<ReturnType<typeof prepareNativeAttemptOutput>>|undefined;
  const result=await runCodexWorker({
   actualCostCents:config.actualCostCents,
   async claimNextTask(){return {taskId:task.task_id,taskType:task.task_type,attempt:task.attempt,budgetLimitCents:task.budget_limit_cents,maxAttempts:task.max_attempts,provider:task.provider,model:task.model,promptVersion:task.prompt_version,episodeId:task.episode_id,accountId:task.account_id,blueprintVersionId:task.blueprint_version_id,title:task.title,allowedAssetRoot:physicalRoot,inputSnapshot:task.input_snapshot} as ClaimedWorkerTask;},
-  async verifyAssetRoot(root){await nativeAssetRoot(config.mediaRoot,root);await verifyMediaLibrary({assetRoot:root,mountPath:config.mountPath,minimumFreeBytes:config.minimumFreeBytes,requireEpisodesDirectory:false});},
-  async verifyArtifacts(p,artifacts,storyboard){if(outputs){await outputs.verify(artifacts,storyboard);return;}await verifyArtifactIndex({assetRoot:p.assets.allowedRoot,episodeId:p.episode.id,episodeRelativePath:p.assets.episodeRelativePath,artifacts});if(storyboard)await verifyReportedStoryboardArtifact({assetRoot:p.assets.allowedRoot,frozenInputs:p.assets.inputs,relativePath:p.output.relativePath,storyboard});},
+  async verifyAssetRoot(root){if(!(location.layoutVersion===1&&root===config.mediaRoot&&root===location.assetRoot))await nativeAssetRoot(config.mediaRoot,root);await verifyMediaLibrary({assetRoot:root,mountPath:config.mountPath,minimumFreeBytes:config.minimumFreeBytes,requireEpisodesDirectory:false,allowMountRoot:location.layoutVersion===1&&root===config.mediaRoot});},
+  async verifyArtifacts(p,artifacts,storyboard){if(outputs){await outputs.verify(artifacts,storyboard);return;}const storage=await episodeFileIO(pool,physicalRoot,String(task.episode_id));await verifyArtifactIndex({assetRoot:p.assets.allowedRoot,episodeId:p.episode.id,episodeRelativePath:p.assets.episodeRelativePath,artifacts,storage});if(storyboard)await verifyReportedStoryboardArtifact({assetRoot:p.assets.allowedRoot,frozenInputs:p.assets.inputs,relativePath:p.output.relativePath,storyboard,storage});},
   async preflight(p){if(task.task_type==='generate_final_render'&&!config.delivery)throw Error('最终交付尚未配置。');if(p.capability==='acoustic_alignment')await assertAlignmentReady(config.projectRoot,config.mediaRoot,config.alignment,p.model);if(task.task_type==='generate_review_render'&&!config.studio)throw Error('审核视频尚未配置。');if(task.task_type==='generate_shot_sync_preview'&&!config.shotPreview)throw Error('同步预览尚未配置。');if(p.capability==='narration_generation')await assertNarrationReady(config.narration);if(nativeMediaTask(String(task.task_type),String(task.provider))||p.visualAssetPreparation?.imageGeneration)await assertMediaReady(config.media,{},process.env,nativeMediaRequiresExternal(p));return {version:workerPreflightVersion,checks:[{capability:p.capability,check:'command_availability',phase:'preflight',status:config.visualCommand.length&&(!p.visualAssetPreparation?.imageGeneration||Boolean(config.media))?'passed':'unavailable',reason:p.capability==='narration_generation'?`本地口播执行模式：${config.narration?.mode??'disabled'}。`:'本地受控规划执行路径；不自动调用在线Provider。',action:config.visualCommand.length&&(!p.visualAssetPreparation?.imageGeneration||Boolean(config.media))?'none':'contact_environment_admin',scope:'worker'}]};},
   reportProgress:async(_id,_attempt,progress)=>{await port.rpc('report_worker_progress',{...args,p_progress:{version:'worker-progress/v1',progress}});process.stdout.write(JSON.stringify({event:'progress',taskId:task.task_id,step:progress.step})+'\n');},
   reportResult:async(_id,_attempt,result)=>{if(outputs?.uncertain)throw Error('产物发布结果未知，保留原任务状态，请核对后处理。');if(outputs&&result.status==='completed')await outputs.publish(pool,result);else await port.rpc('report_worker_result',{...args,p_result:result});},

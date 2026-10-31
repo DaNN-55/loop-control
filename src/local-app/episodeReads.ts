@@ -1,17 +1,12 @@
 import {resolveEpisodeFileReference} from './episodeFiles.js';
 import {resolveEpisodeStorageLocation,requireEpisodeStorageDirectory} from './episodeStorageLocation.js';
-import {join} from 'node:path';
-import {safeRelative} from './localFiles.js';
 import{createHash}from'node:crypto';
-import{mappedAssetPath}from'./mediaPaths.js';
-import{readMediaDeployment}from'./mediaDeployment.js';
 import {ownerTransaction} from './ownerTransaction.js';
 import type {Pool} from 'pg';
 export async function readLocalEpisode(pool:Pool,ownerId:string,episodeId:string,known:Record<string,string>={},mediaRoot?:string){
  return ownerTransaction(pool,ownerId,true,async client=>{
   const {rows:[row]}=await client.query('SELECT public.read_episode_production($1,$2) AS result',[episodeId,known]);if(!row.result||!mediaRoot)return row.result;
-  const b=(await client.query("SELECT s.asset_root root,s.directory_relative_path,local_identity.is_historical_episode($1) historical FROM local_identity.episode_storage_location($1) s",[episodeId])).rows[0],roots=await readMediaDeployment(client,mediaRoot);let localAssetRoot='';try{localAssetRoot=mappedAssetPath(mediaRoot,b?.root,roots);}catch{/* No unsafe fallback to a logical source path. */}
-  const localDirectoryPath=localAssetRoot&&typeof b?.directory_relative_path==='string'&&safeRelative(b.directory_relative_path)?join(localAssetRoot,b.directory_relative_path):'';
+  const b=(await client.query('SELECT local_identity.is_historical_episode($1) historical',[episodeId])).rows[0];let localAssetRoot='',localDirectoryPath='';try{const location=await resolveEpisodeStorageLocation(client,mediaRoot,episodeId);localAssetRoot=location.assetRoot;localDirectoryPath=location.directoryPath;}catch{/* An unauthorized/missing deployment never grants a fallback source root. */}
   const hash=createHash('sha256').update(localAssetRoot+localDirectoryPath+String(Boolean(b?.historical))).digest('hex');return{...row.result,hashes:{...row.result.hashes,localAssetRoot:hash},sections:{...row.result.sections,...(known.localAssetRoot===hash?{}:{localAssetRoot,localDirectoryPath,historicalReadOnly:Boolean(b?.historical)})}};
  });
 }

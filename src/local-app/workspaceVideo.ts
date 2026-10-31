@@ -1,9 +1,8 @@
 import {randomUUID} from 'node:crypto';
-import {join} from 'node:path';
 import type {PoolClient} from 'pg';
 import type {WorkspaceClip} from '../productionWorkspace.js';
 import {ConfigurationError} from './configurationCommands.js';
-import {verifyNativeFile} from './localFiles.js';
+import {episodeFileIO,verifyEpisodeFile} from './episodeFiles.js';
 import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
 const exec=promisify(execFile);
@@ -38,8 +37,8 @@ export async function saveWorkspaceVideoRanges(c:PoolClient,root:string,episodeI
    if(!m)throw new ConfigurationError(404,'本期视频材料不存在。');
    let observed:VideoProbe;
    try{
-    await verifyNativeFile(root,m.storage_path,m.sha256,Number(m.file_size));
-    const {stdout}=await exec('ffprobe',['-v','error','-select_streams','v:0','-show_entries','stream=duration,width,height','-of','json',join(root,m.storage_path)],{timeout:15000});
+    await verifyEpisodeFile(c,root,episodeId,m.storage_path,m.sha256,Number(m.file_size));
+    const {stdout}=await exec('ffprobe',['-v','error','-select_streams','v:0','-show_entries','stream=duration,width,height','-of','json',await (await episodeFileIO(c,root,episodeId)).resolveReference(m.storage_path)],{timeout:15000});
     const stream=JSON.parse(stdout).streams?.[0];observed={durationSeconds:Number(stream?.duration),width:Number(stream?.width),height:Number(stream?.height)};
     if(!Number.isFinite(observed.durationSeconds)||observed.durationSeconds<=0||!Number.isInteger(observed.width)||observed.width<=0||!Number.isInteger(observed.height)||observed.height<=0)throw Error('Invalid video stream');
    }catch{throw new ConfigurationError(409,'视频材料缺失、指纹已变化或无法读取视频流时长。');}

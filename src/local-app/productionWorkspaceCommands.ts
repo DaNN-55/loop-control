@@ -27,7 +27,7 @@ import {workspaceCaptionFields} from '../workspaceCaptions.js';
 import {matchWorkspaceImage,generateWorkspaceImage,fillWorkspaceImageResult} from './workspaceImages.js';
 import {randomUUID,createHash} from 'node:crypto';
 import {writeFile,mkdir} from 'node:fs/promises';
-import {join,dirname} from 'node:path';
+import {dirname,relative} from 'node:path';
 import type {PoolClient} from 'pg';
 import {ConfigurationError} from './configurationCommands.js';
 import {verifyNativeFile} from './localFiles.js';
@@ -108,7 +108,7 @@ export class ProductionWorkspaceCommands{
    if(importedRender){
     for(const member of importedRender.members){const source=await resolveWorkspaceSource(c,root,e.id,member.relativePath);if(source.sha256!==member.sha256)throw new ConfigurationError(409,'当前素材登记与旧工程冻结版本不一致。');}
     // Source asset duration is the full file, not the selected legacy interval.
-    for(const asset of project.assets){const observed=asset.kind==='video'?await inspectWorkspaceVisualFile(root,asset.src,'video'):null;asset.durationInFrames=Math.ceil((observed?.durationSeconds??await probeMp3Artifact(join(root,asset.src)))*project.timelines[0].fps);if(observed)Object.assign(asset,{width:observed.width,height:observed.height});}
+    for(const asset of project.assets){const observed=asset.kind==='video'?await inspectWorkspaceVisualFile(root,relative(root,await (await episodeFileIO(c,root,e.id)).resolveReference(asset.src)),'video'):null;asset.durationInFrames=Math.ceil((observed?.durationSeconds??await probeMp3Artifact(await (await episodeFileIO(c,root,e.id)).resolveReference(asset.src)))*project.timelines[0].fps);if(observed)Object.assign(asset,{width:observed.width,height:observed.height});}
     for(const item of project.timelines[0].items){const asset=project.assets.find(a=>a.id===item.sourceAssetId||a.src===item.src);if(asset&&Number(item.srcInFrame??0)+Number(item.durationInFrames)>asset.durationInFrames+1)throw new ConfigurationError(409,'旧工程的实际使用区间超出原文件，未接入不完整素材。');}
     adaptLegacyWorkspaceMetadata(project,clips,importedRender);
    }
@@ -143,7 +143,7 @@ export class ProductionWorkspaceCommands{
    let p=(await c.query("SELECT p.*,a.relative_path,a.sha256,a.file_size FROM public.review_packages p JOIN public.artifacts a ON a.id=p.artifact_id WHERE p.id=$1 AND p.episode_id=$2 AND p.stage='storyboard_review' AND p.invalidated_at IS NULL",[data.reviewPackageId,e.id])).rows[0];
    if(!p&&!data.reviewPackageId)p=await prepareAuthoredWorkspace(c,root,e);
    if(p?.planning)return p;
-   if(p?.context_snapshot?.workspace_preparation?.scriptRevisionId===e.main_script_revision_id){await verifyEpisodeFile(c,root,e.id,p.relative_path,p.sha256,Number(p.file_size));await verifyReportedStoryboardArtifact({assetRoot:root,relativePath:p.relative_path,frozenInputs:p.context_snapshot.input_artifacts,storyboard:p.context_snapshot.worker_result.storyboard});await c.query('SELECT local_identity.confirm_workspace_plan($1,$2,$3)',[e.id,e.main_script_revision_id,p.id]);}
+   if(p?.context_snapshot?.workspace_preparation?.scriptRevisionId===e.main_script_revision_id){await verifyEpisodeFile(c,root,e.id,p.relative_path,p.sha256,Number(p.file_size));await verifyReportedStoryboardArtifact({storage:await episodeFileIO(c,root,e.id),assetRoot:root,relativePath:p.relative_path,frozenInputs:p.context_snapshot.input_artifacts,storyboard:p.context_snapshot.worker_result.storyboard});await c.query('SELECT local_identity.confirm_workspace_plan($1,$2,$3)',[e.id,e.main_script_revision_id,p.id]);}
    const formal=p&&(await c.query('SELECT 1 FROM local_identity.workspace_preparations WHERE package_id=$1 AND script_revision_id=$2',[p.id,e.main_script_revision_id])).rowCount;
    if(!p||!formal&&!['storyboard_review','storyboard_approved','production_ready','render_ready','qc_review','qc_passed'].includes(e.stage))throw new ConfigurationError(409,'请先确认脚本与分镜匹配基准。');
    if(row){
@@ -198,7 +198,7 @@ export class ProductionWorkspaceCommands{
    const clip=row.bindings.find(b=>b.id===data.clipId);if(!clip||clip.source)throw new ConfigurationError(409,'占位已变化，请刷新；已有片段请在剪辑中调整。');
    if(typeof data.materialRevisionId!=='string'||!uuid.test(data.materialRevisionId))throw new ConfigurationError(400,'素材标识无效。');
    const m=(await c.query("SELECT * FROM public.production_material_revisions WHERE id=$1 AND episode_id=$2 AND material_type='video'",[data.materialRevisionId,e.id])).rows[0];if(!m)throw new ConfigurationError(404,'本期视频素材不存在。');
-   await verifyEpisodeFile(c,root,e.id,m.storage_path,m.sha256,Number(m.file_size));const observed=await inspectMp4Artifact(join(root,m.storage_path));
+   await verifyEpisodeFile(c,root,e.id,m.storage_path,m.sha256,Number(m.file_size));const observed=await inspectMp4Artifact(await (await episodeFileIO(c,root,e.id)).resolveReference(m.storage_path));
    const timeline=project.timelines.find(t=>t.items.some(i=>i.id===clip.itemId)),item=timeline?.items.find(i=>i.id===clip.itemId);if(!timeline||!item)throw new ConfigurationError(409,'占位已从工程删除，请在当前工程中操作。');
    if(observed.durationSeconds+0.05<Number(item.durationInFrames)/timeline.fps)throw new ConfigurationError(409,'原片短于占位时长，请先明确调整镜头时长。');
    const assetId=`material-${m.id}`;if(!project.assets.some(a=>a.id===assetId))project.assets.push(Object.assign({id:assetId,name:m.source_path.split('/').pop()??clip.shotId,kind:'video' as const,src:m.storage_path,durationInFrames:Math.round(observed.durationSeconds*timeline.fps)},{width:observed.width,height:observed.height,sourceRevision:m.id,sourceContentHash:m.sha256}));

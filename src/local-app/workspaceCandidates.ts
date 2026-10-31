@@ -1,5 +1,6 @@
 import {episodeFileIO} from './episodeFiles.js';
 import {episodeStorageLocationAtRoot} from './episodeStorageLocation.js';
+import {relative} from 'node:path';
 import {resolveWorkspaceShotLineage} from './workspacePreparation.js';
 import {inspectWorkspaceVisualFile} from './workspaceVisualMedia.js';
 import {resolveWorkspaceMainVoice} from '../workspaceAudio.js';
@@ -30,7 +31,8 @@ export async function prepareRegisteredWorkspaceCandidate(c:PoolClient,root:stri
  if(!['keep-target','use-candidate'].includes(String(durationPolicy)))throw new ConfigurationError(400,'请明确选择保留目标时长或采用候选时长。');
  const source=await resolveWorkspaceSource(c,root,row.episode_id,candidate.relativePath);if(source.sha256!==candidate.sha256||Number(source.file_size)!==candidate.fileSize)throw new ConfigurationError(409,'候选源身份已变化。');
  await verifyEpisodeFile(c,root,row.episode_id,candidate.relativePath,candidate.sha256,candidate.fileSize);
- const observed=candidate.kind==='image'?(await inspectWorkspaceVisualFile(root,candidate.relativePath,'image'),candidate.durationSeconds):candidate.kind==='audio'?await probeMp3Artifact(await resolveEpisodeFileReference(c,await episodeStorageLocationAtRoot(c,root,row.episode_id),candidate.relativePath)):(await inspectMp4Artifact(await resolveEpisodeFileReference(c,await episodeStorageLocationAtRoot(c,root,row.episode_id),candidate.relativePath))).durationSeconds;
+ const physical=await resolveEpisodeFileReference(c,await episodeStorageLocationAtRoot(c,root,row.episode_id),candidate.relativePath);
+ const observed=candidate.kind==='image'?(await inspectWorkspaceVisualFile(root,relative(root,physical),'image'),candidate.durationSeconds):candidate.kind==='audio'?await probeMp3Artifact(physical):(await inspectMp4Artifact(physical)).durationSeconds;
  if(Math.abs(observed-candidate.durationSeconds)>0.05)throw new ConfigurationError(409,'候选实际时长与登记不同。');
  let explicitSpeech=false;
  if(candidate.kind==='audio'){const frozen=(await c.query('SELECT t.input_snapshot FROM public.tasks t JOIN local_identity.workspace_narration_requests r ON r.task_id=t.id WHERE r.workspace_id=$1 AND t.id=$2',[row.id,candidate.taskId])).rows[0]?.input_snapshot;if(frozen?.selectionVersion===1){explicitSpeech=true;const voice=frozen.media.narration.voice;validateSpeechParameters(frozen.production_selection,voice.name,voice.language_code,Number(voice.speaking_rate));}}

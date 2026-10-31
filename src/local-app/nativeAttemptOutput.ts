@@ -1,4 +1,4 @@
-import type {EpisodeFileIO} from './episodeFiles.js';
+import {episodeFileIO,type EpisodeFileIO} from './episodeFiles.js';
 import {verifyNativeFile} from './localFiles.js';
 import {relative} from 'node:path';
 import {constants} from 'node:fs';
@@ -17,28 +17,29 @@ export interface NativeAttemptFence {p_task_id:string;p_attempt:number;p_lease_t
 export async function prepareNativeAttemptOutput(taskPackage:WorkerTaskPackage,fence:NativeAttemptFence,additionalInputs:ArtifactManifest[]=[],storage?:EpisodeFileIO){
  if(fence.p_task_id!==taskPackage.task.id||fence.p_attempt!==taskPackage.budget.attempt)throw Error('输出尝试与冻结任务不一致。');
  const episodeRelativePath=taskPackage.assets.episodeRelativePath??`episodes/${taskPackage.episode.id}`;
- const directory=join(await realpath(taskPackage.assets.allowedRoot),episodeRelativePath),details=await lstat(directory,{bigint:true}),expected=taskPackage.assets.episodeDirectoryIdentity;
- if(!details.isDirectory()||details.isSymbolicLink()||await realpath(directory)!==directory||expected?.deviceId!=null&&(String(details.dev)!==expected.deviceId||String(details.ino)!==expected.inodeId))throw Error('生产单目录身份已变化，请恢复原位置后重试。');
+ const expected=taskPackage.assets.episodeDirectoryIdentity,directory=storage?await storage.assertFrozenDirectory(episodeRelativePath,expected):join(await realpath(taskPackage.assets.allowedRoot),episodeRelativePath),details=await lstat(directory,{bigint:true});
+ if(!details.isDirectory()||details.isSymbolicLink()||await realpath(directory)!==directory||!storage&&expected?.deviceId!=null&&(String(details.dev)!==expected.deviceId||String(details.ino)!==expected.inodeId))throw Error('生产单目录身份已变化，请恢复原位置后重试。');
+ const episodeReferencePrefixes=storage?await storage.referencePrefixes():undefined;
  const identity=createHash('sha256').update(JSON.stringify(fence)).digest('hex');
- const marker=await safeAssetOutputPath(taskPackage.assets.allowedRoot,`${episodeRelativePath}/.native-worker-attempts/${identity}/identity.json`);
+ const marker=await safeAssetOutputPath(taskPackage.assets.allowedRoot,`${storage?.relativePath??episodeRelativePath}/.native-worker-attempts/${identity}/identity.json`);
  const stagingRoot=dirname(marker);
  await writeFile(marker,JSON.stringify({taskId:taskPackage.task.id,attempt:fence.p_attempt})+'\n',{flag:'wx',mode:0o600});
  const staged={...taskPackage,assets:{...taskPackage.assets,allowedRoot:stagingRoot}};
  const inputs=[...taskPackage.assets.inputs,...additionalInputs];
  if(storage){
   await storage.assertValid();
-  for(const input of inputs){if(![episodeRelativePath,`episodes/${taskPackage.episode.id}`].some(prefix=>input.relativePath.startsWith(prefix+'/')))throw Error('输入文件不属于当前生产单。');await verifyNativeFile(taskPackage.assets.allowedRoot,relative(taskPackage.assets.allowedRoot,await storage.resolveReference(input.relativePath)),input.sha256,input.fileSize);}
+  for(const input of inputs){await verifyNativeFile(taskPackage.assets.allowedRoot,relative(taskPackage.assets.allowedRoot,await storage.resolveReference(input.relativePath)),input.sha256,input.fileSize);}
  }else await verifyArtifactIndex({assetRoot:taskPackage.assets.allowedRoot,episodeId:taskPackage.episode.id,episodeRelativePath,artifacts:inputs});
  for(const input of new Map(inputs.map(input=>[input.relativePath,input])).values()){
   const destination=await safeAssetOutputPath(stagingRoot,input.relativePath);
   await copyFile(storage?await storage.resolveReference(input.relativePath):join(taskPackage.assets.allowedRoot,input.relativePath),destination,constants.COPYFILE_FICLONE|constants.COPYFILE_EXCL);
  }
- await verifyArtifactIndex({assetRoot:stagingRoot,episodeId:taskPackage.episode.id,episodeRelativePath,artifacts:inputs});
+ await verifyArtifactIndex({assetRoot:stagingRoot,episodeId:taskPackage.episode.id,episodeRelativePath,episodeReferencePrefixes,artifacts:inputs});
  // Normal planners may use an exclusive direct write rather than mkdir.
  // Prepare only the frozen parent path; the executor must create the file.
  await safeAssetOutputPath(stagingRoot,taskPackage.output.relativePath);
  async function verify(artifacts:ArtifactManifest[],storyboard?:WorkerResult['storyboard']){
-  await verifyArtifactIndex({assetRoot:stagingRoot,episodeId:taskPackage.episode.id,episodeRelativePath,artifacts});
+  await verifyArtifactIndex({assetRoot:stagingRoot,episodeId:taskPackage.episode.id,episodeRelativePath,episodeReferencePrefixes,artifacts});
   if(storyboard)await verifyReportedStoryboardArtifact({assetRoot:stagingRoot,frozenInputs:taskPackage.assets.inputs,relativePath:taskPackage.output.relativePath,storyboard});
  }
  let uncertain=false;
@@ -77,7 +78,8 @@ export async function prepareNativeAttemptOutput(taskPackage:WorkerTaskPackage,f
    await client.query('SAVEPOINT native_output_publication');
    if(files.some(artifact=>inputs.some(input=>input.relativePath===artifact.relativePath)))throw Error('发布产物不能覆盖冻结输入或已审核复用来源。');
    await verify(files,result.storyboard);
-   for(const artifact of files)prepared.push(await preparePublication(taskPackage.assets.allowedRoot,stagingRoot,backupRoot,artifact));
+   const physical=new Set<string>();
+   for(const artifact of files){const output=storage?relative(taskPackage.assets.allowedRoot,await storage.resolveReference(artifact.relativePath)):artifact.relativePath;if(physical.has(output))throw Error('多个逻辑产物指向同一实际目标，拒绝覆盖。');physical.add(output);prepared.push(await preparePublication(taskPackage.assets.allowedRoot,stagingRoot,backupRoot,artifact,output));}
    await durableReceipt(stagingRoot,{version:1,fence,taskPackage,assetRoot:taskPackage.assets.allowedRoot,inputHash:authority.inputHash,result,files:prepared.map(file=>({artifact:file.artifact,previous:file.previous})),status:'prepared'});
    for(const file of prepared){modified.push(file);await atomicReplace(file.temporary,file.destination);}
    await client.query('SELECT local_identity.input_worker_call($1,$2)',['report_worker_result',{...fence,p_result:result}]);
@@ -107,8 +109,8 @@ export async function prepareNativeAttemptOutput(taskPackage:WorkerTaskPackage,f
 }
 
 interface PreparedPublication{artifact:ArtifactManifest;destination:string;temporary:string;previous?:ArtifactManifest}
-async function preparePublication(assetRoot:string,stagingRoot:string,backupRoot:string,artifact:ArtifactManifest):Promise<PreparedPublication>{
- const destination=await safeAssetOutputPath(assetRoot,artifact.relativePath);
+async function preparePublication(assetRoot:string,stagingRoot:string,backupRoot:string,artifact:ArtifactManifest,physicalReference=artifact.relativePath):Promise<PreparedPublication>{
+ const destination=await safeAssetOutputPath(assetRoot,physicalReference);
  const temporary=join(dirname(destination),`.${basename(destination)}.${randomUUID()}.publishing`);
  let previous:ArtifactManifest|undefined;
  try{
@@ -163,16 +165,17 @@ export async function recoverNativeAttemptOutput(pool:Pick<Pool,'connect'>,paths
  if(!receipt.taskPackage?.task||!Array.isArray(receipt.files)||!receipt.files.length||receipt.files.length>256)throw Error('私有发布凭据缺少冻结任务或产物。');
  validateWorkerResult(receipt.result,receipt.taskPackage);
  const fence=receipt.fence;
- if(receipt.version!==1||!fence||!Number.isSafeInteger(fence.p_attempt)||fence.p_attempt<0||receipt.result?.taskId!==fence.p_task_id||receipt.result.status!=='completed'||receipt.taskPackage.task.id!==fence.p_task_id||receipt.taskPackage.budget.attempt!==fence.p_attempt||await realpath(receipt.assetRoot)!==await realpath(paths.assetRoot))throw Error('私有发布凭据格式或资产目录不一致。');
+ if(receipt.version!==1||!fence||!Number.isSafeInteger(fence.p_attempt)||fence.p_attempt<0||receipt.result?.taskId!==fence.p_task_id||receipt.result.status!=='completed'||receipt.taskPackage.task.id!==fence.p_task_id||receipt.taskPackage.budget.attempt!==fence.p_attempt)throw Error('私有发布凭据格式或资产目录不一致。');
  const identity=createHash('sha256').update(JSON.stringify(fence)).digest('hex');
  const episodeRelativePath=receipt.taskPackage.assets.episodeRelativePath??`episodes/${receipt.taskPackage.episode.id}`;
- const parents=[join(await realpath(paths.assetRoot),episodeRelativePath,'.native-worker-attempts',identity),...(!receipt.taskPackage.assets.episodeRelativePath?[join(await realpath(paths.assetRoot),'.native-worker-attempts',identity)]:[])];
- if(!parents.includes(await realpath(paths.stagingRoot)))throw Error('发布恢复目录不属于此任务尝试。');
  const client=await pool.connect(),backupRoot=join(paths.stagingRoot,'.publication-backups');
  const files:PreparedPublication[]=[];
  let commitSent=false,modified=false,unknown=false;
  try{
   await client.query('BEGIN');
+  const storage=await episodeFileIO(client,paths.assetRoot,receipt.taskPackage.episode.id,true);
+  const currentDirectory=await storage.assertFrozenDirectory(episodeRelativePath,receipt.taskPackage.assets.episodeDirectoryIdentity,receipt.assetRoot);
+  if(join(currentDirectory,'.native-worker-attempts',identity)!==await realpath(paths.stagingRoot))throw Error('发布恢复目录不属于此任务尝试的当前位置。');
   const authority=await outputAuthority(client,fence,receipt.files.map(file=>file.artifact.relativePath));
   assertFrozenOutput(authority,receipt.taskPackage,receipt.result);
   if(authority.inputHash!==receipt.inputHash||authority.conflicts.length)throw Error('冻结输入已变化或路径被其他任务索引，拒绝旧尝试恢复。');
@@ -183,7 +186,7 @@ export async function recoverNativeAttemptOutput(pool:Pick<Pool,'connect'>,paths
   for(const entry of receipt.files){
    const {artifact,previous}=entry;
    if(!receipt.result.artifacts.some(indexed=>indexed.relativePath===artifact.relativePath&&isDeepStrictEqual(indexed,artifact))&&artifact.artifactType!=='native_executor_auxiliary')throw Error('发布凭据的产物清单不一致。');
-   const destination=await safeAssetOutputPath(paths.assetRoot,artifact.relativePath);
+   const destination=await safeAssetOutputPath(paths.assetRoot,relative(paths.assetRoot,await storage.resolveReference(artifact.relativePath)));
    const current=await readFile(destination).catch((error:NodeJS.ErrnoException)=>{if(error.code!=='ENOENT')throw error;return null;});
    const matches=(expected:ArtifactManifest)=>current?.length===expected.fileSize&&createHash('sha256').update(current!).digest('hex')===expected.sha256;
    if(current&&!matches(artifact)&&!(previous&&matches(previous)))throw Error('目标文件已有未识别字节，拒绝覆盖。');

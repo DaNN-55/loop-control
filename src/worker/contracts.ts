@@ -505,7 +505,14 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
     if (input.task.provider !== "openchatcut") throw new Error("审核渲染任务 Provider 必须是 OpenChatCut。 ");
     const render = input.reviewRender;
     if (!isSafeRelativePath(render.projectRelativePath) || !isNonEmptyString(render.preRenderReviewPackageId) || !Number.isInteger(render.projectRevision) || render.projectRevision < 1 || render.members.length === 0) throw new Error("冻结审核渲染工程格式无效。 ");
-    if (render.studioProject && (!isSafeRelativePath(render.studioProject.relativePath) || !new RegExp(`^episodes/${input.episode.id}/(?:studio-frozen/[0-9a-f-]{36}/index\\.html|openchatcut-frozen/[0-9a-f-]{36}/project\\.json)$`, "i").test(render.studioProject.relativePath) || !isSha256(render.studioProject.sha256) || !Number.isInteger(render.studioProject.fileSize) || render.studioProject.fileSize < 1)) throw new Error("OpenChatCut 冻结工程格式无效。 ");
+    if (render.studioProject) {
+      const frozen=render.studioProject;
+      const prefix=[`episodes/${input.episode.id}`,...(input.episodeRelativePath?[input.episodeRelativePath]:[])].some(prefix=>frozen.relativePath.startsWith(prefix+'/'));
+      const indexed=input.inputArtifacts.some(a=>a.relativePath===frozen.relativePath&&a.sha256===frozen.sha256&&a.fileSize===frozen.fileSize);
+      // Format and immutable input membership only; DB/episode I/O still prove
+      // the physical location and the full historical identity chain.
+      if(!isSafeRelativePath(frozen.relativePath)||!/\/(?:studio-frozen\/[0-9a-f-]{36}\/index[.]html|openchatcut-frozen\/[0-9a-f-]{36}\/project[.]json)$/i.test(frozen.relativePath)||!(prefix||indexed)||!isSha256(frozen.sha256)||!Number.isInteger(frozen.fileSize)||frozen.fileSize<1)throw new Error("OpenChatCut 冻结工程格式无效。 ");
+    }
     validateReviewRenderStoryboard(render.storyboard);
     if (!isReviewRenderAdjustments(render.adjustments)) throw new Error("冻结审核渲染合成配置无效。 ");
     for (const member of render.members) {
