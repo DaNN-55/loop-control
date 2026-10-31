@@ -8,9 +8,7 @@ import {ConfigurationError} from './configurationCommands.js';
 import {inspectMediaRoot,verifyMediaRootBinding,type MediaRootBinding} from './mediaRootSettings.js';
 import {requireAccountAssetRoot,setAccountAssetDirectory} from './accountAssetRoots.js';
 interface Intent {account_id:string;path:string;root_binding:MediaRootBinding;marker:string;device_id:string|null;inode_id:string|null;marker_device_id:string|null;marker_inode_id:string|null;cleanup_owned:boolean;payload_hash:string;result:Record<string,unknown>|null}
-// Full UUID avoids prefix collisions, including case/normalization-insensitive filesystems.
-async function ownsMarker(path:string,content:string,device:string|null,inode:string|null){if(device===null||inode===null)return false;try{const s=await lstat(path,{bigint:true});return s.isFile()&&!s.isSymbolicLink()&&s.nlink===1n&&String(s.dev)===device&&String(s.ino)===inode&&await realpath(path)===path&&await readFile(path,'utf8')===content;}catch{return false;}}
-function directoryName(name:string,id:string){let readable='';for(const c of name.normalize('NFC').replace(/[\x00-\x1f\x7f<>:"/\\|?*]/g,'-').trim().replace(/[. ]+$/g,'')){if(Buffer.byteLength(readable+c)>100)break;readable+=c;}if(/^(con|prn|aux|nul|com[0-9¹²³]|lpt[0-9¹²³])(?:\.|$)/iu.test(readable))readable='账号-'+readable;return`${readable||'账号'}--${id}`;}
+import {directoryName,ownsMarker} from './creationIdentity.js';
 export async function createAccountDirectory(pool:Pool,session:OwnerSession,key:string,hash:string,data:Record<string,unknown>,mediaRoot:string,checkReferences?:(c:PoolClient,refs:string[])=>Promise<void>,refs:string[]=[]){
  const lock=await pool.connect(),lockKey=session.id+':'+key;
  const transaction=<T>(run:(c:PoolClient)=>Promise<T>)=>sessionTransaction(pool,session,run,lock);

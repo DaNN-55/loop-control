@@ -58,6 +58,8 @@ T04/#182 merged without conflicts at `6c20004d` from clean source `41059893` (im
 
 Root tracker readback: #182 is completed; seven of17 tickets are closed (179/180/181/182/184/185/186). T05/#183 and T09/#187 are active. T04 clean fully merged worktree was removed after ancestry/status/no-runtime-reference verification; recovery branch retained.
 
+T05/#183 implementation is complete on its isolated branch, synchronized with integration e747ee2b; root owns merge and tracker closure. Migration114 adds account-relative series/unassigned containers and durable creation intents; series names can repeat, stable UUIDs and inode identities remain authoritative. Formal create keeps returning series_versions; rename is independent metadata and leaves rules/frozen references unchanged. Legacy series remain explicitly unmanaged; unassigned is explicit physical creation with no fake business series; read/open never mkdir. Final account-root and child/marker identity checks run after the container INSERT. TDD evidence and downstream resolver/backup/rebind contracts: external t05/, T05-CONTRACT.md and T05/HANDOFF.md. New episode defaults remain legacy until T12.
+
 ---
 
 # 2026-10-31 #166 合并 main 与过程清理（完成）

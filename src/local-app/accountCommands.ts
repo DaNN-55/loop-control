@@ -1,3 +1,5 @@
+import {createStorageContainer,ownedContainerAccount,readStorageContainer,resolveStorageContainer,requireStorageContainer} from './seriesDirectories.js';
+import {createHash} from 'node:crypto';
 import {planAccountDirectoryMigration,readAccountDirectoryMigrations,executeAccountDirectoryMigration} from './accountDirectoryMigration.js';
 import {readAccountAssetDirectory,setAccountAssetDirectory,requireAccountAssetRoot} from './accountAssetRoots.js';
 import type {Pool,PoolClient} from 'pg';
@@ -6,7 +8,7 @@ import {promisify} from 'node:util';
 import {isAbsolute,resolve} from 'node:path';
 import type {OwnerSession} from './sessions.js';
 import {sessionTransaction} from './ownerTransaction.js';
-import {ConfigurationError} from './configurationCommands.js';
+import {canonical,ConfigurationError} from './configurationCommands.js';
 import {resolveLocalAssetRoot} from './mediaDeployment.js';
 import type {LocalEpisodeCommands} from './episodeCommands.js';
 const exec=promisify(execFile),uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -32,8 +34,17 @@ export class LocalAccountCommands{
  }
  async execute(session:OwnerSession,body:Record<string,unknown>,signal?:AbortSignal){
   if(this.closed)throw new ConfigurationError(503,'本机服务正在退出。');
-  if(!['chooseAssetDirectory','openAssetDirectory','setAssetDirectory','readAssetDirectory','planAssetDirectoryMigration','readAssetDirectoryMigrations','executeAssetDirectoryMigration','rollbackAssetDirectoryMigration'].includes(String(body.command))||Object.keys(body).some(k=>!['command','data','idempotencyKey'].includes(k))||typeof body.idempotencyKey!=='string'||!uuid.test(body.idempotencyKey)||!body.data||typeof body.data!=='object'||Array.isArray(body.data))throw new ConfigurationError(400,'账号本机操作无效。');
+  if(!['readSeriesDirectory','openSeriesDirectory','readUnassignedDirectory','openUnassignedDirectory','createUnassignedDirectory','chooseAssetDirectory','openAssetDirectory','setAssetDirectory','readAssetDirectory','planAssetDirectoryMigration','readAssetDirectoryMigrations','executeAssetDirectoryMigration','rollbackAssetDirectoryMigration'].includes(String(body.command))||Object.keys(body).some(k=>!['command','data','idempotencyKey'].includes(k))||typeof body.idempotencyKey!=='string'||!uuid.test(body.idempotencyKey)||!body.data||typeof body.data!=='object'||Array.isArray(body.data))throw new ConfigurationError(400,'账号本机操作无效。');
   const data=body.data as Record<string,unknown>,choose=body.command==='chooseAssetDirectory';
+  if(['readSeriesDirectory','openSeriesDirectory','readUnassignedDirectory','openUnassignedDirectory','createUnassignedDirectory'].includes(String(body.command))){
+   const series=String(body.command).includes('Series'),field=series?'seriesId':'accountId';
+   if(typeof data[field]!=='string'||!uuid.test(String(data[field]))||Object.keys(data).some(k=>k!==field))throw new ConfigurationError(400,'收纳目录参数无效。');
+   if(body.command==='createUnassignedDirectory')return createStorageContainer(this.pool,session,body.idempotencyKey,createHash('sha256').update(JSON.stringify(canonical(body))).digest('hex'),data,this.mediaRoot,'unassigned');
+   return sessionTransaction(this.pool,session,async c=>{const accountId=await ownedContainerAccount(c,series?String(data.seriesId):null,series?undefined:String(data.accountId));
+    if(String(body.command).startsWith('read'))return readStorageContainer(c,this.mediaRoot,accountId,series?String(data.seriesId):null);
+    const location=await resolveStorageContainer(c,this.mediaRoot,accountId,series?String(data.seriesId):null);await this.directories.open(await requireStorageContainer(c,this.mediaRoot,location));return{opened:true};
+   });
+  }
   if(['planAssetDirectoryMigration','readAssetDirectoryMigrations','executeAssetDirectoryMigration','rollbackAssetDirectoryMigration'].includes(String(body.command))){
    const planning=body.command==='planAssetDirectoryMigration',reading=body.command==='readAssetDirectoryMigrations';
    if(typeof data.accountId!=='string'||!uuid.test(data.accountId)||Object.keys(data).some(k=>!['accountId',...(planning?['path']:reading?[]:['migrationId'])].includes(k))||!planning&&!reading&&(typeof data.migrationId!=='string'||!uuid.test(data.migrationId)))throw new ConfigurationError(400,'目录迁移参数无效。');
