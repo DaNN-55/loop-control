@@ -8,6 +8,7 @@ import {editStudioDocument} from './studioDocument.fixture';
 import {prepareCollectionTargets,moveCollection} from './episodeCollection.fixture';
 import {restoreCreatedEpisode} from './episodeCreationRestore.fixture';
 import {nativeStorageContext} from './nativeStorage.fixture';
+import {observeRestoredNativeBrowser} from './nativeRestoreBrowser.fixture';
 const enabled=process.env.LOOP_WORKSPACE_ACCEPTANCE==='1';
 
 it.skipIf(!enabled)('all historical native coordinates remain usable after A→B→unassigned→A→B and a real database/media restore with original sources offline',async()=>{
@@ -19,7 +20,7 @@ it.skipIf(!enabled)('all historical native coordinates remain usable after A→B
   const send=async(command:string,data:Record<string,unknown>={})=>{const r=await f.request(command,{workspaceId:w.id,expectedRevision:w.revision,...data});expect(r.status,command+': '+JSON.stringify(r.body)).toBe(200);w=r.body.productionWorkspace??r.body;return r.body;};
   let opened=await send('openWorkspaceStudio');await editStudioDocument(opened.studioUrl,w.project.projectId,doc=>{doc.timelines[0].name='T14 original SQLite edit';});await send('saveWorkspaceStudio',{workspaceRelativePath:opened.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:w.project.sha256});await send('closeWorkspaceStudio');
   const frozen=(await f.c.query('SELECT to_jsonb(t) value FROM public.tasks t WHERE episode_id=$1 ORDER BY id',[f.episode])).rows;
-  const {post,account,a,b,adoption}=await prepareCollectionTargets(f);await rename(join(f.assetRoot,f.episodeRelativePath),join(f.assetRoot,f.episodeRelativePath+'.offline'));
+  const {post,account,a,b,adoption}=await prepareCollectionTargets(f,{a:'收纳 A [100% #?]',b:'..alpha 收纳 B _✨'});await rename(join(f.assetRoot,f.episodeRelativePath),join(f.assetRoot,f.episodeRelativePath+'.offline'));
   opened=await send('openWorkspaceStudio');const blocked=await post('account-commands','planEpisodeCollectionMove',{episodeId:f.episode,seriesId:a.series_id});expect(blocked.status).toBe(200);expect(blocked.body.conflicts.some((v:string)=>v.includes('Studio'))).toBe(true);expect((await post('account-commands','executeAssetDirectoryMigration',{accountId:account,migrationId:blocked.body.id})).status).toBe(409);await post('account-commands','rollbackAssetDirectoryMigration',{accountId:account,migrationId:blocked.body.id});await send('closeWorkspaceStudio');
   let prefix=adoption.episodes[0].targetPrefix;const moves=[];
   for(const seriesId of [a.series_id,b.series_id,null,a.series_id,b.series_id]){
@@ -30,6 +31,8 @@ it.skipIf(!enabled)('all historical native coordinates remain usable after A→B
   const artifact=w.exports[0].artifact,response=await fetch(f.origin+'/_local-artifact?episode='+f.episode+'&path='+encodeURIComponent(artifact.relativePath)+'&sha256='+artifact.sha256,{headers:{Cookie:'loop_owner_session='+f.token}});expect(response.status).toBe(200);expect(createHash('sha256').update(Buffer.from(await response.arrayBuffer())).digest('hex')).toBe(artifact.sha256);
   expect((await f.c.query('SELECT to_jsonb(t) value FROM public.tasks t WHERE episode_id=$1 ORDER BY id',[f.episode])).rows).toEqual(frozen);
   const evidence=process.env.LOOP_T14_EVIDENCE??'/private/tmp/loop-control-178-20261031/T14/native-restore';await mkdir(evidence,{recursive:true});await writeFile(join(evidence,'moves.json'),JSON.stringify({moves,adoption,frozen,currentPrefix:prefix,sourceOffline:true},null,2));
-  await restoreCreatedEpisode({f,context,storage,source,target,episode:f.episode,accountId:account,prefix,w,evidence,volumeMount:'/',phase:'collection',expectedTransformX:0});
+  expect(prefix.startsWith('..alpha 收纳 B _✨--')).toBe(true);
+  await observeRestoredNativeBrowser({origin:f.origin,email:f.email,password:f.password,episode:f.episode,output:join(evidence,'moved-browser'),cacheDirectory:join(storage,'moved-browser-cache'),expectedDirectoryPath:join(f.assetRoot,prefix)});await send('closeWorkspaceStudio');
+  await restoreCreatedEpisode({f,context,storage,source,target,episode:f.episode,accountId:account,prefix,w,evidence,volumeMount:'/',phase:'collection',expectedTransformX:0,browserOutput:join(evidence,'restored-browser')});
  }finally{await f.close();await rm(storage,{recursive:true,force:true});}
 },300000);

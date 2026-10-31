@@ -187,7 +187,7 @@ function requiredSafeName(value) {
 
 function isDescendant(rootPath, candidate) {
   const rel = relative(rootPath, candidate);
-  return rel === "" || (!rel.startsWith("..") && !isAbsolute(rel));
+  return rel === "" || (rel !== ".." && !rel.startsWith("../") && !isAbsolute(rel));
 }
 
 async function availablePort() {

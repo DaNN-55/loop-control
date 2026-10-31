@@ -14,7 +14,7 @@ export async function serveOwnedArtifact(root:string,artifact:ArtifactFile,respo
  const accountRoot=location?.assetRoot??mappedAssetPath(root,artifact.source_asset_root,artifact.source_media_roots??[artifact.source_media_root]);
  if(location){const directory=await lstat(location.directoryPath,{bigint:true});if(location.assetRoot!==accountRoot||!directory.isDirectory()||directory.isSymbolicLink()||await realpath(location.directoryPath)!==location.directoryPath||location.deviceId!==null&&(String(directory.dev)!==location.deviceId||String(directory.ino)!==location.inodeId))throw Error('Production directory identity differs');}
  const path=artifact.resolved_file_path??resolve(accountRoot,artifact.relative_path),rel=relative(accountRoot,path);
- if(!rel||isAbsolute(artifact.relative_path)||rel.startsWith('..')||await realpath(path)!==path)throw Error('Unsafe artifact path');
+ if(!rel||isAbsolute(artifact.relative_path)||(rel==='..'||rel.startsWith('../'))||await realpath(path)!==path)throw Error('Unsafe artifact path');
  const file=await open(path,constants.O_RDONLY|constants.O_NOFOLLOW);
  try{
   const before=await file.stat();if(!before.isFile()||before.nlink!==1||before.size!==Number(artifact.file_size))throw Error('Artifact metadata differs');

@@ -504,7 +504,7 @@ function rewriteSources(value: unknown, map: Map<string, string>): void {
 
 function isDescendant(root: string, candidate: string): boolean {
   const path = relative(root, candidate);
-  return path !== "" && !path.startsWith("..") && !isAbsolute(path);
+  return path !== "" && path !== ".." && !path.startsWith("../") && !isAbsolute(path);
 }
 
 function nodeVersion(nodePath: string): number {
