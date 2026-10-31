@@ -1,6 +1,7 @@
 import {once} from 'node:events';
 import {createServer} from 'node:net';
-import {spawn} from 'node:child_process';
+import {spawn,execFile} from 'node:child_process';
+import {promisify} from 'node:util';
 export async function mediaRootDatabaseTransport(f:{database:string}){
  const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MODULE!);const context=runtimeContext();
  const bridges=new Set<ReturnType<typeof spawn>>();
@@ -18,7 +19,7 @@ export async function mediaRootDatabaseTransport(f:{database:string}){
  return{database,close:async()=>{for(const child of bridges)child.kill();await new Promise<void>(done=>server.close(()=>done()));}};
 }
 
-export async function nativeMediaRootFixture(options:{existingData?:boolean}={}){
+export async function nativeMediaRootFixture(options:{existingData?:boolean;newInstall?:boolean}={}){
  const {embeddedStudioFixture}=await import('./embeddedStudio.fixture');
  const {workspaceAudioVolume}=await import('./workspaceAudioVolume.fixture');
  const {mkdir,writeFile,rm,readFile}=await import('node:fs/promises');const {createHash}=await import('node:crypto');
@@ -32,14 +33,15 @@ export async function nativeMediaRootFixture(options:{existingData?:boolean}={})
   child=spawn(process.execPath,['--input-type=module','-e',script,configFile],{env:{PATH:process.env.PATH,HOME:process.env.HOME,TMPDIR:process.env.TMPDIR},stdio:['ignore','pipe','pipe']});
   return await new Promise<{origin:string;pid:number}>((resolve,reject)=>{let output='',errors='';const timer=setTimeout(()=>{child!.kill('SIGKILL');reject(Error('Native launch timed out: '+errors));},30000);child!.stdout!.on('data',b=>{output+=String(b);const line=output.split('\n').find(s=>s.startsWith('{"origin"'));if(line){clearTimeout(timer);resolve(JSON.parse(line));}});child!.stderr!.on('data',b=>errors+=String(b));child!.once('exit',code=>{clearTimeout(timer);reject(Error('Native launch '+code+': '+errors));});});
  };
+ const closeFolderWindows=async()=>{if(process.platform==='darwin')await promisify(execFile)('/usr/bin/osascript',['-e','on run argv\nset ownedRoot to item 1 of argv\ntell application "Finder"\nrepeat with w in (get windows)\ntry\nset p to POSIX path of (target of w as alias)\nif p starts with (ownedRoot & "/") or p is (ownedRoot & "/") then close w\nend try\nend repeat\nend tell\nend run','--',volume.mountPath],{timeout:5000}).catch(()=>{});};
  const stop=async()=>{if(child&&child.exitCode===null){const done=once(child,'exit');child.kill();await done;}child=undefined;};
  try{
-  if(!options.existingData)await f.c.query('TRUNCATE public.accounts CASCADE');await f.c.query('INSERT INTO public.worker_scheduler_settings(singleton,capacity) VALUES(true,1) ON CONFLICT(singleton) DO UPDATE SET capacity=1');if(!options.existingData)await rm(f.assetRoot,{recursive:true});
+  if(!options.existingData){await f.c.query('TRUNCATE public.accounts CASCADE');await f.c.query('DELETE FROM local_identity.media_root_binding');}if(options.newInstall)await f.c.query('DELETE FROM local_identity.import_record');await f.c.query('INSERT INTO public.worker_scheduler_settings(singleton,capacity) VALUES(true,1) ON CONFLICT(singleton) DO UPDATE SET capacity=1');if(!options.existingData)await rm(f.assetRoot,{recursive:true});
   for(const p of [runtimeRoot,source,target,join(runtimeRoot,'state')])await mkdir(p,{mode:0o700,recursive:true});
   const cacheDirectory=join(source,'whisperx-models');await mkdir(cacheDirectory,{mode:0o700});await writeFile(join(cacheDirectory,'retained.txt'),'Retained platform cache fixture');
   const database={...transport.database,user:'loop_app'};
   const initial={storageOwnerId:f.owner,runtimeRoot,projectRoot:process.cwd(),home:process.env.HOME,stateDirectory:join(runtimeRoot,'state'),mediaRoot:source,backupRoot:join(runtimeRoot,'backups'),automaticBackups:false,controlledNotifications:true,database,workerDatabase:transport.database,worker:{mountPath:volume.mountPath,minimumFreeBytes:0,visualCommand:['/usr/bin/true'],alignment:{python:'/usr/bin/true',cacheDirectory,runnerSha256:createHash('sha256').update(await readFile(join(process.cwd(),'scripts/whisperx-align.py'))).digest('hex')},concurrency:1,actualCostCents:0}};
   await writeFile(configFile,JSON.stringify(initial),{mode:0o600});
-  return{f,volume,runtimeRoot,source,target,configFile,launch,stop,close:async()=>{await stop();await transport.close();await f.close();await volume.close();}};
+  return{f,volume,runtimeRoot,source,target,configFile,launch,stop,crash:async()=>{if(child&&child.exitCode===null){const done=once(child,'exit');child.kill('SIGKILL');await done;}child=undefined;},close:async()=>{await stop();await closeFolderWindows();await transport.close();await f.close();await volume.close();}};
  }catch(error){await stop();await transport.close();await f.close();await volume.close();throw error;}
 }

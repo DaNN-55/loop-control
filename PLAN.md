@@ -9,7 +9,7 @@ Confirmed acceptance: formal UI → Owner HTTP → isolated real database/files 
 | #179 | None | Integrated locally; acceptance passed, tracker remains open |
 | #180 | None | Integrated locally; acceptance passed, tracker remains open |
 | #181 | #179 | Integrated locally; independent acceptance passed; tracker remains open |
-| #182 | #180, #181 | Pending |
+| #182 | #180, #181 | In progress: durable creation + genuine first-account/no-import native acceptance |
 | #183 | #182 | Pending |
 | #184 | #179 | Integrated locally; checks passed; publication cleanup fix required; tracker remains open |
 | #185 | #179 | Integrated locally; acceptance passed, tracker remains open |

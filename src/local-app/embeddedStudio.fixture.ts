@@ -22,7 +22,7 @@ export async function embeddedStudioFixture(options:{testRootParent?:string;orig
   const mod=options.testContextModule??process.env.LOOP_TEST_CONTEXT_MODULE??join(process.cwd(),'scripts/runtime/environment.mjs');const {runtimeContext}=await import(mod);const context=runtimeContext();context.assertDatabase();
   const database='loop_studio_153_'+randomBytes(6).toString('hex');context.sql('CREATE DATABASE '+database+' TEMPLATE template0','postgres');
   try{
-  await copyFixtureSchema(context,database,[...new Set([...(options.migrations??[]),'db/local/105-account-asset-directories.sql','db/local/106-account-directory-migrations.sql','db/local/110-episode-storage-locations.sql','db/local/117-input-storage-locations.sql'])].sort());
+  await copyFixtureSchema(context,database,[...new Set([...(options.migrations??[]),'db/local/105-account-asset-directories.sql','db/local/106-account-directory-migrations.sql','db/local/110-episode-storage-locations.sql','db/local/111-global-media-root.sql','db/local/113-automatic-account-directories.sql','db/local/117-input-storage-locations.sql'])].sort());
   }catch(error){context.sql('DROP DATABASE '+database+' WITH (FORCE)','postgres');throw error;}
   const bridge=spawn('docker',['exec','-i',context.container,'perl','-MIO::Socket::UNIX','-MIO::Select','-MSocket=SOCK_STREAM','-e',"my $s=IO::Socket::UNIX->new(Type=>SOCK_STREAM,Peer=>'/var/run/postgresql/.s.PGSQL.5432') or die;my $sel=IO::Select->new(\\*STDIN,$s);while(1){for my $f($sel->can_read){my $n=sysread($f,my $b,65536);exit unless $n;my $o=fileno($f)==0?$s:\\*STDOUT;while(length $b){my $w=syswrite($o,$b);die unless $w;substr($b,0,$w,'');}}}"],{env:context.env,stdio:['pipe','pipe','pipe']});
   const stream=Duplex.from({readable:bridge.stdout!,writable:bridge.stdin!});
@@ -69,6 +69,8 @@ export async function embeddedStudioFixture(options:{testRootParent?:string;orig
     await c.query("INSERT INTO public.artifacts(id,episode_id,producer_task_id,artifact_type,relative_path,sha256,file_size) VALUES($1,$2,$3,'storyboard',$4,$5,$6),($7,$2,$3,'render',$8,$9,$10)",[boardArtifact,episode,task,boardPath,boardSha,boardBytes.length,videoArtifact,videoPath,files[0].sha256,files[0].fileSize]);
     await c.query("INSERT INTO public.review_packages(id,episode_id,stage,revision_number,artifact_id,task_id,context_snapshot) VALUES($1,$2,'storyboard_review',1,$3,$4,$5),($6,$2,'qc_review',1,$7,$4,$8)",[board,episode,boardArtifact,task,{worker_result:{storyboard:render.storyboard}},qc,videoArtifact,{project_relative_path:boardPath}]);
     await c.query("INSERT INTO local_identity.import_record(imported_at,source_created_at,archive_sha256,source_media_root) VALUES(now(),now(),$1,$2)",['f'.repeat(64),root]);
+    const rootStat=await lstat(root,{bigint:true});
+    await c.query('SELECT local_identity.bind_media_root($1,$2,$3,$4,false,$5)',[root,String(rootStat.dev),String(rootStat.ino),options.testRootParent??'/',owner]);
     await c.query('COMMIT');
     server.listen(0,'127.0.0.1');await once(server,'listening');started=true;const origin=options.origin??`http://127.0.0.1:${(server.address() as {port:number}).port}`;
     handler=createLocalHandler({pool,origin,mediaRoot:root,episodes:commands});

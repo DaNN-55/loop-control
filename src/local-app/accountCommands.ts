@@ -1,5 +1,5 @@
 import {planAccountDirectoryMigration,readAccountDirectoryMigrations,executeAccountDirectoryMigration} from './accountDirectoryMigration.js';
-import {readAccountAssetDirectory,setAccountAssetDirectory} from './accountAssetRoots.js';
+import {readAccountAssetDirectory,setAccountAssetDirectory,requireAccountAssetRoot} from './accountAssetRoots.js';
 import type {Pool,PoolClient} from 'pg';
 import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
@@ -45,12 +45,16 @@ export class LocalAccountCommands{
    if(typeof data.accountId!=='string'||!uuid.test(data.accountId)||Object.keys(data).some(k=>!['accountId',...(body.command==='setAssetDirectory'?['path']:[])].includes(k)))throw new ConfigurationError(400,'账号目录参数无效。');
    return sessionTransaction(this.pool,session,async c=>{await this.account(c,session,data.accountId);return body.command==='setAssetDirectory'?setAccountAssetDirectory(c,this.mediaRoot,String(data.accountId),data.path):readAccountAssetDirectory(c,this.mediaRoot,String(data.accountId));});
   }
-  if(typeof data.accountId!=='string'||!uuid.test(data.accountId)||Object.keys(data).some(k=>!['accountId',...(choose?[]:['path'])].includes(k))||!choose&&(typeof data.path!=='string'||!data.path.trim()||data.path.length>4096))throw new ConfigurationError(400,'账号或目录参数无效。');
+  if(body.command==='openAssetDirectory'){
+   if(typeof data.accountId!=='string'||!uuid.test(data.accountId)||Object.keys(data).some(k=>k!=='accountId'))throw new ConfigurationError(400,'账号目录参数无效。');
+   return sessionTransaction(this.pool,session,async c=>{await this.account(c,session,data.accountId);const path=await requireAccountAssetRoot(c,this.mediaRoot,String(data.accountId));await this.directories.open(path);return{opened:true};});
+  }
+  if(typeof data.accountId!=='string'||!uuid.test(data.accountId)||Object.keys(data).some(k=>k!=='accountId'))throw new ConfigurationError(400,'账号或目录参数无效。');
   if(choose){
    await sessionTransaction(this.pool,session,c=>this.account(c,session,data.accountId));
    if(this.choosing)throw new ConfigurationError(409,'已有文件夹选择窗口，请先完成或取消。');this.choosing=true;this.chooserAbort=new AbortController();
    try{const path=await this.directories.choose(this.mediaRoot,signal?AbortSignal.any([signal,this.chooserAbort.signal]):this.chooserAbort.signal);return await sessionTransaction(this.pool,session,async c=>{await this.account(c,session,data.accountId);if(path===null)return{cancelled:true};return{assetRoot:await resolveLocalAssetRoot(c,this.mediaRoot,path)};});}finally{this.choosing=false;this.chooserAbort=undefined;}
   }
-  return sessionTransaction(this.pool,session,async c=>{await this.account(c,session,data.accountId);const path=await resolveLocalAssetRoot(c,this.mediaRoot,data.path);await this.directories.open(path);return{opened:true};});
+  throw new ConfigurationError(400,'账号本机操作无效。');
  }
 }
