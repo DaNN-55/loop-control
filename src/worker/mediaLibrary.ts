@@ -115,7 +115,7 @@ async function directoryPath(path: string, label: string): Promise<string> {
 
 function isDescendant(parent: string, child: string): boolean {
   const pathFromParent = relative(resolve(parent), resolve(child));
-  return pathFromParent.length > 0 && !pathFromParent.startsWith("..") && !isAbsolute(pathFromParent);
+  return pathFromParent.length > 0 && pathFromParent !== ".." && !pathFromParent.startsWith("../") && !isAbsolute(pathFromParent);
 }
 
 function isSafePathSegment(value: string): boolean {

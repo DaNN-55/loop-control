@@ -4,6 +4,7 @@ import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
 import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import {join} from 'node:path';
+import {randomUUID} from 'node:crypto';
 import {productionWorkspaceFixture} from './productionWorkspace.fixture';
 const exec=promisify(execFile);
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner uploads and persists a native still image with duration and composition',async()=>{
@@ -60,10 +61,11 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner sees missing and c
 },180000);
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('AI image generation retains the selected execution path and blocks when no registered connection exists',async()=>{
  const f=await productionWorkspaceFixture({migrations:['db/local/086-workspace-images.sql']});try{
+  const selection={capability:'video',provider:'volcengine',adapter:'seedance_video',model:'doubao-seedance-2-0-260128',connectionVersionId:randomUUID()};
   const made=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;
-  const result=await f.request('generateWorkspaceImage',{workspaceId:made.id,expectedRevision:made.revision,clipId:made.clips[0].id,materialRevisionId:f.material,prompt:'镜头缓慢推进',durationSeconds:4,reservationCents:50});expect(result.status).toBe(409);expect(result.body.error).toContain('图片');
+  const result=await f.request('generateWorkspaceImage',{selection,workspaceId:made.id,expectedRevision:made.revision,clipId:made.clips[0].id,materialRevisionId:f.material,prompt:'镜头缓慢推进',durationSeconds:4,reservationCents:50});expect(result.status).toBe(409);expect(result.body.error).toContain('图片');
   const path=join(f.root,'first.png');await exec('ffmpeg',['-nostdin','-v','error','-f','lavfi','-i','testsrc2=size=64x64','-frames:v','1',path]);const uploaded=await f.request('importMaterial',{materialType:'image',sourceKind:'file',sourcePath:'first.png',mimeType:'image/png',contentBase64:(await readFile(path)).toString('base64'),isMainScript:false,materialPurpose:'visual_reference'});
-  const blocked=await f.request('generateWorkspaceImage',{workspaceId:made.id,expectedRevision:made.revision,clipId:made.clips[0].id,materialRevisionId:uploaded.body.id,prompt:'镜头缓慢推进',durationSeconds:4,reservationCents:50});expect(blocked.status).toBe(409);expect(blocked.body.error).toContain('连接');
+  const blocked=await f.request('generateWorkspaceImage',{selection,workspaceId:made.id,expectedRevision:made.revision,clipId:made.clips[0].id,materialRevisionId:uploaded.body.id,prompt:'镜头缓慢推进',durationSeconds:4,reservationCents:50});expect(blocked.status).toBe(409);expect(blocked.body.error).toContain('连接');
   expect((await f.c.query('SELECT id FROM public.tasks WHERE episode_id=$1 AND status<>\'completed\'',[f.episode])).rowCount).toBe(0);
 
  }finally{await f.close();}
@@ -89,12 +91,13 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each([false,true])('Owner
   const path=join(f.root,'input.png');await exec('ffmpeg',['-nostdin','-v','error','-f','lavfi','-i','testsrc2=size=640x360','-frames:v','1',path]);
   const uploaded=await f.request('importMaterial',{materialType:'image',sourceKind:'file',sourcePath:'input.png',mimeType:'image/png',contentBase64:(await readFile(path)).toString('base64'),isMainScript:false,materialPurpose:'visual_reference'});expect(uploaded.status).toBe(200);
   expect((await f.request('setWanBudget',{trialCents:200,totalCents:500,full:false})).status).toBe(200);
+  const selection={capability:'video',provider:'volcengine',adapter:'seedance_video',model:'doubao-seedance-2-0-260128',connectionVersionId:version};
   let w=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;
   const authorized=await f.request('authorizeWorkspacePreparation',{workspaceId:w.id,expectedRevision:w.revision,enabled:true});expect(authorized.status,JSON.stringify(authorized.body)).toBe(200);w=authorized.body;
-  const requested=await f.request('generateWorkspaceImage',{workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[0].id,materialRevisionId:uploaded.body.id,prompt:'人物缓慢转身',durationSeconds:4,reservationCents:90});expect(requested.status,JSON.stringify(requested.body)).toBe(200);w=requested.body;
+  const requested=await f.request('generateWorkspaceImage',{selection,workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[0].id,materialRevisionId:uploaded.body.id,prompt:'人物缓慢转身',durationSeconds:4,reservationCents:90});expect(requested.status,JSON.stringify(requested.body)).toBe(200);w=requested.body;
   expect(checks).toBe(1);expect(wakes).toBe(1);expect(w.clips[0].image.taskId).toBeTruthy();expect(w.readiness.placeholders).toHaveLength(2);
   const taskId=w.clips[0].image.taskId;
-  const second=await f.request('generateWorkspaceImage',{workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[1].id,materialRevisionId:uploaded.body.id,prompt:'第二镜缓慢转身',durationSeconds:4,reservationCents:90});expect(second.status,JSON.stringify(second.body)).toBe(200);w=second.body;const secondId=w.clips[1].image.taskId;
+  const second=await f.request('generateWorkspaceImage',{selection,workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[1].id,materialRevisionId:uploaded.body.id,prompt:'第二镜缓慢转身',durationSeconds:4,reservationCents:90});expect(second.status,JSON.stringify(second.body)).toBe(200);w=second.body;const secondId=w.clips[1].image.taskId;
   const controlled=join(f.root,'controlled.mp4');await exec('ffmpeg',['-nostdin','-v','error','-f','lavfi','-i','testsrc2=size=128x128:rate=24','-t','4','-c:v','libx264','-pix_fmt','yuv420p',controlled]);
   if(edited){
    const saved=await f.request('editWorkspaceStructure',{workspaceId:w.id,expectedRevision:w.revision,operation:{kind:'appearance',itemId:w.clips[0].itemId,focusX:17}});expect(saved.status,JSON.stringify(saved.body)).toBe(200);w=saved.body;

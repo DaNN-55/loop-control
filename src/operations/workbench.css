@@ -13,7 +13,7 @@ html[data-interface="impeccable"] .product-ui .work-filters .episode-search{flex
 .work-filters>.dan-select-field{flex:0 1 130px;min-width:110px;width:130px}
 html[data-interface="impeccable"] .product-ui .work-filters select{height:36px;font-size:12px}
 html[data-interface="impeccable"] .impeccable-app.product-ui .lc-work-table{grid-column:auto;grid-row:auto;min-width:0;border:1px solid var(--lc-line);border-radius:12px;overflow:hidden;background:var(--lc-surface)}
-.work-table-scroll{overflow-x:auto}
+.work-table-scroll{position:relative;overflow-x:auto}
 .work-table-scroll table{width:100%;border-collapse:collapse;table-layout:fixed;text-align:left;font-size:12px;min-width:620px}
 html[data-interface="impeccable"] .product-ui .work-table-scroll :is(th,td){text-align:left;border:0;padding:16px 12px;vertical-align:middle;overflow:hidden}
 html[data-interface="impeccable"] .product-ui .work-table-scroll th{background:var(--lc-surface-2);color:var(--lc-muted);font-size:11px;font-weight:500;padding-block:12px}
