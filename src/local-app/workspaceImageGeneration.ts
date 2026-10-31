@@ -1,3 +1,4 @@
+import {requireVisualStorageLocation} from './workspaceVisualMedia.js';
 import {creativeAccountRules} from '../creativeAccountRules.js';
 import {resolveProductionSelection} from './productionSelection.js';
 import {randomUUID} from 'node:crypto';
@@ -12,6 +13,7 @@ import type {InputRuntime} from './episodeCommands.js';
 import type {ProductionWorkspaceRecord} from './productionWorkspaceCommands.js';
 
 export async function queueWorkspaceImageCandidates(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,data:Record<string,unknown>,runtime:InputRuntime){
+  await requireVisualStorageLocation(c,root,row.episode_id,runtime.minimumFreeBytes);
   const clip=row.bindings.find(b=>b.itemId===data.targetItemId),item=project.timelines.flatMap(t=>t.items).find(i=>i.id===data.targetItemId);
   if(!clip||!item||!['video','image','text'].includes(String(item.kind)))throw new ConfigurationError(409,'当前镜头画面已变化。');
   if(typeof data.prompt!=='string'||!data.prompt.trim()||data.prompt.length>1200||!isImageGenerationSettings(data.settings)||!Number.isSafeInteger(data.reservationCents)||Number(data.reservationCents)<1||Number(data.reservationCents)>100000)throw new ConfigurationError(400,'请填写图片提示词、有效生成设置和本次费用预留。');

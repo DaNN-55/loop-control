@@ -1,3 +1,4 @@
+import {requireVisualStorageLocation} from './workspaceVisualMedia.js';
 import {isVideoProvider,videoProviders} from "../worker/videoProviderCatalog.js";
 import type {PoolClient} from 'pg';
 import type {InputRuntime} from './episodeCommands.js';
@@ -9,6 +10,7 @@ export async function executeWanCommand(c:PoolClient,e:{id:string;account_id:str
   if(!Number.isSafeInteger(data.trialCents)||!Number.isSafeInteger(data.totalCents)||Number(data.trialCents)<1||Number(data.totalCents)<Number(data.trialCents)||Number(data.totalCents)>100000||typeof data.full!=='boolean')throw new ConfigurationError(400,'生成预算须为有效金额，总上限不小于试片上限且不超过1000元。');
   return(await c.query('SELECT to_jsonb(public.set_generation_budget($1,$2,$3,$4)) result',[e.account_id,data.trialCents,data.totalCents,data.full])).rows[0].result;
  }
+ await requireVisualStorageLocation(c,root,e.id,runtime.minimumFreeBytes);
  let taskId:string;
  if(command==='resumeWan'){
   if(typeof data.taskId!=='string'||!uuid.test(data.taskId))throw new ConfigurationError(400,'万相任务标识无效。');

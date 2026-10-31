@@ -18,7 +18,7 @@ import type {PoolClient} from 'pg';
 import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
 import type {WorkspaceVisualCandidate} from '../workspaceVisualCandidates.js';
 import {workspaceCandidateTarget,workspaceCandidateAppearance} from '../workspaceCandidates.js';
-import {inspectWorkspaceVisualFile} from './workspaceVisualMedia.js';
+import {inspectWorkspaceVisualFile,requireVisualStorageLocation} from './workspaceVisualMedia.js';
 import {ConfigurationError,canonical} from './configurationCommands.js';
 import {resolveWorkspaceSource} from './workspaceSources.js';
 import {readProductionWorkspace,updateWorkspaceProject,type ProductionWorkspaceRecord} from './productionWorkspaceCommands.js';
@@ -39,6 +39,7 @@ export async function readWorkspaceVisualCandidates(c:PoolClient,row:ProductionW
 }
 /** One real authorization, frozen input and private queue boundary for first fill and later candidates. */
 export async function queueWorkspaceVisualGeneration(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,data:Record<string,unknown>,runtime:InputRuntime,mode:'candidate'|'first'='candidate'){
+  await requireVisualStorageLocation(c,root,row.episode_id,runtime.minimumFreeBytes);
   const {clip,item,timeline}=target(row,project,data.targetItemId),resolved=await resolveProductionSelection(c,data.selection,'video'),lineage={shotType:'b_roll' as const};
   if(resolved&&resolved.choice.mode!=='generation')throw new ConfigurationError(400,'请选择视频生成服务；素材检索请使用检索入口。');
   if(typeof data.firstFrameMaterialRevisionId!=='string'||!uuid.test(data.firstFrameMaterialRevisionId)||typeof data.prompt!=='string'||!data.prompt.trim()||data.prompt.length>1500)throw new ConfigurationError(400,'首帧或动作描述无效。');

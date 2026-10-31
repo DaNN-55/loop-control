@@ -4,8 +4,8 @@ import {join} from 'node:path';
 import {narrationFixture} from './workspaceNarration.fixture';
 import {productionHash} from './scriptProductionStore';
 import {workspaceTestMedia} from './workspaceTestMedia.fixture';
-export async function workspaceImageGenerationFixture(){
- const f=await narrationFixture(undefined,undefined,true);try{
+export async function workspaceImageGenerationFixture(migrations:string[]=[]){
+ const f=await narrationFixture(undefined,undefined,true,false,migrations);try{
  const version=randomUUID(),connection=randomUUID(),secret=randomUUID();
  await f.c.query('BEGIN');
  await f.c.query("SELECT set_config('loop.owner_id',$1,true)",[f.owner]);
