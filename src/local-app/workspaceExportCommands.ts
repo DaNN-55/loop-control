@@ -1,3 +1,4 @@
+import {verifyEpisodeFile,episodeFileIO} from './episodeFiles.js';
 import {randomUUID,createHash} from 'node:crypto';
 import {readFile,writeFile,mkdir,mkdtemp,rm} from 'node:fs/promises';
 import {dirname,join,resolve} from 'node:path';
@@ -12,7 +13,6 @@ import type {WorkspaceExport,WorkspaceExportCheck,WorkspaceExportIssue} from '..
 import {activeOpenChatCutState} from '../worker/openchatcutProject.js';
 import {readWorkspaceCaptions,confirmWorkspaceCaptionTexts} from './workspaceCaptionsCommands.js';
 import {resolveWorkspaceSource} from './workspaceSources.js';
-import {verifyNativeFile} from './localFiles.js';
 import {ConfigurationError} from './configurationCommands.js';
 import {safeAssetOutputPath} from '../worker/controlledMediaExecutor.js';
 import {inspectMp4Artifact} from '../worker/mediaTools.js';
@@ -54,12 +54,13 @@ export async function readWorkspaceExports(c:PoolClient,root:string,row:Producti
  const exports:WorkspaceExport[]=[];
  for(const [index,e] of rows.entries()){
   const current=index===0&&e.content_sha256===row.content_sha256&&Number(e.project_content_version)===Number(row.revision);let available=true;
-  if(index===0&&e.artifact)try{await verifyNativeFile(root,e.artifact.relativePath,e.artifact.sha256,e.artifact.fileSize);}catch{available=false;}
+  if(index===0&&e.artifact)try{await verifyEpisodeFile(c,root,row.episode_id,e.artifact.relativePath,e.artifact.sha256,e.artifact.fileSize);}catch{available=false;}
   exports.push({id:e.id,projectContentVersion:Number(e.project_content_version),contentSha256:e.content_sha256,project:e.project,status:e.status,artifact:e.artifact,checks:[...e.checks,...(!available?[{name:'export_file',passed:false,detail:'导出文件缺失或指纹已变化。'}]:[])],createdAt:e.created_at,confirmedAt:e.confirmed_at,confirmed:!!e.confirmed_at&&current&&available&&!issues.some(i=>!i.resolved_at||new Date(i.created_at)>new Date(e.confirmed_at)),current});
  }
  return{exports,exportIssues:issues.map(i=>({id:i.id,exportId:i.export_id,reason:i.reason,resolved:!!i.resolved_at}))};
 }
 export async function executeWorkspaceExport(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,runtime:InputRuntime,command:string,data:Record<string,unknown>){
+ const storage=await episodeFileIO(c,root,row.episode_id,true);
  if(isOpenChatCutStudio(row.episode_id))throw new ConfigurationError(409,'请先保存并返回，再检查最终文件。');
  if(command==='recordWorkspaceExportIssue'){
   if(data.exportId!==undefined&&(typeof data.exportId!=='string'||!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(data.exportId)))throw new ConfigurationError(400,'导出标识无效。');
@@ -73,7 +74,7 @@ export async function executeWorkspaceExport(c:PoolClient,root:string,row:Produc
   const {exports,exportIssues}=await readWorkspaceExports(c,root,row),e=exports[0];
   if(!e||!e.current||e.id!==data.exportId||e.status!=='ready'||e.contentSha256!==data.expectedContentSha256||e.artifact?.sha256!==data.expectedExportSha256||e.checks.some(x=>!x.passed)||exportIssues.some(x=>!x.resolved))throw new ConfigurationError(409,'当前工程、最终文件或检查已变化，请重新检查这份文件。');
   const readiness=await workspaceExportReadiness(c,root,row,project);if(readiness.checks.some(x=>!x.passed))throw new ConfigurationError(409,'当前已用内容或字幕检查未通过。');
-  await verifyNativeFile(root,e.project.relativePath,e.project.sha256,e.project.fileSize);
+  await verifyEpisodeFile(c,root,row.episode_id,e.project.relativePath,e.project.sha256,e.project.fileSize);
   await confirmWorkspaceCaptionTexts(c,root,{...row,bindings:row.bindings.filter(b=>readiness.used?.ids.has(b.itemId))},project);
   await c.query('UPDATE local_identity.workspace_exports SET confirmed_at=clock_timestamp(),confirmed_by=local_identity.owner_id() WHERE id=$1',[e.id]);return;
  }
@@ -81,15 +82,15 @@ export async function executeWorkspaceExport(c:PoolClient,root:string,row:Produc
  if(checks.every(x=>x.passed))try{
   if(!runtime.studioRuntime)throw Error('本机渲染运行时未配置。');const config=await runtime.studioRuntime(),dir=await mkdtemp(join(tmpdir(),'loop-workspace-export-'));
   try{
-   const output=join(dir,'final.mp4'),spec=join(dir,'spec.json');await writeFile(spec,JSON.stringify({openchatcutRoot:config.root,nodePath:config.nodePath,assetRoot:root,outputPath:output,state:activeOpenChatCutState(project),project,timelineId:project.activeTimelineId,sources:ready.sources}));
+   const output=join(dir,'final.mp4'),spec=join(dir,'spec.json');await writeFile(spec,JSON.stringify({openchatcutRoot:config.root,nodePath:config.nodePath,assetRoot:root,outputPath:output,state:activeOpenChatCutState(project),project,timelineId:project.activeTimelineId,sources:await Promise.all(ready.sources.map(async source=>({...source,sourcePath:await storage.resolveReference(source.relativePath)})))}));
    await promisify(execFile)(config.nodePath??process.execPath,[resolve('scripts/openchatcut-render.mjs'),spec],{env:{...process.env,...config.environment},timeout:300000,maxBuffer:4*1024*1024});
    const inspection=await inspectMp4Artifact(output),probe=JSON.parse((await promisify(execFile)('ffprobe',['-v','error','-show_entries','stream=codec_type,duration,nb_frames:format=duration','-of','json',output],{timeout:30000})).stdout),video=probe.streams?.find((s:{codec_type:string})=>s.codec_type==='video'),videoDurationSeconds=Number(video?.duration),timeline=project.timelines.find(t=>t.id===project.activeTimelineId)!;
    const duration=Math.max(...timeline.items.map(i=>Number(i.startFrame)+Number(i.durationInFrames)))/timeline.fps;
    const audioExpected=ready.used!.items.some(i=>(i.kind==='audio'||i.kind==='video')&&Number(i.volume??1)>0);
    const passed=inspection.width===timeline.width&&inspection.height===timeline.height&&Number.isFinite(videoDurationSeconds)&&Math.abs(videoDurationSeconds-duration)<Math.max(.15,2/timeline.fps)&&(!audioExpected||inspection.hasAudio)&&inspection.blackFrameCount===0;
    checks.push({name:'technical',passed,detail:passed?'实际 MP4 时长、画幅、音频及黑帧检查通过。':'实际 MP4 技术检查未通过。',inspection,videoDurationSeconds,containerDurationSeconds:Number(probe.format?.duration),videoFrames:Number(video?.nb_frames),expectedDurationSeconds:duration,audioExpected});
-   const bytes=await readFile(output),sha=createHash('sha256').update(bytes).digest('hex'),relativePath=`episodes/${row.episode_id}/workspace-exports/${id}/${sha}.mp4`,path=await safeAssetOutputPath(root,relativePath);await mkdir(dirname(path),{recursive:true});await writeFile(path,bytes,{flag:'wx'});artifact={relativePath,sha256:sha,fileSize:bytes.length};await verifyNativeFile(root,relativePath,sha,bytes.length);
-   const framePath=await safeAssetOutputPath(root,`episodes/${row.episode_id}/workspace-exports/${id}/representative.jpg`);await promisify(execFile)('ffmpeg',['-nostdin','-v','error','-ss',String(Math.min(.5,inspection.durationSeconds/2)),'-i',path,'-frames:v','1',framePath],{timeout:30000});const frame=await readFile(framePath);checks.push({name:'representative_frame',passed:frame.length>0,detail:'已实际解码代表帧。',artifact:{relativePath:`episodes/${row.episode_id}/workspace-exports/${id}/representative.jpg`,sha256:createHash('sha256').update(frame).digest('hex'),fileSize:frame.length}});
+   await storage.assertValid();const bytes=await readFile(output),sha=createHash('sha256').update(bytes).digest('hex'),relativePath=`${storage.relativePath}/workspace-exports/${id}/${sha}.mp4`,path=await safeAssetOutputPath(root,relativePath);await mkdir(dirname(path),{recursive:true});await writeFile(path,bytes,{flag:'wx'});artifact={relativePath,sha256:sha,fileSize:bytes.length};await verifyEpisodeFile(c,root,row.episode_id,relativePath,sha,bytes.length);
+   const framePath=await safeAssetOutputPath(root,`${storage.relativePath}/workspace-exports/${id}/representative.jpg`);await promisify(execFile)('ffmpeg',['-nostdin','-v','error','-ss',String(Math.min(.5,inspection.durationSeconds/2)),'-i',path,'-frames:v','1',framePath],{timeout:30000});const frame=await readFile(framePath);checks.push({name:'representative_frame',passed:frame.length>0,detail:'已实际解码代表帧。',artifact:{relativePath:`${storage.relativePath}/workspace-exports/${id}/representative.jpg`,sha256:createHash('sha256').update(frame).digest('hex'),fileSize:frame.length}});
    checks.push({name:'export_file',passed:true,detail:'最终文件已按字节 SHA-256 与大小不可变登记。'});
   }finally{await rm(dir,{recursive:true,force:true});}
  }catch(error){checks.push({name:'native_export',passed:false,detail:error instanceof Error?error.message.slice(0,4000):'本机导出失败，可重试。'});}
@@ -99,5 +100,5 @@ export async function executeWorkspaceExport(c:PoolClient,root:string,row:Produc
 export async function requireConfirmedWorkspaceExport(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject){
  const {exports}=await readWorkspaceExports(c,root,row),current=exports[0];if(!current?.confirmed||!current.artifact)throw new ConfigurationError(409,'请先确认当前最终文件。');
  const readiness=await workspaceExportReadiness(c,root,row,project);if(readiness.checks.some(x=>!x.passed))throw new ConfigurationError(409,'当前实际使用内容检查未通过。');
- await verifyNativeFile(root,current.project.relativePath,current.project.sha256,current.project.fileSize);return current as WorkspaceExport&{artifact:NonNullable<WorkspaceExport['artifact']>};
+ await verifyEpisodeFile(c,root,row.episode_id,current.project.relativePath,current.project.sha256,current.project.fileSize);return current as WorkspaceExport&{artifact:NonNullable<WorkspaceExport['artifact']>};
 }

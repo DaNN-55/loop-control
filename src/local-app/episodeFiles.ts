@@ -1,6 +1,6 @@
 import type {PoolClient} from 'pg';
 import {join,relative} from 'node:path';
-import {episodeStorageLocationAtRoot,requireEpisodeStorageDirectory,type EpisodeStorageLocation} from './episodeStorageLocation.js';
+import {episodeStorageLocationAtRoot,requireEpisodeStorageDirectory,requireWritableEpisodeStorage,type EpisodeStorageLocation} from './episodeStorageLocation.js';
 import {safeRelative,verifyNativeFile} from './localFiles.js';
 import {ConfigurationError} from './configurationCommands.js';
 
@@ -15,3 +15,16 @@ export async function verifyEpisodeFile(c:Pick<PoolClient,'query'>,assetRoot:str
  const path=await resolveEpisodeFileReference(c,location,reference);
  return verifyNativeFile(assetRoot,relative(assetRoot,path),sha256,size);
 }
+
+/** Adapter over the persisted location/file boundary; original references remain keys. */
+export async function episodeFileIO(c:Pick<PoolClient,'query'>,assetRoot:string,episodeId:string,writable=false){
+ const location=writable?await requireWritableEpisodeStorage(c,assetRoot,episodeId):await episodeStorageLocationAtRoot(c,assetRoot,episodeId);
+ if(!writable)await requireEpisodeStorageDirectory(c,location);
+ const assertValid=async()=>{
+  const current=writable?await requireWritableEpisodeStorage(c,assetRoot,episodeId):await episodeStorageLocationAtRoot(c,assetRoot,episodeId);
+  if(current.relativePath!==location.relativePath||current.deviceId!==location.deviceId||current.inodeId!==location.inodeId)throw new ConfigurationError(409,'生产单位置已变化，请重新打开当前工程。');
+  if(!writable)await requireEpisodeStorageDirectory(c,current);
+ };
+ return {relativePath:location.relativePath,resolveReference:(reference:string)=>resolveEpisodeFileReference(c,location,reference),assertValid};
+}
+export type EpisodeFileIO=Awaited<ReturnType<typeof episodeFileIO>>;

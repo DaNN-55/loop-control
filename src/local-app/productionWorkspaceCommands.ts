@@ -1,4 +1,4 @@
-import {verifyEpisodeFile} from './episodeFiles.js';
+import {verifyEpisodeFile,episodeFileIO} from './episodeFiles.js';
 import {saveWorkspacePlanningSelection} from './planningSelectionStore.js';
 import {readWorkspacePexels} from './workspacePexels.js';
 import {readWorkspaceScriptResume,resumeWorkspaceScript} from './workspaceScriptResume.js';
@@ -78,7 +78,7 @@ export class ProductionWorkspaceCommands{
    if(isOpenChatCutStudio(e.id))throw new ConfigurationError(409,'请先保存并关闭原编辑器，再继续已有工程。');
    const board=(await c.query("SELECT * FROM public.review_packages WHERE episode_id=$1 AND stage='storyboard_review' AND invalidated_at IS NULL ORDER BY revision_number DESC LIMIT 1",[e.id])).rows[0];
    if(!board||board.id!==data.reviewPackageId)throw new ConfigurationError(409,'当前分镜基准已变化，请刷新生产单。');
-   const saved=await readLegacyStudioProject(root,e.id);
+   const saved=await readLegacyStudioProject(c,root,e.id);
    let recovery, importedRender:ReturnType<typeof importLegacyHtmlWorkspace>['render']|undefined;
    if(data.savedProjectSha256!==undefined){
     if(data.artifactId!==undefined||data.expectedSourceSha256!==undefined||typeof data.savedProjectSha256!=='string'||!saved||saved.sha256!==data.savedProjectSha256)throw new ConfigurationError(409,'已保存工程已变化，请重新读取后继续。');
@@ -94,11 +94,11 @@ export class ProductionWorkspaceCommands{
     const pre=frozen?.pre_render_review_package_id;
     const origin=typeof pre==='string'&&uuid.test(pre)?(await c.query("SELECT CASE WHEN stage='storyboard_review' THEN id::text ELSE context_snapshot->>'storyboard_review_package_id' END board FROM public.review_packages WHERE id=$1 AND episode_id=$2",[pre,e.id])).rows[0]?.board:null;
     if(origin!==board.id)throw new ConfigurationError(409,'原工程对应其他分镜基准，请选择当前分镜对应的工程。');
-    let bytes:Buffer;try{bytes=await verifyNativeFile(root,source.relative_path,source.sha256,Number(source.file_size));}catch{throw new ConfigurationError(409,'原工程缺失或指纹不符，未修改原文件。');}
-    let project;try{if(source.relative_path.endsWith('.html')){const native=frozen?.studio_project??frozen?.adjustments?.studio_project;if(native){project=JSON.parse((await verifyNativeFile(root,native.relative_path,native.sha256,Number(native.file_size))).toString('utf8'));}else{const imported=importLegacyHtmlWorkspace(source.input_snapshot,bytes.toString('utf8'),`loop-control-${e.id}`);project=imported.project;importedRender=imported.render;}}else project=JSON.parse(bytes.toString('utf8'));}catch(error){throw new ConfigurationError(409,error instanceof Error?error.message:'原工程缺失或格式无效，未修改原文件。');}
+    let bytes:Buffer;try{bytes=await verifyEpisodeFile(c,root,e.id,source.relative_path,source.sha256,Number(source.file_size));}catch{throw new ConfigurationError(409,'原工程缺失或指纹不符，未修改原文件。');}
+    let project;try{if(source.relative_path.endsWith('.html')){const native=frozen?.studio_project??frozen?.adjustments?.studio_project;if(native){project=JSON.parse((await verifyEpisodeFile(c,root,e.id,native.relative_path,native.sha256,Number(native.file_size))).toString('utf8'));}else{const imported=importLegacyHtmlWorkspace(source.input_snapshot,bytes.toString('utf8'),`loop-control-${e.id}`);project=imported.project;importedRender=imported.render;}}else project=JSON.parse(bytes.toString('utf8'));}catch(error){throw new ConfigurationError(409,error instanceof Error?error.message:'原工程缺失或格式无效，未修改原文件。');}
     if(project.version!==3||!Array.isArray(project.timelines)||!Array.isArray(project.assets))throw new ConfigurationError(409,'原工程不是可编辑的 OpenChatCut 文档。');
-    if(importedRender)for(const member of importedRender.members){const frozenSource=source.input_snapshot.input_artifacts?.find((f:{relativePath:string;sha256:string})=>f.relativePath===member.relativePath&&f.sha256===member.sha256);if(!frozenSource)throw new ConfigurationError(409,'旧工程素材缺少对应冻结来源，未接入其他版本。');await verifyNativeFile(root,member.relativePath,member.sha256,Number(frozenSource.fileSize));}
-    recovery={...await preserveLegacyDocument(root,e.id,{project,source:{artifactId:source.id,relativePath:source.relative_path,sha256:source.sha256,fileSize:Number(source.file_size)}}),decision:'preserve' as const};
+    if(importedRender)for(const member of importedRender.members){const frozenSource=source.input_snapshot.input_artifacts?.find((f:{relativePath:string;sha256:string})=>f.relativePath===member.relativePath&&f.sha256===member.sha256);if(!frozenSource)throw new ConfigurationError(409,'旧工程素材缺少对应冻结来源，未接入其他版本。');await verifyEpisodeFile(c,root,e.id,member.relativePath,member.sha256,Number(frozenSource.fileSize));}
+    recovery={...await preserveLegacyDocument(c,root,e.id,{project,source:{artifactId:source.id,relativePath:source.relative_path,sha256:source.sha256,fileSize:Number(source.file_size)}}),decision:'preserve' as const};
    }
    const id=randomUUID(),project=structuredClone(recovery.project),shots=board.context_snapshot?.worker_result?.storyboard?.shots??board.context_snapshot?.storyboard?.shots;
    if(!Array.isArray(shots)||!shots.length)throw new ConfigurationError(409,'原分镜记录不可用，未重新生成工程。');
@@ -114,7 +114,7 @@ export class ProductionWorkspaceCommands{
    }
    if(!runtime.studioRuntime)throw new ConfigurationError(503,'本地 Studio 未配置。');
    await validateWorkspaceProject(c,root,e.id,project,await runtime.studioRuntime());
-   const file=await persistWorkspaceProject(root,e.id,project);
+   const file=await persistWorkspaceProject(c,root,e.id,project);
    row=(await c.query('INSERT INTO local_identity.production_workspaces(id,episode_id,script_revision_id,storyboard_package_id,bindings,project_path,project_sha256,project_size,content_sha256,native_edit_revision) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,1) RETURNING *',[id,e.id,e.main_script_revision_id,board.id,JSON.stringify(clips),file.relativePath,file.sha256,file.fileSize,workspaceContentSha256(project)])).rows[0];
    await recordWorkspaceVersion(c,row!,importedRender?'从旧 HTML 冻结工程接入逐镜头编辑':'从原 OpenChatCut 工程继续编辑');await syncWorkspaceShotInputs(c,row!,clips);
    await c.query('INSERT INTO local_identity.workspace_legacy_recoveries(workspace_id,decision,relative_path,sha256,file_size) VALUES($1,$2,$3,$4,$5)',[id,'preserve',recovery.relativePath,recovery.sha256,recovery.fileSize]);
@@ -143,7 +143,7 @@ export class ProductionWorkspaceCommands{
    let p=(await c.query("SELECT p.*,a.relative_path,a.sha256,a.file_size FROM public.review_packages p JOIN public.artifacts a ON a.id=p.artifact_id WHERE p.id=$1 AND p.episode_id=$2 AND p.stage='storyboard_review' AND p.invalidated_at IS NULL",[data.reviewPackageId,e.id])).rows[0];
    if(!p&&!data.reviewPackageId)p=await prepareAuthoredWorkspace(c,root,e);
    if(p?.planning)return p;
-   if(p?.context_snapshot?.workspace_preparation?.scriptRevisionId===e.main_script_revision_id){await verifyNativeFile(root,p.relative_path,p.sha256,Number(p.file_size));await verifyReportedStoryboardArtifact({assetRoot:root,relativePath:p.relative_path,frozenInputs:p.context_snapshot.input_artifacts,storyboard:p.context_snapshot.worker_result.storyboard});await c.query('SELECT local_identity.confirm_workspace_plan($1,$2,$3)',[e.id,e.main_script_revision_id,p.id]);}
+   if(p?.context_snapshot?.workspace_preparation?.scriptRevisionId===e.main_script_revision_id){await verifyEpisodeFile(c,root,e.id,p.relative_path,p.sha256,Number(p.file_size));await verifyReportedStoryboardArtifact({assetRoot:root,relativePath:p.relative_path,frozenInputs:p.context_snapshot.input_artifacts,storyboard:p.context_snapshot.worker_result.storyboard});await c.query('SELECT local_identity.confirm_workspace_plan($1,$2,$3)',[e.id,e.main_script_revision_id,p.id]);}
    const formal=p&&(await c.query('SELECT 1 FROM local_identity.workspace_preparations WHERE package_id=$1 AND script_revision_id=$2',[p.id,e.main_script_revision_id])).rowCount;
    if(!p||!formal&&!['storyboard_review','storyboard_approved','production_ready','render_ready','qc_review','qc_passed'].includes(e.stage))throw new ConfigurationError(409,'请先确认脚本与分镜匹配基准。');
    if(row){
@@ -153,7 +153,7 @@ export class ProductionWorkspaceCommands{
     if(data.reason!==undefined&&(typeof data.reason!=='string'||!data.reason.trim()||data.reason.length>4000))throw new ConfigurationError(400,'规划更新说明无效。');
     if(isOpenChatCutStudio(e.id))throw new ConfigurationError(409,'请先保存并返回，再重新规划。');
    }else if(command==='replanWorkspace')throw new ConfigurationError(409,'原工程不存在，请先建立初稿。');
-   const storyboard=JSON.parse((await verifyNativeFile(root,p.relative_path,p.sha256,Number(p.file_size))).toString('utf8'));
+   const storyboard=JSON.parse((await verifyEpisodeFile(c,root,e.id,p.relative_path,p.sha256,Number(p.file_size))).toString('utf8'));
    if(!Array.isArray(storyboard.shots)||!storyboard.shots.length||new Set(storyboard.shots.map((s:{id:string})=>s.id)).size!==storyboard.shots.length)throw new ConfigurationError(409,'分镜基准无效。');
    if(!formal)await c.query('SELECT local_identity.confirm_legacy_workspace_preparation($1,$2,$3)',[e.id,e.main_script_revision_id,p.id]);
    const recovery=!row?await preserveLegacyWorkspace(c,root,e.id,data.legacyDecision):null;
@@ -161,7 +161,7 @@ export class ProductionWorkspaceCommands{
    const [width,height]=storyboard.shots[0].targetSpec==='16:9'?[1920,1080]:storyboard.shots[0].targetSpec==='1:1'?[1080,1080]:[1080,1920];
    let frame=0;let project:OpenChatCutProject={version:3,loopControl:{version:'four-step-workspace/v1',inputFingerprint:id,transitionMode:'studio'},assets:[],mediaFolders:[],activeTimelineId:`loop-control-${e.id}`,timelines:[{id:`loop-control-${e.id}`,name:'整期剪辑',order:0,fps:30,width,height,fit:'contain',items:clips.map((clip,i)=>{const duration=Math.max(1,Math.round(Number(storyboard.shots[i].durationSeconds||3)*30)),item={id:clip.itemId,track:'V1',kind:'text',name:`${clip.shotId} · 待匹配画面`,startFrame:frame,durationInFrames:duration,width,height,props:{text:`待匹配画面\n${clip.shotId}`,fontSize:64,color:'#a3acc2',align:'center'},transform:{scale:1,x:0,y:0,rotation:0}};frame+=duration;return item;}),trackOrder:['V1'],tracks:{V1:{kind:'video',name:'画面'}},transitions:[],selectedId:null,captionsHidden:false}]};
    if(recovery?.decision==='preserve'){project=recovery.project;clips=await recoverLegacyBindings(c,root,e.id,id,project,clips);}
-   project=withWorkspaceShotMetadata(project,clips);const file=await persistWorkspaceProject(root,e.id,project);
+   project=withWorkspaceShotMetadata(project,clips);const file=await persistWorkspaceProject(c,root,e.id,project);
    if(row){
     await c.query('UPDATE local_identity.production_workspaces SET script_revision_id=$2,storyboard_package_id=$3 WHERE id=$1',[row.id,e.main_script_revision_id,p.id]);
     await updateWorkspaceProject(c,root,row,project,clips,String(data.reason??'依据已确认脚本与分镜更新素材规划'));
@@ -198,7 +198,7 @@ export class ProductionWorkspaceCommands{
    const clip=row.bindings.find(b=>b.id===data.clipId);if(!clip||clip.source)throw new ConfigurationError(409,'占位已变化，请刷新；已有片段请在剪辑中调整。');
    if(typeof data.materialRevisionId!=='string'||!uuid.test(data.materialRevisionId))throw new ConfigurationError(400,'素材标识无效。');
    const m=(await c.query("SELECT * FROM public.production_material_revisions WHERE id=$1 AND episode_id=$2 AND material_type='video'",[data.materialRevisionId,e.id])).rows[0];if(!m)throw new ConfigurationError(404,'本期视频素材不存在。');
-   await verifyNativeFile(root,m.storage_path,m.sha256,Number(m.file_size));const observed=await inspectMp4Artifact(join(root,m.storage_path));
+   await verifyEpisodeFile(c,root,e.id,m.storage_path,m.sha256,Number(m.file_size));const observed=await inspectMp4Artifact(join(root,m.storage_path));
    const timeline=project.timelines.find(t=>t.items.some(i=>i.id===clip.itemId)),item=timeline?.items.find(i=>i.id===clip.itemId);if(!timeline||!item)throw new ConfigurationError(409,'占位已从工程删除，请在当前工程中操作。');
    if(observed.durationSeconds+0.05<Number(item.durationInFrames)/timeline.fps)throw new ConfigurationError(409,'原片短于占位时长，请先明确调整镜头时长。');
    const assetId=`material-${m.id}`;if(!project.assets.some(a=>a.id===assetId))project.assets.push(Object.assign({id:assetId,name:m.source_path.split('/').pop()??clip.shotId,kind:'video' as const,src:m.storage_path,durationInFrames:Math.round(observed.durationSeconds*timeline.fps)},{width:observed.width,height:observed.height,sourceRevision:m.id,sourceContentHash:m.sha256}));
@@ -213,17 +213,17 @@ export class ProductionWorkspaceCommands{
    if(state?.readiness.placeholders.length||state?.readiness.missingSources.length){const ids=row.bindings.filter(b=>state!.readiness.placeholders.includes(b.itemId)).map(b=>b.shotId);throw new ConfigurationError(409,ids.length?`请先采用有效图片或视频：${[...new Set(ids)].join('、')}。`:'当前采用的画面素材不可读取，请重新匹配后进入剪辑。');}
 
    if((await c.query("SELECT 1 FROM local_identity.workspace_deliveries d JOIN public.tasks t ON t.id=d.task_id WHERE d.workspace_id=$1 AND t.status IN ('ready','running') LIMIT 1",[row.id])).rowCount)throw new ConfigurationError(409,'交付正在排队或校验，请等待结果后再编辑。');
-   const editable=await assembleWorkspaceCaptions(c,root,row,migrateWorkspaceCaptionLanes(withWorkspaceShotMetadata(project,row.bindings))),paths=[...usedWorkspaceContent(editable).paths];for(const asset of editable.assets)if(!paths.includes(asset.src))try{await resolveWorkspaceSource(c,root,e.id,asset.src);paths.push(asset.src);}catch{/* Unused unavailable library media does not block editing. */}const opened=await openOpenChatCutDraftStudio(root,e.id,editable,paths,hash(JSON.stringify({id:row.id,scriptRevisionId:row.script_revision_id,storyboardPackageId:row.storyboard_package_id})),config,validate);
-   this.opened.add(e.id);const current=JSON.parse((await verifyNativeFile(root,opened.workspace.relativePath,opened.workspace.sha256,opened.workspace.fileSize)).toString('utf8')) as OpenChatCutProject;
+   const editable=await assembleWorkspaceCaptions(c,root,row,migrateWorkspaceCaptionLanes(withWorkspaceShotMetadata(project,row.bindings))),paths=[...usedWorkspaceContent(editable).paths];for(const asset of editable.assets)if(!paths.includes(asset.src))try{await resolveWorkspaceSource(c,root,e.id,asset.src);paths.push(asset.src);}catch{/* Unused unavailable library media does not block editing. */}const opened=await openOpenChatCutDraftStudio(root,e.id,editable,paths,hash(JSON.stringify({id:row.id,scriptRevisionId:row.script_revision_id,storyboardPackageId:row.storyboard_package_id})),config,validate,await episodeFileIO(c,root,e.id,true));
+   this.opened.add(e.id);const current=JSON.parse((await verifyEpisodeFile(c,root,e.id,opened.workspace.relativePath,opened.workspace.sha256,opened.workspace.fileSize)).toString('utf8')) as OpenChatCutProject;
    await updateWorkspaceProject(c,root,row,current,synchronizeWorkspaceBindings(current,row.bindings),opened.recoveredNativeEdits?'恢复原生剪辑':'更新工作版本',{nativeEdit:opened.recoveredNativeEdits===true});
    if(opened.recoveredNativeEdits){const recoveredRow=(await c.query('SELECT * FROM local_identity.production_workspaces WHERE id=$1',[row.id])).rows[0] as ProductionWorkspaceRecord;await syncNativeWorkspaceCaptions(c,root,recoveredRow,current);}
    return{...opened,productionWorkspace:await readProductionWorkspace(c,e.id,root)};
   }
   if(command==='closeWorkspaceStudio'){await this.closeEpisode(e.id);return readProductionWorkspace(c,e.id,root);}
   if(command==='saveWorkspaceStudio'){
-   if(data.projectId!==`loop-control-${e.id}`||typeof data.workspaceRelativePath!=='string'||data.workspaceRelativePath!==`episodes/${e.id}/openchatcut-work/current/project.json`||data.expectedWorkspaceSha256!==row.project_sha256)throw new ConfigurationError(409,'当前工程身份或文件版本已变化。');
-   let file;try{file=await snapshotOpenChatCutStudio(root,e.id,`episodes/${e.id}/openchatcut-work/current/project.json`,row.project_sha256,validate);}catch(error){if(error instanceof ConfigurationError)throw error;throw new ConfigurationError(409,'Studio 会话或版本已失效，请重新打开当前工程。');}
-   const current=JSON.parse((await verifyNativeFile(root,file.relativePath,file.sha256,file.fileSize)).toString('utf8')) as OpenChatCutProject;
+   if(data.projectId!==`loop-control-${e.id}`||typeof data.workspaceRelativePath!=='string'||data.workspaceRelativePath!==`${(await episodeFileIO(c,root,e.id,true)).relativePath}/openchatcut-work/current/project.json`||data.expectedWorkspaceSha256!==row.project_sha256)throw new ConfigurationError(409,'当前工程身份或文件版本已变化。');
+   let file;try{file=await snapshotOpenChatCutStudio(root,e.id,`${(await episodeFileIO(c,root,e.id,true)).relativePath}/openchatcut-work/current/project.json`,row.project_sha256,validate,await episodeFileIO(c,root,e.id,true));}catch(error){if(error instanceof ConfigurationError)throw error;throw new ConfigurationError(409,'Studio 会话或版本已失效，请重新打开当前工程。');}
+   const current=JSON.parse((await verifyEpisodeFile(c,root,e.id,file.relativePath,file.sha256,file.fileSize)).toString('utf8')) as OpenChatCutProject;
    await updateWorkspaceProject(c,root,row,current,synchronizeWorkspaceBindings(current,row.bindings),'保存原生剪辑',{nativeEdit:true});
    const savedRow=(await c.query('SELECT * FROM local_identity.production_workspaces WHERE id=$1',[row.id])).rows[0] as ProductionWorkspaceRecord;
    await syncNativeWorkspaceCaptions(c,root,savedRow,current);return{...file,productionWorkspace:await readProductionWorkspace(c,e.id,root)};
@@ -231,12 +231,12 @@ export class ProductionWorkspaceCommands{
   throw new ConfigurationError(400,'不支持的工作台操作。');
  }
 }
-export async function readWorkspaceProject(root:string,row:ProductionWorkspaceRecord):Promise<OpenChatCutProject>{
- try{return JSON.parse((await verifyNativeFile(root,row.project_path,row.project_sha256,Number(row.project_size))).toString('utf8')) as OpenChatCutProject;}catch{throw new ConfigurationError(409,'工程快照不可用或指纹已变化，原始素材未修改。');}
+export async function readWorkspaceProject(c:PoolClient,root:string,row:ProductionWorkspaceRecord):Promise<OpenChatCutProject>{
+ try{return JSON.parse((await verifyEpisodeFile(c,root,row.episode_id,row.project_path,row.project_sha256,Number(row.project_size))).toString('utf8')) as OpenChatCutProject;}catch{throw new ConfigurationError(409,'工程快照不可用或指纹已变化，原始素材未修改。');}
 }
 /** Every version is immutable. A rolled-back DB update only leaves an unreferenced snapshot. */
-export async function persistWorkspaceProject(root:string,episodeId:string,project:OpenChatCutProject){
- const bytes=Buffer.from(JSON.stringify(project,null,2)+'\n'),sha=hash(bytes),path=`episodes/${episodeId}/production-workspace/versions/${sha}.json`,file=await safeAssetOutputPath(root,path);
+export async function persistWorkspaceProject(c:PoolClient,root:string,episodeId:string,project:OpenChatCutProject){
+ const bytes=Buffer.from(JSON.stringify(project,null,2)+'\n'),sha=hash(bytes),path=`${(await episodeFileIO(c,root,episodeId,true)).relativePath}/production-workspace/versions/${sha}.json`,file=await safeAssetOutputPath(root,path);
  await mkdir(dirname(file),{recursive:true});
  try{await writeFile(file,bytes,{flag:'wx'});}catch(error){if((error as {code?:string}).code!=='EEXIST')throw error;await verifyNativeFile(root,path,sha,bytes.length);}
  return{relativePath:path,sha256:sha,fileSize:bytes.length};
@@ -246,11 +246,11 @@ export async function updateWorkspaceProject(c:PoolClient,root:string,row:Produc
  // Existing pre-normalization snapshots retain their confirmed content identity
  // when only the already-bound shot metadata is added. Real metadata/source edits
  // still differ from this normalized previous document and invalidate confirmation.
- const previous=await readWorkspaceProject(root,row),normalizedPrevious=withWorkspaceShotMetadata(previous,row.bindings);project=withWorkspaceShotMetadata(project,bindings);
+ const previous=await readWorkspaceProject(c,root,row),normalizedPrevious=withWorkspaceShotMetadata(previous,row.bindings);project=withWorkspaceShotMetadata(project,bindings);
  // Compare the owned extension at a stable key position without changing SDK file bytes.
  const normalizedCurrent=structuredClone(project);for(const comparable of [normalizedPrevious,normalizedCurrent])for(const timeline of comparable.timelines)for(const item of timeline.items){if(item.loopControlShot){const metadata=item.loopControlShot;delete item.loopControlShot;item.loopControlShot=metadata;}}
  const contentSha=workspaceContentSha256(normalizedPrevious)===workspaceContentSha256(normalizedCurrent)?row.content_sha256:workspaceContentSha256(project);
- const file=await persistWorkspaceProject(root,row.episode_id,project);
+ const file=await persistWorkspaceProject(c,root,row.episode_id,project);
  const changed=await c.query('UPDATE local_identity.production_workspaces SET native_edit_revision=native_edit_revision+CASE WHEN $9 AND content_sha256<>$6 THEN 1 ELSE 0 END,revision=revision+CASE WHEN content_sha256=$6 THEN 0 ELSE 1 END,content_sha256=$6,project_path=$3,project_sha256=$2,project_size=$4,bindings=$5,updated_at=clock_timestamp() WHERE id=$1 AND revision=$7 AND project_sha256=$8',[row.id,file.sha256,file.relativePath,file.fileSize,JSON.stringify(bindings),contentSha,row.revision,row.project_sha256,options.nativeEdit===true]);
  if(!changed.rowCount)throw new ConfigurationError(409,'工程版本已变化，请重新读取当前工程。');
  const current=(await c.query('SELECT * FROM local_identity.production_workspaces WHERE id=$1',[row.id])).rows[0] as ProductionWorkspaceRecord;
@@ -263,15 +263,15 @@ export async function lockProductionWorkspace(c:PoolClient,root:string,episodeId
  if(!row||row.id!==workspaceId||!Number.isSafeInteger(expectedRevision)||Number(row.revision)!==expectedRevision)throw new ConfigurationError(409,'工程版本已变化，请重新打开当前工作版本。');
  if(row.archived_at||row.stage==='production_completed'||row.historical)throw new ConfigurationError(409,'历史或已完成生产单只读。');
  if(row.script_revision_id!==row.current_script||row.invalidated_at)throw new ConfigurationError(409,'脚本基准已变化，请明确重新规划，原工程已保留。');
- const project=await readWorkspaceProject(root,row);await syncWorkspaceShotInputs(c,row,row.bindings);return{row:row as ProductionWorkspaceRecord,project};
+ const project=await readWorkspaceProject(c,root,row);await syncWorkspaceShotInputs(c,row,row.bindings);return{row:row as ProductionWorkspaceRecord,project};
 }
 async function recordWorkspaceVersion(c:PoolClient,row:ProductionWorkspaceRecord,reason:string|null){
  await c.query('INSERT INTO local_identity.production_workspace_versions(workspace_id,episode_id,revision,script_revision_id,storyboard_package_id,project_path,project_sha256,project_size,content_sha256,reason) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) ON CONFLICT DO NOTHING',[row.id,row.episode_id,row.revision,row.script_revision_id,row.storyboard_package_id,row.project_path,row.project_sha256,row.project_size,row.content_sha256,reason]);
 }
 export async function readWorkspaceVersion(c:PoolClient,root:string,episodeId:string,sha:string){
  const row=(await c.query('SELECT * FROM local_identity.production_workspace_versions WHERE episode_id=$1 AND project_sha256=$2',[episodeId,sha])).rows[0];
- if(!row){const recovery=(await c.query('SELECT r.* FROM local_identity.workspace_legacy_recoveries r JOIN local_identity.production_workspaces w ON w.id=r.workspace_id WHERE w.episode_id=$1 AND r.sha256=$2',[episodeId,sha])).rows[0];if(!recovery)throw new ConfigurationError(404,'工程版本不可见。');const frozen=JSON.parse((await verifyNativeFile(root,recovery.relative_path,recovery.sha256,Number(recovery.file_size))).toString('utf8'));return frozen.project as OpenChatCutProject;}
- return readWorkspaceProject(root,row);
+ if(!row){const recovery=(await c.query('SELECT r.* FROM local_identity.workspace_legacy_recoveries r JOIN local_identity.production_workspaces w ON w.id=r.workspace_id WHERE w.episode_id=$1 AND r.sha256=$2',[episodeId,sha])).rows[0];if(!recovery)throw new ConfigurationError(404,'工程版本不可见。');const frozen=JSON.parse((await verifyEpisodeFile(c,root,episodeId,recovery.relative_path,recovery.sha256,Number(recovery.file_size))).toString('utf8'));return frozen.project as OpenChatCutProject;}
+ return readWorkspaceProject(c,root,row);
 }
 
 export async function validateWorkspaceProject(c:PoolClient,root:string,episodeId:string,doc:OpenChatCutProject,config:OpenChatCutRuntimeConfig,previousProject?:OpenChatCutProject,observation?:OpenChatCutProjectObservation){

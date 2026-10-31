@@ -40,7 +40,7 @@ const logs = [];
 try {
   for (const source of sources) {
     const relativePath = requiredString(source.relativePath, "source.relativePath");
-    const sourcePath = resolve(assetRoot, relativePath);
+    const sourcePath = source.sourcePath ? resolve(requiredString(source.sourcePath,"source.sourcePath")) : resolve(assetRoot, relativePath);
     if (!isDescendant(assetRoot, sourcePath)) throw new Error(`Media source escapes the asset root: ${relativePath}`);
     const targetName = requiredSafeName(source.targetName || `${randomUUID()}${extname(relativePath)}`);
     const targetPath = join(uploadDir, targetName);

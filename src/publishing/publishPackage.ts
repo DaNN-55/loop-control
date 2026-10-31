@@ -1,7 +1,9 @@
+import type {EpisodeFileIO} from '../local-app/episodeFiles.js';
+import {safeRelative,verifyNativeFile} from '../local-app/localFiles.js';
 import {verifyWorkspaceManifest,workspacePublishPackageVersion,type WorkspaceDeliveryIdentity} from "./workspacePublishPackage.js";
 import { createHash } from "node:crypto";
-import { mkdir, readFile, realpath, writeFile } from "node:fs/promises";
-import { dirname, relative, resolve } from "node:path";
+import { readFile, realpath, lstat, writeFile } from "node:fs/promises";
+import { relative, resolve } from "node:path";
 import type { ArtifactManifest } from "../worker/contracts.js";
 import { verifyArtifactIndex } from "../worker/mediaLibrary.js";
 
@@ -21,28 +23,28 @@ interface PublishPackageManifest {
   artifacts: ArtifactManifest[];
 }
 
-export async function createPublishPackage(input: { assetRoot: string; episodeId: string; artifacts: readonly ArtifactManifest[] }): Promise<PublishPackage> {
+export async function createPublishPackage(input: { assetRoot: string; episodeId: string; artifacts: readonly ArtifactManifest[];storage?:EpisodeFileIO }): Promise<PublishPackage> {
   const selectedArtifacts = selectRequiredArtifacts(input.artifacts, "发布包");
-  await verifyArtifacts(input.assetRoot, input.episodeId, selectedArtifacts);
-  await verifyQcReport(input.assetRoot, input.episodeId, selectedArtifacts[3]);
+  await verifyArtifacts(input.assetRoot, input.episodeId, selectedArtifacts,input.storage);
+  await verifyQcReport(input.assetRoot, input.episodeId, selectedArtifacts[3],input.storage);
 
-  const relativePath = `episodes/${input.episodeId}/publish-package/manifest.json`;
-  const existingPackage = await existingPublishPackage(input.assetRoot, input.episodeId, relativePath);
+  const relativePath = `${input.storage?.relativePath??`episodes/${input.episodeId}`}/publish-package/manifest.json`;
+  const existingPackage = await existingPublishPackage(input.assetRoot, input.episodeId, relativePath,input.storage);
   if (existingPackage) {
-    await verifyPublishPackage({ assetRoot: input.assetRoot, episodeId: input.episodeId, publishPackage: existingPackage });
+    await verifyPublishPackage({ assetRoot: input.assetRoot, episodeId: input.episodeId, publishPackage: existingPackage,storage:input.storage });
     return existingPackage;
   }
   const manifest: PublishPackageManifest = { version: publishPackageVersion, episodeId: input.episodeId, artifacts: selectedArtifacts };
   const contents = `${JSON.stringify(manifest, null, 2)}\n`;
-  const path = await packagePath(input.assetRoot, input.episodeId, relativePath);
+  const path = await packagePath(input.assetRoot, input.episodeId, relativePath,input.storage);
   await writeFile(path, contents);
 
   return { relativePath, fileSize: Buffer.byteLength(contents), sha256: createHash("sha256").update(contents).digest("hex") };
 }
 
-async function existingPublishPackage(assetRoot: string, episodeId: string, relativePath: string): Promise<PublishPackage | null> {
+async function existingPublishPackage(assetRoot: string, episodeId: string, relativePath: string,storage?:EpisodeFileIO): Promise<PublishPackage | null> {
   try {
-    const contents = await readFile(await assetPath(assetRoot, episodeId, relativePath));
+    const contents = await readFile(await assetPath(assetRoot, episodeId, relativePath,storage));
     return { relativePath, fileSize: contents.length, sha256: createHash("sha256").update(contents).digest("hex") };
   } catch (error) {
     if (isMissingFile(error)) return null;
@@ -50,46 +52,43 @@ async function existingPublishPackage(assetRoot: string, episodeId: string, rela
   }
 }
 
-export async function verifyPublishPackage(input: { assetRoot: string; episodeId: string; publishPackage: PublishPackage; expectedWorkspaceIdentity?:WorkspaceDeliveryIdentity }): Promise<void> {
-  const packageFilePath = await assetPath(input.assetRoot, input.episodeId, input.publishPackage.relativePath);
+export async function verifyPublishPackage(input: { assetRoot: string; episodeId: string; publishPackage: PublishPackage; expectedWorkspaceIdentity?:WorkspaceDeliveryIdentity;storage?:EpisodeFileIO }): Promise<void> {
+  const packageFilePath = await assetPath(input.assetRoot, input.episodeId, input.publishPackage.relativePath,input.storage);
   const contents = await readFile(packageFilePath);
   if (contents.length !== input.publishPackage.fileSize) throw new Error("发布包清单文件大小不匹配。");
   if (createHash("sha256").update(contents).digest("hex") !== input.publishPackage.sha256) throw new Error("发布包清单 SHA-256 不匹配。");
 
   const manifest: unknown = JSON.parse(contents.toString("utf8"));
-  if (isRecord(manifest)&&manifest.version===workspacePublishPackageVersion) { await verifyWorkspaceManifest(input.assetRoot,input.episodeId,manifest,input.expectedWorkspaceIdentity); return; }
+  if (isRecord(manifest)&&manifest.version===workspacePublishPackageVersion) { await verifyWorkspaceManifest(input.assetRoot,input.episodeId,manifest,input.expectedWorkspaceIdentity,input.storage); return; }
   if (!isManifest(manifest, input.episodeId)) throw new Error("发布包清单格式无效。");
   const artifacts = selectRequiredArtifacts(manifest.artifacts, "发布包清单");
-  await verifyArtifacts(input.assetRoot, input.episodeId, artifacts);
-  await verifyQcReport(input.assetRoot, input.episodeId, artifacts[3]);
+  await verifyArtifacts(input.assetRoot, input.episodeId, artifacts,input.storage);
+  await verifyQcReport(input.assetRoot, input.episodeId, artifacts[3],input.storage);
 }
 
-async function verifyArtifacts(assetRoot: string, episodeId: string, artifacts: readonly ArtifactManifest[]): Promise<void> {
-  await verifyArtifactIndex({ assetRoot, episodeId, artifacts });
+async function verifyArtifacts(assetRoot: string, episodeId: string, artifacts: readonly ArtifactManifest[],storage?:EpisodeFileIO): Promise<void> {
+  if(!storage){await verifyArtifactIndex({assetRoot,episodeId,artifacts});return;}
+  for(const a of artifacts)await verifyNativeFile(assetRoot,relative(assetRoot,await assetPath(assetRoot,episodeId,a.relativePath,storage)),a.sha256,a.fileSize);
 }
 
-async function verifyQcReport(assetRoot: string, episodeId: string, artifact: ArtifactManifest): Promise<void> {
-  const contents = await readFile(await assetPath(assetRoot, episodeId, artifact.relativePath), "utf8");
+async function verifyQcReport(assetRoot: string, episodeId: string, artifact: ArtifactManifest,storage?:EpisodeFileIO): Promise<void> {
+  const contents = await readFile(await assetPath(assetRoot, episodeId, artifact.relativePath,storage), "utf8");
   const report: unknown = JSON.parse(contents);
   if (!isPassedQcReport(report)) throw new Error("QC 报告未通过。");
 }
 
-async function assetPath(assetRoot: string, episodeId: string, relativePath: string): Promise<string> {
-  const episodeDirectory = await realpath(resolve(assetRoot, "episodes", episodeId));
-  const path = await realpath(resolve(assetRoot, relativePath));
-  if (!isDescendant(episodeDirectory, path)) throw new Error(`发布包产物不属于当前 Episode：${relativePath}`);
-  return path;
+export async function assetPath(assetRoot:string,episodeId:string,reference:string,storage?:EpisodeFileIO):Promise<string>{
+  await storage?.assertValid();
+  if(!safeRelative(reference)||!(reference.startsWith(`${storage?.relativePath??`episodes/${episodeId}`}/`)||reference.startsWith(`episodes/${episodeId}/`)))throw Error('发布包产物不属于当前生产单。');
+  const path=storage?await storage.resolveReference(reference):resolve(assetRoot,reference);
+  if(!isDescendant(assetRoot,path)||await realpath(path)!==path)throw Error('发布包路径身份无效。');
+  const stat=await lstat(path);if(!stat.isFile()||stat.nlink!==1)throw Error('发布包文件身份无效。');return path;
 }
-
-async function packagePath(assetRoot: string, episodeId: string, relativePath: string): Promise<string> {
-  const resolvedAssetRoot = await realpath(assetRoot);
-  const episodeDirectory = await realpath(resolve(resolvedAssetRoot, "episodes", episodeId));
-  const path = resolve(resolvedAssetRoot, relativePath);
-  const directory = dirname(path);
-  if (!isDescendant(episodeDirectory, directory)) throw new Error(`发布包不属于当前 Episode：${relativePath}`);
-  await mkdir(directory, { recursive: true });
-  if (!isDescendant(episodeDirectory, await realpath(directory))) throw new Error(`发布包目录越出当前 Episode：${relativePath}`);
-  return path;
+async function packagePath(assetRoot:string,episodeId:string,reference:string,storage?:EpisodeFileIO):Promise<string>{
+  await storage?.assertValid();
+  const prefix=storage?.relativePath??`episodes/${episodeId}`;
+  if(!safeRelative(reference)||!reference.startsWith(prefix+'/'))throw Error('发布包路径不属于当前生产单。');
+  const {safeAssetOutputPath}=await import('../worker/controlledMediaExecutor.js');return safeAssetOutputPath(assetRoot,reference);
 }
 
 function isManifest(value: unknown, episodeId: string): value is PublishPackageManifest {

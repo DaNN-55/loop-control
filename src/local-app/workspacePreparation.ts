@@ -1,4 +1,4 @@
-import {verifyEpisodeFile} from './episodeFiles.js';
+import {verifyEpisodeFile,episodeFileIO} from './episodeFiles.js';
 import {episodeStorageLocationAtRoot,requireEpisodeStorageDirectory} from './episodeStorageLocation.js';
 import {inspectOpenChatCutStoredProject} from '../worker/openchatcutStudio.js';
 import {resolveWorkspaceSource} from './workspaceSources.js';
@@ -58,13 +58,13 @@ export async function readWorkspacePreparation(c:PoolClient,row:ProductionWorksp
  return{origin:prep?.origin??'legacy-board',scriptRevisionId:row.script_revision_id,authorized:!!auth?.enabled,authorizationHash:auth?.authorization_hash,shots:shots.map(s=>({shotId:s.shot_id,origin:s.origin,shotType:s.shot_type}))};
 }
 
-export async function preserveLegacyWorkspace(_c:PoolClient,root:string,episodeId:string,decision:unknown){
- const stored=await inspectOpenChatCutStoredProject(root,episodeId);if(!stored||stored.project.loopControl?.version==='four-step-workspace/v1')return null;
+export async function preserveLegacyWorkspace(c:PoolClient,root:string,episodeId:string,decision:unknown){
+ const stored=await inspectOpenChatCutStoredProject(root,episodeId,await episodeFileIO(c,root,episodeId));if(!stored||stored.project.loopControl?.version==='four-step-workspace/v1')return null;
  if(!['preserve','fresh'].includes(String(decision)))throw new ConfigurationError(409,'发现旧剪辑工作版本，请明确保留旧编辑或封存后建立初稿。');
- return{...await preserveLegacyDocument(root,episodeId,stored),decision:String(decision) as 'preserve'|'fresh'};
+ return{...await preserveLegacyDocument(c,root,episodeId,stored),decision:String(decision) as 'preserve'|'fresh'};
 }
-export async function preserveLegacyDocument(root:string,episodeId:string,stored:{project:OpenChatCutProject;metadata?:unknown;source?:unknown}){
- const bytes=Buffer.from(JSON.stringify(stored,null,2)+'\n'),sha=createHash('sha256').update(bytes).digest('hex'),path=`episodes/${episodeId}/production-workspace/recoveries/${sha}.json`,file=await safeAssetOutputPath(root,path);await mkdir(dirname(file),{recursive:true});try{await writeFile(file,bytes,{flag:'wx'});}catch(error){if((error as NodeJS.ErrnoException).code!=='EEXIST')throw error;await verifyNativeFile(root,path,sha,bytes.length);}
+export async function preserveLegacyDocument(c:PoolClient,root:string,episodeId:string,stored:{project:OpenChatCutProject;metadata?:unknown;source?:unknown}){
+ const bytes=Buffer.from(JSON.stringify(stored,null,2)+'\n'),sha=createHash('sha256').update(bytes).digest('hex'),path=`${(await episodeFileIO(c,root,episodeId,true)).relativePath}/production-workspace/recoveries/${sha}.json`,file=await safeAssetOutputPath(root,path);await mkdir(dirname(file),{recursive:true});try{await writeFile(file,bytes,{flag:'wx'});}catch(error){if((error as NodeJS.ErrnoException).code!=='EEXIST')throw error;await verifyNativeFile(root,path,sha,bytes.length);}
  return{...stored,relativePath:path,sha256:sha,fileSize:bytes.length};
 }
 export async function recoverLegacyBindings(c:PoolClient,root:string,episodeId:string,workspaceId:string,project:OpenChatCutProject,original:WorkspaceClip[]){
@@ -73,13 +73,13 @@ export async function recoverLegacyBindings(c:PoolClient,root:string,episodeId:s
  if(!['video','image'].includes(String(item.kind))||typeof item.src!=='string')continue;
  let source;try{source=await resolveWorkspaceSource(c,root,episodeId,item.src);}catch{
  const tasks=(await c.query('SELECT input_snapshot FROM public.tasks WHERE episode_id=$1',[episodeId])).rows;
- const frozen=tasks.flatMap(t=>t.input_snapshot?.input_artifacts??[]).find((f:{relativePath:string})=>f.relativePath===item.src);if(!frozen)throw new ConfigurationError(409,'旧工程素材没有可验证冻结来源，请先恢复原工程。');await verifyNativeFile(root,frozen.relativePath,frozen.sha256,Number(frozen.fileSize));await c.query('SELECT local_identity.register_workspace_recovery_source($1,$2)',[episodeId,frozen]);source=await resolveWorkspaceSource(c,root,episodeId,item.src);
+ const frozen=tasks.flatMap(t=>t.input_snapshot?.input_artifacts??[]).find((f:{relativePath:string})=>f.relativePath===item.src);if(!frozen)throw new ConfigurationError(409,'旧工程素材没有可验证冻结来源，请先恢复原工程。');await verifyEpisodeFile(c,root,episodeId,frozen.relativePath,frozen.sha256,Number(frozen.fileSize));await c.query('SELECT local_identity.register_workspace_recovery_source($1,$2)',[episodeId,frozen]);source=await resolveWorkspaceSource(c,root,episodeId,item.src);
  }
  const originalClip=original.find(b=>String(item.id).startsWith(`shot-${b.shotId}-`)),clipId=randomUUID(),shotId=originalClip?.shotId??`recovered-${clipId}`,text=originalClip?.text??String(item.name??'恢复画面');
  item.loopControlShot={workspaceId,shotId,clipId,text};bindings.push({id:clipId,itemId:String(item.id),shotId,text,source:{materialRevisionId:source.id,relativePath:item.src,sha256:source.sha256,fileSize:Number(source.file_size),kind:item.kind as 'video'|'image'}});
  }
  // Audio and nested sources also retain their frozen registration.
  const paths=new Set<string>();const visit=(v:unknown)=>{if(Array.isArray(v))v.forEach(visit);else if(v&&typeof v==='object')for(const[k,x]of Object.entries(v)){if(k==='src'&&typeof x==='string')paths.add(x);visit(x);}};visit(project);
- for(const path of paths)try{await resolveWorkspaceSource(c,root,episodeId,path);}catch{const tasks=(await c.query('SELECT input_snapshot FROM public.tasks WHERE episode_id=$1',[episodeId])).rows,frozen=tasks.flatMap(t=>t.input_snapshot?.input_artifacts??[]).find((f:{relativePath:string})=>f.relativePath===path);if(!frozen)throw new ConfigurationError(409,'旧工程来源未登记，请先恢复原工程。');await verifyNativeFile(root,path,frozen.sha256,Number(frozen.fileSize));await c.query('SELECT local_identity.register_workspace_recovery_source($1,$2)',[episodeId,frozen]);}
+ for(const path of paths)try{await resolveWorkspaceSource(c,root,episodeId,path);}catch{const tasks=(await c.query('SELECT input_snapshot FROM public.tasks WHERE episode_id=$1',[episodeId])).rows,frozen=tasks.flatMap(t=>t.input_snapshot?.input_artifacts??[]).find((f:{relativePath:string})=>f.relativePath===path);if(!frozen)throw new ConfigurationError(409,'旧工程来源未登记，请先恢复原工程。');await verifyEpisodeFile(c,root,episodeId,path,frozen.sha256,Number(frozen.fileSize));await c.query('SELECT local_identity.register_workspace_recovery_source($1,$2)',[episodeId,frozen]);}
  if(!bindings.length)throw new ConfigurationError(409,'旧工程没有可映射画面，请选择封存后建立初稿。');project.loopControl={version:'four-step-workspace/v1',inputFingerprint:workspaceId,transitionMode:'studio'};return bindings;
 }
