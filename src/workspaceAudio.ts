@@ -5,7 +5,7 @@ export interface WorkspaceSoundEdit {kind:'sound';workspaceId:string;itemId:stri
 export type WorkspaceAudioEdit=WorkspaceVoiceEdit|WorkspaceSoundEdit;
 export interface WorkspaceAudioMix {voices:Array<{shotId:string;mode:WorkspaceVoiceMode;gainDb:number;ambienceGainDb:number|null;sourceItemId:string|null;sourceAssetId:string|null;coverage?:'full'|'partial'|'none';startSeconds?:number|null;durationSeconds?:number|null;shotDurationSeconds?:number;sourceStartSeconds?:number|null;sourceLabel?:string|null;alignmentReady?:boolean}>;sounds:Array<{itemId:string;kind:'bgm'|'sfx';gainDb:number;duckDepthDb:number;startSeconds:number;durationSeconds:number}>}
 export const workspaceAudioFields:Record<string,string[]>={
- prepareWorkspaceAudio:['episodeId','workspaceId','expectedRevision','preparationId','kind','query','description','durationSeconds','shotId','sourceItemId','anchor','offsetSeconds','materialRevisionId','retry'],
+ prepareWorkspaceAudio:['episodeId','workspaceId','expectedRevision','preparationId','kind','query','description','durationSeconds','shotId','sourceItemId','anchor','offsetSeconds','materialRevisionId','retry','selection'],
  adoptWorkspaceAudio:['episodeId','workspaceId','expectedRevision','preparationId'],
  mixWorkspaceAudio:['episodeId','workspaceId','expectedRevision','edit'],
  refreshWorkspaceAudio:['episodeId','workspaceId','expectedRevision'],

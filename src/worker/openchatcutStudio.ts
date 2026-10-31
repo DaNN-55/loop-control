@@ -1,7 +1,7 @@
 import {safeAssetOutputPath} from "./controlledMediaExecutor.js";
 import { createHash, randomUUID } from "node:crypto";
 import { createReadStream } from "node:fs";
-import { copyFile, mkdir, readFile, writeFile, lstat, rename } from "node:fs/promises";
+import { copyFile, mkdir, readFile, writeFile, lstat, rename, unlink } from "node:fs/promises";
 import { spawn, spawnSync, type ChildProcess } from "node:child_process";
 import { createServer as createTcpServer, type Server } from "node:net";
 import { dirname, extname, isAbsolute, join, relative, resolve } from "node:path";
@@ -142,7 +142,14 @@ export async function openOpenChatCutStudio(assetRoot: string, episodeId: string
   return openStudioDocument(assetRoot,episodeId,project,render.members.map(m=>m.relativePath),reviewRenderInputFingerprint(render,project),render.adjustments as unknown as Composition,runtimeConfig,options,render);
 }
 
-export function isOpenChatCutStudio(episodeId:string):boolean{return sessions.has(episodeId);}
+export function isOpenChatCutStudio(episodeId:string):boolean{return sessions.get(episodeId)?.child.exitCode===null;}
+// Retain child identity on disk so a surviving native editor blocks a host restart migration.
+export async function hasActiveNativeStudio(root:string,episodeId:string):Promise<boolean>{
+ if(isOpenChatCutStudio(episodeId))return true;
+ const path=join(root,'episodes',episodeId,'openchatcut-work/current/runtime/.loop-control-studio-process.json');
+ try{const stat=await lstat(path);if(!stat.isFile()||stat.isSymbolicLink()||stat.size>4096)throw Error('Studio process receipt is unsafe');const receipt=JSON.parse(await readFile(path,'utf8'));if(!Number.isSafeInteger(receipt.pid)||receipt.pid<1||receipt.episodeId!==episodeId)throw Error('Studio process receipt is invalid');try{process.kill(receipt.pid,0);return true;}catch(e){if((e as NodeJS.ErrnoException).code==='ESRCH')return false;throw e;}}
+ catch(e){if((e as NodeJS.ErrnoException).code==='ENOENT')return false;throw e;}
+}
 
 /** Register verified LC bytes in the live session before a local item relink. */
 /** Read the latest persisted native store, including legacy edits not submitted to LC. No writes. */
@@ -263,6 +270,9 @@ async function openStudioDocument(assetRoot:string,episodeId:string,project:Open
     env: { ...(runtimeConfig.environment ?? process.env), OPENCHATCUT_ROOT: openchatcutRoot, OPENCHATCUT_DATA_DIR: dataDir, OPENCHATCUT_DEV_PROFILE_ID: randomUUID(), OPENCHATCUT_DISABLE_HARDWARE_ENCODING: "1" },
     stdio: ["ignore", "pipe", "pipe"],
   });
+  const processReceipt=join(dataDir,'.loop-control-studio-process.json');
+  await writeFile(processReceipt,JSON.stringify({pid:child.pid,episodeId}),{mode:0o600});
+  child.once('close',()=>{void readFile(processReceipt,'utf8').then(raw=>{if(JSON.parse(raw).pid===child.pid)return unlink(processReceipt);}).catch(()=>{});});
   const logs: string[] = [];
   child.stdout?.on("data", (chunk) => { logs.push(String(chunk).slice(-4000)); if (logs.length > 8) logs.shift(); });
   child.stderr?.on("data", (chunk) => { logs.push(String(chunk).slice(-4000)); if (logs.length > 8) logs.shift(); });
