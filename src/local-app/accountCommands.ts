@@ -1,3 +1,4 @@
+import {readGenerationBudget,saveGenerationBudget} from './generationBudgets.js';
 import {readEpisodeCollection,planEpisodeCollectionCommand} from './episodeCollection.js';
 import {createStorageContainer,ownedContainerAccount,readStorageContainer,resolveStorageContainer,requireStorageContainer} from './seriesDirectories.js';
 import {createHash} from 'node:crypto';
@@ -35,8 +36,13 @@ export class LocalAccountCommands{
  }
  async execute(session:OwnerSession,body:Record<string,unknown>,signal?:AbortSignal){
   if(this.closed)throw new ConfigurationError(503,'本机服务正在退出。');
-  if(!['readEpisodeCollection','planEpisodeCollectionMove','planLegacyStorageAdoption','readSeriesDirectory','openSeriesDirectory','readUnassignedDirectory','openUnassignedDirectory','createUnassignedDirectory','chooseAssetDirectory','openAssetDirectory','setAssetDirectory','readAssetDirectory','planAssetDirectoryMigration','readAssetDirectoryMigrations','executeAssetDirectoryMigration','rollbackAssetDirectoryMigration'].includes(String(body.command))||Object.keys(body).some(k=>!['command','data','idempotencyKey'].includes(k))||typeof body.idempotencyKey!=='string'||!uuid.test(body.idempotencyKey)||!body.data||typeof body.data!=='object'||Array.isArray(body.data))throw new ConfigurationError(400,'账号本机操作无效。');
+  if(!['readGenerationBudget','setGenerationBudget','readEpisodeCollection','planEpisodeCollectionMove','planLegacyStorageAdoption','readSeriesDirectory','openSeriesDirectory','readUnassignedDirectory','openUnassignedDirectory','createUnassignedDirectory','chooseAssetDirectory','openAssetDirectory','setAssetDirectory','readAssetDirectory','planAssetDirectoryMigration','readAssetDirectoryMigrations','executeAssetDirectoryMigration','rollbackAssetDirectoryMigration'].includes(String(body.command))||Object.keys(body).some(k=>!['command','data','idempotencyKey'].includes(k))||typeof body.idempotencyKey!=='string'||!uuid.test(body.idempotencyKey)||!body.data||typeof body.data!=='object'||Array.isArray(body.data))throw new ConfigurationError(400,'账号本机操作无效。');
   const data=body.data as Record<string,unknown>,choose=body.command==='chooseAssetDirectory';
+  if(body.command==='readGenerationBudget'||body.command==='setGenerationBudget'){
+   const saving=body.command==='setGenerationBudget';
+   if(typeof data.accountId!=='string'||!uuid.test(data.accountId)||Object.keys(data).some(k=>!['accountId',...(saving?['trialCents','totalCents','full']:[])].includes(k)))throw new ConfigurationError(400,'账号预算参数无效。');
+   return sessionTransaction(this.pool,session,async c=>{await this.account(c,session,data.accountId);if(saving)await saveGenerationBudget(c,String(data.accountId),data);return readGenerationBudget(c,String(data.accountId));});
+  }
   if(body.command==='readEpisodeCollection'){
    if(typeof data.episodeId!=='string'||!uuid.test(data.episodeId)||Object.keys(data).some(k=>k!=='episodeId'))throw new ConfigurationError(400,'收纳读取只接受生产单身份。');
    return sessionTransaction(this.pool,session,c=>readEpisodeCollection(c,this.mediaRoot,String(data.episodeId)));

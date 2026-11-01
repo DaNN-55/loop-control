@@ -105,3 +105,10 @@ it('keeps interrupted write intents internal instead of rendering a second crede
  expect(screen.queryByRole('region',{name:'未完成连接操作'})).toBeNull();expect(screen.queryByText('重试原操作')).toBeNull();
  expect(document.querySelectorAll('input[type=password]')).toHaveLength(1);
 });
+
+it('opens account budgets separately from credentials, preserving account selection and saving without an episode',async()=>{
+ vi.stubGlobal('crypto',webcrypto);const calls:{command:string;data:Record<string,unknown>}[]=[];
+ vi.stubGlobal('fetch',vi.fn(async(path:string,init?:RequestInit)=>{if(path==='/api/local/account-commands'){const body=JSON.parse(String(init?.body));calls.push(body);return Response.json({accountId:body.data.accountId,budget:{trial_video_limit_cents:100,total_limit_cents:500,full_generation_enabled:false},usedCents:0});}return Response.json({connections:[],versions:[],capabilities:{secrets:'disabled',verification:'disabled',externalReady:false}});}));
+ render(<LocalConnectionsPanel accounts={[{id:'a',name:'A'},{id:'b',name:'B'}]} budgetAccountId="b" budgetRequested/>);
+ await waitFor(()=>expect(screen.getByLabelText('预算账号')).toHaveProperty('value','b'));await screen.findByText('已设置限额');expect(screen.queryByRole('button',{name:'新建连接'})).toBeNull();fireEvent.change(screen.getByLabelText('账号总上限（元）'),{target:{value:'6'}});fireEvent.click(screen.getByRole('button',{name:'保存账号预算'}));await screen.findByText('账号预算已保存');expect(calls.map(c=>c.command)).toEqual(['readGenerationBudget','setGenerationBudget']);expect(calls[1].data).toEqual({accountId:'b',trialCents:100,totalCents:600,full:false});
+});

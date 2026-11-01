@@ -1,0 +1,26 @@
+{
+  "scope": "actual component, isolated commands; daily page read-only",
+  "railHeight": 260,
+  "previewHeight": 260,
+  "imageRailScrollHeight": 584,
+  "videoRailScrollHeight": 486,
+  "footerHeight": 44,
+  "narrow": {
+    "outerWidth": 360,
+    "clientWidth": 358,
+    "scrollWidth": 358,
+    "footerWidth": 246,
+    "footerScrollWidth": 246,
+    "imageSettingsColumns": 2
+  },
+  "importPopup": {
+    "headingHeight": 36,
+    "position": "absolute"
+  },
+  "videoAppend": {
+    "before": 4,
+    "after": 5,
+    "selected": "03",
+    "adoptedPreserved": true
+  }
+}

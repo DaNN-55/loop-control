@@ -140,13 +140,6 @@
 .embedded-inspector-tabs{position:sticky;top:0;z-index:2;padding:8px 6px}
 .embedded-inspector-tabs>button{padding:5px 9px;font-size:11px}
 .embedded-inspector-content{padding:14px;overflow:auto;flex:1;min-height:0}
-.workspace-generation-budget{font-size:12px;color:var(--lc-muted,#596b83);margin:0}
-.workspace-generation-budget summary{cursor:pointer;padding:6px 0}
-.workspace-generation-budget p{font-size:11px;line-height:1.6;margin:6px 0 10px}
-.workspace-generation-budget .workspace-budget-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-[data-compact-workflow] .workspace-generation-budget .workspace-budget-fields label{display:grid;gap:5px;margin:0;min-width:0}
-[data-compact-workflow] .workspace-generation-budget .workspace-budget-fields input{width:100%}
-[data-compact-workflow] .workspace-generation-budget .workspace-budget-full{display:flex;gap:7px;margin:10px 0;align-items:center}
 /* The approved workflow uses explicit field labels and plain compact selects. */
 html[data-interface="impeccable"] .impeccable-app.product-ui [data-compact-workflow] label:has(>.dan-select-field){display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:5px!important;font-size:12px!important;line-height:1.5!important}
 html[data-interface="impeccable"] .impeccable-app.product-ui [data-compact-workflow] .dan-select-leading{display:none}
@@ -264,13 +257,15 @@ html[data-interface="impeccable"] .impeccable-app.product-ui [data-compact-workf
 [data-compact-workflow] .workspace-replan-notice>p{flex:1 1 280px}
 html[data-interface="impeccable"] .impeccable-app.product-ui [data-compact-workflow] .workspace-replan-notice>label{display:flex!important;align-items:center;gap:7px;margin:0;font-size:12px;white-space:nowrap}
 .workspace-replan-notice>label>input{width:180px;min-width:100px;min-height:30px}
-/* Fixed working canvas; the outer scrollbar removes page chrome before filling the viewport. */
+/* Preparation grows with the detail pane; other steps retain their working canvas. */
 html[data-interface="impeccable"] .impeccable-app.product-ui .lc-production-workspace:has([data-compact-workflow]){--workspace-page-gutter:30px;display:block;padding-left:var(--workspace-page-gutter);padding-right:max(0px,calc(var(--workspace-page-gutter) - var(--workspace-scrollbar-space,0px)));overflow-y:auto;overflow-x:hidden;padding-bottom:calc(max(0px,100dvh - 800px) + 40px);scrollbar-gutter:stable}
 html[data-interface="impeccable"] .impeccable-app.product-ui .lc-production-workspace:has([data-compact-workflow])>.lc-production-return{position:static;min-height:56px;margin:0 calc(-1 * max(0px,var(--workspace-page-gutter) - var(--workspace-scrollbar-space,0px))) 0 calc(-1 * var(--workspace-page-gutter));padding:0 max(0px,calc(var(--workspace-page-gutter) - var(--workspace-scrollbar-space,0px))) 0 var(--workspace-page-gutter)}
 html[data-interface="impeccable"] .impeccable-app.product-ui .lc-production-workspace:has([data-compact-workflow])>.local-episode-detail{display:block;flex:none;min-height:0;width:100%;max-width:none;margin:0;padding:28px 0 0}
 html[data-interface="impeccable"] .impeccable-app.product-ui .lc-production-workspace [data-compact-workflow]{display:flex;flex:none;flex-direction:column;min-height:0}
 html[data-interface="impeccable"] .impeccable-app.product-ui .lc-production-workspace [data-compact-workflow]>.production-workspace-body{display:flex;flex-direction:column;height:800px;min-height:0;max-height:none;flex:0 0 800px;overflow-anchor:none}
-@media(min-width:901px){html[data-interface="impeccable"] .impeccable-app.product-ui .lc-production-workspace [data-compact-workflow]>.production-workspace-body:has(>.workspace-preparation){height:900px;flex-basis:900px}}
+html[data-interface="impeccable"] .impeccable-app.product-ui .lc-production-workspace [data-compact-workflow]>.production-workspace-body:has(>.workspace-preparation){height:auto;flex:0 0 auto}
+[data-compact-workflow] .workspace-preparation-detail>[role=tabpanel]{overflow:visible;flex:0 0 auto}
+@media(min-width:901px){[data-compact-workflow] .workspace-preparation-grid{align-items:stretch}[data-compact-workflow] .workspace-shot-table-pane{contain:size}}
 /* A single selector includes the original backup; both sources share one view action. */
 .workspace-history-toolbar{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;min-width:0}
 .workspace-history-toolbar>.dan-select-field{width:100%;min-width:0}

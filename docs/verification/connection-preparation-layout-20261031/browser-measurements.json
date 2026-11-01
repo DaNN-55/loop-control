@@ -1,0 +1,84 @@
+{
+  "wide": {
+    "fields": [
+      {
+        "height": 55,
+        "top": 596.015625,
+        "width": 143.390625
+      },
+      {
+        "height": 55,
+        "top": 596.015625,
+        "width": 83.65625
+      },
+      {
+        "height": 55,
+        "top": 596.015625,
+        "width": 95.59375
+      },
+      {
+        "height": 55,
+        "top": 596.015625,
+        "width": 155.359375
+      }
+    ],
+    "panes": [
+      1169.421875,
+      1169.421875
+    ]
+  },
+  "collapsed": [
+    986.828125,
+    986.828125
+  ],
+  "narrowPane": {
+    "columns": "186.047px 186.062px",
+    "overflow": false,
+    "width": 380.109375
+  },
+  "mobile": {
+    "columns": "126px 126px",
+    "scrollWidth": 390,
+    "width": 390
+  },
+  "video": {
+    "overflow": "visible",
+    "panes": [
+      687.09375,
+      687.09375
+    ]
+  },
+  "connections": {
+    "childPadding": "28px",
+    "groupPadding": "12px",
+    "headers": [
+      "连接",
+      "服务",
+      "模型",
+      "验证",
+      "凭据版本",
+      "测试",
+      "更多操作"
+    ],
+    "models": [
+      "gpt-image-2",
+      "doubao-seedance-2-0-260128doubao-seedance-2-5-260628",
+      "MiniMax-H3",
+      "kling-v3",
+      "wan2.6-i2v-flash",
+      "—",
+      "seed-tts-2.0",
+      "—"
+    ],
+    "scrollWidth": 1330,
+    "width": 1345
+  },
+  "connectionsMobile": {
+    "overflowX": "auto",
+    "scrollWidth": 886,
+    "tableWidth": 820,
+    "width": 390,
+    "wrapWidth": 279
+  },
+  "splitterRestored": true
+}

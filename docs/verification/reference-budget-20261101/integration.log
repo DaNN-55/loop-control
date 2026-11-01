@@ -1,0 +1,10 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/accountGenerationBudgets.integration.test.ts (1 test) 3308ms
+   ✓ account budgets work without episodes through real Owner HTTP/DB, preserve legacy reads, and reject cross-owner and invalid writes  3308ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  09:50:19
+   Duration  4.42s (transform 639ms, setup 10ms, collect 927ms, tests 3.31s, environment 0ms, prepare 47ms)

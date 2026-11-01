@@ -1,0 +1,4 @@
+import {defineConfig} from 'vite';
+import react from '@vitejs/plugin-react';
+import {readFile} from 'node:fs/promises';
+export default defineConfig({envFile:false,plugins:[react(),{name:'isolated-gallery-artifacts',configureServer(server){server.middlewares.use((req,res,next)=>{if(!req.url.startsWith('/_local-artifact?'))return next();const path=new URL(req.url,'http://localhost').searchParams.get('path');const video=path.endsWith('.mp4');readFile(new URL(video?'fixture-video.mp4':'fixture-image.svg',import.meta.url)).then(bytes=>{res.setHeader('content-type',video?'video/mp4':'image/svg+xml');res.end(bytes);});});}}],server:{host:'127.0.0.1',port:5187,strictPort:true}});

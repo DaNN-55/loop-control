@@ -1,0 +1,55 @@
+{
+  "isolated": {
+    "desktop": 1543,
+    "narrow": 390,
+    "narrowScrollWidth": 390,
+    "referencePanel": {
+      "x": 12,
+      "width": 366,
+      "right": 378
+    },
+    "multiSelect": true,
+    "upload": {
+      "selectedBefore": 2,
+      "selectedAfter": 3,
+      "commands": [
+        "importMaterial"
+      ],
+      "filename": "reference.png"
+    },
+    "escapeRestoresTriggerFocus": true,
+    "budgetAccountIsolation": {
+      "account-a": {
+        "trialCents": 500,
+        "totalCents": 5000,
+        "full": false
+      },
+      "account-b": {
+        "trialCents": 29,
+        "totalCents": 1250,
+        "full": true
+      }
+    },
+    "apiGenerationCalls": 0
+  },
+  "formal": {
+    "origin": "http://127.0.0.1:5174",
+    "account": "日照金山样片",
+    "budget": {
+      "trialYuan": "2.00",
+      "totalYuan": "15.00",
+      "reservedYuan": "6.64",
+      "full": true
+    },
+    "budgetSaved": false,
+    "returnShot": "S02",
+    "returnStep": "素材准备与匹配",
+    "editorCountAfterReturn": 0,
+    "referencePanelImages": 9,
+    "referenceSelected": 0,
+    "pickerClosed": true,
+    "providerGenerationCalls": 0,
+    "servicePid": 60109,
+    "pendingMigrations": 0
+  }
+}

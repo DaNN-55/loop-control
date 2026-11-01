@@ -1,0 +1,228 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/WorkspaceReferencePicker.test.tsx (2 tests) 323ms
+stderr | src/local-app/WorkspaceVisualCandidatesPanel.test.tsx > preserves each target’s generation draft across tabs and shot selection
+An update to WorkspaceGenerationBudget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to WorkspaceGenerationBudget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/local-app/WorkspaceVisualCandidatesPanel.test.tsx > image thumbnails preview without adopting or changing the explicitly chosen video first frame
+An update to WorkspaceGenerationBudget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to WorkspaceGenerationBudget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/local-app/ProductionWorkspacePanel.test.tsx > preserves image and video prompt drafts when switching the unified tabs
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to WorkspaceGenerationBudget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to WorkspaceGenerationBudget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to WorkspaceGenerationBudget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/local-app/ProductionWorkspacePanel.test.tsx > keeps another shot’s video generation draft when adopting an image advances the project
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to WorkspaceGenerationBudget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to WorkspaceGenerationBudget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to WorkspaceGenerationBudget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/local-app/LocalConnectionsPanel.test.tsx (8 tests) 1600ms
+   ✓ labels a closed-network rotation as save-only and clears its secret without verification  359ms
+   ✓ keeps one locked rotation in flight and reuses its operation ID after an unconfirmed failure  361ms
+ ✓ src/local-app/WorkspaceVisualCandidatesPanel.test.tsx (29 tests) 3412ms
+   ✓ explicit image generation freezes reference IDs, count, quality and dimensions without adopting  307ms
+   ✓ keeps a cleared native video choice blank instead of restoring target defaults on return or reopen  347ms
+ ✓ src/local-app/LocalMaintenanceEmbedded.test.tsx (2 tests) 235ms
+ ✓ src/local-app/LocalCatalogApp.test.tsx (13 tests) 3871ms
+   ✓ keeps a committed series save successful when its follow-up read fails  1159ms
+   ✓ returns to login after network logout failure without accepting old reads, then restores writable CSRF on login  317ms
+   ✓ isolates concurrent network logout failures in older-first order from a fresh login  491ms
+   ✓ isolates concurrent network logout failures in newer-first order from a fresh login  305ms
+ ✓ src/connections/ConnectionOrganization.test.tsx (7 tests) 574ms
+   ✓ starts with the reference table and opens the single editor on demand  319ms
+ ✓ src/local-app/ProductionWorkspacePanel.test.tsx (25 tests) 4668ms
+   ✓ four-step navigation reads durable state and does not submit approvals or generation  400ms
+   ✓ preserves image and video prompt drafts when switching the unified tabs  364ms
+   ✓ keeps another shot’s video generation draft when adopting an image advances the project  500ms
+   ✓ pauses delivery polling while its retained draft tree is hidden and resumes one interval on return  300ms
+   ✓ deletes only the selected material shot after confirmation and selects the remaining neighbor  572ms
+ ✓ src/local-app/LocalCatalogApp.workspace.test.tsx (10 tests) 4418ms
+   ✓ opens standalone OpenChatCut from the initial account page without selecting a production order  357ms
+   ✓ uses the approved navigation with real table paging and a contextual production workspace  360ms
+   ✓ 保留安全弹窗焦点，将维护入口统一为侧栏且跨页保留连接草稿  1158ms
+   ✓ cleanupPending=false: confirms the actual directory and exact title, then reports unfinished file cleanup  564ms
+   ✓ cleanupPending=true: confirms the actual directory and exact title, then reports unfinished file cleanup  564ms
+   ✓ shows a delete failure inside the confirmation dialog instead of leaving the click without feedback  329ms
+   ✓ keeps one topbar instance and places the Owner menu after theme in workspace and episode  503ms
+ ✓ src/local-app/WorkspaceGenerationBudget.test.tsx (2 tests) 61ms
+ ✓ src/local-app/AccountGenerationBudgetSettings.test.tsx (3 tests) 102ms
+ ✓ src/local-app/WorkspaceImageMatch.test.tsx (1 test) 72ms
+
+ Test Files  11 passed (11)
+      Tests  102 passed (102)
+   Start at  09:59:21
+   Duration  7.60s (transform 1.71s, setup 53ms, collect 12.27s, tests 19.34s, environment 3.11s, prepare 497ms)

@@ -1,0 +1,11 @@
+{
+  "ownedBrowserSession": "reference-budget-20261101",
+  "browserClosed": true,
+  "fixtureServerPid": 56957,
+  "exactConfigMatchedBeforeStop": true,
+  "formalUserTabRetained": true,
+  "formalEditorClosed": true,
+  "dailyServiceRetained": 60109,
+  "isolatedDatabaseClosedByFixture": true,
+  "privatePreservationRetained": ".loop-control/local/state/reference-budget-20261101"
+}

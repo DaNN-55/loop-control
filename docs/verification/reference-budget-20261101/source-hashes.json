@@ -1,0 +1,20 @@
+{
+  "src/local-app/generationBudgets.ts": "bea1b40694fd1bf4c7df8419306eb60f1943b9cbe6ca0df79de34776ca2322df",
+  "src/local-app/accountCommands.ts": "958d386cbcd57a76997b24e409bcd20a4eb4a01b4977862e63f286e75b15469e",
+  "src/local-app/localRoute.ts": "0fe4f2762c8cda8bb8f2462dea94d45c8febe5cb0b8c6cc37bc66fb5ce9dfdcf",
+  "src/local-app/wanCommands.ts": "4dffe05d524549b5f90a8b2e441f228de2320519a0e004beed84b4bb1ae7fbf2",
+  "src/local-app/WorkspaceReferencePicker.tsx": "ade87b69461ff3a5616746bab7950ea339952cc7ad0c1b1cfbe08687f35c9014",
+  "src/local-app/WorkspaceGenerationBudget.tsx": "0d0f34355d8a2dafd072697c2a6d339350a24cb82db69c9e242d1ca059a352a2",
+  "src/local-app/AccountGenerationBudgetSettings.tsx": "33150f563f64491e9c82df1ed245e08a616ac9f84a6d3c6fc4eadedc2cd6b776",
+  "src/local-app/LocalConnectionsPanel.tsx": "1b046f406f10e4ebf1a8ba2c3fe8991723e5273fea71fccbaef8112314158092",
+  "src/local-app/LocalMaintenancePanel.tsx": "efc71a20abc75ec48062aa56b4350114f901f586279bf78b7ef853816955885d",
+  "src/local-app/LocalCatalogApp.tsx": "13c6c6b727d1a0878a0894321e22dd5f634727d58862e63c4dca51601b672337",
+  "src/local-app/LocalEpisodeDetail.tsx": "b5c4912a63c2c3890ba27dc46921601c5214b90253c008e3c9133a1b3c359ae2",
+  "src/local-app/ProductionWorkspacePanel.tsx": "324a62425b581d410ea44230840785657c5f38d444574a5d0291598341232440",
+  "src/local-app/WorkspaceVisualPreparation.tsx": "e1b3a0a72d461d800a8ffede5f23add3efad7719b19501fa07f835d975ce8aa7",
+  "src/local-app/WorkspaceVisualCandidatesPanel.tsx": "3b9a2507be5da914938444501767d5bb4e6e6a880ca4009d9c67e8d582530fe4",
+  "src/local-app/WorkspaceImageMatch.tsx": "47830448c836be69e825891948c1a90ddf41209e62a1b2580221fddd0d64942d",
+  "src/local-app/workspace-visual-preparation.css": "9f0ad89703295cd16989501a9048d2c6f45bada131ffc51186b68dcbac5777a7",
+  "src/local-app/production-compact.css": "ba04f00f603950dbd74da34514b0951c2d8f9ed6c2d75e708c1623b2460f7b0f",
+  "src/connections/connections.css": "32793faa9eb20865b3a1fdeb9affb6e3e21d557444b2c4ef331d3f21a868c066"
+}

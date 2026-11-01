@@ -1,0 +1,5 @@
+
+> loop-control@0.1.0 runtime:migrate
+> node scripts/runtime/migrate.mjs
+
+{"passed":true,"applied":["110-episode-storage-locations.sql","111-global-media-root.sql","112-series-extension-rules.sql","113-automatic-account-directories.sql","114-series-storage-containers.sql","115-exact-episode-deletion-intents.sql","117-input-storage-locations.sql","118-visual-storage-locations.sql","119-audio-caption-storage-locations.sql","120-native-workspace-storage-locations.sql","121-restored-media-deployment.sql","122-automatic-episode-directories.sql","123-legacy-storage-adoption.sql","124-episode-collection-moves.sql","125-global-media-root-plans.sql","126-global-media-root-execution.sql"],"database":"loop_control","oldMigrationsUnchanged":true,"backupSkippedByExplicitOption":false,"backupDisabledByOwner":true}

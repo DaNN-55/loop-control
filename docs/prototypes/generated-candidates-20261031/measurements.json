@@ -1,0 +1,23 @@
+{
+  "desktop": {
+    "matched": "0 / 6 画面就绪",
+    "previewHeight": 260,
+    "previewLeft": 815.5,
+    "railHeight": 260,
+    "railLeft": 723.5,
+    "railOverflow": "auto",
+    "railScrollHeight": 410,
+    "railScrollTop": 150
+  },
+  "noAdoptBeforeSelection": true,
+  "adoptChangesMatchedFrom0To1": true,
+  "repeatedGenerationCount": 8,
+  "preservesAdopted": true,
+  "compactFooter": {
+    "height": 40,
+    "duplicateCurrentRows": 0,
+    "previewMatched": "0 / 6 画面就绪",
+    "afterAdoptMatched": "1 / 6 画面就绪"
+  },
+  "responsive": "本轮未重新完成移动端验收"
+}

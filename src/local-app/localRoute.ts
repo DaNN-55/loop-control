@@ -1,3 +1,4 @@
+import {readGenerationBudget} from './generationBudgets.js';
 import {LocalMediaRootSettings} from './mediaRootSettings.js';
 import {readWorkspacePlanningSelection} from './planningSelectionStore.js';
 import {readProductionWorkspace,readWorkspaceVersion} from './productionWorkspaceCommands.js';
@@ -149,7 +150,7 @@ export function createLocalHandler(options:LocalOptions){
     const sha=url.searchParams.get('sha')??'',file=await historyFile(options.pool,session.id,sha),bytes=await verifyNativeFile(options.historyRoot,file.sha256,file.sha256,file.bytes);
     response.writeHead(200,{'Content-Type':'application/octet-stream','Content-Length':bytes.length,'Content-Disposition':`attachment; filename="history-${sha}.bin"`});response.end(bytes);return;
    }
-   if(url.pathname==='/api/local/wan-budget'){const id=url.searchParams.get('episode')??'';if(!uuid.test(id)){send(400,{error:'生产单标识无效。'});return;}const value=await ownerTransaction(options.pool,session.id,true,async c=>{const e=(await c.query('SELECT account_id FROM public.episodes WHERE id=$1',[id])).rows[0];if(!e)return null;return{budget:(await c.query('SELECT * FROM public.generation_account_budgets WHERE account_id=$1',[e.account_id])).rows[0]??null,usedCents:Number((await c.query('SELECT coalesce(sum(reserved_cents),0) used FROM public.paid_generation_reservations WHERE account_id=$1',[e.account_id])).rows[0].used)};});send(value?200:404,value??{error:'生产单不可见。'});return;}
+   if(url.pathname==='/api/local/wan-budget'){const id=url.searchParams.get('episode')??'';if(!uuid.test(id)){send(400,{error:'生产单标识无效。'});return;}const value=await ownerTransaction(options.pool,session.id,true,async c=>{const e=(await c.query('SELECT account_id FROM public.episodes WHERE id=$1',[id])).rows[0];if(!e)return null;return readGenerationBudget(c,e.account_id);});send(value?200:404,value??{error:'生产单不可见。'});return;}
    if(url.pathname==='/api/local/system-status'){
     const raw=url.searchParams.get('queuePage')??'1';
     if(!/^[1-9]\d{0,5}$/.test(raw)||[...url.searchParams.keys()].some(k=>k!=='queuePage')||url.searchParams.getAll('queuePage').length>1){send(400,{error:'任务队列页码无效。'});return;}

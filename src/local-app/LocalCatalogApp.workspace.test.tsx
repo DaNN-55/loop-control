@@ -1,7 +1,7 @@
 import userEvent from '@testing-library/user-event';
 import{act,cleanup,fireEvent,render,screen,within,waitFor}from'@testing-library/react';import{afterEach,it,expect,vi}from'vitest';import{webcrypto}from'node:crypto';import{LocalCatalogApp}from'./LocalCatalogApp';import type{LocalCatalog}from'./catalog';
 vi.mock('./LocalSystemStatus',()=>({LocalSystemStatus:()=>null}));
-vi.mock('./LocalEpisodeDetail',()=>({LocalEpisodeDetail:({episodeId}:{episodeId:string})=><p>已打开 {episodeId}</p>}));
+vi.mock('./LocalEpisodeDetail',()=>({LocalEpisodeDetail:({episodeId,preparationEntry}:{episodeId:string;preparationEntry?:{shotId?:string;targetItemId?:string}})=><p>已打开 {episodeId}{preparationEntry&&<span>返回镜头 {preparationEntry.shotId} {preparationEntry.targetItemId}</span>}</p>}));
 const id='10000000-0000-4000-8000-000000000001',episode='20000000-0000-4000-8000-000000000001',at='2026-10-26T00:00:00Z';
 const data={accounts:[{id,name:'日常账号',slug:'daily',timezone:'Asia/Shanghai',created_at:at,archived_at:null,current_blueprint_version_id:id}],blueprints:[{id,account_id:id,version:1,policy:{},is_active:true,is_snapshot:false,created_at:at,archived_at:null}],blueprintRevisions:{[id]:'a'.repeat(32)},episodes:[{id:episode,account_id:id,blueprint_version_id:id,stage:'production_completed',title:'普通长度完整生产单',created_at:at,updated_at:at,archived_at:null,is_test:true}],series:[],seriesVersions:[],promptVersions:[],sourceCreatedAt:at,importedAt:at,page:1,pageSize:20,total:41,episodeCount:41,accountCounts:{[id]:41},reviewCount:2,stages:{production_completed:41},artifactCounts:{[episode]:39},pending:{page:1,total:0,items:[]},blocked:{page:1,total:0,items:[]},worker:{running:0,blocked:0,failed:0,latestCompleted:false},operationRows:[]}as unknown as LocalCatalog;
 afterEach(()=>{cleanup();vi.unstubAllGlobals();history.replaceState(null,'','/');localStorage.clear();sessionStorage.clear();});
@@ -176,4 +176,17 @@ it('恢复失败留在确认框内且可重试，成功后关闭；操作错误�
  expect((await within(modal).findByRole('alert')).textContent).toBe('恢复未完成，请重试。');expect(document.querySelector('.floating-notices')).toBeNull();
  expect((within(modal).getByRole('button',{name:'确认恢复'}) as HTMLButtonElement).disabled).toBe(false);
  await user.click(within(modal).getByRole('button',{name:'确认恢复'}));await waitFor(()=>expect(screen.queryByRole('form',{name:'恢复生产单'})).toBeNull());expect(calls).toBe(2);
+});
+
+it('routes budget adjustment to the production account and returns to the same production',async()=>{
+ vi.stubGlobal('crypto',webcrypto);vi.stubGlobal('fetch',vi.fn(async(path:string,init?:RequestInit)=>{
+  if(path.endsWith('/session'))return Response.json({csrfToken:'fixture',owner:{id,email:'owner@example.test'}});
+  if(path.includes('/catalog?'))return Response.json(data);
+  if(path.endsWith('/account-commands')){expect(JSON.parse(String(init?.body))).toMatchObject({command:'readGenerationBudget',data:{accountId:id}});return Response.json({accountId:id,budget:null,usedCents:0});}
+  if(path.endsWith('/deletion-cleanups'))return Response.json([]);
+  return Response.json({connections:[],versions:[],capabilities:{secrets:'disabled',verification:'disabled',externalReady:false}});
+ }));
+ history.replaceState(null,'','/?episode='+episode);await act(async()=>{render(<LocalCatalogApp/>);});await screen.findByText('已打开 '+episode);
+ act(()=>window.dispatchEvent(new CustomEvent('open-external-connections',{detail:{section:'budgets',accountId:id,episodeId:episode,shotId:'S02',targetItemId:'target-S02'}})));
+ await screen.findByText('尚未设置限额');expect(screen.getByLabelText('预算账号')).toHaveProperty('value',id);expect(screen.queryByText('已打开 '+episode)).toBeNull();fireEvent.click(screen.getByRole('button',{name:'返回分镜'}));await screen.findByText('返回镜头 S02 target-S02');expect(location.search).toContain(episode);
 });
