@@ -112,7 +112,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('a queued package cannot 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('delivery records the used trimmed voice source and never substitutes an unadopted draft text',async()=>{
  const {narrationFixture}=await import('./workspaceNarration.fixture');const f=await narrationFixture();const worker=f.workerPool();
  try{
- await f.authorize();await f.request('setWanBudget',{trialCents:300,totalCents:10000,full:false});let w=f.made;const send=(name:string,extra={})=>f.chosenRequest(name,{workspaceId:w.id,expectedRevision:w.revision,...extra});const clip=w.clips[0],sourceText='这份实际音轨保留不可变的原口播正文。';
+ await f.authorize();let w=f.made;const send=(name:string,extra={})=>f.chosenRequest(name,{workspaceId:w.id,expectedRevision:w.revision,...extra});const clip=w.clips[0],sourceText='这份实际音轨保留不可变的原口播正文。';
  let r=await send('saveWorkspaceNarration',{clipId:clip.id,mode:'tts',text:sourceText});expect(r.status,JSON.stringify(r.body)).toBe(200);w=r.body;
  await send('confirmWorkspaceNarration',{clipId:clip.id});const queued=await send('generateWorkspaceNarration',{clipId:clip.id});expect(queued.status,JSON.stringify(queued.body)).toBe(200);expect((await f.execute(queued.body.narration[0].taskId))?.status).toBe('completed');
  w=(await send('refreshWorkspaceNarration')).body;w=await adoptInitialNarration(f,w);

@@ -56,7 +56,7 @@ it.skipIf(process.env.LOOP_FORMAL_ACCEPTANCE!=='1')('fresh formal and added shot
  expect((await f.send('start')).status).toBe(200);let r=await f.send('prepareWorkspace',{expectedScriptRevisionId:f.main});expect(r.status,JSON.stringify(r.body)).toBe(200);let w=r.body;
  const send=async(name:string,extra={})=>{const result=await f.send(name,{workspaceId:w.id,expectedRevision:w.revision,...extra});expect(result.status,JSON.stringify(result.body)).toBe(200);w=result.body;return result.body;};
  const speechVersion=(await f.c.query("SELECT id FROM public.external_connection_versions WHERE adapter='volcengine_tts'")).rows[0].id,videoVersion=(await f.c.query("SELECT id FROM public.external_connection_versions WHERE adapter='seedance_video'")).rows[0].id;
- expect((await f.send('setWanBudget',{trialCents:300,totalCents:1000,full:false})).status).toBe(200);
+
  await send('authorizeWorkspacePreparation',{enabled:true});await f.send('saveTtsSettings',{languageCode:'zh-CN',voice:'zh_female_vv_uranus_bigtts',speakingRate:1});
  await send('editWorkspaceStructure',{operation:{kind:'insert',afterShotId:w.clips[0].shotId,text:'新增正文不是主脚本基准。'}});
  for(const clip of [w.clips[0],w.clips.find((c:any)=>c.shotId.startsWith('added-'))]){
@@ -68,7 +68,7 @@ it.skipIf(process.env.LOOP_FORMAL_ACCEPTANCE!=='1')('fresh formal and added shot
  expect((await f.c.query('SELECT count(*)::int n FROM public.approvals WHERE episode_id=$1',[f.newEpisode])).rows[0].n).toBe(0);
  expect(w.candidates.find((n:any)=>n.shotId.startsWith('added-')).mainScriptText).toBe('');
  const local=w.clips.find((c:any)=>c.shotId.startsWith('added-'));await send('confirmWorkspaceShot',{clipId:local.id,shotType:'a_roll'});
- expect((await f.send('setWanBudget',{trialCents:300,totalCents:1000,full:false})).status).toBe(200);
+
  const image=await f.send('importMaterial',{sourceKind:'file',sourcePath:'local-first.png',materialType:'image',materialPurpose:'visual_reference',mimeType:'image/png',isMainScript:false,contentBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64')});expect(image.status).toBe(200);
  await send('requestWorkspaceVisualCandidate',{selection:{capability:'video',provider:'volcengine',adapter:'seedance_video',model:'doubao-seedance-2-0-260128',connectionVersionId:videoVersion},targetItemId:local.itemId,firstFrameMaterialRevisionId:image.body.id,prompt:'局部新镜头的受控视觉生成。',durationSeconds:4,reservationCents:90});const visual=w.visualTasks[0];expect(visual.taskId).toBeTruthy();expect((await f.controlled!.execute(visual.taskId))?.status).toBe('completed');
  const got=await fetch(`${f.origin}/api/local/episodes/${f.newEpisode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}});w=(await got.json()).workspace;expect(w.visualCandidates.find((v:any)=>v.shotId===local.shotId)?.status).toBe('available');

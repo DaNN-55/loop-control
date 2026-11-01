@@ -1,0 +1,7 @@
+
+  VITE v7.3.6  ready in 1269 ms
+
+  ➜  Local:   http://127.0.0.1:5174/
+[BABEL] Note: The code generator has deoptimised the styling of /Users/dan/Programs/loop-control/.loop-control/local/state/vite-cache/deps/react-dom_client.js?v=9888ccb6 as it exceeds the max of 500KB.
+(node:7212) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)

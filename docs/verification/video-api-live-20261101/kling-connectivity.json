@@ -1,0 +1,16 @@
+{
+  "at": "2026-11-01T10:47:30.664Z",
+  "operation": "unauthenticated host connectivity diagnosis",
+  "host": "api-singapore.klingai.com",
+  "dns": [
+    {
+      "address": "198.18.0.92",
+      "family": 4
+    },
+    {
+      "address": "2001:2::14",
+      "family": 6
+    }
+  ],
+  "httpStatus": 200
+}

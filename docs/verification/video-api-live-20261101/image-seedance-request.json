@@ -1,0 +1,12 @@
+{
+  "target": "seedance",
+  "model": "gpt-image-2",
+  "connectionVersion": "022dff01-abac-4444-8bc8-a7500751f657",
+  "prompt": "生成一张9:16竖版高级棚拍静物照片。米白色背景与柔和清晨侧光，中央偏下是一个青绿色磨砂球体、一块琥珀色半透明方块、一个珊瑚红圆柱体，几何物体自然组合，真实材质、柔和接触阴影，干净留白，平视近景，颜色鲜明但协调。无文字、无标识、无水印、无边框、无人物。",
+  "settings": {
+    "size": "864x1536",
+    "quality": "medium",
+    "count": 1
+  },
+  "reservationCny": 1
+}

@@ -1,5 +1,5 @@
 import {isRetiredProvider} from '../worker/providerLifecycle.js';
-import {videoProviders} from "../worker/videoProviderCatalog.js";
+import {videoProviders,minimaxEndpoints} from "../worker/videoProviderCatalog.js";
 import {officialVideoDownloadUrl} from "../worker/officialVideoProvider.js";
 import{ProviderOutcomeUnknownError}from'../worker/providerOutcome.js';
 import type{Pool}from'pg';
@@ -18,7 +18,7 @@ export async function narrationPorts(config?:NativeNarrationConfiguration):Promi
  if(!config)throw new SecretStoreError('disabled');
  if(config.mode==='live'){
   if(!config.network)throw new SecretStoreError('unavailable');
-  const providerFor=(url:string|URL):OnlineProvider=>{const h=new URL(url).hostname;for(const [provider,p] of Object.entries(videoProviders)){if(h===new URL(p.endpoint).hostname)return provider as OnlineProvider;try{officialVideoDownloadUrl(provider as keyof typeof videoProviders,String(url));return provider as OnlineProvider;}catch{/* Try other official result hosts. */}}if(h==='dashscope.aliyuncs.com'||/^ws-[a-z0-9]{8,64}\.cn-beijing\.maas\.aliyuncs\.com$/.test(h)||h==='dashscope-a717.oss-accelerate.aliyuncs.com'||/^dashscope-result-[a-z0-9-]+\.oss-[a-z0-9-]+\.aliyuncs\.com$/.test(h))return'bailian';if(h==='api.openai.com')return'openai';if(h==='api.cloudflare.com')return'cloudflare';if(h==='texttospeech.googleapis.com')return'google_tts';if(h==='openspeech.bytedance.com')return'volcengine_tts';if(['api.pexels.com','videos.pexels.com','images.pexels.com'].includes(h))return'pexels';if(['freesound.org','cdn.freesound.org'].includes(h))return'freesound';throw new SecretStoreError('unavailable');};
+  const providerFor=(url:string|URL):OnlineProvider=>{const h=new URL(url).hostname;for(const [provider,p] of Object.entries(videoProviders)){if(h===new URL(p.endpoint).hostname||provider==='minimax'&&h===new URL(minimaxEndpoints.cn).hostname)return provider as OnlineProvider;try{officialVideoDownloadUrl(provider as keyof typeof videoProviders,String(url));return provider as OnlineProvider;}catch{/* Try other official result hosts. */}}if(h==='dashscope.aliyuncs.com'||/^ws-[a-z0-9]{8,64}\.cn-beijing\.maas\.aliyuncs\.com$/.test(h)||h==='dashscope-a717.oss-accelerate.aliyuncs.com'||/^dashscope-result-[a-z0-9-]+\.oss-[a-z0-9-]+\.aliyuncs\.com$/.test(h))return'bailian';if(h==='api.openai.com')return'openai';if(h==='api.cloudflare.com')return'cloudflare';if(h==='texttospeech.googleapis.com')return'google_tts';if(h==='openspeech.bytedance.com')return'volcengine_tts';if(['api.pexels.com','videos.pexels.com','images.pexels.com'].includes(h))return'pexels';if(['freesound.org','cdn.freesound.org'].includes(h))return'freesound';throw new SecretStoreError('unavailable');};
   return{mode:'live',store:configuredKeychainStore(config.keychain),fetcher:(url,init)=>createProviderFetcher(config.network,providerFor(url),'execute')(url,init)};
  }
  if(config.mode!=='controlled'||!config.modulePath.startsWith('/'))throw new SecretStoreError('unavailable');

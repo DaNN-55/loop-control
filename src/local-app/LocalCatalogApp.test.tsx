@@ -26,13 +26,16 @@ it('keeps a committed series save successful when its follow-up read fails',asyn
  // Open the real account workspace from the new home before checking its save semantics.
  await act(async()=>{render(<LocalCatalogApp/>);});
  fireEvent.click(await screen.findByRole('button',{name:'账号'}));fireEvent.click(await screen.findByRole('button',{name:'Fixture series'}));
+ fireEvent.click(screen.getByRole('button',{name:'修改'}));
  fireEvent.change(screen.getByRole('textbox',{name:'系列定位'}),{target:{value:'saved'}});
- fireEvent.click(screen.getByRole('button',{name:'保存为 v2'}));
+ fireEvent.click(screen.getByRole('button',{name:'保存系列设置'}));
  fireEvent.click(screen.getByRole('button',{name:'确认保存为 v2'}));
  expect(await screen.findByRole('alert')).toHaveProperty('textContent',expect.stringContaining('配置已保存'));
  expect(screen.queryByRole('dialog',{name:'确认保存系列版本'})).toBeNull();
  const user=userEvent.setup();await user.click(screen.getByRole('button',{name:'账号操作'}));await user.click(screen.getByRole('menuitem',{name:'刷新账号'}));
- await waitFor(()=>expect(screen.getByRole('heading',{name:'Fixture series · 当前 v2'})).toBeTruthy());
+ await waitFor(()=>expect(screen.getByRole('heading',{name:'Fixture series'})).toBeTruthy());
+ expect((screen.getByRole('textbox',{name:'系列定位'}) as HTMLTextAreaElement).value).toBe('saved');
+ expect((screen.getByRole('textbox',{name:'系列定位'}) as HTMLTextAreaElement).disabled).toBe(true);
  expect(posts).toBe(1);
 });
 function pagedCatalog(title:string,page=1):LocalCatalog{return{accounts:[],blueprints:[],episodes:[{id:title,title,stage:'qc_review',account_id:'fixture',blueprint_version_id:'fixture',series_version_id:null,created_at:'2026-10-25T00:00:00Z',updated_at:'2026-10-25T00:00:00Z',archived_at:null} as LocalCatalog['episodes'][number]],series:[],seriesVersions:[],promptVersions:[],blueprintRevisions:{},sourceCreatedAt:'2026-10-25',importedAt:'2026-10-25',page,pageSize:20,total:60,episodeCount:60,accountCounts:{},reviewCount:3,stages:{},artifactCounts:{},pending:{page:1,total:0,items:[]},blocked:{page:1,total:0,items:[]},worker:{running:0,blocked:0,failed:0,latestCompleted:false},operationRows:[]};}

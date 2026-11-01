@@ -1,0 +1,54 @@
+{
+  "version": "publish-package/v2",
+  "episodeId": "b232b4fd-b43c-470c-bbdf-d97ae3f62f9d",
+  "identity": {
+    "video": {
+      "sha256": "05e3367235dccff57c8c66d29c7675b1be4397054c25d0fc07156273a376c35e",
+      "fileSize": 4226395,
+      "artifactType": "final_render",
+      "relativePath": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/人工口播字幕直链修复 · E2E复验--b232b4fd-b43c-470c-bbdf-d97ae3f62f9d/workspace-exports/d0e3ca0f-3a63-42a7-b307-5d95f3329646/05e3367235dccff57c8c66d29c7675b1be4397054c25d0fc07156273a376c35e.mp4"
+    },
+    "project": {
+      "sha256": "c2fe4d820231873d181eb25f8677d1c166b0b2cf6d71308155ba000401fc9ed5",
+      "fileSize": 15752,
+      "artifactType": "editable_project",
+      "relativePath": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/人工口播字幕直链修复 · E2E复验--b232b4fd-b43c-470c-bbdf-d97ae3f62f9d/production-workspace/versions/c2fe4d820231873d181eb25f8677d1c166b0b2cf6d71308155ba000401fc9ed5.json"
+    },
+    "exportId": "d0e3ca0f-3a63-42a7-b307-5d95f3329646",
+    "workspaceId": "d4286517-da26-4f7c-ac49-ac94ffdb7852",
+    "contentSha256": "dbb1ac60a211a5e872b2c4d01cefb100bb120e4fb034ba2fcca992e9a3779d86",
+    "projectContentVersion": 9
+  },
+  "artifacts": [
+    {
+      "sha256": "05e3367235dccff57c8c66d29c7675b1be4397054c25d0fc07156273a376c35e",
+      "fileSize": 4226395,
+      "artifactType": "final_render",
+      "relativePath": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/人工口播字幕直链修复 · E2E复验--b232b4fd-b43c-470c-bbdf-d97ae3f62f9d/workspace-exports/d0e3ca0f-3a63-42a7-b307-5d95f3329646/05e3367235dccff57c8c66d29c7675b1be4397054c25d0fc07156273a376c35e.mp4"
+    },
+    {
+      "sha256": "c2fe4d820231873d181eb25f8677d1c166b0b2cf6d71308155ba000401fc9ed5",
+      "fileSize": 15752,
+      "artifactType": "editable_project",
+      "relativePath": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/人工口播字幕直链修复 · E2E复验--b232b4fd-b43c-470c-bbdf-d97ae3f62f9d/production-workspace/versions/c2fe4d820231873d181eb25f8677d1c166b0b2cf6d71308155ba000401fc9ed5.json"
+    },
+    {
+      "sha256": "eb50ac41dc1c2fd1a695d76ab6b95665cb4847ffbecce9eeb5619418fe05c20d",
+      "fileSize": 49911,
+      "artifactType": "cover",
+      "relativePath": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/人工口播字幕直链修复 · E2E复验--b232b4fd-b43c-470c-bbdf-d97ae3f62f9d/workspace-deliveries/5b25ba59-04b8-4ba2-9e41-29fe2ecf6950/cover.png"
+    },
+    {
+      "sha256": "d7d11937bcba87ecee8bba09e512854a4e40a7e9d6ccab8810b424d0ee85165b",
+      "fileSize": 2707,
+      "artifactType": "metadata",
+      "relativePath": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/人工口播字幕直链修复 · E2E复验--b232b4fd-b43c-470c-bbdf-d97ae3f62f9d/workspace-deliveries/5b25ba59-04b8-4ba2-9e41-29fe2ecf6950/metadata.json"
+    },
+    {
+      "sha256": "01a9a2af57924e1e774dacf4ff4db1b0908eb6756907ae082b01f51eb288e1e9",
+      "fileSize": 6751,
+      "artifactType": "final_qc_report",
+      "relativePath": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/人工口播字幕直链修复 · E2E复验--b232b4fd-b43c-470c-bbdf-d97ae3f62f9d/workspace-deliveries/5b25ba59-04b8-4ba2-9e41-29fe2ecf6950/checks.json"
+    }
+  ]
+}

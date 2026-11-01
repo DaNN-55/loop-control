@@ -1,0 +1,26 @@
+{
+  "at": "2026-11-01T09:50:46.933Z",
+  "playing": {
+    "currentTime": 0.10773,
+    "duration": 12.032,
+    "ended": false,
+    "paused": false,
+    "readyState": 4,
+    "videoHeight": 1920,
+    "videoWidth": 1080
+  },
+  "seek": {
+    "currentTime": 7.186481,
+    "duration": 12.032,
+    "ended": false,
+    "paused": false,
+    "readyState": 4
+  },
+  "ended": {
+    "currentTime": 12.032,
+    "duration": 12.032,
+    "ended": true,
+    "paused": true,
+    "readyState": 4
+  }
+}

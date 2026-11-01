@@ -1,4 +1,3 @@
-import {readGenerationBudget} from './generationBudgets.js';
 import {LocalMediaRootSettings} from './mediaRootSettings.js';
 import {readWorkspacePlanningSelection} from './planningSelectionStore.js';
 import {readProductionWorkspace,readWorkspaceVersion} from './productionWorkspaceCommands.js';
@@ -122,6 +121,35 @@ export function createLocalHandler(options:LocalOptions){
    }
    if(url.pathname==='/api/local/episode-lifecycle'&&request.method==='POST'){let body;try{body=await readBody(request,16384);}catch{send(400,{error:'生命周期请求格式无效。'});return;}send(200,await lifecycle.execute(session,body));return;}
    if(url.pathname==='/api/local/deletion-cleanups'&&request.method==='GET'){send(200,await lifecycle.pending(session));return;}
+   if(url.pathname==='/api/local/connection-usage'){
+    if(request.method!=='GET'){send(405,{error:'只支持读取连接用量。'});return;}
+    const connectionId=url.searchParams.get('connectionId')??'';if(!uuid.test(connectionId)||[...url.searchParams.keys()].some(key=>key!=='connectionId')){send(400,{error:'连接标识无效。'});return;}
+    send(200,await connections.readUsage(session.id,connectionId));return;
+   }
+   if(url.pathname==='/api/local/connection-billing'){
+    if(request.method==='GET'){
+     const id=url.searchParams.get('connectionId')??'';
+     if(!uuid.test(id)||[...url.searchParams.keys()].some(k=>k!=='connectionId')){send(400,{error:'连接标识无效。'});return;}
+     send(200,await connections.billing.read(session.id,id));return;
+    }
+    if(request.method==='POST'&&!url.search){
+     let body;try{body=await readBody(request,8192);}catch{send(400,{error:'账务设置请求格式无效。'});return;}
+     send(200,await connections.billing.command(session,body));return;
+    }
+    send(405,{error:'账务设置请求方法无效。'});return;
+   }
+   if(url.pathname==='/api/local/connection-models'){
+    if(request.method==='GET'){
+     const id=url.searchParams.get('connectionId')??'';
+     if(!uuid.test(id)||[...url.searchParams.keys()].some(k=>k!=='connectionId')){send(400,{error:'连接标识无效。'});return;}
+     send(200,await connections.models.read(session.id,id));return;
+    }
+    if(request.method==='POST'&&!url.search){
+     let body;try{body=await readBody(request,65536);}catch{send(400,{error:'模型设置请求格式无效。'});return;}
+     send(200,await connections.models.command(session,body));return;
+    }
+    send(405,{error:'模型设置请求方法无效。'});return;
+   }
    if(url.pathname==='/api/local/connections'){
     if(request.method==='GET'){send(200,await connections.read(session.id));return;}
     if(request.method==='POST'){
@@ -150,7 +178,6 @@ export function createLocalHandler(options:LocalOptions){
     const sha=url.searchParams.get('sha')??'',file=await historyFile(options.pool,session.id,sha),bytes=await verifyNativeFile(options.historyRoot,file.sha256,file.sha256,file.bytes);
     response.writeHead(200,{'Content-Type':'application/octet-stream','Content-Length':bytes.length,'Content-Disposition':`attachment; filename="history-${sha}.bin"`});response.end(bytes);return;
    }
-   if(url.pathname==='/api/local/wan-budget'){const id=url.searchParams.get('episode')??'';if(!uuid.test(id)){send(400,{error:'生产单标识无效。'});return;}const value=await ownerTransaction(options.pool,session.id,true,async c=>{const e=(await c.query('SELECT account_id FROM public.episodes WHERE id=$1',[id])).rows[0];if(!e)return null;return readGenerationBudget(c,e.account_id);});send(value?200:404,value??{error:'生产单不可见。'});return;}
    if(url.pathname==='/api/local/system-status'){
     const raw=url.searchParams.get('queuePage')??'1';
     if(!/^[1-9]\d{0,5}$/.test(raw)||[...url.searchParams.keys()].some(k=>k!=='queuePage')||url.searchParams.getAll('queuePage').length>1){send(400,{error:'任务队列页码无效。'});return;}

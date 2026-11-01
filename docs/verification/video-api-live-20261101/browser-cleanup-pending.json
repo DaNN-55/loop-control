@@ -1,0 +1,13 @@
+{
+  "at": "2026-11-01T10:02:51.228Z",
+  "closedTestTab": "7",
+  "remaining": [
+    {
+      "id": "1",
+      "providerTabId": "500b4f93-ad23-4870-bd3e-509f7c091275",
+      "title": "Loop Control",
+      "url": "http://127.0.0.1:5174/",
+      "browserId": "2"
+    }
+  ]
+}

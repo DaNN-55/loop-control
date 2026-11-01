@@ -140,7 +140,7 @@ describe("approval console", () => {
     await waitFor(() => expect(onCreate).toHaveBeenCalledWith({ name: "越南道士", rules: { positioning: "雨夜民俗" } }));
   });
 
-  it("系列设置展示当前版本和历史版本", () => {
+  it("系列设置隐藏版本入口，但保存仍保留递增快照", async () => {
     const series = { account_id: "account-1", created_at: "2026-08-15T00:00:00.000Z", id: "series-1", name: "越南道士" } as Database["public"]["Tables"]["series"]["Row"];
     const seriesVersions = [
       { account_id: "account-1", created_at: "2026-08-17T00:00:00.000Z", id: "series-version-2", rules: {}, series_id: series.id, version: 2 },
@@ -149,10 +149,14 @@ describe("approval console", () => {
 
     render(<SeriesSettings isPending={false} onCreate={vi.fn()} series={[series]} seriesVersions={seriesVersions} />);
 
-    expect(screen.getByRole("heading", { name: "越南道士 · 当前 v2" })).toBeTruthy();
-    expect(screen.getByText("当前 v2")).toBeTruthy();
-    expect(screen.getByRole("heading", { name: "版本历史" })).toBeTruthy();
-    expect(screen.getByRole("button", { name: "保存为 v3" })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "越南道士" })).toBeTruthy();
+    expect(screen.queryByText("当前 v2")).toBeNull();
+    expect(screen.queryByRole("heading", { name: "版本历史" })).toBeNull();
+    expect((screen.getByLabelText("系列定位") as HTMLTextAreaElement).disabled).toBe(true);
+    const user = userEvent.setup();
+    await user.click(screen.getByRole("button", { name: "修改" }));
+    await user.click(screen.getByRole("button", { name: "保存系列设置" }));
+    expect(screen.getByRole("button", { name: "确认保存为 v3" })).toBeTruthy();
   });
 
   it("通过结构化表单编辑蓝图并保留高级创作规则", async () => {
@@ -164,6 +168,7 @@ describe("approval console", () => {
     render(<AccountWorkspace account={account} accounts={[account]} blueprints={[blueprint]} connectionVersions={[{ adapter: "freesound_preview", connection_id: "44444444-4444-4444-8444-444444444444", created_at: "2026-08-15T00:00:00.000Z", endpoint: "https://api.freesound.org", id: "44444444-4444-4444-8444-444444444444", is_current: true, provider: "freesound", revoked_at: null, status: "verified", version: 1 }]} externalConnections={[{ adapter: "freesound_preview", created_at: "2026-08-15T00:00:00.000Z", created_by: "owner-1", current_version_id: "44444444-4444-4444-8444-444444444444", id: "44444444-4444-4444-8444-444444444444", last_verification_detail: null, last_verified_at: "2026-08-15T00:00:00.000Z", name: "主 Freesound", provider: "freesound", status: "verified" }]} isPending="" onUpdateBlueprint={onUpdateBlueprint} onCreateSeries={vi.fn()} onSelectAccount={vi.fn()} promptVersions={[storyboardHarness]} series={[]} seriesVersions={[]} />);
 
     await user.click(screen.getByRole("button", { name: "通用规则" }));
+    await user.click(screen.getByRole("button", { name: "修改" }));
     await user.clear(screen.getByLabelText("账号定位"));
     await user.type(screen.getByLabelText("账号定位"), "新定位");
     await user.click(screen.getByRole("button", { name: /保存通用规则|保存通用规则/ }));

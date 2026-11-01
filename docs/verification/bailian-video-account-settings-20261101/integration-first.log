@@ -1,0 +1,30 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/connectionModels.integration.test.ts (2 tests) 9649ms
+   ✓ owns, discovers and persists model settings through HTTP, enforces new selections and rejects stale saves  6296ms
+   ✓ rejects in-flight discovery when the current version rotates and keeps settings unchanged on errors  3352ms
+ ❯ src/local-app/bailianModels.integration.test.ts (2 tests | 1 failed) 9828ms
+   ✓ persists only compatible Bailian directory IDs for enabling, reopens them and preserves enabled choices on rotation  6137ms
+   × queues and executes the chosen Bailian model with its own reservation and frozen snapshot after disabling it 3690ms
+     → insert or update on table "external_connections" violates foreign key constraint "external_connections_current_version_id_fkey"
+ ✓ src/local-app/productionSelection.integration.test.ts (3 tests) 17467ms
+   ✓ explicit image selections freeze two independent connections without blueprint image authority  9497ms
+   ✓ rejects invalid choices, settings, references and budget; unknown submission cannot charge twice  3783ms
+   ✓ legacy queued image snapshots execute unchanged after content-only saves and new requests still require a selection  4186ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/bailianModels.integration.test.ts > queues and executes the chosen Bailian model with its own reservation and frozen snapshot after disabling it
+error: insert or update on table "external_connections" violates foreign key constraint "external_connections_current_version_id_fkey"
+ ❯ node_modules/pg/lib/client.js:694:17
+ ❯ src/local-app/bailianModels.integration.test.ts:35:3
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 6 passed (7)
+   Start at  12:58:31
+   Duration  18.26s (transform 579ms, setup 28ms, collect 1.81s, tests 36.94s, environment 0ms, prepare 88ms)

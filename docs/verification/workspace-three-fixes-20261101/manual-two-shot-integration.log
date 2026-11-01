@@ -1,0 +1,10 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/workspaceManualNarration.integration.test.ts (1 test) 13955ms
+   ✓ uploaded narration is selectable in a current workspace without legacy approvals or provider calls  13953ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  17:26:40
+   Duration  17.01s (transform 1.67s, setup 27ms, collect 2.36s, tests 13.95s, environment 0ms, prepare 143ms)

@@ -1,0 +1,73 @@
+{
+  "title": "API真实素材混剪验收",
+  "description": "两段真实API视频与两张替代图的四镜头本地流程验收，13秒竖屏。",
+  "tags": [
+    "流程验收",
+    "API测试"
+  ],
+  "exportId": "d0a9059f-5baa-4be0-ba20-4ad5aae945c5",
+  "contentSha256": "8996f5e42747b06220d85f038f362ad3e78c597af2650631a01cf52ce4fc1bfa",
+  "scriptRevisionId": "7208a94f-e254-4bee-ae7e-197efeb75237",
+  "narration": [
+    {
+      "shotId": "shot-01",
+      "baselineText": "Seedance 视频接口连通测试。",
+      "sourceText": null,
+      "adoptedText": null,
+      "textCoverage": "no_recorded_text",
+      "windows": [],
+      "textSource": "not_recorded",
+      "sourceDiffersFromBaseline": null,
+      "differsFromBaseline": null,
+      "audioTrackId": null,
+      "sha256": null,
+      "itemId": null,
+      "source": null
+    },
+    {
+      "shotId": "shot-02",
+      "baselineText": "MiniMax 视频接口连通测试。",
+      "sourceText": null,
+      "adoptedText": null,
+      "textCoverage": "no_recorded_text",
+      "windows": [],
+      "textSource": "not_recorded",
+      "sourceDiffersFromBaseline": null,
+      "differsFromBaseline": null,
+      "audioTrackId": null,
+      "sha256": null,
+      "itemId": null,
+      "source": null
+    },
+    {
+      "shotId": "shot-03",
+      "baselineText": "百炼 视频接口连通测试。",
+      "sourceText": null,
+      "adoptedText": null,
+      "textCoverage": "no_recorded_text",
+      "windows": [],
+      "textSource": "not_recorded",
+      "sourceDiffersFromBaseline": null,
+      "differsFromBaseline": null,
+      "audioTrackId": null,
+      "sha256": null,
+      "itemId": null,
+      "source": null
+    },
+    {
+      "shotId": "shot-04",
+      "baselineText": "Kling 视频接口连通测试。",
+      "sourceText": null,
+      "adoptedText": null,
+      "textCoverage": "no_recorded_text",
+      "windows": [],
+      "textSource": "not_recorded",
+      "sourceDiffersFromBaseline": null,
+      "differsFromBaseline": null,
+      "audioTrackId": null,
+      "sha256": null,
+      "itemId": null,
+      "source": null
+    }
+  ]
+}

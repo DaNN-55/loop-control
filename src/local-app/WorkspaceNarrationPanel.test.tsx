@@ -19,3 +19,15 @@ it('keeps explicitly cleared default and shot selections blank after switching a
  fireEvent.change(screen.getByLabelText('镜头声音'),{target:{value:'foreign_voice_mars_bigtts'}});for(const prefix of ['默认','镜头']){fireEvent.change(screen.getByLabelText(prefix+'连接与模型'),{target:{value:''}});expect((screen.getByLabelText(prefix+'连接与模型') as HTMLSelectElement).value).toBe('');}
  cleanup();const props={episodeId:'e',workspace,pending:false,command,onChanged:vi.fn()};const view=render(<WorkspaceNarrationPanel {...props} selectedShotId="S02"/>);view.rerender(<WorkspaceNarrationPanel {...props} selectedShotId="S01"/>);fireEvent.click(screen.getByText('本期默认'));await waitFor(()=>expect((screen.getByLabelText('镜头连接与模型') as HTMLSelectElement).options.length).toBe(3));for(const prefix of ['默认','镜头'])expect((screen.getByLabelText(prefix+'连接与模型') as HTMLSelectElement).value).toBe('');expect((screen.getByLabelText('镜头声音') as HTMLInputElement).value).toBe('foreign_voice_mars_bigtts');expect(command).not.toHaveBeenCalled();
 });
+it('selects uploaded narration material and explicitly adopts its registered candidate without generating speech',async()=>{
+ const {workspace}=setup();await waitFor(()=>expect((screen.getByLabelText('镜头连接与模型') as HTMLSelectElement).options.length).toBe(3));cleanup();
+ const ready={...workspace,narration:[{...workspace.narration![0],mode:'manual' as const,audioTrackId:'track',inputFingerprint:'manual-hash'}],candidates:[{id:'track',kind:'audio',shotId:'S01',status:'available'}]};
+ const command=vi.fn(async(name:string)=>name==='prepareWorkspaceCandidate'?{adoptionId:'manual-adoption'}:ready);
+ render(<WorkspaceNarrationPanel episodeId="e" workspace={workspace} selectedShotId="S01" pending={false} command={command} onChanged={vi.fn()} materials={[{id:'material',source_path:'voice.mp3',material_type:'audio',material_purpose:'narration'},{id:'music',source_path:'music.mp3',material_type:'audio',material_purpose:'background_music'}]}/>);
+ fireEvent.change(screen.getByLabelText('准备方式'),{target:{value:'manual'}});
+ expect(screen.getByRole('option',{name:'voice.mp3'})).toBeTruthy();expect(screen.queryByRole('option',{name:'music.mp3'})).toBeNull();
+ fireEvent.change(screen.getByLabelText('已登记音轨'),{target:{value:'material:material'}});fireEvent.click(screen.getByRole('button',{name:'采用人工口播'}));
+ await waitFor(()=>expect(command).toHaveBeenCalledWith('saveWorkspaceNarration',expect.objectContaining({mode:'manual',materialRevisionId:'material'})));
+ await waitFor(()=>expect(command).toHaveBeenCalledWith('adoptWorkspaceCandidate',expect.objectContaining({candidateId:'track',adoptionId:'manual-adoption'})));
+ expect(command.mock.calls.some(c=>c[0]==='generateWorkspaceNarration')).toBe(false);
+});

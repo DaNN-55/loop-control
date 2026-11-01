@@ -1,0 +1,26 @@
+{
+  "functions": [
+    "request_official_shot_video(uuid,uuid,text,uuid,text,integer,uuid,integer)",
+    "request_wan_shot_video(uuid,uuid,text,uuid,text,integer,uuid)",
+    "local_identity.request_workspace_official_visual(uuid,uuid,text,uuid,text,integer,uuid,integer)",
+    "local_identity.request_workspace_wan_visual(uuid,uuid,text,uuid,text,integer,uuid)",
+    "local_identity.reserve_wan_generation(uuid,integer,uuid)",
+    "local_identity.queue_workspace_images(uuid)",
+    "local_identity.reserve_workspace_images(uuid,integer,uuid)",
+    "local_identity.reserve_workspace_configured_video(uuid,integer,uuid)",
+    "local_identity.queue_workspace_visual(uuid)",
+    "local_identity.queue_selected_workspace_narration(uuid,text,jsonb,boolean)",
+    "local_identity.reserve_workspace_narration_submission(uuid,integer,uuid)"
+  ],
+  "historicalDataRetained": [
+    "generation_account_budgets",
+    "paid_generation_reservations"
+  ],
+  "retiredHttp": [
+    "GET /api/local/wan-budget",
+    "readGenerationBudget",
+    "setGenerationBudget",
+    "setWanBudget"
+  ],
+  "paidProviderRequests": 0
+}

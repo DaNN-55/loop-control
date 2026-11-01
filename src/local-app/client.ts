@@ -3,6 +3,13 @@ let csrf='',sessionGeneration=0;
 export async function localRequest(path:string,init?:RequestInit){
  if(path==='login'||path==='logout'){sessionGeneration++;csrf='';inFlight.clear();}
  const session=sessionGeneration;
+ // HMR can reload this helper while the authenticated app remains mounted.
+ // Restore a missing token before the mutation; never replay a rejected write.
+ if(init?.method&&init.method.toUpperCase()!=='GET'&&path!=='login'&&!new Headers(init.headers).get('X-CSRF-Token')){
+  if(!csrf)await localRequest('session');
+  if(session!==sessionGeneration||!csrf)throw new Error('会话已变化，请重新打开后操作。');
+  const headers=new Headers(init.headers);headers.set('X-CSRF-Token',csrf);init={...init,headers};
+ }
  const response=await fetch('/api/local/'+path,init);const value=await response.json();
  if(!response.ok){if(response.status===401&&path!=='login'&&session===sessionGeneration){sessionGeneration++;csrf='';inFlight.clear();window.dispatchEvent(new Event('loop-local-session-expired'));}throw Object.assign(new Error(String(value.error??'本机请求失败。').replaceAll('秘密','密钥')),value.preflight?{preflight:value.preflight}:{});}
  if(session===sessionGeneration&&typeof value.csrfToken==='string')csrf=value.csrfToken;return value;
@@ -26,4 +33,11 @@ export async function localConnectionCommand<T>(command:string,data:Record<strin
  let idempotencyKey=resumeKey??sessionStorage.getItem(storageKey);if(!idempotencyKey)idempotencyKey=crypto.randomUUID();sessionStorage.setItem(storageKey,idempotencyKey);
  const request=localRequest('connections',{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':csrf},body:JSON.stringify({command,data,idempotencyKey})}).then(value=>{sessionStorage.removeItem(storageKey);return value;}).finally(()=>inFlight.delete(storageKey));
  inFlight.set(storageKey,request);return request as Promise<T>;
+}
+
+/** Billing secrets stay in the request and component memory, never browser storage or a persisted digest. */
+export async function localBillingCommand<T>(command:string,data:unknown,operationKey:string=crypto.randomUUID()):Promise<T>{
+ const key='billing:'+operationKey,existing=inFlight.get(key);if(existing)return existing as Promise<T>;
+ const request=localRequest('connection-billing',{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':csrf},body:JSON.stringify({command,data,idempotencyKey:operationKey})}).finally(()=>inFlight.delete(key));
+ inFlight.set(key,request);return request as Promise<T>;
 }

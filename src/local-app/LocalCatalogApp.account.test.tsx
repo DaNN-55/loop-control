@@ -19,6 +19,10 @@ it('the blueprint page offers creative configuration without review switches or 
  await act(async()=>{render(<LocalCatalogApp/>);});await act(async()=>{fireEvent.click(screen.getByRole('button',{name:'账号'}));});
  expect(screen.getByLabelText('账号定位')).toBeTruthy();
  expect(screen.queryByText('审核设置')).toBeNull();expect(screen.queryByLabelText('账号默认配置检查')).toBeNull();
+ expect((screen.getByLabelText('账号定位') as HTMLTextAreaElement).disabled).toBe(true);
+ expect(screen.queryByRole('button',{name:'保存通用规则'})).toBeNull();
+ fireEvent.click(screen.getByRole('button',{name:'修改'}));
+ expect((screen.getByLabelText('账号定位') as HTMLTextAreaElement).disabled).toBe(false);
  expect(screen.getByRole('button',{name:'保存通用规则'})).toBeTruthy();
  const user=userEvent.setup();await user.click(screen.getByRole('button',{name:'账号操作'}));await user.click(screen.getByRole('menuitem',{name:'刷新账号'}));
  expect(fetcher.mock.calls.some(([path,init])=>String(path).includes('/account-commands')&&JSON.parse(String(init?.body??'{}')).command==='checkBlueprint')).toBe(false);

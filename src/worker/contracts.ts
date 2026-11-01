@@ -1,3 +1,4 @@
+import {wanVideoModel,wanVideoParameters,defaultWanModelSettings} from '../wanVideoModels.js';
 import {isVideoProvider, videoAdapters, videoProviders} from "./videoProviderCatalog.js";
 import{openChatCutProjectPath}from"./openchatcutPaths.js";
 import { registeredAdapters } from "./registeredAdapters.js";
@@ -474,7 +475,8 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
   }
   if (input.media && "wanVideo" in input.media) {
     const video = input.media.wanVideo;
-    if (!(input.task.provider === "bailian" && input.media.adapter === "wan_video" && input.task.model === "wan2.6-i2v-flash" || isVideoProvider(input.task.provider) && videoProviders[input.task.provider].adapter === input.media.adapter && (videoProviders[input.task.provider].models as readonly string[]).includes(input.task.model)) || !["a_roll_generation", "b_roll_generation"].includes(input.capability) || !isConnectionId(input.credentialRef) || !Number.isInteger(video.durationSeconds) || video.durationSeconds < 2 || video.durationSeconds > 15 || !isNonEmptyString(video.prompt) || video.prompt.length > 1500) throw new Error("万相任务的冻结配置无效。");
+    if (!(input.task.provider === "bailian" && input.media.adapter === "wan_video" && !!wanVideoModel(input.task.model) || isVideoProvider(input.task.provider) && videoProviders[input.task.provider].adapter === input.media.adapter && (videoProviders[input.task.provider].models as readonly string[]).includes(input.task.model)) || !["a_roll_generation", "b_roll_generation"].includes(input.capability) || !isConnectionId(input.credentialRef) || !Number.isInteger(video.durationSeconds) || video.durationSeconds < 2 || video.durationSeconds > 15 || !isNonEmptyString(video.prompt) || video.prompt.length > 1500) throw new Error("万相任务的冻结配置无效。");
+    if(input.task.provider==='bailian')wanVideoParameters(input.task.model,video.durationSeconds,video.settings??defaultWanModelSettings(input.task.model));
     assertArtifactManifest(video.firstFrame);
     if (!input.inputArtifacts.some((artifact) => artifact.relativePath === video.firstFrame.relativePath && artifact.sha256 === video.firstFrame.sha256)) throw new Error("万相首帧不属于冻结输入。");
   }

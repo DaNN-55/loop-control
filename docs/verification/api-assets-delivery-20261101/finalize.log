@@ -1,0 +1,115 @@
+{
+  at: '2026-11-01T11:22:03.321Z',
+  episode: '79eb3098-8733-472a-9bde-873edd4cd26c',
+  stage: 'production_completed',
+  accountChecks: { accounts: true, budgets: true },
+  previousEpisodesUnchanged: true,
+  previousWorkspacesUnchanged: true,
+  previousProjectBytesUnchanged: true,
+  manualNarrations: [],
+  captions: [
+    { shot: 'shot-01', method: 'manual', confirmed: true, task: null },
+    { shot: 'shot-02', method: 'manual', confirmed: true, task: null },
+    { shot: 'shot-03', method: 'manual', confirmed: true, task: null },
+    { shot: 'shot-04', method: 'manual', confirmed: true, task: null }
+  ],
+  allTasksCompleted: true,
+  manualRegistrations: 0,
+  workerRuns: [
+    {
+      task: '1f2e3654-037f-43bd-800d-810f165d2e2e',
+      status: 'completed'
+    }
+  ],
+  totalCostCents: 0,
+  activeTasks: 0,
+  exportChecks: [
+    { name: 'used_content', passed: true },
+    { name: 'captions', passed: true },
+    { name: 'technical', passed: true },
+    { name: 'representative_frame', passed: true },
+    { name: 'export_file', passed: true }
+  ],
+  confirmedExport: true,
+  deliveryVerified: true,
+  exactConfirmedVideo: true,
+  filesVerified: 6,
+  productionFileCount: 42,
+  productionBytes: 19517613,
+  redactedFields: 3,
+  scale105: true,
+  fourSources: [
+    {
+      shot: 'shot-01',
+      sha256: '0740fe905161db31bae05197e8ef1b11af207f1463930ea474435e5b061e31e0',
+      frames: 120
+    },
+    {
+      shot: 'shot-02',
+      sha256: '67dfaf39beaae0704a520ad3c1162dfb7441822018e922413f855c5278012c59',
+      frames: 120
+    },
+    {
+      shot: 'shot-03',
+      sha256: 'a6412f7e2edd9c277efbe308f7d018e07d3cc341582d68f19431dbea6422e76c',
+      frames: 60
+    },
+    {
+      shot: 'shot-04',
+      sha256: 'f720f7b4c3dd4035725db373b40fb30bb2ef3dd669c6ea3f3ee2c7328a1c13ca',
+      frames: 90
+    }
+  ],
+  sourcesMatchExport: true,
+  timelineFrames: 390,
+  playback: {
+    duration: 13.056,
+    ended: true,
+    paused: true,
+    src: 'http://127.0.0.1:5174/_local-artifact?episode=79eb3098-8733-472a-9bde-873edd4cd26c&path=%E6%9C%AA%E5%88%86%E7%B3%BB%E5%88%97--469c8e63-de75-4f1c-b61e-84929254527f%2F%E8%A7%86%E9%A2%91%20API%20%E9%80%90%E9%A1%B9%E7%9C%9F%E5%AE%9E%E7%94%9F%E6%88%90%20%C2%B7%201101--79eb3098-8733-472a-9bde-873edd4cd26c%2Fworkspace-exports%2Fd0a9059f-5baa-4be0-ba20-4ad5aae945c5%2Fb064c33a19e8e2302378eebc1b2a1c4a93f42892f2d0c6ee42b2ea941efa7453.mp4&sha256=b064c33a19e8e2302378eebc1b2a1c4a93f42892f2d0c6ee42b2ea941efa7453',
+    time: 13.056
+  },
+  httpDownloads: [
+    {
+      name: '元数据',
+      file: 'metadata.json',
+      status: 200,
+      bytes: 2115,
+      sha256: '007552e32724c224cd9c289a0455ff8c8f935a525b5f8045d711625de40dff4f',
+      passed: true
+    },
+    {
+      name: '封面',
+      file: 'cover.png',
+      status: 200,
+      bytes: 1601772,
+      sha256: '0740fe905161db31bae05197e8ef1b11af207f1463930ea474435e5b061e31e0',
+      passed: true
+    },
+    {
+      name: '检查证据',
+      file: 'checks.json',
+      status: 200,
+      bytes: 8847,
+      sha256: '6f244861acc16f87645768c8e054889bcb37ef9bc727b47b4f77c1c7a11b3b34',
+      passed: true
+    },
+    {
+      name: '交付清单',
+      file: 'manifest.json',
+      status: 200,
+      bytes: 3229,
+      sha256: '7b3a831b3b3742f08481e941482d7c735d9bc0b88e1f6900b37959aa9746580e',
+      passed: true
+    },
+    {
+      name: '可编辑工程',
+      file: '5403d47d6535bf0ba4689449beb3e453a47a6d6705820e09969ce1fbcb984f45.json',
+      status: 200,
+      bytes: 20131,
+      sha256: '5403d47d6535bf0ba4689449beb3e453a47a6d6705820e09969ce1fbcb984f45',
+      passed: true
+    }
+  ],
+  additionalProviderTasks: 0
+}

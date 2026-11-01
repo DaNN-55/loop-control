@@ -15,7 +15,7 @@ const enabled=process.env.LOOP_WORKSPACE_ACCEPTANCE==='1';
 it.skipIf(!enabled)('real queue claims and one unknown controlled Provider submission remain blockers without rewriting the task or fee',async()=>{
  const f=await narrationFixture(undefined,undefined,false,false,['db/local/120-native-workspace-storage-locations.sql','db/local/125-global-media-root-plans.sql']),worker=f.workerPool(),target=await realpath(await mkdtemp('/private/tmp/loop-root-blockers-'));
  try{
-  await f.authorize();expect((await f.request('setWanBudget',{trialCents:300,totalCents:10000,full:false})).status).toBe(200);let w=await f.read();
+  await f.authorize();let w=await f.read();
   const send=async(command:string,data:Record<string,unknown>={})=>{const r=await f.request(command,{workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[0].id,...data});expect(r.status,JSON.stringify(r.body)).toBe(200);if(r.body.id===w.id)w=r.body;return r.body;};
   await send('saveWorkspaceNarration',{mode:'tts',...f.narrationSettings,text:'全局根盘点不更改未知收费请求。'});await send('confirmWorkspaceNarration');await send('generateWorkspaceNarration',{reservationCents:100});const taskId=w.narration[0].taskId;
   const planned=async(reason:string)=>{const task=(await f.c.query('SELECT to_jsonb(t) value FROM public.tasks t WHERE id=$1',[taskId])).rows,fee=(await f.c.query('SELECT to_jsonb(r) value FROM public.paid_generation_reservations r WHERE task_id=$1',[taskId])).rows;

@@ -7,7 +7,7 @@ import {join} from 'node:path';
 import {workspaceAudioFixture} from './workspaceAudio.fixture';
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('native workspace projection follows audible source over muted prior speech and reports none without altering music or effects',async()=>{
  const f=await workspaceAudioFixture();try{
-  await f.authorize();await f.request('setWanBudget',{trialCents:300,totalCents:10000,full:false});let w=f.made;
+  await f.authorize();let w=f.made;
   const send=async(name:string,data={})=>{const r=await f.chosenRequest(name,{workspaceId:w.id,expectedRevision:w.revision,...data});expect(r.status,JSON.stringify(r.body)).toBe(200);w=r.body;return w;};
   const upload=async(path:string,type:string,purpose:string)=>{const r=await f.request('importMaterial',{sourceKind:'file',sourcePath:path.split('/').pop(),contentBase64:(await readFile(path)).toString('base64'),materialType:type,mimeType:type==='video'?'video/mp4':'audio/mpeg',isMainScript:false,materialPurpose:purpose});expect(r.status,JSON.stringify(r.body)).toBe(200);return r.body.id;};
   const clip=w.clips[0],video=await upload(f.media.video,'video','a_roll');await send('matchWorkspaceMaterial',{clipId:clip.id,materialRevisionId:video});

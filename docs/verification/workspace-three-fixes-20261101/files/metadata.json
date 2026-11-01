@@ -1,0 +1,62 @@
+{
+  "title": "人工口播与字幕保存修复复验",
+  "description": "两段人工口播、两组真实本地声学对齐、原生保存重开、成片与交付文件验证。仅使用本地测试素材，未调用付费生成。",
+  "tags": [
+    "流程复验",
+    "人工口播",
+    "字幕对齐"
+  ],
+  "exportId": "d0e3ca0f-3a63-42a7-b307-5d95f3329646",
+  "contentSha256": "dbb1ac60a211a5e872b2c4d01cefb100bb120e4fb034ba2fcca992e9a3779d86",
+  "scriptRevisionId": "2b44486a-3242-4437-9221-128555e90307",
+  "narration": [
+    {
+      "shotId": "shot-01",
+      "baselineText": "这是第一段画面，检查账号规则。",
+      "sourceText": "这是第一段画面，检查账号规则。",
+      "adoptedText": "这是第一段画面，检查账号规则。",
+      "textCoverage": "complete_source",
+      "windows": [
+        {
+          "srcInFrame": 0,
+          "usedDurationSeconds": 6,
+          "sourceDurationSeconds": 6,
+          "playbackRate": 1,
+          "fps": 30,
+          "audible": true
+        }
+      ],
+      "textSource": "owner_adoption",
+      "sourceDiffersFromBaseline": false,
+      "differsFromBaseline": false,
+      "audioTrackId": "9ce1e5b2-98bf-4313-bb39-a02ade906b7c",
+      "sha256": "972cc1858ec78b9c8758f1c6bb69900133461cdfe80ee921173be7e4c31495d3",
+      "itemId": "workspace-narration-shot-shot-01",
+      "source": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/人工口播字幕直链修复 · E2E复验--b232b4fd-b43c-470c-bbdf-d97ae3f62f9d/materials/972cc1858ec78b9c8758f1c6bb69900133461cdfe80ee921173be7e4c31495d3-人工口播-01.mp3"
+    },
+    {
+      "shotId": "shot-02",
+      "baselineText": "这是第二段画面，检查预算返回。",
+      "sourceText": "这是第二段画面，检查预算返回。",
+      "adoptedText": "这是第二段画面，检查预算返回。",
+      "textCoverage": "complete_source",
+      "windows": [
+        {
+          "srcInFrame": 0,
+          "usedDurationSeconds": 6,
+          "sourceDurationSeconds": 6,
+          "playbackRate": 1,
+          "fps": 30,
+          "audible": true
+        }
+      ],
+      "textSource": "owner_adoption",
+      "sourceDiffersFromBaseline": false,
+      "differsFromBaseline": false,
+      "audioTrackId": "45b5c00a-4465-48eb-9828-631e1789ca55",
+      "sha256": "b4aa281cdf7d4c6a0c8918d7e390d68145fc3ba0a5e0f67c2f80ad3f58206e17",
+      "itemId": "workspace-narration-shot-shot-02",
+      "source": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/人工口播字幕直链修复 · E2E复验--b232b4fd-b43c-470c-bbdf-d97ae3f62f9d/materials/b4aa281cdf7d4c6a0c8918d7e390d68145fc3ba0a5e0f67c2f80ad3f58206e17-人工口播-02.mp3"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+(node:90224) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+4:18:32 PM [vite] (client) hmr update /src/local-app/ProductionWorkspacePanel.tsx
+Worker调度扫描失败：Worker/编排程序未准备、已过期或产物损坏；请先运行 npm run runtime:prepare 并重启服务。
+
+  VITE v7.3.6  ready in 348 ms
+
+  ➜  Local:   http://127.0.0.1:5174/
+[BABEL] Note: The code generator has deoptimised the styling of /Users/dan/Programs/loop-control/.loop-control/local/state/vite-cache/deps/react-dom_client.js?v=9888ccb6 as it exceeds the max of 500KB.
+(node:94725) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)

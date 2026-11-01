@@ -52,6 +52,7 @@ it('paginates 1284 series, searches all pages, and keeps the current editor draf
   const {container} = render(<SeriesSettings isPending={false} onCreate={vi.fn()} series={series} seriesVersions={[]}/>);
   const list = container.querySelector<HTMLElement>('.series-current-layout > aside > nav')!;
   expect(list.querySelectorAll(':scope > button.account-series-entry').length).toBe(20);
+  await user.click(screen.getByRole('button', {name:'修改'}));
   const positioning = screen.getByLabelText('系列定位');
   await user.type(positioning, '未保存的定位');
   await user.click(within(screen.getByRole('navigation', {name:'系列分页'})).getByRole('button', {name:'下一页'}));

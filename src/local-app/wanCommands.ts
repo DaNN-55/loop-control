@@ -1,4 +1,3 @@
-import {saveGenerationBudget} from './generationBudgets.js';
 import {requireVisualStorageLocation} from './workspaceVisualMedia.js';
 import {isVideoProvider,videoProviders} from "../worker/videoProviderCatalog.js";
 import type {PoolClient} from 'pg';
@@ -7,9 +6,6 @@ import {ConfigurationError} from './configurationCommands.js';
 import {verifyEpisodeFile} from './episodeFiles.js';
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 export async function executeWanCommand(c:PoolClient,e:{id:string;account_id:string;policy:Record<string,unknown>},root:string,runtime:InputRuntime,command:string,data:Record<string,unknown>,requestId:string){
- if(command==='setWanBudget'){
-  return saveGenerationBudget(c,e.account_id,data);
- }
  await requireVisualStorageLocation(c,root,e.id,runtime.minimumFreeBytes);
  let taskId:string;
  if(command==='resumeWan'){
@@ -38,7 +34,7 @@ export async function executeWanCommand(c:PoolClient,e:{id:string;account_id:str
   // Opt in before INSERT so the existing output-namespace trigger isolates this
   // task. A rejected request rolls the opt-in back with the command transaction.
   await c.query('UPDATE local_identity.input_episodes SET media_enabled=true WHERE episode_id=$1',[e.id]);
-  try{taskId=(await c.query(official?'SELECT public.request_official_shot_video($1,$2,$3,$4,$5,$6,$7,$8) id':'SELECT public.request_wan_shot_video($1,$2,$3,$4,$5,$6,$7) id',[e.id,data.reviewPackageId,data.shotId,data.firstFrameId,data.prompt.trim(),data.durationSeconds,requestId,...(official?[data.reservationCents]:[])])).rows[0].id;}catch(cause){if(cause&&typeof cause==='object'&&'code' in cause&&cause.code==='P0001'&&'message' in cause&&cause.message==='Approve a generation budget first')throw new ConfigurationError(409,'尚未设置账号视频生成预算。请展开「视频生成预算」保存额度，再重试。');throw cause;}
+  taskId=(await c.query(official?'SELECT public.request_official_shot_video($1,$2,$3,$4,$5,$6,$7,$8) id':'SELECT public.request_wan_shot_video($1,$2,$3,$4,$5,$6,$7) id',[e.id,data.reviewPackageId,data.shotId,data.firstFrameId,data.prompt.trim(),data.durationSeconds,requestId,...(official?[data.reservationCents]:[])])).rows[0].id;
  }
  return(await c.query('SELECT to_jsonb(t) result FROM public.tasks t WHERE id=$1 AND episode_id=$2',[taskId,e.id])).rows[0].result;
 }

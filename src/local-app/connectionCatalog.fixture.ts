@@ -11,12 +11,14 @@ import {copyFixtureSchema} from './fixtureSchema';
 import {createLocalHandler} from './localRoute';
 import {LocalConnections} from './connections';
 import {createProviderProbe} from './providerProbe';
+import {createProviderUsageReader} from './providerUsage';
+import {createProviderModelsReader,type ProviderModelsReader} from './providerModels';
 import {hashPassword} from './password';
 import {csrfFor,tokenHash,sessionCookie} from './sessions';
-export async function connectionCatalogFixture(){
+export async function connectionCatalogFixture(options:{modelsReader?:ProviderModelsReader;billingReader?:import('./providerBilling').BillingReader}={}){
  const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MODULE??join(process.cwd(),'scripts/runtime/environment.mjs')),context=runtimeContext();context.assertDatabase();
  const database='loop_connections_167_'+randomBytes(6).toString('hex');context.sql('CREATE DATABASE '+database+' TEMPLATE template0','postgres');
- try{await copyFixtureSchema(context,database,[]);}catch(error){context.sql('DROP DATABASE '+database+' WITH(FORCE)','postgres');throw error;}
+ try{await copyFixtureSchema(context,database,['db/local/127-connection-model-settings.sql','db/local/128-connection-model-discovery.sql','db/local/129-bailian-video-models.sql','db/local/132-connection-billing.sql']);}catch(error){context.sql('DROP DATABASE '+database+' WITH(FORCE)','postgres');throw error;}
  const children=new Set<ReturnType<typeof spawn>>();
  const poolFor=(user:string)=>new Pool({database,user,max:4,connectionTimeoutMillis:5000,stream:()=>{
   const child=spawn('docker',['exec','-i',context.container,'perl','-MIO::Socket::UNIX','-MIO::Select','-MSocket=SOCK_STREAM','-e',"my $s=IO::Socket::UNIX->new(Type=>SOCK_STREAM,Peer=>'/var/run/postgresql/.s.PGSQL.5432') or die;my $sel=IO::Select->new(\\*STDIN,$s);while(1){for my $f($sel->can_read){my $n=sysread($f,my $b,65536);exit unless $n;my $o=fileno($f)==0?$s:\\*STDOUT;while(length $b){my $w=syswrite($o,$b);die unless $w;substr($b,0,$w,'');}}}"],{env:context.env,stdio:['pipe','pipe','pipe']});
@@ -25,10 +27,12 @@ export async function connectionCatalogFixture(){
  const admin=poolFor('postgres'),pool=poolFor('loop_app'),root=await mkdtemp('/private/tmp/loop-connections-167-');
  const owner=randomUUID(),other=randomUUID(),account=randomUUID(),token=randomBytes(32).toString('hex'),otherToken=randomBytes(32).toString('hex'),password='synthetic-'+randomUUID(),email=owner+'@example.invalid';
  let networkAvailable=true,secretReads=0;const secrets=new Map<string,string>();
- const provider=createServer((req,res)=>{res.setHeader('Content-Type','application/json');if(req.headers.authorization!=='Bearer synthetic-openai-key'){res.writeHead(401);res.end('{}');return;}res.end(JSON.stringify({id:'gpt-image-2'}));});
+ const provider=createServer((req,res)=>{res.setHeader('Content-Type','application/json');if(req.url==='/models'&&req.headers.authorization==='Bearer synthetic-openai-key'){res.end(JSON.stringify({data:[{id:'gpt-image-2'},{id:'unadapted-example'}]}));return;}if(req.url==='/freesound-usage?token=synthetic-freesound-key'){res.end(JSON.stringify({current:{sustained:{num:2,limit:'2000/day'}},historic:[['2026-10-31',5],['2026-11-01',3]]}));return;}if(req.url==='/minimax'&&req.headers.authorization==='Bearer synthetic-cn-key'){res.end(JSON.stringify({items:[]}));return;}if(req.headers.authorization!=='Bearer synthetic-openai-key'){res.writeHead(401);res.end('{}');return;}res.end(JSON.stringify({id:'gpt-image-2'}));});
  provider.listen(0,'127.0.0.1');await once(provider,'listening');const providerOrigin='http://127.0.0.1:'+(provider.address() as {port:number}).port;
- const probe=createProviderProbe({directory:'/not-a-production-policy',policySha256:'0'.repeat(64)},async(url,init)=>{if(String(url)!=='https://api.openai.com/v1/models/gpt-image-2')throw Error('Uncontrolled provider request');return fetch(providerOrigin,init);},undefined,{manualVerification:true});
- const connections=new LocalConnections(pool,{mode:'keychain',async putImmutable(id,value){const old=secrets.get(id);if(old&&old!==value)throw Error('Immutable secret');secrets.set(id,value);},async get(id){secretReads++;const value=secrets.get(id);if(!value)throw Error('Missing synthetic secret');return value;}},{...probe,get networkAvailable(){return networkAvailable;}});
+ const probe=createProviderProbe({directory:'/not-a-production-policy',policySha256:'0'.repeat(64)},async(url,init)=>{if(String(url)==='https://api.minimax.cn/v2/query/video_generation?page_num=1&page_size=1')return fetch(providerOrigin+'/minimax',init);if(String(url)!=='https://api.openai.com/v1/models/gpt-image-2')throw Error('Uncontrolled provider request');return fetch(providerOrigin,init);},undefined,{manualVerification:true});
+ const usageReader=createProviderUsageReader(async(url,init)=>{const u=new URL(url);if(u.origin+u.pathname!=='https://freesound.org/apiv2/usage/'||u.searchParams.get('num_days')!=='7')throw Error('Uncontrolled usage request');return fetch(providerOrigin+'/freesound-usage?token='+encodeURIComponent(u.searchParams.get('token')??''),init);});
+ const modelsReader=options.modelsReader??createProviderModelsReader(async(url,init)=>{if(String(url)!=='https://api.openai.com/v1/models')throw Error('Uncontrolled models request');return fetch(providerOrigin+'/models',init);});
+ const connections=new LocalConnections(pool,{mode:'keychain',async putImmutable(id,value){const old=secrets.get(id);if(old&&old!==value)throw Error('Immutable secret');secrets.set(id,value);},async get(id){secretReads++;const value=secrets.get(id);if(!value)throw Error('Missing synthetic secret');return value;}},{...probe,get networkAvailable(){return networkAvailable;}} ,usageReader,modelsReader,options.billingReader);
  let handler:ReturnType<typeof createLocalHandler>;const server=createServer((q,r)=>handler(q,r));
  async function close(){server.closeAllConnections();await new Promise<void>(done=>server.close(()=>done()));provider.closeAllConnections();await new Promise<void>(done=>provider.close(()=>done()));await Promise.all([pool.end(),admin.end()]);for(const child of children)child.kill();context.sql('DROP DATABASE '+database+' WITH(FORCE)','postgres');await rm(root,{recursive:true,force:true});}
  try{

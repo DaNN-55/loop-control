@@ -127,6 +127,7 @@ export const localCatalogSql=` with owned as materialized (
   'total',(select total from bounds),'page',(select page from bounds),'pageSize',20,
   'episodeCount',(select count(*) from owned),
   'accountCounts',coalesce((select jsonb_object_agg(account_id,n) from(select account_id,count(*) n from owned group by account_id)s),'{}'),
+  'unassignedAccountCounts',coalesce((select jsonb_object_agg(account_id,n) from(select e.account_id,count(*) n from owned e left join current_collections c on c.episode_id=e.id where (c.container_id is not null and c.series_id is null) or (c.container_id is null and e.series_version_id is null) group by e.account_id)s),'{}'),
   'reviewCount',(select count(*) from owned e where archived_at is null and not local_identity.is_historical_episode(e.id) and ((not exists(select 1 from local_identity.production_workspaces w where w.episode_id=e.id) and stage in ('script_review','visual_review','storyboard_review','qc_review')) or exists(select 1 from workspace_facts w where w.episode_id=e.id and w.basis_current and w.export_current and w.export_ready and w.confirmed_at is null and not w.open_issue and e.stage<>'production_completed'))),
   'stages',coalesce((select jsonb_object_agg(stage,n) from(select stage,count(*) n from filtered group by stage)s),'{}'),
   'artifactCounts',coalesce((select jsonb_object_agg(episode_id,n) from(select a.episode_id,count(*) n from public.artifacts a join page_rows e on e.id=a.episode_id group by a.episode_id)s),'{}'),

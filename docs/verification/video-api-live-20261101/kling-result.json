@@ -1,0 +1,16 @@
+{
+  "provider": "kling",
+  "connection": "kling",
+  "version": "2dc46417-5042-4db1-a44a-5fb25a256329",
+  "outcome": "generation_failed",
+  "model": "kling-v3",
+  "durationSeconds": 3,
+  "error": "Provider 请求结果未知；已消费的请求预算保留。请先核对请求账本与供应商记录，不会自动重发。",
+  "network": {
+    "directory": "/Users/dan/Programs/loop-control/.loop-control/maintenance/video-api-live-20261101/kling-policy",
+    "policySha256": "2cc487f386f927318b0bad92f6987700c2d3a5a738ae0d0baa40d7b720aeb9d1"
+  },
+  "reservationCny": 2.1,
+  "actualCost": "unverified; reservation is not charge",
+  "elapsedMs": 5052
+}

@@ -1,0 +1,186 @@
+{
+  "id": "76577bb6-178f-4a8a-9eeb-d35b49f3a439",
+  "checks": [
+    {
+      "name": "used_content",
+      "detail": "已核对 4 个实际来源。",
+      "passed": true,
+      "sources": [
+        {
+          "sha256": "a647ab1a97acfc14fba75a98ea1b123b14b5e2b8f1f4c194d81f870d68ffb1da",
+          "fileSize": 681627,
+          "relativePath": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/账号系列参考图预算返回 · 完整E2E--2f7553cb-c3e9-4dc5-b900-f1439329a0b0/materials/a647ab1a97acfc14fba75a98ea1b123b14b5e2b8f1f4c194d81f870d68ffb1da-source-voice-01.mp4"
+        },
+        {
+          "sha256": "2e17a49fa5b5ce03c5093e4f98be9e887f38e91b0817f7818aac6bc79cbf5e2d",
+          "fileSize": 43734,
+          "relativePath": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/账号系列参考图预算返回 · 完整E2E--2f7553cb-c3e9-4dc5-b900-f1439329a0b0/materials/2e17a49fa5b5ce03c5093e4f98be9e887f38e91b0817f7818aac6bc79cbf5e2d-source-voice-02.mp4"
+        },
+        {
+          "sha256": "8d221b3b946bda31066fa0800897cee568e252d58f093f03d17ce43db26f5e5f",
+          "fileSize": 34707,
+          "relativePath": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/账号系列参考图预算返回 · 完整E2E--2f7553cb-c3e9-4dc5-b900-f1439329a0b0/native-tasks/1a16d9a7-a2f2-4e6e-9f38-694eeec82551/e5fd5a61-3a41-438f-930e-fdb3ea5ee722.mp3"
+        },
+        {
+          "sha256": "33a615ed556bba15e0b914db62109fb2e12bce6006e633cce1ff28f0f23cb873",
+          "fileSize": 34515,
+          "relativePath": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/账号系列参考图预算返回 · 完整E2E--2f7553cb-c3e9-4dc5-b900-f1439329a0b0/native-tasks/74fad210-a159-4f51-a030-aa005d4ad564/1bb2b1dc-5fdc-4a38-8951-155a2c0ac4e8.mp3"
+        }
+      ]
+    },
+    {
+      "name": "captions",
+      "detail": "已核对 2 组字幕时序，正文随最终文件一次确认。",
+      "passed": true,
+      "evidence": [
+        {
+          "clipId": "56d1c6bc-3a90-4b77-a46c-335014653ca4",
+          "detail": null,
+          "itemId": "shot-shot-01-56d1c6bc-3a90-4b77-a46c-335014653ca4",
+          "shotId": "shot-01",
+          "taskId": "b2c309bc-15c3-4e49-8748-e097ac755d82",
+          "timing": "current",
+          "contract": {
+            "cues": [
+              {
+                "id": "phrase-1~0",
+                "text": "这是第一段画面，",
+                "endMs": 1525,
+                "startMs": 20
+              },
+              {
+                "id": "phrase-2~0",
+                "text": "检查账号规则。",
+                "endMs": 5960,
+                "startMs": 1866
+              }
+            ],
+            "text": "这是第一段画面，检查账号规则。",
+            "enabled": true,
+            "spatial": {
+              "anchor": "bottom-center",
+              "insets": {
+                "top": 0.08,
+                "left": 0.08,
+                "right": 0.08,
+                "bottom": 0.18
+              },
+              "version": "shot-caption-space/v2",
+              "maxLines": 2,
+              "safeArea": "title-safe",
+              "aspectRatio": "9:16",
+              "maxCharactersPerLine": 16
+            },
+            "version": "shot-captions/v1",
+            "contentMode": "independent"
+          },
+          "durationMs": 6000,
+          "audioTrackId": "237eb756-6bab-4226-8244-8514a547f963",
+          "narrationText": null,
+          "textConfirmed": false,
+          "inputFingerprint": "b2b19603f7457c6b2f61ae937d1995acaa3626a9fb51ae506789f70d0c24dfe5",
+          "alignmentInputVersion": "8c42b8bac02df0717624f45eb6db1549b3bac4727de05aaf785aa142783c98f2"
+        },
+        {
+          "clipId": "6db92056-ee08-468e-9e5e-c2f2cf512ef0",
+          "detail": null,
+          "itemId": "shot-shot-02-6db92056-ee08-468e-9e5e-c2f2cf512ef0",
+          "shotId": "shot-02",
+          "taskId": "5533e0af-a041-4ed4-8bce-d10f6ab6a7f5",
+          "timing": "current",
+          "contract": {
+            "cues": [
+              {
+                "id": "phrase-1~0",
+                "text": "这是第二段画面，",
+                "endMs": 1585,
+                "startMs": 20
+              },
+              {
+                "id": "phrase-2~0",
+                "text": "检查预算返回。",
+                "endMs": 5960,
+                "startMs": 1946
+              }
+            ],
+            "text": "这是第二段画面，检查预算返回。",
+            "enabled": true,
+            "spatial": {
+              "anchor": "bottom-center",
+              "insets": {
+                "top": 0.08,
+                "left": 0.08,
+                "right": 0.08,
+                "bottom": 0.18
+              },
+              "version": "shot-caption-space/v2",
+              "maxLines": 2,
+              "safeArea": "title-safe",
+              "aspectRatio": "9:16",
+              "maxCharactersPerLine": 16
+            },
+            "version": "shot-captions/v1",
+            "contentMode": "independent"
+          },
+          "durationMs": 6000,
+          "audioTrackId": "aae2a2d3-7f6d-4864-b7a9-69499d921345",
+          "narrationText": null,
+          "textConfirmed": false,
+          "inputFingerprint": "4e125abf2f888c623f9a467fec170b7267a91232cae7755885a991ae2d7b133d",
+          "alignmentInputVersion": "b197417ef924e1ff993b30cd31bfdfd043cca096202f15f6fba9087614fc0f0b"
+        }
+      ]
+    },
+    {
+      "name": "technical",
+      "detail": "实际 MP4 时长、画幅、音频及黑帧检查通过。",
+      "passed": true,
+      "inspection": {
+        "width": 1080,
+        "height": 1920,
+        "hasAudio": true,
+        "blackFrameCount": 0,
+        "durationSeconds": 12.053333
+      },
+      "videoFrames": 360,
+      "audioExpected": true,
+      "videoDurationSeconds": 12,
+      "expectedDurationSeconds": 12,
+      "containerDurationSeconds": 12.053333
+    },
+    {
+      "name": "representative_frame",
+      "detail": "已实际解码代表帧。",
+      "passed": true,
+      "artifact": {
+        "sha256": "20b4836ec421a2d3162d6720ef720d0fa0df879698cdf116d89785df5f548323",
+        "fileSize": 58720,
+        "relativePath": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/账号系列参考图预算返回 · 完整E2E--2f7553cb-c3e9-4dc5-b900-f1439329a0b0/workspace-exports/76577bb6-178f-4a8a-9eeb-d35b49f3a439/representative.jpg"
+      }
+    },
+    {
+      "name": "export_file",
+      "detail": "最终文件已按字节 SHA-256 与大小不可变登记。",
+      "passed": true
+    }
+  ],
+  "status": "ready",
+  "project": {
+    "sha256": "1a91b6243d030dc63ba2db8ccc5237a86c7dcac5ee4a45637d3ad69edd65545b",
+    "fileSize": 16652,
+    "relativePath": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/账号系列参考图预算返回 · 完整E2E--2f7553cb-c3e9-4dc5-b900-f1439329a0b0/production-workspace/versions/1a91b6243d030dc63ba2db8ccc5237a86c7dcac5ee4a45637d3ad69edd65545b.json"
+  },
+  "artifact": {
+    "sha256": "c384cee57060e5bac02a7c51b85348c2ebc62f9e780ef82a5ddcac4b8068fb71",
+    "fileSize": 4227245,
+    "relativePath": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/账号系列参考图预算返回 · 完整E2E--2f7553cb-c3e9-4dc5-b900-f1439329a0b0/workspace-exports/76577bb6-178f-4a8a-9eeb-d35b49f3a439/c384cee57060e5bac02a7c51b85348c2ebc62f9e780ef82a5ddcac4b8068fb71.mp4"
+  },
+  "created_at": "2026-11-01T08:36:13.292242+00:00",
+  "created_by": "644f8c5a-b668-48a3-8a25-94c4e502fa04",
+  "episode_id": "2f7553cb-c3e9-4dc5-b900-f1439329a0b0",
+  "confirmed_at": null,
+  "confirmed_by": null,
+  "workspace_id": "b71c4f80-858d-442b-93f0-98824d90ad93",
+  "content_sha256": "b678dcc2e3f66cbe29ef5be05b599f7a446b2ba7fb99a92c5519fe46113a93cb",
+  "project_content_version": 12
+}

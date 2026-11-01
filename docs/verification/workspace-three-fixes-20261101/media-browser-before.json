@@ -1,0 +1,8 @@
+{
+  "state": "Browser tab: 6, Title: \"127.0.0.1:53352/before.mp4\", URL: \"http://127.0.0.1:53352/before.mp4\".\n0 AXWebArea 127.0.0.1:53352/before.mp4\n\t1 container 无法播放媒体。\n\t\t3 slider (disabled) 视频时间进度条\n\nThe focused UI element is 0 AXWebArea 127.0.0.1:53352/before.mp4",
+  "video": {
+    "duration": null,
+    "readyState": 0
+  },
+  "logs": []
+}

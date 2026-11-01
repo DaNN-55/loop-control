@@ -1,0 +1,42 @@
+[
+  {
+    "name": "封面",
+    "status": 200,
+    "file": "downloads/cover.png",
+    "bytes": 49911,
+    "sha256": "eb50ac41dc1c2fd1a695d76ab6b95665cb4847ffbecce9eeb5619418fe05c20d",
+    "expectedSha256": "eb50ac41dc1c2fd1a695d76ab6b95665cb4847ffbecce9eeb5619418fe05c20d"
+  },
+  {
+    "name": "元数据",
+    "status": 200,
+    "file": "downloads/metadata.json",
+    "bytes": 2707,
+    "sha256": "d7d11937bcba87ecee8bba09e512854a4e40a7e9d6ccab8810b424d0ee85165b",
+    "expectedSha256": "d7d11937bcba87ecee8bba09e512854a4e40a7e9d6ccab8810b424d0ee85165b"
+  },
+  {
+    "name": "检查证据",
+    "status": 200,
+    "file": "downloads/checks.json",
+    "bytes": 6751,
+    "sha256": "01a9a2af57924e1e774dacf4ff4db1b0908eb6756907ae082b01f51eb288e1e9",
+    "expectedSha256": "01a9a2af57924e1e774dacf4ff4db1b0908eb6756907ae082b01f51eb288e1e9"
+  },
+  {
+    "name": "交付清单",
+    "status": 200,
+    "file": "downloads/manifest.json",
+    "bytes": 3332,
+    "sha256": "b5203638272895a154ea87fce8249dc8994782b21b6ac01dc82f14aab45ed3eb",
+    "expectedSha256": "b5203638272895a154ea87fce8249dc8994782b21b6ac01dc82f14aab45ed3eb"
+  },
+  {
+    "name": "可编辑工程",
+    "status": 200,
+    "file": "downloads/project.json",
+    "bytes": 15752,
+    "sha256": "c2fe4d820231873d181eb25f8677d1c166b0b2cf6d71308155ba000401fc9ed5",
+    "expectedSha256": "c2fe4d820231873d181eb25f8677d1c166b0b2cf6d71308155ba000401fc9ed5"
+  }
+]

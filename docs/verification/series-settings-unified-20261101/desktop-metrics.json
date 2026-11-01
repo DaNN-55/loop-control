@@ -1,0 +1,66 @@
+{
+  "fields": [
+    {
+      "disabled": true,
+      "label": "系列显示名称",
+      "value": "豆包推广-v1"
+    },
+    {
+      "disabled": true,
+      "label": "系列定位",
+      "value": "围绕豆包工作桌面端推广做系列视频"
+    },
+    {
+      "disabled": true,
+      "label": "内容格式",
+      "value": "9:16竖屏、中文字幕、紧凑节奏"
+    },
+    {
+      "disabled": true,
+      "label": "角色设定",
+      "value": "无特定要求"
+    },
+    {
+      "disabled": true,
+      "label": "地点设定",
+      "value": "无特定要求"
+    },
+    {
+      "disabled": true,
+      "label": "视觉风格",
+      "value": "无特定要求"
+    },
+    {
+      "disabled": true,
+      "label": "叙事结构",
+      "value": "无特定要求"
+    },
+    {
+      "disabled": true,
+      "label": "限制与禁用内容",
+      "value": "无特定要求"
+    }
+  ],
+  "footer": {
+    "justify": "flex-end",
+    "lastButtonRight": 1473,
+    "right": 1497,
+    "text": "已应用修改"
+  },
+  "height": 953,
+  "overflow": false,
+  "pathExpansionCount": 0,
+  "sections": [
+    {
+      "size": "17px",
+      "text": "系列资料",
+      "weight": "650"
+    },
+    {
+      "size": "17px",
+      "text": "创作规则",
+      "weight": "650"
+    }
+  ],
+  "width": 1543
+}

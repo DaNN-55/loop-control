@@ -1,0 +1,8 @@
+{
+  "verification": "manual",
+  "executionPolicy": {
+    "available": false,
+    "code": "network_expired",
+    "detail": "测试未开始：在线验证授权已过期。 未发出 Provider 请求。"
+  }
+}

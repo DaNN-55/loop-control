@@ -1,0 +1,21 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ scripts/openchatcut-embed-client.test.tsx (1 test | 1 failed) 17ms
+   × acknowledges the exact second-shot caption document even when the autosave effect still holds the previous render 16ms
+     → The URL must be of scheme file
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  scripts/openchatcut-embed-client.test.tsx > acknowledges the exact second-shot caption document even when the autosave effect still holds the previous render
+TypeError: The URL must be of scheme file
+ ❯ scripts/openchatcut-embed-client.test.tsx:16:15
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  17:18:33
+   Duration  2.06s (transform 229ms, setup 81ms, collect 419ms, tests 17ms, environment 867ms, prepare 143ms)

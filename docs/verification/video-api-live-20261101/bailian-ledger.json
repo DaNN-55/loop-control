@@ -1,0 +1,151 @@
+{
+  "policy": {
+    "version": 1,
+    "runId": "video-api-live-20261101-bailian",
+    "enabled": true,
+    "expiresAt": "2026-11-01T11:42:42.089Z",
+    "maxRequests": 98,
+    "currency": "CNY",
+    "maxCostMicrounits": 300000,
+    "priceEvidenceSha256": "bb3f4ccb6d50578bb29b8e4c883cbcd87aae57652a04e41c3dbd267fdeb2d0b6",
+    "approvalSha256": "fde46b761236e90b9ba035b465c0f58ef8addaee35d6b176f2eac07eecded92f",
+    "providers": [
+      "bailian"
+    ],
+    "operations": {
+      "bailian.generate": {
+        "maxRequests": 1,
+        "maxBytes": 1048576,
+        "timeoutMs": 60000,
+        "costMicrounits": 300000
+      },
+      "bailian.poll": {
+        "maxRequests": 95,
+        "maxBytes": 1048576,
+        "timeoutMs": 60000,
+        "costMicrounits": 0
+      },
+      "bailian.download": {
+        "maxRequests": 2,
+        "maxBytes": 104857600,
+        "timeoutMs": 60000,
+        "costMicrounits": 0
+      }
+    }
+  },
+  "policySha256": "4ed1e6f974fe7a9d0050a5c027e75e0d6efd185d5886c5bd3556cea2dc1b2f4a",
+  "state": {
+    "version": 1,
+    "policySha256": "4ed1e6f974fe7a9d0050a5c027e75e0d6efd185d5886c5bd3556cea2dc1b2f4a",
+    "used": 10,
+    "costMicrounits": 300000,
+    "byOperation": {
+      "bailian.generate": 1,
+      "bailian.poll": 8,
+      "bailian.download": 1
+    },
+    "halted": false,
+    "events": [
+      {
+        "operation": "bailian.generate",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "bailian.generate",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 137
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 220
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 220
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 220
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 220
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 220
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 220
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 220
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "bailian.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 782
+      },
+      {
+        "operation": "bailian.download",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "bailian.download",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 1455234
+      }
+    ]
+  }
+}

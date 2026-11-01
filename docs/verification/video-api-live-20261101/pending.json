@@ -1,0 +1,15 @@
+{
+  "at": "2026-11-01T10:03:04.544Z",
+  "episode": "79eb3098-8733-472a-9bde-873edd4cd26c",
+  "status": "awaiting_user_budget",
+  "generationRequests": 0,
+  "activeTasks": 0,
+  "episodeEvidence": [
+    {
+      "id": "79eb3098-8733-472a-9bde-873edd4cd26c",
+      "stage": "script_approved",
+      "title": "视频 API 逐项真实生成 · 1101",
+      "account_id": "2fb0abe3-a125-429c-97b9-3330929c5c6b"
+    }
+  ]
+}

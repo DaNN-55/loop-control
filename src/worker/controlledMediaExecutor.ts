@@ -92,12 +92,12 @@ async function mediaBytes(input: {
     if (image.byteLength !== video.firstFrame.fileSize || createHash("sha256").update(image).digest("hex") !== video.firstFrame.sha256) throw new Error("万相首帧与冻结输入不一致。");
     let imageMime=video.imageMime;
     if(video.composition){const {width,height,fit}=video.composition;
-      if(!Number.isInteger(width)||!Number.isInteger(height)||width<16||height<16||width>4096||height>4096||!['contain','cover'].includes(fit))throw Error('首帧构图无效。');
+      if(!Number.isInteger(width)||!Number.isInteger(height)||width<(taskPackage.provider==='bailian'?240:16)||height<(taskPackage.provider==='bailian'?240:16)||width>4096||height>4096||!['contain','cover'].includes(fit))throw Error('首帧构图无效。');
       const filter=fit==='cover'?`scale=${width}:${height}:force_original_aspect_ratio=increase,crop=${width}:${height}`:`scale=${width}:${height}:force_original_aspect_ratio=decrease,pad=${width}:${height}:(ow-iw)/2:(oh-ih)/2:black`;
-      const {stdout}=await promisify(execFile)('ffmpeg',['-v','error','-i',path,'-vf',filter,'-frames:v','1','-f','image2pipe','-c:v','png','pipe:1'],{encoding:'buffer',maxBuffer:32*1024*1024,timeout:30000});image=stdout;imageMime='image/png';
+      const {stdout}=await promisify(execFile)('ffmpeg',['-v','error','-i',path,'-vf',filter+(taskPackage.provider==='bailian'?',format=rgb24':''),'-frames:v','1','-f','image2pipe','-c:v','png','pipe:1'],{encoding:'buffer',maxBuffer:32*1024*1024,timeout:30000});image=stdout;imageMime='image/png';
     }
     if (isVideoProvider(taskPackage.provider)) return {bytes: await generateOfficialVideo({provider: taskPackage.provider, model: taskPackage.model, credentials: input.officialVideoCredentials!, fetcher: input.fetcher, image, imageMime, prompt: video.prompt, durationSeconds: video.durationSeconds, reserve: input.reserveWan, recordSubmission: input.recordWanSubmission})};
-    return { bytes: await generateWanVideo({ settings:video.settings,credentials: input.bailianCredentials!, fetcher: input.fetcher, image, imageMime, prompt: video.prompt, durationSeconds: video.durationSeconds, reserve: input.reserveWan, recordSubmission: input.recordWanSubmission }) };
+    return { bytes: await generateWanVideo({ model:taskPackage.model,settings:video.settings,credentials: input.bailianCredentials!, fetcher: input.fetcher, image, imageMime, prompt: video.prompt, durationSeconds: video.durationSeconds, reserve: input.reserveWan, recordSubmission: input.recordWanSubmission }) };
   }
   if (taskPackage.provider === "volcengine_tts" && taskPackage.media?.adapter === "volcengine_tts") {
     if (!input.volcengineTtsApiKey) throw new Error("豆包语音连接密钥不可用，无法执行冻结旁白任务。");

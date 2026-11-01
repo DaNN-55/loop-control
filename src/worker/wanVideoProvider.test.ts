@@ -58,3 +58,8 @@ it('sends explicit Wan settings in the paid request and rejects incompatible mul
  const settings={resolution:'1080P' as const,audio:true,promptExtend:true,shotType:'multi' as const,watermark:true,negativePrompt:'画面闪烁',seed:123};await generateWanVideo({...base(),fetcher,settings});expect(JSON.parse(fetcher.mock.calls[0][1].body)).toMatchObject({input:{negative_prompt:'画面闪烁'},parameters:{resolution:'1080P',audio:true,prompt_extend:true,shot_type:'multi',watermark:true,seed:123}});
  const input=base();await expect(generateWanVideo({...input,fetcher:vi.fn(),settings:{...settings,promptExtend:false}})).rejects.toThrow('设置无效');expect(input.reserve).not.toHaveBeenCalled();
 });
+
+it.each(['wan2.6-i2v','wan2.5-i2v-preview','wan2.2-i2v-flash','wan2.2-i2v-plus','wanx2.1-i2v-plus','wanx2.1-i2v-turbo'])('submits the frozen %s model without substituting flash or incompatible audio fields',async model=>{
+ const fetcher=vi.fn().mockResolvedValueOnce(output({task_id:'chosen-task'})).mockResolvedValueOnce(output({task_status:'SUCCEEDED',video_url:'https://dashscope-result-bj.oss-cn-beijing.aliyuncs.com/video.mp4'})).mockResolvedValueOnce(new Response(new Uint8Array([4,5]),{headers:{'Content-Type':'video/mp4'}}));
+ await generateWanVideo({...base(),model,fetcher});const sent=JSON.parse(fetcher.mock.calls[0][1].body);expect(sent.model).toBe(model);expect(sent.parameters.audio).toBeUndefined();expect(sent.parameters.duration).toBe(['wan2.2-i2v-flash','wan2.2-i2v-plus','wanx2.1-i2v-plus'].includes(model)?undefined:5);
+});

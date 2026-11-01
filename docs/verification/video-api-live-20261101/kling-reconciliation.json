@@ -1,0 +1,6 @@
+{
+  "at": "2026-11-01T10:46:21.357Z",
+  "operation": "read-only latest-task reconciliation",
+  "error": "fetch failed",
+  "newGenerationRequests": 0
+}

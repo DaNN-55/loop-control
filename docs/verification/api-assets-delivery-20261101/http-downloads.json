@@ -1,0 +1,42 @@
+[
+  {
+    "name": "元数据",
+    "file": "metadata.json",
+    "status": 200,
+    "bytes": 2115,
+    "sha256": "007552e32724c224cd9c289a0455ff8c8f935a525b5f8045d711625de40dff4f",
+    "passed": true
+  },
+  {
+    "name": "封面",
+    "file": "cover.png",
+    "status": 200,
+    "bytes": 1601772,
+    "sha256": "0740fe905161db31bae05197e8ef1b11af207f1463930ea474435e5b061e31e0",
+    "passed": true
+  },
+  {
+    "name": "检查证据",
+    "file": "checks.json",
+    "status": 200,
+    "bytes": 8847,
+    "sha256": "6f244861acc16f87645768c8e054889bcb37ef9bc727b47b4f77c1c7a11b3b34",
+    "passed": true
+  },
+  {
+    "name": "交付清单",
+    "file": "manifest.json",
+    "status": 200,
+    "bytes": 3229,
+    "sha256": "7b3a831b3b3742f08481e941482d7c735d9bc0b88e1f6900b37959aa9746580e",
+    "passed": true
+  },
+  {
+    "name": "可编辑工程",
+    "file": "5403d47d6535bf0ba4689449beb3e453a47a6d6705820e09969ce1fbcb984f45.json",
+    "status": 200,
+    "bytes": 20131,
+    "sha256": "5403d47d6535bf0ba4689449beb3e453a47a6d6705820e09969ce1fbcb984f45",
+    "passed": true
+  }
+]

@@ -1,0 +1,67 @@
+[
+  {
+    "name": "ref-01.png",
+    "fileSize": 49911,
+    "sha256": "eb50ac41dc1c2fd1a695d76ab6b95665cb4847ffbecce9eeb5619418fe05c20d"
+  },
+  {
+    "name": "ref-02.png",
+    "fileSize": 3342,
+    "sha256": "dc40eb463fa81c9be9c43532f3f7cf17c9bd88b7bf3313e57f3d43b1b827b607"
+  },
+  {
+    "name": "script.md",
+    "fileSize": 899,
+    "sha256": "6c52f69b2326f34a1d3d08eb0faf81f2d8d171f6185852fa65e7c7b6ef3593d5"
+  },
+  {
+    "name": "source-voice-01.mp4",
+    "fileSize": 681627,
+    "sha256": "a647ab1a97acfc14fba75a98ea1b123b14b5e2b8f1f4c194d81f870d68ffb1da"
+  },
+  {
+    "name": "source-voice-02.mp4",
+    "fileSize": 43734,
+    "sha256": "2e17a49fa5b5ce03c5093e4f98be9e887f38e91b0817f7818aac6bc79cbf5e2d"
+  },
+  {
+    "name": "video-01.mp4",
+    "fileSize": 646087,
+    "sha256": "c304574f499980a970b4d19aae4599c7167f18a4e66bd7e3c68d4debe5f933e3"
+  },
+  {
+    "name": "video-02.mp4",
+    "fileSize": 8221,
+    "sha256": "6ed66d77f8d1c420697ed51a2e2ba2857fe3e187e1e585a306115aab286f3693"
+  },
+  {
+    "name": "voice-01.aiff",
+    "fileSize": 163268,
+    "sha256": "dc973eed6b8e5b828155417e44f04050d3d7a1e774b3096971d078110f4a44f8"
+  },
+  {
+    "name": "voice-01.mp3",
+    "fileSize": 59180,
+    "sha256": "da3f00a320cfff9c89bab3e0a0dc85d6f3a55a466c169d3fa3c350396fa1a4a6"
+  },
+  {
+    "name": "voice-01.wav",
+    "fileSize": 173328,
+    "sha256": "7fe79e649fffd5aefd1a930a23324e4f66209e92c5b73dd28599bb19a5a85d83"
+  },
+  {
+    "name": "voice-02.aiff",
+    "fileSize": 167876,
+    "sha256": "f1b71794e5709c184810dfa6a48b6ada4a4f7266f0fd496103b3a5bbfc7c8ddd"
+  },
+  {
+    "name": "voice-02.mp3",
+    "fileSize": 60716,
+    "sha256": "cd6541a93e682eeb1509cf5e79d0277761ca8bde32d57e359c863118eb3656ca"
+  },
+  {
+    "name": "voice-02.wav",
+    "fileSize": 178342,
+    "sha256": "a553e98423297a0da9ff1fcfa3fd45c7a39cae08ea1a5d442204e8672d30db7a"
+  }
+]

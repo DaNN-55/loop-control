@@ -1,0 +1,50 @@
+{
+  event: 'recovery-response',
+  provider: 'minimax',
+  method: 'GET',
+  host: 'api.minimax.cn',
+  path: '/v2/query/video_generation/458656441229509',
+  queryKeys: [],
+  httpStatus: 200
+}
+{
+  event: 'recovery-response',
+  provider: 'minimax',
+  method: 'GET',
+  host: 'algeng-video-infer.oss-cn-shanghai.aliyuncs.com',
+  path: '/inference_output%2Frollout%2F2026-11-01%2F6fda78f4-7d8f-4a74-8ba9-03783ff4f0a0%2Foutput_aigc.mp4',
+  queryKeys: [ 'Expires', 'OSSAccessKeyId', 'Signature' ],
+  httpStatus: 200
+}
+{
+  event: 'recovery-completed',
+  provider: 'minimax',
+  connection: 'minimax',
+  version: 'f738532a-1228-4535-b5a4-111b2ebd12d9',
+  outcome: 'generated',
+  model: 'MiniMax-H3',
+  durationSeconds: 4,
+  taskId: '458656441229509',
+  error: undefined,
+  network: {
+    directory: '/Users/dan/Programs/loop-control/.loop-control/maintenance/video-api-live-20261101/minimax-policy',
+    policySha256: '7a6dbdb3bb420582655b92761bde4ae3408e65ff61c5d6318c4b733e68475ae0'
+  },
+  reservationCny: 3,
+  actualCost: 'unverified; reservation is not charge',
+  elapsedMs: 216342,
+  recoveredAt: '2026-11-01T10:44:50.060Z',
+  originalTaskReused: true,
+  additionalGenerationRequests: 0,
+  artifact: {
+    path: 'docs/verification/video-api-live-20261101/minimax-sample.mp4',
+    bytes: 904732,
+    sha256: '67dfaf39beaae0704a520ad3c1162dfb7441822018e922413f855c5278012c59',
+    media: {
+      programs: [],
+      stream_groups: [],
+      streams: [Array],
+      format: [Object]
+    }
+  }
+}

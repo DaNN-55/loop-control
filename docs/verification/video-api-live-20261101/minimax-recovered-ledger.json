@@ -1,0 +1,280 @@
+{
+  "network": {
+    "directory": "/Users/dan/Programs/loop-control/.loop-control/maintenance/video-api-live-20261101/minimax-policy",
+    "policySha256": "7a6dbdb3bb420582655b92761bde4ae3408e65ff61c5d6318c4b733e68475ae0"
+  },
+  "state": {
+    "version": 1,
+    "policySha256": "7a6dbdb3bb420582655b92761bde4ae3408e65ff61c5d6318c4b733e68475ae0",
+    "used": 26,
+    "costMicrounits": 3000000,
+    "byOperation": {
+      "minimax.generate": 1,
+      "minimax.poll": 24,
+      "minimax.download": 1
+    },
+    "halted": false,
+    "events": [
+      {
+        "operation": "minimax.generate",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "minimax.generate",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 29
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 209
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 209
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 209
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 209
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 209
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 209
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 209
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 209
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 209
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 209
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 209
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 209
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 209
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 209
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 209
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 209
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 209
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 209
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 209
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 209
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 209
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 643
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 643
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "minimax.poll",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 645
+      },
+      {
+        "operation": "minimax.download",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "minimax.download",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 904732
+      }
+    ]
+  }
+}

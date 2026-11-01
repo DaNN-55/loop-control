@@ -1,0 +1,241 @@
+{
+  "passed": true,
+  "exportId": "d0a9059f-5baa-4be0-ba20-4ad5aae945c5",
+  "contentSha256": "8996f5e42747b06220d85f038f362ad3e78c597af2650631a01cf52ce4fc1bfa",
+  "checks": [
+    {
+      "name": "used_content",
+      "detail": "已核对 4 个实际来源。",
+      "passed": true,
+      "sources": [
+        {
+          "sha256": "0740fe905161db31bae05197e8ef1b11af207f1463930ea474435e5b061e31e0",
+          "fileSize": 1601772,
+          "relativePath": "未分系列--469c8e63-de75-4f1c-b61e-84929254527f/视频 API 逐项真实生成 · 1101--79eb3098-8733-472a-9bde-873edd4cd26c/materials/0740fe905161db31bae05197e8ef1b11af207f1463930ea474435e5b061e31e0-seedance-replacement.png"
+        },
+        {
+          "sha256": "67dfaf39beaae0704a520ad3c1162dfb7441822018e922413f855c5278012c59",
+          "fileSize": 904732,
+          "relativePath": "未分系列--469c8e63-de75-4f1c-b61e-84929254527f/视频 API 逐项真实生成 · 1101--79eb3098-8733-472a-9bde-873edd4cd26c/materials/67dfaf39beaae0704a520ad3c1162dfb7441822018e922413f855c5278012c59-minimax-sample.mp4"
+        },
+        {
+          "sha256": "a6412f7e2edd9c277efbe308f7d018e07d3cc341582d68f19431dbea6422e76c",
+          "fileSize": 1455234,
+          "relativePath": "未分系列--469c8e63-de75-4f1c-b61e-84929254527f/视频 API 逐项真实生成 · 1101--79eb3098-8733-472a-9bde-873edd4cd26c/materials/a6412f7e2edd9c277efbe308f7d018e07d3cc341582d68f19431dbea6422e76c-bailian-sample.mp4"
+        },
+        {
+          "sha256": "f720f7b4c3dd4035725db373b40fb30bb2ef3dd669c6ea3f3ee2c7328a1c13ca",
+          "fileSize": 1555596,
+          "relativePath": "未分系列--469c8e63-de75-4f1c-b61e-84929254527f/视频 API 逐项真实生成 · 1101--79eb3098-8733-472a-9bde-873edd4cd26c/materials/f720f7b4c3dd4035725db373b40fb30bb2ef3dd669c6ea3f3ee2c7328a1c13ca-kling-replacement.png"
+        }
+      ]
+    },
+    {
+      "name": "captions",
+      "detail": "已核对 4 组字幕时序，正文随最终文件一次确认。",
+      "passed": true,
+      "evidence": [
+        {
+          "clipId": "77c4712f-00f3-4a1b-9b05-318d5f1cc944",
+          "detail": null,
+          "itemId": "shot-shot-01-77c4712f-00f3-4a1b-9b05-318d5f1cc944",
+          "shotId": "shot-01",
+          "taskId": null,
+          "timing": "current",
+          "contract": {
+            "cues": [
+              {
+                "id": "initial-shot-01~0",
+                "text": "Seedance 视频接口连通测试。",
+                "endMs": 4000,
+                "startMs": 0
+              }
+            ],
+            "text": "Seedance 视频接口连通测试。",
+            "enabled": true,
+            "spatial": {
+              "anchor": "bottom-center",
+              "insets": {
+                "top": 0.08,
+                "left": 0.08,
+                "right": 0.08,
+                "bottom": 0.18
+              },
+              "version": "shot-caption-space/v2",
+              "maxLines": 2,
+              "safeArea": "title-safe",
+              "aspectRatio": "9:16",
+              "maxCharactersPerLine": 16
+            },
+            "version": "shot-captions/v1",
+            "contentMode": "independent"
+          },
+          "durationMs": 4000,
+          "audioTrackId": null,
+          "narrationText": null,
+          "textConfirmed": false,
+          "inputFingerprint": "75dbdd37714ffd246ab1f158b7a2dde0948eb391a851495618a1a7fdc9ca0f8f",
+          "alignmentInputVersion": null
+        },
+        {
+          "clipId": "753a6a3c-9e48-4c89-a0c6-34d3c908706b",
+          "detail": null,
+          "itemId": "shot-shot-02-753a6a3c-9e48-4c89-a0c6-34d3c908706b",
+          "shotId": "shot-02",
+          "taskId": null,
+          "timing": "current",
+          "contract": {
+            "cues": [
+              {
+                "id": "initial-shot-02~0",
+                "text": "MiniMax 视频接口连通测试。",
+                "endMs": 4000,
+                "startMs": 0
+              }
+            ],
+            "text": "MiniMax 视频接口连通测试。",
+            "enabled": true,
+            "spatial": {
+              "anchor": "bottom-center",
+              "insets": {
+                "top": 0.08,
+                "left": 0.08,
+                "right": 0.08,
+                "bottom": 0.18
+              },
+              "version": "shot-caption-space/v2",
+              "maxLines": 2,
+              "safeArea": "title-safe",
+              "aspectRatio": "9:16",
+              "maxCharactersPerLine": 16
+            },
+            "version": "shot-captions/v1",
+            "contentMode": "independent"
+          },
+          "durationMs": 4000,
+          "audioTrackId": null,
+          "narrationText": null,
+          "textConfirmed": false,
+          "inputFingerprint": "631e2e0dc3e6f87734fc1cbdf5d88e0e9d4d6a41d581c9100e31778fff6ff70b",
+          "alignmentInputVersion": null
+        },
+        {
+          "clipId": "8de42e4a-39b9-4d47-8656-a94227f0f884",
+          "detail": null,
+          "itemId": "shot-shot-03-8de42e4a-39b9-4d47-8656-a94227f0f884",
+          "shotId": "shot-03",
+          "taskId": null,
+          "timing": "current",
+          "contract": {
+            "cues": [
+              {
+                "id": "initial-shot-03~0",
+                "text": "百炼 视频接口连通测试。",
+                "endMs": 2000,
+                "startMs": 0
+              }
+            ],
+            "text": "百炼 视频接口连通测试。",
+            "enabled": true,
+            "spatial": {
+              "anchor": "bottom-center",
+              "insets": {
+                "top": 0.08,
+                "left": 0.08,
+                "right": 0.08,
+                "bottom": 0.18
+              },
+              "version": "shot-caption-space/v2",
+              "maxLines": 2,
+              "safeArea": "title-safe",
+              "aspectRatio": "9:16",
+              "maxCharactersPerLine": 16
+            },
+            "version": "shot-captions/v1",
+            "contentMode": "independent"
+          },
+          "durationMs": 2000,
+          "audioTrackId": null,
+          "narrationText": null,
+          "textConfirmed": false,
+          "inputFingerprint": "50918b79ac16c20c4bf181ef0b303df67d4a0908211cc97d9dc21b9380d082fe",
+          "alignmentInputVersion": null
+        },
+        {
+          "clipId": "104ce4e0-5fcf-46f5-9cf0-4a22b0dc878e",
+          "detail": null,
+          "itemId": "shot-shot-04-104ce4e0-5fcf-46f5-9cf0-4a22b0dc878e",
+          "shotId": "shot-04",
+          "taskId": null,
+          "timing": "current",
+          "contract": {
+            "cues": [
+              {
+                "id": "initial-shot-04~0",
+                "text": "Kling 视频接口连通测试。",
+                "endMs": 3000,
+                "startMs": 0
+              }
+            ],
+            "text": "Kling 视频接口连通测试。",
+            "enabled": true,
+            "spatial": {
+              "anchor": "bottom-center",
+              "insets": {
+                "top": 0.08,
+                "left": 0.08,
+                "right": 0.08,
+                "bottom": 0.18
+              },
+              "version": "shot-caption-space/v2",
+              "maxLines": 2,
+              "safeArea": "title-safe",
+              "aspectRatio": "9:16",
+              "maxCharactersPerLine": 16
+            },
+            "version": "shot-captions/v1",
+            "contentMode": "independent"
+          },
+          "durationMs": 3000,
+          "audioTrackId": null,
+          "narrationText": null,
+          "textConfirmed": false,
+          "inputFingerprint": "34d6f2dade9736e6cdc34b11e00da3392cbd5889b63eb1a877cae52378b32bce",
+          "alignmentInputVersion": null
+        }
+      ]
+    },
+    {
+      "name": "technical",
+      "detail": "实际 MP4 时长、画幅、音频及黑帧检查通过。",
+      "passed": true,
+      "inspection": {
+        "width": 1080,
+        "height": 1920,
+        "hasAudio": true,
+        "blackFrameCount": 0,
+        "durationSeconds": 13.056
+      },
+      "videoFrames": 390,
+      "audioExpected": false,
+      "videoDurationSeconds": 13,
+      "expectedDurationSeconds": 13,
+      "containerDurationSeconds": 13.056
+    },
+    {
+      "name": "representative_frame",
+      "detail": "已实际解码代表帧。",
+      "passed": true,
+      "artifact": {
+        "sha256": "692381db4adcf66277babf6091207e86398eda1878364e118878a3f983504101",
+        "fileSize": 67652,
+        "relativePath": "未分系列--469c8e63-de75-4f1c-b61e-84929254527f/视频 API 逐项真实生成 · 1101--79eb3098-8733-472a-9bde-873edd4cd26c/workspace-exports/d0a9059f-5baa-4be0-ba20-4ad5aae945c5/representative.jpg"
+      }
+    },
+    {
+      "name": "export_file",
+      "detail": "最终文件已按字节 SHA-256 与大小不可变登记。",
+      "passed": true
+    }
+  ]
+}

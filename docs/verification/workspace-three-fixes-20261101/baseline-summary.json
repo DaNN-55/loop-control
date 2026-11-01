@@ -1,0 +1,15 @@
+{
+  "at": "2026-11-01T09:29:34.348Z",
+  "counts": {
+    "tasks": 5,
+    "active": 0
+  },
+  "oldEpisodes": [
+    {
+      "id": "2f7553cb-c3e9-4dc5-b900-f1439329a0b0",
+      "title": "账号系列参考图预算返回 · 完整E2E",
+      "stage": "production_completed"
+    }
+  ],
+  "logOffset": 964481
+}

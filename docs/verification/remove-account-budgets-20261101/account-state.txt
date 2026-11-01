@@ -1,0 +1,59 @@
+Browser tab: 13, Title: "Loop Control", URL: "http://127.0.0.1:5174/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 31-155
+~					23 text 账号
+~			29 heading 账号, Value: 1
+~				30 text 账号
++			31 button 新建账号, ID: react-aria8682712819-_r_1j_
++			32 container 账号工作区
++				33 container 系列规则与版本
++					34 container 账号内容导航
++						35 container
++							36 pop up button (collapsed, settable) Description: 当前账号, Value: 豆包推广, ID: select-native-_r_1l_, Secondary Actions: Expand
++								37 menu
++									38 container 使用中
++										39 (selected) 豆包推广
++										40 日照金山样片
++										41 测试
++										42 流程验收1101
++							43 pop up button (collapsed) Description: 账号操作, ID: react-aria8682712819-_r_1m_, Secondary Actions: Expand
++						44 button 通用规则, ID: react-aria8682712819-_r_1q_
++						45 search text field (settable) 查找系列
++						46 button Description: 豆包推广-v1, ID: react-aria8682712819-_r_1s_
++							47 text 豆包推广-v1
++							48 text 当前 v
++							49 text 1
++						50 button Description: 新建系列, ID: react-aria8682712819-_r_1u_
++						51 button 未分系列, ID: react-aria8682712819-_r_20_
++					52 container
++						53 heading 通用规则 v1, Value: 2
++							54 text 通用规则 v 1
++						55 button (collapsed) 历史版本, Secondary Actions: Expand
++							56 text 历史版本
++					57 container
++						58 container Description: 账号资料 标识 doubao-promotion 时区 Asia/Shanghai, ID: account-positioning
++							59 container
++								60 text 账号资料 标识 doubao-promotion 时区 Asia/Shanghai
++							61 container
++								62 text 账号定位
++								63 text entry area (settable) Description: 账号定位, Value: 豆包推广视频，主要面向未使用过豆包的新用户拉新
++							64 container 账号目录
++								65 text 账号目录
++								66 text /Volumes/Ebuget 1T/Media/doubao
++								67 button 打开, ID: react-aria8682712819-_r_22_
++								68 button Description: 复制账号目录路径, ID: react-aria8682712819-_r_24_
++						69 container 创作规则
++							70 text 创作规则
++							71 container
++								72 text 语气风格
++								73 text entry area (settable) 语气风格
++							74 container
++								75 text 视觉风格
++								76 text entry area (settable) 视觉风格
++							77 container
++								78 text 限制与禁用内容
++								79 text entry area (settable) 限制与禁用内容
++						80 text 已保存
++						81 button 撤销修改, ID: react-aria8682712819-_r_26_
++						82 button 保存通用规则, ID: react-aria8682712819-_r_28_
+The focused UI element is 11 button Description: 账号, ID: react-aria8682712819-_r_8_

@@ -1,0 +1,169 @@
+{
+  "passed": true,
+  "exportId": "d0e3ca0f-3a63-42a7-b307-5d95f3329646",
+  "contentSha256": "dbb1ac60a211a5e872b2c4d01cefb100bb120e4fb034ba2fcca992e9a3779d86",
+  "checks": [
+    {
+      "name": "used_content",
+      "detail": "已核对 4 个实际来源。",
+      "passed": true,
+      "sources": [
+        {
+          "sha256": "c304574f499980a970b4d19aae4599c7167f18a4e66bd7e3c68d4debe5f933e3",
+          "fileSize": 646087,
+          "relativePath": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/人工口播字幕直链修复 · E2E复验--b232b4fd-b43c-470c-bbdf-d97ae3f62f9d/materials/c304574f499980a970b4d19aae4599c7167f18a4e66bd7e3c68d4debe5f933e3-video-01.mp4"
+        },
+        {
+          "sha256": "6ed66d77f8d1c420697ed51a2e2ba2857fe3e187e1e585a306115aab286f3693",
+          "fileSize": 8221,
+          "relativePath": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/人工口播字幕直链修复 · E2E复验--b232b4fd-b43c-470c-bbdf-d97ae3f62f9d/materials/6ed66d77f8d1c420697ed51a2e2ba2857fe3e187e1e585a306115aab286f3693-video-02.mp4"
+        },
+        {
+          "sha256": "972cc1858ec78b9c8758f1c6bb69900133461cdfe80ee921173be7e4c31495d3",
+          "fileSize": 48428,
+          "relativePath": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/人工口播字幕直链修复 · E2E复验--b232b4fd-b43c-470c-bbdf-d97ae3f62f9d/materials/972cc1858ec78b9c8758f1c6bb69900133461cdfe80ee921173be7e4c31495d3-人工口播-01.mp3"
+        },
+        {
+          "sha256": "b4aa281cdf7d4c6a0c8918d7e390d68145fc3ba0a5e0f67c2f80ad3f58206e17",
+          "fileSize": 48428,
+          "relativePath": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/人工口播字幕直链修复 · E2E复验--b232b4fd-b43c-470c-bbdf-d97ae3f62f9d/materials/b4aa281cdf7d4c6a0c8918d7e390d68145fc3ba0a5e0f67c2f80ad3f58206e17-人工口播-02.mp3"
+        }
+      ]
+    },
+    {
+      "name": "captions",
+      "detail": "已核对 2 组字幕时序，正文随最终文件一次确认。",
+      "passed": true,
+      "evidence": [
+        {
+          "clipId": "f20f4274-f63f-4e26-9a62-926acaf48e0b",
+          "detail": null,
+          "itemId": "shot-shot-01-f20f4274-f63f-4e26-9a62-926acaf48e0b",
+          "shotId": "shot-01",
+          "taskId": "26c165c5-1892-4215-bcb5-6d04628a14e9",
+          "timing": "current",
+          "contract": {
+            "cues": [
+              {
+                "id": "phrase-1~0",
+                "text": "这是第一段画面，",
+                "endMs": 1525,
+                "startMs": 20
+              },
+              {
+                "id": "phrase-2~0",
+                "text": "检查账号规则。",
+                "endMs": 5940,
+                "startMs": 1866
+              }
+            ],
+            "text": "这是第一段画面，检查账号规则。",
+            "enabled": true,
+            "spatial": {
+              "anchor": "bottom-center",
+              "insets": {
+                "top": 0.08,
+                "left": 0.08,
+                "right": 0.08,
+                "bottom": 0.18
+              },
+              "version": "shot-caption-space/v2",
+              "maxLines": 2,
+              "safeArea": "title-safe",
+              "aspectRatio": "9:16",
+              "maxCharactersPerLine": 16
+            },
+            "version": "shot-captions/v1",
+            "contentMode": "independent"
+          },
+          "durationMs": 6000,
+          "audioTrackId": "9ce1e5b2-98bf-4313-bb39-a02ade906b7c",
+          "narrationText": "这是第一段画面，检查账号规则。",
+          "textConfirmed": false,
+          "inputFingerprint": "1a68267114128d89d52a87b36d383f6ed75cc0c32ddae1806faef2fb6c305265",
+          "alignmentInputVersion": "7c1befe7f800d648ef26c4a2c2cf89b28a3d8383a9d6653f6bda7375c2b24760"
+        },
+        {
+          "clipId": "5ce7ccd7-e9bd-42f7-bd64-1c01c9e2f6e2",
+          "detail": null,
+          "itemId": "shot-shot-02-5ce7ccd7-e9bd-42f7-bd64-1c01c9e2f6e2",
+          "shotId": "shot-02",
+          "taskId": "c99b5a29-c9ef-494c-b57f-7683f8d4fe96",
+          "timing": "current",
+          "contract": {
+            "cues": [
+              {
+                "id": "phrase-1~0",
+                "text": "这是第二段画面，",
+                "endMs": 1585,
+                "startMs": 20
+              },
+              {
+                "id": "phrase-2~0",
+                "text": "检查预算返回。",
+                "endMs": 5940,
+                "startMs": 1947
+              }
+            ],
+            "text": "这是第二段画面，检查预算返回。",
+            "enabled": true,
+            "spatial": {
+              "anchor": "bottom-center",
+              "insets": {
+                "top": 0.08,
+                "left": 0.08,
+                "right": 0.08,
+                "bottom": 0.18
+              },
+              "version": "shot-caption-space/v2",
+              "maxLines": 2,
+              "safeArea": "title-safe",
+              "aspectRatio": "9:16",
+              "maxCharactersPerLine": 16
+            },
+            "version": "shot-captions/v1",
+            "contentMode": "independent"
+          },
+          "durationMs": 6000,
+          "audioTrackId": "45b5c00a-4465-48eb-9828-631e1789ca55",
+          "narrationText": "这是第二段画面，检查预算返回。",
+          "textConfirmed": false,
+          "inputFingerprint": "208bdc8b826ec9f9cdccd049a1164b0fd4ca84d0bc5186c14e1478098fce33b4",
+          "alignmentInputVersion": "65d9a3d242a22b790c80108ca9e112e1b59388e41c5214efaddca7662c1bf3cb"
+        }
+      ]
+    },
+    {
+      "name": "technical",
+      "detail": "实际 MP4 时长、画幅、音频及黑帧检查通过。",
+      "passed": true,
+      "inspection": {
+        "width": 1080,
+        "height": 1920,
+        "hasAudio": true,
+        "blackFrameCount": 0,
+        "durationSeconds": 12.032
+      },
+      "videoFrames": 360,
+      "audioExpected": true,
+      "videoDurationSeconds": 12,
+      "expectedDurationSeconds": 12,
+      "containerDurationSeconds": 12.032
+    },
+    {
+      "name": "representative_frame",
+      "detail": "已实际解码代表帧。",
+      "passed": true,
+      "artifact": {
+        "sha256": "20b4836ec421a2d3162d6720ef720d0fa0df879698cdf116d89785df5f548323",
+        "fileSize": 58720,
+        "relativePath": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/人工口播字幕直链修复 · E2E复验--b232b4fd-b43c-470c-bbdf-d97ae3f62f9d/workspace-exports/d0e3ca0f-3a63-42a7-b307-5d95f3329646/representative.jpg"
+      }
+    },
+    {
+      "name": "export_file",
+      "detail": "最终文件已按字节 SHA-256 与大小不可变登记。",
+      "passed": true
+    }
+  ]
+}

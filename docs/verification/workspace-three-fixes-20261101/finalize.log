@@ -1,0 +1,65 @@
+{
+  at: '2026-11-01T09:47:29.342Z',
+  episode: 'b232b4fd-b43c-470c-bbdf-d97ae3f62f9d',
+  stage: 'production_completed',
+  accountChecks: {
+    accounts: true,
+    blueprints: true,
+    series: true,
+    seriesVersions: true,
+    budgets: true
+  },
+  previousEpisodesUnchanged: true,
+  previousWorkspacesUnchanged: true,
+  previousProjectBytesUnchanged: true,
+  manualNarrations: [
+    { shot: 'shot-01', mode: 'manual', adopted: true },
+    { shot: 'shot-02', mode: 'manual', adopted: true }
+  ],
+  captions: [
+    {
+      shot: 'shot-01',
+      method: 'alignment',
+      confirmed: true,
+      task: '26c165c5-1892-4215-bcb5-6d04628a14e9'
+    },
+    {
+      shot: 'shot-02',
+      method: 'alignment',
+      confirmed: true,
+      task: 'c99b5a29-c9ef-494c-b57f-7683f8d4fe96'
+    }
+  ],
+  allTasksCompleted: true,
+  manualRegistrations: 2,
+  workerRuns: [
+    {
+      task: 'c99b5a29-c9ef-494c-b57f-7683f8d4fe96',
+      status: 'completed'
+    },
+    {
+      task: '26c165c5-1892-4215-bcb5-6d04628a14e9',
+      status: 'completed'
+    },
+    {
+      task: '5b25ba59-04b8-4ba2-9e41-29fe2ecf6950',
+      status: 'completed'
+    }
+  ],
+  totalCostCents: 0,
+  activeTasks: 0,
+  exportChecks: [
+    { name: 'used_content', passed: true },
+    { name: 'captions', passed: true },
+    { name: 'technical', passed: true },
+    { name: 'representative_frame', passed: true },
+    { name: 'export_file', passed: true }
+  ],
+  confirmedExport: true,
+  deliveryVerified: true,
+  exactConfirmedVideo: true,
+  filesVerified: 6,
+  productionFileCount: 44,
+  productionBytes: 6349557,
+  redactedFields: 13
+}

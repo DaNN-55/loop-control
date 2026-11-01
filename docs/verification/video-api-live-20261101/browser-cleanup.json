@@ -1,0 +1,18 @@
+{
+  "at": "2026-11-01T10:57:02.278Z",
+  "closedTestTabs": [
+    "7",
+    "8"
+  ],
+  "remaining": [
+    {
+      "id": "1",
+      "providerTabId": "500b4f93-ad23-4870-bd3e-509f7c091275",
+      "title": "Loop Control",
+      "url": "http://127.0.0.1:5174/?episode=79eb3098-8733-472a-9bde-873edd4cd26c",
+      "browserId": "2"
+    }
+  ],
+  "originalTabPreserved": true,
+  "editorOpened": false
+}

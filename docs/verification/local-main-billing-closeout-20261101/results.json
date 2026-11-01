@@ -1,0 +1,35 @@
+{
+  "date": "2026-11-01",
+  "branch": "main",
+  "base_commit": "6610633055d9cdf7c295eb7c3b0b64d277fbce5d",
+  "validated_index_tree": "60c25e548d58638434f537445db0cb9b0ea0bcea",
+  "tests": {
+    "files_passed": 190,
+    "tests_passed": 1221,
+    "command": "npm test -- --maxWorkers=2",
+    "exit_code": 0
+  },
+  "checks": [
+    {
+      "command": "npm run check",
+      "exit_code": 0
+    },
+    {
+      "command": "npx tsc -p tsconfig.local-app.json --noEmit",
+      "exit_code": 0
+    },
+    {
+      "command": "npx tsc -p tsconfig.worker.json --noEmit",
+      "exit_code": 0
+    },
+    {
+      "command": "npm run build",
+      "exit_code": 0
+    }
+  ],
+  "excluded_cleanup_paths": 33,
+  "staged_secret_pattern_findings": 0,
+  "immutable_migration_whitespace_exception": "db/local/132-connection-billing.sql:54: new blank line at EOF",
+  "immutable_migration_git_blob": "6df8e624cf5a7cbe17cd127a0628c32dfacf4d22",
+  "pushed": false
+}

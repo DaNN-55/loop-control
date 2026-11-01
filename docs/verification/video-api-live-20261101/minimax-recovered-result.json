@@ -1,0 +1,44 @@
+{
+  "provider": "minimax",
+  "connection": "minimax",
+  "version": "f738532a-1228-4535-b5a4-111b2ebd12d9",
+  "outcome": "generated",
+  "model": "MiniMax-H3",
+  "durationSeconds": 4,
+  "taskId": "458656441229509",
+  "network": {
+    "directory": "/Users/dan/Programs/loop-control/.loop-control/maintenance/video-api-live-20261101/minimax-policy",
+    "policySha256": "7a6dbdb3bb420582655b92761bde4ae3408e65ff61c5d6318c4b733e68475ae0"
+  },
+  "reservationCny": 3,
+  "actualCost": "unverified; reservation is not charge",
+  "elapsedMs": 216342,
+  "recoveredAt": "2026-11-01T10:44:50.060Z",
+  "originalTaskReused": true,
+  "additionalGenerationRequests": 0,
+  "artifact": {
+    "path": "docs/verification/video-api-live-20261101/minimax-sample.mp4",
+    "bytes": 904732,
+    "sha256": "67dfaf39beaae0704a520ad3c1162dfb7441822018e922413f855c5278012c59",
+    "media": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 768,
+          "height": 1344,
+          "r_frame_rate": "24/1"
+        },
+        {
+          "codec_name": "aac",
+          "r_frame_rate": "0/0"
+        }
+      ],
+      "format": {
+        "duration": "4.458333",
+        "size": "904732"
+      }
+    }
+  }
+}

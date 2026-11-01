@@ -1,0 +1,59 @@
+{
+  "at": "2026-11-01T10:56:22.813Z",
+  "episode": "79eb3098-8733-472a-9bde-873edd4cd26c",
+  "assets": [
+    {
+      "shot": "shot-01",
+      "file": "seedance-replacement.png",
+      "materialId": "0006a1ce-ab86-4f8d-9a41-5bf138926bb3",
+      "candidateId": "8c470427-904c-4718-aba6-f3f7260ec523",
+      "bytes": 1601772,
+      "sha256": "0740fe905161db31bae05197e8ef1b11af207f1463930ea474435e5b061e31e0",
+      "relativePath": "未分系列--469c8e63-de75-4f1c-b61e-84929254527f/视频 API 逐项真实生成 · 1101--79eb3098-8733-472a-9bde-873edd4cd26c/materials/0740fe905161db31bae05197e8ef1b11af207f1463930ea474435e5b061e31e0-seedance-replacement.png",
+      "result": "image-seedance-result.json"
+    },
+    {
+      "shot": "shot-02",
+      "file": "minimax-sample.mp4",
+      "materialId": "edd08d83-3bd6-41d2-b476-0695ef7eb496",
+      "candidateId": "5215a392-2073-4cdd-8e72-64d0addc7323",
+      "bytes": 904732,
+      "sha256": "67dfaf39beaae0704a520ad3c1162dfb7441822018e922413f855c5278012c59",
+      "relativePath": "未分系列--469c8e63-de75-4f1c-b61e-84929254527f/视频 API 逐项真实生成 · 1101--79eb3098-8733-472a-9bde-873edd4cd26c/materials/67dfaf39beaae0704a520ad3c1162dfb7441822018e922413f855c5278012c59-minimax-sample.mp4",
+      "result": "minimax-recovered-result.json"
+    },
+    {
+      "shot": "shot-03",
+      "file": "bailian-sample.mp4",
+      "materialId": "44c816f8-b7bb-4e70-ab10-72fb1708f0fd",
+      "candidateId": "3951fb0e-defb-4118-8fe0-b3d915f3b493",
+      "bytes": 1455234,
+      "sha256": "a6412f7e2edd9c277efbe308f7d018e07d3cc341582d68f19431dbea6422e76c",
+      "relativePath": "未分系列--469c8e63-de75-4f1c-b61e-84929254527f/视频 API 逐项真实生成 · 1101--79eb3098-8733-472a-9bde-873edd4cd26c/materials/a6412f7e2edd9c277efbe308f7d018e07d3cc341582d68f19431dbea6422e76c-bailian-sample.mp4",
+      "result": "bailian-result.json"
+    },
+    {
+      "shot": "shot-04",
+      "file": "kling-replacement.png",
+      "materialId": "9e29dae8-ab53-4cf6-ae6d-ef43c6cde48e",
+      "candidateId": "ac8e22b0-d9ad-4ffe-b1e6-e497987b0623",
+      "bytes": 1555596,
+      "sha256": "f720f7b4c3dd4035725db373b40fb30bb2ef3dd669c6ea3f3ee2c7328a1c13ca",
+      "relativePath": "未分系列--469c8e63-de75-4f1c-b61e-84929254527f/视频 API 逐项真实生成 · 1101--79eb3098-8733-472a-9bde-873edd4cd26c/materials/f720f7b4c3dd4035725db373b40fb30bb2ef3dd669c6ea3f3ee2c7328a1c13ca-kling-replacement.png",
+      "result": "image-kling-result.json"
+    }
+  ],
+  "allFourCandidatesStored": true,
+  "adoptionDecisions": 0,
+  "accountSettingsUnchanged": true,
+  "budgetsUnchanged": true,
+  "dailyDeploymentUnchanged": true,
+  "activeLocalTasks": 0,
+  "generationsRequested": 6,
+  "reservationCny": 13.4,
+  "allPrivateLedgersHalted": true,
+  "seedance": "skipped by user after ModelNotOpen",
+  "kling": "submission unknown; skipped by user; no retry",
+  "productionFileCount": 8,
+  "productionBytes": 5576156
+}

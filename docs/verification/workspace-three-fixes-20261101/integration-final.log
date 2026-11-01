@@ -1,0 +1,16 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/workspaceNarration.integration.test.ts (13 tests | 12 skipped) 18957ms
+   ✓ manual narration and disabled modes never enqueue TTS, while short pictures preserve a recoverable conflict  18953ms
+ ✓ src/local-app/workspaceManualNarration.integration.test.ts (1 test) 20340ms
+   ✓ uploaded narration is selectable in a current workspace without legacy approvals or provider calls  20336ms
+ ✓ src/local-app/workspaceCaptions.integration.test.ts (3 tests) 84913ms
+   ✓ Owner edits only the chosen native caption lane and persists manual timing without shot approval  26110ms
+   ✓ current native caption evidence follows the real alignment queue and rejects a late Worker result after a text edit  10577ms
+   ✓ real landscape and portrait Remotion frames contain caption pixels inside the chosen safe area  48220ms
+
+ Test Files  3 passed (3)
+      Tests  5 passed | 12 skipped (17)
+   Start at  17:27:20
+   Duration  88.03s (transform 2.09s, setup 128ms, collect 7.79s, tests 124.21s, environment 1ms, prepare 502ms)

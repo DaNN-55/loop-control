@@ -1,0 +1,106 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ scripts/openchatcut-embed-client.test.tsx (1 test | 1 failed) 198ms
+   × acknowledges the exact second-shot caption document even when the autosave effect still holds the previous render 195ms
+     → expected { version: 3, …(4) } to deeply equal { version: 3, …(4) }
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  scripts/openchatcut-embed-client.test.tsx > acknowledges the exact second-shot caption document even when the autosave effect still holds the previous render
+AssertionError: expected { version: 3, …(4) } to deeply equal { version: 3, …(4) }
+
+- Expected
++ Received
+
+@@ -20,79 +20,15 @@
+        "name": "main",
+        "order": 0,
+        "selectedId": null,
+        "trackOrder": [
+          "V1",
+-         "workspace-captions",
+        ],
+        "tracks": {
+          "V1": {
+            "kind": "video",
+            "name": "video",
+-         },
+-         "workspace-captions": {
+-           "captions": {
+-             "enabled": true,
+-             "layoutPolicy": {
+-               "mode": "manual-slots",
+-               "slots": [],
+-             },
+-             "pacing": "phrase",
+-             "perSource": {},
+-             "sourceEntries": [
+-               {
+-                 "anchor": "bottom-center",
+-                 "heightRatio": 0.74,
+-                 "id": "workspace-caption-shot-two",
+-                 "itemId": "manual:workspace-caption-shot-two",
+-                 "label": "字幕",
+-                 "loopControl": {
+-                   "contentMode": "independent",
+-                   "spatial": {
+-                     "anchor": "bottom-center",
+-                     "aspectRatio": "9:16",
+-                     "insets": {
+-                       "bottom": 0.18,
+-                       "left": 0.08,
+-                       "right": 0.08,
+-                       "top": 0.08,
+-                     },
+-                     "maxCharactersPerLine": 16,
+-                     "maxLines": 2,
+-                     "safeArea": "title-safe",
+-                     "version": "shot-caption-space/v2",
+-                   },
+-                   "text": "第二镜字幕",
+-                   "version": "workspace-caption/v1",
+-                 },
+-                 "offsetXRatio": 0,
+-                 "offsetYRatio": 0.09999999999999999,
+-                 "slotId": "workspace-caption-shot-two-slot",
+-                 "style": {
+-                   "color": "#ffffff",
+-                   "fontFamily": "sans-serif",
+-                   "fontSize": 0.02684659090909091,
+-                   "fontWeight": 600,
+-                   "wholeLine": true,
+-                 },
+-                 "visible": true,
+-                 "widthRatio": 0.8400000000000001,
+-                 "words": [
+-                   {
+-                     "end": 7585,
+-                     "id": "phrase-1~0",
+-                     "start": 6020,
+-                     "text": "第二镜字幕",
+-                   },
+-                 ],
+-               },
+-             ],
+-             "sourceMode": "item",
+-             "template": "plain",
+-           },
+-           "kind": "caption",
+-           "name": "字幕",
+          },
+        },
+        "transitions": [],
+        "width": 1080,
+      },
+
+ ❯ scripts/openchatcut-embed-client.test.tsx:29:178
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  17:20:52
+   Duration  3.04s (transform 364ms, setup 59ms, collect 826ms, tests 198ms, environment 1.20s, prepare 176ms)

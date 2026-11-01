@@ -1,4 +1,6 @@
 import {buildProductionServiceCatalog} from '../connections/serviceCatalog.js';
+import {minimaxCredential} from '../worker/officialVideoProvider.js';
+import {minimaxEndpoints,type MiniMaxRegion} from '../worker/videoProviderCatalog.js';
 import {isRetiredProvider,retiredProviderMessage} from '../worker/providerLifecycle.js';
 import {createHash,randomUUID} from 'node:crypto';
 import type {Pool,PoolClient} from 'pg';
@@ -8,8 +10,15 @@ import {ConfigurationError} from './configurationCommands.js';
 import {disabledSecretStore,disabledConnectionProbe,type SecretStore,type ConnectionProbe} from './connectionPorts.js';
 import {ownedConnectionVersion,verifyLocalConnection} from '../worker/localConnection.js';
 import {workerPreflightVersion,type WorkerPreflightCheck} from '../worker/contracts.js';
+import {connectionUsageSupported,connectionUsagePlaceholder,type ConnectionUsageRead} from '../connections/connectionUsage.js';
+import {createProviderUsageReader,failedConnectionUsage,type ProviderUsageReader} from './providerUsage.js';
+import {LocalConnectionModels} from './connectionModels.js';
+import {LocalConnectionBilling} from './connectionBilling.js';
+import {billingProvider} from '../connections/connectionBilling.js';
+import type {BillingReader} from './providerBilling.js';
+import {createProviderModelsReader,type ProviderModelsReader} from './providerModels.js';
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
-const fields={create:['name','provider','adapter','secret'],rotate:['connectionId','provider','adapter','secret'],rebind:['versionId','secret'],update:['connectionId','name','description'],revoke:['versionId'],verify:['connectionId']} as const;
+const fields={create:['name','provider','adapter','secret'],rotate:['connectionId','provider','adapter','secret'],region:['connectionId','versionId','region'],rebind:['versionId','secret'],update:['connectionId','name','description'],revoke:['versionId'],verify:['connectionId']} as const;
 const metadataJSON=(value:Record<string,string>)=>JSON.stringify(Object.entries(value).sort());
 function invalid(message='连接请求无效。'):never{throw new ConfigurationError(400,message);}
 export function parseConnectionCommand(body:Record<string,unknown>){
@@ -28,14 +37,44 @@ export function parseConnectionCommand(body:Record<string,unknown>){
   else{const clean=value.trim();if(clean.length>(key==='description'?500:100)||key!=='description'&&!clean)invalid();metadata[key]=clean;}
  }
  if(isRetiredProvider(metadata.provider??''))throw new ConfigurationError(410,retiredProviderMessage);
- return {command,key:body.idempotencyKey,metadata,secret};
+ if(metadata.provider==='minimax'&&(command==='create'||command==='rotate')){
+  try{metadata.region=minimaxCredential(secret).region;}catch{invalid('MiniMax API Key 或所属站点无效。');}
+ }
+ if(command==='region'){
+  if(!Object.hasOwn(minimaxEndpoints,metadata.region))invalid('MiniMax 所属站点无效。');
+  metadata.command='rotate';metadata.provider='minimax';metadata.adapter='minimax_video';
+ }
+ return {command:command==='region'?'rotate' as const:command,key:body.idempotencyKey,metadata,secret};
 }
 async function lockIntent(client:PoolClient,ownerId:string,key:string){await client.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',['connection:'+ownerId+':'+key]);}
 export class LocalConnections {
- constructor(private pool:Pool,private store:SecretStore=disabledSecretStore,private probe:ConnectionProbe=disabledConnectionProbe){}
+ private usageCache=new Map<string,{expires:number;request:Promise<ConnectionUsageRead>}>();
+ readonly models:LocalConnectionModels;
+ readonly billing:LocalConnectionBilling;
+ constructor(private pool:Pool,private store:SecretStore=disabledSecretStore,private probe:ConnectionProbe=disabledConnectionProbe,private usageReader:ProviderUsageReader=createProviderUsageReader(),modelsReader:ProviderModelsReader=createProviderModelsReader(),billingReader?:BillingReader){
+  this.billing=new LocalConnectionBilling(pool,store,billingReader);
+  this.models=new LocalConnectionModels(pool,store,modelsReader,provider=>this.probe.verificationStatus?.(provider).available??this.networkAvailable);
+ }
  get configurationReady(){return this.store.mode==='keychain'&&this.probe.mode==='live';}
  get externalReady(){return this.configurationReady&&this.networkAvailable;}
  get networkAvailable(){return this.probe.mode==='live'&&this.probe.networkAvailable!==false;}
+ async readUsage(ownerId:string,connectionId:string):Promise<ConnectionUsageRead>{
+  const version=await ownerTransaction(this.pool,ownerId,true,async client=>{
+   const connection=(await client.query('SELECT current_version_id FROM public.external_connections WHERE id=$1 AND created_by=$2',[connectionId,ownerId])).rows[0];
+   if(!connection)throw new ConfigurationError(404,'连接不可见。');
+   const version=await ownedConnectionVersion(client,connection.current_version_id);
+   if(!version||version.revoked_at||!version.is_current)throw new ConfigurationError(409,'当前连接版本不可用。');return version;
+  });
+  const result=(usage:ConnectionUsageRead['usage'])=>({connectionId,versionId:version.id,usage});
+  if(billingProvider(version.provider))return result(await this.billing.usage(ownerId,connectionId));
+  if(!connectionUsageSupported(version.provider))return result(connectionUsagePlaceholder(version.provider));
+  if(this.store.mode!=='keychain'||version.store_mode!=='keychain'||!version.secret_ref)return result(failedConnectionUsage(version.provider,'本机密钥未绑定，未发出用量查询。'));
+  const key=ownerId+':'+version.id,previous=this.usageCache.get(key);
+  if(previous&&previous.expires>Date.now())return previous.request;
+  const request=(async()=>{try{return result(await this.usageReader({provider:version.provider,secret:await this.store.get(version.secret_ref!)}));}catch{return result(failedConnectionUsage(version.provider));}})();
+  if(this.usageCache.size>=64)this.usageCache.delete(this.usageCache.keys().next().value!);
+  this.usageCache.set(key,{expires:Date.now()+5*60000,request});return request;
+ }
  async assertBlueprintReferences(client:PoolClient,refs:string[],options:{purpose?:'save'|'execute'}={}){
   const execute=options.purpose!=='save';
   const networkAvailable=this.networkAvailable,checks:WorkerPreflightCheck[]=[];
@@ -70,6 +109,11 @@ export class LocalConnections {
     FROM public.external_connections c WHERE c.created_by=$1 AND c.provider NOT IN('cloudflare','google_tts')`,[ownerId])).rows;
    for(const connection of connections){const entry=usage.find(item=>item.id===connection.id);if(entry){const {id,...counts}=entry;connection.usage=counts;}}
    const bindings=(await client.query('SELECT version_id,store_mode FROM local_identity.connection_bindings WHERE owner_id=$1',[ownerId])).rows;
+   const minimaxRegions=(await client.query("SELECT version_id,metadata->>'region' region FROM local_identity.connection_intents WHERE owner_id=$1 AND applied_at IS NOT NULL AND metadata->>'provider'='minimax' AND metadata->>'command' IN('create','rotate')",[ownerId])).rows;
+   for(const connection of connections.filter(c=>c.provider==='minimax')){
+    const region=minimaxRegions.find(r=>r.version_id===connection.current_version_id)?.region??'international';
+    connection.region=region;connection.endpoint=minimaxEndpoints[region as MiniMaxRegion];
+   }
    const qualifications=(await client.query('SELECT version_id,qualified FROM local_identity.connection_qualifications WHERE owner_id=$1',[ownerId])).rows;
    const latest=(await client.query('SELECT DISTINCT ON(connection_version_id) connection_version_id,status FROM public.external_connection_verifications ORDER BY connection_version_id,created_at DESC,id DESC')).rows;
    const pending=(await client.query('SELECT idempotency_key,metadata,created_at FROM local_identity.connection_intents WHERE owner_id=$1 AND applied_at IS NULL ORDER BY created_at',[ownerId])).rows;
@@ -81,7 +125,8 @@ export class LocalConnections {
     const last=latest.find(p=>p.connection_version_id===c.current_version_id);
     c.last_verification_detail=current?.secretState==='unbound'?'本机密钥未绑定，请显式重新录入。':this.store.mode!=='keychain'?'测试未开始：本机 Keychain 未启用。':this.probe.mode!=='live'?'测试未开始：当前仅配置模拟验证。':last?.status==='retryable'&&c.status==='verified'?'本次测试暂不可用；上次有效验证资格保留，生产前仍须检查。':c.status==='verified'?'已验证；运行时仍检查密钥可用性。':'需要在本机重新验证。';}
    const verificationByProvider=Object.fromEntries(['volcengine','minimax','kling','bailian','pexels','freesound','openai','volcengine_tts'].map(provider=>[provider,this.probe.verificationStatus?.(provider)??{available:this.networkAvailable,detail:this.networkAvailable?'可测试连接。':'在线验证未启用。'}]));
-   return {serviceCatalog:buildProductionServiceCatalog({connections,versions:localVersions,externalReady}),connections,versions:localVersions,pending,capabilities:{secrets:this.store.mode,verification:this.probe.mode,externalReady,networkAvailable:this.networkAvailable,verificationByProvider,verificationAvailable:Object.values(verificationByProvider).some(status=>status.available)}};
+   const enabledModels=Object.fromEntries((await client.query('SELECT connection_id,enabled_models FROM local_identity.connection_model_settings')).rows.map(r=>[r.connection_id,r.enabled_models]));
+   return {serviceCatalog:buildProductionServiceCatalog({connections,versions:localVersions,externalReady,enabledModels}),connections,versions:localVersions,pending,capabilities:{billing:this.store.mode==='keychain',secrets:this.store.mode,verification:this.probe.mode,externalReady,networkAvailable:this.networkAvailable,verificationByProvider,verificationAvailable:Object.values(verificationByProvider).some(status=>status.available)}};
   });
  }
  async command(session:OwnerSession,body:Record<string,unknown>){
@@ -99,8 +144,9 @@ export class LocalConnections {
      if(!endpoint)invalid('只支持已登记的供应商和适配器。');
     }
     if(command==='rotate'){
-     const c=(await client.query('SELECT id FROM public.external_connections WHERE id=$1 AND created_by=$2',[metadata.connectionId,session.id])).rows[0];
+     const c=(await client.query('SELECT id,current_version_id,provider FROM public.external_connections WHERE id=$1 AND created_by=$2',[metadata.connectionId,session.id])).rows[0];
      if(!c)throw new ConfigurationError(404,'连接不可见。');connectionId=c.id;
+     if(metadata.versionId&&(c.provider!=='minimax'||c.current_version_id!==metadata.versionId))throw new ConfigurationError(409,'连接版本已变化，请重新读取后修改站点。');
     }
     if(command==='rebind'){
      const v=await ownedConnectionVersion(client,metadata.versionId);
@@ -125,7 +171,13 @@ export class LocalConnections {
      await client.query('SELECT local_identity.lock_owned_connection($1)',[i.connection_id]);
      const v=await ownedConnectionVersion(client,i.version_id);if(!v||v.revoked_at||v.secret_ref&&v.secret_ref!==i.secret_ref)throw new ConfigurationError(409,'版本或绑定已变化。');
     }
-    await this.store.putImmutable(i.secret_ref,input.secret);
+    let secret=input.secret;
+    if(command==='rotate'&&metadata.versionId){
+     const source=await ownedConnectionVersion(client,metadata.versionId);
+     if(!source||!source.is_current||source.revoked_at||source.connection_id!==i.connection_id||source.provider!=='minimax'||source.store_mode!==this.store.mode||!source.secret_ref)throw new ConfigurationError(409,'原连接版本不可用，请重新读取后修改站点。');
+     secret=JSON.stringify({apiKey:minimaxCredential(await this.store.get(source.secret_ref)).apiKey,region:metadata.region});
+    }
+    await this.store.putImmutable(i.secret_ref,secret);
     const result=(await client.query('SELECT local_identity.apply_connection_intent($1) result',[key])).rows[0].result;
     return {connection:result,replayed:false};
    });

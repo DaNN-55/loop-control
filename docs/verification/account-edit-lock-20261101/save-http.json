@@ -1,0 +1,38 @@
+[
+  {
+    "event": "Network.requestWillBeSent",
+    "requestId": "32356.214",
+    "method": "POST",
+    "path": "http://127.0.0.1:5174/api/local/configuration"
+  },
+  {
+    "event": "Network.responseReceived",
+    "requestId": "32356.214",
+    "path": "http://127.0.0.1:5174/api/local/configuration",
+    "status": 200
+  },
+  {
+    "event": "Network.requestWillBeSent",
+    "requestId": "32356.215",
+    "method": "GET",
+    "path": "http://127.0.0.1:5174/api/local/catalog"
+  },
+  {
+    "event": "Network.responseReceived",
+    "requestId": "32356.215",
+    "path": "http://127.0.0.1:5174/api/local/catalog",
+    "status": 200
+  },
+  {
+    "event": "Network.requestWillBeSent",
+    "requestId": "32356.216",
+    "method": "GET",
+    "path": "http://127.0.0.1:5174/api/local/connections"
+  },
+  {
+    "event": "Network.responseReceived",
+    "requestId": "32356.216",
+    "path": "http://127.0.0.1:5174/api/local/connections",
+    "status": 200
+  }
+]

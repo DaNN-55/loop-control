@@ -1,0 +1,14 @@
+Browser tab: 16, Title: "Loop Control", URL: "http://127.0.0.1:5174/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 54-78
+~					52 container
+~						53 heading 未分系列, Value: 2
++							54 text 未分系列
++						55 container 未分系列目录
++							56 text 未分系列目录
++							57 text /Volumes/Ebuget 1T/Media/流程验收1101--2fb0abe3-a125-429c-97b9-3330929c5c6b/未分系列--469c8e63-de75-4f1c-b61e-84929254527f
++							58 button Description: 打开未分系列目录, ID: react-aria5060923786-_r_3v_
++							59 button Description: 复制未分系列目录路径, ID: react-aria5060923786-_r_41_
++							60 button (collapsed) 完整路径, Secondary Actions: Expand
++								61 text 完整路径
+The focused UI element is 51 button 未分系列, ID: react-aria5060923786-_r_3n_

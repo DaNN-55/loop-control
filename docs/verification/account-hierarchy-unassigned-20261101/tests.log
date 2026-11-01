@@ -1,0 +1,14 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/platform/ConfigurationForms.local.test.tsx (4 tests) 169ms
+ ✓ src/accounts/AccountGeneralSettings.test.tsx (2 tests) 224ms
+ ✓ src/accounts/AccountWorkspace.test.tsx (23 tests) 1500ms
+ ✓ src/local-app/LocalCatalogApp.workspace.test.tsx (9 tests) 1675ms
+   ✓ 保留安全弹窗焦点，将维护入口统一为侧栏且跨页保留连接草稿  311ms
+   ✓ keeps one topbar instance and places the Owner menu after theme in workspace and episode  429ms
+
+ Test Files  4 passed (4)
+      Tests  38 passed (38)
+   Start at  20:17:35
+   Duration  3.71s (transform 827ms, setup 27ms, collect 4.77s, tests 3.57s, environment 1.46s, prepare 160ms)

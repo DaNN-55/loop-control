@@ -1,0 +1,19 @@
+{
+  "at": "2026-11-01T08:44:39.376Z",
+  "episode": "2f7553cb-c3e9-4dc5-b900-f1439329a0b0",
+  "stage": "production_completed",
+  "allFiveTasksCompleted": true,
+  "costCents": 0,
+  "activeTasks": 0,
+  "originalAccountsUnchanged": true,
+  "connectionCount": 13,
+  "credentialVersionCount": 19,
+  "packageVerified": true,
+  "exportConfirmed": true,
+  "allChecksPassed": true,
+  "accountRulesFrozenCorrectly": true,
+  "budgetExcludedFromCreativePolicy": true,
+  "publicEvidenceRedactedFields": 15,
+  "productionFileCount": 58,
+  "productionBytes": 8163031
+}

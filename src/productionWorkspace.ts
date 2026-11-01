@@ -33,7 +33,7 @@ export const productionWorkspaceFields:Record<string,string[]>={
  ...workspaceDeliveryFields,
  ...workspaceExportFields,
  saveWorkspaceNarrationDefaults:['episodeId','workspaceId','expectedRevision','selection','voice','speakingRate','languageCode'],
- saveWorkspaceNarration:['episodeId','workspaceId','expectedRevision','clipId','mode','text','voice','speakingRate','audioTrackId','selection','languageCode'],
+ saveWorkspaceNarration:['episodeId','workspaceId','expectedRevision','clipId','mode','text','voice','speakingRate','audioTrackId','materialRevisionId','selection','languageCode'],
  confirmWorkspaceNarration:['episodeId','workspaceId','expectedRevision','clipId'],
  generateWorkspaceNarration:['episodeId','workspaceId','expectedRevision','clipId','retry','reservationCents'],
  adoptWorkspaceNarration:['episodeId','workspaceId','expectedRevision','clipId','inputFingerprint','audioTrackId'],

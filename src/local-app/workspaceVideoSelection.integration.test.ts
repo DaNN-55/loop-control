@@ -9,7 +9,7 @@ import {workspaceTestMedia} from './workspaceTestMedia.fixture';
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('video selections generate real independent candidates without blueprint tools or added-shot type',async()=>{
  const f=await narrationFixture(undefined,undefined,true);try{
- await f.authorize();await f.request('setWanBudget',{trialCents:300,totalCents:1000,full:false});
+ await f.authorize();
  const a=(await f.c.query("SELECT v.id,b.secret_ref FROM public.external_connection_versions v JOIN local_identity.connection_bindings b ON b.version_id=v.id WHERE adapter='seedance_video'")).rows[0];
  const b=randomUUID(),connection=randomUUID(),secret=randomUUID();await f.c.query('BEGIN');
  await f.c.query("INSERT INTO public.external_connections(id,provider,adapter,name,created_by,current_version_id,endpoint) VALUES($1,'volcengine','seedance_video','Video B',$2,$3,'https://ark.cn-beijing.volces.com/api/v3')",[connection,f.owner,b]);
@@ -38,14 +38,16 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('video selections generat
  }finally{await f.close();}
 },120000);
 
-it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('video rejects invalid selection, input and budget before submission and preserves unknown-result protection across restart',async()=>{
+it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('video ignores exceeded historical account ceilings and preserves input and unknown-result protection across restart',async()=>{
  const f=await narrationFixture(undefined,undefined,true);try{
- await f.authorize();await f.request('setWanBudget',{trialCents:300,totalCents:1000,full:false});let w=await f.read();
+ await f.authorize();let w=await f.read();
  const version=(await f.c.query("SELECT id FROM public.external_connection_versions WHERE adapter='seedance_video'")).rows[0].id,first=await f.request('importMaterial',{materialType:'image',sourceKind:'file',sourcePath:'first.png',mimeType:'image/png',contentBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64'),isMainScript:false,materialPurpose:'visual_reference'});
  const selection={capability:'video',provider:'volcengine',adapter:'seedance_video',model:'doubao-seedance-2-0-260128',connectionVersionId:version},args={workspaceId:w.id,expectedRevision:w.revision,targetItemId:w.clips[0].itemId,selection,firstFrameMaterialRevisionId:first.body.id,prompt:'不可重复付费',durationSeconds:4,reservationCents:90};
  for(const change of [{selection:{...selection,model:'unsupported'}},{videoSettings:{resolution:'1080P'}},{firstFrameFit:'stretch'},{durationSeconds:3},{durationSeconds:16}])expect((await f.request('requestWorkspaceVisualCandidate',{...args,...change})).status).toBeGreaterThanOrEqual(400);
  expect((await f.request('requestWorkspaceVisualCandidate',{...args,selection:{...selection,connectionVersionId:randomUUID()}})).status).toBe(409);expect((await f.request('requestWorkspaceVisualCandidate',args,{token:f.otherToken})).status).toBe(404);expect((await f.request('requestWorkspaceVisualCandidate',args,{csrf:false})).status).toBe(403);
- const budget=await f.request('requestWorkspaceVisualCandidate',{...args,reservationCents:1001});expect(budget.status).toBe(409);expect(budget.body.error).toContain('预算');expect((await f.read()).visualTasks).toHaveLength(0);
+ const invalid=await f.request('requestWorkspaceVisualCandidate',{...args,reservationCents:100001});expect(invalid.status).toBe(400);expect((await f.read()).visualTasks).toHaveLength(0);
+ const account=(await f.c.query('SELECT account_id FROM public.episodes WHERE id=$1',[f.episode])).rows[0].account_id;
+ await f.c.query('INSERT INTO public.generation_account_budgets(account_id,trial_video_limit_cents,total_limit_cents,full_generation_enabled,approved_by) VALUES($1,1,1,false,$2) ON CONFLICT(account_id) DO UPDATE SET trial_video_limit_cents=1,total_limit_cents=1,full_generation_enabled=false',[account,f.owner]);
  await writeFile(join(f.root,'controlled-video.mjs'),(await readFile(join(f.root,'controlled-video.mjs'),'utf8')).replace("return Response.json({id:'controlled-t05-video'});","throw Error('Controlled unknown POST');"));
  const requested=await f.request('requestWorkspaceVisualCandidate',args);expect(requested.status,JSON.stringify(requested.body)).toBe(200);w=requested.body;const task=w.visualTasks[0].taskId;await f.execute(task,false);await f.restart();await f.restartWorker();w=await f.read();
  expect((await f.request('retryWorkspaceVisualCandidate',{workspaceId:w.id,expectedRevision:w.revision,candidateId:w.visualTasks[0].id})).status).toBe(409);const repeated=await f.request('requestWorkspaceVisualCandidate',{...args,expectedRevision:w.revision,prompt:'换动作也不能绕过'});expect(repeated.status).toBe(409);expect(repeated.body.error).toContain('未知');expect((await readFile(f.videoSubmissions,'utf8')).trim().split('\n')).toHaveLength(1);expect((await f.read()).visualTasks).toHaveLength(1);
@@ -54,7 +56,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('video rejects invalid se
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('selected video model uses actual adopted source voice window, rejects overflow and protects against later voice changes',async()=>{
  const {promisify}=await import('node:util'),{execFile}=await import('node:child_process');const f=await narrationFixture(undefined,undefined,true);try{
- await f.authorize();await f.request('setWanBudget',{trialCents:300,totalCents:1000,full:false});let w=await f.read();const clip=w.clips[0],send=async(command:string,data:Record<string,unknown>)=>{const r=await f.request(command,{workspaceId:w.id,expectedRevision:w.revision,...data});expect(r.status,JSON.stringify(r.body)).toBe(200);w=r.body;};
+ await f.authorize();let w=await f.read();const clip=w.clips[0],send=async(command:string,data:Record<string,unknown>)=>{const r=await f.request(command,{workspaceId:w.id,expectedRevision:w.revision,...data});expect(r.status,JSON.stringify(r.body)).toBe(200);w=r.body;};
  const video=join(f.root,'source-voice.mp4');await promisify(execFile)('ffmpeg',['-v','error','-f','lavfi','-i','color=c=blue:s=128x128:r=30','-f','lavfi','-i','sine=frequency=440:sample_rate=48000','-t','17','-c:v','libx264','-c:a','aac','-pix_fmt','yuv420p',video]);
  const imported=await f.request('importMaterial',{materialType:'video',sourceKind:'file',sourcePath:'source-voice.mp4',mimeType:'video/mp4',contentBase64:(await readFile(video)).toString('base64'),isMainScript:false,materialPurpose:'a_roll'}),first=await f.request('importMaterial',{materialType:'image',sourceKind:'file',sourcePath:'first.png',mimeType:'image/png',contentBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64'),isMainScript:false,materialPurpose:'visual_reference'});
  const long=w.clips[1];for(const [chosen,frames] of [[clip,150],[long,480]] as const)await send('saveWorkspaceVideoRanges',{shotId:chosen.shotId,ranges:[{clipId:chosen.id,materialRevisionId:imported.body.id,sourceInFrame:15,durationInFrames:frames,durationLocked:false}]});

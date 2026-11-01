@@ -3,12 +3,12 @@
     "aspect": "9:16",
     "width": 640,
     "height": 1138,
-    "changedPixels": 4983,
+    "changedPixels": 5770,
     "bounds": {
-      "minX": 245,
-      "minY": 813,
-      "maxX": 394,
-      "maxY": 921
+      "minX": 241,
+      "minY": 812,
+      "maxX": 398,
+      "maxY": 923
     },
     "insets": {
       "top": 0.08,
@@ -21,11 +21,11 @@
     "aspect": "16:9",
     "width": 640,
     "height": 360,
-    "changedPixels": 572,
+    "changedPixels": 864,
     "bounds": {
       "minX": 296,
-      "minY": 287,
-      "maxX": 343,
+      "minY": 286,
+      "maxX": 351,
       "maxY": 321
     },
     "insets": {

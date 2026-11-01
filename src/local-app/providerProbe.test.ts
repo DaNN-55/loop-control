@@ -52,3 +52,14 @@ it('verifies GPT Image 2 model access without invoking image generation',async()
 it('does not accept the retired image model as GPT Image 2 verification',async()=>{
  expect(await createProviderProbe(fixture('openai'),async()=>Response.json({id:'gpt-image-1'})).verify(input('openai'))).toBe('retryable');
 });
+
+it('uses the selected MiniMax domestic origin and sends only its API key',async()=>{
+ const transport=vi.fn(async(url:string|URL,init?:RequestInit)=>{
+  expect(String(url)).toBe('https://api.minimax.cn/v2/query/video_generation?page_num=1&page_size=1');
+  expect(new Headers(init?.headers).get('Authorization')).toBe('Bearer synthetic-cn-key');
+  return Response.json({items:[]});
+ });
+ const probe=createProviderProbe(fixture('minimax',false),transport,undefined,{manualVerification:true});
+ expect((await probe.test!({...input('minimax'),secret:JSON.stringify({region:'cn',apiKey:'synthetic-cn-key'})})).outcome).toBe('verified');
+ expect(transport).toHaveBeenCalledTimes(1);
+});

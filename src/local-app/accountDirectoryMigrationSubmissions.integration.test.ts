@@ -14,7 +14,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each(['reject','unknown']
  // external Provider response is controlled; the HTTP/queue/Worker/DB are real.
  const f=await narrationFixture(undefined,base=>copyFileSync(join(base.assetRoot,`episodes/${base.episode}/voice.mp3`),voice),false,false,{voice,video:workspaceTestMedia('landscape-red-blue.mp4')});
  try{
- await f.authorize();expect((await f.request('setWanBudget',{trialCents:100,totalCents:1000,full:false})).status).toBe(200);
+ await f.authorize();
  let w=await f.read();const version=(await f.c.query("SELECT id FROM public.external_connection_versions WHERE adapter='volcengine_tts'")).rows[0].id,base={workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[0].id};
  const saved=await f.request('saveWorkspaceNarration',{...base,mode:'tts',text:'明确拒绝与提交未知必须区分。',selection:{capability:'speech',provider:'volcengine_tts',adapter:'volcengine_tts',model:'seed-tts-2.0',connectionVersionId:version},voice:'zh_female_vv_uranus_bigtts',speakingRate:1,languageCode:'zh-CN'});expect(saved.status,JSON.stringify(saved.body)).toBe(200);w=saved.body;
  expect((await f.request('confirmWorkspaceNarration',{...base,expectedRevision:w.revision})).status).toBe(200);

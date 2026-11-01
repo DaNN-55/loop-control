@@ -1,0 +1,39 @@
+import {cleanup,render,screen,fireEvent,waitFor,within} from '@testing-library/react';
+import {afterEach,expect,it,vi} from 'vitest';
+import {AccountWorkspace} from './AccountWorkspace';
+const command=vi.hoisted(()=>vi.fn());
+vi.mock('../local-app/client',()=>({localCommand:command}));
+vi.mock('./AccountDirectoryPanel',()=>({AccountDirectoryPanel:()=>null}));
+afterEach(()=>{cleanup();vi.resetAllMocks();});
+it('account rules save and recover drafts without account budget settings or commands',async()=>{
+ const save=vi.fn().mockResolvedValueOnce(null).mockResolvedValue({id:'b'}),props={account:{id:'a',name:'A',current_blueprint_version_id:'b',slug:'a',timezone:'UTC'},accounts:[],blueprints:[{id:'b',version:1,account_id:'a',policy:{positioning:'原定位'}}],isPending:'',onSelectAccount:vi.fn(),onUpdateBlueprint:save} as any;
+ render(<AccountWorkspace {...props}/>);expect(screen.queryByRole('region',{name:'费用与限额'})).toBeNull();expect(command).not.toHaveBeenCalled();
+ expect(screen.getByLabelText('账号定位')).toHaveProperty('disabled',true);expect(screen.getByText('已应用')).toBeTruthy();expect(screen.queryByRole('button',{name:'保存通用规则'})).toBeNull();expect(screen.queryByRole('button',{name:'撤销修改'})).toBeNull();
+ fireEvent.click(screen.getByRole('button',{name:'修改'}));expect(screen.getByLabelText('账号定位')).toHaveProperty('disabled',false);
+ fireEvent.change(screen.getByLabelText('账号定位'),{target:{value:'新的规则'}});
+ fireEvent.click(screen.getByRole('button',{name:'保存通用规则'}));let dialog=screen.getByRole('dialog');fireEvent.click(within(dialog).getByRole('button',{name:'确认保存通用规则'}));await within(dialog).findByRole('alert');expect(save).toHaveBeenCalledWith(expect.objectContaining({positioning:'新的规则'}));
+ fireEvent.click(within(dialog).getByRole('button',{name:'取消'}));expect(screen.getByLabelText('账号定位')).toHaveProperty('value','新的规则');
+ fireEvent.click(screen.getByRole('button',{name:'撤销修改'}));expect(screen.getByLabelText('账号定位')).toHaveProperty('value','原定位');
+ expect(screen.getByLabelText('账号定位')).toHaveProperty('disabled',true);fireEvent.click(screen.getByRole('button',{name:'修改'}));
+ fireEvent.change(screen.getByLabelText('账号定位'),{target:{value:'保存后的规则'}});fireEvent.click(screen.getByRole('button',{name:'保存通用规则'}));dialog=screen.getByRole('dialog');fireEvent.click(within(dialog).getByRole('button',{name:'确认保存通用规则'}));await waitFor(()=>expect(screen.queryByRole('dialog')).toBeNull());expect(screen.getByText('已应用')).toBeTruthy();expect(screen.getByLabelText('账号定位')).toHaveProperty('disabled',true);expect(command).not.toHaveBeenCalled();
+ fireEvent.click(screen.getByRole('button',{name:'修改'}));fireEvent.change(screen.getByLabelText('账号定位'),{target:{value:'再次修改但撤销'}});fireEvent.click(screen.getByRole('button',{name:'撤销修改'}));expect(screen.getByLabelText('账号定位')).toHaveProperty('value','保存后的规则');expect(screen.getByLabelText('账号定位')).toHaveProperty('disabled',true);
+});
+
+it('locks fields and prevents a second request while account rules are being saved',async()=>{
+ let finish!:(value:any)=>void;
+ const save=vi.fn(()=>new Promise<any>(resolve=>{finish=resolve;}));
+ const props={account:{id:'a',name:'A',current_blueprint_version_id:'b',slug:'a',timezone:'UTC'},accounts:[],blueprints:[{id:'b',version:1,account_id:'a',policy:{positioning:'原定位'}}],isPending:'',onSelectAccount:vi.fn(),onUpdateBlueprint:save} as any;
+ render(<AccountWorkspace {...props}/>);
+ fireEvent.click(screen.getByRole('button',{name:'修改'}));
+ fireEvent.change(screen.getByLabelText('账号定位'),{target:{value:'待应用规则'}});
+ fireEvent.click(screen.getByRole('button',{name:'保存通用规则'}));
+ const dialog=screen.getByRole('dialog'),confirm=within(dialog).getByRole('button',{name:'确认保存通用规则'});
+ fireEvent.click(confirm);fireEvent.click(confirm);
+ expect(save).toHaveBeenCalledTimes(1);
+ expect(screen.getByLabelText('账号定位')).toHaveProperty('disabled',true);
+ expect(within(dialog).getByRole('button',{name:'取消'})).toHaveProperty('disabled',true);
+ finish({id:'b'});
+ await screen.findByRole('button',{name:'修改'});
+ expect(screen.getByText('已应用')).toBeTruthy();
+ expect(screen.getByLabelText('账号定位')).toHaveProperty('value','待应用规则');
+});

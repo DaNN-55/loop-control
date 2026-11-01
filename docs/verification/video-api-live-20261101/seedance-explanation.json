@@ -1,0 +1,13 @@
+{
+  "at": "2026-11-01T10:40:10.087Z",
+  "observed": {
+    "httpStatus": 404,
+    "code": "ModelNotOpen",
+    "model": "doubao-seedance-2-0-260128",
+    "accountIdSuffix": "4467",
+    "providerTaskId": null
+  },
+  "screenshotMeaning": "Key permission all covers resources within its project; not proof of account model activation",
+  "source": "https://docs.volcengine.com/docs/ark/manage-api-keys?lang=zh",
+  "next": "Inspect Seedance model activation status and account/project identity; no second paid request authorized yet"
+}

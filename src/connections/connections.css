@@ -201,17 +201,17 @@ html[data-interface="impeccable"] .product-ui .reference-connections.reference-c
 html[data-interface="impeccable"] .product-ui .reference-connections.reference-connections .reference-connections-toolbar > div {min-width:0;width:100%;margin:0}
 html[data-interface="impeccable"] .product-ui .reference-connections.reference-connections .reference-connections-toolbar label {display:block;margin:0 0 6px;padding:0;font-size:12px;font-weight:500;color:var(--lc-muted)}
 html[data-interface="impeccable"] .product-ui .reference-connections.reference-connections .reference-connections-toolbar :is(input,select) {width:100%;font-size:13px}
-html[data-interface="impeccable"] .product-ui .reference-connections .reference-connections-table-wrap {border:1px solid var(--lc-line);border-radius:12px;background:var(--lc-surface);overflow:auto}
-html[data-interface="impeccable"] .product-ui .reference-connections table {width:100%;min-width:820px;border-collapse:collapse;table-layout:fixed;font-size:13px}
-html[data-interface="impeccable"] .product-ui .reference-connections :is(th,td) {padding:10px 12px;text-align:left;border:0;border-bottom:1px solid var(--lc-line);vertical-align:middle;overflow-wrap:anywhere}
-html[data-interface="impeccable"] .product-ui .reference-connections th {background:var(--lc-surface-2);color:var(--lc-muted);font-size:11px;font-weight:500;padding-block:12px}
-html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(1) {width:20%}
-html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(2) {width:14%}
-html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(3) {width:25%}
-html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(4) {width:22%}
-html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(5) {width:7%;white-space:nowrap}
-html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(6) {width:8%}
-html[data-interface="impeccable"] .product-ui .reference-connections .reference-connection-child>td:first-child {padding-left:28px}
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connections-table-wrap {border:1px solid var(--lc-line);border-radius:12px;background:var(--lc-surface);overflow:auto;contain:layout paint}
+html[data-interface="impeccable"] .product-ui .reference-connections table {width:100%;min-width:1244px;border-collapse:collapse;table-layout:fixed;font-size:13px}
+html[data-interface="impeccable"] .product-ui .reference-connections :is(th,td) {padding:12px 12px;text-align:left;border:0;border-bottom:1px solid var(--lc-line);vertical-align:middle;overflow-wrap:anywhere}
+html[data-interface="impeccable"] .product-ui .reference-connections th {background:var(--lc-surface-2);color:var(--lc-muted);font-size:12px;font-weight:500;padding-block:12px}
+html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(1) {width:184px;padding-left:46px}
+html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(2) {width:136px}
+html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(3) {width:286px}
+html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(4) {width:168px}
+html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(5) {width:92px;white-space:nowrap}
+html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(6) {width:210px}
+html[data-interface="impeccable"] .product-ui .reference-connections tbody td:first-child:not([colspan]) {padding-left:46px}
 html[data-interface="impeccable"] .product-ui .reference-connections tbody tr:last-child td {border-bottom:0}
 html[data-interface="impeccable"] .product-ui .reference-connections tbody tr:hover {background:var(--lc-surface-2)}
 html[data-interface="impeccable"] .product-ui .reference-connections .reference-connection-name {display:inline;padding:0;min-height:0;border:0;border-radius:0;background:none;color:var(--lc-ink);text-align:left;font-weight:600;font-size:13px;line-height:1.6;box-shadow:none}
@@ -277,31 +277,49 @@ html .reference-connections-menu [role="menuitem"] svg {height:15px;width:15px;s
   html[data-interface="impeccable"] .product-ui .reference-connections .reference-connections-detail-list {grid-template-columns:100px minmax(0,1fr);gap:12px}
 }
 
-html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(7){width:4%}
-html[data-interface="impeccable"] .product-ui .reference-connections :is(th,td):nth-child(n+6){padding-inline:8px;text-align:center;white-space:nowrap}
-html[data-interface="impeccable"] .product-ui .reference-connections .reference-connection-more>button{margin-inline:auto}
+html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(7){width:88px}
+html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(8){width:48px}
+html[data-interface="impeccable"] .product-ui .reference-connections :is(th,td):nth-child(n+7){padding-inline:8px;text-align:center;white-space:nowrap}
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connection-more>button{margin-inline:0}
 
-.reference-connections .reference-connections-group td {
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connections-group td {
   background: var(--lc-surface-2);
   color: var(--lc-ink);
   font-weight: 650;
   padding-block: 8px;
+  padding-inline: 30px;
 }
+
+.connection-models-body {padding:20px;display:grid;gap:16px;min-width:0}
+.connection-models-heading {display:flex;align-items:center;justify-content:space-between;gap:16px}
+.connection-models-heading strong {overflow-wrap:anywhere}
+.connection-models-filters {display:grid;grid-template-columns:minmax(0,1fr) 130px 130px;gap:8px}
+.connection-models-list {max-height:340px;overflow:auto;overscroll-behavior:contain;min-width:0}
+.connection-models-row {display:grid;gap:5px;padding:12px 0;border-bottom:1px solid var(--lc-line);overflow-wrap:anywhere}
+.connection-models-row:last-child {border-bottom:0}
+.connection-models-meta {padding-left:24px;color:var(--lc-muted);font-size:12px;line-height:1.5}
+@media(max-width:600px){.connection-models-filters {grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.connection-models-filters>:first-child {grid-column:1/-1}}
 
 .connection-settings-nav{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:16px}
 .connection-settings-nav>button:last-child:nth-child(3){margin-left:auto}
-.account-generation-budget-settings{border:1px solid var(--lc-line);border-radius:12px;background:var(--lc-surface);padding:24px;max-width:780px}
-.account-generation-budget-settings>header{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
-.account-generation-budget-settings h2{margin:0;font-size:16px;font-weight:600}
-.account-generation-budget-settings>header>label{display:flex;align-items:center;gap:10px;font-size:12px;min-width:0}
-.account-generation-budget-settings select{max-width:260px}
-.account-budget-editor{display:grid;gap:16px;margin-top:16px}
-.account-budget-editor p{margin:0;font-size:12px;line-height:1.65}
-.account-budget-readout{display:flex;gap:24px;color:var(--lc-muted);font-size:12px;flex-wrap:wrap}
-.account-budget-readout strong{color:var(--lc-ink);font-weight:600;font-variant-numeric:tabular-nums}
-.account-budget-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-.account-budget-fields>label{display:grid;gap:8px;font-size:12px;min-width:0}
-.account-budget-full{display:flex;align-items:center;gap:8px;font-size:12px}
-.account-budget-full input{accent-color:var(--lc-accent)}
-.account-budget-editor footer{display:flex;align-items:center;gap:12px;border-top:1px solid var(--lc-line);padding-top:16px;font-size:12px}
-@media(max-width:600px){.account-generation-budget-settings{padding:16px}.account-generation-budget-settings>header{gap:12px}.account-generation-budget-settings>header>label{width:100%}.account-generation-budget-settings>header>label>div{flex:1}.account-generation-budget-settings select{max-width:100%}.account-budget-fields{grid-template-columns:minmax(0,1fr)}}
+
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connection-usage{font-size:12px;font-variant-numeric:tabular-nums}
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connection-usage-line{display:flex;align-items:baseline;gap:8px;line-height:1.6}
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connection-usage-line>span:first-child{color:var(--lc-muted);flex:0 0 48px}
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connection-usage-line>span[data-state=ready]{color:var(--lc-ink)}
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connection-usage-line>span:not([data-state=ready]){color:var(--lc-muted)}
+
+html[data-interface="impeccable"] .product-ui .reference-connections td.reference-connection-more{text-align:center}
+
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connections-column-label { display: inline-flex; align-items: center; gap: 5px; }
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connection-test-button { min-height: 30px; padding: 4px 8px; font-weight: 500; box-shadow: none; }
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connection-test-button svg { width: 14px; height: 14px; }
+html[data-interface="impeccable"] .product-ui .reference-connections td:nth-child(5) { color: var(--lc-muted); font-variant-numeric: tabular-nums; }
+.connection-billing-fields { display: grid; gap: 16px; min-width: 0; }
+.connection-billing-fields > a { font-size: 12px; color: var(--lc-accent); text-decoration: underline; text-underline-offset: 3px; }
+.connection-billing-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 8px; }
+.connection-billing-summary { display: grid; gap: 14px; border-top: 1px solid var(--lc-line); padding-top: 16px; }
+.connection-billing-summary > div { display: grid; grid-template-columns: 72px minmax(0,1fr); gap: 6px 12px; }
+.connection-billing-summary p { grid-column: 1 / -1; }
+.connection-billing-console-link { color: var(--lc-accent); text-decoration: underline; text-underline-offset: 3px; }
+.connection-billing-console-link:focus-visible { outline: 2px solid var(--lc-accent); outline-offset: 3px; border-radius: 2px; }

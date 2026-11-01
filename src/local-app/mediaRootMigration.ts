@@ -42,7 +42,8 @@ export async function planMediaRootMigration(pool:Pool,session:OwnerSession,medi
    const source=(await c.query('SELECT local_identity.media_root_binding() binding')).rows[0].binding as MediaRootBinding;
    if(!source||source.path!==mediaRoot)throw new ConfigurationError(409,'服务媒体根与登记位置不一致，请重启服务。');
    await verifyMediaRootBinding(source);
-   if(overlap(source.path,target.path)||(runtime?.protectedRoots??[]).some(p=>overlap(p,target.path))||['/System','/Library','/usr','/bin','/sbin','/etc','/dev','/proc'].some(p=>overlap(p,target.path)))throw new ConfigurationError(400,'目标不能与源位置、平台运行目录、历史库或备份重叠。');
+   const conflictingRoots=[source.path,...(runtime?.protectedRoots??[]),'/System','/Library','/usr','/bin','/sbin','/etc','/dev','/proc'].filter(p=>overlap(p,target.path));
+   if(conflictingRoots.length)throw new ConfigurationError(400,'目标不能与源位置、平台运行目录、历史库或备份重叠。冲突路径：'+[...new Set(conflictingRoots)].map(p=>`${p}（${p===target.path?'与目标相同':assetPathWithin(target.path,p)?'位于目标目录内':'包含目标目录'}）`).join('；')+'。');
    const conflicts:string[]=[],blockers=(await c.query('SELECT local_identity.media_root_pending_operations() reasons')).rows[0].reasons as {kind:string;object_id:string;reason:string}[];
    for(const pending of await runtime?.pendingOperations?.()??[])blockers.push({...pending,object_id:'deployment'});
    for(const account of accounts)for(const r of (await c.query('SELECT local_identity.account_directory_busy($1) reasons',[account.id])).rows[0].reasons)blockers.push({kind:'production',object_id:account.id,reason:r.reason});

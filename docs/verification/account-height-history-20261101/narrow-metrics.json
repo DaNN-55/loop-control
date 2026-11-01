@@ -1,0 +1,28 @@
+{
+  "footer": {
+    "bottom": 833,
+    "height": 73,
+    "left": 81,
+    "right": 588,
+    "top": 760,
+    "width": 507,
+    "x": 81,
+    "y": 760
+  },
+  "historyCount": 0,
+  "overflow": false,
+  "panel": {
+    "bottom": 834,
+    "height": 936,
+    "left": 80,
+    "right": 589,
+    "top": -102,
+    "width": 509,
+    "x": 80,
+    "y": -102
+  },
+  "viewport": {
+    "height": 850,
+    "width": 620
+  }
+}

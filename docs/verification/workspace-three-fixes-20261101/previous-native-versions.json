@@ -1,0 +1,165 @@
+[
+  {
+    "revision": 9,
+    "reason": "采用原片主声",
+    "at": "2026-11-01T08:24:21.502727+00:00",
+    "caption": [
+      {
+        "shot": "shot-01",
+        "c": [
+          {
+            "id": "initial-shot-01~0",
+            "text": "这是第一段画面，检查账号规则。",
+            "startMs": 0,
+            "endMs": 6000
+          }
+        ]
+      },
+      {
+        "shot": "shot-02",
+        "c": [
+          {
+            "id": "initial-shot-02~0",
+            "text": "这是第二段画面，检查预算返回。",
+            "startMs": 0,
+            "endMs": 6000
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "revision": 10,
+    "reason": "保存原生剪辑",
+    "at": "2026-11-01T08:24:45.612956+00:00",
+    "caption": [
+      {
+        "shot": "shot-01",
+        "c": [
+          {
+            "id": "initial-shot-01~0",
+            "text": "这是第一段画面，检查账号规则。",
+            "startMs": 0,
+            "endMs": 6000
+          }
+        ]
+      },
+      {
+        "shot": "shot-02",
+        "c": [
+          {
+            "id": "initial-shot-02~0",
+            "text": "这是第二段画面，检查预算返回。",
+            "startMs": 0,
+            "endMs": 6000
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "revision": 10,
+    "reason": "更新工作版本",
+    "at": "2026-11-01T08:26:35.237712+00:00",
+    "caption": [
+      {
+        "shot": "shot-01",
+        "c": [
+          {
+            "id": "initial-shot-01~0",
+            "text": "这是第一段画面，检查账号规则。",
+            "startMs": 0,
+            "endMs": 6000
+          }
+        ]
+      },
+      {
+        "shot": "shot-02",
+        "c": [
+          {
+            "id": "initial-shot-02~0",
+            "text": "这是第二段画面，检查预算返回。",
+            "startMs": 0,
+            "endMs": 6000
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "revision": 11,
+    "reason": "保存原生剪辑",
+    "at": "2026-11-01T08:35:06.578662+00:00",
+    "caption": [
+      {
+        "shot": "shot-01",
+        "c": [
+          {
+            "id": "phrase-1~0",
+            "text": "这是第一段画面，",
+            "startMs": 20,
+            "endMs": 1525
+          },
+          {
+            "id": "phrase-2~0",
+            "text": "检查账号规则。",
+            "startMs": 1866,
+            "endMs": 5960
+          }
+        ]
+      },
+      {
+        "shot": "shot-02",
+        "c": [
+          {
+            "id": "initial-shot-02~0",
+            "text": "这是第二段画面，检查预算返回。",
+            "startMs": 0,
+            "endMs": 6000
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "revision": 12,
+    "reason": "保存原生剪辑",
+    "at": "2026-11-01T08:35:22.078229+00:00",
+    "caption": [
+      {
+        "shot": "shot-01",
+        "c": [
+          {
+            "id": "phrase-1~0",
+            "text": "这是第一段画面，",
+            "startMs": 20,
+            "endMs": 1525
+          },
+          {
+            "id": "phrase-2~0",
+            "text": "检查账号规则。",
+            "startMs": 1866,
+            "endMs": 5960
+          }
+        ]
+      },
+      {
+        "shot": "shot-02",
+        "c": [
+          {
+            "id": "phrase-1~0",
+            "text": "这是第二段画面，",
+            "startMs": 20,
+            "endMs": 1585
+          },
+          {
+            "id": "phrase-2~0",
+            "text": "检查预算返回。",
+            "startMs": 1946,
+            "endMs": 5960
+          }
+        ]
+      }
+    ]
+  }
+]

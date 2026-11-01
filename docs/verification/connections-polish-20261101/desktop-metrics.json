@@ -1,0 +1,14 @@
+{
+  "button": {
+    "border": "0px",
+    "height": 32,
+    "shadow": "none"
+  },
+  "headerPadding": "46px",
+  "misleadingNetworkRows": 0,
+  "namePadding": "46px",
+  "outerWidth": 1404,
+  "rows": 8,
+  "tableWidth": 1402,
+  "viewport": 1543
+}

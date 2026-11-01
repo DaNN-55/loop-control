@@ -1,0 +1,391 @@
+{
+  "version": 3,
+  "loopControl": {
+    "version": "four-step-workspace/v1",
+    "inputFingerprint": "b71c4f80-858d-442b-93f0-98824d90ad93",
+    "transitionMode": "studio"
+  },
+  "assets": [
+    {
+      "width": 360,
+      "height": 640,
+      "id": "candidate-afdc4a35-5137-4f7f-81c8-3c2a1228e61a",
+      "name": "shot-02 · 待匹配画面",
+      "kind": "video",
+      "src": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/账号系列参考图预算返回 · 完整E2E--2f7553cb-c3e9-4dc5-b900-f1439329a0b0/materials/6ed66d77f8d1c420697ed51a2e2ba2857fe3e187e1e585a306115aab286f3693-video-02.mp4",
+      "durationInFrames": 180,
+      "sourceContentHash": "6ed66d77f8d1c420697ed51a2e2ba2857fe3e187e1e585a306115aab286f3693",
+      "sourceRevision": "source-sha256-6ed66d77f8d1c420697ed51a2e2ba2857fe3e187e1e585a306115aab286f3693"
+    },
+    {
+      "width": 360,
+      "height": 640,
+      "id": "candidate-2c2b4152-5151-4a0d-926d-7c18d4610586",
+      "name": "shot-01 · 待匹配画面",
+      "kind": "video",
+      "src": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/账号系列参考图预算返回 · 完整E2E--2f7553cb-c3e9-4dc5-b900-f1439329a0b0/materials/c304574f499980a970b4d19aae4599c7167f18a4e66bd7e3c68d4debe5f933e3-video-01.mp4",
+      "durationInFrames": 180,
+      "sourceContentHash": "c304574f499980a970b4d19aae4599c7167f18a4e66bd7e3c68d4debe5f933e3",
+      "sourceRevision": "source-sha256-c304574f499980a970b4d19aae4599c7167f18a4e66bd7e3c68d4debe5f933e3"
+    },
+    {
+      "width": 360,
+      "height": 640,
+      "id": "candidate-82b027b4-0a73-4766-82a5-3c3a61edd406",
+      "name": "shot-01 · 待匹配画面",
+      "kind": "video",
+      "src": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/账号系列参考图预算返回 · 完整E2E--2f7553cb-c3e9-4dc5-b900-f1439329a0b0/materials/a647ab1a97acfc14fba75a98ea1b123b14b5e2b8f1f4c194d81f870d68ffb1da-source-voice-01.mp4",
+      "durationInFrames": 180,
+      "sourceContentHash": "a647ab1a97acfc14fba75a98ea1b123b14b5e2b8f1f4c194d81f870d68ffb1da",
+      "sourceRevision": "source-sha256-a647ab1a97acfc14fba75a98ea1b123b14b5e2b8f1f4c194d81f870d68ffb1da"
+    },
+    {
+      "width": 360,
+      "height": 640,
+      "id": "candidate-9a3a823c-662d-4176-bb10-c2da379b9ccf",
+      "name": "shot-02 · 待匹配画面",
+      "kind": "video",
+      "src": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/账号系列参考图预算返回 · 完整E2E--2f7553cb-c3e9-4dc5-b900-f1439329a0b0/materials/2e17a49fa5b5ce03c5093e4f98be9e887f38e91b0817f7818aac6bc79cbf5e2d-source-voice-02.mp4",
+      "durationInFrames": 180,
+      "sourceContentHash": "2e17a49fa5b5ce03c5093e4f98be9e887f38e91b0817f7818aac6bc79cbf5e2d",
+      "sourceRevision": "source-sha256-2e17a49fa5b5ce03c5093e4f98be9e887f38e91b0817f7818aac6bc79cbf5e2d"
+    },
+    {
+      "id": "audio-track-aae2a2d3-7f6d-4864-b7a9-69499d921345",
+      "name": "shot-02 原片 0.00–6.00s",
+      "kind": "audio",
+      "src": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/账号系列参考图预算返回 · 完整E2E--2f7553cb-c3e9-4dc5-b900-f1439329a0b0/native-tasks/1a16d9a7-a2f2-4e6e-9f38-694eeec82551/e5fd5a61-3a41-438f-930e-fdb3ea5ee722.mp3",
+      "durationInFrames": 180,
+      "loopControlAudioSource": {
+        "videoAssetId": "candidate-9a3a823c-662d-4176-bb10-c2da379b9ccf",
+        "sha256": "2e17a49fa5b5ce03c5093e4f98be9e887f38e91b0817f7818aac6bc79cbf5e2d",
+        "sourceInFrame": 0,
+        "sourceFrameRate": 30
+      },
+      "sourceRevision": "source-v1--sdh9bs-3r72ru"
+    },
+    {
+      "id": "audio-track-237eb756-6bab-4226-8244-8514a547f963",
+      "name": "shot-01 原片 0.00–6.00s",
+      "kind": "audio",
+      "src": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/账号系列参考图预算返回 · 完整E2E--2f7553cb-c3e9-4dc5-b900-f1439329a0b0/native-tasks/74fad210-a159-4f51-a030-aa005d4ad564/1bb2b1dc-5fdc-4a38-8951-155a2c0ac4e8.mp3",
+      "durationInFrames": 180,
+      "loopControlAudioSource": {
+        "videoAssetId": "candidate-82b027b4-0a73-4766-82a5-3c3a61edd406",
+        "sha256": "a647ab1a97acfc14fba75a98ea1b123b14b5e2b8f1f4c194d81f870d68ffb1da",
+        "sourceInFrame": 0,
+        "sourceFrameRate": 30
+      },
+      "sourceRevision": "source-v1--pyflob-6lb3s8"
+    }
+  ],
+  "mediaFolders": [],
+  "activeTimelineId": "loop-control-2f7553cb-c3e9-4dc5-b900-f1439329a0b0",
+  "timelines": [
+    {
+      "id": "loop-control-2f7553cb-c3e9-4dc5-b900-f1439329a0b0",
+      "name": "整期剪辑",
+      "order": 0,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "fit": "contain",
+      "items": [
+        {
+          "id": "shot-shot-01-56d1c6bc-3a90-4b77-a46c-335014653ca4",
+          "track": "track_loop-control-2f7553cb-c3e9-4dc5-b900-f1439329a0b0_1",
+          "kind": "video",
+          "name": "shot-01 · 待匹配画面",
+          "startFrame": 0,
+          "durationInFrames": 180,
+          "width": 360,
+          "height": 640,
+          "transform": {
+            "scale": 1,
+            "x": 0,
+            "y": 0,
+            "rotation": 0
+          },
+          "loopControlShot": {
+            "workspaceId": "b71c4f80-858d-442b-93f0-98824d90ad93",
+            "shotId": "shot-01",
+            "clipId": "56d1c6bc-3a90-4b77-a46c-335014653ca4",
+            "text": "这是第一段画面，检查账号规则。"
+          },
+          "src": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/账号系列参考图预算返回 · 完整E2E--2f7553cb-c3e9-4dc5-b900-f1439329a0b0/materials/a647ab1a97acfc14fba75a98ea1b123b14b5e2b8f1f4c194d81f870d68ffb1da-source-voice-01.mp4",
+          "sourceAssetId": "candidate-82b027b4-0a73-4766-82a5-3c3a61edd406",
+          "loopControlCandidate": {
+            "inputFingerprint": "e2d25804d1f79323f1fd0ddf16b9177f0a89dc077391c93626f5e6d4cf8dc5ee",
+            "sourceId": "candidate-82b027b4-0a73-4766-82a5-3c3a61edd406",
+            "durationPolicy": "keep-target",
+            "startFrame": 0,
+            "durationInFrames": 180,
+            "shotWindow": {
+              "startFrame": 0,
+              "durationInFrames": 180
+            }
+          },
+          "srcInFrame": 0,
+          "volume": 0,
+          "loopControlAudio": {
+            "workspaceId": "b71c4f80-858d-442b-93f0-98824d90ad93",
+            "shotId": "shot-01",
+            "voiceMode": "source"
+          },
+          "sourceContentHash": "a647ab1a97acfc14fba75a98ea1b123b14b5e2b8f1f4c194d81f870d68ffb1da",
+          "sourceRevision": "source-sha256-a647ab1a97acfc14fba75a98ea1b123b14b5e2b8f1f4c194d81f870d68ffb1da"
+        },
+        {
+          "id": "shot-shot-02-6db92056-ee08-468e-9e5e-c2f2cf512ef0",
+          "track": "track_loop-control-2f7553cb-c3e9-4dc5-b900-f1439329a0b0_1",
+          "kind": "video",
+          "name": "shot-02 · 待匹配画面",
+          "startFrame": 180,
+          "durationInFrames": 180,
+          "width": 360,
+          "height": 640,
+          "transform": {
+            "scale": 1,
+            "x": 0,
+            "y": 0,
+            "rotation": 0
+          },
+          "loopControlShot": {
+            "workspaceId": "b71c4f80-858d-442b-93f0-98824d90ad93",
+            "shotId": "shot-02",
+            "clipId": "6db92056-ee08-468e-9e5e-c2f2cf512ef0",
+            "text": "这是第二段画面，检查预算返回。"
+          },
+          "src": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/账号系列参考图预算返回 · 完整E2E--2f7553cb-c3e9-4dc5-b900-f1439329a0b0/materials/2e17a49fa5b5ce03c5093e4f98be9e887f38e91b0817f7818aac6bc79cbf5e2d-source-voice-02.mp4",
+          "sourceAssetId": "candidate-9a3a823c-662d-4176-bb10-c2da379b9ccf",
+          "loopControlCandidate": {
+            "inputFingerprint": "59c89d73049424659bd77b6bfd2a85b7857f441fd20faf50a9a7064d56ca7773",
+            "sourceId": "candidate-9a3a823c-662d-4176-bb10-c2da379b9ccf",
+            "durationPolicy": "keep-target",
+            "startFrame": 180,
+            "durationInFrames": 180,
+            "shotWindow": {
+              "startFrame": 180,
+              "durationInFrames": 180
+            }
+          },
+          "srcInFrame": 0,
+          "volume": 0,
+          "loopControlAudio": {
+            "workspaceId": "b71c4f80-858d-442b-93f0-98824d90ad93",
+            "shotId": "shot-02",
+            "voiceMode": "source"
+          },
+          "sourceContentHash": "2e17a49fa5b5ce03c5093e4f98be9e887f38e91b0817f7818aac6bc79cbf5e2d",
+          "sourceRevision": "source-sha256-2e17a49fa5b5ce03c5093e4f98be9e887f38e91b0817f7818aac6bc79cbf5e2d"
+        },
+        {
+          "id": "workspace-source-shot-shot-02",
+          "kind": "audio",
+          "name": "shot-02 原声",
+          "track": "workspace-main-voice",
+          "src": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/账号系列参考图预算返回 · 完整E2E--2f7553cb-c3e9-4dc5-b900-f1439329a0b0/native-tasks/1a16d9a7-a2f2-4e6e-9f38-694eeec82551/e5fd5a61-3a41-438f-930e-fdb3ea5ee722.mp3",
+          "sourceAssetId": "audio-track-aae2a2d3-7f6d-4864-b7a9-69499d921345",
+          "startFrame": 180,
+          "durationInFrames": 180,
+          "srcInFrame": 0,
+          "playbackRate": 1,
+          "volume": 1,
+          "loopControlAudio": {
+            "workspaceId": "b71c4f80-858d-442b-93f0-98824d90ad93",
+            "shotId": "shot-02",
+            "sourceItemId": "shot-shot-02-6db92056-ee08-468e-9e5e-c2f2cf512ef0",
+            "sourceAssetId": "audio-track-aae2a2d3-7f6d-4864-b7a9-69499d921345"
+          },
+          "sourceRevision": "source-v1--sdh9bs-3r72ru"
+        },
+        {
+          "id": "workspace-source-shot-shot-01",
+          "kind": "audio",
+          "name": "shot-01 原声",
+          "track": "workspace-main-voice",
+          "src": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/账号系列参考图预算返回 · 完整E2E--2f7553cb-c3e9-4dc5-b900-f1439329a0b0/native-tasks/74fad210-a159-4f51-a030-aa005d4ad564/1bb2b1dc-5fdc-4a38-8951-155a2c0ac4e8.mp3",
+          "sourceAssetId": "audio-track-237eb756-6bab-4226-8244-8514a547f963",
+          "startFrame": 0,
+          "durationInFrames": 180,
+          "srcInFrame": 0,
+          "playbackRate": 1,
+          "volume": 1,
+          "loopControlAudio": {
+            "workspaceId": "b71c4f80-858d-442b-93f0-98824d90ad93",
+            "shotId": "shot-01",
+            "sourceItemId": "shot-shot-01-56d1c6bc-3a90-4b77-a46c-335014653ca4",
+            "sourceAssetId": "audio-track-237eb756-6bab-4226-8244-8514a547f963"
+          },
+          "sourceRevision": "source-v1--pyflob-6lb3s8"
+        }
+      ],
+      "trackOrder": [
+        "track_loop-control-2f7553cb-c3e9-4dc5-b900-f1439329a0b0_1",
+        "track_loop-control-2f7553cb-c3e9-4dc5-b900-f1439329a0b0_2",
+        "workspace-main-voice"
+      ],
+      "tracks": {
+        "track_loop-control-2f7553cb-c3e9-4dc5-b900-f1439329a0b0_1": {
+          "kind": "video",
+          "name": "画面"
+        },
+        "track_loop-control-2f7553cb-c3e9-4dc5-b900-f1439329a0b0_2": {
+          "kind": "caption",
+          "captions": {
+            "enabled": true,
+            "template": "plain",
+            "pacing": "phrase",
+            "sourceMode": "item",
+            "sourceEntries": [
+              {
+                "id": "workspace-caption-shot-shot-01",
+                "itemId": "manual:workspace-caption-shot-shot-01",
+                "label": "字幕",
+                "slotId": "workspace-caption-shot-shot-01-slot",
+                "visible": true,
+                "anchor": "bottom-center",
+                "offsetXRatio": 0,
+                "offsetYRatio": 0.09999999999999999,
+                "widthRatio": 0.8400000000000001,
+                "heightRatio": 0.74,
+                "words": [
+                  {
+                    "id": "phrase-1~0",
+                    "text": "这是第一段画面，",
+                    "start": 20,
+                    "end": 1525
+                  },
+                  {
+                    "id": "phrase-2~0",
+                    "text": "检查账号规则。",
+                    "start": 1866,
+                    "end": 5960
+                  }
+                ],
+                "style": {
+                  "fontFamily": "sans-serif",
+                  "fontWeight": 600,
+                  "color": "#ffffff",
+                  "fontSize": 0.02684659090909091,
+                  "wholeLine": true
+                },
+                "loopControl": {
+                  "version": "workspace-caption/v1",
+                  "contentMode": "independent",
+                  "text": "这是第一段画面，检查账号规则。",
+                  "spatial": {
+                    "version": "shot-caption-space/v2",
+                    "anchor": "bottom-center",
+                    "safeArea": "title-safe",
+                    "aspectRatio": "9:16",
+                    "insets": {
+                      "top": 0.08,
+                      "right": 0.08,
+                      "bottom": 0.18,
+                      "left": 0.08
+                    },
+                    "maxLines": 2,
+                    "maxCharactersPerLine": 16
+                  }
+                }
+              },
+              {
+                "id": "workspace-caption-shot-shot-02",
+                "itemId": "manual:workspace-caption-shot-shot-02",
+                "label": "字幕",
+                "slotId": "workspace-caption-shot-shot-02-slot",
+                "visible": true,
+                "anchor": "bottom-center",
+                "offsetXRatio": 0,
+                "offsetYRatio": 0.09999999999999999,
+                "widthRatio": 0.8400000000000001,
+                "heightRatio": 0.74,
+                "words": [
+                  {
+                    "id": "phrase-1~0",
+                    "text": "这是第二段画面，",
+                    "start": 6020,
+                    "end": 7585
+                  },
+                  {
+                    "id": "phrase-2~0",
+                    "text": "检查预算返回。",
+                    "start": 7946,
+                    "end": 11960
+                  }
+                ],
+                "style": {
+                  "fontFamily": "sans-serif",
+                  "fontWeight": 600,
+                  "color": "#ffffff",
+                  "fontSize": 0.02684659090909091,
+                  "wholeLine": true
+                },
+                "loopControl": {
+                  "version": "workspace-caption/v1",
+                  "contentMode": "independent",
+                  "text": "这是第二段画面，检查预算返回。",
+                  "spatial": {
+                    "version": "shot-caption-space/v2",
+                    "anchor": "bottom-center",
+                    "safeArea": "title-safe",
+                    "aspectRatio": "9:16",
+                    "insets": {
+                      "top": 0.08,
+                      "right": 0.08,
+                      "bottom": 0.18,
+                      "left": 0.08
+                    },
+                    "maxLines": 2,
+                    "maxCharactersPerLine": 16
+                  }
+                }
+              }
+            ],
+            "layoutPolicy": {
+              "mode": "manual-slots",
+              "slots": [
+                {
+                  "id": "workspace-caption-shot-shot-01-slot",
+                  "anchor": "bottom-center",
+                  "offsetXRatio": 0,
+                  "offsetYRatio": 0.09999999999999999,
+                  "widthRatio": 0.8400000000000001,
+                  "heightRatio": 0.74
+                },
+                {
+                  "id": "workspace-caption-shot-shot-02-slot",
+                  "anchor": "bottom-center",
+                  "offsetXRatio": 0,
+                  "offsetYRatio": 0.09999999999999999,
+                  "widthRatio": 0.8400000000000001,
+                  "heightRatio": 0.74
+                }
+              ]
+            },
+            "perSource": {
+              "workspace-caption-shot-shot-01": {
+                "maxLines": 2
+              },
+              "workspace-caption-shot-shot-02": {
+                "maxLines": 2
+              }
+            }
+          }
+        },
+        "workspace-main-voice": {
+          "kind": "audio",
+          "name": "主声音",
+          "role": "anchor"
+        }
+      },
+      "transitions": [],
+      "selectedId": "shot-shot-01-56d1c6bc-3a90-4b77-a46c-335014653ca4",
+      "captionsHidden": false,
+      "selectedIds": [
+        "shot-shot-01-56d1c6bc-3a90-4b77-a46c-335014653ca4"
+      ]
+    }
+  ]
+}

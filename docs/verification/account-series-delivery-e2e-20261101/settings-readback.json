@@ -1,0 +1,104 @@
+{
+  "at": "2026-11-01T08:34:16.957Z",
+  "originalAccountsUnchanged": true,
+  "account": [
+    {
+      "id": "2fb0abe3-a125-429c-97b9-3330929c5c6b",
+      "name": "流程验收1101",
+      "slug": "e2e-settings-1101",
+      "timezone": "Asia/Shanghai",
+      "created_at": "2026-11-01T08:12:41.16226+00:00",
+      "archived_at": null,
+      "current_blueprint_version_id": "34edfed8-45f3-4a37-a822-ba6c1046023b"
+    }
+  ],
+  "blueprints": [
+    {
+      "id": "34edfed8-45f3-4a37-a822-ba6c1046023b",
+      "policy": {
+        "tone": "简洁、准确，直接陈述。",
+        "positioning": "本地端到端验收账号，验证账号与系列规则、参考图、预算返回及导出交付。",
+        "restrictions": "仅使用本地验收素材，不调用付费生成。",
+        "visual_style": "竖屏，清晰的几何测试图案。"
+      },
+      "version": 1,
+      "is_active": true,
+      "account_id": "2fb0abe3-a125-429c-97b9-3330929c5c6b",
+      "created_at": "2026-11-01T08:12:41.16226+00:00",
+      "archived_at": null,
+      "is_snapshot": false
+    }
+  ],
+  "series": [
+    {
+      "id": "613ba518-9bf6-498e-904a-b612091c56ee",
+      "name": "双镜头流程验收",
+      "account_id": "2fb0abe3-a125-429c-97b9-3330929c5c6b",
+      "created_at": "2026-11-01T08:13:49.97648+00:00"
+    }
+  ],
+  "seriesVersions": [
+    {
+      "id": "edcc9121-c556-4456-8acf-b0dff42d2b32",
+      "rules": {
+        "format": "9:16竖屏，两个镜头，中文字幕",
+        "locations": "本地测试场景",
+        "characters": "无真人出镜，使用几何测试画面",
+        "positioning": "用两个镜头核验素材与设置返回路径",
+        "restrictions": "不上传外部素材，不使用付费生成",
+        "visual_style": "保留账号的清晰风格，镜头一动态图案，镜头二彩条",
+        "narrative_structure": "第一段检查规则，第二段检查预算返回"
+      },
+      "version": 1,
+      "series_id": "613ba518-9bf6-498e-904a-b612091c56ee",
+      "account_id": "2fb0abe3-a125-429c-97b9-3330929c5c6b",
+      "created_at": "2026-11-01T08:13:49.97648+00:00",
+      "created_by": "644f8c5a-b668-48a3-8a25-94c4e502fa04"
+    }
+  ],
+  "budget": [
+    {
+      "account_id": "2fb0abe3-a125-429c-97b9-3330929c5c6b",
+      "approved_at": "2026-11-01T08:24:22.940513+00:00",
+      "approved_by": "644f8c5a-b668-48a3-8a25-94c4e502fa04",
+      "total_limit_cents": 850,
+      "full_generation_enabled": false,
+      "trial_video_limit_cents": 225
+    }
+  ],
+  "episode": [
+    {
+      "id": "2f7553cb-c3e9-4dc5-b900-f1439329a0b0",
+      "account_id": "2fb0abe3-a125-429c-97b9-3330929c5c6b",
+      "series_version_id": "edcc9121-c556-4456-8acf-b0dff42d2b32"
+    }
+  ],
+  "taskCounts": [
+    {
+      "type": "extract_embedded_audio",
+      "status": "completed"
+    },
+    {
+      "type": "extract_embedded_audio",
+      "status": "completed"
+    },
+    {
+      "type": "align_shot_captions",
+      "status": "completed"
+    },
+    {
+      "type": "align_shot_captions",
+      "status": "completed"
+    }
+  ],
+  "alignmentConfidencePreserved": [
+    [
+      0.9885714285714285,
+      0.9918333333333335
+    ],
+    [
+      0.9962857142857142,
+      0.9945
+    ]
+  ]
+}

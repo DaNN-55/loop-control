@@ -10,7 +10,7 @@ it.skipIf(process.env.LOOP_T08_BROWSER!=='1')('formal audio page generates and p
  const f=await workspaceAudioFixture({migrations:['db/local/110-episode-storage-locations.sql','db/local/118-visual-storage-locations.sql','db/local/119-audio-caption-storage-locations.sql']});let vite:import('vite').ViteDevServer|undefined;
  const evidence=process.env.LOOP_T08_BROWSER_EVIDENCE!;if(!evidence)throw Error('Explicit isolated evidence directory required');
  try{
- await f.authorize();expect((await f.request('setWanBudget',{trialCents:300,totalCents:10000,full:false})).status).toBe(200);
+ await f.authorize();
  const prefix='系列 browser audio/生产单 browser audio',directory=join(f.assetRoot,prefix);await mkdir(directory,{recursive:true});const identity=await lstat(directory,{bigint:true});await f.c.query('UPDATE local_identity.episode_asset_locations SET directory_relative_path=$2,directory_device_id=$3,directory_inode_id=$4,layout_version=2 WHERE episode_id=$1',[f.episode,prefix,String(identity.dev),String(identity.ino)]);
  const connections=new LocalConnections(f.pool,{mode:'keychain',async putImmutable(){throw Error('No secret writes');},async get(id){return 'controlled-'+id;}},{mode:'live',networkAvailable:true,async verify(){throw Error('No live Provider verification');}});let catalogHandler:ReturnType<typeof createLocalHandler>;
  const {createServer}=await import('vite'),{default:react}=await import('@vitejs/plugin-react');const proxy={target:f.origin,changeOrigin:true,configure(p:any){p.on('proxyReq',(req:any)=>req.setHeader('origin',f.origin));}};

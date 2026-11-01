@@ -1,0 +1,10 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/accountUnassignedCounts.integration.test.ts (1 test) 2442ms
+   ✓ unassigned navigation counts physical collections across search, archive and frozen creative series, with Owner isolation  2442ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  20:17:34
+   Duration  3.05s (transform 339ms, setup 7ms, collect 463ms, tests 2.44s, environment 0ms, prepare 33ms)

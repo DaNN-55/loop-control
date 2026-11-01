@@ -1,0 +1,32 @@
+import {render,screen,within,waitFor} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import {expect,it,vi} from 'vitest';
+import {webcrypto} from 'node:crypto';
+import {ConnectionBillingDialog} from './ConnectionBillingDialog';
+import type {ExternalConnection} from './ConnectionWorkspace';
+import type {ConnectionBillingSettings} from './connectionBilling';
+vi.stubGlobal('crypto',webcrypto);
+const connection={id:'connection',name:'百炼',provider:'bailian'} as ExternalConnection;
+const settings:ConnectionBillingSettings={connectionId:'connection',provider:'aliyun',configured:false,revision:'default',updatedAt:null};
+it('keeps secrets masked and out of storage, supports failure, retry, success cleanup and disconnect',async()=>{
+ const user=userEvent.setup(),saved={...settings,configured:true,revision:'new'};const onSave=vi.fn().mockRejectedValueOnce(Error('账务权限不足')).mockResolvedValue(saved),onDisconnect=vi.fn().mockResolvedValue(settings);
+ const session=vi.spyOn(Storage.prototype,'setItem');
+ render(<ConnectionBillingDialog connection={connection} onClose={vi.fn()} onReadBilling={async()=>settings} onSaveBilling={onSave} onDisconnectBilling={onDisconnect}/>);
+ const secret=await screen.findByLabelText('账务 AccessKey Secret');expect(secret).toHaveProperty('type','password');
+ await user.type(screen.getByLabelText('账务 AccessKey ID'),'synthetic-ak-01');await user.type(secret,'synthetic-secret-0123456789');
+ await user.click(screen.getByRole('button',{name:'验证并保存'}));expect(await screen.findByRole('alert')).toHaveProperty('textContent','账务权限不足');
+ expect(secret).toHaveProperty('value','synthetic-secret-0123456789');await user.click(screen.getByRole('button',{name:'验证并保存'}));
+ await screen.findByText('账务凭据已保存。');expect(screen.queryByLabelText('账务 AccessKey Secret')).toBeNull();expect(onSave.mock.calls[0][1]).toBe(onSave.mock.calls[1][1]);
+ expect(session).not.toHaveBeenCalled();expect(document.body.textContent).not.toContain('synthetic-secret-0123456789');
+ await user.click(screen.getByRole('button',{name:'更换凭据'}));expect(screen.getByLabelText('账务 AccessKey Secret')).toHaveProperty('value','');await user.click(screen.getByRole('button',{name:'取消更换'}));
+ await user.click(screen.getByRole('button',{name:'断开账务关联'}));expect(onDisconnect).toHaveBeenCalledWith({connectionId:'connection',revision:'new'});
+ session.mockRestore();
+});
+it('OpenAI uses the Admin field and disables duplicate submissions while the read is pending',async()=>{
+ const user=userEvent.setup();let finish!:(v:ConnectionBillingSettings)=>void;const onSave=vi.fn(()=>new Promise<ConnectionBillingSettings>(resolve=>{finish=resolve;}));
+ render(<ConnectionBillingDialog connection={{...connection,provider:'openai'}} onClose={vi.fn()} onReadBilling={async()=>({...settings,provider:'openai'})} onSaveBilling={onSave}/>);
+ await user.type(await screen.findByLabelText('OpenAI Admin API Key'),'synthetic-admin-key');await user.click(screen.getByRole('button',{name:'验证并保存'}));
+ expect(screen.getByLabelText('OpenAI Admin API Key')).toHaveProperty('disabled',true);expect(screen.getByRole('button',{name:'关闭账务设置'})).toHaveProperty('disabled',true);
+ expect(onSave).toHaveBeenCalledTimes(1);finish({...settings,provider:'openai',configured:true,revision:'new'});await waitFor(()=>expect(screen.queryByLabelText('OpenAI Admin API Key')).toBeNull());
+ expect(within(screen.getByRole('dialog')).getByRole('button',{name:'刷新账务'})).toBeTruthy();
+});

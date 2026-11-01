@@ -1,0 +1,10 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/accounts/AccountGeneralSettings.test.tsx (1 test) 113ms
+ ✓ src/accounts/AccountWorkspace.test.tsx (21 tests) 1310ms
+
+ Test Files  2 passed (2)
+      Tests  22 passed (22)
+   Start at  20:04:21
+   Duration  2.69s (transform 179ms, setup 13ms, collect 1.96s, tests 1.42s, environment 527ms, prepare 72ms)

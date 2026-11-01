@@ -1,0 +1,11 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/platform/ConfigurationForms.local.test.tsx (4 tests) 191ms
+ ✓ src/accounts/AccountGeneralSettings.test.tsx (2 tests) 221ms
+ ✓ src/accounts/AccountWorkspace.test.tsx (21 tests) 1373ms
+
+ Test Files  3 passed (3)
+      Tests  27 passed (27)
+   Start at  20:08:40
+   Duration  2.25s (transform 279ms, setup 17ms, collect 1.82s, tests 1.79s, environment 404ms, prepare 84ms)

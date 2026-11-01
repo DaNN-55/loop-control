@@ -59,6 +59,7 @@ export async function executeConfiguration(pool:Pool,session:OwnerSession,body:R
   else if(field==='rules'){if(!value||typeof value!=='object'||Array.isArray(value))throw new ConfigurationError(400,'系列规则必须是对象。');validatePolicySecrets(value);}
   else if(typeof value!=='string'||value.length>100000)throw new ConfigurationError(400,'配置字段无效。');
  }
+ if(command==='updateBlueprint'&&Object.keys(data).some(k=>!definition.fields.includes(k as never)))throw new ConfigurationError(400,'账号规则字段无效。');
  if(command==='createAccount'){try{new Intl.DateTimeFormat('en',{timeZone:String(data.timezone)});}catch{throw new ConfigurationError(400,'时区无效。');}}
  if(command==='createAccount'){if(data.assetRoot!==undefined&&data.assetRoot!=='')throw new ConfigurationError(400,'新账号会自动建立专属目录；历史目录请在账号资料的恢复与迁移中处理。');return createAccountDirectory(pool,session,String(body.idempotencyKey),hash,data,mediaRoot,checkExternalReferences,validateConfigurationPolicy(data.policy,!!checkExternalReferences));}
  if((command==='createSeries'||command==='renameSeries')&&Object.keys(data).some(k=>!definition.fields.includes(k as never)))throw new ConfigurationError(400,'系列资料字段无效。');

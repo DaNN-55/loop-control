@@ -1,0 +1,18 @@
+{
+  "at": "2026-11-01T11:41:10.712Z",
+  "businessRecordsUnchanged": {
+    "accounts": true,
+    "blueprints": true,
+    "episodes": true,
+    "workspaces": true,
+    "budgets": true,
+    "reservations": true
+  },
+  "remainingAccountBudgetGuards": [],
+  "activeTasks": 0,
+  "migration": {
+    "sha256": "8d76c48d671ab512718d5489b3bf734e540793423ca00a29684aa693ca50793f",
+    "version": "131-retire-account-generation-budgets.sql",
+    "applied_at": "2026-11-01T11:40:00.006286+00:00"
+  }
+}

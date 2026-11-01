@@ -5,7 +5,7 @@ import {readWorkspaceShotWindow} from '../workspaceShots.js';
 import {createHash} from 'node:crypto';
 import type {PoolClient} from 'pg';
 import {applyWorkspaceCaptionEdit,readWorkspaceCaption,type WorkspaceCaptionState} from '../workspaceCaptions.js';
-import {defaultShotCaptionContract,isValidShotCaptionContract,shotCaptionContractToDatabase,type ShotCaptionContract} from '../shotCaptions.js';
+import {defaultShotCaptionContract,isValidShotCaptionContract,normalizeShotCaptionContract,shotCaptionContractToDatabase,type ShotCaptionContract} from '../shotCaptions.js';
 import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
 import {isOpenChatCutStudio} from '../worker/openchatcutStudio.js';
 import {probeMp3Artifact} from '../worker/mediaTools.js';
@@ -123,7 +123,8 @@ export async function executeWorkspaceCaptionCommand(c:PoolClient,root:string,ro
   const e=(await c.query('SELECT * FROM local_identity.workspace_caption_evidence WHERE workspace_id=$1 AND shot_id=$2',[row.id,x.clip.shotId])).rows[0],task=typeof data.taskId==='string'?(await c.query('SELECT * FROM public.tasks WHERE id=$1 AND episode_id=$2',[data.taskId,row.episode_id])).rows[0]:null,alignment=x.route.explicitRoute?task?.last_result?.acousticAlignment:x.draft?.acoustic_alignment;
   if(!e||e.task_id!==data.taskId||e.input_fingerprint!==x.inputFingerprint||data.expectedInputFingerprint!==x.inputFingerprint||!task||task.status!=='completed'||task.task_type!=='align_shot_captions'||alignment?.status!=='completed'||alignment.inputVersion!==task.input_snapshot.acoustic_alignment.input_version||alignment.textFingerprint!==createHash('sha256').update(x.contract.text).digest('hex')||alignment.audioSha256!==x.audio?.sha256)throw new ConfigurationError(409,'对齐结果已过期或尚未完成，请按当前正文和音轨重新对齐。');
   const artifact=(await c.query("SELECT * FROM public.artifacts WHERE producer_task_id=$1 AND episode_id=$2 AND artifact_type='acoustic_alignment_evidence'",[task.id,row.episode_id])).rows[0];if(!artifact)throw new ConfigurationError(409,'对齐证据文件不存在。');await verifyEpisodeFile(c,root,row.episode_id,artifact.relative_path,artifact.sha256,Number(artifact.file_size));
-  const contract={...x.contract,cues:alignment.cues};validateCues(contract,Number(x.item.durationInFrames)*1000/x.timeline.fps);
+  const alignedInput={...x.contract,cues:alignment.cues};validateCues(alignedInput,Number(x.item.durationInFrames)*1000/x.timeline.fps);
+  const contract=normalizeShotCaptionContract(alignedInput,{enabled:x.contract.enabled,text:x.contract.text});
   if(command==='prepareWorkspaceCaptionAlignment')return{captionContract:contract};
   if(data.nativeApplied!==undefined&&typeof data.nativeApplied!=='boolean')throw new ConfigurationError(400,'原生字幕保存状态无效。');
   const aligned=applyWorkspaceCaptionEdit(project,x.clip.itemId,contract,{timingOnly:true});

@@ -12,9 +12,9 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each([false,true])('fresh
  try{
   expect((await f.send('start')).status).toBe(200);
   let r=await f.send('prepareWorkspace',{expectedScriptRevisionId:f.main});expect(r.status,JSON.stringify(r.body)).toBe(200);let w=r.body;
-  await f.send('setWanBudget',{trialCents:300,totalCents:10000,full:false});const send=async(command:string,data:Record<string,unknown>={})=>{const response=await f.chosenSend(command,{workspaceId:w.id,expectedRevision:w.revision,...data});if(response.status===200&&response.body.id===w.id)w=response.body;return response;};
+  const send=async(command:string,data:Record<string,unknown>={})=>{const response=await f.chosenSend(command,{workspaceId:w.id,expectedRevision:w.revision,...data});if(response.status===200&&response.body.id===w.id)w=response.body;return response;};
   const uploaded=await f.send('importMaterial',{sourceKind:'file',sourcePath:'first.png',materialType:'image',materialPurpose:'visual_reference',mimeType:'image/png',isMainScript:false,contentBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64')});expect(uploaded.status).toBe(200);
-  expect((await f.send('setWanBudget',{trialCents:300,totalCents:1000,full:false})).status).toBe(200);
+
   const payload={clipId:w.clips[0].id,materialRevisionId:uploaded.body.id,prompt:'清晨山脊，缓慢推进。',durationSeconds:4,reservationCents:90};
   r=await send('generateWorkspaceImage',payload);expect(r.status,JSON.stringify(r.body)).toBe(409);expect(r.body.error).toContain('授权');
   expect((await send('authorizeWorkspacePreparation',{enabled:true})).status).toBe(200);
@@ -47,7 +47,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('replanning discards curr
  try{
   expect((await f.send('start')).status).toBe(200);
   let r=await f.send('prepareWorkspace',{expectedScriptRevisionId:f.main});expect(r.status,JSON.stringify(r.body)).toBe(200);let w=r.body;
-  await f.send('setWanBudget',{trialCents:300,totalCents:10000,full:false});const send=async(command:string,data:Record<string,unknown>={})=>{const response=await f.chosenSend(command,{workspaceId:w.id,expectedRevision:w.revision,...data});expect(response.status,JSON.stringify(response.body)).toBe(200);if(response.body.id===w.id)w=response.body;return response;};
+  const send=async(command:string,data:Record<string,unknown>={})=>{const response=await f.chosenSend(command,{workspaceId:w.id,expectedRevision:w.revision,...data});expect(response.status,JSON.stringify(response.body)).toBe(200);if(response.body.id===w.id)w=response.body;return response;};
   await f.send('saveTtsSettings',{languageCode:'zh-CN',voice:'zh_female_vv_uranus_bigtts',speakingRate:1});
   const generate=async(text:string)=>{await send('authorizeWorkspacePreparation',{enabled:true});await send('saveWorkspaceNarration',{clipId:w.clips[0].id,mode:'tts',text});await send('confirmWorkspaceNarration',{clipId:w.clips[0].id});await send('generateWorkspaceNarration',{clipId:w.clips[0].id});expect((await f.controlled!.execute(w.narration[0].taskId))?.status).toBe('completed');};
   await generate('重规划前的完整口播。');await send('refreshWorkspaceNarration');w=await adoptInitialNarration({request:(command,data)=>f.send(command,data)},w);

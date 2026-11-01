@@ -1,0 +1,32 @@
+[
+  {
+    "name": "交付清单",
+    "status": 200,
+    "file": "downloads/manifest.json",
+    "expectedSha256": "e2170261c31d0f2e653b75de865b3de3049488840e48ffe59810ea3b289cc174"
+  },
+  {
+    "name": "元数据",
+    "status": 200,
+    "file": "downloads/metadata.json",
+    "expectedSha256": "4ed0fa2e834894aa0c5daba4f6427e99947c41a31788e3044597da6ce9bfde85"
+  },
+  {
+    "name": "检查证据",
+    "status": 200,
+    "file": "downloads/checks.json",
+    "expectedSha256": "8f2c80232fa1492b745c250d5123e2932e9fc6c151d8bd91e765072bed4f3ec4"
+  },
+  {
+    "name": "可编辑工程",
+    "status": 200,
+    "file": "downloads/project.json",
+    "expectedSha256": "1a91b6243d030dc63ba2db8ccc5237a86c7dcac5ee4a45637d3ad69edd65545b"
+  },
+  {
+    "name": "封面",
+    "status": 200,
+    "file": "downloads/cover.png",
+    "expectedSha256": "eb50ac41dc1c2fd1a695d76ab6b95665cb4847ffbecce9eeb5619418fe05c20d"
+  }
+]

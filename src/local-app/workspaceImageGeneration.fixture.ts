@@ -5,7 +5,7 @@ import {narrationFixture} from './workspaceNarration.fixture';
 import {productionHash} from './scriptProductionStore';
 import {workspaceTestMedia} from './workspaceTestMedia.fixture';
 export async function workspaceImageGenerationFixture(migrations:string[]=[],episodeRelativePath?:(episodeId:string)=>string){
- const f=await narrationFixture(undefined,undefined,true,false,{migrations,episodeRelativePath});try{
+ const f=await narrationFixture(undefined,undefined,true,false,{migrations:['db/local/127-connection-model-settings.sql','db/local/128-connection-model-discovery.sql','db/local/129-bailian-video-models.sql',...migrations],episodeRelativePath});try{
  const version=randomUUID(),connection=randomUUID(),secret=randomUUID();
  await f.c.query('BEGIN');
  await f.c.query("SELECT set_config('loop.owner_id',$1,true)",[f.owner]);
@@ -23,7 +23,7 @@ export async function workspaceImageGenerationFixture(migrations:string[]=[],epi
  await f.c.query('UPDATE public.episodes SET blueprint_version_id=(SELECT current_blueprint_version_id FROM public.accounts WHERE id=$2) WHERE id=$1',[f.episode,account]);
  await f.c.query('COMMIT');
  await f.authorize();await f.c.query('UPDATE local_identity.script_productions SET plan=$2 WHERE episode_id=$1',[f.episode,{executionFingerprint:productionHash(policy)}]);
- await f.request('setWanBudget',{trialCents:100,totalCents:1000,full:false});
+
  const ref=await f.request('importMaterial',{materialType:'image',sourceKind:'file',sourcePath:'reference.png',mimeType:'image/png',contentBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64'),isMainScript:false,materialPurpose:'visual_reference'});if(ref.status!==200)throw Error(JSON.stringify(ref.body));
  const submissions=join(f.root,'image-submissions.jsonl');await writeFile(join(f.root,'controlled-video.mjs'),`import{readFileSync,appendFileSync}from'node:fs';export async function createNarrationPorts(){return{mode:'controlled',store:{mode:'keychain',get:async ref=> 'synthetic-image-'+ref},fetcher:async(url,init)=>{const body=JSON.parse(init.body);appendFileSync(${JSON.stringify(submissions)},JSON.stringify({url:String(url),body,credentialRef:new Headers(init.headers).get('Authorization')?.replace('Bearer synthetic-image-','')})+'\\n');if(readFileSync(${JSON.stringify(f.responseMode)},'utf8')==='unknown')throw Error('Controlled image transport break');return Response.json({data:Array.from({length:body.n},()=>({b64_json:readFileSync(${JSON.stringify(workspaceTestMedia('still-striped.png'))}).toString('base64')}))});}};}`);
  return {f,ref,submissions};

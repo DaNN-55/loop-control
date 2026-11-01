@@ -22,7 +22,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('first video freezes the 
   });const saved=await f.request('saveWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision,workspaceRelativePath:opened.body.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:w.project.sha256});expect(saved.status,JSON.stringify(saved.body)).toBe(200);w=saved.body.productionWorkspace;await send('closeWorkspaceStudio');
   const target=w.clips.find((c:any)=>c.id===clipId);expect(target.source).toBeNull();expect(w.audio.mix.voices.find((v:any)=>v.shotId===first.shotId).mode).toBe('source');
   await send('saveWorkspaceNarration',{clipId,mode:'tts',text:'这份尚未生成的口播草稿不能替代实际原声。'});expect(w.narration.find((n:any)=>n.shotId===first.shotId).audioTrackId).toBeNull();
-  await f.authorize();expect((await f.request('setWanBudget',{trialCents:100,totalCents:200,full:false})).status).toBe(200);
+  await f.authorize();
   const picture=await f.request('importMaterial',{sourceKind:'file',sourcePath:'first.png',contentBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64'),materialType:'image',mimeType:'image/png',isMainScript:false,materialPurpose:'visual_reference'});expect(picture.status).toBe(200);
   const before=w.nativeEditRevision;await send('generateWorkspaceImage',{clipId,materialRevisionId:picture.body.id,prompt:'自然平稳推进',durationSeconds:11,reservationCents:90});
   const image=w.clips.find((c:any)=>c.id===clipId).image;expect(image.durationSeconds).toBe(2);expect(image.providerDurationSeconds).toBe(4);expect(w.nativeEditRevision).toBe(before);

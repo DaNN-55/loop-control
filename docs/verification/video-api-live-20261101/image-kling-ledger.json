@@ -1,0 +1,47 @@
+{
+  "policy": {
+    "version": 1,
+    "runId": "video-api-live-20261101-image-kling",
+    "enabled": true,
+    "expiresAt": "2026-11-01T11:51:51.739Z",
+    "maxRequests": 1,
+    "currency": "CNY",
+    "maxCostMicrounits": 1000000,
+    "priceEvidenceSha256": "3df34abb2f6effe0e3887361e5a734cb09af08d152a1c8336ffb120553efe76e",
+    "approvalSha256": "7dc530639cfbfd2f66a969f32a075e41d60277145d6fccf6ea8b0c57e6b39302",
+    "providers": [
+      "openai"
+    ],
+    "operations": {
+      "openai.generate": {
+        "maxRequests": 1,
+        "maxBytes": 20971520,
+        "timeoutMs": 60000,
+        "costMicrounits": 1000000
+      }
+    }
+  },
+  "policySha256": "58104e8088f766f8cca9a3debf636f780cd417e132ee999fef31caa80dc31edf",
+  "state": {
+    "version": 1,
+    "policySha256": "58104e8088f766f8cca9a3debf636f780cd417e132ee999fef31caa80dc31edf",
+    "used": 1,
+    "costMicrounits": 1000000,
+    "byOperation": {
+      "openai.generate": 1
+    },
+    "halted": false,
+    "events": [
+      {
+        "operation": "openai.generate",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "openai.generate",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 2074665
+      }
+    ]
+  }
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "level": "warn",
+    "message": "Made 63 network requests to load fonts for Inter. Consider loading fewer weights and subsets by passing options to loadFont(). Disable this warning by passing \"ignoreTooManyRequestsWarning: true\" to \"options\".",
+    "timestamp": "2026-11-01T09:38:20.628Z",
+    "url": "http://127.0.0.1:54570/@fs/private/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-openchatcut-vite-YBTs7U/deps/@remotion_google-fonts_Inter.js?v=0b8d1a47"
+  },
+  {
+    "level": "warn",
+    "message": "Made 126 network requests to load fonts for Inter. Consider loading fewer weights and subsets by passing options to loadFont(). Disable this warning by passing \"ignoreTooManyRequestsWarning: true\" to \"options\".",
+    "timestamp": "2026-11-01T09:38:20.647Z",
+    "url": "http://127.0.0.1:54570/@fs/private/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-openchatcut-vite-YBTs7U/deps/@remotion_google-fonts_Inter.js?v=0b8d1a47"
+  },
+  {
+    "level": "warn",
+    "message": "Made 63 network requests to load fonts for Inter. Consider loading fewer weights and subsets by passing options to loadFont(). Disable this warning by passing \"ignoreTooManyRequestsWarning: true\" to \"options\".",
+    "timestamp": "2026-11-01T09:43:08.709Z",
+    "url": "http://127.0.0.1:54916/@fs/private/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-openchatcut-vite-gCVbrX/deps/@remotion_google-fonts_Inter.js?v=16a72fd8"
+  },
+  {
+    "level": "warn",
+    "message": "Made 126 network requests to load fonts for Inter. Consider loading fewer weights and subsets by passing options to loadFont(). Disable this warning by passing \"ignoreTooManyRequestsWarning: true\" to \"options\".",
+    "timestamp": "2026-11-01T09:43:08.718Z",
+    "url": "http://127.0.0.1:54916/@fs/private/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-openchatcut-vite-gCVbrX/deps/@remotion_google-fonts_Inter.js?v=16a72fd8"
+  }
+]

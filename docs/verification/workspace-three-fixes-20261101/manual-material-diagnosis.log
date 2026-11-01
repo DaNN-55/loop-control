@@ -1,0 +1,31 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+stderr | src/local-app/workspaceManualNarration.integration.test.ts > uploaded narration is selectable in a current workspace without legacy approvals or provider calls
+[DEBUG-workspace-three] column reference "t.id" is ambiguous 42702
+
+ ❯ src/local-app/workspaceManualNarration.integration.test.ts (1 test | 1 failed) 9715ms
+   × uploaded narration is selectable in a current workspace without legacy approvals or provider calls 9708ms
+     → {"error":"本机服务暂不可用，请检查本机状态。"}: expected 503 to be 200 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workspaceManualNarration.integration.test.ts > uploaded narration is selectable in a current workspace without legacy approvals or provider calls
+AssertionError: {"error":"本机服务暂不可用，请检查本机状态。"}: expected 503 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 503
+
+ ❯ src/local-app/workspaceManualNarration.integration.test.ts:12:177
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  17:20:13
+   Duration  13.26s (transform 1.96s, setup 61ms, collect 2.64s, tests 9.71s, environment 0ms, prepare 138ms)

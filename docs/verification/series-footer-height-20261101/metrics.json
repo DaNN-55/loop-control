@@ -1,0 +1,38 @@
+[
+  {
+    "align": "flex-end",
+    "height": 57,
+    "rightInset": 24,
+    "state": "locked",
+    "width": 1543
+  },
+  {
+    "align": "flex-end",
+    "height": 57,
+    "rightInset": 24,
+    "state": "editing",
+    "width": 1543
+  },
+  {
+    "height": 57,
+    "state": "save-confirmation",
+    "width": 1543
+  },
+  {
+    "height": 57,
+    "overflow": false,
+    "rightInset": 20,
+    "state": "editing",
+    "width": 620
+  },
+  {
+    "height": 57,
+    "state": "save-confirmation",
+    "width": 620
+  },
+  {
+    "height": 57,
+    "state": "cancelled-locked",
+    "width": 620
+  }
+]

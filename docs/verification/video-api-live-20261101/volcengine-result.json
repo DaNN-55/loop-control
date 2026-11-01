@@ -1,0 +1,16 @@
+{
+  "provider": "volcengine",
+  "connection": "seedance",
+  "version": "0c7266ff-531d-4200-bb6a-78c4d1f263fd",
+  "outcome": "generation_failed",
+  "model": "doubao-seedance-2-0-260128",
+  "durationSeconds": 4,
+  "error": "视频接口请求失败：HTTP 404。",
+  "network": {
+    "directory": "/Users/dan/Programs/loop-control/.loop-control/maintenance/video-api-live-20261101/volcengine-policy",
+    "policySha256": "03561aa6e326e874a8c1d81c17f7c0a07fa0b4191edb730bc94af696dab07fff"
+  },
+  "reservationCny": 6,
+  "actualCost": "unverified; reservation is not charge",
+  "elapsedMs": 346
+}

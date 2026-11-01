@@ -1,0 +1,11 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/bailianModels.integration.test.ts (2 tests) 3094ms
+   ✓ persists only compatible Bailian directory IDs for enabling, reopens them and preserves enabled choices on rotation  1134ms
+   ✓ queues and executes the chosen Bailian model with its own reservation and frozen snapshot after disabling it  1959ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  13:00:10
+   Duration  3.75s (transform 373ms, setup 8ms, collect 509ms, tests 3.09s, environment 0ms, prepare 31ms)

@@ -1,0 +1,100 @@
+{
+  "at": "2026-11-01T11:02:26.836Z",
+  "workspace": "9a972216-d441-4cd6-8e9c-584a2df7404d",
+  "revision": 7,
+  "nativeEditRevision": 4,
+  "matched": [
+    {
+      "shot": "shot-01",
+      "file": "seedance-replacement.png",
+      "sha": "0740fe905161db31bae05197e8ef1b11af207f1463930ea474435e5b061e31e0",
+      "item": {
+        "timeline": "loop-control-79eb3098-8733-472a-9bde-873edd4cd26c",
+        "fps": 30,
+        "id": "shot-shot-01-77c4712f-00f3-4a1b-9b05-318d5f1cc944",
+        "kind": "image",
+        "src": "未分系列--469c8e63-de75-4f1c-b61e-84929254527f/视频 API 逐项真实生成 · 1101--79eb3098-8733-472a-9bde-873edd4cd26c/materials/0740fe905161db31bae05197e8ef1b11af207f1463930ea474435e5b061e31e0-seedance-replacement.png",
+        "sourceContentHash": "0740fe905161db31bae05197e8ef1b11af207f1463930ea474435e5b061e31e0",
+        "sourceAssetId": "candidate-8c470427-904c-4718-aba6-f3f7260ec523",
+        "startFrame": 0,
+        "durationInFrames": 120,
+        "volume": 0,
+        "caption": false
+      }
+    },
+    {
+      "shot": "shot-02",
+      "file": "minimax-sample.mp4",
+      "sha": "67dfaf39beaae0704a520ad3c1162dfb7441822018e922413f855c5278012c59",
+      "item": {
+        "timeline": "loop-control-79eb3098-8733-472a-9bde-873edd4cd26c",
+        "fps": 30,
+        "id": "shot-shot-02-753a6a3c-9e48-4c89-a0c6-34d3c908706b",
+        "kind": "video",
+        "src": "未分系列--469c8e63-de75-4f1c-b61e-84929254527f/视频 API 逐项真实生成 · 1101--79eb3098-8733-472a-9bde-873edd4cd26c/materials/67dfaf39beaae0704a520ad3c1162dfb7441822018e922413f855c5278012c59-minimax-sample.mp4",
+        "sourceContentHash": "67dfaf39beaae0704a520ad3c1162dfb7441822018e922413f855c5278012c59",
+        "sourceAssetId": "candidate-5215a392-2073-4cdd-8e72-64d0addc7323",
+        "startFrame": 120,
+        "durationInFrames": 120,
+        "volume": 0,
+        "caption": false
+      }
+    },
+    {
+      "shot": "shot-03",
+      "file": "bailian-sample.mp4",
+      "sha": "a6412f7e2edd9c277efbe308f7d018e07d3cc341582d68f19431dbea6422e76c",
+      "item": {
+        "timeline": "loop-control-79eb3098-8733-472a-9bde-873edd4cd26c",
+        "fps": 30,
+        "id": "shot-shot-03-8de42e4a-39b9-4d47-8656-a94227f0f884",
+        "kind": "video",
+        "src": "未分系列--469c8e63-de75-4f1c-b61e-84929254527f/视频 API 逐项真实生成 · 1101--79eb3098-8733-472a-9bde-873edd4cd26c/materials/a6412f7e2edd9c277efbe308f7d018e07d3cc341582d68f19431dbea6422e76c-bailian-sample.mp4",
+        "sourceContentHash": "a6412f7e2edd9c277efbe308f7d018e07d3cc341582d68f19431dbea6422e76c",
+        "sourceAssetId": "candidate-3951fb0e-defb-4118-8fe0-b3d915f3b493",
+        "startFrame": 240,
+        "durationInFrames": 60,
+        "volume": 0,
+        "caption": false
+      }
+    },
+    {
+      "shot": "shot-04",
+      "file": "kling-replacement.png",
+      "sha": "f720f7b4c3dd4035725db373b40fb30bb2ef3dd669c6ea3f3ee2c7328a1c13ca",
+      "item": {
+        "timeline": "loop-control-79eb3098-8733-472a-9bde-873edd4cd26c",
+        "fps": 30,
+        "id": "shot-shot-04-104ce4e0-5fcf-46f5-9cf0-4a22b0dc878e",
+        "kind": "image",
+        "src": "未分系列--469c8e63-de75-4f1c-b61e-84929254527f/视频 API 逐项真实生成 · 1101--79eb3098-8733-472a-9bde-873edd4cd26c/materials/f720f7b4c3dd4035725db373b40fb30bb2ef3dd669c6ea3f3ee2c7328a1c13ca-kling-replacement.png",
+        "sourceContentHash": "f720f7b4c3dd4035725db373b40fb30bb2ef3dd669c6ea3f3ee2c7328a1c13ca",
+        "sourceAssetId": "candidate-ac8e22b0-d9ad-4ffe-b1e6-e497987b0623",
+        "startFrame": 300,
+        "durationInFrames": 90,
+        "volume": 0,
+        "caption": false
+      }
+    }
+  ],
+  "projectKeys": [
+    "version",
+    "loopControl",
+    "assets",
+    "mediaFolders",
+    "activeTimelineId",
+    "timelines"
+  ],
+  "workspaceKeys": [
+    "narration_defaults"
+  ],
+  "timelines": [
+    {
+      "id": "loop-control-79eb3098-8733-472a-9bde-873edd4cd26c",
+      "width": 1080,
+      "height": 1920,
+      "fps": 30
+    }
+  ],
+  "otherItems": []
+}

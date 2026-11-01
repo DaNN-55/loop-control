@@ -1,0 +1,5 @@
+Native property precision click returned target unavailable twice despite visible control; switched to screenshot-grounded pointer input.
+Background-tab screenshots did not match the target accessibility state during native playback; switching to a visible test tab and retaining AX/DB evidence as authoritative.
+
+Direct MP4 document navigation pauses the document response in IAB; CDP was unavailable for that response. No repeated body read attempted. Inline actual video reached ended=true at 13.056 s; HTTP 206 video/mp4 observed in tab 11.
+After the earlier test tabs were automatically closed, this continuation used a fresh independent tab 11; screenshots and DOM now match. Tab 1 was not navigated or closed.

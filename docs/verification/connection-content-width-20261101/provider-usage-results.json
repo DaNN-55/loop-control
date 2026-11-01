@@ -1,0 +1,150 @@
+{
+  "checkedAt": "2026-11-01T04:03:44.623Z",
+  "scope": "current visible Owner connections; provider accounting, not local reservations",
+  "results": [
+    {
+      "name": "Pexels 素材连接",
+      "provider": "pexels",
+      "execution": "live_read_only",
+      "remaining": {
+        "label": "请求余量",
+        "text": "24,962 次",
+        "detail": "供应商响应头的剩余请求数，不是资金余额。当前周期限额 25,000 次。重置于 2026/11/21 20:52:41。",
+        "status": "ready"
+      },
+      "recent": {
+        "label": "近7天",
+        "text": "未提供历史",
+        "detail": "供应商未提供近7天历史请求查询接口；不使用本平台估算补数。",
+        "status": "unsupported"
+      },
+      "updatedAt": "2026-11-01T04:03:41.170Z"
+    },
+    {
+      "name": "火山语音连接",
+      "provider": "volcengine_tts",
+      "execution": "not_executed_no_supported_billing_access",
+      "remaining": {
+        "label": "余量",
+        "text": "需账务权限",
+        "detail": "现有生成 Key 不提供账务查询；需单独接入有权限的账号账务凭据。",
+        "status": "unsupported"
+      },
+      "recent": {
+        "label": "近7天",
+        "text": "需账务权限",
+        "detail": "现有生成 Key 不提供账务查询；需单独接入有权限的账号账务凭据。",
+        "status": "unsupported"
+      },
+      "updatedAt": null
+    },
+    {
+      "name": "百炼-万象",
+      "provider": "bailian",
+      "execution": "not_executed_no_supported_billing_access",
+      "remaining": {
+        "label": "余量",
+        "text": "需账务权限",
+        "detail": "现有生成 Key 不提供账务查询；需单独接入有权限的账号账务凭据。",
+        "status": "unsupported"
+      },
+      "recent": {
+        "label": "近7天",
+        "text": "需账务权限",
+        "detail": "现有生成 Key 不提供账务查询；需单独接入有权限的账号账务凭据。",
+        "status": "unsupported"
+      },
+      "updatedAt": null
+    },
+    {
+      "name": "Freesound 本地",
+      "provider": "freesound",
+      "execution": "live_read_only",
+      "remaining": {
+        "label": "日余量",
+        "text": "1,998 次",
+        "detail": "供应商最近24小时请求限额；同一用户的多个客户端共享限流。不是资金余额。",
+        "status": "ready"
+      },
+      "recent": {
+        "label": "近7天",
+        "text": "8 次",
+        "detail": "供应商返回的当前 API client 最近7天请求次数，不是费用。",
+        "status": "ready"
+      },
+      "updatedAt": "2026-11-01T04:03:42.363Z"
+    },
+    {
+      "name": "seedance",
+      "provider": "volcengine",
+      "execution": "not_executed_no_supported_billing_access",
+      "remaining": {
+        "label": "余量",
+        "text": "需账务权限",
+        "detail": "现有生成 Key 不提供账务查询；需单独接入有权限的账号账务凭据。",
+        "status": "unsupported"
+      },
+      "recent": {
+        "label": "近7天",
+        "text": "需账务权限",
+        "detail": "现有生成 Key 不提供账务查询；需单独接入有权限的账号账务凭据。",
+        "status": "unsupported"
+      },
+      "updatedAt": null
+    },
+    {
+      "name": "minimax",
+      "provider": "minimax",
+      "execution": "not_executed_no_supported_billing_access",
+      "remaining": {
+        "label": "余量",
+        "text": "未接入",
+        "detail": "未接入官方可用的余额或账单接口，请在服务控制台查看。",
+        "status": "unsupported"
+      },
+      "recent": {
+        "label": "近7天",
+        "text": "未接入",
+        "detail": "未接入官方可用的余额或账单接口，请在服务控制台查看。",
+        "status": "unsupported"
+      },
+      "updatedAt": null
+    },
+    {
+      "name": "kling",
+      "provider": "kling",
+      "execution": "live_read_only",
+      "remaining": {
+        "label": "资源包",
+        "text": "未返回",
+        "detail": "供应商没有返回资源包列表；无法据此判断现金余额。",
+        "status": "unavailable"
+      },
+      "recent": {
+        "label": "7天任务",
+        "text": "无扣费记录",
+        "detail": "账号内近7天创建任务的实际现金扣费，可能包含其他 Key 调用；不是按扣费发生日查询。",
+        "status": "ready"
+      },
+      "updatedAt": "2026-11-01T04:03:44.614Z"
+    },
+    {
+      "name": "gpt-image2",
+      "provider": "openai",
+      "execution": "not_executed_no_supported_billing_access",
+      "remaining": {
+        "label": "余量",
+        "text": "未提供接口",
+        "detail": "未找到官方公开的预付余额查询接口，请在控制台查看。",
+        "status": "unsupported"
+      },
+      "recent": {
+        "label": "近7天",
+        "text": "需账务权限",
+        "detail": "现有生成 Key 不提供账务查询；需单独接入有权限的账号账务凭据。",
+        "status": "unsupported"
+      },
+      "updatedAt": null
+    }
+  ]
+}

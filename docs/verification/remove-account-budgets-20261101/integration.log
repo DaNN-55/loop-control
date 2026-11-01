@@ -1,0 +1,24 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/accountGenerationBudgets.integration.test.ts (1 test) 6175ms
+   ✓ retired account budget endpoints reject writes while rule saves and authorization remain enforced  6174ms
+(node:27251) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ✓ src/local-app/productionSelection.integration.test.ts (3 tests) 12541ms
+   ✓ without any account budget, explicit image selections freeze two independent connections without blueprint image authority  7306ms
+   ✓ exceeded historical account ceilings do not block images; invalid requests and unknown submission fencing remain  2643ms
+   ✓ legacy queued image snapshots execute unchanged after content-only saves and new requests still require a selection  2591ms
+ ✓ src/local-app/workspaceVideoSelection.integration.test.ts (3 tests) 16817ms
+   ✓ video selections generate real independent candidates without blueprint tools or added-shot type  9335ms
+   ✓ video ignores exceeded historical account ceilings and preserves input and unknown-result protection across restart  2955ms
+   ✓ selected video model uses actual adopted source voice window, rejects overflow and protects against later voice changes  4526ms
+ ✓ src/local-app/speechSelection.integration.test.ts (3 tests) 19761ms
+   ✓ speech requests freeze connection and voice while defaults change, and completed audio waits for explicit native adoption  7288ms
+   ✓ fresh formal speech adoption drives actual video duration and invalidates subtitle evidence when a longer voice is adopted  10357ms
+   ✓ speech validates actual choices, ownership and budget, and an unknown paid request cannot be sent again after restart  2116ms
+
+ Test Files  4 passed (4)
+      Tests  10 passed (10)
+   Start at  19:38:43
+   Duration  20.59s (transform 644ms, setup 48ms, collect 2.71s, tests 55.29s, environment 0ms, prepare 137ms)

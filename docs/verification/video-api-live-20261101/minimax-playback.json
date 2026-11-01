@@ -1,0 +1,18 @@
+{
+  "playing": {
+    "currentTime": 0.242934,
+    "duration": 4.458333,
+    "ended": false,
+    "paused": false,
+    "readyState": 4,
+    "videoHeight": 1344,
+    "videoWidth": 768
+  },
+  "afterPlayback": {
+    "currentTime": 4.458333,
+    "duration": 4.458333,
+    "ended": true,
+    "paused": true,
+    "readyState": 4
+  }
+}

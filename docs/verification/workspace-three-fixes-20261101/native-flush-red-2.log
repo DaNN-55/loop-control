@@ -1,0 +1,30 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ scripts/openchatcut-embed-client.test.tsx (1 test | 1 failed) 44ms
+   × acknowledges the exact second-shot caption document even when the autosave effect still holds the previous render 42ms
+     → panels.setChatCollapsed is not a function
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  scripts/openchatcut-embed-client.test.tsx > acknowledges the exact second-shot caption document even when the autosave effect still holds the previous render
+TypeError: panels.setChatCollapsed is not a function
+ ❯ eval scripts/openchatcut-embed-client.test.tsx:18:16
+
+ ❯ Object.react_stack_bottom_frame node_modules/react-dom/cjs/react-dom-client.development.js:25989:20
+ ❯ runWithFiberInDEV node_modules/react-dom/cjs/react-dom-client.development.js:874:13
+ ❯ commitHookEffectListMount node_modules/react-dom/cjs/react-dom-client.development.js:13249:29
+ ❯ commitHookPassiveMountEffects node_modules/react-dom/cjs/react-dom-client.development.js:13336:11
+ ❯ commitPassiveMountOnFiber node_modules/react-dom/cjs/react-dom-client.development.js:15484:13
+ ❯ recursivelyTraversePassiveMountEffects node_modules/react-dom/cjs/react-dom-client.development.js:15439:11
+ ❯ commitPassiveMountOnFiber node_modules/react-dom/cjs/react-dom-client.development.js:15519:11
+ ❯ flushPassiveEffects node_modules/react-dom/cjs/react-dom-client.development.js:18432:9
+ ❯ node_modules/react-dom/cjs/react-dom-client.development.js:17923:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  17:19:13
+   Duration  2.59s (transform 193ms, setup 33ms, collect 496ms, tests 44ms, environment 1.20s, prepare 164ms)

@@ -1,4 +1,5 @@
 import {isRetiredProvider,retiredProviderMessage} from './providerLifecycle.js';
+import {wanVideoModels} from '../wanVideoModels.js';
 import {imageSizes} from '../imageGeneration.js';
 import {videoProviders} from "./videoProviderCatalog.js";
 export const executionPathKeys = ["external", "local", "manual"] as const;
@@ -121,8 +122,8 @@ const manifest: readonly RegisteredAdapterDefinition[] = [
     capabilities: ["a_roll_generation", "b_roll_generation"].map(capability => ({capability, configurationFields: ["credential_ref", "max_attempts"], modelCatalog: definition.models, presetCatalog: ["official-video-v1"]})),
   })),
   { production: [{capability: 'video', label: '百炼万相视频', mode: 'generation', inputModes: ['text', 'first_frame'], constraints: {prompt: {maxLength: 1500}, durationSeconds: {min: 2, max: 15, integer: true}, firstFrame: {required: true, maxBytes: 20*1024*1024, mimeTypes: ['image/png', 'image/jpeg', 'image/webp', 'image/bmp']}, resolutions: ['720P','1080P'], aspectRatios: ['adaptive']}}], provider: "bailian", adapter: "wan_video", executionPath: "external", connection: { kind: "owner_managed", type: "bailian_video_api", endpoint: "https://dashscope.aliyuncs.com" }, execution: { kind: "controlled_media", safetyLimit: 1 }, capabilities: [
-    { capability: "a_roll_generation", configurationFields: ["credential_ref", "max_attempts"], modelCatalog: ["wan2.6-i2v-flash"], presetCatalog: ["wan-video-v1"] },
-    { capability: "b_roll_generation", configurationFields: ["credential_ref", "max_attempts"], modelCatalog: ["wan2.6-i2v-flash"], presetCatalog: ["wan-video-v1"] },
+    { capability: "a_roll_generation", configurationFields: ["credential_ref", "max_attempts"], modelCatalog: Object.keys(wanVideoModels), presetCatalog: ["wan-video-v1"] },
+    { capability: "b_roll_generation", configurationFields: ["credential_ref", "max_attempts"], modelCatalog: Object.keys(wanVideoModels), presetCatalog: ["wan-video-v1"] },
   ] },
   { provider: "codex", adapter: "codex", executionPath: "internal", connection: { kind: "none" }, execution: { kind: "codex", safetyLimit: 1 }, capabilities: [
     { capability: "script_writing", configurationFields: ["model"], modelCatalog: [], presetCatalog: [] },

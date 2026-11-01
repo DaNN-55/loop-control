@@ -26,3 +26,9 @@
 - [ADR-0018：制作按次选择与账号目录归属](0018-per-request-production-and-account-storage.md)
 
 - [ADR-0019：统一媒体根与生产单物理收纳](0019-managed-media-storage-locations.md)
+
+- [ADR-0020：连接模型设置与执行快照分离](0020-connection-model-preferences.md)
+
+- [ADR-0021：按协议接入百炼首帧视频模型](0021-bailian-video-model-contracts.md)
+
+- [ADR-0022：供应商账务凭据与生成凭据分离](0022-provider-billing-credentials.md)

@@ -1,0 +1,57 @@
+[
+  {
+    "name": "交付清单",
+    "status": 200,
+    "file": "downloads/manifest.json",
+    "expectedSha256": "e2170261c31d0f2e653b75de865b3de3049488840e48ffe59810ea3b289cc174",
+    "actualSha256": "e2170261c31d0f2e653b75de865b3de3049488840e48ffe59810ea3b289cc174",
+    "fileSize": 3354,
+    "matches": true
+  },
+  {
+    "name": "元数据",
+    "status": 200,
+    "file": "downloads/metadata.json",
+    "expectedSha256": "4ed0fa2e834894aa0c5daba4f6427e99947c41a31788e3044597da6ce9bfde85",
+    "actualSha256": "4ed0fa2e834894aa0c5daba4f6427e99947c41a31788e3044597da6ce9bfde85",
+    "fileSize": 1420,
+    "matches": true
+  },
+  {
+    "name": "检查证据",
+    "status": 200,
+    "file": "downloads/checks.json",
+    "expectedSha256": "8f2c80232fa1492b745c250d5123e2932e9fc6c151d8bd91e765072bed4f3ec4",
+    "actualSha256": "8f2c80232fa1492b745c250d5123e2932e9fc6c151d8bd91e765072bed4f3ec4",
+    "fileSize": 6693,
+    "matches": true
+  },
+  {
+    "name": "可编辑工程",
+    "status": 200,
+    "file": "downloads/project.json",
+    "expectedSha256": "1a91b6243d030dc63ba2db8ccc5237a86c7dcac5ee4a45637d3ad69edd65545b",
+    "actualSha256": "1a91b6243d030dc63ba2db8ccc5237a86c7dcac5ee4a45637d3ad69edd65545b",
+    "fileSize": 16652,
+    "matches": true
+  },
+  {
+    "name": "封面",
+    "status": 200,
+    "file": "downloads/cover.png",
+    "expectedSha256": "eb50ac41dc1c2fd1a695d76ab6b95665cb4847ffbecce9eeb5619418fe05c20d",
+    "actualSha256": "eb50ac41dc1c2fd1a695d76ab6b95665cb4847ffbecce9eeb5619418fe05c20d",
+    "fileSize": 49911,
+    "matches": true
+  },
+  {
+    "name": "最终视频",
+    "status": 200,
+    "file": "downloads/final.mp4",
+    "expectedSha256": "c384cee57060e5bac02a7c51b85348c2ebc62f9e780ef82a5ddcac4b8068fb71",
+    "source": "local-export-copy; browser HTTP 200 observed, browser response body blocked by paused media document",
+    "actualSha256": "c384cee57060e5bac02a7c51b85348c2ebc62f9e780ef82a5ddcac4b8068fb71",
+    "fileSize": 4227245,
+    "matches": true
+  }
+]

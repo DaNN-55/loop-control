@@ -1,0 +1,30 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/local-app/workspaceCaptions.integration.test.ts (3 tests | 1 failed | 2 skipped) 1987ms
+   ↓ Owner edits only the chosen native caption lane and persists manual timing without shot approval
+   × current native caption evidence follows the real alignment queue and rejects a late Worker result after a text edit 1987ms
+     → expected false to be true // Object.is equality
+   ↓ real landscape and portrait Remotion frames contain caption pixels inside the chosen safe area
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workspaceCaptions.integration.test.ts > current native caption evidence follows the real alignment queue and rejects a late Worker result after a text edit
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/local-app/workspaceCaptions.integration.test.ts:44:403
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 skipped (3)
+   Start at  16:32:29
+   Duration  2.60s (transform 346ms, setup 7ms, collect 466ms, tests 1.99s, environment 0ms, prepare 39ms)

@@ -1,0 +1,21 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ scripts/openchatcut-embed-client.test.tsx (1 test | 1 failed) 62ms
+   × acknowledges the exact second-shot caption document even when the autosave effect still holds the previous render 60ms
+     → Cannot read properties of undefined (reading 'result')
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  scripts/openchatcut-embed-client.test.tsx > acknowledges the exact second-shot caption document even when the autosave effect still holds the previous render
+TypeError: Cannot read properties of undefined (reading 'result')
+ ❯ scripts/openchatcut-embed-client.test.tsx:24:118
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  17:20:12
+   Duration  2.80s (transform 238ms, setup 33ms, collect 515ms, tests 62ms, environment 1.11s, prepare 328ms)

@@ -1,10 +1,10 @@
 import {officialVideoDownloadUrl} from '../worker/officialVideoProvider.js';
-import {videoProviders, type VideoProvider} from '../worker/videoProviderCatalog.js';
+import {videoProviders,minimaxEndpoints, type VideoProvider} from '../worker/videoProviderCatalog.js';
 // Endpoint boundary for signed, deployment-owned network policies.
 export function officialVideoOperation(provider: VideoProvider, phase: 'verify'|'execute', url: URL, init: RequestInit): string {
  const method=(init.method??'GET').toUpperCase(),origin=videoProviders[provider].endpoint;
  const base=new URL(origin),path=url.pathname.slice(base.pathname==='/'?0:base.pathname.length);
- if(url.origin===base.origin){
+ if(url.origin===base.origin||provider==='minimax'&&url.origin===minimaxEndpoints.cn){
   const create=provider==='volcengine'?'/contents/generations/tasks':provider==='minimax'?'/v2/video_generation':'/v1/videos/image2video';
   const list=provider==='volcengine'?'/contents/generations/tasks':provider==='minimax'?'/v2/query/video_generation':create;
   const pagination=provider==='kling'?['pageNum','pageSize']:['page_num','page_size'];

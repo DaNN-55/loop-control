@@ -1,0 +1,12 @@
+{
+  "target": "kling",
+  "model": "gpt-image-2",
+  "connectionVersion": "022dff01-abac-4444-8bc8-a7500751f657",
+  "prompt": "生成一张9:16竖版高级棚拍静物照片。深蓝色背景，柔和暖光从右上方照入，中央是一座由青绿色圆环、琥珀色半透明球体和珊瑚红方块组成的平衡几何雕塑，真实细腻材质，干净构图，主体完整，顶部留白，颜色鲜明但协调。无文字、无标识、无水印、无边框、无人物。",
+  "settings": {
+    "size": "864x1536",
+    "quality": "medium",
+    "count": 1
+  },
+  "reservationCny": 1
+}

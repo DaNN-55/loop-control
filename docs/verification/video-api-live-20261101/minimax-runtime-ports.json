@@ -1,0 +1,10 @@
+{
+  "at": "2026-11-01T10:51:53.494Z",
+  "taskId": "458656441229509",
+  "mode": "live",
+  "actualProductionPorts": true,
+  "domesticPollingAndOssDownload": true,
+  "sha256": "67dfaf39beaae0704a520ad3c1162dfb7441822018e922413f855c5278012c59",
+  "bytes": 904732,
+  "submissionCalls": 0
+}

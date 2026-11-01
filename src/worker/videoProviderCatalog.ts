@@ -5,5 +5,7 @@ export const videoProviders = {
   kling: { adapter: 'kling_video', label: '可灵 Kling 3.0', endpoint: 'https://api-singapore.klingai.com', models: ['kling-v3'], minDuration: 3, maxDuration: 15 },
 } as const;
 export type VideoProvider = keyof typeof videoProviders;
+export const minimaxEndpoints={cn:'https://api.minimax.cn',international:'https://api.minimax.io'} as const;
+export type MiniMaxRegion=keyof typeof minimaxEndpoints;
 export function isVideoProvider(value: string): value is VideoProvider { return Object.hasOwn(videoProviders, value); }
 export const videoAdapters: readonly string[] = Object.values(videoProviders).map(p => p.adapter);

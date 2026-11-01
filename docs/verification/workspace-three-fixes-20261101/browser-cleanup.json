@@ -1,0 +1,32 @@
+{
+  "at": "2026-11-01T09:51:18.679Z",
+  "closedTabs": [
+    "5",
+    "6"
+  ],
+  "before": [
+    {
+      "id": "1",
+      "providerTabId": "500b4f93-ad23-4870-bd3e-509f7c091275",
+      "title": "Loop Control",
+      "url": "http://127.0.0.1:5174/"
+    },
+    {
+      "id": "5",
+      "providerTabId": "browser-use:65853779-b95a-444a-92b1-ec6eefb1234d",
+      "title": "Loop Control",
+      "url": "http://127.0.0.1:5174/?episode=b232b4fd-b43c-470c-bbdf-d97ae3f62f9d"
+    }
+  ],
+  "after": [
+    {
+      "id": "1",
+      "providerTabId": "500b4f93-ad23-4870-bd3e-509f7c091275",
+      "title": "Loop Control",
+      "url": "http://127.0.0.1:5174/"
+    }
+  ],
+  "originalTabPreserved": true,
+  "visibilityRestored": true,
+  "editorClosed": true
+}

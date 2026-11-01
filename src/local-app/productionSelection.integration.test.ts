@@ -5,7 +5,7 @@ import {readFile,writeFile} from 'node:fs/promises';
 import {csrfFor} from './sessions';
 import {workspaceImageGenerationFixture} from './workspaceImageGeneration.fixture';
 
-it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('explicit image selections freeze two independent connections without blueprint image authority',async()=>{
+it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('without any account budget, explicit image selections freeze two independent connections without blueprint image authority',async()=>{
  const {f,ref,submissions}=await workspaceImageGenerationFixture();try{
  const a=(await f.c.query("SELECT v.id FROM public.external_connection_versions v WHERE adapter='openai_images'")).rows[0].id;
  await f.c.query('BEGIN');
@@ -17,6 +17,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('explicit image selection
  await f.c.query("INSERT INTO local_identity.connection_probe_evidence(version_id,owner_id,mode,outcome) VALUES($1,$2,'live','verified')",[b,f.owner]);
  await f.c.query('COMMIT');
  const account=(await f.c.query('SELECT account_id FROM public.episodes WHERE id=$1',[f.episode])).rows[0].account_id;
+ await f.c.query('DELETE FROM public.generation_account_budgets WHERE account_id=$1',[account]);
  await f.c.query('BEGIN');await f.c.query("SELECT set_config('loop.owner_id',$1,true)",[f.owner]);await f.c.query('SET SESSION AUTHORIZATION loop_app');
  await f.c.query('SELECT public.update_current_blueprint($1,$2)',[account,{asset_root:f.assetRoot,positioning:'明亮纪实，不添加商标'}]);
  const series=(await f.c.query('SELECT (public.create_series($1,$2,$3)).id',[account,'冻结系列',{visual_style:'保持金色画框',restrictions:'不改变产品文字'}])).rows[0].id;
@@ -27,6 +28,12 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('explicit image selection
  const key=randomUUID(),submit=async(data:unknown)=>{const r=await fetch(f.origin+'/api/local/episode-commands',{method:'POST',headers:{Origin:f.origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+f.token,'X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command:'requestWorkspaceImageCandidates',idempotencyKey:key,data:{episodeId:f.episode,...data as Record<string,unknown>}})});return{status:r.status,body:await r.json()};};
  const queued=await submit(args);expect((await submit(args)).body).toEqual(queued.body);expect((await submit({...args,prompt:'Different request'})).status).toBe(409);expect(queued.status,JSON.stringify(queued.body)).toBe(200);w=queued.body;
  const taskA=w.visualTasks[0].taskId;
+ const frozenBefore=(await f.c.query('SELECT input_snapshot::text snapshot FROM public.tasks WHERE id=$1',[taskA])).rows[0].snapshot;
+ const connectionA=(await f.c.query('SELECT connection_id FROM public.external_connection_versions WHERE id=$1',[a])).rows[0].connection_id;
+ const preferences=await fetch(f.origin+'/api/local/connection-models',{method:'POST',headers:{Origin:f.origin,Cookie:'loop_owner_session='+f.token,'Content-Type':'application/json','X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command:'save',idempotencyKey:randomUUID(),data:{connectionId:connectionA,versionId:a,revision:'default',enabledModels:[]}})});
+ expect(preferences.status,JSON.stringify(await preferences.json())).toBe(200);
+ expect((await f.c.query('SELECT input_snapshot::text snapshot FROM public.tasks WHERE id=$1',[taskA])).rows[0].snapshot).toBe(frozenBefore);
+ const disabled=await f.request('requestWorkspaceImageCandidates',{...args,expectedRevision:w.revision,prompt:'A new request with a disabled model'});expect(disabled.status,JSON.stringify(disabled.body)).toBe(409);expect(disabled.body.error).toContain('已停用');
  // Rotation/default changes cannot mutate the already submitted exact version.
  await f.c.query('BEGIN');const rotated=randomUUID();await f.c.query("INSERT INTO public.external_connection_versions(id,connection_id,version,provider,adapter,endpoint,vault_secret_id) SELECT $2,connection_id,2,provider,adapter,endpoint,vault_secret_id FROM public.external_connection_versions WHERE id=$1",[a,rotated]);await f.c.query('UPDATE public.external_connections SET current_version_id=$2 WHERE current_version_id=$1',[a,rotated]);await f.c.query('COMMIT');
  expect((await f.request('requestWorkspaceImageCandidates',{...args,selection:selection(b)})).status).toBe(409);
@@ -42,7 +49,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('explicit image selection
  }finally{await f.close();}
 },120000);
 
-it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('rejects invalid choices, settings, references and budget; unknown submission cannot charge twice',async()=>{
+it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('exceeded historical account ceilings do not block images; invalid requests and unknown submission fencing remain',async()=>{
  const {f,ref,submissions}=await workspaceImageGenerationFixture();try{
  const version=(await f.c.query("SELECT id FROM public.external_connection_versions WHERE adapter='openai_images'")).rows[0].id;
  const w=await f.read(),selection={capability:'image',provider:'openai',adapter:'openai_images',model:'gpt-image-2',connectionVersionId:version};
@@ -52,7 +59,10 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('rejects invalid choices,
  expect((await f.request('requestWorkspaceImageCandidates',args,{token:f.otherToken})).status).toBe(404);
  expect((await f.request('requestWorkspaceImageCandidates',args,{csrf:false})).status).toBe(403);
  await f.c.query('UPDATE local_identity.connection_qualifications SET qualified=false WHERE version_id=$1',[version]);expect((await f.request('requestWorkspaceImageCandidates',args)).status).toBe(409);await f.c.query('UPDATE local_identity.connection_qualifications SET qualified=true WHERE version_id=$1',[version]);
- const tooMuch=await f.request('requestWorkspaceImageCandidates',{...args,reservationCents:1001});expect(tooMuch.status,JSON.stringify(tooMuch.body)).toBe(409);expect(tooMuch.body.error).toContain('预算');expect((await f.read()).visualTasks).toHaveLength(0);
+ const invalid=await f.request('requestWorkspaceImageCandidates',{...args,reservationCents:0});expect(invalid.status,JSON.stringify(invalid.body)).toBe(400);expect((await f.read()).visualTasks).toHaveLength(0);
+ const account=(await f.c.query('SELECT account_id FROM public.episodes WHERE id=$1',[f.episode])).rows[0].account_id;
+ await f.c.query('INSERT INTO public.generation_account_budgets(account_id,trial_video_limit_cents,total_limit_cents,full_generation_enabled,approved_by) VALUES($1,1,1,false,$2) ON CONFLICT(account_id) DO UPDATE SET trial_video_limit_cents=1,total_limit_cents=1,full_generation_enabled=false',[account,f.owner]);
+ await f.c.query("INSERT INTO public.paid_generation_reservations(task_id,account_id,kind,reserved_cents) SELECT id,$2,'image',200000 FROM public.tasks WHERE episode_id=$1 ORDER BY created_at LIMIT 1 ON CONFLICT(task_id) DO NOTHING",[f.episode,account]);
  const queued=await f.request('requestWorkspaceImageCandidates',args);expect(queued.status,JSON.stringify(queued.body)).toBe(200);const task=queued.body.visualTasks[0].taskId;
  await writeFile(f.responseMode,'unknown');await f.execute(task,false);await f.restart();await f.restartWorker();
  const repeated=await f.request('requestWorkspaceImageCandidates',args);expect(repeated.status,JSON.stringify(repeated.body)).toBe(409);expect(repeated.body.error).toContain('未知');

@@ -1,0 +1,12 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/connections/ConnectionOrganization.test.tsx (12 tests) 537ms
+ ✓ src/local-app/providerUsage.test.ts (5 tests) 4430ms
+   ✓ keeps missing Kling resource data unknown and sums cash separately from trial credits across pages  2209ms
+   ✓ does not present incomplete Kling pages as a zero or complete total  2206ms
+
+ Test Files  2 passed (2)
+      Tests  17 passed (17)
+   Start at  10:46:27
+   Duration  4.61s (transform 101ms, setup 16ms, collect 831ms, tests 4.97s, environment 256ms, prepare 79ms)

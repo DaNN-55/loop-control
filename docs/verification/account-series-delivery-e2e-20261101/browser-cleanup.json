@@ -1,0 +1,33 @@
+{
+  "at": "2026-11-01T08:42:27.425Z",
+  "closedTestTabs": [
+    "2",
+    "4"
+  ],
+  "originalUserTab": "1",
+  "before": [
+    {
+      "id": "1",
+      "providerTabId": "500b4f93-ad23-4870-bd3e-509f7c091275",
+      "title": "Loop Control",
+      "url": "http://127.0.0.1:5174/",
+      "browserId": "2"
+    },
+    {
+      "id": "2",
+      "providerTabId": "browser-use:07180373-f66d-47ad-bedf-8dee3ce1d586",
+      "title": "Loop Control",
+      "url": "http://127.0.0.1:5174/?episode=2f7553cb-c3e9-4dc5-b900-f1439329a0b0",
+      "browserId": "2"
+    }
+  ],
+  "after": [
+    {
+      "id": "1",
+      "providerTabId": "500b4f93-ad23-4870-bd3e-509f7c091275",
+      "title": "Loop Control",
+      "url": "http://127.0.0.1:5174/",
+      "browserId": "2"
+    }
+  ]
+}

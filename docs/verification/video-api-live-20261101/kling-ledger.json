@@ -1,0 +1,57 @@
+{
+  "policy": {
+    "version": 1,
+    "runId": "video-api-live-20261101-kling",
+    "enabled": true,
+    "expiresAt": "2026-11-01T11:45:42.162Z",
+    "maxRequests": 98,
+    "currency": "CNY",
+    "maxCostMicrounits": 2100000,
+    "priceEvidenceSha256": "bb3f4ccb6d50578bb29b8e4c883cbcd87aae57652a04e41c3dbd267fdeb2d0b6",
+    "approvalSha256": "fde46b761236e90b9ba035b465c0f58ef8addaee35d6b176f2eac07eecded92f",
+    "providers": [
+      "kling"
+    ],
+    "operations": {
+      "kling.generate": {
+        "maxRequests": 1,
+        "maxBytes": 1048576,
+        "timeoutMs": 60000,
+        "costMicrounits": 2100000
+      },
+      "kling.poll": {
+        "maxRequests": 95,
+        "maxBytes": 1048576,
+        "timeoutMs": 60000,
+        "costMicrounits": 0
+      },
+      "kling.download": {
+        "maxRequests": 2,
+        "maxBytes": 104857600,
+        "timeoutMs": 60000,
+        "costMicrounits": 0
+      }
+    }
+  },
+  "policySha256": "2cc487f386f927318b0bad92f6987700c2d3a5a738ae0d0baa40d7b720aeb9d1",
+  "state": {
+    "version": 1,
+    "policySha256": "2cc487f386f927318b0bad92f6987700c2d3a5a738ae0d0baa40d7b720aeb9d1",
+    "used": 1,
+    "costMicrounits": 2100000,
+    "byOperation": {
+      "kling.generate": 1
+    },
+    "halted": true,
+    "events": [
+      {
+        "operation": "kling.generate",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "kling.generate",
+        "outcome": "unknown"
+      }
+    ]
+  }
+}

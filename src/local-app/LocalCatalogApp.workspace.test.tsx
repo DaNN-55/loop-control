@@ -177,16 +177,3 @@ it('恢复失败留在确认框内且可重试，成功后关闭；操作错误�
  expect((within(modal).getByRole('button',{name:'确认恢复'}) as HTMLButtonElement).disabled).toBe(false);
  await user.click(within(modal).getByRole('button',{name:'确认恢复'}));await waitFor(()=>expect(screen.queryByRole('form',{name:'恢复生产单'})).toBeNull());expect(calls).toBe(2);
 });
-
-it('routes budget adjustment to the production account and returns to the same production',async()=>{
- vi.stubGlobal('crypto',webcrypto);vi.stubGlobal('fetch',vi.fn(async(path:string,init?:RequestInit)=>{
-  if(path.endsWith('/session'))return Response.json({csrfToken:'fixture',owner:{id,email:'owner@example.test'}});
-  if(path.includes('/catalog?'))return Response.json(data);
-  if(path.endsWith('/account-commands')){expect(JSON.parse(String(init?.body))).toMatchObject({command:'readGenerationBudget',data:{accountId:id}});return Response.json({accountId:id,budget:null,usedCents:0});}
-  if(path.endsWith('/deletion-cleanups'))return Response.json([]);
-  return Response.json({connections:[],versions:[],capabilities:{secrets:'disabled',verification:'disabled',externalReady:false}});
- }));
- history.replaceState(null,'','/?episode='+episode);await act(async()=>{render(<LocalCatalogApp/>);});await screen.findByText('已打开 '+episode);
- act(()=>window.dispatchEvent(new CustomEvent('open-external-connections',{detail:{section:'budgets',accountId:id,episodeId:episode,shotId:'S02',targetItemId:'target-S02'}})));
- await screen.findByText('尚未设置限额');expect(screen.getByLabelText('预算账号')).toHaveProperty('value',id);expect(screen.queryByText('已打开 '+episode)).toBeNull();fireEvent.click(screen.getByRole('button',{name:'返回分镜'}));await screen.findByText('返回镜头 S02 target-S02');expect(location.search).toContain(episode);
-});

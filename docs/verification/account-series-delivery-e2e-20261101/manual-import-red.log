@@ -1,0 +1,1335 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/local-app/ProductionWorkspacePanel.test.tsx (26 tests | 1 failed | 25 skipped) 217ms
+   × keeps material import reachable after matching so manual narration can be registered 216ms
+     → Unable to find an accessible element with the role "button" and name "导入本期素材"
+
+Here are the accessible roles:
+
+  region:
+
+  Name "四步制作工作流":
+  [36m<section[39m
+    [33maria-label[39m=[32m"四步制作工作流"[39m
+    [33mclass[39m=[32m"production-workspace"[39m
+    [33mdata-compact-workflow[39m=[32m"true"[39m
+  [36m/>[39m
+
+  Name "素材镜头列表":
+  [36m<section[39m
+    [33maria-label[39m=[32m"素材镜头列表"[39m
+    [33mclass[39m=[32m"workspace-shot-table-pane"[39m
+  [36m/>[39m
+
+  Name "本期素材":
+  [36m<section[39m
+    [33maria-label[39m=[32m"本期素材"[39m
+    [33mclass[39m=[32m"workspace-material-inventory"[39m
+  [36m/>[39m
+
+  Name "上传与生成画面":
+  [36m<section[39m
+    [33maria-label[39m=[32m"上传与生成画面"[39m
+    [33mclass[39m=[32m"workspace-visual-replacement"[39m
+  [36m/>[39m
+
+  Name "镜头图片与视频":
+  [36m<section[39m
+    [33maria-label[39m=[32m"镜头图片与视频"[39m
+    [33mclass[39m=[32m"workspace-visual-candidates workspace-visual-unified"[39m
+  [36m/>[39m
+
+  Name "图片候选结果":
+  [36m<section[39m
+    [33maria-label[39m=[32m"图片候选结果"[39m
+    [33mclass[39m=[32m"workspace-visual-results"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  banner:
+
+  Name "":
+  [36m<header[39m
+    [33mclass[39m=[32m"production-workspace-title"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<header />[39m
+
+  Name "":
+  [36m<header />[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "工程":
+  [36m<h2 />[39m
+
+  Name "素材匹配":
+  [36m<h3 />[39m
+
+  Name "镜头 拖动行调整顺序":
+  [36m<h3 />[39m
+
+  Name "本期素材":
+  [36m<h3 />[39m
+
+  Name "画面候选":
+  [36m<h3 />[39m
+
+  --------------------------------------------------
+  navigation:
+
+  Name "四步制作步骤":
+  [36m<nav[39m
+    [33maria-label[39m=[32m"四步制作步骤"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "脚本确认":
+  [36m<button[39m
+    [33maria-label[39m=[32m"脚本确认"[39m
+  [36m/>[39m
+
+  Name "素材准备与匹配":
+  [36m<button[39m
+    [33maria-current[39m=[32m"step"[39m
+    [33maria-label[39m=[32m"素材准备与匹配"[39m
+  [36m/>[39m
+
+  Name "剪辑工作台":
+  [36m<button[39m
+    [33maria-label[39m=[32m"剪辑工作台"[39m
+  [36m/>[39m
+
+  Name "检查与交付":
+  [36m<button[39m
+    [33maria-label[39m=[32m"检查与交付"[39m
+  [36m/>[39m
+
+  Name "允许本期在线制作":
+  [36m<button[39m
+    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+    [33mdata-color[39m=[32m"secondary"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mid[39m=[32m"react-aria-_r_8_"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "进入剪辑工作台":
+  [36m<button[39m
+    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 bg-brand-solid text-white shadow-xs-skeuomorphic ring-1 ring-transparent ring-inset hover:bg-brand-solid_hover data-loading:bg-brand-solid_hover before:absolute before:inset-px before:border before:border-white/12 before:mask-b-from-0% *:data-icon:text-white/60 hover:*:data-icon:text-white/70"[39m
+    [33mdata-color[39m=[32m"primary"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mid[39m=[32m"react-aria-_r_a_"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "选择镜头 S01":
+  [36m<button[39m
+    [33maria-label[39m=[32m"选择镜头 S01"[39m
+    [33maria-pressed[39m=[32m"true"[39m
+    [33mdraggable[39m=[32m"true"[39m
+    [33mtitle[39m=[32m"S01"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "镜头 S01 操作":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"true"[39m
+    [33maria-label[39m=[32m"镜头 S01 操作"[39m
+    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover workspace-shot-menu-trigger"[39m
+    [33mdata-color[39m=[32m"tertiary"[39m
+    [33mdata-icon-only[39m=[32m"true"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mid[39m=[32m"react-aria-_r_e_"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "新增镜头":
+  [36m<button[39m
+    [33maria-label[39m=[32m"新增镜头"[39m
+    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover workspace-shot-add"[39m
+    [33mdata-color[39m=[32m"tertiary"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mid[39m=[32m"react-aria-_r_i_"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "本期素材 · 0":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"true"[39m
+    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+    [33mdata-color[39m=[32m"tertiary"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mid[39m=[32m"react-aria-_r_k_"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "刷新":
+  [36m<button[39m
+    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+    [33mdata-color[39m=[32m"tertiary"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mid[39m=[32m"react-aria-_r_m_"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "上传素材":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"true"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "AI 生成":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"false"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "选择或拖入图片 PNG、JPEG、WebP、BMP，可多选":
+  [36m<button[39m
+    [33mclass[39m=[32m"workspace-visual-dropzone"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  group:
+
+  Name "":
+  [36m<fieldset[39m
+    [33mclass[39m=[32m"production-workspace-body"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<details[39m
+    [33mclass[39m=[32m"workspace-online-authorization"[39m
+  [36m/>[39m
+
+  Name "图片来源":
+  [36m<div[39m
+    [33maria-label[39m=[32m"图片来源"[39m
+    [33mclass[39m=[32m"workspace-visual-origin"[39m
+    [33mrole[39m=[32m"group"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p />[39m
+
+  Name "":
+  [36m<p />[39m
+
+  --------------------------------------------------
+  table:
+
+  Name "镜头":
+  [36m<table[39m
+    [33maria-label[39m=[32m"镜头"[39m
+    [33mclass[39m=[32m"workspace-shot-table"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  rowgroup:
+
+  Name "":
+  [36m<thead />[39m
+
+  Name "":
+  [36m<tbody />[39m
+
+  Name "":
+  [36m<tfoot />[39m
+
+  --------------------------------------------------
+  row:
+
+  Name "镜头 脚本与素材 时长 画面 口播 操作":
+  [36m<tr />[39m
+
+  Name "镜头 S01":
+  [36m<tr[39m
+    [33maria-describedby[39m=[32m"_r_c_"[39m
+    [33maria-label[39m=[32m"镜头 S01"[39m
+    [33maria-selected[39m=[32m"true"[39m
+    [33mdraggable[39m=[32m"true"[39m
+    [33mtabindex[39m=[32m"0"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<tr />[39m
+
+  --------------------------------------------------
+  columnheader:
+
+  Name "镜头":
+  [36m<th[39m
+    [33mscope[39m=[32m"col"[39m
+  [36m/>[39m
+
+  Name "脚本与素材":
+  [36m<th[39m
+    [33mscope[39m=[32m"col"[39m
+  [36m/>[39m
+
+  Name "时长":
+  [36m<th[39m
+    [33mscope[39m=[32m"col"[39m
+  [36m/>[39m
+
+  Name "画面":
+  [36m<th[39m
+    [33mscope[39m=[32m"col"[39m
+  [36m/>[39m
+
+  Name "口播":
+  [36m<th[39m
+    [33mscope[39m=[32m"col"[39m
+  [36m/>[39m
+
+  Name "操作":
+  [36m<th[39m
+    [33mscope[39m=[32m"col"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  cell:
+
+  Name "S01":
+  [36m<td />[39m
+
+  Name "第一镜 保留占位":
+  [36m<td />[39m
+
+  Name "—":
+  [36m<td />[39m
+
+  Name "待匹配":
+  [36m<td />[39m
+
+  Name "关闭":
+  [36m<td />[39m
+
+  Name "":
+  [36m<td[39m
+    [33mclass[39m=[32m"workspace-shot-table-actions-cell"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<td[39m
+    [33mclass[39m=[32m"workspace-shot-insert-cell"[39m
+    [33mcolspan[39m=[32m"6"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  status:
+
+  Name "":
+  [36m<span[39m
+    [33mclass[39m=[32m"sr-only"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  separator:
+
+  Name "调整镜头列表宽度":
+  [36m<div[39m
+    [33maria-label[39m=[32m"调整镜头列表宽度"[39m
+    [33maria-orientation[39m=[32m"vertical"[39m
+    [33maria-valuemax[39m=[32m"75"[39m
+    [33maria-valuemin[39m=[32m"20"[39m
+    [33maria-valuenow[39m=[32m"41"[39m
+    [33maria-valuetext[39m=[32m"镜头列表 41%"[39m
+    [33mclass[39m=[32m"workspace-preparation-resizer"[39m
+    [33mrole[39m=[32m"separator"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtitle[39m=[32m"拖动调整宽度；双击恢复默认；方向键微调"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  complementary:
+
+  Name "":
+  [36m<aside[39m
+    [33mclass[39m=[32m"workspace-preparation-detail"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  tablist:
+
+  Name "素材设置":
+  [36m<div[39m
+    [33maria-label[39m=[32m"素材设置"[39m
+    [33mclass[39m=[32m"workspace-detail-tabs"[39m
+    [33mrole[39m=[32m"tablist"[39m
+  [36m/>[39m
+
+  Name "画面类型":
+  [36m<div[39m
+    [33maria-label[39m=[32m"画面类型"[39m
+    [33mclass[39m=[32m"workspace-visual-preview-tabs"[39m
+    [33mrole[39m=[32m"tablist"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  tab:
+
+  Name "画面":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"preparation-panel-visual"[39m
+    [33maria-selected[39m=[32m"true"[39m
+    [33mid[39m=[32m"preparation-tab-visual"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "口播":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"preparation-panel-voice"[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mid[39m=[32m"preparation-tab-voice"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "配乐与音效":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"preparation-panel-sound"[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mid[39m=[32m"preparation-tab-sound"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "图片":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"visual-content-shot-S01-clip"[39m
+    [33maria-selected[39m=[32m"true"[39m
+    [33mid[39m=[32m"visual-kind-shot-S01-clip-image"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "视频":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"visual-content-shot-S01-clip"[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mid[39m=[32m"visual-kind-shot-S01-clip-video"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  tabpanel:
+
+  Name "画面":
+  [36m<div[39m
+    [33maria-labelledby[39m=[32m"preparation-tab-visual"[39m
+    [33mid[39m=[32m"preparation-panel-visual"[39m
+    [33mrole[39m=[32m"tabpanel"[39m
+  [36m/>[39m
+
+  Name "图片":
+  [36m<div[39m
+    [33maria-labelledby[39m=[32m"visual-kind-shot-S01-clip-image"[39m
+    [33mclass[39m=[32m"workspace-visual-content"[39m
+    [33mid[39m=[32m"visual-content-shot-S01-clip"[39m
+    [33mrole[39m=[32m"tabpanel"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"四步制作工作流"[39m
+      [33mclass[39m=[32m"production-workspace"[39m
+      [33mdata-compact-workflow[39m=[32m"true"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"production-workspace-title"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<h2>[39m
+            [0m工程[0m
+          [36m</h2>[39m
+          [36m<span>[39m
+            [0m四步制作[0m
+          [36m</span>[39m
+        [36m</div>[39m
+      [36m</header>[39m
+      [36m<nav[39m
+        [33maria-label[39m=[32m"四步制作步骤"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33maria-label[39m=[32m"脚本确认"[39m
+        [36m>[39m
+          [36m<span>[39m
+            [0m1[0m
+          [36m</span>[39m
+          [0m脚本确认[0m
+          [36m<small>[39m
+            [0m已确认[0m
+          [36m</small>[39m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-current[39m=[32m"step"[39m
+          [33maria-label[39m=[32m"素材准备与匹配"[39m
+        [36m>[39m
+          [36m<span>[39m
+            [0m2[0m
+          [36m</span>[39m
+          [0m素材准备与匹配[0m
+          [36m<small>[39m
+            [0m1 项待准备[0m
+          [36m</small>[39m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-label[39m=[32m"剪辑工作台"[39m
+        [36m>[39m
+          [36m<span>[39m
+            [0m3[0m
+          [36m</span>[39m
+          [0m剪辑工作台[0m
+          [36m<small>[39m
+            [0m待剪辑[0m
+          [36m</small>[39m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-label[39m=[32m"检查与交付"[39m
+        [36m>[39m
+          [36m<span>[39m
+            [0m4[0m
+          [36m</span>[39m
+          [0m检查与交付[0m
+          [36m<small>[39m
+            [0m待确认[0m
+          [36m</small>[39m
+        [36m</button>[39m
+      [36m</nav>[39m
+      [36m<fieldset[39m
+        [33mclass[39m=[32m"production-workspace-body"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mhidden[39m=[32m""[39m
+        [36m>[39m
+          [36m<section[39m
+            [33maria-label[39m=[32m"脚本确认"[39m
+            [33mclass[39m=[32m"production-workspace-section workspace-script workspace-script-compact"[39m
+          [36m>[39m
+            [36m<header>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"workspace-compact-heading"[39m
+              [36m>[39m
+                [36m<h3>[39m
+                  [0m主脚本[0m
+                [36m</h3>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"is-confirmed"[39m
+                  [33mrole[39m=[32m"status"[39m
+                [36m>[39m
+                  [0m已确认基准[0m
+                  [0m · 预览锁定[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</header>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"workspace-script-layout"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"workspace-script-main"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33maria-label[39m=[32m"主脚本预览"[39m
+                  [33mclass[39m=[32m"workspace-script-preview"[39m
+                  [33mrole[39m=[32m"document"[39m
+                  [33mtabindex[39m=[32m"0"[39m
+                [36m>[39m
+                  [0m正在读取主脚本…[0m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"workspace-script-statistics"[39m
+                [36m>[39m
+                  [36m<span>[39m
+                    [0m0[0m
+                    [0m 字[0m
+                  [36m</span>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+              [36m<aside[39m
+                [33maria-label[39m=[32m"脚本基准"[39m
+                [33mclass[39m=[32m"workspace-script-basis"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"workspace-script-file"[39m
+                [36m>[39m
+                  [36m<input[39m
+                    [33maccept[39m=[32m".md,.txt,text/plain,text/markdown"[39m
+                    [33maria-label[39m=[32m"上传主脚本"[39m
+                    [33mdisabled[39m=[32m""[39m
+                    [33mhidden[39m=[32m""[39m
+                    [33mtype[39m=[32m"file"[39m
+                  [36m/>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"workspace-script-file-slot is-locked"[39m
+                  [36m>[39m
+                    [36m<svg[39m
+                      [33maria-hidden[39m=[32m"true"[39m
+                      [33mclass[39m=[32m"lucide lucide-file-text"[39m
+                      [33mfill[39m=[32m"none"[39m
+                      [33mheight[39m=[32m"20"[39m
+                      [33mstroke[39m=[32m"currentColor"[39m
+                      [33mstroke-linecap[39m=[32m"round"[39m
+                      [33mstroke-linejoin[39m=[32m"round"[39m
+                      [33mstroke-width[39m=[32m"2"[39m
+                      [33mviewBox[39m=[32m"0 0 24 24"[39m
+                      [33mwidth[39m=[32m"20"[39m
+                      [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                    [36m>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M14 2v5a1 1 0 0 0 1 1h5"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M10 9H8"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M16 13H8"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M16 17H8"[39m
+                      [36m/>[39m
+                    [36m</svg>[39m
+                    [36m<span>[39m
+                      [36m<strong>[39m
+                        [0m主脚本[0m
+                      [36m</strong>[39m
+                      [36m<small>[39m
+                        [0m已确认脚本[0m
+                      [36m</small>[39m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33maria-label[39m=[32m"脚本操作"[39m
+                  [33mclass[39m=[32m"workspace-script-controls"[39m
+                  [33mrole[39m=[32m"group"[39m
+                [36m>[39m
+                  [36m<button[39m
+                    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify...
+   ↓ four-step navigation reads durable state and does not submit approvals or generation
+   ↓ enables a persisted draft only after the explicit Owner action
+   ↓ shows the four-step shell on a new episode without mounting old workflow actions
+   ↓ keeps an unsaved script draft while navigating read-only steps
+   ↓ requires an explicit recovery choice before replacing a legacy working edit
+   ↓ shows planner failure and retries only through the explicit failed-task action
+   ↓ preserves image and video prompt drafts when switching the unified tabs
+   ↓ disables workspace write forms on a completed order even when legacy content remains inspectable
+   ↓ keeps another shot’s video generation draft when adopting an image advances the project
+   ↓ keeps one delivery form and its metadata, cover and issue drafts across workflow navigation
+   ↓ pauses delivery polling while its retained draft tree is hidden and resumes one interval on return
+   ↓ preserves an explicit script step while the initial workspace finishes loading
+   ↓ enters the existing native project directly from the editing step without rebuilding it
+   ↓ keeps project history out of the four-step interface without changing records
+   ↓ keeps a revised pending script on step one while preserving the stale saved project
+   ↓ reuses the saved script revision when continuing an existing workspace without a second reason
+   ↓ blocks entering the editor until every shot has an adopted readable visual
+   ↓ deletes only the selected material shot after confirmation and selects the remaining neighbor
+   ↓ keeps the selected shot and deletion dialog when the saved revision is stale
+   ↓ appends a shot after the final shot and selects it only after the saved result returns
+   ↓ retains an insert draft and the saved shot order when a structure update fails
+   ↓ saves row drag and keyboard sorting through the revisioned move command without changing selection
+   ↓ disables row actions and sorting on historical read-only orders while retaining shot selection
+   ↓ keeps the stale reason visible and explicitly resumes formatting-only revisions without recreating the project
+   ↓ returns from budget settings to the original preparation target without auto-opening an existing native edit
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/ProductionWorkspacePanel.test.tsx > keeps material import reachable after matching so manual narration can be registered
+TestingLibraryElementError: Unable to find an accessible element with the role "button" and name "导入本期素材"
+
+Here are the accessible roles:
+
+  region:
+
+  Name "四步制作工作流":
+  [36m<section[39m
+    [33maria-label[39m=[32m"四步制作工作流"[39m
+    [33mclass[39m=[32m"production-workspace"[39m
+    [33mdata-compact-workflow[39m=[32m"true"[39m
+  [36m/>[39m
+
+  Name "素材镜头列表":
+  [36m<section[39m
+    [33maria-label[39m=[32m"素材镜头列表"[39m
+    [33mclass[39m=[32m"workspace-shot-table-pane"[39m
+  [36m/>[39m
+
+  Name "本期素材":
+  [36m<section[39m
+    [33maria-label[39m=[32m"本期素材"[39m
+    [33mclass[39m=[32m"workspace-material-inventory"[39m
+  [36m/>[39m
+
+  Name "上传与生成画面":
+  [36m<section[39m
+    [33maria-label[39m=[32m"上传与生成画面"[39m
+    [33mclass[39m=[32m"workspace-visual-replacement"[39m
+  [36m/>[39m
+
+  Name "镜头图片与视频":
+  [36m<section[39m
+    [33maria-label[39m=[32m"镜头图片与视频"[39m
+    [33mclass[39m=[32m"workspace-visual-candidates workspace-visual-unified"[39m
+  [36m/>[39m
+
+  Name "图片候选结果":
+  [36m<section[39m
+    [33maria-label[39m=[32m"图片候选结果"[39m
+    [33mclass[39m=[32m"workspace-visual-results"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  banner:
+
+  Name "":
+  [36m<header[39m
+    [33mclass[39m=[32m"production-workspace-title"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<header />[39m
+
+  Name "":
+  [36m<header />[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "工程":
+  [36m<h2 />[39m
+
+  Name "素材匹配":
+  [36m<h3 />[39m
+
+  Name "镜头 拖动行调整顺序":
+  [36m<h3 />[39m
+
+  Name "本期素材":
+  [36m<h3 />[39m
+
+  Name "画面候选":
+  [36m<h3 />[39m
+
+  --------------------------------------------------
+  navigation:
+
+  Name "四步制作步骤":
+  [36m<nav[39m
+    [33maria-label[39m=[32m"四步制作步骤"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "脚本确认":
+  [36m<button[39m
+    [33maria-label[39m=[32m"脚本确认"[39m
+  [36m/>[39m
+
+  Name "素材准备与匹配":
+  [36m<button[39m
+    [33maria-current[39m=[32m"step"[39m
+    [33maria-label[39m=[32m"素材准备与匹配"[39m
+  [36m/>[39m
+
+  Name "剪辑工作台":
+  [36m<button[39m
+    [33maria-label[39m=[32m"剪辑工作台"[39m
+  [36m/>[39m
+
+  Name "检查与交付":
+  [36m<button[39m
+    [33maria-label[39m=[32m"检查与交付"[39m
+  [36m/>[39m
+
+  Name "允许本期在线制作":
+  [36m<button[39m
+    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+    [33mdata-color[39m=[32m"secondary"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mid[39m=[32m"react-aria-_r_8_"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "进入剪辑工作台":
+  [36m<button[39m
+    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 bg-brand-solid text-white shadow-xs-skeuomorphic ring-1 ring-transparent ring-inset hover:bg-brand-solid_hover data-loading:bg-brand-solid_hover before:absolute before:inset-px before:border before:border-white/12 before:mask-b-from-0% *:data-icon:text-white/60 hover:*:data-icon:text-white/70"[39m
+    [33mdata-color[39m=[32m"primary"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mid[39m=[32m"react-aria-_r_a_"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "选择镜头 S01":
+  [36m<button[39m
+    [33maria-label[39m=[32m"选择镜头 S01"[39m
+    [33maria-pressed[39m=[32m"true"[39m
+    [33mdraggable[39m=[32m"true"[39m
+    [33mtitle[39m=[32m"S01"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "镜头 S01 操作":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"true"[39m
+    [33maria-label[39m=[32m"镜头 S01 操作"[39m
+    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover workspace-shot-menu-trigger"[39m
+    [33mdata-color[39m=[32m"tertiary"[39m
+    [33mdata-icon-only[39m=[32m"true"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mid[39m=[32m"react-aria-_r_e_"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "新增镜头":
+  [36m<button[39m
+    [33maria-label[39m=[32m"新增镜头"[39m
+    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover workspace-shot-add"[39m
+    [33mdata-color[39m=[32m"tertiary"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mid[39m=[32m"react-aria-_r_i_"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "本期素材 · 0":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"true"[39m
+    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+    [33mdata-color[39m=[32m"tertiary"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mid[39m=[32m"react-aria-_r_k_"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "刷新":
+  [36m<button[39m
+    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+    [33mdata-color[39m=[32m"tertiary"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mid[39m=[32m"react-aria-_r_m_"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "上传素材":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"true"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "AI 生成":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"false"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "选择或拖入图片 PNG、JPEG、WebP、BMP，可多选":
+  [36m<button[39m
+    [33mclass[39m=[32m"workspace-visual-dropzone"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  group:
+
+  Name "":
+  [36m<fieldset[39m
+    [33mclass[39m=[32m"production-workspace-body"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<details[39m
+    [33mclass[39m=[32m"workspace-online-authorization"[39m
+  [36m/>[39m
+
+  Name "图片来源":
+  [36m<div[39m
+    [33maria-label[39m=[32m"图片来源"[39m
+    [33mclass[39m=[32m"workspace-visual-origin"[39m
+    [33mrole[39m=[32m"group"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p />[39m
+
+  Name "":
+  [36m<p />[39m
+
+  --------------------------------------------------
+  table:
+
+  Name "镜头":
+  [36m<table[39m
+    [33maria-label[39m=[32m"镜头"[39m
+    [33mclass[39m=[32m"workspace-shot-table"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  rowgroup:
+
+  Name "":
+  [36m<thead />[39m
+
+  Name "":
+  [36m<tbody />[39m
+
+  Name "":
+  [36m<tfoot />[39m
+
+  --------------------------------------------------
+  row:
+
+  Name "镜头 脚本与素材 时长 画面 口播 操作":
+  [36m<tr />[39m
+
+  Name "镜头 S01":
+  [36m<tr[39m
+    [33maria-describedby[39m=[32m"_r_c_"[39m
+    [33maria-label[39m=[32m"镜头 S01"[39m
+    [33maria-selected[39m=[32m"true"[39m
+    [33mdraggable[39m=[32m"true"[39m
+    [33mtabindex[39m=[32m"0"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<tr />[39m
+
+  --------------------------------------------------
+  columnheader:
+
+  Name "镜头":
+  [36m<th[39m
+    [33mscope[39m=[32m"col"[39m
+  [36m/>[39m
+
+  Name "脚本与素材":
+  [36m<th[39m
+    [33mscope[39m=[32m"col"[39m
+  [36m/>[39m
+
+  Name "时长":
+  [36m<th[39m
+    [33mscope[39m=[32m"col"[39m
+  [36m/>[39m
+
+  Name "画面":
+  [36m<th[39m
+    [33mscope[39m=[32m"col"[39m
+  [36m/>[39m
+
+  Name "口播":
+  [36m<th[39m
+    [33mscope[39m=[32m"col"[39m
+  [36m/>[39m
+
+  Name "操作":
+  [36m<th[39m
+    [33mscope[39m=[32m"col"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  cell:
+
+  Name "S01":
+  [36m<td />[39m
+
+  Name "第一镜 保留占位":
+  [36m<td />[39m
+
+  Name "—":
+  [36m<td />[39m
+
+  Name "待匹配":
+  [36m<td />[39m
+
+  Name "关闭":
+  [36m<td />[39m
+
+  Name "":
+  [36m<td[39m
+    [33mclass[39m=[32m"workspace-shot-table-actions-cell"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<td[39m
+    [33mclass[39m=[32m"workspace-shot-insert-cell"[39m
+    [33mcolspan[39m=[32m"6"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  status:
+
+  Name "":
+  [36m<span[39m
+    [33mclass[39m=[32m"sr-only"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  separator:
+
+  Name "调整镜头列表宽度":
+  [36m<div[39m
+    [33maria-label[39m=[32m"调整镜头列表宽度"[39m
+    [33maria-orientation[39m=[32m"vertical"[39m
+    [33maria-valuemax[39m=[32m"75"[39m
+    [33maria-valuemin[39m=[32m"20"[39m
+    [33maria-valuenow[39m=[32m"41"[39m
+    [33maria-valuetext[39m=[32m"镜头列表 41%"[39m
+    [33mclass[39m=[32m"workspace-preparation-resizer"[39m
+    [33mrole[39m=[32m"separator"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtitle[39m=[32m"拖动调整宽度；双击恢复默认；方向键微调"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  complementary:
+
+  Name "":
+  [36m<aside[39m
+    [33mclass[39m=[32m"workspace-preparation-detail"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  tablist:
+
+  Name "素材设置":
+  [36m<div[39m
+    [33maria-label[39m=[32m"素材设置"[39m
+    [33mclass[39m=[32m"workspace-detail-tabs"[39m
+    [33mrole[39m=[32m"tablist"[39m
+  [36m/>[39m
+
+  Name "画面类型":
+  [36m<div[39m
+    [33maria-label[39m=[32m"画面类型"[39m
+    [33mclass[39m=[32m"workspace-visual-preview-tabs"[39m
+    [33mrole[39m=[32m"tablist"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  tab:
+
+  Name "画面":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"preparation-panel-visual"[39m
+    [33maria-selected[39m=[32m"true"[39m
+    [33mid[39m=[32m"preparation-tab-visual"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "口播":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"preparation-panel-voice"[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mid[39m=[32m"preparation-tab-voice"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "配乐与音效":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"preparation-panel-sound"[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mid[39m=[32m"preparation-tab-sound"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "图片":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"visual-content-shot-S01-clip"[39m
+    [33maria-selected[39m=[32m"true"[39m
+    [33mid[39m=[32m"visual-kind-shot-S01-clip-image"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "视频":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"visual-content-shot-S01-clip"[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mid[39m=[32m"visual-kind-shot-S01-clip-video"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  tabpanel:
+
+  Name "画面":
+  [36m<div[39m
+    [33maria-labelledby[39m=[32m"preparation-tab-visual"[39m
+    [33mid[39m=[32m"preparation-panel-visual"[39m
+    [33mrole[39m=[32m"tabpanel"[39m
+  [36m/>[39m
+
+  Name "图片":
+  [36m<div[39m
+    [33maria-labelledby[39m=[32m"visual-kind-shot-S01-clip-image"[39m
+    [33mclass[39m=[32m"workspace-visual-content"[39m
+    [33mid[39m=[32m"visual-content-shot-S01-clip"[39m
+    [33mrole[39m=[32m"tabpanel"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"四步制作工作流"[39m
+      [33mclass[39m=[32m"production-workspace"[39m
+      [33mdata-compact-workflow[39m=[32m"true"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"production-workspace-title"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<h2>[39m
+            [0m工程[0m
+          [36m</h2>[39m
+          [36m<span>[39m
+            [0m四步制作[0m
+          [36m</span>[39m
+        [36m</div>[39m
+      [36m</header>[39m
+      [36m<nav[39m
+        [33maria-label[39m=[32m"四步制作步骤"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33maria-label[39m=[32m"脚本确认"[39m
+        [36m>[39m
+          [36m<span>[39m
+            [0m1[0m
+          [36m</span>[39m
+          [0m脚本确认[0m
+          [36m<small>[39m
+            [0m已确认[0m
+          [36m</small>[39m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-current[39m=[32m"step"[39m
+          [33maria-label[39m=[32m"素材准备与匹配"[39m
+        [36m>[39m
+          [36m<span>[39m
+            [0m2[0m
+          [36m</span>[39m
+          [0m素材准备与匹配[0m
+          [36m<small>[39m
+            [0m1 项待准备[0m
+          [36m</small>[39m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-label[39m=[32m"剪辑工作台"[39m
+        [36m>[39m
+          [36m<span>[39m
+            [0m3[0m
+          [36m</span>[39m
+          [0m剪辑工作台[0m
+          [36m<small>[39m
+            [0m待剪辑[0m
+          [36m</small>[39m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-label[39m=[32m"检查与交付"[39m
+        [36m>[39m
+          [36m<span>[39m
+            [0m4[0m
+          [36m</span>[39m
+          [0m检查与交付[0m
+          [36m<small>[39m
+            [0m待确认[0m
+          [36m</small>[39m
+        [36m</button>[39m
+      [36m</nav>[39m
+      [36m<fieldset[39m
+        [33mclass[39m=[32m"production-workspace-body"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mhidden[39m=[32m""[39m
+        [36m>[39m
+          [36m<section[39m
+            [33maria-label[39m=[32m"脚本确认"[39m
+            [33mclass[39m=[32m"production-workspace-section workspace-script workspace-script-compact"[39m
+          [36m>[39m
+            [36m<header>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"workspace-compact-heading"[39m
+              [36m>[39m
+                [36m<h3>[39m
+                  [0m主脚本[0m
+                [36m</h3>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"is-confirmed"[39m
+                  [33mrole[39m=[32m"status"[39m
+                [36m>[39m
+                  [0m已确认基准[0m
+                  [0m · 预览锁定[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</header>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"workspace-script-layout"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"workspace-script-main"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33maria-label[39m=[32m"主脚本预览"[39m
+                  [33mclass[39m=[32m"workspace-script-preview"[39m
+                  [33mrole[39m=[32m"document"[39m
+                  [33mtabindex[39m=[32m"0"[39m
+                [36m>[39m
+                  [0m正在读取主脚本…[0m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"workspace-script-statistics"[39m
+                [36m>[39m
+                  [36m<span>[39m
+                    [0m0[0m
+                    [0m 字[0m
+                  [36m</span>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+              [36m<aside[39m
+                [33maria-label[39m=[32m"脚本基准"[39m
+                [33mclass[39m=[32m"workspace-script-basis"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"workspace-script-file"[39m
+                [36m>[39m
+                  [36m<input[39m
+                    [33maccept[39m=[32m".md,.txt,text/plain,text/markdown"[39m
+                    [33maria-label[39m=[32m"上传主脚本"[39m
+                    [33mdisabled[39m=[32m""[39m
+                    [33mhidden[39m=[32m""[39m
+                    [33mtype[39m=[32m"file"[39m
+                  [36m/>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"workspace-script-file-slot is-locked"[39m
+                  [36m>[39m
+                    [36m<svg[39m
+                      [33maria-hidden[39m=[32m"true"[39m
+                      [33mclass[39m=[32m"lucide lucide-file-text"[39m
+                      [33mfill[39m=[32m"none"[39m
+                      [33mheight[39m=[32m"20"[39m
+                      [33mstroke[39m=[32m"currentColor"[39m
+                      [33mstroke-linecap[39m=[32m"round"[39m
+                      [33mstroke-linejoin[39m=[32m"round"[39m
+                      [33mstroke-width[39m=[32m"2"[39m
+                      [33mviewBox[39m=[32m"0 0 24 24"[39m
+                      [33mwidth[39m=[32m"20"[39m
+                      [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                    [36m>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M14 2v5a1 1 0 0 0 1 1h5"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M10 9H8"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M16 13H8"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M16 17H8"[39m
+                      [36m/>[39m
+                    [36m</svg>[39m
+                    [36m<span>[39m
+                      [36m<strong>[39m
+                        [0m主脚本[0m
+                      [36m</strong>[39m
+                      [36m<small>[39m
+                        [0m已确认脚本[0m
+                      [36m</small>[39m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33maria-label[39m=[32m"脚本操作"[39m
+                  [33mclass[39m=[32m"workspace-script-controls"[39m
+                  [33mrole[39m=[32m"group"[39m
+                [36m>[39m
+                  [36m<button[39m
+                    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify...
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/local-app/ProductionWorkspacePanel.test.tsx:12:16
+     10|  render(<ProductionWorkspacePanel episodeId="e" title="工程" scriptRevis…
+     11|  await screen.findByText('第一镜');fireEvent.click(screen.getByRole('butt…
+     12|  expect(screen.getByRole('button',{name:'导入本期素材'})).toBeTruthy();
+       |                ^
+     13|  fireEvent.change(screen.getByLabelText('登记素材用途'),{target:{value:'narr…
+     14|  fireEvent.change(screen.getByLabelText('上传制作素材'),{target:{files:[new …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 25 skipped (26)
+   Start at  16:18:21
+   Duration  1.92s (transform 299ms, setup 9ms, collect 1.26s, tests 217ms, environment 284ms, prepare 38ms)

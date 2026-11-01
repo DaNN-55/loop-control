@@ -1,0 +1,10 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/workspaceCaptions.integration.test.ts (3 tests | 2 skipped) 2142ms
+   ✓ current native caption evidence follows the real alignment queue and rejects a late Worker result after a text edit  2142ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 2 skipped (3)
+   Start at  16:32:43
+   Duration  2.70s (transform 324ms, setup 6ms, collect 435ms, tests 2.14s, environment 0ms, prepare 28ms)

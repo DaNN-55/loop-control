@@ -1,0 +1,24 @@
+{
+  "status": 200,
+  "unassignedAccountCounts": {
+    "2fb0abe3-a125-429c-97b9-3330929c5c6b": 1
+  },
+  "accounts": [
+    {
+      "name": "豆包推广",
+      "count": 0
+    },
+    {
+      "name": "日照金山样片",
+      "count": 0
+    },
+    {
+      "name": "测试",
+      "count": 0
+    },
+    {
+      "name": "流程验收1101",
+      "count": 1
+    }
+  ]
+}

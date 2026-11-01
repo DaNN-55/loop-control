@@ -1,0 +1,20 @@
+{
+  "at": "2026-11-01T09:29:26.232Z",
+  "closed": "6",
+  "remaining": [
+    {
+      "id": "1",
+      "providerTabId": "500b4f93-ad23-4870-bd3e-509f7c091275",
+      "title": "Loop Control",
+      "url": "http://127.0.0.1:5174/",
+      "browserId": "2"
+    },
+    {
+      "id": "5",
+      "providerTabId": "browser-use:65853779-b95a-444a-92b1-ec6eefb1234d",
+      "title": "Loop Control",
+      "url": "http://127.0.0.1:5174/?episode=2f7553cb-c3e9-4dc5-b900-f1439329a0b0",
+      "browserId": "2"
+    }
+  ]
+}

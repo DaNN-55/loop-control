@@ -1,0 +1,154 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ scripts/openchatcut-embed-client.test.tsx (3 tests) 444ms
+ ✓ src/local-app/artifactRoute.test.ts (2 tests) 376ms
+   ✓ serves verified media byte ranges for seeking and rejects invalid ranges or tampered bytes  307ms
+ ✓ src/local-app/EmbeddedStudioHost.test.tsx (12 tests) 2336ms
+   ✓ waits for the real frame flush before saving and rejects foreign messages  473ms
+   ✓ keeps the editor open when its real flush fails and ignores a wrong channel  359ms
+ ✓ src/local-app/WorkspaceCaptionsPanel.test.tsx (2 tests) 522ms
+   ✓ keeps timing explicit when text changes and sends saved native cues through the Owner command  492ms
+ ✓ src/local-app/WorkspaceNarrationPanel.test.tsx (7 tests) 1426ms
+   ✓ allows independent connection/model choices and changing them does not submit  368ms
+   ✓ retains an unsubmitted preparation mode, voice and text when the panel reopens  314ms
+stderr | src/local-app/ProductionWorkspacePanel.test.tsx > preserves image and video prompt drafts when switching the unified tabs
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to WorkspaceGenerationBudget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to WorkspaceGenerationBudget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to WorkspaceGenerationBudget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/local-app/ProductionWorkspacePanel.test.tsx > keeps another shot’s video generation draft when adopting an image advances the project
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to WorkspaceGenerationBudget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to WorkspaceGenerationBudget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to WorkspaceGenerationBudget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/local-app/ProductionWorkspacePanel.test.tsx (26 tests) 8224ms
+   ✓ keeps material import reachable after matching and lists newly imported narration material  748ms
+   ✓ preserves image and video prompt drafts when switching the unified tabs  430ms
+   ✓ disables workspace write forms on a completed order even when legacy content remains inspectable  336ms
+   ✓ keeps another shot’s video generation draft when adopting an image advances the project  619ms
+   ✓ keeps project history out of the four-step interface without changing records  330ms
+   ✓ deletes only the selected material shot after confirmation and selects the remaining neighbor  1020ms
+   ✓ keeps the selected shot and deletion dialog when the saved revision is stale  501ms
+   ✓ appends a shot after the final shot and selects it only after the saved result returns  394ms
+   ✓ saves row drag and keyboard sorting through the revisioned move command without changing selection  508ms
+   ✓ disables row actions and sorting on historical read-only orders while retaining shot selection  611ms
+
+ Test Files  6 passed (6)
+      Tests  52 passed (52)
+   Start at  17:26:15
+   Duration  15.78s (transform 2.53s, setup 473ms, collect 16.16s, tests 13.33s, environment 5.96s, prepare 1.56s)

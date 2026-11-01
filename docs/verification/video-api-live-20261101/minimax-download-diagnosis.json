@@ -1,0 +1,32 @@
+{
+  "at": "2026-11-01T10:42:41.889Z",
+  "taskId": "458656441229509",
+  "httpStatus": 200,
+  "status": "succeeded",
+  "url": {
+    "protocol": "https:",
+    "host": "algeng-video-infer.oss-cn-shanghai.aliyuncs.com",
+    "pathSha256": "f00e4e16c20a7e8deed81a008eb5ace5f88b35b79ccbf092cf060b7e169c5bf3",
+    "queryKeys": [
+      "Expires",
+      "OSSAccessKeyId",
+      "Signature"
+    ]
+  },
+  "keys": [
+    "id",
+    "model",
+    "status",
+    "created_at",
+    "updated_at",
+    "content",
+    "resolution",
+    "duration",
+    "usage",
+    "ratio",
+    "task_type"
+  ],
+  "contentKeys": [
+    "url"
+  ]
+}

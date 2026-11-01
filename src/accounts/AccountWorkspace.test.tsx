@@ -28,7 +28,18 @@ function renderWorkspace(overrides: Partial<ComponentProps<typeof AccountWorkspa
 }
 
 describe("账号配置工作区", () => {
-  it("通用规则和系列共享导航，账号目录紧接定位，新建槽和未分系列位于列表后", async () => {
+  it("账号设置只列出通用规则与自建系列，不提供未分系列入口", async () => {
+    const user=userEvent.setup();
+    renderWorkspace({series:[series],seriesVersions});
+    expect(screen.queryByRole("button",{name:"未分系列"})).toBeNull();
+    expect(screen.getByRole("button",{name:"通用规则"})).toBeTruthy();
+    expect(screen.getByRole("button",{name:series.name})).toBeTruthy();
+    await user.click(screen.getByRole("button",{name:series.name}));
+    expect(screen.queryByRole("heading",{name:"未分系列"})).toBeNull();
+    expect(screen.getByLabelText("系列定位")).toHaveProperty("value","当前系列定位");
+  });
+
+  it("通用规则和系列共享导航，账号目录紧接定位，新建槽位于系列列表后", async () => {
     const user = userEvent.setup();
     renderWorkspace({ series: [series], seriesVersions });
     const navigation = screen.getByRole("navigation", {name:"账号内容导航"});
@@ -38,12 +49,13 @@ describe("账号配置工作区", () => {
     const directory = screen.getByRole("region", {name:"账号目录"});
     expect(screen.getByLabelText("账号定位").compareDocumentPosition(directory) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(directory.compareDocumentPosition(screen.getByLabelText("语气风格")) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(directory.compareDocumentPosition(screen.getByRole("button", {name:"保存通用规则"})) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(directory.compareDocumentPosition(screen.getByRole("button", {name:"修改"})) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(screen.queryByLabelText("账号名称")).toBeNull();
     expect(within(navigation).queryByRole("heading",{name:"系列"})).toBeNull();
+    expect(within(navigation).getByRole("separator",{name:"系列"})).toBeTruthy();
     expect(within(navigation).getByRole("button",{name:series.name}).compareDocumentPosition(within(navigation).getByRole("button",{name:"新建系列"})) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(navigation.lastElementChild).toBe(within(navigation).getByRole("button",{name:"未分系列"}));
-    expect(within(navigation).getByRole("searchbox", {name:"查找系列"}).compareDocumentPosition(within(navigation).getByRole("button", {name:"未分系列"})) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(navigation.lastElementChild).toBe(within(navigation).getByRole("button",{name:"新建系列"}));
+    expect(within(navigation).queryByRole("searchbox", {name:"查找系列"})).toBeNull();
     await user.click(within(navigation).getByRole("button", {name:series.name}));
     expect(screen.getByLabelText("系列定位")).toHaveProperty("value", "当前系列定位");
   });
@@ -56,6 +68,7 @@ describe("账号配置工作区", () => {
       return <AccountWorkspace account={currentAccount} accounts={[currentAccount]} blueprints={[{...blueprint,policy:JSON.parse(JSON.stringify(blueprint.policy))}]} isPending="" onSelectAccount={vi.fn()} onUpdateBlueprint={onUpdateBlueprint} onRenameAccount={async (_id,name)=>{setAccount({...account,name});return true;}}/>;
     }
     render(<ReadbackWorkspace/>);
+    await user.click(screen.getByRole("button", { name: "修改" }));
     await user.type(screen.getByLabelText("账号定位"), "规则草稿");
     await user.click(screen.getByRole("button", {name:"账号操作"}));
     await user.click(screen.getByRole("menuitem", {name:"重命名"}));
@@ -72,14 +85,15 @@ describe("账号配置工作区", () => {
     const onCreateSeriesVersion = vi.fn().mockResolvedValue(undefined);
     renderWorkspace({onCreateSeriesVersion, series:[series], seriesVersions:[{...seriesVersions[0],rules:{positioning:"当前系列定位", extension:{nested:["keep"]}}}]});
     await user.click(screen.getByRole("button", {name:series.name}));
-    expect(screen.getByText("账号硬约束始终生效")).toBeTruthy();
+    await user.click(screen.getByRole("button", {name:"修改"}));
+    expect(screen.queryByText("账号硬约束始终生效")).toBeNull();
     expect(screen.getByLabelText("视觉风格")).toHaveProperty("placeholder", "沿用账号通用规则");
     expect(screen.queryByText("补充规则")).toBeNull();
     expect(screen.queryByLabelText("nested")).toBeNull();
     await user.clear(screen.getByLabelText("系列定位"));
     await user.type(screen.getByLabelText("系列定位"), "更新后的定位");
     expect(screen.queryByLabelText("系列扩展规则 JSON")).toBeNull();
-    await user.click(screen.getByRole("button", {name:"保存为 v3"}));
+    await user.click(screen.getByRole("button", {name:"保存系列设置"}));
     await user.click(screen.getByRole("button", {name:"确认保存为 v3"}));
     expect(onCreateSeriesVersion).toHaveBeenCalledWith({seriesId:series.id,rules:{positioning:"更新后的定位",extension:{nested:["keep"]}}});
   });
@@ -92,6 +106,8 @@ describe("账号配置工作区", () => {
     expect(screen.queryByRole("navigation", { name: "蓝图配置分区" })).toBeNull();
     expect(screen.queryByRole("complementary", { name: "账号默认配置检查" })).toBeNull();
     expect(screen.queryByText("蓝图版本")).toBeNull();
+    expect(screen.queryByText("历史版本")).toBeNull();
+    expect(screen.getByRole("heading", { name: /^通用规则$/ })).toBeTruthy();
     expect(screen.queryByRole("button", { name: /激活|归档|停用/ })).toBeNull();
   });
 
@@ -117,11 +133,12 @@ describe("账号配置工作区", () => {
     const onUpdateBlueprint = vi.fn().mockResolvedValue(blueprint);
     renderWorkspace({ onUpdateBlueprint });
 
+    await user.click(screen.getByRole("button", { name: "修改" }));
     await user.clear(screen.getByLabelText("账号定位"));
     await user.type(screen.getByLabelText("账号定位"), "新定位");
     await user.click(screen.getByRole("button", { name: "保存通用规则" }));
     const dialog = screen.getByRole("dialog", { name: "确认保存通用规则" });
-    expect(within(dialog).getByText(/创作规则应用于之后新建的生产单/)).toBeTruthy();
+    expect(within(dialog).getByText(/创作规则应用于之后新建的生产单；已有生产单保留原规则/)).toBeTruthy();
     await user.click(within(dialog).getByRole("button", { name: "确认保存通用规则" }));
 
     expect(onUpdateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ positioning: "新定位" }));
@@ -130,12 +147,13 @@ describe("账号配置工作区", () => {
   it("保存失败时在确认弹窗中展示错误并保留草稿", async () => {
     const user = userEvent.setup();
     renderWorkspace({onUpdateBlueprint: vi.fn().mockResolvedValue(null)});
+    await user.click(screen.getByRole("button", { name: "修改" }));
     await user.clear(screen.getByLabelText("账号定位"));
     await user.type(screen.getByLabelText("账号定位"), "失败后保留的草稿");
     await user.click(screen.getByRole("button", {name: "保存通用规则"}));
     const dialog = screen.getByRole("dialog", {name: "确认保存通用规则"});
     await user.click(within(dialog).getByRole("button", {name: "确认保存通用规则"}));
-    expect(await within(dialog).findByRole("alert")).toHaveProperty("textContent", "蓝图未保存，请处理错误后重试。");
+    expect(await within(dialog).findByRole("alert")).toHaveProperty("textContent", "规则未保存，请处理错误后重试。");
     await user.click(within(dialog).getByRole("button", {name: "取消"}));
     expect(screen.getByLabelText("账号定位")).toHaveProperty("value", "失败后保留的草稿");
   });
@@ -144,6 +162,7 @@ describe("账号配置工作区", () => {
     const user = userEvent.setup();
     const onDirtyChange = vi.fn();
     renderWorkspace({ onDirtyChange });
+    await user.click(screen.getByRole("button", { name: "修改" }));
     await user.clear(screen.getByLabelText("账号定位"));
     await user.type(screen.getByLabelText("账号定位"), "未保存定位");
     await user.click(screen.getByRole("button", { name: "撤销修改" }));
@@ -156,11 +175,13 @@ describe("账号配置工作区", () => {
     const user = userEvent.setup();
     const confirm = vi.spyOn(window, "confirm").mockReturnValue(false);
     renderWorkspace({series:[series],seriesVersions});
+    await user.click(screen.getByRole("button", { name: "修改" }));
     await user.type(screen.getByLabelText("账号定位"), "未保存");
     await user.click(screen.getByRole("button", { name: series.name }));
     expect(screen.getByRole("button", { name: "通用规则" }).getAttribute("aria-current")).toBe("page");
     confirm.mockReturnValue(true);
     await user.click(screen.getByRole("button", { name: series.name }));
+    await user.click(screen.getByRole("button", {name:"修改"}));
     expect(screen.getByRole("button", { name: series.name }).getAttribute("aria-current")).toBe("page");
     confirm.mockRestore();
   });
@@ -168,22 +189,58 @@ describe("账号配置工作区", () => {
   it("账号目录独立维护，蓝图只显示内容规则", () => {
     renderWorkspace();
     const groups=screen.getAllByRole("group").filter(group=>group.tagName==='FIELDSET');
-    expect(groups.map(group=>group.querySelector('legend')?.textContent)).toEqual(['账号资料','创作规则']);
+    expect(groups.map(group=>group.querySelector('legend > span')?.textContent ?? group.querySelector('legend')?.textContent)).toEqual(['账号资料','创作规则']);
+    expect(screen.getByText('dao-studio').closest('legend')).toBeTruthy();
     expect(screen.queryByRole('table',{name:'生产能力配置矩阵'})).toBeNull();
     expect(screen.queryByRole('button',{name:'修改分镜规划配置'})).toBeNull();
     for(const name of ['启用图片生成','启用A-roll','启用B-roll','启用旁白','启用配乐 / 音效'])expect(screen.queryByRole('checkbox',{name})).toBeNull();
   });
 
-  it("系列页展示版本历史并通过新版本保存", async () => {
+  it("系列名称与规则共用保存入口，重命名回读不会清空规则草稿", async () => {
+    const user=userEvent.setup(),onCreateSeriesVersion=vi.fn().mockResolvedValue(undefined);
+    function ReadbackSeries() {
+      const [name,setName]=useState(series.name);
+      return <AccountWorkspace account={account} accounts={[account]} blueprints={[blueprint]} isPending="" onSelectAccount={vi.fn()} series={[{...series,name}]} seriesVersions={[...seriesVersions]} onRenameSeries={async(_id,next)=>{setName(next);return true;}} onCreateSeriesVersion={onCreateSeriesVersion}/>;
+    }
+    render(<ReadbackSeries/>);
+    await user.click(screen.getByRole("button",{name:series.name}));
+    expect(screen.getByLabelText("系列定位")).toHaveProperty("disabled",true);
+    await user.click(screen.getByRole("button",{name:"修改"}));
+    await user.clear(screen.getByLabelText("系列显示名称"));await user.type(screen.getByLabelText("系列显示名称"),"新系列名称");
+    await user.type(screen.getByLabelText("系列定位"),"保留草稿");
+    await user.click(screen.getByRole("button",{name:"保存系列设置"}));await user.click(screen.getByRole("button",{name:"确认保存为 v3"}));
+    expect(onCreateSeriesVersion).toHaveBeenCalledExactlyOnceWith({seriesId:series.id,rules:{positioning:"当前系列定位保留草稿"}});
+    expect(screen.getByLabelText("系列显示名称")).toHaveProperty("value","新系列名称");
+    expect(screen.getByLabelText("系列定位")).toHaveProperty("disabled",true);
+    expect(screen.queryByRole("button",{name:"保存系列名称"})).toBeNull();
+  });
+
+  it("系列超过八个时显示搜索，缩减为少量系列后清除隐藏筛选", async () => {
+    const user=userEvent.setup();
+    const many=Array.from({length:9},(_,index)=>({...series,id:`series-${index}`,name:`系列${index}`}));
+    const props={account,accounts:[account],blueprints:[blueprint],isPending:"",onSelectAccount:vi.fn()};
+    const view=render(<AccountWorkspace {...props} series={many}/>);
+    const search=screen.getByRole("searchbox",{name:"查找系列"});
+    await user.type(search,"系列8");
+    expect(screen.getByRole("button",{name:"系列8"})).toBeTruthy();
+    expect(screen.queryByRole("button",{name:"系列0"})).toBeNull();
+    view.rerender(<AccountWorkspace {...props} series={[many[0]]}/>);
+    await waitFor(()=>expect(screen.queryByRole("searchbox",{name:"查找系列"})).toBeNull());
+    expect(screen.getByRole("button",{name:"系列0"})).toBeTruthy();
+  });
+
+  it("系列页隐藏版本历史，但仍通过新版本保存", async () => {
     const user = userEvent.setup();
     const onCreateSeriesVersion = vi.fn().mockResolvedValue(undefined);
     renderWorkspace({ onCreateSeriesVersion, series: [series], seriesVersions });
 
     await user.click(screen.getByRole("button", { name: series.name }));
-    expect(screen.getByRole("heading", { name: `${series.name} · 当前 v2` })).toBeTruthy();
+    await user.click(screen.getByRole("button", {name:"修改"}));
+    expect(screen.getByRole("heading", { name: series.name })).toBeTruthy();
+    expect(screen.queryByText(/当前 v/)).toBeNull();
     expect((screen.getByLabelText("系列定位") as HTMLTextAreaElement).value).toBe("当前系列定位");
-    expect(screen.getByRole("heading", { name: "版本历史" })).toBeTruthy();
-    await user.click(screen.getByRole("button", { name: "保存为 v3" }));
+    expect(screen.queryByRole("heading", { name: "版本历史" })).toBeNull();
+    await user.click(screen.getByRole("button", { name: "保存系列设置" }));
     const dialog = screen.getByRole("dialog", { name: "确认保存系列版本" });
     expect(within(dialog).getByText(/创建系列 v3/)).toBeTruthy();
     await user.click(within(dialog).getByRole("button", { name: "确认保存为 v3" }));
@@ -195,24 +252,26 @@ describe("账号配置工作区", () => {
     const onCreateSeriesVersion = vi.fn().mockResolvedValue(undefined);
     renderWorkspace({onCreateSeriesVersion, series:[series], seriesVersions});
     await user.click(screen.getByRole("button", {name:series.name}));
-    const footer = screen.getByRole("button", {name:"保存为 v3"}).closest("footer") as HTMLElement;
+    await user.click(screen.getByRole("button", {name:"修改"}));
+    const footer = screen.getByRole("button", {name:"保存系列设置"}).closest("footer") as HTMLElement;
     for (const [label, value] of [["系列定位", "聚焦城市生活"], ["内容格式", "竖屏"], ["角色设定", "主持人"], ["地点设定", "街区"], ["视觉风格", "写实"], ["叙事结构", "开场到结尾"], ["限制与禁用内容", "不使用商标"]]) {
       await user.clear(screen.getByLabelText(label));
       await user.type(screen.getByLabelText(label), value);
     }
-    expect(within(footer).getByRole("status").textContent).toBe("有未保存更改");
-    await user.click(screen.getByRole("button", {name:"保存为 v3"}));
+    expect(within(footer).getByRole("status").textContent).toBe("有未应用更改");
+    await user.click(screen.getByRole("button", {name:"保存系列设置"}));
     await user.click(screen.getByRole("button", {name:"确认保存为 v3"}));
     expect(onCreateSeriesVersion).toHaveBeenCalledWith({seriesId:series.id,rules:expect.objectContaining({positioning:"聚焦城市生活",format:"竖屏",characters:"主持人",locations:"街区",visual_style:"写实",narrative_structure:"开场到结尾",restrictions:"不使用商标"})});
-    expect(within(footer).getByRole("status").textContent).toBe("已保存");
+    expect(within(footer).getByRole("status").textContent).toBe("已应用");
   });
 
   it("系列保存失败时错误在弹窗内可见，取消后可撤销草稿", async () => {
     const user = userEvent.setup();
     renderWorkspace({onCreateSeriesVersion:vi.fn().mockRejectedValue(new Error("系列保存失败，请重试。")),series:[series],seriesVersions});
     await user.click(screen.getByRole("button", {name:series.name}));
+    await user.click(screen.getByRole("button", {name:"修改"}));
     await user.type(screen.getByLabelText("系列定位"), "保留草稿");
-    await user.click(screen.getByRole("button", {name:"保存为 v3"}));
+    await user.click(screen.getByRole("button", {name:"保存系列设置"}));
     const dialog = screen.getByRole("dialog", {name:"确认保存系列版本"});
     await user.click(within(dialog).getByRole("button", {name:"确认保存为 v3"}));
     expect(await within(dialog).findByRole("alert")).toHaveProperty("textContent","系列保存失败，请重试。");
@@ -227,6 +286,7 @@ describe("账号配置工作区", () => {
     const confirm = vi.spyOn(window, "confirm").mockReturnValue(false);
     renderWorkspace({ series: [series], seriesVersions });
     await user.click(screen.getByRole("button", { name: series.name }));
+    await user.click(screen.getByRole("button", {name:"修改"}));
     await user.type(screen.getByLabelText("系列定位"), "未保存");
     await user.click(screen.getByRole("button", { name: "通用规则" }));
     expect(screen.getByRole("button", { name: series.name }).getAttribute("aria-current")).toBe("page");
@@ -244,6 +304,7 @@ describe("账号配置工作区", () => {
     }
     render(<RerenderingWorkspace />);
     await user.click(screen.getByRole("button", { name: series.name }));
+    await user.click(screen.getByRole("button", {name:"修改"}));
     await user.click(screen.getByRole("button", { name: "新建系列" }));
     expect(screen.getByRole("heading", { name: "新建系列" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "创建系列" })).toBeTruthy();

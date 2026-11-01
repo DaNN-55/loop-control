@@ -1,0 +1,489 @@
+{
+  "version": 3,
+  "loopControl": {
+    "version": "four-step-workspace/v1",
+    "inputFingerprint": "9a972216-d441-4cd6-8e9c-584a2df7404d",
+    "transitionMode": "studio"
+  },
+  "assets": [
+    {
+      "width": 864,
+      "height": 1536,
+      "id": "candidate-8c470427-904c-4718-aba6-f3f7260ec523",
+      "name": "shot-01 · 待匹配画面",
+      "kind": "image",
+      "src": "未分系列--469c8e63-de75-4f1c-b61e-84929254527f/视频 API 逐项真实生成 · 1101--79eb3098-8733-472a-9bde-873edd4cd26c/materials/0740fe905161db31bae05197e8ef1b11af207f1463930ea474435e5b061e31e0-seedance-replacement.png",
+      "durationInFrames": 90,
+      "sourceContentHash": "0740fe905161db31bae05197e8ef1b11af207f1463930ea474435e5b061e31e0",
+      "sourceRevision": "source-sha256-0740fe905161db31bae05197e8ef1b11af207f1463930ea474435e5b061e31e0"
+    },
+    {
+      "width": 768,
+      "height": 1344,
+      "id": "candidate-5215a392-2073-4cdd-8e72-64d0addc7323",
+      "name": "shot-02 · 待匹配画面",
+      "kind": "video",
+      "src": "未分系列--469c8e63-de75-4f1c-b61e-84929254527f/视频 API 逐项真实生成 · 1101--79eb3098-8733-472a-9bde-873edd4cd26c/materials/67dfaf39beaae0704a520ad3c1162dfb7441822018e922413f855c5278012c59-minimax-sample.mp4",
+      "durationInFrames": 134,
+      "sourceContentHash": "67dfaf39beaae0704a520ad3c1162dfb7441822018e922413f855c5278012c59",
+      "sourceRevision": "source-sha256-67dfaf39beaae0704a520ad3c1162dfb7441822018e922413f855c5278012c59"
+    },
+    {
+      "width": 720,
+      "height": 1280,
+      "id": "candidate-3951fb0e-defb-4118-8fe0-b3d915f3b493",
+      "name": "shot-03 · 待匹配画面",
+      "kind": "video",
+      "src": "未分系列--469c8e63-de75-4f1c-b61e-84929254527f/视频 API 逐项真实生成 · 1101--79eb3098-8733-472a-9bde-873edd4cd26c/materials/a6412f7e2edd9c277efbe308f7d018e07d3cc341582d68f19431dbea6422e76c-bailian-sample.mp4",
+      "durationInFrames": 60,
+      "sourceContentHash": "a6412f7e2edd9c277efbe308f7d018e07d3cc341582d68f19431dbea6422e76c",
+      "sourceRevision": "source-sha256-a6412f7e2edd9c277efbe308f7d018e07d3cc341582d68f19431dbea6422e76c"
+    },
+    {
+      "width": 864,
+      "height": 1536,
+      "id": "candidate-ac8e22b0-d9ad-4ffe-b1e6-e497987b0623",
+      "name": "shot-04 · 待匹配画面",
+      "kind": "image",
+      "src": "未分系列--469c8e63-de75-4f1c-b61e-84929254527f/视频 API 逐项真实生成 · 1101--79eb3098-8733-472a-9bde-873edd4cd26c/materials/f720f7b4c3dd4035725db373b40fb30bb2ef3dd669c6ea3f3ee2c7328a1c13ca-kling-replacement.png",
+      "durationInFrames": 90,
+      "sourceContentHash": "f720f7b4c3dd4035725db373b40fb30bb2ef3dd669c6ea3f3ee2c7328a1c13ca",
+      "sourceRevision": "source-sha256-f720f7b4c3dd4035725db373b40fb30bb2ef3dd669c6ea3f3ee2c7328a1c13ca"
+    }
+  ],
+  "mediaFolders": [],
+  "activeTimelineId": "loop-control-79eb3098-8733-472a-9bde-873edd4cd26c",
+  "timelines": [
+    {
+      "id": "loop-control-79eb3098-8733-472a-9bde-873edd4cd26c",
+      "name": "整期剪辑",
+      "order": 0,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "fit": "contain",
+      "items": [
+        {
+          "id": "shot-shot-01-77c4712f-00f3-4a1b-9b05-318d5f1cc944",
+          "track": "track_loop-control-79eb3098-8733-472a-9bde-873edd4cd26c_1",
+          "kind": "image",
+          "name": "shot-01 · 待匹配画面",
+          "startFrame": 0,
+          "durationInFrames": 120,
+          "width": 864,
+          "height": 1536,
+          "transform": {
+            "scale": 1.05,
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "scaleX": 1.05,
+            "scaleY": 1.05
+          },
+          "loopControlShot": {
+            "workspaceId": "9a972216-d441-4cd6-8e9c-584a2df7404d",
+            "shotId": "shot-01",
+            "clipId": "77c4712f-00f3-4a1b-9b05-318d5f1cc944",
+            "text": "Seedance 视频接口连通测试。"
+          },
+          "src": "未分系列--469c8e63-de75-4f1c-b61e-84929254527f/视频 API 逐项真实生成 · 1101--79eb3098-8733-472a-9bde-873edd4cd26c/materials/0740fe905161db31bae05197e8ef1b11af207f1463930ea474435e5b061e31e0-seedance-replacement.png",
+          "sourceAssetId": "candidate-8c470427-904c-4718-aba6-f3f7260ec523",
+          "loopControlCandidate": {
+            "inputFingerprint": "576938d5bc4d300b8e6d1071fe51de94c9e5d2d8bb32008d1e553bd383a3f54d",
+            "sourceId": "candidate-8c470427-904c-4718-aba6-f3f7260ec523",
+            "durationPolicy": "keep-target",
+            "startFrame": 0,
+            "durationInFrames": 120,
+            "shotWindow": {
+              "startFrame": 0,
+              "durationInFrames": 120
+            }
+          },
+          "srcInFrame": 0,
+          "volume": 0,
+          "sourceContentHash": "0740fe905161db31bae05197e8ef1b11af207f1463930ea474435e5b061e31e0",
+          "sourceRevision": "source-sha256-0740fe905161db31bae05197e8ef1b11af207f1463930ea474435e5b061e31e0"
+        },
+        {
+          "id": "shot-shot-02-753a6a3c-9e48-4c89-a0c6-34d3c908706b",
+          "track": "track_loop-control-79eb3098-8733-472a-9bde-873edd4cd26c_1",
+          "kind": "video",
+          "name": "shot-02 · 待匹配画面",
+          "startFrame": 120,
+          "durationInFrames": 120,
+          "width": 768,
+          "height": 1344,
+          "transform": {
+            "scale": 1,
+            "x": 0,
+            "y": 0,
+            "rotation": 0
+          },
+          "loopControlShot": {
+            "workspaceId": "9a972216-d441-4cd6-8e9c-584a2df7404d",
+            "shotId": "shot-02",
+            "clipId": "753a6a3c-9e48-4c89-a0c6-34d3c908706b",
+            "text": "MiniMax 视频接口连通测试。"
+          },
+          "src": "未分系列--469c8e63-de75-4f1c-b61e-84929254527f/视频 API 逐项真实生成 · 1101--79eb3098-8733-472a-9bde-873edd4cd26c/materials/67dfaf39beaae0704a520ad3c1162dfb7441822018e922413f855c5278012c59-minimax-sample.mp4",
+          "sourceAssetId": "candidate-5215a392-2073-4cdd-8e72-64d0addc7323",
+          "loopControlCandidate": {
+            "inputFingerprint": "4902223a1295571e8517431dee456f80f9d3f343facd574c1eaf14ec3e41b7a8",
+            "sourceId": "candidate-5215a392-2073-4cdd-8e72-64d0addc7323",
+            "durationPolicy": "keep-target",
+            "startFrame": 120,
+            "durationInFrames": 120,
+            "shotWindow": {
+              "startFrame": 120,
+              "durationInFrames": 120
+            }
+          },
+          "srcInFrame": 0,
+          "volume": 0,
+          "sourceContentHash": "67dfaf39beaae0704a520ad3c1162dfb7441822018e922413f855c5278012c59",
+          "sourceRevision": "source-sha256-67dfaf39beaae0704a520ad3c1162dfb7441822018e922413f855c5278012c59"
+        },
+        {
+          "id": "shot-shot-03-8de42e4a-39b9-4d47-8656-a94227f0f884",
+          "track": "track_loop-control-79eb3098-8733-472a-9bde-873edd4cd26c_1",
+          "kind": "video",
+          "name": "shot-03 · 待匹配画面",
+          "startFrame": 240,
+          "durationInFrames": 60,
+          "width": 720,
+          "height": 1280,
+          "transform": {
+            "scale": 1,
+            "x": 0,
+            "y": 0,
+            "rotation": 0
+          },
+          "loopControlShot": {
+            "workspaceId": "9a972216-d441-4cd6-8e9c-584a2df7404d",
+            "shotId": "shot-03",
+            "clipId": "8de42e4a-39b9-4d47-8656-a94227f0f884",
+            "text": "百炼 视频接口连通测试。"
+          },
+          "src": "未分系列--469c8e63-de75-4f1c-b61e-84929254527f/视频 API 逐项真实生成 · 1101--79eb3098-8733-472a-9bde-873edd4cd26c/materials/a6412f7e2edd9c277efbe308f7d018e07d3cc341582d68f19431dbea6422e76c-bailian-sample.mp4",
+          "sourceAssetId": "candidate-3951fb0e-defb-4118-8fe0-b3d915f3b493",
+          "loopControlCandidate": {
+            "inputFingerprint": "215df26fd5ed2eaaa287f3f7e6ab36b5dd6e5d458559225777979a7e0d11a354",
+            "sourceId": "candidate-3951fb0e-defb-4118-8fe0-b3d915f3b493",
+            "durationPolicy": "keep-target",
+            "startFrame": 240,
+            "durationInFrames": 60,
+            "shotWindow": {
+              "startFrame": 240,
+              "durationInFrames": 60
+            }
+          },
+          "srcInFrame": 0,
+          "volume": 0,
+          "sourceContentHash": "a6412f7e2edd9c277efbe308f7d018e07d3cc341582d68f19431dbea6422e76c",
+          "sourceRevision": "source-sha256-a6412f7e2edd9c277efbe308f7d018e07d3cc341582d68f19431dbea6422e76c"
+        },
+        {
+          "id": "shot-shot-04-104ce4e0-5fcf-46f5-9cf0-4a22b0dc878e",
+          "track": "track_loop-control-79eb3098-8733-472a-9bde-873edd4cd26c_1",
+          "kind": "image",
+          "name": "shot-04 · 待匹配画面",
+          "startFrame": 300,
+          "durationInFrames": 90,
+          "width": 864,
+          "height": 1536,
+          "transform": {
+            "scale": 1,
+            "x": 0,
+            "y": 0,
+            "rotation": 0
+          },
+          "loopControlShot": {
+            "workspaceId": "9a972216-d441-4cd6-8e9c-584a2df7404d",
+            "shotId": "shot-04",
+            "clipId": "104ce4e0-5fcf-46f5-9cf0-4a22b0dc878e",
+            "text": "Kling 视频接口连通测试。"
+          },
+          "src": "未分系列--469c8e63-de75-4f1c-b61e-84929254527f/视频 API 逐项真实生成 · 1101--79eb3098-8733-472a-9bde-873edd4cd26c/materials/f720f7b4c3dd4035725db373b40fb30bb2ef3dd669c6ea3f3ee2c7328a1c13ca-kling-replacement.png",
+          "sourceAssetId": "candidate-ac8e22b0-d9ad-4ffe-b1e6-e497987b0623",
+          "loopControlCandidate": {
+            "inputFingerprint": "e8f54ec2267352e20031224186b35444d4f4ba21de4b55ce0a8984247c3989d1",
+            "sourceId": "candidate-ac8e22b0-d9ad-4ffe-b1e6-e497987b0623",
+            "durationPolicy": "keep-target",
+            "startFrame": 300,
+            "durationInFrames": 90,
+            "shotWindow": {
+              "startFrame": 300,
+              "durationInFrames": 90
+            }
+          },
+          "srcInFrame": 0,
+          "volume": 0,
+          "sourceContentHash": "f720f7b4c3dd4035725db373b40fb30bb2ef3dd669c6ea3f3ee2c7328a1c13ca",
+          "sourceRevision": "source-sha256-f720f7b4c3dd4035725db373b40fb30bb2ef3dd669c6ea3f3ee2c7328a1c13ca"
+        }
+      ],
+      "trackOrder": [
+        "track_loop-control-79eb3098-8733-472a-9bde-873edd4cd26c_1",
+        "track_loop-control-79eb3098-8733-472a-9bde-873edd4cd26c_2"
+      ],
+      "tracks": {
+        "track_loop-control-79eb3098-8733-472a-9bde-873edd4cd26c_1": {
+          "kind": "video",
+          "name": "画面"
+        },
+        "track_loop-control-79eb3098-8733-472a-9bde-873edd4cd26c_2": {
+          "kind": "caption",
+          "captions": {
+            "enabled": true,
+            "template": "plain",
+            "pacing": "phrase",
+            "sourceMode": "item",
+            "sourceEntries": [
+              {
+                "id": "workspace-caption-shot-shot-01",
+                "itemId": "manual:workspace-caption-shot-shot-01",
+                "label": "字幕",
+                "slotId": "workspace-caption-shot-shot-01-slot",
+                "visible": true,
+                "anchor": "bottom-center",
+                "offsetXRatio": 0,
+                "offsetYRatio": 0.09999999999999999,
+                "widthRatio": 0.8400000000000001,
+                "heightRatio": 0.74,
+                "words": [
+                  {
+                    "id": "initial-shot-01~0",
+                    "text": "Seedance 视频接口连通测\n试。",
+                    "start": 0,
+                    "end": 4000
+                  }
+                ],
+                "style": {
+                  "fontFamily": "sans-serif",
+                  "fontWeight": 600,
+                  "color": "#ffffff",
+                  "fontSize": 0.02684659090909091,
+                  "wholeLine": true
+                },
+                "loopControl": {
+                  "version": "workspace-caption/v1",
+                  "contentMode": "independent",
+                  "text": "Seedance 视频接口连通测试。",
+                  "spatial": {
+                    "version": "shot-caption-space/v2",
+                    "anchor": "bottom-center",
+                    "safeArea": "title-safe",
+                    "aspectRatio": "9:16",
+                    "insets": {
+                      "top": 0.08,
+                      "right": 0.08,
+                      "bottom": 0.18,
+                      "left": 0.08
+                    },
+                    "maxLines": 2,
+                    "maxCharactersPerLine": 16
+                  }
+                }
+              },
+              {
+                "id": "workspace-caption-shot-shot-02",
+                "itemId": "manual:workspace-caption-shot-shot-02",
+                "label": "字幕",
+                "slotId": "workspace-caption-shot-shot-02-slot",
+                "visible": true,
+                "anchor": "bottom-center",
+                "offsetXRatio": 0,
+                "offsetYRatio": 0.09999999999999999,
+                "widthRatio": 0.8400000000000001,
+                "heightRatio": 0.74,
+                "words": [
+                  {
+                    "id": "initial-shot-02~0",
+                    "text": "MiniMax 视频接口连通测试\n。",
+                    "start": 4000,
+                    "end": 8000
+                  }
+                ],
+                "style": {
+                  "fontFamily": "sans-serif",
+                  "fontWeight": 600,
+                  "color": "#ffffff",
+                  "fontSize": 0.02684659090909091,
+                  "wholeLine": true
+                },
+                "loopControl": {
+                  "version": "workspace-caption/v1",
+                  "contentMode": "independent",
+                  "text": "MiniMax 视频接口连通测试。",
+                  "spatial": {
+                    "version": "shot-caption-space/v2",
+                    "anchor": "bottom-center",
+                    "safeArea": "title-safe",
+                    "aspectRatio": "9:16",
+                    "insets": {
+                      "top": 0.08,
+                      "right": 0.08,
+                      "bottom": 0.18,
+                      "left": 0.08
+                    },
+                    "maxLines": 2,
+                    "maxCharactersPerLine": 16
+                  }
+                }
+              },
+              {
+                "id": "workspace-caption-shot-shot-03",
+                "itemId": "manual:workspace-caption-shot-shot-03",
+                "label": "字幕",
+                "slotId": "workspace-caption-shot-shot-03-slot",
+                "visible": true,
+                "anchor": "bottom-center",
+                "offsetXRatio": 0,
+                "offsetYRatio": 0.09999999999999999,
+                "widthRatio": 0.8400000000000001,
+                "heightRatio": 0.74,
+                "words": [
+                  {
+                    "id": "initial-shot-03~0",
+                    "text": "百炼 视频接口连通测试。",
+                    "start": 8000,
+                    "end": 10000
+                  }
+                ],
+                "style": {
+                  "fontFamily": "sans-serif",
+                  "fontWeight": 600,
+                  "color": "#ffffff",
+                  "fontSize": 0.02684659090909091,
+                  "wholeLine": true
+                },
+                "loopControl": {
+                  "version": "workspace-caption/v1",
+                  "contentMode": "independent",
+                  "text": "百炼 视频接口连通测试。",
+                  "spatial": {
+                    "version": "shot-caption-space/v2",
+                    "anchor": "bottom-center",
+                    "safeArea": "title-safe",
+                    "aspectRatio": "9:16",
+                    "insets": {
+                      "top": 0.08,
+                      "right": 0.08,
+                      "bottom": 0.18,
+                      "left": 0.08
+                    },
+                    "maxLines": 2,
+                    "maxCharactersPerLine": 16
+                  }
+                }
+              },
+              {
+                "id": "workspace-caption-shot-shot-04",
+                "itemId": "manual:workspace-caption-shot-shot-04",
+                "label": "字幕",
+                "slotId": "workspace-caption-shot-shot-04-slot",
+                "visible": true,
+                "anchor": "bottom-center",
+                "offsetXRatio": 0,
+                "offsetYRatio": 0.09999999999999999,
+                "widthRatio": 0.8400000000000001,
+                "heightRatio": 0.74,
+                "words": [
+                  {
+                    "id": "initial-shot-04~0",
+                    "text": "Kling 视频接口连通测试。",
+                    "start": 10000,
+                    "end": 13000
+                  }
+                ],
+                "style": {
+                  "fontFamily": "sans-serif",
+                  "fontWeight": 600,
+                  "color": "#ffffff",
+                  "fontSize": 0.02684659090909091,
+                  "wholeLine": true
+                },
+                "loopControl": {
+                  "version": "workspace-caption/v1",
+                  "contentMode": "independent",
+                  "text": "Kling 视频接口连通测试。",
+                  "spatial": {
+                    "version": "shot-caption-space/v2",
+                    "anchor": "bottom-center",
+                    "safeArea": "title-safe",
+                    "aspectRatio": "9:16",
+                    "insets": {
+                      "top": 0.08,
+                      "right": 0.08,
+                      "bottom": 0.18,
+                      "left": 0.08
+                    },
+                    "maxLines": 2,
+                    "maxCharactersPerLine": 16
+                  }
+                }
+              }
+            ],
+            "layoutPolicy": {
+              "mode": "manual-slots",
+              "slots": [
+                {
+                  "id": "workspace-caption-shot-shot-01-slot",
+                  "anchor": "bottom-center",
+                  "offsetXRatio": 0,
+                  "offsetYRatio": 0.09999999999999999,
+                  "widthRatio": 0.8400000000000001,
+                  "heightRatio": 0.74
+                },
+                {
+                  "id": "workspace-caption-shot-shot-02-slot",
+                  "anchor": "bottom-center",
+                  "offsetXRatio": 0,
+                  "offsetYRatio": 0.09999999999999999,
+                  "widthRatio": 0.8400000000000001,
+                  "heightRatio": 0.74
+                },
+                {
+                  "id": "workspace-caption-shot-shot-03-slot",
+                  "anchor": "bottom-center",
+                  "offsetXRatio": 0,
+                  "offsetYRatio": 0.09999999999999999,
+                  "widthRatio": 0.8400000000000001,
+                  "heightRatio": 0.74
+                },
+                {
+                  "id": "workspace-caption-shot-shot-04-slot",
+                  "anchor": "bottom-center",
+                  "offsetXRatio": 0,
+                  "offsetYRatio": 0.09999999999999999,
+                  "widthRatio": 0.8400000000000001,
+                  "heightRatio": 0.74
+                }
+              ]
+            },
+            "perSource": {
+              "workspace-caption-shot-shot-01": {
+                "maxLines": 2
+              },
+              "workspace-caption-shot-shot-02": {
+                "maxLines": 2
+              },
+              "workspace-caption-shot-shot-03": {
+                "maxLines": 2
+              },
+              "workspace-caption-shot-shot-04": {
+                "maxLines": 2
+              }
+            }
+          }
+        }
+      },
+      "transitions": [],
+      "selectedId": "shot-shot-01-77c4712f-00f3-4a1b-9b05-318d5f1cc944",
+      "captionsHidden": false,
+      "selectedIds": [
+        "shot-shot-01-77c4712f-00f3-4a1b-9b05-318d5f1cc944"
+      ]
+    }
+  ]
+}

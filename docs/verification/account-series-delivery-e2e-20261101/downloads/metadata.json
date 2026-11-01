@@ -1,0 +1,44 @@
+{
+  "title": "账号与系列设置 · 本地流程验收",
+  "description": "本地合成素材验收：账号与系列规则、三张参考图、预算调整及返回第二镜头、原声提取、字幕校时与真实导出。不调用付费生成。",
+  "tags": [
+    "流程验收",
+    "本地素材",
+    "账号系列"
+  ],
+  "exportId": "76577bb6-178f-4a8a-9eeb-d35b49f3a439",
+  "contentSha256": "b678dcc2e3f66cbe29ef5be05b599f7a446b2ba7fb99a92c5519fe46113a93cb",
+  "scriptRevisionId": "52feeadc-5165-4ea0-a90b-44cf911fa1a7",
+  "narration": [
+    {
+      "shotId": "shot-01",
+      "baselineText": "这是第一段画面，检查账号规则。",
+      "sourceText": null,
+      "adoptedText": null,
+      "textCoverage": "no_recorded_text",
+      "windows": [],
+      "textSource": "not_recorded",
+      "sourceDiffersFromBaseline": null,
+      "differsFromBaseline": null,
+      "audioTrackId": null,
+      "sha256": null,
+      "itemId": null,
+      "source": null
+    },
+    {
+      "shotId": "shot-02",
+      "baselineText": "这是第二段画面，检查预算返回。",
+      "sourceText": null,
+      "adoptedText": null,
+      "textCoverage": "no_recorded_text",
+      "windows": [],
+      "textSource": "not_recorded",
+      "sourceDiffersFromBaseline": null,
+      "differsFromBaseline": null,
+      "audioTrackId": null,
+      "sha256": null,
+      "itemId": null,
+      "source": null
+    }
+  ]
+}

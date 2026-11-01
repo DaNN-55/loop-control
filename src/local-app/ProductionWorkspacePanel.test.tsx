@@ -4,6 +4,17 @@ import userEvent from '@testing-library/user-event';
 import {ProductionWorkspacePanel} from './ProductionWorkspacePanel';
 const workspace={id:'w',episodeId:'e',workflowVersion:'four-step/v1',scriptRevisionId:'s',storyboardPackageId:'b',revision:1,contentSha256:'a'.repeat(64),clips:[{id:'clip',itemId:'shot-S01-clip',shotId:'S01',text:'第一镜',source:null}],project:{relativePath:'episodes/e/project.json',sha256:'a'.repeat(64),fileSize:2,projectId:'loop-control-e'},readiness:{deliverable:false,placeholders:['shot-S01-clip'],missingSources:[]},stale:false} as const;
 afterEach(()=>{cleanup();sessionStorage.clear();vi.unstubAllGlobals();});
+it('keeps material import reachable after matching and lists newly imported narration material',async()=>{
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace})));
+ const command=vi.fn(async()=>({id:'manual-voice',storage_path:'episodes/e/voice.mp3'}));
+ render(<ProductionWorkspacePanel episodeId="e" title="工程" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);
+ await screen.findByText('第一镜');fireEvent.click(screen.getByRole('button',{name:'本期素材 · 0'}));
+ expect(screen.getByRole('button',{name:'导入本期素材'})).toBeTruthy();
+ fireEvent.change(screen.getByLabelText('登记素材用途'),{target:{value:'narration'}});
+ fireEvent.change(screen.getByLabelText('上传制作素材'),{target:{files:[new File(['local speech'],'voice.mp3',{type:'audio/mpeg'})]}});
+ await waitFor(()=>expect(command).toHaveBeenCalledWith('importMaterial',expect.objectContaining({episodeId:'e',materialType:'audio',sourcePath:'voice.mp3',materialPurpose:'narration',isMainScript:false})));
+ expect(command).toHaveBeenCalledTimes(1);await waitFor(()=>expect(screen.getByRole('region',{name:'本期素材'}).textContent).toContain('voice.mp3'));
+});
 it('four-step navigation reads durable state and does not submit approvals or generation',async()=>{
  vi.stubGlobal('fetch',vi.fn(async()=>new Response(JSON.stringify({workspace}),{status:200,headers:{'Content-Type':'application/json'}})));
  const command=vi.fn();render(<ProductionWorkspacePanel episodeId="e" title="工程" scriptRevisionId="s" boardId="b" materials={[]} command={command} onLegacy={()=>{}}/>);

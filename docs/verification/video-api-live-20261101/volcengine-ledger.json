@@ -1,0 +1,59 @@
+{
+  "policy": {
+    "version": 1,
+    "runId": "video-api-live-20261101-volcengine",
+    "enabled": true,
+    "expiresAt": "2026-11-01T11:37:45.976Z",
+    "maxRequests": 98,
+    "currency": "CNY",
+    "maxCostMicrounits": 6000000,
+    "priceEvidenceSha256": "bb3f4ccb6d50578bb29b8e4c883cbcd87aae57652a04e41c3dbd267fdeb2d0b6",
+    "approvalSha256": "fde46b761236e90b9ba035b465c0f58ef8addaee35d6b176f2eac07eecded92f",
+    "providers": [
+      "volcengine"
+    ],
+    "operations": {
+      "volcengine.generate": {
+        "maxRequests": 1,
+        "maxBytes": 1048576,
+        "timeoutMs": 60000,
+        "costMicrounits": 6000000
+      },
+      "volcengine.poll": {
+        "maxRequests": 95,
+        "maxBytes": 1048576,
+        "timeoutMs": 60000,
+        "costMicrounits": 0
+      },
+      "volcengine.download": {
+        "maxRequests": 2,
+        "maxBytes": 104857600,
+        "timeoutMs": 60000,
+        "costMicrounits": 0
+      }
+    }
+  },
+  "policySha256": "03561aa6e326e874a8c1d81c17f7c0a07fa0b4191edb730bc94af696dab07fff",
+  "state": {
+    "version": 1,
+    "policySha256": "03561aa6e326e874a8c1d81c17f7c0a07fa0b4191edb730bc94af696dab07fff",
+    "used": 1,
+    "costMicrounits": 6000000,
+    "byOperation": {
+      "volcengine.generate": 1
+    },
+    "halted": true,
+    "events": [
+      {
+        "operation": "volcengine.generate",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "volcengine.generate",
+        "outcome": "failed",
+        "status": 404,
+        "bytes": 275
+      }
+    ]
+  }
+}

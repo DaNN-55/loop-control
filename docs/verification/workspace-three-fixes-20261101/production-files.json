@@ -1,0 +1,225 @@
+{
+  "productionRoot": "/Volumes/Ebuget 1T/Media/流程验收1101--2fb0abe3-a125-429c-97b9-3330929c5c6b/双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/人工口播字幕直链修复 · E2E复验--b232b4fd-b43c-470c-bbdf-d97ae3f62f9d",
+  "files": [
+    {
+      "path": "materials/0854c75279a3a1784839e94f88a8ef16621728588d2d3b35f7b0bc56ca912fb7-script.md",
+      "bytes": 896,
+      "sha256": "0854c75279a3a1784839e94f88a8ef16621728588d2d3b35f7b0bc56ca912fb7"
+    },
+    {
+      "path": "materials/6ed66d77f8d1c420697ed51a2e2ba2857fe3e187e1e585a306115aab286f3693-video-02.mp4",
+      "bytes": 8221,
+      "sha256": "6ed66d77f8d1c420697ed51a2e2ba2857fe3e187e1e585a306115aab286f3693"
+    },
+    {
+      "path": "materials/972cc1858ec78b9c8758f1c6bb69900133461cdfe80ee921173be7e4c31495d3-人工口播-01.mp3",
+      "bytes": 48428,
+      "sha256": "972cc1858ec78b9c8758f1c6bb69900133461cdfe80ee921173be7e4c31495d3"
+    },
+    {
+      "path": "materials/b4aa281cdf7d4c6a0c8918d7e390d68145fc3ba0a5e0f67c2f80ad3f58206e17-人工口播-02.mp3",
+      "bytes": 48428,
+      "sha256": "b4aa281cdf7d4c6a0c8918d7e390d68145fc3ba0a5e0f67c2f80ad3f58206e17"
+    },
+    {
+      "path": "materials/c304574f499980a970b4d19aae4599c7167f18a4e66bd7e3c68d4debe5f933e3-video-01.mp4",
+      "bytes": 646087,
+      "sha256": "c304574f499980a970b4d19aae4599c7167f18a4e66bd7e3c68d4debe5f933e3"
+    },
+    {
+      "path": "native-tasks/26c165c5-1892-4215-bcb5-6d04628a14e9/shot-01-7c1befe7f800d648ef26c4a2c2cf89b28a3d8383a9d6653f6bda7375c2b24760.json",
+      "bytes": 1130,
+      "sha256": "83561ae8030c6c4874c511d36ea4f989aa76ca0594e45dd4edf00c545b4b71c8"
+    },
+    {
+      "path": "native-tasks/c99b5a29-c9ef-494c-b57f-7683f8d4fe96/shot-02-65d9a3d242a22b790c80108ca9e112e1b59388e41c5214efaddca7662c1bf3cb.json",
+      "bytes": 1130,
+      "sha256": "a96a90bb9be441f1ed1fdc5ad7480547014ca1da088d5a4751d2a905da28f239"
+    },
+    {
+      "path": "openchatcut-work/current/generated-project.json",
+      "bytes": 15752,
+      "sha256": "c2fe4d820231873d181eb25f8677d1c166b0b2cf6d71308155ba000401fc9ed5"
+    },
+    {
+      "path": "openchatcut-work/current/project.json",
+      "bytes": 15752,
+      "sha256": "c2fe4d820231873d181eb25f8677d1c166b0b2cf6d71308155ba000401fc9ed5"
+    },
+    {
+      "path": "openchatcut-work/current/runtime/media/uploads/.preview/3809355d81531f747d6f.mp4.preview-v3-646087-1793525881370913.peaks.json",
+      "bytes": 51,
+      "sha256": "5be16b3d9532d52cb5c83ac10ba8089a0f81d26051f636a212688ca3ea94638c"
+    },
+    {
+      "path": "openchatcut-work/current/runtime/media/uploads/.preview/3809355d81531f747d6f.mp4.preview-v3-646087-1793525881370913.poster.jpg",
+      "bytes": 18650,
+      "sha256": "d8eb3b8f68e0ccd5f84cd5c0636dda7a0c0c740c47a805fadde405556d8c2ccd"
+    },
+    {
+      "path": "openchatcut-work/current/runtime/media/uploads/.preview/3809355d81531f747d6f.mp4.preview-v3-646087-1793525881370913.strip.jpg",
+      "bytes": 3030,
+      "sha256": "9c715ea788d2e4ddbd0e406ab5713fa68f7ac0bf3a5b8d69c5e32d062d3a683f"
+    },
+    {
+      "path": "openchatcut-work/current/runtime/media/uploads/.preview/5e2f7bb91463fa5516d7.mp4.preview-v3-8221-1793525881399978.peaks.json",
+      "bytes": 51,
+      "sha256": "5be16b3d9532d52cb5c83ac10ba8089a0f81d26051f636a212688ca3ea94638c"
+    },
+    {
+      "path": "openchatcut-work/current/runtime/media/uploads/.preview/5e2f7bb91463fa5516d7.mp4.preview-v3-8221-1793525881399978.poster.jpg",
+      "bytes": 8996,
+      "sha256": "aea343f33fed5f3b1dd0cc948ad40909a0b363b587686a6c32296267ebdccf04"
+    },
+    {
+      "path": "openchatcut-work/current/runtime/media/uploads/.preview/5e2f7bb91463fa5516d7.mp4.preview-v3-8221-1793525881399978.strip.jpg",
+      "bytes": 2642,
+      "sha256": "1adb0a91697d799a52092a8f2b6663b0825684ec8bb4cdc5b97eafea814f8aca"
+    },
+    {
+      "path": "openchatcut-work/current/runtime/media/uploads/.preview/a8f75cc7cb40601671c7.mp3.preview-v3-48428-1793525881417213.peaks.json",
+      "bytes": 2497,
+      "sha256": "60fa96e551a3447a46340d9625c081ebf04bd93887d03e42fa63e05cb78ff71e"
+    },
+    {
+      "path": "openchatcut-work/current/runtime/media/uploads/.preview/cb3c1a503f708b5ece77.mp3.preview-v3-48428-1793525881435264.peaks.json",
+      "bytes": 2525,
+      "sha256": "d52e22ac66cad878c2e8c4aa861ab8de8e30e312f93d29bbb80e81c8e6e1987f"
+    },
+    {
+      "path": "openchatcut-work/current/runtime/media/uploads/3809355d81531f747d6f.mp4",
+      "bytes": 646087,
+      "sha256": "c304574f499980a970b4d19aae4599c7167f18a4e66bd7e3c68d4debe5f933e3"
+    },
+    {
+      "path": "openchatcut-work/current/runtime/media/uploads/5e2f7bb91463fa5516d7.mp4",
+      "bytes": 8221,
+      "sha256": "6ed66d77f8d1c420697ed51a2e2ba2857fe3e187e1e585a306115aab286f3693"
+    },
+    {
+      "path": "openchatcut-work/current/runtime/media/uploads/a8f75cc7cb40601671c7.mp3",
+      "bytes": 48428,
+      "sha256": "972cc1858ec78b9c8758f1c6bb69900133461cdfe80ee921173be7e4c31495d3"
+    },
+    {
+      "path": "openchatcut-work/current/runtime/media/uploads/cb3c1a503f708b5ece77.mp3",
+      "bytes": 48428,
+      "sha256": "b4aa281cdf7d4c6a0c8918d7e390d68145fc3ba0a5e0f67c2f80ad3f58206e17"
+    },
+    {
+      "path": "openchatcut-work/current/runtime/project-store-v1.json",
+      "bytes": 14941,
+      "sha256": "5f37aac333b31ed4c94413216848432b57160cf8f548c9c7fb356b87d858e6b7"
+    },
+    {
+      "path": "openchatcut-work/current/runtime/project-store-v1.sqlite3",
+      "bytes": 221184,
+      "sha256": "416c22764b77a913683b274a9cddcda3bad968f64ca327d68fa4854fed51d1b9"
+    },
+    {
+      "path": "openchatcut-work/current/runtime/project-store-v1.sqlite3-shm",
+      "bytes": 32768,
+      "sha256": "10af54ffc4475d2e104d0ca0a41e964b02e3f11b0cb7245995811c737f961197"
+    },
+    {
+      "path": "openchatcut-work/current/runtime/project-store-v1.sqlite3-wal",
+      "bytes": 61832,
+      "sha256": "3b5b68d162a8f29c21de4eb6e6175b39f67d3476d0711893dedeacc4c663223b"
+    },
+    {
+      "path": "openchatcut-work/current/runtime/project-store-v1.sqlite3.receipt.json",
+      "bytes": 1546,
+      "sha256": "77f345bf39fb22cb92a327b26fc63675adb4b495d4a77de934617656a3fb56af"
+    },
+    {
+      "path": "openchatcut-work/current/runtime/settings.env",
+      "bytes": 36,
+      "sha256": "5e70e2e95e8049a519eddee3f5dc65176dc6f6a226387b72569ac80924c0f868"
+    },
+    {
+      "path": "openchatcut-work/current/workspace.json",
+      "bytes": 1412,
+      "sha256": "181137daa520af5e53148463bef9729b2043811b656861ebcdaac7f75919b98c"
+    },
+    {
+      "path": "preparation/d3e5d4e9-80d2-4b71-8ba0-6a14e27bdd17.json",
+      "bytes": 1365,
+      "sha256": "1d733f36a75413a287e15d2f6f7e59164ce62cdfd07ab6478f7a551669e4a70e"
+    },
+    {
+      "path": "production-workspace/versions/0edd550d63ad6df52bbc56e509c0e4d044d59e3c58dfe22fbd4881571a80c188.json",
+      "bytes": 15579,
+      "sha256": "0edd550d63ad6df52bbc56e509c0e4d044d59e3c58dfe22fbd4881571a80c188"
+    },
+    {
+      "path": "production-workspace/versions/14f0e66de4b20e6e60b3de041373454fbf06e2a5ecd232f86b6de579a6c59620.json",
+      "bytes": 2532,
+      "sha256": "14f0e66de4b20e6e60b3de041373454fbf06e2a5ecd232f86b6de579a6c59620"
+    },
+    {
+      "path": "production-workspace/versions/1b1bfca7922e852baa8985e28a706f6a55386369eb10c26714ec9463973d30f8.json",
+      "bytes": 5574,
+      "sha256": "1b1bfca7922e852baa8985e28a706f6a55386369eb10c26714ec9463973d30f8"
+    },
+    {
+      "path": "production-workspace/versions/33687fa959dcbd9f07337ea0c4fa90e28cba05fd2d7fa554c6b2b5dc9b230691.json",
+      "bytes": 14744,
+      "sha256": "33687fa959dcbd9f07337ea0c4fa90e28cba05fd2d7fa554c6b2b5dc9b230691"
+    },
+    {
+      "path": "production-workspace/versions/696898a24e44951bdbf287e2f416330be6e1b226abc2a749ad7acb2204b70094.json",
+      "bytes": 9816,
+      "sha256": "696898a24e44951bdbf287e2f416330be6e1b226abc2a749ad7acb2204b70094"
+    },
+    {
+      "path": "production-workspace/versions/a037a2d968027519aa686eb850ed583da32fc45effeed68b8a8ee677ddb9f652.json",
+      "bytes": 15405,
+      "sha256": "a037a2d968027519aa686eb850ed583da32fc45effeed68b8a8ee677ddb9f652"
+    },
+    {
+      "path": "production-workspace/versions/c2fe4d820231873d181eb25f8677d1c166b0b2cf6d71308155ba000401fc9ed5.json",
+      "bytes": 15752,
+      "sha256": "c2fe4d820231873d181eb25f8677d1c166b0b2cf6d71308155ba000401fc9ed5"
+    },
+    {
+      "path": "production-workspace/versions/da520fe3479b589d2206f876a46a629a7a30846154032805d9bb9cd1beaff571.json",
+      "bytes": 4052,
+      "sha256": "da520fe3479b589d2206f876a46a629a7a30846154032805d9bb9cd1beaff571"
+    },
+    {
+      "path": "production-workspace/versions/f575edfb841e4905113e0578dd87d86a0189871edf4311e195d36fd0b7e96347.json",
+      "bytes": 7773,
+      "sha256": "f575edfb841e4905113e0578dd87d86a0189871edf4311e195d36fd0b7e96347"
+    },
+    {
+      "path": "workspace-deliveries/5b25ba59-04b8-4ba2-9e41-29fe2ecf6950/checks.json",
+      "bytes": 6751,
+      "sha256": "01a9a2af57924e1e774dacf4ff4db1b0908eb6756907ae082b01f51eb288e1e9"
+    },
+    {
+      "path": "workspace-deliveries/5b25ba59-04b8-4ba2-9e41-29fe2ecf6950/cover.png",
+      "bytes": 49911,
+      "sha256": "eb50ac41dc1c2fd1a695d76ab6b95665cb4847ffbecce9eeb5619418fe05c20d"
+    },
+    {
+      "path": "workspace-deliveries/5b25ba59-04b8-4ba2-9e41-29fe2ecf6950/manifest.json",
+      "bytes": 3332,
+      "sha256": "b5203638272895a154ea87fce8249dc8994782b21b6ac01dc82f14aab45ed3eb"
+    },
+    {
+      "path": "workspace-deliveries/5b25ba59-04b8-4ba2-9e41-29fe2ecf6950/metadata.json",
+      "bytes": 2707,
+      "sha256": "d7d11937bcba87ecee8bba09e512854a4e40a7e9d6ccab8810b424d0ee85165b"
+    },
+    {
+      "path": "workspace-exports/d0e3ca0f-3a63-42a7-b307-5d95f3329646/05e3367235dccff57c8c66d29c7675b1be4397054c25d0fc07156273a376c35e.mp4",
+      "bytes": 4226395,
+      "sha256": "05e3367235dccff57c8c66d29c7675b1be4397054c25d0fc07156273a376c35e"
+    },
+    {
+      "path": "workspace-exports/d0e3ca0f-3a63-42a7-b307-5d95f3329646/representative.jpg",
+      "bytes": 58720,
+      "sha256": "20b4836ec421a2d3162d6720ef720d0fa0df879698cdf116d89785df5f548323"
+    }
+  ]
+}

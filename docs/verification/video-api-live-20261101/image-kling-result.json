@@ -1,0 +1,42 @@
+{
+  "target": "kling",
+  "provider": "openai",
+  "model": "gpt-image-2",
+  "connectionVersion": "022dff01-abac-4444-8bc8-a7500751f657",
+  "outcome": "generated",
+  "requestId": "req_2209f3291afd41789e683bc4f76db6c9",
+  "usage": {
+    "input_tokens": 116,
+    "input_tokens_details": {
+      "image_tokens": 0,
+      "text_tokens": 116
+    },
+    "output_tokens": 1078,
+    "output_tokens_details": {
+      "image_tokens": 1078,
+      "text_tokens": 0
+    },
+    "total_tokens": 1194
+  },
+  "artifact": {
+    "path": "/Users/dan/Programs/loop-control/docs/verification/video-api-live-20261101/kling-replacement.png",
+    "bytes": 1555596,
+    "sha256": "f720f7b4c3dd4035725db373b40fb30bb2ef3dd669c6ea3f3ee2c7328a1c13ca",
+    "media": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "png",
+          "width": 864,
+          "height": 1536
+        }
+      ]
+    }
+  },
+  "network": {
+    "directory": "/Users/dan/Programs/loop-control/.loop-control/maintenance/video-api-live-20261101/image-kling-policy",
+    "policySha256": "58104e8088f766f8cca9a3debf636f780cd417e132ee999fef31caa80dc31edf"
+  },
+  "reservationCny": 1
+}

@@ -1,0 +1,25 @@
+{
+  "fields": [
+    {
+      "disabled": true,
+      "opacity": "1"
+    },
+    {
+      "disabled": true,
+      "opacity": "1"
+    },
+    {
+      "disabled": true,
+      "opacity": "1"
+    },
+    {
+      "disabled": true,
+      "opacity": "1"
+    }
+  ],
+  "height": 850,
+  "locked": true,
+  "overflow": false,
+  "saveVisible": false,
+  "width": 620
+}

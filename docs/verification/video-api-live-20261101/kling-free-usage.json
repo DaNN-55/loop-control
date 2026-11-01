@@ -1,0 +1,21 @@
+{
+  "at": "2026-11-01T10:01:53.556Z",
+  "provider": "kling",
+  "version": "2dc46417-5042-4db1-a44a-5fb25a256329",
+  "operation": "read-only usage",
+  "usage": {
+    "remaining": {
+      "label": "资源包",
+      "text": "未返回",
+      "detail": "供应商没有返回资源包列表；无法据此判断现金余额。",
+      "status": "unavailable"
+    },
+    "recent": {
+      "label": "7天任务",
+      "text": "无扣费记录",
+      "detail": "账号内近7天创建任务的实际现金扣费，可能包含其他 Key 调用；不是按扣费发生日查询。",
+      "status": "ready"
+    },
+    "updatedAt": "2026-11-01T10:01:55.911Z"
+  }
+}

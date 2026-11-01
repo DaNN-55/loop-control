@@ -124,7 +124,7 @@ it.skipIf(!process.env.LOOP_SCRIPT_V2_TEST_FIXTURE)('real PostgreSQL: v2 import,
   const paidBody={command:'generateWan',data:paidData,idempotencyKey:productionActionId(scope,{command:'generateWan',data:paidData,identity:paidData})};
   await expect(automatic(scope,{...paidBody,data:{...paidData,prompt:'Stale proposal'}})).rejects.toThrow('输入或审核状态已变化');
   await expect(automatic(scope,paidBody)).rejects.toThrow();
-  await run('setWanBudget',{trialCents:200,totalCents:1500,full:false});
+
   const paid=await automatic(scope,paidBody) as {id:string};
   expect((await automatic(scope,paidBody) as {id:string}).id).toBe(paid.id);
   await c.query("SELECT set_config('loop.owner_id',$1,true)",[owner]);

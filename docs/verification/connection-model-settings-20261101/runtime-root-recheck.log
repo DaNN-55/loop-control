@@ -1,0 +1,10 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ scripts/runtime/media-root.test.mjs (1 test) 2302ms
+   ✓ fresh processes read the shipped deployment reader with initialized external media, preserve private capabilities, and reject replaced roots or receipts  2302ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  12:31:56
+   Duration  2.45s (transform 100ms, setup 7ms, collect 7ms, tests 2.30s, environment 0ms, prepare 36ms)

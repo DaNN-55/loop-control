@@ -1,0 +1,32 @@
+{
+  "footer": {
+    "bottom": 936,
+    "height": 73,
+    "left": 327,
+    "right": 1512,
+    "top": 863,
+    "width": 1185,
+    "x": 327,
+    "y": 863
+  },
+  "historyCount": 0,
+  "panel": {
+    "bottom": 937,
+    "height": 793,
+    "left": 94,
+    "right": 1513,
+    "top": 144,
+    "width": 1419,
+    "x": 94,
+    "y": 144
+  },
+  "textareaHeights": [
+    130.328125,
+    130.328125,
+    130.328125
+  ],
+  "viewport": {
+    "height": 953,
+    "width": 1543
+  }
+}

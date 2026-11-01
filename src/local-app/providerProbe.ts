@@ -1,6 +1,6 @@
 import {isRetiredProvider,retiredProviderMessage} from '../worker/providerLifecycle.js';
 import {isVideoProvider,videoProviders} from "../worker/videoProviderCatalog.js";
-import {videoAuthorization} from "../worker/officialVideoProvider.js";
+import {videoAuthorization,videoEndpoint} from "../worker/officialVideoProvider.js";
 import{bailianCredential}from'../worker/wanVideoProvider.js';
 import type{ConnectionProbe,ProbeResult}from'./connectionPorts.js';
 import{createManualVerificationFetcher,createProviderFetcher,providerNetworkAvailable,providerNetworkStatus,type ProviderNetworkConfiguration,type OnlineProvider}from'./providerNetwork.js';
@@ -28,7 +28,7 @@ export function createProviderProbe(config:ProviderNetworkConfiguration,transpor
   try{
    if(provider==='volcengine_tts'){await synthesizeVolcengineTts({apiKey:input.secret,fetcher,model:'seed-tts-2.0',text:'这是一条测试。',voice:{languageCode:'zh-CN',name:'zh_female_vv_uranus_bigtts',speakingRate:1}});return outcome;}
    let url:string,headers:Record<string,string>={};
-   if(isVideoProvider(provider)){url=videoProviders[provider].endpoint+(provider==='volcengine'?'/contents/generations/tasks':provider==='minimax'?'/v2/query/video_generation':'/v1/videos/image2video')+(provider==='kling'?'?pageNum=1&pageSize=1':'?page_num=1&page_size=1');headers.Authorization=videoAuthorization(provider,input.secret);}
+   if(isVideoProvider(provider)){url=videoEndpoint(provider,input.secret)+(provider==='volcengine'?'/contents/generations/tasks':provider==='minimax'?'/v2/query/video_generation':'/v1/videos/image2video')+(provider==='kling'?'?pageNum=1&pageSize=1':'?page_num=1&page_size=1');headers.Authorization=videoAuthorization(provider,input.secret);}
    else if(provider==='bailian'){const credential=bailianCredential(input.secret);url=credential.origin+'/api/v1/models?model=wan2.6-i2v-flash&page_no=1&page_size=20';headers.Authorization='Bearer '+credential.apiKey;}
    else if(provider==='openai'){url='https://api.openai.com/v1/models/gpt-image-2';headers.Authorization='Bearer '+input.secret;}
    else if(provider==='pexels'){url='https://api.pexels.com/v1/videos/search?query=nature&per_page=1';headers.Authorization=input.secret;}

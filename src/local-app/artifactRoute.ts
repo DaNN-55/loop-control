@@ -21,7 +21,7 @@ export async function serveOwnedArtifact(root:string,artifact:ArtifactFile,respo
   const hash=createHash('sha256');for await(const chunk of file.createReadStream({autoClose:false,start:0}))hash.update(chunk);
   const after=await file.stat();if(hash.digest('hex')!==artifact.sha256||before.mtimeMs!==after.mtimeMs||before.size!==after.size)throw Error('Artifact fingerprint differs');
   const types:Record<string,string>={'.mp4':'video/mp4','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.wav':'audio/wav','.mp3':'audio/mpeg','.json':'application/json','.md':'text/plain; charset=utf-8','.txt':'text/plain; charset=utf-8'};
-  const headers={'Content-Type':types[extname(path)]??'application/octet-stream','Content-Security-Policy':"default-src 'none'; sandbox",'Content-Disposition':'inline','Accept-Ranges':'bytes'};
+  const headers={'Content-Type':types[extname(path)]??'application/octet-stream','Content-Security-Policy':(['.mp4','.mp3','.wav'].includes(extname(path))?"default-src 'none'; media-src 'self'; sandbox allow-same-origin":"default-src 'none'; sandbox"),'Content-Disposition':'inline','Accept-Ranges':'bytes'};
   let start=0,end=after.size-1;
   if(rangeHeader!==undefined){
    const match=/^bytes=(\d*)-(\d*)$/.exec(rangeHeader.trim());

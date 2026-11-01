@@ -1,0 +1,12 @@
+{
+  "played": {
+    "currentTime": 8.746799,
+    "duration": 12.053333,
+    "ended": false,
+    "paused": false,
+    "readyState": 4,
+    "videoHeight": 1920,
+    "videoWidth": 1080
+  },
+  "state": "Browser tab: 6, Title: \"127.0.0.1:53352/after.mp4\", URL: \"http://127.0.0.1:53352/after.mp4\".\n0 AXWebArea 127.0.0.1:53352/after.mp4\n\t1 container\n\t\t2 button\n\t\t3 container\n\t\t\t4 slider\n\t\t\t5 button\n\t\t6 button\n\t\t7 pop up button\n\t\t8 slider 视频时间进度条\n\nThe focused UI element is 2 button"
+}

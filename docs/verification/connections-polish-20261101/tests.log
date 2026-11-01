@@ -1,0 +1,13 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/connections/ConnectionServiceCatalog.test.tsx (3 tests) 95ms
+ ✓ src/connections/ConnectionDanUi.test.tsx (2 tests) 486ms
+   ✓ clears the credential draft and restores masking when opening another connection  391ms
+ ✓ src/connections/ConnectionFeedback.test.tsx (10 tests) 620ms
+ ✓ src/connections/ConnectionOrganization.test.tsx (12 tests) 762ms
+
+ Test Files  4 passed (4)
+      Tests  27 passed (27)
+   Start at  21:00:24
+   Duration  1.60s (transform 146ms, setup 26ms, collect 2.22s, tests 1.96s, environment 571ms, prepare 127ms)

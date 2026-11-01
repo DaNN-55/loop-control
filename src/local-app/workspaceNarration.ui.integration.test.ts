@@ -14,7 +14,7 @@ it.skipIf(process.env.LOOP_T05_UI!=='1')('keeps an isolated native UI available 
  let timer:ReturnType<typeof setInterval>|undefined;
  try{
   f=await narrationFixture(origin,base=>{handler=base.handler;},true);await f.authorize();
-  await f.request('setWanBudget',{trialCents:100,totalCents:200,full:false});
+
   await f.request('importMaterial',{materialType:'image',sourceKind:'file',sourcePath:'still-striped.png',mimeType:'image/png',contentBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64'),isMainScript:false,materialPurpose:'visual_reference'});
   await writeFile('/private/tmp/t05-ui-fixture.json',JSON.stringify({origin,episode:f.episode,email:f.email,password:f.password,database:f.database,root:f.root}));
   let busy=false;timer=setInterval(()=>{if(busy||!f)return;busy=true;void (async()=>{try{const next=(await f!.c.query("SELECT id FROM public.tasks WHERE episode_id=$1 AND task_type IN ('generate_narration','generate_a_roll','generate_b_roll') AND status='ready' ORDER BY created_at LIMIT 1",[f!.episode])).rows[0];if(next)expect((await f!.execute(next.id))?.status).toBe('completed');}finally{busy=false;}})();},200);

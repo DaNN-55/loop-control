@@ -1,0 +1,44 @@
+{
+  "at": "2026-11-01T08:13:08.940Z",
+  "head": "6610633055d9cdf7c295eb7c3b0b64d277fbce5d",
+  "service": {
+    "binding": {
+      "path": "/Volumes/Ebuget 1T/Media",
+      "inodeId": "1890273",
+      "deviceId": "16777244",
+      "mountPath": "/Volumes/Ebuget 1T"
+    },
+    "accounts": [
+      {
+        "id": "0e44b99f-456f-46f1-ac0f-4a634e2b2511",
+        "name": "测试",
+        "slug": "test01",
+        "timezone": "Asia/Shanghai",
+        "created_at": "2026-11-01T04:42:03.194097+00:00",
+        "archived_at": null,
+        "current_blueprint_version_id": "0cd85ed7-04f4-4c94-b208-c08e1fa6fe4d"
+      },
+      {
+        "id": "194e137d-7bb0-4788-a413-f8b9726891d8",
+        "name": "豆包推广",
+        "slug": "doubao-promotion",
+        "timezone": "Asia/Shanghai",
+        "created_at": "2026-09-01T01:13:00.551457+00:00",
+        "archived_at": null,
+        "current_blueprint_version_id": "ebae38f3-b93e-40db-9be0-9708a3976858"
+      },
+      {
+        "id": "9179a633-a946-4442-9877-6293507672e6",
+        "name": "日照金山样片",
+        "slug": "rizhao-jinshan-sample",
+        "timezone": "Asia/Shanghai",
+        "created_at": "2026-10-24T07:40:03.985122+00:00",
+        "archived_at": null,
+        "current_blueprint_version_id": "19dbfac5-c69d-4b83-a18f-f227c4ea5b3e"
+      }
+    ],
+    "episodes": 0,
+    "credentials": 19
+  },
+  "logOffset": 963100
+}

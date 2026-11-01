@@ -1,0 +1,17 @@
+{
+  "provider": "minimax",
+  "connection": "minimax",
+  "version": "f738532a-1228-4535-b5a4-111b2ebd12d9",
+  "outcome": "submitted_unfinished",
+  "model": "MiniMax-H3",
+  "durationSeconds": 4,
+  "taskId": "458656441229509",
+  "error": "视频下载地址不属于对应供应商。",
+  "network": {
+    "directory": "/Users/dan/Programs/loop-control/.loop-control/maintenance/video-api-live-20261101/minimax-policy",
+    "policySha256": "7a6dbdb3bb420582655b92761bde4ae3408e65ff61c5d6318c4b733e68475ae0"
+  },
+  "reservationCny": 3,
+  "actualCost": "unverified; reservation is not charge",
+  "elapsedMs": 216342
+}

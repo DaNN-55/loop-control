@@ -1,0 +1,54 @@
+{
+  "version": "publish-package/v2",
+  "episodeId": "2f7553cb-c3e9-4dc5-b900-f1439329a0b0",
+  "identity": {
+    "video": {
+      "sha256": "c384cee57060e5bac02a7c51b85348c2ebc62f9e780ef82a5ddcac4b8068fb71",
+      "fileSize": 4227245,
+      "artifactType": "final_render",
+      "relativePath": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/账号系列参考图预算返回 · 完整E2E--2f7553cb-c3e9-4dc5-b900-f1439329a0b0/workspace-exports/76577bb6-178f-4a8a-9eeb-d35b49f3a439/c384cee57060e5bac02a7c51b85348c2ebc62f9e780ef82a5ddcac4b8068fb71.mp4"
+    },
+    "project": {
+      "sha256": "1a91b6243d030dc63ba2db8ccc5237a86c7dcac5ee4a45637d3ad69edd65545b",
+      "fileSize": 16652,
+      "artifactType": "editable_project",
+      "relativePath": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/账号系列参考图预算返回 · 完整E2E--2f7553cb-c3e9-4dc5-b900-f1439329a0b0/production-workspace/versions/1a91b6243d030dc63ba2db8ccc5237a86c7dcac5ee4a45637d3ad69edd65545b.json"
+    },
+    "exportId": "76577bb6-178f-4a8a-9eeb-d35b49f3a439",
+    "workspaceId": "b71c4f80-858d-442b-93f0-98824d90ad93",
+    "contentSha256": "b678dcc2e3f66cbe29ef5be05b599f7a446b2ba7fb99a92c5519fe46113a93cb",
+    "projectContentVersion": 12
+  },
+  "artifacts": [
+    {
+      "sha256": "c384cee57060e5bac02a7c51b85348c2ebc62f9e780ef82a5ddcac4b8068fb71",
+      "fileSize": 4227245,
+      "artifactType": "final_render",
+      "relativePath": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/账号系列参考图预算返回 · 完整E2E--2f7553cb-c3e9-4dc5-b900-f1439329a0b0/workspace-exports/76577bb6-178f-4a8a-9eeb-d35b49f3a439/c384cee57060e5bac02a7c51b85348c2ebc62f9e780ef82a5ddcac4b8068fb71.mp4"
+    },
+    {
+      "sha256": "1a91b6243d030dc63ba2db8ccc5237a86c7dcac5ee4a45637d3ad69edd65545b",
+      "fileSize": 16652,
+      "artifactType": "editable_project",
+      "relativePath": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/账号系列参考图预算返回 · 完整E2E--2f7553cb-c3e9-4dc5-b900-f1439329a0b0/production-workspace/versions/1a91b6243d030dc63ba2db8ccc5237a86c7dcac5ee4a45637d3ad69edd65545b.json"
+    },
+    {
+      "sha256": "eb50ac41dc1c2fd1a695d76ab6b95665cb4847ffbecce9eeb5619418fe05c20d",
+      "fileSize": 49911,
+      "artifactType": "cover",
+      "relativePath": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/账号系列参考图预算返回 · 完整E2E--2f7553cb-c3e9-4dc5-b900-f1439329a0b0/workspace-deliveries/c6c56a56-0882-44b0-982a-bffd847d783a/cover.png"
+    },
+    {
+      "sha256": "4ed0fa2e834894aa0c5daba4f6427e99947c41a31788e3044597da6ce9bfde85",
+      "fileSize": 1420,
+      "artifactType": "metadata",
+      "relativePath": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/账号系列参考图预算返回 · 完整E2E--2f7553cb-c3e9-4dc5-b900-f1439329a0b0/workspace-deliveries/c6c56a56-0882-44b0-982a-bffd847d783a/metadata.json"
+    },
+    {
+      "sha256": "8f2c80232fa1492b745c250d5123e2932e9fc6c151d8bd91e765072bed4f3ec4",
+      "fileSize": 6693,
+      "artifactType": "final_qc_report",
+      "relativePath": "双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/账号系列参考图预算返回 · 完整E2E--2f7553cb-c3e9-4dc5-b900-f1439329a0b0/workspace-deliveries/c6c56a56-0882-44b0-982a-bffd847d783a/checks.json"
+    }
+  ]
+}

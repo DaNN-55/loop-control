@@ -17,7 +17,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('a committed native attem
  const f=await narrationFixture(undefined,undefined,false,false,['db/local/120-native-workspace-storage-locations.sql','db/local/121-restored-media-deployment.sql','db/local/123-legacy-storage-adoption.sql']),worker=f.workerPool();
  try{
   const oldDirectory=await lstat(join(f.assetRoot,f.episodeRelativePath),{bigint:true});await f.c.query('UPDATE local_identity.episode_asset_locations SET directory_relative_path=$2,directory_device_id=$3,directory_inode_id=$4 WHERE episode_id=$1',[f.episode,f.episodeRelativePath,String(oldDirectory.dev),String(oldDirectory.ino)]);
-  let w=await f.fillVisuals(f.made);await f.authorize();expect((await f.request('setWanBudget',{trialCents:300,totalCents:10000,full:false})).status).toBe(200);
+  let w=await f.fillVisuals(f.made);await f.authorize();
   const send=async(command:string,data:Record<string,unknown>={})=>{const r=await f.request(command,{workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[0].id,...data});expect(r.status,command+': '+JSON.stringify(r.body)).toBe(200);if(r.body.id===w.id)w=r.body;return r.body;};
   await send('saveWorkspaceNarration',{mode:'tts',...f.narrationSettings,text:'迁移后仍是同一份冻结口播。'});await send('confirmWorkspaceNarration');await send('generateWorkspaceNarration',{reservationCents:100});
   const taskId=w.narration[0].taskId,port=nativeWorkerPort(worker),task=(await port.rpc('claim_next_worker_task',{p_task_id:taskId,p_worker_capacity:1}) as any[])[0];expect(task.task_id).toBe(taskId);

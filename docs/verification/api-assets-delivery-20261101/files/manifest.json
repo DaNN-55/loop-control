@@ -1,0 +1,54 @@
+{
+  "version": "publish-package/v2",
+  "episodeId": "79eb3098-8733-472a-9bde-873edd4cd26c",
+  "identity": {
+    "video": {
+      "sha256": "b064c33a19e8e2302378eebc1b2a1c4a93f42892f2d0c6ee42b2ea941efa7453",
+      "fileSize": 6148396,
+      "artifactType": "final_render",
+      "relativePath": "未分系列--469c8e63-de75-4f1c-b61e-84929254527f/视频 API 逐项真实生成 · 1101--79eb3098-8733-472a-9bde-873edd4cd26c/workspace-exports/d0a9059f-5baa-4be0-ba20-4ad5aae945c5/b064c33a19e8e2302378eebc1b2a1c4a93f42892f2d0c6ee42b2ea941efa7453.mp4"
+    },
+    "project": {
+      "sha256": "5403d47d6535bf0ba4689449beb3e453a47a6d6705820e09969ce1fbcb984f45",
+      "fileSize": 20131,
+      "artifactType": "editable_project",
+      "relativePath": "未分系列--469c8e63-de75-4f1c-b61e-84929254527f/视频 API 逐项真实生成 · 1101--79eb3098-8733-472a-9bde-873edd4cd26c/production-workspace/versions/5403d47d6535bf0ba4689449beb3e453a47a6d6705820e09969ce1fbcb984f45.json"
+    },
+    "exportId": "d0a9059f-5baa-4be0-ba20-4ad5aae945c5",
+    "workspaceId": "9a972216-d441-4cd6-8e9c-584a2df7404d",
+    "contentSha256": "8996f5e42747b06220d85f038f362ad3e78c597af2650631a01cf52ce4fc1bfa",
+    "projectContentVersion": 8
+  },
+  "artifacts": [
+    {
+      "sha256": "b064c33a19e8e2302378eebc1b2a1c4a93f42892f2d0c6ee42b2ea941efa7453",
+      "fileSize": 6148396,
+      "artifactType": "final_render",
+      "relativePath": "未分系列--469c8e63-de75-4f1c-b61e-84929254527f/视频 API 逐项真实生成 · 1101--79eb3098-8733-472a-9bde-873edd4cd26c/workspace-exports/d0a9059f-5baa-4be0-ba20-4ad5aae945c5/b064c33a19e8e2302378eebc1b2a1c4a93f42892f2d0c6ee42b2ea941efa7453.mp4"
+    },
+    {
+      "sha256": "5403d47d6535bf0ba4689449beb3e453a47a6d6705820e09969ce1fbcb984f45",
+      "fileSize": 20131,
+      "artifactType": "editable_project",
+      "relativePath": "未分系列--469c8e63-de75-4f1c-b61e-84929254527f/视频 API 逐项真实生成 · 1101--79eb3098-8733-472a-9bde-873edd4cd26c/production-workspace/versions/5403d47d6535bf0ba4689449beb3e453a47a6d6705820e09969ce1fbcb984f45.json"
+    },
+    {
+      "sha256": "0740fe905161db31bae05197e8ef1b11af207f1463930ea474435e5b061e31e0",
+      "fileSize": 1601772,
+      "artifactType": "cover",
+      "relativePath": "未分系列--469c8e63-de75-4f1c-b61e-84929254527f/视频 API 逐项真实生成 · 1101--79eb3098-8733-472a-9bde-873edd4cd26c/workspace-deliveries/1f2e3654-037f-43bd-800d-810f165d2e2e/cover.png"
+    },
+    {
+      "sha256": "007552e32724c224cd9c289a0455ff8c8f935a525b5f8045d711625de40dff4f",
+      "fileSize": 2115,
+      "artifactType": "metadata",
+      "relativePath": "未分系列--469c8e63-de75-4f1c-b61e-84929254527f/视频 API 逐项真实生成 · 1101--79eb3098-8733-472a-9bde-873edd4cd26c/workspace-deliveries/1f2e3654-037f-43bd-800d-810f165d2e2e/metadata.json"
+    },
+    {
+      "sha256": "6f244861acc16f87645768c8e054889bcb37ef9bc727b47b4f77c1c7a11b3b34",
+      "fileSize": 8847,
+      "artifactType": "final_qc_report",
+      "relativePath": "未分系列--469c8e63-de75-4f1c-b61e-84929254527f/视频 API 逐项真实生成 · 1101--79eb3098-8733-472a-9bde-873edd4cd26c/workspace-deliveries/1f2e3654-037f-43bd-800d-810f165d2e2e/checks.json"
+    }
+  ]
+}

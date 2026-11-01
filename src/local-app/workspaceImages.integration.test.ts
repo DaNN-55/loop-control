@@ -90,7 +90,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each([false,true])('Owner
   await f.c.query('UPDATE local_identity.input_episodes SET enabled=true WHERE episode_id=$1',[f.episode]);await f.c.query('COMMIT');
   const path=join(f.root,'input.png');await exec('ffmpeg',['-nostdin','-v','error','-f','lavfi','-i','testsrc2=size=640x360','-frames:v','1',path]);
   const uploaded=await f.request('importMaterial',{materialType:'image',sourceKind:'file',sourcePath:'input.png',mimeType:'image/png',contentBase64:(await readFile(path)).toString('base64'),isMainScript:false,materialPurpose:'visual_reference'});expect(uploaded.status).toBe(200);
-  expect((await f.request('setWanBudget',{trialCents:200,totalCents:500,full:false})).status).toBe(200);
+
   const selection={capability:'video',provider:'volcengine',adapter:'seedance_video',model:'doubao-seedance-2-0-260128',connectionVersionId:version};
   let w=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;
   const authorized=await f.request('authorizeWorkspacePreparation',{workspaceId:w.id,expectedRevision:w.revision,enabled:true});expect(authorized.status,JSON.stringify(authorized.body)).toBe(200);w=authorized.body;

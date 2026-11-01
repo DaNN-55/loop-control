@@ -1,0 +1,9 @@
+{
+  "status": 200,
+  "headers": {
+    "Accept-Ranges": "bytes",
+    "Content-Length": "4226395",
+    "Content-Security-Policy": "default-src 'none'; media-src 'self'; sandbox allow-same-origin",
+    "Content-Type": "video/mp4"
+  }
+}

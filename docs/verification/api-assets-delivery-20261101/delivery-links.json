@@ -1,0 +1,26 @@
+[
+  {
+    "href": "http://127.0.0.1:5174/_local-artifact?episode=79eb3098-8733-472a-9bde-873edd4cd26c&path=%E6%9C%AA%E5%88%86%E7%B3%BB%E5%88%97--469c8e63-de75-4f1c-b61e-84929254527f%2F%E8%A7%86%E9%A2%91%20API%20%E9%80%90%E9%A1%B9%E7%9C%9F%E5%AE%9E%E7%94%9F%E6%88%90%20%C2%B7%201101--79eb3098-8733-472a-9bde-873edd4cd26c%2Fworkspace-deliveries%2F1f2e3654-037f-43bd-800d-810f165d2e2e%2Fcover.png&sha256=0740fe905161db31bae05197e8ef1b11af207f1463930ea474435e5b061e31e0",
+    "text": "封面"
+  },
+  {
+    "href": "http://127.0.0.1:5174/_local-artifact?episode=79eb3098-8733-472a-9bde-873edd4cd26c&path=%E6%9C%AA%E5%88%86%E7%B3%BB%E5%88%97--469c8e63-de75-4f1c-b61e-84929254527f%2F%E8%A7%86%E9%A2%91%20API%20%E9%80%90%E9%A1%B9%E7%9C%9F%E5%AE%9E%E7%94%9F%E6%88%90%20%C2%B7%201101--79eb3098-8733-472a-9bde-873edd4cd26c%2Fworkspace-deliveries%2F1f2e3654-037f-43bd-800d-810f165d2e2e%2Fmetadata.json&sha256=007552e32724c224cd9c289a0455ff8c8f935a525b5f8045d711625de40dff4f",
+    "text": "元数据"
+  },
+  {
+    "href": "http://127.0.0.1:5174/_local-artifact?episode=79eb3098-8733-472a-9bde-873edd4cd26c&path=%E6%9C%AA%E5%88%86%E7%B3%BB%E5%88%97--469c8e63-de75-4f1c-b61e-84929254527f%2F%E8%A7%86%E9%A2%91%20API%20%E9%80%90%E9%A1%B9%E7%9C%9F%E5%AE%9E%E7%94%9F%E6%88%90%20%C2%B7%201101--79eb3098-8733-472a-9bde-873edd4cd26c%2Fworkspace-deliveries%2F1f2e3654-037f-43bd-800d-810f165d2e2e%2Fchecks.json&sha256=6f244861acc16f87645768c8e054889bcb37ef9bc727b47b4f77c1c7a11b3b34",
+    "text": "检查证据"
+  },
+  {
+    "href": "http://127.0.0.1:5174/_local-artifact?episode=79eb3098-8733-472a-9bde-873edd4cd26c&path=%E6%9C%AA%E5%88%86%E7%B3%BB%E5%88%97--469c8e63-de75-4f1c-b61e-84929254527f%2F%E8%A7%86%E9%A2%91%20API%20%E9%80%90%E9%A1%B9%E7%9C%9F%E5%AE%9E%E7%94%9F%E6%88%90%20%C2%B7%201101--79eb3098-8733-472a-9bde-873edd4cd26c%2Fworkspace-deliveries%2F1f2e3654-037f-43bd-800d-810f165d2e2e%2Fmanifest.json&sha256=7b3a831b3b3742f08481e941482d7c735d9bc0b88e1f6900b37959aa9746580e",
+    "text": "交付清单"
+  },
+  {
+    "href": "http://127.0.0.1:5174/_local-artifact?episode=79eb3098-8733-472a-9bde-873edd4cd26c&path=%E6%9C%AA%E5%88%86%E7%B3%BB%E5%88%97--469c8e63-de75-4f1c-b61e-84929254527f%2F%E8%A7%86%E9%A2%91%20API%20%E9%80%90%E9%A1%B9%E7%9C%9F%E5%AE%9E%E7%94%9F%E6%88%90%20%C2%B7%201101--79eb3098-8733-472a-9bde-873edd4cd26c%2Fworkspace-exports%2Fd0a9059f-5baa-4be0-ba20-4ad5aae945c5%2Fb064c33a19e8e2302378eebc1b2a1c4a93f42892f2d0c6ee42b2ea941efa7453.mp4&sha256=b064c33a19e8e2302378eebc1b2a1c4a93f42892f2d0c6ee42b2ea941efa7453",
+    "text": "最终视频"
+  },
+  {
+    "href": "http://127.0.0.1:5174/_local-artifact?episode=79eb3098-8733-472a-9bde-873edd4cd26c&path=%E6%9C%AA%E5%88%86%E7%B3%BB%E5%88%97--469c8e63-de75-4f1c-b61e-84929254527f%2F%E8%A7%86%E9%A2%91%20API%20%E9%80%90%E9%A1%B9%E7%9C%9F%E5%AE%9E%E7%94%9F%E6%88%90%20%C2%B7%201101--79eb3098-8733-472a-9bde-873edd4cd26c%2Fproduction-workspace%2Fversions%2F5403d47d6535bf0ba4689449beb3e453a47a6d6705820e09969ce1fbcb984f45.json&sha256=5403d47d6535bf0ba4689449beb3e453a47a6d6705820e09969ce1fbcb984f45",
+    "text": "可编辑工程"
+  }
+]

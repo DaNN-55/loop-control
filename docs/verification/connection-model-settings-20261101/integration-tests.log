@@ -1,0 +1,19 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/connectionUsage.integration.test.ts (1 test) 2816ms
+   ✓ reads only owned current-version usage through Owner HTTP and caches without touching generation or verification  2816ms
+ ✓ src/local-app/minimaxRegion.integration.test.ts (1 test) 2828ms
+   ✓ rotates MiniMax region through Owner HTTP, freezes the secret, and reads the site without Keychain access  2828ms
+ ✓ src/local-app/connectionModels.integration.test.ts (2 tests) 4244ms
+   ✓ owns, discovers and persists model settings through HTTP, enforces new selections and rejects stale saves  2829ms
+   ✓ rejects in-flight discovery when the current version rotates and keeps settings unchanged on errors  1414ms
+ ✓ src/local-app/productionSelection.integration.test.ts (3 tests) 8228ms
+   ✓ explicit image selections freeze two independent connections without blueprint image authority  4225ms
+   ✓ rejects invalid choices, settings, references and budget; unknown submission cannot charge twice  1962ms
+   ✓ legacy queued image snapshots execute unchanged after content-only saves and new requests still require a selection  2041ms
+
+ Test Files  4 passed (4)
+      Tests  7 passed (7)
+   Start at  12:31:58
+   Duration  9.22s (transform 693ms, setup 68ms, collect 2.79s, tests 18.12s, environment 0ms, prepare 217ms)

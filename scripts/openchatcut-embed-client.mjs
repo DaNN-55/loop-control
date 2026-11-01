@@ -1,3 +1,4 @@
+import {saveProject,flushProjectSaves} from '/src/persist/projectStore.ts';
 import {browserProjectOwnership} from '/src/persist/projectStoreTransport.ts';
 import {applyWorkspaceCandidate,isWorkspaceCandidateEdit,addWorkspaceRegisteredSource} from 'virtual:loop-control-candidates';
 import {applyWorkspaceAudioMix} from 'virtual:loop-control-audio';
@@ -22,6 +23,13 @@ export function useLoopControlHost(projectId,base,agent,panels){
   const revision=useRef(0),reportedWritable=useRef(null);
   const active=parentOrigin&&parent!==window&&channel&&/^[a-f0-9-]{36}$/.test(channel)&&projectId===expectedProject;
   function emit(type,extra={}){if(active)parent.postMessage({type,channel,projectId,...extra},parentOrigin);}
+  async function flushLiveDocument(){
+    if(!await live.current.agent.flushBeforeLeaveRef.current())return false;
+    // React's autosave effect may still hold the previous render. Enqueue the
+    // actual live document through the SDK coordinator before acknowledging it.
+    const document=live.current.base.doc,saved=await saveProject(projectId,document);
+    return saved.status==='saved'&&(await flushProjectSaves(projectId)).ok&&document===live.current.base.doc;
+  }
   useEffect(()=>{
     if(!active)return;
     panels.setChatCollapsed(true);
@@ -46,11 +54,11 @@ export function useLoopControlHost(projectId,base,agent,panels){
           const next=msg.action==='add-registered-source'?addWorkspaceRegisteredSource(doc,msg.asset):msg.action==='apply-audio-mix'?applyWorkspaceAudioMix(doc,msg.edit):msg.action==='apply-candidate'?applyWorkspaceCandidate(doc,msg.edit):msg.action==='apply-captions'?applyWorkspaceCaptionEdit(doc,msg.itemId,msg.contract,{timingOnly:msg.timingOnly===true}):applyWorkspaceShotOperation(migrateWorkspaceCaptionLanes(doc),msg.operation);
           live.current.base.commands.applyDoc(next);
           await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
-          const ok=await live.current.agent.flushBeforeLeaveRef.current();
+          const ok=await flushLiveDocument();
           result(ok,ok?undefined:'原生保存冲突，请保留当前编辑并重试。',ok?{revision:revision.current,documentFingerprint:await digest(live.current.base.doc),document:structuredClone(live.current.base.doc)}:undefined);
         }else if(msg.action==='flush'){
           const doc=live.current.base.doc,next=migrateWorkspaceCaptionLanes(doc);if(JSON.stringify(next)!==JSON.stringify(doc)){live.current.base.commands.applyDoc(next);await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));}
-          const ok=await live.current.agent.flushBeforeLeaveRef.current();
+          const ok=await flushLiveDocument();
           result(ok,ok?undefined:'编辑器仍有未保存修改，请在编辑器中重试保存。');
         }else if(msg.action==='select'){
           const item=live.current.base.state.items.find(i=>i.id===msg.itemId&&(i.kind==='video'||i.kind==='image'||i.kind==='text'&&i.id.startsWith('shot-')));

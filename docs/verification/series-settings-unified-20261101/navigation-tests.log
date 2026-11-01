@@ -1,0 +1,9 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/accounts/AccountWorkspace.test.tsx (24 tests) 1972ms
+
+ Test Files  1 passed (1)
+      Tests  24 passed (24)
+   Start at  20:33:31
+   Duration  3.51s (transform 186ms, setup 7ms, collect 1.13s, tests 1.97s, environment 251ms, prepare 32ms)

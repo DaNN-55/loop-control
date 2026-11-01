@@ -73,7 +73,7 @@ it.skipIf(process.env.LOOP_NATIVE_WAN_ACCEPTANCE!=='1')('native HTTP -> PostgreS
   const login=await fetch(origin+'/api/local/login',{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({email,password})});expect(login.status).toBe(200);
   const headers={Origin:origin,'Content-Type':'application/json',Cookie:login.headers.get('set-cookie')!.split(';')[0],'X-CSRF-Token':(await login.json()).csrfToken};
   const request=async(command:string,data:unknown,key=id())=>{const r=await fetch(origin+'/api/local/episode-commands',{method:'POST',headers,body:JSON.stringify({command,data,idempotencyKey:key})});return{status:r.status,body:await r.json()};};
-  expect((await request('setWanBudget',{episodeId:episode,trialCents:200,totalCents:1500,full:false})).status).toBe(200);
+
   const key=id(),data={episodeId:episode,reviewPackageId:review,shotId:shot.id,firstFrameId:imageId,prompt:shot.productionMethod,durationSeconds:5};
   const first=await request('generateWan',data,key);expect(first.status,JSON.stringify(first.body)).toBe(200);expect(first.body.input_snapshot.output.relative_path).toContain(`/native-tasks/${first.body.id}/`);
   expect((await request('generateWan',data,key)).body.id).toBe(first.body.id);

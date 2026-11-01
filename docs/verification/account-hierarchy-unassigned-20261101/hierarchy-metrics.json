@@ -1,0 +1,44 @@
+{
+  "children": [
+    {
+      "font": "12px",
+      "text": "账号定位",
+      "weight": "400",
+      "x": 367
+    },
+    {
+      "font": "12px",
+      "text": "语气风格",
+      "weight": "400",
+      "x": 367
+    },
+    {
+      "font": "12px",
+      "text": "视觉风格",
+      "weight": "400",
+      "x": 367
+    },
+    {
+      "font": "12px",
+      "text": "限制与禁用内容",
+      "weight": "400",
+      "x": 367
+    }
+  ],
+  "locked": true,
+  "parents": [
+    {
+      "font": "17px",
+      "text": "账号资料标识 doubao-promotion时区 Asia/Shanghai",
+      "weight": "650",
+      "x": 351
+    },
+    {
+      "font": "17px",
+      "text": "创作规则",
+      "weight": "650",
+      "x": 351
+    }
+  ],
+  "unassigned": false
+}
