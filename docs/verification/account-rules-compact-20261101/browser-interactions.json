@@ -1,0 +1,9 @@
+{
+  "addSeriesOpensActualForm": true,
+  "accountMenu": [
+    "重命名",
+    "归档账号",
+    "删除账号"
+  ],
+  "keyboardFocusOutline": "solid"
+}

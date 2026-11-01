@@ -1,0 +1,43 @@
+{
+  "fixture": "in-memory AccountWorkspace; no daily writes or provider requests",
+  "desktop": {
+    "viewport": 1543,
+    "scrollWidth": 1543,
+    "input": {
+      "x": 431,
+      "y": 233.796875,
+      "width": 931,
+      "height": 38
+    },
+    "save": {
+      "x": 1374,
+      "y": 235.796875,
+      "width": 112,
+      "height": 36
+    }
+  },
+  "narrow": {
+    "viewport": 390,
+    "scrollWidth": 390,
+    "input": {
+      "x": 45,
+      "y": 749.296875,
+      "width": 176,
+      "height": 38
+    },
+    "save": {
+      "x": 233,
+      "y": 751.296875,
+      "width": 112,
+      "height": 36
+    }
+  },
+  "supplementVisible": false,
+  "renameReadback": "豆包推广演示",
+  "renameStatus": "系列名称已保存",
+  "tests": {
+    "files": 5,
+    "passed": 57
+  },
+  "appTypecheckExit": 0
+}

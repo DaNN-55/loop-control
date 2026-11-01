@@ -1,0 +1,89 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/platform/configurationForms.test.ts (24 tests) 6ms
+ ✓ src/platform/ConfigurationForms.local.test.tsx (4 tests) 157ms
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 通用规则和系列共享导航，账号目录紧接定位，新建槽和未分系列位于列表后
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 账号名称只从左上角修改，规则草稿在重命名后保留
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 系列沿用空默认值并保留未知规则与账号硬约束
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 用当前配置工作区取代蓝图版本管理
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 在账号操作菜单集中展示信息并支持归档
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 直接编辑并保存当前蓝图
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 保存失败时在确认弹窗中展示错误并保留草稿
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 取消编辑会恢复当前保存值
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 有未保存修改时确认后才切换到系列
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 账号目录独立维护，蓝图只显示内容规则
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 系列页展示版本历史并通过新版本保存
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 系列分组调整后仍保存全部字段，并在底部恢复保存状态
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+
+ ✓ src/ui/PcVisualFixes.test.tsx (5 tests) 860ms
+   ✓ accepts at most 200 title characters before creation and exposes the limit  509ms
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 系列保存失败时错误在弹窗内可见，取消后可撤销草稿
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 系列有未保存修改时也会拦截离开
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 系列有未保存修改时也会拦截离开
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 保留新建系列入口
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 支持重命名账号
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 有生产单时阻止删除账号
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 无生产单时要求输入账号名后才删除
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+
+ ✓ src/accounts/AccountWorkspace.test.tsx (21 tests) 1557ms
+
+ Test Files  4 passed (4)
+      Tests  54 passed (54)
+   Start at  09:13:24
+   Duration  2.83s (transform 326ms, setup 36ms, collect 2.59s, tests 2.58s, environment 951ms, prepare 127ms)

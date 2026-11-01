@@ -45,9 +45,11 @@ it.skipIf(process.env.LOOP_ACCOUNT_WORKSPACE_BROWSER!=='1')('edits account and s
   await browser('find','role','button','click','--name','账号','--exact');
   await browser('wait','--text','通用规则');
   await browser('find','label','账号定位','fill','未保存账号创作规则');
-  await replaceName('input[aria-label=账号名称]','隔离账号改名');
-  const initial=await read();await browser('find','role','button','click','--name','保存账号资料','--exact');
-  await browser('wait','--text','账号资料已保存');
+  await browser('find','role','button','click','--name','账号操作','--exact');
+  await browser('find','role','menuitem','click','--name','重命名','--exact');
+  await replaceName('input[aria-label=账号显示名称]','隔离账号改名');
+  const initial=await read();await browser('find','role','button','click','--name','保存名称','--exact');
+  await browser('wait','--fn',"document.querySelector('[aria-label=重命名账号]') === null");
   const renamed=await read();expect(renamed.accounts[0].name).toBe('隔离账号改名');expect(renamed.blueprints).toEqual(initial.blueprints);
   expect(await browser('eval','document.querySelector(\'[aria-label="账号定位"]\').value')).toContain('未保存账号创作规则');
   await browser('find','role','button','click','--name','隔离系列','--exact');await browser('dialog','dismiss');expect(await browser('eval','document.querySelector(\'[aria-label="账号定位"]\').value')).toContain('未保存账号创作规则');

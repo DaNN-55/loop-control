@@ -1,4 +1,5 @@
 import {XClose} from '@untitledui/icons';
+import {CreativeRuleFields} from './CreativeRuleFields';
 import {Disclosure} from '../ui/dan-ui/components/base/disclosure/disclosure';
 import {TextAreaBase} from '../ui/dan-ui/components/base/textarea/textarea';
 import {InputBase} from '../ui/dan-ui/components/base/input/input';
@@ -46,10 +47,6 @@ const executorLabels = {
 const promptCapabilityOptions: Array<[PromptCapability, string]> = [
   ["storyboard_planning", "分镜规划"],
 ];
-function FieldHint({ children }: { children: ReactNode }) {
-  return <p className="field-hint">{children}</p>;
-}
-
 function FieldLabel({ children, help }: { children: ReactNode; help?: ReactNode }) {
   return <span className="field-label">{children}{help ? <HelpTip label={typeof children === "string" ? children : "字段"}>{help}</HelpTip> : null}</span>;
 }
@@ -148,28 +145,12 @@ function mediaConfigurationLabel(key: MediaAdapterKey): string {
   return key === "static_visual" ? "图片生成" : mediaAdapterConfiguration(key).label;
 }
 
-function readableRuleValue(value: Json): string {
-  if (value === null) return "未配置";
-  if (Array.isArray(value)) return value.map(readableRuleValue).join("、") || "未配置";
-  if (typeof value === "object") return Object.entries(value as Record<string, Json>).map(([key, nestedValue]) => `${key.replaceAll("_", " ")}：${readableRuleValue(nestedValue)}`).join("；") || "未配置";
-  return String(value);
-}
-
-function ReadOnlyAdvancedRules({ source }: { source: string }) {
-  let parsed: unknown;
-  try { parsed = JSON.parse(source); } catch { return null; }
-  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return null;
-  const entries = Object.entries(parsed as Record<string, Json>);
-  if (!entries.length) return null;
-  return <fieldset><legend>其他规则</legend><dl className="configuration-summary blueprint-summary-grid">{entries.map(([key, value]) => <div key={key}><dt>{key.replaceAll("_", " ")}</dt><dd>{readableRuleValue(value)}</dd></div>)}</dl><FieldHint>未单独做成字段的规则也会在这里按键值显示，不使用原始 JSON。</FieldHint></fieldset>;
-}
-
 function externalConnectionProviderLabel(provider:string):string {
  if(isVideoProvider(provider))return videoProviders[provider].label;
  return ({openai:'OpenAI Images',volcengine_tts:'火山语音',pexels:'Pexels',freesound:'Freesound'} as Record<string,string>)[provider]??provider;
 }
 
-export function BlueprintConfigurationForm({ accountLayout = false, footerStatus, saveState, initialPolicy, isPending, onCancel, onDirtyChange, onSave, readOnly = false }: { accountId?: string; accountLayout?: boolean; footerStatus?: ReactNode; saveState?: ReactNode; connectionVersions?: ExternalConnectionVersion[]; externalConnections?: ExternalConnection[]; initialAssetRoot: string; initialPolicy: Json; isEpisodeRepair?: boolean; isPending: boolean; localAdapterReadiness?: LocalAdapterReadiness; onCancel: () => void; onCreateConnection?: (input: ExternalConnectionInput) => Promise<ExternalConnection | null>; onCreatePromptVersion?: (input: { capability: PromptCapability; name: string; summary: string; instructions: string }) => Promise<PromptVersion | null>; onDirtyChange?: (dirty: boolean) => void; onRotateConnection?: (input: { connectionId: string; provider: ExternalConnectionInput["provider"]; adapter: ExternalConnectionInput["adapter"]; secret: string }) => Promise<ExternalConnection | null>; onSave: (policy: Json, activate: boolean) => Promise<void>; onTestConnection?: (connectionId: string) => Promise<unknown>; onUpdateConnection?: (input: { connectionId: string; name: string; description: string }) => Promise<void>; promptVersions?: PromptVersion[]; readOnly?: boolean; systemStatus?: LocalSystemStatusReport | null; technicalOnly?: boolean }) {
+export function BlueprintConfigurationForm({ accountDetails, accountDirectory, accountLayout = false, footerStatus, saveState, initialPolicy, isPending, onCancel, onDirtyChange, onSave, readOnly = false }: { accountDetails?: ReactNode; accountDirectory?: ReactNode; accountId?: string; accountLayout?: boolean; footerStatus?: ReactNode; saveState?: ReactNode; connectionVersions?: ExternalConnectionVersion[]; externalConnections?: ExternalConnection[]; initialAssetRoot: string; initialPolicy: Json; isEpisodeRepair?: boolean; isPending: boolean; localAdapterReadiness?: LocalAdapterReadiness; onCancel: () => void; onCreateConnection?: (input: ExternalConnectionInput) => Promise<ExternalConnection | null>; onCreatePromptVersion?: (input: { capability: PromptCapability; name: string; summary: string; instructions: string }) => Promise<PromptVersion | null>; onDirtyChange?: (dirty: boolean) => void; onRotateConnection?: (input: { connectionId: string; provider: ExternalConnectionInput["provider"]; adapter: ExternalConnectionInput["adapter"]; secret: string }) => Promise<ExternalConnection | null>; onSave: (policy: Json, activate: boolean) => Promise<void>; onTestConnection?: (connectionId: string) => Promise<unknown>; onUpdateConnection?: (input: { connectionId: string; name: string; description: string }) => Promise<void>; promptVersions?: PromptVersion[]; readOnly?: boolean; systemStatus?: LocalSystemStatusReport | null; technicalOnly?: boolean }) {
  const [form,setForm]=useState(()=>blueprintPolicyToForm(initialPolicy));
  const [error,setError]=useState(''),[confirming,setConfirming]=useState(false);
  const initialPolicySource = JSON.stringify(initialPolicy);
@@ -177,8 +158,8 @@ export function BlueprintConfigurationForm({ accountLayout = false, footerStatus
  function reset(){setForm(blueprintPolicyToForm(initialPolicy));setError('');onDirtyChange?.(false);onCancel();}
  async function save(){try{setError('');await onSave(blueprintFormToPolicy(form),true);setConfirming(false);onDirtyChange?.(false);}catch(cause){setError(cause instanceof Error?cause.message:'蓝图规则无法保存。');}}
  return <section className={`configuration-form blueprint-configuration-form${accountLayout?' account-blueprint-form':''}`}>
-  <fieldset id="account-positioning"><legend>账号定位</legend><label><FieldLabel>账号定位与内容方向</FieldLabel><TextAreaBase size="sm" aria-label="账号定位" rows={4} disabled={readOnly} value={form.positioning} onChange={event=>{setForm(current=>({...current,positioning:event.target.value}));onDirtyChange?.(true);}} /></label></fieldset>
-  {readOnly?<ReadOnlyAdvancedRules source={form.advancedJson}/>:<fieldset><legend>创作规则</legend><label><FieldLabel help="以 JSON 对象保存内容边界、语气、视觉风格等创作规则。">创作规则 JSON</FieldLabel><TextAreaBase size="sm" aria-label="创作规则 JSON" rows={8} value={form.advancedJson} onChange={event=>{setForm(current=>({...current,advancedJson:event.target.value}));onDirtyChange?.(true);}} /></label></fieldset>}
+  <fieldset id="account-positioning"><legend>{accountLayout?'账号资料':'账号定位'}</legend>{accountDetails}<label><FieldLabel>账号定位</FieldLabel><TextAreaBase size="sm" aria-label="账号定位" rows={2} disabled={readOnly} value={form.positioning} onChange={event=>{setForm(current=>({...current,positioning:event.target.value}));onDirtyChange?.(true);}} /></label>{accountDirectory}</fieldset>
+  <fieldset><legend>创作规则</legend><CreativeRuleFields source={form.advancedJson} readOnly={readOnly} showDefaults onChange={advancedJson=>{setForm(current=>({...current,advancedJson}));onDirtyChange?.(true);}}/></fieldset>
   {error&&!confirming?<p role="alert" className="form-error">{error}</p>:null}
   {!readOnly?<div className={accountLayout?'account-blueprint-footer':undefined}>{footerStatus}<div className="configuration-actions">{saveState}<Button size="sm" color="secondary" isDisabled={isPending} onPress={reset}>撤销修改</Button><Button size="sm" color="primary" isDisabled={isPending} onPress={()=>{try{blueprintFormToPolicy(form);setError('');setConfirming(true);}catch(cause){setError(cause instanceof Error?cause.message:'创作规则无效。');}}}>{isPending?'保存中…':accountLayout?'保存通用规则':'保存蓝图'}</Button></div></div>:null}
   {confirming?<ConfirmationModal title={accountLayout ? "确认保存通用规则" : "确认保存蓝图"} confirmLabel={accountLayout ? "确认保存通用规则" : "确认保存蓝图"} isPending={isPending} onCancel={()=>setConfirming(false)} onConfirm={save}><p>创作规则应用于之后新建的生产单；已有生产单保留原规则。</p>{error?<p role="alert" className="form-error">{error}</p>:null}</ConfirmationModal>:null}
@@ -292,7 +273,7 @@ export function SeriesConfigurationForm({ headingContent, accountPolicy, current
   const accountDefaults = seriesRulesToForm(accountPolicy ?? {});
   const inheritedPlaceholder = (key: keyof SeriesFormValues) => accountPolicy === undefined ? undefined : accountDefaults[key] || "沿用账号通用规则";
   return <><header className="series-configuration-heading"><h2>{isEditing ? <>{initialName}<span className="series-current-version"> · 当前 v{currentVersion}</span></> : "新建系列"}</h2>{headingContent}</header><form className="configuration-form series-configuration-form" onChangeCapture={() => {setDirty(true); onDirtyChange?.(true);}} onSubmit={requestSubmit}>
-    {accountPolicy !== undefined ? <details className="series-account-rules"><summary>继承账号通用规则 · 账号硬约束始终生效</summary><p>空字段沿用账号默认值；填写字段仅覆盖对应创作偏好，限制与禁用内容叠加生效。</p><dl><dt>账号定位</dt><dd>{accountDefaults.positioning || "未设置"}</dd><dt>账号硬约束始终生效</dt><dd><pre>{JSON.stringify(accountPolicy, null, 2)}</pre></dd></dl></details> : null}
+    {accountPolicy !== undefined ? <details className="series-account-rules"><summary>继承账号通用规则 · 账号硬约束始终生效</summary><dl><dt>账号定位</dt><dd>{accountDefaults.positioning || "未设置"}</dd><dt>账号硬约束始终生效</dt><dd><CreativeRuleFields source={blueprintPolicyToForm(accountPolicy).advancedJson} readOnly onChange={()=>{}}/></dd></dl></details> : null}
     {!isEditing ? <div className="series-name-field"><label><FieldLabel help="名称可独立修改；规则保存为新版本。">系列名称</FieldLabel><InputBase size="sm" aria-label="系列名称" onChange={(event) => setName(event.target.value)} placeholder="例如：城市观察短片" isRequired value={name} /></label></div> : null}
     <fieldset><legend><FieldLabel help="系列的固定受众、主题和制作格式。">内容方向</FieldLabel></legend>
       <label><FieldLabel>系列定位</FieldLabel><TextAreaBase size="sm" aria-label="系列定位" onChange={(event) => setForm((current) => ({ ...current, positioning: event.target.value }))} placeholder={inheritedPlaceholder("positioning") ?? "受众、主题与内容方向"} rows={2} value={form.positioning} /></label>
@@ -303,9 +284,8 @@ export function SeriesConfigurationForm({ headingContent, accountPolicy, current
       ['locations', '地点设定', '地点、环境与时代背景'],
       ['visualStyle', '视觉风格', '画面质感、色彩与镜头语言'],
       ['narrativeStructure', '叙事结构', '开场、展开与结尾'],
-    ] as const).map(([key, label, placeholder]) => <label key={key}><FieldLabel>{label}</FieldLabel><TextAreaBase size="sm" aria-label={label} onChange={(event) => setForm((current) => ({...current, [key]: event.target.value}))} placeholder={inheritedPlaceholder(key) ?? placeholder} rows={3} value={form[key]} /></label>)}</div></fieldset>
+    ] as const).map(([key, label, placeholder]) => <label key={key}><FieldLabel>{label}</FieldLabel><TextAreaBase size="sm" aria-label={label} onChange={(event) => setForm((current) => ({...current, [key]: event.target.value}))} placeholder={inheritedPlaceholder(key) ?? placeholder} rows={2} value={form[key]} /></label>)}</div></fieldset>
     <fieldset><legend>限制与禁用内容</legend><label><TextAreaBase size="sm" aria-label="限制与禁用内容" onChange={(event) => setForm((current) => ({ ...current, restrictions: event.target.value }))} placeholder={inheritedPlaceholder("restrictions") ?? "不能出现的事实、表达、人物、素材或画面"} rows={2} value={form.restrictions} /></label></fieldset>
-    <details className="series-advanced-rules"><summary>高级规则</summary><label><FieldLabel>系列扩展规则 JSON</FieldLabel><TextAreaBase size="sm" aria-label="系列扩展规则 JSON" rows={6} value={form.advancedJson ?? "{}"} onChange={event=>setForm(current=>({...current,advancedJson:event.target.value}))}/></label></details>
     {error && !saveConfirmationOpen ? <p className="form-error" role="alert">{error}</p> : null}
     <footer className="series-form-footer"><span className={`account-save-state${dirty ? " is-dirty" : ""}`} role="status">{isPending ? "保存中…" : dirty ? "有未保存更改" : isEditing ? "已保存" : "未创建"}</span><div className="configuration-actions"><Button size="sm" color="secondary" className="button button-secondary" isDisabled={isPending} onClick={reset} type="button">{isEditing ? "撤销修改" : "取消"}</Button><Button size="sm" color="primary" className="button button-primary" isDisabled={isPending} type="submit">{isPending ? "保存中…" : isEditing ? `保存为 v${currentVersion + 1}` : "创建系列"}</Button></div></footer>
     {saveConfirmationOpen ? <ConfirmationModal confirmLabel={isEditing ? `确认保存为 v${currentVersion + 1}` : "确认创建系列"} isPending={isPending} onCancel={() => setSaveConfirmationOpen(false)} onConfirm={confirmSubmit} pendingLabel="保存中…" title={isEditing ? "确认保存系列版本" : "确认创建系列"}>{error ? <p className="form-error" role="alert">{error}</p> : null}<section aria-label="本次保存影响" className="configuration-impact"><p>{isEditing ? `创建系列 v${currentVersion + 1}，供之后新建生产单选择；已有生产单继续使用冻结版本。` : "创建系列 v1，之后可在新建生产单时选择；不会改动已有生产单。"}</p></section></ConfirmationModal> : null}

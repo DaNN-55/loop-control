@@ -1,0 +1,14 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/platform/configurationForms.test.ts (24 tests) 11ms
+ ✓ src/accounts/AccountDirectoryPanel.test.tsx (3 tests) 107ms
+ ✓ src/platform/ConfigurationForms.local.test.tsx (4 tests) 224ms
+ ✓ src/ui/PcVisualFixes.test.tsx (5 tests) 1415ms
+   ✓ accepts at most 200 title characters before creation and exposes the limit  907ms
+ ✓ src/accounts/AccountWorkspace.test.tsx (21 tests) 1932ms
+
+ Test Files  5 passed (5)
+      Tests  57 passed (57)
+   Start at  09:35:35
+   Duration  3.47s (transform 423ms, setup 50ms, collect 3.92s, tests 3.69s, environment 1.57s, prepare 202ms)

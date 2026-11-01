@@ -1,0 +1,8 @@
+{
+  "src/accounts/AccountDirectoryPanel.tsx": "c9abb65bfaac8e02cea75caddd8f5fae639b07b2a70dd91a5d279cd6c2bc5dfb",
+  "src/accounts/AccountDirectoryPanel.test.tsx": "928ebf08ea9698f2930c3d212c317e9dce8791d16008a147465e6683f76a645f",
+  "src/accounts/AccountWorkspace.tsx": "43851ff3981020e5e3c889783a7ac24185620a03031337f58c3d6285146ae12b",
+  "src/accounts/AccountWorkspace.test.tsx": "f6d49f15151bfb650c9f82e0c12ce7896509cc1d17836ed642fda1b357966192",
+  "src/platform/ConfigurationForms.tsx": "b252175de53a64af19332e2bcb311d8a9887c56b69b6250bf71dd358b14fa6f5",
+  "src/ui/impeccable/configuration.css": "58a04e52c45ddab0f9b45d47815e86152a8dc2484f45bc5c5ee6a499b1798c8e"
+}

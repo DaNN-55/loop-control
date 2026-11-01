@@ -1,0 +1,11 @@
+{
+  "src/accounts/AccountWorkspace.tsx": "cf7ad0cd0ba63dbab289c52d40eb29a92f6b1c39e36fbbf7497bb9cd29a50c4e",
+  "src/accounts/AccountWorkspace.test.tsx": "e9000900907adcf483005bbfd9a19e4bd98aed62b5d86cda227fc39809948f03",
+  "src/platform/ConfigurationForms.tsx": "b5a857a0e2bf3131039c7e0f9ffdf81d9ac16c967f04f63095037ca4059aba52",
+  "src/platform/CreativeRuleFields.tsx": "a2f31ee3c98c7416b42d39e8b89fa71f72675f6d6222d84b0742ba7b2103808c",
+  "src/platform/ConfigurationForms.local.test.tsx": "a00ad61111ec7ad2ce26bf711ffb45064390c38465f5bc05faa231000d8fc85f",
+  "src/ui/impeccable/configuration.css": "29b4c4cafa7f826c036c141be54f96fa26c19bfd57da54e9d22290300a0b09c4",
+  "src/ui/PcVisualFixes.test.tsx": "19b40b635f8944592da35d6a8eea3906213926a321c75f13fcd033394f097421",
+  "src/local-app/accountCreation.browser.integration.test.ts": "40b23707798a6cb1cab4752d3aa722366ed9a1d8fb1a010db36735ddff15bc34",
+  "src/local-app/accountWorkspace.browser.integration.test.ts": "35e293391afafa8304fb4b3acf1a89f68c510d5a1af4d2f7415f6572fabd3537"
+}
