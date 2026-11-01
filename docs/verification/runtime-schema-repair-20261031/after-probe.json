@@ -1,0 +1,12 @@
+{
+  "ready": true,
+  "pending": [],
+  "relations": {
+    "pexelsRequests": "local_identity.workspace_pexels_requests",
+    "episodeLocations": "local_identity.episode_asset_locations",
+    "accountDirectories": "local_identity.account_asset_directories",
+    "planningSelections": "local_identity.episode_planning_selections",
+    "episodeRootFunction": "local_identity.episode_asset_root(uuid)"
+  },
+  "integrity": true
+}

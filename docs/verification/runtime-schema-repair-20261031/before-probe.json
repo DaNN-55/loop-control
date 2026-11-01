@@ -1,0 +1,23 @@
+{
+  "ready": false,
+  "pending": [
+    "100-production-request-selection.sql",
+    "101-production-video-selection.sql",
+    "102-workspace-pexels.sql",
+    "103-workspace-speech-selection.sql",
+    "104-production-audio-selection.sql",
+    "105-account-asset-directories.sql",
+    "106-account-directory-migrations.sql",
+    "107-retire-blueprint-reviews.sql",
+    "108-content-blueprint-preparation-selection.sql",
+    "109-workspace-generation-deletion.sql"
+  ],
+  "relations": {
+    "pexelsRequests": null,
+    "episodeLocations": null,
+    "accountDirectories": null,
+    "planningSelections": null,
+    "episodeRootFunction": null
+  },
+  "integrity": true
+}

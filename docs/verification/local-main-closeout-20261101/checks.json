@@ -1,0 +1,23 @@
+{
+  "branch": "main",
+  "base": "409bbd14",
+  "sourceCommits": [
+    "3046296e34e214dabbb248ad040ae6ec47dd2963",
+    "34fbdf5045a7c33327e039576102aca389fef05e"
+  ],
+  "defaultTests": {
+    "files": 180,
+    "passed": 1167,
+    "failed": 0
+  },
+  "appTypecheckExit": 0,
+  "nodeTypecheckExit": 0,
+  "worktrees": 1,
+  "localBranches": [
+    "main"
+  ],
+  "dailyServicePid": 60109,
+  "dailyPort": 5174,
+  "pushed": false,
+  "logsTrailingBlankLinesNormalized": true
+}

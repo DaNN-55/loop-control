@@ -1,0 +1,10 @@
+{
+  "originalEpisode": "3bf59fde-cf0b-47e1-990e-d7034cfbcfb3",
+  "titleVisible": true,
+  "workflowVisible": true,
+  "serviceErrorVisible": false,
+  "worker": "online-idle",
+  "servicePidBefore": 71478,
+  "servicePidAfter": 71478,
+  "agentCreatedVerificationTabClosed": true
+}
