@@ -1,3 +1,5 @@
+import {cacheBundledStudioSounds} from './openchatcutBundledSounds.js';
+import {openChatCutBundledSounds,bundledSoundRuntimeSource} from '../openchatcutBundledSounds.js';
 import type {EpisodeFileIO} from '../local-app/episodeFiles.js';
 import {safeAssetOutputPath} from "./controlledMediaExecutor.js";
 import { createHash, randomUUID } from "node:crypto";
@@ -243,10 +245,15 @@ async function openStudioDocument(assetRoot:string,episodeId:string,project:Open
   await safeAssetOutputPath(root,`${options.storage?.relativePath??`episodes/${episodeId}`}/openchatcut-work/current/runtime/media/uploads/.probe`);
   const uploadDir = join(dataDir, "media", "uploads");
   await mkdir(uploadDir, { recursive: true });
-  const reverseSources = new Map<string, string>(recoverStored?Object.entries(storedMetadata!.reverseSources):[]);
+  const reverseSources = new Map<string, string>(recoverStored?Object.entries(storedMetadata!.reverseSources):Object.entries(storedMetadata?.reverseSources??{}).filter(([source])=>source.startsWith('/media/uploads/lc-sfx-')));
+  const bundledSdkRoot=runtimeConfig.root?.trim()||process.env.OPENCHATCUT_ROOT?.trim();
+  if(!bundledSdkRoot)throw Error('未配置 OPENCHATCUT_ROOT，无法准备内置音效。');
+  await cacheBundledStudioSounds(root,options.storage?.relativePath??`episodes/${episodeId}`,dataDir,bundledSdkRoot,reverseSources,options.storage);
+  await writeFile(await safeAssetOutputPath(root,relative(root,join(dataDir,'loop-bundled-sounds.json'))),JSON.stringify(Object.fromEntries(Object.entries(openChatCutBundledSounds).map(([id,sound])=>[id,bundledSoundRuntimeSource(sound.sha256)]))));
   sourcePaths = [...new Set(sourcePaths)];
   const copiedProject = structuredClone(project);
   for (const sourceRelativePath of sourcePaths) {
+    if([...reverseSources].some(([remote,original])=>remote.startsWith('/media/uploads/lc-sfx-')&&original===sourceRelativePath))continue;
     const source = options.storage?await options.storage.resolveReference(sourceRelativePath):resolve(root, sourceRelativePath);
     if (!isDescendant(root, source)) throw new Error("OpenChatCut 素材路径超出生产单资产根。");
     const targetName = `${createHash("sha256").update(sourceRelativePath).digest("hex").slice(0, 20)}${extname(sourceRelativePath).toLowerCase()}`;
@@ -349,7 +356,7 @@ export async function freezeOpenChatCutStudio(assetRoot: string, episodeId: stri
 async function assertStudioWorkspace(root: string, episodeId: string, projectId: string,episodeRelativePath=`episodes/${episodeId}`) {
   if (!/^[0-9a-f-]{36}$/i.test(episodeId)) throw new Error("Studio Episode 标识无效。");
   const prefix = `${episodeRelativePath}/openchatcut-work/current`;
-  for (const suffix of ["project.json", "workspace.json", "generated-project.json", "runtime/project-store-v1.json", "runtime/project-store-v1.sqlite3", "runtime/project-store-v1.sqlite3.receipt.json", "runtime/.loop-control-studio-process.json", "runtime/project-store-v1.sqlite3-wal", "runtime/project-store-v1.sqlite3-shm", `runtime/project-store-v1/${encodeURIComponent(`project:${projectId}`)}.json`, "runtime/project-store-v1/.ready", "runtime/media/uploads/.probe"]) {
+  for (const suffix of ["project.json", "workspace.json", "generated-project.json", "runtime/project-store-v1.json", "runtime/loop-bundled-sounds.json", "runtime/project-store-v1.sqlite3", "runtime/project-store-v1.sqlite3.receipt.json", "runtime/.loop-control-studio-process.json", "runtime/project-store-v1.sqlite3-wal", "runtime/project-store-v1.sqlite3-shm", `runtime/project-store-v1/${encodeURIComponent(`project:${projectId}`)}.json`, "runtime/project-store-v1/.ready", "runtime/media/uploads/.probe"]) {
     const path = resolve(root, `${prefix}/${suffix}`);
     if(!isDescendant(root,path))throw Error("Studio 工作路径无效。");
     try { const stat = await lstat(path); if (await realpath(path)!==path || !stat.isFile() || stat.nlink !== 1) throw new Error("Studio 工作文件不是安全普通文件。"); }

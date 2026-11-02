@@ -1,6 +1,10 @@
+import type {OpenChatCutRuntimeConfig} from '../worker/openchatcutStudio.js';
+import {openChatCutBundledSounds,openChatCutBundledSoundVersion,bundledSoundMaterialName} from '../openchatcutBundledSounds.js';
+import {readTrustedBundledSound} from '../worker/openchatcutBundledSounds.js';
+import {episodeFileIO,verifyEpisodeFile} from './episodeFiles.js';
+import {snapshotInput} from './localFiles.js';
 import type {PoolClient} from 'pg';
 import {ConfigurationError} from './configurationCommands.js';
-import {verifyEpisodeFile} from './episodeFiles.js';
 /** One trust boundary for native document paths: never promote a task artifact to a fake material. */
 export async function resolveWorkspaceSource(c:PoolClient,root:string,episodeId:string,path:string){
  try{
@@ -16,4 +20,22 @@ export async function resolveWorkspaceSource(c:PoolClient,root:string,episodeId:
  if(!artifact)throw new ConfigurationError(409,'工程引用了未注册的本期素材或已完成任务产物。');
  await verifyEpisodeFile(c,root,episodeId,path,artifact.sha256,Number(artifact.file_size));return{...artifact,registration:'task_artifact' as const};
  }catch(error){if(error instanceof ConfigurationError)throw error;throw new ConfigurationError(409,'已用素材缺失或指纹已变化，请检查原文件。');}
+}
+
+/** Accept only a pinned bundled sound at this episode's exact material coordinate. */
+export async function registerWorkspaceBundledSound(c:PoolClient,root:string,episodeId:string,path:string,config:OpenChatCutRuntimeConfig){
+ const entry=Object.entries(openChatCutBundledSounds).find(([id,sound])=>path.endsWith(`/materials/${sound.sha256}-${bundledSoundMaterialName(id)}`));
+ if(!entry)return;
+ const io=await episodeFileIO(c,root,episodeId,true);
+ if(path!==`${io.relativePath}/materials/${entry[1].sha256}-${bundledSoundMaterialName(entry[0])}`)return;
+ const[id,sound]=entry,origin=`openchatcut-bundled/${openChatCutBundledSoundVersion}/${sound.sha256}/${bundledSoundMaterialName(id)}`;
+ const registered=(await c.query('SELECT id,storage_path,sha256,file_size,source_path FROM public.production_material_revisions WHERE episode_id=$1 AND storage_path=$2',[episodeId,path])).rows[0];
+ if(registered){
+  if(registered.sha256!==sound.sha256||Number(registered.file_size)!==sound.fileSize)throw new ConfigurationError(409,'内置音效来源证据已变化。');
+  await verifyEpisodeFile(c,root,episodeId,path,sound.sha256,sound.fileSize);return;
+ }
+ const sdkRoot=config.root?.trim()||process.env.OPENCHATCUT_ROOT?.trim();if(!sdkRoot)throw new ConfigurationError(409,'内置音效库不可用，请恢复当前 Studio 安装后重试。');
+ let bytes:Buffer;try{bytes=await readTrustedBundledSound(sdkRoot,id);}catch{throw new ConfigurationError(409,'内置音效文件不可用或指纹已变化，请恢复当前 Studio 安装后重试。');}
+ await io.assertValid();const file=await snapshotInput(root,episodeId,{sourceKind:'file',sourcePath:bundledSoundMaterialName(id),contentBase64:bytes.toString('base64')},io.relativePath);await io.assertValid();
+ await c.query("SELECT public.import_production_material($1,'audio','file',$2,$3,'audio/mpeg',$4,$5,false,'sound_effect')",[episodeId,origin,file.storagePath,sound.sha256,sound.fileSize]);
 }

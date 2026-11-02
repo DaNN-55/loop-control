@@ -1,0 +1,11 @@
+{
+  "correlation": 0.9999839016025235,
+  "codecPrimingSamples": 2048,
+  "codecPrimingMs": 42.666666666666664,
+  "gainRatio": 0.998720258445562,
+  "sampleRate": 48000,
+  "sourceInFrame": 3,
+  "startFrame": 12,
+  "durationInFrames": 24,
+  "volume": 0.4
+}

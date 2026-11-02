@@ -18,7 +18,7 @@ import {executeWorkspaceDelivery,readWorkspaceDeliveries} from './workspaceDeliv
 import {workspaceDeliveryFields} from '../workspaceDelivery.js';
 import {migrateWorkspaceCaptionLanes} from '../workspaceCaptions.js';
 import {applyWorkspaceShotOperation,isWorkspaceShotOperation,synchronizeWorkspaceBindings,withWorkspaceShotMetadata,workspaceShotIdentity} from '../workspaceShots.js';
-import {resolveWorkspaceSource} from './workspaceSources.js';
+import {resolveWorkspaceSource,registerWorkspaceBundledSound} from './workspaceSources.js';
 import {executeWorkspaceNarration,readWorkspaceNarration} from './workspaceNarration.js';
 import type {InputRuntime} from './episodeCommands.js';
 import {executeWorkspaceExport,readWorkspaceExports,usedWorkspaceContent} from './workspaceExportCommands.js';
@@ -285,7 +285,8 @@ export async function readWorkspaceVersion(c:PoolClient,root:string,episodeId:st
 }
 
 export async function validateWorkspaceProject(c:PoolClient,root:string,episodeId:string,doc:OpenChatCutProject,config:OpenChatCutRuntimeConfig,previousProject?:OpenChatCutProject,observation?:OpenChatCutProjectObservation){
-   const used=usedWorkspaceContent(doc),effective=(item:Record<string,unknown>)=>item.kind==='video'||item.kind==='image';
+   const used=usedWorkspaceContent(doc);for(const path of used.paths)await registerWorkspaceBundledSound(c,root,episodeId,path,config);
+   const effective=(item:Record<string,unknown>)=>item.kind==='video'||item.kind==='image';
    if(!used.items.some(effective)&&((previousProject&&usedWorkspaceContent(previousProject).items.some(effective))||!used.items.some(item=>item.kind==='text'&&workspaceShotIdentity(item))))throw new ConfigurationError(409,'不能删除最后一个有效镜头；请在当前编辑器中恢复画面后重试保存。');
    for(const asset of doc.assets)if(!previousProject?.assets.some(a=>a.id===asset.id&&a.src===asset.src))await resolveWorkspaceSource(c,root,episodeId,asset.src);
    const sources=used.paths;
