@@ -16,8 +16,9 @@ import {hashPassword} from './password';
 import {csrfFor,tokenHash} from './sessions';
 
 it.skipIf(process.env.LOOP_SECRET_ACCEPTANCE!=='1')('admin secret boundaries, metadata, password, audit and immutable references through HTTP/PG',async()=>{
- const modulePath=join(process.cwd(),'scripts/runtime/environment.mjs'),{runtimeContext}=await import(modulePath),context=runtimeContext();context.assertDatabase();
- const testDatabase='loop_secret_test_'+randomBytes(8).toString('hex');context.sql('CREATE DATABASE '+testDatabase+' TEMPLATE template0','postgres');
+ if(!process.env.LOOP_TEST_CONTEXT_MODULE)throw Error('Isolated test context is required');
+ const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MODULE),context=runtimeContext();if(context.dailyRuntime!==false)throw Error('Daily runtime is forbidden');context.assertDatabase();
+ const testDatabase='loop_secret_test_'+randomBytes(6).toString('hex');context.sql('CREATE DATABASE '+testDatabase+' TEMPLATE template0','postgres');
  try{const schema=context.docker(['exec',context.container,'pg_dump','-U','postgres','-d',context.database,'--schema-only']);context.sql(schema,testDatabase);}catch{context.sql('DROP DATABASE '+testDatabase+' WITH (FORCE)','postgres');throw Error('Isolated schema setup failed');}
  const bridge=spawn('docker',['exec','-i',context.container,'perl','-MIO::Socket::UNIX','-MIO::Select','-MSocket=SOCK_STREAM','-e',"my $s=IO::Socket::UNIX->new(Type=>SOCK_STREAM,Peer=>'/var/run/postgresql/.s.PGSQL.5432') or die 'socket'; my $sel=IO::Select->new(\\*STDIN,$s); while(1){for my $f($sel->can_read){my $n=sysread($f,my $b,65536);exit unless $n;my $o=fileno($f)==0?$s:\\*STDOUT;while(length $b){my $w=syswrite($o,$b);die 'write' unless $w;substr($b,0,$w,'');}}}"],{env:context.env,stdio:['pipe','pipe','pipe']});
  const stream=Duplex.from({readable:bridge.stdout!,writable:bridge.stdin!});
@@ -26,8 +27,9 @@ it.skipIf(process.env.LOOP_SECRET_ACCEPTANCE!=='1')('admin secret boundaries, me
  const password='synthetic-only-'+id(),value='fixture-only-'+id(),token=randomBytes(32).toString('hex'),otherToken=randomBytes(32).toString('hex'),expired=randomBytes(32).toString('hex');
  const fixture=mkdtempSync('/private/tmp/loop-secret-test-'),runtime=join(fixture,'.loop-control/local');mkdirSync(join(runtime,'history/content'),{recursive:true,mode:0o700});
  writeFileSync(join(runtime,'secret-index.json'),JSON.stringify({version:1,entries:{'test-named':{reference},'control-alias':{reference:alias}},referenceAliases:{[alias]:control,[oldAlias]:reference}}),{mode:0o600});
+ const values=new Map([[reference,value],[unnamed,value]]);
  let calls=0,unavailable=false;
- const store={async get(ref:string){calls++;if(unavailable)throw Error('private helper failure: '+value);if(ref!==reference&&ref!==unnamed)throw Error('Unknown fixture');return value;}};
+ const store={async get(ref:string){calls++;if(unavailable)throw Error('private helper failure: '+value);if(!values.has(ref))throw Error('Unknown fixture');return values.get(ref)!;}};
  const scoped={async query(sql:string,values?:unknown[]){if(sql.startsWith('BEGIN'))return c.query('SAVEPOINT secret_request');if(sql==='COMMIT')return c.query('RELEASE SAVEPOINT secret_request');if(sql==='ROLLBACK'){await c.query('ROLLBACK TO SAVEPOINT secret_request');return c.query('RELEASE SAVEPOINT secret_request');}return c.query(sql,values);},release(){}} as unknown as PoolClient;
  const pool={query:(sql:string,values?:unknown[])=>c.query(sql,values),connect:async()=>scoped} as unknown as Pool;
  let handler:ReturnType<typeof createLocalHandler>;const server=createServer((q,r)=>handler(q,r));
@@ -40,6 +42,12 @@ it.skipIf(process.env.LOOP_SECRET_ACCEPTANCE!=='1')('admin secret boundaries, me
   await c.query("INSERT INTO public.external_connections(id,provider,adapter,name,created_by,current_version_id,endpoint) VALUES($1,'pexels','pexels_video','Unindexed fixture',$2,$3,'https://api.pexels.com/videos/search')",[connection,other,version]);
   await c.query("INSERT INTO public.external_connection_versions(id,connection_id,version,provider,adapter,endpoint,vault_secret_id) VALUES($1,$2,1,'pexels','pexels_video','https://api.pexels.com/videos/search',$3)",[version,connection,unnamed]);
   await c.query("INSERT INTO local_identity.connection_bindings(version_id,owner_id,secret_ref,store_mode) VALUES($1,$2,$3,'keychain')",[version,other,unnamed]);
+  const oldTwo=id(),oldTen=id(),namedConnection=id(),currentVersion=id();values.set(oldTwo,'synthetic-version-2');values.set(oldTen,'synthetic-version-10');
+  await c.query("INSERT INTO public.external_connections(id,provider,adapter,name,created_by,current_version_id,endpoint) VALUES($1,'pexels','pexels_video','合成版本连接',$2,$3,'https://api.pexels.com/videos/search')",[namedConnection,owner,currentVersion]);
+  for(const [versionNumber,ref,versionId]of [[2,oldTwo,id()],[10,oldTen,id()],[3,reference,currentVersion]] as const){
+   await c.query("INSERT INTO public.external_connection_versions(id,connection_id,version,provider,adapter,endpoint,vault_secret_id) VALUES($1,$2,$3,'pexels','pexels_video','https://api.pexels.com/videos/search',$4)",[versionId,namedConnection,versionNumber,ref]);
+   await c.query("INSERT INTO local_identity.connection_bindings(version_id,owner_id,secret_ref,store_mode) VALUES($1,$2,$3,'keychain')",[versionId,owner,ref]);
+  }
   const source=createHash('sha256').update(id()).digest('hex'),content=Buffer.from('restorable keychain:'+oldAlias),sha=createHash('sha256').update(content).digest('hex');
   writeFileSync(join(runtime,'history/content',sha),content,{mode:0o600});
   await c.query("INSERT INTO local_identity.history_sources(id,owner_id,kind,label) VALUES($1,$2,'test','Fixture')",[source,other]);
@@ -63,7 +71,8 @@ it.skipIf(process.env.LOOP_SECRET_ACCEPTANCE!=='1')('admin secret boundaries, me
   expect(listing.body.items.find((x:{reference:string})=>x.reference===control).revealAllowed).toBe(false);
   const counts=listing.body.categoryCounts;expect(counts.system).toBeGreaterThan(0);expect(Object.values(counts as Record<string,number>).reduce((total,n)=>total+n,0)).toBe(listing.body.total);expect((await request('secrets?q=absent&category=history')).body.categoryCounts).toEqual(counts);
   const detail=await request('secrets/detail?reference='+reference);expect(detail.status).toBe(200);expect(detail.body.item.history.metadataOccurrences).toBe(1);expect(detail.body.item.history.fileOccurrences).toBe(1);expect(JSON.stringify(detail.body).includes(value)).toBe(false);
-  expect((await request('secrets?q=test-named&category=history')).body.total).toBe(1);
+  expect((await request('secrets?q=test-named&category=connection')).body.total).toBe(1);
+  expect(listing.body.items.filter((row:{connections:{name:string}[]})=>row.connections.some(use=>use.name==='合成版本连接')).map((row:{reference:string})=>row.reference)).toEqual([reference,oldTen,oldTwo]);
   expect((await request('secrets/reveal',payload(),token,false)).status).toBe(403);expect(calls).toBe(0);
   expect((await request('secrets/reveal',payload(),expired)).status).toBe(401);
   const reset=async()=>{await c.query('SET SESSION AUTHORIZATION DEFAULT');await c.query('DELETE FROM local_identity.secret_access_windows WHERE owner_id=$1',[owner]);await c.query('SET SESSION AUTHORIZATION loop_app');};
@@ -75,11 +84,15 @@ it.skipIf(process.env.LOOP_SECRET_ACCEPTANCE!=='1')('admin secret boundaries, me
   expect((await request('secrets/reveal',payload())).status).toBe(429);expect(calls).toBe(0);await reset();
   expect((await request('secrets/reveal',payload(reference,'incorrect'))).status).toBe(403);expect(calls).toBe(0);
   for(const action of ['view','copy']){const r=await request('secrets/reveal',payload(reference,password,action));expect(r.status).toBe(200);expect(r.body.value===value).toBe(true);expect(r.headers.get('cache-control')).toContain('no-store');}
+  await reset();
+  for(const [ref,expected]of [[oldTen,'synthetic-version-10'],[oldTwo,'synthetic-version-2']]){const response=await request('secrets/reveal',payload(ref));expect(response.status).toBe(200);expect(response.body.value).toBe(expected);}
   unavailable=true;const failure=await request('secrets/reveal',payload());expect(failure.status).toBe(503);expect(JSON.stringify(failure.body).includes(value)).toBe(false);unavailable=false;
   await reset();
   // The password digest is read live, even for an already-established session.
   await c.query('SET SESSION AUTHORIZATION DEFAULT');
-  const updatedPassword='new-synthetic-only-'+id();await c.query('UPDATE local_identity.credentials SET password_digest=$1 WHERE owner_id=$2',[await hashPassword(updatedPassword),owner]);await c.query('SET SESSION AUTHORIZATION loop_app');
+  const updatedPassword='synthetic-browser-password';await c.query('SET SESSION AUTHORIZATION loop_app');
+  expect((await request('password',{password:'too-short'})).status).toBe(400);
+  expect((await request('password',{password:updatedPassword})).status).toBe(200);
   expect((await request('secrets/reveal',payload())).status).toBe(403);
   expect((await request('secrets/reveal',payload(reference,updatedPassword))).status).toBe(200);
   await reset();
@@ -90,6 +103,7 @@ it.skipIf(process.env.LOOP_SECRET_ACCEPTANCE!=='1')('admin secret boundaries, me
   expect((await request('secrets/reveal',payload(reference,'incorrect'))).status).toBe(403);
   expect((await request('secrets/reveal',payload(reference,updatedPassword))).status).toBe(429);
   await c.query('SET SESSION AUTHORIZATION DEFAULT');await c.query('UPDATE local_identity.credentials SET failed_attempts=0,locked_until=NULL WHERE owner_id=$1',[owner]);await c.query('SET SESSION AUTHORIZATION loop_app');await reset();
+  if(process.env.LOOP_SECRET_BROWSER_MODULE){const {review}=await import(process.env.LOOP_SECRET_BROWSER_MODULE);await review({server,token,origin,csrf:csrfFor(token)});await reset();}
   // Recheck session expiry after the Keychain boundary, before any plaintext response.
   const lateService=new SecretAdministration(pool,{adminOwnerId:owner,runtimeRoot:runtime,controlReferences:[]},{async get(){await c.query('SET SESSION AUTHORIZATION DEFAULT');await c.query("UPDATE local_identity.sessions SET expires_at=clock_timestamp()-interval '1 second' WHERE token_hash=$1",[tokenHash(token)]);await c.query('SET SESSION AUTHORIZATION loop_app');return value;}});
   handler=createLocalHandler({pool,origin,mediaRoot:fixture,secrets:lateService});const late=await request('secrets/reveal',payload(reference,updatedPassword));expect(late.status).toBe(401);expect(JSON.stringify(late.body).includes(value)).toBe(false);
@@ -101,4 +115,4 @@ it.skipIf(process.env.LOOP_SECRET_ACCEPTANCE!=='1')('admin secret boundaries, me
   for(const role of ['loop_owner','loop_worker']){await c.query('SAVEPOINT role_boundary');await c.query('SET SESSION AUTHORIZATION '+role);let denied=false;try{await c.query('SELECT local_identity.secret_reference_inventory($1)',[tokenHash(otherToken)]);}catch{denied=true;}expect(denied).toBe(true);await c.query('ROLLBACK TO SAVEPOINT role_boundary');await c.query('SET SESSION AUTHORIZATION DEFAULT');}
   for(const op of ['SELECT * FROM','UPDATE','DELETE FROM']){await c.query('SAVEPOINT audit_boundary');await c.query('SET SESSION AUTHORIZATION loop_app');let denied=false;try{await c.query(op+' local_identity.secret_access_audit'+(op==='UPDATE'?" SET reason='changed'":''));}catch{denied=true;}expect(denied).toBe(true);await c.query('ROLLBACK TO SAVEPOINT audit_boundary');await c.query('SET SESSION AUTHORIZATION DEFAULT');}
  }finally{server.closeAllConnections();await new Promise<void>(resolve=>server.close(()=>resolve()));await c.query('ROLLBACK').catch(()=>{});c.release();await admin.end();bridge.kill();rmSync(fixture,{recursive:true,force:true});context.sql('DROP DATABASE '+testDatabase+' WITH (FORCE)','postgres');}
-},60000);
+},process.env.LOOP_SECRET_BROWSER_MODULE?300000:60000);

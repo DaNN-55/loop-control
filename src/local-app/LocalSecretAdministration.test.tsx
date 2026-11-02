@@ -73,3 +73,14 @@ it('uses full inventory category counts even on an empty page',async()=>{
  render(<LocalSecretAdministration csrf="csrf" onClose={()=>{}}/>);await screen.findByText('没有匹配的密钥。');
  const select=screen.getByRole('combobox',{name:'分类'}) as HTMLSelectElement;expect(Array.from(select.options).map(option=>option.textContent)).toEqual(['全部分类','系统控制','连接使用']);
 });
+it('explains local reauthentication at the sensitive action and keeps a failed verification associated with the password for retry',async()=>{
+ let attempts=0;vi.mocked(localRequest).mockImplementation(async(path)=>{
+  if(path==='secrets/reveal'){if(++attempts===1)throw Error('当前密码验证失败。');return{value,expiresAt:new Date(Date.now()+30000).toISOString()};}
+  return path.startsWith('secrets/detail?')?{item}:{items:[item],total:1,page:1,pageSize:50};
+ });
+ render(<LocalSecretAdministration csrf="csrf" onClose={()=>{}}/>);await select();await verify();
+ const error=await screen.findByRole('alert');expect(error.textContent).toBe('当前密码验证失败。');
+ const password=screen.getByLabelText('当前登录密码');expect((password as HTMLInputElement).value).toBe('');expect(password.getAttribute('aria-invalid')).toBe('true');expect(password.getAttribute('aria-describedby')?.split(' ')).toContain(error.id);expect(document.activeElement).toBe(password);
+ expect(screen.getByText('使用当前登录密码验证本机身份，仅用于此次查看或复制。')).toBeTruthy();expect(screen.getByText('同名密钥：当前优先，历史版本倒序。')).toBeTruthy();expect(screen.queryByLabelText('密钥明文')).toBeNull();expect(copied).toHaveLength(0);
+ fireEvent.change(password,{target:{value:'synthetic-password-only'}});await act(async()=>{fireEvent.submit(screen.getByRole('form',{name:'验证管理员身份'}));});await screen.findByLabelText('密钥明文');expect(screen.queryByRole('alert')).toBeNull();
+});

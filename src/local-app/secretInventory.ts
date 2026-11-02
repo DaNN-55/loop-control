@@ -56,13 +56,14 @@ export class SecretInventory {
   // Four readers cap file descriptors/memory; subsequent reads reuse SHA-keyed references.
   let cursor=0;await Promise.all(Array.from({length:4},async()=>{while(cursor<inventory.files.length){const file=inventory.files[cursor++];for(const reference of await this.markers(file)){const item=row(reference);item.history.fileOccurrences++;if(item.history.files.length<3)item.history.files.push(file.logical_path);}}}));
   for(const item of rows.values()){
-   item.names=[...new Set(item.names)];const current=item.connections.filter(c=>c.current&&!c.revoked);
+   item.connections.sort((a,b)=>Number(b.current&&!b.revoked)-Number(a.current&&!a.revoked)||b.version-a.version||a.name.localeCompare(b.name,'zh-CN'));
+   item.names=[...new Set([...item.connections.map(connection=>connection.name),...item.names])];const current=item.connections.filter(c=>c.current&&!c.revoked);
    const history=item.history.metadataOccurrences+item.history.fileOccurrences;
    item.category=!item.revealAllowed?'system':current.length||item.pendingUses.length?'connection':history?'history':item.connections.length?'connection':'unreferenced';
    item.purpose=item.runtimeUses.length?item.runtimeUses.join('；'):current.length?'当前连接：'+current.map(c=>c.name).join('、'):history?'历史原文还原':item.connections.length?'连接历史版本':item.pendingUses.length?'恢复未完成连接操作':'当前核查未发现引用';
    if(!item.names.length)item.names=[item.connections[0]?.name??'无索引名称的引用条目'];
    if(!item.revealAllowed)item.state='系统控制凭据，仅展示元数据';
   }
-  return [...rows.values()].filter(item=>!Object.hasOwn(index.historicalLiterals??{},item.reference)).concat([{reference:controlReference,names:['专用 Keychain 启动解锁锚点'],aliases:[],purpose:'启动时解锁专用库；锚点由登录 Keychain 的固定 helper 管理',category:'system',runtimeUses:['专用库启动控制'],connections:[],pendingUses:[],history:{metadataOccurrences:0,fileOccurrences:0,files:[]},revealAllowed:false,state:'系统控制条目，不提供网页读取'}as SecretMetadata]).sort((a,b)=>a.names[0].localeCompare(b.names[0],'zh-CN'));
+  return [...rows.values()].filter(item=>!Object.hasOwn(index.historicalLiterals??{},item.reference)).concat([{reference:controlReference,names:['专用 Keychain 启动解锁锚点'],aliases:[],purpose:'启动时解锁专用库；锚点由登录 Keychain 的固定 helper 管理',category:'system',runtimeUses:['专用库启动控制'],connections:[],pendingUses:[],history:{metadataOccurrences:0,fileOccurrences:0,files:[]},revealAllowed:false,state:'系统控制条目，不提供网页读取'}as SecretMetadata]).sort((a,b)=>a.names[0].localeCompare(b.names[0],'zh-CN')||Number(b.connections.some(c=>c.current&&!c.revoked))-Number(a.connections.some(c=>c.current&&!c.revoked))||(b.connections[0]?.version??0)-(a.connections[0]?.version??0)||a.reference.localeCompare(b.reference));
  }
 }

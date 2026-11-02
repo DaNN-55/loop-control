@@ -209,27 +209,32 @@ export function ReviewWorkspace({ serverPage, accountsById, episodes, onSelectEp
 
 
 export function PasswordForm({ isPending, onClose, onSubmit, identity }: { isPending: boolean; onClose: () => void; onSubmit: (password: string) => Promise<void>; identity?:ReactNode }) {
+  const id=useId(),passwordRef=useRef<HTMLInputElement>(null),confirmationRef=useRef<HTMLInputElement>(null),submitting=useRef(false);
+  const [saving,setSaving]=useState(false),pending=isPending||saving;
   const [password, setPassword] = useState("");
   const [confirmation, setConfirmation] = useState("");
   const [formError, setFormError] = useState("");
+  const [invalidField,setInvalidField]=useState<'password'|'confirmation'|null>(null);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (isPending) return;
-    if (password.length < 12) {
-      setFormError("请设置至少 12 位的登录密码。");
+    if (pending||submitting.current) return;
+    if (password.length < 12 || password.length > 1024) {
+      setFormError("请设置至少 12 位、最多 1024 位的密码。");setInvalidField('password');passwordRef.current?.focus();
       return;
     }
     if (password !== confirmation) {
-      setFormError("两次输入的密码不一致。");
+      setFormError("两次输入的密码不一致。");setInvalidField('confirmation');confirmationRef.current?.focus();
       return;
     }
-    setFormError("");
-    await onSubmit(password);
+    setFormError("");setInvalidField(null);
+    submitting.current=true;setSaving(true);
+    try{await onSubmit(password);}catch(error){setFormError(error instanceof Error?error.message:'密码保存失败，请重试。');}
+    finally{submitting.current=false;setSaving(false);}
   }
 
-  const dialogRef = useDialogFocus(true, () => {if (!isPending) onClose();});
-  return <div className="modal-backdrop" role="presentation"><div aria-label="登录与安全" aria-modal="true" className="modal-card episode-form-modal" ref={dialogRef} role="dialog"><form aria-label="登录与安全" className="owner-password-form" onSubmit={submit}><header><div><h2>登录与安全</h2><p>密码只用于登录，不会显示或保存在控制台记录中。</p></div><Button size="sm" color="tertiary" isDisabled={isPending} aria-label="关闭登录与安全" className="icon-button" onClick={onClose} type="button"><Icon name="Close" /></Button></header>{identity}<label>新密码<InputBase size="sm" isDisabled={isPending} aria-label="新密码" autoComplete="new-password" onChange={(event) => setPassword(event.target.value)} isRequired type="password" value={password} /></label><label>确认密码<InputBase size="sm" isDisabled={isPending} aria-label="确认密码" autoComplete="new-password" onChange={(event) => setConfirmation(event.target.value)} isRequired type="password" value={confirmation} /></label><div className="modal-actions"><Button size="sm" color="secondary" className="button button-secondary" isDisabled={isPending} onClick={onClose} type="button">取消</Button><Button size="sm" color="primary" className="button button-primary" isDisabled={isPending} type="submit">{isPending ? "保存中…" : "保存密码"}</Button></div>{formError ? <p className="form-error">{formError}</p> : null}</form></div></div>;
+  const dialogRef = useDialogFocus(true, () => {if (!pending) onClose();});
+  return <div className="modal-backdrop" role="presentation"><div aria-label="登录与安全" aria-modal="true" className="modal-card episode-form-modal" ref={dialogRef} role="dialog"><form aria-label="登录与安全" className="owner-password-form" aria-describedby={formError&&!invalidField?id+'-error':undefined} onSubmit={submit}><header><div><h2>登录与安全</h2><p>密码用于本机身份验证，包括登录、查看和复制密钥。</p></div><Button size="sm" color="tertiary" isDisabled={pending} aria-label="关闭登录与安全" className="icon-button" onClick={onClose} type="button"><Icon name="Close" /></Button></header>{identity}<label>新密码<InputBase size="sm" ref={passwordRef} isDisabled={pending} aria-label="新密码" autoComplete="new-password" aria-describedby={[id+'-rule',invalidField==='password'?id+'-error':null].filter(Boolean).join(' ')} aria-invalid={invalidField==='password'||undefined} isInvalid={invalidField==='password'} onChange={(event) => {setPassword(event.target.value);if(invalidField==='password'){setInvalidField(null);setFormError('');}}} isRequired maxLength={1024} type="password" value={password} /><span id={id+'-rule'} className="form-hint">至少 12 位，最多 1024 位。</span></label><label>确认密码<InputBase size="sm" ref={confirmationRef} isDisabled={pending} aria-label="确认密码" autoComplete="new-password" aria-describedby={invalidField==='confirmation'?id+'-error':undefined} aria-invalid={invalidField==='confirmation'||undefined} isInvalid={invalidField==='confirmation'} onChange={(event) => {setConfirmation(event.target.value);if(invalidField==='confirmation'){setInvalidField(null);setFormError('');}}} isRequired maxLength={1024} type="password" value={confirmation} /></label>{formError ? <p id={id+'-error'} role="alert" className="form-error">{formError}</p> : null}<div className="modal-actions"><Button size="sm" color="secondary" className="button button-secondary" isDisabled={pending} onClick={onClose} type="button">取消</Button><Button size="sm" color="primary" className="button button-primary" isDisabled={pending} type="submit">{pending ? "保存中…" : "保存密码"}</Button></div></form></div></div>;
 }
 
 type IconName = NavigationItem | "Moon" | "Sun" | "Exit" | "Close" | "Play" | "PanelLeft" | "User" | "Edit" | "Delete" | "Video" | "Refresh";
