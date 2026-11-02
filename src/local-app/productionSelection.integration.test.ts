@@ -25,7 +25,13 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('without any account budg
  let w=await f.read();const sha=w.project.sha256;
  const selection=(id:string)=>({capability:'image',provider:'openai',adapter:'openai_images',model:'gpt-image-2',connectionVersionId:id});
  const args={workspaceId:w.id,expectedRevision:w.revision,targetItemId:w.clips[0].itemId,selection:selection(a),prompt:'保留主体，改变背景。',settings:{size:'864x1536',quality:'high',count:1},referenceMaterialRevisionIds:[ref.body.id],reservationCents:100};
- const key=randomUUID(),submit=async(data:unknown)=>{const r=await fetch(f.origin+'/api/local/episode-commands',{method:'POST',headers:{Origin:f.origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+f.token,'X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command:'requestWorkspaceImageCandidates',idempotencyKey:key,data:{episodeId:f.episode,...data as Record<string,unknown>}})});return{status:r.status,body:await r.json()};};
+ const proposalKey=randomUUID(),confirmKey=randomUUID();
+ const raw=async(command:string,idempotencyKey:string,data:Record<string,unknown>)=>{const r=await fetch(f.origin+'/api/local/episode-commands',{method:'POST',headers:{Origin:f.origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+f.token,'X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command,idempotencyKey,data})});return{status:r.status,body:await r.json()};};
+ const submit=async(data:typeof args)=>{
+  const proposal=await raw('prepareWorkspaceCall',proposalKey,{episodeId:f.episode,workspaceId:args.workspaceId,expectedRevision:args.expectedRevision,callCommand:'requestWorkspaceImageCandidates',callData:{episodeId:f.episode,...data}});
+  if(proposal.status!==200)return proposal;
+  return raw('confirmWorkspaceCall',confirmKey,{episodeId:f.episode,workspaceId:args.workspaceId,expectedRevision:args.expectedRevision,confirmationId:proposal.body.confirmationId});
+ };
  const queued=await submit(args);expect((await submit(args)).body).toEqual(queued.body);expect((await submit({...args,prompt:'Different request'})).status).toBe(409);expect(queued.status,JSON.stringify(queued.body)).toBe(200);w=queued.body;
  const taskA=w.visualTasks[0].taskId;
  const frozenBefore=(await f.c.query('SELECT input_snapshot::text snapshot FROM public.tasks WHERE id=$1',[taskA])).rows[0].snapshot;
@@ -54,12 +60,15 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('exceeded historical acco
  const version=(await f.c.query("SELECT id FROM public.external_connection_versions WHERE adapter='openai_images'")).rows[0].id;
  const w=await f.read(),selection={capability:'image',provider:'openai',adapter:'openai_images',model:'gpt-image-2',connectionVersionId:version};
  const args={workspaceId:w.id,expectedRevision:w.revision,targetItemId:w.clips[0].itemId,selection,prompt:'受控图片',settings:{size:'864x1536',quality:'auto',count:1},referenceMaterialRevisionIds:[ref.body.id],reservationCents:100};
- for(const change of [{selection:{...selection,model:'unsupported'}},{settings:{...args.settings,size:'1x1'}},{settings:{...args.settings,duration:5}},{referenceMaterialRevisionIds:[randomUUID()]}])expect((await f.request('requestWorkspaceImageCandidates',{...args,...change})).status).toBe(400);
+ const prepare=async(data:Record<string,unknown>)=>f.rawRequest('prepareWorkspaceCall',{workspaceId:w.id,expectedRevision:w.revision,callCommand:'requestWorkspaceImageCandidates',callData:{episodeId:f.episode,...data}});
+ expect((await prepare({...args,selection:{...selection,model:'unsupported'}})).status).toBe(400);
+ for(const change of [{settings:{...args.settings,size:'1x1'}},{settings:{...args.settings,duration:5}},{referenceMaterialRevisionIds:['invalid-id']}]){const proposal=await prepare({...args,...change}),rejected=proposal.status===200?await f.rawRequest('confirmWorkspaceCall',{workspaceId:w.id,expectedRevision:w.revision,confirmationId:proposal.body.confirmationId}):proposal;expect(rejected.status,JSON.stringify({change,body:rejected.body})).toBe(400);}
+ expect((await prepare({...args,referenceMaterialRevisionIds:[randomUUID()]})).status).toBe(409);
  expect((await f.request('requestWorkspaceImageCandidates',{...args,selection:{...selection,connectionVersionId:randomUUID()}})).status).toBe(409);
  expect((await f.request('requestWorkspaceImageCandidates',args,{token:f.otherToken})).status).toBe(404);
  expect((await f.request('requestWorkspaceImageCandidates',args,{csrf:false})).status).toBe(403);
  await f.c.query('UPDATE local_identity.connection_qualifications SET qualified=false WHERE version_id=$1',[version]);expect((await f.request('requestWorkspaceImageCandidates',args)).status).toBe(409);await f.c.query('UPDATE local_identity.connection_qualifications SET qualified=true WHERE version_id=$1',[version]);
- const invalid=await f.request('requestWorkspaceImageCandidates',{...args,reservationCents:0});expect(invalid.status,JSON.stringify(invalid.body)).toBe(400);expect((await f.read()).visualTasks).toHaveLength(0);
+ const invalid=await prepare({...args,reservationCents:0});expect(invalid.status,JSON.stringify(invalid.body)).toBe(400);expect((await f.read()).visualTasks).toHaveLength(0);
  const account=(await f.c.query('SELECT account_id FROM public.episodes WHERE id=$1',[f.episode])).rows[0].account_id;
  await f.c.query('INSERT INTO public.generation_account_budgets(account_id,trial_video_limit_cents,total_limit_cents,full_generation_enabled,approved_by) VALUES($1,1,1,false,$2) ON CONFLICT(account_id) DO UPDATE SET trial_video_limit_cents=1,total_limit_cents=1,full_generation_enabled=false',[account,f.owner]);
  await f.c.query("INSERT INTO public.paid_generation_reservations(task_id,account_id,kind,reserved_cents) SELECT id,$2,'image',200000 FROM public.tasks WHERE episode_id=$1 ORDER BY created_at LIMIT 1 ON CONFLICT(task_id) DO NOTHING",[f.episode,account]);
@@ -73,14 +82,17 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('exceeded historical acco
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('legacy queued image snapshots execute unchanged after content-only saves and new requests still require a selection',async()=>{
  const {f,ref}=await workspaceImageGenerationFixture();try{
- const w=await f.read(),id=randomUUID(),version=(await f.c.query("SELECT id FROM public.external_connection_versions WHERE adapter='openai_images'")).rows[0].id;
+ const w=await f.read(),version=(await f.c.query("SELECT id FROM public.external_connection_versions WHERE adapter='openai_images'")).rows[0].id;
  const execution={execution_path:'external',credential_ref:version,executor:{provider:'openai',adapter:'openai_images',model:'gpt-image-2',prompt_version:'static-visual-v1'},budget_cents:100,max_attempts:1},policy={positioning:'历史纪实',tone:'克制',asset_root:f.assetRoot,allowed_tools:['read','write'],budgets:{storyboard_planning_cents:90},static_visual:execution};
  const blueprint=(await f.c.query('SELECT blueprint_version_id,account_id FROM public.episodes WHERE id=$1',[f.episode])).rows[0];
  // Seed a pre-108 historical policy in this disposable DB; production writes stay projected.
  await f.c.query('BEGIN');await f.c.query('ALTER TABLE public.account_blueprint_versions DISABLE TRIGGER a_blueprint_creative_write');await f.c.query('ALTER TABLE public.account_blueprint_versions DISABLE TRIGGER validate_blueprint_external_connections_before_write');await f.c.query("SELECT set_config('loop.owner_id',$1,true)",[f.owner]);await f.c.query('UPDATE public.account_blueprint_versions SET policy=$2 WHERE id=$1',[blueprint.blueprint_version_id,policy]);await f.c.query('ALTER TABLE public.account_blueprint_versions ENABLE TRIGGER a_blueprint_creative_write');await f.c.query('ALTER TABLE public.account_blueprint_versions ENABLE TRIGGER validate_blueprint_external_connections_before_write');await f.c.query('COMMIT');
- const auth=(await f.c.query('SELECT authorization_hash FROM local_identity.script_productions WHERE episode_id=$1',[f.episode])).rows[0].authorization_hash;
- const target=w.clips[0],snapshot={kind:'image',usage:'still',execution,prompt:'已入队的旧图',imageSettings:{size:'864x1536',quality:'auto',count:1},references:[],referenceMaterialRevisionIds:[],durationSeconds:3,reservationCents:100,authorizationHash:auth};
- await f.c.query('BEGIN');await f.c.query('INSERT INTO local_identity.workspace_visual_candidates(id,workspace_id,episode_id,clip_id,shot_id,target_item_id,input_fingerprint,target_snapshot,request_snapshot) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)',[id,w.id,f.episode,target.id,target.shotId,target.itemId,'c'.repeat(64),JSON.stringify({kind:'text'}),JSON.stringify(snapshot)]);await f.c.query("SELECT set_config('loop.owner_id',$1,true)",[f.owner]);await f.c.query('SET SESSION AUTHORIZATION loop_app');const taskId=(await f.c.query('SELECT local_identity.queue_workspace_images($1) id',[id])).rows[0].id;await f.c.query('SET SESSION AUTHORIZATION DEFAULT');await f.c.query('COMMIT');
+ const target=w.clips[0],snapshot={imageSettings:{size:'864x1536',quality:'auto',count:1}};
+ // Queue through today's public confirmation boundary, then retain a pre-selection
+ // frozen task shape to exercise the supported historical execution/read path.
+ const queued=await f.request('requestWorkspaceImageCandidates',{workspaceId:w.id,expectedRevision:w.revision,targetItemId:target.itemId,selection:{capability:'image',provider:'openai',adapter:'openai_images',model:'gpt-image-2',connectionVersionId:version},prompt:'已入队的旧图',settings:snapshot.imageSettings,referenceMaterialRevisionIds:[ref.body.id],reservationCents:100});expect(queued.status,JSON.stringify(queued.body)).toBe(200);
+ const taskId=queued.body.visualTasks[0].taskId;
+ await f.c.query("UPDATE public.tasks SET input_snapshot=input_snapshot-'production_selection'-'production_context'-'workspace_target'-'cost_basis' WHERE id=$1",[taskId]);
  const before=(await f.c.query('SELECT input_snapshot::text bytes FROM public.tasks WHERE id=$1',[taskId])).rows[0].bytes;
  const r=await fetch(f.origin+'/api/local/configuration',{method:'POST',headers:{Origin:f.origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+f.token,'X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command:'updateBlueprint',idempotencyKey:randomUUID(),expectedRevision:(await f.c.query('SELECT md5(policy::text) revision FROM public.account_blueprint_versions WHERE id=$1',[blueprint.blueprint_version_id])).rows[0].revision,data:{accountId:blueprint.account_id,policy:{positioning:'之后的新内容规则'}}})});expect(r.status,JSON.stringify(await r.json())).toBe(200);
  expect((await f.c.query('SELECT input_snapshot::text bytes FROM public.tasks WHERE id=$1',[taskId])).rows[0].bytes).toBe(before);

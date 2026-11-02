@@ -40,7 +40,7 @@ it('uses the adopted speech snapshot rather than subsequently edited narration p
 });
 it('50 个镜头初始不加载播放器，只展开一个，切换和收起会卸载旧媒体',()=>{
  const items=Array.from({length:50},(_,i)=>({...project.timelines[0].items[1],id:`item-${i}`,src:`independent-${i}.mp4`,sourceContentHash:`sha-${i}`,startFrame:i*60,loopControlShot:{shotId:`镜头${i+1}`,clipId:`clip-${i}`,text:`独立来源 ${i+1}`}}));
- const large={...project,timelines:[{...project.timelines[0],items}]};const workspace={...w,exports:[],clips:items.map((item,i)=>({id:`clip-${i}`,itemId:item.id,shotId:`镜头${i+1}`,text:'独立来源',source:null}))};
+ const large:typeof project={...project,timelines:[{...project.timelines[0],items}]};const workspace={...w,exports:[],clips:items.map((item,i)=>({id:`clip-${i}`,itemId:item.id,shotId:`镜头${i+1}`,text:'独立来源',source:null}))};
  render(<WorkspaceCompletedShots workspace={workspace} project={large}/>);
  expect(screen.getAllByRole('article')).toHaveLength(50);expect(document.querySelectorAll('video,audio')).toHaveLength(0);
  fireEvent.click(screen.getByRole('button',{name:'展开 镜头1 预览'}));expect(document.querySelectorAll('video')).toHaveLength(1);

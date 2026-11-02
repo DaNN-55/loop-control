@@ -4,15 +4,16 @@ import {readFile,writeFile} from 'node:fs/promises';
 import {join} from 'node:path';
 import {workspaceImageGenerationFixture} from './workspaceImageGeneration.fixture';
 import {editStudioDocument} from './studioDocument.fixture';
+import type {OpenChatCutProject} from '../worker/openchatcutProject';
 import {narrationFixture} from './workspaceNarration.fixture';
 const enabled=process.env.LOOP_WORKSPACE_ACCEPTANCE==='1';
 async function saveAndReopenNative(f:any,w:any,candidate:any){
  w=await f.fillVisuals(w);
  const send=async(name:string,data:Record<string,unknown>={})=>{const response=await f.request(name,{workspaceId:w.id,expectedRevision:w.revision,...data});expect(response.status,JSON.stringify(response.body)).toBe(200);return response.body;};
  let opened=await send('openWorkspaceStudio');w=opened.productionWorkspace;
- await editStudioDocument(opened.studioUrl,w.project.projectId,doc=>{const item=doc.timelines.flatMap(t=>t.items).find(i=>i.id===candidate.targetItemId)!;item.transform={...(item.transform??{}),scale:0.3333333333333333};});
+ await editStudioDocument(opened.studioUrl,w.project.projectId,doc=>{const item=(doc as OpenChatCutProject).timelines.flatMap(t=>t.items).find(i=>i.id===candidate.targetItemId)!;item.transform={...(item.transform??{}),scale:0.3333333333333333};});
  w=(await send('saveWorkspaceStudio',{workspaceRelativePath:opened.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:opened.workspace.sha256})).productionWorkspace;await send('closeWorkspaceStudio');
- opened=await send('openWorkspaceStudio');w=opened.productionWorkspace;const reopened=await editStudioDocument(opened.studioUrl,w.project.projectId,doc=>doc);expect(reopened.timelines.flatMap(t=>t.items).find(i=>i.id===candidate.targetItemId)?.transform?.scale).toBe(0.3333333333333333);
+ opened=await send('openWorkspaceStudio');w=opened.productionWorkspace;const reopened=await editStudioDocument(opened.studioUrl,w.project.projectId,doc=>doc);expect((reopened as OpenChatCutProject).timelines.flatMap(t=>t.items).find(i=>i.id===candidate.targetItemId)?.transform).toMatchObject({scale:0.3333333333333333});
  w=(await send('saveWorkspaceStudio',{workspaceRelativePath:opened.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:opened.workspace.sha256})).productionWorkspace;await send('closeWorkspaceStudio');
  return w;
 }

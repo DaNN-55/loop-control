@@ -18,3 +18,13 @@ it('protects switching to a different production order and refreshes only the se
  const writes=fixture();const view=render(<LocalCatalogApp/>);fireEvent.change(await screen.findByLabelText('主脚本'),{target:{value:'对象切换草稿'}});fireEvent.click(screen.getByText('另一张生产单'));expect(screen.getByRole('dialog',{name:'保留未提交内容'})).toBeTruthy();fireEvent.click(screen.getByRole('button',{name:'保留草稿并离开'}));expect((await screen.findByLabelText('主脚本') as HTMLTextAreaElement).value).toBe('');fireEvent.click(screen.getByRole('button',{name:'关闭生产单详情'}));expect(screen.queryByRole('dialog')).toBeNull();fireEvent.click(screen.getByText('草稿验证生产单'));expect((await screen.findByLabelText('主脚本') as HTMLTextAreaElement).value).toBe('对象切换草稿');
  const unload=new Event('beforeunload',{cancelable:true});fireEvent(window,unload);expect(unload.defaultPrevented).toBe(true);view.unmount();render(<LocalCatalogApp/>);expect((await screen.findByLabelText('主脚本') as HTMLTextAreaElement).value).toBe('对象切换草稿');expect(writes).toEqual([]);
 });
+it('discards this tab edit without deleting a newer draft saved by another tab',async()=>{
+ const writes=fixture();render(<LocalCatalogApp/>);fireEvent.change(await screen.findByLabelText('主脚本'),{target:{value:'当前窗口草稿'}});const key=Object.keys(localStorage).find(key=>key.startsWith('loop-control.workspace-draft.v1:'))!;
+ const stored=JSON.parse(localStorage.getItem(key)!);localStorage.setItem(key,JSON.stringify({...stored,value:{...stored.value,text:'另一窗口较新草稿'}}));
+ fireEvent.click(screen.getByRole('button',{name:'关闭生产单详情'}));fireEvent.click(screen.getByRole('button',{name:'放弃修改并离开'}));fireEvent.click(await screen.findByText('草稿验证生产单'));expect((await screen.findByLabelText('主脚本') as HTMLTextAreaElement).value).toBe('另一窗口较新草稿');expect(writes).toEqual([]);
+});
+
+it('does not overwrite another tab newer draft when closing without further edits',async()=>{
+ const writes=fixture(),view=render(<LocalCatalogApp/>);fireEvent.change(await screen.findByLabelText('主脚本'),{target:{value:'旧窗口草稿'}});const key=Object.keys(localStorage).find(key=>key.startsWith('loop-control.workspace-draft.v1:'))!,stored=JSON.parse(localStorage.getItem(key)!);const newer=JSON.stringify({...stored,value:{...stored.value,text:'另一窗口最后保存的草稿'}});localStorage.setItem(key,newer);
+ const unload=new Event('beforeunload',{cancelable:true});fireEvent(window,unload);expect(unload.defaultPrevented).toBe(true);expect(localStorage.getItem(key)).toBe(newer);view.unmount();render(<LocalCatalogApp/>);expect((await screen.findByLabelText('主脚本') as HTMLTextAreaElement).value).toBe('另一窗口最后保存的草稿');expect(writes).toEqual([]);
+});

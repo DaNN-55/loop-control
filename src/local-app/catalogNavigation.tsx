@@ -87,6 +87,8 @@ export function useCatalogHistory(value:CatalogNavigation,owner:string,restore:(
   if(owner&&historyOwner.current&&owner!==historyOwner.current){historyOwner.current=owner;const next=readCatalogNavigation('');current.current.url=catalogNavigationUrl(next);history.replaceState({...history.state,loopCatalogNavigation:{index:current.current.index,owner}},'',current.current.url);restore(next);return;}
   if(owner)historyOwner.current=owner;
   if(current.current.url===url){history.replaceState({...history.state,loopCatalogNavigation:{index:current.current.index,owner:owner||historyOwner.current}},'',url);return;}
+  const previousUrl=new URL(current.current.url,location.href),nextUrl=new URL(url,location.href);for(const key of ['searchQ','searchOpen']){previousUrl.searchParams.delete(key);nextUrl.searchParams.delete(key);}
+  if(previousUrl.href===nextUrl.href){current.current.url=url;history.replaceState({...history.state,loopCatalogNavigation:{index:current.current.index,owner}},'',url);return;}
   current.current={index:current.current.index+1,url};history.pushState({...history.state,loopCatalogNavigation:{index:current.current.index,owner}},'',url);
  },[url,owner]);
 }

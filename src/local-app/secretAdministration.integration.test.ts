@@ -27,7 +27,7 @@ it.skipIf(process.env.LOOP_SECRET_ACCEPTANCE!=='1')('admin secret boundaries, me
  const password='synthetic-only-'+id(),value='fixture-only-'+id(),token=randomBytes(32).toString('hex'),otherToken=randomBytes(32).toString('hex'),expired=randomBytes(32).toString('hex');
  const fixture=mkdtempSync('/private/tmp/loop-secret-test-'),runtime=join(fixture,'.loop-control/local');mkdirSync(join(runtime,'history/content'),{recursive:true,mode:0o700});
  writeFileSync(join(runtime,'secret-index.json'),JSON.stringify({version:1,entries:{'test-named':{reference},'control-alias':{reference:alias}},referenceAliases:{[alias]:control,[oldAlias]:reference}}),{mode:0o600});
- const values=new Map([[reference,value],[unnamed,value]]);
+ const values=new Map<string,string>([[reference,value],[unnamed,value]]);
  let calls=0,unavailable=false;
  const store={async get(ref:string){calls++;if(unavailable)throw Error('private helper failure: '+value);if(!values.has(ref))throw Error('Unknown fixture');return values.get(ref)!;}};
  const scoped={async query(sql:string,values?:unknown[]){if(sql.startsWith('BEGIN'))return c.query('SAVEPOINT secret_request');if(sql==='COMMIT')return c.query('RELEASE SAVEPOINT secret_request');if(sql==='ROLLBACK'){await c.query('ROLLBACK TO SAVEPOINT secret_request');return c.query('RELEASE SAVEPOINT secret_request');}return c.query(sql,values);},release(){}} as unknown as PoolClient;
