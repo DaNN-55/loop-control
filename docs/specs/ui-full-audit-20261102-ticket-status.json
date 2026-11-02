@@ -119,10 +119,21 @@
         3,
         4
       ],
-      "status": "open",
+      "status": "closed",
       "parentLinked": true,
       "dependenciesLinked": true,
-      "nativeDependencies": true
+      "nativeDependencies": true,
+      "implementation": {
+        "state": "integrated-pending-full-regression",
+        "commit": "289aefcb",
+        "focused": {
+          "components": 48,
+          "finalAudio": 14,
+          "realManualSoundDelayedClose": 1
+        },
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/05.md",
+        "sharedSoundLabelsCommit": "dc7c3aaf"
+      }
     },
     {
       "n": 6,
@@ -134,10 +145,22 @@
       "id": 6162303083,
       "url": "https://github.com/DaNN-55/loop-control/issues/202",
       "blockedBy": [],
-      "status": "open",
+      "status": "closed",
       "parentLinked": true,
       "dependenciesLinked": true,
-      "nativeDependencies": true
+      "nativeDependencies": true,
+      "implementation": {
+        "state": "integrated-pending-full-regression",
+        "commit": "dc7c3aaf",
+        "focused": {
+          "core": 30,
+          "finalScript": 17,
+          "rootPanel": 29,
+          "rootTypes": true,
+          "browserControlledHttp": true
+        },
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/06.md"
+      }
     },
     {
       "n": 7,
@@ -344,10 +367,21 @@
       "id": 6162318169,
       "url": "https://github.com/DaNN-55/loop-control/issues/211",
       "blockedBy": [],
-      "status": "open",
+      "status": "closed",
       "parentLinked": true,
       "dependenciesLinked": true,
-      "nativeDependencies": true
+      "nativeDependencies": true,
+      "implementation": {
+        "state": "integrated-pending-full-regression",
+        "commit": "0fd213dc",
+        "focused": {
+          "relatedComponentsSeparately": 50,
+          "realWireBoundary": 1,
+          "rootTypes": true,
+          "browserControlledHttp": true
+        },
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/15.md"
+      }
     },
     {
       "n": 16,
@@ -699,6 +733,16 @@
       "ticket": 18,
       "test": "src/local-app/workspacePexels.integration.test.ts Owner full search→adopt→export",
       "reason": "existing export scenario exceeded120s under resource load; scoped5 integration passed; final32 rerun serial with adequate bounded timeout"
+    },
+    {
+      "ticket": 5,
+      "test": "workspaceBundledSounds.integration.test.ts exportWorkspace",
+      "reason": "503 at export; unknown internal cause; serial32 diagnosis required, not assumedclose/resource failure"
+    },
+    {
+      "ticket": 15,
+      "test": "productionSelection.integration.test.ts first case direct generation at29",
+      "reason": "old test bypasses current prepare/confirm gate; test-only update preserving duplicate/conflict/frozen selection assertions then rerun32"
     }
   ]
 }

@@ -1,0 +1,40 @@
+{
+  "source": {
+    "relativePath": "episodes/13c1eaed-13f7-45d6-960d-0c74b9fecf83/materials/c356e719d06ca43078c2b6d75ab633f4591e70404f5a9a4ecb466650de97b8d0-own-bell.mp3",
+    "sha256": "c356e719d06ca43078c2b6d75ab633f4591e70404f5a9a4ecb466650de97b8d0",
+    "fileSize": 3692
+  },
+  "mix": [
+    {
+      "itemId": "workspace-sfx-39bed77f-a1dd-4eb2-a94a-e618908c1d47",
+      "kind": "sfx",
+      "gainDb": -17,
+      "duckDepthDb": 3,
+      "startSeconds": 0.2,
+      "durationSeconds": 0.4
+    }
+  ],
+  "shutdown": [
+    {
+      "event": "signal",
+      "at": 1793625210558
+    },
+    {
+      "event": "exit",
+      "at": 1793625213814,
+      "code": 143,
+      "signal": null
+    },
+    {
+      "event": "signal",
+      "at": 1793625219655
+    },
+    {
+      "event": "exit",
+      "at": 1793625222886,
+      "code": 143,
+      "signal": null
+    }
+  ],
+  "supplierCalls": 0
+}
