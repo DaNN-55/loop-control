@@ -401,10 +401,22 @@
       "id": 6162322539,
       "url": "https://github.com/DaNN-55/loop-control/issues/214",
       "blockedBy": [],
-      "status": "open",
+      "status": "closed",
       "parentLinked": true,
       "dependenciesLinked": true,
-      "nativeDependencies": true
+      "nativeDependencies": true,
+      "implementation": {
+        "state": "integrated-pending-full-regression",
+        "commit": "9b20b85a",
+        "focused": {
+          "regressionTests": 16,
+          "finalOwnTests": 4,
+          "integrationPassed": 5,
+          "integrationExportTimeout": 1,
+          "browser": "controlled-local-component"
+        },
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/18.md"
+      }
     },
     {
       "n": 19,
@@ -434,10 +446,21 @@
       "id": 6162325234,
       "url": "https://github.com/DaNN-55/loop-control/issues/216",
       "blockedBy": [],
-      "status": "open",
+      "status": "closed",
       "parentLinked": true,
       "dependenciesLinked": true,
-      "nativeDependencies": true
+      "nativeDependencies": true,
+      "implementation": {
+        "state": "integrated-pending-full-regression",
+        "commit": "5856ace6",
+        "focused": {
+          "componentAndSpatial": 9,
+          "realHttpSdk": 2,
+          "browser": 1,
+          "rootViewedNarrowScreenshot": true
+        },
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/20.md"
+      }
     },
     {
       "n": 21,
@@ -670,5 +693,12 @@
     }
   ],
   "publishedAt": "2026-11-02T12:17:43.572Z",
-  "executionAuthorization": "single integration branch, no per-ticket worktrees; local commits and verified merge to main approved; no push/deploy/daily writes or paid calls"
+  "executionAuthorization": "single integration branch, no per-ticket worktrees; local commits and verified merge to main approved; no push/deploy/daily writes or paid calls",
+  "requiredFinalRechecks": [
+    {
+      "ticket": 18,
+      "test": "src/local-app/workspacePexels.integration.test.ts Owner full search→adopt→export",
+      "reason": "existing export scenario exceeded120s under resource load; scoped5 integration passed; final32 rerun serial with adequate bounded timeout"
+    }
+  ]
 }
