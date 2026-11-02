@@ -1,3 +1,6 @@
+import {useWorkspaceLeaveEntry} from '../local-app/WorkspaceDraft';
+import {useConnectionDrafts} from './ConnectionDraftSession';
+import {ConnectionDraftLeaveDialog} from './ConnectionDraftLeaveDialog';
 import type {PanelNavigation} from '../local-app/catalogNavigation';
 import {PopulatedFilterSelect} from '../ui/PopulatedFilterSelect';
 import {Plug,Plus,Play,MoreHorizontal,Pencil,History,X,RefreshCw,CreditCard} from 'lucide-react';
@@ -47,6 +50,7 @@ export type ExternalConnectionVersion = {
   status: "unverified" | "verified" | "invalid" | "retryable" | "revoked";
   version: number;
   secretState?:'unbound'|'bound-unchecked';
+  usage?:{currentBlueprints:number;episodes:number;tasks:number;activeTasks:number;requests:number;savedSelections:number};
 };
 
 const statusLabels: Record<ExternalConnection["status"] | ExternalConnectionVersion["status"], string> = {
@@ -181,12 +185,28 @@ export function ConnectionWorkspace({ navigation,serviceCatalog, connections, us
   const [selectedId,setSelectedId]=useState(navigation?.value.connection??'');
   const viewedConnection=useRef(navigation?.value.connection??'');
   const [modelConnectionId,setModelConnectionId]=useState('');
+  const sessionDrafts=useConnectionDrafts();
+  const modelDrafts={current:sessionDrafts.models};
   const [billingConnectionId,setBillingConnectionId]=useState('');
   const billingConnection=connections.find(c=>c.id===billingConnectionId);
   const modelConnection=connections.find(c=>c.id===modelConnectionId);
   const [dialog,applyDialog]=useState<''|'new'|'edit'|'detail'>(navigation?.value.connection?'detail':'');
   function setDialog(next:''|'new'|'edit'|'detail'){applyDialog(next);if(next!=='detail'){viewedConnection.current='';navigation?.change({connection:''});}}
   const [showVersions,setShowVersions]=useState(false);
+  const [leavePrompt,setLeavePrompt]=useState(false);
+  const [revokingId,setRevokingId]=useState(''),[revokeError,setRevokeError]=useState('');
+  const revoking=versions.find(version=>version.id===revokingId);
+  const revokingConnection=connections.find(connection=>connection.id===revoking?.connection_id);
+  async function revoke(){if(!revoking||!onRevokeVersion||operationLock.current||busy)return;operationLock.current=true;setOperation('saving');setRevokeError('');try{await onRevokeVersion(revoking.id);setRevokingId('');}catch(cause){setRevokeError(cause instanceof Error?cause.message:'撤销未确认完成，请重新读取版本后核对。');}finally{operationLock.current=false;setOperation('');}}
+  // Session-local non-secret drafts. Never copy credential input into these snapshots.
+  const drafts={current:sessionDrafts.connections};
+  const editingBaseline=useRef('');
+  const connectionBaseline=(connection?:ExternalConnection)=>JSON.stringify(connection?[connection.name,connection.description??'',connection.current_version_id,connection.region]:[]);
+  function closeDialog(){setSecret('');setRebindSecrets({});setCredentialFieldRevision(value=>value+1);setLeavePrompt(false);setDialog('');}
+  function requestClose(){if(busy)return;if(nonSecretChanged||secret||Object.values(rebindSecrets).some(Boolean))setLeavePrompt(true);else closeDialog();}
+  function keepDraft(){drafts.current.set(selectedId||'__new',{baseline:editingBaseline.current,name,description,adapter,workspaceId,region:minimaxRegion});return true;}
+  function leave(keep:boolean){if(keep)keepDraft();else drafts.current.delete(selectedId||'__new');closeDialog();}
+
   const [capabilityFilter,applyCapabilityFilter]=useState(navigation?.value.capability??'all'),[statusFilter,applyStatusFilter]=useState(navigation?.value.status??'');
   const setCapabilityFilter=(capability:string)=>{applyCapabilityFilter(capability);navigation?.change({capability});};
   const setStatusFilter=(status:string)=>{applyStatusFilter(status);navigation?.change({status});};
@@ -202,7 +222,7 @@ export function ConnectionWorkspace({ navigation,serviceCatalog, connections, us
   const [error,setError]=useState(''),[notice,setNotice]=useState('');
   const [resultTitle,setResultTitle]=useState(''),[resultName,setResultName]=useState('');
   const [resultConnectionId,setResultConnectionId]=useState('');
-  const resultRef=useRef<HTMLDivElement>(null);
+  const resultRef=useRef<HTMLDivElement>(null),dialogRef=useRef<HTMLDivElement>(null),revokeDialogRef=useRef<HTMLDivElement>(null);
   const [rebindSecrets,setRebindSecrets]=useState<Record<string,string>>({});
   const operationLock=useRef(false),editor=useRef<HTMLFormElement>(null);
   const selected=connections.find(connection=>connection.id===selectedId);
@@ -212,7 +232,10 @@ export function ConnectionWorkspace({ navigation,serviceCatalog, connections, us
   const metadataChanged=Boolean(selected&&(name.trim()!==selected.name||description!==(selected.description??'')));
   const regionChanged=Boolean(selected?.provider==='minimax'&&minimaxRegion!==(selected.region??'international'));
   const hasChanges=!selected||metadataChanged||Boolean(secret.trim())||regionChanged;
+  const nonSecretChanged=dialog==='new'?Boolean(name||description||workspaceId||adapter!=='pexels_video'||minimaxRegion!=='cn'):dialog==='edit'&&Boolean(metadataChanged||regionChanged||workspaceId);
   const busy=isPending||operation!=='';
+  useEffect(()=>{if((dialog==='new'||dialog==='edit')&&!nonSecretChanged)drafts.current.delete(selectedId||'__new');},[dialog,nonSecretChanged,selectedId]);
+  useWorkspaceLeaveEntry({kind:'connection',dirty:()=>Boolean(dialog&&(nonSecretChanged||secret||Object.values(rebindSecrets).some(Boolean))),hasSecret:()=>Boolean(secret||Object.values(rebindSecrets).some(Boolean)),keep:()=>{leave(true);return true;},discard:()=>leave(false),beforeUnload:()=>{if(nonSecretChanged)keepDraft();}});
   const catalog=serviceCatalog??buildProductionServiceCatalog({connections,versions,externalReady:verificationEnabled});
   const selectedServices=catalog.groups.flatMap(group=>group.services.filter(service=>service.connectionId===selected?.id));
   const capabilityOf=(connection:ExternalConnection)=>catalog.groups.filter(group=>group.services.some(service=>service.connectionId===connection.id)).map(group=>group.label).join('、')||'未注册功能';
@@ -227,16 +250,21 @@ export function ConnectionWorkspace({ navigation,serviceCatalog, connections, us
   function choose(id:string){
     if(busy)return;
     const connection=connections.find(item=>item.id===id);
+    editingBaseline.current=connectionBaseline(connection);
     setCredentialFieldRevision(value=>value+1);
     setSelectedId(id);setName(connection?.name??'');setDescription(connection?.description??'');
+    setAdapter('pexels_video');setWorkspaceId('');
     setMinimaxRegion(connection?.region??(connection?'international':'cn'));
-    setSecret('');setWorkspaceId('');setRebindSecrets({});setError('');setNotice('');setResultTitle('');setResultName('');setResultConnectionId('');
+    const draft=drafts.current.get(id||'__new');
+    if(draft&&draft.baseline===connectionBaseline(connection)){setName(draft.name);setDescription(draft.description);setAdapter(draft.adapter);setWorkspaceId(draft.workspaceId);setMinimaxRegion(draft.region);}else if(draft)drafts.current.delete(id||'__new');
+    setSecret('');setRebindSecrets({});setError('');setNotice('');setResultTitle('');setResultName('');setResultConnectionId('');
+    if(draft&&draft.baseline!==connectionBaseline(connection)){setNotice('保留的修改所依据的连接已变化，已读取当前资料。');setResultTitle('已读取当前连接');}
   }
-  function openConnection(id:string,mode:'edit'|'detail',versionsOpen=false){if(busy)return;if(selectedId!==id)choose(id);setShowVersions(versionsOpen);setDialog(mode);if(mode==='detail'){viewedConnection.current=id;navigation?.change({connection:id});}}
-  function createConnection(){if(busy)return;if(selectedId)choose('');setShowVersions(false);setDialog('new');}
+  function openConnection(id:string,mode:'edit'|'detail',versionsOpen=false){if(busy)return;choose(id);setShowVersions(versionsOpen);setDialog(mode);if(mode==='detail'){viewedConnection.current=id;navigation?.change({connection:id});}}
+  function createConnection(){if(busy)return;choose('');setShowVersions(false);setDialog('new');}
   useEffect(()=>{if(selectedId&&!connections.some(connection=>connection.id===selectedId)){setSelectedId('');setName('');setDescription('');setSecret('');applyDialog('');if(navigation?.value.connection){setNotice('该连接已不可用，请从当前列表重新选择。');viewedConnection.current='';navigation.change({connection:''});}}},[connections,selectedId]);
 
-  useEffect(()=>{if(operation===''&&(notice||error||errorMessage))resultRef.current?.scrollIntoView?.({block:'nearest'});},[operation,notice,error,errorMessage]);
+  useEffect(()=>{if(operation===''&&(notice||error||errorMessage))resultRef.current?.scrollIntoView?.({block:'nearest'});if(operation===''&&(error||errorMessage||revokeError)&&document.activeElement===document.body)(revokingId?revokeDialogRef.current:dialogRef.current)?.focus();},[operation,notice,error,errorMessage,revokeError,revokingId]);
 
   async function test(connectionId:string,credentialSaved=false){
     setResultConnectionId(connectionId);
@@ -275,6 +303,7 @@ export function ConnectionWorkspace({ navigation,serviceCatalog, connections, us
       }
       const credentialChanged=!selected||Boolean(secret.trim())||regionChanged;
       if(!connection)throw new Error('连接保存未确认完成，请检查提示后重试。');
+      drafts.current.delete(selectedId||'__new');
       setSecret('');
       if(!selected){setSelectedId(connection.id);setName(connection.name);setDescription(connection.description??'');setWorkspaceId('');}
       setResultTitle(credentialChanged?'凭据已保存':'连接资料已保存');
@@ -293,7 +322,7 @@ export function ConnectionWorkspace({ navigation,serviceCatalog, connections, us
   }
   const versionDetails=selected && selectedVersions.length > 0 && <Disclosure label={<>连接版本（{selectedVersions.length}）</>} className="connection-versions" open={showVersions} onToggle={event=>setShowVersions(event.currentTarget.open)}><ul>{selectedVersions.map(version => <li key={version.id}>
       <div className="connection-version-row"><span>v{version.version} · {statusLabels[version.status]}{version.is_current ? ' · 当前' : ''}</span><div className="connection-version-actions">
-        {version.revoked_at ? <small>已撤销</small> : onRevokeVersion && <Button color="tertiary-destructive" size="xs" isDisabled={busy} onPress={() => {if(window.confirm('撤销此连接版本？引用它的生产单不会自动切换。'))void onRevokeVersion(version.id);}}>撤销版本</Button>}
+        {version.revoked_at ? <small>已撤销</small> : onRevokeVersion && <Button color="tertiary-destructive" size="xs" isDisabled={busy} onPress={() => {setRevokeError('');setRevokingId(version.id);}}>撤销版本</Button>}
         {version.status === 'unverified' && !version.is_current && onDeleteVersion && <Button color="tertiary" size="xs" isDisabled={busy} onPress={() => {if(window.confirm('删除这个未引用的连接草稿？删除后不可恢复。'))void onDeleteVersion(version.id);}}>删除草稿</Button>}
       </div></div>
       {onRebindVersion && !version.revoked_at && version.secretState === 'unbound' && <Disclosure label={<>恢复缺失的密钥绑定</>}><p>此版本不会自动使用其他版本的认证材料。</p><Input aria-label={`v${version.version} 恢复认证材料`} size="sm" type="password" autoComplete="off" isDisabled={busy} value={rebindSecrets[version.id] ?? ''} onChange={value => setRebindSecrets(current => ({...current,[version.id]:value}))}/><Button color="secondary" size="sm" isDisabled={busy || !rebindSecrets[version.id]} onPress={() => void rebind(version)}>重新绑定此版本</Button></Disclosure>}
@@ -351,18 +380,19 @@ export function ConnectionWorkspace({ navigation,serviceCatalog, connections, us
       })}</tbody>)}{!filteredConnections.length&&<tbody><tr><td colSpan={8}><div className="reference-connections-empty"><strong>{connections.length?'没有匹配的连接':'尚未添加连接'}</strong><p>{connections.length?'调整筛选条件，或创建新的服务连接。':'添加服务凭据后，验证其连接状态。'}</p>{connections.length>0&&<Button color="secondary" size="sm" onPress={()=>{applyQuery('');setCapabilityFilter('all');setStatusFilter('');}}>清空筛选</Button>}</div></td></tr></tbody>}</table>
     </section>
     {billingConnection&&<ConnectionBillingDialog key={billingConnection.id} connection={billingConnection} onClose={()=>setBillingConnectionId('')} onReadBilling={onReadBilling} onSaveBilling={onSaveBilling} onRefreshBilling={onRefreshBilling} onDisconnectBilling={onDisconnectBilling}/>}
-    {modelConnection&&<ConnectionModelsDialog key={modelConnection.id} connection={modelConnection} onClose={()=>setModelConnectionId('')} onReadModels={onReadModels} onSyncModels={onSyncModels} onSaveModels={onSaveModels}/>}
+    {modelConnection&&<ConnectionModelsDialog key={modelConnection.id} connection={modelConnection} draft={modelDrafts.current.get(modelConnection.id)} onDraftChange={draft=>{if(draft)modelDrafts.current.set(modelConnection.id,draft);else modelDrafts.current.delete(modelConnection.id);}} onClose={()=>setModelConnectionId('')} onReadModels={onReadModels} onSyncModels={onSyncModels} onSaveModels={onSaveModels}/>}
     <p className="reference-connections-note" role="status">{statusMessage||`凭据保存在 ${secretStorage}，不会回显。`}</p>
-    <ModalOverlay className="product-ui reference-connections-overlay" isOpen={Boolean(dialog)} isDismissable={!busy} isKeyboardDismissDisabled={busy} onOpenChange={open=>{if(!open&&!busy)setDialog('');}}><Modal className="reference-connections-modal"><Dialog aria-label={dialog==='detail'?selected?.name:dialog==='new'?'新建连接':'编辑连接'} className="dan-ui connection-workspace reference-connections reference-connections-dialog">
-      <header className="reference-connections-dialog-header"><h2>{dialog==='detail'?selected?.name:dialog==='new'?'新建连接':'编辑连接'}</h2><Button color="tertiary" size="sm" iconLeading={X} aria-label="关闭连接窗口" isDisabled={busy} onPress={()=>setDialog('')}/></header>
+    <ModalOverlay className="product-ui reference-connections-overlay" isOpen={Boolean(dialog)} isDismissable={!busy&&!leavePrompt&&!revokingId} isKeyboardDismissDisabled={busy||leavePrompt||Boolean(revokingId)} onOpenChange={open=>{if(!open)requestClose();}}><Modal className="reference-connections-modal"><Dialog ref={dialogRef} aria-label={dialog==='detail'?selected?.name:dialog==='new'?'新建连接':'编辑连接'} className="dan-ui connection-workspace reference-connections reference-connections-dialog">
+      <header className="reference-connections-dialog-header"><h2>{dialog==='detail'?selected?.name:dialog==='new'?'新建连接':'编辑连接'}</h2><Button color="tertiary" size="sm" iconLeading={X} aria-label="关闭连接窗口" isDisabled={busy} onPress={requestClose}/></header>
       {dialog==='detail'&&selected?<><div className="reference-connections-detail-body">
         <div className="reference-connection-summary" role="status" title={selected.last_verification_detail||undefined}><span className="reference-connection-status" data-status={selected.status}><i aria-hidden="true"/>{statusLabels[selected.status]}</span>{selectedCurrentVersion&&<span>v{selectedCurrentVersion.version}</span>}<span>{selected.last_verified_at?<>最近测试 <time dateTime={selected.last_verified_at}>{new Date(selected.last_verified_at).toLocaleString('zh-CN',{dateStyle:'short',timeStyle:'short'})}</time></>:'尚未测试'}</span></div>
         <dl className="reference-connections-detail-list"><dt>生产能力</dt><dd>{capabilityOf(selected)}</dd><dt>服务提供方</dt><dd>{providerDisplayName(selected.provider)}</dd><dt>技术标识</dt><dd>{selected.provider}</dd><dt>适配器</dt><dd>{selected.adapter}</dd><dt>模型 / 服务</dt><dd>{selectedServices.map(service=>service.models.length?service.models.join('、'):service.label).join('；')||'未注册或不支持当前制作功能。'}</dd>{selected.endpoint&&<><dt>服务地址</dt><dd>{selected.endpoint}</dd></>}{selected.description&&<><dt>备注</dt><dd>{selected.description}</dd></>}{selected.usage&&(selected.usage.currentBlueprints+selected.usage.episodes+selected.usage.tasks)>0&&<><dt>使用范围</dt><dd>当前配置 {selected.usage.currentBlueprints} · 生产单 {selected.usage.episodes} · 任务 {selected.usage.tasks}</dd></>}</dl>
         {!operationResult&&selected.status!=='verified'&&selected.last_verification_detail&&<p className="reference-connections-note form-error" role="alert">{selected.last_verification_detail}</p>}
         {operationResult}{versionDetails}
-      </div><footer className="reference-connections-dialog-footer"><Button color="secondary" size="sm" isDisabled={busy} onPress={()=>setDialog('edit')}>编辑连接</Button><Button color="primary" size="sm" iconLeading={Play} isDisabled={busy||!canVerify} isLoading={operation==='testing'} showTextWhileLoading onPress={()=>void testSelected(selected.id)}>测试连接</Button></footer></>:<>
+      </div><footer className="reference-connections-dialog-footer"><Button color="secondary" size="sm" isDisabled={busy} onPress={()=>{choose(selected.id);setDialog('edit');}}>编辑连接</Button><Button color="primary" size="sm" iconLeading={Play} isDisabled={busy||!canVerify} isLoading={operation==='testing'} showTextWhileLoading onPress={()=>void testSelected(selected.id)}>测试连接</Button></footer></>:<>
     <form aria-label="保存连接" className="connection-editor" onSubmit={event => void submit(event)} ref={editor}>
       <fieldset className="connection-fields" disabled={busy}>
+        <p className="reference-connections-note" role="status">{nonSecretChanged||secret?'未保存修改':'尚未修改'}</p>
         <NativeSelect icon={Plug} aria-label="连接类型" className="connection-field" label="连接类型" size="sm" disabled={busy || Boolean(selected)} value={selected?.adapter ?? adapter} onChange={event => {setCredentialFieldRevision(value=>value+1);setAdapter(event.target.value as ExternalConnectionInput['adapter']);setSecret('');setWorkspaceId('');}} options={[...connectionTypes.map(type => ({value:type.adapter,label:type.label})),...(selected&&!connectionTypes.some(type=>type.adapter===selected.adapter)?[{value:selected.adapter,label:selected.adapter}]:[])]}/>
         <Input className="connection-field" label="连接名称" size="sm" autoComplete="off" maxLength={100} isRequired isDisabled={busy} onChange={setName} value={name}/>
         {selected && <TextArea className="connection-field" label="连接说明" size="sm" maxLength={500} isDisabled={busy} onChange={setDescription} rows={2} value={description}/>}
@@ -374,12 +404,24 @@ export function ConnectionWorkspace({ navigation,serviceCatalog, connections, us
         {versionDetails}
         {operationResult}
         <div className="connection-submit-row">
-          <Button color="secondary" size="sm" isDisabled={busy} onPress={()=>setDialog('')}>取消</Button>
+          <Button color="secondary" size="sm" isDisabled={busy} onPress={requestClose}>取消</Button>
           <Button aria-busy={operation !== ''} color="primary" size="sm" isLoading={operation !== ''} showTextWhileLoading isDisabled={busy || !name.trim() || (!selected && !secret.trim()) || (!canVerify && !hasChanges) || Boolean(selected && metadataChanged && !onUpdateConnection) || Boolean(selected && secret.trim() && !onRotateConnection)} type="submit">{operation === 'testing' ? '测试中…' : operation === 'saving' ? '保存中…' : canVerify ? hasChanges ? '保存并测试' : '测试连接' : selected ? '保存更新' : '仅保存凭据'}</Button>
         </div>
       </fieldset>
     </form>
       </>}
     </Dialog></Modal></ModalOverlay>
+    {revoking&&<ModalOverlay className="product-ui reference-connections-overlay" isOpen isDismissable={!busy} isKeyboardDismissDisabled={busy} onOpenChange={open=>{if(!open&&!busy)setRevokingId('');}}><Modal className="reference-connections-modal"><Dialog ref={revokeDialogRef} aria-label="撤销连接版本" className="dan-ui connection-workspace reference-connections reference-connections-dialog">
+      <header className="reference-connections-dialog-header"><h2>撤销连接版本</h2></header>
+      <div className="reference-connections-detail-body"><strong>{revokingConnection?.name} · v{revoking.version}</strong>{revoking.usage?<>
+        <p>已记录引用：生产单 {revoking.usage.episodes} · 任务 {revoking.usage.tasks}（待执行或执行中 {revoking.usage.activeTasks}）· 制作请求 {revoking.usage.requests} · 已保存制作选择 {revoking.usage.savedSelections} 项。</p>
+        <p>统计已保存的蓝图字段、任务、制作请求快照及配乐 / 口播选择；不包含尚未保存的表单。</p>
+        <p>当前蓝图中的旧连接字段引用：{revoking.usage.currentBlueprints}。旧字段仅保留历史记录，不代表当前制作选择。</p>
+      </>:<p role="alert">尚未读取此版本的引用影响，请重新读取连接后再撤销。</p>}
+      <p>撤销后仍需此版本的本机执行将被阻止，不会取消供应商已接受的请求。历史记录和已冻结输入保留，不会自动切换到其他版本；撤销后不能恢复此版本。</p>
+      {revoking.revoked_at&&<p role="status">此版本已撤销。</p>}{revokeError&&<p className="form-error" role="alert">{revokeError}</p>}</div>
+      <footer className="reference-connections-dialog-footer"><Button color="secondary" size="sm" autoFocus isDisabled={busy} onPress={()=>setRevokingId('')}>取消撤销</Button><Button color="primary-destructive" size="sm" isLoading={busy} showTextWhileLoading isDisabled={busy||!revoking.usage||Boolean(revoking.revoked_at)} onPress={()=>void revoke()}>确认撤销 v{revoking.version}</Button></footer>
+    </Dialog></Modal></ModalOverlay>}
+    {leavePrompt&&<ConnectionDraftLeaveDialog hasSecret={Boolean(secret||Object.values(rebindSecrets).some(Boolean))} onContinue={()=>setLeavePrompt(false)} onDiscard={()=>leave(false)} onKeep={nonSecretChanged?()=>leave(true):undefined}/>}
   </section>;
 }

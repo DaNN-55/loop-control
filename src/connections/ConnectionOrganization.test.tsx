@@ -18,8 +18,9 @@ it('starts with the reference table and opens the single editor on demand',()=>{
  fireEvent.click(screen.getByRole('button',{name:'清除连接搜索'}));
  edit(active.name);fireEvent.change(screen.getByLabelText(/^新的 API Key/),{target:{value:'synthetic-draft'}});
  fireEvent.click(screen.getByRole('button',{name:'关闭连接窗口'}));
- edit(active.name);expect((screen.getByLabelText(/^新的 API Key/)as HTMLInputElement).value).toBe('synthetic-draft');
- fireEvent.click(screen.getByRole('button',{name:'关闭连接窗口'}));
+ fireEvent.click(screen.getByRole('button',{name:'继续编辑'}));expect((screen.getByLabelText(/^新的 API Key/)as HTMLInputElement).value).toBe('synthetic-draft');
+ fireEvent.click(screen.getByRole('button',{name:'关闭连接窗口'}));fireEvent.click(screen.getByRole('button',{name:'放弃修改并关闭'}));
+ edit(active.name);expect((screen.getByLabelText(/^新的 API Key/)as HTMLInputElement).value).toBe('');fireEvent.click(screen.getByRole('button',{name:'关闭连接窗口'}));
  edit(fresh.name);expect((screen.getByLabelText(/^新的 API Key/)as HTMLInputElement).value).toBe('');
 });
 it('saves selected metadata and tests the unchanged credential through the unified action',async()=>{

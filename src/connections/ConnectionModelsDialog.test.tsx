@@ -46,3 +46,26 @@ it('hides empty model ranges and restores the enabled range as models are select
  const range=screen.getByRole('combobox',{name:'模型范围'});expect(within(range).queryByRole('option',{name:'尚未适配'})).toBeNull();expect(within(range).queryByRole('option',{name:'已启用'})).toBeNull();
  fireEvent.click(screen.getByRole('checkbox',{name:'gpt-image-2'}));expect(within(range).getByRole('option',{name:'已启用'})).toBeTruthy();
 });
+it('protects changed model choices on Escape and can keep them through close/reopen',async()=>{
+ const user=userEvent.setup();const connection={id:'c',name:'Images',provider:'openai',adapter:'openai_images',current_version_id:'v',status:'verified'}as ExternalConnection;
+ render(<ConnectionWorkspace connections={[connection]} onCreateConnection={vi.fn()} onTestConnection={vi.fn()} onReadModels={async()=>data}/>);
+ await user.click(screen.getByRole('button',{name:'Images 连接操作'}));await user.click(screen.getByRole('menuitem',{name:'模型设置'}));await user.click(await screen.findByRole('checkbox',{name:'gpt-image-2'}));
+ await user.keyboard('{Escape}');expect(screen.getByRole('dialog',{name:'关闭前处理修改'})).toBeTruthy();await user.click(screen.getByRole('button',{name:'继续编辑'}));expect((screen.getByRole('checkbox',{name:'gpt-image-2'})as HTMLInputElement).checked).toBe(false);
+ await user.click(screen.getByRole('button',{name:'关闭模型设置'}));await user.click(screen.getByRole('button',{name:'保留修改并关闭'}));
+ await user.click(screen.getByRole('button',{name:'Images 连接操作'}));await user.click(screen.getByRole('menuitem',{name:'模型设置'}));expect((await screen.findByRole('checkbox',{name:'gpt-image-2'})as HTMLInputElement).checked).toBe(false);
+ await user.click(screen.getByRole('button',{name:'取消'}));await user.click(screen.getByRole('button',{name:'放弃修改并关闭'}));
+ await user.click(screen.getByRole('button',{name:'Images 连接操作'}));await user.click(screen.getByRole('menuitem',{name:'模型设置'}));expect((await screen.findByRole('checkbox',{name:'gpt-image-2'})as HTMLInputElement).checked).toBe(true);
+});
+it('does not restore model drafts over a newer revision and does not close an unconfirmed save',async()=>{
+ const close=vi.fn();render(<ConnectionModelsDialog connection={{id:'c',name:'Images'}} onClose={close} onReadModels={async()=>({...data,revision:'new-revision'})} draft={{versionId:'v',revision:'old-revision',enabledModels:[]}} onDraftChange={vi.fn()} onSaveModels={async()=>undefined as unknown as ConnectionModelSettings}/>);
+ const model=await screen.findByRole('checkbox',{name:'gpt-image-2'});expect((model as HTMLInputElement).checked).toBe(true);expect(screen.getByText('保留的修改所依据的版本已变化，已读取当前设置。')).toBeTruthy();fireEvent.click(model);fireEvent.click(screen.getByRole('button',{name:'保存设置'}));expect(await screen.findByRole('alert')).toHaveProperty('textContent','模型设置保存未确认完成，请重新读取后核对。');expect(close).not.toHaveBeenCalled();
+});
+it('forgets retained model edits when the owner changes back to the server selection',async()=>{
+ const user=userEvent.setup(),connection={id:'c',name:'Images',provider:'openai',adapter:'openai_images',current_version_id:'v',status:'verified'}as ExternalConnection;
+ render(<ConnectionWorkspace connections={[connection]} onCreateConnection={vi.fn()} onTestConnection={vi.fn()} onReadModels={async()=>data}/>);
+ async function open(){await user.click(screen.getByRole('button',{name:'Images 连接操作'}));await user.click(screen.getByRole('menuitem',{name:'模型设置'}));return await screen.findByRole('checkbox',{name:'gpt-image-2'});}
+ await user.click(await open());await user.click(screen.getByRole('button',{name:'取消'}));await user.click(screen.getByRole('button',{name:'保留修改并关闭'}));await user.click(await open());await user.click(screen.getByRole('button',{name:'取消'}));expect(screen.queryByRole('dialog')).toBeNull();expect((await open()as HTMLInputElement).checked).toBe(true);
+});
+it('restores keyboard focus after an asynchronous failed save loses the disabled submit button',async()=>{
+ const user=userEvent.setup();let reject!:(cause:Error)=>void;render(<ConnectionModelsDialog connection={{id:'c',name:'Images'}} onClose={vi.fn()} onReadModels={async()=>data} onSaveModels={()=>new Promise((_resolve,fail)=>{reject=fail;})}/>);await user.click(await screen.findByRole('checkbox',{name:'gpt-image-2'}));await user.click(screen.getByRole('button',{name:'保存设置'}));act(()=>{document.body.tabIndex=-1;document.body.focus();});await act(async()=>reject(Error('保存冲突')));expect(await screen.findByRole('alert')).toHaveProperty('textContent','保存冲突');expect(document.activeElement).toBe(screen.getByRole('dialog',{name:'Images 模型设置'}));await user.keyboard('{Escape}');expect(screen.getByRole('dialog',{name:'关闭前处理修改'})).toBeTruthy();document.body.removeAttribute('tabindex');
+});

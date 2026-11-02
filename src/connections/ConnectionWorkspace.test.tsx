@@ -69,7 +69,7 @@ describe("外部连接工作区", () => {
     const onRevokeVersion = vi.fn().mockResolvedValue(undefined);
     const onDeleteVersion = vi.fn().mockResolvedValue(undefined);
     vi.stubGlobal("confirm", vi.fn().mockReturnValue(true));
-    render(<ConnectionWorkspace connections={[connection]} onCreateConnection={vi.fn()} onDeleteVersion={onDeleteVersion} onRevokeVersion={onRevokeVersion} onRotateConnection={onRotateConnection} onTestConnection={onTestConnection} versions={[{ adapter: "openai_images", connection_id: "connection-1", created_at: "", endpoint: "https://api.openai.com/v1", id: "version-1", is_current: false, provider: "openai", revoked_at: null, status: "verified", version: 1 }, { adapter: "openai_images", connection_id: "connection-1", created_at: "", endpoint: "https://api.openai.com/v1", id: "version-2", is_current: true, provider: "openai", revoked_at: null, status: "unverified", version: 2 }, { adapter: "openai_images", connection_id: "connection-1", created_at: "", endpoint: "https://api.openai.com/v1", id: "version-3", is_current: false, provider: "openai", revoked_at: null, status: "unverified", version: 3 }]} />);
+    render(<ConnectionWorkspace connections={[connection]} onCreateConnection={vi.fn()} onDeleteVersion={onDeleteVersion} onRevokeVersion={onRevokeVersion} onRotateConnection={onRotateConnection} onTestConnection={onTestConnection} versions={[{ adapter: "openai_images", connection_id: "connection-1", created_at: "", endpoint: "https://api.openai.com/v1", id: "version-1", is_current: false, provider: "openai", revoked_at: null, status: "verified", version: 1, usage:{currentBlueprints:0,episodes:0,tasks:0,activeTasks:0,requests:0,savedSelections:0} }, { adapter: "openai_images", connection_id: "connection-1", created_at: "", endpoint: "https://api.openai.com/v1", id: "version-2", is_current: true, provider: "openai", revoked_at: null, status: "unverified", version: 2 }, { adapter: "openai_images", connection_id: "connection-1", created_at: "", endpoint: "https://api.openai.com/v1", id: "version-3", is_current: false, provider: "openai", revoked_at: null, status: "unverified", version: 3 }]} />);
 
     await user.click(screen.getByRole("button",{name:"主 OpenAI"}));
     await user.click(screen.getByRole("button",{name:"编辑连接"}));
@@ -79,6 +79,7 @@ describe("外部连接工作区", () => {
     expect(onTestConnection).toHaveBeenCalledWith("connection-1");
     await user.click(screen.getByText("连接版本（3）"));
     await user.click(screen.getAllByRole("button", { name: "撤销版本" })[0]);
+    await user.click(screen.getByRole("button",{name:"确认撤销 v1"}));
     expect(onRevokeVersion).toHaveBeenCalledWith("version-1");
     await user.click(screen.getByRole("button", { name: "删除草稿" }));
     expect(onDeleteVersion).toHaveBeenCalledWith("version-3");

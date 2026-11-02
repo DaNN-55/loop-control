@@ -38,7 +38,7 @@ export function LocalConnectionsPanel(){
  onRotateConnection={async input=>{try{return (await command<{connection:ExternalConnection}>('rotate',input)).connection;}catch{return null;}}}
  onChangeRegion={async input=>{try{return (await command<{connection:ExternalConnection}>('region',input)).connection;}catch{return null;}}}
  onUpdateConnection={async input=>{await command('update',input);}}
- onRevokeVersion={async versionId=>{try{await command('revoke',{versionId});}catch{/* Visible panel error. */}}}
+ onRevokeVersion={async versionId=>{await command('revoke',{versionId});}}
  onRebindVersion={async(versionId,secret)=>{await command('rebind',{versionId,secret});}}
  onTestConnection={connectionId=>command('verify',{connectionId})}
  onReadBilling={data.capabilities.billing?connectionId=>localRequest('connection-billing?connectionId='+connectionId):undefined}

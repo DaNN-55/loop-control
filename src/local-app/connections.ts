@@ -108,6 +108,40 @@ export class LocalConnections {
     (SELECT count(*)::int FROM public.tasks t WHERE EXISTS(SELECT 1 FROM visible_versions v WHERE v.connection_id=c.id AND t.input_snapshot::text LIKE '%'||v.id::text||'%')) AS tasks
     FROM public.external_connections c WHERE c.created_by=$1 AND c.provider NOT IN('cloudflare','google_tts')`,[ownerId])).rows;
    for(const connection of connections){const entry=usage.find(item=>item.id===connection.id);if(entry){const {id,...counts}=entry;connection.usage=counts;}}
+   // Count semantic version references, separately from connection-wide historical usage.
+   // One batched read shares the same Owner/RLS snapshot as the directory.
+   const versionUsage=(await client.query(`WITH visible_versions AS MATERIALIZED(
+    SELECT v.id FROM public.list_external_connection_versions(NULL) v JOIN public.external_connections c ON c.id=v.connection_id WHERE c.created_by=$1
+   ), owned_episodes AS MATERIALIZED(SELECT e.id FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id WHERE m.user_id=$1 AND m.role='owner'), task_refs AS MATERIALIZED(
+    SELECT v.id version_id,t.id,t.episode_id,t.status,t.invalidated_at FROM visible_versions v JOIN public.tasks t ON t.input_snapshot->>'credential_ref'=v.id::text OR t.input_snapshot#>>'{production_selection,connectionVersionId}'=v.id::text JOIN owned_episodes e ON e.id=t.episode_id
+   ), requests AS(
+    SELECT 'visual:'||id::text id,episode_id,request_snapshot FROM local_identity.workspace_visual_candidates
+    UNION ALL SELECT 'speech:'||task_id::text,episode_id,request_snapshot FROM local_identity.workspace_narration_requests
+    UNION ALL SELECT 'audio:'||id::text,episode_id,request_snapshot FROM local_identity.workspace_audio_preparations
+    UNION ALL SELECT 'pexels:'||id::text,episode_id,request_snapshot FROM local_identity.workspace_pexels_requests
+   ), request_refs AS MATERIALIZED(
+    SELECT v.id version_id,r.id,r.episode_id FROM visible_versions v JOIN requests r ON r.request_snapshot#>>'{selection,connectionVersionId}'=v.id::text OR r.request_snapshot#>>'{execution,credential_ref}'=v.id::text JOIN owned_episodes e ON e.id=r.episode_id
+   ), saved_selections AS(
+    SELECT episode_id,music_defaults#>>'{selection,connectionVersionId}' version_id FROM local_identity.production_workspaces
+    UNION ALL SELECT episode_id,narration_defaults#>>'{selection,connectionVersionId}' FROM local_identity.production_workspaces
+    UNION ALL SELECT episode_id,selection->>'connectionVersionId' FROM local_identity.workspace_narrations WHERE mode='tts'
+   ), saved_refs AS MATERIALIZED(
+    SELECT v.id version_id,s.episode_id FROM visible_versions v JOIN saved_selections s ON s.version_id=v.id::text JOIN owned_episodes e ON e.id=s.episode_id
+   ), blueprint_refs AS MATERIALIZED(
+    SELECT v.id version_id,b.id,b.account_id FROM visible_versions v JOIN public.account_blueprint_versions b ON jsonb_path_exists(b.policy,'$.**.credential_ref ? (@ == $version)',jsonb_build_object('version',v.id::text)) JOIN public.account_memberships m ON m.account_id=b.account_id AND m.user_id=$1 AND m.role='owner'
+   ), episode_refs AS(
+    SELECT b.version_id,e.id FROM blueprint_refs b JOIN public.episodes e ON e.blueprint_version_id=b.id
+    UNION SELECT version_id,episode_id FROM task_refs
+    UNION SELECT version_id,episode_id FROM request_refs
+    UNION SELECT version_id,episode_id FROM saved_refs
+   ) SELECT v.id,jsonb_build_object(
+    'currentBlueprints',(SELECT count(*)::int FROM blueprint_refs b JOIN public.accounts a ON a.current_blueprint_version_id=b.id WHERE b.version_id=v.id),
+    'episodes',(SELECT count(*)::int FROM episode_refs e WHERE e.version_id=v.id),
+    'tasks',(SELECT count(*)::int FROM task_refs t WHERE t.version_id=v.id),
+    'activeTasks',(SELECT count(*)::int FROM task_refs t WHERE t.version_id=v.id AND t.status IN('ready','running') AND t.invalidated_at IS NULL),
+    'requests',(SELECT count(*)::int FROM request_refs r WHERE r.version_id=v.id),
+    'savedSelections',(SELECT count(*)::int FROM saved_refs s WHERE s.version_id=v.id)
+   ) usage FROM visible_versions v`,[ownerId])).rows;
    const bindings=(await client.query('SELECT version_id,store_mode FROM local_identity.connection_bindings WHERE owner_id=$1',[ownerId])).rows;
    const minimaxRegions=(await client.query("SELECT version_id,metadata->>'region' region FROM local_identity.connection_intents WHERE owner_id=$1 AND applied_at IS NOT NULL AND metadata->>'provider'='minimax' AND metadata->>'command' IN('create','rotate')",[ownerId])).rows;
    for(const connection of connections.filter(c=>c.provider==='minimax')){
@@ -118,7 +152,7 @@ export class LocalConnections {
    const latest=(await client.query('SELECT DISTINCT ON(connection_version_id) connection_version_id,status FROM public.external_connection_verifications ORDER BY connection_version_id,created_at DESC,id DESC')).rows;
    const pending=(await client.query('SELECT idempotency_key,metadata,created_at FROM local_identity.connection_intents WHERE owner_id=$1 AND applied_at IS NULL ORDER BY created_at',[ownerId])).rows;
    const externalReady=this.externalReady;
-   const localVersions=versions.map(v=>{const binding=bindings.find(b=>b.version_id===v.id),qualified=qualifications.some(q=>q.version_id===v.id&&q.qualified);return {...v,historicalStatus:v.status,status:v.revoked_at?'revoked':this.store.mode!=='keychain'||this.probe.mode!=='live'||!binding||binding.store_mode!=='keychain'?'retryable':qualified?'verified':v.status==='verified'?'retryable':v.status,secretState:binding?'bound-unchecked':'unbound'};});
+   const localVersions=versions.map(v=>{const binding=bindings.find(b=>b.version_id===v.id),qualified=qualifications.some(q=>q.version_id===v.id&&q.qualified);return {...v,usage:versionUsage.find(entry=>entry.id===v.id)?.usage,historicalStatus:v.status,status:v.revoked_at?'revoked':this.store.mode!=='keychain'||this.probe.mode!=='live'||!binding||binding.store_mode!=='keychain'?'retryable':qualified?'verified':v.status==='verified'?'retryable':v.status,secretState:binding?'bound-unchecked':'unbound'};});
    // Historical provider text is never used as a diagnostic response channel;
    // an imported verified flag cannot stand in for a usable native binding.
    for(const c of connections){const current=localVersions.find(v=>v.id===c.current_version_id);if(current?.status==='revoked')c.status='invalid';else if(current)c.status=current.status;
