@@ -1,3 +1,4 @@
+import {useCatalogPanelNavigation} from './catalogNavigation';
 import {Disclosure} from '../ui/dan-ui/components/base/disclosure/disclosure';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {Input} from '../ui/dan-ui/components/base/input/input';
@@ -15,22 +16,28 @@ interface Report {categoryCounts?:Record<string,number>;summary:{versions:string
 interface VersionDetail {version:{table_name:string;row_key:unknown;payload_json:string}}
 const states:Record<string,string>={'superseded-import-precision':'旧导入精度版本',inserted:'有合入记录','current-preserved':'保留当时版本','secondary-key-conflict':'冲突版本','history-only:missing-parent':'缺少原始引用','history-only':'历史版本'};
 export function HistorySources(){
- const [report,setReport]=useState<Report|null>(null),[category,setCategory]=useState(''),[state,setState]=useState('active');
- const [sourceQuery,setSourceQuery]=useState(''),[source,setSource]=useState(''),[query,setQuery]=useState('');
+ const navigation=useCatalogPanelNavigation('sources');
+ const applied=useRef(navigation?.value??{source:'',q:'',sourcesQ:'',category:'',scope:'active',filesPage:1,recordsPage:1});
+ const navigationKey=useRef(JSON.stringify(applied.current));
+ const [report,setReport]=useState<Report|null>(null),[category,setCategory]=useState(applied.current.category),[state,setState]=useState(applied.current.scope);
+ const [sourceQuery,setSourceQuery]=useState(applied.current.sourcesQ),[source,setSource]=useState(applied.current.source),[query,setQuery]=useState(applied.current.q);
  const [error,setError]=useState(''),[notice,setNotice]=useState(''),[busy,setBusy]=useState(false),[operation,setOperation]=useState('');
  const [selected,setSelected]=useState<HistoryVersion|null>(null),[version,setVersion]=useState<VersionDetail|null>(null);
  const [preview,setPreview]=useState<{source:HistorySource;result:HistoryCleanupPreview}|null>(null);
  const request=useRef(0),detailRequest=useRef(0),operationLock=useRef(false),viewer=useRef<HTMLElement>(null),previewPanel=useRef<HTMLElement>(null);
  const [sourceLimit,setSourceLimit]=useState(50);
  const disabled=busy||Boolean(operation);
- async function load(options:{source?:string;q?:string;category?:string;state?:string;sourcesQ?:string;filesPage?:number;recordsPage?:number}={}){
+ async function load(options:{source?:string;q?:string;category?:string;state?:string;sourcesQ?:string;filesPage?:number;recordsPage?:number}={},sync=true){
+  const destination={...applied.current,source:options.source??applied.current.source,q:options.q??applied.current.q,category:options.category??applied.current.category,scope:options.state??applied.current.scope,sourcesQ:options.sourcesQ??applied.current.sourcesQ,filesPage:options.filesPage??1,recordsPage:options.recordsPage??1};
+  applied.current=destination;navigationKey.current=JSON.stringify(destination);if(sync)navigation?.change(destination);
   const generation=++request.current;detailRequest.current++;setBusy(true);setError('');setSelected(null);setVersion(null);
-  const params={source:options.source??source,q:options.q??query,category:options.category??category,state:options.state??state,sourcesQ:options.sourcesQ??sourceQuery,filesPage:String(options.filesPage??1),recordsPage:String(options.recordsPage??1)};
+  const params={source:destination.source,q:destination.q,category:destination.category,state:destination.scope,sourcesQ:destination.sourcesQ,filesPage:String(destination.filesPage),recordsPage:String(destination.recordsPage)};
   try{const next:Report=await localRequest('history?'+new URLSearchParams(params));if(generation===request.current)setReport(next);}
   catch(cause){if(generation===request.current)setError(cause instanceof Error?cause.message:'历史资料读取失败，请重试。');}
   finally{if(generation===request.current)setBusy(false);}
  }
- useEffect(()=>{void load({source:'',q:'',category:'',state:'active',sourcesQ:''});return()=>{request.current++;detailRequest.current++;};},[]);
+ useEffect(()=>{void load({source:applied.current.source,q:applied.current.q,category:applied.current.category,state:applied.current.scope,sourcesQ:applied.current.sourcesQ,filesPage:applied.current.filesPage,recordsPage:applied.current.recordsPage},false);return()=>{request.current++;detailRequest.current++;};},[]);
+ useEffect(()=>{if(!navigation||navigationKey.current===JSON.stringify(navigation.value))return;const next=navigation.value;applied.current=next;navigationKey.current=JSON.stringify(next);setSourceQuery(next.sourcesQ);setQuery(next.q);setSource(next.source);setCategory(next.category);setState(next.scope);setPreview(null);void load({source:next.source,q:next.q,category:next.category,state:next.scope,sourcesQ:next.sourcesQ,filesPage:next.filesPage,recordsPage:next.recordsPage},false);},[JSON.stringify(navigation?.value)]);
  useEffect(()=>{if(report?.source&&source===report.source.id)viewer.current?.scrollIntoView({block:'start',behavior:'instant'});},[report?.source?.id]);
  useEffect(()=>{if(preview)previewPanel.current?.scrollIntoView({block:'start',behavior:'instant'});},[preview]);
  async function openSource(item:HistorySource){if(disabled)return;setSource(item.id);setQuery('');setPreview(null);await load({source:item.id,q:''});viewer.current?.scrollIntoView({block:'start',behavior:'instant'});}
@@ -50,7 +57,7 @@ export function HistorySources(){
   return <nav aria-label={kind==='files'?'文件分页':'记录分页'} className="history-pagination"><Button color="secondary" size="sm" isDisabled={disabled||page<=1} onPress={()=>void load({filesPage:kind==='files'?page-1:report.pagination.filesPage,recordsPage:kind==='records'?page-1:report.pagination.recordsPage})} iconLeading={ChevronLeft} type="button">上一页</Button><span>第 {page} / {Math.ceil(total/50)} 页 · {total.toLocaleString()} 项</span><Button color="secondary" size="sm" isDisabled={disabled||page*50>=total} onPress={()=>void load({filesPage:kind==='files'?page+1:report.pagination.filesPage,recordsPage:kind==='records'?page+1:report.pagination.recordsPage})} iconTrailing={ChevronRight} type="button">下一页</Button></nav>;
  }
  return <section aria-label="资料来源管理" className="dan-ui history-ui history-workspace history-sources reference-history" aria-busy={disabled}>
-  <form aria-label="查找资料来源" className="history-source-filters" role="search" onSubmit={event=>{event.preventDefault();if(!disabled){setSource('');setPreview(null);void load({source:'',q:''});}}}>
+  <form aria-label="查找资料来源" className="history-source-filters" role="search" onSubmit={event=>{event.preventDefault();if(!disabled){setSource('');setPreview(null);void load({source:'',q:'',sourcesQ:sourceQuery.trim()});}}}>
    <Input aria-label="查找来源" icon={Search} placeholder="搜索名称、文件或来源" size="sm" maxLength={200} onChange={setSourceQuery} type="search" value={sourceQuery}/>
    <PopulatedFilterSelect icon={Layers} aria-label="分类" size="sm" disabled={disabled} counts={report?.categoryCounts} allValue="" value={category} onValueChange={value=>{setCategory(value);setSource('');setPreview(null);void load({category:value,source:'',q:''});}} options={[{value:"",label:"全部分类"},...historyCategories.map(item=>({value:item.id,label:item.label}))]}/>
    <PopulatedFilterSelect icon={Archive} aria-label="显示范围" size="sm" disabled={disabled} counts={report?.sourceCounts} allValue="all" value={state} onValueChange={value=>{setState(value);setSource('');setPreview(null);void load({state:value,source:'',q:''});}} options={[{value:"active",label:report?`未归档（${report.sourceCounts.active}）`:"未归档"},{value:"archived",label:report?`已归档（${report.sourceCounts.archived}）`:"已归档"},{value:"all",label:"全部来源"}]}/>
@@ -62,7 +69,7 @@ export function HistorySources(){
    {preview&&<section aria-label="永久清理预览" className="history-cleanup-preview" ref={previewPanel}><header className="history-header"><div><h3>永久清理预览</h3><p>{preview.source.title}</p></div><Button aria-label="关闭清理预览" color="tertiary" size="sm" iconLeading={X} onPress={()=>setPreview(null)} type="button"/></header><p>仅预览，不删除文件或索引。</p><dl className="history-preview-counts"><div><dt>来源关联</dt><dd>{preview.result.recordLinks.toLocaleString()} 条记录 / {preview.result.fileLinks.toLocaleString()} 个文件</dd></div><div><dt>其他来源共用</dt><dd>{preview.result.sharedRecords.toLocaleString()} 条记录 / {preview.result.sharedContents.toLocaleString()} 份内容，保留</dd></div><div><dt>保护依赖</dt><dd>{preview.result.protectedContents.toLocaleString()} 份内容，保留</dd></div><div><dt>有业务合入记录</dt><dd>{preview.result.projectedRecords.toLocaleString()} 条</dd></div><div><dt>独占待核查</dt><dd>{preview.result.reviewContents.toLocaleString()} 份内容 · {historySize(preview.result.reviewBytes)}</dd></div></dl><p className="field-hint">待核查大小不等于可释放空间。还需核验运行引用、资料正文中的间接引用和磁盘文件；永久删除尚未开放。</p><Disclosure label={<>核查样例（最多 12 项）</>}><ul className="history-preview-samples">{preview.result.samples.map(item=><li key={item.logical_path}><span>{item.logical_path}</span><small>{item.state==='shared'?'共用，保留':item.state==='protected'?'保护依赖，保留':'待核查'}</small></li>)}</ul></Disclosure></section>}
    {report.source&&source===report.source.id&&<section aria-label="来源资料" className="history-source-view" ref={viewer}><header className="history-header"><div><h3>{report.source.title}</h3><p>{report.source.archived_at?'已归档 · 仍可查询和下载':'资料内容'}</p></div><Button color="secondary" size="sm" isDisabled={disabled} onPress={()=>{setSource('');setPreview(null);void load({source:'',q:''});}} type="button">收起资料</Button></header>
     <Disclosure label={<>原始来源信息</>} className="history-source-original"><dl><dt>原名称或路径</dt><dd>{report.source.label}</dd><dt>来源编号</dt><dd>{report.source.id}</dd><dt>导入时间</dt><dd>{report.source.imported_at}</dd></dl></Disclosure>
-    <form aria-label="查找来源内容" className="history-content-search" role="search" onSubmit={event=>{event.preventDefault();if(!disabled)void load();}}><Input aria-label="查找文件或记录" size="sm" maxLength={200} onChange={setQuery} type="search" value={query}/></form>
+    <form aria-label="查找来源内容" className="history-content-search" role="search" onSubmit={event=>{event.preventDefault();if(!disabled)void load({q:query.trim()});}}><Input aria-label="查找文件或记录" size="sm" maxLength={200} onChange={setQuery} type="search" value={query}/></form>
     <Disclosure label={<>文件（{report.pagination.fileTotal.toLocaleString()} 项）</>} className="history-category" key={source+'files'}>{report.files.length?historyCategories.map(group=>{
      const items=report.files.filter(item=>item.category===group.id);return items.length?<section className="history-list-section" key={group.id}><h4>{group.label}</h4><ul className="history-files">{items.map(file=><li key={file.logical_path+file.sha256}><div className="history-file-name"><a aria-label={file.logical_path} download={file.logical_path.split('/').at(-1)} href={'/api/local/history-file?sha='+file.sha256}>{file.title}</a><Disclosure label={<>原路径与摘要</>}><p>{file.logical_path}</p><code>{file.sha256}</code></Disclosure></div><small>{historySize(file.bytes)}</small></li>)}</ul></section>:null;
     }):<p className="maintenance-empty">没有匹配的历史文件。</p>}{paging('files')}</Disclosure>

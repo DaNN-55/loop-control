@@ -1,3 +1,4 @@
+import type {PanelNavigation} from '../local-app/catalogNavigation';
 import {PopulatedFilterSelect} from '../ui/PopulatedFilterSelect';
 import {Plug,Plus,Play,MoreHorizontal,Pencil,History,X,RefreshCw,CreditCard} from 'lucide-react';
 import {Dialog,Menu,MenuItem,MenuTrigger,Modal,ModalOverlay,Popover} from 'react-aria-components';
@@ -58,6 +59,7 @@ function connectionCredential(provider:ExternalConnectionInput['provider'],secre
 
 export function ExternalConnectionPicker({ adapter, connections, isPending = false, label = "外部连接", officialEndpoint, onCreateConnection, onRotateConnection, onSelectVersion, onTestConnection, onUpdateConnection, provider, selectedVersionId, versions = [] }: {
   adapter: ExternalConnectionInput["adapter"];
+  navigation?:PanelNavigation<'connections'>;
   connections: ExternalConnection[];
   officialEndpoint?: string;
   isPending?: boolean;
@@ -150,7 +152,8 @@ const connectionTypes = [...new Map(registeredAdapters.productionChoices().filte
   secretLabel:choice.provider==='kling'?'API Key（旧版可填 Access Key:Secret Key）':choice.provider==='pexels'?'Pexels API Key':choice.provider==='volcengine_tts'?'豆包语音 API Key':choice.provider==='openai'?'OpenAI API Key':choice.provider==='bailian'?'百炼 API Key':choice.label+' API Key',
 }));
 
-export function ConnectionWorkspace({ serviceCatalog, connections, usageByVersion={}, isPending = false, onCreateConnection, onDeleteVersion, onRevokeVersion, onRotateConnection, onChangeRegion, onTestConnection, onUpdateConnection, onRebindVersion, onReadModels,onSyncModels,onSaveModels,onReadBilling,onSaveBilling,onRefreshBilling,onDisconnectBilling, secretStorage='Vault', verificationEnabled=true, verificationByProvider, errorMessage='', showHeader=true, statusMessage='', onRefresh, versions = [] }: ConnectionModelActions & ConnectionBillingActions & {
+export function ConnectionWorkspace({ navigation,serviceCatalog, connections, usageByVersion={}, isPending = false, onCreateConnection, onDeleteVersion, onRevokeVersion, onRotateConnection, onChangeRegion, onTestConnection, onUpdateConnection, onRebindVersion, onReadModels,onSyncModels,onSaveModels,onReadBilling,onSaveBilling,onRefreshBilling,onDisconnectBilling, secretStorage='Vault', verificationEnabled=true, verificationByProvider, errorMessage='', showHeader=true, statusMessage='', onRefresh, versions = [] }: ConnectionModelActions & ConnectionBillingActions & {
+  navigation?:PanelNavigation<'connections'>;
   connections: ExternalConnection[];
   usageByVersion?:Record<string,ConnectionUsageSummary>;
   serviceCatalog?: ProductionServiceCatalog;
@@ -172,18 +175,23 @@ export function ConnectionWorkspace({ serviceCatalog, connections, usageByVersio
   onRefresh?:()=>void;
   versions?: ExternalConnectionVersion[];
 }) {
-  const [selectedId,setSelectedId]=useState('');
+  const [selectedId,setSelectedId]=useState(navigation?.value.connection??'');
+  const viewedConnection=useRef(navigation?.value.connection??'');
   const [modelConnectionId,setModelConnectionId]=useState('');
   const [billingConnectionId,setBillingConnectionId]=useState('');
   const billingConnection=connections.find(c=>c.id===billingConnectionId);
   const modelConnection=connections.find(c=>c.id===modelConnectionId);
-  const [dialog,setDialog]=useState<''|'new'|'edit'|'detail'>('');
+  const [dialog,applyDialog]=useState<''|'new'|'edit'|'detail'>(navigation?.value.connection?'detail':'');
+  function setDialog(next:''|'new'|'edit'|'detail'){applyDialog(next);if(next!=='detail'){viewedConnection.current='';navigation?.change({connection:''});}}
   const [showVersions,setShowVersions]=useState(false);
-  const [capabilityFilter,setCapabilityFilter]=useState('all'),[statusFilter,setStatusFilter]=useState('');
+  const [capabilityFilter,applyCapabilityFilter]=useState(navigation?.value.capability??'all'),[statusFilter,applyStatusFilter]=useState(navigation?.value.status??'');
+  const setCapabilityFilter=(capability:string)=>{applyCapabilityFilter(capability);navigation?.change({capability});};
+  const setStatusFilter=(status:string)=>{applyStatusFilter(status);navigation?.change({status});};
   const [testingId,setTestingId]=useState('');
   const [name,setName]=useState(''),[description,setDescription]=useState(''),[secret,setSecret]=useState('');
   const [adapter,setAdapter]=useState<ExternalConnectionInput["adapter"]>('pexels_video');
-  const [workspaceId,setWorkspaceId]=useState(''),[query,setQuery]=useState('');
+  const [workspaceId,setWorkspaceId]=useState(''),[query,setQuery]=useState(navigation?.value.q??'');
+  useEffect(()=>{if(navigation){setQuery(navigation.value.q);applyCapabilityFilter(navigation.value.capability);applyStatusFilter(navigation.value.status);if(viewedConnection.current!==navigation.value.connection){viewedConnection.current=navigation.value.connection;setSelectedId(navigation.value.connection);applyDialog(navigation.value.connection?'detail':'');}}},[navigation?.value.q,navigation?.value.capability,navigation?.value.status,navigation?.value.connection]);
   const [minimaxRegion,setMinimaxRegion]=useState<MiniMaxRegion>('cn');
   const [credentialFieldRevision,setCredentialFieldRevision]=useState(0);
   const [operation,setOperation]=useState<''|'saving'|'testing'>('');
@@ -220,9 +228,9 @@ export function ConnectionWorkspace({ serviceCatalog, connections, usageByVersio
     setMinimaxRegion(connection?.region??(connection?'international':'cn'));
     setSecret('');setWorkspaceId('');setRebindSecrets({});setError('');setNotice('');setResultTitle('');setResultName('');setResultConnectionId('');
   }
-  function openConnection(id:string,mode:'edit'|'detail',versionsOpen=false){if(busy)return;if(selectedId!==id)choose(id);setShowVersions(versionsOpen);setDialog(mode);}
+  function openConnection(id:string,mode:'edit'|'detail',versionsOpen=false){if(busy)return;if(selectedId!==id)choose(id);setShowVersions(versionsOpen);setDialog(mode);if(mode==='detail'){viewedConnection.current=id;navigation?.change({connection:id});}}
   function createConnection(){if(busy)return;if(selectedId)choose('');setShowVersions(false);setDialog('new');}
-  useEffect(()=>{if(selectedId&&!connections.some(connection=>connection.id===selectedId)){setSelectedId('');setName('');setDescription('');setSecret('');}},[connections,selectedId]);
+  useEffect(()=>{if(selectedId&&!connections.some(connection=>connection.id===selectedId)){setSelectedId('');setName('');setDescription('');setSecret('');applyDialog('');if(navigation?.value.connection){setNotice('该连接已不可用，请从当前列表重新选择。');viewedConnection.current='';navigation.change({connection:''});}}},[connections,selectedId]);
 
   useEffect(()=>{if(operation===''&&(notice||error||errorMessage))resultRef.current?.scrollIntoView?.({block:'nearest'});},[operation,notice,error,errorMessage]);
 
@@ -300,7 +308,7 @@ export function ConnectionWorkspace({ serviceCatalog, connections, usageByVersio
       <div className="reference-connections-actions"><Button color="primary" size="sm" iconLeading={Plus} isDisabled={busy} onPress={createConnection}>新建连接</Button></div>
     </header>
     <div className="reference-connections-toolbar">
-      <Input aria-label="查找已存连接" size="sm" className="reference-connections-search" placeholder="名称、服务或适配器" onChange={setQuery} type="search" value={query}/>
+      <Input aria-label="查找已存连接" size="sm" className="reference-connections-search" placeholder="名称、服务或适配器" onChange={setQuery} onKeyDown={event=>{if(event.key==='Enter'){event.preventDefault();navigation?.change({q:query.trim()});}}} type="search" value={query}/>
       <PopulatedFilterSelect aria-label="生产能力" size="sm" value={capabilityFilter} onValueChange={setCapabilityFilter} allValue="all" counts={Object.fromEntries(tableGroups.map(group=>[group.capability,group.entries.length]))} options={[{value:'all',label:'全部能力'},...Object.entries(productionCapabilityLabels).map(([value,label])=>({value,label})),{value:'unsupported',label:'其他连接'}]}/>
       <PopulatedFilterSelect aria-label="验证状态" size="sm" value={statusFilter} onValueChange={setStatusFilter} allValue="" counts={Object.fromEntries((['verified','unverified','invalid','retryable']as const).map(status=>[status,connections.filter(connection=>connection.status===status).length]))} options={[{value:'',label:'全部状态'},...(['verified','unverified','invalid','retryable']as const).map(value=>({value,label:statusLabels[value]}))]}/>
     </div>

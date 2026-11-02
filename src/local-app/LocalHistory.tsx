@@ -1,3 +1,4 @@
+import {useCatalogPanelNavigation} from './catalogNavigation';
 import {Dialog,Modal,ModalOverlay} from 'react-aria-components';
 import {Disclosure} from '../ui/dan-ui/components/base/disclosure/disclosure';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
@@ -18,20 +19,26 @@ interface Report {scopeCounts?:Record<string,number>;items:Episode[];total:numbe
 interface Preview {episodeId:string;recordLinks:number;fileLinks:number;sharedContents:number;protectedContents:number;reviewContents:number;reviewBytes:number;samples:{logical_path:string;state:string}[]}
 const sections=[['script','脚本'],['storyboard','分镜'],['media','素材'],['delivery','成片与发布包'],['other','其他文件']]as const;
 export function LocalHistory(){
- const[report,setReport]=useState<Report|null>(null),[query,setQuery]=useState(''),[scope,setScope]=useState('active'),[contentOnly,setContentOnly]=useState(true),[episode,setEpisode]=useState('');
- const[error,setError]=useState(''),[notice,setNotice]=useState(''),[busy,setBusy]=useState(false),[operation,setOperation]=useState(''),[activeTab,setActiveTab]=useState('episodes'),[sourcesOpened,setSourcesOpened]=useState(false);
+ const navigation=useCatalogPanelNavigation('history');
+ const applied=useRef(navigation?.value??{tab:'episodes',q:'',scope:'active',contentOnly:true,episode:'',page:1,filesPage:1,recordsPage:1});
+ const navigationKey=useRef(JSON.stringify(applied.current));
+ const[report,setReport]=useState<Report|null>(null),[query,setQuery]=useState(applied.current.q),[scope,setScope]=useState(applied.current.scope),[contentOnly,setContentOnly]=useState(applied.current.contentOnly),[episode,setEpisode]=useState(applied.current.episode);
+ const[error,setError]=useState(''),[notice,setNotice]=useState(''),[busy,setBusy]=useState(false),[operation,setOperation]=useState(''),[activeTab,setActiveTab]=useState(applied.current.tab),[sourcesOpened,setSourcesOpened]=useState(applied.current.tab==='sources');
  const[deletePending,setDeletePending]=useState(false),[confirmingDelete,setConfirmingDelete]=useState(false);
  const[detail,setDetail]=useState<{title:string;table:string;raw:string}|null>(null),[preview,setPreview]=useState<{item:Episode;data:Preview}|null>(null);
  const generation=useRef(0),detailGeneration=useRef(0),operationLock=useRef(false),previewTrigger=useRef<HTMLButtonElement|null>(null);
- async function load(next:{q?:string;state?:string;contentOnly?:boolean;page?:number;episode?:string;filesPage?:number;recordsPage?:number}={}){
+ async function load(next:{q?:string;state?:string;contentOnly?:boolean;page?:number;episode?:string;filesPage?:number;recordsPage?:number}={},sync=true){
+  const destination={...applied.current,q:next.q??applied.current.q,scope:next.state??applied.current.scope,contentOnly:next.contentOnly??applied.current.contentOnly,page:next.page??applied.current.page,episode:next.episode??applied.current.episode,filesPage:next.filesPage??1,recordsPage:next.recordsPage??1};
+  applied.current=destination;navigationKey.current=JSON.stringify(destination);if(sync)navigation?.change(destination);
   const current=++generation.current;detailGeneration.current++;setBusy(true);setError('');setDetail(null);
-  try{const value=await localRequest('history-episodes?'+new URLSearchParams({q:next.q??query,state:next.state??scope,contentOnly:String(next.contentOnly??contentOnly),page:String(next.page??report?.page??1),episode:next.episode??episode,filesPage:String(next.filesPage??1),recordsPage:String(next.recordsPage??1)}));if(generation.current===current)setReport(value);}
+  try{const value=await localRequest('history-episodes?'+new URLSearchParams({q:destination.q,state:destination.scope,contentOnly:String(destination.contentOnly),page:String(destination.page),episode:destination.episode,filesPage:String(destination.filesPage),recordsPage:String(destination.recordsPage)}));if(generation.current===current)setReport(value);}
   catch(cause){if(generation.current===current)setError(cause instanceof Error?cause.message:'历史生产单读取失败，请重试。');}finally{if(generation.current===current)setBusy(false);}
  }
- useEffect(()=>{void load({q:'',state:'active',contentOnly:true,page:1,episode:''});return()=>{generation.current++;detailGeneration.current++;};},[]);
+ useEffect(()=>{void load({q:applied.current.q,state:applied.current.scope,contentOnly:applied.current.contentOnly,page:applied.current.page,episode:applied.current.episode,filesPage:applied.current.filesPage,recordsPage:applied.current.recordsPage},false);return()=>{generation.current++;detailGeneration.current++;};},[]);
+ useEffect(()=>{if(!navigation||navigationKey.current===JSON.stringify(navigation.value))return;const next=navigation.value;applied.current=next;navigationKey.current=JSON.stringify(next);setQuery(next.q);setScope(next.scope);setContentOnly(next.contentOnly);setEpisode(next.episode);setActiveTab(next.tab);setSourcesOpened(value=>value||next.tab==='sources');setPreview(null);void load({q:next.q,state:next.scope,contentOnly:next.contentOnly,page:next.page,episode:next.episode,filesPage:next.filesPage,recordsPage:next.recordsPage},false);},[JSON.stringify(navigation?.value)]);
  useEffect(()=>{if(preview||!previewTrigger.current)return;const target=previewTrigger.current;const frame=requestAnimationFrame(()=>{if(target.isConnected)target.focus();});return()=>cancelAnimationFrame(frame);},[preview]);
  const disabled=busy||Boolean(operation)||deletePending;
- function closeContent(){generation.current++;detailGeneration.current++;setEpisode('');setDetail(null);setBusy(false);setReport(value=>value?{...value,selected:null}:value);}
+ function closeContent(){applied.current={...applied.current,episode:''};navigationKey.current=JSON.stringify(applied.current);navigation?.change({episode:''});generation.current++;detailGeneration.current++;setEpisode('');setDetail(null);setBusy(false);setReport(value=>value?{...value,selected:null}:value);}
  async function open(item:Episode){if(disabled)return;setEpisode(item.episode_id);setPreview(null);await load({episode:item.episode_id});}
  async function manage(item:Episode,command:'archive'|'restore'|'preview'){
   if(operationLock.current||busy)return;operationLock.current=true;setOperation(command+item.episode_id);setError('');setNotice('');setPreview(null);
@@ -44,12 +51,12 @@ export function LocalHistory(){
   return <nav aria-label={kind==='files'?'文件分页':'记录分页'} className="history-pagination"><Button color="secondary" size="sm" isDisabled={disabled||page<=1} onPress={()=>void load({filesPage:kind==='files'?page-1:report.pagination.filesPage,recordsPage:kind==='records'?page-1:report.pagination.recordsPage})} iconLeading={ChevronLeft} type="button">上一页</Button><span>第 {page} / {Math.ceil(total/50)} 页</span><Button color="secondary" size="sm" isDisabled={disabled||page*50>=total} onPress={()=>void load({filesPage:kind==='files'?page+1:report.pagination.filesPage,recordsPage:kind==='records'?page+1:report.pagination.recordsPage})} iconTrailing={ChevronRight} type="button">下一页</Button></nav>;
  }
  return <section aria-label="历史资料" className="dan-ui history-ui history-workspace history-by-episode reference-history" aria-busy={disabled}>
-  <Tabs selectedKey={activeTab} onSelectionChange={key=>{setActiveTab(String(key));if(key==='sources')setSourcesOpened(true);}} className="reference-history-surface">
+  <Tabs selectedKey={activeTab} onSelectionChange={key=>{setActiveTab(String(key));applied.current={...applied.current,tab:String(key)};navigationKey.current=JSON.stringify(applied.current);navigation?.change({tab:String(key)});if(key==='sources')setSourcesOpened(true);}} className="reference-history-surface">
    <Tabs.List aria-label="历史资料分类" type="underline" className="reference-history-tabs">
     <Tabs.Item id="episodes">生产单历史</Tabs.Item><Tabs.Item id="sources">资料来源</Tabs.Item>
    </Tabs.List>
    <Tabs.Panel id="episodes" hidden={activeTab!=='episodes'} shouldForceMount className="reference-history-panel">
-  <form role="search" aria-label="查找历史生产单" className="history-episode-filters" onSubmit={event=>{event.preventDefault();if(!disabled){setEpisode('');setPreview(null);void load({page:1,episode:''});}}}>
+  <form role="search" aria-label="查找历史生产单" className="history-episode-filters" onSubmit={event=>{event.preventDefault();if(!disabled){setEpisode('');setPreview(null);void load({q:query.trim(),page:1,episode:''});}}}>
    <Input aria-label="生产单或账号" icon={Search} type="search" size="sm" maxLength={200} placeholder="搜索标题、账号或生产单编号" value={query} onChange={setQuery}/>
    <PopulatedFilterSelect icon={Archive} aria-label="显示范围" size="sm" disabled={disabled} counts={report?.scopeCounts} allValue="all" value={scope} onValueChange={value=>{setScope(value);setEpisode('');setPreview(null);void load({state:value,page:1,episode:''});}} options={[{value:"active",label:"未归档"},{value:"archived",label:"已归档"},{value:"all",label:"全部历史"}]}/>
    <Checkbox className="history-content-only" label="仅显示有生产内容的条目" size="sm" isSelected={contentOnly} isDisabled={disabled} onChange={value=>{setContentOnly(value);setEpisode('');setPreview(null);void load({contentOnly:value,page:1,episode:''});}}/>
