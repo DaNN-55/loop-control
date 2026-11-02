@@ -1,3 +1,5 @@
+import {WorkspaceVisualTaskStatus} from './WorkspaceVisualTaskStatus';
+import {reconcileWorkspaceOutput} from './workspaceOutputReconciliationClient';
 import {AudioPreview} from '../ui/media/AudioPreview';
 import {useEffect,useRef,useState} from 'react';
 import {Plus} from 'lucide-react';
@@ -41,17 +43,19 @@ export function WorkspaceAudioPreparation({workspace:w,command,onChange,material
  const allMaterials=[...materials,...uploaded.filter(m=>!materials.some(known=>known.id===m.id))],disabled=readOnly||busy||w.stale||!!bridge&&!bridge.connected,preparations=w.audio?.preparations??[];
  const effects=preparations.filter(p=>p.kind==='sfx'&&(!selectedShotId||p.anchor==='shot'&&p.shotId===selectedShotId)),absoluteEffects=selectedShotId?preparations.filter(p=>p.kind==='sfx'&&p.anchor==='absolute'):[],other=preparations.filter(p=>p.kind!=='sfx'&&(p.kind==='bgm'||!selectedShotId||p.shotId===selectedShotId));
  async function applySound(edit:WorkspaceAudioEdit){setBusy(true);setError('');try{if(bridge)setLive(await bridge.applyNativeEdit('apply-audio-mix',{edit}));else{const saved=current.current;reading.publish(await command('mixWorkspaceAudio',{episodeId:saved.episodeId,workspaceId:saved.id,expectedRevision:saved.revision,edit}) as ProductionWorkspace);}}catch(cause){setError(cause instanceof Error?cause.message:'音效修改未保存。');}finally{setBusy(false);}}
+ async function reconcile(p:typeof preparations[number],recover=false){setBusy(true);setError('');try{if(recover&&p.generationTask)await reconcileWorkspaceOutput(w.episodeId,p.generationTask);reading.publish(await reading.read());}catch(cause){setError(cause instanceof Error?cause.message:'音频状态未能核对，请重试。');}finally{setBusy(false);}}
  function candidate(p:typeof preparations[number]){
   const sound=p.kind==='sfx'?mix?.sounds.find(s=>s.itemId===p.adoptedItemId):undefined,ready=['completed','ready'].includes(p.status)&&(!p.taskId||p.status==='completed');
   const timeline=doc?.timelines.find(t=>t.items.some(i=>shotIds[p.shotId??'']?.includes(String(i.id)))),start=timeline?Math.min(...timeline.items.filter(i=>shotIds[p.shotId??'']?.includes(String(i.id))).map(i=>Number(i.startFrame)/timeline.fps)):null;
   const offsetSeconds=sound&&p.anchor==='shot'&&start!==null?sound.startSeconds-start:p.offsetSeconds;
-  return <div className="workspace-audio-candidate" key={p.id}><div><strong>{p.description}</strong><span>{p.kind==='bgm'?'整期':p.kind==='source'?'原片':p.anchor==='shot'?`${p.shotId} · +${offsetSeconds.toFixed(2)} 秒`:`整期 ${sound?.startSeconds??p.offsetSeconds} 秒`} · {sound?'已加入':p.status==='completed'||!p.taskId?'可用':p.status==='ready'||p.status==='running'?'准备中':p.status==='failed'?'失败':p.status==='blocked'?'待重试':p.status}{p.kind==='sfx'?` · ${(sound?.durationSeconds??p.durationSeconds).toFixed(2)} 秒`:''}</span></div>
+  return <div className="workspace-audio-candidate" key={p.id}><div><strong>{p.description}</strong><span>{p.kind==='bgm'?'整期':p.kind==='source'?'原片':p.anchor==='shot'?`${p.shotId} · +${offsetSeconds.toFixed(2)} 秒`:`整期 ${sound?.startSeconds??p.offsetSeconds} 秒`} · {sound?'已加入':p.generationTask?.publicationAttempt!=null?'发布待核对':p.status==='completed'||!p.taskId?'可用':p.status==='ready'||p.status==='running'?'准备中':p.status==='failed'?'失败':p.status==='blocked'?'待重试':p.status}{p.kind==='sfx'?` · ${(sound?.durationSeconds??p.durationSeconds).toFixed(2)} 秒`:''}</span></div>
    {p.connection&&<span>{p.connection.name} v{p.connection.version} · {p.selection?.provider} · 检索：{p.query}</span>}
    {p.relativePath&&<AudioPreview aria-label={`${p.description}试听`} preload="none" src={`/_local-artifact?episode=${w.episodeId}&path=${encodeURIComponent(p.relativePath)}&sha256=${p.sha256}`}/>}
    <div className="workspace-audio-actions">{p.source?.provider==='freesound'?<><a href={String(p.source.sourceUrl)} target="_blank" rel="noreferrer">{String(p.source.creator)}</a><a href={String(p.source.license)} target="_blank" rel="noreferrer">许可</a></>:p.source?.provider==='manual'?<span>人工来源</span>:null}
     {ready&&!sound&&<Button size="sm" color="secondary" isDisabled={disabled||!!bridge} onPress={()=>void run('adoptWorkspaceAudio',{preparationId:p.id})}>{p.kind==='sfx'?p.anchor==='shot'?'加入镜头':'加入时间线':p.adoptedItemId?'重新采用':'采用'}</Button>}
-    {['failed','blocked'].includes(p.status)&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>void run('prepareWorkspaceAudio',{kind:p.kind,preparationId:p.id,retry:true})}>重试</Button>}
+    {['failed','blocked'].includes(p.status)&&p.generationTask?.publicationAttempt==null&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>void run('prepareWorkspaceAudio',{kind:p.kind,preparationId:p.id,retry:true})}>重试</Button>}
    </div>
+   {p.generationTask?.publicationAttempt!=null&&<WorkspaceVisualTaskStatus task={p.generationTask} label="音频" taskNoun="音频任务" resumeLabel="恢复音频任务" disabled={disabled} onRefresh={()=>void reconcile(p)} onReconcile={()=>void reconcile(p,true)} onResume={()=>{}}/>}
    {sound&&<SoundRow key={sound.itemId+JSON.stringify(sound)} sound={sound} workspaceId={w.id} disabled={disabled} apply={applySound} summary={false}/>}{p.error&&<p role="alert">{p.error}</p>}
   </div>;
  }

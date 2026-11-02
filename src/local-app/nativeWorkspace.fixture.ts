@@ -1,3 +1,4 @@
+import {recoverPendingNativeAttemptOutput} from './nativeAttemptOutput';
 // Real isolated Owner/HTTP/PostgreSQL/files. Business scenarios own their own records and media.
 import {createServer} from 'node:http';
 import {spawn} from 'node:child_process';
@@ -55,6 +56,8 @@ export async function nativeWorkspaceFixture(options:NativeWorkspaceFixtureOptio
   const pool=new Pool({database,user:'loop_app',max:4,connectionTimeoutMillis:5000,stream} as ConstructorParameters<typeof Pool>[0]);
   resources.defer(async()=>{if(!pool.ended)await pool.end();});
   const workerPool=()=>{const worker=new Pool({...pool.options,user:'loop_worker'} as ConstructorParameters<typeof Pool>[0]);resources.defer(async()=>{if(!worker.ended)await worker.end();});return worker;};
+  const recoveryPool=workerPool();
+  const recoverOutput=(taskId:string,attempt:number)=>recoverPendingNativeAttemptOutput(recoveryPool,root,taskId,attempt);
   const connections=options.connections?.(pool);
 
   const owner=randomUUID(),other=randomUUID(),token=randomBytes(32).toString('hex'),otherToken=randomBytes(32).toString('hex'),password='fixture-'+randomUUID(),email=owner+'@example.invalid';
@@ -73,12 +76,12 @@ export async function nativeWorkspaceFixture(options:NativeWorkspaceFixtureOptio
    commands=createCommands();
    server.listen(0,'127.0.0.1');await once(server,'listening');
    origin=options.origin??`http://127.0.0.1:${(server.address() as {port:number}).port}`;
-   handler=createLocalHandler({pool,origin,mediaRoot:root,episodes:commands,connections});
+   handler=createLocalHandler({pool,origin,mediaRoot:root,episodes:commands,connections,recoverOutput});
    await options.onSetup?.({stage:'server',database,root,origin});return origin;
   };
   return{database,root,pool,c,owner,other,token,otherToken,password,email,runtime,workerPool,start,
    get origin(){return origin;},get handler(){return handler;},
-   async restart(){await commands!.close();commands=createCommands();handler=createLocalHandler({pool,origin,mediaRoot:root,episodes:commands,connections});},
+   async restart(){await commands!.close();commands=createCommands();handler=createLocalHandler({pool,origin,mediaRoot:root,episodes:commands,connections,recoverOutput});},
    closeStudio:(episodeId:string)=>commands!.closeStudio(episodeId),close:resources.close,
    async post(endpoint:string,command:string,data:Record<string,unknown>,requestOptions:{token?:string;csrf?:boolean;origin?:string}={}){
     const session=requestOptions.token??token;

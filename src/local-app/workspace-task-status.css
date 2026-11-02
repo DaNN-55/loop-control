@@ -1,0 +1,4 @@
+.workspace-visual-task{display:flex;flex-wrap:wrap;align-items:flex-start;gap:8px;min-width:0;margin-block:12px}
+.workspace-visual-task>p,.workspace-visual-task>details{flex-basis:100%;min-width:0;margin:0;overflow-wrap:anywhere;line-height:1.6}
+.workspace-visual-task>details p{margin:6px 0 0;overflow-wrap:anywhere}
+.workspace-visual-task>details summary{cursor:pointer}

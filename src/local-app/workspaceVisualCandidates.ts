@@ -147,7 +147,12 @@ export async function workspaceVisualMainVoice(c:PoolClient,root:string,row:Prod
  return{mode:item.id===`workspace-source-shot-${shotId}`?'source':'tts',windowDurationSeconds:duration,identity:workspaceVisualVoiceIdentity(project,shotId),source:{id:source.id,relativePath:item.src,sha256:source.sha256,fileSize:Number(source.file_size),srcInFrame:Number(item.srcInFrame??0),playbackRate:Number(item.playbackRate??1),coverage:route.coverage}};
 }
 export async function readWorkspaceVisualTasks(c:PoolClient,row:ProductionWorkspaceRecord){
- return(await c.query(`SELECT v.id,v.shot_id "shotId",v.request_snapshot->>'kind' kind,t.id "taskId",t.status,t.last_result#>>'{blockers,0,detail}' error,(t.status IN ('failed','blocked') AND r.provider_task_id IS NOT NULL AND s.outcome<>'rejected') "canResume" FROM local_identity.workspace_visual_candidates v JOIN public.tasks t ON t.id=v.task_id LEFT JOIN public.paid_generation_reservations r ON r.task_id=t.id LEFT JOIN local_identity.workspace_visual_submissions s ON s.task_id=t.id WHERE v.workspace_id=$1 ORDER BY v.created_at DESC`,[row.id])).rows;
+ return(await c.query(`SELECT v.id,v.shot_id "shotId",v.target_item_id "targetItemId",v.request_snapshot->>'kind' kind,t.id "taskId",t.status,t.provider,t.model,t.created_at "createdAt",v.request_snapshot#>>'{connection,name}' "connectionName",
+ coalesce(t.last_result#>>'{blockers,0,detail}',t.last_result#>>'{retry,reason}',CASE WHEN t.status IN ('failed','blocked') THEN '生成未完成，请核对原任务与连接。' END) error,
+ s.outcome "submissionOutcome",r.provider_task_id "providerTaskId",r.request_state "requestState",h.attempt "publicationAttempt",
+ (t.status IN ('failed','blocked') AND r.request_state='submitting' AND r.provider_task_id IS NULL AND coalesce(s.outcome,'started')<>'rejected') "submissionUnknown",
+ (t.status IN ('failed','blocked') AND r.provider_task_id IS NOT NULL AND s.outcome<>'rejected' AND h.task_id IS NULL) "canResume"
+ FROM local_identity.workspace_visual_candidates v JOIN public.tasks t ON t.id=v.task_id LEFT JOIN public.paid_generation_reservations r ON r.task_id=t.id LEFT JOIN local_identity.workspace_visual_submissions s ON s.task_id=t.id LEFT JOIN local_identity.workspace_publication_holds($2) h ON h.task_id=t.id WHERE v.workspace_id=$1 ORDER BY v.created_at DESC`,[row.id,row.episode_id])).rows;
 }
 
 async function visualContextCurrent(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,record:Record<string,any>){

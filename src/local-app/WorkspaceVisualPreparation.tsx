@@ -1,3 +1,5 @@
+import {WorkspaceVisualTaskStatus} from './WorkspaceVisualTaskStatus';
+import {reconcileWorkspaceOutput} from './workspaceOutputReconciliationClient';
 import {useWorkspaceReading,useWorkspacePolling} from './useWorkspaceReading';
 import {wanVideoModel,wanVideoSettingsError,wanProviderDuration,defaultWanModelSettings} from '../wanVideoModels';
 import {WorkspaceReferencePicker} from './WorkspaceReferencePicker';
@@ -80,7 +82,7 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
  const current=candidate?.relativePath===props.currentVisualPath||active?.id==='current',imageChosen=!!candidate&&selectedImage?.candidateId===candidate.id;
  const target=workspace.visualTargets?.find(t=>t.targetItemId===targetItemId),voiceDriven=!!target&&target.voiceMode!=='none';
  const minimumSeconds=wanProfile?.durations[0]??videoService?.constraints.durationSeconds?.min??2,maximumSeconds=wanProfile?.durations.at(-1)??videoService?.constraints.durationSeconds?.max??15,actualDuration=voiceDriven?target.durationSeconds:Number(draft.duration),providerDuration=actualDuration===null?null:wanProfile?wanProviderDuration(videoModel!,actualDuration,voiceDriven):voiceDriven?Math.max(minimumSeconds,Math.ceil(actualDuration)):actualDuration,invalidDuration=!actualDuration||actualDuration<(voiceDriven?0.1:minimumSeconds)||actualDuration>maximumSeconds||!voiceDriven&&!Number.isInteger(actualDuration)||!!wanProfile&&providerDuration===undefined;
- const tasks=(workspace.visualTasks??[]).filter(t=>!t.shotId||options.some(c=>c.shotId===t.shotId)),pending=tasks.filter(t=>['ready','running'].includes(t.status)),taskKey=pending.map(t=>t.taskId).join(':');
+ const tasks=(workspace.visualTasks??[]).filter(t=>!t.shotId||options.some(c=>c.shotId===t.shotId)),pending=tasks.filter(t=>['ready','running'].includes(t.status)&&t.publicationAttempt==null),taskKey=pending.map(t=>t.taskId).join(':');
  function change<K extends keyof Draft>(key:K,value:Draft[K]){setDraft(d=>({...d,[key]:value}));}
  function select(id:string){setDraft(d=>({...d,selected:{...d.selected,[d.tab]:id}}));setRangeStart('0');setRangeEnd('');setPolicy('keep-target');setAcceptImpact(false);setError('');}
  function url(path:string,sha256=''){return '/_local-artifact?'+new URLSearchParams({episode:workspace.episodeId,path,...(sha256?{sha256}:{})});}
@@ -162,7 +164,7 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
  const selectedVideoDuration=candidate?.kind==='video'?(rangeEnd?Number(rangeEnd):candidate.durationSeconds)-Number(rangeStart):null,rangeValid=!candidate||candidate.kind!=='video'||Number(rangeStart)>=0&&Number.isFinite(Number(rangeStart))&&Number.isFinite(selectedVideoDuration)&&selectedVideoDuration!>0&&(rangeEnd?Number(rangeEnd):candidate.durationSeconds)<=candidate.durationSeconds;
  const canAdopt=rangeValid&&!!candidate&&candidate.status==='available'&&(policy==='keep-target'?candidate.kind!=='video'||candidate.currentDurationSeconds===null||(selectedVideoDuration??candidate.durationSeconds)+0.05>=candidate.currentDurationSeconds:acceptImpact);
  const prompt=tab==='image'?draft.imagePrompt:draft.videoPrompt;
- const canGenerate=prompt.trim()&&!pending.some(t=>(t.kind??'video')===tab)&&(tab==='image'?imageCompatible:videoCompatible&&!!draft.firstFrame&&!invalidDuration);
+ const canGenerate=prompt.trim()&&!tasks.some(t=>t.targetItemId===targetItemId&&(t.submissionUnknown||t.publicationAttempt!=null))&&!pending.some(t=>(t.kind??'video')===tab)&&(tab==='image'?imageCompatible:videoCompatible&&!!draft.firstFrame&&!invalidDuration);
  return <section className="workspace-visual-candidates workspace-visual-unified" aria-label="镜头图片与视频">
   <header><div className="workspace-visual-preview-tabs" role="tablist" aria-label="画面类型">{(['image','video'] as const).map(kind=><button key={kind} id={`visual-kind-${targetItemId}-${kind}`} type="button" role="tab" aria-selected={tab===kind} aria-controls={`visual-content-${targetItemId}`} tabIndex={tab===kind?0:-1} onClick={()=>change('tab',kind)} onKeyDown={e=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(e.key)){e.preventDefault();const next=e.key==='Home'?'image':e.key==='End'?'video':tab==='image'?'video':'image';change('tab',next);document.getElementById(`visual-kind-${targetItemId}-${next}`)?.focus();}}}>{kind==='image'?'图片':'视频'}</button>)}</div><Button size="sm" color="tertiary" iconLeading={RefreshCw} aria-label="刷新" title="刷新画面候选" isDisabled={disabled} onPress={()=>void run(async()=>{await fresh();setCatalogReload(value=>value+1);})}/></header>
   {options.length>1&&<label>目标片段<NativeSelect size="sm" aria-label="画面候选目标" value={targetItemId} disabled={disabled} onChange={e=>props.onTargetChange?.(e.target.value)}>{options.map((c,i)=><option key={c.itemId} value={c.itemId}>片段 {i+1} · {c.text}</option>)}</NativeSelect></label>}
@@ -199,7 +201,7 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
       </div>}
      </div>
     </div>
-  {tasks.filter(t=>t.status!=='completed').map(t=><div className="workspace-visual-task" key={t.id}><p role={t.error?'alert':'status'}>{(t.kind??'video')==='image'?'图片':'视频'}{t.status==='running'?'生成中':t.status==='ready'?'等待生成':t.status==='failed'?'生成失败':'生成受阻'}{t.error?` · ${t.error}`:''}</p>{t.canResume&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>void run(async()=>{const w=await fresh();onChange(await command('retryWorkspaceVisualCandidate',{...base(w),candidateId:t.id}) as ProductionWorkspace);})}>恢复画面任务</Button>}</div>)}
+  {tasks.filter(t=>t.status!=='completed').map(t=><WorkspaceVisualTaskStatus key={t.id} task={t} label={(t.kind??'video')==='image'?'图片':'视频'} disabled={disabled} onRefresh={()=>void run(async()=>{onChange(await fresh());})} onResume={()=>void run(async()=>{const w=await fresh();onChange(await command('retryWorkspaceVisualCandidate',{...base(w),candidateId:t.id}) as ProductionWorkspace);})} onReconcile={()=>void run(async()=>{await reconcileWorkspaceOutput(workspace.episodeId,t);onChange(await fresh());})}/>)}
    </section>
    <div className="workspace-visual-origin" role="group" aria-label={`${kindName}来源`}>{(tab==='video'?['material','generate','search'] as const:['material','generate'] as const).map(value=><button key={value} type="button" aria-pressed={origin===value} onClick={()=>setDraft(d=>({...d,origin:{...d.origin,[tab]:value}}))}>{value==='material'?'上传素材':value==='search'?'素材检索':'AI 生成'}</button>)}</div>
    {origin==='material'?<div className="workspace-visual-import">

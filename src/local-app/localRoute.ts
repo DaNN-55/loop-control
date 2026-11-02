@@ -1,3 +1,4 @@
+import {reconcileOwnerNativeOutput} from './workspaceOutputReconciliation.js';
 import{runtimeErrorMessages}from'../orchestration/runtimeBuild.js';
 import {LocalMediaRootSettings} from './mediaRootSettings.js';
 import {readWorkspacePlanningSelection} from './planningSelectionStore.js';
@@ -31,7 +32,7 @@ import {SecretStoreError} from './connectionPorts.js';
 import type {LocalEpisodeCommands} from './episodeCommands.js';
 import type {SecretAdministration,SecretOperation} from './secretAdministration.js';
 import type {RuntimeStatus} from '../observability/runtimeStatus.js';
-interface LocalOptions {mediaRootSettings?:LocalMediaRootSettings;pool:Pool;origin:string;mediaRoot:string;historyRoot?:string;secrets?:SecretAdministration;connections?:LocalConnections;episodes?:LocalEpisodeCommands;automation?:NativeAutomation;accounts?:LocalAccountCommands;runtimeStatus?:(ownerId:string,page:number)=>Promise<RuntimeStatus>}
+interface LocalOptions {recoverOutput?:(taskId:string,attempt:number)=>Promise<{status:'completed';registered:boolean}>;mediaRootSettings?:LocalMediaRootSettings;pool:Pool;origin:string;mediaRoot:string;historyRoot?:string;secrets?:SecretAdministration;connections?:LocalConnections;episodes?:LocalEpisodeCommands;automation?:NativeAutomation;accounts?:LocalAccountCommands;runtimeStatus?:(ownerId:string,page:number)=>Promise<RuntimeStatus>}
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 async function readBody(request:IncomingMessage,limit=8192):Promise<Record<string,unknown>>{
  if(request.headers['content-type']?.split(';')[0]!=='application/json')throw Error('JSON required');
@@ -115,6 +116,10 @@ export function createLocalHandler(options:LocalOptions){
    if(url.pathname==='/api/local/configuration'&&request.method==='POST'){
     let body;try{body=await readBody(request,256*1024);}catch{send(400,{error:'配置请求格式无效。'});return;}
     send(200,await executeConfiguration(options.pool,session,body,options.mediaRoot,connections.configurationReady?(client,refs)=>connections.assertBlueprintReferences(client,refs,{purpose:'save'}):undefined));return;
+   }
+   if(url.pathname==='/api/local/native-output/reconcile'&&request.method==='POST'){
+    let body;try{body=await readBody(request);}catch{send(400,{error:'产物核对请求格式无效。'});return;}
+    send(200,await reconcileOwnerNativeOutput(options.pool,session,body,options.recoverOutput));return;
    }
    if(url.pathname==='/api/local/episode-commands'&&request.method==='POST'){
     if(!options.episodes){send(503,{error:'本地Episode执行服务尚未配置。'});return;}
