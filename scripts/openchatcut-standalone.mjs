@@ -1,3 +1,4 @@
+import {nativeAccessibilityPlugin} from './openchatcut-accessibility.mjs';
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { patchCaptionCueIdentity } from './openchatcut-caption-identity.mjs';
@@ -14,7 +15,7 @@ const server = await createServer({
   root,
   configFile: join(root, "config/vite.config.ts"),
   cacheDir: join(dataDir, "vite-cache"),
-  plugins: [{ name: 'loop-control-caption-identity', enforce: 'pre', transform(code, id) {
+  plugins: [nativeAccessibilityPlugin(root), { name: 'loop-control-caption-identity', enforce: 'pre', transform(code, id) {
     const path = id.split('?')[0];
     if (path.endsWith('/src/captions/useCaptionCueGestures.ts') || path.endsWith('/src/captions/CaptionTrackLane.tsx')) return { code: patchCaptionCueIdentity(code, path), map: null };
   } }],
