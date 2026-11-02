@@ -19,8 +19,12 @@ export interface RuntimeQueue {
 export interface RuntimeResources {
   cpuPercent: number | null;
   memory: {totalBytes: number; freeBytes: number};
-  disk: {availableBytes: number; totalBytes: number} | null;
-  media: {state: RuntimeState; availableBytes: number | null; minimumFreeBytes: number | null};
+  /** Program volume; retained for existing resource readiness. */
+  disk: {availableBytes: number; totalBytes: number; sourcePath?: string} | null;
+  /** OS user data volume, observed independently of the program location. */
+  systemDisk?: {availableBytes: number; totalBytes: number; sourcePath: string} | null;
+  media: {state: RuntimeState; availableBytes: number | null; minimumFreeBytes: number | null;
+    totalBytes?: number | null; sourcePath?: string; mountPath?: string | null; sameVolume?: boolean | null};
 }
 export interface RuntimeStatus {
   observedAt: string;

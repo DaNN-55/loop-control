@@ -24,8 +24,8 @@ html[data-interface="impeccable"] .status-drawer-layer { background: transparent
 .status-drawer-content { padding: 0 0 22px; }
 .status-drawer-facts { margin: 0; display: grid; gap: 14px; }
 .status-drawer-facts > div { display: flex; align-items: baseline; gap: 20px; justify-content: space-between; }
-.status-drawer-facts dt { color: var(--lc-muted); font-size: 12px; }
-.status-drawer-facts dd { margin: 0; font-size: 12px; text-align: right; font-variant-numeric: tabular-nums; }
+.status-drawer-facts dt { flex-shrink: 0; color: var(--lc-muted); font-size: 12px; }
+.status-drawer-facts dd { min-width: 0; overflow-wrap: anywhere; margin: 0; font-size: 12px; text-align: right; font-variant-numeric: tabular-nums; }
 .status-drawer-tasks { list-style: none; padding: 0; margin: 0; }
 .status-drawer-tasks > li { padding: 16px 0; border-top: 1px solid var(--lc-line); }
 .status-drawer-tasks > li:first-child { border-top: 0; padding-top: 0; }

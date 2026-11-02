@@ -107,6 +107,15 @@ export function createLocalHandler(options:LocalOptions){
     let body;try{body=await readBody(request);}catch{send(400,{error:'本机存储请求格式无效。'});return;}
     send(200,await mediaRootSettings.execute(session,body));return;
    }
+   // Status observes media failure; business routes below still require the deployment guard.
+   if(url.pathname==='/api/local/system-status'){
+    if(request.method!=='GET'){send(405,{error:'系统状态仅支持读取。'});return;}
+    const raw=url.searchParams.get('queuePage')??'1';
+    if(!/^[1-9]\d{0,5}$/.test(raw)||[...url.searchParams.keys()].some(k=>k!=='queuePage')||url.searchParams.getAll('queuePage').length>1){send(400,{error:'任务队列页码无效。'});return;}
+    const [maintenance,runtime]=await Promise.all([options.automation?.status().catch(()=>null),options.runtimeStatus?.(session.id,Number(raw))]);
+    if(!maintenance&&!runtime){send(503,{error:'系统状态暂不可用，请稍后重试。'});return;}
+    send(200,{...maintenance,observedAt:runtime?.observedAt??maintenance?.observedAt,runtime:runtime??null,maintenanceAvailable:!!maintenance});return;
+   }
    await readMediaDeployment(options.pool,options.mediaRoot,request.method!=='GET');
    if(url.pathname==='/api/local/account-commands'&&request.method==='POST'){
     let body;try{body=await readBody(request,16384);}catch{send(400,{error:'账号本机操作请求格式无效。'});return;}
@@ -184,13 +193,6 @@ export function createLocalHandler(options:LocalOptions){
     if(!options.historyRoot)throw new ConfigurationError(503,'历史文件库尚未配置。');
     const sha=url.searchParams.get('sha')??'',file=await historyFile(options.pool,session.id,sha),bytes=await verifyNativeFile(options.historyRoot,file.sha256,file.sha256,file.bytes);
     response.writeHead(200,{'Content-Type':'application/octet-stream','Content-Length':bytes.length,'Content-Disposition':`attachment; filename="history-${sha}.bin"`});response.end(bytes);return;
-   }
-   if(url.pathname==='/api/local/system-status'){
-    const raw=url.searchParams.get('queuePage')??'1';
-    if(!/^[1-9]\d{0,5}$/.test(raw)||[...url.searchParams.keys()].some(k=>k!=='queuePage')||url.searchParams.getAll('queuePage').length>1){send(400,{error:'任务队列页码无效。'});return;}
-    const [maintenance,runtime]=await Promise.all([options.automation?.status().catch(()=>null),options.runtimeStatus?.(session.id,Number(raw))]);
-    if(!maintenance&&!runtime){send(503,{error:'系统状态暂不可用，请稍后重试。'});return;}
-    send(200,{...maintenance,observedAt:runtime?.observedAt??maintenance?.observedAt,runtime:runtime??null,maintenanceAvailable:!!maintenance});return;
    }
    if(url.pathname==='/api/local/catalog'){send(200,await readLocalCatalog(options.pool,session.id,parseCatalogQuery(url.searchParams)));return;}
    if(url.pathname==='/api/local/script-production'){

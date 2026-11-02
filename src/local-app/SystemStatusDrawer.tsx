@@ -41,12 +41,14 @@ export function SystemStatusDrawer({open,onOpen,onClose,runtime,maintenance,main
   const version=runtime?.version,versionFailure=version?.state==='running_invalid'||version?.state==='mismatch';
   const worker=runtime?.worker,queue=runtime?.queue,resources=runtime?.resources;
   const maintenanceState=maintenanceAvailable?combined(maintenance.filter(item=>item.stateText!=='已关闭'&&item.stateText!=='未启用').map(item=>item.state)):'unknown';
-  const resourceState:SystemState=resources?combined([resources.disk?'healthy':'unknown',resources.media.state]):'unknown';
-  const overall:SystemState=error?'offline':combined([versionFailure?'attention':'healthy',worker?.state??'unknown',queue?queue.blocked+queue.failed?'attention':'healthy':'unknown',resourceState,maintenanceState]);
+  const resourceState:SystemState=resources?combined([resources.disk?'healthy':'unknown',resources.systemDisk?'healthy':'unknown',resources.media.state]):'unknown';
+  const overall:SystemState=error?'offline':combined([versionFailure?'attention':version?.state==='current'?'healthy':'unknown',worker?.state??'unknown',queue?queue.blocked+queue.failed?'attention':'healthy':'unknown',resourceState,maintenanceState]);
   const statusText=pending&&!observedAt?'读取中…':stateLabel(overall);
   const workerSummary=!worker?'未读取':worker.state==='healthy'?`在线 · ${worker.active?'忙碌':'空闲'}`:worker.state==='offline'?'离线':worker.state==='attention'?'需处理':'未配置';
   const queueSummary=!queue?'未读取':queue.total?[queue.running?`${queue.running} 执行中`:'',queue.queued?`${queue.queued} 排队`:'',queue.blocked+queue.failed?`${queue.blocked+queue.failed} 需处理`:''].filter(Boolean).join(' · '):'暂无活动任务';
-  const resourceSummary=!resources?'未读取':resources.media.state==='offline'?'素材盘不可用':resources.media.state==='attention'?'素材盘空间不足':`内存空闲 ${bytes(resources.memory.freeBytes)} · 磁盘可用 ${bytes(resources.disk?.availableBytes)}`;
+  const systemDiskSummary=!resources?'系统盘未读取':resources.systemDisk?`系统盘可用 ${bytes(resources.systemDisk.availableBytes)}`:resources.systemDisk===null?'系统盘读取失败':'系统盘待确认';
+  const mediaDiskSummary=!resources?'素材盘未读取':resources.media.state==='offline'?'素材盘不可用':resources.media.state==='unknown'?'素材盘待确认':`素材盘${resources.media.state==='attention'?'空间不足，':''}可用 ${bytes(resources.media.availableBytes)}`;
+  const resourceSummary=!resources?'未读取':resources.systemDisk&&resources.media.sameVolume&&resources.media.state==='healthy'?`系统盘与素材盘共用空间 · 可用 ${bytes(resources.systemDisk.availableBytes)}`:`${systemDiskSummary} · ${mediaDiskSummary}`;
   const hoverSummary=`Worker ${workerSummary}；${queueSummary}；最近读取 ${date(observedAt)}`;
   return <div className="system-status">
     <Button size="sm" color="tertiary" aria-label={`系统状态：${statusText}`} aria-expanded={open} aria-haspopup="dialog" data-status-summary={hoverSummary} className={`system-status-trigger system-status-${overall}`} onClick={open?onClose:onOpen} onMouseEnter={()=>setHovering(true)} onMouseLeave={()=>setHovering(false)} onFocus={()=>setHovering(true)} onBlur={()=>setHovering(false)}><i aria-hidden="true"/>{triggerLabel&&<span className="sidebar-tool-label">{triggerLabel}</span>}</Button>
@@ -81,7 +83,7 @@ export function SystemStatusDrawer({open,onOpen,onClose,runtime,maintenance,main
           </>}
         </Section>
         <Section title="资源状态" summary={resourceSummary} attention={resourceState==='offline'||resourceState==='attention'}>
-          <dl className="status-drawer-facts"><div><dt>CPU 使用</dt><dd>{resources?.cpuPercent==null?'未读取':`${resources.cpuPercent}%`}</dd></div><div><dt>空闲内存 / 总计</dt><dd>{resources?`${bytes(resources.memory.freeBytes)} / ${bytes(resources.memory.totalBytes)}`:'未读取'}</dd></div><div><dt>本机磁盘可用</dt><dd>{bytes(resources?.disk?.availableBytes)}</dd></div><div><dt>素材盘</dt><dd>{!resources?'未读取':resources.media.state==='unknown'?'未配置挂载检查':resources.media.state==='offline'?'不可用':`${bytes(resources.media.availableBytes)} 可用`}</dd></div></dl>
+          <dl className="status-drawer-facts"><div><dt>CPU 使用</dt><dd>{resources?.cpuPercent==null?'未读取':`${resources.cpuPercent}%`}</dd></div><div><dt>空闲内存 / 总计</dt><dd>{resources?`${bytes(resources.memory.freeBytes)} / ${bytes(resources.memory.totalBytes)}`:'未读取'}</dd></div><div><dt>系统盘可用 / 总计</dt><dd>{!resources?'未读取':!resources.systemDisk?resources.systemDisk===null?'读取失败':'待确认':`${bytes(resources.systemDisk.availableBytes)} / ${bytes(resources.systemDisk.totalBytes)}`}</dd></div><div><dt>素材盘可用 / 总计</dt><dd>{!resources?'未读取':resources.media.state==='unknown'?'待确认':resources.media.state==='offline'?'不可用':resources.systemDisk&&resources.media.sameVolume?'与系统盘同卷，共用上述空间':`${bytes(resources.media.availableBytes)} / ${bytes(resources.media.totalBytes)}`}</dd></div><div><dt>系统盘来源（用户数据卷）</dt><dd>{resources?.systemDisk?.sourcePath??'来源待确认'}</dd></div><div><dt>素材目录</dt><dd>{resources?.media.sourcePath??'来源待确认'}</dd></div>{resources?.media.mountPath&&<div><dt>素材盘挂载点</dt><dd>{resources.media.mountPath}</dd></div>}</dl>
           {resources?.media.state==='offline'&&<p className="status-drawer-problem">检查素材盘挂载及媒体目录读写权限。</p>}
           {resources?.media.state==='attention'&&<p className="status-drawer-problem">素材盘可用空间低于运行要求（{bytes(resources.media.minimumFreeBytes)}）。</p>}
         </Section>

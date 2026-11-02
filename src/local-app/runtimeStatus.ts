@@ -1,5 +1,5 @@
-import {cpus, freemem, totalmem} from 'node:os';
-import {statfs} from 'node:fs/promises';
+import {cpus, freemem, totalmem, homedir} from 'node:os';
+import {stat,statfs,realpath} from 'node:fs/promises';
 import type {Pool} from 'pg';
 import {createRuntimeVersionReader,type RuntimeVersionOptions} from './runtimeVersion.js';
 import {ownerTransaction} from './ownerTransaction.js';
@@ -70,14 +70,23 @@ export function createRuntimeStatusReader(options: Options) {
     if(resourceCache && at-resourceCache.at<2500)return resourceCache.value;
     const value=(async():Promise<RuntimeResources>=>{
       const cpu=cpuTimes(),total=cpu.total-previousCpu.total,idle=cpu.idle-previousCpu.idle;previousCpu=cpu;
-      const [disk,media]=await Promise.all([
-        statfs(options.projectRoot).then(fs=>({availableBytes:fs.bavail*fs.bsize,totalBytes:fs.blocks*fs.bsize})).catch(()=>null),
-        options.mountPath ? verifyMediaLibrary({mediaRootBinding:(await options.pool.query("SELECT local_identity.media_deployment()->'binding' binding")).rows[0].binding,assetRoot:options.mediaRoot,mountPath:options.mountPath,minimumFreeBytes:0,requireEpisodesDirectory:false,allowMountRoot:true})
-          .then(result=>({state:result.availableBytes<(options.minimumFreeBytes??0)?'attention' as const:'healthy' as const,availableBytes:result.availableBytes,minimumFreeBytes:options.minimumFreeBytes??0}))
-          .catch(()=>({state:'offline' as const,availableBytes:null,minimumFreeBytes:options.minimumFreeBytes??0}))
-          : Promise.resolve({state:'unknown' as const,availableBytes:null,minimumFreeBytes:null}),
+      const [disk,systemDisk,media]=await Promise.all([
+        statfs(options.projectRoot).then(fs=>({availableBytes:fs.bavail*fs.bsize,totalBytes:fs.blocks*fs.bsize,sourcePath:options.projectRoot})).catch(()=>null),
+        Promise.all([statfs(homedir()),stat(homedir()),realpath(homedir())])
+          .then(([fs,identity,sourcePath])=>({availableBytes:fs.bavail*fs.bsize,totalBytes:fs.blocks*fs.bsize,sourcePath,deviceId:identity.dev})).catch(()=>null),
+        options.mountPath ? (async()=>{
+          await verifyMediaLibrary({mediaRootBinding:(await options.pool.query("SELECT local_identity.media_deployment()->'binding' binding")).rows[0].binding,assetRoot:options.mediaRoot,mountPath:options.mountPath!,minimumFreeBytes:0,requireEpisodesDirectory:false,allowMountRoot:true});
+          const [fs,identity,sourcePath]=await Promise.all([statfs(options.mediaRoot),stat(options.mediaRoot),realpath(options.mediaRoot)]);
+          const availableBytes=fs.bavail*fs.bsize;
+          return {state:availableBytes<(options.minimumFreeBytes??0)?'attention' as const:'healthy' as const,availableBytes,totalBytes:fs.blocks*fs.bsize,minimumFreeBytes:options.minimumFreeBytes??0,sourcePath,mountPath:options.mountPath!,deviceId:identity.dev};
+        })().catch(()=>({state:'offline' as const,availableBytes:null,totalBytes:null,minimumFreeBytes:options.minimumFreeBytes??0,sourcePath:options.mediaRoot,mountPath:options.mountPath!,deviceId:null}))
+          : Promise.resolve({state:'unknown' as const,availableBytes:null,totalBytes:null,minimumFreeBytes:null,sourcePath:options.mediaRoot,mountPath:null,deviceId:null}),
       ]);
-      return {cpuPercent:total>0?Math.round(100*Math.max(0,Math.min(1,1-idle/total))):null,memory:{totalBytes:totalmem(),freeBytes:freemem()},disk,media};
+      const {deviceId:mediaDevice,...mediaStatus}=media;
+      return {cpuPercent:total>0?Math.round(100*Math.max(0,Math.min(1,1-idle/total))):null,memory:{totalBytes:totalmem(),freeBytes:freemem()},
+        disk,
+        systemDisk:systemDisk?{availableBytes:systemDisk.availableBytes,totalBytes:systemDisk.totalBytes,sourcePath:systemDisk.sourcePath}:null,
+        media:{...mediaStatus,sameVolume:systemDisk&&mediaDevice!=null?systemDisk.deviceId===mediaDevice:null}};
     })();resourceCache={at,value};return value;
   }
   return async(ownerId: string, page=1):Promise<RuntimeStatus>=>{
