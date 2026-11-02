@@ -1,3 +1,4 @@
+import {nativeReadabilityPlugin} from './openchatcut-readability.mjs';
 import {nativeAccessibilityPlugin} from './openchatcut-accessibility.mjs';
 import {patchBundledSoundSources} from './openchatcut-bundled-sounds.mjs';
 import {patchCaptionDrag} from './openchatcut-caption-drag.mjs';
@@ -37,6 +38,6 @@ const bridge={name:'loop-control-embedded-editor',enforce:'pre',config(config){c
   return {code:"import {useLoopControlHost} from 'virtual:loop-control-embed';\n"+code.replace(anchor,'  const hostHome=useLoopControlHost(props.project.id, base, environment.agent, ui.panels);\n  if(hostHome)ui.persistence.handleHome=hostHome;\n'+anchor),map:null};
 }};
 const {createServer,transformWithEsbuild}=await import(pathToFileURL(join(root,'node_modules/vite/dist/node/index.js')).href);
-const server=await createServer({root,configFile:join(root,'config/vite.config.ts'),cacheDir,plugins:[nativeAccessibilityPlugin(root),bridge],server:{host:'127.0.0.1',port,strictPort:true,open:false}});
+const server=await createServer({root,configFile:join(root,'config/vite.config.ts'),cacheDir,plugins:[nativeAccessibilityPlugin(root),nativeReadabilityPlugin(root),bridge],server:{host:'127.0.0.1',port,strictPort:true,open:false}});
 await server.listen();
 for(const signal of ['SIGINT','SIGTERM'])process.once(signal,async()=>{await server.close();await pruneOpenChatCutCache(root);process.exit(0);});
