@@ -26,7 +26,15 @@ export function LocalEpisodeDetail({episodeId,onChanged,onStudioAction,onOpenAcc
  const reader=useMemo(()=>createEpisodeReader<LocalEpisodeSnapshot>(async(id,known)=>localRequest(`episodes/${id}?known=${encodeURIComponent(JSON.stringify(known))}`)),[episodeId]);
  async function refresh(){const next=await reader(episodeId);setSnapshot(next);}
  useEffect(()=>{let current=true,busy=false;async function poll(){if(busy||document.hidden)return;busy=true;try{const s=await reader(episodeId);if(current){const changedCatalog=episodeCatalogChanged(previous.current,s);previous.current=s;setSnapshot(s);if(changedCatalog)void changed.current().catch(()=>{});}}catch(e){if(current)setError(e instanceof Error?e.message:String(e));}finally{busy=false;}}void poll();const timer=setInterval(()=>void poll(),2000);document.addEventListener('visibilitychange',poll);return()=>{current=false;clearInterval(timer);document.removeEventListener('visibilitychange',poll);};},[episodeId,reader]);
- async function command(name:string,data:unknown){setError('');setPreflight(null);try{const result=await localCommand(name,data,undefined,'episode-commands');await refresh();await onChanged();return result;}catch(e){if(e&&typeof e==='object'&&'preflight'in e)setPreflight(e.preflight as WorkerPreflightResult);throw e;}}
+ async function command(name:string,data:unknown){
+  setError('');setPreflight(null);
+  let result:unknown;
+  try{result=await localCommand(name,data,undefined,'episode-commands');}
+  catch(e){if(e&&typeof e==='object'&&'preflight'in e)setPreflight(e.preflight as WorkerPreflightResult);throw e;}
+  const refreshed=await Promise.allSettled([refresh(),Promise.resolve().then(onChanged)]);
+  if(refreshed.some(value=>value.status==='rejected'))setError('操作已完成，页面信息更新失败，请重新打开生产单核对。');
+  return result;
+ }
  const studioListener=useRef(onStudioAction);studioListener.current=onStudioAction;
  useEffect(()=>{studioListener.current?.(workspaceStudioAction);return()=>studioListener.current?.(null);},[episodeId,workspaceStudioAction]);
  if(!snapshot)return <section className="local-episode-detail">{error?<p role="alert">{error}</p>:<p role="status">正在加载生产单…</p>}</section>;
