@@ -1,0 +1,26 @@
+{
+  "originalMain": "055914a931c26d3f637237947f4265af80678d68",
+  "mergedMain": "647852ab59576d7efd5035cda654f368c0bbea86",
+  "branch": "main",
+  "backup": "/private/tmp/loop-ui-main-preserve-7gvbtuvc",
+  "restoredExactFileSha256": {
+    "PLAN.md": "a1aeaf15c2b94303f16a801e76fd2bd5ff4c8242ac8a5c9b81eaba90ca2f5fd8",
+    "docs/verification/media-fresh-start-20261101/REPORT.md": "3d9fe47e433db914b378e9af96776b2f4a7761a78a4f34417829c1b93e32aa00"
+  },
+  "ownTemporaryStashDropped": true,
+  "preservedUnrelatedPaths": [
+    "PLAN.md",
+    "docs/verification/media-fresh-start-20261101/REPORT.md"
+  ],
+  "verifiedProductCommit": "6421a779ce1be462bda3c4e04157fecabeb5f627",
+  "productSourceDiffEmpty": true,
+  "parentIssueClosed": 196,
+  "all32ChildrenClosed": true,
+  "completedAt": "2026-11-02T16:19:44.173339Z",
+  "finalChecks": "regression/final-6421a779/summary.json",
+  "cleanup": "final/cleanup.json",
+  "unrelatedPlanTailPreservedDuringCloseout": true,
+  "daily5174Pid": 35988,
+  "pushed": false,
+  "dailyRuntimeUpdated": false
+}

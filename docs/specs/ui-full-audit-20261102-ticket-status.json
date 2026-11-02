@@ -3,7 +3,7 @@
   "integrationBranch": "codex/ui-full-optimization-20261102",
   "baselineCommit": "b047f61d",
   "originalMain": "055914a9",
-  "phase": "validated-awaiting-local-main",
+  "phase": "complete-local-main",
   "tickets": [
     {
       "n": 1,
@@ -21,7 +21,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "validated",
+        "state": "verified-local-main",
         "commit": "994f75c2",
         "focused": {
           "integration": 18,
@@ -49,7 +49,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "validated",
+        "state": "verified-local-main",
         "commit": "a161b33e",
         "focused": {
           "files": 2,
@@ -74,7 +74,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "validated",
+        "state": "verified-local-main",
         "commit": "192bfb0c",
         "focused": {
           "integration": 7,
@@ -99,7 +99,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "validated",
+        "state": "verified-local-main",
         "commit": "48a7b283",
         "focused": {
           "tests": 50,
@@ -128,7 +128,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "validated",
+        "state": "verified-local-main",
         "commit": "289aefcb",
         "focused": {
           "components": 48,
@@ -155,7 +155,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "validated",
+        "state": "verified-local-main",
         "commit": "dc7c3aaf",
         "focused": {
           "core": 30,
@@ -183,7 +183,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "validated",
+        "state": "verified-local-main",
         "commit": "161f6dc2",
         "focused": {
           "navigation": 15,
@@ -211,7 +211,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "validated",
+        "state": "verified-local-main",
         "commit": "3e14d606",
         "focused": {
           "files": 6,
@@ -240,7 +240,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "validated",
+        "state": "verified-local-main",
         "commit": "539fa8b1",
         "focused": {
           "files": 6,
@@ -267,7 +267,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "validated",
+        "state": "verified-local-main",
         "commit": "d62c5316",
         "focused": {
           "componentCases": 73,
@@ -299,7 +299,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "validated",
+        "state": "verified-local-main",
         "commit": "6314a96e",
         "focused": {
           "files": 6,
@@ -330,7 +330,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "validated",
+        "state": "verified-local-main",
         "commit": "7580af34",
         "focused": {
           "files": 5,
@@ -357,7 +357,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "validated",
+        "state": "verified-local-main",
         "commit": "aa62a6a6",
         "focused": {
           "tests": 37,
@@ -385,7 +385,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "validated",
+        "state": "verified-local-main",
         "commit": "7bcee5c1",
         "focused": {
           "focused": 85,
@@ -415,7 +415,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "validated",
+        "state": "verified-local-main",
         "commit": "0fd213dc",
         "focused": {
           "relatedComponentsSeparately": 50,
@@ -443,7 +443,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "validated",
+        "state": "verified-local-main",
         "commit": "ed78adc8",
         "focused": {
           "panelAndAdoption": 36,
@@ -468,7 +468,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "validated",
+        "state": "verified-local-main",
         "commit": "15255d20",
         "focused": {
           "tests": 73,
@@ -495,7 +495,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "validated",
+        "state": "verified-local-main",
         "commit": "9b20b85a",
         "focused": {
           "regressionTests": 16,
@@ -525,7 +525,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "validated",
+        "state": "verified-local-main",
         "commit": "6c1afa6b",
         "focused": {
           "audio": 15,
@@ -553,7 +553,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "validated",
+        "state": "verified-local-main",
         "commit": "5856ace6",
         "focused": {
           "componentAndSpatial": 9,
@@ -583,7 +583,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "validated",
+        "state": "verified-local-main",
         "commit": "723d3064",
         "focused": {
           "componentCases": 65,
@@ -610,7 +610,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "validated",
+        "state": "verified-local-main",
         "commit": "a515fd89",
         "focused": {
           "componentCases": 17,
@@ -638,7 +638,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "validated",
+        "state": "verified-local-main",
         "commit": "7c4172a1",
         "focused": {
           "focused": 34,
@@ -665,7 +665,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "validated",
+        "state": "verified-local-main",
         "commit": "d8b8deeb",
         "focused": {
           "componentCases": 50,
@@ -692,7 +692,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "validated",
+        "state": "verified-local-main",
         "commit": "ba6f9027",
         "focused": {
           "distinctFocusedCases": 29,
@@ -719,7 +719,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "validated",
+        "state": "verified-local-main",
         "commit": "717404a2",
         "focused": {
           "tests": 20,
@@ -747,7 +747,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "validated",
+        "state": "verified-local-main",
         "commit": "c4b66b6b",
         "focused": {
           "componentCases": 15,
@@ -773,7 +773,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "validated",
+        "state": "verified-local-main",
         "commit": "d62c5316",
         "focused": {
           "componentCases": 37,
@@ -799,7 +799,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "validated",
+        "state": "verified-local-main",
         "commit": "b7a059d3",
         "focused": {
           "componentCases": 34,
@@ -825,7 +825,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "validated",
+        "state": "verified-local-main",
         "commit": "d334f986",
         "focused": {
           "componentCases": 0,
@@ -851,7 +851,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "validated",
+        "state": "verified-local-main",
         "commit": "802aefbb",
         "focused": {
           "componentCases": 0,
@@ -901,12 +901,12 @@
         30,
         31
       ],
-      "status": "open",
+      "status": "closed",
       "parentLinked": true,
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "acceptance-complete",
+        "state": "verified-local-main",
         "sourceCommit": "6421a779ce1be462bda3c4e04157fecabeb5f627",
         "evidence": "docs/verification/ui-optimization-20261102/final/RESULTS.md",
         "explicitIntegrationPassed": 19,
@@ -947,5 +947,10 @@
     "realPaidProviderCalls": 0,
     "dailyRestartCommands": 0,
     "ownedEnvironmentsCleaned": 3
-  }
+  },
+  "mergedInto": "main",
+  "mergePoint": "647852ab59576d7efd5035cda654f368c0bbea86",
+  "completedAt": "2026-11-02T16:19:44.173339Z",
+  "mainSourceMatchesVerifiedCommit": true,
+  "parentStatus": "closed"
 }

@@ -1,5 +1,5 @@
 {
-  "status": "published-implementing",
+  "status": "complete-local-main",
   "scopeApproved": true,
   "scopeApproval": "Owner 在当前聊天表示「ok，我全部认可」，包含新增 N01–N07 和 U44 最终方案。",
   "parent": "https://github.com/DaNN-55/loop-control/issues/196",
@@ -609,5 +609,7 @@
     }
   ],
   "breakdownApproved": true,
-  "executionApproval": "Owner 已调用 implement-spec，确认单一集成分支实施、验证后本地合并 main；不为工单创建 worktree。逐票状态和真实 GitHub 编号见 ticket-status.json。"
+  "executionApproval": "Owner 已调用 implement-spec，确认单一集成分支实施、验证后本地合并 main；不为工单创建 worktree。逐票状态和真实 GitHub 编号见 ticket-status.json。",
+  "verifiedProductCommit": "6421a779ce1be462bda3c4e04157fecabeb5f627",
+  "completionEvidence": "docs/verification/ui-optimization-20261102/REPORT.md"
 }
