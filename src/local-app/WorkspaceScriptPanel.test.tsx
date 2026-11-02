@@ -1,7 +1,8 @@
 import {render,screen,fireEvent,cleanup,waitFor,within} from '@testing-library/react';
 import {afterEach,it,expect,vi} from 'vitest';
 import {WorkspaceScriptPanel} from './WorkspaceScriptPanel';
-afterEach(cleanup);
+import {WorkspaceDraftProvider} from './WorkspaceDraft';
+afterEach(()=>{cleanup();localStorage.clear();});
 it('confirms a new script through material registration and start, then locks a copyable preview',async()=>{
  const command=vi.fn(async()=>({id:'new-script'})),confirmed=vi.fn();render(<WorkspaceScriptPanel episodeId="e" scriptRevisionId={null} script="" stage="waiting_input" readOnly={false} pending={false} command={command} onConfirmed={confirmed}/>);
  expect(screen.getByRole('button',{name:'确认脚本'}).closest('aside')).toBeTruthy();fireEvent.change(screen.getByRole('textbox',{name:'主脚本'}),{target:{value:'第一镜。\n第二镜。'}});fireEvent.click(screen.getByRole('button',{name:'确认脚本'}));
@@ -84,4 +85,18 @@ it('updates draft counts while preserving the exact UTF-8 source submitted for c
  expect(Buffer.from((imported[1] as {contentBase64:string}).contentBase64,'base64').toString('utf8')).toBe(script);
  fireEvent.click(screen.getByRole('button',{name:'修改脚本'}));fireEvent.change(screen.getByRole('textbox',{name:'主脚本'}),{target:{value:'# 标题\n## 正文\n一二三四。'}});
  expect(within(screen.getByRole('group',{name:'脚本字数'})).getByText('正文文字数 4')).toBeTruthy();expect(screen.getByText('有未确认修改')).toBeTruthy();
+});
+
+it('recovers unsent script text and reason only for the same Owner, episode and server version',()=>{
+ const command=vi.fn(),props={episodeId:'draft-e',scriptRevisionId:'v1',script:'原文',stage:'storyboard_approved',readOnly:false,pending:false,command,onConfirmed:()=>{}};
+ const view=render(<WorkspaceDraftProvider ownerId="owner-a"><WorkspaceScriptPanel {...props}/></WorkspaceDraftProvider>);
+ fireEvent.click(screen.getByRole('button',{name:'修改脚本'}));fireEvent.change(screen.getByLabelText('主脚本'),{target:{value:'未提交正文'}});fireEvent.change(screen.getByLabelText('脚本修订原因'),{target:{value:'调整叙事'}});view.unmount();
+ const recovered=render(<WorkspaceDraftProvider ownerId="owner-a"><WorkspaceScriptPanel {...props}/></WorkspaceDraftProvider>);
+ expect((screen.getByLabelText('主脚本') as HTMLTextAreaElement).value).toBe('未提交正文');expect((screen.getByLabelText('脚本修订原因') as HTMLInputElement).value).toBe('调整叙事');expect(command).not.toHaveBeenCalled();recovered.unmount();
+ const other=render(<WorkspaceDraftProvider ownerId="owner-b"><WorkspaceScriptPanel {...props}/></WorkspaceDraftProvider>);expect(screen.getByRole('document').textContent).toBe('原文');other.unmount();
+ render(<WorkspaceDraftProvider ownerId="owner-a"><WorkspaceScriptPanel {...props} scriptRevisionId="v2" script="服务器新文"/></WorkspaceDraftProvider>);expect(screen.getByRole('document').textContent).toBe('服务器新文');
+});
+it('does not resurrect a draft after the user manually returns all fields to the saved baseline',()=>{
+ const props={episodeId:'revert-e',scriptRevisionId:'revert-v1',script:'原文',stage:'storyboard_approved',readOnly:false,pending:false,command:vi.fn(),onConfirmed:()=>{}},panel=<WorkspaceDraftProvider ownerId="revert-owner"><WorkspaceScriptPanel {...props}/></WorkspaceDraftProvider>;
+ const view=render(panel);fireEvent.click(screen.getByRole('button',{name:'修改脚本'}));fireEvent.change(screen.getByLabelText('主脚本'),{target:{value:'临时修改'}});fireEvent.change(screen.getByLabelText('主脚本'),{target:{value:'原文'}});view.unmount();render(panel);expect(screen.queryByLabelText('主脚本')).toBeNull();expect(screen.getByRole('document').textContent).toBe('原文');
 });

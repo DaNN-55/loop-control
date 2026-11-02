@@ -150,7 +150,7 @@ it('keeps AudioSkin playback enabled in a completed order while narration and mu
  const {container}=render(<ProductionWorkspacePanel episodeId="e" title="已完成工程" stage="production_completed" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);
  await screen.findByText('先导出最终视频，检查后确认这份文件。');fireEvent.click(screen.getByRole('button',{name:/^素材准备与匹配/}));fireEvent.click(screen.getByRole('tab',{name:'口播'}));
  const media=await screen.findByLabelText('S01 voice 口播试听');expect(media.closest('fieldset')?.disabled).toBe(false);expect(container.querySelector('.app-audio-player button')?.matches(':disabled')).toBe(false);expect((screen.getByRole('textbox',{name:'口播正文'}) as HTMLTextAreaElement).disabled).toBe(true);
- fireEvent.click(screen.getByRole('tab',{name:'配乐与音效'}));expect((screen.getByRole('combobox',{name:'来源'}) as HTMLSelectElement).disabled).toBe(true);expect((screen.getByRole('button',{name:'上传 MP3'}) as HTMLButtonElement).matches(':disabled')).toBe(true);expect(command).not.toHaveBeenCalled();
+ fireEvent.click(screen.getByRole('tab',{name:'配乐与声音'}));expect((screen.getByRole('combobox',{name:'来源'}) as HTMLSelectElement).disabled).toBe(true);expect((screen.getByRole('button',{name:'上传 MP3'}) as HTMLButtonElement).matches(':disabled')).toBe(true);expect(command).not.toHaveBeenCalled();
 });
 
 it('saves optional sound intent only on request and restores the right text when switching shots',async()=>{
@@ -165,4 +165,9 @@ it('saves optional sound intent only on request and restores the right text when
  fireEvent.click(screen.getByText('第一镜'));expect((screen.getByRole('textbox',{name:'音效意图'}) as HTMLTextAreaElement).value).toBe('开门时一声轻响');
  view.unmount();render(<ProductionWorkspacePanel episodeId="e" title="工程" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);
  await screen.findByText('开门时一声轻响');expect(command).toHaveBeenCalledTimes(1);
+});
+
+it('keeps revision editing unavailable until the actual script baseline has loaded',async()=>{
+ let resolveScript!:(response:Response)=>void;vi.stubGlobal('fetch',vi.fn(async(path:string)=>path.startsWith('/_local-artifact')?new Promise<Response>(resolve=>{resolveScript=resolve;}):Response.json({workspace:null})));
+ render(<ProductionWorkspacePanel episodeId="baseline-e" title="脚本读取" scriptRevisionId="baseline-script" stage="script_approved" materials={[{id:'baseline-script',material_type:'script',source_path:'script.md',storage_path:'script.md',is_main_script:true}]} command={vi.fn()} onLegacy={()=>{}}/>);fireEvent.click(await screen.findByRole('button',{name:/^脚本确认/}));expect((screen.getByRole('button',{name:'修改脚本'}) as HTMLButtonElement).disabled).toBe(true);await act(async()=>resolveScript(new Response('实际服务器正文')));expect((screen.getByRole('button',{name:'修改脚本'}) as HTMLButtonElement).disabled).toBe(false);fireEvent.click(screen.getByRole('button',{name:'修改脚本'}));expect((screen.getByLabelText('主脚本') as HTMLTextAreaElement).value).toBe('实际服务器正文');
 });

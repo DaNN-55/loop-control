@@ -4,6 +4,7 @@ import {FileText} from 'lucide-react';
 import {MarkdownPreview} from '../ui/MarkdownPreview';
 import {mainScriptStatistics} from '../reviews/mainScript';
 import {ConfirmationModal} from '../ui/ConfirmationModal';
+import {useWorkspaceDraft} from './WorkspaceDraft';
 import './workspace-compact-panels.css';
 
 interface Props {
@@ -11,12 +12,14 @@ interface Props {
  command:(name:string,data:unknown)=>Promise<unknown>;onConfirmed:(scriptRevisionId?:string,revisionReason?:string)=>void;history?:ReactNode;errorPresented?:boolean;
 }
 export function WorkspaceScriptPanel({episodeId,scriptRevisionId,script,stage,readOnly,pending,command,onConfirmed,history,errorPresented=false}:Props){
- const [text,setText]=useState(script),[preview,setPreview]=useState(script),[reason,setReason]=useState(''),[error,setError]=useState(''),[busy,setBusy]=useState(false),[filename,setFilename]=useState('script.md');
+ const draft=useWorkspaceDraft({episodeId,kind:'script',version:scriptRevisionId??'new',initial:{text:script,reason:'',filename:'script.md'},enabled:!readOnly});
+ const {text,reason,filename}=draft.value,setText=(text:string)=>draft.setValue(value=>({...value,text})),setReason=(reason:string)=>draft.setValue(value=>({...value,reason})),setFilename=(filename:string)=>draft.setValue(value=>({...value,filename}));
+ const [preview,setPreview]=useState(script),[error,setError]=useState(''),[busy,setBusy]=useState(false);
  const [editing,setEditing]=useState(!readOnly&&(!scriptRevisionId||stage==='waiting_input')),[confirmation,setConfirmation]=useState<'save'|'discard'|null>(null),[locallyConfirmed,setLocallyConfirmed]=useState(false);
  const [invalid,setInvalid]=useState<'script'|'reason'|null>(null),errorId=useId(),reasonInput=useRef<HTMLInputElement>(null),textInput=useRef<HTMLTextAreaElement>(null);
- const baseline=useRef(script),previous=useRef(scriptRevisionId),input=useRef<HTMLInputElement>(null);
- useEffect(()=>{if(previous.current!==scriptRevisionId||text===baseline.current){setText(script);baseline.current=script;previous.current=scriptRevisionId;}setPreview(script);},[script,scriptRevisionId]);
- const changed=text!==preview,revision=!!scriptRevisionId&&stage!=='waiting_input',disabled=readOnly||pending||busy,isEditing=editing&&!readOnly;
+ const input=useRef<HTMLInputElement>(null);
+ useEffect(()=>{setPreview(script);},[script,scriptRevisionId]);
+ const changed=text!==preview,revision=!!scriptRevisionId&&stage!=='waiting_input',disabled=readOnly||pending||busy,isEditing=(editing||draft.dirty)&&!readOnly;
  const baselineStatus=revision||locallyConfirmed?'已确认基准':'待确认';
  const statistics=mainScriptStatistics(isEditing?text:preview),confirmedCharacters=Array.from(preview).length;
  function requestSave(){
@@ -25,9 +28,10 @@ export function WorkspaceScriptPanel({episodeId,scriptRevisionId,script,stage,re
   if(scriptRevisionId&&changed&&!reason.trim()){setInvalid('reason');reasonInput.current?.focus();return;}
   if(revision||scriptRevisionId&&changed)setConfirmation('save');else void confirm();
  }
- function discard(){setInvalid(null);setText(preview);setReason('');setError('');setFilename('script.md');setEditing(false);setConfirmation(null);}
+ function discard(){setInvalid(null);draft.reset();setError('');setEditing(false);setConfirmation(null);}
  async function confirm(){
   if(disabled)return;
+  const submitted={...draft.value};
   setBusy(true);setError('');
   try{
    let confirmedScriptId=scriptRevisionId??undefined;
@@ -39,7 +43,7 @@ export function WorkspaceScriptPanel({episodeId,scriptRevisionId,script,stage,re
     if(!reason.trim())throw Error('请填写修订原因。');
     const revised=await command('reconfirmScript',{episodeId,expectedScriptRevisionId:scriptRevisionId,text,reason:reason.trim()}) as {id:string};confirmedScriptId=revised.id;
    }
-   await command('start',{episodeId});setPreview(text);setReason('');setEditing(false);setLocallyConfirmed(true);setConfirmation(null);onConfirmed(confirmedScriptId,reason.trim()||undefined);
+   await command('start',{episodeId});if(draft.acknowledge(submitted,{...submitted,reason:''})){setPreview(submitted.text);setEditing(false);}setLocallyConfirmed(true);setConfirmation(null);onConfirmed(confirmedScriptId,submitted.reason.trim()||undefined);
   }catch(cause){setConfirmation(null);setError(cause instanceof Error?cause.message:'脚本确认未完成。');}finally{setBusy(false);}
  }
  async function readScriptFile(file:File){
@@ -49,6 +53,7 @@ export function WorkspaceScriptPanel({episodeId,scriptRevisionId,script,stage,re
  return <section className="production-workspace-section workspace-script workspace-script-compact" aria-label="脚本确认">
   <header><div className="workspace-compact-heading"><h3>主脚本</h3><span role="status" className={revision||locallyConfirmed?'is-confirmed':''}>{baselineStatus}{!isEditing?' · 预览锁定':''}</span></div></header>
 
+  {draft.restored&&<p role="status">已恢复本机脚本草稿，尚未确认。</p>}{draft.storageError&&<p role="alert" className="form-error">本机草稿暂无法保存，请保持此页面打开。</p>}
   <div className="workspace-script-layout">
    <div className="workspace-script-main">
     {isEditing?<label className="workspace-script-text">主脚本<textarea ref={textInput} aria-label="主脚本" aria-required="true" aria-invalid={invalid==='script'||undefined} aria-describedby={invalid==='script'?errorId:undefined} value={text} disabled={pending||busy} onChange={event=>{setText(event.target.value);if(invalid==='script')setInvalid(null);}} placeholder="粘贴脚本，或上传 Markdown / TXT"/>{invalid==='script'&&<span id={errorId} className="form-error" role="alert">请填写主脚本。</span>}</label>:<div className="workspace-script-preview" role="document" aria-label="主脚本预览" tabIndex={0}>{preview?<MarkdownPreview content={preview}/>: '正在读取主脚本…'}</div>}

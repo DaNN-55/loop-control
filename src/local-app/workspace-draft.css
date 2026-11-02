@@ -1,0 +1,5 @@
+.workspace-draft-leave .modal-actions { flex-wrap: wrap; }
+@media (max-width: 520px) {
+ .workspace-draft-leave .modal-actions { display: grid; grid-template-columns: 1fr; }
+ .workspace-draft-leave .modal-actions > button { width: 100%; }
+}

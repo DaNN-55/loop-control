@@ -1,12 +1,13 @@
 import {act,render,screen,fireEvent,waitFor,cleanup} from '@testing-library/react';
 import {afterEach,beforeEach,it,expect,vi} from 'vitest';
 import {WorkspaceDeliveryPanel} from './WorkspaceDeliveryPanel';
+import {WorkspaceDraftProvider} from './WorkspaceDraft';
 import type {ProductionWorkspace} from '../productionWorkspace';
 vi.mock('./client',()=>({localRequest:vi.fn()}));
 import {localRequest} from './client';
 const createObjectURL=vi.fn(()=> 'blob:cover-preview'),revokeObjectURL=vi.fn();
 beforeEach(()=>{createObjectURL.mockClear();revokeObjectURL.mockClear();Object.defineProperty(URL,'createObjectURL',{configurable:true,value:createObjectURL});Object.defineProperty(URL,'revokeObjectURL',{configurable:true,value:revokeObjectURL});});
-afterEach(()=>{cleanup();vi.useRealTimers();});
+afterEach(()=>{cleanup();localStorage.clear();vi.useRealTimers();});
 const workspace=()=>({id:'workspace',episodeId:'episode',revision:7,stale:false,exports:[{id:'export',confirmed:true,contentSha256:'confirmed-content',artifact:{sha256:'confirmed-video'}}]}) as unknown as ProductionWorkspace;
 it('registers the selected real cover and binds delivery metadata to the confirmed export',async()=>{
  const w=workspace(),command=vi.fn(async()=>w);render(<WorkspaceDeliveryPanel workspace={w} pending={false} command={command} onChange={()=>{}}/>);
@@ -44,4 +45,20 @@ it('continues delivery polling when parent refreshes replace the callback',async
  render(<WorkspaceDeliveryPanel workspace={w} pending={true} command={vi.fn()} onChange={()=>{}}/>);
  expect(await screen.findByRole('heading',{name:'发布标题'})).toBeTruthy();expect(screen.getByText('发布简介')).toBeTruthy();expect(screen.getByText('#清晨 #产品')).toBeTruthy();fireEvent.click(screen.getByRole('button',{name:'复制简介'}));await waitFor(()=>expect(writeText).toHaveBeenCalledWith('发布简介'));
  expect(screen.getByRole('link',{name:'下载可编辑工程'}).getAttribute('href')).toContain('download=1');expect(screen.getByRole('link',{name:'下载全部交付文件（ZIP）'})).toBeTruthy();expect(document.querySelector('.workspace-delivery-technical')).toBeNull();expect(screen.queryByText('下载检查证据')).toBeNull();expect(screen.getByRole('button',{name:'复制标题'}).textContent).toBe('');expect(screen.getByRole('img',{name:'交付封面'})).toBeTruthy();vi.unstubAllGlobals();
+});
+
+it('restores non-secret delivery text after reopening but requires the cover file again',()=>{
+ const w=workspace(),command=vi.fn(),renderPanel=()=>render(<WorkspaceDraftProvider ownerId="delivery-owner"><WorkspaceDeliveryPanel workspace={w} pending={false} command={command} onChange={()=>{}}/></WorkspaceDraftProvider>);
+ const view=renderPanel();fireEvent.change(screen.getByLabelText('标题'),{target:{value:'未提交标题'}});fireEvent.change(screen.getByLabelText('简介'),{target:{value:'未提交简介'}});fireEvent.change(screen.getByLabelText('标签'),{target:{value:'清晨,自然'}});fireEvent.change(screen.getByLabelText('封面'),{target:{files:[new File(['png'],'封面.png',{type:'image/png'})]}});view.unmount();renderPanel();
+ expect((screen.getByLabelText('标题') as HTMLInputElement).value).toBe('未提交标题');expect((screen.getByLabelText('简介') as HTMLTextAreaElement).value).toBe('未提交简介');expect((screen.getByLabelText('标签') as HTMLInputElement).value).toBe('清晨,自然');expect(screen.getByText('请重新选择封面：封面.png')).toBeTruthy();expect(screen.queryByRole('img',{name:'交付封面预览'})).toBeNull();expect((screen.getByRole('button',{name:'生成并验证交付包'}) as HTMLButtonElement).disabled).toBe(true);expect(command).not.toHaveBeenCalled();
+});
+it('keeps text entered during a delivery request and clears only the successfully submitted draft',async()=>{
+ const w=workspace();let finish!:(w:ProductionWorkspace)=>void;const command=vi.fn(()=>new Promise<ProductionWorkspace>(resolve=>{finish=resolve;}));
+ const view=render(<WorkspaceDraftProvider ownerId="pending-owner"><WorkspaceDeliveryPanel workspace={w} pending={false} command={command} onChange={()=>{}}/></WorkspaceDraftProvider>);
+ fireEvent.change(screen.getByLabelText('标题'),{target:{value:'请求中的标题'}});const cover=new File(['cover'],'cover.png',{type:'image/png'});Object.defineProperty(cover,'arrayBuffer',{value:async()=>new Uint8Array([1]).buffer});fireEvent.change(screen.getByLabelText('封面'),{target:{files:[cover]}});fireEvent.click(screen.getByRole('button',{name:'生成并验证交付包'}));await waitFor(()=>expect(command).toHaveBeenCalledOnce());fireEvent.change(screen.getByLabelText('标题'),{target:{value:'请求后继续填写'}});await act(async()=>finish(w));view.unmount();
+ render(<WorkspaceDraftProvider ownerId="pending-owner"><WorkspaceDeliveryPanel workspace={w} pending={false} command={command} onChange={()=>{}}/></WorkspaceDraftProvider>);expect((screen.getByLabelText('标题') as HTMLInputElement).value).toBe('请求后继续填写');
+});
+it('does not carry a live cover file into another export even when its recovered filename matches',()=>{
+ const first=workspace(),second={...workspace(),exports:[{...workspace().exports![0],id:'another-export'}]},command=vi.fn(),panel=(w:ProductionWorkspace)=><WorkspaceDraftProvider ownerId="export-owner"><WorkspaceDeliveryPanel workspace={w} pending={false} command={command} onChange={()=>{}}/></WorkspaceDraftProvider>;
+ const saved=render(panel(second));fireEvent.change(screen.getByLabelText('标题'),{target:{value:'另一导出草稿'}});fireEvent.change(screen.getByLabelText('封面'),{target:{files:[new File(['second'],'same-name.png',{type:'image/png'})]}});saved.unmount();const current=render(panel(first));fireEvent.change(screen.getByLabelText('封面'),{target:{files:[new File(['first'],'same-name.png',{type:'image/png'})]}});expect(screen.getByRole('img',{name:'交付封面预览'})).toBeTruthy();current.rerender(panel(second));expect(screen.queryByRole('img',{name:'交付封面预览'})).toBeNull();expect(screen.getByText('请重新选择封面：same-name.png')).toBeTruthy();
 });

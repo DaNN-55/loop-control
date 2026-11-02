@@ -1,0 +1,87 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+stderr | src/local-app/ProductionWorkspacePanel.test.tsx > preserves image and video prompt drafts when switching the unified tabs
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/local-app/ProductionWorkspacePanel.test.tsx > keeps another shot’s video generation draft when adopting an image advances the project
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/local-app/ProductionWorkspacePanel.test.tsx (29 tests) 11214ms
+   ✓ keeps material import reachable after matching and lists newly imported narration material  1028ms
+   ✓ preserves image and video prompt drafts when switching the unified tabs  688ms
+   ✓ disables workspace write forms on a completed order even when legacy content remains inspectable  362ms
+   ✓ keeps another shot’s video generation draft when adopting an image advances the project  683ms
+   ✓ pauses delivery polling while its retained draft tree is hidden and resumes one interval on return  319ms
+   ✓ reuses the saved script revision when continuing an existing workspace without a second reason  367ms
+   ✓ deletes only the selected material shot after confirmation and selects the remaining neighbor  1226ms
+   ✓ keeps the selected shot and deletion dialog when the saved revision is stale  599ms
+   ✓ appends a shot after the final shot and selects it only after the saved result returns  541ms
+   ✓ retains an insert draft and the saved shot order when a structure update fails  419ms
+   ✓ saves row drag and keyboard sorting through the revisioned move command without changing selection  439ms
+   ✓ disables row actions and sorting on historical read-only orders while retaining shot selection  333ms
+   ✓ keeps AudioSkin playback enabled in a completed order while narration and music editing stay disabled  1032ms
+   ✓ saves optional sound intent only on request and restores the right text when switching shots  611ms
+
+ Test Files  1 passed (1)
+      Tests  29 passed (29)
+   Start at  21:14:19
+   Duration  18.94s (transform 1.69s, setup 26ms, collect 6.27s, tests 11.21s, environment 867ms, prepare 126ms)
