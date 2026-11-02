@@ -4,7 +4,6 @@ import {EpisodeCollectionDialog} from './EpisodeCollectionDialog';
 import {OwnerPreferencesDialog,type PreferencesPage} from './OwnerPreferencesDialog';
 import {defaultOwnerPreferences,parseOwnerPreferences,type OwnerPreferences} from '../preferences/preferences';
 import {WorkspaceTopbar} from "./WorkspaceTopbar";
-import type {CatalogStatus} from '../episodes/episodeCatalogTypes';
 import {Video,LayoutDashboard,Clapperboard,Users,Plug,Archive,Plus,ChevronRight,CircleAlert} from 'lucide-react';
 import {LoopControlMark} from './LoopControlMark';
 import './brand-mark.css';

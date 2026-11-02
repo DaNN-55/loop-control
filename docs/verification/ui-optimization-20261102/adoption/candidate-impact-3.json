@@ -1,0 +1,79 @@
+{
+  "plan": {
+    "adoptionId": "2d298beb-69bf-4e2f-a0d0-c474b70bf580",
+    "candidateId": "b3fde234-7989-4d35-9831-a904a0a6b341",
+    "projectSha256": "95045eb6a0d12c5e934e767cb00c79993a87d8cf3d3caa52dca054d7b09e1874",
+    "edit": {
+      "visual": {
+        "usage": "still",
+        "motionPolicy": "preserve-target",
+        "acceptTimelineImpact": true,
+        "expectedAppearance": "{\"keyframes\":null,\"transform\":{\"rotation\":0,\"scale\":1,\"x\":0,\"y\":0},\"zoom\":null}",
+        "placeholder": false
+      },
+      "shotWindow": {
+        "startFrame": 0,
+        "durationInFrames": 60
+      },
+      "targetItemId": "shot-shot-1-32fd9136-1b68-42eb-a2c1-c819efc17673",
+      "expectedTarget": {
+        "id": "shot-shot-1-32fd9136-1b68-42eb-a2c1-c819efc17673",
+        "kind": "image",
+        "src": "episodes/5c634955-d4df-431d-9f52-88aa442c7c27/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-candidate.png",
+        "sourceAssetId": "candidate-390b22c3-94a8-4af6-8e02-66e11a09f0fd",
+        "sourceRevision": "source-sha256-89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+        "sourceContentHash": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+        "startFrame": 0,
+        "durationInFrames": 60,
+        "srcInFrame": 0,
+        "playbackRate": 1
+      },
+      "durationPolicy": "use-candidate",
+      "source": {
+        "id": "candidate-b3fde234-7989-4d35-9831-a904a0a6b341",
+        "kind": "image",
+        "width": 640,
+        "height": 360,
+        "src": "episodes/5c634955-d4df-431d-9f52-88aa442c7c27/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-next-candidate.png",
+        "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+        "inputFingerprint": "fcefafb91cb2b265655da6f5df5dd14550abf8876865f49d2767afbbd6dd2616",
+        "durationSeconds": 3
+      }
+    },
+    "impact": {
+      "currentSeconds": 2,
+      "sourceSeconds": 3,
+      "appliedSeconds": 3,
+      "deltaSeconds": 1,
+      "startSeconds": 0,
+      "endSeconds": 3,
+      "fps": 30,
+      "affectedFragments": [
+        {
+          "itemId": "shot-shot-2-fc7510e6-33a6-4165-a029-52d116d00353",
+          "label": "缺少素材的第二镜。",
+          "kind": "video",
+          "track": "track_loop-control-5c634955-d4df-431d-9f52-88aa442c7c27_1",
+          "startSeconds": 2,
+          "endSeconds": 4,
+          "changedStartSeconds": 2,
+          "changedEndSeconds": 3
+        },
+        {
+          "itemId": "spanning-overlay",
+          "label": "跨区间说明",
+          "kind": "text",
+          "track": "track_loop-control-5c634955-d4df-431d-9f52-88aa442c7c27_3",
+          "startSeconds": 0.5,
+          "endSeconds": 3.5,
+          "changedStartSeconds": 2,
+          "changedEndSeconds": 3
+        }
+      ]
+    }
+  },
+  "persistedFrames": 90,
+  "unchangedOtherFragments": true,
+  "reopened": true,
+  "conflictChecked": true
+}

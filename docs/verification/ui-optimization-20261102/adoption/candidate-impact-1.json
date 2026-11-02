@@ -1,0 +1,69 @@
+{
+  "plan": {
+    "adoptionId": "921bf667-b3db-4d40-84c0-62ea2f1b6849",
+    "candidateId": "4b69ecd4-c933-4c78-be51-928af1f0be10",
+    "projectSha256": "bb036a37d3f3ec9c09d97c6adb24aac6adc4649fba3f2fa245f2f0fc01b9c4c6",
+    "edit": {
+      "visual": {
+        "usage": "still",
+        "motionPolicy": "preserve-target",
+        "acceptTimelineImpact": true,
+        "expectedAppearance": "{\"keyframes\":null,\"transform\":{\"rotation\":0,\"scale\":1,\"x\":0,\"y\":0},\"zoom\":null}",
+        "placeholder": false
+      },
+      "shotWindow": {
+        "startFrame": 0,
+        "durationInFrames": 60
+      },
+      "targetItemId": "shot-shot-1-4f32bf6c-b9ec-4e3c-a18f-bb4607b42436",
+      "expectedTarget": {
+        "id": "shot-shot-1-4f32bf6c-b9ec-4e3c-a18f-bb4607b42436",
+        "kind": "image",
+        "src": "episodes/33f8964d-63c8-407c-9e41-12111518651e/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-candidate.png",
+        "sourceAssetId": "candidate-432f9238-b2b1-4b8e-b6ba-c772446f20f3",
+        "sourceRevision": "source-sha256-89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+        "sourceContentHash": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+        "startFrame": 0,
+        "durationInFrames": 60,
+        "srcInFrame": 0,
+        "playbackRate": 1
+      },
+      "durationPolicy": "use-candidate",
+      "source": {
+        "id": "candidate-4b69ecd4-c933-4c78-be51-928af1f0be10",
+        "kind": "image",
+        "width": 640,
+        "height": 360,
+        "src": "episodes/33f8964d-63c8-407c-9e41-12111518651e/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-next-candidate.png",
+        "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+        "inputFingerprint": "17b2f51ab9e505e8175efac6f3b3f9a87c549efa4d45f2e9d592f26424f3a72c",
+        "durationSeconds": 1
+      }
+    },
+    "impact": {
+      "currentSeconds": 2,
+      "sourceSeconds": 1,
+      "appliedSeconds": 1,
+      "deltaSeconds": -1,
+      "startSeconds": 0,
+      "endSeconds": 1,
+      "fps": 30,
+      "affectedFragments": [
+        {
+          "itemId": "spanning-overlay",
+          "label": "跨区间说明",
+          "kind": "text",
+          "track": "track_loop-control-33f8964d-63c8-407c-9e41-12111518651e_3",
+          "startSeconds": 0.5,
+          "endSeconds": 3.5,
+          "changedStartSeconds": 1,
+          "changedEndSeconds": 2
+        }
+      ]
+    }
+  },
+  "persistedFrames": 30,
+  "unchangedOtherFragments": true,
+  "reopened": true,
+  "conflictChecked": false
+}

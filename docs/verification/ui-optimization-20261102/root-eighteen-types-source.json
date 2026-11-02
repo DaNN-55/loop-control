@@ -1,0 +1,20 @@
+{
+  "sourceCommit": "6c1afa6befc57d6087f894b50368afadb7f8542f",
+  "scope": "integrated tickets through19, excludes in-progress14/23/25",
+  "archivePaths": [
+    "db",
+    "package-lock.json",
+    "package.json",
+    "public",
+    "scripts",
+    "src",
+    "tsconfig.app.json",
+    "tsconfig.json",
+    "tsconfig.local-app.json",
+    "tsconfig.node.json",
+    "tsconfig.worker.json",
+    "vite.config.ts"
+  ],
+  "overlay": "remove only unused CatalogStatus type import from LocalCatalogApp.tsx",
+  "result": "npm run check exit0"
+}

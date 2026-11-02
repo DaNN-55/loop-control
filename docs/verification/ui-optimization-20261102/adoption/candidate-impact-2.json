@@ -1,0 +1,58 @@
+{
+  "plan": {
+    "adoptionId": "b28df9d5-5709-41f6-9aee-30aca3812c11",
+    "candidateId": "e5d860b9-b77d-4ace-be20-4e070a023c16",
+    "projectSha256": "5d23ecc21fe110e209096ee3003f863e5f665e20faa2ddf080005da30ad5e84a",
+    "edit": {
+      "visual": {
+        "usage": "still",
+        "motionPolicy": "preserve-target",
+        "acceptTimelineImpact": true,
+        "expectedAppearance": "{\"keyframes\":null,\"transform\":{\"rotation\":0,\"scale\":1,\"x\":0,\"y\":0},\"zoom\":null}",
+        "placeholder": false
+      },
+      "shotWindow": {
+        "startFrame": 0,
+        "durationInFrames": 60
+      },
+      "targetItemId": "shot-shot-1-b26fe538-6915-479b-a635-9dbb094d24ee",
+      "expectedTarget": {
+        "id": "shot-shot-1-b26fe538-6915-479b-a635-9dbb094d24ee",
+        "kind": "image",
+        "src": "episodes/b5c2d807-a6cf-49d1-ba9f-4be3f0bc27dd/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-candidate.png",
+        "sourceAssetId": "candidate-34581428-cbcd-4e64-9a65-05a7b3b20d58",
+        "sourceRevision": "source-sha256-89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+        "sourceContentHash": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+        "startFrame": 0,
+        "durationInFrames": 60,
+        "srcInFrame": 0,
+        "playbackRate": 1
+      },
+      "durationPolicy": "use-candidate",
+      "source": {
+        "id": "candidate-e5d860b9-b77d-4ace-be20-4e070a023c16",
+        "kind": "image",
+        "width": 640,
+        "height": 360,
+        "src": "episodes/b5c2d807-a6cf-49d1-ba9f-4be3f0bc27dd/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-next-candidate.png",
+        "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+        "inputFingerprint": "47adb2f589fec2deacd004518e22f30d1ed854732726ca5a5e90fcfb0d7b62d2",
+        "durationSeconds": 2
+      }
+    },
+    "impact": {
+      "currentSeconds": 2,
+      "sourceSeconds": 2,
+      "appliedSeconds": 2,
+      "deltaSeconds": 0,
+      "startSeconds": 0,
+      "endSeconds": 2,
+      "fps": 30,
+      "affectedFragments": []
+    }
+  },
+  "persistedFrames": 60,
+  "unchangedOtherFragments": true,
+  "reopened": true,
+  "conflictChecked": false
+}

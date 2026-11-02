@@ -172,10 +172,20 @@
       "id": 6162304523,
       "url": "https://github.com/DaNN-55/loop-control/issues/203",
       "blockedBy": [],
-      "status": "open",
+      "status": "closed",
       "parentLinked": true,
       "dependenciesLinked": true,
-      "nativeDependencies": true
+      "nativeDependencies": true,
+      "implementation": {
+        "state": "integrated-pending-full-regression",
+        "commit": "161f6dc2",
+        "focused": {
+          "navigation": 15,
+          "browserReads": 328,
+          "browserWrites": 0
+        },
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/07.md"
+      }
     },
     {
       "n": 8,
@@ -348,10 +358,20 @@
       "id": 6162316583,
       "url": "https://github.com/DaNN-55/loop-control/issues/210",
       "blockedBy": [],
-      "status": "open",
+      "status": "closed",
       "parentLinked": true,
       "dependenciesLinked": true,
-      "nativeDependencies": true
+      "nativeDependencies": true,
+      "implementation": {
+        "state": "integrated-pending-full-regression",
+        "commit": "7bcee5c1",
+        "focused": {
+          "focused": 85,
+          "postReview": 11,
+          "realHttpSdk": 2
+        },
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/14.md"
+      }
     },
     {
       "n": 15,
@@ -394,10 +414,19 @@
       "id": 6162319432,
       "url": "https://github.com/DaNN-55/loop-control/issues/212",
       "blockedBy": [],
-      "status": "open",
+      "status": "closed",
       "parentLinked": true,
       "dependenciesLinked": true,
-      "nativeDependencies": true
+      "nativeDependencies": true,
+      "implementation": {
+        "state": "integrated-pending-full-regression",
+        "commit": "ed78adc8",
+        "focused": {
+          "panelAndAdoption": 36,
+          "realHttpSdkScenariosSeparately": 3
+        },
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/16.md"
+      }
     },
     {
       "n": 17,
@@ -464,10 +493,21 @@
       "id": 6162323865,
       "url": "https://github.com/DaNN-55/loop-control/issues/215",
       "blockedBy": [],
-      "status": "open",
+      "status": "closed",
       "parentLinked": true,
       "dependenciesLinked": true,
-      "nativeDependencies": true
+      "nativeDependencies": true,
+      "implementation": {
+        "state": "integrated-pending-full-regression",
+        "commit": "6c1afa6b",
+        "focused": {
+          "audio": 15,
+          "narration": 10,
+          "status": 5,
+          "realHttpWorker": 1
+        },
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/19.md"
+      }
     },
     {
       "n": 20,
@@ -544,10 +584,20 @@
       "id": 6162328849,
       "url": "https://github.com/DaNN-55/loop-control/issues/219",
       "blockedBy": [],
-      "status": "open",
+      "status": "closed",
       "parentLinked": true,
       "dependenciesLinked": true,
-      "nativeDependencies": true
+      "nativeDependencies": true,
+      "implementation": {
+        "state": "integrated-pending-full-regression",
+        "commit": "7c4172a1",
+        "focused": {
+          "focused": 34,
+          "finalAffected": 2,
+          "realHttpPg": 4
+        },
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/23.md"
+      }
     },
     {
       "n": 24,
@@ -577,10 +627,19 @@
       "id": 6162331496,
       "url": "https://github.com/DaNN-55/loop-control/issues/221",
       "blockedBy": [],
-      "status": "open",
+      "status": "closed",
       "parentLinked": true,
       "dependenciesLinked": true,
-      "nativeDependencies": true
+      "nativeDependencies": true,
+      "implementation": {
+        "state": "integrated-pending-full-regression",
+        "commit": "ba6f9027",
+        "focused": {
+          "distinctFocusedCases": 29,
+          "realHttpPgNative": 1
+        },
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/25.md"
+      }
     },
     {
       "n": 26,
