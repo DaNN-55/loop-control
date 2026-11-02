@@ -1,3 +1,4 @@
+import {WorkspaceAudioRecord} from './WorkspaceSoundRecords';
 import {WorkspaceVisualTaskStatus} from './WorkspaceVisualTaskStatus';
 import {reconcileWorkspaceOutput} from './workspaceOutputReconciliationClient';
 import {AudioPreview} from '../ui/media/AudioPreview';
@@ -16,7 +17,10 @@ type Command=(name:string,data:unknown)=>Promise<unknown>;
 interface Props {readOnly?:boolean;workspace:ProductionWorkspace;command:Command;onChange:(workspace:ProductionWorkspace)=>void;materials?:Array<{id:string;material_type:string;source_path:string}>;project?:OpenChatCutProject|null;bridge?:EmbeddedStudioBridge;selectedShotId?:string}
 type AudioDraft={selection?:ProductionSelection|null;kind:'bgm'|'sfx'|'source';description:string;query:string;manual:string;sourceItem:string;duration:number;anchor:'absolute'|'shot';offset:number;shot:string};
 const emptyAudioDraft=():AudioDraft=>({kind:'bgm',description:'整期配乐',query:'',manual:'',sourceItem:'',duration:1,anchor:'absolute',offset:0,shot:''});
-export function WorkspaceAudioPreparation({workspace:w,command,onChange,materials=[],project,bridge,selectedShotId,readOnly=false}:Props){
+export function WorkspaceAudioPreparation(props:Props){
+ return props.readOnly?<WorkspaceAudioRecord workspace={props.workspace} project={props.project} selectedShotId={props.selectedShotId}/>:<EditableWorkspaceAudioPreparation {...props}/>;
+}
+function EditableWorkspaceAudioPreparation({workspace:w,command,onChange,materials=[],project,bridge,selectedShotId,readOnly=false}:Props){
  const key=w.id+':'+(selectedShotId??'episode'),initial=():AudioDraft=>{const empty=emptyAudioDraft();try{const stored=sessionStorage.getItem(`loop-audio-draft-v2:${key}`),saved=JSON.parse(stored??sessionStorage.getItem(`loop-audio-draft:${key}`)??'{}');return {...empty,...(w.audio?.defaults??{}),...(['bgm','source'].includes(saved.kind)||stored&&saved.kind==='sfx'?saved:{})};}catch{return empty;}};
  const [drafts,setDrafts]=useState<Record<string,AudioDraft>>({}),[uploaded,setUploaded]=useState<NonNullable<Props['materials']>>([]),[busy,setBusy]=useState(false),[error,setError]=useState(''),[defaultSaved,setDefaultSaved]=useState(false),[live,setLive]=useState<OpenChatCutProject|null>(null);
  const draft=drafts[key]??initial(),{kind,description,query,manual,sourceItem,selection,duration,anchor,offset,shot}=draft;

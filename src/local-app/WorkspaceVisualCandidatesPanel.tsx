@@ -128,4 +128,4 @@ function WorkspaceVisualCandidatesLegacy({workspace,command,onChange:updated,bri
  </section>;
 }
 
-export function WorkspaceVisualCandidatesPanel(props:Parameters<typeof WorkspaceVisualCandidatesLegacy>[0]&Pick<VisualPreparationProps,'currentVisualPath'|'currentMaterialRevisionId'>){return props.preparation?<WorkspaceVisualPreparation {...props}/>:<WorkspaceVisualCandidatesLegacy {...props}/>;}
+export function WorkspaceVisualCandidatesPanel(props:Parameters<typeof WorkspaceVisualCandidatesLegacy>[0]&Pick<VisualPreparationProps,'currentVisualPath'|'currentMaterialRevisionId'|'currentVisualSha256'>){return props.preparation?<WorkspaceVisualPreparation {...props}/>:<WorkspaceVisualCandidatesLegacy {...props}/>;}

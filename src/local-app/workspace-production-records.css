@@ -1,0 +1,8 @@
+.workspace-production-records { min-width: 0; color: var(--lc-ink,#17263e); }
+.workspace-production-records > article { padding-block: 18px; border-top: 1px solid var(--lc-line,#d8e1ee); overflow-wrap: anywhere; }
+.workspace-production-records h4 { margin: 0 0 12px; font-size: 14px; }
+.workspace-production-records h5 { margin: 20px 0 8px; font-size: 13px; }
+.workspace-production-records p { max-width: 65ch; line-height: 1.7; overflow-wrap: anywhere; }
+.workspace-production-records dl, .workspace-production-records table { font-variant-numeric: tabular-nums; }
+.workspace-production-records table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.workspace-production-records th, .workspace-production-records td { padding: 8px; text-align: left; border-bottom: 1px solid var(--lc-line,#d8e1ee); overflow-wrap: anywhere; }

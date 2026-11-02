@@ -27,3 +27,10 @@ it('respects a saved 2x visual speed and its six-second source window',()=>{
  const video=screen.getByLabelText('S1 当前视频') as HTMLVideoElement;Object.defineProperty(video,'duration',{value:20});fireEvent.loadedMetadata(video);expect(video.playbackRate).toBe(2);expect(video.currentTime).toBe(2);expect(screen.getByText('使用 2.00–8.00 s')).toBeTruthy();
  const pause=vi.spyOn(video,'pause').mockImplementation(()=>{});Object.defineProperty(video,'paused',{value:false});video.currentTime=5;fireEvent.timeUpdate(video);expect(pause).not.toHaveBeenCalled();video.currentTime=8.2;fireEvent.timeUpdate(video);expect(pause).toHaveBeenCalledOnce();expect(video.currentTime).toBe(8);
 });
+it('shows honest read-only missing-source copy and static image duration without a source trim range',()=>{
+ const {rerender}=render(<WorkspaceShotPreview workspace={workspace} clips={[{...clip,source:null}]} project={null} readOnly onSelect={vi.fn()}/>);
+ expect(screen.getByText('此工程未保留可读取的画面来源。')).toBeTruthy();expect(screen.queryByText(/上传素材|生成视频|填入结果/)).toBeNull();
+ const image={...clip,source:{...clip.source!,kind:'image' as const,relativePath:'still.png'}};
+ rerender(<WorkspaceShotPreview workspace={workspace} clips={[image]} project={{...project,timelines:[{fps:30,items:[{id:'item',kind:'image',src:'still.png',sourceContentHash:'sha',durationInFrames:90}]}]} as unknown as OpenChatCutProject} readOnly onSelect={vi.fn()}/>);
+ expect(screen.getByText('显示 3.00 s')).toBeTruthy();expect(screen.queryByText(/使用 0.00/)).toBeNull();
+});

@@ -1,3 +1,4 @@
+import {WorkspaceVisualRecord} from './WorkspaceVisualRecord';
 import {WorkspaceCandidateImpact} from './WorkspaceCandidateImpact';
 import type {WorkspaceCandidatePreparation} from '../workspaceCandidates';
 import {WorkspaceGenerationModel} from './WorkspaceGenerationModel';
@@ -42,7 +43,7 @@ function uploadSession(key:string):UploadSession {
 export interface VisualPreparationProps {
  workspace:ProductionWorkspace;command:(name:string,data:unknown)=>Promise<unknown>;onChange:(w:ProductionWorkspace)=>void;
  materials:Material[];selectedShotId?:string;selectedTargetItemId?:string;onTargetChange?:(id:string)=>void;
- currentVisualKind?:string;currentVisualPath?:string;currentMaterialRevisionId?:string;preview?:ReactNode;readOnly?:boolean;
+ currentVisualKind?:string;currentVisualPath?:string;currentVisualSha256?:string;currentMaterialRevisionId?:string;preview?:ReactNode;readOnly?:boolean;
  onImported?:(material:Material&{storage_path:string})=>void;
 }
 interface Draft {imageBrief:ImageBrief;imageSelection?:ProductionSelection|null;videoSelection?:ProductionSelection|null;videoSettings:WanGenerationSettings;firstFrameFit:'contain'|'cover';tab:Kind;origin:Record<Kind,'material'|'generate'|'search'>;imagePrompt:string;videoPrompt:string;references:string[];firstFrame:string;settings:ImageGenerationSettings;duration:string;usage:'still'|'pan-zoom';selected:Record<Kind,string>}
@@ -55,6 +56,7 @@ function initialDraft(props:VisualPreparationProps,targetItemId:string):Draft {
 export function WorkspaceVisualPreparation(props:VisualPreparationProps){
  const options=props.selectedShotId?props.workspace.clips.filter(c=>c.shotId===props.selectedShotId):props.workspace.clips;
  const target=options.find(c=>c.itemId===props.selectedTargetItemId)??options[0];
+ if(props.readOnly&&target)return <WorkspaceVisualRecord workspace={props.workspace} targetItemId={target.itemId} options={options} onTargetChange={props.onTargetChange} materials={props.materials} currentVisualPath={props.currentVisualPath} currentVisualSha256={props.currentVisualSha256} preview={props.preview}/>;
  return target?<VisualPreparationTarget key={props.workspace.episodeId+':'+props.workspace.id+':'+target.itemId} {...props} targetItemId={target.itemId} options={options}/>:null;
 }
 function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:string;options:ProductionWorkspace['clips']}){
