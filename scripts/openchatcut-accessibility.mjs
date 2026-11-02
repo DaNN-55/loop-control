@@ -36,6 +36,9 @@ export function patchNativeAccessibility(code, id) {
     code = replaceSource(code, '<input type="range" min={MIN_TIME_ZOOM}', '<label style={{display: \'inline-flex\', alignItems: \'center\', gap: 4}}><span>{t(\'缩放\')}</span><input type="range" min={MIN_TIME_ZOOM}');
     return replaceSource(code, "title={t('缩放时间轴')} className=\"cc-timeline-zoom\" />", "aria-label={t('缩放时间轴')} title={t('缩放时间轴')} className=\"cc-timeline-zoom\" /></label>");
   }
+  if (path.endsWith('/src/media/MediaPoolCard.tsx')) {
+    return replaceSource(code, '<span className="cc-asset-used-dot" title={t(\'正在时间线中使用\')} aria-label={t(\'正在时间线中使用\')}', '<span className="cc-asset-used-dot" role="img" title={t(\'正在时间线中使用\')} aria-label={t(\'正在时间线中使用\')}');
+  }
   if (path.endsWith('/src/library/SoundBrowser.tsx')) {
     code = replaceSource(code, 'role="listbox"', 'role="list"');
     code = replaceSource(code, 'role="option"\n      aria-selected={playing}', 'role="listitem"\n      aria-label={displayName}');
