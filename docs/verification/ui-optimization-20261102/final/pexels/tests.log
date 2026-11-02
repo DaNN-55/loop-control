@@ -1,0 +1,182 @@
+
+ RUN  v3.2.7 /private/tmp/loop-ui-audit-9BF3TG/source
+
+stderr | src/local-app/workspacePexels.integration.test.ts > Pexels failures stay recoverable, validate external URLs and bytes, and never generate or adopt automatically
+FINAL32_INNER_ERROR ConfigurationError: 请输入 1～100 个字符的检索词。
+    at executeWorkspacePexels [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspacePexels.ts:51:84[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at executeWorkspaceVisualCandidate [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceVisualCandidates.ts:82:115[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:129:77
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m400[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/workspacePexels.integration.test.ts > Pexels failures stay recoverable, validate external URLs and bytes, and never generate or adopt automatically
+FINAL32_INNER_ERROR ConfigurationError: 所选服务不支持该模型或预设。
+    at resolveProductionSelection [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/productionSelection.ts:15:215[90m)[39m
+    at executeWorkspacePexels [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspacePexels.ts:50:24[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at executeWorkspaceVisualCandidate [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceVisualCandidates.ts:82:115[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:129:77
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m400[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/workspacePexels.integration.test.ts > Pexels failures stay recoverable, validate external URLs and bytes, and never generate or adopt automatically
+FINAL32_INNER_ERROR ConfigurationError: Pexels 检索参数无效。
+    at executeWorkspacePexels [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspacePexels.ts:52:339[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at executeWorkspaceVisualCandidate [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceVisualCandidates.ts:82:115[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:129:77
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m400[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/workspacePexels.integration.test.ts > Pexels failures stay recoverable, validate external URLs and bytes, and never generate or adopt automatically
+FINAL32_INNER_ERROR ConfigurationError: Pexels 检索参数无效。
+    at executeWorkspacePexels [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspacePexels.ts:52:339[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at executeWorkspaceVisualCandidate [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceVisualCandidates.ts:82:115[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:129:77
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m400[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/workspacePexels.integration.test.ts > Pexels failures stay recoverable, validate external URLs and bytes, and never generate or adopt automatically
+FINAL32_INNER_ERROR ConfigurationError: 所选连接不可用、无权使用或尚未验证。
+    at resolveProductionSelection [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/productionSelection.ts:23:173[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at executeWorkspacePexels [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspacePexels.ts:50:18[90m)[39m
+    at executeWorkspaceVisualCandidate [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceVisualCandidates.ts:82:115[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:129:77
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m409[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/workspacePexels.integration.test.ts > Pexels failures stay recoverable, validate external URLs and bytes, and never generate or adopt automatically
+FINAL32_INNER_ERROR ConfigurationError: Episode字段无效。
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:84:84[90m)[39m
+    at LocalEpisodeCommands.execute [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:49:78[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:137:37
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m {
+  status: [33m400[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/workspacePexels.integration.test.ts > Pexels failures stay recoverable, validate external URLs and bytes, and never generate or adopt automatically
+FINAL32_INNER_ERROR ConfigurationError: 本地生产单不可见。
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:116:122
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m404[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/workspacePexels.integration.test.ts > Pexels failures stay recoverable, validate external URLs and bytes, and never generate or adopt automatically
+FINAL32_INNER_ERROR ConfigurationError: 请先完成选定素材的预览下载，再导入候选。
+    at executeWorkspacePexels [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspacePexels.ts:36:162[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at executeWorkspaceVisualCandidate [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceVisualCandidates.ts:82:115[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:129:77
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m409[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/workspacePexels.integration.test.ts > Pexels failures stay recoverable, validate external URLs and bytes, and never generate or adopt automatically
+FINAL32_INNER_ERROR ConfigurationError: 请先完成选定素材的预览下载，再导入候选。
+    at executeWorkspacePexels [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspacePexels.ts:36:162[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at executeWorkspaceVisualCandidate [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceVisualCandidates.ts:82:115[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:129:77
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m409[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/workspacePexels.integration.test.ts > Pexels failures stay recoverable, validate external URLs and bytes, and never generate or adopt automatically
+FINAL32_INNER_ERROR ConfigurationError: 请先完成选定素材的预览下载，再导入候选。
+    at executeWorkspacePexels [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspacePexels.ts:36:162[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at executeWorkspaceVisualCandidate [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceVisualCandidates.ts:82:115[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:129:77
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m409[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/workspacePexels.integration.test.ts > a short Pexels video gives recoverable duration feedback and only an explicit duration choice changes the native window
+FINAL32_INNER_ERROR ConfigurationError: 候选短于目标窗口，请明确采用候选时长。
+    at prepareRegisteredWorkspaceCandidate [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceCandidateAdoption.ts:34:103[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:129:77
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m409[39m,
+  preflight: [90mundefined[39m
+}
+
+(node:6126) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+stderr | src/local-app/workspacePexels.integration.test.ts > Pexels results and unimported previews for one shot survive many searches on another shot
+FINAL32_INNER_ERROR ConfigurationError: 本地生产单不可见。
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:116:122
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m404[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/workspacePexels.integration.test.ts > thumbnail search metadata survives Owner reads and duplicate preview/import cannot change the project before adoption
+FINAL32_INNER_ERROR ConfigurationError: 同一镜头已有 Pexels 检索或预览正在进行，请等待后重试。
+    at executeWorkspacePexels [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspacePexels.ts:65:133[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at executeWorkspaceVisualCandidate [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceVisualCandidates.ts:82:115[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:129:77
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m409[39m,
+  preflight: [90mundefined[39m
+}
+
+ ✓ src/local-app/workspacePexels.integration.test.ts (6 tests) 37862ms
+   ✓ Owner queries Pexels, previews an explicit result, imports and explicitly adopts managed bytes after restart  12175ms
+   ✓ Pexels failures stay recoverable, validate external URLs and bytes, and never generate or adopt automatically  3291ms
+   ✓ queued Pexels requests retain exact credentials across rotation and old candidates remain selectable after a new query  2615ms
+   ✓ a short Pexels video gives recoverable duration feedback and only an explicit duration choice changes the native window  2064ms
+   ✓ Pexels results and unimported previews for one shot survive many searches on another shot  15770ms
+   ✓ thumbnail search metadata survives Owner reads and duplicate preview/import cannot change the project before adoption  1947ms
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  23:24:59
+   Duration  38.51s (transform 402ms, setup 7ms, collect 533ms, tests 37.86s, environment 0ms, prepare 23ms)
+
+JSON report written to /Users/dan/Programs/loop-control/docs/verification/ui-optimization-20261102/final/pexels/vitest.json

@@ -1,0 +1,13 @@
+
+ RUN  v3.2.7 /private/tmp/loop-ui-audit-9BF3TG/source
+
+ ✓ src/local-app/workspaceReadonlyRecords.integration.test.ts (2 tests) 14200ms
+   ✓ Owner reads retain frozen image request facts and exact adopted native bytes after restart  7366ms
+   ✓ Owner reads retain the video first frame, frozen prompt and actual adopted source without changing native values  6833ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  23:32:37
+   Duration  14.83s (transform 381ms, setup 7ms, collect 520ms, tests 14.20s, environment 0ms, prepare 23ms)
+
+JSON report written to /Users/dan/Programs/loop-control/docs/verification/ui-optimization-20261102/final/readonly/vitest.json

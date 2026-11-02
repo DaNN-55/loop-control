@@ -1,0 +1,8 @@
+{"url":"/api/local/episode-commands","status":409,"body":{"error":"同一操作标识不能用于不同内容。"}}
+{"url":"/api/local/episode-commands","status":409,"body":{"error":"该连接尚未启用或已停用此模型，请读取模型并启用后重新选择。"}}
+{"url":"/api/local/episode-commands","status":409,"body":{"error":"已有图片任务正在进行或提交结果未知，请先核对已有任务。"}}
+{"url":"/api/local/episode-commands","status":400,"body":{"error":"所选服务不支持该模型或预设。"}}
+{"url":"/api/local/episode-commands","status":400,"body":{"error":"图片生成设置不可用。"}}
+{"url":"/api/local/episode-commands","status":400,"body":{"error":"图片设置包含不支持的参数。"}}
+{"url":"/api/local/episode-commands","status":409,"body":{"error":"参考图或首帧已变化，请重新选择本期图片。"}}
+{"url":"/api/local/episode-commands","status":400,"body":{"error":"请选择本次制作服务。"}}

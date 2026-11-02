@@ -1,0 +1,37 @@
+{
+  "task": {
+    "id": "825cd986-2963-41ca-9049-238bfc5a6716",
+    "shotId": "shot-01",
+    "taskId": "825cd986-2963-41ca-9049-238bfc5a6716",
+    "status": "blocked",
+    "provider": "volcengine_tts",
+    "model": "seed-tts-2.0",
+    "createdAt": "2026-11-02T15:55:50.220Z",
+    "connectionName": "雨伞故事受控speech",
+    "submissionOutcome": "started",
+    "publicationAttempt": null,
+    "error": "Provider 请求结果未知；已消费的请求预算保留。请先核对请求账本与供应商记录，不会自动重发。",
+    "submissionUnknown": true
+  },
+  "afterTask": {
+    "id": "825cd986-2963-41ca-9049-238bfc5a6716",
+    "shotId": "shot-01",
+    "taskId": "825cd986-2963-41ca-9049-238bfc5a6716",
+    "status": "blocked",
+    "provider": "volcengine_tts",
+    "model": "seed-tts-2.0",
+    "createdAt": "2026-11-02T15:55:50.220Z",
+    "connectionName": "雨伞故事受控speech",
+    "submissionOutcome": "started",
+    "publicationAttempt": null,
+    "error": "Provider 请求结果未知；已消费的请求预算保留。请先核对请求账本与供应商记录，不会自动重发。",
+    "submissionUnknown": true
+  },
+  "supplierPostsBefore": 3,
+  "supplierPostsAfter": 3,
+  "button": {
+    "disabled": true,
+    "text": "生成新口播候选"
+  },
+  "view": "跳到主要内容\nLoop Control\n工作台\n生产单\n账号\n连接配置\n历史资料\nOpenChatCut\n系统状态\n收起侧栏\n返回工作区\n生产单\n⌘ K\n打开文件夹\n末班车前的一把伞\n四步制作\n1\n脚本确认\n已确认\n2\n素材准备与匹配\n0 项待准备\n3\n剪辑工作台\n字幕待校时\n4\n检查与交付\n待确认\n编辑器已连接\n专注剪辑\n收起补充工具\n返回生产单\n保存工作版本\n镜头 2\n01\n雨停了，她把伞留在长椅上。\n02\n伞柄的纸条写着：留给下一个人。\n插入镜头\n镜头设置\n字幕对齐\n画面版本\n口播版本\n声音素材\n口播版本\n刷新\n镜头\nshot-01 · 未知结果保留原任务，不重复发送。\nshot-02 · 伞柄的纸条写着：留给下一个人。\n局部口播正文\n生成新口播候选\n\n口播提交结果未知 · Provider 请求结果未知；已消费的请求预算保留。请先核对请求账本与供应商记录，不会自动重发。\n\n请先在原供应商核对本次请求；当前结果未知，不能再次提交生成。\n\n刷新核对结果\n任务信息\n采用时长\n选择时长处理\n保留目标窗口，超长裁尾\n采用候选完整时长，其他片段不移动\n2.50 秒\n当前 2.50 秒\n已采用\n+0.00 秒\n\n原生候选二次核对，不提前采用。\n\n与已确认主脚本的差异\n0:00\n0:00\n版本来源\n2.50 秒\n当前 2.50 秒\n输入已变化\n+0.00 秒\n\n实际候选口播，核对影响后采用。\n\n与已确认主脚本的差异\n0:00\n0:00\n版本来源"
+}

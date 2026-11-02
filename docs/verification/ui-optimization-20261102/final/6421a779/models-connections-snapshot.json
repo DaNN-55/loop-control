@@ -1,0 +1,331 @@
+{
+  "lifecycle": {
+    "effectiveLaunch": {
+      "browserLaunched": true,
+      "engine": "chrome",
+      "launchHash": 714199096424468500
+    },
+    "launched": false,
+    "relaunchedBrowser": false,
+    "restartedBackground": false,
+    "restoreStatus": "not_configured",
+    "reused": true,
+    "saveStatus": "not_attempted"
+  },
+  "origin": "http://127.0.0.1:5178/__story?view=connections",
+  "refs": {
+    "e1": {
+      "name": "",
+      "role": "generic"
+    },
+    "e10": {
+      "name": "本地连接",
+      "role": "region"
+    },
+    "e11": {
+      "name": "工作台",
+      "role": "button"
+    },
+    "e12": {
+      "name": "生产单",
+      "role": "button"
+    },
+    "e13": {
+      "name": "账号",
+      "role": "button"
+    },
+    "e14": {
+      "name": "连接配置",
+      "role": "button"
+    },
+    "e15": {
+      "name": "历史资料",
+      "role": "button"
+    },
+    "e16": {
+      "name": "系统状态：不可用",
+      "role": "button"
+    },
+    "e17": {
+      "name": "待处理通知",
+      "role": "button"
+    },
+    "e18": {
+      "name": "切换至深色模式",
+      "role": "button"
+    },
+    "e19": {
+      "name": "外部连接管理",
+      "role": "region"
+    },
+    "e2": {
+      "name": "跳到主要内容",
+      "role": "link"
+    },
+    "e20": {
+      "name": "查找生产单、账号或素材",
+      "role": "textbox"
+    },
+    "e21": {
+      "name": "所有者设置",
+      "role": "button"
+    },
+    "e22": {
+      "name": "连接列表",
+      "role": "region"
+    },
+    "e23": {
+      "name": "新建连接",
+      "role": "button"
+    },
+    "e24": {
+      "name": "查找已存连接",
+      "role": "searchbox"
+    },
+    "e25": {
+      "name": "搜索",
+      "role": "button"
+    },
+    "e26": {
+      "name": "生产能力",
+      "role": "combobox"
+    },
+    "e27": {
+      "name": "验证状态",
+      "role": "combobox"
+    },
+    "e28": {
+      "name": "全部能力",
+      "role": "option"
+    },
+    "e29": {
+      "name": "图片",
+      "role": "option"
+    },
+    "e3": {
+      "name": "平台工作台",
+      "role": "region"
+    },
+    "e30": {
+      "name": "视频",
+      "role": "option"
+    },
+    "e31": {
+      "name": "语音",
+      "role": "option"
+    },
+    "e32": {
+      "name": "全部状态",
+      "role": "option"
+    },
+    "e33": {
+      "name": "已验证",
+      "role": "option"
+    },
+    "e34": {
+      "name": "连接",
+      "role": "columnheader"
+    },
+    "e35": {
+      "name": "服务",
+      "role": "columnheader"
+    },
+    "e36": {
+      "name": "模型",
+      "role": "columnheader"
+    },
+    "e37": {
+      "name": "验证 连接验证说明",
+      "role": "columnheader"
+    },
+    "e38": {
+      "name": "凭据版本",
+      "role": "columnheader"
+    },
+    "e39": {
+      "name": "额度 / 近7天",
+      "role": "columnheader"
+    },
+    "e4": {
+      "name": "工作区",
+      "role": "navigation"
+    },
+    "e40": {
+      "name": "操作",
+      "role": "columnheader"
+    },
+    "e41": {
+      "name": "更多操作",
+      "role": "columnheader"
+    },
+    "e42": {
+      "name": "图片",
+      "role": "cell"
+    },
+    "e43": {
+      "name": "雨伞故事受控image",
+      "role": "cell"
+    },
+    "e44": {
+      "name": "OpenAI",
+      "role": "cell"
+    },
+    "e45": {
+      "name": "gpt-image-2",
+      "role": "cell"
+    },
+    "e46": {
+      "name": "已验证 验证时间未记录",
+      "role": "cell"
+    },
+    "e47": {
+      "name": "v1",
+      "role": "cell"
+    },
+    "e48": {
+      "name": "雨伞故事受控image 额度与用量",
+      "role": "cell"
+    },
+    "e49": {
+      "name": "测试 雨伞故事受控image",
+      "role": "cell"
+    },
+    "e5": {
+      "name": "连接配置",
+      "role": "heading"
+    },
+    "e50": {
+      "name": "雨伞故事受控image 连接操作",
+      "role": "cell"
+    },
+    "e51": {
+      "name": "视频",
+      "role": "cell"
+    },
+    "e52": {
+      "name": "雨伞故事受控video",
+      "role": "cell"
+    },
+    "e53": {
+      "name": "火山引擎",
+      "role": "cell"
+    },
+    "e54": {
+      "name": "doubao-seedance-2-0-260128 doubao-seedance-2-5-260628",
+      "role": "cell"
+    },
+    "e55": {
+      "name": "已验证 验证时间未记录",
+      "role": "cell"
+    },
+    "e56": {
+      "name": "v1",
+      "role": "cell"
+    },
+    "e57": {
+      "name": "雨伞故事受控video 额度与用量",
+      "role": "cell"
+    },
+    "e58": {
+      "name": "测试 雨伞故事受控video",
+      "role": "cell"
+    },
+    "e59": {
+      "name": "雨伞故事受控video 连接操作",
+      "role": "cell"
+    },
+    "e6": {
+      "name": "连接配置内容",
+      "role": "region"
+    },
+    "e60": {
+      "name": "语音",
+      "role": "cell"
+    },
+    "e61": {
+      "name": "雨伞故事受控speech",
+      "role": "cell"
+    },
+    "e62": {
+      "name": "豆包语音",
+      "role": "cell"
+    },
+    "e63": {
+      "name": "seed-tts-2.0",
+      "role": "cell"
+    },
+    "e64": {
+      "name": "已验证 验证时间未记录",
+      "role": "cell"
+    },
+    "e65": {
+      "name": "v1",
+      "role": "cell"
+    },
+    "e66": {
+      "name": "雨伞故事受控speech 额度与用量",
+      "role": "cell"
+    },
+    "e67": {
+      "name": "测试 雨伞故事受控speech",
+      "role": "cell"
+    },
+    "e68": {
+      "name": "雨伞故事受控speech 连接操作",
+      "role": "cell"
+    },
+    "e69": {
+      "name": "连接验证说明",
+      "role": "button"
+    },
+    "e7": {
+      "name": "打开 OpenChatCut 独立剪辑",
+      "role": "button"
+    },
+    "e70": {
+      "name": "雨伞故事受控image",
+      "role": "button"
+    },
+    "e71": {
+      "name": "测试 雨伞故事受控image",
+      "role": "button"
+    },
+    "e72": {
+      "name": "雨伞故事受控image 连接操作",
+      "role": "button"
+    },
+    "e73": {
+      "name": "雨伞故事受控video",
+      "role": "button"
+    },
+    "e74": {
+      "name": "测试 雨伞故事受控video",
+      "role": "button"
+    },
+    "e75": {
+      "name": "雨伞故事受控video 连接操作",
+      "role": "button"
+    },
+    "e76": {
+      "name": "雨伞故事受控speech",
+      "role": "button"
+    },
+    "e77": {
+      "name": "测试 雨伞故事受控speech",
+      "role": "button"
+    },
+    "e78": {
+      "name": "雨伞故事受控speech 连接操作",
+      "role": "button"
+    },
+    "e8": {
+      "name": "收起侧栏",
+      "role": "button"
+    },
+    "e9": {
+      "name": "当前位置",
+      "role": "navigation"
+    }
+  },
+  "snapshot": "- generic \"跳到主要内容Loop Control工作台生产单账号连接配置历史资料OpenChatCut系统状态收起侧栏个人工作区连接配置⌘ K连接配置管理生产能力使用的服务与凭据引用。新建连接搜索全部能力图片视频\" [ref=e1] clickable [onclick]\n  - link \"跳到主要内容\" [ref=e2]\n  - navigation \"工作区\" [ref=e4]\n    - button \"工作台\" [ref=e11]\n    - button \"生产单\" [ref=e12]\n    - button \"账号\" [ref=e13]\n    - button \"连接配置\" [ref=e14]\n    - button \"历史资料\" [ref=e15]\n  - button \"打开 OpenChatCut 独立剪辑\" [ref=e7]\n  - button \"系统状态：不可用\" [expanded=false, ref=e16]\n  - button \"收起侧栏\" [ref=e8]\n  - region \"平台工作台\" [ref=e3]\n    - navigation \"当前位置\" [ref=e9]\n    - textbox \"查找生产单、账号或素材\" [ref=e20]\n    - button \"待处理通知\" [expanded=false, ref=e17]\n    - button \"切换至深色模式\" [ref=e18]\n    - button \"所有者设置\" [expanded=false, ref=e21]\n    - heading \"连接配置\" [level=1, ref=e5]\n    - region \"连接配置内容\" [ref=e6]\n      - region \"本地连接\" [ref=e10]\n        - region \"外部连接管理\" [ref=e19]\n          - button \"新建连接\" [ref=e23]\n          - searchbox \"查找已存连接\" [ref=e24]\n          - button \"搜索\" [ref=e25]\n          - combobox \"生产能力\" [expanded=false, ref=e26]: 全部能力\n            - option \"全部能力\" [selected, ref=e28]\n            - option \"图片\" [ref=e29]\n            - option \"视频\" [ref=e30]\n            - option \"语音\" [ref=e31]\n          - combobox \"验证状态\" [expanded=false, ref=e27]: 全部状态\n            - option \"全部状态\" [selected, ref=e32]\n            - option \"已验证\" [ref=e33]\n          - region \"连接列表\" [ref=e22]\n            - columnheader \"连接\" [ref=e34]\n            - columnheader \"服务\" [ref=e35]\n            - columnheader \"模型\" [ref=e36]\n            - columnheader \"验证 连接验证说明\" [ref=e37]\n              - button \"连接验证说明\" [ref=e69]\n            - columnheader \"凭据版本\" [ref=e38]\n            - columnheader \"额度 / 近7天\" [ref=e39]\n            - columnheader \"操作\" [ref=e40]\n            - columnheader \"更多操作\" [ref=e41]\n            - cell \"图片\" [ref=e42]\n            - cell \"雨伞故事受控image\" [ref=e43]\n              - button \"雨伞故事受控image\" [ref=e70]\n            - cell \"OpenAI\" [ref=e44]\n            - cell \"gpt-image-2\" [ref=e45]\n            - cell \"已验证 验证时间未记录\" [ref=e46]\n            - cell \"v1\" [ref=e47]\n            - cell \"雨伞故事受控image 额度与用量\" [ref=e48]\n            - cell \"测试 雨伞故事受控image\" [ref=e49]\n              - button \"测试 雨伞故事受控image\" [ref=e71]\n            - cell \"雨伞故事受控image 连接操作\" [ref=e50]\n              - button \"雨伞故事受控image 连接操作\" [expanded=false, ref=e72]\n            - cell \"视频\" [ref=e51]\n            - cell \"雨伞故事受控video\" [ref=e52]\n              - button \"雨伞故事受控video\" [ref=e73]\n            - cell \"火山引擎\" [ref=e53]\n            - cell \"doubao-seedance-2-0-260128 doubao-seedance-2-5-260628\" [ref=e54]\n            - cell \"已验证 验证时间未记录\" [ref=e55]\n            - cell \"v1\" [ref=e56]\n            - cell \"雨伞故事受控video 额度与用量\" [ref=e57]\n            - cell \"测试 雨伞故事受控video\" [ref=e58]\n              - button \"测试 雨伞故事受控video\" [ref=e74]\n            - cell \"雨伞故事受控video 连接操作\" [ref=e59]\n              - button \"雨伞故事受控video 连接操作\" [expanded=false, ref=e75]\n            - cell \"语音\" [ref=e60]\n            - cell \"雨伞故事受控speech\" [ref=e61]\n              - button \"雨伞故事受控speech\" [ref=e76]\n            - cell \"豆包语音\" [ref=e62]\n            - cell \"seed-tts-2.0\" [ref=e63]\n            - cell \"已验证 验证时间未记录\" [ref=e64]\n            - cell \"v1\" [ref=e65]\n            - cell \"雨伞故事受控speech 额度与用量\" [ref=e66]\n            - cell \"测试 雨伞故事受控speech\" [ref=e67]\n              - button \"测试 雨伞故事受控speech\" [ref=e77]\n            - cell \"雨伞故事受控speech 连接操作\" [ref=e68]\n              - button \"雨伞故事受控speech 连接操作\" [expanded=false, ref=e78]"
+}

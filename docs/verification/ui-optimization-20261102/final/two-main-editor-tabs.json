@@ -1,0 +1,35 @@
+{
+  "lifecycle": {
+    "effectiveLaunch": {
+      "browserLaunched": true,
+      "engine": "chrome",
+      "launchHash": 11356512708933070000
+    },
+    "launched": false,
+    "relaunchedBrowser": false,
+    "restartedBackground": false,
+    "restoreStatus": "not_configured",
+    "reused": true,
+    "saveStatus": "not_attempted"
+  },
+  "tabs": [
+    {
+      "active": false,
+      "label": null,
+      "tabId": "t1",
+      "targetId": "9B40E3884241E8664E8D72A39448F82C",
+      "title": "雨伞故事 · 隔离 E2E",
+      "type": "page",
+      "url": "http://127.0.0.1:5173/__story?view=episodes&episode=1e53fb5c-fccf-48f7-a2cc-5754a691082f&step=preparation"
+    },
+    {
+      "active": true,
+      "label": null,
+      "tabId": "t2",
+      "targetId": "AB6FFA2295F2C7CC4DA594774821344C",
+      "title": "雨伞故事 · 隔离 E2E",
+      "type": "page",
+      "url": "http://127.0.0.1:5173/__story?view=episodes&episode=1e53fb5c-fccf-48f7-a2cc-5754a691082f&step=editing"
+    }
+  ]
+}

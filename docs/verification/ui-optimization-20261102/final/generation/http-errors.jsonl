@@ -1,0 +1,9 @@
+{"url":"/api/local/episode-commands","status":409,"body":{"error":"供应商提交结果未知或不能恢复；必须核对已有结果，不会创建重复付费任务。"}}
+{"url":"/api/local/episode-commands","status":409,"body":{"error":"已有图片任务正在进行或提交结果未知，请先核对已有任务。"}}
+{"url":"/api/local/episode-commands","status":409,"body":{"error":"供应商提交结果未知或不能恢复；必须核对已有结果，不会创建重复付费任务。"}}
+{"url":"/api/local/native-output/reconcile","status":404,"body":{"error":"原任务不可见。"}}
+{"url":"/api/local/native-output/reconcile","status":409,"body":{"error":"原任务或尝试已变化，请刷新后核对。"}}
+{"url":"/api/local/native-output/reconcile","status":400,"body":{"error":"产物核对标识无效。"}}
+{"url":"/api/local/native-output/reconcile","status":409,"body":{"error":"原发布记录或文件缺失。请保留当前任务和文件，核对后再试。"}}
+{"url":"/api/local/native-output/reconcile","status":409,"body":{"error":"原发布记录不完整或已变化。请保留当前任务和文件，核对后再试。"}}
+{"url":"/api/local/episode-commands","status":409,"body":{"error":"上次口播仍在执行或提交结果未知；请先核对，不会重复发送。"}}

@@ -1,0 +1,27 @@
+{
+  "created": {
+    "targetId": "5A0C4C20AB928FEAA90D7B31D733DAC0"
+  },
+  "windows": {
+    "first": {
+      "windowId": 672954987,
+      "bounds": {
+        "left": 22,
+        "top": 53,
+        "width": 1440,
+        "height": 1000,
+        "windowState": "normal"
+      }
+    },
+    "second": {
+      "windowId": 672954990,
+      "bounds": {
+        "left": 44,
+        "top": 75,
+        "width": 1440,
+        "height": 1000,
+        "windowState": "normal"
+      }
+    }
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "runs": [
+    {
+      "stage": "preliminary-b7",
+      "root": "/private/tmp/loop-ui-audit-9BF3TG",
+      "coordinatorRun": {
+        "passed": true,
+        "source": "/private/tmp/loop-ui-audit-9BF3TG/source",
+        "evidence": "/private/tmp/loop-ui-audit-9BF3TG/evidence",
+        "container": "loop-story-e2e-d3f6536c9aee",
+        "containerRemoved": true,
+        "paidCalls": 0,
+        "paidCostCny": 0
+      },
+      "ownedMountRoot": "/private/tmp/loop-t06-volume-JpS4q7",
+      "mountPathAbsent": true,
+      "ownedImageAttached": false,
+      "ownedProcesses": [],
+      "remainingContainer": "",
+      "sourceAndSdkCopiesRemoved": true,
+      "rawEvidenceRetained": "/private/tmp/loop-ui-audit-9BF3TG/evidence"
+    },
+    {
+      "stage": "ccb9470",
+      "root": "/private/tmp/loop-ui-audit-iUIfyG",
+      "coordinatorRun": {
+        "passed": true,
+        "source": "/private/tmp/loop-ui-audit-iUIfyG/source",
+        "evidence": "/private/tmp/loop-ui-audit-iUIfyG/evidence",
+        "container": "loop-story-e2e-7e549af11607",
+        "containerRemoved": true,
+        "paidCalls": 0,
+        "paidCostCny": 0
+      },
+      "ownedMountRoot": "/private/tmp/loop-t06-volume-yQES7A",
+      "mountPathAbsent": true,
+      "ownedImageAttached": false,
+      "ownedProcesses": [],
+      "remainingContainer": "",
+      "sourceAndSdkCopiesRemoved": true,
+      "rawEvidenceRetained": "/private/tmp/loop-ui-audit-iUIfyG/evidence"
+    },
+    {
+      "stage": "6421a779",
+      "root": "/private/tmp/loop-ui-audit-qlyDIy",
+      "coordinatorRun": {
+        "passed": true,
+        "source": "/private/tmp/loop-ui-audit-qlyDIy/source",
+        "evidence": "/private/tmp/loop-ui-audit-qlyDIy/evidence",
+        "container": "loop-story-e2e-1a136c312357",
+        "containerRemoved": true,
+        "paidCalls": 0,
+        "paidCostCny": 0
+      },
+      "ownedMountRoot": "/private/tmp/loop-t06-volume-I1scTq",
+      "mountPathAbsent": true,
+      "ownedImageAttached": false,
+      "ownedProcesses": [],
+      "remainingContainer": "",
+      "sourceAndSdkCopiesRemoved": true,
+      "rawEvidenceRetained": "/private/tmp/loop-ui-audit-qlyDIy/evidence"
+    }
+  ],
+  "daily5174ReadOnlyObservation": "COMMAND   PID USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME\nnode    35988  dan   27u  IPv4 0x29b2e4eff27fafa6      0t0  TCP 127.0.0.1:5174 (LISTEN)",
+  "dailyWrites": 0,
+  "dailyRestartCommands": 0,
+  "paidProviderCalls": 0,
+  "realKeychainCalls": 0,
+  "gitWritesByTicket32": 0,
+  "retained": "Committed evidence; private raw evidence and runner notes retained. Only owned source/SDK disposable copies removed; shared dependencies untouched."
+}

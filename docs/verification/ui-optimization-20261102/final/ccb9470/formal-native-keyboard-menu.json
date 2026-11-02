@@ -1,0 +1,12 @@
+{
+  "escape": {
+    "open": false,
+    "focus": "皮肤"
+  },
+  "first": "石墨",
+  "next": "墨黑",
+  "last": "拿铁(浅色)",
+  "homeEnd": true,
+  "enter": true,
+  "tabCloses": true
+}

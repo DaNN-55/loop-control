@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "source": "/private/tmp/loop-ui-audit-qlyDIy/source",
+  "evidence": "/private/tmp/loop-ui-audit-qlyDIy/evidence",
+  "container": "loop-story-e2e-1a136c312357",
+  "containerRemoved": true,
+  "paidCalls": 0,
+  "paidCostCny": 0
+}

@@ -1,0 +1,11 @@
+{"url":"/api/local/episode-commands","status":400,"body":{"error":"disguised.png：扩展名与真实媒体内容不一致，或文件不可读取。"}}
+{"url":"/api/local/episode-commands","status":400,"body":{"error":"empty.png：文件为空，请重新选择。"}}
+{"url":"/api/local/episode-commands","status":400,"body":{"error":"renamed.jpg：扩展名与真实媒体内容不一致，或文件不可读取。"}}
+{"url":"/api/local/episode-commands","status":400,"body":{"error":"corrupt.png：图片或视频尺寸无效。"}}
+{"url":"/api/local/episode-commands","status":400,"body":{"error":"wrong-mime.png：文件类型与扩展名不一致。"}}
+{"url":"/api/local/episode-commands","status":400,"body":{"error":"video-as-image.png：扩展名与真实媒体内容不一致，或文件不可读取。"}}
+{"url":"/api/local/episode-commands","status":400,"body":{"error":"png-inside-video.png：扩展名与真实媒体内容不一致，或文件不可读取。"}}
+{"url":"/api/local/episode-commands","status":400,"body":{"error":"wrong-purpose.png：媒体类型与素材用途不一致。"}}
+{"url":"/api/local/episode-commands","status":404,"body":{"error":"本地生产单不可见。"}}
+{"url":"/api/local/episode-commands","status":404,"body":{"error":"本地生产单不可见。"}}
+{"url":"/api/local/episode-commands","status":400,"body":{"error":"oversized.png：单个文件不能超过 100 MB。"}}

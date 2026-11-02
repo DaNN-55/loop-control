@@ -1,0 +1,111 @@
+
+ RUN  v3.2.7 /private/tmp/loop-ui-audit-9BF3TG/source
+
+stderr | src/local-app/productionSelection.integration.test.ts > without any account budget, explicit image selections freeze two independent connections without blueprint image authority
+FINAL32_INNER_ERROR ConfigurationError: 同一操作标识不能用于不同内容。
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:89:45
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m409[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/productionSelection.integration.test.ts > without any account budget, explicit image selections freeze two independent connections without blueprint image authority
+FINAL32_INNER_ERROR ConfigurationError: 该连接尚未启用或已停用此模型，请读取模型并启用后重新选择。
+    at resolveProductionSelection [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/productionSelection.ts:25:129[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at describe [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceCallConfirmation.ts:33:271[90m)[39m
+    at prepareWorkspaceCall [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceCallConfirmation.ts:58:65[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:129:77
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m409[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/productionSelection.integration.test.ts > without any account budget, explicit image selections freeze two independent connections without blueprint image authority
+FINAL32_INNER_ERROR ConfigurationError: 已有图片任务正在进行或提交结果未知，请先核对已有任务。
+    at queueWorkspaceImageCandidates [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceImageGeneration.ts:49:142[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at executeWorkspaceVisualCandidate [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceVisualCandidates.ts:84:3[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:129:77
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m409[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/productionSelection.integration.test.ts > exceeded historical account ceilings do not block images; invalid requests and unknown submission fencing remain
+FINAL32_INNER_ERROR ConfigurationError: 所选服务不支持该模型或预设。
+    at resolveProductionSelection [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/productionSelection.ts:15:215[90m)[39m
+    at describe [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceCallConfirmation.ts:33:277[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at prepareWorkspaceCall [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceCallConfirmation.ts:58:65[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:129:77
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m400[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/productionSelection.integration.test.ts > exceeded historical account ceilings do not block images; invalid requests and unknown submission fencing remain
+FINAL32_INNER_ERROR ConfigurationError: 图片生成设置不可用。
+    at describe [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceCallConfirmation.ts:36:337[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at prepareWorkspaceCall [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceCallConfirmation.ts:58:65[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:129:77
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m400[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/productionSelection.integration.test.ts > legacy queued image snapshots execute unchanged after content-only saves and new requests still require a selection
+FINAL32_INNER_ERROR ConfigurationError: 请选择本次制作服务。
+    at resolveProductionSelection [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/productionSelection.ts:10:65[90m)[39m
+    at describe [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceCallConfirmation.ts:33:277[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at prepareWorkspaceCall [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceCallConfirmation.ts:58:65[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:129:77
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m400[39m,
+  preflight: [90mundefined[39m
+}
+
+ ❯ src/local-app/productionSelection.integration.test.ts (3 tests | 1 failed) 6449ms
+   ✓ without any account budget, explicit image selections freeze two independent connections without blueprint image authority  2901ms
+   × exceeded historical account ceilings do not block images; invalid requests and unknown submission fencing remain 1393ms
+     → {"change":{"settings":{"size":"864x1536","quality":"auto","count":1,"duration":5}},"body":{"confirmationId":"edd94d75-ecb5-4d03-b3ba-b92ea8e019e2","expiresAt":"2026-11-02T15:39:22.564Z","summary":{"kind":"图片生成","target":"shot-1","provider":"openai","model":"gpt-image-2","connection":"Controlled image batch · v1","parameters":["1 张","864 × 1536","质量：自动"],"inputs":["reference.png"],"prompt":"受控图片","reservationCents":100,"estimate":{"version":"workspace-cost/2026-11-02.3","estimatedCents":116,"suggestedCents":139,"minimumCents":1,"maximumCents":100000,"basis":"完整提示词 27 字符 ≈31 输入 token；图 1 640×360 ≈3848 token（输入均为本地近似）。输出 1 张 × 4312 token/张（官方计算器，自动质量按高质量）；文本/图片输入/输出单价 $5/$8/$30 每百万 token，美元按 7.2 折算。","sourceUrl":"https://developers.openai.com/api/docs/guides/image-generation#cost-and-latency","conservative":true,"bufferPercent":20,"imageInputs":{"textCharacters":27,"textTokens":31,"referenceTokens":3848,"references":[{"width":640,"height":360,"tokens":3848}],"outputTokensPerImage":4312,"quality":"high"}}}}}: expected 200 to be 400 // Object.is equality
+   ✓ legacy queued image snapshots execute unchanged after content-only saves and new requests still require a selection  2155ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/productionSelection.integration.test.ts > exceeded historical account ceilings do not block images; invalid requests and unknown submission fencing remain
+AssertionError: {"change":{"settings":{"size":"864x1536","quality":"auto","count":1,"duration":5}},"body":{"confirmationId":"edd94d75-ecb5-4d03-b3ba-b92ea8e019e2","expiresAt":"2026-11-02T15:39:22.564Z","summary":{"kind":"图片生成","target":"shot-1","provider":"openai","model":"gpt-image-2","connection":"Controlled image batch · v1","parameters":["1 张","864 × 1536","质量：自动"],"inputs":["reference.png"],"prompt":"受控图片","reservationCents":100,"estimate":{"version":"workspace-cost/2026-11-02.3","estimatedCents":116,"suggestedCents":139,"minimumCents":1,"maximumCents":100000,"basis":"完整提示词 27 字符 ≈31 输入 token；图 1 640×360 ≈3848 token（输入均为本地近似）。输出 1 张 × 4312 token/张（官方计算器，自动质量按高质量）；文本/图片输入/输出单价 $5/$8/$30 每百万 token，美元按 7.2 折算。","sourceUrl":"https://developers.openai.com/api/docs/guides/image-generation#cost-and-latency","conservative":true,"bufferPercent":20,"imageInputs":{"textCharacters":27,"textTokens":31,"referenceTokens":3848,"references":[{"width":640,"height":360,"tokens":3848}],"outputTokensPerImage":4312,"quality":"high"}}}}}: expected 200 to be 400 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 400[39m
+[31m+ 200[39m
+
+ ❯ src/local-app/productionSelection.integration.test.ts:65:271
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  23:29:17
+   Duration  7.22s (transform 461ms, setup 8ms, collect 649ms, tests 6.45s, environment 0ms, prepare 27ms)
+
+JSON report written to /Users/dan/Programs/loop-control/docs/verification/ui-optimization-20261102/final/selection-all-2/vitest.json

@@ -1,0 +1,54 @@
+{
+  "source": "6421a779",
+  "process": {
+    "first": {
+      "origin": "http://127.0.0.1:56182",
+      "pid": 31773
+    },
+    "second": {
+      "origin": "http://127.0.0.1:56188",
+      "pid": 31789
+    },
+    "firstRead": {
+      "status": 200,
+      "revision": 110,
+      "sha": "f90765f1403c84b9d2be110e7c46d0907a8f7dc491999303f0b0c1d2daa97dcb"
+    },
+    "secondRead": {
+      "status": 200,
+      "revision": 110,
+      "sha": "f90765f1403c84b9d2be110e7c46d0907a8f7dc491999303f0b0c1d2daa97dcb"
+    },
+    "stoppedRefused": true
+  },
+  "binding": {
+    "path": "/private/tmp/loop-t06-volume-I1scTq/mounted/loop-153-S0tOUW",
+    "inodeId": "16",
+    "deviceId": "16777253",
+    "mountPath": "/private/tmp/loop-t06-volume-I1scTq/mounted"
+  },
+  "diskBefore": {
+    "deviceId": "16777253",
+    "inodeId": "16",
+    "mountPath": "/private/tmp/loop-t06-volume-I1scTq/mounted",
+    "volumeUuid": "C8697FCA-1331-4559-AF75-4A5F1E11C79E"
+  },
+  "diskAfter": {
+    "deviceId": "16777253",
+    "inodeId": "16",
+    "mountPath": "/private/tmp/loop-t06-volume-I1scTq/mounted",
+    "volumeUuid": "C8697FCA-1331-4559-AF75-4A5F1E11C79E"
+  },
+  "unmountedResponse": {
+    "status": 409,
+    "body": {
+      "error": "媒体根不存在或不可读写，请恢复挂载和权限后重试。"
+    }
+  },
+  "recovered": {
+    "status": 200,
+    "revision": 110,
+    "sha": "f90765f1403c84b9d2be110e7c46d0907a8f7dc491999303f0b0c1d2daa97dcb"
+  },
+  "paidCalls": 0
+}

@@ -1,0 +1,33 @@
+{
+  "providerBoundary": "real Owner connection-models sync HTTP, actual controlled reader returns120 models; no remote request",
+  "all": {
+    "bodyScroll": 1200,
+    "dialog": {
+      "bottom": 792.78125,
+      "height": 723.5625,
+      "left": 280,
+      "right": 920,
+      "top": 69.21875,
+      "width": 640,
+      "x": 280,
+      "y": 69.21875
+    },
+    "list": {
+      "bottom": 672.59375,
+      "height": 340,
+      "left": 300,
+      "right": 900,
+      "top": 332.59375,
+      "width": 600,
+      "x": 300,
+      "y": 332.59375
+    },
+    "listScrollHeight": 8227,
+    "rows": 121,
+    "width": 1200
+  },
+  "searched": {
+    "count": 1,
+    "row": "controlled-catalog-model-120\n\n未分类 · 尚未适配 · 目录已返回"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "input": "physical CDP mouse",
+  "before": {
+    "x": 443.109375,
+    "y": 338.203125,
+    "width": 113.375,
+    "height": 10.890625,
+    "top": 338.203125,
+    "right": 556.484375,
+    "bottom": 349.09375,
+    "left": 443.109375
+  },
+  "after": {
+    "x": 463.109375,
+    "y": 318.203125,
+    "width": 113.375,
+    "height": 10.890625,
+    "top": 318.203125,
+    "right": 576.484375,
+    "bottom": 329.09375,
+    "left": 463.109375
+  },
+  "savedRevision": 7,
+  "reopenedRevision": 7,
+  "savedSha": "00977b6023e89a0c6076b11fe6ed4580e5bde3f4653b2225ebf97f00fb41386e",
+  "reopenedSha": "00977b6023e89a0c6076b11fe6ed4580e5bde3f4653b2225ebf97f00fb41386e"
+}

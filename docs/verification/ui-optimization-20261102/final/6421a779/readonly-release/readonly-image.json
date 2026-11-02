@@ -1,0 +1,114 @@
+{
+  "task": {
+    "id": "bbdb7c4d-f1ff-4f85-a2dc-f172e1b4a0bc",
+    "shotId": "shot-1",
+    "targetItemId": "shot-shot-1-e99f1765-3320-4b3e-92ba-a519a9764a49",
+    "kind": "image",
+    "taskId": "a77921df-3ec2-44ef-a0b2-f6cfc68ad5e2",
+    "status": "ready",
+    "provider": "openai",
+    "model": "gpt-image-2",
+    "createdAt": "2026-11-02T15:52:28.456Z",
+    "connectionName": "Controlled image batch",
+    "error": null,
+    "submissionOutcome": null,
+    "providerTaskId": null,
+    "requestState": null,
+    "publicationAttempt": null,
+    "submissionUnknown": false,
+    "canResume": false,
+    "generation": {
+      "selection": {
+        "model": "gpt-image-2",
+        "adapter": "openai_images",
+        "provider": "openai",
+        "capability": "image",
+        "connectionVersionId": "c0a8a21c-7e99-4346-8ac2-faeb77fa5168"
+      },
+      "connectionName": "Controlled image batch",
+      "prompt": "原图片制作请求",
+      "actualPrompt": "原图片制作请求\n\n账号创作规则：{}\n系列创作规则：null",
+      "firstFrameMaterialRevisionId": "",
+      "durationSeconds": 2,
+      "imageSettings": {
+        "size": "1152x2048",
+        "count": 1,
+        "quality": "high"
+      },
+      "imageBrief": {
+        "crop": "allow",
+        "framing": "auto",
+        "references": [],
+        "captionSpace": "none"
+      },
+      "referenceMaterialRevisionIds": [
+        "2750fcc6-4f32-4436-9552-305c714d49f6"
+      ]
+    }
+  },
+  "record": {
+    "materialRevisionId": "5e897c47-fac6-48b8-bbc9-7c5da839655d",
+    "generation": {
+      "selection": {
+        "model": "gpt-image-2",
+        "adapter": "openai_images",
+        "provider": "openai",
+        "capability": "image",
+        "connectionVersionId": "c0a8a21c-7e99-4346-8ac2-faeb77fa5168"
+      },
+      "connectionName": "Controlled image batch",
+      "prompt": "原图片制作请求",
+      "actualPrompt": "原图片制作请求\n\n账号创作规则：{}\n系列创作规则：null",
+      "firstFrameMaterialRevisionId": "",
+      "durationSeconds": 2,
+      "imageSettings": {
+        "size": "1152x2048",
+        "count": 1,
+        "quality": "high"
+      },
+      "imageBrief": {
+        "crop": "allow",
+        "framing": "auto",
+        "references": [],
+        "captionSpace": "none"
+      },
+      "referenceMaterialRevisionIds": [
+        "2750fcc6-4f32-4436-9552-305c714d49f6"
+      ]
+    },
+    "durationImpact": {
+      "deltaSeconds": 0,
+      "overlapItemIds": []
+    },
+    "id": "bbdb7c4d-f1ff-4f85-a2dc-f172e1b4a0bc",
+    "kind": "image",
+    "usage": "still",
+    "shotId": "shot-1",
+    "clipId": "e99f1765-3320-4b3e-92ba-a519a9764a49",
+    "targetItemId": "shot-shot-1-e99f1765-3320-4b3e-92ba-a519a9764a49",
+    "taskId": "a77921df-3ec2-44ef-a0b2-f6cfc68ad5e2",
+    "inputFingerprint": "4e1b99284de0f02c8d3b1775dbc42eecd9ddb8d7e9ddddb05d4efb615c676433",
+    "text": "",
+    "mainScriptText": "",
+    "audioTrackId": null,
+    "relativePath": "episodes/0662322e-5b64-4b0d-b393-6f854d86bdb1/native-tasks/a77921df-3ec2-44ef-a0b2-f6cfc68ad5e2/image.png",
+    "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+    "fileSize": 1515,
+    "durationSeconds": 2,
+    "width": 640,
+    "height": 360,
+    "currentDurationSeconds": 2,
+    "pendingConfirmation": false,
+    "status": "adopted"
+  },
+  "project": {
+    "relativePath": "episodes/0662322e-5b64-4b0d-b393-6f854d86bdb1/production-workspace/versions/9b99406b72eb108fadf63d70ba67afa18a49dde492098de376ae508534e6d91f.json",
+    "sha256": "9b99406b72eb108fadf63d70ba67afa18a49dde492098de376ae508534e6d91f",
+    "fileSize": 9787,
+    "projectId": "loop-control-0662322e-5b64-4b0d-b393-6f854d86bdb1"
+  },
+  "revision": 5,
+  "unchangedBytes": true,
+  "nativeSavedAndReopened": true,
+  "supplierPosts": 1
+}

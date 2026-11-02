@@ -1,0 +1,7 @@
+{"url":"/api/local/episode-commands","status":409,"body":{"error":"请先确认本次调用与费用预留。"}}
+{"url":"/api/local/episode-commands","status":409,"body":{"error":"请先确认本次调用与费用预留。"}}
+{"url":"/api/local/episode-commands","status":409,"body":{"error":"请先确认本次调用与费用预留。"}}
+{"url":"/api/local/episode-commands","status":400,"body":{"error":"所选服务不支持该模型或预设。"}}
+{"url":"/api/local/episode-commands","status":400,"body":{"error":"图片生成设置不可用。"}}
+{"url":"/api/local/episode-commands","status":400,"body":{"error":"图片设置包含不支持的参数。"}}
+{"url":"/api/local/episode-commands","status":409,"body":{"error":"参考图或首帧已变化，请重新选择本期图片。"}}

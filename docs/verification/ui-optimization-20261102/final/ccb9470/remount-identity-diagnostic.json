@@ -1,0 +1,18 @@
+{
+  "binding": [
+    {
+      "binding": {
+        "path": "/private/tmp/loop-t06-volume-yQES7A/mounted/loop-153-zexhjQ",
+        "inodeId": "16",
+        "deviceId": "16777253",
+        "mountPath": "/private/tmp/loop-t06-volume-yQES7A/mounted"
+      }
+    }
+  ],
+  "actual": {
+    "path": "/private/tmp/loop-t06-volume-yQES7A/mounted/loop-153-zexhjQ",
+    "deviceId": "16777249",
+    "inodeId": "16"
+  },
+  "operation": "same owned sparseimage detached then attached; no SQL rebind"
+}

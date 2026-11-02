@@ -1,0 +1,53 @@
+{
+  "taskId": "f1b8f4b6-7507-4b9f-bb9a-483e42bd6cee",
+  "state": {
+    "id": "08ab7aae-f7ae-4e91-8394-33aaf159adf8",
+    "shotId": "shot-1",
+    "targetItemId": "shot-shot-1-cf7cfabe-bfe5-49cf-9bb0-15f974c785a6",
+    "kind": "image",
+    "taskId": "f1b8f4b6-7507-4b9f-bb9a-483e42bd6cee",
+    "status": "failed",
+    "provider": "openai",
+    "model": "gpt-image-2",
+    "createdAt": "2026-11-02T15:52:19.547Z",
+    "connectionName": "Controlled image batch",
+    "error": "媒体执行或产物验证失败，请检查冻结输入和本机执行状态。",
+    "submissionOutcome": "rejected",
+    "providerTaskId": null,
+    "requestState": "submitting",
+    "publicationAttempt": null,
+    "submissionUnknown": false,
+    "canResume": false,
+    "generation": {
+      "selection": {
+        "model": "gpt-image-2",
+        "adapter": "openai_images",
+        "provider": "openai",
+        "capability": "image",
+        "connectionVersionId": "c56921a8-9de1-4062-a506-f79fbcb92655"
+      },
+      "connectionName": "Controlled image batch",
+      "prompt": "核对原图片请求",
+      "actualPrompt": "核对原图片请求\n\n账号创作规则：{}\n系列创作规则：null",
+      "firstFrameMaterialRevisionId": "",
+      "durationSeconds": 2,
+      "imageSettings": {
+        "size": "1152x2048",
+        "count": 1,
+        "quality": "high"
+      },
+      "imageBrief": {
+        "crop": "allow",
+        "framing": "auto",
+        "references": [],
+        "captionSpace": "none"
+      },
+      "referenceMaterialRevisionIds": [
+        "b977a870-36d5-4a0d-8e40-f92036f2737e"
+      ]
+    }
+  },
+  "supplierPosts": 1,
+  "attemptCount": 1,
+  "retryStatus": 409
+}

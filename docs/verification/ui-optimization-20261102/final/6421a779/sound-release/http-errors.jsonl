@@ -1,0 +1,8 @@
+{"url":"/api/local/episode-commands","status":404,"body":{"error":"本地生产单不可见。"}}
+{"url":"/api/local/episode-commands","status":409,"body":{"error":"工程引用了未注册的本期素材或已完成任务产物。"}}
+{"url":"/api/local/episode-commands","status":409,"body":{"error":"工程引用了未注册的本期素材或已完成任务产物。"}}
+{"url":"/api/local/episode-commands","status":409,"body":{"error":"工程引用了未注册的本期素材或已完成任务产物。"}}
+{"url":"/api/local/episode-commands","status":409,"body":{"error":"工程引用了未注册的本期素材或已完成任务产物。"}}
+{"url":"/api/local/episode-commands","status":409,"body":{"error":"生产单目录缺失或存储盘未挂载，请恢复原目录或连接存储盘后重试。"}}
+{"url":"/api/local/episode-commands","status":409,"body":{"error":"当前采用的画面素材不可读取，请重新匹配后进入剪辑。"}}
+{"url":"/api/local/episode-commands","status":409,"body":{"error":"当前采用的画面素材不可读取，请重新匹配后进入剪辑。"}}

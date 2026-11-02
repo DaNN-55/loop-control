@@ -1,0 +1,26 @@
+{
+  "http": {
+    "before": {
+      "revision": 110,
+      "sha": "f90765f1403c84b9d2be110e7c46d0907a8f7dc491999303f0b0c1d2daa97dcb"
+    },
+    "failedView": "跳到主要内容\nLoop Control\n工作台\n生产单\n账号\n连接配置\n历史资料\nOpenChatCut\n系统状态\n收起侧栏\n返回工作区\n生产单\n⌘ K\n打开文件夹\n末班车前的一把伞\n四步制作\n1\n脚本确认\n读取失败\n2\n素材准备与匹配\n读取失败\n3\n剪辑工作台\n读取失败\n4\n检查与交付\n读取失败\n\n测试网关：暂时无法读取，请稍后重试。\n\n重新读取制作流程",
+    "recovered": {
+      "revision": 110,
+      "sha": "f90765f1403c84b9d2be110e7c46d0907a8f7dc491999303f0b0c1d2daa97dcb"
+    }
+  },
+  "session": {
+    "routeBefore": "http://127.0.0.1:5176/__story?view=episodes&episode=4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283&step=preparation",
+    "expired": {
+      "text": "Loop Control\n\n让想法，\n沿着清楚的步骤\n成为作品。\n\n准备素材\n制作与审核\n交付成片\n\n从第一份脚本，到可交付的成片。\n\n登录控制台\n邮箱\n密码\n使用密码登录",
+      "url": "http://127.0.0.1:5176/__story?view=episodes&episode=4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283&step=preparation"
+    },
+    "routeAfter": "http://127.0.0.1:5176/__story?view=episodes&episode=4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283&step=preparation",
+    "restored": {
+      "revision": 110,
+      "sha": "f90765f1403c84b9d2be110e7c46d0907a8f7dc491999303f0b0c1d2daa97dcb"
+    },
+    "credentialBoundary": "fixture synthetic owner password seeded only in isolated DB, then actual standard login UI; no real secrets"
+  }
+}

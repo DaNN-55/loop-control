@@ -1,0 +1,126 @@
+{
+  "task": "f9a1e74c-ec1c-4a75-9a4e-d6611b47c84b",
+  "candidates": [
+    {
+      "speech": {
+        "selection": {
+          "model": "seed-tts-2.0",
+          "adapter": "volcengine_tts",
+          "provider": "volcengine_tts",
+          "capability": "speech",
+          "connectionVersionId": "efed38a8-6292-4413-8097-2ff167ca532c"
+        },
+        "connectionName": "雨伞故事受控speech",
+        "voice": "zh_female_vv_uranus_bigtts",
+        "languageCode": "zh-CN",
+        "speakingRate": 1
+      },
+      "id": "2695d4a0-7840-4e43-b316-8442fdbf0d45",
+      "kind": "audio",
+      "shotId": "shot-01",
+      "clipId": "07d1a112-4ff3-4a29-8b6e-930ab03c614a",
+      "targetItemId": "workspace-narration-shot-shot-01",
+      "taskId": "f9a1e74c-ec1c-4a75-9a4e-d6611b47c84b",
+      "inputFingerprint": "58d6cac9191c431d3f52d4cdcdc32a36298ce1c76b36a1b98d7cc3107ce19b31",
+      "text": "实际候选口播，核对影响后采用。",
+      "mainScriptText": "雨停了，她把伞留在长椅上。",
+      "audioTrackId": "2695d4a0-7840-4e43-b316-8442fdbf0d45",
+      "relativePath": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/native-tasks/f9a1e74c-ec1c-4a75-9a4e-d6611b47c84b/shot-narration-shot-01-3284a4d9-663a-46f9-bd9b-80f58d5f412d.mp3",
+      "sha256": "15f7a076c1641a4bd0ec86bd8e739721a3b2b2a0331ac6ce2e6310fb0603df8e",
+      "fileSize": 20588,
+      "durationSeconds": 2.5,
+      "pendingConfirmation": false,
+      "currentVoiceMode": "none",
+      "currentDurationSeconds": null,
+      "targetDurationSeconds": 3,
+      "durationImpact": {
+        "deltaSeconds": -0.5,
+        "overlapItemIds": []
+      },
+      "status": "available"
+    }
+  ],
+  "narration": [
+    {
+      "execution": {
+        "taskId": "f9a1e74c-ec1c-4a75-9a4e-d6611b47c84b",
+        "selection": {
+          "model": "seed-tts-2.0",
+          "adapter": "volcengine_tts",
+          "provider": "volcengine_tts",
+          "capability": "speech",
+          "connectionVersionId": "efed38a8-6292-4413-8097-2ff167ca532c"
+        },
+        "voice": "zh_female_vv_uranus_bigtts",
+        "languageCode": "zh-CN",
+        "speakingRate": 1,
+        "text": "实际候选口播，核对影响后采用。"
+      },
+      "windowWarning": null,
+      "selection": {
+        "model": "seed-tts-2.0",
+        "adapter": "volcengine_tts",
+        "provider": "volcengine_tts",
+        "capability": "speech",
+        "connectionVersionId": "efed38a8-6292-4413-8097-2ff167ca532c"
+      },
+      "defaults": null,
+      "requiresCandidateAdoption": true,
+      "clipId": "07d1a112-4ff3-4a29-8b6e-930ab03c614a",
+      "shotId": "shot-01",
+      "mode": "tts",
+      "text": "实际候选口播，核对影响后采用。",
+      "voice": "zh_female_vv_uranus_bigtts",
+      "languageCode": "zh-CN",
+      "speakingRate": 1,
+      "override": true,
+      "inputFingerprint": "58d6cac9191c431d3f52d4cdcdc32a36298ce1c76b36a1b98d7cc3107ce19b31",
+      "confirmed": true,
+      "taskId": "f9a1e74c-ec1c-4a75-9a4e-d6611b47c84b",
+      "status": "completed",
+      "error": null,
+      "audioTrackId": "2695d4a0-7840-4e43-b316-8442fdbf0d45",
+      "artifactId": "860fd4f9-8c92-419c-a8c1-c1537f4fd2a3",
+      "relativePath": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/native-tasks/f9a1e74c-ec1c-4a75-9a4e-d6611b47c84b/shot-narration-shot-01-3284a4d9-663a-46f9-bd9b-80f58d5f412d.mp3",
+      "sha256": "15f7a076c1641a4bd0ec86bd8e739721a3b2b2a0331ac6ce2e6310fb0603df8e",
+      "fileSize": 20588,
+      "durationSeconds": 2.5,
+      "itemId": "workspace-narration-shot-shot-01",
+      "adoptedAudioTrackId": null
+    },
+    {
+      "execution": null,
+      "windowWarning": null,
+      "selection": null,
+      "defaults": null,
+      "requiresCandidateAdoption": true,
+      "clipId": "7f4e8420-c59b-4fd3-b304-82f316274d08",
+      "shotId": "shot-02",
+      "mode": "none",
+      "text": "伞柄的纸条写着：留给下一个人。",
+      "voice": null,
+      "languageCode": "zh-CN",
+      "speakingRate": null,
+      "override": false,
+      "inputFingerprint": "a3bc51c4ed2e94183d8e522c0c9915ca5695133b93ebaaa9702c82df66b49fd1",
+      "confirmed": false,
+      "taskId": null,
+      "status": "disabled",
+      "error": null,
+      "audioTrackId": null,
+      "artifactId": null,
+      "relativePath": null,
+      "sha256": null,
+      "fileSize": null,
+      "durationSeconds": null,
+      "itemId": "workspace-narration-shot-shot-02",
+      "adoptedAudioTrackId": null
+    }
+  ],
+  "project": {
+    "relativePath": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/production-workspace/versions/d6bbe609e7fa48f255fb070436f955376846ab7622868309c61bca1a6a4e98b1.json",
+    "sha256": "d6bbe609e7fa48f255fb070436f955376846ab7622868309c61bca1a6a4e98b1",
+    "fileSize": 14575,
+    "projectId": "loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283"
+  }
+}

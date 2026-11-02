@@ -1,0 +1,90 @@
+{
+  "task": {
+    "id": "9c4c9c0b-8a62-4dd4-8aed-050d9f68b133",
+    "shotId": "shot-1",
+    "targetItemId": "shot-shot-1-be92b171-e848-45cc-832a-e249eef5a0eb",
+    "kind": "video",
+    "taskId": "9760c602-5e71-49e2-9eaf-2d229c223a66",
+    "status": "ready",
+    "provider": "volcengine",
+    "model": "doubao-seedance-2-0-260128",
+    "createdAt": "2026-11-02T15:52:35.562Z",
+    "connectionName": "Controlled narration video",
+    "error": null,
+    "submissionOutcome": null,
+    "providerTaskId": null,
+    "requestState": null,
+    "publicationAttempt": null,
+    "submissionUnknown": false,
+    "canResume": false,
+    "generation": {
+      "selection": {
+        "model": "doubao-seedance-2-0-260128",
+        "adapter": "seedance_video",
+        "provider": "volcengine",
+        "capability": "video",
+        "connectionVersionId": "66dad453-61e0-4b8c-813b-b202501b87be"
+      },
+      "connectionName": "Controlled narration video",
+      "prompt": "原视频制作动作",
+      "actualPrompt": "原视频制作动作\n\n账号创作规则：{}\n系列创作规则：null",
+      "firstFrameMaterialRevisionId": "225d3f48-2c61-4d01-8e44-2dd1fe56cdc0",
+      "durationSeconds": 4,
+      "firstFrameFit": "cover"
+    }
+  },
+  "record": {
+    "materialRevisionId": "ee4dfd65-a44e-4716-a968-ace7465caea3",
+    "generation": {
+      "selection": {
+        "model": "doubao-seedance-2-0-260128",
+        "adapter": "seedance_video",
+        "provider": "volcengine",
+        "capability": "video",
+        "connectionVersionId": "66dad453-61e0-4b8c-813b-b202501b87be"
+      },
+      "connectionName": "Controlled narration video",
+      "prompt": "原视频制作动作",
+      "actualPrompt": "原视频制作动作\n\n账号创作规则：{}\n系列创作规则：null",
+      "firstFrameMaterialRevisionId": "225d3f48-2c61-4d01-8e44-2dd1fe56cdc0",
+      "durationSeconds": 4,
+      "firstFrameFit": "cover"
+    },
+    "durationImpact": {
+      "deltaSeconds": 2,
+      "overlapItemIds": [
+        "shot-shot-2-aae81942-8872-4029-858a-80d9cc4d998e"
+      ]
+    },
+    "id": "9c4c9c0b-8a62-4dd4-8aed-050d9f68b133",
+    "kind": "video",
+    "usage": "video",
+    "shotId": "shot-1",
+    "clipId": "be92b171-e848-45cc-832a-e249eef5a0eb",
+    "targetItemId": "shot-shot-1-be92b171-e848-45cc-832a-e249eef5a0eb",
+    "taskId": "9760c602-5e71-49e2-9eaf-2d229c223a66",
+    "inputFingerprint": "543e17bdcad3c9cebcdb86af0b4e00a0d912665ff075fcec754fdd0b69029250",
+    "text": "",
+    "mainScriptText": "",
+    "audioTrackId": null,
+    "relativePath": "episodes/4ece4046-0722-4a51-b76a-d7376bee551a/native-tasks/9760c602-5e71-49e2-9eaf-2d229c223a66/9760c602-5e71-49e2-9eaf-2d229c223a66.mp4",
+    "sha256": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+    "fileSize": 44148,
+    "durationSeconds": 4,
+    "width": 640,
+    "height": 360,
+    "currentDurationSeconds": 2,
+    "pendingConfirmation": false,
+    "status": "adopted"
+  },
+  "project": {
+    "relativePath": "episodes/4ece4046-0722-4a51-b76a-d7376bee551a/production-workspace/versions/a77f79d805b2e828bd56196b754a67cde7d50d1791359b1e4762b689e3d5f1a7.json",
+    "sha256": "a77f79d805b2e828bd56196b754a67cde7d50d1791359b1e4762b689e3d5f1a7",
+    "fileSize": 9850,
+    "projectId": "loop-control-4ece4046-0722-4a51-b76a-d7376bee551a"
+  },
+  "revision": 5,
+  "unchangedBytes": true,
+  "nativeSavedAndReopened": true,
+  "supplierPosts": 1
+}

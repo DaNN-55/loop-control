@@ -1,0 +1,168 @@
+
+ RUN  v3.2.7 /private/tmp/loop-ui-audit-qlyDIy/source
+
+stderr | src/local-app/materialAcceptance.integration.test.ts > Owner upload rejects disguised media before it becomes available and retains existing files
+FINAL32_INNER_ERROR ConfigurationError: disguised.png：扩展名与真实媒体内容不一致，或文件不可读取。
+    at fail [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/materialAcceptance.ts:34:43[90m)[39m
+    at validateImportedMaterial [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/materialAcceptance.ts:50:165[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at [90m/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/episodeCommands.ts:183:111
+    at snapshotInput [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/localFiles.ts:43:14[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/episodeCommands.ts:183:21
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m400[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/materialAcceptance.integration.test.ts > Media acceptance rejects empty, mislabeled, corrupt, oversized and foreign uploads through Owner HTTP
+FINAL32_INNER_ERROR ConfigurationError: empty.png：文件为空，请重新选择。
+    at fail [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/materialAcceptance.ts:34:43[90m)[39m
+    at validateImportedMaterial [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/materialAcceptance.ts:35:19[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/episodeCommands.ts:183:117
+    at snapshotInput [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/localFiles.ts:43:20[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/episodeCommands.ts:183:21
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m400[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/materialAcceptance.integration.test.ts > Media acceptance rejects empty, mislabeled, corrupt, oversized and foreign uploads through Owner HTTP
+FINAL32_INNER_ERROR ConfigurationError: renamed.jpg：扩展名与真实媒体内容不一致，或文件不可读取。
+    at fail [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/materialAcceptance.ts:34:43[90m)[39m
+    at validateImportedMaterial [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/materialAcceptance.ts:50:165[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at [90m/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/episodeCommands.ts:183:111
+    at snapshotInput [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/localFiles.ts:43:14[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/episodeCommands.ts:183:21
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m400[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/materialAcceptance.integration.test.ts > Media acceptance rejects empty, mislabeled, corrupt, oversized and foreign uploads through Owner HTTP
+FINAL32_INNER_ERROR ConfigurationError: corrupt.png：图片或视频尺寸无效。
+    at fail [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/materialAcceptance.ts:34:43[90m)[39m
+    at validateImportedMaterial [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/materialAcceptance.ts:51:85[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at [90m/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/episodeCommands.ts:183:111
+    at snapshotInput [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/localFiles.ts:43:14[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/episodeCommands.ts:183:21
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m400[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/materialAcceptance.integration.test.ts > Media acceptance rejects empty, mislabeled, corrupt, oversized and foreign uploads through Owner HTTP
+FINAL32_INNER_ERROR ConfigurationError: wrong-mime.png：文件类型与扩展名不一致。
+    at fail [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/materialAcceptance.ts:34:43[90m)[39m
+    at validateImportedMaterial [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/materialAcceptance.ts:40:74[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/episodeCommands.ts:183:117
+    at snapshotInput [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/localFiles.ts:43:20[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/episodeCommands.ts:183:21
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m400[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/materialAcceptance.integration.test.ts > Media acceptance rejects empty, mislabeled, corrupt, oversized and foreign uploads through Owner HTTP
+FINAL32_INNER_ERROR ConfigurationError: video-as-image.png：扩展名与真实媒体内容不一致，或文件不可读取。
+    at fail [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/materialAcceptance.ts:34:43[90m)[39m
+    at validateImportedMaterial [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/materialAcceptance.ts:50:165[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at [90m/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/episodeCommands.ts:183:111
+    at snapshotInput [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/localFiles.ts:43:14[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/episodeCommands.ts:183:21
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m400[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/materialAcceptance.integration.test.ts > Media acceptance rejects empty, mislabeled, corrupt, oversized and foreign uploads through Owner HTTP
+FINAL32_INNER_ERROR ConfigurationError: png-inside-video.png：扩展名与真实媒体内容不一致，或文件不可读取。
+    at fail [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/materialAcceptance.ts:34:43[90m)[39m
+    at validateImportedMaterial [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/materialAcceptance.ts:50:165[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at [90m/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/episodeCommands.ts:183:111
+    at snapshotInput [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/localFiles.ts:43:14[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/episodeCommands.ts:183:21
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m400[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/materialAcceptance.integration.test.ts > Media acceptance rejects empty, mislabeled, corrupt, oversized and foreign uploads through Owner HTTP
+FINAL32_INNER_ERROR ConfigurationError: wrong-purpose.png：媒体类型与素材用途不一致。
+    at fail [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/materialAcceptance.ts:34:43[90m)[39m
+    at validateImportedMaterial [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/materialAcceptance.ts:42:72[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/episodeCommands.ts:183:117
+    at snapshotInput [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/localFiles.ts:43:20[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/episodeCommands.ts:183:21
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m400[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/materialAcceptance.integration.test.ts > Media acceptance rejects empty, mislabeled, corrupt, oversized and foreign uploads through Owner HTTP
+FINAL32_INNER_ERROR ConfigurationError: 本地生产单不可见。
+    at [90m/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/episodeCommands.ts:111:125
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m404[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/materialAcceptance.integration.test.ts > Media acceptance rejects empty, mislabeled, corrupt, oversized and foreign uploads through Owner HTTP
+FINAL32_INNER_ERROR ConfigurationError: 本地生产单不可见。
+    at [90m/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/episodeCommands.ts:111:125
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m404[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/materialAcceptance.integration.test.ts > Media acceptance rejects empty, mislabeled, corrupt, oversized and foreign uploads through Owner HTTP
+FINAL32_INNER_ERROR ConfigurationError: oversized.png：单个文件不能超过 100 MB。
+    at fail [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/materialAcceptance.ts:34:43[90m)[39m
+    at validateImportedMaterial [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/materialAcceptance.ts:36:32[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/episodeCommands.ts:183:117
+    at snapshotInput [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/localFiles.ts:43:20[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/episodeCommands.ts:183:21
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-qlyDIy/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m400[39m,
+  preflight: [90mundefined[39m
+}
+
+ ✓ src/local-app/materialAcceptance.integration.test.ts (4 tests) 5957ms
+   ✓ Owner upload rejects disguised media before it becomes available and retains existing files  1473ms
+   ✓ Owner can import genuine media without browser MIME metadata  1124ms
+   ✓ Media acceptance rejects empty, mislabeled, corrupt, oversized and foreign uploads through Owner HTTP  1452ms
+   ✓ Media acceptance keeps genuine still, video, audio and reference documents usable  1907ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  00:02:33
+   Duration  6.60s (transform 377ms, setup 7ms, collect 512ms, tests 5.96s, environment 0ms, prepare 32ms)
+
+JSON report written to /Users/dan/Programs/loop-control/docs/verification/ui-optimization-20261102/final/6421a779/material-release/vitest.json

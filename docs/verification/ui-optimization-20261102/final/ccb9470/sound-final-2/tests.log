@@ -1,0 +1,127 @@
+
+ RUN  v3.2.7 /private/tmp/loop-ui-audit-iUIfyG/source
+
+stderr | src/local-app/workspaceBundledSounds.integration.test.ts > inline Simple Whoosh becomes an immutable episode source and survives repeated native saves and reopening
+FINAL32_INNER_ERROR ConfigurationError: 本地生产单不可见。
+    at [90m/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/episodeCommands.ts:116:122
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m404[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/workspaceBundledSounds.integration.test.ts > inline Simple Whoosh becomes an immutable episode source and survives repeated native saves and reopening
+FINAL32_INNER_ERROR ConfigurationError: 工程引用了未注册的本期素材或已完成任务产物。
+    at resolveWorkspaceSource [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/workspaceSources.ts:20:21[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at validateWorkspaceProject [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/productionWorkspaceCommands.ts:302:30[90m)[39m
+    at validate [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/productionWorkspaceCommands.ts:224:93[90m)[39m
+    at snapshotOpenChatCutStudio [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/worker/openchatcutStudio.ts:338:3[90m)[39m
+    at ProductionWorkspaceCommands.execute [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/productionWorkspaceCommands.ts:239:22[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/episodeCommands.ts:129:77
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m409[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/workspaceBundledSounds.integration.test.ts > inline Simple Whoosh becomes an immutable episode source and survives repeated native saves and reopening
+FINAL32_INNER_ERROR ConfigurationError: 工程引用了未注册的本期素材或已完成任务产物。
+    at resolveWorkspaceSource [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/workspaceSources.ts:20:21[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at validateWorkspaceProject [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/productionWorkspaceCommands.ts:302:30[90m)[39m
+    at validate [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/productionWorkspaceCommands.ts:224:93[90m)[39m
+    at snapshotOpenChatCutStudio [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/worker/openchatcutStudio.ts:338:3[90m)[39m
+    at ProductionWorkspaceCommands.execute [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/productionWorkspaceCommands.ts:239:22[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/episodeCommands.ts:129:77
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m409[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/workspaceBundledSounds.integration.test.ts > inline Simple Whoosh becomes an immutable episode source and survives repeated native saves and reopening
+FINAL32_INNER_ERROR ConfigurationError: 工程引用了未注册的本期素材或已完成任务产物。
+    at resolveWorkspaceSource [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/workspaceSources.ts:20:21[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at validateWorkspaceProject [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/productionWorkspaceCommands.ts:302:30[90m)[39m
+    at validate [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/productionWorkspaceCommands.ts:224:93[90m)[39m
+    at snapshotOpenChatCutStudio [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/worker/openchatcutStudio.ts:338:3[90m)[39m
+    at ProductionWorkspaceCommands.execute [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/productionWorkspaceCommands.ts:239:22[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/episodeCommands.ts:129:77
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m409[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/workspaceBundledSounds.integration.test.ts > inline Simple Whoosh becomes an immutable episode source and survives repeated native saves and reopening
+FINAL32_INNER_ERROR ConfigurationError: 工程引用了未注册的本期素材或已完成任务产物。
+    at resolveWorkspaceSource [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/workspaceSources.ts:20:21[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at validateWorkspaceProject [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/productionWorkspaceCommands.ts:302:30[90m)[39m
+    at validate [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/productionWorkspaceCommands.ts:224:93[90m)[39m
+    at snapshotOpenChatCutStudio [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/worker/openchatcutStudio.ts:338:3[90m)[39m
+    at ProductionWorkspaceCommands.execute [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/productionWorkspaceCommands.ts:239:22[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/episodeCommands.ts:129:77
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m409[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/workspaceBundledSounds.integration.test.ts > inline Simple Whoosh becomes an immutable episode source and survives repeated native saves and reopening
+FINAL32_INNER_ERROR ConfigurationError: 生产单目录缺失或存储盘未挂载，请恢复原目录或连接存储盘后重试。
+    at requireEpisodeStorageDirectory [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/episodeStorageLocation.ts:68:28[90m)[39m
+    at verifyEpisodeFile [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/episodeFiles.ts:36:75[90m)[39m
+    at readWorkspaceProject [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/productionWorkspaceCommands.ts:248:25[90m)[39m
+    at lockProductionWorkspace [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/productionWorkspaceCommands.ts:285:16[90m)[39m
+    at ProductionWorkspaceCommands.execute [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/productionWorkspaceCommands.ts:185:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/episodeCommands.ts:129:77
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m409[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/workspaceBundledSounds.integration.test.ts > inline Simple Whoosh becomes an immutable episode source and survives repeated native saves and reopening
+FINAL32_INNER_ERROR ConfigurationError: 当前采用的画面素材不可读取，请重新匹配后进入剪辑。
+    at ProductionWorkspaceCommands.execute [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/productionWorkspaceCommands.ts:227:191[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at [90m/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/episodeCommands.ts:129:77
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m409[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/workspaceBundledSounds.integration.test.ts > inline Simple Whoosh becomes an immutable episode source and survives repeated native saves and reopening
+FINAL32_INNER_ERROR ConfigurationError: 当前采用的画面素材不可读取，请重新匹配后进入剪辑。
+    at ProductionWorkspaceCommands.execute [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/productionWorkspaceCommands.ts:227:191[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at [90m/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/episodeCommands.ts:129:77
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-iUIfyG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m409[39m,
+  preflight: [90mundefined[39m
+}
+
+ ✓ src/local-app/workspaceBundledSounds.integration.test.ts (2 tests) 28162ms
+   ✓ inline Simple Whoosh becomes an immutable episode source and survives repeated native saves and reopening  21012ms
+   ✓ a sound first adopted after a real collection move belongs to the current episode directory  7150ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  23:43:41
+   Duration  28.77s (transform 361ms, setup 7ms, collect 492ms, tests 28.16s, environment 0ms, prepare 24ms)
+
+JSON report written to /Users/dan/Programs/loop-control/docs/verification/ui-optimization-20261102/final/ccb9470/sound-final-2/vitest.json

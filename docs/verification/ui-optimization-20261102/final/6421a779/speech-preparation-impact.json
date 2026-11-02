@@ -1,0 +1,55 @@
+{
+  "before": {
+    "revision": 9,
+    "sha": "d6bbe609e7fa48f255fb070436f955376846ab7622868309c61bca1a6a4e98b1"
+  },
+  "prepared": {
+    "revision": 9,
+    "sha": "d6bbe609e7fa48f255fb070436f955376846ab7622868309c61bca1a6a4e98b1"
+  },
+  "impact": "跳到主要内容\nLoop Control\n工作台\n生产单\n账号\n连接配置\n历史资料\nOpenChatCut\n系统状态\n收起侧栏\n返回工作区\n生产单\n⌘ K\n打开文件夹\n末班车前的一把伞\n四步制作\n1\n脚本确认\n已确认\n2\n素材准备与匹配\n1 项待准备\n3\n剪辑工作台\n字幕待校时\n4\n检查与交付\n待确认\n素材准备与匹配\n2 / 2 画面就绪\n进入剪辑工作台\n镜头 拖动行调整顺序\n镜头\t脚本与素材\t时长\t画面\t口播\t操作\n\nshot-01\n\t\n雨停了，她把伞留在长椅上。\n站台黄伞.png\n\t3.0 s\t已匹配\t待准备\t\n\n\nshot-02\n\t\n伞柄的纸条写着：留给下一个人。\n伞柄纸条.png\n\t3.0 s\t已匹配\t关闭\t\n\n\n2 个镜头\n画面、口播在同一行核对\n本期素材 · 3\n音效意图（可选）\n画面\n口播\n配乐与声音\n口播\n刷新连接\n本期默认\n\n保存到本期，重开窗口或标签页后仍可使用。保存不会生成口播，也不更改镜头设置和已有音轨。\n\n连接与模型\n选择语音连接与模型\n雨伞故事受控speech · volcengine_tts · seed-tts-2.0 · v1\n声音\n语言\n中文（简体）\n语速\n保存默认\nshot-01\n2.50 秒\n准备方式\n关闭\n生成口播\n人工口播\n口播正文\n\n本镜设置仅用于下次生成；使用本期默认会填入已保存值。\n\n连接与模型\n原选择当前不可用，请重新选择\n雨伞故事受控speech · volcengine_tts · seed-tts-2.0 · v1\n声音\n语言\n中文（简体）\n英语\n日语\n西班牙语\n语速\n使用本期默认\n生成口播\n上次生成参数\n\n实际候选口播，核对影响后采用。\n\n雨伞故事受控speech · seed-tts-2.0 · zh_female_vv_uranus_bigtts · 2.50 秒\n\n10\n10\n0:00\n0:00\n0:00\n采用此口播\n\n口播与画面窗口不同，采用后请补充画面、拆镜或重新校时。\n\n采用前核对\n\n当前 3.00 秒 → 采用后 2.50 秒（-0.50 秒）\n\n素材区间 2.50 秒\n\n片段缩短，其他片段保持原位；缩短区间不再播放此口播。\n\n雨停了，她把伞留在长椅上。\n图片 · 0.00–3.00 秒 · 变化区间 2.50–3.00 秒\n确认采用\n取消",
+  "after": {
+    "revision": 10,
+    "sha": "341900b25b3e35e82828509779978e814b562df60dfe3213aa9c2c3947df0449",
+    "candidates": [
+      {
+        "speech": {
+          "selection": {
+            "model": "seed-tts-2.0",
+            "adapter": "volcengine_tts",
+            "provider": "volcengine_tts",
+            "capability": "speech",
+            "connectionVersionId": "efed38a8-6292-4413-8097-2ff167ca532c"
+          },
+          "connectionName": "雨伞故事受控speech",
+          "voice": "zh_female_vv_uranus_bigtts",
+          "languageCode": "zh-CN",
+          "speakingRate": 1
+        },
+        "id": "2695d4a0-7840-4e43-b316-8442fdbf0d45",
+        "kind": "audio",
+        "shotId": "shot-01",
+        "clipId": "07d1a112-4ff3-4a29-8b6e-930ab03c614a",
+        "targetItemId": "workspace-narration-shot-shot-01",
+        "taskId": "f9a1e74c-ec1c-4a75-9a4e-d6611b47c84b",
+        "inputFingerprint": "58d6cac9191c431d3f52d4cdcdc32a36298ce1c76b36a1b98d7cc3107ce19b31",
+        "text": "实际候选口播，核对影响后采用。",
+        "mainScriptText": "雨停了，她把伞留在长椅上。",
+        "audioTrackId": "2695d4a0-7840-4e43-b316-8442fdbf0d45",
+        "relativePath": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/native-tasks/f9a1e74c-ec1c-4a75-9a4e-d6611b47c84b/shot-narration-shot-01-3284a4d9-663a-46f9-bd9b-80f58d5f412d.mp3",
+        "sha256": "15f7a076c1641a4bd0ec86bd8e739721a3b2b2a0331ac6ce2e6310fb0603df8e",
+        "fileSize": 20588,
+        "durationSeconds": 2.5,
+        "pendingConfirmation": false,
+        "currentVoiceMode": "tts",
+        "currentDurationSeconds": 2.5,
+        "targetDurationSeconds": 2.5,
+        "durationImpact": {
+          "deltaSeconds": 0,
+          "overlapItemIds": []
+        },
+        "status": "adopted"
+      }
+    ]
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "actualZoom": {
+    "factor": 2,
+    "tabId": 1453824594
+  },
+  "unzoomed": {
+    "dpr": 1,
+    "height": 900,
+    "width": 1366
+  },
+  "zoomed": {
+    "cssZoom": "1",
+    "dpr": 2,
+    "frame": {
+      "bottom": 441,
+      "height": 361,
+      "left": 51,
+      "right": 674,
+      "top": 80,
+      "width": 623,
+      "x": 51,
+      "y": 80
+    },
+    "height": 450,
+    "save": {
+      "bottom": 71,
+      "height": 31.5,
+      "left": 361,
+      "right": 480,
+      "top": 39.5,
+      "width": 119,
+      "x": 361,
+      "y": 39.5
+    },
+    "width": 683
+  },
+  "nativeGeometry": {
+    "width": 623,
+    "height": 361,
+    "inspector": {
+      "x": 363,
+      "y": 41,
+      "width": 260,
+      "height": 172.8203125,
+      "top": 41,
+      "right": 623,
+      "bottom": 213.8203125,
+      "left": 363
+    },
+    "timeline": {
+      "x": 46.5,
+      "y": 280.8203125,
+      "width": 910,
+      "height": 28,
+      "top": 280.8203125,
+      "right": 956.5,
+      "bottom": 308.8203125,
+      "left": 46.5
+    }
+  }
+}

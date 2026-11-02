@@ -1,0 +1,328 @@
+{
+  "input": "CDP Input.dispatchMouseEvent real mouse",
+  "frame": {
+    "bottom": 1056,
+    "height": 741.5,
+    "left": 385,
+    "right": 1335,
+    "top": 314.5,
+    "width": 950,
+    "x": 385,
+    "y": 314.5
+  },
+  "before": {
+    "cues": [
+      "100",
+      "2800",
+      "3100",
+      "5800"
+    ],
+    "box": {
+      "x": 266.625,
+      "y": 547.59375,
+      "width": 206.09375,
+      "height": 39,
+      "top": 547.59375,
+      "right": 472.71875,
+      "bottom": 586.59375,
+      "left": 266.625
+    }
+  },
+  "after": {
+    "cues": [
+      "600",
+      "3300",
+      "3100",
+      "5800"
+    ],
+    "html": [
+      {
+        "cls": "cc-insp-select cc-caption-font-select",
+        "text": "默认系统字体sans-serifAntonArchivo BlackBangersBarlow CondensedBowlby OneCaveatCormorant GaramondDM SansDancing ScriptFrauncesFredokaInterInter TightLXGW WenKai TCLibre BaskervilleMontserratMulishNewsreaderNoto Serif SCNoto Serif TCNunitoOswaldPinyon ScriptPlayfair DisplayRobotoSoraSpace MonoSpecial EliteUnboundedVT323ZCOOL QingKe HuangYouNoto Sans SCSmiley SansQingsong Shouxie Ti YiQingsong Shouxie Ti San PPangmen Zhengdao Biaoti TiPangmen Zhengdao Qingsong TiHuxiaobo Nanshen TiHuxiaobo Saobao TiHuxiaobo Zhenshuai TiDouyin Meihao TiAcademy Engraved LETAl BayanAl NileAl TarikhAmerican TypewriterAndale MonoApple BrailleApple ChanceryApple Color EmojiApple SD Gothic NeoApple SymbolsAppleGothicAppleMyungjoArialArial BlackArial HebrewArial Hebrew ScholarArial NarrowArial Rounded MT BoldArial Unicode MSAthelasAvenirAvenir NextAvenir Next CondensedAyuthayaBaghdadBangla MNBangla Sangam MNBaskervilleBeirutBig CaslonBodoni 72Bodoni 72 OldstyleBodoni 72 SmallcapsBodoni OrnamentsBradley HandBrush Script MTChalkboardChalkboard SEChalkdusterCharterCochinComic Sans MSCopperplateCorsiva HebrewCourierCourier NewDamascusDecoType NaskhDevanagari MTDevanagari Sangam MNDidotDIN AlternateDIN CondensedDiwan KufiDiwan ThuluthEuphemia UCASFarahFarisiFuturaGalvjiGB18030 BitmapGeeza ProGenevaGeorgiaGill SansGrantha Sangam MNGujarati MTGujarati Sangam MNGurmukhi MNGurmukhi MTGurmukhi Sangam MNHeiti SCHeiti TCHelveticaHelvetica NeueHerculanumHiragino Kaku Gothic ProHiragino Kaku Gothic ProNHiragino Kaku Gothic StdHiragino Kaku Gothic StdNHiragino Maru Gothic ProHiragino Maru Gothic ProNHiragino Mincho ProHiragino Mincho ProNHiragino SansHiragino Sans GBHoefler TextImpactInaiMathiIowan Old StyleITF DevanagariITF Devanagari MarathiKailasaKannada MNKannada Sangam MNKefa IIIKhmer MNKhmer Sangam MNKohinoor BanglaKohinoor DevanagariKohinoor GujaratiKohinoor TeluguKokonorKrungthepKufiStandardGKLao MNLao Sangam MNLucida GrandeLuminariMalayalam MNMalayalam Sangam MNMarionMarker FeltMenloMicrosoft Sans SerifMishafiMishafi GoldMonacoMshtakanMukta MaheeMunaMyanmar MNMyanmar Sangam MNNadeemNew Peninim MTNoteworthyNoto Nastaliq UrduNoto Sans AdlamNoto Sans ArmenianNoto Sans AvestanNoto Sans BamumNoto Sans Bassa VahNoto Sans BatakNoto Sans BhaiksukiNoto Sans BugineseNoto Sans BuhidNoto Sans CarianNoto Sans Caucasian AlbanianNoto Sans ChakmaNoto Sans ChamNoto Sans CopticNoto Sans CuneiformNoto Sans CypriotNoto Sans DuployanNoto Sans Egyptian HieroglyphsNoto Sans ElbasanNoto Sans GlagoliticNoto Sans GothicNoto Sans Gunjala GondiNoto Sans Hanifi RohingyaNoto Sans HanunooNoto Sans HatranNoto Sans Imperial AramaicNoto Sans Inscriptional PahlaviNoto Sans Inscriptional ParthianNoto Sans JavaneseNoto Sans KaithiNoto Sans KannadaNoto Sans Kayah LiNoto Sans KharoshthiNoto Sans KhojkiNoto Sans KhudawadiNoto Sans LepchaNoto Sans LimbuNoto Sans Linear ANoto Sans Linear BNoto Sans LisuNoto Sans LycianNoto Sans LydianNoto Sans MahajaniNoto Sans MandaicNoto Sans ManichaeanNoto Sans MarchenNoto Sans Masaram GondiNoto Sans Meetei MayekNoto Sans Mende KikakuiNoto Sans MeroiticNoto Sans MiaoNoto Sans ModiNoto Sans MongolianNoto Sans MroNoto Sans MultaniNoto Sans MyanmarNoto Sans NabataeanNoto Sans Nag MundariNoto Sans New Tai LueNoto Sans NewaNoto Sans NKoNoto Sans Ol ChikiNoto Sans Old HungarianNoto Sans Old ItalicNoto Sans Old North ArabianNoto Sans Old PermicNoto Sans Old PersianNoto Sans Old South ArabianNoto Sans Old TurkicNoto Sans OriyaNoto Sans OsageNoto Sans OsmanyaNoto Sans Pahawh HmongNoto Sans PalmyreneNoto Sans Pau Cin HauNoto Sans PhagsPaNoto Sans PhoenicianNoto Sans Psalter PahlaviNoto Sans RejangNoto Sans SamaritanNoto Sans SaurashtraNoto Sans SharadaNoto Sans SiddhamNoto Sans Sora SompengNoto Sans SundaneseNoto Sans SunuwarNoto Sans Syloti NagriNoto Sans SyriacNoto Sans TagalogNoto Sans TagbanwaNoto Sans Tai LeNoto Sans Tai ThamNoto Sans Tai VietNoto Sans TakriNoto Sans ThaanaNoto Sans TifinaghNoto Sans TirhutaNoto Sans UgariticNoto Sans VaiNoto Sans WanchoNoto Sans Warang CitiNoto Sans YiNoto Sans ZawgyiNoto Serif AhomNoto Serif BalineseNoto Serif Hmong NyiakengNoto Serif MyanmarNoto Serif YezidiOptimaOriya MNOriya Sangam MNPalatinoPapyrusParty LETPhosphatePlantagenet CherokeePT MonoPT SansPT Sans CaptionPT Sans NarrowPT SerifPT Serif CaptionRaananaRockwellSanaSathuSavoye LETSeravekShree Devanagari 714SignPainterSilomSinhala MNSinhala Sangam MNSkiaSnell RoundhandSongti SCSongti TCSTIX Two MathSTIX Two TextSTIXGeneralSTIXIntegralsDSTIXIntegralsSmSTIXIntegralsUpSTIXIntegralsUpDSTIXIntegralsUpSmSTIXNonUnicodeSTIXSizeFiveSymSTIXSizeFourSymSTIXSizeOneSymSTIXSizeThreeSymSTIXSizeTwoSymSTIXVariantsSTSongSukhumvit SetSuperclarendonSymbolSystem FontTahomaTamil MNTamil Sangam MNTelugu MNTelugu Sangam MNThonburiTimesTimes New RomanTrattatelloTrebuchet MSVerdanaWaseemWebdingsWingdingsWingdings 2Wingdings 3Zapf DingbatsZapfino输入自定义字体名称…",
+        "box": {
+          "x": 691,
+          "y": 221.15625,
+          "width": 222,
+          "height": 29,
+          "top": 221.15625,
+          "right": 913,
+          "bottom": 250.15625,
+          "left": 691
+        }
+      },
+      {
+        "cls": "cc-insp-row cc-caption-style-row",
+        "text": "字间距0px",
+        "box": {
+          "x": 691,
+          "y": 299.328125,
+          "width": 259,
+          "height": 28,
+          "top": 299.328125,
+          "right": 950,
+          "bottom": 327.328125,
+          "left": 691
+        }
+      },
+      {
+        "cls": "cc-insp-row cc-caption-style-row",
+        "text": "行高1.25×",
+        "box": {
+          "x": 691,
+          "y": 332.328125,
+          "width": 259,
+          "height": 28,
+          "top": 332.328125,
+          "right": 950,
+          "bottom": 360.328125,
+          "left": 691
+        }
+      },
+      {
+        "cls": "cc-insp-row cc-caption-style-row",
+        "text": "字号2.7%",
+        "box": {
+          "x": 691,
+          "y": 365.328125,
+          "width": 259,
+          "height": 28,
+          "top": 365.328125,
+          "right": 950,
+          "bottom": 393.328125,
+          "left": 691
+        }
+      },
+      {
+        "cls": "cc-insp-row cc-caption-style-row",
+        "text": "字重600",
+        "box": {
+          "x": 691,
+          "y": 398.328125,
+          "width": 259,
+          "height": 28,
+          "top": 398.328125,
+          "right": 950,
+          "bottom": 426.328125,
+          "left": 691
+        }
+      },
+      {
+        "cls": "cc-insp-row cc-caption-style-row",
+        "text": "文字描边0px",
+        "box": {
+          "x": 691,
+          "y": 431.328125,
+          "width": 259,
+          "height": 28,
+          "top": 431.328125,
+          "right": 950,
+          "bottom": 459.328125,
+          "left": 691
+        }
+      },
+      {
+        "cls": "cc-insp-row cc-caption-style-row",
+        "text": "文描透明度100%",
+        "box": {
+          "x": 691,
+          "y": 464.328125,
+          "width": 259,
+          "height": 28,
+          "top": 464.328125,
+          "right": 950,
+          "bottom": 492.328125,
+          "left": 691
+        }
+      },
+      {
+        "cls": "cc-insp-row cc-caption-style-row",
+        "text": "文字阴影0px",
+        "box": {
+          "x": 691,
+          "y": 497.328125,
+          "width": 259,
+          "height": 28,
+          "top": 497.328125,
+          "right": 950,
+          "bottom": 525.328125,
+          "left": 691
+        }
+      },
+      {
+        "cls": "cc-insp-row cc-caption-style-row",
+        "text": "边框描边0px",
+        "box": {
+          "x": 691,
+          "y": 530.328125,
+          "width": 259,
+          "height": 28,
+          "top": 530.328125,
+          "right": 950,
+          "bottom": 558.328125,
+          "left": 691
+        }
+      },
+      {
+        "cls": "cc-insp-row cc-caption-style-row",
+        "text": "边描透明度100%",
+        "box": {
+          "x": 691,
+          "y": 563.328125,
+          "width": 259,
+          "height": 28,
+          "top": 563.328125,
+          "right": 950,
+          "bottom": 591.328125,
+          "left": 691
+        }
+      },
+      {
+        "cls": "cc-insp-row cc-caption-style-row",
+        "text": "边框圆角0px",
+        "box": {
+          "x": 691,
+          "y": 596.328125,
+          "width": 259,
+          "height": 28,
+          "top": 596.328125,
+          "right": 950,
+          "bottom": 624.328125,
+          "left": 691
+        }
+      },
+      {
+        "cls": "cc-insp-row cc-caption-style-row",
+        "text": "边框阴影0px",
+        "box": {
+          "x": 691,
+          "y": 629.328125,
+          "width": 259,
+          "height": 28,
+          "top": 629.328125,
+          "right": 950,
+          "bottom": 657.328125,
+          "left": 691
+        }
+      },
+      {
+        "cls": "cc-insp-color-row cc-caption-color-row",
+        "text": "文字颜色文字描边文字阴影",
+        "box": {
+          "x": 691,
+          "y": 662.328125,
+          "width": 259,
+          "height": 45.171875,
+          "top": 662.328125,
+          "right": 950,
+          "bottom": 707.5,
+          "left": 691
+        }
+      },
+      {
+        "cls": "cc-insp-color-row cc-caption-color-row",
+        "text": "边框颜色边框描边边框阴影",
+        "box": {
+          "x": 691,
+          "y": 712.5,
+          "width": 259,
+          "height": 45.171875,
+          "top": 712.5,
+          "right": 950,
+          "bottom": 757.671875,
+          "left": 691
+        }
+      },
+      {
+        "cls": "cc-insp-row cc-caption-style-row",
+        "text": "缩放100%",
+        "box": {
+          "x": 691,
+          "y": 799.484375,
+          "width": 259,
+          "height": 28,
+          "top": 799.484375,
+          "right": 950,
+          "bottom": 827.484375,
+          "left": 691
+        }
+      },
+      {
+        "cls": "cc-insp-row cc-caption-style-row",
+        "text": "水平0%",
+        "box": {
+          "x": 691,
+          "y": 832.484375,
+          "width": 259,
+          "height": 28,
+          "top": 832.484375,
+          "right": 950,
+          "bottom": 860.484375,
+          "left": 691
+        }
+      },
+      {
+        "cls": "cc-insp-row cc-caption-style-row",
+        "text": "垂直-10%",
+        "box": {
+          "x": 691,
+          "y": 865.484375,
+          "width": 259,
+          "height": 28,
+          "top": 865.484375,
+          "right": 950,
+          "bottom": 893.484375,
+          "left": 691
+        }
+      },
+      {
+        "cls": "cc-insp-row cc-caption-style-row",
+        "text": "旋转0°",
+        "box": {
+          "x": 691,
+          "y": 898.484375,
+          "width": 259,
+          "height": 28,
+          "top": 898.484375,
+          "right": 950,
+          "bottom": 926.484375,
+          "left": 691
+        }
+      },
+      {
+        "cls": "cc-insp-row cc-caption-style-row",
+        "text": "透明100%",
+        "box": {
+          "x": 691,
+          "y": 931.484375,
+          "width": 259,
+          "height": 28,
+          "top": 931.484375,
+          "right": 950,
+          "bottom": 959.484375,
+          "left": 691
+        }
+      },
+      {
+        "cls": "cc-caption-toggle cc-tip cc-tip-r active",
+        "text": "开启",
+        "box": {
+          "x": 832,
+          "y": 423.59375,
+          "width": 82,
+          "height": 28,
+          "top": 423.59375,
+          "right": 914,
+          "bottom": 451.59375,
+          "left": 832
+        }
+      }
+    ]
+  },
+  "workspaceRevision": 6,
+  "project": {
+    "relativePath": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/production-workspace/versions/de11a102f26b64e16fb385ae1009281a560a302661cd2d330d8bb166ca11c272.json",
+    "sha256": "de11a102f26b64e16fb385ae1009281a560a302661cd2d330d8bb166ca11c272",
+    "fileSize": 14371,
+    "projectId": "loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283"
+  }
+}

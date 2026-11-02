@@ -1,0 +1,1361 @@
+[
+  {
+    "id": "U01",
+    "scope": "**U01**：作为所有者，我希望在离开生产详情、关闭窗口或按 Escape 前保留未提交的脚本和交付草稿，以便避免输入意外丢失。",
+    "tickets": [
+      6
+    ],
+    "ticketEvidence": [
+      "../tickets/06.md"
+    ],
+    "finalScenarios": [
+      "T08"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U02",
+    "scope": "**U02**：作为所有者，我希望刷新与浏览器前进、后退能恢复页面、标签、筛选和所选对象，以便连续处理同一项工作。",
+    "tickets": [
+      7
+    ],
+    "ticketEvidence": [
+      "../tickets/07.md"
+    ],
+    "finalScenarios": [
+      "T05"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U03",
+    "scope": "**U03**：作为所有者，我希望普通表单打开后聚焦首个合适输入框，危险操作保留安全焦点，以便直接输入并避免误触。",
+    "tickets": [
+      8
+    ],
+    "ticketEvidence": [
+      "../tickets/08.md"
+    ],
+    "finalScenarios": [
+      "T05"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U04",
+    "scope": "**U04**：作为所有者，我希望工作台、生产单和连接列表清楚且一致地表达搜索触发方式，以便知道何时会更新结果。",
+    "tickets": [
+      9
+    ],
+    "ticketEvidence": [
+      "../tickets/09.md"
+    ],
+    "finalScenarios": [
+      "T05"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U05",
+    "scope": "**U05**：作为所有者，我希望搜索作品时优先看到成片、图片、音视频和脚本，以便更快找到生产内容。",
+    "tickets": [
+      10
+    ],
+    "ticketEvidence": [
+      "../tickets/10.md"
+    ],
+    "finalScenarios": [
+      "T05"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U06",
+    "scope": "**U06**：作为所有者，我希望从各类搜索的前八项继续查看全部结果并保留关键词，以便不被结果截断阻挡。",
+    "tickets": [
+      10
+    ],
+    "ticketEvidence": [
+      "../tickets/10.md"
+    ],
+    "finalScenarios": [
+      "T05"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U07",
+    "scope": "**U07**：作为所有者，我希望搜索文件入口区分预览、下载与打开所属生产单，以便预知点击结果。",
+    "tickets": [
+      10
+    ],
+    "ticketEvidence": [
+      "../tickets/10.md"
+    ],
+    "finalScenarios": [
+      "T05"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U08",
+    "scope": "**U08**：作为所有者，我希望当前表单的错误显示在对应窗口、字段或提交区域，以便立即定位并修正问题。",
+    "tickets": [
+      8
+    ],
+    "ticketEvidence": [
+      "../tickets/08.md"
+    ],
+    "finalScenarios": [
+      "T05"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U09",
+    "scope": "**U09**：作为所有者，我希望工作台标题能正确涵盖制作中和已完成作品，以便不误判当前任务范围。",
+    "tickets": [
+      11
+    ],
+    "ticketEvidence": [
+      "../tickets/11.md"
+    ],
+    "finalScenarios": [
+      "T03",
+      "T04"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U10",
+    "scope": "**U10**：作为所有者，我希望已完成作品的侧栏标题表达查看成果而非继续处理，以便理解实际可执行动作。",
+    "tickets": [
+      11
+    ],
+    "ticketEvidence": [
+      "../tickets/11.md"
+    ],
+    "finalScenarios": [
+      "T03",
+      "T04"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U11",
+    "scope": "**U11**：作为所有者，我希望无待审核时只看到必要而准确的简短状态，以便减少占位且不把无待审说成曾完成审核。",
+    "tickets": [
+      11
+    ],
+    "ticketEvidence": [
+      "../tickets/11.md"
+    ],
+    "finalScenarios": [
+      "T03",
+      "T04"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U12",
+    "scope": "**U12**：作为所有者，我希望阶段轨迹区分正在查看的页面与业务完成状态，以便不把完成作品理解成仍在处理。",
+    "tickets": [
+      11
+    ],
+    "ticketEvidence": [
+      "../tickets/11.md"
+    ],
+    "finalScenarios": [
+      "T03",
+      "T04"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U13",
+    "scope": "**U13**：作为所有者，我希望费用金额保留实际、估算与未知语义，共用说明集中展示，以便减少重复并保持口径准确。",
+    "tickets": [
+      11
+    ],
+    "ticketEvidence": [
+      "../tickets/11.md"
+    ],
+    "finalScenarios": [
+      "T03",
+      "T04"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U14",
+    "scope": "**U14**：作为所有者，我希望阶段耗时明确标为本阶段而非整期制作耗时，以便正确理解时间投入。",
+    "tickets": [
+      11
+    ],
+    "ticketEvidence": [
+      "../tickets/11.md"
+    ],
+    "finalScenarios": [
+      "T03",
+      "T04"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U15",
+    "scope": "**U15**：作为所有者，我希望物理收纳的调整入口明确表达收纳系列且区别冻结创作基线，以便不误以为迁移文件会改创作规则。",
+    "tickets": [
+      11
+    ],
+    "ticketEvidence": [
+      "../tickets/11.md"
+    ],
+    "finalScenarios": [
+      "T03",
+      "T04"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U16",
+    "scope": "**U16**：作为所有者，我希望归档范围与制作状态使用不同语义名称，以便正确组合筛选。",
+    "tickets": [
+      9
+    ],
+    "ticketEvidence": [
+      "../tickets/09.md"
+    ],
+    "finalScenarios": [
+      "T05"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U17",
+    "scope": "**U17**：作为所有者，我希望筛选生效和结果为空时能够一键清空筛选，以便快速恢复完整列表。",
+    "tickets": [
+      9
+    ],
+    "ticketEvidence": [
+      "../tickets/09.md"
+    ],
+    "finalScenarios": [
+      "T05"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U18",
+    "scope": "**U18**：作为所有者，我希望新建生产单继承当前账号，系列选项明确当前版本，以便减少误选账号与旧版本。",
+    "tickets": [
+      9
+    ],
+    "ticketEvidence": [
+      "../tickets/09.md"
+    ],
+    "finalScenarios": [
+      "T05"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U19",
+    "scope": "**U19**：作为所有者，我希望锁定规则使用可选取、可键盘访问的正文或只读控件，以便阅读和复制已保存内容。",
+    "tickets": [
+      12
+    ],
+    "ticketEvidence": [
+      "../tickets/12.md"
+    ],
+    "finalScenarios": [
+      "T03",
+      "T04"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U20",
+    "scope": "**U20**：作为所有者，我希望规则查看态按内容高度排版，编辑态保留合适输入区域，以便减少无效滚动。",
+    "tickets": [
+      12
+    ],
+    "ticketEvidence": [
+      "../tickets/12.md"
+    ],
+    "finalScenarios": [
+      "T03",
+      "T04"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U21",
+    "scope": "**U21**：作为所有者，我希望在通用规则标题同行行尾显示已应用状态及当前版本，系列规则同理，以便就近确认当前规则版本。",
+    "tickets": [
+      12
+    ],
+    "ticketEvidence": [
+      "../tickets/12.md"
+    ],
+    "finalScenarios": [
+      "T03",
+      "T04"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U22",
+    "scope": "**U22**：作为所有者，我希望系列规则明确区分沿用账号与本系列覆盖，并能查看最终生效值，以便理解继承结果。",
+    "tickets": [
+      12
+    ],
+    "ticketEvidence": [
+      "../tickets/12.md"
+    ],
+    "finalScenarios": [
+      "T03",
+      "T04"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U23",
+    "scope": "**U23**：作为所有者，我希望账号标识对不支持的输入给出明确格式反馈，以便不被静默删字符困扰。",
+    "tickets": [
+      12
+    ],
+    "ticketEvidence": [
+      "../tickets/12.md"
+    ],
+    "finalScenarios": [
+      "T03",
+      "T04"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U24",
+    "scope": "**U24**：作为所有者，我希望系列较多时出现按需搜索且保持当前系列可见，以便快速定位系列。",
+    "tickets": [
+      12
+    ],
+    "ticketEvidence": [
+      "../tickets/12.md"
+    ],
+    "finalScenarios": [
+      "T03",
+      "T04"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U25",
+    "scope": "**U25**：作为所有者，我希望空脚本或缺少修订原因时看到字段附近的可见错误，以便知道如何继续确认。",
+    "tickets": [
+      13
+    ],
+    "ticketEvidence": [
+      "../tickets/13.md"
+    ],
+    "finalScenarios": [
+      "T05"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U26",
+    "scope": "**U26**：作为所有者，我希望脚本字符数与口播字数采用准确且区分的统计口径，以便不把 Markdown 与制作设置当成口播正文。",
+    "tickets": [
+      13
+    ],
+    "ticketEvidence": [
+      "../tickets/13.md"
+    ],
+    "finalScenarios": [
+      "T05"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U27",
+    "scope": "**U27**：作为所有者，我希望第二步导航、内部标题和说明使用一致主名称，以便理解分镜与素材准备的关系。",
+    "tickets": [
+      11
+    ],
+    "ticketEvidence": [
+      "../tickets/11.md"
+    ],
+    "finalScenarios": [
+      "T03",
+      "T04"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U28",
+    "scope": "**U28**：作为所有者，我希望只读分镜台撤下不可执行的拖动和新增提示，以便不尝试被禁用的操作。",
+    "tickets": [
+      14
+    ],
+    "ticketEvidence": [
+      "../tickets/14.md"
+    ],
+    "finalScenarios": [
+      "T01"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U29",
+    "scope": "**U29**：作为所有者，我希望已完成和归档作品优先展示冻结的实际生成记录，以便不把空白或默认表单误认为制作历史。",
+    "tickets": [
+      14
+    ],
+    "ticketEvidence": [
+      "../tickets/14.md"
+    ],
+    "finalScenarios": [
+      "T01"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U30",
+    "scope": "**U30**：作为所有者，我希望唯一的图片候选自动进入预览，采用仍需明确操作，以便减少无意义点击。",
+    "tickets": [
+      16
+    ],
+    "ticketEvidence": [
+      "../tickets/16.md"
+    ],
+    "finalScenarios": [
+      "T02"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U31",
+    "scope": "**U31**：作为所有者，我希望图片、视频、参考图和封面各入口显示真实格式与大小限制，以便在选择前准备正确文件。",
+    "tickets": [
+      1
+    ],
+    "ticketEvidence": [
+      "../tickets/01.md"
+    ],
+    "finalScenarios": [
+      "T08"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U32",
+    "scope": "**U32**：作为所有者，我希望图片和视频提示词接近长度限制时显示字符计数，以便避免意外截断或提交失败。",
+    "tickets": [
+      15
+    ],
+    "ticketEvidence": [
+      "../tickets/15.md"
+    ],
+    "finalScenarios": [
+      "T02"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U33",
+    "scope": "**U33**：作为所有者，我希望模型选择突出模型并按连接组织次要信息，以便读懂长选项。",
+    "tickets": [
+      15
+    ],
+    "ticketEvidence": [
+      "../tickets/15.md"
+    ],
+    "finalScenarios": [
+      "T02"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U34",
+    "scope": "**U34**：作为所有者，我希望连接或生成参数不兼容时指出具体字段，以便有针对性地修复选择。",
+    "tickets": [
+      15
+    ],
+    "ticketEvidence": [
+      "../tickets/15.md"
+    ],
+    "finalScenarios": [
+      "T02"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U35",
+    "scope": "**U35**：作为所有者，我希望多张参考图以缩略图摘要组织并按需展开用途、保留与改变，以便不被十六张图片的长表单淹没。",
+    "tickets": [
+      15
+    ],
+    "ticketEvidence": [
+      "../tickets/15.md"
+    ],
+    "finalScenarios": [
+      "T02"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U36",
+    "scope": "**U36**：作为所有者，我希望参考图支持放大核对且不改变已选图片，以便辨认细节与近似文件。",
+    "tickets": [
+      15
+    ],
+    "ticketEvidence": [
+      "../tickets/15.md"
+    ],
+    "finalScenarios": [
+      "T02"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U37",
+    "scope": "**U37**：作为所有者，我希望采用候选前看到本次时长变化及受影响片段，以便明确接受时间线影响。",
+    "tickets": [
+      16
+    ],
+    "ticketEvidence": [
+      "../tickets/16.md"
+    ],
+    "finalScenarios": [
+      "T02"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U38",
+    "scope": "**U38**：作为所有者，我希望等待、执行、失败、未知提交及恢复任务有清楚状态与可达入口，以便安全核对原任务而不重复提交。",
+    "tickets": [
+      17
+    ],
+    "ticketEvidence": [
+      "../tickets/17.md"
+    ],
+    "finalScenarios": [
+      "T01"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U39",
+    "scope": "**U39**：作为所有者，我希望Pexels 结果在下载预览前有可用缩略图，以便先筛选再获取视频。",
+    "tickets": [
+      18
+    ],
+    "ticketEvidence": [
+      "../tickets/18.md"
+    ],
+    "finalScenarios": [
+      "T02"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U40",
+    "scope": "**U40**：作为所有者，我希望Pexels 连接读取失败可在面板就地重试，以便不必猜测应刷新哪个页面。",
+    "tickets": [
+      18
+    ],
+    "ticketEvidence": [
+      "../tickets/18.md"
+    ],
+    "finalScenarios": [
+      "T02"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U41",
+    "scope": "**U41**：作为所有者，我希望批量上传逐文件显示成功、失败和未处理，并在等待时提供符合实际布局的占位加载反馈，以便避免重复导入并知道进度。",
+    "tickets": [
+      2
+    ],
+    "ticketEvidence": [
+      "../tickets/02.md"
+    ],
+    "finalScenarios": [
+      "T08"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U42",
+    "scope": "**U42**：作为所有者，我希望口播与声音设置中本期默认采用一致且明确的保存范围，以便重开窗口或标签页后仍能理解默认值来源。",
+    "tickets": [
+      19
+    ],
+    "ticketEvidence": [
+      "../tickets/19.md"
+    ],
+    "finalScenarios": [
+      "T02"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U43",
+    "scope": "**U43**：作为所有者，我希望音效默认连接设置完成时获得就地成功反馈，以便确认操作已经生效。",
+    "tickets": [
+      5
+    ],
+    "ticketEvidence": [
+      "../tickets/05.md"
+    ],
+    "finalScenarios": [
+      "T02"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U44",
+    "scope": "**U44**：作为所有者，我希望优先在剪辑工作台内置音效库选择和调整音效，并可在脚本或前置工作区记录可选音效意图，以便减少重复入口且在剪辑时保留创作意图；具体移除范围待 T02 实测后定案。",
+    "tickets": [
+      4,
+      5
+    ],
+    "ticketEvidence": [
+      "../tickets/04.md",
+      "../tickets/05.md"
+    ],
+    "finalScenarios": [
+      "T02"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": "U44 is one item shared by tickets04/05: per-shot optional sound intent; retired preproduction online sound/default entry, music/source/historical audio retained"
+  },
+  {
+    "id": "U45",
+    "scope": "**U45**：作为所有者，我希望锚点、绝对位置与闪避等声音参数有贴近操作的名称和必要短帮助，以便理解时间与音量含义。",
+    "tickets": [
+      19
+    ],
+    "ticketEvidence": [
+      "../tickets/19.md"
+    ],
+    "finalScenarios": [
+      "T02"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U46",
+    "scope": "**U46**：作为所有者，我希望口播生成按钮直接说明会生成口播，以便清楚区分配置保存与生成请求。",
+    "tickets": [
+      19
+    ],
+    "ticketEvidence": [
+      "../tickets/19.md"
+    ],
+    "finalScenarios": [
+      "T02"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U47",
+    "scope": "**U47**：作为所有者，我希望字幕边距的编辑与查看统一使用明确的百分比单位及范围，以便避免把 0.18 与 18 混淆。",
+    "tickets": [
+      20
+    ],
+    "ticketEvidence": [
+      "../tickets/20.md"
+    ],
+    "finalScenarios": [
+      "T02"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U48",
+    "scope": "**U48**：作为所有者，我希望手工校时有可见正文、开始、结束列名与单位，并使用字幕条目而非 cue，以便准确调整字幕。",
+    "tickets": [
+      20
+    ],
+    "ticketEvidence": [
+      "../tickets/20.md"
+    ],
+    "finalScenarios": [
+      "T02"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U49",
+    "scope": "**U49**：作为所有者，我希望镜头查看中的浮点参数按合理精度显示，底层值保留完整，以便读懂缩放等参数。",
+    "tickets": [
+      14
+    ],
+    "ticketEvidence": [
+      "../tickets/14.md"
+    ],
+    "finalScenarios": [
+      "T01"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U50",
+    "scope": "**U50**：作为所有者，我希望视频和图片各自只显示适用属性，以便不在视频上误读静帧用法。",
+    "tickets": [
+      14
+    ],
+    "ticketEvidence": [
+      "../tickets/14.md"
+    ],
+    "finalScenarios": [
+      "T01"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U51",
+    "scope": "**U51**：作为所有者，我希望镜头预览控件清楚表达当前片段区间与整片时间，以便理解播放边界。",
+    "tickets": [
+      21
+    ],
+    "ticketEvidence": [
+      "../tickets/21.md"
+    ],
+    "finalScenarios": [
+      "T06"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U52",
+    "scope": "**U52**：作为所有者，我希望大量镜头的已完成工程按展开或可见范围加载播放器，以便降低查看时的资源开销。",
+    "tickets": [
+      21
+    ],
+    "ticketEvidence": [
+      "../tickets/21.md"
+    ],
+    "finalScenarios": [
+      "T06"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U53",
+    "scope": "**U53**：作为所有者，我希望各处媒体播放器的常用操作、键盘、加载和错误反馈保持一致，以便无需重复学习。",
+    "tickets": [
+      21
+    ],
+    "ticketEvidence": [
+      "../tickets/21.md"
+    ],
+    "finalScenarios": [
+      "T06"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U54",
+    "scope": "**U54**：作为所有者，我希望封面在完整读取前检查真实格式与大小限制，以便及时获得明确错误并避免无效内存开销。",
+    "tickets": [
+      22
+    ],
+    "ticketEvidence": [
+      "../tickets/22.md"
+    ],
+    "finalScenarios": [
+      "T03",
+      "T04"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U55",
+    "scope": "**U55**：作为所有者，我希望标签规范前导井号并在提交前校验数量与单项长度，以便避免展示或复制双井号与笼统失败。",
+    "tickets": [
+      22
+    ],
+    "ticketEvidence": [
+      "../tickets/22.md"
+    ],
+    "finalScenarios": [
+      "T03",
+      "T04"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U56",
+    "scope": "**U56**：作为所有者，我希望提交问题记录后只清除已提交正文，保留请求期间新输入，以便不丢失下一条问题。",
+    "tickets": [
+      22
+    ],
+    "ticketEvidence": [
+      "../tickets/22.md"
+    ],
+    "finalScenarios": [
+      "T03",
+      "T04"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U57",
+    "scope": "**U57**：作为所有者，我希望连接主列表使用服务显示名称，详情保留技术标识，以便直接识别服务。",
+    "tickets": [
+      23
+    ],
+    "ticketEvidence": [
+      "../tickets/23.md"
+    ],
+    "finalScenarios": [
+      "T03",
+      "T04"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U58",
+    "scope": "**U58**：作为所有者，我希望已验证状态可就近查看最近验证时间，以便不把历史验证误认成实时检测。",
+    "tickets": [
+      23
+    ],
+    "ticketEvidence": [
+      "../tickets/23.md"
+    ],
+    "finalScenarios": [
+      "T03",
+      "T04"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U59",
+    "scope": "**U59**：作为所有者，我希望供应商账号可用额、Key 请求余量和资源包明确区分，以便不重复计算共享余额。",
+    "tickets": [
+      23
+    ],
+    "ticketEvidence": [
+      "../tickets/23.md"
+    ],
+    "finalScenarios": [
+      "T03",
+      "T04"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U60",
+    "scope": "**U60**：作为所有者，我希望额度更新时间可用键盘访问且方便判断时效，以便正确使用缓存账务数据。",
+    "tickets": [
+      23
+    ],
+    "ticketEvidence": [
+      "../tickets/23.md"
+    ],
+    "finalScenarios": [
+      "T03",
+      "T04"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U61",
+    "scope": "**U61**：作为所有者，我希望撤销连接版本前明确连接、版本和实际引用影响，以便理解撤销后果。",
+    "tickets": [
+      24
+    ],
+    "ticketEvidence": [
+      "../tickets/24.md"
+    ],
+    "finalScenarios": [
+      "T08"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U62",
+    "scope": "**U62**：作为所有者，我希望模型和连接非敏感表单关闭前保护已发生的修改，不持久保存密钥草稿，以便避免丢失选择并维持秘密边界。",
+    "tickets": [
+      24
+    ],
+    "ticketEvidence": [
+      "../tickets/24.md"
+    ],
+    "finalScenarios": [
+      "T08"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U63",
+    "scope": "**U63**：作为所有者，我希望只有简体中文可用时静态展示语言，以便减少无实际选择的控件。",
+    "tickets": [
+      25
+    ],
+    "ticketEvidence": [
+      "../tickets/25.md"
+    ],
+    "finalScenarios": [
+      "T05"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U64",
+    "scope": "**U64**：作为所有者，我希望偏好区分未修改、未保存、保存中与已保存，恢复默认也属于待保存修改，以便了解设置是否生效。",
+    "tickets": [
+      25
+    ],
+    "ticketEvidence": [
+      "../tickets/25.md"
+    ],
+    "finalScenarios": [
+      "T05"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U65",
+    "scope": "**U65**：作为所有者，我希望应用内与 macOS 通知渠道可独立控制，待办可见性不随提醒开关消失，以便按需静音而不丢失待处理事项。",
+    "tickets": [
+      25
+    ],
+    "ticketEvidence": [
+      "../tickets/25.md"
+    ],
+    "finalScenarios": [
+      "T05"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U66",
+    "scope": "**U66**：作为所有者，我希望新密码字段提前表达至少十二位规则并关联具体错误，以便一次正确设置密码。",
+    "tickets": [
+      26
+    ],
+    "ticketEvidence": [
+      "../tickets/26.md"
+    ],
+    "finalScenarios": [
+      "T05"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U67",
+    "scope": "**U67**：作为所有者，我希望安全窗口准确说明密码用于本机身份验证而不只用于登录，以便理解密钥查看和复制的验证要求。",
+    "tickets": [
+      26
+    ],
+    "ticketEvidence": [
+      "../tickets/26.md"
+    ],
+    "finalScenarios": [
+      "T05"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U68",
+    "scope": "**U68**：作为所有者，我希望存储迁移先清楚表达检查计划，再明确开始迁移，以便不混淆预览与执行。",
+    "tickets": [
+      27
+    ],
+    "ticketEvidence": [
+      "../tickets/27.md"
+    ],
+    "finalScenarios": [
+      "T07"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U69",
+    "scope": "**U69**：作为所有者，我希望迁移大小与进度使用一致且易读的 KB、MB、GB 单位，以便快速判断空间与进度。",
+    "tickets": [
+      27
+    ],
+    "ticketEvidence": [
+      "../tickets/27.md"
+    ],
+    "finalScenarios": [
+      "T07"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U70",
+    "scope": "**U70**：作为所有者，我希望个人偏好保存和存储迁移分别反馈结果，存储读取失败可就地重试，以便理解独立动作并恢复读取。",
+    "tickets": [
+      27
+    ],
+    "ticketEvidence": [
+      "../tickets/27.md"
+    ],
+    "finalScenarios": [
+      "T07"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U71",
+    "scope": "**U71**：作为所有者，我希望历史空状态区分尚无资料与筛选无匹配，以便采取正确下一步。",
+    "tickets": [
+      28
+    ],
+    "ticketEvidence": [
+      "../tickets/28.md"
+    ],
+    "finalScenarios": [
+      "T05"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U72",
+    "scope": "**U72**：作为所有者，我希望已归档生产单与独立历史资料范围有清楚区别和互相查找入口，以便找到仍然保留的作品。",
+    "tickets": [
+      28
+    ],
+    "ticketEvidence": [
+      "../tickets/28.md"
+    ],
+    "finalScenarios": [
+      "T05"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U73",
+    "scope": "**U73**：作为所有者，我希望同名密钥按当前优先、历史版本倒序组织，以便准确选到所需版本。",
+    "tickets": [
+      26
+    ],
+    "ticketEvidence": [
+      "../tickets/26.md"
+    ],
+    "finalScenarios": [
+      "T05"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U74",
+    "scope": "**U74**：作为所有者，我希望系统资源摘要明确系统盘与素材盘，以便不混淆可用空间。",
+    "tickets": [
+      29
+    ],
+    "ticketEvidence": [
+      "../tickets/29.md"
+    ],
+    "finalScenarios": [
+      "T07"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U75",
+    "scope": "**U75**：作为所有者，我希望版本未确认时汇总显示待确认而非过强的正常结论，以便正确判断运行状态。",
+    "tickets": [
+      29
+    ],
+    "ticketEvidence": [
+      "../tickets/29.md"
+    ],
+    "finalScenarios": [
+      "T07"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "U76",
+    "scope": "**U76**：作为所有者，我希望已完成详情在无活动任务时降低轮询，页面隐藏时暂停，以便减少后台请求和资源开销。",
+    "tickets": [
+      21
+    ],
+    "ticketEvidence": [
+      "../tickets/21.md"
+    ],
+    "finalScenarios": [
+      "T06"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "N01",
+    "scope": "**N01**：作为所有者，我希望关闭窗口后焦点返回仍存在的操作入口，以便继续用键盘完成原来的工作。",
+    "tickets": [
+      8
+    ],
+    "ticketEvidence": [
+      "../tickets/08.md"
+    ],
+    "finalScenarios": [
+      "T05"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "N02",
+    "scope": "**N02**：作为所有者，我希望剪辑台内置音效能纳入本期素材并完成保存、重开和交付，以便实际使用内置音效而不丢失编辑结果。",
+    "tickets": [
+      3
+    ],
+    "ticketEvidence": [
+      "../tickets/03.md"
+    ],
+    "finalScenarios": [
+      "T02"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "N03",
+    "scope": "**N03**：作为所有者，我希望不可解码的图片在登记为可用素材前被拒绝，以便素材列表不出现无法使用的文件。",
+    "tickets": [
+      1
+    ],
+    "ticketEvidence": [
+      "../tickets/01.md"
+    ],
+    "finalScenarios": [
+      "T08"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "N04",
+    "scope": "**N04**：作为键盘及辅助技术使用者，我希望剪辑器分隔条、预览图、时间轴与音效列表具有正确语义，以便辨认并操作这些控件。",
+    "tickets": [
+      30
+    ],
+    "ticketEvidence": [
+      "../tickets/30.md"
+    ],
+    "finalScenarios": [
+      "T03",
+      "T04",
+      "T05"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "N05",
+    "scope": "**N05**：作为所有者，我希望镜头编号、导出按钮与次级文字达到可读对比度，以便在明暗背景下辨认必要内容。",
+    "tickets": [
+      31
+    ],
+    "ticketEvidence": [
+      "../tickets/31.md"
+    ],
+    "finalScenarios": [
+      "T03",
+      "T04",
+      "T05"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "N06",
+    "scope": "**N06**：作为受限窗口中的所有者，我希望剪辑面板保持精确值、保存与时间线可达，以便在 900 像素宽度下继续编辑。",
+    "tickets": [
+      31
+    ],
+    "ticketEvidence": [
+      "../tickets/31.md"
+    ],
+    "finalScenarios": [
+      "T03",
+      "T04",
+      "T05"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  },
+  {
+    "id": "N07",
+    "scope": "**N07**：作为键盘使用者，我希望皮肤等菜单可用 Escape 关闭并返回入口焦点，以便无需借助鼠标退出菜单；皮肤项已有顶层 SDK 复现，正常嵌入形态仍需复核。",
+    "tickets": [
+      30
+    ],
+    "ticketEvidence": [
+      "../tickets/30.md"
+    ],
+    "finalScenarios": [
+      "T03",
+      "T04",
+      "T05"
+    ],
+    "verification": "ticket-specific evidence + final642 default suite; scenario-specific final artifacts listed in 6421a779/T01-T08.json; not a claim every field was manually repeated",
+    "codeIdentity": "6421a779 full source; earlier focused evidence is retained with explicit delta relationship",
+    "note": ""
+  }
+]

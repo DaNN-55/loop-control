@@ -1,0 +1,113 @@
+
+ RUN  v3.2.7 /private/tmp/loop-ui-audit-9BF3TG/source
+
+stderr | src/local-app/workspaceGenerationState.integration.test.ts > HTTP image unknown response remains visible after restart without a repeated paid POST
+FINAL32_INNER_ERROR ConfigurationError: 供应商提交结果未知或不能恢复；必须核对已有结果，不会创建重复付费任务。
+    at executeWorkspaceVisualCandidate [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceVisualCandidates.ts:91:156[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:129:77
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m409[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/workspaceGenerationState.integration.test.ts > HTTP image unknown response remains visible after restart without a repeated paid POST
+FINAL32_INNER_ERROR ConfigurationError: 已有图片任务正在进行或提交结果未知，请先核对已有任务。
+    at queueWorkspaceImageCandidates [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceImageGeneration.ts:49:142[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at executeWorkspaceVisualCandidate [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceVisualCandidates.ts:84:3[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:129:77
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m409[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/workspaceGenerationState.integration.test.ts > HTTP image reject response remains visible after restart without a repeated paid POST
+FINAL32_INNER_ERROR ConfigurationError: 供应商提交结果未知或不能恢复；必须核对已有结果，不会创建重复付费任务。
+    at executeWorkspaceVisualCandidate [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceVisualCandidates.ts:91:156[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:129:77
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m409[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/workspaceGenerationState.integration.test.ts > Owner HTTP reconciles a held publication after lost COMMIT without a new attempt or supplier POST
+FINAL32_INNER_ERROR ConfigurationError: 原任务不可见。
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceOutputReconciliation.ts:12:18
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at reconcileOwnerNativeOutput [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceOutputReconciliation.ts:10:2[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:132:14 {
+  status: [33m404[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/workspaceGenerationState.integration.test.ts > Owner HTTP reconciles a held publication after lost COMMIT without a new attempt or supplier POST
+FINAL32_INNER_ERROR ConfigurationError: 原任务或尝试已变化，请刷新后核对。
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceOutputReconciliation.ts:13:85
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at reconcileOwnerNativeOutput [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceOutputReconciliation.ts:10:2[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:132:14 {
+  status: [33m409[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/workspaceGenerationState.integration.test.ts > Owner HTTP reconciles a held publication after lost COMMIT without a new attempt or supplier POST
+FINAL32_INNER_ERROR ConfigurationError: 产物核对标识无效。
+    at reconcileOwnerNativeOutput [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceOutputReconciliation.ts:8:263[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:132:20
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m {
+  status: [33m400[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/workspaceGenerationState.integration.test.ts > Owner HTTP reconciles a held publication after lost COMMIT without a new attempt or supplier POST
+FINAL32_INNER_ERROR ConfigurationError: 原发布记录或文件缺失。请保留当前任务和文件，核对后再试。
+    at reconcileOwnerNativeOutput [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceOutputReconciliation.ts:16:283[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:132:14 {
+  status: [33m409[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/workspaceGenerationState.integration.test.ts > Owner HTTP reconciles a held publication after lost COMMIT without a new attempt or supplier POST
+FINAL32_INNER_ERROR ConfigurationError: 原发布记录不完整或已变化。请保留当前任务和文件，核对后再试。
+    at reconcileOwnerNativeOutput [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceOutputReconciliation.ts:16:283[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:132:14 {
+  status: [33m409[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/workspaceGenerationState.integration.test.ts > HTTP speech preserves unknown original submission evidence even after current input is changed
+FINAL32_INNER_ERROR ConfigurationError: 上次口播仍在执行或提交结果未知；请先核对，不会重复发送。
+    at executeWorkspaceNarration [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceNarration.ts:107:449[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at ProductionWorkspaceCommands.execute [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/productionWorkspaceCommands.ts:209:90[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:129:77
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m409[39m,
+  preflight: [90mundefined[39m
+}
+
+ ✓ src/local-app/workspaceGenerationState.integration.test.ts (5 tests) 9055ms
+   ✓ HTTP image unknown response remains visible after restart without a repeated paid POST  2090ms
+   ✓ HTTP image reject response remains visible after restart without a repeated paid POST  1544ms
+   ✓ HTTP video polling resumes the same frozen task and original remote ID, never a second POST  1780ms
+   ✓ Owner HTTP reconciles a held publication after lost COMMIT without a new attempt or supplier POST  1959ms
+   ✓ HTTP speech preserves unknown original submission evidence even after current input is changed  1682ms
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  23:31:25
+   Duration  9.66s (transform 370ms, setup 7ms, collect 503ms, tests 9.05s, environment 0ms, prepare 22ms)
+
+JSON report written to /Users/dan/Programs/loop-control/docs/verification/ui-optimization-20261102/final/generation/vitest.json

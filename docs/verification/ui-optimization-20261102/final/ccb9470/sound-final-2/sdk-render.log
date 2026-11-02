@@ -1,0 +1,19 @@
+[OpenChatCut] isolated profile 1205918d-7e52-459f-afca-bd85a81de1a7 · /var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/tk-openchatcut-3JaIYF
+11:43:53 PM [vite] (client) Re-optimizing dependencies because vite config has changed
+
+  VITE v8.1.4  ready in 797 ms
+
+  ➜  Local:   http://127.0.0.1:55060/
+11:43:53 PM [vite] (client) Pre-transform error: Failed to load url /@fs/src/main.tsx (resolved id: /src/main.tsx). Does the file exist?
+[Tab 2, src/captions/segmenterData.ts:53] Made 63 network requests to load fonts for Inter. Consider loading fewer weights and subsets by passing options to loadFont(). Disable this warning by passing "ignoreTooManyRequestsWarning: true" to "options".
+[Tab 2, src/captions/segmenterData.ts:53] Made 126 network requests to load fonts for Inter. Consider loading fewer weights and subsets by passing options to loadFont(). Disable this warning by passing "ignoreTooManyRequestsWarning: true" to "options".
+[Tab 3, src/captions/segmenterData.ts:53] Made 63 network requests to load fonts for Inter. Consider loading fewer weights and subsets by passing options to loadFont(). Disable this warning by passing "ignoreTooManyRequestsWarning: true" to "options".
+[Tab 3, src/captions/segmenterData.ts:53] Made 126 network requests to load fonts for Inter. Consider loading fewer weights and subsets by passing options to loadFont(). Disable this warning by passing "ignoreTooManyRequestsWarning: true" to "options".
+[Tab 1, src/captions/segmenterData.ts:53] Made 63 network requests to load fonts for Inter. Consider loading fewer weights and subsets by passing options to loadFont(). Disable this warning by passing "ignoreTooManyRequestsWarning: true" to "options".
+[Tab 4, src/captions/segmenterData.ts:53] Made 63 network requests to load fonts for Inter. Consider loading fewer weights and subsets by passing options to loadFont(). Disable this warning by passing "ignoreTooManyRequestsWarning: true" to "options".
+[Tab 1, src/captions/segmenterData.ts:53] Made 126 network requests to load fonts for Inter. Consider loading fewer weights and subsets by passing options to loadFont(). Disable this warning by passing "ignoreTooManyRequestsWarning: true" to "options".
+[Tab 4, src/captions/segmenterData.ts:53] Made 126 network requests to load fonts for Inter. Consider loading fewer weights and subsets by passing options to loadFont(). Disable this warning by passing "ignoreTooManyRequestsWarning: true" to "options".
+[Tab 0, src/captions/segmenterData.ts:53] Made 63 network requests to load fonts for Inter. Consider loading fewer weights and subsets by passing options to loadFont(). Disable this warning by passing "ignoreTooManyRequestsWarning: true" to "options".
+[Tab 0, src/captions/segmenterData.ts:53] Made 126 network requests to load fonts for Inter. Consider loading fewer weights and subsets by passing options to loadFont(). Disable this warning by passing "ignoreTooManyRequestsWarning: true" to "options".
+[Tab 5, src/captions/segmenterData.ts:53] Made 63 network requests to load fonts for Inter. Consider loading fewer weights and subsets by passing options to loadFont(). Disable this warning by passing "ignoreTooManyRequestsWarning: true" to "options".
+[Tab 5, src/captions/segmenterData.ts:53] Made 126 network requests to load fonts for Inter. Consider loading fewer weights and subsets by passing options to loadFont(). Disable this warning by passing "ignoreTooManyRequestsWarning: true" to "options".

@@ -1,0 +1,482 @@
+[
+  {
+    "name": "石墨",
+    "theme": "dark",
+    "inks": [
+      {
+        "selector": "button[aria-label=\"导出 MP4\"]",
+        "ink": "rgb(0, 0, 0)",
+        "bg": "rgb(220, 112, 54)",
+        "ratio": 6.414065319674589
+      },
+      {
+        "selector": ".cc-main-tab:not(.selected)",
+        "ink": "rgb(153, 153, 153)",
+        "bg": "rgb(24, 24, 24)",
+        "ratio": 6.232394430779212
+      },
+      {
+        "selector": ".cc-ruler-head span",
+        "ink": "rgb(176, 176, 176)",
+        "bg": "rgb(24, 24, 24)",
+        "ratio": 8.187390596894145
+      },
+      {
+        "selector": ".cc-track-name-title",
+        "ink": "rgb(255, 255, 255)",
+        "bg": "rgb(59, 75, 216)",
+        "ratio": 6.595548346249063
+      },
+      {
+        "selector": ".cc-track-name-custom",
+        "ink": "rgb(255, 255, 255)",
+        "bg": "rgb(59, 75, 216)",
+        "ratio": 6.595548346249063
+      }
+    ],
+    "hostInks": [
+      {
+        "bg": "rgb(26, 40, 60)",
+        "ink": "rgb(179, 194, 214)",
+        "ratio": 8.214456119924238,
+        "selector": ".embedded-studio [role=status]"
+      },
+      {
+        "bg": "rgb(41, 61, 101)",
+        "ink": "rgb(179, 194, 214)",
+        "ratio": 5.951929333180127,
+        "selector": ".workspace-shot-select small"
+      }
+    ],
+    "disabled": {
+      "disabled": true,
+      "opacity": "0.28"
+    },
+    "violations": [
+      {
+        "id": "landmark-one-main",
+        "impact": "moderate",
+        "nodes": 2
+      },
+      {
+        "id": "page-has-heading-one",
+        "impact": "moderate",
+        "nodes": 2
+      }
+    ],
+    "incomplete": [
+      {
+        "id": "aria-prohibited-attr",
+        "nodes": 1
+      },
+      {
+        "id": "color-contrast",
+        "nodes": 4
+      },
+      {
+        "id": "skip-link",
+        "nodes": 1
+      }
+    ]
+  },
+  {
+    "name": "墨黑",
+    "theme": "dark",
+    "inks": [
+      {
+        "selector": "button[aria-label=\"导出 MP4\"]",
+        "ink": "rgb(0, 0, 0)",
+        "bg": "rgb(220, 112, 54)",
+        "ratio": 6.414065319674589
+      },
+      {
+        "selector": ".cc-main-tab:not(.selected)",
+        "ink": "rgb(138, 138, 138)",
+        "bg": "rgb(11, 11, 11)",
+        "ratio": 5.701440402371047
+      },
+      {
+        "selector": ".cc-ruler-head span",
+        "ink": "rgb(171, 171, 171)",
+        "bg": "rgb(11, 11, 11)",
+        "ratio": 8.571132227318154
+      },
+      {
+        "selector": ".cc-track-name-title",
+        "ink": "rgb(255, 255, 255)",
+        "bg": "rgb(59, 75, 216)",
+        "ratio": 6.595548346249063
+      },
+      {
+        "selector": ".cc-track-name-custom",
+        "ink": "rgb(255, 255, 255)",
+        "bg": "rgb(59, 75, 216)",
+        "ratio": 6.595548346249063
+      }
+    ],
+    "hostInks": [
+      {
+        "bg": "rgb(26, 40, 60)",
+        "ink": "rgb(179, 194, 214)",
+        "ratio": 8.214456119924238,
+        "selector": ".embedded-studio [role=status]"
+      },
+      {
+        "bg": "rgb(41, 61, 101)",
+        "ink": "rgb(179, 194, 214)",
+        "ratio": 5.951929333180127,
+        "selector": ".workspace-shot-select small"
+      }
+    ],
+    "disabled": {
+      "disabled": true,
+      "opacity": "0.28"
+    },
+    "violations": [
+      {
+        "id": "landmark-one-main",
+        "impact": "moderate",
+        "nodes": 2
+      },
+      {
+        "id": "page-has-heading-one",
+        "impact": "moderate",
+        "nodes": 2
+      }
+    ],
+    "incomplete": [
+      {
+        "id": "aria-prohibited-attr",
+        "nodes": 1
+      },
+      {
+        "id": "color-contrast",
+        "nodes": 4
+      },
+      {
+        "id": "skip-link",
+        "nodes": 1
+      }
+    ]
+  },
+  {
+    "name": "摩卡",
+    "theme": "dark",
+    "inks": [
+      {
+        "selector": "button[aria-label=\"导出 MP4\"]",
+        "ink": "rgb(17, 17, 27)",
+        "bg": "rgb(250, 179, 135)",
+        "ratio": 10.593202810985
+      },
+      {
+        "selector": ".cc-main-tab:not(.selected)",
+        "ink": "rgb(182, 185, 200)",
+        "bg": "rgb(30, 30, 46)",
+        "ratio": 8.405908995372798
+      },
+      {
+        "selector": ".cc-ruler-head span",
+        "ink": "rgb(179, 185, 208)",
+        "bg": "rgb(30, 30, 46)",
+        "ratio": 8.40943267664281
+      },
+      {
+        "selector": ".cc-track-name-title",
+        "ink": "rgb(255, 255, 255)",
+        "bg": "rgb(59, 75, 216)",
+        "ratio": 6.595548346249063
+      },
+      {
+        "selector": ".cc-track-name-custom",
+        "ink": "rgb(255, 255, 255)",
+        "bg": "rgb(59, 75, 216)",
+        "ratio": 6.595548346249063
+      }
+    ],
+    "hostInks": [
+      {
+        "bg": "rgb(26, 40, 60)",
+        "ink": "rgb(179, 194, 214)",
+        "ratio": 8.214456119924238,
+        "selector": ".embedded-studio [role=status]"
+      },
+      {
+        "bg": "rgb(41, 61, 101)",
+        "ink": "rgb(179, 194, 214)",
+        "ratio": 5.951929333180127,
+        "selector": ".workspace-shot-select small"
+      }
+    ],
+    "disabled": {
+      "disabled": true,
+      "opacity": "0.28"
+    },
+    "violations": [
+      {
+        "id": "landmark-one-main",
+        "impact": "moderate",
+        "nodes": 2
+      },
+      {
+        "id": "page-has-heading-one",
+        "impact": "moderate",
+        "nodes": 2
+      }
+    ],
+    "incomplete": [
+      {
+        "id": "aria-prohibited-attr",
+        "nodes": 1
+      },
+      {
+        "id": "color-contrast",
+        "nodes": 4
+      },
+      {
+        "id": "skip-link",
+        "nodes": 1
+      }
+    ]
+  },
+  {
+    "name": "北极",
+    "theme": "dark",
+    "inks": [
+      {
+        "selector": "button[aria-label=\"导出 MP4\"]",
+        "ink": "rgb(0, 0, 0)",
+        "bg": "rgb(136, 192, 208)",
+        "ratio": 10.497516104141502
+      },
+      {
+        "selector": ".cc-main-tab:not(.selected)",
+        "ink": "rgb(184, 191, 206)",
+        "bg": "rgb(46, 52, 64)",
+        "ratio": 6.769150149274117
+      },
+      {
+        "selector": ".cc-ruler-head span",
+        "ink": "rgb(216, 222, 233)",
+        "bg": "rgb(46, 52, 64)",
+        "ratio": 9.245243340706116
+      },
+      {
+        "selector": ".cc-track-name-title",
+        "ink": "rgb(255, 255, 255)",
+        "bg": "rgb(59, 75, 216)",
+        "ratio": 6.595548346249063
+      },
+      {
+        "selector": ".cc-track-name-custom",
+        "ink": "rgb(255, 255, 255)",
+        "bg": "rgb(59, 75, 216)",
+        "ratio": 6.595548346249063
+      }
+    ],
+    "hostInks": [
+      {
+        "bg": "rgb(26, 40, 60)",
+        "ink": "rgb(179, 194, 214)",
+        "ratio": 8.214456119924238,
+        "selector": ".embedded-studio [role=status]"
+      },
+      {
+        "bg": "rgb(41, 61, 101)",
+        "ink": "rgb(179, 194, 214)",
+        "ratio": 5.951929333180127,
+        "selector": ".workspace-shot-select small"
+      }
+    ],
+    "disabled": {
+      "disabled": true,
+      "opacity": "0.28"
+    },
+    "violations": [
+      {
+        "id": "landmark-one-main",
+        "impact": "moderate",
+        "nodes": 2
+      },
+      {
+        "id": "page-has-heading-one",
+        "impact": "moderate",
+        "nodes": 2
+      }
+    ],
+    "incomplete": [
+      {
+        "id": "aria-prohibited-attr",
+        "nodes": 1
+      },
+      {
+        "id": "color-contrast",
+        "nodes": 4
+      },
+      {
+        "id": "skip-link",
+        "nodes": 1
+      }
+    ]
+  },
+  {
+    "name": "东京夜",
+    "theme": "dark",
+    "inks": [
+      {
+        "selector": "button[aria-label=\"导出 MP4\"]",
+        "ink": "rgb(0, 0, 0)",
+        "bg": "rgb(122, 162, 247)",
+        "ratio": 8.33872727255501
+      },
+      {
+        "selector": ".cc-main-tab:not(.selected)",
+        "ink": "rgb(146, 152, 187)",
+        "bg": "rgb(26, 27, 38)",
+        "ratio": 6.047987869869102
+      },
+      {
+        "selector": ".cc-ruler-head span",
+        "ink": "rgb(169, 177, 214)",
+        "bg": "rgb(26, 27, 38)",
+        "ratio": 8.095547455350856
+      },
+      {
+        "selector": ".cc-track-name-title",
+        "ink": "rgb(255, 255, 255)",
+        "bg": "rgb(59, 75, 216)",
+        "ratio": 6.595548346249063
+      },
+      {
+        "selector": ".cc-track-name-custom",
+        "ink": "rgb(255, 255, 255)",
+        "bg": "rgb(59, 75, 216)",
+        "ratio": 6.595548346249063
+      }
+    ],
+    "hostInks": [
+      {
+        "bg": "rgb(26, 40, 60)",
+        "ink": "rgb(179, 194, 214)",
+        "ratio": 8.214456119924238,
+        "selector": ".embedded-studio [role=status]"
+      },
+      {
+        "bg": "rgb(41, 61, 101)",
+        "ink": "rgb(179, 194, 214)",
+        "ratio": 5.951929333180127,
+        "selector": ".workspace-shot-select small"
+      }
+    ],
+    "disabled": {
+      "disabled": true,
+      "opacity": "0.28"
+    },
+    "violations": [
+      {
+        "id": "landmark-one-main",
+        "impact": "moderate",
+        "nodes": 2
+      },
+      {
+        "id": "page-has-heading-one",
+        "impact": "moderate",
+        "nodes": 2
+      }
+    ],
+    "incomplete": [
+      {
+        "id": "aria-prohibited-attr",
+        "nodes": 1
+      },
+      {
+        "id": "color-contrast",
+        "nodes": 4
+      },
+      {
+        "id": "skip-link",
+        "nodes": 1
+      }
+    ]
+  },
+  {
+    "name": "拿铁",
+    "theme": "light",
+    "inks": [
+      {
+        "selector": "button[aria-label=\"导出 MP4\"]",
+        "ink": "rgb(0, 0, 0)",
+        "bg": "rgb(254, 100, 11)",
+        "ratio": 7.0418670955225755
+      },
+      {
+        "selector": ".cc-main-tab:not(.selected)",
+        "ink": "rgb(86, 89, 112)",
+        "bg": "rgb(239, 241, 245)",
+        "ratio": 6.07164253399741
+      },
+      {
+        "selector": ".cc-ruler-head span",
+        "ink": "rgb(87, 90, 114)",
+        "bg": "rgb(239, 241, 245)",
+        "ratio": 5.969978731678218
+      },
+      {
+        "selector": ".cc-track-name-title",
+        "ink": "rgb(255, 255, 255)",
+        "bg": "rgb(59, 75, 216)",
+        "ratio": 6.595548346249063
+      },
+      {
+        "selector": ".cc-track-name-custom",
+        "ink": "rgb(255, 255, 255)",
+        "bg": "rgb(59, 75, 216)",
+        "ratio": 6.595548346249063
+      }
+    ],
+    "hostInks": [
+      {
+        "bg": "rgb(255, 255, 255)",
+        "ink": "rgb(89, 107, 131)",
+        "ratio": 5.446642681822732,
+        "selector": ".embedded-studio [role=status]"
+      },
+      {
+        "bg": "rgb(234, 240, 255)",
+        "ink": "rgb(89, 107, 131)",
+        "ratio": 4.773987575890371,
+        "selector": ".workspace-shot-select small"
+      }
+    ],
+    "disabled": {
+      "disabled": true,
+      "opacity": "0.28"
+    },
+    "violations": [
+      {
+        "id": "landmark-one-main",
+        "impact": "moderate",
+        "nodes": 2
+      },
+      {
+        "id": "page-has-heading-one",
+        "impact": "moderate",
+        "nodes": 2
+      }
+    ],
+    "incomplete": [
+      {
+        "id": "aria-prohibited-attr",
+        "nodes": 1
+      },
+      {
+        "id": "color-contrast",
+        "nodes": 4
+      },
+      {
+        "id": "skip-link",
+        "nodes": 1
+      }
+    ]
+  }
+]

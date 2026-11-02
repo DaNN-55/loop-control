@@ -1,0 +1,3 @@
+{"url":"/api/local/episode-commands","status":409,"body":{"error":"同一操作标识不能用于不同内容。"}}
+{"url":"/api/local/episode-commands","status":409,"body":{"error":"该连接尚未启用或已停用此模型，请读取模型并启用后重新选择。"}}
+{"url":"/api/local/episode-commands","status":409,"body":{"error":"已有图片任务正在进行或提交结果未知，请先核对已有任务。"}}

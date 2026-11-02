@@ -1,0 +1,145 @@
+
+ RUN  v3.2.7 /private/tmp/loop-ui-audit-9BF3TG/source
+
+stderr | src/local-app/productionSelection.integration.test.ts > without any account budget, explicit image selections freeze two independent connections without blueprint image authority
+FINAL32_INNER_ERROR ConfigurationError: 请先确认本次调用与费用预留。
+    at ProductionWorkspaceCommands.execute [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/productionWorkspaceCommands.ts:77:64[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:129:77
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m409[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/productionSelection.integration.test.ts > without any account budget, explicit image selections freeze two independent connections without blueprint image authority
+FINAL32_INNER_ERROR ConfigurationError: 请先确认本次调用与费用预留。
+    at ProductionWorkspaceCommands.execute [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/productionWorkspaceCommands.ts:77:64[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:129:77
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m409[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/productionSelection.integration.test.ts > without any account budget, explicit image selections freeze two independent connections without blueprint image authority
+FINAL32_INNER_ERROR ConfigurationError: 请先确认本次调用与费用预留。
+    at ProductionWorkspaceCommands.execute [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/productionWorkspaceCommands.ts:77:64[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:129:77
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m409[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/productionSelection.integration.test.ts > exceeded historical account ceilings do not block images; invalid requests and unknown submission fencing remain
+FINAL32_INNER_ERROR ConfigurationError: 所选服务不支持该模型或预设。
+    at resolveProductionSelection [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/productionSelection.ts:15:215[90m)[39m
+    at describe [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceCallConfirmation.ts:33:277[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at prepareWorkspaceCall [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceCallConfirmation.ts:58:65[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:129:77
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m400[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/productionSelection.integration.test.ts > exceeded historical account ceilings do not block images; invalid requests and unknown submission fencing remain
+FINAL32_INNER_ERROR ConfigurationError: 图片生成设置不可用。
+    at describe [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceCallConfirmation.ts:36:337[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at prepareWorkspaceCall [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceCallConfirmation.ts:58:65[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:129:77
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m400[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/productionSelection.integration.test.ts > exceeded historical account ceilings do not block images; invalid requests and unknown submission fencing remain
+FINAL32_INNER_ERROR ConfigurationError: 图片设置包含不支持的参数。
+    at queueWorkspaceImageCandidates [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceImageGeneration.ts:26:92[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at executeWorkspaceVisualCandidate [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceVisualCandidates.ts:84:3[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:129:77
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m400[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/productionSelection.integration.test.ts > exceeded historical account ceilings do not block images; invalid requests and unknown submission fencing remain
+FINAL32_INNER_ERROR ConfigurationError: 参考图或首帧已变化，请重新选择本期图片。
+    at describe [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceCallConfirmation.ts:40:250[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at prepareWorkspaceCall [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceCallConfirmation.ts:58:65[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:129:77
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m409[39m,
+  preflight: [90mundefined[39m
+}
+
+ ❯ src/local-app/productionSelection.integration.test.ts (3 tests | 3 failed) 4317ms
+   × without any account budget, explicit image selections freeze two independent connections without blueprint image authority 1636ms
+     → {"error":"请先确认本次调用与费用预留。"}: expected 409 to be 200 // Object.is equality
+   × exceeded historical account ceilings do not block images; invalid requests and unknown submission fencing remain 1460ms
+     → expected 409 to be 400 // Object.is equality
+   × legacy queued image snapshots execute unchanged after content-only saves and new requests still require a selection 1220ms
+     → Current authorized image configuration required
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/productionSelection.integration.test.ts > without any account budget, explicit image selections freeze two independent connections without blueprint image authority
+AssertionError: {"error":"请先确认本次调用与费用预留。"}: expected 409 to be 200 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 200[39m
+[31m+ 409[39m
+
+ ❯ src/local-app/productionSelection.integration.test.ts:29:217
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/local-app/productionSelection.integration.test.ts > exceeded historical account ceilings do not block images; invalid requests and unknown submission fencing remain
+AssertionError: expected 409 to be 400 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 400[39m
+[31m+ 409[39m
+
+ ❯ src/local-app/productionSelection.integration.test.ts:57:287
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/local-app/productionSelection.integration.test.ts > legacy queued image snapshots execute unchanged after content-only saves and new requests still require a selection
+error: Current authorized image configuration required
+ ❯ ../../../../Users/dan/Programs/loop-control/node_modules/pg/lib/client.js:694:17
+ ❯ src/local-app/productionSelection.integration.test.ts:83:514
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed (3)
+   Start at  23:26:19
+   Duration  4.97s (transform 401ms, setup 7ms, collect 546ms, tests 4.32s, environment 0ms, prepare 23ms)
+
+JSON report written to /Users/dan/Programs/loop-control/docs/verification/ui-optimization-20261102/final/selection-red/vitest.json

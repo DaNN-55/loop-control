@@ -1,0 +1,26 @@
+{
+  "boundary": "two normal authenticated main browser profiles → same real SDK/Owner project",
+  "staleWindowDraftBeforeOtherSave": "125%",
+  "staleWindowDraftAfterOtherSave": "125%",
+  "draftProof": "normal-old-window-draft-protected.png captured after other browser normal save; server latest140%",
+  "nativeOwnership": "newer normal editor steals SDK write ownership; old window disables Save and retains draft until explicit Reload Frame",
+  "ordinaryReclaim": {
+    "action": "Reload Frame with actual iframe.src including #/editor fragment",
+    "before": {
+      "revision": 8,
+      "sha": "4e0fc67b85b86e85876585627cc8b10cbf16ca71a7605d2d0a7bd90971fe4263"
+    },
+    "after": {
+      "revision": 8,
+      "sha": "4e0fc67b85b86e85876585627cc8b10cbf16ca71a7605d2d0a7bd90971fe4263"
+    }
+  },
+  "requests": [
+    {
+      "command": "saveWorkspaceStudio",
+      "status": 409,
+      "error": "工程版本已变化，请重新打开当前工作版本。"
+    }
+  ],
+  "state": "跳到主要内容\nLoop Control\n工作台\n生产单\n账号\n连接配置\n历史资料\nOpenChatCut\n系统状态\n收起侧栏\n返回工作区\n生产单\n⌘ K\n打开文件夹\n末班车前的一把伞\n四步制作\n1\n脚本确认\n已确认\n2\n素材准备与匹配\n0 项待准备\n3\n剪辑工作台\n字幕待校时\n4\n检查与交付\n待确认\n\n工程版本已变化，请重新打开当前工作版本。\n\n编辑器已连接\n专注剪辑\n生成、版本与对齐\n返回生产单\n保存工作版本\n\n工程版本已变化，请重新打开当前工作版本。\n\n镜头 2\n01\n雨停了，她把伞留在长椅上。\n02\n伞柄的纸条写着：留给下一个人。\n插入镜头"
+}

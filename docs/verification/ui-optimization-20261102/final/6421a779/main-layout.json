@@ -1,0 +1,30 @@
+[
+  {
+    "bodyScrollWidth": 390,
+    "focus": "<body><div id=\"root\"><div class=\"app-shell dan-ui product-ui impeccable-app\" data-sidebar=\"expanded\" data-theme=\"light\"><a class=\"skip-link\" href=\"#main-content\">跳到主要内容</a><aside class=\"sidebar\" aria-label=\"主导航\"><div class=\"lc-brand\" role=\"img\" aria-label=\"Loop Control\"><svg class=\"lc-brand-mark\" wi",
+    "height": 900,
+    "scrollWidth": 390,
+    "width": 390
+  },
+  {
+    "bodyScrollWidth": 640,
+    "focus": "<body><div id=\"root\"><div class=\"app-shell dan-ui product-ui impeccable-app\" data-sidebar=\"expanded\" data-theme=\"light\"><a class=\"skip-link\" href=\"#main-content\">跳到主要内容</a><aside class=\"sidebar\" aria-label=\"主导航\"><div class=\"lc-brand\" role=\"img\" aria-label=\"Loop Control\"><svg class=\"lc-brand-mark\" wi",
+    "height": 900,
+    "scrollWidth": 640,
+    "width": 640
+  },
+  {
+    "bodyScrollWidth": 900,
+    "focus": "<body><div id=\"root\"><div class=\"app-shell dan-ui product-ui impeccable-app\" data-sidebar=\"expanded\" data-theme=\"light\"><a class=\"skip-link\" href=\"#main-content\">跳到主要内容</a><aside class=\"sidebar\" aria-label=\"主导航\"><div class=\"lc-brand\" role=\"img\" aria-label=\"Loop Control\"><svg class=\"lc-brand-mark\" wi",
+    "height": 900,
+    "scrollWidth": 900,
+    "width": 900
+  },
+  {
+    "bodyScrollWidth": 1366,
+    "focus": "<body><div id=\"root\"><div class=\"app-shell dan-ui product-ui impeccable-app\" data-sidebar=\"expanded\" data-theme=\"light\"><a class=\"skip-link\" href=\"#main-content\">跳到主要内容</a><aside class=\"sidebar\" aria-label=\"主导航\"><div class=\"lc-brand\" role=\"img\" aria-label=\"Loop Control\"><svg class=\"lc-brand-mark\" wi",
+    "height": 900,
+    "scrollWidth": 1366,
+    "width": 1366
+  }
+]

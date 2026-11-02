@@ -1,0 +1,242 @@
+{
+  "axeVersion": "4.12.1",
+  "counts": {
+    "inapplicable": 42,
+    "incomplete": 3,
+    "passes": 44,
+    "violations": 4
+  },
+  "incomplete": [
+    {
+      "help": "Elements must only use permitted ARIA attributes",
+      "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/aria-prohibited-attr?application=axeAPI",
+      "id": "aria-prohibited-attr",
+      "impact": "serious",
+      "nodeCount": 1,
+      "nodes": [
+        {
+          "failureSummary": "Fix all of the following:\n  aria-label attribute is not well supported on a div with no valid role attribute.",
+          "html": "<div class=\"production-directory\" aria-label=\"本地文件夹\">",
+          "target": [
+            ".production-directory"
+          ]
+        }
+      ],
+      "tags": [
+        "cat.aria",
+        "wcag2a",
+        "wcag412",
+        "EN-301-549",
+        "EN-9.4.1.2",
+        "RGAAv4",
+        "RGAA-7.1.1"
+      ]
+    },
+    {
+      "help": "Elements must meet minimum color contrast ratio thresholds",
+      "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/color-contrast?application=axeAPI",
+      "id": "color-contrast",
+      "impact": "serious",
+      "nodeCount": 4,
+      "nodes": [
+        {
+          "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it is overlapped by another element",
+          "html": "<span class=\"cc-asset-duration\">0:03</span>",
+          "target": [
+            "iframe",
+            ".cc-asset-card[draggable=\"true\"]:nth-child(1) > .cc-asset-thumb-wrap > .cc-asset-duration"
+          ]
+        },
+        {
+          "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it is overlapped by another element",
+          "html": "<button class=\"cc-asset-name\" title=\"伞柄纸条.png\" tabindex=\"-1\">伞柄纸条.png</button>",
+          "target": [
+            "iframe",
+            "button[title=\"伞柄纸条.png\"]"
+          ]
+        },
+        {
+          "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it is overlapped by another element",
+          "html": "<span class=\"cc-asset-duration\">0:03</span>",
+          "target": [
+            "iframe",
+            ".cc-asset-card[draggable=\"true\"]:nth-child(2) > .cc-asset-thumb-wrap > .cc-asset-duration"
+          ]
+        },
+        {
+          "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it is overlapped by another element",
+          "html": "<button class=\"cc-asset-name\" title=\"站台黄伞.png\" tabindex=\"-1\">站台黄伞.png</button>",
+          "target": [
+            "iframe",
+            "button[title=\"站台黄伞.png\"]"
+          ]
+        }
+      ],
+      "tags": [
+        "cat.color",
+        "wcag2aa",
+        "wcag143",
+        "TTv5",
+        "TT13.c",
+        "EN-301-549",
+        "EN-9.1.4.3",
+        "ACT",
+        "RGAAv4",
+        "RGAA-3.2.1"
+      ]
+    },
+    {
+      "help": "The skip-link target should exist and be focusable",
+      "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/skip-link?application=axeAPI",
+      "id": "skip-link",
+      "impact": "moderate",
+      "nodeCount": 1,
+      "nodes": [
+        {
+          "failureSummary": "Fix any of the following:\n  Skip link target should become visible on activation",
+          "html": "<a class=\"skip-link\" href=\"#main-content\">跳到主要内容</a>",
+          "target": [
+            "a"
+          ]
+        }
+      ],
+      "tags": [
+        "cat.keyboard",
+        "best-practice",
+        "RGAAv4",
+        "RGAA-12.7.1"
+      ]
+    }
+  ],
+  "lifecycle": {
+    "effectiveLaunch": {
+      "browserLaunched": true,
+      "engine": "chrome",
+      "launchHash": 1360756712475076600
+    },
+    "launched": false,
+    "relaunchedBrowser": false,
+    "restartedBackground": false,
+    "restoreStatus": "not_configured",
+    "reused": true,
+    "saveStatus": "not_attempted"
+  },
+  "url": "http://127.0.0.1:5175/__story?view=episodes&episode=c7c71ff8-a628-4df6-af2e-6b6f4c8a6f98&step=editing",
+  "violations": [
+    {
+      "help": "Elements must only use supported ARIA attributes",
+      "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/aria-allowed-attr?application=axeAPI",
+      "id": "aria-allowed-attr",
+      "impact": "critical",
+      "nodeCount": 1,
+      "nodes": [
+        {
+          "failureSummary": "Fix all of the following:\n  ARIA attribute is not allowed: aria-expanded=\"false\"",
+          "html": "<input aria-label=\"查找生产单、账号或素材\" aria-expanded=\"false\" placeholder=\"查找生产单、账号或素材\" maxlength=\"200\" value=\"\">",
+          "target": [
+            "input[aria-label=\"查找生产单、账号或素材\"]"
+          ]
+        }
+      ],
+      "tags": [
+        "cat.aria",
+        "wcag2a",
+        "wcag412",
+        "EN-301-549",
+        "EN-9.4.1.2",
+        "RGAAv4",
+        "RGAA-7.1.1"
+      ]
+    },
+    {
+      "help": "Elements must only use permitted ARIA attributes",
+      "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/aria-prohibited-attr?application=axeAPI",
+      "id": "aria-prohibited-attr",
+      "impact": "serious",
+      "nodeCount": 2,
+      "nodes": [
+        {
+          "failureSummary": "Fix all of the following:\n  aria-label attribute cannot be used on a span with no valid role attribute.",
+          "html": "<span class=\"cc-asset-used-dot\" title=\"正在时间线中使用\" aria-label=\"正在时间线中使用\"></span>",
+          "target": [
+            "iframe",
+            ".cc-asset-card[draggable=\"true\"]:nth-child(1) > .cc-asset-thumb-wrap > .cc-asset-used-dot[title=\"正在时间线中使用\"][aria-label=\"正在时间线中使用\"]"
+          ]
+        },
+        {
+          "failureSummary": "Fix all of the following:\n  aria-label attribute cannot be used on a span with no valid role attribute.",
+          "html": "<span class=\"cc-asset-used-dot\" title=\"正在时间线中使用\" aria-label=\"正在时间线中使用\"></span>",
+          "target": [
+            "iframe",
+            ".cc-asset-card[draggable=\"true\"]:nth-child(2) > .cc-asset-thumb-wrap > .cc-asset-used-dot[title=\"正在时间线中使用\"][aria-label=\"正在时间线中使用\"]"
+          ]
+        }
+      ],
+      "tags": [
+        "cat.aria",
+        "wcag2a",
+        "wcag412",
+        "EN-301-549",
+        "EN-9.4.1.2",
+        "RGAAv4",
+        "RGAA-7.1.1"
+      ]
+    },
+    {
+      "help": "Document should have one main landmark",
+      "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/landmark-one-main?application=axeAPI",
+      "id": "landmark-one-main",
+      "impact": "moderate",
+      "nodeCount": 2,
+      "nodes": [
+        {
+          "failureSummary": "Fix all of the following:\n  Document does not have a main landmark",
+          "html": "<html lang=\"zh-CN\" data-theme=\"dark\" data-interface=\"impeccable\" data-row-density=\"compact\">",
+          "target": [
+            "html"
+          ]
+        },
+        {
+          "failureSummary": "Fix all of the following:\n  Document does not have a main landmark",
+          "html": "<html lang=\"zh-CN\" data-lc-host-tools=\"closed\" data-cc-skin=\"mocha\">",
+          "target": [
+            "iframe",
+            "html"
+          ]
+        }
+      ],
+      "tags": [
+        "cat.semantics",
+        "best-practice"
+      ]
+    },
+    {
+      "help": "Page should contain a level-one heading",
+      "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/page-has-heading-one?application=axeAPI",
+      "id": "page-has-heading-one",
+      "impact": "moderate",
+      "nodeCount": 2,
+      "nodes": [
+        {
+          "failureSummary": "Fix all of the following:\n  Page must have a level-one heading",
+          "html": "<html lang=\"zh-CN\" data-theme=\"dark\" data-interface=\"impeccable\" data-row-density=\"compact\">",
+          "target": [
+            "html"
+          ]
+        },
+        {
+          "failureSummary": "Fix all of the following:\n  Page must have a level-one heading",
+          "html": "<html lang=\"zh-CN\" data-lc-host-tools=\"closed\" data-cc-skin=\"mocha\">",
+          "target": [
+            "iframe",
+            "html"
+          ]
+        }
+      ],
+      "tags": [
+        "cat.semantics",
+        "best-practice"
+      ]
+    }
+  ]
+}

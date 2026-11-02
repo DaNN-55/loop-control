@@ -1,0 +1,50 @@
+
+ RUN  v3.2.7 /private/tmp/loop-ui-audit-9BF3TG/source
+
+stderr | src/local-app/productionSelection.integration.test.ts > without any account budget, explicit image selections freeze two independent connections without blueprint image authority
+FINAL32_INNER_ERROR ConfigurationError: 同一操作标识不能用于不同内容。
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:89:45
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m409[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/productionSelection.integration.test.ts > without any account budget, explicit image selections freeze two independent connections without blueprint image authority
+FINAL32_INNER_ERROR ConfigurationError: 该连接尚未启用或已停用此模型，请读取模型并启用后重新选择。
+    at resolveProductionSelection [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/productionSelection.ts:25:129[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at describe [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceCallConfirmation.ts:33:271[90m)[39m
+    at prepareWorkspaceCall [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceCallConfirmation.ts:58:65[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:129:77
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m409[39m,
+  preflight: [90mundefined[39m
+}
+
+stderr | src/local-app/productionSelection.integration.test.ts > without any account budget, explicit image selections freeze two independent connections without blueprint image authority
+FINAL32_INNER_ERROR ConfigurationError: 已有图片任务正在进行或提交结果未知，请先核对已有任务。
+    at queueWorkspaceImageCandidates [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceImageGeneration.ts:49:142[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at executeWorkspaceVisualCandidate [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/workspaceVisualCandidates.ts:84:3[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:129:77
+    at ownerTransaction [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/ownerTransaction.ts:8:16[90m)[39m
+    at LocalEpisodeCommands.executeCommand [90m(/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/episodeCommands.ts:86:16[90m)[39m
+    at [90m/private/tmp/loop-ui-audit-9BF3TG/source/[39msrc/local-app/localRoute.ts:137:14 {
+  status: [33m409[39m,
+  preflight: [90mundefined[39m
+}
+
+ ✓ src/local-app/productionSelection.integration.test.ts (3 tests | 2 skipped) 3147ms
+   ✓ without any account budget, explicit image selections freeze two independent connections without blueprint image authority  3146ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 2 skipped (3)
+   Start at  23:27:10
+   Duration  3.91s (transform 463ms, setup 9ms, collect 638ms, tests 3.15s, environment 0ms, prepare 27ms)
+
+JSON report written to /Users/dan/Programs/loop-control/docs/verification/ui-optimization-20261102/final/selection-green/vitest.json

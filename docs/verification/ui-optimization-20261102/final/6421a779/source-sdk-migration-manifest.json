@@ -1,0 +1,624 @@
+{
+  "sourceCommit": "6421a779ce1be462bda3c4e04157fecabeb5f627",
+  "sourceArchive": "git archive streamed to tar, full committed tree",
+  "productBehaviorOverlays": [],
+  "instrumentationOverlays": [
+    "src/local-app/localRoute.ts error JSONL/stderr only, guarded on diagnostic env",
+    "scripts/openchatcut-render.mjs child stdout/stderr only"
+  ],
+  "testOverlays": [
+    "src/local-app/uiAudit20261102.integration.test.ts",
+    "storyBrowser session handle and private zoom extension",
+    "localRoute diagnostic stderr and error JSONL only",
+    "openchatcut-render child stdout/stderr retention",
+    "test deadline overrides Pexels420s and sound600s",
+    "storyE2e synthetic 120-model provider reader; remote usage disabled"
+  ],
+  "sdkCommit": "72ddb3300cda4ed31cbd0bccbfc94fb29b8cffca",
+  "sdkVersion": "0.2.17",
+  "sdkDirty": "",
+  "migrations": [
+    {
+      "path": "002-owner.sql",
+      "sha256": "aa2b21848acafe049c214d0c82f6dd0fad06e44be1afb6a48922eda3413d9022"
+    },
+    {
+      "path": "003-media-roots.sql",
+      "sha256": "d209e2e49ef8cf9696ff28eda23ffa554ea548c797fdef3c94d2a5a101328d9d"
+    },
+    {
+      "path": "004-configuration.sql",
+      "sha256": "15b98c7e24bcc2b25a7b6783de68350ce736250aedc8cddd82667260148f5511"
+    },
+    {
+      "path": "005-configuration-lock.sql",
+      "sha256": "3abb670a6a4e8ffce99b84cd43c33c29ce34437b726b03cc85387e5f41674719"
+    },
+    {
+      "path": "006-configuration-revision-lock.sql",
+      "sha256": "93b7397f5a3f5ca0d63c6fd777922fd1e6cc823149faab5b3016876fc810a66a"
+    },
+    {
+      "path": "007-connections.sql",
+      "sha256": "e7eca42def840bd491ce8b6260b0294ef1dbdb13d8ad2a491fe59131ce557895"
+    },
+    {
+      "path": "008-connection-qualification.sql",
+      "sha256": "f7ee44ad334fcd4fcc8f2a677ba763ab012fdaa3d83e7d62d2d3090c23190549"
+    },
+    {
+      "path": "009-episode-input.sql",
+      "sha256": "b12947a9ff5ff626fbf64ebdae08cec8a524eccfed7a8f4656bead13a823d342"
+    },
+    {
+      "path": "010-input-scheduler-turn.sql",
+      "sha256": "ea70992e2c0609c72de74847b2201ae06f005d2161bcf726719ca896bbb986a2"
+    },
+    {
+      "path": "011-input-owner-lock.sql",
+      "sha256": "2cf8fcc821c3ff02b19d050001a718af2366e567d97d0d1f6fc0f2bb835f0344"
+    },
+    {
+      "path": "012-input-worker-fence-call.sql",
+      "sha256": "95a4279ef18a83732187606d74b51efd7a3096e0b37eeb79d60c7dc4ce4276b3"
+    },
+    {
+      "path": "013-storyboard.sql",
+      "sha256": "7d6d3c2e61e91183d846516a5c44d41a17a277d3c3cea30db3ab5577b67571a2"
+    },
+    {
+      "path": "014-narration.sql",
+      "sha256": "aabd3a50575ebd463c35c5adc6ed12f9923fbd53ba0ec037bab77e3d1077bba5"
+    },
+    {
+      "path": "015-narration-retry.sql",
+      "sha256": "99cf091c068a0d270db652a92ba2ca152d0d576f04717db72f9372104aada2d0"
+    },
+    {
+      "path": "016-media.sql",
+      "sha256": "36f63f01f68a12034743fbd0998e2f97353f18c69f8788968b38a6f48013606c"
+    },
+    {
+      "path": "017-media-fences.sql",
+      "sha256": "e360a89be558527fee95f58cca5928988e0928787e07d7ebe5838a90136d75b4"
+    },
+    {
+      "path": "018-media-source-mode.sql",
+      "sha256": "5174ce81cac117bc7cff795c58cb412d822d50e7da62fd6f7841277028b5a3be"
+    },
+    {
+      "path": "019-alignment-preview.sql",
+      "sha256": "7acb335e4322806f59143396f43cc2df482567f355eb0378a13591b01c7476c5"
+    },
+    {
+      "path": "020-source-audio-reuse.sql",
+      "sha256": "db1b06f9956759685aa240d5728f02f17f76e412e993e7de96fc3ee64ef7a11b"
+    },
+    {
+      "path": "021-alignment-fences.sql",
+      "sha256": "c05acb30247341d15b15a4a66e0f2d9d86d6d45384bf19f57de6c5d1d907bf2d"
+    },
+    {
+      "path": "022-source-workbench-fence.sql",
+      "sha256": "9268972010cf4cc2a9696de74544a32f0ccda09ad8b4234a25c2b5c542a9a5c0"
+    },
+    {
+      "path": "023-source-retry-readiness.sql",
+      "sha256": "c93733424c28dc5118d13abd8298166f7de12373e152cecbf111b8a7c55b1fc5"
+    },
+    {
+      "path": "024-auto-alignment-model.sql",
+      "sha256": "667de9bd4bde31548fc7b3651ff2fd2bb6b4f0eb363d7624a162fbed1588f6cf"
+    },
+    {
+      "path": "025-studio.sql",
+      "sha256": "0551afdfb46f3ff6a8df4b449455ff5e6354480a3adcf331330ce24e61fc193b"
+    },
+    {
+      "path": "026-studio-duration.sql",
+      "sha256": "f87c0e61e7484c4e727d5d500c44e467d7cc5385d702910deef97139ea281d79"
+    },
+    {
+      "path": "027-studio-freeze-binding.sql",
+      "sha256": "343c2fa15fa865680193f2e7b065ee497269d466d8d104e97ad8360b43742c4d"
+    },
+    {
+      "path": "028-delivery.sql",
+      "sha256": "b96a610217887d56ac97dbca694d15cc615d0ca28e5545684d155a71a842b173"
+    },
+    {
+      "path": "029-final-retry.sql",
+      "sha256": "4b55421cc92e0a8df8fec60320c6b6c240b1a07aa35efb5c0839f526a5e2631e"
+    },
+    {
+      "path": "030-owned-final-read.sql",
+      "sha256": "d2a3cb1a5751b0d7d791162f5178ad80835f653c618ca4d9be98f5e62fbaf77a"
+    },
+    {
+      "path": "031-delete-retired-counts.sql",
+      "sha256": "b6f45da3d43b86d31fd9a8ec2a072cefbcc79b0f7ce9a3e1a731d44acf67585a"
+    },
+    {
+      "path": "032-delete-managed-marker.sql",
+      "sha256": "42dde873294f37c54c82d981b4c58658c2db5206e6aa28dc0fce464ce5d3fe7b"
+    },
+    {
+      "path": "033-deletion-cleanup-receipt.sql",
+      "sha256": "4307122a05d410a2dcddbf4abf93feced12590a658dbf0899c663362a8db29f6"
+    },
+    {
+      "path": "034-delete-shot-drafts.sql",
+      "sha256": "4ca4de44560d0082434c80d6146a9e73572d9158958dc3b1844801abe621706b"
+    },
+    {
+      "path": "035-retry-history-status.sql",
+      "sha256": "762c14ce515c3ca998bb0c5a320c21ec962508ec3cdcdfda49ff989822cc633e"
+    },
+    {
+      "path": "036-native-automation.sql",
+      "sha256": "a3ef40daafc9e2d80172fd63cc9a3f2a805b49e1982c7a8445bfe712b7da0e93"
+    },
+    {
+      "path": "037-automation-attempts.sql",
+      "sha256": "9a8184724892dc93aa79c56a1854045e58f4f347e8fe1d9e7936a87980f6559a"
+    },
+    {
+      "path": "038-media-deployment.sql",
+      "sha256": "efa59ac839d3705e7740b94119f158456f8b869e908684a1f49839cd1365fee4"
+    },
+    {
+      "path": "039-caption-text-confirmation.sql",
+      "sha256": "f239b43bd2f66045f6f89b7cf58e70d1148b29e67d3a828500e5598824f75d04"
+    },
+    {
+      "path": "040-native-output-publication.sql",
+      "sha256": "e37033e5b167eadca17862ec1ef2a59aeefc9d71ddf2b66c7178d9d25b70a8a1"
+    },
+    {
+      "path": "041-shared-planning-freeze.sql",
+      "sha256": "c3e260dab40a48cc1fc874794899663d8636a19e228d7a55ee6677df482f5e0c"
+    },
+    {
+      "path": "042-native-output-ownership.sql",
+      "sha256": "3354f8f837b2f306d0361f6ec88852d12a7bbef826d2f9590dd28898e295f67c"
+    },
+    {
+      "path": "043-owner-policy-initplans.sql",
+      "sha256": "361ff9ae7f716aa3e97fe4372d168adab3ab8642b4f431c9f99da1044ca3fd09"
+    },
+    {
+      "path": "044-owner-password.sql",
+      "sha256": "1f804ba99eb4766d255922a0ecd23edf1835913851ba2e3fd170379c7fc026e6"
+    },
+    {
+      "path": "045-owner-password-digest-validation.sql",
+      "sha256": "ef289149ec58b446d8c51aff8d99220f5b72cf92b9b0744995f05d92297a44dd"
+    },
+    {
+      "path": "046-owner-episode-title.sql",
+      "sha256": "f9a8cb7b29373c30fc70bb2319666917bc22a2c14a6602b14207698769228714"
+    },
+    {
+      "path": "047-owner-workspace-commands.sql",
+      "sha256": "819ca6030a8d5cbe17a851cf48c7a1718d91b6d2dc9bc0a562168671c1425b24"
+    },
+    {
+      "path": "048-native-planning-attempt-limits.sql",
+      "sha256": "0479594a5b1d5efca6fa9d15b136b056556f1044a962c72dd630e9508f6b997c"
+    },
+    {
+      "path": "049-historical-generation-ledgers.sql",
+      "sha256": "924e03b28bd74aa4e257cd72ed89f42121607417f7135f6f169a559c3217cf1c"
+    },
+    {
+      "path": "050-historical-connection-metadata.sql",
+      "sha256": "8d502f7c4a5b690040ba820140154601987c801a6f763355cbec4ea3fabc9e91"
+    },
+    {
+      "path": "051-historical-media-integrity.sql",
+      "sha256": "8361a0316665be02130d61fb98c714b9c62be2a5a9ed9a18946a0b9eb3e5ed8d"
+    },
+    {
+      "path": "052-native-wan.sql",
+      "sha256": "6ce43152ed7fecbf2db9f52c829aa60f049ed3f23cbb67b4841fe2b379bcc2a3"
+    },
+    {
+      "path": "053-native-wan-reservation-scope.sql",
+      "sha256": "4230be18fcb766527b3144b479c45f1b0348a8a0c1286f5a2e2e8c223d43843e"
+    },
+    {
+      "path": "054-native-wan-explicit-requests.sql",
+      "sha256": "103ffb633a7a665727f96e32640aca6a719afc65b46c1ece8cfb69671826f736"
+    },
+    {
+      "path": "055-history-consolidation.sql",
+      "sha256": "489792ad9024f0986bb99bd663130f1abc0d4bfb507be243f5fd7666ad787492"
+    },
+    {
+      "path": "056-history-projection-results.sql",
+      "sha256": "6330cf341ccba235f3f0c04578e53dd92a8b4979825199b6568a2516824cd1c6"
+    },
+    {
+      "path": "057-history-file-secret-references.sql",
+      "sha256": "5a999f6546a71e9563d63617bcbfaf57d09a67616b1400ac29b7c890f4526fd5"
+    },
+    {
+      "path": "058-readonly-historical-episodes.sql",
+      "sha256": "3a0a0c43825a09c4a096ff4533e0ea15fa2faf1b57f0fb7d797b6218384cf696"
+    },
+    {
+      "path": "059-historical-notification-fence.sql",
+      "sha256": "ede77cbed101518aade8df2316a64f9c62f5ad7f462341e4f930b5e510ce6c6d"
+    },
+    {
+      "path": "060-historical-task-read-scope.sql",
+      "sha256": "075839ebf5f449ff42eda72fa8a0d817340c9123830cbdc5915e46398718bfc7"
+    },
+    {
+      "path": "061-current-notification-status.sql",
+      "sha256": "3e158acd411f7ee6ee3328d5d74cb45cbb7e3025f18a7c0622d931851f9467d4"
+    },
+    {
+      "path": "062-isolate-historical-automation.sql",
+      "sha256": "3d2f5461597df964ac329cba491d8b435e76cdaa47b60894d4eb22bcc0ad6b32"
+    },
+    {
+      "path": "063-official-video-providers.sql",
+      "sha256": "7d0d7111da17f6baa332239a6f36a3f359638f5da77a1243ebdc330afeb35195"
+    },
+    {
+      "path": "064-secret-administration.sql",
+      "sha256": "9e612b9883d8090241c56d8f67d38f4bcd89f2ad47be525bd75bf2d516eb10c0"
+    },
+    {
+      "path": "065-account-audit-deletion.sql",
+      "sha256": "a4a9235d459eb81116fb76631eee1c45374c9a661ef9a02253a0a8f2b8347748"
+    },
+    {
+      "path": "066-retire-cloudflare-google-tts.sql",
+      "sha256": "50c0a20cfd3540f47f5b698c6414fb786d9e0e6bbc552476743e4b310d90d096"
+    },
+    {
+      "path": "067-history-organization.sql",
+      "sha256": "cca45a58dc3243502ff24dd896fc2fd879191cc8e8ab5767e01a962810fc47a0"
+    },
+    {
+      "path": "068-archived-episode-deletion.sql",
+      "sha256": "9bc9122bf15e6a533d8849d8137b3555ac350ebfa44d6538ac49fae08dc3d600"
+    },
+    {
+      "path": "069-legacy-episode-cleanup.sql",
+      "sha256": "51c9b328af5433daf1bef09615b6e127f3b568b96b4b01ace531d95df3fa0e36"
+    },
+    {
+      "path": "070-history-episode-navigation.sql",
+      "sha256": "09c6c728ffee6ae095f438339a0c6aa0eac88e996e9ca5ca4b2c7d78210c550d"
+    },
+    {
+      "path": "071-history-episode-file-query.sql",
+      "sha256": "c5522cd60fe6c70731a410d7e07f3ccaf550ae70204c7ca685a87b33ebc9f496"
+    },
+    {
+      "path": "072-history-episode-file-precedence.sql",
+      "sha256": "9245758881a7230b040d7db9bfaa4f5b22695fd060d3faccc7d85bbcf65740a7"
+    },
+    {
+      "path": "073-empty-account-directory-cleanup.sql",
+      "sha256": "e3391a1bfb6c7b93597acc57f1ef77f5927b85c13f61bc4e1d66b5810ec85a27"
+    },
+    {
+      "path": "074-script-production-v2.sql",
+      "sha256": "75a361cbdb49c080eb86a2a3d66f3216830f89871c19f90ac96f5cc7733d6c17"
+    },
+    {
+      "path": "075-history-production-retention.sql",
+      "sha256": "60929a75efcb0b375b0f84e394b45587d84f39b30c000b4ded46d1f16020aa7e"
+    },
+    {
+      "path": "076-history-retained-file-variants.sql",
+      "sha256": "5cd0bde93be141a370b63d6ee5396f9debb2912b6721c2c2af0536c85eb43881"
+    },
+    {
+      "path": "077-history-episode-deletion.sql",
+      "sha256": "5780f834951acb961681bafca506e7fe9bffeabd4468f64cedf2324f8dc9462f"
+    },
+    {
+      "path": "078-history-deletion-child-ownership.sql",
+      "sha256": "85cdcf501a9392101dbf23c53cf107189021dbe98cba7c93ed124632e4688989"
+    },
+    {
+      "path": "079-owner-preferences.sql",
+      "sha256": "57f6c838cbda620973054c58a2b5c073511dc1ecd826489e39a0f560d18164ad"
+    },
+    {
+      "path": "080-owner-task-failure-notifications.sql",
+      "sha256": "8637aa08639c4a6e38965fd4565dae3c19b3ceb29b1f22e421774638b46a978d"
+    },
+    {
+      "path": "081-health-check-details.sql",
+      "sha256": "2f0fa1d09975b2be1a3019093bc55a9c8db0d1c4867429d7589a720d2704dec2"
+    },
+    {
+      "path": "082-production-revisions.sql",
+      "sha256": "2dbaacb3662df09f8fa42fdcaf847b63eb55603fecd8679e2613ef85f2ca15e8"
+    },
+    {
+      "path": "083-legacy-episode-archive.sql",
+      "sha256": "1eb2fe9bc71877d3b4388b1840aed109903610188895386b6dfde7f4ba27bb06"
+    },
+    {
+      "path": "083-pending-structure-revision-fence.sql",
+      "sha256": "da3a64532d44a386daf917f148c0653457ad43582e1da5ba1886a5ff47c46b44"
+    },
+    {
+      "path": "084-four-step-workspace.sql",
+      "sha256": "9885be8d1c49f25628bfc463b26766d18fd3f39f83ac475cf4f0ddb8597f996e"
+    },
+    {
+      "path": "086-workspace-images.sql",
+      "sha256": "314a2b190cb3e16a2c60677b88330e1a46abf43a4f2cdaa7c591a598390e27d0"
+    },
+    {
+      "path": "087-workspace-narration.sql",
+      "sha256": "0095662c87e88f42ed485797b48a65adfa1063eb4bc7d4d8516ad958b49c2153"
+    },
+    {
+      "path": "088-workspace-audio.sql",
+      "sha256": "842e7687a34f868854b8f785c1d17e5d9c8e5744c5e3c408c2def60aefe9c3db"
+    },
+    {
+      "path": "089-workspace-captions.sql",
+      "sha256": "da5e303897ce36a81c1a25d26087b263ec850ee3ef065432b69b9040a515cefb"
+    },
+    {
+      "path": "090-workspace-candidates.sql",
+      "sha256": "f02e7d9f878e0489d3734c3c97162dd5bd37f48de1464cbd7322ab8ea1665e02"
+    },
+    {
+      "path": "091-workspace-visual-candidates.sql",
+      "sha256": "aab4b8be0b885a06650b389a18cb11513340259f0edfd57010b49910539f7374"
+    },
+    {
+      "path": "092-workspace-shot-caption-identity.sql",
+      "sha256": "4df30439f5fe9b4b5dcd37e8a1c504d0ac6388583baeb9465b0ae40a7679b6ce"
+    },
+    {
+      "path": "093-workspace-export.sql",
+      "sha256": "4f0067981324414d4ccf50d2a170d10359142769f09b3b5427fe7991e17f7bce"
+    },
+    {
+      "path": "094-workspace-delivery.sql",
+      "sha256": "109da65f28f3ba91369152f1231e2a9ca9fcfc800da0f120b4342aee408c40e2"
+    },
+    {
+      "path": "095-formal-workflow.sql",
+      "sha256": "405b9c800aaaff4153ea8a96d1b4e229629041d1d5060cd139be194f9ac66ee9"
+    },
+    {
+      "path": "096-workspace-episode-deletion.sql",
+      "sha256": "907057c3aeab21f1312cdfd51bce6b65ede02fb6bc1dfaeaafd1c21f9a0067be"
+    },
+    {
+      "path": "097-workspace-image-generation.sql",
+      "sha256": "3389125fe5e3a356942d5231070cd6ac4cee464ddc546af7cfb6ccd5f121965e"
+    },
+    {
+      "path": "098-workspace-formatting-resume.sql",
+      "sha256": "643ac99037ccc21c8b897ad5751b975d4a048921523f83602337766e58bec7fb"
+    },
+    {
+      "path": "100-production-request-selection.sql",
+      "sha256": "5571dedeb64e8e61e8411d2b95c431817cfac962bca71324b83c0833d0de0626"
+    },
+    {
+      "path": "101-production-video-selection.sql",
+      "sha256": "15e5eab7f332c884a4e5916ff20e82d2b469db9c2e918bf3f329e02a35b60a99"
+    },
+    {
+      "path": "102-workspace-pexels.sql",
+      "sha256": "98ff257f64addd23732585dcecdec3f672305e45fe4212fb11e8b97e3977d7e4"
+    },
+    {
+      "path": "103-workspace-speech-selection.sql",
+      "sha256": "45dd489b0e81127a21b4f3f980846553180db31c171feb5d52488ee6986c845d"
+    },
+    {
+      "path": "104-production-audio-selection.sql",
+      "sha256": "ee5aa2b44c9b440e06a0ec4a3e12b45c6c4b97680013d1ad77c1683870396ea7"
+    },
+    {
+      "path": "105-account-asset-directories.sql",
+      "sha256": "754504c0cf08d5b2bcf1fad68267d35e328a2e3b402509ee54d6b6b035068424"
+    },
+    {
+      "path": "106-account-directory-migrations.sql",
+      "sha256": "2f7ed501015a318c960a61b25fe70f71c2f2d7749c2dd6c3169fa921daae4aa2"
+    },
+    {
+      "path": "107-retire-blueprint-reviews.sql",
+      "sha256": "6279405c038dd1d694cf61645cfda3713b72f2cda9608c92cb50b6b71aff1976"
+    },
+    {
+      "path": "108-content-blueprint-preparation-selection.sql",
+      "sha256": "dabc828afdbe2740a6f6a07017954ac659b867c684945ccd5e47ada88e39ef2b"
+    },
+    {
+      "path": "109-workspace-generation-deletion.sql",
+      "sha256": "05e6bc8fad50f1fb27dbc338725f288c86797fbe2e8fef4d5073ccbae86a4078"
+    },
+    {
+      "path": "110-episode-storage-locations.sql",
+      "sha256": "59525235b9d0c3ef5ed002f74a0c0d9cf1ae1c50a9d7b918891998ed96bc4003"
+    },
+    {
+      "path": "111-global-media-root.sql",
+      "sha256": "b01ce5afb6f9fa1011aeeb3edb71fad9041fe60e838b61bddcf9bd4473643b6d"
+    },
+    {
+      "path": "112-series-extension-rules.sql",
+      "sha256": "214a31ec34146239630ecc5634d28c06f0af1be05c0b4237ea03f0418c5bce62"
+    },
+    {
+      "path": "113-automatic-account-directories.sql",
+      "sha256": "20dcac014deafcd8e893b5161eb5edd6fa4e44f2ff305e0a7032c56366c0157a"
+    },
+    {
+      "path": "114-series-storage-containers.sql",
+      "sha256": "fc2e75dfa098f77c4b509e61dd01374f1d467624550fdcff4ba8c90300dd97b2"
+    },
+    {
+      "path": "115-exact-episode-deletion-intents.sql",
+      "sha256": "84e423f36b8f8da167fcda443bc9e35fa14832c29e0706f667c2ea1fcbbd1792"
+    },
+    {
+      "path": "117-input-storage-locations.sql",
+      "sha256": "39aa149b287bad157b1e458a30f08a469aff636a50a242befb834e61a7a992bf"
+    },
+    {
+      "path": "118-visual-storage-locations.sql",
+      "sha256": "f476760a12395deffc891fe64960bf1539067a16f4bba02e5dd1b0348eee43b3"
+    },
+    {
+      "path": "119-audio-caption-storage-locations.sql",
+      "sha256": "c219245ea39965df221b11fcc98c5afb29e6b69a3c4c4d86d46cb334b83dc028"
+    },
+    {
+      "path": "120-native-workspace-storage-locations.sql",
+      "sha256": "cf8dbcc79c827b70f3ae03e9b871c4128f01523f08792d79cecbd07170d62f70"
+    },
+    {
+      "path": "121-restored-media-deployment.sql",
+      "sha256": "0327dfff621d7340844134ebd63350ebe076ae1afdcbdf33c94b6760d3e6a236"
+    },
+    {
+      "path": "122-automatic-episode-directories.sql",
+      "sha256": "93dddcf5553746b122f81cb8bdadc09e99790e529498a884124d9bf8a26b56b8"
+    },
+    {
+      "path": "123-legacy-storage-adoption.sql",
+      "sha256": "6f08deeeab8c32fe525ad19d26a3d298f8e49a490547f599a9425cbded2ba47e"
+    },
+    {
+      "path": "124-episode-collection-moves.sql",
+      "sha256": "7b3e2af761d9a49bf900ea3b0d74e214a06558ebd43441c85a567d54be7e8c7d"
+    },
+    {
+      "path": "125-global-media-root-plans.sql",
+      "sha256": "993b0a6ace94ffa55426ef80f3a70cb2a5496d9e5e5d2875dea3466b93335e38"
+    },
+    {
+      "path": "126-global-media-root-execution.sql",
+      "sha256": "95afd1612bd8eac5ec60f79d36890e6aa8475c8dfded3b0bc3925b2ee81c1312"
+    },
+    {
+      "path": "127-connection-model-settings.sql",
+      "sha256": "c3167eedf0ae93adee46503fefebf9e13ebaaa23d1acc2cb86eb7b02bccfea21"
+    },
+    {
+      "path": "128-connection-model-discovery.sql",
+      "sha256": "30bf45f0c3a7eacba31fa6accdebcb1cdd6bb5112dc9353cbbd8ac75287ad722"
+    },
+    {
+      "path": "129-bailian-video-models.sql",
+      "sha256": "ed77469c3540d135c034612e2763b439cbcc276c365813b3c28742cfe1b82ace"
+    },
+    {
+      "path": "130-workspace-manual-narration.sql",
+      "sha256": "8bc5ae3b9fdc2deb13705ead950c92f87c99f469d5cfcdd120fb365df19c20ab"
+    },
+    {
+      "path": "131-retire-account-generation-budgets.sql",
+      "sha256": "8d76c48d671ab512718d5489b3bf734e540793423ca00a29684aa693ca50793f"
+    },
+    {
+      "path": "132-connection-billing.sql",
+      "sha256": "535aa9a9a8d2df274faf24f34cdcb0d81cfe010e675734c196999ce1889ba3b7"
+    },
+    {
+      "path": "133-native-output-publication-fences.sql",
+      "sha256": "e067390efcebc59cc6b51a2f550851722dfaddfc42d1b69092170ca0af06743b"
+    },
+    {
+      "path": "134-workspace-call-confirmations.sql",
+      "sha256": "dc9318ef85a63cca331f21cecefae20668b48c49c91a28a54fd64d5454649962"
+    },
+    {
+      "path": "135-workspace-call-confirmation-lifecycle.sql",
+      "sha256": "cd09ce4090a8b9845f442ec0fa97ed5446a1a961298d45de2ff428c4996f0d6f"
+    },
+    {
+      "path": "136-workspace-generation-reconciliation.sql",
+      "sha256": "21f6b624c798e7853fd3b241f34b4b2de8d580b0c7c7a7bc209763d055a2fb55"
+    },
+    {
+      "path": "137-workspace-audio-defaults.sql",
+      "sha256": "793db8709f8b15e36468e897adf18f10b6e790af0341dc8003bc7f09d91c5bfc"
+    },
+    {
+      "path": "138-owner-notification-channels.sql",
+      "sha256": "67194acc083500729cef348ede5fc10332474e0dde8c9f980c43d89819fd1cad"
+    }
+  ],
+  "nodeModules": "read-only shared symlink; private Vite cache",
+  "paidCalls": 0,
+  "overlayHashes": [
+    {
+      "path": "src/local-app/uiAudit20261102.integration.test.ts",
+      "sha256": "a01b8f849bb8273b373b2f508e4547978993af77bc248737ad166bd678adf7c5"
+    },
+    {
+      "path": "src/local-app/storyBrowser.fixture.ts",
+      "sha256": "973f2d496216cbab8b9727a9c7536524bc6e78d137c7784ccd3e6697dcd11392"
+    },
+    {
+      "path": "src/local-app/storyE2e.fixture.ts",
+      "sha256": "4cf2ae8b2b7fb73e6e139a08fa92ade2a537dae30b7d5b111b86b88be24647bd"
+    },
+    {
+      "path": "src/local-app/localRoute.ts",
+      "sha256": "9db4fdd794e8cd1a468ecf3897fd4944903a9452207b3a6130fb1850e184f8a6"
+    },
+    {
+      "path": "scripts/openchatcut-render.mjs",
+      "sha256": "f2998b0f88657e871b69abc93ca90314f782f4c7631a7eb9e7a3c447104a6098"
+    },
+    {
+      "path": "src/local-app/workspaceBundledSounds.integration.test.ts",
+      "sha256": "00890a41d76cd5b20ddf27e328224c17bee0ca23dbb55e943761795c56b72dc1"
+    },
+    {
+      "path": "src/local-app/workspacePexels.integration.test.ts",
+      "sha256": "53501fb5b9619d4e79666696789b7ce99a335b2c1988d41fd53a251b73abe5e7"
+    }
+  ],
+  "sourceTree": "9e0f037ba1a7538bf4dedd5f0f507e13ee6f2e20",
+  "runtimeManifestSha256": "d7b15fcac2b22370460fc3822b4cd9519051eede7c38b6506f3c3ac805f84c9c",
+  "finalRootChecks": {
+    "sourceCommit": "6421a779ce1be462bda3c4e04157fecabeb5f627",
+    "check": 0,
+    "runtimePrepare": 0,
+    "testFilesPassed": 233,
+    "testsPassed": 1557,
+    "legacyTestsSkipped": 1,
+    "build": 0,
+    "source": "/private/tmp/loop-ui-final-check-lg_pdhqa"
+  },
+  "sourceRelationships": [
+    {
+      "commit": "b7a059d39d5cef4a7baf100f1eb308beb7235076",
+      "role": "preliminary only, no final verdict reused silently"
+    },
+    {
+      "commit": "ccb9470df3139d847e3be36de88ded21d0ba7f9c",
+      "role": "earlier complete normal editor concurrency proof; relevant host/bridge/production persistence paths identical to642, explicit reuse",
+      "delta": [
+        "docs/verification/ui-optimization-20261102/final-a11y-fixes.md",
+        "scripts/openchatcut-accessibility.mjs",
+        "scripts/openchatcut-accessibility.test.mjs",
+        "src/local-app/LocalCatalogApp.search.test.tsx",
+        "src/local-app/WorkspaceSearchPanel.tsx",
+        "src/local-app/WorkspaceVisualCandidatesPanel.test.tsx"
+      ]
+    }
+  ]
+}

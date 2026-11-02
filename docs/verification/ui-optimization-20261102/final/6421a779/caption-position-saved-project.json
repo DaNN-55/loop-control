@@ -1,0 +1,390 @@
+{
+  "version": 3,
+  "loopControl": {
+    "version": "four-step-workspace/v1",
+    "inputFingerprint": "01439216-d50e-498f-8020-087515356848",
+    "transitionMode": "studio"
+  },
+  "assets": [
+    {
+      "id": "material-3456522f-014a-47ed-9150-45de65800923",
+      "name": "站台黄伞.png",
+      "kind": "image",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/0af8ddc9b5c99ac280b9764272a1f414bd2197597dba68c59bb68860b33fbfe4-站台黄伞.png",
+      "durationInFrames": 90,
+      "sourceRevision": "source-v1-0kvwuuc0-mgh9o"
+    },
+    {
+      "id": "material-7c6c49a8-22b5-4ace-94b4-242b82ec9d4c",
+      "name": "伞柄纸条.png",
+      "kind": "image",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/42bcaaa312285dea1dc4f5fa87f5e1ef3fc530b8aac22a2b5068e714b91039ad-伞柄纸条.png",
+      "durationInFrames": 90,
+      "sourceRevision": "source-v1-0uqlbud-6usafo"
+    }
+  ],
+  "mediaFolders": [],
+  "activeTimelineId": "loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283",
+  "timelines": [
+    {
+      "id": "loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283",
+      "name": "整期剪辑",
+      "order": 0,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "fit": "contain",
+      "items": [
+        {
+          "id": "shot-shot-01-07d1a112-4ff3-4a29-8b6e-930ab03c614a",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "image",
+          "name": "shot-01",
+          "startFrame": 0,
+          "durationInFrames": 90,
+          "width": 360,
+          "height": 640,
+          "transform": {
+            "scale": 1,
+            "x": 0,
+            "y": 0,
+            "rotation": 0
+          },
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "shot-01",
+            "clipId": "07d1a112-4ff3-4a29-8b6e-930ab03c614a",
+            "text": "雨停了，她把伞留在长椅上。",
+            "provenance": {
+              "materialRevisionId": "3456522f-014a-47ed-9150-45de65800923",
+              "sha256": "0af8ddc9b5c99ac280b9764272a1f414bd2197597dba68c59bb68860b33fbfe4",
+              "fileSize": 2211,
+              "kind": "image"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/0af8ddc9b5c99ac280b9764272a1f414bd2197597dba68c59bb68860b33fbfe4-站台黄伞.png",
+          "sourceAssetId": "material-3456522f-014a-47ed-9150-45de65800923",
+          "fit": "contain",
+          "volume": 0,
+          "sourceFilename": "站台黄伞.png",
+          "sourceContentHash": "0af8ddc9b5c99ac280b9764272a1f414bd2197597dba68c59bb68860b33fbfe4",
+          "sourceRevision": "source-sha256-0af8ddc9b5c99ac280b9764272a1f414bd2197597dba68c59bb68860b33fbfe4"
+        },
+        {
+          "id": "shot-shot-02-7f4e8420-c59b-4fd3-b304-82f316274d08",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "image",
+          "name": "shot-02",
+          "startFrame": 90,
+          "durationInFrames": 90,
+          "width": 360,
+          "height": 640,
+          "transform": {
+            "scale": 1,
+            "x": 0,
+            "y": 0,
+            "rotation": 0
+          },
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "shot-02",
+            "clipId": "7f4e8420-c59b-4fd3-b304-82f316274d08",
+            "text": "伞柄的纸条写着：留给下一个人。",
+            "provenance": {
+              "materialRevisionId": "7c6c49a8-22b5-4ace-94b4-242b82ec9d4c",
+              "sha256": "42bcaaa312285dea1dc4f5fa87f5e1ef3fc530b8aac22a2b5068e714b91039ad",
+              "fileSize": 2094,
+              "kind": "image"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/42bcaaa312285dea1dc4f5fa87f5e1ef3fc530b8aac22a2b5068e714b91039ad-伞柄纸条.png",
+          "sourceAssetId": "material-7c6c49a8-22b5-4ace-94b4-242b82ec9d4c",
+          "fit": "contain",
+          "volume": 0,
+          "sourceFilename": "伞柄纸条.png",
+          "sourceContentHash": "42bcaaa312285dea1dc4f5fa87f5e1ef3fc530b8aac22a2b5068e714b91039ad",
+          "sourceRevision": "source-sha256-42bcaaa312285dea1dc4f5fa87f5e1ef3fc530b8aac22a2b5068e714b91039ad"
+        }
+      ],
+      "trackOrder": [
+        "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+        "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_2"
+      ],
+      "tracks": {
+        "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1": {
+          "kind": "video",
+          "name": "画面"
+        },
+        "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_2": {
+          "kind": "caption",
+          "captions": {
+            "enabled": true,
+            "template": "plain",
+            "pacing": "phrase",
+            "sourceMode": "item",
+            "sourceEntries": [
+              {
+                "id": "workspace-caption-shot-shot-01",
+                "itemId": "manual:workspace-caption-shot-shot-01",
+                "label": "字幕",
+                "slotId": "workspace-caption-shot-shot-01-slot",
+                "visible": true,
+                "anchor": "bottom-center",
+                "offsetXRatio": 0,
+                "offsetYRatio": 0.09999999999999999,
+                "widthRatio": 0.8400000000000001,
+                "heightRatio": 0.74,
+                "words": [
+                  {
+                    "id": "story-line-0~0",
+                    "text": "雨停了，她把伞留在长椅上。",
+                    "start": 600,
+                    "end": 3300
+                  }
+                ],
+                "style": {
+                  "fontFamily": "sans-serif",
+                  "fontWeight": 600,
+                  "color": "#ffffff",
+                  "fontSize": 0.02684659090909091,
+                  "wholeLine": true
+                },
+                "loopControl": {
+                  "version": "workspace-caption/v1",
+                  "contentMode": "independent",
+                  "text": "雨停了，她把伞留在长椅上。",
+                  "spatial": {
+                    "version": "shot-caption-space/v2",
+                    "anchor": "bottom-center",
+                    "safeArea": "title-safe",
+                    "aspectRatio": "9:16",
+                    "insets": {
+                      "top": 0.08,
+                      "right": 0.08,
+                      "bottom": 0.18,
+                      "left": 0.08
+                    },
+                    "maxLines": 2,
+                    "maxCharactersPerLine": 16
+                  }
+                },
+                "trackOrder": 0
+              },
+              {
+                "id": "workspace-caption-shot-shot-02",
+                "itemId": "manual:workspace-caption-shot-shot-02",
+                "label": "字幕",
+                "slotId": "workspace-caption-shot-shot-02-slot",
+                "visible": true,
+                "anchor": "bottom-center",
+                "offsetXRatio": 0,
+                "offsetYRatio": 0.09999999999999999,
+                "widthRatio": 0.8400000000000001,
+                "heightRatio": 0.74,
+                "words": [
+                  {
+                    "id": "story-line-1~0",
+                    "text": "伞柄的纸条写着：留给下一个人。",
+                    "start": 3100,
+                    "end": 5800
+                  }
+                ],
+                "style": {
+                  "fontFamily": "sans-serif",
+                  "fontWeight": 600,
+                  "color": "#ffffff",
+                  "fontSize": 0.02684659090909091,
+                  "wholeLine": true
+                },
+                "loopControl": {
+                  "version": "workspace-caption/v1",
+                  "contentMode": "independent",
+                  "text": "伞柄的纸条写着：留给下一个人。",
+                  "spatial": {
+                    "version": "shot-caption-space/v2",
+                    "anchor": "bottom-center",
+                    "safeArea": "title-safe",
+                    "aspectRatio": "9:16",
+                    "insets": {
+                      "top": 0.08,
+                      "right": 0.08,
+                      "bottom": 0.18,
+                      "left": 0.08
+                    },
+                    "maxLines": 2,
+                    "maxCharactersPerLine": 16
+                  }
+                },
+                "trackOrder": 1
+              }
+            ],
+            "layoutPolicy": {
+              "mode": "manual-slots",
+              "slots": [
+                {
+                  "id": "workspace-caption-shot-shot-01-slot",
+                  "anchor": "bottom-center",
+                  "offsetXRatio": 0.1092896174863388,
+                  "offsetYRatio": 0.16153846153846152,
+                  "widthRatio": 0.8400000000000001,
+                  "heightRatio": 0.74
+                },
+                {
+                  "id": "workspace-caption-shot-shot-02-slot",
+                  "anchor": "bottom-center",
+                  "offsetXRatio": 0,
+                  "offsetYRatio": 0.09999999999999999,
+                  "widthRatio": 0.8400000000000001,
+                  "heightRatio": 0.74
+                }
+              ]
+            },
+            "perSource": {
+              "workspace-caption-shot-shot-01": {
+                "maxLines": 2
+              },
+              "workspace-caption-shot-shot-02": {
+                "maxLines": 2
+              }
+            }
+          }
+        }
+      },
+      "transitions": [],
+      "selectedId": null,
+      "captionsHidden": false,
+      "selectedIds": [],
+      "captions": {
+        "enabled": true,
+        "template": "plain",
+        "pacing": "phrase",
+        "sourceMode": "item",
+        "sourceEntries": [
+          {
+            "id": "workspace-caption-shot-shot-01",
+            "itemId": "manual:workspace-caption-shot-shot-01",
+            "label": "字幕",
+            "slotId": "workspace-caption-shot-shot-01-slot",
+            "visible": true,
+            "anchor": "bottom-center",
+            "offsetXRatio": 0,
+            "offsetYRatio": 0.09999999999999999,
+            "widthRatio": 0.8400000000000001,
+            "heightRatio": 0.74,
+            "words": [
+              {
+                "id": "story-line-0~0",
+                "text": "雨停了，她把伞留在长椅上。",
+                "start": 600,
+                "end": 3300
+              }
+            ],
+            "style": {
+              "fontFamily": "sans-serif",
+              "fontWeight": 600,
+              "color": "#ffffff",
+              "fontSize": 0.02684659090909091,
+              "wholeLine": true
+            },
+            "loopControl": {
+              "version": "workspace-caption/v1",
+              "contentMode": "independent",
+              "text": "雨停了，她把伞留在长椅上。",
+              "spatial": {
+                "version": "shot-caption-space/v2",
+                "anchor": "bottom-center",
+                "safeArea": "title-safe",
+                "aspectRatio": "9:16",
+                "insets": {
+                  "top": 0.08,
+                  "right": 0.08,
+                  "bottom": 0.18,
+                  "left": 0.08
+                },
+                "maxLines": 2,
+                "maxCharactersPerLine": 16
+              }
+            },
+            "trackOrder": 0
+          },
+          {
+            "id": "workspace-caption-shot-shot-02",
+            "itemId": "manual:workspace-caption-shot-shot-02",
+            "label": "字幕",
+            "slotId": "workspace-caption-shot-shot-02-slot",
+            "visible": true,
+            "anchor": "bottom-center",
+            "offsetXRatio": 0,
+            "offsetYRatio": 0.09999999999999999,
+            "widthRatio": 0.8400000000000001,
+            "heightRatio": 0.74,
+            "words": [
+              {
+                "id": "story-line-1~0",
+                "text": "伞柄的纸条写着：留给下一个人。",
+                "start": 3100,
+                "end": 5800
+              }
+            ],
+            "style": {
+              "fontFamily": "sans-serif",
+              "fontWeight": 600,
+              "color": "#ffffff",
+              "fontSize": 0.02684659090909091,
+              "wholeLine": true
+            },
+            "loopControl": {
+              "version": "workspace-caption/v1",
+              "contentMode": "independent",
+              "text": "伞柄的纸条写着：留给下一个人。",
+              "spatial": {
+                "version": "shot-caption-space/v2",
+                "anchor": "bottom-center",
+                "safeArea": "title-safe",
+                "aspectRatio": "9:16",
+                "insets": {
+                  "top": 0.08,
+                  "right": 0.08,
+                  "bottom": 0.18,
+                  "left": 0.08
+                },
+                "maxLines": 2,
+                "maxCharactersPerLine": 16
+              }
+            },
+            "trackOrder": 1
+          }
+        ],
+        "layoutPolicy": {
+          "mode": "manual-slots",
+          "slots": [
+            {
+              "id": "workspace-caption-shot-shot-01-slot",
+              "anchor": "bottom-center",
+              "offsetXRatio": 0.1092896174863388,
+              "offsetYRatio": 0.16153846153846152,
+              "widthRatio": 0.8400000000000001,
+              "heightRatio": 0.74
+            },
+            {
+              "id": "workspace-caption-shot-shot-02-slot",
+              "anchor": "bottom-center",
+              "offsetXRatio": 0,
+              "offsetYRatio": 0.09999999999999999,
+              "widthRatio": 0.8400000000000001,
+              "heightRatio": 0.74
+            }
+          ]
+        },
+        "perSource": {
+          "workspace-caption-shot-shot-01": {
+            "maxLines": 2
+          },
+          "workspace-caption-shot-shot-02": {
+            "maxLines": 2
+          }
+        }
+      }
+    }
+  ]
+}

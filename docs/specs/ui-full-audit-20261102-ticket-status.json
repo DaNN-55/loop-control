@@ -3,7 +3,7 @@
   "integrationBranch": "codex/ui-full-optimization-20261102",
   "baselineCommit": "b047f61d",
   "originalMain": "055914a9",
-  "phase": "final-validation",
+  "phase": "validated-awaiting-local-main",
   "tickets": [
     {
       "n": 1,
@@ -21,14 +21,15 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "integrated-pending-browser",
+        "state": "validated",
         "commit": "994f75c2",
         "focused": {
           "integration": 18,
           "components": 93,
           "backendTypes": true
         },
-        "evidence": "docs/verification/ui-optimization-20261102/tickets/01.md"
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/01.md",
+        "finalVerification": "docs/verification/ui-optimization-20261102/final/83-id-mapping.md"
       }
     },
     {
@@ -48,13 +49,14 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "integrated-pending-full-regression",
+        "state": "validated",
         "commit": "a161b33e",
         "focused": {
           "files": 2,
           "tests": 11
         },
-        "evidence": "docs/verification/ui-optimization-20261102/tickets/02.md"
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/02.md",
+        "finalVerification": "docs/verification/ui-optimization-20261102/final/83-id-mapping.md"
       }
     },
     {
@@ -72,13 +74,14 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "integrated-pending-full-regression",
+        "state": "validated",
         "commit": "192bfb0c",
         "focused": {
           "integration": 7,
           "actualAudioVerified": true
         },
-        "evidence": "docs/verification/ui-optimization-20261102/tickets/03.md"
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/03.md",
+        "finalVerification": "docs/verification/ui-optimization-20261102/final/83-id-mapping.md"
       }
     },
     {
@@ -96,13 +99,14 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "integrated-pending-full-regression",
+        "state": "validated",
         "commit": "48a7b283",
         "focused": {
           "tests": 50,
           "rootVerified": true
         },
-        "evidence": "docs/verification/ui-optimization-20261102/tickets/04.md"
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/04.md",
+        "finalVerification": "docs/verification/ui-optimization-20261102/final/83-id-mapping.md"
       }
     },
     {
@@ -124,7 +128,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "integrated-pending-full-regression",
+        "state": "validated",
         "commit": "289aefcb",
         "focused": {
           "components": 48,
@@ -132,7 +136,8 @@
           "realManualSoundDelayedClose": 1
         },
         "evidence": "docs/verification/ui-optimization-20261102/tickets/05.md",
-        "sharedSoundLabelsCommit": "dc7c3aaf"
+        "sharedSoundLabelsCommit": "dc7c3aaf",
+        "finalVerification": "docs/verification/ui-optimization-20261102/final/83-id-mapping.md"
       }
     },
     {
@@ -150,7 +155,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "integrated-pending-full-regression",
+        "state": "validated",
         "commit": "dc7c3aaf",
         "focused": {
           "core": 30,
@@ -159,7 +164,8 @@
           "rootTypes": true,
           "browserControlledHttp": true
         },
-        "evidence": "docs/verification/ui-optimization-20261102/tickets/06.md"
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/06.md",
+        "finalVerification": "docs/verification/ui-optimization-20261102/final/83-id-mapping.md"
       }
     },
     {
@@ -177,14 +183,15 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "integrated-pending-full-regression",
+        "state": "validated",
         "commit": "161f6dc2",
         "focused": {
           "navigation": 15,
           "browserReads": 328,
           "browserWrites": 0
         },
-        "evidence": "docs/verification/ui-optimization-20261102/tickets/07.md"
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/07.md",
+        "finalVerification": "docs/verification/ui-optimization-20261102/final/83-id-mapping.md"
       }
     },
     {
@@ -204,14 +211,15 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "integrated-pending-browser",
+        "state": "validated",
         "commit": "3e14d606",
         "focused": {
           "files": 6,
           "tests": 35,
           "rootVerified": true
         },
-        "evidence": "docs/verification/ui-optimization-20261102/tickets/08.md"
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/08.md",
+        "finalVerification": "docs/verification/ui-optimization-20261102/final/83-id-mapping.md"
       }
     },
     {
@@ -232,13 +240,14 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "integrated-pending-full-regression",
+        "state": "validated",
         "commit": "539fa8b1",
         "focused": {
           "files": 6,
           "tests": 52
         },
-        "evidence": "docs/verification/ui-optimization-20261102/tickets/09.md"
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/09.md",
+        "finalVerification": "docs/verification/ui-optimization-20261102/final/83-id-mapping.md"
       }
     },
     {
@@ -258,13 +267,14 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "integrated-pending-final-validation",
+        "state": "validated",
         "commit": "d62c5316",
         "focused": {
           "componentCases": 73,
           "realScenarios": 1
         },
-        "evidence": "docs/verification/ui-optimization-20261102/tickets/10.md"
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/10.md",
+        "finalVerification": "docs/verification/ui-optimization-20261102/final/83-id-mapping.md"
       }
     },
     {
@@ -289,14 +299,15 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "integrated-pending-full-regression",
+        "state": "validated",
         "commit": "6314a96e",
         "focused": {
           "files": 6,
           "tests": 45,
           "isolatedComponentBrowser": true
         },
-        "evidence": "docs/verification/ui-optimization-20261102/tickets/11.md"
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/11.md",
+        "finalVerification": "docs/verification/ui-optimization-20261102/final/83-id-mapping.md"
       }
     },
     {
@@ -319,14 +330,15 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "integrated-pending-full-regression",
+        "state": "validated",
         "commit": "7580af34",
         "focused": {
           "files": 5,
           "tests": 36,
           "rootVerified": true
         },
-        "evidence": "docs/verification/ui-optimization-20261102/tickets/12.md"
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/12.md",
+        "finalVerification": "docs/verification/ui-optimization-20261102/final/83-id-mapping.md"
       }
     },
     {
@@ -345,13 +357,14 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "integrated-pending-full-regression",
+        "state": "validated",
         "commit": "aa62a6a6",
         "focused": {
           "tests": 37,
           "rootVerified": true
         },
-        "evidence": "docs/verification/ui-optimization-20261102/tickets/13.md"
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/13.md",
+        "finalVerification": "docs/verification/ui-optimization-20261102/final/83-id-mapping.md"
       }
     },
     {
@@ -372,14 +385,15 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "integrated-pending-full-regression",
+        "state": "validated",
         "commit": "7bcee5c1",
         "focused": {
           "focused": 85,
           "postReview": 11,
           "realHttpSdk": 2
         },
-        "evidence": "docs/verification/ui-optimization-20261102/tickets/14.md"
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/14.md",
+        "finalVerification": "docs/verification/ui-optimization-20261102/final/83-id-mapping.md"
       }
     },
     {
@@ -401,7 +415,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "integrated-pending-full-regression",
+        "state": "validated",
         "commit": "0fd213dc",
         "focused": {
           "relatedComponentsSeparately": 50,
@@ -409,7 +423,8 @@
           "rootTypes": true,
           "browserControlledHttp": true
         },
-        "evidence": "docs/verification/ui-optimization-20261102/tickets/15.md"
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/15.md",
+        "finalVerification": "docs/verification/ui-optimization-20261102/final/83-id-mapping.md"
       }
     },
     {
@@ -428,13 +443,14 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "integrated-pending-full-regression",
+        "state": "validated",
         "commit": "ed78adc8",
         "focused": {
           "panelAndAdoption": 36,
           "realHttpSdkScenariosSeparately": 3
         },
-        "evidence": "docs/verification/ui-optimization-20261102/tickets/16.md"
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/16.md",
+        "finalVerification": "docs/verification/ui-optimization-20261102/final/83-id-mapping.md"
       }
     },
     {
@@ -452,14 +468,15 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "integrated-pending-full-regression",
+        "state": "validated",
         "commit": "15255d20",
         "focused": {
           "tests": 73,
           "integration": 7,
           "rootReadResults": true
         },
-        "evidence": "docs/verification/ui-optimization-20261102/tickets/17.md"
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/17.md",
+        "finalVerification": "docs/verification/ui-optimization-20261102/final/83-id-mapping.md"
       }
     },
     {
@@ -478,7 +495,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "integrated-pending-full-regression",
+        "state": "validated",
         "commit": "9b20b85a",
         "focused": {
           "regressionTests": 16,
@@ -487,7 +504,8 @@
           "integrationExportTimeout": 1,
           "browser": "controlled-local-component"
         },
-        "evidence": "docs/verification/ui-optimization-20261102/tickets/18.md"
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/18.md",
+        "finalVerification": "docs/verification/ui-optimization-20261102/final/83-id-mapping.md"
       }
     },
     {
@@ -507,7 +525,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "integrated-pending-full-regression",
+        "state": "validated",
         "commit": "6c1afa6b",
         "focused": {
           "audio": 15,
@@ -515,7 +533,8 @@
           "status": 5,
           "realHttpWorker": 1
         },
-        "evidence": "docs/verification/ui-optimization-20261102/tickets/19.md"
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/19.md",
+        "finalVerification": "docs/verification/ui-optimization-20261102/final/83-id-mapping.md"
       }
     },
     {
@@ -534,7 +553,7 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "integrated-pending-full-regression",
+        "state": "validated",
         "commit": "5856ace6",
         "focused": {
           "componentAndSpatial": 9,
@@ -542,7 +561,8 @@
           "browser": 1,
           "rootViewedNarrowScreenshot": true
         },
-        "evidence": "docs/verification/ui-optimization-20261102/tickets/20.md"
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/20.md",
+        "finalVerification": "docs/verification/ui-optimization-20261102/final/83-id-mapping.md"
       }
     },
     {
@@ -563,13 +583,14 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "integrated-pending-final-validation",
+        "state": "validated",
         "commit": "723d3064",
         "focused": {
           "componentCases": 65,
           "realScenarios": 0
         },
-        "evidence": "docs/verification/ui-optimization-20261102/tickets/21.md"
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/21.md",
+        "finalVerification": "docs/verification/ui-optimization-20261102/final/83-id-mapping.md"
       }
     },
     {
@@ -589,13 +610,14 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "integrated-pending-final-validation",
+        "state": "validated",
         "commit": "a515fd89",
         "focused": {
           "componentCases": 17,
           "realScenarios": 1
         },
-        "evidence": "docs/verification/ui-optimization-20261102/tickets/22.md"
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/22.md",
+        "finalVerification": "docs/verification/ui-optimization-20261102/final/83-id-mapping.md"
       }
     },
     {
@@ -616,14 +638,15 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "integrated-pending-full-regression",
+        "state": "validated",
         "commit": "7c4172a1",
         "focused": {
           "focused": 34,
           "finalAffected": 2,
           "realHttpPg": 4
         },
-        "evidence": "docs/verification/ui-optimization-20261102/tickets/23.md"
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/23.md",
+        "finalVerification": "docs/verification/ui-optimization-20261102/final/83-id-mapping.md"
       }
     },
     {
@@ -642,13 +665,14 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "integrated-pending-final-validation",
+        "state": "validated",
         "commit": "d8b8deeb",
         "focused": {
           "componentCases": 50,
           "realScenarios": 4
         },
-        "evidence": "docs/verification/ui-optimization-20261102/tickets/24.md"
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/24.md",
+        "finalVerification": "docs/verification/ui-optimization-20261102/final/83-id-mapping.md"
       }
     },
     {
@@ -668,13 +692,14 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "integrated-pending-full-regression",
+        "state": "validated",
         "commit": "ba6f9027",
         "focused": {
           "distinctFocusedCases": 29,
           "realHttpPgNative": 1
         },
-        "evidence": "docs/verification/ui-optimization-20261102/tickets/25.md"
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/25.md",
+        "finalVerification": "docs/verification/ui-optimization-20261102/final/83-id-mapping.md"
       }
     },
     {
@@ -694,14 +719,15 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "integrated-pending-full-regression",
+        "state": "validated",
         "commit": "717404a2",
         "focused": {
           "tests": 20,
           "realHttpPg": 1,
           "syntheticBrowser": true
         },
-        "evidence": "docs/verification/ui-optimization-20261102/tickets/26.md"
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/26.md",
+        "finalVerification": "docs/verification/ui-optimization-20261102/final/83-id-mapping.md"
       }
     },
     {
@@ -721,13 +747,14 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "integrated-pending-final-validation",
+        "state": "validated",
         "commit": "c4b66b6b",
         "focused": {
           "componentCases": 15,
           "realScenarios": 7
         },
-        "evidence": "docs/verification/ui-optimization-20261102/tickets/27.md"
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/27.md",
+        "finalVerification": "docs/verification/ui-optimization-20261102/final/83-id-mapping.md"
       }
     },
     {
@@ -746,13 +773,14 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "integrated-pending-final-validation",
+        "state": "validated",
         "commit": "d62c5316",
         "focused": {
           "componentCases": 37,
           "realScenarios": 1
         },
-        "evidence": "docs/verification/ui-optimization-20261102/tickets/28.md"
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/28.md",
+        "finalVerification": "docs/verification/ui-optimization-20261102/final/83-id-mapping.md"
       }
     },
     {
@@ -771,13 +799,14 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "integrated-pending-final-validation",
+        "state": "validated",
         "commit": "b7a059d3",
         "focused": {
           "componentCases": 34,
           "realScenarios": 1
         },
-        "evidence": "docs/verification/ui-optimization-20261102/tickets/29.md"
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/29.md",
+        "finalVerification": "docs/verification/ui-optimization-20261102/final/83-id-mapping.md"
       }
     },
     {
@@ -796,13 +825,14 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "integrated-pending-final-validation",
+        "state": "validated",
         "commit": "d334f986",
         "focused": {
           "componentCases": 0,
           "realScenarios": 1
         },
-        "evidence": "docs/verification/ui-optimization-20261102/tickets/30.md"
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/30.md",
+        "finalVerification": "docs/verification/ui-optimization-20261102/final/83-id-mapping.md"
       }
     },
     {
@@ -821,13 +851,14 @@
       "dependenciesLinked": true,
       "nativeDependencies": true,
       "implementation": {
-        "state": "integrated-pending-final-validation",
+        "state": "validated",
         "commit": "802aefbb",
         "focused": {
           "componentCases": 0,
           "realScenarios": 1
         },
-        "evidence": "docs/verification/ui-optimization-20261102/tickets/31.md"
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/31.md",
+        "finalVerification": "docs/verification/ui-optimization-20261102/final/83-id-mapping.md"
       }
     },
     {
@@ -873,7 +904,14 @@
       "status": "open",
       "parentLinked": true,
       "dependenciesLinked": true,
-      "nativeDependencies": true
+      "nativeDependencies": true,
+      "implementation": {
+        "state": "acceptance-complete",
+        "sourceCommit": "6421a779ce1be462bda3c4e04157fecabeb5f627",
+        "evidence": "docs/verification/ui-optimization-20261102/final/RESULTS.md",
+        "explicitIntegrationPassed": 19,
+        "limits": "See T01–T08.json; legacy skip, structural axe findings and unexecuted VoiceOver are not counted as passes."
+      }
     }
   ],
   "publishedAt": "2026-11-02T12:17:43.572Z",
@@ -895,5 +933,19 @@
       "reason": "old test bypasses current prepare/confirm gate; test-only update preserving duplicate/conflict/frozen selection assertions then rerun32"
     }
   ],
-  "featureCheckpoint": "b7a059d39d5cef4a7baf100f1eb308beb7235076"
+  "featureCheckpoint": "b7a059d39d5cef4a7baf100f1eb308beb7235076",
+  "verifiedProductCommit": "6421a779ce1be462bda3c4e04157fecabeb5f627",
+  "finalEvidence": "docs/verification/ui-optimization-20261102/REPORT.md",
+  "finalChecks": {
+    "typeCheck": true,
+    "runtimePrepare": true,
+    "defaultFiles": 233,
+    "defaultPassed": 1557,
+    "defaultSkipped": 1,
+    "build": true,
+    "explicitIntegrationPassed": 19,
+    "realPaidProviderCalls": 0,
+    "dailyRestartCommands": 0,
+    "ownedEnvironmentsCleaned": 3
+  }
 }

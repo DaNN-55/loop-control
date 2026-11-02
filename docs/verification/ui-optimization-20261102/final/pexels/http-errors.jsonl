@@ -1,0 +1,14 @@
+{"url":"/api/local/episode-commands","status":400,"body":{"error":"请输入 1～100 个字符的检索词。"}}
+{"url":"/api/local/episode-commands","status":400,"body":{"error":"所选服务不支持该模型或预设。"}}
+{"url":"/api/local/episode-commands","status":400,"body":{"error":"Pexels 检索参数无效。"}}
+{"url":"/api/local/episode-commands","status":400,"body":{"error":"Pexels 检索参数无效。"}}
+{"url":"/api/local/episode-commands","status":409,"body":{"error":"所选连接不可用、无权使用或尚未验证。"}}
+{"url":"/api/local/episode-commands","status":400,"body":{"error":"Episode字段无效。"}}
+{"url":"/api/local/episode-commands","status":404,"body":{"error":"本地生产单不可见。"}}
+{"url":"/api/local/episode-commands","status":403,"body":{"error":"CSRF校验失败。"}}
+{"url":"/api/local/episode-commands","status":409,"body":{"error":"请先完成选定素材的预览下载，再导入候选。"}}
+{"url":"/api/local/episode-commands","status":409,"body":{"error":"请先完成选定素材的预览下载，再导入候选。"}}
+{"url":"/api/local/episode-commands","status":409,"body":{"error":"请先完成选定素材的预览下载，再导入候选。"}}
+{"url":"/api/local/episode-commands","status":409,"body":{"error":"候选短于目标窗口，请明确采用候选时长。"}}
+{"url":"/api/local/episode-commands","status":404,"body":{"error":"本地生产单不可见。"}}
+{"url":"/api/local/episode-commands","status":409,"body":{"error":"同一镜头已有 Pexels 检索或预览正在进行，请等待后重试。"}}

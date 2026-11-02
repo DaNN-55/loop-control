@@ -1,0 +1,126 @@
+{
+  "sourceCommit": "6421a779ce1be462bda3c4e04157fecabeb5f627",
+  "cases": {
+    "T01": {
+      "status": "verified",
+      "evidence": [
+        "generation-release/vitest.json",
+        "generation-release/image-unknown.json",
+        "generation-release/video-resume.json",
+        "generation-release/publication-reconciliation.json",
+        "native-speech-unknown.json",
+        "readonly-release/vitest.json"
+      ],
+      "scope": "real controlled task/Worker/HTTP restart, no repeated supplier POST, same task/remote ID, publication proof recovery and readonly native bytes; formal native unknown disables generate and GET refresh preserves task",
+      "limitations": [
+        "queued/running transient UI not separately fabricated or captured in every stage",
+        "VoiceOver not run"
+      ]
+    },
+    "T02": {
+      "status": "verified",
+      "evidence": [
+        "caption-position-drag.json",
+        "physical-caption-drag.json",
+        "sound-release/vitest.json",
+        "sound-release/sound-analysis.json",
+        "pexels-release/vitest.json",
+        "speech-preparation-impact.json",
+        "native-speech-impact.json"
+      ],
+      "scope": "formal main→normal SDK physical caption timing/position drag→save/reopen; full real bundled sound export/ZIP byte equality and MP4 waveform; controlled Pexels search/preview/import/adopt/reopen/export; two speech impact confirmation surfaces",
+      "limitations": [
+        "third-party effects/plugins all parameter combinations not tested",
+        "no real remote/paid provider used",
+        "old503/120s exports did not reproduce in final serial runs; no unsupported cause assigned"
+      ]
+    },
+    "T03": {
+      "status": "verified",
+      "evidence": [
+        "main-layout.json",
+        "formal-main-browser-200.json",
+        "formal-main-browser-200.png"
+      ],
+      "scope": "formal main390/640/900/1366, normal embedded compact and focus mode; actual browser extension getZoom2/DPR2/CSSzoom1",
+      "limitations": [
+        "not mobile/native-device acceptance"
+      ]
+    },
+    "T04": {
+      "status": "verified-with-structural-limits",
+      "evidence": [
+        "formal-six-skins.json",
+        "formal-axe-dark-石墨.json",
+        "formal-axe-light-拿铁.json"
+      ],
+      "scope": "formal host light/dark and native six skins; required ink samples>=4.5; target control aria/name/label and contrast violations0",
+      "limitations": [
+        "moderate landmark-one-main/page-has-heading-one retained",
+        "axe incomplete includes video/occlusion; not full accessibility certification"
+      ]
+    },
+    "T05": {
+      "status": "verified-with-readings-limits",
+      "evidence": [
+        "formal-native-keyboard-menu.json",
+        "two-tab-draft-and-validation.json",
+        "root-default-vitest.json"
+      ],
+      "scope": "real keyboard menu Escape/arrows/Home/End/Enter/Tab and focus return; real script discard dialog initial cancel focus and Tab inside; final root validation/keyboard tests",
+      "limitations": [
+        "VoiceOver not run",
+        "attached extra manual field-invalid observation was interrupted by navigation and is not counted as passing; root focused tests cover field association"
+      ]
+    },
+    "T06": {
+      "status": "verified-synthetic-scale",
+      "evidence": [
+        "scale-101-episodes.json",
+        "catalog-101-page.json",
+        "scale-51-shots.json",
+        "scale-main-playback.json",
+        "scale-media-initial.json",
+        "long-model-list.json"
+      ],
+      "scope": "101 actual HTTP episodes/20 visible cards/6pages;51shots+49distinct synthetic MP4 and2PNG, placeholders0/missing0/history50; formal media playback decoded18frames; actual controlled120-model HTTP catalog/121dialog rows/filterlast1",
+      "limitations": [
+        "synthetic low-bitrate media only; no high-bitrate capacity guarantee",
+        "heap sample not a memory profile",
+        "51shots registration/matching151356ms is a measured fixture run, no broader performance claim"
+      ]
+    },
+    "T07": {
+      "status": "verified",
+      "evidence": [
+        "http-session-recovery.json",
+        "process-disk-recovery.json",
+        "../ccb9470/remount-identity-diagnostic.json"
+      ],
+      "scope": "formal503→reread, expired real session→normal login/context restore; actual application process stop/refused/start sameSHA; actual APFS detach409/remount identity+UUIDstable→200sameSHA",
+      "limitations": [
+        "earlier sameimage differentdev was correctly rejected by ADR0019; no SQL rebind",
+        "no daily disk/service fault injection",
+        "full external network outage beyond controlledHTTP503 not repeated"
+      ]
+    },
+    "T08": {
+      "status": "verified-with-explicit-source-relationship",
+      "evidence": [
+        "mixed-upload.json",
+        "material-release/vitest.json",
+        "two-tab-draft-and-validation.json",
+        "../ccb9470/normal-editor-concurrency.json",
+        "../ccb9470/normal-old-window-draft-protected.png",
+        "../selection-all-final/vitest.json"
+      ],
+      "scope": "valid/empty/disguised/truncated/valid batch actual UI2success3failure/db+2;100MB+1clientrejection/noentry; actual server media4/4; older script discard cannot erase newer tab; normal two authenticated editor profiles preserve draft, ordinaryReloadFrame→Owner409 protects SHA; prepare/confirm idempotency/frozen tests",
+      "limitations": [
+        "full normal editor409 proof captured onccb; relevant code identical through642 per manifest;642 attempted repeat interrupted by harnessnavigation, not counted as new pass"
+      ]
+    }
+  },
+  "paidCalls": 0,
+  "voiceOver": "not run",
+  "coordinatorMarkersAreNotPassProof": true
+}

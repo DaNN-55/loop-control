@@ -1,0 +1,2361 @@
+{
+  "version": 3,
+  "loopControl": {
+    "version": "four-step-workspace/v1",
+    "inputFingerprint": "01439216-d50e-498f-8020-087515356848",
+    "transitionMode": "studio"
+  },
+  "assets": [
+    {
+      "id": "material-3456522f-014a-47ed-9150-45de65800923",
+      "name": "站台黄伞.png",
+      "kind": "image",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/0af8ddc9b5c99ac280b9764272a1f414bd2197597dba68c59bb68860b33fbfe4-站台黄伞.png",
+      "durationInFrames": 90,
+      "sourceRevision": "source-v1-0kvwuuc0-mgh9o"
+    },
+    {
+      "id": "material-7c6c49a8-22b5-4ace-94b4-242b82ec9d4c",
+      "name": "伞柄纸条.png",
+      "kind": "image",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/42bcaaa312285dea1dc4f5fa87f5e1ef3fc530b8aac22a2b5068e714b91039ad-伞柄纸条.png",
+      "durationInFrames": 90,
+      "sourceRevision": "source-v1-0uqlbud-6usafo"
+    },
+    {
+      "id": "audio-track-2695d4a0-7840-4e43-b316-8442fdbf0d45",
+      "name": "workspace-narration-shot-shot-01",
+      "kind": "audio",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/native-tasks/f9a1e74c-ec1c-4a75-9a4e-d6611b47c84b/shot-narration-shot-01-3284a4d9-663a-46f9-bd9b-80f58d5f412d.mp3",
+      "durationInFrames": 75,
+      "sourceRevision": "source-v1-0eyvcji040tgsa"
+    },
+    {
+      "id": "audio-track-43f63b43-f140-461e-b521-1a2024d20713",
+      "name": "shot-01 口播",
+      "kind": "audio",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/native-tasks/80165ee3-84d4-4d16-a438-37674c034f26/shot-narration-shot-01-c49e6953-a603-4dd9-a915-f10167c1eac0.mp3",
+      "durationInFrames": 75,
+      "sourceRevision": "source-v1--nbitu8-hmqydx"
+    },
+    {
+      "id": "material-8211001c-cd84-4c7d-9e7a-403ecf23cb3c",
+      "name": "independent-00.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/92423c3b948d2c893e305d702a1e5d07e1e9187731bf0227090b880b8c006b53-independent-00.mp4",
+      "durationInFrames": 120,
+      "width": 320,
+      "height": 180,
+      "sourceRevision": "8211001c-cd84-4c7d-9e7a-403ecf23cb3c",
+      "sourceContentHash": "92423c3b948d2c893e305d702a1e5d07e1e9187731bf0227090b880b8c006b53"
+    },
+    {
+      "id": "material-d1c81d3d-a28b-4dd5-8abf-66267883e18b",
+      "name": "independent-01.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/3d7bc9bb6d0b613617b6365be90756539304c4e145d1b5e0acfe80952db65aec-independent-01.mp4",
+      "durationInFrames": 120,
+      "width": 180,
+      "height": 320,
+      "sourceRevision": "d1c81d3d-a28b-4dd5-8abf-66267883e18b",
+      "sourceContentHash": "3d7bc9bb6d0b613617b6365be90756539304c4e145d1b5e0acfe80952db65aec"
+    },
+    {
+      "id": "material-f549ee60-0543-41c3-acb5-d5c88b1b23e8",
+      "name": "independent-02.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/9f70e2558154559e2cb4ab3e50b44b9e4b3f4270c47c7ead21731c8d3c67f3fa-independent-02.mp4",
+      "durationInFrames": 120,
+      "width": 240,
+      "height": 240,
+      "sourceRevision": "f549ee60-0543-41c3-acb5-d5c88b1b23e8",
+      "sourceContentHash": "9f70e2558154559e2cb4ab3e50b44b9e4b3f4270c47c7ead21731c8d3c67f3fa"
+    },
+    {
+      "id": "material-0d991443-230f-4468-af92-dcbf79bcab84",
+      "name": "independent-03.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/626e40515c37225fbf23375af4b110e4e8c2d6b6c15308a5d1ba563bfad8257b-independent-03.mp4",
+      "durationInFrames": 120,
+      "width": 320,
+      "height": 180,
+      "sourceRevision": "0d991443-230f-4468-af92-dcbf79bcab84",
+      "sourceContentHash": "626e40515c37225fbf23375af4b110e4e8c2d6b6c15308a5d1ba563bfad8257b"
+    },
+    {
+      "id": "material-22339fba-43c7-4d61-b52f-e4e0f9c3b407",
+      "name": "independent-04.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/a04045d06f9805fff57d5fe92a3454d0fb151cee10af70528e3310aa1a689492-independent-04.mp4",
+      "durationInFrames": 120,
+      "width": 180,
+      "height": 320,
+      "sourceRevision": "22339fba-43c7-4d61-b52f-e4e0f9c3b407",
+      "sourceContentHash": "a04045d06f9805fff57d5fe92a3454d0fb151cee10af70528e3310aa1a689492"
+    },
+    {
+      "id": "material-5db099df-b6e3-4fae-8305-48de4c3cb640",
+      "name": "independent-05.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/c72d07ac33ba72b7638e54f3f64c827a9c4d835f873c1e57add5c9f2d32b2874-independent-05.mp4",
+      "durationInFrames": 120,
+      "width": 240,
+      "height": 240,
+      "sourceRevision": "5db099df-b6e3-4fae-8305-48de4c3cb640",
+      "sourceContentHash": "c72d07ac33ba72b7638e54f3f64c827a9c4d835f873c1e57add5c9f2d32b2874"
+    },
+    {
+      "id": "material-fc1757dc-b86e-4c6d-9772-7b9f010c3a4f",
+      "name": "independent-06.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/1fbb9e667ebfc986d89cc9f66ca2aa7feb5271b69a72cf23a5f3d4ccf4717534-independent-06.mp4",
+      "durationInFrames": 120,
+      "width": 320,
+      "height": 180,
+      "sourceRevision": "fc1757dc-b86e-4c6d-9772-7b9f010c3a4f",
+      "sourceContentHash": "1fbb9e667ebfc986d89cc9f66ca2aa7feb5271b69a72cf23a5f3d4ccf4717534"
+    },
+    {
+      "id": "material-c4479b3f-d4e2-47fb-ad34-ed7a9ae633c1",
+      "name": "independent-07.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/922d253ab84697d17fd486714db4bc00df4a6280ba144ed0a606936a10fe9081-independent-07.mp4",
+      "durationInFrames": 120,
+      "width": 180,
+      "height": 320,
+      "sourceRevision": "c4479b3f-d4e2-47fb-ad34-ed7a9ae633c1",
+      "sourceContentHash": "922d253ab84697d17fd486714db4bc00df4a6280ba144ed0a606936a10fe9081"
+    },
+    {
+      "id": "material-d496cbe6-7292-4cd6-ba10-0fa93db8fa65",
+      "name": "independent-08.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/9d4ec4bcd33ef5d95dff0b8f309baa736247feb0dca1ac2303ebf649061016f8-independent-08.mp4",
+      "durationInFrames": 120,
+      "width": 240,
+      "height": 240,
+      "sourceRevision": "d496cbe6-7292-4cd6-ba10-0fa93db8fa65",
+      "sourceContentHash": "9d4ec4bcd33ef5d95dff0b8f309baa736247feb0dca1ac2303ebf649061016f8"
+    },
+    {
+      "id": "material-fbd346c0-2afa-48a6-b4a4-3df802f7653f",
+      "name": "independent-09.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/c5f8bb7b432d7a9b9c46307323f2ea5a7eca61b27c2fa2e0982653c6e34315c7-independent-09.mp4",
+      "durationInFrames": 120,
+      "width": 320,
+      "height": 180,
+      "sourceRevision": "fbd346c0-2afa-48a6-b4a4-3df802f7653f",
+      "sourceContentHash": "c5f8bb7b432d7a9b9c46307323f2ea5a7eca61b27c2fa2e0982653c6e34315c7"
+    },
+    {
+      "id": "material-c8d4d384-7955-4cf1-9251-10d2b49c1f5b",
+      "name": "independent-10.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/731fa07c878e14489ef10b05f28c205cd4026eb72bb5875865294cd41c4cd9fa-independent-10.mp4",
+      "durationInFrames": 120,
+      "width": 180,
+      "height": 320,
+      "sourceRevision": "c8d4d384-7955-4cf1-9251-10d2b49c1f5b",
+      "sourceContentHash": "731fa07c878e14489ef10b05f28c205cd4026eb72bb5875865294cd41c4cd9fa"
+    },
+    {
+      "id": "material-907242cd-e466-41f8-91eb-790a1b6df147",
+      "name": "independent-11.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/f63979384af263b5a12d659e9f4304f219a64287c820794f61c0c2df3d63dd4c-independent-11.mp4",
+      "durationInFrames": 120,
+      "width": 240,
+      "height": 240,
+      "sourceRevision": "907242cd-e466-41f8-91eb-790a1b6df147",
+      "sourceContentHash": "f63979384af263b5a12d659e9f4304f219a64287c820794f61c0c2df3d63dd4c"
+    },
+    {
+      "id": "material-3a171334-ac6b-4755-b32c-db72660ca1bd",
+      "name": "independent-12.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/278e2f0ebd85b55c040f0a6e17a61f3c56a3d53d5ade739ac3b2a907baae5cb0-independent-12.mp4",
+      "durationInFrames": 120,
+      "width": 320,
+      "height": 180,
+      "sourceRevision": "3a171334-ac6b-4755-b32c-db72660ca1bd",
+      "sourceContentHash": "278e2f0ebd85b55c040f0a6e17a61f3c56a3d53d5ade739ac3b2a907baae5cb0"
+    },
+    {
+      "id": "material-cbe3ffef-0c36-4845-81fc-a3b08a79409f",
+      "name": "independent-13.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/c58239fc4b09bd7113211630fccbc98d852c4d37156b804430199b9dca27935e-independent-13.mp4",
+      "durationInFrames": 120,
+      "width": 180,
+      "height": 320,
+      "sourceRevision": "cbe3ffef-0c36-4845-81fc-a3b08a79409f",
+      "sourceContentHash": "c58239fc4b09bd7113211630fccbc98d852c4d37156b804430199b9dca27935e"
+    },
+    {
+      "id": "material-43a30627-b3c8-44f3-9b0b-07b60107984a",
+      "name": "independent-14.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/99e119e6bf08c3b2ee9626074ebc7b316a2d0d1631145b5c320d8f9f23103b6d-independent-14.mp4",
+      "durationInFrames": 120,
+      "width": 240,
+      "height": 240,
+      "sourceRevision": "43a30627-b3c8-44f3-9b0b-07b60107984a",
+      "sourceContentHash": "99e119e6bf08c3b2ee9626074ebc7b316a2d0d1631145b5c320d8f9f23103b6d"
+    },
+    {
+      "id": "material-24a7f787-4a0e-4160-bc6a-eaa41daca2fe",
+      "name": "independent-15.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/5387cb09ad25b7fae829e9bed185acebd047ceb2df28da54251b393c960ae872-independent-15.mp4",
+      "durationInFrames": 120,
+      "width": 320,
+      "height": 180,
+      "sourceRevision": "24a7f787-4a0e-4160-bc6a-eaa41daca2fe",
+      "sourceContentHash": "5387cb09ad25b7fae829e9bed185acebd047ceb2df28da54251b393c960ae872"
+    },
+    {
+      "id": "material-8f417bff-5476-4f65-a12b-61917e7eb745",
+      "name": "independent-16.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/ad35f76d2be8c512522f9d59e97af7dba18286349f9ba4ea2136b31c1f8c35cf-independent-16.mp4",
+      "durationInFrames": 120,
+      "width": 180,
+      "height": 320,
+      "sourceRevision": "8f417bff-5476-4f65-a12b-61917e7eb745",
+      "sourceContentHash": "ad35f76d2be8c512522f9d59e97af7dba18286349f9ba4ea2136b31c1f8c35cf"
+    },
+    {
+      "id": "material-0585da90-44af-4221-946b-032e47f5ee9e",
+      "name": "independent-17.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/0714c74b7deecf03fbf4e65eefbad7fc14fb9b00038591deb0c863c42bd85249-independent-17.mp4",
+      "durationInFrames": 120,
+      "width": 240,
+      "height": 240,
+      "sourceRevision": "0585da90-44af-4221-946b-032e47f5ee9e",
+      "sourceContentHash": "0714c74b7deecf03fbf4e65eefbad7fc14fb9b00038591deb0c863c42bd85249"
+    },
+    {
+      "id": "material-5a34cb02-82c8-4161-9c68-4d61758e1baf",
+      "name": "independent-18.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/7bc5b9d4f465a152d2c59794955de3dab94ab5f5979ba306f8aa11c6e1af5fde-independent-18.mp4",
+      "durationInFrames": 120,
+      "width": 320,
+      "height": 180,
+      "sourceRevision": "5a34cb02-82c8-4161-9c68-4d61758e1baf",
+      "sourceContentHash": "7bc5b9d4f465a152d2c59794955de3dab94ab5f5979ba306f8aa11c6e1af5fde"
+    },
+    {
+      "id": "material-e3890d04-0b56-485a-b13c-32ea2da8387f",
+      "name": "independent-19.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/fee13ae5f2a0fd3b851832882609593692f022d9f614230f6a858c5e66546729-independent-19.mp4",
+      "durationInFrames": 120,
+      "width": 180,
+      "height": 320,
+      "sourceRevision": "e3890d04-0b56-485a-b13c-32ea2da8387f",
+      "sourceContentHash": "fee13ae5f2a0fd3b851832882609593692f022d9f614230f6a858c5e66546729"
+    },
+    {
+      "id": "material-e68017d3-5f7a-41a8-9bfc-88f77a4bbae4",
+      "name": "independent-20.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/97ded529436bab201118bf12acd48cf645f2a0c62ee9230436d3d8b88985f2ee-independent-20.mp4",
+      "durationInFrames": 120,
+      "width": 240,
+      "height": 240,
+      "sourceRevision": "e68017d3-5f7a-41a8-9bfc-88f77a4bbae4",
+      "sourceContentHash": "97ded529436bab201118bf12acd48cf645f2a0c62ee9230436d3d8b88985f2ee"
+    },
+    {
+      "id": "material-94279083-17e9-416b-8f09-f7f86bf6e295",
+      "name": "independent-21.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/21bc3e43886b4e72c14585a8cc54077864d85b0a6420243c382ae93dcfe3c5be-independent-21.mp4",
+      "durationInFrames": 120,
+      "width": 320,
+      "height": 180,
+      "sourceRevision": "94279083-17e9-416b-8f09-f7f86bf6e295",
+      "sourceContentHash": "21bc3e43886b4e72c14585a8cc54077864d85b0a6420243c382ae93dcfe3c5be"
+    },
+    {
+      "id": "material-e82876e8-cae0-45f7-a5c4-1318dbbc62a8",
+      "name": "independent-22.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/3e0ea107b5e80eceb39894071e1adf94af330ee150594d7990a0d99a97bfbe0c-independent-22.mp4",
+      "durationInFrames": 120,
+      "width": 180,
+      "height": 320,
+      "sourceRevision": "e82876e8-cae0-45f7-a5c4-1318dbbc62a8",
+      "sourceContentHash": "3e0ea107b5e80eceb39894071e1adf94af330ee150594d7990a0d99a97bfbe0c"
+    },
+    {
+      "id": "material-855976ab-0d72-49e1-ba75-f425747322b5",
+      "name": "independent-23.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/92c78d3dee27d84f4bf9fcbaf1e5c6d5a4c164a13754d37ad1e509ba5ba90074-independent-23.mp4",
+      "durationInFrames": 120,
+      "width": 240,
+      "height": 240,
+      "sourceRevision": "855976ab-0d72-49e1-ba75-f425747322b5",
+      "sourceContentHash": "92c78d3dee27d84f4bf9fcbaf1e5c6d5a4c164a13754d37ad1e509ba5ba90074"
+    },
+    {
+      "id": "material-a011d738-a3a4-4dcc-a79b-71e19b13943c",
+      "name": "independent-24.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/be47ab16429c8ca49f48dc56465732bcdba8ab70c371988c4d88dd59a06fe468-independent-24.mp4",
+      "durationInFrames": 120,
+      "width": 320,
+      "height": 180,
+      "sourceRevision": "a011d738-a3a4-4dcc-a79b-71e19b13943c",
+      "sourceContentHash": "be47ab16429c8ca49f48dc56465732bcdba8ab70c371988c4d88dd59a06fe468"
+    },
+    {
+      "id": "material-8a328352-5c6f-448b-ad0c-9eb5248ad70e",
+      "name": "independent-25.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/312025de8bb0dee47edfbc32eea64ef035f77374b6441f2e5c0700f8e18e3242-independent-25.mp4",
+      "durationInFrames": 120,
+      "width": 180,
+      "height": 320,
+      "sourceRevision": "8a328352-5c6f-448b-ad0c-9eb5248ad70e",
+      "sourceContentHash": "312025de8bb0dee47edfbc32eea64ef035f77374b6441f2e5c0700f8e18e3242"
+    },
+    {
+      "id": "material-a43d5a32-c546-4cf4-a88f-5a21bd0bc8c7",
+      "name": "independent-26.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/b0ea48dbe785150fd1bd1519185edccab24168c867cde0ea279ee75bb34dd758-independent-26.mp4",
+      "durationInFrames": 120,
+      "width": 240,
+      "height": 240,
+      "sourceRevision": "a43d5a32-c546-4cf4-a88f-5a21bd0bc8c7",
+      "sourceContentHash": "b0ea48dbe785150fd1bd1519185edccab24168c867cde0ea279ee75bb34dd758"
+    },
+    {
+      "id": "material-1c9c240a-f2fe-4471-8066-0b609ec02575",
+      "name": "independent-27.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/43982ea23e501f021a48cfe11a7b447c185eabeb805db1d74be83f4079f8460e-independent-27.mp4",
+      "durationInFrames": 120,
+      "width": 320,
+      "height": 180,
+      "sourceRevision": "1c9c240a-f2fe-4471-8066-0b609ec02575",
+      "sourceContentHash": "43982ea23e501f021a48cfe11a7b447c185eabeb805db1d74be83f4079f8460e"
+    },
+    {
+      "id": "material-aa73f298-68dd-445d-a6eb-e745f84c902b",
+      "name": "independent-28.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/17634cd057df45b7e88d7d2ea3684c25f3b05b668e7bbfd2ee5b9f44578ce1e3-independent-28.mp4",
+      "durationInFrames": 120,
+      "width": 180,
+      "height": 320,
+      "sourceRevision": "aa73f298-68dd-445d-a6eb-e745f84c902b",
+      "sourceContentHash": "17634cd057df45b7e88d7d2ea3684c25f3b05b668e7bbfd2ee5b9f44578ce1e3"
+    },
+    {
+      "id": "material-5f996940-7182-4cdf-a0d0-ee36466ff9cf",
+      "name": "independent-29.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/b4c61040c58624b90d0fdf140a309ed2880846ac6546b33ba5d5bc103e63c663-independent-29.mp4",
+      "durationInFrames": 120,
+      "width": 240,
+      "height": 240,
+      "sourceRevision": "5f996940-7182-4cdf-a0d0-ee36466ff9cf",
+      "sourceContentHash": "b4c61040c58624b90d0fdf140a309ed2880846ac6546b33ba5d5bc103e63c663"
+    },
+    {
+      "id": "material-232466d8-bdc1-453c-912f-2fb64a9fc641",
+      "name": "independent-30.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/2d53edf18b1d69e99f213cf134bf672099b32e3a5057327baeb2da9537e71ea0-independent-30.mp4",
+      "durationInFrames": 120,
+      "width": 320,
+      "height": 180,
+      "sourceRevision": "232466d8-bdc1-453c-912f-2fb64a9fc641",
+      "sourceContentHash": "2d53edf18b1d69e99f213cf134bf672099b32e3a5057327baeb2da9537e71ea0"
+    },
+    {
+      "id": "material-f8c73e20-e29c-4a6b-a6ab-c98db3ab48cd",
+      "name": "independent-31.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/76bfd31a2bd22c26921b1d8793f8cd43bb1c16266e9382045d77d19827b529e7-independent-31.mp4",
+      "durationInFrames": 120,
+      "width": 180,
+      "height": 320,
+      "sourceRevision": "f8c73e20-e29c-4a6b-a6ab-c98db3ab48cd",
+      "sourceContentHash": "76bfd31a2bd22c26921b1d8793f8cd43bb1c16266e9382045d77d19827b529e7"
+    },
+    {
+      "id": "material-d13285e4-a851-4ab7-acdd-719d3caa0dd1",
+      "name": "independent-32.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/cd10e5e7a01abb2fbecd1622d10d8ad7c5f4624fc898a82ca093027019fe549a-independent-32.mp4",
+      "durationInFrames": 120,
+      "width": 240,
+      "height": 240,
+      "sourceRevision": "d13285e4-a851-4ab7-acdd-719d3caa0dd1",
+      "sourceContentHash": "cd10e5e7a01abb2fbecd1622d10d8ad7c5f4624fc898a82ca093027019fe549a"
+    },
+    {
+      "id": "material-13ccb20e-4e05-4f70-bed2-86acc6a983fa",
+      "name": "independent-33.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/870818dea9122e16ab5fca48e86a3ce12bdbad72a0f612d152f90852327d7ce0-independent-33.mp4",
+      "durationInFrames": 120,
+      "width": 320,
+      "height": 180,
+      "sourceRevision": "13ccb20e-4e05-4f70-bed2-86acc6a983fa",
+      "sourceContentHash": "870818dea9122e16ab5fca48e86a3ce12bdbad72a0f612d152f90852327d7ce0"
+    },
+    {
+      "id": "material-a59f7ec1-ad41-4a6d-8691-3b33b89cf9f9",
+      "name": "independent-34.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/042ab980c43e4ce66038d3cd2a1d4a1766cf96f77d081aba3bd97f02b60e34f2-independent-34.mp4",
+      "durationInFrames": 120,
+      "width": 180,
+      "height": 320,
+      "sourceRevision": "a59f7ec1-ad41-4a6d-8691-3b33b89cf9f9",
+      "sourceContentHash": "042ab980c43e4ce66038d3cd2a1d4a1766cf96f77d081aba3bd97f02b60e34f2"
+    },
+    {
+      "id": "material-949703f5-8a53-4292-92c7-94a30339975d",
+      "name": "independent-35.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/0df3982f50f89a07f043a682b0d40f96ce2cf909cf2f5294fc616241c917cebf-independent-35.mp4",
+      "durationInFrames": 120,
+      "width": 240,
+      "height": 240,
+      "sourceRevision": "949703f5-8a53-4292-92c7-94a30339975d",
+      "sourceContentHash": "0df3982f50f89a07f043a682b0d40f96ce2cf909cf2f5294fc616241c917cebf"
+    },
+    {
+      "id": "material-b41a524b-5e19-473e-995b-707e9c18f193",
+      "name": "independent-36.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/17c566770f2514b586ca94a6d7db417146ee917459085362bbab8e964674a685-independent-36.mp4",
+      "durationInFrames": 120,
+      "width": 320,
+      "height": 180,
+      "sourceRevision": "b41a524b-5e19-473e-995b-707e9c18f193",
+      "sourceContentHash": "17c566770f2514b586ca94a6d7db417146ee917459085362bbab8e964674a685"
+    },
+    {
+      "id": "material-16331128-f06b-4bdc-ac75-b81e2c1db320",
+      "name": "independent-37.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/4892e555c8d7f9dd1d47664c6abf7e6f5c0773c5baf93027ce8d8c1ac366a129-independent-37.mp4",
+      "durationInFrames": 120,
+      "width": 180,
+      "height": 320,
+      "sourceRevision": "16331128-f06b-4bdc-ac75-b81e2c1db320",
+      "sourceContentHash": "4892e555c8d7f9dd1d47664c6abf7e6f5c0773c5baf93027ce8d8c1ac366a129"
+    },
+    {
+      "id": "material-f9eee0d0-1443-454e-989b-bd5bc24bb2a3",
+      "name": "independent-38.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/1eed99994253cd595e1915aed2a4e91caf05fe7566dcf6515542a38a9b8e09ec-independent-38.mp4",
+      "durationInFrames": 120,
+      "width": 240,
+      "height": 240,
+      "sourceRevision": "f9eee0d0-1443-454e-989b-bd5bc24bb2a3",
+      "sourceContentHash": "1eed99994253cd595e1915aed2a4e91caf05fe7566dcf6515542a38a9b8e09ec"
+    },
+    {
+      "id": "material-01955360-ff0f-486f-884e-921fa547064d",
+      "name": "independent-39.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/7b0ff7b57edcd7861b70d1d9f8a596e0a20065e96970c8263359374121614096-independent-39.mp4",
+      "durationInFrames": 120,
+      "width": 320,
+      "height": 180,
+      "sourceRevision": "01955360-ff0f-486f-884e-921fa547064d",
+      "sourceContentHash": "7b0ff7b57edcd7861b70d1d9f8a596e0a20065e96970c8263359374121614096"
+    },
+    {
+      "id": "material-47680646-0658-4126-876e-328c54711da5",
+      "name": "independent-40.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/e4c946e4e555e1b594c589f424f2b004db3c7d2708038780953903583e4c8420-independent-40.mp4",
+      "durationInFrames": 120,
+      "width": 180,
+      "height": 320,
+      "sourceRevision": "47680646-0658-4126-876e-328c54711da5",
+      "sourceContentHash": "e4c946e4e555e1b594c589f424f2b004db3c7d2708038780953903583e4c8420"
+    },
+    {
+      "id": "material-66255cae-be71-428b-bdfd-2c4d2cafd0ea",
+      "name": "independent-41.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/c3d95c7d651921e4532d143c82f4a97174bf74da9e68e951482b4a9fa495789d-independent-41.mp4",
+      "durationInFrames": 120,
+      "width": 240,
+      "height": 240,
+      "sourceRevision": "66255cae-be71-428b-bdfd-2c4d2cafd0ea",
+      "sourceContentHash": "c3d95c7d651921e4532d143c82f4a97174bf74da9e68e951482b4a9fa495789d"
+    },
+    {
+      "id": "material-73fa864c-4b6d-4d17-bdf3-6a710810a338",
+      "name": "independent-42.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/16356a718f35a9299ed3a4de86ed708b18878bbf59d01bf9cd603dd05293fe07-independent-42.mp4",
+      "durationInFrames": 120,
+      "width": 320,
+      "height": 180,
+      "sourceRevision": "73fa864c-4b6d-4d17-bdf3-6a710810a338",
+      "sourceContentHash": "16356a718f35a9299ed3a4de86ed708b18878bbf59d01bf9cd603dd05293fe07"
+    },
+    {
+      "id": "material-411aae51-5ac4-4e64-9910-d72d290e2603",
+      "name": "independent-43.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/e2181a1a36d4d8df8acbd9ef7ee362016e170a15f144de9718e77cb73aeb309c-independent-43.mp4",
+      "durationInFrames": 120,
+      "width": 180,
+      "height": 320,
+      "sourceRevision": "411aae51-5ac4-4e64-9910-d72d290e2603",
+      "sourceContentHash": "e2181a1a36d4d8df8acbd9ef7ee362016e170a15f144de9718e77cb73aeb309c"
+    },
+    {
+      "id": "material-533d5432-273c-4373-aa85-f0fff3f8b59e",
+      "name": "independent-44.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/4c64dd395cd6c0149ab29879e9939d3cc488a79eacb0c0b84f09e3a3f578cd7b-independent-44.mp4",
+      "durationInFrames": 120,
+      "width": 240,
+      "height": 240,
+      "sourceRevision": "533d5432-273c-4373-aa85-f0fff3f8b59e",
+      "sourceContentHash": "4c64dd395cd6c0149ab29879e9939d3cc488a79eacb0c0b84f09e3a3f578cd7b"
+    },
+    {
+      "id": "material-30a8ef02-8e89-4f46-9e96-9bc1ca867791",
+      "name": "independent-45.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/4b6f7093484b9a4a97f4eacb1ce08ccd85ee26282882927d1fcd244888e0247c-independent-45.mp4",
+      "durationInFrames": 120,
+      "width": 320,
+      "height": 180,
+      "sourceRevision": "30a8ef02-8e89-4f46-9e96-9bc1ca867791",
+      "sourceContentHash": "4b6f7093484b9a4a97f4eacb1ce08ccd85ee26282882927d1fcd244888e0247c"
+    },
+    {
+      "id": "material-676dca4d-4f9b-4940-8085-90685efcc11d",
+      "name": "independent-46.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/f4b5ab7d701621645ddc94876c472e4b2a50beac220a23e15315032e3d2213f9-independent-46.mp4",
+      "durationInFrames": 120,
+      "width": 180,
+      "height": 320,
+      "sourceRevision": "676dca4d-4f9b-4940-8085-90685efcc11d",
+      "sourceContentHash": "f4b5ab7d701621645ddc94876c472e4b2a50beac220a23e15315032e3d2213f9"
+    },
+    {
+      "id": "material-a4e025b2-4e59-4f2f-8a4d-41d3469d1eb5",
+      "name": "independent-47.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/c1df7c2baefe640b5c3ba3e490eee1177d3e2721a7dd9145ed5f6b2d4e7062ad-independent-47.mp4",
+      "durationInFrames": 120,
+      "width": 240,
+      "height": 240,
+      "sourceRevision": "a4e025b2-4e59-4f2f-8a4d-41d3469d1eb5",
+      "sourceContentHash": "c1df7c2baefe640b5c3ba3e490eee1177d3e2721a7dd9145ed5f6b2d4e7062ad"
+    },
+    {
+      "id": "material-5d821b8d-70b4-4cf0-b999-a5593a2f9f85",
+      "name": "independent-48.mp4",
+      "kind": "video",
+      "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/184df480a07a99d60b4f72b38ac016ba4849a357f6a322532ceb3afa0d2aa32a-independent-48.mp4",
+      "durationInFrames": 120,
+      "width": 320,
+      "height": 180,
+      "sourceRevision": "5d821b8d-70b4-4cf0-b999-a5593a2f9f85",
+      "sourceContentHash": "184df480a07a99d60b4f72b38ac016ba4849a357f6a322532ceb3afa0d2aa32a"
+    }
+  ],
+  "mediaFolders": [],
+  "activeTimelineId": "loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283",
+  "timelines": [
+    {
+      "id": "loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283",
+      "name": "整期剪辑",
+      "order": 0,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "fit": "contain",
+      "items": [
+        {
+          "id": "shot-shot-01-07d1a112-4ff3-4a29-8b6e-930ab03c614a",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "image",
+          "name": "shot-01",
+          "startFrame": 0,
+          "durationInFrames": 90,
+          "width": 360,
+          "height": 640,
+          "transform": {
+            "scale": 1.4,
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "scaleX": 1.4,
+            "scaleY": 1.4
+          },
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "shot-01",
+            "clipId": "07d1a112-4ff3-4a29-8b6e-930ab03c614a",
+            "text": "雨停了，她把伞留在长椅上。",
+            "provenance": {
+              "materialRevisionId": "3456522f-014a-47ed-9150-45de65800923",
+              "sha256": "0af8ddc9b5c99ac280b9764272a1f414bd2197597dba68c59bb68860b33fbfe4",
+              "fileSize": 2211,
+              "kind": "image"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/0af8ddc9b5c99ac280b9764272a1f414bd2197597dba68c59bb68860b33fbfe4-站台黄伞.png",
+          "sourceAssetId": "material-3456522f-014a-47ed-9150-45de65800923",
+          "fit": "contain",
+          "volume": 0,
+          "loopControlAudio": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "shot-01",
+            "voiceMode": "tts"
+          },
+          "sourceFilename": "站台黄伞.png",
+          "sourceContentHash": "0af8ddc9b5c99ac280b9764272a1f414bd2197597dba68c59bb68860b33fbfe4",
+          "sourceRevision": "source-sha256-0af8ddc9b5c99ac280b9764272a1f414bd2197597dba68c59bb68860b33fbfe4"
+        },
+        {
+          "id": "shot-shot-02-7f4e8420-c59b-4fd3-b304-82f316274d08",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "image",
+          "name": "shot-02",
+          "startFrame": 90,
+          "durationInFrames": 90,
+          "width": 360,
+          "height": 640,
+          "transform": {
+            "scale": 1,
+            "x": 0,
+            "y": 0,
+            "rotation": 0
+          },
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "shot-02",
+            "clipId": "7f4e8420-c59b-4fd3-b304-82f316274d08",
+            "text": "伞柄的纸条写着：留给下一个人。",
+            "provenance": {
+              "materialRevisionId": "7c6c49a8-22b5-4ace-94b4-242b82ec9d4c",
+              "sha256": "42bcaaa312285dea1dc4f5fa87f5e1ef3fc530b8aac22a2b5068e714b91039ad",
+              "fileSize": 2094,
+              "kind": "image"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/42bcaaa312285dea1dc4f5fa87f5e1ef3fc530b8aac22a2b5068e714b91039ad-伞柄纸条.png",
+          "sourceAssetId": "material-7c6c49a8-22b5-4ace-94b4-242b82ec9d4c",
+          "fit": "contain",
+          "volume": 0,
+          "sourceFilename": "伞柄纸条.png",
+          "sourceContentHash": "42bcaaa312285dea1dc4f5fa87f5e1ef3fc530b8aac22a2b5068e714b91039ad",
+          "sourceRevision": "source-sha256-42bcaaa312285dea1dc4f5fa87f5e1ef3fc530b8aac22a2b5068e714b91039ad"
+        },
+        {
+          "id": "workspace-narration-shot-shot-01",
+          "kind": "audio",
+          "name": "shot-01 口播",
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/native-tasks/80165ee3-84d4-4d16-a438-37674c034f26/shot-narration-shot-01-c49e6953-a603-4dd9-a915-f10167c1eac0.mp3",
+          "sourceAssetId": "audio-track-43f63b43-f140-461e-b521-1a2024d20713",
+          "srcInFrame": 0,
+          "startFrame": 0,
+          "durationInFrames": 75,
+          "volume": 1,
+          "track": "workspace-main-voice",
+          "loopControlAudio": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "shot-01"
+          },
+          "loopControlCandidate": {
+            "inputFingerprint": "dc02db088a7c51b1cbfe5b74b6ee8addebafcd4c28cfe9cfc997d71f47c5c640",
+            "sourceId": "audio-track-43f63b43-f140-461e-b521-1a2024d20713",
+            "durationPolicy": "use-candidate",
+            "startFrame": 0,
+            "durationInFrames": 75,
+            "shotWindow": {
+              "startFrame": 0,
+              "durationInFrames": 90
+            }
+          },
+          "sourceContentHash": "15f7a076c1641a4bd0ec86bd8e739721a3b2b2a0331ac6ce2e6310fb0603df8e",
+          "sourceRevision": "source-sha256-15f7a076c1641a4bd0ec86bd8e739721a3b2b2a0331ac6ce2e6310fb0603df8e"
+        },
+        {
+          "id": "shot-added-c9c5c60f-ec45-4899-badb-ff193e7b27ad-c9c5c60f-ec45-4899-badb-ff193e7b27ad",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-c9c5c60f-ec45-4899-badb-ff193e7b27ad",
+          "startFrame": 180,
+          "durationInFrames": 90,
+          "width": 320,
+          "height": 180,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-c9c5c60f-ec45-4899-badb-ff193e7b27ad",
+            "clipId": "c9c5c60f-ec45-4899-badb-ff193e7b27ad",
+            "text": "独立视频 1 · 320×180",
+            "provenance": {
+              "materialRevisionId": "8211001c-cd84-4c7d-9e7a-403ecf23cb3c",
+              "sha256": "92423c3b948d2c893e305d702a1e5d07e1e9187731bf0227090b880b8c006b53",
+              "fileSize": 142507,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/92423c3b948d2c893e305d702a1e5d07e1e9187731bf0227090b880b8c006b53-independent-00.mp4",
+          "sourceAssetId": "material-8211001c-cd84-4c7d-9e7a-403ecf23cb3c",
+          "sourceRevision": "8211001c-cd84-4c7d-9e7a-403ecf23cb3c",
+          "sourceContentHash": "92423c3b948d2c893e305d702a1e5d07e1e9187731bf0227090b880b8c006b53",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-dc3c524e-2b72-4e8c-ac0a-d9e94d651c75-dc3c524e-2b72-4e8c-ac0a-d9e94d651c75",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-dc3c524e-2b72-4e8c-ac0a-d9e94d651c75",
+          "startFrame": 270,
+          "durationInFrames": 90,
+          "width": 180,
+          "height": 320,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-dc3c524e-2b72-4e8c-ac0a-d9e94d651c75",
+            "clipId": "dc3c524e-2b72-4e8c-ac0a-d9e94d651c75",
+            "text": "独立视频 2 · 180×320",
+            "provenance": {
+              "materialRevisionId": "d1c81d3d-a28b-4dd5-8abf-66267883e18b",
+              "sha256": "3d7bc9bb6d0b613617b6365be90756539304c4e145d1b5e0acfe80952db65aec",
+              "fileSize": 144301,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/3d7bc9bb6d0b613617b6365be90756539304c4e145d1b5e0acfe80952db65aec-independent-01.mp4",
+          "sourceAssetId": "material-d1c81d3d-a28b-4dd5-8abf-66267883e18b",
+          "sourceRevision": "d1c81d3d-a28b-4dd5-8abf-66267883e18b",
+          "sourceContentHash": "3d7bc9bb6d0b613617b6365be90756539304c4e145d1b5e0acfe80952db65aec",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-6813a2a6-14fa-4280-bfe7-5943f452ab53-6813a2a6-14fa-4280-bfe7-5943f452ab53",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-6813a2a6-14fa-4280-bfe7-5943f452ab53",
+          "startFrame": 360,
+          "durationInFrames": 90,
+          "width": 240,
+          "height": 240,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-6813a2a6-14fa-4280-bfe7-5943f452ab53",
+            "clipId": "6813a2a6-14fa-4280-bfe7-5943f452ab53",
+            "text": "独立视频 3 · 240×240",
+            "provenance": {
+              "materialRevisionId": "f549ee60-0543-41c3-acb5-d5c88b1b23e8",
+              "sha256": "9f70e2558154559e2cb4ab3e50b44b9e4b3f4270c47c7ead21731c8d3c67f3fa",
+              "fileSize": 138927,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/9f70e2558154559e2cb4ab3e50b44b9e4b3f4270c47c7ead21731c8d3c67f3fa-independent-02.mp4",
+          "sourceAssetId": "material-f549ee60-0543-41c3-acb5-d5c88b1b23e8",
+          "sourceRevision": "f549ee60-0543-41c3-acb5-d5c88b1b23e8",
+          "sourceContentHash": "9f70e2558154559e2cb4ab3e50b44b9e4b3f4270c47c7ead21731c8d3c67f3fa",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-e7c07eed-94f0-422f-a2cf-9d66829fe082-e7c07eed-94f0-422f-a2cf-9d66829fe082",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-e7c07eed-94f0-422f-a2cf-9d66829fe082",
+          "startFrame": 450,
+          "durationInFrames": 90,
+          "width": 320,
+          "height": 180,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-e7c07eed-94f0-422f-a2cf-9d66829fe082",
+            "clipId": "e7c07eed-94f0-422f-a2cf-9d66829fe082",
+            "text": "独立视频 4 · 320×180",
+            "provenance": {
+              "materialRevisionId": "0d991443-230f-4468-af92-dcbf79bcab84",
+              "sha256": "626e40515c37225fbf23375af4b110e4e8c2d6b6c15308a5d1ba563bfad8257b",
+              "fileSize": 138777,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/626e40515c37225fbf23375af4b110e4e8c2d6b6c15308a5d1ba563bfad8257b-independent-03.mp4",
+          "sourceAssetId": "material-0d991443-230f-4468-af92-dcbf79bcab84",
+          "sourceRevision": "0d991443-230f-4468-af92-dcbf79bcab84",
+          "sourceContentHash": "626e40515c37225fbf23375af4b110e4e8c2d6b6c15308a5d1ba563bfad8257b",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-8637b0dc-ba06-491a-b3a4-1d6341f7509c-8637b0dc-ba06-491a-b3a4-1d6341f7509c",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-8637b0dc-ba06-491a-b3a4-1d6341f7509c",
+          "startFrame": 540,
+          "durationInFrames": 90,
+          "width": 180,
+          "height": 320,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-8637b0dc-ba06-491a-b3a4-1d6341f7509c",
+            "clipId": "8637b0dc-ba06-491a-b3a4-1d6341f7509c",
+            "text": "独立视频 5 · 180×320",
+            "provenance": {
+              "materialRevisionId": "22339fba-43c7-4d61-b52f-e4e0f9c3b407",
+              "sha256": "a04045d06f9805fff57d5fe92a3454d0fb151cee10af70528e3310aa1a689492",
+              "fileSize": 140900,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/a04045d06f9805fff57d5fe92a3454d0fb151cee10af70528e3310aa1a689492-independent-04.mp4",
+          "sourceAssetId": "material-22339fba-43c7-4d61-b52f-e4e0f9c3b407",
+          "sourceRevision": "22339fba-43c7-4d61-b52f-e4e0f9c3b407",
+          "sourceContentHash": "a04045d06f9805fff57d5fe92a3454d0fb151cee10af70528e3310aa1a689492",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-8f3976f4-d0bb-4f59-a038-7cd1b9da1eb7-8f3976f4-d0bb-4f59-a038-7cd1b9da1eb7",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-8f3976f4-d0bb-4f59-a038-7cd1b9da1eb7",
+          "startFrame": 630,
+          "durationInFrames": 90,
+          "width": 240,
+          "height": 240,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-8f3976f4-d0bb-4f59-a038-7cd1b9da1eb7",
+            "clipId": "8f3976f4-d0bb-4f59-a038-7cd1b9da1eb7",
+            "text": "独立视频 6 · 240×240",
+            "provenance": {
+              "materialRevisionId": "5db099df-b6e3-4fae-8305-48de4c3cb640",
+              "sha256": "c72d07ac33ba72b7638e54f3f64c827a9c4d835f873c1e57add5c9f2d32b2874",
+              "fileSize": 138196,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/c72d07ac33ba72b7638e54f3f64c827a9c4d835f873c1e57add5c9f2d32b2874-independent-05.mp4",
+          "sourceAssetId": "material-5db099df-b6e3-4fae-8305-48de4c3cb640",
+          "sourceRevision": "5db099df-b6e3-4fae-8305-48de4c3cb640",
+          "sourceContentHash": "c72d07ac33ba72b7638e54f3f64c827a9c4d835f873c1e57add5c9f2d32b2874",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-7de71c9e-1188-4f87-b2ee-74bb3302b81e-7de71c9e-1188-4f87-b2ee-74bb3302b81e",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-7de71c9e-1188-4f87-b2ee-74bb3302b81e",
+          "startFrame": 720,
+          "durationInFrames": 90,
+          "width": 320,
+          "height": 180,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-7de71c9e-1188-4f87-b2ee-74bb3302b81e",
+            "clipId": "7de71c9e-1188-4f87-b2ee-74bb3302b81e",
+            "text": "独立视频 7 · 320×180",
+            "provenance": {
+              "materialRevisionId": "fc1757dc-b86e-4c6d-9772-7b9f010c3a4f",
+              "sha256": "1fbb9e667ebfc986d89cc9f66ca2aa7feb5271b69a72cf23a5f3d4ccf4717534",
+              "fileSize": 139774,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/1fbb9e667ebfc986d89cc9f66ca2aa7feb5271b69a72cf23a5f3d4ccf4717534-independent-06.mp4",
+          "sourceAssetId": "material-fc1757dc-b86e-4c6d-9772-7b9f010c3a4f",
+          "sourceRevision": "fc1757dc-b86e-4c6d-9772-7b9f010c3a4f",
+          "sourceContentHash": "1fbb9e667ebfc986d89cc9f66ca2aa7feb5271b69a72cf23a5f3d4ccf4717534",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-176256f2-183e-4356-b5d9-fe64644a021a-176256f2-183e-4356-b5d9-fe64644a021a",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-176256f2-183e-4356-b5d9-fe64644a021a",
+          "startFrame": 810,
+          "durationInFrames": 90,
+          "width": 180,
+          "height": 320,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-176256f2-183e-4356-b5d9-fe64644a021a",
+            "clipId": "176256f2-183e-4356-b5d9-fe64644a021a",
+            "text": "独立视频 8 · 180×320",
+            "provenance": {
+              "materialRevisionId": "c4479b3f-d4e2-47fb-ad34-ed7a9ae633c1",
+              "sha256": "922d253ab84697d17fd486714db4bc00df4a6280ba144ed0a606936a10fe9081",
+              "fileSize": 144846,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/922d253ab84697d17fd486714db4bc00df4a6280ba144ed0a606936a10fe9081-independent-07.mp4",
+          "sourceAssetId": "material-c4479b3f-d4e2-47fb-ad34-ed7a9ae633c1",
+          "sourceRevision": "c4479b3f-d4e2-47fb-ad34-ed7a9ae633c1",
+          "sourceContentHash": "922d253ab84697d17fd486714db4bc00df4a6280ba144ed0a606936a10fe9081",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-181d6163-7c14-4725-b6f2-33ad604ac490-181d6163-7c14-4725-b6f2-33ad604ac490",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-181d6163-7c14-4725-b6f2-33ad604ac490",
+          "startFrame": 900,
+          "durationInFrames": 90,
+          "width": 240,
+          "height": 240,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-181d6163-7c14-4725-b6f2-33ad604ac490",
+            "clipId": "181d6163-7c14-4725-b6f2-33ad604ac490",
+            "text": "独立视频 9 · 240×240",
+            "provenance": {
+              "materialRevisionId": "d496cbe6-7292-4cd6-ba10-0fa93db8fa65",
+              "sha256": "9d4ec4bcd33ef5d95dff0b8f309baa736247feb0dca1ac2303ebf649061016f8",
+              "fileSize": 142423,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/9d4ec4bcd33ef5d95dff0b8f309baa736247feb0dca1ac2303ebf649061016f8-independent-08.mp4",
+          "sourceAssetId": "material-d496cbe6-7292-4cd6-ba10-0fa93db8fa65",
+          "sourceRevision": "d496cbe6-7292-4cd6-ba10-0fa93db8fa65",
+          "sourceContentHash": "9d4ec4bcd33ef5d95dff0b8f309baa736247feb0dca1ac2303ebf649061016f8",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-2edaf7a0-580d-4e05-9486-2bfb12a6e332-2edaf7a0-580d-4e05-9486-2bfb12a6e332",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-2edaf7a0-580d-4e05-9486-2bfb12a6e332",
+          "startFrame": 990,
+          "durationInFrames": 90,
+          "width": 320,
+          "height": 180,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-2edaf7a0-580d-4e05-9486-2bfb12a6e332",
+            "clipId": "2edaf7a0-580d-4e05-9486-2bfb12a6e332",
+            "text": "独立视频 10 · 320×180",
+            "provenance": {
+              "materialRevisionId": "fbd346c0-2afa-48a6-b4a4-3df802f7653f",
+              "sha256": "c5f8bb7b432d7a9b9c46307323f2ea5a7eca61b27c2fa2e0982653c6e34315c7",
+              "fileSize": 141720,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/c5f8bb7b432d7a9b9c46307323f2ea5a7eca61b27c2fa2e0982653c6e34315c7-independent-09.mp4",
+          "sourceAssetId": "material-fbd346c0-2afa-48a6-b4a4-3df802f7653f",
+          "sourceRevision": "fbd346c0-2afa-48a6-b4a4-3df802f7653f",
+          "sourceContentHash": "c5f8bb7b432d7a9b9c46307323f2ea5a7eca61b27c2fa2e0982653c6e34315c7",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-8c1c43b2-941a-4d75-b291-a289637c22f9-8c1c43b2-941a-4d75-b291-a289637c22f9",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-8c1c43b2-941a-4d75-b291-a289637c22f9",
+          "startFrame": 1080,
+          "durationInFrames": 90,
+          "width": 180,
+          "height": 320,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-8c1c43b2-941a-4d75-b291-a289637c22f9",
+            "clipId": "8c1c43b2-941a-4d75-b291-a289637c22f9",
+            "text": "独立视频 11 · 180×320",
+            "provenance": {
+              "materialRevisionId": "c8d4d384-7955-4cf1-9251-10d2b49c1f5b",
+              "sha256": "731fa07c878e14489ef10b05f28c205cd4026eb72bb5875865294cd41c4cd9fa",
+              "fileSize": 147203,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/731fa07c878e14489ef10b05f28c205cd4026eb72bb5875865294cd41c4cd9fa-independent-10.mp4",
+          "sourceAssetId": "material-c8d4d384-7955-4cf1-9251-10d2b49c1f5b",
+          "sourceRevision": "c8d4d384-7955-4cf1-9251-10d2b49c1f5b",
+          "sourceContentHash": "731fa07c878e14489ef10b05f28c205cd4026eb72bb5875865294cd41c4cd9fa",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-1c1bbf10-2b0a-46f6-bc68-9159fe05bb9a-1c1bbf10-2b0a-46f6-bc68-9159fe05bb9a",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-1c1bbf10-2b0a-46f6-bc68-9159fe05bb9a",
+          "startFrame": 1170,
+          "durationInFrames": 90,
+          "width": 240,
+          "height": 240,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-1c1bbf10-2b0a-46f6-bc68-9159fe05bb9a",
+            "clipId": "1c1bbf10-2b0a-46f6-bc68-9159fe05bb9a",
+            "text": "独立视频 12 · 240×240",
+            "provenance": {
+              "materialRevisionId": "907242cd-e466-41f8-91eb-790a1b6df147",
+              "sha256": "f63979384af263b5a12d659e9f4304f219a64287c820794f61c0c2df3d63dd4c",
+              "fileSize": 143235,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/f63979384af263b5a12d659e9f4304f219a64287c820794f61c0c2df3d63dd4c-independent-11.mp4",
+          "sourceAssetId": "material-907242cd-e466-41f8-91eb-790a1b6df147",
+          "sourceRevision": "907242cd-e466-41f8-91eb-790a1b6df147",
+          "sourceContentHash": "f63979384af263b5a12d659e9f4304f219a64287c820794f61c0c2df3d63dd4c",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-07490a66-7e0f-48ea-abaf-47a32a9e22b6-07490a66-7e0f-48ea-abaf-47a32a9e22b6",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-07490a66-7e0f-48ea-abaf-47a32a9e22b6",
+          "startFrame": 1260,
+          "durationInFrames": 90,
+          "width": 320,
+          "height": 180,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-07490a66-7e0f-48ea-abaf-47a32a9e22b6",
+            "clipId": "07490a66-7e0f-48ea-abaf-47a32a9e22b6",
+            "text": "独立视频 13 · 320×180",
+            "provenance": {
+              "materialRevisionId": "3a171334-ac6b-4755-b32c-db72660ca1bd",
+              "sha256": "278e2f0ebd85b55c040f0a6e17a61f3c56a3d53d5ade739ac3b2a907baae5cb0",
+              "fileSize": 142902,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/278e2f0ebd85b55c040f0a6e17a61f3c56a3d53d5ade739ac3b2a907baae5cb0-independent-12.mp4",
+          "sourceAssetId": "material-3a171334-ac6b-4755-b32c-db72660ca1bd",
+          "sourceRevision": "3a171334-ac6b-4755-b32c-db72660ca1bd",
+          "sourceContentHash": "278e2f0ebd85b55c040f0a6e17a61f3c56a3d53d5ade739ac3b2a907baae5cb0",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-7e6fe2a5-050b-444c-be4a-147d3ccb9d41-7e6fe2a5-050b-444c-be4a-147d3ccb9d41",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-7e6fe2a5-050b-444c-be4a-147d3ccb9d41",
+          "startFrame": 1350,
+          "durationInFrames": 90,
+          "width": 180,
+          "height": 320,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-7e6fe2a5-050b-444c-be4a-147d3ccb9d41",
+            "clipId": "7e6fe2a5-050b-444c-be4a-147d3ccb9d41",
+            "text": "独立视频 14 · 180×320",
+            "provenance": {
+              "materialRevisionId": "cbe3ffef-0c36-4845-81fc-a3b08a79409f",
+              "sha256": "c58239fc4b09bd7113211630fccbc98d852c4d37156b804430199b9dca27935e",
+              "fileSize": 146097,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/c58239fc4b09bd7113211630fccbc98d852c4d37156b804430199b9dca27935e-independent-13.mp4",
+          "sourceAssetId": "material-cbe3ffef-0c36-4845-81fc-a3b08a79409f",
+          "sourceRevision": "cbe3ffef-0c36-4845-81fc-a3b08a79409f",
+          "sourceContentHash": "c58239fc4b09bd7113211630fccbc98d852c4d37156b804430199b9dca27935e",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-b51d654c-c370-4253-a174-32233ece046f-b51d654c-c370-4253-a174-32233ece046f",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-b51d654c-c370-4253-a174-32233ece046f",
+          "startFrame": 1440,
+          "durationInFrames": 90,
+          "width": 240,
+          "height": 240,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-b51d654c-c370-4253-a174-32233ece046f",
+            "clipId": "b51d654c-c370-4253-a174-32233ece046f",
+            "text": "独立视频 15 · 240×240",
+            "provenance": {
+              "materialRevisionId": "43a30627-b3c8-44f3-9b0b-07b60107984a",
+              "sha256": "99e119e6bf08c3b2ee9626074ebc7b316a2d0d1631145b5c320d8f9f23103b6d",
+              "fileSize": 140769,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/99e119e6bf08c3b2ee9626074ebc7b316a2d0d1631145b5c320d8f9f23103b6d-independent-14.mp4",
+          "sourceAssetId": "material-43a30627-b3c8-44f3-9b0b-07b60107984a",
+          "sourceRevision": "43a30627-b3c8-44f3-9b0b-07b60107984a",
+          "sourceContentHash": "99e119e6bf08c3b2ee9626074ebc7b316a2d0d1631145b5c320d8f9f23103b6d",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-94c48f09-2368-449c-8d67-52bf42a199d5-94c48f09-2368-449c-8d67-52bf42a199d5",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-94c48f09-2368-449c-8d67-52bf42a199d5",
+          "startFrame": 1530,
+          "durationInFrames": 90,
+          "width": 320,
+          "height": 180,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-94c48f09-2368-449c-8d67-52bf42a199d5",
+            "clipId": "94c48f09-2368-449c-8d67-52bf42a199d5",
+            "text": "独立视频 16 · 320×180",
+            "provenance": {
+              "materialRevisionId": "24a7f787-4a0e-4160-bc6a-eaa41daca2fe",
+              "sha256": "5387cb09ad25b7fae829e9bed185acebd047ceb2df28da54251b393c960ae872",
+              "fileSize": 139434,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/5387cb09ad25b7fae829e9bed185acebd047ceb2df28da54251b393c960ae872-independent-15.mp4",
+          "sourceAssetId": "material-24a7f787-4a0e-4160-bc6a-eaa41daca2fe",
+          "sourceRevision": "24a7f787-4a0e-4160-bc6a-eaa41daca2fe",
+          "sourceContentHash": "5387cb09ad25b7fae829e9bed185acebd047ceb2df28da54251b393c960ae872",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-9c95fbbd-638d-4fd1-ad26-dc1d91237356-9c95fbbd-638d-4fd1-ad26-dc1d91237356",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-9c95fbbd-638d-4fd1-ad26-dc1d91237356",
+          "startFrame": 1620,
+          "durationInFrames": 90,
+          "width": 180,
+          "height": 320,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-9c95fbbd-638d-4fd1-ad26-dc1d91237356",
+            "clipId": "9c95fbbd-638d-4fd1-ad26-dc1d91237356",
+            "text": "独立视频 17 · 180×320",
+            "provenance": {
+              "materialRevisionId": "8f417bff-5476-4f65-a12b-61917e7eb745",
+              "sha256": "ad35f76d2be8c512522f9d59e97af7dba18286349f9ba4ea2136b31c1f8c35cf",
+              "fileSize": 140946,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/ad35f76d2be8c512522f9d59e97af7dba18286349f9ba4ea2136b31c1f8c35cf-independent-16.mp4",
+          "sourceAssetId": "material-8f417bff-5476-4f65-a12b-61917e7eb745",
+          "sourceRevision": "8f417bff-5476-4f65-a12b-61917e7eb745",
+          "sourceContentHash": "ad35f76d2be8c512522f9d59e97af7dba18286349f9ba4ea2136b31c1f8c35cf",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-04acb4c6-e489-4e99-8847-83c2d8d0085b-04acb4c6-e489-4e99-8847-83c2d8d0085b",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-04acb4c6-e489-4e99-8847-83c2d8d0085b",
+          "startFrame": 1710,
+          "durationInFrames": 90,
+          "width": 240,
+          "height": 240,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-04acb4c6-e489-4e99-8847-83c2d8d0085b",
+            "clipId": "04acb4c6-e489-4e99-8847-83c2d8d0085b",
+            "text": "独立视频 18 · 240×240",
+            "provenance": {
+              "materialRevisionId": "0585da90-44af-4221-946b-032e47f5ee9e",
+              "sha256": "0714c74b7deecf03fbf4e65eefbad7fc14fb9b00038591deb0c863c42bd85249",
+              "fileSize": 138368,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/0714c74b7deecf03fbf4e65eefbad7fc14fb9b00038591deb0c863c42bd85249-independent-17.mp4",
+          "sourceAssetId": "material-0585da90-44af-4221-946b-032e47f5ee9e",
+          "sourceRevision": "0585da90-44af-4221-946b-032e47f5ee9e",
+          "sourceContentHash": "0714c74b7deecf03fbf4e65eefbad7fc14fb9b00038591deb0c863c42bd85249",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-fba1fd33-4918-49e9-86ae-5e8bb88db3c3-fba1fd33-4918-49e9-86ae-5e8bb88db3c3",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-fba1fd33-4918-49e9-86ae-5e8bb88db3c3",
+          "startFrame": 1800,
+          "durationInFrames": 90,
+          "width": 320,
+          "height": 180,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-fba1fd33-4918-49e9-86ae-5e8bb88db3c3",
+            "clipId": "fba1fd33-4918-49e9-86ae-5e8bb88db3c3",
+            "text": "独立视频 19 · 320×180",
+            "provenance": {
+              "materialRevisionId": "5a34cb02-82c8-4161-9c68-4d61758e1baf",
+              "sha256": "7bc5b9d4f465a152d2c59794955de3dab94ab5f5979ba306f8aa11c6e1af5fde",
+              "fileSize": 139140,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/7bc5b9d4f465a152d2c59794955de3dab94ab5f5979ba306f8aa11c6e1af5fde-independent-18.mp4",
+          "sourceAssetId": "material-5a34cb02-82c8-4161-9c68-4d61758e1baf",
+          "sourceRevision": "5a34cb02-82c8-4161-9c68-4d61758e1baf",
+          "sourceContentHash": "7bc5b9d4f465a152d2c59794955de3dab94ab5f5979ba306f8aa11c6e1af5fde",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-160f73ed-7b5a-40b0-b96c-dcad3b2d2bbf-160f73ed-7b5a-40b0-b96c-dcad3b2d2bbf",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-160f73ed-7b5a-40b0-b96c-dcad3b2d2bbf",
+          "startFrame": 1890,
+          "durationInFrames": 90,
+          "width": 180,
+          "height": 320,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-160f73ed-7b5a-40b0-b96c-dcad3b2d2bbf",
+            "clipId": "160f73ed-7b5a-40b0-b96c-dcad3b2d2bbf",
+            "text": "独立视频 20 · 180×320",
+            "provenance": {
+              "materialRevisionId": "e3890d04-0b56-485a-b13c-32ea2da8387f",
+              "sha256": "fee13ae5f2a0fd3b851832882609593692f022d9f614230f6a858c5e66546729",
+              "fileSize": 143304,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/fee13ae5f2a0fd3b851832882609593692f022d9f614230f6a858c5e66546729-independent-19.mp4",
+          "sourceAssetId": "material-e3890d04-0b56-485a-b13c-32ea2da8387f",
+          "sourceRevision": "e3890d04-0b56-485a-b13c-32ea2da8387f",
+          "sourceContentHash": "fee13ae5f2a0fd3b851832882609593692f022d9f614230f6a858c5e66546729",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-1e430b16-46ed-4b39-958d-01c06b843c46-1e430b16-46ed-4b39-958d-01c06b843c46",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-1e430b16-46ed-4b39-958d-01c06b843c46",
+          "startFrame": 1980,
+          "durationInFrames": 90,
+          "width": 240,
+          "height": 240,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-1e430b16-46ed-4b39-958d-01c06b843c46",
+            "clipId": "1e430b16-46ed-4b39-958d-01c06b843c46",
+            "text": "独立视频 21 · 240×240",
+            "provenance": {
+              "materialRevisionId": "e68017d3-5f7a-41a8-9bfc-88f77a4bbae4",
+              "sha256": "97ded529436bab201118bf12acd48cf645f2a0c62ee9230436d3d8b88985f2ee",
+              "fileSize": 141652,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/97ded529436bab201118bf12acd48cf645f2a0c62ee9230436d3d8b88985f2ee-independent-20.mp4",
+          "sourceAssetId": "material-e68017d3-5f7a-41a8-9bfc-88f77a4bbae4",
+          "sourceRevision": "e68017d3-5f7a-41a8-9bfc-88f77a4bbae4",
+          "sourceContentHash": "97ded529436bab201118bf12acd48cf645f2a0c62ee9230436d3d8b88985f2ee",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-c431af72-b9f5-43c7-a119-fc84f3871dae-c431af72-b9f5-43c7-a119-fc84f3871dae",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-c431af72-b9f5-43c7-a119-fc84f3871dae",
+          "startFrame": 2070,
+          "durationInFrames": 90,
+          "width": 320,
+          "height": 180,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-c431af72-b9f5-43c7-a119-fc84f3871dae",
+            "clipId": "c431af72-b9f5-43c7-a119-fc84f3871dae",
+            "text": "独立视频 22 · 320×180",
+            "provenance": {
+              "materialRevisionId": "94279083-17e9-416b-8f09-f7f86bf6e295",
+              "sha256": "21bc3e43886b4e72c14585a8cc54077864d85b0a6420243c382ae93dcfe3c5be",
+              "fileSize": 140849,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/21bc3e43886b4e72c14585a8cc54077864d85b0a6420243c382ae93dcfe3c5be-independent-21.mp4",
+          "sourceAssetId": "material-94279083-17e9-416b-8f09-f7f86bf6e295",
+          "sourceRevision": "94279083-17e9-416b-8f09-f7f86bf6e295",
+          "sourceContentHash": "21bc3e43886b4e72c14585a8cc54077864d85b0a6420243c382ae93dcfe3c5be",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-c80aa3cf-40d3-48b0-9def-aa2fa7c5ec15-c80aa3cf-40d3-48b0-9def-aa2fa7c5ec15",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-c80aa3cf-40d3-48b0-9def-aa2fa7c5ec15",
+          "startFrame": 2160,
+          "durationInFrames": 90,
+          "width": 180,
+          "height": 320,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-c80aa3cf-40d3-48b0-9def-aa2fa7c5ec15",
+            "clipId": "c80aa3cf-40d3-48b0-9def-aa2fa7c5ec15",
+            "text": "独立视频 23 · 180×320",
+            "provenance": {
+              "materialRevisionId": "e82876e8-cae0-45f7-a5c4-1318dbbc62a8",
+              "sha256": "3e0ea107b5e80eceb39894071e1adf94af330ee150594d7990a0d99a97bfbe0c",
+              "fileSize": 146835,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/3e0ea107b5e80eceb39894071e1adf94af330ee150594d7990a0d99a97bfbe0c-independent-22.mp4",
+          "sourceAssetId": "material-e82876e8-cae0-45f7-a5c4-1318dbbc62a8",
+          "sourceRevision": "e82876e8-cae0-45f7-a5c4-1318dbbc62a8",
+          "sourceContentHash": "3e0ea107b5e80eceb39894071e1adf94af330ee150594d7990a0d99a97bfbe0c",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-d9b93cfe-e82f-40eb-bc7c-8bea39c4653e-d9b93cfe-e82f-40eb-bc7c-8bea39c4653e",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-d9b93cfe-e82f-40eb-bc7c-8bea39c4653e",
+          "startFrame": 2250,
+          "durationInFrames": 90,
+          "width": 240,
+          "height": 240,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-d9b93cfe-e82f-40eb-bc7c-8bea39c4653e",
+            "clipId": "d9b93cfe-e82f-40eb-bc7c-8bea39c4653e",
+            "text": "独立视频 24 · 240×240",
+            "provenance": {
+              "materialRevisionId": "855976ab-0d72-49e1-ba75-f425747322b5",
+              "sha256": "92c78d3dee27d84f4bf9fcbaf1e5c6d5a4c164a13754d37ad1e509ba5ba90074",
+              "fileSize": 143304,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/92c78d3dee27d84f4bf9fcbaf1e5c6d5a4c164a13754d37ad1e509ba5ba90074-independent-23.mp4",
+          "sourceAssetId": "material-855976ab-0d72-49e1-ba75-f425747322b5",
+          "sourceRevision": "855976ab-0d72-49e1-ba75-f425747322b5",
+          "sourceContentHash": "92c78d3dee27d84f4bf9fcbaf1e5c6d5a4c164a13754d37ad1e509ba5ba90074",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-404561f4-c130-464a-8c30-ceb07b5b7d73-404561f4-c130-464a-8c30-ceb07b5b7d73",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-404561f4-c130-464a-8c30-ceb07b5b7d73",
+          "startFrame": 2340,
+          "durationInFrames": 90,
+          "width": 320,
+          "height": 180,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-404561f4-c130-464a-8c30-ceb07b5b7d73",
+            "clipId": "404561f4-c130-464a-8c30-ceb07b5b7d73",
+            "text": "独立视频 25 · 320×180",
+            "provenance": {
+              "materialRevisionId": "a011d738-a3a4-4dcc-a79b-71e19b13943c",
+              "sha256": "be47ab16429c8ca49f48dc56465732bcdba8ab70c371988c4d88dd59a06fe468",
+              "fileSize": 143024,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/be47ab16429c8ca49f48dc56465732bcdba8ab70c371988c4d88dd59a06fe468-independent-24.mp4",
+          "sourceAssetId": "material-a011d738-a3a4-4dcc-a79b-71e19b13943c",
+          "sourceRevision": "a011d738-a3a4-4dcc-a79b-71e19b13943c",
+          "sourceContentHash": "be47ab16429c8ca49f48dc56465732bcdba8ab70c371988c4d88dd59a06fe468",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-2c0718ad-5dc1-4c3e-bf71-fb27141e7059-2c0718ad-5dc1-4c3e-bf71-fb27141e7059",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-2c0718ad-5dc1-4c3e-bf71-fb27141e7059",
+          "startFrame": 2430,
+          "durationInFrames": 90,
+          "width": 180,
+          "height": 320,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-2c0718ad-5dc1-4c3e-bf71-fb27141e7059",
+            "clipId": "2c0718ad-5dc1-4c3e-bf71-fb27141e7059",
+            "text": "独立视频 26 · 180×320",
+            "provenance": {
+              "materialRevisionId": "8a328352-5c6f-448b-ad0c-9eb5248ad70e",
+              "sha256": "312025de8bb0dee47edfbc32eea64ef035f77374b6441f2e5c0700f8e18e3242",
+              "fileSize": 146669,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/312025de8bb0dee47edfbc32eea64ef035f77374b6441f2e5c0700f8e18e3242-independent-25.mp4",
+          "sourceAssetId": "material-8a328352-5c6f-448b-ad0c-9eb5248ad70e",
+          "sourceRevision": "8a328352-5c6f-448b-ad0c-9eb5248ad70e",
+          "sourceContentHash": "312025de8bb0dee47edfbc32eea64ef035f77374b6441f2e5c0700f8e18e3242",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-f1fe028b-1282-431b-b100-7fc9941d95fa-f1fe028b-1282-431b-b100-7fc9941d95fa",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-f1fe028b-1282-431b-b100-7fc9941d95fa",
+          "startFrame": 2520,
+          "durationInFrames": 90,
+          "width": 240,
+          "height": 240,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-f1fe028b-1282-431b-b100-7fc9941d95fa",
+            "clipId": "f1fe028b-1282-431b-b100-7fc9941d95fa",
+            "text": "独立视频 27 · 240×240",
+            "provenance": {
+              "materialRevisionId": "a43d5a32-c546-4cf4-a88f-5a21bd0bc8c7",
+              "sha256": "b0ea48dbe785150fd1bd1519185edccab24168c867cde0ea279ee75bb34dd758",
+              "fileSize": 142561,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/b0ea48dbe785150fd1bd1519185edccab24168c867cde0ea279ee75bb34dd758-independent-26.mp4",
+          "sourceAssetId": "material-a43d5a32-c546-4cf4-a88f-5a21bd0bc8c7",
+          "sourceRevision": "a43d5a32-c546-4cf4-a88f-5a21bd0bc8c7",
+          "sourceContentHash": "b0ea48dbe785150fd1bd1519185edccab24168c867cde0ea279ee75bb34dd758",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-e1dfc75f-0dcf-4eb7-ae14-9c67b88edaad-e1dfc75f-0dcf-4eb7-ae14-9c67b88edaad",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-e1dfc75f-0dcf-4eb7-ae14-9c67b88edaad",
+          "startFrame": 2610,
+          "durationInFrames": 90,
+          "width": 320,
+          "height": 180,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-e1dfc75f-0dcf-4eb7-ae14-9c67b88edaad",
+            "clipId": "e1dfc75f-0dcf-4eb7-ae14-9c67b88edaad",
+            "text": "独立视频 28 · 320×180",
+            "provenance": {
+              "materialRevisionId": "1c9c240a-f2fe-4471-8066-0b609ec02575",
+              "sha256": "43982ea23e501f021a48cfe11a7b447c185eabeb805db1d74be83f4079f8460e",
+              "fileSize": 140858,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/43982ea23e501f021a48cfe11a7b447c185eabeb805db1d74be83f4079f8460e-independent-27.mp4",
+          "sourceAssetId": "material-1c9c240a-f2fe-4471-8066-0b609ec02575",
+          "sourceRevision": "1c9c240a-f2fe-4471-8066-0b609ec02575",
+          "sourceContentHash": "43982ea23e501f021a48cfe11a7b447c185eabeb805db1d74be83f4079f8460e",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-ec5272a0-0ebe-4318-a212-785e8d75760d-ec5272a0-0ebe-4318-a212-785e8d75760d",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-ec5272a0-0ebe-4318-a212-785e8d75760d",
+          "startFrame": 2700,
+          "durationInFrames": 90,
+          "width": 180,
+          "height": 320,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-ec5272a0-0ebe-4318-a212-785e8d75760d",
+            "clipId": "ec5272a0-0ebe-4318-a212-785e8d75760d",
+            "text": "独立视频 29 · 180×320",
+            "provenance": {
+              "materialRevisionId": "aa73f298-68dd-445d-a6eb-e745f84c902b",
+              "sha256": "17634cd057df45b7e88d7d2ea3684c25f3b05b668e7bbfd2ee5b9f44578ce1e3",
+              "fileSize": 141673,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/17634cd057df45b7e88d7d2ea3684c25f3b05b668e7bbfd2ee5b9f44578ce1e3-independent-28.mp4",
+          "sourceAssetId": "material-aa73f298-68dd-445d-a6eb-e745f84c902b",
+          "sourceRevision": "aa73f298-68dd-445d-a6eb-e745f84c902b",
+          "sourceContentHash": "17634cd057df45b7e88d7d2ea3684c25f3b05b668e7bbfd2ee5b9f44578ce1e3",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-76689936-5c46-4d22-bdc2-f39ef1b227af-76689936-5c46-4d22-bdc2-f39ef1b227af",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-76689936-5c46-4d22-bdc2-f39ef1b227af",
+          "startFrame": 2790,
+          "durationInFrames": 90,
+          "width": 240,
+          "height": 240,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-76689936-5c46-4d22-bdc2-f39ef1b227af",
+            "clipId": "76689936-5c46-4d22-bdc2-f39ef1b227af",
+            "text": "独立视频 30 · 240×240",
+            "provenance": {
+              "materialRevisionId": "5f996940-7182-4cdf-a0d0-ee36466ff9cf",
+              "sha256": "b4c61040c58624b90d0fdf140a309ed2880846ac6546b33ba5d5bc103e63c663",
+              "fileSize": 138516,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/b4c61040c58624b90d0fdf140a309ed2880846ac6546b33ba5d5bc103e63c663-independent-29.mp4",
+          "sourceAssetId": "material-5f996940-7182-4cdf-a0d0-ee36466ff9cf",
+          "sourceRevision": "5f996940-7182-4cdf-a0d0-ee36466ff9cf",
+          "sourceContentHash": "b4c61040c58624b90d0fdf140a309ed2880846ac6546b33ba5d5bc103e63c663",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-32e424dc-6273-4818-bb96-8da3de42b9cd-32e424dc-6273-4818-bb96-8da3de42b9cd",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-32e424dc-6273-4818-bb96-8da3de42b9cd",
+          "startFrame": 2880,
+          "durationInFrames": 90,
+          "width": 320,
+          "height": 180,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-32e424dc-6273-4818-bb96-8da3de42b9cd",
+            "clipId": "32e424dc-6273-4818-bb96-8da3de42b9cd",
+            "text": "独立视频 31 · 320×180",
+            "provenance": {
+              "materialRevisionId": "232466d8-bdc1-453c-912f-2fb64a9fc641",
+              "sha256": "2d53edf18b1d69e99f213cf134bf672099b32e3a5057327baeb2da9537e71ea0",
+              "fileSize": 138750,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/2d53edf18b1d69e99f213cf134bf672099b32e3a5057327baeb2da9537e71ea0-independent-30.mp4",
+          "sourceAssetId": "material-232466d8-bdc1-453c-912f-2fb64a9fc641",
+          "sourceRevision": "232466d8-bdc1-453c-912f-2fb64a9fc641",
+          "sourceContentHash": "2d53edf18b1d69e99f213cf134bf672099b32e3a5057327baeb2da9537e71ea0",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-51eb1116-4557-4f0f-a91f-58fe56cbe6cd-51eb1116-4557-4f0f-a91f-58fe56cbe6cd",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-51eb1116-4557-4f0f-a91f-58fe56cbe6cd",
+          "startFrame": 2970,
+          "durationInFrames": 90,
+          "width": 180,
+          "height": 320,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-51eb1116-4557-4f0f-a91f-58fe56cbe6cd",
+            "clipId": "51eb1116-4557-4f0f-a91f-58fe56cbe6cd",
+            "text": "独立视频 32 · 180×320",
+            "provenance": {
+              "materialRevisionId": "f8c73e20-e29c-4a6b-a6ab-c98db3ab48cd",
+              "sha256": "76bfd31a2bd22c26921b1d8793f8cd43bb1c16266e9382045d77d19827b529e7",
+              "fileSize": 141942,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/76bfd31a2bd22c26921b1d8793f8cd43bb1c16266e9382045d77d19827b529e7-independent-31.mp4",
+          "sourceAssetId": "material-f8c73e20-e29c-4a6b-a6ab-c98db3ab48cd",
+          "sourceRevision": "f8c73e20-e29c-4a6b-a6ab-c98db3ab48cd",
+          "sourceContentHash": "76bfd31a2bd22c26921b1d8793f8cd43bb1c16266e9382045d77d19827b529e7",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-18b6b0cf-6ef4-4f1a-b4d3-fa4cb198790d-18b6b0cf-6ef4-4f1a-b4d3-fa4cb198790d",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-18b6b0cf-6ef4-4f1a-b4d3-fa4cb198790d",
+          "startFrame": 3060,
+          "durationInFrames": 90,
+          "width": 240,
+          "height": 240,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-18b6b0cf-6ef4-4f1a-b4d3-fa4cb198790d",
+            "clipId": "18b6b0cf-6ef4-4f1a-b4d3-fa4cb198790d",
+            "text": "独立视频 33 · 240×240",
+            "provenance": {
+              "materialRevisionId": "d13285e4-a851-4ab7-acdd-719d3caa0dd1",
+              "sha256": "cd10e5e7a01abb2fbecd1622d10d8ad7c5f4624fc898a82ca093027019fe549a",
+              "fileSize": 140256,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/cd10e5e7a01abb2fbecd1622d10d8ad7c5f4624fc898a82ca093027019fe549a-independent-32.mp4",
+          "sourceAssetId": "material-d13285e4-a851-4ab7-acdd-719d3caa0dd1",
+          "sourceRevision": "d13285e4-a851-4ab7-acdd-719d3caa0dd1",
+          "sourceContentHash": "cd10e5e7a01abb2fbecd1622d10d8ad7c5f4624fc898a82ca093027019fe549a",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-aab7ddf1-1384-47ec-bb33-a8b2f7411ba6-aab7ddf1-1384-47ec-bb33-a8b2f7411ba6",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-aab7ddf1-1384-47ec-bb33-a8b2f7411ba6",
+          "startFrame": 3150,
+          "durationInFrames": 90,
+          "width": 320,
+          "height": 180,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-aab7ddf1-1384-47ec-bb33-a8b2f7411ba6",
+            "clipId": "aab7ddf1-1384-47ec-bb33-a8b2f7411ba6",
+            "text": "独立视频 34 · 320×180",
+            "provenance": {
+              "materialRevisionId": "13ccb20e-4e05-4f70-bed2-86acc6a983fa",
+              "sha256": "870818dea9122e16ab5fca48e86a3ce12bdbad72a0f612d152f90852327d7ce0",
+              "fileSize": 140609,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/870818dea9122e16ab5fca48e86a3ce12bdbad72a0f612d152f90852327d7ce0-independent-33.mp4",
+          "sourceAssetId": "material-13ccb20e-4e05-4f70-bed2-86acc6a983fa",
+          "sourceRevision": "13ccb20e-4e05-4f70-bed2-86acc6a983fa",
+          "sourceContentHash": "870818dea9122e16ab5fca48e86a3ce12bdbad72a0f612d152f90852327d7ce0",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-bbc79124-d0de-46a5-8520-c15f2b02e17c-bbc79124-d0de-46a5-8520-c15f2b02e17c",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-bbc79124-d0de-46a5-8520-c15f2b02e17c",
+          "startFrame": 3240,
+          "durationInFrames": 90,
+          "width": 180,
+          "height": 320,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-bbc79124-d0de-46a5-8520-c15f2b02e17c",
+            "clipId": "bbc79124-d0de-46a5-8520-c15f2b02e17c",
+            "text": "独立视频 35 · 180×320",
+            "provenance": {
+              "materialRevisionId": "a59f7ec1-ad41-4a6d-8691-3b33b89cf9f9",
+              "sha256": "042ab980c43e4ce66038d3cd2a1d4a1766cf96f77d081aba3bd97f02b60e34f2",
+              "fileSize": 146483,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/042ab980c43e4ce66038d3cd2a1d4a1766cf96f77d081aba3bd97f02b60e34f2-independent-34.mp4",
+          "sourceAssetId": "material-a59f7ec1-ad41-4a6d-8691-3b33b89cf9f9",
+          "sourceRevision": "a59f7ec1-ad41-4a6d-8691-3b33b89cf9f9",
+          "sourceContentHash": "042ab980c43e4ce66038d3cd2a1d4a1766cf96f77d081aba3bd97f02b60e34f2",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-1eeece54-5de1-462c-a75d-3c653671a878-1eeece54-5de1-462c-a75d-3c653671a878",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-1eeece54-5de1-462c-a75d-3c653671a878",
+          "startFrame": 3330,
+          "durationInFrames": 90,
+          "width": 240,
+          "height": 240,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-1eeece54-5de1-462c-a75d-3c653671a878",
+            "clipId": "1eeece54-5de1-462c-a75d-3c653671a878",
+            "text": "独立视频 36 · 240×240",
+            "provenance": {
+              "materialRevisionId": "949703f5-8a53-4292-92c7-94a30339975d",
+              "sha256": "0df3982f50f89a07f043a682b0d40f96ce2cf909cf2f5294fc616241c917cebf",
+              "fileSize": 143084,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/0df3982f50f89a07f043a682b0d40f96ce2cf909cf2f5294fc616241c917cebf-independent-35.mp4",
+          "sourceAssetId": "material-949703f5-8a53-4292-92c7-94a30339975d",
+          "sourceRevision": "949703f5-8a53-4292-92c7-94a30339975d",
+          "sourceContentHash": "0df3982f50f89a07f043a682b0d40f96ce2cf909cf2f5294fc616241c917cebf",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-d1829c79-b320-4784-b872-7a6c45bafff4-d1829c79-b320-4784-b872-7a6c45bafff4",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-d1829c79-b320-4784-b872-7a6c45bafff4",
+          "startFrame": 3420,
+          "durationInFrames": 90,
+          "width": 320,
+          "height": 180,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-d1829c79-b320-4784-b872-7a6c45bafff4",
+            "clipId": "d1829c79-b320-4784-b872-7a6c45bafff4",
+            "text": "独立视频 37 · 320×180",
+            "provenance": {
+              "materialRevisionId": "b41a524b-5e19-473e-995b-707e9c18f193",
+              "sha256": "17c566770f2514b586ca94a6d7db417146ee917459085362bbab8e964674a685",
+              "fileSize": 142545,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/17c566770f2514b586ca94a6d7db417146ee917459085362bbab8e964674a685-independent-36.mp4",
+          "sourceAssetId": "material-b41a524b-5e19-473e-995b-707e9c18f193",
+          "sourceRevision": "b41a524b-5e19-473e-995b-707e9c18f193",
+          "sourceContentHash": "17c566770f2514b586ca94a6d7db417146ee917459085362bbab8e964674a685",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-e2a34101-f2c7-4542-88c5-f5d77aeb1513-e2a34101-f2c7-4542-88c5-f5d77aeb1513",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-e2a34101-f2c7-4542-88c5-f5d77aeb1513",
+          "startFrame": 3510,
+          "durationInFrames": 90,
+          "width": 180,
+          "height": 320,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-e2a34101-f2c7-4542-88c5-f5d77aeb1513",
+            "clipId": "e2a34101-f2c7-4542-88c5-f5d77aeb1513",
+            "text": "独立视频 38 · 180×320",
+            "provenance": {
+              "materialRevisionId": "16331128-f06b-4bdc-ac75-b81e2c1db320",
+              "sha256": "4892e555c8d7f9dd1d47664c6abf7e6f5c0773c5baf93027ce8d8c1ac366a129",
+              "fileSize": 147352,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/4892e555c8d7f9dd1d47664c6abf7e6f5c0773c5baf93027ce8d8c1ac366a129-independent-37.mp4",
+          "sourceAssetId": "material-16331128-f06b-4bdc-ac75-b81e2c1db320",
+          "sourceRevision": "16331128-f06b-4bdc-ac75-b81e2c1db320",
+          "sourceContentHash": "4892e555c8d7f9dd1d47664c6abf7e6f5c0773c5baf93027ce8d8c1ac366a129",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-b613d5de-f6ec-4176-8fd1-ab9987e1dd23-b613d5de-f6ec-4176-8fd1-ab9987e1dd23",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-b613d5de-f6ec-4176-8fd1-ab9987e1dd23",
+          "startFrame": 3600,
+          "durationInFrames": 90,
+          "width": 240,
+          "height": 240,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-b613d5de-f6ec-4176-8fd1-ab9987e1dd23",
+            "clipId": "b613d5de-f6ec-4176-8fd1-ab9987e1dd23",
+            "text": "独立视频 39 · 240×240",
+            "provenance": {
+              "materialRevisionId": "f9eee0d0-1443-454e-989b-bd5bc24bb2a3",
+              "sha256": "1eed99994253cd595e1915aed2a4e91caf05fe7566dcf6515542a38a9b8e09ec",
+              "fileSize": 143018,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/1eed99994253cd595e1915aed2a4e91caf05fe7566dcf6515542a38a9b8e09ec-independent-38.mp4",
+          "sourceAssetId": "material-f9eee0d0-1443-454e-989b-bd5bc24bb2a3",
+          "sourceRevision": "f9eee0d0-1443-454e-989b-bd5bc24bb2a3",
+          "sourceContentHash": "1eed99994253cd595e1915aed2a4e91caf05fe7566dcf6515542a38a9b8e09ec",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-7a53f50a-78b2-4d55-bcd8-dcdc52390352-7a53f50a-78b2-4d55-bcd8-dcdc52390352",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-7a53f50a-78b2-4d55-bcd8-dcdc52390352",
+          "startFrame": 3690,
+          "durationInFrames": 90,
+          "width": 320,
+          "height": 180,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-7a53f50a-78b2-4d55-bcd8-dcdc52390352",
+            "clipId": "7a53f50a-78b2-4d55-bcd8-dcdc52390352",
+            "text": "独立视频 40 · 320×180",
+            "provenance": {
+              "materialRevisionId": "01955360-ff0f-486f-884e-921fa547064d",
+              "sha256": "7b0ff7b57edcd7861b70d1d9f8a596e0a20065e96970c8263359374121614096",
+              "fileSize": 142185,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/7b0ff7b57edcd7861b70d1d9f8a596e0a20065e96970c8263359374121614096-independent-39.mp4",
+          "sourceAssetId": "material-01955360-ff0f-486f-884e-921fa547064d",
+          "sourceRevision": "01955360-ff0f-486f-884e-921fa547064d",
+          "sourceContentHash": "7b0ff7b57edcd7861b70d1d9f8a596e0a20065e96970c8263359374121614096",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-459204a0-114d-44c0-afb2-309051a893f8-459204a0-114d-44c0-afb2-309051a893f8",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-459204a0-114d-44c0-afb2-309051a893f8",
+          "startFrame": 3780,
+          "durationInFrames": 90,
+          "width": 180,
+          "height": 320,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-459204a0-114d-44c0-afb2-309051a893f8",
+            "clipId": "459204a0-114d-44c0-afb2-309051a893f8",
+            "text": "独立视频 41 · 180×320",
+            "provenance": {
+              "materialRevisionId": "47680646-0658-4126-876e-328c54711da5",
+              "sha256": "e4c946e4e555e1b594c589f424f2b004db3c7d2708038780953903583e4c8420",
+              "fileSize": 143599,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/e4c946e4e555e1b594c589f424f2b004db3c7d2708038780953903583e4c8420-independent-40.mp4",
+          "sourceAssetId": "material-47680646-0658-4126-876e-328c54711da5",
+          "sourceRevision": "47680646-0658-4126-876e-328c54711da5",
+          "sourceContentHash": "e4c946e4e555e1b594c589f424f2b004db3c7d2708038780953903583e4c8420",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-cf9f10e2-dca9-473e-9948-e394034bd0fc-cf9f10e2-dca9-473e-9948-e394034bd0fc",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-cf9f10e2-dca9-473e-9948-e394034bd0fc",
+          "startFrame": 3870,
+          "durationInFrames": 90,
+          "width": 240,
+          "height": 240,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-cf9f10e2-dca9-473e-9948-e394034bd0fc",
+            "clipId": "cf9f10e2-dca9-473e-9948-e394034bd0fc",
+            "text": "独立视频 42 · 240×240",
+            "provenance": {
+              "materialRevisionId": "66255cae-be71-428b-bdfd-2c4d2cafd0ea",
+              "sha256": "c3d95c7d651921e4532d143c82f4a97174bf74da9e68e951482b4a9fa495789d",
+              "fileSize": 138582,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/c3d95c7d651921e4532d143c82f4a97174bf74da9e68e951482b4a9fa495789d-independent-41.mp4",
+          "sourceAssetId": "material-66255cae-be71-428b-bdfd-2c4d2cafd0ea",
+          "sourceRevision": "66255cae-be71-428b-bdfd-2c4d2cafd0ea",
+          "sourceContentHash": "c3d95c7d651921e4532d143c82f4a97174bf74da9e68e951482b4a9fa495789d",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-bd3c0b79-c304-4565-9686-dc4bf1dd1381-bd3c0b79-c304-4565-9686-dc4bf1dd1381",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-bd3c0b79-c304-4565-9686-dc4bf1dd1381",
+          "startFrame": 3960,
+          "durationInFrames": 90,
+          "width": 320,
+          "height": 180,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-bd3c0b79-c304-4565-9686-dc4bf1dd1381",
+            "clipId": "bd3c0b79-c304-4565-9686-dc4bf1dd1381",
+            "text": "独立视频 43 · 320×180",
+            "provenance": {
+              "materialRevisionId": "73fa864c-4b6d-4d17-bdf3-6a710810a338",
+              "sha256": "16356a718f35a9299ed3a4de86ed708b18878bbf59d01bf9cd603dd05293fe07",
+              "fileSize": 138915,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/16356a718f35a9299ed3a4de86ed708b18878bbf59d01bf9cd603dd05293fe07-independent-42.mp4",
+          "sourceAssetId": "material-73fa864c-4b6d-4d17-bdf3-6a710810a338",
+          "sourceRevision": "73fa864c-4b6d-4d17-bdf3-6a710810a338",
+          "sourceContentHash": "16356a718f35a9299ed3a4de86ed708b18878bbf59d01bf9cd603dd05293fe07",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-88ce363b-291c-4d58-a64c-5638a35481db-88ce363b-291c-4d58-a64c-5638a35481db",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-88ce363b-291c-4d58-a64c-5638a35481db",
+          "startFrame": 4050,
+          "durationInFrames": 90,
+          "width": 180,
+          "height": 320,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-88ce363b-291c-4d58-a64c-5638a35481db",
+            "clipId": "88ce363b-291c-4d58-a64c-5638a35481db",
+            "text": "独立视频 44 · 180×320",
+            "provenance": {
+              "materialRevisionId": "411aae51-5ac4-4e64-9910-d72d290e2603",
+              "sha256": "e2181a1a36d4d8df8acbd9ef7ee362016e170a15f144de9718e77cb73aeb309c",
+              "fileSize": 140716,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/e2181a1a36d4d8df8acbd9ef7ee362016e170a15f144de9718e77cb73aeb309c-independent-43.mp4",
+          "sourceAssetId": "material-411aae51-5ac4-4e64-9910-d72d290e2603",
+          "sourceRevision": "411aae51-5ac4-4e64-9910-d72d290e2603",
+          "sourceContentHash": "e2181a1a36d4d8df8acbd9ef7ee362016e170a15f144de9718e77cb73aeb309c",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-8e61344d-4b54-4f67-a685-6d57f1af8754-8e61344d-4b54-4f67-a685-6d57f1af8754",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-8e61344d-4b54-4f67-a685-6d57f1af8754",
+          "startFrame": 4140,
+          "durationInFrames": 90,
+          "width": 240,
+          "height": 240,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-8e61344d-4b54-4f67-a685-6d57f1af8754",
+            "clipId": "8e61344d-4b54-4f67-a685-6d57f1af8754",
+            "text": "独立视频 45 · 240×240",
+            "provenance": {
+              "materialRevisionId": "533d5432-273c-4373-aa85-f0fff3f8b59e",
+              "sha256": "4c64dd395cd6c0149ab29879e9939d3cc488a79eacb0c0b84f09e3a3f578cd7b",
+              "fileSize": 139068,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/4c64dd395cd6c0149ab29879e9939d3cc488a79eacb0c0b84f09e3a3f578cd7b-independent-44.mp4",
+          "sourceAssetId": "material-533d5432-273c-4373-aa85-f0fff3f8b59e",
+          "sourceRevision": "533d5432-273c-4373-aa85-f0fff3f8b59e",
+          "sourceContentHash": "4c64dd395cd6c0149ab29879e9939d3cc488a79eacb0c0b84f09e3a3f578cd7b",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-58a97281-9adc-4fa3-a7b2-b5971a368f29-58a97281-9adc-4fa3-a7b2-b5971a368f29",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-58a97281-9adc-4fa3-a7b2-b5971a368f29",
+          "startFrame": 4230,
+          "durationInFrames": 90,
+          "width": 320,
+          "height": 180,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-58a97281-9adc-4fa3-a7b2-b5971a368f29",
+            "clipId": "58a97281-9adc-4fa3-a7b2-b5971a368f29",
+            "text": "独立视频 46 · 320×180",
+            "provenance": {
+              "materialRevisionId": "30a8ef02-8e89-4f46-9e96-9bc1ca867791",
+              "sha256": "4b6f7093484b9a4a97f4eacb1ce08ccd85ee26282882927d1fcd244888e0247c",
+              "fileSize": 140031,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/4b6f7093484b9a4a97f4eacb1ce08ccd85ee26282882927d1fcd244888e0247c-independent-45.mp4",
+          "sourceAssetId": "material-30a8ef02-8e89-4f46-9e96-9bc1ca867791",
+          "sourceRevision": "30a8ef02-8e89-4f46-9e96-9bc1ca867791",
+          "sourceContentHash": "4b6f7093484b9a4a97f4eacb1ce08ccd85ee26282882927d1fcd244888e0247c",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-e505ef0a-1afd-4edf-8858-d496326033d1-e505ef0a-1afd-4edf-8858-d496326033d1",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-e505ef0a-1afd-4edf-8858-d496326033d1",
+          "startFrame": 4320,
+          "durationInFrames": 90,
+          "width": 180,
+          "height": 320,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-e505ef0a-1afd-4edf-8858-d496326033d1",
+            "clipId": "e505ef0a-1afd-4edf-8858-d496326033d1",
+            "text": "独立视频 47 · 180×320",
+            "provenance": {
+              "materialRevisionId": "676dca4d-4f9b-4940-8085-90685efcc11d",
+              "sha256": "f4b5ab7d701621645ddc94876c472e4b2a50beac220a23e15315032e3d2213f9",
+              "fileSize": 145509,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/f4b5ab7d701621645ddc94876c472e4b2a50beac220a23e15315032e3d2213f9-independent-46.mp4",
+          "sourceAssetId": "material-676dca4d-4f9b-4940-8085-90685efcc11d",
+          "sourceRevision": "676dca4d-4f9b-4940-8085-90685efcc11d",
+          "sourceContentHash": "f4b5ab7d701621645ddc94876c472e4b2a50beac220a23e15315032e3d2213f9",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-0fd79588-c42d-48e0-8f23-1c2c2b4e584f-0fd79588-c42d-48e0-8f23-1c2c2b4e584f",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-0fd79588-c42d-48e0-8f23-1c2c2b4e584f",
+          "startFrame": 4410,
+          "durationInFrames": 90,
+          "width": 240,
+          "height": 240,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-0fd79588-c42d-48e0-8f23-1c2c2b4e584f",
+            "clipId": "0fd79588-c42d-48e0-8f23-1c2c2b4e584f",
+            "text": "独立视频 48 · 240×240",
+            "provenance": {
+              "materialRevisionId": "a4e025b2-4e59-4f2f-8a4d-41d3469d1eb5",
+              "sha256": "c1df7c2baefe640b5c3ba3e490eee1177d3e2721a7dd9145ed5f6b2d4e7062ad",
+              "fileSize": 142495,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/c1df7c2baefe640b5c3ba3e490eee1177d3e2721a7dd9145ed5f6b2d4e7062ad-independent-47.mp4",
+          "sourceAssetId": "material-a4e025b2-4e59-4f2f-8a4d-41d3469d1eb5",
+          "sourceRevision": "a4e025b2-4e59-4f2f-8a4d-41d3469d1eb5",
+          "sourceContentHash": "c1df7c2baefe640b5c3ba3e490eee1177d3e2721a7dd9145ed5f6b2d4e7062ad",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "shot-added-eb350adc-518a-4d71-992d-06d2a8b25837-eb350adc-518a-4d71-992d-06d2a8b25837",
+          "track": "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+          "kind": "video",
+          "name": "added-eb350adc-518a-4d71-992d-06d2a8b25837",
+          "startFrame": 4500,
+          "durationInFrames": 90,
+          "width": 320,
+          "height": 180,
+          "loopControlShot": {
+            "workspaceId": "01439216-d50e-498f-8020-087515356848",
+            "shotId": "added-eb350adc-518a-4d71-992d-06d2a8b25837",
+            "clipId": "eb350adc-518a-4d71-992d-06d2a8b25837",
+            "text": "独立视频 49 · 320×180",
+            "provenance": {
+              "materialRevisionId": "5d821b8d-70b4-4cf0-b999-a5593a2f9f85",
+              "sha256": "184df480a07a99d60b4f72b38ac016ba4849a357f6a322532ceb3afa0d2aa32a",
+              "fileSize": 141948,
+              "kind": "video"
+            }
+          },
+          "src": "城市善意--4bae388a-cc05-41cf-8ab4-f44fd43adadb/末班车前的一把伞--4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283/materials/184df480a07a99d60b4f72b38ac016ba4849a357f6a322532ceb3afa0d2aa32a-independent-48.mp4",
+          "sourceAssetId": "material-5d821b8d-70b4-4cf0-b999-a5593a2f9f85",
+          "sourceRevision": "5d821b8d-70b4-4cf0-b999-a5593a2f9f85",
+          "sourceContentHash": "184df480a07a99d60b4f72b38ac016ba4849a357f6a322532ceb3afa0d2aa32a",
+          "srcInFrame": 0,
+          "volume": 0
+        }
+      ],
+      "trackOrder": [
+        "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1",
+        "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_2",
+        "workspace-main-voice"
+      ],
+      "tracks": {
+        "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_1": {
+          "kind": "video",
+          "name": "画面"
+        },
+        "track_loop-control-4fa8c6ee-3abd-4e77-bc5f-fb6b67bfb283_2": {
+          "kind": "caption",
+          "captions": {
+            "enabled": true,
+            "template": "plain",
+            "pacing": "phrase",
+            "sourceMode": "item",
+            "sourceEntries": [
+              {
+                "id": "workspace-caption-shot-shot-01",
+                "itemId": "manual:workspace-caption-shot-shot-01",
+                "label": "字幕",
+                "slotId": "workspace-caption-shot-shot-01-slot",
+                "visible": true,
+                "anchor": "bottom-center",
+                "offsetXRatio": 0,
+                "offsetYRatio": 0.09999999999999999,
+                "widthRatio": 0.8400000000000001,
+                "heightRatio": 0.74,
+                "words": [
+                  {
+                    "id": "story-line-0~0",
+                    "text": "雨停了，她把伞留在长椅上。",
+                    "start": 600,
+                    "end": 3300
+                  }
+                ],
+                "style": {
+                  "fontFamily": "sans-serif",
+                  "fontWeight": 600,
+                  "color": "#ffffff",
+                  "fontSize": 0.02684659090909091,
+                  "wholeLine": true
+                },
+                "loopControl": {
+                  "version": "workspace-caption/v1",
+                  "contentMode": "independent",
+                  "text": "雨停了，她把伞留在长椅上。",
+                  "spatial": {
+                    "version": "shot-caption-space/v2",
+                    "anchor": "bottom-center",
+                    "safeArea": "title-safe",
+                    "aspectRatio": "9:16",
+                    "insets": {
+                      "top": 0.08,
+                      "right": 0.08,
+                      "bottom": 0.18,
+                      "left": 0.08
+                    },
+                    "maxLines": 2,
+                    "maxCharactersPerLine": 16
+                  }
+                },
+                "trackOrder": 0
+              },
+              {
+                "id": "workspace-caption-shot-shot-02",
+                "itemId": "manual:workspace-caption-shot-shot-02",
+                "label": "字幕",
+                "slotId": "workspace-caption-shot-shot-02-slot",
+                "visible": true,
+                "anchor": "bottom-center",
+                "offsetXRatio": 0,
+                "offsetYRatio": 0.09999999999999999,
+                "widthRatio": 0.8400000000000001,
+                "heightRatio": 0.74,
+                "words": [
+                  {
+                    "id": "story-line-1~0",
+                    "text": "伞柄的纸条写着：留给下一个人。",
+                    "start": 3100,
+                    "end": 5800
+                  }
+                ],
+                "style": {
+                  "fontFamily": "sans-serif",
+                  "fontWeight": 600,
+                  "color": "#ffffff",
+                  "fontSize": 0.02684659090909091,
+                  "wholeLine": true
+                },
+                "loopControl": {
+                  "version": "workspace-caption/v1",
+                  "contentMode": "independent",
+                  "text": "伞柄的纸条写着：留给下一个人。",
+                  "spatial": {
+                    "version": "shot-caption-space/v2",
+                    "anchor": "bottom-center",
+                    "safeArea": "title-safe",
+                    "aspectRatio": "9:16",
+                    "insets": {
+                      "top": 0.08,
+                      "right": 0.08,
+                      "bottom": 0.18,
+                      "left": 0.08
+                    },
+                    "maxLines": 2,
+                    "maxCharactersPerLine": 16
+                  }
+                },
+                "trackOrder": 1
+              }
+            ],
+            "layoutPolicy": {
+              "mode": "manual-slots",
+              "slots": [
+                {
+                  "id": "workspace-caption-shot-shot-01-slot",
+                  "anchor": "bottom-center",
+                  "offsetXRatio": 0.1092896174863388,
+                  "offsetYRatio": 0.16153846153846152,
+                  "widthRatio": 0.8400000000000001,
+                  "heightRatio": 0.74
+                },
+                {
+                  "id": "workspace-caption-shot-shot-02-slot",
+                  "anchor": "bottom-center",
+                  "offsetXRatio": 0,
+                  "offsetYRatio": 0.09999999999999999,
+                  "widthRatio": 0.8400000000000001,
+                  "heightRatio": 0.74
+                }
+              ]
+            },
+            "perSource": {
+              "workspace-caption-shot-shot-01": {
+                "maxLines": 2
+              },
+              "workspace-caption-shot-shot-02": {
+                "maxLines": 2
+              }
+            }
+          }
+        },
+        "workspace-main-voice": {
+          "kind": "audio",
+          "name": "主声音",
+          "role": "anchor"
+        }
+      },
+      "transitions": [],
+      "selectedId": "shot-added-eb350adc-518a-4d71-992d-06d2a8b25837-eb350adc-518a-4d71-992d-06d2a8b25837",
+      "captionsHidden": false,
+      "selectedIds": [
+        "shot-added-eb350adc-518a-4d71-992d-06d2a8b25837-eb350adc-518a-4d71-992d-06d2a8b25837"
+      ],
+      "captions": {
+        "enabled": true,
+        "template": "plain",
+        "pacing": "phrase",
+        "sourceMode": "item",
+        "sourceEntries": [
+          {
+            "id": "workspace-caption-shot-shot-01",
+            "itemId": "manual:workspace-caption-shot-shot-01",
+            "label": "字幕",
+            "slotId": "workspace-caption-shot-shot-01-slot",
+            "visible": true,
+            "anchor": "bottom-center",
+            "offsetXRatio": 0,
+            "offsetYRatio": 0.09999999999999999,
+            "widthRatio": 0.8400000000000001,
+            "heightRatio": 0.74,
+            "words": [
+              {
+                "id": "story-line-0~0",
+                "text": "雨停了，她把伞留在长椅上。",
+                "start": 600,
+                "end": 3300
+              }
+            ],
+            "style": {
+              "fontFamily": "sans-serif",
+              "fontWeight": 600,
+              "color": "#ffffff",
+              "fontSize": 0.02684659090909091,
+              "wholeLine": true
+            },
+            "loopControl": {
+              "version": "workspace-caption/v1",
+              "contentMode": "independent",
+              "text": "雨停了，她把伞留在长椅上。",
+              "spatial": {
+                "version": "shot-caption-space/v2",
+                "anchor": "bottom-center",
+                "safeArea": "title-safe",
+                "aspectRatio": "9:16",
+                "insets": {
+                  "top": 0.08,
+                  "right": 0.08,
+                  "bottom": 0.18,
+                  "left": 0.08
+                },
+                "maxLines": 2,
+                "maxCharactersPerLine": 16
+              }
+            },
+            "trackOrder": 0
+          },
+          {
+            "id": "workspace-caption-shot-shot-02",
+            "itemId": "manual:workspace-caption-shot-shot-02",
+            "label": "字幕",
+            "slotId": "workspace-caption-shot-shot-02-slot",
+            "visible": true,
+            "anchor": "bottom-center",
+            "offsetXRatio": 0,
+            "offsetYRatio": 0.09999999999999999,
+            "widthRatio": 0.8400000000000001,
+            "heightRatio": 0.74,
+            "words": [
+              {
+                "id": "story-line-1~0",
+                "text": "伞柄的纸条写着：留给下一个人。",
+                "start": 3100,
+                "end": 5800
+              }
+            ],
+            "style": {
+              "fontFamily": "sans-serif",
+              "fontWeight": 600,
+              "color": "#ffffff",
+              "fontSize": 0.02684659090909091,
+              "wholeLine": true
+            },
+            "loopControl": {
+              "version": "workspace-caption/v1",
+              "contentMode": "independent",
+              "text": "伞柄的纸条写着：留给下一个人。",
+              "spatial": {
+                "version": "shot-caption-space/v2",
+                "anchor": "bottom-center",
+                "safeArea": "title-safe",
+                "aspectRatio": "9:16",
+                "insets": {
+                  "top": 0.08,
+                  "right": 0.08,
+                  "bottom": 0.18,
+                  "left": 0.08
+                },
+                "maxLines": 2,
+                "maxCharactersPerLine": 16
+              }
+            },
+            "trackOrder": 1
+          }
+        ],
+        "layoutPolicy": {
+          "mode": "manual-slots",
+          "slots": [
+            {
+              "id": "workspace-caption-shot-shot-01-slot",
+              "anchor": "bottom-center",
+              "offsetXRatio": 0.1092896174863388,
+              "offsetYRatio": 0.16153846153846152,
+              "widthRatio": 0.8400000000000001,
+              "heightRatio": 0.74
+            },
+            {
+              "id": "workspace-caption-shot-shot-02-slot",
+              "anchor": "bottom-center",
+              "offsetXRatio": 0,
+              "offsetYRatio": 0.09999999999999999,
+              "widthRatio": 0.8400000000000001,
+              "heightRatio": 0.74
+            }
+          ]
+        },
+        "perSource": {
+          "workspace-caption-shot-shot-01": {
+            "maxLines": 2
+          },
+          "workspace-caption-shot-shot-02": {
+            "maxLines": 2
+          }
+        }
+      }
+    }
+  ]
+}
