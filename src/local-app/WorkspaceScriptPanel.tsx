@@ -2,6 +2,7 @@ import {useEffect,useId,useRef,useState,type ReactNode} from 'react';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {FileText} from 'lucide-react';
 import {MarkdownPreview} from '../ui/MarkdownPreview';
+import {mainScriptStatistics} from '../reviews/mainScript';
 import {ConfirmationModal} from '../ui/ConfirmationModal';
 import './workspace-compact-panels.css';
 
@@ -17,6 +18,7 @@ export function WorkspaceScriptPanel({episodeId,scriptRevisionId,script,stage,re
  useEffect(()=>{if(previous.current!==scriptRevisionId||text===baseline.current){setText(script);baseline.current=script;previous.current=scriptRevisionId;}setPreview(script);},[script,scriptRevisionId]);
  const changed=text!==preview,revision=!!scriptRevisionId&&stage!=='waiting_input',disabled=readOnly||pending||busy,isEditing=editing&&!readOnly;
  const baselineStatus=revision||locallyConfirmed?'已确认基准':'待确认';
+ const statistics=mainScriptStatistics(isEditing?text:preview),confirmedCharacters=Array.from(preview).length;
  function requestSave(){
   setError('');setInvalid(null);
   if(!text.trim()){setInvalid('script');textInput.current?.focus();return;}
@@ -49,8 +51,8 @@ export function WorkspaceScriptPanel({episodeId,scriptRevisionId,script,stage,re
 
   <div className="workspace-script-layout">
    <div className="workspace-script-main">
-    {isEditing?<label className="workspace-script-text">主脚本<textarea ref={textInput} aria-label="主脚本" aria-required="true" aria-invalid={invalid==='script'||undefined} aria-describedby={invalid==='script'?errorId:undefined} value={text} disabled={pending||busy} onChange={event=>{setText(event.target.value);if(invalid==='script')setInvalid(null);}} placeholder="粘贴脚本，或上传 Markdown / TXT"/></label>:<div className="workspace-script-preview" role="document" aria-label="主脚本预览" tabIndex={0}>{preview?<MarkdownPreview content={preview}/>: '正在读取主脚本…'}</div>}
-    <div className="workspace-script-statistics"><span>{(isEditing?text:preview).length.toLocaleString()} 字{isEditing&&changed?' · 有未确认修改':''}</span></div>
+    {isEditing?<label className="workspace-script-text">主脚本<textarea ref={textInput} aria-label="主脚本" aria-required="true" aria-invalid={invalid==='script'||undefined} aria-describedby={invalid==='script'?errorId:undefined} value={text} disabled={pending||busy} onChange={event=>{setText(event.target.value);if(invalid==='script')setInvalid(null);}} placeholder="粘贴脚本，或上传 Markdown / TXT"/>{invalid==='script'&&<span id={errorId} className="form-error" role="alert">请填写主脚本。</span>}</label>:<div className="workspace-script-preview" role="document" aria-label="主脚本预览" tabIndex={0}>{preview?<MarkdownPreview content={preview}/>: '正在读取主脚本…'}</div>}
+    <div className="workspace-script-statistics" role="group" aria-label="脚本字数"><span title="完整脚本的 Unicode 字符数，包含空白、标点与格式。">脚本字符 {statistics.characters.toLocaleString()}</span><span title={statistics.textKind==='narration'?'仅统计口播字段中的文字和数字，不计空白与标点。':'仅统计正文中的文字和数字，未区分口播与说明。'}>{statistics.textKind==='narration'?'口播字数':'正文文字数'} {statistics.textCharacters===null?'暂无法统计':statistics.textCharacters.toLocaleString()}</span>{isEditing&&changed&&<span>有未确认修改</span>}</div>
 
    </div>
    <aside className="workspace-script-basis" aria-label="脚本基准">
@@ -60,13 +62,12 @@ export function WorkspaceScriptPanel({episodeId,scriptRevisionId,script,stage,re
     </div>
     {(!readOnly||invalid||error&&!errorPresented)&&<div className="workspace-script-controls" role="group" aria-label="脚本操作">
      {!isEditing&&!readOnly&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>{setText(preview);setError('');setEditing(true);}}>修改脚本</Button>}
-    {isEditing&&scriptRevisionId&&changed&&<label className="workspace-script-reason">修订原因<input ref={reasonInput} aria-label="脚本修订原因" aria-required="true" aria-invalid={invalid==='reason'||undefined} aria-describedby={invalid==='reason'?errorId:undefined} placeholder="简述本次修改原因" value={reason} disabled={disabled} onChange={event=>{setReason(event.target.value);if(invalid==='reason')setInvalid(null);}}/></label>}
+    {isEditing&&scriptRevisionId&&changed&&<label className="workspace-script-reason">修订原因<input ref={reasonInput} aria-label="脚本修订原因" aria-required="true" aria-invalid={invalid==='reason'||undefined} aria-describedby={invalid==='reason'?errorId:undefined} placeholder="简述本次修改原因" value={reason} disabled={disabled} onChange={event=>{setReason(event.target.value);if(invalid==='reason')setInvalid(null);}}/>{invalid==='reason'&&<span id={errorId} className="form-error" role="alert">请填写修订原因。</span>}</label>}
     {isEditing&&<div className="workspace-script-actions"><Button size="sm" color="primary" isDisabled={disabled||!!scriptRevisionId&&!changed&&stage!=='waiting_input'} onPress={requestSave}>{busy?'正在确认…':revision?'确认脚本修订':'确认脚本'}</Button>{(revision||locallyConfirmed)&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>{if(changed||reason.trim())setConfirmation('discard');else discard();}}>取消编辑</Button>}</div>}
-    {invalid&&<span id={errorId} className="sr-only" role="alert">{invalid==='script'?'请填写主脚本。':'请填写修订原因。'}</span>}
     {error&&!errorPresented&&<p role="alert" className="form-error">{error}</p>}
     </div>}
     <h4>脚本基准</h4>
-    <dl><div><dt>状态</dt><dd>{readOnly?'只读':baselineStatus}</dd></div><div><dt>已确认正文</dt><dd>{scriptRevisionId||locallyConfirmed?`${preview.length.toLocaleString()} 字`:'尚未确认'}</dd></div></dl>
+    <dl><div><dt>状态</dt><dd>{readOnly?'只读':baselineStatus}</dd></div><div><dt>已确认脚本</dt><dd>{scriptRevisionId||locallyConfirmed?`${confirmedCharacters.toLocaleString()} 字符`:'尚未确认'}</dd></div></dl>
     {scriptRevisionId&&<p className="workspace-script-revision-id" aria-label="脚本基准 ID">{scriptRevisionId}</p>}
     {isEditing&&revision&&<p>修订后需重新核对素材匹配，已有工程与媒体保留。</p>}
     {history}

@@ -29,7 +29,7 @@ it('keeps completed script evidence copyable with no edit or upload action',()=>
 
 it('marks missing required fields inline, focuses them and clears the invalid state as the user types',()=>{
  const command=vi.fn();render(<WorkspaceScriptPanel episodeId="e" scriptRevisionId="old" script="原文" stage="storyboard_approved" readOnly={false} pending={false} command={command} onConfirmed={()=>{}}/>);
- fireEvent.click(screen.getByRole('button',{name:'修改脚本'}));fireEvent.change(screen.getByLabelText('主脚本'),{target:{value:'新文'}});fireEvent.click(screen.getByRole('button',{name:'确认脚本修订'}));const reason=screen.getByLabelText('脚本修订原因');expect(reason.getAttribute('aria-invalid')).toBe('true');expect(document.activeElement).toBe(reason);expect(reason.getAttribute('aria-describedby')).toBe(screen.getByRole('alert').id);expect(screen.getByRole('alert').className).toBe('sr-only');
+ fireEvent.click(screen.getByRole('button',{name:'修改脚本'}));fireEvent.change(screen.getByLabelText('主脚本'),{target:{value:'新文'}});fireEvent.click(screen.getByRole('button',{name:'确认脚本修订'}));const reason=screen.getByLabelText('脚本修订原因');expect(reason.getAttribute('aria-invalid')).toBe('true');expect(document.activeElement).toBe(reason);expect(reason.getAttribute('aria-describedby')).toBe(screen.getByRole('alert').id);expect(screen.getByRole('alert').className).toContain('form-error');expect(screen.getByRole('alert').closest('label')).toBe(reason.closest('label'));
  fireEvent.change(reason,{target:{value:'调整'}});expect(reason.getAttribute('aria-invalid')).toBeNull();expect(screen.queryByRole('alert')).toBeNull();expect(command).not.toHaveBeenCalled();
 });
 it('accepts a dropped script as an unconfirmed draft and rejects unsupported files',async()=>{
@@ -44,4 +44,44 @@ it('renders confirmed Markdown semantically and keeps the exact source when edit
  const command=vi.fn();render(<WorkspaceScriptPanel episodeId="e" scriptRevisionId="s" script={script} stage="storyboard_approved" readOnly={false} pending={false} command={command} onConfirmed={()=>{}}/>);
  const preview=within(screen.getByRole('document',{name:'主脚本预览'}));expect(preview.getByRole('heading',{name:'标题',level:1})).toBeTruthy();expect(preview.getByRole('heading',{name:'正文',level:2})).toBeTruthy();expect(preview.getByRole('blockquote').textContent).toBe('引用说明');expect(preview.getByRole('listitem').querySelector('strong')?.textContent).toBe('重点');expect(screen.getByRole('document').querySelector('script')).toBeNull();
  fireEvent.click(screen.getByRole('button',{name:'修改脚本'}));expect((screen.getByRole('textbox',{name:'主脚本'}) as HTMLTextAreaElement).value).toBe(script);expect(command).not.toHaveBeenCalled();
+});
+
+it('shows a visible script error beside an empty field before submitting any command',()=>{
+ const command=vi.fn();render(<WorkspaceScriptPanel episodeId="e" scriptRevisionId={null} script="" stage="waiting_input" readOnly={false} pending={false} command={command} onConfirmed={()=>{}}/>);
+ const script=screen.getByRole('textbox',{name:'主脚本'});fireEvent.change(script,{target:{value:' \n '}});fireEvent.click(screen.getByRole('button',{name:'确认脚本'}));
+ const alert=screen.getByRole('alert');expect(alert.textContent).toBe('请填写主脚本。');expect(alert.className).toContain('form-error');expect(alert.closest('label')).toBe(script.closest('label'));expect(script.getAttribute('aria-describedby')).toBe(alert.id);expect(script.getAttribute('aria-invalid')).toBe('true');expect(document.activeElement).toBe(script);expect(command).not.toHaveBeenCalled();
+ fireEvent.change(script,{target:{value:'补充正文'}});expect(screen.queryByRole('alert')).toBeNull();expect(script.getAttribute('aria-invalid')).toBeNull();
+});
+
+it('separates complete characters from spoken letters and numbers for v2',()=>{
+ const script="# 片名\n## 制作设置\n- 模板版本：2\n- 旁白音色：默认\n## 正文\n### 段落 01\n- 口播：你好，世界！\n- 首帧素材：无\n- 视频生成提示词：山间晨光\n### 段落 02\n- 口播：今天 AI 见！\n- 首帧素材：无\n- 视频生成提示词：城市黄昏";render(<WorkspaceScriptPanel episodeId="e" scriptRevisionId="s" script={script} stage="storyboard_approved" readOnly={false} pending={false} command={vi.fn()} onConfirmed={()=>{}}/>);
+ const counts=within(screen.getByRole('group',{name:'脚本字数'}));expect(counts.getByText('脚本字符 131')).toBeTruthy();expect(counts.getByText('口播字数 9')).toBeTruthy();
+ fireEvent.click(screen.getByRole('button',{name:'修改脚本'}));expect((screen.getByRole('textbox',{name:'主脚本'}) as HTMLTextAreaElement).value).toBe(script);
+});
+
+it('separates complete characters from spoken letters and numbers for legacy Markdown',()=>{
+ const script="# 标题\n\n## 正文\n你好，**世界**！\n> AI 𠮷。\n\n## 制作设置\n- 画幅：9:16";render(<WorkspaceScriptPanel episodeId="e" scriptRevisionId="s" script={script} stage="storyboard_approved" readOnly={false} pending={false} command={vi.fn()} onConfirmed={()=>{}}/>);
+ const counts=within(screen.getByRole('group',{name:'脚本字数'}));expect(counts.getByText('脚本字符 49')).toBeTruthy();expect(counts.getByText('正文文字数 7')).toBeTruthy();
+ fireEvent.click(screen.getByRole('button',{name:'修改脚本'}));expect((screen.getByRole('textbox',{name:'主脚本'}) as HTMLTextAreaElement).value).toBe(script);
+});
+
+it('separates complete characters from spoken letters and numbers for plain text',()=>{
+ const script="你好，世界！\nAI 𠮷。";render(<WorkspaceScriptPanel episodeId="e" scriptRevisionId="s" script={script} stage="storyboard_approved" readOnly={false} pending={false} command={vi.fn()} onConfirmed={()=>{}}/>);
+ const counts=within(screen.getByRole('group',{name:'脚本字数'}));expect(counts.getByText('脚本字符 12')).toBeTruthy();expect(counts.getByText('正文文字数 7')).toBeTruthy();
+ fireEvent.click(screen.getByRole('button',{name:'修改脚本'}));expect((screen.getByRole('textbox',{name:'主脚本'}) as HTMLTextAreaElement).value).toBe(script);
+});
+
+it('does not report v2 settings as spoken text while the draft is invalid',()=>{
+ const script='# 片名\n## 制作设置\n- 模板版本：2\n- 旁白音色：默认\n## 正文\n### 段落 01\n- 视频生成提示词：山间晨光';
+ render(<WorkspaceScriptPanel episodeId="e" scriptRevisionId={null} script={script} stage="waiting_input" readOnly={false} pending={false} command={vi.fn()} onConfirmed={()=>{}}/>);
+ expect(within(screen.getByRole('group',{name:'脚本字数'})).getByText('口播字数 暂无法统计')).toBeTruthy();
+});
+it('updates draft counts while preserving the exact UTF-8 source submitted for confirmation',async()=>{
+ const script='# 标题\r\n\r\n## 正文\r\n你好，𠮷！\r\n',command=vi.fn(async(_name:string,_data:unknown)=>({id:'new-script'}));
+ render(<WorkspaceScriptPanel episodeId="e" scriptRevisionId={null} script={script} stage="waiting_input" readOnly={false} pending={false} command={command} onConfirmed={()=>{}}/>);
+ expect(within(screen.getByRole('group',{name:'脚本字数'})).getByText('正文文字数 3')).toBeTruthy();fireEvent.click(screen.getByRole('button',{name:'确认脚本'}));
+ await screen.findByRole('document',{name:'主脚本预览'});const imported=command.mock.calls.find(([name])=>name==='importMaterial')!;
+ expect(Buffer.from((imported[1] as {contentBase64:string}).contentBase64,'base64').toString('utf8')).toBe(script);
+ fireEvent.click(screen.getByRole('button',{name:'修改脚本'}));fireEvent.change(screen.getByRole('textbox',{name:'主脚本'}),{target:{value:'# 标题\n## 正文\n一二三四。'}});
+ expect(within(screen.getByRole('group',{name:'脚本字数'})).getByText('正文文字数 4')).toBeTruthy();expect(screen.getByText('有未确认修改')).toBeTruthy();
 });
