@@ -1,0 +1,17 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/ui/SelectMenuInteraction.test.tsx (11 tests) 726ms
+ ✓ src/ui/IconComboBox.test.tsx (6 tests) 424ms
+ ✓ src/ui/DanUiInteractionGuards.test.tsx (6 tests) 371ms
+ ✓ src/episodes/EpisodeForm.test.tsx (3 tests) 741ms
+   ✓ opens a new production order at its working title  301ms
+   ✓ keeps API failures in the dialog and preserves the working title for retry  330ms
+ ✓ src/ui/useDialogFocus.test.tsx (8 tests) 213ms
+ ✓ src/local-app/LocalCatalogApp.episode-dialog.test.tsx (1 test) 236ms
+
+ Test Files  6 passed (6)
+      Tests  35 passed (35)
+   Start at  20:15:40
+   Duration  12.86s (transform 1.07s, setup 21ms, collect 7.42s, tests 2.71s, environment 1.65s, prepare 235ms)
+
