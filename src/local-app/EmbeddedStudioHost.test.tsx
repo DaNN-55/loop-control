@@ -123,3 +123,12 @@ it('moves only platform shot settings into closed supplemental tools without rep
  fireEvent.click(screen.getByRole('button',{name:'收起补充工具'}));request=post.mock.calls.at(-1)![0];deliver({type:'loop-control:result',requestId:request.requestId,ok:true});await waitFor(()=>expect(screen.queryByRole('tab',{name:'镜头设置'})).toBeNull());expect(screen.getByTitle('OpenChatCut 剪辑工程')).toBe(frame);
  deliver({...state,revision:2,selectedIds:[]});expect(screen.getByTitle('OpenChatCut 剪辑工程')).toBe(frame);
 });
+it('shows only the selected shot sound intent beside the native editor without adding an editing command',()=>{
+ render(<EmbeddedStudioHost episodeId="e" title="工程" session={{studioUrl:'http://127.0.0.1:5175/#/editor/loop-control-e',workspace,sourcePath:'episodes/e/board.json'}} shots={[{id:'S01',text:'第一镜',soundIntent:'开门时一声轻响'},{id:'S02',text:'第二镜',soundIntent:'结尾的钟声'}]} onSave={async()=>workspace} onClose={()=>{}}/>);
+ const frame=screen.getByTitle('OpenChatCut 剪辑工程') as HTMLIFrameElement,channel=new URL(frame.src).searchParams.get('lcChannel'),post=vi.spyOn(frame.contentWindow!,'postMessage');
+ const state={channel,projectId:workspace.projectId,type:'loop-control:state',writable:true,revision:1,items:[{id:'first',startFrame:0,durationInFrames:60},{id:'second',startFrame:60,durationInFrames:60}],shots:[{id:'S01',itemIds:['first']},{id:'S02',itemIds:['second']}]};
+ const select=(selectedIds:string[])=>fireEvent(window,new MessageEvent('message',{origin:'http://127.0.0.1:5175',source:frame.contentWindow!,data:{...state,selectedIds}}));
+ select(['first']);expect(screen.getByLabelText('当前镜头音效意图').textContent).toContain('开门时一声轻响');expect(screen.queryByText('结尾的钟声')).toBeNull();
+ select(['second']);expect(screen.getByLabelText('当前镜头音效意图').textContent).toContain('结尾的钟声');expect(screen.queryByText('开门时一声轻响')).toBeNull();
+ select([]);expect(screen.queryByLabelText('当前镜头音效意图')).toBeNull();expect(post).not.toHaveBeenCalled();
+});

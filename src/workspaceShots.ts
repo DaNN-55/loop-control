@@ -2,9 +2,9 @@ import {defaultShotComposition,shotCompositionRect,shotCompositionTransform,shot
 import type {OpenChatCutProject} from './worker/openchatcutProject.js';
 import type {WorkspaceClip} from './productionWorkspace.js';
 import {adjustWorkspaceVideoRange} from './workspaceVideo.js';
-/** Stable membership lives in the native instance; bindings remain provenance only. */
-export interface WorkspaceShotIdentity {workspaceId:string;shotId:string;clipId:string;text:string;provenance?:Omit<NonNullable<WorkspaceClip['source']>,'relativePath'>}
-export interface WorkspaceShot {id:string;text:string;timelineId:string;itemIds:string[];startFrame:number;durationInFrames:number;effective:boolean}
+/** Stable membership and optional creative notes follow the native shot identity. */
+export interface WorkspaceShotIdentity {workspaceId:string;shotId:string;clipId:string;text:string;soundIntent?:string;provenance?:Omit<NonNullable<WorkspaceClip['source']>,'relativePath'>}
+export interface WorkspaceShot {id:string;text:string;soundIntent?:string;timelineId:string;itemIds:string[];startFrame:number;durationInFrames:number;effective:boolean}
 export type WorkspaceShotOperation=
  |{kind:'insert';afterShotId:string|null;text:string;clipId?:string}
  |{kind:'remove';shotId:string}
@@ -20,11 +20,11 @@ export function workspaceShotIdentity(item:Record<string,unknown>,workspaceId=''
  return match?{workspaceId,shotId:match[1],clipId:match[2],text:String(item.name??match[1])}:null;
 }
 export function withWorkspaceShotMetadata(project:OpenChatCutProject,bindings:WorkspaceClip[]):OpenChatCutProject{
- const next=structuredClone(project);for(const timeline of next.timelines)for(const item of timeline.items){const binding=bindings.find(b=>b.itemId===item.id);if(binding){item.loopControlShot={workspaceId:next.loopControl?.inputFingerprint??'',shotId:binding.shotId,clipId:binding.id,text:binding.text,...(binding.source?{provenance:{materialRevisionId:binding.source.materialRevisionId,sha256:binding.source.sha256,fileSize:binding.source.fileSize,kind:binding.source.kind}}:{})};}}return next;
+ const next=structuredClone(project);for(const timeline of next.timelines)for(const item of timeline.items){const binding=bindings.find(b=>b.itemId===item.id);if(binding){item.loopControlShot={workspaceId:next.loopControl?.inputFingerprint??'',shotId:binding.shotId,clipId:binding.id,text:binding.text,...(binding.soundIntent?{soundIntent:binding.soundIntent}:{}),...(binding.source?{provenance:{materialRevisionId:binding.source.materialRevisionId,sha256:binding.source.sha256,fileSize:binding.source.fileSize,kind:binding.source.kind}}:{})};}}return next;
 }
 export function readWorkspaceShots(project:OpenChatCutProject):WorkspaceShot[]{
  const shots:WorkspaceShot[]=[];for(const timeline of project.timelines){for(const item of [...timeline.items].sort((a,b)=>Number(a.startFrame)-Number(b.startFrame))){const meta=workspaceShotIdentity(item);if(!meta||!['video','image','text'].includes(String(item.kind)))continue;
- let shot=shots.find(s=>s.id===meta.shotId&&s.timelineId===timeline.id);if(!shot){shot={id:meta.shotId,text:meta.text,timelineId:timeline.id,itemIds:[],startFrame:Number(item.startFrame),durationInFrames:0,effective:false};shots.push(shot);}shot.itemIds.push(String(item.id));shot.durationInFrames=Math.max(shot.startFrame+shot.durationInFrames,Number(item.startFrame)+Number(item.durationInFrames))-shot.startFrame;shot.effective||=item.kind==='video'||item.kind==='image';}}
+ let shot=shots.find(s=>s.id===meta.shotId&&s.timelineId===timeline.id);if(!shot){shot={id:meta.shotId,text:meta.text,...(meta.soundIntent?{soundIntent:meta.soundIntent}:{}),timelineId:timeline.id,itemIds:[],startFrame:Number(item.startFrame),durationInFrames:0,effective:false};shots.push(shot);}shot.itemIds.push(String(item.id));shot.durationInFrames=Math.max(shot.startFrame+shot.durationInFrames,Number(item.startFrame)+Number(item.durationInFrames))-shot.startFrame;shot.effective||=item.kind==='video'||item.kind==='image';}}
  return shots;
 }
 export function readWorkspaceShotWindow(project:OpenChatCutProject,itemId:string){
@@ -35,7 +35,7 @@ export function readWorkspaceShotWindow(project:OpenChatCutProject,itemId:string
  return{timeline,item,items,shotId:meta?.shotId??null,startFrame,endFrame,durationInFrames:endFrame-startFrame};
 }
 export function synchronizeWorkspaceBindings(project:OpenChatCutProject,previous:WorkspaceClip[]):WorkspaceClip[]{
- return readWorkspaceShots(project).flatMap(shot=>shot.itemIds.map(itemId=>{const item=project.timelines.flatMap(t=>t.items).find(i=>i.id===itemId)!,meta=workspaceShotIdentity(item)!,old=previous.find(b=>b.id===meta.clipId);return old?{...old,text:meta.text}:{id:meta.clipId,itemId,shotId:meta.shotId,text:meta.text,source:meta.provenance&&typeof item.src==='string'?{...meta.provenance,relativePath:item.src}:null};}));
+ return readWorkspaceShots(project).flatMap(shot=>shot.itemIds.map(itemId=>{const item=project.timelines.flatMap(t=>t.items).find(i=>i.id===itemId)!,meta=workspaceShotIdentity(item)!,old=previous.find(b=>b.id===meta.clipId),soundIntent=previous.find(b=>b.shotId===meta.shotId)?.soundIntent;return old?{...old,text:meta.text}:{id:meta.clipId,itemId,shotId:meta.shotId,text:meta.text,...(soundIntent?{soundIntent}:{}),source:meta.provenance&&typeof item.src==='string'?{...meta.provenance,relativePath:item.src}:null};}));
 }
 /** Constrained native edits. Unrelated nodes, pool assets and source files are never reconstructed. */
 export function applyWorkspaceShotOperation(project:OpenChatCutProject,operation:WorkspaceShotOperation):OpenChatCutProject{

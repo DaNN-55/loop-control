@@ -6,7 +6,7 @@ import {workspaceExportFields,type WorkspaceExport,type WorkspaceExportIssue} fr
 import {workspaceCaptionFields,type WorkspaceCaptionState} from './workspaceCaptions.js';
 /** Provenance bindings identify native items; the OpenChatCut document owns editing. */
 export interface WorkspaceSource {materialRevisionId:string;relativePath:string;sha256:string;fileSize:number;kind:'video'|'image'|'audio'}
-export interface WorkspaceClip {id:string;itemId:string;shotId:string;text:string;source:WorkspaceSource|null;image?:{usage:'still'|'pan-zoom'|'ai-video';durationSeconds:number;providerDurationSeconds?:number;fit:'contain'|'cover';focusX:number;focusY:number;taskId?:string;materialRevisionId?:string}}
+export interface WorkspaceClip {id:string;itemId:string;shotId:string;text:string;soundIntent?:string;source:WorkspaceSource|null;image?:{usage:'still'|'pan-zoom'|'ai-video';durationSeconds:number;providerDurationSeconds?:number;fit:'contain'|'cover';focusX:number;focusY:number;taskId?:string;materialRevisionId?:string}}
 export interface ProductionWorkspace {
  scriptResume?:{canReuse:boolean;reason:string};
  selectedImages?:Array<{targetItemId:string;candidateId:string;materialRevisionId:string}>;
@@ -26,6 +26,7 @@ export const productionWorkspaceFields:Record<string,string[]>={
  resumeWorkspaceEditing:['episodeId','workspaceId','expectedRevision','expectedScriptRevisionId','expectedProjectSha256'],
  adoptLegacyWorkspace:['episodeId','artifactId','savedProjectSha256','expectedSourceSha256','expectedScriptRevisionId','reviewPackageId'],
  authorizeWorkspacePreparation:['episodeId','workspaceId','expectedRevision','enabled'],
+ saveWorkspaceSoundIntent:['episodeId','workspaceId','expectedRevision','expectedProjectSha256','shotId','soundIntent'],
  confirmWorkspaceShot:['episodeId','workspaceId','expectedRevision','clipId','shotType'],
  ...workspaceVisualFields,
  prepareWorkspaceCandidate:['episodeId','workspaceId','expectedRevision','candidateId','durationPolicy'],

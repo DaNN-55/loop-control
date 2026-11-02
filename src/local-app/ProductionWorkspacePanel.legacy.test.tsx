@@ -18,23 +18,23 @@ function mount(snapshot:EpisodeProductionSnapshot|undefined,stage='qc_review'){
  return command;
 }
 it('shows distinct existing content at all four steps without preparing or recreating an order',async()=>{
- const command=mount(legacySnapshot);fireEvent.click(screen.getByRole('button',{name:'分镜台'}));await screen.findAllByText('已有分镜正文');expect(screen.queryByRole('button',{name:'准备素材匹配'})).toBeNull();
- fireEvent.click(screen.getByRole('button',{name:'脚本确认'}));await waitFor(()=>expect(screen.getByRole('document',{name:'主脚本预览'}).textContent).toContain('保留的脚本正文'));
- fireEvent.click(screen.getByRole('button',{name:'剪辑工作台'}));await screen.findByRole('heading',{name:'已有剪辑工程'});expect(screen.getByRole('link',{name:'下载工程 project.json'})).toBeTruthy();expect(screen.queryByText('已有分镜正文')).toBeNull();
- fireEvent.click(screen.getByRole('button',{name:'检查与交付'}));await screen.findByRole('heading',{name:'已有审核成片'});expect(screen.getByText('原片分辨率通过')).toBeTruthy();expect(screen.getByRole('link',{name:'下载审核成片'})).toBeTruthy();
+ const command=mount(legacySnapshot);fireEvent.click(screen.getByRole('button',{name:/^素材准备与匹配/}));await screen.findAllByText('已有分镜正文');expect(screen.queryByRole('button',{name:'准备素材匹配'})).toBeNull();
+ fireEvent.click(screen.getByRole('button',{name:/^脚本确认/}));await waitFor(()=>expect(screen.getByRole('document',{name:'主脚本预览'}).textContent).toContain('保留的脚本正文'));
+ fireEvent.click(screen.getByRole('button',{name:/^剪辑工作台/}));await screen.findByRole('heading',{name:'已有剪辑工程'});expect(screen.getByRole('link',{name:'下载工程 project.json'})).toBeTruthy();expect(screen.queryByText('已有分镜正文')).toBeNull();
+ fireEvent.click(screen.getByRole('button',{name:/^检查与交付/}));await screen.findByRole('heading',{name:'已有审核成片'});expect(screen.getByText('原片分辨率通过')).toBeTruthy();expect(screen.getByRole('link',{name:'下载审核成片'})).toBeTruthy();
  expect(command).not.toHaveBeenCalled();
 });
 it('keeps completed order inspection controls available without write controls',async()=>{
- const command=mount(legacySnapshot,'production_completed');fireEvent.click(screen.getByRole('button',{name:'分镜台'}));await screen.findAllByText('已有分镜正文');
- expect(screen.queryByRole('button',{name:'准备素材匹配'})).toBeNull();fireEvent.click(screen.getByRole('button',{name:'剪辑工作台'}));await screen.findByRole('link',{name:'下载工程 project.json'});expect((screen.getByRole('combobox',{name:'已有工程版本'}) as HTMLSelectElement).disabled).toBe(false);expect(command).not.toHaveBeenCalled();
+ const command=mount(legacySnapshot,'production_completed');fireEvent.click(screen.getByRole('button',{name:/^素材准备与匹配/}));await screen.findAllByText('已有分镜正文');
+ expect(screen.queryByRole('button',{name:'准备素材匹配'})).toBeNull();fireEvent.click(screen.getByRole('button',{name:/^剪辑工作台/}));await screen.findByRole('link',{name:'下载工程 project.json'});expect((screen.getByRole('combobox',{name:'已有工程版本'}) as HTMLSelectElement).disabled).toBe(false);expect(command).not.toHaveBeenCalled();
 });
 it('gives new orders separate editing and export empty states instead of repeating matching controls',async()=>{
- mount(undefined,'script_approved');await screen.findByRole('button',{name:'准备素材匹配'});fireEvent.click(screen.getByRole('button',{name:'剪辑工作台'}));await screen.findByText('尚未建立剪辑工程。');expect(screen.queryByRole('button',{name:'准备素材匹配'})).toBeNull();fireEvent.click(screen.getByRole('button',{name:'检查与交付'}));await screen.findByText('尚无导出或交付文件。');
+ mount(undefined,'script_approved');await screen.findByRole('button',{name:'准备素材匹配'});fireEvent.click(screen.getByRole('button',{name:/^剪辑工作台/}));await screen.findByText('尚未建立剪辑工程。');expect(screen.queryByRole('button',{name:'准备素材匹配'})).toBeNull();fireEvent.click(screen.getByRole('button',{name:/^检查与交付/}));await screen.findByText('尚无导出或交付文件。');
 });
 
 it('explicitly adopts the selected native original without requesting preparation or generation',async()=>{
  const command=mount(legacySnapshot);command.mockRejectedValue(new Error('验收暂停于明确接入命令'));
- fireEvent.click(screen.getByRole('button',{name:'剪辑工作台'}));const button=await screen.findByRole('button',{name:'继续编辑原工程'});
+ fireEvent.click(screen.getByRole('button',{name:/^剪辑工作台/}));const button=await screen.findByRole('button',{name:'继续编辑原工程'});
  await waitFor(()=>expect((button as HTMLButtonElement).disabled).toBe(false));fireEvent.click(button);
  await waitFor(()=>expect(command).toHaveBeenCalledExactlyOnceWith('adoptLegacyWorkspace',{episodeId:episode,expectedScriptRevisionId:script,reviewPackageId:'board',artifactId:'project',expectedSourceSha256:'c'.repeat(64)}));
  await screen.findByText('验收暂停于明确接入命令');
@@ -47,19 +47,19 @@ it('reads frozen member bindings when a pre-workbench order has no shot draft ro
  frozen.reviewPackages[0].context_snapshot={worker_result:{storyboard:{shots:[{id:'S01',scriptSegment:'第一镜正文',durationSeconds:3},{id:'S02',scriptSegment:'第二镜正文',durationSeconds:4}]}}};
  frozen.artifacts.push({id:'second-video',episode_id:episode,artifact_type:'a_roll_video',relative_path:'second.mp4',sha256:'f'.repeat(64)} as typeof frozen.artifacts[number]);
  (frozen.reviewPackages.at(-1)!.context_snapshot as {members:unknown[]}).members.push({member_key:'shot:S02',artifact:{id:'second-video'}});
- const command=mount(frozen);fireEvent.click(screen.getByRole('button',{name:'分镜台'}));await screen.findByText('old.mp4');expect(screen.getByText(/已冻结旁白/)).toBeTruthy();expect(screen.queryByText('未保存画面匹配')).toBeNull();
+ const command=mount(frozen);fireEvent.click(screen.getByRole('button',{name:/^素材准备与匹配/}));await screen.findByText('old.mp4');expect(screen.getByText(/已冻结旁白/)).toBeTruthy();expect(screen.queryByText('未保存画面匹配')).toBeNull();
  expect(screen.queryByRole('combobox',{name:'查看已有镜头'})).toBeNull();expect(screen.queryByRole('combobox',{name:'已有素材预览'})).toBeNull();expect(screen.queryByRole('heading',{name:'已有视觉资料'})).toBeNull();
  fireEvent.click(screen.getByRole('button',{name:'选择镜头 S02'}));await screen.findByText('second.mp4');const detail=document.querySelector('.legacy-preparation-detail') as HTMLElement;expect(within(detail).queryByText('old.mp4')).toBeNull();expect(within(detail).queryByText('第二镜正文')).toBeNull();expect(within(detail).getByText('S02 已选画面')).toBeTruthy();expect(command).not.toHaveBeenCalled();
 });
 
 it('does not claim an existing review video when a legacy order only has visual preparation',async()=>{
  const early=structuredClone(legacySnapshot);early.artifacts=[];early.reviewPackages=[{...early.reviewPackages[0],stage:'visual_review'}];
- const command=mount(early,'visual_review');fireEvent.click(screen.getByRole('button',{name:'检查与交付'}));await screen.findByText('尚无审核成片。');expect(screen.getByText('尚未生成交付文件。')).toBeTruthy();expect(screen.queryByText(/已有审核成片可以查看和下载/)).toBeNull();expect(command).not.toHaveBeenCalled();
+ const command=mount(early,'visual_review');fireEvent.click(screen.getByRole('button',{name:/^检查与交付/}));await screen.findByText('尚无审核成片。');expect(screen.getByText('尚未生成交付文件。')).toBeTruthy();expect(screen.queryByText(/已有审核成片可以查看和下载/)).toBeNull();expect(command).not.toHaveBeenCalled();
 });
 
 it('enables per-shot editing of the current HTML order explicitly from materials without asking for generation',async()=>{
  const snapshot=structuredClone(legacySnapshot);snapshot.artifacts.find(a=>a.id==='project')!.relative_path='original.html';
- const command=mount(snapshot);command.mockRejectedValue(new Error('验收停在接入'));fireEvent.click(screen.getByRole('button',{name:'分镜台'}));const entry=await screen.findByRole('button',{name:'启用逐镜头编辑'});await waitFor(()=>expect((entry as HTMLButtonElement).disabled).toBe(false));fireEvent.click(entry);await waitFor(()=>expect(command).toHaveBeenCalledExactlyOnceWith('adoptLegacyWorkspace',{episodeId:episode,expectedScriptRevisionId:script,reviewPackageId:'board',artifactId:'project',expectedSourceSha256:'c'.repeat(64)}));
+ const command=mount(snapshot);command.mockRejectedValue(new Error('验收停在接入'));fireEvent.click(screen.getByRole('button',{name:/^素材准备与匹配/}));const entry=await screen.findByRole('button',{name:'启用逐镜头编辑'});await waitFor(()=>expect((entry as HTMLButtonElement).disabled).toBe(false));fireEvent.click(entry);await waitFor(()=>expect(command).toHaveBeenCalledExactlyOnceWith('adoptLegacyWorkspace',{episodeId:episode,expectedScriptRevisionId:script,reviewPackageId:'board',artifactId:'project',expectedSourceSha256:'c'.repeat(64)}));
 });
 
 it('does not report missing production content while a completed workspace is still loading',async()=>{
