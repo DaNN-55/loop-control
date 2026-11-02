@@ -2,7 +2,7 @@ import {Dialog,Modal,ModalOverlay} from 'react-aria-components';
 import {Disclosure} from '../ui/dan-ui/components/base/disclosure/disclosure';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {Input} from '../ui/dan-ui/components/base/input/input';
-import {NativeSelect} from '../ui/dan-ui/components/base/select/select-native';
+import {PopulatedFilterSelect} from '../ui/PopulatedFilterSelect';
 import {Checkbox} from '../ui/dan-ui/components/base/checkbox/checkbox';
 import {BadgeWithDot} from '../ui/dan-ui/components/base/badges/badges';
 import {HistoryDeleteAction} from './HistoryDeleteAction';
@@ -14,7 +14,7 @@ import{useEffect,useRef,useState}from'react';import{localRequest,localCommand}fr
 interface Episode {episode_id:string;title:string;account_name:string;updated_at:string;file_count:number;record_count:number;archived_at:string|null}
 interface HistoryFile {logical_path:string;sha256:string;bytes:string;title:string;section:string}
 interface HistoryRecord {table_name:string;row_key:unknown;payload_sha256:string;title:string}
-interface Report {items:Episode[];total:number;page:number;pageSize:number;selected:Episode|null;files:HistoryFile[];versions:HistoryRecord[];pagination:{filesPage:number;recordsPage:number;fileTotal:number;recordTotal:number}}
+interface Report {scopeCounts?:Record<string,number>;items:Episode[];total:number;page:number;pageSize:number;selected:Episode|null;files:HistoryFile[];versions:HistoryRecord[];pagination:{filesPage:number;recordsPage:number;fileTotal:number;recordTotal:number}}
 interface Preview {episodeId:string;recordLinks:number;fileLinks:number;sharedContents:number;protectedContents:number;reviewContents:number;reviewBytes:number;samples:{logical_path:string;state:string}[]}
 const sections=[['script','脚本'],['storyboard','分镜'],['media','素材'],['delivery','成片与发布包'],['other','其他文件']]as const;
 export function LocalHistory(){
@@ -51,7 +51,7 @@ export function LocalHistory(){
    <Tabs.Panel id="episodes" hidden={activeTab!=='episodes'} shouldForceMount className="reference-history-panel">
   <form role="search" aria-label="查找历史生产单" className="history-episode-filters" onSubmit={event=>{event.preventDefault();if(!disabled){setEpisode('');setPreview(null);void load({page:1,episode:''});}}}>
    <Input aria-label="生产单或账号" icon={Search} type="search" size="sm" maxLength={200} placeholder="搜索标题、账号或生产单编号" value={query} onChange={setQuery}/>
-   <NativeSelect icon={Archive} aria-label="显示范围" size="sm" disabled={disabled} value={scope} onChange={event=>{setScope(event.target.value);setEpisode('');setPreview(null);void load({state:event.target.value,page:1,episode:''});}} options={[{value:"active",label:"未归档"},{value:"archived",label:"已归档"},{value:"all",label:"全部历史"}]}/>
+   <PopulatedFilterSelect icon={Archive} aria-label="显示范围" size="sm" disabled={disabled} counts={report?.scopeCounts} allValue="all" value={scope} onValueChange={value=>{setScope(value);setEpisode('');setPreview(null);void load({state:value,page:1,episode:''});}} options={[{value:"active",label:"未归档"},{value:"archived",label:"已归档"},{value:"all",label:"全部历史"}]}/>
    <Checkbox className="history-content-only" label="仅显示有生产内容的条目" size="sm" isSelected={contentOnly} isDisabled={disabled} onChange={value=>{setContentOnly(value);setEpisode('');setPreview(null);void load({contentOnly:value,page:1,episode:''});}}/>
   </form>
   {error&&!report?.selected&&<div className="history-message history-error" role="alert"><span>{error}</span><Button color="secondary" size="sm" isDisabled={disabled} onPress={()=>void load()} type="button">重新读取</Button></div>}{notice&&<div role="status" className="history-message history-notice"><span>{notice}</span><Button aria-label="关闭历史提示" color="tertiary" size="sm" iconLeading={X} onPress={()=>setNotice('')} type="button"/></div>}

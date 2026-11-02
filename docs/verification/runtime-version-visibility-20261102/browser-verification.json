@@ -1,0 +1,19 @@
+{
+  "desktopWidth": 1280,
+  "narrowWidth": 620,
+  "noDrawerOverflow": true,
+  "pageMode": "development",
+  "paidCalls": 0,
+  "passed": true,
+  "recordsUnchanged": true,
+  "unauthorizedRequestDenied": true,
+  "version": {
+    "backendReleaseId": "d1bc507b4089b6b0a4234865e60c40ff108ad6b6dbaf78e580c7774cb03ae658",
+    "checkedAt": "2026-11-02T06:11:37.023Z",
+    "preparedReleaseId": "d1bc507b4089b6b0a4234865e60c40ff108ad6b6dbaf78e580c7774cb03ae658",
+    "startedAt": "2026-11-02T06:08:48.604Z",
+    "state": "source_changed",
+    "workerReleaseId": "d1bc507b4089b6b0a4234865e60c40ff108ad6b6dbaf78e580c7774cb03ae658"
+  },
+  "worker": "healthy"
+}

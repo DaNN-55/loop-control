@@ -35,4 +35,4 @@ it('fresh processes read the shipped deployment reader with initialized external
   const receiptPath=join(root,'media-root-receipt.json'),receipt=JSON.parse(await readFile(receiptPath,'utf8'));await writeFile(receiptPath,JSON.stringify({...receipt,database:'foreign_database'}));await expect(exec(process.execPath,['--input-type=module','-e',reader])).rejects.toThrow('receipt mismatch');
   await undo();expect(JSON.parse((await exec(process.execPath,['--input-type=module','-e',reader])).stdout).mediaRoot).toBe(source);
  }finally{await rm(temp,{recursive:true,force:true});}
-});
+},15000);

@@ -1,6 +1,7 @@
 import {cpus, freemem, totalmem} from 'node:os';
 import {statfs} from 'node:fs/promises';
 import type {Pool} from 'pg';
+import {createRuntimeVersionReader,type RuntimeVersionOptions} from './runtimeVersion.js';
 import {ownerTransaction} from './ownerTransaction.js';
 import {verifyMediaLibrary} from '../worker/mediaLibrary.js';
 import type {RuntimeQueue, RuntimeResources, RuntimeStatus, WorkerRuntimeStatus} from '../observability/runtimeStatus.js';
@@ -9,8 +10,8 @@ export interface WorkerObservation {
   stopped: boolean; lastHeartbeatAt: string | null; lastScanAt: string | null;
   lastError: string | null; activeWorkers: number; capacity: number;
 }
-interface Options {
-  pool: Pool; projectRoot: string; mediaRoot: string;
+interface Options extends RuntimeVersionOptions {
+  pool: Pool; mediaRoot: string;
   mountPath?: string; minimumFreeBytes?: number;
   worker?: () => WorkerObservation;
 }
@@ -61,6 +62,7 @@ export function observeWorker(source: WorkerObservation | undefined, at: number)
 const cpuTimes = () => cpus().reduce((sum,cpu) => ({idle:sum.idle+cpu.times.idle,total:sum.total+Object.values(cpu.times).reduce((a,b)=>a+b,0)}),{idle:0,total:0});
 
 export function createRuntimeStatusReader(options: Options) {
+  const version=createRuntimeVersionReader(options);
   let previousCpu=cpuTimes();
   let resourceCache: {at:number; value:Promise<RuntimeResources>} | undefined;
   function resources() {
@@ -79,14 +81,15 @@ export function createRuntimeStatusReader(options: Options) {
     })();resourceCache={at,value};return value;
   }
   return async(ownerId: string, page=1):Promise<RuntimeStatus>=>{
-    const [queue,resourceStatus]=await Promise.all([
+    const [queue,resourceStatus,versionStatus]=await Promise.all([
       ownerTransaction(options.pool,ownerId,true,async client=>{
         await client.query("SET LOCAL statement_timeout='3000ms'");
         return (await client.query(runtimeQueueSql,[ownerId,page])).rows[0].queue as RuntimeQueue;
       }).catch(()=>null),
       resources().catch(()=>null),
+      version(),
     ]);
     const observedAt=new Date().toISOString();
-    return {observedAt,worker:observeWorker(options.worker?.(),Date.parse(observedAt)),queue,resources:resourceStatus};
+    return {observedAt,version:versionStatus,worker:observeWorker(options.worker?.(),Date.parse(observedAt)),queue,resources:resourceStatus};
   };
 }

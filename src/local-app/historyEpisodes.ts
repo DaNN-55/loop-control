@@ -19,7 +19,8 @@ export async function readHistoryEpisodes(pool:Pool,ownerId:string,search:URLSea
   const where=`($2='' OR title ILIKE '%'||$2||'%' OR account_name ILIKE '%'||$2||'%' OR episode_id ILIKE '%'||$2||'%') AND ($3='all' OR (archived_at IS NOT NULL)=($3='archived')) AND ($4='false' OR file_count>0 OR content_count>0)`;
   const result=(await c.query(`${catalog}, filtered AS MATERIALIZED(SELECT * FROM catalog WHERE ${where}) SELECT
    coalesce((SELECT jsonb_agg(x) FROM(SELECT * FROM filtered ORDER BY file_count>0 DESC,updated_at DESC,episode_id LIMIT 30 OFFSET $5)x),'[]'::jsonb) items,
-   (SELECT count(*) FROM filtered) total,(SELECT to_jsonb(x) FROM catalog x WHERE episode_id=$6) selected`,[ownerId,q,state,contentOnly,(currentPage-1)*30,episode])).rows[0];
+   (SELECT count(*) FROM filtered) total,
+   (SELECT jsonb_build_object('active',count(*) filter(where archived_at is null),'archived',count(*) filter(where archived_at is not null)) FROM catalog WHERE ($4='false' OR file_count>0 OR content_count>0)) "scopeCounts",(SELECT to_jsonb(x) FROM catalog x WHERE episode_id=$6) selected`,[ownerId,q,state,contentOnly,(currentPage-1)*30,episode])).rows[0];
   const rows=result.items,total=Number(result.total);
   let selected=result.selected,files:Record<string,unknown>[]=[],versions:Record<string,unknown>[]=[],fileTotal=0,recordTotal=0;
   if(episode){
@@ -30,7 +31,7 @@ export async function readHistoryEpisodes(pool:Pool,ownerId:string,search:URLSea
    versions=(await c.query(`SELECT r.table_name,r.row_key,r.payload_sha256,coalesce(v.payload->>'title',v.payload->>'name',v.payload->>'task_type',v.payload->>'artifact_type',v.payload->>'id',r.row_key::text) label FROM local_identity.history_episode_records r JOIN local_identity.history_versions v USING(owner_id,table_name,row_key,payload_sha256) WHERE r.owner_id=$1 AND r.episode_id=$2 ORDER BY r.table_name,r.row_key,r.payload_sha256 LIMIT 50 OFFSET $3`,[ownerId,episode,(recordsPage-1)*50])).rows.map(row=>({...row,title:historyRecordTitle(row.table_name,row.label)}));
    recordTotal=Number((await c.query('SELECT count(*) count FROM local_identity.history_episode_records WHERE owner_id=$1 AND episode_id=$2',[ownerId,episode])).rows[0].count);
   }
-  return{items:rows,total,page:currentPage,pageSize:30,selected,files,versions,pagination:{filesPage,recordsPage,fileTotal,recordTotal}};
+  return{scopeCounts:result.scopeCounts,items:rows,total,page:currentPage,pageSize:30,selected,files,versions,pagination:{filesPage,recordsPage,fileTotal,recordTotal}};
  });
 }
 export async function manageHistoryEpisode(pool:Pool,session:OwnerSession,body:Record<string,unknown>){

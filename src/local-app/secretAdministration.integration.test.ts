@@ -61,6 +61,7 @@ it.skipIf(process.env.LOOP_SECRET_ACCEPTANCE!=='1')('admin secret boundaries, me
   const listing=await request('secrets');expect(listing.status).toBe(200);expect(JSON.stringify(listing.body).includes(value)).toBe(false);
   expect(listing.body.items.some((x:{reference:string})=>x.reference===unnamed)).toBe(true);
   expect(listing.body.items.find((x:{reference:string})=>x.reference===control).revealAllowed).toBe(false);
+  const counts=listing.body.categoryCounts;expect(counts.system).toBeGreaterThan(0);expect(Object.values(counts as Record<string,number>).reduce((total,n)=>total+n,0)).toBe(listing.body.total);expect((await request('secrets?q=absent&category=history')).body.categoryCounts).toEqual(counts);
   const detail=await request('secrets/detail?reference='+reference);expect(detail.status).toBe(200);expect(detail.body.item.history.metadataOccurrences).toBe(1);expect(detail.body.item.history.fileOccurrences).toBe(1);expect(JSON.stringify(detail.body).includes(value)).toBe(false);
   expect((await request('secrets?q=test-named&category=history')).body.total).toBe(1);
   expect((await request('secrets/reveal',payload(),token,false)).status).toBe(403);expect(calls).toBe(0);

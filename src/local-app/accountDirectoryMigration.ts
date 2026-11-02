@@ -14,7 +14,7 @@ import {resolveEpisodeStorageLocation,requireEpisodeStorageDirectory,resolveEpis
 import {verifyMediaRootBinding,type MediaRootBinding} from './mediaRootSettings.js';
 import {episodeFileIO} from './episodeFiles.js';
 import {resolveStorageContainer,requireStorageContainer} from './seriesDirectories.js';
-import {copyStorageFile,identity,fileDigest,inventory,references,fingerprint,type File,type Root,type Reference} from './storageInventory.js';
+import {copyStorageFile,storageCopySession,identity,fileDigest,inventory,references,fingerprint,type File,type Root,type Reference} from './storageInventory.js';
 type Client=Pick<PoolClient,'query'>;
 interface Manifest{targetRoot:string;targetIdentity:Root;sources:Root[];logicalRoots:string[];episodes:{id:string;title:string}[];files:File[];references:Reference[];evidenceSha256:string;conflicts:string[];totalBytes:number}
 async function allInventory(roots:{path:string}[]){const files:File[]=[];for(const root of roots){files.push(...await inventory(root.path));if(files.length>100000)throw new ConfigurationError(409,'迁移文件总数超过本次上限，请先整理目录。');}return files;}
@@ -230,13 +230,17 @@ async function executeStorageAdoption(pool:Pool,session:OwnerSession,mediaRoot:s
   const unique=[...new Map(m.files.map(f=>[f.targetRelativePath!,f])).values()];
   // Only a persisted handle identity can authorize removing our interrupted
   // partial copy. A name that merely resembles a temp is never disposable.
-  for(const temp of m.temporaryFiles){try{const actual=await lstat(temp.path,{bigint:true});if(!actual.isFile()||actual.isSymbolicLink()||String(actual.dev)!==temp.device||String(actual.ino)!==temp.inode||await realpath(temp.path)!==temp.path)throw new ConfigurationError(409,'迁移暂存文件身份已变化，保留现场。');if(actual.nlink!==1n){const destination=temp.path.slice(0,-('.migration-'+id).length),published=await lstat(destination,{bigint:true});if(actual.nlink!==2n||published.dev!==actual.dev||published.ino!==actual.ino)throw new ConfigurationError(409,'迁移暂存链接身份不一致，保留现场。');}await unlink(temp.path);}catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;}}
+  const copies=storageCopySession(copyTarget,id,{
+   pending:()=>m.temporaryFiles,
+   async record(temp){m.temporaryFiles=m.temporaryFiles.filter(f=>f.path!==temp.path);m.temporaryFiles.push(temp);await persist();},
+  },{identity:'迁移暂存文件身份已变化，保留现场。',link:'迁移暂存链接身份不一致，保留现场。'});
+  await copies.recover();
   const capacity=await statfs(m.targetRoot,{bigint:true});if(capacity.bavail*capacity.bsize<BigInt(m.totalBytes))throw new ConfigurationError(409,'目标空间不足，请释放空间后恢复。');
   for(const episode of m.episodes.filter(e=>!e.managed)){
    const expected=new Map(unique.filter(f=>f.targetRelativePath!.startsWith(episode.targetPrefix+'/')).map(f=>[f.targetRelativePath!.slice(episode.targetPrefix.length+1),f]));
    for(const actual of await inventory(join(m.targetRoot,episode.targetPrefix))){const f=expected.get(actual.relativePath);if(!f||actual.sha256!==f.sha256||actual.fileSize!==f.fileSize)throw new ConfigurationError(409,'目标出现未知或冲突文件，保留现场，未切换位置。');}
   }
-  for(const file of unique){if(signal?.aborted)throw new ConfigurationError(409,'复制已中断，可恢复；原位置仍有效。');await copyStorageFile(copyTarget,file,id,signal,async temp=>{m.temporaryFiles=m.temporaryFiles.filter(f=>f.path!==temp.path);m.temporaryFiles.push(temp);await persist();});}
+  for(const file of unique){if(signal?.aborted)throw new ConfigurationError(409,'复制已中断，可恢复；原位置仍有效。');await copies.copy(file,signal);}
   for(const file of unique){const actual=await fileDigest(m.targetRoot,file.targetRelativePath!);if(actual.sha256!==file.sha256||actual.fileSize!==file.fileSize)throw new ConfigurationError(409,'目标文件校验失败，原位置保留。');}
   if(fingerprint(await scopedInventory(m.episodes))!==fingerprint(m.files))throw new ConfigurationError(409,'复制期间旧源改变，未切换位置。');
   const result=await transaction(async c=>{

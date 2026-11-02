@@ -1,0 +1,12 @@
+{
+  "preparedRelease": "5fdf17dccb0573d10cdac0a0e36fc8890f8fbd1b1e304599f1c96f108863de84",
+  "runningRelease": "5fdf17dccb0573d10cdac0a0e36fc8890f8fbd1b1e304599f1c96f108863de84",
+  "serviceMatches": true,
+  "releaseValid": true,
+  "keychain": {
+    "unlocked": true
+  },
+  "developmentChanged": [
+    "src/local-app/workspaceCallEstimate.ts"
+  ]
+}

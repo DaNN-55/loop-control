@@ -121,7 +121,7 @@ it('retains failed attempt files without reporting them as accepted or repeating
  await writeSafeAssetFile(attempt.taskPackage.assets.allowedRoot,output,'unregistered output');
  const db=database(0,true);await expect(attempt.publish(db.pool,result('unregistered output'))).rejects.toThrow('Result registration failed');
  expect(await readFile(join(attempt.taskPackage.assets.allowedRoot,output),'utf8')).toBe('unregistered output');
- expect(db.accepted).toEqual([]);expect(db.operations).toEqual(['BEGIN','SELECT local_identity.input_worker_call($1,$2)','SELECT local_identity.native_output_authority($1,$2,$3,$4) authority','SAVEPOINT native_output_publication','SELECT local_identity.input_worker_call($1,$2)','ROLLBACK TO SAVEPOINT native_output_publication','ROLLBACK','release']);
+ expect(db.accepted).toEqual([]);expect(db.operations).toEqual(['SELECT local_identity.begin_native_output_publication($1,$2,$3)','BEGIN','SELECT local_identity.input_worker_call($1,$2)','SELECT local_identity.native_output_authority($1,$2,$3,$4) authority','SAVEPOINT native_output_publication','SELECT local_identity.input_worker_call($1,$2)','ROLLBACK TO SAVEPOINT native_output_publication','ROLLBACK','SELECT local_identity.finish_native_output_publication($1,$2,$3)','release']);
 });
 
 it('restores an existing canonical file before releasing the task transaction when result registration fails',async()=>{

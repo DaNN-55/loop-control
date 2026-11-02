@@ -1,0 +1,36 @@
+{
+  "controlledSoundTasks": 1,
+  "controlledSpeechTasks": 1,
+  "narration": {
+    "adoptedAudioTrackId": null,
+    "status": "completed",
+    "text": "用于刷新保护验证的第一镜口播。"
+  },
+  "passed": true,
+  "playback": {
+    "duration": 2.376,
+    "error": null,
+    "readyState": 4
+  },
+  "realProviderCalls": 0,
+  "refreshDelayedAcrossShotSwitch": true,
+  "revision": 1,
+  "sound": {
+    "adoptedItemId": null,
+    "description": "脚步实测",
+    "status": "completed"
+  },
+  "soundDraft": {
+    "alerts": [],
+    "offset": 0.4,
+    "purpose": "第一镜下一条未提交草稿",
+    "query": "footsteps",
+    "shot": "shot-1"
+  },
+  "speechDraft": {
+    "rate": "1.2",
+    "reservation": "200",
+    "text": "尚未提交的第二版口播草稿"
+  },
+  "workspaceId": "8e328431-e2f8-4fef-96c1-40a8e9f5208c"
+}

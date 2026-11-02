@@ -1,0 +1,392 @@
+[
+  {
+    "command": "read",
+    "status": 401,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 401,
+    "dropped": false
+  },
+  {
+    "command": "login",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 503,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 503,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "openWorkspaceStudio",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "saveWorkspaceStudio",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "prepareWorkspaceVisualCandidate",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "saveWorkspaceStudio",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "adoptWorkspaceVisualCandidate",
+    "status": 0,
+    "dropped": true
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 503,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 503,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "openWorkspaceStudio",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "saveWorkspaceStudio",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "adoptWorkspaceVisualCandidate",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "saveWorkspaceStudio",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "closeWorkspaceStudio",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  }
+]

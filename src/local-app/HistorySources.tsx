@@ -1,7 +1,7 @@
 import {Disclosure} from '../ui/dan-ui/components/base/disclosure/disclosure';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {Input} from '../ui/dan-ui/components/base/input/input';
-import {NativeSelect} from '../ui/dan-ui/components/base/select/select-native';
+import {PopulatedFilterSelect} from '../ui/PopulatedFilterSelect';
 import {BadgeWithDot} from '../ui/dan-ui/components/base/badges/badges';
 import {ChevronLeft,ChevronRight,X,FileText,Search,Archive,Layers} from 'lucide-react';
 import '../ui/dan-ui/styles/scoped.css';
@@ -11,7 +11,7 @@ import {localCommand,localRequest} from './client';
 import {historyCategories,historySize,type HistoryCategory,type HistorySource,type HistoryCleanupPreview} from './historyPresentation';
 interface HistoryVersion {table_name:string;row_key:unknown;payload_sha256:string;label:string;title:string;status:string}
 interface HistoryFile {logical_path:string;sha256:string;bytes:string;kind:string;category:HistoryCategory;title:string}
-interface Report {summary:{versions:string;files:string};sources:HistorySource[];source:HistorySource|null;versions:HistoryVersion[];files:HistoryFile[];pagination:{filesPage:number;recordsPage:number;fileTotal:number;versionTotal:number};sourceCounts:{active:number;archived:number}}
+interface Report {categoryCounts?:Record<string,number>;summary:{versions:string;files:string};sources:HistorySource[];source:HistorySource|null;versions:HistoryVersion[];files:HistoryFile[];pagination:{filesPage:number;recordsPage:number;fileTotal:number;versionTotal:number};sourceCounts:{active:number;archived:number}}
 interface VersionDetail {version:{table_name:string;row_key:unknown;payload_json:string}}
 const states:Record<string,string>={'superseded-import-precision':'旧导入精度版本',inserted:'有合入记录','current-preserved':'保留当时版本','secondary-key-conflict':'冲突版本','history-only:missing-parent':'缺少原始引用','history-only':'历史版本'};
 export function HistorySources(){
@@ -52,8 +52,8 @@ export function HistorySources(){
  return <section aria-label="资料来源管理" className="dan-ui history-ui history-workspace history-sources reference-history" aria-busy={disabled}>
   <form aria-label="查找资料来源" className="history-source-filters" role="search" onSubmit={event=>{event.preventDefault();if(!disabled){setSource('');setPreview(null);void load({source:'',q:''});}}}>
    <Input aria-label="查找来源" icon={Search} placeholder="搜索名称、文件或来源" size="sm" maxLength={200} onChange={setSourceQuery} type="search" value={sourceQuery}/>
-   <NativeSelect icon={Layers} aria-label="分类" size="sm" disabled={disabled} value={category} onChange={event=>{setCategory(event.target.value);setSource('');setPreview(null);void load({category:event.target.value,source:'',q:''});}} options={[{value:"",label:"全部分类"},...historyCategories.map(item=>({value:item.id,label:item.label}))]}/>
-   <NativeSelect icon={Archive} aria-label="显示范围" size="sm" disabled={disabled} value={state} onChange={event=>{setState(event.target.value);setSource('');setPreview(null);void load({state:event.target.value,source:'',q:''});}} options={[{value:"active",label:report?`未归档（${report.sourceCounts.active}）`:"未归档"},{value:"archived",label:report?`已归档（${report.sourceCounts.archived}）`:"已归档"},{value:"all",label:"全部来源"}]}/>
+   <PopulatedFilterSelect icon={Layers} aria-label="分类" size="sm" disabled={disabled} counts={report?.categoryCounts} allValue="" value={category} onValueChange={value=>{setCategory(value);setSource('');setPreview(null);void load({category:value,source:'',q:''});}} options={[{value:"",label:"全部分类"},...historyCategories.map(item=>({value:item.id,label:item.label}))]}/>
+   <PopulatedFilterSelect icon={Archive} aria-label="显示范围" size="sm" disabled={disabled} counts={report?.sourceCounts} allValue="all" value={state} onValueChange={value=>{setState(value);setSource('');setPreview(null);void load({state:value,source:'',q:''});}} options={[{value:"active",label:report?`未归档（${report.sourceCounts.active}）`:"未归档"},{value:"archived",label:report?`已归档（${report.sourceCounts.archived}）`:"已归档"},{value:"all",label:"全部来源"}]}/>
   </form>
   {error&&<p className="history-message history-error" role="alert">{error}</p>}{notice&&<p role="status" className="history-message history-notice">{notice}</p>}
   {!report&&busy&&<p role="status" className="history-loading">正在读取资料来源…</p>}

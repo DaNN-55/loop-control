@@ -1,0 +1,14 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+stderr | src/local-app/episodeMetrics.browser.integration.test.ts > real Owner page renders compact metrics, sorted workbench, connections and embedded storage at desktop and narrow widths
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-153-U2h9Br/vite/deps/react-dom_client.js?v=5ca0ebdc as it exceeds the max of 500KB.
+
+ ✓ src/local-app/episodeMetrics.browser.integration.test.ts (1 test) 7534ms
+   ✓ real Owner page renders compact metrics, sorted workbench, connections and embedded storage at desktop and narrow widths  7534ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  16:23:15
+   Duration  8.27s (transform 387ms, setup 8ms, collect 578ms, tests 7.53s, environment 0ms, prepare 32ms)
+

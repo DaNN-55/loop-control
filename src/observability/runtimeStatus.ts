@@ -24,7 +24,15 @@ export interface RuntimeResources {
 }
 export interface RuntimeStatus {
   observedAt: string;
+  version?:RuntimeVersionStatus;
   worker: WorkerRuntimeStatus;
   queue: RuntimeQueue | null;
   resources: RuntimeResources | null;
+}
+
+export type RuntimeVersionState='current'|'source_changed'|'restart_required'|'preparing'|'not_prepared'|'prepared_invalid'|'running_invalid'|'mismatch'|'unknown';
+export interface RuntimeVersionStatus {
+ state:RuntimeVersionState;
+ backendReleaseId:string|null;workerReleaseId:string|null;preparedReleaseId:string|null;
+ startedAt:string;checkedAt:string;
 }

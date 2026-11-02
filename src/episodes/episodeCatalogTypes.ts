@@ -4,9 +4,20 @@ type Episode=Database["public"]["Tables"]["episodes"]["Row"];
 export interface ServerPage { page: number; total: number; pageSize: number; onPageChange: (page: number) => void }
 export interface WorkerSummary { running: number; blocked: number; failed: number; latestCompleted: boolean; latest?: { task_type: string; at: string } | null }
 export type CatalogStatus = "all" | "review" | "running" | "blocked" | "done";
-export type CatalogSort = "updated" | "oldest" | "title";
+export type CatalogSort = "updated" | "oldest" | "title" | "cost_desc" | "cost_asc";
+export type ProductionStep = 'script' | 'preparation' | 'editing' | 'delivery';
+export interface EpisodeMetrics {
+  cost: {actualCents:number|null;estimatedCents:number|null;reservedCents:number;unpricedCount:number;recalculated:boolean};
+  stageStartedAt: Partial<Record<ProductionStep,string>>;
+  finishedAt: string|null;
+  generations: {image:number;video:number;narration:number;sound:number;failed:number};
+}
 export type CatalogActionStatus = Exclude<CatalogStatus, "all"> | "draft";
 export interface EpisodeCatalog {
+  metrics?: Record<string,EpisodeMetrics>;
+  filterAccountCounts?: Record<string,number>;
+  visibilityCounts?: Record<string,number>;
+  seriesEpisodeCounts?: Record<string, number>;
   unassignedAccountCounts?: Record<string, number>;
   collections?: Record<string,{containerId:string;seriesId:string|null}>;
   episodes: Episode[]; page: number; total: number; pageSize: number; episodeCount: number;

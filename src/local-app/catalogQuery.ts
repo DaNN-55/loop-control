@@ -90,9 +90,14 @@ export const localCatalogSql=` with owned as materialized (
    and ($2::text<>'reviews' or exists(select 1 from pending p where p.episode_id=e.id))
  ), bounds as (
   select count(*) total,least(greatest(coalesce($3::integer,1),1),greatest(1,ceil(count(*)/20.0)::int)) page from filtered
+ ), cost_order as materialized (
+  select key::uuid episode_id,case when value#>>'{cost,actualCents}' is not null or value#>>'{cost,estimatedCents}' is not null
+   then coalesce((value#>>'{cost,actualCents}')::numeric,0)+coalesce((value#>>'{cost,estimatedCents}')::numeric,0) end cents
+  from jsonb_each($12::jsonb)
  ), page_rows as materialized (
-  select e.* from filtered e where $2::text<>'accounts'
-  order by case when $10::text='title' then lower(e.title) end asc,
+  select e.* from filtered e left join cost_order cost on cost.episode_id=e.id where $2::text<>'accounts'
+  order by case when $10::text='cost_desc' then cost.cents end desc nulls last,
+   case when $10::text='cost_asc' then cost.cents end asc nulls last,case when $10::text='title' then lower(e.title) end asc,
    case when $10::text='oldest' then e.updated_at end asc,e.updated_at desc,e.id
   limit 20 offset ((select page from bounds)-1)*20
  ), pending_bounds as (
@@ -122,11 +127,29 @@ export const localCatalogSql=` with owned as materialized (
   order by episode_id,task_type,operation,coalesce(completed_at,claimed_at,created_at) desc,id desc
  )
  select jsonb_build_object(
-  'episodes',coalesce((select jsonb_agg(to_jsonb(e) order by case when $10::text='title' then lower(e.title) end asc,case when $10::text='oldest' then e.updated_at end asc,e.updated_at desc,e.id) from page_rows e),'[]'),
+  'metrics',coalesce((select jsonb_object_agg(e.id,$12::jsonb->e.id::text) from page_rows e where $12::jsonb ? e.id::text),'{}'),
+  'episodes',coalesce((select jsonb_agg(to_jsonb(e) order by case when $10::text='cost_desc' then cost.cents end desc nulls last,case when $10::text='cost_asc' then cost.cents end asc nulls last,case when $10::text='title' then lower(e.title) end asc,case when $10::text='oldest' then e.updated_at end asc,e.updated_at desc,e.id) from page_rows e left join cost_order cost on cost.episode_id=e.id),'[]'),
   'collections',coalesce((select jsonb_object_agg(c.episode_id,jsonb_build_object('containerId',c.container_id,'seriesId',c.series_id)) from current_collections c join page_rows e on e.id=c.episode_id),'{}'),
   'total',(select total from bounds),'page',(select page from bounds),'pageSize',20,
   'episodeCount',(select count(*) from owned),
   'accountCounts',coalesce((select jsonb_object_agg(account_id,n) from(select account_id,count(*) n from owned group by account_id)s),'{}'),
+  'filterAccountCounts',coalesce((select jsonb_object_agg(account_id,n) from (
+   select e.account_id,count(*) n from owned e
+   where ($6::text='all' or $6::text='active' and e.archived_at is null or $6::text='archived' and e.archived_at is not null)
+    and ($2::text not in ('reviews','operations') or e.archived_at is null and not local_identity.is_historical_episode(e.id))
+   group by e.account_id) counts),'{}'),
+  'visibilityCounts',(select jsonb_build_object('active',count(*) filter(where e.archived_at is null),'archived',count(*) filter(where e.archived_at is not null))
+   from owned e where ($4::uuid is null or e.account_id=$4::uuid)),
+  'seriesEpisodeCounts',coalesce((select jsonb_object_agg(series_key,n) from (
+   select case when c.container_id is not null then coalesce(c.series_id::text,'unassigned')
+    when e.series_version_id is null then 'unassigned' else coalesce(s.id::text,'unavailable') end series_key,count(*) n
+   from owned e left join current_collections c on c.episode_id=e.id
+   left join public.series_versions v on v.id=e.series_version_id left join public.series s on s.id=v.series_id
+   where ($4::uuid is null or e.account_id=$4::uuid)
+    and ($6::text='all' or $6::text='active' and e.archived_at is null or $6::text='archived' and e.archived_at is not null)
+    and ($2::text not in ('reviews','operations') or e.archived_at is null and not local_identity.is_historical_episode(e.id))
+   group by 1
+  ) counts),'{}'),
   'unassignedAccountCounts',coalesce((select jsonb_object_agg(account_id,n) from(select e.account_id,count(*) n from owned e left join current_collections c on c.episode_id=e.id where (c.container_id is not null and c.series_id is null) or (c.container_id is null and e.series_version_id is null) group by e.account_id)s),'{}'),
   'reviewCount',(select count(*) from owned e where archived_at is null and not local_identity.is_historical_episode(e.id) and ((not exists(select 1 from local_identity.production_workspaces w where w.episode_id=e.id) and stage in ('script_review','visual_review','storyboard_review','qc_review')) or exists(select 1 from workspace_facts w where w.episode_id=e.id and w.basis_current and w.export_current and w.export_ready and w.confirmed_at is null and not w.open_issue and e.stage<>'production_completed'))),
   'stages',coalesce((select jsonb_object_agg(stage,n) from(select stage,count(*) n from filtered group by stage)s),'{}'),

@@ -108,14 +108,14 @@ Impeccable 源码检测器本轮运行一次，返回 **0 项**，见 [detector.
 ## 覆盖、验证与限制
 
 - **范围**：27个当前可达产品TSX文件的值索引；18个夹具入口覆盖系列运营、生产单、账号蓝图／系列、连接、历史、密钥、登录安全、创建／确认、状态、实际生产抽屉、分镜／声音／画面、AI生成、交付与完成。16个生产阶段均有浅深色首屏记录；部分阶段内的媒体／QC／弹层另行交互核查，不声称所有组合都完成端到端操作。
-- **PC尺寸**：1280×900、1440×1000、1920×1080、2560×1440。以 measurements.json 的实际 width/height 为准。另有320×844早期补充记录，仅作附录；移动布局与触摸手势不在本次结论中。
+- **PC尺寸**：1280×900、1440×1000、1920×1080、2560×1440。以 measurements.json.gz 的实际 width/height 为准。另有320×844早期补充记录，仅作附录；移动布局与触摸手势不在本次结论中。
 - **数据／状态**：Demo、Worst、Empty、One、1284总数、20／21边界；正常、加载、503、pending、禁止查看、可完成、预渲染审核成员。状态覆盖按组件实际生效，不把静态props组件在loading参数下的画面称为异步加载验收。
 - **证据质量**：初版探针误用了接口未提供的 childElementCount，早期clipped/colorSamples为空，不作为通过证据；已改为children.length，后续PC尺寸和逐项复现重新取证。密钥初次采集早于加载完成，已补 settled 测量。少量试图改成1280×720的记录仍实际1440×1000，已改名为actual1440并标记，不宣称检查过低高度PC。
 - **机械／编译验证**：detector一次，0命中；夹具TypeScript检查通过；产品Vite构建通过，输出在独立临时目录，不覆盖日常运行产物。主JS955.17kB/gzip287.24kB、CSS471.89kB/gzip69.63kB，仍有>500kB chunk提示；这是资源观察，未据此断言页面卡顿。
 - **未执行**：第三方OpenChatCut内部、真实Provider网络生成、真实保存／删除／归档、真实密钥取回、物理设备、触摸、全应用读屏流程、所有键盘路径、长时性能分析。产品是中文LTR，没有新增RTL产品要求。
 - **变更边界**：仅新增本目录的夹具、测量与报告，更新根PLAN。未修产品源码；起点哈希复核见 [results.json](results.json)。日常5174服务保留。
 
-完整证据目录见 [SCREENSHOTS.md](SCREENSHOTS.md)，字段边界见 [FIELD-MAP.md](FIELD-MAP.md)，原始尺寸见 [measurements.json](measurements.json)。截图数量和自动测量次数不等于逐状态人工通过数量。
+完整证据目录见 [SCREENSHOTS.md](SCREENSHOTS.md)，字段边界见 [FIELD-MAP.md](FIELD-MAP.md)，原始尺寸见 [measurements.json.gz](measurements.json.gz)。截图数量和自动测量次数不等于逐状态人工通过数量。
 
 ## 可切换的 Break UI 演示
 

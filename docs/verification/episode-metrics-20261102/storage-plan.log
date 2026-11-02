@@ -1,0 +1,107 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/local-app/mediaRootMigration.browser.integration.test.ts (1 test | 1 failed) 3253ms
+   × formal Owner storage settings persist a root plan, show conflicts and recover the same plan after a real process restart 3253ms
+     → Cannot find package 'undefined' imported from '/Users/dan/Programs/loop-control/src/local-app/mediaRootRuntime.fixture.ts'
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/mediaRootMigration.browser.integration.test.ts > formal Owner storage settings persist a root plan, show conflicts and recover the same plan after a real process restart
+Error: Cannot find package 'undefined' imported from '/Users/dan/Programs/loop-control/src/local-app/mediaRootRuntime.fixture.ts'
+ ❯ mediaRootDatabaseTransport src/local-app/mediaRootRuntime.fixture.ts:7:25
+      5| import {readFileSync,writeFileSync} from 'node:fs';
+      6| export async function mediaRootDatabaseTransport(f:{database:string},o…
+      7|  const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MOD…
+       |                         ^
+      8|  const bridges=new Set<ReturnType<typeof spawn>>();
+      9|  const server=createServer(socket=>{
+ ❯ nativeMediaRootFixture src/local-app/mediaRootRuntime.fixture.ts:30:46
+ ❯ src/local-app/mediaRootMigration.browser.integration.test.ts:13:16
+
+Caused by: Error: Failed to load url undefined (resolved id: undefined). Does the file exist?
+ ❯ loadAndTransform node_modules/vite/dist/node/chunks/config.js:22739:33
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  16:12:43
+   Duration  3.46s (transform 383ms, setup 8ms, collect 70ms, tests 3.25s, environment 0ms, prepare 30ms)
+
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+stderr | src/local-app/mediaRootMigration.browser.integration.test.ts > formal Owner storage settings persist a root plan, show conflicts and recover the same plan after a real process restart
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-t06-volume-06iZZV/mounted/loop-153-rdyBnk/vite-cache/deps/react-dom_client.js?v=6eb0f37d as it exceeds the max of 500KB.
+
+ ❯ src/local-app/mediaRootMigration.browser.integration.test.ts (1 test | 1 failed) 9642ms
+   × formal Owner storage settings persist a root plan, show conflicts and recover the same plan after a real process restart 9642ms
+     → expected 'false' to be 'true' // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/mediaRootMigration.browser.integration.test.ts > formal Owner storage settings persist a root plan, show conflicts and recover the same plan after a real process restart
+AssertionError: expected 'false' to be 'true' // Object.is equality
+
+Expected: "true"
+Received: "false"
+
+ ❯ src/local-app/mediaRootMigration.browser.integration.test.ts:22:262
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  16:13:48
+   Duration  9.89s (transform 439ms, setup 8ms, collect 70ms, tests 9.64s, environment 0ms, prepare 31ms)
+
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+stderr | src/local-app/mediaRootMigration.browser.integration.test.ts > formal Owner storage settings persist a root plan, show conflicts and recover the same plan after a real process restart
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-t06-volume-l2FSsP/mounted/loop-153-1ivwG8/vite-cache/deps/react-dom_client.js?v=842fc3fd as it exceeds the max of 500KB.
+
+stderr | src/local-app/mediaRootMigration.browser.integration.test.ts > formal Owner storage settings persist a root plan, show conflicts and recover the same plan after a real process restart
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-t06-volume-l2FSsP/mounted/loop-153-1ivwG8/vite-cache/deps/react-dom_client.js?v=bbd33713 as it exceeds the max of 500KB.
+
+ ❯ src/local-app/mediaRootMigration.browser.integration.test.ts (1 test | 1 failed) 13339ms
+   × formal Owner storage settings persist a root plan, show conflicts and recover the same plan after a real process restart 13339ms
+     → Command failed: agent-browser --session lc178-t15-9ce89af6-7f59-49cc-b848-e635e7837c28 find role button click --name 更换存储位置 --exact
+✗ 24 elements have role "button", but none match name "更换存储位置". Names seen: "打开 OpenChatCut 独立剪辑", "收起侧栏", "工作台", "生产单", "账号", ...
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/mediaRootMigration.browser.integration.test.ts > formal Owner storage settings persist a root plan, show conflicts and recover the same plan after a real process restart
+Error: Command failed: agent-browser --session lc178-t15-9ce89af6-7f59-49cc-b848-e635e7837c28 find role button click --name 更换存储位置 --exact
+✗ 24 elements have role "button", but none match name "更换存储位置". Names seen: "打开 OpenChatCut 独立剪辑", "收起侧栏", "工作台", "生产单", "账号", ...
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  16:15:07
+   Duration  13.56s (transform 389ms, setup 7ms, collect 65ms, tests 13.34s, environment 0ms, prepare 29ms)
+
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+stderr | src/local-app/mediaRootMigration.browser.integration.test.ts > formal Owner storage settings persist a root plan, show conflicts and recover the same plan after a real process restart
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-t06-volume-olBRrn/mounted/loop-153-jRs4PI/vite-cache/deps/react-dom_client.js?v=e698d2d7 as it exceeds the max of 500KB.
+
+stderr | src/local-app/mediaRootMigration.browser.integration.test.ts > formal Owner storage settings persist a root plan, show conflicts and recover the same plan after a real process restart
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-t06-volume-olBRrn/mounted/loop-153-jRs4PI/vite-cache/deps/react-dom_client.js?v=bbd33713 as it exceeds the max of 500KB.
+
+ ✓ src/local-app/mediaRootMigration.browser.integration.test.ts (1 test) 12425ms
+   ✓ formal Owner storage settings persist a root plan, show conflicts and recover the same plan after a real process restart  12424ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  16:16:10
+   Duration  12.67s (transform 430ms, setup 8ms, collect 71ms, tests 12.42s, environment 0ms, prepare 30ms)
+

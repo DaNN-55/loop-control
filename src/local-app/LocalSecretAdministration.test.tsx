@@ -67,3 +67,9 @@ it('can retry a failed detail read through the same row action',async()=>{
  render(<LocalSecretAdministration csrf="csrf" onClose={()=>{}}/>);fireEvent.click(await screen.findByRole('button',{name:/^查看密钥：/}));expect((await screen.findByRole('alert')).textContent).toContain('详情读取失败');
  await act(async()=>{fireEvent.click(screen.getByRole('button',{name:/^查看密钥：/}));});await screen.findByLabelText('当前登录密码');expect(screen.queryByRole('alert')).toBeNull();expect(detailReads).toBe(2);
 });
+
+it('uses full inventory category counts even on an empty page',async()=>{
+ vi.mocked(localRequest).mockResolvedValue({items:[],total:0,page:1,pageSize:50,categoryCounts:{system:2,connection:55}});
+ render(<LocalSecretAdministration csrf="csrf" onClose={()=>{}}/>);await screen.findByText('没有匹配的密钥。');
+ const select=screen.getByRole('combobox',{name:'分类'}) as HTMLSelectElement;expect(Array.from(select.options).map(option=>option.textContent)).toEqual(['全部分类','系统控制','连接使用']);
+});

@@ -130,3 +130,13 @@ it('places two truthful usage lines after the credential version and keeps other
  const headers=screen.getAllByRole('columnheader').map(c=>c.textContent);expect(headers.indexOf('额度 / 近7天')).toBe(headers.indexOf('凭据版本')+1);
  const cell=screen.getByRole('cell',{name:'Usage fixture 额度与用量'});expect(cell.querySelectorAll('.reference-connection-usage-line')).toHaveLength(2);expect(cell.textContent).toContain('1,998 次');expect(cell.textContent).toContain('8 次');expect(screen.queryByText('¥999')).toBeNull();
 });
+
+it('hides unused capabilities and verification states and restores them when records arrive',()=>{
+ const a=row('a','Pexels'),props={onCreateConnection:vi.fn(),onTestConnection:vi.fn()};
+ const {rerender}=render(<ConnectionWorkspace {...props} connections={[a]}/>);
+ const capabilities=screen.getByRole('combobox',{name:'生产能力'}),statuses=screen.getByRole('combobox',{name:'验证状态'});
+ expect(within(capabilities).getAllByRole('option')).toHaveLength(2);expect(within(statuses).getAllByRole('option')).toHaveLength(2);
+ fireEvent.change(screen.getByLabelText('查找已存连接'),{target:{value:'absent'}});expect(within(capabilities).getAllByRole('option')).toHaveLength(2);
+ rerender(<ConnectionWorkspace {...props} connections={[a,{...a,id:'tts',provider:'volcengine_tts',adapter:'volcengine_tts',status:'invalid'}]}/>);
+ expect(within(capabilities).getByRole('option',{name:'语音'})).toBeTruthy();expect(within(statuses).getAllByRole('option')).toHaveLength(3);
+});

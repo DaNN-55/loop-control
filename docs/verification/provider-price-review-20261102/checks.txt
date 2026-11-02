@@ -1,0 +1,29 @@
+/tmp/loop-price-review-unit.log
+ ✓ src/local-app/workspaceCallEstimate.test.ts (13 tests) 2ms
+ Test Files  1 passed (1)
+      Tests  13 passed (13)
+   Start at  14:47:08
+   Duration  269ms (transform 38ms, setup 11ms, collect 28ms, tests 2ms, environment 0ms, prepare 47ms)
+
+/tmp/loop-price-review-http.log
+ ✓ src/local-app/workspaceCallConfirmation.integration.test.ts (5 tests) 10029ms
+   ✓ confirmation does not queue, legacy enablement cannot bypass it, and one confirmation queues exactly once without enabling the episode  3140ms
+   ✓ expired and changed-input confirmations fail without consuming the proposal or queueing a task  1616ms
+   ✓ connection or reference changes require a fresh confirmation and failed validation rolls consumption back  1469ms
+   ✓ confirmation records follow the existing guarded production-order deletion  1815ms
+   ✓ automatically estimates a call and atomically freezes the Owner-adjusted reservation in the actual queued task  1988ms
+
+/tmp/loop-price-review-http-final.log
+ ✓ src/local-app/workspacePriceSelection.integration.test.ts (1 test) 9903ms
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  14:50:39
+   Duration  11.79s (transform 1.14s, setup 20ms, collect 1.61s, tests 9.90s, environment 0ms, prepare 49ms)
+
+/tmp/loop-price-review-default.log
+ ✓ src/local-app/workspaceCallEstimate.test.ts (13 tests) 3ms
+ Test Files  201 passed (201)
+      Tests  1337 passed | 1 skipped (1338)
+   Start at  14:49:57
+   Duration  54.32s (transform 4.48s, setup 502ms, collect 59.13s, tests 133.01s, environment 40.64s, prepare 9.49s)
+

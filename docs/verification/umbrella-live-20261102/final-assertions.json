@@ -1,0 +1,398 @@
+{
+  "at": "2026-11-02T04:20:25.978Z",
+  "branch": "main",
+  "orders": [
+    {
+      "provider": "bailian",
+      "episodeId": "2abb56f4-79b3-4d4e-8537-8d707e9b060d",
+      "title": "末班车前的一把伞 · 百炼写实版",
+      "stage": "production_completed",
+      "project": {
+        "relativePath": "末班车前的善意 · 写实--c295c32a-e02d-48cf-ad72-231a02e408c9/末班车前的一把伞 · 百炼写实版--2abb56f4-79b3-4d4e-8537-8d707e9b060d/production-workspace/versions/8bed5b88970839c458a771d920a8396ed995a6634294220d8c7737bc188af5a0.json",
+        "sha256": "8bed5b88970839c458a771d920a8396ed995a6634294220d8c7737bc188af5a0",
+        "fileSize": 11907,
+        "projectId": "loop-control-2abb56f4-79b3-4d4e-8537-8d707e9b060d"
+      },
+      "generated": {
+        "file": "/Volumes/Ebuget 1T/Media/雨后小故事 · 真实制作--00b3a9f2-387f-472c-9e07-a433deb86dfb/末班车前的善意 · 写实--c295c32a-e02d-48cf-ad72-231a02e408c9/末班车前的一把伞 · 百炼写实版--2abb56f4-79b3-4d4e-8537-8d707e9b060d/native-tasks/7f11f0ef-d7ce-4ac5-aa62-eaa7ee9eb348/7f11f0ef-d7ce-4ac5-aa62-eaa7ee9eb348.mp4",
+        "sha256": "29be930a65e0dfd95fa7955fc830231437c4350d8367cc4a2331a7eee559cfdf",
+        "media": {
+          "programs": [],
+          "stream_groups": [],
+          "streams": [
+            {
+              "codec_name": "h264",
+              "width": 720,
+              "height": 1280,
+              "r_frame_rate": "30/1"
+            }
+          ],
+          "format": {
+            "duration": "4.000000",
+            "size": "3645643"
+          }
+        }
+      },
+      "final": {
+        "artifact": {
+          "sha256": "3ab6643cdaf0b19c202a7d0d4095869b4ab7d381b8ae04d601b5fd14050c610e",
+          "fileSize": 6279473,
+          "relativePath": "末班车前的善意 · 写实--c295c32a-e02d-48cf-ad72-231a02e408c9/末班车前的一把伞 · 百炼写实版--2abb56f4-79b3-4d4e-8537-8d707e9b060d/workspace-exports/62939317-ab7e-4401-a987-be73c534af4a/3ab6643cdaf0b19c202a7d0d4095869b4ab7d381b8ae04d601b5fd14050c610e.mp4"
+        },
+        "media": {
+          "programs": [],
+          "stream_groups": [],
+          "streams": [
+            {
+              "codec_name": "h264",
+              "width": 1080,
+              "height": 1920,
+              "side_data_list": [
+                {}
+              ]
+            },
+            {
+              "codec_name": "aac"
+            }
+          ],
+          "format": {
+            "duration": "4.053333",
+            "size": "6279473"
+          }
+        }
+      },
+      "deliveries": [
+        {
+          "id": "9a93ec74-8186-43bb-a5a8-a5162a3d7b05",
+          "exportId": "62939317-ab7e-4401-a987-be73c534af4a",
+          "taskId": "9a93ec74-8186-43bb-a5a8-a5162a3d7b05",
+          "status": "completed",
+          "error": null,
+          "verified": true,
+          "artifacts": [
+            {
+              "sha256": "4cd8136c302059a6c82da0e2f4388799f11628822ed74be3b7bec03d32144ead",
+              "fileSize": 2297360,
+              "artifactType": "cover",
+              "relativePath": "末班车前的善意 · 写实--c295c32a-e02d-48cf-ad72-231a02e408c9/末班车前的一把伞 · 百炼写实版--2abb56f4-79b3-4d4e-8537-8d707e9b060d/workspace-deliveries/9a93ec74-8186-43bb-a5a8-a5162a3d7b05/cover.png"
+            },
+            {
+              "sha256": "9f86cf93048e5a18760597a73c7d287581963860383512e26c9dcd6d3542f0d2",
+              "fileSize": 1318,
+              "artifactType": "metadata",
+              "relativePath": "末班车前的善意 · 写实--c295c32a-e02d-48cf-ad72-231a02e408c9/末班车前的一把伞 · 百炼写实版--2abb56f4-79b3-4d4e-8537-8d707e9b060d/workspace-deliveries/9a93ec74-8186-43bb-a5a8-a5162a3d7b05/metadata.json"
+            },
+            {
+              "sha256": "846f5c939b94c88745529b34dd48f12c710bccdc08f2f60e4cd937cc1870a212",
+              "fileSize": 4981,
+              "artifactType": "final_qc_report",
+              "relativePath": "末班车前的善意 · 写实--c295c32a-e02d-48cf-ad72-231a02e408c9/末班车前的一把伞 · 百炼写实版--2abb56f4-79b3-4d4e-8537-8d707e9b060d/workspace-deliveries/9a93ec74-8186-43bb-a5a8-a5162a3d7b05/checks.json"
+            },
+            {
+              "sha256": "1ca855ca3029ddabb77cf91b0df65a8f432521a9449799ef0725d7686c4ce5d7",
+              "fileSize": 3404,
+              "artifactType": "publish_package",
+              "relativePath": "末班车前的善意 · 写实--c295c32a-e02d-48cf-ad72-231a02e408c9/末班车前的一把伞 · 百炼写实版--2abb56f4-79b3-4d4e-8537-8d707e9b060d/workspace-deliveries/9a93ec74-8186-43bb-a5a8-a5162a3d7b05/manifest.json"
+            },
+            {
+              "sha256": "3ab6643cdaf0b19c202a7d0d4095869b4ab7d381b8ae04d601b5fd14050c610e",
+              "fileSize": 6279473,
+              "artifactType": "final_render",
+              "relativePath": "末班车前的善意 · 写实--c295c32a-e02d-48cf-ad72-231a02e408c9/末班车前的一把伞 · 百炼写实版--2abb56f4-79b3-4d4e-8537-8d707e9b060d/workspace-exports/62939317-ab7e-4401-a987-be73c534af4a/3ab6643cdaf0b19c202a7d0d4095869b4ab7d381b8ae04d601b5fd14050c610e.mp4"
+            },
+            {
+              "sha256": "8bed5b88970839c458a771d920a8396ed995a6634294220d8c7737bc188af5a0",
+              "fileSize": 11907,
+              "artifactType": "editable_project",
+              "relativePath": "末班车前的善意 · 写实--c295c32a-e02d-48cf-ad72-231a02e408c9/末班车前的一把伞 · 百炼写实版--2abb56f4-79b3-4d4e-8537-8d707e9b060d/production-workspace/versions/8bed5b88970839c458a771d920a8396ed995a6634294220d8c7737bc188af5a0.json"
+            }
+          ],
+          "createdAt": "2026-11-02T04:12:04.354Z"
+        }
+      ],
+      "requests": [
+        {
+          "candidateId": "f87eccf0-daa4-4810-969a-986e51a7c3d8",
+          "taskId": "7f11f0ef-d7ce-4ac5-aa62-eaa7ee9eb348",
+          "kind": "video",
+          "sha256": "29be930a65e0dfd95fa7955fc830231437c4350d8367cc4a2331a7eee559cfdf",
+          "generation": {
+            "selection": {
+              "model": "wan2.6-i2v-flash",
+              "adapter": "wan_video",
+              "provider": "bailian",
+              "capability": "video",
+              "connectionVersionId": "0364ea9a-41c6-40f6-8178-191b3073efdd"
+            },
+            "connectionName": "百炼-万象",
+            "prompt": "写实电影短片《末班车前的一把伞》，总长4秒。保持首帧真实摄影风格、雨夜公交站、木长椅、黄色雨伞和风衣女子。前0至2秒：女子登车后末班公交缓缓驶离站台，车尾灯映着湿地，黄伞被留在长椅边。后2至4秒：镜头平稳推进黄色伞柄上的白色纸条，纸条被微风轻轻吹动，显示原有“留给下一个人”字迹，背景公交尾灯渐远。人物自然、车体真实移动、浅景深、自然物理光影。不要插画、卡片、矢量风格、翻页或幻灯片，不添加标题、字幕和水印。",
+            "firstFrameMaterialRevisionId": "991330a5-3a41-4de1-a443-dcb2a7c79013",
+            "durationSeconds": 4,
+            "videoSettings": {
+              "audio": false,
+              "shotType": "single",
+              "watermark": false,
+              "resolution": "720P",
+              "promptExtend": false,
+              "negativePrompt": ""
+            },
+            "firstFrameFit": "cover"
+          },
+          "materialRevisionId": "a14028cc-b6b9-4167-a717-ef2fc8a4875d"
+        },
+        {
+          "candidateId": "e10dce9f-6f9d-480f-9111-ac8074635a56",
+          "taskId": "b5061140-340a-4911-88c3-99dedda4b568",
+          "kind": "image",
+          "sha256": "4cd8136c302059a6c82da0e2f4388799f11628822ed74be3b7bec03d32144ead",
+          "generation": {
+            "selection": {
+              "model": "gpt-image-2",
+              "adapter": "openai_images",
+              "provider": "openai",
+              "capability": "image",
+              "connectionVersionId": "022dff01-abac-4444-8bc8-a7500751f657"
+            },
+            "connectionName": "gpt-image2",
+            "prompt": "写实电影剧照，真实摄影质感，绝不是插画、矢量图或卡片。深夜雨后的城市公交站台，暖黄色顶灯照着湿木长椅和积水反光；一把真实的黄色长柄雨伞靠在长椅边，伞柄系一张白色小纸条，上面工整写着“留给下一个人”。画面右后方，一位穿米色风衣的成年年轻女子正走上即将出发的末班公交，只见自然背影，公交尾灯柔和。35mm电影镜头，深蓝夜色、自然皮肤和布料质感、真实物理光影，画面安静有故事。雨伞与纸条位于画面中央偏下，适合裁成9:16；不要标题、字幕、水印、边框或任何图形化装饰。",
+            "firstFrameMaterialRevisionId": "",
+            "durationSeconds": 2,
+            "imageSettings": {
+              "size": "1024x1536",
+              "count": 1,
+              "quality": "low"
+            },
+            "imageBrief": {
+              "crop": "allow",
+              "framing": "auto",
+              "references": [],
+              "captionSpace": "none"
+            },
+            "referenceMaterialRevisionIds": []
+          },
+          "materialRevisionId": "991330a5-3a41-4de1-a443-dcb2a7c79013"
+        }
+      ],
+      "adoptions": [
+        {
+          "candidateId": "f87eccf0-daa4-4810-969a-986e51a7c3d8",
+          "sourceInSeconds": 0,
+          "sourceOutSeconds": 2,
+          "projectSha256": "36b7843c443d8caaf667ea4f971f8bbbf4e38ecec940e92b041d2af78ba51322"
+        },
+        {
+          "candidateId": "2b51a983-76ad-4ff3-9d0e-8c68dfae8176",
+          "sourceInSeconds": 2,
+          "sourceOutSeconds": 4,
+          "projectSha256": "8bed5b88970839c458a771d920a8396ed995a6634294220d8c7737bc188af5a0"
+        }
+      ]
+    },
+    {
+      "provider": "minimax",
+      "episodeId": "be49fc67-8058-4bde-8a10-3c4ac61d59e0",
+      "title": "末班车前的一把伞 · MiniMax写实版",
+      "stage": "production_completed",
+      "project": {
+        "relativePath": "末班车前的善意 · 写实--c295c32a-e02d-48cf-ad72-231a02e408c9/末班车前的一把伞 · MiniMax写实版--be49fc67-8058-4bde-8a10-3c4ac61d59e0/production-workspace/versions/e991e510657245f89a820df77a3d284a4a713ff746547dcbcee14a83532a498a.json",
+        "sha256": "e991e510657245f89a820df77a3d284a4a713ff746547dcbcee14a83532a498a",
+        "fileSize": 11912,
+        "projectId": "loop-control-be49fc67-8058-4bde-8a10-3c4ac61d59e0"
+      },
+      "generated": {
+        "file": "/Volumes/Ebuget 1T/Media/雨后小故事 · 真实制作--00b3a9f2-387f-472c-9e07-a433deb86dfb/末班车前的善意 · 写实--c295c32a-e02d-48cf-ad72-231a02e408c9/末班车前的一把伞 · MiniMax写实版--be49fc67-8058-4bde-8a10-3c4ac61d59e0/native-tasks/0bfc1637-d228-4559-8593-c9d183fed246/0bfc1637-d228-4559-8593-c9d183fed246.mp4",
+        "sha256": "17e25e5315ce40a61b3e7da21c7cd8c9f9cc175848d73472d3237e71ccb90c55",
+        "media": {
+          "programs": [],
+          "stream_groups": [],
+          "streams": [
+            {
+              "codec_name": "h264",
+              "width": 768,
+              "height": 1344,
+              "r_frame_rate": "24/1"
+            },
+            {
+              "codec_name": "aac",
+              "r_frame_rate": "0/0"
+            }
+          ],
+          "format": {
+            "duration": "4.458333",
+            "size": "849893"
+          }
+        }
+      },
+      "final": {
+        "artifact": {
+          "sha256": "2c255cb3cc401cfd6ef767e5759009123dd549893dd80f60b8c56c88094f26aa",
+          "fileSize": 3502230,
+          "relativePath": "末班车前的善意 · 写实--c295c32a-e02d-48cf-ad72-231a02e408c9/末班车前的一把伞 · MiniMax写实版--be49fc67-8058-4bde-8a10-3c4ac61d59e0/workspace-exports/027df1ce-0884-46d4-af5a-a844ab702884/2c255cb3cc401cfd6ef767e5759009123dd549893dd80f60b8c56c88094f26aa.mp4"
+        },
+        "media": {
+          "programs": [],
+          "stream_groups": [],
+          "streams": [
+            {
+              "codec_name": "h264",
+              "width": 1080,
+              "height": 1920,
+              "side_data_list": [
+                {}
+              ]
+            },
+            {
+              "codec_name": "aac"
+            }
+          ],
+          "format": {
+            "duration": "4.053333",
+            "size": "3502230"
+          }
+        }
+      },
+      "deliveries": [
+        {
+          "id": "53d56e16-bf0e-4045-9322-c0efc1c80b96",
+          "exportId": "027df1ce-0884-46d4-af5a-a844ab702884",
+          "taskId": "53d56e16-bf0e-4045-9322-c0efc1c80b96",
+          "status": "completed",
+          "error": null,
+          "verified": true,
+          "artifacts": [
+            {
+              "sha256": "470e441189c9412d802000ee31f8d0699ce4d0338bdaea6d0ddd208d19c6d94d",
+              "fileSize": 1906452,
+              "artifactType": "cover",
+              "relativePath": "末班车前的善意 · 写实--c295c32a-e02d-48cf-ad72-231a02e408c9/末班车前的一把伞 · MiniMax写实版--be49fc67-8058-4bde-8a10-3c4ac61d59e0/workspace-deliveries/53d56e16-bf0e-4045-9322-c0efc1c80b96/cover.png"
+            },
+            {
+              "sha256": "d9af337be20e239432de9c9cb5b5b3b48dd2348dcc357505a09b4c30ce7de8ce",
+              "fileSize": 1319,
+              "artifactType": "metadata",
+              "relativePath": "末班车前的善意 · 写实--c295c32a-e02d-48cf-ad72-231a02e408c9/末班车前的一把伞 · MiniMax写实版--be49fc67-8058-4bde-8a10-3c4ac61d59e0/workspace-deliveries/53d56e16-bf0e-4045-9322-c0efc1c80b96/metadata.json"
+            },
+            {
+              "sha256": "91289a7ca8cbff0eebec5d74278995d7f462b7c9ef0a554c724cebf060236f74",
+              "fileSize": 4981,
+              "artifactType": "final_qc_report",
+              "relativePath": "末班车前的善意 · 写实--c295c32a-e02d-48cf-ad72-231a02e408c9/末班车前的一把伞 · MiniMax写实版--be49fc67-8058-4bde-8a10-3c4ac61d59e0/workspace-deliveries/53d56e16-bf0e-4045-9322-c0efc1c80b96/checks.json"
+            },
+            {
+              "sha256": "a89c4c36590776b30b15c6128d48e41efb11e478563c9d96c7e2a9befe396e23",
+              "fileSize": 3411,
+              "artifactType": "publish_package",
+              "relativePath": "末班车前的善意 · 写实--c295c32a-e02d-48cf-ad72-231a02e408c9/末班车前的一把伞 · MiniMax写实版--be49fc67-8058-4bde-8a10-3c4ac61d59e0/workspace-deliveries/53d56e16-bf0e-4045-9322-c0efc1c80b96/manifest.json"
+            },
+            {
+              "sha256": "2c255cb3cc401cfd6ef767e5759009123dd549893dd80f60b8c56c88094f26aa",
+              "fileSize": 3502230,
+              "artifactType": "final_render",
+              "relativePath": "末班车前的善意 · 写实--c295c32a-e02d-48cf-ad72-231a02e408c9/末班车前的一把伞 · MiniMax写实版--be49fc67-8058-4bde-8a10-3c4ac61d59e0/workspace-exports/027df1ce-0884-46d4-af5a-a844ab702884/2c255cb3cc401cfd6ef767e5759009123dd549893dd80f60b8c56c88094f26aa.mp4"
+            },
+            {
+              "sha256": "e991e510657245f89a820df77a3d284a4a713ff746547dcbcee14a83532a498a",
+              "fileSize": 11912,
+              "artifactType": "editable_project",
+              "relativePath": "末班车前的善意 · 写实--c295c32a-e02d-48cf-ad72-231a02e408c9/末班车前的一把伞 · MiniMax写实版--be49fc67-8058-4bde-8a10-3c4ac61d59e0/production-workspace/versions/e991e510657245f89a820df77a3d284a4a713ff746547dcbcee14a83532a498a.json"
+            }
+          ],
+          "createdAt": "2026-11-02T04:15:36.914Z"
+        }
+      ],
+      "requests": [
+        {
+          "candidateId": "60da68a2-ea6f-4eb1-ac7d-e1c7ab97b774",
+          "taskId": "0bfc1637-d228-4559-8593-c9d183fed246",
+          "kind": "video",
+          "sha256": "17e25e5315ce40a61b3e7da21c7cd8c9f9cc175848d73472d3237e71ccb90c55",
+          "generation": {
+            "selection": {
+              "model": "MiniMax-H3",
+              "adapter": "minimax_video",
+              "provider": "minimax",
+              "capability": "video",
+              "connectionVersionId": "f738532a-1228-4535-b5a4-111b2ebd12d9"
+            },
+            "connectionName": "minimax",
+            "prompt": "写实电影短片《末班车前的一把伞》，总长4秒。保持首帧真实摄影风格、雨夜公交站、木长椅、黄色雨伞和风衣女子。前0至2秒：女子登车后末班公交缓缓驶离站台，车尾灯映着湿地，黄伞被留在长椅边。后2至4秒：镜头平稳推进黄色伞柄上的白色纸条，纸条被微风轻轻吹动，显示原有“留给下一个人”字迹，背景公交尾灯渐远。人物自然、车体真实移动、浅景深、自然物理光影。不要插画、卡片、矢量风格、翻页或幻灯片，不添加标题、字幕和水印。",
+            "firstFrameMaterialRevisionId": "4eb248b3-64de-4910-a132-ef4ed2b1b6c4",
+            "durationSeconds": 4,
+            "firstFrameFit": "cover"
+          },
+          "materialRevisionId": "5573a202-5d89-4b1f-b3d4-776be3a3b5bd"
+        },
+        {
+          "candidateId": "95f66731-e4bb-4aa7-a295-ea87c44c3625",
+          "taskId": "51603f99-3b9b-4f69-b29e-d68fcfe95876",
+          "kind": "image",
+          "sha256": "470e441189c9412d802000ee31f8d0699ce4d0338bdaea6d0ddd208d19c6d94d",
+          "generation": {
+            "selection": {
+              "model": "gpt-image-2",
+              "adapter": "openai_images",
+              "provider": "openai",
+              "capability": "image",
+              "connectionVersionId": "022dff01-abac-4444-8bc8-a7500751f657"
+            },
+            "connectionName": "gpt-image2",
+            "prompt": "写实电影剧照，真实摄影质感，绝不是插画、矢量图或卡片。深夜雨后的城市公交站台，暖黄色顶灯照着湿木长椅和积水反光；一把真实的黄色长柄雨伞靠在长椅边，伞柄系一张白色小纸条，纸条只写两行：第一行“留给”，第二行“下一个人”；不要重复字词。画面右后方，一位穿米色风衣的成年年轻女子正走上即将出发的末班公交，只见自然背影，公交尾灯柔和。35mm电影镜头，深蓝夜色、自然皮肤和布料质感、真实物理光影，画面安静有故事。雨伞与纸条位于画面中央偏下，适合裁成9:16；不要标题、字幕、水印、边框或任何图形化装饰。",
+            "firstFrameMaterialRevisionId": "",
+            "durationSeconds": 2,
+            "imageSettings": {
+              "size": "1024x1536",
+              "count": 1,
+              "quality": "low"
+            },
+            "imageBrief": {
+              "crop": "allow",
+              "framing": "auto",
+              "references": [],
+              "captionSpace": "none"
+            },
+            "referenceMaterialRevisionIds": []
+          },
+          "materialRevisionId": "4eb248b3-64de-4910-a132-ef4ed2b1b6c4"
+        }
+      ],
+      "adoptions": [
+        {
+          "candidateId": "60da68a2-ea6f-4eb1-ac7d-e1c7ab97b774",
+          "sourceInSeconds": 0,
+          "sourceOutSeconds": 2,
+          "projectSha256": "bb13955de0efdb6614eee8155add5e4ed5bf47df31ec5742136129c41dcf0931"
+        },
+        {
+          "candidateId": "24c15f53-b661-4b43-94be-80d8b6c8d2a9",
+          "sourceInSeconds": 2,
+          "sourceOutSeconds": 4,
+          "projectSha256": "e991e510657245f89a820df77a3d284a4a713ff746547dcbcee14a83532a498a"
+        }
+      ]
+    }
+  ],
+  "originalEpisodesUnchanged": true,
+  "originalAccountsUnchanged": true,
+  "originalEpisodeCount": 3,
+  "activeTasks": 0,
+  "pendingNativePublications": 0,
+  "allPrivateLedgersHalted": true,
+  "paidSubmissions": 5,
+  "reservationCny": 4.4,
+  "estimatedCny": 3.6,
+  "actualCost": "Supplier invoice not retrieved; reservation and account balance are not an itemized bill",
+  "dailyNetworkConfigurationRestored": true,
+  "semanticDeploymentMatchesBefore": true,
+  "maxRawVideoSeconds": 6,
+  "maxFinalVideoSeconds": 4.053333,
+  "drafts": [
+    {
+      "id": "3ed5d22f-34a7-49d8-b11f-b74a5392b900",
+      "archived": true
+    },
+    {
+      "id": "266fcb67-789f-4016-93b1-e0f128ce4268",
+      "archived": true
+    }
+  ]
+}

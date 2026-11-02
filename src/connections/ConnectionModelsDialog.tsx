@@ -3,7 +3,7 @@ import {Dialog,Modal,ModalOverlay} from 'react-aria-components';
 import {RefreshCw,X} from 'lucide-react';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {Input} from '../ui/dan-ui/components/base/input/input';
-import {NativeSelect} from '../ui/dan-ui/components/base/select/select-native';
+import {PopulatedFilterSelect} from '../ui/PopulatedFilterSelect';
 import {Checkbox} from '../ui/dan-ui/components/base/checkbox/checkbox';
 import type {ConnectionModelRequest,ConnectionModelSettings} from './connectionModels';
 export interface ConnectionModelActions {
@@ -29,7 +29,7 @@ export function ConnectionModelsDialog({connection,onClose,onReadModels,onSyncMo
    {operation==='loading'&&<p role="status">正在读取模型设置…</p>}
    {settings&&<>
     <p className="reference-connections-note" role="status">{settings.discovery.detail}</p>
-    <div className="connection-models-filters"><Input aria-label="搜索模型" size="sm" type="search" placeholder="搜索模型名称" value={query} onChange={setQuery}/><NativeSelect aria-label="模型范围" size="sm" value={filter} onChange={e=>setFilter(e.target.value)} options={[{value:'all',label:'全部模型'},{value:'adapted',label:'本平台支持'},{value:'enabled',label:'已启用'},{value:'unadapted',label:'尚未适配'}]}/><NativeSelect aria-label="模型能力" size="sm" value={capability} onChange={e=>setCapability(e.target.value)} options={[{value:'all',label:'全部能力'},...[...new Set(settings.models.map(m=>m.capability))].map(value=>({value,label:value}))]}/></div>
+    <div className="connection-models-filters"><Input aria-label="搜索模型" size="sm" type="search" placeholder="搜索模型名称" value={query} onChange={setQuery}/><PopulatedFilterSelect aria-label="模型范围" size="sm" value={filter} onValueChange={setFilter} allValue="all" counts={{adapted:settings.models.filter(m=>m.adapted).length,enabled:settings.models.filter(m=>enabled.includes(m.id)).length,unadapted:settings.models.filter(m=>!m.adapted).length}} options={[{value:'all',label:'全部模型'},{value:'adapted',label:'本平台支持'},{value:'enabled',label:'已启用'},{value:'unadapted',label:'尚未适配'}]}/><PopulatedFilterSelect aria-label="模型能力" size="sm" value={capability} onValueChange={setCapability} allValue="all" counts={Object.fromEntries(settings.models.map(m=>[m.capability,1]))} options={[{value:'all',label:'全部能力'},...[...new Set(settings.models.map(m=>m.capability))].map(value=>({value,label:value}))]}/></div>
     <div className="connection-models-list" aria-label="可选模型">{visible.length?visible.map(m=><div className="connection-models-row" key={m.id}><Checkbox aria-label={m.id} label={m.id} isSelected={m.adapted&&enabled.includes(m.id)} isDisabled={busy||!m.adapted} onChange={checked=>setEnabled(current=>checked?[...current,m.id]:current.filter(id=>id!==m.id))}/><span className="connection-models-meta">{m.capability} · {m.adapted?'本平台支持':'尚未适配'}{m.listed?' · 目录已返回':''}{m.reason&&<span className="connection-models-reason">{m.reason}</span>}</span></div>):<p className="reference-connections-note">没有匹配的模型。</p>}</div>
     <p className="reference-connections-note">已启用 {settings.models.filter(m=>m.adapted&&enabled.includes(m.id)).length} 个模型，用于之后的制作选择；已有任务保持原模型。</p>
     {!enabled.length&&<p className="reference-connections-note">保存后，此连接将没有可选的生成模型。</p>}

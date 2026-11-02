@@ -1,4 +1,4 @@
-import json,math,re
+import json,math,re,gzip
 from pathlib import Path
 D=Path(__file__).parent
 
@@ -19,7 +19,7 @@ def encoded(c):return 12.92*c if c<=.0031308 else 1.055*c**(1/2.4)-.055
 def blend(a,b):return [linear(encoded(a[i])*a[3]+encoded(b[i])*(1-a[3])) for i in range(3)]+[1]
 
 def luminance(c):return sum(c[i]*w for i,w in enumerate([.2126,.7152,.0722]))
-res=[];rows=json.loads((D/'measurements.json').read_text())
+res=[];rows=json.loads((D/'measurements.json').read_bytes() if (D/'measurements.json').exists() else gzip.decompress((D/'measurements.json.gz').read_bytes()))
 real=json.loads((D/'real-account-dark-measurements.json').read_text());rows.append({'scene':'real-accounts','theme':'dark',**real})
 for filename,scene in [('secret-selected-dark.json','selected-secret'),('artifact-dark.json','artifact-preview')]:
  rows.append({'scene':scene,'theme':'dark',**json.loads((D/filename).read_text())})

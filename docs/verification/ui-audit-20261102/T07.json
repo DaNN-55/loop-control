@@ -1,0 +1,33 @@
+{
+  "id": "T07",
+  "verdict": "executed",
+  "processBefore": {
+    "origin": "http://127.0.0.1:51732",
+    "pid": 49543
+  },
+  "processAfter": {
+    "origin": "http://127.0.0.1:51738",
+    "pid": 49559
+  },
+  "processWorkspaceBeforeAfter": {
+    "status": 200,
+    "revision": 54,
+    "clips": 50
+  },
+  "unmounted": {
+    "status": 409,
+    "body": {
+      "error": "媒体根不存在或不可读写，请恢复挂载和权限后重试。"
+    }
+  },
+  "remount": {
+    "revision": 54,
+    "clips": 50
+  },
+  "sessionExpiry": "独立合成会话过期后回到登录；恢复后重开原生产单",
+  "network": "拦截隔离浏览器 /api/local/** 后 Failed to fetch + 重新读取工作区；撤销拦截后恢复",
+  "limitations": [
+    "未测试真实 5174/日常外置盘/系统休眠",
+    "第一次使用 send 辅助函数会在请求前断言读取成功，不适用于掉盘；已改为实际 HTTP raw 请求获取409正文"
+  ]
+}

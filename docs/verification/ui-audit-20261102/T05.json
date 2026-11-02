@@ -1,0 +1,240 @@
+{
+  "id": "T05",
+  "verdict": "executed-findings",
+  "modalTabCycle": [
+    {
+      "inDialog": true,
+      "label": "雨后小故事",
+      "tag": "SELECT"
+    },
+    {
+      "inDialog": true,
+      "label": "系列版本说明",
+      "tag": "SPAN"
+    },
+    {
+      "inDialog": true,
+      "label": "系列版本",
+      "tag": "SELECT"
+    },
+    {
+      "inDialog": true,
+      "label": "工作标题（可留空）",
+      "tag": "INPUT"
+    },
+    {
+      "inDialog": true,
+      "label": "取消",
+      "tag": "BUTTON"
+    },
+    {
+      "inDialog": true,
+      "label": "创建生产单",
+      "tag": "BUTTON"
+    },
+    {
+      "inDialog": true,
+      "label": "关闭新建生产单",
+      "tag": "BUTTON"
+    },
+    {
+      "inDialog": true,
+      "label": "雨后小故事",
+      "tag": "SELECT"
+    },
+    {
+      "inDialog": true,
+      "label": "系列版本说明",
+      "tag": "SPAN"
+    },
+    {
+      "inDialog": true,
+      "label": "系列版本",
+      "tag": "SELECT"
+    },
+    {
+      "inDialog": true,
+      "label": "工作标题（可留空）",
+      "tag": "INPUT"
+    },
+    {
+      "inDialog": true,
+      "label": "取消",
+      "tag": "BUTTON"
+    }
+  ],
+  "focusReturn": "新建生产单按钮获得焦点 → Enter → Escape 后 activeElement=BODY，未回入口",
+  "skinEscape": {
+    "focusedRole": "menuitemradio",
+    "afterEscapeExpanded": true
+  },
+  "nativeAxe": [
+    {
+      "help": "Required ARIA attributes must be provided",
+      "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/aria-required-attr?application=axeAPI",
+      "id": "aria-required-attr",
+      "impact": "critical",
+      "nodeCount": 2,
+      "nodes": [
+        {
+          "failureSummary": "Fix any of the following:\n  Required ARIA attribute not present: aria-valuenow",
+          "html": "<div class=\"cc-panel-divider\" role=\"separator\" tabindex=\"0\" aria-orientation=\"vertical\" aria-label=\"拖动调整大小\" title=\"拖动调整大小\" style=\"position: relative; z-index: 20; width: 9px; height: 100%; left: -4px; top: 0px; cursor: col-resize;\">",
+          "target": [
+            "iframe",
+            "div:nth-child(5) > .cc-panel-divider[aria-label=\"拖动调整大小\"][title=\"拖动调整大小\"]"
+          ]
+        },
+        {
+          "failureSummary": "Fix any of the following:\n  Required ARIA attribute not present: aria-valuenow",
+          "html": "<div class=\"cc-panel-divider\" role=\"separator\" tabindex=\"0\" aria-orientation=\"horizontal\" aria-label=\"拖动调整大小\" title=\"拖动调整大小\" style=\"position: relative; z-index: 20; width: 100%; height: 9px; left: 0px; top: -4px; cursor: row-resize;\">",
+          "target": [
+            "iframe",
+            "div[aria-orientation=\"horizontal\"]"
+          ]
+        }
+      ],
+      "tags": [
+        "cat.aria",
+        "wcag2a",
+        "wcag412",
+        "EN-301-549",
+        "EN-9.4.1.2",
+        "RGAAv4",
+        "RGAA-7.1.1"
+      ]
+    },
+    {
+      "help": "Images must have alternative text",
+      "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/image-alt?application=axeAPI",
+      "id": "image-alt",
+      "impact": "critical",
+      "nodeCount": 1,
+      "nodes": [
+        {
+          "failureSummary": "Fix any of the following:\n  Element does not have an alt attribute\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
+          "html": "<img src=\"/media/uploads/e207ecbaeb7bf7f1d08e.png\" style=\"width: 100%; height: 100%; object-fit: fill;\">",
+          "target": [
+            "iframe",
+            "img"
+          ]
+        }
+      ],
+      "tags": [
+        "cat.text-alternatives",
+        "wcag2a",
+        "wcag111",
+        "section508",
+        "section508.22.a",
+        "TTv5",
+        "TT7.a",
+        "TT7.b",
+        "EN-301-549",
+        "EN-9.1.1.1",
+        "ACT",
+        "RGAAv4",
+        "RGAA-1.1.1"
+      ]
+    },
+    {
+      "help": "Form elements should have a visible label",
+      "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/label-title-only?application=axeAPI",
+      "id": "label-title-only",
+      "impact": "serious",
+      "nodeCount": 1,
+      "nodes": [
+        {
+          "failureSummary": "Fix all of the following:\n  Only title used to generate label for form element",
+          "html": "<input min=\"0.02\" max=\"6\" step=\"0.01\" title=\"缩放时间轴\" class=\"cc-timeline-zoom\" type=\"range\" value=\"2.1203703703703702\">",
+          "target": [
+            "iframe",
+            ".cc-timeline-zoom"
+          ]
+        }
+      ],
+      "tags": [
+        "cat.forms",
+        "best-practice"
+      ]
+    },
+    {
+      "help": "Interactive controls must not be nested",
+      "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/nested-interactive?application=axeAPI",
+      "id": "nested-interactive",
+      "impact": "serious",
+      "nodeCount": 7,
+      "nodes": [
+        {
+          "failureSummary": "Fix any of the following:\n  Element has focusable descendants",
+          "html": "<div role=\"option\" aria-selected=\"false\" class=\"cc-sound-row\" title=\"短促干净的飞入/切换扫过声，适合卡片、字幕、镜头或元素快速移动时做转场强调。 · 可拖到时间线音轨\" draggable=\"true\">",
+          "target": [
+            "iframe",
+            "div:nth-child(1) > .cc-sound-row[role=\"option\"][draggable=\"true\"]"
+          ]
+        },
+        {
+          "failureSummary": "Fix any of the following:\n  Element has focusable descendants",
+          "html": "<div role=\"option\" aria-selected=\"false\" class=\"cc-sound-row\" title=\"较轻、偏空气感的短 whoosh，适合转场、轻量卡片、贴纸、字幕或 UI 元素滑入滑出。 · 可拖到时间线音轨\" draggable=\"true\">",
+          "target": [
+            "iframe",
+            "div:nth-child(2) > .cc-sound-row[role=\"option\"][draggable=\"true\"]"
+          ]
+        },
+        {
+          "failureSummary": "Fix any of the following:\n  Element has focusable descendants",
+          "html": "<div role=\"option\" aria-selected=\"false\" class=\"cc-sound-row\" title=\"很短的低频上升提示，适合在冲击、切点、标题弹出前做一小段快速铺垫，也可以作为转场 · 可拖到时间线音轨\" draggable=\"true\">",
+          "target": [
+            "iframe",
+            "div:nth-child(3) > .cc-sound-row[role=\"option\"][draggable=\"true\"]"
+          ]
+        },
+        {
+          "failureSummary": "Fix any of the following:\n  Element has focusable descendants",
+          "html": "<div role=\"option\" aria-selected=\"false\" class=\"cc-sound-row\" title=\"经典低频 boom 冲击声，适合震惊、反转、夸张表情、重点字幕或画面突然停顿。 · 可拖到时间线音轨\" draggable=\"true\">",
+          "target": [
+            "iframe",
+            "div:nth-child(4) > .cc-sound-row[role=\"option\"][draggable=\"true\"]"
+          ]
+        },
+        {
+          "failureSummary": "Fix any of the following:\n  Element has focusable descendants",
+          "html": "<div role=\"option\" aria-selected=\"false\" class=\"cc-sound-row\" title=\"偏动漫/综艺的正向 wow 反应声，适合物品展示、人物亮相、隆重登场、揭幕或发现亮点的惊喜时刻。 · 可拖到时间线音轨\" draggable=\"true\">",
+          "target": [
+            "iframe",
+            "div:nth-child(5) > .cc-sound-row[role=\"option\"][draggable=\"true\"]"
+          ]
+        },
+        {
+          "failureSummary": "Fix any of the following:\n  Element has focusable descendants",
+          "html": "<div role=\"option\" aria-selected=\"false\" class=\"cc-sound-row\" title=\"极短气泡 pop，适合 MG 卡片、贴纸、提示气泡或小组件弹出。 · 可拖到时间线音轨\" draggable=\"true\">",
+          "target": [
+            "iframe",
+            "div:nth-child(6) > .cc-sound-row[role=\"option\"][draggable=\"true\"]"
+          ]
+        },
+        {
+          "failureSummary": "Fix any of the following:\n  Element has focusable descendants",
+          "html": "<div role=\"option\" aria-selected=\"false\" class=\"cc-sound-row\" title=\"慢速真实键盘输入声，适合办公、代码、搜索或屏幕录制感、打字机式出现文字等场景。 · 可拖到时间线音轨\" draggable=\"true\">",
+          "target": [
+            "iframe",
+            "div:nth-child(7) > .cc-sound-row[role=\"option\"][draggable=\"true\"]"
+          ]
+        }
+      ],
+      "tags": [
+        "cat.keyboard",
+        "wcag2a",
+        "wcag412",
+        "TTv5",
+        "TT6.a",
+        "EN-301-549",
+        "EN-9.4.1.2",
+        "RGAAv4",
+        "RGAA-7.1.1"
+      ]
+    }
+  ],
+  "limitations": [
+    "未运行VoiceOver朗读",
+    "皮肤菜单键盘结果来自同SDK顶层页面，其余嵌入菜单尚须实现后回归"
+  ]
+}

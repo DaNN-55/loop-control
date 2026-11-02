@@ -1,0 +1,17 @@
+[
+  {
+    "provider": "bailian",
+    "currentTime": 4.053333,
+    "duration": 4.053333,
+    "ended": true,
+    "errorCode": null
+  },
+  {
+    "provider": "minimax",
+    "currentTime": 0.242831,
+    "duration": 4.053333,
+    "ended": false,
+    "errorCode": null,
+    "paused": false
+  }
+]

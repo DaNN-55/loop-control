@@ -1,0 +1,54 @@
+{
+  "id": "T08",
+  "verdict": "executed-findings",
+  "duplicateGeneration": {
+    "first": 200,
+    "repeat": 200,
+    "tasks": 1,
+    "providerPosts": 1
+  },
+  "staleWrite": {
+    "status": 409,
+    "error": "工程版本已变化，请重新打开当前工作版本。"
+  },
+  "concurrent": {
+    "result": {
+      "expected": 54,
+      "results": [
+        {
+          "status": 200
+        },
+        {
+          "error": "工程版本已变化，请重新打开当前工作版本。",
+          "status": 409
+        }
+      ]
+    }
+  },
+  "partialUpload": {
+    "selection": [
+      "01-good.png",
+      "02-invalid.png",
+      "03-good.png"
+    ],
+    "materialRows": [
+      "01-good.png",
+      "02-invalid.png"
+    ],
+    "candidateOnly": [
+      "01-good.png"
+    ],
+    "remainingSkipped": [
+      "03-good.png"
+    ],
+    "message": "视觉素材无法读取，请检查原始文件。"
+  },
+  "oversized": {
+    "bytes": 104857601,
+    "message": "素材不能为空或超过 100 MB。"
+  },
+  "limitations": [
+    "验证了真实并发HTTP版本冲突；未验收两个原生窗口并发保存",
+    "100MB只测试客户端前置拒绝，不发送大请求至后端"
+  ]
+}

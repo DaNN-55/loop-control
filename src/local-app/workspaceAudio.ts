@@ -1,3 +1,4 @@
+import {currentWorkspaceCallAuthorization} from './workspaceCallConfirmation.js';
 import {episodeStorageLocationAtRoot,requireWritableEpisodeStorage} from './episodeStorageLocation.js';
 import {creativeAccountRules} from '../creativeAccountRules.js';
 import {createHash,randomUUID} from 'node:crypto';
@@ -51,8 +52,7 @@ export async function executeWorkspaceAudio(c:PoolClient,root:string,row:Product
   }else if(data.kind==='source')await audioRuntime(runtime,'source');else{
    const resolved=await resolveProductionSelection(c,data.selection,'music_sound');
    const max=resolved.choice.constraints.query?.maxLength??100;if(String(query).length>max)throw new ConfigurationError(400,`检索词不能超过 ${max} 字符。`);
-   const authorized=(await c.query('SELECT authorization_hash FROM local_identity.script_productions WHERE episode_id=$1 AND script_revision_id=$2 AND enabled AND authorized_at IS NOT NULL',[row.episode_id,row.script_revision_id])).rows[0];
-   if(!authorized)throw new ConfigurationError(409,'请先授权当前脚本制作。');
+   const authorized=await currentWorkspaceCallAuthorization(c,row);
    const context=(await c.query('SELECT e.account_id,e.blueprint_version_id,e.series_version_id,b.policy,s.rules series_rules FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id LEFT JOIN public.series_versions s ON s.id=e.series_version_id WHERE e.id=$1',[row.episode_id])).rows[0];
    const execution={...resolved.execution,executor:{...resolved.execution.executor,model:'freesound-preview-v1'},allowed_tools:['read','write','network'],budget_cents:0,max_attempts:1};
    requestSnapshot={selectionVersion:1,selection:resolved.selection,connection:resolved.connection,execution,query,description,parameters:{durationSeconds:duration,anchor,offsetSeconds:offset,shotId},context:{accountId:context.account_id,blueprintVersionId:context.blueprint_version_id,seriesVersionId:context.series_version_id,accountRules:creativeAccountRules(context.policy),seriesRules:context.series_rules},target:{workspaceId:row.id,scriptRevisionId:row.script_revision_id,projectSha256:row.project_sha256,revision:row.revision,shotId},costBasis:{kind:'freesound_preview_search',reservationCents:0},authorizationHash:authorized.authorization_hash};

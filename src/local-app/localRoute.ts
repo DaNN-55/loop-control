@@ -1,3 +1,4 @@
+import{runtimeErrorMessages}from'../orchestration/runtimeBuild.js';
 import {LocalMediaRootSettings} from './mediaRootSettings.js';
 import {readWorkspacePlanningSelection} from './planningSelectionStore.js';
 import {readProductionWorkspace,readWorkspaceVersion} from './productionWorkspaceCommands.js';
@@ -23,6 +24,7 @@ import type {Pool} from 'pg';
 import {readLocalCatalog,parseCatalogQuery} from './catalog.js';
 import {lookupSession,readSessionToken,establishSession,revokeSession,cookieHeader,csrfFor} from './sessions.js';
 import {readLocalEpisode,findOwnedArtifact,findOwnedInputFile} from './episodeReads.js';
+import {serveDeliveryArchive} from './deliveryArchive.js';
 import {serveOwnedArtifact} from './artifactRoute.js';
 import {LocalConnections} from './connections.js';
 import {SecretStoreError} from './connectionPorts.js';
@@ -196,7 +198,30 @@ export function createLocalHandler(options:LocalOptions){
     if(!uuid.test(id)){send(400,{error:'产物引用无效。'});return;}
     const file=await findOwnedInputFile(options.pool,session.id,id,path,options.mediaRoot);if(!file){send(404,{error:'产物不可见。'});return;}
     if(hash&&hash!==file.sha256){send(409,{error:'产物指纹已变化。'});return;}
-    try{await serveOwnedArtifact(options.mediaRoot,file,response,request.headers.range);}catch{if(response.headersSent)response.destroy();else send(409,{error:'产物路径或指纹校验失败。'});}return;
+    try{await serveOwnedArtifact(options.mediaRoot,file,response,request.headers.range,url.searchParams.get('download')==='1');}catch{if(response.headersSent)response.destroy();else send(409,{error:'产物路径或指纹校验失败。'});}return;
+   }
+   const deliveryArchive=url.pathname.match(/^\/api\/local\/episodes\/([^/]+)\/delivery-download$/);
+   if(deliveryArchive&&uuid.test(deliveryArchive[1])&&request.method==='GET'){
+    const episodeId=deliveryArchive[1],deliveryId=url.searchParams.get('delivery');
+    if(!uuid.test(deliveryId??'')||[...url.searchParams.keys()].some(k=>k!=='delivery')||url.searchParams.getAll('delivery').length!==1)throw new ConfigurationError(400,'交付包引用无效。');
+    const delivery=await ownerTransaction(options.pool,session.id,true,async c=>{
+     const e=(await c.query("SELECT e.id FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id WHERE e.id=$1 AND m.user_id=$2 AND m.role='owner'",[episodeId,session.id])).rows[0];
+     if(!e)throw new ConfigurationError(404,'生产单不可见。');
+     const w=await readProductionWorkspace(c,episodeId,await resolveEpisodeAssetRoot(c,options.mediaRoot,episodeId));
+     const d=w?.deliveries?.find(d=>d.id===deliveryId);
+     if(!d?.verified)throw new ConfigurationError(409,'交付包未验证或文件已变化，请刷新检查。');
+     return d;
+    });
+    const entries=[];
+    const names:Record<string,string>={final_render:'final-video.mp4',editable_project:'editable-project.json',metadata:'metadata.json',final_qc_report:'checks.json',publish_package:'manifest.json'};
+    for(const a of delivery.artifacts){
+     const artifact=await findOwnedInputFile(options.pool,session.id,episodeId,a.relativePath,options.mediaRoot);
+     if(!artifact||artifact.sha256!==a.sha256||Number(artifact.file_size)!==a.fileSize)throw new ConfigurationError(409,'交付文件已变化，请刷新检查。');
+     const name=names[a.artifactType]??(a.artifactType==='cover'?`cover.${a.relativePath.split('.').pop()}`:null);
+     if(!name)throw new ConfigurationError(409,'交付文件类型不可下载。');
+     entries.push({name,artifact});
+    }
+    try{await serveDeliveryArchive(options.mediaRoot,entries,response,episodeId);}catch(error){if(response.headersSent)response.destroy();else throw new ConfigurationError(409,error instanceof Error?error.message:'交付下载失败。');}return;
    }
    const legacyProject=url.pathname.match(/^\/api\/local\/episodes\/([^/]+)\/legacy-project$/);
    if(legacyProject&&uuid.test(legacyProject[1])&&request.method==='GET'){
@@ -227,11 +252,11 @@ export function createLocalHandler(options:LocalOptions){
     try{await serveOwnedArtifact(options.mediaRoot,record,response,request.headers.range);}catch{if(response.headersSent)response.destroy();else send(409,{error:'产物路径或指纹校验失败。'});}return;
    }
    send(404,{error:'本地路径尚未迁移。'});
-  }catch(error){if(error instanceof ConfigurationError){send(error.status,{error:error.message,...(error.preflight?{preflight:error.preflight}:{})});return;}
-   if(error instanceof SecretStoreError){send(error.code==='conflict'?409:503,{error:error.code==='conflict'?'旧密钥引用不能覆盖；请显式创建新版本。':error.code==='denied'?'本机 Keychain 已锁定或拒绝访问；请运行 npm start 解锁后重试。此次操作未确认完成。':'密钥存储或验证未就绪；请检查授权、绑定和本机状态。'});return;}
+  }catch(error){const runtimeCode=(error as {code?:string})?.code;if(runtimeCode&&Object.hasOwn(runtimeErrorMessages,runtimeCode)){send(503,{code:runtimeCode,error:runtimeErrorMessages[runtimeCode as keyof typeof runtimeErrorMessages]});return;}if(error instanceof ConfigurationError){send(error.status,{error:error.message,...(error.preflight?{preflight:error.preflight}:{})});return;}
+   if(error instanceof SecretStoreError){send(error.code==='conflict'?409:503,{...(error.code==='denied'?{code:'keychain_access_denied'}:{}),error:error.code==='conflict'?'旧密钥引用不能覆盖；请显式创建新版本。':error.code==='denied'?'本机 Keychain 已锁定或拒绝访问；请运行 npm start 解锁，若仍不可用请检查系统授权。此次操作未确认完成。':'密钥存储或验证未就绪；请检查授权、绑定和本机状态。'});return;}
    if((error as {status?:number})?.status===401){send(401,{error:'会话已失效。'});return;}
    if((error as {code?:string})?.code==='P0002'){send(404,{error:'连接或版本不可见。'});return;}
    const code=(error as {code?:string})?.code;if(code==='42501'){send(403,{error:'所有者权限不足。'});return;}if(code==='23505'||code==='23503'){send(409,{error:'配置冲突或仍被引用。'});return;}if(code==='23514'||code?.startsWith('22')){send(400,{error:'配置校验未通过。'});return;}
-   if(response.headersSent)response.destroy();else send(503,{error:'本机服务暂不可用，请检查本机状态。'});}
+   if(response.headersSent)response.destroy();else send(503,{code:'local_service_unavailable',error:request.method==='GET'?'本机服务暂不可用，请查看系统状态后重新读取。':'本机操作结果暂未确认，请查看系统状态并核对已有任务或保存结果，再继续操作。'});}
  };
 }

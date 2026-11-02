@@ -12,8 +12,20 @@ import type {ArtifactManifest,WorkerResult,WorkerTaskPackage} from '../worker/co
 import {safeAssetOutputPath} from '../worker/controlledMediaExecutor.js';
 import {verifyArtifactIndex} from '../worker/mediaLibrary.js';
 import {verifyReportedStoryboardArtifact} from '../worker/storyboardArtifact.js';
+import {NativePublicationUnknownError} from '../orchestration/workerOutcome.js';
+import {resolveEpisodeStorageLocation} from './episodeStorageLocation.js';
 
 export interface NativeAttemptFence {p_task_id:string;p_attempt:number;p_lease_token:string}
+/** An explicit local recovery resolves its location and fence from the database,
+ * never from an operator-supplied path. This does not execute a Provider. */
+export async function recoverPendingNativeAttemptOutput(pool:Pool,mediaRoot:string,taskId:string,attempt:number){
+ if(!/^[a-f0-9-]{36}$/.test(taskId)||!Number.isSafeInteger(attempt)||attempt<0)throw Error('Invalid native recovery identity');
+ const row=(await pool.query('SELECT * FROM local_identity.native_output_recovery_attempt($1,$2)',[taskId,attempt])).rows[0];
+ if(!row)throw Error('本次发布没有可恢复的数据库凭据，未修改文件。');
+ const location=await resolveEpisodeStorageLocation(pool,mediaRoot,row.episode_id),fence={p_task_id:taskId,p_attempt:attempt,p_lease_token:row.lease_token};
+ const identity=createHash('sha256').update(JSON.stringify(fence)).digest('hex');
+ return recoverNativeAttemptOutput(pool,{assetRoot:location.assetRoot,stagingRoot:join(location.assetRoot,location.relativePath,'.native-worker-attempts',identity)});
+}
 export async function prepareNativeAttemptOutput(taskPackage:WorkerTaskPackage,fence:NativeAttemptFence,additionalInputs:ArtifactManifest[]=[],storage?:EpisodeFileIO){
  if(fence.p_task_id!==taskPackage.task.id||fence.p_attempt!==taskPackage.budget.attempt)throw Error('输出尝试与冻结任务不一致。');
  const episodeRelativePath=taskPackage.assets.episodeRelativePath??`episodes/${taskPackage.episode.id}`;
@@ -44,15 +56,18 @@ export async function prepareNativeAttemptOutput(taskPackage:WorkerTaskPackage,f
  }
  let uncertain=false;
  return{taskPackage:staged,verify,get uncertain(){return uncertain;},async publish(pool:Pick<Pool,'connect'>,result:WorkerResult){
-  if(uncertain)throw Error('产物发布结果尚未确认，不能自动重复登记。');
+  if(uncertain)throw new NativePublicationUnknownError('产物发布结果尚未确认，不能自动重复登记。');
   if(result.status!=='completed')throw Error('只有已完成产物可以发布。');
   if(result.artifacts.some(artifact=>inputs.some(input=>input.relativePath===artifact.relativePath)))throw Error('发布产物不能覆盖冻结输入或已审核复用来源。');
   const backupRoot=dirname(await safeAssetOutputPath(stagingRoot,'.publication-backups/identity.json'));
   const client=await pool.connect();
   const prepared:PreparedPublication[]=[],modified:PreparedPublication[]=[];
-  let commitSent=false;
+  let commitSent=false,armed=false;
   async function outcome(status:string){await writeFile(join(stagingRoot,'publication-outcome.json'),JSON.stringify({status,taskId:fence.p_task_id,attempt:fence.p_attempt,files:prepared.map(file=>({candidate:file.artifact,previous:file.previous??null}))},null,2)+'\n',{mode:0o600}).catch(()=>{});}
   try{
+   // Autocommit this durable fence BEFORE the publication transaction. A lost
+   // COMMIT or SIGKILL cannot let ordinary lease recovery re-execute the task.
+   await client.query('SELECT local_identity.begin_native_output_publication($1,$2,$3)',[fence.p_task_id,fence.p_attempt,fence.p_lease_token]);armed=true;
    await client.query('BEGIN');
    const currentDirectory=await lstat(directory,{bigint:true});
    if(!currentDirectory.isDirectory()||await realpath(directory)!==directory||currentDirectory.dev!==details.dev||currentDirectory.ino!==details.ino)throw Error('生产单目录身份已变化，保留任务文件等待恢复。');
@@ -83,6 +98,7 @@ export async function prepareNativeAttemptOutput(taskPackage:WorkerTaskPackage,f
    await durableReceipt(stagingRoot,{version:1,fence,taskPackage,assetRoot:taskPackage.assets.allowedRoot,inputHash:authority.inputHash,result,files:prepared.map(file=>({artifact:file.artifact,previous:file.previous})),status:'prepared'});
    for(const file of prepared){modified.push(file);await atomicReplace(file.temporary,file.destination);}
    await client.query('SELECT local_identity.input_worker_call($1,$2)',['report_worker_result',{...fence,p_result:result}]);
+   await client.query('SELECT local_identity.finish_native_output_publication($1,$2,$3)',[fence.p_task_id,fence.p_attempt,fence.p_lease_token]);
    commitSent=true;
    await client.query('COMMIT');
    // Successful temporary input copies need not inflate future media backups.
@@ -100,8 +116,9 @@ export async function prepareNativeAttemptOutput(taskPackage:WorkerTaskPackage,f
    // Once COMMIT or the connection outcome is unknown, restoring could replace
    // bytes already referenced by a committed result or a newer attempt. Keep
    // both generations and do not automatically report a new failed result.
-   if(uncertain)await outcome(commitSent?'commit_unknown':'restore_unknown');
    if(!commitSent)await client.query('ROLLBACK').catch(()=>{});
+   if(armed&&!uncertain)try{await client.query('SELECT local_identity.finish_native_output_publication($1,$2,$3)',[fence.p_task_id,fence.p_attempt,fence.p_lease_token]);}catch{uncertain=true;}
+   if(uncertain){await outcome(commitSent?'commit_unknown':'restore_unknown');throw new NativePublicationUnknownError(error instanceof Error?error.message:undefined,{cause:error});}
    throw error;
   }
   finally{await Promise.all(prepared.map(file=>rm(file.temporary,{force:true}).catch(()=>{})));client.release(uncertain);}
@@ -176,6 +193,7 @@ export async function recoverNativeAttemptOutput(pool:Pick<Pool,'connect'>,paths
   const storage=await episodeFileIO(client,paths.assetRoot,receipt.taskPackage.episode.id,true);
   const currentDirectory=await storage.assertFrozenDirectory(episodeRelativePath,receipt.taskPackage.assets.episodeDirectoryIdentity,receipt.assetRoot);
   if(join(currentDirectory,'.native-worker-attempts',identity)!==await realpath(paths.stagingRoot))throw Error('发布恢复目录不属于此任务尝试的当前位置。');
+  await client.query('SELECT local_identity.resume_native_output_publication($1,$2,$3)',[fence.p_task_id,fence.p_attempt,fence.p_lease_token]);
   const authority=await outputAuthority(client,fence,receipt.files.map(file=>file.artifact.relativePath));
   assertFrozenOutput(authority,receipt.taskPackage,receipt.result);
   if(authority.inputHash!==receipt.inputHash||authority.conflicts.length)throw Error('冻结输入已变化或路径被其他任务索引，拒绝旧尝试恢复。');
@@ -205,6 +223,7 @@ export async function recoverNativeAttemptOutput(pool:Pick<Pool,'connect'>,paths
   await client.query('SAVEPOINT native_output_publication');
   for(const file of files){modified=true;await atomicReplace(file.temporary,file.destination);}
   if(!registered)await client.query('SELECT local_identity.input_worker_call($1,$2)',['report_worker_result',{...fence,p_result:receipt.result}]);
+  await client.query('SELECT local_identity.finish_native_output_publication($1,$2,$3)',[fence.p_task_id,fence.p_attempt,fence.p_lease_token]);
   commitSent=true;await client.query('COMMIT');
   await durableReceipt(paths.stagingRoot,{...receipt,status:'reconciled_completed'});
   return{status:'completed',registered:!registered};

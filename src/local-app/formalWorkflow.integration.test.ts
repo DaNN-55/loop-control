@@ -1,11 +1,12 @@
 // @vitest-environment node
 import {formalWorkflowFixture} from './formalWorkflow.fixture';
+import {freshProductionFixture} from './freshProduction.fixture';
 import {it,expect} from 'vitest';
 import {randomUUID} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
 import {productionWorkspaceFixture} from './productionWorkspace.fixture';
 import {workspaceTestMedia} from './workspaceTestMedia.fixture';
-const fresh=()=>formalWorkflowFixture();
+const fresh=()=>freshProductionFixture();
 it.skipIf(process.env.LOOP_FORMAL_ACCEPTANCE!=='1')('Owner confirms a fresh script before visual materials exist',async()=>{const f=await fresh();try{const started=await f.send('start');expect(started.status,JSON.stringify(started.body)).toBe(200);expect(started.body.stage).toBe('script_approved');}finally{await f.close();}},120000);
 it.skipIf(process.env.LOOP_FORMAL_ACCEPTANCE!=='1')('Owner builds a formal incomplete draft without old storyboard approvals',async()=>{const f=await fresh();try{
  const imported=await f.send('importMaterial',{sourceKind:'file',sourcePath:'still.png',materialType:'image',materialPurpose:'visual_reference',mimeType:'image/png',isMainScript:false,contentBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64')});expect(imported.status).toBe(200);

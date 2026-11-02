@@ -1,0 +1,19 @@
+{
+  "workspaceId": "ea7e310d-6b8d-4ca1-b89a-848fe762f482",
+  "revision": 1,
+  "narration": [
+    {
+      "shotId": "shot-1",
+      "status": "completed",
+      "taskId": "792b8083-b0dd-4556-8127-e2a607f4190e",
+      "hasOutput": true
+    },
+    {
+      "shotId": "shot-2",
+      "status": "pending",
+      "taskId": null,
+      "hasOutput": false
+    }
+  ],
+  "controlledProviderCalls": 1
+}

@@ -1,0 +1,327 @@
+{
+  "lifecycle": {
+    "effectiveLaunch": {
+      "browserLaunched": true,
+      "engine": "chrome",
+      "launchHash": 11677035664275012000
+    },
+    "launched": false,
+    "relaunchedBrowser": false,
+    "restartedBackground": false,
+    "restoreStatus": "not_configured",
+    "reused": true,
+    "saveStatus": "not_attempted"
+  },
+  "origin": "http://127.0.0.1:5173/__metrics",
+  "refs": {
+    "e1": {
+      "name": "",
+      "role": "generic"
+    },
+    "e10": {
+      "name": "本地连接",
+      "role": "region"
+    },
+    "e11": {
+      "name": "工作台",
+      "role": "button"
+    },
+    "e12": {
+      "name": "生产单",
+      "role": "button"
+    },
+    "e13": {
+      "name": "账号",
+      "role": "button"
+    },
+    "e14": {
+      "name": "连接配置",
+      "role": "button"
+    },
+    "e15": {
+      "name": "历史资料",
+      "role": "button"
+    },
+    "e16": {
+      "name": "系统状态：不可用",
+      "role": "button"
+    },
+    "e17": {
+      "name": "待处理通知",
+      "role": "button"
+    },
+    "e18": {
+      "name": "切换至深色模式",
+      "role": "button"
+    },
+    "e19": {
+      "name": "外部连接管理",
+      "role": "region"
+    },
+    "e2": {
+      "name": "跳到主要内容",
+      "role": "link"
+    },
+    "e20": {
+      "name": "查找生产单、账号或素材",
+      "role": "textbox"
+    },
+    "e21": {
+      "name": "所有者设置",
+      "role": "button"
+    },
+    "e22": {
+      "name": "查找已存连接",
+      "role": "searchbox"
+    },
+    "e23": {
+      "name": "连接列表",
+      "role": "region"
+    },
+    "e24": {
+      "name": "新建连接",
+      "role": "button"
+    },
+    "e25": {
+      "name": "生产能力",
+      "role": "combobox"
+    },
+    "e26": {
+      "name": "验证状态",
+      "role": "combobox"
+    },
+    "e27": {
+      "name": "全部能力",
+      "role": "option"
+    },
+    "e28": {
+      "name": "图片",
+      "role": "option"
+    },
+    "e29": {
+      "name": "视频",
+      "role": "option"
+    },
+    "e3": {
+      "name": "平台工作台",
+      "role": "region"
+    },
+    "e30": {
+      "name": "音乐与音效",
+      "role": "option"
+    },
+    "e31": {
+      "name": "全部状态",
+      "role": "option"
+    },
+    "e32": {
+      "name": "未测试",
+      "role": "option"
+    },
+    "e33": {
+      "name": "连接",
+      "role": "columnheader"
+    },
+    "e34": {
+      "name": "服务",
+      "role": "columnheader"
+    },
+    "e35": {
+      "name": "模型",
+      "role": "columnheader"
+    },
+    "e36": {
+      "name": "验证 连接验证说明",
+      "role": "columnheader"
+    },
+    "e37": {
+      "name": "凭据版本",
+      "role": "columnheader"
+    },
+    "e38": {
+      "name": "额度 / 近7天",
+      "role": "columnheader"
+    },
+    "e39": {
+      "name": "操作",
+      "role": "columnheader"
+    },
+    "e4": {
+      "name": "工作区",
+      "role": "navigation"
+    },
+    "e40": {
+      "name": "更多操作",
+      "role": "columnheader"
+    },
+    "e41": {
+      "name": "图片",
+      "role": "cell"
+    },
+    "e42": {
+      "name": "图片生成连接名称较长时也应完整换行显示",
+      "role": "cell"
+    },
+    "e43": {
+      "name": "openai",
+      "role": "cell"
+    },
+    "e44": {
+      "name": "gpt-image-2",
+      "role": "cell"
+    },
+    "e45": {
+      "name": "未测试 需要在本机重新验证。",
+      "role": "cell"
+    },
+    "e46": {
+      "name": "v1",
+      "role": "cell"
+    },
+    "e47": {
+      "name": "图片生成连接名称较长时也应完整换行显示 额度与用量",
+      "role": "cell"
+    },
+    "e48": {
+      "name": "测试 图片生成连接名称较长时也应完整换行显示",
+      "role": "cell"
+    },
+    "e49": {
+      "name": "图片生成连接名称较长时也应完整换行显示 连接操作",
+      "role": "cell"
+    },
+    "e5": {
+      "name": "连接配置",
+      "role": "heading"
+    },
+    "e50": {
+      "name": "视频",
+      "role": "cell"
+    },
+    "e51": {
+      "name": "视频连接",
+      "role": "cell"
+    },
+    "e52": {
+      "name": "volcengine",
+      "role": "cell"
+    },
+    "e53": {
+      "name": "doubao-seedance-2-0-260128 doubao-seedance-2-5-260628",
+      "role": "cell"
+    },
+    "e54": {
+      "name": "未测试 需要在本机重新验证。",
+      "role": "cell"
+    },
+    "e55": {
+      "name": "v1",
+      "role": "cell"
+    },
+    "e56": {
+      "name": "视频连接 额度与用量",
+      "role": "cell"
+    },
+    "e57": {
+      "name": "测试 视频连接",
+      "role": "cell"
+    },
+    "e58": {
+      "name": "视频连接 连接操作",
+      "role": "cell"
+    },
+    "e59": {
+      "name": "音乐与音效",
+      "role": "cell"
+    },
+    "e6": {
+      "name": "连接配置内容",
+      "role": "region"
+    },
+    "e60": {
+      "name": "音效连接",
+      "role": "cell"
+    },
+    "e61": {
+      "name": "freesound",
+      "role": "cell"
+    },
+    "e62": {
+      "name": "Freesound 配乐 / 音效",
+      "role": "cell"
+    },
+    "e63": {
+      "name": "未测试 需要在本机重新验证。",
+      "role": "cell"
+    },
+    "e64": {
+      "name": "v1",
+      "role": "cell"
+    },
+    "e65": {
+      "name": "音效连接 额度与用量",
+      "role": "cell"
+    },
+    "e66": {
+      "name": "测试 音效连接",
+      "role": "cell"
+    },
+    "e67": {
+      "name": "音效连接 连接操作",
+      "role": "cell"
+    },
+    "e68": {
+      "name": "连接验证说明",
+      "role": "button"
+    },
+    "e69": {
+      "name": "图片生成连接名称较长时也应完整换行显示",
+      "role": "button"
+    },
+    "e7": {
+      "name": "打开 OpenChatCut 独立剪辑",
+      "role": "button"
+    },
+    "e70": {
+      "name": "测试 图片生成连接名称较长时也应完整换行显示",
+      "role": "button"
+    },
+    "e71": {
+      "name": "图片生成连接名称较长时也应完整换行显示 连接操作",
+      "role": "button"
+    },
+    "e72": {
+      "name": "视频连接",
+      "role": "button"
+    },
+    "e73": {
+      "name": "测试 视频连接",
+      "role": "button"
+    },
+    "e74": {
+      "name": "视频连接 连接操作",
+      "role": "button"
+    },
+    "e75": {
+      "name": "音效连接",
+      "role": "button"
+    },
+    "e76": {
+      "name": "测试 音效连接",
+      "role": "button"
+    },
+    "e77": {
+      "name": "音效连接 连接操作",
+      "role": "button"
+    },
+    "e8": {
+      "name": "收起侧栏",
+      "role": "button"
+    },
+    "e9": {
+      "name": "当前位置",
+      "role": "navigation"
+    }
+  },
+  "snapshot": "- generic [ref=e1] clickable [onclick]\n  - link \"跳到主要内容\" [ref=e2]\n  - complementary \"主导航\"\n    - image \"Loop Control\"\n      - StaticText \"Loop Control\"\n    - navigation \"工作区\" [ref=e4]\n      - group \"生产工作\"\n        - button \"工作台\" [ref=e11]\n          - StaticText \"工作台\"\n        - button \"生产单\" [ref=e12]\n          - StaticText \"生产单\"\n      - group \"账号管理\"\n        - button \"账号\" [ref=e13]\n          - StaticText \"账号\"\n      - group \"配置与资料\"\n        - button \"连接配置\" [ref=e14]\n          - StaticText \"连接配置\"\n        - button \"历史资料\" [ref=e15]\n          - StaticText \"历史资料\"\n    - generic\n      - button \"打开 OpenChatCut 独立剪辑\" [ref=e7]\n        - StaticText \"OpenChatCut\"\n      - button \"系统状态：不可用\" [expanded=false, ref=e16]\n        - StaticText \"系统状态\"\n      - button \"收起侧栏\" [ref=e8]\n        - StaticText \"收起侧栏\"\n  - region \"平台工作台\" [ref=e3]\n    - sectionheader\n      - navigation \"当前位置\" [ref=e9]\n        - StaticText \"个人工作区\"\n        - strong\n          - StaticText \"连接配置\"\n      - group \"工作区工具\"\n        - textbox \"查找生产单、账号或素材\" [ref=e20]\n        - button \"待处理通知\" [expanded=false, ref=e17]\n        - button \"切换至深色模式\" [ref=e18]\n        - button \"所有者设置\" [expanded=false, ref=e21]\n    - heading \"连接配置\" [level=1, ref=e5]\n    - region \"连接配置内容\" [ref=e6]\n      - region \"本地连接\" [ref=e10]\n        - region \"外部连接管理\" [ref=e19]\n          - sectionheader\n            - paragraph\n              - StaticText \"管理生产能力使用的服务与凭据引用。\"\n            - button \"新建连接\" [ref=e24]\n              - StaticText \"新建连接\"\n          - searchbox \"查找已存连接\" [ref=e22]\n          - combobox \"生产能力\" [expanded=false, ref=e25]: 全部能力\n            - MenuListPopup\n              - option \"全部能力\" [selected, ref=e27]\n              - option \"图片\" [ref=e28]\n              - option \"视频\" [ref=e29]\n              - option \"音乐与音效\" [ref=e30]\n          - combobox \"验证状态\" [expanded=false, ref=e26]: 全部状态\n            - MenuListPopup\n              - option \"全部状态\" [selected, ref=e31]\n              - option \"未测试\" [ref=e32]\n          - region \"连接列表\" [ref=e23]\n            - table \"已保存连接\"\n              - rowgroup\n                - row\n                  - columnheader \"连接\" [ref=e33]\n                  - columnheader \"服务\" [ref=e34]\n                  - columnheader \"模型\" [ref=e35]\n                  - columnheader \"验证 连接验证说明\" [ref=e36]\n                    - StaticText \"验证\"\n                    - button \"连接验证说明\" [ref=e68]\n                  - columnheader \"凭据版本\" [ref=e37]\n                  - columnheader \"额度 / 近7天\" [ref=e38]\n                  - columnheader \"操作\" [ref=e39]\n                  - columnheader \"更多操作\" [ref=e40]\n                    - StaticText \"更多操作\"\n              - rowgroup \"图片\"\n                - row\n                  - cell \"图片\" [ref=e41]\n                - row\n                  - cell \"图片生成连接名称较长时也应完整换行显示\" [ref=e42]\n                    - button \"图片生成连接名称较长时也应完整换行显示\" [ref=e69]\n                  - cell \"openai\" [ref=e43]\n                  - cell \"gpt-image-2\" [ref=e44]\n                    - StaticText \"gpt-image-2\"\n                  - cell \"未测试 需要在本机重新验证。\" [ref=e45]\n                    - StaticText \"未测试\"\n                    - StaticText \"需要在本机重新验证。\"\n                  - cell \"v1\" [ref=e46]\n                  - cell \"图片生成连接名称较长时也应完整换行显示 额度与用量\" [ref=e47]\n                    - generic\n                      - StaticText \"余量\"\n                      - StaticText \"未提供接口\"\n                    - generic\n                      - StaticText \"近7天\"\n                      - StaticText \"需账务权限\"\n                  - cell \"测试 图片生成连接名称较长时也应完整换行显示\" [ref=e48]\n                    - button \"测试 图片生成连接名称较长时也应完整换行显示\" [disabled, ref=e70]\n                      - StaticText \"测试\"\n                  - cell \"图片生成连接名称较长时也应完整换行显示 连接操作\" [ref=e49]\n                    - button \"图片生成连接名称较长时也应完整换行显示 连接操作\" [expanded=false, ref=e71]\n              - rowgroup \"视频\"\n                - row\n                  - cell \"视频\" [ref=e50]\n                - row\n                  - cell \"视频连接\" [ref=e51]\n                    - button \"视频连接\" [ref=e72]\n                  - cell \"volcengine\" [ref=e52]\n                  - cell \"doubao-seedance-2-0-260128 doubao-seedance-2-5-260628\" [ref=e53]\n                    - StaticText \"doubao-seedance-2-0-260128\"\n                    - StaticText \"doubao-seedance-2-5-260628\"\n                  - cell \"未测试 需要在本机重新验证。\" [ref=e54]\n                    - StaticText \"未测试\"\n                    - StaticText \"需要在本机重新验证。\"\n                  - cell \"v1\" [ref=e55]\n                  - cell \"视频连接 额度与用量\" [ref=e56]\n                    - generic\n                      - StaticText \"余量\"\n                      - StaticText \"需账务权限\"\n                    - generic\n                      - StaticText \"近7天\"\n                      - StaticText \"需账务权限\"\n                  - cell \"测试 视频连接\" [ref=e57]\n                    - button \"测试 视频连接\" [disabled, ref=e73]\n                      - StaticText \"测试\"\n                  - cell \"视频连接 连接操作\" [ref=e58]\n                    - button \"视频连接 连接操作\" [expanded=false, ref=e74]\n              - rowgroup \"音乐与音效\"\n                - row\n                  - cell \"音乐与音效\" [ref=e59]\n                - row\n                  - cell \"音效连接\" [ref=e60]\n                    - button \"音效连接\" [ref=e75]\n                  - cell \"freesound\" [ref=e61]\n                  - cell \"Freesound 配乐 / 音效\" [ref=e62]\n                  - cell \"未测试 需要在本机重新验证。\" [ref=e63]\n                    - StaticText \"未测试\"\n                    - StaticText \"需要在本机重新验证。\"\n                  - cell \"v1\" [ref=e64]\n                  - cell \"音效连接 额度与用量\" [ref=e65]\n                    - generic\n                      - StaticText \"日余量\"\n                      - StaticText \"读取中…\"\n                    - generic\n                      - StaticText \"近7天\"\n                      - StaticText \"读取中…\"\n                  - cell \"测试 音效连接\" [ref=e66]\n                    - button \"测试 音效连接\" [disabled, ref=e76]\n                      - StaticText \"测试\"\n                  - cell \"音效连接 连接操作\" [ref=e67]\n                    - button \"音效连接 连接操作\" [expanded=false, ref=e77]\n          - status\n            - StaticText \"凭据仅保存到本机 Keychain · 在线验证已锁定\""
+}

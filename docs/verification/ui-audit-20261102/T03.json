@@ -1,0 +1,124 @@
+{
+  "id": "T03",
+  "verdict": "executed-findings",
+  "newModal": [
+    {
+      "body": {
+        "height": 768,
+        "width": 1366
+      },
+      "overflowing": [],
+      "viewport": {
+        "dpr": 1,
+        "height": 768,
+        "width": 1366
+      }
+    },
+    {
+      "body": {
+        "height": 768,
+        "width": 900
+      },
+      "overflowing": [],
+      "viewport": {
+        "dpr": 1,
+        "height": 768,
+        "width": 900
+      }
+    },
+    {
+      "body": {
+        "height": 768,
+        "width": 640
+      },
+      "overflowing": [],
+      "viewport": {
+        "dpr": 1,
+        "height": 768,
+        "width": 640
+      }
+    },
+    {
+      "body": {
+        "height": 768,
+        "width": 390
+      },
+      "overflowing": [
+        {
+          "name": "已完成",
+          "rect": {
+            "left": 391.3125,
+            "right": 454.3125,
+            "width": 63
+          },
+          "tag": "BUTTON"
+        }
+      ],
+      "viewport": {
+        "dpr": 1,
+        "height": 768,
+        "width": 390
+      }
+    },
+    {
+      "body": {
+        "height": 768,
+        "width": 683
+      },
+      "overflowing": [
+        {
+          "name": "花费（元）：实际来自执行费用记录；估算为尚无实际金额的调用，两者分别展示。预留不计入花费。按实际与估算之和排序，未知费用不当作零。",
+          "rect": {
+            "left": 1321.734375,
+            "right": 1451.734375,
+            "width": 130
+          },
+          "tag": "BUTTON"
+        },
+        {
+          "name": "阶段用时：仅显示当前阶段，从进入该阶段开始计时，推进后切换；完成后停止计时。包含该阶段内的生成、操作与审核等待。",
+          "rect": {
+            "left": 1537.734375,
+            "right": 1641.734375,
+            "width": 104
+          },
+          "tag": "BUTTON"
+        },
+        {
+          "name": "生成次数：按已开始的生成尝试计数，含未采用候选和失败重试；不含排队、上传和本地编辑。",
+          "rect": {
+            "left": 1766.625,
+            "right": 1870.625,
+            "width": 104
+          },
+          "tag": "BUTTON"
+        },
+        {
+          "name": "生产单操作：末班车前的一把伞",
+          "rect": {
+            "left": 1988.625,
+            "right": 2052.625,
+            "width": 64
+          },
+          "tag": "BUTTON"
+        }
+      ],
+      "viewport": {
+        "dpr": 1,
+        "height": 768,
+        "width": 1366
+      }
+    }
+  ],
+  "editorWidth900": "非专注布局下属性精确值被挤压、分组标题换行、时间线落到首屏下方；截图 t03-editor-900-retest",
+  "sizes": [
+    1366,
+    900,
+    640,
+    390
+  ],
+  "limitations": [
+    "200%使用CSS zoom模拟，未实际操作浏览器原生缩放；后续验收仍须原生缩放检查",
+    "编辑器900px只覆盖非专注布局，不将整个第三方编辑器声明为手机适配"
+  ]
+}

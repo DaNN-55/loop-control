@@ -113,3 +113,15 @@ it('keeps connection settings focused on API connections without account budget 
  vi.stubGlobal('fetch',vi.fn(async()=>Response.json({connections:[],versions:[],capabilities:{secrets:'disabled',verification:'disabled',externalReady:false}})));
  render(<LocalConnectionsPanel/>);await screen.findByRole('button',{name:'新建连接'});expect(screen.queryByText('费用与限额')).toBeNull();expect(screen.queryByLabelText('预算账号')).toBeNull();
 });
+it('loads MiniMax available funds automatically and keeps unsupported actual spend explicit',async()=>{
+ const connection={id:'10000000-0000-4000-8000-000000000031',name:'MiniMax balance fixture',provider:'minimax',adapter:'minimax_video',region:'cn',status:'verified',current_version_id:'10000000-0000-4000-8000-000000000032'};
+ const usage={remaining:{label:'可用额',text:'¥23.00',detail:'现金 ¥10.00；代金券 ¥13.00；不是现金余额。',status:'ready'},recent:{label:'近7天',text:'暂不支持',detail:'未提供官方账单查询接口；不使用估算。',status:'unsupported'},updatedAt:'2026-11-02T01:00:00Z'};
+ const requests:string[]=[];vi.stubGlobal('fetch',vi.fn(async(path:string,init?:RequestInit)=>{
+  requests.push(String(path));expect(init?.method??'GET').toBe('GET');
+  if(String(path).includes('/connection-usage?'))return Response.json({connectionId:connection.id,versionId:connection.current_version_id,usage});
+  return Response.json({connections:[connection],versions:[],capabilities:{secrets:'keychain',verification:'live',externalReady:false,networkAvailable:false}});
+ }));
+ render(<LocalConnectionsPanel/>);await screen.findByText('¥23.00');const cell=screen.getByRole('cell',{name:connection.name+' 额度与用量'});
+ expect(cell.textContent).toContain('近7天暂不支持');expect(cell.querySelector('[title]')?.getAttribute('title')).toContain('现金 ¥10.00');
+ expect(requests.filter(p=>p.includes('/connection-usage?'))).toHaveLength(1);expect(requests.some(p=>p.includes('connection-billing'))).toBe(false);
+});

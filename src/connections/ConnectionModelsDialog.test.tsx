@@ -39,3 +39,10 @@ it('locks repeated syncs and saving until a read finishes',async()=>{
  expect((screen.getByRole('button',{name:'关闭模型设置'})as HTMLButtonElement).disabled).toBe(true);await act(async()=>finish(data));
  expect(within(screen.getByLabelText('可选模型')).getByRole('checkbox')).toBeTruthy();
 });
+
+it('hides empty model ranges and restores the enabled range as models are selected',async()=>{
+ render(<ConnectionModelsDialog connection={{id:'c',name:'Images'}} onClose={vi.fn()} onReadModels={async()=>({...data,enabledModels:[]})}/>);
+ await screen.findByRole('checkbox',{name:'gpt-image-2'});
+ const range=screen.getByRole('combobox',{name:'模型范围'});expect(within(range).queryByRole('option',{name:'尚未适配'})).toBeNull();expect(within(range).queryByRole('option',{name:'已启用'})).toBeNull();
+ fireEvent.click(screen.getByRole('checkbox',{name:'gpt-image-2'}));expect(within(range).getByRole('option',{name:'已启用'})).toBeTruthy();
+});

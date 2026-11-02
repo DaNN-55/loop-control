@@ -1,3 +1,4 @@
+import {useWorkspacePolling,type WorkspaceReading} from './useWorkspaceReading';
 import {useEffect,useRef,useState} from 'react';
 import type {ProductionWorkspace} from '../productionWorkspace';
 import type {ProductionSelection} from '../productionSelection';
@@ -5,15 +6,15 @@ import type {ProductionService,ProductionServiceCatalog} from '../connections/se
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {NativeSelect} from '../ui/dan-ui/components/base/select/select-native';
 import './workspace-pexels.css';
-export function WorkspacePexelsSearch({workspace,targetItemId,command,onChange,prepare,disabled=false}:{workspace:ProductionWorkspace;targetItemId:string;command:(name:string,data:unknown)=>Promise<unknown>;onChange:(w:ProductionWorkspace)=>void;prepare:()=>Promise<ProductionWorkspace>;disabled?:boolean}){
+export function WorkspacePexelsSearch({workspace,targetItemId,command,onChange,prepare,reader,disabled=false}:{workspace:ProductionWorkspace;targetItemId:string;command:(name:string,data:unknown)=>Promise<unknown>;onChange:(w:ProductionWorkspace)=>void;prepare:()=>Promise<ProductionWorkspace>;reader:WorkspaceReading;disabled?:boolean}){
  const key=`loop-pexels-draft:${workspace.id}:${targetItemId}`;
  const [draft,setDraft]=useState<{query:string;orientation:string;size:string;page:string;selection?:ProductionSelection|null}>(()=>{try{return JSON.parse(sessionStorage.getItem(key)??'null')??{query:'',orientation:'portrait',size:'medium',page:'1'};}catch{return{query:'',orientation:'portrait',size:'medium',page:'1'};}}),[services,setServices]=useState<ProductionService[]>([]),[busy,setBusy]=useState(false),[error,setError]=useState('');
  const working=useRef(false),latest=useRef(onChange);latest.current=onChange;
  useEffect(()=>{try{sessionStorage.setItem(key,JSON.stringify(draft));}catch{/* Draft storage is optional. */}},[key,draft]);
  useEffect(()=>{let active=true;void fetch('/api/local/connections').then(async r=>{if(!r.ok)throw Error();const catalog=(await r.json()).serviceCatalog as ProductionServiceCatalog;if(active)setServices(catalog.groups.find(g=>g.capability==='video')?.services.filter(s=>s.mode==='search'&&s.provider==='pexels'&&s.adapter==='pexels_video')??[]);}).catch(()=>{if(active)setError('无法读取 Pexels 连接，请刷新后重试。');});return()=>{active=false;};},[workspace.id]);
  const requests=(workspace.pexels?.requests??[]).filter(r=>r.targetItemId===targetItemId),pending=requests.filter(r=>['ready','running'].includes(r.status)),taskKey=pending.map(r=>r.taskId).join(':'),search=requests.find(r=>r.operation==='search'),previews=requests.filter(r=>r.operation==='preview'&&r.source?.searchId===search?.id),service=services.find(s=>s.connectionVersionId===draft.selection?.connectionVersionId);
- useEffect(()=>{if(!taskKey)return;let active=true,reading=false;const timer=setInterval(()=>{if(reading)return;reading=true;void fetch(`/api/local/episodes/${workspace.episodeId}/workspace`).then(async r=>{if(r.ok&&active)latest.current((await r.json()).workspace);}).catch(()=>{}).finally(()=>{reading=false;});},1500);return()=>{active=false;clearInterval(timer);};},[workspace.episodeId,taskKey]);
- async function run(name:string,data:Record<string,unknown>){if(working.current)return;working.current=true;setBusy(true);setError('');try{const w=await prepare();latest.current(await command(name,{episodeId:w.episodeId,workspaceId:w.id,expectedRevision:w.revision,...data}) as ProductionWorkspace);}catch(e){setError(e instanceof Error?e.message:'Pexels 操作未完成，请重试。');}finally{working.current=false;setBusy(false);}}
+ useWorkspacePolling(reader,!!taskKey,1500);
+ async function run(name:string,data:Record<string,unknown>){if(working.current)return;working.current=true;setBusy(true);setError('');try{const w=await prepare();latest.current(await command(name,{episodeId:w.episodeId,workspaceId:w.id,expectedRevision:w.revision,...data}) as ProductionWorkspace);}catch(e){if(!(e instanceof Error&&e.name==='AbortError'))setError(e instanceof Error?e.message:'Pexels 操作未完成，请重试。');}finally{working.current=false;setBusy(false);}}
  const locked=disabled||busy;
  function artifact(path:string,sha:string){return '/_local-artifact?episode='+encodeURIComponent(workspace.episodeId)+'&path='+encodeURIComponent(path)+'&sha256='+sha;}
  return <div className="workspace-pexels">

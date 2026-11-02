@@ -1,0 +1,103 @@
+E2E evidence: /private/tmp/loop-story-e2e-ewmqri/evidence
+
+> loop-control@0.1.0 runtime:prepare
+> node scripts/prepare-runtime.mjs
+
+
+> loop-control@0.1.0 worker:build
+> tsc -p tsconfig.worker.json
+
+
+> loop-control@0.1.0 backend:build
+> tsc -p tsconfig.local-app.json
+
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-ewmqri/source
+
+stderr | src/local-app/storyE2e.integration.test.ts > story 5 browser: cancel a collection plan, recover a lost move receipt, and read the same export with the old directory offline
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-t06-volume-xwDWlL/mounted/loop-153-gGaHS5/browser-vite-cache/deps/react-dom_client.js?v=00d6fc58 as it exceeds the max of 500KB.
+
+stderr | src/local-app/storyE2e.integration.test.ts > story 1 browser: validates the new script, recovers committed import/create receipts and opens one series-bound order
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-t06-volume-TnSewh/mounted/loop-153-hffipP/browser-vite-cache/deps/react-dom_client.js?v=5278410f as it exceeds the max of 500KB.
+
+stderr | src/local-app/storyE2e.integration.test.ts > story 4 browser: confirms the actual subtitles, retries a lost package receipt, then reloads a verified playable delivery
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-t06-volume-wrhBiq/mounted/loop-153-eqOZdq/browser-vite-cache/deps/react-dom_client.js?v=e8989049 as it exceeds the max of 500KB.
+
+stderr | src/local-app/storyE2e.integration.test.ts > story 2 browser: a lost committed generation response and resubmission keep one task before an explicit three-second adoption
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-t06-volume-J9bhm7/mounted/loop-153-cH2l7u/browser-vite-cache/deps/react-dom_client.js?v=e7922513 as it exceeds the max of 500KB.
+
+stderr | src/local-app/storyE2e.integration.test.ts > story 3 browser: native adoption interrupted before its receipt recovers on reload and duplicate confirmation
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-t06-volume-AsU6aA/mounted/loop-153-m1Qs78/browser-vite-cache/deps/react-dom_client.js?v=b28e431f as it exceeds the max of 500KB.
+
+ ❯ src/local-app/storyE2e.integration.test.ts (21 tests | 1 failed) 218248ms
+   ✓ story 5 browser: cancel a collection plan, recover a lost move receipt, and read the same export with the old directory offline  27350ms
+   ✓ story 5: detached media refuses export without creating a host fallback and remount restores the same story  4570ms
+   ✓ story 1 browser: validates the new script, recovers committed import/create receipts and opens one series-bound order  10644ms
+   ✓ story 4 browser: confirms the actual subtitles, retries a lost package receipt, then reloads a verified playable delivery  17989ms
+   × story 2 browser: a lost committed generation response and resubmission keep one task before an explicit three-second adoption 44414ms
+     → Browser wait failed: {"success":false,"data":null,"error":"Wait timed out after 25000ms"}
+
+   ✓ story 2: rejects an unsupported duration, then one duplicate-safe request produces an unused four-second candidate  4626ms
+   ✓ story 2: image generation rejects bad input and duplicate submission leaves one unused story candidate  4294ms
+   ✓ story 2: speech generation rejects bad input and duplicate submission leaves one unused story candidate  4455ms
+   ✓ story 1 process: a real crash during directory creation resumes the same story order and rejects a changed duplicate  3395ms
+   ✓ story 5 process: resume a real copy-publication SIGKILL without losing either shot or duplicating the move  5930ms
+   ✓ story 5 process: rollback a real copy-publication SIGKILL without losing either shot or duplicating the move  5199ms
+   ✓ story 3: saved native image recovers a missing adoption receipt, and repeated confirmation preserves both story shots  9050ms
+   ✓ story 3: saved native video recovers a missing adoption receipt, and repeated confirmation preserves both story shots  10161ms
+   ✓ story 3: saved native speech recovers its missing receipt without regenerating or substituting the story text  10136ms
+   ✓ story 3: changed-file cannot overwrite the saved umbrella scene  3979ms
+   ✓ story 3: newer-target cannot overwrite the saved umbrella scene  4173ms
+   ✓ story 3: reject cannot overwrite the saved umbrella scene  4053ms
+   ✓ story 4: a six-second subtitled export and exact package survive failed validation, retry, restart and duplicate submission  12646ms
+   ✓ story 2: unknown interruption survives restart without a second supplier submission  5009ms
+   ✓ story 2: poll-fail interruption survives restart without a second supplier submission  4964ms
+   ✓ story 3 browser: native adoption interrupted before its receipt recovers on reload and duplicate confirmation  21209ms
+ ✓ src/local-app/workerOutcomes.integration.test.ts (10 tests) 18206ms
+   ✓ a failure report already waiting on the lease cannot cross a newly committed publication fence  1700ms
+   ✓ the final prepare failure records a terminal result through the real fenced Worker port  1442ms
+   ✓ the final execute failure records a terminal result through the real fenced Worker port  1491ms
+   ✓ ordinary execution failure retries within its allowance and stops at the final attempt  1548ms
+   ✓ the real scheduler observes unknown publication and restart does not regenerate (committed=false)  2401ms
+   ✓ the real scheduler observes unknown publication and restart does not regenerate (committed=true)  2045ms
+   ✓ actual compiled Worker preserves unknown publication across its process boundary (committed=false)  1826ms
+   ✓ actual compiled Worker preserves unknown publication across its process boundary (committed=true)  1862ms
+   ✓ lost COMMIT acknowledgement (committed=false) survives expiry and reconciles from a new connection without generation  1813ms
+   ✓ lost COMMIT acknowledgement (committed=true) survives expiry and reconciles from a new connection without generation  2076ms
+ ✓ src/local-app/workspaceDelivery.integration.test.ts (4 tests) 51766ms
+   ✓ Owner delivery requires an exact confirmed export  1330ms
+   ✓ real Worker verifies exact package, fences tamper and missing inputs, retries and survives restart  19507ms
+   ✓ a queued package cannot complete or retry against a different final export  16455ms
+   ✓ delivery records the used trimmed voice source and never substitutes an unadopted draft text  14473ms
+ ✓ src/local-app/runtimeRelease.integration.test.ts (1 test) 19328ms
+   ✓ the real scheduler keeps its executable version across editing and preparation; the next service uses the new version  19327ms
+stderr | src/local-app/programLoading.browser.integration.test.ts > real page keeps login and production states honest during delayed reads and recovers a failed read without writes
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-t06-volume-iTIy8p/mounted/loop-153-bE3c3x/browser-vite-cache/deps/react-dom_client.js?v=2058de2d as it exceeds the max of 500KB.
+
+ ✓ src/local-app/programLoading.browser.integration.test.ts (1 test) 8849ms
+   ✓ real page keeps login and production states honest during delayed reads and recovers a failed read without writes  8848ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/storyE2e.integration.test.ts > story 2 browser: a lost committed generation response and resubmission keep one task before an explicit three-second adoption
+Error: Browser wait failed: {"success":false,"data":null,"error":"Wait timed out after 25000ms"}
+
+ ❯ Object.cli src/local-app/storyBrowser.fixture.ts:23:77
+     21|   let stdout:string;
+     22|   try{({stdout}=await exec('agent-browser',['--session',session,'--jso…
+     23|   catch(error){const e=error as Error&{stdout?:string;stderr?:string};…
+       |                                                                             ^
+     24|   const result=JSON.parse(stdout);if(!result.success)throw Error(resul…
+     25|  };
+ ❯ src/local-app/storyE2e.integration.test.ts:131:31
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 4 passed (5)
+      Tests  1 failed | 36 passed (37)
+   Start at  14:24:55
+   Duration  318.83s (transform 749ms, setup 18ms, collect 1.67s, tests 316.40s, environment 0ms, prepare 171ms)
+
+JSON report written to /private/tmp/loop-story-e2e-ewmqri/evidence/vitest.json

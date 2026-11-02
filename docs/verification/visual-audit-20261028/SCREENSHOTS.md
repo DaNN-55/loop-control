@@ -2,7 +2,7 @@
 
 共301张；仅代表采样记录，不代表每张均作为通过证据。具体缺陷与取证有效性以REPORT.md为准。
 
-尺寸以measurements.json实际值为准。文件名包含320的记录是移动附录；actual1440是未成功切换低高度的对照。chrome-pending-focus-outside命名未被证实为焦点逃逸，不作为缺陷结论。
+尺寸以measurements.json.gz实际值为准。文件名包含320的记录是移动附录；actual1440是未成功切换低高度的对照。chrome-pending-focus-outside命名未被证实为焦点逃逸，不作为缺陷结论。
 
 | 画面 | 实际尺寸 / 说明 |
 | --- | --- |

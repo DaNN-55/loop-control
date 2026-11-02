@@ -1,0 +1,14 @@
+{
+  "sourcePage": "https://developers.openai.com/api/docs/guides/image-generation",
+  "calculatorModule": "https://developers.openai.com/_astro/GptImageTokenCalculator.react.BWGLfw71.js",
+  "sha256": "f4423b7224feb43aae518ee1c975a690a7590b994d593ffde86708381b2ff563",
+  "model": "gpt-image-2",
+  "qualityGrid": {
+    "low": 16,
+    "medium": 48,
+    "high": 96
+  },
+  "rounding": "short grid nearest integer; ties to even",
+  "outputStandardUSDPerMillion": 30,
+  "sourceChecked": "2026-11-02"
+}

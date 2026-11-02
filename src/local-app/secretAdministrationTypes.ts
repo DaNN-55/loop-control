@@ -6,4 +6,4 @@ export interface SecretMetadata {
  history:{metadataOccurrences:number;fileOccurrences:number;files:string[]};
  revealAllowed:boolean;state:string;
 }
-export interface SecretList {items:SecretMetadata[];total:number;page:number;pageSize:number;observedAt:string}
+export interface SecretList {categoryCounts?:Record<string,number>;items:SecretMetadata[];total:number;page:number;pageSize:number;observedAt:string}

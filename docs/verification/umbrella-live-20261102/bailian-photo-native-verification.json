@@ -1,0 +1,35 @@
+{
+  "episodeId": "2abb56f4-79b3-4d4e-8537-8d707e9b060d",
+  "projectId": "loop-control-2abb56f4-79b3-4d4e-8537-8d707e9b060d",
+  "fps": 30,
+  "used": [
+    {
+      "id": "shot-shot-01-d2e4bb5d-e3d3-45f2-8a0c-639b454b0531",
+      "kind": "video",
+      "sha256": "29be930a65e0dfd95fa7955fc830231437c4350d8367cc4a2331a7eee559cfdf",
+      "sourceInFrame": 0,
+      "durationInFrames": 60
+    },
+    {
+      "id": "shot-shot-02-9db34f89-6823-49e3-b0fe-88618c0c99a9",
+      "kind": "video",
+      "sha256": "29be930a65e0dfd95fa7955fc830231437c4350d8367cc4a2331a7eee559cfdf",
+      "sourceInFrame": 60,
+      "durationInFrames": 60
+    }
+  ],
+  "adoptions": [
+    {
+      "candidateId": "f87eccf0-daa4-4810-969a-986e51a7c3d8",
+      "sourceInSeconds": 0,
+      "sourceOutSeconds": 2,
+      "projectSha256": "36b7843c443d8caaf667ea4f971f8bbbf4e38ecec940e92b041d2af78ba51322"
+    },
+    {
+      "candidateId": "2b51a983-76ad-4ff3-9d0e-8c68dfae8176",
+      "sourceInSeconds": 2,
+      "sourceOutSeconds": 4,
+      "projectSha256": "8bed5b88970839c458a771d920a8396ed995a6634294220d8c7737bc188af5a0"
+    }
+  ]
+}

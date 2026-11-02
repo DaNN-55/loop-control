@@ -9,5 +9,3 @@ export function mainScriptDiagnostic(script:string):string|null {
   if(!script.split(/^##\s+正文\s*$/m)[1]?.trim())return `第 ${script.slice(0,body.index).split('\n').length} 行：“## 正文”下没有内容，请填写正文。`;
   try{parseProductionScript(script);return null;}catch(error){return error instanceof Error?error.message:'主脚本格式无效。';}
 }
-export function isValidMainScript(script:string){return mainScriptDiagnostic(script)===null;}
-export const mainScriptFormatError='主脚本需包含“# 本期标题”和非空的“## 正文”；可先查看脚本模板。';

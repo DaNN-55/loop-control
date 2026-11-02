@@ -1,13 +1,34 @@
-import {LocalMediaRootSettings,inspectMediaRoot,verifyMediaRootBinding} from '../../dist/local-app/local-app/mediaRootSettings.js';
+import{readPreparedRuntimeRelease,assertRuntimeRelease}from'../../src/orchestration/runtimeBuild.ts';
+import{pathToFileURL}from'node:url';
+
 import {mediaRootWorkerSettings,persistMediaRootDeployment,readMediaRootAuthorization,readPendingMediaRootDeployment,recoverMediaRootDeployment,migrationProofQuery,verifyMediaRootMigrationProof,mediaRootPendingPath} from './media-root.mjs';
-import {SecretAdministration} from '../../dist/local-app/local-app/secretAdministration.js';
-import {createRuntimeStatusReader} from '../../dist/local-app/local-app/runtimeStatus.js';
-import{configuredKeychainStore}from'../../dist/local-app/local-app/keychainStore.js';import{createPexelsLiveProbe}from'../../dist/local-app/local-app/pexelsLiveProbe.js';
-import{createProviderProbe}from'../../dist/local-app/local-app/providerProbe.js';
-import{LocalAccountCommands}from'../../dist/local-app/local-app/accountCommands.js';
+
+
+
+
+
 import{appendFileSync}from'node:fs';import{unlink}from'node:fs/promises';import{join}from'node:path';
-import{createLocalDatabase}from'../../dist/local-app/local-app/catalog.js';import{createLocalHandler}from'../../dist/local-app/local-app/localRoute.js';import{readMediaDeployment}from'../../dist/local-app/local-app/mediaDeployment.js';import{startNativeWorkerService}from'../../dist/local-app/local-app/localWorkerService.js';import{LocalEpisodeCommands}from'../../dist/local-app/local-app/episodeCommands.js';import{LocalConnections}from'../../dist/local-app/local-app/connections.js';import{startNativeAutomation}from'../../dist/local-app/local-app/nativeAutomation.js';import{nativeBackup}from'../../dist/local-app/local-app/nativeBackup.js';
+
 export async function createNativeApplication(d){
+ const runtimeRelease=d.runtimeRelease??(process.env.LOOP_RUNTIME_RELEASE?JSON.parse(process.env.LOOP_RUNTIME_RELEASE):await readPreparedRuntimeRelease(d.projectRoot));
+ await assertRuntimeRelease(d.projectRoot,runtimeRelease);d={...d,runtimeRelease};
+ const load=path=>import(pathToFileURL(join(runtimeRelease.root,'dist/local-app',path)).href);
+ const {LocalMediaRootSettings,inspectMediaRoot,verifyMediaRootBinding}=await load('local-app/mediaRootSettings.js');
+ const {SecretAdministration}=await load('local-app/secretAdministration.js');
+ const {createRuntimeStatusReader}=await load('local-app/runtimeStatus.js');
+ const {configuredKeychainStore}=await load('local-app/keychainStore.js');
+ const {createPexelsLiveProbe}=await load('local-app/pexelsLiveProbe.js');
+ const {createProviderProbe}=await load('local-app/providerProbe.js');
+ const {LocalAccountCommands}=await load('local-app/accountCommands.js');
+ const {createLocalDatabase}=await load('local-app/catalog.js');
+ const {createLocalHandler}=await load('local-app/localRoute.js');
+ const {readMediaDeployment}=await load('local-app/mediaDeployment.js');
+ const {startNativeWorkerService}=await load('local-app/localWorkerService.js');
+ const {LocalEpisodeCommands}=await load('local-app/episodeCommands.js');
+ const {LocalConnections}=await load('local-app/connections.js');
+ const {startNativeAutomation}=await load('local-app/nativeAutomation.js');
+ const {nativeBackup}=await load('local-app/nativeBackup.js');
+
  const pending=readPendingMediaRootDeployment(d);
  if(pending){const recovery=createLocalDatabase(d.database);try{const state=(await recovery.query("SELECT local_identity.media_root_binding() binding,coalesce(nullif(current_setting('loop.restore_state',true),''),'ready') restore_state")).rows[0];const proof=pending.publication?.operation==='migration'?(await recovery.query(migrationProofQuery(pending.publication))).rows[0].media_root_publication_proof:undefined;d=recoverMediaRootDeployment(d,state.binding,{restoreState:state.restore_state,migrationProof:proof});}finally{await recovery.end();}}
  let current,active=d,closed=false,paused=false,previousPending;const requests=new Set();
@@ -34,7 +55,6 @@ export async function createNativeApplication(d){
   if(!maintenance){let complete;const done=new Promise(resolve=>{complete=resolve;});requests.add(done);const finishRequest=()=>{requests.delete(done);complete();};r.once('finish',finishRequest);r.once('close',finishRequest);}
   return current.handler(q,r);
  },close:async()=>{if(closed)return;closed=true;await previousPending?.close();await current.close();}};
-}
 async function createNativeInstance(d,activate,lifecycle){
  const pool=createLocalDatabase(d.database);let worker,episodes,accounts,automation,mediaRootSettings,closing;function close(){return closing??=(async()=>{accounts?.close();mediaRootSettings?.close();await automation?.stop();await episodes?.close();await worker?.stop();await pool.end();})();}
  try{
@@ -43,18 +63,21 @@ async function createNativeInstance(d,activate,lifecycle){
  await verifyMediaRootBinding(binding,d.worker?.minimumFreeBytes??0);
  await pool.query('SELECT local_identity.bind_media_root($1,$2,$3,$4,false,coalesce($5::uuid,CASE WHEN local_identity.media_root_binding() IS NULL THEN $6::uuid END))',[binding.path,binding.deviceId,binding.inodeId,binding.mountPath,d.storageOwnerId??null,d.secretAdministration?.adminOwnerId??null]);
  const sourceRoots=await readMediaDeployment(pool,d.mediaRoot);const environment={PATH:process.env.PATH,HOME:d.home,TMPDIR:process.env.TMPDIR,LOOP_STATE_DIR:d.stateDirectory,...(d.openChatCut?{OPENCHATCUT_ROOT:d.openChatCut.root,OPENCHATCUT_NODE:d.openChatCut.node}:{}),...(process.env.LOOP_LOCAL_OFFLINE==='1'?{NODE_OPTIONS:'--import '+join(d.projectRoot,'scripts/runtime/offline-guard.mjs')}:{})};
- worker=d.worker?await startNativeWorkerService({...d.worker,studioPort:d.openChatCut?.port,projectRoot:d.projectRoot,applicationDatabase:{host:d.database.host,port:d.database.port,database:d.database.database},database:d.workerDatabase,mediaRoot:d.mediaRoot,environment}):undefined;
+ const visualCommand=d.worker?.visualCommand?.map(value=>value===join(d.projectRoot,'scripts/runtime/codex.mjs')?join(runtimeRelease.root,'scripts/runtime/codex.mjs'):value);
+ worker=d.worker?await startNativeWorkerService({...d.worker,visualCommand,studioPort:d.openChatCut?.port,projectRoot:d.projectRoot,runtimeRelease:d.runtimeRelease,applicationDatabase:{host:d.database.host,port:d.database.port,database:d.database.database},database:d.workerDatabase,mediaRoot:d.mediaRoot,environment}):undefined;
  const store=d.connections?.keychain?configuredKeychainStore(d.connections.keychain,d.prepareKeychainAccess):undefined;
  const probe=d.connections?.verification==='manual'?createProviderProbe(d.connections.network,undefined,undefined,{manualVerification:true}):d.connections?.verification==='providers-budgeted'?createProviderProbe(d.connections.network,undefined,d.connections.readOnlyVerification):d.connections?.verification==='pexels-offline'?Object.assign(createPexelsLiveProbe({reserveRequest:()=>false}),{networkAvailable:false}):undefined;
  const secrets=d.secretAdministration&&store?new SecretAdministration(pool,d.secretAdministration,store):undefined;
  const connections=new LocalConnections(pool,store,probe);episodes=worker?new LocalEpisodeCommands(pool,d.mediaRoot,{...d.worker,...worker,checkReferences:(c,refs)=>connections.assertBlueprintReferences(c,refs)}):undefined;
  episodes?.startScriptContinuation();
  accounts=new LocalAccountCommands(pool,d.mediaRoot,episodes);
- automation=await startNativeAutomation({backupsEnabled:d.automaticBackups!==false,pool,projectRoot:d.projectRoot,recordSchedule:!worker,mediaRoot:d.mediaRoot,stateDirectory:d.stateDirectory,backup:nativeBackup(d.projectRoot,d.database.database,d.mediaRoot,d.backupRoot,{script:d.backupScript,environment:d.backupEnvironment}),...(d.controlledNotifications?{send:async m=>appendFileSync(join(d.stateDirectory,'notification-private.jsonl'),JSON.stringify({id:m.eventId,at:new Date().toISOString()})+'\n',{mode:0o600})}:{})});
+ automation=await startNativeAutomation({backupsEnabled:d.automaticBackups!==false,pool,projectRoot:d.projectRoot,runtimeRelease:d.runtimeRelease,recordSchedule:!worker,mediaRoot:d.mediaRoot,stateDirectory:d.stateDirectory,backup:nativeBackup(d.projectRoot,d.database.database,d.mediaRoot,d.backupRoot,{script:d.backupScript,environment:d.backupEnvironment}),...(d.controlledNotifications?{send:async m=>appendFileSync(join(d.stateDirectory,'notification-private.jsonl'),JSON.stringify({id:m.eventId,at:new Date().toISOString()})+'\n',{mode:0o600})}:{})});
  const historyRoot=join(d.runtimeRoot,'history/content');
  const storageResources=[{kind:'program',path:d.projectRoot},{kind:'runtime',path:d.runtimeRoot},{kind:'state',path:d.stateDirectory},{kind:'program',path:d.openChatCut?.root},{kind:'model-cache',path:d.worker?.alignment?.cacheDirectory},{kind:'history',path:historyRoot},{kind:'backup',path:d.backupRoot},{kind:'secrets'}].filter(r=>r.path||r.kind==='secrets');
  mediaRootSettings=new LocalMediaRootSettings(pool,d.mediaRoot,{resources:storageResources,pendingOperations:async()=>readPendingMediaRootDeployment(d)?[{kind:'publication',reason:'本机存储配置发布尚未完成，请先恢复原操作。'}]:[],minimumFreeBytes:d.worker?.minimumFreeBytes??0,retainedRoots:[d.worker?.alignment?.cacheDirectory].filter(p=>typeof p==='string'),protectedRoots:[...sourceRoots,historyRoot,d.runtimeRoot,d.projectRoot,d.stateDirectory,d.backupRoot,d.openChatCut?.root,d.worker?.alignment?.cacheDirectory].filter(p=>typeof p==='string'),...lifecycle,persist:(binding,publication)=>persistMediaRootDeployment(d,binding,publication),activate});
- const runtimeStatus=createRuntimeStatusReader({pool,projectRoot:d.projectRoot,mediaRoot:d.mediaRoot,mountPath:d.worker?.mountPath,minimumFreeBytes:d.worker?.minimumFreeBytes,worker:worker?.status});
+ const runtimeStatus=createRuntimeStatusReader({pool,projectRoot:d.projectRoot,mediaRoot:d.mediaRoot,mountPath:d.worker?.mountPath,minimumFreeBytes:d.worker?.minimumFreeBytes,worker:worker?.status,runtimeRelease:d.runtimeRelease,workerRelease:()=>worker?.runtimeRelease?.id??null});
  return{handler:createLocalHandler({origin:`http://127.0.0.1:${d.port}`,pool,mediaRoot:d.mediaRoot,historyRoot,mediaRootSettings,secrets,connections,episodes,accounts,automation,runtimeStatus}),close};
  }catch(error){await close();throw error;}
+}
+
 }

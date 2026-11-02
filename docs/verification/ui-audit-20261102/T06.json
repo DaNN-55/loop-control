@@ -1,0 +1,348 @@
+{
+  "id": "T06",
+  "verdict": "executed-with-limits",
+  "episodes": {
+    "total": 101,
+    "created": 100,
+    "creationMs": 10453,
+    "failures": 0,
+    "pageRows": 20
+  },
+  "workspace": {
+    "clips": 51,
+    "videoClips": 49,
+    "imageClips": 2,
+    "placeholders": 0,
+    "revision": 104,
+    "historyReturned": 50
+  },
+  "vitals": {
+    "cls": {
+      "entries": [
+        {
+          "startTime": 295.6,
+          "value": 0
+        }
+      ],
+      "score": 0
+    },
+    "fcp": 228,
+    "hydratedComponents": [],
+    "hydration": null,
+    "inp": null,
+    "lcp": {
+      "element": "span",
+      "size": 5400,
+      "startTime": 476,
+      "url": null
+    },
+    "lifecycle": {
+      "effectiveLaunch": {
+        "browserLaunched": true,
+        "engine": "chrome",
+        "launchHash": 11356512708933070000
+      },
+      "launched": false,
+      "relaunchedBrowser": false,
+      "restartedBackground": false,
+      "restoreStatus": "not_configured",
+      "reused": true,
+      "saveStatus": "not_configured"
+    },
+    "phases": [
+      {
+        "duration": 0.7,
+        "endTime": 205.6,
+        "label": "Render",
+        "startTime": 204.9
+      },
+      {
+        "duration": 1.8,
+        "endTime": 207.4,
+        "label": "Waiting for Paint",
+        "startTime": 205.6
+      },
+      {
+        "duration": 0.7,
+        "endTime": 208.1,
+        "label": "Remaining Effects",
+        "startTime": 207.4
+      },
+      {
+        "duration": 0.3,
+        "endTime": 295.1,
+        "label": "Render",
+        "startTime": 294.8
+      },
+      {
+        "duration": 0.1,
+        "endTime": 295.2,
+        "label": "Commit",
+        "startTime": 295.1
+      },
+      {
+        "duration": 0.1,
+        "endTime": 295.3,
+        "label": "Waiting for Paint",
+        "startTime": 295.2
+      },
+      {
+        "duration": 0.1,
+        "endTime": 295.4,
+        "label": "Remaining Effects",
+        "startTime": 295.3
+      },
+      {
+        "duration": 0.1,
+        "endTime": 295.9,
+        "label": "Render",
+        "startTime": 295.8
+      },
+      {
+        "duration": 0.1,
+        "endTime": 296,
+        "label": "Commit",
+        "startTime": 295.9
+      },
+      {
+        "duration": 0.1,
+        "endTime": 296.1,
+        "label": "Waiting for Paint",
+        "startTime": 296
+      },
+      {
+        "duration": 0.2,
+        "endTime": 303.8,
+        "label": "Render",
+        "startTime": 303.6
+      },
+      {
+        "duration": 0.1,
+        "endTime": 303.9,
+        "label": "Commit",
+        "startTime": 303.8
+      },
+      {
+        "duration": 0.1,
+        "endTime": 304,
+        "label": "Remaining Effects",
+        "startTime": 303.9
+      },
+      {
+        "duration": 0.1,
+        "endTime": 304.1,
+        "label": "Render",
+        "startTime": 304
+      },
+      {
+        "duration": 41.6,
+        "endTime": 455.5,
+        "label": "Render",
+        "startTime": 413.9
+      },
+      {
+        "duration": 0.6,
+        "endTime": 456.1,
+        "label": "Commit",
+        "startTime": 455.5
+      },
+      {
+        "duration": 11.9,
+        "endTime": 468,
+        "label": "Waiting for Paint",
+        "startTime": 456.1
+      },
+      {
+        "duration": 2.7,
+        "endTime": 470.7,
+        "label": "Remaining Effects",
+        "startTime": 468
+      },
+      {
+        "duration": 18.9,
+        "endTime": 510,
+        "label": "Render",
+        "startTime": 491.1
+      },
+      {
+        "duration": 1.3,
+        "endTime": 511.3,
+        "label": "Commit",
+        "startTime": 510
+      },
+      {
+        "duration": 0.2,
+        "endTime": 511.5,
+        "label": "Waiting for Paint",
+        "startTime": 511.3
+      },
+      {
+        "duration": 0.6,
+        "endTime": 512.1,
+        "label": "Remaining Effects",
+        "startTime": 511.5
+      },
+      {
+        "duration": 18.1,
+        "endTime": 535.7,
+        "label": "Render",
+        "startTime": 517.6
+      },
+      {
+        "duration": 1,
+        "endTime": 536.7,
+        "label": "Commit",
+        "startTime": 535.7
+      },
+      {
+        "duration": 0.4,
+        "endTime": 537.1,
+        "label": "Waiting for Paint",
+        "startTime": 536.7
+      },
+      {
+        "duration": 0.5,
+        "endTime": 537.6,
+        "label": "Remaining Effects",
+        "startTime": 537.1
+      },
+      {
+        "duration": 0.5,
+        "endTime": 538.2,
+        "label": "Render",
+        "startTime": 537.7
+      },
+      {
+        "duration": 0.1,
+        "endTime": 538.3,
+        "label": "Commit",
+        "startTime": 538.2
+      },
+      {
+        "duration": 0.1,
+        "endTime": 538.4,
+        "label": "Remaining Effects",
+        "startTime": 538.3
+      }
+    ],
+    "ttfb": 1.1,
+    "url": "http://127.0.0.1:5173/__story"
+  },
+  "preparationSample": {
+    "domNodes": 3731,
+    "heapBytes": 321509834,
+    "players": 3,
+    "rows": 51
+  },
+  "nativeSample": {
+    "result": {
+      "clips": 0,
+      "heap": 125615171,
+      "inputs": [
+        {
+          "label": null,
+          "title": "",
+          "type": "file"
+        },
+        {
+          "label": null,
+          "title": "",
+          "type": "file"
+        },
+        {
+          "label": "搜索素材",
+          "title": "",
+          "type": "text"
+        },
+        {
+          "label": null,
+          "title": "",
+          "type": "number"
+        },
+        {
+          "label": "缩放比例",
+          "title": "",
+          "type": "range"
+        },
+        {
+          "label": "横向缩放",
+          "title": "",
+          "type": "range"
+        },
+        {
+          "label": "纵向缩放",
+          "title": "",
+          "type": "range"
+        },
+        {
+          "label": "水平",
+          "title": "",
+          "type": "range"
+        },
+        {
+          "label": "垂直",
+          "title": "",
+          "type": "range"
+        },
+        {
+          "label": "旋转",
+          "title": "",
+          "type": "range"
+        },
+        {
+          "label": "透明",
+          "title": "",
+          "type": "range"
+        },
+        {
+          "label": "圆角",
+          "title": "",
+          "type": "range"
+        },
+        {
+          "label": "裁左",
+          "title": "",
+          "type": "range"
+        },
+        {
+          "label": "裁右",
+          "title": "",
+          "type": "range"
+        },
+        {
+          "label": "裁上",
+          "title": "",
+          "type": "range"
+        },
+        {
+          "label": "裁下",
+          "title": "",
+          "type": "range"
+        },
+        {
+          "label": null,
+          "title": "缩放时间轴",
+          "type": "range"
+        },
+        {
+          "label": null,
+          "title": "",
+          "type": "file"
+        },
+        {
+          "label": null,
+          "title": "",
+          "type": "file"
+        }
+      ],
+      "nodes": 1186,
+      "players": 32
+    }
+  },
+  "limitations": [
+    "重复使用同一4秒合成视频，不能代表49个独立高码率来源",
+    "开发模式单次数据，不是生产性能结论",
+    "附加打开带嵌入桥参数的SDK地址到顶层标签后，快照出现超时；隔离浏览器已关闭，该不受支持测试形态不归为产品缺陷",
+    "未覆盖数千生产单、上百模型或真实Pexels远端"
+  ]
+}

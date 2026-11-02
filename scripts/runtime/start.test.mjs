@@ -2,6 +2,7 @@
 import {EventEmitter} from 'node:events';
 import {afterEach,beforeEach,expect,it,vi} from 'vitest';
 const ports=vi.hoisted(()=>({exists:true,matching:false,inspect:vi.fn(),rename:vi.fn(),write:vi.fn(),spawn:vi.fn(),prepare:vi.fn(),unlock:vi.fn(),ensure:vi.fn()}));
+vi.mock('../../src/orchestration/runtimeBuild.ts',()=>({readPreparedRuntimeRelease:async()=>({id:'fixture-release',root:'/fixture/project/.loop-control/runtime-releases/fixture-release'})}));
 vi.mock('./keychain.mjs',()=>({keychainState:ports.unlock}));
 vi.mock('./services.mjs',()=>({ensureServices:ports.ensure}));
 vi.mock('./environment.mjs',()=>({projectRoot:'/fixture/project',readDeployment:()=>({port:5174,recordPath:'/fixture/runtime/app.json',logPath:'/fixture/runtime/app-private.log',home:'/fixture/home',deploymentFile:'/fixture/runtime/deployment.json'}),writePrivateFile:ports.write}));
@@ -19,7 +20,7 @@ it('archives a record only after confirming its process exited, then starts norm
  await import('./start.mjs');
  expect(process.kill).toHaveBeenCalledWith(444,0);expect(ports.rename).toHaveBeenCalledWith('/fixture/runtime/app.json',expect.stringMatching(/app\.json\.stale-\d+$/));expect(ports.spawn).toHaveBeenCalledTimes(1);expect(ports.write).toHaveBeenCalledWith('/fixture/runtime/app.json',expect.stringContaining('999'),{exclusive:true});
  expect(ports.spawn.mock.calls[0][2]).toMatchObject({detached:true,stdio:['ignore',10,10]});
- expect(ports.spawn.mock.results[0].value.unref).toHaveBeenCalledOnce();
+ expect(ports.spawn.mock.results[0].value.unref).toHaveBeenCalledOnce();expect(JSON.parse(ports.spawn.mock.calls[0][2].env.LOOP_RUNTIME_RELEASE).id).toBe('fixture-release');expect(JSON.parse(ports.write.mock.calls[0][1]).runtimeRelease.id).toBe('fixture-release');
 });
 it('does not archive or stop a live process whose identity does not match',async()=>{
  process.kill.mockImplementation(()=>true);

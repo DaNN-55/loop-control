@@ -1,0 +1,35 @@
+{
+  "e2e": {
+    "passed": 21,
+    "failed": 0,
+    "skipped": 0,
+    "command": "npm run test:e2e"
+  },
+  "default": {
+    "files": 188,
+    "passed": 1257,
+    "failed": 0,
+    "command": "npm test -- --maxWorkers=2 --reporter=json"
+  },
+  "types": {
+    "exitCode": 0,
+    "command": "npm run check"
+  },
+  "syntax": {
+    "exitCode": 0,
+    "command": "node --check scripts/e2e/run.mjs"
+  },
+  "diff": {
+    "exitCode": 0,
+    "command": "git diff --check"
+  },
+  "snapshot": "/private/tmp/loop-story-e2e-EY3rVp/source",
+  "paidCalls": 0,
+  "paidCostCny": 0,
+  "video": {
+    "duration": 6.058667,
+    "frames": 13,
+    "time": 0.270883
+  },
+  "allOwnedSourceMatchesSnapshot": true
+}

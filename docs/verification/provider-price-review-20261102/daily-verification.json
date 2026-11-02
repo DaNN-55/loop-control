@@ -1,0 +1,13 @@
+{
+  "businessUnchanged": true,
+  "legacyAuthorizationsUnchanged": true,
+  "runtimePrepared": true,
+  "dailyHTTP": 200,
+  "releaseId": "5f8aeb65a12e84f41d4cc67ea18ef2bc0c62ed67aea8a5ad8ff43b0462b5e990",
+  "activity": {
+    "ready": 0,
+    "running": 0
+  },
+  "realProviderCalls": 0,
+  "runningReleaseMatchesPrepared": true
+}

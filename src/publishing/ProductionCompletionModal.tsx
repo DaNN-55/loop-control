@@ -1,3 +1,4 @@
+import {AudioPreview} from '../ui/media/AudioPreview';
 import {ProductionNodeSurface,ProductionNodePreview} from '../episodes/ProductionNodeLayout';
 import {ModalOverlay,Modal,Dialog} from '../ui/dan-ui/components/application/modals/modal';
 import {XClose} from '@untitledui/icons';
@@ -103,7 +104,7 @@ function PublishMaterialPreview({ artifact, kind, label }: { artifact: Artifact;
   const [isExpanded, setIsExpanded] = useState(false);
   if (error) return <div aria-label={`${label}预览`} className="publish-material-preview"><span className="publish-material-preview-error">{error}</span></div>;
   if (!url) return <div aria-label={`${label}预览`} className="publish-material-preview"><span>正在加载预览…</span></div>;
-  const media = kind === "image" ? <img alt={`${label}预览`} src={url} /> : kind === "video" ? <video aria-label={`${label}预览`} controls preload="metadata" src={url} /> : <audio aria-label={`${label}预览`} controls preload="metadata" src={url} />;
+  const media = kind === "image" ? <img alt={`${label}预览`} src={url} /> : kind === "video" ? <video aria-label={`${label}预览`} controls preload="metadata" src={url} /> : <AudioPreview aria-label={`${label}预览`} preload="metadata" src={url} />;
   return <><figure className="publish-material-preview"><div>{media}</div><Button size="sm" color="tertiary" aria-label={`放大查看${label}`} className="publish-material-zoom" onClick={() => setIsExpanded(true)} type="button"><Expand size={16}/></Button></figure>{isExpanded ? <ModalOverlay isOpen isDismissable onOpenChange={setIsExpanded} className="dan-ui product-ui artifact-lightbox-overlay"><Modal className="artifact-lightbox-modal"><Dialog aria-label={`${label}放大预览`} className="artifact-lightbox-content"><Button autoFocus size="sm" color="tertiary" aria-label={`关闭${label}放大预览`} className="publish-material-lightbox-close" onPress={() => setIsExpanded(false)} type="button">关闭</Button>{media}</Dialog></Modal></ModalOverlay> : null}</>;
 }
 

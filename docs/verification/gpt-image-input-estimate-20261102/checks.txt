@@ -1,0 +1,25 @@
+/tmp/loop-image-input-unit2.log
+ ✓ src/local-app/workspaceCallEstimate.test.ts (16 tests) 4ms
+ ✓ src/imageGeneration.test.ts (3 tests) 3ms
+ Test Files  2 passed (2)
+      Tests  19 passed (19)
+   Start at  15:07:31
+   Duration  501ms (transform 51ms, setup 14ms, collect 40ms, tests 7ms, environment 323ms, prepare 81ms)
+
+/tmp/loop-image-input-http.log
+ ✓ src/local-app/workspaceImageGeneration.integration.test.ts (1 test) 4590ms
+ ✓ src/local-app/workspaceImageInputEstimate.integration.test.ts (2 tests) 6377ms
+ ✓ src/local-app/workspaceCallConfirmation.integration.test.ts (5 tests) 12171ms
+ Test Files  3 passed (3)
+      Tests  8 passed (8)
+   Start at  15:07:32
+   Duration  13.07s (transform 539ms, setup 43ms, collect 2.14s, tests 23.14s, environment 0ms, prepare 104ms)
+
+/tmp/loop-image-input-default.log
+ ✓ src/imageGeneration.test.ts (3 tests) 2ms
+ ✓ src/local-app/workspaceCallEstimate.test.ts (16 tests) 6ms
+ Test Files  201 passed (201)
+      Tests  1341 passed | 1 skipped (1342)
+   Start at  15:10:05
+   Duration  47.69s (transform 4.22s, setup 291ms, collect 53.70s, tests 126.87s, environment 27.97s, prepare 6.88s)
+

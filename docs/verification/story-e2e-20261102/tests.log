@@ -1,0 +1,47 @@
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-EY3rVp/source
+
+stderr | src/local-app/storyE2e.integration.test.ts > story 5 browser: cancel a collection plan, recover a lost move receipt, and read the same export with the old directory offline
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-t06-volume-xkTFzd/mounted/loop-153-7nzHuQ/browser-vite-cache/deps/react-dom_client.js?v=9b3c4948 as it exceeds the max of 500KB.
+
+stderr | src/local-app/storyE2e.integration.test.ts > story 1 browser: validates the new script, recovers committed import/create receipts and opens one series-bound order
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-t06-volume-tUrdVL/mounted/loop-153-xKIBzt/browser-vite-cache/deps/react-dom_client.js?v=485557d3 as it exceeds the max of 500KB.
+
+stderr | src/local-app/storyE2e.integration.test.ts > story 4 browser: confirms the actual subtitles, retries a lost package receipt, then reloads a verified playable delivery
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-t06-volume-EOZWiP/mounted/loop-153-48UymK/browser-vite-cache/deps/react-dom_client.js?v=bf550592 as it exceeds the max of 500KB.
+
+stderr | src/local-app/storyE2e.integration.test.ts > story 2 browser: a lost committed generation response and resubmission keep one task before an explicit three-second adoption
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-t06-volume-Vulrme/mounted/loop-153-vB43lq/browser-vite-cache/deps/react-dom_client.js?v=55aba304 as it exceeds the max of 500KB.
+
+stderr | src/local-app/storyE2e.integration.test.ts > story 3 browser: native adoption interrupted before its receipt recovers on reload and duplicate confirmation
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-t06-volume-abVOd2/mounted/loop-153-LMA015/browser-vite-cache/deps/react-dom_client.js?v=e56e169b as it exceeds the max of 500KB.
+
+ ✓ src/local-app/storyE2e.integration.test.ts (21 tests) 194858ms
+   ✓ story 5 browser: cancel a collection plan, recover a lost move receipt, and read the same export with the old directory offline  27405ms
+   ✓ story 5: detached media refuses export without creating a host fallback and remount restores the same story  3875ms
+   ✓ story 1 browser: validates the new script, recovers committed import/create receipts and opens one series-bound order  8690ms
+   ✓ story 4 browser: confirms the actual subtitles, retries a lost package receipt, then reloads a verified playable delivery  19289ms
+   ✓ story 2 browser: a lost committed generation response and resubmission keep one task before an explicit three-second adoption  20052ms
+   ✓ story 2: rejects an unsupported duration, then one duplicate-safe request produces an unused four-second candidate  7593ms
+   ✓ story 2: image generation rejects bad input and duplicate submission leaves one unused story candidate  5239ms
+   ✓ story 2: speech generation rejects bad input and duplicate submission leaves one unused story candidate  4503ms
+   ✓ story 1 process: a real crash during directory creation resumes the same story order and rejects a changed duplicate  3237ms
+   ✓ story 5 process: resume a real copy-publication SIGKILL without losing either shot or duplicating the move  5772ms
+   ✓ story 5 process: rollback a real copy-publication SIGKILL without losing either shot or duplicating the move  4781ms
+   ✓ story 3: saved native image recovers a missing adoption receipt, and repeated confirmation preserves both story shots  9178ms
+   ✓ story 3: saved native video recovers a missing adoption receipt, and repeated confirmation preserves both story shots  9065ms
+   ✓ story 3: saved native speech recovers its missing receipt without regenerating or substituting the story text  9258ms
+   ✓ story 3: changed-file cannot overwrite the saved umbrella scene  3738ms
+   ✓ story 3: newer-target cannot overwrite the saved umbrella scene  3919ms
+   ✓ story 3: reject cannot overwrite the saved umbrella scene  3815ms
+   ✓ story 4: a six-second subtitled export and exact package survive failed validation, retry, restart and duplicate submission  14444ms
+   ✓ story 2: unknown interruption survives restart without a second supplier submission  4836ms
+   ✓ story 2: poll-fail interruption survives restart without a second supplier submission  4674ms
+   ✓ story 3 browser: native adoption interrupted before its receipt recovers on reload and duplicate confirmation  21491ms
+
+ Test Files  1 passed (1)
+      Tests  21 passed (21)
+   Start at  11:08:31
+   Duration  196.12s (transform 668ms, setup 14ms, collect 1.05s, tests 194.86s, environment 0ms, prepare 41ms)
+
+JSON report written to /private/tmp/loop-story-e2e-EY3rVp/evidence/vitest.json

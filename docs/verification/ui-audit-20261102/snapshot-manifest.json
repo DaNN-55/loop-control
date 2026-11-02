@@ -1,0 +1,21 @@
+{
+  "createdAt": "2026-11-02T11:49:54.034Z",
+  "baseHead": "055914a931c26d3f637237947f4265af80678d68",
+  "sourceWasDirty": true,
+  "sourceRoot": "/private/tmp/loop-ui-audit-ZEDnyP/source",
+  "sdkVersion": "0.2.17",
+  "soundCount": 39,
+  "snapshotOnlyPatch": "expose browser session in storyBrowser fixture",
+  "hashes": {
+    "package.json": "76ca1faa91e209fc9855c861930ea65796192c950435b3832e9751d5243e4107",
+    "src/local-app/LocalCatalogApp.tsx": "7dcaeaf20fab0eae113e047f8d1d065a124480357e1a9e33acf519d6dd188d83",
+    "src/local-app/WorkspaceVisualPreparation.tsx": "214282b51c621e7d5b236e4c672fcc8944999a0493e6206cf7fc5808d02af3a4",
+    "src/local-app/workspaceVisualCandidates.ts": "1febb4852c3ed0f074cd6a685952752fafc3ef052c7cc1a1835d80d7b1a56a04",
+    "src/local-app/workspaceSources.ts": "73a52a4770fdf220bd3e2af8ba7d87cf238bfa9ad2919498a77d9af0f8754904",
+    "src/local-app/storyBrowser.fixture.ts": "1b7a8e4a3336f9d87ca04f675f372d0b23c94f4018556b8d049671125d7af69b",
+    "src/local-app/uiAudit20261102.integration.test.ts": "591567d39d9ab4bb13603a4a46d939fc56cc773744b8857ce3e3748b7d3de853",
+    "OpenChatCut/package.json": "6647149489f43e5e3934963f4fbe8fa0bc0ce37972e055f9cacc2462e76e1805",
+    "OpenChatCut/src/library/SoundBrowser.tsx": "5f7eb3ce61911fa86d5809dad170dff7af35cc04046887015a40ac61a90d781a",
+    "OpenChatCut/src/audio/soundLibrary.ts": "52864e7811495aebaa7988adfd8e2d39aba256366a92e7427ecae027eae7f5b7"
+  }
+}

@@ -1,3 +1,4 @@
+import {currentWorkspaceCallAuthorization} from './workspaceCallConfirmation.js';
 import {episodeStorageLocationAtRoot,requireWritableEpisodeStorage} from './episodeStorageLocation.js';
 import {creativeAccountRules} from '../creativeAccountRules.js';
 import {resolveProductionSelection} from './productionSelection.js';
@@ -11,7 +12,6 @@ import type {PoolClient} from 'pg';
 import type {WorkspaceNarration} from '../productionWorkspace.js';
 import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
 import type {InputRuntime} from './episodeCommands.js';
-import {productionHash} from './scriptProductionStore.js';
 import {ConfigurationError} from './configurationCommands.js';
 import {verifyEpisodeFile,resolveEpisodeFileReference} from './episodeFiles.js';
 import {resolveWorkspaceSource} from './workspaceSources.js';
@@ -98,8 +98,7 @@ export async function executeWorkspaceNarration(c:PoolClient,root:string,row:Pro
  if(command!=='generateWorkspaceNarration')throw new ConfigurationError(400,'不支持的口播操作。');
  if(n.mode!=='tts'||!n.confirmed)throw new ConfigurationError(409,'请先保存并确认当前镜头匹配与口播。');
  if(data.retry!==undefined&&typeof data.retry!=='boolean')throw new ConfigurationError(400,'重试参数无效。');
- const authorized=(await c.query('SELECT p.* FROM local_identity.script_productions p WHERE p.episode_id=$1 AND p.script_revision_id=$2 AND p.enabled AND p.authorized_at IS NOT NULL',[row.episode_id,row.script_revision_id])).rows[0];
- if(!authorized)throw new ConfigurationError(409,'请先确认并授权本期制作计划。');
+ const authorized=await currentWorkspaceCallAuthorization(c,row);
  if(n.selection){
   const active=await c.query(`SELECT 1 FROM local_identity.workspace_narration_requests r JOIN public.tasks t ON t.id=r.task_id LEFT JOIN local_identity.workspace_narration_submissions s ON s.task_id=t.id WHERE r.workspace_id=$1 AND r.shot_id=$2 AND ((t.status IN ('ready','running') AND r.input_fingerprint<>$3) OR (s.outcome IN ('started','received') AND t.status<>'completed'))`,[row.id,clip.shotId,n.inputFingerprint]);if(active.rowCount)throw new ConfigurationError(409,'上次口播仍在执行或提交结果未知；请先核对，不会重复发送。');
   const resolved=await resolveProductionSelection(c,n.selection,'speech');validateSpeechParameters(resolved.selection,n.voice,n.languageCode,n.speakingRate);
@@ -112,7 +111,6 @@ export async function executeWorkspaceNarration(c:PoolClient,root:string,row:Pro
  }
  if(data.retry!==true||!n.taskId||!(await c.query('SELECT 1 FROM local_identity.workspace_narration_requests WHERE task_id=$1 AND workspace_id=$2 AND input_fingerprint=$3',[n.taskId,row.id,n.inputFingerprint])).rowCount)throw new ConfigurationError(400,'请选择本次制作服务。');
  const e=(await c.query('SELECT b.policy FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE e.id=$1',[row.episode_id])).rows[0];
- if(authorized.plan?.executionFingerprint!==productionHash(e.policy))throw new ConfigurationError(409,'制作能力已变化，请重新确认本期授权。');
  const config=e.policy.narration;
  if(config?.execution_path!=='external'||config?.executor?.provider!=='volcengine_tts'||config.executor.adapter!=='volcengine_tts')throw new ConfigurationError(409,'当前口播能力为人工、关闭或不可执行。');
  const unresolved=await c.query(`SELECT 1 FROM local_identity.workspace_narration_requests r JOIN local_identity.workspace_narration_submissions s ON s.task_id=r.task_id JOIN public.tasks t ON t.id=r.task_id WHERE r.workspace_id=$1 AND r.shot_id=$2 AND s.outcome IN ('started','received') AND t.status<>'completed'`,[row.id,clip.shotId]);

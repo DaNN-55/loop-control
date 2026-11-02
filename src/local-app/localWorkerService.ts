@@ -9,11 +9,12 @@ import type {PoolConfig} from 'pg';
 import {createWorkerDatabase,nativeWorkerPort,assertNativeWorkerDatabase,assertWorkerDatabaseBinding} from './workerDatabase.js';
 import {ConfigurationError} from './configurationCommands.js';
 import {startWorkerScheduler} from '../orchestration/workerScheduler.js';
-import {assertPreparedRuntime} from '../orchestration/runtimeBuild.js';
+import {assertRuntimeRelease,readPreparedRuntimeRelease,type RuntimeRelease} from '../orchestration/runtimeBuild.js';
 import type {ClaimedTaskRow} from '../orchestration/workerDispatch.js';
+import {NativePublicationUnknownError,isNativePublicationUnknownMessage} from '../orchestration/workerOutcome.js';
 import{assertNarrationReady,type NativeNarrationConfiguration}from'./narrationWorker.js';
 export interface NativeWorkerConfiguration {
- projectRoot:string;database:PoolConfig;mediaRoot:string;mountPath:string;minimumFreeBytes:number;
+ projectRoot:string;runtimeRelease?:RuntimeRelease;database:PoolConfig;mediaRoot:string;mountPath:string;minimumFreeBytes:number;
  applicationDatabase:Pick<PoolConfig,'host'|'port'|'database'>;
  visualCommand:string[];environment:NodeJS.ProcessEnv;concurrency:number;
  actualCostCents:number;
@@ -21,15 +22,16 @@ export interface NativeWorkerConfiguration {
  media?:NativeMediaConfiguration;
  alignment?:NativeAlignmentConfiguration;shotPreview?:boolean;studio?:boolean;delivery?:boolean;
  studioPort?:number;
- record?:(event:{name:string;taskId:string;pid?:number;step?:string})=>void;
+ record?:(event:{name:string;taskId:string;pid?:number;step?:string;runtimeVersion?:string})=>void;
 }
 export async function startNativeWorkerService(config:NativeWorkerConfiguration){
+ config={...config,runtimeRelease:config.runtimeRelease??await readPreparedRuntimeRelease(config.projectRoot)};
  assertWorkerDatabaseBinding(config.database,config.applicationDatabase);
  const pool=createWorkerDatabase(config.database),port=nativeWorkerPort(pool),controller=new AbortController();
  const ready=async()=>{
-  await assertPreparedRuntime(config.projectRoot);
+  await assertRuntimeRelease(config.projectRoot,config.runtimeRelease!);
   await readMediaDeployment(pool,config.mediaRoot);
-  await access(join(config.projectRoot,'dist/worker/local-app/localWorkerCli.js'));
+  await access(join(config.runtimeRelease!.root,'dist/worker/local-app/localWorkerCli.js'));
   if(!Number.isSafeInteger(config.actualCostCents)||config.actualCostCents<0)throw Error('Worker成本配置无效。');
   if(!config.visualCommand.length)throw Error('本地视觉执行器未配置。');await access(config.visualCommand[0],constants.X_OK);
   try{await assertNativeWorkerDatabase(pool,config.database.database!,Boolean(config.narration),Boolean(config.media));}catch{throw new ConfigurationError(503,'Worker数据库连接或身份检查失败，请检查本机Worker配置。');}
@@ -39,21 +41,21 @@ export async function startNativeWorkerService(config:NativeWorkerConfiguration)
  async function execute(task:ClaimedTaskRow){
   await ready();
   return new Promise((resolve,reject)=>{
-   const child=spawn(process.execPath,[join(config.projectRoot,'dist/worker/local-app/localWorkerCli.js')],{cwd:config.projectRoot,env:config.environment,detached:process.platform!=='win32',stdio:['pipe','pipe','pipe']});
-   config.record?.({name:'worker-started',taskId:task.task_id,pid:child.pid});
+   const child=spawn(process.execPath,[join(config.runtimeRelease!.root,'dist/worker/local-app/localWorkerCli.js')],{cwd:config.projectRoot,env:config.environment,detached:process.platform!=='win32',stdio:['pipe','pipe','pipe']});
+   config.record?.({name:'worker-started',taskId:task.task_id,pid:child.pid,runtimeVersion:config.runtimeRelease!.id});
    let output='',overflow=false;let killTimer:ReturnType<typeof setTimeout>|undefined;
    const kill=(signal:NodeJS.Signals)=>{if(child.pid)try{process.kill(process.platform==='win32'?child.pid:-child.pid,signal);}catch{/* Exited. */}};
    const stop=()=>{kill('SIGTERM');killTimer=setTimeout(()=>kill('SIGKILL'),2000);killTimer.unref();};controller.signal.addEventListener('abort',stop,{once:true});
    if(controller.signal.aborted)stop();
-   const {projectRoot,database,mediaRoot,mountPath,minimumFreeBytes,visualCommand,actualCostCents,narration,media,alignment,shotPreview,studio,delivery}=config;
+   const {projectRoot,runtimeRelease,database,mediaRoot,mountPath,minimumFreeBytes,visualCommand,actualCostCents,narration,media,alignment,shotPreview,studio,delivery}=config;
    const applicationDatabase={host:config.applicationDatabase.host,port:config.applicationDatabase.port,database:config.applicationDatabase.database};
-   child.stdin.on('error',()=>{});child.stdin.end(JSON.stringify({task,config:{projectRoot,database,applicationDatabase,mediaRoot,mountPath,minimumFreeBytes,visualCommand,actualCostCents,narration,media,alignment,shotPreview,studio,delivery}}));
+   child.stdin.on('error',()=>{});child.stdin.end(JSON.stringify({task,config:{projectRoot,runtimeRelease,database,applicationDatabase,mediaRoot,mountPath,minimumFreeBytes,visualCommand,actualCostCents,narration,media,alignment,shotPreview,studio,delivery}}));
    child.stdout.on('data',b=>{output+=String(b);if(Buffer.byteLength(output)>65536){overflow=true;stop();}});
    child.stderr.on('data',()=>{}); // Raw process/database diagnostics never become a response channel.
-   child.once('error',reject);child.once('close',code=>{controller.signal.removeEventListener('abort',stop);if(killTimer)clearTimeout(killTimer);try{if(code!==0||overflow)throw Error();for(const line of output.trim().split('\n')){const value=JSON.parse(line);if(value.event==='progress')config.record?.({name:'worker-progress',taskId:task.task_id,step:String(value.step)});}resolve(JSON.parse(output.trim().split('\n').at(-1)!));}catch{reject(Error('本地Worker执行未完成。'));}});
+   child.once('error',reject);child.once('close',code=>{controller.signal.removeEventListener('abort',stop);if(killTimer)clearTimeout(killTimer);try{if(!overflow&&code!==0&&isNativePublicationUnknownMessage(output,task)){config.record?.({name:'worker-publication-unknown',taskId:task.task_id});throw new NativePublicationUnknownError();}if(code!==0||overflow)throw Error();for(const line of output.trim().split('\n')){const value=JSON.parse(line);if(value.event==='progress')config.record?.({name:'worker-progress',taskId:task.task_id,step:String(value.step)});}resolve(JSON.parse(output.trim().split('\n').at(-1)!));}catch(error){reject(error instanceof NativePublicationUnknownError?error:Error('本地Worker执行未完成。'));}});
   });
  }
  const scheduler=await startWorkerScheduler({projectRoot:config.projectRoot,database,environment:config.environment,concurrency:config.concurrency,signal:controller.signal},{prepare:ready,execute});
  let stopping:Promise<void>|undefined;
- return {ready,deliveryReady:async()=>{await ready();if(!config.delivery)throw Error('本地交付尚未配置。');await assertMediaReady(config.media,{a_roll:{execution_path:'local',executor:{provider:'openchatcut'}}},config.environment);},studioRuntime:async()=>{await ready();if(!config.studio||!config.environment.OPENCHATCUT_ROOT)throw Error('本地 Studio 尚未配置。');await assertMediaReady(config.media,{a_roll:{execution_path:'local',executor:{provider:'openchatcut'}}},config.environment);return {port:config.studioPort,root:config.environment.OPENCHATCUT_ROOT,nodePath:config.environment.OPENCHATCUT_NODE??process.execPath,environment:config.environment};},postReady:async(kind:'source'|'alignment'|'preview')=>{await ready();if(kind==='alignment'){await assertAlignmentConfigured(config.projectRoot,config.mediaRoot,config.alignment);}else{if(kind==='preview'&&!config.shotPreview)throw Error('同步预览尚未配置。');await assertMediaReady(config.media,kind==='preview'?{a_roll:{execution_path:'local',executor:{provider:'openchatcut'}}}:{},config.environment);}},localClipReady:async()=>{await ready();await assertMediaReady(config.media,undefined,config.environment);},mediaReady:async(policy:Record<string,unknown>)=>{await ready();await assertMediaReady(config.media,policy,config.environment);},narrationReady:async()=>{await ready();await assertNarrationReady(config.narration);},wake:(episodeId:string)=>scheduler.wake({episodeId}),status:scheduler.status,stop(){return stopping??= (async()=>{controller.abort();await scheduler.stop();await pool.end();})();}};
+ return {runtimeRelease:config.runtimeRelease!,ready,deliveryReady:async()=>{await ready();if(!config.delivery)throw Error('本地交付尚未配置。');await assertMediaReady(config.media,{a_roll:{execution_path:'local',executor:{provider:'openchatcut'}}},config.environment);},studioRuntime:async()=>{await ready();if(!config.studio||!config.environment.OPENCHATCUT_ROOT)throw Error('本地 Studio 尚未配置。');await assertMediaReady(config.media,{a_roll:{execution_path:'local',executor:{provider:'openchatcut'}}},config.environment);return {port:config.studioPort,root:config.environment.OPENCHATCUT_ROOT,nodePath:config.environment.OPENCHATCUT_NODE??process.execPath,environment:config.environment};},postReady:async(kind:'source'|'alignment'|'preview')=>{await ready();if(kind==='alignment'){await assertAlignmentConfigured(config.projectRoot,config.mediaRoot,config.alignment);}else{if(kind==='preview'&&!config.shotPreview)throw Error('同步预览尚未配置。');await assertMediaReady(config.media,kind==='preview'?{a_roll:{execution_path:'local',executor:{provider:'openchatcut'}}}:{},config.environment);}},localClipReady:async()=>{await ready();await assertMediaReady(config.media,undefined,config.environment);},mediaReady:async(policy:Record<string,unknown>)=>{await ready();await assertMediaReady(config.media,policy,config.environment);},narrationReady:async()=>{await ready();await assertNarrationReady(config.narration);},wake:(episodeId:string)=>scheduler.wake({episodeId}),status:scheduler.status,stop(){return stopping??= (async()=>{controller.abort();await scheduler.stop();await pool.end();})();}};
 }

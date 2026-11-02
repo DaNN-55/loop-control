@@ -798,7 +798,8 @@ describe("审核台", () => {
     expect(screen.getByText("当前片段原声成为唯一主声音；多槽位复用也只播放一次。")).toBeTruthy();
     await user.selectOptions(screen.getByLabelText("shot-1 镜头音效"), "sfx-1");
     expect(onSaveStoryboardAudioSelection).toHaveBeenCalledWith(expect.objectContaining({ audioKind: "sfx", cueId: "sfx-1", targetId: "shot-1", targetKind: "shot" }));
-    const previewSfx = screen.getByRole("button", { name: "shot-1 试听镜头音效" });
+    const sfxMedia = await screen.findByLabelText("shot-1 试听镜头音效");
+    const previewSfx = within(sfxMedia.closest('.app-audio-player') as HTMLElement).getByRole("button", { name: "播放" });
     await waitFor(() => expect((previewSfx as HTMLButtonElement).disabled).toBe(false));
     await user.click(previewSfx);
     expect(playSfx).toHaveBeenCalledTimes(1);

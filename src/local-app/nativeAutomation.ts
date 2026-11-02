@@ -6,23 +6,23 @@ import {access,stat} from 'node:fs/promises';
 import {constants} from 'node:fs';
 import {consumeNotifications,notificationCategory,type ClaimedNotificationEvent,type EventNotification} from '../orchestration/notificationConsumer.js';
 import {recordOperation,readOperationsEvidence,bindOperationDirectory,type Operation,type OperationResult} from '../orchestration/operationsEvidence.js';
-import {assertPreparedRuntime} from '../orchestration/runtimeBuild.js';
+import {assertPreparedRuntime,assertRuntimeRelease,type RuntimeRelease} from '../orchestration/runtimeBuild.js';
 import {healthCheckLabels,readHealthChecks,type HealthCheck,type HealthResult} from '../observability/healthChecks.js';
 const exec=promisify(execFile);
 export interface AutomationJob {id:string;kind:'health'|'backup';due_at:Date;token:string;attempt:number}
 export interface NativeAutomationOptions {
- pool:Pool;projectRoot:string;mediaRoot:string;stateDirectory:string;
+ pool:Pool;projectRoot:string;runtimeRelease?:RuntimeRelease;mediaRoot:string;stateDirectory:string;
  backupsEnabled?:boolean;
  now?:()=>Date;intervalMs?:number;recordSchedule?:boolean;
  send?:(message:EventNotification)=>Promise<void>;
  health?:(signal:AbortSignal)=>Promise<HealthResult>;
  backup?:(jobId:string,signal:AbortSignal)=>Promise<{passed:boolean;detail:string}>;
 }
-export async function nativeHealth(options:Pick<NativeAutomationOptions,'pool'|'projectRoot'|'mediaRoot'>):Promise<HealthResult>{
+export async function nativeHealth(options:Pick<NativeAutomationOptions,'pool'|'projectRoot'|'runtimeRelease'|'mediaRoot'>):Promise<HealthResult>{
  const probes:{id:HealthCheck['id'];run:()=>Promise<unknown>}[]=[
   {id:'database',run:()=>options.pool.query('SELECT 1')},
   {id:'media_directory',run:async()=>{if(!(await stat(options.mediaRoot)).isDirectory())throw Object.assign(Error(),{code:'ENOTDIR'});await access(options.mediaRoot,constants.R_OK|constants.W_OK);}},
-  {id:'runtime',run:()=>assertPreparedRuntime(options.projectRoot)},
+  {id:'runtime',run:()=>options.runtimeRelease?assertRuntimeRelease(options.projectRoot,options.runtimeRelease):assertPreparedRuntime(options.projectRoot)},
  ];
  const checks=await Promise.all(probes.map(async({id,run}):Promise<HealthCheck>=>{
   try{await run();return{id,passed:true,detail:`${healthCheckLabels[id]}检查通过。`};}

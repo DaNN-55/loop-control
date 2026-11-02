@@ -1,0 +1,192 @@
+[
+  {
+    "command": "read",
+    "status": 401,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 401,
+    "dropped": false
+  },
+  {
+    "command": "login",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 503,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 503,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "readEpisodeCollection",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "planEpisodeCollectionMove",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "readEpisodeCollection",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "rollbackAssetDirectoryMigration",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "readEpisodeCollection",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "planEpisodeCollectionMove",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "readEpisodeCollection",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "executeAssetDirectoryMigration",
+    "status": 200,
+    "dropped": true
+  },
+  {
+    "command": "readEpisodeCollection",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 503,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 503,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "readEpisodeCollection",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  },
+  {
+    "command": "read",
+    "status": 200,
+    "dropped": false
+  }
+]

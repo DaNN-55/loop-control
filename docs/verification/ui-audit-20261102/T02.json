@@ -1,0 +1,49 @@
+{
+  "id": "T02",
+  "verdict": "executed-blocking-finding",
+  "sound": {
+    "select": true,
+    "insert": true,
+    "hostSave": false,
+    "message": "工程引用了未注册的本期素材或已完成任务产物。",
+    "undoThenSave": true
+  },
+  "baselineExport": {
+    "status": 200,
+    "mp4": {
+      "sha256": "4af77e072fe4350672378826c5e2548c302e4c10e1e176e6a1d6b4f547701217",
+      "fileSize": 295819,
+      "relativePath": "城市善意--4b533d7f-35a8-43a7-8984-83817f79be55/末班车前的一把伞--1e5be46c-83b4-4bb8-84b6-bbff3f378fdd/workspace-exports/0784be87-0e84-4e85-a04d-dd56471e4f57/4af77e072fe4350672378826c5e2548c302e4c10e1e176e6a1d6b4f547701217.mp4"
+    },
+    "technical": {
+      "name": "technical",
+      "detail": "实际 MP4 时长、画幅、音频及黑帧检查通过。",
+      "passed": true,
+      "inspection": {
+        "width": 1080,
+        "height": 1920,
+        "hasAudio": true,
+        "blackFrameCount": 0,
+        "durationSeconds": 6.058667
+      },
+      "videoFrames": 180,
+      "audioExpected": false,
+      "videoDurationSeconds": 6,
+      "expectedDurationSeconds": 6,
+      "containerDurationSeconds": 6.058667
+    }
+  },
+  "surfaces": [
+    "资源库及音效分类、试听/添加入口",
+    "快捷键窗口",
+    "视频片段右键菜单",
+    "基础属性",
+    "导出设置窗口",
+    "补充工具及专注剪辑"
+  ],
+  "limitations": [
+    "内置音效主应用保存已阻塞，带内置音效的重开和交付未通过；不把无音效基线导出当成它通过",
+    "未逐一执行所有第三方MG/LUT/特效/翻译/Agent功能；部分涉及外部服务",
+    "iframe语义点击坐标有偏移，改用截图坐标；首次900截图落在about:blank已排除并重测"
+  ]
+}

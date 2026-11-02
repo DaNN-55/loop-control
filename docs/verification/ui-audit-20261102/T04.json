@@ -1,0 +1,560 @@
+{
+  "id": "T04",
+  "verdict": "executed-findings",
+  "darkCreate": {
+    "axeVersion": "4.12.1",
+    "counts": {
+      "inapplicable": 33,
+      "incomplete": 1,
+      "passes": 27,
+      "violations": 0
+    },
+    "incomplete": [
+      {
+        "help": "Elements must only use permitted ARIA attributes",
+        "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/aria-prohibited-attr?application=axeAPI",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodeCount": 2,
+        "nodes": [
+          {
+            "failureSummary": "Fix all of the following:\n  aria-label attribute is not well supported on a time with no valid role attribute.",
+            "html": "<time datetime=\"2026-11-02T11:12:46.459191+00:00\" title=\"2026年11月2日 19:12\" aria-label=\"2026年11月2日 19:12\">11/02 19:12</time>",
+            "target": [
+              "time"
+            ]
+          },
+          {
+            "failureSummary": "Fix all of the following:\n  aria-label attribute is not well supported on a span with no valid role attribute.",
+            "html": "<span aria-label=\"暂无费用记录\">—</span>",
+            "target": [
+              "span[aria-label=\"暂无费用记录\"]"
+            ]
+          }
+        ],
+        "tags": [
+          "cat.aria",
+          "wcag2a",
+          "wcag412",
+          "EN-301-549",
+          "EN-9.4.1.2",
+          "RGAAv4",
+          "RGAA-7.1.1"
+        ]
+      }
+    ],
+    "lifecycle": {
+      "effectiveLaunch": {
+        "browserLaunched": true,
+        "engine": "chrome",
+        "launchHash": 11356512708933070000
+      },
+      "launched": false,
+      "relaunchedBrowser": false,
+      "restartedBackground": false,
+      "restoreStatus": "not_configured",
+      "reused": true,
+      "saveStatus": "not_attempted"
+    },
+    "url": "http://127.0.0.1:5173/__story",
+    "violations": []
+  },
+  "darkPassword": {
+    "axeVersion": "4.12.1",
+    "counts": {
+      "inapplicable": 32,
+      "incomplete": 1,
+      "passes": 28,
+      "violations": 0
+    },
+    "incomplete": [
+      {
+        "help": "Elements must only use permitted ARIA attributes",
+        "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/aria-prohibited-attr?application=axeAPI",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodeCount": 2,
+        "nodes": [
+          {
+            "failureSummary": "Fix all of the following:\n  aria-label attribute is not well supported on a time with no valid role attribute.",
+            "html": "<time datetime=\"2026-11-02T11:12:46.459191+00:00\" title=\"2026年11月2日 19:12\" aria-label=\"2026年11月2日 19:12\">11/02 19:12</time>",
+            "target": [
+              "time"
+            ]
+          },
+          {
+            "failureSummary": "Fix all of the following:\n  aria-label attribute is not well supported on a span with no valid role attribute.",
+            "html": "<span aria-label=\"暂无费用记录\">—</span>",
+            "target": [
+              "span[aria-label=\"暂无费用记录\"]"
+            ]
+          }
+        ],
+        "tags": [
+          "cat.aria",
+          "wcag2a",
+          "wcag412",
+          "EN-301-549",
+          "EN-9.4.1.2",
+          "RGAAv4",
+          "RGAA-7.1.1"
+        ]
+      }
+    ],
+    "lifecycle": {
+      "effectiveLaunch": {
+        "browserLaunched": true,
+        "engine": "chrome",
+        "launchHash": 11356512708933070000
+      },
+      "launched": false,
+      "relaunchedBrowser": false,
+      "restartedBackground": false,
+      "restoreStatus": "not_configured",
+      "reused": true,
+      "saveStatus": "not_attempted"
+    },
+    "url": "http://127.0.0.1:5173/__story",
+    "violations": []
+  },
+  "nativeAxe": {
+    "axeVersion": "4.12.1",
+    "counts": {
+      "inapplicable": 39,
+      "incomplete": 3,
+      "passes": 48,
+      "violations": 5
+    },
+    "incomplete": [
+      {
+        "help": "Elements must only use permitted ARIA attributes",
+        "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/aria-prohibited-attr?application=axeAPI",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodeCount": 1,
+        "nodes": [
+          {
+            "failureSummary": "Fix all of the following:\n  aria-label attribute is not well supported on a div with no valid role attribute.",
+            "html": "<div class=\"production-directory\" aria-label=\"本地文件夹\">",
+            "target": [
+              ".production-directory"
+            ]
+          }
+        ],
+        "tags": [
+          "cat.aria",
+          "wcag2a",
+          "wcag412",
+          "EN-301-549",
+          "EN-9.4.1.2",
+          "RGAAv4",
+          "RGAA-7.1.1"
+        ]
+      },
+      {
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/color-contrast?application=axeAPI",
+        "id": "color-contrast",
+        "impact": "serious",
+        "nodeCount": 11,
+        "nodes": [
+          {
+            "failureSummary": "Fix any of the following:\n  Element content is too short to determine if it is actual text content",
+            "html": "<small>2</small>",
+            "target": [
+              "h3 > small"
+            ]
+          },
+          {
+            "failureSummary": "Fix any of the following:\n  Element content is too short to determine if it is actual text content",
+            "html": "<button class=\"cc-tip cc-tip-r\" data-tip=\"切换界面语言\" aria-label=\"切换界面语言\" style=\"min-width: 30px; hei...\">",
+            "target": [
+              "iframe",
+              "button[data-tip=\"切换界面语言\"]"
+            ]
+          },
+          {
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it is overlapped by another element",
+            "html": "<button aria-label=\"输入缩放比例的精确值\" class=\"cc-insp-scalar\" title=\"点击输入精确值；左右拖动调整；Shift ×10；⌘ ×0.1\" type=\"button\">100%</button>",
+            "target": [
+              "iframe",
+              "button[aria-label=\"输入缩放比例的精确值\"]"
+            ]
+          },
+          {
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it is overlapped by another element",
+            "html": "<button aria-label=\"输入横向缩放的精确值\" class=\"cc-insp-scalar\" title=\"点击输入精确值；左右拖动调整；Shift ×10；⌘ ×0.1\" type=\"button\">100%</button>",
+            "target": [
+              "iframe",
+              "button[aria-label=\"输入横向缩放的精确值\"]"
+            ]
+          },
+          {
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it is overlapped by another element",
+            "html": "<button aria-label=\"输入纵向缩放的精确值\" class=\"cc-insp-scalar\" title=\"点击输入精确值；左右拖动调整；Shift ×10；⌘ ×0.1\" type=\"button\">100%</button>",
+            "target": [
+              "iframe",
+              "button[aria-label=\"输入纵向缩放的精确值\"]"
+            ]
+          },
+          {
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it is overlapped by another element",
+            "html": "<button aria-label=\"输入水平的精确值\" class=\"cc-insp-scalar\" title=\"点击输入精确值；左右拖动调整；Shift ×10；⌘ ×0.1\" type=\"button\">0%</button>",
+            "target": [
+              "iframe",
+              "button[aria-label=\"输入水平的精确值\"]"
+            ]
+          },
+          {
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it is overlapped by another element",
+            "html": "<button aria-label=\"输入垂直的精确值\" class=\"cc-insp-scalar\" title=\"点击输入精确值；左右拖动调整；Shift ×10；⌘ ×0.1\" type=\"button\">0%</button>",
+            "target": [
+              "iframe",
+              "button[aria-label=\"输入垂直的精确值\"]"
+            ]
+          },
+          {
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a background gradient",
+            "html": "<span class=\"cc-clip-duration\" data-cc-live-duration=\"90\">00:03.00</span>",
+            "target": [
+              "iframe",
+              ".is-selected > .cc-clip-duration[data-cc-live-duration=\"90\"]"
+            ]
+          },
+          {
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a background gradient",
+            "html": "<span class=\"cc-clip-label\">shot-01</span>",
+            "target": [
+              "iframe",
+              ".is-selected > .cc-clip-label"
+            ]
+          },
+          {
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a background gradient",
+            "html": "<span class=\"cc-clip-duration\" data-cc-live-duration=\"90\">00:03.00</span>",
+            "target": [
+              "iframe",
+              "div[title=\"shot-02\"] > .cc-clip-duration[data-cc-live-duration=\"90\"]"
+            ]
+          }
+        ],
+        "tags": [
+          "cat.color",
+          "wcag2aa",
+          "wcag143",
+          "TTv5",
+          "TT13.c",
+          "EN-301-549",
+          "EN-9.1.4.3",
+          "ACT",
+          "RGAAv4",
+          "RGAA-3.2.1"
+        ]
+      },
+      {
+        "help": "The skip-link target should exist and be focusable",
+        "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/skip-link?application=axeAPI",
+        "id": "skip-link",
+        "impact": "moderate",
+        "nodeCount": 1,
+        "nodes": [
+          {
+            "failureSummary": "Fix any of the following:\n  Skip link target should become visible on activation",
+            "html": "<a class=\"skip-link\" href=\"#main-content\">跳到主要内容</a>",
+            "target": [
+              "a"
+            ]
+          }
+        ],
+        "tags": [
+          "cat.keyboard",
+          "best-practice",
+          "RGAAv4",
+          "RGAA-12.7.1"
+        ]
+      }
+    ],
+    "lifecycle": {
+      "effectiveLaunch": {
+        "browserLaunched": true,
+        "engine": "chrome",
+        "launchHash": 11356512708933070000
+      },
+      "launched": false,
+      "relaunchedBrowser": false,
+      "restartedBackground": false,
+      "restoreStatus": "not_configured",
+      "reused": true,
+      "saveStatus": "not_attempted"
+    },
+    "url": "http://127.0.0.1:5173/__story?episode=1e5be46c-83b4-4bb8-84b6-bbff3f378fdd",
+    "violations": [
+      {
+        "help": "Required ARIA attributes must be provided",
+        "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/aria-required-attr?application=axeAPI",
+        "id": "aria-required-attr",
+        "impact": "critical",
+        "nodeCount": 2,
+        "nodes": [
+          {
+            "failureSummary": "Fix any of the following:\n  Required ARIA attribute not present: aria-valuenow",
+            "html": "<div class=\"cc-panel-divider\" role=\"separator\" tabindex=\"0\" aria-orientation=\"vertical\" aria-label=\"拖动调整大小\" title=\"拖动调整大小\" style=\"position: relative; z-index: 20; width: 9px; height: 100%; left: -4px; top: 0px; cursor: col-resize;\">",
+            "target": [
+              "iframe",
+              "div:nth-child(5) > .cc-panel-divider[aria-label=\"拖动调整大小\"][title=\"拖动调整大小\"]"
+            ]
+          },
+          {
+            "failureSummary": "Fix any of the following:\n  Required ARIA attribute not present: aria-valuenow",
+            "html": "<div class=\"cc-panel-divider\" role=\"separator\" tabindex=\"0\" aria-orientation=\"horizontal\" aria-label=\"拖动调整大小\" title=\"拖动调整大小\" style=\"position: relative; z-index: 20; width: 100%; height: 9px; left: 0px; top: -4px; cursor: row-resize;\">",
+            "target": [
+              "iframe",
+              "div[aria-orientation=\"horizontal\"]"
+            ]
+          }
+        ],
+        "tags": [
+          "cat.aria",
+          "wcag2a",
+          "wcag412",
+          "EN-301-549",
+          "EN-9.4.1.2",
+          "RGAAv4",
+          "RGAA-7.1.1"
+        ]
+      },
+      {
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/color-contrast?application=axeAPI",
+        "id": "color-contrast",
+        "impact": "serious",
+        "nodeCount": 23,
+        "nodes": [
+          {
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 3.24 (foreground color: #7586a0, background color: #eaf0ff, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1",
+            "html": "<small>01</small>",
+            "target": [
+              "button[title=\"1. 雨停了，她把伞留在长椅上。\"] > small"
+            ]
+          },
+          {
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 3.5 (foreground color: #7586a0, background color: #f7f9fc, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1",
+            "html": "<small>02</small>",
+            "target": [
+              "button[title=\"2. 伞柄的纸条写着：留给下一个人。\"] > small"
+            ]
+          },
+          {
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 3.27 (foreground color: #ffffff, background color: #dc7036, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+            "html": "<button class=\"cc-tip cc-tip-r\" data-tip=\"导出 MP4\" aria-label=\"导出 MP4\" style=\"min-width: 58px; hei...\">",
+            "target": [
+              "iframe",
+              "button[data-tip=\"导出 MP4\"]"
+            ]
+          },
+          {
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 4.49 (foreground color: #808080, background color: #181818, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1",
+            "html": "<div class=\"cc-chat-collapsed-brand\">OpenChatCut</div>",
+            "target": [
+              "iframe",
+              ".cc-chat-collapsed-brand"
+            ]
+          },
+          {
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 4.49 (foreground color: #808080, background color: #181818, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+            "html": "<button class=\"cc-main-tab\">我的素材</button>",
+            "target": [
+              "iframe",
+              ".cc-main-tab:nth-child(1)"
+            ]
+          },
+          {
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 4.49 (foreground color: #808080, background color: #181818, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+            "html": "<button class=\"cc-main-tab\">序列</button>",
+            "target": [
+              "iframe",
+              ".cc-main-tab:nth-child(2)"
+            ]
+          },
+          {
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 4.49 (foreground color: #808080, background color: #181818, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+            "html": "<button class=\"cc-main-tab\">文字稿</button>",
+            "target": [
+              "iframe",
+              ".cc-main-tab:nth-child(4)"
+            ]
+          },
+          {
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 4.49 (foreground color: #808080, background color: #181818, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+            "html": "<button class=\"cc-main-tab\">字幕</button>",
+            "target": [
+              "iframe",
+              ".cc-main-tab:nth-child(5)"
+            ]
+          },
+          {
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 4.49 (foreground color: #808080, background color: #181818, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+            "html": "<button class=\"cc-main-tab\">技能</button>",
+            "target": [
+              "iframe",
+              ".cc-main-tab:nth-child(6)"
+            ]
+          },
+          {
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 4.49 (foreground color: #808080, background color: #181818, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+            "html": "<button style=\"background: none; border-width: medium medium 2px; border-style: none none solid; border-color: currentcolor currentcolor transparent; border-image: none; cursor: pointer; color: var(--cc-text-dim); padding: 0px 0px 4px;\">MG 动画</button>",
+            "target": [
+              "iframe",
+              ".cc-library-panel > div:nth-child(2) > div > button:nth-child(1)"
+            ]
+          }
+        ],
+        "tags": [
+          "cat.color",
+          "wcag2aa",
+          "wcag143",
+          "TTv5",
+          "TT13.c",
+          "EN-301-549",
+          "EN-9.1.4.3",
+          "ACT",
+          "RGAAv4",
+          "RGAA-3.2.1"
+        ]
+      },
+      {
+        "help": "Images must have alternative text",
+        "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/image-alt?application=axeAPI",
+        "id": "image-alt",
+        "impact": "critical",
+        "nodeCount": 1,
+        "nodes": [
+          {
+            "failureSummary": "Fix any of the following:\n  Element does not have an alt attribute\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
+            "html": "<img src=\"/media/uploads/e207ecbaeb7bf7f1d08e.png\" style=\"width: 100%; height: 100%; object-fit: fill;\">",
+            "target": [
+              "iframe",
+              "img"
+            ]
+          }
+        ],
+        "tags": [
+          "cat.text-alternatives",
+          "wcag2a",
+          "wcag111",
+          "section508",
+          "section508.22.a",
+          "TTv5",
+          "TT7.a",
+          "TT7.b",
+          "EN-301-549",
+          "EN-9.1.1.1",
+          "ACT",
+          "RGAAv4",
+          "RGAA-1.1.1"
+        ]
+      },
+      {
+        "help": "Form elements should have a visible label",
+        "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/label-title-only?application=axeAPI",
+        "id": "label-title-only",
+        "impact": "serious",
+        "nodeCount": 1,
+        "nodes": [
+          {
+            "failureSummary": "Fix all of the following:\n  Only title used to generate label for form element",
+            "html": "<input min=\"0.02\" max=\"6\" step=\"0.01\" title=\"缩放时间轴\" class=\"cc-timeline-zoom\" type=\"range\" value=\"2.1203703703703702\">",
+            "target": [
+              "iframe",
+              ".cc-timeline-zoom"
+            ]
+          }
+        ],
+        "tags": [
+          "cat.forms",
+          "best-practice"
+        ]
+      },
+      {
+        "help": "Interactive controls must not be nested",
+        "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/nested-interactive?application=axeAPI",
+        "id": "nested-interactive",
+        "impact": "serious",
+        "nodeCount": 7,
+        "nodes": [
+          {
+            "failureSummary": "Fix any of the following:\n  Element has focusable descendants",
+            "html": "<div role=\"option\" aria-selected=\"false\" class=\"cc-sound-row\" title=\"短促干净的飞入/切换扫过声，适合卡片、字幕、镜头或元素快速移动时做转场强调。 · 可拖到时间线音轨\" draggable=\"true\">",
+            "target": [
+              "iframe",
+              "div:nth-child(1) > .cc-sound-row[role=\"option\"][draggable=\"true\"]"
+            ]
+          },
+          {
+            "failureSummary": "Fix any of the following:\n  Element has focusable descendants",
+            "html": "<div role=\"option\" aria-selected=\"false\" class=\"cc-sound-row\" title=\"较轻、偏空气感的短 whoosh，适合转场、轻量卡片、贴纸、字幕或 UI 元素滑入滑出。 · 可拖到时间线音轨\" draggable=\"true\">",
+            "target": [
+              "iframe",
+              "div:nth-child(2) > .cc-sound-row[role=\"option\"][draggable=\"true\"]"
+            ]
+          },
+          {
+            "failureSummary": "Fix any of the following:\n  Element has focusable descendants",
+            "html": "<div role=\"option\" aria-selected=\"false\" class=\"cc-sound-row\" title=\"很短的低频上升提示，适合在冲击、切点、标题弹出前做一小段快速铺垫，也可以作为转场 · 可拖到时间线音轨\" draggable=\"true\">",
+            "target": [
+              "iframe",
+              "div:nth-child(3) > .cc-sound-row[role=\"option\"][draggable=\"true\"]"
+            ]
+          },
+          {
+            "failureSummary": "Fix any of the following:\n  Element has focusable descendants",
+            "html": "<div role=\"option\" aria-selected=\"false\" class=\"cc-sound-row\" title=\"经典低频 boom 冲击声，适合震惊、反转、夸张表情、重点字幕或画面突然停顿。 · 可拖到时间线音轨\" draggable=\"true\">",
+            "target": [
+              "iframe",
+              "div:nth-child(4) > .cc-sound-row[role=\"option\"][draggable=\"true\"]"
+            ]
+          },
+          {
+            "failureSummary": "Fix any of the following:\n  Element has focusable descendants",
+            "html": "<div role=\"option\" aria-selected=\"false\" class=\"cc-sound-row\" title=\"偏动漫/综艺的正向 wow 反应声，适合物品展示、人物亮相、隆重登场、揭幕或发现亮点的惊喜时刻。 · 可拖到时间线音轨\" draggable=\"true\">",
+            "target": [
+              "iframe",
+              "div:nth-child(5) > .cc-sound-row[role=\"option\"][draggable=\"true\"]"
+            ]
+          },
+          {
+            "failureSummary": "Fix any of the following:\n  Element has focusable descendants",
+            "html": "<div role=\"option\" aria-selected=\"false\" class=\"cc-sound-row\" title=\"极短气泡 pop，适合 MG 卡片、贴纸、提示气泡或小组件弹出。 · 可拖到时间线音轨\" draggable=\"true\">",
+            "target": [
+              "iframe",
+              "div:nth-child(6) > .cc-sound-row[role=\"option\"][draggable=\"true\"]"
+            ]
+          },
+          {
+            "failureSummary": "Fix any of the following:\n  Element has focusable descendants",
+            "html": "<div role=\"option\" aria-selected=\"false\" class=\"cc-sound-row\" title=\"慢速真实键盘输入声，适合办公、代码、搜索或屏幕录制感、打字机式出现文字等场景。 · 可拖到时间线音轨\" draggable=\"true\">",
+            "target": [
+              "iframe",
+              "div:nth-child(7) > .cc-sound-row[role=\"option\"][draggable=\"true\"]"
+            ]
+          }
+        ],
+        "tags": [
+          "cat.keyboard",
+          "wcag2a",
+          "wcag412",
+          "TTv5",
+          "TT6.a",
+          "EN-301-549",
+          "EN-9.4.1.2",
+          "RGAAv4",
+          "RGAA-7.1.1"
+        ]
+      }
+    ]
+  },
+  "passwordError": "12 位规则报错未设置 aria-invalid/aria-describedby",
+  "limitations": [
+    "原生剪辑器保持自身深色皮肤；渐变/遮挡导致的 incomplete 保留人工核验，未算通过"
+  ]
+}

@@ -1,0 +1,106 @@
+[
+  {
+    "provider": "bailian",
+    "episodeId": "2abb56f4-79b3-4d4e-8537-8d707e9b060d",
+    "deliveryId": "9a93ec74-8186-43bb-a5a8-a5162a3d7b05",
+    "verified": true,
+    "artifacts": [
+      {
+        "type": "cover",
+        "sha256": "4cd8136c302059a6c82da0e2f4388799f11628822ed74be3b7bec03d32144ead",
+        "bytes": 2297360
+      },
+      {
+        "type": "metadata",
+        "sha256": "9f86cf93048e5a18760597a73c7d287581963860383512e26c9dcd6d3542f0d2",
+        "bytes": 1318
+      },
+      {
+        "type": "final_qc_report",
+        "sha256": "846f5c939b94c88745529b34dd48f12c710bccdc08f2f60e4cd937cc1870a212",
+        "bytes": 4981
+      },
+      {
+        "type": "publish_package",
+        "sha256": "1ca855ca3029ddabb77cf91b0df65a8f432521a9449799ef0725d7686c4ce5d7",
+        "bytes": 3404
+      },
+      {
+        "type": "final_render",
+        "sha256": "3ab6643cdaf0b19c202a7d0d4095869b4ab7d381b8ae04d601b5fd14050c610e",
+        "bytes": 6279473
+      },
+      {
+        "type": "editable_project",
+        "sha256": "8bed5b88970839c458a771d920a8396ed995a6634294220d8c7737bc188af5a0",
+        "bytes": 11907
+      }
+    ],
+    "zip": {
+      "sha256": "1832e3b877f808214401f29e8760801c2c766bffb70df34062d201fb80371231",
+      "bytes": 8599181,
+      "entries": [
+        "cover.png",
+        "metadata.json",
+        "checks.json",
+        "manifest.json",
+        "final-video.mp4",
+        "editable-project.json"
+      ],
+      "integrity": "passed"
+    },
+    "title": "末班车前的一把伞 · 百炼"
+  },
+  {
+    "provider": "minimax",
+    "episodeId": "be49fc67-8058-4bde-8a10-3c4ac61d59e0",
+    "deliveryId": "53d56e16-bf0e-4045-9322-c0efc1c80b96",
+    "verified": true,
+    "artifacts": [
+      {
+        "type": "cover",
+        "sha256": "470e441189c9412d802000ee31f8d0699ce4d0338bdaea6d0ddd208d19c6d94d",
+        "bytes": 1906452
+      },
+      {
+        "type": "metadata",
+        "sha256": "d9af337be20e239432de9c9cb5b5b3b48dd2348dcc357505a09b4c30ce7de8ce",
+        "bytes": 1319
+      },
+      {
+        "type": "final_qc_report",
+        "sha256": "91289a7ca8cbff0eebec5d74278995d7f462b7c9ef0a554c724cebf060236f74",
+        "bytes": 4981
+      },
+      {
+        "type": "publish_package",
+        "sha256": "a89c4c36590776b30b15c6128d48e41efb11e478563c9d96c7e2a9befe396e23",
+        "bytes": 3411
+      },
+      {
+        "type": "final_render",
+        "sha256": "2c255cb3cc401cfd6ef767e5759009123dd549893dd80f60b8c56c88094f26aa",
+        "bytes": 3502230
+      },
+      {
+        "type": "editable_project",
+        "sha256": "e991e510657245f89a820df77a3d284a4a713ff746547dcbcee14a83532a498a",
+        "bytes": 11912
+      }
+    ],
+    "zip": {
+      "sha256": "76fc8810cb6594585d904f7dd279a6ed3ce25e633b21a5005ec7d9b9a3061806",
+      "bytes": 5431043,
+      "entries": [
+        "cover.png",
+        "metadata.json",
+        "checks.json",
+        "manifest.json",
+        "final-video.mp4",
+        "editable-project.json"
+      ],
+      "integrity": "passed"
+    },
+    "title": "末班车前的一把伞 · MiniMax"
+  }
+]

@@ -1,11 +1,11 @@
 import type {Pool,PoolClient} from 'pg';
-import {mkdir,lstat,realpath,unlink,statfs} from 'node:fs/promises';
+import {mkdir,statfs} from 'node:fs/promises';
 import {join,dirname} from 'node:path';
 import {sessionTransaction} from './ownerTransaction.js';
 import type {OwnerSession} from './sessions.js';
 import {ConfigurationError} from './configurationCommands.js';
 import {verifyMediaRootBinding,type MediaRootBinding,type MediaRootRuntime} from './mediaRootSettings.js';
-import {copyStorageFile,inventory,identity,fingerprint,type File,type Root} from './storageInventory.js';
+import {storageCopySession,inventory,identity,fingerprint,type File,type Root} from './storageInventory.js';
 import type {EpisodeStorageLocation} from './episodeStorageLocation.js';
 import {episodeFileIO} from './episodeFiles.js';
 import {hasActiveNativeStudio} from '../worker/openchatcutStudio.js';
@@ -88,12 +88,16 @@ export async function executeMediaRootMigration(pool:Pool,session:OwnerSession,i
    await verifyMediaRootBinding(m.targetBinding);let created=false;try{await mkdir(path,{mode:0o700});created=true;}catch(error){if((error as NodeJS.ErrnoException).code!=='EEXIST')throw error;}
    const actual=await identity(path);await verifyMediaRootBinding(m.targetBinding);if(actual.device!==copyTarget.device)throw new ConfigurationError(409,'迁移目标目录所在位置已变化。');if(!created)throw new ConfigurationError(409,'未登记目标目录已有内容，请保留现场。');p.createdDirectories.push(actual);await persist();
   }
-  for(const temp of p.temporaryFiles){try{const s=await lstat(temp.path,{bigint:true});if(!s.isFile()||s.isSymbolicLink()||String(s.dev)!==temp.device||String(s.ino)!==temp.inode||await realpath(temp.path)!==temp.path)throw new ConfigurationError(409,'暂存文件身份变化，保留现场。');if(s.nlink!==1n){const published=await lstat(temp.path.slice(0,-('.migration-'+id).length),{bigint:true});if(s.nlink!==2n||published.dev!==s.dev||published.ino!==s.ino)throw new ConfigurationError(409,'暂存链接身份变化，保留现场。');}await unlink(temp.path);}catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;}}
+  const copies=storageCopySession(copyTarget,id,{
+   pending:()=>p.temporaryFiles,
+   async record(temp){p.temporaryFiles.push(temp);await persist();},
+  },{identity:'暂存文件身份变化，保留现场。',link:'暂存链接身份变化，保留现场。'});
+  await copies.recover();
   p.temporaryFiles=[];const copied=await assertTarget(m,p,false),remaining=m.totalBytes-copied.reduce((n,f)=>n+f.fileSize,0),space=await statfs(m.targetBinding.path,{bigint:true});if(space.bavail*space.bsize<BigInt(remaining+m.space.reserveBytes))throw new ConfigurationError(409,'目标空间不足，请释放空间后恢复迁移。');
   p.copiedFiles=copied.length;p.copiedBytes=m.totalBytes-remaining;await persist();
   for(const file of m.files){
    const already=copied.some(f=>f.relativePath===file.targetRelativePath),baseBytes=p.copiedBytes;
-   await copyStorageFile(copyTarget,file,id,undefined,async temp=>{p.temporaryFiles.push(temp);await persist();},async bytes=>{p.activeFile=file.targetRelativePath;p.activeFileBytes=bytes;p.copiedBytes=baseBytes+bytes;await persist();});
+   await copies.copy(file,undefined,async bytes=>{p.activeFile=file.targetRelativePath;p.activeFileBytes=bytes;p.copiedBytes=baseBytes+bytes;await persist();});
    if(!already){p.copiedFiles++;p.copiedBytes=baseBytes+file.fileSize;}delete p.activeFile;p.activeFileBytes=0;await persist();
   }
   p.temporaryFiles=[];await persist();await assertTarget(m,p,true);

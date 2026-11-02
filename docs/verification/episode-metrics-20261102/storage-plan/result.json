@@ -1,0 +1,782 @@
+{
+  "firstPid": 39543,
+  "restartedPid": 40025,
+  "state": {
+    "migration": {
+      "id": "a11e7e57-a675-478a-b837-3e1547542fc0",
+      "status": "planned",
+      "manifest": {
+        "files": [
+          {
+            "sha256": "1e13ec361e4cba26cf65307e6f223eb121436fbba410f40ba389fe1f60c3c1b1",
+            "fileSize": 204,
+            "accountId": "22acc074-924f-4061-ab2c-11c599cfec4c",
+            "episodeId": "4711ee33-49d0-4ada-94b6-ef3f27650b63",
+            "sourceRoot": "/private/tmp/loop-t06-volume-olBRrn/mounted/loop-153-jRs4PI/account/episodes/4711ee33-49d0-4ada-94b6-ef3f27650b63",
+            "relativePath": "board.json",
+            "targetRelativePath": "account/episodes/4711ee33-49d0-4ada-94b6-ef3f27650b63/board.json"
+          },
+          {
+            "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+            "fileSize": 210288,
+            "accountId": "22acc074-924f-4061-ab2c-11c599cfec4c",
+            "episodeId": "4711ee33-49d0-4ada-94b6-ef3f27650b63",
+            "sourceRoot": "/private/tmp/loop-t06-volume-olBRrn/mounted/loop-153-jRs4PI/account/episodes/4711ee33-49d0-4ada-94b6-ef3f27650b63",
+            "relativePath": "shot.mp4",
+            "targetRelativePath": "account/episodes/4711ee33-49d0-4ada-94b6-ef3f27650b63/shot.mp4"
+          },
+          {
+            "sha256": "21367e1bb28c3f86626206d5349933c1755207ff4e2bf770e59606432875899b",
+            "fileSize": 16556,
+            "accountId": "22acc074-924f-4061-ab2c-11c599cfec4c",
+            "episodeId": "4711ee33-49d0-4ada-94b6-ef3f27650b63",
+            "sourceRoot": "/private/tmp/loop-t06-volume-olBRrn/mounted/loop-153-jRs4PI/account/episodes/4711ee33-49d0-4ada-94b6-ef3f27650b63",
+            "relativePath": "voice.mp3",
+            "targetRelativePath": "account/episodes/4711ee33-49d0-4ada-94b6-ef3f27650b63/voice.mp3"
+          }
+        ],
+        "space": {
+          "freeBytes": 245743616,
+          "reserveBytes": 0,
+          "requiredBytes": 227048,
+          "remainingBytes": 227048
+        },
+        "target": {
+          "files": [
+            {
+              "sha256": "24519892b57a819496a1deac84a3a9fee17976a480ba0c01cbb8e1a96b97dcdf",
+              "fileSize": 17,
+              "sourceRoot": "/private/tmp/loop-t06-volume-olBRrn/mounted/chosen-library",
+              "relativePath": "keep.txt"
+            }
+          ],
+          "directories": [],
+          "existingBytes": 17,
+          "incompleteBytes": 0,
+          "incompleteCopies": [],
+          "existingFileCount": 1
+        },
+        "version": 1,
+        "accounts": [
+          {
+            "id": "22acc074-924f-4061-ab2c-11c599cfec4c",
+            "name": "Studio153 fixture",
+            "owned": true
+          }
+        ],
+        "blockers": [],
+        "episodes": [
+          {
+            "id": "4711ee33-49d0-4ada-94b6-ef3f27650b63",
+            "title": "隔离 Studio153 验收",
+            "lineage": [],
+            "location": {
+              "inodeId": null,
+              "deviceId": null,
+              "accountId": "22acc074-924f-4061-ab2c-11c599cfec4c",
+              "assetRoot": "/private/tmp/loop-t06-volume-olBRrn/mounted/loop-153-jRs4PI/account",
+              "episodeId": "4711ee33-49d0-4ada-94b6-ef3f27650b63",
+              "relativePath": "episodes/4711ee33-49d0-4ada-94b6-ef3f27650b63",
+              "authorityRoot": "/private/tmp/loop-t06-volume-olBRrn/mounted/loop-153-jRs4PI/account",
+              "directoryPath": "/private/tmp/loop-t06-volume-olBRrn/mounted/loop-153-jRs4PI/account/episodes/4711ee33-49d0-4ada-94b6-ef3f27650b63",
+              "layoutVersion": 1,
+              "storageSeriesId": null
+            },
+            "accountId": "22acc074-924f-4061-ab2c-11c599cfec4c",
+            "collection": {
+              "status": "legacy",
+              "container": null
+            }
+          }
+        ],
+        "evidence": {
+          "22acc074-924f-4061-ab2c-11c599cfec4c": {
+            "public.tasks": [
+              {
+                "id": "69acf58c-c967-4db0-95e6-dc2a6e1ca7d1",
+                "model": "gpt-5.6-terra",
+                "status": "completed",
+                "attempt": 0,
+                "provider": "codex",
+                "task_type": "generate_review_render",
+                "claimed_at": null,
+                "created_at": "2026-11-02T08:16:13.384904+00:00",
+                "episode_id": "4711ee33-49d0-4ada-94b6-ef3f27650b63",
+                "last_result": null,
+                "lease_token": null,
+                "available_at": "-infinity",
+                "completed_at": null,
+                "max_attempts": 1,
+                "input_snapshot": {
+                  "capability": "review_rendering",
+                  "allowed_tools": [
+                    "read",
+                    "write"
+                  ],
+                  "review_render": {
+                    "members": [
+                      {
+                        "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+                        "task_id": "video-task-1",
+                        "audio_mode": "tts",
+                        "member_key": "shot:shot-1",
+                        "artifact_id": "video-artifact-1",
+                        "composition": {
+                          "slots": [
+                            {
+                              "id": "full",
+                              "fit": "cover",
+                              "focalPoint": {
+                                "x": 0.5,
+                                "y": 0.5
+                              },
+                              "clipSegmentIndex": 0
+                            }
+                          ],
+                          "layout": "full",
+                          "version": "shot-composition/v1"
+                        },
+                        "member_kind": "shot_media",
+                        "relative_path": "episodes/4711ee33-49d0-4ada-94b6-ef3f27650b63/shot.mp4",
+                        "start_seconds": 0,
+                        "subtitle_text": "  已确认正文，必须原样保留。\n第二行也不能改写。  ",
+                        "duration_seconds": 2,
+                        "input_fingerprint": "11111111111111111111111111111111",
+                        "subtitles_enabled": false,
+                        "preparation_contract": {
+                          "version": "shot-preparation/v1",
+                          "captions": {
+                            "cues": [],
+                            "text": "  已确认正文，必须原样保留。\n第二行也不能改写。  ",
+                            "enabled": false,
+                            "spatial": {
+                              "anchor": "bottom-center",
+                              "insets": {
+                                "top": 0.08,
+                                "left": 0.08,
+                                "right": 0.08,
+                                "bottom": 0.18
+                              },
+                              "version": "shot-caption-space/v2",
+                              "max_lines": 2,
+                              "safe_area": "title-safe",
+                              "aspect_ratio": "9:16",
+                              "max_characters_per_line": 16
+                            },
+                            "version": "shot-captions/v1",
+                            "content_mode": "follow_tts"
+                          },
+                          "tts_text": "  已确认正文，必须原样保留。\n第二行也不能改写。  ",
+                          "audio_mix": {
+                            "bgm": null,
+                            "sfx": null,
+                            "version": "shot-audio-mix/v1",
+                            "main_voice": {
+                              "mode": "tts",
+                              "role": "anchor",
+                              "gain_db": 0,
+                              "track_id": "audio-track-1"
+                            }
+                          },
+                          "tts_voice": "voice-a",
+                          "audio_mode": "tts",
+                          "composition": {
+                            "slots": [
+                              {
+                                "id": "full",
+                                "fit": "cover",
+                                "focalPoint": {
+                                  "x": 0.5,
+                                  "y": 0.5
+                                },
+                                "clipSegmentIndex": 0
+                              }
+                            ],
+                            "layout": "full",
+                            "version": "shot-composition/v1"
+                          },
+                          "clip_segments": [
+                            {
+                              "end_seconds": 2,
+                              "start_seconds": 0
+                            }
+                          ],
+                          "transition_mode": "cut",
+                          "input_fingerprint": "11111111111111111111111111111111",
+                          "tts_speaking_rate": 1.2,
+                          "storyboard_fingerprint": "00000000000000000000000000000000",
+                          "source_material_revision_id": "material-1"
+                        }
+                      },
+                      {
+                        "sha256": "21367e1bb28c3f86626206d5349933c1755207ff4e2bf770e59606432875899b",
+                        "task_id": "audio-task-1",
+                        "audio_mode": "tts",
+                        "member_key": "narration:shot-1",
+                        "member_kind": "narration",
+                        "relative_path": "episodes/4711ee33-49d0-4ada-94b6-ef3f27650b63/voice.mp3",
+                        "start_seconds": 0,
+                        "audio_track_id": "audio-track-1",
+                        "duration_seconds": 2
+                      }
+                    ],
+                    "storyboard": {
+                      "shots": [
+                        {
+                          "id": "shot-1",
+                          "shotType": "a_roll",
+                          "inputBasis": [],
+                          "targetSpec": "9:16",
+                          "scriptSegment": "第一镜",
+                          "durationSeconds": 2,
+                          "productionMethod": "全屏 TTS"
+                        }
+                      ],
+                      "version": "storyboard/v1",
+                      "audioCues": []
+                    },
+                    "adjustments": {
+                      "crop": "cover",
+                      "width": 360,
+                      "height": 640,
+                      "layout": "center",
+                      "pacing": "standard",
+                      "reason": "test",
+                      "frame_rate": 30,
+                      "transition": "cut",
+                      "bgm_gain_db": -12,
+                      "sfx_gain_db": -6,
+                      "aspect_ratio": "9:16",
+                      "caption_style": "minimal",
+                      "allowed_frames": 2,
+                      "captions_enabled": true,
+                      "narration_gain_db": 0
+                    },
+                    "confirmed_shots": [
+                      {
+                        "shot_id": "shot-1",
+                        "audio_mode": "tts",
+                        "composition": {
+                          "slots": [
+                            {
+                              "id": "full",
+                              "fit": "cover",
+                              "focalPoint": {
+                                "x": 0.5,
+                                "y": 0.5
+                              },
+                              "clipSegmentIndex": 0
+                            }
+                          ],
+                          "layout": "full",
+                          "version": "shot-composition/v1"
+                        },
+                        "subtitle_text": "  已确认正文，必须原样保留。\n第二行也不能改写。  ",
+                        "video_task_id": "video-task-1",
+                        "audio_track_id": "audio-track-1",
+                        "input_fingerprint": "11111111111111111111111111111111",
+                        "subtitles_enabled": false,
+                        "video_artifact_id": "video-artifact-1",
+                        "confirmation_status": "confirmed",
+                        "preparation_contract": {
+                          "version": "shot-preparation/v1",
+                          "captions": {
+                            "cues": [],
+                            "text": "  已确认正文，必须原样保留。\n第二行也不能改写。  ",
+                            "enabled": false,
+                            "spatial": {
+                              "anchor": "bottom-center",
+                              "insets": {
+                                "top": 0.08,
+                                "left": 0.08,
+                                "right": 0.08,
+                                "bottom": 0.18
+                              },
+                              "version": "shot-caption-space/v2",
+                              "max_lines": 2,
+                              "safe_area": "title-safe",
+                              "aspect_ratio": "9:16",
+                              "max_characters_per_line": 16
+                            },
+                            "version": "shot-captions/v1",
+                            "content_mode": "follow_tts"
+                          },
+                          "tts_text": "  已确认正文，必须原样保留。\n第二行也不能改写。  ",
+                          "audio_mix": {
+                            "bgm": null,
+                            "sfx": null,
+                            "version": "shot-audio-mix/v1",
+                            "main_voice": {
+                              "mode": "tts",
+                              "role": "anchor",
+                              "gain_db": 0,
+                              "track_id": "audio-track-1"
+                            }
+                          },
+                          "tts_voice": "voice-a",
+                          "audio_mode": "tts",
+                          "composition": {
+                            "slots": [
+                              {
+                                "id": "full",
+                                "fit": "cover",
+                                "focalPoint": {
+                                  "x": 0.5,
+                                  "y": 0.5
+                                },
+                                "clipSegmentIndex": 0
+                              }
+                            ],
+                            "layout": "full",
+                            "version": "shot-composition/v1"
+                          },
+                          "clip_segments": [
+                            {
+                              "end_seconds": 2,
+                              "start_seconds": 0
+                            }
+                          ],
+                          "transition_mode": "cut",
+                          "input_fingerprint": "11111111111111111111111111111111",
+                          "tts_speaking_rate": 1.2,
+                          "storyboard_fingerprint": "00000000000000000000000000000000",
+                          "source_material_revision_id": "material-1"
+                        }
+                      }
+                    ],
+                    "project_revision": 1,
+                    "confirmation_mode": "shot_preparation",
+                    "project_relative_path": "episodes/4711ee33-49d0-4ada-94b6-ef3f27650b63/board.json",
+                    "pre_render_review_package_id": "225009c0-84e6-40f1-9ef6-69b01eab8743"
+                  },
+                  "input_artifacts": [
+                    {
+                      "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+                      "fileSize": 210288,
+                      "artifactType": "shot_media",
+                      "relativePath": "episodes/4711ee33-49d0-4ada-94b6-ef3f27650b63/shot.mp4"
+                    },
+                    {
+                      "sha256": "21367e1bb28c3f86626206d5349933c1755207ff4e2bf770e59606432875899b",
+                      "fileSize": 16556,
+                      "artifactType": "narration",
+                      "relativePath": "episodes/4711ee33-49d0-4ada-94b6-ef3f27650b63/voice.mp3"
+                    }
+                  ],
+                  "runtime_constraints": {
+                    "source": {
+                      "worker_capacity": 1,
+                      "adapter_safety_limit": 1,
+                      "provider_or_connection_limit": null
+                    },
+                    "version": "worker-runtime/v1",
+                    "concurrency_group": "unknown:default:shared",
+                    "effective_concurrency": 1
+                  }
+                },
+                "invalidated_at": null,
+                "prompt_version": "brief-v1",
+                "actual_cost_cents": null,
+                "budget_limit_cents": 0,
+                "invalidated_reason": null
+              }
+            ],
+            "public.approvals": [],
+            "public.artifacts": [
+              {
+                "id": "0ee0ae9c-6fe6-47f8-acc8-1ad61e279e60",
+                "sha256": "1e13ec361e4cba26cf65307e6f223eb121436fbba410f40ba389fe1f60c3c1b1",
+                "file_size": 204,
+                "created_at": "2026-11-02T08:16:13.384904+00:00",
+                "episode_id": "4711ee33-49d0-4ada-94b6-ef3f27650b63",
+                "artifact_type": "storyboard",
+                "relative_path": "episodes/4711ee33-49d0-4ada-94b6-ef3f27650b63/board.json",
+                "producer_task_id": "69acf58c-c967-4db0-95e6-dc2a6e1ca7d1"
+              },
+              {
+                "id": "9afd251a-0ecd-4e81-a958-160c1b144059",
+                "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+                "file_size": 210288,
+                "created_at": "2026-11-02T08:16:13.384904+00:00",
+                "episode_id": "4711ee33-49d0-4ada-94b6-ef3f27650b63",
+                "artifact_type": "render",
+                "relative_path": "episodes/4711ee33-49d0-4ada-94b6-ef3f27650b63/shot.mp4",
+                "producer_task_id": "69acf58c-c967-4db0-95e6-dc2a6e1ca7d1"
+              }
+            ],
+            "public.asset_locks": [],
+            "public.audio_tracks": [],
+            "public.audit_events": [],
+            "blueprint_asset_roots": [],
+            "public.review_packages": [
+              {
+                "id": "225009c0-84e6-40f1-9ef6-69b01eab8743",
+                "stage": "storyboard_review",
+                "task_id": "69acf58c-c967-4db0-95e6-dc2a6e1ca7d1",
+                "created_at": "2026-11-02T08:16:13.384904+00:00",
+                "episode_id": "4711ee33-49d0-4ada-94b6-ef3f27650b63",
+                "artifact_id": "0ee0ae9c-6fe6-47f8-acc8-1ad61e279e60",
+                "task_run_id": null,
+                "invalidated_at": null,
+                "revision_number": 1,
+                "context_snapshot": {
+                  "worker_result": {
+                    "storyboard": {
+                      "shots": [
+                        {
+                          "id": "shot-1",
+                          "shotType": "a_roll",
+                          "inputBasis": [],
+                          "targetSpec": "9:16",
+                          "scriptSegment": "第一镜",
+                          "durationSeconds": 2,
+                          "productionMethod": "全屏 TTS"
+                        }
+                      ],
+                      "version": "storyboard/v1",
+                      "audioCues": []
+                    }
+                  }
+                },
+                "invalidated_reason": null
+              },
+              {
+                "id": "6e12c1de-820a-44a9-a45a-efa1dcd23cc5",
+                "stage": "qc_review",
+                "task_id": "69acf58c-c967-4db0-95e6-dc2a6e1ca7d1",
+                "created_at": "2026-11-02T08:16:13.384904+00:00",
+                "episode_id": "4711ee33-49d0-4ada-94b6-ef3f27650b63",
+                "artifact_id": "9afd251a-0ecd-4e81-a958-160c1b144059",
+                "task_run_id": null,
+                "invalidated_at": null,
+                "revision_number": 1,
+                "context_snapshot": {
+                  "project_relative_path": "episodes/4711ee33-49d0-4ada-94b6-ef3f27650b63/board.json"
+                },
+                "invalidated_reason": null
+              }
+            ],
+            "public.state_transitions": [],
+            "account_asset_directories": [
+              {
+                "inode_id": "17",
+                "device_id": "16777249",
+                "account_id": "22acc074-924f-4061-ab2c-11c599cfec4c",
+                "updated_at": "2026-11-02T08:16:13.498116+00:00",
+                "actual_root": "/private/tmp/loop-t06-volume-olBRrn/mounted/loop-153-jRs4PI/account"
+              }
+            ],
+            "account_directory_locations": [],
+            "public.worker_episode_turns": [],
+            "local_identity.input_episodes": [
+              {
+                "enabled": false,
+                "owner_id": "bab75af7-f9cb-4685-bb4e-ddc8bde41dd7",
+                "episode_id": "4711ee33-49d0-4ada-94b6-ef3f27650b63",
+                "media_enabled": false,
+                "studio_enabled": false,
+                "preview_enabled": false,
+                "delivery_enabled": false,
+                "alignment_enabled": false,
+                "narration_enabled": false,
+                "storyboard_enabled": true,
+                "visual_media_enabled": false,
+                "script_template_version": null
+              }
+            ],
+            "public.episode_read_revisions": [
+              {
+                "item_id": "0ee0ae9c-6fe6-47f8-acc8-1ad61e279e60",
+                "section": "artifacts",
+                "revision": 1,
+                "episode_id": "4711ee33-49d0-4ada-94b6-ef3f27650b63"
+              },
+              {
+                "item_id": "225009c0-84e6-40f1-9ef6-69b01eab8743",
+                "section": "reviewPackages",
+                "revision": 1,
+                "episode_id": "4711ee33-49d0-4ada-94b6-ef3f27650b63"
+              },
+              {
+                "item_id": "69acf58c-c967-4db0-95e6-dc2a6e1ca7d1",
+                "section": "tasks",
+                "revision": 1,
+                "episode_id": "4711ee33-49d0-4ada-94b6-ef3f27650b63"
+              },
+              {
+                "item_id": "6e12c1de-820a-44a9-a45a-efa1dcd23cc5",
+                "section": "reviewPackages",
+                "revision": 1,
+                "episode_id": "4711ee33-49d0-4ada-94b6-ef3f27650b63"
+              },
+              {
+                "item_id": "9afd251a-0ecd-4e81-a958-160c1b144059",
+                "section": "artifacts",
+                "revision": 1,
+                "episode_id": "4711ee33-49d0-4ada-94b6-ef3f27650b63"
+              }
+            ],
+            "public.production_dependencies": [],
+            "public.shot_preparation_drafts": [],
+            "public.production_invalidations": [],
+            "local_identity.workspace_exports": [],
+            "local_identity.script_productions": [],
+            "local_identity.historical_episodes": [],
+            "public.storyboard_audio_selections": [],
+            "local_identity.workspace_deliveries": [],
+            "local_identity.workspace_narrations": [],
+            "local_identity.production_workspaces": [],
+            "local_identity.workspace_shot_inputs": [],
+            "public.production_material_revisions": [],
+            "local_identity.workspace_preparations": [],
+            "local_identity.episode_asset_locations": [
+              {
+                "account_id": "22acc074-924f-4061-ab2c-11c599cfec4c",
+                "asset_root": "/private/tmp/loop-t06-volume-olBRrn/mounted/loop-153-jRs4PI/account",
+                "created_at": "2026-11-02T08:16:13.403967+00:00",
+                "episode_id": "4711ee33-49d0-4ada-94b6-ef3f27650b63",
+                "layout_version": 1,
+                "storage_series_id": null,
+                "directory_inode_id": null,
+                "directory_device_id": null,
+                "directory_relative_path": null
+              }
+            ],
+            "local_identity.episode_storage_lineage": [],
+            "local_identity.workspace_export_issues": [],
+            "local_identity.episode_creation_intents": [],
+            "local_identity.episode_deletion_intents": [],
+            "local_identity.workspace_audio_requests": [],
+            "local_identity.workspace_image_requests": [],
+            "local_identity.history_episode_deletions": [],
+            "local_identity.workspace_pexels_requests": [],
+            "local_identity.workspace_caption_evidence": [],
+            "local_identity.episode_planning_selections": [
+              {
+                "revision": 0,
+                "selection": null,
+                "episode_id": "4711ee33-49d0-4ada-94b6-ef3f27650b63",
+                "updated_at": "2026-11-02T08:16:13.404895+00:00"
+              }
+            ],
+            "local_identity.history_episode_preferences": [],
+            "local_identity.workspace_legacy_recoveries": [],
+            "local_identity.workspace_visual_candidates": [],
+            "public.review_render_composition_revisions": [],
+            "local_identity.workspace_audio_preparations": [],
+            "local_identity.workspace_call_confirmations": [],
+            "local_identity.workspace_narration_requests": [],
+            "local_identity.production_workspace_versions": [],
+            "local_identity.workspace_candidate_adoptions": [],
+            "local_identity.workspace_candidate_decisions": [],
+            "local_identity.workspace_visual_image_choices": []
+          }
+        },
+        "retained": [
+          {
+            "kind": "program",
+            "path": "/Users/dan/Programs/loop-control",
+            "reason": "独立管理，保留原位置与配置。"
+          },
+          {
+            "kind": "runtime",
+            "path": "/private/tmp/loop-t06-volume-olBRrn/mounted/loop-153-jRs4PI/runtime",
+            "reason": "独立管理，保留原位置与配置。"
+          },
+          {
+            "kind": "state",
+            "path": "/private/tmp/loop-t06-volume-olBRrn/mounted/loop-153-jRs4PI/runtime/state",
+            "reason": "独立管理，保留原位置与配置。"
+          },
+          {
+            "kind": "model-cache",
+            "path": "/private/tmp/loop-t06-volume-olBRrn/mounted/loop-153-jRs4PI/whisperx-models",
+            "reason": "独立管理，保留原位置与配置。"
+          },
+          {
+            "kind": "history",
+            "path": "/private/tmp/loop-t06-volume-olBRrn/mounted/loop-153-jRs4PI/runtime/history/content",
+            "reason": "独立管理，保留原位置与配置。"
+          },
+          {
+            "kind": "backup",
+            "path": "/private/tmp/loop-t06-volume-olBRrn/mounted/loop-153-jRs4PI/runtime/backups",
+            "reason": "独立管理，保留原位置与配置。"
+          },
+          {
+            "kind": "secrets",
+            "reason": "独立管理，保留原位置与配置。"
+          },
+          {
+            "kind": "unknown",
+            "path": "/private/tmp/loop-t06-volume-olBRrn/mounted/loop-153-jRs4PI/vite-cache",
+            "reason": "未知、手动或保留源内容；不纳入复制，不自动删除。"
+          }
+        ],
+        "conflicts": [
+          "目标目录已有内容，请保留现场并选择空目录。"
+        ],
+        "fileCount": 3,
+        "resources": [
+          {
+            "kind": "program",
+            "path": "/Users/dan/Programs/loop-control"
+          },
+          {
+            "kind": "runtime",
+            "path": "/private/tmp/loop-t06-volume-olBRrn/mounted/loop-153-jRs4PI/runtime"
+          },
+          {
+            "kind": "state",
+            "path": "/private/tmp/loop-t06-volume-olBRrn/mounted/loop-153-jRs4PI/runtime/state"
+          },
+          {
+            "kind": "model-cache",
+            "path": "/private/tmp/loop-t06-volume-olBRrn/mounted/loop-153-jRs4PI/whisperx-models"
+          },
+          {
+            "kind": "history",
+            "path": "/private/tmp/loop-t06-volume-olBRrn/mounted/loop-153-jRs4PI/runtime/history/content"
+          },
+          {
+            "kind": "backup",
+            "path": "/private/tmp/loop-t06-volume-olBRrn/mounted/loop-153-jRs4PI/runtime/backups"
+          },
+          {
+            "kind": "secrets"
+          }
+        ],
+        "canExecute": false,
+        "references": [
+          {
+            "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+            "fileSize": 210288,
+            "accountId": "22acc074-924f-4061-ab2c-11c599cfec4c",
+            "episodeId": "4711ee33-49d0-4ada-94b6-ef3f27650b63",
+            "physicalPath": "/private/tmp/loop-t06-volume-olBRrn/mounted/loop-153-jRs4PI/account/episodes/4711ee33-49d0-4ada-94b6-ef3f27650b63/shot.mp4",
+            "relativePath": "episodes/4711ee33-49d0-4ada-94b6-ef3f27650b63/shot.mp4"
+          },
+          {
+            "sha256": "21367e1bb28c3f86626206d5349933c1755207ff4e2bf770e59606432875899b",
+            "fileSize": 16556,
+            "accountId": "22acc074-924f-4061-ab2c-11c599cfec4c",
+            "episodeId": "4711ee33-49d0-4ada-94b6-ef3f27650b63",
+            "physicalPath": "/private/tmp/loop-t06-volume-olBRrn/mounted/loop-153-jRs4PI/account/episodes/4711ee33-49d0-4ada-94b6-ef3f27650b63/voice.mp3",
+            "relativePath": "episodes/4711ee33-49d0-4ada-94b6-ef3f27650b63/voice.mp3"
+          },
+          {
+            "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+            "fileSize": 210288,
+            "accountId": "22acc074-924f-4061-ab2c-11c599cfec4c",
+            "episodeId": "4711ee33-49d0-4ada-94b6-ef3f27650b63",
+            "physicalPath": "/private/tmp/loop-t06-volume-olBRrn/mounted/loop-153-jRs4PI/account/episodes/4711ee33-49d0-4ada-94b6-ef3f27650b63/shot.mp4",
+            "relativePath": "episodes/4711ee33-49d0-4ada-94b6-ef3f27650b63/shot.mp4"
+          },
+          {
+            "sha256": "21367e1bb28c3f86626206d5349933c1755207ff4e2bf770e59606432875899b",
+            "fileSize": 16556,
+            "accountId": "22acc074-924f-4061-ab2c-11c599cfec4c",
+            "episodeId": "4711ee33-49d0-4ada-94b6-ef3f27650b63",
+            "physicalPath": "/private/tmp/loop-t06-volume-olBRrn/mounted/loop-153-jRs4PI/account/episodes/4711ee33-49d0-4ada-94b6-ef3f27650b63/voice.mp3",
+            "relativePath": "episodes/4711ee33-49d0-4ada-94b6-ef3f27650b63/voice.mp3"
+          },
+          {
+            "sha256": "1e13ec361e4cba26cf65307e6f223eb121436fbba410f40ba389fe1f60c3c1b1",
+            "fileSize": 204,
+            "accountId": "22acc074-924f-4061-ab2c-11c599cfec4c",
+            "episodeId": "4711ee33-49d0-4ada-94b6-ef3f27650b63",
+            "physicalPath": "/private/tmp/loop-t06-volume-olBRrn/mounted/loop-153-jRs4PI/account/episodes/4711ee33-49d0-4ada-94b6-ef3f27650b63/board.json",
+            "relativePath": "episodes/4711ee33-49d0-4ada-94b6-ef3f27650b63/board.json"
+          },
+          {
+            "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+            "fileSize": 210288,
+            "accountId": "22acc074-924f-4061-ab2c-11c599cfec4c",
+            "episodeId": "4711ee33-49d0-4ada-94b6-ef3f27650b63",
+            "physicalPath": "/private/tmp/loop-t06-volume-olBRrn/mounted/loop-153-jRs4PI/account/episodes/4711ee33-49d0-4ada-94b6-ef3f27650b63/shot.mp4",
+            "relativePath": "episodes/4711ee33-49d0-4ada-94b6-ef3f27650b63/shot.mp4"
+          },
+          {
+            "sha256": "1e13ec361e4cba26cf65307e6f223eb121436fbba410f40ba389fe1f60c3c1b1",
+            "fileSize": 204,
+            "accountId": "22acc074-924f-4061-ab2c-11c599cfec4c",
+            "episodeId": "4711ee33-49d0-4ada-94b6-ef3f27650b63",
+            "physicalPath": "/private/tmp/loop-t06-volume-olBRrn/mounted/loop-153-jRs4PI/account/episodes/4711ee33-49d0-4ada-94b6-ef3f27650b63/board.json",
+            "relativePath": "episodes/4711ee33-49d0-4ada-94b6-ef3f27650b63/board.json"
+          }
+        ],
+        "totalBytes": 227048,
+        "directories": [
+          {
+            "kind": "account",
+            "source": {
+              "path": "/private/tmp/loop-t06-volume-olBRrn/mounted/loop-153-jRs4PI/account",
+              "inode": "17",
+              "device": "16777249"
+            },
+            "accountId": "22acc074-924f-4061-ab2c-11c599cfec4c",
+            "targetRelativePath": "account"
+          },
+          {
+            "kind": "episode",
+            "source": {
+              "path": "/private/tmp/loop-t06-volume-olBRrn/mounted/loop-153-jRs4PI/account/episodes/4711ee33-49d0-4ada-94b6-ef3f27650b63",
+              "inode": "19",
+              "device": "16777249"
+            },
+            "accountId": "22acc074-924f-4061-ab2c-11c599cfec4c",
+            "episodeId": "4711ee33-49d0-4ada-94b6-ef3f27650b63",
+            "targetRelativePath": "account/episodes/4711ee33-49d0-4ada-94b6-ef3f27650b63"
+          }
+        ],
+        "sourceBinding": {
+          "path": "/private/tmp/loop-t06-volume-olBRrn/mounted/loop-153-jRs4PI",
+          "inodeId": "16",
+          "deviceId": "16777249",
+          "mountPath": "/private/tmp/loop-t06-volume-olBRrn/mounted"
+        },
+        "targetBinding": {
+          "path": "/private/tmp/loop-t06-volume-olBRrn/mounted/chosen-library",
+          "inodeId": "24",
+          "deviceId": "16777249",
+          "mountPath": "/private/tmp/loop-t06-volume-olBRrn/mounted"
+        },
+        "directoryCount": 2,
+        "evidenceSha256": "3c6e4d41a2713996d003860a59a5796cbc76e31232c3fcf2b796e9973fc62ea1",
+        "migrationStates": [],
+        "incompleteCopies": [],
+        "frozenDirectories": []
+      },
+      "manifestSha256": "0b42dee59670b40e193089e1354042d5aa1557e60aaa432aed15b406b79bcb46",
+      "createdAt": "2026-11-02T08:16:18.175Z",
+      "progress": {},
+      "error": null,
+      "updatedAt": "2026-11-02T08:16:18.175Z"
+    },
+    "executing": false,
+    "path": "/private/tmp/loop-t06-volume-olBRrn/mounted/loop-153-jRs4PI",
+    "canInitialize": false,
+    "status": "ready"
+  },
+  "dimensions": [
+    {
+      "client": 560,
+      "left": 440,
+      "right": 1000,
+      "scroll": 560,
+      "width": 1440
+    },
+    {
+      "client": 379,
+      "left": 0,
+      "right": 379,
+      "scroll": 379,
+      "width": 390
+    }
+  ],
+  "firstPlanId": "94e9c393-9c8d-4ae1-9ae6-85e896fa8a88",
+  "replannedId": "a11e7e57-a675-478a-b837-3e1547542fc0",
+  "finderWindows": 1,
+  "configUnchanged": true,
+  "targetBytesRetained": true
+}

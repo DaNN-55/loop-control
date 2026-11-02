@@ -1,0 +1,16 @@
+{
+  "at": "2026-11-02T04:27:15.695Z",
+  "runtimeReady": true,
+  "worker": {
+    "state": "healthy",
+    "heartbeatAt": "2026-11-02T04:27:11.971Z",
+    "lastScanAt": "2026-11-02T04:27:12.008Z",
+    "active": 0,
+    "capacity": 1,
+    "problem": null
+  },
+  "dailyNetworkRestored": true,
+  "browserPlaybackPassed": true,
+  "browserSession": "Original valid Owner session restored to the same local origin; temporary copy removed",
+  "tempAuthFilesRemoved": true
+}

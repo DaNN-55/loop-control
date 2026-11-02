@@ -1,0 +1,34 @@
+E2E evidence: /private/tmp/loop-story-e2e-MRAJ2C/evidence
+
+> loop-control@0.1.0 runtime:prepare
+> node scripts/prepare-runtime.mjs
+
+
+> loop-control@0.1.0 worker:build
+> tsc -p tsconfig.worker.json
+
+
+> loop-control@0.1.0 backend:build
+> tsc -p tsconfig.local-app.json
+
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-MRAJ2C/source
+
+stderr | src/local-app/storyE2e.integration.test.ts > story 2 browser: a lost committed generation response and resubmission keep one task before an explicit three-second adoption
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-t06-volume-vvnl8j/mounted/loop-153-yW6tXF/browser-vite-cache/deps/react-dom_client.js?v=124ca71f as it exceeds the max of 500KB.
+
+ ✓ src/local-app/storyE2e.integration.test.ts (21 tests | 20 skipped) 18893ms
+   ✓ story 2 browser: a lost committed generation response and resubmission keep one task before an explicit three-second adoption  18893ms
+stderr | src/local-app/programLoading.browser.integration.test.ts > real page keeps login and production states honest during delayed reads and recovers a failed read without writes
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-t06-volume-sIrXXj/mounted/loop-153-uEvWGN/browser-vite-cache/deps/react-dom_client.js?v=a33629a2 as it exceeds the max of 500KB.
+
+ ✓ src/local-app/programLoading.browser.integration.test.ts (1 test) 7462ms
+   ✓ real page keeps login and production states honest during delayed reads and recovers a failed read without writes  7461ms
+
+ Test Files  2 passed (2)
+      Tests  2 passed | 20 skipped (22)
+   Start at  14:30:31
+   Duration  27.42s (transform 414ms, setup 9ms, collect 773ms, tests 26.36s, environment 0ms, prepare 63ms)
+
+JSON report written to /private/tmp/loop-story-e2e-MRAJ2C/evidence/vitest.json

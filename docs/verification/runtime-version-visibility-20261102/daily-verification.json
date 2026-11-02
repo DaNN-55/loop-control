@@ -1,0 +1,16 @@
+{
+  "verified": true,
+  "pid": 11639,
+  "releaseId": "5275ac17c6b86a5e8f6eaf48eebfb890ab154deabfe8b201e8ba9bdadfe3de2f",
+  "backendObserved": "5275ac17c6b8",
+  "workerObserved": "5275ac17c6b8",
+  "startedAtDisplayed": "2026/11/2 14:37:38",
+  "versionStateDisplayed": "已应用当前版本",
+  "systemStateDisplayed": "正常",
+  "workerDisplayed": "在线 · 空闲",
+  "pageModeDisplayed": "开发热更新",
+  "httpStatus": 200,
+  "runningReleaseIntegrity": "valid",
+  "originalTabRestored": true,
+  "ownRestartPerformed": false
+}

@@ -1,0 +1,108 @@
+{
+  "before": {
+    "samples": [
+      {
+        "durationMs": 381.28,
+        "queries": 218,
+        "completeReads": 2,
+        "fileChecks": 8,
+        "mp3Probes": 0,
+        "mp4Probes": 0
+      },
+      {
+        "durationMs": 341.78,
+        "queries": 217,
+        "completeReads": 2,
+        "fileChecks": 8,
+        "mp3Probes": 0,
+        "mp4Probes": 0
+      },
+      {
+        "durationMs": 337.14,
+        "queries": 217,
+        "completeReads": 2,
+        "fileChecks": 8,
+        "mp3Probes": 0,
+        "mp4Probes": 0
+      },
+      {
+        "durationMs": 402.05,
+        "queries": 217,
+        "completeReads": 2,
+        "fileChecks": 8,
+        "mp3Probes": 0,
+        "mp4Probes": 0
+      },
+      {
+        "durationMs": 394.72,
+        "queries": 217,
+        "completeReads": 2,
+        "fileChecks": 8,
+        "mp3Probes": 0,
+        "mp4Probes": 0
+      }
+    ],
+    "median": {
+      "durationMs": 381.28,
+      "queries": 217,
+      "completeReads": 2,
+      "fileChecks": 8,
+      "mp3Probes": 0,
+      "mp4Probes": 0
+    },
+    "meanDurationMs": 371.394
+  },
+  "after": {
+    "samples": [
+      {
+        "durationMs": 313.26,
+        "queries": 161,
+        "completeReads": 1,
+        "fileChecks": 6,
+        "mp3Probes": 0,
+        "mp4Probes": 0
+      },
+      {
+        "durationMs": 291.28,
+        "queries": 160,
+        "completeReads": 1,
+        "fileChecks": 6,
+        "mp3Probes": 0,
+        "mp4Probes": 0
+      },
+      {
+        "durationMs": 728.23,
+        "queries": 160,
+        "completeReads": 1,
+        "fileChecks": 6,
+        "mp3Probes": 0,
+        "mp4Probes": 0
+      },
+      {
+        "durationMs": 337.73,
+        "queries": 160,
+        "completeReads": 1,
+        "fileChecks": 6,
+        "mp3Probes": 0,
+        "mp4Probes": 0
+      },
+      {
+        "durationMs": 314.82,
+        "queries": 160,
+        "completeReads": 1,
+        "fileChecks": 6,
+        "mp3Probes": 0,
+        "mp4Probes": 0
+      }
+    ],
+    "median": {
+      "durationMs": 314.82,
+      "queries": 160,
+      "completeReads": 1,
+      "fileChecks": 6,
+      "mp3Probes": 0,
+      "mp4Probes": 0
+    },
+    "meanDurationMs": 397.064
+  }
+}

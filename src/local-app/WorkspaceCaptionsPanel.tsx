@@ -35,6 +35,23 @@ export function WorkspaceCaptionsPanel({workspace,command,onChange,bridge,readOn
    const value=await command(name,{episodeId:workspace.episodeId,workspaceId:current.id,expectedRevision:current.revision,clipId,...(name==='requestWorkspaceCaptionAlignment'?{}:{expectedInputFingerprint:state?.inputFingerprint}),...extra}) as ProductionWorkspace|{workspace:ProductionWorkspace};onChange('workspace' in value?value.workspace:value);
   }
  }catch(cause){setError(cause instanceof Error?cause.message:'字幕操作未完成。');}finally{setPending(false);}}
+ if(readOnly){
+  const saved=state?.contract??defaultShotCaptionContract(clip?.text??'','independent');
+  return <section className="workspace-captions workspace-captions-readonly" aria-label="工作台字幕">
+   <header><h3>字幕</h3>{state&&<span role="status">{timingLabels[state.timing]}{state.textConfirmed?' · 正文已核对':''}</span>}</header>
+   <label>字幕片段<NativeSelect size="sm" aria-label="字幕片段" value={clipId} disabled={!workspace.clips.length} onChange={event=>setClipId(event.target.value)}>{workspace.clips.filter((c,i,all)=>all.findIndex(v=>v.shotId===c.shotId)===i).map(c=><option key={c.id} value={c.id}>{c.shotId} · {c.text.slice(0,18)}</option>)}</NativeSelect></label>
+   <p className="workspace-saved-caption" aria-label="字幕正文">{saved.text||'未设置字幕正文'}</p>
+   <dl className="workspace-saved-facts">
+    <div><dt>字幕模式</dt><dd>{!saved.enabled?'已关闭':saved.contentMode==='follow_tts'?'跟随口播':'独立字幕'}</dd></div>
+    <div><dt>字幕位置</dt><dd>{shotCaptionAnchorLabels[saved.spatial.anchor]}</dd></div>
+    <div><dt>安全区</dt><dd>{shotCaptionSafeAreaLabels[saved.spatial.safeArea]}</dd></div>
+    <div><dt>排版</dt><dd>{saved.spatial.maxLines} 行 · 每行 {saved.spatial.maxCharactersPerLine} 字</dd></div>
+   </dl>
+   {saved.spatial.safeArea==='custom'&&<dl className="workspace-saved-facts">{(['top','right','bottom','left'] as const).map((side,index)=><div key={side}><dt>{['上','右','下','左'][index]}边距</dt><dd>{Math.round((saved.spatial.insets?.[side]??0)*100)}%</dd></div>)}</dl>}
+   {saved.cues.length>0&&<details className="workspace-saved-timing"><summary>字幕时序 · {saved.cues.length} 条</summary><table aria-label="已保存字幕时序"><thead><tr><th>开始</th><th>结束</th><th>正文</th></tr></thead><tbody>{saved.cues.map(cue=><tr key={cue.id}><td>{(cue.startMs/1000).toFixed(2)}s</td><td>{(cue.endMs/1000).toFixed(2)}s</td><td>{cue.text}</td></tr>)}</tbody></table></details>}
+   {state?.detail&&<p role="alert">{state.detail}</p>}
+  </section>;
+ }
  return <section className="workspace-captions" aria-label="工作台字幕"><header><h3>{alignmentOnly?'字幕对齐':'字幕'}</h3><span role="status">{dirty?'有未保存修改':state?`${timingLabels[state.timing]}${state.textConfirmed?' · 正文已核对':''}`:''}</span></header>
   <div className="workspace-caption-selectors"><label>字幕片段<NativeSelect size="sm" aria-label="字幕片段" value={clipId} disabled={pending} onChange={e=>setClipId(e.target.value)}>{workspace.clips.filter((c,i,all)=>all.findIndex(v=>v.shotId===c.shotId)===i).map(c=><option key={c.id} value={c.id}>{c.shotId} · {c.text.slice(0,18)}</option>)}</NativeSelect></label>
   {!alignmentOnly&&<label>字幕模式<NativeSelect size="sm" aria-label="字幕模式" value={!contract.enabled?'off':contract.contentMode} disabled={disabled} onChange={e=>{const value=e.target.value;change({...contract,enabled:value!=='off',contentMode:value==='follow_tts'?'follow_tts':'independent',text:value==='follow_tts'?state?.narrationText??contract.text:contract.text,cues:value==='follow_tts'&&state?.narrationText!==contract.text?[]:contract.cues});}}><option value="follow_tts" disabled={!state?.narrationText}>跟随口播</option><option value="independent">独立字幕</option><option value="off">关闭字幕</option></NativeSelect></label>}</div>

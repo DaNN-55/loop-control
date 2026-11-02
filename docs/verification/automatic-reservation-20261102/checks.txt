@@ -1,0 +1,35 @@
+/tmp/loop-auto-cost-default.log
+ Test Files  199 passed (199)
+      Tests  1313 passed (1313)
+   Start at  14:33:24
+   Duration  42.16s (transform 3.72s, setup 400ms, collect 48.35s, tests 106.72s, environment 25.79s, prepare 6.67s)
+
+/tmp/loop-auto-cost-integration2.log
+ ✓ src/local-app/workspaceCallConfirmation.integration.test.ts (5 tests) 13400ms
+ ✓ src/local-app/workspaceVideoSelection.integration.test.ts (3 tests) 14288ms
+ ✓ src/local-app/speechSelection.integration.test.ts (3 tests) 16769ms
+ Test Files  3 passed (3)
+      Tests  11 passed (11)
+   Start at  14:32:52
+   Duration  17.56s (transform 491ms, setup 29ms, collect 1.91s, tests 44.46s, environment 0ms, prepare 98ms)
+
+/tmp/loop-auto-cost-audio.log
+ ✓ src/local-app/workspaceAudioSelection.integration.test.ts (2 tests) 16445ms
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  14:34:19
+   Duration  17.25s (transform 460ms, setup 8ms, collect 632ms, tests 16.45s, environment 0ms, prepare 34ms)
+
+/tmp/loop-auto-cost-browser.log
+ ✓ src/local-app/workspaceCostEstimate.browser.integration.test.ts (1 test) 211654ms
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  14:33:23
+   Duration  212.42s (transform 458ms, setup 7ms, collect 610ms, tests 211.65s, environment 0ms, prepare 32ms)
+
+/tmp/loop-auto-cost-ui2.log
+ Test Files  2 passed (2)
+      Tests  16 passed (16)
+   Start at  14:32:05
+   Duration  3.02s (transform 259ms, setup 40ms, collect 1.40s, tests 819ms, environment 511ms, prepare 343ms)
+

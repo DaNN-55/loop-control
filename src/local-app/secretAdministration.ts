@@ -43,9 +43,11 @@ export class SecretAdministration {
  list(session:OwnerSession,search:URLSearchParams):Promise<Reply>{return this.transaction(session,'list',null,async c=>{
   if([...search.keys()].some(k=>!['q','category','page'].includes(k)||search.getAll(k).length!==1)||(search.get('q')??'').length>200||!['all','system','connection','history','unreferenced'].includes(search.get('category')??'all')||!/^\d{1,6}$/.test(search.get('page')??'1'))return{status:400,body:{error:'密钥筛选条件无效。',reason:'invalid_request'}};
   const query=(search.get('q')??'').toLowerCase(),category=search.get('category')??'all';
-  const rows=(await this.metadata(c,session)).filter(row=>(category==='all'||row.category===category)&&[...row.names,...row.aliases,row.reference,row.purpose,...row.connections.map(v=>v.name)].join('\n').toLowerCase().includes(query));
+  const inventory=await this.metadata(c,session);
+  const categoryCounts=Object.fromEntries(['system','connection','history','unreferenced'].map(category=>[category,inventory.filter(row=>row.category===category).length]));
+  const rows=inventory.filter(row=>(category==='all'||row.category===category)&&[...row.names,...row.aliases,row.reference,row.purpose,...row.connections.map(v=>v.name)].join('\n').toLowerCase().includes(query));
   const page=Math.max(1,Math.min(Number(search.get('page')??1),Math.max(1,Math.ceil(rows.length/50))));
-  return{status:200,body:{items:rows.slice((page-1)*50,page*50),total:rows.length,page,pageSize:50,observedAt:new Date().toISOString()}};
+  return{status:200,body:{categoryCounts,items:rows.slice((page-1)*50,page*50),total:rows.length,page,pageSize:50,observedAt:new Date().toISOString()}};
  });}
  detail(session:OwnerSession,reference:string):Promise<Reply>{return this.transaction(session,'detail',reference,async c=>{
   if(reference!==controlReference&&!secretReferencePattern.test(reference))return{status:400,body:{error:'密钥引用无效。',reason:'invalid_reference'}};

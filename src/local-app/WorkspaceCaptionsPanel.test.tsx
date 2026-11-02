@@ -19,3 +19,11 @@ it('keeps only alignment actions in Studio without duplicate text, style or appr
  render(<WorkspaceCaptionsPanel workspace={workspace} alignmentOnly command={vi.fn()} onChange={()=>{}}/>);
  expect(screen.getByRole('button',{name:'声学对齐'})).toBeTruthy();expect(screen.queryByLabelText('字幕正文')).toBeNull();expect(screen.queryByLabelText('字幕位置')).toBeNull();expect(screen.queryByRole('button',{name:'正文已核对'})).toBeNull();expect(screen.queryByRole('button',{name:'保存字幕'})).toBeNull();
 });
+
+it('lets completed-project readers switch saved captions without exposing editing actions',()=>{
+ const contract=defaultShotCaptionContract('第一段字幕','independent');contract.cues=[{id:'cue',text:'第一段字幕',startMs:100,endMs:900}];
+ const workspace={id:'w',episodeId:'e',revision:2,clips:[{id:'c1',itemId:'v1',shotId:'S1',text:'镜头一'},{id:'c2',itemId:'v2',shotId:'S2',text:'镜头二'}],captions:[{shotId:'S1',contract,timing:'current',textConfirmed:true},{shotId:'S2',contract:{...contract,text:'第二段字幕',cues:[]},timing:'stale',textConfirmed:false,detail:'请核对时序'}]} as unknown as ProductionWorkspace;
+ const command=vi.fn();render(<WorkspaceCaptionsPanel workspace={workspace} command={command} onChange={()=>{}} readOnly/>);
+ expect(screen.getByLabelText('字幕正文').textContent).toBe('第一段字幕');expect(screen.getByRole('table',{name:'已保存字幕时序'})).toBeTruthy();expect(screen.queryByRole('button',{name:'保存字幕'})).toBeNull();
+ fireEvent.change(screen.getByRole('combobox',{name:'字幕片段'}),{target:{value:'c2'}});expect(screen.getByLabelText('字幕正文').textContent).toBe('第二段字幕');expect(screen.getByRole('alert').textContent).toBe('请核对时序');expect(screen.queryByRole('table',{name:'已保存字幕时序'})).toBeNull();expect(command).not.toHaveBeenCalled();
+});

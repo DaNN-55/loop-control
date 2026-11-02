@@ -1,4 +1,7 @@
 import{readFileSync,existsSync}from'node:fs';import{spawnSync}from'node:child_process';import{join}from'node:path';import{createHash}from'node:crypto';import{root,assertPrivatePath}from'./environment.mjs';
+export class KeychainAccessError extends Error{constructor(code){super(code==='keychain_locked'?'本机运行 Keychain 已锁定；请运行 npm start 解锁后重试。本次未读取或修改运行凭据。':'无法访问本机运行 Keychain 工具；请检查本机授权与工具状态后重试。本次未确认操作完成。');this.code=code;}}
+function controlKeychain(body){const helper=join(root,'native/keychain-control');try{assertPrivatePath(helper);const r=spawnSync(helper,[],{input:JSON.stringify(body),encoding:'utf8',env:{PATH:'/usr/bin:/bin'},timeout:5000,maxBuffer:65536});if(r.status!==0||r.stderr)throw Error();return JSON.parse(r.stdout);}catch{throw new KeychainAccessError('keychain_unavailable');}}
+export function requireUnlockedKeychain(){const state=controlKeychain({operation:'status'});if(state?.unlocked===false)throw new KeychainAccessError('keychain_locked');if(state?.unlocked!==true)throw new KeychainAccessError('keychain_unavailable');}
 function invokePrivate(helper,args,body){const r=spawnSync(helper,args,{input:JSON.stringify(body),encoding:'utf8',env:{PATH:'/usr/bin:/bin'},timeout:5000,maxBuffer:65536});if(r.status!==0||r.stderr)throw Error('Local Keychain unavailable');const value=JSON.parse(r.stdout);if(value.ok!==true)throw Error('Local Keychain unavailable');return value;}
 export function bootstrapKeychain(operation,secret){const helper=join(root,'native/keychain-bootstrap');assertPrivatePath(helper);return invokePrivate(helper,[],{operation,...(secret===undefined?{}:{secret})});}
 export function resolveRuntimeSecretReference(reference,aliases={}){
@@ -30,6 +33,7 @@ export function runtimeSecret(reference){
   const path=join(root,'history/content',descriptor.catalogSha256);assertPrivatePath(path);
   return historicalLiteralValue(reference,descriptor,readFileSync(path));
  }
+ requireUnlockedKeychain();
  const settings=JSON.parse(readFileSync(join(root,'deployment.json'))),helper=join(root,'native/keychain-helper'),keychain=join(root,'keychain/loop-control.keychain-db');
  assertPrivatePath(helper);assertPrivatePath(keychain);
  if(createHash('sha256').update(readFileSync(helper)).digest('hex')!==settings.connections.keychain.helperSha256)throw Error('Keychain helper identity changed');
@@ -39,7 +43,8 @@ export function hydrateDeploymentSecrets(d){
  for(const key of ['database','workerDatabase'])if(d[key]?.passwordRef){if(d[key].password!==undefined)throw Error('Ambiguous database secret');d={...d,[key]:{...d[key],password:runtimeSecret(d[key].passwordRef)}};delete d[key].passwordRef;}
  return d;
 }
-export function keychainState(operation){const helper=join(root,'native/keychain-control');assertPrivatePath(helper);const invoke=body=>{const r=spawnSync(helper,[],{input:JSON.stringify(body),encoding:'utf8',env:{PATH:'/usr/bin:/bin'},timeout:5000});if(r.status!==0)throw Error('Daily application Keychain unavailable');return JSON.parse(r.stdout);};
- if(operation==='unlock'){if(!invoke({operation:'status'}).unlocked){let password=bootstrapKeychain('get').secret;invoke({operation:'unlock',password});password='';}}
- else if(operation==='lock')invoke({operation:'lock'});else throw Error('Unknown application Keychain operation');
+export function keychainState(operation){
+ if(operation==='status'){const state=controlKeychain({operation:'status'});if(typeof state?.unlocked!=='boolean')throw new KeychainAccessError('keychain_unavailable');return{unlocked:state.unlocked};}
+ if(operation==='unlock'){if(!keychainState('status').unlocked){let password=bootstrapKeychain('get').secret;controlKeychain({operation:'unlock',password});password='';}}
+ else if(operation==='lock')controlKeychain({operation:'lock'});else throw Error('Unknown application Keychain operation');
 }

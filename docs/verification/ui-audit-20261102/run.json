@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "source": "/private/tmp/loop-ui-audit-ZEDnyP/source",
+  "evidence": "/private/tmp/loop-ui-audit-ZEDnyP/evidence",
+  "container": "loop-story-e2e-7fd83d98e1b4",
+  "containerRemoved": true,
+  "paidCalls": 0,
+  "paidCostCny": 0
+}

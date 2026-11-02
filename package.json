@@ -17,6 +17,7 @@
     "test": "vitest run --exclude '**/*.integration.test.ts'",
     "test:openchatcut-integration": "vitest run src/worker/openchatcutProject.integration.test.ts",
     "test:watch": "vitest --exclude '**/*.integration.test.ts'",
+    "test:e2e": "node scripts/e2e/run.mjs",
     "worker:build": "tsc -p tsconfig.worker.json",
     "worker:execute": "node scripts/run-prepared.mjs worker",
     "worker:run": "npm run worker:execute --",
@@ -29,6 +30,7 @@
   },
   "dependencies": {
     "@untitledui/icons": "0.0.23",
+    "@videojs/react": "10.2.0",
     "lucide-react": "^1.31.0",
     "pg": "8.23.1",
     "react": "^19.1.1",

@@ -1,0 +1,142 @@
+{
+  "passed": true,
+  "exportId": "027df1ce-0884-46d4-af5a-a844ab702884",
+  "contentSha256": "f1cacff890c6f1a10b3cdddcf5b6facfc6a168da8e6139c8185fedf3f317034c",
+  "checks": [
+    {
+      "name": "used_content",
+      "detail": "已核对 1 个实际来源。",
+      "passed": true,
+      "sources": [
+        {
+          "sha256": "17e25e5315ce40a61b3e7da21c7cd8c9f9cc175848d73472d3237e71ccb90c55",
+          "fileSize": 849893,
+          "relativePath": "末班车前的善意 · 写实--c295c32a-e02d-48cf-ad72-231a02e408c9/末班车前的一把伞 · MiniMax写实版--be49fc67-8058-4bde-8a10-3c4ac61d59e0/native-tasks/0bfc1637-d228-4559-8593-c9d183fed246/0bfc1637-d228-4559-8593-c9d183fed246.mp4"
+        }
+      ]
+    },
+    {
+      "name": "captions",
+      "detail": "已核对 2 组字幕时序，正文随最终文件一次确认。",
+      "passed": true,
+      "evidence": [
+        {
+          "clipId": "e40af689-fad3-4b1a-aa77-5b74a255a5b4",
+          "detail": null,
+          "itemId": "shot-shot-01-e40af689-fad3-4b1a-aa77-5b74a255a5b4",
+          "shotId": "shot-01",
+          "taskId": null,
+          "timing": "current",
+          "contract": {
+            "cues": [
+              {
+                "id": "umbrella-photo-line-0~0",
+                "text": "雨停了，她把伞留在长椅边。",
+                "endMs": 1800,
+                "startMs": 100
+              }
+            ],
+            "text": "雨停了，她把伞留在长椅边。",
+            "enabled": true,
+            "spatial": {
+              "anchor": "bottom-center",
+              "insets": {
+                "top": 0.08,
+                "left": 0.08,
+                "right": 0.08,
+                "bottom": 0.18
+              },
+              "version": "shot-caption-space/v2",
+              "maxLines": 2,
+              "safeArea": "title-safe",
+              "aspectRatio": "9:16",
+              "maxCharactersPerLine": 16
+            },
+            "version": "shot-captions/v1",
+            "contentMode": "independent"
+          },
+          "durationMs": 2000,
+          "audioTrackId": null,
+          "narrationText": "雨停了，她把伞留在长椅边。",
+          "textConfirmed": false,
+          "inputFingerprint": "b7538260b69a0486b3b27f7295d42a18465c27c0e1ab526b0480208ad9854b8a",
+          "alignmentInputVersion": null
+        },
+        {
+          "clipId": "09408d54-4360-4166-b0a0-83f37e319c32",
+          "detail": null,
+          "itemId": "shot-shot-02-09408d54-4360-4166-b0a0-83f37e319c32",
+          "shotId": "shot-02",
+          "taskId": null,
+          "timing": "current",
+          "contract": {
+            "cues": [
+              {
+                "id": "umbrella-photo-line-1~0",
+                "text": "纸条写着：留给下一个人。",
+                "endMs": 1800,
+                "startMs": 100
+              }
+            ],
+            "text": "纸条写着：留给下一个人。",
+            "enabled": true,
+            "spatial": {
+              "anchor": "bottom-center",
+              "insets": {
+                "top": 0.08,
+                "left": 0.08,
+                "right": 0.08,
+                "bottom": 0.18
+              },
+              "version": "shot-caption-space/v2",
+              "maxLines": 2,
+              "safeArea": "title-safe",
+              "aspectRatio": "9:16",
+              "maxCharactersPerLine": 16
+            },
+            "version": "shot-captions/v1",
+            "contentMode": "independent"
+          },
+          "durationMs": 2000,
+          "audioTrackId": null,
+          "narrationText": "纸条写着：留给下一个人。",
+          "textConfirmed": false,
+          "inputFingerprint": "57325150e89a6bdbb4e16ca063c25e023a657083e214ea00f02d252bab5ecc1d",
+          "alignmentInputVersion": null
+        }
+      ]
+    },
+    {
+      "name": "technical",
+      "detail": "实际 MP4 时长、画幅、音频及黑帧检查通过。",
+      "passed": true,
+      "inspection": {
+        "width": 1080,
+        "height": 1920,
+        "hasAudio": true,
+        "blackFrameCount": 0,
+        "durationSeconds": 4.053333
+      },
+      "videoFrames": 120,
+      "audioExpected": false,
+      "videoDurationSeconds": 4,
+      "expectedDurationSeconds": 4,
+      "containerDurationSeconds": 4.053333
+    },
+    {
+      "name": "representative_frame",
+      "detail": "已实际解码代表帧。",
+      "passed": true,
+      "artifact": {
+        "sha256": "9c5fde28d7f510066bcb07f7cd822eed0050ba3f8c6d974a2f622ad98bdfbf3d",
+        "fileSize": 83027,
+        "relativePath": "末班车前的善意 · 写实--c295c32a-e02d-48cf-ad72-231a02e408c9/末班车前的一把伞 · MiniMax写实版--be49fc67-8058-4bde-8a10-3c4ac61d59e0/workspace-exports/027df1ce-0884-46d4-af5a-a844ab702884/representative.jpg"
+      }
+    },
+    {
+      "name": "export_file",
+      "detail": "最终文件已按字节 SHA-256 与大小不可变登记。",
+      "passed": true
+    }
+  ]
+}

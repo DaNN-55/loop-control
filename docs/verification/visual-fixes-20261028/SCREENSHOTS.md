@@ -1,6 +1,6 @@
 # PC复验截图
 
-369张截图；实际尺寸与状态以measurements.json及专项JSON为准。文件按JPEG保存，少数早期.png后缀实际为JPEG。旧检查画面保留，但问题结论以REPORT.md逐编号表为准。
+369张截图；实际尺寸与状态以measurements.json.gz及专项JSON为准。文件按JPEG保存，少数早期.png后缀实际为JPEG。旧检查画面保留，但问题结论以REPORT.md逐编号表为准。
 
 | 截图 |
 | --- |

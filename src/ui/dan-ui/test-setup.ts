@@ -10,3 +10,14 @@ if (!globalThis.CSS?.escape) {
   }).join('');
   Object.defineProperty(globalThis, 'CSS', {value: {...globalThis.CSS, escape}, configurable: true});
 }
+
+// jsdom supplies audioTracks as an array; browser AudioTrackList also emits events.
+// Supply the missing empty EventTarget list for media component integration tests.
+if(typeof HTMLMediaElement!=='undefined'){
+const audioTrackLists=new WeakMap<HTMLMediaElement,EventTarget & {length:number;[Symbol.iterator]:()=>Iterator<never>}>();
+Object.defineProperty(HTMLMediaElement.prototype,'audioTracks',{configurable:true,get(){
+ let tracks=audioTrackLists.get(this);
+ if(!tracks){tracks=Object.assign(new EventTarget(),{length:0,*[Symbol.iterator]():Generator<never>{}});audioTrackLists.set(this,tracks);}
+ return tracks;
+}});
+}

@@ -1,0 +1,11 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/connectionUsage.integration.test.ts (2 tests) 2904ms
+   ✓ reads only owned current-version usage through Owner HTTP and caches without touching generation or verification  1742ms
+   ✓ reads the current MiniMax PAYG balance through Owner HTTP without separate billing credentials or changing generation state  1161ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  08:57:01
+   Duration  3.53s (transform 356ms, setup 8ms, collect 500ms, tests 2.90s, environment 0ms, prepare 30ms)

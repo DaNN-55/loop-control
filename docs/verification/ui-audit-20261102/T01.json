@@ -1,0 +1,42 @@
+{
+  "id": "T01",
+  "verdict": "executed-findings",
+  "states": [
+    "initial-preparation",
+    "ready",
+    "completed",
+    "definite-rejection",
+    "unknown-submission",
+    "resumable-failed",
+    "resumed-completed",
+    "export-awaiting-confirmation"
+  ],
+  "successImageTask": "612fb177-f660-4c27-bd16-410572c4ba8d",
+  "unknownTask": "ffbaa3bb-52dd-4a73-8714-c315026996d1",
+  "unknownRepeatStatus": 409,
+  "resumable": {
+    "id": "ad4a8268-ac3a-4038-8105-b0c62cffe55d",
+    "shotId": "shot-01",
+    "kind": "video",
+    "taskId": "86c19510-798a-4171-be17-f9517b023ccb",
+    "status": "failed",
+    "error": null,
+    "canResume": true
+  },
+  "resumed": {
+    "id": "ad4a8268-ac3a-4038-8105-b0c62cffe55d",
+    "shotId": "shot-01",
+    "kind": "video",
+    "taskId": "86c19510-798a-4171-be17-f9517b023ccb",
+    "status": "completed",
+    "error": null,
+    "canResume": false
+  },
+  "syntheticSubmissions": 4,
+  "paidCalls": 0,
+  "uiFinding": "未知提交与确定失败均被画面任务读取为 failed/error=null，页面只显示生成失败；补充U38证据",
+  "limitations": [
+    "running瞬时态未冻结截图，不当作视觉验收通过",
+    "导出后步骤4不自动恢复编辑，验证脚本已改为手动点击第三步"
+  ]
+}

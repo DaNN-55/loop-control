@@ -12,7 +12,7 @@ export function createWorkerDatabase(config:PoolConfig){
  return pool;
 }
 export async function assertNativeWorkerDatabase(pool:Pool,database:string,narration=false,media=false){
- const narrationPrivilege=narration?" AND has_function_privilege(current_user,'local_identity.input_task_connection(uuid,integer,uuid)','EXECUTE')":"";
+ const narrationPrivilege=(narration?" AND has_function_privilege(current_user,'local_identity.input_task_connection(uuid,integer,uuid)','EXECUTE')":"")+" AND has_function_privilege(current_user,'local_identity.begin_native_output_publication(uuid,integer,uuid)','EXECUTE')";
  const {rows:[row]}=await pool.query("SELECT session_user='loop_worker' AND current_database()=$1 AND NOT EXISTS(SELECT 1 FROM pg_roles WHERE rolname=current_user AND (rolsuper OR rolbypassrls OR rolcreatedb OR rolcreaterole)) AND has_function_privilege(current_user,'local_identity.plan_input_tasks(uuid)','EXECUTE') AND has_function_privilege(current_user,'local_identity.claim_input_task(uuid,integer)','EXECUTE') AND has_function_privilege(current_user,'local_identity.input_worker_call(text,jsonb)','EXECUTE')"+narrationPrivilege+(media?" AND has_function_privilege(current_user,'local_identity.input_media_connection(uuid,integer,uuid,uuid)','EXECUTE')":"")+" ready",[database]);
  if(!row?.ready)throw Error('Native Worker database identity or permissions differ');
 }
@@ -21,7 +21,6 @@ export function nativeWorkerPort(pool:Pool):WorkerDatabasePort{
   async plan(scope){return (await pool.query('SELECT id FROM local_identity.plan_input_tasks($1)',[scope.episodeId??null])).rowCount??0;},
   async rpc(name,args){
    if(name==='claim_next_worker_task')return (await pool.query('SELECT * FROM local_identity.claim_input_task($1,$2)',[args.p_task_id??null,args.p_worker_capacity])).rows;
-   if(name==='worker_retry_delay_ms')return [0]; // Service's durable four-second scan handles persisted backoff.
    if(!['report_worker_result','report_worker_progress','refresh_worker_task_lease'].includes(name))throw Error('Unsupported native Worker operation');
    await pool.query('SELECT local_identity.input_worker_call($1,$2)',[name,args]);return [];
   },

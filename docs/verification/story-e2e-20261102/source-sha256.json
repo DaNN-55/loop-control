@@ -1,0 +1,10 @@
+{
+  "package.json": "76ca1faa91e209fc9855c861930ea65796192c950435b3832e9751d5243e4107",
+  "scripts/e2e/run.mjs": "e446b560ae282d36266ff6a6843dde24ac86f8a387f547a82dc3a2995e64a6ac",
+  "src/local-app/nativeWorkspace.fixture.ts": "e80188856c721e0aaa77757db184bf0c1c2b4d62d2bd8b372f7786923d178c28",
+  "src/local-app/storyE2e.fixture.ts": "0c3caf1779822d3b2cc323e625102d0c4bc237804cf25163f0346a22402a94bf",
+  "src/local-app/storyBrowser.fixture.ts": "b55864ed062b07e81b9b96a658ef8480b3b2d6e0f56ddb4ac20273e3171287c8",
+  "src/local-app/storyProcess.fixture.ts": "67fa932f560d2b4b4838b6e6a607f631bdb5f386235e6fe7adfdcc2e04587770",
+  "src/local-app/storyE2e.integration.test.ts": "38f047e0d21c630b13d9f695f6831ca46c55315991ebdf0a8af01e0be34db5a6",
+  "src/local-app/fixtures/story-e2e/umbrella.md": "f7d00bc20be78c9136755e11e297d8cb73672b21d546a3afceb6a78c6977f37f"
+}

@@ -1,0 +1,590 @@
+{
+  "duration": 6.058667,
+  "workspace": {
+    "selectedImages": [],
+    "visualConfiguration": {
+      "imageModel": null,
+      "videoModel": null,
+      "videoProvider": null
+    },
+    "preparation": {
+      "origin": "script-segment",
+      "scriptRevisionId": "efa1e039-2d43-4f53-b2f1-c75b2c5b66c9",
+      "authorized": false,
+      "shots": [
+        {
+          "shotId": "shot-01",
+          "origin": "script-segment",
+          "shotType": "b_roll"
+        },
+        {
+          "shotId": "shot-02",
+          "origin": "script-segment",
+          "shotType": "b_roll"
+        }
+      ]
+    },
+    "pexels": {
+      "requests": []
+    },
+    "visualCandidates": [],
+    "visualTasks": [],
+    "visualTargets": [
+      {
+        "targetItemId": "shot-shot-01-69d2174c-cfd1-4970-aec7-2bf44513fda6",
+        "width": 1080,
+        "height": 1920,
+        "provider": "",
+        "voiceMode": "none",
+        "durationSeconds": null,
+        "providerDurationSeconds": null,
+        "minimumSeconds": 2,
+        "maximumSeconds": 15
+      },
+      {
+        "targetItemId": "shot-shot-02-8c39be71-d1c5-4907-9265-8448f7a94c35",
+        "width": 1080,
+        "height": 1920,
+        "provider": "",
+        "voiceMode": "none",
+        "durationSeconds": null,
+        "providerDurationSeconds": null,
+        "minimumSeconds": 2,
+        "maximumSeconds": 15
+      }
+    ],
+    "audio": {
+      "mix": {
+        "voices": [
+          {
+            "coverage": "none",
+            "startSeconds": null,
+            "durationSeconds": null,
+            "shotDurationSeconds": 3,
+            "sourceStartSeconds": null,
+            "sourceLabel": null,
+            "alignmentReady": false,
+            "shotId": "shot-01",
+            "mode": "none",
+            "gainDb": 0,
+            "ambienceGainDb": null,
+            "sourceItemId": null,
+            "sourceAssetId": null
+          },
+          {
+            "coverage": "none",
+            "startSeconds": null,
+            "durationSeconds": null,
+            "shotDurationSeconds": 3,
+            "sourceStartSeconds": null,
+            "sourceLabel": null,
+            "alignmentReady": false,
+            "shotId": "shot-02",
+            "mode": "none",
+            "gainDb": 0,
+            "ambienceGainDb": null,
+            "sourceItemId": null,
+            "sourceAssetId": null
+          }
+        ],
+        "sounds": []
+      },
+      "preparations": []
+    },
+    "deliveries": [
+      {
+        "id": "5e3d7026-8450-411e-9a4d-db2dddb1aa60",
+        "exportId": "cccdc6ad-46ae-4914-8762-ba5811c72471",
+        "taskId": "5e3d7026-8450-411e-9a4d-db2dddb1aa60",
+        "status": "completed",
+        "error": null,
+        "verified": true,
+        "artifacts": [
+          {
+            "sha256": "0af8ddc9b5c99ac280b9764272a1f414bd2197597dba68c59bb68860b33fbfe4",
+            "fileSize": 2211,
+            "artifactType": "cover",
+            "relativePath": "城市善意--1200517c-be4e-49cd-8fd5-e03a39f750e2/末班车前的一把伞--39203af8-6c98-40a7-8c97-01f673ac36b1/workspace-deliveries/7280bc6f-de71-4194-b7f2-7af45017fa7e/cover.png"
+          },
+          {
+            "sha256": "77f5fd05f9acf900e2201bf74ae86a09a673cbbe76e1fe1f812f74b4a5d947d4",
+            "fileSize": 1265,
+            "artifactType": "metadata",
+            "relativePath": "城市善意--1200517c-be4e-49cd-8fd5-e03a39f750e2/末班车前的一把伞--39203af8-6c98-40a7-8c97-01f673ac36b1/workspace-deliveries/7280bc6f-de71-4194-b7f2-7af45017fa7e/metadata.json"
+          },
+          {
+            "sha256": "467392325bfe35b79ffa9221de1d16729d13f162207513d2fa73cfcc94d0db22",
+            "fileSize": 5282,
+            "artifactType": "final_qc_report",
+            "relativePath": "城市善意--1200517c-be4e-49cd-8fd5-e03a39f750e2/末班车前的一把伞--39203af8-6c98-40a7-8c97-01f673ac36b1/workspace-deliveries/7280bc6f-de71-4194-b7f2-7af45017fa7e/checks.json"
+          },
+          {
+            "sha256": "72377b27ea04d4634c0d87ca2504ca0c3bf2cd381ce0ea8229be0353eb980aef",
+            "fileSize": 3131,
+            "artifactType": "publish_package",
+            "relativePath": "城市善意--1200517c-be4e-49cd-8fd5-e03a39f750e2/末班车前的一把伞--39203af8-6c98-40a7-8c97-01f673ac36b1/workspace-deliveries/5e3d7026-8450-411e-9a4d-db2dddb1aa60/manifest.json"
+          },
+          {
+            "sha256": "4af77e072fe4350672378826c5e2548c302e4c10e1e176e6a1d6b4f547701217",
+            "fileSize": 295819,
+            "artifactType": "final_render",
+            "relativePath": "城市善意--1200517c-be4e-49cd-8fd5-e03a39f750e2/末班车前的一把伞--39203af8-6c98-40a7-8c97-01f673ac36b1/workspace-exports/cccdc6ad-46ae-4914-8762-ba5811c72471/4af77e072fe4350672378826c5e2548c302e4c10e1e176e6a1d6b4f547701217.mp4"
+          },
+          {
+            "sha256": "8df295ddff638281e594c4f79773acb5250a84de94e9ccc507492860b6667e4f",
+            "fileSize": 9498,
+            "artifactType": "editable_project",
+            "relativePath": "城市善意--1200517c-be4e-49cd-8fd5-e03a39f750e2/末班车前的一把伞--39203af8-6c98-40a7-8c97-01f673ac36b1/production-workspace/versions/8df295ddff638281e594c4f79773acb5250a84de94e9ccc507492860b6667e4f.json"
+          }
+        ],
+        "createdAt": "2026-11-02T03:11:15.881Z"
+      },
+      {
+        "id": "7280bc6f-de71-4194-b7f2-7af45017fa7e",
+        "exportId": "cccdc6ad-46ae-4914-8762-ba5811c72471",
+        "taskId": "7280bc6f-de71-4194-b7f2-7af45017fa7e",
+        "status": "failed",
+        "error": "文件路径或大小已变化。",
+        "verified": false,
+        "artifacts": [],
+        "createdAt": "2026-11-02T03:11:15.423Z"
+      }
+    ],
+    "usedNarration": [],
+    "candidates": [],
+    "exports": [
+      {
+        "id": "cccdc6ad-46ae-4914-8762-ba5811c72471",
+        "projectContentVersion": 5,
+        "contentSha256": "8fb43f54d7866f2956796c1566c3afef52cecc54fc460e949214953660cfa138",
+        "project": {
+          "sha256": "8df295ddff638281e594c4f79773acb5250a84de94e9ccc507492860b6667e4f",
+          "fileSize": 9498,
+          "relativePath": "城市善意--1200517c-be4e-49cd-8fd5-e03a39f750e2/末班车前的一把伞--39203af8-6c98-40a7-8c97-01f673ac36b1/production-workspace/versions/8df295ddff638281e594c4f79773acb5250a84de94e9ccc507492860b6667e4f.json"
+        },
+        "status": "ready",
+        "artifact": {
+          "sha256": "4af77e072fe4350672378826c5e2548c302e4c10e1e176e6a1d6b4f547701217",
+          "fileSize": 295819,
+          "relativePath": "城市善意--1200517c-be4e-49cd-8fd5-e03a39f750e2/末班车前的一把伞--39203af8-6c98-40a7-8c97-01f673ac36b1/workspace-exports/cccdc6ad-46ae-4914-8762-ba5811c72471/4af77e072fe4350672378826c5e2548c302e4c10e1e176e6a1d6b4f547701217.mp4"
+        },
+        "checks": [
+          {
+            "name": "used_content",
+            "detail": "已核对 2 个实际来源。",
+            "passed": true,
+            "sources": [
+              {
+                "sha256": "0af8ddc9b5c99ac280b9764272a1f414bd2197597dba68c59bb68860b33fbfe4",
+                "fileSize": 2211,
+                "relativePath": "城市善意--1200517c-be4e-49cd-8fd5-e03a39f750e2/末班车前的一把伞--39203af8-6c98-40a7-8c97-01f673ac36b1/materials/0af8ddc9b5c99ac280b9764272a1f414bd2197597dba68c59bb68860b33fbfe4-站台黄伞.png"
+              },
+              {
+                "sha256": "42bcaaa312285dea1dc4f5fa87f5e1ef3fc530b8aac22a2b5068e714b91039ad",
+                "fileSize": 2094,
+                "relativePath": "城市善意--1200517c-be4e-49cd-8fd5-e03a39f750e2/末班车前的一把伞--39203af8-6c98-40a7-8c97-01f673ac36b1/materials/42bcaaa312285dea1dc4f5fa87f5e1ef3fc530b8aac22a2b5068e714b91039ad-伞柄纸条.png"
+              }
+            ]
+          },
+          {
+            "name": "captions",
+            "detail": "已核对 2 组字幕时序，正文随最终文件一次确认。",
+            "passed": true,
+            "evidence": [
+              {
+                "clipId": "69d2174c-cfd1-4970-aec7-2bf44513fda6",
+                "detail": null,
+                "itemId": "shot-shot-01-69d2174c-cfd1-4970-aec7-2bf44513fda6",
+                "shotId": "shot-01",
+                "taskId": null,
+                "timing": "current",
+                "contract": {
+                  "cues": [
+                    {
+                      "id": "story-line-0~0",
+                      "text": "雨停了，她把伞留在长椅上。",
+                      "endMs": 2800,
+                      "startMs": 100
+                    }
+                  ],
+                  "text": "雨停了，她把伞留在长椅上。",
+                  "enabled": true,
+                  "spatial": {
+                    "anchor": "bottom-center",
+                    "insets": {
+                      "top": 0.08,
+                      "left": 0.08,
+                      "right": 0.08,
+                      "bottom": 0.18
+                    },
+                    "version": "shot-caption-space/v2",
+                    "maxLines": 2,
+                    "safeArea": "title-safe",
+                    "aspectRatio": "9:16",
+                    "maxCharactersPerLine": 16
+                  },
+                  "version": "shot-captions/v1",
+                  "contentMode": "independent"
+                },
+                "durationMs": 3000,
+                "audioTrackId": null,
+                "narrationText": "雨停了，她把伞留在长椅上。",
+                "textConfirmed": false,
+                "inputFingerprint": "2b8d2fb9afae9f1bd60ba704ae64b2f99f2e0bdeed256cecbc7ece67a816f079",
+                "alignmentInputVersion": null
+              },
+              {
+                "clipId": "8c39be71-d1c5-4907-9265-8448f7a94c35",
+                "detail": null,
+                "itemId": "shot-shot-02-8c39be71-d1c5-4907-9265-8448f7a94c35",
+                "shotId": "shot-02",
+                "taskId": null,
+                "timing": "current",
+                "contract": {
+                  "cues": [
+                    {
+                      "id": "story-line-1~0",
+                      "text": "伞柄的纸条写着：留给下一个人。",
+                      "endMs": 2800,
+                      "startMs": 100
+                    }
+                  ],
+                  "text": "伞柄的纸条写着：留给下一个人。",
+                  "enabled": true,
+                  "spatial": {
+                    "anchor": "bottom-center",
+                    "insets": {
+                      "top": 0.08,
+                      "left": 0.08,
+                      "right": 0.08,
+                      "bottom": 0.18
+                    },
+                    "version": "shot-caption-space/v2",
+                    "maxLines": 2,
+                    "safeArea": "title-safe",
+                    "aspectRatio": "9:16",
+                    "maxCharactersPerLine": 16
+                  },
+                  "version": "shot-captions/v1",
+                  "contentMode": "independent"
+                },
+                "durationMs": 3000,
+                "audioTrackId": null,
+                "narrationText": "伞柄的纸条写着：留给下一个人。",
+                "textConfirmed": false,
+                "inputFingerprint": "b1223d93e979b033342058351488491ddc0690c1a5ca068c6b2abed5ef433ebd",
+                "alignmentInputVersion": null
+              }
+            ]
+          },
+          {
+            "name": "technical",
+            "detail": "实际 MP4 时长、画幅、音频及黑帧检查通过。",
+            "passed": true,
+            "inspection": {
+              "width": 1080,
+              "height": 1920,
+              "hasAudio": true,
+              "blackFrameCount": 0,
+              "durationSeconds": 6.058667
+            },
+            "videoFrames": 180,
+            "audioExpected": false,
+            "videoDurationSeconds": 6,
+            "expectedDurationSeconds": 6,
+            "containerDurationSeconds": 6.058667
+          },
+          {
+            "name": "representative_frame",
+            "detail": "已实际解码代表帧。",
+            "passed": true,
+            "artifact": {
+              "sha256": "ab65ae8f16b1d73afd4602a0bca517a6a0123be271433154b3a5fd18e20c3a66",
+              "fileSize": 30500,
+              "relativePath": "城市善意--1200517c-be4e-49cd-8fd5-e03a39f750e2/末班车前的一把伞--39203af8-6c98-40a7-8c97-01f673ac36b1/workspace-exports/cccdc6ad-46ae-4914-8762-ba5811c72471/representative.jpg"
+            }
+          },
+          {
+            "name": "export_file",
+            "detail": "最终文件已按字节 SHA-256 与大小不可变登记。",
+            "passed": true
+          }
+        ],
+        "createdAt": "2026-11-02T03:11:14.922Z",
+        "confirmedAt": "2026-11-02T03:11:15.204Z",
+        "confirmed": true,
+        "current": true
+      },
+      {
+        "id": "c50c9ce5-b089-4ef8-96c8-8121c2409fb4",
+        "projectContentVersion": 1,
+        "contentSha256": "09bdf5b9e637f57e8113a55d736022ede19f6f52fd72091eadc2dd90d5fd039c",
+        "project": {
+          "sha256": "f8b35cde4444ec981493911f4334ce32ec9ec0c0640fa8df6f49641e69eafe4d",
+          "fileSize": 2523,
+          "relativePath": "城市善意--1200517c-be4e-49cd-8fd5-e03a39f750e2/末班车前的一把伞--39203af8-6c98-40a7-8c97-01f673ac36b1/production-workspace/versions/f8b35cde4444ec981493911f4334ce32ec9ec0c0640fa8df6f49641e69eafe4d.json"
+        },
+        "status": "failed",
+        "artifact": null,
+        "checks": [
+          {
+            "name": "used_content",
+            "detail": "还有 2 处已用画面占位。",
+            "passed": false
+          },
+          {
+            "name": "captions",
+            "detail": "必要字幕缺少当前时序，请在剪辑器校时或使用字幕对齐。",
+            "passed": false
+          }
+        ],
+        "createdAt": "2026-11-02T03:11:04.950Z",
+        "confirmedAt": null,
+        "confirmed": false,
+        "current": false
+      }
+    ],
+    "exportIssues": [],
+    "captions": [
+      {
+        "clipId": "69d2174c-cfd1-4970-aec7-2bf44513fda6",
+        "itemId": "shot-shot-01-69d2174c-cfd1-4970-aec7-2bf44513fda6",
+        "shotId": "shot-01",
+        "durationMs": 3000,
+        "contract": {
+          "version": "shot-captions/v1",
+          "enabled": true,
+          "contentMode": "independent",
+          "text": "雨停了，她把伞留在长椅上。",
+          "cues": [
+            {
+              "id": "story-line-0~0",
+              "text": "雨停了，她把伞留在长椅上。",
+              "startMs": 100,
+              "endMs": 2800
+            }
+          ],
+          "spatial": {
+            "version": "shot-caption-space/v2",
+            "anchor": "bottom-center",
+            "safeArea": "title-safe",
+            "aspectRatio": "9:16",
+            "insets": {
+              "top": 0.08,
+              "right": 0.08,
+              "bottom": 0.18,
+              "left": 0.08
+            },
+            "maxLines": 2,
+            "maxCharactersPerLine": 16
+          }
+        },
+        "inputFingerprint": "2b8d2fb9afae9f1bd60ba704ae64b2f99f2e0bdeed256cecbc7ece67a816f079",
+        "timing": "current",
+        "textConfirmed": true,
+        "audioTrackId": null,
+        "narrationText": "雨停了，她把伞留在长椅上。",
+        "taskId": null,
+        "alignmentInputVersion": null,
+        "detail": null
+      },
+      {
+        "clipId": "8c39be71-d1c5-4907-9265-8448f7a94c35",
+        "itemId": "shot-shot-02-8c39be71-d1c5-4907-9265-8448f7a94c35",
+        "shotId": "shot-02",
+        "durationMs": 3000,
+        "contract": {
+          "version": "shot-captions/v1",
+          "enabled": true,
+          "contentMode": "independent",
+          "text": "伞柄的纸条写着：留给下一个人。",
+          "cues": [
+            {
+              "id": "story-line-1~0",
+              "text": "伞柄的纸条写着：留给下一个人。",
+              "startMs": 100,
+              "endMs": 2800
+            }
+          ],
+          "spatial": {
+            "version": "shot-caption-space/v2",
+            "anchor": "bottom-center",
+            "safeArea": "title-safe",
+            "aspectRatio": "9:16",
+            "insets": {
+              "top": 0.08,
+              "right": 0.08,
+              "bottom": 0.18,
+              "left": 0.08
+            },
+            "maxLines": 2,
+            "maxCharactersPerLine": 16
+          }
+        },
+        "inputFingerprint": "b1223d93e979b033342058351488491ddc0690c1a5ca068c6b2abed5ef433ebd",
+        "timing": "current",
+        "textConfirmed": true,
+        "audioTrackId": null,
+        "narrationText": "伞柄的纸条写着：留给下一个人。",
+        "taskId": null,
+        "alignmentInputVersion": null,
+        "detail": null
+      }
+    ],
+    "id": "0cdccbd0-f42c-41c5-9005-bed1eee6ec5b",
+    "episodeId": "39203af8-6c98-40a7-8c97-01f673ac36b1",
+    "workflowVersion": "four-step/v1",
+    "scriptRevisionId": "efa1e039-2d43-4f53-b2f1-c75b2c5b66c9",
+    "storyboardPackageId": "ca8eafb2-e010-41e9-9cb6-769ca47ef449",
+    "revision": 5,
+    "contentSha256": "8fb43f54d7866f2956796c1566c3afef52cecc54fc460e949214953660cfa138",
+    "nativeEditRevision": 2,
+    "narration": [
+      {
+        "windowWarning": null,
+        "selection": null,
+        "defaults": null,
+        "requiresCandidateAdoption": true,
+        "clipId": "69d2174c-cfd1-4970-aec7-2bf44513fda6",
+        "shotId": "shot-01",
+        "mode": "none",
+        "text": "雨停了，她把伞留在长椅上。",
+        "voice": null,
+        "languageCode": "zh-CN",
+        "speakingRate": null,
+        "override": false,
+        "inputFingerprint": "b7443ff0f72b33a866bf1d7eb4b00648ac36ae2e87ce0f440636473104d5ed7b",
+        "confirmed": false,
+        "taskId": null,
+        "status": "disabled",
+        "error": null,
+        "audioTrackId": null,
+        "artifactId": null,
+        "relativePath": null,
+        "sha256": null,
+        "fileSize": null,
+        "durationSeconds": null,
+        "itemId": "workspace-narration-shot-shot-01",
+        "adoptedAudioTrackId": null
+      },
+      {
+        "windowWarning": null,
+        "selection": null,
+        "defaults": null,
+        "requiresCandidateAdoption": true,
+        "clipId": "8c39be71-d1c5-4907-9265-8448f7a94c35",
+        "shotId": "shot-02",
+        "mode": "none",
+        "text": "伞柄的纸条写着：留给下一个人。",
+        "voice": null,
+        "languageCode": "zh-CN",
+        "speakingRate": null,
+        "override": false,
+        "inputFingerprint": "28d53b9f74d282df9003a0878a36b7b43285d318b008ae04a844fa5874e33fe5",
+        "confirmed": false,
+        "taskId": null,
+        "status": "disabled",
+        "error": null,
+        "audioTrackId": null,
+        "artifactId": null,
+        "relativePath": null,
+        "sha256": null,
+        "fileSize": null,
+        "durationSeconds": null,
+        "itemId": "workspace-narration-shot-shot-02",
+        "adoptedAudioTrackId": null
+      }
+    ],
+    "clips": [
+      {
+        "id": "69d2174c-cfd1-4970-aec7-2bf44513fda6",
+        "text": "雨停了，她把伞留在长椅上。",
+        "image": {
+          "fit": "contain",
+          "usage": "still",
+          "focusX": 0,
+          "focusY": 0,
+          "durationSeconds": 3
+        },
+        "itemId": "shot-shot-01-69d2174c-cfd1-4970-aec7-2bf44513fda6",
+        "shotId": "shot-01",
+        "source": {
+          "kind": "image",
+          "sha256": "0af8ddc9b5c99ac280b9764272a1f414bd2197597dba68c59bb68860b33fbfe4",
+          "fileSize": 2211,
+          "relativePath": "城市善意--1200517c-be4e-49cd-8fd5-e03a39f750e2/末班车前的一把伞--39203af8-6c98-40a7-8c97-01f673ac36b1/materials/0af8ddc9b5c99ac280b9764272a1f414bd2197597dba68c59bb68860b33fbfe4-站台黄伞.png",
+          "materialRevisionId": "4d3f356d-00ad-4d87-95a3-f9f59684e5e6"
+        }
+      },
+      {
+        "id": "8c39be71-d1c5-4907-9265-8448f7a94c35",
+        "text": "伞柄的纸条写着：留给下一个人。",
+        "image": {
+          "fit": "contain",
+          "usage": "still",
+          "focusX": 0,
+          "focusY": 0,
+          "durationSeconds": 3
+        },
+        "itemId": "shot-shot-02-8c39be71-d1c5-4907-9265-8448f7a94c35",
+        "shotId": "shot-02",
+        "source": {
+          "kind": "image",
+          "sha256": "42bcaaa312285dea1dc4f5fa87f5e1ef3fc530b8aac22a2b5068e714b91039ad",
+          "fileSize": 2094,
+          "relativePath": "城市善意--1200517c-be4e-49cd-8fd5-e03a39f750e2/末班车前的一把伞--39203af8-6c98-40a7-8c97-01f673ac36b1/materials/42bcaaa312285dea1dc4f5fa87f5e1ef3fc530b8aac22a2b5068e714b91039ad-伞柄纸条.png",
+          "materialRevisionId": "e517b76a-567e-41a5-a4c0-2c5064ba741a"
+        }
+      }
+    ],
+    "project": {
+      "relativePath": "城市善意--1200517c-be4e-49cd-8fd5-e03a39f750e2/末班车前的一把伞--39203af8-6c98-40a7-8c97-01f673ac36b1/production-workspace/versions/8df295ddff638281e594c4f79773acb5250a84de94e9ccc507492860b6667e4f.json",
+      "sha256": "8df295ddff638281e594c4f79773acb5250a84de94e9ccc507492860b6667e4f",
+      "fileSize": 9498,
+      "projectId": "loop-control-39203af8-6c98-40a7-8c97-01f673ac36b1"
+    },
+    "history": [
+      {
+        "revision": 5,
+        "sha256": "8df295ddff638281e594c4f79773acb5250a84de94e9ccc507492860b6667e4f",
+        "scriptRevisionId": "efa1e039-2d43-4f53-b2f1-c75b2c5b66c9",
+        "reason": "编辑字幕",
+        "createdAt": "2026-11-02T03:11:05.542Z"
+      },
+      {
+        "revision": 4,
+        "sha256": "4c3e8313d0c06b2090ea64601056386c32801cb2c91f330bc41e30f6b4f38ade",
+        "scriptRevisionId": "efa1e039-2d43-4f53-b2f1-c75b2c5b66c9",
+        "reason": "匹配图片",
+        "createdAt": "2026-11-02T03:11:05.358Z"
+      },
+      {
+        "revision": 3,
+        "sha256": "4ff79f503507d3185f2cce09be27d8f90bcac7da26e509732f0e07b7611dde93",
+        "scriptRevisionId": "efa1e039-2d43-4f53-b2f1-c75b2c5b66c9",
+        "reason": "编辑字幕",
+        "createdAt": "2026-11-02T03:11:05.209Z"
+      },
+      {
+        "revision": 2,
+        "sha256": "2fe8a38f1366bd39a61f7acacac16f2767a6046df04f9e23915e1fbba3d68e2e",
+        "scriptRevisionId": "efa1e039-2d43-4f53-b2f1-c75b2c5b66c9",
+        "reason": "匹配图片",
+        "createdAt": "2026-11-02T03:11:05.060Z"
+      },
+      {
+        "revision": 1,
+        "sha256": "f8b35cde4444ec981493911f4334ce32ec9ec0c0640fa8df6f49641e69eafe4d",
+        "scriptRevisionId": "efa1e039-2d43-4f53-b2f1-c75b2c5b66c9",
+        "reason": "首次组装",
+        "createdAt": "2026-11-02T03:11:04.868Z"
+      }
+    ],
+    "readiness": {
+      "deliverable": true,
+      "placeholders": [],
+      "missingSources": []
+    },
+    "stale": false
+  }
+}

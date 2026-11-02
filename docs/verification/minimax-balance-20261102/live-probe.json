@@ -1,0 +1,24 @@
+{
+  "url": "https://api.minimax.cn/account/query_balance",
+  "httpStatus": 200,
+  "region": "cn",
+  "standardPaygKey": true,
+  "statusCode": 0,
+  "amounts": {
+    "available_amount": "23.00",
+    "cash_balance": "10.00",
+    "voucher_balance": "13.00",
+    "credit_balance": "0.00",
+    "owed_amount": "0.00"
+  },
+  "fieldNames": [
+    "available_amount",
+    "cash_balance",
+    "voucher_balance",
+    "credit_balance",
+    "owed_amount",
+    "balance_alert_switch",
+    "balance_alert_threshold",
+    "base_resp"
+  ]
+}

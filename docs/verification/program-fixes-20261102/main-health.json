@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "detail": "3 项检查通过。",
+  "checks": [
+    {
+      "id": "database",
+      "passed": true,
+      "detail": "数据库检查通过。"
+    },
+    {
+      "id": "media_directory",
+      "passed": true,
+      "detail": "媒体目录检查通过。"
+    },
+    {
+      "id": "runtime",
+      "passed": true,
+      "detail": "运行程序检查通过。"
+    }
+  ]
+}

@@ -1,0 +1,675 @@
+[
+  {
+    "name": "network",
+    "policy": {
+      "version": 1,
+      "runId": "umbrella-live-20261102",
+      "enabled": true,
+      "expiresAt": "2026-11-02T05:34:55.948Z",
+      "maxRequests": 486,
+      "currency": "CNY",
+      "maxCostMicrounits": 4500000,
+      "priceEvidenceSha256": "bdc15fafe21cfabcb33e12101992e7c8f242b22335676eed2c0536fa424369e1",
+      "approvalSha256": "7ab6c2cdcc36626077f7401e236ce5b78a251a2619be103f2bc6fa70e2a31e67",
+      "providers": [
+        "bailian",
+        "minimax"
+      ],
+      "operations": {
+        "bailian.generate": {
+          "maxRequests": 1,
+          "maxBytes": 1048576,
+          "timeoutMs": 60000,
+          "costMicrounits": 1000000
+        },
+        "bailian.poll": {
+          "maxRequests": 240,
+          "maxBytes": 1048576,
+          "timeoutMs": 60000,
+          "costMicrounits": 0
+        },
+        "bailian.download": {
+          "maxRequests": 2,
+          "maxBytes": 104857600,
+          "timeoutMs": 60000,
+          "costMicrounits": 0
+        },
+        "minimax.generate": {
+          "maxRequests": 1,
+          "maxBytes": 1048576,
+          "timeoutMs": 60000,
+          "costMicrounits": 3500000
+        },
+        "minimax.poll": {
+          "maxRequests": 240,
+          "maxBytes": 1048576,
+          "timeoutMs": 60000,
+          "costMicrounits": 0
+        },
+        "minimax.download": {
+          "maxRequests": 2,
+          "maxBytes": 104857600,
+          "timeoutMs": 60000,
+          "costMicrounits": 0
+        }
+      }
+    },
+    "policySha256": "d29d43c16db57150d9a00f06e772be903593698c664cdf433d694cedc407aa36",
+    "state": {
+      "version": 1,
+      "policySha256": "d29d43c16db57150d9a00f06e772be903593698c664cdf433d694cedc407aa36",
+      "used": 16,
+      "costMicrounits": 1000000,
+      "byOperation": {
+        "bailian.generate": 1,
+        "bailian.poll": 14,
+        "bailian.download": 1
+      },
+      "halted": true,
+      "events": [
+        {
+          "operation": "bailian.generate",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "bailian.generate",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 137
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 220
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 220
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 220
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 220
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 220
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 220
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 220
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 220
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 220
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 220
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 220
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 220
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 220
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 1605
+        },
+        {
+          "operation": "bailian.download",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "bailian.download",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 1974447
+        }
+      ]
+    }
+  },
+  {
+    "name": "photo-network",
+    "policy": {
+      "version": 1,
+      "runId": "umbrella-live-photo-20261102",
+      "enabled": true,
+      "expiresAt": "2026-11-02T06:04:32.313Z",
+      "maxRequests": 488,
+      "currency": "CNY",
+      "maxCostMicrounits": 3400000,
+      "priceEvidenceSha256": "3edc24a90dfab5e3c7a4c1fd5de0803ee6d96c1b3cec7a9b84ea023b48585111",
+      "approvalSha256": "0a40ef3edee66dfc0a4a14ad4a3d524d853eeae3087fcb938d85c2eaeacee5fa",
+      "providers": [
+        "openai",
+        "bailian",
+        "minimax"
+      ],
+      "operations": {
+        "openai.generate": {
+          "maxRequests": 2,
+          "maxBytes": 20971520,
+          "timeoutMs": 60000,
+          "costMicrounits": 100000
+        },
+        "bailian.generate": {
+          "maxRequests": 1,
+          "maxBytes": 1048576,
+          "timeoutMs": 60000,
+          "costMicrounits": 700000
+        },
+        "bailian.poll": {
+          "maxRequests": 240,
+          "maxBytes": 1048576,
+          "timeoutMs": 60000,
+          "costMicrounits": 0
+        },
+        "bailian.download": {
+          "maxRequests": 2,
+          "maxBytes": 104857600,
+          "timeoutMs": 60000,
+          "costMicrounits": 0
+        },
+        "minimax.generate": {
+          "maxRequests": 1,
+          "maxBytes": 1048576,
+          "timeoutMs": 60000,
+          "costMicrounits": 2500000
+        },
+        "minimax.poll": {
+          "maxRequests": 240,
+          "maxBytes": 1048576,
+          "timeoutMs": 60000,
+          "costMicrounits": 0
+        },
+        "minimax.download": {
+          "maxRequests": 2,
+          "maxBytes": 104857600,
+          "timeoutMs": 60000,
+          "costMicrounits": 0
+        }
+      }
+    },
+    "policySha256": "13d18e01675ac590dfb3bc113f28efc12525c04f2205502cb184bc4d07410446",
+    "state": {
+      "version": 1,
+      "policySha256": "13d18e01675ac590dfb3bc113f28efc12525c04f2205502cb184bc4d07410446",
+      "used": 36,
+      "costMicrounits": 3400000,
+      "byOperation": {
+        "openai.generate": 2,
+        "bailian.generate": 1,
+        "bailian.poll": 11,
+        "bailian.download": 1,
+        "minimax.generate": 1,
+        "minimax.poll": 19,
+        "minimax.download": 1
+      },
+      "halted": true,
+      "events": [
+        {
+          "operation": "openai.generate",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "openai.generate",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 3063680
+        },
+        {
+          "operation": "openai.generate",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "openai.generate",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 2542468
+        },
+        {
+          "operation": "bailian.generate",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "bailian.generate",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 137
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 220
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 220
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 220
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 220
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 220
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 220
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 220
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 220
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 220
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 220
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "bailian.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 2059
+        },
+        {
+          "operation": "bailian.download",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "bailian.download",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 3645643
+        },
+        {
+          "operation": "minimax.generate",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "minimax.generate",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 29
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 209
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 209
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 209
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 209
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 209
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 209
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 209
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 209
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 209
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 209
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 209
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 209
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 209
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 209
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 209
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 209
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 209
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 209
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "minimax.poll",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 641
+        },
+        {
+          "operation": "minimax.download",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "minimax.download",
+          "outcome": "completed",
+          "status": 200,
+          "bytes": 849893
+        }
+      ]
+    }
+  }
+]

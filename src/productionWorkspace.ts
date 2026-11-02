@@ -20,6 +20,8 @@ export interface ProductionWorkspace {
  readiness:{deliverable:boolean;placeholders:string[];missingSources:string[]};stale:boolean;
 }
 export const productionWorkspaceFields:Record<string,string[]>={
+ prepareWorkspaceCall:['episodeId','workspaceId','expectedRevision','callCommand','callData'],
+ confirmWorkspaceCall:['episodeId','workspaceId','expectedRevision','confirmationId','reservationCents'],
  saveWorkspacePlanningSelection:['episodeId','selection','expectedSelectionRevision'],
  resumeWorkspaceEditing:['episodeId','workspaceId','expectedRevision','expectedScriptRevisionId','expectedProjectSha256'],
  adoptLegacyWorkspace:['episodeId','artifactId','savedProjectSha256','expectedSourceSha256','expectedScriptRevisionId','reviewPackageId'],

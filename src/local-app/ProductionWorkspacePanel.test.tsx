@@ -18,7 +18,7 @@ it('keeps material import reachable after matching and lists newly imported narr
 it('four-step navigation reads durable state and does not submit approvals or generation',async()=>{
  vi.stubGlobal('fetch',vi.fn(async()=>new Response(JSON.stringify({workspace}),{status:200,headers:{'Content-Type':'application/json'}})));
  const command=vi.fn();render(<ProductionWorkspacePanel episodeId="e" title="工程" scriptRevisionId="s" boardId="b" materials={[]} command={command} onLegacy={()=>{}}/>);
- await screen.findByRole('button',{name:'素材准备与匹配'});await act(async()=>{fireEvent.click(screen.getByRole('button',{name:'检查与交付'}));});expect(screen.getByText('还有 1 处占位')).toBeTruthy();await act(async()=>{fireEvent.click(screen.getByRole('button',{name:'脚本确认'}));});expect(command).not.toHaveBeenCalled();
+ await screen.findByRole('button',{name:'分镜台'});await act(async()=>{fireEvent.click(screen.getByRole('button',{name:'检查与交付'}));});expect(screen.getByText('还有 1 处占位')).toBeTruthy();await act(async()=>{fireEvent.click(screen.getByRole('button',{name:'脚本确认'}));});expect(command).not.toHaveBeenCalled();
 });
 it('enables a persisted draft only after the explicit Owner action',async()=>{
  vi.stubGlobal('fetch',vi.fn(async()=>new Response(JSON.stringify({workspace:null}),{status:200,headers:{'Content-Type':'application/json'}})));
@@ -29,12 +29,12 @@ it('shows the four-step shell on a new episode without mounting old workflow act
  vi.stubGlobal('fetch',vi.fn(async()=>new Response(JSON.stringify({workspace:null}),{status:200,headers:{'Content-Type':'application/json'}})));
  const command=vi.fn();render(<ProductionWorkspacePanel episodeId="fresh" title="新单" stage="waiting_input" scriptRevisionId={null} materials={[]} command={command} onLegacy={()=>{}}><button>旧分镜批准</button></ProductionWorkspacePanel>);
  await screen.findByRole('navigation',{name:'四步制作步骤'});expect(screen.getByRole('textbox',{name:'主脚本'})).toBeTruthy();expect(screen.queryByRole('button',{name:'旧分镜批准'})).toBeNull();
- fireEvent.click(screen.getByRole('button',{name:'素材准备与匹配'}));expect(command).not.toHaveBeenCalled();expect(screen.getByText('请先确认脚本。')).toBeTruthy();
+ fireEvent.click(screen.getByRole('button',{name:'分镜台'}));expect(command).not.toHaveBeenCalled();expect(screen.getByText('请先确认脚本。')).toBeTruthy();
 });
 it('keeps an unsaved script draft while navigating read-only steps',async()=>{
  vi.stubGlobal('fetch',vi.fn(async()=>new Response(JSON.stringify({workspace:null}),{status:200,headers:{'Content-Type':'application/json'}})));
  render(<ProductionWorkspacePanel episodeId="fresh" title="新单" stage="waiting_input" scriptRevisionId={null} materials={[]} command={vi.fn()} onLegacy={()=>{}}/>);
- await screen.findByRole('textbox',{name:'主脚本'});fireEvent.change(screen.getByRole('textbox',{name:'主脚本'}),{target:{value:'未提交的脚本草稿'}});fireEvent.click(screen.getByRole('button',{name:'素材准备与匹配'}));fireEvent.click(screen.getByRole('button',{name:'脚本确认'}));expect((screen.getByRole('textbox',{name:'主脚本'}) as HTMLTextAreaElement).value).toBe('未提交的脚本草稿');
+ await screen.findByRole('textbox',{name:'主脚本'});fireEvent.change(screen.getByRole('textbox',{name:'主脚本'}),{target:{value:'未提交的脚本草稿'}});fireEvent.click(screen.getByRole('button',{name:'分镜台'}));fireEvent.click(screen.getByRole('button',{name:'脚本确认'}));expect((screen.getByRole('textbox',{name:'主脚本'}) as HTMLTextAreaElement).value).toBe('未提交的脚本草稿');
 });
 it('requires an explicit recovery choice before replacing a legacy working edit',async()=>{
  vi.stubGlobal('fetch',vi.fn(async()=>new Response(JSON.stringify({workspace:null}),{status:200,headers:{'Content-Type':'application/json'}})));
@@ -55,7 +55,7 @@ it('preserves image and video prompt drafts when switching the unified tabs',asy
 });
 it('disables workspace write forms on a completed order even when legacy content remains inspectable',async()=>{
  const legacy={episode:{id:'e'},reviewPackages:[],artifacts:[{id:'old-final',episode_id:'e',artifact_type:'final_render',relative_path:'episodes/e/old-final.mp4',sha256:'f'.repeat(64),created_at:'2026-10-30'}],materialRevisions:[],audioTracks:[]} as unknown as import('../episodes/EpisodeProductionContainer').EpisodeProductionSnapshot;
- vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace})));render(<ProductionWorkspacePanel episodeId="e" title="已完成工程" stage="production_completed" scriptRevisionId="s" materials={[]} command={vi.fn()} onLegacy={()=>{}} legacySnapshot={legacy}/>);await screen.findByText('先导出最终视频，检查后确认这份文件。');fireEvent.click(screen.getByRole('button',{name:'剪辑工作台'}));const textbox=await screen.findByRole('textbox',{name:'字幕正文'});expect((textbox as HTMLTextAreaElement).disabled).toBe(true);expect((screen.getByRole('combobox',{name:'字幕片段'}) as HTMLSelectElement).disabled).toBe(false);fireEvent.click(screen.getByRole('button',{name:'素材准备与匹配'}));fireEvent.click(screen.getByRole('tab',{name:'口播'}));expect((screen.getByRole('tab',{name:'画面'}) as HTMLButtonElement).disabled).toBe(false);expect((screen.getByRole('button',{name:'选择镜头 S01'}) as HTMLButtonElement).disabled).toBe(false);fireEvent.click(screen.getByRole('button',{name:'检查与交付'}));expect(screen.queryByRole('button',{name:'正在导出与检查…'})).toBeNull();
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace})));render(<ProductionWorkspacePanel episodeId="e" title="已完成工程" stage="production_completed" scriptRevisionId="s" materials={[]} command={vi.fn()} onLegacy={()=>{}} legacySnapshot={legacy}/>);await screen.findByText('先导出最终视频，检查后确认这份文件。');fireEvent.click(screen.getByRole('button',{name:'剪辑工作台'}));expect(await screen.findByText('已完成工程',{selector:'h3'})).toBeTruthy();expect(screen.getByRole('button',{name:'剪辑工作台'}).textContent).toContain('只读');expect(screen.getByRole('article',{name:'S01 镜头配置'})).toBeTruthy();expect(screen.queryByRole('button',{name:'保存字幕'})).toBeNull();expect(screen.queryByRole('combobox',{name:'字幕片段'})).toBeNull();expect(screen.getByRole('article',{name:'S01 镜头配置'}).querySelector('details')).toBeNull();fireEvent.click(screen.getByRole('button',{name:'分镜台'}));fireEvent.click(screen.getByRole('tab',{name:'口播'}));expect((screen.getByRole('tab',{name:'画面'}) as HTMLButtonElement).disabled).toBe(false);expect((screen.getByRole('button',{name:'选择镜头 S01'}) as HTMLButtonElement).disabled).toBe(false);fireEvent.click(screen.getByRole('button',{name:'检查与交付'}));expect(screen.queryByRole('button',{name:'正在导出与检查…'})).toBeNull();
 });
 it('keeps another shot’s video generation draft when adopting an image advances the project',async()=>{
  const second={id:'clip2',itemId:'shot-S02-clip',shotId:'S02',text:'第二镜',source:null};
@@ -88,7 +88,7 @@ it('enters the existing native project directly from the editing step without re
 });
 it('keeps project history out of the four-step interface without changing records',async()=>{
  const w={...workspace,recovery:{decision:'preserve',sha256:'old-project',relativePath:'old.json',fileSize:10},history:[{revision:1,sha256:'saved-project',scriptRevisionId:'s',reason:'保存原编辑'}]};vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:w})));const command=vi.fn();const{container}=render(<ProductionWorkspacePanel episodeId="e" title="工程" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}} historicalReadOnly/>);await screen.findByText('第一镜');
- for(const name of ['脚本确认','素材准备与匹配','剪辑工作台','检查与交付']){fireEvent.click(screen.getByRole('button',{name}));expect(container.querySelector('.workspace-version-history')).toBeNull();expect(screen.queryByRole('button',{name:'查看所选工程'})).toBeNull();}expect(command).not.toHaveBeenCalled();
+ for(const name of ['脚本确认','分镜台','剪辑工作台','检查与交付']){fireEvent.click(screen.getByRole('button',{name}));expect(container.querySelector('.workspace-version-history')).toBeNull();expect(screen.queryByRole('button',{name:'查看所选工程'})).toBeNull();}expect(command).not.toHaveBeenCalled();
 });
 
 it('keeps a revised pending script on step one while preserving the stale saved project',async()=>{
@@ -142,5 +142,13 @@ it('returns from budget settings to the original preparation target without auto
  const command=vi.fn(),second={...workspace.clips[0],id:'second',itemId:'shot-S02-clip',shotId:'S02',text:'第二镜'},saved={...workspace,nativeEditRevision:2,clips:[...workspace.clips,second],readiness:{deliverable:true,placeholders:[],missingSources:[]}};
  vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:saved})));
  render(<ProductionWorkspacePanel episodeId="e" title="工程" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}} preparationEntry={{shotId:'S02',targetItemId:'shot-S02-clip'}}/>);
- await screen.findByRole('row',{name:'镜头 S02'});expect(screen.getByRole('button',{name:'素材准备与匹配'}).getAttribute('aria-current')).toBe('step');expect(screen.getByRole('button',{name:'选择镜头 S02'}).getAttribute('aria-pressed')).toBe('true');expect(screen.queryByRole('region',{name:'整期剪辑工作台'})).toBeNull();expect(command).not.toHaveBeenCalled();
+ await screen.findByRole('row',{name:'镜头 S02'});expect(screen.getByRole('button',{name:'分镜台'}).getAttribute('aria-current')).toBe('step');expect(screen.getByRole('button',{name:'选择镜头 S02'}).getAttribute('aria-pressed')).toBe('true');expect(screen.queryByRole('region',{name:'整期剪辑工作台'})).toBeNull();expect(command).not.toHaveBeenCalled();
+});
+it('keeps AudioSkin playback enabled in a completed order while narration and music editing stay disabled',async()=>{
+ const completed={...workspace,narration:[{shotId:'S01',clipId:'clip',mode:'manual',status:'completed',text:'已有口播',durationSeconds:6}],candidates:[{id:'voice',kind:'audio',shotId:'S01',status:'adopted',relativePath:'voice.mp3',text:'已有口播',durationSeconds:6}]};
+ const command=vi.fn();vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:completed})));
+ const {container}=render(<ProductionWorkspacePanel episodeId="e" title="已完成工程" stage="production_completed" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);
+ await screen.findByText('先导出最终视频，检查后确认这份文件。');fireEvent.click(screen.getByRole('button',{name:'分镜台'}));fireEvent.click(screen.getByRole('tab',{name:'口播'}));
+ const media=await screen.findByLabelText('S01 voice 口播试听');expect(media.closest('fieldset')?.disabled).toBe(false);expect(container.querySelector('.app-audio-player button')?.matches(':disabled')).toBe(false);expect((screen.getByRole('textbox',{name:'口播正文'}) as HTMLTextAreaElement).disabled).toBe(true);
+ fireEvent.click(screen.getByRole('tab',{name:'配乐与音效'}));expect((screen.getByRole('combobox',{name:'来源'}) as HTMLSelectElement).disabled).toBe(true);expect((screen.getByRole('button',{name:'上传 MP3'}) as HTMLButtonElement).matches(':disabled')).toBe(true);expect(command).not.toHaveBeenCalled();
 });

@@ -172,3 +172,16 @@ it('clears the administrator secret page when another browser tab changes identi
  act(()=>channels[0].onmessage?.({data:{kind:'changed',sender:'other-browser-tab'}}));
  expect(screen.queryByRole('dialog',{name:'密钥管理'})).toBeNull();expect(screen.getByRole('heading',{name:'登录控制台'})).toBeTruthy();
 });
+
+it('keeps the login form hidden while checking the session and loading an authenticated workspace',async()=>{
+ let finishSession!:(value:Response)=>void,finishCatalog!:(value:Response)=>void;
+ vi.stubGlobal('fetch',vi.fn((path:string)=>path.endsWith('/session')?new Promise<Response>(r=>finishSession=r):path.includes('/catalog?')?new Promise<Response>(r=>finishCatalog=r):Promise.resolve(Response.json({connections:[],versions:[]}))));
+ render(<LocalCatalogApp/>);expect(screen.queryByRole('heading',{name:'登录控制台'})).toBeNull();expect(screen.getByRole('status').textContent).toContain('正在确认登录状态');
+ await act(async()=>finishSession(Response.json({owner:{id:'owner'},csrfToken:'fixture'})));expect(screen.queryByRole('heading',{name:'登录控制台'})).toBeNull();expect(screen.getByRole('status').textContent).toContain('正在读取工作区');
+ await act(async()=>finishCatalog(Response.json(pagedCatalog('loaded-owner'))));expect(await productionButton()).toBeTruthy();
+});
+
+it('an authenticated catalog failure offers a read retry without presenting a login form',async()=>{
+ let catalogs=0,sessions=0;vi.stubGlobal('fetch',vi.fn(async(path:string)=>{if(path.endsWith('/session')){sessions++;return Response.json({owner:{id:'owner'},csrfToken:'fixture'});}if(path.includes('/catalog?'))return ++catalogs===1?Response.json({code:'local_service_unavailable',error:'目录暂时不可用'},{status:503}):Response.json(pagedCatalog('recovered-owner'));return Response.json({connections:[],versions:[]});}));
+ render(<LocalCatalogApp/>);expect(await screen.findByRole('button',{name:'重新读取工作区'})).toBeTruthy();expect(screen.queryByRole('heading',{name:'登录控制台'})).toBeNull();fireEvent.click(screen.getByRole('button',{name:'重新读取工作区'}));expect(await productionButton()).toBeTruthy();expect(sessions).toBe(1);
+});

@@ -11,7 +11,7 @@ export async function localRequest(path:string,init?:RequestInit){
   const headers=new Headers(init.headers);headers.set('X-CSRF-Token',csrf);init={...init,headers};
  }
  const response=await fetch('/api/local/'+path,init);const value=await response.json();
- if(!response.ok){if(response.status===401&&path!=='login'&&session===sessionGeneration){sessionGeneration++;csrf='';inFlight.clear();window.dispatchEvent(new Event('loop-local-session-expired'));}throw Object.assign(new Error(String(value.error??'本机请求失败。').replaceAll('秘密','密钥')),value.preflight?{preflight:value.preflight}:{});}
+ if(!response.ok){if(response.status===401&&path!=='login'&&session===sessionGeneration){sessionGeneration++;csrf='';inFlight.clear();window.dispatchEvent(new Event('loop-local-session-expired'));}throw Object.assign(new Error(String(value.error??'本机请求失败。').replaceAll('秘密','密钥')),{status:response.status,...(typeof value.code==='string'?{code:value.code}:{}),...(value.preflight?{preflight:value.preflight}:{})});}
  if(session===sessionGeneration&&typeof value.csrfToken==='string')csrf=value.csrfToken;return value;
 }
 export async function localCommand<T>(command:string,data:unknown,expectedRevision?:string,endpoint='configuration'):Promise<T>{

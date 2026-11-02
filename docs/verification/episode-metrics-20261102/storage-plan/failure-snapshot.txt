@@ -1,0 +1,208 @@
+- generic [ref=e1] clickable [onclick]
+  - link "跳到主要内容" [ref=e2]
+  - complementary "主导航"
+    - image "Loop Control"
+    - navigation "工作区" [ref=e4]
+      - group "生产工作"
+        - button "工作台" [ref=e9]
+        - button "生产单" [ref=e10]
+      - group "账号管理"
+        - button "账号" [ref=e11]
+      - group "配置与资料"
+        - button "连接配置" [ref=e12]
+        - button "历史资料" [ref=e13]
+    - generic
+      - button "打开 OpenChatCut 独立剪辑" [ref=e6]
+      - button "系统状态：正常" [expanded=false, ref=e14]
+      - button "收起侧栏" [ref=e7]
+  - region "平台工作台" [ref=e3]
+    - sectionheader
+      - navigation "当前位置" [ref=e8]
+        - strong
+          - StaticText "工作台"
+      - group "工作区工具"
+        - textbox "查找生产单、账号或素材" [ref=e30]
+        - button "待处理通知" [expanded=false, ref=e15]
+        - button "切换至深色模式" [ref=e16]
+        - button "所有者设置" [expanded=false, ref=e31]
+    - region "系列运营概览" [ref=e5]
+      - sectionheader
+        - heading "制作中的内容" [level=1, ref=e17]
+        - button "新建生产单" [ref=e18]
+          - StaticText "新建生产单"
+      - status
+        - strong
+          - StaticText "1 项审核，等待你的决定"
+        - StaticText "查看审核证据，确认后继续制作。"
+        - button "开始审核" [ref=e19]
+          - StaticText "开始审核"
+      - tablist "工作台状态筛选"
+        - tab "全部制作 1" [selected, ref=e20]
+          - StaticText "全部制作"
+          - StaticText "1"
+        - tab "待审核 1" [ref=e21]
+          - StaticText "待审核"
+          - StaticText "1"
+        - tab "制作中 0" [ref=e22]
+          - StaticText "制作中"
+          - StaticText "0"
+        - tab "需处理 0" [ref=e23]
+          - StaticText "需处理"
+          - StaticText "0"
+        - tab "已完成 0" [ref=e24]
+          - StaticText "已完成"
+          - StaticText "0"
+      - tabpanel "全部制作 1"
+        - search "搜索工作台生产单"
+          - textbox "搜索标题或编号" [ref=e32]
+        - combobox "工作台账号筛选" [expanded=false, ref=e33]: 全部账号
+          - MenuListPopup
+            - option "全部账号" [selected, ref=e55]
+            - option "Studio153 fixture" [ref=e56]
+        - combobox "运营系列筛选" [expanded=false, ref=e34]: 全部系列
+          - MenuListPopup
+            - option "全部系列" [selected, ref=e57]
+            - option "未归属系列" [ref=e58]
+        - combobox "工作台排序" [expanded=false, ref=e35]: 最近更新
+          - MenuListPopup
+            - option "最近更新" [selected, ref=e59]
+            - option "最早更新" [ref=e60]
+            - option "标题顺序" [ref=e61]
+            - option "花费从高到低" [ref=e62]
+            - option "花费从低到高" [ref=e63]
+        - region "系列生产单" [ref=e25]
+          - table
+            - rowgroup
+              - row
+                - columnheader "生产单" [ref=e78]
+                - columnheader "当前阶段" [ref=e79]
+                - columnheader "状态" [ref=e80]
+                - columnheader "最近更新" [ref=e81]
+                - columnheader "操作" [ref=e82]
+                  - StaticText "操作"
+            - row [ref=e64] clickable [cursor:pointer, onclick]
+              - cell "隔离 Studio153 验收 Studio153 fixture · 未关联系列" [ref=e68]
+                - button "隔离 Studio153 验收 Studio153 fixture · 未关联系列" [ref=e83]
+                  - strong
+                    - StaticText "隔离 Studio153 验收"
+                  - StaticText "Studio153 fixture · 未关联系列"
+              - cell "检查与交付" [ref=e69]
+              - cell "待审核" [ref=e70]
+              - cell "11/02 16:15" [ref=e71]
+                - time
+                  - StaticText "11/02 16:15"
+              - cell "打开生产单 隔离 Studio153 验收" [ref=e72]
+                - button "打开生产单 隔离 Studio153 验收" [ref=e84]
+        - sectionfooter
+          - StaticText "1"
+          - StaticText " 张生产单"
+          - button "查看全部" [ref=e36]
+            - StaticText "查看全部"
+      - complementary "当前作品"
+        - sectionheader
+          - heading "继续处理" [level=2, ref=e37]
+          - StaticText "7ae2c353"
+        - generic
+          - strong
+            - StaticText "隔离 Studio153 验收"
+          - StaticText "预览暂不可用"
+          - group "作品预览切换"
+            - button "查看封面" [disabled, ref=e45]
+            - status
+              - StaticText "封面预览"
+            - button "查看视频" [ref=e46]
+        - heading "隔离 Studio153 验收" [level=3, ref=e26]
+        - paragraph
+          - StaticText "Studio153 fixture"
+        - list "当前生产阶段"
+          - listitem [level=1]
+            - StaticText "脚本确认"
+          - listitem [level=1]
+            - StaticText "分镜台"
+          - listitem [level=1]
+            - StaticText "剪辑工作台"
+          - listitem [level=1]
+            - StaticText "检查与交付"
+        - region "下一步" [ref=e27]
+          - strong
+            - StaticText "合成与 QC"
+            - StaticText "待审核"
+          - paragraph
+            - StaticText "观看实际成片，确认本次交付版本。"
+          - button "确认整片" [ref=e38]
+            - StaticText "确认整片"
+        - DescriptionList
+          - term "脚本"
+          - definition
+            - StaticText "已确认"
+          - term "蓝图快照"
+          - definition
+            - StaticText "v1"
+          - term "系列版本"
+          - definition
+            - StaticText "未关联"
+          - term "最近更新"
+          - definition
+            - StaticText "11/02 16:15"
+        - sectionfooter
+          - button "查看完整生产单" [ref=e39]
+            - StaticText "查看完整生产单"
+  - dialog "个人偏好"
+    - banner
+      - heading "个人偏好" [level=2, ref=e28]
+      - button "关闭个人偏好" [ref=e29]
+    - form
+      - generic
+        - button "上传头像" [ref=e40]
+          - StaticText "上传头像"
+        - StaticText "PNG、JPEG、WebP，最大 5 MB"
+        - LabelText
+          - StaticText "显示名称"
+          - group
+            - textbox "显示名称" [ref=e65]
+        - LabelText
+          - StaticText "界面语言"
+        - combobox "界面语言" [expanded=false, ref=e47]: 简体中文
+          - MenuListPopup
+            - option "简体中文" [selected, ref=e73]
+        - LabelText
+          - StaticText "外观"
+        - combobox "外观" [expanded=false, ref=e48]: 浅色
+          - MenuListPopup
+            - option "浅色" [selected, ref=e74]
+            - option "深色" [ref=e75]
+            - option "跟随系统" [ref=e76]
+        - StaticText "使用紧凑行距"
+        - LabelText [ref=e41] clickable [onclick]
+          - switch "使用紧凑行距" [checked=true, ref=e49]
+        - region "存储位置" [ref=e42]
+          - heading "存储位置" [level=3, ref=e50]
+          - StaticText "/private/tmp/loop-t06-volume-l2FSsP/mounted/loop-153-1ivwG8"
+          - button "打开存储文件夹" [ref=e51]
+          - button "更换存储位置" [ref=e52]
+          - LabelText
+            - StaticText "新位置"
+            - group
+              - textbox "新位置" [ref=e77]: /private/tmp/loop-t06-volume-l2FSsP/mounted/chosen-library
+                - StaticText "/private/tmp/loop-t06-volume-l2FSsP/mounted/chosen-library"
+          - button "选择文件夹" [ref=e53]
+          - button "迁移" [ref=e54]
+            - StaticText "迁移"
+          - generic "迁移进度"
+            - StaticText "迁移到"
+            - StaticText "/private/tmp/loop-t06-volume-l2FSsP/mounted/chosen-library"
+            - paragraph
+              - StaticText "3 个文件 · 227,048 B"
+            - list "迁移阻塞"
+              - listitem [level=1]
+                - StaticText "目标目录已有内容，请保留现场并选择空目录。"
+            - button "取消" [ref=e66]
+              - StaticText "取消"
+            - button "开始迁移" [disabled, ref=e67]
+              - StaticText "开始迁移"
+      - contentinfo
+        - status
+        - button "恢复默认" [ref=e43]
+          - StaticText "恢复默认"
+        - button "保存偏好" [ref=e44]
+          - StaticText "保存偏好"

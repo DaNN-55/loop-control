@@ -6,8 +6,10 @@ import {resolve,relative,isAbsolute,extname} from 'node:path';
 import {createHash} from 'node:crypto';
 import {pipeline} from 'node:stream/promises';
 import type {ServerResponse} from 'node:http';
-interface ArtifactFile {storage_location?:EpisodeStorageLocation;resolved_file_path?:string;relative_path:string;sha256:string;file_size:string|number;source_asset_root:string;source_media_root:string;source_media_roots?:string[];expected_media_root?:string|null}
-export async function serveOwnedArtifact(root:string,artifact:ArtifactFile,response:ServerResponse,rangeHeader?:string){
+import type {FileHandle} from 'node:fs/promises';
+import {basename} from 'node:path';
+export interface ArtifactFile {storage_location?:EpisodeStorageLocation;resolved_file_path?:string;relative_path:string;sha256:string;file_size:string|number;source_asset_root:string;source_media_root:string;source_media_roots?:string[];expected_media_root?:string|null}
+export async function openOwnedArtifact(root:string,artifact:ArtifactFile):Promise<{file:FileHandle;path:string;size:number}>{
  if(!artifact.source_media_root||!isAbsolute(artifact.source_asset_root))throw Error('Missing deployment mapping');
  if(artifact.expected_media_root&&artifact.expected_media_root!==root)throw Error('Restored media deployment mismatch');
  const location=artifact.storage_location;
@@ -20,15 +22,21 @@ export async function serveOwnedArtifact(root:string,artifact:ArtifactFile,respo
   const before=await file.stat();if(!before.isFile()||before.nlink!==1||before.size!==Number(artifact.file_size))throw Error('Artifact metadata differs');
   const hash=createHash('sha256');for await(const chunk of file.createReadStream({autoClose:false,start:0}))hash.update(chunk);
   const after=await file.stat();if(hash.digest('hex')!==artifact.sha256||before.mtimeMs!==after.mtimeMs||before.size!==after.size)throw Error('Artifact fingerprint differs');
-  const types:Record<string,string>={'.mp4':'video/mp4','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.wav':'audio/wav','.mp3':'audio/mpeg','.json':'application/json','.md':'text/plain; charset=utf-8','.txt':'text/plain; charset=utf-8'};
-  const headers={'Content-Type':types[extname(path)]??'application/octet-stream','Content-Security-Policy':(['.mp4','.mp3','.wav'].includes(extname(path))?"default-src 'none'; media-src 'self'; sandbox allow-same-origin":"default-src 'none'; sandbox"),'Content-Disposition':'inline','Accept-Ranges':'bytes'};
-  let start=0,end=after.size-1;
+  return {file,path,size:after.size};
+ }catch(error){await file.close();throw error;}
+}
+export async function serveOwnedArtifact(root:string,artifact:ArtifactFile,response:ServerResponse,rangeHeader?:string,download=false){
+ const {file,path,size}=await openOwnedArtifact(root,artifact);
+ try{
+  const types:Record<string,string>={'.mp4':'video/mp4','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp','.wav':'audio/wav','.mp3':'audio/mpeg','.json':'application/json','.md':'text/plain; charset=utf-8','.txt':'text/plain; charset=utf-8'};
+  const headers={'Content-Type':types[extname(path)]??'application/octet-stream','Content-Security-Policy':(['.mp4','.mp3','.wav'].includes(extname(path))?"default-src 'none'; media-src 'self'; sandbox allow-same-origin":"default-src 'none'; sandbox"),'Content-Disposition':download?`attachment; filename*=UTF-8''${encodeURIComponent(basename(path))}`:'inline','Accept-Ranges':'bytes'};
+  let start=0,end=size-1;
   if(rangeHeader!==undefined){
    const match=/^bytes=(\d*)-(\d*)$/.exec(rangeHeader.trim());
-   if(match&&(match[1]||match[2])){if(match[1]){start=Number(match[1]);end=match[2]?Math.min(Number(match[2]),end):end;}else{const suffix=Number(match[2]);start=suffix>0?Math.max(0,after.size-suffix):-1;}}
-   if(!match||!(match[1]||match[2])||!Number.isSafeInteger(start)||!Number.isSafeInteger(end)||start<0||start>=after.size||end<start){response.writeHead(416,{...headers,'Content-Range':`bytes */${after.size}`,'Content-Length':'0'});response.end();return;}
+   if(match&&(match[1]||match[2])){if(match[1]){start=Number(match[1]);end=match[2]?Math.min(Number(match[2]),end):end;}else{const suffix=Number(match[2]);start=suffix>0?Math.max(0,size-suffix):-1;}}
+   if(!match||!(match[1]||match[2])||!Number.isSafeInteger(start)||!Number.isSafeInteger(end)||start<0||start>=size||end<start){response.writeHead(416,{...headers,'Content-Range':`bytes */${size}`,'Content-Length':'0'});response.end();return;}
   }
-  response.writeHead(rangeHeader===undefined?200:206,{...headers,'Content-Length':String(rangeHeader===undefined?after.size:end-start+1),...(rangeHeader===undefined?{}:{'Content-Range':`bytes ${start}-${end}/${after.size}`})});
+  response.writeHead(rangeHeader===undefined?200:206,{...headers,'Content-Length':String(rangeHeader===undefined?size:end-start+1),...(rangeHeader===undefined?{}:{'Content-Range':`bytes ${start}-${end}/${size}`})});
   await pipeline(file.createReadStream({autoClose:false,start,...(rangeHeader===undefined?{}:{end})}),response);
  }finally{await file.close();}
 }

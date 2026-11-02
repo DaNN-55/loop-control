@@ -16,11 +16,6 @@ export function credentialEnvironmentForReference(provider: string, adapter: str
   return credentialEnvironmentForProvider(provider);
 }
 
-export function runtimeCommandArguments(command: string): string[] {
-  if (command === (process.env.WHISPERX_PYTHON?.trim() || "python3")) return ["-c", "import whisperx, torch; print('whisperx local runtime available')"];
-  return command === "ffmpeg" ? ["-version"] : ["--version"];
-}
-
 export function runtimeCommandInvocation(command: string, argumentsList: string[], options: { openChatCutNode?: string } = {}): { command: string; argumentsList: string[] } {
   if (command === "openchatcut") return { command: options.openChatCutNode ?? process.env.OPENCHATCUT_NODE ?? process.execPath, argumentsList: ["scripts/openchatcut-render.mjs", ...argumentsList] };
   return { command, argumentsList };

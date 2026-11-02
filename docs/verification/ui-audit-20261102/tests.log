@@ -1,0 +1,20 @@
+
+ RUN  v3.2.7 /private/tmp/loop-ui-audit-ZEDnyP/source
+
+stderr | src/local-app/uiAudit20261102.integration.test.ts > T01–T08 isolated UI audit: real page, HTTP, PG, Worker, native SDK and files
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-t06-volume-VzLweC/mounted/loop-153-rbYzjq/browser-vite-cache/deps/react-dom_client.js?v=e251874e as it exceeds the max of 500KB.
+
+stdout | src/local-app/uiAudit20261102.integration.test.ts > T01–T08 isolated UI audit: real page, HTTP, PG, Worker, native SDK and files
+AUDIT_READY /private/tmp/loop-ui-audit-ZEDnyP/evidence/audit-context.json
+
+(node:46806) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ✓ src/local-app/uiAudit20261102.integration.test.ts (1 test) 2026466ms
+   ✓ T01–T08 isolated UI audit: real page, HTTP, PG, Worker, native SDK and files  2026466ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  19:12:43
+   Duration  2027.14s (transform 360ms, setup 7ms, collect 534ms, tests 2026.47s, environment 0ms, prepare 33ms)
+
+JSON report written to /private/tmp/loop-ui-audit-ZEDnyP/evidence/vitest.json

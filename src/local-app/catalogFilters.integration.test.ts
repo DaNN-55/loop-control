@@ -72,9 +72,9 @@ beforeAll(()=>{
 },20000);
 afterAll(()=>{if(created)psql(`DROP DATABASE ${database};`,'postgres');},10000);
 function catalog(query:Partial<CatalogQuery>={},asOwner=owner):EpisodeCatalog{
- const parameters=[asOwner,query.view??'episodes',query.page??1,query.accountId||null,query.seriesId??'all',query.visibility??'active',query.pendingPage??1,query.blockedPage??1,query.q??'',query.sort??'updated',query.status??'all'];
+ const parameters=[asOwner,query.view??'episodes',query.page??1,query.accountId||null,query.seriesId??'all',query.visibility??'active',query.pendingPage??1,query.blockedPage??1,query.q??'',query.sort??'updated',query.status??'all','{}'];
  const values=parameters.map(v=>v===null?'NULL':typeof v==='number'?String(v):sqlString(v)).join(',');
- const result=psql(`SET ROLE loop_app;BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY;SELECT set_config('loop.owner_id','${asOwner}',true);PREPARE catalog_filter(uuid,text,integer,uuid,text,text,integer,integer,text,text,text) AS ${localCatalogSql};EXECUTE catalog_filter(${values});ROLLBACK;`);
+ const result=psql(`SET ROLE loop_app;BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY;SELECT set_config('loop.owner_id','${asOwner}',true);PREPARE catalog_filter(uuid,text,integer,uuid,text,text,integer,integer,text,text,text,jsonb) AS ${localCatalogSql};EXECUTE catalog_filter(${values});ROLLBACK;`);
  return JSON.parse(result.trim().split('\n').at(-1)!);
 }
 it('searches all matching records before pagination, treats SQL wildcards literally, and searches UUID fragments',()=>{

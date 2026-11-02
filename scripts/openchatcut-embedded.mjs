@@ -3,12 +3,14 @@ import {patchCaptionLayout,patchCaptionInspector} from './openchatcut-caption-la
 import {patchEditorBridgeRetry} from './openchatcut-bridge-retry.mjs';
 import {patchMediaPoolImports} from './openchatcut-media-imports.mjs';
 import {patchCaptionCueIdentity} from './openchatcut-caption-identity.mjs';
+import {pruneOpenChatCutCache} from './openchatcut-cache.mjs';
 // Host-owned runtime adapter: no edits to the installed OpenChatCut checkout.
 import {join} from 'node:path';
 import {readFile} from 'node:fs/promises';
 import {pathToFileURL} from 'node:url';
 const root=process.env.OPENCHATCUT_ROOT,dataDir=process.env.OPENCHATCUT_DATA_DIR,cacheDir=process.env.LOOP_OPENCHATCUT_VITE_CACHE_DIR,port=Number(process.argv[2]);
 if(!root||!dataDir||!cacheDir||!Number.isInteger(port)||port<1||port>65535)throw Error('Studio 嵌入运行配置无效。');
+await pruneOpenChatCutCache(root);
 const compositionVirtual='\0loop-control-composition';const compositionCode=await readFile(new URL('../src/shotComposition.ts',import.meta.url),'utf8');
 const candidateVirtual='\0loop-control-candidates',candidateCode=await readFile(new URL('../src/workspaceCandidates.ts',import.meta.url),'utf8');
 const structureVirtual='\0loop-control-structure',rangeVirtual='\0loop-control-ranges';
@@ -34,4 +36,4 @@ const bridge={name:'loop-control-embedded-editor',enforce:'pre',config(config){c
 const {createServer,transformWithEsbuild}=await import(pathToFileURL(join(root,'node_modules/vite/dist/node/index.js')).href);
 const server=await createServer({root,configFile:join(root,'config/vite.config.ts'),cacheDir,plugins:[bridge],server:{host:'127.0.0.1',port,strictPort:true,open:false}});
 await server.listen();
-for(const signal of ['SIGINT','SIGTERM'])process.once(signal,async()=>{await server.close();process.exit(0);});
+for(const signal of ['SIGINT','SIGTERM'])process.once(signal,async()=>{await server.close();await pruneOpenChatCutCache(root);process.exit(0);});

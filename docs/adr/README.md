@@ -32,3 +32,9 @@
 - [ADR-0021：按协议接入百炼首帧视频模型](0021-bailian-video-model-contracts.md)
 
 - [ADR-0022：供应商账务凭据与生成凭据分离](0022-provider-billing-credentials.md)
+
+- [ADR-0023：原生产物发布未知结果的显式核对](0023-native-output-publication-reconciliation.md)
+
+- [ADR-0024：在线制作逐次确认](0024-per-call-workspace-confirmation.md)
+
+- [ADR-0025：后台与 Worker 绑定已准备的运行版本](0025-prepared-runtime-releases.md)

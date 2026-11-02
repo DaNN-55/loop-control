@@ -202,16 +202,16 @@ html[data-interface="impeccable"] .product-ui .reference-connections.reference-c
 html[data-interface="impeccable"] .product-ui .reference-connections.reference-connections .reference-connections-toolbar label {display:block;margin:0 0 6px;padding:0;font-size:12px;font-weight:500;color:var(--lc-muted)}
 html[data-interface="impeccable"] .product-ui .reference-connections.reference-connections .reference-connections-toolbar :is(input,select) {width:100%;font-size:13px}
 html[data-interface="impeccable"] .product-ui .reference-connections .reference-connections-table-wrap {border:1px solid var(--lc-line);border-radius:12px;background:var(--lc-surface);overflow:auto;contain:layout paint}
-html[data-interface="impeccable"] .product-ui .reference-connections table {width:100%;min-width:1244px;border-collapse:collapse;table-layout:fixed;font-size:13px}
+html[data-interface="impeccable"] .product-ui .reference-connections table {width:100%;min-width:0;border-collapse:collapse;table-layout:fixed;font-size:13px}
 html[data-interface="impeccable"] .product-ui .reference-connections :is(th,td) {padding:12px 12px;text-align:left;border:0;border-bottom:1px solid var(--lc-line);vertical-align:middle;overflow-wrap:anywhere}
 html[data-interface="impeccable"] .product-ui .reference-connections th {background:var(--lc-surface-2);color:var(--lc-muted);font-size:12px;font-weight:500;padding-block:12px}
-html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(1) {width:184px;padding-left:46px}
-html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(2) {width:136px}
-html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(3) {width:286px}
-html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(4) {width:168px}
-html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(5) {width:92px;white-space:nowrap}
-html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(6) {width:210px}
-html[data-interface="impeccable"] .product-ui .reference-connections tbody td:first-child:not([colspan]) {padding-left:46px}
+html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(1) {width:auto;padding-left:16px}
+html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(2) {width:clamp(108px,10vw,156px)}
+html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(3) {width:clamp(220px,18vw,280px)}
+html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(4) {width:76px}
+html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(5) {width:72px;white-space:normal}
+html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(6) {width:clamp(164px,12vw,192px)}
+html[data-interface="impeccable"] .product-ui .reference-connections tbody td:first-child:not([colspan]) {padding-left:16px}
 html[data-interface="impeccable"] .product-ui .reference-connections tbody tr:last-child td {border-bottom:0}
 html[data-interface="impeccable"] .product-ui .reference-connections tbody tr:hover {background:var(--lc-surface-2)}
 html[data-interface="impeccable"] .product-ui .reference-connections .reference-connection-name {display:inline;padding:0;min-height:0;border:0;border-radius:0;background:none;color:var(--lc-ink);text-align:left;font-weight:600;font-size:13px;line-height:1.6;box-shadow:none}
@@ -277,8 +277,8 @@ html .reference-connections-menu [role="menuitem"] svg {height:15px;width:15px;s
   html[data-interface="impeccable"] .product-ui .reference-connections .reference-connections-detail-list {grid-template-columns:100px minmax(0,1fr);gap:12px}
 }
 
-html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(7){width:88px}
-html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(8){width:48px}
+html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(7){width:72px}
+html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(8){width:44px}
 html[data-interface="impeccable"] .product-ui .reference-connections :is(th,td):nth-child(n+7){padding-inline:8px;text-align:center;white-space:nowrap}
 html[data-interface="impeccable"] .product-ui .reference-connections .reference-connection-more>button{margin-inline:0}
 
@@ -323,3 +323,32 @@ html[data-interface="impeccable"] .product-ui .reference-connections td:nth-chil
 .connection-billing-summary p { grid-column: 1 / -1; }
 .connection-billing-console-link { color: var(--lc-accent); text-decoration: underline; text-underline-offset: 3px; }
 .connection-billing-console-link:focus-visible { outline: 2px solid var(--lc-accent); outline-offset: 3px; border-radius: 2px; }
+
+/* Keep compact metadata together; the name column takes remaining space. */
+@media(min-width:1001px) and (max-width:1300px){
+ html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(2){width:14%}
+ html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(3){width:24%}
+ html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(5){width:64px}
+ html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(6){width:160px}
+}
+
+/* Reflow dense connection rows at narrow widths without hiding account data. */
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connection-name{max-width:100%;overflow-wrap:anywhere}
+@media(max-width:1000px){
+ html[data-interface="impeccable"] .product-ui .reference-connections table thead{display:none}
+ html[data-interface="impeccable"] .product-ui .reference-connections tbody{display:block;width:100%}
+ html[data-interface="impeccable"] .product-ui .reference-connections tbody tr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 32px;border-bottom:1px solid var(--lc-line);padding:10px 12px;gap:10px}
+ html[data-interface="impeccable"] .product-ui .reference-connections tbody td{display:block;min-width:0;padding:0!important;border:0;white-space:normal}
+ html[data-interface="impeccable"] .product-ui .reference-connections tbody tr.reference-connections-group{display:block;padding:8px 12px;background:var(--lc-surface-2)}
+ html[data-interface="impeccable"] .product-ui .reference-connections td:nth-child(1){grid-column:1/3;grid-row:1}
+ html[data-interface="impeccable"] .product-ui .reference-connections td:nth-child(2){grid-column:1;grid-row:2}
+ html[data-interface="impeccable"] .product-ui .reference-connections td:nth-child(3){grid-column:1/4;grid-row:3}
+ html[data-interface="impeccable"] .product-ui .reference-connections td:nth-child(4){grid-column:2/4;grid-row:2}
+ html[data-interface="impeccable"] .product-ui .reference-connections td:nth-child(5){grid-column:1;grid-row:4}
+ html[data-interface="impeccable"] .product-ui .reference-connections td:nth-child(6){grid-column:2/4;grid-row:4}
+ html[data-interface="impeccable"] .product-ui .reference-connections td:nth-child(7){grid-column:1/3;grid-row:5}
+ html[data-interface="impeccable"] .product-ui .reference-connections td:nth-child(8){grid-column:3;grid-row:1}
+ html[data-interface="impeccable"] .product-ui .reference-connections td:nth-child(5):before{content:"凭据 ";color:var(--lc-muted)}
+ html[data-interface="impeccable"] .product-ui .reference-connections td[colspan]{grid-column:1/-1}
+ html[data-interface="impeccable"] .product-ui .reference-connections .reference-connection-usage-line{flex-wrap:wrap;gap:2px 8px}
+}

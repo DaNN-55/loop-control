@@ -1,0 +1,43 @@
+/tmp/loop-per-call-default2.log
+ Test Files  196 passed (196)
+      Tests  1293 passed (1293)
+   Start at  14:15:59
+   Duration  61.37s (transform 4.76s, setup 509ms, collect 75.48s, tests 147.15s, environment 43.32s, prepare 9.42s)
+
+/tmp/loop-per-call-channels3.log
+ ✓ src/local-app/workspaceCallConfirmation.integration.test.ts (3 tests) 39882ms
+ ✓ src/local-app/workspaceAudioSelection.integration.test.ts (2 tests) 60153ms
+ ✓ src/local-app/workspaceVideoSelection.integration.test.ts (3 tests) 63628ms
+ ✓ src/local-app/speechSelection.integration.test.ts (3 tests) 67452ms
+ Test Files  4 passed (4)
+      Tests  11 passed (11)
+   Start at  14:08:04
+   Duration  69.47s (transform 1.34s, setup 119ms, collect 6.82s, tests 231.12s, environment 0ms, prepare 297ms)
+
+/tmp/loop-per-call-boundaries-final2.log
+ ✓ src/local-app/workspaceCallConfirmation.integration.test.ts (4 tests) 8031ms
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  14:17:44
+   Duration  9.15s (transform 675ms, setup 9ms, collect 979ms, tests 8.03s, environment 0ms, prepare 26ms)
+
+/tmp/loop-per-call-budget-final.log
+ ✓ src/local-app/speechSelection.integration.test.ts (3 tests) 14481ms
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  14:20:53
+   Duration  15.21s (transform 430ms, setup 9ms, collect 582ms, tests 14.48s, environment 0ms, prepare 36ms)
+
+/tmp/loop-per-call-browser.log
+ ✓ src/local-app/workspaceCallConfirmation.browser.integration.test.ts (1 test) 279399ms
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  14:08:32
+   Duration  282.08s (transform 1.47s, setup 23ms, collect 2.22s, tests 279.40s, environment 0ms, prepare 77ms)
+
+/tmp/loop-per-call-final-affected.log
+ Test Files  3 passed (3)
+      Tests  19 passed (19)
+   Start at  14:17:57
+   Duration  1.47s (transform 177ms, setup 19ms, collect 1.79s, tests 516ms, environment 573ms, prepare 115ms)
+

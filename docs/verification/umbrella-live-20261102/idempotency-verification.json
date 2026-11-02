@@ -1,0 +1,46 @@
+{
+  "results": [
+    {
+      "label": "bailian-photo-generate-image",
+      "status": 200
+    },
+    {
+      "label": "bailian-photo-generate-video",
+      "status": 200
+    },
+    {
+      "label": "bailian-photo-confirm-adoption-0",
+      "status": 200
+    },
+    {
+      "label": "bailian-photo-confirm-adoption-1",
+      "status": 200
+    },
+    {
+      "label": "bailian-photo-confirm-export",
+      "status": 200
+    },
+    {
+      "label": "minimax-photo-generate-image",
+      "status": 200
+    },
+    {
+      "label": "minimax-photo-generate-video",
+      "status": 200
+    },
+    {
+      "label": "minimax-photo-confirm-adoption-0",
+      "status": 200
+    },
+    {
+      "label": "minimax-photo-confirm-adoption-1",
+      "status": 200
+    },
+    {
+      "label": "minimax-photo-confirm-export",
+      "status": 200
+    }
+  ],
+  "tasksAndProjectUnchanged": true,
+  "paidNetworkUnchanged": true
+}

@@ -1,0 +1,12 @@
+{
+  "businessUnchanged": true,
+  "legacyAuthorizationsUnchanged": true,
+  "runtimePrepared": true,
+  "dailyHTTP": 200,
+  "database": {
+    "ready": 0,
+    "latest": "135-workspace-call-confirmation-lifecycle.sql",
+    "running": 0,
+    "confirmations": 0
+  }
+}

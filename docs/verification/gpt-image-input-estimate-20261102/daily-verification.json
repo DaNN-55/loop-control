@@ -1,0 +1,12 @@
+{
+  "businessUnchanged": true,
+  "legacyAuthorizationsUnchanged": true,
+  "runtimePrepared": true,
+  "runningReleaseMatchesPrepared": true,
+  "dailyHTTP": 200,
+  "activity": {
+    "ready": 0,
+    "running": 0
+  },
+  "realProviderCalls": 0
+}

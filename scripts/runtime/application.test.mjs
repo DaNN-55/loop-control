@@ -1,6 +1,7 @@
 // @vitest-environment node
 import{it,expect,vi}from'vitest';
 const ports=vi.hoisted(()=>({worker:vi.fn(async()=>({stop:vi.fn()})),connections:vi.fn(),accountClose:vi.fn(),runtime:vi.fn(()=>vi.fn()),store:vi.fn(()=>({mode:'keychain'})),probe:vi.fn(()=>({mode:'live'})),providerProbe:vi.fn((config,_transport,_readOnly,options)=>({mode:'live',networkAvailable:false,config,options}))}));
+vi.mock('../../src/orchestration/runtimeBuild.ts',()=>({readPreparedRuntimeRelease:async()=>({id:'fixture-release',root:new URL('../../',import.meta.url).pathname.replace(/\/$/,'')}),assertRuntimeRelease:async()=>{}}));
 vi.mock('../../dist/local-app/local-app/catalog.js',()=>({createLocalDatabase:()=>({end:vi.fn(),query:vi.fn()})}));
 vi.mock('../../dist/local-app/local-app/mediaRootSettings.js',()=>({inspectMediaRoot:async path=>({path,deviceId:'fixture-device',inodeId:'fixture-inode',mountPath:'/isolated/volume'}),verifyMediaRootBinding:async value=>value,LocalMediaRootSettings:class{close=vi.fn();}}));
 vi.mock('../../dist/local-app/local-app/runtimeStatus.js',()=>({createRuntimeStatusReader:ports.runtime}));
@@ -42,9 +43,11 @@ it('assembles manual connection tests without sharing production request budgets
 });
 
 it('wires the runtime status reader into the authenticated native route',async()=>{
- const d={runtimeRoot:'/isolated/.loop-control/local',projectRoot:'/isolated',home:'/isolated/home',stateDirectory:'/isolated/state',mediaRoot:'/isolated/media',database:{database:'isolated'},port:55189,worker:{mountPath:'/isolated/volume',minimumFreeBytes:1024},workerDatabase:{}};
+ ports.worker.mockResolvedValueOnce({stop:vi.fn(),runtimeRelease:{id:'worker-selected',root:'/worker-release'}});
+ const d={runtimeRelease:{id:'backend-selected',root:new URL('../../',import.meta.url).pathname.replace(/\/$/,'')},runtimeRoot:'/isolated/.loop-control/local',projectRoot:'/isolated',home:'/isolated/home',stateDirectory:'/isolated/state',mediaRoot:'/isolated/media',database:{database:'isolated'},port:55189,worker:{mountPath:'/isolated/volume',minimumFreeBytes:1024},workerDatabase:{}};
  const app=await createNativeApplication(d);try{
   expect(ports.runtime).toHaveBeenLastCalledWith(expect.objectContaining({projectRoot:d.projectRoot,mediaRoot:d.mediaRoot,mountPath:d.worker.mountPath,minimumFreeBytes:1024}));
   expect(createLocalHandler).toHaveBeenLastCalledWith(expect.objectContaining({runtimeStatus:ports.runtime.mock.results.at(-1).value}));
+  const selected=ports.runtime.mock.calls.at(-1)[0];expect(selected.runtimeRelease).toEqual(d.runtimeRelease);expect(selected.workerRelease()).toBe('worker-selected');
  }finally{await app.close();}
 });

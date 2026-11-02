@@ -1,5 +1,7 @@
 # 四步制作流程原型
 
+状态：已退役。2026-11-01 清理时确认原型路由和 npm 命令已移除，正式工作区由 `ProductionWorkspacePanel`、统一素材准备与嵌入式 OpenChatCut 承担。原型组件、专属样式、切换器及失效启动器随本轮清理移除；以下保留 2026-10-29 的方案选择与交互边界，入口和命令仅为历史记录。源码可从 Git 历史恢复，验收记录保留在 `docs/verification/four-step-workflow-prototype-20261029/REPORT.md`。
+
 问题：在“首次生成提前，剪辑中允许局部重生”前提下，整期剪辑与素材、脚本应如何组织？
 
 运行：`npm run prototype:four-step`。复用当前日常本机服务，不另起数据库或 Worker。需要现有 Owner 登录。

@@ -25,6 +25,14 @@ const reviewPackages: ReviewPackage[] = [
 
 const tasks: Task[] = [{ actual_cost_cents: null, attempt: 0, budget_limit_cents: 0, claimed_at: null, completed_at: null, created_at: "2026-08-15T00:00:00.000Z", episode_id: "episode-blocked", id: "blocked-task", input_snapshot: {}, last_result: { blockers: [{ code: "media_provider_unavailable", detail: "测试媒体适配器未配置。" }] }, max_attempts: 1, model: "", prompt_version: "", provider: "", status: "blocked", task_type: "generate_b_roll" }];
 
+it('preserves server ordering across series instead of regrouping recent episodes',async()=>{
+ const ordered=[{...episodes[2],title:'最新作品',updated_at:'2026-11-02T00:00:00Z'},episodes[0],episodes[1]];
+ const catalog={episodes:ordered,page:1,total:3,pageSize:20,episodeCount:3,accountCounts:{},reviewCount:0,stages:{},artifactCounts:{},pending:{page:1,total:0,items:[]},blocked:{page:1,total:0,items:[]},worker:{running:0,blocked:0,failed:0,latestCompleted:false},operationRows:[]} satisfies import('../episodes/episodeCatalogTypes').EpisodeCatalog;
+ await act(async()=>{render(<OperationsWorkspace remote={{catalog,seriesId:'all',onSeriesChange:vi.fn(),onPageChange:vi.fn(),onPendingPageChange:vi.fn(),onBlockedPageChange:vi.fn()}} episodes={ordered} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[]} reviewPackages={[]} series={[series]} seriesVersions={[seriesVersion]} tasks={[]} onSelectEpisode={vi.fn()} selectedEpisode={null}/>);});
+ const rows=within(screen.getByRole('region',{name:'系列生产单'})).getAllByRole('row').slice(1);
+ expect(rows.map(row=>row.textContent)).toEqual([expect.stringContaining('最新作品'),expect.stringContaining('脚本待审'),expect.stringContaining('媒体受阻')]);
+});
+
 describe("系列运营视图", () => {
   it("按当前生产单阶段汇总系列，并且不显示统一完成百分比", () => {
     render(<OperationsWorkspace episodes={episodes} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[]} reviewPackages={reviewPackages} series={[series]} seriesVersions={[seriesVersion]} tasks={tasks} onSelectEpisode={vi.fn()} selectedEpisode={null} />);
@@ -109,7 +117,7 @@ it('keeps row selection separate from opening the full production order',async()
 
 it('uses catalog callbacks for status, account, search, sort and series without opening an episode',async()=>{
  const user=userEvent.setup(),onSearch=vi.fn(),onStatus=vi.fn(),onAccount=vi.fn(),onSort=vi.fn(),onSeriesChange=vi.fn();
- const catalog={pending:{total:1,items:[],page:1},blocked:{total:0,items:[],page:1},worker:{running:0,blocked:0,failed:0},operationRows:[],statusCounts:{all:3,review:1,running:0,blocked:1,done:1},page:1,total:3,stages:{}} as unknown as import('../episodes/episodeCatalogTypes').EpisodeCatalog;
+ const catalog={seriesEpisodeCounts:{'series-1':3},pending:{total:1,items:[],page:1},blocked:{total:0,items:[],page:1},worker:{running:0,blocked:0,failed:0},operationRows:[],statusCounts:{all:3,review:1,running:0,blocked:1,done:1},page:1,total:3,stages:{}} as unknown as import('../episodes/episodeCatalogTypes').EpisodeCatalog;
  render(<OperationsWorkspace catalogControls={{query:'',status:'all',sort:'updated',accountId:'',onSearch,onStatus,onAccount,onSort}} remote={{catalog,seriesId:'all',onSeriesChange,onPageChange:vi.fn(),onPendingPageChange:vi.fn(),onBlockedPageChange:vi.fn()}} accounts={[{id:'account-1',name:'当前账号'} as never]} episodes={[]} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[]} reviewPackages={[]} series={[series]} seriesVersions={[seriesVersion]} tasks={[]} onSelectEpisode={vi.fn()} selectedEpisode={null}/>);
  await user.click(screen.getByRole('tab',{name:'待审核 1'}));expect(onStatus).toHaveBeenCalledWith('review');
  await user.type(screen.getByRole('textbox',{name:'搜索标题或编号'}),'  待审{Enter}');expect(onSearch).toHaveBeenCalledWith('待审');
@@ -128,5 +136,38 @@ it('uses the persisted four-step projection for stage, continuation and phase tr
  const episode={...episodes[0],stage:'script_approved' as const,title:'四步原生工程'};
  const catalog={episodes:[episode],pending:{total:0,items:[],page:1},blocked:{total:0,items:[],page:1},worker:{running:0,blocked:0,failed:0},operationRows:[{episodeId:episode.id,reviewRevision:null,reviewPending:false,blockerCount:0,actionStatus:'running',workflowStep:'editing'}],page:1,total:1,stages:{script_approved:1}} as unknown as import('../episodes/episodeCatalogTypes').EpisodeCatalog;
  await act(async()=>{render(<OperationsWorkspace remote={{catalog,seriesId:'all',onSeriesChange:vi.fn(),onPageChange:vi.fn(),onPendingPageChange:vi.fn(),onBlockedPageChange:vi.fn()}} episodes={[episode]} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[]} reviewPackages={[]} series={[series]} seriesVersions={[seriesVersion]} tasks={[]} onSelectEpisode={vi.fn()} selectedEpisode={episode}/>);});
- expect(within(screen.getByRole('region',{name:'系列生产单'})).getByText('剪辑工作台')).toBeTruthy();expect(within(screen.getByRole('complementary',{name:'当前作品'})).getByRole('button',{name:'继续剪辑'})).toBeTruthy();expect(within(screen.getByRole('list',{name:'当前生产阶段'})).getAllByRole('listitem')).toHaveLength(4);expect(episode.stage).toBe('script_approved');
+ expect(within(screen.getByRole('region',{name:'系列生产单'})).getByText('剪辑工作台')).toBeTruthy();expect(within(screen.getByRole('complementary',{name:'当前作品'})).getByRole('button',{name:'继续剪辑'})).toBeTruthy();expect(within(screen.getByRole('list',{name:'当前生产阶段'})).getAllByRole('listitem')).toHaveLength(4);expect(within(screen.getByRole('list',{name:'当前生产阶段'})).getByText('分镜台')).toBeTruthy();expect(episode.stage).toBe('script_approved');
+});
+
+it('shows only populated series options using full catalog counts across pages and filters',()=>{
+ const catalog={seriesEpisodeCounts:{'series-1':2,unassigned:1},pending:{total:0,items:[],page:1},blocked:{total:0,items:[],page:1},worker:{running:0,blocked:0,failed:0},operationRows:[],page:1,total:0,stages:{}} as unknown as import('../episodes/episodeCatalogTypes').EpisodeCatalog;
+ const props={episodes:[],preRenderReviewMemberDecisions:[],preRenderReviewMembers:[],reviewPackages:[],series:[series,{...series,id:'empty',name:'空系列'}],seriesVersions:[seriesVersion],tasks:[],onSelectEpisode:vi.fn(),selectedEpisode:null};
+ const remote={catalog,seriesId:'all',onSeriesChange:vi.fn(),onPageChange:vi.fn(),onPendingPageChange:vi.fn(),onBlockedPageChange:vi.fn()};
+ const {rerender}=render(<OperationsWorkspace {...props} remote={remote}/>);
+ expect(screen.getByRole('option',{name:'雨夜志怪'})).toBeTruthy();
+ expect(screen.getByRole('option',{name:'未归属系列'})).toBeTruthy();
+ expect(screen.queryByRole('option',{name:'空系列'})).toBeNull();
+ expect(screen.queryByRole('option',{name:'关联系列不可用'})).toBeNull();
+ rerender(<OperationsWorkspace {...props} remote={{...remote,catalog:{...catalog,seriesEpisodeCounts:{unavailable:1}}}}/>);
+ expect(screen.queryByRole('option',{name:'未归属系列'})).toBeNull();
+ expect(screen.getByRole('option',{name:'关联系列不可用'})).toBeTruthy();
+});
+
+it.each([
+ {pending:0,running:0,blocked:0,failed:0,production:0,tone:'success',title:'当前审核已处理完毕'},
+ {pending:2,running:0,blocked:0,failed:0,production:0,tone:'warning',title:'2 项审核，等待你的决定'},
+ {pending:0,running:1,blocked:0,failed:0,production:0,tone:'info',title:'内容正在制作中'},
+ {pending:0,running:0,blocked:0,failed:0,production:1,tone:'info',title:'内容正在制作中'},
+ {pending:0,running:0,blocked:1,failed:0,production:0,tone:'danger',title:'当前有制作任务需要处理'},
+ {pending:0,running:0,blocked:0,failed:1,production:0,tone:'danger',title:'当前有制作任务需要处理'},
+ {pending:2,running:1,blocked:1,failed:1,production:1,tone:'danger',title:'当前有制作任务需要处理'},
+ {pending:2,running:1,blocked:0,failed:0,production:1,tone:'warning',title:'2 项审核，等待你的决定'},
+])('uses $tone for pending=$pending, running=$running, blocked=$blocked, failed=$failed, production=$production',async({pending,running,blocked,failed,production,tone,title})=>{
+ const openReviews=vi.fn();
+ const catalog={pending:{total:pending,items:[],page:1},blocked:{total:0,items:[],page:1},worker:{running,blocked,failed},operationRows:[],statusCounts:{all:0,review:pending,running:production,blocked,done:0},page:1,total:0,stages:{}} as unknown as import('../episodes/episodeCatalogTypes').EpisodeCatalog;
+ render(<OperationsWorkspace remote={{catalog,seriesId:'all',onSeriesChange:vi.fn(),onPageChange:vi.fn(),onPendingPageChange:vi.fn(),onBlockedPageChange:vi.fn()}} episodes={[]} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[]} reviewPackages={[]} series={[]} seriesVersions={[]} tasks={[]} selectedEpisode={null} onSelectEpisode={vi.fn()} onOpenReviewQueue={openReviews}/>);
+ const notice=screen.getByRole('status');expect(notice.getAttribute('data-tone')).toBe(tone);expect(within(notice).getByText(title)).toBeTruthy();
+ if(pending){await userEvent.setup().click(within(notice).getByRole('button',{name:'开始审核'}));expect(openReviews).toHaveBeenCalledOnce();}
+ else expect(within(notice).queryByRole('button',{name:'开始审核'})).toBeNull();
+ if(blocked+failed)expect(within(notice).getByText(new RegExp(`${blocked} 项任务阻塞 · ${failed} 项失败`))).toBeTruthy();
 });

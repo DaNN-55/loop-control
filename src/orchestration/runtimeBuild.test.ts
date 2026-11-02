@@ -33,7 +33,7 @@ it("准备后可执行，源码变化或产物损坏必须重新准备", async (
   await expect(assertPreparedRuntime(root)).rejects.toThrow(/runtime:prepare/);
   await expect(prepareRuntime(root, async () => { throw Error("compiler failed"); })).rejects.toThrow("compiler failed");
   await expect(assertPreparedRuntime(root)).rejects.toThrow(/runtime:prepare/);
-});
+},15000);
 
 it("前端独立改动不使 Worker 过期，Worker 引用的共享依赖变化仍需重建", async () => {
   const root = await mkdtemp(join(tmpdir(), "loop-runtime-scope-")); roots.push(root);

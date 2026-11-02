@@ -1,5 +1,5 @@
 import {connectionUsagePlaceholder,type ConnectionUsageMetric,type ConnectionUsageSummary} from '../connections/connectionUsage.js';
-import {videoAuthorization} from '../worker/officialVideoProvider.js';
+import {minimaxCredential,videoAuthorization} from '../worker/officialVideoProvider.js';
 import type {MediaFetcher} from '../worker/mediaProviders.js';
 export type ProviderUsageReader=(input:{provider:string;secret:string})=>Promise<ConnectionUsageSummary>;
 const number=(value:unknown):value is number=>typeof value==='number'&&Number.isFinite(value)&&value>=0;
@@ -26,6 +26,22 @@ export function createProviderUsageReader(transport:MediaFetcher=fetch):Provider
   });klingQueue=result.catch(()=>{});return result;
  }
  return async({provider,secret})=>{
+  if(provider==='minimax'){
+   const recent=connectionUsagePlaceholder(provider).recent;
+   try{
+    const credential=minimaxCredential(secret);
+    if(!credential.apiKey.startsWith('sk-api-'))return{remaining:metric('可用额','需按量Key','余额查询需要 MiniMax 按量 API Key；套餐额度不是账号余额。','unsupported'),recent,updatedAt:null};
+    const {value}=await json(credential.origin+'/account/query_balance',{headers:{Authorization:'Bearer '+credential.apiKey}});
+    if(value?.base_resp?.status_code!==0)throw Error();
+    const fields=['available_amount','cash_balance','voucher_balance','credit_balance','owed_amount'] as const;
+    if(fields.some(field=>typeof value[field]!=='string'||! /^-?\d{1,12}(?:\.\d{1,8})?$/.test(value[field])))throw Error();
+    const money=(raw:string)=>{
+     const [whole,fraction='']=raw.split('.');
+     return (credential.region==='cn'?'¥':'US$')+whole.replace(/\B(?=(\d{3})+(?!\d))/g,',')+'.'+fraction.replace(/0+$/,'').padEnd(2,'0');
+    };
+    return{remaining:metric('可用额',money(value.available_amount),'MiniMax '+(credential.region==='cn'?'国内站':'国际站')+'账号可用额，包含现金、代金券及信用额度，不是独立 Key 的现金余额。现金 '+money(value.cash_balance)+'；代金券 '+money(value.voucher_balance)+'；信用额度 '+money(value.credit_balance)+'；欠款 '+money(value.owed_amount)+'。'),recent,updatedAt:new Date().toISOString()};
+   }catch{return{...failedConnectionUsage(provider,'MiniMax 余额读取失败，请检查按量 API Key、所属站点或稍后重试。'),recent};}
+  }
   if(provider==='pexels'){
    const recent=connectionUsagePlaceholder(provider).recent;
    try{

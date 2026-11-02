@@ -22,3 +22,9 @@ it('replaces preview counts with the focused deletion confirmation and can retur
  expect((within(dialog).getByRole('button',{name:'永久删除'})as HTMLButtonElement).disabled).toBe(true);
  fireEvent.click(within(dialog).getByRole('button',{name:'取消删除'}));expect(screen.getByRole('dialog',{name:episode.title+' · 清理预览'})).toBeTruthy();expect(document.activeElement).toBe(screen.getByRole('button',{name:'永久删除…'}));expect(vi.mocked(localCommand).mock.calls.map(x=>x[0])).toEqual(['preview','planHistoryDeletion']);
 });
+
+it('hides empty archive scopes using whole-history counts and resets an empty initial scope',async()=>{
+ vi.mocked(localRequest).mockResolvedValue({...report,items:[],scopeCounts:{active:0,archived:3}});render(<LocalHistory/>);
+ await waitFor(()=>expect((screen.getByRole('combobox',{name:'显示范围'})as HTMLSelectElement).value).toBe('all'));
+ expect(screen.queryByRole('option',{name:'未归档'})).toBeNull();expect(screen.getByRole('option',{name:'已归档'})).toBeTruthy();
+});

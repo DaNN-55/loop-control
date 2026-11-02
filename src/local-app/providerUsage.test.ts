@@ -38,3 +38,30 @@ it('reads Pexels request quota headers while keeping unavailable seven-day histo
  expect(value.remaining).toMatchObject({label:'请求余量',text:'24,964 次',status:'ready'});expect(value.recent).toMatchObject({text:'未提供历史',status:'unsupported'});expect(JSON.stringify(value)).not.toContain('synthetic-pexels-key');
  const missing=await createProviderUsageReader(async()=>Response.json({page:1,videos:[]}))({provider:'pexels',secret:'synthetic-pexels-key'});expect(missing.remaining.status).toBe('unavailable');expect(missing.recent.text).toBe('未提供历史');
 });
+it.each(['cn','international'])('reads MiniMax %s account balance with its existing PAYG key and never estimates seven-day spend',async region=>{
+ const transport=vi.fn(async(url:string|URL,init?:RequestInit)=>{
+  expect(String(url)).toBe((region==='cn'?'https://api.minimax.cn':'https://api.minimax.io')+'/account/query_balance');
+  expect(init?.method??'GET').toBe('GET');expect(init?.body).toBeUndefined();expect(init?.redirect).toBe('manual');expect(init?.signal).toBeInstanceOf(AbortSignal);
+  expect(new Headers(init?.headers).get('Authorization')).toBe('Bearer sk-api-synthetic-minimax-key');
+  return Response.json({available_amount:'23.00',cash_balance:'10.00',voucher_balance:'13.00',credit_balance:'0.00',owed_amount:'0.00',base_resp:{status_code:0}});
+ });
+ const summary=await createProviderUsageReader(transport)({provider:'minimax',secret:JSON.stringify({region,apiKey:'sk-api-synthetic-minimax-key'})});
+ expect(summary.remaining).toMatchObject({label:'可用额',text:region==='cn'?'¥23.00':'US$23.00',status:'ready'});
+ expect(summary.remaining.detail).toContain(region==='cn'?'现金 ¥10.00':'现金 US$10.00');expect(summary.remaining.detail).toContain('代金券');
+ expect(summary.recent).toMatchObject({label:'近7天',text:'暂不支持',status:'unsupported'});expect(summary.updatedAt).not.toBeNull();
+ expect(transport).toHaveBeenCalledTimes(1);expect(JSON.stringify(summary)).not.toContain('sk-api-synthetic');
+});
+it('never reports a failed, malformed or redirected MiniMax balance as zero, and keeps spend unsupported',async()=>{
+ const valid={available_amount:'23.00',cash_balance:'10.00',voucher_balance:'13.00',credit_balance:'0.00',owed_amount:'0.00',base_resp:{status_code:0}};
+ const responses=[new Response('private key response',{status:302}),new Response('private key response',{status:401}),Response.json({...valid,base_resp:{status_code:1004,status_msg:'sk-api-private-key'}}),Response.json({...valid,available_amount:'NaN'}),Response.json({...valid,available_amount:2300}),Response.json({...valid,cash_balance:undefined}),Response.json({...valid,available_amount:'0.000000001'})];
+ for(const response of responses){
+  const summary=await createProviderUsageReader(async()=>response)({provider:'minimax',secret:JSON.stringify({region:'cn',apiKey:'sk-api-synthetic-minimax-key'})});
+  expect(summary.remaining).toMatchObject({text:'读取失败',status:'unavailable'});expect(summary.recent.status).toBe('unsupported');expect(JSON.stringify(summary)).not.toMatch(/private|sk-api/);
+ }
+ const transport=vi.fn();const invalid=await createProviderUsageReader(transport)({provider:'minimax',secret:'{"apiKey":"sk-api-synthetic","region":"https://example.invalid"}'});
+ expect(invalid.remaining.status).toBe('unavailable');expect(transport).not.toHaveBeenCalled();
+});
+it('keeps MiniMax signed balance amounts exact without treating them as integer cents',async()=>{
+ const summary=await createProviderUsageReader(async()=>Response.json({available_amount:'-1234.12345678',cash_balance:'-1234.12345678',voucher_balance:'0',credit_balance:'0',owed_amount:'0.01',base_resp:{status_code:0}}))({provider:'minimax',secret:'sk-api-synthetic-minimax-key'});
+ expect(summary.remaining.text).toBe('US$-1,234.12345678');expect(summary.remaining.status).toBe('ready');
+});

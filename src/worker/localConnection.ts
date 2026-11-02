@@ -22,12 +22,3 @@ export async function verifyLocalConnection(client:PoolClient,store:SecretStore,
  if(result.attempted)await client.query('SELECT local_identity.record_connection_probe($1,$2,$3)',[version.id,probe.mode,outcome]);
  return {versionId:version.id,mode:probe.mode,...result,outcome:probe.mode==='simulated'?'retryable':outcome,ready:probe.mode==='live'&&outcome==='verified'};
 }
-
-export async function resolveLocalWorkerCredential(client:PoolClient,store:SecretStore,input:{versionId:string;accountId:string;provider:string;adapter:string}):Promise<string>{
- if(isRetiredProvider(input.provider))throw new SecretStoreError('disabled');
- const version=await ownedConnectionVersion(client,input.versionId);
- if(!version||version.revoked_at||!version.is_current||version.provider!==input.provider||version.adapter!==input.adapter||version.store_mode!=='keychain'||store.mode!=='keychain'||!version.secret_ref)throw new SecretStoreError('missing');
- const allowed=await client.query(`SELECT EXISTS(SELECT 1 FROM public.account_memberships WHERE account_id=$1 AND user_id=local_identity.owner_id() AND role='owner') AND public.connection_version_is_verified($2) AND EXISTS(SELECT 1 FROM local_identity.connection_probe_evidence WHERE version_id=$2 AND mode='live' AND outcome='verified') allowed`,[input.accountId,version.id]);
- if(!allowed.rows[0].allowed)throw new SecretStoreError('denied');
- return store.get(version.secret_ref); // Exact version only: no latest/env/Vault fallback.
-}

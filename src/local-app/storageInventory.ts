@@ -48,6 +48,34 @@ export function references(evidence:unknown){const refs:Reference[]=[],workspace
 
  }visit(evidence);return refs;}
 
+interface StorageCopyJournal {
+ pending():readonly Root[];
+ record(temporary:Root):Promise<void>;
+}
+
+/** Both migration ledgers keep their own lifecycle; filesystem recovery and publication share one protocol. */
+export function storageCopySession(root:Root,id:string,journal:StorageCopyJournal,errors:{identity:string;link:string}){
+ return {
+  async recover(){
+   for(const temporary of journal.pending()){
+    try{
+     const actual=await lstat(temporary.path,{bigint:true});
+     if(!actual.isFile()||actual.isSymbolicLink()||String(actual.dev)!==temporary.device||String(actual.ino)!==temporary.inode||await realpath(temporary.path)!==temporary.path)throw new ConfigurationError(409,errors.identity);
+     if(actual.nlink!==1n){
+      const destination=temporary.path.slice(0,-('.migration-'+id).length),published=await lstat(destination,{bigint:true});
+      if(actual.nlink!==2n||published.dev!==actual.dev||published.ino!==actual.ino)throw new ConfigurationError(409,errors.link);
+     }
+     await unlink(temporary.path);
+    }catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;}
+   }
+  },
+  copy(file:File,signal?:AbortSignal,onProgress?:(bytes:number)=>Promise<void>){
+   // The copy awaits this journal's durable identity before its first write.
+   return copyStorageFile(root,file,id,signal,temporary=>journal.record(temporary),onProgress);
+  },
+ };
+}
+
 async function assertCopyRoot(root:Root){if(fingerprint(await identity(root.path))!==fingerprint(root))throw new ConfigurationError(409,'复制目标挂载或目录身份已变化，请恢复原位置。');}
 async function safeParents(root:Root,path:string){let parent=root.path;for(const part of path.split('/').slice(0,-1)){await assertCopyRoot(root);parent=join(parent,part);await mkdir(parent,{mode:0o700}).catch(e=>{if(e.code!=='EEXIST')throw e;});if((await identity(parent)).device!==root.device)throw new ConfigurationError(409,'复制目标父目录所在位置已变化。');await assertCopyRoot(root);}}
 export async function copyStorageFile(root:Root,f:File,id:string,signal?:AbortSignal,onTemporary?:(value:{path:string;device:string;inode:string})=>Promise<void>,onProgress?:(bytes:number)=>Promise<void>){const outputPath=f.targetRelativePath??f.relativePath;await assertCopyRoot(root);await safeParents(root,outputPath);const dest=join(root.path,outputPath);

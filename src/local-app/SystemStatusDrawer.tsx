@@ -5,7 +5,7 @@ import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {useDialogFocus} from '../ui/useDialogFocus';
 import {stateLabel, type StatusItem, type SystemState} from '../observability/SystemStatusSurface';
 import {taskStatusLabel, taskTypeLabel} from '../observability/TaskProgressPanel';
-import type {RuntimeStatus} from '../observability/runtimeStatus';
+import type {RuntimeStatus,RuntimeVersionState} from '../observability/runtimeStatus';
 import {healthCheckLabels,type HealthCheck} from '../observability/healthChecks';
 import './SystemStatusDrawer.css';
 
@@ -16,6 +16,7 @@ interface Props {
   onRefresh: () => void; onPage: (page:number) => void;
   onOpenEpisode?: (id:string) => boolean | void; triggerLabel?: string;
 }
+const versionLabels:Record<RuntimeVersionState,string>={current:'已应用当前版本',source_changed:'开发改动待准备',restart_required:'新版已准备，待重启',preparing:'新版准备中',not_prepared:'未找到已准备版本',prepared_invalid:'准备版本不可用',running_invalid:'运行版本校验失败',mismatch:'后台与 Worker 版本不一致',unknown:'版本待确认'};
 const bytes=(value:number|null|undefined)=>value==null?'未读取':`${new Intl.NumberFormat('zh-CN',{maximumFractionDigits:1}).format(value/1024**3)} GB`;
 const date=(value:string|null|undefined)=>value?new Intl.DateTimeFormat('zh-CN',{dateStyle:'short',timeStyle:'medium',timeZone:'Asia/Shanghai'}).format(new Date(value)):'未读取';
 function combined(states:SystemState[]):SystemState {
@@ -37,10 +38,11 @@ export function SystemStatusDrawer({open,onOpen,onClose,runtime,maintenance,main
     const previous=document.body.style.overflow;document.body.style.overflow='hidden';
     return()=>{document.body.style.overflow=previous;};
   },[open]);
+  const version=runtime?.version,versionFailure=version?.state==='running_invalid'||version?.state==='mismatch';
   const worker=runtime?.worker,queue=runtime?.queue,resources=runtime?.resources;
   const maintenanceState=maintenanceAvailable?combined(maintenance.filter(item=>item.stateText!=='已关闭'&&item.stateText!=='未启用').map(item=>item.state)):'unknown';
   const resourceState:SystemState=resources?combined([resources.disk?'healthy':'unknown',resources.media.state]):'unknown';
-  const overall:SystemState=error?'offline':combined([worker?.state??'unknown',queue?queue.blocked+queue.failed?'attention':'healthy':'unknown',resourceState,maintenanceState]);
+  const overall:SystemState=error?'offline':combined([versionFailure?'attention':'healthy',worker?.state??'unknown',queue?queue.blocked+queue.failed?'attention':'healthy':'unknown',resourceState,maintenanceState]);
   const statusText=pending&&!observedAt?'读取中…':stateLabel(overall);
   const workerSummary=!worker?'未读取':worker.state==='healthy'?`在线 · ${worker.active?'忙碌':'空闲'}`:worker.state==='offline'?'离线':worker.state==='attention'?'需处理':'未配置';
   const queueSummary=!queue?'未读取':queue.total?[queue.running?`${queue.running} 执行中`:'',queue.queued?`${queue.queued} 排队`:'',queue.blocked+queue.failed?`${queue.blocked+queue.failed} 需处理`:''].filter(Boolean).join(' · '):'暂无活动任务';
@@ -53,6 +55,20 @@ export function SystemStatusDrawer({open,onOpen,onClose,runtime,maintenance,main
       <header className="status-drawer-heading"><h2>系统状态</h2><span className={`status-drawer-status${overall==='healthy'?'':overall==='unknown'?' is-muted':' is-warning'}`} role="status"><i/>{statusText}</span><Button size="sm" color="tertiary" aria-label="关闭系统状态详情" iconLeading={X} onClick={onClose}/></header>
       <div className="status-drawer-body" aria-busy={pending}>
         {error&&<p role="alert" className="status-drawer-problem">{error}</p>}
+        <Section title="运行版本" summary={version?versionLabels[version.state]:'版本待确认'} attention={versionFailure}>
+          <dl className="status-drawer-facts">
+            <div><dt>后台版本</dt><dd title={version?.backendReleaseId??undefined}>{version?.backendReleaseId?.slice(0,12)??'待确认'}</dd></div>
+            <div><dt>Worker 版本</dt><dd title={version?.workerReleaseId??undefined}>{version?.workerReleaseId?.slice(0,12)??'待确认'}</dd></div>
+            <div><dt>启动时间</dt><dd>{date(version?.startedAt)}</dd></div>
+            {version?.preparedReleaseId&&version.preparedReleaseId!==version.backendReleaseId&&<div><dt>已准备版本</dt><dd title={version.preparedReleaseId}>{version.preparedReleaseId.slice(0,12)}</dd></div>}
+            <div><dt>页面模式</dt><dd>{import.meta.env.DEV?'开发热更新':'构建页面'}</dd></div>
+          </dl>
+          {version?.state==='source_changed'&&<p className="status-drawer-empty">新改动尚未准备；当前后台和 Worker 继续使用已启动版本。</p>}
+          {version?.state==='restart_required'&&<p className="status-drawer-empty">当前服务仍使用已启动版本，重启后才会应用新版。</p>}
+          {version?.state==='running_invalid'&&<p className="status-drawer-problem">当前运行文件校验失败，请检查并重新准备运行版本。</p>}
+          {version?.state==='prepared_invalid'&&<p className="status-drawer-empty">新版本未通过校验，请重新准备；当前服务未切换版本。</p>}
+          {(!version||version.state==='unknown')&&<p className="status-drawer-empty">尚未确认完整运行版本，不能据此判断更新已生效。</p>}
+        </Section>
         <Section title="本机 Worker" summary={workerSummary} attention={worker?.state==='offline'||worker?.state==='attention'}>
           <dl className="status-drawer-facts"><div><dt>最近心跳</dt><dd>{date(worker?.heartbeatAt)}</dd></div><div><dt>执行位</dt><dd>{worker?.active!=null&&worker.capacity!=null?`${worker.active} / ${worker.capacity} 使用中`:'未读取'}</dd></div><div><dt>最近扫描</dt><dd>{date(worker?.lastScanAt)}</dd></div></dl>
           {worker?.problem&&<p className="status-drawer-problem">{worker.problem}</p>}

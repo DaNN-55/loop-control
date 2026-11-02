@@ -27,7 +27,7 @@ it('lists source rows and keeps raw names, file paths and exact JSON in on-deman
  expect(localCommand).not.toHaveBeenCalled();
 });
 it('archives through the protected command and can filter archived sources without deleting',async()=>{
- requests();vi.mocked(localCommand).mockResolvedValue({archived:true});const user=userEvent.setup();render(<LocalHistory/>);
+ requests();vi.mocked(localCommand).mockImplementation(async()=>{vi.mocked(localRequest).mockResolvedValue({...report,sources:[],sourceCounts:{active:0,archived:1}});return {archived:true};});const user=userEvent.setup();render(<LocalHistory/>);
  await screen.findByRole('table',{name:'资料来源列表'});await user.click(screen.getByRole('button',{name:'归档 '+item.title}));
  await screen.findByText('已归档，可在「已归档」中恢复。文件和索引保留。');expect(localCommand).toHaveBeenCalledWith('archive',{sourceId:source},undefined,'history-management');
  await user.selectOptions(screen.getByLabelText('显示范围'),'archived');await waitFor(()=>expect(new URL(vi.mocked(localRequest).mock.calls.at(-1)![0],'http://local/').searchParams.get('state')).toBe('archived'));
@@ -43,4 +43,10 @@ it('reports read failures and retains search input for retry',async()=>{
 });
 it('discards details that finish after a new content search',async()=>{
  let finish!:(value:unknown)=>void;requests();vi.mocked(localRequest).mockImplementation(async path=>path.includes('version=')?new Promise(resolve=>{finish=resolve;}):{...report,source:item});const user=userEvent.setup();render(<LocalHistory/>);await open(user);await user.click(screen.getByText('技术记录（1 项）'));await user.click(screen.getByRole('button',{name:'生产单 · 原始生产单'}));await user.type(screen.getByRole('searchbox',{name:'查找文件或记录'}),'{Enter}');await waitFor(()=>expect(screen.queryByRole('region',{name:'选定历史记录'})).toBeNull());finish({version:{table_name:'public.episodes',payload_json:'stale',row_key:{}}});await waitFor(()=>expect(screen.queryByText('技术详情')).toBeNull());
+});
+
+it('shows only populated source categories and keeps them during an empty search',async()=>{
+ vi.mocked(localRequest).mockResolvedValue({...report,sources:[],categoryCounts:{diagnostics:4}});render(<LocalHistory/>);await screen.findByRole('table');
+ const category=screen.getByRole('combobox',{name:'分类'});expect(within(category).getAllByRole('option').map(option=>option.textContent)).toEqual(['全部分类','测试与诊断']);
+ expect(within(screen.getByRole('combobox',{name:'显示范围'})).queryByRole('option',{name:/已归档/})).toBeNull();
 });

@@ -7,6 +7,7 @@ import { tmpdir } from "node:os";
 import {extname,isAbsolute,join,relative,resolve} from "node:path";
 import { createHash, randomUUID } from "node:crypto";
 import { fileURLToPath } from "node:url";
+import { pruneOpenChatCutCache } from './openchatcut-cache.mjs';
 
 async function main() {
 if (process.argv[2] === "--version") {
@@ -30,6 +31,7 @@ const sources = Array.isArray(spec.sources) ? spec.sources : [];
 if (!isAbsolute(root) || !isAbsolute(assetRoot) || !isAbsolute(outputPath)) throw new Error("OpenChatCut paths must be absolute.");
 if (!state || typeof state !== "object" || !Array.isArray(state.items)) throw new Error("OpenChatCut render state is invalid.");
 assertOpenChatCutRuntime({ root, nodeVersion: process.version });
+await pruneOpenChatCutCache(root);
 
 const dataDir = await mkdtemp(join(tmpdir(), "tk-openchatcut-"));
 const uploadDir = join(dataDir, "media", "uploads");
@@ -80,6 +82,7 @@ try {
   throw new Error(`${error instanceof Error ? error.message : String(error)}${details ? `\n${details.slice(-2000)}` : ""}`);
 } finally {
   await rm(dataDir, { recursive: true, force: true });
+  await pruneOpenChatCutCache(root);
 }
 }
 

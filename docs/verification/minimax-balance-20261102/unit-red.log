@@ -1,0 +1,116 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/local-app/providerUsage.test.ts (10 tests | 4 failed) 4462ms
+   ✓ reads documented and live Freesound usage shapes without treating requests as money 32ms
+   ✓ reads documented and live Freesound usage shapes without treating requests as money 1ms
+   ✓ keeps missing Kling resource data unknown and sums cash separately from trial credits across pages  2204ms
+   ✓ rejects provider errors and redirects without returning provider text or keys 1ms
+   ✓ does not present incomplete Kling pages as a zero or complete total  2202ms
+   ✓ reads Pexels request quota headers while keeping unavailable seven-day history explicit 9ms
+   × reads MiniMax cn account balance with its existing PAYG key and never estimates seven-day spend 10ms
+     → expected { label: '余量', text: '未接入', …(2) } to match object { label: '可用额', text: '¥23.00', …(1) }
+(1 matching property omitted from actual)
+   × reads MiniMax international account balance with its existing PAYG key and never estimates seven-day spend 1ms
+     → expected { label: '余量', text: '未接入', …(2) } to match object { Object (label, text, ...) }
+(1 matching property omitted from actual)
+   × never reports a failed, malformed or redirected MiniMax balance as zero, and keeps spend unsupported 1ms
+     → expected { label: '余量', text: '未接入', …(2) } to match object { text: '读取失败', status: 'unavailable' }
+(2 matching properties omitted from actual)
+   × keeps MiniMax signed balance amounts exact without treating them as integer cents 1ms
+     → expected '未接入' to be 'US$-1,234.12345678' // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/providerUsage.test.ts > reads MiniMax cn account balance with its existing PAYG key and never estimates seven-day spend
+AssertionError: expected { label: '余量', text: '未接入', …(2) } to match object { label: '可用额', text: '¥23.00', …(1) }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "label": "可用额",
+-   "status": "ready",
+-   "text": "¥23.00",
++   "label": "余量",
++   "status": "unsupported",
++   "text": "未接入",
+  }
+
+ ❯ src/local-app/providerUsage.test.ts:49:28
+     47|  });
+     48|  const summary=await createProviderUsageReader(transport)({provider:'m…
+     49|  expect(summary.remaining).toMatchObject({label:'可用额',text:region==='c…
+       |                            ^
+     50|  expect(summary.remaining.detail).toContain(region==='cn'?'现金 ¥10.00':…
+     51|  expect(summary.recent).toMatchObject({label:'近7天',text:'未提供接口',status…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/local-app/providerUsage.test.ts > reads MiniMax international account balance with its existing PAYG key and never estimates seven-day spend
+AssertionError: expected { label: '余量', text: '未接入', …(2) } to match object { Object (label, text, ...) }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "label": "可用额",
+-   "status": "ready",
+-   "text": "US$23.00",
++   "label": "余量",
++   "status": "unsupported",
++   "text": "未接入",
+  }
+
+ ❯ src/local-app/providerUsage.test.ts:49:28
+     47|  });
+     48|  const summary=await createProviderUsageReader(transport)({provider:'m…
+     49|  expect(summary.remaining).toMatchObject({label:'可用额',text:region==='c…
+       |                            ^
+     50|  expect(summary.remaining.detail).toContain(region==='cn'?'现金 ¥10.00':…
+     51|  expect(summary.recent).toMatchObject({label:'近7天',text:'未提供接口',status…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/local-app/providerUsage.test.ts > never reports a failed, malformed or redirected MiniMax balance as zero, and keeps spend unsupported
+AssertionError: expected { label: '余量', text: '未接入', …(2) } to match object { text: '读取失败', status: 'unavailable' }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "status": "unavailable",
+-   "text": "读取失败",
++   "status": "unsupported",
++   "text": "未接入",
+  }
+
+ ❯ src/local-app/providerUsage.test.ts:59:29
+     57|  for(const response of responses){
+     58|   const summary=await createProviderUsageReader(async()=>response)({pr…
+     59|   expect(summary.remaining).toMatchObject({text:'读取失败',status:'unavail…
+       |                             ^
+     60|  }
+     61|  const transport=vi.fn();const invalid=await createProviderUsageReader…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  src/local-app/providerUsage.test.ts > keeps MiniMax signed balance amounts exact without treating them as integer cents
+AssertionError: expected '未接入' to be 'US$-1,234.12345678' // Object.is equality
+
+Expected: "US$-1,234.12345678"
+Received: "未接入"
+
+ ❯ src/local-app/providerUsage.test.ts:66:33
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 6 passed (10)
+   Start at  08:54:49
+   Duration  4.77s (transform 69ms, setup 16ms, collect 55ms, tests 4.46s, environment 0ms, prepare 73ms)

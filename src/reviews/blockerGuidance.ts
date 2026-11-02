@@ -46,7 +46,7 @@ function specializedMediaUnavailableGuidance(blocker: Pick<WorkerBlocker, "detai
 }
 
 function structuredPreflightGuidance(blocker: Pick<WorkerBlocker, "detail" | "action" | "check" | "status">, repairTarget: RepairTarget | null): WorkerBlockerGuidance | undefined {
-  if(blocker.action==='select_production')return{title:'本次制作选择需要调整',summary:'请在素材准备与匹配中检查当前模型与参数，再明确提交新的请求。',resolution:['在生产单的素材准备与匹配中选择可用模型、Harness 或媒体服务。','检查外部连接的验证状态；已提交任务保留原选择。'],retryLabel:'前往素材准备与匹配',location:'生产单 → 素材准备与匹配',locationNote:'改选不会改变已有任务、候选或已采用素材。',technicalDetail:blocker.detail};
+  if(blocker.action==='select_production')return{title:'本次制作选择需要调整',summary:'请在分镜台中检查当前模型与参数，再明确提交新的请求。',resolution:['在生产单的分镜台中选择可用模型、Harness 或媒体服务。','检查外部连接的验证状态；已提交任务保留原选择。'],retryLabel:'前往分镜台',location:'生产单 → 分镜台',locationNote:'改选不会改变已有任务、候选或已采用素材。',technicalDetail:blocker.detail};
   if(blocker.action==='manage_account_directory')return{title:'账号目录需要处理',summary:'请检查账号专属目录的实际位置与访问权限。',resolution:['打开账号配置中的专属目录，检查位置、挂载与读写权限。'],retryLabel:'检查账号目录',location:'账号配置 → 专属目录',locationNote:'已有文件须通过目录迁移更换位置。',technicalDetail:blocker.detail};
   if (blocker.check === "provider_network_policy") {
     return {
