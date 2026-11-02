@@ -78,3 +78,62 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('real landscape and portr
   await writeFile(join(output,'render-pixels.json'),JSON.stringify(results,null,2)+'\n');
  }finally{await f.close();}
 },240_000);
+it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner caption errors identify the field and current shot window without changing the saved native captions',async()=>{
+ const f=await productionWorkspaceFixture();try{
+  const w=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;
+  const contract=defaultShotCaptionContract('手工字幕','independent');contract.spatial.safeArea='custom';contract.cues=[{id:'manual',text:contract.text,startMs:100,endMs:900}];
+  const save=(captionContract:unknown)=>f.request('saveWorkspaceCaptions',{workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[0].id,captionContract});
+  for(const [bad,message] of [
+   [{...contract,spatial:{...contract.spatial,insets:{...contract.spatial.insets,bottom:null}}},'下边距不能为空。'],
+   [{...contract,spatial:{...contract.spatial,insets:{...contract.spatial.insets,bottom:.41}}},'下边距须为 0–40%。'],
+   [{...contract,cues:[{...contract.cues[0],startMs:null}]},'第 1 条开始时间不能为空。'],
+   [{...contract,cues:[{...contract.cues[0],startMs:950}]},'第 1 条结束时间须晚于开始时间。'],
+   [{...contract,cues:[{...contract.cues[0],endMs:99999}]},`第 1 条结束时间超出当前镜头窗口（${w.captions[0].durationMs/1000} 秒），请重新校时。`],
+  ] as const){const rejected=await save(bad);expect(rejected.status,JSON.stringify(rejected.body)).toBe(400);expect(JSON.stringify(rejected.body)).toContain(message);}
+  const restored=(await(await fetch(f.origin+`/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}})).json()).workspace;
+  expect(restored.revision).toBe(w.revision);expect(restored.project.sha256).toBe(w.project.sha256);
+ }finally{await f.close();}
+},180000);
+it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('percentage margins and second timings survive Owner save, native dragging, save and reopen',async()=>{
+ const {editStudioDocument}=await import('./studioDocument.fixture');
+ const f=await productionWorkspaceFixture();try{
+  let w=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;
+  const send=(name:string,extra={})=>f.request(name,{workspaceId:w.id,expectedRevision:w.revision,...extra});
+  const contract=defaultShotCaptionContract('百分比字幕','independent');contract.spatial.safeArea='custom';contract.spatial.insets={top:.08,right:.12,bottom:.2,left:.08};contract.cues=[{id:'manual',text:contract.text,startMs:125,endMs:1250}];
+  const saved=await send('saveWorkspaceCaptions',{clipId:w.clips[0].id,captionContract:contract});expect(saved.status,JSON.stringify(saved.body)).toBe(200);w=await f.fillVisuals(saved.body);
+  let opened=await send('openWorkspaceStudio');expect(opened.status,JSON.stringify(opened.body)).toBe(200);w=opened.body.productionWorkspace;
+  const laneOf=(doc:any)=>Object.values(doc.timelines[0].tracks).flatMap((t:any)=>t.captions?.sourceEntries??[]).find((l:any)=>l.id===`workspace-caption-shot-${w.clips[0].shotId}`) as any;
+  const native=JSON.parse(await readFile(join(f.assetRoot,w.project.relativePath),'utf8')),lane=laneOf(native);
+  expect(lane.widthRatio).toBeCloseTo(.8,8);expect(lane.heightRatio).toBeCloseTo(.72,8);expect(lane.offsetXRatio).toBeCloseTo(-.02,8);expect(lane.offsetYRatio).toBeCloseTo(.12,8);expect(lane.words[0]).toMatchObject({start:125,end:1250});
+  await editStudioDocument(opened.body.studioUrl,w.project.projectId,doc=>{const dragged=laneOf(doc);dragged.offsetXRatio=.17;dragged.offsetYRatio=.09;dragged.words[0].start=250;dragged.words[0].end=1150;});
+  const nativeSaved=await send('saveWorkspaceStudio',{workspaceRelativePath:opened.body.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:w.project.sha256});expect(nativeSaved.status,JSON.stringify(nativeSaved.body)).toBe(200);w=nativeSaved.body.productionWorkspace;
+  const closed=await send('closeWorkspaceStudio');expect(closed.status).toBe(200);w=closed.body;
+  await f.restart();w=(await(await fetch(f.origin+`/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}})).json()).workspace;
+  opened=await send('openWorkspaceStudio');expect(opened.status,JSON.stringify(opened.body)).toBe(200);w=opened.body.productionWorkspace;
+  const reopened=laneOf(JSON.parse(await readFile(join(f.assetRoot,w.project.relativePath),'utf8')));
+  expect(reopened.offsetXRatio).toBe(.17);expect(reopened.offsetYRatio).toBe(.09);expect(reopened.words[0]).toMatchObject({start:250,end:1150});expect(w.captions[0].contract.spatial.insets).toEqual(contract.spatial.insets);expect(w.captions[0].contract.cues[0]).toMatchObject({startMs:250,endMs:1150});
+ }finally{await f.close();}
+},240000);
+it.skipIf(process.env.LOOP_CAPTION_BROWSER!=='1')('browser edits and reopens percentage margins and second timing through the actual Owner HTTP boundary',async()=>{
+ const {writeFile,rm}=await import('node:fs/promises'),{createServer:netServer}=await import('node:net'),{createServer}=await import('vite'),{default:react}=await import('@vitejs/plugin-react'),{promisify}=await import('node:util'),{execFile}=await import('node:child_process');
+ const f=await productionWorkspaceFixture(),evidence=process.env.LOOP_STORY_EVIDENCE!,entry=join(process.cwd(),'src/local-app/__captionsBrowser.tsx');let app:Awaited<ReturnType<typeof createServer>>|undefined;
+ const session='captions-'+f.episode,cli=promisify(execFile),browser=async(...args:string[])=>(await cli('agent-browser',['--session',session,...args],{env:{...process.env,AGENT_BROWSER_ALLOWED_DOMAINS:'127.0.0.1,localhost'},maxBuffer:4*1024*1024})).stdout;
+ try{
+  let w=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;
+  const contract=defaultShotCaptionContract('浏览器字幕','independent');contract.spatial.safeArea='custom';contract.cues=[{id:'browser',text:contract.text,startMs:100,endMs:900}];
+  const saved=await f.request('saveWorkspaceCaptions',{workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[0].id,captionContract:contract});expect(saved.status).toBe(200);w=saved.body;
+  await writeFile(entry,`import{createRoot}from'react-dom/client';import{useState}from'react';import{WorkspaceCaptionsPanel}from'./WorkspaceCaptionsPanel';import{localRequest,localCommand}from'./client';import'../styles.css';import'../ui/impeccable/foundation.css';import'../ui/impeccable/production.css';function App({initial}){const[w,setW]=useState(initial);return <main className="impeccable-app dan-ui product-ui" style={{padding:20,maxWidth:900,margin:'auto'}}><WorkspaceCaptionsPanel workspace={w} command={(name,data)=>localCommand(name,data,undefined,'episode-commands')} onChange={setW}/></main>}async function start(){await localRequest('login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(${JSON.stringify({email:f.email,password:f.password})})});const r=await fetch('/api/local/episodes/${f.episode}/workspace');createRoot(document.getElementById('root')).render(<App initial={(await r.json()).workspace}/>);}void start();`);
+  const proxy={target:f.origin,changeOrigin:true,configure(p:any){p.on('proxyReq',(req:any)=>req.setHeader('origin',f.origin));}};
+  const reservation=netServer();await new Promise<void>(resolve=>reservation.listen(0,'127.0.0.1',resolve));const testPort=(reservation.address() as {port:number}).port;await new Promise<void>((resolve,reject)=>reservation.close(error=>error?reject(error):resolve()));
+  app=await createServer({configFile:false,root:process.cwd(),envFile:false,cacheDir:join(f.root,'caption-vite'),plugins:[react(),{name:'captions-browser',configureServer(server){server.middlewares.use('/__captions',async(_req,res)=>{res.setHeader('Content-Type','text/html');res.end(await server.transformIndexHtml('/__captions','<!doctype html><html lang="zh-CN" data-interface="impeccable"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>字幕验证</title><div id="root"></div><script type="module" src="/src/local-app/__captionsBrowser.tsx"></script></html>'));});}}],server:{host:'127.0.0.1',port:testPort,strictPort:true,proxy:{'/api':proxy,'/_local-artifact':proxy}}});await app.listen();
+  await browser('open',`http://127.0.0.1:${(app.httpServer!.address() as {port:number}).port}/__captions`);await browser('wait','[aria-label="字幕下边距（%）"]');
+  await writeFile(join(evidence,'caption-before.txt'),await browser('snapshot'));
+  await browser('fill','[aria-label="字幕下边距（%）"]','20');await browser('find','text','手工校时','click');await browser('fill','[aria-label="字幕条目 1 结束（秒）"]','1.25');await browser('find','role','button','click','--name','保存字幕');
+  await browser('wait','--fn',"!document.body.innerText.includes('有未保存修改')");await browser('reload');await browser('wait','[aria-label="字幕下边距（%）"]');await browser('find','text','手工校时','click');
+  expect((await browser('get','value','[aria-label="字幕下边距（%）"]')).trim()).toBe('20');expect((await browser('get','value','[aria-label="字幕条目 1 结束（秒）"]')).trim()).toBe('1.25');
+  for(const width of [1280,380]){await browser('set','viewport',String(width),'900');await browser('screenshot',join(evidence,`captions-${width}.png`));const layout=await browser('eval',JSON.stringify('')+";JSON.stringify({width:innerWidth,scrollWidth:document.documentElement.scrollWidth,headers:[...document.querySelectorAll('th')].map(x=>x.textContent)})");await writeFile(join(evidence,`captions-layout-${width}.json`),layout);expect(layout).toContain('开始（秒）');}
+  await browser('fill','[aria-label="字幕下边距（%）"]','1');await browser('press','Backspace');await writeFile(join(evidence,'caption-invalid.txt'),await browser('snapshot'));expect((await browser('get','value','[aria-label="字幕下边距（%）"]')).trim()).toBe('');await browser('wait','[aria-invalid="true"]');expect(await browser('get','text','body')).toContain('下边距不能为空。');await browser('find','role','button','click','--name','保存字幕');
+  const restored=(await(await fetch(f.origin+`/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}})).json()).workspace;
+  expect(restored.captions[0].contract.spatial.insets.bottom).toBe(.2);expect(restored.captions[0].contract.cues[0].endMs).toBe(1250);await writeFile(join(evidence,'caption-after.txt'),await browser('snapshot'));
+ }finally{await browser('close').catch(()=>{});await app?.close();await rm(entry,{force:true});await f.close();}
+},240000);

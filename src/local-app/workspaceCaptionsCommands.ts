@@ -1,3 +1,4 @@
+import {workspaceCaptionFieldErrors} from '../workspaceCaptionValidation.js';
 import {episodeStorageLocationAtRoot,requireEpisodeStorageDirectory,requireWritableEpisodeStorage} from './episodeStorageLocation.js';
 import {readUsedWorkspaceNarrationVersions} from './workspaceCandidates.js';
 import {resolveWorkspaceMainVoice} from '../workspaceAudio.js';
@@ -91,8 +92,10 @@ export async function executeWorkspaceCaptionCommand(c:PoolClient,root:string,ro
  await requireWritableEpisodeStorage(c,root,row.episode_id);
  let x=await captionContext(c,root,row,project,data.clipId);
  if(command==='saveWorkspaceCaptions'){
+  const errors=workspaceCaptionFieldErrors(data.captionContract,Number(x.item.durationInFrames)*1000/x.timeline.fps);
+  if(Object.keys(errors).length)throw new ConfigurationError(400,Object.values(errors).join(' '));
   if(!isValidShotCaptionContract(data.captionContract))throw new ConfigurationError(400,'字幕正文、布局或时序无效。');const contract=data.captionContract;
-  if(contract.text.length>100000||contract.cues.length>1000||new Set(contract.cues.map(cue=>cue.id)).size!==contract.cues.length)throw new ConfigurationError(400,'字幕正文或 cue 数量无效。');
+  if(contract.text.length>100000||contract.cues.length>1000||new Set(contract.cues.map(cue=>cue.id)).size!==contract.cues.length)throw new ConfigurationError(400,'字幕正文或字幕条目数量无效。');
   if(contract.contentMode==='follow_tts'&&(x.route.explicitRoute&&x.route.item?.id!==`workspace-narration-shot-${x.clip.shotId}`||(!x.route.explicitRoute&&x.draft?.audio_mode!=='tts')||x.followText!==contract.text))throw new ConfigurationError(409,'跟随口播须采用当前口播正文，请刷新后重试。');
   validateCues(contract,Number(x.item.durationInFrames)*1000/x.timeline.fps);
   if(data.nativeApplied!==undefined&&typeof data.nativeApplied!=='boolean')throw new ConfigurationError(400,'原生字幕保存状态无效。');
@@ -142,6 +145,6 @@ export async function executeWorkspaceCaptionCommand(c:PoolClient,root:string,ro
  throw new ConfigurationError(400,'字幕操作无效。');
 }
 function validateCues(contract:ShotCaptionContract,duration:number){
- let previous=0;for(const cue of contract.cues){if(!cue.text.trim()||cue.id.length>200||cue.startMs<previous||cue.endMs>duration+1)throw new ConfigurationError(400,'字幕 cue 重叠或超出当前片段。');previous=cue.endMs;}
+ let previous=0;for(const cue of contract.cues){if(!cue.text.trim()||cue.id.length>200||cue.startMs<previous||cue.endMs>duration+1)throw new ConfigurationError(400,'字幕条目重叠或超出当前镜头窗口。');previous=cue.endMs;}
  if(contract.cues.length&&comparable(contract.cues.map(c=>c.text).join(''))!==comparable(contract.text))throw new ConfigurationError(400,'字幕时序正文与当前字幕不一致，请重新校时。');
 }
