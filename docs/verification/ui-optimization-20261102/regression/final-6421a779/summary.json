@@ -1,0 +1,28 @@
+{
+  "commit": "6421a779ce1be462bda3c4e04157fecabeb5f627",
+  "source": "full git archive; no source overlay",
+  "success": true,
+  "files": 233,
+  "passedTests": 1557,
+  "failedTests": 0,
+  "pending": [
+    {
+      "file": "src/local-app/runtimeVersion.test.ts",
+      "test": "legacy runtime APIs remain unverified instead of borrowing the prepared version",
+      "status": "skipped"
+    }
+  ],
+  "commands": [
+    "npm run check",
+    "npm run runtime:prepare",
+    "npm test -- --maxWorkers=1 --fileParallelism=false --testTimeout=15000",
+    "npm run build"
+  ],
+  "exitCode": 0,
+  "outputs": {
+    "vitest.json": "ad838fa00cbbf9718244d75de3c90a544e078206d2b22568bbe6f1d88bf392b7",
+    "check.log": "928dd2453fd01e81e22aeb4106e166671312b96a2a55a28c6841f24d1af4c1b0",
+    "runtime-prepare.log": "0888d176bbcea27ecb67435b2dc7c99dd17f79b24390833e2dc0fa7829411396",
+    "build.log": "9039197344486ce2aec6672520efc326a928fff71a4d46191c696d19e29410cd"
+  }
+}

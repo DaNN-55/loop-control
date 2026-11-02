@@ -1,0 +1,8 @@
+{
+  "snapshotBase": "ccb9470df3139d847e3be36de88ded21d0ba7f9c",
+  "verifiedCommit": "04c0858dde3755ca4879f1b95a50b40cb4fa69ef",
+  "overlay": [
+    "src/local-app/WorkspaceVisualCandidatesPanel.test.tsx"
+  ],
+  "note": "Only the typed public-response test fixture differs from the full archive; all production source unchanged."
+}

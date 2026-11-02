@@ -1,0 +1,28 @@
+{
+  "commit": "04c0858dde3755ca4879f1b95a50b40cb4fa69ef",
+  "productCommit": "ccb9470df3139d847e3be36de88ded21d0ba7f9c",
+  "success": true,
+  "files": 232,
+  "passedTests": 1553,
+  "failedTests": 0,
+  "pending": [
+    {
+      "file": "src/local-app/runtimeVersion.test.ts",
+      "test": "legacy runtime APIs remain unverified instead of borrowing the prepared version",
+      "status": "skipped"
+    }
+  ],
+  "commands": [
+    "npm run check",
+    "npm run runtime:prepare",
+    "npm test -- --maxWorkers=1 --fileParallelism=false --testTimeout=15000",
+    "npm run build"
+  ],
+  "outputs": {
+    "vitest.json": "b07df3adbc8fe53784c1d8a354299b7eb410e8f368cbe00c333ab3399c5269c7",
+    "source-input.json": "477eeecbd541f21253cd3c7fc9c9961709caef86e0801c5c18b448678d136df2",
+    "check.log": "928dd2453fd01e81e22aeb4106e166671312b96a2a55a28c6841f24d1af4c1b0",
+    "runtime-prepare.log": "21cc562c445028fcd847025ee082e3ab3e60c33d6d07b47d3479b69876e14108",
+    "build.log": "a6dd2ef780af28edd3a6ff5641c2ffc757fd5e3b5d72087ca1cd6f16a417483b"
+  }
+}
