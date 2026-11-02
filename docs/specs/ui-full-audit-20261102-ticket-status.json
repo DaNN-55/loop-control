@@ -375,10 +375,20 @@
       "id": 6162321036,
       "url": "https://github.com/DaNN-55/loop-control/issues/213",
       "blockedBy": [],
-      "status": "open",
+      "status": "closed",
       "parentLinked": true,
       "dependenciesLinked": true,
-      "nativeDependencies": true
+      "nativeDependencies": true,
+      "implementation": {
+        "state": "integrated-pending-full-regression",
+        "commit": "15255d20",
+        "focused": {
+          "tests": 73,
+          "integration": 7,
+          "rootReadResults": true
+        },
+        "evidence": "docs/verification/ui-optimization-20261102/tickets/17.md"
+      }
     },
     {
       "n": 18,

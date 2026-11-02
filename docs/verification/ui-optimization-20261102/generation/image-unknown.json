@@ -1,0 +1,25 @@
+{
+  "taskId": "6ebf23f7-d260-4dc8-9afb-1819a7b2086d",
+  "state": {
+    "id": "9edcec27-7ddf-40ec-bb87-696a256b06ed",
+    "shotId": "shot-1",
+    "targetItemId": "shot-shot-1-74de0e4e-ecf4-40b4-b806-da4bd5ab193b",
+    "kind": "image",
+    "taskId": "6ebf23f7-d260-4dc8-9afb-1819a7b2086d",
+    "status": "failed",
+    "provider": "openai",
+    "model": "gpt-image-2",
+    "createdAt": "2026-11-02T12:49:33.045Z",
+    "connectionName": "Controlled image batch",
+    "error": "媒体执行或产物验证失败，请检查冻结输入和本机执行状态。",
+    "submissionOutcome": "started",
+    "providerTaskId": null,
+    "requestState": "submitting",
+    "publicationAttempt": null,
+    "submissionUnknown": true,
+    "canResume": false
+  },
+  "supplierPosts": 1,
+  "attemptCount": 1,
+  "retryStatus": 409
+}

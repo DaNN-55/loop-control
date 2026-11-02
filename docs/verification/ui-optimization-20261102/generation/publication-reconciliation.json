@@ -1,0 +1,31 @@
+{
+  "taskId": "acc45299-c236-4b8d-8854-70a3a48c1b94",
+  "heldAttempt": 0,
+  "attemptCount": 1,
+  "supplierPosts": 1,
+  "missingProofStatus": 409,
+  "tamperedProofStatus": 409,
+  "foreignOwnerStatus": 404,
+  "wrongAttemptStatus": 409,
+  "extraLeaseStatus": 400,
+  "repeatedReconciliationRegistered": false,
+  "completedState": {
+    "id": "d2e1422d-4bab-45e4-81cd-07a9ea5c4374",
+    "shotId": "shot-1",
+    "targetItemId": "shot-shot-1-7758dbfa-56df-48d9-a0c0-66c520160935",
+    "kind": "image",
+    "taskId": "acc45299-c236-4b8d-8854-70a3a48c1b94",
+    "status": "completed",
+    "provider": "openai",
+    "model": "gpt-image-2",
+    "createdAt": "2026-11-02T12:49:51.703Z",
+    "connectionName": "Controlled image batch",
+    "error": "Completed",
+    "submissionOutcome": "received",
+    "providerTaskId": null,
+    "requestState": "succeeded",
+    "publicationAttempt": null,
+    "submissionUnknown": false,
+    "canResume": false
+  }
+}

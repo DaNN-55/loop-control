@@ -1,0 +1,29 @@
+{
+  "taskId": "5733bdf9-550c-4000-bc70-3c0a9b62915b",
+  "providerTaskId": "controlled-t05-video",
+  "supplierPosts": 1,
+  "attemptCount": 2,
+  "pollQueries": [
+    "https://ark.cn-beijing.volces.com/api/v3/contents/generations/tasks/controlled-t05-video",
+    "https://ark.cn-beijing.volces.com/api/v3/contents/generations/tasks/controlled-t05-video"
+  ],
+  "completedState": {
+    "id": "c052c7fe-b6d0-493b-ba63-d15b399bdca9",
+    "shotId": "shot-1",
+    "targetItemId": "shot-shot-1-4b8360db-dada-4a5d-83e4-93f60e0d39b8",
+    "kind": "video",
+    "taskId": "5733bdf9-550c-4000-bc70-3c0a9b62915b",
+    "status": "completed",
+    "provider": "volcengine",
+    "model": "doubao-seedance-2-0-260128",
+    "createdAt": "2026-11-02T12:49:46.981Z",
+    "connectionName": "Controlled narration video",
+    "error": "Completed successfully.",
+    "submissionOutcome": "received",
+    "providerTaskId": "controlled-t05-video",
+    "requestState": "succeeded",
+    "publicationAttempt": null,
+    "submissionUnknown": false,
+    "canResume": false
+  }
+}
