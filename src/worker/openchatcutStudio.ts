@@ -125,7 +125,8 @@ export async function closeOpenChatCutStudio(episodeId: string): Promise<void> {
   if (!session) return;
   if (session.child.exitCode === null) {
     await new Promise<void>((resolveClose,reject) => {
-      const timer=setTimeout(()=>reject(Error('Studio 尚未关闭，请稍后重试；不会替换仍在编辑的工程。')),2_000);
+      // Allow graceful shutdown to finish before releasing the session and its files.
+      const timer=setTimeout(()=>reject(Error('Studio 尚未关闭，请稍后重试；不会替换仍在编辑的工程。')),10_000);
       session.child.once('close',()=>{clearTimeout(timer);resolveClose();});
       session.child.kill('SIGTERM');
     });
