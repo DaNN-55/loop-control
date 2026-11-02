@@ -136,7 +136,7 @@ it('uses the persisted four-step projection for stage, continuation and phase tr
  const episode={...episodes[0],stage:'script_approved' as const,title:'四步原生工程'};
  const catalog={episodes:[episode],pending:{total:0,items:[],page:1},blocked:{total:0,items:[],page:1},worker:{running:0,blocked:0,failed:0},operationRows:[{episodeId:episode.id,reviewRevision:null,reviewPending:false,blockerCount:0,actionStatus:'running',workflowStep:'editing'}],page:1,total:1,stages:{script_approved:1}} as unknown as import('../episodes/episodeCatalogTypes').EpisodeCatalog;
  await act(async()=>{render(<OperationsWorkspace remote={{catalog,seriesId:'all',onSeriesChange:vi.fn(),onPageChange:vi.fn(),onPendingPageChange:vi.fn(),onBlockedPageChange:vi.fn()}} episodes={[episode]} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[]} reviewPackages={[]} series={[series]} seriesVersions={[seriesVersion]} tasks={[]} onSelectEpisode={vi.fn()} selectedEpisode={episode}/>);});
- expect(within(screen.getByRole('region',{name:'系列生产单'})).getByText('剪辑工作台')).toBeTruthy();expect(within(screen.getByRole('complementary',{name:'当前作品'})).getByRole('button',{name:'继续剪辑'})).toBeTruthy();expect(within(screen.getByRole('list',{name:'当前生产阶段'})).getAllByRole('listitem')).toHaveLength(4);expect(within(screen.getByRole('list',{name:'当前生产阶段'})).getByText('分镜台')).toBeTruthy();expect(episode.stage).toBe('script_approved');
+ expect(within(screen.getByRole('region',{name:'系列生产单'})).getByText('剪辑工作台')).toBeTruthy();expect(within(screen.getByRole('complementary',{name:'当前作品'})).getByRole('button',{name:'继续剪辑'})).toBeTruthy();expect(within(screen.getByRole('list',{name:'当前生产阶段'})).getAllByRole('listitem')).toHaveLength(4);expect(within(screen.getByRole('list',{name:'当前生产阶段'})).getByText('素材准备与匹配')).toBeTruthy();expect(episode.stage).toBe('script_approved');
 });
 
 it('shows only populated series options using full catalog counts across pages and filters',()=>{
@@ -154,7 +154,7 @@ it('shows only populated series options using full catalog counts across pages a
 });
 
 it.each([
- {pending:0,running:0,blocked:0,failed:0,production:0,tone:'success',title:'当前审核已处理完毕'},
+ {pending:0,running:0,blocked:0,failed:0,production:0,tone:'success',title:'当前没有待审核项'},
  {pending:2,running:0,blocked:0,failed:0,production:0,tone:'warning',title:'2 项审核，等待你的决定'},
  {pending:0,running:1,blocked:0,failed:0,production:0,tone:'info',title:'内容正在制作中'},
  {pending:0,running:0,blocked:0,failed:0,production:1,tone:'info',title:'内容正在制作中'},
@@ -170,4 +170,17 @@ it.each([
  if(pending){await userEvent.setup().click(within(notice).getByRole('button',{name:'开始审核'}));expect(openReviews).toHaveBeenCalledOnce();}
  else expect(within(notice).queryByRole('button',{name:'开始审核'})).toBeNull();
  if(blocked+failed)expect(within(notice).getByText(new RegExp(`${blocked} 项任务阻塞 · ${failed} 项失败`))).toBeTruthy();
+});
+
+it('opens completed work as results and never marks its final stage as still in progress',async()=>{
+ const user=userEvent.setup(),open=vi.fn();
+ render(<OperationsWorkspace episodes={episodes} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[]} reviewPackages={reviewPackages} series={[series]} seriesVersions={[seriesVersion]} tasks={tasks} onSelectEpisode={open} selectedEpisode={episodes[0]}/>);
+ await user.click(within(screen.getByRole('region',{name:'系列生产单'})).getByRole('button',{name:'无系列生产单 未关联系列'}));
+ const result=within(screen.getByRole('complementary',{name:'当前作品'}));
+ expect(result.getByRole('heading',{name:'查看成果'})).toBeTruthy();
+ expect(result.queryByRole('heading',{name:'继续处理'})).toBeNull();
+ expect(result.getByRole('list',{name:'当前生产阶段'}).querySelector('[aria-current="step"]')).toBeNull();
+ expect(result.getByRole('region',{name:'制作成果'})).toBeTruthy();
+ await user.click(result.getByRole('button',{name:'查看交付包'}));
+ expect(open).toHaveBeenCalledWith('episode-unassigned');
 });

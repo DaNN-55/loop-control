@@ -15,7 +15,7 @@ export function episodeActionState(episode:Episode,summary?:EpisodeRowSummary):E
  return ['waiting_input','brief_draft','script_draft'].includes(episode.stage)?'draft':'running';
 }
 export function EpisodeStatus({state}:{state:EpisodeActionState}){const {label,icon:Icon}=states[state];return <span className={`episode-state episode-state-${state}`}><Icon aria-hidden="true" size={14}/>{label}</span>;}
-export const workflowStepLabels={script:'脚本确认',preparation:'分镜台',editing:'剪辑工作台',delivery:'检查与交付'} as const;
+export const workflowStepLabels={script:'脚本确认',preparation:'素材准备与匹配',editing:'剪辑工作台',delivery:'检查与交付'} as const;
 export const workspacePhaseGroups=Object.entries(workflowStepLabels).map(([id,label])=>({id:id as keyof typeof workflowStepLabels,label,stages:[] as EpisodeStage[]}));
 export function episodeWorkflowLabel(summary?:EpisodeRowSummary){return summary?.workflowStep?workflowStepLabels[summary.workflowStep]:null;}
 export function episodeNextAction(episode:Episode,state:EpisodeActionState,summary?:EpisodeRowSummary){

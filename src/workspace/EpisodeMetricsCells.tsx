@@ -21,10 +21,9 @@ export function EpisodeMetricsCells({metrics,step='script'}:{metrics?:EpisodeMet
  return <>
   <div role="cell" className="episode-cost">
    {cost?.actualCents!==null&&cost?.actualCents!==undefined?<span>实际 {yuan(cost.actualCents)}</span>:null}
-   {cost?.estimatedCents!==null&&cost?.estimatedCents!==undefined?<span className="episode-metric-secondary">估算 ≈{yuan(cost.estimatedCents)}</span>:null}
+   {cost?.estimatedCents!==null&&cost?.estimatedCents!==undefined?<span className="episode-metric-secondary" title={cost.recalculated?'按当前价格估算':undefined}>估算 ≈{yuan(cost.estimatedCents)}</span>:null}
    {cost?.unpricedCount?<small>{cost.unpricedCount} 次费用待确认</small>:null}
    {(!cost||cost.actualCents===null&&cost.estimatedCents===null&&!cost.unpricedCount)&&<span aria-label="暂无费用记录">—</span>}
-   {cost?.recalculated&&<small>按当前价格估算</small>}
   </div>
   <div role="cell" className="episode-stage-durations"><span>{stepLabels[step]} · {seconds===null?'未记录':duration(seconds)}</span></div>
   <div role="cell" className="episode-generation-counts">{metrics?<><span>图 {metrics.generations.image} · 视频 {metrics.generations.video}</span><span className="episode-metric-secondary">口播 {metrics.generations.narration} · 音效 {metrics.generations.sound}</span>{metrics.generations.failed>0&&<small>含 {metrics.generations.failed} 次失败</small>}</>:<span aria-label="暂无生成记录">—</span>}</div>

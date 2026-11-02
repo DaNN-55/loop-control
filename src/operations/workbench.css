@@ -89,3 +89,5 @@ html[data-interface="impeccable"] .product-ui .work-video-toolbar>button:hover{b
 .work-video-fill{width:var(--media-slider-fill);background:#fff}
 .work-video-thumb{position:absolute;left:var(--media-slider-fill);width:8px;height:8px;border-radius:50%;background:#fff;translate:-50% 0}
 @media(prefers-reduced-motion:reduce){.work-video-controls{transition:none}}
+
+.work-review-status{margin:0;color:var(--lc-muted);font-size:12px;line-height:1.6}
