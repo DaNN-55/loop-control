@@ -8,3 +8,5 @@
 .workspace-audio-group .workspace-audio-candidate>.workspace-audio-voice{grid-column:1/-1;border-bottom:0;padding:0}
 .workspace-audio-group .workspace-audio-actions{justify-content:flex-start}
 .workspace-audio-group .workspace-audio-candidate>div:first-child>span{color:var(--lc-muted,#596b83)}
+.workspace-audio-form>.workspace-audio-note,.workspace-audio-voice>small{grid-column:1/-1;flex-basis:100%;margin:0;line-height:1.6}
+.workspace-audio-voice>small{font-size:12px;color:var(--lc-muted,#596b83)}

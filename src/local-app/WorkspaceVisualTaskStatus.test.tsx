@@ -22,7 +22,7 @@ it('narration retains unknown submission evidence and blocks another paid prepar
  const {WorkspaceNarrationPanel}=await import('./WorkspaceNarrationPanel');vi.stubGlobal('fetch',vi.fn(async()=>Response.json({serviceCatalog:{groups:[]}})));
  const n={clipId:'clip',shotId:'shot',mode:'tts',text:'正文',status:'failed',error:null,confirmed:true,generationTask:{id:'speech',taskId:'speech-task',status:'failed',error:'语音回执未收到',submissionOutcome:'started',submissionUnknown:true}};
  render(<WorkspaceNarrationPanel episodeId="episode" workspace={{...base,narration:[n]} as unknown as ProductionWorkspace} pending={false} command={vi.fn()} onChanged={()=>{}} selectedShotId="shot"/>);
- expect(screen.getByText(/^口播提交结果未知/)).toBeTruthy();expect((screen.getByRole('button',{name:'确认匹配并准备口播'}) as HTMLButtonElement).disabled).toBe(true);expect(screen.getByRole('button',{name:'刷新核对结果'})).toBeTruthy();
+ expect(screen.getByText(/^口播提交结果未知/)).toBeTruthy();expect((screen.getByRole('button',{name:'生成口播'}) as HTMLButtonElement).disabled).toBe(true);expect(screen.getByRole('button',{name:'刷新核对结果'})).toBeTruthy();
 });
 it('audio publication remains explicitly recoverable and never offers ordinary retry',async()=>{
  const {WorkspaceAudioPreparation}=await import('./WorkspaceAudioPanel');vi.stubGlobal('fetch',vi.fn(async()=>Response.json({serviceCatalog:{groups:[]}})));

@@ -31,3 +31,28 @@ it('selects uploaded narration material and explicitly adopts its registered can
  await waitFor(()=>expect(command).toHaveBeenCalledWith('adoptWorkspaceCandidate',expect.objectContaining({candidateId:'track',adoptionId:'manual-adoption'})));
  expect(command.mock.calls.some(c=>c[0]==='generateWorkspaceNarration')).toBe(false);
 });
+
+it('reopens from the latest persisted default while retaining an explicit shot override and frozen execution',async()=>{
+ const {workspace,command}=setup();fireEvent.click(screen.getByText('本期默认'));await waitFor(()=>expect((screen.getByLabelText('默认连接与模型') as HTMLSelectElement).options.length).toBe(3));
+ fireEvent.change(screen.getByLabelText('默认语速'),{target:{value:'1.5'}});cleanup();
+ const latest={...workspace,narration:[{...workspace.narration![0],speakingRate:1.25,defaults:{...workspace.narration![0].defaults!,speakingRate:.85},execution:{taskId:'original-task',selection,voice:'原任务声音',languageCode:'zh-CN',speakingRate:1,text:'冻结口播正文'}}]};
+ render(<WorkspaceNarrationPanel episodeId="e" workspace={latest} selectedShotId="S01" pending={false} command={command} onChanged={vi.fn()}/>);fireEvent.click(screen.getByText('本期默认'));await waitFor(()=>expect((screen.getByLabelText('默认语速') as HTMLInputElement).value).toBe('0.85'));
+ expect((screen.getByLabelText('镜头语速') as HTMLInputElement).value).toBe('1.25');expect(screen.getByText(/原任务声音/)).toBeTruthy();expect(screen.getByText('冻结口播正文')).toBeTruthy();expect(screen.getByRole('button',{name:'生成口播'})).toBeTruthy();expect(command).not.toHaveBeenCalled();
+});
+
+it('keeps an actively edited default when another window saves and offers an explicit reload',async()=>{
+ const {workspace,command}=setup();cleanup();const props={episodeId:'e',pending:false,command,onChanged:vi.fn(),selectedShotId:'S01'},view=render(<WorkspaceNarrationPanel {...props} workspace={workspace}/>);
+ fireEvent.click(screen.getByText('本期默认'));await waitFor(()=>expect((screen.getByLabelText('默认连接与模型') as HTMLSelectElement).options.length).toBe(3));fireEvent.change(screen.getByLabelText('默认语速'),{target:{value:'1.4'}});
+ const updated={...workspace,narration:[{...workspace.narration![0],defaults:{...workspace.narration![0].defaults!,speakingRate:.85}}]};view.rerender(<WorkspaceNarrationPanel {...props} workspace={updated}/>);
+ expect((screen.getByLabelText('默认语速') as HTMLInputElement).value).toBe('1.4');expect(screen.getByRole('status').textContent).toContain('其他窗口更新');fireEvent.click(screen.getByRole('button',{name:'载入已保存默认'}));expect((screen.getByLabelText('默认语速') as HTMLInputElement).value).toBe('0.85');expect(command).not.toHaveBeenCalled();
+});
+
+it('offers old shot settings for explicit recovery while a new episode default remains authoritative',async()=>{
+ const {workspace,command}=setup();cleanup();sessionStorage.clear();
+ sessionStorage.setItem('loop-speech-draft:w:S01',JSON.stringify({selection,voice:'zh_female_vv_uranus_bigtts',languageCode:'zh-CN',speakingRate:1.35}));
+ sessionStorage.setItem('loop-speech-default-draft:w',JSON.stringify({selection,speakingRate:1.8}));
+ const latest={...workspace,narration:[{...workspace.narration![0],selection:null,voice:null,speakingRate:null,defaults:{...workspace.narration![0].defaults!,selection:{...selection,connectionVersionId:'b'},speakingRate:.85}}]};
+ const props={episodeId:'e',workspace:latest,pending:false,command,onChanged:vi.fn(),selectedShotId:'S01'};render(<WorkspaceNarrationPanel {...props}/>);fireEvent.click(screen.getByText('本期默认'));await waitFor(()=>expect((screen.getByLabelText('镜头连接与模型') as HTMLSelectElement).options.length).toBe(3));
+ expect((screen.getByLabelText('默认语速') as HTMLInputElement).value).toBe('0.85');expect((screen.getByLabelText('镜头语速') as HTMLInputElement).value).toBe('0.85');
+ cleanup();render(<WorkspaceNarrationPanel {...props}/>);await waitFor(()=>expect((screen.getByLabelText('镜头连接与模型') as HTMLSelectElement).options.length).toBe(3));fireEvent.click(screen.getByRole('button',{name:'恢复旧镜头草稿'}));expect((screen.getByLabelText('镜头语速') as HTMLInputElement).value).toBe('1.35');expect((screen.getByLabelText('镜头连接与模型') as HTMLSelectElement).value).toBe('a:seed-tts-2.0');expect(command).not.toHaveBeenCalled();
+});
