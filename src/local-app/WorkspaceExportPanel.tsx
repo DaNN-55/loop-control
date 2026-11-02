@@ -1,3 +1,4 @@
+import {VideoPreview} from '../ui/media/VideoPreview';
 import {WorkspaceDeliveryPanel} from './WorkspaceDeliveryPanel';
 import {useState,type ReactNode} from 'react';
 import {Check,FileVideo,History,RefreshCw,MessageSquarePlus} from 'lucide-react';
@@ -15,7 +16,7 @@ export function WorkspaceExportPanel({workspace:w,pending,command,onChange,readO
   <div className="workspace-export-layout">
    <div className="workspace-final-preview">
     <div className="workspace-final-heading"><h4>成片预览</h4></div>
-    {latest?.artifact?<video aria-label="最终导出视频" controls preload="metadata" src={`/_local-artifact?episode=${encodeURIComponent(w.episodeId)}&path=${encodeURIComponent(latest.artifact.relativePath)}&sha256=${latest.artifact.sha256}`}/>:<div className="workspace-final-empty"><FileVideo aria-hidden="true"/><p>{latest?'最终文件尚未就绪。':'先导出最终视频，检查后确认这份文件。'}</p></div>}
+    {latest?.artifact?<VideoPreview title="最终导出视频" aria-label="最终导出视频" sourceLabel="成片" src={`/_local-artifact?episode=${encodeURIComponent(w.episodeId)}&path=${encodeURIComponent(latest.artifact.relativePath)}&sha256=${latest.artifact.sha256}`}/>:<div className="workspace-final-empty"><FileVideo aria-hidden="true"/><p>{latest?'最终文件尚未就绪。':'先导出最终视频，检查后确认这份文件。'}</p></div>}
     {latest&&(latest.confirmed?<p role="status" className="workspace-final-confirmed"><Check size={15} aria-hidden="true"/>已确认这份最终文件</p>:<Button size="sm" color="primary" iconLeading={Check} isDisabled={readOnly||pending||!latest.current||latest.status!=='ready'||latest.checks.some(c=>!c.passed)||blocked} onPress={()=>void run('confirmWorkspaceExport',{exportId:latest.id,expectedExportSha256:latest.artifact?.sha256,expectedContentSha256:w.contentSha256}).catch(()=>{})}>确认成片与字幕</Button>)}
    </div>
    <div className="workspace-export-review">

@@ -1,8 +1,9 @@
 import {cleanup,fireEvent,render,screen} from '@testing-library/react';
-import {afterEach,expect,it,vi} from 'vitest';
+import {afterEach,beforeEach,expect,it,vi} from 'vitest';
 import {WorkspaceShotPreview} from './WorkspaceShotPreview';
 import type {ProductionWorkspace,WorkspaceClip} from '../productionWorkspace';
 import type {OpenChatCutProject} from '../worker/openchatcutProject';
+beforeEach(()=>{vi.spyOn(HTMLMediaElement.prototype,'pause').mockImplementation(()=>{});vi.spyOn(HTMLMediaElement.prototype,'load').mockImplementation(()=>{});});
 afterEach(()=>{cleanup();vi.restoreAllMocks();});
 const clip:WorkspaceClip={id:'clip',shotId:'S1',itemId:'item',text:'画面',source:{kind:'video',relativePath:'episodes/e/source.mp4',sha256:'source-sha',fileSize:20,materialRevisionId:'material'}};
 const workspace={episodeId:'e'} as ProductionWorkspace;
@@ -24,7 +25,7 @@ it('previews the saved video after adopting it over an original image binding',(
 it('respects a saved 2x visual speed and its six-second source window',()=>{
  const sped={...project,timelines:[{...project.timelines[0],items:[{...project.timelines[0].items[0],playbackRate:2}]}]} as OpenChatCutProject;
  render(<WorkspaceShotPreview workspace={workspace} clips={[clip]} project={sped} onSelect={vi.fn()}/>);
- const video=screen.getByLabelText('S1 当前视频') as HTMLVideoElement;Object.defineProperty(video,'duration',{value:20});fireEvent.loadedMetadata(video);expect(video.playbackRate).toBe(2);expect(video.currentTime).toBe(2);expect(screen.getByText('使用 2.00–8.00 s')).toBeTruthy();
+ const video=screen.getByLabelText('S1 当前视频') as HTMLVideoElement;Object.defineProperty(video,'duration',{value:20});fireEvent.loadedMetadata(video);expect(video.playbackRate).toBe(2);expect(video.currentTime).toBe(2);expect(screen.getByText('使用 2.00–8.00 s')).toBeTruthy();expect(screen.getByText('片段 0.00 / 3.00 s')).toBeTruthy();video.currentTime=4;fireEvent.timeUpdate(video);expect(screen.getByText('片段 1.00 / 3.00 s')).toBeTruthy();expect(screen.getByText('源视频 4.00 / 20.00 s')).toBeTruthy();
  const pause=vi.spyOn(video,'pause').mockImplementation(()=>{});Object.defineProperty(video,'paused',{value:false});video.currentTime=5;fireEvent.timeUpdate(video);expect(pause).not.toHaveBeenCalled();video.currentTime=8.2;fireEvent.timeUpdate(video);expect(pause).toHaveBeenCalledOnce();expect(video.currentTime).toBe(8);
 });
 it('shows honest read-only missing-source copy and static image duration without a source trim range',()=>{
@@ -33,4 +34,28 @@ it('shows honest read-only missing-source copy and static image duration without
  const image={...clip,source:{...clip.source!,kind:'image' as const,relativePath:'still.png'}};
  rerender(<WorkspaceShotPreview workspace={workspace} clips={[image]} project={{...project,timelines:[{fps:30,items:[{id:'item',kind:'image',src:'still.png',sourceContentHash:'sha',durationInFrames:90}]}]} as unknown as OpenChatCutProject} readOnly onSelect={vi.fn()}/>);
  expect(screen.getByText('显示 3.00 s')).toBeTruthy();expect(screen.queryByText(/使用 0.00/)).toBeNull();
+});
+
+it('区分当前片段与源视频时间，片段内拖动不能越界，查看整段可自由定位',()=>{
+ render(<WorkspaceShotPreview workspace={workspace} clips={[clip]} project={project} onSelect={vi.fn()}/>);
+ const video=screen.getByLabelText('S1 当前视频') as HTMLVideoElement;
+ Object.defineProperty(video,'duration',{value:20});fireEvent.loadedMetadata(video);
+ expect(screen.getByText('片段 0.00 / 3.00 s')).toBeTruthy();expect(screen.getByText('源视频 2.00 / 20.00 s')).toBeTruthy();
+ video.currentTime=19;fireEvent.seeking(video);expect(video.currentTime).toBe(5);
+ video.currentTime=0;fireEvent.seeking(video);expect(video.currentTime).toBe(2);
+ fireEvent.click(screen.getByRole('button',{name:'查看整段源视频'}));
+ video.currentTime=19;fireEvent.seeking(video);expect(video.currentTime).toBe(19);
+ fireEvent.click(screen.getByRole('button',{name:'仅播放当前片段'}));expect(video.currentTime).toBe(2);
+ expect(JSON.stringify(project)).not.toContain('currentTime');
+});
+it('加载失败提供原位重试，切换片段释放原视频',()=>{
+ const view=render(<WorkspaceShotPreview workspace={workspace} clips={[clip]} project={project} onSelect={vi.fn()}/>);
+ const video=screen.getByLabelText('S1 当前视频') as HTMLVideoElement;
+ expect(screen.getByText('正在加载视频…')).toBeTruthy();fireEvent.error(video);
+ expect(screen.getByRole('alert').textContent).toContain('视频未能加载');
+ fireEvent.click(screen.getByRole('button',{name:'重试加载视频'}));
+ const next=screen.getByLabelText('S1 当前视频') as HTMLVideoElement;expect(next).not.toBe(video);
+ const pause=vi.spyOn(next,'pause').mockImplementation(()=>{});Object.defineProperty(next,'paused',{configurable:true,value:false});
+ view.rerender(<WorkspaceShotPreview workspace={workspace} clips={[{...clip,source:{...clip.source!,relativePath:'other.mp4'}}]} project={null} onSelect={vi.fn()}/>);
+ expect(pause).toHaveBeenCalled();
 });

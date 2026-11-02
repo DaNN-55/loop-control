@@ -32,3 +32,13 @@ it('ignores a playback rejection from an intentionally replaced sample',async()=
  view.rerender(<AudioPreview src="blob:new" onPlaybackError={error}/>);
  await act(async()=>{reject(new Error('interrupted'));});expect(error).not.toHaveBeenCalled();
 });
+it('音频加载失败可原位重试，页面隐藏会暂停试听',async()=>{
+ vi.spyOn(HTMLMediaElement.prototype,'load').mockImplementation(()=>{});
+ render(<AudioPreview src="/registered.mp3" aria-label="错误试听"/>);
+ const audio=screen.getByLabelText('错误试听') as HTMLAudioElement;
+ fireEvent.loadStart(audio);expect(screen.getByText('正在加载音频…')).toBeTruthy();
+ fireEvent.error(audio);expect(screen.getByRole('alert').textContent).toContain('音频未能加载');
+ fireEvent.click(screen.getByRole('button',{name:'重试加载音频'}));
+ const next=screen.getByLabelText('错误试听') as HTMLAudioElement;expect(next).not.toBe(audio);
+ await act(async()=>{await next.play();});Object.defineProperty(document,'hidden',{configurable:true,value:true});fireEvent(document,new Event('visibilitychange'));expect(next.paused).toBe(true);Object.defineProperty(document,'hidden',{configurable:true,value:false});
+});

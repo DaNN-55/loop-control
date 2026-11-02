@@ -1,3 +1,4 @@
+import {VideoPreview} from '../ui/media/VideoPreview';
 import {useWorkspacePolling,type WorkspaceReading} from './useWorkspaceReading';
 import {useEffect,useRef,useState} from 'react';
 import type {ProductionWorkspace} from '../productionWorkspace';
@@ -53,7 +54,7 @@ export function WorkspacePexelsSearch({workspace,targetItemId,command,onChange,p
   {search?.results?.length===0&&<p role="status">没有找到视频，请修改检索词、方向或页码后重试。</p>}
   {search?.results&&search.results.length>0&&<ol className="workspace-pexels-results" aria-label="Pexels 检索结果">{search.results.map(result=>{const preview=previews.find(r=>r.source?.id===result.id);return <li key={result.id}>
    {!preview?.preview&&<PexelsThumbnail key={result.thumbnailUrl??'missing'} id={result.id} url={result.thumbnailUrl}/>} <div className="workspace-pexels-result-source"><a href={result.sourceUrl} target="_blank" rel="noreferrer">Pexels #{result.id}</a><a href={result.creatorUrl} target="_blank" rel="noreferrer">{result.creator}</a><span>{result.durationSeconds} 秒 · {result.width}×{result.height}</span></div>
-   {preview?.preview?<><video controls preload="metadata" aria-label={`Pexels ${result.id} 预览`} src={artifact(preview.preview.relativePath,preview.preview.sha256)}/><Button size="sm" color="secondary" isDisabled={locked||!!preview.candidateId} onPress={()=>void run('importWorkspacePexelsVideo',{previewId:preview.id})}>{preview.candidateId?'已导入候选':'导入为画面候选'}</Button></>:<Button size="sm" color="secondary" isDisabled={locked||pending.some(r=>r.operation==='preview')} onPress={()=>void run('previewWorkspacePexelsVideo',{searchId:search.id,resultId:result.id})}>下载预览 #{result.id}</Button>}
+   {preview?.preview?<><VideoPreview title={`Pexels ${result.id} 预览`} aria-label={`Pexels ${result.id} 预览`} src={artifact(preview.preview.relativePath,preview.preview.sha256)}/><Button size="sm" color="secondary" isDisabled={locked||!!preview.candidateId} onPress={()=>void run('importWorkspacePexelsVideo',{previewId:preview.id})}>{preview.candidateId?'已导入候选':'导入为画面候选'}</Button></>:<Button size="sm" color="secondary" isDisabled={locked||pending.some(r=>r.operation==='preview')} onPress={()=>void run('previewWorkspacePexelsVideo',{searchId:search.id,resultId:result.id})}>下载预览 #{result.id}</Button>}
    {preview?.error&&<p role="alert">预览下载失败，请重试。{preview.error}</p>}
   </li>;})}</ol>}
   {search?.error&&<p role="alert">检索未完成，请检查连接或修改检索条件后重试。{search.error}</p>}{error&&<p role="alert">{error}</p>}

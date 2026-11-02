@@ -5,15 +5,14 @@ import type {OpenChatCutProject} from '../worker/openchatcutProject';
 import {readWorkspaceShots} from '../workspaceShots';
 import {readWorkspaceAudioMix,isWorkspaceItemAudible} from '../workspaceAudio';
 import {shotCaptionAnchorLabels,shotCaptionSafeAreaLabels,shotCaptionSafeAreaInsets} from '../shotCaptions';
-import {WorkbenchVideoPlayer} from '../operations/WorkbenchVideoPlayer';
+import {VideoPreview} from '../ui/media/VideoPreview';
 import {WorkspaceShotPreview} from './WorkspaceShotPreview';
 
 const propertyNames:Record<string,string>={x:'水平位置',y:'垂直位置',scale:'缩放',scaleX:'水平缩放',scaleY:'垂直缩放',rotation:'旋转',opacity:'透明度'};
 const seconds=(value:number)=>`${value.toFixed(2)} s`;
 function Facts({values}:{values:Array<[string,string|number]>}){return <dl className="workspace-saved-facts">{values.map(([label,value])=><div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>;}
 function ShotMovie({url,start,end,title,fps}:{url:string;start:number;end:number;title:string;fps:number}){
- const [failed,setFailed]=useState(false);
- return failed?<p role="alert">成片预览未能加载，请在检查与交付中重试。</p>:<WorkbenchVideoPlayer source={url} title={title} segment={{start,end,frameDuration:1/fps}} onError={()=>setFailed(true)}/>;
+ return <VideoPreview src={url} title={title} aria-label={title} sourceLabel="成片" segment={{start,end,frameDuration:1/fps}}/>;
 }
 function OriginalPreview({workspace,clips,project}:{workspace:ProductionWorkspace;clips:ProductionWorkspace['clips'];project:OpenChatCutProject|null}){
  const [selected,setSelected]=useState(clips[0]?.itemId);
@@ -21,6 +20,7 @@ function OriginalPreview({workspace,clips,project}:{workspace:ProductionWorkspac
 }
 /** The immutable confirmed render shows the combined result; the native document owns settings. */
 export function WorkspaceCompletedShots({workspace:w,project,materials=[]}:{workspace:ProductionWorkspace;project:OpenChatCutProject|null;materials?:Array<{storage_path:string;source_path:string}>}){
+ const [previewShot,setPreviewShot]=useState<string|null>(null);
  const groups=project?readWorkspaceShots(project):w.clips.filter((c,i,a)=>a.findIndex(v=>v.shotId===c.shotId)===i).map(c=>({id:c.shotId,text:c.text,timelineId:'',itemIds:w.clips.filter(v=>v.shotId===c.shotId).map(v=>v.itemId),startFrame:0,durationInFrames:0}));
  const mix=project?readWorkspaceAudioMix(project,Object.fromEntries(groups.map(s=>[s.id,s.itemIds]))):w.audio?.mix;
  const exported=w.exports?.find(e=>e.current&&e.confirmed&&e.artifact),movie=exported?.artifact;
@@ -34,7 +34,7 @@ export function WorkspaceCompletedShots({workspace:w,project,materials=[]}:{work
   return <article className="workspace-completed-shot" key={shot.timelineId+shot.id} aria-label={`${shot.id} 镜头配置`}>
    <header><h4>{shot.id}</h4><p>{shot.text}</p>{timeline&&<span>{seconds(start)}–{seconds(end)} · {seconds(end-start)}</span>}</header>
    <div className="workspace-completed-shot-layout"><div className="workspace-completed-shot-preview">
-    <h5>{combined?'成片镜头预览':'原素材预览'}</h5>{combined?<ShotMovie key={url+start+end} url={url!} start={start} end={end} fps={fps} title={`${shot.id} 成片`}/>:<OriginalPreview workspace={w} clips={clips} project={project}/>}
+    <h5>{combined?'成片镜头预览':'原素材预览'}</h5><button className="workspace-shot-preview-toggle" type="button" aria-label={`${previewShot===shot.id?'收起':'展开'} ${shot.id} 预览`} aria-expanded={previewShot===shot.id} onClick={()=>setPreviewShot(previewShot===shot.id?null:shot.id)}>{previewShot===shot.id?'收起预览':'展开预览'}</button>{previewShot===shot.id&&(combined?<ShotMovie key={url+start+end} url={url!} start={start} end={end} fps={fps} title={`${shot.id} 成片`}/>:<OriginalPreview workspace={w} clips={clips} project={project}/>)}
     {!combined&&<p className="workspace-saved-empty">{project?'当前没有可对应的已确认成片，原素材不包含最终混音和字幕。':'尚未读取到已保存工程，镜头时长与最终配置暂不可核对。'}</p>}
    </div><div className="workspace-completed-shot-properties">
     <section aria-label={`${shot.id} 画面属性`}><h5>画面</h5>{timeline&&<Facts values={[

@@ -1,8 +1,8 @@
-import {cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
+import {act,cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
 import {afterEach,beforeEach,expect,it,vi} from 'vitest';
 import {WorkbenchArtwork,useWorkbenchPreview} from './workbenchPreview';
 import type {EpisodeProductionSnapshot} from '../episodes/EpisodeProductionContainer';
-beforeEach(()=>{vi.spyOn(HTMLMediaElement.prototype,'pause').mockImplementation(()=>{});});
+beforeEach(()=>{vi.spyOn(HTMLMediaElement.prototype,'pause').mockImplementation(()=>{});vi.spyOn(HTMLMediaElement.prototype,'play').mockImplementation(function(this:HTMLMediaElement){Object.defineProperty(this,'paused',{value:false,configurable:true});this.dispatchEvent(new Event('play'));return Promise.resolve();});});
 afterEach(()=>{cleanup();vi.unstubAllGlobals();vi.restoreAllMocks();});
 const artifact=(id:string,type:string,path:string)=>({id,artifact_type:type,relative_path:path,sha256:id.repeat(64),created_at:'2026-10-28T00:00:00Z'}) as EpisodeProductionSnapshot['artifacts'][number];
 it('aborts the previous selected episode read and never replaces the new preview with an old response',async()=>{
@@ -19,18 +19,20 @@ it('prefers the registered cover with its SHA and falls back explicitly when med
  fireEvent.error(image);expect(screen.getByText('预览暂不可用')).toBeTruthy();
 });
 
-it('starts on the cover, switches to a playable final video, and stops it when returning',()=>{
+it('starts on the cover, switches to a playable final video, and stops it when returning',async()=>{
  render(<WorkbenchArtwork episodeId="episode-a" title="作品" artifacts={[artifact('c','cover','cover.png'),artifact('f','final_render','final.mp4'),{...artifact('r','review_render','review.mp4'),created_at:'2026-10-29T00:00:00Z'}]}/>);
  expect(screen.getByRole('img')).toBeTruthy();expect((screen.getByRole('button',{name:'查看封面'}) as HTMLButtonElement).disabled).toBe(true);expect(screen.queryByLabelText('作品视频预览')).toBeNull();
  fireEvent.click(screen.getByRole('button',{name:'查看视频'}));
  const video=screen.getByLabelText('作品视频预览') as HTMLVideoElement;
  expect(new URL(video.src).searchParams.get('path')).toBe('final.mp4');expect(video.controls).toBe(false);expect(screen.getByRole('button',{name:'播放视频'})).toBeTruthy();expect(video.autoplay).toBe(false);expect(video.muted).toBe(false);expect(video.getAttribute('preload')).toBe('metadata');expect((screen.getByRole('button',{name:'查看视频'}) as HTMLButtonElement).disabled).toBe(true);
+ await act(async()=>{fireEvent.click(screen.getByRole('button',{name:'播放视频'}));});
  fireEvent.click(screen.getByRole('button',{name:'查看封面'}));expect(screen.getByRole('img')).toBeTruthy();expect(screen.queryByLabelText('作品视频预览')).toBeNull();expect(video.pause).toHaveBeenCalledOnce();
 });
-it('resets to the cover and stops playback when the selected production order changes',()=>{
+it('resets to the cover and stops playback when the selected production order changes',async()=>{
  const assets=[artifact('c','cover','cover.png'),artifact('v','render','render.mp4')];
  const {rerender}=render(<WorkbenchArtwork episodeId="episode-a" title="作品甲" artifacts={assets}/>);
  fireEvent.click(screen.getByRole('button',{name:'查看视频'}));const video=screen.getByLabelText('作品甲视频预览') as HTMLVideoElement;
+ await act(async()=>{fireEvent.click(screen.getByRole('button',{name:'播放视频'}));});
  rerender(<WorkbenchArtwork episodeId="episode-b" title="作品乙" artifacts={assets}/>);
  expect(screen.queryByLabelText('作品乙视频预览')).toBeNull();expect(new URL(screen.getByRole('img').getAttribute('src')!,'http://localhost').searchParams.get('episode')).toBe('episode-b');expect(video.pause).toHaveBeenCalledOnce();
 });
@@ -42,7 +44,7 @@ it('uses the registered video thumbnail as the initial cover when no cover exist
 it('keeps the cover reachable after a video fails and the video reachable after a cover fails',()=>{
  render(<WorkbenchArtwork episodeId="episode-a" title="作品" artifacts={[artifact('c','cover','cover.png'),artifact('f','final_render','final.mp4')]}/>);
  fireEvent.error(screen.getByRole('img'));expect(screen.getByText('预览暂不可用')).toBeTruthy();
- fireEvent.click(screen.getByRole('button',{name:'查看视频'}));const video=screen.getByLabelText('作品视频预览');expect(video).toBeTruthy();fireEvent.error(video);expect(screen.getByText('预览暂不可用')).toBeTruthy();
+ fireEvent.click(screen.getByRole('button',{name:'查看视频'}));const video=screen.getByLabelText('作品视频预览');expect(video).toBeTruthy();fireEvent.error(video);expect(screen.getByRole('alert').textContent).toContain('视频未能加载');fireEvent.click(screen.getByRole('button',{name:'重试加载视频'}));expect(screen.getByLabelText('作品视频预览')).not.toBe(video);
  fireEvent.click(screen.getByRole('button',{name:'查看封面'}));expect(screen.getByText('预览暂不可用')).toBeTruthy();expect((screen.getByRole('button',{name:'查看视频'}) as HTMLButtonElement).disabled).toBe(false);
 });
 it('omits navigation when there is only a cover or no media',()=>{

@@ -192,7 +192,7 @@ it.each(['image','video'] as const)('requires explicit %s selection and adoption
 });
 it('keeps stale and read-only candidates visible while disallowing adoption',()=>{
  const w={...workspace,visualCandidates:[{...workspace.visualCandidates![0],kind:'image' as const,status:'stale' as const}]};const props={workspace:w,command:vi.fn(),onChange:vi.fn(),materials:[],preparation:true};const view=render(<WorkspaceVisualCandidatesPanel {...props}/>);fireEvent.click(screen.getByRole('button',{name:'预览图片候选 01'}));expect((screen.getByRole('button',{name:'采用此图片'}) as HTMLButtonElement).disabled).toBe(true);expect(screen.getByText(/输入已变化/)).toBeTruthy();
- view.rerender(<WorkspaceVisualCandidatesPanel {...props} workspace={{...w,visualCandidates:[{...w.visualCandidates[0],status:'available'}]}} readOnly/>);expect((screen.getByRole('button',{name:'采用此图片'}) as HTMLButtonElement).disabled).toBe(true);expect(props.command).not.toHaveBeenCalled();
+ view.rerender(<WorkspaceVisualCandidatesPanel {...props} workspace={{...w,visualCandidates:[{...w.visualCandidates[0],status:'available'}]}} readOnly/>);expect(screen.queryByRole('button',{name:'采用此图片'})).toBeNull();expect(screen.getByRole('region',{name:'画面制作记录'})).toBeTruthy();expect(props.command).not.toHaveBeenCalled();
 });
 
 it.each(['image','video'] as const)('adds an existing episode %s to results without adopting or submitting generation',async kind=>{

@@ -25,8 +25,25 @@ export function LocalEpisodeDetail({episodeId,ownerId='',onChanged,onStudioActio
  const [preflight,setPreflight]=useState<WorkerPreflightResult|null>(null);
  const previous=useRef<LocalEpisodeSnapshot|null>(null),changed=useRef(onChanged);changed.current=onChanged;
  const reader=useMemo(()=>createEpisodeReader<LocalEpisodeSnapshot>(async(id,known)=>localRequest(`episodes/${id}?known=${encodeURIComponent(JSON.stringify(known))}`)),[episodeId]);
- async function refresh(){const next=await reader(episodeId);setSnapshot(next);}
- useEffect(()=>{let current=true,busy=false;async function poll(){if(busy||document.hidden)return;busy=true;try{const s=await reader(episodeId);if(current){const changedCatalog=episodeCatalogChanged(previous.current,s);previous.current=s;setSnapshot(s);if(changedCatalog)void changed.current().catch(()=>{});}}catch(e){if(current)setError(e instanceof Error?e.message:String(e));}finally{busy=false;}}void poll();const timer=setInterval(()=>void poll(),2000);document.addEventListener('visibilitychange',poll);return()=>{current=false;clearInterval(timer);document.removeEventListener('visibilitychange',poll);};},[episodeId,reader]);
+ const reschedule=useRef<()=>void>(()=>{});
+ async function refresh(){const next=await reader(episodeId,'',true);previous.current=next;setSnapshot(next);reschedule.current();}
+ useEffect(()=>{
+  let current=true,busy=false,resumeRequested=false,timer:ReturnType<typeof setTimeout>|undefined;
+  const schedule=()=>{clearTimeout(timer);if(!current||document.hidden)return;const s=previous.current;
+   const active=s?.tasks.some(task=>['ready','running'].includes(task.status)&&!(task as {invalidated_at?:string|null}).invalidated_at);
+   const idle=!!s&&(s.episode.stage==='production_completed'||!!s.episode.archived_at||s.historicalReadOnly)&&!active;
+   timer=setTimeout(()=>void poll(),idle?30000:2000);
+  };
+  async function poll(fresh=false){
+   clearTimeout(timer);if(!current||document.hidden)return;if(busy){if(fresh)resumeRequested=true;return;}busy=true;
+   try{const s=await reader(episodeId,'',fresh);if(current){const changedCatalog=episodeCatalogChanged(previous.current,s);previous.current=s;setSnapshot(s);if(changedCatalog)void changed.current().catch(()=>{});}}
+   catch(e){if(current)setError(e instanceof Error?e.message:String(e));}
+   finally{busy=false;if(current){if(resumeRequested&&!document.hidden){resumeRequested=false;void poll(true);}else schedule();}}
+  }
+  const visibility=()=>{clearTimeout(timer);if(!document.hidden)void poll(true);};
+  reschedule.current=schedule;void poll();document.addEventListener('visibilitychange',visibility);
+  return()=>{current=false;clearTimeout(timer);reschedule.current=()=>{};document.removeEventListener('visibilitychange',visibility);};
+ },[episodeId,reader]);
  async function command(name:string,data:unknown){
   setError('');setPreflight(null);
   let result:unknown;
