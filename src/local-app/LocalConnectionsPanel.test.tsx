@@ -122,6 +122,6 @@ it('loads MiniMax available funds automatically and keeps unsupported actual spe
   return Response.json({connections:[connection],versions:[],capabilities:{secrets:'keychain',verification:'live',externalReady:false,networkAvailable:false}});
  }));
  render(<LocalConnectionsPanel/>);await screen.findByText('¥23.00');const cell=screen.getByRole('cell',{name:connection.name+' 额度与用量'});
- expect(cell.textContent).toContain('近7天暂不支持');expect(cell.querySelector('[title]')?.getAttribute('title')).toContain('现金 ¥10.00');
+ expect(cell.textContent).toContain('近7天暂不支持');const details=cell.querySelector('summary')!;expect(details.textContent).toContain('账务详情');fireEvent.click(details);expect(cell.textContent).toContain('现金 ¥10.00');expect(cell.textContent).toContain('缓存');expect(cell.textContent).toContain('非实时');expect(cell.querySelector('time')?.dateTime).toBe(usage.updatedAt);
  expect(requests.filter(p=>p.includes('/connection-usage?'))).toHaveLength(1);expect(requests.some(p=>p.includes('connection-billing'))).toBe(false);
 });

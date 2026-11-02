@@ -21,9 +21,13 @@ describe("外部连接工作区", () => {
 
   it("从空连接池创建并显式测试 Pexels 连接，表单提交后清空密钥", async () => {
     const user = userEvent.setup();
-    const onCreateConnection = vi.fn().mockResolvedValue({ id: "connection-1", name: "主 Pexels", provider: "pexels", adapter: "pexels_video", status: "unverified", created_at: "", created_by: "owner", last_verification_detail: null, last_verified_at: null });
+    const connection = { id: "connection-1", name: "主 Pexels", provider: "pexels", adapter: "pexels_video", status: "unverified" as const, created_at: "", created_by: "owner", last_verification_detail: null, last_verified_at: null, description: "", endpoint: "", current_version_id: "version-1" };
     const onTestConnection = vi.fn().mockResolvedValue(undefined);
-    render(<ConnectionWorkspace connections={[]} onCreateConnection={onCreateConnection} onTestConnection={onTestConnection} />);
+    const onCreateConnection = vi.fn(async ():Promise<typeof connection> => {
+      view.rerender(<ConnectionWorkspace connections={[connection]} onCreateConnection={onCreateConnection} onTestConnection={onTestConnection} />);
+      return connection;
+    });
+    const view = render(<ConnectionWorkspace connections={[]} onCreateConnection={onCreateConnection} onTestConnection={onTestConnection} />);
     fireEvent.click(screen.getByRole("button", {name:"新建连接"}));
 
     expect(screen.getByRole("dialog",{name:"新建连接"})).toBeTruthy();
@@ -33,7 +37,7 @@ describe("外部连接工作区", () => {
 
     expect(onCreateConnection).toHaveBeenCalledWith({ adapter: "pexels_video", name: "主 Pexels", provider: "pexels", secret: "secret-key" });
     expect(onTestConnection).toHaveBeenCalledWith("connection-1");
-    expect((screen.getByLabelText(/^Pexels API Key/) as HTMLInputElement).value).toBe("");
+    expect((screen.getByLabelText(/^新的 API Key/) as HTMLInputElement).value).toBe("");
   });
 
   it("不再提供 Google TTS 或 Cloudflare 新连接", () => {

@@ -17,7 +17,7 @@ import '../ui/dan-ui/styles/scoped.css';
 import './connections.css';
 import {registeredAdapters,productionCapabilityLabels} from '../worker/registeredAdapters';
 import {type MiniMaxRegion} from '../worker/videoProviderCatalog';
-import {connectionUsagePlaceholder,type ConnectionUsageSummary} from './connectionUsage';
+import {connectionUsagePlaceholder,connectionUsageScope,type ConnectionUsageSummary} from './connectionUsage';
 import {buildProductionServiceCatalog,type ProductionServiceCatalog} from './serviceCatalog';
 import { useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
@@ -147,6 +147,9 @@ export function ExternalConnectionPicker({ adapter, connections, isPending = fal
   </div>;
 }
 
+const providerDisplayNames:Record<string,string>={pexels:'Pexels',freesound:'Freesound',openai:'OpenAI',cloudflare:'Cloudflare',google_tts:'Google Cloud',volcengine_tts:'豆包语音',bailian:'阿里云百炼',volcengine:'火山引擎',minimax:'MiniMax',kling:'可灵'};
+const providerDisplayName=(provider:string)=>providerDisplayNames[provider]??provider;
+
 const connectionTypes = [...new Map(registeredAdapters.productionChoices().filter(choice=>choice.connection.kind==='owner_managed').map(choice=>[choice.identityKey,choice])).values()].map(choice=>({
   provider:choice.provider as ExternalConnectionInput['provider'],adapter:choice.adapter as ExternalConnectionInput['adapter'],label:choice.label,
   secretLabel:choice.provider==='kling'?'API Key（旧版可填 Access Key:Secret Key）':choice.provider==='pexels'?'Pexels API Key':choice.provider==='volcengine_tts'?'豆包语音 API Key':choice.provider==='openai'?'OpenAI API Key':choice.provider==='bailian'?'百炼 API Key':choice.label+' API Key',
@@ -190,8 +193,9 @@ export function ConnectionWorkspace({ navigation,serviceCatalog, connections, us
   const [testingId,setTestingId]=useState('');
   const [name,setName]=useState(''),[description,setDescription]=useState(''),[secret,setSecret]=useState('');
   const [adapter,setAdapter]=useState<ExternalConnectionInput["adapter"]>('pexels_video');
-  const [workspaceId,setWorkspaceId]=useState(''),[query,setQuery]=useState(navigation?.value.q??'');
-  useEffect(()=>{if(navigation){setQuery(navigation.value.q);applyCapabilityFilter(navigation.value.capability);applyStatusFilter(navigation.value.status);if(viewedConnection.current!==navigation.value.connection){viewedConnection.current=navigation.value.connection;setSelectedId(navigation.value.connection);applyDialog(navigation.value.connection?'detail':'');}}},[navigation?.value.q,navigation?.value.capability,navigation?.value.status,navigation?.value.connection]);
+  const [workspaceId,setWorkspaceId]=useState(''),[query,setQuery]=useState(navigation?.value.q??''),[appliedQuery,setAppliedQuery]=useState(navigation?.value.q??'');
+  function applyQuery(value:string){const q=value.trim();setQuery(q);setAppliedQuery(q);navigation?.change({q});}
+  useEffect(()=>{if(navigation){setQuery(navigation.value.q);setAppliedQuery(navigation.value.q);applyCapabilityFilter(navigation.value.capability);applyStatusFilter(navigation.value.status);if(viewedConnection.current!==navigation.value.connection){viewedConnection.current=navigation.value.connection;setSelectedId(navigation.value.connection);applyDialog(navigation.value.connection?'detail':'');}}},[navigation?.value.q,navigation?.value.capability,navigation?.value.status,navigation?.value.connection]);
   const [minimaxRegion,setMinimaxRegion]=useState<MiniMaxRegion>('cn');
   const [credentialFieldRevision,setCredentialFieldRevision]=useState(0);
   const [operation,setOperation]=useState<''|'saving'|'testing'>('');
@@ -216,7 +220,7 @@ export function ConnectionWorkspace({ navigation,serviceCatalog, connections, us
     const connection=connections.find(connection=>connection.id===service.connectionId);
     return connection?[{connection,service}]:[];
   })})),{capability:'unsupported',label:'其他连接',entries:connections.filter(connection=>!catalog.groups.some(group=>group.services.some(service=>service.connectionId===connection.id))).map(connection=>({connection,service:null}))}];
-  const filteredGroups=tableGroups.filter(group=>capabilityFilter==='all'||group.capability===capabilityFilter).map(group=>({...group,entries:group.entries.filter(({connection,service})=>(!statusFilter||connection.status===statusFilter)&&[connection.name,connection.provider,connection.adapter,connection.description??'',...(service?.models??[]),...(service?.presets??[])].join(' ').toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()))}));
+  const filteredGroups=tableGroups.filter(group=>capabilityFilter==='all'||group.capability===capabilityFilter).map(group=>({...group,entries:group.entries.filter(({connection,service})=>(!statusFilter||connection.status===statusFilter)&&[connection.name,providerDisplayName(connection.provider),connection.provider,connection.adapter,connection.description??'',...(service?.models??[]),...(service?.presets??[])].join(' ').toLocaleLowerCase().includes(appliedQuery.toLocaleLowerCase()))}));
   const selectedVersions=versions.filter(version=>version.connection_id===selectedId);
   const selectedCurrentVersion=selectedVersions.find(version=>version.id===selected?.current_version_id)??selectedVersions.find(version=>version.is_current);
 
@@ -308,7 +312,11 @@ export function ConnectionWorkspace({ navigation,serviceCatalog, connections, us
       <div className="reference-connections-actions"><Button color="primary" size="sm" iconLeading={Plus} isDisabled={busy} onPress={createConnection}>新建连接</Button></div>
     </header>
     <div className="reference-connections-toolbar">
-      <Input aria-label="查找已存连接" size="sm" className="reference-connections-search" placeholder="名称、服务或适配器" onChange={setQuery} onKeyDown={event=>{if(event.key==='Enter'){event.preventDefault();navigation?.change({q:query.trim()});}}} type="search" value={query}/>
+      <form role="search" aria-label="搜索连接" className="reference-connections-search-form" onSubmit={event=>{event.preventDefault();applyQuery(query);}}>
+        <Input aria-label="查找已存连接" size="sm" className="reference-connections-search" placeholder="名称、服务或适配器" onChange={setQuery} type="search" value={query}/>
+        {(query||appliedQuery)&&<Button aria-label="清除连接搜索" color="tertiary" size="sm" iconLeading={X} onPress={()=>applyQuery('')}/>}
+        <Button color="secondary" size="sm" type="submit">搜索</Button>
+      </form>
       <PopulatedFilterSelect aria-label="生产能力" size="sm" value={capabilityFilter} onValueChange={setCapabilityFilter} allValue="all" counts={Object.fromEntries(tableGroups.map(group=>[group.capability,group.entries.length]))} options={[{value:'all',label:'全部能力'},...Object.entries(productionCapabilityLabels).map(([value,label])=>({value,label})),{value:'unsupported',label:'其他连接'}]}/>
       <PopulatedFilterSelect aria-label="验证状态" size="sm" value={statusFilter} onValueChange={setStatusFilter} allValue="" counts={Object.fromEntries((['verified','unverified','invalid','retryable']as const).map(status=>[status,connections.filter(connection=>connection.status===status).length]))} options={[{value:'',label:'全部状态'},...(['verified','unverified','invalid','retryable']as const).map(value=>({value,label:statusLabels[value]}))]}/>
     </div>
@@ -324,14 +332,23 @@ export function ConnectionWorkspace({ navigation,serviceCatalog, connections, us
         const usage=usageByVersion[connection.current_version_id??'']??connectionUsagePlaceholder(connection.provider);
         return <tr key={connection.id} className={capabilityFilter==='all'?'reference-connection-child':undefined}>
           <td><button type="button" className="reference-connection-name" disabled={busy} onClick={()=>openConnection(connection.id,'detail')}>{connection.name}</button>{connection.description&&<div className="reference-connection-secondary">{connection.description}</div>}</td>
-          <td className="reference-connection-service">{connection.provider}</td>
+          <td className="reference-connection-service">{providerDisplayName(connection.provider)}</td>
           <td className="reference-connection-model">{service?.mode==='search'?service.label:service?.models.length?service.models.map(model=><div key={model}>{model}</div>):service?.mode==='generation'?'未启用模型':service?.presets.length?service.presets.map(preset=><div key={preset}>{preset}</div>):'—'}</td>
-          <td><span className="reference-connection-status" title={executionAuthorizationRequired?'当前环境未开放自动执行；内容生成需单独授权。这不是实时网络检测结果。':undefined} data-status={connection.status}><i aria-hidden="true"/>{statusLabels[connection.status]}</span>{!service?.executable&&!executionAuthorizationRequired&&<div className="reference-connection-secondary">{service?.unavailableReason??'未注册或不支持当前制作功能。'}</div>}</td>
+          <td><span className="reference-connection-status" title={executionAuthorizationRequired?'当前环境未开放自动执行；内容生成需单独授权。这不是实时网络检测结果。':undefined} data-status={connection.status}><i aria-hidden="true"/>{statusLabels[connection.status]}</span><div className="reference-connection-secondary">{connection.last_verified_at?<>最近验证 <time dateTime={connection.last_verified_at}>{new Date(connection.last_verified_at).toLocaleString('zh-CN',{dateStyle:'short',timeStyle:'short'})}</time></>:connection.status==='verified'?'验证时间未记录':'尚无通过记录'}</div>{!service?.executable&&!executionAuthorizationRequired&&<div className="reference-connection-secondary">{service?.unavailableReason??'未注册或不支持当前制作功能。'}</div>}</td>
           <td>{current?`v${current.version}`:'—'}</td>
-          <td className="reference-connection-usage" aria-label={`${connection.name} 额度与用量`}>{[usage.remaining,usage.recent].map((item,index)=><div key={index} className="reference-connection-usage-line" title={item.detail+(usage.updatedAt?' 更新于 '+new Date(usage.updatedAt).toLocaleString('zh-CN'): '')}><span>{item.label}</span><span data-state={item.status}>{connection.provider==='openai'&&index===0&&item.text==='控制台查看'?<a className="connection-billing-console-link" href="https://platform.openai.com/settings/organization/billing/overview" target="_blank" rel="noopener noreferrer" aria-label="在OpenAI控制台查看余额（新窗口）">{item.text}</a>:item.text}</span></div>)}</td>
+          <td className="reference-connection-usage" aria-label={`${connection.name} 额度与用量`}>
+            <div className="reference-connection-secondary">{connectionUsageScope(connection.provider)??'供应商用量'}</div>
+            {[usage.remaining,usage.recent].map((item,index)=><div key={index} className="reference-connection-usage-line"><span>{item.label}</span><span data-state={item.status}>{connection.provider==='openai'&&index===0&&item.text==='控制台查看'?<a className="connection-billing-console-link" href="https://platform.openai.com/settings/organization/billing/overview" target="_blank" rel="noopener noreferrer" aria-label="在 OpenAI 控制台查看余额（新窗口）">{item.text}</a>:item.text}</span></div>)}
+            <Disclosure label="账务详情" className="reference-connection-usage-details">
+              {usage.updatedAt?<p>读取时间 <time dateTime={usage.updatedAt}>{new Date(usage.updatedAt).toLocaleString('zh-CN')}</time></p>:<p>尚无成功读取时间</p>}
+              <p>查询结果可能来自缓存，非实时状态；供应商数据可能另有延迟。</p>
+              {['minimax','openai','bailian','volcengine','volcengine_tts','kling','freesound'].includes(connection.provider)&&<p>同一供应商账号的多个 Key 可能共享，不应逐连接相加。</p>}
+              <p>{usage.remaining.label}：{usage.remaining.detail}</p><p>{usage.recent.label}：{usage.recent.detail}</p>
+            </Disclosure>
+          </td>
           <td className="reference-connection-test"><Button className="reference-connection-test-button" color="tertiary" size="xs" iconLeading={RefreshCw} aria-label={`测试 ${connection.name}`} isLoading={testingId===connection.id} showTextWhileLoading isDisabled={busy||!canTest} onPress={()=>void testSelected(connection.id)}>{testingId===connection.id?'测试中…':'测试'}</Button></td><td className="reference-connection-more"><MenuTrigger><Button aria-label={`${connection.name} 连接操作`} color="tertiary" size="sm" iconLeading={MoreHorizontal} isDisabled={busy}/><Popover placement="bottom end" className="dan-ui reference-connections-menu"><Menu aria-label={`${connection.name} 操作`} onAction={key=>key==='billing'?setBillingConnectionId(connection.id):key==='models'?setModelConnectionId(connection.id):openConnection(connection.id,key==='edit'?'edit':'detail',key==='versions')}><MenuItem id="edit" textValue="编辑连接"><Pencil aria-hidden="true"/>编辑连接</MenuItem>{onReadModels&&service?.mode==='generation'&&<MenuItem id="models" textValue="模型设置"><RefreshCw aria-hidden="true"/>模型设置</MenuItem>}{onReadBilling&&billingProvider(connection.provider)&&<MenuItem id="billing" textValue="账务设置"><CreditCard aria-hidden="true"/>账务设置</MenuItem>}<MenuItem id="versions" textValue="版本详情"><History aria-hidden="true"/>版本详情</MenuItem></Menu></Popover></MenuTrigger></td>
         </tr>;
-      })}</tbody>)}{!filteredConnections.length&&<tbody><tr><td colSpan={8}><div className="reference-connections-empty"><strong>{connections.length?'没有匹配的连接':'尚未添加连接'}</strong><p>{connections.length?'调整筛选条件，或创建新的服务连接。':'添加服务凭据后，验证其连接状态。'}</p>{connections.length>0&&<Button color="secondary" size="sm" onPress={()=>{setQuery('');setCapabilityFilter('all');setStatusFilter('');}}>清空筛选</Button>}</div></td></tr></tbody>}</table>
+      })}</tbody>)}{!filteredConnections.length&&<tbody><tr><td colSpan={8}><div className="reference-connections-empty"><strong>{connections.length?'没有匹配的连接':'尚未添加连接'}</strong><p>{connections.length?'调整筛选条件，或创建新的服务连接。':'添加服务凭据后，验证其连接状态。'}</p>{connections.length>0&&<Button color="secondary" size="sm" onPress={()=>{applyQuery('');setCapabilityFilter('all');setStatusFilter('');}}>清空筛选</Button>}</div></td></tr></tbody>}</table>
     </section>
     {billingConnection&&<ConnectionBillingDialog key={billingConnection.id} connection={billingConnection} onClose={()=>setBillingConnectionId('')} onReadBilling={onReadBilling} onSaveBilling={onSaveBilling} onRefreshBilling={onRefreshBilling} onDisconnectBilling={onDisconnectBilling}/>}
     {modelConnection&&<ConnectionModelsDialog key={modelConnection.id} connection={modelConnection} onClose={()=>setModelConnectionId('')} onReadModels={onReadModels} onSyncModels={onSyncModels} onSaveModels={onSaveModels}/>}
@@ -340,7 +357,7 @@ export function ConnectionWorkspace({ navigation,serviceCatalog, connections, us
       <header className="reference-connections-dialog-header"><h2>{dialog==='detail'?selected?.name:dialog==='new'?'新建连接':'编辑连接'}</h2><Button color="tertiary" size="sm" iconLeading={X} aria-label="关闭连接窗口" isDisabled={busy} onPress={()=>setDialog('')}/></header>
       {dialog==='detail'&&selected?<><div className="reference-connections-detail-body">
         <div className="reference-connection-summary" role="status" title={selected.last_verification_detail||undefined}><span className="reference-connection-status" data-status={selected.status}><i aria-hidden="true"/>{statusLabels[selected.status]}</span>{selectedCurrentVersion&&<span>v{selectedCurrentVersion.version}</span>}<span>{selected.last_verified_at?<>最近测试 <time dateTime={selected.last_verified_at}>{new Date(selected.last_verified_at).toLocaleString('zh-CN',{dateStyle:'short',timeStyle:'short'})}</time></>:'尚未测试'}</span></div>
-        <dl className="reference-connections-detail-list"><dt>生产能力</dt><dd>{capabilityOf(selected)}</dd><dt>服务提供方</dt><dd>{selected.provider}</dd><dt>适配器</dt><dd>{selected.adapter}</dd><dt>模型 / 服务</dt><dd>{selectedServices.map(service=>service.models.length?service.models.join('、'):service.label).join('；')||'未注册或不支持当前制作功能。'}</dd>{selected.endpoint&&<><dt>服务地址</dt><dd>{selected.endpoint}</dd></>}{selected.description&&<><dt>备注</dt><dd>{selected.description}</dd></>}{selected.usage&&(selected.usage.currentBlueprints+selected.usage.episodes+selected.usage.tasks)>0&&<><dt>使用范围</dt><dd>当前配置 {selected.usage.currentBlueprints} · 生产单 {selected.usage.episodes} · 任务 {selected.usage.tasks}</dd></>}</dl>
+        <dl className="reference-connections-detail-list"><dt>生产能力</dt><dd>{capabilityOf(selected)}</dd><dt>服务提供方</dt><dd>{providerDisplayName(selected.provider)}</dd><dt>技术标识</dt><dd>{selected.provider}</dd><dt>适配器</dt><dd>{selected.adapter}</dd><dt>模型 / 服务</dt><dd>{selectedServices.map(service=>service.models.length?service.models.join('、'):service.label).join('；')||'未注册或不支持当前制作功能。'}</dd>{selected.endpoint&&<><dt>服务地址</dt><dd>{selected.endpoint}</dd></>}{selected.description&&<><dt>备注</dt><dd>{selected.description}</dd></>}{selected.usage&&(selected.usage.currentBlueprints+selected.usage.episodes+selected.usage.tasks)>0&&<><dt>使用范围</dt><dd>当前配置 {selected.usage.currentBlueprints} · 生产单 {selected.usage.episodes} · 任务 {selected.usage.tasks}</dd></>}</dl>
         {!operationResult&&selected.status!=='verified'&&selected.last_verification_detail&&<p className="reference-connections-note form-error" role="alert">{selected.last_verification_detail}</p>}
         {operationResult}{versionDetails}
       </div><footer className="reference-connections-dialog-footer"><Button color="secondary" size="sm" isDisabled={busy} onPress={()=>setDialog('edit')}>编辑连接</Button><Button color="primary" size="sm" iconLeading={Play} isDisabled={busy||!canVerify} isLoading={operation==='testing'} showTextWhileLoading onPress={()=>void testSelected(selected.id)}>测试连接</Button></footer></>:<>

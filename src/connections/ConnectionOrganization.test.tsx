@@ -9,13 +9,13 @@ it('starts with the reference table and opens the single editor on demand',()=>{
  render(<ConnectionWorkspace connections={[active,fresh]} onCreateConnection={vi.fn()} onTestConnection={vi.fn()} onUpdateConnection={vi.fn()}/>);
  const table=screen.getByRole('table',{name:'已保存连接'});
  expect(within(table).getAllByRole('columnheader').map(cell=>cell.textContent)).toEqual(['连接','服务','模型','验证','凭据版本','额度 / 近7天','操作','更多操作']);
- const searchCells=screen.getByRole('button',{name:fresh.name}).closest('tr')!.querySelectorAll('td');expect(searchCells[1].textContent).toBe('pexels');expect(searchCells[2].textContent).toBe('Pexels 素材检索');
+ const searchCells=screen.getByRole('button',{name:fresh.name}).closest('tr')!.querySelectorAll('td');expect(searchCells[1].textContent).toBe('Pexels');expect(searchCells[2].textContent).toBe('Pexels 素材检索');
  const testCell=screen.getByRole('button',{name:'测试 '+fresh.name}).closest('td');const moreCell=screen.getByRole('button',{name:fresh.name+' 连接操作'}).closest('td');expect(testCell).not.toBe(moreCell);
  expect(screen.queryByRole('form',{name:'保存连接'})).toBeNull();
  expect(document.querySelectorAll('input[type=password]')).toHaveLength(0);
- fireEvent.change(screen.getByLabelText('查找已存连接'),{target:{value:'My Pexels'}});
+ fireEvent.change(screen.getByLabelText('查找已存连接'),{target:{value:'My Pexels'}});fireEvent.click(screen.getByRole('button',{name:'搜索'}));
  expect(within(table).queryByText(active.name)).toBeNull();expect(within(table).getByText(fresh.name)).toBeTruthy();
- fireEvent.change(screen.getByLabelText('查找已存连接'),{target:{value:''}});
+ fireEvent.click(screen.getByRole('button',{name:'清除连接搜索'}));
  edit(active.name);fireEvent.change(screen.getByLabelText(/^新的 API Key/),{target:{value:'synthetic-draft'}});
  fireEvent.click(screen.getByRole('button',{name:'关闭连接窗口'}));
  edit(active.name);expect((screen.getByLabelText(/^新的 API Key/)as HTMLInputElement).value).toBe('synthetic-draft');
@@ -40,7 +40,7 @@ it('combines capability and verification filters without inventing model values'
  const a=row('a','Pexels connection'),b={...row('b','Voice connection'),provider:'volcengine_tts',adapter:'volcengine_tts',status:'unverified' as const};
  render(<ConnectionWorkspace connections={[a,b]} onCreateConnection={vi.fn()} onTestConnection={vi.fn()}/>);
  fireEvent.change(screen.getByLabelText('生产能力'),{target:{value:'speech'}});
- const table=screen.getByRole('table');expect(within(table).queryByText(a.name)).toBeNull();expect(within(table).getByText(b.name)).toBeTruthy();const cells=within(table).getByText(b.name).closest('tr')!.querySelectorAll('td');expect(cells[1].textContent).toBe('volcengine_tts');expect(cells[2].textContent).toBe('seed-tts-2.0');expect(within(table).getAllByText('—')).toHaveLength(1);
+ const table=screen.getByRole('table');expect(within(table).queryByText(a.name)).toBeNull();expect(within(table).getByText(b.name)).toBeTruthy();const cells=within(table).getByText(b.name).closest('tr')!.querySelectorAll('td');expect(cells[1].textContent).toBe('豆包语音');expect(cells[2].textContent).toBe('seed-tts-2.0');expect(within(table).getAllByText('—')).toHaveLength(1);
  fireEvent.change(screen.getByLabelText('验证状态'),{target:{value:'verified'}});expect(within(table).queryByText(b.name)).toBeNull();
  fireEvent.click(screen.getByRole('button',{name:'清空筛选'}));expect(within(table).getByText(a.name)).toBeTruthy();expect(within(table).getByText(b.name)).toBeTruthy();
 });
