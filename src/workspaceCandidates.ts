@@ -55,3 +55,6 @@ export function addWorkspaceRegisteredSource(project:OpenChatCutProject,value:un
  if(!asset||!/^material-[a-f0-9-]{36}$/.test(asset.id)||!['image','video'].includes(asset.kind)||!/^\/media\/uploads\/[a-f0-9]+\.[a-z0-9]+$/.test(asset.src)||!/^[a-f0-9]{64}$/.test(asset.sourceContentHash??'')||!Number.isInteger(asset.durationInFrames)||asset.durationInFrames<1||!(Number(asset.width)>0&&Number(asset.height)>0))throw Error('登记素材输入无效。');
  const next=structuredClone(project),old=next.assets.find(a=>a.id===asset.id);if(old){if(old.src!==asset.src||(old as {sourceContentHash?:string}).sourceContentHash!==asset.sourceContentHash)throw Error('池中来源已变化，请保留原素材。');return next;}next.assets.push(structuredClone(asset));return next;
 }
+
+/** Prepared against the authoritative project; displayed before any native replacement. */
+export interface WorkspaceCandidatePreparation {adoptionId:string;candidateId:string;projectSha256:string;edit:WorkspaceCandidateEdit;impact:{currentSeconds:number;sourceSeconds:number;appliedSeconds:number;deltaSeconds:number;startSeconds:number;endSeconds:number;fps:number;affectedFragments:{itemId:string;label:string;kind:string;track:string;startSeconds:number;endSeconds:number;changedStartSeconds:number;changedEndSeconds:number}[]}}

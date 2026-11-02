@@ -1,3 +1,5 @@
+import {WorkspaceCandidateImpact} from './WorkspaceCandidateImpact';
+import type {WorkspaceCandidatePreparation} from '../workspaceCandidates';
 import {WorkspacePromptField} from './WorkspacePromptField';
 import {WorkspaceGenerationModel} from './WorkspaceGenerationModel';
 import {WorkspaceVisualTaskStatus} from './WorkspaceVisualTaskStatus';
@@ -18,6 +20,7 @@ import './workspace-visual-candidates.css';
 interface Material{id:string;material_type:string;source_path:string;storage_path?:string}
 const labels={available:'待比较',stale:'输入已变化',adopted:'已采用',rejected:'已拒绝'};
 function WorkspaceVisualCandidatesLegacy({workspace,command,onChange:updated,bridge,materials,selectedShotId,selectedTargetItemId,onTargetChange,preparation=false,onImported,preview,currentVisualKind,readOnly=false}:{workspace:ProductionWorkspace;command:(name:string,data:unknown)=>Promise<unknown>;onChange:(workspace:ProductionWorkspace)=>void;bridge?:EmbeddedStudioBridge;materials:Material[];selectedShotId?:string;selectedTargetItemId?:string;onTargetChange?:(itemId:string)=>void;preparation?:boolean;preview?:ReactNode;currentVisualKind?:string;readOnly?:boolean;onImported?:(material:Material&{storage_path:string})=>void}){
+ const [adoption,setAdoption]=useState<WorkspaceCandidatePreparation|null>(null);
  const [targetItemId,setTarget]=useState(workspace.clips[0]?.itemId??''),[policy,setPolicy]=useState<''|'keep-target'|'use-candidate'>(''),[acceptImpact,setAcceptImpact]=useState(false),[motionPolicy,setMotionPolicy]=useState<'preserve-target'|'replace-motion'>('preserve-target'),[busy,setBusy]=useState(false),[error,setError]=useState('');
  useEffect(()=>{const shot=selectedShotId??bridge?.selectedShotId,clip=workspace.clips.find(c=>c.itemId===selectedTargetItemId&&(!shot||c.shotId===shot))??workspace.clips.find(c=>c.shotId===shot);if(clip)setTarget(clip.itemId);},[selectedShotId,selectedTargetItemId,bridge?.selectedShotId]);
  const [initialEditorDraft]=useState(()=>{try{return JSON.parse(sessionStorage.getItem(`loop-visual-editor-draft:${workspace.id}:${targetItemId}`)??'null');}catch{return null;}});
@@ -42,6 +45,7 @@ function WorkspaceVisualCandidatesLegacy({workspace,command,onChange:updated,bri
  const actualDuration=voiceDriven?Number(target?.durationSeconds):Number(generationDuration),providerDurationSeconds=voiceDriven?Math.max(minimumSeconds,Math.ceil(actualDuration)):actualDuration,voiceUnavailable=voiceDriven&&!(actualDuration>0),overMaximum=actualDuration>maximumSeconds,videoCompatible=!!videoService?.executable&&!!videoSelection?.model&&videoService.models.includes(videoSelection.model);
  const pendingTasks=workspace.visualTasks?.filter(task=>['ready','running'].includes(task.status)&&task.publicationAttempt==null)??[],taskKey=pendingTasks.map(task=>task.taskId+task.status).join(':');
  const disabled=readOnly||busy||workspace.stale||!!bridge&&!bridge.connected,candidates=workspace.visualCandidates?.filter(c=>c.targetItemId===targetItemId)??[];
+ useEffect(()=>{setAdoption(null);},[workspace.project?.sha256,targetItemId,policy,acceptImpact,motionPolicy]);
  useEffect(()=>{setPolicy('');setAcceptImpact(false);setMotionPolicy('preserve-target');},[workspace.id,targetItemId]);
  const reader=useWorkspaceReading(workspace,updated,targetItemId,'无法读取当前工程版本。');
  const {read:fresh,publish:onChange}=reader;
@@ -60,7 +64,8 @@ function WorkspaceVisualCandidatesLegacy({workspace,command,onChange:updated,bri
   setUploaded(rows=>[...rows,{id:registered.id,material_type:kind,source_path:file.name,storage_path:registered.storage_path}]);setMaterial(registered.id);setOrigin(asFirstFrame?'generate':'material');if(kind==='image')setFirstFrame(registered.id);if(registered.storage_path)onImported?.({id:registered.id,material_type:kind,source_path:file.name,storage_path:registered.storage_path});
   if(bridge)await addToPool(registered.id,await fresh());else onChange(await fresh());
  });}
- async function adopt(candidate:WorkspaceVisualCandidate){await run(async()=>{let w=await current();const prepared=await command('prepareWorkspaceVisualCandidate',{...base(w),candidateId:candidate.id,durationPolicy:policy,acceptTimelineImpact:acceptImpact,motionPolicy}) as {adoptionId:string;edit:unknown};if(bridge){await bridge.applyNativeEdit('apply-candidate',{edit:prepared.edit});w=await fresh();}onChange(await command('adoptWorkspaceVisualCandidate',{...base(w),candidateId:candidate.id,adoptionId:prepared.adoptionId,...(bridge?{nativeApplied:true}:{})}) as ProductionWorkspace);});}
+ async function adopt(candidate:WorkspaceVisualCandidate){await run(async()=>{const w=await current(),prepared=await command('prepareWorkspaceVisualCandidate',{...base(w),candidateId:candidate.id,durationPolicy:policy,acceptTimelineImpact:acceptImpact,motionPolicy}) as WorkspaceCandidatePreparation;if(!prepared.impact)throw Error('无法读取采用影响，请刷新后重新核对。');setAdoption(prepared);});}
+ async function confirmAdoption(){if(!adoption)return;const plan=adoption;await run(async()=>{let w=await current();setAdoption(null);if(w.project?.sha256!==plan.projectSha256)throw Error('工程已变化，请重新核对采用影响。');if(bridge){await bridge.applyNativeEdit('apply-candidate',{edit:plan.edit});w=await fresh();}onChange(await command('adoptWorkspaceVisualCandidate',{...base(w),candidateId:plan.candidateId,adoptionId:plan.adoptionId,...(bridge?{nativeApplied:true}:{})}) as ProductionWorkspace);});}
  async function generate(){await run(async()=>{
   const w=await current(),latest=w.visualTargets?.find(target=>target.targetItemId===targetItemId);
   if((target?.voiceMode??'none')!==(latest?.voiceMode??'none')||(target?.durationSeconds??null)!==(latest?.durationSeconds??null)||(target?.providerDurationSeconds??null)!==(latest?.providerDurationSeconds??null)){
@@ -117,6 +122,7 @@ function WorkspaceVisualCandidatesLegacy({workspace,command,onChange:updated,bri
    <details><summary>版本来源</summary><dl>{candidate.generation?.selection&&<><dt>服务</dt><dd>{candidate.generation.connectionName??candidate.generation.selection.connectionVersionId} · {candidate.generation.selection.provider} · {candidate.generation.selection.model}</dd></>}{candidate.source&&<><dt>素材来源</dt><dd><a href={candidate.source.sourceUrl} target="_blank" rel="noreferrer">Pexels #{candidate.source.id}</a> · <a href={candidate.source.creatorUrl} target="_blank" rel="noreferrer">{candidate.source.creator}</a> · {candidate.source.connectionName} · {candidate.source.query}</dd></>}<dt>输入</dt><dd>{candidate.inputFingerprint}</dd><dt>任务</dt><dd>{candidate.taskId??'Owner 上传材料'}</dd><dt>文件 SHA-256</dt><dd>{candidate.sha256}</dd></dl></details>
    {candidate.pendingConfirmation&&<Button size="sm" color="primary" isDisabled={disabled} onPress={()=>void run(async()=>{const w=await current();onChange(await command('adoptWorkspaceVisualCandidate',{...base(w),candidateId:candidate.id,nativeApplied:true}) as ProductionWorkspace);})}>确认画面采用</Button>}
    {candidate.status==='available'&&!candidate.pendingConfirmation&&<footer><Button size="sm" color="primary" isDisabled={disabled||!policy||policy==='use-candidate'&&!acceptImpact||policy==='keep-target'&&candidate.kind==='video'&&candidate.durationSeconds<Number(candidate.currentDurationSeconds)} onPress={()=>void adopt(candidate)}>采用此画面</Button><Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>void run(async()=>{const w=await current();onChange(await command('rejectWorkspaceVisualCandidate',{...base(w),candidateId:candidate.id}) as ProductionWorkspace);})}>拒绝，保留当前画面</Button></footer>}
+   {adoption?.candidateId===candidate.id&&<WorkspaceCandidateImpact plan={adoption} disabled={!!disabled} onConfirm={()=>void confirmAdoption()} onCancel={()=>setAdoption(null)}/>}
   </article>)}
   {!candidates.length&&<p>上传或生成的视频会显示在这里，比较后采用；不满意可修改提示词继续生成。</p>}
  </section>;

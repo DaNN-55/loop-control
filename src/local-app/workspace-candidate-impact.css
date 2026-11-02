@@ -1,0 +1,8 @@
+.workspace-candidate-impact{padding:16px 0;margin-top:12px;border-block:1px solid var(--lc-line,#d8e1ee);color:var(--lc-ink,#17263e);outline-offset:4px;overflow-wrap:anywhere;}
+.workspace-candidate-impact h4{font-size:14px;font-weight:600;margin:0 0 8px;}
+.workspace-visual-candidates .workspace-candidate-impact p{font-size:13px;margin:6px 0;line-height:1.6;}
+.workspace-candidate-impact-duration{font-variant-numeric:tabular-nums;font-weight:600;}
+.workspace-candidate-impact ul{list-style:none;padding:0;margin:12px 0;max-height:220px;overflow:auto;}
+.workspace-candidate-impact li{display:grid;gap:3px;padding:8px 0;border-bottom:1px solid var(--lc-line,#d8e1ee);font-size:13px;}
+.workspace-candidate-impact li span{font-variant-numeric:tabular-nums;line-height:1.5;}
+.workspace-candidate-impact>div{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}

@@ -1,3 +1,5 @@
+import {WorkspaceCandidateImpact} from './WorkspaceCandidateImpact';
+import type {WorkspaceCandidatePreparation} from '../workspaceCandidates';
 import {WorkspaceGenerationModel} from './WorkspaceGenerationModel';
 import {WorkspacePromptField} from './WorkspacePromptField';
 import {WorkspaceVisualTaskStatus} from './WorkspaceVisualTaskStatus';
@@ -61,6 +63,7 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
  const [imageServices,setImageServices]=useState<ProductionService[]>([]),[videoServices,setVideoServices]=useState<ProductionService[]>([]),[catalogError,setCatalogError]=useState(''),[catalogReload,setCatalogReload]=useState(0);
  useEffect(()=>{if(draft.origin[draft.tab]!=='generate')return;let active=true;void fetch('/api/local/connections').then(async r=>{if(!r.ok)throw Error();const catalog=(await r.json()).serviceCatalog as ProductionServiceCatalog;if(active){setImageServices(catalog?.groups?.find(g=>g.capability==='image')?.services??[]);setVideoServices(catalog?.groups?.find(g=>g.capability==='video')?.services.filter(s=>s.mode==='generation')??[]);setCatalogError('');}}).catch(()=>{if(active)setCatalogError('无法读取制作连接，请刷新后重试。');});return()=>{active=false;};},[draft.tab,draft.origin.image,draft.origin.video,catalogReload]);
  const [busy,setBusy]=useState(false),[error,setError]=useState(''),[notice,setNotice]=useState(''),[rangeStart,setRangeStart]=useState('0'),[rangeEnd,setRangeEnd]=useState(''),[policy,setPolicy]=useState('keep-target'),[acceptImpact,setAcceptImpact]=useState(false),[zoom,setZoom]=useState(false);
+ const [adoption,setAdoption]=useState<WorkspaceCandidatePreparation|null>(null);
  const [uploadState]=useState(()=>uploadSession(`${workspace.episodeId}:${workspace.id}:${targetItemId}`));
  const {rows:uploadRows,running:uploading}=useSyncExternalStore(uploadState.subscribe,uploadState.read);
  const working=useRef(false),fileInput=useRef<HTMLInputElement>(null),referenceInput=useRef<HTMLInputElement>(null),mounted=useRef(true),zoomClose=useRef<HTMLButtonElement>(null),zoomTrigger=useRef<HTMLButtonElement>(null),resultMore=useRef<HTMLDetailsElement>(null),thumbnailRail=useRef<HTMLDivElement>(null);
@@ -77,7 +80,9 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
  const visible=candidates.filter(c=>c.kind===tab),currentEntry=props.currentVisualKind===tab&&!!props.currentVisualPath&&!visible.some(c=>c.relativePath===props.currentVisualPath);
  const entries=[...(currentEntry?[{id:'current',candidate:null}]:[]),...visible.map(c=>({id:c.id,candidate:c}))];
  const pendingUpload=uploadRows.find(row=>row.status==='running'&&!row.asReference&&row.tab===tab);
- const active=entries.find(e=>e.id===draft.selected[tab])??entries.find(e=>e.id==='current'||e.candidate?.relativePath===props.currentVisualPath),index=entries.findIndex(e=>e.id===active?.id),candidate=active?.candidate;
+ const applicableImages=entries.filter(e=>e.candidate?.kind==='image'&&e.candidate.status==='available');
+ const active=entries.find(e=>e.id===draft.selected[tab])??(tab==='image'&&applicableImages.length===1?applicableImages[0]:undefined)??entries.find(e=>e.id==='current'||e.candidate?.relativePath===props.currentVisualPath),index=entries.findIndex(e=>e.id===active?.id),candidate=active?.candidate;
+ useEffect(()=>{setAdoption(null);},[candidate?.id,policy,acceptImpact,draft.usage,rangeStart,rangeEnd,workspace.project?.sha256]);
  useEffect(()=>{const rail=thumbnailRail.current,selected=rail?.querySelector<HTMLElement>('[aria-pressed=true]');if(!rail||!selected)return;const r=rail.getBoundingClientRect(),s=selected.getBoundingClientRect();if(s.top<r.top)rail.scrollTop-=r.top-s.top;else if(s.bottom>r.bottom)rail.scrollTop+=s.bottom-r.bottom;},[tab,active?.id]);
  const reference=allMaterials.find(m=>m.id===draft.firstFrame),selectedImage=workspace.selectedImages?.find(s=>s.targetItemId===targetItemId);
  const current=candidate?.relativePath===props.currentVisualPath||active?.id==='current',imageChosen=!!candidate&&selectedImage?.candidateId===candidate.id;
@@ -141,10 +146,16 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
    if(c.kind==='image'&&props.currentVisualKind==='video'){
     const next=await command('retainWorkspaceImageCandidate',{...base(w),candidateId:c.id}) as ProductionWorkspace;onChange(next);setDraft(d=>({...d,firstFrame:d.firstFrame||c.materialRevisionId||''}));setNotice('图片已选用；当前镜头继续优先使用视频。');return;
    }
-   const prepared=await command('prepareWorkspaceVisualCandidate',{...base(w),candidateId:c.id,durationPolicy:policy,acceptTimelineImpact:acceptImpact,motionPolicy:draft.usage==='pan-zoom'?'replace-motion':'preserve-target',...(c.kind==='image'?{imageUsage:draft.usage}:Number(rangeStart)!==0||rangeEnd?{sourceInSeconds:Number(rangeStart),sourceOutSeconds:rangeEnd?Number(rangeEnd):c.durationSeconds}:{})}) as {adoptionId:string};
-   w=await fresh();onChange(await command('adoptWorkspaceVisualCandidate',{...base(w),candidateId:c.id,adoptionId:prepared.adoptionId}) as ProductionWorkspace);
-   if(c.kind==='image'&&c.materialRevisionId)setDraft(d=>({...d,firstFrame:d.firstFrame||c.materialRevisionId!}));
-   setNotice(`已采用${c.kind==='image'?'图片':'视频'}。`);
+   const prepared=await command('prepareWorkspaceVisualCandidate',{...base(w),candidateId:c.id,durationPolicy:policy,acceptTimelineImpact:acceptImpact,motionPolicy:draft.usage==='pan-zoom'?'replace-motion':'preserve-target',...(c.kind==='image'?{imageUsage:draft.usage}:Number(rangeStart)!==0||rangeEnd?{sourceInSeconds:Number(rangeStart),sourceOutSeconds:rangeEnd?Number(rangeEnd):c.durationSeconds}:{})}) as WorkspaceCandidatePreparation;
+   if(!prepared.impact)throw Error('无法读取采用影响，请刷新后重新核对。');
+   setAdoption(prepared);
+  });}
+ async function confirmAdoption(){if(!adoption)return;const plan=adoption;await run(async()=>{
+   const w=await fresh();setAdoption(null);
+   if(w.project?.sha256!==plan.projectSha256)throw Error('工程已变化，请重新核对采用影响。');
+   onChange(await command('adoptWorkspaceVisualCandidate',{...base(w),candidateId:plan.candidateId,adoptionId:plan.adoptionId}) as ProductionWorkspace);
+   if(candidate?.kind==='image'&&candidate.materialRevisionId)setDraft(d=>({...d,firstFrame:d.firstFrame||candidate.materialRevisionId!}));
+   setNotice(`已采用${candidate?.kind==='image'?'图片':'视频'}。`);
   });}
  async function generate(){await run(async()=>{
    const w=await fresh();
@@ -212,6 +223,7 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
         </div></details>
        </div>}
       </div>}
+      {adoption&&candidate?.id===adoption.candidateId&&<WorkspaceCandidateImpact plan={adoption} disabled={!!disabled} onConfirm={()=>void confirmAdoption()} onCancel={()=>setAdoption(null)}/>}
      </div>
     </div>
   {tasks.filter(t=>t.status!=='completed').map(t=><WorkspaceVisualTaskStatus key={t.id} task={t} label={(t.kind??'video')==='image'?'图片':'视频'} disabled={disabled} onRefresh={()=>void run(async()=>{onChange(await fresh());})} onResume={()=>void run(async()=>{const w=await fresh();onChange(await command('retryWorkspaceVisualCandidate',{...base(w),candidateId:t.id}) as ProductionWorkspace);})} onReconcile={()=>void run(async()=>{await reconcileWorkspaceOutput(workspace.episodeId,t);onChange(await fresh());})}/>)}

@@ -2,19 +2,21 @@ import {render,screen,fireEvent,waitFor,cleanup} from '@testing-library/react';
 import {afterEach,it,expect,vi} from 'vitest';
 import {WorkspaceVisualCandidatesPanel} from './WorkspaceVisualCandidatesPanel';
 import type {ProductionWorkspace} from '../productionWorkspace';
-const workspace={id:'workspace',episodeId:'episode',revision:3,stale:false,clips:[{id:'clip-1',itemId:'visual-1',shotId:'S1',text:'第一片段',source:null},{id:'clip-2',itemId:'visual-2',shotId:'S1',text:'同镜第二片段',source:null}],visualCandidates:[{id:'candidate',kind:'video',usage:'video',clipId:'clip-1',shotId:'S1',targetItemId:'visual-1',taskId:null,inputFingerprint:'a'.repeat(64),text:'',mainScriptText:'',audioTrackId:null,relativePath:'episodes/episode/new.mp4',sha256:'b'.repeat(64),fileSize:100,durationSeconds:2,currentDurationSeconds:3,status:'available',width:640,height:360}]} as unknown as ProductionWorkspace;
+const preparation={adoptionId:'adoption',candidateId:'candidate',projectSha256:'original',edit:{targetItemId:'visual-1'},impact:{currentSeconds:3,sourceSeconds:2,appliedSeconds:2,deltaSeconds:-1,startSeconds:0,endSeconds:2,fps:30,affectedFragments:[]}};
+const workspace={project:{sha256:'original'},id:'workspace',episodeId:'episode',revision:3,stale:false,clips:[{id:'clip-1',itemId:'visual-1',shotId:'S1',text:'第一片段',source:null},{id:'clip-2',itemId:'visual-2',shotId:'S1',text:'同镜第二片段',source:null}],visualCandidates:[{id:'candidate',kind:'video',usage:'video',clipId:'clip-1',shotId:'S1',targetItemId:'visual-1',taskId:null,inputFingerprint:'a'.repeat(64),text:'',mainScriptText:'',audioTrackId:null,relativePath:'episodes/episode/new.mp4',sha256:'b'.repeat(64),fileSize:100,durationSeconds:2,currentDurationSeconds:3,status:'available',width:640,height:360}]} as unknown as ProductionWorkspace;
 const videoChoice={capability:'video',provider:'volcengine',adapter:'seedance_video',model:'doubao-seedance-2-0-260128',connectionVersionId:'video-a'};
 const videoCatalog={serviceCatalog:{groups:[{capability:'video',services:[{id:'video-a',provider:'volcengine',adapter:'seedance_video',models:['doubao-seedance-2-0-260128'],connectionVersionId:'video-a',connectionName:'Video A',mode:'generation',executable:true,constraints:{durationSeconds:{min:4,max:15,integer:true}}}]}]}};
 async function chooseVideo(){await screen.findByRole('option',{name:'doubao-seedance-2-0-260128'});fireEvent.change(screen.getByLabelText('视频连接与模型'),{target:{value:'video-a:doubao-seedance-2-0-260128'}});}
 afterEach(()=>{cleanup();sessionStorage.clear();vi.unstubAllGlobals();});
 it('Owner explicitly chooses a target duration policy and adopts only the selected visual instance',async()=>{
  vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace})));
- const command=vi.fn(async(name:string)=>name==='prepareWorkspaceVisualCandidate'?{adoptionId:'adoption',edit:{targetItemId:'visual-1'}}:workspace),onChange=vi.fn();
+ const command=vi.fn(async(name:string)=>name==='prepareWorkspaceVisualCandidate'?preparation:workspace),onChange=vi.fn();
  render(<WorkspaceVisualCandidatesPanel workspace={workspace} command={command} onChange={onChange} materials={[]}/>);
  expect((screen.getByRole('button',{name:'采用此画面'}) as HTMLButtonElement).disabled).toBe(true);
  expect(command).not.toHaveBeenCalled();fireEvent.change(screen.getByLabelText('视觉候选时长处理'),{target:{value:'use-candidate'}});
  expect((screen.getByRole('button',{name:'采用此画面'}) as HTMLButtonElement).disabled).toBe(true);
  fireEvent.click(screen.getByLabelText('保留其他片段位置，接受本次空隙或覆盖'));fireEvent.click(screen.getByRole('button',{name:'采用此画面'}));
+ expect(await screen.findByRole('region',{name:'采用前核对'})).toBeTruthy();expect(command).toHaveBeenCalledTimes(1);fireEvent.click(screen.getByRole('button',{name:'确认采用'}));
  await waitFor(()=>expect(command).toHaveBeenCalledWith('adoptWorkspaceVisualCandidate',{episodeId:'episode',workspaceId:'workspace',expectedRevision:3,candidateId:'candidate',adoptionId:'adoption'}));
  expect(command).toHaveBeenCalledWith('prepareWorkspaceVisualCandidate',{episodeId:'episode',workspaceId:'workspace',expectedRevision:3,candidateId:'candidate',durationPolicy:'use-candidate',acceptTimelineImpact:true,motionPolicy:'preserve-target'});
 });
@@ -52,13 +54,14 @@ it('pending visual generation remains a task until explicitly adopted',()=>{
  expect(screen.getByText('画面生成中')).toBeTruthy();expect(screen.getByLabelText('视觉任务 provider-task')).toBeTruthy();
 });
 it('live adoption waits for native persistence and uses the post-save workspace revision',async()=>{
- const updated={...workspace,revision:8};vi.stubGlobal('fetch',vi.fn().mockResolvedValueOnce(Response.json({workspace:{...workspace,revision:7}})).mockResolvedValueOnce(Response.json({workspace:updated})));
+ const updated={...workspace,revision:8};vi.stubGlobal('fetch',vi.fn().mockResolvedValueOnce(Response.json({workspace:{...workspace,revision:7}})).mockImplementation(async()=>Response.json({workspace:updated})));
  const bridge={connected:true,save:vi.fn(async()=>{}),applyNativeEdit:vi.fn(async()=>({}))} as unknown as import('./EmbeddedStudioHost').EmbeddedStudioBridge;
- const command=vi.fn(async(name:string)=>name==='prepareWorkspaceVisualCandidate'?{adoptionId:'adoption',edit:{targetItemId:'visual-1'}}:updated),onChange=vi.fn();
+ const command=vi.fn(async(name:string)=>name==='prepareWorkspaceVisualCandidate'?preparation:updated),onChange=vi.fn();
  render(<WorkspaceVisualCandidatesPanel workspace={workspace} command={command} onChange={onChange} bridge={bridge} materials={[]}/>);
  fireEvent.change(screen.getByLabelText('视觉候选时长处理'),{target:{value:'use-candidate'}});fireEvent.click(screen.getByLabelText('保留其他片段位置，接受本次空隙或覆盖'));fireEvent.click(screen.getByRole('button',{name:'采用此画面'}));
+ await screen.findByRole('region',{name:'采用前核对'});expect(bridge.applyNativeEdit).not.toHaveBeenCalled();fireEvent.click(screen.getByRole('button',{name:'确认采用'}));
  await waitFor(()=>expect(command).toHaveBeenCalledWith('adoptWorkspaceVisualCandidate',{episodeId:'episode',workspaceId:'workspace',expectedRevision:8,candidateId:'candidate',adoptionId:'adoption',nativeApplied:true}));
- expect(bridge.save).toHaveBeenCalledTimes(1);expect(bridge.applyNativeEdit).toHaveBeenCalledWith('apply-candidate',{edit:{targetItemId:'visual-1'}});expect(command).toHaveBeenCalledWith('prepareWorkspaceVisualCandidate',expect.objectContaining({expectedRevision:7}));expect(onChange).toHaveBeenCalledWith(updated);
+ expect(bridge.save).toHaveBeenCalledTimes(2);expect(bridge.applyNativeEdit).toHaveBeenCalledWith('apply-candidate',{edit:{targetItemId:'visual-1'}});expect(command).toHaveBeenCalledWith('prepareWorkspaceVisualCandidate',expect.objectContaining({expectedRevision:7}));expect(onChange).toHaveBeenCalledWith(updated);
 });
 it('a failed visual request preserves the Owner local choices for correction',async()=>{
  vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace})));const command=vi.fn(async()=>{throw Error('图片指纹已变化');});
@@ -180,9 +183,9 @@ it('keeps a cleared Pexels connection and query across target switches and reope
 
 it.each(['image','video'] as const)('requires explicit %s selection and adoption and preserves old candidates on append',async kind=>{
  const candidates=[1,2].map(i=>({...workspace.visualCandidates![0],id:kind+i,kind,usage:kind==='image'?'still' as const:'video' as const,relativePath:`${kind}-${i}.${kind==='image'?'png':'mp4'}`,durationSeconds:5}));
- const w={...workspace,clips:[workspace.clips[0]],visualCandidates:candidates};vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:w})));const command=vi.fn(async(name:string)=>name==='prepareWorkspaceVisualCandidate'?{adoptionId:'explicit'}:w);const props={workspace:w,command,onChange:vi.fn(),materials:[],preparation:true};const view=render(<WorkspaceVisualCandidatesPanel {...props}/>);
+ const w={...workspace,clips:[workspace.clips[0]],visualCandidates:candidates};vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:w})));const command=vi.fn(async(name:string)=>name==='prepareWorkspaceVisualCandidate'?{...preparation,adoptionId:'explicit',candidateId:kind+'2'}:w);const props={workspace:w,command,onChange:vi.fn(),materials:[],preparation:true};const view=render(<WorkspaceVisualCandidatesPanel {...props}/>);
  if(kind==='video')fireEvent.click(screen.getByRole('tab',{name:'视频'}));const label=kind==='image'?'图片':'视频';expect(screen.queryByRole('button',{name:`采用此${label}`})).toBeNull();fireEvent.click(screen.getByRole('button',{name:`预览${label}候选 02`}));expect(command).not.toHaveBeenCalled();
- fireEvent.click(screen.getByRole('button',{name:`采用此${label}`}));await waitFor(()=>expect(command).toHaveBeenCalledWith('adoptWorkspaceVisualCandidate',{episodeId:'episode',workspaceId:'workspace',expectedRevision:3,candidateId:kind+'2',adoptionId:'explicit'}));expect(command).toHaveBeenCalledWith('prepareWorkspaceVisualCandidate',expect.objectContaining({candidateId:kind+'2',durationPolicy:'keep-target',motionPolicy:'preserve-target'}));
+ fireEvent.click(screen.getByRole('button',{name:`采用此${label}`}));await screen.findByRole('region',{name:'采用前核对'});fireEvent.click(screen.getByRole('button',{name:'确认采用'}));await waitFor(()=>expect(command).toHaveBeenCalledWith('adoptWorkspaceVisualCandidate',{episodeId:'episode',workspaceId:'workspace',expectedRevision:3,candidateId:kind+'2',adoptionId:'explicit'}));expect(command).toHaveBeenCalledWith('prepareWorkspaceVisualCandidate',expect.objectContaining({candidateId:kind+'2',durationPolicy:'keep-target',motionPolicy:'preserve-target'}));
  view.rerender(<WorkspaceVisualCandidatesPanel {...props} currentVisualKind={kind} currentVisualPath={candidates[1].relativePath} workspace={{...w,visualCandidates:[...candidates,{...candidates[0],id:'added',relativePath:'added'}]}}/>);
  expect(screen.getAllByRole('button',{name:new RegExp(`预览${label}候选`)})).toHaveLength(3);expect(screen.getByRole('button',{name:`预览${label}候选 02，已采用`}).getAttribute('aria-pressed')).toBe('true');expect((screen.getByRole('button',{name:'已采用'}) as HTMLButtonElement).disabled).toBe(true);
  fireEvent.click(screen.getByRole('button',{name:`预览${label}候选 03`}));expect(command).toHaveBeenCalledTimes(2);
