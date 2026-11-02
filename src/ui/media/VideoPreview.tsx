@@ -17,7 +17,7 @@ export function VideoPreview(props:VideoPreviewProps){
 function VideoPreviewSource({src,title,poster,className,'aria-label':label,preload='metadata',onError,segment,playbackRate=1,sourceLabel='源视频'}:VideoPreviewProps){
  const media=useRef<HTMLVideoElement>(null),[attempt,retry]=useState(0),[whole,setWhole]=useState(false),[loading,setLoading]=useState(preload!=='none'),[failed,setFailed]=useState(false),[time,setTime]=useState(0),[duration,setDuration]=useState(0);
  const clipped=!!segment&&!whole,start=clipped?segment.start:0,end=clipped?segment.end:duration,lastFrame=clipped?Math.max(start,end-(segment.frameDuration??0)):end;
- useMediaLifecycle(media,src+':'+attempt);
+ useMediaLifecycle(media,src+':'+attempt,src);
  useEffect(()=>{const element=media.current;if(!clipped||!element?.requestVideoFrameCallback)return;let callback=0;
   const check=()=>{if(!element.paused&&element.currentTime>=lastFrame){element.pause();element.currentTime=lastFrame;setTime(lastFrame);}callback=element.requestVideoFrameCallback(check);};
   callback=element.requestVideoFrameCallback(check);return()=>element.cancelVideoFrameCallback(callback);

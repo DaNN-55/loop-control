@@ -42,3 +42,7 @@ it('音频加载失败可原位重试，页面隐藏会暂停试听',async()=>{
  const next=screen.getByLabelText('错误试听') as HTMLAudioElement;expect(next).not.toBe(audio);
  await act(async()=>{await next.play();});Object.defineProperty(document,'hidden',{configurable:true,value:true});fireEvent(document,new Event('visibilitychange'));expect(next.paused).toBe(true);Object.defineProperty(document,'hidden',{configurable:true,value:false});
 });
+it('retains the current audio source through StrictMode setup and releases it on unmount',async()=>{
+ const {StrictMode}=await import('react');const {rerender,unmount}=render(<StrictMode><AudioPreview src="/strict-first.mp3" aria-label="严格模式音频"/></StrictMode>);const first=screen.getByLabelText('严格模式音频') as HTMLAudioElement;
+ expect(first.getAttribute('src')).toBe('/strict-first.mp3');rerender(<StrictMode><AudioPreview src="/strict-second.mp3" aria-label="严格模式音频"/></StrictMode>);const second=screen.getByLabelText('严格模式音频') as HTMLAudioElement;expect(second.getAttribute('src')).toBe('/strict-second.mp3');unmount();expect(second.getAttribute('src')).toBeNull();
+});

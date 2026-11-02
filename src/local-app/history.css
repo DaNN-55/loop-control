@@ -239,3 +239,9 @@ html[data-interface="impeccable"] .product-ui .history-delete-buttons{display:fl
 html[data-interface="impeccable"] .product-ui .history-error[role="alert"]{display:flex;align-items:center;justify-content:space-between;gap:16px}
 
 html[data-interface="impeccable"] .product-ui .history-delete-action h4:focus{outline:none}
+
+/* Scope guidance shares the list surface; navigation never changes retention. */
+.history-ui.history-workspace .history-scope-links { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin: 16px 20px; font-size: 13px; line-height: 1.6; color: var(--color-text-tertiary); }
+.history-ui.history-workspace .history-scope-links p { flex: 1 1 320px; margin: 0; }
+.history-ui.history-workspace .history-content-search { flex-wrap: wrap; }
+.history-ui.history-workspace .history-content-search > div { flex: 1 1 240px; }

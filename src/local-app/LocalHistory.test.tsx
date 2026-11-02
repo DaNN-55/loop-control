@@ -50,3 +50,45 @@ it('shows only populated source categories and keeps them during an empty search
  const category=screen.getByRole('combobox',{name:'分类'});expect(within(category).getAllByRole('option').map(option=>option.textContent)).toEqual(['全部分类','测试与诊断']);
  expect(within(screen.getByRole('combobox',{name:'显示范围'})).queryByRole('option',{name:/已归档/})).toBeNull();
 });
+
+it('distinguishes an empty history library and offers a read-only refresh',async()=>{
+ vi.mocked(localRequest).mockResolvedValue({...report,sources:[],summary:{versions:'0',files:'0'},sourceCounts:{active:0,archived:0}});
+ const user=userEvent.setup();render(<LocalHistory/>);
+ await screen.findByText('尚无独立历史资料。');
+ expect(screen.queryByRole('button',{name:'重置来源筛选'})).toBeNull();
+ await waitFor(()=>expect((screen.getByRole('combobox',{name:'显示范围'}) as HTMLSelectElement).value).toBe('all'));
+ const reads=vi.mocked(localRequest).mock.calls.length;
+ await user.click(screen.getByRole('button',{name:'重新读取资料来源'}));
+ await waitFor(()=>expect(localRequest).toHaveBeenCalledTimes(reads+1));
+ expect(localCommand).not.toHaveBeenCalled();
+});
+
+it('keeps committed source filters until reset and resets the complete lookup without writes',async()=>{
+ vi.mocked(localRequest).mockImplementation(async path=>({...report,sources:new URL(path,'http://local/').searchParams.get('sourcesQ')?[]:[item],categoryCounts:{diagnostics:1}}));
+ const user=userEvent.setup();render(<LocalHistory/>);await screen.findByRole('table');
+ await user.selectOptions(screen.getByRole('combobox',{name:'分类'}),'diagnostics');
+ await user.type(screen.getByRole('searchbox',{name:'查找来源'}),'不存在{Enter}');
+ await screen.findByText('没有匹配的资料来源。');
+ expect((screen.getByRole('searchbox',{name:'查找来源'}) as HTMLInputElement).value).toBe('不存在');
+ expect((screen.getByRole('combobox',{name:'分类'}) as HTMLSelectElement).value).toBe('diagnostics');
+ await user.click(screen.getByRole('button',{name:'重置来源筛选'}));
+ await screen.findByRole('button',{name:'查看 '+item.title});
+ const params=new URL(vi.mocked(localRequest).mock.calls.at(-1)![0],'http://local/').searchParams;
+ expect(Object.fromEntries(params)).toMatchObject({source:'',sourcesQ:'',q:'',category:'',state:'all',filesPage:'1',recordsPage:'1'});
+ expect((screen.getByRole('searchbox',{name:'查找来源'}) as HTMLInputElement).value).toBe('');
+ expect(localCommand).not.toHaveBeenCalled();
+});
+
+it('distinguishes missing source content from a content search with no results',async()=>{
+ vi.mocked(localRequest).mockResolvedValue({...report,source:item,files:[],versions:[],pagination:{filesPage:1,recordsPage:1,fileTotal:0,versionTotal:0}});
+ const user=userEvent.setup();render(<LocalHistory/>);await open(user);
+ await user.click(screen.getByText('文件（0 项）'));await user.click(screen.getByText('技术记录（0 项）'));
+ expect(screen.getByText('此来源没有登记的历史文件。')).toBeTruthy();
+ expect(screen.getByText('此来源没有留存的技术记录。')).toBeTruthy();
+ await user.type(screen.getByRole('searchbox',{name:'查找文件或记录'}),'找不到{Enter}');
+ await screen.findByText('没有匹配的历史文件。');
+ await user.click(screen.getByRole('button',{name:'清除内容搜索'}));
+ await screen.findByText('此来源没有登记的历史文件。');
+ expect(new URL(vi.mocked(localRequest).mock.calls.at(-1)![0],'http://local/').searchParams.get('q')).toBe('');
+ expect(localCommand).not.toHaveBeenCalled();
+});

@@ -18,3 +18,7 @@ it('同一套真实播放控件支持按钮和聚焦后的Space/M/左右键，�
  await act(async()=>{fireEvent.keyDown(player,{key:'ArrowLeft',code:'ArrowLeft'});});fireEvent.seeking(video);expect(video.currentTime).toBe(2);
  Object.defineProperty(document,'hidden',{value:true,configurable:true});fireEvent(document,new Event('visibilitychange'));expect(video.paused).toBe(true);
 });
+it('retains the current video source through StrictMode setup and still releases replaced and unmounted media',async()=>{
+ const {StrictMode}=await import('react');const {rerender,unmount}=render(<StrictMode><VideoPreview src="/strict-first.mp4" title="严格模式"/></StrictMode>);const first=screen.getByLabelText('严格模式视频预览') as HTMLVideoElement;
+ expect(first.getAttribute('src')).toBe('/strict-first.mp4');rerender(<StrictMode><VideoPreview src="/strict-second.mp4" title="严格模式"/></StrictMode>);const second=screen.getByLabelText('严格模式视频预览') as HTMLVideoElement;expect(first.getAttribute('src')).toBeNull();expect(second.getAttribute('src')).toBe('/strict-second.mp4');unmount();expect(second.getAttribute('src')).toBeNull();
+});

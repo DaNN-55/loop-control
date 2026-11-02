@@ -1,3 +1,5 @@
+import {useState} from 'react';
+import {CatalogPanelNavigationContext,readCatalogNavigation} from './catalogNavigation';
 import {cleanup,fireEvent,render,screen,waitFor,within} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {afterEach,beforeEach,expect,it,vi} from 'vitest';
@@ -26,16 +28,18 @@ it('does not let an old response replace a newer search and opens the real resul
  fireEvent.change(input,{target:{value:'second'}});await waitFor(()=>expect(finish.has('second')).toBe(true));
  finish.get('second')!(Response.json({...empty('second'),episodes:[{id:episodeId,kind:'episode',episodeId,title:'最新结果',subtitle:'真实账号'}]}));await screen.findByRole('button',{name:/最新结果/});
  finish.get('first')!(Response.json({...empty('first'),episodes:[{id:'old',kind:'episode',episodeId,title:'旧搜索结果',subtitle:'真实账号'}]}));await waitFor(()=>expect(screen.queryByText('旧搜索结果')).toBeNull());
- await userEvent.setup().click(screen.getByRole('button',{name:/最新结果/}));expect(props.onOpenEpisode).toHaveBeenCalledWith(episodeId);await waitFor(()=>expect(screen.queryByRole('region',{name:'工作区搜索结果'})).toBeNull());
+ await userEvent.setup().click(screen.getByRole('button',{name:/最新结果/}));expect(props.onOpenEpisode).toHaveBeenCalledWith(episodeId,{q:'second',category:'all',page:1,open:false});await waitFor(()=>expect(screen.queryByRole('region',{name:'工作区搜索结果'})).toBeNull());
 });
 
-it('preserves account navigation and opens only the registered SHA-bound material',async()=>{
- const sha='a'.repeat(64),path=`episodes/${episodeId}/main-script.md`,open=vi.spyOn(window,'open').mockReturnValue(null);
- vi.stubGlobal('fetch',vi.fn(async()=>Response.json({...empty('fixture'),accounts:[{id:accountId,kind:'account',accountId,title:'真实账号',subtitle:'账号配置'}],materials:[{id:'material',kind:'material',episodeId,path,sha256:sha,title:'main-script.md',subtitle:'当前脚本'}],hasMore:{episodes:false,accounts:false,materials:true}})));
- render(<WorkspaceTopbar {...props}/>);const user=userEvent.setup();await user.click(screen.getByRole('textbox',{name:'查找生产单、账号或素材'}));fireEvent.change(await screen.findByRole('textbox',{name:'查找生产单、账号或素材'}),{target:{value:'fixture'}});
- await user.click(await screen.findByRole('button',{name:/真实账号 账号配置/}));expect(props.onOpenAccount).toHaveBeenCalledWith(accountId);
- await user.click(screen.getByRole('textbox',{name:'查找生产单、账号或素材'}));const material=await screen.findByRole('button',{name:/main-script.md 当前脚本/});expect(screen.getByText('仅显示前 1 项，请细化关键词。')).toBeTruthy();await user.click(material);
- expect(open).toHaveBeenCalledWith('/_local-artifact?'+new URLSearchParams({episode:episodeId,path,sha256:sha}),'_blank','noopener,noreferrer');
+it('keeps registered files separate from preview, download and production navigation and pages all results',async()=>{
+ const sha='a'.repeat(64),path=`episodes/${episodeId}/main-script.md`,requests:string[]=[];
+ vi.stubGlobal('fetch',vi.fn(async(url:string)=>{requests.push(url);if(url.startsWith('/_local-artifact'))return new Response('A real script preview');const p=new URL(url,'http://localhost').searchParams;return Response.json({...empty('fixture'),accounts:[{id:accountId,kind:'account',accountId,title:'真实账号',subtitle:'账号配置'}],materials:[{id:'material',kind:'material',episodeId,path,sha256:sha,title:p.get('page')==='2'?'second-script.md':'main-script.md',subtitle:'当前脚本',fileType:'script',typeLabel:'脚本'}],hasMore:{episodes:false,accounts:false,materials:p.get('page')!=='2'},pagination:{category:p.get('category')||'all',page:Number(p.get('page')||1),pageSize:8,total:{episodes:0,accounts:1,materials:9},pages:{episodes:1,accounts:1,materials:2}}});}));
+ render(<WorkspaceTopbar {...props}/>);const user=userEvent.setup();await user.click(screen.getByRole('textbox',{name:'查找生产单、账号或素材'}));fireEvent.change(screen.getByRole('textbox',{name:'查找生产单、账号或素材'}),{target:{value:'fixture'}});
+ await screen.findByText('main-script.md');expect(props.onOpenEpisode).not.toHaveBeenCalled();const row=screen.getByText('main-script.md').closest('li')!;
+ const download=within(row).getByRole('link',{name:'下载 main-script.md'});expect(download.getAttribute('href')).toBe('/_local-artifact?'+new URLSearchParams({episode:episodeId,path,sha256:sha})+'&download=1');
+ await user.click(within(row).getByRole('button',{name:'预览 main-script.md'}));expect(await screen.findByText('A real script preview')).toBeTruthy();expect(props.onOpenEpisode).not.toHaveBeenCalled();await user.click(screen.getByRole('button',{name:'关闭预览'}));
+ await user.click(screen.getByRole('button',{name:'查看全部素材（9）'}));await waitFor(()=>expect(requests.some(url=>url.includes('category=materials'))).toBe(true));await user.click(await screen.findByRole('button',{name:'下一页'}));await screen.findByText('second-script.md');expect(requests.some(url=>url.includes('page=2'))).toBe(true);expect(screen.queryByText('main-script.md')).toBeNull();
+ await user.click(within(screen.getByText('second-script.md').closest('li')!).getByRole('button',{name:'打开所属生产单'}));expect(props.onOpenEpisode).toHaveBeenCalledWith(episodeId,{q:'fixture',category:'materials',page:2,open:false});
 });
 
 it('shows a readable search error and retries the same query',async()=>{
@@ -81,4 +85,22 @@ it.each([[false,false],[false,true],[true,false],[true,true]])('uses only the in
  await userEvent.setup().click(screen.getByRole('button',{name:'待处理通知'}));
  if(inApp){expect(await screen.findByText('交付包已完成')).toBeTruthy();}else{await screen.findByText('暂无待处理事项。');expect(screen.queryByText('交付包已完成')).toBeNull();}
  expect(requests.some(url=>url.endsWith('notification-events'))).toBe(inApp);
+});
+
+it('clears visible results and pending responses when the Owner changes',async()=>{
+ const finish=new Map<string,(response:Response)=>void>();vi.stubGlobal('fetch',vi.fn((url:string)=>new Promise<Response>(resolve=>finish.set(new URL(url,'http://localhost').searchParams.get('q')!,resolve))));
+ const {rerender}=render(<WorkspaceTopbar {...props} ownerId="owner-a"/>);const user=userEvent.setup();await user.click(screen.getByRole('textbox',{name:'查找生产单、账号或素材'}));fireEvent.change(screen.getByRole('textbox'),{target:{value:'owner-a query'}});await waitFor(()=>expect(finish.has('owner-a query')).toBe(true));
+ rerender(<WorkspaceTopbar {...props} ownerId="owner-b"/>);expect((screen.getByRole('textbox') as HTMLInputElement).value).toBe('');finish.get('owner-a query')!(Response.json({...empty('owner-a query'),episodes:[{id:episodeId,kind:'episode',episodeId,title:'旧 Owner 私有作品',subtitle:'账号 A'}]}));await user.click(screen.getByRole('textbox'));expect(screen.queryByText('旧 Owner 私有作品')).toBeNull();expect(screen.queryByRole('button',{name:/打开所属/})).toBeNull();
+});
+
+it('keeps file preview failures in place and retries the same SHA-bound file without opening production',async()=>{
+ const path=`episodes/${episodeId}/main-script.md`,sha='b'.repeat(64);let attempts=0;
+ vi.stubGlobal('fetch',vi.fn(async(url:string)=>url.startsWith('/_local-artifact')?(++attempts===1?new Response('Unavailable',{status:409}):new Response('Recovered script')):Response.json({...empty('script'),materials:[{id:'script',kind:'material',episodeId,path,sha256:sha,title:'main-script.md',subtitle:'脚本',fileType:'script',typeLabel:'脚本'}]})));
+ render(<WorkspaceTopbar {...props}/>);const user=userEvent.setup();await user.click(screen.getByRole('textbox'));fireEvent.change(screen.getByRole('textbox'),{target:{value:'script'}});await user.click(await screen.findByRole('button',{name:'预览 main-script.md'}));expect((await screen.findByRole('alert')).textContent).toContain('文件预览未能加载');expect(props.onOpenEpisode).not.toHaveBeenCalled();await user.click(screen.getByRole('button',{name:'重试预览'}));expect(await screen.findByText('Recovered script')).toBeTruthy();expect(attempts).toBe(2);await user.keyboard('{Escape}');expect(document.activeElement).toBe(screen.getByRole('textbox'));expect(screen.queryByText('Recovered script')).toBeNull();
+});
+
+it('keeps the full-search keyword and page but does not reopen the popup when production navigation remounts the header',async()=>{
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({...empty('script'),materials:[{id:'file',kind:'material',episodeId,path:'script.md',sha256:'a'.repeat(64),title:'main-script.md',subtitle:'原生产单',fileType:'script'}],pagination:{category:'materials',page:2,pageSize:8,total:{episodes:0,accounts:0,materials:9},pages:{episodes:1,accounts:1,materials:2}}})));
+ function App(){const[panels,setPanels]=useState(()=>readCatalogNavigation('?searchQ=script&searchCategory=materials&searchPage=2').panels),[destination,setDestination]=useState('list');return <CatalogPanelNavigationContext.Provider value={{value:panels,change:(key,patch)=>setPanels(current=>({...current,[key]:{...current[key],...patch}}))}}><p>{destination}</p><WorkspaceTopbar key={destination} {...props} onOpenEpisode={(_id,search)=>{if(search)setPanels(current=>({...current,search}));setDestination('production');}}/></CatalogPanelNavigationContext.Provider>;}
+ render(<App/>);const user=userEvent.setup();await user.click(await screen.findByRole('button',{name:'打开所属生产单'}));expect(screen.getByText('production')).toBeTruthy();expect(screen.queryByRole('region',{name:'工作区搜索结果'})).toBeNull();expect((screen.getByRole('textbox') as HTMLInputElement).value).toBe('script');await user.click(screen.getByRole('textbox'));expect(await screen.findByText('main-script.md')).toBeTruthy();expect(screen.getByText('共 9 项 · 第 2 / 2 页')).toBeTruthy();
 });

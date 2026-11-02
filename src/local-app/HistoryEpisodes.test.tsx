@@ -28,3 +28,15 @@ it('hides empty archive scopes using whole-history counts and resets an empty in
  await waitFor(()=>expect((screen.getByRole('combobox',{name:'显示范围'})as HTMLSelectElement).value).toBe('all'));
  expect(screen.queryByRole('option',{name:'未归档'})).toBeNull();expect(screen.getByRole('option',{name:'已归档'})).toBeTruthy();
 });
+
+it('shows a genuine empty history separately from an empty content filter and resets the latter',async()=>{
+ vi.mocked(localRequest).mockResolvedValue({...report,items:[],total:0,totalHistory:0,scopeCounts:{active:0,archived:0}});const app=render(<LocalHistory/>);
+ await screen.findByText('尚无生产单历史。');expect(screen.queryByRole('button',{name:'重置历史筛选'})).toBeNull();app.unmount();
+ vi.mocked(localRequest).mockResolvedValue({...report,items:[],total:0,totalHistory:2,scopeCounts:{active:0,archived:0}});render(<LocalHistory/>);
+ await screen.findByText('没有匹配的历史生产单。');
+ await act(async()=>fireEvent.click(screen.getByRole('button',{name:'重置历史筛选'})));
+ const params=new URL(vi.mocked(localRequest).mock.calls.at(-1)![0],'http://local/').searchParams;
+ expect(Object.fromEntries(params)).toMatchObject({q:'',state:'all',contentOnly:'false',page:'1',episode:'',filesPage:'1',recordsPage:'1'});
+ expect((screen.getByRole('checkbox',{name:'仅显示有生产内容的条目'}) as HTMLInputElement).checked).toBe(false);
+ expect(localCommand).not.toHaveBeenCalled();
+});

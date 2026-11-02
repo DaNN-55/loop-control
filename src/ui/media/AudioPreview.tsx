@@ -11,7 +11,7 @@ type AudioPreviewProps=Omit<AudioHTMLAttributes<HTMLAudioElement>,'controls'> & 
 /** Shared AudioSkin for local artifacts, uploaded drafts and generated voice samples. */
 export function AudioPreview({ref,src,autoPlay=false,onPlaybackError,preload='metadata',onError,onLoadStart,onLoadedMetadata,onWaiting,onCanPlay,onPlaying,...props}:AudioPreviewProps){
  const media=useRef<HTMLAudioElement>(null),[attempt,retry]=useState(0),[loading,setLoading]=useState(false),[failed,setFailed]=useState(false);
- useMediaLifecycle(media,String(src)+':'+attempt);
+ useMediaLifecycle(media,String(src)+':'+attempt,String(src??''));
  useEffect(()=>{setFailed(false);setLoading(false);},[src]);
  useImperativeHandle(ref,()=>media.current!,[src,attempt]);
  useEffect(()=>{

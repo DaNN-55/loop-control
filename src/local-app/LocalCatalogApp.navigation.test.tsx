@@ -51,3 +51,24 @@ it('ignores an older catalog response after browser Back restores the original q
 it('restores the editing viewing position without opening or rebuilding a native project',async()=>{
  history.replaceState(null,'',`/?view=episodes&episode=${draftEpisode}&step=editing`);const {writes}=fixture();render(<LocalCatalogApp/>);await screen.findByText('剪辑工作台尚未连接。');expect(screen.getByRole('button',{name:'剪辑工作台，当前查看'})).toBeTruthy();expect(writes).toEqual([]);
 });
+
+it('crosses from independent history to the actual archived production list and returns with source filters intact',async()=>{
+ history.replaceState(null,'','/?view=history&historyTab=sources&historyQ=旧作&historyPage=2&sourcesQ=保留&sourceCategory=diagnostics&sourceScope=all&sourceFilesPage=3&sourceRecordsPage=2&outside=kept');
+ const {reads,writes}=fixture(),original=globalThis.fetch;
+ vi.stubGlobal('fetch',vi.fn(async(path:string,init?:RequestInit)=>{
+  if(path.includes('/history-episodes?'))return Response.json({totalHistory:1,scopeCounts:{active:1,archived:0},items:[],total:0,page:1,pageSize:30,selected:null,files:[],versions:[],pagination:{filesPage:1,recordsPage:1,fileTotal:0,recordTotal:0}});
+  if(path.includes('/history?'))return Response.json({summary:{versions:'1',files:'0'},sources:[],source:null,versions:[],files:[],pagination:{filesPage:3,recordsPage:2,fileTotal:0,versionTotal:0},sourceCounts:{active:1,archived:0},categoryCounts:{diagnostics:1}});
+  return original(path,init);
+ }));
+ render(<LocalCatalogApp/>);await screen.findByText('没有匹配的资料来源。');
+ fireEvent.click(screen.getByRole('button',{name:'查找生产单历史'}));await screen.findByText('没有匹配的历史生产单。');
+ fireEvent.click(screen.getByRole('button',{name:'查找独立历史资料'}));await screen.findByText('没有匹配的资料来源。');
+ fireEvent.click(screen.getByRole('button',{name:'查看归档生产单'}));
+ await screen.findByRole('search',{name:'搜索生产单'});
+ await waitFor(()=>expect(reads.at(-1)?.get('visibility')).toBe('archived'));
+ expect((screen.getByRole('combobox',{name:'归档范围'}) as HTMLSelectElement).value).toBe('archived');
+ fireEvent.click(screen.getByRole('button',{name:'查找独立历史资料'}));
+ await screen.findByText('没有匹配的资料来源。');
+ const p=new URLSearchParams(location.search);expect(p.get('view')).toBe('history');expect(p.get('historyTab')).toBe('sources');
+ expect(p.get('sourcesQ')).toBe('保留');expect(p.get('sourceCategory')).toBe('diagnostics');expect(p.get('sourceFilesPage')).toBe('3');expect(p.get('sourceRecordsPage')).toBe('2');expect(p.get('historyQ')).toBe('旧作');expect(p.get('historyPage')).toBe('2');expect(p.get('outside')).toBe('kept');expect(writes).toEqual([]);
+});
