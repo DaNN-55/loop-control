@@ -39,7 +39,7 @@ export function OwnerPreferencesDialog({preferences,page,loading,saving,unavaila
   catch{setFailed(true);}
   finally{setPending(false);}
  }
- return <div className="modal-backdrop owner-preferences-backdrop"><div className="owner-preferences-dialog" role="dialog" aria-modal="true" aria-label={title} ref={ref}>
+ return <div className="modal-backdrop owner-preferences-backdrop"><div className={`owner-preferences-dialog${personal&&csrf?' owner-preferences-storage':''}`} role="dialog" aria-modal="true" aria-label={title} ref={ref}>
   <header><h2>{title}</h2><Button size="sm" color="tertiary" iconLeading={X} aria-label={`关闭${title}`} isDisabled={busy} onClick={onClose}/></header>
   {loading?<div className="owner-preferences-loading" role="status">正在读取偏好…</div>:<form onSubmit={event=>{event.preventDefault();void save();}}>
    <section className="owner-preferences-card">
