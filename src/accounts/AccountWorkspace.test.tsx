@@ -204,14 +204,14 @@ describe("账号配置工作区", () => {
     }
     render(<ReadbackSeries/>);
     await user.click(screen.getByRole("button",{name:series.name}));
-    expect(screen.getByLabelText("系列定位")).toHaveProperty("disabled",true);
+    expect(screen.getByLabelText("系列定位")).toHaveProperty("readOnly",true);
     await user.click(screen.getByRole("button",{name:"修改"}));
     await user.clear(screen.getByLabelText("系列显示名称"));await user.type(screen.getByLabelText("系列显示名称"),"新系列名称");
     await user.type(screen.getByLabelText("系列定位"),"保留草稿");
     await user.click(screen.getByRole("button",{name:"保存系列设置"}));await user.click(screen.getByRole("button",{name:"确认保存为 v3"}));
     expect(onCreateSeriesVersion).toHaveBeenCalledExactlyOnceWith({seriesId:series.id,rules:{positioning:"当前系列定位保留草稿"}});
     expect(screen.getByLabelText("系列显示名称")).toHaveProperty("value","新系列名称");
-    expect(screen.getByLabelText("系列定位")).toHaveProperty("disabled",true);
+    expect(screen.getByLabelText("系列定位")).toHaveProperty("readOnly",true);
     expect(screen.queryByRole("button",{name:"保存系列名称"})).toBeNull();
   });
 
@@ -247,7 +247,7 @@ describe("账号配置工作区", () => {
     expect(onCreateSeriesVersion).toHaveBeenCalledWith({ seriesId: series.id, rules: expect.objectContaining({ positioning: "当前系列定位" }) });
   });
 
-  it("系列分组调整后仍保存全部字段，并在底部恢复保存状态", async () => {
+  it("系列分组调整后仍保存全部字段，并在标题显示已应用状态", async () => {
     const user = userEvent.setup();
     const onCreateSeriesVersion = vi.fn().mockResolvedValue(undefined);
     renderWorkspace({onCreateSeriesVersion, series:[series], seriesVersions});
@@ -262,7 +262,8 @@ describe("账号配置工作区", () => {
     await user.click(screen.getByRole("button", {name:"保存系列设置"}));
     await user.click(screen.getByRole("button", {name:"确认保存为 v3"}));
     expect(onCreateSeriesVersion).toHaveBeenCalledWith({seriesId:series.id,rules:expect.objectContaining({positioning:"聚焦城市生活",format:"竖屏",characters:"主持人",locations:"街区",visual_style:"写实",narrative_structure:"开场到结尾",restrictions:"不使用商标"})});
-    expect(within(footer).getByRole("status").textContent).toBe("已应用");
+    expect(within(screen.getByRole("heading",{name:series.name}).parentElement!).getByRole("status").textContent).toBe("已应用 · v2");
+    expect(within(footer).queryByRole("status")).toBeNull();
   });
 
   it("系列保存失败时错误在弹窗内可见，取消后可撤销草稿", async () => {

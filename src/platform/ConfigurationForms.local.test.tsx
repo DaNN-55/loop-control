@@ -18,7 +18,7 @@ it('edits readable creative fields without losing nested values or reintroducing
  for(const field of screen.getAllByRole('textbox').filter(node=>node.tagName==='TEXTAREA'))expect(field.getAttribute('rows')).toBe('2');
 });
 it('historical creative rules are read-only and switching accounts resets the editable draft',()=>{
- const props={initialAssetRoot:'',isPending:false,onCancel:()=>{},onSave:async()=>{}};const view=render(<BlueprintConfigurationForm {...props} initialPolicy={{positioning:'旧规则',tone:'克制'}} readOnly/>);expect(screen.getByRole('textbox',{name:'账号定位'})).toHaveProperty('disabled',true);expect(screen.queryByRole('button',{name:'保存蓝图'})).toBeNull();view.rerender(<BlueprintConfigurationForm {...props} initialPolicy={{positioning:'新账号'}}/>);expect(screen.getByRole('textbox',{name:'账号定位'})).toHaveProperty('value','新账号');
+ const props={initialAssetRoot:'',isPending:false,onCancel:()=>{},onSave:async()=>{}};const view=render(<BlueprintConfigurationForm {...props} initialPolicy={{positioning:'旧规则',tone:'克制'}} readOnly/>);expect(screen.getByRole('textbox',{name:'账号定位'})).toHaveProperty('readOnly',true);expect(screen.queryByRole('button',{name:'保存蓝图'})).toBeNull();view.rerender(<BlueprintConfigurationForm {...props} initialPolicy={{positioning:'新账号'}}/>);expect(screen.getByRole('textbox',{name:'账号定位'})).toHaveProperty('value','新账号');
 });
 it('keeps boolean and numeric rule types when editing nested fields',async()=>{
  const save=vi.fn(async()=>{});render(<BlueprintConfigurationForm initialAssetRoot="" initialPolicy={{extension:{enabled:true,limit:3}}} isPending={false} onCancel={()=>{}} onSave={save}/>);
