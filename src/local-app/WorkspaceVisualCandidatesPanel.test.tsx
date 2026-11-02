@@ -2,7 +2,8 @@ import {render,screen,fireEvent,waitFor,cleanup} from '@testing-library/react';
 import {afterEach,it,expect,vi} from 'vitest';
 import {WorkspaceVisualCandidatesPanel} from './WorkspaceVisualCandidatesPanel';
 import type {ProductionWorkspace} from '../productionWorkspace';
-const preparation={adoptionId:'adoption',candidateId:'candidate',projectSha256:'original',edit:{targetItemId:'visual-1'},impact:{currentSeconds:3,sourceSeconds:2,appliedSeconds:2,deltaSeconds:-1,startSeconds:0,endSeconds:2,fps:30,affectedFragments:[]}};
+import type {WorkspaceCandidatePreparation} from '../workspaceCandidates';
+const preparation:WorkspaceCandidatePreparation={adoptionId:'adoption',candidateId:'candidate',projectSha256:'original',edit:{targetItemId:'visual-1',expectedTarget:null,durationPolicy:'use-candidate',source:{id:'candidate-source',kind:'video',src:'episodes/episode/new.mp4',sha256:'b'.repeat(64),inputFingerprint:'a'.repeat(64),durationSeconds:2}},impact:{currentSeconds:3,sourceSeconds:2,appliedSeconds:2,deltaSeconds:-1,startSeconds:0,endSeconds:2,fps:30,affectedFragments:[]}};
 const workspace={project:{sha256:'original'},id:'workspace',episodeId:'episode',revision:3,stale:false,clips:[{id:'clip-1',itemId:'visual-1',shotId:'S1',text:'第一片段',source:null},{id:'clip-2',itemId:'visual-2',shotId:'S1',text:'同镜第二片段',source:null}],visualCandidates:[{id:'candidate',kind:'video',usage:'video',clipId:'clip-1',shotId:'S1',targetItemId:'visual-1',taskId:null,inputFingerprint:'a'.repeat(64),text:'',mainScriptText:'',audioTrackId:null,relativePath:'episodes/episode/new.mp4',sha256:'b'.repeat(64),fileSize:100,durationSeconds:2,currentDurationSeconds:3,status:'available',width:640,height:360}]} as unknown as ProductionWorkspace;
 const videoChoice={capability:'video',provider:'volcengine',adapter:'seedance_video',model:'doubao-seedance-2-0-260128',connectionVersionId:'video-a'};
 const videoCatalog={serviceCatalog:{groups:[{capability:'video',services:[{id:'video-a',provider:'volcengine',adapter:'seedance_video',models:['doubao-seedance-2-0-260128'],connectionVersionId:'video-a',connectionName:'Video A',mode:'generation',executable:true,constraints:{durationSeconds:{min:4,max:15,integer:true}}}]}]}};
@@ -61,7 +62,7 @@ it('live adoption waits for native persistence and uses the post-save workspace 
  fireEvent.change(screen.getByLabelText('视觉候选时长处理'),{target:{value:'use-candidate'}});fireEvent.click(screen.getByLabelText('保留其他片段位置，接受本次空隙或覆盖'));fireEvent.click(screen.getByRole('button',{name:'采用此画面'}));
  await screen.findByRole('region',{name:'采用前核对'});expect(bridge.applyNativeEdit).not.toHaveBeenCalled();fireEvent.click(screen.getByRole('button',{name:'确认采用'}));
  await waitFor(()=>expect(command).toHaveBeenCalledWith('adoptWorkspaceVisualCandidate',{episodeId:'episode',workspaceId:'workspace',expectedRevision:8,candidateId:'candidate',adoptionId:'adoption',nativeApplied:true}));
- expect(bridge.save).toHaveBeenCalledTimes(2);expect(bridge.applyNativeEdit).toHaveBeenCalledWith('apply-candidate',{edit:{targetItemId:'visual-1'}});expect(command).toHaveBeenCalledWith('prepareWorkspaceVisualCandidate',expect.objectContaining({expectedRevision:7}));expect(onChange).toHaveBeenCalledWith(updated);
+ expect(bridge.save).toHaveBeenCalledTimes(2);expect(bridge.applyNativeEdit).toHaveBeenCalledWith('apply-candidate',{edit:preparation.edit});expect(command).toHaveBeenCalledWith('prepareWorkspaceVisualCandidate',expect.objectContaining({expectedRevision:7}));expect(onChange).toHaveBeenCalledWith(updated);
 });
 it('a failed visual request preserves the Owner local choices for correction',async()=>{
  vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace})));const command=vi.fn(async()=>{throw Error('图片指纹已变化');});
