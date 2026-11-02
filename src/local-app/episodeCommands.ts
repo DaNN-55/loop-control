@@ -1,3 +1,4 @@
+import {validateImportedMaterial} from './materialAcceptance.js';
 import{RuntimePreparationError}from'../orchestration/runtimeBuild.js';
 import {createEpisodeDirectory} from './episodeCreation.js';
 import {verifyEpisodeFile,episodeFileIO,resolveEpisodeFileReference} from './episodeFiles.js';
@@ -178,8 +179,9 @@ export class LocalEpisodeCommands {
      const purposes=['main_script','supplemental_script','general_reference','visual_reference','a_roll','b_roll','narration','background_music','sound_effect','cover'];
      if(!purposes.includes(String(data.materialPurpose))||typeof data.materialType!=='string'||typeof data.mimeType!=='string'||typeof data.isMainScript!=='boolean')throw new ConfigurationError(400,'材料类型无效。');
      if(typeof data.sourceKind!=='string'||typeof data.sourcePath!=='string'||data.logicalName!==undefined&&typeof data.logicalName!=='string')throw new ConfigurationError(400,'材料路径无效。');
-     const snapshot=await snapshotInput(root,e.id,data as never,location!.relativePath);
-     value=(await c.query('SELECT to_jsonb(public.import_production_material($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)) result',[e.id,data.materialType,data.sourceKind,snapshot.sourcePath,snapshot.storagePath,data.mimeType,snapshot.sha256,snapshot.fileSize,data.isMainScript,data.materialPurpose])).rows[0].result;
+     let mimeType=data.mimeType;
+     const snapshot=await snapshotInput(root,e.id,data as never,location!.relativePath,async bytes=>{mimeType=await validateImportedMaterial(bytes,data as never);});
+     value=(await c.query('SELECT to_jsonb(public.import_production_material($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)) result',[e.id,data.materialType,data.sourceKind,snapshot.sourcePath,snapshot.storagePath,mimeType,snapshot.sha256,snapshot.fileSize,data.isMainScript,data.materialPurpose])).rows[0].result;
      if(data.isMainScript)await c.query('UPDATE local_identity.input_episodes SET script_template_version=$2 WHERE episode_id=$1',[e.id,parseProductionScript((await verifyEpisodeFile(c,root,e.id,snapshot.storagePath,snapshot.sha256,snapshot.fileSize)).toString('utf8'))?2:null]);
      if(!data.isMainScript)await this.scriptStore.alias(c,session.id,value.id,String(data.sourcePath));
     }else if(body.command==='setAudioSourceMode'){

@@ -1,0 +1,32 @@
+E2E evidence: /private/tmp/loop-story-e2e-3WxOQO/evidence
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-3WxOQO/source
+
+ ✓ src/local-app/materialAcceptance.integration.test.ts (4 tests) 5999ms
+   ✓ Owner upload rejects disguised media before it becomes available and retains existing files  1385ms
+   ✓ Owner can import genuine media without browser MIME metadata  1219ms
+   ✓ Media acceptance rejects empty, mislabeled, corrupt, oversized and foreign uploads through Owner HTTP  1490ms
+   ✓ Media acceptance keeps genuine still, video, audio and reference documents usable  1905ms
+ ✓ src/local-app/inputPublicationOwnership.integration.test.ts (10 tests) 12009ms
+   ✓ Owner import preserves unknown replacement and original bytes after temporary-link failure  1204ms
+   ✓ Owner import preserves unknown replacement and original bytes after receipt-link failure  1227ms
+   ✓ Owner import preserves unknown replacement and original bytes after temporary-open failure  1095ms
+   ✓ Owner import preserves unknown replacement and original bytes after receipt-open failure  1229ms
+   ✓ Owner import preserves unknown replacement and original bytes after temporary-close failure  1124ms
+   ✓ Owner import preserves unknown replacement and original bytes after receipt-close failure  1186ms
+   ✓ Owner import preserves unknown replacement and original bytes after temporary-close-identical failure  1224ms
+   ✓ Owner recovery preserves a receipt replaced during recovery-receipt-link and retries without deleting its unknown bytes  1210ms
+   ✓ Owner recovery preserves a receipt replaced during recovery-receipt-link-identical and retries without deleting its unknown bytes  1343ms
+   ✓ Owner recovery preserves a receipt replaced during legacy-receipt and retries without deleting its unknown bytes  1166ms
+ ✓ src/local-app/inputStorageLocation.integration.test.ts (4 tests) 10634ms
+   ✓ Owner imports and confirms managed script bytes at the registered production location, retaining legacy previews after restart  3785ms
+   ✓ Owner reuses an approved series input as a self-contained managed copy with original source approval evidence  3482ms
+   ✓ input retries preserve immutable bytes and reject unsafe, foreign, interrupted and replaced-directory submissions  1683ms
+   ✓ receipted input publication survives an interrupted unlink and restart without overwriting unknown targets or trusting altered receipts  1683ms
+
+ Test Files  3 passed (3)
+      Tests  18 passed (18)
+   Start at  20:18:05
+   Duration  29.80s (transform 427ms, setup 9ms, collect 793ms, tests 28.64s, environment 0ms, prepare 86ms)
+
+JSON report written to /private/tmp/loop-story-e2e-3WxOQO/evidence/vitest.json

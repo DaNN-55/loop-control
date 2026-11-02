@@ -27,7 +27,7 @@ export async function verifyNativeFile(root:string,path:string,sha256:string,siz
  if(await realpath(full)!==full||!s.isFile()||s.nlink!==1||s.size!==size)throw new ConfigurationError(409,'文件路径或大小已变化。');
  const bytes=await readFile(full);if(createHash('sha256').update(bytes).digest('hex')!==sha256)throw new ConfigurationError(409,'文件指纹已变化。');return bytes;
 }
-export async function snapshotInput(root:string,episodeId:string,input:{sourceKind:string;sourcePath:string;logicalName?:string;contentBase64?:string;isMainScript?:boolean},directoryRelativePath=`episodes/${episodeId}`){
+export async function snapshotInput(root:string,episodeId:string,input:{sourceKind:string;sourcePath:string;logicalName?:string;contentBase64?:string;isMainScript?:boolean},directoryRelativePath=`episodes/${episodeId}`,validate?:(bytes:Buffer)=>Promise<void>){
  if(!safeRelative(input.sourcePath)||input.logicalName&&!safeRelative(input.logicalName))throw new ConfigurationError(400,'材料路径无效。');
  await ensureInputDirectories(root,episodeId,directoryRelativePath);
  let bytes:Buffer;
@@ -40,6 +40,7 @@ export async function snapshotInput(root:string,episodeId:string,input:{sourceKi
   bytes=Buffer.from(input.contentBase64,'base64');
   if(bytes.toString('base64')!==input.contentBase64)throw new ConfigurationError(400,'材料内容无效。');
  }
+ if(validate)await validate(bytes);
  if(!bytes.length||bytes.length>100*1024*1024)throw new ConfigurationError(400,'材料不能为空或超过100MB。');
  if(input.isMainScript){const diagnostic=mainScriptDiagnostic(bytes.toString('utf8'));if(diagnostic)throw new ConfigurationError(400,diagnostic);}
  const sha256=createHash('sha256').update(bytes).digest('hex'),sourcePath=input.logicalName??input.sourcePath,storagePath=`${directoryRelativePath}/materials/${sha256}-${basename(sourcePath)}`;
