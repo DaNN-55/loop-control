@@ -1,4 +1,4 @@
-import {render,screen,fireEvent,waitFor,cleanup} from '@testing-library/react';
+import {act,render,screen,fireEvent,waitFor,cleanup} from '@testing-library/react';
 import {afterEach,it,expect,vi} from 'vitest';
 import {WorkspaceExportPanel} from './WorkspaceExportPanel';
 import type {ProductionWorkspace} from '../productionWorkspace';
@@ -17,4 +17,12 @@ it('puts checks first and file information on the right without exposing raw pat
 it('opens failed checks so their explanation stays visible',()=>{
  const w={id:'w',episodeId:'e',revision:1,stale:false,readiness:{placeholders:[]},exports:[{id:'ex',current:true,confirmed:false,status:'failed',checks:[{name:'decode',passed:false,detail:'视频无法解码'}]}]} as unknown as ProductionWorkspace;
  render(<WorkspaceExportPanel workspace={w} pending={false} command={vi.fn()} onChange={()=>{}}/>);expect(document.querySelector('.workspace-technical-checks')?.hasAttribute('open')).toBe(true);expect(screen.getByRole('alert').textContent).toContain('视频无法解码');
+});
+
+it('keeps the next issue during a slow submission and preserves input after errors',async()=>{
+ const w={id:'w',episodeId:'e',revision:1,readiness:{placeholders:[]},exports:[]} as unknown as ProductionWorkspace;
+ let finish!:(value:ProductionWorkspace)=>void,reject!:(error:Error)=>void;const command=vi.fn(()=>new Promise<ProductionWorkspace>((resolve,fail)=>{finish=resolve;reject=fail;}));render(<WorkspaceExportPanel workspace={w} pending={false} command={command} onChange={()=>{}}/>);
+ const input=screen.getByRole('textbox',{name:'问题记录'});fireEvent.change(input,{target:{value:'第一条问题'}});fireEvent.click(screen.getByRole('button',{name:'记录问题'}));fireEvent.click(screen.getByRole('button',{name:/记录问题/}));expect(command).toHaveBeenCalledTimes(1);fireEvent.change(input,{target:{value:'第二条问题'}});await act(async()=>finish(w));expect((input as HTMLTextAreaElement).value).toBe('第二条问题');
+ fireEvent.click(screen.getByRole('button',{name:'记录问题'}));await act(async()=>reject(Error('记录失败，请重试。')));expect((input as HTMLTextAreaElement).value).toBe('第二条问题');expect(screen.getByRole('alert').textContent).toContain('记录失败');
+ fireEvent.click(screen.getByRole('button',{name:'记录问题'}));await act(async()=>finish(w));expect((input as HTMLTextAreaElement).value).toBe('');
 });

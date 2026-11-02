@@ -11,6 +11,8 @@ import type {WorkspaceDelivery} from '../workspaceDelivery.js';
 import {requireConfirmedWorkspaceExport,usedWorkspaceContent} from './workspaceExportCommands.js';
 import {ConfigurationError} from './configurationCommands.js';
 import {safeAssetOutputPath} from '../worker/controlledMediaExecutor.js';
+import {normalizeDeliveryTags,deliveryTagsError} from '../publishing/deliveryMetadata.js';
+import {validateImportedMaterial} from './materialAcceptance.js';
 import {coverImageExtension} from '../publishing/coverImage.js';
 import {verifyPublishPackage} from '../publishing/publishPackage.js';
 import {isOpenChatCutStudio} from '../worker/openchatcutStudio.js';
@@ -32,8 +34,12 @@ export async function executeWorkspaceDelivery(c:PoolClient,root:string,row:Prod
  await c.query('SELECT local_identity.queue_workspace_delivery($1,$2,$3,$4)',[id,row.id,confirmed.id,snapshot]);return;
  }
  if(data.exportId!==confirmed.id||data.expectedExportSha256!==confirmed.artifact.sha256||data.expectedContentSha256!==confirmed.contentSha256)throw new ConfigurationError(409,'请为这份已确认文件重新准备交付。');
- if(typeof data.title!=='string'||!data.title.trim()||data.title.length>200||typeof data.description!=='string'||data.description.length>5000||!Array.isArray(data.tags)||data.tags.length>20||data.tags.some(t=>typeof t!=='string'||!t.trim()||t.length>50)||typeof data.coverBase64!=='string'||data.coverBase64.length>28*1024*1024)throw new ConfigurationError(400,'请填写有效交付标题、说明、标签和封面。');
- const cover=Buffer.from(data.coverBase64,'base64'),extension=coverImageExtension(cover);if(!extension||cover.length>20*1024*1024||cover.toString('base64')!==data.coverBase64)throw new ConfigurationError(400,'请上传有效 JPG、PNG 或 WebP 封面。');
+ if(typeof data.title!=='string'||!data.title.trim()||data.title.length>200||typeof data.description!=='string'||data.description.length>5000)throw new ConfigurationError(400,'请填写有效交付标题和简介。');
+ if(!Array.isArray(data.tags)||data.tags.some(t=>typeof t!=='string'))throw new ConfigurationError(400,'标签格式无效，请使用文字标签。');
+ const tags=normalizeDeliveryTags(data.tags),tagsError=deliveryTagsError(tags);if(tagsError)throw new ConfigurationError(400,tagsError);
+ if(typeof data.coverBase64!=='string'||data.coverBase64.length>28*1024*1024)throw new ConfigurationError(400,'封面不能超过 20 MB，请选择 JPG、PNG 或 WebP 图片。');
+ const cover=Buffer.from(data.coverBase64,'base64'),extension=coverImageExtension(cover);if(!cover.length)throw new ConfigurationError(400,'封面为空，请重新选择。');if(cover.length>20*1024*1024)throw new ConfigurationError(400,'封面不能超过 20 MB。');if(!extension||cover.toString('base64')!==data.coverBase64)throw new ConfigurationError(400,'请上传有效 JPG、PNG 或 WebP 封面。');
+ await validateImportedMaterial(cover,{sourcePath:`封面.${extension}`,materialType:'image',mimeType:'',materialPurpose:'cover',isMainScript:false});
  const hasDecisions=!!(await c.query("SELECT to_regclass('local_identity.workspace_candidate_decisions') present")).rows[0].present;
  const approvedProject=JSON.parse((await verifyEpisodeFile(c,root,row.episode_id,confirmed.project.relativePath,confirmed.project.sha256,confirmed.project.fileSize)).toString()) as OpenChatCutProject,used=usedWorkspaceContent(approvedProject),narration=[];
  for(const clip of row.bindings.filter((x,i,all)=>all.findIndex(v=>v.shotId===x.shotId)===i)){
@@ -49,7 +55,7 @@ export async function executeWorkspaceDelivery(c:PoolClient,root:string,row:Prod
  const id=randomUUID(),prefix=`${storage.relativePath}/workspace-deliveries/${id}`;
  const immutable=async(type:string,path:string,bytes:Buffer)=>{const a={artifactType:type,relativePath:path,sha256:createHash('sha256').update(bytes).digest('hex'),fileSize:bytes.length};await writeFile(await safeAssetOutputPath(root,path),bytes,{flag:'wx',mode:0o600});return a;};
  const coverArtifact=await immutable('cover',`${prefix}/cover.${extension}`,cover);
- const metadata=await immutable('metadata',`${prefix}/metadata.json`,Buffer.from(JSON.stringify({title:data.title.trim(),description:data.description.trim(),tags:data.tags.map(t=>t.trim()),exportId:confirmed.id,contentSha256:confirmed.contentSha256,scriptRevisionId:row.script_revision_id,narration},null,2)+'\n'));
+ const metadata=await immutable('metadata',`${prefix}/metadata.json`,Buffer.from(JSON.stringify({title:data.title.trim(),description:data.description.trim(),tags,exportId:confirmed.id,contentSha256:confirmed.contentSha256,scriptRevisionId:row.script_revision_id,narration},null,2)+'\n'));
  const checks=await immutable('final_qc_report',`${prefix}/checks.json`,Buffer.from(JSON.stringify({passed:true,exportId:confirmed.id,contentSha256:confirmed.contentSha256,checks:confirmed.checks},null,2)+'\n'));
  const identity={workspaceId:row.id,exportId:confirmed.id,projectContentVersion:confirmed.projectContentVersion,contentSha256:confirmed.contentSha256,video:{artifactType:'final_render',...confirmed.artifact},project:{artifactType:'editable_project',...confirmed.project}};
  const snapshot={capability:'workspace_delivery',workspace_delivery:{identity,artifacts:[identity.video,identity.project,coverArtifact,metadata,checks]},input_artifacts:[identity.video,identity.project,coverArtifact,metadata,checks],output:{relative_path:`${prefix}/manifest.json`,required_artifact_types:['publish_package'],content_type:'application/json'}};
