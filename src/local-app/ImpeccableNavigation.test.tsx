@@ -34,7 +34,7 @@ function setup(options:{studioFails?:boolean}={}) {
   return {queries,posts,lastQuery:()=>queries.at(-1)!};
 }
 const nav=()=>within(screen.getByRole('complementary',{name:'主导航'}));
-async function mount(){await act(async()=>{render(<LocalCatalogApp/>);});await screen.findByRole('heading',{name:'制作中的内容',level:1});}
+async function mount(){await act(async()=>{render(<LocalCatalogApp/>);});await screen.findByRole('heading',{name:'内容工作台',level:1});}
 afterEach(()=>{cleanup();vi.restoreAllMocks();vi.unstubAllGlobals();history.replaceState(null,'','/');localStorage.clear();sessionStorage.clear();});
 
 it('待审核合并到生产单，工作台审核入口使用真实目录筛选',async()=>{
@@ -78,13 +78,13 @@ it('选择作品更新下一步，打开及返回详情保留第二页上下文'
  await screen.findByRole('complementary',{name:'当前作品'});
  fireEvent.click(within(screen.getByRole('region',{name:'系列生产单'})).getByText('生产单 22'));
  const current=screen.getByRole('complementary',{name:'当前作品'});expect(within(current).getByRole('heading',{name:'生产单 22'})).toBeTruthy();
- const before=lastQuery().toString(),count=queries.length;
+ const before=lastQuery().toString(),beforeUrl=location.search,count=queries.length;
  fireEvent.click(within(current).getByRole('button',{name:'继续审核'}));
  await screen.findByText('实际生产单 '+uuid(22));
  expect(document.getElementById('main-content')?.hasAttribute('inert')).toBe(true);
  fireEvent.click(screen.getByRole('button',{name:'返回工作区'}));
  expect(document.getElementById('main-content')?.hasAttribute('inert')).toBe(false);
- expect(location.search).toBe('');expect(lastQuery().toString()).toBe(before);expect(queries).toHaveLength(count);
+ expect(location.search).toBe(beforeUrl);expect(lastQuery().toString()).toBe(before);expect(queries).toHaveLength(count);
  expect(within(screen.getByRole('complementary',{name:'当前作品'})).getByRole('heading',{name:'生产单 22'})).toBeTruthy();
 });
 

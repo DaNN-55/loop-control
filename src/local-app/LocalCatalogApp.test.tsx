@@ -9,7 +9,7 @@ vi.mock('./LocalSystemStatus',()=>({LocalSystemStatus:()=>null}));
 import {localCommand} from './client';
 async function productionButton(){return within(await screen.findByRole('complementary',{name:'主导航'})).getByRole('button',{name:'生产单'});}
 function clickLogout(){if(!screen.queryByRole('menuitem',{name:'退出登录'}))flushSync(()=>{fireEvent.click(screen.getAllByRole('button',{name:'所有者设置'})[0]);});fireEvent.click(screen.getByRole('menuitem',{name:'退出登录'}));}
-afterEach(()=>{cleanup();vi.unstubAllGlobals();sessionStorage.clear();});
+afterEach(()=>{cleanup();vi.unstubAllGlobals();sessionStorage.clear();localStorage.clear();history.replaceState(null,'','/');});
 it('keeps a committed series save successful when its follow-up read fails',async()=>{
  const accountId='10000000-0000-4000-8000-000000000001',blueprintId='10000000-0000-4000-8000-000000000002',seriesId='10000000-0000-4000-8000-000000000003',ownerId='10000000-0000-4000-8000-000000000004',at='2026-10-23T00:00:00Z';
  const version={id:'10000000-0000-4000-8000-000000000005',account_id:accountId,series_id:seriesId,version:1,rules:{positioning:'before'},created_by:ownerId,created_at:at};

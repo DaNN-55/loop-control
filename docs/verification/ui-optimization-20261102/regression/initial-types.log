@@ -1,0 +1,19 @@
+
+> loop-control@0.1.0 check
+> tsc -b --pretty false
+
+src/local-app/LocalCatalogApp.password-dialog.test.tsx(1,9): error TS6133: 'act' is declared but its value is never read.
+src/local-app/secretAdministration.integration.test.ts(32,121): error TS2345: Argument of type 'string' is not assignable to parameter of type '`${string}-${string}-${string}-${string}-${string}`'.
+src/local-app/secretAdministration.integration.test.ts(32,175): error TS2345: Argument of type 'string' is not assignable to parameter of type '`${string}-${string}-${string}-${string}-${string}`'.
+src/local-app/WorkspaceCompletedShots.test.tsx(44,56): error TS2322: Type '{ timelines: { items: { id: string; src: string; sourceContentHash: string; startFrame: number; loopControlShot: { shotId: string; clipId: string; text: string; }; }[]; id: string; name: string; order: 0; ... 8 more ...; captionsHidden: boolean; }[]; ... 4 more ...; activeTimelineId: string; }' is not assignable to type 'OpenChatCutProject'.
+  Types of property 'timelines' are incompatible.
+    Type '{ items: { id: string; src: string; sourceContentHash: string; startFrame: number; loopControlShot: { shotId: string; clipId: string; text: string; }; }[]; id: string; name: string; order: 0; fps: number; width: number; ... 6 more ...; captionsHidden: boolean; }[]' is not assignable to type '[OpenChatCutTimeline]'.
+      Target requires 1 element(s) but source may have fewer.
+src/local-app/workspaceReadonlyRecords.integration.test.ts(13,103): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/local-app/workspaceReadonlyRecords.integration.test.ts(13,120): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/local-app/workspaceReadonlyRecords.integration.test.ts(15,193): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/local-app/workspaceReadonlyRecords.integration.test.ts(15,210): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/local-app/workspaceSearch.integration.test.ts(44,171): error TS2345: Argument of type '{ q: string; category: string; page?: undefined; ownerId?: undefined; } | { q: string; page: string; category?: undefined; ownerId?: undefined; } | { q: string; category: string; page: string; ownerId?: undefined; } | { ...; }' is not assignable to parameter of type 'Record<string, string>'.
+  Type '{ q: string; category: string; page?: undefined; ownerId?: undefined; }' is not assignable to type 'Record<string, string>'.
+    Property 'page' is incompatible with index signature.
+      Type 'undefined' is not assignable to type 'string'.

@@ -14,6 +14,6 @@ it('clears the credential draft and restores masking when opening another connec
  render(<ConnectionWorkspace connections={rows} onCreateConnection={vi.fn()} onTestConnection={vi.fn()}/>);
  await user.click(screen.getByRole('button',{name:'First'}));await user.click(screen.getByRole('button',{name:'编辑连接'}));
  await user.type(screen.getByLabelText(/^新的 API Key/),'synthetic-draft');await user.click(screen.getByRole('button',{name:'显示密码'}));expect((screen.getByLabelText(/^新的 API Key/)as HTMLInputElement).type).toBe('text');
- await user.click(screen.getByRole('button',{name:'关闭连接窗口'}));await user.click(screen.getByRole('button',{name:'Second'}));await user.click(screen.getByRole('button',{name:'编辑连接'}));
+ await user.click(screen.getByRole('button',{name:'关闭连接窗口'}));await user.click(screen.getByRole('button',{name:'放弃修改并关闭'}));await user.click(screen.getByRole('button',{name:'Second'}));await user.click(screen.getByRole('button',{name:'编辑连接'}));
  const secret=screen.getByLabelText(/^新的 API Key/)as HTMLInputElement;expect(secret.value).toBe('');expect(secret.type).toBe('password');
 });

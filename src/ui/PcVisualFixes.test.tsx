@@ -59,7 +59,8 @@ it('paginates 1284 series, searches all pages, and keeps the current editor draf
   expect((positioning as HTMLTextAreaElement).value).toBe('未保存的定位');
   expect(list.textContent).toContain('联合制作系列 21');
   await user.type(screen.getByRole('searchbox', {name:'查找系列'}), '1284');
-  expect(list.querySelectorAll(':scope > button.account-series-entry').length).toBe(1);
+  expect(list.querySelectorAll(':scope > button.account-series-entry').length).toBe(2);
+  expect(within(list).getByRole('button', {name:'联合制作系列 1'}).getAttribute('aria-current')).toBe('page');
   expect(list.textContent).toContain('联合制作系列 1284');
   expect(screen.queryByRole('navigation', {name:'系列分页'})).toBeNull();
   await user.clear(screen.getByRole('searchbox', {name:'查找系列'}));

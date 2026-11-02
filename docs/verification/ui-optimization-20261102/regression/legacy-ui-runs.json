@@ -1,0 +1,77 @@
+[
+  {
+    "run": 1,
+    "passed": 105,
+    "failed": 8,
+    "rawEvidence": "/private/tmp/loop-ui-implementation-notes/root-legacy-v1.json",
+    "failures": [
+      {
+        "file": "src/connections/ConnectionDanUi.test.tsx",
+        "test": "clears the credential draft and restores masking when opening another connection"
+      },
+      {
+        "file": "src/local-app/ImpeccableNavigation.test.tsx",
+        "test": "待审核合并到生产单，工作台审核入口使用真实目录筛选"
+      },
+      {
+        "file": "src/local-app/ImpeccableNavigation.test.tsx",
+        "test": "工作台生产单和需处理筛选使用服务端分页，切换范围重置页码"
+      },
+      {
+        "file": "src/local-app/ImpeccableNavigation.test.tsx",
+        "test": "选择作品更新下一步，打开及返回详情保留第二页上下文"
+      },
+      {
+        "file": "src/local-app/ImpeccableNavigation.test.tsx",
+        "test": "搜索、状态和排序全部送服务端，切换范围重置分页且不写业务数据"
+      },
+      {
+        "file": "src/local-app/ImpeccableNavigation.test.tsx",
+        "test": "侧栏分组和底部工具保持已认可设计，Owner焦点与状态不丢"
+      },
+      {
+        "file": "src/local-app/ImpeccableNavigation.test.tsx",
+        "test": "制作区Studio失败通知仍在可操作区域并保留CSRF"
+      },
+      {
+        "file": "src/local-app/LocalCatalogApp.workspace.test.tsx",
+        "test": "保留安全弹窗焦点，将维护入口统一为侧栏且跨页保留连接草稿"
+      }
+    ]
+  },
+  {
+    "run": 2,
+    "passed": 29,
+    "failed": 2,
+    "rawEvidence": "/private/tmp/loop-ui-implementation-notes/root-legacy-v2.json",
+    "failures": [
+      {
+        "file": "src/local-app/ImpeccableNavigation.test.tsx",
+        "test": "选择作品更新下一步，打开及返回详情保留第二页上下文"
+      },
+      {
+        "file": "src/local-app/LocalCatalogApp.workspace.test.tsx",
+        "test": "保留安全弹窗焦点，将维护入口统一为侧栏且跨页保留连接草稿"
+      }
+    ]
+  },
+  {
+    "run": 3,
+    "passed": 14,
+    "failed": 1,
+    "rawEvidence": "/private/tmp/loop-ui-implementation-notes/root-legacy-v3.json",
+    "failures": [
+      {
+        "file": "src/local-app/LocalCatalogApp.workspace.test.tsx",
+        "test": "保留安全弹窗焦点，将维护入口统一为侧栏且跨页保留连接草稿"
+      }
+    ]
+  },
+  {
+    "run": 4,
+    "passed": 9,
+    "failed": 0,
+    "rawEvidence": "/private/tmp/loop-ui-implementation-notes/root-legacy-v4.json",
+    "failures": []
+  }
+]

@@ -152,7 +152,7 @@ describe("approval console", () => {
     expect(screen.getByRole("heading", { name: "越南道士" })).toBeTruthy();
     expect(screen.queryByText("当前 v2")).toBeNull();
     expect(screen.queryByRole("heading", { name: "版本历史" })).toBeNull();
-    expect((screen.getByLabelText("系列定位") as HTMLTextAreaElement).disabled).toBe(true);
+    expect((screen.getByLabelText("系列定位") as HTMLTextAreaElement).readOnly).toBe(true);
     const user = userEvent.setup();
     await user.click(screen.getByRole("button", { name: "修改" }));
     await user.click(screen.getByRole("button", { name: "保存系列设置" }));

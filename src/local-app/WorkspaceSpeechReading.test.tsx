@@ -58,12 +58,12 @@ it.each<Kind>(['speech','sound'])('keeps %s drafts through refresh, shot switche
  const element=(target='S1')=>kind==='speech'?<WorkspaceCandidatesPanel {...props} drafts={drafts}/>:<WorkspaceAudioPreparation {...props} selectedShotId={target}/>;
  const view=render(element());
  const label=kind==='speech'?'局部口播正文':'用途';fireEvent.change(screen.getByLabelText(label),{target:{value:'未提交的草稿'}});
- if(kind==='sound'){fireEvent.change(screen.getByLabelText('英文检索词'),{target:{value:'footsteps'}});fireEvent.change(screen.getByLabelText('偏移（秒）'),{target:{value:'.4'}});}
+ if(kind==='sound'){fireEvent.change(screen.getByLabelText('英文检索词'),{target:{value:'ambient footsteps'}});fireEvent.change(screen.getByLabelText('类型'),{target:{value:'sfx'}});fireEvent.change(screen.getByLabelText('用途'),{target:{value:'未提交的草稿'}});fireEvent.change(screen.getByLabelText('距镜头开头（秒）'),{target:{value:'.4'}});}
  await act(async()=>{await vi.advanceTimersByTimeAsync(3000);});expect(props.onChange).toHaveBeenCalledWith(expect.objectContaining({revision:4}));
  if(kind==='speech'){fireEvent.change(screen.getByLabelText('候选镜头'),{target:{value:'S2'}});fireEvent.change(screen.getByLabelText('候选镜头'),{target:{value:'S1'}});}else{view.rerender(element('S2'));view.rerender(element());}
  expect((screen.getByLabelText(label) as HTMLInputElement).value).toBe('未提交的草稿');view.unmount();render(element());
  expect((screen.getByLabelText(label) as HTMLInputElement).value).toBe('未提交的草稿');
- if(kind==='sound'){expect((screen.getByLabelText('英文检索词') as HTMLInputElement).value).toBe('footsteps');expect((screen.getByLabelText('偏移（秒）') as HTMLInputElement).value).toBe('0.4');}
+ if(kind==='sound'){expect((screen.getByLabelText('类型') as HTMLSelectElement).value).toBe('sfx');expect((screen.getByLabelText('距镜头开头（秒）') as HTMLInputElement).value).toBe('0.4');fireEvent.change(screen.getByLabelText('类型'),{target:{value:'bgm'}});expect((screen.getByLabelText('英文检索词') as HTMLInputElement).value).toBe('ambient footsteps');}
  expect(command.mock.calls.every(call=>call[0]==='refreshWorkspaceAudio')).toBe(true);
 });
 

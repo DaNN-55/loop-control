@@ -66,14 +66,16 @@ it('保留安全弹窗焦点，将维护入口统一为侧栏且跨页保留连�
  await user.click(within(maintenance).getByRole('button',{name:'新建连接'}));
  await user.type(await screen.findByRole('textbox',{name:'连接名称'}),'未提交的连接草稿');
  await user.click(screen.getByRole('button',{name:'关闭连接窗口'}));
+ await user.click(screen.getByRole('button',{name:'保留修改并关闭'}));
  await user.click(nav.getByRole('button',{name:'历史资料'}));
- await within(maintenance).findByText('没有匹配的历史生产单。可修改搜索或关闭“仅显示有生产内容的条目”。');
+ await within(maintenance).findByText('没有匹配的历史生产单。');
  expect(screen.queryByRole('tab',{name:'历史资料'})).toBeNull();
  expect(screen.queryByRole('textbox',{name:'连接名称'})).toBeNull();
  await user.click(nav.getByRole('button',{name:'连接配置'}));
  await user.click(within(maintenance).getByRole('button',{name:'新建连接'}));
  expect((screen.getByRole('textbox',{name:'连接名称'})as HTMLInputElement).value).toBe('未提交的连接草稿');
  await user.click(screen.getByRole('button',{name:'关闭连接窗口'}));
+ await user.click(screen.getByRole('button',{name:'保留修改并关闭'}));
  await user.click(nav.getByRole('button',{name:'历史资料'}));
  expect(requests.filter(path=>path.includes('/history-episodes?'))).toHaveLength(1);
 });
