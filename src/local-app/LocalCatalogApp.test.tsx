@@ -35,7 +35,7 @@ it('keeps a committed series save successful when its follow-up read fails',asyn
  const user=userEvent.setup();await user.click(screen.getByRole('button',{name:'账号操作'}));await user.click(screen.getByRole('menuitem',{name:'刷新账号'}));
  await waitFor(()=>expect(screen.getByRole('heading',{name:'Fixture series'})).toBeTruthy());
  expect((screen.getByRole('textbox',{name:'系列定位'}) as HTMLTextAreaElement).value).toBe('saved');
- expect((screen.getByRole('textbox',{name:'系列定位'}) as HTMLTextAreaElement).disabled).toBe(true);
+ expect((screen.getByRole('textbox',{name:'系列定位'}) as HTMLTextAreaElement).readOnly).toBe(true);
  expect(posts).toBe(1);
 });
 function pagedCatalog(title:string,page=1):LocalCatalog{return{accounts:[],blueprints:[],episodes:[{id:title,title,stage:'qc_review',account_id:'fixture',blueprint_version_id:'fixture',series_version_id:null,created_at:'2026-10-25T00:00:00Z',updated_at:'2026-10-25T00:00:00Z',archived_at:null} as LocalCatalog['episodes'][number]],series:[],seriesVersions:[],promptVersions:[],blueprintRevisions:{},sourceCreatedAt:'2026-10-25',importedAt:'2026-10-25',page,pageSize:20,total:60,episodeCount:60,accountCounts:{},reviewCount:3,stages:{},artifactCounts:{},pending:{page:1,total:0,items:[]},blocked:{page:1,total:0,items:[]},worker:{running:0,blocked:0,failed:0,latestCompleted:false},operationRows:[]};}
@@ -44,7 +44,7 @@ it('requests server pages and discards a late response from an earlier filter',a
  vi.stubGlobal('fetch',vi.fn(async(path:string)=>{if(path.endsWith('/session'))return json({csrfToken:'synthetic'});if(path.includes('/catalog?')){paths.push(path);if(catalogs++===0)return json(pagedCatalog('initial'));return new Promise<Response>(resolve=>waiting.push(resolve));}return json({});}));
  render(<LocalCatalogApp/>);fireEvent.click(await productionButton());await waitFor(()=>expect(waiting).toHaveLength(1));await act(async()=>{waiting.shift()!(json(pagedCatalog('initial')));});
  fireEvent.click(screen.getByRole('button',{name:'下一页'}));await waitFor(()=>expect(waiting).toHaveLength(1));expect(paths.at(-1)).toContain('page=2');
- fireEvent.change(screen.getByRole('combobox',{name:'生产单状态'}),{target:{value:'all'}});await waitFor(()=>expect(waiting).toHaveLength(2));expect(paths.at(-1)).toContain('page=1');
+ fireEvent.change(screen.getByRole('combobox',{name:'归档范围'}),{target:{value:'all'}});await waitFor(()=>expect(waiting).toHaveLength(2));expect(paths.at(-1)).toContain('page=1');
  waiting[1](json(pagedCatalog('new-filter')));await screen.findByText(/new-filter/);waiting[0](json(pagedCatalog('stale-page',2)));
  await waitFor(()=>expect(screen.queryByText(/stale-page/)).toBeNull());expect(screen.getByText(/new-filter/)).toBeTruthy();
 });

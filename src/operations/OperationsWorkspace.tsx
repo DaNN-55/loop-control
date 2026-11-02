@@ -50,7 +50,7 @@ interface SeriesOperation {
 
 interface WorkbenchControls {
  query:string;status:CatalogStatus;sort:CatalogSort;accountId:string;
- onSearch:(query:string)=>void;onStatus:(status:CatalogStatus)=>void;onSort:(sort:CatalogSort)=>void;onAccount:(id:string)=>void;
+ onSearch:(query:string)=>void;onReset?:()=>void;onStatus:(status:CatalogStatus)=>void;onSort:(sort:CatalogSort)=>void;onAccount:(id:string)=>void;
 }
 interface RemoteOperations {
   catalog: EpisodeCatalog; seriesId: string; onSeriesChange: (id: string) => void;
@@ -125,6 +125,12 @@ export function OperationsWorkspace({ catalogControls,isLoading=false,accounts=[
       : remote.catalog.worker.running > 0 || (remote.catalog.statusCounts?.running ?? 0) > 0
         ? {tone:'info',icon:Clock3,title:'内容正在制作中',detail:'可以查看制作进度，或继续其他生产单。'}
         : {tone:'success',icon:Check,title:'当前审核已处理完毕',detail:'可以继续制作，或新建生产单。'};
+  const hasFilters = Boolean(search || catalogControls?.query || (catalogControls && catalogControls.status !== 'all') || (catalogControls && catalogControls.sort !== 'updated') || catalogControls?.accountId || effectiveSeriesId !== 'all');
+  function resetFilters() {
+    setSearch('');setEpisodePage(1);setSelectedSeriesId('all');
+    if(catalogControls?.onReset){catalogControls.onReset();return;}
+    catalogControls?.onSearch('');catalogControls?.onStatus('all');catalogControls?.onSort('updated');catalogControls?.onAccount('');remote?.onSeriesChange('all');
+  }
   const NoticeIcon = notice?.icon ?? Check;
   return <section className="operations-workspace" aria-label="系列运营概览" aria-busy={isLoading} data-has-current={Boolean(focusedEpisode)}>
     <header className="operations-intro"><div><h1>制作中的内容</h1></div>{actions}</header>
@@ -135,10 +141,11 @@ export function OperationsWorkspace({ catalogControls,isLoading=false,accounts=[
     </>}
     <div className="work-results" role={catalogControls?'tabpanel':undefined} id={`${tabId}-panel`} aria-labelledby={catalogControls?`${tabId}-${catalogControls.status}`:undefined}>
     <div className="work-filters">
-      {catalogControls&&<form className="episode-search" role="search" aria-label="搜索工作台生产单" onSubmit={event=>{event.preventDefault();catalogControls.onSearch(search.trim());}}><Search size={15} aria-hidden="true"/><input aria-label="搜索标题或编号" placeholder="搜索标题或编号" maxLength={200} value={search} onChange={event=>setSearch(event.target.value)}/>{search&&<button type="button" aria-label="清除搜索" onClick={()=>{setSearch('');catalogControls.onSearch('');}}><X size={14}/></button>}</form>}
+      {catalogControls&&<form className="episode-search" role="search" aria-label="搜索工作台生产单" onSubmit={event=>{event.preventDefault();const query=search.trim();setSearch(query);catalogControls.onSearch(query);}}><Search size={15} aria-hidden="true"/><input aria-label="搜索标题或编号" placeholder="搜索标题或编号" maxLength={200} value={search} onChange={event=>setSearch(event.target.value)}/>{search&&<button type="button" aria-label="清除搜索" onClick={()=>{setSearch('');catalogControls.onSearch('');}}><X size={14} aria-hidden="true"/></button>}<button className="episode-search-submit" type="submit">搜索</button></form>}
       {catalogControls&&<PopulatedFilterSelect icon={Users} size="sm" aria-label="工作台账号筛选" disabled={isLoading} value={catalogControls.accountId} onValueChange={catalogControls.onAccount} allValue="" counts={accountCounts} options={[{value:"",label:"全部账号"},...accounts.map(account=>({value:account.id,label:account.name}))]}/>}
       <PopulatedFilterSelect icon={Layers} size="sm" aria-label="运营系列筛选" disabled={isLoading} value={effectiveSeriesId} onValueChange={remote?.onSeriesChange??setSelectedSeriesId} allValue="all" counts={seriesCounts} options={[{value:"all",label:"全部系列"},...seriesOptions.map(operation=>({value:operation.id,label:operation.name}))]}/>
       {catalogControls&&<NativeSelect icon={ArrowDownWideNarrow} size="sm" aria-label="工作台排序" value={catalogControls.sort} onChange={event=>catalogControls.onSort(event.target.value as CatalogSort)} options={[{value:'updated',label:'最近更新'},{value:'oldest',label:'最早更新'},{value:'title',label:'标题顺序'},{value:'cost_desc',label:'花费从高到低'},{value:'cost_asc',label:'花费从低到高'}]}/>}
+      {(hasFilters || (remote?.catalog.total ?? visibleEpisodes.length) === 0) && <Button size="sm" color="tertiary" onPress={resetFilters}>清空筛选</Button>}
     </div>
     <section className="lc-work-table" aria-label="系列生产单">
     {isLoading?<p role="status" className="workspace-loading">正在读取工作台…</p>:visibleEpisodes.length?<><div className="work-table-scroll"><table><thead><tr><th scope="col">生产单</th><th scope="col">当前阶段</th><th scope="col">状态</th><th scope="col">最近更新</th><th scope="col"><span className="sr-only">操作</span></th></tr></thead><tbody>{visibleEpisodePage.map(({episode,blockers:episodeBlockers,reviewPackage,reviewPending})=>{

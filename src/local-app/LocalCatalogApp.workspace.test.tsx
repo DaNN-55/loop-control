@@ -96,7 +96,7 @@ it.each([false,true])('cleanupPending=%s: confirms the actual directory and exac
  }));
  await act(async()=>{render(<LocalCatalogApp/>);});
  await user.click(within(screen.getByRole('complementary',{name:'主导航'})).getByRole('button',{name:'生产单'}));
- await user.selectOptions(await screen.findByRole('combobox',{name:'生产单状态'}),'archived');
+ await user.selectOptions(await screen.findByRole('combobox',{name:'归档范围'}),'archived');
  await user.click(await screen.findByRole('button',{name:'生产单操作：普通长度完整生产单'}));
  await user.click(screen.getByRole('menuitem',{name:'永久删除'}));
  const modal=screen.getByRole('form',{name:'永久删除生产单'}),confirm=within(modal).getByRole('button',{name:'确认永久删除'});
@@ -126,7 +126,7 @@ it.each(['plan','delete'])('shows a %s failure inside the confirmation dialog in
  }));
  await act(async()=>{render(<LocalCatalogApp/>);});
  await user.click(within(screen.getByRole('complementary',{name:'主导航'})).getByRole('button',{name:'生产单'}));
- await user.selectOptions(await screen.findByRole('combobox',{name:'生产单状态'}),'archived');
+ await user.selectOptions(await screen.findByRole('combobox',{name:'归档范围'}),'archived');
  await user.click(await screen.findByRole('button',{name:'生产单操作：测试'}));
  await user.click(screen.getByRole('menuitem',{name:'永久删除'}));
  const modal=screen.getByRole('form',{name:'永久删除生产单'});
@@ -170,7 +170,7 @@ it('恢复失败留在确认框内且可重试，成功后关闭；操作错误�
  }));
  await act(async()=>{render(<LocalCatalogApp/>);});
  await user.click(within(screen.getByRole('complementary',{name:'主导航'})).getByRole('button',{name:'生产单'}));
- await user.selectOptions(await screen.findByRole('combobox',{name:'生产单状态'}),'archived');
+ await user.selectOptions(await screen.findByRole('combobox',{name:'归档范围'}),'archived');
  await user.click(await screen.findByRole('button',{name:'生产单操作：待恢复旧单'}));await user.click(screen.getByRole('menuitem',{name:'恢复'}));
  const modal=screen.getByRole('form',{name:'恢复生产单'});await user.click(within(modal).getByRole('button',{name:'确认恢复'}));
  expect((await within(modal).findByRole('alert')).textContent).toBe('恢复未完成，请重试。');expect(document.querySelector('.floating-notices')).toBeNull();
