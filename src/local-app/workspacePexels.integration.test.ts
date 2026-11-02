@@ -63,3 +63,20 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Pexels results and unimp
  await f.restart();w=await f.read();expect(w.pexels.requests.find((r:any)=>r.id===search.id)?.results).toHaveLength(2);expect(w.pexels.requests.find((r:any)=>r.id===preview.id)?.preview).toBeTruthy();expect((await f.request('importWorkspacePexelsVideo',{...base(),previewId:preview.id},{token:f.otherToken})).status).toBe(404);await send('searchWorkspacePexelsVideos',{targetItemId:target,selection,query:'new search for first shot'});await send('importWorkspacePexelsVideo',{previewId:preview.id});expect(w.visualCandidates[0].targetItemId).toBe(target);expect(w.visualCandidates[0].source.id).toBe(22);
  }finally{await f.close();}
 },120000);
+
+
+it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('thumbnail search metadata survives Owner reads and duplicate preview/import cannot change the project before adoption',async()=>{
+ const f=await workspacePexelsFixture();try{
+  let w=await f.read();const original=w.project.sha256,target=w.clips[0].itemId,base=()=>({workspaceId:w.id,expectedRevision:w.revision});
+  const result=await f.request('searchWorkspacePexelsVideos',{...base(),targetItemId:target,selection:{capability:'video',provider:'pexels',adapter:'pexels_video',connectionVersionId:f.version},query:'ocean'});expect(result.status,JSON.stringify(result.body)).toBe(200);w=result.body;
+  await f.execute(w.pexels.requests[0].taskId);w=await f.read();const search=w.pexels.requests[0];
+  expect(search.results[0].thumbnailUrl).toBe('https://images.pexels.com/videos/11/preview.jpg');expect(search.results[1].thumbnailUrl).toBeUndefined();expect(w.visualCandidates).toHaveLength(0);expect(w.project.sha256).toBe(original);
+  const start=await f.request('previewWorkspacePexelsVideo',{...base(),searchId:search.id,resultId:11});expect(start.status,JSON.stringify(start.body)).toBe(200);w=start.body;const pending=w.pexels.requests.find((r:any)=>r.operation==='preview');
+  expect((await f.request('previewWorkspacePexelsVideo',{...base(),searchId:search.id,resultId:11})).status).toBe(409);
+  await f.execute(pending.taskId);await f.restart();w=await f.read();const preview=w.pexels.requests.find((r:any)=>r.id===pending.id);expect(preview.source.thumbnailUrl).toBe(search.results[0].thumbnailUrl);
+  const download=await fetch(f.origin+'/_local-artifact?episode='+f.episode+'&path='+encodeURIComponent(preview.preview.relativePath)+'&sha256='+preview.preview.sha256,{headers:{Cookie:'loop_owner_session='+f.token}});expect(download.status).toBe(200);expect(Buffer.from(await download.arrayBuffer())).toEqual(await readFile(workspaceTestMedia('landscape-red-blue.mp4')));
+  expect(w.visualCandidates).toHaveLength(0);const imported=await f.request('importWorkspacePexelsVideo',{...base(),previewId:preview.id});expect(imported.status,JSON.stringify(imported.body)).toBe(200);w=imported.body;expect(w.visualCandidates).toHaveLength(1);expect(w.visualCandidates[0].source.id).toBe(11);expect(w.project.sha256).toBe(original);
+  const repeated=await f.request('importWorkspacePexelsVideo',{...base(),previewId:preview.id});expect(repeated.status,JSON.stringify(repeated.body)).toBe(200);w=repeated.body;expect(w.visualCandidates).toHaveLength(1);expect(w.project.sha256).toBe(original);expect(w.visualCandidates[0].status).toBe('available');
+  const calls=(await readFile(f.calls,'utf8')).trim().split('\n').map(line=>JSON.parse(line));expect(calls.filter(call=>new URL(call.url).hostname==='videos.pexels.com')).toHaveLength(1);expect(calls.some(call=>new URL(call.url).hostname==='images.pexels.com')).toBe(false);
+ }finally{await f.close();}
+},120000);

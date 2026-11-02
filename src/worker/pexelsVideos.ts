@@ -1,7 +1,7 @@
 import type {MediaFetcher} from './mediaProviders.js';
 export class PexelsVideoError extends Error {}
 export interface PexelsVideoParameters {orientation:'portrait'|'landscape'|'square';size:'large'|'medium'|'small';page:number}
-export interface PexelsVideoSource {id:number;fileId:number;durationSeconds:number;width:number;height:number;creator:string;creatorUrl:string;sourceUrl:string;downloadUrl:string}
+export interface PexelsVideoSource {id:number;fileId:number;durationSeconds:number;width:number;height:number;creator:string;creatorUrl:string;sourceUrl:string;downloadUrl:string;thumbnailUrl?:string}
 export interface PexelsVideoRequest {operation:'search'|'preview';parameters:PexelsVideoParameters;source?:PexelsVideoSource}
 export function pexelsUrl(value:unknown,kind:'media'|'source'){
  if(typeof value!=='string'||value.length>2048)throw new PexelsVideoError('Pexels 返回的网址无效。');
@@ -22,7 +22,10 @@ async function boundedResponse(fetcher:MediaFetcher,url:string,init:RequestInit,
 }
 export function validatePexelsSource(value:unknown):PexelsVideoSource{
  const s=value as PexelsVideoSource;if(!s||!Number.isSafeInteger(s.id)||s.id<=0||!Number.isSafeInteger(s.fileId)||s.fileId<=0||!Number.isFinite(s.durationSeconds)||s.durationSeconds<=0||s.durationSeconds>7200||![s.width,s.height].every(n=>Number.isInteger(n)&&n>0&&n<=4096)||typeof s.creator!=='string'||!s.creator.trim()||s.creator.length>200)throw new PexelsVideoError('Pexels 素材信息无效。');
- return {id:s.id,fileId:s.fileId,durationSeconds:s.durationSeconds,width:s.width,height:s.height,creator:s.creator,creatorUrl:pexelsUrl(s.creatorUrl,'source'),sourceUrl:pexelsUrl(s.sourceUrl,'source'),downloadUrl:pexelsUrl(s.downloadUrl,'media')};
+ let thumbnailUrl:string|undefined;
+ // A missing or unusable still image must not hide an otherwise valid video.
+ try{const url=pexelsUrl(s.thumbnailUrl,'media');if(new URL(url).hostname==='images.pexels.com')thumbnailUrl=url;}catch{/* Optional thumbnail falls back in the search panel. */}
+ return {...(thumbnailUrl?{thumbnailUrl}:{}),id:s.id,fileId:s.fileId,durationSeconds:s.durationSeconds,width:s.width,height:s.height,creator:s.creator,creatorUrl:pexelsUrl(s.creatorUrl,'source'),sourceUrl:pexelsUrl(s.sourceUrl,'source'),downloadUrl:pexelsUrl(s.downloadUrl,'media')};
 }
 export async function queryPexelsVideos(input:{apiKey:string;fetcher:MediaFetcher;query:string;parameters:PexelsVideoParameters}):Promise<PexelsVideoSource[]>{
  const {parameters:p}=input;if(!input.apiKey.trim()||!input.query.trim()||input.query.length>100||!['portrait','landscape','square'].includes(p.orientation)||!['large','medium','small'].includes(p.size)||!Number.isInteger(p.page)||p.page<1||p.page>100)throw new PexelsVideoError('Pexels 检索参数无效。');
@@ -33,7 +36,7 @@ export async function queryPexelsVideos(input:{apiKey:string;fetcher:MediaFetche
   if(!v||!Array.isArray(v.video_files)||!v.user)throw new PexelsVideoError('Pexels 素材信息不完整。');
   const files=v.video_files.filter((f:Record<string,any>)=>f.file_type==='video/mp4'&&f.width>0&&f.height>0&&f.width<=4096&&f.height<=4096).sort((a:Record<string,any>,b:Record<string,any>)=>Math.abs(Math.max(a.width,a.height)-1280)-Math.abs(Math.max(b.width,b.height)-1280));
   const f=files[0];if(!f)throw new PexelsVideoError('Pexels 结果缺少可预览的 MP4。');
-  return validatePexelsSource({id:v.id,fileId:f.id,durationSeconds:v.duration,width:f.width,height:f.height,creator:v.user.name,creatorUrl:v.user.url,sourceUrl:v.url,downloadUrl:f.link});
+  return validatePexelsSource({id:v.id,fileId:f.id,durationSeconds:v.duration,width:f.width,height:f.height,creator:v.user.name,creatorUrl:v.user.url,sourceUrl:v.url,downloadUrl:f.link,thumbnailUrl:v.image});
  });
 }
 export async function downloadPexelsVideo(fetcher:MediaFetcher,source:PexelsVideoSource){
