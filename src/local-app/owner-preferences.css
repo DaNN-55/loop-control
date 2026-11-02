@@ -17,7 +17,11 @@ html[data-interface="impeccable"] .product-ui .owner-menu-trigger .owner-menu-av
 .owner-preferences-note{font-size:12px;color:var(--lc-muted);margin:0}
 .owner-preferences-dialog form>footer{border-radius:0 0 14px 14px;padding:18px 24px;background:var(--lc-surface-2);border-top:1px solid var(--lc-line);display:flex;align-items:center;gap:16px;justify-content:space-between}
 .owner-preferences-dialog form>footer>div{display:flex;gap:8px}
-.owner-preferences-dialog [role="status"]{font-size:12px;color:var(--lc-success)}
+.owner-preferences-dialog [role="status"]{font-size:12px;color:var(--lc-muted)}
+.owner-preferences-dialog [role="status"][data-state="saved"]{color:var(--lc-success)}
+.owner-preferences-dialog [role="status"][data-state="failed"]{color:var(--lc-danger)}
+.owner-preferences-fields p{margin:0;font-size:13px}
+.owner-preferences-card h3{margin:0;font-size:13px;font-weight:600}
 .owner-preferences-error{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .owner-preferences-loading{padding:32px 24px}
 .owner-profile-summary{display:grid;gap:4px;padding:12px 16px;border-bottom:1px solid var(--lc-line);margin-bottom:4px}

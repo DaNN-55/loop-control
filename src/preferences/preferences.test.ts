@@ -10,3 +10,9 @@ it('reads legacy preferences without an avatar and validates bounded raster data
  expect(parseOwnerPreferences({...legacy,avatar:png}).avatar).toBe(png);
  for(const avatar of ['https://example.com/photo.png','data:image/svg+xml;base64,PHN2Zz4=','data:image/png;base64,AAAA','data:image/jpeg;base64,iVBORw0KGgo=','data:image/png;base64,'+'A'.repeat(100000),true,42])expect(()=>parseOwnerPreferences({...legacy,avatar})).toThrow('头像');
 });
+it('keeps channels independent while reading legacy category preferences',()=>{
+ const legacy={...defaultOwnerPreferences,notifications:{review:false,failure:true,delivery:true}};
+ expect(parseOwnerPreferences(legacy).notifications).toEqual({review:false,failure:true,delivery:true,inApp:true,macOS:true});
+ expect(parseOwnerPreferences({...legacy,notifications:{...legacy.notifications,inApp:false,macOS:true}}).notifications).toEqual({review:false,failure:true,delivery:true,inApp:false,macOS:true});
+ for(const patch of [{inApp:'false'},{macOS:null}])expect(()=>parseOwnerPreferences({...legacy,notifications:{...legacy.notifications,...patch}})).toThrow();
+});

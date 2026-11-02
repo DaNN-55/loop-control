@@ -5,6 +5,8 @@ import {spawn} from 'node:child_process';
 import {Duplex} from 'node:stream';
 import {randomUUID,randomBytes} from 'node:crypto';
 import {readFileSync} from 'node:fs';
+import {mkdtemp,rm} from 'node:fs/promises';
+import {startNativeAutomation} from './nativeAutomation';
 import {join} from 'node:path';
 import {createServer} from 'node:http';
 import {Pool,type PoolClient} from 'pg';
@@ -14,7 +16,7 @@ import {createLocalHandler} from './localRoute';
 import {LocalConnections} from './connections';
 import {defaultOwnerPreferences} from '../preferences/preferences';
 it.skipIf(process.env.LOOP_PREFERENCES_ACCEPTANCE!=='1')('persists Owner preferences through authenticated HTTP, isolates Owners and gates both desktop categories and the recent feed',async()=>{
- const {runtimeContext}=await import(join(process.cwd(),'scripts/runtime/environment.mjs')),context=runtimeContext();context.assertDatabase();
+ const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MODULE??join(process.cwd(),'scripts/runtime/environment.mjs')),context=runtimeContext();if(context.dailyRuntime!==false)throw Error('Owner preference acceptance requires an isolated runtime');context.assertDatabase();
  const bridge=spawn('docker',['exec','-i',context.container,'perl','-MIO::Socket::UNIX','-MIO::Select','-MSocket=SOCK_STREAM','-e',"my $s=IO::Socket::UNIX->new(Type=>SOCK_STREAM,Peer=>'/var/run/postgresql/.s.PGSQL.5432') or die 'socket';my $sel=IO::Select->new(\\*STDIN,$s);while(1){for my $f($sel->can_read){my $n=sysread($f,my $b,65536);exit unless $n;my $o=fileno($f)==0?$s:\\*STDOUT;while(length $b){my $w=syswrite($o,$b);die 'write' unless $w;substr($b,0,$w,'');}}}"],{env:context.env,stdio:['pipe','pipe','pipe']});
  const stream=Duplex.from({readable:bridge.stdout!,writable:bridge.stdin!});
  const admin=new Pool({database:context.database,user:'postgres',max:1,stream:()=>Object.assign(stream,{connect(){queueMicrotask(()=>stream.emit('connect'));return stream;},setNoDelay(){return stream;},setKeepAlive(){return stream;}})}as ConstructorParameters<typeof Pool>[0]);
@@ -46,7 +48,7 @@ it.skipIf(process.env.LOOP_PREFERENCES_ACCEPTANCE!=='1')('persists Owner prefere
   expect((await post(defaultOwnerPreferences,'bad')).status).toBe(403);
   expect((await post(defaultOwnerPreferences,csrfFor(token),'http://wrong.test')).status).toBe(403);
   expect((await post({...defaultOwnerPreferences,notifications:{review:false}})).status).toBe(400);
-  const saved={...defaultOwnerPreferences,displayName:'Dan fixture',appearance:'system',compactRows:false,notifications:{review:false,failure:false,delivery:true}};
+  const saved={...defaultOwnerPreferences,displayName:'Dan fixture',appearance:'system',compactRows:false,notifications:{...defaultOwnerPreferences.notifications,review:false,failure:false,delivery:true}};
   expect((await post(saved)).status).toBe(200);expect(await(await get()).json()).toEqual(saved);
   const avatar='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+j5f8AAAAASUVORK5CYII=';
   expect((await post({...saved,avatar})).status).toBe(200);expect((await(await get()).json()).avatar).toBe(avatar);
@@ -55,6 +57,15 @@ it.skipIf(process.env.LOOP_PREFERENCES_ACCEPTANCE!=='1')('persists Owner prefere
   expect((await c.query('SELECT owner_id FROM local_identity.owner_preferences')).rows).toEqual([{owner_id:owner}]);
   expect((await c.query('UPDATE local_identity.owner_preferences SET preferences=$1 WHERE owner_id=$2',[JSON.stringify(defaultOwnerPreferences),other])).rowCount).toBe(0);
   const enabled=async(id:string,kind:string)=>(await c.query('SELECT local_identity.native_notification_enabled($1,$2) enabled',[id,kind])).rows[0].enabled;
+  // Existing persisted category-only preferences gain channel defaults on read.
+  await c.query('SET SESSION AUTHORIZATION DEFAULT');await c.query('UPDATE local_identity.owner_preferences SET preferences=$1 WHERE owner_id=$2',[JSON.stringify({...saved,notifications:{review:false,failure:false,delivery:true}}),owner]);await c.query('SET SESSION AUTHORIZATION loop_app');
+  expect(await(await get()).json()).toEqual(saved);expect(await enabled(delivery,'delivery')).toBe(true);
+  for(const inApp of [false,true])for(const macOS of [false,true]){
+   const channels={...saved,notifications:{...saved.notifications,inApp,macOS}};
+   expect((await post(channels)).status).toBe(200);expect(await(await get()).json()).toEqual(channels);
+   expect(await enabled(delivery,'delivery')).toBe(macOS);expect(await enabled(review,'review')).toBe(false);
+  }
+  expect((await post(saved)).status).toBe(200);
   expect(await enabled(review,'review')).toBe(false);expect(await enabled(delivery,'delivery')).toBe(true);
   // Same real connection command path; provider/Keychain ports are controlled and never call out.
   const session={id:owner,email:'preferences-a@example.invalid',token};let outcome:'invalid'|'retryable'='invalid';
@@ -81,7 +92,24 @@ it.skipIf(process.env.LOOP_PREFERENCES_ACCEPTANCE!=='1')('persists Owner prefere
   await c.query('SET SESSION AUTHORIZATION loop_app');
   const failedFeed=await(await get('notification-events')).json();expect(failedFeed.filter((event:{event_type:string})=>event.event_type==='production_task_failed')).toHaveLength(1);
   const taskEvent=failedFeed.find((event:{event_type:string})=>event.event_type==='production_task_failed');expect(taskEvent.episode_id).toBe(episode);expect(await enabled(taskEvent.id,'failure')).toBe(true);
+  if(process.env.LOOP_PREFERENCES_BROWSER_MODULE){const {review}=await import(process.env.LOOP_PREFERENCES_BROWSER_MODULE);await review({server,token,origin,csrf:csrfFor(token)});}
+  // The schema-only fixture has no singleton rows; native initialization needs its installation seed.
+  await c.query('SET SESSION AUTHORIZATION DEFAULT');await c.query('INSERT INTO public.notification_delivery_state(singleton,initialized) VALUES(true,false) ON CONFLICT(singleton) DO NOTHING');await c.query('SET SESSION AUTHORIZATION loop_app');
+  const stateDirectory=await mkdtemp('/private/tmp/loop-preferences-native-'),sent:string[]=[];let transportDenied=false;
+  const automation=await startNativeAutomation({pool,projectRoot:process.cwd(),mediaRoot:'/fixture',stateDirectory,backupsEnabled:false,recordSchedule:false,intervalMs:2000000000,now:()=>new Date('2099-01-01T00:00:00Z'),send:async message=>{if(transportDenied)throw Error('synthetic OS transport denial');sent.push(message.eventId);}});
+  try{
+   await automation.wake();sent.length=0;
+   for(const inApp of [false,true])for(const macOS of [false,true]){
+    expect((await post({...saved,notifications:{...saved.notifications,inApp,macOS}})).status).toBe(200);
+    const eventId=randomUUID();await c.query('SET SESSION AUTHORIZATION DEFAULT');await c.query("INSERT INTO public.audit_events(id,account_id,event_type,payload)VALUES($1,$2,'publish_package_verified','{}')",[eventId,account]);await c.query('SET SESSION AUTHORIZATION loop_app');
+    await automation.wake();expect(sent.includes(eventId),JSON.stringify(await automation.status())).toBe(macOS);
+   }
+   transportDenied=true;
+   const denied=randomUUID();await c.query('SET SESSION AUTHORIZATION DEFAULT');await c.query("INSERT INTO public.audit_events(id,account_id,event_type,payload)VALUES($1,$2,'publish_package_verified','{}')",[denied,account]);await c.query('SET SESSION AUTHORIZATION loop_app');
+   await automation.wake();expect((await automation.status()).operations.notification?.latest.passed).toBe(false);
+   transportDenied=false;await automation.wake();expect(sent.includes(denied)).toBe(false);
+  }finally{await automation.stop();await rm(stateDirectory,{recursive:true,force:true});}
   await c.query('SET SESSION AUTHORIZATION DEFAULT');await c.query('UPDATE local_identity.sessions SET revoked_at=now() WHERE token_hash=$1',[tokenHash(token)]);await c.query('SET SESSION AUTHORIZATION loop_app');
   expect((await post(saved)).status).toBe(401);
  }finally{await new Promise<void>(resolve=>server.close(()=>resolve()));await c.query('ROLLBACK').catch(()=>{});c.release();await admin.end();bridge.kill();}
-},60000);
+},process.env.LOOP_PREFERENCES_BROWSER_MODULE?300000:60000);

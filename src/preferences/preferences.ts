@@ -5,11 +5,11 @@ export interface OwnerPreferences {
   language: 'zh-CN';
   appearance: 'light' | 'dark' | 'system';
   compactRows: boolean;
-  notifications: Record<NotificationKind, boolean>;
+  notifications: Record<NotificationKind, boolean> & {inApp?:boolean;macOS?:boolean};
 }
 export const defaultOwnerPreferences: OwnerPreferences = {
   displayName: '', avatar: null, language: 'zh-CN', appearance: 'light', compactRows: true,
-  notifications: {review: true, failure: true, delivery: true},
+  notifications: {review: true, failure: true, delivery: true,inApp:true,macOS:true},
 };
 /** Validate at the API boundary, including JSON loaded from storage. */
 export function parseOwnerPreferences(value: unknown): OwnerPreferences {
@@ -19,11 +19,12 @@ export function parseOwnerPreferences(value: unknown): OwnerPreferences {
   if (Object.keys(p).some(key=>!['displayName','avatar','language','appearance','compactRows','notifications'].includes(key)) ||
       typeof p.displayName !== 'string' || p.displayName.trim().length > 60 || /[\u0000-\u001f\u007f]/.test(p.displayName) ||
       p.language !== 'zh-CN' || !['light','dark','system'].includes(String(p.appearance)) || typeof p.compactRows !== 'boolean' ||
-      !n || typeof n !== 'object' || Array.isArray(n) || Object.keys(n).some(key=>!['review','failure','delivery'].includes(key)) ||
-      ['review','failure','delivery'].some(key=>typeof n[key] !== 'boolean')) throw Error('偏好字段无效。');
+      !n || typeof n !== 'object' || Array.isArray(n) || Object.keys(n).some(key=>!['review','failure','delivery','inApp','macOS'].includes(key)) ||
+      ['review','failure','delivery'].some(key=>typeof n[key] !== 'boolean') ||
+      ['inApp','macOS'].some(key=>key in n&&typeof n[key]!=='boolean')) throw Error('偏好字段无效。');
   const avatar = p.avatar ?? null;
   if(avatar!==null&&!isAvatarDataUrl(avatar))throw Error('头像须为不超过 64 KB 的 PNG、JPEG 或 WebP 图片。');
-  return {...p,avatar,displayName:p.displayName.trim(),notifications:{...n}} as OwnerPreferences;
+  return {...p,avatar,displayName:p.displayName.trim(),notifications:{...n,inApp:n.inApp??true,macOS:n.macOS??true}} as OwnerPreferences;
 }
 
 export const maxAvatarBytes = 64 * 1024;

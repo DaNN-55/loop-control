@@ -32,7 +32,7 @@ export function WorkspaceTopbar({ownerMenu,theme,onToggleTheme,onOpenEpisode,onO
     const [notificationsOpen,setNotificationsOpen]=useState(false);
     const [notificationEvents,setNotificationEvents]=useState<Array<{id:string;event_type:string;episode_id:string|null;created_at:string;payload:{name?:string;detail?:string}}>>([]);
     const [notificationEventsError,setNotificationEventsError]=useState('');
-    const notificationsDisabled=!notificationPreferences.review&&!notificationPreferences.failure&&!notificationPreferences.delivery;
+    const remindersDisabled=notificationPreferences.inApp===false||(!notificationPreferences.review&&!notificationPreferences.failure&&!notificationPreferences.delivery);
     const [query,setQuery]=useState('');
     const [results,setResults]=useState<WorkspaceSearchResponse|null>(null);
     const [searchLoading,setSearchLoading]=useState(false);
@@ -78,15 +78,15 @@ export function WorkspaceTopbar({ownerMenu,theme,onToggleTheme,onOpenEpisode,onO
 
     useEffect(()=>{
         const generation=++attentionGeneration.current,controller=new AbortController();
-        if(!notificationsOpen||notificationsDisabled)return()=>controller.abort();
+        if(!notificationsOpen)return()=>controller.abort();
         setAttentionLoading(true);setAttentionError('');
         void localRequest(attentionPath,{signal:controller.signal})
             .then((value:LocalCatalog)=>{if(!controller.signal.aborted&&generation===attentionGeneration.current)setAttention(value);})
             .catch(error=>{if(!controller.signal.aborted&&generation===attentionGeneration.current)setAttentionError(error instanceof Error?error.message:'待处理信息暂不可用。');})
             .finally(()=>{if(!controller.signal.aborted&&generation===attentionGeneration.current)setAttentionLoading(false);});
         return()=>controller.abort();
-    },[notificationsOpen,attentionRevision,notificationsDisabled]);
-    useEffect(()=>{const controller=new AbortController();if(!notificationsOpen||!notificationEventsEnabled||notificationsDisabled)return;setNotificationEventsError('');void localRequest('notification-events',{signal:controller.signal}).then(value=>{if(!controller.signal.aborted){if(!Array.isArray(value))throw Error('最近提醒格式无效。');setNotificationEvents(value);}}).catch(error=>{if(!controller.signal.aborted)setNotificationEventsError(error instanceof Error?error.message:'最近提醒暂不可用。');});return()=>controller.abort();},[notificationsOpen,attentionRevision,notificationEventsEnabled,notificationsDisabled]);
+    },[notificationsOpen,attentionRevision]);
+    useEffect(()=>{const controller=new AbortController();if(!notificationsOpen||!notificationEventsEnabled||remindersDisabled)return;setNotificationEventsError('');void localRequest('notification-events',{signal:controller.signal}).then(value=>{if(!controller.signal.aborted){if(!Array.isArray(value))throw Error('最近提醒格式无效。');setNotificationEvents(value);}}).catch(error=>{if(!controller.signal.aborted)setNotificationEventsError(error instanceof Error?error.message:'最近提醒暂不可用。');});return()=>controller.abort();},[notificationsOpen,attentionRevision,notificationEventsEnabled,remindersDisabled]);
 
     function openHit(hit:WorkspaceSearchHit){
         if(hit.kind==='material'){
@@ -102,14 +102,14 @@ export function WorkspaceTopbar({ownerMenu,theme,onToggleTheme,onOpenEpisode,onO
     function openAttentionCatalog(status:'review'|'blocked'){setNotificationsOpen(false);onOpenCatalog(status);}
 
     const attentionItems=new Map<string,{id:string;title:string;review:boolean;blocked:boolean;detail:string}>();
-    for(const episode of notificationPreferences.review?attention?.pending.items??[]:[])attentionItems.set(episode.id,{id:episode.id,title:episode.title||'未命名生产单',review:true,blocked:false,detail:'审核包已就绪'});
-    for(const item of notificationPreferences.failure?attention?.blocked.items??[]:[]){
+    for(const episode of attention?.pending.items??[])attentionItems.set(episode.id,{id:episode.id,title:episode.title||'未命名生产单',review:true,blocked:false,detail:'审核包已就绪'});
+    for(const item of attention?.blocked.items??[]){
         const previous=attentionItems.get(item.episode.id);
         attentionItems.set(item.episode.id,{id:item.episode.id,title:item.episode.title||'未命名生产单',review:previous?.review??false,blocked:true,detail:item.blocker.detail||'存在需要处理的阻塞'});
     }
     const hasResults=Boolean(results&&groups.some(group=>results[group.key].length));
-    const visibleEvents=notificationEvents.filter(event=>event.event_type==='publish_package_verified'?notificationPreferences.delivery:notificationPreferences.failure);
-    const attentionCount=!notificationsDisabled&&Boolean((attention&&(notificationPreferences.review&&attention.pending.total>0||notificationPreferences.failure&&(attention.blocked.total>0||attention.worker.failed>0)))||visibleEvents.length);
+    const visibleEvents=remindersDisabled?[]:notificationEvents.filter(event=>event.event_type==='publish_package_verified'?notificationPreferences.delivery:notificationPreferences.failure);
+    const attentionCount=Boolean((attention&&(attention.pending.total>0||attention.blocked.total>0||attention.worker.failed>0))||visibleEvents.length);
 
     return <div className="workspace-topbar-tools" role="group" aria-label="工作区工具">
         <div ref={searchContainer} className="workspace-inline-search" onBlurCapture={event=>{if(event.relatedTarget&&!event.currentTarget.contains(event.relatedTarget as Node))setSearchOpen(false);}} onKeyDown={event=>{
@@ -126,16 +126,16 @@ export function WorkspaceTopbar({ownerMenu,theme,onToggleTheme,onOpenEpisode,onO
             <Popover placement="bottom end" offset={10} className="dan-ui product-ui workspace-attention-popover">
                 <Dialog aria-label="待处理通知" className="workspace-attention-dialog">
                     <header><h2>待处理</h2><Button size="sm" color="tertiary" className="workspace-topbar-icon" iconLeading={RefreshCw} aria-label="刷新待处理" isDisabled={attentionLoading} onPress={()=>setAttentionRevision(value=>value+1)}/></header>
-                    {notificationsDisabled?<p className="workspace-tool-state">已关闭所有通知。</p>:attentionLoading?<p className="workspace-tool-state" role="status">正在读取待处理事项…</p>:attentionError?<div className="workspace-tool-state"><p role="alert">{attentionError}</p><Button size="sm" color="secondary" onPress={()=>setAttentionRevision(value=>value+1)}>重新读取</Button></div>:attention?<>
-                        <p className="workspace-attention-summary">{notificationPreferences.review&&<>待审核 {attention.pending.total}</>}{notificationPreferences.failure&&<span>需处理 {attention.blocked.total}</span>}</p>
+                    {attentionLoading?<p className="workspace-tool-state" role="status">正在读取待处理事项…</p>:attentionError?<div className="workspace-tool-state"><p role="alert">{attentionError}</p><Button size="sm" color="secondary" onPress={()=>setAttentionRevision(value=>value+1)}>重新读取</Button></div>:attention?<>
+                        <p className="workspace-attention-summary"><>待审核 {attention.pending.total}</><span>需处理 {attention.blocked.total}</span></p>
                         <ul className="workspace-attention-list">{Array.from(attentionItems.values()).map(item=><li key={item.id}><button type="button" onClick={()=>openAttentionEpisode(item.id)}><span className="workspace-attention-item-copy"><strong>{item.title}</strong><small>{item.detail}</small></span><span className="workspace-attention-flags">{item.review&&<span>待审核</span>}{item.blocked&&<span className="needs-attention">需处理</span>}</span><ChevronRight size={14} aria-hidden="true"/></button></li>)}</ul>
-                        {!attentionItems.size&&(!notificationPreferences.failure||attention.worker.failed===0)&&!visibleEvents.length&&<p className="workspace-tool-state">暂无待处理事项。</p>}
-                        {notificationPreferences.failure&&attention.worker.failed>0&&<button type="button" className="workspace-attention-failures" onClick={()=>openAttentionCatalog('blocked')}><AlertCircle size={15} aria-hidden="true"/><span>{attention.worker.failed} 项任务失败</span><ChevronRight size={14} aria-hidden="true"/></button>}
-                        {(notificationPreferences.review&&attention.pending.total>0||notificationPreferences.failure&&attention.blocked.total>0)&&<footer>{notificationPreferences.review&&attention.pending.total>0&&<button type="button" onClick={()=>openAttentionCatalog('review')}>全部待审核（{attention.pending.total}）</button>}{notificationPreferences.failure&&attention.blocked.total>0&&<button type="button" onClick={()=>openAttentionCatalog('blocked')}>全部需处理（{attention.blocked.total}）</button>}</footer>}
-                        {(notificationPreferences.review&&attention.pending.total>attention.pending.items.length||notificationPreferences.failure&&attention.blocked.total>attention.blocked.items.length)&&<p className="workspace-attention-page-note">当前显示首批事项，可打开全部列表继续查看。</p>}
+                        {!attentionItems.size&&attention.worker.failed===0&&!visibleEvents.length&&<p className="workspace-tool-state">暂无待处理事项。</p>}
+                        {attention.worker.failed>0&&<button type="button" className="workspace-attention-failures" onClick={()=>openAttentionCatalog('blocked')}><AlertCircle size={15} aria-hidden="true"/><span>{attention.worker.failed} 项任务失败</span><ChevronRight size={14} aria-hidden="true"/></button>}
+                        {(attention.pending.total>0||attention.blocked.total>0)&&<footer>{attention.pending.total>0&&<button type="button" onClick={()=>openAttentionCatalog('review')}>全部待审核（{attention.pending.total}）</button>}{attention.blocked.total>0&&<button type="button" onClick={()=>openAttentionCatalog('blocked')}>全部需处理（{attention.blocked.total}）</button>}</footer>}
+                        {(attention.pending.total>attention.pending.items.length||attention.blocked.total>attention.blocked.items.length)&&<p className="workspace-attention-page-note">当前显示首批事项，可打开全部列表继续查看。</p>}
                     </>:null}
-                    {!notificationsDisabled&&visibleEvents.length>0&&<section className="workspace-recent-notifications"><h3>最近提醒</h3><ul className="workspace-attention-list">{visibleEvents.map(event=><li key={event.id}><button type="button" onClick={()=>{setNotificationsOpen(false);if(event.event_type!=='connection_verification_failed'&&event.episode_id)onOpenEpisode(event.episode_id);else onOpenConnections?.();}}><span className="workspace-attention-item-copy"><strong>{event.event_type==='publish_package_verified'?'交付包已完成':event.event_type==='production_task_failed'?'生产任务失败':`${event.payload.name||'连接'}验证失败`}</strong><small>{new Date(event.created_at).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})}</small></span><ChevronRight size={14} aria-hidden="true"/></button></li>)}</ul></section>}
-                    {!notificationsDisabled&&notificationEventsError&&<p className="workspace-tool-state" role="alert">{notificationEventsError}</p>}
+                    {!remindersDisabled&&visibleEvents.length>0&&<section className="workspace-recent-notifications"><h3>最近提醒</h3><ul className="workspace-attention-list">{visibleEvents.map(event=><li key={event.id}><button type="button" onClick={()=>{setNotificationsOpen(false);if(event.event_type!=='connection_verification_failed'&&event.episode_id)onOpenEpisode(event.episode_id);else onOpenConnections?.();}}><span className="workspace-attention-item-copy"><strong>{event.event_type==='publish_package_verified'?'交付包已完成':event.event_type==='production_task_failed'?'生产任务失败':`${event.payload.name||'连接'}验证失败`}</strong><small>{new Date(event.created_at).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})}</small></span><ChevronRight size={14} aria-hidden="true"/></button></li>)}</ul></section>}
+                    {!remindersDisabled&&notificationEventsError&&<p className="workspace-tool-state" role="alert">{notificationEventsError}</p>}
                 </Dialog>
             </Popover>
         </DialogTrigger>

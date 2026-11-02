@@ -69,9 +69,16 @@ it('filters each category and opens completed packages and failed connections fr
  await user.click(screen.getByRole('button',{name:'待处理通知'}));await user.click(await screen.findByRole('button',{name:/交付包已完成/}));expect(props.onOpenEpisode).toHaveBeenCalledWith(episodeId);
  rerender(<WorkspaceTopbar {...props} onOpenConnections={connections} notificationEventsEnabled notificationPreferences={{review:false,failure:true,delivery:false}}/>);
  await user.click(screen.getByRole('button',{name:'待处理通知'}));await user.click(await screen.findByRole('button',{name:/连接A验证失败/}));expect(connections).toHaveBeenCalledOnce();
- await user.click(screen.getByRole('button',{name:'待处理通知'}));await screen.findByText('失败作品');expect(screen.queryByText('审核作品')).toBeNull();expect(screen.queryByText('交付包已完成')).toBeNull();
+ await user.click(screen.getByRole('button',{name:'待处理通知'}));await screen.findByText('失败作品');expect(screen.getByText('审核作品')).toBeTruthy();expect(screen.queryByText('交付包已完成')).toBeNull();
 });
-it('does not fetch or show reminders when all notification categories are disabled',async()=>{
- const fetcher=vi.fn();vi.stubGlobal('fetch',fetcher);render(<WorkspaceTopbar {...props} notificationEventsEnabled notificationPreferences={{review:false,failure:false,delivery:false}}/>);
- await userEvent.setup().click(screen.getByRole('button',{name:'待处理通知'}));await screen.findByText('已关闭所有通知。');expect(fetcher).not.toHaveBeenCalled();
+it('keeps pending work and badge visible while all reminder channels and categories are muted',async()=>{
+ const fetcher=vi.fn(async()=>Response.json({pending:{total:1,items:[{id:episodeId,title:'静音后的待审核作品'}]},blocked:{total:0,items:[]},worker:{failed:2}}));vi.stubGlobal('fetch',fetcher);render(<WorkspaceTopbar {...props} notificationEventsEnabled notificationPreferences={{review:false,failure:false,delivery:false,inApp:false,macOS:false}}/>);
+ await userEvent.setup().click(screen.getByRole('button',{name:'待处理通知'}));await screen.findByText('静音后的待审核作品');expect(screen.getByRole('button',{name:'全部待审核（1）'})).toBeTruthy();expect(screen.getByRole('button',{name:'2 项任务失败'})).toBeTruthy();expect(document.querySelector('.workspace-attention-dot')).toBeTruthy();expect(fetcher).toHaveBeenCalledTimes(1);expect(screen.queryByText('最近提醒')).toBeNull();
+});
+it.each([[false,false],[false,true],[true,false],[true,true]])('uses only the in-app channel for recent reminders (inApp=%s, macOS=%s)',async(inApp,macOS)=>{
+ const requests:string[]=[];vi.stubGlobal('fetch',vi.fn(async(url:string)=>{requests.push(url);return Response.json(url.endsWith('notification-events')?[{id:'done',event_type:'publish_package_verified',episode_id:episodeId,created_at:'2026-11-02T00:00:00Z',payload:{}}]:{pending:{total:0,items:[]},blocked:{total:0,items:[]},worker:{failed:0}});}));
+ render(<WorkspaceTopbar {...props} notificationEventsEnabled notificationPreferences={{review:true,failure:true,delivery:true,inApp,macOS}}/>);
+ await userEvent.setup().click(screen.getByRole('button',{name:'待处理通知'}));
+ if(inApp){expect(await screen.findByText('交付包已完成')).toBeTruthy();}else{await screen.findByText('暂无待处理事项。');expect(screen.queryByText('交付包已完成')).toBeNull();}
+ expect(requests.some(url=>url.endsWith('notification-events'))).toBe(inApp);
 });
