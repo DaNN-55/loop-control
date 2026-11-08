@@ -29,7 +29,7 @@ export function LocalMaintenancePanel({onClose, revision, embedded=false, initia
   useEffect(()=>{if(active==='history')setHistoryVisited(true);},[active]);
   const dialogRef = useDialogFocus(!embedded, onClose);
   if(embedded)return <section aria-label={active==='connections'?'连接配置内容':'历史资料内容'} className="maintenance-embedded">
-    <div className="maintenance-panel-content connection-settings-content" hidden={active!=='connections'} inert={active!=='connections'} data-inert={active!=='connections'||undefined}>{active==='connections'&&<LocalConnectionsPanel inlineBilling/>}</div>
+    <div className="maintenance-panel-content connection-settings-content" hidden={active!=='connections'} inert={active!=='connections'} data-inert={active!=='connections'||undefined}><LocalConnectionsPanel inlineBilling/><LocalDeletionRecovery revision={revision}/></div>
     <div className="maintenance-panel-content" hidden={active!=='history'} inert={active!=='history'} data-inert={active!=='history'||undefined}>{historyVisited&&<LocalHistory/>}</div>
   </section>;
   const contents = <>

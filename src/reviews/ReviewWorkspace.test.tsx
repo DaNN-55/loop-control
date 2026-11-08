@@ -1543,13 +1543,14 @@ describe("审核台", () => {
     expect(screen.queryByLabelText("镜头时长判定")).toBeNull();
     const preview = await screen.findByLabelText("presenter.mp4 预览") as HTMLVideoElement;
     const pause = vi.spyOn(preview, "pause").mockImplementation(() => undefined);
+    Object.defineProperty(preview,"paused",{value:false,configurable:true});
     preview.currentTime = 2;
     fireEvent.timeUpdate(preview);
     expect(document.querySelector<HTMLElement>(".clip-filmstrip-playhead")?.style.left).toBe("34.48275862068966%");
     preview.currentTime = 3;
     fireEvent.timeUpdate(preview);
     expect(pause).toHaveBeenCalled();
-    preview.currentTime = 2;
+    preview.currentTime = 3;
     fireEvent.play(preview);
     expect(preview.currentTime).toBe(1);
     Object.defineProperty(preview, "duration", { configurable: true, value: 10 });

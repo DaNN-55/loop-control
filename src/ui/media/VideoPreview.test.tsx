@@ -39,3 +39,11 @@ it('only shows the two time displays and source switch for a trimmed range',()=>
  rerender(<VideoPreview {...props} segment={{start:0,end:5}}/>);
  expect(screen.getByRole('button',{name:'查看整段源视频'})).toBeTruthy();
 });
+
+it('clamps native time updates to both trim boundaries even while paused',()=>{
+ render(<VideoPreview src="/source.mp4" title="边界" segment={{start:0.5,end:2}}/>);
+ const video=screen.getByLabelText('边界视频预览') as HTMLVideoElement;
+ video.currentTime=0;fireEvent.timeUpdate(video);expect(video.currentTime).toBe(0.5);
+ video.currentTime=2.5;fireEvent.timeUpdate(video);expect(video.currentTime).toBe(2);
+ expect(video.paused).toBe(true);
+});

@@ -194,7 +194,7 @@ it('plays only the selected trim range without changing the source or saving a d
   render(<EpisodeProductionView {...f.props} nodeWorkspace onSaveShotPreparationDraft={save}/>);
   await screen.findByText('播放所选片段');
   const video=await waitFor(()=>{const element=document.querySelector<HTMLVideoElement>('.shot-marker-video video');expect(element).toBeTruthy();return element!;});
-  fireEvent.play(video);expect(video.currentTime).toBe(0.5);
+  Object.defineProperty(video,'paused',{value:false,configurable:true});fireEvent.play(video);expect(video.currentTime).toBe(0.5);
   video.currentTime=0;fireEvent.timeUpdate(video);expect(video.currentTime).toBe(0.5);
   video.currentTime=2.5;fireEvent.timeUpdate(video);expect(video.currentTime).toBe(2);expect(pause).toHaveBeenCalled();
   expect(screen.getByText('0.500–2.000s · 仅原片截取')).toBeTruthy();

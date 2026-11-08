@@ -56,7 +56,7 @@ function VideoPreviewSource({src,title,poster,className,'aria-label':label,prelo
    onLoadedMetadata={event=>{const player=event.currentTarget;setDuration(Number.isFinite(player.duration)?player.duration:0);if(Number.isFinite(player.duration))onDuration?.(player.duration);player.playbackRate=clipped?playbackRate:1;if(clipped)player.currentTime=start;setTime(player.currentTime);setLoading(false);}}
    onPlay={event=>{const player=event.currentTarget;player.playbackRate=clipped?playbackRate:1;if(clipped&&(player.currentTime<start||player.currentTime>=lastFrame))player.currentTime=start;update();}}
    onSeeking={event=>{const player=event.currentTarget;if(clipped&&(player.currentTime<start||player.currentTime>lastFrame))player.currentTime=Math.max(start,Math.min(lastFrame,player.currentTime));update();}}
-   onTimeUpdate={event=>{const player=event.currentTarget;if(clipped&&player.currentTime>=lastFrame&&!player.paused){player.pause();player.currentTime=lastFrame;}update();}}/>
+   onTimeUpdate={event=>{const player=event.currentTarget;if(clipped){if(player.currentTime<start)player.currentTime=start;else if(player.currentTime>=lastFrame){if(!player.paused)player.pause();player.currentTime=lastFrame;}}update();}}/>
   {loading&&!failed&&<p className="app-media-feedback" role="status">正在加载视频…</p>}
   {failed&&<div className="app-media-feedback"><p role="alert">视频未能加载，请重试。</p><button type="button" onClick={()=>{setFailed(false);setLoading(true);retry(value=>value+1);}}>重试加载视频</button></div>}
   <Controls.Root visibility="always"><Controls.Content className="app-video-controls">
