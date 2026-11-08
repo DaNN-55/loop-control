@@ -1,25 +1,36 @@
 # 本地变更整理与远端同步
 
-日期：2026-11-08。
+日期：2026-11-08。本报告记录统一推送前的本地验收；推送及远端 SHA 以本任务最终回复为准。
 
-## 范围
+## 范围与提交
 
-用户授权整理本地变更，依次提交、合并、测试，本地完成后统一推送远端。起点为 main / 2521324a；拉取远端后确认 origin/main 为 9cfeb2b6，本地领先 354 个提交，远端没有独有提交，只有一个工作树。
+用户授权整理本地变更，依次提交、合并、测试，本地完成后统一推送。起点为 main / 2521324a；拉取远端后确认 origin/main 为 9cfeb2b6，本地领先 354 个提交，远端没有独有提交，只有一个工作树。
 
-原始未提交状态、完整二进制补丁与 501 个文件路径的恢复快照保存在忽略目录 `.loop-control/maintenance/local-closeout-20261108/`。未改业务数据、密钥、运行配置或日常服务。
+在 codex/local-closeout-20261108 上按 8 批整理：Codex 构建；规划和媒体后端；共享控件与预览；连接和规划设置；账号与目录；制作界面；原型归档；文档和既有验收资料。媒体冻结类型、Worker、数据库迁移和 HTTP 入口放在同一后端提交，保持接口变更完整。通过 aff29c7e 合并回 main；后续在 main 提交回归修复。提交清单见 [commits.txt](./commits.txt)。
 
-## 提交
+原始未提交状态、完整二进制补丁与 501 个文件路径的恢复快照保存在忽略目录 `.loop-control/maintenance/local-closeout-20261108/`。原型和设计审阅资料单独归档。`.impeccable/live` 是本机工具状态，使用 `.git/info/exclude` 仅在本地排除，未删除或发布。
 
-- `006b9c08`：build: include Codex prompt and result contracts in Worker output，4 个路径。
-- `2ec4943f`：feat: complete local planning and media production workflows，145 个路径。
-- `f5088c75`：fix: refine shared controls and media preview lifecycle，14 个路径。
-- `dbe0b0fa`：feat: organize connection settings and storyboard planning controls，18 个路径。
-- `54bb9b08`：feat: unify account navigation and production directory views，50 个路径。
-- `5010b85f`：feat: unify generation composers and narration audio controls，80 个路径。
-- `b2402d4f`：chore: archive connection and account design prototypes，8 个路径。
+## 验证结果
 
-文档和已有验收截图另行提交。`.impeccable/live/config.json` 为含本机绝对路径的工具会话配置，仅保留本地。整理中只修正 diff 检查指出的尾随空格和文件末尾多余空行。
+- 默认回归：238 个文件，1,661 项通过、0 失败、1 项既有跳过。跳过项为旧运行 API 不借用准备版本身份的兼容性场景，不计为通过。见 [unit-summary.txt](./unit-summary.txt)。
+- 隔离集成：所选 15 个文件共 74 项。首轮执行全部 74 项，64 项通过、10 项失败；逐步修复并定向复验后，74 项最新执行状态均为通过。未将过滤后跳过的项目计为新通过，也未在最后再次整套运行这 74 项。逐项结果和执行批次见 [validation.json](./validation.json)。
+- 集成覆盖 PostgreSQL 全量迁移、Owner HTTP、真实 Worker 子进程、脚本拆镜、模型身份与参数冻结、音频和字幕开关、未知提交、防重、轮询恢复、显式采用、原生编辑保存、导出和交付、目录调整及浏览器刷新恢复。供应商网络使用受控响应，真实付费调用为 0。
+- `npm run check`、`npm run build`、后端和 Worker 构建、`npm run runtime:prepare` 及发布物完整性检查通过。见 [check.log](./check.log)、[build.log](./build.log)、[runtime.log](./runtime.log)。
+- 独立 Chrome 使用实际 VideoPreview 组件播放真实测试视频；向裁剪范围外定位后，实际时间分别回到 0.5 秒和 2 秒。390px 窄窗无横向溢出，视频宽 358px。见 [browser-preview.json](./browser-preview.json)、[browser-preview-narrow.json](./browser-preview-narrow.json) 和对应截图。
+- 浏览器生成流程验证丢失确认回执后仍只有一个任务，原生字幕对齐入口、保存并返回分镜台、候选明确采用和保留原画面变换通过。截图见 [generation-adopted.png](./generation-adopted.png)。
 
-## 验证进度
+## 本轮修复与诊断
 
-待合并到本地 main 后执行本轮验证；旧验收报告保留其原始范围，不能替代本轮结果。当前尚未推送远端。
+两处行为修复：维护页切换时保留连接表单实例及草稿，恢复未完成文件清理入口；视频 timeupdate 校正裁剪入点前和出点后的位置，暂停状态也不超出区间。新增边界回归，并重跑原失败用例和真实浏览器。
+
+其余修复同步旧按钮、状态摘要、模型列表和控件位置的断言，保留草稿、防重、冲突和明确采用检查。上传测试连续替换输入标签仍失败后，核对正式素材上下文，改走「导入本期素材、选取素材、加入候选」流程。旧媒体事件夹具补齐真实播放的 paused 状态，整期授权旧用例改为验证拒绝并沿用逐次调用确认。
+
+部分隔离故障注入仍替换旧 Provider 文本，实际没有制造断网；已更新匹配并断言注入生效，再验证未知提交不可重发与同一 Provider 任务恢复。连接生命周期测试改用显式隔离上下文。浏览器测试按当前镜头名称、模型菜单、规格弹层、候选更多操作及保存返回入口执行，不恢复已移除的界面入口。
+
+脚本测试首次误用 node --test，读取报错后改由 Vitest 默认回归执行。独立视频验收页最初缺少 HTTP Range 支持，补齐临时服务器后完成真实播放和定位验证；未修改产品的媒体服务。全量回归曾在并发验收期间出现一次 5 秒导航用例超时，单独复验和随后全量均通过，未放宽超时。
+
+## 环境与证据
+
+未改日常业务数据、密钥或部署配置，未重启日常服务。所有本轮隔离容器在退出时核对身份后移除；临时媒体卷由夹具释放。完整集成证据移入本地维护目录，删除本轮六个复制源码 / SDK 的临时目录、独立预览入口和临时服务器，关闭本轮浏览器会话；原有资源保留。
+
+本轮执行器基于 `scripts/e2e/run.mjs` 临时扩展测试清单，执行器与完整日志保存在 `.loop-control/maintenance/local-closeout-20261108/`，未新增正式测试依赖或独立测试框架。现有 React act / Focusable 与 pg 弃用提示保留，不作为测试通过的替代证据。

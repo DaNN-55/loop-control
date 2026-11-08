@@ -1,0 +1,12 @@
+006b9c08 build: include Codex prompt and result contracts in Worker output
+2ec4943f feat: complete local planning and media production workflows
+f5088c75 fix: refine shared controls and media preview lifecycle
+dbe0b0fa feat: organize connection settings and storyboard planning controls
+54bb9b08 feat: unify account navigation and production directory views
+5010b85f feat: unify generation composers and narration audio controls
+b2402d4f chore: archive connection and account design prototypes
+61563a43 docs: archive local workflow and interface acceptance evidence
+aff29c7e merge: integrate verified local workflow and interface changes
+9b9a7631 fix: preserve connection drafts and clamp trimmed video previews
+01432d10 test: align workflow regressions with current controls and fault fixtures
+73c5cd89 test: align formal browser generation status and native save controls

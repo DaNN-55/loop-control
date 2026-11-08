@@ -1,0 +1,543 @@
+{
+  "unit": {
+    "files": 238,
+    "passed": 1661,
+    "failed": 0,
+    "skipped": 1,
+    "total": 1662,
+    "success": true
+  },
+  "integration": {
+    "distinctTests": 74,
+    "passed": 74,
+    "failed": 0,
+    "method": "Initial 74-test run followed by focused reruns of failures; later filtered skips do not overwrite completed results.",
+    "runs": [
+      {
+        "log": "integration.log",
+        "counts": {
+          "passed": 64,
+          "failed": 10
+        },
+        "containerRemoved": true,
+        "paidCalls": 0
+      },
+      {
+        "log": "integration-recheck.log",
+        "counts": {
+          "skipped": 64,
+          "passed": 8,
+          "failed": 2
+        },
+        "containerRemoved": true,
+        "paidCalls": 0
+      },
+      {
+        "log": "browser-recheck.log",
+        "counts": {
+          "skipped": 72,
+          "failed": 2
+        },
+        "containerRemoved": true,
+        "paidCalls": 0
+      },
+      {
+        "log": "browser-final.log",
+        "counts": {
+          "skipped": 72,
+          "failed": 1,
+          "passed": 1
+        },
+        "containerRemoved": true,
+        "paidCalls": 0
+      },
+      {
+        "log": "generation-browser-final.log",
+        "counts": {
+          "skipped": 73,
+          "failed": 1
+        },
+        "containerRemoved": true,
+        "paidCalls": 0
+      },
+      {
+        "log": "generation-browser-complete.log",
+        "counts": {
+          "skipped": 73,
+          "passed": 1
+        },
+        "containerRemoved": true,
+        "paidCalls": 0
+      }
+    ],
+    "tests": [
+      {
+        "file": "blueprintContraction.integration.test.ts",
+        "name": "Owner saves creative-only accounts without media connections and retains referenced legacy blueprint evidence",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "blueprintContraction.integration.test.ts",
+        "name": "ordinary planning drafts persist before workspace creation and failed retries retain their frozen selection",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "blueprintContraction.integration.test.ts",
+        "name": "v2 direct preparation needs no planner and new media requests require explicit service selection",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "connectionLifecycle.integration.test.ts",
+        "name": "creates, rotates and verifies every current provider through real database commands without live provider calls",
+        "status": "passed",
+        "run": "integration-recheck.log"
+      },
+      {
+        "file": "connectionModels.integration.test.ts",
+        "name": "owns, discovers and persists model settings through HTTP, enforces new selections and rejects stale saves",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "connectionModels.integration.test.ts",
+        "name": "rejects in-flight discovery when the current version rotates and keeps settings unchanged on errors",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "formalWorkflow.integration.test.ts",
+        "name": "Owner builds a formal incomplete draft without old storyboard approvals",
+        "status": "passed",
+        "run": "integration-recheck.log"
+      },
+      {
+        "file": "formalWorkflow.integration.test.ts",
+        "name": "Owner confirms a fresh script before visual materials exist",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "formalWorkflow.integration.test.ts",
+        "name": "first formal adoption preserves the latest unsubmitted legacy Studio document",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "formalWorkflow.integration.test.ts",
+        "name": "fresh formal and added shots generate through the real controlled Provider Worker without legacy approval",
+        "status": "passed",
+        "run": "integration-recheck.log"
+      },
+      {
+        "file": "formalWorkflow.integration.test.ts",
+        "name": "historical planner retries retain frozen configuration and verified artifacts",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "formalWorkflow.integration.test.ts",
+        "name": "late legacy render reports retain artifacts without advancing or approving the adopted workspace",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "gptImage25.integration.test.ts",
+        "name": "freezes and executes all four GPT Image 2.5 identities through Owner HTTP, queue and Worker",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "gptImage26.integration.test.ts",
+        "name": "freezes and executes both GPT Image 2.6 identities through Owner HTTP, queue and Worker",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "openchatcutStudio.modules.integration.test.ts",
+        "name": "serves the real embedded editor virtual-module dependency graph without import resolution failures",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "speechSelection.integration.test.ts",
+        "name": "fresh formal speech adoption drives actual video duration and invalidates subtitle evidence when a longer voice is adopted",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "speechSelection.integration.test.ts",
+        "name": "speech requests freeze connection and voice while defaults change, and completed audio waits for explicit native adoption",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "speechSelection.integration.test.ts",
+        "name": "speech validates actual choices, ownership and budget, and an unknown paid request cannot be sent again after restart",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "storyE2e.integration.test.ts",
+        "name": "script layout creates parallel slots without extending the next shot",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "storyE2e.integration.test.ts",
+        "name": "script-only browser: confirmation prepares local shots and keeps visual tabs clear of candidates",
+        "status": "passed",
+        "run": "integration-recheck.log"
+      },
+      {
+        "file": "storyE2e.integration.test.ts",
+        "name": "script-only recovery: local preparation supersedes an unfinished legacy model task",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "storyE2e.integration.test.ts",
+        "name": "story 1 browser: validates the new script, recovers committed import/create receipts and opens one series-bound order",
+        "status": "passed",
+        "run": "integration-recheck.log"
+      },
+      {
+        "file": "storyE2e.integration.test.ts",
+        "name": "story 1 process: a real crash during directory creation resumes the same story order and rejects a changed duplicate",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "storyE2e.integration.test.ts",
+        "name": "story 2 browser: a lost committed generation response and resubmission keep one task before an explicit three-second adoption",
+        "status": "passed",
+        "run": "generation-browser-complete.log"
+      },
+      {
+        "file": "storyE2e.integration.test.ts",
+        "name": "story 2: image generation rejects bad input and duplicate submission leaves one unused story candidate",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "storyE2e.integration.test.ts",
+        "name": "story 2: poll-fail interruption survives restart without a second supplier submission",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "storyE2e.integration.test.ts",
+        "name": "story 2: rejects an unsupported duration, then one duplicate-safe request produces an unused four-second candidate",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "storyE2e.integration.test.ts",
+        "name": "story 2: speech generation rejects bad input and duplicate submission leaves one unused story candidate",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "storyE2e.integration.test.ts",
+        "name": "story 2: unknown interruption survives restart without a second supplier submission",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "storyE2e.integration.test.ts",
+        "name": "story 3 browser: a lost storyboard adoption receipt leaves the same saved replacement after reload",
+        "status": "passed",
+        "run": "browser-final.log"
+      },
+      {
+        "file": "storyE2e.integration.test.ts",
+        "name": "story 3: changed-file cannot overwrite the saved umbrella scene",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "storyE2e.integration.test.ts",
+        "name": "story 3: newer-target cannot overwrite the saved umbrella scene",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "storyE2e.integration.test.ts",
+        "name": "story 3: reject cannot overwrite the saved umbrella scene",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "storyE2e.integration.test.ts",
+        "name": "story 3: saved native image recovers a missing adoption receipt, and repeated confirmation preserves both story shots",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "storyE2e.integration.test.ts",
+        "name": "story 3: saved native speech recovers its missing receipt without regenerating or substituting the story text",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "storyE2e.integration.test.ts",
+        "name": "story 3: saved native video recovers a missing adoption receipt, and repeated confirmation preserves both story shots",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "storyE2e.integration.test.ts",
+        "name": "story 4 browser: confirms the actual subtitles, retries a lost package receipt, then reloads a verified playable delivery",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "storyE2e.integration.test.ts",
+        "name": "story 4: a six-second subtitled export and exact package survive failed validation, retry, restart and duplicate submission",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "storyE2e.integration.test.ts",
+        "name": "story 5 browser: cancel a collection plan, recover a lost move receipt, and read the same export with the old directory offline",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "storyE2e.integration.test.ts",
+        "name": "story 5 process: resume a real copy-publication SIGKILL without losing either shot or duplicating the move",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "storyE2e.integration.test.ts",
+        "name": "story 5 process: rollback a real copy-publication SIGKILL without losing either shot or duplicating the move",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "storyE2e.integration.test.ts",
+        "name": "story 5: detached media refuses export without creating a host fallback and remount restores the same story",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "workspaceGenerationState.integration.test.ts",
+        "name": "HTTP image reject preserves the original submission and a successful retry can supply a video first frame",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "workspaceGenerationState.integration.test.ts",
+        "name": "HTTP image unknown preserves the original submission and a successful retry can supply a video first frame",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "workspaceGenerationState.integration.test.ts",
+        "name": "HTTP speech preserves unknown original submission evidence even after current input is changed",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "workspaceGenerationState.integration.test.ts",
+        "name": "HTTP video polling resumes the same frozen task and original remote ID, never a second POST",
+        "status": "passed",
+        "run": "integration-recheck.log"
+      },
+      {
+        "file": "workspaceGenerationState.integration.test.ts",
+        "name": "Owner HTTP reconciles a held publication after lost COMMIT without a new attempt or supplier POST",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "workspaceManualNarration.integration.test.ts",
+        "name": "first TTS draft preserves script subtitles and later drafts preserve independent captions",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "workspaceManualNarration.integration.test.ts",
+        "name": "unassigned MP3 can be used for narration, music and effects without provider calls",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "workspaceNarrationTabs.integration.test.ts",
+        "name": "narration and caption switches survive native save without losing media, drafts, gains or independent text",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "workspaceSoundCandidates.integration.test.ts",
+        "name": "freezes distinct sound candidates, requires manual adoption, and keeps music settings on the production order",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "workspaceSoundSwitches.integration.test.ts",
+        "name": "independent episode sound switches retain gains and media through native save and restart",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "workspaceVisualCandidates.integration.test.ts",
+        "name": "Owner creates a controlled Provider visual candidate during editing without changing Episode stage",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "workspaceVisualCandidates.integration.test.ts",
+        "name": "Owner locally fills a placeholder with a registered pan-zoom image without video generation",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "workspaceVisualCandidates.integration.test.ts",
+        "name": "Owner locally fills a placeholder with a registered still image without video generation",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "workspaceVisualCandidates.integration.test.ts",
+        "name": "Owner registers a local visual candidate and replaces only one source instance",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "workspaceVisualCandidates.integration.test.ts",
+        "name": "Owner registers new media into the existing live pool and can save and reopen it",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "workspaceVisualCandidates.integration.test.ts",
+        "name": "a visual task with a saved Provider ID resumes polling without a second paid submission",
+        "status": "passed",
+        "run": "integration-recheck.log"
+      },
+      {
+        "file": "workspaceVisualCandidates.integration.test.ts",
+        "name": "added shots accept registered local visuals and explicitly selected generation and changed target input blocks a new paid POST",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "workspaceVisualCandidates.integration.test.ts",
+        "name": "an unavailable unused visual candidate does not prevent editing and cannot be adopted",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "workspaceVisualCandidates.integration.test.ts",
+        "name": "freezes bailian references inputs and sends the right roles to a simulated provider",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "workspaceVisualCandidates.integration.test.ts",
+        "name": "freezes kling keyframes inputs and sends the right roles to a simulated provider",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "workspaceVisualCandidates.integration.test.ts",
+        "name": "freezes kling references inputs and sends the right roles to a simulated provider",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "workspaceVisualCandidates.integration.test.ts",
+        "name": "freezes minimax keyframes inputs and sends the right roles to a simulated provider",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "workspaceVisualCandidates.integration.test.ts",
+        "name": "freezes minimax references inputs and sends the right roles to a simulated provider",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "workspaceVisualCandidates.integration.test.ts",
+        "name": "freezes volcengine keyframes inputs and sends the right roles to a simulated provider",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "workspaceVisualCandidates.integration.test.ts",
+        "name": "freezes volcengine references inputs and sends the right roles to a simulated provider",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "workspaceVisualCandidates.integration.test.ts",
+        "name": "manual video adoption preserves the selected source interval and refuses a short range",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "workspaceVisualCandidates.integration.test.ts",
+        "name": "returns the used video to candidates without moving the shot and allows re-adoption",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "workspaceVisualCandidates.integration.test.ts",
+        "name": "short visual source requires an explicit duration decision without repeating or moving other clips",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "workspaceVisualCandidates.integration.test.ts",
+        "name": "unknown paid visual submissions cannot be bypassed by retry or a new prompt",
+        "status": "passed",
+        "run": "integration-recheck.log"
+      },
+      {
+        "file": "workspaceVisualCandidates.integration.test.ts",
+        "name": "video generation freezes and applies the first-frame composition without changing the source image",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "workspaceVisualCandidates.integration.test.ts",
+        "name": "visual generation freezes the actual source voice window instead of retained muted TTS and rejects a later route change",
+        "status": "passed",
+        "run": "integration.log"
+      },
+      {
+        "file": "workspaceVisualCandidates.integration.test.ts",
+        "name": "voice gain and BGM edits do not stale a visual request or overwrite the new mix",
+        "status": "passed",
+        "run": "integration.log"
+      }
+    ]
+  },
+  "build": [
+    {
+      "check": "check-final",
+      "code": 0
+    },
+    {
+      "check": "build-final",
+      "code": 0
+    },
+    {
+      "check": "runtime-final",
+      "code": 0
+    }
+  ],
+  "browser": {
+    "playbackFrames": 213,
+    "trimLowerSeconds": 0.5,
+    "trimUpperSeconds": 2,
+    "desktopOverflow": false,
+    "narrowWidth": 390,
+    "narrowOverflow": false
+  },
+  "sourceCommit": "73c5cd89750c4b93986f741df672ba298c273b51"
+}
