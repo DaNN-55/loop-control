@@ -17,7 +17,7 @@ it.skipIf(process.env.LOOP_FORMAL_ACCEPTANCE!=='1')('Owner builds a formal incom
  let w=prepared.body;
  // Existing 084+ workspaces can have no 095 lineage rows. GET stays read-only.
  await f.c.query('DELETE FROM local_identity.workspace_shot_inputs WHERE workspace_id=$1',[w.id]);const upgradedRead=await fetch(`${f.origin}/api/local/episodes/${f.newEpisode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}}),upgraded=(await upgradedRead.json()).workspace;expect(upgraded.preparation.shots).toHaveLength(w.clips.length);expect((await f.c.query('SELECT count(*)::int n FROM local_identity.workspace_shot_inputs WHERE workspace_id=$1',[w.id])).rows[0].n).toBe(0);
- const authorized=await f.send('authorizeWorkspacePreparation',{workspaceId:w.id,expectedRevision:w.revision,enabled:true});expect(authorized.status,JSON.stringify(authorized.body)).toBe(200);expect(authorized.body.preparation.authorized).toBe(true);
+ const authorized=await f.send('authorizeWorkspacePreparation',{workspaceId:w.id,expectedRevision:w.revision,enabled:true});expect(authorized.status).toBe(409);expect(authorized.body.error).toContain('请在生成时确认本次调用');
  const added=await f.send('editWorkspaceStructure',{workspaceId:w.id,expectedRevision:w.revision,operation:{kind:'insert',afterShotId:w.clips[0].shotId,text:'新增的本地口播。'}});expect(added.status,JSON.stringify(added.body)).toBe(200);w=added.body;const local=w.clips.find((c:any)=>c.shotId.startsWith('added-'));
  const saved=await f.send('saveWorkspaceNarration',{workspaceId:w.id,expectedRevision:w.revision,clipId:local.id,mode:'none',text:'新增的本地口播。'});expect(saved.status,JSON.stringify(saved.body)).toBe(200);
  const type=await f.send('confirmWorkspaceShot',{workspaceId:w.id,expectedRevision:w.revision,clipId:local.id,shotType:'a_roll'});expect(type.status,JSON.stringify(type.body)).toBe(200);
@@ -59,7 +59,7 @@ it.skipIf(process.env.LOOP_FORMAL_ACCEPTANCE!=='1')('fresh formal and added shot
  const send=async(name:string,extra={})=>{const result=await f.send(name,{workspaceId:w.id,expectedRevision:w.revision,...extra});expect(result.status,JSON.stringify(result.body)).toBe(200);w=result.body;return result.body;};
  const speechVersion=(await f.c.query("SELECT id FROM public.external_connection_versions WHERE adapter='volcengine_tts'")).rows[0].id,videoVersion=(await f.c.query("SELECT id FROM public.external_connection_versions WHERE adapter='seedance_video'")).rows[0].id;
 
- await send('authorizeWorkspacePreparation',{enabled:true});await f.send('saveTtsSettings',{languageCode:'zh-CN',voice:'zh_female_vv_uranus_bigtts',speakingRate:1});
+ await f.send('saveTtsSettings',{languageCode:'zh-CN',voice:'zh_female_vv_uranus_bigtts',speakingRate:1});
  await send('editWorkspaceStructure',{operation:{kind:'insert',afterShotId:w.clips[0].shotId,text:'新增正文不是主脚本基准。'}});
  for(const clip of [w.clips[0],w.clips.find((c:any)=>c.shotId.startsWith('added-'))]){
   await send('saveWorkspaceNarration',{clipId:clip.id,mode:'tts',selection:{capability:'speech',provider:'volcengine_tts',adapter:'volcengine_tts',model:'seed-tts-2.0',connectionVersionId:speechVersion},text:clip.text,voice:'zh_female_vv_uranus_bigtts',languageCode:'zh-CN',speakingRate:1});await send('confirmWorkspaceNarration',{clipId:clip.id});await send('generateWorkspaceNarration',{clipId:clip.id,reservationCents:50});

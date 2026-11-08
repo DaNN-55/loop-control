@@ -12,7 +12,7 @@ it('groups every shot with its own combined render window, expanded properties a
  render(<WorkspaceCompletedShots workspace={w} project={project}/>);
  expect(screen.getAllByRole('article')).toHaveLength(2);expect(document.querySelectorAll('video')).toHaveLength(0);
  fireEvent.click(screen.getByRole('button',{name:'展开 S1 预览'}));
- expect(screen.getByLabelText('S1 成片').getAttribute('src')).toContain('sha256=frozen');
+ const video=screen.getByLabelText('S1 成片') as HTMLVideoElement;expect(video.getAttribute('src')).toContain('sha256=frozen');Object.defineProperty(video,'duration',{value:5});fireEvent.loadedMetadata(video);
  expect(screen.getByRole('slider',{name:'片段进度'}).getAttribute('max')).toBe('2.966666666666667');
  fireEvent.click(screen.getByRole('button',{name:'展开 S2 预览'}));
  expect(screen.queryByLabelText('S1 成片')).toBeNull();expect(screen.getByRole('slider',{name:'片段进度'}).getAttribute('min')).toBe('3');

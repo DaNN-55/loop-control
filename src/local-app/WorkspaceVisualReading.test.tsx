@@ -1,3 +1,4 @@
+import {registeredAdapters} from '../worker/registeredAdapters';
 import {useState} from 'react';
 import {act,cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
 import {afterEach,expect,it,vi} from 'vitest';
@@ -37,10 +38,11 @@ it.each([true,false])('a slow poll cannot overwrite a later command at the same 
 
 it('Pexels and visual generation share an in-flight read while retaining the search draft',async()=>{
  vi.useFakeTimers();const slow=deferred<Response>();let reads=0;
- vi.stubGlobal('fetch',vi.fn((url:string)=>url==='/api/local/connections'?Promise.resolve(Response.json({serviceCatalog:{groups:[]}})):(reads++,slow.promise)));
+ const service={...registeredAdapters.productionChoices().find(c=>c.provider==='pexels'&&c.adapter==='pexels_video')!,id:'pexels',connectionVersionId:'pexels-v',connectionName:'图库',executable:true};
+ vi.stubGlobal('fetch',vi.fn((url:string)=>url==='/api/local/connections'?Promise.resolve(Response.json({serviceCatalog:{groups:[{capability:'video',services:[service]}]}})):(reads++,slow.promise)));
  const w={...workspace,pexels:{requests:[{id:'search',taskId:'search-task',operation:'search',targetItemId:'visual-1',status:'running',parameters:{page:1}}]}} as unknown as ProductionWorkspace;
  const command=vi.fn();render(<Host preparation command={command} initial={w}/>);
- fireEvent.click(screen.getByRole('tab',{name:'视频'}));fireEvent.click(screen.getByRole('button',{name:'素材检索'}));
+ await act(async()=>{});fireEvent.click(screen.getByRole('tab',{name:'视频'}));fireEvent.click(screen.getByRole('button',{name:'AI 生成'}));await act(async()=>{});fireEvent.click(screen.getByRole('button',{name:'视频连接与模型'}));fireEvent.click(screen.getByRole('menuitemradio',{name:/Pexels 素材检索/}));
  fireEvent.change(screen.getByLabelText('检索词'),{target:{value:'保留这个查询'}});
  await act(async()=>{await vi.advanceTimersByTimeAsync(6000);});expect(reads).toBe(1);
  await act(async()=>{slow.resolve(Response.json({workspace:{...w,revision:4}}));});

@@ -7,8 +7,8 @@ import type {ProductionWorkspace} from '../productionWorkspace';
 afterEach(()=>{cleanup();vi.unstubAllGlobals();sessionStorage.clear();});
 it.each(['episode','catalog'])('上传已成功后 %s 刷新失败，仍保留素材回执并完成候选登记',async(failure)=>{
  const episodeId=`refresh-${failure}`;
- const snapshot={episode:{id:episodeId,account_id:'account',title:'上传回执验证',stage:'storyboard_approved',archived_at:null,main_script_revision_id:null},blueprint:null,seriesVersion:null,materialRevisions:[],audioTracks:[],tasks:[],taskRuns:[],artifacts:[],reviewPackages:[],transitions:[],preRenderReviewMembers:[],preRenderReviewMemberDecisions:[],audioTrackAnnotations:[],connectionVersions:[],qcReviewIssues:[],reviewAnnotations:[],shotPreparationDrafts:[],storyboardAudioSelections:[]};
- let workspace={id:`workspace-${episodeId}`,episodeId,revision:1,workflowVersion:'four-step/v1',clips:[{id:'clip',itemId:'target',shotId:'shot',text:'镜头',source:null}],visualCandidates:[],visualTasks:[],visualTargets:[],selectedImages:[],narration:[],stale:false,project:{relativePath:'project.json',sha256:'sha',fileSize:1,projectId:'project'},readiness:{deliverable:false,placeholders:['target'],missingSources:[]},history:[]} as unknown as ProductionWorkspace;
+ const snapshot={episode:{id:episodeId,account_id:'account',title:'上传回执验证',stage:'storyboard_approved',archived_at:null,main_script_revision_id:'script'},blueprint:null,seriesVersion:null,materialRevisions:[],audioTracks:[],tasks:[],taskRuns:[],artifacts:[],reviewPackages:[],transitions:[],preRenderReviewMembers:[],preRenderReviewMemberDecisions:[],audioTrackAnnotations:[],connectionVersions:[],qcReviewIssues:[],reviewAnnotations:[],shotPreparationDrafts:[],storyboardAudioSelections:[]};
+ let workspace={id:`workspace-${episodeId}`,episodeId,revision:1,workflowVersion:'four-step/v1',scriptRevisionId:'script',clips:[{id:'clip',itemId:'target',shotId:'shot',text:'镜头',source:null}],visualCandidates:[],visualTasks:[],visualTargets:[],selectedImages:[],narration:[],stale:false,project:{relativePath:'project.json',sha256:'sha',fileSize:1,projectId:'project'},readiness:{deliverable:false,placeholders:['target'],missingSources:[]},history:[]} as unknown as ProductionWorkspace;
  let imports=0;
  vi.stubGlobal('crypto',webcrypto);
  vi.stubGlobal('fetch',vi.fn(async(path:string,init?:RequestInit)=>{
@@ -29,7 +29,10 @@ it.each(['episode','catalog'])('上传已成功后 %s 刷新失败，仍保留�
   throw Error(`Unexpected request ${path}`);
  }));
  render(<LocalEpisodeDetail episodeId={episodeId} onClose={()=>{}} onChanged={()=>{if(imports&&failure==='catalog')throw Error('列表刷新暂时失败。');return Promise.resolve();}}/>);
- fireEvent.change(await screen.findByLabelText('上传图片素材'),{target:{files:[new File(['fixture'],'receipt.png',{type:'image/png'})]}});
+ fireEvent.click(await screen.findByRole('button',{name:'本期素材 · 0'}));
+ fireEvent.change(screen.getByLabelText('上传制作素材'),{target:{files:[new File(['fixture'],'receipt.png',{type:'image/png'})]}});
+ fireEvent.click(await screen.findByRole('button',{name:'预览 receipt.png'}));
+ fireEvent.click(screen.getByRole('button',{name:'拖入图片加入候选'}));
  await waitFor(()=>expect(screen.getAllByRole('button',{name:/预览图片候选/})).toHaveLength(1));
  expect(screen.getByRole('alert').textContent).toContain('操作已完成，页面信息更新失败');
  expect(screen.queryByRole('button',{name:'重试未完成项'})).toBeNull();

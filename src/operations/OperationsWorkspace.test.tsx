@@ -163,9 +163,9 @@ it.each([
  {pending:2,running:0,blocked:0,failed:0,production:0,tone:'warning',title:'2 项审核，等待你的决定'},
  {pending:0,running:1,blocked:0,failed:0,production:0,tone:'info',title:'内容正在制作中'},
  {pending:0,running:0,blocked:0,failed:0,production:1,tone:'info',title:'内容正在制作中'},
- {pending:0,running:0,blocked:1,failed:0,production:0,tone:'danger',title:'当前有制作任务需要处理'},
- {pending:0,running:0,blocked:0,failed:1,production:0,tone:'danger',title:'当前有制作任务需要处理'},
- {pending:2,running:1,blocked:1,failed:1,production:1,tone:'danger',title:'当前有制作任务需要处理'},
+ {pending:0,running:0,blocked:1,failed:0,production:0,tone:'danger',title:'有后台任务需要处理'},
+ {pending:0,running:0,blocked:0,failed:1,production:0,tone:'danger',title:'有后台任务需要处理'},
+ {pending:2,running:1,blocked:1,failed:1,production:1,tone:'danger',title:'有后台任务需要处理'},
  {pending:2,running:1,blocked:0,failed:0,production:1,tone:'warning',title:'2 项审核，等待你的决定'},
 ])('uses $tone for pending=$pending, running=$running, blocked=$blocked, failed=$failed, production=$production',async({pending,running,blocked,failed,production,tone,title})=>{
  const openReviews=vi.fn();
@@ -174,7 +174,7 @@ it.each([
  const notice=screen.getByRole('status');expect(notice.getAttribute('data-tone')).toBe(tone);expect(within(notice).getByText(title)).toBeTruthy();
  if(pending){await userEvent.setup().click(within(notice).getByRole('button',{name:'开始审核'}));expect(openReviews).toHaveBeenCalledOnce();}
  else expect(within(notice).queryByRole('button',{name:'开始审核'})).toBeNull();
- if(blocked+failed)expect(within(notice).getByText(new RegExp(`${blocked} 项任务阻塞 · ${failed} 项失败`))).toBeTruthy();
+ if(blocked+failed)expect(notice.textContent).toContain([blocked&&`${blocked} 项阻塞`,failed&&`${failed} 项失败`].filter(Boolean).join(' · '));
 });
 
 it('opens completed work as results and never marks its final stage as still in progress',async()=>{

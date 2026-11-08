@@ -19,7 +19,7 @@ it('keeps secrets masked and out of storage, supports failure, retry, success cl
  await screen.findByText('账务凭据已保存。');expect(screen.queryByLabelText('账务 AccessKey Secret')).toBeNull();expect(onSave.mock.calls[0][1]).toBe(onSave.mock.calls[1][1]);
  expect(session).not.toHaveBeenCalled();expect(document.body.textContent).not.toContain('synthetic-secret-0123456789');
  await user.click(screen.getByRole('button',{name:'更换凭据'}));expect(screen.getByLabelText('账务 AccessKey Secret')).toHaveProperty('value','');await user.click(screen.getByRole('button',{name:'取消更换'}));
- await user.click(screen.getByRole('button',{name:'断开账务关联'}));expect(onDisconnect).toHaveBeenCalledWith({connectionId:'connection',revision:'new'});
+ await user.click(screen.getByRole('button',{name:'断开「百炼」的账务关联'}));expect(onDisconnect).toHaveBeenCalledWith({connectionId:'connection',revision:'new'});
  session.mockRestore();
 });
 it('OpenAI uses the Admin field and disables duplicate submissions while the read is pending',async()=>{

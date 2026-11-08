@@ -40,7 +40,7 @@ it('retries storage reads locally without replacing a personal preference draft 
  await user.click(screen.getByRole('button',{name:'重新读取存储位置'}));
  await screen.findByText('/test/old');
  expect((screen.getByRole('textbox',{name:'显示名称'}) as HTMLInputElement).value).toBe('个人草稿');
- expect(screen.getByText('未保存')).toBeTruthy();expect(save).not.toHaveBeenCalled();
+ expect(screen.getByText('有未保存修改')).toBeTruthy();expect(save).not.toHaveBeenCalled();
  await user.click(screen.getByRole('button',{name:'保存偏好'}));await screen.findByText('已保存');
  await user.click(screen.getByRole('button',{name:'更换存储位置'}));
  expect(screen.getByText('已保存')).toBeTruthy();

@@ -18,13 +18,13 @@ function fixture(query:URLSearchParams):LocalCatalog {
   const episodes=query.get('status')==='blocked'?batch(page,43,'阻塞生产单',200):batch(page,61,'生产单');
   return {accounts:[{id:accountId,name:'原始账号',slug:'original',timezone:'Asia/Shanghai',created_at:at,archived_at:null,current_blueprint_version_id:accountId}],blueprints:[{id:accountId,account_id:accountId,version:1,policy:{},is_active:true,is_snapshot:false,created_at:at,archived_at:null}],blueprintRevisions:{[accountId]:'a'.repeat(32)},episodes,series:[{id:seriesId,account_id:accountId,name:'原始系列',created_at:at,archived_at:null}],seriesVersions:[{id:seriesVersionId,series_id:seriesId,version:1,rules:{},created_at:at}],promptVersions:[],sourceCreatedAt:at,importedAt:at,page,pageSize:20,total:61,episodeCount:78,accountCounts:{[accountId]:78},reviewCount:52,statusCounts:{all:61,review:45,running:2,blocked:3,done:0},stages:{script_review:61},artifactCounts:{},pending:{page:pendingPage,total:45,items:batch(pendingPage,45,'审核包',100).map(item=>({...item,revision_number:3}))},blocked:{page:blockedPage,total:43,items:batch(blockedPage,43,'阻塞生产单',200).map(item=>({episode:item,blocker:{code:'CONFIGURATION_REQUIRED',detail:'请补全冻结配置。',taskId:`task-${item.id}`}}))},worker:{running:2,blocked:3,failed:1,latestCompleted:false},operationRows:episodes.map(item=>({episodeId:item.id,reviewRevision:3,reviewPending:true,blockerCount:0}))} as unknown as LocalCatalog;
 }
-function setup(options:{studioFails?:boolean}={}) {
+function setup(options:{studioFails?:boolean;noTaskIssues?:boolean}={}) {
   const queries:URLSearchParams[]=[];
   const posts:Array<{path:string;body:Record<string,unknown>;headers:Headers}>=[];
   vi.stubGlobal('crypto',webcrypto);
   vi.stubGlobal('fetch',vi.fn(async(path:string,init?:RequestInit)=>{
     if(path.endsWith('/session'))return Response.json({csrfToken:'navigation-fixture-csrf',owner:{id:accountId,email:'owner@example.test'}});
-    if(path.includes('/catalog?')){const query=new URL(path,'http://localhost').searchParams;queries.push(query);return Response.json(fixture(query));}
+    if(path.includes('/catalog?')){const query=new URL(path,'http://localhost').searchParams;queries.push(query);const catalog=fixture(query);if(options.noTaskIssues)catalog.worker={...catalog.worker,blocked:0,failed:0};return Response.json(catalog);}
     if(init?.method==='POST'){posts.push({path,body:JSON.parse(String(init.body)),headers:new Headers(init.headers)});return options.studioFails?Response.json({error:'Studio 工作区不可用，请重试。'},{status:503}):Response.json({});}
     if(path.endsWith('/deletion-cleanups'))return Response.json([]);
     if(path.includes('/history-episodes?'))return Response.json({items:[],total:0,page:1,pageSize:30,selected:null,files:[],versions:[],pagination:{filesPage:1,recordsPage:1,fileTotal:0,recordTotal:0}});
@@ -38,7 +38,7 @@ async function mount(){await act(async()=>{render(<LocalCatalogApp/>);});await s
 afterEach(()=>{cleanup();vi.restoreAllMocks();vi.unstubAllGlobals();history.replaceState(null,'','/');localStorage.clear();sessionStorage.clear();});
 
 it('待审核合并到生产单，工作台审核入口使用真实目录筛选',async()=>{
- const {queries,lastQuery}=setup();await mount();
+ const {queries,lastQuery}=setup({noTaskIssues:true});await mount();
  expect(lastQuery().get('view')).toBe('operations');
  expect(nav().queryByRole('button',{name:'待审核'})).toBeNull();
  expect(nav().getByRole('button',{name:'生产单'}).textContent).toContain('45');

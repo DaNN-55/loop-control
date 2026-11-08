@@ -9,7 +9,7 @@ it('filters only this connections enabled models; absent settings preserve the r
  const catalog=buildProductionServiceCatalog({connections,versions,externalReady:true,enabledModels:{a:[]}});
  const services=catalog.groups.flatMap(g=>g.services);
  expect(services.find(s=>s.connectionId==='a')).toMatchObject({models:[],executable:false,unavailableReason:'尚未启用模型，请在更多操作中设置。'});
- expect(services.find(s=>s.connectionId==='b')).toMatchObject({models:['gpt-image-2'],executable:true});
+ expect(services.find(s=>s.connectionId==='b')).toMatchObject({models:['gpt-image-2','gpt-image-2.5-sunburst','gpt-image-2.5-flare','gpt-image-2.5-sunburst-2026-09-08','gpt-image-2.5-flare-2026-09-08','gpt-image-2.6-sunburst','gpt-image-2.6-flare'],executable:true});
 });
 it('groups saved connections by registered function and shows exact provider models and unavailable reasons',()=>{
  const connections=[{id:'a',name:'Image studio',provider:'openai',adapter:'openai_images',current_version_id:'a-v',status:'verified'},{id:'b',name:'Second studio',provider:'openai',adapter:'openai_images',current_version_id:'b-v',status:'unverified'},{id:'v',name:'Video studio',provider:'bailian',adapter:'wan_video',current_version_id:'v-v',status:'verified'}] as ExternalConnection[];

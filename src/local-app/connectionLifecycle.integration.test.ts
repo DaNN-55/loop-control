@@ -10,7 +10,7 @@ import {tokenHash} from './sessions';
 import {hashPassword} from './password';
 
 it.skipIf(process.env.LOOP_CONNECTION_ACCEPTANCE!=='1')('creates, rotates and verifies every current provider through real database commands without live provider calls',async()=>{
- const {runtimeContext}=await import(join(process.cwd(),'scripts/runtime/environment.mjs')),context=runtimeContext();context.assertDatabase();
+ const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MODULE??join(process.cwd(),'scripts/runtime/environment.mjs')),context=runtimeContext();context.assertDatabase();
  const bridge=spawn('docker',['exec','-i',context.container,'perl','-MIO::Socket::UNIX','-MIO::Select','-MSocket=SOCK_STREAM','-e',"my $s=IO::Socket::UNIX->new(Type=>SOCK_STREAM,Peer=>'/var/run/postgresql/.s.PGSQL.5432') or die 'socket';my $sel=IO::Select->new(\\*STDIN,$s);while(1){for my $f($sel->can_read){my $n=sysread($f,my $b,65536);exit unless $n;my $o=fileno($f)==0?$s:\\*STDOUT;while(length $b){my $w=syswrite($o,$b);die 'write' unless $w;substr($b,0,$w,'');}}}"],{env:context.env,stdio:['pipe','pipe','pipe']});
  const stream=Duplex.from({readable:bridge.stdout!,writable:bridge.stdin!});
  const admin=new Pool({database:context.database,user:'postgres',max:1,stream:()=>Object.assign(stream,{connect(){queueMicrotask(()=>stream.emit('connect'));return stream;},setNoDelay(){return stream;},setKeepAlive(){return stream;}})}as ConstructorParameters<typeof Pool>[0]);

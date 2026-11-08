@@ -19,7 +19,7 @@ it('keeps the existing first-assembly command and publishes its resulting native
 });
 it('a parent command result fences a delayed narration refresh even at the same revision',async()=>{
  setup();const slow=deferred<ProductionWorkspace>(),command=vi.fn(()=>slow.promise);render(panel(command));await act(async()=>{});
- expect(command).toHaveBeenCalledTimes(1);fireEvent.click(screen.getByRole('tab',{name:'口播'}));fireEvent.click(screen.getByRole('button',{name:'publish command result'}));
+ expect(command).toHaveBeenCalledTimes(1);fireEvent.click(screen.getByRole('tab',{name:'字幕与口播'}));fireEvent.click(screen.getByRole('button',{name:'publish command result'}));
  await act(async()=>{slow.resolve(workspace);});expect(screen.getByTestId('parent-speech').textContent).toBe('3:completed:none');
 });
 it('does not overlap narration refresh commands while the previous reply is pending',async()=>{
@@ -34,6 +34,6 @@ it('preserves a narration refresh conflict as an error without generating or ado
 
 it('ignores an old refresh conflict after a newer command result was accepted',async()=>{
  setup();let reject!:(cause:Error)=>void;const slow=new Promise<ProductionWorkspace>((_resolve,fail)=>{reject=fail;});
- render(panel(vi.fn(()=>slow)));await act(async()=>{});fireEvent.click(screen.getByRole('tab',{name:'口播'}));fireEvent.click(screen.getByRole('button',{name:'publish command result'}));
+ render(panel(vi.fn(()=>slow)));await act(async()=>{});fireEvent.click(screen.getByRole('tab',{name:'字幕与口播'}));fireEvent.click(screen.getByRole('button',{name:'publish command result'}));
  await act(async()=>{reject(Error('旧刷新版本冲突'));});expect(screen.queryByRole('alert')).toBeNull();expect(screen.getByTestId('parent-speech').textContent).toBe('3:completed:none');
 });

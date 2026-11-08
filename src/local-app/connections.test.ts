@@ -32,5 +32,5 @@ it('saves a qualified reference with closed networking without reading its secre
  expect(service.configurationReady).toBe(true);expect(service.externalReady).toBe(false);
  await service.assertBlueprintReferences({query}as unknown as PoolClient,[id],{purpose:'save'});expect(get).not.toHaveBeenCalled();
  const runtimeQuery=vi.fn().mockResolvedValueOnce({rows:[row]}).mockResolvedValueOnce({rows:[{owned:true}]}).mockResolvedValueOnce({rows:[row]}).mockResolvedValueOnce({rows:[{allowed:true}]});
- await expect(service.assertBlueprintReferences({query:runtimeQuery}as unknown as PoolClient,[id])).rejects.toMatchObject({status:409,preflight:{checks:[expect.objectContaining({check:'provider_network_policy'})]}});expect(get).not.toHaveBeenCalled();
+ await expect(service.assertBlueprintReferences({query:runtimeQuery}as unknown as PoolClient,[id])).rejects.toMatchObject({status:409,preflight:{checks:expect.arrayContaining([expect.objectContaining({check:'provider_network_policy'})])}});expect(get).not.toHaveBeenCalled();
 });

@@ -23,7 +23,10 @@ function Host({kind,command,changed=()=>{},target='S1',bridge}:{kind:Kind;comman
  {kind==='speech'?<WorkspaceCandidatesPanel workspace={w} command={command} onChange={onChange} drafts={drafts.current} bridge={bridge}/>:<WorkspaceAudioPreparation workspace={w} command={command} onChange={onChange} selectedShotId={target} materials={[{id:'manual',material_type:'audio',source_path:'click.mp3',material_purpose:'background_music'}]} bridge={bridge}/>}</>;
 }
 function setupFetch(read:()=>Promise<Response>){vi.stubGlobal('fetch',vi.fn((url:string)=>url==='/api/local/connections'?Promise.resolve(Response.json({serviceCatalog:{groups:[]}})):read()));}
-function prepareSound(){fireEvent.change(screen.getByLabelText('来源'),{target:{value:'manual'}});fireEvent.click(screen.getByRole('button',{name:'准备人工音频'}));}
+function chooseUpload(){fireEvent.click(screen.getByRole('button',{name:'音频来源'}));fireEvent.change(screen.getByRole('combobox',{name:'音频来源类型'}),{target:{value:'upload'}});fireEvent.click(screen.getByRole('button',{name:'关闭音频来源'}));}
+function setPurpose(value:string){fireEvent.click(screen.getByRole('button',{name:'音频来源'}));fireEvent.change(screen.getByLabelText('用途'),{target:{value}});fireEvent.click(screen.getByRole('button',{name:'关闭音频来源'}));}
+function purpose(){fireEvent.click(screen.getByRole('button',{name:'音频来源'}));const value=(screen.getByLabelText('用途') as HTMLInputElement).value;fireEvent.click(screen.getByRole('button',{name:'关闭音频来源'}));return value;}
+function prepareSound(){chooseUpload();fireEvent.change(screen.getByRole('combobox',{name:'本地音频'}),{target:{value:'manual'}});fireEvent.click(screen.getByRole('button',{name:'准备人工音频'}));}
 
 it.each<Kind>(['speech','sound'])('ignores a slow %s refresh after a same-revision command response',async kind=>{
  vi.useFakeTimers();const slow=deferred<Response>(),sound=deferred<ProductionWorkspace>();let reads=0;
@@ -57,13 +60,22 @@ it.each<Kind>(['speech','sound'])('keeps %s drafts through refresh, shot switche
  const props={workspace,command,onChange:vi.fn()};
  const element=(target='S1')=>kind==='speech'?<WorkspaceCandidatesPanel {...props} drafts={drafts}/>:<WorkspaceAudioPreparation {...props} selectedShotId={target}/>;
  const view=render(element());
- const label=kind==='speech'?'局部口播正文':'用途';fireEvent.change(screen.getByLabelText(label),{target:{value:'未提交的草稿'}});
- if(kind==='sound'){fireEvent.change(screen.getByLabelText('英文检索词'),{target:{value:'ambient footsteps'}});fireEvent.click(screen.getByRole('button',{name:'导入音效'}));fireEvent.change(screen.getByLabelText('用途'),{target:{value:'未提交的草稿'}});fireEvent.change(screen.getByLabelText('距镜头开头（秒）'),{target:{value:'.4'}});}
+ const label='局部口播正文';
+ if(kind==='speech')fireEvent.change(screen.getByLabelText(label),{target:{value:'未提交的草稿'}});
+ else{
+  fireEvent.change(screen.getByLabelText('英文检索词'),{target:{value:'ambient footsteps'}});
+  fireEvent.click(screen.getByRole('button',{name:'音效'}));setPurpose('未提交的草稿');chooseUpload();
+  fireEvent.click(screen.getByRole('button',{name:'音效位置'}));fireEvent.change(screen.getByLabelText('距镜头开头（秒）'),{target:{value:'.4'}});fireEvent.click(screen.getByRole('button',{name:'关闭音效位置'}));
+ }
  await act(async()=>{await vi.advanceTimersByTimeAsync(3000);});expect(props.onChange).toHaveBeenCalledWith(expect.objectContaining({revision:4}));
  if(kind==='speech'){fireEvent.change(screen.getByLabelText('候选镜头'),{target:{value:'S2'}});fireEvent.change(screen.getByLabelText('候选镜头'),{target:{value:'S1'}});}else{view.rerender(element('S2'));view.rerender(element());}
- expect((screen.getByLabelText(label) as HTMLInputElement).value).toBe('未提交的草稿');view.unmount();render(element());
- expect((screen.getByLabelText(label) as HTMLInputElement).value).toBe('未提交的草稿');
- if(kind==='sound'){expect(screen.getByRole('button',{name:'导入音效'}).getAttribute('aria-pressed')).toBe('true');expect((screen.getByLabelText('距镜头开头（秒）') as HTMLInputElement).value).toBe('0.4');fireEvent.click(screen.getByRole('button',{name:'整期配乐'}));expect((screen.getByLabelText('英文检索词') as HTMLInputElement).value).toBe('ambient footsteps');}
+ expect(kind==='speech'?(screen.getByLabelText(label) as HTMLInputElement).value:purpose()).toBe('未提交的草稿');view.unmount();render(element());
+ expect(kind==='speech'?(screen.getByLabelText(label) as HTMLInputElement).value:purpose()).toBe('未提交的草稿');
+ if(kind==='sound'){
+  expect(screen.getByRole('button',{name:'音效'}).getAttribute('aria-pressed')).toBe('true');
+  fireEvent.click(screen.getByRole('button',{name:'音效位置'}));expect(screen.getByLabelText('距镜头开头（秒）')).toHaveProperty('value','0.4');fireEvent.click(screen.getByRole('button',{name:'关闭音效位置'}));
+  fireEvent.click(screen.getByRole('button',{name:'整期配乐'}));expect(screen.getByLabelText('英文检索词')).toHaveProperty('value','ambient footsteps');
+ }
  expect(command.mock.calls.every(call=>call[0]==='refreshWorkspaceAudio')).toBe(true);
 });
 
@@ -78,8 +90,8 @@ it('does not submit audio after a slow saved-workspace read belongs to a differe
 
 it('shows an audio version conflict without retrying or clearing the form',async()=>{
  setupFetch(async()=>Response.json({workspace}));const command=vi.fn(async()=>{throw Error('工程版本已变化，请重新打开当前工作版本。');});
- render(<Host kind="sound" command={command}/>);fireEvent.change(screen.getByLabelText('用途'),{target:{value:'拒绝后保留'}});prepareSound();await act(async()=>{});
- expect(screen.getByRole('alert').textContent).toContain('工程版本已变化');expect(command).toHaveBeenCalledTimes(1);expect((screen.getByLabelText('用途') as HTMLInputElement).value).toBe('拒绝后保留');expect((screen.getByLabelText('来源') as HTMLSelectElement).value).toBe('manual');
+ render(<Host kind="sound" command={command}/>);setPurpose('拒绝后保留');prepareSound();await act(async()=>{});
+ expect(screen.getByRole('alert').textContent).toContain('工程版本已变化');expect(command).toHaveBeenCalledTimes(1);expect(purpose()).toBe('拒绝后保留');expect(screen.getByRole('combobox',{name:'本地音频'})).toHaveProperty('value','manual');
 });
 
  it.each<Kind>(['speech','sound'])('keeps an external save when an older %s reply returns',async kind=>{
