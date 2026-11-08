@@ -1,0 +1,12 @@
+{
+  "targetedUnitFiles": 5,
+  "targetedUnitTestsPassed": 71,
+  "narrationDraftTestPassed": 1,
+  "isolatedIntegrationTestsPassed": 5,
+  "typecheckPassed": true,
+  "frontendBuildPassed": true,
+  "layoutFindings": [],
+  "fixedRuntimeValid": true,
+  "runningMatchesPrepared": true,
+  "noRealGenerateOrAdopt": true
+}

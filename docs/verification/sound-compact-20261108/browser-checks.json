@@ -1,0 +1,41 @@
+{
+  "desktop": {
+    "actionsSameRow": true,
+    "duplicateHeading": false,
+    "formWidth": 653.09375,
+    "height": 953,
+    "pageOverflow": false,
+    "width": 1543
+  },
+  "narrow": {
+    "formWidth": 467.453125,
+    "gap": 20,
+    "height": 790,
+    "pageOverflow": false,
+    "searchSharesRow": true,
+    "width": 1152
+  },
+  "candidateNarrow": {
+    "candidateRows": [
+      {
+        "controlsWithinPanel": true,
+        "height": 32,
+        "width": 424
+      },
+      {
+        "controlsWithinPanel": true,
+        "height": 76,
+        "width": 424
+      },
+      {
+        "controlsWithinPanel": true,
+        "height": 36,
+        "width": 424
+      }
+    ],
+    "containerWidth": 436,
+    "disclosures": 0,
+    "overflow": false,
+    "width": 500
+  }
+}

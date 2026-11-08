@@ -1,0 +1,57 @@
+{
+  "wide": {
+    "buttons": [
+      {
+        "height": 32,
+        "label": "试听音色",
+        "shadow": "none",
+        "width": 32
+      },
+      {
+        "height": 32,
+        "label": "保存口播设置",
+        "shadow": "none",
+        "width": 32
+      }
+    ],
+    "overflow": false,
+    "toolbarBorder": "0px solid rgb(23, 38, 62)",
+    "width": 1490
+  },
+  "narrow": {
+    "controls": [
+      {
+        "label": "口播来源",
+        "left": 636.15625,
+        "right": 867.15625
+      },
+      {
+        "label": "声音选项",
+        "left": 1019.15625,
+        "right": 1053.15625
+      },
+      {
+        "label": null,
+        "left": 618.15625,
+        "right": 702.15625
+      },
+      {
+        "label": "试听音色",
+        "left": 708.15625,
+        "right": 740.15625
+      },
+      {
+        "label": "保存口播设置",
+        "left": 746.15625,
+        "right": 778.15625
+      },
+      {
+        "label": null,
+        "left": 1018,
+        "right": 1102
+      }
+    ],
+    "overflow": false,
+    "width": 1152
+  }
+}

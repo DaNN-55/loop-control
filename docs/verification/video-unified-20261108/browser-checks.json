@@ -1,0 +1,36 @@
+{
+  "desktop": {
+    "width": 1543,
+    "height": 953,
+    "videoComposerHeight": 280.375,
+    "addWidth": 52,
+    "addHeight": 80,
+    "addAndCardAligned": true
+  },
+  "narrow": {
+    "viewport": {
+      "width": 1152,
+      "height": 790
+    },
+    "video": {
+      "duration": "1.87 秒",
+      "height": 316.375,
+      "overflow": false,
+      "width": 563.34375
+    },
+    "pexels": {
+      "hasDuration": false,
+      "height": 259,
+      "overflow": false,
+      "query": "mountain clouds",
+      "width": 563.34375
+    }
+  },
+  "reload": {
+    "pexelsQueryPreserved": true,
+    "generationPromptPreserved": true,
+    "orientationPreserved": true
+  },
+  "realSearchSubmitted": false,
+  "realGenerationSubmitted": false
+}

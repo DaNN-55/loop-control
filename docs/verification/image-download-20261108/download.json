@@ -1,0 +1,15 @@
+{
+  "path": "/Users/dan/Downloads/image.png",
+  "bytes": 2485317,
+  "sha256": "faa7e1d5ed3df225a46c5a023d5e3dbe9e236a18602dc393607326ab8de20c91",
+  "matchesPreviewFingerprint": true,
+  "downloadControl": {
+    "width": 32,
+    "height": 32
+  },
+  "zoomControl": {
+    "width": 32,
+    "height": 32
+  },
+  "gap": 6
+}

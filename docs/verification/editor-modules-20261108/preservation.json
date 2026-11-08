@@ -1,0 +1,14 @@
+{
+  "nativeUnchanged": false,
+  "nativeBefore": "ae0d331392306e87cc0923ef5d4639d91a9ddb5b46d32c2385af48bfd6662be1",
+  "nativeAfter": "fe792a7d49f831cea3dd48b15e5ed5649aa19740ecaf14c4d573d6810e768ef9",
+  "workspaceUnchanged": true,
+  "activeTasks": 0,
+  "nativeContentUnchanged": true,
+  "changedPaths": [
+    "timelines[0].selectedId",
+    "timelines[0].selectedIds[0]"
+  ],
+  "normalizedBefore": "bb390e942fd5f2324dbac10ab76343eed120255a78fbc8f47eb6e7d296745370",
+  "normalizedAfter": "bb390e942fd5f2324dbac10ab76343eed120255a78fbc8f47eb6e7d296745370"
+}

@@ -1,0 +1,10 @@
+[
+  "src/imageGeneration.ts",
+  "src/local-app/productionSelection.ts",
+  "src/local-app/providerNetwork.ts",
+  "src/local-app/workspaceCallConfirmation.ts",
+  "src/local-app/workspaceCallEstimate.ts",
+  "src/worker/mediaProviders.ts",
+  "src/worker/registeredAdapters.ts",
+  "src/workspaceCall.ts"
+]

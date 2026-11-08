@@ -1,0 +1,12 @@
+{
+  "queue": 0,
+  "version": {
+    "backendReleaseId": "54dd441ee080413e1d76a4924279ebb931a619b3760ef8a16b41e2e80883a67e",
+    "checkedAt": "2026-11-08T12:20:06.329Z",
+    "preparedReleaseId": "54dd441ee080413e1d76a4924279ebb931a619b3760ef8a16b41e2e80883a67e",
+    "startedAt": "2026-11-08T12:19:26.112Z",
+    "state": "current",
+    "workerReleaseId": "54dd441ee080413e1d76a4924279ebb931a619b3760ef8a16b41e2e80883a67e"
+  },
+  "worker": "healthy"
+}

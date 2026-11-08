@@ -1,0 +1,40 @@
+{
+  "testFiles": 5,
+  "tests": 64,
+  "buildPassed": true,
+  "runtimePrepared": true,
+  "browser": {
+    "desktop": [
+      1543,
+      953
+    ],
+    "narrow": [
+      1152,
+      790
+    ],
+    "search": [
+      "云舟",
+      "xiaohe"
+    ],
+    "originalVoiceRestored": "zh_female_vv_uranus_bigtts",
+    "controlHeights": [
+      38,
+      38,
+      38
+    ],
+    "controlBottoms": [
+      495.5,
+      495.5,
+      495.5
+    ],
+    "narrowMenu": {
+      "left": 574.296875,
+      "right": 964,
+      "viewport": 1152
+    },
+    "defaultDialogPreservedOnEscape": true
+  },
+  "providerCalls": 0,
+  "databaseMigration": false,
+  "serviceRestart": false
+}

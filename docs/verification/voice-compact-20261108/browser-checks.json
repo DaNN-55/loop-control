@@ -1,0 +1,46 @@
+{
+  "wide": {
+    "captionStandalone": false,
+    "inlineSettings": false,
+    "overflow": false,
+    "rows": [
+      {
+        "height": 53,
+        "width": 1001.171875
+      },
+      {
+        "height": 53,
+        "width": 1001.171875
+      }
+    ],
+    "viewport": {
+      "height": 953,
+      "width": 1916
+    }
+  },
+  "narrow": {
+    "overflow": false,
+    "rows": [
+      {
+        "height": 53,
+        "width": 563.34375
+      },
+      {
+        "height": 53,
+        "width": 563.34375
+      }
+    ],
+    "viewport": {
+      "height": 790,
+      "width": 1152
+    }
+  },
+  "readonlyDuration": {
+    "readOnly": true,
+    "value": 1.87,
+    "reasonVisible": true
+  },
+  "settingsScopesVerified": true,
+  "metadataAvailableInPlayerDetails": true,
+  "noRealGenerateOrAdopt": true
+}

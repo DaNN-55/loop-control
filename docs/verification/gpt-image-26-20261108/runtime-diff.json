@@ -1,0 +1,5 @@
+[
+  "src/imageGeneration.ts",
+  "src/local-app/workspaceCallEstimate.ts",
+  "src/worker/registeredAdapters.ts"
+]

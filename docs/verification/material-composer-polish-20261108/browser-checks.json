@@ -1,0 +1,83 @@
+{
+  "narrow": {
+    "composerHeight": 199.5625,
+    "gridColumns": "97.2031px 97.2031px 97.2188px",
+    "pageOverflow": false,
+    "promptBackground": "rgb(247, 249, 252)",
+    "thumb": {
+      "height": 87.203125,
+      "width": 87.203125
+    },
+    "toolbar": [
+      {
+        "font": "13px",
+        "height": 32,
+        "label": "图片连接与模型"
+      },
+      {
+        "font": "13px",
+        "height": 32,
+        "label": "图片规格"
+      },
+      {
+        "font": "13px",
+        "height": 32,
+        "label": "生成数量"
+      },
+      {
+        "font": "13px",
+        "height": 32,
+        "label": "构图与字幕留白"
+      },
+      {
+        "font": "13px",
+        "height": 32,
+        "label": "生成图片"
+      }
+    ],
+    "viewport": [
+      1152,
+      790
+    ]
+  },
+  "desktop": {
+    "columns": "102.25px 102.25px 102.25px 102.25px",
+    "composerHeight": 199.5625,
+    "pageOverflow": false,
+    "thumb": {
+      "h": 92.25,
+      "w": 92.25
+    },
+    "toolbar": [
+      {
+        "font": "13px",
+        "height": 32,
+        "label": "图片连接与模型"
+      },
+      {
+        "font": "13px",
+        "height": 32,
+        "label": "图片规格"
+      },
+      {
+        "font": "13px",
+        "height": 32,
+        "label": "生成数量"
+      },
+      {
+        "font": "13px",
+        "height": 32,
+        "label": "构图与字幕留白"
+      },
+      {
+        "font": "13px",
+        "height": 32,
+        "label": "生成图片"
+      }
+    ],
+    "viewport": [
+      1543,
+      953
+    ]
+  }
+}

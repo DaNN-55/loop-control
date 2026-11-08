@@ -1,0 +1,12 @@
+{
+  "tests": [
+    "Test Files  7 passed (7)",
+    "Tests  82 passed (82)"
+  ],
+  "build": [
+    "✓ built in 2.32s"
+  ],
+  "runtime": [
+    "Worker/编排程序已准备并通过源码与产物完整性检查。"
+  ]
+}

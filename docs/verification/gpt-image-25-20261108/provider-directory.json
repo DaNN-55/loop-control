@@ -1,0 +1,12 @@
+{
+  "ok": true,
+  "connection": "gpt-image2",
+  "version": "022dff01-abac-4444-8bc8-a7500751f657",
+  "directoryCount": 96,
+  "image25Models": [
+    "gpt-image-2.5-sunburst",
+    "gpt-image-2.5-flare-2026-09-08",
+    "gpt-image-2.5-sunburst-2026-09-08",
+    "gpt-image-2.5-flare"
+  ]
+}
