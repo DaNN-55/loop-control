@@ -12,6 +12,7 @@ import { cx, sortCx } from "../../../utils/cx";
 export interface InputBaseProps extends Omit<AriaInputProps, "size"> {
     /** Tooltip message on hover. */
     tooltip?: string;
+    passwordVisibilityLabel?: string;
     /** Whether the input is invalid. */
     isInvalid?: boolean;
     /** Whether the input is disabled. */
@@ -46,6 +47,7 @@ export interface InputBaseProps extends Omit<AriaInputProps, "size"> {
 export const InputBase = ({
     ref,
     tooltip,
+    passwordVisibilityLabel = "密码",
     shortcut,
     groupRef,
     size = "md",
@@ -174,7 +176,7 @@ export const InputBase = ({
             {type === "password" && (
                 <AriaButton
                     isDisabled={isDisabled || inputProps.disabled || context?.isDisabled || undefined}
-                    aria-label={isPasswordVisible ? "隐藏密码" : "显示密码"}
+                    aria-label={`${isPasswordVisible?"隐藏":"显示"}${passwordVisibilityLabel}`}
                     aria-pressed={isPasswordVisible}
                     onPress={() => setIsPasswordVisible(!isPasswordVisible)}
                     className={cx(

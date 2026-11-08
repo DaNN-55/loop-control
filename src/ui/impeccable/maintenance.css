@@ -1,4 +1,10 @@
 /* Approved Impeccable maintenance surfaces. Runtime adapters and controls retain their contracts. */
+html[data-interface="impeccable"] .product-ui .connections-settings-dialog {
+  width: min(100%, 960px);
+  max-width: none;
+  min-width: 0;
+}
+html[data-interface="impeccable"] .product-ui .connections-settings-dialog > header { align-items: center; }
 html[data-interface="impeccable"] .product-ui .maintenance-embedded {
   min-width: 0;
   border: 1px solid var(--lc-line);

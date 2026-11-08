@@ -8,7 +8,7 @@ export function useMediaLifecycle(media:RefObject<HTMLMediaElement|null>,identit
   if(src&&element.getAttribute('src')!==src)element.setAttribute('src',src);
   const pause=()=>{if(!element.paused)element.pause();};
   const visibility=()=>{if(document.hidden)pause();};document.addEventListener('visibilitychange',visibility);
-  const observer=typeof IntersectionObserver==='undefined'?null:new IntersectionObserver(entries=>{if(!entries[0]?.isIntersecting)pause();});observer?.observe(element.closest('.app-audio-player')??element);
+  const observer=typeof IntersectionObserver==='undefined'?null:new IntersectionObserver(entries=>{if(!entries[0]?.isIntersecting)pause();});observer?.observe(element.closest('[data-media-visibility]')??element.closest('.app-audio-player')??element);
   return()=>{document.removeEventListener('visibilitychange',visibility);observer?.disconnect();pause();element.removeAttribute('src');if(element.currentSrc)element.load();};
  },[media,identity,src]);
 }

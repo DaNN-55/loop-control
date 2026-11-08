@@ -1,5 +1,6 @@
 /* Approved Loop Control Impeccable world. Native UI only; component behavior stays upstream. */
 html[data-interface="impeccable"] {
+ --lc-workspace-bottom-inset:16px;
  --lc-bg:#eef2f8; --lc-surface:#fff; --lc-surface-2:#f7f9fc; --lc-ink:#17263e; --lc-muted:#596b83; --lc-line:#d8e1ee; --lc-line-strong:#bdcadd; --lc-accent:#365fe0; --lc-accent-hover:#254fc9; --lc-accent-soft:#eaf0ff; --lc-rail:#173e8f; --lc-rail-ink:#e8efff; --lc-success:#167556; --lc-warning:#94600c; --lc-danger:#bd4147; --lc-success-soft:#e9f5ef; --lc-warning-soft:#fff5df; --lc-danger-soft:#fff0f0; --lc-primary-ink:#fff;
  color-scheme:light; background:var(--lc-bg); font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
 }
@@ -46,20 +47,20 @@ html[data-interface="impeccable"] .product-ui .stage-approved {background:var(--
 html[data-interface="impeccable"] .product-ui .empty-state {background:var(--lc-surface);border:1px dashed var(--lc-line);box-shadow:none;padding:40px 24px;color:var(--lc-muted)}
 html[data-interface="impeccable"] .product-ui .empty-state h2 {font-size:16px}
 html[data-interface="impeccable"] .product-ui .pagination-controls {font-size:12px;padding:16px 0;color:var(--lc-muted)}
-.impeccable-app.app-shell {--lc-rail-width:200px;display:block;min-height:100vh;background:var(--lc-bg);padding-left:var(--lc-rail-width)}
+.impeccable-app.app-shell {--lc-rail-width:208px;display:block;min-height:100vh;background:var(--lc-bg);padding-left:var(--lc-rail-width)}
 .impeccable-app.app-shell[data-sidebar="collapsed"] {--lc-rail-width:64px}
-.impeccable-app.product-ui .sidebar {position:fixed;inset:0 auto 0 0;width:var(--lc-rail-width);height:100dvh;display:flex;flex-direction:column;background:var(--lc-rail);border:0;padding:24px 14px 16px;color:var(--lc-rail-ink);z-index:50;overflow:visible}
+.impeccable-app.product-ui .sidebar {--lc-rail:var(--lc-surface-2);--lc-rail-ink:var(--lc-ink);position:fixed;inset:0 auto 0 0;width:var(--lc-rail-width);height:100dvh;display:flex;flex-direction:column;background:var(--lc-rail);border:0;border-right:1px solid var(--lc-line);padding:22px 12px var(--lc-workspace-bottom-inset);color:var(--lc-rail-ink);z-index:50;overflow:visible}
 .lc-brand {display:flex;gap:10px;align-items:center;padding:0 8px 30px;color:var(--lc-rail-ink);white-space:nowrap}
 .lc-brand > svg {flex-shrink:0}
 .lc-brand > span {font-size:16px;font-weight:650;letter-spacing:-.02em}
 .lc-brand small {display:block;font-size:10px;font-weight:400;letter-spacing:.04em;color:#c8d7f3;margin-top:3px}
-.impeccable-app.product-ui .navigation {display:grid;gap:16px;margin:0;padding:0}
-.impeccable-app.product-ui .sidebar .navigation-item {display:flex;width:100%;max-width:100%;min-width:0;margin:0;min-height:40px;padding:10px 12px!important;color:var(--lc-rail-ink)!important;background:transparent!important;border:0;border-radius:7px;box-shadow:none;justify-content:flex-start;gap:10px;font-weight:450;white-space:nowrap}
-.impeccable-app.product-ui .sidebar .navigation-item:hover {background:#ffffff14!important}
-.impeccable-app.product-ui .sidebar .navigation-item.is-active {background:#ffffff21!important;color:#fff!important;font-weight:600}
+.impeccable-app.product-ui .navigation {display:grid;gap:22px;margin:0;padding:0}
+.impeccable-app.product-ui .sidebar .navigation-item {display:flex;width:100%;max-width:100%;min-width:0;margin:0;min-height:40px;padding:10px 12px!important;color:var(--lc-rail-ink)!important;background:transparent!important;border:0;border-radius:7px;box-shadow:none;justify-content:flex-start;gap:10px;font-size:13px!important;font-weight:500!important;white-space:nowrap}
+.impeccable-app.product-ui .sidebar .navigation-item:hover {background:var(--lc-bg)!important}
+.impeccable-app.product-ui .sidebar .navigation-item.is-active {background:var(--lc-accent-soft)!important;color:var(--lc-accent)!important;font-weight:600!important}
 .impeccable-app.product-ui .sidebar .navigation-item svg {width:18px;height:18px;color:inherit!important;stroke-width:1.7}
 .impeccable-app .navigation-item [data-text] {display:flex;align-items:center;gap:8px;flex:1;padding:0}
-html[data-interface="impeccable"] .impeccable-app .navigation-badge {margin-left:auto;background:#ffffff20;color:#fff;border:0;font-size:10px;min-width:18px;line-height:18px;border-radius:4px;text-align:center}
+html[data-interface="impeccable"] .impeccable-app .navigation-badge {margin-left:auto;background:var(--lc-accent-soft);color:var(--lc-accent);border:0;font-size:10px;min-width:18px;line-height:18px;border-radius:4px;text-align:center}
 .impeccable-app.product-ui .sidebar-studio-shortcut {margin:0;width:100%;min-height:40px;color:var(--lc-rail-ink)!important;background:transparent!important;padding:10px 12px!important;border:0;border-radius:7px;justify-content:start}
 .impeccable-app.product-ui .sidebar-footer {display:flex;flex-direction:column;gap:12px;margin-top:auto;padding:0;background:transparent;border:0;width:100%}
 .impeccable-app.product-ui .sidebar .sidebar-footer {margin-top:auto}
@@ -193,14 +194,14 @@ html[data-interface="impeccable"] .dan-ui [data-color="primary"] [data-icon] {co
 
 .impeccable-app.product-ui .table-row .account-name>.lc-table-name {flex:1}
 
-/* Navigation groups use proximity; utility states remain visible on the cobalt rail. */
+/* Navigation and utilities share the secondary surface and semantic selection colors. */
 .impeccable-app .navigation-group {display:grid;gap:5px;min-width:0}
-.impeccable-app .navigation-group + .navigation-group {border-top:1px solid #ffffff26;padding-top:16px}
+.impeccable-app .navigation-group + .navigation-group {padding-top:0}
 .impeccable-app.product-ui .sidebar-studio-shortcut svg {width:18px;height:18px;stroke-width:1.7;flex-shrink:0}
-.impeccable-app.product-ui .sidebar :is(.sidebar-utility,.owner-menu-trigger,.system-status-trigger,.sidebar-studio-shortcut):hover {background:#ffffff14!important}
-.impeccable-app.product-ui .sidebar :is(.sidebar-utility,.owner-menu-trigger,.system-status-trigger):is([aria-pressed="true"],[aria-expanded="true"],[data-active="true"]) {background:#ffffff2b!important;color:#fff!important;box-shadow:none}
-.impeccable-app.product-ui .sidebar :is(.sidebar-utility,.owner-menu-trigger,.system-status-trigger,.sidebar-studio-shortcut):active {background:#ffffff38!important}
-.impeccable-app.product-ui .sidebar :is(.sidebar-utility,.owner-menu-trigger,.system-status-trigger,.sidebar-studio-shortcut):is(:focus-visible,[data-focus-visible]) {outline:2px solid var(--lc-rail-ink);outline-offset:2px}
+.impeccable-app.product-ui .sidebar :is(.sidebar-utility,.owner-menu-trigger,.system-status-trigger,.sidebar-studio-shortcut):hover {background:var(--lc-bg)!important}
+.impeccable-app.product-ui .sidebar :is(.sidebar-utility,.owner-menu-trigger,.system-status-trigger):is([aria-pressed="true"],[aria-expanded="true"],[data-active="true"]) {background:var(--lc-accent-soft)!important;color:var(--lc-accent)!important;box-shadow:none}
+.impeccable-app.product-ui .sidebar :is(.sidebar-utility,.owner-menu-trigger,.system-status-trigger,.sidebar-studio-shortcut):active {background:var(--lc-accent-soft)!important}
+.impeccable-app.product-ui .sidebar :is(.sidebar-utility,.owner-menu-trigger,.system-status-trigger,.sidebar-studio-shortcut):is(:focus-visible,[data-focus-visible]) {outline:2px solid var(--lc-accent);outline-offset:2px}
 .impeccable-app.product-ui[data-sidebar="collapsed"] .sidebar-studio-shortcut {justify-content:center;padding-inline:10px!important}
 
 html[data-interface="impeccable"] .impeccable-app .navigation-group {border-radius:0}
@@ -265,10 +266,10 @@ html[data-interface="impeccable"] .product-ui label:has(> .dan-select-field) > :
 html[data-interface="impeccable"] .product-ui .dan-icon-combobox-input {border:0!important;background:transparent!important;box-shadow:none!important}
 
 /* Three real tools share one footprint; no empty four-column utility grid. */
-html[data-interface="impeccable"] .impeccable-app.product-ui .sidebar .sidebar-footer{gap:4px;border-top:1px solid #ffffff26;padding-top:12px}
+html[data-interface="impeccable"] .impeccable-app.product-ui .sidebar .sidebar-footer{gap:2px;border-top:1px solid var(--lc-line);padding-top:10px}
 html[data-interface="impeccable"] .impeccable-app.product-ui .sidebar .sidebar-utilities{display:flex;flex-direction:column;gap:4px;border:0;padding:0;--lc-icon-control-size:40px}
 html[data-interface="impeccable"] .impeccable-app.product-ui .sidebar .sidebar-utilities .system-status{width:100%}
-html[data-interface="impeccable"] .impeccable-app.product-ui .sidebar .sidebar-footer :is(.sidebar-studio-shortcut,.system-status-trigger,.sidebar-utility){display:flex!important;width:100%!important;height:40px!important;min-width:0!important;min-height:40px!important;margin:0;padding:10px 12px!important;gap:10px!important;justify-content:flex-start!important;border-radius:7px;box-sizing:border-box}
+html[data-interface="impeccable"] .impeccable-app.product-ui .sidebar .sidebar-footer :is(.sidebar-studio-shortcut,.system-status-trigger,.sidebar-utility){display:flex!important;width:100%!important;height:36px!important;min-width:0!important;min-height:36px!important;margin:0;padding:8px 12px!important;gap:10px!important;justify-content:flex-start!important;border-radius:7px;box-sizing:border-box;color:var(--lc-muted)!important}
 html[data-interface="impeccable"] .impeccable-app.product-ui .sidebar .sidebar-footer :is(.system-status-trigger,.sidebar-utility)>[data-text]{display:flex!important;align-items:center;gap:10px!important;line-height:1.5;padding:0!important}
 html[data-interface="impeccable"] .impeccable-app.product-ui .sidebar .sidebar-footer .sidebar-tool-label{font-size:13px;font-weight:500;white-space:nowrap}
 html[data-interface="impeccable"] .impeccable-app.product-ui .sidebar .sidebar-footer .system-status-trigger i{margin:5px;flex:0 0 8px}
@@ -282,9 +283,48 @@ html[data-interface="impeccable"] .impeccable-app.product-ui[data-sidebar="colla
 
 /* Compact, content-sized feedback. Action failures stay beside the confirming action. */
 .impeccable-app .floating-notices{width:max-content;max-width:min(520px,calc(100vw - 32px))}
-.impeccable-app .floating-notices .error-message{gap:10px;padding:10px 12px;border-radius:9px;background:var(--lc-surface);border-color:var(--lc-line);color:var(--lc-ink);box-shadow:0 8px 24px rgb(13 27 48 / .12);line-height:1.6}
+.impeccable-app .floating-notices .error-message{align-items:center;gap:10px;padding:10px 12px;border-radius:9px;background:var(--lc-surface);border-color:var(--lc-line);color:var(--lc-ink);box-shadow:0 8px 24px rgb(13 27 48 / .12);line-height:1.6}
 .impeccable-app .floating-notices .notice-icon{flex-shrink:0;color:var(--lc-danger)}
-.impeccable-app .floating-notices .notice-copy{min-width:0;overflow-wrap:anywhere}
+.impeccable-app .floating-notices .notice-copy{flex:1;min-width:0;overflow-wrap:anywhere;text-align:center}
 .impeccable-app .floating-notices .notice-actions{display:flex;align-items:center;gap:4px;margin-left:auto;flex-shrink:0}
 .impeccable-app .floating-notices .notice-actions button{padding:5px;min-height:28px;min-width:28px;font-size:12px}
 @media(max-width:480px){.impeccable-app .floating-notices .error-message{flex-wrap:wrap}.impeccable-app .floating-notices .notice-copy{flex:1;min-width:0}.impeccable-app .floating-notices .notice-actions{margin-left:28px}}
+
+/* Account names sit under the account disclosure on the workspace rail. */
+.impeccable-app .sidebar-account-heading { display: flex; align-items: center; gap: 4px; min-width: 0; }
+.impeccable-app.product-ui .sidebar-account-heading .navigation-item { flex:1;font-size:12px!important;color:var(--lc-muted)!important; }
+.impeccable-app .sidebar-account-heading .navigation-label {flex:1;min-width:0;}
+.impeccable-app .sidebar-account-chevron { margin-left: auto; }
+.impeccable-app .sidebar-account-heading [aria-expanded="true"] .sidebar-account-chevron,
+.impeccable-app .sidebar-account-more[aria-expanded="true"] > svg { transform: rotate(180deg); }
+.impeccable-app .sidebar-account-list { min-height: 0; max-height: min(50dvh, 440px); overflow-y: auto; scrollbar-width: thin; padding: 4px 0; }
+.impeccable-app .sidebar-account-list[hidden],
+.impeccable-app .sidebar-account-list ul[hidden] { display: none; }
+.impeccable-app .sidebar-account-list ul { list-style: none; padding: 0; margin: 0; }
+.impeccable-app .sidebar-account-list p { font-size: 12px; margin: 8px; }
+.impeccable-app.product-ui .sidebar :is(.sidebar-account-add,.sidebar-account-entry) {
+  color: var(--lc-rail-ink) !important; background: transparent !important; box-shadow: none; border: 0; min-height: 32px;
+}
+.impeccable-app.product-ui .sidebar .sidebar-account-add { flex: none; width: 32px; padding: 6px !important; }
+.impeccable-app.product-ui .sidebar .sidebar-account-entry {
+  width: 100%; min-width: 0; justify-content: flex-start; padding: 7px 10px !important; font-size:13px!important;font-weight:400!important;text-align:left;
+}
+.impeccable-app .sidebar-account-entry > [data-text] { display:flex;align-items:center;gap:9px;flex:1;min-width:0;padding:0; }
+.impeccable-app .sidebar-account-initial {display:grid;place-items:center;flex:none;width:23px;height:23px;border-radius:6px;background:var(--lc-bg);color:var(--lc-muted);font-size:11px;font-weight:500;}
+.impeccable-app .sidebar-account-name { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.impeccable-app.product-ui .sidebar :is(.sidebar-account-add,.sidebar-account-entry):hover { background:var(--lc-bg)!important; }
+.impeccable-app.product-ui .sidebar .sidebar-account-entry[aria-current="page"] { background:var(--lc-accent-soft)!important;color:var(--lc-accent)!important;font-weight:600!important; }
+.impeccable-app .sidebar-account-entry[aria-current="page"] .sidebar-account-initial{background:var(--lc-surface);color:var(--lc-accent);}
+.impeccable-app.product-ui .sidebar .sidebar-account-more { font-size: 12px; }
+.impeccable-app .sidebar-account-list input { min-width: 0; }
+.impeccable-app.product-ui[data-sidebar="collapsed"] .sidebar-account-add { display: none !important; }
+
+@media (max-width: 900px) {
+  .impeccable-app .sidebar-account-group { position: relative; }
+  .impeccable-app .sidebar-account-list {
+    position: absolute; inset: 16px auto auto calc(100% + 10px); width: min(216px, calc(100vw - 72px));
+    background: var(--lc-rail); border-radius: 0 8px 8px 0; padding: 8px; box-shadow: 0 6px 18px #13234233;
+  }
+  .impeccable-app .sidebar-account-heading { flex-direction: column; }
+  .impeccable-app.product-ui .sidebar .sidebar-account-heading [aria-expanded="false"] + .sidebar-account-add { display: none !important; }
+}
