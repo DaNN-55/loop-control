@@ -38,10 +38,10 @@ export async function verifyReportedStoryboardArtifact(input: { assetRoot: strin
   const source = await readFile(input.storage?await input.storage.resolveReference(input.relativePath):join(input.assetRoot, input.relativePath), "utf8");
   let artifactStoryboard: StoryboardManifest;
   try {
-    artifactStoryboard = validateStoryboardManifest(JSON.parse(source), input.frozenInputs);
+    artifactStoryboard = validateStoryboardManifest(JSON.parse(source), input.frozenInputs, true);
   } catch {
     throw new Error("分镜产物文件格式无效。");
   }
-  const reportedStoryboard = validateStoryboardManifest(input.storyboard, input.frozenInputs);
+  const reportedStoryboard = validateStoryboardManifest(input.storyboard, input.frozenInputs, true);
   if (JSON.stringify(artifactStoryboard) !== JSON.stringify(reportedStoryboard)) throw new Error("分镜产物文件与 Worker 回报不一致。");
 }

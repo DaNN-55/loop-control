@@ -1,5 +1,6 @@
+import {videoVisualInputProblem,type VideoOutputRatio,type VideoVisualInputSelection} from '../videoVisualInputs.js';
 import {isWanGenerationSettings,type WanGenerationSettings} from '../videoGenerationSettings.js';
-import {defaultWanModel,defaultWanModelSettings,wanVideoModel,wanVideoParameters} from '../wanVideoModels.js';
+import {defaultWanModel,defaultWanModelSettings,wanReferenceMode,wanReferenceModel,wanVideoModel,wanVideoParameters} from '../wanVideoModels.js';
 import type { MediaFetcher } from "./mediaProviders.js";
 
 export function bailianCredential(secret: string): { apiKey: string; origin: string } {
@@ -29,15 +30,20 @@ export interface WanVideoInput {
   settings?: WanGenerationSettings;
   credentials: string;
   fetcher: MediaFetcher;
-  image: Uint8Array;
-  imageMime: string;
+  image?: Uint8Array;
+  imageMime?: string;
+  visualInputs?: readonly VideoVisualInputSelection[];
+  referenceRatio?: VideoOutputRatio;
   prompt: string;
   durationSeconds: number;
   reserve: () => Promise<WanReservation>;
   recordSubmission: (taskId: string) => Promise<void>;
   sleep?: (milliseconds: number) => Promise<void>;
   maxPolls?: number;
+  onProgress?: (phase:VideoGenerationPhase)=>Promise<void>;
 }
+
+export type VideoGenerationPhase='queued'|'processing'|'saving';
 
 export function wanVideoCostCents(durationSeconds: number): number {
   if (!Number.isInteger(durationSeconds) || durationSeconds < 2 || durationSeconds > 15) throw new Error("万相镜头时长须为 2～15 的整数秒。");
@@ -46,9 +52,18 @@ export function wanVideoCostCents(durationSeconds: number): number {
 
 export async function generateWanVideo(input: WanVideoInput): Promise<Uint8Array> {
   const model=input.model??defaultWanModel,profile=wanVideoModel(model),settings=input.settings??defaultWanModelSettings(model);
-  const parameters=wanVideoParameters(model,input.durationSeconds,settings);
+  const parameters=wanVideoParameters(model,input.durationSeconds,settings,input.referenceRatio);
   if(input.settings&&!isWanGenerationSettings(input.settings))throw Error('视频生成设置无效。');
-  if (!input.prompt.trim() || input.prompt.length > 1500 || input.image.byteLength === 0 || input.image.byteLength > profile!.maxBytes || !["image/png", "image/jpeg", "image/webp", "image/bmp"].includes(input.imageMime)) throw new Error("万相首帧或提示词无效。");
+  if(!input.prompt.trim()||input.prompt.length>1500)throw Error('万相提示词无效。');
+  let media: {reference_urls:string[]}|{img_url:string};
+  if(model===wanReferenceModel){
+    const entries=input.visualInputs??[],problem=videoVisualInputProblem(wanReferenceMode,entries);
+    if(problem)throw Error(problem);
+    media={reference_urls:entries.map(entry=>entry.source!)};
+  }else{
+    if(!input.image?.byteLength||input.image.byteLength>profile!.maxBytes||!input.imageMime||!['image/png','image/jpeg','image/webp','image/bmp'].includes(input.imageMime))throw Error('万相首帧无效。');
+    media={img_url:`data:${input.imageMime};base64,${Buffer.from(input.image).toString('base64')}`};
+  }
   // Input validation precedes the reservation and every paid request.
   const { apiKey, origin } = bailianCredential(input.credentials);
   const reservation = await input.reserve();
@@ -58,7 +73,7 @@ export async function generateWanVideo(input: WanVideoInput): Promise<Uint8Array
     const response = await input.fetcher(`${origin}/api/v1/services/aigc/video-generation/video-synthesis`, {
       method: "POST", signal: AbortSignal.timeout(30_000),
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json", "X-DashScope-Async": "enable" },
-      body: JSON.stringify({model,input:{prompt:input.prompt.trim(),...(settings.negativePrompt?{negative_prompt:settings.negativePrompt}:{}),img_url:`data:${input.imageMime};base64,${Buffer.from(input.image).toString('base64')}`},parameters}),
+      body: JSON.stringify({model,input:{prompt:input.prompt.trim(),...(settings.negativePrompt?{negative_prompt:settings.negativePrompt}:{}),...media},parameters}),
     });
     const data = await supplierJson(response);
     taskId = typeof data.task_id === "string" ? data.task_id : "";
@@ -67,13 +82,15 @@ export async function generateWanVideo(input: WanVideoInput): Promise<Uint8Array
   }
   if (!/^[a-zA-Z0-9_-]{1,128}$/.test(taskId)) throw new Error("已保存的万相任务 ID 无效。");
   const sleep = input.sleep ?? ((ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms)));
-  for (let attempt = 0; attempt < (input.maxPolls ?? 60); attempt += 1) {
+  for (let attempt = 0; attempt < (input.maxPolls ?? Infinity); attempt += 1) {
     const data = await supplierJson(await input.fetcher(`${origin}/api/v1/tasks/${encodeURIComponent(taskId)}`, { headers: { Authorization: `Bearer ${apiKey}` }, signal: AbortSignal.timeout(30_000) }));
     if (data.task_status === "SUCCEEDED") {
       if (typeof data.video_url !== "string") throw new Error("万相任务成功但缺少视频地址；请按原任务恢复下载。");
+      await input.onProgress?.('saving');
       return downloadWanVideo(input.fetcher, data.video_url);
     }
     if (!["PENDING", "RUNNING"].includes(String(data.task_status))) throw new Error(`万相任务状态 ${String(data.task_status)}；费用预留已保留，重做前请核对。`);
+    await input.onProgress?.(data.task_status==='PENDING'?'queued':'processing');
     await sleep(Math.min(5_000 + attempt * 1_000, 10_000));
   }
   throw new Error("万相仍在处理中；供应商任务 ID 已保存，可恢复查询，不要重新生成。");

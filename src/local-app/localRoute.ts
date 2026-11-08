@@ -5,7 +5,8 @@ import {readWorkspacePlanningSelection} from './planningSelectionStore.js';
 import {readProductionWorkspace,readWorkspaceVersion} from './productionWorkspaceCommands.js';
 import {readLegacyStudioProject} from './legacyStudioProject.js';
 import {resolveEpisodeAssetRoot} from './accountAssetRoots.js';
-import{ownerTransaction}from'./ownerTransaction.js';
+import{ownerTransaction,sessionTransaction}from'./ownerTransaction.js';
+import {readGlobalPlanning,updateGlobalPlanning} from './globalPlanningStore.js';
 import {readWorkspaceSearch} from './workspaceSearch.js';
 import {readOwnerPreferences,saveOwnerPreferences,readOwnerNotificationEvents} from './ownerPreferences.js';
 import {ScriptProductionStore} from './scriptProductionStore.js';
@@ -20,6 +21,7 @@ import type{NativeAutomation}from'./nativeAutomation.js';
 import{LocalEpisodeLifecycle}from'./episodeLifecycle.js';
 import {executeConfiguration,ConfigurationError} from './configurationCommands.js';
 import {timingSafeEqual} from 'node:crypto';
+import {join} from 'node:path';
 import type {IncomingMessage,ServerResponse} from 'node:http';
 import type {Pool} from 'pg';
 import {readLocalCatalog,parseCatalogQuery} from './catalog.js';
@@ -39,7 +41,7 @@ async function readBody(request:IncomingMessage,limit=8192):Promise<Record<strin
  let text='';for await(const chunk of request){text+=chunk;if(Buffer.byteLength(text)>limit)throw Error('Body too large');}
  const parsed:unknown=JSON.parse(text);if(!parsed||typeof parsed!=='object'||Array.isArray(parsed))throw Error('Object required');return parsed as Record<string,unknown>;
 }
-export function createLocalHandler(options:LocalOptions){
+export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}){
  const host=new URL(options.origin).host;
  const mediaRootSettings=options.mediaRootSettings??new LocalMediaRootSettings(options.pool,options.mediaRoot);
  const lifecycle=new LocalEpisodeLifecycle(options.pool,options.mediaRoot,id=>options.episodes?.closeStudio(id)??Promise.resolve(),options.historyRoot);
@@ -81,6 +83,12 @@ export function createLocalHandler(options:LocalOptions){
     if(!changed){send(401,{error:'会话已失效，请重新登录。'});return;}send(200,{changed:true});return;
    }
    if(url.pathname==='/api/local/session'&&request.method==='GET'){send(200,{owner:{id:session.id,email:session.email},secretAdministration:!!options.secrets?.allowed(session),csrfToken:csrfFor(session.token)});return;}
+   if(url.pathname==='/api/local/storyboard-planning'){
+    if(request.method==='GET'){send(200,await ownerTransaction(options.pool,session.id,true,readGlobalPlanning));return;}
+    if(request.method!=='POST')throw new ConfigurationError(405,'分镜规则请求方法无效。');
+    let body;try{body=await readBody(request,256*1024);}catch{throw new ConfigurationError(400,'分镜规则请求格式无效。');}
+    send(200,await sessionTransaction(options.pool,session,c=>updateGlobalPlanning(c,body.command,body.data)));return;
+   }
    if(url.pathname==='/api/local/preferences'){
     if(request.method==='GET'){send(200,await readOwnerPreferences(options.pool,session.id));return;}
     if(request.method!=='POST'){send(405,{error:'偏好请求方法无效。'});return;}
@@ -166,6 +174,12 @@ export function createLocalHandler(options:LocalOptions){
     }
     send(405,{error:'模型设置请求方法无效。'});return;
    }
+   if(url.pathname==='/api/local/speech-sample'){
+    if(request.method!=='POST'||url.search){send(405,{error:'样音请求需要 POST。'});return;}
+    if(!options.stateDirectory){send(503,{error:'本机样音目录未配置。'});return;}
+    let body;try{body=await readBody(request);}catch{send(400,{error:'样音请求格式无效。'});return;}
+    send(200,await connections.speechSample(session.id,join(options.stateDirectory,'speech-samples'),body));return;
+   }
    if(url.pathname==='/api/local/connections'){
     if(request.method==='GET'){send(200,await connections.read(session.id));return;}
     if(request.method==='POST'){
@@ -246,7 +260,7 @@ export function createLocalHandler(options:LocalOptions){
    const workspace=url.pathname.match(/^\/api\/local\/episodes\/([^/]+)\/workspace(?:\/project)?$/);
    if(workspace&&uuid.test(workspace[1])&&request.method==='GET'){
     if(url.pathname.endsWith('/project')&&(!/^[a-f0-9]{64}$/.test(url.searchParams.get('sha')??'')||url.searchParams.getAll('sha').length!==1))throw new ConfigurationError(400,'工程版本指纹无效。');
-    const value=await ownerTransaction(options.pool,session.id,true,async c=>{const e=(await c.query('SELECT e.id,b.policy FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE e.id=$1 AND m.user_id=$2 AND m.role=\'owner\'',[workspace[1],session.id])).rows[0];if(!e)throw new ConfigurationError(404,'生产单不可见。');const root=await resolveEpisodeAssetRoot(c,options.mediaRoot,e.id);return url.pathname.endsWith('/project')?readWorkspaceVersion(c,root,e.id,url.searchParams.get('sha')??''):{workspace:await readProductionWorkspace(c,e.id,root),planningSelection:await readWorkspacePlanningSelection(c,e.id)};});send(200,url.pathname.endsWith('/project')?{project:value}:value);return;
+    const value=await ownerTransaction(options.pool,session.id,true,async c=>{const e=(await c.query('SELECT e.id,b.policy FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE e.id=$1 AND m.user_id=$2 AND m.role=\'owner\'',[workspace[1],session.id])).rows[0];if(!e)throw new ConfigurationError(404,'生产单不可见。');const root=await resolveEpisodeAssetRoot(c,options.mediaRoot,e.id);return url.pathname.endsWith('/project')?readWorkspaceVersion(c,root,e.id,url.searchParams.get('sha')??''):{workspace:await readProductionWorkspace(c,e.id,root),planningSelection:await readWorkspacePlanningSelection(c,e.id),globalPlanningConfigured:Boolean((await readGlobalPlanning(c)).planningSelection.selection)};});send(200,url.pathname.endsWith('/project')?{project:value}:value);return;
    }
    const episode=url.pathname.match(/^\/api\/local\/episodes\/([^/]+)$/);
    if(episode&&uuid.test(episode[1])){

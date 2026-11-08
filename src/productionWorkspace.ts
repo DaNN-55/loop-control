@@ -15,7 +15,7 @@ export interface ProductionWorkspace {
  preparation?:{origin:string;authorized:boolean;authorizationHash?:string;scriptRevisionId:string;shots:Array<{shotId:string;origin:string;shotType:'a_roll'|'b_roll'|null}>};
  pexels?:import('./workspacePexels.js').WorkspacePexelsState;visualCandidates?:WorkspaceVisualCandidate[];visualTasks?:WorkspaceVisualTask[];visualTargets?:WorkspaceVisualTarget[];
  id:string;episodeId:string;workflowVersion:'four-step/v1';scriptRevisionId:string;storyboardPackageId:string;revision:number;contentSha256:string;nativeEditRevision?:number;
- audio?:{defaults?:{selection:import('./productionSelection.js').ProductionSelection}|null;mix:WorkspaceAudioMix;preparations:Array<{generationTask?:import('./workspaceVisualCandidates.js').WorkspaceVisualTask;id:string;kind:string;shotId:string|null;sourceItemId:string|null;description:string;query:string|null;selection?:import('./productionSelection.js').ProductionSelection|null;connection?:{name:string;version:number}|null;anchor:string;offsetSeconds:number;durationSeconds:number;taskId:string|null;status:string;error:string|null;audioTrackId:string|null;relativePath:string|null;sha256:string|null;fileSize:number;adoptedItemId:string|null;source:Record<string,unknown>|null}>};usedNarration?:WorkspaceUsedNarration[];candidates?:WorkspaceCandidate[];deliveries?:WorkspaceDelivery[];exports?:WorkspaceExport[];exportIssues?:WorkspaceExportIssue[];captions?:WorkspaceCaptionState[];narration?:WorkspaceNarration[];clips:WorkspaceClip[];project:{relativePath:string;sha256:string;fileSize:number;projectId:string};
+ audio?:{enabled?:{bgm:boolean;sfx:boolean};defaults?:{selection?:import('./productionSelection.js').ProductionSelection;settings?:{description:string;query:string;materialRevisionId:string}}|null;mix:WorkspaceAudioMix;preparations:Array<{generationTask?:import('./workspaceVisualCandidates.js').WorkspaceVisualTask;id:string;kind:string;shotId:string|null;sourceItemId:string|null;description:string;query:string|null;selection?:import('./productionSelection.js').ProductionSelection|null;connection?:{name:string;version:number}|null;anchor:string;offsetSeconds:number;durationSeconds:number;taskId:string|null;status:string;error:string|null;audioTrackId:string|null;relativePath:string|null;sha256:string|null;fileSize:number;adoptedItemId:string|null;source:Record<string,unknown>|null}>};usedNarration?:WorkspaceUsedNarration[];candidates?:WorkspaceCandidate[];deliveries?:WorkspaceDelivery[];exports?:WorkspaceExport[];exportIssues?:WorkspaceExportIssue[];captions?:WorkspaceCaptionState[];narration?:WorkspaceNarration[];clips:WorkspaceClip[];project:{relativePath:string;sha256:string;fileSize:number;projectId:string};
  history:Array<{revision:number;sha256:string;scriptRevisionId:string;reason:string|null;createdAt?:string}>;
  readiness:{deliverable:boolean;placeholders:string[];missingSources:string[]};stale:boolean;
 }
@@ -29,17 +29,19 @@ export const productionWorkspaceFields:Record<string,string[]>={
  saveWorkspaceSoundIntent:['episodeId','workspaceId','expectedRevision','expectedProjectSha256','shotId','soundIntent'],
  confirmWorkspaceShot:['episodeId','workspaceId','expectedRevision','clipId','shotType'],
  ...workspaceVisualFields,
- prepareWorkspaceCandidate:['episodeId','workspaceId','expectedRevision','candidateId','durationPolicy'],
- adoptWorkspaceCandidate:['episodeId','workspaceId','expectedRevision','candidateId','adoptionId','nativeApplied'],
+ prepareWorkspaceCandidate:['episodeId','workspaceId','expectedRevision','candidateId','durationPolicy','restoreNarration'],
+ adoptWorkspaceCandidate:['episodeId','workspaceId','expectedRevision','candidateId','adoptionId','nativeApplied','restoreNarration'],
  rejectWorkspaceCandidate:['episodeId','workspaceId','expectedRevision','candidateId'],
  ...workspaceAudioFields,
  ...workspaceDeliveryFields,
  ...workspaceExportFields,
+ setWorkspaceNarrationEnabled:['episodeId','workspaceId','expectedRevision','clipId','enabled'],
  saveWorkspaceNarrationDefaults:['episodeId','workspaceId','expectedRevision','selection','voice','speakingRate','languageCode'],
  saveWorkspaceNarration:['episodeId','workspaceId','expectedRevision','clipId','mode','text','voice','speakingRate','audioTrackId','materialRevisionId','selection','languageCode'],
  confirmWorkspaceNarration:['episodeId','workspaceId','expectedRevision','clipId'],
  generateWorkspaceNarration:['episodeId','workspaceId','expectedRevision','clipId','retry','reservationCents'],
  adoptWorkspaceNarration:['episodeId','workspaceId','expectedRevision','clipId','inputFingerprint','audioTrackId'],
+ withdrawWorkspaceNarration:['episodeId','workspaceId','expectedRevision','clipId','audioTrackId'],
  refreshWorkspaceNarration:['episodeId','workspaceId','expectedRevision'],
  editWorkspaceStructure:['episodeId','workspaceId','expectedRevision','operation'],
  saveWorkspaceVideoRanges:['episodeId','workspaceId','expectedRevision','shotId','ranges'],
@@ -56,4 +58,4 @@ export const productionWorkspaceFields:Record<string,string[]>={
  closeWorkspaceStudio:['episodeId','workspaceId','expectedRevision'],
 };
 
-export interface WorkspaceNarration {execution?:{taskId:string;selection:import('./productionSelection.js').ProductionSelection;voice:string;languageCode:string;speakingRate:number;text:string}|null;generationTask?:import('./workspaceVisualCandidates.js').WorkspaceVisualTask;windowWarning?:string|null;selection?:import('./productionSelection.js').ProductionSelection|null;defaults?:{selection:import('./productionSelection.js').ProductionSelection;voice:string;languageCode:string;speakingRate:number}|null;requiresCandidateAdoption?:boolean;videoWindow?:{durationSeconds:number;generationSeconds:number;maximumSeconds:number};clipId:string;shotId:string;mode:'tts'|'manual'|'none';text:string;voice:string|null;languageCode:string|null;speakingRate:number|null;override:boolean;inputFingerprint:string;confirmed:boolean;taskId:string|null;status:string;error:string|null;audioTrackId:string|null;artifactId:string|null;relativePath:string|null;sha256:string|null;fileSize:number|null;durationSeconds:number|null;itemId:string;adoptedAudioTrackId:string|null}
+export interface WorkspaceNarration {enabled?:boolean;retainedAudioTrackId?:string|null;execution?:{taskId:string;selection:import('./productionSelection.js').ProductionSelection;voice:string;languageCode:string;speakingRate:number;text:string}|null;generationTask?:import('./workspaceVisualCandidates.js').WorkspaceVisualTask;windowWarning?:string|null;selection?:import('./productionSelection.js').ProductionSelection|null;defaults?:{selection:import('./productionSelection.js').ProductionSelection;voice:string;languageCode:string;speakingRate:number}|null;requiresCandidateAdoption?:boolean;videoWindow?:{durationSeconds:number;generationSeconds:number;maximumSeconds:number};clipId:string;shotId:string;mode:'tts'|'manual'|'none';text:string;voice:string|null;languageCode:string|null;speakingRate:number|null;override:boolean;inputFingerprint:string;confirmed:boolean;taskId:string|null;status:string;error:string|null;audioTrackId:string|null;artifactId:string|null;relativePath:string|null;sha256:string|null;fileSize:number|null;durationSeconds:number|null;itemId:string;adoptedAudioTrackId:string|null}

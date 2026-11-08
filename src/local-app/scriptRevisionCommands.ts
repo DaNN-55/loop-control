@@ -4,7 +4,7 @@ import {basename} from 'node:path';
 import {createHash} from 'node:crypto';
 import {ConfigurationError} from './configurationCommands.js';
 import {snapshotInput} from './localFiles.js';
-import {parseProductionScript} from '../reviews/productionScript.js';
+import {parseStoryboardScript} from '../reviews/productionScript.js';
 
 export async function reconfirmScript(c:PoolClient,root:string,episode:{id:string;main_script_revision_id:string|null;stage:string;archived_at:string|null},data:Record<string,unknown>,directoryRelativePath=`episodes/${episode.id}`){
  if(typeof data.expectedScriptRevisionId!=='string'||data.expectedScriptRevisionId!==episode.main_script_revision_id||episode.archived_at||episode.stage==='production_completed')throw new ConfigurationError(409,'当前脚本版本或生产单状态已变化，请刷新。');
@@ -16,6 +16,6 @@ export async function reconfirmScript(c:PoolClient,root:string,episode:{id:strin
  if((await c.query("SELECT 1 FROM public.tasks WHERE episode_id=$1 AND status='running' LIMIT 1",[episode.id])).rowCount)throw new ConfigurationError(409,'制作任务正在运行，请完成或停止后修订脚本。');
  const snapshot=await snapshotInput(root,episode.id,{sourceKind:'file',sourcePath:basename(old.source_path),contentBase64:Buffer.from(data.text).toString('base64'),isMainScript:true},directoryRelativePath);
  const result=(await c.query('SELECT to_jsonb(local_identity.reconfirm_episode_script($1,$2,$3,$4,$5,$6,$7)) result',[episode.id,old.id,snapshot.sourcePath,snapshot.storagePath,snapshot.sha256,snapshot.fileSize,data.reason.trim()])).rows[0].result;
- await c.query('UPDATE local_identity.input_episodes SET script_template_version=$2 WHERE episode_id=$1',[episode.id,parseProductionScript(data.text)?2:null]);
+ await c.query('UPDATE local_identity.input_episodes SET script_template_version=$2 WHERE episode_id=$1',[episode.id,parseStoryboardScript(data.text)?2:null]);
  return result;
 }

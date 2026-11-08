@@ -1,3 +1,5 @@
+import {prepareWorkspaceVideoSound} from './workspaceVideoSound.js';
+import {applyWorkspaceVideoSound} from '../workspaceVideoSound.js';
 import {resolveWorkspaceMainVoice} from '../workspaceAudio.js';
 import {adoptFirstWorkspaceNarration,readWorkspaceNarration,readWorkspaceNarrationTarget} from './workspaceNarration.js';
 import {queueWorkspaceVisualGeneration} from './workspaceVisualCandidates.js';
@@ -49,7 +51,7 @@ export async function generateWorkspaceImage(c:PoolClient,root:string,e:{id:stri
   ({row,project}=await lockProductionWorkspace(c,root,e.id,row.id,revision));
  }
  const currentClip=row.bindings.find(b=>b.id===data.clipId)!;
- const narration=(await readWorkspaceNarration(c,row,project)).find(n=>n.shotId===currentClip.shotId),voice=resolveWorkspaceMainVoice(project,currentClip.shotId).item,hasVoice=(!voice||voice.id===narration?.itemId)&&(narration?.mode==='tts'||narration?.mode==='manual');
+ const narration=(await readWorkspaceNarration(c,row,project)).find(n=>n.shotId===currentClip.shotId),voice=resolveWorkspaceMainVoice(project,currentClip.shotId).item,hasVoice=narration?.enabled!==false&&(!voice||voice.id===narration?.itemId)&&(narration?.mode==='tts'||narration?.mode==='manual');
  const narrationTarget=hasVoice?await readWorkspaceNarrationTarget(c,root,row.id,clip.id):null;
  const queued=await queueWorkspaceVisualGeneration(c,root,row,project,{targetItemId:clip.itemId,firstFrameMaterialRevisionId:image.id,selection:data.selection,videoSettings:data.videoSettings,firstFrameFit:data.firstFrameFit,prompt:data.prompt,durationSeconds:data.durationSeconds,reservationCents:data.reservationCents},runtime,'first');
  const targetDuration=queued.targetSeconds,providerDuration=queued.providerSeconds,task={id:queued.taskId};
@@ -80,6 +82,8 @@ export async function fillWorkspaceImageResult(c:PoolClient,root:string,episodeI
  if(Number(item.durationInFrames)!==duration)throw new ConfigurationError(409,'占位时长已变化，结果保留为候选。');
  const assetId=`material-${material.id}`;project.assets.push({id:assetId,name:material.source_path,kind:'video',src:material.storage_path,durationInFrames:Math.round(observed.durationSeconds*timeline.fps)});
  Object.assign(item,{kind:'video',name:clip.shotId,src:material.storage_path,sourceAssetId:assetId,sourceRevision:material.id,sourceContentHash:material.sha256,durationInFrames:duration,srcInFrame:0,volume:0});delete item.props;
+ const sound=await prepareWorkspaceVideoSound(c,root,episodeId,material.storage_path,material.sha256,timeline.fps,0,duration,1,observed.hasAudio);
+ applyWorkspaceVideoSound(project,timeline,item,clip.shotId,sound,!!resolveWorkspaceMainVoice(project,clip.shotId).item);
  clip.source={materialRevisionId:material.id,relativePath:material.storage_path,sha256:material.sha256,fileSize:Number(material.file_size),kind:'video'};
  return updateWorkspaceProject(c,root,row,project,row.bindings,'填入首次图片视频');
 }

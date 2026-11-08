@@ -4,6 +4,8 @@ import type {ShotCaptionContract} from './shotCaptions.js';
 export interface WorkspaceCaptionState {clipId:string;itemId:string;shotId:string;durationMs:number;contract:ShotCaptionContract;inputFingerprint:string;timing:'missing'|'current'|'stale'|'waiting'|'failed';textConfirmed:boolean;audioTrackId:string|null;narrationText:string|null;taskId:string|null;alignmentInputVersion:string|null;detail:string|null}
 export const isWorkspaceCaptionContract=isValidShotCaptionContract;
 export const workspaceCaptionFields:Record<string,string[]>={
+ setWorkspaceCaptionsEnabled:['episodeId','workspaceId','expectedRevision','clipId','enabled'],
+ saveWorkspaceNarrationCaptions:['episodeId','workspaceId','expectedRevision','clipId','contentMode','text'],
  saveWorkspaceCaptions:['episodeId','workspaceId','expectedRevision','clipId','captionContract','nativeApplied'],
  requestWorkspaceCaptionAlignment:['episodeId','workspaceId','expectedRevision','clipId','localOnly'],
  prepareWorkspaceCaptionAlignment:['episodeId','workspaceId','expectedRevision','clipId','taskId','expectedInputFingerprint'],
@@ -52,6 +54,28 @@ export function readWorkspaceCaption(project:OpenChatCutProject,itemId:string):{
  if(!lane||!meta||!item||!timeline||!track?.captions)return null;
  const raw:ShotCaptionContract={version:'shot-captions/v1',enabled:timeline.captionsHidden!==true&&lane.visible!==false&&track.captions.enabled!==false,contentMode:meta.contentMode==='follow_tts'&&lane.words?.length&&lane.words.map(w=>w.text.replace(/\s/g,'')).join('')!==meta.text.replace(/\s/g,'')?'independent':meta.contentMode,text:lane.words?.length?lane.words.map(w=>w.text.replace(/\n/g,'')).join(''):meta.text,cues:(lane.words??[]).map(w=>({id:w.id,text:w.text.replace(/\n/g,''),startMs:Math.round(w.start-Number(window?.startFrame??item.startFrame)*1000/timeline.fps),endMs:Math.round(w.end-Number(window?.startFrame??item.startFrame)*1000/timeline.fps)})),spatial:{...meta.spatial,anchor:(lane.anchor??track.captions.layoutPolicy?.slots?.find(s=>s.id===lane.slotId)?.anchor??meta.spatial.anchor) as ShotCaptionContract['spatial']['anchor']}};
  return {laneId:lane.id,words:lane.words??[],contract:normalizeShotCaptionContract(raw,{enabled:raw.enabled,text:raw.text,aspectRatio:timeline.width===timeline.height?'1:1':timeline.width>timeline.height?'16:9':'9:16'})};
+}
+
+/** Seed changed text within the shot or voice window. Real timing is reviewed separately. */
+export function setWorkspaceCaptionText(
+ project:OpenChatCutProject,itemId:string,contract:ShotCaptionContract,text:string,voice?:Record<string,unknown>,
+):OpenChatCutProject{
+ if(contract.cues.length&&text.replace(/\s/gu,'')===contract.text.replace(/\s/gu,'')){
+  return applyWorkspaceCaptionEdit(project,itemId,contract);
+ }
+ const window=readWorkspaceShotWindow(project,itemId);
+ if(!window)throw Error('当前工程中找不到字幕所属片段。');
+ const start=voice?Math.max(window.startFrame,Number(voice.startFrame)):window.startFrame;
+ const end=voice?Math.min(window.startFrame+window.durationInFrames,Number(voice.startFrame)+Number(voice.durationInFrames)):window.startFrame+window.durationInFrames;
+ const ms=(frame:number)=>Math.round((frame-window.startFrame)*1000/window.timeline.fps);
+ const cues=text.trim()&&end>start?[{id:'narration-caption',text,startMs:ms(start),endMs:ms(end)}]:[];
+ return applyWorkspaceCaptionEdit(project,itemId,{...contract,text,cues});
+}
+
+export function followWorkspaceNarrationCaption(project:OpenChatCutProject,itemId:string,text:string,voice:Record<string,unknown>,initialContract?:ShotCaptionContract):OpenChatCutProject{
+ const existing=readWorkspaceCaption(project,itemId)?.contract,contract=existing??initialContract;
+ if(!contract?.enabled||contract.contentMode!=='follow_tts'||!text.trim()||existing&&contract.cues.length&&text.replace(/\s/gu,'')===contract.text.replace(/\s/gu,''))return project;
+ return setWorkspaceCaptionText(project,itemId,contract,text,voice);
 }
 
 /** Upgrade old visual-bound lanes without rebuilding words or their absolute timing. */

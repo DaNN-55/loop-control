@@ -1,6 +1,9 @@
+import {shotCompositionLayouts,type ShotCompositionLayout} from '../shotComposition.js';
+import type {FrozenVideoVisualInput} from '../videoVisualInputs.js';
 import {wanVideoModel,wanVideoParameters,defaultWanModelSettings} from '../wanVideoModels.js';
 import {isVideoProvider, videoAdapters, videoProviders} from "./videoProviderCatalog.js";
 import{openChatCutProjectPath}from"./openchatcutPaths.js";
+import {videoOutputRatios,videoVisualInputProblem,type VideoOutputRatio} from '../videoVisualInputs.js';
 import { registeredAdapters } from "./registeredAdapters.js";
 import type { StoryboardStructureRevision } from "./storyboardRevision.js";
 import { isShotDurationDecision, type ShotDurationDecision } from "./durationDecision.js";
@@ -81,6 +84,7 @@ export interface StoryboardShotManifest {
   productionMethod: string;
   inputBasis: Array<Pick<ArtifactManifest, "relativePath" | "sha256">>;
   targetSpec: string;
+  layout?: ShotCompositionLayout;
 }
 
 export interface StoryboardManifest {
@@ -195,7 +199,7 @@ export interface WorkerTaskPackageInput {
     shot: StoryboardShotManifest;
   };
   media?:
-    | { adapter: "wan_video" | "seedance_video" | "minimax_video" | "kling_video"; wanVideo: { settings?:import('../videoGenerationSettings.js').WanGenerationSettings;composition?:import('../videoGenerationSettings.js').FirstFrameComposition;firstFrame: ArtifactManifest; prompt: string; durationSeconds: number; imageMime: string } }
+    | { adapter: "wan_video" | "seedance_video" | "minimax_video" | "kling_video"; wanVideo: { settings?:import('../videoGenerationSettings.js').WanGenerationSettings;composition?:import('../videoGenerationSettings.js').FirstFrameComposition;firstFrame?: ArtifactManifest; visualInputs?: FrozenVideoVisualInput[]; visualMode?: string; referenceRatio?:VideoOutputRatio; prompt: string; durationSeconds: number; imageMime?: string } }
     | {
       adapter: "google_tts" | "volcengine_tts";
       narration: {
@@ -244,6 +248,7 @@ export interface WorkerTaskPackageInput {
       adapter: "freesound_preview";
       soundtrack: {
         query: string;
+        candidateIndex?: number;
         targetDurationSeconds: number;
         cue: StoryboardAudioCue;
       };
@@ -477,8 +482,21 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
     const video = input.media.wanVideo;
     if (!(input.task.provider === "bailian" && input.media.adapter === "wan_video" && !!wanVideoModel(input.task.model) || isVideoProvider(input.task.provider) && videoProviders[input.task.provider].adapter === input.media.adapter && (videoProviders[input.task.provider].models as readonly string[]).includes(input.task.model)) || !["a_roll_generation", "b_roll_generation"].includes(input.capability) || !isConnectionId(input.credentialRef) || !Number.isInteger(video.durationSeconds) || video.durationSeconds < 2 || video.durationSeconds > 15 || !isNonEmptyString(video.prompt) || video.prompt.length > 1500) throw new Error("万相任务的冻结配置无效。");
     if(input.task.provider==='bailian')wanVideoParameters(input.task.model,video.durationSeconds,video.settings??defaultWanModelSettings(input.task.model));
-    assertArtifactManifest(video.firstFrame);
-    if (!input.inputArtifacts.some((artifact) => artifact.relativePath === video.firstFrame.relativePath && artifact.sha256 === video.firstFrame.sha256)) throw new Error("万相首帧不属于冻结输入。");
+    if(video.referenceRatio!==undefined&&!videoOutputRatios.includes(video.referenceRatio))throw Error('参考视频输出比例无效。');
+    if(video.visualInputs){
+      const choice=registeredAdapters.productionChoices().find(entry=>entry.provider===input.task.provider&&entry.adapter===input.media?.adapter);
+      const mode=choice?.videoGenerationModes?.[input.task.model]?.find(entry=>entry.id===video.visualMode);
+      if(!mode||mode.id==='first-frame')throw new Error('所选视频生成模式无效。');
+      const problem=videoVisualInputProblem(mode,video.visualInputs);
+      if(problem)throw new Error(problem);
+    }
+    const frames=video.visualInputs??(video.firstFrame?[video.firstFrame]:[]);
+    if(!frames.length)throw new Error('视频任务缺少冻结画面输入。');
+    for(const frame of frames){
+      assertArtifactManifest(frame);
+      if(!input.inputArtifacts.some(artifact=>artifact.relativePath===frame.relativePath&&artifact.sha256===frame.sha256&&artifact.fileSize===frame.fileSize))
+        throw new Error('视频素材不属于冻结输入。');
+    }
   }
   if (input.capability === "narration_generation" && (!input.media || (input.media.adapter !== "google_tts" && input.media.adapter !== "volcengine_tts"))) throw new Error("旁白生成必须包含冻结的 TTS 配置。");
   if (input.capability === "narration_generation" && !isConnectionId(input.credentialRef)) throw new Error("旁白生成必须包含冻结的外部连接版本 ID。");
@@ -573,7 +591,7 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
   if (input.media?.adapter === "freesound_preview") {
     if (input.task.provider !== "freesound") throw new Error("声轨任务 Provider 必须与冻结 Freesound 适配器匹配。");
     const soundtrack = input.media.soundtrack;
-    if (!isNonEmptyString(soundtrack.query) || soundtrack.query.length > 100 || !isPositiveFiniteNumber(soundtrack.targetDurationSeconds)) throw new Error("声轨任务的冻结检索词或时长无效。");
+    if (!isNonEmptyString(soundtrack.query) || soundtrack.query.length > 100 || !isPositiveFiniteNumber(soundtrack.targetDurationSeconds)||soundtrack.candidateIndex!==undefined&&(!Number.isInteger(soundtrack.candidateIndex)||soundtrack.candidateIndex<0||soundtrack.candidateIndex>2)) throw new Error("声轨任务的冻结检索词、候选序号或时长无效。");
     validateStoryboardAudioCue(soundtrack.cue);
   }
   if (input.media?.adapter === "openai_images") {
@@ -664,7 +682,7 @@ export function validateWorkerResult(value: unknown, taskPackage: WorkerTaskPack
   assertRetry(value.retry);
 
   const storyboard = taskPackage.capability === "storyboard_planning" && value.status === "completed"
-    ? validateStoryboardManifest(value.storyboard, taskPackage.assets.inputs)
+    ? validateStoryboardManifest(value.storyboard, taskPackage.assets.inputs, true)
     : undefined;
   if (taskPackage.capability === "storyboard_planning" && value.status !== "completed" && value.storyboard !== null) throw new Error("未完成的分镜任务必须返回空分镜内容。");
   if (taskPackage.capability !== "storyboard_planning" && value.storyboard !== undefined) throw new Error("非分镜任务不能返回分镜内容。");
@@ -725,11 +743,13 @@ function parseVisualAssetRequests(value: unknown, frozenInputs: ArtifactManifest
   });
 }
 
-export function validateStoryboardManifest(value: unknown, frozenInputs: ArtifactManifest[]): StoryboardManifest {
+export function validateStoryboardManifest(value: unknown, frozenInputs: ArtifactManifest[], allowScriptOnly = false): StoryboardManifest {
   if (!isRecord(value) || value.version !== "storyboard/v1" || !Array.isArray(value.shots) || value.shots.length === 0) throw new Error("分镜内容格式无效。");
+  const requireVisualBasis = !allowScriptOnly || frozenInputs.some(artifact => artifact.artifactType !== "main_script");
   const shotIds = new Set<string>();
   const shots = value.shots.map((candidate) => {
     if (!isRecord(candidate) || !isNonEmptyString(candidate.id) || !isNonEmptyString(candidate.scriptSegment) || !isNonNegativeNumber(candidate.durationSeconds) || candidate.durationSeconds <= 0 || (candidate.shotType !== "a_roll" && candidate.shotType !== "b_roll") || !isNonEmptyString(candidate.productionMethod) || !Array.isArray(candidate.inputBasis) || candidate.inputBasis.length === 0 || !isNonEmptyString(candidate.targetSpec)) throw new Error("分镜镜头格式无效。");
+    if (candidate.layout!==undefined&&!shotCompositionLayouts.includes(candidate.layout as ShotCompositionLayout)) throw new Error("分镜构图格式无效。");
     if (shotIds.has(candidate.id)) throw new Error("分镜镜头 ID 不能重复。");
     shotIds.add(candidate.id);
     const shotType = candidate.shotType as StoryboardShotManifest["shotType"];
@@ -740,7 +760,7 @@ export function validateStoryboardManifest(value: unknown, frozenInputs: Artifac
       return { relativePath: input.relativePath, sha256: input.sha256 };
     });
     if (!inputBasis.some((input) => frozenInputs.some((artifact) => artifact.artifactType === "main_script" && artifact.relativePath === input.relativePath && artifact.sha256 === input.sha256))) throw new Error("每个分镜镜头必须引用冻结主脚本。");
-    if (!inputBasis.some((input) => frozenInputs.some((artifact) => artifact.artifactType !== "main_script" && artifact.relativePath === input.relativePath && artifact.sha256 === input.sha256))) throw new Error("每个分镜镜头必须引用冻结视觉依据。");
+    if (requireVisualBasis && !inputBasis.some((input) => frozenInputs.some((artifact) => artifact.artifactType !== "main_script" && artifact.relativePath === input.relativePath && artifact.sha256 === input.sha256))) throw new Error("每个分镜镜头必须引用冻结视觉依据。");
     return {
       id: candidate.id,
       scriptSegment: candidate.scriptSegment,
@@ -749,6 +769,7 @@ export function validateStoryboardManifest(value: unknown, frozenInputs: Artifac
       productionMethod: candidate.productionMethod,
       inputBasis,
       targetSpec: candidate.targetSpec,
+      ...(candidate.layout?{layout:candidate.layout as ShotCompositionLayout}:{}),
     };
   });
   const audioCuesValue = value.audioCues;

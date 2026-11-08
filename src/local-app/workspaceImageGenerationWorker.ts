@@ -9,13 +9,14 @@ import {writeSafeAssetFile} from '../worker/controlledMediaExecutor.js';
 import type {WorkerTaskPackage} from '../worker/contracts.js';
 import {isImageGenerationSettings} from '../imageGeneration.js';
 import type {NativeAttemptFence} from './nativeAttemptOutput.js';
+import {isDefiniteProviderRejection} from '../worker/providerOutcome.js';
 
-export async function executeWorkspaceImages(pool:Pool,p:WorkerTaskPackage,fence:NativeAttemptFence,secret:string,fetcher:MediaFetcher){
+export async function executeWorkspaceImages(pool:Pool,p:WorkerTaskPackage,fence:NativeAttemptFence,secret:string,createFetcher:(reserve:()=>Promise<void>)=>MediaFetcher){
   if(p.media?.adapter!=='openai_images'||!isImageGenerationSettings(p.media.staticVisual.settings))throw Error('冻结图片设置无效。');
   const image=p.media.staticVisual;
   const references=await Promise.all((image.references??[]).map(async ref=>({mimeType:ref.mimeType,bytes:await readFile(join(p.assets.allowedRoot,ref.relativePath))})));
-  await pool.query('SELECT local_identity.reserve_workspace_images($1,$2,$3)',[fence.p_task_id,fence.p_attempt,fence.p_lease_token]);
-  const observe:MediaFetcher=async(url,init)=>{const response=await fetcher(url,init);if(response.status>=400&&response.status<500&&response.status!==408)await pool.query('SELECT local_identity.record_workspace_visual_submission($1,$2,$3,$4)',[fence.p_task_id,fence.p_attempt,fence.p_lease_token,'rejected']);return response;};
+  const fetcher=createFetcher(async()=>{await pool.query('SELECT local_identity.reserve_workspace_images($1,$2,$3)',[fence.p_task_id,fence.p_attempt,fence.p_lease_token]);});
+  const observe:MediaFetcher=async(url,init)=>{const response=await fetcher(url,init);if(isDefiniteProviderRejection(response.status))await pool.query('SELECT local_identity.record_workspace_visual_submission($1,$2,$3,$4)',[fence.p_task_id,fence.p_attempt,fence.p_lease_token,'rejected']);return response;};
   const images=await generateOpenAiImages({apiKey:secret,fetcher:observe,model:p.model,prompt:image.prompt,settings:image.settings,references});
   await pool.query('SELECT local_identity.record_workspace_visual_submission($1,$2,$3,$4)',[fence.p_task_id,fence.p_attempt,fence.p_lease_token,'received']);
   const artifacts=[];

@@ -1,3 +1,6 @@
+import {readWorkspaceNarrationEnabled,setWorkspaceNarrationEnabled} from '../workspaceNarrationToggle.js';
+import {followWorkspaceNarrationCaption} from '../workspaceCaptions.js';
+import {readWorkspaceCaptions} from './workspaceCaptionsCommands.js';
 import {readWorkspaceNarrationTasks} from './workspaceGenerationTasks.js';
 import {currentWorkspaceCallAuthorization} from './workspaceCallConfirmation.js';
 import {episodeStorageLocationAtRoot,requireWritableEpisodeStorage} from './episodeStorageLocation.js';
@@ -10,6 +13,7 @@ import {applyWorkspaceAudioMix,resolveWorkspaceMainVoice} from '../workspaceAudi
 import {isVideoProvider,videoProviders} from '../worker/videoProviderCatalog.js';
 import {createHash} from 'node:crypto';
 import type {PoolClient} from 'pg';
+import type {WorkspaceCandidate} from '../workspaceCandidates.js';
 import type {WorkspaceNarration} from '../productionWorkspace.js';
 import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
 import type {InputRuntime} from './episodeCommands.js';
@@ -49,8 +53,25 @@ export async function readWorkspaceNarration(c:PoolClient,row:ProductionWorkspac
   const conflict=!!(!deliberate&&track&&track===s?.adopted_audio_track_id&&nativeVoice?.sourceAssetId===`audio-track-${track}`&&visuals.length&&Math.max(...visuals.map(i=>i.end))-Math.min(...visuals.map(i=>i.start))!==Math.ceil(Number(s.duration_seconds)*visuals[0].fps));
   const windowWarning=s?.selection&&mainVoice&&visuals.length&&Number(mainVoice.durationInFrames)!==Math.max(...visuals.map(v=>v.end))-Math.min(...visuals.map(v=>v.start))?'实际口播与画面窗口时长不同，请调整画面或拆镜，并重新核对字幕。':null;
   const generationTask=generationTasks.find(t=>t.shotId===clip.shotId),execution=executions.find(r=>r.shot_id===clip.shotId&&r.input_snapshot?.production_selection);
-  return{execution:execution?{taskId:execution.task_id,selection:execution.input_snapshot.production_selection,voice:execution.input_snapshot.media.narration.voice.name,languageCode:execution.input_snapshot.media.narration.voice.language_code,speakingRate:Number(execution.input_snapshot.media.narration.voice.speaking_rate),text:execution.input_snapshot.media.narration.text}:null,generationTask:generationTask?.status==='completed'?undefined:generationTask,windowWarning,selection:s?.selection??null,defaults:defaults??null,requiresCandidateAdoption,...(!s?.selection&&duration&&bounds?{videoWindow:{durationSeconds:duration,generationSeconds:Math.max(bounds.minDuration,Math.ceil(duration)),maximumSeconds:bounds.maxDuration}}:{}),clipId:clip.id,shotId:clip.shotId,mode:s?.mode??(inherited?'manual':'none'),text:d?.tts_text??inherited?.input_snapshot?.media?.narration?.text??legacyMeta?.text??clip.text,voice:d?.tts_voice??null,languageCode:d?.tts_language_code??null,speakingRate:d?.tts_speaking_rate?Number(d.tts_speaking_rate):null,override:!!d?.tts_override_voice,inputFingerprint:hash,confirmed:!!s&&s.confirmed_fingerprint===hash,taskId:s?.task_id??null,status:inherited?'completed':conflict?'duration_conflict':!current?'pending':s?.status??(s?.mode==='none'?'disabled':'pending'),error:conflict?'画面范围与完整口播时长不同，请明确调整画面或主声音轨。':s&&['failed','blocked'].includes(s.status)?s.last_result?.blockers?.[0]?.detail??s.last_result?.retry?.reason??null:null,audioTrackId:track??inherited?.id??null,artifactId:track?s.source_artifact_id:inherited?.source_artifact_id??null,relativePath:track?s.relative_path:inherited?.relative_path??null,sha256:track?s.sha256:inherited?.sha256??null,fileSize:track?Number(s.file_size):inherited?Number(inherited.file_size):null,durationSeconds:track?Number(s.duration_seconds):inherited?Number(inherited.duration_seconds):null,itemId:workspaceNarrationItemId(clip.shotId),adoptedAudioTrackId:adoptedTrack};});
+  const enabled=project?readWorkspaceNarrationEnabled(project,[...ids],s?.mode!=='none'):s?.mode!=='none';
+  const retainedAudioTrackId=nativeVoice?.loopControlNarrationMute&&typeof nativeVoice.sourceAssetId==='string'&&nativeVoice.sourceAssetId.startsWith('audio-track-')?nativeVoice.sourceAssetId.slice(12):null;
+  return{enabled,retainedAudioTrackId,execution:execution?{taskId:execution.task_id,selection:execution.input_snapshot.production_selection,voice:execution.input_snapshot.media.narration.voice.name,languageCode:execution.input_snapshot.media.narration.voice.language_code,speakingRate:Number(execution.input_snapshot.media.narration.voice.speaking_rate),text:execution.input_snapshot.media.narration.text}:null,generationTask:generationTask?.status==='completed'?undefined:generationTask,windowWarning,selection:s?.selection??null,defaults:defaults??null,requiresCandidateAdoption,...(!s?.selection&&duration&&bounds?{videoWindow:{durationSeconds:duration,generationSeconds:Math.max(bounds.minDuration,Math.ceil(duration)),maximumSeconds:bounds.maxDuration}}:{}),clipId:clip.id,shotId:clip.shotId,mode:s?.mode??(inherited?'manual':'none'),text:d?.tts_text??inherited?.input_snapshot?.media?.narration?.text??legacyMeta?.text??clip.text,voice:d?.tts_voice??null,languageCode:d?.tts_language_code??null,speakingRate:d?.tts_speaking_rate?Number(d.tts_speaking_rate):null,override:!!d?.tts_override_voice,inputFingerprint:hash,confirmed:!!s&&s.confirmed_fingerprint===hash,taskId:s?.task_id??null,status:inherited?'completed':conflict?'duration_conflict':!current?'pending':s?.status??(s?.mode==='none'?'disabled':'pending'),error:conflict?'画面范围与完整口播时长不同，请明确调整画面或主声音轨。':s&&['failed','blocked'].includes(s.status)?s.last_result?.blockers?.[0]?.detail??s.last_result?.retry?.reason??null:null,audioTrackId:track??inherited?.id??null,artifactId:track?s.source_artifact_id:inherited?.source_artifact_id??null,relativePath:track?s.relative_path:inherited?.relative_path??null,sha256:track?s.sha256:inherited?.sha256??null,fileSize:track?Number(s.file_size):inherited?Number(inherited.file_size):null,durationSeconds:track?Number(s.duration_seconds):inherited?Number(inherited.duration_seconds):null,itemId:workspaceNarrationItemId(clip.shotId),adoptedAudioTrackId:adoptedTrack};});
 }
+/** Restore the frozen text and track inside the same transaction as candidate adoption. */
+export async function restoreWorkspaceNarrationDraft(c:PoolClient,row:ProductionWorkspaceRecord,candidate:WorkspaceCandidate){
+ const {shotId,text,speech,audioTrackId,taskId}=candidate;
+ if(speech){
+  await c.query('SELECT local_identity.save_selected_workspace_narration($1,$2,$3,$4,$5,$6,$7)',[row.episode_id,row.storyboard_package_id,shotId,text,speech.voice,speech.speakingRate,speech.languageCode]);
+ }else{
+  await c.query("SELECT local_identity.save_workspace_narration_draft($1,$2,$3,'source',$4,NULL,NULL)",[row.episode_id,row.storyboard_package_id,shotId,text]);
+  await c.query('SELECT local_identity.use_workspace_narration_track($1,$2,$3,$4)',[row.episode_id,row.storyboard_package_id,shotId,audioTrackId]);
+ }
+ const saved=await c.query('UPDATE local_identity.workspace_narrations SET mode=$3,selection=$4,task_id=$5,manual_audio_track_id=$6 WHERE workspace_id=$1 AND shot_id=$2',[row.id,shotId,speech?'tts':'manual',speech?JSON.stringify(speech.selection):null,speech?taskId:null,speech?null:audioTrackId]);
+ if(!saved.rowCount)throw new ConfigurationError(409,'镜头口播设置已变化，请重新核对。');
+ const restored=(await inputs(c,row)).find(i=>i.clip.shotId===shotId)!;
+ await c.query('UPDATE local_identity.workspace_narrations SET input_fingerprint=$3,confirmed_fingerprint=$3 WHERE workspace_id=$1 AND shot_id=$2',[row.id,shotId,restored.hash]);
+}
+
 export async function executeWorkspaceNarration(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,runtime:Pick<InputRuntime,'narrationReady'|'checkReferences'>,command:string,data:Record<string,unknown>){
  await requireWritableEpisodeStorage(c,root,row.episode_id);
  if(command==='saveWorkspaceNarrationDefaults'){
@@ -59,12 +80,20 @@ export async function executeWorkspaceNarration(c:PoolClient,root:string,row:Pro
  }
  if(command==='refreshWorkspaceNarration'){await adoptFirstWorkspaceNarration(c,root,row,project);return;}
  const clip=row.bindings.find(b=>b.id===data.clipId);if(!clip)throw new ConfigurationError(404,'镜头实例不存在。');
+ if(command==='setWorkspaceNarrationEnabled'){
+  if(typeof data.enabled!=='boolean')throw new ConfigurationError(400,'口播开关无效。');
+  if(isOpenChatCutStudio(row.episode_id))throw new ConfigurationError(409,'请先退出剪辑工作台，再修改口播开关。');
+  const clips=row.bindings.filter(b=>b.shotId===clip.shotId);
+  const next=setWorkspaceNarrationEnabled(project,clip.shotId,clips.map(b=>b.itemId),clips.map(b=>b.id),data.enabled);
+  await updateWorkspaceProject(c,root,row,next,row.bindings,data.enabled?'启用镜头口播':'关闭镜头口播',{nativeEdit:true});return;
+ }
  if(command==='saveWorkspaceNarration'){
+
   if(!['tts','manual','none'].includes(String(data.mode))||typeof data.text!=='string'||data.text.length>100000||data.mode==='tts'&&!data.text.trim())throw new ConfigurationError(400,'口播配置无效。');
   if(data.voice!==undefined&&data.voice!==null&&(typeof data.voice!=='string'||!data.voice.trim()||data.voice.length>200)||data.speakingRate!==undefined&&data.speakingRate!==null&&(typeof data.speakingRate!=='number'||!Number.isFinite(data.speakingRate)||data.speakingRate<0.5||data.speakingRate>2))throw new ConfigurationError(400,'声音或语速无效。');
   if(data.mode==='manual'&&data.materialRevisionId){
    if(data.audioTrackId)throw new ConfigurationError(400,'请选择素材或已登记音轨中的一项。');
-   const material=(await c.query("SELECT * FROM public.production_material_revisions WHERE id=$1 AND episode_id=$2 AND material_type='audio' AND material_purpose='narration'",[data.materialRevisionId,row.episode_id])).rows[0];
+   const material=(await c.query("SELECT * FROM public.production_material_revisions WHERE id=$1 AND episode_id=$2 AND material_type='audio' AND material_purpose IN ('narration','general_reference')",[data.materialRevisionId,row.episode_id])).rows[0];
    if(!material)throw new ConfigurationError(404,'请选择本期已上传的口播素材。');
    await verifyEpisodeFile(c,root,row.episode_id,material.storage_path,material.sha256,Number(material.file_size));
    const duration=await probeMp3Artifact(await resolveEpisodeFileReference(c,await episodeStorageLocationAtRoot(c,root,row.episode_id),material.storage_path));
@@ -93,21 +122,31 @@ export async function executeWorkspaceNarration(c:PoolClient,root:string,row:Pro
   return;
  }
  const n=(await readWorkspaceNarration(c,row,project)).find(n=>n.shotId===clip.shotId)!;
+ if(command==='withdrawWorkspaceNarration'){
+  if(!n.adoptedAudioTrackId||data.audioTrackId!==n.adoptedAudioTrackId)throw new ConfigurationError(409,'已采用的口播已变化，请重新读取。');
+  if(isOpenChatCutStudio(row.episode_id))throw new ConfigurationError(409,'请先保存并返回，再撤回口播。');
+  const voice=resolveWorkspaceMainVoice(project,n.shotId).item;
+  for(const timeline of project.timelines)timeline.items=timeline.items.filter(i=>i!==voice);
+  await c.query('UPDATE local_identity.workspace_narrations SET adopted_audio_track_id=NULL WHERE workspace_id=$1 AND shot_id=$2',[row.id,n.shotId]);
+  await updateWorkspaceProject(c,root,row,project,row.bindings,'撤回镜头口播',{nativeEdit:true});
+  return;
+ }
  if(command==='confirmWorkspaceNarration'){
   if(!(await c.query('UPDATE local_identity.workspace_narrations SET confirmed_fingerprint=$3,input_fingerprint=$3,requested_project_sha256=$4,confirmed_match_fingerprint=$5,requested_native_edit_revision=$6 WHERE workspace_id=$1 AND shot_id=$2',[row.id,clip.shotId,n.inputFingerprint,row.project_sha256,fingerprint(clip.source),Number(row.native_edit_revision??0)])).rowCount)throw new ConfigurationError(409,'请先保存本镜口播设置。');return;
  }
  if(command==='adoptWorkspaceNarration'){
+  if(n.enabled===false)throw new ConfigurationError(409,'请先启用口播，再采用音轨。');
   if(data.inputFingerprint!==n.inputFingerprint||data.audioTrackId!==n.audioTrackId)throw new ConfigurationError(409,'口播输入或音轨已变化，请重新读取。');await adopt(c,root,row,project,n,true);return;
  }
  if(command!=='generateWorkspaceNarration')throw new ConfigurationError(400,'不支持的口播操作。');
- if(n.mode!=='tts'||!n.confirmed)throw new ConfigurationError(409,'请先保存并确认当前镜头匹配与口播。');
+ if(n.enabled===false||n.mode!=='tts'||!n.confirmed)throw new ConfigurationError(409,'请先保存并确认当前镜头匹配与口播。');
  if(data.retry!==undefined&&typeof data.retry!=='boolean')throw new ConfigurationError(400,'重试参数无效。');
  const authorized=await currentWorkspaceCallAuthorization(c,row);
  if(n.selection){
   const active=await c.query(`SELECT 1 FROM local_identity.workspace_narration_requests r JOIN public.tasks t ON t.id=r.task_id LEFT JOIN local_identity.workspace_narration_submissions s ON s.task_id=t.id WHERE r.workspace_id=$1 AND r.shot_id=$2 AND ((t.status IN ('ready','running') AND r.input_fingerprint<>$3) OR (s.outcome IN ('started','received') AND t.status<>'completed'))`,[row.id,clip.shotId,n.inputFingerprint]);if(active.rowCount)throw new ConfigurationError(409,'上次口播仍在执行或提交结果未知；请先核对，不会重复发送。');
   const resolved=await resolveProductionSelection(c,n.selection,'speech');validateSpeechParameters(resolved.selection,n.voice,n.languageCode,n.speakingRate);
   if(typeof data.reservationCents!=='number'||!Number.isSafeInteger(data.reservationCents)||data.reservationCents<Math.max(1,n.text.length)||data.reservationCents>100000)throw new ConfigurationError(400,'请填写足够的本次口播费用预留（分）；按每字至少 1 分保守预留。');
-  if(!runtime.narrationReady)throw new ConfigurationError(503,'本地口播执行器未就绪。');await runtime.narrationReady();await runtime.checkReferences(c,[resolved.selection.connectionVersionId!]);
+  if(!runtime.narrationReady)throw new ConfigurationError(503,'本地口播执行器未就绪。');await runtime.narrationReady();await runtime.checkReferences(c,[resolved.selection.connectionVersionId!],{purpose:'workspace-generation'});
   const context=(await c.query('SELECT e.account_id,e.blueprint_version_id,e.series_version_id,b.policy,s.rules,s.series_id FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id LEFT JOIN public.series_versions s ON s.id=e.series_version_id WHERE e.id=$1',[row.episode_id])).rows[0];
   const snapshot={selectionVersion:1,selection:resolved.selection,connection:resolved.connection,execution:resolved.execution,inputFingerprint:n.inputFingerprint,authorizationHash:authorized.authorization_hash,reservationCents:data.reservationCents,context:{accountId:context.account_id,blueprintVersionId:context.blueprint_version_id,accountRules:creativeAccountRules(context.policy),seriesVersionId:context.series_version_id,seriesId:context.series_id,seriesRules:context.rules,text:n.text,voice:{name:n.voice,languageCode:n.languageCode,speakingRate:n.speakingRate}},target:{workspaceId:row.id,shotId:clip.shotId,clipId:clip.id,scriptRevisionId:row.script_revision_id,storyboardPackageId:row.storyboard_package_id,projectSha256:row.project_sha256,nativeEditRevision:Number(row.native_edit_revision??0),workspaceRevision:Number(row.revision)},costBasis:{reservationCents:data.reservationCents,kind:'owner_reservation',minimumCents:Math.max(1,n.text.length)}};
   const t=(await c.query('SELECT to_jsonb(local_identity.queue_selected_workspace_narration($1,$2,$3,$4)) result',[row.id,clip.shotId,JSON.stringify(snapshot),data.retry??false])).rows[0].result;
@@ -128,7 +167,7 @@ export async function executeWorkspaceNarration(c:PoolClient,root:string,row:Pro
 /** Only the first ready voice of an untouched draft may be assembled automatically. */
 export async function adoptFirstWorkspaceNarration(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,shotId?:string){
  for(const n of await readWorkspaceNarration(c,row,project)){
-  if(shotId!==undefined&&n.shotId!==shotId||resolveWorkspaceMainVoice(project,n.shotId).item)continue;
+  if(n.enabled===false||shotId!==undefined&&n.shotId!==shotId||resolveWorkspaceMainVoice(project,n.shotId).item)continue;
   const s=(await c.query('SELECT requested_native_edit_revision,selection FROM local_identity.workspace_narrations WHERE workspace_id=$1 AND shot_id=$2',[row.id,n.shotId])).rows[0];
   if(s?.selection)continue;
   if(!n.requiresCandidateAdoption&&Number(row.native_edit_revision??0)===0&&n.confirmed&&n.audioTrackId&&!n.adoptedAudioTrackId&&Number(s?.requested_native_edit_revision)===Number(row.native_edit_revision??0)){await adopt(c,root,row,project,n);return true;}
@@ -167,7 +206,9 @@ async function adopt(c:PoolClient,root:string,row:ProductionWorkspaceRecord,proj
  const previous=timeline.items.find(i=>i.id===n.itemId);if(previous)Object.assign(previous,item);else timeline.items.push(item);
  if(!timeline.trackOrder.includes('workspace-narration'))timeline.trackOrder.push('workspace-narration');timeline.tracks['workspace-narration']={kind:'audio',name:'主声音'};
  const mixed=applyWorkspaceAudioMix(project,{kind:'voice',workspaceId:row.id,shotId:n.shotId,visualItemIds:bindings.map(b=>b.itemId),mode:'tts',gainDb:0,ambienceGainDb:null});
- const updated=await updateWorkspaceProject(c,root,row,mixed,row.bindings,'采用实际口播时长',{nativeEdit});
+ const caption=(await readWorkspaceCaptions(c,root,{...row,bindings:row.bindings.filter(b=>b.shotId===n.shotId)},mixed))[0];
+ const next=followWorkspaceNarrationCaption(mixed,visual.id as string,n.text,item,caption?.contract);
+ const updated=await updateWorkspaceProject(c,root,row,next,row.bindings,'采用实际口播时长',{nativeEdit});
  // Carry forward only requests based on the exact untouched draft, never ordinary editor saves.
  await c.query('UPDATE local_identity.workspace_narrations SET requested_project_sha256=$3 WHERE workspace_id=$1 AND requested_project_sha256=$2 AND adopted_audio_track_id IS NULL',[row.id,row.project_sha256,updated!.project.sha256]);
  await c.query('UPDATE local_identity.workspace_narrations SET adopted_audio_track_id=$3 WHERE workspace_id=$1 AND shot_id=$2',[row.id,n.shotId,n.audioTrackId]);

@@ -1,5 +1,6 @@
 // @vitest-environment node
 import {it,expect} from 'vitest';
+import {seedLegacyPlanning} from './legacyPlanning.fixture';
 import {randomUUID} from 'node:crypto';
 import {csrfFor} from './sessions';
 import {productionWorkspaceFixture} from './productionWorkspace.fixture';
@@ -26,10 +27,10 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('ordinary planning drafts
  const saved=await f.send('saveWorkspacePlanningSelection',{selection,expectedSelectionRevision:0});expect(saved.status,JSON.stringify(saved.body)).toBe(200);
  const read=await fetch(`${f.origin}/api/local/episodes/${f.newEpisode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}});expect((await read.json()).planningSelection.selection).toEqual(selection);
  await f.send('importMaterial',{sourceKind:'file',sourcePath:'ref.mp4',materialType:'video',materialPurpose:'visual_reference',mimeType:'video/mp4',isMainScript:false,contentBase64:(await (await import('node:fs/promises')).readFile(f.assetRoot+'/'+f.videoPath)).toString('base64')});
- expect((await f.send('start')).status).toBe(200);const first=await f.send('prepareWorkspace',{expectedScriptRevisionId:f.main});expect(first.status,JSON.stringify(first.body)).toBe(200);expect(first.body.planning).toBe(true);
- const original=(await f.c.query('SELECT input_snapshot,model,budget_limit_cents FROM public.tasks WHERE id=$1',[first.body.taskId])).rows[0];expect(original.model).toBe(selection.model);expect(original.budget_limit_cents).toBe(37);expect(original.input_snapshot.harness.id).toBe(selection.harnessId);
+ expect((await f.send('start')).status).toBe(200);const first=await seedLegacyPlanning(f,f.newEpisode,f.main);
+ const original=(await f.c.query('SELECT input_snapshot,model,budget_limit_cents FROM public.tasks WHERE id=$1',[first.taskId])).rows[0];expect(original.model).toBe(selection.model);expect(original.budget_limit_cents).toBe(37);expect(original.input_snapshot.harness.id).toBe(selection.harnessId);
  expect((await f.send('saveWorkspacePlanningSelection',{selection:{...selection,model:'gpt-5.6-codex',budgetCents:83},expectedSelectionRevision:1})).status).toBe(200);
- await f.c.query("UPDATE public.tasks SET status='failed' WHERE id=$1",[first.body.taskId]);const retry=await f.send('retryWorkspacePlanning',{expectedScriptRevisionId:f.main,taskId:first.body.taskId});expect(retry.status,JSON.stringify(retry.body)).toBe(200);
+ await f.c.query("UPDATE public.tasks SET status='failed' WHERE id=$1",[first.taskId]);const retry=await f.send('retryWorkspacePlanning',{expectedScriptRevisionId:f.main,taskId:first.taskId});expect(retry.status,JSON.stringify(retry.body)).toBe(200);
  const frozen=(await f.c.query('SELECT input_snapshot,model,budget_limit_cents FROM public.tasks WHERE id=$1',[retry.body.taskId])).rows[0];expect(frozen.model).toBe(selection.model);expect(frozen.budget_limit_cents).toBe(37);expect(frozen.input_snapshot.harness).toEqual(original.input_snapshot.harness);expect(frozen.input_snapshot.allowed_tools).toEqual(original.input_snapshot.allowed_tools);
  await f.c.query("UPDATE public.tasks SET status='failed' WHERE id=$1",[retry.body.taskId]);const replanned=await f.send('replanWorkspace',{expectedScriptRevisionId:f.main,planningTaskId:retry.body.taskId});expect(replanned.status,JSON.stringify(replanned.body)).toBe(200);expect((await f.c.query('SELECT model,budget_limit_cents FROM public.tasks WHERE id=$1',[replanned.body.taskId])).rows[0]).toEqual({model:'gpt-5.6-codex',budget_limit_cents:83});
  await f.c.query('UPDATE public.episodes SET archived_at=clock_timestamp() WHERE id=$1',[f.newEpisode]);expect((await f.send('saveWorkspacePlanningSelection',{selection,expectedSelectionRevision:2})).status).toBe(409);

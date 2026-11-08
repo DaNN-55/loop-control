@@ -46,7 +46,13 @@ async function sources(root: string) {
 async function outputs(root: string) {
   const paths = [...await files(root, "dist/worker"), ...await files(root, "dist/local-app")];
   if (requiredOutputs.some(path => !paths.includes(path))) throw Error("Missing runtime entrypoint");
-  try{await lstat(join(root,"scripts/runtime/codex.mjs"));paths.push("scripts/runtime/codex.mjs");}catch(error){if((error as NodeJS.ErrnoException).code!=="ENOENT")throw error;}
+  try{
+    await lstat(join(root,"scripts/runtime/codex.mjs"));
+    for(const module of ["codexPrompt","workerResultSchema"]){
+      if(!paths.includes(`dist/worker/worker/${module}.js`))throw Error(`Missing Codex executor module: ${module}`);
+    }
+    paths.push("scripts/runtime/codex.mjs");
+  }catch(error){if((error as NodeJS.ErrnoException).code!=="ENOENT")throw error;}
   return fingerprints(root, paths);
 }
 

@@ -17,6 +17,11 @@ import {LocalConnectionBilling} from './connectionBilling.js';
 import {billingProvider} from '../connections/connectionBilling.js';
 import type {BillingReader} from './providerBilling.js';
 import {createProviderModelsReader,type ProviderModelsReader} from './providerModels.js';
+import {createWorkspaceGenerationFetcher,isWorkspaceGenerationProvider} from './providerNetwork.js';
+import {synthesizeVolcengineTts} from '../worker/mediaProviders.js';
+import {speechSampleText} from '../speechSample.js';
+import {resolveProductionSelection} from './productionSelection.js';
+import {readSpeechSample} from './speechSampleCache.js';
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 const fields={create:['name','provider','adapter','secret'],rotate:['connectionId','provider','adapter','secret'],region:['connectionId','versionId','region'],rebind:['versionId','secret'],update:['connectionId','name','description'],revoke:['versionId'],verify:['connectionId']} as const;
 const metadataJSON=(value:Record<string,string>)=>JSON.stringify(Object.entries(value).sort());
@@ -58,6 +63,36 @@ export class LocalConnections {
  get configurationReady(){return this.store.mode==='keychain'&&this.probe.mode==='live';}
  get externalReady(){return this.configurationReady&&this.networkAvailable;}
  get networkAvailable(){return this.probe.mode==='live'&&this.probe.networkAvailable!==false;}
+ private usesWorkspaceConnection(provider:string){
+  return provider==='volcengine_tts'?this.probe.workspaceSpeechFromConnections:
+   this.probe.workspaceGenerationFromConnections&&(isWorkspaceGenerationProvider(provider)||provider==='pexels'||provider==='freesound');
+ }
+ async speechSample(ownerId:string,directory:string,data:Record<string,unknown>){
+  const {selection,voice,generate}=data;
+  if(Object.keys(data).some(key=>!['selection','voice','generate'].includes(key))||typeof voice!=='string'||typeof generate!=='boolean')throw new ConfigurationError(400,'样音参数无效。');
+  const resolved=await ownerTransaction(this.pool,ownerId,false,async client=>{
+   const result=await resolveProductionSelection(client,selection,'speech');
+   if(result.selection.provider!=='volcengine_tts'||!result.choice.voiceCatalog?.['zh-CN']?.includes(voice)||!this.configurationReady||!this.usesWorkspaceConnection(result.selection.provider))throw new ConfigurationError(409,'此连接或音色暂不支持试听。');
+   return result;
+  });
+  const model=resolved.selection.model!;
+  const bytes=await readSpeechSample(directory,[ownerId,resolved.selection.provider,model,voice,speechSampleText],generate?async()=>{
+   const key=await ownerTransaction(this.pool,ownerId,false,async client=>{
+    const current=await resolveProductionSelection(client,selection,'speech');
+    const version=await ownedConnectionVersion(client,current.connection!.id);
+    if(!version?.secret_ref)throw new ConfigurationError(409,'语音连接已变化，请重新选择。');
+    return this.store.get(version.secret_ref);
+   });
+   try{
+    const speech={text:speechSampleText,voice,model};
+    // The private cache holds an exclusive reservation for this sample.
+    const fetcher=createWorkspaceGenerationFetcher('volcengine_tts',{speech,reserve:async()=>{}});
+    const timedFetcher:typeof fetcher=(url,init)=>fetcher(url,{...init,signal:AbortSignal.timeout(20000)});
+    return await synthesizeVolcengineTts({apiKey:key,fetcher:timedFetcher,model,text:speechSampleText,voice:{name:voice,languageCode:'zh-CN',speakingRate:1}});
+   }catch{throw new ConfigurationError(502,'样音合成未完成，请在供应商侧核对后再试。');}
+  }:undefined);
+  return {audioBase64:bytes?.toString('base64')??null};
+ }
  async readUsage(ownerId:string,connectionId:string):Promise<ConnectionUsageRead>{
   const version=await ownerTransaction(this.pool,ownerId,true,async client=>{
    const connection=(await client.query('SELECT current_version_id FROM public.external_connections WHERE id=$1 AND created_by=$2',[connectionId,ownerId])).rows[0];
@@ -75,10 +110,11 @@ export class LocalConnections {
   if(this.usageCache.size>=64)this.usageCache.delete(this.usageCache.keys().next().value!);
   this.usageCache.set(key,{expires:Date.now()+5*60000,request});return request;
  }
- async assertBlueprintReferences(client:PoolClient,refs:string[],options:{purpose?:'save'|'execute'}={}){
+ async assertBlueprintReferences(client:PoolClient,refs:string[],options:{purpose?:'save'|'execute'|'workspace-generation'}={}){
   const execute=options.purpose!=='save';
+  const workspaceGeneration=options.purpose==='workspace-generation'&&(this.probe.workspaceGenerationFromConnections||this.probe.workspaceSpeechFromConnections);
   const networkAvailable=this.networkAvailable,checks:WorkerPreflightCheck[]=[];
-  if(execute&&!networkAvailable)checks.push({capability:'worker_runtime',check:'provider_network_policy',phase:'preflight',status:'unavailable',reason:'当前部署的 Provider 网络策略未启用或请求预算不可用；请联系环境管理员，不会发起在线检查。',scope:'worker',action:'contact_environment_admin'});
+  if(execute&&!workspaceGeneration&&!networkAvailable)checks.push({capability:'worker_runtime',check:'provider_network_policy',phase:'preflight',status:'unavailable',reason:'当前部署的 Provider 网络策略未启用或请求预算不可用；请联系环境管理员，不会发起在线检查。',scope:'worker',action:'contact_environment_admin'});
   let credentialFailure=this.store.mode!=='keychain'||this.probe.mode!=='live'?'真实Keychain及在线验证尚未就绪。':'';
   if(!credentialFailure)try{
    const owners=await Promise.all(refs.map(id=>ownedConnectionVersion(client,id)));
@@ -89,8 +125,12 @@ export class LocalConnections {
     if(!v||v.revoked_at||!v.is_current||v.store_mode!=='keychain'||!v.secret_ref)throw new ConfigurationError(409,'连接版本未绑定、已变化或已撤销。');
     const verified=(await client.query("SELECT public.connection_version_is_verified($1) AND EXISTS(SELECT 1 FROM local_identity.connection_probe_evidence WHERE version_id=$1 AND mode='live' AND outcome='verified') allowed",[id])).rows[0];
     if(!verified.allowed)throw new ConfigurationError(409,'连接版本需要真实验证。');
-    // Closed networking still permits metadata checks, never a secret read.
-    if(execute&&networkAvailable)await this.store.get(v.secret_ref);
+    if(workspaceGeneration&&this.usesWorkspaceConnection(v.provider)){
+     await this.store.get(v.secret_ref);
+    }else if(execute){
+     if(!networkAvailable||this.probe.executionAvailable?.(v.provider)===false)throw new ConfigurationError(409,'当前服务没有可用的在线制作授权。');
+     await this.store.get(v.secret_ref);
+    }
    }
   }catch(error){credentialFailure=error instanceof ConfigurationError?error.message:'连接版本未就绪，请检查本机绑定与验证资格。';}
   if(credentialFailure)checks.push({capability:'worker_runtime',check:'credential_presence',phase:'preflight',status:'blocked',reason:credentialFailure,scope:'connection',action:'manage_connection'});
@@ -111,9 +151,14 @@ export class LocalConnections {
    // Count semantic version references, separately from connection-wide historical usage.
    // One batched read shares the same Owner/RLS snapshot as the directory.
    const versionUsage=(await client.query(`WITH visible_versions AS MATERIALIZED(
-    SELECT v.id FROM public.list_external_connection_versions(NULL) v JOIN public.external_connections c ON c.id=v.connection_id WHERE c.created_by=$1
+    SELECT v.id,v.connection_id FROM public.list_external_connection_versions(NULL) v JOIN public.external_connections c ON c.id=v.connection_id WHERE c.created_by=$1
    ), owned_episodes AS MATERIALIZED(SELECT e.id FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id WHERE m.user_id=$1 AND m.role='owner'), task_refs AS MATERIALIZED(
-    SELECT v.id version_id,t.id,t.episode_id,t.status,t.invalidated_at FROM visible_versions v JOIN public.tasks t ON t.input_snapshot->>'credential_ref'=v.id::text OR t.input_snapshot#>>'{production_selection,connectionVersionId}'=v.id::text JOIN owned_episodes e ON e.id=t.episode_id
+    SELECT v.id version_id,v.connection_id,t.id,t.episode_id,t.status,t.invalidated_at FROM visible_versions v JOIN public.tasks t ON t.input_snapshot->>'credential_ref'=v.id::text OR t.input_snapshot#>>'{production_selection,connectionVersionId}'=v.id::text JOIN owned_episodes e ON e.id=t.episode_id
+   ), connection_activity AS (
+    SELECT connection_id,
+     count(DISTINCT id) FILTER (WHERE status='ready')::int AS queued,
+     count(DISTINCT id) FILTER (WHERE status='running')::int AS running
+    FROM task_refs WHERE invalidated_at IS NULL AND status IN ('ready','running') GROUP BY connection_id
    ), requests AS(
     SELECT 'visual:'||id::text id,episode_id,request_snapshot FROM local_identity.workspace_visual_candidates
     UNION ALL SELECT 'speech:'||task_id::text,episode_id,request_snapshot FROM local_identity.workspace_narration_requests
@@ -141,7 +186,9 @@ export class LocalConnections {
     'activeTasks',(SELECT count(*)::int FROM task_refs t WHERE t.version_id=v.id AND t.status IN('ready','running') AND t.invalidated_at IS NULL),
     'requests',(SELECT count(*)::int FROM request_refs r WHERE r.version_id=v.id),
     'savedSelections',(SELECT count(*)::int FROM saved_refs s WHERE s.version_id=v.id)
-   ) usage FROM visible_versions v`,[ownerId])).rows;
+   ) usage,v.connection_id,coalesce(activity.queued,0) queued,coalesce(activity.running,0) running
+   FROM visible_versions v LEFT JOIN connection_activity activity USING (connection_id)`,[ownerId])).rows;
+   const activityByConnection=new Map(versionUsage.map(row=>[row.connection_id,{queued:row.queued,running:row.running}]));
    const bindings=(await client.query('SELECT version_id,store_mode FROM local_identity.connection_bindings WHERE owner_id=$1',[ownerId])).rows;
    const minimaxRegions=(await client.query("SELECT version_id,metadata->>'region' region FROM local_identity.connection_intents WHERE owner_id=$1 AND applied_at IS NOT NULL AND metadata->>'provider'='minimax' AND metadata->>'command' IN('create','rotate')",[ownerId])).rows;
    for(const connection of connections.filter(c=>c.provider==='minimax')){
@@ -149,18 +196,23 @@ export class LocalConnections {
     connection.region=region;connection.endpoint=minimaxEndpoints[region as MiniMaxRegion];
    }
    const qualifications=(await client.query('SELECT version_id,qualified FROM local_identity.connection_qualifications WHERE owner_id=$1',[ownerId])).rows;
-   const latest=(await client.query('SELECT DISTINCT ON(connection_version_id) connection_version_id,status FROM public.external_connection_verifications ORDER BY connection_version_id,created_at DESC,id DESC')).rows;
+   const latest=(await client.query('SELECT DISTINCT ON(connection_version_id) connection_version_id,status,created_at FROM public.external_connection_verifications ORDER BY connection_version_id,created_at DESC,id DESC')).rows;
    const pending=(await client.query('SELECT idempotency_key,metadata,created_at FROM local_identity.connection_intents WHERE owner_id=$1 AND applied_at IS NULL ORDER BY created_at',[ownerId])).rows;
    const externalReady=this.externalReady;
+   const executionByProvider=Object.fromEntries(connections.map(({provider})=>[provider,
+    this.usesWorkspaceConnection(provider)?this.configurationReady:externalReady&&(this.probe.executionAvailable?.(provider)??true)]));
+   const executionIssues=Object.fromEntries(connections.filter(({provider})=>!executionByProvider[provider]).map(({provider})=>[provider,this.probe.executionIssue?.(provider)??null]));
    const localVersions=versions.map(v=>{const binding=bindings.find(b=>b.version_id===v.id),qualified=qualifications.some(q=>q.version_id===v.id&&q.qualified);return {...v,usage:versionUsage.find(entry=>entry.id===v.id)?.usage,historicalStatus:v.status,status:v.revoked_at?'revoked':this.store.mode!=='keychain'||this.probe.mode!=='live'||!binding||binding.store_mode!=='keychain'?'retryable':qualified?'verified':v.status==='verified'?'retryable':v.status,secretState:binding?'bound-unchecked':'unbound'};});
    // Historical provider text is never used as a diagnostic response channel;
    // an imported verified flag cannot stand in for a usable native binding.
    for(const c of connections){const current=localVersions.find(v=>v.id===c.current_version_id);if(current?.status==='revoked')c.status='invalid';else if(current)c.status=current.status;
     const last=latest.find(p=>p.connection_version_id===c.current_version_id);
+    c.lastVerificationAt=last?.created_at??null;
+    c.inFlightTasks=activityByConnection.get(c.id)??{queued:0,running:0};
     c.last_verification_detail=current?.secretState==='unbound'?'本机密钥未绑定，请显式重新录入。':this.store.mode!=='keychain'?'测试未开始：本机 Keychain 未启用。':this.probe.mode!=='live'?'测试未开始：当前仅配置模拟验证。':last?.status==='retryable'&&c.status==='verified'?'本次测试暂不可用；上次有效验证资格保留，生产前仍须检查。':c.status==='verified'?'已验证；运行时仍检查密钥可用性。':'需要在本机重新验证。';}
    const verificationByProvider=Object.fromEntries(['volcengine','minimax','kling','bailian','pexels','freesound','openai','volcengine_tts'].map(provider=>[provider,this.probe.verificationStatus?.(provider)??{available:this.networkAvailable,detail:this.networkAvailable?'可测试连接。':'在线验证未启用。'}]));
    const enabledModels=Object.fromEntries((await client.query('SELECT connection_id,enabled_models FROM local_identity.connection_model_settings')).rows.map(r=>[r.connection_id,r.enabled_models]));
-   return {serviceCatalog:buildProductionServiceCatalog({connections,versions:localVersions,externalReady,enabledModels}),connections,versions:localVersions,pending,capabilities:{billing:this.store.mode==='keychain',secrets:this.store.mode,verification:this.probe.mode,externalReady,networkAvailable:this.networkAvailable,verificationByProvider,verificationAvailable:Object.values(verificationByProvider).some(status=>status.available)}};
+   return {serviceCatalog:buildProductionServiceCatalog({connections,versions:localVersions,externalReady,executionByProvider,executionIssues,enabledModels}),connections,versions:localVersions,pending,capabilities:{billing:this.store.mode==='keychain',secrets:this.store.mode,verification:this.probe.mode,externalReady,networkAvailable:this.networkAvailable,verificationByProvider,verificationAvailable:Object.values(verificationByProvider).some(status=>status.available)}};
   });
  }
  async command(session:OwnerSession,body:Record<string,unknown>){

@@ -11,7 +11,7 @@ import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import type { ArtifactManifest, WorkerResult, WorkerTaskPackage } from "./contracts.js";
 import { generateOpenAiImage, searchFreesoundPreview, searchPexelsVideo, synthesizeVolcengineTts, type FreesoundPreview, type MediaFetcher } from "./mediaProviders.js";
-import { generateWanVideo, type WanReservation } from "./wanVideoProvider.js";
+import { generateWanVideo, type WanReservation, type VideoGenerationPhase } from "./wanVideoProvider.js";
 import type { WhisperXExecution } from "./whisperxAlignment.js";
 
 export async function executeControlledMediaTask(input: {
@@ -24,6 +24,7 @@ export async function executeControlledMediaTask(input: {
   officialVideoCredentials?: string;
   reserveWan?: () => Promise<WanReservation>;
   recordWanSubmission?: (id: string) => Promise<void>;
+  recordVideoProgress?: (phase:VideoGenerationPhase)=>Promise<void>;
   freesoundApiKey?: string;
   openaiApiKey?: string;
   cloudflareWorkersAiCredentials?: string;
@@ -70,6 +71,7 @@ async function mediaBytes(input: {
   officialVideoCredentials?: string;
   reserveWan?: () => Promise<WanReservation>;
   recordWanSubmission?: (id: string) => Promise<void>;
+  recordVideoProgress?: (phase:VideoGenerationPhase)=>Promise<void>;
   freesoundApiKey?: string;
   openaiApiKey?: string;
   cloudflareWorkersAiCredentials?: string;
@@ -84,20 +86,42 @@ async function mediaBytes(input: {
   if ((taskPackage.provider === "bailian" || isVideoProvider(taskPackage.provider)) && taskPackage.media && "wanVideo" in taskPackage.media) {
     if (!(input.bailianCredentials || input.officialVideoCredentials) || !input.reserveWan || !input.recordWanSubmission) throw new Error("百炼连接或调用预算未配置。");
     const video = taskPackage.media.wanVideo;
-    const path = await realpath(resolve(taskPackage.assets.allowedRoot, video.firstFrame.relativePath));
     const root = await realpath(taskPackage.assets.allowedRoot);
-    const fromRoot = relative(root, path);
-    if (fromRoot === ".." || fromRoot.startsWith("../") || isAbsolute(fromRoot)) throw new Error("万相首帧路径越界。");
-    let image:Uint8Array = await readFile(path);
-    if (image.byteLength !== video.firstFrame.fileSize || createHash("sha256").update(image).digest("hex") !== video.firstFrame.sha256) throw new Error("万相首帧与冻结输入不一致。");
-    let imageMime=video.imageMime;
-    if(video.composition){const {width,height,fit}=video.composition;
-      if(!Number.isInteger(width)||!Number.isInteger(height)||width<(taskPackage.provider==='bailian'?240:16)||height<(taskPackage.provider==='bailian'?240:16)||width>4096||height>4096||!['contain','cover'].includes(fit))throw Error('首帧构图无效。');
-      const filter=fit==='cover'?`scale=${width}:${height}:force_original_aspect_ratio=increase,crop=${width}:${height}`:`scale=${width}:${height}:force_original_aspect_ratio=decrease,pad=${width}:${height}:(ow-iw)/2:(oh-ih)/2:black`;
-      const {stdout}=await promisify(execFile)('ffmpeg',['-v','error','-i',path,'-vf',filter+(taskPackage.provider==='bailian'?',format=rgb24':''),'-frames:v','1','-f','image2pipe','-c:v','png','pipe:1'],{encoding:'buffer',maxBuffer:32*1024*1024,timeout:30000});image=stdout;imageMime='image/png';
+    async function readFrame(frame:ArtifactManifest,mimeType:string,composition?:typeof video.composition){
+      const path=await realpath(resolve(root,frame.relativePath));
+      const fromRoot=relative(root,path);
+      if(fromRoot==='..'||fromRoot.startsWith('../')||isAbsolute(fromRoot))throw Error('视频素材路径越界。');
+      let image:Uint8Array=await readFile(path);
+      if(image.byteLength!==frame.fileSize||createHash('sha256').update(image).digest('hex')!==frame.sha256)throw Error('视频素材与冻结输入不一致。');
+      let imageMime=mimeType;
+      if(composition){const {width,height,fit}=composition;
+        if(!Number.isInteger(width)||!Number.isInteger(height)||width<(taskPackage.provider==='bailian'?240:16)||height<(taskPackage.provider==='bailian'?240:16)||width>4096||height>4096||!['contain','cover'].includes(fit))throw Error('首帧构图无效。');
+        const filter=fit==='cover'?`scale=${width}:${height}:force_original_aspect_ratio=increase,crop=${width}:${height}`:`scale=${width}:${height}:force_original_aspect_ratio=decrease,pad=${width}:${height}:(ow-iw)/2:(oh-ih)/2:black`;
+        const {stdout}=await promisify(execFile)('ffmpeg',['-v','error','-i',path,'-vf',filter+(taskPackage.provider==='bailian'?',format=rgb24':''),'-frames:v','1','-f','image2pipe','-c:v','png','pipe:1'],{encoding:'buffer',maxBuffer:32*1024*1024,timeout:30000});image=stdout;imageMime='image/png';
+      }
+      return {image,imageMime};
     }
-    if (isVideoProvider(taskPackage.provider)) return {bytes: await generateOfficialVideo({provider: taskPackage.provider, model: taskPackage.model, credentials: input.officialVideoCredentials!, fetcher: input.fetcher, image, imageMime, prompt: video.prompt, durationSeconds: video.durationSeconds, reserve: input.reserveWan, recordSubmission: input.recordWanSubmission})};
-    return { bytes: await generateWanVideo({ model:taskPackage.model,settings:video.settings,credentials: input.bailianCredentials!, fetcher: input.fetcher, image, imageMime, prompt: video.prompt, durationSeconds: video.durationSeconds, reserve: input.reserveWan, recordSubmission: input.recordWanSubmission }) };
+    if(video.visualInputs&&taskPackage.provider==='bailian'){
+      return {bytes:await generateWanVideo({model:taskPackage.model,settings:video.settings,credentials:input.bailianCredentials!,fetcher:input.fetcher,
+        visualInputs:video.visualInputs,referenceRatio:video.referenceRatio,prompt:video.prompt,durationSeconds:video.durationSeconds,
+        reserve:input.reserveWan,recordSubmission:input.recordWanSubmission,onProgress:input.recordVideoProgress})};
+    }
+    if(video.visualInputs&&isVideoProvider(taskPackage.provider)){
+      const visualInputs=await Promise.all(video.visualInputs.map(async entry=>{
+        if(entry.role==='referenceVideos'){
+          if(entry.source)return entry;
+          const {image:video}=await readFrame(entry,entry.mimeType);
+          return {...entry,video};
+        }
+        const frame=await readFrame(entry,entry.mimeType,entry.role==='firstFrame'?video.composition:undefined);
+        return {...entry,image:frame.image,mimeType:frame.imageMime};
+      }));
+      return {bytes:await generateOfficialVideo({provider:taskPackage.provider,model:taskPackage.model,credentials:input.officialVideoCredentials!,fetcher:input.fetcher,visualInputs,visualMode:video.visualMode,referenceRatio:video.referenceRatio,prompt:video.prompt,durationSeconds:video.durationSeconds,reserve:input.reserveWan,recordSubmission:input.recordWanSubmission,onProgress:input.recordVideoProgress})};
+    }
+    if(!video.firstFrame||!video.imageMime)throw Error('缺少冻结首帧。');
+    const {image,imageMime}=await readFrame(video.firstFrame,video.imageMime,video.composition);
+    if (isVideoProvider(taskPackage.provider)) return {bytes: await generateOfficialVideo({provider: taskPackage.provider, model: taskPackage.model, credentials: input.officialVideoCredentials!, fetcher: input.fetcher, image, imageMime, prompt: video.prompt, durationSeconds: video.durationSeconds, reserve: input.reserveWan, recordSubmission: input.recordWanSubmission, onProgress: input.recordVideoProgress})};
+    return { bytes: await generateWanVideo({ model:taskPackage.model,settings:video.settings,credentials: input.bailianCredentials!, fetcher: input.fetcher, image, imageMime, prompt: video.prompt, durationSeconds: video.durationSeconds, reserve: input.reserveWan, recordSubmission: input.recordWanSubmission, onProgress: input.recordVideoProgress }) };
   }
   if (taskPackage.provider === "volcengine_tts" && taskPackage.media?.adapter === "volcengine_tts") {
     if (!input.volcengineTtsApiKey) throw new Error("豆包语音连接密钥不可用，无法执行冻结旁白任务。");
@@ -145,6 +169,7 @@ async function mediaBytes(input: {
       apiKey: input.freesoundApiKey,
       fetcher: input.fetcher,
       query: taskPackage.media.soundtrack.query,
+      candidateIndex: taskPackage.media.soundtrack.candidateIndex,
       targetDurationSeconds: taskPackage.media.soundtrack.targetDurationSeconds,
     });
     const response = await input.fetcher(selected.previewUrl);

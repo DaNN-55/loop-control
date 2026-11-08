@@ -1,6 +1,6 @@
 import {retiredProviderMessage} from './providerLifecycle.js';
 import { randomUUID } from "node:crypto";
-import {isImageGenerationSettings, type ImageGenerationSettings} from '../imageGeneration.js';
+import {isImageGenerationSettings,openAiImageModels,openAiImageQualities, type ImageGenerationSettings} from '../imageGeneration.js';
 
 export interface MediaFetcher {
   (input: string | URL, init?: RequestInit): Promise<Response>;
@@ -21,13 +21,21 @@ export interface FreesoundPreview {
   previewUrl: string;
 }
 
+export class OpenAiImageRequestError extends Error {
+ constructor(status:number){
+  const action=status===429?'请检查供应商额度或稍后重试。':status===401||status===403?'请检查 OpenAI 连接权限后重试。':'';
+  super(`OpenAI 图片请求返回 HTTP ${status}。${action}`);
+ }
+}
+
 export async function generateOpenAiImage(input: { apiKey: string; fetcher: MediaFetcher; model: string; prompt: string }): Promise<Uint8Array> {
   return (await generateOpenAiImages(input))[0];
 }
 
 export async function generateOpenAiImages(input: { apiKey: string; fetcher: MediaFetcher; model: string; prompt: string; settings?: ImageGenerationSettings; references?: Array<{mimeType:string;bytes:Uint8Array}> }): Promise<Uint8Array[]> {
   if (!input.apiKey.trim() || !input.model.trim() || !input.prompt.trim()) throw new Error("OpenAI Images 配置或视觉提示词无效。");
-  if (input.settings && !isImageGenerationSettings(input.settings)) throw Error('图片生成参数无效。');
+  if(!openAiImageModels.includes(input.model))throw Error('OpenAI 图片模型未适配。');
+  if (input.settings && (!isImageGenerationSettings(input.settings)||!openAiImageQualities(input.model).includes(input.settings.quality))) throw Error('图片生成参数无效。');
   const refs=input.references??[];
   if(refs.length>16||refs.some(r=>!['image/png','image/jpeg','image/webp'].includes(r.mimeType)||!r.bytes.length||r.bytes.length>20*1024*1024))throw Error('参考图格式或大小无效。');
   const response = await input.fetcher(`https://api.openai.com/v1/images/${refs.length?'edits':'generations'}`, {
@@ -35,8 +43,8 @@ export async function generateOpenAiImages(input: { apiKey: string; fetcher: Med
     headers: { Authorization: `Bearer ${input.apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify({ model: input.model, prompt: input.prompt, n: input.settings?.count??1, size: input.settings?.size??"1024x1536", output_format: "png", ...(input.settings?{quality:input.settings.quality}:{}), ...(refs.length?{images:refs.map(r=>({image_url:`data:${r.mimeType};base64,${Buffer.from(r.bytes).toString('base64')}`}))}:{}) }),
   });
+  if (!response.ok) throw new OpenAiImageRequestError(response.status);
   const payload: unknown = await response.json();
-  if (!response.ok) throw new Error(`OpenAI Images 请求失败：HTTP ${response.status}。`);
   if(!isRecord(payload)||!Array.isArray(payload.data)||!payload.data.length)throw Error('OpenAI Images 响应缺少 PNG 数据。');
   if(payload.data.length!==(input.settings?.count??1))throw Error('OpenAI Images 返回的图片数量不完整。');
   return payload.data.map(row=>{
@@ -118,24 +126,28 @@ export async function searchPexelsVideo(input: { apiKey: string; fetcher: MediaF
 /** Safe, locally authored search feedback; never includes Provider payloads or credentials. */
 export class FreesoundSearchError extends Error {}
 
-export async function searchFreesoundPreview(input: { apiKey: string; fetcher: MediaFetcher; query: string; targetDurationSeconds: number }): Promise<FreesoundPreview> {
+export async function searchFreesoundPreview(input: { apiKey: string; fetcher: MediaFetcher; query: string; targetDurationSeconds: number;candidateIndex?:number }): Promise<FreesoundPreview> {
   if (!input.apiKey.trim() || !input.query.trim() || !Number.isFinite(input.targetDurationSeconds) || input.targetDurationSeconds <= 0) throw new FreesoundSearchError("Freesound 检索配置无效。");
   if (input.query.length > 100) throw new FreesoundSearchError("Freesound 冻结检索词不能超过 100 个字符。");
   const endpoint = new URL("https://freesound.org/apiv2/search/");
   endpoint.searchParams.set("token", input.apiKey);
   endpoint.searchParams.set("query", input.query.replace(/\s+/g, " ").trim());
   endpoint.searchParams.set("filter", `duration:[${input.targetDurationSeconds} TO *]`);
-  endpoint.searchParams.set("sort", "duration_asc");
+  if(input.candidateIndex!==undefined&&(!Number.isInteger(input.candidateIndex)||input.candidateIndex<0||input.candidateIndex>2))throw new FreesoundSearchError('Freesound 候选序号无效。');
+  endpoint.searchParams.set("sort", input.candidateIndex===undefined?"duration_asc":"score");
   endpoint.searchParams.set("fields", "id,name,username,license,duration,url,previews");
   endpoint.searchParams.set("page_size", "50");
   const response = await input.fetcher(endpoint.toString());
   if (!response.ok) throw new FreesoundSearchError(`Freesound 请求失败：HTTP ${response.status}。`);
   const payload: unknown = await response.json();
   if (!isRecord(payload) || !Array.isArray(payload.results)) throw new FreesoundSearchError("Freesound 响应格式无效。");
+  const seen=new Set<number>();let index=0;
   for (const candidate of payload.results) {
     if (!isRecord(candidate) || typeof candidate.id !== "number" || !Number.isInteger(candidate.id) || candidate.id <= 0 || typeof candidate.name !== "string" || !candidate.name.trim() || typeof candidate.username !== "string" || !candidate.username.trim() || typeof candidate.license !== "string" || !candidate.license.trim() || typeof candidate.url !== "string" || !candidate.url || typeof candidate.duration !== "number" || !Number.isFinite(candidate.duration) || candidate.duration < input.targetDurationSeconds || !isRecord(candidate.previews)) continue;
     const previewUrl = candidate.previews["preview-hq-mp3"];
     if (typeof previewUrl !== "string" || !previewUrl) continue;
+    if(seen.has(candidate.id))continue;seen.add(candidate.id);
+    if(index++!==(input.candidateIndex??0))continue;
     return { id: candidate.id, title: candidate.name, creator: candidate.username, license: candidate.license, sourceUrl: candidate.url, previewUrl };
   }
   throw new FreesoundSearchError("Freesound 未找到符合冻结时长的 MP3 预览。");

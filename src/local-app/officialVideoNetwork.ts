@@ -1,5 +1,6 @@
+import {isPublicMediaUrl,videoOutputRatios} from '../videoVisualInputs.js';
 import {officialVideoDownloadUrl} from '../worker/officialVideoProvider.js';
-import {videoProviders,minimaxEndpoints, type VideoProvider} from '../worker/videoProviderCatalog.js';
+import {klingOmniModel,klingOmniPath,videoProviders,minimaxEndpoints, type VideoProvider} from '../worker/videoProviderCatalog.js';
 // Endpoint boundary for signed, deployment-owned network policies.
 export function officialVideoOperation(provider: VideoProvider, phase: 'verify'|'execute', url: URL, init: RequestInit): string {
  const method=(init.method??'GET').toUpperCase(),origin=videoProviders[provider].endpoint;
@@ -11,7 +12,20 @@ export function officialVideoOperation(provider: VideoProvider, phase: 'verify'|
   if(phase==='verify'&&method==='GET'&&path===list&&[...url.searchParams.keys()].every(k=>pagination.includes(k))&&url.searchParams.get(pagination[0])==='1'&&url.searchParams.get(pagination[1])==='1')return'verify';
   if(phase==='execute'&&method==='GET'&&!url.search){
    const query=provider==='minimax'?'/v2/query/video_generation/':create+'/';
-   if(path.startsWith(query)&&/^[a-zA-Z0-9_-]{1,128}$/.test(path.slice(query.length)))return'poll';
+   const pollPaths=provider==='kling'?[query,klingOmniPath+'/']:[query];
+   if(pollPaths.some(prefix=>path.startsWith(prefix)&&/^[a-zA-Z0-9_-]{1,128}$/.test(path.slice(prefix.length))))return'poll';
+  }
+  if(phase==='execute'&&method==='POST'&&provider==='kling'&&path===klingOmniPath&&!url.search){
+   if(typeof init.body!=='string'||Buffer.byteLength(init.body)>55*1024*1024)throw Error('Invalid Kling Omni body');
+   const body=JSON.parse(init.body),duration=Number(body.duration),images=body.image_list??[],videos=body.video_list??[];
+   if(body.model_name!==klingOmniModel||body.mode!=='pro'||body.sound!=='off'||!videoOutputRatios.includes(body.aspect_ratio)||
+    typeof body.prompt!=='string'||!body.prompt.trim()||body.prompt.length>1500||typeof body.duration!=='string'||
+    !Number.isInteger(duration)||duration<3||duration>15||
+    !Array.isArray(images)||!Array.isArray(videos)||images.length+videos.length===0||images.length>(videos.length?4:7)||videos.length>1||
+    images.some(image=>!image||Object.keys(image).length!==1||typeof image.image_url!=='string'||image.image_url.length>Math.ceil(10*1024*1024/3)*4||!/^[A-Za-z0-9+/]+={0,2}$/.test(image.image_url))||
+    videos.some(video=>!video||Object.keys(video).length!==3||!isPublicMediaUrl(video.video_url)||video.refer_type!=='feature'||video.keep_original_sound!=='no')||
+    Object.keys(body).some(k=>!['model_name','prompt','duration','aspect_ratio','mode','sound','image_list','video_list'].includes(k)))throw Error('Invalid Kling Omni body');
+   return'generate';
   }
   if(phase==='execute'&&method==='POST'&&path===create&&!url.search){
    if(typeof init.body!=='string'||Buffer.byteLength(init.body)>15*1024*1024)throw Error('Invalid video body');

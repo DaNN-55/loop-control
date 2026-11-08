@@ -1,3 +1,6 @@
+import {prepareWorkspaceVideoSound} from './workspaceVideoSound.js';
+import {applyWorkspaceVideoSound,removeLinkedVideoSound} from '../workspaceVideoSound.js';
+import {resolveWorkspaceMainVoice} from '../workspaceAudio.js';
 import {randomUUID} from 'node:crypto';
 import type {PoolClient} from 'pg';
 import type {WorkspaceClip} from '../productionWorkspace.js';
@@ -22,6 +25,7 @@ export async function saveWorkspaceVideoRanges(c:PoolClient,root:string,episodeI
  const old=timeline?.items.filter(i=>previous.some(b=>b.itemId===i.id));
  if(!timeline||!old||old.length!==previous.length||old.some(i=>i.kind!=='video'&&i.kind!=='text'))throw new ConfigurationError(409,'当前镜头结构已变化，请在剪辑中调整。');
  const start=Math.min(...old.map(i=>Number(i.startFrame))),end=Math.max(...old.map(i=>Number(i.startFrame)+Number(i.durationInFrames))),ids=new Set<string>();
+ const sounds:Awaited<ReturnType<typeof prepareWorkspaceVideoSound>>[]=[];
  const items:Array<Record<string,unknown>>=[],bindings:WorkspaceClip[]=[],materials=new Map<string,{source:RegisteredVideo;observed:VideoProbe}>();
  let frame=start;
  for(const [index,value] of data.ranges.entries()){
@@ -50,13 +54,17 @@ export async function saveWorkspaceVideoRanges(c:PoolClient,root:string,episodeI
   const assetId=`material-${m.id}`;if(!project.assets.some(a=>a.id===assetId))project.assets.push(Object.assign({id:assetId,name:m.source_path.split('/').pop()??m.id,kind:'video' as const,src:m.storage_path,durationInFrames:sourceFrames},{sourceRevision:m.id,sourceContentHash:m.sha256,sourceFilename:m.source_path.split('/').pop(),width:observed.width,height:observed.height}));
   const itemId=existing?.itemId??`shot-${data.shotId}-${id}`,base=old.find(i=>i.id===itemId)??{};
   const item={...base,id:itemId,track:old[0].track,kind:'video',name:data.shotId,src:m.storage_path,sourceAssetId:assetId,sourceRevision:m.id,sourceContentHash:m.sha256,sourceFilename:m.source_path.split('/').pop(),startFrame:frame,durationInFrames:Number(r.durationInFrames),width:observed.width,height:observed.height,srcInFrame:Number(r.sourceInFrame),volume:base.volume??0,loopControlVideo:{durationLocked:r.durationLocked}};delete (item as Record<string,unknown>).props;
+  sounds.push(await prepareWorkspaceVideoSound(c,root,episodeId,m.storage_path,m.sha256,timeline.fps,item.srcInFrame,item.durationInFrames));
   items.push(item);bindings.push({id,itemId,shotId:data.shotId,text:previous[0].text,...(previous[0].soundIntent?{soundIntent:previous[0].soundIntent}:{}),source:{materialRevisionId:m.id,relativePath:m.storage_path,sha256:m.sha256,fileSize:Number(m.file_size),kind:'video'}});frame+=Number(r.durationInFrames);
  }
+ for(const item of old)removeLinkedVideoSound(timeline,item);
  const delta=frame-end;for(const item of timeline.items)if(!old.includes(item)&&Number(item.startFrame)>=end)item.startFrame=Number(item.startFrame)+delta;
  const retained=new Set(items.map(i=>i.id)),removed=new Set(old.filter(i=>!retained.has(i.id)).map(i=>i.id));
  if(removed.has(timeline.selectedId))timeline.selectedId=null;
  const selected=(timeline as unknown as {selectedIds?:string[]});if(selected.selectedIds)selected.selectedIds=selected.selectedIds.filter(id=>!removed.has(id));
  const insertion=timeline.items.findIndex(i=>old.includes(i));timeline.items=timeline.items.filter(i=>!old.includes(i));timeline.items.splice(insertion,0,...items);
+ const hasMainVoice=!!resolveWorkspaceMainVoice(project,data.shotId).item;
+ for(const [index,item] of items.entries())applyWorkspaceVideoSound(project,timeline,item,data.shotId,sounds[index],hasMainVoice);
  const at=row.bindings.findIndex(b=>b.shotId===data.shotId),next=row.bindings.filter(b=>b.shotId!==data.shotId);next.splice(at,0,...bindings);
  return updateWorkspaceProject(c,root,row,project,next,'准备视频区间');
 }

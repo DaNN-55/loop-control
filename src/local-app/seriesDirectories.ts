@@ -24,19 +24,19 @@ export async function resolveStorageContainer(c:Client,_mediaRoot:string,account
  const row=(await c.query('SELECT * FROM local_identity.account_storage_containers WHERE account_id=$1 AND series_id IS NOT DISTINCT FROM $2::uuid',[accountId,seriesId])).rows[0];
  const account=(await c.query('SELECT actual_root FROM local_identity.account_asset_directories WHERE account_id=$1',[accountId])).rows[0];
  const base={containerId:null,accountId,seriesId,kind:seriesId?'series' as const:'unassigned' as const,assetRoot:account?.actual_root??null,relativePath:null,directoryPath:null,deviceId:null,inodeId:null};
- if(!row)return{...base,status:seriesId?'legacy-unmanaged':'unset',reason:seriesId?'此系列尚未纳入统一目录。':'尚未创建未分系列收纳目录。'};
- if(!safeRelative(row.directory_relative_path)||row.directory_relative_path.includes('/'))throw new ConfigurationError(409,'收纳目录登记无效，请检查恢复记录。');
+ if(!row)return{...base,status:seriesId?'legacy-unmanaged':'unset',reason:seriesId?'此系列尚未纳入统一目录。':'尚未创建未分系列目录。'};
+ if(!safeRelative(row.directory_relative_path)||row.directory_relative_path.includes('/'))throw new ConfigurationError(409,'系列目录登记无效，请检查恢复记录。');
  return{...base,containerId:row.id,relativePath:row.directory_relative_path,directoryPath:account?join(account.actual_root,row.directory_relative_path):null,deviceId:row.device_id,inodeId:row.inode_id,status:'ready'};
 }
 export async function requireStorageContainer(c:Client,mediaRoot:string,location:StorageContainer,writable=false){
- if(!location.directoryPath||!location.deviceId)throw new ConfigurationError(409,location.reason??'收纳目录尚未登记。');
+ if(!location.directoryPath||!location.deviceId)throw new ConfigurationError(409,location.reason??'系列目录尚未登记。');
  try{
   const root=await requireAccountAssetRoot(c,mediaRoot,location.accountId);
-  if(root!==location.assetRoot)throw new ConfigurationError(409,'账号目录已变化，请重新读取收纳位置。');
+  if(root!==location.assetRoot)throw new ConfigurationError(409,'账号目录已变化，请重新读取系列位置。');
   const stat=await lstat(location.directoryPath,{bigint:true});
-  if(!stat.isDirectory()||stat.isSymbolicLink()||String(stat.dev)!==location.deviceId||String(stat.ino)!==location.inodeId||await realpath(location.directoryPath)!==location.directoryPath)throw new ConfigurationError(409,'收纳目录身份已变化，请恢复原目录或检查迁移记录。');
+  if(!stat.isDirectory()||stat.isSymbolicLink()||String(stat.dev)!==location.deviceId||String(stat.ino)!==location.inodeId||await realpath(location.directoryPath)!==location.directoryPath)throw new ConfigurationError(409,'系列目录身份已变化，请恢复原目录或检查迁移记录。');
   await access(location.directoryPath,constants.R_OK|constants.X_OK|(writable?constants.W_OK:0));return location.directoryPath;
- }catch(e){if(e instanceof ConfigurationError)throw e;const code=(e as NodeJS.ErrnoException).code;if(code==='EACCES'||code==='EPERM')throw new ConfigurationError(403,'没有访问收纳目录的权限，请恢复权限后重试。');throw new ConfigurationError(409,'收纳目录缺失或存储盘未挂载，请恢复原位置后重试。');}
+ }catch(e){if(e instanceof ConfigurationError)throw e;const code=(e as NodeJS.ErrnoException).code;if(code==='EACCES'||code==='EPERM')throw new ConfigurationError(403,'没有访问系列目录的权限，请恢复权限后重试。');throw new ConfigurationError(409,'系列目录缺失或存储盘未挂载，请恢复原位置后重试。');}
 }
 export async function readStorageContainer(c:Client,mediaRoot:string,accountId:string,seriesId:string|null){
  const location=await resolveStorageContainer(c,mediaRoot,accountId,seriesId);if(location.status!=='ready')return location;
@@ -78,14 +78,14 @@ export async function createStorageContainer(pool:Pool,session:OwnerSession,key:
   if(intent.result){await transaction(async c=>{await requireStorageContainer(c,mediaRoot,await resolveStorageContainer(c,mediaRoot,intent.account_id,kind==='series'?intent.container_id:null));if(key!==intent.idempotency_key)await c.query('INSERT INTO local_identity.command_receipts(owner_id,idempotency_key,payload_hash,result) VALUES($1,$2,$3,$4)',[session.id,key,hash,intent.result]);});return intent.result;}
   await transaction(validateParent);
   try{
-   const actual=await prepareCreationDirectory(path,marker,intent,'创建中的收纳目录或标记身份已变化，请保留现场后恢复。'),made=actual.made;
+   const actual=await prepareCreationDirectory(path,marker,intent,'创建中的系列目录或标记身份已变化，请保留现场后恢复。'),made=actual.made;
    await transaction(c=>update(c,'UPDATE local_identity.container_creation_intents SET device_id=$3,inode_id=$4,cleanup_owned=cleanup_owned OR $5,marker_device_id=$6,marker_inode_id=$7 WHERE owner_id=$1 AND idempotency_key=$2',[actual.deviceId,actual.inodeId,made,actual.markerDeviceId,actual.markerInodeId]));
    const result=await transaction(async c=>{
     await c.query("SELECT pg_advisory_xact_lock(hashtextextended('global-media-root',0))");
     await c.query("SELECT pg_advisory_xact_lock(hashtextextended('account-asset-root-ownership',0))");
     await ownedContainerAccount(c,null,intent.account_id);await validateParent(c);
     const created=kind==='series'?(await c.query('SELECT to_jsonb(local_identity.create_series_at_id($1,$2,$3,$4)) result',[intent.container_id,intent.account_id,data.name,data.rules])).rows[0].result:{containerId:intent.container_id,accountId:intent.account_id,kind:'unassigned'};
-    const verifyChild=async()=>{if(!await matchesCreationDirectory(path,marker,actual))throw new ConfigurationError(409,'创建中的收纳目录或身份标记已变化，请保留现场后恢复。');};
+    const verifyChild=async()=>{if(!await matchesCreationDirectory(path,marker,actual))throw new ConfigurationError(409,'创建中的系列目录或身份标记已变化，请保留现场后恢复。');};
     await validateParent(c);await verifyChild();
     await c.query('INSERT INTO local_identity.account_storage_containers(id,account_id,kind,series_id,directory_relative_path,device_id,inode_id) VALUES($1,$2,$3,$4,$5,$6,$7)',[intent.container_id,intent.account_id,kind,kind==='series'?intent.container_id:null,intent.directory_relative_path,actual.deviceId,actual.inodeId]);
     // Revalidate after the final INSERT as well: a paused query can span an OS directory replacement.
@@ -98,7 +98,7 @@ export async function createStorageContainer(pool:Pool,session:OwnerSession,key:
   }catch(error){
    const saved=await transaction(async c=>(await update(c,'SELECT * FROM local_identity.container_creation_intents WHERE owner_id=$1 AND idempotency_key=$2')).rows[0] as Intent);
    if(!saved.result&&saved.device_id&&saved.cleanup_owned)try{await transaction(validateParent);if(await removeCreatedDirectory(path,marker,saved)){await transaction(c=>update(c,'UPDATE local_identity.container_creation_intents SET device_id=NULL,inode_id=NULL,marker_device_id=NULL,marker_inode_id=NULL,cleanup_owned=false WHERE owner_id=$1 AND idempotency_key=$2'));}}catch{/* Unknown/manual files and identity changes are never deletion authority. */}
-   if(error instanceof ConfigurationError||(error as {code?:string}).code==='23505')throw error;throw new ConfigurationError(409,'收纳目录创建未完成，请检查权限、挂载和空间后重试。');
+   if(error instanceof ConfigurationError||(error as {code?:string}).code==='23505')throw error;throw new ConfigurationError(409,'系列目录创建未完成，请检查权限、挂载和空间后重试。');
   }
  }finally{if(lockedAccount)await client.query('SELECT pg_advisory_unlock(hashtextextended($1,0))',[accountLock]).catch(()=>{});await client.query('SELECT pg_advisory_unlock(hashtextextended($1,0))',[keyLock]).catch(()=>{});client.release();}
 }

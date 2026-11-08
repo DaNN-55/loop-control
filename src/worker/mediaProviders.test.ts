@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { generateCloudflareWorkersAiImage, generateOpenAiImage, searchFreesoundPreview, searchPexelsVideo, synthesizeGoogleTts, synthesizeVolcengineTts } from "./mediaProviders";
+import { generateCloudflareWorkersAiImage, generateOpenAiImage,generateOpenAiImages, searchFreesoundPreview, searchPexelsVideo, synthesizeGoogleTts, synthesizeVolcengineTts } from "./mediaProviders";
 
 describe("受控媒体供应商", () => {
   it("使用 OpenAI Images 的 base64 PNG 响应", async () => {
@@ -85,4 +85,15 @@ describe("受控媒体供应商", () => {
     await expect(searchPexelsVideo({ apiKey: "pexels-key", fetcher: vi.fn().mockResolvedValue(new Response(JSON.stringify({ videos: [] }), { status: 200 })), query: "雨夜", targetDurationSeconds: 5 })).rejects.toThrow("竖屏视频");
     await expect(searchPexelsVideo({ apiKey: "pexels-key", fetcher: vi.fn(), query: "雨".repeat(101), targetDurationSeconds: 5 })).rejects.toThrow("100");
   });
+});
+
+it.each(['gpt-image-2.5-sunburst','gpt-image-2.5-flare','gpt-image-2.5-sunburst-2026-09-08','gpt-image-2.5-flare-2026-09-08','gpt-image-2.6-sunburst','gpt-image-2.6-flare'])('sends the exact %s model and enhanced quality through generation and editing',async model=>{
+ const png=Buffer.from([137,80,78,71,13,10,26,10,1]);
+ for(const quality of ['xhigh','max'] as const){
+  const fetcher=vi.fn(async(_url:string|URL,_init?:RequestInit)=>Response.json({data:[{b64_json:png.toString('base64')}]}));
+  await generateOpenAiImages({apiKey:'synthetic',fetcher,model,prompt:'保留主体',settings:{size:'864x1536',quality,count:1},...(quality==='max'?{references:[{mimeType:'image/png',bytes:png}]}:{})});
+  expect(fetcher.mock.calls[0][0]).toBe('https://api.openai.com/v1/images/'+(quality==='max'?'edits':'generations'));
+  expect(JSON.parse(String(fetcher.mock.calls[0][1]?.body))).toMatchObject({model,quality,n:1,output_format:'png'});
+ }
+ const fetcher=vi.fn();await expect(generateOpenAiImages({apiKey:'synthetic',fetcher,model:'gpt-image-2',prompt:'test',settings:{size:'864x1536',quality:'max',count:1}})).rejects.toThrow('参数无效');expect(fetcher).not.toHaveBeenCalled();
 });

@@ -5,6 +5,6 @@ export const wanSettingLabels:Record<keyof WanGenerationSettings,string>={resolu
 export const defaultWanSettings:WanGenerationSettings={resolution:'720P',audio:false,promptExtend:false,shotType:'single',watermark:false,negativePrompt:''};
 export function isWanGenerationSettings(value:unknown):value is WanGenerationSettings {
  if(!value||typeof value!=='object')return false;const s=value as WanGenerationSettings;
- return ['720P','1080P'].includes(s.resolution)&&typeof s.audio==='boolean'&&typeof s.promptExtend==='boolean'&&typeof s.watermark==='boolean'&&['single','multi'].includes(s.shotType)&&(s.shotType!=='multi'||s.promptExtend)&&typeof s.negativePrompt==='string'&&s.negativePrompt.length<=500&&(s.seed===undefined||Number.isInteger(s.seed)&&s.seed>=0&&s.seed<=2147483647);
+ return ['720P','1080P'].includes(s.resolution)&&typeof s.audio==='boolean'&&typeof s.promptExtend==='boolean'&&typeof s.watermark==='boolean'&&['single','multi'].includes(s.shotType)&&typeof s.negativePrompt==='string'&&s.negativePrompt.length<=500&&(s.seed===undefined||Number.isInteger(s.seed)&&s.seed>=0&&s.seed<=2147483647);
 }
 export interface FirstFrameComposition {fit:'contain'|'cover';width:number;height:number}

@@ -33,11 +33,22 @@ function estimateTask(task:MetricTask):{cents:number;recalculated:boolean}|null 
   return {cents:estimate.estimatedCents,recalculated:true};
  }catch{return null;}
 }
-export function summarizeEpisodeMetrics(tasks:MetricTask[]):Record<string,EpisodeMetrics>{
+export function summarizeEpisodeMetrics(tasks:MetricTask[],now=Date.now()):Record<string,EpisodeMetrics>{
  const result:Record<string,EpisodeMetrics>={};
+ const intervals=new Map<string,Array<[start:number,end:number]>>();
  for(const task of tasks){
-  const summary=result[task.episode_id]??={cost:{actualCents:null,estimatedCents:null,reservedCents:0,unpricedCount:0,recalculated:false},stageStartedAt:{},finishedAt:null,generations:{image:0,video:0,narration:0,sound:0,failed:0}};
+  const summary=result[task.episode_id]??={cost:{actualCents:null,estimatedCents:null,reservedCents:0,unpricedCount:0,recalculated:false},workerRunSeconds:null,generations:{image:0,video:0,narration:0,sound:0,failed:0}};
   const runs=task.runs.length?task.runs:task.claimed_at?[{started_at:task.claimed_at,completed_at:task.completed_at,status:task.status,actual_cost_cents:task.actual_cost_cents??0}]:[];
+  if(task.provider!=='manual_upload'&&task.input_snapshot.capability!=='narration_manual_upload'){
+   for(const run of runs){
+    const start=Date.parse(run.started_at);
+    const end=run.completed_at?Date.parse(run.completed_at):run.status==='running'&&task.status==='running'?now:NaN;
+    if(!Number.isFinite(start)||!Number.isFinite(end)||end<start)continue;
+    const episodeIntervals=intervals.get(task.episode_id)??[];
+    episodeIntervals.push([start,end]);
+    intervals.set(task.episode_id,episodeIntervals);
+   }
+  }
   const kind=generationKinds[task.task_type];
   const local=['manual_upload','local','controlled',''].includes(task.provider)||task.input_snapshot.capability==='narration_manual_upload';
   if(!kind||local)continue;
@@ -57,6 +68,14 @@ export function summarizeEpisodeMetrics(tasks:MetricTask[]):Record<string,Episod
    else summary.cost.unpricedCount+=unknownAttempts;
   }
  }
+ for(const [episodeId,runs] of intervals){
+  let total=0,previousEnd=-Infinity;
+  for(const [start,end] of runs.sort((a,b)=>a[0]-b[0])){
+   total+=Math.max(0,end-Math.max(start,previousEnd));
+   previousEnd=Math.max(previousEnd,end);
+  }
+  result[episodeId].workerRunSeconds=total/1000;
+ }
  return result;
 }
 export async function readEpisodeMetrics(c:PoolClient,ownerId:string,episodeIds?:string[]):Promise<Record<string,EpisodeMetrics>>{
@@ -74,20 +93,5 @@ export async function readEpisodeMetrics(c:PoolClient,ownerId:string,episodeIds?
  LEFT JOIN local_identity.workspace_call_confirmations confirmation ON confirmation.authorization_hash=coalesce(v.request_snapshot->>'authorizationHash',n.authorization_hash) AND confirmation.consumed_at IS NOT NULL
  LEFT JOIN public.paid_generation_reservations reservation ON reservation.task_id=t.id
  WHERE EXISTS(SELECT 1 FROM public.account_memberships m WHERE m.account_id=e.account_id AND m.user_id=$1 AND m.role='owner') AND ($2::uuid[] IS NULL OR e.id=ANY($2::uuid[]))`,[ownerId,episodeIds??null]);
- const metrics=summarizeEpisodeMetrics(rows);
- const stages=await c.query(`SELECT e.id,
- jsonb_strip_nulls(jsonb_build_object(
- 'script',coalesce((SELECT max(s.created_at) FROM public.state_transitions s WHERE s.episode_id=e.id AND s.to_stage IN ('waiting_input','brief_draft','script_draft','script_review')),e.created_at),
- 'preparation',coalesce((SELECT max(s.created_at) FROM public.state_transitions s WHERE s.episode_id=e.id AND s.to_stage='script_approved'),w.created_at),
- 'editing',(SELECT min(v.created_at) FROM local_identity.production_workspace_versions v WHERE v.workspace_id=w.id AND v.script_revision_id=w.script_revision_id AND v.reason IN ('保存原生剪辑','恢复原生剪辑','修改镜头结构')),
- 'delivery',(SELECT min(x.created_at) FROM local_identity.workspace_exports x WHERE x.workspace_id=w.id AND x.project_content_version=w.revision AND x.content_sha256=w.content_sha256)
- )) starts,
- CASE WHEN e.stage='production_completed' THEN coalesce((SELECT max(s.created_at) FROM public.state_transitions s WHERE s.episode_id=e.id AND s.to_stage='production_completed'),e.updated_at) ELSE e.archived_at END finished_at
- FROM public.episodes e LEFT JOIN local_identity.production_workspaces w ON w.episode_id=e.id
- WHERE EXISTS(SELECT 1 FROM public.account_memberships m WHERE m.account_id=e.account_id AND m.user_id=$1 AND m.role='owner') AND ($2::uuid[] IS NULL OR e.id=ANY($2::uuid[]))`,[ownerId,episodeIds??null]);
- for(const row of stages.rows){
-  const summary=metrics[row.id]??={cost:{actualCents:null,estimatedCents:null,reservedCents:0,unpricedCount:0,recalculated:false},stageStartedAt:{},finishedAt:null,generations:{image:0,video:0,narration:0,sound:0,failed:0}};
-  summary.stageStartedAt=row.starts;summary.finishedAt=row.finished_at?new Date(row.finished_at).toISOString():null;
- }
- return metrics;
+ return summarizeEpisodeMetrics(rows);
 }

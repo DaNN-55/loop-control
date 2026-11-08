@@ -3,13 +3,14 @@ import {isVideoProvider,videoProviders} from "../worker/videoProviderCatalog.js"
 import {videoAuthorization,videoEndpoint} from "../worker/officialVideoProvider.js";
 import{bailianCredential}from'../worker/wanVideoProvider.js';
 import type{ConnectionProbe,ProbeResult}from'./connectionPorts.js';
-import{createManualVerificationFetcher,createProviderFetcher,providerNetworkAvailable,providerNetworkStatus,type ProviderNetworkConfiguration,type OnlineProvider}from'./providerNetwork.js';
+import{createManualVerificationFetcher,createProviderFetcher,isWorkspaceGenerationProvider,openAiImageAuthorizationIssue,providerNetworkAvailable,providerNetworkStatus,type ProviderNetworkConfiguration,type OnlineProvider}from'./providerNetwork.js';
 import{synthesizeVolcengineTts,parseVolcengineTtsAudio,type MediaFetcher}from'../worker/mediaProviders.js';
 const adapters:Partial<Record<OnlineProvider,[string,string]>>={volcengine:['seedance_video',videoProviders.volcengine.endpoint],minimax:['minimax_video',videoProviders.minimax.endpoint],kling:['kling_video',videoProviders.kling.endpoint],bailian:['wan_video','https://dashscope.aliyuncs.com'],openai:['openai_images','https://api.openai.com/v1'],pexels:['pexels_video','https://api.pexels.com'],freesound:['freesound_preview','https://freesound.org/apiv2'],volcengine_tts:['volcengine_tts','https://openspeech.bytedance.com/api/v3/tts/unidirectional/sse']};
 // Endpoint/credential qualification only. A successful model task remains a separate gate.
-export function createProviderProbe(config:ProviderNetworkConfiguration,transport?:MediaFetcher,readOnly?:Partial<Record<OnlineProvider,ProviderNetworkConfiguration>>,options:{manualVerification?:boolean}={}):ConnectionProbe{
+export function createProviderProbe(config:ProviderNetworkConfiguration,transport?:MediaFetcher,readOnly?:Partial<Record<OnlineProvider,ProviderNetworkConfiguration>>,options:{manualVerification?:boolean;workspaceGenerationFromConnections?:boolean;workspaceSpeechFromConnections?:boolean}={}):ConnectionProbe{
  const policyFor=(provider:string)=>readOnly?.[provider as OnlineProvider]??config;
- const statusFor=(provider:string)=>isRetiredProvider(provider)?{available:false,code:'provider_retired',detail:retiredProviderMessage}:!adapters[provider as OnlineProvider]?{available:false,code:'provider_not_registered',detail:'未登记的连接服务。'}:options.manualVerification?{available:true,code:'available',detail:'可手动测试连接。'}:providerNetworkStatus(policyFor(provider),provider);
+ const manualVerification=(provider:string)=>options.manualVerification||(options.workspaceGenerationFromConnections&&isWorkspaceGenerationProvider(provider));
+ const statusFor=(provider:string)=>isRetiredProvider(provider)?{available:false,code:'provider_retired',detail:retiredProviderMessage}:!adapters[provider as OnlineProvider]?{available:false,code:'provider_not_registered',detail:'未登记的连接服务。'}:manualVerification(provider)?{available:true,code:'available',detail:'可手动测试连接。'}:providerNetworkStatus(policyFor(provider),provider);
  async function test(input:Parameters<ConnectionProbe['verify']>[0]):Promise<ProbeResult>{
   const status=statusFor(input.provider);if(!status.available)return{outcome:'retryable',attempted:false,code:status.code,detail:status.detail};
   let httpStatus:number|undefined,attempted=false;const observing:MediaFetcher=async(url,init)=>{attempted=true;const response=await (transport??fetch)(url,init);httpStatus=response.status;return response;};
@@ -23,7 +24,7 @@ export function createProviderProbe(config:ProviderNetworkConfiguration,transpor
   if(!expected||input.adapter!==expected[0]||input.endpoint!==expected[1]||!input.secret.trim()||!statusFor(input.provider).available)return'retryable';
   let outcome:'verified'|'invalid'|'retryable'='retryable';
   const classifyResponse=async(r:Response)=>{outcome=await classify(provider,r);return outcome==='verified';};
-  const manual=options.manualVerification?createManualVerificationFetcher(provider,sender):undefined;
+  const manual=manualVerification(provider)?createManualVerificationFetcher(provider,sender):undefined;
   const fetcher:MediaFetcher=manual?async(url,init)=>{const response=await manual(url,init);await classifyResponse(response.clone());return response;}:createProviderFetcher(policyFor(provider),provider,'verify',sender,classifyResponse);
   try{
    if(provider==='volcengine_tts'){await synthesizeVolcengineTts({apiKey:input.secret,fetcher,model:'seed-tts-2.0',text:'这是一条测试。',voice:{languageCode:'zh-CN',name:'zh_female_vv_uranus_bigtts',speakingRate:1}});return outcome;}
@@ -36,7 +37,7 @@ export function createProviderProbe(config:ProviderNetworkConfiguration,transpor
    await fetcher(url,{headers});return outcome;
   }catch{return outcome;}
  }
- return{mode:'live',get networkAvailable(){return providerNetworkAvailable(config);},verificationStatus:statusFor,test,verify:input=>verify(input)};
+ return{mode:'live',workspaceGenerationFromConnections:options.workspaceGenerationFromConnections,workspaceSpeechFromConnections:options.workspaceSpeechFromConnections,get networkAvailable(){return providerNetworkAvailable(config);},executionAvailable:provider=>providerNetworkAvailable(config,provider),executionIssue:provider=>provider==='openai'?openAiImageAuthorizationIssue(config):null,verificationStatus:statusFor,test,verify:input=>verify(input)};
 }
 async function classify(provider:OnlineProvider,r:Response):Promise<'verified'|'invalid'|'retryable'>{
  if(r.status===401||r.status===403)return'invalid';if(!r.ok)return'retryable';

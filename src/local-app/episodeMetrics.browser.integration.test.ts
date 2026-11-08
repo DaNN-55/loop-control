@@ -50,7 +50,7 @@ it.skipIf(process.env.LOOP_METRICS_BROWSER!=='1')('real Owner page renders compa
   };
   for(const width of [1543,1443,1101,1001,1000,901,801,760,390]){await cli('set','viewport',String(width),'953');await capture('episodes-'+width,'.episode-table');}
   await cli('set','viewport','1443','953');await click('工作台');await cli('wait','--text',titles[2]);await cli('select','[aria-label="工作台排序"]','updated');await cli('wait','--fn',`document.querySelector('.lc-work-table tbody tr')?.textContent.includes(${JSON.stringify(titles[0])})||document.querySelector('[aria-label="系列生产单"] [role=row]:nth-child(2)')?.textContent.includes(${JSON.stringify(titles[0])})`);
-  await click('连接配置');await cli('wait','--text','图片生成连接名称较长时也应完整换行显示');
+  await click('所有者设置');await cli('find','role','menuitem','click','--name','连接配置','--exact');await cli('wait','--text','图片生成连接名称较长时也应完整换行显示');
   for(const width of [1543,1443,1101,1001,1000,901,801,760,390]){await cli('set','viewport',String(width),'953');await capture('connections-'+width,'.reference-connections-table-wrap');}
   await cli('set','viewport','1443','953');await click('图片生成连接名称较长时也应完整换行显示 连接操作');
   await cli('wait','--fn',"[...document.querySelectorAll('[role=menuitem]')].some(e=>e.textContent.includes('账务设置'))");

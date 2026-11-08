@@ -17,5 +17,5 @@ export async function saveOwnerPreferences(pool:Pool,session:OwnerSession,input:
   });
 }
 export async function readOwnerNotificationEvents(pool:Pool,ownerId:string){
-  return ownerTransaction(pool,ownerId,true,async client=>(await client.query('SELECT * FROM local_identity.owner_notification_events()')).rows);
+  return ownerTransaction(pool,ownerId,true,async client=>(await client.query(`SELECT n.*, e.title AS episode_title FROM local_identity.owner_notification_events() n LEFT JOIN public.episodes e ON e.id=n.episode_id AND EXISTS (SELECT 1 FROM public.account_memberships m WHERE m.account_id=e.account_id AND m.user_id=local_identity.owner_id() AND m.role='owner')`)).rows);
 }

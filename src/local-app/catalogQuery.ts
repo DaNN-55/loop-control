@@ -1,3 +1,5 @@
+import {operationsEpisodePageSize} from '../episodes/episodeCatalogTypes.js';
+
 // Native parameterization of the C-stage catalog contract (ADR-0008).
 // Executed inside the same Owner/RLS repeatable-read transaction as metadata.
 export const localCatalogSql=` with owned as materialized (
@@ -87,9 +89,12 @@ export const localCatalogSql=` with owned as materialized (
  ), filtered as materialized (
   select e.* from scoped e join episode_states state on state.episode_id=e.id
   where ($11::text='all' or $11::text='review' and exists(select 1 from pending p where p.episode_id=e.id) or $11::text<>'review' and state.action_status=$11::text)
+   and ($13::text='all' or state.workflow_step=$13::text)
    and ($2::text<>'reviews' or exists(select 1 from pending p where p.episode_id=e.id))
+ ), page_settings as (
+  select case when $2::text='operations' then ${operationsEpisodePageSize} when $2::text='episodes' then $14::integer else 20 end page_size
  ), bounds as (
-  select count(*) total,least(greatest(coalesce($3::integer,1),1),greatest(1,ceil(count(*)/20.0)::int)) page from filtered
+  select count(*) total,least(greatest(coalesce($3::integer,1),1),greatest(1,ceil(count(*)/(select page_size::numeric from page_settings))::int)) page from filtered
  ), cost_order as materialized (
   select key::uuid episode_id,case when value#>>'{cost,actualCents}' is not null or value#>>'{cost,estimatedCents}' is not null
    then coalesce((value#>>'{cost,actualCents}')::numeric,0)+coalesce((value#>>'{cost,estimatedCents}')::numeric,0) end cents
@@ -99,7 +104,7 @@ export const localCatalogSql=` with owned as materialized (
   order by case when $10::text='cost_desc' then cost.cents end desc nulls last,
    case when $10::text='cost_asc' then cost.cents end asc nulls last,case when $10::text='title' then lower(e.title) end asc,
    case when $10::text='oldest' then e.updated_at end asc,e.updated_at desc,e.id
-  limit 20 offset ((select page from bounds)-1)*20
+  limit (select page_size from page_settings) offset ((select page from bounds)-1)*(select page_size from page_settings)
  ), pending_bounds as (
   select count(*) total,least(greatest(coalesce($7::integer,1),1),greatest(1,ceil(count(*)/20.0)::int)) page from pending
  ), pending_rows as materialized (
@@ -130,7 +135,7 @@ export const localCatalogSql=` with owned as materialized (
   'metrics',coalesce((select jsonb_object_agg(e.id,$12::jsonb->e.id::text) from page_rows e where $12::jsonb ? e.id::text),'{}'),
   'episodes',coalesce((select jsonb_agg(to_jsonb(e) order by case when $10::text='cost_desc' then cost.cents end desc nulls last,case when $10::text='cost_asc' then cost.cents end asc nulls last,case when $10::text='title' then lower(e.title) end asc,case when $10::text='oldest' then e.updated_at end asc,e.updated_at desc,e.id) from page_rows e left join cost_order cost on cost.episode_id=e.id),'[]'),
   'collections',coalesce((select jsonb_object_agg(c.episode_id,jsonb_build_object('containerId',c.container_id,'seriesId',c.series_id)) from current_collections c join page_rows e on e.id=c.episode_id),'{}'),
-  'total',(select total from bounds),'page',(select page from bounds),'pageSize',20,
+  'total',(select total from bounds),'page',(select page from bounds),'pageSize',(select page_size from page_settings),
   'episodeCount',(select count(*) from owned),
   'accountCounts',coalesce((select jsonb_object_agg(account_id,n) from(select account_id,count(*) n from owned group by account_id)s),'{}'),
   'filterAccountCounts',coalesce((select jsonb_object_agg(account_id,n) from (
@@ -162,7 +167,7 @@ export const localCatalogSql=` with owned as materialized (
    'blocked',(select count(*) from current_worker where status='blocked'),'failed',(select count(*) from current_worker where status='failed'),
    'latest',(select jsonb_build_object('task_type',task_type,'at',coalesce(completed_at,claimed_at,created_at)) from worker_tasks order by coalesce(completed_at,claimed_at,created_at) desc,created_at desc,id limit 1),
    'latestCompleted',coalesce((select status='completed' from worker_tasks order by coalesce(completed_at,claimed_at,created_at) desc,created_at desc,id limit 1),false)),
-  'statusCounts',(select jsonb_build_object('all',count(*),'review',count(*) filter(where exists(select 1 from pending p where p.episode_id=state.episode_id)),'running',count(*) filter(where action_status='running'),'blocked',count(*) filter(where action_status='blocked'),'done',count(*) filter(where action_status='done')) from episode_states state),
+  'statusCounts',(select jsonb_build_object('all',count(*),'review',count(*) filter(where exists(select 1 from pending p where p.episode_id=state.episode_id)),'running',count(*) filter(where action_status='running'),'blocked',count(*) filter(where action_status='blocked'),'done',count(*) filter(where action_status='done')) from episode_states state where $13::text='all' or state.workflow_step=$13::text),
   'operationRows',coalesce((select jsonb_agg(jsonb_build_object('episodeId',e.id,'reviewRevision',coalesce((select p.revision_number from pending p where p.episode_id=e.id),r.revision_number),'reviewPending',exists(select 1 from pending p where p.episode_id=e.id),'workflowStep',state.workflow_step,
    'blockerCount',(select count(*) from task_blockers b where b.episode_id=e.id),'actionStatus',state.action_status)) from page_rows e left join current_packages r on r.episode_id=e.id join episode_states state on state.episode_id=e.id),'[]')
  ) AS catalog`;

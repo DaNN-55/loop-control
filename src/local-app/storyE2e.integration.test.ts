@@ -8,7 +8,7 @@ import {promisify} from 'node:util';
 import {storyE2eFixture,storyLines} from './storyE2e.fixture';
 import {storyBrowser} from './storyBrowser.fixture';
 import {editStudioDocument} from './studioDocument.fixture';
-import {applyWorkspaceCandidate} from '../workspaceCandidates';
+import {applyWorkspaceCandidate,workspaceCandidateTarget} from '../workspaceCandidates';
 import {storyProcess} from './storyProcess.fixture';
 import {collectionOwnerPost} from './episodeCollection.fixture';
 import {deletionFixtureFingerprint} from './deletionFingerprint.fixture';
@@ -20,16 +20,16 @@ it.skipIf(!enabled)('story 5 browser: cancel a collection plan, recover a lost m
   await f.fill();await f.ok(f.send('exportWorkspace'));const project=f.workspace.project.sha256,artifact=f.workspace.exports![0].artifact!;
   const old=(await f.c.query('SELECT * FROM local_identity.episode_storage_location($1)',[f.episode])).rows[0];
   browser=await storyBrowser(f,'collection-story');
-  const open=async()=>{await browser!.click('文件夹更多操作');await browser!.cli('find','role','menuitem','click','--name','调整收纳系列','--exact');await browser!.wait("!!document.querySelector('[aria-label=目标收纳系列] option[value=unassigned]')");};
-  await open();await browser.cli('select','[aria-label="目标收纳"]','unassigned');await browser.click('盘点调整');await browser.cli('wait','--text','复制、校验并切换');
+  const open=async()=>{await browser!.click('文件夹更多操作');await browser!.cli('find','role','menuitem','click','--name','调整系列','--exact');await browser!.wait("!!document.querySelector('[aria-label=目标系列] option[value=unassigned]')");};
+  await open();await browser.cli('select','[aria-label="目标系列"]','unassigned');await browser.click('预览调整');await browser.cli('wait','--text','复制、校验并切换');
   await browser.click('放弃调整');await browser.cli('wait','--text','调整已放弃');
   expect((await f.c.query('SELECT directory_relative_path FROM local_identity.episode_storage_location($1)',[f.episode])).rows[0].directory_relative_path).toBe(old.directory_relative_path);
-  await browser.cli('select','[aria-label="目标收纳"]','unassigned');await browser.click('盘点调整');await browser.cli('wait','--text','复制、校验并切换');
+  await browser.cli('select','[aria-label="目标系列"]','unassigned');await browser.click('预览调整');await browser.cli('wait','--text','复制、校验并切换');
   browser.dropNextResponse('executeAssetDirectoryMigration');await browser.doubleClick('复制、校验并切换');await browser.cli('wait','--text','服务端结果回执未能送达');
-  await browser.click('关闭调整收纳系列');await f.restart();
+  await browser.click('关闭调整系列');await f.restart();
   await rename(join(f.assetRoot,old.directory_relative_path),join(f.assetRoot,old.directory_relative_path)+'.offline');
   await browser.cli('reload');await browser.cli('wait','--text','末班车前的一把伞');await open();
-  expect(await browser.evaluate("document.querySelector('[role=dialog][aria-label=调整收纳系列]').innerText")).toContain('未分系列');
+  expect(await browser.evaluate("document.querySelector('[role=dialog][aria-label=调整系列]').innerText")).toContain('未分系列');
   expect((await f.read()).project.sha256).toBe(project);
   const response=await fetch(f.origin+`/_local-artifact?episode=${f.episode}&path=${encodeURIComponent(artifact.relativePath)}&sha256=${artifact.sha256}`,{headers:{Cookie:'loop_owner_session='+f.token}});
   expect(response.status).toBe(200);expect(createHash('sha256').update(Buffer.from(await response.arrayBuffer())).digest('hex')).toBe(artifact.sha256);
@@ -53,14 +53,13 @@ it.skipIf(!enabled)('story 1 browser: validates the new script, recovers committ
  try{
   browser=await storyBrowser(f,'creation-story');
   await browser.click('确认脚本');await browser.cli('wait','--text','请填写主脚本');
-  await browser.fill('主脚本',f.scriptText.replace('模板版本：2','模板版本：3'));await browser.click('确认脚本');
-  await browser.cli('wait','--text','不支持的模板版本');
   await browser.fill('主脚本',f.scriptText);browser.dropNextResponse('importMaterial');await browser.doubleClick('确认脚本');
   await browser.cli('wait','--text','服务端结果回执未能送达');
   await browser.click('确认脚本');
-  await browser.click('准备素材匹配');
   await expect.poll(async()=>(await f.read())?.clips?.length,{timeout:15000}).toBe(2);
   expect(f.workspace.clips.map(c=>c.text)).toEqual(storyLines);
+  expect(f.workspace.clips.map(c=>c.shotId)).toEqual(['shot-01','shot-02']);
+  await browser.wait("document.querySelector('[aria-label=素材镜头列表]')?.innerText.includes('shot-02') === true");
   expect((await f.c.query('SELECT count(*)::int n FROM public.production_material_revisions WHERE episode_id=$1 AND is_main_script',[f.episode])).rows[0].n).toBe(1);
   await f.restart();await browser.cli('reload');await browser.cli('wait','--text','末班车前的一把伞');
   await browser.click('关闭生产单详情');await browser.click('新建生产单');
@@ -111,28 +110,70 @@ it.skipIf(!enabled)('story 4 browser: confirms the actual subtitles, retries a l
 it.skipIf(!enabled)('story 2 browser: a lost committed generation response and resubmission keep one task before an explicit three-second adoption',async()=>{
  const f=await storyE2eFixture();let browser:Awaited<ReturnType<typeof storyBrowser>>|undefined;
  try{
-  await f.fill();browser=await storyBrowser(f,'generation-story');await browser.visualTools();
-  await browser.click('定位镜头 shot-02');
-  await browser.wait("document.querySelector('[aria-label=画面候选目标]').selectedOptions[0].textContent.includes('shot-02')");
-  await browser.cli('select','[aria-label="画面候选来源"]','generate');
+  await f.fill();
+  const itemId=f.workspace.clips[1].itemId;
+  await f.ok(f.send('editWorkspaceStructure',{operation:{kind:'appearance',itemId,fit:'cover',focusX:17}}));
+  browser=await storyBrowser(f,'generation-story');
+  const showVideoPreparation=async()=>{
+   await browser!.cli('open',browser!.url+'&step=preparation');
+   await browser!.click('选择镜头 shot-02');
+   await browser!.cli('find','role','tab','click','--name','视频','--exact');
+   await browser!.click('AI 生成');
+  };
+  await showVideoPreparation();
   await browser.wait("Array.from(document.querySelector('[aria-label=视频连接与模型]').options).some(o=>o.value&&!o.disabled)");
   const model=await browser.evaluate("Array.from(document.querySelector('[aria-label=视频连接与模型]').options).find(o=>o.value&&!o.disabled).value");
   await browser.cli('select','[aria-label="视频连接与模型"]',model);
-  await browser.cli('select','[aria-label="画面首帧图片"]',f.materials.second.id);
+  const materialToggle=await browser.evaluate("Array.from(document.querySelectorAll('button[aria-expanded]')).find(b=>b.textContent.trim().startsWith('本期素材 ·')).getAttribute('aria-expanded')");
+  if(materialToggle==='false')await browser.cli('find','role','button','click','--name','本期素材 ·');
+  await browser.click('预览 伞柄纸条.png');
+  await browser.click('拖入图片作为首帧');
   await browser.fill('画面动作','黄色伞柄上的纸条轻轻晃动，留给下一个人。');
-  await browser.fill('生成时长（秒）','4');await browser.fill('本次费用预留（分）','20');
-  await browser.doubleClick('生成画面候选');await browser.cli('wait','--text','确认本次');
+  await browser.fill('生成时长（秒）','4');
+  await browser.doubleClick('生成视频');await browser.cli('wait','--text','确认本次视频生成');
   browser.dropNextResponse('confirmWorkspaceCall');await browser.doubleClick('确认并提交本次调用');
   await expect.poll(()=>browser!.traffic.filter(t=>t.command==='confirmWorkspaceCall').length,{timeout:15000}).toBe(1);
   await browser.cli('wait','--text','服务端结果回执未能送达');
-  await browser.click('取消');await browser.cli('reload');await browser.visualTools();await browser.click('定位镜头 shot-02');await browser.cli('select','[aria-label="画面候选来源"]','generate');await browser.cli('wait','--text','画面等待执行');
+  await browser.click('取消');await showVideoPreparation();await browser.cli('wait','--text','视频等待生成');
   await f.read();expect(f.workspace.visualTasks).toHaveLength(1);const job=f.workspace.visualTasks![0];
   const result=await f.execute(job.taskId);expect(result.status,JSON.stringify(result)).toBe('completed');
-  await browser.click('刷新画面');await browser.cli('wait','--text','采用此画面');
-  await browser.cli('select','[aria-label="视觉候选时长处理"]','keep-target');await browser.click('采用此画面');
+  const beforeOpen=await f.read();
+  const preview=await f.ok(f.send('prepareWorkspaceVisualCandidate',{
+   candidateId:beforeOpen.visualCandidates![0].id,durationPolicy:'use-candidate',acceptTimelineImpact:true,motionPolicy:'preserve-target',
+  }));
+  expect(preview.impact).toMatchObject({currentSeconds:3,appliedSeconds:4,captionRecheck:true});
+  const targetItem=async(w:typeof f.workspace)=>JSON.parse(await readFile(join(f.assetRoot,w.project.relativePath),'utf8'))
+   .timelines.flatMap((timeline:any)=>timeline.items).find((item:any)=>item.id===itemId);
+  const edited=await targetItem(beforeOpen),beforeTarget=workspaceCandidateTarget(edited);
+  await browser.click('进入剪辑工作台');
+  await browser.click('定位镜头 shot-02');
+  await browser.wait("document.querySelector('button[aria-label=\"定位镜头 shot-02\"]')?.getAttribute('aria-pressed')==='true'");
+  expect(await browser.evaluate("!Array.from(document.querySelectorAll('.embedded-studio header button')).some(button=>button.textContent==='补充工具')")).toBe(true);
+  const clickNative=async(name:string)=>{
+   const line=(await browser!.snapshot()).split('\n').find(line=>line.includes('- button '+JSON.stringify(name)+' '));
+   const ref=line?.match(/ref=(e\d+)/)?.[1];
+   if(!ref)throw Error('原生编辑器按钮未出现：'+name);
+   await browser!.cli('focus','@'+ref);
+   await browser!.cli('press','Enter');
+  };
+  await clickNative('字幕');
+  await clickNative('字幕对齐');
+  await browser.wait("!!document.querySelector('.embedded-studio-caption-panel:not([hidden]) [aria-label=工作台字幕]')");
+  await browser.click('关闭字幕对齐');
+  await browser.click('保存工作版本');
+  await browser.cli('wait','--text','工作版本已保存');
+  const afterSave=await f.read();
+  expect(workspaceCandidateTarget(await targetItem(afterSave))).toEqual(beforeTarget);
+  expect(afterSave.visualCandidates?.[0].status).toBe('available');
+  await browser.click('保存并返回分镜台');
+  await browser.wait("document.querySelector('button[aria-label=\"选择镜头 shot-02\"]')?.getAttribute('aria-pressed')==='true'");
+  await browser.cli('find','role','tab','click','--name','视频','--exact');
+  await browser.click('预览视频候选 01');
+  await browser.click('采用到当前镜头');
+  await browser.click('确认采用');
   await expect.poll(async()=>(await f.read()).visualCandidates![0].status,{timeout:15000}).toBe('adopted');
   const project=JSON.parse(await readFile(join(f.assetRoot,f.workspace.project.relativePath),'utf8'));
-  expect(project.timelines[0].items.find((i:any)=>i.id===f.workspace.clips[1].itemId)).toMatchObject({kind:'video',durationInFrames:90,srcInFrame:0});
+  expect(project.timelines[0].items.find((i:any)=>i.id===itemId)).toMatchObject({kind:'video',durationInFrames:90,srcInFrame:0,transform:edited.transform,fit:'cover'});
   expect((await readFile(f.submissions,'utf8')).trim().split('\n')).toHaveLength(1);
   await browser.capture('adopted');
  }catch(error){await browser?.capture('failed');throw error;}
@@ -143,7 +184,7 @@ it.skipIf(!enabled)('story 2: rejects an unsupported duration, then one duplicat
  const f=await storyE2eFixture();try{
   await f.fill();const w=f.workspace;
   expect(w.clips.map(c=>c.text)).toEqual(storyLines);
-  
+
   const key=randomUUID(),data={targetItemId:w.clips[1].itemId,selection:f.selections.video,firstFrameMaterialRevisionId:f.materials.second.id,prompt:'黄色伞柄的纸条轻轻晃动，留给下一个人。',durationSeconds:3,reservationCents:20};
   expect((await f.send('requestWorkspaceVisualCandidate',data)).status).toBe(409);
   expect((await f.read()).visualTasks).toHaveLength(0);data.durationSeconds=4;
@@ -335,33 +376,87 @@ it.skipIf(!enabled).each(['unknown','poll-fail'] as const)('story 2: %s interrup
  }finally{await f.close();}
 },180000);
 
-it.skipIf(!enabled)('story 3 browser: native adoption interrupted before its receipt recovers on reload and duplicate confirmation',async()=>{
+it.skipIf(!enabled)('story 3 browser: a lost storyboard adoption receipt leaves the same saved replacement after reload',async()=>{
  const f=await storyE2eFixture();let browser:Awaited<ReturnType<typeof storyBrowser>>|undefined;
  try{
-  await f.fill();const material=await f.importFile(f.files.candidate,'image','visual_reference');
+  await f.fill();
+  const material=await f.importFile(f.files.candidate,'image','visual_reference');
   await f.ok(f.send('registerWorkspaceVisualCandidate',{targetItemId:f.workspace.clips[0].itemId,materialRevisionId:material.id,usage:'still',durationSeconds:3}));
-  browser=await storyBrowser(f,'native-story');
-  await browser.visualTools();
-  expect(await browser.evaluate("document.querySelector('.workspace-shot-rail').textContent")).toContain(storyLines[0]);
-  await browser.wait("!!document.querySelector('[aria-label=视觉候选时长处理]')");
-  await browser.cli('select','[aria-label="视觉候选时长处理"]','keep-target');
-  browser.interruptNextRequest('adoptWorkspaceVisualCandidate');
-  await browser.click('采用此画面');
-  await expect.poll(async()=>(await f.read()).visualCandidates![0].pendingConfirmation,{timeout:20000}).toBe(true);
+  browser=await storyBrowser(f,'storyboard-adoption');
+  await browser.cli('open',browser.url+'&step=preparation');
+  await browser.click('采用到当前镜头');
+  browser.dropNextResponse('adoptWorkspaceVisualCandidate');
+  await browser.click('确认采用');
   await expect.poll(()=>browser!.traffic.some(t=>t.command==='adoptWorkspaceVisualCandidate'&&t.dropped),{timeout:10000}).toBe(true);
-  const saved=f.workspace.project.sha256;
-  await browser.capture('receipt-interrupted');
-  await f.restart();await browser.cli('reload');
-  await browser.visualTools();
-  await browser.cli('wait','--text','确认画面采用');
-  await browser.doubleClick('确认画面采用');
   await expect.poll(async()=>(await f.read()).visualCandidates![0].status,{timeout:10000}).toBe('adopted');
-  expect(f.workspace.project.sha256).toBe(saved);expect(f.workspace.clips.map(c=>c.text)).toEqual(storyLines);
+  const saved=f.workspace.project.sha256;
+  await browser.cli('reload');
   await browser.cli('wait','--text','已采用');
-  await browser.wait("Array.from(document.querySelectorAll('.embedded-studio button')).some(b=>b.textContent.includes('返回生产单')&&!b.disabled)");
-  await browser.click('返回生产单');
-  await browser.wait("!document.querySelector('iframe[title=\"OpenChatCut 剪辑工程\"]')");
+  expect((await f.read()).project.sha256).toBe(saved);
+  expect(f.workspace.clips.map(c=>c.text)).toEqual(storyLines);
   await browser.capture('adopted-and-saved');
  }catch(error){await browser?.capture('failed');throw error;}
  finally{await browser?.close();await f.close();}
 },180000);
+
+it.skipIf(!enabled)('script layout creates parallel slots without extending the next shot',async()=>{
+ const f=await storyE2eFixture({blank:true,scriptOnly:true});
+ try{
+  const text=f.scriptText.replace('构图：full','构图：2up-horizontal');
+  const script=await f.ok(f.request('importMaterial',{
+   sourceKind:'file',sourcePath:'分屏脚本.md',materialType:'script',materialPurpose:'main_script',mimeType:'text/markdown',
+   isMainScript:true,contentBase64:Buffer.from(text).toString('base64'),
+  }));
+  await f.ok(f.request('start'));
+  const workspace=await f.ok(f.request('prepareWorkspace',{expectedScriptRevisionId:script.id}));
+  const timeline=JSON.parse(await readFile(join(f.assetRoot,workspace.project.relativePath),'utf8')).timelines[0];
+  expect(workspace.clips.map((clip:{shotId:string})=>clip.shotId)).toEqual(['shot-01','shot-01','shot-02']);
+  expect(timeline.items.map((item:{track:string;startFrame:number;durationInFrames:number})=>[item.track,item.startFrame,item.durationInFrames])).toEqual([['V1',0,90],['V2',0,90],['V1',90,90]]);
+  expect(timeline.items.slice(0,2).map((item:any)=>item.loopControlComposition.slotId)).toEqual(['left','right']);
+ }finally{await f.close();}
+},180000);
+
+it.skipIf(!enabled)('script-only browser: confirmation prepares local shots and keeps visual tabs clear of candidates',async()=>{
+ const f=await storyE2eFixture({blank:true,scriptOnly:true});
+ let browser:Awaited<ReturnType<typeof storyBrowser>>|undefined;
+ try{
+  browser=await storyBrowser(f,'script-only');
+  await browser.wait("!!document.querySelector('textarea[aria-label=主脚本]:not([disabled])')");
+  await browser.fill('主脚本','# 普通脚本\n\n## 正文\n\n第一段走到站台。\n\n第二段发现一把伞。\n\n## 备注\n\n不进入口播。');
+  await browser.click('确认脚本');
+  await browser.wait("document.querySelector('[aria-label=素材镜头列表]')?.innerText.includes('第二段发现一把伞。') === true");
+  expect((await f.read()).clips.map(clip=>clip.text)).toEqual(['第一段走到站台。','第二段发现一把伞。']);
+  expect((await f.c.query("SELECT count(*)::int n FROM public.tasks WHERE episode_id=$1 AND task_type='draft_storyboard'",[f.episode])).rows[0].n).toBe(0);
+  await browser.cli('set','viewport','1440','500');
+  await browser.click('AI 生成');
+  expect(await browser.evaluate(`(() => {
+   const pane=document.querySelector('#preparation-panel-visual'),tabs=pane.querySelector('.workspace-visual-unified > header'),heading=pane.querySelector('.workspace-results-heading');
+   pane.scrollTop=tabs.offsetHeight+10;
+   const clear=pane.scrollTop>0&&tabs.getBoundingClientRect().bottom<=heading.getBoundingClientRect().top;
+   pane.scrollTop=0;return clear;
+  })()`)).toBe(true);
+  for(const name of ['视频','图片']){
+   await browser.cli('find','role','tab','click','--name',name,'--exact');
+   expect(await browser.evaluate("document.querySelector('.workspace-visual-preview-tabs [aria-selected=true]')?.textContent")).toBe(name);
+  }
+  await browser.capture('script-only-storyboard');
+ }catch(error){await browser?.capture('failed');throw error;}
+ finally{await browser?.close();await f.close();}
+},120000);
+
+it.skipIf(!enabled)('script-only recovery: local preparation supersedes an unfinished legacy model task',async()=>{
+ const f=await storyE2eFixture({blank:true,scriptOnly:true});
+ try{
+  const script=(await f.ok(f.request('importMaterial',{sourceKind:'file',sourcePath:'普通脚本.md',materialType:'script',materialPurpose:'main_script',mimeType:'text/markdown',isMainScript:true,contentBase64:Buffer.from('# 普通脚本\n\n## 正文\n\n保留已经确认的原文。').toString('base64')}))).id;
+  await f.ok(f.request('start'));
+  const harness=await f.ok(f.post('configuration','createPromptVersion',{accountId:f.account.id,capability:'storyboard_planning',name:'旧分镜',summary:'恢复测试',instructions:'保留原文。'}));
+  await f.ok(f.request('saveWorkspacePlanningSelection',{expectedSelectionRevision:0,selection:{provider:'codex',adapter:'codex',model:'gpt-5.6-codex',harnessId:harness.id,budgetCents:0,allowedTools:['read','write']}}));
+  const {seedLegacyPlanning}=await import('./legacyPlanning.fixture');
+  const old=await seedLegacyPlanning(f,f.episode,script);
+  const prepared=await f.ok(f.request('prepareWorkspace',{expectedScriptRevisionId:script}));
+  expect(prepared.clips.map((clip:{text:string})=>clip.text)).toEqual(['保留已经确认的原文。']);
+  const tasks=(await f.c.query("SELECT id,invalidated_at FROM public.tasks WHERE episode_id=$1 AND task_type='draft_storyboard'",[f.episode])).rows;
+  expect(tasks).toEqual([{id:old.taskId,invalidated_at:expect.any(Date)}]);
+  expect((await f.ok(f.request('prepareWorkspace',{expectedScriptRevisionId:script}))).storyboardPackageId).toBe(prepared.storyboardPackageId);
+ }finally{await f.close();}
+},120000);

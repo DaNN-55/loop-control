@@ -1,3 +1,4 @@
+import {creativeMediaPrompt} from './creativeAccountRules.js';
 export const imageSizePresets = [
   {ratio:'9:16', label:'竖屏 9:16', standard:'864x1536', high:'1152x2048'},
   {ratio:'16:9', label:'横屏 16:9', standard:'1536x864', high:'2048x1152'},
@@ -6,9 +7,17 @@ export const imageSizePresets = [
   {ratio:'3:2', label:'横图 3:2', standard:'1536x1024', high:'1920x1280'},
 ] as const;
 export const imageSizes = imageSizePresets.flatMap(p=>[p.standard,p.high]);
+export const openAiImage25Models = ['gpt-image-2.5-sunburst','gpt-image-2.5-flare','gpt-image-2.5-sunburst-2026-09-08','gpt-image-2.5-flare-2026-09-08'] as const;
+export const openAiImage26Models = ['gpt-image-2.6-sunburst','gpt-image-2.6-flare'] as const;
+export const openAiEnhancedImageModels:readonly string[] = [...openAiImage25Models,...openAiImage26Models];
+export const openAiImageModels:readonly string[] = ['gpt-image-2',...openAiEnhancedImageModels];
+export const imageQualityLabels = {auto:'自动',low:'低',medium:'中',high:'高',xhigh:'超高',max:'最高'} as const;
+export function openAiImageQualities(model?:string):readonly (keyof typeof imageQualityLabels)[]{
+ return openAiEnhancedImageModels.some(id=>id===model)?['auto','low','medium','high','xhigh','max']:['auto','low','medium','high'];
+}
 export interface ImageGenerationSettings {
   size: typeof imageSizes[number];
-  quality: 'auto' | 'low' | 'medium' | 'high';
+  quality: keyof typeof imageQualityLabels;
   count: 1 | 2 | 4;
 }
 
@@ -42,11 +51,11 @@ export function imageBriefPrompt(brief:ImageBrief,ids:string[]):string {
 export function isImageGenerationSettings(value: unknown): value is ImageGenerationSettings {
   if (!value || typeof value !== 'object') return false;
   const s = value as ImageGenerationSettings;
-  return imageSizes.includes(s.size) && ['auto', 'low', 'medium', 'high'].includes(s.quality) && [1, 2, 4].includes(s.count);
+  return imageSizes.includes(s.size) && Object.hasOwn(imageQualityLabels,s.quality) && [1, 2, 4].includes(s.count);
 }
 
 /** One exact request text shared by call estimation and queued image generation. */
 export function imageRequestPrompt(prompt:string,brief:ImageBrief,ids:string[],accountRules:Record<string,unknown>,seriesRules:unknown){
  const composed=[prompt.trim(),imageBriefPrompt(brief,ids)].filter(Boolean).join('\n\n');
- return `${composed}\n\n账号创作规则：${JSON.stringify(accountRules)}\n系列创作规则：${JSON.stringify(seriesRules??null)}`;
+ return creativeMediaPrompt(composed,accountRules,seriesRules);
 }

@@ -1,5 +1,5 @@
 import {randomUUID} from 'node:crypto';
-import {readFile,writeFile} from 'node:fs/promises';
+import {readFile,rename,writeFile} from 'node:fs/promises';
 import {join} from 'node:path';
 import {narrationFixture} from './workspaceNarration.fixture';
 import {productionHash} from './scriptProductionStore';
@@ -25,7 +25,9 @@ export async function workspaceImageGenerationFixture(migrations:string[]=[],epi
  await f.authorize();await f.c.query('UPDATE local_identity.script_productions SET plan=$2 WHERE episode_id=$1',[f.episode,{executionFingerprint:productionHash(policy)}]);
 
  const ref=await f.request('importMaterial',{materialType:'image',sourceKind:'file',sourcePath:'reference.png',mimeType:'image/png',contentBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64'),isMainScript:false,materialPurpose:'visual_reference'});if(ref.status!==200)throw Error(JSON.stringify(ref.body));
- const submissions=join(f.root,'image-submissions.jsonl');await writeFile(join(f.root,'controlled-video.mjs'),`import{readFileSync,appendFileSync}from'node:fs';export async function createNarrationPorts(){return{mode:'controlled',store:{mode:'keychain',get:async ref=> 'synthetic-image-'+ref},fetcher:async(url,init)=>{const body=JSON.parse(init.body);appendFileSync(${JSON.stringify(submissions)},JSON.stringify({url:String(url),body,credentialRef:new Headers(init.headers).get('Authorization')?.replace('Bearer synthetic-image-','')})+'\\n');if(readFileSync(${JSON.stringify(f.responseMode)},'utf8')==='unknown')throw Error('Controlled image transport break');return Response.json({data:Array.from({length:body.n},()=>({b64_json:readFileSync(${JSON.stringify(workspaceTestMedia('still-striped.png'))}).toString('base64')}))});}};}`);
+ const submissions=join(f.root,'image-submissions.jsonl'),module=join(f.root,'controlled-video.mjs');
+ await rename(module,join(f.root,'video-only.mjs'));
+ await writeFile(module,`import{createNarrationPorts as videoPorts}from'./video-only.mjs';import{readFileSync,appendFileSync}from'node:fs';export async function createNarrationPorts(){const video=await videoPorts();return{mode:'controlled',store:{mode:'keychain',get:async ref=> 'synthetic-image-'+ref},fetcher:async(url,init)=>{if(new URL(url).hostname!=='api.openai.com')return video.fetcher(url,init);const body=JSON.parse(init.body);appendFileSync(${JSON.stringify(submissions)},JSON.stringify({url:String(url),body,credentialRef:new Headers(init.headers).get('Authorization')?.replace('Bearer synthetic-image-','')})+'\\n');if(readFileSync(${JSON.stringify(f.responseMode)},'utf8')==='unknown')throw Error('Controlled image transport break');return Response.json({data:Array.from({length:body.n},()=>({b64_json:readFileSync(${JSON.stringify(workspaceTestMedia('still-striped.png'))}).toString('base64')}))});}};}`);
  return {f,ref,submissions};
  }catch(error){await f.close();throw error;}
 }

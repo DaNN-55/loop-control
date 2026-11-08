@@ -1,7 +1,9 @@
 import {PexelsVideoError} from '../worker/pexelsVideos.js';
-import {FreesoundSearchError} from '../worker/mediaProviders.js';
+import {FreesoundSearchError,OpenAiImageRequestError} from '../worker/mediaProviders.js';
 import {assertWorkspaceVisualExecution} from './workspaceVisualWorker.js';
 import {executeWorkspaceImages} from './workspaceImageGenerationWorker.js';
+import type {VideoGenerationPhase} from '../worker/wanVideoProvider.js';
+import {createProviderFetcher,createVideoContinuationFetcher,createWorkspaceGenerationFetcher,createWorkspaceSearchFetcher} from './providerNetwork.js';
 import {isVideoProvider} from "../worker/videoProviderCatalog.js";
 import{ProviderOutcomeUnknownError}from'../worker/providerOutcome.js';
 import{registeredAdapters}from'../worker/registeredAdapters.js';
@@ -16,7 +18,7 @@ import {extractMp3Artifact,trimMp3Artifact,trimMp4Artifact,trimMp4SegmentsArtifa
 import type {WorkerTaskPackage} from '../worker/contracts.js';
 import {narrationPorts,type NativeNarrationConfiguration} from './narrationWorker.js';
 import {SecretStoreError} from './connectionPorts.js';
-export type NativeMediaConfiguration=NativeNarrationConfiguration|{mode:'local'};
+export type NativeMediaConfiguration=(NativeNarrationConfiguration&{workspaceGenerationFromConnections?:boolean})|{mode:'local'};
 export async function assertMediaReady(config:NativeMediaConfiguration|undefined,policy:Record<string,unknown>={},environment:NodeJS.ProcessEnv=process.env,requiresExternal=false){
  if(!config)throw Error('本地媒体执行尚未配置。');
  const external=requiresExternal||['static_visual','a_roll','b_roll','soundtrack'].some(k=>(policy[k] as {execution_path?:string}|undefined)?.execution_path==='external');
@@ -24,7 +26,7 @@ export async function assertMediaReady(config:NativeMediaConfiguration|undefined
  await promisify(execFile)('ffmpeg',['-version'],{env:environment,timeout:3000,maxBuffer:65536});
  await promisify(execFile)('ffprobe',['-version'],{env:environment,timeout:3000,maxBuffer:65536});
  for(const c of Object.values(policy) as Array<{execution_path?:string;executor?:{provider?:string}}>)if(c?.execution_path==='local'&&c.executor?.provider==='openchatcut'){const i=runtimeCommandInvocation('openchatcut',['--version']);await promisify(execFile)(i.command,i.argumentsList,{env:environment,timeout:5000,maxBuffer:65536});}
- if(external){const ports=await narrationPorts(config.mode==='local'?undefined:config);if(ports.store.mode!=='keychain')throw Error('在线媒体密钥存储尚未配置。');}
+ if(external){const ports=await narrationPorts(config.mode==='local'?undefined:config,config.mode==='live'&&config.workspaceGenerationFromConnections);if(ports.store.mode!=='keychain')throw Error('在线媒体密钥存储尚未配置。');}
 }
 export function nativeMediaTask(type:string,provider:string){return (type==='generate_static_visual'&&provider==='openai')||(['generate_shot_sync_preview','generate_review_render','generate_final_render'].includes(type)&&provider==='openchatcut')||(['generate_a_roll','generate_b_roll'].includes(type)&&(['openchatcut','ffmpeg','pexels','bailian'].includes(provider)||isVideoProvider(provider)))||(type==='generate_soundtrack'&&provider==='freesound')||(type==='extract_embedded_audio'&&provider==='ffmpeg');}
 // A frozen reference may come from the Episode blueprint even for a local clip.
@@ -40,7 +42,8 @@ export async function executeNativeMedia(pool:Pool,config:NativeMediaConfigurati
  if(p.task.type==='generate_soundtrack'||p.task.type==='extract_embedded_audio'){const current=(await pool.query('SELECT local_identity.workspace_audio_task_current($1,$2,$3) current',[fence.p_task_id,fence.p_attempt,fence.p_lease_token])).rows[0]?.current;if(!current)throw Error('音频准备输入或制作授权已变化。');}
  const external=nativeMediaRequiresExternal(p);
  await assertMediaReady(config,{},process.env,external);
- const ports=external?await narrationPorts(config?.mode==='local'?undefined:config):undefined;
+ const configuredGeneration=config?.mode==='live'&&config.workspaceGenerationFromConnections;
+ const ports=external?await narrationPorts(config?.mode==='local'?undefined:config,configuredGeneration):undefined;
  const resolve=async(ref:string|undefined,provider:string,adapter:string)=>{
   if(!ports||!ref)throw new SecretStoreError('unavailable');
   try{const r=(await pool.query('SELECT * FROM local_identity.input_media_connection($1,$2,$3,$4)',[fence.p_task_id,fence.p_attempt,fence.p_lease_token,ref])).rows[0];if(!r||r.provider!==provider||r.adapter!==adapter)throw Error();return await ports.store.get(r.secret_ref);}catch{throw new SecretStoreError('unavailable');}
@@ -54,17 +57,63 @@ export async function executeNativeMedia(pool:Pool,config:NativeMediaConfigurati
   }else{
    const secret=external?await resolve(p.credentialRef,p.provider,p.media!.adapter):undefined;
    const denied=async():Promise<never>=>{throw Error('External media not configured');};
-   const observeVideo:typeof denied|NonNullable<typeof ports>['fetcher']=async(input,init)=>{
-    const response=await (ports?.fetcher??denied)(input,init);
-    if(p.provider==='bailian'||isVideoProvider(p.provider)){
+   const pexelsRequest=p.media?.adapter==='pexels_video'?p.media.bRoll.request:undefined;
+   const configuredSearch=configuredGeneration&&p.budget.limitCents===0
+    ?p.provider==='pexels'&&p.promptVersion==='workspace-pexels-v1'&&pexelsRequest
+      ?createWorkspaceSearchFetcher('pexels',[pexelsRequest.operation==='search'?'search':'download'])
+      :p.provider==='freesound'&&p.task.type==='generate_soundtrack'
+        ?createWorkspaceSearchFetcher('freesound',['search','download']):undefined
+    :undefined;
+   const videoProvider=p.provider==='bailian'||isVideoProvider(p.provider)?p.provider:null;
+   let providerTaskId:string|undefined,lastVideoPhase:VideoGenerationPhase|undefined,workspaceVideoReserved=false;
+   const configuredVideo=videoProvider&&configuredGeneration?createWorkspaceGenerationFetcher(videoProvider,{
+    reserve:async()=>{if(!workspaceVideoReserved||providerTaskId)throw Error('Current video submission required');},
+    videoTaskId:()=>providerTaskId
+   }):undefined;
+   const observeVideo:NonNullable<typeof ports>['fetcher']=async(input,init)=>{
+    const queryOriginal=providerTaskId&&videoProvider&&config?.mode==='live'&&(init?.method??'GET')==='GET';
+    const fetcher=configuredVideo&&(workspaceVideoReserved||queryOriginal)?configuredVideo:
+     queryOriginal?createVideoContinuationFetcher(config.network,videoProvider,providerTaskId!):configuredSearch??ports?.fetcher??denied;
+    const response=await fetcher(input,init);
+    if(videoProvider){
      let rejected=init?.method==='POST'&&response.status>=400&&response.status<500&&response.status!==408;
-     if(init?.method!=='POST'&&response.ok){try{const value=await response.clone().json();const status=value.status??value.task?.status??value.data?.task_status;rejected=['failed','fail','cancelled','canceled'].includes(status);}catch{/* Existing Provider parser reports invalid payloads. */}}
+     if(init?.method!=='POST'&&response.ok){try{const value=await response.clone().json();const status=value.status??value.task?.status??value.data?.task_status??value.output?.task_status;rejected=['failed','fail','cancelled','canceled'].includes(String(status).toLowerCase());}catch{/* Existing Provider parser reports invalid payloads. */}}
      if(rejected)await pool.query('SELECT local_identity.record_workspace_visual_submission($1,$2,$3,$4)',[fence.p_task_id,fence.p_attempt,fence.p_lease_token,'rejected']);
-    }return response;
+    }
+    return response;
    };
-
-   output=p.task.type==='generate_static_visual'?await executeWorkspaceImages(pool,p,fence,secret!,observeVideo):await executeControlledMediaTask({taskPackage:p,fetcher:observeVideo,pexelsApiKey:p.provider==='pexels'?secret:undefined,googleTtsApiKey:undefined,bailianCredentials:p.provider==='bailian'?secret:undefined,officialVideoCredentials:isVideoProvider(p.provider)?secret:undefined,reserveWan:(p.provider==='bailian'||isVideoProvider(p.provider))?async()=>{await assertWorkspaceVisualExecution(pool,fence);return (await pool.query('SELECT local_identity.reserve_workspace_configured_video($1,$2,$3) result',[fence.p_task_id,fence.p_attempt,fence.p_lease_token])).rows[0].result;}:undefined,recordWanSubmission:(p.provider==='bailian'||isVideoProvider(p.provider))?async id=>{await pool.query('SELECT local_identity.record_wan_submission($1,$2,$3,$4)',[fence.p_task_id,fence.p_attempt,fence.p_lease_token,id]);await pool.query('SELECT local_identity.record_workspace_visual_submission($1,$2,$3,$4)',[fence.p_task_id,fence.p_attempt,fence.p_lease_token,'received']);}:undefined,freesoundApiKey:p.provider==='freesound'?secret:undefined,validateMp4:validateMp4Artifact,probeMp3:probeMp3Artifact,extractMp3:extractMp3Artifact,trimMp3:trimMp3Artifact,trimMp4:trimMp4Artifact,trimMp4Segments:trimMp4SegmentsArtifact});
+   if(p.task.type==='generate_static_visual'){
+    output=await executeWorkspaceImages(pool,p,fence,secret!,reserve=>{
+     if(config?.mode==='live'&&p.provider==='openai')return configuredGeneration
+      ?createWorkspaceGenerationFetcher('openai',{reserve})
+      :createProviderFetcher(config.network,'openai','execute',undefined,undefined,reserve);
+     return async(url,init)=>{await reserve();return observeVideo(url,init);};
+    });
+   }else{
+    output=await executeControlledMediaTask({
+     taskPackage:p,fetcher:observeVideo,pexelsApiKey:p.provider==='pexels'?secret:undefined,googleTtsApiKey:undefined,
+     bailianCredentials:p.provider==='bailian'?secret:undefined,officialVideoCredentials:isVideoProvider(p.provider)?secret:undefined,
+     reserveWan:videoProvider?async()=>{
+      const isCurrentWorkspaceRequest=await assertWorkspaceVisualExecution(pool,fence);
+      const reservation=(await pool.query('SELECT local_identity.reserve_workspace_configured_video($1,$2,$3) result',[fence.p_task_id,fence.p_attempt,fence.p_lease_token])).rows[0].result;
+      workspaceVideoReserved=isCurrentWorkspaceRequest&&reservation.new===true;
+      providerTaskId=reservation.provider_task_id??undefined;
+      return reservation;
+     }:undefined,
+     recordWanSubmission:videoProvider?async id=>{
+      await pool.query('SELECT local_identity.record_wan_submission($1,$2,$3,$4)',[fence.p_task_id,fence.p_attempt,fence.p_lease_token,id]);
+      await pool.query('SELECT local_identity.record_workspace_visual_submission($1,$2,$3,$4)',[fence.p_task_id,fence.p_attempt,fence.p_lease_token,'received']);
+      providerTaskId=id;
+     }:undefined,
+     recordVideoProgress:videoProvider?async phase=>{
+      if(phase===lastVideoPhase)return;
+      await pool.query('SELECT local_identity.record_workspace_video_phase($1,$2,$3,$4)',[fence.p_task_id,fence.p_attempt,fence.p_lease_token,phase]);
+      lastVideoPhase=phase;
+     }:undefined,
+     freesoundApiKey:p.provider==='freesound'?secret:undefined,validateMp4:validateMp4Artifact,probeMp3:probeMp3Artifact,extractMp3:extractMp3Artifact,trimMp3:trimMp3Artifact,trimMp4:trimMp4Artifact,trimMp4Segments:trimMp4SegmentsArtifact
+    });
+   }
   }
   const result=JSON.parse(output);result.validation.checks.push({name:'native_media_mode',passed:true,detail:ports?.mode==='controlled'?'受控Provider响应和SecretStore替身；没有在线资格或在线生成证明。':external?'在线执行路径。':'本机媒体执行。'});return JSON.stringify(result);
- }catch(error){if(error instanceof ProviderOutcomeUnknownError||error instanceof PexelsVideoError||error instanceof FreesoundSearchError)throw error;if(p.provider==='pexels')throw Error(error instanceof SecretStoreError?'Pexels 所选连接不可用，请检查原连接后重新检索。':'Pexels 视频文件无效或无法读取，请重新预览其他结果。');throw Error('媒体执行或产物验证失败，请检查冻结输入和本机执行状态。',{cause:error});}
+ }catch(error){if(error instanceof ProviderOutcomeUnknownError||error instanceof PexelsVideoError||error instanceof FreesoundSearchError||error instanceof OpenAiImageRequestError)throw error;if(p.provider==='pexels')throw Error(error instanceof SecretStoreError?'Pexels 所选连接不可用，请检查原连接后重新检索。':'Pexels 视频文件无效或无法读取，请重新预览其他结果。');throw Error('媒体执行或产物验证失败，请检查冻结输入和本机执行状态。',{cause:error});}
 }

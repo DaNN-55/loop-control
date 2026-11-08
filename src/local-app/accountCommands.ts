@@ -38,11 +38,11 @@ export class LocalAccountCommands{
   if(!['readEpisodeCollection','planEpisodeCollectionMove','planLegacyStorageAdoption','readSeriesDirectory','openSeriesDirectory','readUnassignedDirectory','openUnassignedDirectory','createUnassignedDirectory','chooseAssetDirectory','openAssetDirectory','setAssetDirectory','readAssetDirectory','planAssetDirectoryMigration','readAssetDirectoryMigrations','executeAssetDirectoryMigration','rollbackAssetDirectoryMigration'].includes(String(body.command))||Object.keys(body).some(k=>!['command','data','idempotencyKey'].includes(k))||typeof body.idempotencyKey!=='string'||!uuid.test(body.idempotencyKey)||!body.data||typeof body.data!=='object'||Array.isArray(body.data))throw new ConfigurationError(400,'账号本机操作无效。');
   const data=body.data as Record<string,unknown>,choose=body.command==='chooseAssetDirectory';
   if(body.command==='readEpisodeCollection'){
-   if(typeof data.episodeId!=='string'||!uuid.test(data.episodeId)||Object.keys(data).some(k=>k!=='episodeId'))throw new ConfigurationError(400,'收纳读取只接受生产单身份。');
+   if(typeof data.episodeId!=='string'||!uuid.test(data.episodeId)||Object.keys(data).some(k=>k!=='episodeId'))throw new ConfigurationError(400,'系列读取只接受生产单身份。');
    return sessionTransaction(this.pool,session,c=>readEpisodeCollection(c,this.mediaRoot,String(data.episodeId)));
   }
   if(body.command==='planEpisodeCollectionMove'){
-   if(typeof data.episodeId!=='string'||!uuid.test(data.episodeId)||data.seriesId!==null&&(typeof data.seriesId!=='string'||!uuid.test(data.seriesId))||Object.keys(data).some(k=>!['episodeId','seriesId'].includes(k)))throw new ConfigurationError(400,'收纳调整只接受生产单与目标系列身份。');
+   if(typeof data.episodeId!=='string'||!uuid.test(data.episodeId)||data.seriesId!==null&&(typeof data.seriesId!=='string'||!uuid.test(data.seriesId))||Object.keys(data).some(k=>!['episodeId','seriesId'].includes(k)))throw new ConfigurationError(400,'系列调整只接受生产单与目标系列身份。');
    return planEpisodeCollectionCommand(this.pool,session,this.mediaRoot,body,String(data.episodeId),data.seriesId as string|null);
   }
   if(body.command==='planLegacyStorageAdoption'){
@@ -51,7 +51,7 @@ export class LocalAccountCommands{
   }
   if(['readSeriesDirectory','openSeriesDirectory','readUnassignedDirectory','openUnassignedDirectory','createUnassignedDirectory'].includes(String(body.command))){
    const series=String(body.command).includes('Series'),field=series?'seriesId':'accountId';
-   if(typeof data[field]!=='string'||!uuid.test(String(data[field]))||Object.keys(data).some(k=>k!==field))throw new ConfigurationError(400,'收纳目录参数无效。');
+   if(typeof data[field]!=='string'||!uuid.test(String(data[field]))||Object.keys(data).some(k=>k!==field))throw new ConfigurationError(400,'系列目录参数无效。');
    if(body.command==='createUnassignedDirectory')return createStorageContainer(this.pool,session,body.idempotencyKey,createHash('sha256').update(JSON.stringify(canonical(body))).digest('hex'),data,this.mediaRoot,'unassigned');
    return sessionTransaction(this.pool,session,async c=>{const accountId=await ownedContainerAccount(c,series?String(data.seriesId):null,series?undefined:String(data.accountId));
     if(String(body.command).startsWith('read'))return readStorageContainer(c,this.mediaRoot,accountId,series?String(data.seriesId):null);

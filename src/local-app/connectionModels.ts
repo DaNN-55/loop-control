@@ -1,4 +1,4 @@
-import {wanVideoModel,wanUnsupportedReason} from '../wanVideoModels.js';
+import {wanReferenceModel,wanVideoModel,wanUnsupportedReason} from '../wanVideoModels.js';
 import {randomUUID} from 'node:crypto';
 import type {Pool,PoolClient} from 'pg';
 import type {OwnerSession} from './sessions.js';
@@ -23,7 +23,7 @@ async function read(c:PoolClient,connectionId:string):Promise<ConnectionModelSet
  const saved=(await c.query('SELECT * FROM local_identity.connection_model_settings WHERE connection_id=$1',[connectionId])).rows[0];
  const defaults=defaultConnectionModels(version.provider,version.adapter),enabled=saved?.enabled_models??defaults.map(m=>m.id);
  const discovered=saved?.discovery_version_id===version.id?saved.discovered_models as string[]:[];
- const visible=version.provider==='bailian'?models.filter(m=>defaults.some(d=>d.id===m.id)||enabled.includes(m.id)||discovered.includes(m.id)):models;
+ const visible=version.provider==='bailian'?models.filter(m=>m.id===wanReferenceModel||defaults.some(d=>d.id===m.id)||enabled.includes(m.id)||discovered.includes(m.id)):models;
  return{connectionId,versionId:version.id,revision:saved?.revision??'default',enabledModels:enabled,models:visible.map(m=>({...m,listed:discovered.includes(m.id)})),discovery:modelDiscoveryAvailability(version.provider)};
 }
 export class LocalConnectionModels{

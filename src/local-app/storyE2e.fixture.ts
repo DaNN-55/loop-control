@@ -22,7 +22,7 @@ const exec=promisify(execFile);
 export const storyTitle='末班车前的一把伞';
 export const storyLines=['雨停了，她把伞留在长椅上。','伞柄的纸条写着：留给下一个人。'];
 
-export async function storyE2eFixture(options:{blank?:boolean}={}){
+export async function storyE2eFixture(options:{blank?:boolean;scriptOnly?:boolean}={}){
  if(!process.env.LOOP_TEST_CONTEXT_MODULE)throw Error('Use npm run test:e2e; an explicit isolated cluster is required');
  const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MODULE);
  const context=runtimeContext();if(context.dailyRuntime!==false)throw Error('Story E2E refuses the daily runtime');context.assertDatabase();
@@ -68,7 +68,7 @@ export async function storyE2eFixture(options:{blank?:boolean}={}){
   await exec('ffmpeg',['-nostdin','-v','error','-f','lavfi','-i',note,'-t','4','-r','30','-c:v','libx264','-pix_fmt','yuv420p',files.video]);
   await exec('ffmpeg',['-nostdin','-v','error','-f','lavfi','-i','sine=frequency=660:sample_rate=48000','-t','2.5','-c:a','libmp3lame',files.voice]);
   const importFile=async(path:string,type:string,purpose:string,isMainScript=false)=>ok(request('importMaterial',{sourceKind:'file',sourcePath:path.split('/').at(-1),materialType:type,materialPurpose:purpose,mimeType:type==='image'?'image/png':type==='video'?'video/mp4':type==='audio'?'audio/mpeg':'text/markdown',isMainScript,contentBase64:(await readFile(path)).toString('base64')}));
-  const materials={first:await importFile(files.first,'image','visual_reference'),second:await importFile(files.second,'image','visual_reference')};
+  const materials=options.scriptOnly?{} as Record<string,any>:{first:await importFile(files.first,'image','visual_reference'),second:await importFile(files.second,'image','visual_reference')};
   let script:string|null=null,w:ProductionWorkspace|undefined;
   if(!options.blank){
    script=(await ok(request('importMaterial',{sourceKind:'file',sourcePath:'末班车前的一把伞.md',materialType:'script',materialPurpose:'main_script',mimeType:'text/markdown',isMainScript:true,contentBase64:Buffer.from(scriptText).toString('base64')}))).id;

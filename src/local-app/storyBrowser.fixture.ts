@@ -30,17 +30,6 @@ export async function storyBrowser(f:Story,name:string){
  const click=async(name:string)=>{await buttonReady(name);return cli('find','role','button','click','--name',name,'--exact');};
  const doubleClick=async(name:string)=>{await buttonReady(name);const line=(await snapshot()).split('\n').find(line=>line.includes('- button '+JSON.stringify(name)+' '));const ref=line?.match(/ref=(e\d+)/)?.[1];if(!ref)throw Error('Button absent: '+name);return cli('dblclick','@'+ref);};
  const fill=async(label:string,value:string)=>cli('find','label',label,'fill',value,'--exact');
- const visualTools=async()=>{
-  await wait("!!document.querySelector('[aria-label=四步制作步骤]')");
-  // An edited workspace automatically restores its editor after the workspace GET.
-  // Do not race that restore by waiting to click the navigation it has just disabled.
-  if(f.workspace.nativeEditRevision)await wait("!!document.querySelector('iframe[title=\"OpenChatCut 剪辑工程\"]')");
-  else if(!await evaluate("!!document.querySelector('iframe[title=\"OpenChatCut 剪辑工程\"]')"))await click('剪辑工作台');
-  await wait("Array.from(document.querySelectorAll('button')).some(b=>b.textContent.includes('保存工作版本')&&!b.disabled)");
-  if(await evaluate("document.querySelector('.embedded-studio-caption-panel').hidden"))await click('生成、版本与对齐');
-  await wait("!!document.querySelector('[role=tablist][aria-label=补充工具]')&&document.querySelector('[role=tablist][aria-label=补充工具]').getBoundingClientRect().width>0");
-  await cli('find','role','tab','click','--name','画面版本','--exact');
- };
  const capture=async(suffix:string)=>{
   await writeFile(join(evidence,name+'-'+suffix+'.txt'),await snapshot());
   await writeFile(join(evidence,name+'-'+suffix+'-dom.txt'),String(await evaluate('document.body.innerText')));
@@ -76,6 +65,6 @@ export async function storyBrowser(f:Story,name:string){
   await cli('open',url);await cli('wait','--text','登录控制台');
   await fill('邮箱',f.email);await fill('密码',f.password);await click('使用密码登录');
   await cli('wait','--text','末班车前的一把伞');
-  return{cli,snapshot,evaluate,wait,click,doubleClick,fill,visualTools,capture,traffic,url,holdRead,failReads:(kind:ReadKind)=>{readFailures.add(kind);return()=>readFailures.delete(kind);},dropNextResponse:(command:string)=>{drop={command,before:false};},interruptNextRequest:(command:string)=>{drop={command,before:true};},close};
+  return{cli,snapshot,evaluate,wait,click,doubleClick,fill,capture,traffic,url,holdRead,failReads:(kind:ReadKind)=>{readFailures.add(kind);return()=>readFailures.delete(kind);},dropNextResponse:(command:string)=>{drop={command,before:false};},interruptNextRequest:(command:string)=>{drop={command,before:true};},close};
  }catch(error){await close();throw error;}
 }

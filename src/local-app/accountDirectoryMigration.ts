@@ -136,7 +136,7 @@ export async function planLegacyStorageAdoption(c:Client,mediaRoot:string,accoun
  }
  const episodes:AdoptionEpisode[]=[],containers:AdoptionContainer[]=[];
  const desired=[...(await c.query('SELECT id,name FROM public.series WHERE account_id=$1 ORDER BY id',[account])).rows,{id:null,name:'未分系列'}];
- for(const series of desired){const current=(await c.query('SELECT * FROM local_identity.account_storage_containers WHERE account_id=$1 AND series_id IS NOT DISTINCT FROM $2::uuid',[account,series.id])).rows[0],id=current?.id??randomUUID(),prefix=current?.directory_relative_path??directoryName(series.name,id,series.id?'系列':'未分系列');const actual=current?await identity(join(targetRoot,prefix)):null;if(current&&(actual!.device!==current.device_id||actual!.inode!==current.inode_id))throw new ConfigurationError(409,'收纳目录身份已变化，请先恢复原位置。');containers.push({id,seriesId:series.id,name:series.name,prefix,identity:actual});}
+ for(const series of desired){const current=(await c.query('SELECT * FROM local_identity.account_storage_containers WHERE account_id=$1 AND series_id IS NOT DISTINCT FROM $2::uuid',[account,series.id])).rows[0],id=current?.id??randomUUID(),prefix=current?.directory_relative_path??directoryName(series.name,id,series.id?'系列':'未分系列');const actual=current?await identity(join(targetRoot,prefix)):null;if(current&&(actual!.device!==current.device_id||actual!.inode!==current.inode_id))throw new ConfigurationError(409,'系列目录身份已变化，请先恢复原位置。');containers.push({id,seriesId:series.id,name:series.name,prefix,identity:actual});}
 
  const rows=(await c.query('SELECT e.id,e.title,s.id series_id,s.name series_name FROM public.episodes e LEFT JOIN public.series_versions v ON v.id=e.series_version_id LEFT JOIN public.series s ON s.id=v.series_id AND s.account_id=e.account_id WHERE e.account_id=$1 ORDER BY e.id',[account])).rows;
  for(const row of rows){
@@ -149,7 +149,7 @@ export async function planLegacyStorageAdoption(c:Client,mediaRoot:string,accoun
    const current=(await c.query('SELECT * FROM local_identity.account_storage_containers WHERE account_id=$1 AND series_id IS NOT DISTINCT FROM $2::uuid',[account,seriesId])).rows[0];
    const id=current?.id??randomUUID(),name=row.series_name??'未分系列',prefix=current?.directory_relative_path??directoryName(name,id,seriesId?'系列':'未分系列');
    const actual=current?await identity(join(targetRoot,prefix)):null;
-   if(current&&(actual!.device!==current.device_id||actual!.inode!==current.inode_id))throw new ConfigurationError(409,'收纳目录身份已变化，请先恢复原位置。');
+   if(current&&(actual!.device!==current.device_id||actual!.inode!==current.inode_id))throw new ConfigurationError(409,'系列目录身份已变化，请先恢复原位置。');
    container={id,seriesId,name,prefix,identity:actual};containers.push(container);
   }
   const sources:AdoptionSource[]=[];
@@ -181,14 +181,14 @@ export async function planEpisodeCollectionMove(c:Client,mediaRoot:string,episod
  const account=episode.account_id;await lock(c,account);
  if((await c.query("SELECT 1 FROM local_identity.account_directory_migrations WHERE account_id=$1 AND status IN ('planned','copying','failed')",[account])).rowCount)throw new ConfigurationError(409,'请先恢复或回滚已有目录计划。');
  const location=await resolveEpisodeStorageLocation(c,mediaRoot,episodeId);await requireEpisodeStorageDirectory(c,location);
- const sourceCollection=await resolveEpisodeStorageCollection(c,location);if(sourceCollection.status!=='registered')throw new ConfigurationError(409,'请先在账号中盘点旧资料纳管，再调整收纳。');
- if(sourceCollection.container.seriesId===seriesId)throw new ConfigurationError(409,'生产单已在此收纳位置。');
+ const sourceCollection=await resolveEpisodeStorageCollection(c,location);if(sourceCollection.status!=='registered')throw new ConfigurationError(409,'请先在账号中盘点旧资料纳管，再调整系列。');
+ if(sourceCollection.container.seriesId===seriesId)throw new ConfigurationError(409,'生产单已在此系列位置。');
  const container=await resolveStorageContainer(c,mediaRoot,account,seriesId);await requireStorageContainer(c,mediaRoot,container);
  const binding=(await c.query('SELECT local_identity.media_root_binding() binding')).rows[0].binding as MediaRootBinding;await verifyMediaRootBinding(binding);
  const targetRoot=location.assetRoot,targetIdentity=await identity(targetRoot),id=randomUUID(),source=sourceCollection.container;
  const targetPrefix=container.relativePath+'/'+directoryName(episode.title,episodeId+'--'+id,'生产单');
  const sourceDirectory=await identity(location.directoryPath),episodes:AdoptionEpisode[]=[{id:episodeId,title:episode.title,seriesId,seriesName:seriesId?(await c.query('SELECT name FROM public.series WHERE id=$1',[seriesId])).rows[0].name:null,targetPrefix,managed:false,sources:[{root:targetIdentity,prefix:location.relativePath,directory:sourceDirectory}]}];
- const containers:AdoptionContainer[]=[{id:source.id,seriesId:source.seriesId,name:'原收纳',prefix:source.relativePath,identity:await identity(join(targetRoot,source.relativePath))},{id:container.containerId!,seriesId,name:'目标收纳',prefix:container.relativePath!,identity:await identity(container.directoryPath!)}];
+ const containers:AdoptionContainer[]=[{id:source.id,seriesId:source.seriesId,name:'原系列',prefix:source.relativePath,identity:await identity(join(targetRoot,source.relativePath))},{id:container.containerId!,seriesId,name:'目标系列',prefix:container.relativePath!,identity:await identity(container.directoryPath!)}];
  const files=await scopedInventory(episodes),data=await evidence(c,account),refs=references(data).filter(ref=>ref.episodeId===episodeId);
  for(const file of files.filter(f=>f.relativePath.endsWith('.json')&&f.fileSize<=32*1024*1024)){let document;try{document=JSON.parse(await readFile(join(file.sourceRoot,file.relativePath),'utf8'));}catch{continue;}refs.push(...references(document).map(ref=>({...ref,episodeId})));}
  const conflicts=await adoptionBlockers(c,account);conflicts.push(...await adoptionReferenceConflicts(c,mediaRoot,episodes,files,refs));

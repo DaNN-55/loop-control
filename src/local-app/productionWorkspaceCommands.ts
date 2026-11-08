@@ -1,3 +1,7 @@
+import {defaultShotComposition,shotCompositionRect,shotCompositionTransform,shotCompositionSlotLabels,shotCompositionLayouts} from '../shotComposition.js';
+import type {StoryboardShotManifest} from '../worker/contracts.js';
+import {prepareWorkspaceVideoSound} from './workspaceVideoSound.js';
+import {applyWorkspaceVideoSound} from '../workspaceVideoSound.js';
 import {requiresWorkspaceCall} from '../workspaceCall.js';
 import {prepareWorkspaceCall,consumeWorkspaceCall} from './workspaceCallConfirmation.js';
 import {verifyEpisodeFile,episodeFileIO} from './episodeFiles.js';
@@ -13,7 +17,7 @@ import {readWorkspaceVisualCandidates,readWorkspaceVisualTasks,readWorkspaceVisu
 import {workspaceVisualFields} from '../workspaceVisualCandidates.js';
 import {readWorkspaceCandidates,readUsedWorkspaceNarrationVersions,validateWorkspaceCandidateUses,executeWorkspaceCandidateCommand} from './workspaceCandidates.js';
 import {executeWorkspaceAudio,readWorkspaceAudio} from './workspaceAudio.js';
-import {workspaceAudioFields} from '../workspaceAudio.js';
+import {workspaceAudioFields,resolveWorkspaceMainVoice} from '../workspaceAudio.js';
 import {executeWorkspaceDelivery,readWorkspaceDeliveries} from './workspaceDeliveryCommands.js';
 import {workspaceDeliveryFields} from '../workspaceDelivery.js';
 import {migrateWorkspaceCaptionLanes} from '../workspaceCaptions.js';
@@ -145,9 +149,11 @@ export class ProductionWorkspaceCommands{
   }
   if(command==='prepareWorkspace'||command==='replanWorkspace'){
    if(!e.main_script_revision_id||e.main_script_revision_id!==data.expectedScriptRevisionId)throw new ConfigurationError(409,'脚本基准已变化，请先确认当前脚本。');
+   if(!data.reviewPackageId&&command==='prepareWorkspace'&&row?.script_revision_id===e.main_script_revision_id){
+    await syncWorkspaceShotInputs(c,row,row.bindings);return readProductionWorkspace(c,e.id,root);
+   }
    let p=(await c.query("SELECT p.*,a.relative_path,a.sha256,a.file_size FROM public.review_packages p JOIN public.artifacts a ON a.id=p.artifact_id WHERE p.id=$1 AND p.episode_id=$2 AND p.stage='storyboard_review' AND p.invalidated_at IS NULL",[data.reviewPackageId,e.id])).rows[0];
    if(!p&&!data.reviewPackageId)p=await prepareAuthoredWorkspace(c,root,e);
-   if(p?.planning)return p;
    if(p?.context_snapshot?.workspace_preparation?.scriptRevisionId===e.main_script_revision_id){await verifyEpisodeFile(c,root,e.id,p.relative_path,p.sha256,Number(p.file_size));await verifyReportedStoryboardArtifact({storage:await episodeFileIO(c,root,e.id),assetRoot:root,relativePath:p.relative_path,frozenInputs:p.context_snapshot.input_artifacts,storyboard:p.context_snapshot.worker_result.storyboard});await c.query('SELECT local_identity.confirm_workspace_plan($1,$2,$3)',[e.id,e.main_script_revision_id,p.id]);}
    const formal=p&&(await c.query('SELECT 1 FROM local_identity.workspace_preparations WHERE package_id=$1 AND script_revision_id=$2',[p.id,e.main_script_revision_id])).rowCount;
    if(!p||!formal&&!['storyboard_review','storyboard_approved','production_ready','render_ready','qc_review','qc_passed'].includes(e.stage))throw new ConfigurationError(409,'请先确认脚本与分镜匹配基准。');
@@ -162,9 +168,32 @@ export class ProductionWorkspaceCommands{
    if(!Array.isArray(storyboard.shots)||!storyboard.shots.length||new Set(storyboard.shots.map((s:{id:string})=>s.id)).size!==storyboard.shots.length)throw new ConfigurationError(409,'分镜基准无效。');
    if(!formal)await c.query('SELECT local_identity.confirm_legacy_workspace_preparation($1,$2,$3)',[e.id,e.main_script_revision_id,p.id]);
    const recovery=!row?await preserveLegacyWorkspace(c,root,e.id,data.legacyDecision):null;
-   const id=row?.id??randomUUID();let clips:WorkspaceClip[]=storyboard.shots.map((s:{id:string;scriptSegment:string})=>{if(typeof s.id!=='string'||typeof s.scriptSegment!=='string')throw new ConfigurationError(409,'分镜身份无效。');const clip=randomUUID();return{id:clip,itemId:`shot-${s.id}-${clip}`,shotId:s.id,text:s.scriptSegment,source:null};});
-   const [width,height]=storyboard.shots[0].targetSpec==='16:9'?[1920,1080]:storyboard.shots[0].targetSpec==='1:1'?[1080,1080]:[1080,1920];
-   let frame=0;let project:OpenChatCutProject={version:3,loopControl:{version:'four-step-workspace/v1',inputFingerprint:id,transitionMode:'studio'},assets:[],mediaFolders:[],activeTimelineId:`loop-control-${e.id}`,timelines:[{id:`loop-control-${e.id}`,name:'整期剪辑',order:0,fps:30,width,height,fit:'contain',items:clips.map((clip,i)=>{const duration=Math.max(1,Math.round(Number(storyboard.shots[i].durationSeconds||3)*30)),item={id:clip.itemId,track:'V1',kind:'text',name:`${clip.shotId} · 待匹配画面`,startFrame:frame,durationInFrames:duration,width,height,props:{text:`待匹配画面\n${clip.shotId}`,fontSize:64,color:'#a3acc2',align:'center'},transform:{scale:1,x:0,y:0,rotation:0}};frame+=duration;return item;}),trackOrder:['V1'],tracks:{V1:{kind:'video',name:'画面'}},transitions:[],selectedId:null,captionsHidden:false}]};
+   const id=row?.id??randomUUID();
+   const shots=storyboard.shots as StoryboardShotManifest[];
+   const [width,height]=shots[0].targetSpec==='16:9'?[1920,1080]:shots[0].targetSpec==='1:1'?[1080,1080]:[1080,1920];
+   const tracks:OpenChatCutProject['timelines'][number]['tracks']={V1:{kind:'video',name:'画面'}};
+   let frame=0;
+   let clips:WorkspaceClip[]=[];
+   const items=shots.flatMap(shot=>{
+    if(typeof shot.id!=='string'||typeof shot.scriptSegment!=='string')throw new ConfigurationError(409,'分镜身份无效。');
+    const duration=Math.max(1,Math.round(Number(shot.durationSeconds||3)*30));
+    const layout=shot.layout&&shotCompositionLayouts.includes(shot.layout)?shot.layout:'full';
+    const composition=defaultShotComposition(layout);
+    const shotItems=composition.slots.map((slot,index)=>{
+     const clipId=randomUUID(),itemId=`shot-${shot.id}-${clipId}`,track=`V${index+1}`;
+     const label=shotCompositionSlotLabels[slot.id];
+     tracks[track]??={kind:'video',name:`画面 ${index+1}`};
+     clips.push({id:clipId,itemId,shotId:shot.id,text:shot.scriptSegment,source:null});
+     return {id:itemId,track,kind:'text',name:`${shot.id} · ${label}`,startFrame:frame,durationInFrames:duration,width,height,
+      props:{text:`待匹配画面\n${label}`,fontSize:64,color:'#a3acc2',align:'center'},
+      transform:{...shotCompositionTransform(shotCompositionRect(layout,slot.id),slot),rotation:0},
+      ...(layout!=='full'?{loopControlComposition:{layout,slotId:slot.id}}:{}),
+     };
+    });
+    frame+=duration;
+    return shotItems;
+   });
+   let project:OpenChatCutProject={version:3,loopControl:{version:'four-step-workspace/v1',inputFingerprint:id,transitionMode:'studio'},assets:[],mediaFolders:[],activeTimelineId:`loop-control-${e.id}`,timelines:[{id:`loop-control-${e.id}`,name:'整期剪辑',order:0,fps:30,width,height,fit:'contain',items,trackOrder:Object.keys(tracks),tracks,transitions:[],selectedId:null,captionsHidden:false}]};
    if(recovery?.decision==='preserve'){project=recovery.project;clips=await recoverLegacyBindings(c,root,e.id,id,project,clips);}
    project=withWorkspaceShotMetadata(project,clips);const file=await persistWorkspaceProject(c,root,e.id,project);
    if(row){
@@ -206,7 +235,7 @@ export class ProductionWorkspaceCommands{
    let next;try{next=applyWorkspaceShotOperation(migrateWorkspaceCaptionLanes(withWorkspaceShotMetadata(project,row.bindings)),data.operation);}catch(error){throw new ConfigurationError(409,error instanceof Error?error.message:'镜头编辑失败。');}
    return updateWorkspaceProject(c,root,row,next,synchronizeWorkspaceBindings(next,row.bindings),'修改镜头结构',{nativeEdit:true});
   }
-  if(command.endsWith('WorkspaceNarration')||command==='saveWorkspaceNarrationDefaults'){await executeWorkspaceNarration(c,root,row,project,runtime,command,data);return readProductionWorkspace(c,e.id,root);}
+  if(command.endsWith('WorkspaceNarration')||command==='saveWorkspaceNarrationDefaults'||command==='setWorkspaceNarrationEnabled'){await executeWorkspaceNarration(c,root,row,project,runtime,command,data);return readProductionWorkspace(c,e.id,root);}
   if(command==='matchWorkspaceMaterial'){
    if(isOpenChatCutStudio(e.id))throw new ConfigurationError(409,'请先保存并返回素材匹配，再填入指定占位。');
    const clip=row.bindings.find(b=>b.id===data.clipId);if(!clip||clip.source)throw new ConfigurationError(409,'占位已变化，请刷新；已有片段请在剪辑中调整。');
@@ -217,6 +246,8 @@ export class ProductionWorkspaceCommands{
    if(observed.durationSeconds+0.05<Number(item.durationInFrames)/timeline.fps)throw new ConfigurationError(409,'原片短于占位时长，请先明确调整镜头时长。');
    const assetId=`material-${m.id}`;if(!project.assets.some(a=>a.id===assetId))project.assets.push(Object.assign({id:assetId,name:m.source_path.split('/').pop()??clip.shotId,kind:'video' as const,src:m.storage_path,durationInFrames:Math.round(observed.durationSeconds*timeline.fps)},{width:observed.width,height:observed.height,sourceRevision:m.id,sourceContentHash:m.sha256}));
    Object.assign(item,{kind:'video',name:clip.shotId,src:m.storage_path,sourceAssetId:assetId,sourceRevision:m.id,sourceContentHash:m.sha256,width:observed.width,height:observed.height,srcInFrame:0,volume:0});delete item.props;
+   const sound=await prepareWorkspaceVideoSound(c,root,e.id,m.storage_path,m.sha256,timeline.fps,0,Number(item.durationInFrames),1,observed.hasAudio);
+   applyWorkspaceVideoSound(project,timeline,item,clip.shotId,sound,!!resolveWorkspaceMainVoice(project,clip.shotId).item);
    clip.source={materialRevisionId:m.id,relativePath:m.storage_path,sha256:m.sha256,fileSize:Number(m.file_size),kind:'video'};
    await updateWorkspaceProject(c,root,row,project,row.bindings);return readProductionWorkspace(c,e.id,root);
   }
