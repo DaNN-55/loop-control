@@ -1,3 +1,5 @@
+import {VideoPreview} from '../ui/media/VideoPreview';
+import {ImagePreview} from '../ui/media/ImagePreview';
 import {AudioPreview} from '../ui/media/AudioPreview';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { ArrowLeft, ChevronLeft, ChevronRight, Check, CircleAlert, Expand, FileText, GripVertical, ImageIcon, PanelLeftClose, PanelLeftOpen, Pencil, Plus, Save, Trash2, X } from 'lucide-react';
@@ -58,7 +60,7 @@ export function ProductionNodeMedia({ item }: {
     item: NodeMediaItem;
 }) {
     const { url, error } = useLocalArtifactBlob(item.source);
-    return <div className="production-node-media">{error ? <p role="alert" className="form-error">{error}</p> : !url ? <p role="status">正在读取预览…</p> : item.kind === 'image' ? <img alt={item.label} src={url}/> : item.kind === 'video' ? <video aria-label={item.label} controls preload="metadata" src={url}/> : <AudioPreview aria-label={item.label} src={url}/>}</div>;
+    return <div className="production-node-media">{error ? <p role="alert" className="form-error">{error}</p> : !url ? <p role="status">正在读取预览…</p> : item.kind === 'image' ? <ImagePreview alt={item.label} src={url}/> : item.kind === 'video' ? <VideoPreview title={item.label} aria-label={item.label} src={url}/> : <AudioPreview aria-label={item.label} src={url}/>}</div>;
 }
 export function ProductionNodeGallery({ items, title, version, details, frameless = false }: {
     items: NodeMediaItem[];
@@ -187,7 +189,7 @@ export function ProductionMaterialPreview({ material, onSave, onBack, isPending 
         setIssue(validate(event.target.value)); }} onKeyDown={event => { if ((event.metaKey || event.ctrlKey) && event.key === 's') {
         event.preventDefault();
         save();
-    } }}/></div></div><footer><Button size="sm" color="secondary" onPress={() => { setEditing(false); setIssue(null); }}>取消</Button><Button size="sm" color="primary" iconLeading={Save} isDisabled={isPending} onPress={save}>保存修订</Button></footer></div> : readError ? <p role="alert" className="form-error">{readError}</p> : content ? <div className="production-script-preview" role="region" aria-label="脚本预览正文" tabIndex={0}><MarkdownPreview content={content}/></div> : <ProductionNodeEmpty text="正在读取脚本…"/> : draftUrl && kind ? <div className="production-node-media">{kind === 'image' ? <img src={draftUrl} alt={material.name}/> : kind === 'video' ? <video src={draftUrl} controls aria-label={material.name}/> : <AudioPreview src={draftUrl} aria-label={material.name}/>}</div> : kind && material.source ? <ProductionNodeMedia item={{ key: material.source, label: material.name, source: material.source, kind }}/> : <ProductionNodeEmpty text="此文件暂不支持直接预览。"/>}</ProductionNodePreview>;
+    } }}/></div></div><footer><Button size="sm" color="secondary" onPress={() => { setEditing(false); setIssue(null); }}>取消</Button><Button size="sm" color="primary" iconLeading={Save} isDisabled={isPending} onPress={save}>保存修订</Button></footer></div> : readError ? <p role="alert" className="form-error">{readError}</p> : content ? <div className="production-script-preview" role="region" aria-label="脚本预览正文" tabIndex={0}><MarkdownPreview content={content}/></div> : <ProductionNodeEmpty text="正在读取脚本…"/> : draftUrl && kind ? <div className="production-node-media">{kind === 'image' ? <ImagePreview src={draftUrl} alt={material.name}/> : kind === 'video' ? <VideoPreview src={draftUrl} title={material.name} aria-label={material.name}/> : <AudioPreview src={draftUrl} aria-label={material.name}/>}</div> : kind && material.source ? <ProductionNodeMedia item={{ key: material.source, label: material.name, source: material.source, kind }}/> : <ProductionNodeEmpty text="此文件暂不支持直接预览。"/>}</ProductionNodePreview>;
 }
 export function nodeMediaItem(episodeId: string, path: string, sha: string, label = path): NodeMediaItem | null { const kind = artifactPreviewKind(path); return kind ? { key: path + sha, label, kind, source: localArtifactUrl(episodeId, path, sha) } : null; }
 export function ProductionScriptPlanGate({ source, children }: {

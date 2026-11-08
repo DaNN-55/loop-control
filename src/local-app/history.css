@@ -35,7 +35,6 @@
 }
 .history-ui.history-workspace .history-episode-filters { grid-template-columns: minmax(0, 1fr) 164px auto; }
 .history-ui.history-workspace .history-source-filters { grid-template-columns: 152px 164px minmax(0, 1fr) auto; }
-.history-ui.history-workspace .history-episode-filters > button { grid-column: 3; grid-row: 1; }
 .history-ui.history-workspace .history-content-only { grid-column: 1 / -1; grid-row: 2; min-width: 0; }
 .history-ui.history-workspace .history-content-only p { margin: 0; }
 .history-ui.history-workspace .history-result-count,
@@ -133,14 +132,12 @@
 @media (max-width: 800px) {
   .history-ui.history-workspace .history-source-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .history-ui.history-workspace .history-source-filters > div:has(input) { grid-column: 1; }
-  .history-ui.history-workspace .history-source-filters > button { justify-self: end; }
   .history-ui.history-workspace .history-source-list > li { grid-template-columns: minmax(0, 1fr); }
   .history-ui.history-workspace .history-source-actions { justify-content: flex-start; }
 }
 @media (max-width: 600px) {
   .history-ui.history-workspace .history-episode-filters { grid-template-columns: minmax(0, 1fr) auto; }
   .history-ui.history-workspace .history-episode-filters > div:has(input) { grid-column: 1 / -1; }
-  .history-ui.history-workspace .history-episode-filters > button { grid-column: 2; grid-row: 2; }
   .history-ui.history-workspace .history-content-only { grid-row: 3; }
   .history-ui.history-workspace .history-episode-row { grid-template-columns: minmax(0, 1fr); gap: 10px; }
   .history-ui.history-workspace .history-episode-actions { justify-content: flex-start; }
@@ -152,13 +149,8 @@
 /* History follows the approved reference surface; these rules stay local to this page. */
 html[data-interface="impeccable"] .product-ui .reference-history.history-workspace { gap: 0; padding: 0; }
 html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .reference-history-surface { overflow: hidden; border: 1px solid var(--lc-line); border-radius: 12px; background: var(--lc-surface); }
-html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .reference-history-tabs { gap: 24px; padding: 6px 20px 0; border-bottom: 1px solid var(--lc-line); }
-html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .reference-history-tabs [role="tab"] { min-height: 44px; padding: 10px 0; font-size: 13px; color: var(--lc-muted); border-bottom: 2px solid transparent; background: transparent; }
-html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .reference-history-tabs [role="tab"][data-selected] { color: var(--lc-accent); border-bottom-color: var(--lc-accent) !important; }
-html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .reference-history-panel { display: grid; min-width: 0; gap: 0; }
-html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .reference-history-panel:is([data-inert="true"],[hidden]) { display: none; }
 html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace :is(.history-episode-filters,.history-source-filters) { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; padding: 16px 20px; border: 0; border-bottom: 1px solid var(--lc-line); border-radius: 0; background: transparent; }
-html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace :is(.history-episode-filters,.history-source-filters) > div:has(input[type="search"]) { flex: 1 1 240px; min-width: 200px; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace :is(.history-episode-filters,.history-source-filters) > .episode-search { flex: 1 1 240px; min-width: min(200px, 100%); }
 html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace :is(.history-episode-filters,.history-source-filters) > .dan-select-field { width: 150px; flex: 0 0 150px; }
 html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .history-content-only { min-height: 32px; padding: 0; white-space: nowrap; flex: 0 0 auto; }
 html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace :is(.history-content-layout,.history-content-layout.has-selection) { display: grid; grid-template-columns: minmax(0,1fr); gap: 0; }
@@ -190,8 +182,6 @@ html[data-interface="impeccable"] .product-ui .reference-history.history-ui.hist
 html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace :is(.history-episode-name,.history-source-heading) > button > [data-text] { min-width: 0; max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
 /* A full reading workspace, even when a query only returns a few records. */
 html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .reference-history-surface { min-height: 0; }
-html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .reference-history-panel { flex: 1; align-content: start; }
-html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .reference-history-panel:not([hidden]) { display: flex; flex-direction: column; }
 html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace :is(.history-content-layout,.history-catalog,.history-source-catalog,.history-sources) { flex: 1; }
 html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace :is(.history-catalog,.history-source-catalog) { display: flex; flex-direction: column; }
 html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace :is(.history-result-count,.reference-history-summary) { margin-top: 0; padding-top: 12px; }
@@ -199,6 +189,7 @@ html[data-interface="impeccable"] .product-ui .reference-history.history-ui.hist
 html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace :is(.history-episode-content,.history-source-view,.history-cleanup-preview) .maintenance-empty { min-height: 0; display: block; text-align: left; padding: 12px 0; }
 
 html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace :is(.history-content-layout,.history-sources) { display: flex; flex-direction: column; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .history-sources { gap: 0; }
 
 /* The backdrop is the only vertical scroll surface for expanded history. */
 html[data-interface="impeccable"] .reference-history-overlay { position: fixed; inset: 0; z-index: 1000; display: flex; align-items: flex-start; justify-content: center; overflow-y: auto; padding: 28px 24px; background: rgb(15 23 42 / .4); }
@@ -241,7 +232,7 @@ html[data-interface="impeccable"] .product-ui .history-error[role="alert"]{displ
 html[data-interface="impeccable"] .product-ui .history-delete-action h4:focus{outline:none}
 
 /* Scope guidance shares the list surface; navigation never changes retention. */
-.history-ui.history-workspace .history-scope-links { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin: 16px 20px; font-size: 13px; line-height: 1.6; color: var(--color-text-tertiary); }
-.history-ui.history-workspace .history-scope-links p { flex: 1 1 320px; margin: 0; }
 .history-ui.history-workspace .history-content-search { flex-wrap: wrap; }
 .history-ui.history-workspace .history-content-search > div { flex: 1 1 240px; }
+
+.history-workspace .episode-search input::-webkit-search-cancel-button { appearance: none; }

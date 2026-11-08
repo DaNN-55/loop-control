@@ -25,14 +25,14 @@ it('keeps a committed series save successful when its follow-up read fails',asyn
  }));
  // Open the real account workspace from the new home before checking its save semantics.
  await act(async()=>{render(<LocalCatalogApp/>);});
- fireEvent.click(await screen.findByRole('button',{name:'账号'}));fireEvent.click(await screen.findByRole('button',{name:'Fixture series'}));
+ fireEvent.click(await screen.findByRole('button',{name:'账号'}));fireEvent.click(await screen.findByRole('button',{name:'Fixture'}));fireEvent.click(await screen.findByRole('tab',{name:'系列规则'}));
  fireEvent.click(screen.getByRole('button',{name:'修改'}));
  fireEvent.change(screen.getByRole('textbox',{name:'系列定位'}),{target:{value:'saved'}});
  fireEvent.click(screen.getByRole('button',{name:'保存系列设置'}));
  fireEvent.click(screen.getByRole('button',{name:'确认保存为 v2'}));
  expect(await screen.findByRole('alert')).toHaveProperty('textContent',expect.stringContaining('配置已保存'));
  expect(screen.queryByRole('dialog',{name:'确认保存系列版本'})).toBeNull();
- const user=userEvent.setup();await user.click(screen.getByRole('button',{name:'账号操作'}));await user.click(screen.getByRole('menuitem',{name:'刷新账号'}));
+ const user=userEvent.setup();await user.click(screen.getByRole('button',{name:'账号设置'}));await user.click(screen.getByRole('button',{name:'刷新账号'}));
  await waitFor(()=>expect(screen.getByRole('heading',{name:'Fixture series'})).toBeTruthy());
  expect((screen.getByRole('textbox',{name:'系列定位'}) as HTMLTextAreaElement).value).toBe('saved');
  expect((screen.getByRole('textbox',{name:'系列定位'}) as HTMLTextAreaElement).readOnly).toBe(true);
@@ -184,4 +184,31 @@ it('keeps the login form hidden while checking the session and loading an authen
 it('an authenticated catalog failure offers a read retry without presenting a login form',async()=>{
  let catalogs=0,sessions=0;vi.stubGlobal('fetch',vi.fn(async(path:string)=>{if(path.endsWith('/session')){sessions++;return Response.json({owner:{id:'owner'},csrfToken:'fixture'});}if(path.includes('/catalog?'))return ++catalogs===1?Response.json({code:'local_service_unavailable',error:'目录暂时不可用'},{status:503}):Response.json(pagedCatalog('recovered-owner'));return Response.json({connections:[],versions:[]});}));
  render(<LocalCatalogApp/>);expect(await screen.findByRole('button',{name:'重新读取工作区'})).toBeTruthy();expect(screen.queryByRole('heading',{name:'登录控制台'})).toBeNull();fireEvent.click(screen.getByRole('button',{name:'重新读取工作区'}));expect(await productionButton()).toBeTruthy();expect(sessions).toBe(1);
+});
+
+it('shows an expired-session message and allows recovery after an invalid login',async()=>{
+ let loginAttempts=0;
+ vi.stubGlobal('crypto',webcrypto);
+ vi.stubGlobal('fetch',vi.fn(async(path:string)=>{
+  if(path.endsWith('/session'))return Response.json({csrfToken:'before'});
+  if(path.endsWith('/login'))return ++loginAttempts===1?Response.json({error:'邮箱或密码不正确。'},{status:401}):Response.json({csrfToken:'after'});
+  if(path.includes('/catalog?'))return Response.json(pagedCatalog('隔离登录验证'));
+  return Response.json({});
+ }));
+ history.replaceState(null,'','/?view=episodes');
+ render(<LocalCatalogApp/>);
+ await screen.findByRole('heading',{name:'生产单'});
+ fireEvent(window,new Event('loop-local-session-expired'));
+ expect(await screen.findByText('会话已失效，请重新登录。')).toBeTruthy();
+ async function login(){
+  const email=await screen.findByRole('textbox',{name:'邮箱'});
+  fireEvent.change(email,{target:{value:'fixture@example.test'}});
+  fireEvent.change(screen.getByLabelText('密码'),{target:{value:'synthetic-password'}});
+  fireEvent.submit(email.closest('form')!);
+ }
+ await login();
+ expect(await screen.findByText('邮箱或密码不正确。')).toBeTruthy();
+ await login();
+ expect(await screen.findByRole('heading',{name:'生产单'})).toBeTruthy();
+ expect(loginAttempts).toBe(2);
 });

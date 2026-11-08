@@ -92,9 +92,14 @@ describe("系列运营视图", () => {
 
     render(<OperationsWorkspace episodes={manyEpisodes} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[]} reviewPackages={[]} series={[series]} seriesVersions={[seriesVersion]} tasks={[]} onSelectEpisode={vi.fn()} selectedEpisode={null} />);
 
+    const list = within(screen.getByRole("region", { name: "系列生产单" }));
     expect(screen.getByText("第 1 / 2 页 · 共 21 条")).toBeTruthy();
+    expect(list.getAllByRole("row").slice(1)).toHaveLength(12);
     await user.click(screen.getByRole("button", { name: "下一页" }));
-    expect(within(screen.getByRole("region",{name:"系列生产单"})).getByText("分页生产单 21",{selector:"strong"})).toBeTruthy();
+    expect(list.getAllByRole("row").slice(1)).toHaveLength(9);
+    expect(list.getByText("分页生产单 13", { selector: "strong" })).toBeTruthy();
+    expect(list.getByText("分页生产单 21", { selector: "strong" })).toBeTruthy();
+    expect(within(screen.getByRole("complementary", { name: "当前作品" })).getByRole("heading", { name: "分页生产单 13" })).toBeTruthy();
   });
 
   it("默认不把已归档 Episode 纳入运营汇总", () => {
@@ -136,7 +141,7 @@ it('uses the persisted four-step projection for stage, continuation and phase tr
  const episode={...episodes[0],stage:'script_approved' as const,title:'四步原生工程'};
  const catalog={episodes:[episode],pending:{total:0,items:[],page:1},blocked:{total:0,items:[],page:1},worker:{running:0,blocked:0,failed:0},operationRows:[{episodeId:episode.id,reviewRevision:null,reviewPending:false,blockerCount:0,actionStatus:'running',workflowStep:'editing'}],page:1,total:1,stages:{script_approved:1}} as unknown as import('../episodes/episodeCatalogTypes').EpisodeCatalog;
  await act(async()=>{render(<OperationsWorkspace remote={{catalog,seriesId:'all',onSeriesChange:vi.fn(),onPageChange:vi.fn(),onPendingPageChange:vi.fn(),onBlockedPageChange:vi.fn()}} episodes={[episode]} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[]} reviewPackages={[]} series={[series]} seriesVersions={[seriesVersion]} tasks={[]} onSelectEpisode={vi.fn()} selectedEpisode={episode}/>);});
- expect(within(screen.getByRole('region',{name:'系列生产单'})).getByText('剪辑工作台')).toBeTruthy();expect(within(screen.getByRole('complementary',{name:'当前作品'})).getByRole('button',{name:'继续剪辑'})).toBeTruthy();expect(within(screen.getByRole('list',{name:'当前生产阶段'})).getAllByRole('listitem')).toHaveLength(4);expect(within(screen.getByRole('list',{name:'当前生产阶段'})).getByText('素材准备与匹配')).toBeTruthy();expect(episode.stage).toBe('script_approved');
+ expect(within(screen.getByRole('region',{name:'系列生产单'})).getByText('剪辑工作台')).toBeTruthy();expect(within(screen.getByRole('complementary',{name:'当前作品'})).getByRole('button',{name:'继续剪辑'})).toBeTruthy();expect(within(screen.getByRole('list',{name:'当前生产阶段'})).getAllByRole('listitem')).toHaveLength(4);expect(within(screen.getByRole('list',{name:'当前生产阶段'})).getByText('分镜台')).toBeTruthy();expect(episode.stage).toBe('script_approved');
 });
 
 it('shows only populated series options using full catalog counts across pages and filters',()=>{

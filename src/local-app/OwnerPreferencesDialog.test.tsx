@@ -43,10 +43,10 @@ it('shows static language and distinguishes unchanged, draft, saving, saved and 
  const {rerender}=render(<OwnerPreferencesDialog {...base} onSave={save}/>);
  expect(screen.queryByRole('combobox',{name:'界面语言'})).toBeNull();expect(screen.getByText('简体中文')).toBeTruthy();
  expect(screen.getByRole('status').textContent).toBe('未修改');expect((screen.getByRole('button',{name:'保存偏好'}) as HTMLButtonElement).disabled).toBe(true);
- await user.type(screen.getByRole('textbox',{name:'显示名称'}),'修改');expect(screen.getByRole('status').textContent).toBe('未保存');
+ await user.type(screen.getByRole('textbox',{name:'显示名称'}),'修改');expect(screen.getByRole('status').textContent).toBe('有未保存修改');
  await user.click(screen.getByRole('button',{name:'保存偏好'}));expect(screen.getByRole('status').textContent).toBe('保存中…');finish(true);
  await waitFor(()=>expect(screen.getByRole('status').textContent).toBe('已保存'));
- await user.click(screen.getByRole('button',{name:'恢复默认'}));expect(screen.getByRole('status').textContent).toBe('未保存');
+ await user.click(screen.getByRole('button',{name:'恢复默认'}));expect(screen.getByRole('status').textContent).toBe('有未保存修改');
  await user.click(screen.getByRole('button',{name:'保存偏好'}));finish(false);await waitFor(()=>expect(screen.getByRole('status').textContent).toBe('保存失败，修改尚未保存'));
  expect((screen.getByRole('textbox',{name:'显示名称'}) as HTMLInputElement).value).toBe('');
  rerender(<OwnerPreferencesDialog {...base} error="暂时无法保存" onSave={save}/>);expect(screen.getByRole('alert').textContent).toBe('暂时无法保存');
@@ -54,7 +54,7 @@ it('shows static language and distinguishes unchanged, draft, saving, saved and 
 it('saves independent reminder channels and keeps channel edits until explicitly saved',async()=>{
  const user=userEvent.setup(),save=vi.fn(async()=>true);
  render(<OwnerPreferencesDialog {...base} page="notifications" onSave={save}/>);
- await user.click(screen.getByRole('switch',{name:'应用内提醒'}));expect(screen.getByRole('status').textContent).toBe('未保存');expect(save).not.toHaveBeenCalled();
+ await user.click(screen.getByRole('switch',{name:'应用内提醒'}));expect(screen.getByRole('status').textContent).toBe('有未保存修改');expect(save).not.toHaveBeenCalled();
  await user.click(screen.getByRole('button',{name:'保存偏好'}));expect(save).toHaveBeenLastCalledWith({...base.preferences,notifications:{...base.preferences.notifications,inApp:false,macOS:true}});
  await user.click(screen.getByRole('switch',{name:'macOS 桌面提醒'}));await user.click(screen.getByRole('button',{name:'保存偏好'}));expect(save).toHaveBeenLastCalledWith({...base.preferences,notifications:{...base.preferences.notifications,inApp:false,macOS:false}});
 });

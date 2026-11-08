@@ -14,10 +14,13 @@ interface Report {
 }
 const names={schedule:'调度检查',notification:'事件提醒',health:'每日健康检查',backup:'完整备份',snapshot:'部分快照'} as const;
 const date=(v:string|null)=>v?new Intl.DateTimeFormat('zh-CN',{dateStyle:'medium',timeStyle:'short',timeZone:'Asia/Shanghai'}).format(new Date(v)):'暂无记录';
-export function LocalSystemStatus({embedded=false,triggerLabel,onOpenEpisode}:{embedded?:boolean;triggerLabel?:string;onOpenEpisode?:(id:string)=>boolean|void}){
+export function LocalSystemStatus({embedded=false,triggerLabel,onOpenEpisode,queueRequest=0,onQueueChange}:{embedded?:boolean;triggerLabel?:string;onOpenEpisode?:(id:string)=>boolean|void;queueRequest?:number;onQueueChange?:(queue:RuntimeStatus['queue'])=>void}){
  const [payload,setPayload]=useState<Report|null>(null),[error,setError]=useState(''),[pending,setPending]=useState(true);
  const [open,setOpen]=useState(false),[page,setPage]=useState(1);
  const report=payload?.automation?payload:null;
+ useEffect(()=>{if(queueRequest){setPage(1);setOpen(true);}},[queueRequest]);
+ const queue=payload?.runtime?.queue??null;
+ useEffect(()=>onQueueChange?.(queue),[queue,onQueueChange]);
  const request=useRef(0),controller=useRef<AbortController|null>(null);
  const refresh=useCallback(async()=>{
   if(controller.current)return;

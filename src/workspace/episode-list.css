@@ -8,13 +8,24 @@ html[data-interface="impeccable"] .product-ui .episode-list-toolbar {gap:10px!im
 html[data-interface="impeccable"] .product-ui .episode-list-toolbar label > div {min-width:0!important}
 html[data-interface="impeccable"] .product-ui .episode-list-toolbar > label {flex:0 1 150px}
 html[data-interface="impeccable"] .product-ui .episode-list-toolbar > .dan-select-field {width:144px;flex:0 0 144px}
+.episode-applied-filters {display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 12px;color:var(--lc-muted);font-size:12px}
+.episode-applied-filters .episode-filter-chip {display:inline-flex;align-items:center;gap:6px;max-width:min(280px,100%);min-height:28px;padding:3px 8px;border:1px solid var(--lc-line);border-radius:6px;background:var(--lc-accent-soft);color:var(--lc-accent);font:inherit;cursor:pointer}
+.episode-applied-filters .episode-filter-chip > span {overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.episode-applied-filters .episode-filter-chip > svg {flex:none}
+.episode-applied-filters .episode-filter-chip:hover {border-color:var(--lc-accent)}
+.episode-applied-filters .episode-filter-chip:focus-visible {outline:2px solid var(--lc-accent);outline-offset:2px}
 html[data-interface="impeccable"] .product-ui .episode-list-toolbar .summary-count {padding:0;margin-left:auto;white-space:nowrap;font-size:11px}
 html[data-interface="impeccable"] .product-ui .episode-search {display:flex;align-items:center;gap:8px;position:relative;flex:1 1 260px;min-width:220px;height:36px;border:1px solid var(--lc-line-strong);border-radius:7px;background:var(--lc-surface);padding:0 8px 0 11px;color:var(--lc-muted)}
 html[data-interface="impeccable"] .product-ui .episode-search:focus-within {outline:2px solid var(--lc-accent);outline-offset:1px}
 html[data-interface="impeccable"] .product-ui .episode-search input {flex:1;min-width:0;width:100%;border:0!important;box-shadow:none!important;background:transparent!important;padding:0!important;outline:0!important;height:32px;min-height:0;font-weight:400}
 html[data-interface="impeccable"] .product-ui .episode-search button {display:inline-flex;align-items:center;justify-content:center;background:transparent;border:0;padding:3px;min-height:24px;border-radius:4px;color:var(--lc-muted);font-size:12px;white-space:nowrap}
 html[data-interface="impeccable"] .product-ui .episode-search button:hover {background:var(--lc-surface-2);color:var(--lc-accent)}
-html[data-interface="impeccable"] .product-ui .episode-list-workspace .table-row {grid-template-columns:minmax(120px,1fr) clamp(70px,6vw,108px) clamp(62px,5vw,76px) clamp(86px,7vw,116px) clamp(96px,7vw,108px) clamp(100px,7.5vw,120px) clamp(100px,7vw,108px) 28px;gap:12px;min-width:0;padding:14px 16px;min-height:76px;align-items:center}
+html[data-interface="impeccable"] .product-ui .episode-list-workspace .table-row {grid-template-columns:minmax(120px,2.7fr) minmax(70px,.85fr) minmax(62px,.7fr) minmax(86px,1fr) minmax(96px,1fr) minmax(100px,1.1fr) minmax(100px,1.1fr) 28px;gap:12px;min-width:0;padding:14px 16px;min-height:76px;align-items:center}
+@media (width > 1200px) {
+  html[data-interface="impeccable"] .product-ui .episode-list-workspace .table-row {
+    padding-inline-end: 46px;
+  }
+}
 html[data-interface="impeccable"] .product-ui .episode-list-workspace .table-row.table-header {min-height:40px;padding-block:10px}
 html[data-interface="impeccable"] .product-ui .episode-name {min-width:0}
 html[data-interface="impeccable"] .product-ui .episode-name small {font-size:11px;line-height:1.5;color:var(--lc-muted);white-space:nowrap;text-overflow:ellipsis;overflow:hidden;margin-top:5px}
@@ -48,8 +59,11 @@ html[data-interface="impeccable"] .product-ui .episode-list-toolbar .dan-select-
 
 /* Count and pagination share the same lower edge as the workbench list. */
 html[data-interface="impeccable"] .product-ui .episode-list-footer{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px 0 0;color:var(--lc-muted);font-size:12px}
-html[data-interface="impeccable"] .product-ui .episode-list-footer>.summary-count{margin:0;padding:0;white-space:nowrap;font-size:12px;font-weight:400}
-html[data-interface="impeccable"] .product-ui .episode-list-footer>.pagination-controls{flex:1;margin:0;padding:0;border:0;justify-content:flex-end;gap:20px}
+html[data-interface="impeccable"] .product-ui .episode-list-footer>.pagination-controls{flex:1;margin:0;padding:0;border:0;flex-wrap:wrap;gap:12px}
+.episode-list-footer .pagination-controls>div{align-items:center;flex-wrap:wrap;margin-inline-start:auto}
+.episode-page-size{display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+html[data-interface="impeccable"] .episode-actions-popover .menu-item-danger :is(span,svg){color:var(--lc-danger)!important}
+html[data-interface="impeccable"] .episode-actions-popover .menu-item-danger:is(:hover,[data-focused])>div{background:var(--lc-danger-soft)}
 html[data-interface="impeccable"] .product-ui .episode-list-workspace .episode-action-cell{justify-self:center}
 html[data-interface="impeccable"] .product-ui .episode-list-workspace .table-header>[role=columnheader]:last-child{text-align:center}
 html[data-interface="impeccable"] .episode-actions-popover{width:260px!important;max-width:calc(100vw - 32px);background:var(--lc-surface);color:var(--lc-ink);border-radius:10px!important}
@@ -67,7 +81,35 @@ html[data-interface="impeccable"] .episode-actions-popover [role=menuitem] span{
 
 html[data-interface="impeccable"] .product-ui .modal-card.episode-archive-modal > header{border-bottom:0;padding-bottom:0}
 
+html[data-interface="impeccable"] .impeccable-app.product-ui .episode-list-workspace .modal-backdrop > .episode-deletion-modal{
+ box-sizing:border-box;
+ width:min(720px,calc(100vw - 32px));
+ max-width:720px;
+ max-height:calc(100dvh - 56px);
+ grid-template-rows:auto minmax(0,1fr) auto;
+ gap:16px;
+ padding:clamp(16px,4vw,24px);
+ overflow:hidden;
+}
+.episode-deletion-modal h2{font-size:18px;line-height:1.4}
+.episode-deletion-modal .episode-deletion-body{display:grid;align-content:start;gap:12px;min-width:0;overflow-y:auto;overscroll-behavior:contain}
+.episode-deletion-modal .episode-deletion-body :is(h3,summary){font-size:13px;font-weight:600;color:var(--lc-ink)}
+.episode-deletion-modal .episode-deletion-body h3{margin:0}
+.episode-deletion-modal .episode-deletion-body p{margin:0}
+.episode-deletion-modal .episode-deletion-body .episode-deletion-paths{gap:4px;margin-block-start:4px;padding-inline-start:20px}
+.episode-deletion-modal .episode-deletion-paths code{font-size:12px;line-height:1.6}
+.episode-deletion-modal .episode-deletion-paths small{display:block;color:var(--lc-muted);font-size:12px}
+.episode-deletion-footer{display:grid;gap:12px;border-top:1px solid var(--lc-line);padding-top:12px}
+.episode-deletion-footer label{min-width:0;overflow-wrap:anywhere;font-size:13px}
+.episode-deletion-footer .modal-actions{margin:0}
+@media(max-height:430px){
+ html[data-interface="impeccable"] .impeccable-app.product-ui .episode-list-workspace .modal-backdrop > .episode-deletion-modal{
+  display:block;max-height:calc(100dvh - 56px);overflow-y:auto;
+ }
+ .episode-deletion-modal .episode-deletion-body{margin-block:12px;overflow:visible}
+}
+
 html[data-interface="impeccable"] .product-ui .episode-list-workspace .table-row>*{min-width:0;overflow-wrap:anywhere}
 html[data-interface="impeccable"] .product-ui .episode-list-workspace .episode-table{overflow-x:visible}
 @media(max-width:1200px){html[data-interface="impeccable"] .product-ui .episode-list-workspace .table-row{gap:8px;padding-inline:12px;grid-template-columns:minmax(120px,1.8fr) minmax(60px,.9fr) 60px 76px minmax(85px,1fr) minmax(70px,.9fr) minmax(90px,1fr) 24px}html[data-interface="impeccable"] .product-ui .episode-list-workspace time{white-space:normal}}
-@media(max-width:1000px){html[data-interface="impeccable"] .product-ui .episode-list-workspace .table-header{display:none}html[data-interface="impeccable"] .product-ui .episode-list-workspace .episode-row{grid-template-columns:repeat(3,minmax(0,1fr)) 28px;gap:12px;align-items:start}html[data-interface="impeccable"] .product-ui .episode-list-workspace .episode-name{grid-column:1/4;grid-row:1}html[data-interface="impeccable"] .product-ui .episode-list-workspace .episode-action-cell{grid-column:4;grid-row:1}html[data-interface="impeccable"] .product-ui .episode-list-workspace .episode-row>[role=cell]:nth-child(2){grid-column:1;grid-row:2}html[data-interface="impeccable"] .product-ui .episode-list-workspace .episode-row>[role=cell]:nth-child(3){grid-column:2;grid-row:2}html[data-interface="impeccable"] .product-ui .episode-list-workspace .episode-row>[role=cell]:nth-child(4){grid-column:3/5;grid-row:2}html[data-interface="impeccable"] .product-ui .episode-list-workspace .episode-cost{grid-column:1;grid-row:3}html[data-interface="impeccable"] .product-ui .episode-list-workspace .episode-stage-durations{grid-column:2;grid-row:3}html[data-interface="impeccable"] .product-ui .episode-list-workspace .episode-generation-counts{grid-column:3/5;grid-row:3}.episode-cost:before{content:"花费（元）"}.episode-stage-durations:before{content:"本阶段用时"}.episode-generation-counts:before{content:"生成次数"}.episode-cost:before,.episode-stage-durations:before,.episode-generation-counts:before{display:block;font-size:10px;color:var(--lc-muted);margin-bottom:4px}}
+@media(max-width:1000px){html[data-interface="impeccable"] .product-ui .episode-list-workspace .table-header{display:none}html[data-interface="impeccable"] .product-ui .episode-list-workspace .episode-row{grid-template-columns:repeat(3,minmax(0,1fr)) 28px;gap:12px;align-items:start}html[data-interface="impeccable"] .product-ui .episode-list-workspace .episode-name{grid-column:1/4;grid-row:1}html[data-interface="impeccable"] .product-ui .episode-list-workspace .episode-action-cell{grid-column:4;grid-row:1}html[data-interface="impeccable"] .product-ui .episode-list-workspace .episode-row>[role=cell]:nth-child(2){grid-column:1;grid-row:2}html[data-interface="impeccable"] .product-ui .episode-list-workspace .episode-row>[role=cell]:nth-child(3){grid-column:2;grid-row:2}html[data-interface="impeccable"] .product-ui .episode-list-workspace .episode-row>[role=cell]:nth-child(4){grid-column:3/5;grid-row:2}html[data-interface="impeccable"] .product-ui .episode-list-workspace .episode-cost{grid-column:1;grid-row:3}html[data-interface="impeccable"] .product-ui .episode-list-workspace .episode-stage-durations{grid-column:2;grid-row:3}html[data-interface="impeccable"] .product-ui .episode-list-workspace .episode-generation-counts{grid-column:3/5;grid-row:3}.episode-cost:before{content:"花费（元）"}.episode-stage-durations:before{content:"后台任务用时"}.episode-generation-counts:before{content:"生成次数"}.episode-cost:before,.episode-stage-durations:before,.episode-generation-counts:before{display:block;font-size:10px;color:var(--lc-muted);margin-bottom:4px}}

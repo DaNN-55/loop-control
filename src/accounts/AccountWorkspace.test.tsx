@@ -24,7 +24,7 @@ const seriesVersions: SeriesVersion[] = [
 ];
 
 function renderWorkspace(overrides: Partial<ComponentProps<typeof AccountWorkspace>> = {}) {
-  return render(<AccountWorkspace account={account} accounts={[account]} blueprints={[blueprint]} isPending="" onSelectAccount={vi.fn()} promptVersions={[storyboardHarness]} {...overrides} />);
+  return render(<AccountWorkspace account={account} blueprints={[blueprint]} isPending="" promptVersions={[storyboardHarness]} {...overrides} />);
 }
 
 describe("账号配置工作区", () => {
@@ -32,51 +32,48 @@ describe("账号配置工作区", () => {
     const user=userEvent.setup();
     renderWorkspace({series:[series],seriesVersions});
     expect(screen.queryByRole("button",{name:"未分系列"})).toBeNull();
-    expect(screen.getByRole("button",{name:"通用规则"})).toBeTruthy();
-    expect(screen.getByRole("button",{name:series.name})).toBeTruthy();
-    await user.click(screen.getByRole("button",{name:series.name}));
+    expect(screen.getByRole("tab",{name:"通用规则"})).toBeTruthy();
+    expect(screen.queryByRole("button",{name:series.name})).toBeNull();
+    await user.click(screen.getByRole("tab", {name:"系列规则"}));
     expect(screen.queryByRole("heading",{name:"未分系列"})).toBeNull();
     expect(screen.getByLabelText("系列定位")).toHaveProperty("value","当前系列定位");
   });
 
-  it("通用规则和系列共享导航，账号目录紧接定位，新建槽位于系列列表后", async () => {
+  it("账号设置管理目录，系列导航只在系列标签显示", async () => {
     const user = userEvent.setup();
     renderWorkspace({ series: [series], seriesVersions });
-    const navigation = screen.getByRole("navigation", {name:"账号内容导航"});
-    expect(within(navigation).getByLabelText("当前账号")).toBeTruthy();
-    expect(within(navigation).getByRole("button", {name:"通用规则"}).getAttribute("aria-current")).toBe("page");
-    expect(screen.queryByRole("tab")).toBeNull();
-    const directory = screen.getByRole("region", {name:"账号目录"});
-    expect(screen.getByLabelText("账号定位").compareDocumentPosition(directory) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(directory.compareDocumentPosition(screen.getByLabelText("语气风格")) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(directory.compareDocumentPosition(screen.getByRole("button", {name:"修改"})) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(screen.queryByLabelText("账号名称")).toBeNull();
-    expect(within(navigation).queryByRole("heading",{name:"系列"})).toBeNull();
-    expect(within(navigation).getByRole("separator",{name:"系列"})).toBeTruthy();
-    expect(within(navigation).getByRole("button",{name:series.name}).compareDocumentPosition(within(navigation).getByRole("button",{name:"新建系列"})) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(navigation.lastElementChild).toBe(within(navigation).getByRole("button",{name:"新建系列"}));
+    expect(screen.getByRole("heading", {name:account.name, level:1})).toBeTruthy();
+    expect(screen.getByRole("tab", {name:"通用规则"}).getAttribute("aria-selected")).toBe("true");
+    expect(screen.queryByRole("navigation", {name:"系列导航"})).toBeNull();
+    expect(screen.queryByText("账号目录")).toBeNull();
+    await user.click(screen.getByRole("button", {name:"账号设置"}));
+    const settings = screen.getByRole("dialog", {name:"账号设置"});
+    expect(within(settings).getByText("账号目录")).toBeTruthy();
+    await user.click(within(settings).getByRole("button", {name:"关闭账号设置"}));
+    await user.click(screen.getByRole("tab", {name:"系列规则"}));
+    const navigation = screen.getByRole("navigation", {name:"系列导航"});
+    expect(within(navigation).getByRole("button", {name:"新建系列"})).toBeTruthy();
     expect(within(navigation).queryByRole("searchbox", {name:"查找系列"})).toBeNull();
-    await user.click(within(navigation).getByRole("button", {name:series.name}));
     expect(screen.getByLabelText("系列定位")).toHaveProperty("value", "当前系列定位");
   });
 
-  it("账号名称只从左上角修改，规则草稿在重命名后保留", async () => {
+  it("账号名称从账号设置修改，规则草稿在重命名后保留", async () => {
     const user = userEvent.setup();
     const onUpdateBlueprint = vi.fn();
     function ReadbackWorkspace() {
       const [currentAccount, setAccount] = useState(account);
-      return <AccountWorkspace account={currentAccount} accounts={[currentAccount]} blueprints={[{...blueprint,policy:JSON.parse(JSON.stringify(blueprint.policy))}]} isPending="" onSelectAccount={vi.fn()} onUpdateBlueprint={onUpdateBlueprint} onRenameAccount={async (_id,name)=>{setAccount({...account,name});return true;}}/>;
+      return <AccountWorkspace account={currentAccount} blueprints={[{...blueprint,policy:JSON.parse(JSON.stringify(blueprint.policy))}]} isPending="" onUpdateBlueprint={onUpdateBlueprint} onRenameAccount={async (_id,name)=>{setAccount({...account,name});return true;}}/>;
     }
     render(<ReadbackWorkspace/>);
     await user.click(screen.getByRole("button", { name: "修改" }));
     await user.type(screen.getByLabelText("账号定位"), "规则草稿");
-    await user.click(screen.getByRole("button", {name:"账号操作"}));
-    await user.click(screen.getByRole("menuitem", {name:"重命名"}));
+    await user.click(screen.getByRole("button", {name:"账号设置"}));
+    await user.click(screen.getByRole("button", {name:"重命名"}));
     await user.clear(screen.getByLabelText("账号显示名称"));
     await user.type(screen.getByLabelText("账号显示名称"), "新名称");
     await user.click(screen.getByRole("button", {name:"保存名称"}));
     expect(screen.getByLabelText("账号定位")).toHaveProperty("value", "越南民间信仰规则草稿");
-    expect(screen.getByLabelText("当前账号")).toHaveProperty("selectedIndex", 0);
+    expect(screen.getByRole("heading", {name:"新名称",level:1})).toBeTruthy();
     expect(onUpdateBlueprint).not.toHaveBeenCalled();
   });
 
@@ -84,7 +81,7 @@ describe("账号配置工作区", () => {
     const user = userEvent.setup();
     const onCreateSeriesVersion = vi.fn().mockResolvedValue(undefined);
     renderWorkspace({onCreateSeriesVersion, series:[series], seriesVersions:[{...seriesVersions[0],rules:{positioning:"当前系列定位", extension:{nested:["keep"]}}}]});
-    await user.click(screen.getByRole("button", {name:series.name}));
+    await user.click(screen.getByRole("tab", {name:"系列规则"}));
     await user.click(screen.getByRole("button", {name:"修改"}));
     expect(screen.queryByText("账号硬约束始终生效")).toBeNull();
     expect(screen.getByLabelText("视觉风格")).toHaveProperty("placeholder", "沿用账号通用规则");
@@ -98,10 +95,28 @@ describe("账号配置工作区", () => {
     expect(onCreateSeriesVersion).toHaveBeenCalledWith({seriesId:series.id,rules:{positioning:"更新后的定位",extension:{nested:["keep"]}}});
   });
 
+  it("显示系列定位、继承的视觉风格及两处限制，编辑时只编辑系列值", async () => {
+    const user=userEvent.setup();
+    renderWorkspace({
+      blueprints:[{...blueprint,policy:{positioning:"账号定位默认值",visual_style:"暖色自然光",restrictions:"禁止未授权素材"}}],
+      series:[series],
+      seriesVersions:[{...seriesVersions[0],rules:{positioning:"系列定位",restrictions:"禁止夸大宣传"}}],
+    });
+    await user.click(screen.getByRole("tab", {name:"系列规则"}));
+    expect(screen.getByLabelText("系列定位")).toHaveProperty("value","系列定位");
+    expect(screen.getByText("来自系列规则")).toBeTruthy();
+    expect(screen.getByLabelText("视觉风格")).toHaveProperty("value","暖色自然光");
+    expect(screen.getByText("沿用账号通用规则")).toBeTruthy();
+    expect(screen.getByLabelText("限制与禁用内容")).toHaveProperty("value","账号通用规则\n禁止未授权素材\n\n系列规则\n禁止夸大宣传");
+    await user.click(screen.getByRole("button",{name:"修改"}));
+    expect(screen.getByLabelText("限制与禁用内容")).toHaveProperty("value","禁止夸大宣传");
+    expect(screen.getByText(/同时生效的账号限制/)).toBeTruthy();
+  });
+
   it("用当前配置工作区取代蓝图版本管理", () => {
     renderWorkspace({ blueprints: [blueprint, { ...blueprint, id: "old", is_active: false, version: 2 }], onUpdateBlueprint: vi.fn().mockResolvedValue(blueprint) });
 
-    expect(screen.getByLabelText("当前账号")).toBeTruthy();
+    expect(screen.getByRole("heading", {name:account.name,level:1})).toBeTruthy();
     expect(screen.queryByRole("heading", { name: "蓝图配置" })).toBeNull();
     expect(screen.queryByRole("navigation", { name: "蓝图配置分区" })).toBeNull();
     expect(screen.queryByRole("complementary", { name: "账号默认配置检查" })).toBeNull();
@@ -111,17 +126,17 @@ describe("账号配置工作区", () => {
     expect(screen.queryByRole("button", { name: /激活|归档|停用/ })).toBeNull();
   });
 
-  it("在账号操作菜单集中展示信息并支持归档", async () => {
+  it("在账号设置集中展示信息并支持归档", async () => {
     const user = userEvent.setup();
     const onSetAccountArchived = vi.fn().mockResolvedValue(true);
     renderWorkspace({ accountEpisodeCount: 7, onSetAccountArchived });
 
-    await user.click(screen.getByRole("button", { name: "账号操作" }));
-    const menu = screen.getByRole("menu", { name: "账号操作" });
+    await user.click(screen.getByRole("button", { name: "账号设置" }));
+    const menu = screen.getByRole("dialog", { name: "账号设置" });
     expect(within(menu).getByText("dao-studio")).toBeTruthy();
     expect(within(menu).getByText("Asia/Shanghai")).toBeTruthy();
     expect(within(menu).getByText("7 个")).toBeTruthy();
-    await user.click(within(menu).getByRole("menuitem", { name: "归档账号" }));
+    await user.click(within(menu).getByRole("button", { name: "归档账号" }));
     const dialog = screen.getByRole("dialog", { name: "归档账号" });
     expect(within(dialog).getByText(/已有生产单、系列和历史配置都会保留/)).toBeTruthy();
     await user.click(within(dialog).getByRole("button", { name: "确认归档账号" }));
@@ -165,7 +180,10 @@ describe("账号配置工作区", () => {
     await user.click(screen.getByRole("button", { name: "修改" }));
     await user.clear(screen.getByLabelText("账号定位"));
     await user.type(screen.getByLabelText("账号定位"), "未保存定位");
-    await user.click(screen.getByRole("button", { name: "撤销修改" }));
+    const confirm = vi.spyOn(window,"confirm").mockReturnValueOnce(true);
+    await user.click(screen.getByRole("button", { name: "放弃修改" }));
+    expect(confirm).toHaveBeenCalledWith("放弃通用规则的未保存修改？");
+    confirm.mockRestore();
     expect((screen.getByLabelText("账号定位") as HTMLTextAreaElement).value).toBe("越南民间信仰");
     expect(onDirtyChange).toHaveBeenCalledWith(true);
     expect(onDirtyChange).toHaveBeenLastCalledWith(false);
@@ -177,10 +195,10 @@ describe("账号配置工作区", () => {
     renderWorkspace({series:[series],seriesVersions});
     await user.click(screen.getByRole("button", { name: "修改" }));
     await user.type(screen.getByLabelText("账号定位"), "未保存");
-    await user.click(screen.getByRole("button", { name: series.name }));
-    expect(screen.getByRole("button", { name: "通用规则" }).getAttribute("aria-current")).toBe("page");
+    await user.click(screen.getByRole("tab", {name:"系列规则"}));
+    expect(screen.getByRole("tab", { name: "通用规则" }).getAttribute("aria-selected")).toBe("true");
     confirm.mockReturnValue(true);
-    await user.click(screen.getByRole("button", { name: series.name }));
+    await user.click(screen.getByRole("tab", {name:"系列规则"}));
     await user.click(screen.getByRole("button", {name:"修改"}));
     expect(screen.getByRole("button", { name: series.name }).getAttribute("aria-current")).toBe("page");
     confirm.mockRestore();
@@ -189,8 +207,8 @@ describe("账号配置工作区", () => {
   it("账号目录独立维护，蓝图只显示内容规则", () => {
     renderWorkspace();
     const groups=screen.getAllByRole("group").filter(group=>group.tagName==='FIELDSET');
-    expect(groups.map(group=>group.querySelector('legend > span')?.textContent ?? group.querySelector('legend')?.textContent)).toEqual(['账号资料','创作规则']);
-    expect(screen.getByText('dao-studio').closest('legend')).toBeTruthy();
+    expect(groups.map(group=>group.querySelector('legend > span')?.textContent ?? group.querySelector('legend')?.textContent ?? group.getAttribute('aria-label'))).toEqual(['账号定位设置','创作规则']);
+    expect(screen.queryByText('dao-studio')).toBeNull();
     expect(screen.queryByRole('table',{name:'生产能力配置矩阵'})).toBeNull();
     expect(screen.queryByRole('button',{name:'修改分镜规划配置'})).toBeNull();
     for(const name of ['启用图片生成','启用A-roll','启用B-roll','启用旁白','启用配乐 / 音效'])expect(screen.queryByRole('checkbox',{name})).toBeNull();
@@ -200,10 +218,10 @@ describe("账号配置工作区", () => {
     const user=userEvent.setup(),onCreateSeriesVersion=vi.fn().mockResolvedValue(undefined);
     function ReadbackSeries() {
       const [name,setName]=useState(series.name);
-      return <AccountWorkspace account={account} accounts={[account]} blueprints={[blueprint]} isPending="" onSelectAccount={vi.fn()} series={[{...series,name}]} seriesVersions={[...seriesVersions]} onRenameSeries={async(_id,next)=>{setName(next);return true;}} onCreateSeriesVersion={onCreateSeriesVersion}/>;
+      return <AccountWorkspace account={account} blueprints={[blueprint]} isPending="" series={[{...series,name}]} seriesVersions={[...seriesVersions]} onRenameSeries={async(_id,next)=>{setName(next);return true;}} onCreateSeriesVersion={onCreateSeriesVersion}/>;
     }
     render(<ReadbackSeries/>);
-    await user.click(screen.getByRole("button",{name:series.name}));
+    await user.click(screen.getByRole("tab", {name:"系列规则"}));
     expect(screen.getByLabelText("系列定位")).toHaveProperty("readOnly",true);
     await user.click(screen.getByRole("button",{name:"修改"}));
     await user.clear(screen.getByLabelText("系列显示名称"));await user.type(screen.getByLabelText("系列显示名称"),"新系列名称");
@@ -218,8 +236,10 @@ describe("账号配置工作区", () => {
   it("系列超过八个时显示搜索，缩减为少量系列后清除隐藏筛选", async () => {
     const user=userEvent.setup();
     const many=Array.from({length:9},(_,index)=>({...series,id:`series-${index}`,name:`系列${index}`}));
-    const props={account,accounts:[account],blueprints:[blueprint],isPending:"",onSelectAccount:vi.fn()};
+    const props={account,blueprints:[blueprint],isPending:""};
     const view=render(<AccountWorkspace {...props} series={many}/>);
+    await user.click(screen.getByRole("tab", {name:"系列规则"}));
+    await user.click(screen.getByRole("button", {name:"系列1"}));
     const search=screen.getByRole("searchbox",{name:"查找系列"});
     await user.type(search,"系列8");
     expect(screen.getByRole("button",{name:"系列8"})).toBeTruthy();
@@ -234,7 +254,7 @@ describe("账号配置工作区", () => {
     const onCreateSeriesVersion = vi.fn().mockResolvedValue(undefined);
     renderWorkspace({ onCreateSeriesVersion, series: [series], seriesVersions });
 
-    await user.click(screen.getByRole("button", { name: series.name }));
+    await user.click(screen.getByRole("tab", {name:"系列规则"}));
     await user.click(screen.getByRole("button", {name:"修改"}));
     expect(screen.getByRole("heading", { name: series.name })).toBeTruthy();
     expect(screen.queryByText(/当前 v/)).toBeNull();
@@ -251,7 +271,7 @@ describe("账号配置工作区", () => {
     const user = userEvent.setup();
     const onCreateSeriesVersion = vi.fn().mockResolvedValue(undefined);
     renderWorkspace({onCreateSeriesVersion, series:[series], seriesVersions});
-    await user.click(screen.getByRole("button", {name:series.name}));
+    await user.click(screen.getByRole("tab", {name:"系列规则"}));
     await user.click(screen.getByRole("button", {name:"修改"}));
     const footer = screen.getByRole("button", {name:"保存系列设置"}).closest("footer") as HTMLElement;
     for (const [label, value] of [["系列定位", "聚焦城市生活"], ["内容格式", "竖屏"], ["角色设定", "主持人"], ["地点设定", "街区"], ["视觉风格", "写实"], ["叙事结构", "开场到结尾"], ["限制与禁用内容", "不使用商标"]]) {
@@ -269,7 +289,7 @@ describe("账号配置工作区", () => {
   it("系列保存失败时错误在弹窗内可见，取消后可撤销草稿", async () => {
     const user = userEvent.setup();
     renderWorkspace({onCreateSeriesVersion:vi.fn().mockRejectedValue(new Error("系列保存失败，请重试。")),series:[series],seriesVersions});
-    await user.click(screen.getByRole("button", {name:series.name}));
+    await user.click(screen.getByRole("tab", {name:"系列规则"}));
     await user.click(screen.getByRole("button", {name:"修改"}));
     await user.type(screen.getByLabelText("系列定位"), "保留草稿");
     await user.click(screen.getByRole("button", {name:"保存系列设置"}));
@@ -278,7 +298,10 @@ describe("账号配置工作区", () => {
     expect(await within(dialog).findByRole("alert")).toHaveProperty("textContent","系列保存失败，请重试。");
     await user.click(within(dialog).getByRole("button", {name:"取消"}));
     expect(screen.getByLabelText("系列定位")).toHaveProperty("value","当前系列定位保留草稿");
-    await user.click(screen.getByRole("button", {name:"撤销修改"}));
+    const confirm = vi.spyOn(window,"confirm").mockReturnValueOnce(true);
+    await user.click(screen.getByRole("button", {name:"放弃修改"}));
+    expect(confirm).toHaveBeenCalledWith("放弃当前系列的未保存修改？");
+    confirm.mockRestore();
     expect(screen.getByLabelText("系列定位")).toHaveProperty("value","当前系列定位");
   });
 
@@ -286,14 +309,14 @@ describe("账号配置工作区", () => {
     const user = userEvent.setup();
     const confirm = vi.spyOn(window, "confirm").mockReturnValue(false);
     renderWorkspace({ series: [series], seriesVersions });
-    await user.click(screen.getByRole("button", { name: series.name }));
+    await user.click(screen.getByRole("tab", {name:"系列规则"}));
     await user.click(screen.getByRole("button", {name:"修改"}));
     await user.type(screen.getByLabelText("系列定位"), "未保存");
-    await user.click(screen.getByRole("button", { name: "通用规则" }));
+    await user.click(screen.getByRole("tab", { name: "通用规则" }));
     expect(screen.getByRole("button", { name: series.name }).getAttribute("aria-current")).toBe("page");
     confirm.mockReturnValue(true);
-    await user.click(screen.getByRole("button", { name: "通用规则" }));
-    expect(screen.getByRole("button", { name: "通用规则" }).getAttribute("aria-current")).toBe("page");
+    await user.click(screen.getByRole("tab", { name: "通用规则" }));
+    expect(screen.getByRole("tab", { name: "通用规则" }).getAttribute("aria-selected")).toBe("true");
     confirm.mockRestore();
   });
 
@@ -301,10 +324,10 @@ describe("账号配置工作区", () => {
     const user = userEvent.setup();
     function RerenderingWorkspace() {
       const [, setDirty] = useState(false);
-      return <AccountWorkspace account={account} accounts={[account]} blueprints={[blueprint]} isPending="" onDirtyChange={setDirty} onSelectAccount={vi.fn()} series={[series]} seriesVersions={[...seriesVersions]} />;
+      return <AccountWorkspace account={account} blueprints={[blueprint]} isPending="" onDirtyChange={setDirty} series={[series]} seriesVersions={[...seriesVersions]} />;
     }
     render(<RerenderingWorkspace />);
-    await user.click(screen.getByRole("button", { name: series.name }));
+    await user.click(screen.getByRole("tab", {name:"系列规则"}));
     await user.click(screen.getByRole("button", {name:"修改"}));
     await user.click(screen.getByRole("button", { name: "新建系列" }));
     expect(screen.getByRole("heading", { name: "新建系列" })).toBeTruthy();
@@ -319,8 +342,8 @@ describe("账号配置工作区", () => {
     const user = userEvent.setup();
     const onRenameAccount = vi.fn().mockResolvedValue(true);
     renderWorkspace({ onRenameAccount });
-    await user.click(screen.getByRole("button", { name: "账号操作" }));
-    await user.click(screen.getByRole("menuitem", { name: "重命名" }));
+    await user.click(screen.getByRole("button", { name: "账号设置" }));
+    await user.click(screen.getByRole("button", { name: "重命名" }));
     await user.clear(screen.getByRole("textbox", { name: "账号显示名称" }));
     await user.type(screen.getByRole("textbox", { name: "账号显示名称" }), "新名称");
     await user.click(screen.getByRole("button", { name: "保存名称" }));
@@ -330,8 +353,8 @@ describe("账号配置工作区", () => {
   it("有生产单时阻止删除账号", async () => {
     const user = userEvent.setup();
     renderWorkspace({ accountEpisodeCount: 1 });
-    await user.click(screen.getByRole("button", { name: "账号操作" }));
-    await user.click(screen.getByRole("menuitem", { name: "删除账号" }));
+    await user.click(screen.getByRole("button", { name: "账号设置" }));
+    await user.click(screen.getByRole("button", { name: "删除账号" }));
     expect(screen.getByText(/该账号有 1 个生产单，当前不能删除/)).toBeTruthy();
     expect((screen.getByRole("button", { name: "确认删除账号" }) as HTMLButtonElement).disabled).toBe(true);
   });
@@ -340,8 +363,8 @@ describe("账号配置工作区", () => {
     const user = userEvent.setup();
     const onDeleteAccount = vi.fn().mockResolvedValue(true);
     renderWorkspace({ accountEpisodeCount: 0, onDeleteAccount });
-    await user.click(screen.getByRole("button", { name: "账号操作" }));
-    await user.click(screen.getByRole("menuitem", { name: "删除账号" }));
+    await user.click(screen.getByRole("button", { name: "账号设置" }));
+    await user.click(screen.getByRole("button", { name: "删除账号" }));
     const dialog = screen.getByRole("dialog", { name: "删除账号" });
     const confirm = within(dialog).getByRole("button", { name: "确认删除账号" }) as HTMLButtonElement;
     expect(confirm.disabled).toBe(true);

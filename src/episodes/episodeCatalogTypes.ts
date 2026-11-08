@@ -1,15 +1,18 @@
 import type {Database} from "../lib/database.types.js";
 import type {WorkerBlocker} from "../reviews/workerBlocker.js";
 type Episode=Database["public"]["Tables"]["episodes"]["Row"];
-export interface ServerPage { page: number; total: number; pageSize: number; onPageChange: (page: number) => void }
+export const operationsEpisodePageSize = 12;
+export const episodePageSizes = [10, 20, 50] as const;
+export const defaultEpisodePageSize = 20;
+export type EpisodePageSize = typeof episodePageSizes[number];
+export interface ServerPage { page: number; total: number; pageSize: number; onPageChange: (page: number) => void; onPageSizeChange?: (size: EpisodePageSize) => void }
 export interface WorkerSummary { running: number; blocked: number; failed: number; latestCompleted: boolean; latest?: { task_type: string; at: string } | null }
 export type CatalogStatus = "all" | "review" | "running" | "blocked" | "done";
 export type CatalogSort = "updated" | "oldest" | "title" | "cost_desc" | "cost_asc";
 export type ProductionStep = 'script' | 'preparation' | 'editing' | 'delivery';
 export interface EpisodeMetrics {
   cost: {actualCents:number|null;estimatedCents:number|null;reservedCents:number;unpricedCount:number;recalculated:boolean};
-  stageStartedAt: Partial<Record<ProductionStep,string>>;
-  finishedAt: string|null;
+  workerRunSeconds: number|null;
   generations: {image:number;video:number;narration:number;sound:number;failed:number};
 }
 export type CatalogActionStatus = Exclude<CatalogStatus, "all"> | "draft";
@@ -29,8 +32,9 @@ export interface EpisodeCatalog {
   statusCounts?: Record<CatalogStatus, number>;
 }
 export interface CatalogQuery {
+ pageSize?: EpisodePageSize;
   view: "accounts" | "episodes" | "reviews" | "operations"; page: number;
   accountId: string; seriesId: string; visibility: "active" | "archived" | "all";
   pendingPage: number; blockedPage: number;
-  q?: string; sort?: CatalogSort; status?: CatalogStatus;
+  q?: string; sort?: CatalogSort; status?: CatalogStatus; catalogStage?: ProductionStep | "all";
 }

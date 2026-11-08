@@ -23,7 +23,7 @@ it('shows only the actual account directory and opens it without reading migrati
 it('does not substitute a legacy location or offer legacy repair when the current directory is absent',async()=>{
  command.mockResolvedValue({assetRoot:null,status:'unset',legacyRoots:['/old/account'],reason:'请设置账号实际专属目录。'});
  render(<AccountDirectoryPanel accountId="account"/>);
- await screen.findByText('暂未生成');
+ expect(await screen.findByText('尚未建立账号目录。')).toBe(screen.getByRole('status'));
  expect(screen.queryByText('/old/account')).toBeNull();
  expect(screen.queryByText('请设置账号实际专属目录。')).toBeNull();
  expect(screen.getByRole('button',{name:'打开'})).toHaveProperty('disabled',true);

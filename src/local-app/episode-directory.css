@@ -1,4 +1,4 @@
-.production-directory{display:flex;align-items:center;justify-content:flex-end;gap:8px;min-width:0;margin-bottom:16px}
+.production-directory{display:flex;align-items:center;justify-content:flex-end;gap:8px;min-width:0;margin-inline-start:auto}
 .production-directory-menu{width:min(420px,calc(100vw - 32px))}
 .production-directory-menu code{display:block;padding:10px 12px;white-space:normal;overflow-wrap:anywhere;font-size:12px;color:var(--lc-muted);user-select:text}
 .production-directory button{flex-shrink:0}
