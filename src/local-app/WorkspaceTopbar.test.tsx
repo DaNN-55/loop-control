@@ -8,7 +8,7 @@ import type {WorkspaceSearchResponse} from './workspaceSearchTypes';
 
 const episodeId='20000000-0000-4000-8000-000000000001';
 const accountId='10000000-0000-4000-8000-000000000001';
-const props={theme:'light' as const,onToggleTheme:vi.fn(),onOpenEpisode:vi.fn(),onOpenAccount:vi.fn(),onOpenCatalog:vi.fn()};
+const props={theme:'light' as const,onToggleTheme:vi.fn(),onOpenEpisode:vi.fn(),onOpenAccount:vi.fn(),onOpenCatalog:vi.fn(),onOpenTaskQueue:vi.fn()};
 const empty=(query:string):WorkspaceSearchResponse=>({query,episodes:[],accounts:[],materials:[],hasMore:{episodes:false,accounts:false,materials:false}});
 beforeEach(()=>{Element.prototype.scrollIntoView=vi.fn();});
 afterEach(()=>{cleanup();vi.unstubAllGlobals();vi.restoreAllMocks();vi.clearAllMocks();});
@@ -55,7 +55,7 @@ it('reads global pending work on demand, merges duplicate episodes and retains e
  const row=await within(dialog).findByRole('button',{name:/真实待处理作品/});expect(within(dialog).getAllByRole('button',{name:/真实待处理作品/})).toHaveLength(1);expect(row.textContent).toContain('待审核');expect(row.textContent).toContain('需处理');expect(within(dialog).getByText('当前显示首批事项，可打开全部列表继续查看。')).toBeTruthy();expect(requests[0]).toBe('/api/local/catalog?view=operations&visibility=active&page=1&pendingPage=1&blockedPage=1');
  await user.click(row);expect(props.onOpenEpisode).toHaveBeenCalledWith(episodeId);
  await user.click(screen.getByRole('button',{name:'待处理通知'}));await user.click(await screen.findByRole('button',{name:'全部待审核（21）'}));expect(props.onOpenCatalog).toHaveBeenCalledWith('review');
- await user.click(screen.getByRole('button',{name:'待处理通知'}));await user.click(await screen.findByRole('button',{name:'3 项任务失败'}));expect(props.onOpenCatalog).toHaveBeenCalledWith('blocked');
+ await user.click(screen.getByRole('button',{name:'待处理通知'}));await user.click(await screen.findByRole('button',{name:'后台任务 · 3 项失败'}));expect(props.onOpenTaskQueue).toHaveBeenCalledOnce();
 });
 
 it('retries unavailable notifications and invokes the existing theme action',async()=>{
@@ -73,17 +73,17 @@ it('filters each category and opens completed packages and failed connections fr
  await user.click(screen.getByRole('button',{name:'待处理通知'}));await user.click(await screen.findByRole('button',{name:/交付包已完成/}));expect(props.onOpenEpisode).toHaveBeenCalledWith(episodeId);
  rerender(<WorkspaceTopbar {...props} onOpenConnections={connections} notificationEventsEnabled notificationPreferences={{review:false,failure:true,delivery:false}}/>);
  await user.click(screen.getByRole('button',{name:'待处理通知'}));await user.click(await screen.findByRole('button',{name:/连接A验证失败/}));expect(connections).toHaveBeenCalledOnce();
- await user.click(screen.getByRole('button',{name:'待处理通知'}));await screen.findByText('失败作品');expect(screen.getByText('审核作品')).toBeTruthy();expect(screen.queryByText('交付包已完成')).toBeNull();
+ await user.click(screen.getByRole('button',{name:'待处理通知'}));await screen.findByText('失败作品');expect(screen.getByText('审核作品')).toBeTruthy();expect(screen.queryByText(/^交付包已完成/)).toBeNull();
 });
 it('keeps pending work and badge visible while all reminder channels and categories are muted',async()=>{
  const fetcher=vi.fn(async()=>Response.json({pending:{total:1,items:[{id:episodeId,title:'静音后的待审核作品'}]},blocked:{total:0,items:[]},worker:{failed:2}}));vi.stubGlobal('fetch',fetcher);render(<WorkspaceTopbar {...props} notificationEventsEnabled notificationPreferences={{review:false,failure:false,delivery:false,inApp:false,macOS:false}}/>);
- await userEvent.setup().click(screen.getByRole('button',{name:'待处理通知'}));await screen.findByText('静音后的待审核作品');expect(screen.getByRole('button',{name:'全部待审核（1）'})).toBeTruthy();expect(screen.getByRole('button',{name:'2 项任务失败'})).toBeTruthy();expect(document.querySelector('.workspace-attention-dot')).toBeTruthy();expect(fetcher).toHaveBeenCalledTimes(1);expect(screen.queryByText('最近提醒')).toBeNull();
+ await userEvent.setup().click(screen.getByRole('button',{name:'待处理通知'}));await screen.findByText('静音后的待审核作品');expect(screen.getByRole('button',{name:'全部待审核（1）'})).toBeTruthy();expect(screen.getByRole('button',{name:'后台任务 · 2 项失败'})).toBeTruthy();expect(document.querySelector('.workspace-attention-dot')).toBeTruthy();expect(fetcher).toHaveBeenCalledTimes(1);expect(screen.queryByText('最近提醒')).toBeNull();
 });
 it.each([[false,false],[false,true],[true,false],[true,true]])('uses only the in-app channel for recent reminders (inApp=%s, macOS=%s)',async(inApp,macOS)=>{
  const requests:string[]=[];vi.stubGlobal('fetch',vi.fn(async(url:string)=>{requests.push(url);return Response.json(url.endsWith('notification-events')?[{id:'done',event_type:'publish_package_verified',episode_id:episodeId,created_at:'2026-11-02T00:00:00Z',payload:{}}]:{pending:{total:0,items:[]},blocked:{total:0,items:[]},worker:{failed:0}});}));
  render(<WorkspaceTopbar {...props} notificationEventsEnabled notificationPreferences={{review:true,failure:true,delivery:true,inApp,macOS}}/>);
  await userEvent.setup().click(screen.getByRole('button',{name:'待处理通知'}));
- if(inApp){expect(await screen.findByText('交付包已完成')).toBeTruthy();}else{await screen.findByText('暂无待处理事项。');expect(screen.queryByText('交付包已完成')).toBeNull();}
+ if(inApp){expect(await screen.findByText(/^交付包已完成/)).toBeTruthy();}else{await screen.findByText('暂无待处理事项。');expect(screen.queryByText(/^交付包已完成/)).toBeNull();}
  expect(requests.some(url=>url.endsWith('notification-events'))).toBe(inApp);
 });
 
@@ -96,11 +96,11 @@ it('clears visible results and pending responses when the Owner changes',async()
 it('keeps file preview failures in place and retries the same SHA-bound file without opening production',async()=>{
  const path=`episodes/${episodeId}/main-script.md`,sha='b'.repeat(64);let attempts=0;
  vi.stubGlobal('fetch',vi.fn(async(url:string)=>url.startsWith('/_local-artifact')?(++attempts===1?new Response('Unavailable',{status:409}):new Response('Recovered script')):Response.json({...empty('script'),materials:[{id:'script',kind:'material',episodeId,path,sha256:sha,title:'main-script.md',subtitle:'脚本',fileType:'script',typeLabel:'脚本'}]})));
- render(<WorkspaceTopbar {...props}/>);const user=userEvent.setup();await user.click(screen.getByRole('textbox'));fireEvent.change(screen.getByRole('textbox'),{target:{value:'script'}});await user.click(await screen.findByRole('button',{name:'预览 main-script.md'}));expect((await screen.findByRole('alert')).textContent).toContain('文件预览未能加载');expect(props.onOpenEpisode).not.toHaveBeenCalled();await user.click(screen.getByRole('button',{name:'重试预览'}));expect(await screen.findByText('Recovered script')).toBeTruthy();expect(attempts).toBe(2);await user.keyboard('{Escape}');expect(document.activeElement).toBe(screen.getByRole('textbox'));expect(screen.queryByText('Recovered script')).toBeNull();
+ render(<WorkspaceTopbar {...props}/>);const user=userEvent.setup();await user.click(screen.getByRole('textbox'));fireEvent.change(screen.getByRole('textbox'),{target:{value:'script'}});await user.click(await screen.findByRole('button',{name:'预览 main-script.md'}));expect((await screen.findByRole('alert')).textContent).toContain('文件预览未能加载');expect(props.onOpenEpisode).not.toHaveBeenCalled();await user.click(screen.getByRole('button',{name:'重试预览'}));expect(await screen.findByText('Recovered script')).toBeTruthy();expect(attempts).toBe(2);await user.keyboard('{Escape}');expect(document.activeElement).toBe(screen.getByRole('button',{name:'预览 main-script.md'}));expect(screen.queryByText('Recovered script')).toBeNull();
 });
 
 it('keeps the full-search keyword and page but does not reopen the popup when production navigation remounts the header',async()=>{
  vi.stubGlobal('fetch',vi.fn(async()=>Response.json({...empty('script'),materials:[{id:'file',kind:'material',episodeId,path:'script.md',sha256:'a'.repeat(64),title:'main-script.md',subtitle:'原生产单',fileType:'script'}],pagination:{category:'materials',page:2,pageSize:8,total:{episodes:0,accounts:0,materials:9},pages:{episodes:1,accounts:1,materials:2}}})));
  function App(){const[panels,setPanels]=useState(()=>readCatalogNavigation('?searchQ=script&searchCategory=materials&searchPage=2').panels),[destination,setDestination]=useState('list');return <CatalogPanelNavigationContext.Provider value={{value:panels,change:(key,patch)=>setPanels(current=>({...current,[key]:{...current[key],...patch}}))}}><p>{destination}</p><WorkspaceTopbar key={destination} {...props} onOpenEpisode={(_id,search)=>{if(search)setPanels(current=>({...current,search}));setDestination('production');}}/></CatalogPanelNavigationContext.Provider>;}
- render(<App/>);const user=userEvent.setup();await user.click(await screen.findByRole('button',{name:'打开所属生产单'}));expect(screen.getByText('production')).toBeTruthy();expect(screen.queryByRole('region',{name:'工作区搜索结果'})).toBeNull();expect((screen.getByRole('textbox') as HTMLInputElement).value).toBe('script');await user.click(screen.getByRole('textbox'));expect(await screen.findByText('main-script.md')).toBeTruthy();expect(screen.getByText('共 9 项 · 第 2 / 2 页')).toBeTruthy();
+ render(<App/>);const user=userEvent.setup();await user.click(screen.getByRole('textbox'));await user.click(await screen.findByRole('button',{name:'打开所属生产单'}));expect(screen.getByText('production')).toBeTruthy();expect(screen.queryByRole('region',{name:'工作区搜索结果'})).toBeNull();expect((screen.getByRole('textbox') as HTMLInputElement).value).toBe('script');await user.click(screen.getByRole('textbox'));expect(await screen.findByText('main-script.md')).toBeTruthy();expect(screen.getByText('共 9 项 · 第 2 / 2 页')).toBeTruthy();
 });

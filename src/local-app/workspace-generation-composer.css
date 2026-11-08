@@ -1,0 +1,80 @@
+.workspace-generation-composer{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;padding:12px;border:1px solid var(--lc-line);border-radius:12px;background:var(--lc-surface);min-width:0}
+.workspace-generation-composer[data-drag-over]{outline:2px solid var(--lc-accent);outline-offset:1px;background:var(--lc-accent-soft)}
+.workspace-composer-reference{min-width:0;max-width:100%}.workspace-composer-prompt{min-width:0}.workspace-composer-toolbar{grid-column:1/-1;display:flex;align-items:center;flex-wrap:wrap;gap:4px;min-width:0}.workspace-composer-kind{display:inline-flex;align-items:center;gap:4px;padding:6px 4px;color:var(--lc-accent);font-size:13px;line-height:20px;white-space:nowrap}
+.workspace-composer-chip{font-size:12px!important;max-width:100%;gap:5px!important}.workspace-composer-chip>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px}.workspace-composer-submit{margin-left:auto}.workspace-generation-composer>.workspace-visual-generation-note{grid-column:1/-1;margin:0;font-size:12px}
+.workspace-composer-prompt .workspace-prompt-field{font-size:0;gap:0;margin:0}.workspace-composer-prompt .workspace-prompt-field textarea{border:0!important;background:transparent!important;padding:0!important;min-height:88px;resize:vertical;font-size:13px;line-height:1.7;box-shadow:none!important}.workspace-composer-prompt .workspace-prompt-count{font-size:12px;margin-top:6px}
+.workspace-composer-popover{width:min(344px,calc(100vw - 24px));max-height:min(650px,calc(100dvh - 24px));overflow:auto;z-index:110;background:var(--lc-surface);color:var(--lc-ink);border:1px solid var(--lc-line-strong);border-radius:10px;box-shadow:0 8px 24px rgb(16 24 40 / .14);font-size:13px;line-height:1.5}
+.workspace-composer-settings{padding:12px;display:grid;gap:10px;outline:none}.workspace-composer-settings>header{display:flex;align-items:center;justify-content:space-between;gap:10px}.workspace-composer-settings h3{margin:0;font-size:14px}.workspace-composer-settings label{display:grid;gap:6px;font-size:12px;min-width:0}.workspace-composer-settings :is(input,textarea){min-width:0;width:100%;box-sizing:border-box;padding:7px 9px;border:1px solid var(--lc-line-strong);border-radius:6px;background:var(--lc-surface);color:var(--lc-ink);font:inherit}.workspace-composer-settings .workspace-visual-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.workspace-composer-settings .workspace-video-advanced-fields{padding-top:0}.workspace-composer-settings .workspace-visual-checkbox{display:flex;align-items:center}.workspace-composer-settings .workspace-visual-checkbox input{width:auto}
+.workspace-composer-model-search{width:100%}.workspace-composer-model-list{display:grid;gap:3px;outline:none}.workspace-composer-model-option{padding:10px;border-radius:6px;outline:none;display:flex;align-items:center;gap:10px}.workspace-composer-model-option[data-focused],.workspace-composer-model-option[data-selected]{background:var(--lc-accent-soft)}.workspace-composer-model-option>span{display:grid;gap:4px;min-width:0;overflow-wrap:anywhere;flex:1}.workspace-composer-model-option strong{font-size:13px;font-weight:600}.workspace-composer-model-option small{font-size:12px;color:var(--lc-muted)}.workspace-composer-model-option>svg{color:var(--lc-accent)}
+.workspace-composer-choice-field{display:grid;gap:7px;font-size:12px}.workspace-composer-choice-field>span{color:var(--lc-muted)}.workspace-composer-choices{display:flex;flex-wrap:wrap;gap:5px}.workspace-composer-choices button{min-width:36px;min-height:32px;box-sizing:border-box;padding:5px 9px;border:1px solid transparent;border-radius:6px;background:var(--lc-surface-2);color:var(--lc-ink);font:inherit;cursor:pointer}.workspace-composer-choices button[aria-pressed=true]{background:var(--lc-accent-soft);color:var(--lc-accent);border-color:var(--lc-accent)}.workspace-composer-choices button:disabled{opacity:.5;cursor:default}.workspace-composer-choices button:focus-visible{outline:2px solid var(--lc-accent);outline-offset:2px}
+.workspace-composer-reference .workspace-reference-label>span{display:none}.workspace-composer-reference .workspace-reference-label{margin:0}.workspace-composer-reference .workspace-reference-input{min-width:0}.workspace-composer-reference .workspace-reference-surface[data-shelf],.workspace-composer-reference .workspace-reference-surface{border:0;padding:0;min-block-size:0;background:transparent;display:block}.workspace-composer-reference .workspace-reference-surface>.workspace-material-drop{display:none}.workspace-composer-reference .workspace-reference-thumbnails{display:flex;flex-wrap:wrap;gap:6px;margin:7px 0 0}.workspace-composer-reference .workspace-reference-thumbnails>div{width:52px}.workspace-composer-reference .workspace-reference-enlarge{height:48px}.workspace-composer-reference .workspace-reference-details{margin-top:8px;max-width:250px}.workspace-composer-reference:has(.workspace-reference-thumbnails){grid-column:1/-1}.workspace-composer-reference:has(.workspace-reference-thumbnails)+.workspace-composer-prompt{grid-column:1/-1}
+.workspace-composer-reference .workspace-video-input-heading{display:none}.workspace-composer-reference .workspace-video-input-area{border:0;padding:0;min-height:0;background:transparent}.workspace-composer-reference .workspace-video-input-thumbnails{gap:6px}.workspace-composer-reference .workspace-first-frame-thumbnail{height:60px}.workspace-composer-reference .workspace-first-frame-thumbnail :is(img,video){height:60px;max-width:80px}.workspace-composer-reference .workspace-video-input-card{max-width:100px}.workspace-composer-reference .workspace-video-inputs>label{font-size:12px}.workspace-composer-reference:has(.workspace-video-input-card){grid-column:1/-1}.workspace-composer-reference:has(.workspace-video-input-card)+.workspace-composer-prompt{grid-column:1/-1}
+@media(max-width:480px){.workspace-generation-composer{padding:10px;gap:8px}.workspace-composer-chip>span{max-width:145px}.workspace-composer-settings .workspace-visual-fields{grid-template-columns:1fr 1fr}}
+
+.workspace-composer-add,.workspace-composer-reference .workspace-reference-label>button{display:inline-grid;place-items:center;width:40px;min-height:52px;padding:5px;border:1px dashed var(--lc-line-strong);border-radius:6px;background:var(--lc-surface-2);color:var(--lc-muted)}
+.workspace-sound-search{display:grid;gap:9px;padding-block:10px}.workspace-sound-search>label{display:grid;gap:6px}.workspace-sound-search input{box-sizing:border-box;width:100%;min-width:0;padding:7px 9px;border:1px solid var(--lc-line-strong);border-radius:6px;background:var(--lc-surface);color:var(--lc-ink);font:inherit}
+html[data-interface="impeccable"] .product-ui.workspace-composer-popover label:has(> .dan-select-field){display:grid!important;gap:6px!important;font-size:12px!important;line-height:1.5!important}
+html[data-interface="impeccable"] .product-ui.workspace-composer-popover label:has(> .dan-select-field)>span:first-child{font-size:12px!important;line-height:1.5!important}
+
+/* Override the shared form/button rules only inside the generation composer. */
+html[data-interface="impeccable"] .product-ui .workspace-composer-toolbar button[data-color]{height:32px;min-height:32px!important;padding:6px 8px!important;font-size:13px!important;line-height:20px!important;gap:4px!important}
+html[data-interface="impeccable"] .product-ui .workspace-generation-composer .workspace-composer-toolbar button[data-color]>svg[data-icon]:not([data-icon="loading"]){width:14px!important;height:14px!important;flex:none!important}
+html[data-interface="impeccable"] .product-ui .workspace-composer-prompt .workspace-prompt-field{margin:0!important;row-gap:0!important}
+.workspace-composer-reference .workspace-reference-input{gap:0}
+.workspace-composer-prompt textarea:focus-visible{outline:2px solid var(--lc-accent);outline-offset:2px}
+
+.workspace-composer-prompt textarea[aria-invalid=true]{border-color:var(--lc-danger)!important}
+
+.workspace-composer-input{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:start;gap:8px 10px;min-width:0;padding:10px;border:1px solid var(--lc-line);border-radius:7px;background:var(--lc-surface-2)}
+.workspace-composer-input:focus-within{outline:2px solid var(--lc-accent);outline-offset:2px}
+.workspace-composer-input:has(textarea[aria-invalid=true]){border-color:var(--lc-danger)}
+.workspace-composer-input .workspace-composer-prompt textarea:focus-visible{outline:none}
+html[data-interface="impeccable"] .product-ui .workspace-composer-input .workspace-reference-label>button[data-color]{width:44px;min-width:44px!important;height:56px;min-height:56px!important;padding:8px!important;border:1px dashed var(--lc-line-strong);border-radius:6px;background:var(--lc-surface);color:var(--lc-muted)}
+.workspace-composer-popover[data-compact]{width:min(224px,calc(100vw - 24px))}
+.workspace-composer-popover:has(.workspace-image-composition){width:min(288px,calc(100vw - 24px))}
+.workspace-composer-popover.workspace-composer-model-popover{width:min(384px,calc(100vw - 24px))}
+.workspace-composer-settings .workspace-visual-fields.workspace-image-composition{grid-template-columns:minmax(0,1fr)}
+html[data-interface="impeccable"] .product-ui.workspace-composer-popover .workspace-composer-settings label{margin:0!important}
+html[data-interface="impeccable"] .product-ui.workspace-composer-popover .workspace-composer-settings :is(input:not([type=checkbox]),select){min-height:32px!important;height:32px!important;font-size:13px!important;padding-block:5px!important}
+
+/* Extra image drafting space grows with references, validation and toolbar wrapping. */
+.workspace-generation-composer[data-kind=image]{box-sizing:border-box;min-height:259px;grid-template-rows:minmax(0,1fr) auto}
+.workspace-generation-composer[data-kind=image] .workspace-composer-input{align-items:stretch}
+.workspace-generation-composer[data-kind=image] .workspace-composer-prompt{display:grid;align-items:stretch}
+html[data-interface="impeccable"] .product-ui .workspace-generation-composer[data-kind=image] .workspace-prompt-field{display:flex;flex-direction:column}
+.workspace-generation-composer[data-kind=image] .workspace-composer-prompt textarea{flex:1;min-height:168px}
+html[data-interface="impeccable"] .product-ui .workspace-generation-composer[data-kind=image] .workspace-composer-input .workspace-reference-label>button[data-color]{width:52px;min-width:52px!important;height:80px;min-height:80px!important}
+
+/* Keep the add tile beside selected references; a full row scrolls horizontally. */
+.workspace-generation-composer[data-kind=image] .workspace-reference-input:has(.workspace-reference-thumbnails){display:grid;grid-template-columns:52px minmax(0,1fr);align-items:start;gap:0 10px}
+.workspace-generation-composer[data-kind=image] .workspace-reference-input:has(.workspace-reference-thumbnails)>.workspace-reference-label{padding-top:6px}
+.workspace-generation-composer[data-kind=image] .workspace-reference-thumbnails{flex-wrap:nowrap;align-items:start;gap:10px;overflow-x:auto;max-width:100%;box-sizing:border-box;margin:0;padding:6px;scrollbar-width:thin;scrollbar-color:var(--lc-line-strong) transparent}
+.workspace-generation-composer[data-kind=image] .workspace-reference-thumbnails>div{flex:0 0 52px;width:52px;gap:0}
+.workspace-generation-composer[data-kind=image] .workspace-reference-thumbnails .workspace-reference-enlarge{height:60px;box-sizing:border-box}
+.workspace-generation-composer[data-kind=image] .workspace-reference-enlarge img{height:54px;object-fit:contain}
+.workspace-generation-composer[data-kind=image] .workspace-reference-thumbnails .workspace-reference-edit{height:20px;min-height:20px;padding:0 2px;line-height:20px}
+.workspace-generation-composer[data-kind=image] .workspace-reference-input>.workspace-reference-details{grid-column:1/-1}
+.workspace-generation-composer[data-kind=image] .workspace-composer-input:has(.workspace-reference-thumbnails){grid-template-rows:auto minmax(72px,1fr)}
+.workspace-generation-composer[data-kind=image] .workspace-composer-input:has(.workspace-reference-thumbnails) .workspace-composer-prompt textarea{min-height:72px}
+
+/* Video uses the same drafting space and horizontal reference row as images. */
+.workspace-generation-composer[data-kind=video]{box-sizing:border-box;min-height:259px;grid-template-rows:minmax(0,1fr) auto}
+.workspace-generation-composer[data-kind=video] .workspace-composer-input{align-items:stretch}
+.workspace-generation-composer[data-kind=video] .workspace-composer-prompt{display:grid;align-items:stretch}
+html[data-interface="impeccable"] .product-ui .workspace-generation-composer[data-kind=video] .workspace-prompt-field{display:flex;flex-direction:column}
+.workspace-generation-composer[data-kind=video] .workspace-composer-prompt textarea{flex:1;min-height:168px}
+.workspace-generation-composer[data-kind=video] .workspace-video-inputs{display:grid;grid-template-columns:52px minmax(0,1fr);align-items:start;gap:0 10px;min-width:0}
+.workspace-generation-composer[data-kind=video] .workspace-composer-add{box-sizing:border-box;width:52px;height:80px;min-height:80px}
+.workspace-generation-composer[data-kind=video] .workspace-video-inputs:has(.workspace-video-input-card)>.workspace-composer-add{margin-top:6px}
+.workspace-generation-composer[data-kind=video] .workspace-video-input-area{min-width:0;display:block}
+.workspace-generation-composer[data-kind=video] .workspace-video-inputs:not(:has(.workspace-video-input-card)) .workspace-video-input-area{display:none}
+.workspace-generation-composer[data-kind=video] .workspace-video-inputs>label,.workspace-generation-composer[data-kind=video] .workspace-video-inputs>small{grid-column:1/-1}
+.workspace-generation-composer[data-kind=video] .workspace-video-input-thumbnails{display:flex;flex-wrap:nowrap;align-items:start;gap:10px;overflow-x:auto;max-width:100%;padding:6px;scrollbar-width:thin;scrollbar-color:var(--lc-line-strong) transparent}
+.workspace-generation-composer[data-kind=video] .workspace-video-input-card{flex:0 0 52px;width:52px;min-width:0}
+.workspace-generation-composer[data-kind=video] .workspace-first-frame-thumbnail{height:60px;min-height:0}
+.workspace-generation-composer[data-kind=video] .workspace-first-frame-thumbnail :is(img,video){box-sizing:border-box;width:100%!important;max-width:100%;height:60px!important;min-height:0!important;object-fit:contain}
+.workspace-generation-composer[data-kind=video] .workspace-video-input-caption{min-height:20px;font-size:11px;line-height:20px}
+.workspace-generation-composer[data-kind=video] .workspace-composer-input:has(.workspace-video-input-card){grid-template-rows:auto minmax(72px,1fr)}
+.workspace-generation-composer[data-kind=video] .workspace-composer-input:has(.workspace-video-input-card) .workspace-composer-prompt textarea{min-height:72px}
+.workspace-generation-composer[data-operation=search] .workspace-composer-reference{display:none}
+.workspace-generation-composer[data-operation=search] .workspace-composer-prompt{grid-column:1/-1}

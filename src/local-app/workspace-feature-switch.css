@@ -1,0 +1,4 @@
+.workspace-feature-switch{align-items:center!important;gap:7px;flex:none;margin-inline-start:auto;min-height:32px}
+.workspace-feature-switch:not([data-selected])>div.rounded-full{background:var(--lc-muted,#596b83)!important;box-shadow:inset 0 0 0 1px var(--lc-line-strong,#bdcadd)}
+.workspace-feature-switch p{margin:0!important;font-size:12px!important;font-weight:500;white-space:nowrap;color:var(--lc-muted)}
+.workspace-feature-switch[data-selected] p{color:var(--lc-accent)}

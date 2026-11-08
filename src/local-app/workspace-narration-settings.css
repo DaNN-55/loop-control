@@ -1,19 +1,167 @@
-.workspace-narration-default-settings{margin-bottom:12px;border-bottom:1px solid var(--lc-line,#d8e1ee)}
-.workspace-narration-default-settings>summary{font-weight:600;color:var(--lc-ink,#17263e)}
-[data-compact-workflow] .workspace-narration-default-settings .workspace-narration-defaults{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:end;padding:4px 0 14px}
-.workspace-narration-defaults>.workspace-narration-model,.workspace-narration-defaults>.workspace-narration-voice,.workspace-narration-defaults>.workspace-narration-model-note{grid-column:1/-1}
+.workspace-narration-defaults.workspace-narration-default-form{display:grid;gap:12px;padding:0}
+.workspace-narration-defaults>.workspace-narration-model,.workspace-narration-defaults>.workspace-narration-voice-row,.workspace-narration-defaults>.workspace-narration-model-note{grid-column:1/-1}
+.workspace-narration-voice-row{--narration-control-height:38px;display:grid;grid-template-columns:minmax(0,1fr) minmax(64px,22%) var(--narration-control-height);align-items:end;gap:8px;width:100%}
+.workspace-narration-voice-row label,.workspace-narration-voice-row input{min-width:0;width:100%}
+.workspace-narration-defaults .workspace-narration-voice-row input{width:100%;min-block-size:var(--narration-control-height);padding-block:8px}
+.workspace-narration-voice-row .workspace-speech-sample{display:grid}
+.product-ui .workspace-narration-voice-row .workspace-speech-sample>button[data-rac]{
+ --lc-icon-control-size:var(--narration-control-height);
+ display:grid;place-items:center;inline-size:100%;min-block-size:var(--narration-control-height);padding:0
+}
+.workspace-narration-voice-row .workspace-speech-sample svg{display:block}
+.workspace-speech-sample-error{grid-column:1/-1;margin:0}
 .workspace-narration-provider{font-size:11px;color:var(--lc-muted,#596b83);font-weight:400;margin-left:8px}
 .workspace-narration-model-note{font-size:11px;color:var(--lc-muted,#596b83);line-height:1.6;margin:0}
-[data-compact-workflow] .workspace-narration-default-settings .workspace-narration-defaults input{width:100%;min-width:0}
-.workspace-narration-defaults>.workspace-narration-default-actions{display:flex;align-items:center;gap:8px;grid-column:1/-1}
-.workspace-narration-default-actions>span{font-size:11px;color:var(--lc-success,#167556)}
+.workspace-narration-toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.workspace-narration-toolbar button:disabled{opacity:.55;cursor:default}
+.workspace-narration-fields>.workspace-narration-actions{justify-content:flex-end}
+.workspace-narration-actions[data-mode=tts]>button{width:100%}
+.workspace-narration-default-actions{display:flex;align-items:center;gap:8px;grid-column:1/-1;flex-wrap:wrap}
+.workspace-narration-default-actions>span{font-size:11px;color:var(--lc-muted,#596b83)}
 
-.workspace-speech-candidate{min-width:0;padding:12px 0;border-top:1px solid var(--lc-line,#d8e1ee)}
-.workspace-speech-candidate p{margin:0 0 6px;overflow-wrap:anywhere}
-.workspace-speech-candidate audio{display:block;width:100%;max-width:360px;margin-bottom:8px}
-.workspace-speech-candidate [role=status]{font-size:12px;color:var(--lc-muted,#596b83);margin:8px 0 0}
+.workspace-narration-text{display:grid;gap:8px;min-width:0}
+.workspace-narration-text>.workspace-results-heading{margin-bottom:0}
+.workspace-speech-results,.workspace-speech-result{min-width:0}
+.workspace-speech-results-list{display:grid;gap:8px}
+.workspace-speech-result{
+ display:grid;gap:8px;padding:12px;border:1px solid var(--lc-line);
+ border-radius:7px;background:var(--lc-surface);
+}
+.workspace-speech-result-heading,.workspace-speech-result-footer{
+ display:flex;align-items:center;justify-content:space-between;gap:8px 12px;
+}
+.workspace-speech-result-heading{align-items:baseline}
+.workspace-speech-result p{margin:0;min-width:0;overflow-wrap:anywhere}
+.workspace-speech-result-heading p{font-weight:600}
+.workspace-speech-result-heading span,.workspace-speech-result-footer>span,.workspace-speech-result-note{
+ flex:none;font-size:12px;color:var(--lc-muted);
+}
+.workspace-speech-result-heading span{white-space:nowrap;font-variant-numeric:tabular-nums}
+.workspace-speech-result-footer{flex-wrap:wrap}
+.workspace-speech-result-footer p{flex:1 1 200px;font-size:12px;color:var(--lc-muted)}
+.workspace-speech-result-footer p[role=status]{flex-basis:0}
+.workspace-speech-result-footer>span,.workspace-speech-result-footer>div{margin-inline-start:auto}
 .workspace-narration-defaults>.workspace-narration-model-note{flex-basis:100%}
-.workspace-narration-default-actions{flex-wrap:wrap}
-.workspace-narration-default-actions>span{color:var(--lc-muted,#596b83)}
-.workspace-narration-default-actions>.workspace-narration-default-saved{color:var(--lc-success,#167556)}
-.workspace-narration-default-actions>[role=status]:not(.workspace-narration-default-saved){flex-basis:100%}
+.workspace-narration-default-actions>[role=status]{flex-basis:100%}
+
+.workspace-narration-caption-settings {
+ display: grid;
+ gap: 10px;
+ padding-bottom: 16px;
+ margin-bottom: 12px;
+ border-bottom: 1px solid var(--lc-line);
+}
+.workspace-narration-caption-settings h3,.workspace-narration-caption-settings p {margin: 0}
+.workspace-narration-caption-settings label {display: grid; gap: 6px}
+.workspace-narration-caption-settings button {justify-self: start}
+.workspace-template-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}.workspace-template-heading h3{margin:0;font-size:14px}.workspace-template-heading>span{font-size:12px;color:var(--lc-muted);font-variant-numeric:tabular-nums}
+.workspace-voice-inline-settings{display:grid;gap:10px;padding-top:3px}.workspace-voice-inline-settings>button{justify-self:start}.workspace-voice-inline-settings .workspace-narration-voice-row{grid-template-columns:minmax(0,1fr) 92px 38px}
+.workspace-voice-inline-settings label{display:grid;gap:6px;font-size:12px}.workspace-voice-inline-settings input{width:100%;min-width:0;box-sizing:border-box;padding:7px 9px;border:1px solid var(--lc-line-strong);border-radius:6px;background:var(--lc-surface);color:var(--lc-ink);font:inherit}
+.workspace-voice-material-selection{display:flex;align-items:center;gap:8px}.workspace-voice-material-selection .workspace-material-drop{position:static;flex-direction:row;min-height:34px}.workspace-voice-material-selection+.workspace-narration-actions{margin-top:0}
+.workspace-narration-fields>.workspace-narration-text{margin-top:4px}.workspace-narration-fields>.workspace-narration-actions[data-mode=tts]>button{width:auto;margin-left:auto}.workspace-narration-fields>.workspace-speech-results{margin-top:10px}
+.workspace-template-caption{padding-top:12px;border-top:1px solid var(--lc-line);margin-top:12px}.workspace-template-caption>summary{font-size:13px;font-weight:600;cursor:pointer}.workspace-template-caption>div{display:grid;gap:10px;padding-top:10px}.workspace-template-caption label{display:grid;gap:6px}
+.workspace-speech-result{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;border:0;border-top:1px solid var(--lc-line);border-radius:0;padding:12px 0;background:transparent}.workspace-speech-result-heading{display:grid;align-content:start;gap:4px}.workspace-speech-result-heading p{font-weight:500}.workspace-speech-result-footer,.workspace-speech-result-note{grid-column:1/-1}.workspace-speech-result .workspace-audio-audition{justify-content:flex-end;align-content:start}
+html[data-interface="impeccable"] .product-ui .workspace-voice-inline-settings label:has(>.dan-select-field),html[data-interface="impeccable"] .product-ui .workspace-template-caption label:has(>.dan-select-field){display:grid!important;gap:6px!important;font-size:12px!important;line-height:1.5!important}
+html[data-interface="impeccable"] .product-ui .workspace-voice-inline-settings .workspace-narration-voice-row>label{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:6px!important;font-size:12px!important;line-height:1.5!important}.workspace-voice-inline-settings .workspace-narration-voice-row input{height:38px!important}
+.workspace-voice-picker-field{display:grid;gap:6px;min-width:0}.workspace-voice-picker-field>label{margin:0;font-size:12px;line-height:1.5}.workspace-voice-picker .dan-icon-combobox-control{height:38px;min-height:38px;box-sizing:border-box}.workspace-voice-picker .dan-icon-combobox-input{min-height:0!important;height:36px!important;box-sizing:border-box;padding-top:0!important;padding-bottom:0!important;border:0!important;background:transparent!important;outline:none!important;box-shadow:none!important}.workspace-voice-picker .dan-icon-combobox-toggle{height:36px;min-height:36px}
+.workspace-voice-option-label{display:grid;gap:3px;min-width:0}.workspace-voice-option-label small{font-size:11px;color:var(--lc-muted);overflow-wrap:anywhere;font-weight:400}.workspace-voice-picker-popover{min-width:260px;max-width:calc(100vw - 24px)}.workspace-voice-picker-popover .dan-select-option{align-items:center}
+html[data-interface="impeccable"] .product-ui .workspace-narration-voice-row>label,html[data-interface="impeccable"] .product-ui .workspace-voice-picker-field>label{margin:0!important}
+
+.workspace-speech-settings-scope{display:flex;gap:6px}
+.workspace-narration-controls{align-items:center;flex-wrap:wrap;gap:8px}
+.workspace-caption-inline,.workspace-caption-save{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0}
+.workspace-caption-mode{display:flex;align-items:center;gap:8px;flex:none}
+.workspace-caption-mode>.dan-select-field{width:148px;flex:0 0 148px;min-width:0}
+.workspace-caption-save>span{font-size:12px;color:var(--lc-muted)}
+.workspace-speech-results{container-type:inline-size}
+.workspace-speech-result{grid-template-columns:minmax(0,1fr) auto auto;align-items:center;padding:8px 0;gap:8px}
+.workspace-speech-result-heading{display:flex;align-items:center;gap:8px;min-width:0}
+.workspace-speech-result-copy{display:flex;align-items:center;gap:6px;min-width:0;flex:1}
+.workspace-speech-result-copy>p{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.workspace-speech-result-copy>.workspace-speech-adopted{flex:none;color:var(--lc-success);background:var(--lc-success-soft);font-size:11px;line-height:18px}
+.workspace-speech-result>.workspace-speech-result-footer{grid-column:auto;flex-wrap:nowrap;justify-content:flex-end}
+.workspace-speech-result>.workspace-speech-result-footer>div{margin:0;white-space:nowrap}
+.workspace-speech-result .workspace-result-actions{gap:4px}
+.workspace-speech-result>.workspace-speech-result-footer:has(.workspace-result-confirmation){grid-column:1/-1;flex-wrap:wrap}
+@container(max-width:420px){.workspace-speech-result{grid-template-columns:minmax(0,1fr) auto}.workspace-speech-result>.workspace-speech-result-footer{grid-column:1/-1}}
+.workspace-narration-editor{min-width:0;border:1px solid var(--lc-line-strong);border-radius:8px;background:var(--lc-surface);overflow:hidden}
+.workspace-narration .workspace-narration-editor>textarea{display:block;width:100%;box-sizing:border-box;min-height:110px;margin:0;padding:12px;border:0;border-radius:0;background:transparent}
+.workspace-narration-editor:has(>textarea:focus-visible){outline:2px solid var(--lc-accent);outline-offset:2px}
+.workspace-narration-editor>textarea:focus-visible{outline:none}
+.workspace-narration-editor>.workspace-narration-controls{padding:8px;border-top:1px solid var(--lc-line)}
+.workspace-narration-editor .workspace-caption-inline{flex:1 1 auto}
+.workspace-narration-editor .workspace-narration-controls>button{width:auto;margin-inline-start:auto;flex:none}
+.workspace-narration-editor button[data-rac]{min-block-size:32px!important;block-size:32px!important;max-block-size:32px;padding-block:4px!important}
+.workspace-narration-editor .workspace-caption-mode select{border-color:transparent;background:transparent}
+.product-ui .workspace-speech-result button[data-rac]{inline-size:80px;min-inline-size:80px;block-size:32px!important;min-block-size:32px!important;max-block-size:32px;padding:4px 8px!important;font-size:13px;line-height:20px}
+.workspace-speech-result .workspace-narration-withdraw:hover{background:var(--lc-danger-soft)}
+
+/* One script feeds speech; independent subtitles stay in the native editor. */
+.workspace-caption-exception{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12px;color:var(--lc-muted)}
+.workspace-caption-feedback{font-size:12px;color:var(--lc-muted)}
+.workspace-narration-editor>.workspace-narration-controls{min-height:48px}
+.workspace-speech-result{grid-template-columns:minmax(0,1fr);gap:6px;padding:10px 0}
+.workspace-speech-result-player{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0}
+.workspace-speech-result-player>.workspace-audio-audition{flex:1 1 180px;min-width:0}
+.workspace-speech-result-player>.workspace-speech-result-footer{flex:none;margin:0;min-width:0;justify-content:flex-end}
+.workspace-speech-result-player>.workspace-speech-result-footer:has(.workspace-result-confirmation){flex-basis:100%;flex-wrap:wrap}
+.product-ui .workspace-speech-result .workspace-audio-audition[data-layout=bar]{--lc-icon-control-size:32px}
+.product-ui .workspace-speech-result .workspace-audio-audition[data-layout=bar]>button[data-rac]{inline-size:32px;min-inline-size:32px;padding:0!important}
+
+/* Narration and captions share one preparation destination, with independent switches. */
+.workspace-narration-subheader{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:40px;margin-bottom:12px}
+.workspace-narration-subheader>[role=switch]{flex:none;margin-inline-start:auto;align-items:center}
+.workspace-narration-subheader .workspace-visual-preview-tabs{flex:none}
+.workspace-narration-fields [hidden]{display:none!important}
+.workspace-narration-voice-content{display:grid;gap:10px;min-width:0}
+.workspace-narration-text{min-width:0}
+.workspace-caption-editor-heading{display:flex;align-items:center;gap:8px;padding:10px 12px 0;margin:0;font-size:12px;color:var(--lc-muted)}
+.workspace-caption-editor-heading h3{margin:0;font-size:12px;font-weight:500}
+.workspace-speech-composer .workspace-narration-editor>textarea,.workspace-narration-caption-editor .workspace-narration-editor>textarea{min-height:150px}
+.workspace-narration-composer-toolbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:0;min-width:0}
+.workspace-narration-source{display:flex;align-items:center;gap:4px;min-width:0;max-width:260px;color:var(--lc-accent)}
+.workspace-narration-source>svg{flex:none}
+.workspace-narration-source>.dan-select-field{min-width:0;width:100%}
+.workspace-narration-composer-toolbar .dan-select-field select{border:0;background:transparent;min-height:32px!important;height:32px!important;padding-block:4px!important}
+.workspace-narration-composer-toolbar .workspace-voice-picker{width:180px;max-width:100%;min-width:100px}
+.workspace-narration-composer-toolbar .workspace-voice-picker .dan-icon-combobox-control{height:32px;min-height:32px}
+.workspace-narration-composer-toolbar .workspace-voice-picker .dan-icon-combobox-input{height:30px!important;min-height:30px!important}
+.workspace-narration-composer-toolbar .workspace-voice-picker .dan-icon-combobox-toggle{height:30px;min-height:30px}
+.workspace-narration-rate{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--lc-muted)}
+html[data-interface="impeccable"] .product-ui .workspace-narration-rate>input{width:66px;height:32px!important;min-height:32px!important;padding:4px 6px!important;font-size:12px}
+.workspace-narration-composer-toolbar{--lc-icon-control-size:32px}
+.workspace-narration-composer-toolbar>.workspace-narration-primary{margin-inline-start:auto;flex:none}
+html[data-interface="impeccable"] .product-ui .workspace-narration-composer-toolbar>.workspace-narration-primary{height:32px;min-height:32px!important;min-inline-size:72px;padding:6px 8px!important;font-size:13px!important;line-height:20px!important;gap:4px!important}
+.workspace-narration-file-slot{position:relative;display:grid;gap:8px;padding:12px;min-width:0}
+.workspace-narration-file-slot>.workspace-material-drop{position:static;min-height:150px;width:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;padding:16px;border:1px dashed var(--lc-line-strong);border-radius:6px;background:var(--lc-surface-raised,var(--lc-surface));color:var(--lc-muted)}
+.workspace-narration-file-slot>.workspace-material-drop>span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.workspace-narration-file-slot>.workspace-material-drop>small{font-size:12px}
+.workspace-narration-file-slot>.workspace-material-drop[data-drag-over]{border-color:var(--lc-accent);background:var(--lc-accent-soft)}
+.workspace-narration-file-slot>button[aria-label="清除选择"]{position:absolute;right:16px;top:16px;--lc-icon-control-size:28px}
+.workspace-narration-caption-editor{display:grid;gap:10px;min-width:0}
+.workspace-caption-reference{display:flex;align-items:baseline;gap:8px;margin:0;color:var(--lc-muted);font-size:12px;min-width:0;white-space:nowrap}
+.workspace-caption-reference>span{overflow:hidden;text-overflow:ellipsis;min-width:0}
+.workspace-narration-caption-editor .workspace-narration-controls>.workspace-caption-feedback{font-size:12px;margin-inline-end:auto}
+@container(max-width:460px){.workspace-narration-source{max-width:100%;flex-basis:100%}.workspace-narration-composer-toolbar .workspace-voice-picker{width:170px}}
+.workspace-narration-composer-toolbar .workspace-narration-rate{display:block;width:84px;flex:none}
+.workspace-narration-rate-control{height:32px;min-height:32px}
+html[data-interface="impeccable"] .product-ui .workspace-narration-rate-control>input{height:32px!important;min-height:32px!important;padding:4px 7px 4px 34px!important;font-size:12px;border:0;background:transparent;box-shadow:none}
+.workspace-narration-rate-control>svg{left:9px;width:14px;height:14px}
+.workspace-narration-toolbar-error{font-size:12px;color:var(--lc-danger);flex-basis:100%}
+
+.workspace-narration-subheader{margin-bottom:0}
+
+/* Match the visual composer's quiet toolbar without changing shared form controls. */
+html[data-interface="impeccable"] .product-ui .workspace-narration-composer-toolbar :is(.dan-select-trigger,.dan-icon-combobox-control,.workspace-narration-rate-control){border:0!important;box-shadow:none!important;background:transparent!important}
+html[data-interface="impeccable"] .product-ui .workspace-narration-composer-toolbar :is(.dan-select-trigger,.dan-icon-combobox-control,.workspace-narration-rate-control):hover{background:var(--lc-surface-2)!important}
+html[data-interface="impeccable"] .product-ui .workspace-narration-composer-toolbar :is(.dan-icon-combobox-control,.workspace-narration-rate-control):focus-within,
+html[data-interface="impeccable"] .product-ui .workspace-narration-composer-toolbar .dan-select-trigger:focus-visible{outline:2px solid var(--lc-accent);outline-offset:1px}
+html[data-interface="impeccable"] .product-ui .workspace-narration-composer-toolbar button[data-icon-only]{inline-size:32px;min-inline-size:32px;height:32px;min-height:32px!important;padding:0!important}
+html[data-interface="impeccable"] .product-ui .workspace-narration-composer-toolbar button[data-icon-only]>svg[data-icon]{width:16px!important;height:16px!important}
+.workspace-narration-caption-editor .workspace-narration-editor>.workspace-narration-controls{border-top:0}
+
+/* Keep the input surface separate from the toolbar, as in the visual composer. */
+.workspace-generation-composer>.workspace-narration-input{border-color:var(--lc-line);border-radius:7px;background:var(--lc-surface-2)}
+.workspace-caption-composer>.workspace-narration-controls{display:flex;align-items:center;flex-wrap:wrap;gap:8px;min-height:32px;padding:0;border:0}
+.workspace-caption-composer>.workspace-narration-controls>button:last-child{margin-inline-start:auto;flex:none}
+html[data-interface="impeccable"] .product-ui :is(.workspace-speech-composer,.workspace-caption-composer) button[data-rac]{min-block-size:32px!important;block-size:32px!important;max-block-size:32px;padding-block:4px!important}

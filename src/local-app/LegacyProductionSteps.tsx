@@ -1,3 +1,5 @@
+import {VideoPreview} from '../ui/media/VideoPreview';
+import {ImagePreview} from '../ui/media/ImagePreview';
 import {AudioPreview} from '../ui/media/AudioPreview';
 import {useEffect,useState,type ReactNode} from 'react';
 import type {EpisodeProductionSnapshot} from '../episodes/EpisodeProductionContainer';
@@ -25,7 +27,7 @@ function FileLink({episodeId,path,sha256,children}:{episodeId:string;path:string
 function Media({episodeId,path,sha256,label}:{episodeId:string;path:string;sha256?:string;label:string}){
  const kind=artifactPreviewKind(path),{url,error}=useLocalArtifactBlob(kind?localArtifactUrl(episodeId,path,sha256):null);
  if(!kind)return null;
- return <figure className="legacy-media">{error?<p role="alert">{error}</p>:!url?<p role="status">正在读取{label}…</p>:kind==='image'?<img src={url} alt={label}/>:kind==='audio'?<AudioPreview src={url} preload="metadata" aria-label={label}/>:<video src={url} controls preload="metadata" aria-label={label}/>}<figcaption>{label}</figcaption></figure>;
+ return <figure className="legacy-media">{error?<p role="alert">{error}</p>:!url?<p role="status">正在读取{label}…</p>:kind==='image'?<ImagePreview src={url} alt={label}/>:kind==='audio'?<AudioPreview src={url} preload="metadata" aria-label={label}/>:<VideoPreview src={url} title={label} aria-label={label}/>}<figcaption>{label}</figcaption></figure>;
 }
 function TextFile({episodeId,path,sha256}:{episodeId:string;path:string;sha256?:string}){
  const {content,error}=useLocalArtifactText(localArtifactUrl(episodeId,path,sha256));

@@ -38,12 +38,13 @@ function setup(){
 }
 const image=(name:string)=>new File(['image fixture'],name,{type:'image/png'});
 function choose(files:File[]){fireEvent.change(screen.getByLabelText('上传图片素材'),{target:{files}});}
+function openUploadHistory(){const trigger=screen.getByLabelText('上传记录'),details=trigger.closest('details')!;if(!details.open)fireEvent.click(trigger);return screen.getByRole('region',{name:'上传结果'});}
 afterEach(()=>{cleanup();vi.unstubAllGlobals();sessionStorage.clear();});
 
 it('批量上传逐项保留成功与失败，只重试失败项并支持下一批',async()=>{
  const fixture=setup();render(<fixture.View/>);
  choose([image('first.png'),image('bad.png'),image('last.png')]);
- const results=await screen.findByRole('region',{name:'上传结果'});
+ const results=openUploadHistory();
  await waitFor(()=>expect(within(results).getByText('last.png').closest('li')?.textContent).toContain('成功'));
  expect(within(results).getByText('first.png').closest('li')?.textContent).toContain('成功');
  expect(within(results).getByText('bad.png').closest('li')?.textContent).toContain('失败');
@@ -62,14 +63,14 @@ it('关闭重开保留真实处理中与未处理项，收到导入回执后只�
  const fixture=setup(),resume=fixture.pauseImport('in-flight.png');
  const view=render(<fixture.View/>);
  choose([image('in-flight.png'),image('waiting.png')]);
- const results=await screen.findByRole('region',{name:'上传结果'});
+ const results=openUploadHistory();
  await waitFor(()=>expect(within(results).getByText('in-flight.png').closest('li')?.textContent).toContain('处理中'));
  expect(within(results).getByText('waiting.png').closest('li')?.textContent).toContain('未处理');
  expect(screen.getByRole('status',{name:'图片候选上传中'})).toBeTruthy();
  expect(screen.queryByText('尚未添加图片')).toBeNull();
  await waitFor(()=>expect(fixture.startedImports).toEqual(['in-flight.png']));
  view.unmount();render(<fixture.View/>);
- const reopened=within(screen.getByRole('region',{name:'上传结果'}));
+ const reopened=within(openUploadHistory());
  expect(reopened.getByText('in-flight.png').closest('li')?.textContent).toContain('处理中');
  await act(async()=>{resume();});
  await waitFor(()=>expect(reopened.getByText('in-flight.png').closest('li')?.textContent).toContain('未处理'));
@@ -84,7 +85,7 @@ it('关闭重开保留真实处理中与未处理项，收到导入回执后只�
 it('素材导入成功但候选登记失败后，关闭重开重试不会再次导入',async()=>{
  const fixture=setup();fixture.failRegistration='retry-candidate.png';
  const view=render(<fixture.View/>);choose([image('retry-candidate.png')]);
- await screen.findByText(/素材已导入，候选未完成：候选登记暂时失败/);
+ await waitFor(()=>expect(openUploadHistory().textContent).toContain('素材已导入，候选未完成：候选登记暂时失败'));
  view.unmount();render(<fixture.View/>);fixture.failRegistration='';
  fireEvent.click(screen.getByRole('button',{name:'重试未完成项'}));
  fireEvent.click(screen.getByRole('button',{name:'重试未完成项'}));
@@ -97,7 +98,7 @@ it('素材导入成功但候选登记失败后，关闭重开重试不会再次�
 it('候选已登记但响应丢失时，重试核对现有候选，不重复导入或登记',async()=>{
  const fixture=setup();fixture.loseRegistrationResponse=true;render(<fixture.View/>);
  choose([image('response-lost.png')]);
- await screen.findByText(/连接中断，候选结果尚未确认/);
+ await waitFor(()=>expect(openUploadHistory().textContent).toContain('连接中断，候选结果尚未确认'));
  fireEvent.click(screen.getByRole('button',{name:'重试未完成项'}));
  await waitFor(()=>expect(screen.getAllByRole('button',{name:/预览图片候选/})).toHaveLength(1));
  expect(fixture.imports).toEqual(['response-lost.png']);expect(fixture.registrations).toEqual(['response-lost.png']);
@@ -109,7 +110,7 @@ it('候选登记进行中关闭并立即重开，完成后同步已登记候选'
  view.unmount();render(<fixture.View/>);
  await act(async()=>{resume();});
  await waitFor(()=>expect(screen.getAllByRole('button',{name:/预览图片候选/})).toHaveLength(1));
- const results=within(screen.getByRole('region',{name:'上传结果'}));
+ const results=within(openUploadHistory());
  expect(results.getByText('register-in-flight.png').closest('li')?.textContent).toContain('成功');
  expect(fixture.imports).toEqual(['register-in-flight.png']);
 });
@@ -139,7 +140,7 @@ it('导入提交成功但网络回执丢失时，真实命令客户端复用幂�
  }));
  function View(){const [value,setValue]=useState(workspace);return <WorkspaceVisualPreparation workspace={value} command={(name,data)=>localCommand(name,data,undefined,'episode-commands')} onChange={setValue} materials={[]}/>;}
  render(<View/>);choose([image('network-retry.png')]);
- await screen.findByText('网络连接中断。');
+ await waitFor(()=>expect(openUploadHistory().textContent).toContain('网络连接中断。'));
  fireEvent.click(screen.getByRole('button',{name:'重试未完成项'}));
  await waitFor(()=>expect(screen.getAllByRole('button',{name:/预览图片候选/})).toHaveLength(1));
  expect(imported).toBe(1);expect(importKeys).toHaveLength(2);expect(importKeys[1]).toBe(importKeys[0]);
@@ -149,11 +150,11 @@ it('切换目标或生产单不显示上一目标的上传结果，返回原目�
  const fixture=setup(),workspace={...fixture.workspace,clips:[...fixture.workspace.clips,{id:'clip-two',itemId:'target-two',shotId:'shot-two',text:'另一镜头',source:null}]};
  const props={workspace,command:fixture.command,onChange:()=>{},materials:[]};
  const view=render(<WorkspaceVisualPreparation {...props} selectedTargetItemId="target"/>);
- choose([image('bad.png')]);await screen.findByText('图片内容无法解码。');
+ choose([image('bad.png')]);await waitFor(()=>expect(openUploadHistory().textContent).toContain('图片内容无法解码。'));
  view.rerender(<WorkspaceVisualPreparation {...props} selectedTargetItemId="target-two"/>);
  expect(screen.queryByRole('region',{name:'上传结果'})).toBeNull();
  view.rerender(<WorkspaceVisualPreparation {...props} selectedTargetItemId="target"/>);
- expect(within(screen.getByRole('region',{name:'上传结果'})).getByText('bad.png')).toBeTruthy();
+ expect(within(openUploadHistory()).getByText('bad.png')).toBeTruthy();
  view.rerender(<WorkspaceVisualPreparation {...props} workspace={{...workspace,episodeId:'different-episode'}} selectedTargetItemId="target"/>);
  expect(screen.queryByRole('region',{name:'上传结果'})).toBeNull();
 });
@@ -162,7 +163,7 @@ it('逐文件保留空文件与超过 100 MB 的拒绝结果，继续导入有�
  const large=image('oversize.png');Object.defineProperty(large,'size',{value:100*1024*1024+1});
  choose([new File([],'empty.png',{type:'image/png'}),large,image('valid.png')]);
  await waitFor(()=>expect(screen.getAllByRole('button',{name:/预览图片候选/})).toHaveLength(1));
- const results=within(screen.getByRole('region',{name:'上传结果'}));
+ const results=within(openUploadHistory());
  expect(results.getByText('empty.png').closest('li')?.textContent).toContain('失败');
  expect(results.getByText('oversize.png').closest('li')?.textContent).toContain('100 MB');
  expect(fixture.imports).toEqual(['valid.png']);
@@ -172,9 +173,14 @@ it('参考图保留每张 20 MB 与每次最多 16 张的接收限制',async()=>
  fireEvent.click(screen.getByRole('button',{name:'AI 生成'}));
  const large=image('large-reference.png');Object.defineProperty(large,'size',{value:20*1024*1024+1});
  fireEvent.change(screen.getByLabelText('导入生成参考图'),{target:{files:[large]}});
- await screen.findByText('每张参考图不能超过 20 MB。');
+ await waitFor(()=>expect(openUploadHistory().textContent).toContain('每张参考图不能超过 20 MB。'));
  expect(fixture.imports).toEqual([]);
  fireEvent.change(screen.getByLabelText('导入生成参考图'),{target:{files:Array.from({length:17},(_,i)=>image(`ref-${i}.png`))}});
- await screen.findByRole('alert');expect(screen.getByRole('alert').textContent).toContain('最多可添加 16 张参考图');
+ await screen.findByRole('status',{name:'上传提示'});expect(screen.getByRole('status',{name:'上传提示'}).textContent).toContain('最多可添加 16 张参考图');
  expect(fixture.imports).toEqual([]);
+});
+
+it('不支持的本地文件仅显示短提示，不发起素材导入',async()=>{
+ const fixture=setup();render(<fixture.View/>);choose([new File(['local validation only'],'invalid.txt',{type:'text/plain'})]);
+ const notice=await screen.findByRole('status',{name:'上传提示'});expect(notice.textContent).toContain('请选择有效的图片文件');expect(fixture.startedImports).toEqual([]);expect(screen.getByLabelText('上传记录').closest('details')?.open).toBe(false);
 });

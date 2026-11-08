@@ -8,6 +8,7 @@
 .workspace-script-compact .is-confirmed,.workspace-export-compact .is-confirmed{color:var(--lc-success,#167556)}
 .workspace-export-compact .is-failed{color:var(--lc-danger,#bd4147)}
 .workspace-script-layout{display:grid;grid-template-columns:minmax(0,1fr) 280px;flex:1;min-height:0}
+.workspace-script-restored{margin:0 0 10px;color:var(--lc-muted);font-size:12px;line-height:1.5}
 .workspace-script-main{display:flex;flex-direction:column;gap:0;min-width:0;min-height:0;padding:16px;overflow:auto}
 .workspace-script-compact .workspace-script-text{display:flex!important;flex:1;flex-direction:column;align-items:stretch!important;gap:8px!important;min-height:260px;margin:0!important;font-size:12px!important;color:var(--lc-muted,#596b83)}
 .workspace-script-compact .workspace-script-text>textarea{flex:1;width:100%;min-height:300px;height:100%;padding:16px;border:1px solid var(--lc-line-strong,#bdcadd);border-radius:5px;background:var(--lc-surface,#fff);color:var(--lc-ink,#17263e);font-size:14px;line-height:1.85;resize:none;box-sizing:border-box}
@@ -106,7 +107,13 @@ html[data-interface="impeccable"] .impeccable-app.product-ui .workspace-script-p
 .workspace-delivery-files>a:hover{background:var(--lc-accent-soft,#eaf0ff);text-decoration:underline;text-underline-offset:3px}
 .workspace-script-compact textarea:focus-visible,.workspace-script-compact input:focus-visible,.workspace-export-compact textarea:focus-visible,.workspace-export-compact input:focus-visible,.workspace-script-basis summary:focus-visible,.workspace-final-details summary:focus-visible{outline:2px solid var(--lc-accent,#365fe0);outline-offset:2px}
 .workspace-script-compact input:disabled,.workspace-export-compact input:disabled,.workspace-export-compact textarea:disabled{background:var(--lc-bg,#eef2f8);color:var(--lc-muted,#596b83)}
-@media(min-width:1000px){.workspace-script-compact{height:100%}.workspace-export-compact{height:100%}}
+[data-compact-workflow] :is(.workspace-script-compact,.workspace-export-compact) {
+ flex:1 0 auto;
+}
+[data-compact-workflow] .workspace-script-compact .workspace-script-text>textarea {
+ height:auto;
+ field-sizing:content;
+}
 @media(max-width:1100px){.workspace-script-layout{grid-template-columns:minmax(0,1fr) 250px}.workspace-export-layout{grid-template-columns:minmax(250px,.9fr) minmax(0,1.2fr)}.workspace-export-review{padding:14px}.workspace-final-preview{padding:14px}}
 @media(max-width:850px){.workspace-script-layout,.workspace-export-layout{grid-template-columns:1fr}.workspace-script-compact,.workspace-export-compact{overflow:visible}.workspace-script-basis{border-left:0;border-top:1px solid var(--lc-line,#d8e1ee);overflow:visible}.workspace-script-main{min-height:420px}.workspace-script-compact .workspace-script-text>textarea{min-height:300px;resize:vertical}.workspace-final-preview{border-right:0;border-bottom:1px solid var(--lc-line,#d8e1ee);overflow:visible}.workspace-final-preview>video{height:min(55vh,500px);max-height:none;flex:none}.workspace-export-review{overflow:visible}.workspace-final-details{gap:8px}}
 @media(max-width:640px){.workspace-delivery-compact .workspace-delivery-fields{grid-template-columns:1fr}.workspace-delivery-compact .workspace-delivery-cover-picker{width:100%;height:180px;min-height:180px;aspect-ratio:auto}.workspace-delivery-cover-placeholder{min-height:180px}}
