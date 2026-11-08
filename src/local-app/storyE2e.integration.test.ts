@@ -132,7 +132,7 @@ it.skipIf(!enabled)('story 2 browser: a lost committed generation response and r
   browser.dropNextResponse('confirmWorkspaceCall');await browser.doubleClick('确认并提交本次调用');
   await expect.poll(()=>browser!.traffic.filter(t=>t.command==='confirmWorkspaceCall').length,{timeout:15000}).toBe(1);
   await browser.cli('wait','--text','服务端结果回执未能送达');
-  await browser.click('取消');await showVideoPreparation();await browser.cli('wait','--text','视频等待生成');
+  await browser.click('取消');await showVideoPreparation();await browser.cli('wait','--text','排队中');
   await f.read();expect(f.workspace.visualTasks).toHaveLength(1);const job=f.workspace.visualTasks![0];
   const result=await f.execute(job.taskId);expect(result.status,JSON.stringify(result)).toBe('completed');
   const beforeOpen=await f.read();
@@ -158,13 +158,11 @@ it.skipIf(!enabled)('story 2 browser: a lost committed generation response and r
   await clickNative('字幕对齐');
   await browser.wait("!!document.querySelector('.embedded-studio-caption-panel:not([hidden]) [aria-label=工作台字幕]')");
   await browser.click('关闭字幕对齐');
-  await browser.click('保存工作版本');
-  await browser.cli('wait','--text','工作版本已保存');
+  await browser.click('保存并返回分镜台');
+  await browser.wait("document.querySelector('button[aria-label=\"选择镜头 02\"]')?.getAttribute('aria-pressed')==='true'");
   const afterSave=await f.read();
   expect(workspaceCandidateTarget(await targetItem(afterSave))).toEqual(beforeTarget);
   expect(afterSave.visualCandidates?.[0].status).toBe('available');
-  await browser.click('保存并返回分镜台');
-  await browser.wait("document.querySelector('button[aria-label=\"选择镜头 02\"]')?.getAttribute('aria-pressed')==='true'");
   await browser.cli('find','role','tab','click','--name','视频','--exact');
   await browser.click('预览视频候选 01');
   await browser.click('采用到当前镜头');
