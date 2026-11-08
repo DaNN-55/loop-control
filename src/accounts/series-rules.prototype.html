@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>系列创作规则 · Demo</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#ebf1f8;color:#182b45;font:14px/1.6 system-ui,sans-serif}header{background:#f8faff;border-bottom:1px solid #d3deec;padding:14px 5vw;color:#506580}main{max-width:1140px;margin:28px auto 100px;padding:0 18px}h1{font-size:25px;margin:0}h2{font-size:17px;margin:0 0 4px}p{margin:0 0 18px;color:#516583}.shell{display:grid;grid-template-columns:168px minmax(0,1fr);border:1px solid #d3deec;border-radius:12px;overflow:hidden;background:white}.sidebar{padding:18px 12px;background:#f6f8fc;color:#506580}.sidebar span,.sidebar strong{display:block;padding:8px 10px}.sidebar strong{background:#e7eeff;color:#2347a1;border-radius:6px}.body{padding:24px}.heading{border-bottom:1px solid #e0e7f1;padding-bottom:12px;margin-bottom:18px}.fields{display:grid;gap:13px}label{display:grid;grid-template-columns:120px minmax(0,1fr);gap:8px;align-items:start}small{display:block;color:#536a88}input,textarea{width:100%;font:inherit;color:inherit;border:1px solid #c4d2e5;border-radius:6px;padding:7px 10px;background:#fbfcff}textarea{resize:vertical;min-height:48px}input:focus,textarea:focus,button:focus-visible,summary:focus-visible{outline:2px solid #365dd5;outline-offset:2px}details,.preview{border:1px solid #dce5f0;border-radius:8px;margin-top:18px;padding:12px 14px;background:#f8faff}summary{cursor:pointer;font-weight:600}dl{margin:8px 0 0}.rule{display:grid;grid-template-columns:110px minmax(0,1fr);gap:10px;padding:8px 0;border-top:1px solid #e0e7f1}dt{color:#526783}dd{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}.split{display:grid;grid-template-columns:1.1fr 1fr;gap:18px}.split label{display:block}.split .preview{margin:0;align-self:start}.tabs{display:flex;gap:8px;margin-bottom:16px}button{font:inherit;cursor:pointer;border-radius:6px;border:1px solid #c4d2e5;background:#fff;color:inherit;padding:5px 10px}button[aria-pressed=true]{background:#e7eeff;color:#244baf}.switch{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:10px;align-items:center;background:#182b45;color:white;border-radius:30px;padding:7px 9px;white-space:nowrap;box-shadow:0 4px 20px #182b4540}.switch button{border:0;background:#304866;color:#fff}.demo{color:#2347a1;font-weight:600;margin-left:10px}@media(max-width:740px){.shell,.split{grid-template-columns:1fr}.sidebar{display:none}label{grid-template-columns:1fr}.body{padding:16px}}
+</style>
+<header>个人工作区　›　账号　›　系列规则 <span class="demo">交互 Demo</span></header>
+<main><h1>双镜头流程验收</h1><p>修改或清空任意字段，观察生效内容如何变化。示例数据会随页面刷新重置。</p><div class="shell"><aside class="sidebar"><span>通用规则</span><strong>双镜头流程验收</strong></aside><section class="body"><div class="heading"><h2>创作规则</h2><div>留空时沿用账号通用规则。账号限制始终生效。</div></div><div id="panel"></div></section></div></main>
+<nav class="switch" aria-label="切换 Demo 布局"><button id="prev" aria-label="上一版">←</button><span id="variant"></span><button id="next" aria-label="下一版">→</button></nav>
+<script>
+const rules = [
+ ['系列定位','双镜头验证素材与设置返回路径','城市生活短片'],
+ ['内容格式','9:16 竖屏，两个镜头，中文字幕','9:16 竖屏，中文旁白'],
+ ['角色设定','无人出镜，使用几何测试画面',''],
+ ['地点设定','','本地测试场景'],
+ ['视觉风格','首镜动态图案，次镜彩条','清晰、自然的画面'],
+ ['叙事结构','第一段检查规则，第二段检查预算返回',''],
+ ['系列追加限制','不使用付费生成','']
+];
+const labels = ['A · 折叠预览','B · 并排预览','C · 编辑与预览分栏切换'];
+const params = new URLSearchParams(location.search);
+let variant = Math.max(0, ['A','B','C'].indexOf(params.get('variant')));
+let tab = 'edit';
+const panel = document.querySelector('#panel');
+function renderPreview() {
+ const list = document.querySelector('#effective');
+ if (!list) return;
+ list.replaceChildren();
+ const add = (name, value, inherited) => {
+  const row = document.createElement('div');
+  row.className = 'rule';
+  const term = document.createElement('dt');
+  const description = document.createElement('dd');
+  term.textContent = name;
+  description.textContent = inherited ? '沿用账号 · ' + value : value;
+  row.append(term, description);
+  list.append(row);
+ };
+ for (const [name, value, fallback] of rules.slice(0,-1)) {
+  if (value.trim() || fallback) add(name, value.trim() || fallback, !value.trim());
+ }
+ add('账号限制','不上传外部素材',false);
+ const extra = rules.at(-1)[1].trim();
+ if (extra) add('系列追加限制',extra,false);
+}
+function render() {
+ const fields = '<div class="fields" id="fields"></div>';
+ const summary = '<dl id="effective"></dl>';
+ const preview = '<section class="preview" aria-label="规则预览"><h2>规则预览</h2>' + summary + '</section>';
+ document.querySelector('#variant').textContent = labels[variant];
+ panel.innerHTML = [
+  fields + '<details><summary>规则预览</summary>' + summary + '</details>',
+  '<div class="split">' + fields + preview + '</div>',
+  '<div class="tabs"><button id="edit" type="button" aria-pressed="' + (tab === 'edit') + '">编辑规则</button><button id="preview" type="button" aria-pressed="' + (tab === 'preview') + '">规则预览</button></div>' + (tab === 'edit' ? fields : preview)
+ ][variant];
+ for (const [index, row] of rules.entries()) {
+  const root = document.querySelector('#fields');
+  if (!root) break;
+  const [name, value, fallback] = row;
+  const label = document.createElement('label');
+  const title = document.createElement('span');
+  title.textContent = name;
+  const inherited = document.createElement('small');
+  const input = document.createElement(index === 1 ? 'input' : 'textarea');
+  input.setAttribute('aria-label', name);
+  input.value = value;
+  input.placeholder = fallback || '填写规则';
+  const update = () => {
+   inherited.textContent = !input.value.trim() && fallback ? '沿用账号' : '';
+   inherited.hidden = !inherited.textContent;
+  };
+  input.addEventListener('input', () => { row[1] = input.value; update(); renderPreview(); });
+  update();
+  title.append(inherited);
+  label.append(title,input);
+  root.append(label);
+ }
+ for (const name of ['edit','preview']) document.getElementById(name)?.addEventListener('click', () => { tab = name; render(); document.getElementById(name).focus(); });
+ renderPreview();
+}
+function change(direction) {
+ variant = (variant + direction + labels.length) % labels.length;
+ params.set('variant',['A','B','C'][variant]);
+ history.replaceState(null,'','?' + params);
+ render();
+}
+document.querySelector('#prev').onclick = () => change(-1);
+document.querySelector('#next').onclick = () => change(1);
+document.addEventListener('keydown', event => {
+ if (event.target.matches('input, textarea, [contenteditable]')) return;
+ if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') change(event.key === 'ArrowLeft' ? -1 : 1);
+});
+render();
+</script>
+</html>
