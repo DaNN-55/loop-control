@@ -1,0 +1,53 @@
+{
+  "overflow": false,
+  "rate": [
+    {
+      "icon": {
+        "bottom": 515.875,
+        "height": 16,
+        "left": 1229,
+        "right": 1245,
+        "top": 499.875,
+        "width": 16,
+        "x": 1229,
+        "y": 499.875
+      },
+      "input": {
+        "bottom": 523.875,
+        "height": 32,
+        "left": 1217,
+        "right": 1301,
+        "top": 491.875,
+        "width": 84,
+        "x": 1217,
+        "y": 491.875
+      },
+      "rect": {
+        "bottom": 523.875,
+        "height": 32,
+        "left": 1217,
+        "right": 1301,
+        "top": 491.875,
+        "width": 84,
+        "x": 1217,
+        "y": 491.875
+      }
+    }
+  ],
+  "switches": [
+    {
+      "label": "启用口播",
+      "rect": {
+        "bottom": 339,
+        "height": 32,
+        "left": 1394,
+        "right": 1395,
+        "top": 307,
+        "width": 1,
+        "x": 1394,
+        "y": 307
+      }
+    }
+  ],
+  "width": 1490
+}

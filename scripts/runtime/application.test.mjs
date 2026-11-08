@@ -42,6 +42,16 @@ it('assembles manual connection tests without sharing production request budgets
  const app=await createNativeApplication({...d,runtimeRoot:'/isolated/.loop-control/local'});try{expect(ports.providerProbe).toHaveBeenLastCalledWith(network,undefined,undefined,{manualVerification:true});expect(ports.connections.mock.calls.at(-1)[2]).toMatchObject({options:{manualVerification:true},networkAvailable:false});}finally{await app.close();}
 });
 
+it('uses configured connections for image, video and speech in the daily app and Worker',async()=>{
+ const network={directory:'/expired',policySha256:'a'.repeat(64)},keychain={approved:true,runtimeRoot:'/isolated/.loop-control/local',helperSha256:'pinned'};
+ const d={purpose:'local-daily',projectRoot:'/isolated',home:'/isolated/home',stateDirectory:'/isolated/state',mediaRoot:'/isolated/media',database:{database:'isolated'},port:55189,connections:{keychain,network,verification:'manual'},workerDatabase:{},worker:{media:{mode:'live',network,keychain},narration:{mode:'live',network,keychain}}};
+ const app=await createNativeApplication({...d,runtimeRoot:'/isolated/.loop-control/local'});try{
+  expect(ports.connections.mock.calls.at(-1)[2]).toMatchObject({options:{manualVerification:true,workspaceGenerationFromConnections:true,workspaceSpeechFromConnections:true}});
+  expect(ports.worker.mock.calls.at(-1)[0].media).toMatchObject({workspaceGenerationFromConnections:true});
+  expect(ports.worker.mock.calls.at(-1)[0].narration).toMatchObject({workspaceSpeechFromConnections:true});
+ }finally{await app.close();}
+});
+
 it('wires the runtime status reader into the authenticated native route',async()=>{
  ports.worker.mockResolvedValueOnce({stop:vi.fn(),runtimeRelease:{id:'worker-selected',root:'/worker-release'}});
  const d={runtimeRelease:{id:'backend-selected',root:new URL('../../',import.meta.url).pathname.replace(/\/$/,'')},runtimeRoot:'/isolated/.loop-control/local',projectRoot:'/isolated',home:'/isolated/home',stateDirectory:'/isolated/state',mediaRoot:'/isolated/media',database:{database:'isolated'},port:55189,worker:{mountPath:'/isolated/volume',minimumFreeBytes:1024},workerDatabase:{}};

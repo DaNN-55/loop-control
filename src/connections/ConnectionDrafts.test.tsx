@@ -10,7 +10,7 @@ it('protects a changed connection on Escape and keeps only non-secret input when
  await user.click(screen.getByRole('button',{name:'图片连接'}));await user.click(screen.getByRole('button',{name:'编辑连接'}));
  fireEvent.change(screen.getByLabelText(/^连接名称/),{target:{value:'未保存名称'}});fireEvent.change(screen.getByLabelText(/^新的 API Key/),{target:{value:'synthetic-secret-draft'}});
  await user.keyboard('{Escape}');const guard=screen.getByRole('dialog',{name:'关闭前处理修改'});expect(guard).toBeTruthy();
- await user.click(within(guard).getByRole('button',{name:'继续编辑'}));expect((screen.getByLabelText(/^新的 API Key/) as HTMLInputElement).value).toBe('synthetic-secret-draft');
+ await user.click(within(guard).getByRole('button',{name:'关闭确认，继续编辑'}));expect((screen.getByLabelText(/^新的 API Key/) as HTMLInputElement).value).toBe('synthetic-secret-draft');
  await user.click(screen.getByRole('button',{name:'关闭连接窗口'}));await user.click(screen.getByRole('button',{name:'保留修改并关闭'}));
  await user.click(screen.getByRole('button',{name:'图片连接'}));await user.click(screen.getByRole('button',{name:'编辑连接'}));
  expect((screen.getByLabelText(/^连接名称/) as HTMLInputElement).value).toBe('未保存名称');expect((screen.getByLabelText(/^新的 API Key/) as HTMLInputElement).value).toBe('');

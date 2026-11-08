@@ -1,3 +1,4 @@
+import {buildCodexPrompt} from './codexPrompt';
 import { describe, expect, it, vi } from "vitest";
 import { runCodexWorker, shotPreparationContractFromSnapshot } from "./codexRunner";
 import {ProviderOutcomeUnknownError} from "./providerOutcome";
@@ -335,7 +336,7 @@ describe("本地 Codex Worker runner", () => {
     }));
 
     await runCodexWorker({
-      claimNextTask: async () => ({ ...claimedTask, inputSnapshot: { ...claimedTask.inputSnapshot, prompt_context: { version: "prompt-context/v1", blueprint_version_id: "blueprint-1", series_version_id: "series-version-3", account_hard_constraints: { restrictions: ["不得承诺医疗效果"] }, account_defaults: { positioning: "民俗短视频" }, series_baseline: { version_id: "series-version-3", version: 3, rules: { visual_style: "写实雨夜" } }, episode_input: { commission: { creative_direction: "克制", core_content: "人物选择" } }, review_feedback: { reason: "补充人物动机" }, hash: "context-hash-1" } } }),
+      claimNextTask: async () => ({ ...claimedTask, inputSnapshot: { ...claimedTask.inputSnapshot, prompt_context: { version: "prompt-context/v1", blueprint_version_id: "blueprint-1", series_version_id: "series-version-3", account_hard_constraints: { restrictions: ["不得承诺医疗效果"] }, account_defaults: { positioning: "民俗短视频", visual_style:"账号旧风格", restrictions:["不得承诺医疗效果"] }, series_baseline: { version_id: "series-version-3", version: 3, rules: { visual_style: "写实雨夜", restrictions:"不得展示身份信息" } }, episode_input: { commission: { creative_direction: "克制", core_content: "人物选择" } }, review_feedback: { reason: "补充人物动机" }, hash: "context-hash-1" } } }),
       reportResult: vi.fn().mockResolvedValue(undefined),
       execute,
       verifyAssetRoot: async () => undefined,
@@ -344,6 +345,12 @@ describe("本地 Codex Worker runner", () => {
     });
 
     expect(execute).toHaveBeenCalledWith(expect.objectContaining({ promptContext: expect.objectContaining({ version: "prompt-context/v1", blueprintVersionId: "blueprint-1", seriesVersionId: "series-version-3", hash: "context-hash-1" }) }));
+    const prompt=buildCodexPrompt({...execute.mock.calls[0][0],capability:'storyboard_planning'});
+    const {promptContext}=JSON.parse(prompt.split("Task package:\n\n")[1]);
+    expect(promptContext.accountDefaults).toEqual({positioning:"民俗短视频"});
+    expect(promptContext.accountHardConstraints.restrictions).toEqual(["不得承诺医疗效果"]);
+    expect(promptContext.seriesBaseline.rules).toEqual({visual_style:"写实雨夜",restrictions:"不得展示身份信息"});
+    expect(execute.mock.calls[0][0].promptContext.accountDefaults.visual_style).toBe("账号旧风格");
   });
 
   it("把逐镜头批注和已批准视觉依据冻结给分镜 Worker", async () => {

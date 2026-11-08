@@ -28,6 +28,6 @@ export async function resolveProductionSelection(c:PoolClient,value:unknown,capa
  }else if(s.connectionVersionId!==undefined)throw new ConfigurationError(400,'本地服务不使用外部连接。');
  const selection:ProductionSelection={capability,provider:choice.provider,adapter:choice.adapter,...(s.model?{model:s.model}:{}),...(s.preset?{preset:s.preset}:{}),...(connection?{connectionVersionId:connection.id}:{})};
  const profile=s.provider==='bailian'&&s.model?wanVideoModel(s.model):undefined;
- const selectedChoice=profile?{...choice,constraints:{...choice.constraints,durationSeconds:{min:profile.durations[0],max:profile.durations.at(-1)!,integer:true},resolutions:profile.resolutions,firstFrame:{...choice.constraints.firstFrame!,maxBytes:profile.maxBytes}}}:choice;
+ const selectedChoice=profile?{...choice,constraints:{...choice.constraints,durationSeconds:{min:profile.durations[0],max:profile.durations.at(-1)!,integer:true},resolutions:profile.resolutions,firstFrame:{...choice.constraints.firstFrame!,maxBytes:profile.maxBytes}}}:{...choice,constraints:{...choice.constraints,...choice.modelConstraints?.[s.model??'']}};
  return {choice:selectedChoice,selection,connection,execution:{execution_path:choice.executionPath,...(connection?{credential_ref:connection.id}:{}),executor:{provider:choice.provider,adapter:choice.adapter,...(s.model?{model:s.model}:{}),...(s.preset?{preset:s.preset}:{}),prompt_version:'production-request-v1'}}};
 }

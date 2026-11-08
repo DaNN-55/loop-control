@@ -2,7 +2,7 @@
 
 import { type FC, type KeyboardEvent, type SelectHTMLAttributes, useEffect, useId, useRef, useState } from "react";
 import { Header, ListBox, ListBoxItem, ListBoxSection, Popover } from "react-aria-components";
-import { Check, SlidersHorizontal } from "lucide-react";
+import { ArrowUpRight, Check, Settings, SlidersHorizontal } from "lucide-react";
 import "./select-menu.css";
 import { ChevronDown } from "@untitledui/icons";
 import { HintText } from "../input/hint-text";
@@ -10,8 +10,8 @@ import { Label } from "../input/label";
 import { cx } from "../../../utils/cx";
 
 interface NativeSelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, "size"> {
-    /** Optional context icon inside the control. */
-    icon?: FC<{ className?: string; "aria-hidden"?: boolean | "true" | "false" }>;
+    /** Context icon inside the control and options. Pass null to omit it. */
+    icon?: FC<{ className?: string; "aria-hidden"?: boolean | "true" | "false" }> | null;
     /** Text rendered in a label above the select and linked to it by a generated id. */
     label?: string;
     /** Helper text rendered below the select and referenced by its `aria-describedby`. */
@@ -20,6 +20,8 @@ interface NativeSelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>
     selectClassName?: string;
     /** Controls the select's padding, text size, and the size of the chevron. Ignored when the select sits inside an `InputGroup`, which imposes its own sizing. */
     size?: "sm" | "md" | "lg";
+    /** Optional action shown below the listbox. */
+    popupAction?: { label: string; onPress: () => void; kind?: "navigation" };
     /** The options to render. Each entry becomes an `option` element showing `label` and submitting `value`. */
     options?: { label: string; value: string; disabled?: boolean }[];
 }
@@ -43,12 +45,13 @@ type MenuOption = { id: string; value: string; label: string; disabled: boolean;
 type MenuGroup = { id: string; label?: string; options: MenuOption[] };
 type MenuSnapshot = { groups: MenuGroup[]; label: string };
 
-export const NativeSelect = ({ icon: Icon = SlidersHorizontal, label, hint, options, children, className, selectClassName, size = "md", id: providedId, ...props }: NativeSelectProps) => {
+export const NativeSelect = ({ icon: Icon = SlidersHorizontal, label, hint, options, popupAction, children, className, selectClassName, size = "md", id: providedId, ...props }: NativeSelectProps) => {
     const id = useId();
     const selectId = providedId ?? `select-native-${id}`;
     const labelId = `${selectId}-label`;
     const hintId = `select-native-hint-${id}`;
     const listId = `${selectId}-options`;
+    const popupActionRef = useRef<HTMLButtonElement>(null);
     const selectRef = useRef<HTMLSelectElement>(null);
     const focusAfterClose = useRef<HTMLElement | null>(null);
     const [menu, setMenu] = useState<MenuSnapshot | null>(null);
@@ -140,6 +143,19 @@ export const NativeSelect = ({ icon: Icon = SlidersHorizontal, label, hint, opti
         if (!select) return;
         event.preventDefault();
         event.stopPropagation();
+        const action = popupActionRef.current;
+        if (action && !event.shiftKey && event.target !== action) {
+            action.focus();
+            return;
+        }
+        if (action && event.shiftKey && event.target === action) {
+            const option = event.currentTarget.querySelector<HTMLElement>('[role="option"][aria-selected="true"]:not([aria-disabled="true"])')
+                ?? event.currentTarget.querySelector<HTMLElement>('[role="option"]:not([aria-disabled="true"])');
+            if (option) {
+                option.focus();
+                return;
+            }
+        }
         const scope = select.closest('[role="dialog"]') ?? document;
         const candidates = Array.from(scope.querySelectorAll<HTMLElement>('button:not([disabled]),summary,a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')).filter(element => {
             if (element.closest('[hidden],[inert],[data-inert="true"],[data-select-popup]')) return false;
@@ -178,7 +194,7 @@ export const NativeSelect = ({ icon: Icon = SlidersHorizontal, label, hint, opti
     }, [props.form]);
 
     const menuOptions = menu?.groups.flatMap(group => group.options) ?? [];
-    const renderOption = (option: MenuOption) => <ListBoxItem id={option.id} key={option.id} textValue={option.label || "空选项"} onAction={() => { if (!props.multiple) closeMenu(); }} className="dan-select-option"><Icon aria-hidden="true" className="dan-select-option-icon"/><span>{option.label}</span><Check aria-hidden="true" className="dan-select-option-check"/></ListBoxItem>;
+    const renderOption = (option: MenuOption) => <ListBoxItem id={option.id} key={option.id} textValue={option.label || "空选项"} onAction={() => { if (!props.multiple) closeMenu(); }} className="dan-select-option">{Icon && <Icon aria-hidden="true" className="dan-select-option-icon"/>}<span>{option.label}</span><Check aria-hidden="true" className="dan-select-option-check"/></ListBoxItem>;
 
     return (
         <div className={cx("w-full in-data-input-wrapper:w-max dan-select-field", className)} data-select-size={size}>
@@ -189,7 +205,7 @@ export const NativeSelect = ({ icon: Icon = SlidersHorizontal, label, hint, opti
             )}
 
             <div className="relative grid w-full items-center dan-select-control">
-                <Icon aria-hidden="true" className="dan-select-leading"/>
+                {Icon && <Icon aria-hidden="true" className="dan-select-leading"/>}
                 <select
                     {...props}
                     ref={selectRef}
@@ -271,7 +287,19 @@ export const NativeSelect = ({ icon: Icon = SlidersHorizontal, label, hint, opti
             }}>
                 <ListBox id={listId} aria-label={menu?.label || "选项"} selectionMode={props.multiple ? "multiple" : "single"} selectedKeys={new Set(menuOptions.filter(option => option.selected).map(option => option.id))} disabledKeys={menuOptions.filter(option => option.disabled).map(option => option.id)} onSelectionChange={choose} autoFocus="first" className="dan-select-listbox">
                     {menu?.groups.map(group => group.label ? <ListBoxSection id={group.id} key={group.id}><Header className="dan-select-group-label">{group.label}</Header>{group.options.map(renderOption)}</ListBoxSection> : group.options.map(renderOption))}
-                </ListBox></div>
+                </ListBox>
+                {popupAction && <div className="dan-select-action-footer">
+                    <button ref={popupActionRef} className="dan-select-popup-action" type="button" aria-haspopup={popupAction.kind === "navigation" ? undefined : "dialog"} onClick={() => {
+                        closeMenu(false);
+                        popupAction.onPress();
+                    }}>
+                        {popupAction.kind === "navigation"
+                            ? <ArrowUpRight aria-hidden="true" className="dan-select-option-icon"/>
+                            : <Settings aria-hidden="true" className="dan-select-option-icon"/>}
+                        {popupAction.label}
+                    </button>
+                </div>}
+            </div>
             </Popover>
 
             {hint && (

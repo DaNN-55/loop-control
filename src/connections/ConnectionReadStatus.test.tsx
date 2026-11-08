@@ -10,7 +10,9 @@ it('shows service display name and nearby historical verification time without p
  const c=connection('长连接名称'.repeat(12));render(<ConnectionWorkspace {...actions} connections={[c]}/>);
  const row=screen.getByRole('button',{name:c.name}).closest('tr')!;
  expect(within(row).getByRole('cell',{name:'MiniMax'})).toBeTruthy();
- const time=row.querySelector('time');expect(time?.dateTime).toBe(c.last_verified_at);expect(time?.parentElement?.textContent).toContain('最近验证');
+ expect(row.querySelector('time')).toBeNull();
+ fireEvent.click(within(row).getByRole('button',{name:c.name+' 账务与凭据详情'}));
+ const time=screen.getByRole('region',{name:'凭据详情'}).querySelector('time');expect(time?.dateTime).toBe(c.last_verified_at);expect(time?.parentElement?.textContent).toContain('最近验证');
  expect(actions.onTestConnection).not.toHaveBeenCalled();
  fireEvent.click(screen.getByRole('button',{name:c.name}));
  const detail=screen.getByRole('dialog');expect(within(detail).getByText('MiniMax')).toBeTruthy();expect(within(detail).getByText('minimax')).toBeTruthy();expect(within(detail).getByText('minimax_video')).toBeTruthy();
@@ -18,23 +20,24 @@ it('shows service display name and nearby historical verification time without p
 it('keeps account amounts distinct from shared request allowances and resource packs with accessible cache details',()=>{
  const a=connection('账号 A'),b=connection('账号 B'),p=connection('请求 Key','pexels','pexels_video'),k=connection('资源包 Key','kling','kling_video');
  render(<ConnectionWorkspace {...actions} connections={[a,b,p,k]} usageByVersion={{[a.current_version_id!]:summary,[b.current_version_id!]:summary,[p.current_version_id!]:{...summary,remaining:{label:'请求余量',text:'97 次',status:'ready',detail:'供应商返回的请求限额，不是余额。'}},[k.current_version_id!]:{...summary,remaining:{label:'包余量',text:'2 个有效包',status:'ready',detail:'账号级资源包，约 12 小时延迟。'}}}}/>);
- const aCell=screen.getByRole('cell',{name:'账号 A 额度与用量'});
+ fireEvent.click(screen.getByRole('button',{name:'账号 A 账务与凭据详情'}));
+ const aCell=screen.getByRole('region',{name:'账务详情'});
  expect(within(aCell).getByText('供应商账号可用额')).toBeTruthy();
- const details=within(aCell).getByText('账务详情').closest('summary')!;expect(details.tagName).toBe('SUMMARY');
- fireEvent.click(details);
  expect(aCell.textContent).toContain('同一供应商账号的多个 Key 可能共享，不应逐连接相加');expect(aCell.textContent).toContain('缓存');expect(aCell.textContent).toContain('非实时');expect(aCell.querySelector('time')?.dateTime).toBe(summary.updatedAt);
- expect(screen.getByRole('cell',{name:'请求 Key 额度与用量'}).textContent).toContain('Key 请求余量');
- expect(screen.getByRole('cell',{name:'资源包 Key 额度与用量'}).textContent).toContain('账号资源包');
+ fireEvent.click(screen.getByRole('button',{name:'请求 Key 账务与凭据详情'}));
+ expect(screen.getByRole('group',{name:'请求 Key 额度与用量'}).textContent).toContain('Key 请求余量');
+ fireEvent.click(screen.getByRole('button',{name:'资源包 Key 账务与凭据详情'}));
+ expect(screen.getByRole('group',{name:'资源包 Key 额度与用量'}).textContent).toContain('账号资源包');
  expect(screen.queryByText('¥24.68')).toBeNull();
 });
 it('keeps failed unknown values and their unavailable timestamp separate from zero',()=>{
  const c=connection('未知账务');render(<ConnectionWorkspace {...actions} connections={[c]} usageByVersion={{[c.current_version_id!]:{remaining:{label:'可用额',text:'读取失败',status:'unavailable',detail:'权限不足，请检查账务凭据。'},recent:summary.recent,updatedAt:null}}}/>);
- const cell=screen.getByRole('cell',{name:'未知账务 额度与用量'});fireEvent.click(within(cell).getByText('账务详情'));
+ fireEvent.click(screen.getByRole('button',{name:'未知账务 账务与凭据详情'}));const cell=screen.getByRole('region',{name:'账务详情'});
  expect(cell.textContent).toContain('尚无成功读取时间');expect(cell.textContent).toContain('权限不足');expect(cell.textContent).not.toContain('¥0');expect(cell.querySelector('time')).toBeNull();
 });
 it('applies only submitted normalized search and clears the applied URL query with X',()=>{
  const a=connection('Alpha'),b=connection('Beta');const change=vi.fn();
- const navigation={value:{q:'',capability:'all',status:'',connection:''},change};
+ const navigation={value:{open:true,q:'',capability:'all',status:'',connection:''},change};
  render(<ConnectionWorkspace {...actions} connections={[a,b]} navigation={navigation}/>);
  const input=screen.getByRole('searchbox',{name:'查找已存连接'});
  fireEvent.change(input,{target:{value:'  Alpha  '}});expect(screen.getByRole('button',{name:'Beta'})).toBeTruthy();expect(change).not.toHaveBeenCalled();

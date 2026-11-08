@@ -1,3 +1,5 @@
+import {VideoPreview} from '../ui/media/VideoPreview';
+import {ImagePreview} from '../ui/media/ImagePreview';
 import {AudioPreview} from '../ui/media/AudioPreview';
 import {ProductionScriptPlanGate,ProductionNodeNavigation,ProductionNodeMedia,ProductionNodeSurface,ProductionNodePreview,ProductionNodeEmpty,ProductionNodeGallery,ProductionMaterialPreview,ProductionShotRail,ProductionShotPagination,nodeForStage,productionNodes,nodeMediaItem,type ProductionNodeId,type NodeMediaItem} from './ProductionNodeLayout';
 import './production-review-fixes.css';
@@ -1355,7 +1357,7 @@ function ShotMarkerPreview({ compact=false,onEdit,activeSegment, alignActionLabe
   const seekPreview = (seconds: number) => { if (previewRef.current) previewRef.current.currentTime = seconds; setPlayheadSeconds(seconds); };
   const changeRange = (range: ClipSegmentDraft) => { onChange(range); seekPreview(range.startSeconds); };
   useEffect(() => { seekPreview(activeSegment.startSeconds); }, [activeSegment.startSeconds, material.id]);
-  const video=url ? <video aria-label={`${material.source_path} 预览`} controls onLoadedMetadata={(event) => { const duration = event.currentTarget.duration; if (Number.isFinite(duration) && duration > 0) onDuration(duration); seekPreview(activeSegment.startSeconds); }} onPlay={(event) => { event.currentTarget.currentTime = activeSegment.startSeconds; setPlayheadSeconds(activeSegment.startSeconds); }} onTimeUpdate={(event) => { const current = event.currentTarget.currentTime; if (current < activeSegment.startSeconds) { event.currentTarget.currentTime = activeSegment.startSeconds; setPlayheadSeconds(activeSegment.startSeconds); } else if (current >= activeSegment.endSeconds) { event.currentTarget.pause(); event.currentTarget.currentTime = activeSegment.endSeconds; setPlayheadSeconds(activeSegment.endSeconds); } else setPlayheadSeconds(Math.max(activeSegment.startSeconds, current)); }} preload="metadata" ref={previewRef} src={url} /> : error ? <p className="form-error">{error}</p> : <LoadingIndicator compact label="正在加载素材预览…" />;
+  const video=url ? <VideoPreview title={material.source_path} aria-label={`${material.source_path} 预览`} src={url} mediaRef={previewRef} onDuration={onDuration} onTimeChange={setPlayheadSeconds} segment={{start:activeSegment.startSeconds,end:activeSegment.endSeconds}}/> : error ? <p className="form-error">{error}</p> : <LoadingIndicator compact label="正在加载素材预览…" />;
   const markerToolbar=<div className="clip-marker-toolbar"><Checkbox isSelected={durationLocked} isDisabled={disabled} onChange={(selected) => setDurationLocked(selected)}  label={<><span>锁定片段长度</span></>}/><span>当前 {(activeSegment.endSeconds - activeSegment.startSeconds).toFixed(3)}s{targetDuration === null ? "" : ` · 口播 ${targetDuration.toFixed(3)}s`}</span><div><Button size="xs" color="secondary" aria-label="向前移动 1 帧" className="button button-secondary button-small" isDisabled={disabled || activeSegment.startSeconds <= 0} onClick={() => changeRange(moveClipTimeRange(activeSegment, -frameSeconds, maxDuration))} type="button">−1 帧</Button><Button size="xs" color="secondary" aria-label="向后移动 1 帧" className="button button-secondary button-small" isDisabled={disabled || activeSegment.endSeconds >= maxDuration} onClick={() => changeRange(moveClipTimeRange(activeSegment, frameSeconds, maxDuration))} type="button">+1 帧</Button>{targetDuration === null ? null : <Button size="xs" color="secondary" className="button button-secondary button-small" isDisabled={disabled} onClick={() => changeRange(fitClipTimeRange(activeSegment, targetDuration, maxDuration))} type="button">{alignActionLabel}</Button>}</div></div>;
   return <figure className={'shot-marker-preview'+(compact?' is-compact':'')}>
     {compact?<><ShotClipBounds segment={activeSegment} maxDuration={maxDuration} disabled={disabled} locked={durationLocked} onChange={changeRange} onEdit={onEdit} shotId={shotId}/></>:video}
@@ -2288,7 +2290,7 @@ function ProductionShotReferenceThumbnail({episodeId,shot}:{episodeId:string;sho
  const input=shot.inputBasis.find(value=>['image','video'].includes(artifactPreviewKind(value.relativePath)??''));
  const source=input?(artifactPreviewKind(input.relativePath)==='video'?localArtifactThumbnailUrl(episodeId,input.relativePath,input.sha256):localArtifactUrl(episodeId,input.relativePath,input.sha256)):null;
  const {url}=useLocalArtifactBlob(source);
- return url?<img alt={shot.id+' 参考缩略图'} src={url} loading="lazy"/>:<span className="production-shot-no-image"><ImageIcon size={20}/></span>;
+ return url?<ImagePreview alt={shot.id+' 参考缩略图'} src={url} loading="lazy"/>:<span className="production-shot-no-image"><ImageIcon size={20}/></span>;
 }
 
 function StoryboardTimelineThumbnail({ episodeId, index, materials, shot }: { episodeId: string; index: number; materials: MaterialRevision[]; shot: StoryboardShot }) {
@@ -2397,9 +2399,9 @@ export function ArtifactPreview({ artifacts, historyArtifacts = [] }: { artifact
 }
 
 function ArtifactPreviewMedia({ kind, label, onDuration, source }: { kind: "image" | "video" | "audio"; label: string; onDuration?: (duration: number) => void; source: string }) {
-  if (kind === "image") return <img alt={label} src={source} />;
+  if (kind === "image") return <ImagePreview alt={label} src={source} />;
   if (kind === "audio") return <AudioPreview aria-label={label} preload="metadata" src={source} />;
-  return <video aria-label={label} controls key={source} onLoadedMetadata={onDuration ? (event) => { const duration = event.currentTarget.duration; if (Number.isFinite(duration)) onDuration(duration); } : undefined} preload="auto" src={source} />;
+  return <VideoPreview title={label} aria-label={label} onDuration={onDuration} preload="auto" src={source} />;
 }
 
 function LocalArtifactMedia({ artifact, kind, source }: { artifact: Artifact; kind: "image" | "video" | "audio"; source: string }) {
@@ -2471,10 +2473,10 @@ function ReviewActions({ episode, hasOpenQcBlockers = false, isPending, onReques
 
 function OperationDraftNotice({ isRestored = false, onClear }: { isRestored?: boolean; onClear: () => void }) { return <div className="operation-draft-notice" role="status"><span>{isRestored ? "已恢复本地草稿" : "本地草稿已保存"}</span><Button size="sm" color="tertiary" className="text-button" onClick={onClear} type="button">清除草稿</Button></div>; }
 
-export function EpisodeDetailDrawer({ children, tools,compact = false, isOpen, onClose }: { children: ReactNode;tools?:ReactNode; compact?: boolean; isOpen: boolean; onClose: () => void }) {
+export function EpisodeDetailDrawer({ children, tools,compact = false, inert, isOpen, onClose }: { children: ReactNode;tools?:ReactNode; compact?: boolean; inert?: boolean; isOpen: boolean; onClose: () => void }) {
   useEffect(() => { if (!isOpen) return; function closeOnEscape(event: KeyboardEvent) { if (event.key === "Escape" && !document.querySelector('[role="dialog"][aria-modal="true"]')) onClose(); } window.addEventListener("keydown", closeOnEscape); return () => window.removeEventListener("keydown", closeOnEscape); }, [isOpen, onClose]);
   if (!isOpen) return null;
-  return <><div aria-hidden="true" className="episode-detail-scrim" data-testid="episode-detail-scrim" onClick={onClose} /><aside aria-label="当前生产单详情" className={`episode-detail-drawer lc-production-workspace${compact ? " is-input-stage" : ""}`} role="complementary"><div className="lc-production-return"><Button size="sm" color="tertiary" iconLeading={ArrowLeft} onClick={onClose} type="button">返回工作区</Button><span>生产单</span><div className="production-return-tools">{tools}<Button size="sm" color="tertiary" aria-label="关闭生产单详情" className="drawer-close icon-button" onClick={onClose} type="button"><Icon name="Close" /></Button></div></div>{children}</aside></>;
+  return <><div aria-hidden="true" className="episode-detail-scrim" data-testid="episode-detail-scrim" onClick={onClose} /><aside inert={inert} aria-label="当前生产单详情" className={`episode-detail-drawer lc-production-workspace${compact ? " is-input-stage" : ""}`} role="complementary"><div className="lc-production-return"><Button size="sm" color="tertiary" iconLeading={ArrowLeft} onClick={onClose} type="button">返回工作区</Button><span>生产单</span><div className="production-return-tools">{tools}<Button size="sm" color="tertiary" aria-label="关闭生产单详情" className="drawer-close icon-button" onClick={onClose} type="button"><Icon name="Close" /></Button></div></div>{children}</aside></>;
 }
 
 function Artifact({ complete = false, label, name }: { complete?: boolean; label: string; name: string }) { return <div className="artifact-row"><i className={complete ? "artifact-complete" : "artifact-pending"}>{complete ? <Check aria-hidden="true" size={12}/> : null}</i><span>{label}</span><small>{name}</small></div>; }

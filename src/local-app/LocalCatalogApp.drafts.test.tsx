@@ -8,7 +8,7 @@ function fixture(){const writes:string[]=[];history.replaceState(null,'','/?epis
 it('protects actual drawer close and Escape, keeps text for reopen, then discards only on explicit choice',async()=>{
  const writes=fixture();await act(async()=>{render(<LocalCatalogApp/>);});fireEvent.change(await screen.findByLabelText('主脚本'),{target:{value:'关闭前的脚本'}});fireEvent.click(screen.getByRole('button',{name:'关闭生产单详情'}));
  expect(screen.getByRole('dialog',{name:'保留未提交内容'})).toBeTruthy();fireEvent.click(screen.getByRole('button',{name:'继续编辑'}));expect((screen.getByLabelText('主脚本') as HTMLTextAreaElement).value).toBe('关闭前的脚本');fireEvent.keyDown(window,{key:'Escape'});fireEvent.click(screen.getByRole('button',{name:'保留草稿并离开'}));expect(screen.queryByRole('complementary',{name:'当前生产单详情'})).toBeNull();
- fireEvent.click(await screen.findByText('草稿验证生产单'));expect((await screen.findByLabelText('主脚本') as HTMLTextAreaElement).value).toBe('关闭前的脚本');fireEvent.click(screen.getByRole('button',{name:'关闭生产单详情'}));fireEvent.click(screen.getByRole('button',{name:'放弃修改并离开'}));fireEvent.click(await screen.findByText('草稿验证生产单'));expect((await screen.findByLabelText('主脚本') as HTMLTextAreaElement).value).toBe('');expect(writes).toEqual([]);
+ fireEvent.click(await screen.findByRole('button',{name:'草稿验证生产单'}));expect((await screen.findByLabelText('主脚本') as HTMLTextAreaElement).value).toBe('关闭前的脚本');fireEvent.click(screen.getByRole('button',{name:'关闭生产单详情'}));fireEvent.click(screen.getByRole('button',{name:'放弃修改并离开'}));fireEvent.click(await screen.findByRole('button',{name:'草稿验证生产单'}));expect((await screen.findByLabelText('主脚本') as HTMLTextAreaElement).value).toBe('');expect(writes).toEqual([]);
 });
 it('protects four-step and workspace page navigation without submitting drafts',async()=>{
  const writes=fixture();await act(async()=>{render(<LocalCatalogApp/>);});fireEvent.change(await screen.findByLabelText('主脚本'),{target:{value:'导航前草稿'}});fireEvent.click(screen.getByRole('button',{name:/^检查与交付/}));expect(screen.getByRole('dialog',{name:'保留未提交内容'})).toBeTruthy();fireEvent.click(screen.getByRole('button',{name:'保留草稿并离开'}));fireEvent.change(await screen.findByLabelText('标题'),{target:{value:'交付未提交标题'}});
@@ -21,7 +21,7 @@ it('protects switching to a different production order and refreshes only the se
 it('discards this tab edit without deleting a newer draft saved by another tab',async()=>{
  const writes=fixture();render(<LocalCatalogApp/>);fireEvent.change(await screen.findByLabelText('主脚本'),{target:{value:'当前窗口草稿'}});const key=Object.keys(localStorage).find(key=>key.startsWith('loop-control.workspace-draft.v1:'))!;
  const stored=JSON.parse(localStorage.getItem(key)!);localStorage.setItem(key,JSON.stringify({...stored,value:{...stored.value,text:'另一窗口较新草稿'}}));
- fireEvent.click(screen.getByRole('button',{name:'关闭生产单详情'}));fireEvent.click(screen.getByRole('button',{name:'放弃修改并离开'}));fireEvent.click(await screen.findByText('草稿验证生产单'));expect((await screen.findByLabelText('主脚本') as HTMLTextAreaElement).value).toBe('另一窗口较新草稿');expect(writes).toEqual([]);
+ fireEvent.click(screen.getByRole('button',{name:'关闭生产单详情'}));fireEvent.click(screen.getByRole('button',{name:'放弃修改并离开'}));fireEvent.click(await screen.findByRole('button',{name:'草稿验证生产单'}));expect((await screen.findByLabelText('主脚本') as HTMLTextAreaElement).value).toBe('另一窗口较新草稿');expect(writes).toEqual([]);
 });
 
 it('does not overwrite another tab newer draft when closing without further edits',async()=>{

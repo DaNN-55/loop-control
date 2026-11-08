@@ -19,6 +19,7 @@ export interface OpenChatCutProject {
   loopControl?: {
     version: "shot-sync-preview/v1" | "four-step-workspace/v1";
     inputFingerprint: string;
+    audioEnabled?: {bgm?:boolean;sfx?:boolean};
     transitionMode: "cut" | "fade" | "studio";
   };
   assets: Array<{ id: string; name: string; kind: "video" | "audio" | "image"; src: string; durationInFrames: number }>;
@@ -37,6 +38,7 @@ export interface OpenChatCutTimeline {
   fit: "cover" | "contain";
   items: Array<Record<string, unknown>>;
   trackOrder: string[];
+  linkGroups?: Array<{id:string;itemIds:string[];anchorItemId?:string;mode:'linked'|'locked'}>;
   tracks: Record<string, OpenChatCutTrack>;
   transitions: Array<Record<string, unknown>>;
   selectedId: null;

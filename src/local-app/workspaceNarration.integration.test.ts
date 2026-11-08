@@ -21,16 +21,18 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner can prepare disabl
 },120_000);
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('confirmed narration uses the real Worker, survives restart and assembles actual duration without duplicate submissions',async()=>{
- const f=await narrationFixture();try{
+ const f=await narrationFixture(undefined,undefined,false,false,['db/local/145-workspace-confirmed-narration.sql']);try{
   const w=f.made,base={workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[0].id};
+  const captionBefore=w.captions[0].contract;
   const save=await f.request('saveWorkspaceNarration',{...base,mode:'tts',...f.narrationSettings,text:'完整口播不能删词。'});expect(save.status,JSON.stringify(save.body)).toBe(200);
+  expect(save.body.captions[0].contract).toEqual(captionBefore);
   expect((await f.request('generateWorkspaceNarration',{...base,reservationCents:100})).status).toBe(409);
   expect((await f.request('confirmWorkspaceNarration',base)).status).toBe(200);
-  expect((await f.request('generateWorkspaceNarration',{...base,reservationCents:100})).status).toBe(409);await f.authorize();
+  expect((await f.rawRequest('generateWorkspaceNarration',{...base,reservationCents:100})).status).toBe(409);
   const generated=await f.request('generateWorkspaceNarration',{...base,reservationCents:100});expect(generated.status,JSON.stringify(generated.body)).toBe(200);const task=generated.body.narration[0].taskId;
   expect((await f.request('generateWorkspaceNarration',{...base,reservationCents:100})).body.narration[0].taskId).toBe(task);
-  await f.restart();await f.restartWorker();expect(await f.execute(task)).toEqual({status:'completed',taskId:task});await f.restart();
-  const ready=await f.read();expect(ready.narration[0].error).toBeNull();
+  await f.restart();await f.restartWorker();expect(await f.execute(task,true,1,true)).toEqual({status:'completed',taskId:task});await f.restart();
+  const ready=await f.read();expect(ready.narration[0].error).toBeNull();expect(ready.captions[0].contract).toEqual(captionBefore);
   expect((await readWorkspaceNarrationTarget(f.c,f.assetRoot,w.id,w.clips[0].id)).durationSeconds).toBe(2.4);expect(ready.narration[0].audioTrackId).toBeTruthy();expect(ready.narration[0].durationSeconds).toBe(2.4);expect(ready.narration[0].durationSeconds).toBeLessThan(2.5);
   const assembled=await f.request('refreshWorkspaceNarration',{workspaceId:w.id,expectedRevision:w.revision});expect(assembled.status,JSON.stringify(assembled.body)).toBe(200);expect(assembled.body.narration[0].adoptedAudioTrackId).toBeNull();assembled.body=await adoptInitialNarration(f,assembled.body);expect(assembled.body.narration[0].adoptedAudioTrackId).toBe(ready.narration[0].audioTrackId);
   const project=JSON.parse(await readFile(join(f.assetRoot,assembled.body.project.relativePath),'utf8'));const item=project.timelines[0].items.find((i:any)=>i.id===ready.narration[0].itemId);expect(item.durationInFrames).toBe(72);expect(item.sourceAssetId).toBe('audio-track-'+ready.narration[0].audioTrackId);expect(project.timelines[0].items.find((i:any)=>i.id===w.clips[1].itemId).startFrame).toBe(60);

@@ -8,8 +8,9 @@ it('starts with the reference table and opens the single editor on demand',()=>{
  const active=row('active','TTS multishot pexels fixture',1),fresh=row('fresh','My Pexels');
  render(<ConnectionWorkspace connections={[active,fresh]} onCreateConnection={vi.fn()} onTestConnection={vi.fn()} onUpdateConnection={vi.fn()}/>);
  const table=screen.getByRole('table',{name:'已保存连接'});
- expect(within(table).getAllByRole('columnheader').map(cell=>cell.textContent)).toEqual(['连接','服务','模型','验证','凭据版本','额度 / 近7天','操作','更多操作']);
- const searchCells=screen.getByRole('button',{name:fresh.name}).closest('tr')!.querySelectorAll('td');expect(searchCells[1].textContent).toBe('Pexels');expect(searchCells[2].textContent).toBe('Pexels 素材检索');
+ expect(within(table).getAllByRole('columnheader').map(cell=>cell.textContent)).toEqual(['连接','能力','服务','模型','','更多操作']);
+ const searchCells=screen.getByRole('button',{name:fresh.name}).closest('tr')!.querySelectorAll('td');expect(searchCells[2].textContent).toBe('Pexels');expect(searchCells[3].textContent).toBe('Pexels 素材检索');
+ expect(within(searchCells[0]).getByText('已验证')).toBeTruthy();
  const testCell=screen.getByRole('button',{name:'测试 '+fresh.name}).closest('td');const moreCell=screen.getByRole('button',{name:fresh.name+' 连接操作'}).closest('td');expect(testCell).not.toBe(moreCell);
  expect(screen.queryByRole('form',{name:'保存连接'})).toBeNull();
  expect(document.querySelectorAll('input[type=password]')).toHaveLength(0);
@@ -18,7 +19,7 @@ it('starts with the reference table and opens the single editor on demand',()=>{
  fireEvent.click(screen.getByRole('button',{name:'清除连接搜索'}));
  edit(active.name);fireEvent.change(screen.getByLabelText(/^新的 API Key/),{target:{value:'synthetic-draft'}});
  fireEvent.click(screen.getByRole('button',{name:'关闭连接窗口'}));
- fireEvent.click(screen.getByRole('button',{name:'继续编辑'}));expect((screen.getByLabelText(/^新的 API Key/)as HTMLInputElement).value).toBe('synthetic-draft');
+ fireEvent.click(screen.getByRole('button',{name:'关闭确认，继续编辑'}));expect((screen.getByLabelText(/^新的 API Key/)as HTMLInputElement).value).toBe('synthetic-draft');
  fireEvent.click(screen.getByRole('button',{name:'关闭连接窗口'}));fireEvent.click(screen.getByRole('button',{name:'放弃修改并关闭'}));
  edit(active.name);expect((screen.getByLabelText(/^新的 API Key/)as HTMLInputElement).value).toBe('');fireEvent.click(screen.getByRole('button',{name:'关闭连接窗口'}));
  edit(fresh.name);expect((screen.getByLabelText(/^新的 API Key/)as HTMLInputElement).value).toBe('');
@@ -41,7 +42,7 @@ it('combines capability and verification filters without inventing model values'
  const a=row('a','Pexels connection'),b={...row('b','Voice connection'),provider:'volcengine_tts',adapter:'volcengine_tts',status:'unverified' as const};
  render(<ConnectionWorkspace connections={[a,b]} onCreateConnection={vi.fn()} onTestConnection={vi.fn()}/>);
  fireEvent.change(screen.getByLabelText('生产能力'),{target:{value:'speech'}});
- const table=screen.getByRole('table');expect(within(table).queryByText(a.name)).toBeNull();expect(within(table).getByText(b.name)).toBeTruthy();const cells=within(table).getByText(b.name).closest('tr')!.querySelectorAll('td');expect(cells[1].textContent).toBe('豆包语音');expect(cells[2].textContent).toBe('seed-tts-2.0');expect(within(table).getAllByText('—')).toHaveLength(1);
+ const table=screen.getByRole('table');expect(within(table).queryByText(a.name)).toBeNull();expect(within(table).getByText(b.name)).toBeTruthy();const cells=within(table).getByText(b.name).closest('tr')!.querySelectorAll('td');expect(cells[1].textContent).toBe('语音');expect(cells[2].textContent).toBe('豆包语音');expect(cells[3].textContent).toBe('seed-tts-2.0');
  fireEvent.change(screen.getByLabelText('验证状态'),{target:{value:'verified'}});expect(within(table).queryByText(b.name)).toBeNull();
  fireEvent.click(screen.getByRole('button',{name:'清空筛选'}));expect(within(table).getByText(a.name)).toBeTruthy();expect(within(table).getByText(b.name)).toBeTruthy();
 });
@@ -125,11 +126,12 @@ it('changes MiniMax site using the saved key without asking for or rotating a re
  expect(rotate).not.toHaveBeenCalled();expect(test).toHaveBeenCalledWith(connection.id);expect(screen.queryByRole('dialog')).toBeNull();
 });
 
-it('places two truthful usage lines after the credential version and keeps other versions isolated',()=>{
+it('shows usage only in the expanded row and keeps other versions isolated',()=>{
  const connection=row('usage','Usage fixture');
  render(<ConnectionWorkspace connections={[connection]} onCreateConnection={vi.fn()} onTestConnection={vi.fn()} usageByVersion={{[connection.current_version_id!]:{remaining:{label:'日余量',text:'1,998 次',detail:'共享请求限额，不是余额。',status:'ready'},recent:{label:'近7天',text:'8 次',detail:'供应商请求次数。',status:'ready'},updatedAt:'2026-11-01T00:00:00Z'},'old-version':{remaining:{label:'余额',text:'¥999',detail:'旧版本',status:'ready'},recent:{label:'近7天',text:'¥123',detail:'旧版本',status:'ready'},updatedAt:null}}}/>);
- const headers=screen.getAllByRole('columnheader').map(c=>c.textContent);expect(headers.indexOf('额度 / 近7天')).toBe(headers.indexOf('凭据版本')+1);
- const cell=screen.getByRole('cell',{name:'Usage fixture 额度与用量'});expect(cell.querySelectorAll('.reference-connection-usage-line')).toHaveLength(2);expect(cell.textContent).toContain('1,998 次');expect(cell.textContent).toContain('8 次');expect(screen.queryByText('¥999')).toBeNull();
+ expect(screen.queryByRole('columnheader',{name:'额度 / 近7天'})).toBeNull();
+ fireEvent.click(screen.getByRole('button',{name:'Usage fixture 账务与凭据详情'}));
+ const cell=screen.getByRole('group',{name:'Usage fixture 额度与用量'});expect(cell.querySelectorAll('.reference-connection-usage-line')).toHaveLength(2);expect(cell.textContent).toContain('1,998 次');expect(cell.textContent).toContain('8 次');expect(screen.queryByText('¥999')).toBeNull();
 });
 
 it('hides unused capabilities and verification states and restores them when records arrive',()=>{

@@ -63,3 +63,23 @@ it.each(['wan2.6-i2v','wan2.5-i2v-preview','wan2.2-i2v-flash','wan2.2-i2v-plus',
  const fetcher=vi.fn().mockResolvedValueOnce(output({task_id:'chosen-task'})).mockResolvedValueOnce(output({task_status:'SUCCEEDED',video_url:'https://dashscope-result-bj.oss-cn-beijing.aliyuncs.com/video.mp4'})).mockResolvedValueOnce(new Response(new Uint8Array([4,5]),{headers:{'Content-Type':'video/mp4'}}));
  await generateWanVideo({...base(),model,fetcher});const sent=JSON.parse(fetcher.mock.calls[0][1].body);expect(sent.model).toBe(model);expect(sent.parameters.audio).toBeUndefined();expect(sent.parameters.duration).toBe(['wan2.2-i2v-flash','wan2.2-i2v-plus','wanx2.1-i2v-plus'].includes(model)?undefined:5);
 });
+
+it('keeps polling a saved Wan task beyond the former total wait and reports provider milestones',async()=>{
+ const input=base(),onProgress=vi.fn(async()=>{});
+ let polls=0;
+ const fetcher=vi.fn(async(url:string|URL)=>{
+  if(String(url).includes('/api/v1/tasks/')){
+   polls++;
+   if(polls<=61)return output({task_status:polls===1?'PENDING':'RUNNING'});
+   return output({task_status:'SUCCEEDED',video_url:'https://dashscope-a717.oss-accelerate.aliyuncs.com/output.mp4'});
+  }
+  return new Response(Uint8Array.of(1),{headers:{'content-type':'video/mp4'}});
+ });
+ const bytes=await generateWanVideo({...input,maxPolls:undefined,reserve:async()=>({new:false,provider_task_id:'existing'}),fetcher,onProgress});
+ expect(bytes).toEqual(Uint8Array.of(1));
+ expect(polls).toBe(62);
+ expect(input.recordSubmission).not.toHaveBeenCalled();
+ expect(onProgress.mock.calls.at(0)).toEqual(['queued']);
+ expect(onProgress.mock.calls.at(1)).toEqual(['processing']);
+ expect(onProgress.mock.calls.at(-1)).toEqual(['saving']);
+});

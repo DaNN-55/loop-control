@@ -36,3 +36,8 @@ html[data-interface="impeccable"][data-row-density="comfortable"] .product-ui .e
 .owner-preferences-storage{max-height:calc(100dvh - 32px);display:flex;flex-direction:column}.owner-preferences-storage>header{flex-shrink:0}.owner-preferences-storage>form{display:flex;flex-direction:column;min-height:0}.owner-preferences-storage .owner-preferences-card{min-height:0;overflow:auto}.owner-preferences-storage form>footer{flex-shrink:0}
 html[data-interface="impeccable"] .impeccable-app.product-ui .owner-preferences-backdrop:has(>.owner-preferences-storage){overflow:hidden;align-items:center;padding-block:16px}
 html[data-interface="impeccable"] .impeccable-app.product-ui .modal-backdrop>.owner-preferences-dialog.owner-preferences-storage{max-height:calc(100dvh - 32px);margin-block:0;overflow:hidden}
+
+.owner-avatar-preview .media-image-trigger { width: 100%; height: 100%; }
+.owner-avatar-preview .media-image-trigger > span { top: auto; right: 4px; bottom: 4px; width: 20px; height: 20px; }
+.owner-preferences-dialog form>footer{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 16px}
+.owner-preferences-dialog .owner-restore-scope{grid-column:1/-1;justify-self:end;text-align:right;color:var(--lc-muted);font-size:12px}

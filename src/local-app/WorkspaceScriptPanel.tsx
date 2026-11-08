@@ -51,12 +51,25 @@ export function WorkspaceScriptPanel({episodeId,scriptRevisionId,script,stage,re
   try{if(!/\.(md|txt)$/i.test(file.name))throw Error('请选择 Markdown 或 TXT 脚本。');if(!file.size||file.size>2*1024*1024)throw Error('脚本不能为空或超过2MB。');setText(await file.text());setInvalid(null);setFilename(file.name);setError('');}catch(cause){setError(cause instanceof Error?cause.message:'脚本读取失败。');}
  }
  return <section className="production-workspace-section workspace-script workspace-script-compact" aria-label="脚本确认">
-  <header><div className="workspace-compact-heading"><h3>主脚本</h3><span role="status" className={revision||locallyConfirmed?'is-confirmed':''}>{baselineStatus}{!isEditing?' · 预览锁定':''}</span></div></header>
+  <header><div className="workspace-compact-heading"><h3>主脚本</h3><span role="status" className={revision||locallyConfirmed?'is-confirmed':''}>{baselineStatus}{readOnly?' · 只读':''}</span></div></header>
 
-  {draft.restored&&<p role="status">已恢复本机脚本草稿，尚未确认。</p>}{draft.storageError&&<p role="alert" className="form-error">本机草稿暂无法保存，请保持此页面打开。</p>}
+  {draft.storageError&&<p role="alert" className="form-error">本机草稿暂无法保存，请保持此页面打开。</p>}
   <div className="workspace-script-layout">
    <div className="workspace-script-main">
-    {isEditing?<label className="workspace-script-text">主脚本<textarea ref={textInput} aria-label="主脚本" aria-required="true" aria-invalid={invalid==='script'||undefined} aria-describedby={invalid==='script'?errorId:undefined} value={text} disabled={pending||busy} onChange={event=>{setText(event.target.value);if(invalid==='script')setInvalid(null);}} placeholder="粘贴脚本，或上传 Markdown / TXT"/>{invalid==='script'&&<span id={errorId} className="form-error" role="alert">请填写主脚本。</span>}</label>:<div className="workspace-script-preview" role="document" aria-label="主脚本预览" tabIndex={0}>{preview?<MarkdownPreview content={preview}/>: '正在读取主脚本…'}</div>}
+    {draft.restored&&<p role="status" className="workspace-script-restored">已恢复草稿，尚未确认。</p>}
+    {isEditing?<div className="workspace-script-text"><textarea ref={textInput} aria-label="主脚本" aria-required="true" aria-invalid={invalid==='script'||undefined} aria-describedby={invalid==='script'?errorId:undefined} value={text} disabled={pending||busy} onChange={event=>{setText(event.target.value);if(invalid==='script')setInvalid(null);}} placeholder={`粘贴脚本，或上传 Markdown / TXT。以下是可识别的 v2 模板示例。
+
+# 雨后的街角
+
+## 制作设置
+- 模板版本：2
+- 画幅：9:16
+
+## 正文
+### 段落 01
+- 口播：雨停了，街角还亮着一盏灯。
+- 首帧素材：无
+- 视频生成提示词：雨后街角，暖色路灯倒映在积水中，镜头缓慢推进。`}/>{invalid==='script'&&<span id={errorId} className="form-error" role="alert">请填写主脚本。</span>}</div>:<div className="workspace-script-preview" role="document" aria-label="主脚本预览" tabIndex={0}>{preview?<MarkdownPreview content={preview}/>: '正在读取主脚本…'}</div>}
     <div className="workspace-script-statistics" role="group" aria-label="脚本字数"><span title="完整脚本的 Unicode 字符数，包含空白、标点与格式。">脚本字符 {statistics.characters.toLocaleString()}</span><span title={statistics.textKind==='narration'?'仅统计口播字段中的文字和数字，不计空白与标点。':'仅统计正文中的文字和数字，未区分口播与说明。'}>{statistics.textKind==='narration'?'口播字数':'正文文字数'} {statistics.textCharacters===null?'暂无法统计':statistics.textCharacters.toLocaleString()}</span>{isEditing&&changed&&<span>有未确认修改</span>}</div>
 
    </div>
@@ -72,7 +85,7 @@ export function WorkspaceScriptPanel({episodeId,scriptRevisionId,script,stage,re
     {error&&!errorPresented&&<p role="alert" className="form-error">{error}</p>}
     </div>}
     <h4>脚本基准</h4>
-    <dl><div><dt>状态</dt><dd>{readOnly?'只读':baselineStatus}</dd></div><div><dt>已确认脚本</dt><dd>{scriptRevisionId||locallyConfirmed?`${confirmedCharacters.toLocaleString()} 字符`:'尚未确认'}</dd></div></dl>
+    <dl><div><dt>基准版本</dt><dd>{scriptRevisionId?.slice(0,8)??'尚无版本'}</dd></div><div><dt>基准字数</dt><dd>{scriptRevisionId||locallyConfirmed?`${confirmedCharacters.toLocaleString()} 字符`:'尚未确认'}</dd></div></dl>
     {scriptRevisionId&&<p className="workspace-script-revision-id" aria-label="脚本基准 ID">{scriptRevisionId}</p>}
     {isEditing&&revision&&<p>修订后需重新核对素材匹配，已有工程与媒体保留。</p>}
     {history}

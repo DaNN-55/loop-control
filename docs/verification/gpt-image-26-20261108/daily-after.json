@@ -1,0 +1,63 @@
+{
+  "at": "2026-11-08T04:12:06.990Z",
+  "runtime": {
+    "id": "5a80b0f35caa714f63ac393546a23ecdae350bf1b4f7a5371881957ff39b41da",
+    "root": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/5a80b0f35caa714f63ac393546a23ecdae350bf1b4f7a5371881957ff39b41da"
+  },
+  "migration": "153-gpt-image-26-models.sql",
+  "functions": {
+    "queue": true,
+    "namespace": true
+  },
+  "http": 200,
+  "data": {
+    "public.episodes": {
+      "count": 3,
+      "sha256": "db88b9f0d97efba230f61e9e685c2c8413e3d372fbf3fc8cc24e70cc1b0ff53d"
+    },
+    "public.production_material_revisions": {
+      "count": 19,
+      "sha256": "aedcebbbb58cbc83ca6a98c79b929c5a2d7a43aaae8abe1ec3191afd2e2a9757"
+    },
+    "public.audio_tracks": {
+      "count": 2,
+      "sha256": "818584757a911c7921364372d781b9665cac26a10d753219ff31c67fc262b3d4"
+    },
+    "public.tasks": {
+      "count": 11,
+      "sha256": "790eefe3f69500272a8866217312ec4a670b826610f0aaa7db0b5a33b22a4dad"
+    },
+    "local_identity.production_workspaces": {
+      "count": 3,
+      "sha256": "bccf853f24b67602538ad083ac239fd7bfc3a9eb2a76b87a4fb35299fd0c5c31"
+    },
+    "local_identity.workspace_visual_candidates": {
+      "count": 26,
+      "sha256": "dd37d9acc34ed7f98fa69bbf2bf1d017fa19564e605c96ebd4c912cc7e382364"
+    },
+    "local_identity.workspace_audio_preparations": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "public.external_connection_versions": {
+      "count": 19,
+      "sha256": "cc8820e71bd382b9f595e9fe549aff8e272738ea3e14a148f127bc215146691d"
+    },
+    "local_identity.connection_bindings": {
+      "count": 18,
+      "sha256": "1c3778fdefd60b00cc0d062478fb896410a5530331cef1cd01277dc9e752ded1"
+    }
+  },
+  "unchanged": [
+    "public.episodes",
+    "public.production_material_revisions",
+    "public.audio_tracks",
+    "public.tasks",
+    "local_identity.production_workspaces",
+    "local_identity.workspace_visual_candidates",
+    "local_identity.workspace_audio_preparations",
+    "public.external_connection_versions",
+    "local_identity.connection_bindings"
+  ],
+  "changed": []
+}

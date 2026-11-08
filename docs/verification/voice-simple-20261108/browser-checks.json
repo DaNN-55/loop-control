@@ -1,0 +1,39 @@
+{
+  "desktop": {
+    "candidateDisclosures": 0,
+    "captionGap": 8,
+    "captionOverlap": 0,
+    "captionValue": "independent",
+    "media": [
+      {
+        "error": null,
+        "paused": true
+      },
+      {
+        "error": null,
+        "paused": true
+      }
+    ],
+    "pageOverflow": false,
+    "removedHeading": true,
+    "viewport": {
+      "height": 953,
+      "width": 1543
+    },
+    "visibleCandidateHeights": [
+      49,
+      53
+    ]
+  },
+  "narrow": {
+    "candidateDisclosures": 0,
+    "captionGap": 8,
+    "captionOverlap": 0,
+    "captionValue": "independent",
+    "pageOverflow": false,
+    "viewport": {
+      "height": 790,
+      "width": 1152
+    }
+  }
+}

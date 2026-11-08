@@ -19,7 +19,8 @@ it.skipIf(process.env.LOOP_CONNECTION_ACCEPTANCE!=='1')('creates, rotates and ve
  const pool={connect:async()=>scoped}as unknown as Pool;
  const values=new Map<string,string>();
  const providers={volcengine:'seedance_video',minimax:'minimax_video',kling:'kling_video',bailian:'wan_video',pexels:'pexels_video',freesound:'freesound_preview',openai:'openai_images',volcengine_tts:'volcengine_tts'};
- const service=new LocalConnections(pool,{mode:'keychain',async putImmutable(id,value){values.set(id,value);},async get(id){return values.get(id)!;}},{mode:'live',networkAvailable:true,verificationStatus:()=>({available:true,code:'available',detail:'Controlled probe'}),async verify(){return 'verified';}});
+ let speechEnabled=false;
+ const service=new LocalConnections(pool,{mode:'keychain',async putImmutable(id,value){values.set(id,value);},async get(id){return values.get(id)!;}},{mode:'live',networkAvailable:false,executionAvailable:()=>false,workspaceGenerationFromConnections:true,get workspaceSpeechFromConnections(){return speechEnabled;},verificationStatus:()=>({available:true,code:'available',detail:'Controlled probe'}),async verify(){return 'verified';}});
  const session={id:owner,email:owner+'@example.invalid',token};
  try{
   await c.query('BEGIN');
@@ -30,14 +31,33 @@ it.skipIf(process.env.LOOP_CONNECTION_ACCEPTANCE!=='1')('creates, rotates and ve
   await c.query("INSERT INTO local_identity.sessions(owner_id,token_hash,expires_at)VALUES($1,$2,now()+interval '1 hour')",[owner,tokenHash(token)]);
   await c.query('SET SESSION AUTHORIZATION loop_app');
   const empty=await service.read(owner);expect(empty.connections).toHaveLength(0);expect(empty.capabilities.verificationAvailable).toBe(true);
+  const available=async(provider:string)=>(await service.read(owner)).serviceCatalog.groups.flatMap(g=>g.services).find(s=>s.provider===provider&&s.executable);
   for(const[provider,adapter]of Object.entries(providers)){
    const created=await service.command(session,{command:'create',idempotencyKey:randomUUID(),data:{name:'Fixture '+provider,provider,adapter,secret:'synthetic-initial'}})as{connection:{id:string;current_version_id:string}};
    expect(created.connection.id).toBeTruthy();
    const updated=await service.command(session,{command:'rotate',idempotencyKey:randomUUID(),data:{connectionId:created.connection.id,provider,adapter,secret:'synthetic-rotated'}})as typeof created;
    expect(updated.connection.current_version_id).not.toBe(created.connection.current_version_id);
+   expect(await available(provider)).toBeUndefined();
    const result=await service.command(session,{command:'verify',idempotencyKey:randomUUID(),data:{connectionId:created.connection.id}})as{ready:boolean};expect(result.ready).toBe(true);
   }
   const read=await service.read(owner);expect(read.connections).toHaveLength(8);expect(read.versions).toHaveLength(16);expect(read.pending).toHaveLength(0);expect(read.connections.every(row=>row.status==='verified')).toBe(true);
   expect(JSON.stringify(read)).not.toContain('synthetic-rotated');expect(values.size).toBe(16);
+  for(const provider of ['openai','volcengine','minimax','kling','bailian','pexels','freesound']){
+   const choice=await available(provider);
+   if(provider==='pexels'||provider==='freesound')expect(choice?.mode).toBe('search');
+   else expect(choice?.models.length).toBeGreaterThan(0);
+   await expect(service.assertBlueprintReferences(scoped,[choice!.connectionVersionId!],{purpose:'workspace-generation'})).resolves.toBeUndefined();
+  }
+  expect(await available('volcengine_tts')).toBeUndefined();
+  speechEnabled=true;
+  const speech=(await available('volcengine_tts'))!;
+  expect(speech.models).toContain('seed-tts-2.0');
+  await expect(service.assertBlueprintReferences(scoped,[speech.connectionVersionId!],{purpose:'workspace-generation'})).resolves.toBeUndefined();
+  await expect(service.assertBlueprintReferences(scoped,[speech.connectionVersionId!])).rejects.toThrow();
+  await service.command(session,{command:'revoke',idempotencyKey:randomUUID(),data:{versionId:speech.connectionVersionId}});
+  expect(await available('volcengine_tts')).toBeUndefined();
+  const image=(await available('openai'))!;
+  await service.command(session,{command:'revoke',idempotencyKey:randomUUID(),data:{versionId:image.connectionVersionId}});
+  expect(await available('openai')).toBeUndefined();
  }finally{await c.query('ROLLBACK').catch(()=>{});c.release();await admin.end();bridge.kill();}
 },30000);

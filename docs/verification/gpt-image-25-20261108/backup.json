@@ -1,0 +1,11 @@
+{
+  "backupPath": "/Users/dan/Programs/loop-control/.loop-control/local/backups/20261108-gpt-image-25/before-152.dump",
+  "bytes": 3710323,
+  "sha256": "09a128fbbbb017cad9defec9ca6b3a6c1820a7b1cbd9479af0d925300b5ae6ef",
+  "archiveReadable": true,
+  "pending": [
+    "152-gpt-image-25-models.sql"
+  ],
+  "activeTasks": 0,
+  "activeStudioProcesses": 0
+}

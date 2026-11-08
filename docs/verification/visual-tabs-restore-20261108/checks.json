@@ -1,0 +1,17 @@
+{
+  "background": "rgba(0, 0, 0, 0)",
+  "border": "0px",
+  "buttons": [
+    {
+      "background": "rgba(234, 240, 255, 0.773)",
+      "selected": "true",
+      "text": "图片"
+    },
+    {
+      "background": "rgba(234, 240, 255, 0.227)",
+      "selected": "false",
+      "text": "视频"
+    }
+  ],
+  "viewport": 1495
+}

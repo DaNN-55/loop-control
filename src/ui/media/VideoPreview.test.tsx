@@ -22,3 +22,20 @@ it('retains the current video source through StrictMode setup and still releases
  const {StrictMode}=await import('react');const {rerender,unmount}=render(<StrictMode><VideoPreview src="/strict-first.mp4" title="严格模式"/></StrictMode>);const first=screen.getByLabelText('严格模式视频预览') as HTMLVideoElement;
  expect(first.getAttribute('src')).toBe('/strict-first.mp4');rerender(<StrictMode><VideoPreview src="/strict-second.mp4" title="严格模式"/></StrictMode>);const second=screen.getByLabelText('严格模式视频预览') as HTMLVideoElement;expect(first.getAttribute('src')).toBeNull();expect(second.getAttribute('src')).toBe('/strict-second.mp4');unmount();expect(second.getAttribute('src')).toBeNull();
 });
+it('only shows the two time displays and source switch for a trimmed range',()=>{
+ const props={src:'/source.mp4',title:'候选'};
+ const {rerender}=render(<VideoPreview {...props} segment={{start:0,end:10.01}}/>);
+ const video=screen.getByLabelText('候选视频预览') as HTMLVideoElement;
+ Object.defineProperty(video,'duration',{value:10.01});
+ fireEvent.loadedMetadata(video);
+ expect(screen.getByText('0.00 / 10.01 s')).toBeTruthy();
+ expect(screen.queryByRole('button',{name:'查看整段源视频'})).toBeNull();
+ rerender(<VideoPreview {...props} segment={{start:0,end:5}}/>);
+ expect(screen.getByText('片段 0.00 / 5.00 s')).toBeTruthy();
+ expect(screen.getByText('源视频 0.00 / 10.01 s')).toBeTruthy();
+ fireEvent.click(screen.getByRole('button',{name:'查看整段源视频'}));
+ rerender(<VideoPreview {...props} segment={{start:0,end:10.01}}/>);
+ expect(screen.queryByRole('button',{name:'仅播放当前片段'})).toBeNull();
+ rerender(<VideoPreview {...props} segment={{start:0,end:5}}/>);
+ expect(screen.getByRole('button',{name:'查看整段源视频'})).toBeTruthy();
+});

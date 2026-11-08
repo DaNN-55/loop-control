@@ -41,6 +41,7 @@ beforeAll(()=>{
  CREATE TABLE local_identity.historical_tasks(id uuid);
  CREATE FUNCTION local_identity.is_historical_episode(uuid) RETURNS boolean LANGUAGE sql STABLE AS 'SELECT EXISTS(SELECT 1 FROM local_identity.historical_episodes WHERE id=$1)';
  CREATE FUNCTION local_identity.is_historical_task(uuid) RETURNS boolean LANGUAGE sql STABLE AS 'SELECT EXISTS(SELECT 1 FROM local_identity.historical_tasks WHERE id=$1)';
+ CREATE FUNCTION local_identity.episode_storage_collection(uuid) RETURNS TABLE(container_id uuid,series_id uuid) LANGUAGE sql STABLE AS 'SELECT NULL::uuid,NULL::uuid';
  INSERT INTO public.account_memberships VALUES('${account}','${owner}','owner'),('${foreignAccount}','${foreignOwner}','owner'),('${memberAccount}','${owner}','worker');
  INSERT INTO public.episodes SELECT ('00000000-0000-4000-8000-'||lpad(n::text,12,'0'))::uuid,'${account}',
   case when n=23 then 'Needle 100%_literal' else '作品 '||lpad(n::text,2,'0') end,
@@ -72,9 +73,9 @@ beforeAll(()=>{
 },20000);
 afterAll(()=>{if(created)psql(`DROP DATABASE ${database};`,'postgres');},10000);
 function catalog(query:Partial<CatalogQuery>={},asOwner=owner):EpisodeCatalog{
- const parameters=[asOwner,query.view??'episodes',query.page??1,query.accountId||null,query.seriesId??'all',query.visibility??'active',query.pendingPage??1,query.blockedPage??1,query.q??'',query.sort??'updated',query.status??'all','{}'];
+ const parameters=[asOwner,query.view??'episodes',query.page??1,query.accountId||null,query.seriesId??'all',query.visibility??'active',query.pendingPage??1,query.blockedPage??1,query.q??'',query.sort??'updated',query.status??'all','{}',query.catalogStage??'all',query.pageSize??20];
  const values=parameters.map(v=>v===null?'NULL':typeof v==='number'?String(v):sqlString(v)).join(',');
- const result=psql(`SET ROLE loop_app;BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY;SELECT set_config('loop.owner_id','${asOwner}',true);PREPARE catalog_filter(uuid,text,integer,uuid,text,text,integer,integer,text,text,text,jsonb) AS ${localCatalogSql};EXECUTE catalog_filter(${values});ROLLBACK;`);
+ const result=psql(`SET ROLE loop_app;BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY;SELECT set_config('loop.owner_id','${asOwner}',true);PREPARE catalog_filter(uuid,text,integer,uuid,text,text,integer,integer,text,text,text,jsonb,text,integer) AS ${localCatalogSql};EXECUTE catalog_filter(${values});ROLLBACK;`);
  return JSON.parse(result.trim().split('\n').at(-1)!);
 }
 it('searches all matching records before pagination, treats SQL wildcards literally, and searches UUID fragments',()=>{
@@ -90,6 +91,22 @@ it('sorts across pages with a stable id tie break and bounds filtered page count
  expect(catalog({sort:'oldest',page:2}).episodes).toHaveLength(12);
  const titles=catalog({sort:'title'});expect(titles.episodes[0].id).toBe(episode(23));
  expect(catalog({q:'作品',page:999}).page).toBe(2);
+ const orders=catalog({pageSize:50,q:'作品',sort:'title'});
+ expect(orders).toMatchObject({page:1,pageSize:50,total:28});
+ for(const size of [10,20] as const){
+  const second=catalog({page:2,pageSize:size,q:'作品',sort:'title'});
+  expect(second).toMatchObject({page:2,pageSize:size,total:28});
+  expect(second.episodes.map(e=>e.id)).toEqual(orders.episodes.slice(size,size*2).map(e=>e.id));
+ }
+ const firstOperations=catalog({view:'operations',q:'作品',sort:'title'});
+ const secondOperations=catalog({view:'operations',q:'作品',sort:'title',page:2});
+ const lastOperations=catalog({view:'operations',q:'作品',sort:'title',page:999});
+ expect(firstOperations).toMatchObject({page:1,pageSize:12,total:28});
+ expect(secondOperations).toMatchObject({page:2,pageSize:12,total:28});
+ expect(lastOperations).toMatchObject({page:3,pageSize:12,total:28});
+ expect([firstOperations,secondOperations,lastOperations].map(result=>result.episodes.length)).toEqual([12,12,4]);
+ const ids=[firstOperations,secondOperations,lastOperations].flatMap(result=>result.episodes.map(e=>e.id));
+ expect(ids).toEqual(Array.from({length:29},(_,index)=>index+1).filter(n=>n!==23).map(episode));
 });
 it('uses actual pending decisions and prioritises blockers, review, done, running, draft',()=>{
  const all=catalog({page:2});

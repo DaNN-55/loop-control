@@ -1,0 +1,197 @@
+.prototype-shell {min-height:100vh;background:var(--lc-canvas,#edf2f8);color:var(--lc-ink,#17263e);padding-left:64px}
+.prototype-rail {position:fixed;inset:0 auto 0 0;width:64px;background:#173a80;color:white;display:flex;align-items:center;flex-direction:column;gap:28px;padding-top:12px}
+.prototype-rail b{font-size:24px}.prototype-rail svg{width:19px;height:19px}.prototype-rail .active{outline:8px solid #ffffff25;border-radius:4px;background:#ffffff25}
+.prototype-top{height:54px;border-bottom:1px solid var(--lc-line,#d8e1ee);background:var(--lc-surface,#fff);display:flex;align-items:center;justify-content:space-between;padding:0 30px;font-size:12px}
+.prototype-top span:last-child{color:var(--lc-muted,#526783)}
+.prototype-main{max-width:1390px;margin:auto;padding:25px 30px 95px}
+.prototype-main h1{font-size:27px;margin:0 0 20px}
+.prototype-main .connection-settings-content{max-inline-size:none;margin:0;padding:0;display:grid;gap:18px}
+.prototype-main .connection-planning{margin:0}
+.prototype-main .connection-planning-picker details,.prototype-main .connection-planning-advanced{margin-top:6px}
+.prototype-main .connection-planning summary{width:fit-content;cursor:pointer}
+.prototype-main .local-connections-panel{min-width:0}
+html[data-interface="impeccable"] .prototype-main .reference-connections .reference-connections-table-wrap{overflow-x:auto}
+html[data-interface="impeccable"] .prototype-main .reference-connections table{min-width:715px;table-layout:fixed}
+html[data-interface="impeccable"] .prototype-main .reference-connections table thead{display:table-header-group}
+html[data-interface="impeccable"] .prototype-main .reference-connections table tbody{display:table-row-group}
+html[data-interface="impeccable"] .prototype-main .reference-connections table tr{display:table-row}
+html[data-interface="impeccable"] .prototype-main .reference-connections table :is(td,th){display:table-cell;padding:7px 12px!important;vertical-align:middle;border-bottom:1px solid var(--lc-line,#d8e1ee);white-space:nowrap}
+html[data-interface="impeccable"] .prototype-main .reference-connections table th:nth-child(1){width:20%}
+html[data-interface="impeccable"] .prototype-main .reference-connections table th:nth-child(2){width:68px}
+html[data-interface="impeccable"] .prototype-main .reference-connections table th:nth-child(3){width:108px}
+html[data-interface="impeccable"] .prototype-main .reference-connections table th:nth-child(4){width:auto}
+html[data-interface="impeccable"] .prototype-main .reference-connections table th:nth-child(5){width:86px}
+html[data-interface="impeccable"] .prototype-main .reference-connections table th:nth-child(6){width:114px}
+html[data-interface="impeccable"] .prototype-main .reference-connections table th:nth-child(7){width:44px}
+html[data-interface="impeccable"] .prototype-main .reference-connection-name{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html[data-interface="impeccable"] .prototype-main .reference-connections table td[colspan]{white-space:normal}
+html[data-interface="impeccable"] .prototype-main .reference-connections .reference-connections-toolbar{gap:8px;grid-template-columns:minmax(145px,1fr) 125px 125px}
+html[data-interface="impeccable"] .prototype-main .reference-connections-search-form{position:relative;gap:0;grid-column:auto}
+.prototype-main .reference-connections-search-form input{padding-inline-end:92px}
+html[data-interface="impeccable"] .prototype-main .reference-connections-search-form button[type="submit"]{position:absolute;right:4px;border:0;background:transparent;box-shadow:none}
+html[data-interface="impeccable"] .prototype-main .reference-connections-search-form button[aria-label="清除连接搜索"]{position:absolute;right:49px}
+.prototype-main .review-section{border:1px solid var(--lc-line,#d8e1ee);border-radius:10px;padding:14px 16px;background:var(--lc-surface,#fff)}
+.prototype-main .review-section h3{margin:0 0 12px}
+.prototype-main .review-section>div+div{margin-top:12px;border-top:1px solid var(--lc-line,#d8e1ee);padding-top:12px}
+.prototype-switch{position:fixed;z-index:30;bottom:16px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:10px;padding:4px 7px;border-radius:24px;background:#17263e;color:white;box-shadow:0 3px 14px #17263e33;font-size:13px;white-space:nowrap}
+.prototype-switch span{min-width:135px;text-align:center}
+.prototype-switch button,.prototype-tabs button{cursor:pointer;font:inherit}
+.prototype-switch button{width:34px;height:32px;background:transparent;border:0;color:white;border-radius:100%;font-size:18px}
+.prototype-switch button:hover{background:#ffffff26}
+.prototype-tabs{display:flex;gap:8px;border-bottom:1px solid var(--lc-line,#d8e1ee);margin-bottom:16px}
+.prototype-tabs button{background:none;border:0;padding:10px 15px;color:inherit;border-bottom:2px solid transparent}
+.prototype-tabs button[aria-pressed="true"]{border-color:#3459df;color:#294fc9;font-weight:650}
+.prototype-shell[data-variant="2"][data-section="planning"] .local-connections-panel,
+.prototype-shell[data-variant="2"][data-section="connections"] .connection-planning{display:none}
+.prototype-shell[data-variant="2"] .connection-planning-bar{max-width:760px}
+.prototype-shell[data-variant="2"] .connection-planning h2{display:none}
+@media(min-width:1120px){
+ .prototype-shell[data-variant="1"] .connection-settings-content{grid-template-columns:minmax(0,1fr) 305px;align-items:start;column-gap:20px}
+ .prototype-shell[data-variant="1"] .connection-planning{grid-column:2;grid-row:1}
+ .prototype-shell[data-variant="1"] .local-connections-panel{grid-column:1;grid-row:1}
+ .prototype-shell[data-variant="1"] .connection-planning-bar{grid-template-columns:minmax(0,1fr)}
+ html[data-interface="impeccable"] .prototype-shell[data-variant="1"] .connection-planning :is(.workspace-planning-selection .configuration-form,.stage-configuration-fields){grid-template-columns:minmax(0,1fr)}
+ html[data-interface="impeccable"] .prototype-shell[data-variant="1"] .connection-planning .configuration-actions{grid-column:1;grid-row:auto;justify-content:start;margin-top:8px}
+ .prototype-shell[data-variant="1"] .workspace-planning-options{display:grid;grid-template-columns:minmax(0,1fr)}
+}
+@media(max-width:700px){
+ .prototype-shell{padding-left:0}.prototype-rail{display:none}.prototype-main,.prototype-top{padding-inline:14px}
+ html[data-interface="impeccable"] .prototype-main .reference-connections .reference-connections-toolbar{grid-template-columns:1fr 1fr}
+ html[data-interface="impeccable"] .prototype-main .reference-connections-search-form{grid-column:1/-1}
+}
+
+html[data-interface="impeccable"] .prototype-main .connection-planning .stage-configuration-dialog.is-inline > section{padding:0;border:0;box-shadow:none;background:none;max-width:none}
+html[data-interface="impeccable"] .prototype-main .connection-planning .stage-configuration-dialog.is-inline label{display:grid;grid-template-columns:minmax(0,1fr);gap:5px}
+html[data-interface="impeccable"] .prototype-main .connection-planning .configuration-actions{align-self:start;margin-top:22px}
+html[data-interface="impeccable"] .prototype-main .reference-connections-search-form button:last-child{position:absolute;right:4px;border:0;background:transparent;box-shadow:none}
+.prototype-main .connection-settings-content{padding:0!important}
+@media(min-width:1120px){
+ html[data-interface="impeccable"] .prototype-shell[data-variant="1"] .prototype-main .connection-planning .configuration-actions{margin-top:8px}
+}
+.prototype-main{max-width:1240px}
+.prototype-shell[data-variant="1"] .prototype-main{max-width:1390px}
+html[data-interface="impeccable"] .prototype-main .reference-connections table th:nth-child(2){width:96px}
+html[data-interface="impeccable"] .prototype-main .connection-planning .stage-configuration-dialog.is-inline{padding:0;overflow:visible}
+.prototype-main .connection-planning .dan-select-control{position:relative;display:block}
+.prototype-main .connection-planning .dan-select-control :is(.dan-select-leading,.dan-select-caret){position:absolute;top:50%;transform:translateY(-50%);width:14px;height:14px;pointer-events:none;z-index:1}
+.prototype-main .connection-planning .dan-select-control .dan-select-leading{left:10px}
+.prototype-main .connection-planning .dan-select-control .dan-select-caret{right:10px}
+.prototype-main .connection-planning .dan-select-control select{width:100%;height:36px;padding-inline:30px;appearance:none;background:white}
+.prototype-main .connection-planning .configuration-actions button{background:#3459df;color:white;border:1px solid #284bbb;border-radius:7px;min-height:36px;padding:0 12px;font-weight:600;font-size:13px}
+.prototype-main .connection-planning .configuration-actions button:disabled{opacity:.5}
+.prototype-main .connection-planning .stage-configuration-fields label>button.help-tip{display:none}
+html[data-interface="impeccable"] .prototype-main .connection-planning .configuration-actions{margin-top:20px}
+html[data-interface="impeccable"] .prototype-main .reference-connections table th:nth-child(1){width:17%}
+html[data-interface="impeccable"] .prototype-main .reference-connections .reference-connections-search-form>button{position:absolute!important;right:4px;background:transparent!important;box-shadow:none!important;border:0!important}
+html[data-interface="impeccable"] .prototype-main .reference-connections .reference-connections-search-form>button[aria-label="清除连接搜索"]{right:51px}
+html[data-interface="impeccable"] .prototype-main .reference-connections .reference-connections-search-form input{padding-inline-end:94px!important}
+
+/* Demo C assigns space per column and keeps model IDs readable. */
+.prototype-shell[data-variant="2"] .prototype-main{width:100%;max-width:1800px}
+@media(max-width:1250px){.prototype-shell[data-variant="2"] .prototype-main{padding-inline:24px}}
+@media(max-width:640px){.prototype-shell[data-variant="2"] .prototype-main{padding-inline:16px}}
+html[data-interface="impeccable"] .prototype-shell[data-variant="2"] .reference-connections table{min-width:870px}
+html[data-interface="impeccable"] .prototype-shell[data-variant="2"] .reference-connections table :is(td,th){padding:5px 10px!important}
+html[data-interface="impeccable"] .prototype-shell[data-variant="2"] .reference-connections table th:nth-child(1){width:22%}
+html[data-interface="impeccable"] .prototype-shell[data-variant="2"] .reference-connections table th:nth-child(2){width:13%}
+html[data-interface="impeccable"] .prototype-shell[data-variant="2"] .reference-connections table th:nth-child(3){width:16%}
+html[data-interface="impeccable"] .prototype-shell[data-variant="2"] .reference-connections table th:nth-child(4){width:220px}
+html[data-interface="impeccable"] .prototype-shell[data-variant="2"] .reference-connections table th:nth-child(5){width:108px}
+html[data-interface="impeccable"] .prototype-shell[data-variant="2"] .reference-connections table th:nth-child(6){width:150px}
+html[data-interface="impeccable"] .prototype-shell[data-variant="2"] .reference-connections table th:nth-child(7){width:auto}
+.prototype-shell[data-variant="2"] .reference-connection-model .reference-connection-single-line{
+ white-space:pre-line;overflow-wrap:anywhere;text-overflow:clip;line-height:1.45
+}
+
+.prototype-planning-card{
+ background:var(--lc-surface);border:1px solid var(--lc-line);border-radius:12px
+}
+.prototype-planning-header,.prototype-planning-fields{padding:24px}
+.prototype-planning-header h3{margin:0;font-size:16px}
+.prototype-planning-header p{margin:6px 0 0;color:var(--lc-muted);font-size:13px}
+.prototype-file-tools legend{display:block;margin-bottom:6px;font-size:12px;font-weight:600}
+.prototype-planning-fields{
+ display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px 20px;align-items:end
+}
+.prototype-file-tools{grid-column:2;grid-row:1;border:0;padding:0;margin:0;min-width:0}
+.prototype-file-tools > div{display:flex;gap:8px;flex-wrap:wrap;min-height:36px;align-items:center}
+.prototype-file-tools button{
+ display:inline-flex;align-items:center;gap:7px;padding:5px 10px;border-radius:999px;
+ border:1px solid var(--lc-line);background:var(--lc-surface);color:var(--lc-muted);font-size:12px;cursor:pointer
+}
+.prototype-file-tools button[aria-checked="true"]{background:#eaf0ff;border-color:#b8c9ff;color:#2348be}
+.prototype-file-tools button span{position:relative;width:23px;height:13px;border-radius:999px;background:#9aa8bb}
+.prototype-file-tools button span::after{content:"";position:absolute;inset:2px auto auto 2px;width:9px;height:9px;border-radius:50%;background:white}
+.prototype-file-tools button[aria-checked="true"] span{background:#3459df}
+.prototype-file-tools button[aria-checked="true"] span::after{left:12px}
+.prototype-file-tools button:focus-visible{outline:2px solid #3459df;outline-offset:2px}
+.prototype-planning-footer{
+ grid-column:1/-1;display:flex;align-items:center;justify-content:flex-end;gap:12px;padding:12px 24px;
+ border-top:1px solid var(--lc-line);font-size:13px
+}
+.prototype-planning-message{margin:0;padding:16px 22px}
+@media(max-width:470px){
+ .prototype-planning-fields{grid-template-columns:minmax(0,1fr)}
+ .prototype-file-tools{grid-column:1;grid-row:2}
+}
+
+
+.prototype-planning-header{padding:20px 24px 16px;border-bottom:1px solid var(--lc-line)}
+.prototype-planning-fields{align-items:start;grid-template-columns:minmax(0,1fr) minmax(180px,1fr)}
+.prototype-planning-model{display:grid;gap:6px;font-size:12px;font-weight:600}
+.prototype-harness{grid-column:1/-1;margin:0;padding:0;border:0;min-width:0}
+.prototype-harness legend{margin-bottom:8px;font-size:12px;font-weight:600}
+.prototype-harness label{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--lc-line);cursor:pointer}
+.prototype-harness label:has(input:checked){background:var(--lc-surface-2)}
+.prototype-harness input{accent-color:#3459df}
+.prototype-harness strong,.prototype-harness small{display:block;overflow-wrap:anywhere}
+.prototype-harness small{color:var(--lc-muted)}
+@media(max-width:470px){
+ .prototype-planning-fields{grid-template-columns:minmax(0,1fr)}
+}
+
+.prototype-shell[data-variant="2"] .reference-connections-search-form input::-webkit-search-cancel-button{appearance:none}
+html[data-interface="impeccable"] .prototype-shell[data-variant="2"] .reference-connections table :is(th,td):first-child{padding-inline-start:18px!important}
+html[data-interface="impeccable"] .prototype-shell[data-variant="2"] .reference-connections table :is(th,td):last-child:not([colspan]){padding-inline-end:18px!important}
+.prototype-shell[data-variant="2"] .reference-connection-detail-grid{padding:8px 0;gap:12px 28px}
+.prototype-shell[data-variant="2"] .reference-connection-detail-grid section{display:flex;flex-direction:column;align-items:start;gap:5px}
+.prototype-shell[data-variant="2"] .reference-connection-detail-grid section > :is(p,ul){margin:0}
+.prototype-shell[data-variant="2"] .reference-connection-detail-grid section:nth-child(2) > ul{order:-1}
+.prototype-shell[data-variant="2"] .reference-connection-detail-grid section:nth-child(2) > strong{order:-2}
+.prototype-shell[data-variant="2"] .reference-connection-detail-grid :is(.prototype-duplicate-model,.prototype-history-version,ul:not(:has(li:not(.prototype-history-version)))){display:none}
+.prototype-shell[data-variant="2"] .reference-connection-detail-grid li{list-style:none}
+.prototype-shell[data-variant="2"] .reference-connection-detail-grid ul{padding:0}
+
+.prototype-version-registration{padding:20px 24px 24px;border-top:1px solid var(--lc-line)}
+.prototype-version-registration h3{margin:0;font-size:16px}
+.prototype-version-registration p{margin:6px 0 14px;color:var(--lc-muted);font-size:13px}
+.prototype-version-registration form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.prototype-version-registration label{display:grid;gap:5px;font-size:12px;font-weight:600}
+.prototype-version-registration :is(input,textarea){width:100%;padding:8px 10px;border:1px solid var(--lc-line);border-radius:7px;background:var(--lc-surface);color:var(--lc-ink);font:inherit}
+.prototype-version-registration form > div{display:flex;align-items:center;gap:12px}
+.prototype-planning-model > :is(div,input){max-width:400px}
+.prototype-harness{border-top:1px solid var(--lc-line);padding-top:6px}
+.prototype-harness legend{padding-right:10px}
+.prototype-harness label > span{display:grid;grid-template-columns:minmax(120px,.75fr) minmax(180px,1fr) minmax(0,1.3fr);align-items:center;gap:8px 16px;flex:1;min-width:0}
+.prototype-version-registration form > :is(label:nth-child(3),div){grid-column:1/-1}
+@media(max-width:700px){
+ .prototype-harness label > span{grid-template-columns:minmax(0,1fr);gap:3px}
+ .prototype-version-registration form{grid-template-columns:minmax(0,1fr)}
+}
+html[data-interface="impeccable"] .prototype-shell[data-variant="2"] .reference-connections table :is(th,td).reference-connection-billing-column{text-align:left}
+html[data-interface="impeccable"] .prototype-shell[data-variant="2"] .reference-connections table th:nth-child(8){width:62px}
+.prototype-shell[data-variant="2"] .reference-connection-row-actions{justify-content:flex-start}
+.prototype-harness-layouts{display:flex;flex-wrap:wrap;gap:6px;padding:0 24px 12px}
+.prototype-harness-layouts button{padding:6px 10px;border:1px solid var(--lc-line);border-radius:8px;background:var(--lc-surface);color:var(--lc-muted)}
+.prototype-harness-layouts button[aria-pressed=true]{background:var(--lc-surface-2);color:#3459df;border-color:#9bb1ee}
+.prototype-harness-workbench{padding:0 24px 20px;display:grid;gap:16px;min-width:0}
+.prototype-harness-workbench[data-layout=side],.prototype-harness-workbench[data-layout=preview]:has(.prototype-version-registration){grid-template-columns:repeat(2,minmax(0,1fr))}
+.prototype-harness-workbench .prototype-version-registration,.prototype-harness-preview{padding:16px;border:1px solid var(--lc-line);border-radius:10px;background:var(--lc-surface-2)}
+.prototype-harness-workbench[data-layout=side] .prototype-harness label > span,.prototype-harness-workbench[data-layout=preview]:has(.prototype-version-registration) .prototype-harness label > span{grid-template-columns:1fr;gap:2px}
+.prototype-harness-workbench .prototype-harness{margin-bottom:12px}
+.prototype-harness-preview{margin-top:12px}
+.prototype-harness-preview h3{margin:0;font-size:13px}
+.prototype-harness-preview pre{white-space:pre-wrap;overflow-wrap:anywhere;margin-bottom:0}
+@media(max-width:800px){
+ .prototype-harness-workbench[data-layout]{grid-template-columns:1fr!important}
+}

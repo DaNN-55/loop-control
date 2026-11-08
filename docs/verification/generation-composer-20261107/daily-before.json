@@ -1,0 +1,36 @@
+{
+  "backupPath": "/Users/dan/Programs/loop-control/.loop-control/local/backups/20261107-generation-composer/before-151.dump",
+  "backupBytes": 3827133,
+  "backupSha256": "5d669dc8cfcce2276798ae60a38b3d15cab5a8686d8904191c144af4e72a0a8e",
+  "archiveReadable": true,
+  "state": {
+    "public.episodes": {
+      "count": 3,
+      "sha256": "db88b9f0d97efba230f61e9e685c2c8413e3d372fbf3fc8cc24e70cc1b0ff53d"
+    },
+    "public.production_material_revisions": {
+      "count": 19,
+      "sha256": "aedcebbbb58cbc83ca6a98c79b929c5a2d7a43aaae8abe1ec3191afd2e2a9757"
+    },
+    "public.audio_tracks": {
+      "count": 2,
+      "sha256": "818584757a911c7921364372d781b9665cac26a10d753219ff31c67fc262b3d4"
+    },
+    "public.tasks": {
+      "count": 11,
+      "sha256": "790eefe3f69500272a8866217312ec4a670b826610f0aaa7db0b5a33b22a4dad"
+    },
+    "local_identity.production_workspaces": {
+      "count": 3,
+      "sha256": "7ef219bdb9a6cd3d521bce63e11d37b0156fdc35bb90c52129dcad44b007c67d"
+    },
+    "local_identity.workspace_visual_candidates": {
+      "count": 22,
+      "sha256": "de88cf71df967f08c3635b25ca06168eda478194027503ec73f117b44a7ce0be"
+    },
+    "local_identity.workspace_audio_preparations": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    }
+  }
+}

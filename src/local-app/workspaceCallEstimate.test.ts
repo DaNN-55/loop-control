@@ -55,3 +55,8 @@ it('returns an auditable input breakdown, scales references independently, and r
  expect(estimate({...base,referenceImages:[{width:256,height:256}]}).suggestedCents).toBeLessThan(result.suggestedCents);
  expect(estimate({...base,referenceImages:[],text:'a'.repeat(100000)}).suggestedCents).toBeGreaterThan(estimate({...base,referenceImages:[]}).suggestedCents);
 });
+
+it.each(['gpt-image-2.5-sunburst','gpt-image-2.5-flare','gpt-image-2.5-sunburst-2026-09-08','gpt-image-2.5-flare-2026-09-08','gpt-image-2.6-sunburst','gpt-image-2.6-flare'])('does not apply the GPT Image 2 token calculator to %s',model=>{
+ const result=estimate({kind:'image',provider:'openai',model,text:'画面',settings:{size:'864x1536',quality:'max',count:4}});
+ expect(result.manualReservation).toBe(true);expect(result.imageInputs).toBeUndefined();expect(result.basis).toContain('手动');expect(result.bufferPercent).toBe(0);
+});

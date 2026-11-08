@@ -1,0 +1,61 @@
+{
+  "models": [
+    "gpt-image-2.6-sunburst",
+    "gpt-image-2.6-flare"
+  ],
+  "connection": "gpt-image2 · v1",
+  "qualities": [
+    "auto",
+    "low",
+    "medium",
+    "high",
+    "xhigh",
+    "max"
+  ],
+  "desktop": {
+    "viewport": {
+      "width": 1543,
+      "height": 953
+    },
+    "rail": {
+      "width": 48,
+      "height": 260
+    },
+    "previewHeight": 260,
+    "horizontalOverflow": false
+  },
+  "narrow": {
+    "viewport": {
+      "width": 1152,
+      "height": 790
+    },
+    "rail": {
+      "width": 48,
+      "height": 260
+    },
+    "previewWidth": 445.828125,
+    "horizontalOverflow": false
+  },
+  "scroll": {
+    "candidates": 5,
+    "scrollHeight": 430,
+    "homeScrollTop": 0,
+    "wrapToLastScrollTop": 170
+  },
+  "video": {
+    "emptyRailAbsent": true,
+    "existingAdoptedPreserved": true,
+    "rail": {
+      "width": 48,
+      "height": 260
+    }
+  },
+  "final": {
+    "model": "gpt-image-2.6-flare",
+    "selectedCandidate": 4,
+    "dialogs": 0,
+    "viewportOverrideCleared": true
+  },
+  "businessWrites": false,
+  "paidGeneration": false
+}

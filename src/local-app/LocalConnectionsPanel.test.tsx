@@ -121,7 +121,10 @@ it('loads MiniMax available funds automatically and keeps unsupported actual spe
   if(String(path).includes('/connection-usage?'))return Response.json({connectionId:connection.id,versionId:connection.current_version_id,usage});
   return Response.json({connections:[connection],versions:[],capabilities:{secrets:'keychain',verification:'live',externalReady:false,networkAvailable:false}});
  }));
- render(<LocalConnectionsPanel/>);await screen.findByText('¥23.00');const cell=screen.getByRole('cell',{name:connection.name+' 额度与用量'});
- expect(cell.textContent).toContain('近7天暂不支持');const details=cell.querySelector('summary')!;expect(details.textContent).toContain('账务详情');fireEvent.click(details);expect(cell.textContent).toContain('现金 ¥10.00');expect(cell.textContent).toContain('缓存');expect(cell.textContent).toContain('非实时');expect(cell.querySelector('time')?.dateTime).toBe(usage.updatedAt);
+ render(<LocalConnectionsPanel/>);
+ const toggle=await screen.findByRole('button',{name:connection.name+' 账务与凭据详情'});
+ expect(screen.queryByText('¥23.00')).toBeNull();fireEvent.click(toggle);
+ await screen.findByText('¥23.00');expect(screen.getByRole('group',{name:connection.name+' 额度与用量'}).textContent).toContain('近7天暂不支持');
+ const details=screen.getByRole('region',{name:'账务详情'});expect(details.textContent).toContain('现金 ¥10.00');expect(details.textContent).toContain('缓存');expect(details.textContent).toContain('非实时');expect(details.querySelector('time')?.dateTime).toBe(usage.updatedAt);expect(screen.getByRole('region',{name:'凭据详情'})).toBeTruthy();
  expect(requests.filter(p=>p.includes('/connection-usage?'))).toHaveLength(1);expect(requests.some(p=>p.includes('connection-billing'))).toBe(false);
 });

@@ -91,7 +91,7 @@ it.skipIf(process.env.LOOP_PREFERENCES_ACCEPTANCE!=='1')('persists Owner prefere
   await c.query("UPDATE public.tasks SET status='failed' WHERE id=$1",[task]);
   await c.query('SET SESSION AUTHORIZATION loop_app');
   const failedFeed=await(await get('notification-events')).json();expect(failedFeed.filter((event:{event_type:string})=>event.event_type==='production_task_failed')).toHaveLength(1);
-  const taskEvent=failedFeed.find((event:{event_type:string})=>event.event_type==='production_task_failed');expect(taskEvent.episode_id).toBe(episode);expect(await enabled(taskEvent.id,'failure')).toBe(true);
+  const taskEvent=failedFeed.find((event:{event_type:string})=>event.event_type==='production_task_failed');expect(taskEvent.episode_id).toBe(episode);expect(taskEvent.episode_title).toBe('Failure rollback fixture');expect(await enabled(taskEvent.id,'failure')).toBe(true);
   if(process.env.LOOP_PREFERENCES_BROWSER_MODULE){const {review}=await import(process.env.LOOP_PREFERENCES_BROWSER_MODULE);await review({server,token,origin,csrf:csrfFor(token)});}
   // The schema-only fixture has no singleton rows; native initialization needs its installation seed.
   await c.query('SET SESSION AUTHORIZATION DEFAULT');await c.query('INSERT INTO public.notification_delivery_state(singleton,initialized) VALUES(true,false) ON CONFLICT(singleton) DO NOTHING');await c.query('SET SESSION AUTHORIZATION loop_app');

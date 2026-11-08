@@ -30,3 +30,18 @@ it('audio publication remains explicitly recoverable and never offers ordinary r
  render(<WorkspaceAudioPreparation workspace={{...base,audio:{mix:{voices:[],sounds:[]},preparations:[p]}} as unknown as ProductionWorkspace} command={vi.fn()} onChange={()=>{}} selectedShotId="shot"/>);
  expect(screen.getByText('音频发布结果待核对')).toBeTruthy();expect(screen.getByRole('button',{name:'核对并恢复产物'})).toBeTruthy();expect(screen.queryByRole('button',{name:'重试'})).toBeNull();
 });
+
+it('shows real image and video milestones without reporting a made-up percentage',()=>{
+ const workspace={...base,visualTasks:[
+  {id:'image',taskId:'image-task',shotId:'shot',kind:'image' as const,status:'running',error:null,submissionOutcome:'started' as const},
+  {id:'video',taskId:'video-task',shotId:'shot',kind:'video' as const,status:'running',error:null,providerTaskId:'original',videoPhase:'queued' as const}
+ ]};
+ const props={command:vi.fn(),onChange:vi.fn(),materials:[]};
+ const view=render(<WorkspaceVisualPreparation workspace={workspace} {...props}/>);
+ const image=screen.getByRole('progressbar',{name:'图片生成进度'});
+ expect(image.getAttribute('aria-valuetext')).toBe('等待供应商返回图片');
+ expect(image.hasAttribute('aria-valuenow')).toBe(false);
+ expect(screen.getByRole('progressbar',{name:'视频生成进度'}).getAttribute('aria-valuetext')).toBe('供应商排队中');
+ view.rerender(<WorkspaceVisualPreparation workspace={{...workspace,visualTasks:[{...workspace.visualTasks[0],submissionOutcome:'received'}]}} {...props}/>);
+ expect(screen.getByRole('progressbar',{name:'图片生成进度'}).getAttribute('aria-valuetext')).toBe('已收到图片，正在验证并保存');
+});

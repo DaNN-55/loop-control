@@ -184,3 +184,12 @@ export const productionScriptTemplate = `# 本期标题
 
 - 制作备注：补充说明只供审核参考，不作为可执行配置。
 `;
+
+/** Nonconforming scripts still serve as input for storyboard parsing. */
+export function parseStoryboardScript(text: string): ProductionScript | null {
+  try { return parseProductionScript(text); }
+  catch (error) {
+    if (error instanceof ProductionScriptError) return null;
+    throw error;
+  }
+}

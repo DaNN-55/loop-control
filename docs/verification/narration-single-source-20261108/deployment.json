@@ -1,0 +1,17 @@
+{
+  "previousRelease": "5a80b0f35caa714f63ac393546a23ecdae350bf1b4f7a5371881957ff39b41da",
+  "preparedRelease": "9420c5946f809b62e3f7f009f497558b223ef8b51207458a06c62c755057eb70",
+  "captionInputsBefore": "6649a5af81e8dc99f987202eb2c510a7",
+  "captionInputsAfter": "6649a5af81e8dc99f987202eb2c510a7",
+  "captionInputsUnchanged": true,
+  "migration": {
+    "passed": true,
+    "applied": [
+      "154-workspace-narration-caption-preservation.sql"
+    ],
+    "database": "loop_control",
+    "oldMigrationsUnchanged": true,
+    "backupSkippedByExplicitOption": false,
+    "backupDisabledByOwner": true
+  }
+}

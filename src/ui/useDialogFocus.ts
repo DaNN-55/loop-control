@@ -1,6 +1,6 @@
 import { useEffect, useRef, type RefObject } from "react";
 
-const focusableSelector = "button:not([disabled]), summary, [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex='-1'])";
+const focusableSelector = "button, summary, [href], input, select, textarea, [tabindex]";
 
 const activeDialogs: HTMLElement[] = [];
 
@@ -25,7 +25,8 @@ export function useDialogFocus<T extends HTMLElement = HTMLDivElement>(isOpen: b
     if (descendant < 0) activeDialogs.push(dialog);
     else activeDialogs.splice(descendant, 0, dialog);
     const focusableElements = () => Array.from(dialogRef.current?.querySelectorAll<HTMLElement>(focusableSelector) ?? []).filter((element) => {
-      if (element.closest('[hidden], [inert], [data-inert="true"]')) return false;
+      if (element.matches(':disabled, [type="hidden"], [aria-disabled="true"], [tabindex="-1"]') ||
+          element.closest('[hidden], [inert], [data-inert="true"], [aria-hidden="true"]')) return false;
       for (let ancestor = element.parentElement; ancestor; ancestor = ancestor.parentElement) {
         if (ancestor.tagName !== "DETAILS" || ancestor.hasAttribute("open")) continue;
         const summary = Array.from(ancestor.children).find((child) => child.tagName === "SUMMARY");
@@ -77,13 +78,16 @@ export function useDialogFocus<T extends HTMLElement = HTMLDivElement>(isOpen: b
       window.removeEventListener("keydown", manageDialogFocus);
       const index = activeDialogs.indexOf(dialog);
       if (index >= 0) activeDialogs.splice(index, 1);
-      const returnTarget = [returnFocusRef?.current, previousFocus].find((target) => target?.isConnected && !target.matches(":disabled") && target !== document.body);
+      const returnTarget = [returnFocusRef?.current, previousFocus].find((target) => target?.isConnected && !target.matches(':disabled, [aria-disabled="true"]') && !target.closest('[hidden], [inert], [aria-hidden="true"]') && target !== document.body);
       const remainingDialog = activeDialogs.at(-1);
+      const active = document.activeElement;
+      if (!remainingDialog && active instanceof HTMLElement && active !== document.body && !dialog.contains(active) &&
+          !active.closest('[hidden], [inert], [aria-hidden="true"]')) return;
       if (returnTarget && (!remainingDialog || remainingDialog.contains(returnTarget))) {
         returnTarget.focus();
         return;
       }
-      const fallback = remainingDialog ?? document.querySelector<HTMLElement>('[data-dialog-focus-fallback], main, [role="main"]');
+      const fallback = remainingDialog ?? document.querySelector<HTMLElement>('[data-dialog-focus-fallback], main, [role="main"], #main-content:not([inert])');
       if (fallback) {
         if (!fallback.hasAttribute("tabindex")) fallback.tabIndex = -1;
         fallback.focus();

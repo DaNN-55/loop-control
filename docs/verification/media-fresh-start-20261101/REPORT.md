@@ -18,6 +18,7 @@
 - `external-media/` 为原 `/Volumes/Ebuget 1T/Media` 整树同盘重命名；根 device/inode 未变，迁移前后逐文件清单与 SHA-256 相同。1675个文件，24,463,882,442字节。含原旧生产、素材库和缓存，未删除。
 - `native-backup/` 为现有完整备份实现生成并独立复核的归档：111张表、1706个媒体文件；数据库归档 SHA-256 为 `adae122477bac4551ffe6e7689094a3a31428f63297d21b83f809adb25ff1f10`。保留8条先前批准的历史引用异常，没有伪称异常已修复；不导出密码、会话、Keychain 值。归档完整性通过，未进行新的完整恢复演练。
 - 旧本地 `doubao`、`rizhao-jinshan`、`openchatcut` 和 `.DS_Store` 同卷移动至 `/Users/dan/Programs/loop-control/.loop-control/local/volume/production-archive-20261101/`，原始资料额外保留；完整媒体副本也在上述外置备份内。
+  - 2026-11-02 后续维护：该本地重复归档的 1,706 个文件与外置完整备份逐项 SHA-256 核对一致后已删除；外置归档保留。本地映像收缩后占用约 1.75 GiB，字幕模型、恢复回执及卷身份验证不变。详见根目录 `PLAN.md` 的「本地旧生产归档整理」和 `.loop-control/maintenance/production-archive-20261102/result.json`。
 - 保存操作前配置、生产单确切ID、原恢复回执、文件清单、迁移回执、临时创建验收和最终读回。归档 `README.md` 说明恢复边界，不能将旧文件覆盖新 Media 或将 dump 混入当前库。
 
 维护证据：`.loop-control/maintenance/20261101-media-fresh-start/`，私有资料不进入 Git。

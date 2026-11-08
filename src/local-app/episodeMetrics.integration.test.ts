@@ -23,10 +23,15 @@ it('reads real Owner metrics, sorts before pagination, keeps unknowns last and e
   const read=(sort:string,page='1',owner=f.owner)=>readLocalCatalog(f.pool,owner,parseCatalogQuery(new URLSearchParams({sort,page})));
   const desc=await read('cost_desc');expect(desc.total).toBe(23);expect(desc.episodes).toHaveLength(20);expect(desc.episodes[0].id).toBe(episodes[21]);
   expect(desc.metrics?.[episodes[21]].cost).toMatchObject({actualCents:220,estimatedCents:null,unpricedCount:0});
-  expect(desc.metrics?.[episodes[21]].stageStartedAt.preparation).toBe('2026-11-02T00:10:00+00:00');
+  expect(desc.metrics?.[episodes[21]].workerRunSeconds).toBe(60);
   expect(Object.keys(desc.metrics??{})).toHaveLength(20);expect(desc.metrics?.[episodes[23]]).toBeUndefined();
   const last=await read('cost_desc','2');expect(last.episodes.at(-1)?.id).toBe(episodes[22]);
   expect((await read('cost_asc')).episodes[0].id).toBe(episodes[0]);expect((await read('cost_asc','2')).episodes.at(-1)?.id).toBe(episodes[22]);
+  const workbench=(catalogStage:string,status:string,page='1')=>readLocalCatalog(f.pool,f.owner,parseCatalogQuery(new URLSearchParams({view:'operations',accountId:account,catalogStage,status,page})));
+  const preparation=await workbench('preparation','running','2');
+  expect(preparation).toMatchObject({total:23,page:2,statusCounts:{all:23,running:23}});
+  expect(preparation.operationRows.map(row=>row.workflowStep)).toEqual(['preparation','preparation','preparation']);
+  expect(await workbench('delivery','running','2')).toMatchObject({episodes:[],total:0,page:1});
   const foreign=await read('cost_desc','1',f.other);expect(foreign.episodes.map(e=>e.id)).toEqual([episodes[23]]);expect(Object.keys(foreign.metrics??{})).toEqual([episodes[23]]);
  }finally{await f.close();}
 },90000);

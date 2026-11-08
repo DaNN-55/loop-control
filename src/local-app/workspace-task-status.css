@@ -2,3 +2,12 @@
 .workspace-visual-task>p,.workspace-visual-task>details{flex-basis:100%;min-width:0;margin:0;overflow-wrap:anywhere;line-height:1.6}
 .workspace-visual-task>details p{margin:6px 0 0;overflow-wrap:anywhere}
 .workspace-visual-task>details summary{cursor:pointer}
+.workspace-visual-progress{flex-basis:100%;display:flex;align-items:center;gap:9px;font-size:var(--text-xs,12px)}
+.workspace-visual-progress-heading{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px 12px;flex:1;min-width:0}
+.workspace-visual-progress-heading>span:last-child{font-variant-numeric:tabular-nums}
+.workspace-task-ring{display:block;width:20px;height:20px;box-sizing:border-box;border:2px solid var(--lc-line-strong);border-top-color:var(--lc-accent);border-radius:50%;animation:workspace-task-ring-spin 1s linear infinite;flex:none}
+.workspace-thumbnail-pending{flex:0 0 max(64px,calc((100% - 40px)/6));min-width:0;border:1px solid var(--lc-line);border-radius:6px;overflow:hidden;background:var(--lc-surface)}
+.workspace-thumbnail-pending .workspace-visual-progress{height:78px;display:flex;flex-direction:column;justify-content:center;gap:5px;padding:5px;font-size:11px;color:var(--lc-muted)}
+.workspace-thumbnail-pending .workspace-visual-progress-heading{display:flex;flex-direction:column;align-items:center;flex:0;gap:1px}
+@keyframes workspace-task-ring-spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.workspace-task-ring{animation:none}}

@@ -1,0 +1,25 @@
+{
+  "composer": {
+    "height": 328,
+    "width": 328
+  },
+  "emptyNotice": false,
+  "generateDisabled": true,
+  "input": {
+    "height": 190,
+    "width": 302
+  },
+  "overflow": false,
+  "rail": {
+    "height": 260,
+    "width": 60
+  },
+  "reference": {
+    "height": 80,
+    "width": 52
+  },
+  "viewport": {
+    "height": 790,
+    "width": 1152
+  }
+}

@@ -7,8 +7,9 @@ import {randomUUID,createHash} from 'node:crypto';
 import {writeFile,mkdir} from 'node:fs/promises';
 import {dirname} from 'node:path';
 import type {PoolClient} from 'pg';
-import {parseProductionScript} from '../reviews/productionScript.js';
-import {verifyReportedStoryboardArtifact} from '../worker/storyboardArtifact.js';
+import {parseStoryboardScript} from '../reviews/productionScript.js';
+import {plainScriptParagraphs} from '../reviews/mainScript.js';
+import type {StoryboardManifest} from '../worker/contracts.js';
 import {storyboardFromScript} from '../worker/scriptPlanning.js';
 import {verifyNativeFile} from './localFiles.js';
 import {safeAssetOutputPath} from '../worker/controlledMediaExecutor.js';
@@ -20,14 +21,18 @@ export async function prepareAuthoredWorkspace(c:PoolClient,root:string,e:{id:st
  const location=await episodeStorageLocationAtRoot(c,root,e.id);await requireEpisodeStorageDirectory(c,location);
  const source=(await c.query('SELECT * FROM public.production_material_revisions WHERE id=$1 AND episode_id=$2',[e.main_script_revision_id,e.id])).rows[0];
  if(!source)throw new ConfigurationError(409,'请先确认主脚本。');
- const script=parseProductionScript((await verifyEpisodeFile(c,root,e.id,source.storage_path,source.sha256,Number(source.file_size))).toString('utf8'));
- if(!script){
- const planned=(await c.query("SELECT p.*,a.relative_path,a.sha256,a.file_size,t.input_snapshot FROM public.review_packages p JOIN public.tasks t ON t.id=p.task_id JOIN public.artifacts a ON a.id=p.artifact_id WHERE p.episode_id=$1 AND t.input_snapshot#>>'{workspace_preparation,scriptRevisionId}'=$2 AND t.status='completed' AND p.invalidated_at IS NULL ORDER BY p.revision_number DESC LIMIT 1",[e.id,source.id])).rows[0];
- if(!planned){try{const task=(await c.query('SELECT local_identity.queue_workspace_planning($1,$2) id',[e.id,source.id])).rows[0].id;return readWorkspacePlanning(c,task);}catch(error){if((error as Error).message==='Select the registered planning Harness, model, budget and tools')throw new ConfigurationError(409,'请在素材准备与匹配中保存分镜规划模型、Harness、额度与文件工具。');throw error;}}
- await verifyEpisodeFile(c,root,e.id,planned.relative_path,planned.sha256,Number(planned.file_size));await verifyReportedStoryboardArtifact({storage:await episodeFileIO(c,root,e.id),assetRoot:root,relativePath:planned.relative_path,frozenInputs:planned.input_snapshot.input_artifacts,storyboard:planned.context_snapshot.worker_result.storyboard});
- await c.query('SELECT local_identity.confirm_workspace_plan($1,$2,$3)',[e.id,source.id,planned.id]);return planned;
- }
- const inputs=[{artifactType:'main_script',relativePath:source.storage_path,sha256:source.sha256,fileSize:Number(source.file_size)}],board=storyboardFromScript(script,inputs,{},true),id=randomUUID(),bytes=Buffer.from(JSON.stringify(board,null,2)+'\n'),path=`${location.relativePath}/preparation/${id}.json`,sha=createHash('sha256').update(bytes).digest('hex'),file=await safeAssetOutputPath(root,path);
+ const text=(await verifyEpisodeFile(c,root,e.id,source.storage_path,source.sha256,Number(source.file_size))).toString('utf8');
+ const script=parseStoryboardScript(text);
+ const inputs=[{artifactType:'main_script',relativePath:source.storage_path,sha256:source.sha256,fileSize:Number(source.file_size)}];
+ const paragraphs=script?[]:plainScriptParagraphs(text);
+ if(!script&&!paragraphs.length)throw new ConfigurationError(409,'脚本正文为空，请补充正文后重新确认。');
+ const board:StoryboardManifest=script?storyboardFromScript(script,inputs,{},true):{
+  version:'storyboard/v1',audioCues:[],shots:paragraphs.map((scriptSegment,index)=>({
+   id:'shot-'+String(index+1).padStart(2,'0'),scriptSegment,durationSeconds:5,shotType:'b_roll',
+   productionMethod:'待匹配素材',targetSpec:'9:16',inputBasis:[{relativePath:source.storage_path,sha256:source.sha256}],
+  })),
+ };
+ const id=randomUUID(),bytes=Buffer.from(JSON.stringify(board,null,2)+'\n'),path=`${location.relativePath}/preparation/${id}.json`,sha=createHash('sha256').update(bytes).digest('hex'),file=await safeAssetOutputPath(root,path);
  await mkdir(dirname(file),{recursive:true});await writeFile(file,bytes,{flag:'wx'});
  await c.query('SELECT local_identity.register_workspace_preparation($1,$2,$3,$4,$5,$6)',[e.id,source.id,id,{relativePath:path,sha256:sha,fileSize:bytes.length},board,'script-segment']);
  return(await c.query('SELECT p.*,a.relative_path,a.sha256,a.file_size FROM public.review_packages p JOIN public.artifacts a ON a.id=p.artifact_id WHERE p.id=$1',[id])).rows[0];

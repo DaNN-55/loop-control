@@ -36,7 +36,7 @@ export async function queueWorkspaceImageCandidates(c:PoolClient,root:string,row
     await verifyEpisodeFile(c,root,row.episode_id,m.storage_path,m.sha256,Number(m.file_size));
     references.push({artifactType:'static_visual',relativePath:m.storage_path,sha256:m.sha256,fileSize:Number(m.file_size),mimeType:m.mime_type,materialRevisionId:m.id});
   }
-  await runtime.checkReferences(c,[resolved.selection.connectionVersionId!]);
+  await runtime.checkReferences(c,[resolved.selection.connectionVersionId!],{purpose:'workspace-generation'});
   if(!runtime.mediaReady)throw new ConfigurationError(503,'图片 Worker 未配置。');
   await runtime.mediaReady({static_visual:config});
   const timeline=project.timelines.find(t=>t.items.includes(item))!,expected=workspaceCandidateTarget(item),id=randomUUID();
@@ -44,7 +44,7 @@ export async function queueWorkspaceImageCandidates(c:PoolClient,root:string,row
   const context={accountId:e.account_id,blueprintVersionId:e.blueprint_version_id,accountRules:creative,seriesVersionId:e.series_version_id,seriesRules:e.series_rules??null};
   const actualPrompt=imageRequestPrompt(data.prompt,brief,ids,creative,context.seriesRules);
   if(resolved&&actualPrompt.length>(resolved.choice.constraints.prompt?.maxLength??1200))throw new ConfigurationError(400,'图片提示词与账号、系列规则合并后过长，请精简后提交。');
-  const snapshot={...(resolved?{selectionVersion:1,selection:resolved.selection,connection:resolved.connection,context,actualPrompt,target:{targetItemId:item.id,shotId:clip.shotId,workspaceRevision:Number(row.revision),projectSha256:row.project_sha256,scriptRevisionId:row.script_revision_id},costBasis:{kind:'owner-reservation',reservationCents:data.reservationCents,model:resolved.selection.model,settings:data.settings}}:{}),kind:'image',usage:'still',execution:config,prompt:data.prompt.trim(),imageSettings:data.settings,imageBrief:brief,references,referenceMaterialRevisionIds:ids,durationSeconds:Number(item.durationInFrames)/timeline.fps,reservationCents:data.reservationCents,authorizationHash:auth.authorization_hash};
+  const snapshot={...(resolved?{selectionVersion:1,selection:resolved.selection,connection:resolved.connection,context,actualPrompt,target:{targetItemId:item.id,shotId:clip.shotId,workspaceRevision:Number(row.revision),projectSha256:row.project_sha256,scriptRevisionId:row.script_revision_id},costBasis:{kind:'owner-reservation',reservationCents:data.reservationCents,model:resolved.selection.model,settings:data.settings}}:{}),...(data.retryOfTaskId?{retryOfTaskId:data.retryOfTaskId}:{}),kind:'image',usage:'still',execution:config,prompt:data.prompt.trim(),imageSettings:data.settings,imageBrief:brief,references,referenceMaterialRevisionIds:ids,durationSeconds:Number(item.durationInFrames)/timeline.fps,reservationCents:data.reservationCents,authorizationHash:auth.authorization_hash};
   await c.query('INSERT INTO local_identity.workspace_visual_candidates(id,workspace_id,episode_id,clip_id,shot_id,target_item_id,input_fingerprint,target_snapshot,request_snapshot) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)',[id,row.id,row.episode_id,clip.id,clip.shotId,item.id,productionHash({expected,snapshot}),JSON.stringify(expected),JSON.stringify(snapshot)]);
   try{await c.query('SELECT local_identity.queue_workspace_images($1)',[id]);}catch(error){if((error as {code?:string}).code==='55000')throw new ConfigurationError(409,'已有图片任务正在进行或提交结果未知，请先核对已有任务。');throw error;}
 }

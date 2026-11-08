@@ -19,11 +19,19 @@ it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('reports exact owned version re
   const beforeReads=f.secretReads,before=await f.request();expect(before.status).toBe(200);
   expect(before.body.versions.find((v:{id:string})=>v.id===old).usage).toEqual({currentBlueprints:1,episodes:1,tasks:1,activeTasks:1,requests:0,savedSelections:0});
   expect(before.body.versions.find((v:{id:string})=>v.id===current).usage).toEqual({currentBlueprints:0,episodes:0,tasks:0,activeTasks:0,requests:0,savedSelections:0});
+  expect(before.body.connections[0]).toMatchObject({lastVerificationAt:null,inFlightTasks:{queued:1,running:0}});
   expect((await f.request(undefined,f.otherToken)).body.versions).toEqual([]);expect((await f.request(undefined,'')).status).toBe(401);expect(f.secretReads).toBe(beforeReads);
   expect((await f.command('revoke',{versionId:old},f.token,false)).status).toBe(403);expect((await f.command('revoke',{versionId:old},f.otherToken)).status).toBe(404);
   expect((await f.command('revoke',{versionId:old})).status).toBe(200);const after=await f.request();expect(after.body.versions.find((v:{id:string})=>v.id===old)).toMatchObject({status:'revoked',usage:{episodes:1,tasks:1,activeTasks:1}});expect(after.body.connections[0].current_version_id).toBe(current);
   const detail=await fetch(f.origin+'/api/local/episodes/'+episode,{headers:{Cookie:'loop_owner_session='+f.token}});expect(detail.status).toBe(200);const production=await detail.json();expect(production.patches.tasks.rows.find((row:{id:string})=>row.id===task).input_snapshot).toEqual(originalTask);
   expect(f.secretReads).toBe(beforeReads);expect(JSON.stringify(after.body)).not.toContain('synthetic-openai-key');
+  const running=randomUUID();
+  await f.admin.query("INSERT INTO public.tasks(id,episode_id,task_type,status,input_snapshot) VALUES($1,$2,'generate_b_roll','running',$3)",[running,episode,{credential_ref:current,production_selection:{connectionVersionId:old}}]);
+  expect((await f.request()).body.connections[0].inFlightTasks).toEqual({queued:1,running:1});
+  await f.admin.query("UPDATE public.tasks SET invalidated_at=now(),invalidated_reason='fixture superseded' WHERE id=$1",[running]);
+  expect((await f.request()).body.connections[0].inFlightTasks).toEqual({queued:1,running:0});
+  expect((await f.command('verify',{connectionId:c.id})).status).toBe(200);
+  expect((await f.request()).body.connections[0].lastVerificationAt).toEqual(expect.any(String));
  }finally{await f.close();}
 },60000);
 it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('includes saved music and narration defaults with no queued task and excludes foreign workspace references',async()=>{

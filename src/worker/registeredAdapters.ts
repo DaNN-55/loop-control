@@ -1,7 +1,8 @@
 import {isRetiredProvider,retiredProviderMessage} from './providerLifecycle.js';
-import {wanVideoModels} from '../wanVideoModels.js';
-import {imageSizes} from '../imageGeneration.js';
-import {videoProviders} from "./videoProviderCatalog.js";
+import {wanReferenceModel,wanReferenceMode,wanVideoModel,wanVideoModels} from '../wanVideoModels.js';
+import {imageSizes,openAiImageModels,openAiEnhancedImageModels,openAiImageQualities} from '../imageGeneration.js';
+import type {VideoGenerationMode} from '../videoVisualInputs.js';
+import {klingOmniModel,videoProviders} from "./videoProviderCatalog.js";
 export const executionPathKeys = ["external", "local", "manual"] as const;
 
 export type ExecutionPath = typeof executionPathKeys[number];
@@ -24,6 +25,10 @@ export interface AcousticAlignmentCapabilities {
 export const productionCapabilityLabels = {image: '图片', video: '视频', speech: '语音', music_sound: '音乐与音效'} as const;
 export type ProductionCapability = keyof typeof productionCapabilityLabels;
 export type ProductionInputMode = 'text' | 'reference_images' | 'first_frame' | 'query' | 'storyboard';
+export type {VideoGenerationMode,VideoVisualInputLimit,VideoVisualInputRole} from '../videoVisualInputs.js';
+export function firstFrameVideoMode(limit?: ProductionServiceConstraints['firstFrame']): VideoGenerationMode {
+  return {id:'first-frame',label:'首帧生成',inputs:{firstFrame:{max:1,min:1,maxBytes:limit?.maxBytes,mimeTypes:limit?.mimeTypes}}};
+}
 export interface ProductionServiceConstraints {
   prompt?: {maxLength: number};
   query?: {maxLength: number};
@@ -39,10 +44,12 @@ export interface ProductionServiceConstraints {
   speakingRate?: {min: number; max: number};
 }
 interface ProductionServiceDeclaration {
+  modelConstraints?: Readonly<Record<string, Partial<ProductionServiceConstraints>>>;
   capability: ProductionCapability;
   label: string;
   mode: 'generation' | 'search' | 'local';
   inputModes: readonly ProductionInputMode[];
+  videoGenerationModes?: Readonly<Record<string, readonly VideoGenerationMode[]>>;
   constraints: ProductionServiceConstraints;
 }
 export interface RegisteredProductionChoice extends ProductionServiceDeclaration {
@@ -115,9 +122,39 @@ const volcengineTtsAlignment: AcousticAlignmentCapabilities = {
   existingTextAudioAlignment: { support: "unsupported", detail: "自动字幕打轴是独立服务与授权，当前冻结的豆包 TTS 连接版本未声明兼容。" },
 };
 
+const officialFirstFrame={required:true,maxBytes:10*1024*1024,mimeTypes:['image/png','image/jpeg']};
+const officialFrame={...firstFrameVideoMode(officialFirstFrame).inputs.firstFrame!,min:1};
+const seedanceModes=Object.fromEntries(videoProviders.volcengine.models.map((model,index)=>[model,[
+ firstFrameVideoMode(officialFirstFrame),
+ {id:'keyframes',label:'首尾帧生成',inputs:{firstFrame:officialFrame,lastFrame:officialFrame}},
+ {id:'references',label:'参考素材生成',allowAssetVideoSource:true,inputs:{
+  referenceImages:{max:index===0?9:30,maxBytes:10*1024*1024,mimeTypes:officialFirstFrame.mimeTypes},
+  referenceVideos:{max:index===0?3:10,maxBytes:200*1024*1024,mimeTypes:['video/mp4','video/quicktime']},
+ }},
+] satisfies VideoGenerationMode[]]));
+const officialVideoModes:Record<string,Readonly<Record<string,readonly VideoGenerationMode[]>>> = {
+ volcengine:seedanceModes,
+ minimax:{'MiniMax-H3':[
+  firstFrameVideoMode(officialFirstFrame),
+  {id:'keyframes',label:'首尾帧生成',inputs:{firstFrame:officialFrame,lastFrame:officialFrame}},
+  {id:'references',label:'参考素材生成',allowInlineMp4:true,inputs:{
+   referenceImages:{max:9,maxBytes:30*1024*1024,mimeTypes:['image/png','image/jpeg','image/webp']},
+   referenceVideos:{max:3,maxBytes:50*1024*1024,mimeTypes:['video/mp4','video/quicktime']},
+  }},
+ ]},
+ kling:{'kling-v3':[
+  firstFrameVideoMode(officialFirstFrame),
+  {id:'keyframes',label:'首尾帧生成',inputs:{firstFrame:officialFrame,lastFrame:officialFrame}},
+ ],[klingOmniModel]:[
+  {id:'references',label:'参考素材生成',maxImagesWithVideo:4,videoSeconds:{min:3,max:15},inputs:{
+   referenceImages:{max:7,maxBytes:10*1024*1024,mimeTypes:officialFirstFrame.mimeTypes},
+   referenceVideos:{max:1,maxBytes:200*1024*1024,mimeTypes:['video/mp4','video/quicktime']},
+  }},
+ ]},
+};
 const manifest: readonly RegisteredAdapterDefinition[] = [
   ...Object.entries(videoProviders).map(([provider, definition]): RegisteredAdapterDefinition => ({
-    production: [{capability: 'video', label: definition.label, mode: 'generation', inputModes: ['text', 'first_frame'], constraints: {prompt: {maxLength: 1500}, durationSeconds: {min: definition.minDuration, max: definition.maxDuration, integer: true}, firstFrame: {required: true, maxBytes: 10*1024*1024, mimeTypes: ['image/png', 'image/jpeg']}, ...(provider==='kling'?{}:{resolutions: [provider === 'minimax' ? '768P' : '720p'], aspectRatios: ['adaptive']})}}],
+    production: [{capability: 'video', label: definition.label, mode: 'generation', inputModes: ['text', 'first_frame'], constraints: {prompt: {maxLength: 1500}, durationSeconds: {min: definition.minDuration, max: definition.maxDuration, integer: true}, firstFrame: officialFirstFrame, ...(provider==='kling'?{}:{resolutions: [provider === 'minimax' ? '768P' : '720p'], aspectRatios: ['adaptive']})}, videoGenerationModes:officialVideoModes[provider]}],
     provider, adapter: definition.adapter, executionPath: "external", connection: {kind: "owner_managed", type: provider+"_video_api", endpoint: definition.endpoint}, execution: {kind: "controlled_media", safetyLimit: 1},
     capabilities: ["a_roll_generation", "b_roll_generation"].map(capability => ({capability, configurationFields: ["credential_ref", "max_attempts"], modelCatalog: definition.models, presetCatalog: ["official-video-v1"]})),
   })),
@@ -130,8 +167,8 @@ const manifest: readonly RegisteredAdapterDefinition[] = [
     { capability: "visual_planning", configurationFields: ["model"], modelCatalog: [], presetCatalog: [] },
     { capability: "storyboard_planning", configurationFields: ["model", "prompt_harness"], modelCatalog: [], presetCatalog: [] },
   ] },
-  { production: [{capability: 'image', label: 'OpenAI Images', mode: 'generation', inputModes: ['text', 'reference_images'], constraints: {sizes: imageSizes, qualities: ['auto','low','medium','high'], counts: [1,2,4], referenceImages: {max: 16, maxBytes: 20*1024*1024, mimeTypes: ['image/png','image/jpeg','image/webp']}}}], provider: "openai", adapter: "openai_images", executionPath: "external", connection: { kind: "owner_managed", type: "openai_api", endpoint: "https://api.openai.com/v1" }, execution: { kind: "controlled_media", safetyLimit: 1 }, capabilities: [
-    { capability: "static_visual_generation", configurationFields: ["model", "credential_ref", "max_attempts"], modelCatalog: ["gpt-image-2"], presetCatalog: ["static-visual-v1"] },
+  { production: [{capability: 'image', label: 'OpenAI Images', mode: 'generation', modelConstraints: Object.fromEntries(openAiEnhancedImageModels.map(model=>[model,{qualities:openAiImageQualities(model)}])), inputModes: ['text', 'reference_images'], constraints: {sizes: imageSizes, qualities: ['auto','low','medium','high'], counts: [1,2,4], referenceImages: {max: 16, maxBytes: 20*1024*1024, mimeTypes: ['image/png','image/jpeg','image/webp']}}}], provider: "openai", adapter: "openai_images", executionPath: "external", connection: { kind: "owner_managed", type: "openai_api", endpoint: "https://api.openai.com/v1" }, execution: { kind: "controlled_media", safetyLimit: 1 }, capabilities: [
+    { capability: "static_visual_generation", configurationFields: ["model", "credential_ref", "max_attempts"], modelCatalog: openAiImageModels, presetCatalog: ["static-visual-v1"] },
   ] },
   { production: [{capability: 'video', label: 'Pexels 素材检索', mode: 'search', inputModes: ['query'], constraints: {query: {maxLength: 100}, orientation: 'portrait'}}], provider: "pexels", adapter: "pexels_video", executionPath: "external", connection: { kind: "owner_managed", type: "pexels_api", endpoint: "https://api.pexels.com" }, execution: { kind: "controlled_media", safetyLimit: 3 }, capabilities: [
     { capability: "b_roll_generation", configurationFields: ["max_attempts"], modelCatalog: ["pexels-video-v1"], presetCatalog: ["b-roll-v1"] },
@@ -215,7 +252,16 @@ function resolve(selection: AdapterSelection): AdapterResolution {
 function productionChoices(): readonly RegisteredProductionChoice[] {
   return manifest.flatMap(definition => (definition.production??[]).map(production => {
     const declarations = definition.capabilities.filter(declaration => normalizeProductionCapability(declaration.capability) === production.capability);
-    return {...production, provider: definition.provider, adapter: definition.adapter, identityKey: identityKey(definition.provider, definition.adapter), executionPath: definition.executionPath, connection: definition.connection, legacyCapabilities: declarations.map(declaration => declaration.capability), models: production.mode === 'search' ? [] : [...new Set(declarations.flatMap(declaration => declaration.modelCatalog))], presets: [...new Set(declarations.flatMap(declaration => declaration.presetCatalog))], ...(declarations[0]?.voiceCatalog ? {voiceCatalog: declarations[0].voiceCatalog} : {})};
+    const models = production.mode === 'search' ? [] : [...new Set(declarations.flatMap(declaration => declaration.modelCatalog))];
+    const firstFrame = production.constraints.firstFrame;
+    const videoGenerationModes = production.capability==='video'&&production.mode==='generation'&&firstFrame
+      ? production.videoGenerationModes??Object.fromEntries(models.map(model=>{
+        const maxBytes = definition.provider==='bailian'?wanVideoModel(model)?.maxBytes:undefined;
+        if(definition.provider==='bailian'&&model===wanReferenceModel)return [model,[wanReferenceMode]];
+        return [model,[firstFrameVideoMode({...firstFrame,maxBytes:maxBytes??firstFrame.maxBytes})]];
+      }))
+      : production.videoGenerationModes;
+    return {...production, ...(videoGenerationModes?{videoGenerationModes}:{}), provider: definition.provider, adapter: definition.adapter, identityKey: identityKey(definition.provider, definition.adapter), executionPath: definition.executionPath, connection: definition.connection, legacyCapabilities: declarations.map(declaration => declaration.capability), models, presets: [...new Set(declarations.flatMap(declaration => declaration.presetCatalog))], ...(declarations[0]?.voiceCatalog ? {voiceCatalog: declarations[0].voiceCatalog} : {})};
   }));
 }
 export const registeredAdapters = Object.freeze({ choicesFor, resolve, productionChoices });

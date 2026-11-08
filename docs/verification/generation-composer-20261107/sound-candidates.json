@@ -1,0 +1,71 @@
+{
+  "taskIds": [
+    "876df2e8-3775-4a8f-b212-4f3c3cecf03f",
+    "c45b32ff-7649-4662-8179-e4fff7b67466",
+    "b6f91089-7e4f-42bd-a253-e605ebb59e93"
+  ],
+  "sourceIds": [
+    3,
+    2,
+    1
+  ],
+  "defaults": {
+    "settings": {
+      "query": "calm ambient",
+      "description": "整期氛围",
+      "materialRevisionId": ""
+    },
+    "selection": {
+      "adapter": "freesound_preview",
+      "provider": "freesound",
+      "capability": "music_sound",
+      "connectionVersionId": "b2f74934-9aea-46a5-a55f-e09e350ba16a"
+    }
+  },
+  "mix": {
+    "voices": [
+      {
+        "coverage": "none",
+        "startSeconds": null,
+        "durationSeconds": null,
+        "shotDurationSeconds": 2,
+        "sourceStartSeconds": null,
+        "sourceLabel": null,
+        "alignmentReady": false,
+        "shotId": "shot-1",
+        "mode": "none",
+        "gainDb": 0,
+        "ambienceGainDb": null,
+        "sourceItemId": null,
+        "sourceAssetId": null
+      },
+      {
+        "coverage": "none",
+        "startSeconds": null,
+        "durationSeconds": null,
+        "shotDurationSeconds": 2,
+        "sourceStartSeconds": null,
+        "sourceLabel": null,
+        "alignmentReady": false,
+        "shotId": "shot-2",
+        "mode": "none",
+        "gainDb": 0,
+        "ambienceGainDb": null,
+        "sourceItemId": null,
+        "sourceAssetId": null
+      }
+    ],
+    "sounds": [
+      {
+        "itemId": "workspace-sfx-5d4926dd-97be-4696-85de-26553670fdc6",
+        "kind": "sfx",
+        "gainDb": -6,
+        "duckDepthDb": 0,
+        "startSeconds": 0.2,
+        "durationSeconds": 0.4
+      }
+    ]
+  },
+  "originalProjectSha": "c00f95891f94087d4d461d50175ce020d4432fb191245276de2513a4e96a7749",
+  "adoptedProjectSha": "8f995eede02c906248bba93216a6fc51ca1dacdbdf76570f15de21e7c731004e"
+}

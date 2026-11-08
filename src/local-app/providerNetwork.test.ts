@@ -1,16 +1,163 @@
 // @vitest-environment node
 import{afterEach,it,expect,vi}from'vitest';import{mkdtempSync,writeFileSync,readFileSync,rmSync,realpathSync,unlinkSync}from'node:fs';import{join}from'node:path';import{tmpdir}from'node:os';import{createHash}from'node:crypto';
-import{createProviderFetcher,type ProviderNetworkConfiguration}from'./providerNetwork';
+import{createProviderFetcher,createVideoContinuationFetcher,createWorkspaceGenerationFetcher,createWorkspaceSearchFetcher,openAiImageAuthorizationIssue,providerNetworkAvailable,type ProviderNetworkConfiguration}from'./providerNetwork';
 import{createServer}from'node:http';
 import{generateOpenAiImage,synthesizeGoogleTts,synthesizeVolcengineTts}from'../worker/mediaProviders';
 const dirs:string[]=[];
 function fixture(enabled:boolean,maxRequests=1):ProviderNetworkConfiguration{const directory=realpathSync(mkdtempSync(join(tmpdir(),'provider-budget-')));dirs.push(directory);const policy={version:1,runId:'fixture',enabled,expiresAt:'2099-01-01T00:00:00Z',maxRequests,currency:'USD',maxCostMicrounits:100,priceEvidenceSha256:'a'.repeat(64),approvalSha256:'b'.repeat(64),providers:['pexels'],operations:{'pexels.verify':{maxRequests,maxBytes:64,timeoutMs:1000,costMicrounits:0}}};const bytes=JSON.stringify(policy);const policySha256=createHash('sha256').update(bytes).digest('hex');writeFileSync(join(directory,'policy.json'),bytes,{mode:0o600});writeFileSync(join(directory,'state.json'),JSON.stringify({version:1,policySha256,used:0,costMicrounits:0,byOperation:{},halted:false,events:[]}),{mode:0o600});return{directory,policySha256};}
 afterEach(()=>{for(const p of dirs.splice(0))rmSync(p,{recursive:true,force:true});vi.unstubAllGlobals();});
+it('dispatches a workspace image only after its reservation, and a fresh confirmation can follow an unknown result',async()=>{
+ const url='https://api.openai.com/v1/images/generations';
+ const request={method:'POST',body:JSON.stringify({model:'gpt-image-2',size:'1024x1536',output_format:'png',prompt:'画面'})};
+ const transport=vi.fn().mockRejectedValueOnce(Error('disconnect')).mockResolvedValueOnce(Response.json({}));
+ const reserve=vi.fn(async()=>{});
+ const generate=createWorkspaceGenerationFetcher('openai',{reserve},transport);
+ await expect(generate('https://unregistered.invalid/v1/images/generations',request)).rejects.toThrow();
+ expect(reserve).not.toHaveBeenCalled();
+ await expect(createWorkspaceGenerationFetcher('openai',{reserve:async()=>{throw Error('No confirmation');}},transport)(url,request)).rejects.toThrow('No confirmation');
+ expect(transport).not.toHaveBeenCalled();
+ await expect(generate(url,request)).rejects.toMatchObject({name:'ProviderOutcomeUnknownError'});
+ expect(reserve.mock.invocationCallOrder[0]).toBeLessThan(transport.mock.invocationCallOrder[0]);
+ await expect(generate(url,request)).rejects.toThrow();
+ expect((await createWorkspaceGenerationFetcher('openai',{reserve},transport)(url,request)).ok).toBe(true);
+ expect(transport).toHaveBeenCalledTimes(2);
+});
+it('dispatches only the confirmed speech text and voice after reserving a single request',async()=>{
+ const url='https://openspeech.bytedance.com/api/v3/tts/unidirectional/sse';
+ const speech={text:'这是镜头独立生成的口播。',voice:'zh_female_vv_uranus_bigtts',model:'seed-tts-2.0'};
+ const request={method:'POST',headers:{'X-Api-Resource-Id':speech.model},body:JSON.stringify({req_params:{text:speech.text,speaker:speech.voice}})};
+ const transport=vi.fn(async()=>new Response('audio stream',{status:200})),reserve=vi.fn(async()=>{});
+ const generate=createWorkspaceGenerationFetcher('volcengine_tts',{speech,reserve},transport);
+ await expect(generate(url,{...request,body:JSON.stringify({req_params:{text:speech.text,speaker:'other'}})})).rejects.toThrow();
+ expect(reserve).not.toHaveBeenCalled();
+ await expect(createWorkspaceGenerationFetcher('volcengine_tts',{speech,reserve:async()=>{throw Error('No confirmation');}},transport)(url,request)).rejects.toThrow('No confirmation');
+ expect(transport).not.toHaveBeenCalled();
+ expect(await (await generate(url,request)).text()).toBe('audio stream');
+ expect(reserve.mock.invocationCallOrder[0]).toBeLessThan(transport.mock.invocationCallOrder[0]);
+ await expect(generate(url,request)).rejects.toThrow();
+ expect(transport).toHaveBeenCalledTimes(1);
+});
+it('continues a recorded workspace video without a network grant or another submission',async()=>{
+ const submit='https://api-singapore.klingai.com/v1/videos/image2video',poll=submit+'/';
+ const request={method:'POST',body:JSON.stringify({model_name:'kling-v3',mode:'std',sound:'off',image:'aW1hZ2U=',prompt:'画面',duration:'5'})};
+ const transport=vi.fn(async()=>Response.json({})),reserve=vi.fn(async()=>{});
+ let id:string|undefined;
+ const video=createWorkspaceGenerationFetcher('kling',{reserve,videoTaskId:()=>id},transport);
+ await expect(video(poll+'original')).rejects.toThrow();
+ expect((await video(submit,request)).ok).toBe(true);
+ expect(reserve.mock.invocationCallOrder[0]).toBeLessThan(transport.mock.invocationCallOrder[0]);
+ await expect(video(submit,request)).rejects.toThrow();
+ id='original';
+ await expect(video(poll+'other')).rejects.toThrow();
+ const resume=createWorkspaceGenerationFetcher('kling',{reserve,videoTaskId:()=>id},transport);
+ expect((await resume(poll+'original')).ok).toBe(true);
+ expect(reserve).toHaveBeenCalledTimes(1);
+ expect(transport).toHaveBeenCalledTimes(2);
+});
+it('limits workspace material requests to one approved read per operation',async()=>{
+ const transport=vi.fn(async()=>new Response('fixture'));
+ const search=createWorkspaceSearchFetcher('pexels',['search'],transport);
+ await expect(search('https://videos.pexels.com/video-files/1/clip.mp4')).rejects.toThrow();
+ await expect(search('https://api.pexels.com/v1/videos/search?query=mountain',{method:'POST'})).rejects.toThrow();
+ const url='https://api.pexels.com/v1/videos/search?query=mountain';
+ expect((await search(url)).ok).toBe(true);
+ await expect(search(url)).rejects.toThrow();
+ const sound=createWorkspaceSearchFetcher('freesound',['search','download'],transport);
+ expect((await sound('https://freesound.org/apiv2/search/?query=wind')).ok).toBe(true);
+ expect((await sound('https://cdn.freesound.org/previews/1/1-preview.mp3')).ok).toBe(true);
+ expect(transport).toHaveBeenCalledTimes(3);
+});
+it('offers production only for providers with a usable execution operation',()=>{
+ const c=fixture(true);
+ expect(providerNetworkAvailable(c,'pexels')).toBe(false);
+ const path=join(c.directory,'policy.json'),policy=JSON.parse(readFileSync(path,'utf8'));
+ policy.providers.push('openai');
+ policy.operations['openai.generate']={maxRequests:1,maxBytes:1024,timeoutMs:1000,costMicrounits:100};
+ const bytes=JSON.stringify(policy);
+ c.policySha256=createHash('sha256').update(bytes).digest('hex');
+ writeFileSync(path,bytes);
+ writeFileSync(join(c.directory,'state.json'),JSON.stringify({version:1,policySha256:c.policySha256,used:0,costMicrounits:0,byOperation:{},halted:false,events:[]}));
+ expect(providerNetworkAvailable(c,'openai')).toBe(true);
+ expect(providerNetworkAvailable(c,'pexels')).toBe(false);
+ expect(providerNetworkAvailable(c,'kling')).toBe(false);
+});
+it('lets the next explicitly submitted OpenAI image request run after a definitive rejection',async()=>{
+ const c=fixture(true,2),path=join(c.directory,'policy.json'),policy=JSON.parse(readFileSync(path,'utf8'));
+ policy.providers=['openai'];
+ policy.operations={'openai.generate':{maxRequests:2,maxBytes:1024,timeoutMs:0,costMicrounits:50}};
+ const bytes=JSON.stringify(policy);
+ c.policySha256=createHash('sha256').update(bytes).digest('hex');
+ writeFileSync(path,bytes);
+ writeFileSync(join(c.directory,'state.json'),JSON.stringify({version:1,policySha256:c.policySha256,used:0,costMicrounits:0,byOperation:{},halted:false,events:[]}));
+ const transport=vi.fn().mockResolvedValueOnce(new Response(null,{status:429})).mockResolvedValueOnce(new Response('{}'));
+ const f=createProviderFetcher(c,'openai','execute',transport),url='https://api.openai.com/v1/images/generations';
+ const request={method:'POST',body:JSON.stringify({model:'gpt-image-2',size:'1024x1536',output_format:'png',prompt:'画面'})};
+ expect((await f(url,request)).status).toBe(429);
+ expect(transport).toHaveBeenCalledTimes(1);
+ expect(providerNetworkAvailable(c,'openai')).toBe(true);
+ vi.useFakeTimers();
+ try{
+  let release!:(response:Response)=>void;
+  transport.mockReset().mockImplementationOnce(()=>new Promise<Response>(resolve=>{release=resolve;}));
+  const waiting=f(url,request);
+  await vi.advanceTimersByTimeAsync(15*60*1000);
+  expect(openAiImageAuthorizationIssue(c)).toContain('正在处理');
+  release(new Response('{}'));
+  expect((await waiting).status).toBe(200);
+ }finally{vi.useRealTimers();}
+ expect(providerNetworkAvailable(c,'openai')).toBe(false);
+ await expect(f(url,request)).rejects.toThrow();
+ expect(transport).toHaveBeenCalledTimes(1);
+ expect(openAiImageAuthorizationIssue(c)).toContain('次数已用完');
+});
+it('allows another confirmed image request after an unknown while retaining its consumed allowance',async()=>{
+ const c=fixture(true,2),path=join(c.directory,'policy.json'),policy=JSON.parse(readFileSync(path,'utf8'));
+ policy.providers=['openai'];
+ policy.operations={'openai.generate':{maxRequests:2,maxBytes:1024,timeoutMs:0,costMicrounits:50}};
+ const bytes=JSON.stringify(policy);
+ c.policySha256=createHash('sha256').update(bytes).digest('hex');
+ writeFileSync(path,bytes);
+ const statePath=join(c.directory,'state.json');
+ writeFileSync(statePath,JSON.stringify({version:1,policySha256:c.policySha256,used:0,costMicrounits:0,byOperation:{},halted:false,events:[]}));
+ const transport=vi.fn().mockRejectedValueOnce(Error('controlled disconnect')).mockResolvedValueOnce(Response.json({}));
+ const confirmed=vi.fn(async()=>{});
+ const f=createProviderFetcher(c,'openai','execute',transport,undefined,confirmed),url='https://api.openai.com/v1/images/generations';
+ const request={method:'POST',body:JSON.stringify({model:'gpt-image-2',size:'1024x1536',output_format:'png',prompt:'画面'})};
+ await expect(f(url,request)).rejects.toThrow('请求结果未知');
+ expect(transport).toHaveBeenCalledTimes(1);
+ expect(providerNetworkAvailable(c,'openai')).toBe(true);
+ await expect(createProviderFetcher(c,'openai','execute',transport)(url,request)).rejects.toThrow();
+ expect(transport).toHaveBeenCalledTimes(1);
+ expect((await f(url,request)).status).toBe(200);
+ expect(confirmed).toHaveBeenCalledTimes(2);
+ expect(JSON.parse(readFileSync(statePath,'utf8'))).toMatchObject({used:2,halted:false,events:[{outcome:'reserved'},{outcome:'unknown'},{outcome:'reserved'},{outcome:'completed'}]});
+});
+it('continues only the original video task and official result after the new-submission grant ends',async()=>{
+ const c=fixture(true),path=join(c.directory,'policy.json'),policy=JSON.parse(readFileSync(path,'utf8'));
+ const readLimit={maxRequests:1,maxBytes:1024,timeoutMs:3000,costMicrounits:0};
+ Object.assign(policy,{providers:['bailian'],expiresAt:'2020-01-01T00:00:00Z',operations:{'bailian.generate':{...readLimit,costMicrounits:100},'bailian.poll':readLimit,'bailian.download':readLimit}});
+ const bytes=JSON.stringify(policy);
+ c.policySha256=createHash('sha256').update(bytes).digest('hex');
+ writeFileSync(path,bytes);
+ const statePath=join(c.directory,'state.json'),spent=JSON.stringify({version:1,policySha256:c.policySha256,used:1,costMicrounits:100,byOperation:{'bailian.generate':1},halted:false,events:[]});
+ writeFileSync(statePath,spent);
+ const transport=vi.fn(async()=>Response.json({}));
+ const follow=createVideoContinuationFetcher(c,'bailian','original',transport);
+ const url='https://dashscope.aliyuncs.com/api/v1/tasks/';
+ expect((await follow(url+'original')).status).toBe(200);
+ expect((await follow(url+'original')).status).toBe(200);
+ expect((await follow('https://dashscope-a717.oss-accelerate.aliyuncs.com/output.mp4')).status).toBe(200);
+ await expect(follow(url+'other')).rejects.toThrow();
+ await expect(follow(url+'original',{method:'POST'})).rejects.toThrow();
+ await expect(follow('https://example.invalid/output.mp4')).rejects.toThrow();
+ expect(transport).toHaveBeenCalledTimes(3);
+ expect(readFileSync(statePath,'utf8')).toBe(spent);
+});
 it('closed authorization never invokes transport or consumes a request',async()=>{const c=fixture(false),transport=vi.fn();const f=createProviderFetcher(c,'pexels','verify',transport);await expect(f('https://api.pexels.com/v1/videos/search')).rejects.toThrow();expect(transport).not.toHaveBeenCalled();expect(JSON.parse(readFileSync(join(c.directory,'state.json'),'utf8')).used).toBe(0);});
 it('reserves before transport and refuses a second request without logging credentials',async()=>{const c=fixture(true);let reserved=0;const f=createProviderFetcher(c,'pexels','verify',async()=>{reserved=JSON.parse(readFileSync(join(c.directory,'state.json'),'utf8')).used;return new Response('{}');});await f('https://api.pexels.com/v1/videos/search',{headers:{Authorization:'synthetic-budget-secret'}});expect(reserved).toBe(1);await expect(f('https://api.pexels.com/v1/videos/search')).rejects.toThrow();expect(readFileSync(join(c.directory,'state.json'),'utf8')).not.toContain('synthetic-budget-secret');});
 it.each(['redirect','declared-size','stream-size','timeout','transport-error'])('halts and keeps the consumed reservation on %s',async kind=>{
  const c=fixture(true,2),transport=vi.fn(async()=>{if(kind==='transport-error')throw Error('synthetic-private-detail');if(kind==='timeout')return new Promise<Response>(()=>{});if(kind==='redirect')return new Response(null,{status:302,headers:{Location:'https://outside.invalid'}});if(kind==='declared-size')return new Response('x',{headers:{'content-length':'65'}});return new Response('x'.repeat(65));});
- const f=createProviderFetcher(c,'pexels','verify',transport);await expect(f('https://api.pexels.com/v1/videos/search')).rejects.toThrow();await expect(f('https://api.pexels.com/v1/videos/search')).rejects.toThrow();const s=JSON.parse(readFileSync(join(c.directory,'state.json'),'utf8'));expect(s.used).toBe(1);expect(s.halted).toBe(true);expect(transport).toHaveBeenCalledTimes(1);expect(JSON.stringify(s)).not.toContain('synthetic-private-detail');
+ const f=createProviderFetcher(c,'pexels','verify',transport);await expect(f('https://api.pexels.com/v1/videos/search')).rejects.toThrow(kind==='timeout'?'等待供应商响应超时（1 秒）':'Provider 请求结果未知');await expect(f('https://api.pexels.com/v1/videos/search')).rejects.toThrow();const s=JSON.parse(readFileSync(join(c.directory,'state.json'),'utf8'));expect(s.used).toBe(1);expect(s.halted).toBe(true);expect(s.events.at(-1).timeoutMs).toBe(kind==='timeout'?1000:undefined);expect(transport).toHaveBeenCalledTimes(1);expect(JSON.stringify(s)).not.toContain('synthetic-private-detail');
 });
 it('rejects wrong hosts and alternate ports without reserving',async()=>{const c=fixture(true),transport=vi.fn(),f=createProviderFetcher(c,'pexels','verify',transport);for(const url of['https://api.pexels.com.evil.invalid/videos/search','https://api.pexels.com:444/videos/search','http://api.pexels.com/v1/videos/search'])await expect(f(url)).rejects.toThrow();expect(transport).not.toHaveBeenCalled();expect(JSON.parse(readFileSync(join(c.directory,'state.json'),'utf8')).used).toBe(0);});
 it('binds existing counters to the original authorization digest',async()=>{const c=fixture(true);writeFileSync(join(c.directory,'policy.json'),'{}',{mode:0o600});const f=createProviderFetcher(c,'pexels','verify',vi.fn());await expect(f('https://api.pexels.com/v1/videos/search')).rejects.toThrow();expect(JSON.parse(readFileSync(join(c.directory,'state.json'),'utf8')).used).toBe(0);});
@@ -152,7 +299,7 @@ it.each(['cloudflare','google_tts'] as const)('blocks retired %s before transpor
 
 it('runs GPT Image 2 through the production request budget and rejects retired or unbounded requests before dispatch',async()=>{
  const c=fixture(true,2),policy=JSON.parse(readFileSync(join(c.directory,'policy.json'),'utf8'));
- policy.providers=['openai'];policy.operations={'openai.generate':{maxRequests:2,maxBytes:1024,timeoutMs:1000,costMicrounits:1}};
+ policy.providers=['openai'];policy.operations={'openai.generate':{maxRequests:2,maxBytes:1024,timeoutMs:0,costMicrounits:1}};
  const bytes=JSON.stringify(policy);c.policySha256=createHash('sha256').update(bytes).digest('hex');
  writeFileSync(join(c.directory,'policy.json'),bytes,{mode:0o600});
  writeFileSync(join(c.directory,'state.json'),JSON.stringify({version:1,policySha256:c.policySha256,used:0,costMicrounits:0,byOperation:{},halted:false,events:[]}),{mode:0o600});
@@ -171,4 +318,13 @@ it('runs GPT Image 2 through the production request budget and rejects retired o
  const state=readFileSync(join(c.directory,'state.json'),'utf8');
  expect(JSON.parse(state)).toMatchObject({used:1,costMicrounits:1,byOperation:{'openai.generate':1}});
  expect(state).not.toContain('synthetic-image-key');
+});
+
+it.each(['gpt-image-2.5-sunburst','gpt-image-2.5-flare','gpt-image-2.5-sunburst-2026-09-08','gpt-image-2.5-flare-2026-09-08','gpt-image-2.6-sunburst','gpt-image-2.6-flare'])('admits only the exact registered image model %s before reserving',async model=>{
+ const body={model,size:'864x1536',quality:'max',n:1,output_format:'png',prompt:'画面'};
+ const transport=vi.fn(async()=>Response.json({})),reserve=vi.fn(async()=>{});
+ await expect(createWorkspaceGenerationFetcher('openai',{reserve},transport)('https://api.openai.com/v1/images/generations',{method:'POST',body:JSON.stringify(body)})).resolves.toBeTruthy();
+ expect(reserve).toHaveBeenCalledTimes(1);expect(transport).toHaveBeenCalledTimes(1);
+ for(const invalid of ['gpt-image-2','gpt-image-2.5','gpt-image-2.7-sunburst'])await expect(createWorkspaceGenerationFetcher('openai',{reserve},transport)('https://api.openai.com/v1/images/generations',{method:'POST',body:JSON.stringify({...body,model:invalid})})).rejects.toThrow();
+ expect(reserve).toHaveBeenCalledTimes(1);
 });

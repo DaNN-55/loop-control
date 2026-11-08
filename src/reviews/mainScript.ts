@@ -23,3 +23,13 @@ export function mainScriptStatistics(script:string):{characters:number;textChara
   const text=(end<0?body:body.slice(0,end)).filter(line=>!/^\s*#{1,3}\s+/.test(line)).join('\n');
   return{characters,textCharacters:text.match(/[\p{L}\p{N}]/gu)?.length??0,textKind:'body'};
 }
+
+/** Each prose paragraph becomes one shot. Headings and other sections stay out of narration. */
+export function plainScriptParagraphs(script:string):string[] {
+  const lines=script.split(/\r?\n/),bodyIndex=lines.findIndex(line=>/^##[ \t]+正文[ \t]*$/.test(line));
+  const body=bodyIndex<0?lines:lines.slice(bodyIndex+1);
+  const end=bodyIndex<0?-1:body.findIndex(line=>/^#{1,2}[ \t]+/.test(line));
+  return (end<0?body:body.slice(0,end))
+    .map(line=>/^\s*#{1,6}[ \t]+/.test(line)?'':line)
+    .join('\n').split(/\n[ \t]*\n/).map(paragraph=>paragraph.trim()).filter(Boolean);
+}

@@ -1,0 +1,46 @@
+[
+  {
+    "composer": {
+      "bottom": 605,
+      "height": 259,
+      "left": 607.65625,
+      "right": 1111,
+      "top": 346,
+      "width": 503.34375,
+      "x": 607.65625,
+      "y": 346
+    },
+    "kind": "music",
+    "overflow": false,
+    "width": 1152
+  },
+  {
+    "composer": {
+      "bottom": 919,
+      "height": 573,
+      "left": 607.65625,
+      "right": 1111,
+      "top": 346,
+      "width": 503.34375,
+      "x": 607.65625,
+      "y": 346
+    },
+    "kind": "sfx",
+    "options": [
+      {
+        "columns": "139.109px",
+        "width": 139.109375
+      },
+      {
+        "columns": "139.125px",
+        "width": 139.125
+      },
+      {
+        "columns": "139.109px",
+        "width": 139.109375
+      }
+    ],
+    "overflow": false,
+    "width": 1152
+  }
+]

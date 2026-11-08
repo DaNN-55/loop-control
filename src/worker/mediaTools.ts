@@ -95,6 +95,11 @@ export async function validateMp4Artifact(path: string, minimumDurationSeconds: 
   }
 }
 
+export async function probeVideoHasAudio(path:string):Promise<boolean>{
+  const {stdout}=await runCommandWithOutput("ffprobe",["-v","error","-select_streams","a","-show_entries","stream=index","-of","csv=p=0",path]);
+  return Boolean(stdout.trim());
+}
+
 export async function inspectMp4Artifact(path: string): Promise<{ durationSeconds: number; width: number; height: number; hasAudio: boolean; blackFrameCount: number }> {
   const { stdout } = await runCommandWithOutput("ffprobe", ["-v", "error", "-show_entries", "format=duration:stream=codec_type,width,height", "-of", "json", path]);
   const inspected = JSON.parse(stdout) as { format?: { duration?: string }; streams?: Array<{ codec_type?: string; width?: number; height?: number }> };

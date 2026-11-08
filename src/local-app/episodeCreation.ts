@@ -59,7 +59,7 @@ export async function createEpisodeDirectory(pool:Pool,session:OwnerSession,key:
    const root=await requireAccountAssetRoot(c,mediaRoot,intent.account_id),actual=await inspectMediaRoot(root);
    if(root!==intent.account_root||actual.deviceId!==intent.account_device_id||actual.inodeId!==intent.account_inode_id)throw new ConfigurationError(409,'账号目录身份已变化，请恢复创建时的位置。');
    const container=await resolveStorageContainer(c,mediaRoot,intent.account_id,intent.storage_series_id);await requireStorageContainer(c,mediaRoot,container,true);
-   if(container.containerId!==intent.container_id||container.relativePath!==intent.container_relative_path||container.deviceId!==intent.container_device_id||container.inodeId!==intent.container_inode_id)throw new ConfigurationError(409,'收纳目录身份已变化，请恢复创建时的位置。');
+   if(container.containerId!==intent.container_id||container.relativePath!==intent.container_relative_path||container.deviceId!==intent.container_device_id||container.inodeId!==intent.container_inode_id)throw new ConfigurationError(409,'系列目录身份已变化，请恢复创建时的位置。');
    await preflight(c,intent.account_id,{asset_root:root});
   };
   await transaction(validateParent);

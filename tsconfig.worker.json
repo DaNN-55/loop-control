@@ -14,6 +14,8 @@
     ]
   },
   "include": [
-    "src/local-app/localWorkerCli.ts"
+    "src/local-app/localWorkerCli.ts",
+    "src/worker/codexPrompt.ts",
+    "src/worker/workerResultSchema.ts"
   ]
 }

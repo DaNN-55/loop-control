@@ -42,9 +42,10 @@ const server=createServer((request,response)=>handler(request,response));
 let handler:ReturnType<typeof createLocalHandler>,origin:string;
 let ownerCookie:string,otherCookie:string;
 const contractKeys=['episodes','total','page','pageSize','episodeCount','accountCounts','reviewCount','stages','artifactCounts','pending','blocked','worker','operationRows'] as const;
-// New action-state metadata is additive. Retained RPC parity still covers the
-// original operations rows; list views now also expose those summaries.
-const contract=(catalog:EpisodeCatalog,view:string)=>Object.fromEntries(contractKeys.map(key=>[key,key==='operationRows'?(view==='operations'?catalog.operationRows.map(({episodeId,reviewRevision,reviewPending,blockerCount})=>({episodeId,reviewRevision,reviewPending,blockerCount})):[]):catalog[key]]));
+// The dashboard's main page now has its own size. Its page data is asserted
+// separately; the retained RPC still checks independent queues and totals.
+const operationsPageKeys=['episodes','page','pageSize','artifactCounts','operationRows'];
+const contract=(catalog:EpisodeCatalog,view:string)=>Object.fromEntries(contractKeys.filter(key=>view!=='operations'||!operationsPageKeys.includes(key)).map(key=>[key,key==='operationRows'?[]:catalog[key]]));
 
 beforeAll(async()=>{
  const historical=await readFile(new URL('../../db/contracts/episode-catalog.sql',import.meta.url),'utf8');
@@ -132,13 +133,17 @@ it('preserves account, series, archived and review filters without changing glob
 
 it('keeps independently paged pending reviews, blockers and Worker summary',async()=>{
  const first=await compare({view:'operations'});expect(first.pending.total).toBe(24);expect(first.pending.items.map((e:{id:string})=>e.id)).toEqual(active.slice(0,20));
+ expect(first).toMatchObject({total:28,page:1,pageSize:12,artifactCounts:{[episode(1)]:2}});
+ expect(first.episodes.map((e:{id:string})=>e.id)).toEqual(active.slice(0,12));
  expect(first.blocked.total).toBe(25);expect(first.blocked.items).toHaveLength(20);
  expect(first.worker).toMatchObject({running:1,blocked:1,failed:1,latestCompleted:true,latest:{task_type:'generate_a_roll',at:'2026-01-01T04:00:00+00:00'}});
  expect(first.operationRows.find((row:{episodeId:string})=>row.episodeId===episode(1))).toMatchObject({reviewRevision:1,reviewPending:true,blockerCount:25});
  const second=await compare({view:'operations',page:'2',pendingPage:'2',blockedPage:'2'});
+ expect(second.episodes.map((e:{id:string})=>e.id)).toEqual(active.slice(12,24));
  expect(second.pending.items.map((e:{id:string})=>e.id)).toEqual(active.slice(20,24));expect(second.pending.page).toBe(2);expect(second.blocked.items).toHaveLength(5);expect(second.blocked.page).toBe(2);
  expect(second.blocked.items.every((item:{episode:{id:string}})=>item.episode.id===episode(1))).toBe(true);
- const last=await compare({view:'operations',pendingPage:'999',blockedPage:'999'});expect(last.pending.page).toBe(2);expect(last.blocked.page).toBe(2);
+ const last=await compare({view:'operations',page:'999',pendingPage:'999',blockedPage:'999'});expect(last.pending.page).toBe(2);expect(last.blocked.page).toBe(2);
+ expect(last.page).toBe(3);expect(last.episodes.map((e:{id:string})=>e.id)).toEqual(active.slice(24));
 });
 
 it('isolates Owners and excludes non-Owner memberships through both actual database roles',async()=>{

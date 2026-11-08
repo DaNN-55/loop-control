@@ -10,14 +10,14 @@ export function useWorkspaceCandidateReview({workspace,scope,reader,command,brid
  useEffect(()=>{owner.active=true;return()=>{owner.active=false;};},[owner]);
  const ownsReview=()=>owner.active&&active.current===owner;
  const plan=review?.owner===owner?review.plan:null;
- async function prepare(candidateId:string,durationPolicy:'keep-target'|'use-candidate',provided?:ProductionWorkspace){
+ async function prepare(candidateId:string,durationPolicy:'keep-target'|'use-candidate',provided?:ProductionWorkspace,restoreNarration=false){
   if(bridge)await bridge.save();const current=provided??await reader.read();
   if(!ownsReview())return;
-  const prepared=await command('prepareWorkspaceCandidate',{episodeId:workspace.episodeId,workspaceId:current.id,expectedRevision:current.revision,candidateId,durationPolicy}) as WorkspaceCandidatePreparation;
-  if(!prepared.impact)throw Error('无法读取采用影响，请刷新后重新核对。');
+  const prepared=await command('prepareWorkspaceCandidate',{episodeId:workspace.episodeId,workspaceId:current.id,expectedRevision:current.revision,candidateId,durationPolicy,...(restoreNarration?{restoreNarration:true}:{})}) as WorkspaceCandidatePreparation;
+  if(!prepared.impact||restoreNarration&&!prepared.restoration)throw Error('无法读取采用影响，请刷新后重新核对。');
   if(ownsReview())setReview({owner,plan:prepared});
  }
- async function confirm(){
+ async function confirm(onConfirmed?:(changed:ProductionWorkspace)=>void){
   if(!plan||!ownsReview())return;
   if(bridge)await bridge.save();let current=await reader.read();
   if(!ownsReview())return;
@@ -25,7 +25,8 @@ export function useWorkspaceCandidateReview({workspace,scope,reader,command,brid
   if(current.project?.sha256!==plan.projectSha256)throw Error('工程已变化，请重新核对采用影响。');
   if(bridge){await bridge.applyNativeEdit('apply-candidate',{edit:plan.edit});current=await reader.read();}
   if(!ownsReview())return;
-  const changed=await command('adoptWorkspaceCandidate',{episodeId:workspace.episodeId,workspaceId:current.id,expectedRevision:current.revision,candidateId:plan.candidateId,adoptionId:plan.adoptionId,...(bridge?{nativeApplied:true}:{})}) as ProductionWorkspace;if(ownsReview())reader.publish(changed);
+  const changed=await command('adoptWorkspaceCandidate',{episodeId:workspace.episodeId,workspaceId:current.id,expectedRevision:current.revision,candidateId:plan.candidateId,adoptionId:plan.adoptionId,...(bridge?{nativeApplied:true}:{}),...(plan.restoration?{restoreNarration:true}:{})}) as ProductionWorkspace;
+  if(ownsReview()){reader.publish(changed);onConfirmed?.(changed);}
  }
  return {plan,prepare,confirm,cancel:()=>setReview(null)};
 }

@@ -42,9 +42,9 @@ it('inherits the filtered account into creation and resets every list scope with
  await user.type(within(search).getByRole('textbox'),'  金山  ');
  expect(requests.at(-1)?.get('q')).toBe('');
  await user.click(within(search).getByRole('button',{name:'搜索'}));
- await screen.findByRole('button',{name:'清空筛选'});
+ expect(within(screen.getByRole('group',{name:'已应用筛选'})).getByRole('button',{name:'清空筛选'})).toBeTruthy();
  expect(requests.at(-1)?.get('q')).toBe('金山');
- await user.click(screen.getByRole('button',{name:'清空筛选'}));
+ await user.click(within(search).getByRole('button',{name:'清除搜索'}));
  expect(requests.at(-1)?.get('q')).toBe('');
  await user.type(within(search).getByRole('textbox'),'山谷{Enter}');
  expect(requests.at(-1)?.get('q')).toBe('山谷');

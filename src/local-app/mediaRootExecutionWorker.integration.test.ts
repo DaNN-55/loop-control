@@ -1,5 +1,6 @@
 // @vitest-environment node
 import {it,expect} from 'vitest';
+import {seedLegacyPlanning} from './legacyPlanning.fixture';
 import {readFile,writeFile,lstat,rename,mkdir,mkdtemp,realpath,rm} from 'node:fs/promises';
 import {join} from 'node:path';
 import {randomUUID,createHash} from 'node:crypto';
@@ -16,7 +17,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('the compiled CLI retries
   const request=async(command:string,data:Record<string,unknown>={})=>{const r=await f.request(command,data);expect(r.status,command+': '+JSON.stringify(r.body)).toBe(200);return r.body;};
   const revised=await request('reconfirmScript',{expectedScriptRevisionId:f.script,text:'# 普通脚本\n\n## 正文\n保留原脚本、素材和模型，迁移只改变物理位置。',reason:'T14 controlled ordinary planner retry'});
   const script=(await f.c.query('SELECT main_script_revision_id FROM public.episodes WHERE id=$1',[f.episode])).rows[0].main_script_revision_id;expect(script).not.toBe(f.script);expect(revised).toBeTruthy();
-  const selection={provider:'codex',adapter:'codex',model:'gpt-5.6-luna',harnessId:harness,budgetCents:0,allowedTools:['read','write']};await request('saveWorkspacePlanningSelection',{expectedSelectionRevision:0,selection});await request('start');let planned=await request('prepareWorkspace',{expectedScriptRevisionId:script});expect(planned.planning).toBe(true);
+  const selection={provider:'codex',adapter:'codex',model:'gpt-5.6-luna',harnessId:harness,budgetCents:0,allowedTools:['read','write']};await request('saveWorkspacePlanningSelection',{expectedSelectionRevision:0,selection});await request('start');let planned=await seedLegacyPlanning(f,f.episode,script);
   await f.c.query('INSERT INTO public.worker_scheduler_settings(singleton,capacity) VALUES(true,1) ON CONFLICT(singleton) DO UPDATE SET capacity=1');
   const port=nativeWorkerPort(worker);
   // The first legacy preparation enables native input after its INSERT. Use

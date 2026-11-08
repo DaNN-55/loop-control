@@ -5,7 +5,7 @@ import {join} from 'node:path';
 import {workspaceImageGenerationFixture} from './workspaceImageGeneration.fixture';
 const enabled=process.env.LOOP_WORKSPACE_ACCEPTANCE==='1';
 async function evidence(name:string,value:unknown){if(process.env.LOOP_GENERATION_EVIDENCE)await writeFile(join(process.env.LOOP_GENERATION_EVIDENCE,name+'.json'),JSON.stringify(value,null,2));}
-it.skipIf(!enabled).each(['unknown','reject'])('HTTP image %s response remains visible after restart without a repeated paid POST',async mode=>{
+it.skipIf(!enabled).each(['unknown','reject'])('HTTP image %s preserves the original submission and a successful retry can supply a video first frame',async mode=>{
  const {f,ref,submissions}=await workspaceImageGenerationFixture();try{
  let w=await f.read();const module=join(f.root,'controlled-video.mjs');await writeFile(module,(await readFile(module,'utf8')).replace("if(readFileSync(","if(readFileSync(").replace("return Response.json({data:",`if(readFileSync(${JSON.stringify(f.responseMode)},'utf8')==='reject')return new Response('controlled rejection',{status:400});return Response.json({data:`));await writeFile(f.responseMode,mode);
  const args={workspaceId:w.id,expectedRevision:w.revision,targetItemId:w.clips[0].itemId,selection:{capability:'image',provider:'openai',adapter:'openai_images',model:'gpt-image-2',connectionVersionId:(await f.c.query("SELECT id FROM public.external_connection_versions WHERE adapter='openai_images'")).rows[0].id},prompt:'核对原图片请求',settings:{size:'1152x2048',quality:'high',count:1},referenceMaterialRevisionIds:[ref.body.id],reservationCents:100};
@@ -14,6 +14,42 @@ it.skipIf(!enabled).each(['unknown','reject'])('HTTP image %s response remains v
  const retry=await f.request('retryWorkspaceVisualCandidate',{workspaceId:w.id,expectedRevision:w.revision,candidateId:job.id});expect(retry.status).toBe(409);
  if(mode==='unknown')expect((await f.request('requestWorkspaceImageCandidates',{...args,prompt:'不同描述也不可重复提交'})).status).toBe(409);
  expect((await readFile(submissions,'utf8')).trim().split('\n')).toHaveLength(1);
+ const retryInput={...args,expectedRevision:w.revision,...(mode==='unknown'?{retryOfTaskId:job.taskId}:{})};
+ if(mode==='unknown'){
+  const draft=await f.rawRequest('prepareWorkspaceCall',{workspaceId:w.id,expectedRevision:w.revision,callCommand:'requestWorkspaceImageCandidates',callData:{episodeId:f.episode,...retryInput}});
+  expect(draft.status,JSON.stringify(draft.body)).toBe(200);
+  expect(draft.body.summary.retryOfTaskId).toBe(job.taskId);
+  expect((await f.read()).visualTasks).toHaveLength(1);
+  expect((await readFile(submissions,'utf8')).trim().split('\n')).toHaveLength(1);
+ }
+ {
+  await writeFile(f.responseMode,'success');
+  const fresh=await f.request('requestWorkspaceImageCandidates',retryInput);
+  expect(fresh.status,JSON.stringify(fresh.body)).toBe(200);
+  const next=fresh.body.visualTasks[0];
+  expect(next.taskId).not.toBe(job.taskId);
+  await f.execute(next.taskId);
+  const updated=await f.read();
+  expect(updated.visualTasks[0]).toMatchObject({taskId:next.taskId,status:'completed'});
+  if(mode==='unknown'){
+   expect(updated.visualTasks.find((task:{taskId:string})=>task.taskId===job.taskId)).toMatchObject({submissionUnknown:true,requestState:'submitting',retryTaskId:next.taskId});
+   expect((await f.request('requestWorkspaceImageCandidates',{...retryInput,expectedRevision:updated.revision})).status).toBe(409);
+   const firstFrame=updated.visualCandidates.find((candidate:{taskId:string})=>candidate.taskId===next.taskId);
+   expect(firstFrame).toBeDefined();
+   const videoInput={workspaceId:updated.id,expectedRevision:updated.revision,targetItemId:args.targetItemId,firstFrameMaterialRevisionId:firstFrame.materialRevisionId,prompt:'使用重试生成的首帧',durationSeconds:4,reservationCents:90};
+   const video=await f.chosenRequest('requestWorkspaceVisualCandidate',videoInput);
+   expect(video.status,JSON.stringify(video.body)).toBe(200);
+   const videoTask=video.body.visualTasks.find((task:{kind:string})=>task.kind==='video');
+   const duplicate=await f.chosenRequest('requestWorkspaceVisualCandidate',{...videoInput,expectedRevision:video.body.revision,prompt:'第二次视频提交'});
+   expect(duplicate.status).toBe(409);
+   await f.execute(videoTask.taskId);
+   const finished=await f.read();
+   expect(finished.visualTasks.find((task:{taskId:string})=>task.taskId===videoTask.taskId)).toMatchObject({status:'completed'});
+   expect(finished.visualTasks.find((task:{taskId:string})=>task.taskId===job.taskId)).toMatchObject({submissionUnknown:true,requestState:'submitting',retryTaskId:next.taskId});
+   expect((await readFile(f.videoSubmissions,'utf8')).trim().split('\n')).toHaveLength(1);
+  }
+  expect((await readFile(submissions,'utf8')).trim().split('\n')).toHaveLength(2);
+ }
  expect((await f.c.query('SELECT attempt FROM public.tasks WHERE id=$1',[job.taskId])).rows[0].attempt).toBe(1);await evidence('image-'+mode,{taskId:job.taskId,state:w.visualTasks[0],supplierPosts:1,attemptCount:1,retryStatus:retry.status});
  }finally{await f.close();}
 },120000);
@@ -24,7 +60,7 @@ it.skipIf(!enabled)('HTTP video polling resumes the same frozen task and origina
  const mode=join(f.root,'poll-mode'),module=join(f.root,'controlled-video.mjs'),queries=join(f.root,'poll-queries.jsonl');await writeFile(mode,'fail');await writeFile(module,(await readFile(module,'utf8')).replace("if(new URL(String(input)).hostname==='ark.cn-beijing.volces.com')return",`if(new URL(String(input)).hostname==='ark.cn-beijing.volces.com'){appendFileSync(${JSON.stringify(queries)},String(input)+'\\n');if(readFileSync(${JSON.stringify(mode)},'utf8')==='fail')throw Error('Controlled poll interruption');}if(new URL(String(input)).hostname==='ark.cn-beijing.volces.com')return`));
  const queued=await f.chosenRequest('requestWorkspaceVisualCandidate',{workspaceId:w.id,expectedRevision:w.revision,targetItemId:w.clips[0].itemId,firstFrameMaterialRevisionId:image.body.id,prompt:'原冻结动作',durationSeconds:4,reservationCents:90});expect(queued.status,JSON.stringify(queued.body)).toBe(200);w=queued.body;const job=w.visualTasks[0];await f.execute(job.taskId,false);await f.restart();await f.restartWorker();w=await f.read();
  expect(w.visualTasks[0]).toMatchObject({taskId:job.taskId,status:'failed',providerTaskId:'controlled-t05-video',submissionOutcome:'received',submissionUnknown:false,canResume:true});expect(w.visualTasks[0].error).toBeTruthy();
- const resumed=await f.request('retryWorkspaceVisualCandidate',{workspaceId:w.id,expectedRevision:w.revision,candidateId:job.id});expect(resumed.status).toBe(200);expect(resumed.body.visualTasks[0].taskId).toBe(job.taskId);await writeFile(mode,'success');await f.execute(job.taskId);w=await f.read();expect(w.visualTasks[0].status).toBe('completed');
+ const resumed=await f.request('retryWorkspaceVisualCandidate',{workspaceId:w.id,expectedRevision:w.revision,candidateId:job.id});expect(resumed.status).toBe(200);expect(resumed.body.visualTasks[0].taskId).toBe(job.taskId);await writeFile(mode,'success');await f.execute(job.taskId);w=await f.read();expect(w.visualTasks[0]).toMatchObject({status:'completed',videoPhase:'saving'});
  expect((await readFile(f.videoSubmissions,'utf8')).trim().split('\n')).toHaveLength(1);const urls=(await readFile(queries,'utf8')).trim().split('\n');expect(urls.length).toBeGreaterThanOrEqual(2);expect(urls.every(url=>url.endsWith('/controlled-t05-video'))).toBe(true);
  const state=(await f.c.query('SELECT attempt,input_snapshot FROM public.tasks WHERE id=$1',[job.taskId])).rows[0];expect(state.attempt).toBe(2);expect(state.input_snapshot.media.wan_video.prompt).toContain('原冻结动作');await evidence('video-resume',{taskId:job.taskId,providerTaskId:'controlled-t05-video',supplierPosts:1,attemptCount:2,pollQueries:urls,completedState:w.visualTasks[0]});
  }finally{await f.close();}

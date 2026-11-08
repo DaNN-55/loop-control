@@ -1,5 +1,5 @@
 .workspace-audio{display:grid;gap:12px;padding-block:16px;border-top:1px solid var(--color-border-secondary,#e5e7eb);min-width:0}.workspace-audio h3{font-size:14px;font-weight:600;margin:0}.workspace-audio-form,.workspace-audio-voice,.workspace-audio-actions{display:flex;gap:10px;align-items:end;flex-wrap:wrap}.workspace-audio label{display:grid;gap:4px;font-size:12px;color:var(--color-text-secondary,#475467);min-width:0}.workspace-audio input:not([type=checkbox]),.workspace-audio select{max-width:240px;min-width:80px;height:34px;border:1px solid var(--color-border-primary,#d0d5dd);border-radius:8px;padding:6px 8px;background:var(--color-bg-primary,#fff);color:var(--color-text-primary,#101828)}.workspace-audio input[type=number]{width:84px}.workspace-audio .workspace-audio-checkbox{display:flex;gap:6px;align-items:center;padding-bottom:8px}.workspace-audio-candidate{display:grid;grid-template-columns:minmax(180px,1fr) minmax(150px,260px);gap:8px;padding-block:10px;border-top:1px solid var(--color-border-secondary,#e5e7eb)}.workspace-audio-candidate>div:first-child{display:grid;gap:4px}.workspace-audio-candidate span,.workspace-audio-actions{font-size:12px;color:var(--color-text-tertiary,#667085)}.workspace-audio-candidate audio{width:100%;height:32px}.workspace-audio-actions{grid-column:1/-1;align-items:center;justify-content:flex-end}.workspace-audio-voice{align-items:center;padding-block:8px;border-bottom:1px solid var(--color-border-secondary,#e5e7eb)}.workspace-audio-voice strong{font-size:12px}.workspace-audio p[role=alert]{font-size:12px;color:var(--color-text-error-primary,#b42318);grid-column:1/-1;margin:0}.embedded-studio .workspace-audio-voice{gap:8px}.embedded-studio .workspace-audio-voice>strong{width:100%}@media(max-width:700px){.workspace-audio-candidate{grid-template-columns:1fr}.workspace-audio-form>label{flex:1;min-width:120px}}
-.workspace-audio-preparation-heading,.workspace-audio-group-heading{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.workspace-audio-group-heading{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .workspace-audio-group{min-width:0;border-top:1px solid var(--lc-line,#d8e1ee);padding-top:12px}
 .workspace-audio-group h4{margin:0;font-size:13px;font-weight:600}
 .workspace-audio-group-heading>span,.workspace-audio-note{font-size:12px;color:var(--lc-muted,#596b83)}
@@ -10,3 +10,91 @@
 .workspace-audio-group .workspace-audio-candidate>div:first-child>span{color:var(--lc-muted,#596b83)}
 .workspace-audio-form>.workspace-audio-note,.workspace-audio-voice>small{grid-column:1/-1;flex-basis:100%;margin:0;line-height:1.6}
 .workspace-audio-voice>small{font-size:12px;color:var(--lc-muted,#596b83)}
+.workspace-audio-form>.workspace-audio-source,.workspace-audio-form>.workspace-audio-search,.workspace-audio-form>.workspace-audio-submit{grid-column:1/-1}
+.workspace-audio-search.workspace-results-heading{margin:0}
+.workspace-music-settings{display:grid;gap:10px}
+.workspace-music-settings select{max-width:none;width:100%}
+.workspace-audio-default{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;color:var(--lc-muted);font-size:12px}
+.workspace-results-gallery .workspace-unified-preview.workspace-audio-drop-preview{height:96px;min-height:0}
+.workspace-audio-submit{display:grid;gap:6px}
+.workspace-audio-submit small,.workspace-visual-generation-note{color:var(--lc-muted);font-size:12px;margin:0}
+.workspace-audio[aria-label="配乐与声音准备"]{border:0;padding-top:0;gap:12px}.workspace-audio-source-controls{display:flex;align-items:end;gap:8px;flex-wrap:wrap;flex-basis:100%;min-width:0}.workspace-audio-source-controls>label{flex:1;min-width:160px}.workspace-audio-source-controls select{max-width:none}.workspace-audio-source-controls .workspace-material-drop{max-width:180px;min-height:34px;box-sizing:border-box}
+.workspace-audio[aria-label="配乐与声音准备"] .workspace-audio-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:end;gap:12px}.workspace-audio[aria-label="配乐与声音准备"] .workspace-audio-form input{width:100%;max-width:none;box-sizing:border-box}.workspace-audio-source-controls,.workspace-audio-form>.workspace-audio-note{grid-column:1/-1}
+.workspace-audio-form>.workspace-audio-submit{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap}.workspace-audio-form>.workspace-audio-submit small{flex:1;min-width:200px;order:-1}.workspace-audio[aria-label="配乐与声音准备"]>.workspace-audio-submit{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.workspace-audio[aria-label="配乐与声音准备"]>.workspace-audio-submit small{flex:1}
+.workspace-audio[aria-label="配乐与声音准备"] .workspace-sound-intent{margin:0;border:0;padding:0}.workspace-audio[aria-label="配乐与声音准备"] .workspace-sound-intent summary{font-weight:500}.workspace-audio[aria-label="配乐与声音准备"] .workspace-sound-search{padding:0}.workspace-sound-search>button{justify-self:start}
+.workspace-audio[aria-label="配乐与声音准备"] .workspace-audio-candidate{grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;padding:12px 0}.workspace-audio-candidate>.workspace-audio-provenance{grid-column:1/-1;font-size:12px;color:var(--lc-muted)}.workspace-audio-provenance{order:2}.workspace-audio-provenance summary{cursor:pointer}.workspace-audio-provenance span{display:block;margin-top:6px;overflow-wrap:anywhere}.workspace-audio-candidate>.workspace-audio-actions{order:1}.workspace-audio-candidate>.workspace-audio-voice{order:3}.workspace-audio-candidate>.workspace-audio-audition{justify-content:flex-end;align-content:start}.workspace-audio-candidate>.workspace-audio-actions{justify-content:flex-start}.workspace-audio-candidate>.workspace-audio-actions>button{margin-left:auto}
+html[data-interface="impeccable"] .product-ui .workspace-audio[aria-label="配乐与声音准备"] label:has(>.dan-select-field){display:grid!important;gap:6px!important;font-size:12px!important;line-height:1.5!important}
+html[data-interface="impeccable"] .product-ui .workspace-audio[aria-label="配乐与声音准备"] :is(.workspace-sound-search,.workspace-audio-form)>label{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:6px!important;font-size:12px!important;line-height:1.5!important}
+.workspace-audio[aria-label="配乐与声音准备"] .workspace-sound-search input{width:100%;max-width:none}.workspace-audio[aria-label="配乐与声音准备"] .workspace-sound-intent>label{font-size:12px}
+
+/* Compact preparation layout; timeline mixing keeps its existing controls. */
+.workspace-audio-preparation{container-type:inline-size}
+.workspace-audio-preparation .workspace-sound-intent-heading{justify-content:space-between;margin:0 0 6px}
+.workspace-audio-preparation .workspace-sound-intent-heading>label{margin:0}
+.workspace-audio-preparation .workspace-sound-search-inline{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:8px}
+.workspace-audio-preparation .workspace-sound-search-inline>small{grid-column:1/-1;margin:0;font-size:12px;color:var(--lc-muted)}
+.workspace-audio-preparation .workspace-audio-form>.workspace-audio-submit{gap:8px;justify-content:space-between}
+.workspace-audio-preparation .workspace-audio-form>.workspace-audio-submit>small{order:initial;flex-basis:100%;min-width:0}
+.workspace-audio-preparation .workspace-audio-form[data-kind=source]{grid-template-columns:minmax(0,1fr) auto}
+.workspace-audio-preparation .workspace-audio-form[data-kind=source]>.workspace-audio-submit{grid-column:auto}
+.workspace-audio-preparation .workspace-audio-form[data-kind=source] select{width:100%;max-width:none}
+.workspace-audio-preparation .workspace-audio-feedback{grid-column:1/-1;font-size:12px;color:var(--lc-muted)}
+.workspace-audio-preparation .workspace-audio-group{padding-top:0;border-top:0}
+.workspace-audio-preparation .workspace-audio-candidate{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;margin-top:0;padding:8px 0}
+.workspace-audio-preparation .workspace-audio-candidate>.workspace-audio-candidate-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;min-width:0}
+.workspace-audio-candidate-summary{display:flex;align-items:center;gap:8px;flex:1 1 160px;min-width:0}
+.workspace-audio-candidate-summary>strong{min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:500}
+.workspace-audio-candidate-summary>span{white-space:nowrap;font-variant-numeric:tabular-nums}
+.workspace-audio-candidate-row>.workspace-audio-actions{flex-wrap:nowrap;gap:8px;min-width:0}
+.workspace-audio-candidate-row>.workspace-audio-actions a{white-space:nowrap}
+.workspace-audio-creator{overflow:hidden;text-overflow:ellipsis;max-width:80px}
+.workspace-audio-preparation .workspace-audio-candidate>.workspace-audio-voice{display:flex;align-items:end;flex-wrap:wrap;gap:8px;padding:0}
+.workspace-audio-preparation .workspace-audio-candidate>.workspace-audio-voice>small{display:none}
+.workspace-audio-preparation .workspace-audio-candidate>.workspace-audio-voice input{width:88px}
+.workspace-audio-preparation .workspace-audio-candidate>.workspace-audio-voice>label{font-size:12px}
+@container(min-width:680px){.workspace-audio-preparation .workspace-audio-form[data-kind=sfx]{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@container(max-width:360px){.workspace-audio-preparation .workspace-sound-search-inline,.workspace-audio-preparation .workspace-audio-form[data-kind=source]{grid-template-columns:minmax(0,1fr)}.workspace-audio-preparation .workspace-sound-search-inline>button{justify-self:end}}
+
+/* Preparation composers share the visual input surface and separate action row. */
+.workspace-audio-composer-input{display:grid;gap:12px;min-width:0;padding:12px;border:1px solid var(--lc-line);border-radius:7px;background:var(--lc-surface-2)}
+.workspace-audio-composer-input:focus-within{outline:2px solid var(--lc-accent);outline-offset:2px}
+.workspace-audio-preparation .workspace-audio-composer-input .workspace-sound-search-inline{grid-template-columns:minmax(0,1fr)}
+.workspace-audio-preparation .workspace-audio-composer-input .workspace-audio-form{grid-template-columns:repeat(2,minmax(0,1fr))}
+.workspace-audio-preparation .workspace-audio-composer-input .workspace-audio-form[data-kind=source]{grid-template-columns:minmax(0,1fr)}
+html[data-interface="impeccable"] .product-ui .workspace-audio-composer-input :is(input:not([type=file]),textarea){background:transparent;border:0;box-shadow:none;max-width:none}
+.workspace-audio-preparation .workspace-audio-composer-input .workspace-sound-intent textarea{min-height:88px;padding:8px 0}
+.workspace-audio-composer-options{display:flex;align-items:end;gap:8px 12px;flex-wrap:wrap;min-width:0}
+.workspace-audio-composer-options>label{flex:1 1 120px}
+.workspace-audio-composer-options .dan-select-field{min-width:0}
+.workspace-audio-preparation .workspace-audio-composer-options :is(select,input){max-width:none;width:100%;box-sizing:border-box}
+.workspace-audio-preparation .workspace-audio-composer-toolbar{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;min-width:0}
+.workspace-audio-composer-toolbar>small{flex-basis:100%;font-size:12px;color:var(--lc-muted)}
+.workspace-audio-composer-toolbar>button:last-of-type{margin-inline-start:auto}
+html[data-interface="impeccable"] .product-ui .workspace-audio-composer .workspace-audio-composer-toolbar>button.workspace-audio-composer-primary{inline-size:72px;min-inline-size:72px;flex:none;height:32px;min-height:32px!important;padding:6px 2px!important;font-size:13px!important;line-height:20px!important;gap:4px!important;white-space:nowrap}
+html[data-interface="impeccable"] .product-ui .workspace-audio-composer-primary>span[data-text]{padding-inline:0!important}
+html[data-interface="impeccable"] .product-ui .workspace-audio-composer button[data-rac]{min-block-size:32px!important;block-size:32px!important;max-block-size:32px;padding-block:4px!important}
+@container(max-width:480px){.workspace-audio-preparation .workspace-audio-composer-input .workspace-audio-form{grid-template-columns:minmax(0,1fr)}.workspace-audio-composer-input .workspace-audio-source-controls>label{min-width:0;flex-basis:100%}}
+
+html[data-interface="impeccable"] .product-ui .workspace-audio-composer-options>label{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:6px!important;font-size:12px!important;line-height:1.5!important}
+.workspace-audio-composer>.workspace-audio-source-controls{width:100%;align-items:center}
+@container(max-width:480px){.workspace-audio-composer>.workspace-audio-source-controls>label{min-width:0;flex-basis:100%}}
+
+.workspace-audio-preparation .workspace-audio-composer-toolbar{justify-content:flex-start;gap:4px}
+.workspace-audio-composer-toolbar .workspace-composer-chip>span{max-width:140px}
+.workspace-audio-source-popover .workspace-audio-source-controls{display:flex;gap:8px;flex-wrap:wrap;align-items:end}
+.workspace-audio-source-popover .workspace-audio-source-controls>label{flex-basis:100%;min-width:0}
+.workspace-audio-source-popover .workspace-audio-source-controls :is(select,input){max-width:100%}
+.workspace-audio-source-popover .workspace-material-drop{min-height:32px;max-width:100%}
+
+.workspace-audio-header-actions{display:flex;align-items:center;gap:8px;margin-inline-start:auto}
+.workspace-audio-enabled-content{display:grid;gap:12px;min-width:0}
+.workspace-audio-enabled-content[hidden]{display:none!important}
+
+.workspace-audio-single-input{min-height:170px;align-content:start}
+.workspace-audio-single-input>label{display:grid!important;gap:8px!important;grid-template-columns:minmax(0,1fr)!important;margin:0!important}
+.workspace-audio-single-input textarea{display:block;width:100%;box-sizing:border-box;min-height:140px;resize:vertical;font:inherit;font-size:13px;line-height:1.7;padding:0!important;color:var(--lc-ink)}
+.workspace-audio-upload-slot{display:grid;gap:10px;min-width:0}
+.workspace-audio-upload-slot>.workspace-material-drop{position:static;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;min-height:140px;padding:12px;border:1px dashed var(--lc-line-strong);border-radius:6px;background:transparent;color:var(--lc-muted)}
+.workspace-audio-upload-slot>.workspace-material-drop small{font-size:12px}
+.workspace-audio-upload-slot>label{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:6px!important}
+.workspace-audio-upload-slot select{max-width:none;width:100%}

@@ -1,0 +1,34 @@
+{
+  "musicSettings": {
+    "query": "calm ambient",
+    "description": "全片氛围",
+    "materialRevisionId": ""
+  },
+  "candidates": [
+    {
+      "id": "334026ce-c28d-43d6-843c-50c70df720b1",
+      "sourceId": 3,
+      "adoptedItemId": "workspace-sfx-334026ce-c28d-43d6-843c-50c70df720b1"
+    },
+    {
+      "id": "a715a894-8e45-4fc7-9e15-242a15de659a",
+      "sourceId": 2,
+      "adoptedItemId": null
+    },
+    {
+      "id": "765be98f-6fea-47ae-8fae-dd4e6523f620",
+      "sourceId": 1,
+      "adoptedItemId": null
+    }
+  ],
+  "sounds": [
+    {
+      "itemId": "workspace-sfx-334026ce-c28d-43d6-843c-50c70df720b1",
+      "kind": "sfx",
+      "gainDb": -6,
+      "duckDepthDb": 0,
+      "startSeconds": 0,
+      "durationSeconds": 1
+    }
+  ]
+}

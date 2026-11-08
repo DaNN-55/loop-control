@@ -29,6 +29,8 @@ it('lists source rows and keeps raw names, file paths and exact JSON in on-deman
 it('archives through the protected command and can filter archived sources without deleting',async()=>{
  requests();vi.mocked(localCommand).mockImplementation(async()=>{vi.mocked(localRequest).mockResolvedValue({...report,sources:[],sourceCounts:{active:0,archived:1}});return {archived:true};});const user=userEvent.setup();render(<LocalHistory/>);
  await screen.findByRole('table',{name:'资料来源列表'});await user.click(screen.getByRole('button',{name:'归档 '+item.title}));
+ expect(localCommand).not.toHaveBeenCalled();
+ await user.click(screen.getByRole('button',{name:'确认归档'}));
  await screen.findByText('已归档，可在「已归档」中恢复。文件和索引保留。');expect(localCommand).toHaveBeenCalledWith('archive',{sourceId:source},undefined,'history-management');
  await user.selectOptions(screen.getByLabelText('显示范围'),'archived');await waitFor(()=>expect(new URL(vi.mocked(localRequest).mock.calls.at(-1)![0],'http://local/').searchParams.get('state')).toBe('archived'));
 });

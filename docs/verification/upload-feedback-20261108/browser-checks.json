@@ -1,0 +1,20 @@
+{
+  "bottomResults": 0,
+  "overflow": false,
+  "popover": {
+    "height": 164.1875,
+    "left": 689,
+    "right": 1069,
+    "width": 380
+  },
+  "toastVisible": false,
+  "viewport": {
+    "height": 790,
+    "width": 1152
+  },
+  "automaticDismissVerified": true,
+  "manualDismissVerified": true,
+  "historyPreserved": true,
+  "retryVerified": true,
+  "localValidationBeforeImport": true
+}

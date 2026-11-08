@@ -5,7 +5,7 @@ import {resolveWorkspaceMainVoice} from '../workspaceAudio.js';
 import {readWorkspaceShotWindow} from '../workspaceShots.js';
 import {createHash} from 'node:crypto';
 import type {PoolClient} from 'pg';
-import {applyWorkspaceCaptionEdit,readWorkspaceCaption,type WorkspaceCaptionState} from '../workspaceCaptions.js';
+import {applyWorkspaceCaptionEdit,readWorkspaceCaption,setWorkspaceCaptionText,type WorkspaceCaptionState} from '../workspaceCaptions.js';
 import {defaultShotCaptionContract,isValidShotCaptionContract,normalizeShotCaptionContract,shotCaptionContractToDatabase,type ShotCaptionContract} from '../shotCaptions.js';
 import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
 import {isOpenChatCutStudio} from '../worker/openchatcutStudio.js';
@@ -20,9 +20,10 @@ async function captionContext(c:PoolClient,root:string,row:ProductionWorkspaceRe
  const clip=row.bindings.find(b=>b.id===clipId);if(!clip)throw new ConfigurationError(404,'当前片段不存在。');
  const window=readWorkspaceShotWindow(project,clip.itemId),timeline=window?.timeline,item=window?{...window.item,startFrame:window.startFrame,durationInFrames:window.durationInFrames}:undefined;if(!timeline||!item)throw new ConfigurationError(409,'片段已从当前工程删除。');
  const draft=(await c.query('SELECT * FROM public.shot_preparation_drafts WHERE episode_id=$1 AND review_package_id=$2 AND shot_id=$3',[row.episode_id,row.storyboard_package_id,clip.shotId])).rows[0];
- const lane=readWorkspaceCaption(project,clip.itemId),contract=lane?.contract??defaultShotCaptionContract(draft?.subtitle_text??clip.text,draft?.audio_mode==='tts'?'follow_tts':'independent',draft?.subtitles_enabled??true);
+ const lane=readWorkspaceCaption(project,clip.itemId),route=resolveWorkspaceMainVoice(project,clip.shotId);
+ const contract=lane?.contract??normalizeShotCaptionContract(draft?.caption_contract,{enabled:draft?.subtitles_enabled??true,text:draft?.subtitle_text??clip.text,audioMode:draft?.audio_mode==='source'||route.item?.id===`workspace-source-shot-${clip.shotId}`?'source':undefined});
  const narration=(await c.query('SELECT clip_id FROM local_identity.workspace_narrations WHERE workspace_id=$1 AND shot_id=$2',[row.id,clip.shotId])).rows[0];
- const route=resolveWorkspaceMainVoice(project,clip.shotId),nativeAudio=route.item??(!route.explicitRoute?timeline.items.find(i=>i.id===`workspace-narration-${narration?.clip_id??clip.id}`):undefined),nativeTrack=typeof nativeAudio?.sourceAssetId==='string'&&nativeAudio.sourceAssetId.startsWith('audio-track-')?nativeAudio.sourceAssetId.slice(12):null;
+ const nativeAudio=route.item??(!route.explicitRoute?timeline.items.find(i=>i.id===`workspace-narration-${narration?.clip_id??clip.id}`):undefined),nativeTrack=typeof nativeAudio?.sourceAssetId==='string'&&nativeAudio.sourceAssetId.startsWith('audio-track-')?nativeAudio.sourceAssetId.slice(12):null;
  const audioId=nativeTrack??(!route.explicitRoute&&draft?.audio_mode!=='none'?draft?.current_audio_track_id:null),audio=audioId?(await c.query('SELECT * FROM public.audio_tracks WHERE id=$1 AND episode_id=$2',[audioId,row.episode_id])).rows[0]:null;
  if(audio)try{await verifyEpisodeFile(c,root,row.episode_id,audio.relative_path,audio.sha256,Number(audio.file_size));}catch{throw new ConfigurationError(409,'当前字幕音轨不可用或指纹已变化。');}
  const usedNarration=route.explicitRoute?(await readUsedWorkspaceNarrationVersions(c,row,project)).find(n=>n.shotId===clip.shotId):null,followText=route.explicitRoute?usedNarration?.text??null:draft?.tts_text??null;
@@ -91,6 +92,28 @@ export async function confirmWorkspaceCaptionTexts(c:PoolClient,root:string,row:
 export async function executeWorkspaceCaptionCommand(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,runtime:{postReady?(kind:'alignment'):Promise<void>;wake?(id:string):void},command:string,data:Record<string,unknown>){
  await requireWritableEpisodeStorage(c,root,row.episode_id);
  let x=await captionContext(c,root,row,project,data.clipId);
+ if(command==='setWorkspaceCaptionsEnabled'){
+  if(typeof data.enabled!=='boolean')throw new ConfigurationError(400,'字幕开关无效。');
+  if(isOpenChatCutStudio(row.episode_id))throw new ConfigurationError(409,'请先退出剪辑工作台，再修改字幕开关。');
+  const contract={...x.contract,enabled:data.enabled};
+  const next=data.enabled&&!contract.cues.length?setWorkspaceCaptionText(project,x.clip.itemId,contract,contract.text,x.route.item):applyWorkspaceCaptionEdit(project,x.clip.itemId,contract);
+  const saved=readWorkspaceCaption(next,x.clip.itemId)!.contract;
+  await c.query('SELECT local_identity.save_workspace_caption_input($1,$2,$3)',[row.id,x.clip.id,shotCaptionContractToDatabase({...saved,contentMode:'independent'})]);
+  return updateWorkspaceProject(c,root,row,next,row.bindings,data.enabled?'启用镜头字幕':'关闭镜头字幕',{nativeEdit:true});
+ }
+ if(command==='saveWorkspaceNarrationCaptions'){
+  if(isOpenChatCutStudio(row.episode_id))throw new ConfigurationError(409,'请先退出剪辑工作台，再修改分镜台字幕。');
+  const mode=data.contentMode;
+  if(mode!=='follow_tts'&&mode!=='independent')throw new ConfigurationError(400,'请选择字幕模式。');
+  if(mode==='independent'&&(typeof data.text!=='string'||!data.text.trim()||data.text.length>100000))throw new ConfigurationError(400,'请填写有效的字幕正文。');
+  const voice=x.route.item?.id===`workspace-narration-shot-${x.clip.shotId}`?x.route.item:undefined;
+  if(mode==='follow_tts'&&data.text!==undefined&&(typeof data.text!=='string'||!data.text.trim()||data.text.length>100000))throw new ConfigurationError(400,'口播文案无效。');
+  const text=mode==='independent'?String(data.text):voice&&x.followText?.trim()?x.followText:typeof data.text==='string'?data.text:x.followText??x.contract.text;
+  const next=setWorkspaceCaptionText(project,x.clip.itemId,{...x.contract,enabled:true,contentMode:mode},text,mode==='follow_tts'?voice:undefined);
+  const saved=readWorkspaceCaption(next,x.clip.itemId)!.contract;
+  await c.query('SELECT local_identity.save_workspace_caption_input($1,$2,$3)',[row.id,x.clip.id,shotCaptionContractToDatabase({...saved,contentMode:'independent'})]);
+  return updateWorkspaceProject(c,root,row,next,row.bindings,'修改口播字幕');
+ }
  if(command==='saveWorkspaceCaptions'){
   const errors=workspaceCaptionFieldErrors(data.captionContract,Number(x.item.durationInFrames)*1000/x.timeline.fps);
   if(Object.keys(errors).length)throw new ConfigurationError(400,Object.values(errors).join(' '));

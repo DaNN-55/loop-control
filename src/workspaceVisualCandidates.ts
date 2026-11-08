@@ -1,21 +1,24 @@
+import type {VideoGenerationPhase} from './worker/wanVideoProvider.js';
 import {resolveWorkspaceMainVoice} from './workspaceAudio.js';
 import type {OpenChatCutProject} from './worker/openchatcutProject.js';
 import type {WorkspaceCandidate} from './workspaceCandidates.js';
 export interface WorkspaceVisualCandidate extends WorkspaceCandidate {source?:import('./workspacePexels.js').WorkspacePexelsSource;usage:'video'|'still'|'pan-zoom';materialRevisionId?:string;generation?:{selection?:import('./productionSelection.js').ProductionSelection;connectionName?:string;actualPrompt?:string;prompt:string;firstFrameMaterialRevisionId:string;durationSeconds:number;imageSettings?:import('./imageGeneration.js').ImageGenerationSettings;imageBrief?:import('./imageGeneration.js').ImageBrief;referenceMaterialRevisionIds?:string[];videoSettings?:import('./videoGenerationSettings.js').WanGenerationSettings;firstFrameFit?:'contain'|'cover'};width:number;height:number}
-export interface WorkspaceVisualTask {generation?:WorkspaceVisualCandidate['generation'];id:string;taskId:string;shotId?:string;kind?:'image'|'video';status:string;error:string|null;canResume?:boolean;provider?:string;model?:string;connectionName?:string|null;createdAt?:string;targetItemId?:string;submissionOutcome?:'started'|'received'|'rejected'|null;providerTaskId?:string|null;requestState?:string|null;submissionUnknown?:boolean;publicationAttempt?:number|null}
+export interface WorkspaceVisualTask {generation?:WorkspaceVisualCandidate['generation'];id:string;taskId:string;shotId?:string;kind?:'image'|'video';status:string;error:string|null;canResume?:boolean;provider?:string;model?:string;connectionName?:string|null;createdAt?:string;targetItemId?:string;submissionOutcome?:'started'|'received'|'rejected'|null;providerTaskId?:string|null;videoPhase?:VideoGenerationPhase|null;requestState?:string|null;submissionUnknown?:boolean;retryTaskId?:string|null;publicationAttempt?:number|null}
 export const workspaceVisualFields:Record<string,string[]>={
  searchWorkspacePexelsVideos:['episodeId','workspaceId','expectedRevision','targetItemId','selection','query','orientation','size','page'],
  previewWorkspacePexelsVideo:['episodeId','workspaceId','expectedRevision','searchId','resultId'],
  importWorkspacePexelsVideo:['episodeId','workspaceId','expectedRevision','previewId'],
- requestWorkspaceVisualCandidate:['selection','episodeId','workspaceId','expectedRevision','targetItemId','firstFrameMaterialRevisionId','prompt','durationSeconds','reservationCents','videoSettings','firstFrameFit'],
+ requestWorkspaceVisualCandidate:['selection','episodeId','workspaceId','expectedRevision','targetItemId','firstFrameMaterialRevisionId','videoMode','visualInputs','prompt','durationSeconds','reservationCents','videoSettings','firstFrameFit'],
  retainWorkspaceImageCandidate:['episodeId','workspaceId','expectedRevision','candidateId'],
- requestWorkspaceImageCandidates:['episodeId','workspaceId','expectedRevision','targetItemId','selection','model','prompt','settings','imageBrief','referenceMaterialRevisionIds','reservationCents'],
+ requestWorkspaceImageCandidates:['episodeId','workspaceId','expectedRevision','targetItemId','selection','model','prompt','settings','imageBrief','referenceMaterialRevisionIds','reservationCents','retryOfTaskId'],
  retryWorkspaceVisualCandidate:['episodeId','workspaceId','expectedRevision','candidateId'],
  prepareWorkspaceVisualPool:['episodeId','workspaceId','expectedRevision','materialRevisionId'],
  registerWorkspaceVisualCandidate:['episodeId','workspaceId','expectedRevision','targetItemId','materialRevisionId','usage','durationSeconds'],
- prepareWorkspaceVisualCandidate:['episodeId','workspaceId','expectedRevision','candidateId','durationPolicy','acceptTimelineImpact','motionPolicy','imageUsage','sourceInSeconds','sourceOutSeconds'],
+ prepareWorkspaceVisualCandidate:['episodeId','workspaceId','expectedRevision','candidateId','durationPolicy','acceptTimelineImpact','motionPolicy','imageUsage','replaceCurrentVisual','sourceInSeconds','sourceOutSeconds'],
  adoptWorkspaceVisualCandidate:['episodeId','workspaceId','expectedRevision','candidateId','adoptionId','nativeApplied'],
  rejectWorkspaceVisualCandidate:['episodeId','workspaceId','expectedRevision','candidateId'],
+ splitWorkspaceVideoSound:['episodeId','workspaceId','expectedRevision','targetItemId'],
+ clearWorkspaceVisualCandidate:['episodeId','workspaceId','expectedRevision','targetItemId','candidateId','sourcePath','sourceSha256'],
 };
 
 export interface WorkspaceVisualTarget {defaultSelection?:import('./productionSelection.js').ProductionSelection;targetItemId:string;voiceMode:'source'|'tts'|'none';durationSeconds:number|null;providerDurationSeconds:number|null;minimumSeconds:number;maximumSeconds:number;model?:string;provider?:string;width?:number;height?:number}

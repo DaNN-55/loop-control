@@ -38,6 +38,24 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('speech requests freeze c
  const old=w.candidates.find((c:any)=>c.taskId===taskA);const prepared=await f.request('prepareWorkspaceCandidate',{workspaceId:w.id,expectedRevision:w.revision,candidateId:old.id,durationPolicy:'use-candidate'});expect(prepared.status,JSON.stringify(prepared.body)).toBe(200);
  r=await f.request('adoptWorkspaceCandidate',{workspaceId:w.id,expectedRevision:w.revision,candidateId:old.id,adoptionId:prepared.body.adoptionId});expect(r.status,JSON.stringify(r.body)).toBe(200);w=r.body;
  const project=JSON.parse(await readFile(join(f.assetRoot,w.project.relativePath),'utf8'));const voice=project.timelines[0].items.find((i:any)=>i.sourceAssetId==='audio-track-'+old.id);expect(voice.durationInFrames).toBe(72);expect(w.usedNarration[0]).toMatchObject({taskId:taskA,text:'完整口播不能截断。',fullSourceUsed:true});expect(w.narration[0].selection.connectionVersionId).toBe(b);
+ // Restore a historical result after the saved text changes and its connection version is retired.
+ const execute=async(command:string,data:Record<string,unknown>={})=>{const result=await f.request(command,{workspaceId:w.id,expectedRevision:w.revision,...(command.endsWith('WorkspaceNarration')?{clipId:clip.id}:{}),...data});expect(result.status,JSON.stringify(result.body)).toBe(200);if(result.body.id===w.id)w=result.body;return result.body;};
+ await execute('saveWorkspaceNarration',{mode:'tts',text:'更新后的口播正文。',selection:selection(b),voice:'zh_male_m191_uranus_bigtts',speakingRate:1,languageCode:'zh-CN'});
+ await execute('withdrawWorkspaceNarration',{audioTrackId:old.id});
+ expect(w.narration[0]).toMatchObject({mode:'tts',text:'更新后的口播正文。',adoptedAudioTrackId:null});
+ expect(w.usedNarration).toHaveLength(0);
+ expect(w.candidates.find((c:any)=>c.id===old.id)).toMatchObject({status:'stale',canRestoreNarration:true});
+ const restore=await execute('prepareWorkspaceCandidate',{candidateId:old.id,durationPolicy:'use-candidate',restoreNarration:true});
+ expect(restore.restoration).toEqual({currentText:'更新后的口播正文。',restoredText:old.text});
+ const adoptArgs={workspaceId:w.id,expectedRevision:w.revision,candidateId:old.id,adoptionId:restore.adoptionId};
+ expect((await f.request('adoptWorkspaceCandidate',adoptArgs)).status).toBe(409);
+ await execute('saveWorkspaceNarration',{mode:'tts',text:'核对之后又改过的正文。',selection:selection(b),voice:'zh_male_m191_uranus_bigtts',speakingRate:1,languageCode:'zh-CN'});
+ expect((await f.request('adoptWorkspaceCandidate',{workspaceId:w.id,expectedRevision:w.revision,candidateId:old.id,adoptionId:restore.adoptionId,restoreNarration:true})).status).toBe(409);
+ const fresh=await execute('prepareWorkspaceCandidate',{candidateId:old.id,durationPolicy:'use-candidate',restoreNarration:true});
+ await execute('adoptWorkspaceCandidate',{candidateId:old.id,adoptionId:fresh.adoptionId,restoreNarration:true});
+ expect(w.narration[0]).toMatchObject({mode:'tts',text:old.text,adoptedAudioTrackId:old.id,defaults:{selection:selection(b)}});
+ expect(w.usedNarration[0]).toMatchObject({taskId:taskA,text:old.text});
+ expect(await readFile(f.submissions,'utf8')).toBe(calls.map(v=>JSON.stringify(v)).join('\n')+'\n');
  }finally{await f.close();}
 },120000);
 
@@ -61,7 +79,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('fresh formal speech adop
  const opened=await send('openWorkspaceStudio');w=opened.productionWorkspace;await editStudioDocument(opened.studioUrl,w.project.projectId,doc=>{doc.timelines[0].items.find((i:any)=>i.id===clip.itemId)!.transform.x=17;});const saved=await send('saveWorkspaceStudio',{workspaceRelativePath:opened.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:opened.workspace.sha256});w=saved.productionWorkspace;await send('closeWorkspaceStudio');
  await promisify(execFile)('ffmpeg',['-nostdin','-v','error','-y','-f','lavfi','-i','sine=frequency=660:sample_rate=48000','-t','5.2','-c:a','libmp3lame',f.controlled!.controlledVoicePath]);
  const second=await speech(first.text+'新版。');expect(second.durationSeconds).toBe(5.2);const short=await f.send('prepareWorkspaceCandidate',{workspaceId:w.id,expectedRevision:w.revision,candidateId:second.id,durationPolicy:'keep-target'});expect(short.status).toBe(409);expect(short.body.error).toContain('不会截断');
- const prepared=await send('prepareWorkspaceCandidate',{candidateId:second.id,durationPolicy:'use-candidate'});await send('adoptWorkspaceCandidate',{candidateId:second.id,adoptionId:prepared.adoptionId});expect(w.captions[0].inputFingerprint).not.toBe(captionFingerprint);expect(w.captions[0]).toMatchObject({timing:'stale',textConfirmed:false});expect(w.narration[0].windowWarning).toContain('拆镜');
+ const prepared=await send('prepareWorkspaceCandidate',{candidateId:second.id,durationPolicy:'use-candidate'});await send('adoptWorkspaceCandidate',{candidateId:second.id,adoptionId:prepared.adoptionId});expect(w.captions[0].inputFingerprint).not.toBe(captionFingerprint);expect(w.captions[0]).toMatchObject({timing:'stale',textConfirmed:false,contract:{contentMode:'follow_tts',text:second.text}});expect(w.narration[0].windowWarning).toContain('拆镜');
  const after=JSON.parse(await readFile(join(f.assetRoot,w.project.relativePath),'utf8')),visual=after.timelines[0].items.find((i:any)=>i.id===clip.itemId),voice=after.timelines[0].items.find((i:any)=>i.id===second.targetItemId);expect(visual.transform.x).toBe(17);expect(visual.durationInFrames).toBe(projectBefore.timelines[0].items.find((i:any)=>i.id===clip.itemId).durationInFrames);expect(voice.durationInFrames).toBe(156);expect(w.usedNarration[0].fullSourceUsed).toBe(true);
  await f.restart();const resumed=(await (await fetch(f.origin+`/api/local/episodes/${f.newEpisode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}})).json()).workspace;expect(resumed.usedNarration[0]).toMatchObject({taskId:second.taskId,fullSourceUsed:true});expect(resumed.captions[0].timing).toBe('stale');
  }finally{await f.close();}

@@ -5,7 +5,7 @@ import {applyWorkspaceAudioMix} from 'virtual:loop-control-audio';
 import {applyWorkspaceShotOperation,isWorkspaceShotOperation,readWorkspaceShots} from 'virtual:loop-control-structure';
 import {applyWorkspaceCaptionEdit,isWorkspaceCaptionContract,migrateWorkspaceCaptionLanes} from 'virtual:loop-control-captions';
 // Loaded by the Loop Control Vite adapter inside the real editor, never a second store.
-import {useEffect,useRef} from 'react';
+import {createElement,useEffect,useRef} from 'react';
 const query=new URLSearchParams(location.search);
 const channel=query.get('lcChannel'),expectedProject=query.get('lcProject');
 const parentValue=query.get('lcParent');
@@ -16,7 +16,16 @@ export function redirectLoopControlImport(kind){
  if(!(parentOrigin&&parent!==window&&channel&&expectedProject&&location.hash===`#/editor/${expectedProject}`))return;
  if(!browserProjectOwnership(expectedProject))throw Error('编辑器写连接尚未就绪，请稍后重试。');
  parent.postMessage({type:'loop-control:import-requested',channel,projectId:expectedProject,kind:kind==='audio'||String(kind).startsWith('audio/')?'audio':'visual'},parentOrigin);
- throw Error(kind==='audio'||String(kind).startsWith('audio/')?'请从宿主声音素材入口登记文件。':'请从宿主画面版本上传并登记素材。');
+ throw Error('请返回分镜台，从「本期素材」导入文件。');
+}
+export function LoopControlCaptionAlignment(){
+ const embedded=parentOrigin&&parent!==window&&channel&&expectedProject&&location.hash===`#/editor/${expectedProject}`;
+ function send(type){parent.postMessage({type,channel,projectId:expectedProject},parentOrigin);}
+ useEffect(()=>{if(embedded)return()=>send('loop-control:caption-library-closed');},[embedded]);
+ return embedded?createElement('button',{
+  type:'button',className:'cc-main-tab',style:{alignSelf:'flex-start',margin:'6px 10px'},
+  onClick:()=>send('loop-control:caption-alignment-requested'),
+ },'字幕对齐'):null;
 }
 export function useLoopControlHost(projectId,base,agent,panels){
   const live=useRef({base,agent});live.current={base,agent};
@@ -76,7 +85,8 @@ export function useLoopControlHost(projectId,base,agent,panels){
     if(!active)return;const base=live.current.base;reportedWritable.current=!!browserProjectOwnership(projectId);
     emit('loop-control:state',{writable:reportedWritable.current,revision:++revision.current,selectedIds:Array.from(base.selection.selectedIds??[]),structureEnabled:base.doc.loopControl?.version==='four-step-workspace/v1',shots:base.doc.loopControl?.version==='four-step-workspace/v1'?readWorkspaceShots(base.doc).filter(s=>s.timelineId===base.doc.activeTimelineId):undefined,items:base.state.items.filter(i=>i.kind==='video'||i.kind==='image'||i.kind==='text'&&i.id.startsWith('shot-')).map(i=>({id:i.id,startFrame:i.startFrame,durationInFrames:i.durationInFrames,kind:i.kind,srcInFrame:i.srcInFrame??0,durationLocked:i.loopControlVideo?.durationLocked===true,sourceDurationInFrames:base.doc.assets.find(a=>a.id===i.sourceAssetId)?.durationInFrames,fit:i.fit??base.state.fit,focusX:i.transform?.x??0,focusY:i.transform?.y??0,layout:i.loopControlComposition?.layout??'full',transition:Number(i.fadeInFrames)>0||Number(i.fadeOutFrames)>0?'fade':'cut'})),width:base.state.width,height:base.state.height});
   }
-  useEffect(()=>{reportState();},[base.doc,projectId,active]);
+  const selectedItemKey=Array.from(base.selection.selectedIds??[]).join('\u0000');
+  useEffect(()=>{reportState();},[base.doc,selectedItemKey,projectId,active]);
   useEffect(()=>{if(!active)return;const timer=setInterval(()=>{if(reportedWritable.current!==!!browserProjectOwnership(projectId))reportState();},100);return()=>clearInterval(timer);},[projectId,active]);
   return active?async()=>emit('loop-control:leave'):null;
 }

@@ -1,6 +1,7 @@
 /* A real select owns form values; React Aria owns the styled, keyboard-operable popup. */
 .dan-ui .dan-select-control { position: relative; min-width: 0; }
 .dan-ui .dan-select-trigger { padding-inline: 36px !important; cursor: pointer; width: 100%; min-width: 0; background-image: none !important; }
+.dan-ui .dan-select-control:not(:has(.dan-select-leading)) .dan-select-trigger { padding-inline-start: 12px !important; }
 .dan-ui .dan-select-trigger:disabled { cursor: not-allowed; }
 .dan-ui .dan-select-leading { position: absolute; z-index: 1; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; pointer-events: none; color: var(--lc-muted,var(--color-fg-quaternary)); }
 .dan-select-popover { width: max(200px,var(--trigger-width)); max-width: calc(100vw - 24px); padding: 4px; background: var(--lc-surface,var(--color-bg-primary)); color: var(--lc-ink,var(--color-text-primary)); border: 1px solid var(--lc-line,var(--color-border-secondary)); border-radius: 12px; box-shadow: 0 12px 32px rgb(12 29 57 / .15); overflow: auto; z-index: 1000; }
@@ -18,3 +19,29 @@
 
 .dan-ui .dan-select-caret {top:50%;right:12px!important;left:auto;transform:translateY(-50%);width:16px;height:16px;pointer-events:none}
 .dan-ui .dan-select-control:has(> .dan-select-trigger:disabled) > svg {opacity:.5}
+
+.dan-select-action-footer {
+    border-top: 1px solid var(--lc-line,var(--color-border-secondary));
+    margin-top: 4px;
+    padding-top: 4px;
+}
+.dan-select-popover .dan-select-popup-action {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 36px;
+    padding: 8px 10px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--lc-accent,var(--color-fg-brand-primary));
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: start;
+    cursor: pointer;
+}
+.dan-select-popup-action .dan-select-option-icon { color: currentColor; }
+.dan-select-popup-action:hover { background: var(--lc-surface-2,var(--color-bg-primary_hover)); }
+.dan-select-popup-action:focus-visible { outline: 2px solid var(--lc-accent,var(--color-border-brand)); outline-offset: -2px; }

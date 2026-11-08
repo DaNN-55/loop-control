@@ -30,3 +30,16 @@ it('uses the frozen connection region for historic MiniMax estimates and keeps a
  expect(summarizeEpisodeMetrics([{...minimax,request_region:'international'}]).episode.cost.estimatedCents).toBe(231);
  expect(summarizeEpisodeMetrics([minimax]).episode.cost).toMatchObject({estimatedCents:null,unpricedCount:1});
 });
+
+it('counts only worker intervals and merges overlapping runs',()=>{
+ const metrics=summarizeEpisodeMetrics([
+  task,
+  {...task,id:'queued',status:'ready',runs:[]},
+  {...task,id:'upload',provider:'manual_upload',runs:[{...run,completed_at:'2026-11-02T02:00:00Z'}]},
+  {...task,id:'render',task_type:'generate_review_render',status:'running',runs:[
+   {...run,started_at:'2026-11-02T00:00:30Z',completed_at:'2026-11-02T00:02:00Z',status:'failed'},
+   {...run,started_at:'2026-11-02T00:03:00Z',completed_at:null,status:'running'},
+  ]},
+ ],Date.parse('2026-11-02T00:04:00Z')).episode;
+ expect(metrics.workerRunSeconds).toBe(180);
+});

@@ -1,3 +1,4 @@
+import type {FrozenVideoVisualInput} from '../videoVisualInputs.js';
 import {applyScriptRenderSettings} from './scriptRenderSettings.js';
 import {videoAdapters} from "./videoProviderCatalog.js";
 import {
@@ -521,8 +522,10 @@ function media(snapshot: Record<string, unknown>): WorkerTaskPackageInput["media
   }
   if (value.adapter === "wan_video" || videoAdapters.includes(String(value.adapter))) {
     const video = value.wan_video;
-    if (!isRecord(video) || !isRecord(video.first_frame)) throw new Error("万相镜头缺少冻结首帧。");
-    return { adapter: value.adapter as "wan_video" | "seedance_video" | "minimax_video" | "kling_video", wanVideo: { settings:video.settings as import('../videoGenerationSettings.js').WanGenerationSettings,composition:video.composition as import('../videoGenerationSettings.js').FirstFrameComposition,firstFrame: video.first_frame as unknown as ArtifactManifest, prompt: requiredString(video.prompt, "缺少视频提示词。"), durationSeconds: requiredPositiveNumber(video.duration_seconds, "缺少视频时长。"), imageMime: requiredString(video.image_mime, "缺少首帧 MIME。") } };
+    if(!isRecord(video))throw new Error('缺少冻结视频配置。');
+    const advanced=Array.isArray(video.visual_inputs);
+    if(!advanced&&!isRecord(video.first_frame))throw new Error('视频镜头缺少冻结首帧。');
+    return { adapter: value.adapter as "wan_video" | "seedance_video" | "minimax_video" | "kling_video", wanVideo: { settings:video.settings as import('../videoGenerationSettings.js').WanGenerationSettings,composition:video.composition as import('../videoGenerationSettings.js').FirstFrameComposition,...(advanced?{visualInputs:video.visual_inputs as FrozenVideoVisualInput[],visualMode:requiredString(video.visual_mode,'缺少视频生成模式。'),...(video.reference_ratio!=null?{referenceRatio:video.reference_ratio as import('../videoVisualInputs.js').VideoOutputRatio}:{})}:{firstFrame:video.first_frame as unknown as ArtifactManifest,imageMime:requiredString(video.image_mime,'缺少首帧 MIME。')}), prompt: requiredString(video.prompt, "缺少视频提示词。"), durationSeconds: requiredPositiveNumber(video.duration_seconds, "缺少视频时长。") } };
   }
   if (value.adapter === "pexels_video") {
     const bRoll = value.b_roll;
@@ -618,6 +621,7 @@ function media(snapshot: Record<string, unknown>): WorkerTaskPackageInput["media
       adapter: "freesound_preview",
       soundtrack: {
         query: requiredString(soundtrack.query, "声轨任务缺少冻结检索词。"),
+        ...(soundtrack.candidate_index===undefined?{}:{candidateIndex:Number(soundtrack.candidate_index)}),
         targetDurationSeconds: requiredPositiveNumber(soundtrack.target_duration_seconds, "声轨任务缺少有效时长。"),
         cue: {
           id: requiredString(soundtrack.cue.id, "声轨任务缺少声轨 ID。"),

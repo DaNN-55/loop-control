@@ -1,3 +1,4 @@
+import {openAiImageModels} from '../imageGeneration';
 // @vitest-environment node
 import {it,expect} from 'vitest';
 import {randomUUID} from 'node:crypto';
@@ -10,9 +11,9 @@ it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('owns, discovers and persists m
  try{
   const created=await f.command('create',{name:'Model fixture',provider:'openai',adapter:'openai_images',secret:'synthetic-openai-key'});expect(created.status).toBe(200);const connection=created.body.connection;
   const call=async(command?:string,data?:unknown,token=f.token,csrf=true)=>{const r=await fetch(f.origin+'/api/local/connection-models'+(command?'':'?connectionId='+connection.id),{method:command?'POST':'GET',headers:{Origin:f.origin,Cookie:'loop_owner_session='+token,...(command?{'Content-Type':'application/json'}:{}),...(csrf?{'X-CSRF-Token':csrfFor(token)}:{})},...(command?{body:JSON.stringify({command,data,idempotencyKey:randomUUID()})}:{})});return{status:r.status,body:await r.json()};};
-  const before=f.secretReads,initial=await call();expect(initial.status).toBe(200);expect(initial.body).toMatchObject({revision:'default',enabledModels:['gpt-image-2'],models:[{adapted:true,listed:false}]});expect(f.secretReads).toBe(before);
+  const before=f.secretReads,initial=await call();expect(initial.status).toBe(200);expect(initial.body).toMatchObject({revision:'default',enabledModels:openAiImageModels,models:openAiImageModels.map(id=>({id,adapted:true,listed:false}))});expect(f.secretReads).toBe(before);
   expect((await call(undefined,undefined,f.otherToken)).status).toBe(404);expect((await call(undefined,undefined,'')).status).toBe(401);
-  const sync=await call('sync',{connectionId:connection.id,versionId:connection.current_version_id});expect(sync.status,JSON.stringify(sync.body)).toBe(200);expect(sync.body.models).toEqual([{id:'gpt-image-2',capability:'图片',adapted:true,listed:true},{id:'unadapted-example',capability:'未分类',adapted:false,listed:true}]);expect(f.secretReads).toBe(before+1);
+  const sync=await call('sync',{connectionId:connection.id,versionId:connection.current_version_id});expect(sync.status,JSON.stringify(sync.body)).toBe(200);expect(sync.body.models).toEqual([...openAiImageModels.map(id=>({id,capability:'图片',adapted:true,listed:id==='gpt-image-2'})),{id:'unadapted-example',capability:'未分类',adapted:false,listed:true}]);expect(f.secretReads).toBe(before+1);
   const data={connectionId:connection.id,versionId:connection.current_version_id,revision:'default',enabledModels:[]};
   expect((await call('save',data,f.token,false)).status).toBe(403);expect((await call('save',data,f.otherToken)).status).not.toBe(200);
   expect((await call('save',{...data,enabledModels:['unadapted-example']})).status).toBe(400);

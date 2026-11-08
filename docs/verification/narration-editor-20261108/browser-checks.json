@@ -1,0 +1,63 @@
+{
+  "desktop": {
+    "buttons": [
+      {
+        "height": 32,
+        "opacity": "1",
+        "text": "试听",
+        "width": 80
+      },
+      {
+        "height": 32,
+        "opacity": "1",
+        "text": "撤回",
+        "width": 80
+      },
+      {
+        "height": 32,
+        "opacity": "1",
+        "text": "试听",
+        "width": 80
+      },
+      {
+        "height": 32,
+        "opacity": "1",
+        "text": "恢复采用",
+        "width": 80
+      }
+    ],
+    "controlsWithinEditor": true,
+    "height": 953,
+    "overflow": false,
+    "width": 1495
+  },
+  "narrow": {
+    "buttons": [
+      {
+        "height": 32,
+        "opacity": "1",
+        "width": 80
+      },
+      {
+        "height": 32,
+        "opacity": "1",
+        "width": 80
+      },
+      {
+        "height": 32,
+        "opacity": "1",
+        "width": 80
+      },
+      {
+        "height": 32,
+        "opacity": "1",
+        "width": 80
+      }
+    ],
+    "captionValue": "independent",
+    "controlsWithinEditor": true,
+    "height": 790,
+    "overflow": false,
+    "width": 1152
+  }
+}

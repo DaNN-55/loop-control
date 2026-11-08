@@ -1,0 +1,36 @@
+{
+  "previous": {
+    "id": "2197b311316bd2a120b1a83108c5b8398d670111671c92a69e0672457835a850",
+    "root": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/2197b311316bd2a120b1a83108c5b8398d670111671c92a69e0672457835a850"
+  },
+  "next": {
+    "id": "763612165899b765c58c6d90635110f33cc5d60b1ef231cb11c24805d2c1fdcd",
+    "root": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/763612165899b765c58c6d90635110f33cc5d60b1ef231cb11c24805d2c1fdcd"
+  },
+  "changedOutputs": [
+    "dist/local-app/local-app/workspaceAudio.js",
+    "dist/local-app/local-app/workspaceCallConfirmation.js",
+    "dist/local-app/soundIntent.js",
+    "dist/local-app/worker/codexRunner.js",
+    "dist/local-app/worker/contracts.js",
+    "dist/local-app/worker/controlledMediaExecutor.js",
+    "dist/local-app/worker/mediaProviders.js",
+    "dist/local-app/workspaceAudio.js",
+    "dist/worker/worker/codexRunner.js",
+    "dist/worker/worker/contracts.js",
+    "dist/worker/worker/controlledMediaExecutor.js",
+    "dist/worker/worker/mediaProviders.js",
+    "dist/worker/workspaceAudio.js"
+  ],
+  "changedSources": [
+    "src/local-app/workspaceAudio.ts",
+    "src/local-app/workspaceCallConfirmation.ts",
+    "src/productionWorkspace.ts",
+    "src/soundIntent.ts",
+    "src/worker/codexRunner.ts",
+    "src/worker/contracts.ts",
+    "src/worker/controlledMediaExecutor.ts",
+    "src/worker/mediaProviders.ts",
+    "src/workspaceAudio.ts"
+  ]
+}

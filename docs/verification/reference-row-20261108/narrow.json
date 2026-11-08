@@ -1,0 +1,33 @@
+{
+  "composer": {
+    "height": 348.375,
+    "width": 328.953125,
+    "x": 782.046875,
+    "y": 608
+  },
+  "overflowX": "auto",
+  "pageOverflow": false,
+  "prompt": {
+    "height": 88.375,
+    "width": 280.953125,
+    "x": 806.046875,
+    "y": 732
+  },
+  "references": {
+    "height": 92,
+    "width": 218.953125,
+    "x": 868.046875,
+    "y": 632
+  },
+  "upload": {
+    "height": 80,
+    "width": 52,
+    "x": 806.046875,
+    "y": 638
+  },
+  "viewport": {
+    "height": 790,
+    "width": 1152
+  },
+  "wrap": "nowrap"
+}

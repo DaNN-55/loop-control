@@ -1,5 +1,6 @@
 import {useEffect,useState} from 'react';
 import {ChevronLeft,ChevronRight} from 'lucide-react';
+import {ImagePreview} from '../ui/media/ImagePreview';
 import {WorkbenchVideoPlayer} from './WorkbenchVideoPlayer';
 import {localRequest} from '../local-app/client';
 import {artifactPreviewKind,localArtifactUrl,localArtifactThumbnailUrl} from '../reviews/localArtifactPreview';
@@ -41,7 +42,7 @@ export function WorkbenchArtwork({episodeId,title,artifacts=[],exportedVideo,err
  const source=showingVideo?videoSource:coverSource;
  const mediaFailed=Boolean(source&&failed.includes(source));
  return <div className={`work-artwork ${source&&!mediaFailed?'has-media':''}`}>
-  {source&&!mediaFailed?(showingVideo?<WorkbenchVideoPlayer key={source} source={source} poster={coverSource??undefined} title={title}/>:<img src={source} alt={`${title}作品预览`} onError={()=>setFailed(current=>[...current,source])}/>):<><strong>{title}</strong><span>{error||mediaFailed?'预览暂不可用':'尚未生成封面'}</span></>}
+  {source&&!mediaFailed?(showingVideo?<WorkbenchVideoPlayer key={source} source={source} poster={coverSource??undefined} title={title}/>:<ImagePreview src={source} alt={`${title}作品预览`} onError={()=>setFailed(current=>[...current,source])}/>):<><strong>{title}</strong><span>{error||mediaFailed?'预览暂不可用':'尚未生成封面'}</span></>}
   {videoSource&&<div className="work-artwork-navigation" role="group" aria-label="作品预览切换">
    <button type="button" aria-label="查看封面" disabled={!showingVideo} onClick={()=>setSelection({episodeId,video:false})}><ChevronLeft size={18} aria-hidden="true"/></button>
    <span className="sr-only" role="status">{showingVideo?'视频预览':'封面预览'}</span>

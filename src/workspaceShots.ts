@@ -1,3 +1,4 @@
+import {linkedVideoSound,removeLinkedVideoSound} from './workspaceVideoSound.js';
 import {defaultShotComposition,shotCompositionRect,shotCompositionTransform,shotCompositionLayouts,type ShotCompositionLayout} from './shotComposition.js';
 import type {OpenChatCutProject} from './worker/openchatcutProject.js';
 import type {WorkspaceClip} from './productionWorkspace.js';
@@ -47,7 +48,7 @@ export function applyWorkspaceShotOperation(project:OpenChatCutProject,operation
   const clipId=operation.clipId??crypto.randomUUID(),shotId=`added-${clipId}`,at=after?after.startFrame+after.durationInFrames:0,duration=Math.round(timeline.fps*3),track=after?String(timeline.items.find(i=>i.id===after.itemIds[0])!.track):timeline.trackOrder.find(id=>timeline.tracks[id].kind==='video');
   if(timeline.items.some(i=>workspaceShotIdentity(i)?.clipId===clipId))return next;
   if(!track)throw Error('当前时间线没有画面轨。');
-  for(const item of timeline.items)if(Number(item.startFrame)>=at&&(workspaceShotIdentity(item)||shots.some(shot=>shotAudio(item,shot))))item.startFrame=Number(item.startFrame)+duration;
+  for(const item of timeline.items)if(Number(item.startFrame)>=at&&(workspaceShotIdentity(item)||shots.some(shot=>shotAudio(item,shot,timeline))))item.startFrame=Number(item.startFrame)+duration;
   retimeLanes(timeline,entry=>entry.words.map(w=>w.start>=at*1000/timeline.fps?{...w,start:w.start+duration*1000/timeline.fps,end:w.end+duration*1000/timeline.fps}:w));
   const id=`shot-${shotId}-${clipId}`;timeline.items.push({id,track,kind:'text',name:'待匹配画面',startFrame:at,durationInFrames:duration,width:timeline.width,height:timeline.height,props:{text:'待匹配画面',fontSize:56,color:'#a3acc2',align:'center'},loopControlShot:{workspaceId:next.loopControl?.inputFingerprint??'',shotId,clipId,text:operation.text}});timeline.selectedId=id as never;(timeline as unknown as {selectedIds:string[]}).selectedIds=[id];return next;
  }
@@ -57,12 +58,15 @@ export function applyWorkspaceShotOperation(project:OpenChatCutProject,operation
   const duration=operation.layout==='full'?items.reduce((sum,i)=>sum+Number(i.durationInFrames),0):Math.max(...items.map(i=>Number(i.durationInFrames)));
   const voice=timeline.items.find(i=>i.id===`workspace-narration-shot-${shot.id}`);if(voice&&Number(voice.durationInFrames)>duration)throw Error('新构图短于完整主声，请先调整画面或主声时长。');
   const lanes=Object.values(timeline.tracks).flatMap(t=>t.captions?.sourceEntries??[]).filter(e=>laneBelongs(e.id,shot));if(lanes.some(e=>e.words.some(w=>w.end>(shot.startFrame+duration)*1000/timeline.fps)))throw Error('新构图短于完整字幕，请先明确调整字幕或画面时长。');
-  const delta=duration-shot.durationInFrames;for(const other of timeline.items)if(!items.includes(other)&&!shotAudio(other,shot)&&Number(other.startFrame)>=shot.startFrame+shot.durationInFrames&&(workspaceShotIdentity(other)||shots.some(s=>shotAudio(other,s))))other.startFrame=Number(other.startFrame)+delta;
+  const delta=duration-shot.durationInFrames;for(const other of timeline.items)if(!items.includes(other)&&!shotAudio(other,shot,timeline)&&Number(other.startFrame)>=shot.startFrame+shot.durationInFrames&&(workspaceShotIdentity(other)||shots.some(s=>shotAudio(other,s,timeline))))other.startFrame=Number(other.startFrame)+delta;
   retimeLanes(timeline,e=>laneBelongs(e.id,shot)?e.words:e.words.map(w=>w.start>=(shot.startFrame+shot.durationInFrames)*1000/timeline.fps?{...w,start:w.start+delta*1000/timeline.fps,end:w.end+delta*1000/timeline.fps}:w));
   let frame=shot.startFrame;for(const [index,item] of items.entries()){
    const slot=composition.slots[Math.min(index,composition.slots.length-1)],trackId=operation.layout==='full'?String(items[0].track):`workspace-visual-${index}`;
    if(!timeline.tracks[trackId]){timeline.tracks[trackId]={kind:'video',name:`画面 ${index+1}`};timeline.trackOrder.push(trackId);}
-   item.track=trackId;item.startFrame=operation.layout==='full'?frame:shot.startFrame;frame+=Number(item.durationInFrames);item.transform={...(item.transform as object),...shotCompositionTransform(shotCompositionRect(operation.layout,slot.id),slot)};item.loopControlComposition={layout:operation.layout};
+   const audio=linkedVideoSound(timeline,item);
+   const start=operation.layout==='full'?frame:shot.startFrame;
+   if(audio)audio.startFrame=Number(audio.startFrame)+start-Number(item.startFrame);
+   item.track=trackId;item.startFrame=start;frame+=Number(item.durationInFrames);item.transform={...(item.transform as object),...shotCompositionTransform(shotCompositionRect(operation.layout,slot.id),slot)};item.loopControlComposition={layout:operation.layout};
   }return next;
  }
  if(operation.kind==='move'||operation.kind==='remove'){
@@ -70,7 +74,7 @@ export function applyWorkspaceShotOperation(project:OpenChatCutProject,operation
   const timeline=next.timelines.find(t=>t.id===shot.timelineId)!,local=shots.filter(s=>s.timelineId===shot.timelineId);
   if(operation.kind==='remove'){
    if(shots.length<=1||shot.effective&&shots.filter(s=>s.effective).length<=1)throw Error('不能删除最后一个有效镜头。');
-   const ids=new Set(shot.itemIds);timeline.items=timeline.items.filter(i=>!ids.has(String(i.id))&&!shotAudio(i,shot));
+   const ids=new Set(shot.itemIds);for(const i of timeline.items.filter(i=>ids.has(String(i.id))))removeLinkedVideoSound(timeline,i);timeline.items=timeline.items.filter(i=>!ids.has(String(i.id))&&!shotAudio(i,shot,timeline));
    timeline.transitions=timeline.transitions.filter(t=>!Object.values(t).some(v=>typeof v==='string'&&ids.has(v)));clearSelection(timeline,ids);removeLanes(timeline,shot);
    moveBlocks(timeline,local.filter(s=>s!==shot),local[0].startFrame);return next;
   }
@@ -84,8 +88,9 @@ export function applyWorkspaceShotOperation(project:OpenChatCutProject,operation
   const remaining=x.items.filter(i=>i!==item),removedStart=Number(item.startFrame),removedEnd=removedStart+Number(item.durationInFrames),overlaps=remaining.some(i=>Number(i.startFrame)<removedEnd&&Number(i.startFrame)+Number(i.durationInFrames)>removedStart),delta=overlaps?0:Number(item.durationInFrames),end=x.endFrame-delta,start=x.startFrame;
   const voice=timeline.items.find(i=>i.id===`workspace-narration-shot-${x.shotId}`);if(voice&&(Number(voice.startFrame)<start||Number(voice.startFrame)+Number(voice.durationInFrames)>end))throw Error('删除后画面短于完整主声，请先明确调整画面或主声时长。');
   const lanes=Object.values(timeline.tracks).flatMap(t=>t.captions?.sourceEntries??[]).filter(e=>e.id===`workspace-caption-shot-${x.shotId}`||x.items.some(i=>e.id===`workspace-caption-${i.id}`));if(lanes.some(e=>e.words.some(w=>w.start<start*1000/timeline.fps||w.end>end*1000/timeline.fps)))throw Error('删除后画面短于完整字幕，请先明确调整字幕或画面时长。');
-  for(const other of timeline.items)if(other!==item&&!shotAudio(other,{id:x.shotId!,itemIds:x.items.map(i=>String(i.id))} as WorkspaceShot)&&Number(other.startFrame)>=removedEnd&&(workspaceShotIdentity(other)||shots.some(shot=>shotAudio(other,shot))))other.startFrame=Number(other.startFrame)-delta;
+  for(const other of timeline.items)if(other!==item&&!shotAudio(other,{id:x.shotId!,itemIds:x.items.map(i=>String(i.id))} as WorkspaceShot,timeline)&&Number(other.startFrame)>=removedEnd&&(workspaceShotIdentity(other)||shots.some(shot=>shotAudio(other,shot,timeline))))other.startFrame=Number(other.startFrame)-delta;
   retimeLanes(timeline,e=>e.id===`workspace-caption-shot-${x.shotId}`?e.words:e.words.map(w=>w.start>=x.endFrame*1000/timeline.fps?{...w,start:w.start-delta*1000/timeline.fps,end:w.end-delta*1000/timeline.fps}:w));
+  removeLinkedVideoSound(timeline,item);
   timeline.items=timeline.items.filter(i=>i!==item);timeline.transitions=timeline.transitions.filter(t=>!Object.values(t).includes(item.id));clearSelection(timeline,new Set([String(item.id)]));return next;
  }
  if(operation.kind==='lock'){item.loopControlVideo={...(item.loopControlVideo as object),durationLocked:operation.locked};return next;}
@@ -95,6 +100,14 @@ export function applyWorkspaceShotOperation(project:OpenChatCutProject,operation
   const range=adjustWorkspaceVideoRange({sourceInFrame:Number(item.srcInFrame??0),durationInFrames:Number(item.durationInFrames),durationLocked:(item.loopControlVideo as {durationLocked?:boolean})?.durationLocked===true},operation.edge,operation.deltaFrames,asset.durationInFrames);
   const voice=timeline.items.find(i=>i.id===`workspace-narration-shot-${x.shotId}`),newEnd=Math.max(...x.items.map(i=>Number(i.startFrame)+(i===item?range.durationInFrames:Number(i.durationInFrames))));
   if(voice&&newEnd<Number(voice.startFrame)+Number(voice.durationInFrames))throw Error('画面不能短于完整主声，请先调整主声。');
+  const audio=linkedVideoSound(timeline,item);
+  if(audio){
+   const start=Number(audio.srcInFrame??0)+range.sourceInFrame-Number(item.srcInFrame??0);
+   const end=start+range.durationInFrames*Number(audio.playbackRate??1);
+   const audioAsset=next.assets.find(a=>a.id===audio.sourceAssetId);
+   if(start<0||!audioAsset||end>audioAsset.durationInFrames)throw Error('调整范围超出独立原声，请先解除联动或重新采用视频区间。');
+   audio.srcInFrame=start;audio.durationInFrames=range.durationInFrames;
+  }
   item.srcInFrame=range.sourceInFrame;item.durationInFrames=range.durationInFrames;return next;
  }
  if(operation.fit!==undefined){
@@ -116,10 +129,10 @@ export function isWorkspaceShotOperation(value:unknown):value is WorkspaceShotOp
  if(v.kind==='remove-range')return true;if(v.kind==='range')return['in','out'].includes(String(v.edge))&&Number.isSafeInteger(v.deltaFrames)&&Math.abs(Number(v.deltaFrames))<=1000000;if(v.kind==='lock')return typeof v.locked==='boolean';
  return(v.fit===undefined||['contain','cover'].includes(String(v.fit)))&&(v.transition===undefined||['cut','fade'].includes(String(v.transition)))&&['focusX','focusY'].every(k=>v[k]===undefined||typeof v[k]==='number'&&Number.isFinite(v[k])&&Math.abs(Number(v[k]))<=100);
 }
-function shotAudio(item:Record<string,unknown>,shot:WorkspaceShot){return item.id===`workspace-narration-shot-${shot.id}`||item.id===`workspace-source-shot-${shot.id}`||(item.kind==='audio'&&(item.loopControlAudio as {shotId?:string}|undefined)?.shotId===shot.id)||shot.itemIds.some(id=>item.id===`workspace-narration-${workspaceShotIdentity({id})?.clipId}`)||((item.loopControlShot as WorkspaceShotIdentity|undefined)?.shotId===shot.id&&item.kind==='audio');}
+function shotAudio(item:Record<string,unknown>,shot:WorkspaceShot,timeline:Timeline){return (item.kind==='audio'&&timeline.linkGroups?.some(g=>g.id.startsWith('workspace-video-sound-')&&g.itemIds.includes(String(item.id))&&g.itemIds.some(id=>shot.itemIds.includes(id))))||item.id===`workspace-narration-shot-${shot.id}`||item.id===`workspace-source-shot-${shot.id}`||(item.kind==='audio'&&(item.loopControlAudio as {shotId?:string}|undefined)?.shotId===shot.id)||shot.itemIds.some(id=>item.id===`workspace-narration-${workspaceShotIdentity({id})?.clipId}`)||((item.loopControlShot as WorkspaceShotIdentity|undefined)?.shotId===shot.id&&item.kind==='audio');}
 type Timeline=OpenChatCutProject['timelines'][number];
 function clearSelection(timeline:Timeline,removed:Set<string>){if(removed.has(String(timeline.selectedId)))timeline.selectedId=null;const t=timeline as unknown as {selectedIds?:string[]};if(t.selectedIds)t.selectedIds=t.selectedIds.filter(id=>!removed.has(id));}
 function laneBelongs(id:string,shot:WorkspaceShot){return id===`workspace-caption-shot-${shot.id}`||shot.itemIds.some(itemId=>id===`workspace-caption-${itemId}`);}
 function retimeLanes(timeline:Timeline,transform:(entry:NonNullable<Timeline['tracks'][string]['captions']>['sourceEntries'][number])=>NonNullable<Timeline['tracks'][string]['captions']>['sourceEntries'][number]['words']){for(const track of Object.values(timeline.tracks))if(track.captions)for(const entry of track.captions.sourceEntries)entry.words=transform(entry);}
 function removeLanes(timeline:Timeline,shot:WorkspaceShot){for(const track of Object.values(timeline.tracks))if(track.captions){const captions=track.captions,removed=captions.sourceEntries.filter(e=>laneBelongs(e.id,shot));captions.sourceEntries=captions.sourceEntries.filter(e=>!removed.includes(e));if(captions.layoutPolicy?.mode==='manual-slots')captions.layoutPolicy.slots=captions.layoutPolicy.slots.filter(s=>!removed.some(e=>e.slotId===s.id));for(const lane of removed)delete captions.perSource[lane.id];}}
-function moveBlocks(timeline:Timeline,order:WorkspaceShot[],start:number){let frame=start;for(const shot of order){const delta=frame-shot.startFrame;for(const item of timeline.items)if(shot.itemIds.includes(String(item.id))||shotAudio(item,shot))item.startFrame=Number(item.startFrame)+delta;retimeLanes(timeline,e=>laneBelongs(e.id,shot)?e.words.map(w=>({...w,start:w.start+delta*1000/timeline.fps,end:w.end+delta*1000/timeline.fps})):e.words);frame+=shot.durationInFrames;}}
+function moveBlocks(timeline:Timeline,order:WorkspaceShot[],start:number){let frame=start;for(const shot of order){const delta=frame-shot.startFrame;for(const item of timeline.items)if(shot.itemIds.includes(String(item.id))||shotAudio(item,shot,timeline))item.startFrame=Number(item.startFrame)+delta;retimeLanes(timeline,e=>laneBelongs(e.id,shot)?e.words.map(w=>({...w,start:w.start+delta*1000/timeline.fps,end:w.end+delta*1000/timeline.fps})):e.words);frame+=shot.durationInFrames;}}

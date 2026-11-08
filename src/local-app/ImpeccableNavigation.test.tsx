@@ -47,11 +47,16 @@ it('待审核合并到生产单，工作台审核入口使用真实目录筛选'
  expect(lastQuery().get('view')).toBe('episodes');expect(lastQuery().get('status')).toBe('review');
  expect(screen.getByRole('tab',{name:'待审核'}).getAttribute('aria-selected')).toBe('true');expect(screen.getByRole('tab',{name:'待审核'}).textContent).toContain('45');
  const count=queries.length;
- for(const label of ['连接配置','历史资料']){fireEvent.click(nav().getByRole('button',{name:label}));await screen.findByRole('heading',{name:label,level:1});}
+ fireEvent.click(screen.getByRole('button',{name:'所有者设置'}));
+ fireEvent.click(await screen.findByRole('menuitem',{name:'连接配置'}));
+ await screen.findByRole('dialog',{name:'连接配置'});
+ expect(new URLSearchParams(location.search).get('view')).toBe('episodes');
+ fireEvent.click(screen.getByRole('button',{name:'关闭连接配置'}));
+ await screen.findByRole('table',{name:'生产单'});
  expect(queries).toHaveLength(count);
- fireEvent.click(nav().getByRole('button',{name:'账号'}));await waitFor(()=>expect(lastQuery().get('view')).toBe('accounts'));
+ fireEvent.click(nav().getByRole('button',{name:'账号'}));fireEvent.click(nav().getByRole('button',{name:'原始账号'}));await waitFor(()=>expect(lastQuery().get('view')).toBe('accounts'));
  expect(queries.every(q=>['accounts','episodes','operations'].includes(q.get('view')??''))).toBe(true);
- expect(queries.every(q=>Array.from(q.keys()).sort().join(',')==='accountId,blockedPage,page,pendingPage,q,seriesId,sort,status,view,visibility')).toBe(true);
+ expect(queries.every(q=>Array.from(q.keys()).sort().join(',')==='accountId,blockedPage,page,pageSize,pendingPage,q,seriesId,sort,status,view,visibility')).toBe(true);
 });
 
 it('工作台生产单和需处理筛选使用服务端分页，切换范围重置页码',async()=>{
@@ -69,6 +74,14 @@ it('工作台生产单和需处理筛选使用服务端分页，切换范围重�
  await waitFor(()=>expect(lastQuery().get('seriesId')).toBe(seriesId));
  expect(['page','pendingPage','blockedPage'].map(key=>lastQuery().get(key))).toEqual(['1','1','1']);
  await within(screen.getByRole('region',{name:'系列生产单'})).findByText('阻塞生产单 201');
+ const filters=within(screen.getByRole('group',{name:'已应用筛选'}));
+ fireEvent.click(filters.getByRole('button',{name:'清除状态筛选：需处理'}));
+ await waitFor(()=>expect(lastQuery().get('status')).toBe('all'));
+ expect(lastQuery().get('seriesId')).toBe(seriesId);
+ fireEvent.click(filters.getByRole('button',{name:'清空筛选'}));
+ await waitFor(()=>expect(lastQuery().get('seriesId')).toBe('all'));
+ expect(screen.queryByRole('group',{name:'已应用筛选'})).toBeNull();
+ expect(document.activeElement).toBe(screen.getByRole('textbox',{name:'搜索标题或编号'}));
 });
 
 it('选择作品更新下一步，打开及返回详情保留第二页上下文',async()=>{
@@ -103,7 +116,7 @@ it('搜索、状态和排序全部送服务端，切换范围重置分页且不�
 it('侧栏分组和底部工具保持已认可设计，Owner焦点与状态不丢',async()=>{
  setup();await mount();
  expect(within(nav().getByRole('group',{name:'生产工作'})).getAllByRole('button').map(b=>b.getAttribute('aria-label'))).toEqual(['工作台','生产单']);
- expect(within(nav().getByRole('group',{name:'配置与资料'})).getAllByRole('button').map(b=>b.getAttribute('aria-label'))).toEqual(['连接配置','历史资料']);
+ expect(nav().queryByRole('button',{name:'连接配置'})).toBeNull();
  expect(nav().getByRole('button',{name:/OpenChatCut/}).closest('.sidebar-footer')).toBeTruthy();
  fireEvent.click(screen.getByRole('button',{name:'切换至深色模式'}));expect(screen.getByRole('button',{name:'切换至浅色模式'}).getAttribute('aria-pressed')).toBe('true');
  fireEvent.click(nav().getByRole('button',{name:'收起侧栏'}));expect(nav().getByRole('button',{name:'展开侧栏'}).getAttribute('aria-pressed')).toBe('true');
