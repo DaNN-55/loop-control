@@ -1,0 +1,34 @@
+.connection-settings-content {max-inline-size:1100px}
+.connection-planning {margin-bottom:20px}
+.connection-planning h2 {font-size:16px;margin:0 0 10px}
+.connection-planning-bar {display:grid;grid-template-columns:minmax(180px,1fr) minmax(0,2.25fr);gap:8px 16px;align-items:start;background:var(--lc-surface);border:1px solid var(--lc-line);border-radius:12px;padding:14px 16px}
+.connection-planning-picker {display:grid;gap:4px;min-width:0}
+.connection-planning-picker form {display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;margin-top:6px}
+.connection-planning-pages {display:flex;align-items:center;justify-content:space-between}
+.connection-planning .workspace-planning-selection {margin:0;padding:0;border:0}
+.connection-planning .workspace-planning-selection .configuration-form {margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:12px;align-items:start}
+html[data-interface="impeccable"] .product-ui .connection-planning .stage-configuration-fields {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+html[data-interface="impeccable"] .product-ui .connection-planning .stage-configuration-fields > label {display:grid;grid-template-columns:minmax(0,1fr);gap:4px;align-items:start}
+html[data-interface="impeccable"] .product-ui .connection-planning .configuration-actions {grid-column:2;grid-row:1;align-self:end;margin:0;padding:0;border:0}
+.connection-planning-advanced {grid-column:1/-1;margin-top:4px}
+.connection-planning summary {color:var(--lc-muted);font-size:12px}
+.connection-planning-bar p {margin:6px 0}
+@media(max-width:850px){
+ .connection-planning-bar {grid-template-columns:minmax(0,1fr)}
+}
+@media(max-width:540px){
+ .connection-planning .workspace-planning-selection .configuration-form,html[data-interface="impeccable"] .product-ui .connection-planning .stage-configuration-fields {grid-template-columns:minmax(0,1fr)}
+ html[data-interface="impeccable"] .product-ui .connection-planning .configuration-actions {grid-column:1;grid-row:auto;margin-top:8px;justify-content:start}
+}
+html[data-interface="impeccable"] .product-ui .connection-planning-picker .dan-select-field > label {
+ position:static!important;width:auto!important;height:auto!important;margin:0 0 5px!important;
+ overflow:visible!important;clip:auto!important;font-size:12px;
+}
+
+.connection-planning-bar:has(> .connection-planning-hint) {align-items:center}
+.connection-planning-hint {color:var(--lc-muted);font-size:13px}
+.connection-planning .configuration-actions {position:relative}
+.connection-planning .configuration-actions [role="status"] {position:absolute;right:0;top:100%;white-space:nowrap;font-size:12px;color:var(--lc-muted)}
+
+.maintenance-embedded .connection-settings-content{max-inline-size:none}
+.connection-settings-content [role=tabpanel]{padding-block-start:16px}

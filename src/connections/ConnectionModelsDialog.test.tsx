@@ -50,7 +50,7 @@ it('protects changed model choices on Escape and can keep them through close/reo
  const user=userEvent.setup();const connection={id:'c',name:'Images',provider:'openai',adapter:'openai_images',current_version_id:'v',status:'verified'}as ExternalConnection;
  render(<ConnectionWorkspace connections={[connection]} onCreateConnection={vi.fn()} onTestConnection={vi.fn()} onReadModels={async()=>data}/>);
  await user.click(screen.getByRole('button',{name:'Images 连接操作'}));await user.click(screen.getByRole('menuitem',{name:'模型设置'}));await user.click(await screen.findByRole('checkbox',{name:'gpt-image-2'}));
- await user.keyboard('{Escape}');expect(screen.getByRole('dialog',{name:'关闭前处理修改'})).toBeTruthy();await user.click(screen.getByRole('button',{name:'继续编辑'}));expect((screen.getByRole('checkbox',{name:'gpt-image-2'})as HTMLInputElement).checked).toBe(false);
+ await user.keyboard('{Escape}');expect(screen.getByRole('dialog',{name:'关闭前处理修改'})).toBeTruthy();await user.click(screen.getByRole('button',{name:'关闭确认，继续编辑'}));expect((screen.getByRole('checkbox',{name:'gpt-image-2'})as HTMLInputElement).checked).toBe(false);
  await user.click(screen.getByRole('button',{name:'关闭模型设置'}));await user.click(screen.getByRole('button',{name:'保留修改并关闭'}));
  await user.click(screen.getByRole('button',{name:'Images 连接操作'}));await user.click(screen.getByRole('menuitem',{name:'模型设置'}));expect((await screen.findByRole('checkbox',{name:'gpt-image-2'})as HTMLInputElement).checked).toBe(false);
  await user.click(screen.getByRole('button',{name:'取消'}));await user.click(screen.getByRole('button',{name:'放弃修改并关闭'}));

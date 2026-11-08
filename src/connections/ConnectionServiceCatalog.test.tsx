@@ -18,6 +18,7 @@ it('groups saved connections by registered function and shows exact provider mod
  render(<ConnectionWorkspace connections={connections} versions={versions} serviceCatalog={catalog} onCreateConnection={vi.fn()} onTestConnection={vi.fn()}/>);
  const table=screen.getByRole('table',{name:'已保存连接'});
  expect(within(table).getAllByText('gpt-image-2',{exact:false})).toHaveLength(2);
+ fireEvent.click(within(table).getByRole('button',{name:'Second studio 账务与凭据详情'}));
  expect(within(table).getByText('连接尚未验证通过。')).toBeTruthy();
  expect(within(table).getByText('wan2.6-i2v-flash',{exact:false})).toBeTruthy();
  fireEvent.change(screen.getByLabelText('生产能力'),{target:{value:'video'}});
@@ -35,4 +36,26 @@ it('shows credential status without reporting an authorization gate as a realtim
  expect(within(screen.getByRole('table',{name:'已保存连接'})).getByText('已验证').getAttribute('title')).toContain('不是实时网络检测结果');
  expect(screen.getByRole('button',{name:'连接验证说明'})).toBeTruthy();
  expect(screen.getByRole('button',{name:'测试 Image studio'})).toHaveProperty('disabled',false);
+});
+
+it('summarizes multi-model connections and expands only the selected list without testing the connection',()=>{
+ const connections=['A','B'].map(id=>({id,name:'视频连接 '+id,provider:'bailian',adapter:'wan_video',current_version_id:id+'-v',status:'verified'})) as ExternalConnection[];
+ const versions=connections.map(c=>({id:c.current_version_id,connection_id:c.id,provider:c.provider,adapter:c.adapter,is_current:true,revoked_at:null,status:c.status,version:1})) as ExternalConnectionVersion[];
+ const enabled=['wan2.6-i2v-flash','wan2.6-r2v'];
+ const serviceCatalog=buildProductionServiceCatalog({connections,versions,externalReady:true,enabledModels:{A:enabled,B:enabled}}),testConnection=vi.fn();
+ const models=serviceCatalog.groups.flatMap(group=>group.services).find(service=>service.connectionId==='A')!.models;
+ render(<ConnectionWorkspace inlineBilling connections={connections} versions={versions} serviceCatalog={serviceCatalog} onCreateConnection={vi.fn()} onTestConnection={testConnection}/>);
+ const table=within(screen.getByRole('table',{name:'已保存连接'}));
+ expect(models.length).toBeGreaterThan(1);
+ expect(table.getAllByText(models[0])).toHaveLength(2);
+ expect(table.queryByText(models[1])).toBeNull();
+ const toggleA=table.getByRole('button',{name:/视频连接 A · 查看/});
+ fireEvent.click(toggleA);
+ expect(toggleA.getAttribute('aria-expanded')).toBe('true');
+ expect(within(table.getByRole('list',{name:'视频连接 A的模型'})).getAllByRole('listitem').map(item=>item.textContent)).toEqual(models);
+ fireEvent.click(table.getByRole('button',{name:/视频连接 B · 查看/}));
+ expect(table.queryByRole('list',{name:'视频连接 A的模型'})).toBeNull();
+ fireEvent.click(table.getByRole('button',{name:'视频连接 B · 收起模型'}));
+ expect(table.queryByRole('list',{name:'视频连接 B的模型'})).toBeNull();
+ expect(testConnection).not.toHaveBeenCalled();
 });
