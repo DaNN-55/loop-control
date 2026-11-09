@@ -66,3 +66,23 @@ it.skipIf(!enabled)('automatically estimates a call and atomically freezes the O
  await f.execute(task);expect((await f.c.query('SELECT reserved_cents FROM public.paid_generation_reservations WHERE task_id=$1',[task])).rows[0].reserved_cents).toBe(321);
  }finally{await f.close();}
 },120000);
+
+it.skipIf(!enabled)('rolls confirmation consumption back when the real candidate write fails and permits the same confirmation after repair',async()=>{
+ const {f,w,propose,confirm}=await setup();let revoked=false;
+ try{
+  const proposal=await propose();expect(proposal.status,JSON.stringify(proposal.body)).toBe(200);
+  const counts=async()=>({
+   tasks:(await f.c.query('SELECT count(*)::int n FROM public.tasks WHERE episode_id=$1',[f.episode])).rows[0].n,
+   candidates:(await f.c.query('SELECT count(*)::int n FROM local_identity.workspace_visual_candidates WHERE workspace_id=$1',[w.id])).rows[0].n,
+   receipts:(await f.c.query('SELECT count(*)::int n FROM local_identity.command_receipts WHERE owner_id=$1',[f.owner])).rows[0].n,
+  });
+  const before=await counts();
+  await f.c.query('REVOKE INSERT ON local_identity.workspace_visual_candidates FROM loop_app');revoked=true;
+  const failed=await confirm(proposal.body.confirmationId);expect(failed.status,JSON.stringify(failed.body)).toBe(403);
+  expect((await f.c.query('SELECT consumed_at,consumed_transaction FROM local_identity.workspace_call_confirmations WHERE id=$1',[proposal.body.confirmationId])).rows[0]).toEqual({consumed_at:null,consumed_transaction:null});
+  expect(await counts()).toEqual(before);
+  await f.c.query('GRANT INSERT ON local_identity.workspace_visual_candidates TO loop_app');revoked=false;
+  const repaired=await confirm(proposal.body.confirmationId);expect(repaired.status,JSON.stringify(repaired.body)).toBe(200);
+  expect((await counts()).tasks).toBe(before.tasks+1);
+ }finally{if(revoked)await f.c.query('GRANT INSERT ON local_identity.workspace_visual_candidates TO loop_app');await f.close();}
+},120000);

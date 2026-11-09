@@ -1,22 +1,16 @@
+import {resolveWorkspaceVideoRequest,workspaceVisualMainVoice} from './workspaceVisualRequest.js';
 import {prepareWorkspaceVideoSound} from './workspaceVideoSound.js';
 import {applyWorkspaceVideoSound,hasSeparatedVideoSound,removeLinkedVideoSound} from '../workspaceVideoSound.js';
-import {resolveWorkspaceVideoInputs} from './resolveWorkspaceVideoInputs.js';
 import type {FrozenVideoVisualInput,VideoOutputRatio} from '../videoVisualInputs.js';
 import {currentWorkspaceCallAuthorization} from './workspaceCallConfirmation.js';
-import {defaultWanModelSettings,wanProviderDuration,wanVideoSettingsError} from '../wanVideoModels.js';
 import {episodeFileIO,verifyEpisodeFile} from './episodeFiles.js';
-import {creativeAccountRules,creativeMediaPrompt} from '../creativeAccountRules.js';
 import {executeWorkspacePexels} from './workspacePexels.js';
-import {resolveProductionSelection} from './productionSelection.js';
-import {isWanGenerationSettings} from '../videoGenerationSettings.js';
 import {resolveWorkspaceShotLineage} from './workspacePreparation.js';
 import {queueWorkspaceImageCandidates} from './workspaceImageGeneration.js';
-import {probeMp3Artifact} from '../worker/mediaTools.js';
 import {relative} from 'node:path';
 import {lstat} from 'node:fs/promises';
 import {resolveWorkspaceMainVoice} from '../workspaceAudio.js';
 import {isVideoProvider,klingOmniModel,videoProviders} from '../worker/videoProviderCatalog.js';
-import {workspaceVisualVoiceIdentity} from '../workspaceVisualCandidates.js';
 import type {InputRuntime} from './episodeCommands.js';
 import {isOpenChatCutStudio,registerOpenChatCutStudioSource} from '../worker/openchatcutStudio.js';
 import {createHash,randomUUID} from 'node:crypto';
@@ -54,36 +48,21 @@ export async function readWorkspaceVisualCandidates(c:PoolClient,row:ProductionW
 /** One real authorization, frozen input and private queue boundary for first fill and later candidates. */
 export async function queueWorkspaceVisualGeneration(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,data:Record<string,unknown>,runtime:InputRuntime,mode:'candidate'|'first'='candidate'){
   await requireVisualStorageLocation(c,root,row.episode_id,runtime.minimumFreeBytes);
-  const {clip,item,timeline}=target(row,project,data.targetItemId),resolved=await resolveProductionSelection(c,data.selection,'video'),lineage={shotType:'b_roll' as const};
-  if(resolved&&resolved.choice.mode!=='generation')throw new ConfigurationError(400,'请选择视频生成服务；素材检索请使用检索入口。');
-  if(typeof data.prompt!=='string'||!data.prompt.trim()||data.prompt.length>1500)throw new ConfigurationError(400,'首帧或动作描述无效。');
-  const e=(await c.query('SELECT e.*,b.policy,s.rules series_rules FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id LEFT JOIN public.series_versions s ON s.id=e.series_version_id WHERE e.id=$1',[row.episode_id])).rows[0],config={...resolved.execution,max_attempts:1},provider=config?.executor?.provider??'';
-  if(!config?.credential_ref||!(provider==='bailian'&&config.executor?.adapter==='wan_video'||isVideoProvider(provider)&&config.executor?.adapter===videoProviders[provider].adapter))throw new ConfigurationError(409,'请为当前镜头选择既有视频连接。');
-  if(data.videoSettings!==undefined&&(provider!=='bailian'||!isWanGenerationSettings(data.videoSettings)||Object.keys(data.videoSettings).some(key=>!['resolution','audio','promptExtend','shotType','watermark','negativePrompt','seed'].includes(key))))throw new ConfigurationError(400,'视频参数无效或不适用于当前模型。');
-  const videoSettings=provider==='bailian'?(data.videoSettings??defaultWanModelSettings(resolved.selection.model!)):undefined;
-  if(provider==='bailian'){const problem=wanVideoSettingsError(resolved.selection.model!,videoSettings);if(problem)throw new ConfigurationError(400,problem);}
-  if(data.firstFrameFit!==undefined&&!['contain','cover'].includes(String(data.firstFrameFit)))throw new ConfigurationError(400,'首帧构图无效。');
-  const authorized=await currentWorkspaceCallAuthorization(c,row);
-  const visual=await resolveWorkspaceVideoInputs(c,root,row.episode_id,data,resolved);
-  const first=visual.frozen.find(input=>input.role==='firstFrame');
+  const {clip,item,timeline}=target(row,project,data.targetItemId),lineage={shotType:'b_roll' as const};
+  const {resolved,creativeContext:context,visual,mainVoice,targetSeconds,providerSeconds:seconds,actualPrompt,videoSettings,prompt}=await resolveWorkspaceVideoRequest(c,root,row,project,data,'queue');
+  const config={...resolved.execution,max_attempts:1},authorized=await currentWorkspaceCallAuthorization(c,row),first=visual.frozen.find(input=>input.role==='firstFrame');
   if(mode==='first'&&visual.advanced)throw new ConfigurationError(400,'占位首次生成仅支持首帧模式。');
   if(data.firstFrameFit!==undefined&&!first)throw new ConfigurationError(400,'当前生成模式不使用首帧构图。');
-  const mainVoice=await workspaceVisualMainVoice(c,root,row,project,clip.shotId),targetSeconds=mainVoice.windowDurationSeconds??Number(data.durationSeconds),bounds=resolved?{minDuration:resolved.choice.constraints.durationSeconds!.min,maxDuration:resolved.choice.constraints.durationSeconds!.max}:isVideoProvider(provider)?videoProviders[provider]:{minDuration:2,maxDuration:15},seconds=provider==='bailian'?wanProviderDuration(resolved.selection.model!,targetSeconds,mainVoice.windowDurationSeconds!==null)??NaN:mainVoice.windowDurationSeconds!==null?Math.max(bounds.minDuration,Math.ceil(targetSeconds)):targetSeconds;
-  if(mainVoice.windowDurationSeconds!==null&&targetSeconds>bounds.maxDuration)throw new ConfigurationError(409,`当前实际主声时长超过所选服务上限 ${bounds.maxDuration} 秒，请明确拆分镜头；不会截断口播。`);
-  if(!Number.isInteger(seconds)||seconds<bounds.minDuration||seconds>bounds.maxDuration)throw new ConfigurationError(409,`当前画面时长不在所选服务 ${bounds.minDuration}～${bounds.maxDuration} 秒范围，请明确拆分或调整；不会变速或循环。`);
-  if((resolved||isVideoProvider(provider))&&(!Number.isSafeInteger(data.reservationCents)||Number(data.reservationCents)<1||Number(data.reservationCents)>100000))throw new ConfigurationError(400,'请填写本次费用预留。');
-  await runtime.checkReferences(c,[config.credential_ref],{purpose:'workspace-generation'});if(!runtime.mediaReady)throw new ConfigurationError(503,'视频Worker未配置。');await runtime.mediaReady({[lineage.shotType]:config});
+  await runtime.checkReferences(c,[config.credential_ref!],{purpose:'workspace-generation'});if(!runtime.mediaReady)throw new ConfigurationError(503,'视频Worker未配置。');await runtime.mediaReady({[lineage.shotType]:config});
   if(mode==='first'){
    if(clip.source||clip.image||item.kind!=='text')throw new ConfigurationError(409,'首次生成只填入尚未匹配的占位。');
    const frames=Math.max(1,Math.ceil(targetSeconds*timeline.fps)),end=Number(item.startFrame)+Number(item.durationInFrames),delta=frames-Number(item.durationInFrames);
    for(const other of timeline.items)if(other.id!==item.id&&Number(other.startFrame)>=end)other.startFrame=Number(other.startFrame)+delta;
    item.durationInFrames=frames;
   }
-  const creative=creativeAccountRules(e.policy),context={accountId:e.account_id,blueprintVersionId:e.blueprint_version_id,accountRules:creative,seriesVersionId:e.series_version_id,seriesRules:e.series_rules??null},actualPrompt=resolved?creativeMediaPrompt(data.prompt,creative,context.seriesRules):data.prompt.trim();
-  if(resolved&&actualPrompt.length>(resolved.choice.constraints.prompt?.maxLength??1500))throw new ConfigurationError(400,'动作描述与账号、系列规则合并后过长，请精简后提交。');
   const referenceOutputRatio:VideoOutputRatio=timeline.width>timeline.height?'16:9':timeline.width<timeline.height?'9:16':'1:1';
   const referenceRatio=visual.mode.characterOrder||resolved.selection.model===klingOmniModel?referenceOutputRatio:undefined;
-  const id=randomUUID(),expected=workspaceCandidateTarget(item),snapshot={...(resolved?{selectionVersion:1,selection:resolved.selection,connection:resolved.connection,context,actualPrompt,target:{targetItemId:item.id,shotId:clip.shotId,workspaceRevision:Number(row.revision),projectSha256:row.project_sha256,scriptRevisionId:row.script_revision_id},costBasis:{kind:'owner-reservation',reservationCents:data.reservationCents,model:resolved.selection.model,providerDurationSeconds:seconds}}:{}),origin:mode==='first'?'first-fill':'candidate',kind:'video',usage:'video',capability:lineage.shotType,execution:config,...(first?{firstFrameId:first.materialRevisionId,firstFrameSha256:first.sha256}:{}),...(visual.advanced?{videoMode:visual.mode.id,visualInputs:visual.frozen,...(referenceRatio?{referenceRatio}:{})}:{}),prompt:data.prompt.trim(),providerDurationSeconds:seconds,targetDurationSeconds:targetSeconds,reservationCents:data.reservationCents??null,authorizationHash:authorized.authorization_hash,nativeEditRevision:Number(row.native_edit_revision),expectedRevision:Number(row.revision),mainVoice,...(videoSettings?{videoSettings}:{}),...(data.firstFrameFit?{firstFrameComposition:{fit:data.firstFrameFit,width:timeline.width,height:timeline.height}}:{})};
+  const id=randomUUID(),expected=workspaceCandidateTarget(item),snapshot={...(resolved?{selectionVersion:1,selection:resolved.selection,connection:resolved.connection,context,actualPrompt,target:{targetItemId:item.id,shotId:clip.shotId,workspaceRevision:Number(row.revision),projectSha256:row.project_sha256,scriptRevisionId:row.script_revision_id},costBasis:{kind:'owner-reservation',reservationCents:data.reservationCents,model:resolved.selection.model,providerDurationSeconds:seconds}}:{}),origin:mode==='first'?'first-fill':'candidate',kind:'video',usage:'video',capability:lineage.shotType,execution:config,...(first?{firstFrameId:first.materialRevisionId,firstFrameSha256:first.sha256}:{}),...(visual.advanced?{videoMode:visual.mode.id,visualInputs:visual.frozen,...(referenceRatio?{referenceRatio}:{})}:{}),prompt:prompt.trim(),providerDurationSeconds:seconds,targetDurationSeconds:targetSeconds,reservationCents:data.reservationCents??null,authorizationHash:authorized.authorization_hash,nativeEditRevision:Number(row.native_edit_revision),expectedRevision:Number(row.revision),mainVoice,...(videoSettings?{videoSettings}:{}),...(data.firstFrameFit?{firstFrameComposition:{fit:data.firstFrameFit,width:timeline.width,height:timeline.height}}:{})};
   await c.query('INSERT INTO local_identity.workspace_visual_candidates(id,workspace_id,episode_id,clip_id,shot_id,target_item_id,input_fingerprint,target_snapshot,request_snapshot) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)',[id,row.id,row.episode_id,clip.id,clip.shotId,item.id,hash({expected,snapshot}),JSON.stringify(expected),JSON.stringify(snapshot)]);
   let taskId:string;
   try{taskId=(await c.query('SELECT local_identity.queue_workspace_visual($1) id',[id])).rows[0].id;}catch(error){if((error as {code?:string}).code==='55000')throw new ConfigurationError(409,'已有画面任务正在进行或供应商提交结果未知，请先恢复已有任务或核对结果；不会重复付费提交。');if((error as {code?:string}).code==='22023')throw new ConfigurationError(409,'本次视频费用预留或生成参数无效，请检查后重试。');throw error;}
@@ -209,13 +188,6 @@ export async function executeWorkspaceVisualCandidate(c:PoolClient,root:string,r
 export async function resolveWorkspaceVisualLineage(c:PoolClient,row:ProductionWorkspaceRecord,shotId:string){
  const shot=await resolveWorkspaceShotLineage(c,row,shotId);
  if(!['a_roll','b_roll'].includes(shot.shotType))throw new ConfigurationError(409,'请选择并确认此镜头的生成能力。');return{id:shotId,shotType:shot.shotType as 'a_roll'|'b_roll'};
-}
-export async function workspaceVisualMainVoice(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,shotId:string){
- const route=resolveWorkspaceMainVoice(project,shotId),item=route.item;
- if(!item)return{mode:'none',windowDurationSeconds:null,identity:workspaceVisualVoiceIdentity(project,shotId),source:null};
- if(typeof item.src!=='string'||item.edits||!(Number(item.playbackRate??1)>0))throw new ConfigurationError(409,'当前实际主声音窗口无法用于画面生成，请先明确其使用区间。');
- const source=await resolveWorkspaceSource(c,root,row.episode_id,item.src),timeline=project.timelines.find(t=>t.items.includes(item))!,duration=Number(item.durationInFrames)/timeline.fps,observed=await probeMp3Artifact(await (await episodeFileIO(c,root,row.episode_id)).resolveReference(item.src));if(Number(item.srcInFrame??0)/timeline.fps+duration*Number(item.playbackRate??1)>observed+0.05)throw new ConfigurationError(409,'实际主声音轨短于当前使用窗口。');
- return{mode:item.id===`workspace-source-shot-${shotId}`?'source':'tts',windowDurationSeconds:duration,identity:workspaceVisualVoiceIdentity(project,shotId),source:{id:source.id,relativePath:item.src,sha256:source.sha256,fileSize:Number(source.file_size),srcInFrame:Number(item.srcInFrame??0),playbackRate:Number(item.playbackRate??1),coverage:route.coverage}};
 }
 export async function readWorkspaceVisualTasks(c:PoolClient,row:ProductionWorkspaceRecord){
  return(await c.query(`SELECT v.id,v.request_snapshot,v.shot_id "shotId",v.target_item_id "targetItemId",v.request_snapshot->>'kind' kind,t.id "taskId",t.status,t.provider,t.model,t.created_at "createdAt",v.request_snapshot#>>'{connection,name}' "connectionName",
