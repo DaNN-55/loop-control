@@ -38,3 +38,5 @@
 - [ADR-0024：在线制作逐次确认](0024-per-call-workspace-confirmation.md)
 
 - [ADR-0025：后台与 Worker 绑定已准备的运行版本](0025-prepared-runtime-releases.md)
+
+- [ADR-0026：原生剪辑宿主模块依赖集中登记](0026-native-editor-module-graph.md)
