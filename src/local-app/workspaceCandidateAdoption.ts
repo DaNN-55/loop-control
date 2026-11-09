@@ -16,7 +16,7 @@ import {isOpenChatCutStudio,registerOpenChatCutStudioSource,inspectOpenChatCutSt
 import {workspaceNarrationItemId,validateSpeechParameters} from './workspaceNarration.js';
 import {ConfigurationError} from './configurationCommands.js';
 import {resolveWorkspaceSource} from './workspaceSources.js';
-import {updateWorkspaceProject,type ProductionWorkspaceRecord} from './productionWorkspaceCommands.js';
+import {persistWorkspaceRevision,type ProductionWorkspaceRecord} from './productionWorkspaceCommands.js';
 export async function prepareRegisteredWorkspaceCandidate(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,candidate:WorkspaceCandidate,durationPolicy:unknown,restoreFingerprint?:string){
  if(isOpenChatCutStudio(row.episode_id)){const native=await inspectOpenChatCutStoredProject(root,row.episode_id,await episodeFileIO(c,root,row.episode_id));if(!native)throw new ConfigurationError(409,'当前原生工程不可读取，请先保存并重新比较。');project=native.project;}
  if(candidate.status!=='available')throw new ConfigurationError(409,'候选已过期或已有决定，请读取当前版本。');
@@ -78,7 +78,7 @@ export async function finishRegisteredWorkspaceCandidate(c:PoolClient,root:strin
  if(prepared.project_sha256!==row.project_sha256)throw new ConfigurationError(409,'工程已变化，请重新比较后采用。');
  let next;try{next=applyWorkspaceCandidate(project,edit);}catch(error){throw new ConfigurationError(409,error instanceof Error?error.message:'采用未完成。');}
  await beforeApply?.();
- await updateWorkspaceProject(c,root,row,next,row.bindings,candidate.visual?'采用画面候选':'采用局部口播候选',{nativeEdit:true});
+ await persistWorkspaceRevision(c,root,row,next,row.bindings,candidate.visual?'采用画面候选':'采用局部口播候选',{nativeEdit:true});
  }
  await recordWorkspaceCandidateDecision(c,row,candidate,'adopted');
 }

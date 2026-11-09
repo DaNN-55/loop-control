@@ -131,7 +131,7 @@ export async function executeWorkspaceCaptionCommand(c:PoolClient,root:string,ro
   const finalProject=isOpenChatCutStudio(row.episode_id)?project:next;
   x=await captionContext(c,root,row,finalProject,x.clip.id);
   await recordEvidence(c,row,x.clip.id,x.inputFingerprint,x.laneFingerprint,'manual',null,x.draft?.acoustic_alignment?.inputVersion??null);
-  await updateWorkspaceProject(c,root,row,finalProject,row.bindings,'编辑字幕',{nativeEdit:true});return readProductionWorkspace(c,row.episode_id,root);
+  return updateWorkspaceProject(c,root,row,finalProject,row.bindings,'编辑字幕',{nativeEdit:true});
  }
  if(command==='requestWorkspaceCaptionAlignment'){
   if(x.route.explicitRoute&&!x.route.alignmentReady){const label=x.route.item?.id===`workspace-source-shot-${x.clip.shotId}`?'原声':'主声';throw new ConfigurationError(409,x.route.coverage==='partial'?`${label}仅覆盖部分镜头，不能执行整段声学对齐；请按当前镜头明确调整音轨或手工校时。`:`${label}音轨已裁切或变速，请重新提取所选区间或手工校时。`);}
@@ -156,7 +156,7 @@ export async function executeWorkspaceCaptionCommand(c:PoolClient,root:string,ro
   const aligned=applyWorkspaceCaptionEdit(project,x.clip.itemId,contract,{timingOnly:true});
   if(data.nativeApplied===true&&JSON.stringify(readWorkspaceCaption(project,x.clip.itemId)?.contract.cues)!==JSON.stringify(readWorkspaceCaption(aligned,x.clip.itemId)?.contract.cues))throw new ConfigurationError(409,'对齐结果尚未保存到当前编辑器。');
   const next=data.nativeApplied===true?project:aligned;
-  x=await captionContext(c,root,row,next,x.clip.id);await recordEvidence(c,row,x.clip.id,x.inputFingerprint,x.laneFingerprint,'alignment',task.id,alignment.inputVersion);await updateWorkspaceProject(c,root,row,next,row.bindings,'采用当前字幕对齐',{nativeEdit:true});return readProductionWorkspace(c,row.episode_id,root);
+  x=await captionContext(c,root,row,next,x.clip.id);await recordEvidence(c,row,x.clip.id,x.inputFingerprint,x.laneFingerprint,'alignment',task.id,alignment.inputVersion);return updateWorkspaceProject(c,root,row,next,row.bindings,'采用当前字幕对齐',{nativeEdit:true});
  }
  if(command==='confirmWorkspaceCaptionText'){
   const e=(await c.query('SELECT * FROM local_identity.workspace_caption_evidence WHERE workspace_id=$1 AND shot_id=$2',[row.id,x.clip.shotId])).rows[0];

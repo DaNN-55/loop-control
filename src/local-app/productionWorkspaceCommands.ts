@@ -198,7 +198,7 @@ export class ProductionWorkspaceCommands{
    project=withWorkspaceShotMetadata(project,clips);const file=await persistWorkspaceProject(c,root,e.id,project);
    if(row){
     await c.query('UPDATE local_identity.production_workspaces SET script_revision_id=$2,storyboard_package_id=$3 WHERE id=$1',[row.id,e.main_script_revision_id,p.id]);
-    await updateWorkspaceProject(c,root,row,project,clips,String(data.reason??'依据已确认脚本与分镜更新素材规划'));
+    await persistWorkspaceRevision(c,root,row,project,clips,String(data.reason??'依据已确认脚本与分镜更新素材规划'));
    }else{
    row=(await c.query('INSERT INTO local_identity.production_workspaces(id,episode_id,script_revision_id,storyboard_package_id,bindings,project_path,project_sha256,project_size,content_sha256,native_edit_revision) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *',[id,e.id,e.main_script_revision_id,p.id,JSON.stringify(clips),file.relativePath,file.sha256,file.fileSize,workspaceContentSha256(project),recovery?.decision==='preserve'?1:0])).rows[0];
     await recordWorkspaceVersion(c,row!,'首次组装');
@@ -249,7 +249,7 @@ export class ProductionWorkspaceCommands{
    const sound=await prepareWorkspaceVideoSound(c,root,e.id,m.storage_path,m.sha256,timeline.fps,0,Number(item.durationInFrames),1,observed.hasAudio);
    applyWorkspaceVideoSound(project,timeline,item,clip.shotId,sound,!!resolveWorkspaceMainVoice(project,clip.shotId).item);
    clip.source={materialRevisionId:m.id,relativePath:m.storage_path,sha256:m.sha256,fileSize:Number(m.file_size),kind:'video'};
-   await updateWorkspaceProject(c,root,row,project,row.bindings);return readProductionWorkspace(c,e.id,root);
+   return updateWorkspaceProject(c,root,row,project,row.bindings);
   }
   if(!runtime.studioRuntime)throw new ConfigurationError(503,'本地 Studio 未配置。');const config=await runtime.studioRuntime();
   const validate=async(doc:OpenChatCutProject,observation?:OpenChatCutProjectObservation)=>{await validateWorkspaceProject(c,root,e.id,doc,config,project,observation);await validateWorkspaceCandidateUses(c,row!,project,doc);await validateWorkspaceVisualUses(c,root,row!,project,doc);};
@@ -260,8 +260,8 @@ export class ProductionWorkspaceCommands{
    if((await c.query("SELECT 1 FROM local_identity.workspace_deliveries d JOIN public.tasks t ON t.id=d.task_id WHERE d.workspace_id=$1 AND t.status IN ('ready','running') LIMIT 1",[row.id])).rowCount)throw new ConfigurationError(409,'交付正在排队或校验，请等待结果后再编辑。');
    const editable=await assembleWorkspaceCaptions(c,root,row,migrateWorkspaceCaptionLanes(withWorkspaceShotMetadata(project,row.bindings))),paths=[...usedWorkspaceContent(editable).paths];for(const asset of editable.assets)if(!paths.includes(asset.src))try{await resolveWorkspaceSource(c,root,e.id,asset.src);paths.push(asset.src);}catch{/* Unused unavailable library media does not block editing. */}const opened=await openOpenChatCutDraftStudio(root,e.id,editable,paths,hash(JSON.stringify({id:row.id,scriptRevisionId:row.script_revision_id,storyboardPackageId:row.storyboard_package_id})),config,validate,await episodeFileIO(c,root,e.id,true));
    this.opened.add(e.id);const current=JSON.parse((await verifyEpisodeFile(c,root,e.id,opened.workspace.relativePath,opened.workspace.sha256,opened.workspace.fileSize)).toString('utf8')) as OpenChatCutProject;
-   await updateWorkspaceProject(c,root,row,current,synchronizeWorkspaceBindings(current,row.bindings),opened.recoveredNativeEdits?'恢复原生剪辑':'更新工作版本',{nativeEdit:opened.recoveredNativeEdits===true});
-   if(opened.recoveredNativeEdits){const recoveredRow=(await c.query('SELECT * FROM local_identity.production_workspaces WHERE id=$1',[row.id])).rows[0] as ProductionWorkspaceRecord;await syncNativeWorkspaceCaptions(c,root,recoveredRow,current);}
+   const savedRow=await persistWorkspaceRevision(c,root,row,current,synchronizeWorkspaceBindings(current,row.bindings),opened.recoveredNativeEdits?'恢复原生剪辑':'更新工作版本',{nativeEdit:opened.recoveredNativeEdits===true});
+   if(opened.recoveredNativeEdits)await syncNativeWorkspaceCaptions(c,root,savedRow,current);
    return{...opened,productionWorkspace:await readProductionWorkspace(c,e.id,root)};
   }
   if(command==='closeWorkspaceStudio'){await this.closeEpisode(e.id);return readProductionWorkspace(c,e.id,root);}
@@ -290,9 +290,8 @@ export async function updateWorkspaceProject(c:PoolClient,root:string,row:Produc
  await persistWorkspaceRevision(c,root,row,project,bindings,reason,options);
  return readProductionWorkspace(c,row.episode_id,root);
 }
-// Native save must synchronize captions before assembling its final readback.
-// Other callers retain updateWorkspaceProject's complete-state return value.
-async function persistWorkspaceRevision(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,bindings:WorkspaceClip[],reason:string|undefined,options:{nativeEdit?:boolean}){
+/** Caller holds the Owner transaction and row lock; write later evidence before the final readback. */
+export async function persistWorkspaceRevision(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,bindings:WorkspaceClip[]=row.bindings,reason?:string,options:{nativeEdit?:boolean}={}){
  // Existing pre-normalization snapshots retain their confirmed content identity
  // when only the already-bound shot metadata is added. Real metadata/source edits
  // still differ from this normalized previous document and invalidate confirmation.

@@ -42,3 +42,5 @@
 - [ADR-0026：原生剪辑宿主模块依赖集中登记](0026-native-editor-module-graph.md)
 
 - [ADR-0027：视觉调用解释规则集中管理](0027-shared-visual-request-resolution.md)
+
+- [ADR-0028：工程写入与完整状态读回分离](0028-workspace-write-readback-boundary.md)

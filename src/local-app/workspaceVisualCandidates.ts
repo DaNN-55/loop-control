@@ -21,7 +21,7 @@ import {workspaceCandidateTarget,workspaceCandidateAppearance} from '../workspac
 import {inspectWorkspaceVisualFile,requireVisualStorageLocation} from './workspaceVisualMedia.js';
 import {ConfigurationError,canonical} from './configurationCommands.js';
 import {resolveWorkspaceSource} from './workspaceSources.js';
-import {readProductionWorkspace,updateWorkspaceProject,type ProductionWorkspaceRecord} from './productionWorkspaceCommands.js';
+import {readProductionWorkspace,persistWorkspaceRevision,updateWorkspaceProject,type ProductionWorkspaceRecord} from './productionWorkspaceCommands.js';
 import {prepareRegisteredWorkspaceCandidate,finishRegisteredWorkspaceCandidate} from './workspaceCandidateAdoption.js';
 const hash=(value:unknown)=>createHash('sha256').update(JSON.stringify(canonical(value))).digest('hex');
 const uuid=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/;
@@ -91,7 +91,7 @@ export async function executeWorkspaceVisualCandidate(c:PoolClient,root:string,r
   await resolveWorkspaceSource(c,root,row.episode_id,m.storage_path);const observed=await inspectWorkspaceVisualFile(root,relative(root,await (await episodeFileIO(c,root,row.episode_id)).resolveReference(m.storage_path)),m.material_type),fps=project.timelines[0].fps;
   const asset={id:`material-${m.id}`,name:m.source_path.split('/').pop(),kind:m.material_type as 'video'|'image',src:m.storage_path,sourceRevision:`source-sha256-${m.sha256}`,sourceContentHash:m.sha256,durationInFrames:Math.ceil((observed.durationSeconds??3)*fps),width:observed.width,height:observed.height};
   if(isOpenChatCutStudio(row.episode_id))return{asset:{...asset,src:await registerOpenChatCutStudioSource(root,row.episode_id,m.storage_path,m.sha256,Number(m.file_size),await episodeFileIO(c,root,row.episode_id,true))}};
-  if(!project.assets.some(a=>a.id===asset.id)){project.assets.push(asset);await updateWorkspaceProject(c,root,row,project,row.bindings,'登记补充视觉素材',{nativeEdit:true});}return{asset};
+  if(!project.assets.some(a=>a.id===asset.id)){project.assets.push(asset);await persistWorkspaceRevision(c,root,row,project,row.bindings,'登记补充视觉素材',{nativeEdit:true});}return{asset};
  }
  if(command==='registerWorkspaceVisualCandidate'){
   const {clip,item}=target(row,project,data.targetItemId);

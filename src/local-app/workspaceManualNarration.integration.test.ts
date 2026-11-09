@@ -1,4 +1,5 @@
 // @vitest-environment node
+import {observeWorkspaceReadback} from './workspaceReadback.fixture';
 import {it,expect} from 'vitest';
 import {readFile} from 'node:fs/promises';
 import {formalWorkflowFixture} from './formalWorkflow.fixture';
@@ -6,7 +7,7 @@ import {productionScriptTemplate} from '../reviews/productionScript';
 import {workspaceTestMedia} from './workspaceTestMedia.fixture';
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('unassigned MP3 can be used for narration, music and effects without provider calls',async()=>{
  const second=productionScriptTemplate.slice(productionScriptTemplate.indexOf('### 段落 01'),productionScriptTemplate.indexOf('## 本期补充约束')).replace('段落 01','段落 02');
- const f=await formalWorkflowFixture({scriptText:productionScriptTemplate.replace('## 本期补充约束',second+'## 本期补充约束')});try{
+ const f=await formalWorkflowFixture({scriptText:productionScriptTemplate.replace('## 本期补充约束',second+'## 本期补充约束')}),measure=observeWorkspaceReadback(f.pool);try{
   expect((await f.send('start')).status).toBe(200);
   const prepared=await f.send('prepareWorkspace',{expectedScriptRevisionId:f.main});expect(prepared.status,JSON.stringify(prepared.body)).toBe(200);let w=prepared.body;expect(w.clips).toHaveLength(2);
   expect(w.captions[0].contract.contentMode).toBe('follow_tts');
@@ -50,10 +51,10 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('unassigned MP3 can be us
   expect(followAfter.status,JSON.stringify(followAfter.body)).toBe(200);w=followAfter.body;
   expect(w.captions[1].contract).toMatchObject({contentMode:'follow_tts',text:'人工口播正文。'});
   const manual=w.narration[0],other=w.narration[1].adoptedAudioTrackId;
-  const withdrawn=await f.send('withdrawWorkspaceNarration',{workspaceId:w.id,expectedRevision:w.revision,clipId:manual.clipId,audioTrackId:manual.adoptedAudioTrackId});
+  const measured=await measure(()=>f.send('withdrawWorkspaceNarration',{workspaceId:w.id,expectedRevision:w.revision,clipId:manual.clipId,audioTrackId:manual.adoptedAudioTrackId})),withdrawn=measured.result;
   expect(withdrawn.status,JSON.stringify(withdrawn.body)).toBe(200);w=withdrawn.body;
   expect(w.narration[0]).toMatchObject({mode:'manual',text:manual.text,adoptedAudioTrackId:null,audioTrackId:manual.audioTrackId});
-  expect(w.narration[1].adoptedAudioTrackId).toBe(other);
+  expect(w.narration[1].adoptedAudioTrackId).toBe(other);expect(measured.reads).toBe(1);
   expect(w.candidates.find((c:any)=>c.id===manual.audioTrackId).status).toBe('available');
   const target={workspaceId:w.id,expectedRevision:w.revision,candidateId:manual.audioTrackId};
   const preparedAgain=await f.send('prepareWorkspaceCandidate',{...target,durationPolicy:'use-candidate'});

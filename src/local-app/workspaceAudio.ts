@@ -12,7 +12,7 @@ import {verifyEpisodeFile,resolveEpisodeFileReference} from './episodeFiles.js';
 import {resolveWorkspaceSource} from './workspaceSources.js';
 import {probeMp3Artifact,inspectMp4Artifact} from '../worker/mediaTools.js';
 import {isOpenChatCutStudio} from '../worker/openchatcutStudio.js';
-import {updateWorkspaceProject,type ProductionWorkspaceRecord} from './productionWorkspaceCommands.js';
+import {persistWorkspaceRevision,type ProductionWorkspaceRecord} from './productionWorkspaceCommands.js';
 import {resolveProductionSelection} from './productionSelection.js';
 import type {InputRuntime} from './episodeCommands.js';
 const hash=(v:unknown)=>createHash('sha256').update(JSON.stringify(v)).digest('hex');
@@ -24,7 +24,7 @@ export async function readWorkspaceAudio(c:PoolClient,row:ProductionWorkspaceRec
  return{enabled:{bgm:readWorkspaceSoundEnabled(project,'bgm'),sfx:readWorkspaceSoundEnabled(project,'sfx')},defaults,mix:readWorkspaceAudioMix(project,workspaceAudioShotIds(row)),preparations:entries.map(p=>({...(p.task_id?{generationTask:{id:p.id,taskId:p.task_id,status:p.status,error:p.last_result?.blockers?.[0]?.detail??p.last_result?.retry?.reason??null,publicationAttempt:p.publication_attempt}}:{}),id:p.id,kind:p.kind,shotId:p.shot_id,sourceItemId:p.source_item_id,sourceSha256:p.source_sha256,description:p.description,...(p.kind==='source'?{sourceWindow:p.input_snapshot?.workspace_source??null}:{}),query:p.query,selection:p.request_snapshot?.selection??p.input_snapshot?.production_selection??null,connection:p.request_snapshot?.connection??null,anchor:p.anchor,offsetSeconds:Number(p.offset_seconds),durationSeconds:Number(p.duration_seconds),taskId:p.task_id,status:p.material_revision_id?'ready':p.status??'pending',error:['failed','blocked'].includes(p.status)?p.last_result?.blockers?.[0]?.detail??p.last_result?.retry?.reason??null:null,audioTrackId:p.audio_track_id??null,relativePath:p.relative_path??p.storage_path??null,sha256:p.sha256??p.material_sha256??null,fileSize:Number(p.file_size??p.material_size??0),adoptedItemId:p.adopted_item_id,source:p.last_result?.mediaSource??(p.material_revision_id?{provider:'manual',materialRevisionId:p.material_revision_id}:null)}))};
 }
 async function persistEdit(c:PoolClient,root:string,row:ProductionWorkspaceRecord,_before:OpenChatCutProject,after:OpenChatCutProject,reason:string){
- return updateWorkspaceProject(c,root,row,after,row.bindings,reason,{nativeEdit:true});
+ return persistWorkspaceRevision(c,root,row,after,row.bindings,reason,{nativeEdit:true});
 }
 export async function executeWorkspaceAudio(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,runtime:InputRuntime,command:string,data:Record<string,unknown>){
  await requireWritableEpisodeStorage(c,root,row.episode_id);

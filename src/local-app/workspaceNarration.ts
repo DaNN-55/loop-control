@@ -23,7 +23,7 @@ import {resolveWorkspaceSource} from './workspaceSources.js';
 import {inspectMp4Artifact} from '../worker/mediaTools.js';
 import {probeMp3Artifact} from '../worker/mediaTools.js';
 import {isOpenChatCutStudio} from '../worker/openchatcutStudio.js';
-import {type ProductionWorkspaceRecord,updateWorkspaceProject} from './productionWorkspaceCommands.js';
+import {type ProductionWorkspaceRecord,persistWorkspaceRevision} from './productionWorkspaceCommands.js';
 const fingerprint=(value:unknown)=>createHash('sha256').update(JSON.stringify(value)).digest('hex');
 export const workspaceNarrationItemId=(shotId:string)=>`workspace-narration-shot-${shotId}`;
 async function inputs(c:PoolClient,row:ProductionWorkspaceRecord){
@@ -85,7 +85,7 @@ export async function executeWorkspaceNarration(c:PoolClient,root:string,row:Pro
   if(isOpenChatCutStudio(row.episode_id))throw new ConfigurationError(409,'请先退出剪辑工作台，再修改口播开关。');
   const clips=row.bindings.filter(b=>b.shotId===clip.shotId);
   const next=setWorkspaceNarrationEnabled(project,clip.shotId,clips.map(b=>b.itemId),clips.map(b=>b.id),data.enabled);
-  await updateWorkspaceProject(c,root,row,next,row.bindings,data.enabled?'启用镜头口播':'关闭镜头口播',{nativeEdit:true});return;
+  await persistWorkspaceRevision(c,root,row,next,row.bindings,data.enabled?'启用镜头口播':'关闭镜头口播',{nativeEdit:true});return;
  }
  if(command==='saveWorkspaceNarration'){
 
@@ -108,7 +108,7 @@ export async function executeWorkspaceNarration(c:PoolClient,root:string,row:Pro
    const items=project.timelines.flatMap(t=>t.items);if(items.some(i=>i.id===workspaceNarrationItemId(clip.shotId))){
     if(isOpenChatCutStudio(row.episode_id))throw new ConfigurationError(409,'请先保存并返回，再关闭口播。');
     for(const timeline of project.timelines)timeline.items=timeline.items.filter(i=>i.id!==workspaceNarrationItemId(clip.shotId));
-    const mixed=applyWorkspaceAudioMix(project,{kind:'voice',workspaceId:row.id,shotId:clip.shotId,visualItemIds:row.bindings.filter(b=>b.shotId===clip.shotId).map(b=>b.itemId),mode:'none',gainDb:0,ambienceGainDb:null});await updateWorkspaceProject(c,root,row,mixed,row.bindings,'关闭镜头口播',{nativeEdit:true});
+    const mixed=applyWorkspaceAudioMix(project,{kind:'voice',workspaceId:row.id,shotId:clip.shotId,visualItemIds:row.bindings.filter(b=>b.shotId===clip.shotId).map(b=>b.itemId),mode:'none',gainDb:0,ambienceGainDb:null});await persistWorkspaceRevision(c,root,row,mixed,row.bindings,'关闭镜头口播',{nativeEdit:true});
    }
   }
   const input=(await inputs(c,row)).find(i=>i.clip.shotId===clip.shotId)!;
@@ -128,7 +128,7 @@ export async function executeWorkspaceNarration(c:PoolClient,root:string,row:Pro
   const voice=resolveWorkspaceMainVoice(project,n.shotId).item;
   for(const timeline of project.timelines)timeline.items=timeline.items.filter(i=>i!==voice);
   await c.query('UPDATE local_identity.workspace_narrations SET adopted_audio_track_id=NULL WHERE workspace_id=$1 AND shot_id=$2',[row.id,n.shotId]);
-  await updateWorkspaceProject(c,root,row,project,row.bindings,'撤回镜头口播',{nativeEdit:true});
+  await persistWorkspaceRevision(c,root,row,project,row.bindings,'撤回镜头口播',{nativeEdit:true});
   return;
  }
  if(command==='confirmWorkspaceNarration'){
@@ -208,11 +208,11 @@ async function adopt(c:PoolClient,root:string,row:ProductionWorkspaceRecord,proj
  const mixed=applyWorkspaceAudioMix(project,{kind:'voice',workspaceId:row.id,shotId:n.shotId,visualItemIds:bindings.map(b=>b.itemId),mode:'tts',gainDb:0,ambienceGainDb:null});
  const caption=(await readWorkspaceCaptions(c,root,{...row,bindings:row.bindings.filter(b=>b.shotId===n.shotId)},mixed))[0];
  const next=followWorkspaceNarrationCaption(mixed,visual.id as string,n.text,item,caption?.contract);
- const updated=await updateWorkspaceProject(c,root,row,next,row.bindings,'采用实际口播时长',{nativeEdit});
+ const updated=await persistWorkspaceRevision(c,root,row,next,row.bindings,'采用实际口播时长',{nativeEdit});
  // Carry forward only requests based on the exact untouched draft, never ordinary editor saves.
- await c.query('UPDATE local_identity.workspace_narrations SET requested_project_sha256=$3 WHERE workspace_id=$1 AND requested_project_sha256=$2 AND adopted_audio_track_id IS NULL',[row.id,row.project_sha256,updated!.project.sha256]);
+ await c.query('UPDATE local_identity.workspace_narrations SET requested_project_sha256=$3 WHERE workspace_id=$1 AND requested_project_sha256=$2 AND adopted_audio_track_id IS NULL',[row.id,row.project_sha256,updated.project_sha256]);
  await c.query('UPDATE local_identity.workspace_narrations SET adopted_audio_track_id=$3 WHERE workspace_id=$1 AND shot_id=$2',[row.id,n.shotId,n.audioTrackId]);
- await c.query(`INSERT INTO local_identity.workspace_candidate_decisions(workspace_id,candidate_id,decision,text_version,main_script_text,input_fingerprint,source_sha256,project_sha256) VALUES($1,$2,'adopted',$3,$4,$5,$6,$7) ON CONFLICT DO NOTHING`,[row.id,n.audioTrackId,n.text,(await resolveWorkspaceShotLineage(c,row,n.shotId)).baseline_text,n.inputFingerprint,n.sha256,updated!.project.sha256]);
+ await c.query(`INSERT INTO local_identity.workspace_candidate_decisions(workspace_id,candidate_id,decision,text_version,main_script_text,input_fingerprint,source_sha256,project_sha256) VALUES($1,$2,'adopted',$3,$4,$5,$6,$7) ON CONFLICT DO NOTHING`,[row.id,n.audioTrackId,n.text,(await resolveWorkspaceShotLineage(c,row,n.shotId)).baseline_text,n.inputFingerprint,n.sha256,updated.project_sha256]);
 }
 
 /** T04/T08 use measured main voice duration before requesting a paid picture candidate. */
