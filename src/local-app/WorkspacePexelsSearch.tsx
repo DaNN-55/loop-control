@@ -7,7 +7,8 @@ import {useWorkspacePolling,type WorkspaceReading} from './useWorkspaceReading';
 import {useEffect,useRef,useState} from 'react';
 import type {ProductionWorkspace} from '../productionWorkspace';
 import type {ProductionSelection} from '../productionSelection';
-import type {ProductionService,ProductionServiceCatalog} from '../connections/serviceCatalog';
+import type {ProductionService} from '../connections/serviceCatalog';
+import {useProductionServiceCatalog,type ProductionCatalogReading} from './useProductionServiceCatalog';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {NativeSelect} from '../ui/dan-ui/components/base/select/select-native';
 import './workspace-pexels.css';
@@ -18,22 +19,17 @@ function PexelsThumbnail({id,url}:{id:number;url?:string}){
   {(!url||state!=='ready')&&<span role="status">{!url?'暂无缩略图':state==='failed'?'缩略图加载失败':'缩略图加载中…'}</span>}
  </div>;
 }
-export function WorkspacePexelsSearch({workspace,targetItemId,command,onChange,prepare,reader,disabled=false,composer}:{workspace:ProductionWorkspace;targetItemId:string;command:(name:string,data:unknown)=>Promise<unknown>;onChange:(w:ProductionWorkspace)=>void;prepare:()=>Promise<ProductionWorkspace>;reader:WorkspaceReading;disabled?:boolean;composer?:{services:ProductionService[];selection?:ProductionSelection|null;onModelChange:(value:string)=>void;catalogError?:string}}){
+export function WorkspacePexelsSearch({workspace,targetItemId,command,onChange,prepare,reader,disabled=false,composer}:{workspace:ProductionWorkspace;targetItemId:string;command:(name:string,data:unknown)=>Promise<unknown>;onChange:(w:ProductionWorkspace)=>void;prepare:()=>Promise<ProductionWorkspace>;reader:WorkspaceReading;disabled?:boolean;composer?:{services:ProductionService[];selection?:ProductionSelection|null;onModelChange:(value:string)=>void;catalogError?:string;catalog:ProductionCatalogReading}}){
  const key=`loop-pexels-draft:${workspace.id}:${targetItemId}`;
- const [draft,setDraft]=useState<{query:string;orientation:string;size:string;page:string;selection?:ProductionSelection|null}>(()=>{try{return JSON.parse(sessionStorage.getItem(key)??'null')??{query:'',orientation:'portrait',size:'medium',page:'1'};}catch{return{query:'',orientation:'portrait',size:'medium',page:'1'};}}),[services,setServices]=useState<ProductionService[]>([]),[busy,setBusy]=useState(false),[error,setError]=useState(''),[connectionError,setConnectionError]=useState(''),[connectionLoading,setConnectionLoading]=useState(true),[connectionAttempt,setConnectionAttempt]=useState(0),[resultsError,setResultsError]=useState(''),[resultsLoading,setResultsLoading]=useState(false);
+ const [draft,setDraft]=useState<{query:string;orientation:string;size:string;page:string;selection?:ProductionSelection|null}>(()=>{try{return JSON.parse(sessionStorage.getItem(key)??'null')??{query:'',orientation:'portrait',size:'medium',page:'1'};}catch{return{query:'',orientation:'portrait',size:'medium',page:'1'};}}),[busy,setBusy]=useState(false),[error,setError]=useState(''),[resultsError,setResultsError]=useState(''),[resultsLoading,setResultsLoading]=useState(false);
  const [settingsPanel,setSettingsPanel]=useState('');
  const selection=composer?composer.selection:draft.selection;
  const working=useRef(false),reading=useRef(false),latest=useRef(onChange);latest.current=onChange;
  useEffect(()=>{try{sessionStorage.setItem(key,JSON.stringify(draft));}catch{/* Draft storage is optional. */}},[key,draft]);
- useEffect(()=>{
-  let active=true;const controller=new AbortController();setConnectionLoading(true);
-  void fetch('/api/local/connections',{signal:controller.signal}).then(async r=>{
-   if(!r.ok)throw Error();const catalog=(await r.json()).serviceCatalog as ProductionServiceCatalog;
-   const available=catalog.groups.find(g=>g.capability==='video')?.services.filter(s=>s.mode==='search'&&s.provider==='pexels'&&s.adapter==='pexels_video')??[];
-   if(active){setServices(available);setConnectionError('');}
-  }).catch(()=>{if(active)setConnectionError('无法读取 Pexels 连接。');}).finally(()=>{if(active)setConnectionLoading(false);});
-  return()=>{active=false;controller.abort();};
- },[workspace.id,connectionAttempt]);
+ const ownCatalog=useProductionServiceCatalog({scope:JSON.stringify([workspace.episodeId,workspace.id]),active:!composer});
+ const catalogReading=composer?.catalog??ownCatalog;
+ const services=(composer?.services??catalogReading.catalog?.groups.find(g=>g.capability==='video')?.services??[]).filter(s=>s.mode==='search'&&s.provider==='pexels'&&s.adapter==='pexels_video');
+ const connectionLoading=catalogReading.pending,connectionError=catalogReading.error?(composer?.catalogError||'无法读取 Pexels 连接。'):'';
  const requests=(workspace.pexels?.requests??[]).filter(r=>r.targetItemId===targetItemId),pending=requests.filter(r=>['ready','running'].includes(r.status)),taskKey=pending.map(r=>r.taskId).join(':'),search=requests.find(r=>r.operation==='search'),previews=requests.filter(r=>r.operation==='preview'&&r.source?.searchId===search?.id),service=services.find(s=>s.connectionVersionId===selection?.connectionVersionId);
  useEffect(()=>setResultsError(''),[workspace]);
  useWorkspacePolling(reader,!!taskKey,1500,()=>setResultsError('无法读取 Pexels 结果。'));
@@ -56,13 +52,12 @@ export function WorkspacePexelsSearch({workspace,targetItemId,command,onChange,p
    model={<WorkspaceGenerationModel compact kind="视频" services={composer.services} selection={selection} disabled={locked} onChange={composer.onModelChange}/>}
    settings={<><WorkspaceComposerSetting label="Pexels 方向" summary={{portrait:'竖屏',landscape:'横屏',square:'方形'}[draft.orientation]??draft.orientation} open={settingsPanel==='orientation'} onOpenChange={open=>setSettingsPanel(open?'orientation':'')} disabled={locked} compact>{orientationField}</WorkspaceComposerSetting><WorkspaceComposerSetting label="Pexels 尺寸" summary={{large:'大',medium:'中',small:'小'}[draft.size]??draft.size} open={settingsPanel==='size'} onOpenChange={open=>setSettingsPanel(open?'size':'')} disabled={locked} compact>{sizeField}</WorkspaceComposerSetting><WorkspaceComposerSetting label="Pexels 页码" summary={`第 ${draft.page} 页`} open={settingsPanel==='page'} onOpenChange={open=>setSettingsPanel(open?'page':'')} disabled={locked} compact>{pageField}</WorkspaceComposerSetting></>}
    submit={submit} onMaterial={()=>{}} onFiles={()=>{}}>
-   {composer.catalogError&&<p role="alert">{composer.catalogError}</p>}
   </WorkspaceGenerationComposer>:<>
   <label>连接<NativeSelect aria-label="Pexels 连接" size="sm" value={service?.id??''} disabled={locked} onChange={e=>{const s=services.find(s=>s.id===e.target.value);setDraft(d=>({...d,selection:s?{capability:'video',provider:s.provider,adapter:s.adapter,connectionVersionId:s.connectionVersionId??undefined}:null}));}}><option value="">选择 Pexels 连接</option>{services.map(s=><option key={s.id} value={s.id} disabled={!s.executable}>{s.connectionName??s.label} · v{s.connectionVersion??'—'}{!s.executable?` · ${s.unavailableReason}`:''}</option>)}</NativeSelect></label>
   <label>检索词<input aria-label="检索词" value={draft.query} maxLength={100} disabled={locked} onChange={e=>setDraft(d=>({...d,query:e.target.value}))}/></label>
   <div className="workspace-visual-fields">{orientationField}{sizeField}{pageField}</div>
   {submit}</>}
-  {connectionError&&<div className="workspace-pexels-retry"><p role="alert">{connectionError}</p><Button size="sm" color="secondary" isDisabled={connectionLoading} onPress={()=>setConnectionAttempt(n=>n+1)}>{connectionLoading?'正在读取连接…':'重试读取连接'}</Button></div>}
+  {connectionError&&<div className="workspace-pexels-retry"><p role="alert">{connectionError}</p><Button size="sm" color="secondary" isDisabled={connectionLoading} onPress={catalogReading.refresh}>{connectionLoading?'正在读取连接…':'重试读取连接'}</Button></div>}
   {selection&&!service&&!connectionLoading&&!connectionError&&<p role="alert">原 Pexels 连接不可用，请重新选择。</p>}
   <a href="https://www.pexels.com" target="_blank" rel="noreferrer">视频来源 Pexels</a>
   {resultsError&&<div className="workspace-pexels-retry"><p role="alert">{resultsError}</p><Button size="sm" color="secondary" isDisabled={resultsLoading} onPress={()=>void retryResults()}>{resultsLoading?'正在读取结果…':'重试读取结果'}</Button></div>}

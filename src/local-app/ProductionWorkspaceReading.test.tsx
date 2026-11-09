@@ -9,7 +9,7 @@ vi.mock('./WorkspaceNarrationPanel',()=>({WorkspaceNarrationPanel:({workspace,on
 const workspace={id:'w',episodeId:'e',revision:3,scriptRevisionId:'script',clips:[{id:'clip',itemId:'visual',shotId:'S1',text:'第一镜',source:null}],project:{relativePath:'project.json',sha256:'a'.repeat(64),fileSize:2,projectId:'p'},readiness:{deliverable:false,placeholders:['visual'],missingSources:[]},stale:false,narration:[{shotId:'S1',clipId:'clip',text:'已确认口播',inputFingerprint:'input',status:'running',taskId:'task'}]} as unknown as ProductionWorkspace;
 function deferred<T>(){let resolve!:(value:T)=>void;const promise=new Promise<T>(done=>{resolve=done;});return{promise,resolve};}
 afterEach(()=>{cleanup();sessionStorage.clear();vi.useRealTimers();vi.unstubAllGlobals();});
-function setup(){vi.useFakeTimers();vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace})));}
+function setup(){vi.useFakeTimers();vi.stubGlobal('fetch',vi.fn(async(path:string)=>Response.json(path==='/api/local/connections'?{serviceCatalog:{version:1,groups:[]}}:{workspace})));}
 function panel(command:(name:string,data:unknown)=>Promise<unknown>){return <ProductionWorkspacePanel episodeId="e" title="工程" scriptRevisionId="script" materials={[]} command={command} onLegacy={()=>{}}/>;}
 it('keeps the existing first-assembly command and publishes its resulting native revision',async()=>{
  setup();const command=vi.fn(async()=>({...workspace,revision:4,narration:[{...workspace.narration![0],status:'completed',audioTrackId:'voice',adoptedAudioTrackId:'voice'}]}));

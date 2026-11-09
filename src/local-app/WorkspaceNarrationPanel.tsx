@@ -20,7 +20,8 @@ import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {Badge} from '../ui/dan-ui/components/base/badges/badges';
 import {NativeSelect} from '../ui/dan-ui/components/base/select/select-native';
 import type {ProductionWorkspace,WorkspaceNarration} from '../productionWorkspace';
-import type {ProductionService,ProductionServiceCatalog} from '../connections/serviceCatalog';
+import type {ProductionService} from '../connections/serviceCatalog';
+import {useProductionServiceCatalog} from './useProductionServiceCatalog';
 import {ConfirmationModal} from '../ui/ConfirmationModal';
 import './workspace-narration-settings.css';
 interface NarrationMaterial {id:string;source_path:string;storage_path?:string;material_type:string;material_purpose?:string|null}
@@ -34,32 +35,12 @@ function EditableWorkspaceNarrationPanel({episodeId,workspace,pending,command,on
  const legacy=narrationConfiguration as {credential_ref?:string;executor?:{provider:string;adapter:string;model:string}}|undefined;
  const persisted=workspace.narration?.find(n=>n.defaults)?.defaults;
  const initial:Settings=persisted??{selection:legacy?.executor&&legacy.credential_ref?{capability:'speech',provider:legacy.executor.provider,adapter:legacy.executor.adapter,model:legacy.executor.model,connectionVersionId:legacy.credential_ref}:null,voice:defaultSettings?.voice??'',languageCode:defaultSettings?.languageCode??'zh-CN',speakingRate:defaultSettings?.speakingRate??1};
- const key=`loop-speech-default-draft:${workspace.id}`,[defaultDraft,setDefaultDraft]=useState(()=>({baseline:workspaceSettingsFingerprint(initial),value:restoreWorkspaceSettingsDraft(key,initial)})),[services,setServices]=useState<ProductionService[]>([]),[catalogError,setCatalogError]=useState(''),[reload,setReload]=useState(0),[busy,setBusy]=useState(false),[error,setError]=useState(''),[tab,setTab]=useState<'voice'|'captions'>(()=>{try{return sessionStorage.getItem(`loop-narration-tab:${workspace.id}`)==='captions'?'captions':'voice';}catch{return 'voice';}});
+ const key=`loop-speech-default-draft:${workspace.id}`,[defaultDraft,setDefaultDraft]=useState(()=>({baseline:workspaceSettingsFingerprint(initial),value:restoreWorkspaceSettingsDraft(key,initial)})),[busy,setBusy]=useState(false),[error,setError]=useState(''),[tab,setTab]=useState<'voice'|'captions'>(()=>{try{return sessionStorage.getItem(`loop-narration-tab:${workspace.id}`)==='captions'?'captions':'voice';}catch{return 'voice';}});
  const settings=defaultDraft.value,defaultChanged=workspaceSettingsFingerprint(settings)!==workspaceSettingsFingerprint(initial),defaultUpdated=defaultDraft.baseline!==workspaceSettingsFingerprint(initial);
  const setSettings=(value:Settings)=>setDefaultDraft({...defaultDraft,value});
  useEffect(()=>{storeWorkspaceSettingsDraft(key,JSON.parse(defaultDraft.baseline),settings);},[key,settings,defaultDraft.baseline]);
- useEffect(()=>{
-  if(!active)return;
-  let request:AbortController|undefined;
-  async function loadServices(){
-   request?.abort();
-   const current=new AbortController();
-   request=current;
-   try{
-    const response=await fetch('/api/local/connections',{signal:current.signal});
-    if(!response.ok)throw Error();
-    const catalog=(await response.json()).serviceCatalog as ProductionServiceCatalog;
-    if(current.signal.aborted)return;
-    setServices(catalog?.groups.find(g=>g.capability==='speech')?.services??[]);
-    setCatalogError('');
-   }catch{
-    if(!current.signal.aborted)setCatalogError('无法读取语音连接。');
-   }
-  }
-  void loadServices();
-  window.addEventListener('focus',loadServices);
-  return()=>{request?.abort();window.removeEventListener('focus',loadServices);};
- },[active,reload]);
+ const catalogReading=useProductionServiceCatalog({scope:JSON.stringify([episodeId,workspace.id]),active});
+ const services=catalogReading.catalog?.groups.find(g=>g.capability==='speech')?.services??[],catalogError=catalogReading.error?'无法读取语音连接。':'';
  useEffect(()=>{try{sessionStorage.setItem(`loop-narration-tab:${workspace.id}`,tab);}catch{/* Optional tab preference. */}},[workspace.id,tab]);
  useEffect(()=>{if(defaultUpdated&&workspaceSettingsFingerprint(settings)===defaultDraft.baseline)setDefaultDraft({baseline:workspaceSettingsFingerprint(initial),value:initial});},[defaultUpdated,defaultDraft.baseline,JSON.stringify(initial),JSON.stringify(settings)]);
  async function persistSettings(w=workspace){
@@ -76,7 +57,7 @@ function EditableWorkspaceNarrationPanel({episodeId,workspace,pending,command,on
   }catch(e){setError(e instanceof Error?e.message:'保存未完成。');}
   finally{setBusy(false);}
  }
- const catalogFailure=catalogError&&<div className="workspace-narration-default-actions"><span role="alert">{catalogError}</span><Button size="sm" color="tertiary" onPress={()=>setReload(v=>v+1)}>重试</Button></div>;
+ const catalogFailure=catalogError&&<div className="workspace-narration-default-actions"><span role="alert">{catalogError}</span><Button size="sm" color="tertiary" onPress={catalogReading.refresh}>重试</Button></div>;
  const settingsFeedback=<>{catalogFailure}
   {defaultUpdated&&workspaceSettingsFingerprint(settings)!==defaultDraft.baseline&&<div className="workspace-narration-default-actions"><span role="status">口播设置已在其他窗口更新。</span><Button size="sm" color="tertiary" isDisabled={pending||busy} onPress={()=>setDefaultDraft({baseline:workspaceSettingsFingerprint(initial),value:initial})}>载入已保存设置</Button></div>}
   {error&&<p role="alert">{error}</p>}</>;

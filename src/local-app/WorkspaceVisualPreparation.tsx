@@ -32,7 +32,7 @@ import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {NativeSelect} from '../ui/dan-ui/components/base/select/select-native';
 import type {ProductionWorkspace} from '../productionWorkspace';
 import type {WorkspaceVisualCandidate} from '../workspaceVisualCandidates';
-import type {ProductionService,ProductionServiceCatalog} from '../connections/serviceCatalog';
+import {useProductionServiceCatalog} from './useProductionServiceCatalog';
 import type {ProductionSelection} from '../productionSelection';
 import {imageSizePresets,emptyImageBrief,referencePurposeLabels,framingLabels,captionSpaceLabels,type ImageBrief,type ImageGenerationSettings} from '../imageGeneration';
 import {defaultWanSettings,wanSettingLabels,type WanGenerationSettings} from '../videoGenerationSettings';
@@ -91,7 +91,13 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
  const shelf=useWorkspaceMaterialSelection();
  const adoptionDescriptionId=useId();
  const [draft,setDraft]=useState<Draft>(()=>{try{const saved=JSON.parse(sessionStorage.getItem(storageKey)??'null');if(saved?.settings&&['image','video'].includes(saved.tab))return {...initialDraft(props,targetItemId),...saved};}catch{/* A missing browser draft is an empty form. */}return initialDraft(props,targetItemId);});
- const [imageServices,setImageServices]=useState<ProductionService[]>([]),[videoServices,setVideoServices]=useState<ProductionService[]>([]),[catalogError,setCatalogError]=useState(''),[catalogReload,setCatalogReload]=useState(0);
+ const [catalogReload,setCatalogReload]=useState(0);
+ const tab=draft.tab,kindName=tab==='image'?'图片':'视频',origin=shelf&&(tab==='image'||draft.origin[tab]==='material')?'generate':draft.origin[tab];
+ const tasks=(workspace.visualTasks??[]).filter(t=>!t.shotId||options.some(c=>c.shotId===t.shotId)),pending=tasks.filter(t=>['ready','running'].includes(t.status)&&t.publicationAttempt==null),taskKey=pending.map(t=>t.taskId).join(':');
+ const catalogReading=useProductionServiceCatalog({scope:JSON.stringify([workspace.episodeId,workspace.id]),active:origin!=='material',refreshKey:JSON.stringify([tab,origin,catalogReload,taskKey])});
+ const imageServices=catalogReading.catalog?.groups.find(g=>g.capability==='image')?.services??[];
+ const videoServices=catalogReading.catalog?.groups.find(g=>g.capability==='video')?.services.filter(s=>s.mode==='generation'||s.mode==='search'&&s.provider==='pexels'&&s.adapter==='pexels_video')??[];
+ const catalogError=catalogReading.error?'无法读取制作连接，请刷新后重试。':'';
  const [composerPanel,setComposerPanel]=useState('');
  const [busy,setBusy]=useState(false),[error,setError]=useState(''),[notice,setNotice]=useState(''),[rangeStart,setRangeStart]=useState(''),[rangeEnd,setRangeEnd]=useState(''),[policy,setPolicy]=useState('keep-target'),[acceptImpact,setAcceptImpact]=useState(false),[zoom,setZoom]=useState(false);
  const [clearVisual,setClearVisual]=useState<{revision:number;candidateId?:string;sourcePath?:string;sourceSha256?:string}|null>(null);
@@ -115,7 +121,6 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
  const {framing,crop}=draft.imageBrief;
  const hasSavedCloseUpWithMargin=framing==='close'&&crop==='protect';
  const framingOption=crop==='allow'?framing:hasSavedCloseUpWithMargin?'close-with-margin':'full-with-margin';
- const tab=draft.tab,kindName=tab==='image'?'图片':'视频',origin=shelf&&(tab==='image'||draft.origin[tab]==='material')?'generate':draft.origin[tab];
  const visible=candidates.filter(c=>c.kind===tab),currentMatches=props.currentVisualKind===tab?visible.filter(c=>c.relativePath===props.currentVisualPath):[];
  const currentCandidate=currentMatches.find(c=>c.status==='adopted'||c.pendingConfirmation)??currentMatches[0];
  const currentEntry=props.currentVisualKind===tab&&!!props.currentVisualPath&&!currentCandidate;
@@ -183,14 +188,6 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
  const candidateMeta=[current?'当前镜头画面':imageChosen?'备用图片':candidate?.generation?.selection?.model,candidate?.status==='stale'?'输入已变化':null].filter(Boolean).join(' · ');
  const target=workspace.visualTargets?.find(t=>t.targetItemId===targetItemId),voiceDriven=!!target&&target.voiceMode!=='none';
  const minimumSeconds=wanProfile?.durations[0]??videoService?.constraints.durationSeconds?.min??2,maximumSeconds=wanProfile?.durations.at(-1)??videoService?.constraints.durationSeconds?.max??15,actualDuration=voiceDriven?target.durationSeconds:Number(draft.duration),providerDuration=actualDuration===null?null:wanProfile?wanProviderDuration(videoModel!,actualDuration,voiceDriven):voiceDriven?Math.max(minimumSeconds,Math.ceil(actualDuration)):actualDuration,invalidDuration=!actualDuration||actualDuration<(voiceDriven?0.1:minimumSeconds)||actualDuration>maximumSeconds||!voiceDriven&&!Number.isInteger(actualDuration)||!!wanProfile&&providerDuration===undefined;
- const tasks=(workspace.visualTasks??[]).filter(t=>!t.shotId||options.some(c=>c.shotId===t.shotId)),pending=tasks.filter(t=>['ready','running'].includes(t.status)&&t.publicationAttempt==null),taskKey=pending.map(t=>t.taskId).join(':');
- useEffect(()=>{if(origin==='material')return;let active=true;void fetch('/api/local/connections').then(async r=>{if(!r.ok)throw Error();const catalog=(await r.json()).serviceCatalog as ProductionServiceCatalog;if(active){setImageServices(catalog?.groups?.find(g=>g.capability==='image')?.services??[]);setVideoServices(catalog?.groups?.find(g=>g.capability==='video')?.services.filter(s=>s.mode==='generation'||s.mode==='search'&&s.provider==='pexels'&&s.adapter==='pexels_video')??[]);setCatalogError('');}}).catch(()=>{if(active)setCatalogError('无法读取制作连接，请刷新后重试。');});return()=>{active=false;};},[tab,origin,catalogReload,taskKey]);
- useEffect(()=>{
-  if(origin==='material')return;
-  const refreshCatalog=()=>setCatalogReload(value=>value+1);
-  window.addEventListener('focus',refreshCatalog);
-  return()=>window.removeEventListener('focus',refreshCatalog);
- },[tab,origin]);
  function change<K extends keyof Draft>(key:K,value:Draft[K]){setDraft(d=>({...d,[key]:value}));}
  function chooseVideoSource(value:string){
   const search=videoServices.find(service=>service.mode==='search'&&value===`${service.id}:search`);
@@ -446,7 +443,7 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
    {origin==='material'?<div className="workspace-visual-import">
     <button type="button" className="workspace-visual-dropzone" disabled={disabled} onClick={()=>fileInput.current?.click()} onDragOver={e=>e.preventDefault()} onDrop={e=>{e.preventDefault();if(!disabled)void upload([...e.dataTransfer.files]);}}><Upload size={18} aria-hidden="true"/><span>选择或拖入{kindName}</span><small>{tab==='image'?'PNG、JPEG、WebP、BMP · 每张不超过 100 MB · 可多选':'MP4 · 不超过 100 MB · 每次 1 个'}</small></button>
 
-   </div>:origin==='search'?<WorkspacePexelsSearch key={targetItemId} workspace={workspace} targetItemId={targetItemId} command={command} onChange={onChange} prepare={fresh} reader={reader} disabled={disabled} composer={{services:videoServices,selection:draft.pexelsSelection,onModelChange:chooseVideoSource,catalogError}}/>:<div className="workspace-visual-generation-form" ref={formRef}>
+   </div>:origin==='search'?<WorkspacePexelsSearch key={targetItemId} workspace={workspace} targetItemId={targetItemId} command={command} onChange={onChange} prepare={fresh} reader={reader} disabled={disabled} composer={{services:videoServices,selection:draft.pexelsSelection,onModelChange:chooseVideoSource,catalogError,catalog:catalogReading}}/>:<div className="workspace-visual-generation-form" ref={formRef}>
 
     {catalogError&&<p role="alert">{catalogError}</p>}
     {selectionProblems.length>0&&<ul className="workspace-generation-problems" aria-label={`${kindName}设置不兼容`} role="list">{selectionProblems.map(problem=><li key={problem}>{problem}</li>)}</ul>}

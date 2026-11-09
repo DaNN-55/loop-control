@@ -7,7 +7,7 @@ import {workspaceMaterialDragType} from './WorkspaceMaterialDrop';
 const workspace={id:'w',episodeId:'e',workflowVersion:'four-step/v1',scriptRevisionId:'s',storyboardPackageId:'b',revision:1,contentSha256:'a'.repeat(64),clips:[{id:'clip',itemId:'shot-S01-clip',shotId:'S01',text:'第一镜',source:null}],project:{relativePath:'episodes/e/project.json',sha256:'a'.repeat(64),fileSize:2,projectId:'loop-control-e'},readiness:{deliverable:false,placeholders:['shot-S01-clip'],missingSources:[]},stale:false} as const;
 afterEach(()=>{cleanup();sessionStorage.clear();vi.unstubAllGlobals();});
 it('opens a single file picker and detects mixed media formats in one batch',async()=>{
- vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace})));
+ vi.stubGlobal('fetch',vi.fn(async(path:string)=>Response.json(path==='/api/local/connections'?{serviceCatalog:{version:1,groups:[]}}:{workspace})));
  const command=vi.fn(async(_name:string,data:unknown)=>{
   const {sourcePath}=data as {sourcePath:string};
   return {id:sourcePath,storage_path:'episodes/e/'+sourcePath};
@@ -372,7 +372,7 @@ it('keeps preparation and its local draft available after Studio launch fails',a
 });
 
 it('keeps a visual upload failure in transient feedback and recovery instead of duplicating it as a workspace error',async()=>{
- vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace})));
+ vi.stubGlobal('fetch',vi.fn(async(path:string)=>Response.json(path==='/api/local/connections'?{serviceCatalog:{version:1,groups:[]}}:{workspace})));
  const command=vi.fn(async(name:string)=>{if(name==='importMaterial')throw Error('文件内容无法解码。');return workspace;});
  render(<ProductionWorkspacePanel episodeId="e" title="工程" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);
  await screen.findByRole('textbox',{name:'图片提示词'});fireEvent.change(screen.getByLabelText('导入生成参考图'),{target:{files:[new File(['invalid'],'bad.png',{type:'image/png'})]}});

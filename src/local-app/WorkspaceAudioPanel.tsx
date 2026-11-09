@@ -12,7 +12,8 @@ import {useWorkspaceReading,useWorkspacePolling} from './useWorkspaceReading';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {Toggle} from '../ui/dan-ui/components/base/toggle/toggle';
 import {NativeSelect} from '../ui/dan-ui/components/base/select/select-native';
-import type {ProductionService,ProductionServiceCatalog} from '../connections/serviceCatalog';
+import type {ProductionService} from '../connections/serviceCatalog';
+import {useProductionServiceCatalog} from './useProductionServiceCatalog';
 import type {ProductionSelection} from '../productionSelection';
 import type {ProductionWorkspace} from '../productionWorkspace';
 import type {OpenChatCutProject} from '../worker/openchatcutProject';
@@ -53,9 +54,8 @@ function EditableWorkspaceAudioPreparation({workspace:w,command,onChange,materia
  const inputMode=draft.inputMode??(draft.manual?'upload':'search');
  const selectedMaterial=eligibleMaterials.find(m=>m.id===draft.manual);
  const manual=inputMode==='upload'?selectedMaterial?.id??'':'';
- const [services,setServices]=useState<ProductionService[]>([]),[catalogError,setCatalogError]=useState(''),[catalogReload,setCatalogReload]=useState(0);
- const needsServiceCatalog=true;
- useEffect(()=>{if(!needsServiceCatalog)return;let active=true;void fetch('/api/local/connections').then(async r=>{if(!r.ok)throw Error();const catalog=(await r.json()).serviceCatalog as ProductionServiceCatalog;if(active){setServices(catalog?.groups.find(g=>g.capability==='music_sound')?.services??[]);setCatalogError('');}}).catch(()=>{if(active)setCatalogError('无法读取音频连接，请刷新服务后重试。');});return()=>{active=false;};},[needsServiceCatalog,catalogReload]);
+ const catalogReading=useProductionServiceCatalog({scope:JSON.stringify([w.episodeId,w.id])});
+ const services=catalogReading.catalog?.groups.find(g=>g.capability==='music_sound')?.services??[],catalogError=catalogReading.error?'无法读取音频连接，请刷新服务后重试。':'';
  const service=services.find(s=>s.connectionVersionId===selection?.connectionVersionId&&s.provider===selection?.provider&&s.adapter===selection?.adapter);
  function change(patch:Partial<AudioDraft>){setMusicSettingsSaved(false);if(Object.hasOwn(patch,'selection'))setDefaultSaved(false);const target=Object.hasOwn(patch,'kind')?key:kind==='bgm'?musicKey:key;setDrafts(values=>{const next={...(values[target]??(target===musicKey?initialMusic():initial())),...patch};try{sessionStorage.setItem(`loop-audio-draft-v2:${target}`,JSON.stringify(next));}catch{/* Keep the live form. */}return {...values,[target]:next};});}
  const intentShot=w.clips.find(clip=>clip.shotId===shot);
@@ -125,7 +125,7 @@ function EditableWorkspaceAudioPreparation({workspace:w,command,onChange,materia
     <WorkspaceComposerSetting label="音频来源" summary={inputMode==='upload'?'上传音频':service?.connectionName??'Freesound'} open={audioSetting==='source'} onOpenChange={open=>setAudioSetting(open?'source':null)} disabled={disabled}>
      <label>来源<NativeSelect size="sm" aria-label="音频来源类型" value={inputMode==='upload'?'upload':service?.id??''} disabled={disabled} onChange={event=>{if(event.target.value==='upload')change({inputMode:'upload'});else{const chosen=services.find(item=>item.id===event.target.value);change({inputMode:'search',selection:chosen?musicSelection(chosen):null});}}}><option value="">选择检索服务</option>{services.map(item=><option key={item.id} value={item.id} disabled={!item.executable}>{item.connectionName??item.label} · Freesound</option>)}<option value="upload">上传音频</option></NativeSelect></label>
      <label>用途<input value={description} maxLength={100} disabled={disabled} onChange={event=>change({description:event.target.value})}/></label>
-     {inputMode==='search'&&<div className="workspace-audio-default"><Button size="sm" color="tertiary" isDisabled={disabled} onPress={()=>setCatalogReload(value=>value+1)}>刷新服务</Button><Button size="sm" color="secondary" isDisabled={disabled||!service?.executable} onPress={()=>void saveMusicDefaults()}>设为本期默认</Button></div>}
+     {inputMode==='search'&&<div className="workspace-audio-default"><Button size="sm" color="tertiary" isDisabled={disabled} onPress={catalogReading.refresh}>刷新服务</Button><Button size="sm" color="secondary" isDisabled={disabled||!service?.executable} onPress={()=>void saveMusicDefaults()}>设为本期默认</Button></div>}
      {catalogError&&<p role="alert">{catalogError}</p>}{defaultSaved&&<span role="status">本期默认已保存</span>}
     </WorkspaceComposerSetting>
     {kind==='sfx'&&<>
