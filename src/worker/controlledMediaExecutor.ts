@@ -11,7 +11,8 @@ import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import type { ArtifactManifest, WorkerResult, WorkerTaskPackage } from "./contracts.js";
 import { generateOpenAiImage, searchFreesoundPreview, searchPexelsVideo, synthesizeVolcengineTts, type FreesoundPreview, type MediaFetcher } from "./mediaProviders.js";
-import { generateWanVideo, type WanReservation, type VideoGenerationPhase } from "./wanVideoProvider.js";
+import { generateWanVideo } from "./wanVideoProvider.js";
+import type {VideoTaskReservation,VideoGenerationPhase} from './videoTaskExecution.js';
 import type { WhisperXExecution } from "./whisperxAlignment.js";
 
 export async function executeControlledMediaTask(input: {
@@ -22,7 +23,7 @@ export async function executeControlledMediaTask(input: {
   volcengineTtsApiKey?: string;
   bailianCredentials?: string;
   officialVideoCredentials?: string;
-  reserveWan?: () => Promise<WanReservation>;
+  reserveWan?: () => Promise<VideoTaskReservation>;
   recordWanSubmission?: (id: string) => Promise<void>;
   recordVideoProgress?: (phase:VideoGenerationPhase)=>Promise<void>;
   freesoundApiKey?: string;
@@ -69,7 +70,7 @@ async function mediaBytes(input: {
   volcengineTtsApiKey?: string;
   bailianCredentials?: string;
   officialVideoCredentials?: string;
-  reserveWan?: () => Promise<WanReservation>;
+  reserveWan?: () => Promise<VideoTaskReservation>;
   recordWanSubmission?: (id: string) => Promise<void>;
   recordVideoProgress?: (phase:VideoGenerationPhase)=>Promise<void>;
   freesoundApiKey?: string;

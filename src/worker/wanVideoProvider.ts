@@ -1,7 +1,8 @@
 import {videoVisualInputProblem,type VideoOutputRatio,type VideoVisualInputSelection} from '../videoVisualInputs.js';
 import {isWanGenerationSettings,type WanGenerationSettings} from '../videoGenerationSettings.js';
 import {defaultWanModel,defaultWanModelSettings,wanReferenceMode,wanReferenceModel,wanVideoModel,wanVideoParameters} from '../wanVideoModels.js';
-import type { MediaFetcher } from "./mediaProviders.js";
+import {executeVideoTask,type VideoTaskPorts} from './videoTaskExecution.js';
+export type {VideoTaskReservation as WanReservation,VideoGenerationPhase} from './videoTaskExecution.js';
 
 export function bailianCredential(secret: string): { apiKey: string; origin: string } {
   let apiKey = secret.trim();
@@ -24,26 +25,17 @@ export function bailianCredential(secret: string): { apiKey: string; origin: str
   return { apiKey, origin: workspaceId ? `https://${workspaceId}.cn-beijing.maas.aliyuncs.com` : "https://dashscope.aliyuncs.com" };
 }
 
-export interface WanReservation { new: boolean; provider_task_id?: string | null; }
-export interface WanVideoInput {
+export interface WanVideoInput extends VideoTaskPorts {
   model?:string;
   settings?: WanGenerationSettings;
   credentials: string;
-  fetcher: MediaFetcher;
   image?: Uint8Array;
   imageMime?: string;
   visualInputs?: readonly VideoVisualInputSelection[];
   referenceRatio?: VideoOutputRatio;
   prompt: string;
   durationSeconds: number;
-  reserve: () => Promise<WanReservation>;
-  recordSubmission: (taskId: string) => Promise<void>;
-  sleep?: (milliseconds: number) => Promise<void>;
-  maxPolls?: number;
-  onProgress?: (phase:VideoGenerationPhase)=>Promise<void>;
 }
-
-export type VideoGenerationPhase='queued'|'processing'|'saving';
 
 export function wanVideoCostCents(durationSeconds: number): number {
   if (!Number.isInteger(durationSeconds) || durationSeconds < 2 || durationSeconds > 15) throw new Error("万相镜头时长须为 2～15 的整数秒。");
@@ -66,34 +58,28 @@ export async function generateWanVideo(input: WanVideoInput): Promise<Uint8Array
   }
   // Input validation precedes the reservation and every paid request.
   const { apiKey, origin } = bailianCredential(input.credentials);
-  const reservation = await input.reserve();
-  let taskId = reservation.provider_task_id ?? "";
-  if (!reservation.new && !taskId) throw new Error("上次万相提交结果未知，已停止重复提交；请核对供应商记录。");
-  if (!taskId) {
-    const response = await input.fetcher(`${origin}/api/v1/services/aigc/video-generation/video-synthesis`, {
-      method: "POST", signal: AbortSignal.timeout(30_000),
-      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json", "X-DashScope-Async": "enable" },
-      body: JSON.stringify({model,input:{prompt:input.prompt.trim(),...(settings.negativePrompt?{negative_prompt:settings.negativePrompt}:{}),...media},parameters}),
-    });
-    const data = await supplierJson(response);
-    taskId = typeof data.task_id === "string" ? data.task_id : "";
-    if (!/^[a-zA-Z0-9_-]{1,128}$/.test(taskId)) throw new Error("万相未返回有效任务 ID；已保留费用预留，禁止自动重提。");
-    await input.recordSubmission(taskId);
-  }
-  if (!/^[a-zA-Z0-9_-]{1,128}$/.test(taskId)) throw new Error("已保存的万相任务 ID 无效。");
-  const sleep = input.sleep ?? ((ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms)));
-  for (let attempt = 0; attempt < (input.maxPolls ?? Infinity); attempt += 1) {
-    const data = await supplierJson(await input.fetcher(`${origin}/api/v1/tasks/${encodeURIComponent(taskId)}`, { headers: { Authorization: `Bearer ${apiKey}` }, signal: AbortSignal.timeout(30_000) }));
-    if (data.task_status === "SUCCEEDED") {
-      if (typeof data.video_url !== "string") throw new Error("万相任务成功但缺少视频地址；请按原任务恢复下载。");
-      await input.onProgress?.('saving');
-      return downloadWanVideo(input.fetcher, data.video_url);
-    }
-    if (!["PENDING", "RUNNING"].includes(String(data.task_status))) throw new Error(`万相任务状态 ${String(data.task_status)}；费用预留已保留，重做前请核对。`);
-    await input.onProgress?.(data.task_status==='PENDING'?'queued':'processing');
-    await sleep(Math.min(5_000 + attempt * 1_000, 10_000));
-  }
-  throw new Error("万相仍在处理中；供应商任务 ID 已保存，可恢复查询，不要重新生成。");
+  return executeVideoTask(input,{
+    submit:async()=>{
+      const response=await input.fetcher(`${origin}/api/v1/services/aigc/video-generation/video-synthesis`,{
+        method:'POST',signal:AbortSignal.timeout(30_000),
+        headers:{Authorization:`Bearer ${apiKey}`,'Content-Type':'application/json','X-DashScope-Async':'enable'},
+        body:JSON.stringify({model,input:{prompt:input.prompt.trim(),...(settings.negativePrompt?{negative_prompt:settings.negativePrompt}:{}),...media},parameters}),
+      });
+      return (await supplierJson(response)).task_id;
+    },
+    query:async taskId=>{
+      const data=await supplierJson(await input.fetcher(`${origin}/api/v1/tasks/${encodeURIComponent(taskId)}`,{headers:{Authorization:`Bearer ${apiKey}`},signal:AbortSignal.timeout(30_000)}));
+      if(data.task_status==='SUCCEEDED'){
+        if(typeof data.video_url!=='string')throw Error('万相任务成功但缺少视频地址；请按原任务恢复下载。');
+        return{url:data.video_url};
+      }
+      if(!['PENDING','RUNNING'].includes(String(data.task_status)))throw Error(`万相任务状态 ${String(data.task_status)}；费用预留已保留，重做前请核对。`);
+      return{phase:data.task_status==='PENDING'?'queued':'processing'};
+    },
+    pollDelayMs:attempt=>Math.min(5_000+attempt*1_000,10_000),
+    download:{validateUrl:officialVideoUrl,invalidResponse:'万相视频下载失败或响应不是有效 MP4。',tooLarge:'万相视频超过本机 100MB 单镜头限制。',empty:'万相下载视频为空。',redirectLimit:'万相结果地址重定向次数过多。'},
+    errors:{unknownSubmission:'上次万相提交结果未知，已停止重复提交；请核对供应商记录。',invalidSubmittedId:'万相未返回有效任务 ID；已保留费用预留，禁止自动重提。',invalidSavedId:'已保存的万相任务 ID 无效。',pollLimit:'万相仍在处理中；供应商任务 ID 已保存，可恢复查询，不要重新生成。'},
+  });
 }
 
 async function supplierJson(response: Response): Promise<Record<string, unknown>> {
@@ -110,23 +96,4 @@ function officialVideoUrl(value: string): URL {
   const allowedHost = url.hostname === "dashscope-a717.oss-accelerate.aliyuncs.com" || /^dashscope-result-[a-z0-9-]+\.oss-[a-z0-9-]+\.aliyuncs\.com$/.test(url.hostname);
   if (url.protocol !== "https:" || url.username || url.password || url.port || !allowedHost) throw new Error("万相视频地址不属于官方结果存储域名。");
   return url;
-}
-
-async function downloadWanVideo(fetcher: MediaFetcher, value: string): Promise<Uint8Array> {
-  let url = officialVideoUrl(value);
-  for (let redirects = 0; redirects < 4; redirects += 1) {
-    // Never send the API key to a result URL or redirect destination.
-    const response = await fetcher(url, { redirect: "manual", signal: AbortSignal.timeout(60_000) });
-    if ([301, 302, 303, 307, 308].includes(response.status)) { url = officialVideoUrl(new URL(response.headers.get("location") ?? "", url).href); continue; }
-    const limit = 100 * 1024 * 1024;
-    if (!response.ok || !response.headers.get("content-type")?.toLowerCase().startsWith("video/mp4") || Number(response.headers.get("content-length")) > limit || !response.body) throw new Error("万相视频下载失败或响应不是有效 MP4。");
-    const reader = response.body.getReader();
-    const chunks: Uint8Array[] = []; let size = 0;
-    try {
-      while (true) { const chunk = await reader.read(); if (chunk.done) break; size += chunk.value.byteLength; if (size > limit) throw new Error("万相视频超过本机 100MB 单镜头限制。"); chunks.push(chunk.value); }
-    } finally { await reader.cancel().catch(() => {}); }
-    if (!size) throw new Error("万相下载视频为空。");
-    return Uint8Array.from(Buffer.concat(chunks));
-  }
-  throw new Error("万相结果地址重定向次数过多。");
 }

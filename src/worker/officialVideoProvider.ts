@@ -1,8 +1,7 @@
 import {registeredAdapters} from './registeredAdapters.js';
 import {videoOutputRatios,videoVisualInputProblem,type VideoOutputRatio,type VideoVisualInputSelection} from '../videoVisualInputs.js';
 import {createHmac} from 'node:crypto';
-import type {MediaFetcher} from './mediaProviders.js';
-import type {WanReservation, VideoGenerationPhase} from './wanVideoProvider.js';
+import {executeVideoTask,type VideoTaskPorts} from './videoTaskExecution.js';
 import {klingOmniModel,klingOmniPath,videoProviders,minimaxEndpoints,type MiniMaxRegion, type VideoProvider} from './videoProviderCatalog.js';
 
 // Like Bailian workspace credentials, region is frozen in the immutable secret binding.
@@ -40,12 +39,9 @@ export function officialVideoDownloadUrl(provider: VideoProvider, value: string)
   return url;
 }
 export type OfficialVideoVisualInput=VideoVisualInputSelection&{image?:Uint8Array;video?:Uint8Array;mimeType:string};
-export interface OfficialVideoInput {
-  provider: VideoProvider; model: string; credentials: string; fetcher: MediaFetcher;
+export interface OfficialVideoInput extends VideoTaskPorts {
+  provider: VideoProvider; model: string; credentials: string;
   image?: Uint8Array; imageMime?: string; visualInputs?: OfficialVideoVisualInput[]; visualMode?: string; referenceRatio?:VideoOutputRatio; prompt: string; durationSeconds: number;
-  reserve: () => Promise<WanReservation>; recordSubmission: (taskId: string) => Promise<void>;
-  sleep?: (ms: number) => Promise<void>; maxPolls?: number;
-  onProgress?: (phase:VideoGenerationPhase)=>Promise<void>;
 }
 export function officialVideoBody(input: Pick<OfficialVideoInput,'provider'|'model'|'image'|'imageMime'|'prompt'|'durationSeconds'|'visualInputs'|'visualMode'|'referenceRatio'>) {
   const p = videoProviders[input.provider];
@@ -91,15 +87,11 @@ export function officialVideoBody(input: Pick<OfficialVideoInput,'provider'|'mod
   const content = [{type:'text',text:input.prompt.trim()}, {type:'image_url',image_url:{url:`data:${input.imageMime};base64,${base64}`},role:'first_frame'}];
   return {model:input.model,content,duration:input.durationSeconds,ratio:'adaptive',resolution:input.provider === 'minimax' ? '768P' : '720p',...(input.provider === 'volcengine' ? {generate_audio:false,watermark:false} : {})};
 }
-const taskIdPattern = /^[a-zA-Z0-9_-]{1,128}$/;
 export async function generateOfficialVideo(input: OfficialVideoInput): Promise<Uint8Array> {
   const body = officialVideoBody(input), endpoint=videoEndpoint(input.provider,input.credentials);
   const headers = () => ({Authorization:videoAuthorization(input.provider,input.credentials),'Content-Type':'application/json'});
   // Validate credentials before reserving. Unknown submissions never create a second task.
   headers();
-  const reservation = await input.reserve();
-  let id = reservation.provider_task_id ?? '';
-  if (!reservation.new && !id) throw Error('上次视频提交结果未知，请核对供应商记录。');
   const createPath = input.provider === 'volcengine' ? '/contents/generations/tasks' : input.provider === 'minimax' ? '/v2/video_generation' : input.model===klingOmniModel?klingOmniPath:'/v1/videos/image2video';
   const json = async (response: Response) => {
     if (!response.ok) throw Error(`视频接口请求失败：HTTP ${response.status}。`);
@@ -107,40 +99,26 @@ export async function generateOfficialVideo(input: OfficialVideoInput): Promise<
     if (!value || typeof value !== 'object' || input.provider === 'kling' && value.code !== 0) throw Error('视频接口响应无效。');
     return value;
   };
-  if (!id) {
-    const value = await json(await input.fetcher(endpoint+createPath,{method:'POST',headers:headers(),body:JSON.stringify(body),signal:AbortSignal.timeout(30000)}));
-    id = input.provider === 'volcengine' ? value.id : input.provider === 'minimax' ? value.task_id : value.data?.task_id;
-    if (typeof id !== 'string' || !taskIdPattern.test(id)) throw Error('视频提交缺少有效任务 ID；禁止自动重提。');
-    await input.recordSubmission(id);
-  }
-  if (!taskIdPattern.test(id)) throw Error('供应商任务 ID 无效。');
   const query = input.provider === 'minimax' ? '/v2/query/video_generation/' : createPath+'/';
-  for (let attempt=0; attempt<(input.maxPolls ?? Infinity); attempt++) {
-    const value = await json(await input.fetcher(endpoint+query+encodeURIComponent(id),{headers:headers(),signal:AbortSignal.timeout(30000)}));
-    const task = input.provider === 'volcengine' ? value : input.provider === 'minimax' ? value.task : value.data;
-    const status = input.provider === 'kling' ? task?.task_status : task?.status;
-    if (status === 'succeeded' || status === 'succeed') {
-      const url = input.provider === 'volcengine' ? task.content?.video_url : input.provider === 'minimax' ? task.content?.url : task.task_result?.videos?.[0]?.url;
-      if (typeof url !== 'string') throw Error('视频任务已完成但缺少下载地址。');
-      await input.onProgress?.('saving');
-      return download(input.provider,input.fetcher,url);
-    }
-    if (!['queued','pending','running','submitted','processing'].includes(status)) throw Error('视频任务失败或状态未知；请沿用原任务核对。');
-    await input.onProgress?.(['queued','pending','submitted'].includes(status)?'queued':'processing');
-    await (input.sleep ?? (ms=>new Promise(resolve=>setTimeout(resolve,ms))))(10000);
-  }
-  throw Error('视频仍在生成，请恢复原任务查询。');
-}
-async function download(provider: VideoProvider, fetcher: MediaFetcher, value: string): Promise<Uint8Array> {
-  let url = officialVideoDownloadUrl(provider,value);
-  for (let redirects=0; redirects<4; redirects++) {
-    const response = await fetcher(url,{redirect:'manual',signal:AbortSignal.timeout(60000)});
-    if ([301,302,303,307,308].includes(response.status)) {url=officialVideoDownloadUrl(provider,new URL(response.headers.get('location')??'',url).href);continue;}
-    const limit=100*1024*1024;
-    if (!response.ok || !response.headers.get('content-type')?.toLowerCase().startsWith('video/mp4') || Number(response.headers.get('content-length'))>limit || !response.body) throw Error('视频下载不是有效 MP4。');
-    const reader=response.body.getReader(),chunks:Uint8Array[]=[];let size=0;
-    try {while(true){const part=await reader.read();if(part.done)break;size+=part.value.length;if(size>limit)throw Error('视频超过 100MB 限制。');chunks.push(part.value);}}finally{await reader.cancel().catch(()=>{});}
-    if(!size)throw Error('下载视频为空。');return Uint8Array.from(Buffer.concat(chunks));
-  }
-  throw Error('视频下载重定向过多。');
+  return executeVideoTask(input,{
+    submit:async()=>{
+      const value=await json(await input.fetcher(endpoint+createPath,{method:'POST',headers:headers(),body:JSON.stringify(body),signal:AbortSignal.timeout(30_000)}));
+      return input.provider==='volcengine'?value.id:input.provider==='minimax'?value.task_id:value.data?.task_id;
+    },
+    query:async id=>{
+      const value=await json(await input.fetcher(endpoint+query+encodeURIComponent(id),{headers:headers(),signal:AbortSignal.timeout(30_000)}));
+      const task=input.provider==='volcengine'?value:input.provider==='minimax'?value.task:value.data;
+      const status=input.provider==='kling'?task?.task_status:task?.status;
+      if(status==='succeeded'||status==='succeed'){
+        const url=input.provider==='volcengine'?task.content?.video_url:input.provider==='minimax'?task.content?.url:task.task_result?.videos?.[0]?.url;
+        if(typeof url!=='string')throw Error('视频任务已完成但缺少下载地址。');
+        return{url};
+      }
+      if(!['queued','pending','running','submitted','processing'].includes(status))throw Error('视频任务失败或状态未知；请沿用原任务核对。');
+      return{phase:['queued','pending','submitted'].includes(status)?'queued':'processing'};
+    },
+    pollDelayMs:()=>10_000,
+    download:{validateUrl:value=>officialVideoDownloadUrl(input.provider,value),invalidResponse:'视频下载不是有效 MP4。',tooLarge:'视频超过 100MB 限制。',empty:'下载视频为空。',redirectLimit:'视频下载重定向过多。'},
+    errors:{unknownSubmission:'上次视频提交结果未知，请核对供应商记录。',invalidSubmittedId:'视频提交缺少有效任务 ID；禁止自动重提。',invalidSavedId:'供应商任务 ID 无效。',pollLimit:'视频仍在生成，请恢复原任务查询。'},
+  });
 }

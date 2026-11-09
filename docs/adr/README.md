@@ -44,3 +44,5 @@
 - [ADR-0027：视觉调用解释规则集中管理](0027-shared-visual-request-resolution.md)
 
 - [ADR-0028：工程写入与完整状态读回分离](0028-workspace-write-readback-boundary.md)
+
+- [ADR-0029：视频任务恢复与下载协议集中管理](0029-video-task-execution.md)

@@ -2,7 +2,7 @@ import {PexelsVideoError} from '../worker/pexelsVideos.js';
 import {FreesoundSearchError,OpenAiImageRequestError} from '../worker/mediaProviders.js';
 import {assertWorkspaceVisualExecution} from './workspaceVisualWorker.js';
 import {executeWorkspaceImages} from './workspaceImageGenerationWorker.js';
-import type {VideoGenerationPhase} from '../worker/wanVideoProvider.js';
+import type {VideoGenerationPhase} from '../worker/videoTaskExecution.js';
 import {createProviderFetcher,createVideoContinuationFetcher,createWorkspaceGenerationFetcher,createWorkspaceSearchFetcher} from './providerNetwork.js';
 import {isVideoProvider} from "../worker/videoProviderCatalog.js";
 import{ProviderOutcomeUnknownError}from'../worker/providerOutcome.js';
