@@ -160,8 +160,8 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
   }catch(e){setError(e instanceof Error?e.message:'采用未完成。');}finally{setBusy(false);}
  }
  async function reconcile(recover=false){setBusy(true);setError('');try{if(recover&&n.generationTask)await reconcileWorkspaceOutput(episodeId,n.generationTask);onChanged((await localRequest(`episodes/${encodeURIComponent(episodeId)}/workspace`)).workspace);}catch(e){setError(e instanceof Error?e.message:'口播状态未能核对，请重试。');}finally{setBusy(false);}}
- async function adopt(candidateId:string,restore=false){setBusy(true);setError('');try{await review.prepare(candidateId,'use-candidate',undefined,restore);}catch(e){setError(e instanceof Error?e.message:'采用未完成。');}finally{setBusy(false);}}
- async function confirmAdoption(){setBusy(true);setError('');try{await review.confirm(changed=>{if(review.plan?.restoration){const restored=changed.narration?.find(v=>v.shotId===n.shotId);if(restored)setText(restored.text);}});}catch(e){setError(e instanceof Error?e.message:'采用未完成。');}finally{setBusy(false);}}
+ async function adopt(candidateId:string,restore=false){setError('');try{await review.prepare(candidateId,'use-candidate',undefined,restore);}catch(e){setError(e instanceof Error?e.message:'采用未完成。');}}
+ async function confirmAdoption(){setError('');try{await review.confirm((changed,plan)=>{if(plan.restoration){const restored=changed.narration?.find(v=>v.shotId===n.shotId);if(restored)setText(restored.text);}});}catch(e){setError(e instanceof Error?e.message:'采用未完成。');}}
  async function withdraw(){
   setBusy(true);setError('');review.cancel();
   try{onChanged(await command('withdrawWorkspaceNarration',{...base(),audioTrackId:n.adoptedAudioTrackId}) as ProductionWorkspace);}
@@ -174,7 +174,7 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
   const uploaded=!c.speech&&(track?!!track.source_material_revision_id:narrationMaterials.some(m=>m.storage_path===c.relativePath));
   return mode==='manual'?uploaded:!uploaded;
  })??[];
- const disabled=pending||busy||workspace.stale;
+ const disabled=pending||busy||review.pending||workspace.stale;
  const adoptedTrack=uploadedTracks.find(t=>t.id===n.adoptedAudioTrackId);
  const clearable=mode==='manual'&&!!manualSelection&&manualSelection!==n.adoptedAudioTrackId&&(!selectedMaterial||selectedMaterial.id!==adoptedTrack?.source_material_revision_id);
  const withdrawAction=<Button className="workspace-narration-withdraw" size="sm" color="tertiary-destructive" aria-label="撤销" isDisabled={disabled} onPress={()=>void withdraw()}>撤销</Button>;
@@ -191,7 +191,7 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
   if(trigger instanceof HTMLElement)requestAnimationFrame(()=>trigger.focus());
  }
  const inlineActions=inlineReview&&<div className="workspace-result-actions workspace-result-confirmation" role="group" aria-label="采用前核对"
-  onKeyDown={event=>{if(event.key==='Escape'&&!busy){event.stopPropagation();cancelAdoption();}}}>
+  onKeyDown={event=>{if(event.key==='Escape'&&!review.pending&&!busy){event.stopPropagation();cancelAdoption();}}}>
   <Button autoFocus size="sm" color="secondary" isDisabled={disabled} onPress={cancelAdoption}>取消</Button>
   <Button size="sm" color="primary" isDisabled={disabled} onPress={()=>void confirmAdoption()}>确认采用</Button>
  </div>;
@@ -255,7 +255,7 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
    </div>
   </section>}
   {plan&&needsImpactDialog&&createPortal(<div className="workspace-visual-adoption-overlay">
-   <ConfirmationModal title={plan.restoration?'恢复口播前核对':'采用前核对'} confirmLabel="确认采用" isPending={busy} confirmDisabled={disabled}
+   <ConfirmationModal title={plan.restoration?'恢复口播前核对':'采用前核对'} confirmLabel="确认采用" isPending={busy||review.pending} confirmDisabled={disabled}
     onConfirm={confirmAdoption} onCancel={cancelAdoption}>
     {plan.restoration&&<div className="workspace-candidate-impact-details">
      <div><strong>当前正文</strong><p style={{whiteSpace:'pre-wrap'}}>{text||'（空）'}</p></div>

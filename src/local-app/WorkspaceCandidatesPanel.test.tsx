@@ -1,4 +1,6 @@
-import {render,screen,fireEvent,cleanup,waitFor} from '@testing-library/react';
+import {useWorkspaceCandidateReview} from './useWorkspaceCandidateReview';
+import {useWorkspaceReading} from './useWorkspaceReading';
+import {render,renderHook,act,screen,fireEvent,cleanup,waitFor} from '@testing-library/react';
 import {afterEach,it,expect,vi} from 'vitest';
 import {WorkspaceCandidatesPanel} from './WorkspaceCandidatesPanel';
 import type {ProductionWorkspace} from '../productionWorkspace';
@@ -40,4 +42,14 @@ it('uses the latest saved episode settings for a new candidate',async()=>{
  render(<WorkspaceCandidatesPanel workspace={workspace} command={command} onChange={vi.fn()}/>);
  fireEvent.click(screen.getByRole('button',{name:'生成新口播候选'}));
  await waitFor(()=>expect(command).toHaveBeenCalledWith('saveWorkspaceNarration',expect.objectContaining(latestDefaults)));
+});
+
+it('cancelling while a native edit is pending prevents the unsent adoption receipt',async()=>{
+ let finish!:()=>void;const native=new Promise<void>(done=>{finish=done;}),applyNativeEdit=vi.fn(()=>native);
+ const bridge={save:vi.fn(async()=>{}),applyNativeEdit} as unknown as import('./EmbeddedStudioHost').EmbeddedStudioBridge;
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace})));const command=vi.fn(async(name:string)=>name==='prepareWorkspaceCandidate'?plan:workspace);
+ const hook=renderHook(()=>{const reader=useWorkspaceReading(workspace,()=>{},'S1','读取失败');return useWorkspaceCandidateReview({workspace,scope:'S1',reader,command,bridge});});
+ await act(async()=>{await hook.result.current.prepare('candidate','use-candidate');});let confirming!:Promise<void>;
+ await act(async()=>{confirming=hook.result.current.confirm();});expect(applyNativeEdit).toHaveBeenCalledOnce();act(()=>hook.result.current.cancel());
+ await act(async()=>{finish();await confirming;});expect(command.mock.calls.map(([name])=>name)).toEqual(['prepareWorkspaceCandidate']);
 });

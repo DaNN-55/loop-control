@@ -21,6 +21,7 @@ import {WorkspacePromptField} from './WorkspacePromptField';
 import {WorkspaceVisualTaskStatus,WorkspaceVisualTaskProgress} from './WorkspaceVisualTaskStatus';
 import {reconcileWorkspaceOutput} from './workspaceOutputReconciliationClient';
 import {useWorkspaceReading,useWorkspacePolling} from './useWorkspaceReading';
+import {useCandidateReviewLifecycle} from './useWorkspaceCandidateReview';
 import {wanVideoModel,wanVideoSettingsError,wanProviderDuration,defaultWanModelSettings,wanReferenceModel} from '../wanVideoModels';
 import {WorkspaceReferencePicker} from './WorkspaceReferencePicker';
 import {productionModelSelection} from './productionModelSelection';
@@ -38,6 +39,7 @@ import {defaultWanSettings,wanSettingLabels,type WanGenerationSettings} from '..
 import './workspace-visual-preparation.css';
 
 type Kind='image'|'video';
+type VisualReviewPlan=(WorkspaceCandidatePreparation&{kind:'adoption';candidate:WorkspaceVisualCandidate})|{kind:'image-backup';candidateId:string;projectSha256:string;candidate:WorkspaceVisualCandidate;impact?:undefined};
 type Material=VideoInputMaterial;
 interface UploadEntry {id:number;name:string;file?:File;kind:Kind;asReference:boolean;tab:Kind;usage:Draft['usage'];status:'pending'|'running'|'succeeded'|'failed';material?:Material&{storage_path:string};error?:string}
 let uploadEntryId=0,uploadNoticeId=0;
@@ -92,7 +94,6 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
  const [imageServices,setImageServices]=useState<ProductionService[]>([]),[videoServices,setVideoServices]=useState<ProductionService[]>([]),[catalogError,setCatalogError]=useState(''),[catalogReload,setCatalogReload]=useState(0);
  const [composerPanel,setComposerPanel]=useState('');
  const [busy,setBusy]=useState(false),[error,setError]=useState(''),[notice,setNotice]=useState(''),[rangeStart,setRangeStart]=useState(''),[rangeEnd,setRangeEnd]=useState(''),[policy,setPolicy]=useState('keep-target'),[acceptImpact,setAcceptImpact]=useState(false),[zoom,setZoom]=useState(false);
- const [adoption,setAdoption]=useState<WorkspaceCandidatePreparation|{candidateId:string;projectSha256:string;impact?:undefined}|null>(null);
  const [clearVisual,setClearVisual]=useState<{revision:number;candidateId?:string;sourcePath?:string;sourceSha256?:string}|null>(null);
  const [clearError,setClearError]=useState('');
  const [imagePreviewError,setImagePreviewError]=useState(''),[imagePreviewAttempt,retryImagePreview]=useState(0);
@@ -114,7 +115,7 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
  const {framing,crop}=draft.imageBrief;
  const hasSavedCloseUpWithMargin=framing==='close'&&crop==='protect';
  const framingOption=crop==='allow'?framing:hasSavedCloseUpWithMargin?'close-with-margin':'full-with-margin';
- const tab=draft.tab,kindName=tab==='image'?'图片':'视频',origin=shelf&&(tab==='image'||draft.origin[tab]==='material')?'generate':draft.origin[tab],disabled=busy||uploading||props.readOnly||workspace.stale;
+ const tab=draft.tab,kindName=tab==='image'?'图片':'视频',origin=shelf&&(tab==='image'||draft.origin[tab]==='material')?'generate':draft.origin[tab];
  const visible=candidates.filter(c=>c.kind===tab),currentMatches=props.currentVisualKind===tab?visible.filter(c=>c.relativePath===props.currentVisualPath):[];
  const currentCandidate=currentMatches.find(c=>c.status==='adopted'||c.pendingConfirmation)??currentMatches[0];
  const currentEntry=props.currentVisualKind===tab&&!!props.currentVisualPath&&!currentCandidate;
@@ -122,12 +123,32 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
  const pendingUpload=uploadRows.find(row=>row.status==='running'&&!row.asReference&&row.tab===tab);
  const applicableImages=entries.filter(e=>e.candidate?.kind==='image'&&e.candidate.status==='available');
  const active=entries.find(e=>e.id===draft.selected[tab])??(tab==='image'&&applicableImages.length===1?applicableImages[0]:undefined)??entries.find(e=>e.id==='current'||!!currentCandidate&&e.candidate===currentCandidate),index=entries.findIndex(e=>e.id===active?.id),candidate=active?.candidate;
- const review=adoption&&candidate?.id===adoption.candidateId?adoption:null;
+ const reader=useWorkspaceReading(workspace,updated,targetItemId,'无法读取当前工程，请重试。');
+ const {read:fresh,publish:onChange}=reader;
+ const candidateReview=useCandidateReviewLifecycle({workspace,scope:JSON.stringify([targetItemId,candidate?.id,policy,acceptImpact,draft.usage,rangeStart,rangeEnd,props.currentVisualKind]),reader,
+  prepare:async(w,choice:{candidate:WorkspaceVisualCandidate;replaceCurrentVisual:boolean}):Promise<VisualReviewPlan>=>{
+   const c=choice.candidate;
+   if(c.kind==='image'&&props.currentVisualKind==='video'&&!choice.replaceCurrentVisual)return {kind:'image-backup',candidateId:c.id,projectSha256:w.project.sha256,candidate:c};
+   const prepared=await command('prepareWorkspaceVisualCandidate',{
+    ...base(w),candidateId:c.id,
+    ...(c.kind==='image'
+     ?{durationPolicy:'keep-target',acceptTimelineImpact:false,motionPolicy:'preserve-target',...(choice.replaceCurrentVisual?{replaceCurrentVisual:true}:{})}
+     :{durationPolicy:policy,acceptTimelineImpact:acceptImpact,motionPolicy:draft.usage==='pan-zoom'?'replace-motion':'preserve-target',
+       ...(rangeStartSeconds!==0||rangeEnd?{sourceInSeconds:rangeStartSeconds,sourceOutSeconds:rangeEndSeconds}:{})})
+   }) as WorkspaceCandidatePreparation;
+   if(!prepared.impact)throw Error('无法读取采用影响，请刷新后重新核对。');
+   return {...prepared,kind:'adoption',candidate:c};
+  },
+  adopt:async(w,plan)=>command(plan.kind==='image-backup'?'retainWorkspaceImageCandidate':'adoptWorkspaceVisualCandidate',{
+   ...base(w),candidateId:plan.candidateId,...(plan.kind==='adoption'?{adoptionId:plan.adoptionId}:{})
+  }) as Promise<ProductionWorkspace>,
+ });
+ const disabled=busy||candidateReview.pending||uploading||props.readOnly||workspace.stale;
+ const review=candidateReview.plan;
  const impact=review?.impact;
  const needsImpactDialog=needsCandidateImpactDialog(impact);
  const inlineReview=review&&!needsImpactDialog;
  const reviewSummary=impact?(impact.deltaSeconds===0?`镜头时长保持 ${impact.appliedSeconds.toFixed(2)} 秒`:`${impact.currentSeconds.toFixed(2)} → ${impact.appliedSeconds.toFixed(2)} 秒`):'保留为备用图片';
- useEffect(()=>{setAdoption(null);},[candidate?.id,policy,acceptImpact,draft.usage,rangeStart,rangeEnd,workspace.project?.sha256]);
  useEffect(()=>{const rail=thumbnailRail.current,selected=rail?.querySelector<HTMLElement>('[aria-pressed=true]');if(!rail||!selected)return;const r=rail.getBoundingClientRect(),s=selected.getBoundingClientRect();if(s.top<r.top)rail.scrollTop-=r.top-s.top;else if(s.bottom>r.bottom)rail.scrollTop+=s.bottom-r.bottom;},[tab,active?.id]);
  const selectedImage=workspace.selectedImages?.find(s=>s.targetItemId===targetItemId);
  const firstFrameLimit=videoService?.constraints.firstFrame;
@@ -181,13 +202,11 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
 
  function select(id:string){setDraft(d=>({...d,selected:{...d.selected,[d.tab]:id}}));setRangeStart('');setRangeEnd('');setPolicy('keep-target');setAcceptImpact(false);setError('');}
  function url(path:string,sha256=''){return '/_local-artifact?'+new URLSearchParams({episode:workspace.episodeId,path,...(sha256?{sha256}:{})});}
- const reader=useWorkspaceReading(workspace,updated,targetItemId,'无法读取当前工程，请重试。');
- const {read:fresh,publish:onChange}=reader;
  useEffect(()=>{
   if(uploading||!uploadRows.some(row=>row.status==='succeeded'&&!row.asReference&&!workspace.visualCandidates?.some(candidate=>candidate.targetItemId===targetItemId&&candidate.materialRevisionId===row.material?.id&&candidate.status!=='rejected')))return;
   void fresh().catch(cause=>{if(mounted.current&&!(cause instanceof Error&&cause.name==='AbortError'))setError('素材已导入，候选列表暂未更新，请刷新重试。');});
  },[uploading,uploadRows,fresh]);
- useWorkspacePolling(reader,!!taskKey&&!busy&&!uploading,2000,()=>setError('任务状态暂时无法更新，可点击刷新重试。'));
+ useWorkspacePolling(reader,!!taskKey&&!busy&&!candidateReview.pending&&!uploading,2000,()=>setError('任务状态暂时无法更新，可点击刷新重试。'));
  function base(w:ProductionWorkspace){return {episodeId:w.episodeId,workspaceId:w.id,expectedRevision:w.revision};}
  async function run(action:()=>Promise<void>){if(working.current)return;working.current=true;setBusy(true);setError('');setNotice('');try{await action();}catch(cause){if(mounted.current&&!(cause instanceof Error&&cause.name==='AbortError'))setError(cause instanceof Error?cause.message:'操作未完成，请重试。');}finally{working.current=false;if(mounted.current)setBusy(false);}}
 
@@ -236,23 +255,12 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
   const rows=files.map(file=>({id:++uploadEntryId,name:file.name,file,kind:file.type.startsWith('image/')?'image' as const:'video' as const,asReference,tab,usage:draft.usage,status:'pending' as const}));
   uploadState.update(value=>({...value,rows:[...value.rows,...rows]}));await processUploads(rows);
  }
- async function adopt(c:WorkspaceVisualCandidate,replaceCurrentVisual=false){await run(async()=>{
-   const w=await fresh();
-   if(c.kind==='image'&&props.currentVisualKind==='video'&&!replaceCurrentVisual){
-    setAdoption({candidateId:c.id,projectSha256:w.project.sha256});return;
-   }
-   const prepared=await command('prepareWorkspaceVisualCandidate',{
-    ...base(w),candidateId:c.id,
-    ...(c.kind==='image'
-     ?{durationPolicy:'keep-target',acceptTimelineImpact:false,motionPolicy:'preserve-target',...(replaceCurrentVisual?{replaceCurrentVisual:true}:{})}
-     :{durationPolicy:policy,acceptTimelineImpact:acceptImpact,motionPolicy:draft.usage==='pan-zoom'?'replace-motion':'preserve-target',
-       ...(rangeStartSeconds!==0||rangeEnd?{sourceInSeconds:rangeStartSeconds,sourceOutSeconds:rangeEndSeconds}:{})})
-   }) as WorkspaceCandidatePreparation;
-   if(!prepared.impact)throw Error('无法读取采用影响，请刷新后重新核对。');
-   setAdoption(prepared);
-  });}
- function closeAdoption(){
-  setAdoption(null);
+ async function adopt(c:WorkspaceVisualCandidate,replaceCurrentVisual=false){
+  if(working.current)return;setError('');setNotice('');
+  try{await candidateReview.prepare({candidate:c,replaceCurrentVisual});}
+  catch(cause){if(mounted.current&&!(cause instanceof Error&&cause.name==='AbortError'))setError(cause instanceof Error?cause.message:'操作未完成，请重试。');}
+ }
+ function returnAdoptionFocus(){
   if(inlineReview)requestAnimationFrame(()=>{
    const menu=resultMore.current;
    if(tab==='image'&&menu)menu.open=false;
@@ -261,15 +269,15 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
    (trigger&&!trigger.matches(':disabled')?trigger:summary)?.focus();
   });
  }
- async function confirmAdoption(){if(!review)return;const plan=review;await run(async()=>{
-   const w=await fresh();closeAdoption();
-   if(w.project?.sha256!==plan.projectSha256)throw Error('工程已变化，请重新核对采用影响。');
-   const backup=!('adoptionId' in plan);
-   const input={...base(w),candidateId:plan.candidateId,...('adoptionId' in plan?{adoptionId:plan.adoptionId}:{})};
-   onChange(await command(backup?'retainWorkspaceImageCandidate':'adoptWorkspaceVisualCandidate',input) as ProductionWorkspace);
-   if(candidate?.kind==='image'&&candidate.materialRevisionId)setDraft(d=>(videoDraftIds(d).some(id=>allMaterials.some(material=>material.id===id&&material.material_type==='image'))?d:{...d,videoInputIds:prioritizeVideoInput(d,candidate.materialRevisionId!)}));
-   setNotice(backup?'图片已保留为备用。':`已采用${candidate?.kind==='image'?'图片':'视频'}。`);
-  });}
+ function closeAdoption(){candidateReview.cancel();returnAdoptionFocus();}
+ async function confirmAdoption(){
+  setError('');returnAdoptionFocus();
+  try{await candidateReview.confirm((_changed,plan)=>{
+   const c=plan.candidate;
+   if(c.kind==='image'&&c.materialRevisionId)setDraft(d=>(videoDraftIds(d).some(id=>allMaterials.some(material=>material.id===id&&material.material_type==='image'))?d:{...d,videoInputIds:prioritizeVideoInput(d,c.materialRevisionId!)}));
+   setNotice(plan.kind==='image-backup'?'图片已保留为备用。':`已采用${c.kind==='image'?'图片':'视频'}。`);
+  });}catch(cause){if(mounted.current&&!(cause instanceof Error&&cause.name==='AbortError'))setError(cause instanceof Error?cause.message:'操作未完成，请重试。');}
+ }
  function removeSelected(){
   const menu=resultMore.current;
   if(menu){menu.open=false;menu.querySelector('summary')?.focus();}
@@ -387,7 +395,7 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
 
       {active&&<div className="workspace-result-footer">
        <p title={inlineReview?reviewSummary:candidateMeta||candidate?.relativePath}><strong>{candidate?`候选 ${String(index+1).padStart(2,'0')} / ${String(entries.length).padStart(2,'0')}`:'当前画面'}</strong>{inlineReview?<span role="status">{reviewSummary}</span>:candidateMeta&&<span>{candidateMeta}</span>}</p>
-       {inlineReview?<div className="workspace-result-actions workspace-result-confirmation" role="group" aria-label="采用前核对" onKeyDown={event=>{if(event.key==='Escape'&&!busy){event.stopPropagation();closeAdoption();}}}>
+       {inlineReview?<div className="workspace-result-actions workspace-result-confirmation" role="group" aria-label="采用前核对" onKeyDown={event=>{if(event.key==='Escape'&&!candidateReview.pending&&!busy){event.stopPropagation();closeAdoption();}}}>
         <Button autoFocus size="sm" color="secondary" isDisabled={disabled} onPress={closeAdoption}>取消</Button>
         <Button size="sm" color="primary" isDisabled={disabled} onPress={()=>void confirmAdoption()}>确认采用</Button>
        </div>:<div className="workspace-result-actions">
@@ -426,8 +434,8 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
          {tab==='image'?candidate?.materialRevisionId&&<Button size="sm" color="primary" isDisabled={disabled||candidate.status==='stale'} onPress={linkFirstFrame}>用作视频首帧</Button>:adoptionAction}
        </div>}
       </div>}
-      {needsImpactDialog&&review&&'adoptionId' in review&&createPortal(<div className="workspace-visual-adoption-overlay">
-       <ConfirmationModal title="采用前核对" confirmLabel="确认采用" isPending={busy} confirmDisabled={!!disabled} onConfirm={confirmAdoption} onCancel={closeAdoption}>
+      {needsImpactDialog&&review&&review.kind==='adoption'&&createPortal(<div className="workspace-visual-adoption-overlay">
+       <ConfirmationModal title="采用前核对" confirmLabel="确认采用" isPending={busy||candidateReview.pending} confirmDisabled={!!disabled} onConfirm={confirmAdoption} onCancel={closeAdoption}>
         <div className="workspace-candidate-impact-details"><WorkspaceCandidateImpactDetails plan={review}/></div>
        </ConfirmationModal>
       </div>,document.querySelector('.app-shell')??document.body)}
