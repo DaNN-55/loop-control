@@ -1,5 +1,4 @@
-import type { Database, Json } from "../lib/database.types";
-import type { StoryboardStructureOperation } from "../worker/storyboardRevision";
+import type { Json } from "../lib/database.types";
 import { defaultAllowedDurationFrames, defaultDurationFrameRate } from "../worker/durationDecision";
 import { defaultReviewRenderComposition, reviewRenderCompositionFromJson, reviewRenderCompositionToJson, type ReviewRenderComposition } from "./reviewComposition";
 export { defaultReviewRenderComposition, reviewRenderCompositionFromJson } from "./reviewComposition";
@@ -23,13 +22,6 @@ export interface OpenChatCutStudioWorkspace {
 export type ReviewRevisionRequest =
   | { kind: "composition"; reviewPackageId: string; composition?: ReviewRenderComposition; reason: string; studioProject?: OpenChatCutStudioWorkspace }
   | { kind: "storyboard"; reviewPackageId: string; reason: string };
-
-export type ShotStructureRevisionRequest = {
-  episodeId: string;
-  operation: StoryboardStructureOperation;
-  reason: string;
-  reviewPackageId: string;
-};
 
 export type ReviewRevisionOutcome =
   | { kind: "composition"; message: "合成调整已冻结；会复用已批准媒体和音轨生成新的审核渲染。" }
@@ -81,18 +73,6 @@ export async function requestReviewRevision(input: ReviewRevisionRequest): Promi
   return { kind: "composition", message: "合成调整已冻结；会复用已批准媒体和音轨生成新的审核渲染。" };
 }
 
-export async function requestShotStructureRevision(input: ShotStructureRevisionRequest): Promise<Database["public"]["Tables"]["tasks"]["Row"]> {
-  const { viewTransport } = await import("../lib/viewTransport");
-  const { data, error } = await viewTransport.rpc("request_shot_structure_revision", {
-    p_episode_id: input.episodeId,
-    p_operation: input.operation as unknown as Json,
-    p_reason: input.reason,
-    p_review_package_id: input.reviewPackageId,
-  });
-  if (error) throw error;
-  return data;
-}
-
 export async function submitStudioReviewRevision(input: StudioReviewRevisionRequest): Promise<ReviewRevisionOutcome> {
   const response = await fetch(`/_freeze-openchatcut-studio?episode=${encodeURIComponent(input.episodeId)}`, {
     body: JSON.stringify({ sourceProjectRelativePath: input.sourceProjectRelativePath, workspaceRelativePath: input.workspaceRelativePath }),
@@ -117,13 +97,6 @@ export function studioWorkspaceFromPayload(value: unknown): OpenChatCutStudioWor
   const workspace = value as Record<string, unknown>;
   if (typeof workspace.relativePath !== "string" || typeof workspace.sha256 !== "string" || typeof workspace.fileSize !== "number") throw new Error("Studio 工作区响应无效。");
   return { relativePath: workspace.relativePath, sha256: workspace.sha256, fileSize: workspace.fileSize, ...(typeof workspace.projectId === "string" ? { projectId: workspace.projectId } : {}) };
-}
-
-export function studioReplacementWarningFromPayload(value: unknown): OpenChatCutStudioWorkspace["replacementWarning"] {
-  if (!value || typeof value !== "object" || Array.isArray(value)) return undefined;
-  const warning = value as Record<string, unknown>;
-  if (warning.code !== "openchatcut_workspace_replacement" || typeof warning.studioHasChanges !== "boolean" || !Array.isArray(warning.modifiedScopes) || warning.modifiedScopes.some((scope) => typeof scope !== "string")) return undefined;
-  return { code: warning.code, studioHasChanges: warning.studioHasChanges, modifiedScopes: warning.modifiedScopes as string[] };
 }
 
 function frozenStudioWorkspaceFromPayload(value: unknown): OpenChatCutStudioWorkspace {

@@ -68,7 +68,6 @@ const fields: Record<string, { key: keyof ProductionSettings; parse: (s: string)
   '音效起点（秒）': { key: 'sfxStart', parse: number(0, 3600) },
   '音效时长（秒）': { key: 'sfxDuration', parse: number(0.01, 3600) },
 };
-export function isProductionScriptV2(text: string) { return /^-\s*模板版本[：:]\s*2\s*$/m.test(text); }
 export function validateProductionDefaults(value:unknown):ProductionSettings {
  if(!value||typeof value!=='object'||Array.isArray(value))throw Error('系列 production_defaults 必须是对象。');
  const result:Record<string,unknown>={};

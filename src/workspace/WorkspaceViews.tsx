@@ -25,7 +25,6 @@ type Account=Row<'accounts'>;type Episode=Row<'episodes'>;type Blueprint=Row<'ac
 export type NavigationItem='accounts'|'episodes'|'operations'|'reviews';
 type EpisodeVisibility='active'|'archived'|'all';type EpisodeAction='rename'|'archive'|null;type EpisodeWithArchive=Episode&{archived_at?:string|null};
 export interface EpisodeDeletionPlan extends DeletionFileScope {path:string;paths?:string[];revision:string;confirmation:string}
-interface ReviewAction{approveStage:EpisodeStage;requestChangesStage:EpisodeStage}
 export const navigation: Array<{ id: NavigationItem; label: string }> = [
   { id: "operations", label: "系列运营" },
   { id: "episodes", label: "生产单" },
@@ -57,23 +56,12 @@ export const stageLabels: Record<EpisodeStage, string> = {
   production_completed: "生产完成",
 };
 
-const reviewActions: Partial<Record<EpisodeStage, ReviewAction>> = {
-  script_review: { approveStage: "script_approved", requestChangesStage: "script_draft" },
-  visual_review: { approveStage: "visual_approved", requestChangesStage: "visual_draft" },
-  storyboard_review: { approveStage: "storyboard_approved", requestChangesStage: "storyboard_draft" },
-  qc_review: { approveStage: "qc_passed", requestChangesStage: "render_ready" },
-};
-
 export function formatDate(source: string) {
   return new Intl.DateTimeFormat("zh-CN", { dateStyle: "medium", timeStyle: "short" }).format(new Date(source));
 }
 
 export function episodeIsArchived(episode: Episode): boolean {
   return Boolean((episode as EpisodeWithArchive).archived_at);
-}
-
-export function reviewActionFor(stage: EpisodeStage): ReviewAction | null {
-  return reviewActions[stage] ?? null;
 }
 
 function EpisodeActionsMenu({ artifactCount, blueprint, episode, isArchivePending, isTitlePending, onOpenDelete, onOpenDirectory, onMoveCollection, onSetArchived, onUpdateTitle }: { artifactCount?:number; blueprint: Blueprint | undefined; episode: Episode; isArchivePending: boolean; isTitlePending: boolean; onOpenDelete?: ()=>void; onOpenDirectory?: (episodeId:string)=>Promise<void>; onMoveCollection?: (episodeId:string)=>void; onSetArchived: (episodeId: string, archived: boolean) => Promise<void>; onUpdateTitle: (episodeId: string, title: string) => Promise<void> }) {

@@ -89,21 +89,6 @@ export function taskStatusLabel(status: Task["status"]): string {
   return taskStatusLabels[status];
 }
 
-export function TaskTimelineDetail({ task, taskRuns }: { task: Task; taskRuns: TaskRun[] }) {
-  const run = latestRunFor(task, taskRuns);
-  const blocker = resultBlocker(task);
-  const concurrency = effectiveConcurrency(task);
-  const progress = taskProgress(task);
-  const progressIndex = progress ? workerProgressSteps.findIndex(([step]) => step === progress.step) : -1;
-
-  return <article className={`timeline-task-detail timeline-task-detail-${task.status}`}>
-    <header><strong>{taskTypeLabel(task.task_type)} · {taskStatusLabels[task.status]}</strong><code>{task.id.slice(0, 8)}</code></header>
-    <dl><div><dt>排队</dt><dd>{formatDate(task.created_at)}</dd></div>{task.claimed_at ? <div><dt>领取</dt><dd>{formatDate(task.claimed_at)}</dd></div> : null}{run ? <div><dt>运行</dt><dd>{formatDate(run.started_at)}</dd></div> : null}{task.completed_at ? <div><dt>完成</dt><dd>{formatDate(task.completed_at)}</dd></div> : null}<div><dt>尝试</dt><dd>{task.attempt} / {task.max_attempts}</dd></div>{concurrency !== null ? <div><dt>并发</dt><dd>{concurrency}</dd></div> : null}</dl>
-    {progress && task.status === "running" ? <div aria-live="polite" className="worker-internal-progress"><strong>{progress.detail}</strong><ol aria-label="Worker 内部执行步骤">{workerProgressSteps.map(([step, label], index) => <li aria-current={index === progressIndex ? "step" : undefined} className={index < progressIndex ? "is-complete" : index === progressIndex ? "is-current" : "is-upcoming"} key={step}><span>{label}</span></li>)}</ol><small>最近更新：{formatDate(progress.observedAt)}</small></div> : null}
-    {blocker ? <p className="worker-task-blocker">{blocker}</p> : null}
-  </article>;
-}
-
 export function TaskProgressPanel({ dispatchRequested = false, embedded = false, taskRuns, tasks }: { dispatchRequested?: boolean; embedded?: boolean; taskRuns: TaskRun[]; tasks: Task[] }) {
   const groups = useMemo(() => {
     const grouped = new Map<string, Task[]>();
