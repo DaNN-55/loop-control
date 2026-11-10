@@ -8,7 +8,14 @@ import {localRequest} from './client';
 
 let activeSample:HTMLAudioElement|undefined;
 
-export function WorkspaceSpeechSample({label,selection,voice,rate,disabled,buttonColor='secondary'}:{label:string;selection:ProductionSelection|null;voice:string;rate:number;disabled:boolean;buttonColor?:'secondary'|'tertiary'}){
+type Props={label:string;selection:ProductionSelection|null;voice:string;rate:number;disabled:boolean;buttonColor?:'secondary'|'tertiary'};
+export function WorkspaceSpeechSample(props:Props){
+ const {selection,voice}=props;
+ const identity=JSON.stringify([selection?.capability,selection?.provider,selection?.adapter,selection?.model,selection?.preset,selection?.connectionVersionId,voice]);
+ // Playback speed is local; a different source owns a new player, request and confirmation.
+ return <SpeechSample key={identity} {...props}/>;
+}
+function SpeechSample({label,selection,voice,rate,disabled,buttonColor='secondary'}:Props){
  const audio=useRef<HTMLAudioElement>(null),request=useRef<AbortController|null>(null);
  const [busy,setBusy]=useState(false),[playing,setPlaying]=useState(false),[confirm,setConfirm]=useState(false),[error,setError]=useState('');
  const rateRef=useRef(rate);
