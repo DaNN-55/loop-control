@@ -1,4 +1,4 @@
-import {act,cleanup,fireEvent,render,screen,within} from '@testing-library/react';
+import {act,cleanup,fireEvent,render,screen,within,waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {afterEach,expect,it,vi} from 'vitest';
 import {ConnectionModelsDialog} from './ConnectionModelsDialog';
@@ -68,4 +68,31 @@ it('forgets retained model edits when the owner changes back to the server selec
 });
 it('restores keyboard focus after an asynchronous failed save loses the disabled submit button',async()=>{
  const user=userEvent.setup();let reject!:(cause:Error)=>void;render(<ConnectionModelsDialog connection={{id:'c',name:'Images'}} onClose={vi.fn()} onReadModels={async()=>data} onSaveModels={()=>new Promise((_resolve,fail)=>{reject=fail;})}/>);await user.click(await screen.findByRole('checkbox',{name:'gpt-image-2'}));await user.click(screen.getByRole('button',{name:'保存设置'}));act(()=>{document.body.tabIndex=-1;document.body.focus();});await act(async()=>reject(Error('保存冲突')));expect(await screen.findByRole('alert')).toHaveProperty('textContent','保存冲突');expect(document.activeElement).toBe(screen.getByRole('dialog',{name:'Images 模型设置'}));await user.keyboard('{Escape}');expect(screen.getByRole('dialog',{name:'关闭前处理修改'})).toBeTruthy();document.body.removeAttribute('tabindex');
+});
+it('refreshes an unedited enabled selection from the server instead of creating a draft against a newer revision',async()=>{
+ const initial={...data,revision:'r1',models:[...data.models,{id:'model-2',adapted:true,listed:true,capability:'图片'}]},newer={...initial,revision:'r2',enabledModels:['model-2']},save=vi.fn();
+ render(<ConnectionModelsDialog connection={{id:'c',name:'Images'}} onClose={vi.fn()} onReadModels={async()=>initial} onSyncModels={async()=>newer} onSaveModels={save}/>);
+ await screen.findByRole('checkbox',{name:'gpt-image-2'});expect(screen.getByRole('button',{name:'保存设置'})).toHaveProperty('disabled',true);fireEvent.click(screen.getByRole('button',{name:'读取模型'}));
+ await waitFor(()=>expect(screen.getByRole('checkbox',{name:'model-2'})).toHaveProperty('checked',true));expect(screen.getByText('尚未修改')).toBeTruthy();expect(screen.getByRole('checkbox',{name:'gpt-image-2'})).toHaveProperty('checked',false);expect(screen.getByRole('button',{name:'保存设置'})).toHaveProperty('disabled',true);expect(save).not.toHaveBeenCalled();
+});
+it('preserves a dirty selection and its original version after discovery observes a concurrent settings change',async()=>{
+ const initial={...data,revision:'r1',models:[...data.models,...['model-2','model-3'].map(id=>({id,adapted:true,listed:true,capability:'图片'}))]},newer={...initial,revision:'r2',enabledModels:['model-2']},save=vi.fn(),keep=vi.fn();
+ render(<ConnectionModelsDialog connection={{id:'c',name:'Images'}} onClose={vi.fn()} onReadModels={async()=>initial} onSyncModels={async()=>newer} onSaveModels={save} onDraftChange={keep}/>);
+ fireEvent.click(await screen.findByRole('checkbox',{name:'gpt-image-2'}));fireEvent.click(screen.getByRole('checkbox',{name:'model-3'}));fireEvent.click(screen.getByRole('button',{name:'读取模型'}));
+ expect((await screen.findByRole('alert')).textContent).toContain('其他窗口');expect(screen.getByRole('checkbox',{name:'model-3'})).toHaveProperty('checked',true);expect(screen.getByRole('button',{name:'保存设置'})).toHaveProperty('disabled',true);fireEvent.click(screen.getByRole('button',{name:'保存设置'}));expect(save).not.toHaveBeenCalled();
+ fireEvent.click(screen.getByRole('button',{name:'取消'}));fireEvent.click(screen.getByRole('button',{name:'保留修改并关闭'}));expect(keep).toHaveBeenLastCalledWith({versionId:'v',revision:'r1',enabledModels:['model-3']});
+});
+it('keeps a real draft while discovery advances only the revision and saves against that unchanged server selection',async()=>{
+ const initial={...data,revision:'r1'},newer={...data,revision:'r2'},save=vi.fn().mockResolvedValue({...newer,enabledModels:[]});
+ render(<ConnectionModelsDialog connection={{id:'c',name:'Images'}} onClose={vi.fn()} onReadModels={async()=>initial} onSyncModels={async()=>newer} onSaveModels={save}/>);fireEvent.click(await screen.findByRole('checkbox',{name:'gpt-image-2'}));fireEvent.click(screen.getByRole('button',{name:'读取模型'}));await waitFor(()=>expect(screen.getByRole('button',{name:'保存设置'})).toHaveProperty('disabled',false));
+ expect(screen.getByRole('checkbox',{name:'gpt-image-2'})).toHaveProperty('checked',false);expect(screen.queryByRole('alert')).toBeNull();fireEvent.click(screen.getByRole('button',{name:'保存设置'}));await waitFor(()=>expect(save).toHaveBeenCalledExactlyOnceWith({connectionId:'c',versionId:'v',revision:'r2',enabledModels:[]}));
+});
+it('keeps the draft when a later server change rejects save and never retries with another baseline',async()=>{
+ const initial={...data,revision:'r1'},save=vi.fn().mockRejectedValue(Error('模型设置已被修改，请重新打开后保存。')),keep=vi.fn(),close=vi.fn();
+ render(<ConnectionModelsDialog connection={{id:'c',name:'Images'}} onClose={close} onReadModels={async()=>initial} onSaveModels={save} onDraftChange={keep}/>);fireEvent.click(await screen.findByRole('checkbox',{name:'gpt-image-2'}));fireEvent.click(screen.getByRole('button',{name:'保存设置'}));await screen.findByRole('alert');expect(save).toHaveBeenCalledExactlyOnceWith({connectionId:'c',versionId:'v',revision:'r1',enabledModels:[]});expect(close).not.toHaveBeenCalled();expect(screen.getByRole('checkbox',{name:'gpt-image-2'})).toHaveProperty('checked',false);
+ fireEvent.click(screen.getByRole('button',{name:'取消'}));fireEvent.click(screen.getByRole('button',{name:'保留修改并关闭'}));expect(keep).toHaveBeenLastCalledWith({versionId:'v',revision:'r1',enabledModels:[]});
+});
+it('does not transplant a draft when a discovery response belongs to another connection version',async()=>{
+ const initial={...data,revision:'r1'},keep=vi.fn(),save=vi.fn();render(<ConnectionModelsDialog connection={{id:'c',name:'Images'}} onClose={vi.fn()} onReadModels={async()=>initial} onSyncModels={async()=>({...data,versionId:'rotated',revision:'r2'})} onSaveModels={save} onDraftChange={keep}/>);
+ fireEvent.click(await screen.findByRole('checkbox',{name:'gpt-image-2'}));fireEvent.click(screen.getByRole('button',{name:'读取模型'}));expect((await screen.findByRole('alert')).textContent).toContain('连接版本已变化');expect(screen.getByRole('checkbox',{name:'gpt-image-2'})).toHaveProperty('checked',false);fireEvent.click(screen.getByRole('button',{name:'取消'}));fireEvent.click(screen.getByRole('button',{name:'保留修改并关闭'}));expect(keep).toHaveBeenLastCalledWith({versionId:'v',revision:'r1',enabledModels:[]});expect(save).not.toHaveBeenCalled();
 });
