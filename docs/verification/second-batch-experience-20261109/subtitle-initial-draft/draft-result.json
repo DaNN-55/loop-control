@@ -1,0 +1,71 @@
+{
+  "paidCalls": 0,
+  "ownerHttp": true,
+  "nativeProject": true,
+  "captions": [
+    {
+      "shotId": "shot-01",
+      "narration": "这是实际口播，不应该作为字幕显示。",
+      "contract": {
+        "version": "shot-captions/v1",
+        "enabled": true,
+        "contentMode": "independent",
+        "text": "这是独立字幕。",
+        "cues": [
+          {
+            "id": "initial-shot-01~0",
+            "text": "这是独立字幕。",
+            "startMs": 0,
+            "endMs": 2000
+          }
+        ],
+        "spatial": {
+          "version": "shot-caption-space/v2",
+          "anchor": "bottom-center",
+          "safeArea": "title-safe",
+          "aspectRatio": "9:16",
+          "insets": {
+            "top": 0.08,
+            "right": 0.08,
+            "bottom": 0.18,
+            "left": 0.08
+          },
+          "maxLines": 2,
+          "maxCharactersPerLine": 16
+        }
+      }
+    },
+    {
+      "shotId": "shot-02",
+      "narration": "这一镜保留口播文案，但不显示字幕。",
+      "contract": {
+        "version": "shot-captions/v1",
+        "enabled": false,
+        "contentMode": "follow_tts",
+        "text": "这一镜保留口播文案，但不显示字幕。",
+        "cues": [
+          {
+            "id": "initial-shot-02~0",
+            "text": "这一镜保留口播文案，但不显示字幕。",
+            "startMs": 0,
+            "endMs": 2000
+          }
+        ],
+        "spatial": {
+          "version": "shot-caption-space/v2",
+          "anchor": "bottom-center",
+          "safeArea": "title-safe",
+          "aspectRatio": "9:16",
+          "insets": {
+            "top": 0.08,
+            "right": 0.08,
+            "bottom": 0.18,
+            "left": 0.08
+          },
+          "maxLines": 2,
+          "maxCharactersPerLine": 16
+        }
+      }
+    }
+  ]
+}

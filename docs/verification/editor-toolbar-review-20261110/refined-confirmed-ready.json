@@ -1,0 +1,156 @@
+{
+  "url": "http://127.0.0.1:5187/__editor_review",
+  "episodeId": "3c3848ca-c8c6-403a-9e5b-de4041ce2862",
+  "workspaceId": "85158b2f-6fc3-4f67-8141-a7a6728de544",
+  "assetRoot": "/private/tmp/loop-153-QjH9Kq/account",
+  "projectPath": "episodes/3c3848ca-c8c6-403a-9e5b-de4041ce2862/production-workspace/versions/8a84cc702a7a1485e9917c78bfbdfa7e5b0bbbc08cfb3ecdcf6e2a1fd1aeb7f2.json",
+  "paidCalls": 0,
+  "revision": 6,
+  "nativeEditRevision": 3,
+  "sounds": [
+    {
+      "itemId": "workspace-sfx-091bb487-041c-45d4-a482-e179d1f5d7b1",
+      "kind": "sfx",
+      "gainDb": -6,
+      "duckDepthDb": 0,
+      "startSeconds": 0.2,
+      "durationSeconds": 0.6
+    }
+  ],
+  "calls": [
+    {
+      "command": "openWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "saveWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "saveWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "closeWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "openWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "saveWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "closeWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "openWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "saveWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "saveWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "saveWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "closeWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "openWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "saveWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "closeWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "openWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "openWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "saveWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "closeWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "openWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "openWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "openWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "openWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "saveWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "saveWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "closeWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "openWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "saveWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "openWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "openWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "saveWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "closeWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "openWorkspaceStudio",
+      "status": 200
+    }
+  ],
+  "saveBehavior": "保存后进入交付",
+  "duplicateAudioRemoved": true
+}

@@ -1,0 +1,74 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/WorkspaceUploadFeedback.test.tsx
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/local-app/WorkspaceUploadFeedback.test.tsx (5 tests | 2 failed) 150ms
+   × keeps unfinished details and retry after the toast expires, without a history entry 77ms
+     → expected <summary …(2)>…(1)</summary> to be null
+   ✓ focuses unfinished details from the toast and retains them after dismissal 33ms
+   × only lists unfinished files and removes recovery controls after success 4ms
+     → expected '上传记录成功 1 / 2重试未完成项bad.png失败文件内容无效。goo…' not to contain 'good.png'
+   ✓ disables retry while uploading and retains unfinished details 14ms
+   ✓ does not replay expired feedback when a panel reopens and cancels an older notice timer 21ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/WorkspaceUploadFeedback.test.tsx > keeps unfinished details and retry after the toast expires, without a history entry
+AssertionError: expected <summary …(2)>…(1)</summary> to be null
+
+- Expected: 
+null
+
++ Received: 
+<summary
+  aria-label="上传记录"
+  title="上传记录 · 待处理 1 项"
+>
+  <svg
+    aria-hidden="true"
+    class="lucide lucide-upload"
+    fill="none"
+    height="16"
+    stroke="currentColor"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="2"
+    viewBox="0 0 24 24"
+    width="16"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M12 3v12"
+    />
+    <path
+      d="m17 8-5-5-5 5"
+    />
+    <path
+      d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
+    />
+  </svg>
+</summary>
+
+ ❯ src/local-app/WorkspaceUploadFeedback.test.tsx:10:58
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/local-app/WorkspaceUploadFeedback.test.tsx > only lists unfinished files and removes recovery controls after success
+AssertionError: expected '上传记录成功 1 / 2重试未完成项bad.png失败文件内容无效。goo…' not to contain 'good.png'
+
+Expected: "good.png"
+Received: "上传记录成功 1 / 2重试未完成项bad.png失败文件内容无效。good.png成功"
+
+ ❯ src/local-app/WorkspaceUploadFeedback.test.tsx:22:67
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 3 passed (5)
+   Start at  13:34:48
+   Duration  1.53s (transform 98ms, setup 18ms, collect 586ms, tests 150ms, environment 374ms, prepare 102ms)
+

@@ -1,0 +1,1476 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/EmbeddedStudioHost.test.tsx src/local-app/ProductionWorkspacePanel.navigation.test.tsx src/local-app/ProductionWorkspacePanel.test.tsx
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control/.scratch/editor-toolbar-review-20261110/pending
+
+ ✓ src/local-app/EmbeddedStudioHost.test.tsx (13 tests) 371ms
+ ✓ src/local-app/ProductionWorkspacePanel.navigation.test.tsx (1 test) 89ms
+stderr | src/local-app/ProductionWorkspacePanel.test.tsx > accepts one unassigned MP3 in all three audio destinations and leaves adoption for the user
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/.scratch/editor-toolbar-review-20261110/pending/src/local-app/WorkspaceSpeechSample.tsx:18:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+stderr | src/local-app/ProductionWorkspacePanel.test.tsx > keeps one delivery form and its metadata, cover and issue drafts across workflow navigation
+In HTML, <button> cannot be a descendant of <button>.
+This will cause a hydration error.
+
+  ...
+    <Activity mode="visible">
+      <div hidden={false}>
+        <WorkspaceExportPanel workspace={{id:"w", ...}} pending={false} readOnly={false} command={function run} ...>
+          <section className="production...">
+            <header>
+            <p>
+            <div className="workspace-...">
+              <div>
+              <div className="workspace-...">
+                <details>
+                <WorkspaceDeliveryPanel workspace={{id:"w", ...}} pending={false} command={function run} ...>
+                  <section className="workspace-..." aria-label="交付包">
+                    <div>
+                    <div className="workspace-...">
+                      <div className="workspace-...">
+                        <span>
+                        <Button className="workspace-..." noTextPadding={true} size="sm" color="secondary" ...>
+                          <Button data-loading={undefined} data-color="secondary" data-icon-only={undefined} ...>
+                            <bound $7230ffa83bc0c2cf$var$DOMElement data-loading={undefined} data-color="secondary" ...>
+>                             <button
+>                               data-loading={undefined}
+>                               data-color="secondary"
+>                               data-icon-only={undefined}
+>                               className="group relative inline-flex h-max cursor-pointer items-center justify-center..."
+>                               style={undefined}
+>                               data-rac=""
+>                               type="button"
+>                               disabled={false}
+>                               form={undefined}
+>                               formAction={undefined}
+>                               formEncType={undefined}
+>                               formMethod={undefined}
+>                               formNoValidate={undefined}
+>                               formTarget={undefined}
+>                               name={undefined}
+>                               value={undefined}
+>                               onFocus={function}
+>                               onBlur={function}
+>                               onKeyDown={function onKeyDown}
+>                               onKeyUp={undefined}
+>                               tabIndex={0}
+>                               onClick={function onClick}
+>                               onMouseDown={function}
+>                               onMouseEnter={function}
+>                               onMouseLeave={function}
+>                               onMouseUp={function}
+>                               onTouchStart={function}
+>                               onTouchMove={function}
+>                               onTouchEnd={function}
+>                               onTouchCancel={function}
+>                               onDragStart={function}
+>                               data-react-aria-pressable={true}
+>                               aria-label="替换封面"
+>                               aria-describedby="_r_np_-hint"
+>                               aria-haspopup={undefined}
+>                               aria-expanded={undefined}
+>                               aria-controls={undefined}
+>                               aria-pressed={undefined}
+>                               aria-current={undefined}
+>                               aria-disabled={undefined}
+>                               id="react-aria-_r_nr_"
+>                               aria-labelledby={undefined}
+>                               slot={undefined}
+>                               data-disabled={undefined}
+>                               data-pressed={undefined}
+>                               data-hovered={undefined}
+>                               data-focused={undefined}
+>                               data-pending={undefined}
+>                               data-focus-visible={undefined}
+>                               ref={function}
+>                             >
+                                <span data-text={true} className="transition...">
+                                  <ImagePreview src="blob:cover" alt="交付封面预览">
+>                                   <button
+>                                     type="button"
+>                                     className="media-image-trigger"
+>                                     aria-label="放大交付封面预览"
+>                                     disabled={false}
+>                                     onClick={function onClick}
+>                                   >
+                        ...
+                      ...
+                    ...
+                ...
+
+<button> cannot contain a nested <button>.
+See this log for the ancestor stack trace.
+
+stderr | src/local-app/ProductionWorkspacePanel.test.tsx > keeps one delivery form and its metadata, cover and issue drafts across workflow navigation
+An update to ForwardRef(VolumeSliderRoot) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ❯ src/local-app/ProductionWorkspacePanel.test.tsx (37 tests | 3 failed) 2312ms
+   ✓ opens a single file picker and detects mixed media formats in one batch 227ms
+   ✓ shows a dismissible success toast from the actual shelf upload and retains the imported material 94ms
+   ✓ shows shelf validation failures in the same toast and can reopen their retained details 152ms
+   × shows both large image drop zones and removes an unused candidate without adopting it 170ms
+     → Unable to find an element with the text: 更多操作, which matches selector 'summary'. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"四步制作工作流"[39m
+      [33mclass[39m=[32m"production-workspace"[39m
+      [33mdata-compact-workflow[39m=[32m"true"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"production-workspace-title"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"production-workspace-heading"[39m
+        [36m>[39m
+          [36m<h2>[39m
+            [0m工程[0m
+          [36m</h2>[39m
+        [36m</div>[39m
+        [36m<nav[39m
+          [33maria-label[39m=[32m"四步制作步骤"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"脚本确认"[39m
+          [36m>[39m
+            [36m<span>[39m
+              [0m1[0m
+            [36m</span>[39m
+            [0m脚本确认[0m
+            [36m<small>[39m
+              [0m已确认[0m
+            [36m</small>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-current[39m=[32m"page"[39m
+            [33maria-label[39m=[32m"分镜台，当前查看"[39m
+          [36m>[39m
+            [36m<span>[39m
+              [0m2[0m
+            [36m</span>[39m
+            [0m分镜台[0m
+            [36m<small>[39m
+              [0m1 项待准备[0m
+            [36m</small>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"剪辑工作台"[39m
+          [36m>[39m
+            [36m<span>[39m
+              [0m3[0m
+            [36m</span>[39m
+            [0m剪辑工作台[0m
+            [36m<small>[39m
+              [0m待剪辑[0m
+            [36m</small>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"检查与交付"[39m
+          [36m>[39m
+            [36m<span>[39m
+              [0m4[0m
+            [36m</span>[39m
+            [0m检查与交付[0m
+            [36m<small>[39m
+              [0m待确认[0m
+            [36m</small>[39m
+          [36m</button>[39m
+        [36m</nav>[39m
+      [36m</header>[39m
+      [36m<fieldset[39m
+        [33mclass[39m=[32m"production-workspace-body"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mhidden[39m=[32m""[39m
+        [36m>[39m
+          [36m<section[39m
+            [33maria-label[39m=[32m"脚本确认"[39m
+            [33mclass[39m=[32m"production-workspace-section workspace-script workspace-script-compact"[39m
+          [36m>[39m
+            [36m<header>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"workspace-compact-heading"[39m
+              [36m>[39m
+                [36m<h3>[39m
+                  [0m主脚本[0m
+                [36m</h3>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"is-confirmed"[39m
+                  [33mrole[39m=[32m"status"[39m
+                [36m>[39m
+                  [0m已确认基准[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</header>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"workspace-script-layout"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"workspace-script-main"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33maria-label[39m=[32m"主脚本预览"[39m
+                  [33mclass[39m=[32m"workspace-script-preview"[39m
+                  [33mrole[39m=[32m"document"[39m
+                  [33mtabindex[39m=[32m"0"[39m
+                [36m>[39m
+                  [0m正在读取主脚本…[0m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33maria-label[39m=[32m"脚本字数"[39m
+                  [33mclass[39m=[32m"workspace-script-statistics"[39m
+                  [33mrole[39m=[32m"group"[39m
+                [36m>[39m
+                  [36m<span[39m
+                    [33mtitle[39m=[32m"完整脚本的 Unicode 字符数，包含空白、标点与格式。"[39m
+                  [36m>[39m
+                    [0m脚本字符 [0m
+                    [0m0[0m
+                  [36m</span>[39m
+                  [36m<span[39m
+                    [33mtitle[39m=[32m"仅统计正文中的文字和数字，未区分口播与说明。"[39m
+                  [36m>[39m
+                    [0m正文文字数[0m
+                    [0m [0m
+                    [0m0[0m
+                  [36m</span>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+              [36m<aside[39m
+                [33maria-label[39m=[32m"脚本基准"[39m
+                [33mclass[39m=[32m"workspace-script-basis"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"workspace-script-file"[39m
+                [36m>[39m
+                  [36m<input[39m
+                    [33maccept[39m=[32m".md,.txt,text/plain,text/markdown"[39m
+                    [33maria-label[39m=[32m"上传主脚本"[39m
+                    [33mdisabled[39m=[32m""[39m
+                    [33mhidden[39m=[32m""[39m
+                    [33mtype[39m=[32m"file"[39m
+                  [36m/>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"workspace-script-file-slot is-locked"[39m
+                  [36m>[39m
+                    [36m<svg[39m
+                      [33maria-hidden[39m=[32m"true"[39m
+                      [33mclass[39m=[32m"lucide lucide-file-text"[39m
+                      [33mfill[39m=[32m"none"[39m
+                      [33mheight[39m=[32m"20"[39m
+                      [33mstroke[39m=[32m"currentColor"[39m
+                      [33mstroke-linecap[39m=[32m"round"[39m
+                      [33mstroke-linejoin[39m=[32m"round"[39m
+                      [33mstroke-width[39m=[32m"2"[39m
+                      [33mviewBox[39m=[32m"0 0 24 24"[39m
+                      [33mwidth[39m=[32m"20"[39m
+                      [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                    [36m>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M14 2v5a1 1 0 0 0 1 1h5"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M10 9H8"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M16 13H8"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M16 17H8"[39m
+                      [36m/>[39m
+                    [36m</svg>[39m
+                    [36m<span>[39m
+                      [36m<strong>[39m
+                        [0m主脚本[0m
+                      [36m</strong>[39m
+                      [36m<small>[39m
+                    ...
+   × accepts one unassigned MP3 in all three audio destinations and leaves adoption for the user 253ms
+     → Unable to find an accessible element with the role "menuitemradio" and name "上传音频"
+
+Here are the accessible roles:
+
+  button:
+
+  Name "Dismiss":
+  [36m<button[39m
+    [33maria-label[39m=[32m"Dismiss"[39m
+    [33mid[39m=[32m"react-aria-_r_ab_"[39m
+    [33mstyle[39m=[32m"width: 1px; height: 1px;"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m/>[39m
+
+  Name "关闭音频来源":
+  [36m<button[39m
+    [33maria-label[39m=[32m"关闭音频来源"[39m
+    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-2.5 py-1.5 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 *:data-icon:size-4 *:data-icon:stroke-[2.25px] text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+    [33mdata-color[39m=[32m"tertiary"[39m
+    [33mdata-icon-only[39m=[32m"true"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mid[39m=[32m"react-aria-_r_ae_"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "刷新服务":
+  [36m<button[39m
+    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+    [33mdata-color[39m=[32m"tertiary"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mid[39m=[32m"react-aria-_r_ag_"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Dismiss":
+  [36m<button[39m
+    [33maria-label[39m=[32m"Dismiss"[39m
+    [33mid[39m=[32m"react-aria-_r_ai_"[39m
+    [33mstyle[39m=[32m"width: 1px; height: 1px;"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  dialog:
+
+  Name "音频来源":
+  [36m<section[39m
+    [33maria-label[39m=[32m"音频来源"[39m
+    [33mclass[39m=[32m"workspace-composer-settings"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mid[39m=[32m"react-aria-_r_9r_"[39m
+    [33mrole[39m=[32m"dialog"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  banner:
+
+  Name "":
+  [36m<header />[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "音频来源":
+  [36m<h3 />[39m
+
+  --------------------------------------------------
+  status:
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"workspace-audio-empty-sources"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  alert:
+
+  Name "":
+  [36m<p[39m
+    [33mrole[39m=[32m"alert"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div[39m
+    [33maria-hidden[39m=[32m"true"[39m
+  [36m>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"四步制作工作流"[39m
+      [33mclass[39m=[32m"production-workspace"[39m
+      [33mdata-compact-workflow[39m=[32m"true"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"production-workspace-title"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"production-workspace-heading"[39m
+        [36m>[39m
+          [36m<h2>[39m
+            [0m工程[0m
+          [36m</h2>[39m
+        [36m</div>[39m
+        [36m<nav[39m
+          [33maria-label[39m=[32m"四步制作步骤"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"脚本确认"[39m
+          [36m>[39m
+            [36m<span>[39m
+              [0m1[0m
+            [36m</span>[39m
+            [0m脚本确认[0m
+            [36m<small>[39m
+              [0m已确认[0m
+            [36m</small>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-current[39m=[32m"page"[39m
+            [33maria-label[39m=[32m"分镜台，当前查看"[39m
+          [36m>[39m
+            [36m<span>[39m
+              [0m2[0m
+            [36m</span>[39m
+            [0m分镜台[0m
+            [36m<small>[39m
+              [0m1 项待准备[0m
+            [36m</small>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"剪辑工作台"[39m
+          [36m>[39m
+            [36m<span>[39m
+              [0m3[0m
+            [36m</span>[39m
+            [0m剪辑工作台[0m
+            [36m<small>[39m
+              [0m待剪辑[0m
+            [36m</small>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"检查与交付"[39m
+          [36m>[39m
+            [36m<span>[39m
+              [0m4[0m
+            [36m</span>[39m
+            [0m检查与交付[0m
+            [36m<small>[39m
+              [0m待确认[0m
+            [36m</small>[39m
+          [36m</button>[39m
+        [36m</nav>[39m
+      [36m</header>[39m
+      [36m<fieldset[39m
+        [33mclass[39m=[32m"production-workspace-body"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mhidden[39m=[32m""[39m
+        [36m>[39m
+          [36m<section[39m
+            [33maria-label[39m=[32m"脚本确认"[39m
+            [33mclass[39m=[32m"production-workspace-section workspace-script workspace-script-compact"[39m
+          [36m>[39m
+            [36m<header>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"workspace-compact-heading"[39m
+              [36m>[39m
+                [36m<h3>[39m
+                  [0m主脚本[0m
+                [36m</h3>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"is-confirmed"[39m
+                  [33mrole[39m=[32m"status"[39m
+                [36m>[39m
+                  [0m已确认基准[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</header>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"workspace-script-layout"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"workspace-script-main"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33maria-label[39m=[32m"主脚本预览"[39m
+                  [33mclass[39m=[32m"workspace-script-preview"[39m
+                  [33mrole[39m=[32m"document"[39m
+                  [33mtabindex[39m=[32m"0"[39m
+                [36m>[39m
+                  [0m正在读取主脚本…[0m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33maria-label[39m=[32m"脚本字数"[39m
+                  [33mclass[39m=[32m"workspace-script-statistics"[39m
+                  [33mrole[39m=[32m"group"[39m
+                [36m>[39m
+                  [36m<span[39m
+                    [33mtitle[39m=[32m"完整脚本的 Unicode 字符数，包含空白、标点与格式。"[39m
+                  [36m>[39m
+                    [0m脚本字符 [0m
+                    [0m0[0m
+                  [36m</span>[39m
+                  [36m<span[39m
+                    [33mtitle[39m=[32m"仅统计正文中的文字和数字，未区分口播与说明。"[39m
+                  [36m>[39m
+                    [0m正文文字数[0m
+                    [0m [0m
+                    [0m0[0m
+                  [36m</span>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+              [36m<aside[39m
+                [33maria-label[39m=[32m"脚本基准"[39m
+                [33mclass[39m=[32m"workspace-script-basis"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"workspace-script-file"[39m
+                [36m>[39m
+                  [36m<input[39m
+                    [33maccept[39m=[32m".md,.txt,text/plain,text/markdown"[39m
+                    [33maria-label[39m=[32m"上传主脚本"[39m
+                    [33mdisabled[39m=[32m""[39m
+                    [33mhidden[39m=[32m""[39m
+                    [33mtype[39m=[32m"file"[39m
+                  [36m/>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"workspace-script-file-slot is-locked"[39m
+                  [36m>[39m
+                    [36m<svg[39m
+                      [33maria-hidden[39m=[32m"true"[39m
+                      [33mclass[39m=[32m"lucide lucide-file-text"[39m
+                      [33mfill[39m=[32m"none"[39m
+                      [33mheight[39m=[32m"20"[39m
+                      [33mstroke[39m=[32m"currentColor"[39m
+                      [33mstroke-linecap[39m=[32m"round"[39m
+                      [33mstroke-linejoin[39m=[32m"round"[39m
+                      [33mstroke-width[39m=[32m"2"[39m
+                      [33mviewBox[39m=[32m"0 0 24 24"[39m
+                      [33mwidth[39m=[32m"20"[39m
+                      [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                    [36m>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M14 2v5a1 1 0 0 0 1 1h5"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M10 9H8"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M16 13H8"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M16 17H8"[39m
+                      [36m/>[39m
+                    [36m</svg>[39m
+                    [36m<span>[39m
+                      [36m<strong>[39m
+                        [0m主脚本[0m
+                      [36m</strong>[39m
+    ...
+   ✓ four-step navigation reads durable state and does not submit approvals or generation 30ms
+   ✓ automatically prepares the persisted storyboard draft 13ms
+   ✓ shows the four-step shell on a new episode without mounting old workflow actions 8ms
+   ✓ keeps an unsaved script draft while navigating read-only steps 12ms
+   ✓ requires an explicit recovery choice before replacing a legacy working edit 23ms
+   ✓ shows only analysis progress during preparation and retries the same local action on failure 25ms
+   ✓ keeps the workspace visible if an older backend returns a planning receipt 11ms
+   ✓ preserves image and video prompt drafts when switching the unified tabs 91ms
+   ✓ disables workspace write forms on a completed order even when legacy content remains inspectable 47ms
+   × keeps another shot’s video generation draft when adopting an image advances the project 98ms
+     → Unable to find an element with the text: 更多操作, which matches selector 'summary'. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"四步制作工作流"[39m
+      [33mclass[39m=[32m"production-workspace"[39m
+      [33mdata-compact-workflow[39m=[32m"true"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"production-workspace-title"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"production-workspace-heading"[39m
+        [36m>[39m
+          [36m<h2>[39m
+            [0m工程[0m
+          [36m</h2>[39m
+        [36m</div>[39m
+        [36m<nav[39m
+          [33maria-label[39m=[32m"四步制作步骤"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"脚本确认"[39m
+          [36m>[39m
+            [36m<span>[39m
+              [0m1[0m
+            [36m</span>[39m
+            [0m脚本确认[0m
+            [36m<small>[39m
+              [0m已确认[0m
+            [36m</small>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-current[39m=[32m"page"[39m
+            [33maria-label[39m=[32m"分镜台，当前查看"[39m
+          [36m>[39m
+            [36m<span>[39m
+              [0m2[0m
+            [36m</span>[39m
+            [0m分镜台[0m
+            [36m<small>[39m
+              [0m2 项待准备[0m
+            [36m</small>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"剪辑工作台"[39m
+          [36m>[39m
+            [36m<span>[39m
+              [0m3[0m
+            [36m</span>[39m
+            [0m剪辑工作台[0m
+            [36m<small>[39m
+              [0m待剪辑[0m
+            [36m</small>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"检查与交付"[39m
+          [36m>[39m
+            [36m<span>[39m
+              [0m4[0m
+            [36m</span>[39m
+            [0m检查与交付[0m
+            [36m<small>[39m
+              [0m待确认[0m
+            [36m</small>[39m
+          [36m</button>[39m
+        [36m</nav>[39m
+      [36m</header>[39m
+      [36m<fieldset[39m
+        [33mclass[39m=[32m"production-workspace-body"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mhidden[39m=[32m""[39m
+        [36m>[39m
+          [36m<section[39m
+            [33maria-label[39m=[32m"脚本确认"[39m
+            [33mclass[39m=[32m"production-workspace-section workspace-script workspace-script-compact"[39m
+          [36m>[39m
+            [36m<header>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"workspace-compact-heading"[39m
+              [36m>[39m
+                [36m<h3>[39m
+                  [0m主脚本[0m
+                [36m</h3>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"is-confirmed"[39m
+                  [33mrole[39m=[32m"status"[39m
+                [36m>[39m
+                  [0m已确认基准[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</header>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"workspace-script-layout"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"workspace-script-main"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33maria-label[39m=[32m"主脚本预览"[39m
+                  [33mclass[39m=[32m"workspace-script-preview"[39m
+                  [33mrole[39m=[32m"document"[39m
+                  [33mtabindex[39m=[32m"0"[39m
+                [36m>[39m
+                  [0m正在读取主脚本…[0m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33maria-label[39m=[32m"脚本字数"[39m
+                  [33mclass[39m=[32m"workspace-script-statistics"[39m
+                  [33mrole[39m=[32m"group"[39m
+                [36m>[39m
+                  [36m<span[39m
+                    [33mtitle[39m=[32m"完整脚本的 Unicode 字符数，包含空白、标点与格式。"[39m
+                  [36m>[39m
+                    [0m脚本字符 [0m
+                    [0m0[0m
+                  [36m</span>[39m
+                  [36m<span[39m
+                    [33mtitle[39m=[32m"仅统计正文中的文字和数字，未区分口播与说明。"[39m
+                  [36m>[39m
+                    [0m正文文字数[0m
+                    [0m [0m
+                    [0m0[0m
+                  [36m</span>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+              [36m<aside[39m
+                [33maria-label[39m=[32m"脚本基准"[39m
+                [33mclass[39m=[32m"workspace-script-basis"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"workspace-script-file"[39m
+                [36m>[39m
+                  [36m<input[39m
+                    [33maccept[39m=[32m".md,.txt,text/plain,text/markdown"[39m
+                    [33maria-label[39m=[32m"上传主脚本"[39m
+                    [33mdisabled[39m=[32m""[39m
+                    [33mhidden[39m=[32m""[39m
+                    [33mtype[39m=[32m"file"[39m
+                  [36m/>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"workspace-script-file-slot is-locked"[39m
+                  [36m>[39m
+                    [36m<svg[39m
+                      [33maria-hidden[39m=[32m"true"[39m
+                      [33mclass[39m=[32m"lucide lucide-file-text"[39m
+                      [33mfill[39m=[32m"none"[39m
+                      [33mheight[39m=[32m"20"[39m
+                      [33mstroke[39m=[32m"currentColor"[39m
+                      [33mstroke-linecap[39m=[32m"round"[39m
+                      [33mstroke-linejoin[39m=[32m"round"[39m
+                      [33mstroke-width[39m=[32m"2"[39m
+                      [33mviewBox[39m=[32m"0 0 24 24"[39m
+                      [33mwidth[39m=[32m"20"[39m
+                      [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                    [36m>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M14 2v5a1 1 0 0 0 1 1h5"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M10 9H8"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M16 13H8"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M16 17H8"[39m
+                      [36m/>[39m
+                    [36m</svg>[39m
+                    [36m<span>[39m
+                      [36m<strong>[39m
+                        [0m主脚本[0m
+                      [36m</strong>[39m
+                      [36m<small>[39m
+                    ...
+   ✓ keeps one delivery form and its metadata, cover and issue drafts across workflow navigation 73ms
+   ✓ pauses delivery polling while its retained draft tree is hidden and resumes one interval on return 43ms
+   ✓ preserves an explicit script step while the initial workspace finishes loading 11ms
+   ✓ enters the existing native project directly from the editing step without rebuilding it 33ms
+   ✓ keeps project history out of the four-step interface without changing records 20ms
+   ✓ keeps a revised pending script on step one while preserving the stale saved project 7ms
+   ✓ reuses the saved script revision when continuing an existing workspace without a second reason 50ms
+   ✓ blocks entering the editor until every shot has an adopted readable visual 31ms
+   ✓ deletes only the selected material shot after confirmation and selects the remaining neighbor 152ms
+   ✓ keeps the selected shot and deletion dialog when the saved revision is stale 79ms
+   ✓ appends a shot after the final shot and selects it only after the saved result returns 56ms
+   ✓ retains an insert draft and the saved shot order when a structure update fails 38ms
+   ✓ saves row drag and keyboard sorting through the revisioned move command without changing selection 46ms
+   ✓ disables row actions and sorting on historical read-only orders while retaining shot selection 15ms
+   ✓ keeps the stale reason visible and explicitly resumes formatting-only revisions without recreating the project 14ms
+   ✓ returns from budget settings to the original preparation target without auto-opening an existing native edit 24ms
+   ✓ keeps AudioSkin playback enabled in a completed order while narration and music show read-only facts 39ms
+   ✓ saves optional sound intent only on request and restores the right text when switching shots 147ms
+   ✓ keeps revision editing unavailable until the actual script baseline has loaded 14ms
+   ✓ builds the storyboard automatically for a confirmed v2 script without showing the general importer 41ms
+   ✓ keeps preparation and its local draft available after Studio launch fails 77ms
+   ✓ keeps a visual upload failure in transient feedback and recovery instead of duplicating it as a workspace error 46ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/ProductionWorkspacePanel.test.tsx > shows both large image drop zones and removes an unused candidate without adopting it
+TestingLibraryElementError: Unable to find an element with the text: 更多操作, which matches selector 'summary'. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"四步制作工作流"[39m
+      [33mclass[39m=[32m"production-workspace"[39m
+      [33mdata-compact-workflow[39m=[32m"true"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"production-workspace-title"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"production-workspace-heading"[39m
+        [36m>[39m
+          [36m<h2>[39m
+            [0m工程[0m
+          [36m</h2>[39m
+        [36m</div>[39m
+        [36m<nav[39m
+          [33maria-label[39m=[32m"四步制作步骤"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"脚本确认"[39m
+          [36m>[39m
+            [36m<span>[39m
+              [0m1[0m
+            [36m</span>[39m
+            [0m脚本确认[0m
+            [36m<small>[39m
+              [0m已确认[0m
+            [36m</small>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-current[39m=[32m"page"[39m
+            [33maria-label[39m=[32m"分镜台，当前查看"[39m
+          [36m>[39m
+            [36m<span>[39m
+              [0m2[0m
+            [36m</span>[39m
+            [0m分镜台[0m
+            [36m<small>[39m
+              [0m1 项待准备[0m
+            [36m</small>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"剪辑工作台"[39m
+          [36m>[39m
+            [36m<span>[39m
+              [0m3[0m
+            [36m</span>[39m
+            [0m剪辑工作台[0m
+            [36m<small>[39m
+              [0m待剪辑[0m
+            [36m</small>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"检查与交付"[39m
+          [36m>[39m
+            [36m<span>[39m
+              [0m4[0m
+            [36m</span>[39m
+            [0m检查与交付[0m
+            [36m<small>[39m
+              [0m待确认[0m
+            [36m</small>[39m
+          [36m</button>[39m
+        [36m</nav>[39m
+      [36m</header>[39m
+      [36m<fieldset[39m
+        [33mclass[39m=[32m"production-workspace-body"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mhidden[39m=[32m""[39m
+        [36m>[39m
+          [36m<section[39m
+            [33maria-label[39m=[32m"脚本确认"[39m
+            [33mclass[39m=[32m"production-workspace-section workspace-script workspace-script-compact"[39m
+          [36m>[39m
+            [36m<header>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"workspace-compact-heading"[39m
+              [36m>[39m
+                [36m<h3>[39m
+                  [0m主脚本[0m
+                [36m</h3>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"is-confirmed"[39m
+                  [33mrole[39m=[32m"status"[39m
+                [36m>[39m
+                  [0m已确认基准[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</header>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"workspace-script-layout"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"workspace-script-main"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33maria-label[39m=[32m"主脚本预览"[39m
+                  [33mclass[39m=[32m"workspace-script-preview"[39m
+                  [33mrole[39m=[32m"document"[39m
+                  [33mtabindex[39m=[32m"0"[39m
+                [36m>[39m
+                  [0m正在读取主脚本…[0m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33maria-label[39m=[32m"脚本字数"[39m
+                  [33mclass[39m=[32m"workspace-script-statistics"[39m
+                  [33mrole[39m=[32m"group"[39m
+                [36m>[39m
+                  [36m<span[39m
+                    [33mtitle[39m=[32m"完整脚本的 Unicode 字符数，包含空白、标点与格式。"[39m
+                  [36m>[39m
+                    [0m脚本字符 [0m
+                    [0m0[0m
+                  [36m</span>[39m
+                  [36m<span[39m
+                    [33mtitle[39m=[32m"仅统计正文中的文字和数字，未区分口播与说明。"[39m
+                  [36m>[39m
+                    [0m正文文字数[0m
+                    [0m [0m
+                    [0m0[0m
+                  [36m</span>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+              [36m<aside[39m
+                [33maria-label[39m=[32m"脚本基准"[39m
+                [33mclass[39m=[32m"workspace-script-basis"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"workspace-script-file"[39m
+                [36m>[39m
+                  [36m<input[39m
+                    [33maccept[39m=[32m".md,.txt,text/plain,text/markdown"[39m
+                    [33maria-label[39m=[32m"上传主脚本"[39m
+                    [33mdisabled[39m=[32m""[39m
+                    [33mhidden[39m=[32m""[39m
+                    [33mtype[39m=[32m"file"[39m
+                  [36m/>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"workspace-script-file-slot is-locked"[39m
+                  [36m>[39m
+                    [36m<svg[39m
+                      [33maria-hidden[39m=[32m"true"[39m
+                      [33mclass[39m=[32m"lucide lucide-file-text"[39m
+                      [33mfill[39m=[32m"none"[39m
+                      [33mheight[39m=[32m"20"[39m
+                      [33mstroke[39m=[32m"currentColor"[39m
+                      [33mstroke-linecap[39m=[32m"round"[39m
+                      [33mstroke-linejoin[39m=[32m"round"[39m
+                      [33mstroke-width[39m=[32m"2"[39m
+                      [33mviewBox[39m=[32m"0 0 24 24"[39m
+                      [33mwidth[39m=[32m"20"[39m
+                      [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                    [36m>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M14 2v5a1 1 0 0 0 1 1h5"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M10 9H8"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M16 13H8"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M16 17H8"[39m
+                      [36m/>[39m
+                    [36m</svg>[39m
+                    [36m<span>[39m
+                      [36m<strong>[39m
+                        [0m主脚本[0m
+                      [36m</strong>[39m
+                      [36m<small>[39m
+                    ...
+ ❯ Object.getElementError ../../../node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ ../../../node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ ../../../node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ ../../../node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/local-app/ProductionWorkspacePanel.test.tsx:127:25
+    125|  await waitFor(()=>expect(screen.getByRole('button',{name:'预览图片候选 01'}…
+    126|  expect(screen.getByRole('button',{name:'预览图片候选 03'})).toBeTruthy();
+    127|  fireEvent.click(screen.getByText('更多操作',{selector:'summary'}));
+       |                         ^
+    128|  fireEvent.click(screen.getByRole('button',{name:'移除候选'}));
+    129|  await waitFor(()=>expect(command).toHaveBeenNthCalledWith(3,'rejectWo…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/local-app/ProductionWorkspacePanel.test.tsx > accepts one unassigned MP3 in all three audio destinations and leaves adoption for the user
+TestingLibraryElementError: Unable to find an accessible element with the role "menuitemradio" and name "上传音频"
+
+Here are the accessible roles:
+
+  button:
+
+  Name "Dismiss":
+  [36m<button[39m
+    [33maria-label[39m=[32m"Dismiss"[39m
+    [33mid[39m=[32m"react-aria-_r_ab_"[39m
+    [33mstyle[39m=[32m"width: 1px; height: 1px;"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m/>[39m
+
+  Name "关闭音频来源":
+  [36m<button[39m
+    [33maria-label[39m=[32m"关闭音频来源"[39m
+    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-2.5 py-1.5 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 *:data-icon:size-4 *:data-icon:stroke-[2.25px] text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+    [33mdata-color[39m=[32m"tertiary"[39m
+    [33mdata-icon-only[39m=[32m"true"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mid[39m=[32m"react-aria-_r_ae_"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "刷新服务":
+  [36m<button[39m
+    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+    [33mdata-color[39m=[32m"tertiary"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mid[39m=[32m"react-aria-_r_ag_"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Dismiss":
+  [36m<button[39m
+    [33maria-label[39m=[32m"Dismiss"[39m
+    [33mid[39m=[32m"react-aria-_r_ai_"[39m
+    [33mstyle[39m=[32m"width: 1px; height: 1px;"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  dialog:
+
+  Name "音频来源":
+  [36m<section[39m
+    [33maria-label[39m=[32m"音频来源"[39m
+    [33mclass[39m=[32m"workspace-composer-settings"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mid[39m=[32m"react-aria-_r_9r_"[39m
+    [33mrole[39m=[32m"dialog"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  banner:
+
+  Name "":
+  [36m<header />[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "音频来源":
+  [36m<h3 />[39m
+
+  --------------------------------------------------
+  status:
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"workspace-audio-empty-sources"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  alert:
+
+  Name "":
+  [36m<p[39m
+    [33mrole[39m=[32m"alert"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div[39m
+    [33maria-hidden[39m=[32m"true"[39m
+  [36m>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"四步制作工作流"[39m
+      [33mclass[39m=[32m"production-workspace"[39m
+      [33mdata-compact-workflow[39m=[32m"true"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"production-workspace-title"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"production-workspace-heading"[39m
+        [36m>[39m
+          [36m<h2>[39m
+            [0m工程[0m
+          [36m</h2>[39m
+        [36m</div>[39m
+        [36m<nav[39m
+          [33maria-label[39m=[32m"四步制作步骤"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"脚本确认"[39m
+          [36m>[39m
+            [36m<span>[39m
+              [0m1[0m
+            [36m</span>[39m
+            [0m脚本确认[0m
+            [36m<small>[39m
+              [0m已确认[0m
+            [36m</small>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-current[39m=[32m"page"[39m
+            [33maria-label[39m=[32m"分镜台，当前查看"[39m
+          [36m>[39m
+            [36m<span>[39m
+              [0m2[0m
+            [36m</span>[39m
+            [0m分镜台[0m
+            [36m<small>[39m
+              [0m1 项待准备[0m
+            [36m</small>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"剪辑工作台"[39m
+          [36m>[39m
+            [36m<span>[39m
+              [0m3[0m
+            [36m</span>[39m
+            [0m剪辑工作台[0m
+            [36m<small>[39m
+              [0m待剪辑[0m
+            [36m</small>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"检查与交付"[39m
+          [36m>[39m
+            [36m<span>[39m
+              [0m4[0m
+            [36m</span>[39m
+            [0m检查与交付[0m
+            [36m<small>[39m
+              [0m待确认[0m
+            [36m</small>[39m
+          [36m</button>[39m
+        [36m</nav>[39m
+      [36m</header>[39m
+      [36m<fieldset[39m
+        [33mclass[39m=[32m"production-workspace-body"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mhidden[39m=[32m""[39m
+        [36m>[39m
+          [36m<section[39m
+            [33maria-label[39m=[32m"脚本确认"[39m
+            [33mclass[39m=[32m"production-workspace-section workspace-script workspace-script-compact"[39m
+          [36m>[39m
+            [36m<header>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"workspace-compact-heading"[39m
+              [36m>[39m
+                [36m<h3>[39m
+                  [0m主脚本[0m
+                [36m</h3>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"is-confirmed"[39m
+                  [33mrole[39m=[32m"status"[39m
+                [36m>[39m
+                  [0m已确认基准[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</header>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"workspace-script-layout"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"workspace-script-main"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33maria-label[39m=[32m"主脚本预览"[39m
+                  [33mclass[39m=[32m"workspace-script-preview"[39m
+                  [33mrole[39m=[32m"document"[39m
+                  [33mtabindex[39m=[32m"0"[39m
+                [36m>[39m
+                  [0m正在读取主脚本…[0m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33maria-label[39m=[32m"脚本字数"[39m
+                  [33mclass[39m=[32m"workspace-script-statistics"[39m
+                  [33mrole[39m=[32m"group"[39m
+                [36m>[39m
+                  [36m<span[39m
+                    [33mtitle[39m=[32m"完整脚本的 Unicode 字符数，包含空白、标点与格式。"[39m
+                  [36m>[39m
+                    [0m脚本字符 [0m
+                    [0m0[0m
+                  [36m</span>[39m
+                  [36m<span[39m
+                    [33mtitle[39m=[32m"仅统计正文中的文字和数字，未区分口播与说明。"[39m
+                  [36m>[39m
+                    [0m正文文字数[0m
+                    [0m [0m
+                    [0m0[0m
+                  [36m</span>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+              [36m<aside[39m
+                [33maria-label[39m=[32m"脚本基准"[39m
+                [33mclass[39m=[32m"workspace-script-basis"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"workspace-script-file"[39m
+                [36m>[39m
+                  [36m<input[39m
+                    [33maccept[39m=[32m".md,.txt,text/plain,text/markdown"[39m
+                    [33maria-label[39m=[32m"上传主脚本"[39m
+                    [33mdisabled[39m=[32m""[39m
+                    [33mhidden[39m=[32m""[39m
+                    [33mtype[39m=[32m"file"[39m
+                  [36m/>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"workspace-script-file-slot is-locked"[39m
+                  [36m>[39m
+                    [36m<svg[39m
+                      [33maria-hidden[39m=[32m"true"[39m
+                      [33mclass[39m=[32m"lucide lucide-file-text"[39m
+                      [33mfill[39m=[32m"none"[39m
+                      [33mheight[39m=[32m"20"[39m
+                      [33mstroke[39m=[32m"currentColor"[39m
+                      [33mstroke-linecap[39m=[32m"round"[39m
+                      [33mstroke-linejoin[39m=[32m"round"[39m
+                      [33mstroke-width[39m=[32m"2"[39m
+                      [33mviewBox[39m=[32m"0 0 24 24"[39m
+                      [33mwidth[39m=[32m"20"[39m
+                      [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                    [36m>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M14 2v5a1 1 0 0 0 1 1h5"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M10 9H8"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M16 13H8"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M16 17H8"[39m
+                      [36m/>[39m
+                    [36m</svg>[39m
+                    [36m<span>[39m
+                      [36m<strong>[39m
+                        [0m主脚本[0m
+                      [36m</strong>[39m
+    ...
+ ❯ Object.getElementError ../../../node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ ../../../node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ ../../../node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ ../../../node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/local-app/ProductionWorkspacePanel.test.tsx:182:83
+    180|  expect(screen.getByRole('button',{name:'加入候选'})).toBeTruthy();
+    181|  fireEvent.click(screen.getByRole('tab',{name:'配乐与声音'}));
+    182|  fireEvent.click(screen.getByRole('button',{name:'音频来源'}));fireEvent.c…
+       |                                                                                   ^
+    183|  dragMaterial(audio,screen.getByRole('button',{name:'拖入配乐'}));
+    184|  expect(screen.getByRole('button',{name:'拖入配乐，已选 unassigned.mp3'})).to…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/local-app/ProductionWorkspacePanel.test.tsx > keeps another shot’s video generation draft when adopting an image advances the project
+TestingLibraryElementError: Unable to find an element with the text: 更多操作, which matches selector 'summary'. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"四步制作工作流"[39m
+      [33mclass[39m=[32m"production-workspace"[39m
+      [33mdata-compact-workflow[39m=[32m"true"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"production-workspace-title"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"production-workspace-heading"[39m
+        [36m>[39m
+          [36m<h2>[39m
+            [0m工程[0m
+          [36m</h2>[39m
+        [36m</div>[39m
+        [36m<nav[39m
+          [33maria-label[39m=[32m"四步制作步骤"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"脚本确认"[39m
+          [36m>[39m
+            [36m<span>[39m
+              [0m1[0m
+            [36m</span>[39m
+            [0m脚本确认[0m
+            [36m<small>[39m
+              [0m已确认[0m
+            [36m</small>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-current[39m=[32m"page"[39m
+            [33maria-label[39m=[32m"分镜台，当前查看"[39m
+          [36m>[39m
+            [36m<span>[39m
+              [0m2[0m
+            [36m</span>[39m
+            [0m分镜台[0m
+            [36m<small>[39m
+              [0m2 项待准备[0m
+            [36m</small>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"剪辑工作台"[39m
+          [36m>[39m
+            [36m<span>[39m
+              [0m3[0m
+            [36m</span>[39m
+            [0m剪辑工作台[0m
+            [36m<small>[39m
+              [0m待剪辑[0m
+            [36m</small>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"检查与交付"[39m
+          [36m>[39m
+            [36m<span>[39m
+              [0m4[0m
+            [36m</span>[39m
+            [0m检查与交付[0m
+            [36m<small>[39m
+              [0m待确认[0m
+            [36m</small>[39m
+          [36m</button>[39m
+        [36m</nav>[39m
+      [36m</header>[39m
+      [36m<fieldset[39m
+        [33mclass[39m=[32m"production-workspace-body"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mhidden[39m=[32m""[39m
+        [36m>[39m
+          [36m<section[39m
+            [33maria-label[39m=[32m"脚本确认"[39m
+            [33mclass[39m=[32m"production-workspace-section workspace-script workspace-script-compact"[39m
+          [36m>[39m
+            [36m<header>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"workspace-compact-heading"[39m
+              [36m>[39m
+                [36m<h3>[39m
+                  [0m主脚本[0m
+                [36m</h3>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"is-confirmed"[39m
+                  [33mrole[39m=[32m"status"[39m
+                [36m>[39m
+                  [0m已确认基准[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</header>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"workspace-script-layout"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"workspace-script-main"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33maria-label[39m=[32m"主脚本预览"[39m
+                  [33mclass[39m=[32m"workspace-script-preview"[39m
+                  [33mrole[39m=[32m"document"[39m
+                  [33mtabindex[39m=[32m"0"[39m
+                [36m>[39m
+                  [0m正在读取主脚本…[0m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33maria-label[39m=[32m"脚本字数"[39m
+                  [33mclass[39m=[32m"workspace-script-statistics"[39m
+                  [33mrole[39m=[32m"group"[39m
+                [36m>[39m
+                  [36m<span[39m
+                    [33mtitle[39m=[32m"完整脚本的 Unicode 字符数，包含空白、标点与格式。"[39m
+                  [36m>[39m
+                    [0m脚本字符 [0m
+                    [0m0[0m
+                  [36m</span>[39m
+                  [36m<span[39m
+                    [33mtitle[39m=[32m"仅统计正文中的文字和数字，未区分口播与说明。"[39m
+                  [36m>[39m
+                    [0m正文文字数[0m
+                    [0m [0m
+                    [0m0[0m
+                  [36m</span>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+              [36m<aside[39m
+                [33maria-label[39m=[32m"脚本基准"[39m
+                [33mclass[39m=[32m"workspace-script-basis"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"workspace-script-file"[39m
+                [36m>[39m
+                  [36m<input[39m
+                    [33maccept[39m=[32m".md,.txt,text/plain,text/markdown"[39m
+                    [33maria-label[39m=[32m"上传主脚本"[39m
+                    [33mdisabled[39m=[32m""[39m
+                    [33mhidden[39m=[32m""[39m
+                    [33mtype[39m=[32m"file"[39m
+                  [36m/>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"workspace-script-file-slot is-locked"[39m
+                  [36m>[39m
+                    [36m<svg[39m
+                      [33maria-hidden[39m=[32m"true"[39m
+                      [33mclass[39m=[32m"lucide lucide-file-text"[39m
+                      [33mfill[39m=[32m"none"[39m
+                      [33mheight[39m=[32m"20"[39m
+                      [33mstroke[39m=[32m"currentColor"[39m
+                      [33mstroke-linecap[39m=[32m"round"[39m
+                      [33mstroke-linejoin[39m=[32m"round"[39m
+                      [33mstroke-width[39m=[32m"2"[39m
+                      [33mviewBox[39m=[32m"0 0 24 24"[39m
+                      [33mwidth[39m=[32m"20"[39m
+                      [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                    [36m>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M14 2v5a1 1 0 0 0 1 1h5"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M10 9H8"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M16 13H8"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M16 17H8"[39m
+                      [36m/>[39m
+                    [36m</svg>[39m
+                    [36m<span>[39m
+                      [36m<strong>[39m
+                        [0m主脚本[0m
+                      [36m</strong>[39m
+                      [36m<small>[39m
+                    ...
+ ❯ Object.getElementError ../../../node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ ../../../node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ ../../../node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ ../../../node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/local-app/ProductionWorkspacePanel.test.tsx:254:443
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  3 failed | 48 passed (51)
+   Start at  07:52:03
+   Duration  4.37s (transform 451ms, setup 21ms, collect 3.99s, tests 2.77s, environment 800ms, prepare 93ms)
+

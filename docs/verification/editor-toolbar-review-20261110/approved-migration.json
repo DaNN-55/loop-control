@@ -1,0 +1,13 @@
+{
+  "migrated": true,
+  "actualMainHttp200": true,
+  "mainServesApprovedToolbar": true,
+  "backendRestarted": false,
+  "pid": 78102,
+  "files": [
+    "src/local-app/EmbeddedStudioHost.tsx",
+    "src/local-app/embedded-studio.css",
+    "src/local-app/EmbeddedStudioHost.test.tsx",
+    "src/local-app/ProductionWorkspacePanel.tsx"
+  ]
+}

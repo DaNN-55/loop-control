@@ -1,0 +1,23 @@
+{
+  "revision": 3,
+  "sha": "a384d9c0f347dad3bfec6d20bfc7ec0447ec1a2b43724e477bc032deec1453e2",
+  "selectedImages": [],
+  "items": [
+    {
+      "shotId": "shot-01",
+      "id": "shot-shot-01-35b9363b-53d6-4669-9abd-09e0e0fafac4",
+      "kind": "image",
+      "start": 0,
+      "duration": 60,
+      "source": "episodes/e0151067-55d2-4de8-b9f9-f700fb68aca1/materials/77562be5060ce29816f794b07edd645caf03689ba287240ff4ededd7abdcee63-preview-image.png"
+    },
+    {
+      "shotId": "shot-02",
+      "id": "shot-shot-02-5c37a99a-5711-4a2a-8f56-6e5e230e82f7",
+      "kind": "video",
+      "start": 60,
+      "duration": 60,
+      "source": "episodes/e0151067-55d2-4de8-b9f9-f700fb68aca1/shot.mp4"
+    }
+  ]
+}

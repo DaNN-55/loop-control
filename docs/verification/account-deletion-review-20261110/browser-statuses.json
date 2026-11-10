@@ -1,0 +1,57 @@
+[
+  {
+    "body": {
+      "archivedEpisodeCount": 24,
+      "cleanupKey": null,
+      "creationCount": 0,
+      "deletionCount": 0,
+      "episodeCount": 25
+    },
+    "sample": "multi",
+    "status": 200
+  },
+  {
+    "body": {
+      "archivedEpisodeCount": 1,
+      "cleanupKey": null,
+      "creationCount": 0,
+      "deletionCount": 0,
+      "episodeCount": 1
+    },
+    "sample": "archived",
+    "status": 200
+  },
+  {
+    "body": {
+      "archivedEpisodeCount": 0,
+      "cleanupKey": null,
+      "creationCount": 0,
+      "deletionCount": 0,
+      "episodeCount": 0
+    },
+    "sample": "empty",
+    "status": 200
+  },
+  {
+    "body": {
+      "archivedEpisodeCount": 0,
+      "cleanupKey": "4a2085a0-8603-41ae-adc5-7b8cb79944c0",
+      "creationCount": 0,
+      "deletionCount": 1,
+      "episodeCount": 0
+    },
+    "sample": "cleanup",
+    "status": 200
+  },
+  {
+    "body": {
+      "archivedEpisodeCount": 0,
+      "cleanupKey": null,
+      "creationCount": 1,
+      "deletionCount": 0,
+      "episodeCount": 0
+    },
+    "sample": "creation",
+    "status": 200
+  }
+]

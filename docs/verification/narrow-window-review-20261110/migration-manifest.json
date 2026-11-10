@@ -1,0 +1,18 @@
+{
+  "migrate": false,
+  "sourceBaselineFiles": 1132,
+  "files": [
+    {
+      "path": "src/local-app/production-compact.css",
+      "mainBeforeSha256": "d2bc4858a9623283bd28a8614240f84583d622d5419e7c72cefd31bca31f358b",
+      "pendingSha256": "6273c207d156025a0fa42c6cc0115d033bf35ed9485427d39c8f243e20d27350"
+    }
+  ],
+  "excluded": [
+    "preview fixture",
+    "runner",
+    "cache",
+    "build outputs",
+    "temporary baseline server"
+  ]
+}

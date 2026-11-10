@@ -1,0 +1,231 @@
+{
+  "series": [
+    {
+      "id": "c77fab59-2262-4787-8370-777b9096cb18",
+      "account_id": "591fa805-ae89-453a-b33a-a89e73f2a913",
+      "name": "傍晚灯光"
+    },
+    {
+      "id": "2d0caebf-771c-4f2b-b876-675fe0fe1326",
+      "account_id": "591fa805-ae89-453a-b33a-a89e73f2a913",
+      "name": "街角故事"
+    },
+    {
+      "id": "75902473-4328-4882-974e-d0721bc78b94",
+      "account_id": "591fa805-ae89-453a-b33a-a89e73f2a913",
+      "name": "雨后街景"
+    },
+    {
+      "id": "57f424ba-7d36-42cf-bee7-9486cc9a5e37",
+      "account_id": "a1438fd7-9f56-4e19-8124-fbbab8a45ea7",
+      "name": "木工练习"
+    }
+  ],
+  "versions": [
+    {
+      "id": "5c329704-f351-4e5b-9ce4-2e3ec4ff8cad",
+      "account_id": "591fa805-ae89-453a-b33a-a89e73f2a913",
+      "series_id": "2d0caebf-771c-4f2b-b876-675fe0fe1326",
+      "version": 1,
+      "rules": {
+        "positioning": "街道与日常人物"
+      }
+    },
+    {
+      "id": "373c57ee-e9e1-4bf6-894e-34fd357e57ab",
+      "account_id": "591fa805-ae89-453a-b33a-a89e73f2a913",
+      "series_id": "2d0caebf-771c-4f2b-b876-675fe0fe1326",
+      "version": 2,
+      "rules": {
+        "positioning": "街道与日常人物",
+        "visual_style": "自然光"
+      }
+    },
+    {
+      "id": "97d3fb7e-41ad-48c9-9594-f8b6cd9bb618",
+      "account_id": "591fa805-ae89-453a-b33a-a89e73f2a913",
+      "series_id": "2d0caebf-771c-4f2b-b876-675fe0fe1326",
+      "version": 3,
+      "rules": {
+        "positioning": "街道、人物与城市微小变化",
+        "visual_style": "自然光"
+      }
+    },
+    {
+      "id": "cbdcbcd6-3bb7-4664-b3f9-e04ad29697b3",
+      "account_id": "a1438fd7-9f56-4e19-8124-fbbab8a45ea7",
+      "series_id": "57f424ba-7d36-42cf-bee7-9486cc9a5e37",
+      "version": 1,
+      "rules": {
+        "positioning": "木工练习记录"
+      }
+    },
+    {
+      "id": "3c7e1b47-5bd9-4a23-8aed-632d49aebc50",
+      "account_id": "591fa805-ae89-453a-b33a-a89e73f2a913",
+      "series_id": "75902473-4328-4882-974e-d0721bc78b94",
+      "version": 1,
+      "rules": {}
+    },
+    {
+      "id": "deb9d449-25a3-479f-9913-21ab64b495c7",
+      "account_id": "591fa805-ae89-453a-b33a-a89e73f2a913",
+      "series_id": "c77fab59-2262-4787-8370-777b9096cb18",
+      "version": 1,
+      "rules": {
+        "visual_style": "胶片颗粒"
+      }
+    }
+  ],
+  "episodes": [
+    {
+      "id": "967fb92f-e2d5-41ba-8a58-338961bb5812",
+      "account_id": "591fa805-ae89-453a-b33a-a89e73f2a913",
+      "title": "隔离 Studio153 验收",
+      "series_version_id": null
+    },
+    {
+      "id": "050ac11c-c189-4723-9241-f79097c3bea0",
+      "account_id": "a1438fd7-9f56-4e19-8124-fbbab8a45ea7",
+      "title": "上下文核对-手作",
+      "series_version_id": "cbdcbcd6-3bb7-4664-b3f9-e04ad29697b3"
+    },
+    {
+      "id": "76abcd7a-f07b-4c85-b6b8-34f3eb19aa26",
+      "account_id": "591fa805-ae89-453a-b33a-a89e73f2a913",
+      "title": "上下文核对-城市",
+      "series_version_id": "373c57ee-e9e1-4bf6-894e-34fd357e57ab"
+    }
+  ],
+  "calls": [
+    {
+      "command": "readSeriesDirectory",
+      "status": 200,
+      "data": {
+        "seriesId": "2d0caebf-771c-4f2b-b876-675fe0fe1326"
+      }
+    },
+    {
+      "command": "createSeries",
+      "status": 200,
+      "data": {
+        "accountId": "591fa805-ae89-453a-b33a-a89e73f2a913",
+        "name": "雨后街景",
+        "rules": {}
+      }
+    },
+    {
+      "command": "readSeriesDirectory",
+      "status": 200,
+      "data": {
+        "seriesId": "75902473-4328-4882-974e-d0721bc78b94"
+      }
+    },
+    {
+      "command": "create",
+      "status": 200,
+      "data": {
+        "accountId": "a1438fd7-9f56-4e19-8124-fbbab8a45ea7",
+        "isTest": false,
+        "seriesVersionId": "cbdcbcd6-3bb7-4664-b3f9-e04ad29697b3",
+        "title": "上下文核对-手作"
+      }
+    },
+    {
+      "command": "readSeriesDirectory",
+      "status": 200,
+      "data": {
+        "seriesId": "2d0caebf-771c-4f2b-b876-675fe0fe1326"
+      }
+    },
+    {
+      "command": "readSeriesDirectory",
+      "status": 200,
+      "data": {
+        "seriesId": "75902473-4328-4882-974e-d0721bc78b94"
+      }
+    },
+    {
+      "command": "create",
+      "status": 200,
+      "data": {
+        "accountId": "591fa805-ae89-453a-b33a-a89e73f2a913",
+        "isTest": false,
+        "seriesVersionId": "373c57ee-e9e1-4bf6-894e-34fd357e57ab",
+        "title": "上下文核对-城市"
+      }
+    },
+    {
+      "command": "readSeriesDirectory",
+      "status": 200,
+      "data": {
+        "seriesId": "2d0caebf-771c-4f2b-b876-675fe0fe1326"
+      }
+    },
+    {
+      "command": "createSeriesVersion",
+      "status": 200,
+      "data": {
+        "seriesId": "2d0caebf-771c-4f2b-b876-675fe0fe1326",
+        "rules": {
+          "positioning": "街道、人物与城市微小变化",
+          "visual_style": "自然光"
+        }
+      }
+    },
+    {
+      "command": "readSeriesDirectory",
+      "status": 200,
+      "data": {
+        "seriesId": "2d0caebf-771c-4f2b-b876-675fe0fe1326"
+      }
+    },
+    {
+      "command": "createSeries",
+      "status": 200,
+      "data": {
+        "accountId": "591fa805-ae89-453a-b33a-a89e73f2a913",
+        "name": "傍晚灯光",
+        "rules": {
+          "visual_style": "胶片颗粒"
+        }
+      }
+    },
+    {
+      "command": "readSeriesDirectory",
+      "status": 200,
+      "data": {
+        "seriesId": "c77fab59-2262-4787-8370-777b9096cb18"
+      }
+    },
+    {
+      "command": "readSeriesDirectory",
+      "status": 200,
+      "data": {
+        "seriesId": "57f424ba-7d36-42cf-bee7-9486cc9a5e37"
+      }
+    },
+    {
+      "command": "readSeriesDirectory",
+      "status": 200,
+      "data": {
+        "seriesId": "c77fab59-2262-4787-8370-777b9096cb18"
+      }
+    },
+    {
+      "command": "readSeriesDirectory",
+      "status": 200,
+      "data": {
+        "seriesId": "2d0caebf-771c-4f2b-b876-675fe0fe1326"
+      }
+    },
+    {
+      "command": "readSeriesDirectory",
+      "status": 200,
+      "data": {
+        "seriesId": "2d0caebf-771c-4f2b-b876-675fe0fe1326"
+      }
+    }
+  ],
+  "paidCalls": 0
+}

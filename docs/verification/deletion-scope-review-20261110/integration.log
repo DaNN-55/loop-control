@@ -1,0 +1,16 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control/.scratch/deletion-scope-review-20261110/pending
+
+ ✓ src/local-app/episodeDeletionRetainedSources.integration.test.ts (2 tests) 3303ms
+   ✓ only current registered files are confirmed; online deployment sources remain outside deletion authority  1915ms
+   ✓ only current registered files are confirmed; offline deployment sources remain outside deletion authority  1387ms
+ ✓ src/local-app/episodeDeletionStorage.integration.test.ts (15 tests | 12 skipped) 4002ms
+   ✓ Owner confirms actual collection files while unknown manual files remain byte-identical  1285ms
+   ✓ a retained manual document keeps its referenced owned bytes and unknown empty directory intact  1410ms
+   ✓ a safely rolled back confirmation releases its reservation for a newly reviewed inventory  1307ms
+
+ Test Files  2 passed (2)
+      Tests  5 passed | 12 skipped (17)
+   Start at  12:45:03
+   Duration  8.39s (transform 518ms, setup 10ms, collect 853ms, tests 7.30s, environment 0ms, prepare 55ms)
+

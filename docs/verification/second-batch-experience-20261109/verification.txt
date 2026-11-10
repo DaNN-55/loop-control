@@ -1,0 +1,82 @@
+loop-second-batch-unit-final3.log
+ ✓ scripts/runtime/keychain.test.mjs (4 tests) 4ms
+ ✓ src/local-app/configurationCommands.test.ts (1 test) 2ms
+ ✓ src/local-app/workerDatabase.test.ts (1 test) 2ms
+ ✓ scripts/storage/reference-integrity.test.mjs (10 tests) 4ms
+ ✓ scripts/runtime/secrets.test.mjs (1 test) 3ms
+ ✓ src/local-app/inputPreflight.test.ts (1 test) 2ms
+ ✓ src/orchestration/workerOutcome.test.ts (1 test) 1ms
+ ✓ src/local-app/runtimeStatus.test.ts (2 tests) 2ms
+
+ Test Files  258 passed (258)
+      Tests  1896 passed | 1 skipped (1897)
+   Start at  19:39:48
+   Duration  74.72s (transform 4.23s, setup 366ms, collect 83.54s, tests 217.79s, environment 35.21s, prepare 8.22s)
+
+
+loop-second-batch-regression.log
+   ✓ structured input reaches actual Owner registration, start and native subtitle preparation  1569ms
+   ✓ independent input reaches actual Owner registration, start and native subtitle preparation  1843ms
+   ✓ disabled input reaches actual Owner registration, start and native subtitle preparation  2546ms
+   ✓ local MP3 prepares without any external service and only explicit adoption changes native audio  1688ms
+   ✓ legacy a_roll and b_roll shots accept the same current video model through the Owner queue  4358ms
+ ✓ src/local-app/firstBatchAcceptance.integration.test.ts (2 tests) 20520ms
+   ✓ initial native subtitles export directly without an empty editor save and detect later visual gaps  18557ms
+   ✓ unknown speech exposes original reservation and cannot resubmit; catalog surfaces the failed current task  1963ms
+
+ Test Files  3 passed (3)
+      Tests  10 passed | 4 skipped (14)
+   Start at  19:32:08
+   Duration  21.44s (transform 566ms, setup 37ms, collect 2.16s, tests 44.03s, environment 0ms, prepare 110ms)
+
+
+loop-second-batch-browser2.log
+7:27:36 PM [vite] (client) hmr update /src/local-app/WorkspacePromptField.tsx
+
+stdout | src/local-app/secondBatchBrowser.integration.test.ts > second batch script, image and local audio flow through actual Owner HTTP
+7:28:23 PM [vite] (client) hmr update /src/local-app/WorkspacePromptField.tsx
+7:28:23 PM [vite] (client) hmr update /src/local-app/WorkspaceVisualPreparation.tsx
+
+ ✓ src/local-app/secondBatchBrowser.integration.test.ts (1 test) 437841ms
+   ✓ second batch script, image and local audio flow through actual Owner HTTP  437841ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  19:22:04
+   Duration  439.65s (transform 1.00s, setup 30ms, collect 1.49s, tests 437.84s, environment 0ms, prepare 57ms)
+
+
+loop-second-batch-build-release2.log
+dist/assets/el--xCo-qNd.js                 4.17 kB │ gzip:   1.52 kB
+dist/assets/bn-xIbqMZu5.js                 4.39 kB │ gzip:   1.38 kB
+dist/assets/hi-B8xcPIYR.js                 4.41 kB │ gzip:   1.40 kB
+dist/assets/th-BUZ0xAoY.js                 4.50 kB │ gzip:   1.36 kB
+dist/assets/mr-D0HYiV2l.js                 4.52 kB │ gzip:   1.38 kB
+dist/assets/ne-N8DqN1TM.js                 4.68 kB │ gzip:   1.37 kB
+dist/assets/te-BF9P08tJ.js                 5.19 kB │ gzip:   1.43 kB
+dist/assets/index-B5atyXjD.js          1,435.85 kB │ gzip: 438.35 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 2.39s
+
+loop-second-batch-types-final.log
+npm notice run loop-control@0.1.0 check
+npm notice run tsc -b --pretty false
+
+loop-second-batch-runtime-prepare.log
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+loop-second-batch-main-restore2.log
+npm notice run loop-control@0.1.0 stop
+npm notice run node scripts/stop.mjs
+本地服务已停止。
+{"restored":true,"backend":"ecf89c820994","port":5174,"frontendSnapshot":"/Users/dan/Programs/loop-control/.scratch/second-batch-review-20261109/main-before"}

@@ -1,0 +1,15 @@
+{
+  "runtime": "2b293cef289c",
+  "httpStatus": 200,
+  "paidCallsDuringFix": 0,
+  "record": {
+    "code": "VIDEO_REQUEST_NOT_SENT",
+    "reason": "MiniMax 参考图请求被本机旧版首帧校验拦截，未向供应商发送。请重新确认后生成。",
+    "status": "failed",
+    "taskId": "c6cc2b02-5f40-4c28-82af-75e4b8107d16",
+    "ledgerOutcome": "rejected",
+    "reservedCents": 240,
+    "supplierTaskId": null,
+    "diagnosisAuditCount": 1
+  }
+}

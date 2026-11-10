@@ -1,0 +1,19 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/LocalDeletionRecovery.test.tsx src/local-app/catalogNavigation.test.ts src/local-app/LocalCatalogApp.workspace.test.tsx src/local-app/LocalMaintenanceEmbedded.test.tsx src/sharedViews.test.tsx --maxWorkers=2
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control/.scratch/cleanup-recovery-review-20261110/pending
+
+ ✓ src/sharedViews.test.tsx (11 tests) 1077ms
+   ✓ approval console > 通过结构化表单编辑蓝图并保留高级创作规则  303ms
+ ✓ src/local-app/LocalMaintenanceEmbedded.test.tsx (2 tests) 175ms
+ ✓ src/local-app/LocalDeletionRecovery.test.tsx (5 tests) 172ms
+ ✓ src/local-app/catalogNavigation.test.ts (5 tests) 8ms
+ ✓ src/local-app/LocalCatalogApp.workspace.test.tsx (11 tests) 3294ms
+   ✓ 保留安全弹窗焦点，从所有者菜单打开连接配置且跨页保留连接草稿  620ms
+   ✓ keeps one topbar instance and places the Owner menu after theme in workspace and episode  541ms
+
+ Test Files  5 passed (5)
+      Tests  34 passed (34)
+   Start at  14:02:17
+   Duration  6.31s (transform 835ms, setup 22ms, collect 5.17s, tests 4.73s, environment 1.43s, prepare 169ms)
+

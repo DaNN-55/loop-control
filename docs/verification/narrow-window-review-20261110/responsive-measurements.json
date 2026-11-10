@@ -1,0 +1,586 @@
+[
+  {
+    "viewport": 1280,
+    "document": 1280,
+    "nav": [
+      {
+        "label": "1\n脚本确认\n已确认",
+        "rect": {
+          "x": 238,
+          "y": 110,
+          "width": 148,
+          "height": 44,
+          "top": 110,
+          "right": 386,
+          "bottom": 154,
+          "left": 238
+        }
+      },
+      {
+        "label": "2\n分镜台\n1 项待准备",
+        "rect": {
+          "x": 408,
+          "y": 110,
+          "width": 156.15625,
+          "height": 44,
+          "top": 110,
+          "right": 564.15625,
+          "bottom": 154,
+          "left": 408
+        }
+      },
+      {
+        "label": "3\n剪辑工作台\n可剪辑",
+        "rect": {
+          "x": 586.15625,
+          "y": 110,
+          "width": 161,
+          "height": 44,
+          "top": 110,
+          "right": 747.15625,
+          "bottom": 154,
+          "left": 586.15625
+        }
+      },
+      {
+        "label": "4\n检查与交付\n待确认",
+        "rect": {
+          "x": 769.15625,
+          "y": 110,
+          "width": 161,
+          "height": 44,
+          "top": 110,
+          "right": 930.15625,
+          "bottom": 154,
+          "left": 769.15625
+        }
+      }
+    ],
+    "table": {
+      "x": 239,
+      "y": 272.5,
+      "width": 414.09375,
+      "height": 626.6875,
+      "top": 272.5,
+      "right": 653.09375,
+      "bottom": 899.1875,
+      "left": 239
+    },
+    "action": {
+      "x": 612.09375,
+      "y": 327.9375,
+      "width": 30,
+      "height": 30,
+      "top": 327.9375,
+      "right": 642.09375,
+      "bottom": 357.9375,
+      "left": 612.09375
+    },
+    "add": {
+      "x": 239,
+      "y": 381.875,
+      "width": 414.09375,
+      "height": 34,
+      "top": 381.875,
+      "right": 653.09375,
+      "bottom": 415.875,
+      "left": 239
+    },
+    "status": [
+      {
+        "label": "5.0 s",
+        "nowrap": "normal",
+        "rect": {
+          "x": 413.09375,
+          "y": 305,
+          "width": 58,
+          "height": 76.375,
+          "top": 305,
+          "right": 471.09375,
+          "bottom": 381.375,
+          "left": 413.09375
+        }
+      },
+      {
+        "label": "待匹配",
+        "nowrap": "normal",
+        "rect": {
+          "x": 471.09375,
+          "y": 305,
+          "width": 65,
+          "height": 76.375,
+          "top": 305,
+          "right": 536.09375,
+          "bottom": 381.375,
+          "left": 471.09375
+        }
+      },
+      {
+        "label": "关闭",
+        "nowrap": "normal",
+        "rect": {
+          "x": 536.09375,
+          "y": 305,
+          "width": 65,
+          "height": 76.375,
+          "top": 305,
+          "right": 601.09375,
+          "bottom": 381.375,
+          "left": 536.09375
+        }
+      },
+      {
+        "label": "",
+        "nowrap": "normal",
+        "rect": {
+          "x": 601.09375,
+          "y": 305,
+          "width": 52,
+          "height": 76.375,
+          "top": 305,
+          "right": 653.09375,
+          "bottom": 381.375,
+          "left": 601.09375
+        }
+      }
+    ]
+  },
+  {
+    "viewport": 900,
+    "document": 900,
+    "nav": [
+      {
+        "label": "1\n脚本确认",
+        "rect": {
+          "x": 88,
+          "y": 110,
+          "width": 93,
+          "height": 44,
+          "top": 110,
+          "right": 181,
+          "bottom": 154,
+          "left": 88
+        }
+      },
+      {
+        "label": "2\n分镜台",
+        "rect": {
+          "x": 191,
+          "y": 110,
+          "width": 80,
+          "height": 44,
+          "top": 110,
+          "right": 271,
+          "bottom": 154,
+          "left": 191
+        }
+      },
+      {
+        "label": "3\n剪辑工作台",
+        "rect": {
+          "x": 281,
+          "y": 110,
+          "width": 106,
+          "height": 44,
+          "top": 110,
+          "right": 387,
+          "bottom": 154,
+          "left": 281
+        }
+      },
+      {
+        "label": "4\n检查与交付",
+        "rect": {
+          "x": 397,
+          "y": 110,
+          "width": 106,
+          "height": 44,
+          "top": 110,
+          "right": 503,
+          "bottom": 154,
+          "left": 397
+        }
+      }
+    ],
+    "table": {
+      "x": 89,
+      "y": 270.5,
+      "width": 786,
+      "height": 124.1875,
+      "top": 270.5,
+      "right": 875,
+      "bottom": 394.6875,
+      "left": 89
+    },
+    "action": {
+      "x": 834,
+      "y": 316.34375,
+      "width": 30,
+      "height": 30,
+      "top": 316.34375,
+      "right": 864,
+      "bottom": 346.34375,
+      "left": 834
+    },
+    "add": {
+      "x": 89,
+      "y": 360.6875,
+      "width": 786,
+      "height": 34,
+      "top": 360.6875,
+      "right": 875,
+      "bottom": 394.6875,
+      "left": 89
+    },
+    "status": [
+      {
+        "label": "5.0 s",
+        "nowrap": "nowrap",
+        "rect": {
+          "x": 663,
+          "y": 303,
+          "width": 50,
+          "height": 57.1875,
+          "top": 303,
+          "right": 713,
+          "bottom": 360.1875,
+          "left": 663
+        }
+      },
+      {
+        "label": "待匹配",
+        "nowrap": "nowrap",
+        "rect": {
+          "x": 713,
+          "y": 303,
+          "width": 55,
+          "height": 57.1875,
+          "top": 303,
+          "right": 768,
+          "bottom": 360.1875,
+          "left": 713
+        }
+      },
+      {
+        "label": "关闭",
+        "nowrap": "nowrap",
+        "rect": {
+          "x": 768,
+          "y": 303,
+          "width": 55,
+          "height": 57.1875,
+          "top": 303,
+          "right": 823,
+          "bottom": 360.1875,
+          "left": 768
+        }
+      },
+      {
+        "label": "",
+        "nowrap": "nowrap",
+        "rect": {
+          "x": 823,
+          "y": 303,
+          "width": 52,
+          "height": 57.1875,
+          "top": 303,
+          "right": 875,
+          "bottom": 360.1875,
+          "left": 823
+        }
+      }
+    ]
+  },
+  {
+    "viewport": 640,
+    "document": 640,
+    "nav": [
+      {
+        "label": "1\n脚本确认",
+        "rect": {
+          "x": 80,
+          "y": 110,
+          "width": 93,
+          "height": 44,
+          "top": 110,
+          "right": 173,
+          "bottom": 154,
+          "left": 80
+        }
+      },
+      {
+        "label": "2\n分镜台",
+        "rect": {
+          "x": 183,
+          "y": 110,
+          "width": 80,
+          "height": 44,
+          "top": 110,
+          "right": 263,
+          "bottom": 154,
+          "left": 183
+        }
+      },
+      {
+        "label": "3\n剪辑工作台",
+        "rect": {
+          "x": 273,
+          "y": 110,
+          "width": 106,
+          "height": 44,
+          "top": 110,
+          "right": 379,
+          "bottom": 154,
+          "left": 273
+        }
+      },
+      {
+        "label": "4\n检查与交付",
+        "rect": {
+          "x": 389,
+          "y": 110,
+          "width": 106,
+          "height": 44,
+          "top": 110,
+          "right": 495,
+          "bottom": 154,
+          "left": 389
+        }
+      }
+    ],
+    "table": {
+      "x": 81,
+      "y": 305,
+      "width": 542,
+      "height": 124.1875,
+      "top": 305,
+      "right": 623,
+      "bottom": 429.1875,
+      "left": 81
+    },
+    "action": {
+      "x": 582,
+      "y": 350.84375,
+      "width": 30,
+      "height": 30,
+      "top": 350.84375,
+      "right": 612,
+      "bottom": 380.84375,
+      "left": 582
+    },
+    "add": {
+      "x": 81,
+      "y": 395.1875,
+      "width": 542,
+      "height": 34,
+      "top": 395.1875,
+      "right": 623,
+      "bottom": 429.1875,
+      "left": 81
+    },
+    "status": [
+      {
+        "label": "5.0 s",
+        "nowrap": "nowrap",
+        "rect": {
+          "x": 411,
+          "y": 337.5,
+          "width": 50,
+          "height": 57.1875,
+          "top": 337.5,
+          "right": 461,
+          "bottom": 394.6875,
+          "left": 411
+        }
+      },
+      {
+        "label": "待匹配",
+        "nowrap": "nowrap",
+        "rect": {
+          "x": 461,
+          "y": 337.5,
+          "width": 55,
+          "height": 57.1875,
+          "top": 337.5,
+          "right": 516,
+          "bottom": 394.6875,
+          "left": 461
+        }
+      },
+      {
+        "label": "关闭",
+        "nowrap": "nowrap",
+        "rect": {
+          "x": 516,
+          "y": 337.5,
+          "width": 55,
+          "height": 57.1875,
+          "top": 337.5,
+          "right": 571,
+          "bottom": 394.6875,
+          "left": 516
+        }
+      },
+      {
+        "label": "",
+        "nowrap": "nowrap",
+        "rect": {
+          "x": 571,
+          "y": 337.5,
+          "width": 52,
+          "height": 57.1875,
+          "top": 337.5,
+          "right": 623,
+          "bottom": 394.6875,
+          "left": 571
+        }
+      }
+    ]
+  },
+  {
+    "viewport": 390,
+    "document": 390,
+    "nav": [
+      {
+        "label": "1\n脚本确认",
+        "rect": {
+          "x": 80,
+          "y": 116,
+          "width": 145,
+          "height": 44,
+          "top": 116,
+          "right": 225,
+          "bottom": 160,
+          "left": 80
+        }
+      },
+      {
+        "label": "2\n分镜台",
+        "rect": {
+          "x": 229,
+          "y": 116,
+          "width": 145,
+          "height": 44,
+          "top": 116,
+          "right": 374,
+          "bottom": 160,
+          "left": 229
+        }
+      },
+      {
+        "label": "3\n剪辑工作台",
+        "rect": {
+          "x": 80,
+          "y": 164,
+          "width": 145,
+          "height": 44,
+          "top": 164,
+          "right": 225,
+          "bottom": 208,
+          "left": 80
+        }
+      },
+      {
+        "label": "4\n检查与交付",
+        "rect": {
+          "x": 229,
+          "y": 164,
+          "width": 145,
+          "height": 44,
+          "top": 164,
+          "right": 374,
+          "bottom": 208,
+          "left": 229
+        }
+      }
+    ],
+    "table": {
+      "x": 81,
+      "y": 359,
+      "width": 292,
+      "height": 124.1875,
+      "top": 359,
+      "right": 373,
+      "bottom": 483.1875,
+      "left": 81
+    },
+    "action": {
+      "x": 332,
+      "y": 404.84375,
+      "width": 30,
+      "height": 30,
+      "top": 404.84375,
+      "right": 362,
+      "bottom": 434.84375,
+      "left": 332
+    },
+    "add": {
+      "x": 81,
+      "y": 449.1875,
+      "width": 292,
+      "height": 34,
+      "top": 449.1875,
+      "right": 373,
+      "bottom": 483.1875,
+      "left": 81
+    },
+    "status": [
+      {
+        "label": "5.0 s",
+        "nowrap": "nowrap",
+        "rect": {
+          "x": 459,
+          "y": 391.5,
+          "width": 50,
+          "height": 57.1875,
+          "top": 391.5,
+          "right": 509,
+          "bottom": 448.6875,
+          "left": 459
+        }
+      },
+      {
+        "label": "待匹配",
+        "nowrap": "nowrap",
+        "rect": {
+          "x": 509,
+          "y": 391.5,
+          "width": 55,
+          "height": 57.1875,
+          "top": 391.5,
+          "right": 564,
+          "bottom": 448.6875,
+          "left": 509
+        }
+      },
+      {
+        "label": "关闭",
+        "nowrap": "nowrap",
+        "rect": {
+          "x": 564,
+          "y": 391.5,
+          "width": 55,
+          "height": 57.1875,
+          "top": 391.5,
+          "right": 619,
+          "bottom": 448.6875,
+          "left": 564
+        }
+      },
+      {
+        "label": "",
+        "nowrap": "nowrap",
+        "rect": {
+          "x": 321,
+          "y": 391.5,
+          "width": 52,
+          "height": 57.1875,
+          "top": 391.5,
+          "right": 373,
+          "bottom": 448.6875,
+          "left": 321
+        }
+      }
+    ]
+  }
+]

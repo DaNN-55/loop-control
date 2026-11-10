@@ -1,0 +1,55 @@
+[
+  {
+    "command": "prepareWorkspaceVisualCandidate",
+    "data": {
+      "episodeId": "e0151067-55d2-4de8-b9f9-f700fb68aca1",
+      "workspaceId": "b852714a-cb3b-4e99-8eda-9fce5708ab24",
+      "expectedRevision": 2,
+      "candidateId": "cbb1f0b3-d116-4828-b8ae-de591443afae",
+      "durationPolicy": "keep-target",
+      "acceptTimelineImpact": false,
+      "motionPolicy": "preserve-target"
+    }
+  },
+  {
+    "command": "adoptWorkspaceVisualCandidate",
+    "data": {
+      "episodeId": "e0151067-55d2-4de8-b9f9-f700fb68aca1",
+      "workspaceId": "b852714a-cb3b-4e99-8eda-9fce5708ab24",
+      "expectedRevision": 2,
+      "candidateId": "cbb1f0b3-d116-4828-b8ae-de591443afae",
+      "adoptionId": "80176c5c-08de-4340-b354-7d0fddff9f68"
+    }
+  },
+  {
+    "command": "retainWorkspaceImageCandidate",
+    "data": {
+      "episodeId": "e0151067-55d2-4de8-b9f9-f700fb68aca1",
+      "workspaceId": "b852714a-cb3b-4e99-8eda-9fce5708ab24",
+      "expectedRevision": 3,
+      "candidateId": "2d6a2984-2cde-41c4-a324-66d86d4e53f8"
+    }
+  },
+  {
+    "command": "clearWorkspaceVisualCandidate",
+    "data": {
+      "episodeId": "e0151067-55d2-4de8-b9f9-f700fb68aca1",
+      "workspaceId": "b852714a-cb3b-4e99-8eda-9fce5708ab24",
+      "expectedRevision": 3,
+      "targetItemId": "shot-shot-02-5c37a99a-5711-4a2a-8f56-6e5e230e82f7",
+      "candidateId": "2d6a2984-2cde-41c4-a324-66d86d4e53f8"
+    }
+  },
+  {
+    "command": "clearWorkspaceVisualCandidate",
+    "data": {
+      "episodeId": "e0151067-55d2-4de8-b9f9-f700fb68aca1",
+      "workspaceId": "b852714a-cb3b-4e99-8eda-9fce5708ab24",
+      "expectedRevision": 3,
+      "targetItemId": "shot-shot-01-35b9363b-53d6-4669-9abd-09e0e0fafac4",
+      "candidateId": "cbb1f0b3-d116-4828-b8ae-de591443afae",
+      "sourcePath": "episodes/e0151067-55d2-4de8-b9f9-f700fb68aca1/materials/77562be5060ce29816f794b07edd645caf03689ba287240ff4ededd7abdcee63-preview-image.png",
+      "sourceSha256": "77562be5060ce29816f794b07edd645caf03689ba287240ff4ededd7abdcee63"
+    }
+  }
+]

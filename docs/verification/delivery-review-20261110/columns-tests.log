@@ -1,0 +1,36 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/WorkspaceExportPanel.test.tsx
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control/.scratch/delivery-review-20261110/pending
+
+stderr | src/local-app/WorkspaceExportPanel.test.tsx > groups issues below checks and secondary file details with export history
+An update to ForwardRef(VolumeSliderRoot) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/local-app/WorkspaceExportPanel.test.tsx > requires a new export after content changes even when an old confirmation remains in history
+An update to ForwardRef(VolumeSliderRoot) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/local-app/WorkspaceExportPanel.test.tsx (6 tests) 137ms
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  08:36:57
+   Duration  1.54s (transform 91ms, setup 9ms, collect 941ms, tests 137ms, environment 303ms, prepare 42ms)
+

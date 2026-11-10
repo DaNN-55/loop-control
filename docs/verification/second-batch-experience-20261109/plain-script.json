@@ -1,0 +1,1 @@
+{"input":"雨停了。\n\n街角亮着灯。","canonical":"# 主脚本\n\n## 正文\n\n雨停了。\n\n街角亮着灯。\n","shots":[{"shotId":"shot-01","text":"雨停了。"},{"shotId":"shot-02","text":"街角亮着灯。"}],"subtitles":["雨停了。","街角亮着灯。"]}

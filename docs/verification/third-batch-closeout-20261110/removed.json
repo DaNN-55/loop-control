@@ -1,0 +1,19 @@
+{
+  "removedTaskDirectories": [
+    "/Users/dan/Programs/loop-control/.scratch/editor-toolbar-review-20261110",
+    "/Users/dan/Programs/loop-control/.scratch/delivery-review-20261110",
+    "/Users/dan/Programs/loop-control/.scratch/series-context-review-20261110",
+    "/Users/dan/Programs/loop-control/.scratch/current-flow-cleanup-20261110",
+    "/Users/dan/Programs/loop-control/.scratch/narrow-window-review-20261110"
+  ],
+  "sourceFilesRemoved": 9648,
+  "sourceAllocatedBytes": 233377792,
+  "looseDumpBytesRemoved": 14235369,
+  "sourceArchiveEntries": 10153,
+  "mediaArchiveEntries": 528,
+  "sourceArchiveVerified": true,
+  "mediaArchiveRestoredAndChecked": true,
+  "originalMediaSnapshotUnchangedVerified": false,
+  "sqliteDatabasesChecked": 2,
+  "videosProbed": 11
+}

@@ -1,0 +1,114 @@
+[
+  {
+    "command": "prepareWorkspaceVisualCandidate",
+    "data": {
+      "episodeId": "c2f5c357-01b3-40e2-8596-df271bf48e25",
+      "workspaceId": "1f6aae1e-1305-4329-9bc1-e6229537d800",
+      "expectedRevision": 2,
+      "candidateId": "8a406c55-7160-4834-8340-949cb31cd884",
+      "durationPolicy": "keep-target",
+      "acceptTimelineImpact": false,
+      "motionPolicy": "preserve-target"
+    }
+  },
+  {
+    "command": "prepareWorkspaceVisualCandidate",
+    "data": {
+      "episodeId": "c2f5c357-01b3-40e2-8596-df271bf48e25",
+      "workspaceId": "1f6aae1e-1305-4329-9bc1-e6229537d800",
+      "expectedRevision": 2,
+      "candidateId": "8a406c55-7160-4834-8340-949cb31cd884",
+      "durationPolicy": "keep-target",
+      "acceptTimelineImpact": false,
+      "motionPolicy": "preserve-target"
+    }
+  },
+  {
+    "command": "adoptWorkspaceVisualCandidate",
+    "data": {
+      "episodeId": "c2f5c357-01b3-40e2-8596-df271bf48e25",
+      "workspaceId": "1f6aae1e-1305-4329-9bc1-e6229537d800",
+      "expectedRevision": 2,
+      "candidateId": "8a406c55-7160-4834-8340-949cb31cd884",
+      "adoptionId": "4dc4edde-fd0a-4871-9aba-93641ff20b07"
+    }
+  },
+  {
+    "command": "clearWorkspaceVisualCandidate",
+    "data": {
+      "episodeId": "c2f5c357-01b3-40e2-8596-df271bf48e25",
+      "workspaceId": "1f6aae1e-1305-4329-9bc1-e6229537d800",
+      "expectedRevision": 3,
+      "targetItemId": "shot-shot-01-4c47e480-4a5d-4a49-9626-51dad7d4cad7",
+      "candidateId": "8a406c55-7160-4834-8340-949cb31cd884",
+      "sourcePath": "episodes/c2f5c357-01b3-40e2-8596-df271bf48e25/materials/77562be5060ce29816f794b07edd645caf03689ba287240ff4ededd7abdcee63-preview-image.png",
+      "sourceSha256": "77562be5060ce29816f794b07edd645caf03689ba287240ff4ededd7abdcee63"
+    }
+  },
+  {
+    "command": "prepareWorkspaceVisualCandidate",
+    "data": {
+      "episodeId": "c2f5c357-01b3-40e2-8596-df271bf48e25",
+      "workspaceId": "1f6aae1e-1305-4329-9bc1-e6229537d800",
+      "expectedRevision": 4,
+      "candidateId": "94fa34ed-ac51-449e-adea-e8150d75d446",
+      "durationPolicy": "keep-target",
+      "acceptTimelineImpact": false,
+      "motionPolicy": "preserve-target"
+    }
+  },
+  {
+    "command": "adoptWorkspaceVisualCandidate",
+    "data": {
+      "episodeId": "c2f5c357-01b3-40e2-8596-df271bf48e25",
+      "workspaceId": "1f6aae1e-1305-4329-9bc1-e6229537d800",
+      "expectedRevision": 4,
+      "candidateId": "94fa34ed-ac51-449e-adea-e8150d75d446",
+      "adoptionId": "915f01d3-5f99-49b5-bf87-2e4d3005d0e8"
+    }
+  },
+  {
+    "command": "clearWorkspaceVisualCandidate",
+    "data": {
+      "episodeId": "c2f5c357-01b3-40e2-8596-df271bf48e25",
+      "workspaceId": "1f6aae1e-1305-4329-9bc1-e6229537d800",
+      "expectedRevision": 5,
+      "targetItemId": "shot-shot-01-4c47e480-4a5d-4a49-9626-51dad7d4cad7",
+      "candidateId": "94fa34ed-ac51-449e-adea-e8150d75d446",
+      "sourcePath": "episodes/c2f5c357-01b3-40e2-8596-df271bf48e25/shot.mp4",
+      "sourceSha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da"
+    }
+  },
+  {
+    "command": "retainWorkspaceImageCandidate",
+    "data": {
+      "episodeId": "c2f5c357-01b3-40e2-8596-df271bf48e25",
+      "workspaceId": "1f6aae1e-1305-4329-9bc1-e6229537d800",
+      "expectedRevision": 6,
+      "candidateId": "69ea6ee0-70a8-4310-80e9-d262a722fa03"
+    }
+  },
+  {
+    "command": "clearWorkspaceVisualCandidate",
+    "data": {
+      "episodeId": "c2f5c357-01b3-40e2-8596-df271bf48e25",
+      "workspaceId": "1f6aae1e-1305-4329-9bc1-e6229537d800",
+      "expectedRevision": 6,
+      "targetItemId": "shot-shot-02-486f9c05-9598-42f3-93a3-5220dff1c95d",
+      "candidateId": "69ea6ee0-70a8-4310-80e9-d262a722fa03"
+    }
+  },
+  {
+    "command": "prepareWorkspaceVisualCandidate",
+    "data": {
+      "episodeId": "c2f5c357-01b3-40e2-8596-df271bf48e25",
+      "workspaceId": "1f6aae1e-1305-4329-9bc1-e6229537d800",
+      "expectedRevision": 6,
+      "candidateId": "69ea6ee0-70a8-4310-80e9-d262a722fa03",
+      "durationPolicy": "keep-target",
+      "acceptTimelineImpact": false,
+      "motionPolicy": "preserve-target",
+      "replaceCurrentVisual": true
+    }
+  }
+]

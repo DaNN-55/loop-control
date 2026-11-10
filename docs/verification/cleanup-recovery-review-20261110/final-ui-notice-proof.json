@@ -1,0 +1,174 @@
+{
+  "noticeGeneratedByActualDeletion": true,
+  "concreteErrorStored": true,
+  "targetAndErrorRestoredAfterRefresh": true,
+  "onlyTargetRetried": true,
+  "manualFilePreserved": true,
+  "calls": [
+    {
+      "command": "archiveEpisode",
+      "data": {
+        "episodeId": "f0769e4e-2cf5-40ee-bd87-a3a1f3447ad8",
+        "archived": true
+      },
+      "status": 200,
+      "result": {
+        "id": "f0769e4e-2cf5-40ee-bd87-a3a1f3447ad8",
+        "stage": "waiting_input",
+        "title": "清理未完成提示核对",
+        "is_test": false,
+        "tts_voice": null,
+        "account_id": "f756547e-ba8c-48e1-865d-42de9b1313ed",
+        "created_at": "2026-11-10T05:44:18.888812+00:00",
+        "updated_at": "2026-11-10T05:47:47.642499+00:00",
+        "archived_at": "2026-11-10T05:47:47.642499+00:00",
+        "script_source": "provided",
+        "audio_source_mode": "tts",
+        "series_version_id": null,
+        "tts_language_code": null,
+        "tts_speaking_rate": null,
+        "worker_preflight_at": null,
+        "blueprint_version_id": "f756547e-ba8c-48e1-865d-42de9b1313ed",
+        "main_script_revision_id": null
+      }
+    },
+    {
+      "command": "planDeletion",
+      "data": {
+        "episodeId": "f0769e4e-2cf5-40ee-bd87-a3a1f3447ad8"
+      },
+      "status": 200,
+      "result": {
+        "episodeId": "f0769e4e-2cf5-40ee-bd87-a3a1f3447ad8",
+        "title": "清理未完成提示核对",
+        "path": "/private/tmp/loop-153-HRWLiJ/account/未分系列--9ab960b9-c3e9-4a33-9874-217240046742/清理未完成提示核对--f0769e4e-2cf5-40ee-bd87-a3a1f3447ad8",
+        "stagingPath": "/private/tmp/loop-153-HRWLiJ/account/未分系列--9ab960b9-c3e9-4a33-9874-217240046742/清理未完成提示核对--f0769e4e-2cf5-40ee-bd87-a3a1f3447ad8",
+        "paths": [
+          "/private/tmp/loop-153-HRWLiJ/account/未分系列--9ab960b9-c3e9-4a33-9874-217240046742/清理未完成提示核对--f0769e4e-2cf5-40ee-bd87-a3a1f3447ad8"
+        ],
+        "stagingPaths": [
+          "/private/tmp/loop-153-HRWLiJ/account/未分系列--9ab960b9-c3e9-4a33-9874-217240046742/清理未完成提示核对--f0769e4e-2cf5-40ee-bd87-a3a1f3447ad8/镜头素材.mp4.loop-control-deletion"
+        ],
+        "files": [
+          {
+            "path": "/private/tmp/loop-153-HRWLiJ/account/未分系列--9ab960b9-c3e9-4a33-9874-217240046742/清理未完成提示核对--f0769e4e-2cf5-40ee-bd87-a3a1f3447ad8/镜头素材.mp4",
+            "bytes": 210288,
+            "authority": "material:28ca5528-d95d-4651-918c-3d812022f9fa"
+          }
+        ],
+        "preserved": [
+          {
+            "path": "/private/tmp/loop-153-HRWLiJ/account/未分系列--9ab960b9-c3e9-4a33-9874-217240046742/清理未完成提示核对--f0769e4e-2cf5-40ee-bd87-a3a1f3447ad8/手放保留.txt",
+            "reason": "未登记或无法证明属于本单的文件，保留。"
+          }
+        ],
+        "confirmation": "清理未完成提示核对",
+        "archived": true,
+        "isTest": false,
+        "revision": "8b195d2be8f5bd468418072ac484b06b3e8244f76b17fa552cb1ffe7fba6215b"
+      }
+    },
+    {
+      "command": "deleteEpisode",
+      "data": {
+        "episodeId": "f0769e4e-2cf5-40ee-bd87-a3a1f3447ad8",
+        "confirmation": "清理未完成提示核对",
+        "expectedPath": "/private/tmp/loop-153-HRWLiJ/account/未分系列--9ab960b9-c3e9-4a33-9874-217240046742/清理未完成提示核对--f0769e4e-2cf5-40ee-bd87-a3a1f3447ad8",
+        "expectedPaths": [
+          "/private/tmp/loop-153-HRWLiJ/account/未分系列--9ab960b9-c3e9-4a33-9874-217240046742/清理未完成提示核对--f0769e4e-2cf5-40ee-bd87-a3a1f3447ad8"
+        ],
+        "expectedRevision": "8b195d2be8f5bd468418072ac484b06b3e8244f76b17fa552cb1ffe7fba6215b"
+      },
+      "status": 200,
+      "result": {
+        "path": "/private/tmp/loop-153-HRWLiJ/account/未分系列--9ab960b9-c3e9-4a33-9874-217240046742/清理未完成提示核对--f0769e4e-2cf5-40ee-bd87-a3a1f3447ad8",
+        "paths": [
+          "/private/tmp/loop-153-HRWLiJ/account/未分系列--9ab960b9-c3e9-4a33-9874-217240046742/清理未完成提示核对--f0769e4e-2cf5-40ee-bd87-a3a1f3447ad8"
+        ],
+        "title": "清理未完成提示核对",
+        "summary": {
+          "title": "清理未完成提示核对",
+          "counts": {
+            "tasks": 0,
+            "approvals": 0,
+            "artifacts": 0,
+            "asset_locks": 0,
+            "experiments": 0,
+            "audio_tracks": 0,
+            "audit_events": 2,
+            "review_packages": 0,
+            "metric_snapshots": 0,
+            "state_transitions": 0,
+            "review_annotations": 0,
+            "audio_track_annotations": 0,
+            "production_dependencies": 0,
+            "production_invalidations": 0,
+            "pre_render_review_members": 0,
+            "production_material_revisions": 1,
+            "pre_render_review_member_decisions": 0,
+            "review_render_composition_revisions": 0
+          },
+          "account_id": "f756547e-ba8c-48e1-865d-42de9b1313ed",
+          "deleted_at": "2026-11-10T05:47:48.033068+00:00",
+          "episode_id": "f0769e4e-2cf5-40ee-bd87-a3a1f3447ad8"
+        },
+        "episodeId": "f0769e4e-2cf5-40ee-bd87-a3a1f3447ad8",
+        "cleanupKey": "f3190de2-e534-4a11-91e8-94ae14622793",
+        "stagingPath": "/private/tmp/loop-153-HRWLiJ/account/未分系列--9ab960b9-c3e9-4a33-9874-217240046742/清理未完成提示核对--f0769e4e-2cf5-40ee-bd87-a3a1f3447ad8",
+        "stagingPaths": [
+          "/private/tmp/loop-153-HRWLiJ/account/未分系列--9ab960b9-c3e9-4a33-9874-217240046742/清理未完成提示核对--f0769e4e-2cf5-40ee-bd87-a3a1f3447ad8/镜头素材.mp4.loop-control-deletion"
+        ],
+        "cleanupPending": true,
+        "message": "示例文件暂时被占用，请重试文件清理。"
+      }
+    },
+    {
+      "command": "retryDeletionCleanup",
+      "data": {
+        "deletionKey": "f3190de2-e534-4a11-91e8-94ae14622793"
+      },
+      "status": 200,
+      "result": {
+        "path": "/private/tmp/loop-153-HRWLiJ/account/未分系列--9ab960b9-c3e9-4a33-9874-217240046742/清理未完成提示核对--f0769e4e-2cf5-40ee-bd87-a3a1f3447ad8",
+        "paths": [
+          "/private/tmp/loop-153-HRWLiJ/account/未分系列--9ab960b9-c3e9-4a33-9874-217240046742/清理未完成提示核对--f0769e4e-2cf5-40ee-bd87-a3a1f3447ad8"
+        ],
+        "title": "清理未完成提示核对",
+        "summary": {
+          "title": "清理未完成提示核对",
+          "counts": {
+            "tasks": 0,
+            "approvals": 0,
+            "artifacts": 0,
+            "asset_locks": 0,
+            "experiments": 0,
+            "audio_tracks": 0,
+            "audit_events": 2,
+            "review_packages": 0,
+            "metric_snapshots": 0,
+            "state_transitions": 0,
+            "review_annotations": 0,
+            "audio_track_annotations": 0,
+            "production_dependencies": 0,
+            "production_invalidations": 0,
+            "pre_render_review_members": 0,
+            "production_material_revisions": 1,
+            "pre_render_review_member_decisions": 0,
+            "review_render_composition_revisions": 0
+          },
+          "account_id": "f756547e-ba8c-48e1-865d-42de9b1313ed",
+          "deleted_at": "2026-11-10T05:47:48.033068+00:00",
+          "episode_id": "f0769e4e-2cf5-40ee-bd87-a3a1f3447ad8"
+        },
+        "episodeId": "f0769e4e-2cf5-40ee-bd87-a3a1f3447ad8",
+        "cleanupKey": "f3190de2-e534-4a11-91e8-94ae14622793",
+        "stagingPath": "/private/tmp/loop-153-HRWLiJ/account/未分系列--9ab960b9-c3e9-4a33-9874-217240046742/清理未完成提示核对--f0769e4e-2cf5-40ee-bd87-a3a1f3447ad8",
+        "localRemoved": true,
+        "stagingPaths": [
+          "/private/tmp/loop-153-HRWLiJ/account/未分系列--9ab960b9-c3e9-4a33-9874-217240046742/清理未完成提示核对--f0769e4e-2cf5-40ee-bd87-a3a1f3447ad8/镜头素材.mp4.loop-control-deletion"
+        ],
+        "cleanupPending": false
+      }
+    }
+  ]
+}

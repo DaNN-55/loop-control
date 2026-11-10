@@ -1,0 +1,163 @@
+{
+  "capCents": 300,
+  "reservedCents": 300,
+  "existingConnectionId": "d96ed2fa-06ff-4b51-bebe-54a05d9b04cc",
+  "results": [
+    {
+      "model": "MiniMax-H3-Highspeed",
+      "resolution": "480P",
+      "durationSeconds": 4,
+      "mode": "references",
+      "status": "completed",
+      "events": [
+        {
+          "operation": "local_original_id_replay",
+          "at": "2026-11-09T10:59:30.231Z"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T10:59:30.236Z",
+          "http": 200,
+          "status": "succeeded",
+          "usage": {
+            "total_seconds": 4,
+            "input_seconds": 0,
+            "output_seconds": 4,
+            "input_image_count": 1,
+            "total_tokens": 80720,
+            "prompt_tokens": 13020,
+            "completion_tokens": 67700
+          }
+        },
+        {
+          "operation": "download",
+          "at": "2026-11-09T10:59:30.439Z",
+          "http": 200
+        }
+      ],
+      "providerTaskId": "461491211739712",
+      "recoveryOnly": true,
+      "reservationCents": 0,
+      "startedAt": "2026-11-09T10:59:29.876Z",
+      "isolatedTaskId": "34098ca8-6b12-44f4-b680-8a8c9e4be8eb",
+      "error": null,
+      "elapsedMs": 976,
+      "artifact": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-minimax-h3-models-20261109-vganztre/artifacts/MiniMax-H3-Highspeed.mp4",
+      "bytes": 263250,
+      "actualDurationSeconds": 3.75
+    },
+    {
+      "model": "MiniMax-H3-Lite",
+      "resolution": "480P",
+      "durationSeconds": 4,
+      "mode": "references",
+      "status": "completed",
+      "events": [
+        {
+          "operation": "submit",
+          "at": "2026-11-09T10:59:32.445Z",
+          "http": 200
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T10:59:32.603Z",
+          "http": 200,
+          "status": "running",
+          "usage": {}
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T10:59:42.704Z",
+          "http": 200,
+          "status": "running",
+          "usage": {}
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T10:59:52.971Z",
+          "http": 200,
+          "status": "succeeded",
+          "usage": {
+            "total_seconds": 4,
+            "input_seconds": 0,
+            "output_seconds": 4,
+            "input_image_count": 1,
+            "total_tokens": 50127,
+            "prompt_tokens": 8463,
+            "completion_tokens": 41664
+          }
+        },
+        {
+          "operation": "download",
+          "at": "2026-11-09T10:59:53.218Z",
+          "http": 200
+        }
+      ],
+      "startedAt": "2026-11-09T10:59:32.155Z",
+      "isolatedTaskId": "a904172e-8fdd-4db2-ba00-896209e093e0",
+      "reservationCents": 150,
+      "providerTaskId": "461492401058026",
+      "error": null,
+      "elapsedMs": 21585,
+      "artifact": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-minimax-h3-models-20261109-vganztre/artifacts/MiniMax-H3-Lite.mp4",
+      "bytes": 164307,
+      "actualDurationSeconds": 4.458333
+    }
+  ],
+  "replayedResults": [
+    {
+      "model": "MiniMax-H3-Highspeed",
+      "resolution": "480P",
+      "durationSeconds": 4,
+      "mode": "references",
+      "status": "failed",
+      "events": [
+        {
+          "operation": "submit",
+          "at": "2026-11-09T10:52:32.657Z",
+          "http": 200
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T10:52:32.955Z",
+          "http": 200,
+          "status": "running",
+          "usage": {}
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T10:52:43.066Z",
+          "http": 200,
+          "status": "running",
+          "usage": {}
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T10:52:53.233Z",
+          "http": 200,
+          "status": "succeeded",
+          "usage": {
+            "total_seconds": 4,
+            "input_seconds": 0,
+            "output_seconds": 4,
+            "input_image_count": 1,
+            "total_tokens": 80720,
+            "prompt_tokens": 13020,
+            "completion_tokens": 67700
+          }
+        },
+        {
+          "operation": "download",
+          "at": "2026-11-09T10:52:53.550Z",
+          "http": 200
+        }
+      ],
+      "startedAt": "2026-11-09T10:52:32.307Z",
+      "isolatedTaskId": "5d0b8af7-963d-4b9f-916a-fc4ac08db01a",
+      "reservationCents": 150,
+      "providerTaskId": "461491211739712",
+      "error": "视频不可播放或时长不足：实际 3.75 秒，要求至少 4 秒；请核对供应商原任务与视频产物。",
+      "elapsedMs": 21684
+    }
+  ]
+}

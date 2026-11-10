@@ -1,0 +1,284 @@
+{
+  "baseline": {
+    "counts": {
+      "total": 2,
+      "page": 1,
+      "pageSize": 20,
+      "episodeCount": 2,
+      "reviewCount": 1,
+      "statusCounts": {
+        "all": 2,
+        "done": 0,
+        "review": 1,
+        "blocked": 0,
+        "running": 1
+      }
+    },
+    "accounts": [
+      {
+        "name": "城市观察",
+        "timezone": "Asia/Shanghai",
+        "policy": {
+          "positioning": "观察城市的普通生活",
+          "restrictions": "不虚构事实",
+          "visual_style": "纪实"
+        }
+      },
+      {
+        "name": "手作日记",
+        "timezone": "Asia/Shanghai",
+        "policy": {
+          "positioning": "记录手作过程",
+          "restrictions": "不误用其他账号素材",
+          "visual_style": "近景"
+        }
+      }
+    ],
+    "series": [
+      {
+        "account": "手作日记",
+        "name": "木工练习",
+        "versions": [
+          {
+            "version": 1,
+            "rules": {
+              "positioning": "木工练习记录"
+            }
+          }
+        ]
+      },
+      {
+        "account": "城市观察",
+        "name": "街角故事",
+        "versions": [
+          {
+            "version": 1,
+            "rules": {
+              "positioning": "街道与日常人物"
+            }
+          },
+          {
+            "version": 2,
+            "rules": {
+              "positioning": "街道与日常人物",
+              "visual_style": "自然光"
+            }
+          }
+        ]
+      }
+    ],
+    "episodes": [
+      {
+        "title": "统一镜头清理核对",
+        "stage": "script_approved",
+        "is_test": false,
+        "tts_voice": null,
+        "tts_language_code": null,
+        "tts_speaking_rate": null,
+        "audio_source_mode": "tts",
+        "account": "城市观察",
+        "series": {
+          "name": "街角故事",
+          "version": 2,
+          "rules": {
+            "positioning": "街道与日常人物",
+            "visual_style": "自然光"
+          }
+        },
+        "workspace": {
+          "workflowVersion": "four-step/v1",
+          "revision": 1,
+          "stale": false,
+          "clips": [
+            {
+              "text": "雨停了，街角还亮着一盏灯。",
+              "sourceKind": null
+            }
+          ],
+          "preparation": {
+            "origin": "script-segment",
+            "authorized": false,
+            "shots": [
+              {
+                "origin": "script-segment"
+              }
+            ]
+          },
+          "readiness": {
+            "deliverable": false,
+            "placeholders": 1,
+            "missingSources": 0
+          },
+          "audioEnabled": {
+            "bgm": true,
+            "sfx": true
+          },
+          "narration": [
+            {
+              "mode": "none",
+              "status": "pending",
+              "text": "雨停了，街角还亮着一盏灯。",
+              "enabled": true
+            }
+          ],
+          "exports": 0,
+          "candidates": 0
+        }
+      },
+      {
+        "title": "隔离 Studio153 验收",
+        "stage": "qc_review",
+        "is_test": false,
+        "tts_voice": null,
+        "tts_language_code": null,
+        "tts_speaking_rate": null,
+        "audio_source_mode": "tts",
+        "account": "城市观察",
+        "series": null,
+        "workspace": null
+      }
+    ]
+  },
+  "pending": {
+    "counts": {
+      "total": 2,
+      "page": 1,
+      "pageSize": 20,
+      "episodeCount": 2,
+      "reviewCount": 1,
+      "statusCounts": {
+        "all": 2,
+        "done": 0,
+        "review": 1,
+        "blocked": 0,
+        "running": 1
+      }
+    },
+    "accounts": [
+      {
+        "name": "城市观察",
+        "timezone": "Asia/Shanghai",
+        "policy": {
+          "positioning": "观察城市的普通生活",
+          "restrictions": "不虚构事实",
+          "visual_style": "纪实"
+        }
+      },
+      {
+        "name": "手作日记",
+        "timezone": "Asia/Shanghai",
+        "policy": {
+          "positioning": "记录手作过程",
+          "restrictions": "不误用其他账号素材",
+          "visual_style": "近景"
+        }
+      }
+    ],
+    "series": [
+      {
+        "account": "手作日记",
+        "name": "木工练习",
+        "versions": [
+          {
+            "version": 1,
+            "rules": {
+              "positioning": "木工练习记录"
+            }
+          }
+        ]
+      },
+      {
+        "account": "城市观察",
+        "name": "街角故事",
+        "versions": [
+          {
+            "version": 1,
+            "rules": {
+              "positioning": "街道与日常人物"
+            }
+          },
+          {
+            "version": 2,
+            "rules": {
+              "positioning": "街道与日常人物",
+              "visual_style": "自然光"
+            }
+          }
+        ]
+      }
+    ],
+    "episodes": [
+      {
+        "title": "统一镜头清理核对",
+        "stage": "script_approved",
+        "is_test": false,
+        "tts_voice": null,
+        "tts_language_code": null,
+        "tts_speaking_rate": null,
+        "audio_source_mode": "tts",
+        "account": "城市观察",
+        "series": {
+          "name": "街角故事",
+          "version": 2,
+          "rules": {
+            "positioning": "街道与日常人物",
+            "visual_style": "自然光"
+          }
+        },
+        "workspace": {
+          "workflowVersion": "four-step/v1",
+          "revision": 1,
+          "stale": false,
+          "clips": [
+            {
+              "text": "雨停了，街角还亮着一盏灯。",
+              "sourceKind": null
+            }
+          ],
+          "preparation": {
+            "origin": "script-segment",
+            "authorized": false,
+            "shots": [
+              {
+                "origin": "script-segment"
+              }
+            ]
+          },
+          "readiness": {
+            "deliverable": false,
+            "placeholders": 1,
+            "missingSources": 0
+          },
+          "audioEnabled": {
+            "bgm": true,
+            "sfx": true
+          },
+          "narration": [
+            {
+              "mode": "none",
+              "status": "pending",
+              "text": "雨停了，街角还亮着一盏灯。",
+              "enabled": true
+            }
+          ],
+          "exports": 0,
+          "candidates": 0
+        }
+      },
+      {
+        "title": "隔离 Studio153 验收",
+        "stage": "qc_review",
+        "is_test": false,
+        "tts_voice": null,
+        "tts_language_code": null,
+        "tts_speaking_rate": null,
+        "audio_source_mode": "tts",
+        "account": "城市观察",
+        "series": null,
+        "workspace": null
+      }
+    ]
+  },
+  "equal": true,
+  "excluded": "Generated UUIDs, timestamps, hashes, filesystem paths, and explicitly retired preparation.shots.shotType; relationships compared by account/series name and frozen version."
+}

@@ -1,0 +1,29 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control/.scratch/current-flow-cleanup-20261110/pending
+
+(node:35295) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ✓ src/local-app/modelSettings.integration.test.ts (17 tests) 40032ms
+   ✓ 'doubao-seedance-2-0-260128': confirmation → actual Owner HTTP → frozen queue → Worker → network boundary for every mode  2967ms
+   ✓ 'doubao-seedance-2-5-260628': confirmation → actual Owner HTTP → frozen queue → Worker → network boundary for every mode  2707ms
+   ✓ 'MiniMax-H3': confirmation → actual Owner HTTP → frozen queue → Worker → network boundary for every mode  4258ms
+   ✓ 'MiniMax-H3-Highspeed': confirmation → actual Owner HTTP → frozen queue → Worker → network boundary for every mode  4204ms
+   ✓ 'MiniMax-H3-Lite': confirmation → actual Owner HTTP → frozen queue → Worker → network boundary for every mode  4232ms
+   ✓ 'kling-v3': confirmation → actual Owner HTTP → frozen queue → Worker → network boundary for every mode  2198ms
+   ✓ 'kling-v3-omni': confirmation → actual Owner HTTP → frozen queue → Worker → network boundary for every mode  1728ms
+   ✓ 'wan2.6-i2v-flash': confirmation → actual Owner HTTP → frozen queue → Worker → network boundary for every mode  1742ms
+   ✓ 'wan2.6-i2v': confirmation → actual Owner HTTP → frozen queue → Worker → network boundary for every mode  1769ms
+   ✓ 'wan2.6-r2v': confirmation → actual Owner HTTP → frozen queue → Worker → network boundary for every mode  1732ms
+   ✓ 'wan2.5-i2v-preview': confirmation → actual Owner HTTP → frozen queue → Worker → network boundary for every mode  1759ms
+   ✓ 'wan2.2-i2v-flash': confirmation → actual Owner HTTP → frozen queue → Worker → network boundary for every mode  1817ms
+   ✓ 'wan2.2-i2v-plus': confirmation → actual Owner HTTP → frozen queue → Worker → network boundary for every mode  1766ms
+   ✓ 'wanx2.1-i2v-plus': confirmation → actual Owner HTTP → frozen queue → Worker → network boundary for every mode  1758ms
+   ✓ 'wanx2.1-i2v-turbo': confirmation → actual Owner HTTP → frozen queue → Worker → network boundary for every mode  1764ms
+   ✓ shows actual insufficient video duration after real Worker media validation, retaining the supplier task  1585ms
+   ✓ MiniMax candidate retains actual shorter media without pretending it covers the shot  2046ms
+
+ Test Files  1 passed (1)
+      Tests  17 passed (17)
+   Start at  10:57:43
+   Duration  40.84s (transform 467ms, setup 9ms, collect 650ms, tests 40.03s, environment 0ms, prepare 33ms)
+

@@ -1,0 +1,53 @@
+{
+  "episodeId": "feacdbde-a47f-4eb4-85a4-42a9fa77f78f",
+  "title": "删除范围核对",
+  "path": "/private/tmp/loop-153-laoxBQ/account/episodes/feacdbde-a47f-4eb4-85a4-42a9fa77f78f",
+  "stagingPath": "/private/tmp/loop-153-laoxBQ/account/episodes/feacdbde-a47f-4eb4-85a4-42a9fa77f78f",
+  "paths": [
+    "/private/tmp/loop-153-laoxBQ/account/episodes/feacdbde-a47f-4eb4-85a4-42a9fa77f78f"
+  ],
+  "stagingPaths": [
+    "/private/tmp/loop-153-laoxBQ/account/episodes/feacdbde-a47f-4eb4-85a4-42a9fa77f78f/board.json.loop-control-deletion",
+    "/private/tmp/loop-153-laoxBQ/account/episodes/feacdbde-a47f-4eb4-85a4-42a9fa77f78f/voice.mp3.loop-control-deletion",
+    "/private/tmp/loop-153-laoxBQ/account/episodes/feacdbde-a47f-4eb4-85a4-42a9fa77f78f/候选待删.mp4.loop-control-deletion"
+  ],
+  "files": [
+    {
+      "path": "/private/tmp/loop-153-laoxBQ/account/episodes/feacdbde-a47f-4eb4-85a4-42a9fa77f78f/board.json",
+      "bytes": 204,
+      "authority": "artifact:63958b5a-dd33-4ba6-86f0-43490221ffbe"
+    },
+    {
+      "path": "/private/tmp/loop-153-laoxBQ/account/episodes/feacdbde-a47f-4eb4-85a4-42a9fa77f78f/voice.mp3",
+      "bytes": 16556,
+      "authority": "frozen-input:4a9338e2-421a-48e8-b00d-2ddbd5e127e7"
+    },
+    {
+      "path": "/private/tmp/loop-153-laoxBQ/account/episodes/feacdbde-a47f-4eb4-85a4-42a9fa77f78f/候选待删.mp4",
+      "bytes": 210288,
+      "authority": "artifact:4d9bdec3-ce0f-465c-962f-abf76ec10488"
+    }
+  ],
+  "preserved": [
+    {
+      "path": "/private/tmp/loop-153-laoxBQ/account/episodes/feacdbde-a47f-4eb4-85a4-42a9fa77f78f/保留笔记.json",
+      "reason": "未登记或无法证明属于本单的文件，保留。"
+    },
+    {
+      "path": "/private/tmp/loop-153-laoxBQ/account/episodes/feacdbde-a47f-4eb4-85a4-42a9fa77f78f/手放文档.txt",
+      "reason": "未登记或无法证明属于本单的文件，保留。"
+    },
+    {
+      "path": "/private/tmp/loop-153-laoxBQ/account/episodes/feacdbde-a47f-4eb4-85a4-42a9fa77f78f/手放空目录",
+      "reason": "未登记的空目录，保留。"
+    },
+    {
+      "path": "/private/tmp/loop-153-laoxBQ/account/episodes/feacdbde-a47f-4eb4-85a4-42a9fa77f78f/shot.mp4",
+      "reason": "保留文件仍引用此文件，保留。"
+    }
+  ],
+  "confirmation": "删除范围核对",
+  "archived": true,
+  "isTest": false,
+  "revision": "5ca372381235074a81c00aa7159c4ab2837e42ca50956151d36b40e41ba15b22"
+}

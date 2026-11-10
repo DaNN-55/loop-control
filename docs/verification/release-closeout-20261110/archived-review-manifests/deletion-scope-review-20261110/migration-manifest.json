@@ -1,0 +1,33 @@
+{
+  "migrated": false,
+  "baselineFiles": 1164,
+  "files": [
+    {
+      "path": "src/workspace/EpisodeDeletionScope.test.tsx",
+      "mainBeforeSha256": null,
+      "pendingSha256": "180a942e0ed8d88815a06795420e46edfbb8ca8bd1b6127bd42b00bcc78e9a50"
+    },
+    {
+      "path": "src/workspace/EpisodeDeletionScope.tsx",
+      "mainBeforeSha256": "eb66d0f9d8792ed6082fd4cf3a04684413890dc7380471c957174193076faee0",
+      "pendingSha256": "6526a1de6bea5f5610f990025629cd15d8885a335eaa37a7e7c01efdb2c345b0"
+    },
+    {
+      "path": "src/workspace/WorkspaceViews.tsx",
+      "mainBeforeSha256": "c6cb7f444dca75d5adb723146e11c79c82ba50467c1e7b7c22b9c1c8c771d99b",
+      "pendingSha256": "4edcd1b5c4218a2ee3b6234d94e575c3c753023f75a86d646ed0afb22b78b7fd"
+    },
+    {
+      "path": "src/workspace/episode-list.css",
+      "mainBeforeSha256": "1ef4846ea047f5614813823aad7f09857808f3dcd8f701eaa4cd969275bdd31c",
+      "pendingSha256": "5d0a54a33878c50da0776eae6c13d4badbbcb0847870f3281aed0d165f3fd27b"
+    }
+  ],
+  "excluded": [
+    "preview fixture",
+    "runner",
+    "cache",
+    "build outputs",
+    "synthetic data"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "preview": "/Users/dan/Programs/loop-control/.scratch/second-batch-review-20261109/main-before",
+  "backup": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-approved-preview-controls-20261109-sa4yr539",
+  "scope": [
+    "src/local-app/WorkspaceVisualPreparation.tsx",
+    "src/local-app/workspace-generation-composer.css",
+    "src/local-app/WorkspaceGenerationChoices.tsx"
+  ],
+  "before": {
+    "src/local-app/WorkspaceVisualPreparation.tsx": "c470ede186e6017f8541b766dba6919564169cecfcf79c2526fd4410e3d2ab32",
+    "src/local-app/workspace-generation-composer.css": "b9803a5360915acdbd4237249dff799b972e43ed5427a5328b713626121c74cd"
+  },
+  "paidCalls": 0,
+  "overlayRemoved": [
+    "src/local-app/WorkspaceVisualPreparation.tsx",
+    "src/local-app/workspace-generation-composer.css",
+    "src/local-app/WorkspaceGenerationChoices.tsx"
+  ],
+  "resolution": "User requested latest current workspace on port 5174; reviewed baseline preserved."
+}

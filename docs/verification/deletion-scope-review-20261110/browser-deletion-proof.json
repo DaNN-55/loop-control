@@ -1,0 +1,19 @@
+{
+  "deletedFiles": 3,
+  "preservedEntries": 4,
+  "preservedBytesAndIdentityUnchanged": true,
+  "calls": [
+    {
+      "command": "archiveEpisode",
+      "status": 200
+    },
+    {
+      "command": "planDeletion",
+      "status": 200
+    },
+    {
+      "command": "deleteEpisode",
+      "status": 200
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vite' --config docs/verification/surface-polish-migration-20261110/vite.config.mjs
+
+  VITE v7.3.6  ready in 80 ms
+
+  ➜  Local:   http://127.0.0.1:5206/
+3:12:44 PM [vite] Internal server error: Failed to resolve import "../../../src/local-app/workspace-visual-record.css" from "docs/verification/surface-polish-migration-20261110/fixture.tsx". Does the file exist?
+  Plugin: vite:import-analysis
+  File: /Users/dan/Programs/loop-control/docs/verification/surface-polish-migration-20261110/fixture.tsx:17:7
+  17 |  import "../../../src/local-app/production-compact.css";
+  18 |  import "../../../src/local-app/workspace-visual-preparation.css";
+  19 |  import "../../../src/local-app/workspace-visual-record.css";
+     |          ^
+  20 |  import "../../../src/local-app/workspace-generation-composer.css";
+  21 |  const params = new URLSearchParams(location.search);
+      at TransformPluginContext._formatLog (file:///Users/dan/Programs/loop-control/node_modules/vite/dist/node/chunks/config.js:29079:43)
+      at TransformPluginContext.error (file:///Users/dan/Programs/loop-control/node_modules/vite/dist/node/chunks/config.js:29076:14)
+      at normalizeUrl (file:///Users/dan/Programs/loop-control/node_modules/vite/dist/node/chunks/config.js:27199:18)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async file:///Users/dan/Programs/loop-control/node_modules/vite/dist/node/chunks/config.js:27257:32
+      at async Promise.all (index 17)
+      at async TransformPluginContext.transform (file:///Users/dan/Programs/loop-control/node_modules/vite/dist/node/chunks/config.js:27225:4)
+      at async EnvironmentPluginContainer.transform (file:///Users/dan/Programs/loop-control/node_modules/vite/dist/node/chunks/config.js:28877:14)
+      at async loadAndTransform (file:///Users/dan/Programs/loop-control/node_modules/vite/dist/node/chunks/config.js:22746:26)
+3:12:44 PM [vite] (client) Pre-transform error: Failed to resolve import "../../../src/local-app/workspace-visual-record.css" from "docs/verification/surface-polish-migration-20261110/fixture.tsx". Does the file exist?
+  Plugin: vite:import-analysis
+  File: /Users/dan/Programs/loop-control/docs/verification/surface-polish-migration-20261110/fixture.tsx:17:7
+  17 |  import "../../../src/local-app/production-compact.css";
+  18 |  import "../../../src/local-app/workspace-visual-preparation.css";
+  19 |  import "../../../src/local-app/workspace-visual-record.css";
+     |          ^
+  20 |  import "../../../src/local-app/workspace-generation-composer.css";
+  21 |  const params = new URLSearchParams(location.search);
+[BABEL] Note: The code generator has deoptimised the styling of /Users/dan/Programs/loop-control/.scratch/surface-polish-migration-20261110/vite-cache/deps/react-dom_client.js?v=fea5e93e as it exceeds the max of 500KB.
+3:12:55 PM [vite] (client) hmr update /docs/verification/surface-polish-migration-20261110/fixture.tsx

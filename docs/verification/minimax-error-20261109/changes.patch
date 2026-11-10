@@ -1,0 +1,597 @@
+--- a/PLAN.md
++++ b/PLAN.md
+@@ -1,3 +1,13 @@
++# MiniMax 生成错误与紧凑任务状态（2026-11-09）
++
++目标：查证任务 c6cc2b02-5f40-4c28-82af-75e4b8107d16 的失败位置，保留可脱敏展示的供应商／本地错误，并将长错误区改为紧凑状态与按需详情。不重发旧未知请求，不改写原账本，不提交／推送；保留现有未提交工作。
++
++- [x] 建立不付费失败回归；原冻结参考图角色在旧运行版本本机网络校验中失败，仅改为首帧角色即可通过，证明未发出请求。
++- [x] 修复参考图／首尾帧的网络校验漂移；保留脱敏供应商错误；区分未发送、明确拒绝和未知；原任务补充审计诊断并解除误锁定，保留预留记录。
++- [x] 1,812 项单元测试通过（1 项跳过），受控 Owner HTTP／Worker 状态与原任务恢复验证通过；实际 1427／640 窗口和 Esc 焦点返回通过；本地版本 `2b293cef289c`。证据见 `docs/verification/minimax-error-20261109/REPORT.md`。
++
++本轮优先用受控响应和只读查询，未经确认原请求结果不提交同一视频。操作前恢复副本：`/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-minimax-error-20261109-r4wt48lr`。
++
+ # 产品体验第一批优化（2026-11-09，已批准）
+ 
+ 范围：仅实施审查 R01／R02／R03／R04／R06。保留现有未提交清理、动效、上传与候选生命周期改动；不提交／推送。R01 检查画面空档并防止棋盘背景进入导出；R02 提供脱敏的未知调用信息、核对与恢复入口，禁止未知请求重复提交；R03 沿用当前镜头时长并就地解释短候选冲突；R04 同步任务／交付异常与实际活动时间；R06 为初始默认字幕登记有效时序，不放宽音轨变化后的失效校验。
+--- a/src/local-app/WorkspaceVisualTaskStatus.tsx
++++ b/src/local-app/WorkspaceVisualTaskStatus.tsx
+@@ -1,5 +1,9 @@
+ import './workspace-task-status.css';
+-import {useEffect,useState} from 'react';
++import {useEffect,useState,useId} from 'react';
++import {createPortal} from 'react-dom';
++import {useDialogFocus} from '../ui/useDialogFocus';
++import {ConfirmationModalPresence} from '../ui/ConfirmationModal';
++import {useSurfacePresence} from '../ui/SurfacePresence';
+ import {Button} from '../ui/dan-ui/components/base/buttons/button';
+ import type {WorkspaceVisualTask} from '../workspaceVisualCandidates';
+ export function WorkspaceVisualTaskProgress({task,label,thumbnail=false}:{task:WorkspaceVisualTask;label:string;thumbnail?:boolean}){
+@@ -22,19 +26,45 @@
+  </div>;
+ }
+ export function WorkspaceVisualTaskStatus({task,label,disabled,onResume,onRefresh,onReconcile,onRetryUnknown,taskNoun='视觉任务',resumeLabel='恢复画面任务'}:{task:WorkspaceVisualTask;label:string;taskNoun?:string;resumeLabel?:string;disabled?:boolean;onResume:()=>void;onRefresh:()=>void;onReconcile:()=>void;onRetryUnknown?:()=>void}){
++ const [open,setOpen]=useState(false);
+  if(task.retryTaskId)return null;
+  const held=task.publicationAttempt!=null,unknown=task.submissionUnknown;
+- const state=held?'发布结果待核对':unknown?(task.submissionOutcome==='received'?'供应商结果待核对':'提交结果未知'):task.status==='running'?'生成中':task.status==='ready'?'等待生成':task.status==='failed'?'生成失败':task.status==='blocked'?'生成受阻':task.status==='completed'?'生成完成':task.status==='superseded'?'已失效':'状态待核对';
+- return <div className="workspace-visual-task"><p role={task.error||held?'alert':'status'} aria-label={taskNoun+' '+task.taskId}>{label}{state}{task.error?' · '+task.error:''}</p>
+- {!held&&!unknown&&(task.status==='running'||task.status==='ready')&&<WorkspaceVisualTaskProgress task={task} label={label}/>}
+- {task.submissionOutcome==='rejected'&&<p>供应商已明确拒绝本次请求。</p>}
+- {task.kind==='image'&&!unknown&&!held&&['failed','blocked'].includes(task.status)&&<p>可检查设置后点击「重新生成图片」，核对费用并再次确认。</p>}
+- {unknown&&<p>{onRetryUnknown?'上一次可能已产生费用。你可以先核对供应商记录，也可以重新确认后提交新请求。':'请先在原供应商核对本次请求；当前结果未知，不能再次提交生成。'}</p>}
+- {onRetryUnknown&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={onRetryUnknown}>重试图片生成</Button>}
+- {task.canResume&&!held&&['failed','blocked'].includes(task.status)&&<><p>恢复只查询原供应商任务，沿用已冻结的输入，不会重新提交生成。</p><Button size="sm" color="secondary" isDisabled={disabled} onPress={onResume}>{resumeLabel}</Button></>}
+- {held&&<><p>已有产物等待核对。核对只恢复本次发布，不会重新生成。</p><Button size="sm" color="secondary" isDisabled={disabled} onPress={onReconcile}>核对并恢复产物</Button></>}
+- {(unknown||held)&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={onRefresh}>刷新核对结果</Button>}
+- {unknown&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>window.dispatchEvent(new Event('open-external-connections'))}>打开连接配置</Button>}
+- {(unknown||held||task.canResume)&&<details open={unknown||undefined}><summary>任务信息</summary>{(task.connectionName||task.provider)&&<p>{task.connectionName??task.provider}{task.model?` · ${task.model}`:''}</p>}{task.createdAt&&<p>提交时间 {new Date(task.createdAt).toLocaleString('zh-CN',{hour12:false})}</p>}{task.reservationCents!=null&&<p>本次费用预留 ¥{(task.reservationCents/100).toFixed(2)}（实际扣费以供应商账单为准）</p>}{unknown&&!task.providerTaskId&&<p>供应商未返回任务编号，请按连接、模型和提交时间核对供应商调用记录。</p>}<p>原任务 {task.taskId}{held?` · 尝试 ${task.publicationAttempt}`:''}</p>{task.providerTaskId&&<p>供应商任务 {task.providerTaskId}</p>}</details>}
+- </div>;
++ const state=held?'发布结果待核对':task.submissionOutcome==='not_sent'?'未提交':unknown?(task.submissionOutcome==='received'?'供应商结果待核对':'提交结果未知'):task.status==='running'?'生成中':task.status==='ready'?'等待生成':task.status==='failed'?'生成失败':task.status==='blocked'?'生成受阻':task.status==='completed'?'生成完成':task.status==='superseded'?'已失效':'状态待核对';
++ const actions=<>
++  {onRetryUnknown&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={onRetryUnknown}>重试图片生成</Button>}
++  {task.canResume&&!held&&['failed','blocked'].includes(task.status)&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={onResume}>{resumeLabel}</Button>}
++  {held&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={onReconcile}>核对并恢复产物</Button>}
++  {(unknown||held)&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={onRefresh}>刷新核对结果</Button>}
++ </>;
++ return <>
++  <div className="workspace-visual-task" inert={open} aria-hidden={open||undefined}>
++   <div className="workspace-task-summary">
++    <p role={task.error||held?'alert':'status'} aria-label={taskNoun+' '+task.taskId} title={task.error??undefined}>{label}{state}{task.error?' · '+task.error:''}</p>
++    <div className="workspace-task-actions">{actions}<Button size="sm" color="tertiary" aria-label={`查看${label}任务详情`} onPress={()=>setOpen(true)}>详情</Button></div>
++   </div>
++   {!held&&!unknown&&(task.status==='running'||task.status==='ready')&&<WorkspaceVisualTaskProgress task={task} label={label}/>}
++  </div>
++  <ConfirmationModalPresence>{open&&createPortal(<TaskDetails title={`${label}任务详情`} onClose={()=>setOpen(false)}>
++   <p className="workspace-task-diagnostic" role="alert">{label}{state}{task.error?' · '+task.error:''}</p>
++   {task.submissionOutcome==='not_sent'&&<p>本次请求在本机被拦截，未向供应商发送。请检查设置，重新确认后生成。</p>}
++   {task.submissionOutcome==='rejected'&&<p>供应商已明确拒绝本次请求，请根据错误原因检查设置后重新确认。</p>}
++   {task.kind==='image'&&!unknown&&!held&&['failed','blocked'].includes(task.status)&&<p>可检查设置后点击「重新生成图片」，核对费用并再次确认。</p>}
++   {unknown&&<p>{onRetryUnknown?'上一次可能已产生费用。你可以先核对供应商记录，也可以重新确认后提交新请求。':'请先在原供应商核对本次请求；当前结果未知，不能再次提交生成。'}</p>}
++   {task.canResume&&!held&&<p>恢复只查询原供应商任务，沿用原输入，不会重新提交生成。</p>}
++   {held&&<p>已有产物等待核对。核对只恢复本次发布，不会重新生成。</p>}
++   <dl className="workspace-task-metadata">
++    {(task.connectionName||task.provider)&&<><dt>连接与模型</dt><dd>{task.connectionName??task.provider}{task.model?` · ${task.model}`:''}</dd></>}
++    {task.createdAt&&<><dt>提交时间</dt><dd>{new Date(task.createdAt).toLocaleString('zh-CN',{hour12:false})}</dd></>}
++    {task.reservationCents!=null&&<><dt>费用预留</dt><dd>¥{(task.reservationCents/100).toFixed(2)}<small>实际扣费以供应商账单为准</small></dd></>}
++    <dt>原任务</dt><dd>{task.taskId}{held?` · 尝试 ${task.publicationAttempt}`:''}</dd>
++    {task.providerTaskId&&<><dt>供应商任务</dt><dd>{task.providerTaskId}</dd></>}
++   </dl>
++   {unknown&&!task.providerTaskId&&<p>本机未保存供应商任务编号，请按连接、模型和提交时间核对供应商调用记录。</p>}
++   <div className="modal-actions">{actions}{(unknown||task.submissionOutcome==='rejected'||task.submissionOutcome==='not_sent')&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>{setOpen(false);window.dispatchEvent(new Event('open-external-connections'));}}>打开连接配置</Button>}</div>
++  </TaskDetails>,document.body)}</ConfirmationModalPresence>
++ </>;
+ }
++function TaskDetails({title,onClose,children}:{title:string;onClose:()=>void;children:import('react').ReactNode}){
++ const presence=useSurfacePresence(),present=presence?.present??true,id=useId(),ref=useDialogFocus<HTMLDivElement>(present,onClose);
++ return <div className="dan-ui product-ui workspace-task-overlay"><div ref={presence?.ref} className="modal-backdrop workspace-task-backdrop" inert={!present} aria-hidden={!present||undefined} onMouseDown={event=>{if(event.target===event.currentTarget)onClose();}}><div ref={ref} role="dialog" aria-modal="true" aria-labelledby={id} className="modal-card confirmation-modal workspace-task-detail"><header><h2 id={id}>{title}</h2><Button size="sm" color="tertiary" data-dialog-initial-focus onPress={onClose} aria-label={`关闭${title}`}>关闭</Button></header><div className="workspace-task-detail-body">{children}</div></div></div></div>;
++}
+--- a/src/local-app/workspace-task-status.css
++++ b/src/local-app/workspace-task-status.css
+@@ -1,7 +1,19 @@
+-.workspace-visual-task{display:flex;flex-wrap:wrap;align-items:flex-start;gap:8px;min-width:0;margin-block:12px}
+-.workspace-visual-task>p,.workspace-visual-task>details{flex-basis:100%;min-width:0;margin:0;overflow-wrap:anywhere;line-height:1.6}
+-.workspace-visual-task>details p{margin:6px 0 0;overflow-wrap:anywhere}
+-.workspace-visual-task>details summary{cursor:pointer}
++.workspace-visual-task{display:flex;flex-direction:column;gap:8px;min-width:0;margin-block:8px}
++.workspace-task-summary{display:flex;align-items:center;gap:12px;min-width:0;padding:8px 10px;border:1px solid var(--lc-line);border-radius:6px;background:var(--lc-surface)}
++.workspace-task-summary>p{flex:1;min-width:0;margin:0;font-size:12px;line-height:1.6;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;overflow-wrap:anywhere}
++.workspace-task-summary>p[role=alert]{color:var(--lc-danger,#b42318)}
++.workspace-task-actions{display:flex;align-items:center;flex:none;flex-wrap:wrap;justify-content:flex-end;gap:6px}
++.workspace-task-overlay .workspace-task-backdrop{z-index:130;align-items:center;padding:24px;box-sizing:border-box}
++.workspace-task-overlay .workspace-task-detail{width:min(600px,calc(100vw - 32px));max-width:600px;max-height:calc(100dvh - 48px);display:flex;flex-direction:column;min-width:0}
++.workspace-task-detail>header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex:none}
++.workspace-task-detail-body{overflow:auto;min-height:0;font-size:13px;line-height:1.7;overflow-wrap:anywhere}
++.workspace-task-detail-body>p{margin:12px 0}
++.workspace-task-diagnostic{color:var(--lc-danger,#b42318)}
++.workspace-task-metadata{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:10px 16px;margin-block:16px}
++.workspace-task-metadata dt{color:var(--lc-muted)}
++.workspace-task-metadata dd{margin:0;min-width:0;overflow-wrap:anywhere}
++.workspace-task-metadata small{display:block;color:var(--lc-muted);font-size:12px}
++@media(max-width:640px){.workspace-task-summary{align-items:flex-start;flex-wrap:wrap}.workspace-task-summary>p{flex-basis:100%}.workspace-task-actions{margin-inline-start:auto}.workspace-task-metadata{grid-template-columns:1fr;gap:4px}.workspace-task-metadata dd{margin-bottom:8px}}
+ .workspace-visual-progress{flex-basis:100%;display:flex;align-items:center;gap:9px;font-size:var(--text-xs,12px)}
+ .workspace-visual-progress-heading{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px 12px;flex:1;min-width:0}
+ .workspace-visual-progress-heading>span:last-child{font-variant-numeric:tabular-nums}
+--- a/src/local-app/WorkspaceVisualTaskStatus.test.tsx
++++ b/src/local-app/WorkspaceVisualTaskStatus.test.tsx
+@@ -7,20 +7,20 @@
+ it('distinguishes unknown submission from failure and only offers a read-only reconciliation',async()=>{
+  const workspace={...base,visualTasks:[{id:'unknown',taskId:'task-unknown',shotId:'shot',kind:'image' as const,status:'failed',error:'图片请求回执未收到',submissionOutcome:'started' as const,providerTaskId:null,requestState:'submitting',submissionUnknown:true,canResume:false}]};const command=vi.fn(),read=vi.fn(async()=>Response.json({workspace}));vi.stubGlobal('fetch',read);
+  render(<WorkspaceVisualPreparation workspace={workspace} command={command} onChange={()=>{}} materials={[]}/>);
+- expect(screen.getByText(/^图片提交结果未知/)).toBeTruthy();expect(screen.getByText(/图片请求回执未收到/)).toBeTruthy();expect(screen.getByText(/请先在原供应商核对/)).toBeTruthy();expect(screen.queryByRole('button',{name:'恢复画面任务'})).toBeNull();
++ expect(screen.getByText(/^图片提交结果未知/)).toBeTruthy();expect(screen.getByText(/图片请求回执未收到/)).toBeTruthy();expect(screen.queryByRole('dialog')).toBeNull();fireEvent.click(screen.getByRole('button',{name:'查看图片任务详情'}));expect(screen.getByText(/请先在原供应商核对/)).toBeTruthy();expect(screen.queryByRole('button',{name:'恢复画面任务'})).toBeNull();
+  fireEvent.click(screen.getByRole('button',{name:'刷新核对结果'}));await waitFor(()=>expect(read).toHaveBeenCalled());expect(command).not.toHaveBeenCalled();
+ });
+ it('held publication exposes the original attempt and reconciliation route without allowing provider retry',()=>{
+  const workspace={...base,visualTasks:[{id:'held',taskId:'10000000-0000-4000-8000-000000000001',shotId:'shot',kind:'video' as const,status:'running',error:null,publicationAttempt:0,submissionOutcome:'received' as const,providerTaskId:'remote-original',canResume:false}]};
+  render(<WorkspaceVisualPreparation workspace={workspace} command={vi.fn()} onChange={()=>{}} materials={[]}/>);
+- expect(screen.getByText('视频发布结果待核对')).toBeTruthy();expect(screen.getByText(/原任务.*尝试 0/)).toBeTruthy();expect(screen.getByRole('button',{name:'核对并恢复产物'})).toBeTruthy();expect(screen.queryByRole('button',{name:'恢复画面任务'})).toBeNull();
++ expect(screen.getByText('视频发布结果待核对')).toBeTruthy();fireEvent.click(screen.getByRole('button',{name:'查看视频任务详情'}));expect(screen.getByText(/10000000-0000-4000-8000-000000000001.*尝试 0/)).toBeTruthy();expect(screen.getByRole('button',{name:'核对并恢复产物'})).toBeTruthy();expect(screen.queryByRole('button',{name:'恢复画面任务'})).toBeNull();
+ });
+ 
+ it('narration retains unknown submission evidence and blocks another paid preparation',async()=>{
+  const {WorkspaceNarrationPanel}=await import('./WorkspaceNarrationPanel');vi.stubGlobal('fetch',vi.fn(async()=>Response.json({serviceCatalog:{groups:[]}})));
+  const n={clipId:'clip',shotId:'shot',mode:'tts',text:'正文',status:'failed',error:null,confirmed:true,generationTask:{id:'speech',taskId:'speech-task',status:'failed',error:'语音回执未收到',reservationCents:100,connectionName:'本次语音连接',model:'seed-tts-2.0',createdAt:'2026-11-09T07:00:00.000Z',submissionOutcome:'started',submissionUnknown:true}};
+  render(<WorkspaceNarrationPanel episodeId="episode" workspace={{...base,narration:[n]} as unknown as ProductionWorkspace} pending={false} command={vi.fn()} onChanged={()=>{}} selectedShotId="shot"/>);
+- expect(screen.getByText(/^口播提交结果未知/)).toBeTruthy();expect(screen.getByText(/本次费用预留 ¥1.00/)).toBeTruthy();expect(screen.getByText(/本次语音连接/)).toBeTruthy();expect(screen.getByText(/供应商未返回任务编号/)).toBeTruthy();expect(screen.getByText(/原任务 speech-task/).closest('details')?.open).toBe(true);const open=vi.fn();window.addEventListener('open-external-connections',open,{once:true});fireEvent.click(screen.getByRole('button',{name:'打开连接配置'}));expect(open).toHaveBeenCalledTimes(1);expect((screen.getByRole('button',{name:'生成口播'}) as HTMLButtonElement).disabled).toBe(true);expect(screen.getByRole('button',{name:'刷新核对结果'})).toBeTruthy();
++ expect(screen.getByText(/^口播提交结果未知/)).toBeTruthy();expect((screen.getByRole('button',{name:'生成口播'}) as HTMLButtonElement).disabled).toBe(true);fireEvent.click(screen.getByRole('button',{name:'查看口播任务详情'}));expect(screen.getByText(/¥1.00/)).toBeTruthy();expect(screen.getByText(/本次语音连接/)).toBeTruthy();expect(screen.getByText(/本机未保存供应商任务编号/)).toBeTruthy();expect(screen.getByText('speech-task')).toBeTruthy();const open=vi.fn();window.addEventListener('open-external-connections',open,{once:true});fireEvent.click(screen.getByRole('button',{name:'打开连接配置'}));expect(open).toHaveBeenCalledTimes(1);await waitFor(()=>expect(screen.queryByRole('dialog')).toBeNull());expect((screen.getByRole('button',{name:'生成口播'}) as HTMLButtonElement).disabled).toBe(true);expect(screen.getByRole('button',{name:'刷新核对结果'})).toBeTruthy();
+ });
+ it('audio publication remains explicitly recoverable and never offers ordinary retry',async()=>{
+  const {WorkspaceAudioPreparation}=await import('./WorkspaceAudioPanel');vi.stubGlobal('fetch',vi.fn(async()=>Response.json({serviceCatalog:{groups:[]}})));
+@@ -43,3 +43,15 @@
+  view.rerender(<WorkspaceVisualPreparation workspace={{...workspace,visualTasks:[{...workspace.visualTasks[0],submissionOutcome:'received'}]}} {...props}/>);
+  expect(screen.getByRole('progressbar',{name:'图片生成进度'}).getAttribute('aria-valuetext')).toBe('已收到图片，正在验证并保存');
+ });
++
++it('shows a local rejection compactly and opens full details without growing the result area',async()=>{
++ const {WorkspaceVisualTaskStatus}=await import('./WorkspaceVisualTaskStatus');
++ const task={id:'local',taskId:'local-task',status:'failed',error:'MiniMax 参考图校验未通过，未发送到供应商。',submissionOutcome:'not_sent' as const,reservationCents:240};
++ render(<WorkspaceVisualTaskStatus task={task} label="视频" onResume={vi.fn()} onRefresh={vi.fn()} onReconcile={vi.fn()}/>);
++ expect(screen.queryByText(/本次请求在本机被拦截/)).toBeNull();expect(screen.queryByRole('dialog')).toBeNull();
++ screen.getByRole('button',{name:'查看视频任务详情'}).focus();fireEvent.click(screen.getByRole('button',{name:'查看视频任务详情'}));
++ expect(screen.getByRole('dialog',{name:'视频任务详情'})).toBeTruthy();expect(screen.getByText(/本次请求在本机被拦截/)).toBeTruthy();
++ expect(screen.queryByText(/供应商已明确拒绝/)).toBeNull();fireEvent.keyDown(window,{key:'Escape'});
++ await waitFor(()=>expect(screen.queryByRole('dialog')).toBeNull());
++ expect(document.activeElement).toBe(screen.getByRole('button',{name:'查看视频任务详情'}));
++});
+--- a/src/local-app/WorkspaceAudioPanel.test.tsx
++++ b/src/local-app/WorkspaceAudioPanel.test.tsx
+@@ -95,7 +95,7 @@
+  const command=vi.fn(async()=>workspace),view=render(<WorkspaceAudioPreparation workspace={{...workspace,audio:{mix:{voices:[],sounds:[]},preparations:[failed]}} as ProductionWorkspace} command={command} onChange={()=>{}} selectedShotId="S1"/>);
+  fireEvent.click(screen.getByRole('button',{name:'重试原音频准备'}));await waitFor(()=>expect(command).toHaveBeenCalledWith('prepareWorkspaceAudio',expect.objectContaining({kind:'sfx',preparationId:'failed',retry:true})));
+  view.rerender(<WorkspaceAudioPreparation workspace={{...workspace,audio:{mix:{voices:[],sounds:[]},preparations:[{...failed,generationTask:{...failed.generationTask,submissionUnknown:true,submissionOutcome:'started'}}]}} as ProductionWorkspace} command={command} onChange={()=>{}} selectedShotId="S1"/>);
+- expect(screen.queryByRole('button',{name:'重试原音频准备'})).toBeNull();expect(screen.getByRole('button',{name:'刷新核对结果'})).toBeTruthy();expect(screen.getByText(/当前结果未知，不能再次提交生成/)).toBeTruthy();expect(command).toHaveBeenCalledTimes(1);
++ expect(screen.queryByRole('button',{name:'重试原音频准备'})).toBeNull();expect(screen.getByRole('button',{name:'刷新核对结果'})).toBeTruthy();fireEvent.click(screen.getByRole('button',{name:'查看音频任务详情'}));expect(screen.getByText(/当前结果未知，不能再次提交生成/)).toBeTruthy();expect(command).toHaveBeenCalledTimes(1);
+ });
+ 
+ it('does not expose duplicate source extraction and preserves legacy source records',()=>{
+--- a/src/local-app/workspaceVisualCandidates.ts
++++ b/src/local-app/workspaceVisualCandidates.ts
+@@ -195,7 +195,7 @@
+  (SELECT retry.task_id FROM local_identity.workspace_visual_candidates retry
+   WHERE retry.workspace_id=v.workspace_id AND retry.target_item_id=v.target_item_id
+     AND retry.task_id IS NOT NULL AND retry.request_snapshot->>'retryOfTaskId'=t.id::text LIMIT 1) "retryTaskId",
+- s.outcome "submissionOutcome",to_jsonb(s)->>'video_phase' "videoPhase",r.provider_task_id "providerTaskId",r.request_state "requestState",h.attempt "publicationAttempt",
++ CASE WHEN t.last_result#>>'{blockers,0,code}'='VIDEO_REQUEST_NOT_SENT' THEN 'not_sent' ELSE s.outcome END "submissionOutcome",to_jsonb(s)->>'video_phase' "videoPhase",r.provider_task_id "providerTaskId",r.request_state "requestState",h.attempt "publicationAttempt",
+  (t.status IN ('failed','blocked') AND r.request_state='submitting' AND r.provider_task_id IS NULL AND coalesce(s.outcome,'started')<>'rejected') "submissionUnknown",r.reserved_cents "reservationCents",
+  (t.status IN ('failed','blocked') AND r.provider_task_id IS NOT NULL AND s.outcome<>'rejected' AND h.task_id IS NULL) "canResume"
+  FROM local_identity.workspace_visual_candidates v JOIN public.tasks t ON t.id=v.task_id LEFT JOIN public.paid_generation_reservations r ON r.task_id=t.id LEFT JOIN local_identity.workspace_visual_submissions s ON s.task_id=t.id LEFT JOIN local_identity.workspace_publication_holds($2) h ON h.task_id=t.id WHERE v.workspace_id=$1 ORDER BY v.created_at DESC`,[row.id,row.episode_id])).rows.map(({request_snapshot,...task})=>({...task,...(typeof request_snapshot.prompt==='string'?{generation:workspaceVisualGenerationRecord(request_snapshot)}:{})}));
+--- a/src/workspaceVisualCandidates.ts
++++ b/src/workspaceVisualCandidates.ts
+@@ -3,7 +3,7 @@
+ import type {OpenChatCutProject} from './worker/openchatcutProject.js';
+ import type {WorkspaceCandidate} from './workspaceCandidates.js';
+ export interface WorkspaceVisualCandidate extends WorkspaceCandidate {source?:import('./workspacePexels.js').WorkspacePexelsSource;usage:'video'|'still'|'pan-zoom';materialRevisionId?:string;generation?:{selection?:import('./productionSelection.js').ProductionSelection;connectionName?:string;actualPrompt?:string;prompt:string;firstFrameMaterialRevisionId:string;durationSeconds:number;imageSettings?:import('./imageGeneration.js').ImageGenerationSettings;imageBrief?:import('./imageGeneration.js').ImageBrief;referenceMaterialRevisionIds?:string[];videoSettings?:import('./videoGenerationSettings.js').WanGenerationSettings;firstFrameFit?:'contain'|'cover'};width:number;height:number}
+-export interface WorkspaceVisualTask {generation?:WorkspaceVisualCandidate['generation'];id:string;taskId:string;shotId?:string;kind?:'image'|'video';status:string;error:string|null;canResume?:boolean;provider?:string;model?:string;connectionName?:string|null;reservationCents?:number|null;createdAt?:string;targetItemId?:string;submissionOutcome?:'started'|'received'|'rejected'|null;providerTaskId?:string|null;videoPhase?:VideoGenerationPhase|null;requestState?:string|null;submissionUnknown?:boolean;retryTaskId?:string|null;publicationAttempt?:number|null}
++export interface WorkspaceVisualTask {generation?:WorkspaceVisualCandidate['generation'];id:string;taskId:string;shotId?:string;kind?:'image'|'video';status:string;error:string|null;canResume?:boolean;provider?:string;model?:string;connectionName?:string|null;reservationCents?:number|null;createdAt?:string;targetItemId?:string;submissionOutcome?:'started'|'received'|'rejected'|'not_sent'|null;providerTaskId?:string|null;videoPhase?:VideoGenerationPhase|null;requestState?:string|null;submissionUnknown?:boolean;retryTaskId?:string|null;publicationAttempt?:number|null}
+ export const workspaceVisualFields:Record<string,string[]>={
+  searchWorkspacePexelsVideos:['episodeId','workspaceId','expectedRevision','targetItemId','selection','query','orientation','size','page'],
+  previewWorkspacePexelsVideo:['episodeId','workspaceId','expectedRevision','searchId','resultId'],
+--- a/src/local-app/mediaWorker.ts
++++ b/src/local-app/mediaWorker.ts
+@@ -1,4 +1,5 @@
+ import {PexelsVideoError} from '../worker/pexelsVideos.js';
++import {VideoGenerationError} from '../worker/videoGenerationError.js';
+ import {FreesoundSearchError,OpenAiImageRequestError} from '../worker/mediaProviders.js';
+ import {assertWorkspaceVisualExecution} from './workspaceVisualWorker.js';
+ import {executeWorkspaceImages} from './workspaceImageGenerationWorker.js';
+@@ -90,7 +91,7 @@
+      return async(url,init)=>{await reserve();return observeVideo(url,init);};
+     });
+    }else{
+-    output=await executeControlledMediaTask({
++    try{output=await executeControlledMediaTask({
+      taskPackage:p,fetcher:observeVideo,pexelsApiKey:p.provider==='pexels'?secret:undefined,googleTtsApiKey:undefined,
+      bailianCredentials:p.provider==='bailian'?secret:undefined,officialVideoCredentials:isVideoProvider(p.provider)?secret:undefined,
+      reserveWan:videoProvider?async()=>{
+@@ -111,9 +112,12 @@
+       lastVideoPhase=phase;
+      }:undefined,
+      freesoundApiKey:p.provider==='freesound'?secret:undefined,validateMp4:validateMp4Artifact,probeMp3:probeMp3Artifact,extractMp3:extractMp3Artifact,trimMp3:trimMp3Artifact,trimMp4:trimMp4Artifact,trimMp4Segments:trimMp4SegmentsArtifact
+-    });
++    });}catch(error){
++     if(videoProvider&&workspaceVideoReserved&&!providerTaskId&&error instanceof VideoGenerationError&&['not_sent','rejected'].includes(error.outcome))await pool.query('SELECT local_identity.record_workspace_visual_submission($1,$2,$3,$4)',[fence.p_task_id,fence.p_attempt,fence.p_lease_token,'rejected']);
++     throw error;
++    }
+    }
+   }
+   const result=JSON.parse(output);result.validation.checks.push({name:'native_media_mode',passed:true,detail:ports?.mode==='controlled'?'受控Provider响应和SecretStore替身；没有在线资格或在线生成证明。':external?'在线执行路径。':'本机媒体执行。'});return JSON.stringify(result);
+- }catch(error){if(error instanceof ProviderOutcomeUnknownError||error instanceof PexelsVideoError||error instanceof FreesoundSearchError||error instanceof OpenAiImageRequestError)throw error;if(p.provider==='pexels')throw Error(error instanceof SecretStoreError?'Pexels 所选连接不可用，请检查原连接后重新检索。':'Pexels 视频文件无效或无法读取，请重新预览其他结果。');throw Error('媒体执行或产物验证失败，请检查冻结输入和本机执行状态。',{cause:error});}
++ }catch(error){if(error instanceof VideoGenerationError)throw error;if(error instanceof ProviderOutcomeUnknownError||error instanceof PexelsVideoError||error instanceof FreesoundSearchError||error instanceof OpenAiImageRequestError)throw error;if(p.provider==='pexels')throw Error(error instanceof SecretStoreError?'Pexels 所选连接不可用，请检查原连接后重新检索。':'Pexels 视频文件无效或无法读取，请重新预览其他结果。');throw Error('媒体执行或产物验证失败，请检查冻结输入和本机执行状态。',{cause:error});}
+ }
+--- a/src/local-app/providerNetwork.ts
++++ b/src/local-app/providerNetwork.ts
+@@ -1,3 +1,4 @@
++import {VideoGenerationError} from '../worker/videoGenerationError.js';
+ import {isWanVideoRequest} from '../wanVideoModels.js';
+ import {imageSizes,openAiImageModels,openAiImageQualities} from '../imageGeneration.js';
+ import {isRetiredProvider} from '../worker/providerLifecycle.js';
+@@ -182,7 +183,7 @@
+ export function createWorkspaceGenerationFetcher(provider:WorkspaceGenerationProvider|'volcengine_tts',authorization:{reserve:()=>Promise<void>;videoTaskId?:()=>string|undefined;speech?:{text:string;voice:string;model:string}},transport:MediaFetcher=provider==='openai'?waitForImageResponse:fetch):MediaFetcher{
+  let started=false;
+  return async(input,init={})=>{
+-  const operation=requestOperation(provider,'execute',input,init);
++  let operation:string;try{operation=requestOperation(provider,'execute',input,init);}catch(error){if(isVideoProvider(provider)&&init.method==='POST')throw error instanceof VideoGenerationError?error:new VideoGenerationError('本机视频请求校验未通过，未向供应商发送。','not_sent');throw error;}
+   const generate=operation===provider+'.generate',download=operation===provider+'.download';
+   if(init.signal?.aborted)throw denied();
+   if(generate){
+@@ -204,7 +205,11 @@
+    const maxBytes=(provider==='openai'?64:provider==='volcengine_tts'?20:download?100:1)*1024*1024;
+    return (await readProviderResponse(response,maxBytes)).response;
+   }catch(error){
+-   if(generate)throw new ProviderOutcomeUnknownError();
++   if(generate){
++    const failure=error as {name?:string;code?:string;cause?:{code?:string}},code=failure?.cause?.code??failure?.code;
++    const reason=signal.aborted||failure?.name==='TimeoutError'?'供应商响应超时':code&&['ECONNRESET','ECONNREFUSED','ENOTFOUND','ETIMEDOUT','UND_ERR_CONNECT_TIMEOUT'].includes(code)?`网络连接异常：${code}`:'网络连接中断或响应未完整收到';
++    throw new ProviderOutcomeUnknownError(undefined,reason);
++   }
+    throw error;
+   }finally{controller.abort();}
+  };
+--- a/src/local-app/officialVideoNetwork.ts
++++ b/src/local-app/officialVideoNetwork.ts
+@@ -1,5 +1,8 @@
+ import {isPublicMediaUrl,videoOutputRatios} from '../videoVisualInputs.js';
+-import {officialVideoDownloadUrl} from '../worker/officialVideoProvider.js';
++import {isDeepStrictEqual} from 'node:util';
++import {registeredAdapters} from '../worker/registeredAdapters.js';
++import {VideoGenerationError} from '../worker/videoGenerationError.js';
++import {officialVideoBody,officialVideoDownloadUrl} from '../worker/officialVideoProvider.js';
+ import {klingOmniModel,klingOmniPath,videoProviders,minimaxEndpoints, type VideoProvider} from '../worker/videoProviderCatalog.js';
+ // Endpoint boundary for signed, deployment-owned network policies.
+ export function officialVideoOperation(provider: VideoProvider, phase: 'verify'|'execute', url: URL, init: RequestInit): string {
+@@ -28,13 +31,13 @@
+    return'generate';
+   }
+   if(phase==='execute'&&method==='POST'&&path===create&&!url.search){
+-   if(typeof init.body!=='string'||Buffer.byteLength(init.body)>15*1024*1024)throw Error('Invalid video body');
++   if(typeof init.body!=='string'||Buffer.byteLength(init.body)>(provider==='kling'?15:55)*1024*1024)throw Error('Invalid video body');
+    const body=JSON.parse(init.body),duration=Number(body.duration),p=videoProviders[provider];
+    if(!Number.isInteger(duration)||duration<p.minDuration||duration>p.maxDuration)throw Error('Invalid video duration');
+    if(provider==='kling'){
+     if(body.model_name!=='kling-v3'||body.mode!=='std'||body.sound!=='off'||typeof body.image!=='string'||!body.image||typeof body.prompt!=='string'||!body.prompt.trim()||body.prompt.length>1500||Object.keys(body).some(k=>!['model_name','image','prompt','mode','duration','sound'].includes(k)))throw Error('Invalid Kling video body');
+    }else{
+-    if(!(p.models as readonly string[]).includes(body.model)||body.ratio!=='adaptive'||body.resolution!==(provider==='minimax'?'768P':'720p')||!Array.isArray(body.content)||body.content.length!==2||body.content[0]?.type!=='text'||typeof body.content[0].text!=='string'||!body.content[0].text.trim()||body.content[0].text.length>1500||body.content[1]?.type!=='image_url'||body.content[1]?.role!=='first_frame'||!/^data:image\/(png|jpeg);base64,[A-Za-z0-9+/=]+$/.test(body.content[1]?.image_url?.url??'')||Object.keys(body).some(k=>!['model','content','duration','ratio','resolution',...(provider==='volcengine'?['generate_audio','watermark']:[])].includes(k))||provider==='volcengine'&&(body.generate_audio!==false||body.watermark!==false))throw Error('Invalid video body');
++    if(!matchesRegisteredVisualBody(provider,body))throw new VideoGenerationError(`${p.label} 请求的模型、画面输入或参数与已登记模式不一致，未向供应商发送。`,'not_sent');
+    }
+    return'generate';
+   }
+@@ -42,3 +45,27 @@
+  if(phase==='execute'&&method==='GET'&&!new Headers(init.headers).has('Authorization')){officialVideoDownloadUrl(provider,url.href);return'download';}
+  throw Error('Unregistered official video request');
+ }
++
++/** Reuse the exact registered serializer so reference modes cannot drift from first-frame validation. */
++function matchesRegisteredVisualBody(provider:'minimax'|'volcengine',body:Record<string,any>){
++ if(!Array.isArray(body.content)||body.content[0]?.type!=='text'||typeof body.content[0].text!=='string')return false;
++ const roles={first_frame:'firstFrame',last_frame:'lastFrame',reference_image:'referenceImages',reference_video:'referenceVideos'} as const;
++ const inputs:import('../worker/officialVideoProvider.js').OfficialVideoVisualInput[]=[];
++ for(const [index,entry] of body.content.slice(1).entries()){
++  const role=roles[entry?.role as keyof typeof roles];if(!role)return false;
++  const url=entry.type==='image_url'?entry.image_url?.url:entry.type==='video_url'?entry.video_url?.url:undefined;
++  if(typeof url!=='string')return false;
++  const data=/^data:(image\/(?:png|jpeg|webp)|video\/mp4);base64,([A-Za-z0-9+/]+={0,2})$/.exec(url);
++  if(data)inputs.push({role,materialRevisionId:String(index),mimeType:data[1],...(entry.type==='video_url'?{video:Buffer.from(data[2],'base64')}:{image:Buffer.from(data[2],'base64')})});
++  else if(entry.type==='video_url'&&role==='referenceVideos')inputs.push({role,materialRevisionId:String(index),source:url,mimeType:'video/mp4'});
++  else return false;
++ }
++ const modes=registeredAdapters.productionChoices().find(c=>c.provider===provider&&c.adapter===videoProviders[provider].adapter)?.videoGenerationModes?.[body.model]??[];
++ for(const mode of modes)try{
++  const base={provider,model:body.model,prompt:body.content[0].text,durationSeconds:body.duration};
++  if(mode.id==='first-frame'&&(inputs.length!==1||inputs[0].role!=='firstFrame'))continue;
++  const expected=mode.id==='first-frame'?officialVideoBody({...base,image:inputs[0].image,imageMime:inputs[0].mimeType}):officialVideoBody({...base,visualInputs:inputs,visualMode:mode.id});
++  if(isDeepStrictEqual(body,expected))return true;
++ }catch{/* Another registered mode may match; no network or reservation occurs here. */}
++ return false;
++}
+--- a/src/worker/officialVideoProvider.ts
++++ b/src/worker/officialVideoProvider.ts
+@@ -1,3 +1,5 @@
++import {VideoGenerationError} from './videoGenerationError.js';
++import {ProviderOutcomeUnknownError,isDefiniteProviderRejection} from './providerOutcome.js';
+ import {registeredAdapters} from './registeredAdapters.js';
+ import {videoOutputRatios,videoVisualInputProblem,type VideoOutputRatio,type VideoVisualInputSelection} from '../videoVisualInputs.js';
+ import {createHmac} from 'node:crypto';
+@@ -88,37 +90,56 @@
+   return {model:input.model,content,duration:input.durationSeconds,ratio:'adaptive',resolution:input.provider === 'minimax' ? '768P' : '720p',...(input.provider === 'volcengine' ? {generate_audio:false,watermark:false} : {})};
+ }
+ export async function generateOfficialVideo(input: OfficialVideoInput): Promise<Uint8Array> {
+-  const body = officialVideoBody(input), endpoint=videoEndpoint(input.provider,input.credentials);
++  let body:ReturnType<typeof officialVideoBody>,endpoint:string;
++  try{body=officialVideoBody(input);endpoint=videoEndpoint(input.provider,input.credentials);videoAuthorization(input.provider,input.credentials);}
++  catch(error){throw new VideoGenerationError(error instanceof Error?error.message:'视频输入无效。','not_sent');}
++  const label=input.provider==='minimax'?'MiniMax':videoProviders[input.provider].label;
+   const headers = () => ({Authorization:videoAuthorization(input.provider,input.credentials),'Content-Type':'application/json'});
+-  // Validate credentials before reserving. Unknown submissions never create a second task.
+-  headers();
+   const createPath = input.provider === 'volcengine' ? '/contents/generations/tasks' : input.provider === 'minimax' ? '/v2/video_generation' : input.model===klingOmniModel?klingOmniPath:'/v1/videos/image2video';
+-  const json = async (response: Response) => {
+-    if (!response.ok) throw Error(`视频接口请求失败：HTTP ${response.status}。`);
+-    const value = await response.json();
+-    if (!value || typeof value !== 'object' || input.provider === 'kling' && value.code !== 0) throw Error('视频接口响应无效。');
++  const redact=(value:unknown)=>{
++   let text=typeof value==='string'?value:'';
++   for(const secret of [input.credentials,videoAuthorization(input.provider,input.credentials),input.provider==='minimax'?minimaxCredential(input.credentials).apiKey:''].filter(Boolean))text=text.split(secret).join('<REDACTED>');
++   return text.replace(/Bearer\s+[^\s,;"']+/gi,'Bearer <REDACTED>').replace(/data:[^\s"']+/gi,'<MEDIA>').replace(/https?:\/\/[^\s"']+/gi,'<URL>').replace(/[\u0000-\u001f]/g,' ').slice(0,500);
++  };
++  const json = async (response:Response,phase:'提交'|'查询') => {
++    let value;try{value=await response.json();}catch{/* Raw HTML/response bodies are never exposed. */}
++    const legacyCode=value?.base_resp?.status_code,detail=redact(value?.error?.message??value?.base_resp?.status_msg??value?.message),request=value?.request_id;
++    const failed=!response.ok||value?.type==='error'||input.provider==='minimax'&&legacyCode!==undefined&&legacyCode!==0||input.provider==='kling'&&value?.code!==0;
++    if(failed){
++     const code=legacyCode??value?.error?.type??(input.provider==='kling'?value?.code:undefined);
++     const definite=isDefiniteProviderRejection(response.status)||response.ok&&([1002,1004,1008,1026,2013].includes(legacyCode)||isDefiniteProviderRejection(Number(value?.error?.http_code)));
++     throw new VideoGenerationError(`${label} ${phase}失败（HTTP ${response.status}${code!==undefined?`，${redact(String(code))}`:''}）${detail?`：${detail}`:'。'}${typeof request==='string'&&/^[a-zA-Z0-9_-]{1,128}$/.test(request)?` 请求编号 ${request}`:''}`,phase==='查询'?'accepted':definite?'rejected':'unknown');
++    }
++    if(!value||typeof value!=='object')throw new VideoGenerationError(`${label} ${phase}返回的内容无法解析。`,phase==='查询'?'accepted':'unknown');
+     return value;
+   };
+   const query = input.provider === 'minimax' ? '/v2/query/video_generation/' : createPath+'/';
+-  return executeVideoTask(input,{
++  let phase:'reservation'|'submission'|'registration'|'poll'|'download'='reservation';
++  try{return await executeVideoTask({...input,recordSubmission:async id=>{phase='registration';await input.recordSubmission(id);}},{
+     submit:async()=>{
+-      const value=await json(await input.fetcher(endpoint+createPath,{method:'POST',headers:headers(),body:JSON.stringify(body),signal:AbortSignal.timeout(30_000)}));
++      phase='submission';const value=await json(await input.fetcher(endpoint+createPath,{method:'POST',headers:headers(),body:JSON.stringify(body),signal:AbortSignal.timeout(30_000)}),'提交');
+       return input.provider==='volcengine'?value.id:input.provider==='minimax'?value.task_id:value.data?.task_id;
+     },
+     query:async id=>{
+-      const value=await json(await input.fetcher(endpoint+query+encodeURIComponent(id),{headers:headers(),signal:AbortSignal.timeout(30_000)}));
++      phase='poll';const value=await json(await input.fetcher(endpoint+query+encodeURIComponent(id),{headers:headers(),signal:AbortSignal.timeout(30_000)}),'查询');
+       const task=input.provider==='volcengine'?value:input.provider==='minimax'?value.task:value.data;
+       const status=input.provider==='kling'?task?.task_status:task?.status;
+       if(status==='succeeded'||status==='succeed'){
+         const url=input.provider==='volcengine'?task.content?.video_url:input.provider==='minimax'?task.content?.url:task.task_result?.videos?.[0]?.url;
+         if(typeof url!=='string')throw Error('视频任务已完成但缺少下载地址。');
+-        return{url};
++        phase='download';return{url};
+       }
+-      if(!['queued','pending','running','submitted','processing'].includes(status))throw Error('视频任务失败或状态未知；请沿用原任务核对。');
++      if(!['queued','pending','running','submitted','processing'].includes(status))throw new VideoGenerationError(`${label} 视频任务${status==='failed'?'生成失败':'状态无法识别'}${redact(task?.error?.message??task?.error?.detail)?`：${redact(task?.error?.message??task?.error?.detail)}`:'，请沿用原任务核对。'}`,'accepted');
+       return{phase:['queued','pending','submitted'].includes(status)?'queued':'processing'};
+     },
+     pollDelayMs:()=>10_000,
+     download:{validateUrl:value=>officialVideoDownloadUrl(input.provider,value),invalidResponse:'视频下载不是有效 MP4。',tooLarge:'视频超过 100MB 限制。',empty:'下载视频为空。',redirectLimit:'视频下载重定向过多。'},
+     errors:{unknownSubmission:'上次视频提交结果未知，请核对供应商记录。',invalidSubmittedId:'视频提交缺少有效任务 ID；禁止自动重提。',invalidSavedId:'供应商任务 ID 无效。',pollLimit:'视频仍在生成，请恢复原任务查询。'},
+-  });
++  });}catch(error){
++    if(error instanceof VideoGenerationError||error instanceof ProviderOutcomeUnknownError)throw error;
++    if(error instanceof Error&&error.message==='上次视频提交结果未知，请核对供应商记录。')throw new VideoGenerationError(`${label} ${error.message}`,'unknown');
++    const stage=String(phase),known=error instanceof Error&&['视频提交缺少有效任务 ID；禁止自动重提。','供应商任务 ID 无效。','视频任务已完成但缺少下载地址。','视频下载不是有效 MP4。','视频超过 100MB 限制。','下载视频为空。','视频下载重定向过多。','视频下载地址不属于对应供应商。','视频仍在生成，请恢复原任务查询。'].includes(error.message)?error.message:null;
++    const failure=new VideoGenerationError(`${label} ${stage==='reservation'?'本机费用预留失败':stage==='registration'?'任务编号保存失败':stage==='submission'?'提交未完成':stage==='download'?'视频下载失败':'任务查询失败'}：${known??(stage==='registration'?'供应商可能已受理，请核对原请求，不要重复生成。':stage==='reservation'?'请检查本机额度和任务状态。':redact(error instanceof Error?error.message:'连接中断或响应未完成，请核对原任务。'))}`,stage==='reservation'?'not_sent':stage==='submission'||stage==='registration'?'unknown':'accepted',{cause:error});
++    if(error instanceof Error&&error.name==='TimeoutError')failure.name='TimeoutError';throw failure;
++  }
+ }
+--- a/src/worker/providerOutcome.ts
++++ b/src/worker/providerOutcome.ts
+@@ -1,8 +1,8 @@
+ // A sent request may have reached the Provider even when no result was received.
+ export class ProviderOutcomeUnknownError extends Error {
+- constructor(timeoutMs?:number){
++ constructor(timeoutMs?:number,reason?:string){
+   super((timeoutMs===undefined?'Provider 请求结果未知':`等待供应商响应超时（${timeoutMs/1000} 秒），提交结果未知`)+
+-   '；已消费的请求预算保留。请先核对请求账本与供应商记录，不会自动重发。');
++   (reason?`（${reason}）`:'')+'；已消费的请求预算保留。请先核对请求账本与供应商记录，不会自动重发。');
+   this.name='ProviderOutcomeUnknownError';
+  }
+ }
+--- a/src/worker/videoGenerationError.ts
++++ b/src/worker/videoGenerationError.ts
+@@ -0,0 +1,8 @@
++/** Safe video diagnostics that may cross Worker, task and UI boundaries. */
++export class VideoGenerationError extends Error {
++ readonly code:string;
++ constructor(message:string,readonly outcome:'not_sent'|'rejected'|'unknown'|'accepted',options?:ErrorOptions){
++  super(message,options);this.name='VideoGenerationError';
++  this.code=outcome==='not_sent'?'VIDEO_REQUEST_NOT_SENT':outcome==='rejected'?'VIDEO_PROVIDER_REJECTED':'VIDEO_GENERATION_FAILED';
++ }
++}
+--- a/src/worker/codexRunner.ts
++++ b/src/worker/codexRunner.ts
+@@ -18,6 +18,7 @@
+   validateWorkerResult,
+ } from "./contracts.js";
+ import { registeredAdapters } from "./registeredAdapters.js";
++import {VideoGenerationError} from './videoGenerationError.js';
+ import {ProviderOutcomeUnknownError} from "./providerOutcome.js";
+ import { validateStoryboardManifest } from "./contracts.js";
+ import type { StoryboardStructureRevision } from "./storyboardRevision.js";
+@@ -855,7 +856,7 @@
+ }
+ 
+ function createFailedResult(taskPackage: WorkerTaskPackage, actualCostCents: number, error: unknown): WorkerResult {
+-  const unknown = error instanceof ProviderOutcomeUnknownError;
++  const unknown = error instanceof ProviderOutcomeUnknownError||error instanceof VideoGenerationError&&error.outcome==='unknown';
+   return {
+     version: "worker-result/v1",
+     taskId: taskPackage.task.id,
+@@ -863,7 +864,7 @@
+     artifacts: [],
+     validation: { passed: false, checks: [{ name: "codex_execution", passed: false, detail: errorMessage(error) }] },
+     actualCostCents,
+-    blockers: [],
++    blockers: error instanceof VideoGenerationError?[{code:error.code,detail:error.message}]:[],
+     retry: {
+       shouldRetry: !unknown && taskPackage.budget.attempt + 1 < taskPackage.budget.maxAttempts,
+       reason: errorMessage(error),
+@@ -874,7 +875,7 @@
+ 
+ function executionPreflightCheck(taskPackage: WorkerTaskPackage, error: unknown): WorkerPreflightCheck | undefined {
+   const detail = errorMessage(error);
+-  if(error instanceof ProviderOutcomeUnknownError)return {capability:taskPackage.capability,check:"provider_result_unknown",phase:"execution",status:"blocked",reason:detail,action:"contact_environment_admin",scope:"worker"};
++  if(error instanceof ProviderOutcomeUnknownError||error instanceof VideoGenerationError&&error.outcome==='unknown')return {capability:taskPackage.capability,check:"provider_result_unknown",phase:"execution",status:"blocked",reason:detail,action:"contact_environment_admin",scope:"worker"};
+   const imageGeneration = taskPackage.visualAssetPreparation?.imageGeneration;
+   const isOpenAiStaticVisual = (taskPackage.provider === "openai" && taskPackage.media?.adapter === "openai_images") || (imageGeneration?.provider === "openai" && imageGeneration.adapter === "openai_images");
+   const isCloudflareStaticVisual = (taskPackage.provider === "cloudflare" && taskPackage.media?.adapter === "workers_ai_images") || (imageGeneration?.provider === "cloudflare" && imageGeneration.adapter === "workers_ai_images");
+--- a/src/worker/codexRunner.test.ts
++++ b/src/worker/codexRunner.test.ts
+@@ -1,6 +1,7 @@
+ import {buildCodexPrompt} from './codexPrompt';
+ import { describe, expect, it, vi } from "vitest";
+ import { runCodexWorker, shotPreparationContractFromSnapshot } from "./codexRunner";
++import {VideoGenerationError} from './videoGenerationError';
+ import {ProviderOutcomeUnknownError} from "./providerOutcome";
+ 
+ const claimedTask = {
+@@ -743,7 +744,7 @@
+   });
+ });
+ 
+-it('keeps a possibly sent Pexels request blocked for Owner reconciliation rather than automatic retry',async()=>{
++it.each([new ProviderOutcomeUnknownError(),new VideoGenerationError('视频提交结果未知：供应商响应不完整','unknown')])('keeps a possibly sent request blocked for Owner reconciliation rather than automatic retry: %s',async failure=>{
+  const reportResult=vi.fn();
+  const inputBasis=[{relativePath:'episodes/episode-1/script.md',sha256:'a'.repeat(64)},{relativePath:'episodes/episode-1/visual.png',sha256:'b'.repeat(64)}];
+  const task={...claimedTask,taskType:'generate_b_roll',provider:'pexels' as const,model:'pexels-video-v1',inputSnapshot:{
+@@ -751,7 +752,7 @@
+   media:{adapter:'pexels_video',b_roll:{query:'nature',target_duration_seconds:3,shot:{id:'shot-1',scriptSegment:'nature',durationSeconds:3,shotType:'b_roll',productionMethod:'Pexels',inputBasis,targetSpec:'9:16'}}},
+   output:{required_artifact_types:['b_roll_asset'],content_type:'video/mp4',relative_path:'episodes/episode-1/b-roll.mp4',review_stage:'production_ready'},input_artifacts:[{artifactType:'main_script',...inputBasis[0],fileSize:128},{artifactType:'static_visual',...inputBasis[1],fileSize:128}]
+  }};
+- await expect(runCodexWorker({claimNextTask:async()=>task,reportResult,execute:async()=>{throw new ProviderOutcomeUnknownError();},verifyAssetRoot:async()=>{},verifyArtifacts:async()=>{},actualCostCents:0})).resolves.toEqual({status:'blocked',taskId:'task-1'});
++ await expect(runCodexWorker({claimNextTask:async()=>task,reportResult,execute:async()=>{throw failure;},verifyAssetRoot:async()=>{},verifyArtifacts:async()=>{},actualCostCents:0})).resolves.toEqual({status:'blocked',taskId:'task-1'});
+  expect(reportResult).toHaveBeenCalledOnce();
+  expect(reportResult).toHaveBeenCalledWith('task-1',0,expect.objectContaining({status:'blocked',artifacts:[],retry:{shouldRetry:false,reason:expect.stringContaining('结果未知')},blockers:[expect.objectContaining({code:'provider_result_unknown',status:'blocked',action:'contact_environment_admin'})]}));
+ });
+--- a/src/worker/videoTaskExecution.test.ts
++++ b/src/worker/videoTaskExecution.test.ts
+@@ -74,7 +74,7 @@
+    if(new URL(value).origin===origin){step('download');return new Response('video',{headers:{'content-type':'video/mp4'}});}
+    step('poll');return completed(provider,origin+'/result.mp4');
+   };
+-  await expect(generate(provider,fetcher,{reserve:async()=>{step('reserve');return{new:true};},recordSubmission:async()=>{step('record');},onProgress:async phase=>{step(phase);}})).rejects.toBe(failure);
++  await expect(generate(provider,fetcher,{reserve:async()=>{step('reserve');return{new:true};},recordSubmission:async()=>{step('record');},onProgress:async phase=>{step(phase);}})).rejects.toSatisfy((error:Error)=>error===failure||error.cause===failure);
+   const expected={reserve:['reserve'],POST:['reserve','POST'],record:['reserve','POST','record'],poll:['reserve','POST','record','poll'],saving:['reserve','POST','record','poll','saving'],download:['reserve','POST','record','poll','saving','download']};
+   expect(events).toEqual(expected[stage]);
+  });
+@@ -105,7 +105,7 @@
+    queries.push(new URL(value).pathname);return completed(provider,origin+'/result.mp4');
+   };
+   const ports={reserve:async()=>({new:!id,provider_task_id:id}),recordSubmission:record};
+-  await expect(generate(provider,fetcher,ports)).rejects.toBe(failure);broken=false;
++  await expect(generate(provider,fetcher,ports)).rejects.toSatisfy((error:Error)=>error===failure||error.cause===failure);broken=false;
+   expect(await generate(provider,fetcher,ports)).toEqual(Uint8Array.of(8));expect(posts).toBe(1);expect(record).toHaveBeenCalledOnce();expect(queries).toHaveLength(2);expect(queries.every(path=>path.endsWith('/durable-task'))).toBe(true);
+  });
+ });
+--- a/src/worker/officialVideoErrors.test.ts
++++ b/src/worker/officialVideoErrors.test.ts
+@@ -0,0 +1,33 @@
++// @vitest-environment node
++import {it,expect,vi} from 'vitest';
++import {generateOfficialVideo} from './officialVideoProvider';
++it('retains a MiniMax HTTP 200 business rejection instead of reporting a missing task ID',async()=>{
++ const record=vi.fn(),fetcher=vi.fn(async()=>Response.json({base_resp:{status_code:1008,status_msg:'insufficient balance'}}));
++ await expect(generateOfficialVideo({provider:'minimax',model:'MiniMax-H3',credentials:'synthetic',image:Uint8Array.of(1),imageMime:'image/png',prompt:'转头',durationSeconds:5,reserve:async()=>({new:true}),recordSubmission:record,fetcher})).rejects.toThrow(/MiniMax.*1008.*insufficient balance/);
++ expect(fetcher).toHaveBeenCalledOnce();expect(record).not.toHaveBeenCalled();
++});
++it('sends a registered MiniMax reference image through the real workspace network boundary',async()=>{
++ const {createWorkspaceGenerationFetcher}=await import('../local-app/providerNetwork');
++ const record=vi.fn(),transport=vi.fn(async(input:string|URL,init:RequestInit={})=>{
++  if(init.method==='POST')return Response.json({task_id:'reference-task'});
++  if(new URL(input).hostname==='api.minimax.io')return Response.json({task:{status:'succeeded',content:{url:'https://cdn.hailuoai.com/test.mp4'}}});
++  return new Response(Uint8Array.of(1,2),{headers:{'content-type':'video/mp4'}});
++ });let saved:string|undefined;
++ const fetcher=createWorkspaceGenerationFetcher('minimax',{reserve:async()=>{},videoTaskId:()=>saved},transport);
++ const result=await generateOfficialVideo({provider:'minimax',model:'MiniMax-H3',credentials:'synthetic',prompt:'转头',durationSeconds:5,visualMode:'references',visualInputs:[{role:'referenceImages',materialRevisionId:'image-1',image:Uint8Array.of(1),mimeType:'image/png'}],reserve:async()=>({new:true}),recordSubmission:async id=>{saved=id;record(id);},fetcher});
++ expect(result).toEqual(Uint8Array.of(1,2));expect(transport).toHaveBeenCalledTimes(3);expect(record).toHaveBeenCalledWith('reference-task');
++});
++it.each([
++ {status:402,body:{type:'error',error:{type:'insufficient_balance_error',message:'insufficient balance (1008)',http_code:'402'},request_id:'request-1'},outcome:'rejected',message:'insufficient balance'},
++ {status:500,body:{type:'error',error:{type:'server_error',message:'internal error'}},outcome:'unknown',message:'internal error'},
++ {status:200,body:{unexpected:'no ID'},outcome:'unknown',message:'任务 ID'},
++])('classifies MiniMax $status responses and retains the supplier reason',async({status,body,outcome,message})=>{
++ const fetcher=vi.fn(async()=>Response.json(body,{status}));
++ const error=await generateOfficialVideo({provider:'minimax',model:'MiniMax-H3',credentials:'synthetic',image:Uint8Array.of(1),imageMime:'image/png',prompt:'转头',durationSeconds:5,reserve:async()=>({new:true}),recordSubmission:vi.fn(),fetcher}).catch(e=>e);
++ expect(error).toMatchObject({outcome,message:expect.stringContaining(message)});expect(fetcher).toHaveBeenCalledOnce();
++});
++it('redacts credentials, inline media and signed URLs in provider errors',async()=>{
++ const secret='synthetic-private-key',fetcher=vi.fn(async()=>Response.json({error:{message:`Invalid ${secret} Bearer ${secret} data:image/png;base64,ABC https://example.test/result?Signature=secret`,http_code:'400'},type:'error'},{status:400}));
++ const error=await generateOfficialVideo({provider:'minimax',model:'MiniMax-H3',credentials:secret,image:Uint8Array.of(1),imageMime:'image/png',prompt:'转头',durationSeconds:5,reserve:async()=>({new:true}),recordSubmission:vi.fn(),fetcher}).catch(e=>e);
++ expect(error.message).toContain('<REDACTED>');for(const value of [secret,'ABC','Signature=secret'])expect(error.message).not.toContain(value);
++});
+--- a/src/local-app/minimaxFailure.integration.test.ts
++++ b/src/local-app/minimaxFailure.integration.test.ts
+@@ -0,0 +1,50 @@
++// @vitest-environment node
++import {it,expect,vi,afterEach} from 'vitest';
++import {readFile} from 'node:fs/promises';
++import {narrationFixture} from './workspaceNarration.fixture';
++import {workspaceTestMedia} from './workspaceTestMedia.fixture';
++import {createWorkspaceGenerationFetcher} from './providerNetwork';
++import {VideoGenerationError} from '../worker/videoGenerationError';
++const seam=vi.hoisted(()=>({ports:undefined as any}));
++vi.mock('./narrationWorker',async original=>{const actual=await original<typeof import('./narrationWorker')>();return{...actual,narrationPorts:async(...args:Parameters<typeof actual.narrationPorts>)=>seam.ports??actual.narrationPorts(...args)};});
++afterEach(()=>{seam.ports=undefined;});
++const enabled=process.env.LOOP_WORKSPACE_ACCEPTANCE==='1';
++it.skipIf(!enabled).each(['success','rejected','not_sent','unknown'] as const)('MiniMax reference request: actual Owner/Worker preserves $s outcome and duplicate guard',async fault=>{
++ const f=await narrationFixture(undefined,undefined,{provider:'minimax',model:'MiniMax-H3'});
++ try{
++  await f.authorize();const events:string[]=[];
++  const transport=async(input:string|URL,init:RequestInit={})=>{
++   const url=new URL(input),method=init.method==='POST'?'POST':url.hostname==='api.minimax.io'?'poll':'download';events.push(method);
++   if(method==='POST'){
++    expect(JSON.parse(String(init.body)).content[1].role).toBe('reference_image');
++    if(fault==='unknown')throw Object.assign(Error('connection reset'),{cause:{code:'ECONNRESET'}});
++    if(fault==='rejected')return Response.json({type:'error',error:{type:'insufficient_balance_error',message:'insufficient balance (1008)',http_code:'402'},request_id:'minimax-request-1'},{status:402});
++    return Response.json({task_id:'minimax-reference-task'});
++   }
++   if(method==='poll')return Response.json({task:{status:'succeeded',content:{url:'https://cdn.hailuoai.com/reference.mp4'}}});
++   return new Response(await readFile(workspaceTestMedia('landscape-red-blue.mp4')),{headers:{'content-type':'video/mp4'}});
++  };
++  const fetcher=createWorkspaceGenerationFetcher('minimax',{reserve:async()=>{},videoTaskId:()=> 'minimax-reference-task'},transport);
++  seam.ports={mode:'controlled',store:{mode:'keychain',get:async()=> 'synthetic-minimax-key'},fetcher:async(input:string|URL,init:RequestInit={})=>{
++   if(fault==='not_sent'&&init.method==='POST')throw new VideoGenerationError('MiniMax 参考图请求被本机首帧校验拦截，未发送到供应商。','not_sent');
++   return fetcher(input,init);
++  }};
++  const image=await f.request('importMaterial',{materialType:'image',sourceKind:'file',sourcePath:'minimax-reference.png',mimeType:'image/png',contentBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64'),isMainScript:false,materialPurpose:'visual_reference'});expect(image.status).toBe(200);
++  const initial=f.made,args={workspaceId:initial.id,expectedRevision:initial.revision,targetItemId:initial.clips[0].itemId,videoMode:'references',visualInputs:[{role:'referenceImages',materialRevisionId:image.body.id}],prompt:'按参考人物转头',durationSeconds:4,reservationCents:240};
++  const queued=await f.chosenRequest('requestWorkspaceVisualCandidate',args);expect(queued.status,JSON.stringify(queued.body)).toBe(200);const task=queued.body.visualTasks[0];
++  await f.execute(task.taskId,false);const w=await f.read(),actual=w.visualTasks.find((t:any)=>t.taskId===task.taskId);
++  if(fault==='success'){
++   expect(actual).toMatchObject({status:'completed',submissionOutcome:'received',providerTaskId:'minimax-reference-task'});expect(w.visualCandidates).toHaveLength(1);expect(events).toEqual(['POST','poll','download']);
++  }else{
++   expect(w.visualCandidates).toHaveLength(0);
++   if(fault==='unknown'){
++    expect(actual).toMatchObject({status:'blocked',submissionUnknown:true});expect(events).toEqual(['POST']);
++    expect((await f.chosenRequest('requestWorkspaceVisualCandidate',{...args,prompt:'不能重复提交'})).status).toBe(409);
++   }else{
++    expect(actual).toMatchObject({status:'failed',submissionUnknown:false,submissionOutcome:fault==='not_sent'?'not_sent':'rejected',error:expect.stringContaining(fault==='not_sent'?'未发送到供应商':'insufficient balance')});
++    expect(actual.error).not.toContain('媒体执行或产物验证失败');expect(events).toEqual(fault==='not_sent'?[]:['POST']);
++    expect((await f.chosenRequest('requestWorkspaceVisualCandidate',{...args,prompt:'核对后重新确认'})).status).toBe(200);
++   }
++  }
++ }finally{await f.close();}
++},120000);
+--- a/src/local-app/videoTaskExecution.integration.test.ts
++++ b/src/local-app/videoTaskExecution.integration.test.ts
+@@ -61,10 +61,10 @@
+  const f=await videoFixture(configuration);let revoked=false;
+  try{
+   await f.c.query('REVOKE EXECUTE ON FUNCTION local_identity.record_wan_submission(uuid,integer,uuid,text) FROM loop_worker');revoked=true;
+-  expect((await f.execute(f.job.taskId,false))?.status).toBe('failed');
++  expect((await f.execute(f.job.taskId,false))?.status).toBe(configuration.provider==='bailian'?'failed':'blocked');
+   await f.c.query('GRANT EXECUTE ON FUNCTION local_identity.record_wan_submission(uuid,integer,uuid,text) TO loop_worker');revoked=false;
+   await f.restart();await f.restartWorker();const w=await f.read();
+-  expect(w.visualTasks.find((t:any)=>t.taskId===f.job.taskId)).toMatchObject({status:'failed',providerTaskId:null,submissionUnknown:true,submissionOutcome:'started',canResume:false});expect(w.visualCandidates).toHaveLength(0);
++  expect(w.visualTasks.find((t:any)=>t.taskId===f.job.taskId)).toMatchObject({status:configuration.provider==='bailian'?'failed':'blocked',providerTaskId:null,submissionUnknown:true,submissionOutcome:'started',canResume:false});expect(w.visualCandidates).toHaveLength(0);
+   expect((await f.request('retryWorkspaceVisualCandidate',{workspaceId:w.id,expectedRevision:w.revision,candidateId:f.job.id})).status).toBe(409);expect((await f.chosenRequest('requestWorkspaceVisualCandidate',{...f.args,expectedRevision:w.revision,prompt:'修改描述也不重复生成'})).status).toBe(409);
+   expect((await f.events()).map(e=>e.kind)).toEqual(['POST']);expect((await f.c.query('SELECT count(*)::int n FROM public.paid_generation_reservations WHERE task_id=$1',[f.job.taskId])).rows[0].n).toBe(1);
+  }finally{if(revoked)await f.c.query('GRANT EXECUTE ON FUNCTION local_identity.record_wan_submission(uuid,integer,uuid,text) TO loop_worker');await f.close();}

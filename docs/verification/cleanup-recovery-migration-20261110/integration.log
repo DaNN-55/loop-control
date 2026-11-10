@@ -1,0 +1,15 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/cleanupRecovery.integration.test.ts (5 tests) 14465ms
+   ✓ the recovery entry resumes link-before-unlink after process death using only the durable scope  3217ms
+   ✓ the recovery entry resumes before-finalize after process death using only the durable scope  2681ms
+   ✓ the recovery entry resumes after-first-finalize after process death using only the durable scope  2607ms
+   ✓ keeps the concrete cleanup failure after restart and exposes it only to its Owner  2679ms
+   ✓ keeps a restore conflict across restart without changing the frozen manifest or overwriting the blocker  3279ms
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  14:24:25
+   Duration  15.31s (transform 505ms, setup 8ms, collect 709ms, tests 14.46s, environment 0ms, prepare 32ms)
+

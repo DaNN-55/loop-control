@@ -1,0 +1,17 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/accountDeletionStatus.integration.test.ts (3 tests) 7858ms
+   ✓ counts all pages and archived orders, isolates Owners, and keeps actual delete rejection aligned  3816ms
+   ✓ reports durable link-before-unlink and links the exact recovery task after the process exits  1948ms
+   ✓ reports durable before-finalize and links the exact recovery task after the process exits  2093ms
+ ✓ src/local-app/accountDeletionStorage.integration.test.ts (3 tests) 4447ms
+   ✓ account deletion cleans only registered empty containers, retaining unknown parents and immutable completed creation history  1756ms
+   ✓ a pending registered container creation reserves its account against parent deletion  1304ms
+   ✓ a parent account cannot cascade an active, archived or completed production  1385ms
+
+ Test Files  2 passed (2)
+      Tests  6 passed (6)
+   Start at  14:49:38
+   Duration  13.22s (transform 428ms, setup 9ms, collect 689ms, tests 12.30s, environment 0ms, prepare 52ms)
+

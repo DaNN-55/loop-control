@@ -1,0 +1,219 @@
+{
+  "revision": 9,
+  "sha": "4a9b58153593330b56264f57b396e813c4849562693964f045b3132559bb67b6",
+  "enabled": {
+    "bgm": true,
+    "sfx": true
+  },
+  "preparations": [
+    {
+      "id": "43e32e78-74ca-44d4-a8ae-f2694a272c12",
+      "kind": "bgm",
+      "shotId": null,
+      "sourceItemId": null,
+      "sourceSha256": null,
+      "description": "local-music.mp3",
+      "query": null,
+      "selection": null,
+      "connection": null,
+      "anchor": "absolute",
+      "offsetSeconds": 0,
+      "durationSeconds": 4,
+      "taskId": null,
+      "status": "ready",
+      "error": null,
+      "audioTrackId": null,
+      "relativePath": "episodes/bb6626ec-e4f1-42bf-b829-f2ec7c00c43f/materials/74b682cc27103655eb1b22bb2522d732823f27e3b8f7b35c3e9dc400065ac2da-local-music.mp3",
+      "sha256": "74b682cc27103655eb1b22bb2522d732823f27e3b8f7b35c3e9dc400065ac2da",
+      "fileSize": 96565,
+      "adoptedItemId": null,
+      "source": {
+        "provider": "manual",
+        "materialRevisionId": "3bafcde0-69e7-40a4-a646-99010060dec8"
+      }
+    },
+    {
+      "id": "ebefef05-63df-432a-8c41-e83a79277bf7",
+      "kind": "sfx",
+      "shotId": "shot-01",
+      "sourceItemId": null,
+      "sourceSha256": null,
+      "description": "脚步声.mp3",
+      "query": null,
+      "selection": null,
+      "connection": null,
+      "anchor": "shot",
+      "offsetSeconds": 0,
+      "durationSeconds": 1,
+      "taskId": null,
+      "status": "ready",
+      "error": null,
+      "audioTrackId": null,
+      "relativePath": "episodes/bb6626ec-e4f1-42bf-b829-f2ec7c00c43f/materials/74b682cc27103655eb1b22bb2522d732823f27e3b8f7b35c3e9dc400065ac2da-脚步声.mp3",
+      "sha256": "74b682cc27103655eb1b22bb2522d732823f27e3b8f7b35c3e9dc400065ac2da",
+      "fileSize": 96565,
+      "adoptedItemId": "workspace-sfx-ebefef05-63df-432a-8c41-e83a79277bf7",
+      "source": {
+        "provider": "manual",
+        "materialRevisionId": "64a19245-fc72-4e52-b958-70745fa819f4"
+      }
+    },
+    {
+      "id": "3c7097b9-86a4-400d-9af2-83f08ddc61e4",
+      "kind": "sfx",
+      "shotId": "shot-01",
+      "sourceItemId": null,
+      "sourceSha256": null,
+      "description": "开门声.mp3",
+      "query": null,
+      "selection": null,
+      "connection": null,
+      "anchor": "shot",
+      "offsetSeconds": 0,
+      "durationSeconds": 1,
+      "taskId": null,
+      "status": "ready",
+      "error": null,
+      "audioTrackId": null,
+      "relativePath": "episodes/bb6626ec-e4f1-42bf-b829-f2ec7c00c43f/materials/74b682cc27103655eb1b22bb2522d732823f27e3b8f7b35c3e9dc400065ac2da-开门声.mp3",
+      "sha256": "74b682cc27103655eb1b22bb2522d732823f27e3b8f7b35c3e9dc400065ac2da",
+      "fileSize": 96565,
+      "adoptedItemId": "workspace-sfx-3c7097b9-86a4-400d-9af2-83f08ddc61e4",
+      "source": {
+        "provider": "manual",
+        "materialRevisionId": "eb2d4ecd-80b0-4c73-b303-1512bdbbe730"
+      }
+    },
+    {
+      "id": "9edf75d3-a21e-49cf-bc92-22eb713a2a31",
+      "kind": "bgm",
+      "shotId": null,
+      "sourceItemId": null,
+      "sourceSha256": null,
+      "description": "配乐示例.mp3",
+      "query": null,
+      "selection": null,
+      "connection": null,
+      "anchor": "absolute",
+      "offsetSeconds": 0,
+      "durationSeconds": 4,
+      "taskId": null,
+      "status": "ready",
+      "error": null,
+      "audioTrackId": null,
+      "relativePath": "episodes/bb6626ec-e4f1-42bf-b829-f2ec7c00c43f/materials/74b682cc27103655eb1b22bb2522d732823f27e3b8f7b35c3e9dc400065ac2da-配乐示例.mp3",
+      "sha256": "74b682cc27103655eb1b22bb2522d732823f27e3b8f7b35c3e9dc400065ac2da",
+      "fileSize": 96565,
+      "adoptedItemId": "workspace-bgm",
+      "source": {
+        "provider": "manual",
+        "materialRevisionId": "e3f9c938-db14-40e7-95b1-fae094ef8efe"
+      }
+    }
+  ],
+  "sounds": [
+    {
+      "itemId": "workspace-sfx-ebefef05-63df-432a-8c41-e83a79277bf7",
+      "kind": "sfx",
+      "gainDb": -8,
+      "duckDepthDb": 0,
+      "startSeconds": 0.2,
+      "durationSeconds": 1.2
+    },
+    {
+      "itemId": "workspace-sfx-3c7097b9-86a4-400d-9af2-83f08ddc61e4",
+      "kind": "sfx",
+      "gainDb": -10,
+      "duckDepthDb": 4,
+      "startSeconds": 0.8,
+      "durationSeconds": 0.6
+    },
+    {
+      "itemId": "workspace-bgm",
+      "kind": "bgm",
+      "gainDb": -12,
+      "duckDepthDb": 10,
+      "startSeconds": 0.5,
+      "durationSeconds": 2.5
+    }
+  ],
+  "nativeAudio": [
+    {
+      "id": "workspace-sfx-ebefef05-63df-432a-8c41-e83a79277bf7",
+      "kind": "audio",
+      "name": "脚步声.mp3",
+      "track": "workspace-sfx-ebefef05-63df-432a-8c41-e83a79277bf7",
+      "src": "episodes/bb6626ec-e4f1-42bf-b829-f2ec7c00c43f/materials/74b682cc27103655eb1b22bb2522d732823f27e3b8f7b35c3e9dc400065ac2da-脚步声.mp3",
+      "sourceAssetId": "material-64a19245-fc72-4e52-b958-70745fa819f4",
+      "sourceContentHash": "74b682cc27103655eb1b22bb2522d732823f27e3b8f7b35c3e9dc400065ac2da",
+      "startFrame": 6,
+      "durationInFrames": 36,
+      "srcInFrame": 0,
+      "volume": 0.3981071705534972,
+      "loopControlAudio": {
+        "workspaceId": "a978f1e6-ee1b-4b2d-8d92-539472c1c93c",
+        "kind": "sfx",
+        "preparationId": "ebefef05-63df-432a-8c41-e83a79277bf7",
+        "shotId": "shot-01",
+        "anchor": "shot",
+        "offsetSeconds": 0.2
+      }
+    },
+    {
+      "id": "workspace-sfx-3c7097b9-86a4-400d-9af2-83f08ddc61e4",
+      "kind": "audio",
+      "name": "开门声.mp3",
+      "track": "workspace-sfx-3c7097b9-86a4-400d-9af2-83f08ddc61e4",
+      "src": "episodes/bb6626ec-e4f1-42bf-b829-f2ec7c00c43f/materials/74b682cc27103655eb1b22bb2522d732823f27e3b8f7b35c3e9dc400065ac2da-开门声.mp3",
+      "sourceAssetId": "material-eb2d4ecd-80b0-4c73-b303-1512bdbbe730",
+      "sourceContentHash": "74b682cc27103655eb1b22bb2522d732823f27e3b8f7b35c3e9dc400065ac2da",
+      "startFrame": 24,
+      "durationInFrames": 18,
+      "srcInFrame": 0,
+      "volume": 0.31622776601683794,
+      "loopControlAudio": {
+        "workspaceId": "a978f1e6-ee1b-4b2d-8d92-539472c1c93c",
+        "kind": "sfx",
+        "preparationId": "3c7097b9-86a4-400d-9af2-83f08ddc61e4",
+        "shotId": "shot-01",
+        "anchor": "shot",
+        "offsetSeconds": 0.8
+      }
+    },
+    {
+      "id": "workspace-bgm",
+      "kind": "audio",
+      "name": "配乐示例.mp3",
+      "track": "workspace-bgm",
+      "src": "episodes/bb6626ec-e4f1-42bf-b829-f2ec7c00c43f/materials/74b682cc27103655eb1b22bb2522d732823f27e3b8f7b35c3e9dc400065ac2da-配乐示例.mp3",
+      "sourceAssetId": "material-e3f9c938-db14-40e7-95b1-fae094ef8efe",
+      "sourceContentHash": "74b682cc27103655eb1b22bb2522d732823f27e3b8f7b35c3e9dc400065ac2da",
+      "startFrame": 15,
+      "durationInFrames": 75,
+      "srcInFrame": 0,
+      "volume": 0.251188643150958,
+      "loopControlAudio": {
+        "workspaceId": "a978f1e6-ee1b-4b2d-8d92-539472c1c93c",
+        "kind": "bgm",
+        "preparationId": "9edf75d3-a21e-49cf-bc92-22eb713a2a31",
+        "anchor": "absolute",
+        "offsetSeconds": 0.5,
+        "shotId": "shot-01"
+      }
+    }
+  ],
+  "visuals": [
+    {
+      "id": "shot-shot-01-64203f9d-a5f3-4da8-ab18-b7cc108bfb69",
+      "kind": "video",
+      "startFrame": 0,
+      "durationInFrames": 60
+    },
+    {
+      "id": "shot-shot-02-d9857585-7ff3-447f-8a21-87e0e292e014",
+      "kind": "video",
+      "startFrame": 60,
+      "durationInFrames": 60
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+[
+  {
+    "command": "importMaterial",
+    "data": {
+      "episodeId": "b1d13f6f-dcb3-4e8d-a8bd-3b407147815d",
+      "materialType": "audio",
+      "sourceKind": "file",
+      "sourcePath": "local-music.mp3",
+      "mimeType": "audio/mpeg",
+      "isMainScript": false,
+      "materialPurpose": "background_music"
+    }
+  },
+  {
+    "command": "prepareWorkspaceAudio",
+    "data": {
+      "episodeId": "b1d13f6f-dcb3-4e8d-a8bd-3b407147815d",
+      "workspaceId": "45cc9672-3021-43bb-920a-9ab2d4758194",
+      "expectedRevision": 3,
+      "kind": "bgm",
+      "description": "local-music.mp3",
+      "materialRevisionId": "0fae9aef-f879-42a4-9005-cf1f48d423bb",
+      "durationSeconds": 4,
+      "anchor": "absolute",
+      "offsetSeconds": 0
+    }
+  },
+  {
+    "command": "adoptWorkspaceAudio",
+    "data": {
+      "episodeId": "b1d13f6f-dcb3-4e8d-a8bd-3b407147815d",
+      "workspaceId": "45cc9672-3021-43bb-920a-9ab2d4758194",
+      "expectedRevision": 3,
+      "preparationId": "f1930d06-8eea-4788-878e-066045a17e58"
+    }
+  },
+  {
+    "command": "importMaterial",
+    "data": {
+      "episodeId": "b1d13f6f-dcb3-4e8d-a8bd-3b407147815d",
+      "materialType": "audio",
+      "sourceKind": "file",
+      "sourcePath": "local-music.mp3",
+      "mimeType": "audio/mpeg",
+      "isMainScript": false,
+      "materialPurpose": "sound_effect"
+    }
+  },
+  {
+    "command": "prepareWorkspaceAudio",
+    "data": {
+      "episodeId": "b1d13f6f-dcb3-4e8d-a8bd-3b407147815d",
+      "workspaceId": "45cc9672-3021-43bb-920a-9ab2d4758194",
+      "expectedRevision": 4,
+      "kind": "sfx",
+      "description": "local-music.mp3",
+      "materialRevisionId": "929ca465-8e97-49f5-b5b6-1b04abfd46b0",
+      "durationSeconds": 1,
+      "anchor": "shot",
+      "offsetSeconds": 0,
+      "shotId": "shot-01"
+    }
+  },
+  {
+    "command": "adoptWorkspaceAudio",
+    "data": {
+      "episodeId": "b1d13f6f-dcb3-4e8d-a8bd-3b407147815d",
+      "workspaceId": "45cc9672-3021-43bb-920a-9ab2d4758194",
+      "expectedRevision": 4,
+      "preparationId": "ae0405f3-9313-42bd-989b-a513229e68ff"
+    }
+  },
+  {
+    "command": "openWorkspaceStudio",
+    "data": {
+      "episodeId": "b1d13f6f-dcb3-4e8d-a8bd-3b407147815d",
+      "workspaceId": "45cc9672-3021-43bb-920a-9ab2d4758194",
+      "expectedRevision": 5
+    }
+  }
+]

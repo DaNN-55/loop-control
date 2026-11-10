@@ -1,0 +1,266 @@
+[
+  {
+    "model": "gpt-image-2",
+    "file": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-model-matrix-20261109-ncpdpm7s/artifacts/gpt-image-2.png",
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "png",
+          "codec_type": "video",
+          "width": 1024,
+          "height": 1024
+        }
+      ],
+      "format": {}
+    }
+  },
+  {
+    "model": "wan2.6-i2v",
+    "file": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-model-matrix-20261109-ncpdpm7s/artifacts/wan2.6-i2v.mp4",
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "format": {
+        "duration": "2.035011"
+      }
+    }
+  },
+  {
+    "model": "gpt-image-2.5-sunburst",
+    "file": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-model-matrix-20261109-ncpdpm7s/artifacts/gpt-image-2.5-sunburst.png",
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "png",
+          "codec_type": "video",
+          "width": 1024,
+          "height": 1024
+        }
+      ],
+      "format": {}
+    }
+  },
+  {
+    "model": "gpt-image-2.5-flare",
+    "file": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-model-matrix-20261109-ncpdpm7s/artifacts/gpt-image-2.5-flare.png",
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "png",
+          "codec_type": "video",
+          "width": 1024,
+          "height": 1024
+        }
+      ],
+      "format": {}
+    }
+  },
+  {
+    "model": "gpt-image-2.5-sunburst-2026-09-08",
+    "file": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-model-matrix-20261109-ncpdpm7s/artifacts/gpt-image-2.5-sunburst-2026-09-08.png",
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "png",
+          "codec_type": "video",
+          "width": 1024,
+          "height": 1024
+        }
+      ],
+      "format": {}
+    }
+  },
+  {
+    "model": "gpt-image-2.5-flare-2026-09-08",
+    "file": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-model-matrix-20261109-ncpdpm7s/artifacts/gpt-image-2.5-flare-2026-09-08.png",
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "png",
+          "codec_type": "video",
+          "width": 1024,
+          "height": 1024
+        }
+      ],
+      "format": {}
+    }
+  },
+  {
+    "model": "gpt-image-2.6-sunburst",
+    "file": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-model-matrix-20261109-ncpdpm7s/artifacts/gpt-image-2.6-sunburst.png",
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "png",
+          "codec_type": "video",
+          "width": 1024,
+          "height": 1024
+        }
+      ],
+      "format": {}
+    }
+  },
+  {
+    "model": "wan2.6-r2v",
+    "file": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-model-matrix-20261109-ncpdpm7s/artifacts/wan2.6-r2v.mp4",
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "format": {
+        "duration": "2.080998"
+      }
+    }
+  },
+  {
+    "model": "gpt-image-2.6-flare",
+    "file": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-model-matrix-20261109-ncpdpm7s/artifacts/gpt-image-2.6-flare.png",
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "png",
+          "codec_type": "video",
+          "width": 1024,
+          "height": 1024
+        }
+      ],
+      "format": {}
+    }
+  },
+  {
+    "model": "wan2.6-i2v-flash",
+    "file": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-model-matrix-20261109-ncpdpm7s/artifacts/wan2.6-i2v-flash.mp4",
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1280,
+          "height": 720
+        }
+      ],
+      "format": {
+        "duration": "2.000000"
+      }
+    }
+  },
+  {
+    "model": "wan2.5-i2v-preview",
+    "file": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-model-matrix-20261109-ncpdpm7s/artifacts/wan2.5-i2v-preview.mp4",
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "format": {
+        "duration": "5.041667"
+      }
+    }
+  },
+  {
+    "model": "wan2.2-i2v-flash",
+    "file": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-model-matrix-20261109-ncpdpm7s/artifacts/wan2.2-i2v-flash.mp4",
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1280,
+          "height": 720
+        }
+      ],
+      "format": {
+        "duration": "5.000000"
+      }
+    }
+  },
+  {
+    "model": "wan2.2-i2v-plus",
+    "file": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-model-matrix-20261109-ncpdpm7s/artifacts/wan2.2-i2v-plus.mp4",
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1072
+        }
+      ],
+      "format": {
+        "duration": "5.000000"
+      }
+    }
+  },
+  {
+    "model": "wanx2.1-i2v-plus",
+    "file": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-model-matrix-20261109-ncpdpm7s/artifacts/wanx2.1-i2v-plus.mp4",
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1280,
+          "height": 720
+        }
+      ],
+      "format": {
+        "duration": "5.366667"
+      }
+    }
+  }
+]

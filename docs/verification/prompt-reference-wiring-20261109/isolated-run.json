@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "source": "/Users/dan/Programs/loop-control",
+  "evidence": "/private/tmp/loop-story-e2e-9W96GI/evidence",
+  "container": "loop-story-e2e-be678807dedc",
+  "containerRemoved": true,
+  "paidCalls": 0,
+  "paidCostCny": 0,
+  "maxVideoSeconds": 8
+}

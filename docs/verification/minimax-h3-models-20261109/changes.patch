@@ -1,0 +1,551 @@
+--- a/db/local/155-minimax-h3-variants.sql
++++ b/db/local/155-minimax-h3-variants.sql
+@@ -0,0 +1,19 @@
++-- Same owned immutable MiniMax connection; expand only the workspace V2 contract.
++DO $migration$
++DECLARE
++ definition text := pg_get_functiondef('local_identity.request_workspace_official_visual(uuid,uuid,text,uuid,text,integer,uuid,integer)'::regprocedure);
++ models text := $old$('minimax','minimax_video','MiniMax-H3')$old$;
++ modes text := $old$provider_name='minimax' and model_name='MiniMax-H3' and visual_mode$old$;
++ candidate text := $old$'audio',provider_name='minimax')$old$;
++ resolution text := $old$case when provider_name='minimax' then '768P' else '720P' end$old$;
++BEGIN
++ IF strpos(definition,models)=0 OR strpos(definition,modes)=0 OR strpos(definition,resolution)=0 OR strpos(definition,candidate)=0 THEN
++  RAISE EXCEPTION 'MiniMax workspace contract changed';
++ END IF;
++ definition:=replace(definition,models,models||$new$,('minimax','minimax_video','MiniMax-H3-Highspeed'),('minimax','minimax_video','MiniMax-H3-Lite')$new$);
++ definition:=replace(definition,modes,$new$provider_name='minimax' and model_name in ('MiniMax-H3','MiniMax-H3-Highspeed','MiniMax-H3-Lite') and visual_mode$new$);
++ definition:=replace(definition,resolution,$new$case when provider_name='minimax' then coalesce((select request_snapshot->>'videoResolution' from local_identity.workspace_visual_candidates where id=p_request_id),'768P') else '720P' end$new$);
++ definition:=replace(definition,candidate,$new$'audio',provider_name='minimax','candidate_only',provider_name='minimax' and coalesce((select request_snapshot->>'origin'='candidate' from local_identity.workspace_visual_candidates where id=p_request_id),false))$new$);
++ EXECUTE definition;
++END
++$migration$;
+--- a/src/local-app/WorkspaceConfigBinding.test.tsx
++++ b/src/local-app/WorkspaceConfigBinding.test.tsx
+@@ -1,3 +1,4 @@
++import {minimaxVideoModels} from '../worker/videoProviderCatalog';
+ import {afterEach,it,expect,vi} from 'vitest';
+ import {cleanup,fireEvent,render,screen,waitFor,within} from '@testing-library/react';
+ import {WorkspaceVisualPreparation} from './WorkspaceVisualPreparation';
+@@ -83,13 +84,16 @@
+ 
+ },15000);
+ 
+-it.each(['first-frame','keyframes','references'])('MiniMax %s: changing the actual mode dropdown changes submitted visual roles',async mode=>{
+- const {command}=setup('minimax','MiniMax-H3','video',{videoInputIds:mode==='first-frame'?[image.id]:mode==='keyframes'?[image.id,tail.id]:[image.id,video.id],videoModeId:'first-frame'});
+- await waitFor(()=>expect(screen.getByRole('button',{name:'视频连接与模型'}).textContent).toContain('MiniMax-H3'));
++it.each(Object.keys(minimaxVideoModels).flatMap(model=>['first-frame','keyframes','references'].map(mode=>({model,mode}))))('$model $mode: UI mode and resolution change submitted visual roles',async({model,mode})=>{
++ const {command}=setup('minimax',model,'video',{videoInputIds:mode==='first-frame'?[image.id]:mode==='keyframes'?[image.id,tail.id]:[image.id,video.id],videoModeId:'first-frame'});
++ await waitFor(()=>expect(screen.getByRole('button',{name:'视频连接与模型'}).textContent).toContain(model));
+  fireEvent.click(screen.getByRole('button',{name:'画面输入模式'}));fireEvent.change(screen.getByRole('combobox',{name:'生成模式'}),{target:{value:mode}});
+  if(mode!=='references')fireEvent.change(screen.getByRole('combobox',{name:'首帧构图'}),{target:{value:'cover'}});
+  fireEvent.click(screen.getByRole('button',{name:'关闭画面输入模式'}));
+- const request=await send(command,'生成视频');
++ for(const resolution of minimaxVideoModels[model].resolutions){
++ fireEvent.click(screen.getByRole('button',{name:'视频规格'}));fireEvent.change(screen.getByRole('combobox',{name:'视频分辨率'}),{target:{value:resolution}});fireEvent.click(screen.getByRole('button',{name:'关闭视频规格'}));
++ const request=await send(command,'生成视频');expect(request.selection.model).toBe(model);expect(request.videoResolution).toBe(resolution);
+  if(mode==='first-frame')expect(request).toMatchObject({firstFrameMaterialRevisionId:image.id,firstFrameFit:'cover'});
+  else expect(request).toMatchObject({videoMode:mode,visualInputs:mode==='keyframes'?[{role:'firstFrame',materialRevisionId:image.id},{role:'lastFrame',materialRevisionId:tail.id}]:[{role:'referenceImages',materialRevisionId:image.id},{role:'referenceVideos',materialRevisionId:video.id}]});
++ }
+ });
+--- a/src/local-app/WorkspaceVisualPreparation.tsx
++++ b/src/local-app/WorkspaceVisualPreparation.tsx
+@@ -1,3 +1,4 @@
++import {minimaxVideoModels} from '../worker/videoProviderCatalog';
+ import {WorkspaceUploadFeedback,type UploadNotice} from './WorkspaceUploadFeedback';
+ import {imageQualityLabels} from '../imageGeneration';
+ import {shotCompositionSlotLabels} from '../shotComposition';
+@@ -65,7 +66,7 @@
+  project?:OpenChatCutProject|null;currentVisualKind?:string;currentVisualPath?:string;currentVisualSha256?:string;currentMaterialRevisionId?:string;preview?:ReactNode;readOnly?:boolean;
+  onImported?:(material:Material&{storage_path:string})=>void;
+ }
+-interface Draft {pexelsSelection?:ProductionSelection|null;imageBrief:ImageBrief;imageSelection?:ProductionSelection|null;videoSelection?:ProductionSelection|null;videoSettings:WanGenerationSettings;firstFrameFit:'contain'|'cover';tab:Kind;origin:Record<Kind,'material'|'generate'|'search'>;imagePrompt:string;videoPrompt:string;references:string[];firstFrame:string;videoModeId?:string;videoInputs?:VideoInputDraft;videoInputIds?:string[];referenceVideoSources?:Record<string,string>;settings:ImageGenerationSettings;duration:string;usage:'still'|'pan-zoom';selected:Record<Kind,string>}
++interface Draft {pexelsSelection?:ProductionSelection|null;imageBrief:ImageBrief;imageSelection?:ProductionSelection|null;videoSelection?:ProductionSelection|null;videoSettings:WanGenerationSettings;videoResolution?:string;firstFrameFit:'contain'|'cover';tab:Kind;origin:Record<Kind,'material'|'generate'|'search'>;imagePrompt:string;videoPrompt:string;references:string[];firstFrame:string;videoModeId?:string;videoInputs?:VideoInputDraft;videoInputIds?:string[];referenceVideoSources?:Record<string,string>;settings:ImageGenerationSettings;duration:string;usage:'still'|'pan-zoom';selected:Record<Kind,string>}
+ function videoDraftIds(draft:Draft){
+  return draft.videoInputIds??[draft.firstFrame,...draft.videoInputs?.lastFrame??[],...draft.videoInputs?.referenceImages??[],...draft.videoInputs?.referenceVideos??[]].filter(Boolean);
+ }
+@@ -127,7 +128,8 @@
+  useEffect(()=>{if(!zoom)return;return()=>zoomTrigger.current?.focus();},[zoom]);
+  const candidates=(workspace.visualCandidates??[]).filter(c=>c.targetItemId===targetItemId&&c.status!=='rejected');
+  const allMaterials=[...props.materials,...uploadRows.flatMap(row=>row.material?[row.material]:[]),...(workspace.visualCandidates??[]).filter(c=>c.kind==='image'&&c.materialRevisionId).map(c=>({id:c.materialRevisionId!,material_type:'image',source_path:c.relativePath.split('/').pop()??'生成图片',storage_path:c.relativePath}))].filter((m,i,a)=>a.findIndex(x=>x.id===m.id)===i);
+- const videoService=videoServices.find(s=>s.mode==='generation'&&s.connectionVersionId===draft.videoSelection?.connectionVersionId&&s.provider===draft.videoSelection.provider&&s.adapter===draft.videoSelection.adapter),videoProvider=draft.videoSelection?.provider,videoModel=draft.videoSelection?.model;
++ const chosenVideoService=videoServices.find(s=>s.mode==='generation'&&s.connectionVersionId===draft.videoSelection?.connectionVersionId&&s.provider===draft.videoSelection.provider&&s.adapter===draft.videoSelection.adapter),videoProvider=draft.videoSelection?.provider,videoModel=draft.videoSelection?.model;
++ const videoService=chosenVideoService?{...chosenVideoService,constraints:{...chosenVideoService.constraints,...chosenVideoService.modelConstraints?.[videoModel??'']}}:undefined;
+  const videoSettings=videoModel===wanReferenceModel?{...draft.videoSettings,audio:true,promptExtend:false}:draft.videoSettings;
+  const wanProfile=videoProvider==='bailian'&&videoModel?wanVideoModel(videoModel):undefined,wanSettingsProblem=videoProvider==='bailian'&&videoModel?wanVideoSettingsError(videoModel,videoSettings):null;
+  const incompatibleWan=!!wanSettingsProblem||videoProvider!=='bailian'&&JSON.stringify(draft.videoSettings)!==JSON.stringify(defaultWanSettings),videoCompatible=!!videoService&&videoService.executable&&!!videoModel&&videoService.models.includes(videoModel)&&!incompatibleWan;
+@@ -208,7 +210,7 @@
+   const search=videoServices.find(service=>service.mode==='search'&&value===`${service.id}:search`);
+   if(search)setDraft(d=>({...d,pexelsSelection:{capability:'video',provider:search.provider,adapter:search.adapter,connectionVersionId:search.connectionVersionId??undefined},origin:{...d.origin,video:'search'}}));
+   else if(!value&&origin==='search')change('pexelsSelection',null);
+-  else setDraft(d=>({...d,videoSelection:productionModelSelection(videoServices,value,'video'),origin:{...d.origin,video:'generate'}}));
++  else setDraft(d=>{const selection=productionModelSelection(videoServices,value,'video');return {...d,videoSelection:selection,...(selection?.provider==='minimax'&&!minimaxVideoModels[selection.model??'']?.resolutions.includes(d.videoResolution??'768P')?{videoResolution:'768P'}:{}),origin:{...d.origin,video:'generate'}};});
+   setComposerPanel(value&&!search?'dimensions':'');
+  }
+ 
+@@ -316,7 +318,7 @@
+    }
+    const next=await command(tab==='image'?'requestWorkspaceImageCandidates':'requestWorkspaceVisualCandidate',{
+     ...base(w),targetItemId,prompt:tab==='image'?draft.imagePrompt:draft.videoPrompt,
+-    ...(tab==='image'?{selection:draft.imageSelection,settings:draft.settings,imageBrief:{...draft.imageBrief,references:draft.references.map(id=>draft.imageBrief.references.find(r=>r.materialRevisionId===id)??{materialRevisionId:id,purpose:'subject',preserve:'',change:''})},referenceMaterialRevisionIds:draft.references,...(retryOfTaskId?{retryOfTaskId}:{})}:{selection:draft.videoSelection,...(advancedVideo?{videoMode:videoMode!.id,visualInputs:submittedVideoInputs}:{firstFrameMaterialRevisionId:submitFirstFrame?.id}),durationSeconds:actualDuration,...(submitFirstFrame?{firstFrameFit:draft.firstFrameFit}:{}),...(videoProvider==='bailian'?{videoSettings}:{})})
++    ...(tab==='image'?{selection:draft.imageSelection,settings:draft.settings,imageBrief:{...draft.imageBrief,references:draft.references.map(id=>draft.imageBrief.references.find(r=>r.materialRevisionId===id)??{materialRevisionId:id,purpose:'subject',preserve:'',change:''})},referenceMaterialRevisionIds:draft.references,...(retryOfTaskId?{retryOfTaskId}:{})}:{selection:draft.videoSelection,...(advancedVideo?{videoMode:videoMode!.id,visualInputs:submittedVideoInputs}:{firstFrameMaterialRevisionId:submitFirstFrame?.id}),durationSeconds:actualDuration,...(submitFirstFrame?{firstFrameFit:draft.firstFrameFit}:{}),...(videoProvider==='bailian'?{videoSettings}:videoProvider==='minimax'?{videoResolution:draft.videoResolution??'768P'}:{})})
+    }) as ProductionWorkspace;
+    onChange(next);setNotice('生成任务已提交，完成后请预览并手动采用。');
+   });}
+@@ -474,8 +476,8 @@
+      url={url} firstFrameFit={draft.firstFrameFit} ratio={(target?.width??9)/(target?.height??16)}
+      onFit={fit=>change('firstFrameFit',fit)} onUpload={()=>referenceInput.current?.click()} onFiles={files=>void upload(files,true)}/>} prompt={<WorkspacePromptField label={`${kindName}提示词`} ariaLabel={tab==='image'?'图片提示词':'画面动作'} value={prompt} limit={promptLimit} disabled={disabled} onChange={value=>change(tab==='image'?'imagePrompt':'videoPrompt',value)} placeholder={tab==='video'?'例如：以首帧为起点，镜头缓慢向装饰画推进，保持画框、图案和文字稳定，单镜头，不切换场景。':draft.references.length?'例如：保留参考图中装饰画的图案、文字和边框，将背景改为明亮的现代客厅，产品居中完整展示，竖屏构图。':'例如：竖屏产品摄影，金色山水装饰画挂在现代客厅，清晨侧光，完整展示画框细节，写实质感，不添加额外文字。'}/>} model={<WorkspaceGenerationModel compact kind={kindName} services={tab==='image'?imageServices:videoServices} selection={tab==='image'?draft.imageSelection:draft.videoSelection} disabled={disabled} onChange={value=>{if(tab==='image'){change('imageSelection',productionModelSelection(imageServices,value,'image'));setComposerPanel(value?'dimensions':'');}else chooseVideoSource(value);}}/>}
+      onMaterial={id=>{if(tab==='video')addVideoInput(id);else if(!draft.references.includes(id)){const max=imageService?.constraints.referenceImages?.max??16;if(draft.references.length>=max)setError(`当前模型最多使用 ${max} 张参考图，请先移除再添加。`);else change('references',[...draft.references,id]);}}} onFiles={files=>void upload(files,true)}
+-     settings={<><WorkspaceComposerSetting label={tab==='image'?'图片规格':'视频规格'} summary={tab==='image'?`${sizePreset.ratio} · ${draft.settings.size.replace('x','×')}`:videoProvider==='bailian'?draft.videoSettings.resolution:videoService?.constraints.resolutions?.join(' / ')??'规格'} open={composerPanel==='dimensions'} onOpenChange={open=>setComposerPanel(open?'dimensions':'')} disabled={disabled}>
+-      {tab==='image'?<WorkspaceImageSettings settings={draft.settings} service={imageService} disabled={disabled} onChange={value=>change('settings',value)}/>:<>{videoProvider==='bailian'?<label>分辨率<NativeSelect size="sm" aria-label="视频分辨率" disabled={disabled} value={draft.videoSettings.resolution} onChange={e=>change('videoSettings',{...draft.videoSettings,resolution:e.target.value as '720P'|'1080P'})}>{(wanProfile?.resolutions??['720P','1080P']).map(value=><option key={value} value={value}>{value}</option>)}</NativeSelect></label>:<p>{videoService?.constraints.resolutions?.join(' / ')??'规格由模型确定'}</p>}<p>比例随画面输入和所选模型确定。</p></>}
++     settings={<><WorkspaceComposerSetting label={tab==='image'?'图片规格':'视频规格'} summary={tab==='image'?`${sizePreset.ratio} · ${draft.settings.size.replace('x','×')}`:videoProvider==='bailian'?draft.videoSettings.resolution:videoProvider==='minimax'?draft.videoResolution??'768P':videoService?.constraints.resolutions?.join(' / ')??'规格'} open={composerPanel==='dimensions'} onOpenChange={open=>setComposerPanel(open?'dimensions':'')} disabled={disabled}>
++      {tab==='image'?<WorkspaceImageSettings settings={draft.settings} service={imageService} disabled={disabled} onChange={value=>change('settings',value)}/>:<>{videoProvider==='bailian'?<label>分辨率<NativeSelect size="sm" aria-label="视频分辨率" disabled={disabled} value={draft.videoSettings.resolution} onChange={e=>change('videoSettings',{...draft.videoSettings,resolution:e.target.value as '720P'|'1080P'})}>{(wanProfile?.resolutions??['720P','1080P']).map(value=><option key={value} value={value}>{value}</option>)}</NativeSelect></label>:videoProvider==='minimax'?<label>分辨率<NativeSelect size="sm" aria-label="视频分辨率" disabled={disabled} value={draft.videoResolution??'768P'} onChange={e=>change('videoResolution',e.target.value)}>{(videoService?.constraints.resolutions??['768P']).map(value=><option key={value} value={value}>{value}</option>)}</NativeSelect></label>:<p>{videoService?.constraints.resolutions?.join(' / ')??'规格由模型确定'}</p>}<p>比例随画面输入和所选模型确定。</p></>}
+      </WorkspaceComposerSetting>
+      {tab==='image'?<><WorkspaceComposerSetting label="生成数量" compact summary={`${draft.settings.count} 张`} open={composerPanel==='count'} onOpenChange={open=>setComposerPanel(open?'count':'')} disabled={disabled}><WorkspaceImageCount settings={draft.settings} service={imageService} disabled={disabled} onChange={value=>change('settings',value)}/></WorkspaceComposerSetting><WorkspaceComposerSetting label="构图与字幕留白" summary="构图" open={composerPanel==='composition'} onOpenChange={open=>setComposerPanel(open?'composition':'')} disabled={disabled}>{tab==='image'&&<>
+ 
+--- a/src/local-app/WorkspaceVisualRecord.tsx
++++ b/src/local-app/WorkspaceVisualRecord.tsx
+@@ -27,7 +27,7 @@
+    <dl className="workspace-saved-facts"><div><dt>素材</dt><dd>{materials.find(m=>m.storage_path===candidate.relativePath)?.source_path.split('/').pop()??candidate.relativePath.split('/').pop()}</dd></div>
+    {candidate.taskId&&<div><dt>原任务</dt><dd>{candidate.taskId}</dd></div>}
+    {generation?.selection&&<><div><dt>连接</dt><dd>{generation.connectionName??generation.selection.connectionVersionId}</dd></div><div><dt>模型</dt><dd>{generation.selection.model}</dd></div><div><dt>服务</dt><dd>{generation.selection.provider} / {generation.selection.adapter}</dd></div></>}
+-   {generation?.imageSettings&&<><div><dt>请求尺寸</dt><dd>{generation.imageSettings.size.replace('x',' × ')}</dd></div><div><dt>质量</dt><dd>{imageQualityLabels[generation.imageSettings.quality]}</dd></div><div><dt>请求数量</dt><dd>{generation.imageSettings.count} 张</dd></div></>}
++   {generation?.videoResolution&&<div><dt>请求分辨率</dt><dd>{generation.videoResolution}</dd></div>}{generation?.imageSettings&&<><div><dt>请求尺寸</dt><dd>{generation.imageSettings.size.replace('x',' × ')}</dd></div><div><dt>质量</dt><dd>{imageQualityLabels[generation.imageSettings.quality]}</dd></div><div><dt>请求数量</dt><dd>{generation.imageSettings.count} 张</dd></div></>}
+    {candidate.kind==='video'&&generation&&<><div><dt>请求时长</dt><dd>{generation.durationSeconds==null?'未记录':`${generation.durationSeconds} s`}</dd></div>{generation.firstFrameMaterialRevisionId&&<div><dt>首帧</dt><dd>{materialName(generation.firstFrameMaterialRevisionId)}</dd></div>}{generation.firstFrameFit&&<div><dt>首帧构图</dt><dd>{generation.firstFrameFit==='contain'?'完整保留':'居中裁切'}</dd></div>}</>}
+    </dl>
+    {generation?<><h5>制作提示词</h5><p className="workspace-saved-caption">{generation.prompt||'未记录提示词正文'}</p>{generation.actualPrompt&&generation.actualPrompt!==generation.prompt&&<details><summary>实际提交提示词</summary><p className="workspace-saved-caption">{generation.actualPrompt}</p></details>}{brief&&<p>{framingLabels[brief.framing]} · {captionSpaceLabels[brief.captionSpace]} · {brief.crop==='protect'?'主体完整，边缘留余量':'裁切由提示词决定'}</p>}{generation.referenceMaterialRevisionIds?.map(id=>{const r=brief?.references.find(r=>r.materialRevisionId===id);return <p key={id}>参考图：{materialName(id)}{r?` · ${referencePurposeLabels[r.purpose]}`:''}{r?.preserve?` · 保留：${r.preserve}`:''}{r?.change?` · 允许改变：${r.change}`:''}</p>;})}{candidate.kind==='video'&&generation.videoSettings&&<VideoSettingsFacts settings={generation.videoSettings}/>}</>:<p>{candidate.source?`Pexels 素材 · ${candidate.source.query}`:candidate.taskId?'此旧任务未保留完整生成快照，无法还原当时参数。':'导入素材，没有生成请求。'}</p>}
+--- a/src/local-app/minimaxVariants.live.integration.test.ts
++++ b/src/local-app/minimaxVariants.live.integration.test.ts
+@@ -0,0 +1,45 @@
++// @vitest-environment node
++// Explicit opt-in: two 4s / 480P reference requests, ¥3 total conservative cap, no retry.
++import {it,expect,vi} from 'vitest';
++import {readFile,writeFile,mkdir,copyFile} from 'node:fs/promises';
++import {join} from 'node:path';
++import {pathToFileURL} from 'node:url';
++import {execFile} from 'node:child_process';
++import {promisify} from 'node:util';
++import {narrationFixture} from './workspaceNarration.fixture';
++import {configuredKeychainStore} from './keychainStore';
++import {createWorkspaceGenerationFetcher} from './providerNetwork';
++const seam=vi.hoisted(()=>({ports:undefined as any}));
++vi.mock('./narrationWorker',async original=>{const actual=await original<typeof import('./narrationWorker')>();return{...actual,narrationPorts:async(...args:Parameters<typeof actual.narrationPorts>)=>seam.ports??actual.narrationPorts(...args)};});
++it.skipIf(process.env.LOOP_MINIMAX_VARIANTS_LIVE!=='1')('two new MiniMax models: isolated Owner confirmation → queue → actual Worker → existing live API',async()=>{
++ const dir=join(process.cwd(),'docs/verification/minimax-h3-models-20261109'),path=join(dir,'live-results.json');
++ let previous:any;try{previous=JSON.parse(await readFile(path,'utf8'));if(previous.results.some((r:any)=>r.status==='submission_started'&&!r.providerTaskId))throw Error('Unknown submission: refuse retry');}catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;}
++ const runtime=await import(/* @vite-ignore */pathToFileURL(join(process.cwd(),'scripts/runtime/environment.mjs')).href),keys=await import(/* @vite-ignore */pathToFileURL(join(process.cwd(),'scripts/runtime/keychain.mjs')).href),c=runtime.runtimeContext(),d=runtime.readSettings();
++ const row=JSON.parse(c.sql("select jsonb_build_object('secretRef',b.secret_ref,'connectionId',cn.id,'versionId',cn.current_version_id) from public.external_connections cn join local_identity.connection_bindings b on b.version_id=cn.current_version_id where cn.id='d96ed2fa-06ff-4b51-bebe-54a05d9b04cc' and cn.provider='minimax'"));
++ const store=configuredKeychainStore(d.connections.keychain,()=>keys.keychainState('unlock')),ledger:any=previous??{capCents:300,reservedCents:0,existingConnectionId:row.connectionId,results:[]},save=()=>writeFile(path,JSON.stringify(ledger,null,2));
++ const artifactDir=process.env.LOOP_MINIMAX_VARIANTS_ARTIFACTS!;expect(artifactDir).toBeTruthy();await mkdir(artifactDir,{recursive:true});await save();
++ try{for(const model of ['MiniMax-H3-Highspeed','MiniMax-H3-Lite']){
++  const existing=ledger.results.find((r:any)=>r.model===model);if(existing?.status==='completed')continue;
++  const originalId=existing?.providerTaskId;
++  const f=await narrationFixture(undefined,undefined,{provider:'minimax',model});const entry:any={model,resolution:'480P',durationSeconds:4,mode:'references',status:'preparing',events:[]};if(existing){(ledger.replayedResults??=[]).push(existing);ledger.results=ledger.results.filter((r:any)=>r.model!==model);}ledger.results.push(entry);if(originalId){entry.providerTaskId=originalId;entry.recoveryOnly=true;entry.reservationCents=0;}await save();
++  try{
++   await f.authorize();const imagePath=join(f.root,'live-reference.png');await promisify(execFile)('ffmpeg',['-nostdin','-v','error','-f','lavfi','-i','color=c=gray:s=512x768','-frames:v','1',imagePath]);
++   const imported=await f.request('importMaterial',{materialType:'image',sourceKind:'file',sourcePath:'synthetic-reference.png',mimeType:'image/png',contentBase64:(await readFile(imagePath)).toString('base64'),isMainScript:false,materialPurpose:'visual_reference'});expect(imported.status).toBe(200);
++   let id:string|undefined;const start=performance.now();entry.startedAt=new Date().toISOString();
++   const fetcher=createWorkspaceGenerationFetcher('minimax',{reserve:async()=>{if(originalId)return;if(ledger.reservedCents+150>300)throw Error('BUDGET_CAP');ledger.reservedCents+=150;entry.reservationCents=150;entry.status='submission_started';await save();},videoTaskId:()=>id},async(url,init={})=>{
++    const event:any={operation:init.method==='POST'?'submit':new URL(url).hostname.includes('minimax.')?'poll':'download',at:new Date().toISOString()};entry.events.push(event);await save();
++    if(init.method==='POST'){const body=JSON.parse(String(init.body));expect(body).toMatchObject({model,resolution:'480P',duration:4});expect(body.content[1].role).toBe('reference_image');if(model.endsWith('Lite'))expect(body.ratio).toBe('9:16');}
++    // A replay feeds the durable original ID into the isolated queue; it never POSTs to MiniMax again.
++    if(init.method==='POST'&&originalId){id=originalId;event.operation='local_original_id_replay';await save();return Response.json({task_id:originalId});}
++    const response=await fetch(url,init);event.http=response.status;
++    if(response.headers.get('content-type')?.includes('json')){const value=await response.clone().json();if(value.task_id){id=value.task_id;entry.providerTaskId=id;}event.status=value.task?.status;event.usage=value.task?.usage;event.error=value.error?.message;}
++    await save();return response;
++   });
++   seam.ports={mode:'controlled',store:{mode:'keychain',get:()=>store.get(row.secretRef)},fetcher};
++   const w=await f.read(),queued=await f.chosenRequest('requestWorkspaceVisualCandidate',{workspaceId:w.id,expectedRevision:w.revision,targetItemId:w.clips[0].itemId,prompt:'A red cube appears on a plain gray table, slowly rotating. Static camera. No text.',videoMode:'references',visualInputs:[{role:'referenceImages',materialRevisionId:imported.body.id}],videoResolution:'480P',durationSeconds:4,reservationCents:150});expect(queued.status,JSON.stringify(queued.body)).toBe(200);
++   const task=queued.body.visualTasks[0];entry.isolatedTaskId=task.taskId;await save();await f.execute(task.taskId,false);const result=await f.read(),actual=result.visualTasks.find((t:any)=>t.taskId===task.taskId);entry.status=actual.status;entry.error=actual.error;entry.elapsedMs=Math.round(performance.now()-start);
++   const candidate=result.visualCandidates.find((v:any)=>v.taskId===task.taskId);if(candidate){const output=join(artifactDir,model+'.mp4');await copyFile(join(f.assetRoot,candidate.relativePath),output);entry.artifact=output;entry.bytes=(await readFile(output)).length;}
++   await save();expect(actual.status,actual.error).toBe('completed');
++  }finally{seam.ports=undefined;await f.close();}
++ }}finally{await save();}
++},600000);
+--- a/src/local-app/modelSettings.integration.test.ts
++++ b/src/local-app/modelSettings.integration.test.ts
+@@ -7,7 +7,7 @@
+ import {narrationFixture} from './workspaceNarration.fixture';
+ import {workspaceTestMedia} from './workspaceTestMedia.fixture';
+ import {registeredAdapters} from '../worker/registeredAdapters';
+-import {videoProviders,type VideoProvider} from '../worker/videoProviderCatalog';
++import {videoProviders,minimaxVideoModels,type VideoProvider} from '../worker/videoProviderCatalog';
+ import {wanVideoModels,defaultWanModelSettings} from '../wanVideoModels';
+ import {createWorkspaceGenerationFetcher} from './providerNetwork';
+ const seam=vi.hoisted(()=>({ports:undefined as any}));
+@@ -20,7 +20,7 @@
+   const resultVideo=join(f.root,'matrix-six-seconds.mp4');await promisify(execFile)('ffmpeg',['-nostdin','-v','error','-f','lavfi','-i','color=red:size=320x180:rate=24','-t','6','-c:v','libx264','-pix_fmt','yuv420p',resultVideo]);
+   const image=await f.request('importMaterial',{materialType:'image',sourceKind:'file',sourcePath:'matrix.png',mimeType:'image/png',contentBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64'),isMainScript:false,materialPurpose:'visual_reference'});expect(image.status).toBe(200);
+   const modes=registeredAdapters.productionChoices().find(c=>c.provider===provider)?.videoGenerationModes?.[model]??[{id:'first-frame'}];
+-  for(const mode of modes){
++  for(const mode of modes)for(const videoResolution of provider==='minimax'?minimaxVideoModels[model].resolutions:[undefined]){
+    let saved:string|undefined;const calls:any[]=[];
+    const fetcher=createWorkspaceGenerationFetcher(provider,{reserve:async()=>{},videoTaskId:()=>saved},async(url,init={})=>{
+     if(init.method==='POST'){calls.push(JSON.parse(String(init.body)));saved='matrix-task';return Response.json({id:saved,task_id:saved,code:0,data:{task_id:saved},output:{task_id:saved}});}
+@@ -35,10 +35,10 @@
+    const w=await f.read(),durationSeconds=provider==='bailian'?wanVideoModels[model].durations[0]:videoProviders[provider].minDuration;
+    const videoSettings=provider==='bailian'?{...defaultWanModelSettings(model),negativePrompt:'不要文字',seed:0,watermark:true,...(model==='wan2.6-r2v'?{promptExtend:false}:{})}:undefined;
+    const visualInputs=mode.id==='keyframes'?[{role:'firstFrame',materialRevisionId:image.body.id},{role:'lastFrame',materialRevisionId:image.body.id}]:[{role:'referenceImages',materialRevisionId:image.body.id,...(model==='wan2.6-r2v'?{source:'https://cdn.aliyuncs.com/synthetic.png'}:{})}];
+-   const args={workspaceId:w.id,expectedRevision:w.revision,targetItemId:w.clips[0].itemId,prompt:'移动镜头',durationSeconds,reservationCents:500,...(videoSettings?{videoSettings}:{}),...(mode.id==='first-frame'?{firstFrameMaterialRevisionId:image.body.id,firstFrameFit:'contain'}:{videoMode:mode.id,visualInputs})};
++   const args={workspaceId:w.id,expectedRevision:w.revision,targetItemId:w.clips[0].itemId,prompt:'移动镜头',durationSeconds,reservationCents:500,...(videoResolution?{videoResolution}:{}),...(videoSettings?{videoSettings}:{}),...(mode.id==='first-frame'?{firstFrameMaterialRevisionId:image.body.id,firstFrameFit:'contain'}:{videoMode:mode.id,visualInputs})};
+    const queued=await f.chosenRequest('requestWorkspaceVisualCandidate',args);expect(queued.status,JSON.stringify(queued.body)).toBe(200);const task=queued.body.visualTasks[0];
+    await f.execute(task.taskId);const result=await f.read();expect(result.visualTasks.find((t:any)=>t.taskId===task.taskId)?.status).toBe('completed');expect(result.project.sha256).toBe(w.project.sha256);expect(calls).toHaveLength(1);
+-   const body=calls[0];expect(body.model??body.model_name).toBe(model);expect(body.prompt??body.input?.prompt??body.content?.[0]?.text).toContain('移动镜头');
++   const body=calls[0];if(videoResolution){expect(body.resolution).toBe(videoResolution);expect(result.visualTasks.find((t:any)=>t.taskId===task.taskId)?.generation.videoResolution).toBe(videoResolution);if(model==='MiniMax-H3-Lite'&&mode.id==='references')expect(body.ratio).toBe('9:16');}expect(body.model??body.model_name).toBe(model);expect(body.prompt??body.input?.prompt??body.content?.[0]?.text).toContain('移动镜头');
+    if(videoSettings){expect(body.input.negative_prompt).toBe('不要文字');expect(body.parameters).toMatchObject({seed:0,watermark:true});}
+    if(mode.id==='keyframes'&&provider==='kling')expect(body.image_tail).toBeTruthy();
+    const frozen=(await f.c.query('SELECT request_snapshot FROM local_identity.workspace_visual_candidates WHERE task_id=$1',[task.taskId])).rows[0].request_snapshot;expect(frozen.selection.model).toBe(model);
+@@ -61,3 +61,14 @@
+   expect(actual).toMatchObject({status:'failed',providerTaskId:'short-original'});expect(actual.error).toContain('实际 4 秒');expect(actual.error).toContain('至少 5 秒');expect(actual.error).not.toContain('媒体执行或产物验证失败');
+  }finally{await f.close();}
+ },120000);
++
++it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('MiniMax candidate retains actual shorter media without pretending it covers the shot',async()=>{
++ const f=await narrationFixture(undefined,undefined,{provider:'minimax',model:'MiniMax-H3-Highspeed'});try{
++  await f.authorize();const resultVideo=join(f.root,'three-point-seven-five.mp4');await promisify(execFile)('ffmpeg',['-nostdin','-v','error','-f','lavfi','-i','color=red:size=320x480:rate=24','-t','3.75','-c:v','libx264','-pix_fmt','yuv420p',resultVideo]);let id:string|undefined;
++  const sourceVideo=join(f.root,'source-six.mp4');await promisify(execFile)('ffmpeg',['-nostdin','-v','error','-stream_loop','-1','-i',resultVideo,'-t','6','-c','copy',sourceVideo]);const sourceMaterial=await f.request('importMaterial',{materialType:'video',sourceKind:'file',sourcePath:'source-six.mp4',mimeType:'video/mp4',contentBase64:(await readFile(sourceVideo)).toString('base64'),isMainScript:false,materialPurpose:'b_roll'});expect(sourceMaterial.status).toBe(200);
++  seam.ports={mode:'controlled',store:{mode:'keychain',get:async()=> 'synthetic'},fetcher:createWorkspaceGenerationFetcher('minimax',{reserve:async()=>{},videoTaskId:()=>id},async(url,init={})=>{if(init.method==='POST'){id='short-original';return Response.json({task_id:id});}if(new URL(url).hostname==='api.minimax.io')return Response.json({task:{status:'succeeded',content:{url:'https://cdn.hailuoai.com/short.mp4'}}});return new Response(await readFile(resultVideo),{headers:{'content-type':'video/mp4'}});})};
++  const imported=await f.request('importMaterial',{materialType:'image',sourceKind:'file',sourcePath:'short.png',mimeType:'image/png',contentBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64'),isMainScript:false,materialPurpose:'visual_reference'});const initial=await f.read(),expanded=await f.request('saveWorkspaceVideoRanges',{workspaceId:initial.id,expectedRevision:initial.revision,shotId:initial.clips[0].shotId,ranges:[{clipId:initial.clips[0].id,materialRevisionId:sourceMaterial.body.id,sourceInFrame:0,durationInFrames:120,durationLocked:false}]});expect(expanded.status,JSON.stringify(expanded.body)).toBe(200);const w=expanded.body;
++  const queued=await f.chosenRequest('requestWorkspaceVisualCandidate',{workspaceId:w.id,expectedRevision:w.revision,targetItemId:w.clips[0].itemId,firstFrameMaterialRevisionId:imported.body.id,prompt:'实际视频长度',videoResolution:'480P',durationSeconds:4,reservationCents:150});expect(queued.status).toBe(200);await f.execute(queued.body.visualTasks[0].taskId);const result=await f.read();expect(result.visualTasks[0].status).toBe('completed');expect(result.visualCandidates[0].durationSeconds).toBe(3.75);expect(result.project.sha256).toBe(w.project.sha256);
++  const prepared=await f.request('prepareWorkspaceVisualCandidate',{workspaceId:result.id,expectedRevision:result.revision,candidateId:result.visualCandidates[0].id,durationPolicy:'keep-target'});expect(prepared.status).toBeGreaterThanOrEqual(400);
++ }finally{await f.close();}
++},120000);
+--- a/src/local-app/officialVideoNetwork.ts
++++ b/src/local-app/officialVideoNetwork.ts
+@@ -66,7 +66,7 @@
+  }
+  const modes=registeredAdapters.productionChoices().find(c=>c.provider===provider&&c.adapter===videoProviders[provider].adapter)?.videoGenerationModes?.[body.model]??[];
+  for(const mode of modes)try{
+-  const base={provider,model:body.model,prompt:body.content[0].text,durationSeconds:body.duration};
++  const base={provider,model:body.model,prompt:body.content[0].text,durationSeconds:body.duration,...(provider==='minimax'?{resolution:body.resolution,referenceRatio:body.ratio==='adaptive'?undefined:body.ratio}:{})};
+   if(mode.id==='first-frame'&&(inputs.length!==1||inputs[0].role!=='firstFrame'))continue;
+   const expected=mode.id==='first-frame'?officialVideoBody({...base,image:inputs[0].image,imageMime:inputs[0].mimeType}):officialVideoBody({...base,visualInputs:inputs,visualMode:mode.id});
+   if(isDeepStrictEqual(body,expected))return true;
+--- a/src/local-app/workspaceCallConfirmation.ts
++++ b/src/local-app/workspaceCallConfirmation.ts
+@@ -47,7 +47,7 @@
+  }else if(videoRequest){
+   const clip=row.bindings.find(b=>b.itemId===payload.targetItemId||b.id===payload.clipId)!,voice=videoRequest.mainVoice;
+   if(command==='generateWorkspaceImage'&&voice.windowDurationSeconds===null){const n=(await readWorkspaceNarration(c,row,project)).find(n=>n.shotId===clip.shotId);if(n&&!n.selection&&!n.requiresCandidateAdoption&&Number(row.native_edit_revision??0)===0&&n.confirmed&&n.audioTrackId&&!n.adoptedAudioTrackId)throw new ConfigurationError(409,'请先刷新并装配已有口播，再确认实际时长与本次视频调用。');}
+-  providerDuration=videoRequest.providerSeconds;parameters=[`镜头 ${videoRequest.targetSeconds} 秒`,`服务请求 ${providerDuration} 秒`];videoInputs=videoRequest.visual;
++  providerDuration=videoRequest.providerSeconds;parameters=[`镜头 ${videoRequest.targetSeconds} 秒`,`服务请求 ${providerDuration} 秒`];videoInputs=videoRequest.visual;if(videoRequest.videoResolution)parameters.push(videoRequest.videoResolution);
+   if(videoInputs.advanced)parameters.push(videoInputs.mode.label);
+   if(videoInputs.referenceVideoSeconds)parameters.push(`参考视频 ${videoInputs.referenceVideoSeconds.toFixed(2)} 秒`);
+   narration=voice;
+@@ -57,7 +57,7 @@
+  // legacy endpoint may still be international; use the same non-secret intent
+  // metadata as the connection catalogue, without opening the credential.
+  const region=resolved.selection.provider==='minimax'&&resolved.connection?(await c.query("SELECT metadata->>'region' region FROM local_identity.connection_intents WHERE version_id=$1 AND owner_id=local_identity.owner_id() AND applied_at IS NOT NULL AND metadata->>'provider'='minimax' AND metadata->>'command' IN ('create','rotate') ORDER BY created_at DESC LIMIT 1",[resolved.connection.id])).rows[0]?.region??'international':undefined;
+- const estimate=estimateWorkspaceCall({kind:image?'image':speech?'speech':sound?'sound':'video',provider:resolved.selection.provider,model:resolved.selection.model,seconds:providerDuration,referenceVideoSeconds:videoInputs?.referenceVideoSeconds,referenceVideoDurations:videoInputs?.referenceVideoDurations,videoImageCount:videoInputs?.frozen.filter(input=>input.role!=='referenceVideos').length,text:requestPrompt,settings:payload.settings as {size:string;quality:string;count:number}|undefined,referenceImages:image?materials.map(m=>({width:m.width,height:m.height})):undefined,videoSettings:payload.videoSettings as Parameters<typeof estimateWorkspaceCall>[0]['videoSettings'],region});
++ const estimate=estimateWorkspaceCall({kind:image?'image':speech?'speech':sound?'sound':'video',provider:resolved.selection.provider,model:resolved.selection.model,seconds:providerDuration,videoResolution:videoRequest?.videoResolution,referenceVideoSeconds:videoInputs?.referenceVideoSeconds,referenceVideoDurations:videoInputs?.referenceVideoDurations,videoImageCount:videoInputs?.frozen.filter(input=>input.role!=='referenceVideos').length,text:requestPrompt,settings:payload.settings as {size:string;quality:string;count:number}|undefined,referenceImages:image?materials.map(m=>({width:m.width,height:m.height})):undefined,videoSettings:payload.videoSettings as Parameters<typeof estimateWorkspaceCall>[0]['videoSettings'],region});
+  amount??=estimate.suggestedCents;
+  if(typeof payload.reservationCents!=='undefined'&&typeof payload.reservationCents!=='number'||!Number.isSafeInteger(amount)||amount<estimate.minimumCents||amount>estimate.maximumCents)throw new ConfigurationError(400,`本次费用预留须为 ¥${(estimate.minimumCents/100).toFixed(2)}～¥${(estimate.maximumCents/100).toFixed(2)}。`);
+  const summary:WorkspaceCallSummary={kind:image?'图片生成':speech?'口播生成':sound?'在线音效':'视频生成',target,provider:resolved.selection.provider,model:resolved.selection.model??resolved.choice.label,connection:resolved.connection?`${resolved.connection.name} · v${resolved.connection.version}`:'本地',parameters,inputs:videoInputs?videoInputs.frozen.map((input,index)=>videoInputs!.mode.characterOrder?`character${index+1} · ${input.name}`:videoInputs!.advanced?`${videoVisualInputLabels[input.role]} · ${input.name}`:input.name):materials.map(m=>m.source_path.split('/').pop()??m.source_path),prompt,reservationCents:amount,estimate,...(retryOfTaskId?{retryOfTaskId}:{})};
+--- a/src/local-app/workspaceCallEstimate.ts
++++ b/src/local-app/workspaceCallEstimate.ts
+@@ -1,3 +1,4 @@
++import {minimaxVideoModels,minimaxVideoResolution} from '../worker/videoProviderCatalog.js';
+ import {openAiEnhancedImageModels} from '../imageGeneration.js';
+ import {gptImage2EstimateRates,type WorkspaceCallEstimate} from '../workspaceCall.js';
+ import {defaultWanModelSettings,wanReferenceModel} from '../wanVideoModels.js';
+@@ -35,7 +36,7 @@
+ }
+ /** Local high-fidelity allowance plus original pixel area; no undocumented resize. */
+ export function imageReferenceTokens(width:number,height:number){return 2048+Math.ceil(width*height/128);}
+-export function estimateWorkspaceCall(input:{kind:'image'|'video'|'speech'|'sound';provider:string;model?:string;seconds?:number;referenceVideoSeconds?:number;referenceVideoDurations?:readonly number[];videoImageCount?:number;text:string;settings?:{size:string;quality:string;count:number};referenceImages?:Array<{width:number;height:number}>;videoSettings?:WanGenerationSettings;region?:'cn'|'international'}):WorkspaceCallEstimate{
++export function estimateWorkspaceCall(input:{kind:'image'|'video'|'speech'|'sound';provider:string;model?:string;seconds?:number;referenceVideoSeconds?:number;referenceVideoDurations?:readonly number[];videoImageCount?:number;text:string;settings?:{size:string;quality:string;count:number};referenceImages?:Array<{width:number;height:number}>;videoSettings?:WanGenerationSettings;videoResolution?:string;region?:'cn'|'international'}):WorkspaceCallEstimate{
+  let yuan=0,minimumCents=input.kind==='sound'?0:1,basis='',sourceUrl='',conservative=false,imageInputs:WorkspaceCallEstimate['imageInputs'];
+  if(input.kind==='sound')basis='Freesound 预览检索沿用 0 元费用预留。';
+  else if(input.kind==='speech'){
+@@ -78,14 +79,14 @@
+     ?`（参考视频约 ${referenceSeconds.toFixed(2)} 秒 + 输出 ${seconds} 秒）× 720 × 1280 × 24 ÷ 1024 × ¥${rate}/百万 token。参考时长取本期预览素材，平台另有最低用量。`
+     :`${seconds} 秒，按 720P 参考像素、24 fps、¥${rate}/百万 token 估算；以实际返回 token 为准。`;
+    sourceUrl='https://docs.volcengine.com/docs/ark/model-pricing?lang=zh';
+-  }else if(input.provider==='minimax'&&input.model==='MiniMax-H3'){
++  }else if(input.provider==='minimax'&&Object.hasOwn(minimaxVideoModels,input.model??'')){
+    const domestic=input.region==='cn',referenceSeconds=input.referenceVideoSeconds??0,extraImages=Math.max(0,(input.videoImageCount??1)-5);
+-   const secondsRate=domestic?0.5:0.08,imageRate=domestic?0.2:0.04,currency=domestic?'¥':'$';
++   const resolution=minimaxVideoResolution(input.model!,input.videoResolution??'768P'),profile=minimaxVideoModels[input.model!],secondsRate=(domestic?profile.cn:profile.international)[resolution],imageRate=domestic?profile.imageCn:profile.imageInternational,currency=domestic?'¥':'$';
+    yuan=((seconds+referenceSeconds)*secondsRate+extraImages*imageRate)*(domestic?1:usdCny);
+    const terms=[`输出 ${seconds} 秒 × ${currency}${secondsRate}/秒`];
+    if(referenceSeconds>0)terms.push(`参考视频 ${referenceSeconds.toFixed(2)} 秒 × ${currency}${secondsRate}/秒`);
+    if(extraImages>0)terms.push(`超出免费额度的 ${extraImages} 张图 × ${currency}${imageRate}/张`);
+-   basis=`${terms.join(' + ')}（768P${domestic?'，国内站':`，美元按 ${usdCny} 折算`}）。`;
++   basis=`${terms.join(' + ')}（${resolution}${domestic?'，国内站':`，美元按 ${usdCny} 折算`}）。`;
+    sourceUrl=`https://platform.minimax.${domestic?'cn':'io'}/docs/pricing/overview`;
+   }else if(input.provider==='kling'&&input.model==='kling-v3'){
+    yuan=seconds*.084*usdCny;basis=`${seconds} 秒 × $0.084/秒，Kling 3.0 标准无声 720P，API 余额原价；美元按 7.2 折算。`;sourceUrl='https://kling.ai/dev/pricing';
+--- a/src/local-app/workspaceVisualCandidates.ts
++++ b/src/local-app/workspaceVisualCandidates.ts
+@@ -33,7 +33,7 @@
+ /** Only nonsecret execution facts cross the Owner read boundary. */
+ function workspaceVisualGenerationRecord(snapshot:Record<string,any>):WorkspaceVisualCandidate['generation'] {
+  if(typeof snapshot.prompt!=='string')return undefined;
+- return {...(snapshot.selection?{selection:snapshot.selection,connectionName:snapshot.connection?.name}:{}),prompt:snapshot.prompt,...(typeof snapshot.actualPrompt==='string'?{actualPrompt:snapshot.actualPrompt}:{}),firstFrameMaterialRevisionId:snapshot.firstFrameId??'',durationSeconds:snapshot.providerDurationSeconds??snapshot.durationSeconds,...(snapshot.videoSettings?{videoSettings:snapshot.videoSettings}:{}),...(snapshot.firstFrameComposition?{firstFrameFit:snapshot.firstFrameComposition.fit}:{}),...(snapshot.imageSettings?{imageSettings:snapshot.imageSettings,imageBrief:snapshot.imageBrief,referenceMaterialRevisionIds:snapshot.referenceMaterialRevisionIds}:{})};
++ return {...(snapshot.selection?{selection:snapshot.selection,connectionName:snapshot.connection?.name}:{}),prompt:snapshot.prompt,...(snapshot.videoResolution?{videoResolution:snapshot.videoResolution}:{}),...(typeof snapshot.actualPrompt==='string'?{actualPrompt:snapshot.actualPrompt}:{}),firstFrameMaterialRevisionId:snapshot.firstFrameId??'',durationSeconds:snapshot.providerDurationSeconds??snapshot.durationSeconds,...(snapshot.videoSettings?{videoSettings:snapshot.videoSettings}:{}),...(snapshot.firstFrameComposition?{firstFrameFit:snapshot.firstFrameComposition.fit}:{}),...(snapshot.imageSettings?{imageSettings:snapshot.imageSettings,imageBrief:snapshot.imageBrief,referenceMaterialRevisionIds:snapshot.referenceMaterialRevisionIds}:{})};
+ }
+ export async function readWorkspaceVisualCandidates(c:PoolClient,row:ProductionWorkspaceRecord,project:OpenChatCutProject,root:string):Promise<WorkspaceVisualCandidate[]>{
+  const records=(await c.query(`SELECT v.*,m.id output_material_id,coalesce(m.storage_path,a.relative_path) storage_path,coalesce(m.sha256,a.sha256) sha256,coalesce(m.file_size,a.file_size) file_size,coalesce(m.material_type,v.request_snapshot->>'kind') material_type FROM local_identity.workspace_visual_candidates v LEFT JOIN public.paid_generation_reservations r ON r.task_id=v.task_id LEFT JOIN public.production_material_revisions m ON m.id=coalesce(v.material_revision_id,r.material_revision_id) AND m.episode_id=v.episode_id LEFT JOIN public.artifacts a ON a.id=v.source_artifact_id AND a.episode_id=v.episode_id WHERE v.workspace_id=$1 AND (m.id IS NOT NULL OR a.id IS NOT NULL) ORDER BY v.created_at DESC`,[row.id])).rows;
+@@ -49,7 +49,7 @@
+ export async function queueWorkspaceVisualGeneration(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,data:Record<string,unknown>,runtime:InputRuntime,mode:'candidate'|'first'='candidate'){
+   await requireVisualStorageLocation(c,root,row.episode_id,runtime.minimumFreeBytes);
+   const {clip,item,timeline}=target(row,project,data.targetItemId),lineage={shotType:'b_roll' as const};
+-  const {resolved,creativeContext:context,visual,mainVoice,targetSeconds,providerSeconds:seconds,actualPrompt,videoSettings,prompt}=await resolveWorkspaceVideoRequest(c,root,row,project,data,'queue');
++  const {resolved,creativeContext:context,visual,mainVoice,targetSeconds,providerSeconds:seconds,actualPrompt,videoSettings,videoResolution,prompt}=await resolveWorkspaceVideoRequest(c,root,row,project,data,'queue');
+   const config={...resolved.execution,max_attempts:1},authorized=await currentWorkspaceCallAuthorization(c,row),first=visual.frozen.find(input=>input.role==='firstFrame');
+   if(mode==='first'&&visual.advanced)throw new ConfigurationError(400,'占位首次生成仅支持首帧模式。');
+   if(data.firstFrameFit!==undefined&&!first)throw new ConfigurationError(400,'当前生成模式不使用首帧构图。');
+@@ -61,8 +61,8 @@
+    item.durationInFrames=frames;
+   }
+   const referenceOutputRatio:VideoOutputRatio=timeline.width>timeline.height?'16:9':timeline.width<timeline.height?'9:16':'1:1';
+-  const referenceRatio=visual.mode.characterOrder||resolved.selection.model===klingOmniModel?referenceOutputRatio:undefined;
+-  const id=randomUUID(),expected=workspaceCandidateTarget(item),snapshot={...(resolved?{selectionVersion:1,selection:resolved.selection,connection:resolved.connection,context,actualPrompt,target:{targetItemId:item.id,shotId:clip.shotId,workspaceRevision:Number(row.revision),projectSha256:row.project_sha256,scriptRevisionId:row.script_revision_id},costBasis:{kind:'owner-reservation',reservationCents:data.reservationCents,model:resolved.selection.model,providerDurationSeconds:seconds}}:{}),origin:mode==='first'?'first-fill':'candidate',kind:'video',usage:'video',capability:lineage.shotType,execution:config,...(first?{firstFrameId:first.materialRevisionId,firstFrameSha256:first.sha256}:{}),...(visual.advanced?{videoMode:visual.mode.id,visualInputs:visual.frozen,...(referenceRatio?{referenceRatio}:{})}:{}),prompt:prompt.trim(),providerDurationSeconds:seconds,targetDurationSeconds:targetSeconds,reservationCents:data.reservationCents??null,authorizationHash:authorized.authorization_hash,nativeEditRevision:Number(row.native_edit_revision),expectedRevision:Number(row.revision),mainVoice,...(videoSettings?{videoSettings}:{}),...(data.firstFrameFit?{firstFrameComposition:{fit:data.firstFrameFit,width:timeline.width,height:timeline.height}}:{})};
++  const referenceRatio=visual.mode.characterOrder||resolved.selection.model===klingOmniModel||resolved.selection.model==='MiniMax-H3-Lite'&&visual.mode.id==='references'?referenceOutputRatio:undefined;
++  const id=randomUUID(),expected=workspaceCandidateTarget(item),snapshot={...(resolved?{selectionVersion:1,selection:resolved.selection,connection:resolved.connection,context,actualPrompt,target:{targetItemId:item.id,shotId:clip.shotId,workspaceRevision:Number(row.revision),projectSha256:row.project_sha256,scriptRevisionId:row.script_revision_id},costBasis:{kind:'owner-reservation',reservationCents:data.reservationCents,model:resolved.selection.model,providerDurationSeconds:seconds}}:{}),origin:mode==='first'?'first-fill':'candidate',kind:'video',usage:'video',capability:lineage.shotType,execution:config,...(first?{firstFrameId:first.materialRevisionId,firstFrameSha256:first.sha256}:{}),...(visual.advanced?{videoMode:visual.mode.id,visualInputs:visual.frozen,...(referenceRatio?{referenceRatio}:{})}:{}),prompt:prompt.trim(),providerDurationSeconds:seconds,targetDurationSeconds:targetSeconds,reservationCents:data.reservationCents??null,authorizationHash:authorized.authorization_hash,nativeEditRevision:Number(row.native_edit_revision),expectedRevision:Number(row.revision),mainVoice,...(videoSettings?{videoSettings}:{}),...(videoResolution?{videoResolution}:{}),...(data.firstFrameFit?{firstFrameComposition:{fit:data.firstFrameFit,width:timeline.width,height:timeline.height}}:{})};
+   await c.query('INSERT INTO local_identity.workspace_visual_candidates(id,workspace_id,episode_id,clip_id,shot_id,target_item_id,input_fingerprint,target_snapshot,request_snapshot) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)',[id,row.id,row.episode_id,clip.id,clip.shotId,item.id,hash({expected,snapshot}),JSON.stringify(expected),JSON.stringify(snapshot)]);
+   let taskId:string;
+   try{taskId=(await c.query('SELECT local_identity.queue_workspace_visual($1) id',[id])).rows[0].id;}catch(error){if((error as {code?:string}).code==='55000')throw new ConfigurationError(409,'已有画面任务正在进行或供应商提交结果未知，请先恢复已有任务或核对结果；不会重复付费提交。');if((error as {code?:string}).code==='22023')throw new ConfigurationError(409,'本次视频费用预留或生成参数无效，请检查后重试。');throw error;}
+--- a/src/local-app/workspaceVisualRequest.ts
++++ b/src/local-app/workspaceVisualRequest.ts
+@@ -14,7 +14,7 @@
+ import {emptyImageBrief,isImageBrief,isImageGenerationSettings,imageBriefPrompt,imageRequestPrompt} from '../imageGeneration.js';
+ import {defaultWanModelSettings,wanProviderDuration,wanVideoSettingsError} from '../wanVideoModels.js';
+ import {isWanGenerationSettings} from '../videoGenerationSettings.js';
+-import {isVideoProvider,videoProviders} from '../worker/videoProviderCatalog.js';
++import {isVideoProvider,videoProviders,minimaxVideoResolution} from '../worker/videoProviderCatalog.js';
+ import {ConfigurationError} from './configurationCommands.js';
+ 
+ // Confirmation retains its existing acceptance rules and measured image metadata.
+@@ -81,6 +81,8 @@
+   if(provider==='bailian'){const problem=wanVideoSettingsError(resolved.selection.model!,videoSettings);if(problem)throw new ConfigurationError(400,problem);}
+   if(data.firstFrameFit!==undefined&&!['contain','cover'].includes(String(data.firstFrameFit)))throw new ConfigurationError(400,'首帧构图无效。');
+  }
++ let videoResolution:string|undefined;
++ try{if(provider==='minimax')videoResolution=minimaxVideoResolution(resolved.selection.model!,data.videoResolution??'768P');else if(data.videoResolution!==undefined)throw Error('所选模型不支持 MiniMax 分辨率设置。');}catch(error){throw new ConfigurationError(400,error instanceof Error?error.message:'视频分辨率无效。');}
+  const clip=row.bindings.find(binding=>binding.itemId===data.targetItemId||binding.id===data.clipId);if(!clip)throw new ConfigurationError(409,'当前镜头已变化。');
+  const mainVoice=await workspaceVisualMainVoice(c,root,row,project,clip.shotId),targetSeconds=mainVoice.windowDurationSeconds??Number(data.durationSeconds),bounds=resolved.choice.constraints.durationSeconds!,min=bounds?.min??2;
+  const providerSeconds=provider==='bailian'?wanProviderDuration(resolved.selection.model!,targetSeconds,mainVoice.windowDurationSeconds!==null)??NaN:mainVoice.windowDurationSeconds!==null?Math.max(min,Math.ceil(targetSeconds)):targetSeconds;
+@@ -92,5 +94,5 @@
+  }
+  const visual=await resolveWorkspaceVideoInputs(c,root,row.episode_id,data,resolved),actualPrompt=creativeMediaPrompt(prompt,creativeContext.accountRules,creativeContext.seriesRules);
+  if(phase==='queue'&&actualPrompt.length>(resolved.choice.constraints.prompt?.maxLength??1500))throw new ConfigurationError(400,'动作描述与账号、系列规则合并后过长，请精简后提交。');
+- return{context,creativeContext,resolved,visual,mainVoice,targetSeconds,providerSeconds,actualPrompt,videoSettings,prompt};
++ return{context,creativeContext,resolved,visual,mainVoice,targetSeconds,providerSeconds,actualPrompt,videoSettings,videoResolution,prompt};
+ }
+--- a/src/worker/codexRunner.ts
++++ b/src/worker/codexRunner.ts
+@@ -526,7 +526,7 @@
+     if(!isRecord(video))throw new Error('缺少冻结视频配置。');
+     const advanced=Array.isArray(video.visual_inputs);
+     if(!advanced&&!isRecord(video.first_frame))throw new Error('视频镜头缺少冻结首帧。');
+-    return { adapter: value.adapter as "wan_video" | "seedance_video" | "minimax_video" | "kling_video", wanVideo: { settings:video.settings as import('../videoGenerationSettings.js').WanGenerationSettings,composition:video.composition as import('../videoGenerationSettings.js').FirstFrameComposition,...(advanced?{visualInputs:video.visual_inputs as FrozenVideoVisualInput[],visualMode:requiredString(video.visual_mode,'缺少视频生成模式。'),...(video.reference_ratio!=null?{referenceRatio:video.reference_ratio as import('../videoVisualInputs.js').VideoOutputRatio}:{})}:{firstFrame:video.first_frame as unknown as ArtifactManifest,imageMime:requiredString(video.image_mime,'缺少首帧 MIME。')}), prompt: requiredString(video.prompt, "缺少视频提示词。"), durationSeconds: requiredPositiveNumber(video.duration_seconds, "缺少视频时长。") } };
++    return { adapter: value.adapter as "wan_video" | "seedance_video" | "minimax_video" | "kling_video", wanVideo: { ...(video.candidate_only===true?{candidateOnly:true}:{}),...(value.adapter==='minimax_video'&&video.resolution!=null?{resolution:requiredString(video.resolution,'缺少 MiniMax 分辨率。')} :{}),settings:video.settings as import('../videoGenerationSettings.js').WanGenerationSettings,composition:video.composition as import('../videoGenerationSettings.js').FirstFrameComposition,...(advanced?{visualInputs:video.visual_inputs as FrozenVideoVisualInput[],visualMode:requiredString(video.visual_mode,'缺少视频生成模式。'),...(video.reference_ratio!=null?{referenceRatio:video.reference_ratio as import('../videoVisualInputs.js').VideoOutputRatio}:{})}:{firstFrame:video.first_frame as unknown as ArtifactManifest,imageMime:requiredString(video.image_mime,'缺少首帧 MIME。')}), prompt: requiredString(video.prompt, "缺少视频提示词。"), durationSeconds: requiredPositiveNumber(video.duration_seconds, "缺少视频时长。") } };
+   }
+   if (value.adapter === "pexels_video") {
+     const bRoll = value.b_roll;
+--- a/src/worker/contracts.ts
++++ b/src/worker/contracts.ts
+@@ -1,7 +1,7 @@
+ import {shotCompositionLayouts,type ShotCompositionLayout} from '../shotComposition.js';
+ import type {FrozenVideoVisualInput} from '../videoVisualInputs.js';
+ import {wanVideoModel,wanVideoParameters,defaultWanModelSettings} from '../wanVideoModels.js';
+-import {isVideoProvider, videoAdapters, videoProviders} from "./videoProviderCatalog.js";
++import {isVideoProvider, videoAdapters, videoProviders,minimaxVideoResolution} from "./videoProviderCatalog.js";
+ import{openChatCutProjectPath}from"./openchatcutPaths.js";
+ import {videoOutputRatios,videoVisualInputProblem,type VideoOutputRatio} from '../videoVisualInputs.js';
+ import { registeredAdapters } from "./registeredAdapters.js";
+@@ -199,7 +199,7 @@
+     shot: StoryboardShotManifest;
+   };
+   media?:
+-    | { adapter: "wan_video" | "seedance_video" | "minimax_video" | "kling_video"; wanVideo: { settings?:import('../videoGenerationSettings.js').WanGenerationSettings;composition?:import('../videoGenerationSettings.js').FirstFrameComposition;firstFrame?: ArtifactManifest; visualInputs?: FrozenVideoVisualInput[]; visualMode?: string; referenceRatio?:VideoOutputRatio; prompt: string; durationSeconds: number; imageMime?: string } }
++    | { adapter: "wan_video" | "seedance_video" | "minimax_video" | "kling_video"; wanVideo: { candidateOnly?:boolean;resolution?:string;settings?:import('../videoGenerationSettings.js').WanGenerationSettings;composition?:import('../videoGenerationSettings.js').FirstFrameComposition;firstFrame?: ArtifactManifest; visualInputs?: FrozenVideoVisualInput[]; visualMode?: string; referenceRatio?:VideoOutputRatio; prompt: string; durationSeconds: number; imageMime?: string } }
+     | {
+       adapter: "google_tts" | "volcengine_tts";
+       narration: {
+@@ -481,6 +481,8 @@
+   if (input.media && "wanVideo" in input.media) {
+     const video = input.media.wanVideo;
+     if (!(input.task.provider === "bailian" && input.media.adapter === "wan_video" && !!wanVideoModel(input.task.model) || isVideoProvider(input.task.provider) && videoProviders[input.task.provider].adapter === input.media.adapter && (videoProviders[input.task.provider].models as readonly string[]).includes(input.task.model)) || !["a_roll_generation", "b_roll_generation"].includes(input.capability) || !isConnectionId(input.credentialRef) || !Number.isInteger(video.durationSeconds) || video.durationSeconds < 2 || video.durationSeconds > 15 || !isNonEmptyString(video.prompt) || video.prompt.length > 1500) throw new Error("万相任务的冻结配置无效。");
++    if(video.candidateOnly&&input.task.provider!=='minimax')throw Error('候选视频时长策略不适用于当前供应商。');
++    if(input.task.provider==='minimax')minimaxVideoResolution(input.task.model,video.resolution??'768P');
+     if(input.task.provider==='bailian')wanVideoParameters(input.task.model,video.durationSeconds,video.settings??defaultWanModelSettings(input.task.model));
+     if(video.referenceRatio!==undefined&&!videoOutputRatios.includes(video.referenceRatio))throw Error('参考视频输出比例无效。');
+     if(video.visualInputs){
+--- a/src/worker/controlledMediaExecutor.ts
++++ b/src/worker/controlledMediaExecutor.ts
+@@ -117,11 +117,11 @@
+         const frame=await readFrame(entry,entry.mimeType,entry.role==='firstFrame'?video.composition:undefined);
+         return {...entry,image:frame.image,mimeType:frame.imageMime};
+       }));
+-      return {bytes:await generateOfficialVideo({provider:taskPackage.provider,model:taskPackage.model,credentials:input.officialVideoCredentials!,fetcher:input.fetcher,visualInputs,visualMode:video.visualMode,referenceRatio:video.referenceRatio,prompt:video.prompt,durationSeconds:video.durationSeconds,reserve:input.reserveWan,recordSubmission:input.recordWanSubmission,onProgress:input.recordVideoProgress})};
++      return {bytes:await generateOfficialVideo({provider:taskPackage.provider,resolution:video.resolution,model:taskPackage.model,credentials:input.officialVideoCredentials!,fetcher:input.fetcher,visualInputs,visualMode:video.visualMode,referenceRatio:video.referenceRatio,prompt:video.prompt,durationSeconds:video.durationSeconds,reserve:input.reserveWan,recordSubmission:input.recordWanSubmission,onProgress:input.recordVideoProgress})};
+     }
+     if(!video.firstFrame||!video.imageMime)throw Error('缺少冻结首帧。');
+     const {image,imageMime}=await readFrame(video.firstFrame,video.imageMime,video.composition);
+-    if (isVideoProvider(taskPackage.provider)) return {bytes: await generateOfficialVideo({provider: taskPackage.provider, model: taskPackage.model, credentials: input.officialVideoCredentials!, fetcher: input.fetcher, image, imageMime, prompt: video.prompt, durationSeconds: video.durationSeconds, reserve: input.reserveWan, recordSubmission: input.recordWanSubmission, onProgress: input.recordVideoProgress})};
++    if (isVideoProvider(taskPackage.provider)) return {bytes: await generateOfficialVideo({provider: taskPackage.provider,resolution:video.resolution, model: taskPackage.model, credentials: input.officialVideoCredentials!, fetcher: input.fetcher, image, imageMime, prompt: video.prompt, durationSeconds: video.durationSeconds, reserve: input.reserveWan, recordSubmission: input.recordWanSubmission, onProgress: input.recordVideoProgress})};
+     return { bytes: await generateWanVideo({ model:taskPackage.model,settings:video.settings,credentials: input.bailianCredentials!, fetcher: input.fetcher, image, imageMime, prompt: video.prompt, durationSeconds: video.durationSeconds, reserve: input.reserveWan, recordSubmission: input.recordWanSubmission, onProgress: input.recordVideoProgress }) };
+   }
+   if (taskPackage.provider === "volcengine_tts" && taskPackage.media?.adapter === "volcengine_tts") {
+@@ -220,7 +220,11 @@
+   try {
+     await writeFile(path, bytes);
+     if (input.taskPackage.media && "wanVideo" in input.taskPackage.media) {
+-      await input.validateMp4(path, input.taskPackage.media.wanVideo.durationSeconds);
++      // MiniMax billing seconds can exceed encoded duration. Workspace output is a
++      // candidate: retain valid media at its measured length; adoption keeps its
++      // existing coverage guard. Legacy production still requires the full length.
++      const candidate=input.taskPackage.provider==='minimax'&&input.taskPackage.media.wanVideo.candidateOnly===true;
++      await input.validateMp4(path, candidate?0.001:input.taskPackage.media.wanVideo.durationSeconds);
+       return undefined;
+     }
+     if (input.taskPackage.provider === "pexels" && input.taskPackage.media?.adapter === "pexels_video") {
+--- a/src/worker/minimaxVariants.test.ts
++++ b/src/worker/minimaxVariants.test.ts
+@@ -0,0 +1,18 @@
++// @vitest-environment node
++import {it,expect} from 'vitest';
++import {registeredAdapters} from './registeredAdapters';
++import {officialVideoBody} from './officialVideoProvider';
++import {officialVideoOperation} from '../local-app/officialVideoNetwork';
++import {estimateWorkspaceCall} from '../local-app/workspaceCallEstimate';
++for(const model of ['MiniMax-H3-Highspeed','MiniMax-H3-Lite'])for(const resolution of ['480P','768P'])for(const mode of ['first-frame','keyframes','references'])it(`${model} / ${resolution} / ${mode} preserves API settings through actual network admission`,()=>{
++ const choice=registeredAdapters.productionChoices().find(c=>c.provider==='minimax')!;expect(choice.models).toContain(model);expect(choice.videoGenerationModes?.[model]?.map(m=>m.id)).toContain(mode);
++ const frame={materialRevisionId:'first',mimeType:'image/png',image:Uint8Array.of(1)};
++ const body=officialVideoBody({provider:'minimax',model,prompt:'动作',durationSeconds:4,resolution,referenceRatio:'9:16',...(mode==='first-frame'?{image:frame.image,imageMime:frame.mimeType}:{visualMode:mode,visualInputs:mode==='keyframes'?[{...frame,role:'firstFrame'},{...frame,materialRevisionId:'last',role:'lastFrame'}]:[{...frame,role:'referenceImages'}]})} as any);
++ expect(body).toMatchObject({model,resolution,duration:4,ratio:model.endsWith('Lite')&&mode==='references'?'9:16':'adaptive'});
++ expect(officialVideoOperation('minimax','execute',new URL('https://api.minimax.cn/v2/video_generation'),{method:'POST',body:JSON.stringify(body)})).toBe('generate');
++});
++it('new variant estimates use model and resolution, including input video and extra images',()=>{
++ for(const [model,resolution,rate,imageRate] of [['MiniMax-H3-Highspeed','480P',.26,.2],['MiniMax-H3-Highspeed','768P',.4,.2],['MiniMax-H3-Lite','480P',.16,.13],['MiniMax-H3-Lite','768P',.26,.13]] as const){
++  expect(estimateWorkspaceCall({kind:'video',provider:'minimax',model,videoResolution:resolution,region:'cn',text:'动作',seconds:4,referenceVideoSeconds:2,videoImageCount:6} as any).estimatedCents).toBe(Math.round((6*rate+imageRate)*100));
++ }
++});
+--- a/src/worker/officialVideoProvider.ts
++++ b/src/worker/officialVideoProvider.ts
+@@ -4,7 +4,7 @@
+ import {videoOutputRatios,videoVisualInputProblem,type VideoOutputRatio,type VideoVisualInputSelection} from '../videoVisualInputs.js';
+ import {createHmac} from 'node:crypto';
+ import {executeVideoTask,type VideoTaskPorts} from './videoTaskExecution.js';
+-import {klingOmniModel,klingOmniPath,videoProviders,minimaxEndpoints,type MiniMaxRegion, type VideoProvider} from './videoProviderCatalog.js';
++import {klingOmniModel,klingOmniPath,videoProviders,minimaxEndpoints,minimaxVideoResolution,type MiniMaxRegion, type VideoProvider} from './videoProviderCatalog.js';
+ 
+ // Like Bailian workspace credentials, region is frozen in the immutable secret binding.
+ // Plain legacy keys retain their original international endpoint.
+@@ -43,11 +43,12 @@
+ export type OfficialVideoVisualInput=VideoVisualInputSelection&{image?:Uint8Array;video?:Uint8Array;mimeType:string};
+ export interface OfficialVideoInput extends VideoTaskPorts {
+   provider: VideoProvider; model: string; credentials: string;
+-  image?: Uint8Array; imageMime?: string; visualInputs?: OfficialVideoVisualInput[]; visualMode?: string; referenceRatio?:VideoOutputRatio; prompt: string; durationSeconds: number;
++  image?: Uint8Array; imageMime?: string; visualInputs?: OfficialVideoVisualInput[]; visualMode?: string; referenceRatio?:VideoOutputRatio; prompt: string; durationSeconds: number; resolution?:string;
+ }
+-export function officialVideoBody(input: Pick<OfficialVideoInput,'provider'|'model'|'image'|'imageMime'|'prompt'|'durationSeconds'|'visualInputs'|'visualMode'|'referenceRatio'>) {
++export function officialVideoBody(input: Pick<OfficialVideoInput,'provider'|'model'|'image'|'imageMime'|'prompt'|'durationSeconds'|'visualInputs'|'visualMode'|'referenceRatio'|'resolution'>) {
+   const p = videoProviders[input.provider];
+   if (!(p.models as readonly string[]).includes(input.model) || !Number.isInteger(input.durationSeconds) || input.durationSeconds < p.minDuration || input.durationSeconds > p.maxDuration || !input.prompt.trim() || input.prompt.length > 1500) throw Error('视频模型、提示词或时长无效。');
++  const resolution=input.provider==='minimax'?minimaxVideoResolution(input.model,input.resolution??'768P'):'720p';
+   if(input.visualInputs){
+     const choice=registeredAdapters.productionChoices().find(entry=>entry.provider===input.provider&&entry.adapter===p.adapter);
+     const mode=choice?.videoGenerationModes?.[input.model]?.find(entry=>entry.id===input.visualMode);
+@@ -79,7 +80,7 @@
+       const frame=(role:'firstFrame'|'lastFrame')=>Buffer.from(input.visualInputs!.find(entry=>entry.role===role)!.image!).toString('base64');
+       return {model_name:input.model,image:frame('firstFrame'),image_tail:frame('lastFrame'),prompt:input.prompt.trim(),mode:'std',duration:String(input.durationSeconds),sound:'off'};
+     }
+-    return {model:input.model,content:[{type:'text',text:input.prompt.trim()},...visualContent],duration:input.durationSeconds,ratio:'adaptive',resolution:input.provider==='minimax'?'768P':'720p',
++    return {model:input.model,content:[{type:'text',text:input.prompt.trim()},...visualContent],duration:input.durationSeconds,ratio:input.provider==='minimax'&&input.model==='MiniMax-H3-Lite'&&input.visualMode==='references'?requiredReferenceRatio(input.referenceRatio):'adaptive',resolution,
+       ...(input.provider==='volcengine'?{generate_audio:false,watermark:false}:{})};
+   }
+   if(input.model===klingOmniModel)throw Error('可灵 Omni 需要参考素材。');
+@@ -87,8 +88,9 @@
+   const base64 = Buffer.from(input.image).toString('base64');
+   if (input.provider === 'kling') return {model_name:input.model, image:base64, prompt:input.prompt.trim(), mode:'std', duration:String(input.durationSeconds), sound:'off'};
+   const content = [{type:'text',text:input.prompt.trim()}, {type:'image_url',image_url:{url:`data:${input.imageMime};base64,${base64}`},role:'first_frame'}];
+-  return {model:input.model,content,duration:input.durationSeconds,ratio:'adaptive',resolution:input.provider === 'minimax' ? '768P' : '720p',...(input.provider === 'volcengine' ? {generate_audio:false,watermark:false} : {})};
++  return {model:input.model,content,duration:input.durationSeconds,ratio:'adaptive',resolution,...(input.provider === 'volcengine' ? {generate_audio:false,watermark:false} : {})};
+ }
++function requiredReferenceRatio(value:VideoOutputRatio|undefined){if(!value||!videoOutputRatios.includes(value))throw Error('MiniMax-H3-Lite 参考素材生成需要明确的输出比例。');return value;}
+ export async function generateOfficialVideo(input: OfficialVideoInput): Promise<Uint8Array> {
+   let body:ReturnType<typeof officialVideoBody>,endpoint:string;
+   try{body=officialVideoBody(input);endpoint=videoEndpoint(input.provider,input.credentials);videoAuthorization(input.provider,input.credentials);}
+--- a/src/worker/registeredAdapters.ts
++++ b/src/worker/registeredAdapters.ts
+@@ -2,7 +2,7 @@
+ import {wanReferenceModel,wanReferenceMode,wanVideoModel,wanVideoModels} from '../wanVideoModels.js';
+ import {imageSizes,openAiImageModels,openAiEnhancedImageModels,openAiImageQualities} from '../imageGeneration.js';
+ import type {VideoGenerationMode} from '../videoVisualInputs.js';
+-import {klingOmniModel,videoProviders} from "./videoProviderCatalog.js";
++import {klingOmniModel,videoProviders,minimaxVideoModels} from "./videoProviderCatalog.js";
+ export const executionPathKeys = ["external", "local", "manual"] as const;
+ 
+ export type ExecutionPath = typeof executionPathKeys[number];
+@@ -134,14 +134,14 @@
+ ] satisfies VideoGenerationMode[]]));
+ const officialVideoModes:Record<string,Readonly<Record<string,readonly VideoGenerationMode[]>>> = {
+  volcengine:seedanceModes,
+- minimax:{'MiniMax-H3':[
++ minimax:Object.fromEntries(videoProviders.minimax.models.map(model=>[model,[
+   firstFrameVideoMode(officialFirstFrame),
+   {id:'keyframes',label:'首尾帧生成',inputs:{firstFrame:officialFrame,lastFrame:officialFrame}},
+   {id:'references',label:'参考素材生成',allowInlineMp4:true,inputs:{
+    referenceImages:{max:9,maxBytes:30*1024*1024,mimeTypes:['image/png','image/jpeg','image/webp']},
+    referenceVideos:{max:3,maxBytes:50*1024*1024,mimeTypes:['video/mp4','video/quicktime']},
+   }},
+- ]},
++ ] satisfies VideoGenerationMode[]])),
+  kling:{'kling-v3':[
+   firstFrameVideoMode(officialFirstFrame),
+   {id:'keyframes',label:'首尾帧生成',inputs:{firstFrame:officialFrame,lastFrame:officialFrame}},
+@@ -154,7 +154,7 @@
+ };
+ const manifest: readonly RegisteredAdapterDefinition[] = [
+   ...Object.entries(videoProviders).map(([provider, definition]): RegisteredAdapterDefinition => ({
+-    production: [{capability: 'video', label: definition.label, mode: 'generation', inputModes: ['text', 'first_frame'], constraints: {prompt: {maxLength: 1500}, durationSeconds: {min: definition.minDuration, max: definition.maxDuration, integer: true}, firstFrame: officialFirstFrame, ...(provider==='kling'?{}:{resolutions: [provider === 'minimax' ? '768P' : '720p'], aspectRatios: ['adaptive']})}, videoGenerationModes:officialVideoModes[provider]}],
++    production: [{capability: 'video', label: definition.label, mode: 'generation', inputModes: ['text', 'first_frame'], constraints: {prompt: {maxLength: 1500}, durationSeconds: {min: definition.minDuration, max: definition.maxDuration, integer: true}, firstFrame: officialFirstFrame, ...(provider==='kling'?{}:{resolutions: [provider === 'minimax' ? '768P' : '720p'], aspectRatios: ['adaptive']})}, ...(provider==='minimax'?{modelConstraints:Object.fromEntries(Object.entries(minimaxVideoModels).map(([model,profile])=>[model,{resolutions:profile.resolutions}]))}:{}),videoGenerationModes:officialVideoModes[provider]}],
+     provider, adapter: definition.adapter, executionPath: "external", connection: {kind: "owner_managed", type: provider+"_video_api", endpoint: definition.endpoint}, execution: {kind: "controlled_media", safetyLimit: 1},
+     capabilities: ["a_roll_generation", "b_roll_generation"].map(capability => ({capability, configurationFields: ["credential_ref", "max_attempts"], modelCatalog: definition.models, presetCatalog: ["official-video-v1"]})),
+   })),
+--- a/src/worker/videoProviderCatalog.ts
++++ b/src/worker/videoProviderCatalog.ts
+@@ -3,7 +3,7 @@
+ export const klingOmniPath='/v1/videos/omni-video';
+ export const videoProviders = {
+   volcengine: { adapter: 'seedance_video', label: '火山方舟 Seedance', endpoint: 'https://ark.cn-beijing.volces.com/api/v3', models: ['doubao-seedance-2-0-260128', 'doubao-seedance-2-5-260628'], minDuration: 4, maxDuration: 15 },
+-  minimax: { adapter: 'minimax_video', label: 'MiniMax H3', endpoint: 'https://api.minimax.io', models: ['MiniMax-H3'], minDuration: 4, maxDuration: 15 },
++  minimax: { adapter: 'minimax_video', label: 'MiniMax H3', endpoint: 'https://api.minimax.io', models: ['MiniMax-H3','MiniMax-H3-Highspeed','MiniMax-H3-Lite'], minDuration: 4, maxDuration: 15 },
+   kling: { adapter: 'kling_video', label: '可灵 Kling 3.0', endpoint: 'https://api-singapore.klingai.com', models: ['kling-v3',klingOmniModel], minDuration: 3, maxDuration: 15 },
+ } as const;
+ export type VideoProvider = keyof typeof videoProviders;
+@@ -11,3 +11,13 @@
+ export type MiniMaxRegion=keyof typeof minimaxEndpoints;
+ export function isVideoProvider(value: string): value is VideoProvider { return Object.hasOwn(videoProviders, value); }
+ export const videoAdapters: readonly string[] = Object.values(videoProviders).map(p => p.adapter);
++
++export const minimaxVideoModels:Readonly<Record<string,{resolutions:readonly string[];cn:Readonly<Record<string,number>>;international:Readonly<Record<string,number>>;imageCn:number;imageInternational:number}>>={
++ 'MiniMax-H3':{resolutions:['768P','2K'],cn:{'768P':.5,'2K':.8},international:{'768P':.08,'2K':.13},imageCn:.2,imageInternational:.04},
++ 'MiniMax-H3-Highspeed':{resolutions:['768P','480P'],cn:{'768P':.4,'480P':.26},international:{'768P':.06,'480P':.04},imageCn:.2,imageInternational:.03},
++ 'MiniMax-H3-Lite':{resolutions:['768P','480P'],cn:{'768P':.26,'480P':.16},international:{'768P':.04,'480P':.025},imageCn:.13,imageInternational:.02},
++};
++export function minimaxVideoResolution(model:string,value:unknown='768P'):string{
++ if(typeof value!=='string'||!Object.hasOwn(minimaxVideoModels,model)||!minimaxVideoModels[model].resolutions.includes(value))throw Error('MiniMax 模型或分辨率无效。');
++ return value;
++}
+--- a/src/workspaceVisualCandidates.ts
++++ b/src/workspaceVisualCandidates.ts
+@@ -2,13 +2,13 @@
+ import {resolveWorkspaceMainVoice} from './workspaceAudio.js';
+ import type {OpenChatCutProject} from './worker/openchatcutProject.js';
+ import type {WorkspaceCandidate} from './workspaceCandidates.js';
+-export interface WorkspaceVisualCandidate extends WorkspaceCandidate {source?:import('./workspacePexels.js').WorkspacePexelsSource;usage:'video'|'still'|'pan-zoom';materialRevisionId?:string;generation?:{selection?:import('./productionSelection.js').ProductionSelection;connectionName?:string;actualPrompt?:string;prompt:string;firstFrameMaterialRevisionId:string;durationSeconds:number;imageSettings?:import('./imageGeneration.js').ImageGenerationSettings;imageBrief?:import('./imageGeneration.js').ImageBrief;referenceMaterialRevisionIds?:string[];videoSettings?:import('./videoGenerationSettings.js').WanGenerationSettings;firstFrameFit?:'contain'|'cover'};width:number;height:number}
++export interface WorkspaceVisualCandidate extends WorkspaceCandidate {source?:import('./workspacePexels.js').WorkspacePexelsSource;usage:'video'|'still'|'pan-zoom';materialRevisionId?:string;generation?:{selection?:import('./productionSelection.js').ProductionSelection;connectionName?:string;actualPrompt?:string;prompt:string;firstFrameMaterialRevisionId:string;durationSeconds:number;imageSettings?:import('./imageGeneration.js').ImageGenerationSettings;imageBrief?:import('./imageGeneration.js').ImageBrief;referenceMaterialRevisionIds?:string[];videoResolution?:string;videoSettings?:import('./videoGenerationSettings.js').WanGenerationSettings;firstFrameFit?:'contain'|'cover'};width:number;height:number}
+ export interface WorkspaceVisualTask {generation?:WorkspaceVisualCandidate['generation'];id:string;taskId:string;shotId?:string;kind?:'image'|'video';status:string;error:string|null;canResume?:boolean;provider?:string;model?:string;connectionName?:string|null;reservationCents?:number|null;createdAt?:string;targetItemId?:string;submissionOutcome?:'started'|'received'|'rejected'|'not_sent'|null;providerTaskId?:string|null;videoPhase?:VideoGenerationPhase|null;requestState?:string|null;submissionUnknown?:boolean;retryTaskId?:string|null;publicationAttempt?:number|null}
+ export const workspaceVisualFields:Record<string,string[]>={
+  searchWorkspacePexelsVideos:['episodeId','workspaceId','expectedRevision','targetItemId','selection','query','orientation','size','page'],
+  previewWorkspacePexelsVideo:['episodeId','workspaceId','expectedRevision','searchId','resultId'],
+  importWorkspacePexelsVideo:['episodeId','workspaceId','expectedRevision','previewId'],
+- requestWorkspaceVisualCandidate:['selection','episodeId','workspaceId','expectedRevision','targetItemId','firstFrameMaterialRevisionId','videoMode','visualInputs','prompt','durationSeconds','reservationCents','videoSettings','firstFrameFit'],
++ requestWorkspaceVisualCandidate:['selection','episodeId','workspaceId','expectedRevision','targetItemId','firstFrameMaterialRevisionId','videoMode','visualInputs','prompt','durationSeconds','reservationCents','videoSettings','videoResolution','firstFrameFit'],
+  retainWorkspaceImageCandidate:['episodeId','workspaceId','expectedRevision','candidateId'],
+  requestWorkspaceImageCandidates:['episodeId','workspaceId','expectedRevision','targetItemId','selection','model','prompt','settings','imageBrief','referenceMaterialRevisionIds','reservationCents','retryOfTaskId'],
+  retryWorkspaceVisualCandidate:['episodeId','workspaceId','expectedRevision','candidateId'],

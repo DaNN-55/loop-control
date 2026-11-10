@@ -1,0 +1,14 @@
+{
+  "mainFilesUnchanged": {
+    "src/local-app/WorkspaceVisualPreparation.tsx": true,
+    "src/local-app/workspace-visual-preparation.css": true
+  },
+  "backupPreservesNativeProject": true,
+  "firstFramePreservesWorkspace": true,
+  "restoredKinds": [
+    "text",
+    "video"
+  ],
+  "url": "http://127.0.0.1:5184/__candidate_controls",
+  "paidCalls": 0
+}

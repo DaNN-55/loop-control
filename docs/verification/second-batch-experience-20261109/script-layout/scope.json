@@ -1,0 +1,11 @@
+{
+  "productFiles": [
+    "src/local-app/WorkspaceScriptPanel.tsx",
+    "src/local-app/workspace-compact-panels.css"
+  ],
+  "root": "/Users/dan/Programs/loop-control/.scratch/second-batch-review-20261109/pending",
+  "preservedAsideAndHandlers": true,
+  "mainContainsNewComparison": false,
+  "runningBackend": "f63e0de65b85",
+  "paidCalls": 0
+}

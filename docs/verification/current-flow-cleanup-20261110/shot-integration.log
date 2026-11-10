@@ -1,0 +1,13 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control/.scratch/current-flow-cleanup-20261110/pending
+
+ ✓ src/local-app/currentShotSemantics.integration.test.ts (3 tests) 14584ms
+   ✓ current new script → neutral workspace → actual video queue and Worker  5224ms
+   ✓ current legacy-script script → neutral workspace → actual video queue and Worker  4695ms
+   ✓ current plain script → neutral workspace → actual video queue and Worker  4664ms
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  10:13:27
+   Duration  15.58s (transform 574ms, setup 13ms, collect 789ms, tests 14.58s, environment 0ms, prepare 53ms)
+

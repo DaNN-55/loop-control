@@ -1,0 +1,415 @@
+--- a/src/local-app/ProductionWorkspacePanel.tsx
++++ b/src/local-app/ProductionWorkspacePanel.tsx
+@@ -219,7 +219,7 @@
+       revealReturnedShot.current=true;
+      }
+      setSession(null);studioRequested.current=false;setStep(productionSteps.indexOf(destination));
+-    }}/> :step===1?<section className="production-workspace-section workspace-preparation"><header><div className="workspace-preparation-heading"><h3>{workflowStepLabels.preparation}</h3><span>{visualReady} / {uniqueClips.length} 画面就绪</span></div><div><Button size="sm" color="primary" isDisabled={pending||readOnly||workspace.stale} onPress={()=>void openEditor().catch(()=>{})}>进入剪辑工作台</Button></div></header><WorkspaceMaterialSelectionProvider key={episodeId} materials={allMaterials}><WorkspacePreparationLayout><section className="workspace-shot-table-pane" aria-label="素材镜头列表"><WorkspaceShotTable readOnly={readOnly} workspace={workspace} project={nativeProject} materials={allMaterials} selectedShotId={selectedShot?.shotId} disabled={pending||readOnly||workspace.stale} onSelect={setSelectedShotId} onDelete={clip=>{setError('');setShotToDelete({episodeId,workspaceId:workspace.id,revision:workspace.revision,shotId:clip.shotId,text:clip.text});}} onEdit={editShots}/><WorkspaceMaterialShelf episodeId={episodeId} shotCount={uniqueClips.length} materials={allMaterials}
++    }}/> :step===1?<section className="production-workspace-section workspace-preparation"><header><div className="workspace-preparation-heading"><h3>{workflowStepLabels.preparation}</h3><span>{visualReady} / {uniqueClips.length} 画面就绪</span></div><div><Button size="sm" color="primary" isDisabled={pending||readOnly||workspace.stale} onPress={()=>void openEditor().catch(()=>{})}>进入剪辑工作台</Button></div></header><WorkspaceMaterialSelectionProvider key={episodeId} materials={allMaterials}><WorkspacePreparationLayout><section className="workspace-shot-table-pane" aria-label="素材镜头列表"><WorkspaceShotTable readOnly={readOnly} workspace={workspace} project={nativeProject} materials={allMaterials} selectedShotId={selectedShot?.shotId} disabled={pending||readOnly||workspace.stale} onSelect={setSelectedShotId} onDelete={clip=>{setError('');setShotToDelete({episodeId,workspaceId:workspace.id,revision:workspace.revision,shotId:clip.shotId,text:clip.text});}} onEdit={editShots}/><WorkspaceMaterialShelf episodeId={episodeId} scriptRevisionId={scriptRevisionId} shotCount={uniqueClips.length} materials={allMaterials}
+     readOnly={readOnly} busy={pending||materialUploadBusy} status={materialUploadStatus} notice={materialUploadNotice} onDismissNotice={id=>setMaterialUploadNotice(current=>current?.id===id?undefined:current)}
+     failures={materialUploadFailures} onImport={uploadMaterials}/></section><aside className="workspace-preparation-detail"><div className="workspace-detail-tabs" role="tablist" aria-label="素材设置">{([['visual','画面'],['voice','字幕与口播'],['sound','配乐与声音']] as const).map(([id,label])=><button key={id} id={`preparation-tab-${id}`} type="button" role="tab" aria-selected={preparationTab===id} aria-controls={`preparation-panel-${id}`} tabIndex={preparationTab===id?0:-1} onClick={()=>setPreparationTab(id)} onKeyDown={event=>{const ids=['visual','voice','sound'] as const,index=ids.indexOf(id);const next=event.key==='ArrowRight'?ids[(index+1)%3]:event.key==='ArrowLeft'?ids[(index+2)%3]:event.key==='Home'?ids[0]:event.key==='End'?ids[2]:null;if(next){event.preventDefault();setPreparationTab(next);requestAnimationFrame(()=>document.getElementById(`preparation-tab-${next}`)?.focus());}}}>{label}</button>)}</div><div role="tabpanel" id="preparation-panel-visual" aria-labelledby="preparation-tab-visual" hidden={preparationTab!=='visual'}><section className="workspace-visual-replacement" aria-label="上传与生成画面">{selectedSegment?.visual&&<p><strong>画面提示</strong> {selectedSegment.visual}</p>}<WorkspaceVisualPreparation workspace={workspace} command={run} onChange={update} materials={allMaterials} selectedShotId={selectedShot?.shotId} selectedTargetItemId={selectedPreview?.itemId} onTargetChange={setPreviewItemId} readOnly={readOnly} project={nativeProject} currentVisualPath={selectedPreview?workspaceShotSource(selectedPreview,nativeProject)?.relativePath:undefined} currentVisualSha256={selectedPreview?workspaceShotSource(selectedPreview,nativeProject)?.sha256:undefined} currentMaterialRevisionId={allMaterials.find(m=>m.storage_path===(selectedPreview?workspaceShotSource(selectedPreview,nativeProject)?.relativePath:undefined))?.id??workspace.visualCandidates?.find(c=>c.relativePath===(selectedPreview?workspaceShotSource(selectedPreview,nativeProject)?.relativePath:undefined))?.materialRevisionId} currentVisualKind={selectedPreview?workspaceShotSource(selectedPreview,nativeProject)?.kind:undefined} preview={<WorkspaceShotPreview readOnly={readOnly} workspace={workspace} clips={selectedClips} selectedItemId={selectedPreview?.itemId} onSelect={setPreviewItemId} project={nativeProject} materials={allMaterials}/>} onImported={material=>setImportedMaterials(rows=>[...rows,{...material,is_main_script:false}])}/></section></div><div role="tabpanel" id="preparation-panel-voice" aria-labelledby="preparation-tab-voice" hidden={preparationTab!=='voice'}><fieldset className="workspace-readonly-fields"><WorkspaceNarrationPanel onImportAudio={uploadMaterials} active={preparationTab==='voice'} readOnly={readOnly} narrationConfiguration={(legacySnapshot?.blueprint?.policy&&typeof legacySnapshot.blueprint.policy==='object'&&!Array.isArray(legacySnapshot.blueprint.policy)?legacySnapshot.blueprint.policy.narration:undefined)} episodeId={episodeId} workspace={workspace} pending={pending||materialUploadBusy||readOnly} command={run} onChanged={update} tracks={audioTracks} materials={allMaterials} defaultSettings={{voice:legacySnapshot?.episode.tts_voice??null,speakingRate:legacySnapshot?.episode.tts_speaking_rate??null,languageCode:legacySnapshot?.episode.tts_language_code??null}} selectedShotId={selectedShot?.shotId}/></fieldset></div><div role="tabpanel" id="preparation-panel-sound" aria-labelledby="preparation-tab-sound" hidden={preparationTab!=='sound'}><fieldset className="workspace-readonly-fields"><WorkspaceAudioPreparation readOnly={readOnly} workspace={workspace} selectedShotId={selectedShot?.shotId} command={run} onChange={update} materials={allMaterials} project={nativeProject}/></fieldset>{readOnly&&selectedShot&&<WorkspaceSoundIntent key={selectedShot.shotId} workspace={workspace} shot={selectedShot} pending={pending} readOnly={readOnly} command={run} onChange={update}/>}</div></aside></WorkspacePreparationLayout></WorkspaceMaterialSelectionProvider></section>:step===2&&!readOnly?<section className="production-workspace-section workspace-editing-opening" aria-label="剪辑工作台连接"><p role="status">{editorOpening?'正在打开剪辑工作台…':workspace.stale?'脚本基准已变化，请先核对素材。':'剪辑工作台尚未连接。'}</p>{!editorOpening&&<Button size="sm" color="primary" isDisabled={pending||workspace.stale} onPress={()=>void openEditor().catch(()=>{})}>重试打开剪辑工作台</Button>}</section>:step===2?<section className="production-workspace-section workspace-editing-entry is-readonly"><header><div><h3>{stage==='production_completed'?'已完成工程':'工程查看'}</h3><p>{stage==='production_completed'?'当前工程已交付，按镜头查看成片与已保存配置。':'当前工程只读，按镜头查看已保存配置。'}</p></div>{workspace.exports?.some(entry=>entry.artifact)&&<Button size="sm" color="secondary" onPress={()=>setStep(3)}>查看成片与交付</Button>}</header><WorkspaceCompletedShots workspace={workspace} project={nativeProject} materials={allMaterials}/></section>:null}
+    {workspace&&deliveryVisited&&<Activity mode={step===3&&!session?'visible':'hidden'}><div hidden={step!==3||!!session}><WorkspaceExportPanel workspace={workspace} pending={pending} readOnly={readOnly} command={run} onChange={update}/></div></Activity>}
+--- a/src/local-app/WorkspaceMaterialShelf.test.tsx
++++ b/src/local-app/WorkspaceMaterialShelf.test.tsx
+@@ -29,3 +29,14 @@
+  expect(image.getAttribute('aria-pressed')).toBe('true');
+  expect(screen.getByRole('button',{name:'收起本期素材'})).toBeTruthy();
+ });
++
++it('shows only the explicitly current script while retaining all media',async()=>{
++ vi.stubGlobal('fetch',vi.fn(async()=>new Response('当前脚本')));
++ const scripts=[{...materials[2],id:'old',storage_path:'old.md'},{...materials[2],id:'current',storage_path:'current.md'}];
++ render(<WorkspaceMaterialShelf episodeId="e" shotCount={1} materials={[...materials.slice(0,2),...scripts]} scriptRevisionId="current" readOnly={false} busy={false} status="" failures={[]} onImport={vi.fn()}/>);
++ fireEvent.click(screen.getByRole('button',{name:'本期素材 · 3'}));
++ expect(screen.getAllByRole('button',{name:'预览 script.md'})).toHaveLength(1);
++ fireEvent.doubleClick(screen.getByRole('button',{name:'预览 script.md'}));
++ expect(await screen.findByText('当前脚本')).toBeTruthy();
++ expect(screen.getByRole('dialog')).toBeTruthy();
++});
+--- a/src/local-app/WorkspaceMaterialShelf.tsx
++++ b/src/local-app/WorkspaceMaterialShelf.tsx
+@@ -23,6 +23,7 @@
+ interface Props {
+  episodeId:string;
+  shotCount:number;
++ scriptRevisionId?:string|null;
+  materials:readonly ShelfMaterial[];
+  readOnly:boolean;
+  busy:boolean;
+@@ -33,7 +34,7 @@
+  onDismissNotice?:(id:number)=>void;
+ }
+ 
+-export function WorkspaceMaterialShelf({episodeId,shotCount,materials,readOnly,busy,status,failures,onImport,notice,onDismissNotice=()=>{}}:Props){
++export function WorkspaceMaterialShelf({episodeId,shotCount,scriptRevisionId,materials,readOnly,busy,status,failures,onImport,notice,onDismissNotice=()=>{}}:Props){
+  const shelf=useWorkspaceMaterialSelection();
+  const [open,setOpen]=useState(false);
+  const [height,setHeight]=useState(defaultHeight);
+@@ -46,7 +47,7 @@
+  const feedback=useRef<HTMLDivElement>(null);
+  const toggle=useRef<HTMLButtonElement>(null);
+  const id=useId();
+- const files=materials.filter(m=>m.material_type in media);
++ const files=materials.filter(m=>m.material_type in media&&(m.material_type!=='script'||scriptRevisionId===undefined||m.id===scriptRevisionId));
+  const preview=files.find(m=>m.id===previewId),selected=files.find(m=>m.id===(shelf&&!readOnly?shelf.selectedId:previewId));
+  const filtered=files.filter(m=>filter==='all'||m.material_type===filter);
+  const uploadDisabled=readOnly||busy;
+--- a/src/local-app/WorkspaceVisualFeedback.test.tsx
++++ b/src/local-app/WorkspaceVisualFeedback.test.tsx
+@@ -54,3 +54,16 @@
+   expect(adopted.querySelector('.workspace-thumbnail-adopted')).toBeTruthy();
+  }
+ });
++
++it('hides superseded known failures after a new task is actually queued but retains unknown submissions',()=>{
++ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({serviceCatalog:{groups:[]}})));
++ const failure={id:'failure',taskId:'old',kind:'image',targetItemId:'target',shotId:'shot',status:'failed',createdAt:'2026-11-09T01:00:00Z',submissionOutcome:'rejected',error:'旧轮失败'};
++ const props={command:vi.fn(),onChange:vi.fn(),materials:[]};
++ const view=render(<WorkspaceVisualPreparation {...props} workspace={{...base,visualTasks:[failure]} as unknown as ProductionWorkspace}/>);
++ expect(screen.getByText(/旧轮失败/)).toBeTruthy();
++ const next={...failure,id:'new',taskId:'new',status:'running',createdAt:'2026-11-09T01:01:00Z',error:undefined};
++ view.rerender(<WorkspaceVisualPreparation {...props} workspace={{...base,visualTasks:[next,failure]} as unknown as ProductionWorkspace}/>);
++ expect(screen.queryByText(/旧轮失败/)).toBeNull();
++ view.rerender(<WorkspaceVisualPreparation {...props} workspace={{...base,visualTasks:[next,{...failure,submissionUnknown:true,submissionOutcome:'unknown'}]} as unknown as ProductionWorkspace}/>);
++ expect(screen.getByText(/旧轮失败/)).toBeTruthy();
++});
+--- a/src/local-app/WorkspaceVisualPreparation.tsx
++++ b/src/local-app/WorkspaceVisualPreparation.tsx
+@@ -456,7 +456,7 @@
+        </ConfirmationModal>
+       </div>,document.querySelector('.app-shell')??document.body)}</ConfirmationModalPresence>
+     </div>
+-  {tasks.filter(t=>t.status!=='completed'&&!thumbnailTasks.includes(t)).map(t=><WorkspaceVisualTaskStatus key={t.id} task={t} label={(t.kind??'video')==='image'?'图片':'视频'} disabled={disabled} onRetryUnknown={t===unknownImageTask?()=>{if(origin==='generate'&&canGenerate)void generate(t.taskId);else{setDraft(d=>({...d,origin:{...d.origin,image:'generate'}}));requestAnimationFrame(()=>formRef.current?.scrollIntoView({block:'nearest'}));}}:undefined} onRefresh={()=>void run(async()=>{await fresh();setCatalogReload(value=>value+1);})} onResume={()=>void run(async()=>{const w=await fresh();onChange(await command('retryWorkspaceVisualCandidate',{...base(w),candidateId:t.id}) as ProductionWorkspace);})} onReconcile={()=>void run(async()=>{await reconcileWorkspaceOutput(workspace.episodeId,t);onChange(await fresh());})}/>)}
++  {tasks.filter(t=>t.status!=='completed'&&!thumbnailTasks.includes(t)&&(t.submissionUnknown&&!t.retryTaskId||t.publicationAttempt!=null||!tasks.some(newer=>newer.taskId!==t.taskId&&newer.targetItemId===t.targetItemId&&(newer.kind??'video')===(t.kind??'video')&&!!newer.createdAt&&!!t.createdAt&&Date.parse(newer.createdAt)>Date.parse(t.createdAt)))).map(t=><WorkspaceVisualTaskStatus key={t.id} task={t} label={(t.kind??'video')==='image'?'图片':'视频'} disabled={disabled} onRetryUnknown={t===unknownImageTask?()=>{if(origin==='generate'&&canGenerate)void generate(t.taskId);else{setDraft(d=>({...d,origin:{...d.origin,image:'generate'}}));requestAnimationFrame(()=>formRef.current?.scrollIntoView({block:'nearest'}));}}:undefined} onRefresh={()=>void run(async()=>{await fresh();setCatalogReload(value=>value+1);})} onResume={()=>void run(async()=>{const w=await fresh();onChange(await command('retryWorkspaceVisualCandidate',{...base(w),candidateId:t.id}) as ProductionWorkspace);})} onReconcile={()=>void run(async()=>{await reconcileWorkspaceOutput(workspace.episodeId,t);onChange(await fresh());})}/>)}
+    </section>
+    {!shelf&&<div className="workspace-visual-origin" role="group" aria-label={`${kindName}来源`}>{(['material','generate'] as const).filter(value=>!shelf||value!=='material').map(value=><button key={value} type="button" aria-pressed={origin===value||value==='generate'&&origin==='search'} onClick={()=>setDraft(d=>({...d,origin:{...d.origin,[tab]:value}}))}>{value==='material'?'上传素材':'AI 生成'}</button>)}</div>}
+    {origin==='material'?<div className="workspace-visual-import">
+--- a/src/local-app/mediaWorker.ts
++++ b/src/local-app/mediaWorker.ts
+@@ -15,7 +15,7 @@
+ import {executeOpenChatCutRender} from '../worker/openchatcutRenderer.js';
+ import {generateVisualAssets} from '../worker/visualAssetExecutor.js';
+ import {runtimeCommandInvocation} from '../worker/runtimeEvidence.js';
+-import {extractMp3Artifact,trimMp3Artifact,trimMp4Artifact,trimMp4SegmentsArtifact,probeMp3Artifact,validateMp4Artifact,inspectMp4Artifact} from '../worker/mediaTools.js';
++import {MediaArtifactValidationError,extractMp3Artifact,trimMp3Artifact,trimMp4Artifact,trimMp4SegmentsArtifact,probeMp3Artifact,validateMp4Artifact,inspectMp4Artifact} from '../worker/mediaTools.js';
+ import type {WorkerTaskPackage} from '../worker/contracts.js';
+ import {narrationPorts,type NativeNarrationConfiguration} from './narrationWorker.js';
+ import {SecretStoreError} from './connectionPorts.js';
+@@ -119,5 +119,5 @@
+    }
+   }
+   const result=JSON.parse(output);result.validation.checks.push({name:'native_media_mode',passed:true,detail:ports?.mode==='controlled'?'受控Provider响应和SecretStore替身；没有在线资格或在线生成证明。':external?'在线执行路径。':'本机媒体执行。'});return JSON.stringify(result);
+- }catch(error){if(error instanceof VideoGenerationError)throw error;if(error instanceof ProviderOutcomeUnknownError||error instanceof PexelsVideoError||error instanceof FreesoundSearchError||error instanceof OpenAiImageRequestError)throw error;if(p.provider==='pexels')throw Error(error instanceof SecretStoreError?'Pexels 所选连接不可用，请检查原连接后重新检索。':'Pexels 视频文件无效或无法读取，请重新预览其他结果。');throw Error('媒体执行或产物验证失败，请检查冻结输入和本机执行状态。',{cause:error});}
++ }catch(error){if(error instanceof VideoGenerationError||error instanceof MediaArtifactValidationError)throw error;if(error instanceof ProviderOutcomeUnknownError||error instanceof PexelsVideoError||error instanceof FreesoundSearchError||error instanceof OpenAiImageRequestError)throw error;if(p.provider==='pexels')throw Error(error instanceof SecretStoreError?'Pexels 所选连接不可用，请检查原连接后重新检索。':'Pexels 视频文件无效或无法读取，请重新预览其他结果。');throw Error('媒体执行或产物验证失败，请检查冻结输入和本机执行状态。',{cause:error});}
+ }
+--- a/src/local-app/modelSettings.integration.test.ts
++++ b/src/local-app/modelSettings.integration.test.ts
+@@ -0,0 +1,63 @@
++// @vitest-environment node
++import {it,expect,vi,afterEach} from 'vitest';
++import {readFile} from 'node:fs/promises';
++import {join} from 'node:path';
++import {execFile} from 'node:child_process';
++import {promisify} from 'node:util';
++import {narrationFixture} from './workspaceNarration.fixture';
++import {workspaceTestMedia} from './workspaceTestMedia.fixture';
++import {registeredAdapters} from '../worker/registeredAdapters';
++import {videoProviders,type VideoProvider} from '../worker/videoProviderCatalog';
++import {wanVideoModels,defaultWanModelSettings} from '../wanVideoModels';
++import {createWorkspaceGenerationFetcher} from './providerNetwork';
++const seam=vi.hoisted(()=>({ports:undefined as any}));
++vi.mock('./narrationWorker',async original=>{const actual=await original<typeof import('./narrationWorker')>();return{...actual,narrationPorts:async(...args:Parameters<typeof actual.narrationPorts>)=>seam.ports??actual.narrationPorts(...args)};});
++afterEach(()=>{seam.ports=undefined;});
++const cases=[...Object.entries(videoProviders).flatMap(([provider,p])=>p.models.map(model=>({provider:provider as VideoProvider|'bailian',model}))),...Object.keys(wanVideoModels).map(model=>({provider:'bailian' as const,model}))];
++it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each(cases)('$model: confirmation → actual Owner HTTP → frozen queue → Worker → network boundary for every mode',async({provider,model})=>{
++ const f=await narrationFixture(undefined,undefined,{provider,model});try{
++  await f.authorize();
++  const resultVideo=join(f.root,'matrix-six-seconds.mp4');await promisify(execFile)('ffmpeg',['-nostdin','-v','error','-f','lavfi','-i','color=red:size=320x180:rate=24','-t','6','-c:v','libx264','-pix_fmt','yuv420p',resultVideo]);
++  const image=await f.request('importMaterial',{materialType:'image',sourceKind:'file',sourcePath:'matrix.png',mimeType:'image/png',contentBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64'),isMainScript:false,materialPurpose:'visual_reference'});expect(image.status).toBe(200);
++  const modes=registeredAdapters.productionChoices().find(c=>c.provider===provider)?.videoGenerationModes?.[model]??[{id:'first-frame'}];
++  for(const mode of modes){
++   let saved:string|undefined;const calls:any[]=[];
++   const fetcher=createWorkspaceGenerationFetcher(provider,{reserve:async()=>{},videoTaskId:()=>saved},async(url,init={})=>{
++    if(init.method==='POST'){calls.push(JSON.parse(String(init.body)));saved='matrix-task';return Response.json({id:saved,task_id:saved,code:0,data:{task_id:saved},output:{task_id:saved}});}
++    const host=new URL(url).hostname;
++    if(host==='dashscope.aliyuncs.com')return Response.json({output:{task_status:'SUCCEEDED',video_url:'https://dashscope-f4de.oss-accelerate.aliyuncs.com/matrix.mp4'}});
++    if(host==='ark.cn-beijing.volces.com')return Response.json({status:'succeeded',content:{video_url:'https://result.volccdn.com/matrix.mp4'}});
++    if(host==='api.minimax.io')return Response.json({task:{status:'succeeded',content:{url:'https://cdn.hailuoai.com/matrix.mp4'}}});
++    if(host==='api-singapore.klingai.com')return Response.json({code:0,data:{task_status:'succeed',task_result:{videos:[{url:'https://cdn.klingai.com/matrix.mp4'}]}}});
++    return new Response(await readFile(resultVideo),{headers:{'content-type':'video/mp4'}});
++   });
++   seam.ports={mode:'controlled',store:{mode:'keychain',get:async()=> 'synthetic-matrix-key'},fetcher};
++   const w=await f.read(),durationSeconds=provider==='bailian'?wanVideoModels[model].durations[0]:videoProviders[provider].minDuration;
++   const videoSettings=provider==='bailian'?{...defaultWanModelSettings(model),negativePrompt:'不要文字',seed:0,watermark:true,...(model==='wan2.6-r2v'?{promptExtend:false}:{})}:undefined;
++   const visualInputs=mode.id==='keyframes'?[{role:'firstFrame',materialRevisionId:image.body.id},{role:'lastFrame',materialRevisionId:image.body.id}]:[{role:'referenceImages',materialRevisionId:image.body.id,...(model==='wan2.6-r2v'?{source:'https://cdn.aliyuncs.com/synthetic.png'}:{})}];
++   const args={workspaceId:w.id,expectedRevision:w.revision,targetItemId:w.clips[0].itemId,prompt:'移动镜头',durationSeconds,reservationCents:500,...(videoSettings?{videoSettings}:{}),...(mode.id==='first-frame'?{firstFrameMaterialRevisionId:image.body.id,firstFrameFit:'contain'}:{videoMode:mode.id,visualInputs})};
++   const queued=await f.chosenRequest('requestWorkspaceVisualCandidate',args);expect(queued.status,JSON.stringify(queued.body)).toBe(200);const task=queued.body.visualTasks[0];
++   await f.execute(task.taskId);const result=await f.read();expect(result.visualTasks.find((t:any)=>t.taskId===task.taskId)?.status).toBe('completed');expect(result.project.sha256).toBe(w.project.sha256);expect(calls).toHaveLength(1);
++   const body=calls[0];expect(body.model??body.model_name).toBe(model);expect(body.prompt??body.input?.prompt??body.content?.[0]?.text).toContain('移动镜头');
++   if(videoSettings){expect(body.input.negative_prompt).toBe('不要文字');expect(body.parameters).toMatchObject({seed:0,watermark:true});}
++   if(mode.id==='keyframes'&&provider==='kling')expect(body.image_tail).toBeTruthy();
++   const frozen=(await f.c.query('SELECT request_snapshot FROM local_identity.workspace_visual_candidates WHERE task_id=$1',[task.taskId])).rows[0].request_snapshot;expect(frozen.selection.model).toBe(model);
++  }
++ }finally{await f.close();}
++},180000);
++
++it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('shows actual insufficient video duration after real Worker media validation, retaining the supplier task',async()=>{
++ const f=await narrationFixture(undefined,undefined,{provider:'bailian',model:'wan2.5-i2v-preview'});try{
++  await f.authorize();let id:string|undefined;
++  const fetcher=createWorkspaceGenerationFetcher('bailian',{reserve:async()=>{},videoTaskId:()=>id},async(url,init={})=>{
++   if(init.method==='POST'){id='short-original';return Response.json({output:{task_id:id}});}
++   if(new URL(url).hostname==='dashscope.aliyuncs.com')return Response.json({output:{task_status:'SUCCEEDED',video_url:'https://dashscope-f4de.oss-accelerate.aliyuncs.com/short.mp4'}});
++   return new Response(await readFile(workspaceTestMedia('landscape-red-blue.mp4')),{headers:{'content-type':'video/mp4'}});
++  });
++  seam.ports={mode:'controlled',store:{mode:'keychain',get:async()=> 'synthetic'},fetcher};
++  const image=await f.request('importMaterial',{materialType:'image',sourceKind:'file',sourcePath:'short.png',mimeType:'image/png',contentBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64'),isMainScript:false,materialPurpose:'visual_reference'}),w=await f.read();
++  const queued=await f.chosenRequest('requestWorkspaceVisualCandidate',{workspaceId:w.id,expectedRevision:w.revision,targetItemId:w.clips[0].itemId,firstFrameMaterialRevisionId:image.body.id,prompt:'短视频校验',durationSeconds:5,reservationCents:500,videoSettings:defaultWanModelSettings('wan2.5-i2v-preview')});expect(queued.status,JSON.stringify(queued.body)).toBe(200);
++  const task=queued.body.visualTasks[0];await f.execute(task.taskId,false);const actual=(await f.read()).visualTasks.find((v:any)=>v.taskId===task.taskId);
++  expect(actual).toMatchObject({status:'failed',providerTaskId:'short-original'});expect(actual.error).toContain('实际 4 秒');expect(actual.error).toContain('至少 5 秒');expect(actual.error).not.toContain('媒体执行或产物验证失败');
++ }finally{await f.close();}
++},120000);
+--- a/src/local-app/narrationWorker.ts
++++ b/src/local-app/narrationWorker.ts
+@@ -18,7 +18,7 @@
+  if(!config)throw new SecretStoreError('disabled');
+  if(config.mode==='live'){
+   if(!config.network&&!allowMissingNetwork)throw new SecretStoreError('unavailable');
+-  const providerFor=(url:string|URL):OnlineProvider=>{const h=new URL(url).hostname;for(const [provider,p] of Object.entries(videoProviders)){if(h===new URL(p.endpoint).hostname||provider==='minimax'&&h===new URL(minimaxEndpoints.cn).hostname)return provider as OnlineProvider;try{officialVideoDownloadUrl(provider as keyof typeof videoProviders,String(url));return provider as OnlineProvider;}catch{/* Try other official result hosts. */}}if(h==='dashscope.aliyuncs.com'||/^ws-[a-z0-9]{8,64}\.cn-beijing\.maas\.aliyuncs\.com$/.test(h)||h==='dashscope-a717.oss-accelerate.aliyuncs.com'||/^dashscope-result-[a-z0-9-]+\.oss-[a-z0-9-]+\.aliyuncs\.com$/.test(h))return'bailian';if(h==='api.openai.com')return'openai';if(h==='api.cloudflare.com')return'cloudflare';if(h==='texttospeech.googleapis.com')return'google_tts';if(h==='openspeech.bytedance.com')return'volcengine_tts';if(['api.pexels.com','videos.pexels.com','images.pexels.com'].includes(h))return'pexels';if(['freesound.org','cdn.freesound.org'].includes(h))return'freesound';throw new SecretStoreError('unavailable');};
++  const providerFor=(url:string|URL):OnlineProvider=>{const h=new URL(url).hostname;for(const [provider,p] of Object.entries(videoProviders)){if(h===new URL(p.endpoint).hostname||provider==='minimax'&&h===new URL(minimaxEndpoints.cn).hostname)return provider as OnlineProvider;try{officialVideoDownloadUrl(provider as keyof typeof videoProviders,String(url));return provider as OnlineProvider;}catch{/* Try other official result hosts. */}}if(h==='dashscope.aliyuncs.com'||/^ws-[a-z0-9]{8,64}\.cn-beijing\.maas\.aliyuncs\.com$/.test(h)||['dashscope-a717.oss-accelerate.aliyuncs.com','dashscope-f4de.oss-accelerate.aliyuncs.com','dashscope-7c2c.oss-cn-shanghai.aliyuncs.com'].includes(h)||/^dashscope-result-[a-z0-9-]+\.oss-[a-z0-9-]+\.aliyuncs\.com$/.test(h))return'bailian';if(h==='api.openai.com')return'openai';if(h==='api.cloudflare.com')return'cloudflare';if(h==='texttospeech.googleapis.com')return'google_tts';if(h==='openspeech.bytedance.com')return'volcengine_tts';if(['api.pexels.com','videos.pexels.com','images.pexels.com'].includes(h))return'pexels';if(['freesound.org','cdn.freesound.org'].includes(h))return'freesound';throw new SecretStoreError('unavailable');};
+   return{mode:'live',store:configuredKeychainStore(config.keychain),fetcher:(url,init)=>{
+    if(!config.network)throw new SecretStoreError('unavailable');
+    return createProviderFetcher(config.network,providerFor(url),'execute')(url,init);
+--- a/src/local-app/officialVideoNetwork.ts
++++ b/src/local-app/officialVideoNetwork.ts
+@@ -31,11 +31,15 @@
+    return'generate';
+   }
+   if(phase==='execute'&&method==='POST'&&path===create&&!url.search){
+-   if(typeof init.body!=='string'||Buffer.byteLength(init.body)>(provider==='kling'?15:55)*1024*1024)throw Error('Invalid video body');
++   if(typeof init.body!=='string'||Buffer.byteLength(init.body)>55*1024*1024)throw Error('Invalid video body');
+    const body=JSON.parse(init.body),duration=Number(body.duration),p=videoProviders[provider];
+    if(!Number.isInteger(duration)||duration<p.minDuration||duration>p.maxDuration)throw Error('Invalid video duration');
+    if(provider==='kling'){
+-    if(body.model_name!=='kling-v3'||body.mode!=='std'||body.sound!=='off'||typeof body.image!=='string'||!body.image||typeof body.prompt!=='string'||!body.prompt.trim()||body.prompt.length>1500||Object.keys(body).some(k=>!['model_name','image','prompt','mode','duration','sound'].includes(k)))throw Error('Invalid Kling video body');
++    const decode=(value:unknown)=>typeof value==='string'&&value.length<=Math.ceil(10*1024*1024/3)*4&&/^[A-Za-z0-9+/]+={0,2}$/.test(value)?Buffer.from(value,'base64'):undefined;
++    const image=decode(body.image),tail=body.image_tail===undefined?undefined:decode(body.image_tail);
++    if(!image||body.image_tail!==undefined&&!tail)throw new VideoGenerationError('可灵首尾帧格式或大小无效，未向供应商发送。','not_sent');
++    const expected=officialVideoBody({provider,model:body.model_name,prompt:body.prompt,durationSeconds:duration,...(tail?{visualMode:'keyframes',visualInputs:[{role:'firstFrame',materialRevisionId:'first',image,mimeType:'image/png'},{role:'lastFrame',materialRevisionId:'last',image:tail,mimeType:'image/png'}]}:{image,imageMime:'image/png'})});
++    if(!isDeepStrictEqual(body,expected))throw new VideoGenerationError('可灵请求参数与已登记模式不一致，未向供应商发送。','not_sent');
+    }else{
+     if(!matchesRegisteredVisualBody(provider,body))throw new VideoGenerationError(`${p.label} 请求的模型、画面输入或参数与已登记模式不一致，未向供应商发送。`,'not_sent');
+    }
+--- a/src/local-app/providerNetwork.ts
++++ b/src/local-app/providerNetwork.ts
+@@ -127,7 +127,7 @@
+   if(apiHost&&method==='GET'&&phase==='verify'&&u.pathname==='/api/v1/models'&&u.searchParams.get('model')==='wan2.6-i2v-flash'&&[...u.searchParams.keys()].every(k=>['model','page_no','page_size'].includes(k)))op='verify';
+   if(apiHost&&phase==='execute'&&method==='POST'&&u.pathname==='/api/v1/services/aigc/video-generation/video-synthesis'&&!u.search)op='generate';
+   if(apiHost&&phase==='execute'&&method==='GET'&&/^\/api\/v1\/tasks\/[a-zA-Z0-9_-]{1,128}$/.test(u.pathname)&&!u.search)op='poll';
+-  if(phase==='execute'&&method==='GET'&&(u.hostname==='dashscope-a717.oss-accelerate.aliyuncs.com'||/^dashscope-result-[a-z0-9-]+\.oss-[a-z0-9-]+\.aliyuncs\.com$/.test(u.hostname))&&!new Headers(init.headers).has('Authorization'))op='download';
++  if(phase==='execute'&&method==='GET'&&(['dashscope-a717.oss-accelerate.aliyuncs.com','dashscope-f4de.oss-accelerate.aliyuncs.com','dashscope-7c2c.oss-cn-shanghai.aliyuncs.com'].includes(u.hostname)||/^dashscope-result-[a-z0-9-]+\.oss-[a-z0-9-]+\.aliyuncs\.com$/.test(u.hostname))&&!new Headers(init.headers).has('Authorization'))op='download';
+  }else if(provider==='volcengine_tts'&&method==='POST'&&api('openspeech.bytedance.com','/api/v3/tts/unidirectional/sse'))op=phase==='verify'?'verify':'generate';
+  if(!op)throw denied();
+  if(method==='POST'){
+--- a/src/worker/mediaProviders.ts
++++ b/src/worker/mediaProviders.ts
+@@ -18,9 +18,9 @@
+ }
+ 
+ export class OpenAiImageRequestError extends Error {
+- constructor(status:number){
++ constructor(status:number,detail=''){
+   const action=status===429?'请检查供应商额度或稍后重试。':status===401||status===403?'请检查 OpenAI 连接权限后重试。':'';
+-  super(`OpenAI 图片请求返回 HTTP ${status}。${action}`);
++  super(`OpenAI 图片请求返回 HTTP ${status}。${detail?`${detail}。`:""}${action}`);
+  }
+ }
+ 
+@@ -39,7 +39,10 @@
+     headers: { Authorization: `Bearer ${input.apiKey}`, "Content-Type": "application/json" },
+     body: JSON.stringify({ model: input.model, prompt: input.prompt, n: input.settings?.count??1, size: input.settings?.size??"1024x1536", output_format: "png", ...(input.settings?{quality:input.settings.quality}:{}), ...(refs.length?{images:refs.map(r=>({image_url:`data:${r.mimeType};base64,${Buffer.from(r.bytes).toString('base64')}`}))}:{}) }),
+   });
+-  if (!response.ok) throw new OpenAiImageRequestError(response.status);
++  if (!response.ok) {
++    let detail='';try{const value=await response.json(),error=value?.error;detail=[error?.code,error?.message].filter(v=>typeof v==='string').join(' · ').split(input.apiKey).join('<REDACTED>').replace(/Bearer\s+[^\s,;"']+/gi,'Bearer <REDACTED>').replace(/data:[^\s"']+/gi,'<MEDIA>').replace(/https?:\/\/[^\s"']+/gi,'<URL>').replace(/[\u0000-\u001f]/g,' ').slice(0,500);}catch{/* Never display raw HTML or malformed bodies. */}
++    throw new OpenAiImageRequestError(response.status,detail);
++  }
+   const payload: unknown = await response.json();
+   if(!isRecord(payload)||!Array.isArray(payload.data)||!payload.data.length)throw Error('OpenAI Images 响应缺少 PNG 数据。');
+   if(payload.data.length!==(input.settings?.count??1))throw Error('OpenAI Images 返回的图片数量不完整。');
+--- a/src/worker/mediaTools.ts
++++ b/src/worker/mediaTools.ts
+@@ -85,13 +85,15 @@
+   return duration;
+ }
+ 
++export class MediaArtifactValidationError extends Error {}
++
+ export async function validateMp4Artifact(path: string, minimumDurationSeconds: number, frameRate?: number, allowedFrames?: number): Promise<void> {
+   const { stdout } = await runCommandWithOutput("ffprobe", [
+     "-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", path,
+   ]);
+   const duration = Number(stdout.trim());
+   if (!videoDurationMeetsMinimum(duration, minimumDurationSeconds, frameRate, allowedFrames)) {
+-    throw new Error(`视频不可播放或时长不足：${duration || "未知"} 秒。`);
++    throw new MediaArtifactValidationError(`视频不可播放或时长不足：实际 ${Number.isFinite(duration)?duration:"未知"} 秒，要求至少 ${minimumDurationSeconds} 秒；请核对供应商原任务与视频产物。`);
+   }
+ }
+ 
+--- a/src/worker/modelSettingsBoundary.test.ts
++++ b/src/worker/modelSettingsBoundary.test.ts
+@@ -0,0 +1,74 @@
++// @vitest-environment node
++import {it,expect} from 'vitest';
++import {officialVideoBody} from './officialVideoProvider';
++import {officialVideoOperation} from '../local-app/officialVideoNetwork';
++import {registeredAdapters} from './registeredAdapters';
++import {videoProviders,klingOmniPath} from './videoProviderCatalog';
++for(const choice of registeredAdapters.productionChoices().filter(c=>['minimax','volcengine','kling'].includes(c.provider)))for(const [model,modes] of Object.entries(choice.videoGenerationModes??{}))for(const mode of modes)it(`${model} / ${mode.id}: registered serializer crosses actual network boundary`,()=>{
++ const provider=choice.provider as keyof typeof videoProviders,p=videoProviders[provider];
++ const inputs=Object.entries(mode.inputs).filter(([,limit])=>(limit?.min??0)>0||!Object.values(mode.inputs).some(v=>(v?.min??0)>0)).slice(0,mode.id==='keyframes'?2:1).map(([role])=>({role,materialRevisionId:role,image:Uint8Array.of(1,2,3),mimeType:'image/png'})) as any;
++ for(const durationSeconds of [p.minDuration,p.maxDuration]){
++  const body=officialVideoBody({provider,model,prompt:'边界测试',durationSeconds,referenceRatio:'9:16',...(mode.id==='first-frame'?{image:Uint8Array.of(1),imageMime:'image/png'}:{visualMode:mode.id,visualInputs:inputs})});
++  const path=provider==='volcengine'?'/contents/generations/tasks':provider==='minimax'?'/v2/video_generation':model==='kling-v3-omni'?klingOmniPath:'/v1/videos/image2video';
++  expect(officialVideoOperation(provider,'execute',new URL(p.endpoint+path),{method:'POST',body:JSON.stringify(body)})).toBe('generate');
++ }
++});
++
++it('forwards every image model × size × quality × count with and without reference images through network admission',async()=>{
++ const {openAiImageModels,imageSizes,openAiImageQualities}=await import('../imageGeneration');
++ const {generateOpenAiImages}=await import('./mediaProviders');
++ const {createWorkspaceGenerationFetcher}=await import('../local-app/providerNetwork');
++ const png=Buffer.from([137,80,78,71,13,10,26,10]);let combinations=0;
++ for(const model of openAiImageModels)for(const size of imageSizes)for(const quality of openAiImageQualities(model))for(const count of [1,2,4] as const)for(const edit of [false,true]){
++  let calls=0,reserves=0;
++  const fetcher=createWorkspaceGenerationFetcher('openai',{reserve:async()=>{reserves++;}},async(url,init)=>{
++   calls++;expect(String(url)).toBe(`https://api.openai.com/v1/images/${edit?'edits':'generations'}`);
++   const body=JSON.parse(String(init?.body));expect(body).toMatchObject({model,size,quality,n:count,output_format:'png',prompt:'测试'});
++   expect(body.images?.length??0).toBe(edit?1:0);
++   return Response.json({data:Array.from({length:count},()=>({b64_json:png.toString('base64')}))});
++  });
++  expect(await generateOpenAiImages({model,apiKey:'synthetic',prompt:'测试',settings:{size,quality,count},references:edit?[{mimeType:'image/png',bytes:png}]:[],fetcher})).toHaveLength(count);
++  expect([calls,reserves]).toEqual([1,1]);combinations++;
++ }
++ expect(combinations).toBe(2400);
++},30000);
++
++it('forwards all Wan model duration/resolution/audio/prompt extension/shot/watermark/seed settings through network admission',async()=>{
++ const {wanVideoModels,wanVideoSettingsError}=await import('../wanVideoModels');
++ const {generateWanVideo}=await import('./wanVideoProvider');
++ const {createWorkspaceGenerationFetcher}=await import('../local-app/providerNetwork');
++ let combinations=0;
++ for(const [model,profile] of Object.entries(wanVideoModels))for(const durationSeconds of profile.durations)for(const resolution of profile.resolutions)for(const audio of [false,true])for(const promptExtend of [false,true])for(const shotType of ['single','multi'] as const)for(const watermark of [false,true]){
++  const settings={resolution,audio,promptExtend,shotType,watermark,negativePrompt:'不要文字',seed:2147483647};if(wanVideoSettingsError(model,settings))continue;
++  let id:string|undefined,calls=0;
++  const fetcher=createWorkspaceGenerationFetcher('bailian',{reserve:async()=>{},videoTaskId:()=>id},async(url,init)=>{
++   if(init?.method==='POST'){
++    calls++;const body=JSON.parse(String(init.body));expect(body.model).toBe(model);expect(body.input.negative_prompt).toBe('不要文字');expect(body.parameters).toMatchObject({watermark,seed:2147483647});
++    if(!profile.fixedDuration)expect(body.parameters.duration).toBe(durationSeconds);
++    if(model==='wan2.6-r2v'){expect(body.parameters.size).toBe(resolution==='720P'?'720*1280':'1080*1920');expect(body.input.reference_urls).toEqual(['https://cdn.aliyuncs.com/synthetic.png']);}
++    else{expect(body.parameters).toMatchObject({resolution,prompt_extend:promptExtend});if(profile.audio==='optional')expect(body.parameters.audio).toBe(audio);if(profile.multiShot&&promptExtend)expect(body.parameters.shot_type).toBe(shotType);}
++    return Response.json({output:{task_id:'matrix-task'}});
++   }
++   if(new URL(url).hostname==='dashscope.aliyuncs.com')return Response.json({output:{task_status:'SUCCEEDED',video_url:`https://${model==='wan2.2-i2v-plus'?'dashscope-7c2c.oss-cn-shanghai.aliyuncs.com':'dashscope-f4de.oss-accelerate.aliyuncs.com'}/matrix.mp4`}});
++   return new Response(Uint8Array.of(1),{headers:{'content-type':'video/mp4'}});
++  });
++  await generateWanVideo({model,settings,durationSeconds,credentials:'synthetic',prompt:'测试',fetcher,reserve:async()=>({new:true}),recordSubmission:async value=>{id=value;},...(model==='wan2.6-r2v'?{referenceRatio:'9:16',visualInputs:[{role:'referenceImages',materialRevisionId:'ref',source:'https://cdn.aliyuncs.com/synthetic.png'}]}:{image:Uint8Array.of(1),imageMime:'image/png'})});
++  expect(calls).toBe(1);combinations++;
++ }
++ expect(combinations).toBe(620);
++},30000);
++
++it('admits the maximum registered reference images and videos, including Seedance asset IDs and MiniMax inline MP4',()=>{
++ for(const choice of registeredAdapters.productionChoices().filter(c=>['minimax','volcengine','kling'].includes(c.provider)))for(const [model,modes] of Object.entries(choice.videoGenerationModes??{})){
++  const mode=modes.find(m=>m.id==='references');if(!mode)continue;
++  const provider=choice.provider as keyof typeof videoProviders,p=videoProviders[provider];
++  for(const withVideos of [false,true])for(const referenceRatio of ['16:9','9:16','1:1'] as const){
++   const nVideos=withVideos?mode.inputs.referenceVideos?.max??0:0,nImages=Math.min(mode.inputs.referenceImages?.max??0,nVideos?mode.maxImagesWithVideo??Infinity:Infinity);
++   const inputs:any[]=[...Array.from({length:nImages},(_,i)=>({role:'referenceImages',materialRevisionId:`img-${i}`,image:Uint8Array.of(1),mimeType:'image/png'})),...Array.from({length:nVideos},(_,i)=>({role:'referenceVideos',materialRevisionId:`vid-${i}`,mimeType:'video/mp4',...(mode.allowInlineMp4?{video:Uint8Array.of(1)}:{source:mode.allowAssetVideoSource?'asset://test-video':'https://cdn.klingai.com/test.mp4'})}))];
++   const body=officialVideoBody({provider,model,prompt:'参考素材',durationSeconds:p.minDuration,visualMode:mode.id,visualInputs:inputs,referenceRatio});
++   const path=provider==='volcengine'?'/contents/generations/tasks':provider==='minimax'?'/v2/video_generation':klingOmniPath;
++   expect(officialVideoOperation(provider,'execute',new URL(p.endpoint+path),{method:'POST',body:JSON.stringify(body)})).toBe('generate');
++   expect(()=>officialVideoOperation(provider,'execute',new URL(p.endpoint+path),{method:'POST',body:JSON.stringify({...body,unexpected:true})})).toThrow();
++  }
++ }
++});
+--- a/src/worker/officialVideoErrors.test.ts
++++ b/src/worker/officialVideoErrors.test.ts
+@@ -31,3 +31,18 @@
+  const error=await generateOfficialVideo({provider:'minimax',model:'MiniMax-H3',credentials:secret,image:Uint8Array.of(1),imageMime:'image/png',prompt:'转头',durationSeconds:5,reserve:async()=>({new:true}),recordSubmission:vi.fn(),fetcher}).catch(e=>e);
+  expect(error.message).toContain('<REDACTED>');for(const value of [secret,'ABC','Signature=secret'])expect(error.message).not.toContain(value);
+ });
++it('retains and redacts an OpenAI structured error',async()=>{
++ const {generateOpenAiImages}=await import('./mediaProviders');
++ const error=await generateOpenAiImages({apiKey:'synthetic-private',model:'gpt-image-2',prompt:'测试',fetcher:async()=>Response.json({error:{code:'model_not_found',message:'Model unavailable synthetic-private https://example.com/signed?key=private'}},{status:404})}).catch(e=>e);
++ expect(error.message).toContain('model_not_found');expect(error.message).toContain('Model unavailable');expect(error.message).not.toContain('synthetic-private');expect(error.message).not.toContain('key=private');
++});
++it('retains a definite Wan rejection code and request ID instead of a generic media error',async()=>{
++ const {generateWanVideo}=await import('./wanVideoProvider');
++ const error=await generateWanVideo({credentials:'synthetic-private',image:Uint8Array.of(1),imageMime:'image/png',prompt:'测试',durationSeconds:2,reserve:async()=>({new:true}),recordSubmission:async()=>{},fetcher:async()=>Response.json({code:'InvalidParameter',message:'Invalid input synthetic-private',request_id:'wan-request-1'},{status:400})}).catch(e=>e);
++ expect(error).toMatchObject({outcome:'rejected'});expect(error.message).toContain('InvalidParameter');expect(error.message).toContain('wan-request-1');expect(error.message).not.toContain('synthetic-private');
++});
++it('retains the Wan terminal failure and summarizes vendor stack traces',async()=>{
++ const {generateWanVideo}=await import('./wanVideoProvider');let sent=false;
++ const error=await generateWanVideo({credentials:'synthetic',image:Uint8Array.of(1),imageMime:'image/png',prompt:'测试',durationSeconds:2,reserve:async()=>({new:true}),recordSubmission:async()=>{},fetcher:async()=>{if(!sent){sent=true;return Response.json({output:{task_id:'failed-task'}});}return Response.json({output:{task_status:'FAILED',code:'AlgoError',message:'Traceback (most recent call last):\n File "/provider/private/file.py"\nTypeError: expected str, not NoneType'}});}}).catch(e=>e);
++ expect(error).toMatchObject({outcome:'accepted'});expect(error.message).toContain('AlgoError');expect(error.message).toContain('TypeError');expect(error.message).not.toContain('/provider/private');
++});
+--- a/src/worker/wanVideoProvider.ts
++++ b/src/worker/wanVideoProvider.ts
+@@ -1,3 +1,5 @@
++import {VideoGenerationError} from './videoGenerationError.js';
++import {isDefiniteProviderRejection} from './providerOutcome.js';
+ import {videoVisualInputProblem,type VideoOutputRatio,type VideoVisualInputSelection} from '../videoVisualInputs.js';
+ import {isWanGenerationSettings,type WanGenerationSettings} from '../videoGenerationSettings.js';
+ import {defaultWanModel,defaultWanModelSettings,wanReferenceMode,wanReferenceModel,wanVideoModel,wanVideoParameters} from '../wanVideoModels.js';
+@@ -65,15 +67,15 @@
+         headers:{Authorization:`Bearer ${apiKey}`,'Content-Type':'application/json','X-DashScope-Async':'enable'},
+         body:JSON.stringify({model,input:{prompt:input.prompt.trim(),...(settings.negativePrompt?{negative_prompt:settings.negativePrompt}:{}),...media},parameters}),
+       });
+-      return (await supplierJson(response)).task_id;
++      return (await supplierJson(response,'提交',[input.credentials,apiKey])).task_id;
+     },
+     query:async taskId=>{
+-      const data=await supplierJson(await input.fetcher(`${origin}/api/v1/tasks/${encodeURIComponent(taskId)}`,{headers:{Authorization:`Bearer ${apiKey}`},signal:AbortSignal.timeout(30_000)}));
++      const data=await supplierJson(await input.fetcher(`${origin}/api/v1/tasks/${encodeURIComponent(taskId)}`,{headers:{Authorization:`Bearer ${apiKey}`},signal:AbortSignal.timeout(30_000)}),'查询',[input.credentials,apiKey]);
+       if(data.task_status==='SUCCEEDED'){
+         if(typeof data.video_url!=='string')throw Error('万相任务成功但缺少视频地址；请按原任务恢复下载。');
+         return{url:data.video_url};
+       }
+-      if(!['PENDING','RUNNING'].includes(String(data.task_status)))throw Error(`万相任务状态 ${String(data.task_status)}；费用预留已保留，重做前请核对。`);
++      if(!['PENDING','RUNNING'].includes(String(data.task_status)))throw new VideoGenerationError(`万相任务状态 ${String(data.task_status)}${typeof data.code==='string'?`（${data.code}）`:''}${typeof data.message==='string'?`：${safeDetail(data.message,[input.credentials,apiKey])}`:''}；费用预留已保留，重做前请核对。`,'accepted');
+       return{phase:data.task_status==='PENDING'?'queued':'processing'};
+     },
+     pollDelayMs:attempt=>Math.min(5_000+attempt*1_000,10_000),
+@@ -82,18 +84,26 @@
+   });
+ }
+ 
+-async function supplierJson(response: Response): Promise<Record<string, unknown>> {
+-  if (!response.ok) throw new Error(`百炼万相请求失败：HTTP ${response.status}。`);
+-  const data: unknown = await response.json();
+-  if (!data || typeof data !== "object" || !((data as Record<string, unknown>).output) || typeof (data as Record<string, unknown>).output !== "object") throw new Error("百炼万相响应缺少 output。");
+-  return (data as { output: Record<string, unknown> }).output;
++function safeDetail(value:string,secrets:string[]){
++ if(value.includes('Traceback (most recent call last)'))value='供应商内部执行错误：'+(value.trim().split('\n').at(-1)??'AlgoError');
++ for(const secret of secrets.filter(Boolean))value=value.split(secret).join('<REDACTED>');
++ return value.replace(/Bearer\s+[^\s,;"']+/gi,'Bearer <REDACTED>').replace(/data:[^\s"']+/gi,'<MEDIA>').replace(/https?:\/\/[^\s"']+/gi,'<URL>').replace(/[\u0000-\u001f]/g,' ').slice(0,500);
++}
++async function supplierJson(response:Response,phase:'提交'|'查询',secrets:string[]):Promise<Record<string,unknown>>{
++ let data:any;try{data=await response.json();}catch{/* Do not expose raw responses. */}
++ if(!response.ok||data?.code){
++  const detail=safeDetail([data?.code,data?.message].filter(v=>typeof v==='string').join(' · '),secrets),request=data?.request_id;
++  throw new VideoGenerationError(`百炼万相${phase}失败：HTTP ${response.status}${detail?`，${detail}`:'。'}${typeof request==='string'&&/^[a-zA-Z0-9_-]{1,128}$/.test(request)?` 请求编号 ${request}`:''}`,phase==='查询'?'accepted':isDefiniteProviderRejection(response.status)?'rejected':'unknown');
++ }
++ if(!data||typeof data!=='object'||!data.output||typeof data.output!=='object')throw new VideoGenerationError('百炼万相响应缺少 output。',phase==='查询'?'accepted':'unknown');
++ return data.output;
+ }
+ 
+ function officialVideoUrl(value: string): URL {
+   const url = new URL(value);
+   // This exact accelerated bucket is documented by Alibaba and was returned by
+   // the authenticated task API. Keep redirect and credential checks unchanged.
+-  const allowedHost = url.hostname === "dashscope-a717.oss-accelerate.aliyuncs.com" || /^dashscope-result-[a-z0-9-]+\.oss-[a-z0-9-]+\.aliyuncs\.com$/.test(url.hostname);
++  const allowedHost = ["dashscope-a717.oss-accelerate.aliyuncs.com","dashscope-f4de.oss-accelerate.aliyuncs.com","dashscope-7c2c.oss-cn-shanghai.aliyuncs.com"].includes(url.hostname) || /^dashscope-result-[a-z0-9-]+\.oss-[a-z0-9-]+\.aliyuncs\.com$/.test(url.hostname);
+   if (url.protocol !== "https:" || url.username || url.password || url.port || !allowedHost) throw new Error("万相视频地址不属于官方结果存储域名。");
+   return url;
+ }

@@ -1,0 +1,13 @@
+{
+  "checkedAt": "2026-11-09T11:02:33.472Z",
+  "pid": 4644,
+  "port": 5174,
+  "runtimeRelease": {
+    "id": "e4f05cbfd6c6786bc070ba4ae106c67f38427c379a2ad70c0902c5bb25047439",
+    "root": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/e4f05cbfd6c6786bc070ba4ae106c67f38427c379a2ad70c0902c5bb25047439"
+  },
+  "http": 200,
+  "region": "cn",
+  "activeTasks": 0,
+  "connectionVersion": "f738532a-1228-4535-b5a4-111b2ebd12d9"
+}

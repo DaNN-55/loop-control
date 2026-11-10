@@ -1,0 +1,259 @@
+--- a/src/accounts/AccountWorkspace.test.tsx
++++ b/src/accounts/AccountWorkspace.test.tsx
+@@ -355,7 +355,7 @@
+     renderWorkspace({ accountEpisodeCount: 1 });
+     await user.click(screen.getByRole("button", { name: "账号设置" }));
+     await user.click(screen.getByRole("button", { name: "删除账号" }));
+-    expect(screen.getByText(/该账号有 1 个生产单，当前不能删除/)).toBeTruthy();
++    expect(await screen.findByText("1 个生产单")).toBeTruthy();
+     expect((screen.getByRole("button", { name: "确认删除账号" }) as HTMLButtonElement).disabled).toBe(true);
+   });
+ 
+@@ -398,3 +398,23 @@
+     await waitFor(() => expect(onApplyEpisodeRepair).toHaveBeenCalledWith(expect.objectContaining({ policy: expect.objectContaining({ executors: expect.objectContaining({ storyboard_planning: expect.objectContaining({ harness_id: storyboardHarness.id }) }) }) })));
+   });
+ });
++
++
++describe('账号删除条件与直达',()=>{
++ const empty={episodeCount:0,archivedEpisodeCount:0,creationCount:0,deletionCount:0,cleanupKey:null};
++ async function open(user:ReturnType<typeof userEvent.setup>){await user.click(screen.getByRole('button',{name:'账号设置'}));await user.click(screen.getByRole('button',{name:'删除账号'}));}
++ it('uses complete server counts and opens all associated orders without a disabled confirmation field',async()=>{
++  const user=userEvent.setup(),readDeletionStatus=vi.fn().mockResolvedValue({...empty,episodeCount:25,archivedEpisodeCount:24}),onViewAccountEpisodes=vi.fn();renderWorkspace({accountEpisodeCount:1,readDeletionStatus,onViewAccountEpisodes});await open(user);
++  await screen.findByText('25 个生产单（含 24 个已归档）');expect(screen.queryByLabelText('删除账号确认文本')).toBeNull();expect((screen.getByRole('button',{name:'确认删除账号'})as HTMLButtonElement).disabled).toBe(true);
++  await user.click(screen.getByRole('button',{name:'查看生产单'}));expect(onViewAccountEpisodes).toHaveBeenCalledWith(account.id);
++ });
++ it('blocks an empty account with unfinished cleanup and routes to the exact cleanup key',async()=>{
++  const user=userEvent.setup(),onViewDeletionCleanup=vi.fn();renderWorkspace({readDeletionStatus:vi.fn().mockResolvedValue({...empty,deletionCount:1,cleanupKey:'cleanup-key'}),onViewDeletionCleanup});await open(user);await screen.findByText('1 项文件清理未完成');expect((screen.getByRole('button',{name:'确认删除账号'})as HTMLButtonElement).disabled).toBe(true);await user.click(screen.getByRole('button',{name:'查看清理任务'}));expect(onViewDeletionCleanup).toHaveBeenCalledWith('cleanup-key');
++ });
++ it('fails closed on a read error and enables name confirmation only after a successful retry',async()=>{
++  const user=userEvent.setup(),readDeletionStatus=vi.fn().mockRejectedValueOnce(new Error('暂时无法读取。')).mockResolvedValue(empty);renderWorkspace({readDeletionStatus});await open(user);await screen.findByRole('alert');expect(screen.queryByLabelText('删除账号确认文本')).toBeNull();expect((screen.getByRole('button',{name:'确认删除账号'})as HTMLButtonElement).disabled).toBe(true);await user.click(screen.getByRole('button',{name:'重新检查'}));await screen.findByLabelText('删除账号确认文本');expect(readDeletionStatus).toHaveBeenCalledTimes(2);
++ });
++ it('offers archive through the existing confirmation instead of deleting associated content',async()=>{
++  const user=userEvent.setup(),onSetAccountArchived=vi.fn().mockResolvedValue(true),onDeleteAccount=vi.fn();renderWorkspace({accountEpisodeCount:1,onSetAccountArchived,onDeleteAccount});await open(user);await screen.findByText('1 个生产单');await user.click(screen.getByRole('button',{name:'归档账号'}));expect(onSetAccountArchived).not.toHaveBeenCalled();await user.click(await screen.findByRole('button',{name:'确认归档账号'}));expect(onSetAccountArchived).toHaveBeenCalledWith(account.id,true);expect(onDeleteAccount).not.toHaveBeenCalled();
++ });
++});
+--- a/src/accounts/AccountWorkspace.tsx
++++ b/src/accounts/AccountWorkspace.tsx
+@@ -1,3 +1,5 @@
++import type {AccountDeletionStatus} from './accountDeletionStatus';
++import './account-deletion.css';
+ import type {PanelNavigation} from '../local-app/catalogNavigation';
+ import {SeriesDirectoryPanel} from './SeriesDirectoryPanel';
+ import {AccountDirectoryPanel} from './AccountDirectoryPanel';
+@@ -33,6 +35,9 @@
+   navigation?:PanelNavigation<'rules'>;
+   account: Account | null;
+   accountEpisodeCount?: number;
++  readDeletionStatus?:(accountId:string)=>Promise<AccountDeletionStatus>;
++  onViewAccountEpisodes?:(accountId:string)=>boolean|void;
++  onViewDeletionCleanup?:(cleanupKey:string)=>void;
+   blueprints: Blueprint[];
+   externalConnections?: ExternalConnection[];
+   connectionVersions?: ExternalConnectionVersion[];
+@@ -63,7 +68,7 @@
+ 
+ const emptySeriesRules: Json = {};
+ 
+-export function AccountWorkspace({ navigation, account, accountEpisodeCount = 0, blueprints, blueprintRepairContext = null, connectionVersions = [], externalConnections = [], isPending, onApplyEpisodeRepair, onCreateConnection, onCreatePromptVersion, onCreateEpisode, onCreateSeries = async () => {}, onCreateSeriesVersion = async () => {}, onRenameSeries = async () => {}, onDeleteAccount = async () => {}, onDismissBlueprintRepair, onDirtyChange, onRefresh, onRenameAccount = async () => {}, onRotateConnection, onSetAccountArchived = async () => {}, onTestConnection, onUpdateBlueprint, onUpdateConnection, promptVersions = [], series = [], seriesVersions = [], systemStatus = null }: AccountWorkspaceProps) {
++export function AccountWorkspace({ navigation, account, accountEpisodeCount = 0, readDeletionStatus, onViewAccountEpisodes, onViewDeletionCleanup, blueprints, blueprintRepairContext = null, connectionVersions = [], externalConnections = [], isPending, onApplyEpisodeRepair, onCreateConnection, onCreatePromptVersion, onCreateEpisode, onCreateSeries = async () => {}, onCreateSeriesVersion = async () => {}, onRenameSeries = async () => {}, onDeleteAccount = async () => {}, onDismissBlueprintRepair, onDirtyChange, onRefresh, onRenameAccount = async () => {}, onRotateConnection, onSetAccountArchived = async () => {}, onTestConnection, onUpdateBlueprint, onUpdateConnection, promptVersions = [], series = [], seriesVersions = [], systemStatus = null }: AccountWorkspaceProps) {
+   const [configurationDirty, setConfigurationDirtyState] = useState(false);
+   const dirty = configurationDirty;
+   useEffect(() => onDirtyChange?.(dirty), [dirty, onDirtyChange]);
+@@ -118,7 +123,7 @@
+       onDelete={() => {accountSettingsRef.current?.focus();setAccountSettingsOpen(false);setDeleteOpen(true);}} />}
+     {renameOpen ? <AccountRenameModal account={account} isPending={isPending === `rename-account-${account.id}`} onClose={() => setRenameOpen(false)} onSave={(name) => onRenameAccount(account.id, name)} /> : null}
+     <ConfirmationModalPresence>{archiveOpen ? <ConfirmationModal confirmLabel={account.archived_at ? "确认恢复账号" : "确认归档账号"} isPending={isPending === `archive-account-${account.id}`} onCancel={() => setArchiveOpen(false)} onConfirm={async () => { if (await onSetAccountArchived(account.id, !account.archived_at) !== false) setArchiveOpen(false); }} pendingLabel={account.archived_at ? "恢复中…" : "归档中…"} title={account.archived_at ? "恢复账号" : "归档账号"}><p>{account.archived_at ? `恢复“${account.name}”后，它会重新出现在新建生产单的账号列表中。` : `归档“${account.name}”后，它不会出现在新建生产单的账号列表中；已有生产单、系列和历史配置都会保留。`}</p></ConfirmationModal> : null}</ConfirmationModalPresence>
+-    <ConfirmationModalPresence>{deleteOpen ? <AccountDeleteModal account={account} episodeCount={accountEpisodeCount} isPending={isPending === `delete-account-${account.id}`} onClose={() => setDeleteOpen(false)} onDelete={(confirmation) => onDeleteAccount(account.id, confirmation)} /> : null}</ConfirmationModalPresence>
++    <ConfirmationModalPresence>{deleteOpen ? <AccountDeleteModal account={account} episodeCount={accountEpisodeCount} readStatus={readDeletionStatus} onViewEpisodes={onViewAccountEpisodes} onViewCleanup={onViewDeletionCleanup} onArchive={!account.archived_at?()=>{setDeleteOpen(false);setArchiveOpen(true);}:undefined} isPending={isPending === `delete-account-${account.id}`} onClose={() => setDeleteOpen(false)} onDelete={(confirmation) => onDeleteAccount(account.id, confirmation)} /> : null}</ConfirmationModalPresence>
+   </section>;
+ }
+ 
+@@ -273,7 +278,24 @@
+   return <div className="modal-backdrop" role="dialog" aria-modal="true" aria-label="重命名账号"><form ref={dialogRef} aria-label="重命名账号" className="modal-card" onSubmit={(event) => void submit(event)}><header><div><h2>重命名账号</h2></div></header><label>账号显示名称<InputBase size="sm" aria-label="账号显示名称" onChange={(event) => setName(event.target.value)} value={name} /></label><div className="modal-actions"><Button size="sm" color="secondary" className="button button-secondary" onClick={onClose} type="button">取消</Button><Button size="sm" color="primary" className="button button-primary" isDisabled={isPending || !name.trim()} type="submit">{isPending ? "保存中…" : "保存名称"}</Button></div></form></div>;
+ }
+ 
+-function AccountDeleteModal({ account, episodeCount, isPending, onClose, onDelete }: { account: Account; episodeCount: number; isPending: boolean; onClose: () => void; onDelete: (confirmation: string) => Promise<boolean | void> }) {
+-  const [confirmation, setConfirmation] = useState("");
+-  return <ConfirmationModal confirmDisabled={episodeCount > 0 || confirmation !== account.name} confirmLabel="确认删除账号" isPending={isPending} onCancel={onClose} onConfirm={async () => { if (await onDelete(confirmation) !== false) onClose(); }} pendingLabel="删除中…" title="删除账号" tone="danger"><p>{episodeCount ? `该账号有 ${episodeCount} 个生产单，当前不能删除。请先归档并永久删除这些生产单，或归档账号保留历史。` : `此操作不可撤销。输入“${account.name}”确认删除。`}</p><label>确认文本<InputBase size="sm" aria-label="删除账号确认文本" isDisabled={episodeCount > 0} onChange={(event) => setConfirmation(event.target.value)} value={confirmation} /></label></ConfirmationModal>;
+-}
++function AccountDeleteModal({account,episodeCount,isPending,onClose,onDelete,readStatus,onViewEpisodes,onViewCleanup,onArchive}:{account:Account;episodeCount:number;isPending:boolean;onClose:()=>void;onDelete:(confirmation:string)=>Promise<boolean|void>;readStatus?:(id:string)=>Promise<AccountDeletionStatus>;onViewEpisodes?:(id:string)=>boolean|void;onViewCleanup?:(key:string)=>void;onArchive?:()=>void}) {
++ const [confirmation,setConfirmation]=useState(''),[status,setStatus]=useState<AccountDeletionStatus|null>(null),[loading,setLoading]=useState(true),[error,setError]=useState('');
++ const generation=useRef(0);
++ const refresh=useCallback(async()=>{
++  const request=++generation.current;setLoading(true);setError('');
++  try{const next=readStatus?await readStatus(account.id):{episodeCount,archivedEpisodeCount:0,creationCount:0,deletionCount:0,cleanupKey:null};if(request===generation.current)setStatus(next);}
++  catch(reason){if(request===generation.current){setStatus(null);setError(reason instanceof Error?reason.message:'无法检查删除条件，请重试。');}}
++  finally{if(request===generation.current)setLoading(false);}
++ },[account.id,episodeCount,readStatus]);
++ useEffect(()=>{void refresh();return()=>{generation.current++;};},[refresh]);
++ const blocked=!!status&&(status.episodeCount>0||status.creationCount>0||status.deletionCount>0);
++ return <ConfirmationModal confirmDisabled={loading||!!error||!status||blocked||confirmation!==account.name} confirmLabel="确认删除账号" isPending={isPending} onCancel={onClose} onConfirm={async()=>{if(loading||!status||blocked||error)return;if(await onDelete(confirmation)!==false)onClose();else await refresh();}} pendingLabel="删除中…" title="删除账号" tone="danger">
++  {loading?<p role="status">正在检查…</p>:error?<><p role="alert">{error}</p><Button size="sm" color="secondary" onPress={()=>void refresh()}>重新检查</Button></>:status&&blocked?<>
++   <p>暂不能删除此账号。</p><div className="account-delete-blockers">
++    {status.episodeCount>0&&<div><span>{status.episodeCount} 个生产单{status.archivedEpisodeCount>0?`（含 ${status.archivedEpisodeCount} 个已归档）`:''}</span>{onViewEpisodes&&<Button size="sm" color="secondary" isDisabled={isPending} onPress={()=>{if(onViewEpisodes(account.id)!==false)onClose();}}>查看生产单</Button>}</div>}
++    {status.deletionCount>0&&<div><span>{status.deletionCount} 项文件清理未完成</span>{status.cleanupKey&&onViewCleanup&&<Button size="sm" color="secondary" isDisabled={isPending} onPress={()=>{onClose();onViewCleanup(status.cleanupKey!);}}>查看清理任务</Button>}</div>}
++    {status.creationCount>0&&<p>{status.creationCount} 项目录创建未完成，请先恢复原操作。</p>}
++   </div><div className="account-delete-options"><Button size="sm" color="tertiary" isDisabled={isPending} onPress={()=>void refresh()}>重新检查</Button>{onArchive&&<Button size="sm" color="tertiary" isDisabled={isPending} onPress={onArchive}>归档账号</Button>}</div>
++  </>:status?<><p>此操作不可撤销。输入“{account.name}”确认删除。</p><label>确认文本<InputBase size="sm" aria-label="删除账号确认文本" isDisabled={isPending} onChange={event=>setConfirmation(event.target.value)} value={confirmation}/></label></>:null}
++ </ConfirmationModal>;
++}
+--- a/src/accounts/account-deletion.css
++++ b/src/accounts/account-deletion.css
+@@ -0,0 +1,7 @@
++.account-delete-blockers{display:grid;gap:12px;margin:16px 0}
++.account-delete-blockers>div{display:flex;align-items:center;justify-content:space-between;gap:12px}
++.account-delete-blockers span,.account-delete-blockers p{overflow-wrap:anywhere}
++.account-delete-blockers p{margin:0}
++.account-delete-blockers button{flex:none}
++.account-delete-options{display:flex;flex-wrap:wrap;gap:8px}
++@media(max-width:480px){.account-delete-blockers>div{align-items:flex-start;flex-wrap:wrap}}
+--- a/src/accounts/accountDeletionStatus.ts
++++ b/src/accounts/accountDeletionStatus.ts
+@@ -0,0 +1,7 @@
++export interface AccountDeletionStatus {
++ episodeCount:number;
++ archivedEpisodeCount:number;
++ creationCount:number;
++ deletionCount:number;
++ cleanupKey:string|null;
++}
+--- a/src/local-app/LocalCatalogApp.tsx
++++ b/src/local-app/LocalCatalogApp.tsx
+@@ -1,3 +1,4 @@
++import type {AccountDeletionStatus} from '../accounts/accountDeletionStatus';
+ import {readCatalogNavigation,catalogNavigationUrl,useCatalogHistory,WorkspaceNavigationContext,CatalogPanelNavigationContext,type CatalogNavigation} from './catalogNavigation';
+ import {WorkspaceDraftProvider,useWorkspaceDraftLeave} from './WorkspaceDraft';
+ import {EpisodeCollectionDialog} from './EpisodeCollectionDialog';
+@@ -40,6 +41,7 @@
+ export function LocalCatalogApp(){return <WorkspaceDraftProvider><LocalCatalogContent/></WorkspaceDraftProvider>;}
+ function LocalCatalogContent(){
+  const requestDraftLeave=useWorkspaceDraftLeave();
++ const readDeletionStatus=useCallback((accountId:string):Promise<AccountDeletionStatus>=>localRequest('account-deletion-status?accountId='+encodeURIComponent(accountId)),[]);
+  const planDeletion=useCallback((episodeId:string)=>localCommand<EpisodeDeletionPlan>('planDeletion',{episodeId},undefined,'episode-lifecycle'),[]);
+  const[collectionEpisode,setCollectionEpisode]=useState<string|null>(null);
+  const [initialNavigation]=useState(()=>readCatalogNavigation(location.search));
+@@ -217,7 +219,7 @@
+  <section inert={Boolean(episodeId)||panels.connections.open||cleanupOpen} className={`content-pane${view === 'accounts' ? ' account-workspace-page' : ''}`} id="main-content" aria-label="平台工作台" tabIndex={-1}><header className="page-header"><nav className="workspace-breadcrumbs" aria-label="当前位置"><span>个人工作区</span><ChevronRight size={14} aria-hidden="true"/><strong aria-current="page">{pageLabel}</strong></nav><div className="page-header-actions">{!episodeId&&topbar}</div></header>{view!=='operations'&&view!=='accounts'&&<div className={`workspace-page-heading${view==='history'?' is-maintenance':''}`}><h1>{pageLabel}</h1>{view==='episodes'&&workspaceActions}</div>}
+ 
+  {view==='history'?<LocalMaintenancePanel embedded activeTab="history" onClose={()=>navigate('operations')} revision={catalog}/>:view==='accounts'?<>
+-<AccountWorkspace onCreateEpisode={()=>setNewEpisode(true)} navigation={{value:panels.rules,change:patch=>setPanels(current=>({...current,rules:{...current.rules,...patch}}))}} onRefresh={()=>refresh().catch(e=>setError(e instanceof Error?e.message:String(e)))} onDirtyChange={setAccountDirty} blueprintRepairContext={repair} onDismissBlueprintRepair={()=>{if(repair){setEpisodeId(repair.episodeId);setView('episodes');filter({view:'episodes'});}setRepair(null);}} onApplyEpisodeRepair={async input=>{try{await localCommand('repairConfiguration',{episodeId:input.context.episodeId,policy:input.policy,blockerCode:input.context.blocker.code,blockerDetail:input.context.blocker.detail},undefined,'episode-commands');await refresh();setRepair(null);setEpisodeId(input.context.episodeId);setView('episodes');filter({view:'episodes'});return true;}catch(e){setError(e instanceof Error?e.message:String(e));return false;}}} externalConnections={connections} connectionVersions={connectionVersions} account={account} accountEpisodeCount={catalog.accountCounts[account?.id??'']??0} blueprints={catalog.blueprints} isPending={connectionActions.pending?'connection':pending} promptVersions={catalog.promptVersions.filter(p=>p.account_id===account?.id)} series={catalog.series.filter(s=>s.account_id===account?.id)} seriesVersions={catalog.seriesVersions.filter(s=>s.account_id===account?.id)}
++<AccountWorkspace readDeletionStatus={readDeletionStatus} onViewDeletionCleanup={openCleanup} onViewAccountEpisodes={id=>navigate('episodes',()=>{setRepair(null);filter({accountId:id,seriesId:'all',visibility:'all',q:'',status:'all',sort:'updated',page:1});})} onCreateEpisode={()=>setNewEpisode(true)} navigation={{value:panels.rules,change:patch=>setPanels(current=>({...current,rules:{...current.rules,...patch}}))}} onRefresh={()=>refresh().catch(e=>setError(e instanceof Error?e.message:String(e)))} onDirtyChange={setAccountDirty} blueprintRepairContext={repair} onDismissBlueprintRepair={()=>{if(repair){setEpisodeId(repair.episodeId);setView('episodes');filter({view:'episodes'});}setRepair(null);}} onApplyEpisodeRepair={async input=>{try{await localCommand('repairConfiguration',{episodeId:input.context.episodeId,policy:input.policy,blockerCode:input.context.blocker.code,blockerDetail:input.context.blocker.detail},undefined,'episode-commands');await refresh();setRepair(null);setEpisodeId(input.context.episodeId);setView('episodes');filter({view:'episodes'});return true;}catch(e){setError(e instanceof Error?e.message:String(e));return false;}}} externalConnections={connections} connectionVersions={connectionVersions} account={account} accountEpisodeCount={catalog.accountCounts[account?.id??'']??0} blueprints={catalog.blueprints} isPending={connectionActions.pending?'connection':pending} promptVersions={catalog.promptVersions.filter(p=>p.account_id===account?.id)} series={catalog.series.filter(s=>s.account_id===account?.id)} seriesVersions={catalog.seriesVersions.filter(s=>s.account_id===account?.id)}
+  onCreateConnection={async input=>{try{return (await connectionActions.command<{connection:ExternalConnection}>('create',input)).connection;}catch{return null;}}}
+  onRotateConnection={async input=>{try{return (await connectionActions.command<{connection:ExternalConnection}>('rotate',input)).connection;}catch{return null;}}}
+  onTestConnection={connectionId=>connectionActions.command('verify',{connectionId})}
+--- a/src/local-app/LocalCatalogApp.workspace.test.tsx
++++ b/src/local-app/LocalCatalogApp.workspace.test.tsx
+@@ -198,3 +198,13 @@
+  await user.click(within(dialog).getByRole('button',{name:'关闭文件清理'}));await waitFor(()=>expect(screen.queryByRole('dialog',{name:'文件清理'})).toBeNull());expect(document.activeElement).toBe(owner);expect(location.search).not.toContain('cleanupOpen');
+  await user.click(owner);await user.click(screen.getByRole('menuitem',{name:'文件清理'}));await screen.findByRole('dialog',{name:'文件清理'});await waitFor(()=>expect(location.search).toContain('cleanupOpen=1'));await act(async()=>{history.back();});await waitFor(()=>expect(screen.queryByRole('dialog',{name:'文件清理'})).toBeNull());expect(location.search).toContain('page=2');
+ });
++
++it('opens the full associated catalog from an account deletion blocker and clears stale scope filters',async()=>{
++ const requests:string[]=[];vi.stubGlobal('crypto',webcrypto);vi.stubGlobal('fetch',vi.fn(async(path:string)=>{
++ requests.push(path);if(path.endsWith('/session'))return Response.json({csrfToken:'fixture',owner:{id,email:'owner@example.test'}});
++ if(path.includes('/account-deletion-status?'))return Response.json({episodeCount:25,archivedEpisodeCount:24,creationCount:0,deletionCount:0,cleanupKey:null});
++ if(path.includes('/catalog?'))return Response.json(data);return Response.json({connections:[],versions:[]});
++ }));history.replaceState(null,'','/?view=accounts&account='+id+'&accountId='+id+'&q=old&status=blocked&visibility=active&page=3&seriesId=unassigned');
++ const user=userEvent.setup();await act(async()=>{render(<LocalCatalogApp/>);});await user.click(await screen.findByRole('button',{name:'账号设置'}));await user.click(screen.getByRole('button',{name:'删除账号'}));await screen.findByText('25 个生产单（含 24 个已归档）');await user.click(screen.getByRole('button',{name:'查看生产单'}));
++ await waitFor(()=>{const last=requests.filter(path=>path.includes('/catalog?')).at(-1)!;const q=new URL(last,'http://localhost').searchParams;expect(q.get('view')).toBe('episodes');expect(q.get('accountId')).toBe(id);expect(q.get('visibility')).toBe('all');expect(q.get('seriesId')).toBe('all');expect(q.get('q')).toBe('');expect(q.get('status')).toBe('all');expect(q.get('page')).toBe('1');});
++});
+--- a/src/local-app/accountDeletion.ts
++++ b/src/local-app/accountDeletion.ts
+@@ -0,0 +1,24 @@
++import type {Pool,PoolClient} from 'pg';
++import type {AccountDeletionStatus} from '../accounts/accountDeletionStatus.js';
++import {ownerTransaction} from './ownerTransaction.js';
++
++// The delete command and its read-only preview share the same pending-operation boundary.
++export async function accountDeletionOperations(client:PoolClient,accountId:string){
++ const {rows:[row]}=await client.query<{creationCount:number;deletionCount:number;cleanupKey:string|null}>(`
++ SELECT count(*) FILTER(WHERE kind='creation')::int "creationCount",
++ count(*) FILTER(WHERE kind='deletion')::int "deletionCount",
++ min(key) FILTER(WHERE kind='deletion') "cleanupKey" FROM (
++ SELECT 'creation' kind,NULL::text key FROM local_identity.episode_creation_intents WHERE account_id=$1 AND result IS NULL
++ UNION ALL SELECT 'creation',NULL FROM local_identity.container_creation_intents WHERE account_id=$1 AND result IS NULL
++ UNION ALL SELECT 'creation',NULL FROM local_identity.account_creation_intents WHERE account_id=$1 AND result IS NULL
++ UNION ALL SELECT 'deletion',idempotency_key::text FROM local_identity.episode_deletion_intents WHERE manifest->>'accountId'=$1::text AND state IN ('prepared','committed')
++ ) pending`,[accountId]);return row;
++}
++export async function readAccountDeletionStatus(pool:Pool,ownerId:string,accountId:string):Promise<AccountDeletionStatus|null>{
++ return ownerTransaction(pool,ownerId,true,async client=>{
++  const owned=await client.query("SELECT 1 FROM public.accounts a JOIN public.account_memberships m ON m.account_id=a.id WHERE a.id=$1 AND m.user_id=$2 AND m.role='owner'",[accountId,ownerId]);
++  if(!owned.rowCount)return null;
++  const {rows:[episodes]}=await client.query<{episodeCount:number;archivedEpisodeCount:number}>('SELECT count(*)::int "episodeCount",count(*) FILTER(WHERE archived_at IS NOT NULL)::int "archivedEpisodeCount" FROM public.episodes WHERE account_id=$1',[accountId]);
++  return {...episodes,...await accountDeletionOperations(client,accountId)};
++ });
++}
+--- a/src/local-app/accountDeletionStatus.integration.test.ts
++++ b/src/local-app/accountDeletionStatus.integration.test.ts
+@@ -0,0 +1,32 @@
++// @vitest-environment node
++import {it,expect} from 'vitest';
++import {randomUUID} from 'node:crypto';
++import {once} from 'node:events';
++import {embeddedStudioFixture} from './embeddedStudio.fixture';
++import {cleanupRecoveryProcess} from './cleanupRecoveryProcess.fixture';
++import {deletionFixtureFingerprint} from './deletionFingerprint.fixture';
++const enabled=process.env.LOOP_ACCOUNT_DELETION_ACCEPTANCE==='1';
++async function get(f:Awaited<ReturnType<typeof embeddedStudioFixture>>,accountId:string,token=f.token){const r=await fetch(f.origin+'/api/local/account-deletion-status?accountId='+accountId,{headers:{Cookie:'loop_owner_session='+token}});return{status:r.status,body:await r.json()};}
++it.skipIf(!enabled)('counts all pages and archived orders, isolates Owners, and keeps actual delete rejection aligned',async()=>{
++ const f=await embeddedStudioFixture({runtime:{mountPath:'/',wake(){}}});try{
++ const account=(await f.c.query('SELECT account_id FROM public.episodes WHERE id=$1',[f.episode])).rows[0].account_id;
++ for(let i=0;i<24;i++){const created=await f.post('episode-commands','create',{accountId:account,title:'关联生产单 '+i});expect(created.status,JSON.stringify(created.body)).toBe(200);}
++ await f.c.query('UPDATE public.episodes SET archived_at=now() WHERE account_id=$1',[account]);
++ const active=randomUUID();await f.c.query("INSERT INTO public.tasks(id,episode_id,task_type,status,input_snapshot) SELECT $1,episode_id,task_type,'running',input_snapshot FROM public.tasks WHERE id=$2",[active,f.task]);
++ const before=await deletionFixtureFingerprint(f.assetRoot);
++ const result=await get(f,account);expect(result).toEqual({status:200,body:{episodeCount:25,archivedEpisodeCount:25,creationCount:0,deletionCount:0,cleanupKey:null}});
++ const list=await fetch(f.origin+'/api/local/catalog?view=episodes&accountId='+account+'&visibility=all&page=1&pageSize=10&seriesId=all&pendingPage=1&blockedPage=1',{headers:{Cookie:'loop_owner_session='+f.token}});const page=await list.json();expect(page.total).toBe(25);expect(page.episodes).toHaveLength(10);
++ expect((await get(f,account,f.otherToken)).status).toBe(404);expect((await get(f,'invalid')).status).toBe(400);expect((await get(f,account+'&accountId='+account)).status).toBe(400);
++ expect((await f.post('configuration','deleteAccount',{accountId:account,confirmation:'Studio153 fixture'})).status).toBe(409);expect(await deletionFixtureFingerprint(f.assetRoot)).toEqual(before);expect((await f.c.query('SELECT status FROM public.tasks WHERE id=$1',[active])).rows[0].status).toBe('running');
++ const empty=await f.post('configuration','createAccount',{name:'空账号核对',slug:'empty-'+randomUUID(),timezone:'UTC',policy:{}});expect(empty.status).toBe(200);expect((await get(f,empty.body.id)).body.episodeCount).toBe(0);expect((await f.post('configuration','deleteAccount',{accountId:empty.body.id,confirmation:'空账号核对'})).status).toBe(200);
++ }finally{await f.close();}
++},300000);
++it.skipIf(!enabled).each(['link-before-unlink','before-finalize'] as const)('reports durable %s and links the exact recovery task after the process exits',async fault=>{
++ const f=await embeddedStudioFixture({runtime:{mountPath:'/',wake(){}}});let worker:Awaited<ReturnType<typeof cleanupRecoveryProcess>>|undefined;try{
++ const account=(await f.c.query('SELECT account_id FROM public.episodes WHERE id=$1',[f.episode])).rows[0].account_id;worker=await cleanupRecoveryProcess(f,fault);await worker.post('archiveEpisode',{episodeId:f.episode,archived:true});const plan=await worker.post('planDeletion',{episodeId:f.episode});expect(plan.status).toBe(200);const key=randomUUID(),exit=once(worker.child,'exit',{signal:AbortSignal.timeout(10000)});
++ await worker.post('deleteEpisode',{episodeId:f.episode,confirmation:plan.body.confirmation,expectedPath:plan.body.path,expectedPaths:plan.body.paths,expectedRevision:plan.body.revision},key).catch(()=>null);await exit;
++ const status=await get(f,account);expect(status.status).toBe(200);expect(status.body).toMatchObject({episodeCount:fault==='before-finalize'?0:1,deletionCount:1,cleanupKey:key});
++ expect((await f.post('configuration','deleteAccount',{accountId:account,confirmation:'Studio153 fixture'})).status).toBe(409);
++ expect((await f.post('episode-lifecycle','retryDeletionCleanup',{deletionKey:key})).status).toBe(200);expect((await get(f,account)).body.deletionCount).toBe(0);
++ }finally{await worker?.close();await f.close();}
++},300000);
+--- a/src/local-app/configurationCommands.ts
++++ b/src/local-app/configurationCommands.ts
+@@ -1,3 +1,4 @@
++import {accountDeletionOperations} from './accountDeletion.js';
+ import {createStorageContainer} from './seriesDirectories.js';
+ import {createAccountDirectory} from './accountCreation.js';
+ import {creativeAccountRules} from '../creativeAccountRules.js';
+@@ -78,7 +79,7 @@
+    if(command==='updateBlueprint'&&body.expectedRevision!==account.rows[0].revision)throw new ConfigurationError(409,'蓝图已变化，请刷新后重试。');
+   }
+   // Capture exact roots before their blueprints are deleted; filesystem writes wait for COMMIT.
+-  if(command==='deleteAccount'&&(await client.query("SELECT 1 FROM local_identity.episode_creation_intents WHERE account_id=$1 AND result IS NULL UNION ALL SELECT 1 FROM local_identity.container_creation_intents WHERE account_id=$1 AND result IS NULL UNION ALL SELECT 1 FROM local_identity.account_creation_intents WHERE account_id=$1 AND result IS NULL UNION ALL SELECT 1 FROM local_identity.episode_deletion_intents i WHERE i.manifest->>'accountId'=$1::text AND i.state IN ('prepared','committed')",[data.accountId])).rowCount)throw new ConfigurationError(409,'账号有未完成的目录创建或删除操作，请先恢复原操作。');
++  if(command==='deleteAccount'){const operations=await accountDeletionOperations(client,String(data.accountId));if(operations.creationCount||operations.deletionCount)throw new ConfigurationError(409,'账号有未完成的目录创建或删除操作，请先恢复原操作。');}
+   const registeredAccountRoot=command==='deleteAccount'?(await client.query('SELECT actual_root,device_id,inode_id FROM local_identity.account_asset_directories WHERE account_id=$1',[data.accountId])).rows[0]:undefined;
+   const registeredContainers=command==='deleteAccount'?(await client.query('SELECT directory_relative_path,device_id,inode_id FROM local_identity.account_storage_containers WHERE account_id=$1',[data.accountId])).rows:[];
+   const accountAssetRoots=command==='deleteAccount'?(await client.query("SELECT COALESCE(d.actual_root,b.policy->>'asset_root') asset_root FROM public.accounts a LEFT JOIN public.account_blueprint_versions b ON b.id=a.current_blueprint_version_id LEFT JOIN local_identity.account_asset_directories d ON d.account_id=a.id WHERE a.id=$1",[data.accountId])).rows.map(row=>row.asset_root):[];
+--- a/src/local-app/localRoute.ts
++++ b/src/local-app/localRoute.ts
+@@ -1,3 +1,4 @@
++import {readAccountDeletionStatus} from './accountDeletion.js';
+ import {reconcileOwnerNativeOutput} from './workspaceOutputReconciliation.js';
+ import{runtimeErrorMessages}from'../orchestration/runtimeBuild.js';
+ import {LocalMediaRootSettings} from './mediaRootSettings.js';
+@@ -145,6 +146,13 @@
+    }
+    if(url.pathname==='/api/local/episode-lifecycle'&&request.method==='POST'){let body;try{body=await readBody(request,16384);}catch{send(400,{error:'生命周期请求格式无效。'});return;}send(200,await lifecycle.execute(session,body));return;}
+    if(url.pathname==='/api/local/deletion-cleanups'&&request.method==='GET'){send(200,await lifecycle.pending(session));return;}
++   if(url.pathname==='/api/local/account-deletion-status'){
++    if(request.method!=='GET'){send(405,{error:'只支持读取账号删除条件。'});return;}
++    const accountId=url.searchParams.get('accountId')??'';
++    if(!uuid.test(accountId)||[...url.searchParams.keys()].some(key=>key!=='accountId')||url.searchParams.getAll('accountId').length!==1){send(400,{error:'账号标识无效。'});return;}
++    const status=await readAccountDeletionStatus(options.pool,session.id,accountId);
++    if(!status)throw new ConfigurationError(404,'账号不可见。');send(200,status);return;
++   }
+    if(url.pathname==='/api/local/connection-usage'){
+     if(request.method!=='GET'){send(405,{error:'只支持读取连接用量。'});return;}
+     const connectionId=url.searchParams.get('connectionId')??'';if(!uuid.test(connectionId)||[...url.searchParams.keys()].some(key=>key!=='connectionId')){send(400,{error:'连接标识无效。'});return;}

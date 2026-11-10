@@ -1,0 +1,14 @@
+{
+  "url": "http://127.0.0.1:5201/__account_deletion?view=accounts&account=84b397f0-0f8c-4880-a506-304567490589",
+  "root": "/private/tmp/loop-153-rAUk6y",
+  "database": "loop_studio_153_0ec5da9b29cd",
+  "accounts": {
+    "multi": "84b397f0-0f8c-4880-a506-304567490589",
+    "archived": "c3aec86a-699c-4338-9a03-b85bf509b55c",
+    "empty": "f89ea806-a58c-4f55-be22-b5d1131d26db",
+    "cleanup": "6e7e2720-9301-40b3-8666-0ff1cb628d61",
+    "creation": "20ff192c-7426-42f8-8556-6d0e44f562de"
+  },
+  "cleanupKey": "4a2085a0-8603-41ae-adc5-7b8cb79944c0",
+  "paidCalls": 0
+}

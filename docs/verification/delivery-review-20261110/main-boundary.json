@@ -1,0 +1,41 @@
+{
+  "migrated32": false,
+  "files": [
+    {
+      "file": "src/local-app/WorkspaceExportPanel.tsx",
+      "before": "6e424e804c006212e51a0a5d483c22da7c6544d6fab4893c38b6e1d71a237d08",
+      "now": "6e424e804c006212e51a0a5d483c22da7c6544d6fab4893c38b6e1d71a237d08",
+      "unchanged": true
+    },
+    {
+      "file": "src/local-app/WorkspaceDeliveryPanel.tsx",
+      "before": "ebfeec7d5d9a0966dd1def026876b68dcfb00603f3402a722a805e2cb1b12567",
+      "now": "ebfeec7d5d9a0966dd1def026876b68dcfb00603f3402a722a805e2cb1b12567",
+      "unchanged": true
+    },
+    {
+      "file": "src/local-app/workspace-compact-panels.css",
+      "before": "45ab4a03e93b59fc6710dfec8dd059245d1fef0156b5311820ef19e45ec75a27",
+      "now": "45ab4a03e93b59fc6710dfec8dd059245d1fef0156b5311820ef19e45ec75a27",
+      "unchanged": true
+    },
+    {
+      "file": "src/local-app/WorkspaceExportPanel.test.tsx",
+      "before": "804af4730411b5a675bb1b0fc5be985198a287db0b6869c7bb6b1f0dde7a6f15",
+      "now": "804af4730411b5a675bb1b0fc5be985198a287db0b6869c7bb6b1f0dde7a6f15",
+      "unchanged": true
+    },
+    {
+      "file": "src/local-app/WorkspaceDeliveryPanel.test.tsx",
+      "before": "9db11789a0e6428d32f75c7ab70c5682b79190063063d750729d7ea93ea88c61",
+      "now": "9db11789a0e6428d32f75c7ab70c5682b79190063063d750729d7ea93ea88c61",
+      "unchanged": true
+    }
+  ],
+  "pid": 78102,
+  "pidUnchanged": true,
+  "runtimeUnchanged": true,
+  "processAlive": true,
+  "httpStatus": 200,
+  "mainDoesNotServe32": true
+}

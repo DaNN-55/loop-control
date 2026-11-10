@@ -1,0 +1,17 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/workspace/EpisodeDeletionScope.test.tsx src/sharedViews.test.tsx src/workspace/EpisodeWorkspace.filters.test.tsx src/local-app/LocalCatalogApp.workspace.test.tsx --maxWorkers=2
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control/.scratch/deletion-scope-review-20261110/pending
+
+ ✓ src/sharedViews.test.tsx (11 tests) 487ms
+ ✓ src/workspace/EpisodeWorkspace.filters.test.tsx (2 tests) 91ms
+ ✓ src/workspace/EpisodeDeletionScope.test.tsx (4 tests) 27ms
+ ✓ src/local-app/LocalCatalogApp.workspace.test.tsx (10 tests) 2062ms
+   ✓ 保留安全弹窗焦点，从所有者菜单打开连接配置且跨页保留连接草稿  434ms
+   ✓ keeps one topbar instance and places the Owner menu after theme in workspace and episode  415ms
+
+ Test Files  4 passed (4)
+      Tests  27 passed (27)
+   Start at  12:59:47
+   Duration  4.12s (transform 475ms, setup 18ms, collect 3.31s, tests 2.67s, environment 833ms, prepare 113ms)
+

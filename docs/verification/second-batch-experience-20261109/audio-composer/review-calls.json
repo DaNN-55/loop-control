@@ -1,0 +1,168 @@
+[
+  {
+    "command": "adoptWorkspaceAudio",
+    "data": {
+      "episodeId": "bb6626ec-e4f1-42bf-b829-f2ec7c00c43f",
+      "workspaceId": "a978f1e6-ee1b-4b2d-8d92-539472c1c93c",
+      "expectedRevision": 3,
+      "preparationId": "ebefef05-63df-432a-8c41-e83a79277bf7"
+    }
+  },
+  {
+    "command": "mixWorkspaceAudio",
+    "data": {
+      "episodeId": "bb6626ec-e4f1-42bf-b829-f2ec7c00c43f",
+      "workspaceId": "a978f1e6-ee1b-4b2d-8d92-539472c1c93c",
+      "expectedRevision": 4,
+      "edit": {
+        "kind": "sound",
+        "workspaceId": "a978f1e6-ee1b-4b2d-8d92-539472c1c93c",
+        "itemId": "workspace-sfx-ebefef05-63df-432a-8c41-e83a79277bf7",
+        "gainDb": -8,
+        "duckDepthDb": 0,
+        "placement": {
+          "anchor": "shot",
+          "shotId": "shot-01",
+          "offsetSeconds": 0.2,
+          "durationSeconds": 1.2
+        }
+      }
+    }
+  },
+  {
+    "command": "adoptWorkspaceAudio",
+    "data": {
+      "episodeId": "bb6626ec-e4f1-42bf-b829-f2ec7c00c43f",
+      "workspaceId": "a978f1e6-ee1b-4b2d-8d92-539472c1c93c",
+      "expectedRevision": 5,
+      "preparationId": "3c7097b9-86a4-400d-9af2-83f08ddc61e4"
+    }
+  },
+  {
+    "command": "mixWorkspaceAudio",
+    "data": {
+      "episodeId": "bb6626ec-e4f1-42bf-b829-f2ec7c00c43f",
+      "workspaceId": "a978f1e6-ee1b-4b2d-8d92-539472c1c93c",
+      "expectedRevision": 6,
+      "edit": {
+        "kind": "sound",
+        "workspaceId": "a978f1e6-ee1b-4b2d-8d92-539472c1c93c",
+        "itemId": "workspace-sfx-3c7097b9-86a4-400d-9af2-83f08ddc61e4",
+        "gainDb": -10,
+        "duckDepthDb": 4,
+        "placement": {
+          "anchor": "shot",
+          "shotId": "shot-01",
+          "offsetSeconds": 0.8,
+          "durationSeconds": 0.6
+        }
+      }
+    }
+  },
+  {
+    "command": "adoptWorkspaceAudio",
+    "data": {
+      "episodeId": "bb6626ec-e4f1-42bf-b829-f2ec7c00c43f",
+      "workspaceId": "a978f1e6-ee1b-4b2d-8d92-539472c1c93c",
+      "expectedRevision": 7,
+      "preparationId": "9edf75d3-a21e-49cf-bc92-22eb713a2a31"
+    }
+  },
+  {
+    "command": "mixWorkspaceAudio",
+    "data": {
+      "episodeId": "bb6626ec-e4f1-42bf-b829-f2ec7c00c43f",
+      "workspaceId": "a978f1e6-ee1b-4b2d-8d92-539472c1c93c",
+      "expectedRevision": 8,
+      "edit": {
+        "kind": "sound",
+        "workspaceId": "a978f1e6-ee1b-4b2d-8d92-539472c1c93c",
+        "itemId": "workspace-bgm",
+        "gainDb": -12,
+        "duckDepthDb": 10,
+        "placement": {
+          "anchor": "absolute",
+          "shotId": "shot-01",
+          "offsetSeconds": 0.5,
+          "durationSeconds": 2.5
+        }
+      }
+    }
+  },
+  {
+    "command": "mixWorkspaceAudio",
+    "data": {
+      "episodeId": "bb6626ec-e4f1-42bf-b829-f2ec7c00c43f",
+      "workspaceId": "a978f1e6-ee1b-4b2d-8d92-539472c1c93c",
+      "expectedRevision": 9,
+      "edit": {
+        "kind": "sound",
+        "workspaceId": "a978f1e6-ee1b-4b2d-8d92-539472c1c93c",
+        "itemId": "workspace-bgm",
+        "gainDb": -12,
+        "duckDepthDb": 10,
+        "placement": {
+          "anchor": "absolute",
+          "shotId": "shot-01",
+          "offsetSeconds": 0.5,
+          "durationSeconds": 99
+        }
+      }
+    }
+  },
+  {
+    "command": "mixWorkspaceAudio",
+    "data": {
+      "episodeId": "bb6626ec-e4f1-42bf-b829-f2ec7c00c43f",
+      "workspaceId": "a978f1e6-ee1b-4b2d-8d92-539472c1c93c",
+      "expectedRevision": 9,
+      "edit": {
+        "kind": "sound",
+        "workspaceId": "a978f1e6-ee1b-4b2d-8d92-539472c1c93c",
+        "itemId": "workspace-bgm",
+        "gainDb": -12,
+        "duckDepthDb": 10,
+        "placement": {
+          "anchor": "absolute",
+          "shotId": "shot-01",
+          "offsetSeconds": 0.5,
+          "durationSeconds": 2.5
+        }
+      }
+    }
+  },
+  {
+    "command": "importMaterial",
+    "data": {
+      "episodeId": "bb6626ec-e4f1-42bf-b829-f2ec7c00c43f",
+      "materialType": "audio",
+      "sourceKind": "file",
+      "sourcePath": "local-music.mp3",
+      "mimeType": "audio/mpeg",
+      "isMainScript": false,
+      "materialPurpose": "background_music"
+    }
+  },
+  {
+    "command": "prepareWorkspaceAudio",
+    "data": {
+      "episodeId": "bb6626ec-e4f1-42bf-b829-f2ec7c00c43f",
+      "workspaceId": "a978f1e6-ee1b-4b2d-8d92-539472c1c93c",
+      "expectedRevision": 9,
+      "kind": "bgm",
+      "description": "local-music.mp3",
+      "materialRevisionId": "3bafcde0-69e7-40a4-a646-99010060dec8",
+      "durationSeconds": 4,
+      "anchor": "absolute",
+      "offsetSeconds": 0
+    }
+  },
+  {
+    "command": "openWorkspaceStudio",
+    "data": {
+      "episodeId": "bb6626ec-e4f1-42bf-b829-f2ec7c00c43f",
+      "workspaceId": "a978f1e6-ee1b-4b2d-8d92-539472c1c93c",
+      "expectedRevision": 9
+    }
+  }
+]

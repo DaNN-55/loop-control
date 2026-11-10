@@ -1,0 +1,17 @@
+{
+  "pid": 47238,
+  "release": "2d19bd0ce5ee0e56ffe458c5bc57852654102a31cf9da62776d104193409df2d",
+  "version": "157-deletion-cleanup-diagnostics.sql",
+  "activeRuntimeIntegrityPassed": true,
+  "businessTablesUnchanged": 5,
+  "http": [
+    {
+      "port": 5174,
+      "status": 200
+    },
+    {
+      "port": 5201,
+      "status": 200
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/EmbeddedStudioHost.test.tsx src/local-app/ProductionWorkspacePanel.navigation.test.tsx
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/EmbeddedStudioHost.test.tsx (13 tests) 490ms
+ ✓ src/local-app/ProductionWorkspacePanel.navigation.test.tsx (1 test) 118ms
+
+ Test Files  2 passed (2)
+      Tests  14 passed (14)
+   Start at  07:54:10
+   Duration  3.36s (transform 713ms, setup 31ms, collect 3.56s, tests 608ms, environment 968ms, prepare 208ms)
+

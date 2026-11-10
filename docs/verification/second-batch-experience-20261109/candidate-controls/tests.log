@@ -1,0 +1,139 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/WorkspaceVisualAdoption.test.tsx src/local-app/WorkspaceImageOptions.test.tsx src/local-app/WorkspaceVisualCandidatesPanel.test.tsx src/local-app/WorkspaceVisualFeedback.test.tsx src/local-app/WorkspaceSecondBatch.test.tsx
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control/.scratch/candidate-controls-review-20261109/pending
+
+stderr | src/local-app/WorkspaceVisualCandidatesPanel.test.tsx > preserves each target’s generation draft across tabs and shot selection
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/local-app/WorkspaceVisualCandidatesPanel.test.tsx > image thumbnails preview without adopting or changing the explicitly chosen video first frame
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/local-app/WorkspaceImageOptions.test.tsx > keeps direct image adoption primary and first-frame selection explicit
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/local-app/WorkspaceVisualAdoption.test.tsx (7 tests) 515ms
+stderr | src/local-app/WorkspaceSecondBatch.test.tsx > keeps a prepared local candidate available for audition without offering duplicate preparation
+An update to EditableWorkspaceAudioPreparation inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/local-app/WorkspaceSecondBatch.test.tsx (9 tests) 446ms
+ ✓ src/local-app/WorkspaceVisualFeedback.test.tsx (5 tests) 596ms
+   ✓ only signals adoption after a successful response (failed=false)  387ms
+ ✓ src/local-app/WorkspaceImageOptions.test.tsx (5 tests) 805ms
+   ✓ submits pixel resolution, ordered reference instructions and composition in one frozen generation request  401ms
+stderr | src/local-app/WorkspaceVisualCandidatesPanel.test.tsx > keeps 视频 candidate actions without a generation settings entry
+An update to ForwardRef(VolumeSliderRoot) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/local-app/WorkspaceVisualCandidatesPanel.test.tsx > keeps a cleared image override blank across target switches and reopening with a legacy default
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/local-app/WorkspaceVisualCandidatesPanel.test.tsx > keeps a cleared video override blank across target switches and reopening with a legacy default
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/local-app/WorkspaceVisualCandidatesPanel.test.tsx > keeps a cleared Pexels connection and query across target switches and reopening without searching
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/local-app/WorkspaceVisualCandidatesPanel.test.tsx > requires explicit video selection and adoption and preserves old candidates on append
+An update to ForwardRef(VolumeSliderRoot) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/local-app/WorkspaceVisualCandidatesPanel.test.tsx > switches video generation and Pexels in one picker while preserving independent drafts and search settings
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/local-app/WorkspaceVisualCandidatesPanel.test.tsx (27 tests) 2428ms
+   ✓ explicit image generation freezes reference IDs, count, quality and dimensions without adopting  347ms
+
+ Test Files  5 passed (5)
+      Tests  53 passed (53)
+   Start at  21:00:30
+   Duration  4.69s (transform 537ms, setup 103ms, collect 8.50s, tests 4.79s, environment 1.87s, prepare 261ms)
+

@@ -1,0 +1,91 @@
+--- before/LocalDeletionRecovery.tsx
++++ after/LocalDeletionRecovery.tsx
+@@ -30,26 +30,27 @@
+    if(!result.cleanupPending){onResolved?.(item.cleanupKey);onChanged?.();}
+    if(!mounted.current)return;
+    if(result.cleanupPending)setMessages(current=>({...current,[item.cleanupKey]:result.message??'文件处理尚未完成，请检查原位置后重试。'}));
+-   else{setItems(current=>current?.filter(row=>row.cleanupKey!==item.cleanupKey)??[]);setNotice(result.recovered?'未提交的删除已恢复，请重新核对范围后再删除。':'文件清理已完成。');}
++   else{setItems(current=>current?.filter(row=>row.cleanupKey!==item.cleanupKey)??[]);setNotice(result.recovered?'文件已恢复，请重新核对后再删除。':'文件清理已完成。');}
+    await refresh();
+   }catch(reason){if(mounted.current)setMessages(current=>({...current,[item.cleanupKey]:reason instanceof Error?reason.message:'处理未确认完成，请重新读取任务后再试。'}));}
+   finally{busy.current=false;if(mounted.current)setPending('');}
+  }
+  return <section className="deletion-cleanup-panel" aria-label="待处理的文件清理">
+-  <div className="deletion-cleanup-toolbar"><h3>待完成删除</h3><Button size="sm" color="secondary" aria-label="刷新清理任务" isDisabled={loading||!!pending} onPress={()=>void refresh()}>刷新</Button></div>
+   {notice&&<p role="status" className="deletion-cleanup-success">{notice}</p>}
+   {error&&<p role="alert" className="deletion-cleanup-error">{error}</p>}
+   {items===null&&loading&&<p role="status">正在读取清理任务…</p>}
+-  {items?.length===0&&!error&&!notice&&<p className="deletion-cleanup-empty">没有待处理的清理任务。</p>}
++  {items?.length===0&&!error&&!notice&&<p className="deletion-cleanup-empty">暂无待处理任务。</p>}
+   {targetKey&&items&&!loading&&!error&&!items.some(item=>item.cleanupKey===targetKey)&&<p role="status">该任务当前不在待处理列表中。</p>}
+   <div ref={list}>{items?.map(item=>{
+-   const prepared=item.phase==='prepared',message=messages[item.cleanupKey]||item.message;
++   const prepared=item.phase==='prepared';
++   const message=messages[item.cleanupKey]||(prepared&&item.message==='删除尚未提交，可恢复已暂存的文件。'?'':item.message);
+    return <article className="deletion-cleanup-task" data-cleanup-key={item.cleanupKey} data-targeted={item.cleanupKey===targetKey||undefined} tabIndex={-1} key={item.cleanupKey} aria-label={item.title||'未命名生产单'}>
+-    <header><div><h4>{item.title||'未命名生产单'}</h4><span>{prepared?'删除尚未提交':'记录已删除 · 文件待清理'}</span></div><Button size="sm" color="secondary" isDisabled={!!pending||loading} isLoading={pending===item.cleanupKey} showTextWhileLoading onPress={()=>void retry(item)}>{pending===item.cleanupKey?(prepared?'恢复中…':'清理中…'):prepared?'恢复未提交的删除':'重试文件清理'}</Button></header>
++    <header><div><h3>{item.title||'未命名生产单'}</h3><span>{prepared?'删除未生效':'记录已删除'}</span></div><Button size="sm" color="secondary" isDisabled={!!pending||loading} isLoading={pending===item.cleanupKey} showTextWhileLoading onPress={()=>void retry(item)}>{pending===item.cleanupKey?(prepared?'恢复中…':'清理中…'):prepared?'恢复文件':'继续清理'}</Button></header>
+     {message&&<p role={messages[item.cleanupKey]?'alert':undefined}>{message}</p>}
+-    <details><summary>查看处理位置</summary><dl><dt>原位置</dt><dd>{(item.paths??[item.path]).map(path=><code key={path}>{path}</code>)}</dd><dt>暂存位置</dt><dd>{(item.stagingPaths??(item.stagingPath?[item.stagingPath]:[])).map(path=><code key={path}>{path}</code>)}</dd></dl></details>
++    <details><summary>查看位置</summary><dl><dt>原位置</dt><dd>{(item.paths??[item.path]).map(path=><code key={path}>{path}</code>)}</dd><dt>暂存位置</dt><dd>{(item.stagingPaths??(item.stagingPath?[item.stagingPath]:[])).map(path=><code key={path}>{path}</code>)}</dd></dl></details>
+    </article>;
+   })}</div>
++  <div className="deletion-cleanup-toolbar"><Button size="sm" color="tertiary" aria-label="刷新清理任务" isDisabled={loading||!!pending} onPress={()=>void refresh()}>刷新</Button></div>
+  </section>;
+ }
+ export function DeletionCleanupDialog({onClose,returnFocusRef,...props}:RecoveryProps&{onClose:()=>void;returnFocusRef:RefObject<HTMLElement|null>}){
+--- before/deletion-cleanup.css
++++ after/deletion-cleanup.css
+@@ -2,13 +2,12 @@
+ .deletion-cleanup-dialog>header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--lc-line)}
+ .deletion-cleanup-dialog h2{margin:0;font-size:18px;font-weight:600}
+ .deletion-cleanup-body{min-height:0;overflow:auto;overscroll-behavior:contain;padding-top:12px}
+-.deletion-cleanup-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+-.deletion-cleanup-toolbar h3{margin:0;font-size:13px;font-weight:600}
++.deletion-cleanup-toolbar{display:flex;align-items:center;justify-content:flex-end;margin-top:8px}
+ .deletion-cleanup-task{padding:12px 0;border-top:1px solid var(--lc-line);outline:none;min-width:0}
+ .deletion-cleanup-task:first-child{border-top:0}
+ .deletion-cleanup-task:focus-visible{outline:2px solid var(--lc-accent);outline-offset:-2px;border-radius:6px}
+ .deletion-cleanup-task>header{display:flex;justify-content:space-between;align-items:center;gap:12px}
+-.deletion-cleanup-task h4{font-size:14px;margin:0 0 4px;font-weight:600;overflow-wrap:anywhere}
++.deletion-cleanup-task h3{font-size:14px;margin:0 0 4px;font-weight:600;overflow-wrap:anywhere}
+ .deletion-cleanup-task header span,.deletion-cleanup-task summary{font-size:12px;color:var(--lc-muted)}
+ .deletion-cleanup-task header>button{flex:none}
+ .deletion-cleanup-task p,.deletion-cleanup-panel>p{font-size:13px;line-height:1.7;overflow-wrap:anywhere;margin:8px 0}
+--- before/LocalDeletionRecovery.test.tsx
++++ after/LocalDeletionRecovery.test.tsx
+@@ -10,22 +10,28 @@
+ it('reads durable tasks without retrying, distinguishes actions and focuses the requested task',async()=>{
+  vi.mocked(localRequest).mockResolvedValue([prepared,committed]);render(<LocalDeletionRecovery revision={1} targetKey={committed.cleanupKey}/>);
+  const target=await screen.findByRole('article',{name:committed.title});expect(document.activeElement).toBe(target);
+- expect(within(target).getByRole('button',{name:'重试文件清理'})).toBeTruthy();expect(screen.getByRole('button',{name:'恢复未提交的删除'})).toBeTruthy();expect(localCommand).not.toHaveBeenCalled();
++ expect(within(target).getByRole('button',{name:'继续清理'})).toBeTruthy();expect(screen.getByRole('button',{name:'恢复文件'})).toBeTruthy();expect(localCommand).not.toHaveBeenCalled();
++ expect(screen.queryByRole('heading',{name:'待完成删除'})).toBeNull();expect(screen.queryByText(prepared.message)).toBeNull();expect(screen.getByText('删除未生效')).toBeTruthy();expect(screen.getByText('记录已删除')).toBeTruthy();
+ });
+ it('restores an uncommitted task once even when clicked twice and leaves other tasks alone',async()=>{
+  vi.mocked(localRequest).mockResolvedValueOnce([prepared,committed]).mockResolvedValue([committed]);let finish!:(value:any)=>void;
+  vi.mocked(localCommand).mockImplementation(()=>new Promise(resolve=>{finish=resolve;}) as any);const onResolved=vi.fn();render(<LocalDeletionRecovery revision={1} onResolved={onResolved}/>);
+- const button=await screen.findByRole('button',{name:'恢复未提交的删除'});fireEvent.click(button);fireEvent.click(button);expect(localCommand).toHaveBeenCalledTimes(1);expect(localCommand).toHaveBeenCalledWith('retryDeletionCleanup',{deletionKey:prepared.cleanupKey},undefined,'episode-lifecycle');
+- finish({cleanupPending:false,recovered:true});await screen.findByText('未提交的删除已恢复，请重新核对范围后再删除。');expect(onResolved).toHaveBeenCalledWith(prepared.cleanupKey);expect(screen.queryByRole('article',{name:prepared.title})).toBeNull();expect(screen.getByRole('article',{name:committed.title})).toBeTruthy();
++ const button=await screen.findByRole('button',{name:'恢复文件'});fireEvent.click(button);fireEvent.click(button);expect(localCommand).toHaveBeenCalledTimes(1);expect(localCommand).toHaveBeenCalledWith('retryDeletionCleanup',{deletionKey:prepared.cleanupKey},undefined,'episode-lifecycle');
++ finish({cleanupPending:false,recovered:true});await screen.findByText('文件已恢复，请重新核对后再删除。');expect(onResolved).toHaveBeenCalledWith(prepared.cleanupKey);expect(screen.queryByRole('article',{name:prepared.title})).toBeNull();expect(screen.getByRole('article',{name:committed.title})).toBeTruthy();
+ });
+ it('keeps the task and full failure message when cleanup remains pending, then reports confirmed completion',async()=>{
+  vi.mocked(localRequest).mockResolvedValueOnce([committed]).mockResolvedValueOnce([committed]).mockResolvedValue([]);vi.mocked(localCommand).mockResolvedValueOnce({cleanupPending:true,message:'目录身份已变化，请检查原位置后重试。'}).mockResolvedValueOnce({cleanupPending:false});const user=userEvent.setup();render(<LocalDeletionRecovery revision={1}/>);
+- await user.click(await screen.findByRole('button',{name:'重试文件清理'}));expect((await screen.findByRole('alert')).textContent).toContain('目录身份已变化');expect(screen.getByRole('article',{name:committed.title})).toBeTruthy();
+- await waitFor(()=>expect((screen.getByRole('button',{name:'重试文件清理'})as HTMLButtonElement).disabled).toBe(false));await user.click(screen.getByRole('button',{name:'重试文件清理'}));await screen.findByText('文件清理已完成。');expect(screen.queryByRole('article')).toBeNull();
++ await user.click(await screen.findByRole('button',{name:'继续清理'}));expect((await screen.findByRole('alert')).textContent).toContain('目录身份已变化');expect(screen.getByRole('article',{name:committed.title})).toBeTruthy();
++ await waitFor(()=>expect((screen.getByRole('button',{name:'继续清理'})as HTMLButtonElement).disabled).toBe(false));await user.click(screen.getByRole('button',{name:'继续清理'}));await screen.findByText('文件清理已完成。');expect(screen.queryByRole('article')).toBeNull();
+ });
+ it('shows read failures and a working refresh without presenting them as an empty queue',async()=>{
+- vi.mocked(localRequest).mockRejectedValueOnce(new Error('读取失败。')).mockResolvedValue([]);const user=userEvent.setup();render(<LocalDeletionRecovery revision={1}/>);expect((await screen.findByRole('alert')).textContent).toBe('读取失败。');expect(screen.queryByText('没有待处理的清理任务。')).toBeNull();await user.click(screen.getByRole('button',{name:'刷新清理任务'}));await screen.findByText('没有待处理的清理任务。');expect(screen.queryByRole('alert')).toBeNull();
++ vi.mocked(localRequest).mockRejectedValueOnce(new Error('读取失败。')).mockResolvedValue([]);const user=userEvent.setup();render(<LocalDeletionRecovery revision={1}/>);expect((await screen.findByRole('alert')).textContent).toBe('读取失败。');expect(screen.queryByText('暂无待处理任务。')).toBeNull();await user.click(screen.getByRole('button',{name:'刷新清理任务'}));await screen.findByText('暂无待处理任务。');expect(screen.queryByRole('alert')).toBeNull();
+ });
+ it('does not replace a newer queue with a late previous response',async()=>{
+  let old!:(value:any)=>void;vi.mocked(localRequest).mockImplementationOnce(()=>new Promise(resolve=>{old=resolve;})).mockResolvedValue([committed]);const view=render(<LocalDeletionRecovery revision={1}/>);view.rerender(<LocalDeletionRecovery revision={2}/>);await screen.findByRole('article',{name:committed.title});old([prepared]);await waitFor(()=>expect(screen.queryByRole('article',{name:prepared.title})).toBeNull());expect(screen.getByRole('article',{name:committed.title})).toBeTruthy();
+ });
++
++it('keeps a concrete prepared recovery failure visible while removing only the normal explanation',async()=>{
++ const failure='文件恢复尚未完成：原位置已存在文件，请先检查。';vi.mocked(localRequest).mockResolvedValue([{...prepared,message:failure}]);render(<LocalDeletionRecovery revision={1}/>);
++ await screen.findByText(failure);expect(screen.getByRole('button',{name:'恢复文件'})).toBeTruthy();expect(screen.getByText('查看位置')).toBeTruthy();
++});

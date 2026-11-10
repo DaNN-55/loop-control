@@ -1,0 +1,1557 @@
+{
+  "capCents": 3000,
+  "reservedCents": 3151,
+  "billingVerified": false,
+  "results": [
+    {
+      "provider": "openai",
+      "model": "gpt-image-2",
+      "ceiling": 50,
+      "startedAt": "2026-11-09T08:24:23.056Z",
+      "status": "completed",
+      "events": [
+        {
+          "operation": "submit",
+          "at": "2026-11-09T08:24:23.138Z",
+          "http": 200,
+          "durationMs": 11409,
+          "usage": {
+            "input_tokens": 30,
+            "input_tokens_details": {
+              "image_tokens": 0,
+              "text_tokens": 30
+            },
+            "output_tokens": 196,
+            "output_tokens_details": {
+              "image_tokens": 196,
+              "text_tokens": 0
+            },
+            "total_tokens": 226
+          }
+        }
+      ],
+      "settings": {
+        "size": "1024x1024",
+        "quality": "low",
+        "count": 1
+      },
+      "reservedCents": 50,
+      "bytes": 1372982,
+      "artifact": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-model-matrix-20261109-ncpdpm7s/artifacts/gpt-image-2.png",
+      "endedAt": "2026-11-09T08:24:36.280Z",
+      "durationMs": 13223
+    },
+    {
+      "provider": "bailian",
+      "model": "wan2.6-i2v",
+      "ceiling": 144,
+      "startedAt": "2026-11-09T08:24:23.057Z",
+      "status": "completed",
+      "events": [
+        {
+          "operation": "submit",
+          "at": "2026-11-09T08:24:23.136Z",
+          "http": 200,
+          "durationMs": 288,
+          "taskStatus": "PENDING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:24:23.348Z",
+          "http": 200,
+          "durationMs": 399,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:24:28.460Z",
+          "http": 200,
+          "durationMs": 5551,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:24:34.613Z",
+          "http": 200,
+          "durationMs": 11689,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:24:41.752Z",
+          "http": 200,
+          "durationMs": 18874,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:24:49.938Z",
+          "http": 200,
+          "durationMs": 27022,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:24:59.086Z",
+          "http": 200,
+          "durationMs": 36179,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:25:09.241Z",
+          "http": 200,
+          "durationMs": 46320,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:25:19.383Z",
+          "http": 200,
+          "durationMs": 56563,
+          "usage": {
+            "video_count": 1,
+            "duration": 2,
+            "SR": 720,
+            "input_video_duration": 0,
+            "output_video_duration": 2
+          },
+          "taskStatus": "SUCCEEDED"
+        },
+        {
+          "operation": "read",
+          "at": "2026-11-09T08:25:19.623Z",
+          "http": 200,
+          "durationMs": 56676
+        }
+      ],
+      "settings": {
+        "resolution": "720P",
+        "audio": true,
+        "promptExtend": false,
+        "shotType": "single",
+        "watermark": false,
+        "negativePrompt": "",
+        "durationSeconds": 2
+      },
+      "reservedCents": 144,
+      "providerTaskId": "6dcab035-3b04-4dd2-9786-419eceb4faee",
+      "phase": "saving",
+      "bytes": 475905,
+      "artifact": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-model-matrix-20261109-ncpdpm7s/artifacts/wan2.6-i2v.mp4",
+      "endedAt": "2026-11-09T08:25:19.783Z",
+      "durationMs": 56726
+    },
+    {
+      "provider": "volcengine",
+      "model": "doubao-seedance-2-0-260128",
+      "ceiling": 200,
+      "startedAt": "2026-11-09T08:24:23.057Z",
+      "status": "supplier_rejected",
+      "events": [
+        {
+          "operation": "submit",
+          "at": "2026-11-09T08:24:23.136Z",
+          "http": 404,
+          "durationMs": 399,
+          "supplierError": "Your account 2122604467 has not activated the model doubao-seedance-2-0-260128. Please activate the model service in the Ark Console. Request id: 0217942126632302fe30231c3416749cd01035ba2ea7b6143ccf3"
+        }
+      ],
+      "settings": {
+        "durationSeconds": 4,
+        "resolution": "720p",
+        "mode": "first-frame"
+      },
+      "reservedCents": 200,
+      "definiteRejection": true,
+      "error": "火山方舟 Seedance 提交失败（HTTP 404，Not Found）：Your account 2122604467 has not activated the model doubao-seedance-2-0-260128. Please activate the model service in the Ark Console. Request id: 0217942126632302fe30231c3416749cd01035ba2ea7b6143ccf3",
+      "endedAt": "2026-11-09T08:24:23.458Z",
+      "durationMs": 400
+    },
+    {
+      "provider": "kling",
+      "model": "kling-v3",
+      "ceiling": 220,
+      "startedAt": "2026-11-09T08:24:23.057Z",
+      "status": "supplier_rejected",
+      "events": [
+        {
+          "operation": "submit",
+          "at": "2026-11-09T08:24:23.137Z",
+          "http": 429,
+          "durationMs": 1551,
+          "code": 1102,
+          "supplierError": "Account balance not enough"
+        }
+      ],
+      "settings": {
+        "durationSeconds": 3,
+        "resolution": "720P",
+        "mode": "first-frame"
+      },
+      "reservedCents": 220,
+      "error": "可灵 Kling 3.0 提交失败（HTTP 429，1102）：Account balance not enough 请求编号 0feaccbf-7268-4ab7-a65a-1e912be824ea",
+      "endedAt": "2026-11-09T08:24:24.609Z",
+      "durationMs": 1552
+    },
+    {
+      "provider": "freesound",
+      "model": "freesound-preview",
+      "ceiling": 0,
+      "startedAt": "2026-11-09T08:24:23.057Z",
+      "status": "completed",
+      "events": [
+        {
+          "operation": "read",
+          "at": "2026-11-09T08:24:23.114Z",
+          "http": 200,
+          "durationMs": 1848
+        }
+      ],
+      "search": {
+        "id": 618605,
+        "title": "Mournful ePiano Loop version 10 (+87 cents) 130 BPM.wav",
+        "license": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "endedAt": "2026-11-09T08:24:25.235Z",
+      "durationMs": 2178
+    },
+    {
+      "provider": "pexels",
+      "model": "pexels-video",
+      "ceiling": 0,
+      "startedAt": "2026-11-09T08:24:23.057Z",
+      "status": "completed",
+      "events": [
+        {
+          "operation": "read",
+          "at": "2026-11-09T08:24:23.114Z",
+          "http": 200,
+          "durationMs": 1194
+        }
+      ],
+      "search": {
+        "id": 32200251,
+        "durationSeconds": 9
+      },
+      "endedAt": "2026-11-09T08:24:24.266Z",
+      "durationMs": 1209
+    },
+    {
+      "provider": "volcengine",
+      "model": "doubao-seedance-2-5-260628",
+      "ceiling": 250,
+      "startedAt": "2026-11-09T08:24:23.458Z",
+      "status": "supplier_rejected",
+      "events": [
+        {
+          "operation": "submit",
+          "at": "2026-11-09T08:24:23.472Z",
+          "http": 404,
+          "durationMs": 347,
+          "supplierError": "Your account 2122604467 has not activated the model doubao-seedance-2-5-260628. Please activate the model service in the Ark Console. Request id: 0217942126634942fe30231c3416749cd01035ba2ea7b618d8650"
+        }
+      ],
+      "settings": {
+        "durationSeconds": 4,
+        "resolution": "720p",
+        "mode": "first-frame"
+      },
+      "reservedCents": 250,
+      "definiteRejection": true,
+      "error": "火山方舟 Seedance 提交失败（HTTP 404，Not Found）：Your account 2122604467 has not activated the model doubao-seedance-2-5-260628. Please activate the model service in the Ark Console. Request id: 0217942126634942fe30231c3416749cd01035ba2ea7b618d8650",
+      "endedAt": "2026-11-09T08:24:23.808Z",
+      "durationMs": 349
+    },
+    {
+      "provider": "kling",
+      "model": "kling-v3-omni",
+      "ceiling": 400,
+      "startedAt": "2026-11-09T08:24:24.609Z",
+      "status": "supplier_rejected",
+      "events": [
+        {
+          "operation": "submit",
+          "at": "2026-11-09T08:24:24.623Z",
+          "http": 429,
+          "durationMs": 1701,
+          "code": 1102,
+          "supplierError": "Account balance not enough"
+        }
+      ],
+      "settings": {
+        "durationSeconds": 3,
+        "resolution": "720P",
+        "mode": "references"
+      },
+      "reservedCents": 400,
+      "error": "可灵 Kling 3.0 提交失败（HTTP 429，1102）：Account balance not enough 请求编号 fe532cee-19be-44bd-9aa2-de065f0497ca",
+      "endedAt": "2026-11-09T08:24:26.314Z",
+      "durationMs": 1704
+    },
+    {
+      "provider": "openai",
+      "model": "gpt-image-2.5-sunburst",
+      "ceiling": 50,
+      "startedAt": "2026-11-09T08:24:36.281Z",
+      "status": "completed",
+      "events": [
+        {
+          "operation": "submit",
+          "at": "2026-11-09T08:24:36.301Z",
+          "http": 200,
+          "durationMs": 8776,
+          "usage": {
+            "input_tokens": 30,
+            "input_tokens_details": {
+              "image_tokens": 0,
+              "text_tokens": 30
+            },
+            "output_tokens": 196,
+            "output_tokens_details": {
+              "image_tokens": 196,
+              "text_tokens": 0
+            },
+            "total_tokens": 226
+          }
+        }
+      ],
+      "settings": {
+        "size": "1024x1024",
+        "quality": "low",
+        "count": 1
+      },
+      "reservedCents": 50,
+      "bytes": 1192318,
+      "artifact": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-model-matrix-20261109-ncpdpm7s/artifacts/gpt-image-2.5-sunburst.png",
+      "endedAt": "2026-11-09T08:24:45.656Z",
+      "durationMs": 9375
+    },
+    {
+      "provider": "openai",
+      "model": "gpt-image-2.5-flare",
+      "ceiling": 50,
+      "startedAt": "2026-11-09T08:24:45.657Z",
+      "status": "completed",
+      "events": [
+        {
+          "operation": "submit",
+          "at": "2026-11-09T08:24:45.683Z",
+          "http": 200,
+          "durationMs": 9331,
+          "usage": {
+            "input_tokens": 30,
+            "input_tokens_details": {
+              "image_tokens": 0,
+              "text_tokens": 30
+            },
+            "output_tokens": 196,
+            "output_tokens_details": {
+              "image_tokens": 196,
+              "text_tokens": 0
+            },
+            "total_tokens": 226
+          }
+        }
+      ],
+      "settings": {
+        "size": "1024x1024",
+        "quality": "low",
+        "count": 1
+      },
+      "reservedCents": 50,
+      "bytes": 1150070,
+      "artifact": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-model-matrix-20261109-ncpdpm7s/artifacts/gpt-image-2.5-flare.png",
+      "endedAt": "2026-11-09T08:24:55.463Z",
+      "durationMs": 9805
+    },
+    {
+      "provider": "openai",
+      "model": "gpt-image-2.5-sunburst-2026-09-08",
+      "ceiling": 50,
+      "startedAt": "2026-11-09T08:24:55.463Z",
+      "status": "completed",
+      "events": [
+        {
+          "operation": "submit",
+          "at": "2026-11-09T08:24:55.487Z",
+          "http": 200,
+          "durationMs": 9140,
+          "usage": {
+            "input_tokens": 30,
+            "input_tokens_details": {
+              "image_tokens": 0,
+              "text_tokens": 30
+            },
+            "output_tokens": 196,
+            "output_tokens_details": {
+              "image_tokens": 196,
+              "text_tokens": 0
+            },
+            "total_tokens": 226
+          }
+        }
+      ],
+      "settings": {
+        "size": "1024x1024",
+        "quality": "low",
+        "count": 1
+      },
+      "reservedCents": 50,
+      "bytes": 1218178,
+      "artifact": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-model-matrix-20261109-ncpdpm7s/artifacts/gpt-image-2.5-sunburst-2026-09-08.png",
+      "endedAt": "2026-11-09T08:25:05.305Z",
+      "durationMs": 9840
+    },
+    {
+      "provider": "openai",
+      "model": "gpt-image-2.5-flare-2026-09-08",
+      "ceiling": 50,
+      "startedAt": "2026-11-09T08:25:05.306Z",
+      "status": "completed",
+      "events": [
+        {
+          "operation": "submit",
+          "at": "2026-11-09T08:25:05.334Z",
+          "http": 200,
+          "durationMs": 9529,
+          "usage": {
+            "input_tokens": 30,
+            "input_tokens_details": {
+              "image_tokens": 0,
+              "text_tokens": 30
+            },
+            "output_tokens": 196,
+            "output_tokens_details": {
+              "image_tokens": 196,
+              "text_tokens": 0
+            },
+            "total_tokens": 226
+          }
+        }
+      ],
+      "settings": {
+        "size": "1024x1024",
+        "quality": "low",
+        "count": 1
+      },
+      "reservedCents": 50,
+      "bytes": 1358313,
+      "artifact": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-model-matrix-20261109-ncpdpm7s/artifacts/gpt-image-2.5-flare-2026-09-08.png",
+      "endedAt": "2026-11-09T08:25:16.487Z",
+      "durationMs": 11180
+    },
+    {
+      "provider": "openai",
+      "model": "gpt-image-2.6-sunburst",
+      "ceiling": 50,
+      "startedAt": "2026-11-09T08:25:16.488Z",
+      "status": "completed",
+      "events": [
+        {
+          "operation": "submit",
+          "at": "2026-11-09T08:25:16.517Z",
+          "http": 200,
+          "durationMs": 20217,
+          "usage": {
+            "input_tokens": 30,
+            "input_tokens_details": {
+              "image_tokens": 0,
+              "text_tokens": 30
+            },
+            "output_tokens": 824,
+            "output_tokens_details": {
+              "image_tokens": 824,
+              "text_tokens": 0
+            },
+            "total_tokens": 854
+          }
+        }
+      ],
+      "settings": {
+        "size": "1024x1024",
+        "quality": "low",
+        "count": 1
+      },
+      "reservedCents": 50,
+      "bytes": 1278464,
+      "artifact": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-model-matrix-20261109-ncpdpm7s/artifacts/gpt-image-2.6-sunburst.png",
+      "endedAt": "2026-11-09T08:25:38.029Z",
+      "durationMs": 21541
+    },
+    {
+      "provider": "bailian",
+      "model": "wan2.6-r2v",
+      "ceiling": 144,
+      "startedAt": "2026-11-09T08:25:19.784Z",
+      "status": "completed",
+      "events": [
+        {
+          "operation": "submit",
+          "at": "2026-11-09T08:25:19.815Z",
+          "http": 200,
+          "durationMs": 137,
+          "taskStatus": "PENDING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:25:19.924Z",
+          "http": 200,
+          "durationMs": 206,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:25:24.994Z",
+          "http": 200,
+          "durationMs": 5355,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:25:31.143Z",
+          "http": 200,
+          "durationMs": 11510,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:25:38.299Z",
+          "http": 200,
+          "durationMs": 18651,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:25:46.441Z",
+          "http": 200,
+          "durationMs": 27349,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:25:56.138Z",
+          "http": 200,
+          "durationMs": 36491,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:26:06.280Z",
+          "http": 200,
+          "durationMs": 46634,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:26:16.423Z",
+          "http": 200,
+          "durationMs": 56773,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:26:26.562Z",
+          "http": 200,
+          "durationMs": 67093,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:26:36.884Z",
+          "http": 200,
+          "durationMs": 77255,
+          "usage": {
+            "video_count": 1,
+            "duration": 2,
+            "size": "1280*720",
+            "SR": 720,
+            "output_video_duration": 2,
+            "input_video_duration": 0
+          },
+          "taskStatus": "SUCCEEDED"
+        },
+        {
+          "operation": "read",
+          "at": "2026-11-09T08:26:37.044Z",
+          "http": 200,
+          "durationMs": 77385
+        }
+      ],
+      "settings": {
+        "resolution": "720P",
+        "audio": true,
+        "promptExtend": false,
+        "shotType": "single",
+        "watermark": false,
+        "negativePrompt": "",
+        "durationSeconds": 2
+      },
+      "reservedCents": 144,
+      "providerTaskId": "9b4796cb-a13c-4451-9ee0-c2d55ae2703f",
+      "phase": "saving",
+      "bytes": 434304,
+      "artifact": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-model-matrix-20261109-ncpdpm7s/artifacts/wan2.6-r2v.mp4",
+      "endedAt": "2026-11-09T08:26:37.223Z",
+      "durationMs": 77438
+    },
+    {
+      "provider": "openai",
+      "model": "gpt-image-2.6-flare",
+      "ceiling": 50,
+      "startedAt": "2026-11-09T08:25:38.030Z",
+      "status": "completed",
+      "events": [
+        {
+          "operation": "submit",
+          "at": "2026-11-09T08:25:38.061Z",
+          "http": 200,
+          "durationMs": 5195,
+          "usage": {
+            "input_tokens": 30,
+            "input_tokens_details": {
+              "image_tokens": 0,
+              "text_tokens": 30
+            },
+            "output_tokens": 824,
+            "output_tokens_details": {
+              "image_tokens": 824,
+              "text_tokens": 0
+            },
+            "total_tokens": 854
+          }
+        }
+      ],
+      "settings": {
+        "size": "1024x1024",
+        "quality": "low",
+        "count": 1
+      },
+      "reservedCents": 50,
+      "bytes": 1230582,
+      "artifact": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-model-matrix-20261109-ncpdpm7s/artifacts/gpt-image-2.6-flare.png",
+      "endedAt": "2026-11-09T08:25:43.857Z",
+      "durationMs": 5824
+    },
+    {
+      "provider": "bailian",
+      "model": "wan2.6-i2v-flash",
+      "ceiling": 36,
+      "startedAt": "2026-11-09T08:26:37.223Z",
+      "status": "completed",
+      "events": [
+        {
+          "operation": "submit",
+          "at": "2026-11-09T08:26:37.243Z",
+          "http": 200,
+          "durationMs": 148,
+          "taskStatus": "PENDING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:26:37.374Z",
+          "http": 200,
+          "durationMs": 232,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:26:42.457Z",
+          "http": 200,
+          "durationMs": 5395,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:26:48.625Z",
+          "http": 200,
+          "durationMs": 11542,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:26:55.770Z",
+          "http": 200,
+          "durationMs": 18693,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:27:03.924Z",
+          "http": 200,
+          "durationMs": 26834,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:27:13.062Z",
+          "http": 200,
+          "durationMs": 35973,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:27:23.203Z",
+          "http": 200,
+          "durationMs": 46113,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:27:33.342Z",
+          "http": 200,
+          "durationMs": 56275,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:27:43.504Z",
+          "http": 200,
+          "durationMs": 66410,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:27:53.640Z",
+          "http": 200,
+          "durationMs": 76637,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:28:03.867Z",
+          "http": 200,
+          "durationMs": 86780,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:28:14.011Z",
+          "http": 200,
+          "durationMs": 96909,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:28:24.139Z",
+          "http": 200,
+          "durationMs": 107042,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:28:34.271Z",
+          "http": 200,
+          "durationMs": 117172,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:28:44.404Z",
+          "http": 200,
+          "durationMs": 127532,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:28:54.759Z",
+          "http": 200,
+          "durationMs": 137661,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:29:04.888Z",
+          "http": 200,
+          "durationMs": 147807,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:29:15.036Z",
+          "http": 200,
+          "durationMs": 158010,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:29:25.239Z",
+          "http": 200,
+          "durationMs": 168154,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:29:35.385Z",
+          "http": 200,
+          "durationMs": 178313,
+          "usage": {
+            "video_count": 1,
+            "duration": 2,
+            "SR": 720,
+            "input_video_duration": 0,
+            "output_video_duration": 2,
+            "audio": false
+          },
+          "taskStatus": "SUCCEEDED"
+        },
+        {
+          "operation": "read",
+          "at": "2026-11-09T08:29:35.542Z",
+          "http": 200,
+          "durationMs": 178436
+        }
+      ],
+      "settings": {
+        "resolution": "720P",
+        "audio": false,
+        "promptExtend": false,
+        "shotType": "single",
+        "watermark": false,
+        "negativePrompt": "",
+        "durationSeconds": 2
+      },
+      "reservedCents": 36,
+      "providerTaskId": "358fea7f-6a10-4a74-8888-65bcc6550e96",
+      "phase": "saving",
+      "bytes": 514635,
+      "artifact": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-model-matrix-20261109-ncpdpm7s/artifacts/wan2.6-i2v-flash.mp4",
+      "endedAt": "2026-11-09T08:29:35.713Z",
+      "durationMs": 178488
+    },
+    {
+      "provider": "bailian",
+      "model": "wan2.5-i2v-preview",
+      "ceiling": 360,
+      "startedAt": "2026-11-09T08:29:35.715Z",
+      "status": "completed",
+      "events": [
+        {
+          "operation": "submit",
+          "at": "2026-11-09T08:29:35.754Z",
+          "http": 200,
+          "durationMs": 166,
+          "taskStatus": "PENDING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:29:35.886Z",
+          "http": 200,
+          "durationMs": 235,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:29:40.956Z",
+          "http": 200,
+          "durationMs": 5376,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:29:47.095Z",
+          "http": 200,
+          "durationMs": 11521,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:29:54.243Z",
+          "http": 200,
+          "durationMs": 18653,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:30:02.375Z",
+          "http": 200,
+          "durationMs": 26796,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:30:11.518Z",
+          "http": 200,
+          "durationMs": 35935,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:30:21.659Z",
+          "http": 200,
+          "durationMs": 46076,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:30:31.800Z",
+          "http": 200,
+          "durationMs": 56237,
+          "usage": {
+            "video_count": 1,
+            "duration": 5,
+            "SR": 720
+          },
+          "taskStatus": "SUCCEEDED"
+        },
+        {
+          "operation": "read",
+          "at": "2026-11-09T08:30:31.958Z",
+          "http": 200,
+          "durationMs": 56338
+        }
+      ],
+      "settings": {
+        "resolution": "720P",
+        "audio": true,
+        "promptExtend": false,
+        "shotType": "single",
+        "watermark": false,
+        "negativePrompt": "",
+        "durationSeconds": 5
+      },
+      "reservedCents": 360,
+      "providerTaskId": "c5e2690c-11c7-42c0-b0a7-66c05a446966",
+      "phase": "saving",
+      "bytes": 1177643,
+      "artifact": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-model-matrix-20261109-ncpdpm7s/artifacts/wan2.5-i2v-preview.mp4",
+      "endedAt": "2026-11-09T08:30:32.137Z",
+      "durationMs": 56419
+    },
+    {
+      "provider": "bailian",
+      "model": "wan2.2-i2v-flash",
+      "ceiling": 120,
+      "startedAt": "2026-11-09T08:30:32.139Z",
+      "status": "completed",
+      "events": [
+        {
+          "operation": "submit",
+          "at": "2026-11-09T08:30:32.172Z",
+          "http": 200,
+          "durationMs": 464,
+          "taskStatus": "PENDING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:30:32.607Z",
+          "http": 200,
+          "durationMs": 537,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:30:37.682Z",
+          "http": 200,
+          "durationMs": 5685,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:30:43.831Z",
+          "http": 200,
+          "durationMs": 11863,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:30:51.007Z",
+          "http": 200,
+          "durationMs": 19048,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:30:59.191Z",
+          "http": 200,
+          "durationMs": 27215,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:31:08.361Z",
+          "http": 200,
+          "durationMs": 36357,
+          "usage": {
+            "duration": 5,
+            "video_count": 1,
+            "SR": 720
+          },
+          "taskStatus": "SUCCEEDED"
+        }
+      ],
+      "settings": {
+        "resolution": "720P",
+        "audio": false,
+        "promptExtend": false,
+        "shotType": "single",
+        "watermark": false,
+        "negativePrompt": "",
+        "durationSeconds": 5
+      },
+      "reservedCents": 120,
+      "providerTaskId": "81a06cb0-dc98-4db5-9510-e7e4af27433c",
+      "phase": "saving",
+      "error": "万相视频地址不属于官方结果存储域名。",
+      "endedAt": "2026-11-09T08:31:08.501Z",
+      "durationMs": 36362,
+      "recovery": {
+        "startedAt": "2026-11-09T08:35:31.246Z",
+        "mode": "query_and_download_original",
+        "events": [
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:35:31.249Z",
+            "http": 200,
+            "taskStatus": "SUCCEEDED",
+            "usage": {
+              "duration": 5,
+              "video_count": 1,
+              "SR": 720
+            },
+            "resultHost": "dashscope-f4de.oss-accelerate.aliyuncs.com"
+          },
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:35:31.445Z",
+            "http": 200
+          }
+        ],
+        "endedAt": "2026-11-09T08:35:32.005Z",
+        "durationMs": 759
+      },
+      "artifact": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-model-matrix-20261109-ncpdpm7s/artifacts/wan2.2-i2v-flash.mp4",
+      "bytes": 3271363
+    },
+    {
+      "provider": "bailian",
+      "model": "wan2.2-i2v-plus",
+      "ceiling": 420,
+      "startedAt": "2026-11-09T08:31:08.502Z",
+      "status": "completed",
+      "events": [
+        {
+          "operation": "submit",
+          "at": "2026-11-09T08:31:08.535Z",
+          "http": 200,
+          "durationMs": 421,
+          "taskStatus": "PENDING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:31:08.928Z",
+          "http": 200,
+          "durationMs": 488,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:31:13.994Z",
+          "http": 200,
+          "durationMs": 5630,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:31:20.137Z",
+          "http": 200,
+          "durationMs": 11759,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:31:27.265Z",
+          "http": 200,
+          "durationMs": 18904,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:31:35.413Z",
+          "http": 200,
+          "durationMs": 27037,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:31:44.545Z",
+          "http": 200,
+          "durationMs": 36164,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:31:54.671Z",
+          "http": 200,
+          "durationMs": 46324,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:32:04.832Z",
+          "http": 200,
+          "durationMs": 56508,
+          "usage": {
+            "duration": 5,
+            "video_count": 1,
+            "SR": 1080
+          },
+          "taskStatus": "SUCCEEDED"
+        }
+      ],
+      "settings": {
+        "resolution": "1080P",
+        "audio": false,
+        "promptExtend": false,
+        "shotType": "single",
+        "watermark": false,
+        "negativePrompt": "",
+        "durationSeconds": 5
+      },
+      "reservedCents": 420,
+      "providerTaskId": "7f98b151-a73d-4e73-a5e1-165d98a72ecc",
+      "phase": "saving",
+      "error": "万相视频地址不属于官方结果存储域名。",
+      "endedAt": "2026-11-09T08:32:05.015Z",
+      "durationMs": 56513,
+      "recovery": {
+        "startedAt": "2026-11-09T08:42:09.566Z",
+        "mode": "query_and_download_original",
+        "events": [
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:42:09.568Z",
+            "http": 200,
+            "taskStatus": "SUCCEEDED",
+            "usage": {
+              "duration": 5,
+              "video_count": 1,
+              "SR": 1080
+            },
+            "resultHost": "dashscope-7c2c.oss-cn-shanghai.aliyuncs.com"
+          },
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:42:09.741Z",
+            "http": 200
+          }
+        ],
+        "endedAt": "2026-11-09T08:42:10.174Z",
+        "durationMs": 608
+      },
+      "recoveryAttempts": [
+        {
+          "startedAt": "2026-11-09T08:35:32.007Z",
+          "mode": "query_and_download_original",
+          "events": [
+            {
+              "operation": "read",
+              "at": "2026-11-09T08:35:32.008Z",
+              "http": 200,
+              "taskStatus": "SUCCEEDED",
+              "usage": {
+                "duration": 5,
+                "video_count": 1,
+                "SR": 1080
+              },
+              "resultHost": "dashscope-7c2c.oss-cn-shanghai.aliyuncs.com"
+            }
+          ],
+          "error": "万相视频地址不属于官方结果存储域名。"
+        }
+      ],
+      "artifact": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-model-matrix-20261109-ncpdpm7s/artifacts/wan2.2-i2v-plus.mp4",
+      "bytes": 1829051
+    },
+    {
+      "provider": "bailian",
+      "model": "wanx2.1-i2v-plus",
+      "ceiling": 420,
+      "startedAt": "2026-11-09T08:32:05.016Z",
+      "status": "completed",
+      "events": [],
+      "settings": {
+        "resolution": "720P",
+        "audio": false,
+        "promptExtend": false,
+        "shotType": "single",
+        "watermark": false,
+        "negativePrompt": "",
+        "durationSeconds": 5
+      },
+      "error": "BUDGET_CAP: no paid POST sent",
+      "endedAt": "2026-11-09T08:32:05.050Z",
+      "durationMs": 33,
+      "recovery": {
+        "startedAt": "2026-11-09T08:35:32.084Z",
+        "mode": "first_submission_after_budget_reconciliation",
+        "events": [
+          {
+            "operation": "submit",
+            "at": "2026-11-09T08:35:32.085Z",
+            "http": 200,
+            "taskStatus": "PENDING"
+          },
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:35:32.496Z",
+            "http": 200,
+            "taskStatus": "RUNNING"
+          },
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:35:37.585Z",
+            "http": 200,
+            "taskStatus": "RUNNING"
+          },
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:35:43.742Z",
+            "http": 200,
+            "taskStatus": "RUNNING"
+          },
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:35:50.884Z",
+            "http": 200,
+            "taskStatus": "RUNNING"
+          },
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:35:59.054Z",
+            "http": 200,
+            "taskStatus": "RUNNING"
+          },
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:36:08.197Z",
+            "http": 200,
+            "taskStatus": "RUNNING"
+          },
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:36:18.344Z",
+            "http": 200,
+            "taskStatus": "RUNNING"
+          },
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:36:28.479Z",
+            "http": 200,
+            "taskStatus": "RUNNING"
+          },
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:36:38.624Z",
+            "http": 200,
+            "taskStatus": "RUNNING"
+          },
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:36:48.768Z",
+            "http": 200,
+            "taskStatus": "RUNNING"
+          },
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:36:58.924Z",
+            "http": 200,
+            "taskStatus": "RUNNING"
+          },
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:37:09.240Z",
+            "http": 200,
+            "taskStatus": "RUNNING"
+          },
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:37:19.380Z",
+            "http": 200,
+            "taskStatus": "RUNNING"
+          },
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:37:29.517Z",
+            "http": 200,
+            "taskStatus": "RUNNING"
+          },
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:37:39.649Z",
+            "http": 200,
+            "taskStatus": "RUNNING"
+          },
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:37:49.810Z",
+            "http": 200,
+            "taskStatus": "RUNNING"
+          },
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:37:59.948Z",
+            "http": 200,
+            "taskStatus": "RUNNING"
+          },
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:38:10.092Z",
+            "http": 200,
+            "taskStatus": "RUNNING"
+          },
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:38:20.224Z",
+            "http": 200,
+            "taskStatus": "RUNNING"
+          },
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:38:30.365Z",
+            "http": 200,
+            "taskStatus": "RUNNING"
+          },
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:38:40.504Z",
+            "http": 200,
+            "taskStatus": "RUNNING"
+          },
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:38:50.644Z",
+            "http": 200,
+            "taskStatus": "RUNNING"
+          },
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:39:00.789Z",
+            "http": 200,
+            "taskStatus": "RUNNING"
+          },
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:39:10.949Z",
+            "http": 200,
+            "taskStatus": "RUNNING"
+          },
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:39:21.108Z",
+            "http": 200,
+            "taskStatus": "RUNNING"
+          },
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:39:31.243Z",
+            "http": 200,
+            "taskStatus": "RUNNING"
+          },
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:39:41.379Z",
+            "http": 200,
+            "taskStatus": "RUNNING"
+          },
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:39:51.507Z",
+            "http": 200,
+            "taskStatus": "RUNNING"
+          },
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:40:01.636Z",
+            "http": 200,
+            "taskStatus": "RUNNING"
+          },
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:40:11.759Z",
+            "http": 200,
+            "taskStatus": "RUNNING"
+          },
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:40:21.904Z",
+            "http": 200,
+            "taskStatus": "RUNNING"
+          },
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:40:32.052Z",
+            "http": 200,
+            "taskStatus": "SUCCEEDED",
+            "usage": {
+              "video_duration": 5,
+              "video_ratio": "standard",
+              "video_count": 1
+            },
+            "resultHost": "dashscope-result-wlcb-acdr-1.oss-cn-wulanchabu-acdr-1.aliyuncs.com"
+          },
+          {
+            "operation": "read",
+            "at": "2026-11-09T08:40:32.200Z",
+            "http": 200
+          }
+        ],
+        "endedAt": "2026-11-09T08:40:33.271Z",
+        "durationMs": 301187
+      },
+      "reservedCents": 420,
+      "providerTaskId": "f9d6b728-4f72-4740-a1b7-47b6b40fcac8",
+      "artifact": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-model-matrix-20261109-ncpdpm7s/artifacts/wanx2.1-i2v-plus.mp4",
+      "bytes": 10441645
+    },
+    {
+      "provider": "bailian",
+      "model": "wanx2.1-i2v-turbo",
+      "ceiling": 87,
+      "startedAt": "2026-11-09T08:32:05.050Z",
+      "status": "supplier_failed",
+      "events": [
+        {
+          "operation": "submit",
+          "at": "2026-11-09T08:32:05.068Z",
+          "http": 200,
+          "durationMs": 412,
+          "taskStatus": "PENDING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:32:05.467Z",
+          "http": 200,
+          "durationMs": 479,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:32:10.536Z",
+          "http": 200,
+          "durationMs": 5636,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:32:16.692Z",
+          "http": 200,
+          "durationMs": 11781,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:32:23.835Z",
+          "http": 200,
+          "durationMs": 18935,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:32:31.991Z",
+          "http": 200,
+          "durationMs": 27072,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:32:41.126Z",
+          "http": 200,
+          "durationMs": 36204,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:32:51.259Z",
+          "http": 200,
+          "durationMs": 46338,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:33:01.392Z",
+          "http": 200,
+          "durationMs": 56491,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:33:11.544Z",
+          "http": 200,
+          "durationMs": 66634,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:33:21.689Z",
+          "http": 200,
+          "durationMs": 76777,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:33:31.830Z",
+          "http": 200,
+          "durationMs": 86910,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:33:41.965Z",
+          "http": 200,
+          "durationMs": 97039,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:33:52.092Z",
+          "http": 200,
+          "durationMs": 107178,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:34:02.233Z",
+          "http": 200,
+          "durationMs": 117311,
+          "taskStatus": "RUNNING"
+        },
+        {
+          "operation": "poll",
+          "at": "2026-11-09T08:34:12.365Z",
+          "http": 200,
+          "durationMs": 127513,
+          "supplierError": "Traceback (most recent call last):\n  File \"/home/workspace/wanx_pipeline/core/core.py\", line 254, in worker\n    syn_vid_path = runner.inference(*args)\n  File \"/home/workspace/wanx_pipeline/core/runner.py\", line 558, in inference\n    self.inter_model.interpolate(self.inference_cfg.target_fps, cache_file, \"/tmp\")\n  File \"/home/workspace/wanx_pipeline/sora/interpolation/model.py\", line 160, in interpolate\n    lastframe = next(videogen)\n  File \"/usr/local/lib/python3.10/site-packages/skvideo/io/io.py\", line 251, in vreader\n    reader = FFmpegReader(fname, inputdict=inputdict, outputdict=outputdict, verbosity=verbosity)\n  File \"/usr/local/lib/python3.10/site-packages/skvideo/io/ffmpeg.py\", line 83, in __init__\n    _, self.extension = os.path.splitext(filename)\n  File \"/usr/local/lib/python3.10/posixpath.py\", line 118, in splitext\n    p = os.fspath(p)\nTypeError: expected str, bytes or os.PathLike object, not NoneType\n",
+          "taskStatus": "FAILED"
+        }
+      ],
+      "settings": {
+        "resolution": "720P",
+        "audio": false,
+        "promptExtend": false,
+        "shotType": "single",
+        "watermark": false,
+        "negativePrompt": "",
+        "durationSeconds": 3
+      },
+      "reservedCents": 87,
+      "providerTaskId": "fdd397d5-fdfc-4afb-97ab-a0808cad6bf6",
+      "phase": "processing",
+      "error": "万相任务状态 FAILED；费用预留已保留，重做前请核对。",
+      "endedAt": "2026-11-09T08:34:12.565Z",
+      "durationMs": 127514,
+      "supplierFailureCode": "AlgoError",
+      "supplierFailureSummary": "供应商内部视频插帧阶段发生 TypeError，未重试。"
+    },
+    {
+      "provider": "minimax",
+      "model": "MiniMax-H3",
+      "status": "completed_existing_user_task",
+      "taskId": "09a8a32a-b74f-4c24-9eae-a32d1436e93e",
+      "durationMs": 107751,
+      "newCostCents": 0
+    }
+  ],
+  "nonBillableRejectionCents": 450,
+  "budgetCommittedCents": 2701
+}

@@ -1,0 +1,104 @@
+{
+  "revision": 3,
+  "sha": "8b5107ee2ae89eff641b13746e2ef623ce6603f38676ffc9e47d66f202044d64",
+  "enabled": {
+    "bgm": true,
+    "sfx": true
+  },
+  "preparations": [
+    {
+      "id": "0222e8d4-a935-481e-b35f-ce9c5be95995",
+      "kind": "sfx",
+      "shotId": "shot-01",
+      "sourceItemId": null,
+      "sourceSha256": null,
+      "description": "脚步声.mp3",
+      "query": null,
+      "selection": null,
+      "connection": null,
+      "anchor": "shot",
+      "offsetSeconds": 0,
+      "durationSeconds": 1,
+      "taskId": null,
+      "status": "ready",
+      "error": null,
+      "audioTrackId": null,
+      "relativePath": "episodes/8360180a-c482-43e0-bfaa-6216b5f77e44/materials/74b682cc27103655eb1b22bb2522d732823f27e3b8f7b35c3e9dc400065ac2da-脚步声.mp3",
+      "sha256": "74b682cc27103655eb1b22bb2522d732823f27e3b8f7b35c3e9dc400065ac2da",
+      "fileSize": 96565,
+      "adoptedItemId": null,
+      "source": {
+        "provider": "manual",
+        "materialRevisionId": "59ab0aa2-613a-408c-9969-dd992e6708a9"
+      }
+    },
+    {
+      "id": "965b3d93-12c5-4427-aafe-28c27abf5156",
+      "kind": "sfx",
+      "shotId": "shot-01",
+      "sourceItemId": null,
+      "sourceSha256": null,
+      "description": "开门声.mp3",
+      "query": null,
+      "selection": null,
+      "connection": null,
+      "anchor": "shot",
+      "offsetSeconds": 0,
+      "durationSeconds": 1,
+      "taskId": null,
+      "status": "ready",
+      "error": null,
+      "audioTrackId": null,
+      "relativePath": "episodes/8360180a-c482-43e0-bfaa-6216b5f77e44/materials/74b682cc27103655eb1b22bb2522d732823f27e3b8f7b35c3e9dc400065ac2da-开门声.mp3",
+      "sha256": "74b682cc27103655eb1b22bb2522d732823f27e3b8f7b35c3e9dc400065ac2da",
+      "fileSize": 96565,
+      "adoptedItemId": null,
+      "source": {
+        "provider": "manual",
+        "materialRevisionId": "f599508e-8f70-4276-bb83-21145d7ce21d"
+      }
+    },
+    {
+      "id": "b3894be8-2c8f-4115-a8a0-f4c064f053ec",
+      "kind": "bgm",
+      "shotId": null,
+      "sourceItemId": null,
+      "sourceSha256": null,
+      "description": "配乐示例.mp3",
+      "query": null,
+      "selection": null,
+      "connection": null,
+      "anchor": "absolute",
+      "offsetSeconds": 0,
+      "durationSeconds": 4,
+      "taskId": null,
+      "status": "ready",
+      "error": null,
+      "audioTrackId": null,
+      "relativePath": "episodes/8360180a-c482-43e0-bfaa-6216b5f77e44/materials/74b682cc27103655eb1b22bb2522d732823f27e3b8f7b35c3e9dc400065ac2da-配乐示例.mp3",
+      "sha256": "74b682cc27103655eb1b22bb2522d732823f27e3b8f7b35c3e9dc400065ac2da",
+      "fileSize": 96565,
+      "adoptedItemId": null,
+      "source": {
+        "provider": "manual",
+        "materialRevisionId": "1cecf73c-2ee6-418a-8ee9-751489e5384a"
+      }
+    }
+  ],
+  "sounds": [],
+  "nativeAudio": [],
+  "visuals": [
+    {
+      "id": "shot-shot-01-72cbc757-9b98-41bb-964e-27b9fac37325",
+      "kind": "video",
+      "startFrame": 0,
+      "durationInFrames": 60
+    },
+    {
+      "id": "shot-shot-02-f0e9d230-e798-4a27-9c8d-7d89becfdb81",
+      "kind": "video",
+      "startFrame": 60,
+      "durationInFrames": 60
+    }
+  ]
+}

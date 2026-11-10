@@ -1,0 +1,133 @@
+[
+  {
+    "model": "wan2.6-i2v",
+    "providerTaskId": "6dcab035-3b04-4dd2-9786-419eceb4faee",
+    "status": "SUCCEEDED",
+    "submit": "2026-11-09 16:24:23.303",
+    "scheduled": "2026-11-09 16:24:23.359",
+    "end": "2026-11-09 16:25:14.646",
+    "queuedSeconds": 0.056,
+    "generationSeconds": 51.287,
+    "resultHost": "dashscope-a717.oss-accelerate.aliyuncs.com",
+    "usage": {
+      "video_count": 1,
+      "duration": 2,
+      "SR": 720,
+      "input_video_duration": 0,
+      "output_video_duration": 2
+    }
+  },
+  {
+    "model": "wan2.6-r2v",
+    "providerTaskId": "9b4796cb-a13c-4451-9ee0-c2d55ae2703f",
+    "status": "SUCCEEDED",
+    "submit": "2026-11-09 16:25:19.879",
+    "scheduled": "2026-11-09 16:25:19.946",
+    "end": "2026-11-09 16:26:36.025",
+    "queuedSeconds": 0.067,
+    "generationSeconds": 76.079,
+    "resultHost": "dashscope-a717.oss-accelerate.aliyuncs.com",
+    "usage": {
+      "video_count": 1,
+      "duration": 2,
+      "size": "1280*720",
+      "SR": 720,
+      "output_video_duration": 2,
+      "input_video_duration": 0
+    }
+  },
+  {
+    "model": "wan2.6-i2v-flash",
+    "providerTaskId": "358fea7f-6a10-4a74-8888-65bcc6550e96",
+    "status": "SUCCEEDED",
+    "submit": "2026-11-09 16:26:37.341",
+    "scheduled": "2026-11-09 16:26:37.398",
+    "end": "2026-11-09 16:29:31.437",
+    "queuedSeconds": 0.057,
+    "generationSeconds": 174.039,
+    "resultHost": "dashscope-a717.oss-accelerate.aliyuncs.com",
+    "usage": {
+      "video_count": 1,
+      "duration": 2,
+      "SR": 720,
+      "input_video_duration": 0,
+      "output_video_duration": 2,
+      "audio": false
+    }
+  },
+  {
+    "model": "wan2.5-i2v-preview",
+    "providerTaskId": "c5e2690c-11c7-42c0-b0a7-66c05a446966",
+    "status": "SUCCEEDED",
+    "submit": "2026-11-09 16:29:35.848",
+    "scheduled": "2026-11-09 16:29:35.912",
+    "end": "2026-11-09 16:30:30.195",
+    "queuedSeconds": 0.064,
+    "generationSeconds": 54.283,
+    "resultHost": "dashscope-a717.oss-accelerate.aliyuncs.com",
+    "usage": {
+      "video_count": 1,
+      "duration": 5,
+      "SR": 720
+    }
+  },
+  {
+    "model": "wan2.2-i2v-flash",
+    "providerTaskId": "81a06cb0-dc98-4db5-9510-e7e4af27433c",
+    "status": "SUCCEEDED",
+    "submit": "2026-11-09 16:30:32.570",
+    "scheduled": "2026-11-09 16:30:32.634",
+    "end": "2026-11-09 16:31:02.975",
+    "queuedSeconds": 0.064,
+    "generationSeconds": 30.341,
+    "resultHost": "dashscope-f4de.oss-accelerate.aliyuncs.com",
+    "usage": {
+      "duration": 5,
+      "video_count": 1,
+      "SR": 720
+    }
+  },
+  {
+    "model": "wan2.2-i2v-plus",
+    "providerTaskId": "7f98b151-a73d-4e73-a5e1-165d98a72ecc",
+    "status": "SUCCEEDED",
+    "submit": "2026-11-09 16:31:08.890",
+    "scheduled": "2026-11-09 16:31:08.934",
+    "end": "2026-11-09 16:31:57.862",
+    "queuedSeconds": 0.044,
+    "generationSeconds": 48.928,
+    "resultHost": "dashscope-7c2c.oss-cn-shanghai.aliyuncs.com",
+    "usage": {
+      "duration": 5,
+      "video_count": 1,
+      "SR": 1080
+    }
+  },
+  {
+    "model": "wanx2.1-i2v-plus",
+    "providerTaskId": "f9d6b728-4f72-4740-a1b7-47b6b40fcac8",
+    "status": "SUCCEEDED",
+    "submit": "2026-11-09 16:35:32.456",
+    "scheduled": "2026-11-09 16:35:32.495",
+    "end": "2026-11-09 16:40:26.937",
+    "queuedSeconds": 0.039,
+    "generationSeconds": 294.442,
+    "resultHost": "dashscope-result-wlcb-acdr-1.oss-cn-wulanchabu-acdr-1.aliyuncs.com",
+    "usage": {
+      "video_duration": 5,
+      "video_ratio": "standard",
+      "video_count": 1
+    }
+  },
+  {
+    "model": "wanx2.1-i2v-turbo",
+    "providerTaskId": "fdd397d5-fdfc-4afb-97ab-a0808cad6bf6",
+    "status": "FAILED",
+    "submit": "2026-11-09 16:32:05.430",
+    "scheduled": "2026-11-09 16:32:05.485",
+    "end": "2026-11-09 16:34:09.405",
+    "queuedSeconds": 0.055,
+    "generationSeconds": 123.92,
+    "code": "AlgoError"
+  }
+]

@@ -1,0 +1,27 @@
+{
+  "status": "migrated",
+  "migrated": true,
+  "productFiles": 8,
+  "testFiles": 7,
+  "unitTestsPassed": 34,
+  "realIntegrationTestsPassed": 5,
+  "mainBaselineFilesUnchanged": 1165,
+  "stagingUnchanged": true,
+  "paidCalls": 0,
+  "previewPort": 5198,
+  "previewSamplesReset": true,
+  "databaseMigration": "157 only in isolation",
+  "distill": {
+    "migrated": false,
+    "changedProductFiles": 2,
+    "changedTestFiles": 1,
+    "currentTargetedTestsPassed": 28,
+    "typecheckPassed": true,
+    "desktopAnd390Verified": true,
+    "mainBaselineFilesUnchanged": 1165,
+    "backendUnchanged": true,
+    "existingReviewStatePreserved": true
+  },
+  "migrationRegressionTestsPassed": 35,
+  "migrationRealIntegrationTestsPassed": 5
+}

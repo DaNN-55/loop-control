@@ -1,0 +1,10 @@
+{
+  "migration": "155-minimax-h3-variants.sql",
+  "sha256": "819118d7715968a44f053e777bf7bba5901259fb39e3060cbd0618121b5f435d",
+  "verified": true,
+  "previousMigrationDriftPreserved": [
+    "139-global-storyboard-planning.sql"
+  ],
+  "scope": "Only the new guarded migration; existing migration records untouched",
+  "checkedAt": "2026-11-09T10:59:42.127Z"
+}

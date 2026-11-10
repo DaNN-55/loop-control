@@ -1,0 +1,12 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/promptReferences.test.ts src/local-app/WorkspaceConfigBinding.test.tsx src/local-app/WorkspacePromptField.test.tsx --maxWorkers=2 --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+·······························································
+
+ Test Files  3 passed (3)
+      Tests  63 passed (63)
+   Start at  20:02:35
+   Duration  14.62s (transform 243ms, setup 19ms, collect 1.68s, tests 12.76s, environment 845ms, prepare 104ms)
+

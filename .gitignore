@@ -12,6 +12,7 @@ docs/运行手册.md
 /.playwright-cli/
 /outputs/
 /tmp/
+/.scratch/
 
 # Local production media; keep HTML, JSON and Markdown project sources tracked
 content/**/*.gif

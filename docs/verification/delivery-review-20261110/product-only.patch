@@ -1,0 +1,146 @@
+diff --git a/Users/dan/Programs/loop-control/.scratch/delivery-review-20261110/before/src/local-app/WorkspaceExportPanel.tsx b/Users/dan/Programs/loop-control/.scratch/delivery-review-20261110/pending/src/local-app/WorkspaceExportPanel.tsx
+index 64dd3349..a2c7f143 100644
+--- a/Users/dan/Programs/loop-control/.scratch/delivery-review-20261110/before/src/local-app/WorkspaceExportPanel.tsx
++++ b/Users/dan/Programs/loop-control/.scratch/delivery-review-20261110/pending/src/local-app/WorkspaceExportPanel.tsx
+@@ -1,35 +1,47 @@
+ import {VideoPreview} from '../ui/media/VideoPreview';
+ import {WorkspaceDeliveryPanel} from './WorkspaceDeliveryPanel';
+ import {useId,useRef,useState,type ReactNode} from 'react';
+-import {Check,FileVideo,History,MessageSquarePlus} from 'lucide-react';
++import {Check,FileVideo,MessageSquarePlus} from 'lucide-react';
+ import {Button} from '../ui/dan-ui/components/base/buttons/button';
+ import {Tooltip} from '../ui/dan-ui/components/base/tooltip/tooltip';
+ import type {ProductionWorkspace} from '../productionWorkspace';
+ import './workspace-compact-panels.css';
+ export function WorkspaceExportPanel({workspace:w,pending,command,onChange,readOnly=false,history}:{workspace:ProductionWorkspace;pending:boolean;readOnly?:boolean;history?:ReactNode;command:(name:string,data:unknown)=>Promise<unknown>;onChange:(w:ProductionWorkspace)=>void}){
+- const [reason,setReason]=useState(''),[recording,setRecording]=useState(false),[issueError,setIssueError]=useState(''),issueErrorId=useId(),recordingRef=useRef(false),issueScope=useRef('');issueScope.current=`${w.episodeId}:${w.id}`;const completed=w.deliveries?.some(d=>d.status==='completed');const latest=w.exports?.[0],issues=w.exportIssues??[],blocked=issues.some(x=>!x.resolved);
+- async function run(name:string,extra:Record<string,unknown>={}){const result=await command(name,{episodeId:w.episodeId,workspaceId:w.id,expectedRevision:w.revision,...extra});onChange(result as ProductionWorkspace);}
++ const [reason,setReason]=useState(''),[recording,setRecording]=useState(false),[issueError,setIssueError]=useState(''),issueErrorId=useId(),recordingRef=useRef(false),issueScope=useRef('');issueScope.current=`${w.episodeId}:${w.id}`;const completed=w.deliveries?.some(d=>d.status==='completed'),delivered=w.deliveries?.some(d=>d.verified);const latest=w.exports?.[0],issues=w.exportIssues??[],blocked=issues.some(x=>!x.resolved);
++ const [action,setAction]=useState<string|null>(null),actionRef=useRef(false),[issuesOpen,setIssuesOpen]=useState(false);
++ const deliveryPending=!!w.deliveries?.[0]&&['ready','running'].includes(w.deliveries[0].status);
++ const confirmed=!!latest?.confirmed&&latest.current&&!w.stale,failed=!!latest&&(latest.status!=='ready'||latest.checks.some(c=>!c.passed)),outdated=!!latest&&(!latest.current||w.stale);
++ const status=action==='exportWorkspace'?'正在导出与检查…':delivered?'交付已完成':completed?'交付文件需核验':deliveryPending?'正在准备交付':!latest?'尚未导出':outdated?'需重新导出':failed?'检查未通过':confirmed?'成片已确认':blocked?'有待处理问题':'待确认成片与字幕';
++ async function run(name:string,extra:Record<string,unknown>={}){if(actionRef.current)return;actionRef.current=true;setAction(name);try{const result=await command(name,{episodeId:w.episodeId,workspaceId:w.id,expectedRevision:w.revision,...extra});onChange(result as ProductionWorkspace);}finally{actionRef.current=false;setAction(null);}}
+  async function recordIssue(){if(recordingRef.current||!reason.trim())return;const submitted=reason,scope=issueScope.current;recordingRef.current=true;setRecording(true);setIssueError('');try{await run('recordWorkspaceExportIssue',{...(latest?{exportId:latest.id}:{}),reason:submitted});if(issueScope.current===scope)setReason(current=>current===submitted?'':current);}catch(cause){if(issueScope.current===scope)setIssueError(cause instanceof Error?cause.message:'问题记录失败，请重试。');}finally{recordingRef.current=false;setRecording(false);}}
+- return <section className="production-workspace-section workspace-export workspace-export-compact">
+-  <header><div className="workspace-compact-heading"><h3>检查与交付</h3><span role="status" className={latest?.confirmed?'is-confirmed':''}>{completed?'交付已完成':latest?.confirmed?'最终文件已确认':latest?.current?'待确认成片与字幕':latest?'需重新导出':'尚未导出'}</span></div><Button size="sm" color="primary" isDisabled={readOnly||pending||w.stale||completed} onPress={()=>void run('exportWorkspace').catch(()=>{})}>
+-   {pending?'正在导出与检查…':latest?'重新导出视频':'导出视频'}
+-  </Button></header>
++ return <section className="production-workspace-section workspace-export workspace-export-compact workspace-review-flow">
++  <header><div className="workspace-compact-heading"><h3>检查与交付</h3><span role="status" className={confirmed||delivered?'is-confirmed':outdated||failed?'is-failed':''}>{status}</span></div>{!completed&&<Button size="sm" color={latest?'secondary':'primary'} isDisabled={readOnly||pending||!!action||w.stale} onPress={()=>void run('exportWorkspace').catch(()=>{})}>
++   {action==='exportWorkspace'?'正在导出与检查…':latest?'重新导出视频':'导出视频'}
++  </Button>}</header>
+   {w.readiness.placeholders.length>0&&<p className="workspace-export-notice">还有 {w.readiness.placeholders.length} 处占位</p>}
+-  {latest&&!latest.current&&<p role="status" className="workspace-export-notice">工程已变化，请重新导出当前内容。</p>}
++  {outdated&&<p role="status" className="workspace-export-notice">工程已变化，请重新导出当前内容。</p>}
+   <div className="workspace-export-layout">
+    <div className="workspace-final-preview">
+     <div className="workspace-final-heading"><h4>成片预览</h4></div>
+     {latest?.artifact?<VideoPreview title="最终导出视频" aria-label="最终导出视频" sourceLabel="成片" src={`/_local-artifact?episode=${encodeURIComponent(w.episodeId)}&path=${encodeURIComponent(latest.artifact.relativePath)}&sha256=${latest.artifact.sha256}`}/>:<div className="workspace-final-empty"><FileVideo aria-hidden="true"/><p>{latest?'最终文件尚未就绪。':'先导出最终视频，检查后确认这份文件。'}</p></div>}
+-    {latest?.artifact&&<div className="workspace-final-details"><details><summary>文件信息</summary><dl><div><dt>工程版本</dt><dd>{latest.projectContentVersion===undefined?'未记录':`v${latest.projectContentVersion}`}</dd></div><div><dt>文件大小</dt><dd>{(latest.artifact.fileSize/1024/1024).toFixed(2)} MB</dd></div><div><dt>格式</dt><dd>MP4</dd></div></dl></details></div>}
+-    {latest&&(latest.confirmed?<p role="status" className="workspace-final-confirmed"><Check size={15} aria-hidden="true"/>已确认这份最终文件</p>:<Button size="sm" color="primary" iconLeading={Check} isDisabled={readOnly||pending||!latest.current||latest.status!=='ready'||latest.checks.some(c=>!c.passed)||blocked} onPress={()=>void run('confirmWorkspaceExport',{exportId:latest.id,expectedExportSha256:latest.artifact?.sha256,expectedContentSha256:w.contentSha256}).catch(()=>{})}>确认成片与字幕</Button>)}
++    {latest&&<div className="workspace-final-actions">{confirmed?<p role="status" className="workspace-final-confirmed"><Check size={15} aria-hidden="true"/>已确认这份最终文件</p>:<>
++     <span className="workspace-final-next">{outdated?'这是旧导出，请先重新导出。':failed?'先处理未通过的检查。':blocked?'先处理已记录的问题。':'检查画面与字幕后，确认这份文件。'}</span>
++     <Button size="sm" color="primary" iconLeading={Check} isDisabled={readOnly||pending||!!action||outdated||failed||!latest.artifact||blocked} onPress={()=>void run('confirmWorkspaceExport',{exportId:latest.id,expectedExportSha256:latest.artifact?.sha256,expectedContentSha256:w.contentSha256}).catch(()=>{})}>{action==='confirmWorkspaceExport'?'正在确认…':'确认成片与字幕'}</Button>
++    </>}</div>}
+    </div>
+    <div className="workspace-export-review">
+-    <details className="workspace-technical-checks" aria-label="技术检查" open={latest?.checks.some(c=>!c.passed)||undefined}><summary className="workspace-review-heading"><h4>技术检查</h4>{latest&&<span className={latest.checks.every(c=>c.passed)?'is-confirmed':'is-failed'}>{latest.checks.filter(c=>c.passed).length} / {latest.checks.length} 通过</span>}</summary>{latest?<ul>{latest.checks.map((check,i)=><li key={`${check.name}-${i}`} role={!check.passed?'alert':undefined}><span className={check.passed?'is-confirmed':'is-failed'}>{check.passed?'通过':'未通过'}</span><span>{check.detail}</span></li>)}</ul>:<p>导出后显示检查结果。</p>}</details>
++    <details className="workspace-technical-checks" aria-label="技术检查" open={latest?.checks.some(c=>!c.passed)||undefined}><summary className="workspace-review-heading"><h4>技术检查</h4>{latest&&<span className={latest.checks.length&&latest.checks.every(c=>c.passed)?'is-confirmed':'is-failed'}>{latest.checks.length?`${latest.checks.filter(c=>c.passed).length} / ${latest.checks.length} 通过`:'尚无检查记录'}</span>}</summary>{latest?<ul>{latest.checks.map((check,i)=><li key={`${check.name}-${i}`} role={!check.passed?'alert':undefined}><span className={check.passed?'is-confirmed':'is-failed'}>{check.passed?'通过':'未通过'}</span><span>{check.detail}</span></li>)}</ul>:<p>导出后显示检查结果。</p>}</details>
++    {(!(readOnly||completed)||issues.length>0)&&<details className="workspace-export-issues" aria-label="导出问题" open={issuesOpen||blocked||!!issueError} onToggle={event=>setIssuesOpen(event.currentTarget.open)}><summary className="workspace-review-heading"><h4>问题记录</h4>{blocked&&<span>{issues.filter(issue=>!issue.resolved).length} 项待处理</span>}</summary>{!readOnly&&!completed&&<div className="workspace-export-issue-entry"><label>问题记录<textarea aria-invalid={!!issueError} aria-describedby={issueError?issueErrorId:undefined} disabled={readOnly||completed} value={reason} onChange={e=>setReason(e.target.value)} maxLength={4000} rows={2}/></label><Tooltip title="记录问题" className="dan-ui dan-ui-tooltip"><Button size="sm" color="tertiary" iconLeading={MessageSquarePlus} aria-label="记录问题" title="记录问题" isDisabled={readOnly||pending||recording||completed||!reason.trim()} isLoading={recording} onPress={()=>void recordIssue()}/></Tooltip>{recording&&<span role="status">正在记录问题…</span>}{issueError&&<p id={issueErrorId} role="alert" className="form-error">{issueError}</p>}</div>}{issues.map(issue=><div className="workspace-export-issue" key={issue.id}><span>{issue.reason}</span>{issue.resolved?<small className="is-confirmed">已解决</small>:<Tooltip title="标为已解决" className="dan-ui dan-ui-tooltip"><Button size="sm" color="tertiary" iconLeading={Check} aria-label="标为已解决" title="标为已解决" isDisabled={readOnly||pending||completed} onPress={()=>void run('resolveWorkspaceExportIssue',{issueId:issue.id}).catch(()=>{})}/></Tooltip>}</div>)}</details>}
+     <WorkspaceDeliveryPanel workspace={w} pending={pending||readOnly} command={command} onChange={onChange}/>
+-    {(w.exports?.length??0)>1&&<div className="workspace-final-details">
+-     <details><summary><History size={13} aria-hidden="true"/>导出历史</summary>{w.exports!.slice(1).map(e=><p key={e.id}>工程版本 {e.projectContentVersion} · {e.status==='ready'?'检查通过':'未通过'}{e.confirmedAt?' · 曾确认':''}{!e.artifact?' · 无输出文件':''}</p>)}</details>
++    {latest&&<div className="workspace-final-details workspace-export-secondary">
++     <details aria-label="文件信息与导出历史"><summary>文件信息与导出历史</summary>
++      <div className="workspace-export-secondary-grid">
++       <div><h5>文件信息</h5>{latest.artifact?<dl><div><dt>工程版本</dt><dd>{latest.projectContentVersion===undefined?'未记录':`v${latest.projectContentVersion}`}</dd></div><div><dt>文件大小</dt><dd>{(latest.artifact.fileSize/1024/1024).toFixed(2)} MB</dd></div><div><dt>格式</dt><dd>MP4</dd></div></dl>:<p>尚无输出文件。</p>}</div>
++       <div><h5>导出历史</h5>{(w.exports?.length??0)>1?w.exports!.slice(1).map(e=><p key={e.id}>工程版本 {e.projectContentVersion} · {e.status==='ready'?'检查通过':'未通过'}{e.confirmedAt?' · 曾确认':''}{!e.artifact?' · 无输出文件':''}</p>):<p>暂无历史导出。</p>}</div>
++      </div>
++     </details>
+     </div>}
+-    {(!(readOnly||completed)||issues.length>0)&&<section className="workspace-export-issues" aria-label="导出问题"><div className="workspace-review-heading"><h4>问题记录</h4><span>{issues.filter(issue=>!issue.resolved).length} 项待处理</span></div>{!readOnly&&!completed&&<div className="workspace-export-issue-entry"><label>问题记录<textarea aria-invalid={!!issueError} aria-describedby={issueError?issueErrorId:undefined} disabled={readOnly||completed} value={reason} onChange={e=>setReason(e.target.value)} maxLength={4000} rows={2}/></label><Tooltip title="记录问题" className="dan-ui dan-ui-tooltip"><Button size="sm" color="tertiary" iconLeading={MessageSquarePlus} aria-label="记录问题" title="记录问题" isDisabled={readOnly||pending||recording||completed||!reason.trim()} isLoading={recording} onPress={()=>void recordIssue()}/></Tooltip>{recording&&<span role="status">正在记录问题…</span>}{issueError&&<p id={issueErrorId} role="alert" className="form-error">{issueError}</p>}</div>}{issues.map(issue=><div className="workspace-export-issue" key={issue.id}><span>{issue.reason}</span>{issue.resolved?<small className="is-confirmed">已解决</small>:<Tooltip title="标为已解决" className="dan-ui dan-ui-tooltip"><Button size="sm" color="tertiary" iconLeading={Check} aria-label="标为已解决" title="标为已解决" isDisabled={readOnly||pending||completed} onPress={()=>void run('resolveWorkspaceExportIssue',{issueId:issue.id}).catch(()=>{})}/></Tooltip>}</div>)}</section>}
++
+     {history}
+    </div>
+   </div>
+diff --git a/Users/dan/Programs/loop-control/.scratch/delivery-review-20261110/before/src/local-app/WorkspaceDeliveryPanel.tsx b/Users/dan/Programs/loop-control/.scratch/delivery-review-20261110/pending/src/local-app/WorkspaceDeliveryPanel.tsx
+index a0d511cf..4e45c48e 100644
+--- a/Users/dan/Programs/loop-control/.scratch/delivery-review-20261110/before/src/local-app/WorkspaceDeliveryPanel.tsx
++++ b/Users/dan/Programs/loop-control/.scratch/delivery-review-20261110/pending/src/local-app/WorkspaceDeliveryPanel.tsx
+@@ -27,7 +27,7 @@ export function WorkspaceDeliveryPanel({workspace:w,pending,command,onChange}:{w
+  }
+  const [published,setPublished]=useState<{key:string;title:string;description:string;tags:string[]}|null>(null),[metadataError,setMetadataError]=useState(''),[metadataReload,setMetadataReload]=useState(0),[copied,setCopied]=useState('');
+  const notify=useRef(onChange);notify.current=onChange;
+- const latest=w.deliveries?.[0],running=latest&&['ready','running'].includes(latest.status),completed=latest?.status==='completed',confirmed=w.exports?.[0]?.confirmed,coverVisible=!latest?.verified&&!running&&!completed;
++ const latest=w.deliveries?.[0],running=latest&&['ready','running'].includes(latest.status),completed=latest?.status==='completed',confirmed=!!source?.confirmed&&source.current&&!w.stale,coverVisible=confirmed&&!latest?.verified&&!running&&!completed;
+  useEffect(()=>{if(!cover||!coverVisible){setCoverPreview('');return;}const url=URL.createObjectURL(cover);setCoverPreview(url);return()=>URL.revokeObjectURL(url);},[cover,coverVisible]);
+  useEffect(()=>{if(!running)return;let active=true,busy=false;const timer=setInterval(()=>{if(busy)return;busy=true;void localRequest(`episodes/${w.episodeId}/workspace`).then(r=>{if(active)notify.current(r.workspace);}).catch(()=>{if(active)setError('交付状态暂不可用，请刷新重试。');}).finally(()=>{busy=false;});},2500);return()=>{active=false;clearInterval(timer);};},[w.episodeId,running]);
+  const metadata=latest?.verified?latest.artifacts.find(a=>a.artifactType==='metadata'):undefined;
+@@ -42,7 +42,7 @@ export function WorkspaceDeliveryPanel({workspace:w,pending,command,onChange}:{w
+  async function run(name:string,extra:Record<string,unknown>){setError('');try{onChange(await command(name,{episodeId:w.episodeId,workspaceId:w.id,expectedRevision:w.revision,...extra}) as ProductionWorkspace);return true;}catch(cause){const message=cause instanceof Error?cause.message:'交付未完成，请重试。';if(name==='prepareWorkspaceDelivery'&&message.includes('封面'))setCoverError(message);else setError(message);return false;}}
+  async function prepare(){if(!cover||preparingRef.current)return;const normalizedTags=normalizeDeliveryTags(tags.split(/[,，]/).map(t=>t.trim()).filter(Boolean)),invalidTags=deliveryTagsError(normalizedTags);setTagsError(invalidTags);if(invalidTags)return;const submitted={...draft.value};preparingRef.current=true;setPreparing(true);try{const bytes=new Uint8Array(await cover.arrayBuffer());let binary='';for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,i+8192));const e=w.exports![0];const succeeded=await run('prepareWorkspaceDelivery',{exportId:e.id,expectedExportSha256:e.artifact?.sha256,expectedContentSha256:e.contentSha256,title,description,tags:normalizedTags,coverBase64:btoa(binary)});if(succeeded&&currentCover.current===cover&&draft.acknowledge(submitted,{title:'',description:'',tags:'',coverName:''}))setCover(null);}catch{setCoverError('封面读取失败，请重新选择。');}finally{preparingRef.current=false;setPreparing(false);}}
+  return <section className="workspace-delivery workspace-delivery-compact" aria-label="交付包">
+- <div className="workspace-review-heading"><h4>交付包</h4><span>{latest?.verified?'验证完成':confirmed?'可准备':'待确认成片与字幕'}</span></div>
++ <div className="workspace-review-heading"><h4>交付包</h4><span>{latest?.verified?'验证完成':running?'正在准备':completed?'需核验':latest&&['failed','blocked'].includes(latest.status)?'交付失败':!source?'尚未开始':confirmed?'可准备':'待确认'}</span></div>
+  {latest?.verified?<>
+  <div className="workspace-delivery-published">
+   {latest.artifacts.filter(a=>a.artifactType==='cover').map(a=><div className="workspace-delivery-published-cover" key={a.relativePath}><ImagePreview src={artifactUrl(a)} alt="交付封面"/><a className="workspace-delivery-cover-download" href={artifactUrl(a,true)} download aria-label="下载封面" title="下载封面"><Download size={16} aria-hidden="true"/></a></div>)}
+@@ -57,8 +57,7 @@ export function WorkspaceDeliveryPanel({workspace:w,pending,command,onChange}:{w
+  </div>
+  <div className="workspace-delivery-downloads">{latest.artifacts.filter(a=>a.artifactType==='final_render').map(a=><a className="workspace-download-primary" key={a.relativePath} href={artifactUrl(a,true)} download><Download size={16} aria-hidden="true"/>下载最终视频</a>)}<a className="workspace-download-secondary" href={`/api/local/episodes/${encodeURIComponent(w.episodeId)}/delivery-download?delivery=${encodeURIComponent(latest.id)}`} download aria-label="下载全部交付文件（ZIP）" title="下载交付文件 ZIP，不含源素材"><FileArchive size={16} aria-hidden="true"/>交付包</a>{latest.artifacts.filter(a=>a.artifactType==='editable_project').map(a=><a className="workspace-download-secondary" key={a.relativePath} href={artifactUrl(a,true)} download aria-label="下载可编辑工程" title="下载可编辑工程，打开时需保留本机原素材"><FileJson size={16} aria-hidden="true"/>工程</a>)}</div>
+  <p className="workspace-delivery-project-note">工程需保留原素材；交付包不含源素材。</p>
+- </>:running?<p role="status">{latest.status==='running'?'正在校验交付文件…':'交付已排队…'}</p>:completed?<p role="alert">{latest.error}</p>:<>
+- {!confirmed&&<p>先在成片预览下方确认成片与字幕，再准备交付。</p>}
++ </>:running?<p role="status">{latest.status==='running'?'正在校验交付文件…':'交付已排队…'}</p>:completed?<p role="alert">{latest.error||'交付文件需重新核验，请读取原交付状态。'}</p>:!confirmed?<><p className="workspace-delivery-locked">{!source?'导出并确认成片后，再设置封面与发布文案。':!source.current||w.stale?'工程已变化，请重新导出并确认成片。':'确认这份成片后，再设置封面与发布文案。'}</p>{latest?.error&&<p role="alert">{latest.error}</p>}</>:<>
+  {draft.restored&&<p role="status">已恢复本机交付草稿，尚未提交。</p>}{draft.storageError&&<p role="alert" className="form-error">本机草稿暂无法保存，请保持此页面打开。</p>}
+  <div className="workspace-delivery-fields">
+   <div className="workspace-delivery-cover"><span>封面</span><Button className="workspace-delivery-cover-picker" noTextPadding size="sm" color="secondary" aria-label={cover?'替换封面':'选择封面'} aria-describedby={`${coverFieldId}-hint${coverError?` ${coverFieldId}-error`:''}`} aria-invalid={!!coverError} isDisabled={pending||!confirmed} onPress={()=>coverInput.current?.click()}>{coverPreview?<ImagePreview src={coverPreview} alt="交付封面预览"/>:<span className="workspace-delivery-cover-placeholder"><ImageIcon size={28} aria-hidden="true"/><span>选择封面图片</span></span>}</Button><span className="workspace-delivery-cover-name" title={cover?.name}>{cover?.name??(coverName?`请重新选择封面：${coverName}`:'尚未选择封面')}</span><span id={`${coverFieldId}-hint`}>JPG、PNG、WebP · 单张不超过 20 MB</span>{checkingCover&&<span role="status">正在检查封面…</span>}{coverError&&<span id={`${coverFieldId}-error`} role="alert" className="form-error">{coverError}</span>}<input ref={coverInput} hidden aria-label="封面" aria-describedby={`${coverFieldId}-hint${coverError?` ${coverFieldId}-error`:''}`} aria-invalid={!!coverError} type="file" accept="image/png,image/jpeg,image/webp" disabled={pending||!confirmed} onChange={e=>{const file=e.target.files?.[0]??null;e.target.value='';void selectCover(file);setError('');}}/></div>
+diff --git a/Users/dan/Programs/loop-control/.scratch/delivery-review-20261110/before/src/local-app/workspace-compact-panels.css b/Users/dan/Programs/loop-control/.scratch/delivery-review-20261110/pending/src/local-app/workspace-compact-panels.css
+index 10d8bcd9..8d9ba109 100644
+--- a/Users/dan/Programs/loop-control/.scratch/delivery-review-20261110/before/src/local-app/workspace-compact-panels.css
++++ b/Users/dan/Programs/loop-control/.scratch/delivery-review-20261110/pending/src/local-app/workspace-compact-panels.css
+@@ -184,3 +184,43 @@ html[data-interface="impeccable"] .product-ui .workspace-script-compact .confirm
+  .workspace-script-comparison{grid-template-columns:minmax(0,1fr);flex:0 0 auto}
+  .workspace-script-shot-preview{padding:16px 0 0;border-left:0;border-top:1px solid var(--lc-line)}
+ }
++
++/* Review the exported file first; delivery inputs follow explicit confirmation. */
++.workspace-export.workspace-review-flow .workspace-export-layout {grid-template-columns:minmax(0,1.15fr) minmax(320px,.85fr);}
++.workspace-review-flow .workspace-final-preview {gap:12px;padding:20px;}
++.workspace-review-flow .workspace-final-preview > .app-video-player:not([data-expanded]) {flex:1 1 420px;min-height:240px;max-height:58vh;}
++.workspace-final-actions {display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0;padding-top:12px;border-top:1px solid var(--lc-line,#d8e1ee);}
++.workspace-final-actions > button {flex:none;}
++.workspace-final-actions .workspace-final-confirmed {margin:0!important;}
++.workspace-final-next {font-size:12px;line-height:1.6;color:var(--lc-muted,#596b83);}
++.workspace-review-flow .workspace-export-review {padding:16px 20px;gap:12px;}
++.workspace-review-flow .workspace-technical-checks {margin:0;padding-bottom:8px;}
++.workspace-review-flow .workspace-export-issues {margin:0;padding:0;border:0;}
++.workspace-review-flow .workspace-export-issues > summary {cursor:pointer;min-height:32px;margin:0;}
++.workspace-review-flow .workspace-export-issues[open] > summary {margin-bottom:8px;}
++.workspace-delivery-locked {margin:12px 0 0!important;max-width:42ch;font-size:13px;line-height:1.7;color:var(--lc-muted,#596b83);}
++@container workspace-review (max-width:900px) {
++ .workspace-export.workspace-review-flow .workspace-export-layout {grid-template-columns:minmax(0,1fr);}
++ .workspace-review-flow .workspace-final-preview {border-right:0;border-bottom:1px solid var(--lc-line,#d8e1ee);overflow:visible;}
++ .workspace-review-flow .workspace-final-preview > .app-video-player:not([data-expanded]) {flex:none;height:42vh;max-height:420px;}
++ .workspace-review-flow .workspace-export-review {overflow:visible;padding:16px;}
++}
++@media(max-width:620px) {
++ .workspace-review-flow .workspace-final-preview {padding:16px;}
++ .workspace-final-actions {align-items:flex-start;flex-direction:column;}
++ .workspace-final-actions > button {align-self:flex-end;}
++}
++
++.workspace-review-flow .workspace-export-issues > summary {justify-content:flex-start;gap:8px;}
++.workspace-review-flow .workspace-export-issues > summary h4 {margin-inline-end:auto;}
++
++.workspace-export.workspace-review-flow {container-type:inline-size;container-name:workspace-review;}
++
++.workspace-review-flow .workspace-export-review > .workspace-delivery {padding-top:12px;border-top:1px solid var(--lc-line,#d8e1ee);}
++.workspace-review-flow .workspace-export-secondary {padding-top:8px;gap:4px;}
++.workspace-review-flow .workspace-export-secondary h5 {margin:0 0 8px;font-size:12px;font-weight:600;}
++.workspace-export-secondary-grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:16px;margin-top:8px;align-items:start;}
++.workspace-export-secondary-grid > div {min-width:0;overflow-wrap:anywhere;}
++.workspace-review-flow .workspace-export-secondary dl {margin:0;gap:12px 16px;}
++.workspace-review-flow .workspace-delivery .workspace-review-heading {margin-bottom:8px;}
++.workspace-review-flow .workspace-delivery-locked {margin:8px 0 0!important;}

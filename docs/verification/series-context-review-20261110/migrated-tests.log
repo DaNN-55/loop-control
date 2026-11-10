@@ -1,0 +1,17 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/platform/SeriesConfigurationForm.test.tsx src/episodes/EpisodeForm.test.tsx src/local-app/LocalCatalogApp.episode-dialog.test.tsx src/accounts/AccountRules.test.tsx
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/accounts/AccountRules.test.tsx (4 tests) 263ms
+ ✓ src/episodes/EpisodeForm.test.tsx (5 tests) 363ms
+ ✓ src/platform/SeriesConfigurationForm.test.tsx (6 tests) 686ms
+   ✓ 已应用时锁定名称和规则，显式修改后一起保存；撤销恢复最近成功值  309ms
+ ✓ src/local-app/LocalCatalogApp.episode-dialog.test.tsx (2 tests) 592ms
+   ✓ inherits the filtered account into creation and resets every list scope with valid pagination  413ms
+
+ Test Files  4 passed (4)
+      Tests  17 passed (17)
+   Start at  08:56:34
+   Duration  3.79s (transform 1.02s, setup 80ms, collect 6.26s, tests 1.90s, environment 1.85s, prepare 188ms)
+

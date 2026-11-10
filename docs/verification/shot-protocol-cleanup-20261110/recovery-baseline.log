@@ -1,0 +1,69 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control/.scratch/current-flow-cleanup-20261110/baseline
+
+ ❯ src/local-app/workspaceVisualCandidates.integration.test.ts (22 tests | 1 failed | 21 skipped) 3824ms
+   ↓ Owner registers a local visual candidate and replaces only one source instance
+   ↓ Owner locally fills a placeholder with a registered still image without video generation
+   ↓ Owner locally fills a placeholder with a registered pan-zoom image without video generation
+   ↓ Owner registers new media into the existing live pool and can save and reopen it
+   ↓ Owner creates a controlled Provider visual candidate during editing without changing Episode stage
+   ↓ visual generation freezes the actual source voice window instead of retained muted TTS and rejects a later route change
+   × unknown paid visual submissions cannot be bypassed by retry or a new prompt 3823ms
+     → expected 'blocked' to be 'failed' // Object.is equality
+   ↓ a visual task with a saved Provider ID resumes polling without a second paid submission
+   ↓ short visual source requires an explicit duration decision without repeating or moving other clips
+   ↓ voice gain and BGM edits do not stale a visual request or overwrite the new mix
+   ↓ an unavailable unused visual candidate does not prevent editing and cannot be adopted
+   ↓ added shots accept registered local visuals and explicitly selected generation and changed target input blocks a new paid POST
+   ↓ manual video adoption preserves the selected source interval and refuses a short range
+   ↓ video generation freezes and applies the first-frame composition without changing the source image
+   ↓ returns the used video to candidates without moving the shot and allows re-adoption
+   ↓ freezes volcengine keyframes inputs and sends the right roles to a simulated provider
+   ↓ freezes volcengine references inputs and sends the right roles to a simulated provider
+   ↓ freezes minimax keyframes inputs and sends the right roles to a simulated provider
+   ↓ freezes minimax references inputs and sends the right roles to a simulated provider
+   ↓ freezes kling keyframes inputs and sends the right roles to a simulated provider
+   ↓ freezes kling references inputs and sends the right roles to a simulated provider
+   ↓ freezes bailian references inputs and sends the right roles to a simulated provider
+ ❯ src/local-app/workspacePexels.integration.test.ts (6 tests | 1 failed | 5 skipped) 5228ms
+   × Owner queries Pexels, previews an explicit result, imports and explicitly adopts managed bytes after restart 5227ms
+     → {"code":"local_service_unavailable","error":"本机操作结果暂未确认，请查看系统状态并核对已有任务或保存结果，再继续操作。"}: expected 503 to be 200 // Object.is equality
+   ↓ Pexels failures stay recoverable, validate external URLs and bytes, and never generate or adopt automatically
+   ↓ queued Pexels requests retain exact credentials across rotation and old candidates remain selectable after a new query
+   ↓ a short Pexels video gives recoverable duration feedback and only an explicit duration choice changes the native window
+   ↓ Pexels results and unimported previews for one shot survive many searches on another shot
+   ↓ thumbnail search metadata survives Owner reads and duplicate preview/import cannot change the project before adoption
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workspacePexels.integration.test.ts > Owner queries Pexels, previews an explicit result, imports and explicitly adopts managed bytes after restart
+AssertionError: {"code":"local_service_unavailable","error":"本机操作结果暂未确认，请查看系统状态并核对已有任务或保存结果，再继续操作。"}: expected 503 to be 200 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 200[39m
+[31m+ 503[39m
+
+ ❯ src/local-app/workspacePexels.integration.test.ts:17:141
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/local-app/workspaceVisualCandidates.integration.test.ts > unknown paid visual submissions cannot be bypassed by retry or a new prompt
+AssertionError: expected 'blocked' to be 'failed' // Object.is equality
+
+Expected: [32m"[7mfail[27med"[39m
+Received: [31m"[7mblock[27med"[39m
+
+ ❯ src/local-app/workspaceVisualCandidates.integration.test.ts:95:201
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 26 skipped (28)
+   Start at  10:40:49
+   Duration  6.26s (transform 627ms, setup 25ms, collect 1.72s, tests 9.05s, environment 0ms, prepare 92ms)
+

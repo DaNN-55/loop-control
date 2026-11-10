@@ -1,0 +1,20 @@
+{
+  "productionChoicesUnchanged": true,
+  "legacyChoicesUnchanged": true,
+  "productionServices": 9,
+  "oldProtocolsChecked": [
+    "a_roll_generation",
+    "b_roll_generation",
+    "narration_generation",
+    "static_visual_generation",
+    "soundtrack_generation"
+  ],
+  "newGenerationAdapters": [
+    "volcengine:seedance_video",
+    "minimax:minimax_video",
+    "kling:kling_video",
+    "bailian:wan_video",
+    "pexels:pexels_video",
+    "openchatcut:openchatcut_card_video"
+  ]
+}

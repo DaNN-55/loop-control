@@ -1,0 +1,597 @@
+--- a/PLAN.md
++++ b/PLAN.md
+@@ -1,3 +1,15 @@
++# 产品体验第一批优化（2026-11-09，已批准）
++
++范围：仅实施审查 R01／R02／R03／R04／R06。保留现有未提交清理、动效、上传与候选生命周期改动；不提交／推送。R01 检查画面空档并防止棋盘背景进入导出；R02 提供脱敏的未知调用信息、核对与恢复入口，禁止未知请求重复提交；R03 沿用当前镜头时长并就地解释短候选冲突；R04 同步任务／交付异常与实际活动时间；R06 为初始默认字幕登记有效时序，不放宽音轨变化后的失效校验。
++
++- [x] 将已实测缺陷转为实际调用边界的失败回归，核对关联 ADR 与现有不变量。
++- [x] 分项实现最小修改，执行定向回归和真实 Owner HTTP／隔离数据库检查。
++- [x] 类型／构建、浏览器宽窄窗与原路径验收，更新日常运行版本；记录用户检查步骤。
++
++结果：已完成五项修改；单元测试 1,803 项通过，补充覆盖／目录／真实 Owner HTTP／Worker／字幕／导出与宽窄浏览器验证通过。日常服务已更新至 `4b3b769585c6`，实际目录读取正常（3 条，单次抽样 57 ms），队列空闲。详细修改和手动步骤见 `docs/verification/first-batch-experience-20261109/REPORT.md`。
++
++验证不新增付费调用；旧未知口播请求保持原状。测试使用隔离存储或上一轮明确命名的测试对象。操作前状态与恢复副本：`/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-first-batch-20261109-014lglrd`。停止或中断前更新本计划。
++
+ # 全面产品体验审查（2026-11-09）
+ 
+ 目标：以当前工作区和实际日常版本审查账号／系列、脚本、素材、生成、剪辑、检查交付、历史与设置。用户授权少量付费测试及测试对象的新建、上传、生成、删除；只操作本轮明确命名的测试数据，保留既有业务与未提交工作。付费调用总额控制在 ¥10 内，价格无法确认时不提交。交付具体建议，本轮不实施产品修改、不提交／推送。
+--- a/src/local-app/workspaceExportCommands.ts
++++ b/src/local-app/workspaceExportCommands.ts
+@@ -17,6 +17,7 @@
+ import {safeAssetOutputPath} from '../worker/controlledMediaExecutor.js';
+ import {inspectMp4Artifact} from '../worker/mediaTools.js';
+ import {isOpenChatCutStudio} from '../worker/openchatcutStudio.js';
++import {workspaceVisualGaps} from './workspaceVisualCoverage.js';
+ 
+ /** Native timeline graph, excluding the unused media pool and unreachable sequences. */
+ export function usedWorkspaceContent(project:OpenChatCutProject){
+@@ -36,6 +37,10 @@
+   for(const path of used.paths){const s=await resolveWorkspaceSource(c,root,row.episode_id,path);sources.push({relativePath:s.relative_path,sha256:s.sha256,fileSize:Number(s.file_size)});}
+   checks.push({name:'used_content',passed:true,detail:`已核对 ${used.paths.size} 个实际来源。`,sources});
+  }catch(error){checks.push({name:'used_content',passed:false,detail:error instanceof Error?error.message:'实际来源不可用。'});}
++ try{
++  const gaps=workspaceVisualGaps(project);
++  checks.push({name:'visual_coverage',passed:gaps.length===0,detail:gaps.length?`画面空档 ${gaps.slice(0,6).map(g=>`${g.startSeconds.toFixed(2)}–${g.endSeconds.toFixed(2)} 秒`).join('、')}。请在剪辑工作台合拢片段，或添加明确的背景画面后重新导出。`:'整期画面连续，无未填充空档。',gaps});
++ }catch(error){checks.push({name:'visual_coverage',passed:false,detail:error instanceof Error?error.message:'画面覆盖检查未完成。'});}
+  try{
+   for(const timeline of project.timelines.filter(t=>used?.timelineIds.has(t.id))){
+    if(timeline.captionsHidden)continue;const endMs=Math.max(0,...timeline.items.map(i=>Number(i.startFrame)+Number(i.durationInFrames)))*1000/timeline.fps;
+--- a/src/local-app/WorkspaceVisualPreparation.tsx
++++ b/src/local-app/WorkspaceVisualPreparation.tsx
+@@ -3,6 +3,7 @@
+ import {shotCompositionSlotLabels} from '../shotComposition';
+ import {hasSeparatedVideoSound} from '../workspaceVideoSound';
+ import type {OpenChatCutProject} from '../worker/openchatcutProject';
++import {readWorkspaceShotWindow} from '../workspaceShots';
+ import {videoVisualInputProblem,type VideoVisualInputSelection} from '../videoVisualInputs';
+ import {useWorkspaceMaterialSelection,WorkspaceMaterialDrop} from './WorkspaceMaterialDrop';
+ import {ImageFocusDialog} from '../ui/media/ImagePreview';
+@@ -76,7 +77,9 @@
+  const selected=props.workspace.selectedImages?.find(s=>s.targetItemId===targetItemId)?.materialRevisionId;
+  let pexelsSelection:ProductionSelection|null|undefined;try{pexelsSelection=JSON.parse(sessionStorage.getItem(`loop-pexels-draft:${props.workspace.id}:${targetItemId}`)??'null')?.selection;}catch{/* Keep an empty search selection. */}
+  let defaults:Partial<Draft>={};try{defaults={...JSON.parse(sessionStorage.getItem(`loop-image-default:${props.workspace.id}`)??'{}'),...JSON.parse(sessionStorage.getItem(`loop-video-default:${props.workspace.id}`)??'{}')};}catch{/* Empty default. */}
+- return {...defaults,pexelsSelection,imageBrief:{...emptyImageBrief,references:[]},videoSelection:defaults.videoSelection??sizeTarget?.defaultSelection,imageSelection:defaults.imageSelection??props.workspace.visualConfiguration?.imageSelection,videoSettings:defaults.videoSettings??{...defaultWanSettings},firstFrameFit:'contain',tab:props.currentVisualKind==='video'?'video':'image',origin:{image:'material',video:'material'},imagePrompt:'',videoPrompt:'',references:[],firstFrame:selected??(props.currentVisualKind==='image'?props.currentMaterialRevisionId??'':''),settings:defaults.settings??{size,quality:'auto',count:1},duration:String(Math.max(3,sizeTarget?.minimumSeconds??2)),usage:'still',selected:{image:'',video:''}};
++ const window=props.project?readWorkspaceShotWindow(props.project,targetItemId):undefined;
++ const seconds=sizeTarget?.durationSeconds??(window?window.durationInFrames/window.timeline.fps:Math.max(3,sizeTarget?.minimumSeconds??2));
++ return {...defaults,pexelsSelection,imageBrief:{...emptyImageBrief,references:[]},videoSelection:defaults.videoSelection??sizeTarget?.defaultSelection,imageSelection:defaults.imageSelection??props.workspace.visualConfiguration?.imageSelection,videoSettings:defaults.videoSettings??{...defaultWanSettings},firstFrameFit:'contain',tab:props.currentVisualKind==='video'?'video':'image',origin:{image:'material',video:'material'},imagePrompt:'',videoPrompt:'',references:[],firstFrame:selected??(props.currentVisualKind==='image'?props.currentMaterialRevisionId??'':''),settings:defaults.settings??{size,quality:'auto',count:1},duration:String(seconds),usage:'still',selected:{image:'',video:''}};
+ }
+ export function WorkspaceVisualPreparation(props:VisualPreparationProps){
+  const options=props.selectedShotId?props.workspace.clips.filter(c=>c.shotId===props.selectedShotId):props.workspace.clips;
+@@ -327,6 +330,7 @@
+  const previewSegment=candidate?.kind==='video'&&rangeValid&&(rangeStartSeconds>0||rangeEndSeconds<candidate.durationSeconds)
+   ?{start:rangeStartSeconds,end:rangeEndSeconds}:undefined;
+  const canAdopt=rangeValid&&!!candidate&&candidate.status==='available'&&(candidate.kind==='image'||(policy==='keep-target'?candidate.currentDurationSeconds===null||(selectedVideoDuration??candidate.durationSeconds)+0.05>=candidate.currentDurationSeconds:acceptImpact));
++ const shortCandidate=candidate?.kind==='video'&&!current&&policy==='keep-target'&&candidate.currentDurationSeconds!==null&&rangeValid&&(selectedVideoDuration??0)+.05<candidate.currentDurationSeconds;
+  const adoptionLabel=current?'已采用':imageChosen?'图片已选用':tab==='image'&&props.currentVisualKind==='video'?'保留为备用图片':'采用到当前镜头';
+  const adoptionAction=tab==='image'?<button type="button" aria-label={adoptionLabel} aria-describedby={adoptionDescriptionId} disabled={disabled||current||imageChosen||!canAdopt} onClick={()=>{if(candidate)void adopt(candidate);}}>
+   <span>{adoptionLabel}</span><small id={adoptionDescriptionId}>{current?'当前镜头正在使用此图':imageChosen?'此图已保留为备用图片':props.currentVisualKind==='video'?'仅保留备用，当前视频不变':'用作镜头画面，保持时长不变'}</small>
+@@ -431,7 +435,7 @@
+              setNotice('视频原声已拆分，可在剪辑工作台单独编辑。');
+             });
+            }}>拆分视频原声</button>}
+-           {tab==='video'&&candidate&&!current&&<details><summary aria-label="裁剪与时长">裁剪与时长<small>选择使用区间，调整采用后的镜头时长</small></summary><div className="workspace-adoption-settings">
++           {tab==='video'&&candidate&&!current&&<details data-adoption-duration><summary aria-label="裁剪与时长">裁剪与时长<small>选择使用区间，调整采用后的镜头时长</small></summary><div className="workspace-adoption-settings">
+     <div className="workspace-visual-fields"><label>使用起点（秒）<input type="number" aria-label="视频使用起点（秒）" min="0" max={candidate.durationSeconds} step="0.1" disabled={disabled} value={rangeStart||String(existingVideoIn)} onChange={e=>setRangeStart(e.target.value)}/></label><label>使用终点（秒）<input type="number" aria-label="视频使用终点（秒）" min="0.1" max={candidate.durationSeconds} step="0.1" disabled={disabled} value={rangeEnd||candidate.durationSeconds} onChange={e=>setRangeEnd(e.target.value)}/></label></div>
+     <label>采用时长<NativeSelect size="sm" aria-label="视觉候选时长处理" disabled={disabled} value={policy} onChange={e=>{setPolicy(e.target.value);setAcceptImpact(false);}}><option value="keep-target">保留镜头时长</option><option value="use-candidate">使用素材完整时长</option></NativeSelect></label>
+     {policy==='use-candidate'&&<label className="workspace-visual-checkbox"><input type="checkbox" disabled={disabled} checked={acceptImpact} onChange={e=>setAcceptImpact(e.target.checked)}/>保留其他片段位置，接受空隙或覆盖</label>}
+@@ -444,6 +448,7 @@
+          </details>
+          {tab==='image'?candidate?.materialRevisionId&&<Button size="sm" color="primary" isDisabled={disabled||candidate.status==='stale'} onPress={linkFirstFrame}>用作视频首帧</Button>:adoptionAction}
+        </div>}
++       {shortCandidate&&<div className="workspace-adoption-duration-warning" role="status"><p>素材可用 {selectedVideoDuration!.toFixed(2)} 秒，短于当前镜头 {candidate.currentDurationSeconds!.toFixed(2)} 秒。</p><Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>{if(resultMore.current){resultMore.current.open=true;const details=resultMore.current.querySelector<HTMLDetailsElement>('[data-adoption-duration]');if(details){details.open=true;requestAnimationFrame(()=>details.querySelector<HTMLSelectElement>('select')?.focus());}}}}>调整采用时长</Button></div>}
+       </div>}
+       <ConfirmationModalPresence>{needsImpactDialog&&review&&review.kind==='adoption'&&createPortal(<div className="workspace-visual-adoption-overlay">
+        <ConfirmationModal title="采用前核对" confirmLabel="确认采用" isPending={busy||candidateReview.pending} confirmDisabled={!!disabled} onConfirm={confirmAdoption} onCancel={closeAdoption}>
+--- a/src/local-app/WorkspaceVisualTaskStatus.tsx
++++ b/src/local-app/WorkspaceVisualTaskStatus.tsx
+@@ -34,6 +34,7 @@
+  {task.canResume&&!held&&['failed','blocked'].includes(task.status)&&<><p>恢复只查询原供应商任务，沿用已冻结的输入，不会重新提交生成。</p><Button size="sm" color="secondary" isDisabled={disabled} onPress={onResume}>{resumeLabel}</Button></>}
+  {held&&<><p>已有产物等待核对。核对只恢复本次发布，不会重新生成。</p><Button size="sm" color="secondary" isDisabled={disabled} onPress={onReconcile}>核对并恢复产物</Button></>}
+  {(unknown||held)&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={onRefresh}>刷新核对结果</Button>}
+- {(unknown||held||task.canResume)&&<details><summary>任务信息</summary>{(task.connectionName||task.provider)&&<p>{task.connectionName??task.provider}{task.model?` · ${task.model}`:''}</p>}{task.createdAt&&<p>提交时间 {new Date(task.createdAt).toLocaleString('zh-CN',{hour12:false})}</p>}<p>原任务 {task.taskId}{held?` · 尝试 ${task.publicationAttempt}`:''}</p>{task.providerTaskId&&<p>供应商任务 {task.providerTaskId}</p>}</details>}
++ {unknown&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>window.dispatchEvent(new Event('open-external-connections'))}>打开连接配置</Button>}
++ {(unknown||held||task.canResume)&&<details open={unknown||undefined}><summary>任务信息</summary>{(task.connectionName||task.provider)&&<p>{task.connectionName??task.provider}{task.model?` · ${task.model}`:''}</p>}{task.createdAt&&<p>提交时间 {new Date(task.createdAt).toLocaleString('zh-CN',{hour12:false})}</p>}{task.reservationCents!=null&&<p>本次费用预留 ¥{(task.reservationCents/100).toFixed(2)}（实际扣费以供应商账单为准）</p>}{unknown&&!task.providerTaskId&&<p>供应商未返回任务编号，请按连接、模型和提交时间核对供应商调用记录。</p>}<p>原任务 {task.taskId}{held?` · 尝试 ${task.publicationAttempt}`:''}</p>{task.providerTaskId&&<p>供应商任务 {task.providerTaskId}</p>}</details>}
+  </div>;
+ }
+--- a/src/local-app/WorkspaceVisualTaskStatus.test.tsx
++++ b/src/local-app/WorkspaceVisualTaskStatus.test.tsx
+@@ -18,9 +18,9 @@
+ 
+ it('narration retains unknown submission evidence and blocks another paid preparation',async()=>{
+  const {WorkspaceNarrationPanel}=await import('./WorkspaceNarrationPanel');vi.stubGlobal('fetch',vi.fn(async()=>Response.json({serviceCatalog:{groups:[]}})));
+- const n={clipId:'clip',shotId:'shot',mode:'tts',text:'正文',status:'failed',error:null,confirmed:true,generationTask:{id:'speech',taskId:'speech-task',status:'failed',error:'语音回执未收到',submissionOutcome:'started',submissionUnknown:true}};
++ const n={clipId:'clip',shotId:'shot',mode:'tts',text:'正文',status:'failed',error:null,confirmed:true,generationTask:{id:'speech',taskId:'speech-task',status:'failed',error:'语音回执未收到',reservationCents:100,connectionName:'本次语音连接',model:'seed-tts-2.0',createdAt:'2026-11-09T07:00:00.000Z',submissionOutcome:'started',submissionUnknown:true}};
+  render(<WorkspaceNarrationPanel episodeId="episode" workspace={{...base,narration:[n]} as unknown as ProductionWorkspace} pending={false} command={vi.fn()} onChanged={()=>{}} selectedShotId="shot"/>);
+- expect(screen.getByText(/^口播提交结果未知/)).toBeTruthy();expect((screen.getByRole('button',{name:'生成口播'}) as HTMLButtonElement).disabled).toBe(true);expect(screen.getByRole('button',{name:'刷新核对结果'})).toBeTruthy();
++ expect(screen.getByText(/^口播提交结果未知/)).toBeTruthy();expect(screen.getByText(/本次费用预留 ¥1.00/)).toBeTruthy();expect(screen.getByText(/本次语音连接/)).toBeTruthy();expect(screen.getByText(/供应商未返回任务编号/)).toBeTruthy();expect(screen.getByText(/原任务 speech-task/).closest('details')?.open).toBe(true);const open=vi.fn();window.addEventListener('open-external-connections',open,{once:true});fireEvent.click(screen.getByRole('button',{name:'打开连接配置'}));expect(open).toHaveBeenCalledTimes(1);expect((screen.getByRole('button',{name:'生成口播'}) as HTMLButtonElement).disabled).toBe(true);expect(screen.getByRole('button',{name:'刷新核对结果'})).toBeTruthy();
+ });
+ it('audio publication remains explicitly recoverable and never offers ordinary retry',async()=>{
+  const {WorkspaceAudioPreparation}=await import('./WorkspaceAudioPanel');vi.stubGlobal('fetch',vi.fn(async()=>Response.json({serviceCatalog:{groups:[]}})));
+--- a/src/local-app/workspace-visual-preparation.css
++++ b/src/local-app/workspace-visual-preparation.css
+@@ -246,3 +246,7 @@
+ .workspace-candidate-actions .workspace-result-more-content>details>summary>small{display:block;margin-top:2px;color:var(--lc-muted);font-size:12px;line-height:inherit}
+ .workspace-duration-follow{color:var(--lc-muted);font-size:12px;font-weight:400}
+ .workspace-composer-settings .workspace-duration-locked{background:var(--lc-surface-2)!important;color:var(--lc-muted)}
++
++.workspace-result-footer:has(>.workspace-adoption-duration-warning){flex-wrap:wrap}
++.workspace-adoption-duration-warning{display:flex;flex-basis:100%;align-items:center;flex-wrap:wrap;gap:8px;margin-block:4px;color:var(--lc-ink)}
++.workspace-adoption-duration-warning p{margin:0;line-height:1.6}
+--- a/src/local-app/workspaceCaptionsCommands.ts
++++ b/src/local-app/workspaceCaptionsCommands.ts
+@@ -15,7 +15,7 @@
+ import {readProductionWorkspace,updateWorkspaceProject,type ProductionWorkspaceRecord} from './productionWorkspaceCommands.js';
+ const fingerprint=(v:unknown)=>createHash('sha256').update(JSON.stringify(v)).digest('hex');
+ const comparable=(v:string)=>v.replace(/\s/gu,'');
+-async function captionContext(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,clipId:unknown){
++async function captionContext(c:PoolClient,root:string,row:Pick<ProductionWorkspaceRecord,'id'|'episode_id'|'storyboard_package_id'|'bindings'>,project:OpenChatCutProject,clipId:unknown){
+  await requireEpisodeStorageDirectory(c,await episodeStorageLocationAtRoot(c,root,row.episode_id));
+  const clip=row.bindings.find(b=>b.id===clipId);if(!clip)throw new ConfigurationError(404,'当前片段不存在。');
+  const window=readWorkspaceShotWindow(project,clip.itemId),timeline=window?.timeline,item=window?{...window.item,startFrame:window.startFrame,durationInFrames:window.durationInFrames}:undefined;if(!timeline||!item)throw new ConfigurationError(409,'片段已从当前工程删除。');
+@@ -47,7 +47,7 @@
+  confirmed_at=CASE WHEN workspace_caption_evidence.input_fingerprint=excluded.input_fingerprint AND workspace_caption_evidence.lane_fingerprint=excluded.lane_fingerprint THEN workspace_caption_evidence.confirmed_at END`,[row.id,clipId,input,lane,method,taskId,alignment,row.bindings.find(b=>b.id===clipId)!.shotId]);
+ }
+ /** First assembly seeds frozen subtitles as editable native lanes; later opens preserve native edits. */
+-export async function assembleWorkspaceCaptions(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject){
++export async function assembleWorkspaceCaptions(c:PoolClient,root:string,row:Pick<ProductionWorkspaceRecord,'id'|'episode_id'|'storyboard_package_id'|'bindings'>,project:OpenChatCutProject){
+  if((await c.query("SELECT 1 FROM local_identity.production_workspace_versions WHERE workspace_id=$1 AND reason='保存原生剪辑' LIMIT 1",[row.id])).rowCount)return project;
+  let next=project;const seen=new Set<string>();
+  for(const clip of row.bindings){
+--- a/src/local-app/productionWorkspaceCommands.ts
++++ b/src/local-app/productionWorkspaceCommands.ts
+@@ -195,7 +195,9 @@
+    });
+    let project:OpenChatCutProject={version:3,loopControl:{version:'four-step-workspace/v1',inputFingerprint:id,transitionMode:'studio'},assets:[],mediaFolders:[],activeTimelineId:`loop-control-${e.id}`,timelines:[{id:`loop-control-${e.id}`,name:'整期剪辑',order:0,fps:30,width,height,fit:'contain',items,trackOrder:Object.keys(tracks),tracks,transitions:[],selectedId:null,captionsHidden:false}]};
+    if(recovery?.decision==='preserve'){project=recovery.project;clips=await recoverLegacyBindings(c,root,e.id,id,project,clips);}
+-   project=withWorkspaceShotMetadata(project,clips);const file=await persistWorkspaceProject(c,root,e.id,project);
++   project=withWorkspaceShotMetadata(project,clips);
++   if(!row&&!recovery)project=await assembleWorkspaceCaptions(c,root,{id,episode_id:e.id,storyboard_package_id:p.id,bindings:clips},project);
++   const file=await persistWorkspaceProject(c,root,e.id,project);
+    if(row){
+     await c.query('UPDATE local_identity.production_workspaces SET script_revision_id=$2,storyboard_package_id=$3 WHERE id=$1',[row.id,e.main_script_revision_id,p.id]);
+     await persistWorkspaceRevision(c,root,row,project,clips,String(data.reason??'依据已确认脚本与分镜更新素材规划'));
+@@ -203,6 +205,8 @@
+    row=(await c.query('INSERT INTO local_identity.production_workspaces(id,episode_id,script_revision_id,storyboard_package_id,bindings,project_path,project_sha256,project_size,content_sha256,native_edit_revision) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *',[id,e.id,e.main_script_revision_id,p.id,JSON.stringify(clips),file.relativePath,file.sha256,file.fileSize,workspaceContentSha256(project),recovery?.decision==='preserve'?1:0])).rows[0];
+     await recordWorkspaceVersion(c,row!,'首次组装');
+     await syncWorkspaceShotInputs(c,row!,clips);
++    // Initial native cues establish timing only; final text approval remains explicit.
++    if(!recovery)await syncNativeWorkspaceCaptions(c,root,row!,project);
+     if(recovery)await c.query('INSERT INTO local_identity.workspace_legacy_recoveries(workspace_id,decision,relative_path,sha256,file_size) VALUES($1,$2,$3,$4,$5)',[id,recovery.decision,recovery.relativePath,recovery.sha256,recovery.fileSize]);
+    }
+    return readProductionWorkspace(c,e.id,root);
+--- a/src/local-app/workspaceGenerationTasks.ts
++++ b/src/local-app/workspaceGenerationTasks.ts
+@@ -3,11 +3,11 @@
+ import type {WorkspaceVisualTask} from '../workspaceVisualCandidates.js';
+ /** Projection of existing task/submission/publication authorities; never creates or retries work. */
+ export async function readWorkspaceNarrationTasks(c:PoolClient,row:ProductionWorkspaceRecord):Promise<WorkspaceVisualTask[]>{
+- return(await c.query(`SELECT r.task_id id,r.shot_id "shotId",t.id "taskId",t.status,t.provider,t.model,t.created_at "createdAt",r.request_snapshot#>>'{connection,name}' "connectionName",s.outcome "submissionOutcome",h.attempt "publicationAttempt",
++ return(await c.query(`SELECT r.task_id id,r.shot_id "shotId",t.id "taskId",t.status,t.provider,t.model,t.created_at "createdAt",r.request_snapshot#>>'{connection,name}' "connectionName",s.outcome "submissionOutcome",coalesce((r.request_snapshot->>'reservationCents')::integer,t.budget_limit_cents) "reservationCents",h.attempt "publicationAttempt",
+  coalesce(t.last_result#>>'{blockers,0,detail}',t.last_result#>>'{retry,reason}') error,
+- (t.status IN ('failed','blocked') AND s.outcome IN ('started','received')) "submissionUnknown"
++ (t.status IN ('failed','blocked') AND (s.outcome IN ('started','received') OR coalesce(t.last_result#>'{preflight,checks}','[]'::jsonb) @> '[{"check":"provider_result_unknown"}]'::jsonb)) "submissionUnknown"
+  FROM local_identity.workspace_narration_requests r JOIN public.tasks t ON t.id=r.task_id
+  LEFT JOIN local_identity.workspace_narration_submissions s ON s.task_id=t.id LEFT JOIN local_identity.workspace_publication_holds($2) h ON h.task_id=t.id
+  WHERE r.workspace_id=$1 AND t.status IN ('ready','running','failed','blocked','completed')
+- ORDER BY coalesce(t.status<>'completed' AND (h.task_id IS NOT NULL OR t.status IN ('ready','running') OR s.outcome IN ('started','received')),false) DESC,t.created_at DESC`,[row.id,row.episode_id])).rows;
++ ORDER BY coalesce(t.status<>'completed' AND (h.task_id IS NOT NULL OR t.status IN ('ready','running') OR s.outcome IN ('started','received') OR coalesce(t.last_result#>'{preflight,checks}','[]'::jsonb) @> '[{"check":"provider_result_unknown"}]'::jsonb),false) DESC,t.created_at DESC`,[row.id,row.episode_id])).rows;
+ }
+--- a/src/local-app/workspaceCandidates.ts
++++ b/src/local-app/workspaceCandidates.ts
+@@ -48,7 +48,7 @@
+  return readProductionWorkspace(c,row.episode_id,root);
+ }
+ /** Delivery metadata follows actual native use, never the mutable narration draft. */
+-export async function readUsedWorkspaceNarrationVersions(c:PoolClient,row:ProductionWorkspaceRecord,project:OpenChatCutProject){
++export async function readUsedWorkspaceNarrationVersions(c:PoolClient,row:Pick<ProductionWorkspaceRecord,'id'|'episode_id'|'storyboard_package_id'|'bindings'>,project:OpenChatCutProject){
+  const results:WorkspaceUsedNarration[]=[];
+  for(const clip of row.bindings.filter((b,index,all)=>all.findIndex(v=>v.shotId===b.shotId)===index)){
+   const route=resolveWorkspaceMainVoice(project,clip.shotId),item=route.item??(!route.explicitRoute?project.timelines.flatMap(t=>t.items.filter(i=>Number(i.volume??1)>0&&(t.tracks[String(i.track)] as {muted?:boolean}|undefined)?.muted!==true)).find(i=>i.id===`workspace-narration-${clip.id}`):undefined);if(!item||typeof item.src!=='string')continue;
+--- a/src/local-app/workspacePreparation.ts
++++ b/src/local-app/workspacePreparation.ts
+@@ -42,7 +42,7 @@
+  for(const clip of bindings){const shot=p?.context_snapshot?.worker_result?.storyboard?.shots?.find((s:{id:string})=>s.id===clip.shotId);
+  await c.query('INSERT INTO local_identity.workspace_shot_inputs(workspace_id,preparation_id,shot_id,origin,baseline_text,shot_type,snapshot) VALUES($1,$7,$2,$3,$4,$5,$6) ON CONFLICT DO NOTHING',[row.id,clip.shotId,shot?p.origin??'legacy-board':'local-added',shot?.scriptSegment??'',shot?.shotType??null,shot??{id:clip.shotId},row.storyboard_package_id]);}
+ }
+-export async function resolveWorkspaceShotLineage(c:PoolClient,row:ProductionWorkspaceRecord,shotId:string,preparationId=row.storyboard_package_id){
++export async function resolveWorkspaceShotLineage(c:PoolClient,row:Pick<ProductionWorkspaceRecord,'id'|'episode_id'|'storyboard_package_id'|'bindings'>,shotId:string,preparationId=row.storyboard_package_id){
+  let result=(await c.query('SELECT * FROM local_identity.workspace_shot_inputs WHERE workspace_id=$1 AND shot_id=$2 AND preparation_id=$3',[row.id,shotId,preparationId])).rows[0];
+  if(!result){const p=(await c.query('SELECT p.context_snapshot,b.origin FROM public.review_packages p LEFT JOIN local_identity.workspace_preparations b ON b.package_id=p.id WHERE p.id=$1 AND p.episode_id=$2',[preparationId,row.episode_id])).rows[0],shot=p?.context_snapshot?.worker_result?.storyboard?.shots?.find((s:{id:string})=>s.id===shotId);if(!shot&&!row.bindings.some(b=>b.shotId===shotId))throw new ConfigurationError(409,'镜头制作依据已变化，请保存并重新确认。');result={origin:shot?p?.origin??'legacy-board':'local-added',baseline_text:shot?.scriptSegment??'',shot_type:shot?.shotType??null,snapshot:shot??{id:shotId}};}
+  return{...result,id:shotId,shotType:result.shot_type,scriptSegment:result.baseline_text};
+--- a/src/local-app/workspaceNarration.ts
++++ b/src/local-app/workspaceNarration.ts
+@@ -142,8 +142,8 @@
+  if(n.enabled===false||n.mode!=='tts'||!n.confirmed)throw new ConfigurationError(409,'请先保存并确认当前镜头匹配与口播。');
+  if(data.retry!==undefined&&typeof data.retry!=='boolean')throw new ConfigurationError(400,'重试参数无效。');
+  const authorized=await currentWorkspaceCallAuthorization(c,row);
++ const active=await c.query(`SELECT 1 FROM local_identity.workspace_narration_requests r JOIN public.tasks t ON t.id=r.task_id LEFT JOIN local_identity.workspace_narration_submissions s ON s.task_id=t.id WHERE r.workspace_id=$1 AND r.shot_id=$2 AND ((t.status IN ('ready','running') AND r.input_fingerprint<>$3) OR (t.status IN ('failed','blocked') AND coalesce(t.last_result#>'{preflight,checks}','[]'::jsonb) @> '[{"check":"provider_result_unknown"}]'::jsonb) OR (s.outcome IN ('started','received') AND t.status<>'completed'))`,[row.id,clip.shotId,n.inputFingerprint]);if(active.rowCount)throw new ConfigurationError(409,'上次口播仍在执行或提交结果未知；请先核对，不会重复发送。');
+  if(n.selection){
+-  const active=await c.query(`SELECT 1 FROM local_identity.workspace_narration_requests r JOIN public.tasks t ON t.id=r.task_id LEFT JOIN local_identity.workspace_narration_submissions s ON s.task_id=t.id WHERE r.workspace_id=$1 AND r.shot_id=$2 AND ((t.status IN ('ready','running') AND r.input_fingerprint<>$3) OR (s.outcome IN ('started','received') AND t.status<>'completed'))`,[row.id,clip.shotId,n.inputFingerprint]);if(active.rowCount)throw new ConfigurationError(409,'上次口播仍在执行或提交结果未知；请先核对，不会重复发送。');
+   const resolved=await resolveProductionSelection(c,n.selection,'speech');validateSpeechParameters(resolved.selection,n.voice,n.languageCode,n.speakingRate);
+   if(typeof data.reservationCents!=='number'||!Number.isSafeInteger(data.reservationCents)||data.reservationCents<Math.max(1,n.text.length)||data.reservationCents>100000)throw new ConfigurationError(400,'请填写足够的本次口播费用预留（分）；按每字至少 1 分保守预留。');
+   if(!runtime.narrationReady)throw new ConfigurationError(503,'本地口播执行器未就绪。');await runtime.narrationReady();await runtime.checkReferences(c,[resolved.selection.connectionVersionId!],{purpose:'workspace-generation'});
+--- a/src/local-app/workspaceVisualCandidates.ts
++++ b/src/local-app/workspaceVisualCandidates.ts
+@@ -196,7 +196,7 @@
+   WHERE retry.workspace_id=v.workspace_id AND retry.target_item_id=v.target_item_id
+     AND retry.task_id IS NOT NULL AND retry.request_snapshot->>'retryOfTaskId'=t.id::text LIMIT 1) "retryTaskId",
+  s.outcome "submissionOutcome",to_jsonb(s)->>'video_phase' "videoPhase",r.provider_task_id "providerTaskId",r.request_state "requestState",h.attempt "publicationAttempt",
+- (t.status IN ('failed','blocked') AND r.request_state='submitting' AND r.provider_task_id IS NULL AND coalesce(s.outcome,'started')<>'rejected') "submissionUnknown",
++ (t.status IN ('failed','blocked') AND r.request_state='submitting' AND r.provider_task_id IS NULL AND coalesce(s.outcome,'started')<>'rejected') "submissionUnknown",r.reserved_cents "reservationCents",
+  (t.status IN ('failed','blocked') AND r.provider_task_id IS NOT NULL AND s.outcome<>'rejected' AND h.task_id IS NULL) "canResume"
+  FROM local_identity.workspace_visual_candidates v JOIN public.tasks t ON t.id=v.task_id LEFT JOIN public.paid_generation_reservations r ON r.task_id=t.id LEFT JOIN local_identity.workspace_visual_submissions s ON s.task_id=t.id LEFT JOIN local_identity.workspace_publication_holds($2) h ON h.task_id=t.id WHERE v.workspace_id=$1 ORDER BY v.created_at DESC`,[row.id,row.episode_id])).rows.map(({request_snapshot,...task})=>({...task,...(typeof request_snapshot.prompt==='string'?{generation:workspaceVisualGenerationRecord(request_snapshot)}:{})}));
+ }
+--- a/src/workspaceVisualCandidates.ts
++++ b/src/workspaceVisualCandidates.ts
+@@ -3,7 +3,7 @@
+ import type {OpenChatCutProject} from './worker/openchatcutProject.js';
+ import type {WorkspaceCandidate} from './workspaceCandidates.js';
+ export interface WorkspaceVisualCandidate extends WorkspaceCandidate {source?:import('./workspacePexels.js').WorkspacePexelsSource;usage:'video'|'still'|'pan-zoom';materialRevisionId?:string;generation?:{selection?:import('./productionSelection.js').ProductionSelection;connectionName?:string;actualPrompt?:string;prompt:string;firstFrameMaterialRevisionId:string;durationSeconds:number;imageSettings?:import('./imageGeneration.js').ImageGenerationSettings;imageBrief?:import('./imageGeneration.js').ImageBrief;referenceMaterialRevisionIds?:string[];videoSettings?:import('./videoGenerationSettings.js').WanGenerationSettings;firstFrameFit?:'contain'|'cover'};width:number;height:number}
+-export interface WorkspaceVisualTask {generation?:WorkspaceVisualCandidate['generation'];id:string;taskId:string;shotId?:string;kind?:'image'|'video';status:string;error:string|null;canResume?:boolean;provider?:string;model?:string;connectionName?:string|null;createdAt?:string;targetItemId?:string;submissionOutcome?:'started'|'received'|'rejected'|null;providerTaskId?:string|null;videoPhase?:VideoGenerationPhase|null;requestState?:string|null;submissionUnknown?:boolean;retryTaskId?:string|null;publicationAttempt?:number|null}
++export interface WorkspaceVisualTask {generation?:WorkspaceVisualCandidate['generation'];id:string;taskId:string;shotId?:string;kind?:'image'|'video';status:string;error:string|null;canResume?:boolean;provider?:string;model?:string;connectionName?:string|null;reservationCents?:number|null;createdAt?:string;targetItemId?:string;submissionOutcome?:'started'|'received'|'rejected'|null;providerTaskId?:string|null;videoPhase?:VideoGenerationPhase|null;requestState?:string|null;submissionUnknown?:boolean;retryTaskId?:string|null;publicationAttempt?:number|null}
+ export const workspaceVisualFields:Record<string,string[]>={
+  searchWorkspacePexelsVideos:['episodeId','workspaceId','expectedRevision','targetItemId','selection','query','orientation','size','page'],
+  previewWorkspacePexelsVideo:['episodeId','workspaceId','expectedRevision','searchId','resultId'],
+--- a/src/local-app/catalogQuery.ts
++++ b/src/local-app/catalogQuery.ts
+@@ -2,9 +2,16 @@
+ 
+ // Native parameterization of the C-stage catalog contract (ADR-0008).
+ // Executed inside the same Owner/RLS repeatable-read transaction as metadata.
+-export const localCatalogSql=` with owned as materialized (
++export const localCatalogSql=` with owned_base as materialized (
+   select e.* from public.episodes e where exists (
+    select 1 from public.account_memberships m where m.account_id=e.account_id and m.user_id=$1::uuid and m.role='owner')
++ ), owned as materialized (
++  select e.*,greatest(e.updated_at,
++   (select max(w.updated_at) from local_identity.production_workspaces w where w.episode_id=e.id),
++   (select max(coalesce(t.completed_at,t.claimed_at,t.created_at)) from public.tasks t where t.episode_id=e.id and t.invalidated_at is null and not local_identity.is_historical_task(t.id)),
++   (select max(greatest(x.created_at,x.confirmed_at)) from local_identity.workspace_exports x where x.episode_id=e.id),
++   (select max(greatest(i.created_at,i.resolved_at)) from local_identity.workspace_export_issues i join local_identity.production_workspaces w on w.id=i.workspace_id where w.episode_id=e.id)) activity_at
++  from owned_base e
+  ), current_collections as materialized (
+   select e.id episode_id,c.container_id,c.series_id from owned e cross join lateral local_identity.episode_storage_collection(e.id) c
+  ), scoped as materialized (
+@@ -50,8 +57,24 @@
+   from public.tasks t join scoped e on e.id=t.episode_id where $2::text<>'accounts' and e.archived_at is null and t.invalidated_at is null and not local_identity.is_historical_task(t.id)
+  ), latest_tasks as materialized (
+   select distinct on (episode_id,scope) * from scoped_tasks order by episode_id,scope,created_at desc,id
++ ), workspace_task_links as materialized (
++  select n.task_id,w.episode_id from workspace_facts w join local_identity.workspace_narrations n on n.workspace_id=w.id where w.basis_current
++  union select a.task_id,w.episode_id from workspace_facts w join local_identity.workspace_audio_preparations a on a.workspace_id=w.id where w.basis_current
++  union select v.task_id,w.episode_id from workspace_facts w join local_identity.workspace_visual_candidates v on v.workspace_id=w.id
++   where w.basis_current and v.dismissed_at is null and not exists(
++    select 1 from local_identity.workspace_visual_candidates newer where newer.workspace_id=v.workspace_id and newer.target_item_id=v.target_item_id
++     and newer.request_snapshot->>'kind'=v.request_snapshot->>'kind' and newer.dismissed_at is null and (newer.created_at,newer.id)>(v.created_at,v.id))
++  union select r.task_id,w.episode_id from workspace_facts w join local_identity.workspace_narration_requests r on r.workspace_id=w.id
++   join public.tasks t on t.id=r.task_id left join local_identity.workspace_narration_submissions s on s.task_id=r.task_id
++   where s.outcome in ('started','received') or coalesce(t.last_result#>'{preflight,checks}','[]'::jsonb) @> '[{"check":"provider_result_unknown"}]'::jsonb
++ ), actionable_tasks as materialized (
++  select t.*,exists(select 1 from workspace_task_links l where l.task_id=t.id and l.episode_id=t.episode_id) workspace_relevant
++  from latest_tasks t join scoped e on e.id=t.episode_id where
++   not exists(select 1 from workspace_facts w where w.episode_id=t.episode_id)
++   or e.stage<>'production_completed' and (exists(select 1 from workspace_task_links l where l.task_id=t.id and l.episode_id=t.episode_id)
++    or exists(select 1 from workspace_facts w where w.episode_id=t.episode_id and w.delivery_task_id=t.id and w.export_current))
+  ), task_blockers as materialized (
+-  select t.id task_id,t.task_type,t.episode_id,b.value blocker from latest_tasks t
++  select t.id task_id,t.task_type,t.episode_id,b.value blocker from actionable_tasks t
+   cross join lateral (
+    select coalesce(jsonb_agg(value),'[]') items from jsonb_array_elements(case when jsonb_typeof(t.last_result->'blockers')='array' then t.last_result->'blockers' else '[]' end)
+    where jsonb_typeof(value->'code')='string' and value->>'code'<>'' and jsonb_typeof(value->'detail')='string' and value->>'detail'<>''
+@@ -59,19 +82,19 @@
+   cross join lateral jsonb_array_elements(case when jsonb_array_length(explicit.items)>0 then explicit.items else
+    coalesce((select jsonb_agg(value||jsonb_build_object('code',value->>'check','detail',value->>'reason'))
+     from jsonb_array_elements(case when jsonb_typeof(t.last_result#>'{preflight,checks}')='array' then t.last_result#>'{preflight,checks}' else '[]' end)
+-    where value->>'status' is distinct from 'passed' and jsonb_typeof(value->'check')='string' and value->>'check'<>'' and jsonb_typeof(value->'reason')='string' and value->>'reason'<>''),'[]') end) b
+-  where t.status in ('blocked','failed') and not exists(select 1 from workspace_facts w where w.episode_id=t.episode_id and (w.delivery_task_id is distinct from t.id or not w.export_current))
++    where value->>'status' is distinct from 'passed' and jsonb_typeof(value->'check')='string' and value->>'check'<>'' and jsonb_typeof(value->'reason')='string' and value->>'reason'<>''),case when t.workspace_relevant then jsonb_build_array(jsonb_build_object('code','WORKSPACE_TASK_FAILED','detail',coalesce(t.last_result#>>'{retry,reason}','生成未完成，请打开素材准备核对本次任务。'))) else '[]'::jsonb end) end) b
++  where t.status in ('blocked','failed')
+   union all select w.delivery_task_id,'prepare_publish_package',w.episode_id,jsonb_build_object('code','WORKSPACE_DELIVERY_FAILED','detail','交付失败，请检查本次结果后重试。')
+    from workspace_facts w join public.tasks t on t.id=w.delivery_task_id join scoped e on e.id=w.episode_id
+    where e.archived_at is null and not local_identity.is_historical_episode(e.id) and e.stage<>'production_completed' and w.export_current and t.status in ('failed','blocked') and (jsonb_typeof(t.last_result->'blockers') is distinct from 'array' or jsonb_array_length(t.last_result->'blockers')=0)
+   union all select w.export_id,'workspace_export',w.episode_id,jsonb_build_object('code','WORKSPACE_EXPORT_FAILED','detail','成片检查未通过，请打开检查与交付处理。')
+-   from workspace_facts w join scoped e on e.id=w.episode_id where e.archived_at is null and not local_identity.is_historical_episode(e.id) and e.stage<>'production_completed' and w.basis_current and w.export_current and (w.export_status='failed' or w.open_issue)
++   from workspace_facts w join scoped e on e.id=w.episode_id where e.archived_at is null and not local_identity.is_historical_episode(e.id) and e.stage<>'production_completed' and (w.basis_current and w.export_current and w.export_status='failed' or w.open_issue)
+  ), episode_states as materialized (
+   select e.id episode_id,case
+    when w.id is not null and e.stage='production_completed' then 'done'
+    when w.id is not null then case
+     when e.archived_at is not null or local_identity.is_historical_episode(e.id) then 'draft'
+-    when w.export_current and (w.delivery_status in ('failed','blocked') or w.export_status='failed' or w.open_issue) then 'blocked'
++    when w.open_issue or exists(select 1 from task_blockers b where b.episode_id=e.id) then 'blocked'
+     when exists(select 1 from pending p where p.episode_id=e.id) then 'review'
+     else 'running' end
+    when exists(select 1 from latest_tasks t where t.episode_id=e.id and t.status in ('blocked','failed') and not exists(
+@@ -103,16 +126,16 @@
+   select e.* from filtered e left join cost_order cost on cost.episode_id=e.id where $2::text<>'accounts'
+   order by case when $10::text='cost_desc' then cost.cents end desc nulls last,
+    case when $10::text='cost_asc' then cost.cents end asc nulls last,case when $10::text='title' then lower(e.title) end asc,
+-   case when $10::text='oldest' then e.updated_at end asc,e.updated_at desc,e.id
++   case when $10::text='oldest' then e.activity_at end asc,e.activity_at desc,e.id
+   limit (select page_size from page_settings) offset ((select page from bounds)-1)*(select page_size from page_settings)
+  ), pending_bounds as (
+   select count(*) total,least(greatest(coalesce($7::integer,1),1),greatest(1,ceil(count(*)/20.0)::int)) page from pending
+  ), pending_rows as materialized (
+   select e.*,r.revision_number from scoped e join pending r on r.episode_id=e.id
+-  order by e.updated_at desc,e.id limit 20 offset ((select page from pending_bounds)-1)*20
++  order by e.activity_at desc,e.id limit 20 offset ((select page from pending_bounds)-1)*20
+  ), blocked as materialized (
+-  select row_number() over(order by e.updated_at desc,e.id,b.task_id,b.blocker::text) position,
+-   jsonb_build_object('episode',to_jsonb(e),'blocker',b.blocker||jsonb_build_object('taskId',b.task_id,'taskType',b.task_type)) item
++  select row_number() over(order by e.activity_at desc,e.id,b.task_id,b.blocker::text) position,
++   jsonb_build_object('episode',(to_jsonb(e)-'activity_at'||jsonb_build_object('updated_at',e.activity_at)),'blocker',b.blocker||jsonb_build_object('taskId',b.task_id,'taskType',b.task_type)) item
+   from task_blockers b join scoped e on e.id=b.episode_id
+  ), blocked_bounds as (
+   select count(*) total,least(greatest(coalesce($8::integer,1),1),greatest(1,ceil(count(*)/20.0)::int)) page from blocked
+@@ -133,7 +156,7 @@
+  )
+  select jsonb_build_object(
+   'metrics',coalesce((select jsonb_object_agg(e.id,$12::jsonb->e.id::text) from page_rows e where $12::jsonb ? e.id::text),'{}'),
+-  'episodes',coalesce((select jsonb_agg(to_jsonb(e) order by case when $10::text='cost_desc' then cost.cents end desc nulls last,case when $10::text='cost_asc' then cost.cents end asc nulls last,case when $10::text='title' then lower(e.title) end asc,case when $10::text='oldest' then e.updated_at end asc,e.updated_at desc,e.id) from page_rows e left join cost_order cost on cost.episode_id=e.id),'[]'),
++  'episodes',coalesce((select jsonb_agg((to_jsonb(e)-'activity_at'||jsonb_build_object('updated_at',e.activity_at)) order by case when $10::text='cost_desc' then cost.cents end desc nulls last,case when $10::text='cost_asc' then cost.cents end asc nulls last,case when $10::text='title' then lower(e.title) end asc,case when $10::text='oldest' then e.activity_at end asc,e.activity_at desc,e.id) from page_rows e left join cost_order cost on cost.episode_id=e.id),'[]'),
+   'collections',coalesce((select jsonb_object_agg(c.episode_id,jsonb_build_object('containerId',c.container_id,'seriesId',c.series_id)) from current_collections c join page_rows e on e.id=c.episode_id),'{}'),
+   'total',(select total from bounds),'page',(select page from bounds),'pageSize',(select page_size from page_settings),
+   'episodeCount',(select count(*) from owned),
+@@ -160,7 +183,7 @@
+   'stages',coalesce((select jsonb_object_agg(stage,n) from(select stage,count(*) n from filtered group by stage)s),'{}'),
+   'artifactCounts',coalesce((select jsonb_object_agg(episode_id,n) from(select a.episode_id,count(*) n from public.artifacts a join page_rows e on e.id=a.episode_id group by a.episode_id)s),'{}'),
+   'pending',case when $2::text='operations' then jsonb_build_object('total',(select total from pending_bounds),'page',(select page from pending_bounds),
+-   'items',coalesce((select jsonb_agg(to_jsonb(e) order by updated_at desc,id) from pending_rows e),'[]')) else jsonb_build_object('total',0,'page',1,'items','[]'::jsonb) end,
++   'items',coalesce((select jsonb_agg((to_jsonb(e)-'activity_at'||jsonb_build_object('updated_at',e.activity_at)) order by activity_at desc,id) from pending_rows e),'[]')) else jsonb_build_object('total',0,'page',1,'items','[]'::jsonb) end,
+   'blocked',case when $2::text='operations' then jsonb_build_object('total',(select total from blocked_bounds),'page',(select page from blocked_bounds),
+    'items',coalesce((select jsonb_agg(item order by position) from blocked where position between ((select page from blocked_bounds)-1)*20+1 and (select page from blocked_bounds)*20),'[]')) else jsonb_build_object('total',0,'page',1,'items','[]'::jsonb) end,
+   'worker',jsonb_build_object('running',(select count(*) from current_worker where status='running'),
+--- a/src/local-app/catalogFilters.integration.test.ts
++++ b/src/local-app/catalogFilters.integration.test.ts
+@@ -31,12 +31,17 @@
+  CREATE TABLE public.pre_render_review_member_decisions(review_package_id uuid,member_key text);
+  CREATE TABLE public.tasks(id uuid PRIMARY KEY,episode_id uuid,task_type text,status text,input_snapshot jsonb,last_result jsonb,created_at timestamptz,invalidated_at timestamptz,completed_at timestamptz,claimed_at timestamptz);
+  CREATE TABLE public.artifacts(episode_id uuid);
+- CREATE TABLE local_identity.production_workspaces(id uuid PRIMARY KEY,episode_id uuid,script_revision_id uuid,storyboard_package_id uuid,revision bigint,content_sha256 text,native_edit_revision bigint);
++ CREATE TABLE local_identity.production_workspaces(id uuid PRIMARY KEY,episode_id uuid,script_revision_id uuid,storyboard_package_id uuid,revision bigint,content_sha256 text,native_edit_revision bigint,updated_at timestamptz);
+  CREATE TABLE local_identity.workspace_preparations(package_id uuid,episode_id uuid,script_revision_id uuid);
+  CREATE TABLE local_identity.workspace_exports(id uuid PRIMARY KEY,workspace_id uuid,episode_id uuid,project_content_version bigint,content_sha256 text,status text,artifact jsonb,checks jsonb,confirmed_at timestamptz,created_at timestamptz);
+- CREATE TABLE local_identity.workspace_export_issues(workspace_id uuid,resolved_at timestamptz);
++ CREATE TABLE local_identity.workspace_export_issues(workspace_id uuid,resolved_at timestamptz,created_at timestamptz);
+  CREATE TABLE local_identity.workspace_deliveries(id uuid,workspace_id uuid,export_id uuid,task_id uuid,created_at timestamptz);
+ 
++ CREATE TABLE local_identity.workspace_narrations(workspace_id uuid,task_id uuid);
++ CREATE TABLE local_identity.workspace_audio_preparations(workspace_id uuid,task_id uuid);
++ CREATE TABLE local_identity.workspace_visual_candidates(id uuid,workspace_id uuid,task_id uuid,target_item_id text,request_snapshot jsonb,dismissed_at timestamptz,created_at timestamptz);
++ CREATE TABLE local_identity.workspace_narration_requests(workspace_id uuid,task_id uuid);
++ CREATE TABLE local_identity.workspace_narration_submissions(task_id uuid,outcome text);
+  CREATE TABLE local_identity.historical_episodes(id uuid);
+  CREATE TABLE local_identity.historical_tasks(id uuid);
+  CREATE FUNCTION local_identity.is_historical_episode(uuid) RETURNS boolean LANGUAGE sql STABLE AS 'SELECT EXISTS(SELECT 1 FROM local_identity.historical_episodes WHERE id=$1)';
+@@ -86,8 +91,8 @@
+  expect(catalog({q:'not present',page:999})).toMatchObject({episodes:[],total:0,page:1});
+ });
+ it('sorts across pages with a stable id tie break and bounds filtered page counts',()=>{
+- expect(catalog().episodes[0].id).toBe(episode(29));
+- const oldest=catalog({sort:'oldest'});expect(oldest.episodes.slice(0,3).map(e=>e.id)).toEqual([episode(33),episode(34),episode(35)]);
++ expect(catalog().episodes[0].id).toBe(episode(34));
++ const oldest=catalog({sort:'oldest'});expect(oldest.episodes.slice(0,3).map(e=>e.id)).toEqual([episode(33),episode(1),episode(2)]);
+  expect(catalog({sort:'oldest',page:2}).episodes).toHaveLength(12);
+  const titles=catalog({sort:'title'});expect(titles.episodes[0].id).toBe(episode(23));
+  expect(catalog({q:'作品',page:999}).page).toBe(2);
+@@ -156,5 +161,13 @@
+  expect(rows.get(episode(36))?.actionStatus).toBe('running');expect(rows.get(episode(37))).toMatchObject({actionStatus:'review',reviewPending:true});expect(rows.get(episode(38))?.actionStatus).toBe('blocked');expect(rows.get(episode(39))?.actionStatus).toBe('done');expect(rows.get(episode(40))?.actionStatus).toBe('running');
+  expect(catalog({q:'四步',status:'review'}).episodes.map(e=>e.id)).toEqual([episode(37)]);expect(catalog({q:'四步',view:'operations'}).blocked.items.map(row=>row.blocker.code)).toEqual(['DELIVERY_FAILED']);
+  psql(`UPDATE local_identity.production_workspaces SET revision=2,content_sha256=repeat('b',64) WHERE episode_id='${episode(37)}';`);expect(catalog({q:'四步',status:'review'}).episodes).toEqual([]);
++ psql(`INSERT INTO local_identity.workspace_narrations VALUES('40000000-0000-4000-8000-000000000036','${taskId(36)}');
++ INSERT INTO local_identity.workspace_export_issues VALUES('40000000-0000-4000-8000-000000000037',null,'2026-01-05');
++ UPDATE local_identity.production_workspaces SET updated_at='2026-01-06' WHERE episode_id='${episode(36)}';`);
++ const active=catalog({q:'四步',view:'operations'});expect(active.episodes[0].id).toBe(episode(36));expect(new Date(active.episodes[0].updated_at).toISOString()).toBe('2026-01-06T00:00:00.000Z');
++ expect(active.operationRows.find(r=>r.episodeId===episode(36))).toMatchObject({actionStatus:'blocked',blockerCount:1});
++ expect(active.operationRows.find(r=>r.episodeId===episode(37))).toMatchObject({actionStatus:'blocked',blockerCount:1});
++ psql(`UPDATE local_identity.workspace_narrations SET task_id=null;UPDATE local_identity.workspace_export_issues SET resolved_at='2026-01-07';`);
++ expect(catalog({q:'四步'}).operationRows.find(r=>r.episodeId===episode(37))?.actionStatus).toBe('running');
+  psql(`UPDATE public.episodes SET archived_at='2026-01-04' WHERE id='${episode(38)}';`);expect(catalog({q:'四步',visibility:'archived'}).operationRows[0]).toMatchObject({actionStatus:'draft',blockerCount:0,reviewPending:false});
+ });
+--- a/src/local-app/workspaceExport.integration.test.ts
++++ b/src/local-app/workspaceExport.integration.test.ts
+@@ -15,7 +15,7 @@
+   const send=(name:string,extra={})=>f.request(name,{workspaceId:w.id,expectedRevision:w.revision,...extra});
+   const blocked=await send('exportWorkspace');expect(blocked.status,JSON.stringify(blocked.body)).toBe(200);w=blocked.body;expect(w.exports[0].status).toBe('failed');expect(w.exports[0].checks.some((x:{name:string;passed:boolean})=>x.name==='used_content'&&!x.passed)).toBe(true);
+   for(const clip of w.clips){const matched=await send('matchWorkspaceMaterial',{clipId:clip.id,materialRevisionId:f.material});expect(matched.status,JSON.stringify(matched.body)).toBe(200);w=matched.body;}
+-  const captionsMissing=await send('exportWorkspace');expect(captionsMissing.status).toBe(200);w=captionsMissing.body;expect(w.exports[0].status).toBe('failed');expect(w.exports[0].checks.find((x:{name:string})=>x.name==='captions').passed).toBe(false);
++  const defaultCaptions=await send('exportWorkspace');expect(defaultCaptions.status).toBe(200);w=defaultCaptions.body;expect(w.exports[0].status).toBe('ready');expect(w.exports[0].checks.find((x:{name:string})=>x.name==='captions').passed).toBe(true);
+   for(const clip of w.clips){const saved=await send('saveWorkspaceCaptions',{clipId:clip.id,captionContract:defaultShotCaptionContract(clip.text,'independent',false)});expect(saved.status,JSON.stringify(saved.body)).toBe(200);w=saved.body;}
+   // Native project-store is the real editor persistence boundary; Owner save still performs CAS.
+   async function nativeEdit(edit:(doc:any)=>void){
+--- a/src/local-app/workspaceVisualCoverage.ts
++++ b/src/local-app/workspaceVisualCoverage.ts
+@@ -0,0 +1,30 @@
++import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
++
++/** Coverage follows the rendered sequence window; audio never fills a visual gap. */
++export function workspaceVisualGaps(project:OpenChatCutProject){
++ const timelines=new Map(project.timelines.map(t=>[t.id,t])),intervals:Array<[number,number]>=[];
++ const root=timelines.get(project.activeTimelineId);if(!root)throw Error('当前时间线不存在。');
++ const duration=Math.max(0,...root.items.map(i=>(Number(i.startFrame)+Number(i.durationInFrames))/root.fps));
++ let nodes=0;
++ function visit(id:string,from:number,to:number,offset:number,speed:number,stack:Set<string>){
++  if(stack.has(id)||stack.size>32||++nodes>4096)throw Error('嵌套序列超出画面检查范围。');
++  const timeline=timelines.get(id);if(!timeline)throw Error('已用嵌套序列不存在。');stack=new Set(stack).add(id);
++  for(const item of timeline.items){
++   const track=timeline.tracks[String(item.track)] as {hidden?:boolean;visible?:boolean}|undefined;
++   if(item.hidden===true||item.visible===false||track?.hidden===true||track?.visible===false||Number(item.opacity??1)===0)continue;
++   const start=Number(item.startFrame)/timeline.fps,end=start+Number(item.durationInFrames)/timeline.fps,a=Math.max(from,start),b=Math.min(to,end);
++   if(b<=a)continue;
++   if(item.kind==='sequence'){
++    const child=timelines.get(String(item.timelineId));if(!child)throw Error('已用嵌套序列不存在。');
++    const rate=Number(item.playbackRate??1),source=Number(item.srcInFrame??0)/child.fps;
++    if(!(rate>0))throw Error('嵌套序列播放速度无效。');
++    visit(child.id,source+(a-start)*rate,source+(b-start)*rate,offset+(a-from)/speed,speed*rate,stack);
++   }else if(['video','image','solid','text','motion-graphic'].includes(String(item.kind)))intervals.push([offset+(a-from)/speed,offset+(b-from)/speed]);
++  }
++ }
++ visit(root.id,0,duration,0,1,new Set());
++ const gaps:Array<{startSeconds:number;endSeconds:number}>=[];let end=0;
++ for(const [a,b] of intervals.sort((a,b)=>a[0]-b[0])){if(a>end+0.001/root.fps)gaps.push({startSeconds:end,endSeconds:a});end=Math.max(end,b);}
++ if(duration>end+0.001/root.fps)gaps.push({startSeconds:end,endSeconds:duration});
++ return gaps;
++}
+--- a/src/local-app/WorkspaceFirstBatch.test.tsx
++++ b/src/local-app/WorkspaceFirstBatch.test.tsx
+@@ -0,0 +1,20 @@
++import {render,screen,fireEvent,cleanup} from '@testing-library/react';
++import {afterEach,it,expect,vi} from 'vitest';
++import {WorkspaceVisualPreparation} from './WorkspaceVisualPreparation';
++import type {ProductionWorkspace} from '../productionWorkspace';
++import type {OpenChatCutProject} from '../worker/openchatcutProject';
++const project={timelines:[{id:'t',fps:30,items:[{id:'visual',kind:'image',startFrame:0,durationInFrames:150}]}]} as unknown as OpenChatCutProject;
++const workspace={id:'w',episodeId:'e',revision:1,project:{sha256:'original'},clips:[{id:'clip',itemId:'visual',shotId:'S1',text:'咖啡'}],visualCandidates:[{id:'short',kind:'video',usage:'video',targetItemId:'visual',shotId:'S1',status:'available',relativePath:'short.mp4',sha256:'a'.repeat(64),durationSeconds:3,currentDurationSeconds:5}]} as unknown as ProductionWorkspace;
++afterEach(()=>{cleanup();sessionStorage.clear();vi.unstubAllGlobals();});
++it('prefills generation from the actual five-second shot instead of an unrelated three-second default',()=>{
++ render(<WorkspaceVisualPreparation workspace={workspace} project={project} materials={[]} command={vi.fn()} onChange={()=>{}}/>);
++ fireEvent.click(screen.getByRole('tab',{name:'视频'}));fireEvent.click(screen.getByRole('button',{name:'AI 生成'}));fireEvent.click(screen.getByRole('button',{name:'生成时长'}));
++ expect((screen.getByLabelText('生成时长（秒）') as HTMLInputElement).value).toBe('5');
++});
++it('explains a short candidate next to adoption and exposes a direct duration action',()=>{
++ const command=vi.fn();render(<WorkspaceVisualPreparation workspace={workspace} project={project} materials={[]} command={command} onChange={()=>{}}/>);
++ fireEvent.click(screen.getByRole('tab',{name:'视频'}));fireEvent.click(screen.getByRole('button',{name:'预览视频候选 01'}));
++ expect(screen.getByText('素材可用 3.00 秒，短于当前镜头 5.00 秒。')).toBeTruthy();
++ fireEvent.click(screen.getByRole('button',{name:'调整采用时长'}));
++ expect(screen.getByLabelText('视觉候选时长处理').closest('details')?.open).toBe(true);expect(command).not.toHaveBeenCalled();
++});
+--- a/src/local-app/workspaceExportCoverage.test.ts
++++ b/src/local-app/workspaceExportCoverage.test.ts
+@@ -0,0 +1,32 @@
++// @vitest-environment node
++import {it,expect,vi} from 'vitest';
++import type {PoolClient} from 'pg';
++import type {OpenChatCutProject} from '../worker/openchatcutProject';
++import type {ProductionWorkspaceRecord} from './productionWorkspaceCommands';
++import {workspaceExportReadiness} from './workspaceExportCommands';
++
++const timeline=(items:unknown[],id='main')=>({id,fps:30,width:360,height:640,items,tracks:{V1:{kind:'video'},A1:{kind:'audio'}},trackOrder:['V1','A1'],captionsHidden:false});
++const solid=(startFrame:number,durationInFrames:number)=>({id:`solid-${startFrame}`,kind:'solid',track:'V1',startFrame,durationInFrames,props:{color:'#fff'}});
++async function coverage(items:unknown[],children:unknown[]=[]){
++ const project={activeTimelineId:'main',assets:[],timelines:[timeline(items),...children]} as unknown as OpenChatCutProject;
++ const c={query:vi.fn(async()=>({rows:[]}))} as unknown as PoolClient;
++ return (await workspaceExportReadiness(c,'/tmp',{id:'w',episode_id:'e',bindings:[]} as unknown as ProductionWorkspaceRecord,project)).checks.find(c=>c.name==='visual_coverage');
++}
++it('blocks the exact 3–5 second visual gap even when audio spans the full export',async()=>{
++ const check=await coverage([solid(0,90),solid(150,150),{id:'music',kind:'audio',track:'A1',startFrame:0,durationInFrames:300}]);
++ expect(check).toMatchObject({passed:false});expect(check?.detail).toContain('3.00–5.00');
++});
++it('accepts contiguous or overlapping visuals and explicit solid backgrounds',async()=>{
++ expect(await coverage([solid(0,90),solid(90,210)])).toMatchObject({passed:true});
++ expect(await coverage([solid(0,300),solid(150,150)])).toMatchObject({passed:true});
++});
++it('checks nested visible windows without counting out-of-window or audio-only content',async()=>{
++ const child=timeline([solid(0,30),solid(60,30)],'child');
++ expect(await coverage([{id:'seq',kind:'sequence',track:'V1',timelineId:'child',startFrame:0,durationInFrames:90}], [child])).toMatchObject({passed:false});
++ expect(await coverage([{id:'seq',kind:'sequence',track:'V1',timelineId:'child',startFrame:0,durationInFrames:30,srcInFrame:60}], [child])).toMatchObject({passed:true});
++});
++
++it('audio tails and hidden visual layers cannot stand in for picture coverage',async()=>{
++ expect(await coverage([solid(0,60),{id:'tail',kind:'audio',track:'A1',startFrame:0,durationInFrames:90}])).toMatchObject({passed:false,detail:expect.stringContaining('2.00–3.00')});
++ expect(await coverage([{...solid(0,90),hidden:true}])).toMatchObject({passed:false});
++});
+--- a/src/local-app/firstBatchAcceptance.integration.test.ts
++++ b/src/local-app/firstBatchAcceptance.integration.test.ts
+@@ -0,0 +1,57 @@
++// @vitest-environment node
++import {it,expect} from 'vitest';
++import {writeFile,readFile} from 'node:fs/promises';
++import {join} from 'node:path';
++import {editStudioDocument} from './studioDocument.fixture';
++import {productionWorkspaceFixture} from './productionWorkspace.fixture';
++import {narrationFixture} from './workspaceNarration.fixture';
++import {readLocalCatalog,parseCatalogQuery} from './catalog';
++const enabled=process.env.LOOP_WORKSPACE_ACCEPTANCE==='1';
++it.skipIf(!enabled)('initial native subtitles export directly without an empty editor save and detect later visual gaps',async()=>{
++ const f=await productionWorkspaceFixture();try{
++  let w=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;
++  w=await f.fillVisuals(w);
++  expect(w.captions.map((c:any)=>c.timing)).toEqual(['current','current']);
++  expect(w.captions.every((c:any)=>!c.textConfirmed)).toBe(true);
++  w=(await f.request('exportWorkspace',{workspaceId:w.id,expectedRevision:w.revision})).body;
++  expect(w.exports[0].status,JSON.stringify(w.exports[0].checks)).toBe('ready');
++  expect(w.exports[0].checks.find((c:any)=>c.name==='visual_coverage')).toMatchObject({passed:true});
++  if(process.env.LOOP_FIRST_BATCH_EVIDENCE)await writeFile(join(process.env.LOOP_FIRST_BATCH_EVIDENCE,'direct-export.json'),JSON.stringify(w));
++  const approved=w.exports[0],base=()=>({workspaceId:w.id,expectedRevision:w.revision});
++  w=(await f.request('recordWorkspaceExportIssue',{...base(),exportId:approved.id,reason:'检查两镜衔接'})).body;
++  const opened=await f.request('openWorkspaceStudio',base());expect(opened.status).toBe(200);w=opened.body.productionWorkspace;
++  await editStudioDocument(opened.body.studioUrl,w.project.projectId,doc=>{doc.timelines[0].items[0].durationInFrames=30;});
++  const saved=await f.request('saveWorkspaceStudio',{...base(),workspaceRelativePath:opened.body.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:w.project.sha256});expect(saved.status,JSON.stringify(saved.body)).toBe(200);w=saved.body.productionWorkspace;
++  w=(await f.request('closeWorkspaceStudio',base())).body;
++  expect(w.captions[0].timing).toBe('stale');
++  // An explicit unresolved issue survives a newer edit even before a new export exists.
++  let catalog=await readLocalCatalog(f.pool,f.owner,parseCatalogQuery(new URLSearchParams('view=operations')));
++  expect(catalog.operationRows.find((r:any)=>r.episodeId===f.episode)).toMatchObject({actionStatus:'blocked'});
++  expect(catalog.blocked.items.some((r:any)=>r.blocker.code==='WORKSPACE_EXPORT_FAILED')).toBe(true);
++  expect(Date.parse(catalog.episodes[0].updated_at)).toBeGreaterThanOrEqual(Date.parse(approved.createdAt));
++  w=(await f.request('exportWorkspace',base())).body;
++  expect(w.exports[0]).toMatchObject({status:'failed',artifact:null});
++  expect(w.exports[0].checks.find((c:any)=>c.name==='visual_coverage')).toMatchObject({passed:false,detail:expect.stringContaining('1.00–2.00')});
++  expect((await f.request('confirmWorkspaceExport',{...base(),exportId:approved.id,expectedExportSha256:approved.artifact.sha256,expectedContentSha256:approved.contentSha256})).status).toBe(409);
++  if(process.env.LOOP_FIRST_BATCH_EVIDENCE)await writeFile(join(process.env.LOOP_FIRST_BATCH_EVIDENCE,'gap-blocked.json'),JSON.stringify(w));
++ }finally{await f.close();}
++},180000);
++it.skipIf(!enabled)('unknown speech exposes original reservation and cannot resubmit; catalog surfaces the failed current task',async()=>{
++ const f=await narrationFixture();try{
++  await f.authorize();let w=f.made;const base={workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[0].id};
++  await f.request('saveWorkspaceNarration',{...base,mode:'tts',...f.narrationSettings,text:'核对未知请求。'});await f.request('confirmWorkspaceNarration',base);
++  w=(await f.request('generateWorkspaceNarration',{...base,reservationCents:100})).body;
++  await writeFile(f.responseMode,'unknown');await f.execute(w.narration[0].taskId);
++  w=await f.read();expect(w.narration[0].generationTask).toMatchObject({submissionUnknown:true,reservationCents:100});
++  expect((await f.request('generateWorkspaceNarration',{...base,retry:true,reservationCents:100})).status).toBe(409);
++  expect((await readFile(f.submissions,'utf8')).trim().split('\n')).toHaveLength(1);
++  const catalog=await readLocalCatalog(f.pool,f.owner,parseCatalogQuery(new URLSearchParams('view=operations')));
++  expect(catalog.operationRows.find((r:any)=>r.episodeId===f.episode)).toMatchObject({actionStatus:'blocked'});
++  expect(catalog.blocked.total).toBeGreaterThan(0);
++  // Legacy interruptions may have Worker unknown evidence without a submission row.
++  await f.c.query('DELETE FROM local_identity.workspace_narration_submissions WHERE task_id=$1',[w.narration[0].taskId]);
++  w=await f.read();expect(w.narration[0].generationTask).toMatchObject({submissionUnknown:true,reservationCents:100});
++  expect((await f.request('generateWorkspaceNarration',{...base,retry:true,reservationCents:100})).status).toBe(409);
++  expect((await readFile(f.submissions,'utf8')).trim().split('\n')).toHaveLength(1);
++ }finally{await f.close();}
++},180000);
+--- a/src/local-app/firstBatchBrowser.integration.test.ts
++++ b/src/local-app/firstBatchBrowser.integration.test.ts
+@@ -0,0 +1,41 @@
++// @vitest-environment node
++import {it,expect} from 'vitest';
++import {execFileSync} from 'node:child_process';
++import {mkdir,writeFile,readFile,rm} from 'node:fs/promises';
++import {createHash} from 'node:crypto';
++import {join} from 'node:path';
++import {setTimeout as pause} from 'node:timers/promises';
++import {narrationFixture} from './workspaceNarration.fixture';
++it.skipIf(process.env.LOOP_FIRST_BATCH_BROWSER!=='1')('first batch controls use real isolated Owner data',async()=>{
++ const f=await narrationFixture(undefined,undefined,false,true);let vite:import('vite').ViteDevServer|undefined;
++ const evidence=join(process.cwd(),'.scratch/first-batch-20261109'),entry=join(evidence,'entry.tsx');
++ try{
++  await mkdir(evidence,{recursive:true});await rm(join(evidence,'browser-done.json'),{force:true});
++  const board=JSON.parse(await readFile(join(f.assetRoot,f.boardPath),'utf8'));for(const shot of board.shots)shot.durationSeconds=5;
++  const bytes=Buffer.from(JSON.stringify(board));await writeFile(join(f.assetRoot,f.boardPath),bytes);
++  await f.c.query('UPDATE public.artifacts SET sha256=$2,file_size=$3 WHERE episode_id=$1 AND relative_path=$4',[f.episode,createHash('sha256').update(bytes).digest('hex'),bytes.length,f.boardPath]);
++  await f.c.query('UPDATE public.review_packages SET context_snapshot=$2 WHERE id=$1',[f.board,{worker_result:{storyboard:board}}]);
++  let w=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;expect(w.id).toBeTruthy();
++  const image=join(f.root,'still.png');execFileSync('ffmpeg',['-nostdin','-v','error','-f','lavfi','-i','color=c=green:s=360x640','-frames:v','1',image]);
++  const imported=await f.request('importMaterial',{sourceKind:'file',sourcePath:'first-batch-still.png',materialType:'image',materialPurpose:'visual_reference',mimeType:'image/png',isMainScript:false,contentBase64:(await readFile(image)).toString('base64')});expect(imported.status).toBe(200);
++  for(const clip of [...w.clips]){
++   w=(await f.request('registerWorkspaceVisualCandidate',{workspaceId:w.id,expectedRevision:w.revision,targetItemId:clip.itemId,materialRevisionId:imported.body.id,usage:'still',durationSeconds:5})).body;
++   const candidate=w.visualCandidates.find((v:any)=>v.targetItemId===clip.itemId&&v.status==='available');
++   const prepared=await f.request('prepareWorkspaceVisualCandidate',{workspaceId:w.id,expectedRevision:w.revision,candidateId:candidate.id,durationPolicy:'keep-target',imageUsage:'still'});expect(prepared.status,JSON.stringify(prepared.body)).toBe(200);
++   const adopted=await f.request('adoptWorkspaceVisualCandidate',{workspaceId:w.id,expectedRevision:w.revision,candidateId:candidate.id,adoptionId:prepared.body.adoptionId});expect(adopted.status,JSON.stringify(adopted.body)).toBe(200);w=adopted.body;
++  }
++  w=(await f.request('registerWorkspaceVisualCandidate',{workspaceId:w.id,expectedRevision:w.revision,targetItemId:w.clips[0].itemId,materialRevisionId:f.material,usage:'video'})).body;
++  await f.authorize();const base={workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[0].id};
++  expect((await f.request('saveWorkspaceNarration',{...base,mode:'tts',...f.narrationSettings,text:'核对本次请求。'})).status).toBe(200);
++  expect((await f.request('confirmWorkspaceNarration',base)).status).toBe(200);
++  w=(await f.request('generateWorkspaceNarration',{...base,reservationCents:100})).body;await writeFile(f.responseMode,'unknown');await f.execute(w.narration[0].taskId);
++  await writeFile(entry,`import React from 'react';import{createRoot}from'react-dom/client';import{ProductionWorkspacePanel}from'/src/local-app/ProductionWorkspacePanel';import{localCommand}from'/src/local-app/client';import '/src/styles.css';import '/src/ui/impeccable/foundation.css';import '/src/ui/impeccable/production.css';import '/src/ui/impeccable/scroll-layout.css';document.documentElement.dataset.interface='impeccable';createRoot(document.getElementById('root')!).render(<main className="dan-ui product-ui" style={{height:'100vh',padding:24,display:'flex',flexDirection:'column',boxSizing:'border-box',overflow:'auto'}}><ProductionWorkspacePanel episodeId=${JSON.stringify(f.episode)} title="第一批体验验收" scriptRevisionId=${JSON.stringify(f.script)} boardId=${JSON.stringify(f.board)} materials={[]} command={(name,data)=>localCommand(name,data,undefined,'episode-commands')} onLegacy={()=>{}}/></main>);`);
++  const {createServer}=await import('vite'),{default:react}=await import('@vitejs/plugin-react');
++  const proxy={target:f.origin,changeOrigin:true,configure(p:any){p.on('proxyReq',(req:any)=>{req.setHeader('origin',f.origin);req.setHeader('cookie','loop_owner_session='+f.token);});}};
++  vite=await createServer({configFile:false,envFile:false,root:process.cwd(),cacheDir:join(f.root,'vite-cache'),define:{'import.meta.env.VITE_LOOP_BACKEND':JSON.stringify('local')},plugins:[react(),{name:'first-batch-acceptance',configureServer(s){s.middlewares.use('/__first_batch',async(_req,res)=>{res.setHeader('Content-Type','text/html');res.end(await s.transformIndexHtml('/__first_batch','<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>第一批验收</title><div id="root"></div><script type="module" src="/.scratch/first-batch-20261109/entry.tsx"></script>'));});}}],server:{host:'127.0.0.1',port:0,proxy:{'/api':proxy,'/_local-artifact':proxy}}});await vite.listen();
++  const address=vite.httpServer!.address() as {port:number};await writeFile(join(evidence,'browser.json'),JSON.stringify({url:`http://127.0.0.1:${address.port}/__first_batch`}));
++  let done=false;for(let i=0;i<600;i++){try{done=JSON.parse(await readFile(join(evidence,'browser-done.json'),'utf8')).passed===true;if(done)break;}catch{}await pause(1000);}expect(done).toBe(true);
++  expect((await readFile(f.submissions,'utf8')).trim().split('\n')).toHaveLength(1);
++  await writeFile(join(evidence,'browser-result.json'),JSON.stringify({passed:true,isolated:true,providerCalls:0,controlledSubmissions:1}));
++ }finally{await vite?.close();await f.close();await rm(entry,{force:true});}
++},660000);

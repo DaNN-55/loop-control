@@ -1,0 +1,17 @@
+{
+  "mainProgramFilesUnchanged": 1132,
+  "productFilesChangedInIsolation": 1,
+  "migrated": false,
+  "relatedTestsPassed": 41,
+  "typeCheck": "passed",
+  "frontendBuild": "passed",
+  "widths": [
+    390,
+    640,
+    900,
+    1280
+  ],
+  "desktopSelectorDifferences": 0,
+  "pageErrors": 0,
+  "paidCalls": 0
+}

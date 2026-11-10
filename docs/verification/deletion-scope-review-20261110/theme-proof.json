@@ -1,0 +1,12 @@
+{
+  "method": "Set the same document data-theme flag for CSS rendering only; preference writes are intentionally outside this fixture allowlist.",
+  "darkBackground": "rgb(26, 40, 60)",
+  "darkPrimary": "rgb(231, 237, 247)",
+  "darkSecondary": "rgb(179, 194, 214)",
+  "widths": [
+    390,
+    1280
+  ],
+  "preferencePersistenceTested": false,
+  "pageExceptions": []
+}

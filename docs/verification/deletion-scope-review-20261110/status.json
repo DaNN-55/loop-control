@@ -1,0 +1,16 @@
+{
+  "status": "migrated",
+  "migrated": true,
+  "productFiles": 3,
+  "testFiles": 1,
+  "unitTestsPassed": 27,
+  "realIntegrationTestsPassed": 5,
+  "actualBrowserDeletion": true,
+  "stalePlanGuardVerified": true,
+  "mainFilesUnchanged": 1164,
+  "paidCalls": 0,
+  "migrationDate": "2026-11-10",
+  "migrationRegressionTestsPassed": 27,
+  "mainPort": 5174,
+  "backup": ".loop-control/maintenance/deletion-scope-migration-20261110/"
+}

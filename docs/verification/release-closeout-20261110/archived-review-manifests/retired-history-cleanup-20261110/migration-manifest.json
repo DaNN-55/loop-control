@@ -1,0 +1,236 @@
+{
+  "migrated": true,
+  "retiredFeature": "history-pages-and-maintenance-shell",
+  "files": [
+    {
+      "path": "CONTEXT.md",
+      "action": "modify",
+      "mainBeforeSha256": "9df9c67010690013effb6af344600e4293c8cc31c5183253b67917ead0837e3a",
+      "pendingSha256": "8ae0cdb607994e7ec2d78dc67ec3c89b7163f5617495068010b56f68505fb52d"
+    },
+    {
+      "path": "docs/adr/0001-episode-archive-and-permanent-delete.md",
+      "action": "modify",
+      "mainBeforeSha256": "f1e1c44594293cac379cc1596ea8c09aa023193659c35ce872921b6b9b78619a",
+      "pendingSha256": "94b1f39cd72942d637d72f36c85c3a4c5bf42575dd735ff24a06467bd2265989"
+    },
+    {
+      "path": "src/fileSize.ts",
+      "action": "add",
+      "mainBeforeSha256": null,
+      "pendingSha256": "dd662ffc5b75448575d3a3a2bc6b08d02e558fa70ad3c33e275b69fbcdbae78b"
+    },
+    {
+      "path": "src/local-app/ConnectionsSettingsDialog.tsx",
+      "action": "add",
+      "mainBeforeSha256": null,
+      "pendingSha256": "9fd039a4ccfa55d2ece0af0abff130903b6f4387abee70baea1ab7574bf4ed34"
+    },
+    {
+      "path": "src/local-app/HistorySources.tsx",
+      "action": "delete",
+      "mainBeforeSha256": "113c9f5ba40c5a2158fcfbd4379d8028b5db6167e150eb716d74c587d97c22fb",
+      "pendingSha256": null
+    },
+    {
+      "path": "src/local-app/LocalCatalogApp.navigation.test.tsx",
+      "action": "modify",
+      "mainBeforeSha256": "0fcf47e0fc70f2bd390d3e03411b3b2782e6f7b5702c26dfb9327cf017b3df52",
+      "pendingSha256": "9e58fb381bdbf45908626bf969c777c927bfbdd0a7fce22e0685e051b49054e2"
+    },
+    {
+      "path": "src/local-app/LocalCatalogApp.tsx",
+      "action": "modify",
+      "mainBeforeSha256": "fa3922b4040fedc9d98304c954c8745c21aed584cd55a3e1db0129e3d9ca00d4",
+      "pendingSha256": "b113409311b796ba26605b05996feeb9028493927df8da4d7e0397f825f17ee9"
+    },
+    {
+      "path": "src/local-app/LocalCatalogApp.workspace.test.tsx",
+      "action": "modify",
+      "mainBeforeSha256": "c30d975f27a15ab835af87a8c3445890e0bfafe63527416dc24d43e050d45c53",
+      "pendingSha256": "43b14f5a51629a408809d0e12c23712ddac4f37be0a42e98e2fc6e3c3fbf1d71"
+    },
+    {
+      "path": "src/local-app/LocalHistory.test.tsx",
+      "action": "delete",
+      "mainBeforeSha256": "c51f969a0ae8f7b00556945339d6071a815ac89e633e5e5ce0c26f8306280e66",
+      "pendingSha256": null
+    },
+    {
+      "path": "src/local-app/LocalHistory.tsx",
+      "action": "delete",
+      "mainBeforeSha256": "e2060a7daa98e841f65815d43bfa8aa7adfe7222f872edc100aee955bacee8c5",
+      "pendingSha256": null
+    },
+    {
+      "path": "src/local-app/LocalMaintenanceEmbedded.test.tsx",
+      "action": "delete",
+      "mainBeforeSha256": "27320e7ba3cb66383a6348f0eccc56c585ef35fa5aa3d0a7f20a0c8f3e9377d2",
+      "pendingSha256": null
+    },
+    {
+      "path": "src/local-app/LocalMaintenancePanel.tsx",
+      "action": "delete",
+      "mainBeforeSha256": "3b5c21daab92a1d6437f42d9e3bedea904f497dedfa304e428ac372169a9b565",
+      "pendingSha256": null
+    },
+    {
+      "path": "src/local-app/LocalSystemStatus.embedded.test.tsx",
+      "action": "add",
+      "mainBeforeSha256": null,
+      "pendingSha256": "fcd620e82278f8f47f693d614e607be17340e4c184b199d476f0e77d4c37fb69"
+    },
+    {
+      "path": "src/local-app/catalogNavigation.test.ts",
+      "action": "modify",
+      "mainBeforeSha256": "78d45f0f808a5d87cb00c296f5ae68d8757826b4513093dd3009ae91ba798069",
+      "pendingSha256": "708c58183c9975360ac778240e418b2474f0424bab137e9b93243873d97a97f6"
+    },
+    {
+      "path": "src/local-app/catalogNavigation.tsx",
+      "action": "modify",
+      "mainBeforeSha256": "b03f1a368e60096480ce1a4296b3d6b046316e0ec4f30b8d56e14cc8f252e6da",
+      "pendingSha256": "c0f536b1bb7808fefacf0d078164aadfa210a9d81d800ceb60c1a341b5f591b6"
+    },
+    {
+      "path": "src/local-app/episodeLifecycle.ts",
+      "action": "modify",
+      "mainBeforeSha256": "a5e684e130c049de03955114d99e004ba1f210374a054aaaa3ef1a89718a4cc4",
+      "pendingSha256": "7571bc9ae8c27f50bb968e990b28a2dc8273cc189a623c3c12f7657e2ee437c8"
+    },
+    {
+      "path": "src/local-app/history.css",
+      "action": "delete",
+      "mainBeforeSha256": "e19192af9b5432b2b6e1157d535d61f9bf75beddcc5e16320481aa76aca76ed3",
+      "pendingSha256": null
+    },
+    {
+      "path": "src/local-app/history.integration.test.ts",
+      "action": "delete",
+      "mainBeforeSha256": "70654fd4b9cb6165456fae7df79c964bd2677dba217579bbc59f94b34ebd69a7",
+      "pendingSha256": null
+    },
+    {
+      "path": "src/local-app/history.ts",
+      "action": "delete",
+      "mainBeforeSha256": "959870d43b34875ecd10bd28b571a7be2af47931ccd9c5c6bf1f368f86ca0957",
+      "pendingSha256": null
+    },
+    {
+      "path": "src/local-app/historyEmptyStates.integration.test.ts",
+      "action": "delete",
+      "mainBeforeSha256": "ae2d92098b63f2184a39899ce6b80e17f9ac063dccc42cbaf5778a40af18d911",
+      "pendingSha256": null
+    },
+    {
+      "path": "src/local-app/historyEpisodeDeletion.integration.test.ts",
+      "action": "delete",
+      "mainBeforeSha256": "65a50676590d878cdcce2ee31c614bf4376368ab6458fc1df3c0308b0d377533",
+      "pendingSha256": null
+    },
+    {
+      "path": "src/local-app/historyEpisodeDeletion.ts",
+      "action": "modify",
+      "mainBeforeSha256": "203748b05045248a76392a62d6f11d3e1c7eac4d5232b85673fdb8f80aa4d474",
+      "pendingSha256": "d14ab3684316dd4d932d0c720636c333a62c35d4da7e64d4aef288cde017f9c2"
+    },
+    {
+      "path": "src/local-app/historyEpisodes.ts",
+      "action": "delete",
+      "mainBeforeSha256": "1ea72df94f5ccb8ebc3b6d91f81b7ccebf868fa4f1328b176abfb2540c046ea6",
+      "pendingSha256": null
+    },
+    {
+      "path": "src/local-app/historyFilterOptions.integration.test.ts",
+      "action": "delete",
+      "mainBeforeSha256": "db5ef1bc72be7c8f52ae2fb444598c2643a051f1b77ae591718a38aa89387420",
+      "pendingSha256": null
+    },
+    {
+      "path": "src/local-app/historyOrganization.integration.test.ts",
+      "action": "delete",
+      "mainBeforeSha256": "edb4974be1ffb708f775bc01a52d17dc8340e3e8b6a6d1ae54a5ad34703216a7",
+      "pendingSha256": null
+    },
+    {
+      "path": "src/local-app/historyPresentation.test.ts",
+      "action": "delete",
+      "mainBeforeSha256": "ccf132b16b82abf95963b2246a04e9e830015ca7668141d3055b87b9f2579273",
+      "pendingSha256": null
+    },
+    {
+      "path": "src/local-app/historyPresentation.ts",
+      "action": "delete",
+      "mainBeforeSha256": "10a8901ad6621e65ddb1bd37e9c81577007d6223a10cbd613bedf958abd2efbb",
+      "pendingSha256": null
+    },
+    {
+      "path": "src/local-app/localRoute.ts",
+      "action": "modify",
+      "mainBeforeSha256": "ab8c4ff27e871b1226211faf1b344a7484f532e2b8a6740d7ca12ed1b33ead00",
+      "pendingSha256": "764ec79f02f26066d1137c210701d6b8443a5eb965a05718f6abe841f4a19e16"
+    },
+    {
+      "path": "src/local-app/owner-preferences.css",
+      "action": "modify",
+      "mainBeforeSha256": "48b8699f5596051192cf3f6d14c2784e4e3481ea1baa74fe1ac0c43854738d6a",
+      "pendingSha256": "e8b3875e9eb0021d44f638f3359d3e31a070d30587711588ad2476fae755393f"
+    },
+    {
+      "path": "src/local-app/retiredHistory.integration.test.ts",
+      "action": "add",
+      "mainBeforeSha256": null,
+      "pendingSha256": "97c84935496bf43efdd98722ab1e0b62f4f0a7536e51a31268b7d765e58133b3"
+    },
+    {
+      "path": "src/local-app/retirementAcceptance.fixture.ts",
+      "action": "add",
+      "mainBeforeSha256": null,
+      "pendingSha256": "736783af756fde2f6e24e40dc6d4d05b3d29d997960b7fbfb22845babfdbdd09"
+    },
+    {
+      "path": "src/styles.css",
+      "action": "modify",
+      "mainBeforeSha256": "dd2d30047e0bcef40e61273290e758c3268b317e62a554ea47da0aadb76184fa",
+      "pendingSha256": "e12ab90cccc523fd693cc752694158e4eb0f580fa1892fc8b18564dd4b1baadb"
+    },
+    {
+      "path": "src/ui/dan-ui/styles/product.css",
+      "action": "modify",
+      "mainBeforeSha256": "cfd406e234003b5dccc1f275ca977a2093ee909a5860891174e4441edef350a1",
+      "pendingSha256": "4efab46f28ad092dd29960dfed872511cdf01d87a2d7fe86814888834dccc331"
+    },
+    {
+      "path": "src/ui/impeccable/maintenance.css",
+      "action": "modify",
+      "mainBeforeSha256": "0af5f8ca972412b226391fbc09c3d992a1253095797d9e68d7b21b727582f356",
+      "pendingSha256": "efcaff959de1b4f178878f1777e395e4eb050d17be01d7ed51a21543f4affd9d"
+    },
+    {
+      "path": "src/ui/impeccable/scroll-layout.css",
+      "action": "modify",
+      "mainBeforeSha256": "9beb418d1b8560d74712ecf4e0573ebd598854ff1f5f3a1898c828ef41792686",
+      "pendingSha256": "46368d10e621de04a35f8ba21acd21acedd31455918e48e84987c539fd028316"
+    },
+    {
+      "path": "src/workspace/EpisodeDeletionScope.tsx",
+      "action": "modify",
+      "mainBeforeSha256": "6526a1de6bea5f5610f990025629cd15d8885a335eaa37a7e7c01efdb2c345b0",
+      "pendingSha256": "f26b6456694f971eb3e71214c9f29c987ed0ef930d27fe4e7f1da71cf73be572"
+    },
+    {
+      "path": "src/workspace/WorkspaceViews.tsx",
+      "action": "modify",
+      "mainBeforeSha256": "26aac827e4c3a517f7adac970a6971b59f11816b996facaa26bf744362e09c26",
+      "pendingSha256": "88dfe042674c897041bc8003a01b8caa21972ad29e510e8dfc9e660b7e58be5c"
+    }
+  ],
+  "migratedAt": "2026-11-10T08:26:21.172354+00:00",
+  "activeRuntime": "9b88a52ec70dd1788fee24218fdf9f14f61e7edff2814235e11a964cf82f87fb",
+  "sidebar": {
+    "path": "src/ui/impeccable/foundation.css",
+    "expandedWidth": 180,
+    "collapsedWidth": 64,
+    "automaticCompactMaxWidth": 900
+  }
+}

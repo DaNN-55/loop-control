@@ -1,0 +1,21 @@
+[
+  "db/local/155-minimax-h3-variants.sql",
+  "src/local-app/WorkspaceConfigBinding.test.tsx",
+  "src/local-app/WorkspaceVisualPreparation.tsx",
+  "src/local-app/WorkspaceVisualRecord.tsx",
+  "src/local-app/minimaxVariants.live.integration.test.ts",
+  "src/local-app/modelSettings.integration.test.ts",
+  "src/local-app/officialVideoNetwork.ts",
+  "src/local-app/workspaceCallConfirmation.ts",
+  "src/local-app/workspaceCallEstimate.ts",
+  "src/local-app/workspaceVisualCandidates.ts",
+  "src/local-app/workspaceVisualRequest.ts",
+  "src/worker/codexRunner.ts",
+  "src/worker/contracts.ts",
+  "src/worker/controlledMediaExecutor.ts",
+  "src/worker/minimaxVariants.test.ts",
+  "src/worker/officialVideoProvider.ts",
+  "src/worker/registeredAdapters.ts",
+  "src/worker/videoProviderCatalog.ts",
+  "src/workspaceVisualCandidates.ts"
+]

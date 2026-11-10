@@ -1,0 +1,56 @@
+{
+  "at": "2026-11-10T03:40:02.907Z",
+  "files": 90,
+  "summary": {
+    "modify": 59,
+    "add": 12,
+    "delete": 19
+  },
+  "migration": "156-unified-shot-video-protocol.sql",
+  "sha256": "ff7b1f6db805b2c0bdc665669559a2560db85808708b75515b6c09e7b9cb7f8a",
+  "before": {
+    "tasks": {
+      "count": 18,
+      "sha": "f14562e300d142dd5fb10c8405db0db4"
+    },
+    "episodes": {
+      "count": 6,
+      "sha": "26615d89853aaece9128dd04fab71daa"
+    },
+    "artifacts": {
+      "count": 33,
+      "sha": "622983c6ae6e054b9789687005113668"
+    },
+    "audit_events": {
+      "count": 113,
+      "sha": "7f78f051c3e827a3cdfcd5d2fc22d695"
+    },
+    "production_material_revisions": {
+      "count": 42,
+      "sha": "c92d59d58ef55b4c6a396a2f38a7227d"
+    }
+  },
+  "after": {
+    "tasks": {
+      "count": 18,
+      "sha": "f14562e300d142dd5fb10c8405db0db4"
+    },
+    "episodes": {
+      "count": 6,
+      "sha": "26615d89853aaece9128dd04fab71daa"
+    },
+    "artifacts": {
+      "count": 33,
+      "sha": "622983c6ae6e054b9789687005113668"
+    },
+    "audit_events": {
+      "count": 113,
+      "sha": "7f78f051c3e827a3cdfcd5d2fc22d695"
+    },
+    "production_material_revisions": {
+      "count": 42,
+      "sha": "c92d59d58ef55b4c6a396a2f38a7227d"
+    }
+  },
+  "ledgerPreserved": true
+}

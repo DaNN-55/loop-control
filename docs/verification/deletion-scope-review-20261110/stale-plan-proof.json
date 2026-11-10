@@ -1,0 +1,26 @@
+{
+  "oldPlanRejected": true,
+  "oldSummaryRemoved": true,
+  "confirmDisabledAfterRejection": true,
+  "recheckPreservedItems": 5,
+  "confirmationClearedOnRecheck": true,
+  "reviewedFilesStillPresent": true,
+  "calls": [
+    {
+      "command": "archiveEpisode",
+      "status": 200
+    },
+    {
+      "command": "planDeletion",
+      "status": 200
+    },
+    {
+      "command": "deleteEpisode",
+      "status": 409
+    },
+    {
+      "command": "planDeletion",
+      "status": 200
+    }
+  ]
+}

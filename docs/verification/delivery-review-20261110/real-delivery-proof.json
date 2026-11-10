@@ -1,0 +1,104 @@
+{
+  "episodeId": "8a26926f-4830-44f6-8ede-ea8e94919754",
+  "exportId": "39f9a26f-431d-43de-a046-206755a30375",
+  "deliveryId": "98466fe0-cf5a-4879-8b0d-0dec166ef31c",
+  "confirmed": true,
+  "verified": true,
+  "artifacts": [
+    {
+      "type": "cover",
+      "bytes": 2033,
+      "sha256": "54d0adb511f2c8108f069e302ff62fe05bb7a6820c2ec3a4919ecedeeac71bfc"
+    },
+    {
+      "type": "metadata",
+      "bytes": 1187,
+      "sha256": "6a3e59e8e8a52329f4fb7ced61be409f8d63115a2b41dc9c2ee91f86c86d5314"
+    },
+    {
+      "type": "final_qc_report",
+      "bytes": 4659,
+      "sha256": "52d257a1b3b5b9472e64c9fd84f846539926214517b5ab467ee02242698c7cbb"
+    },
+    {
+      "type": "publish_package",
+      "bytes": 2657,
+      "sha256": "1f5706c6c2a42e4b5d44906bde8fd7ef2a1fc2df5910e4a54ef42f1702048599"
+    },
+    {
+      "type": "final_render",
+      "bytes": 2549994,
+      "sha256": "6ed62f5700544febe1e4d8439e230aebbd3f6ab21d64161acedb456725226b53"
+    },
+    {
+      "type": "editable_project",
+      "bytes": 8601,
+      "sha256": "1c4fb2c60c72ea9eb0665a6549ac53b3563ee4401eee519040aa49af6c824c75"
+    }
+  ],
+  "zipIntegrity": true,
+  "metadata": {
+    "title": "末班车前的灯光",
+    "description": "两段镜头与独立字幕的本地交付核对。",
+    "tags": [
+      "夜景",
+      "样片"
+    ],
+    "exportId": "39f9a26f-431d-43de-a046-206755a30375",
+    "contentSha256": "e94e8f775506f35ca6abf23fcd74eadb5a317ed3478358b68a518dd6852a87b5",
+    "scriptRevisionId": "29e5793f-726d-4537-acee-9fa092ab505a",
+    "narration": [
+      {
+        "shotId": "shot-1",
+        "baselineText": "第一镜",
+        "sourceText": null,
+        "adoptedText": null,
+        "textCoverage": "no_recorded_text",
+        "windows": [],
+        "textSource": "not_recorded",
+        "sourceDiffersFromBaseline": null,
+        "differsFromBaseline": null,
+        "audioTrackId": null,
+        "sha256": null,
+        "itemId": null,
+        "source": null
+      },
+      {
+        "shotId": "shot-2",
+        "baselineText": "缺少素材的第二镜。",
+        "sourceText": null,
+        "adoptedText": null,
+        "textCoverage": "no_recorded_text",
+        "windows": [],
+        "textSource": "not_recorded",
+        "sourceDiffersFromBaseline": null,
+        "differsFromBaseline": null,
+        "audioTrackId": null,
+        "sha256": null,
+        "itemId": null,
+        "source": null
+      }
+    ]
+  },
+  "probe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_type": "video",
+        "width": 1080,
+        "height": 1920,
+        "side_data_list": [
+          {}
+        ]
+      },
+      {
+        "codec_type": "audio"
+      }
+    ],
+    "format": {
+      "duration": "4.053333"
+    }
+  },
+  "paidCalls": 0
+}

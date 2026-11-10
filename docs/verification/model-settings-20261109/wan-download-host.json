@@ -1,0 +1,12 @@
+{
+  "model": "wan2.2-i2v-flash",
+  "providerTaskId": "81a06cb0-dc98-4db5-9510-e7e4af27433c",
+  "http": 200,
+  "status": "SUCCEEDED",
+  "resultHost": "dashscope-f4de.oss-accelerate.aliyuncs.com",
+  "usage": {
+    "duration": 5,
+    "video_count": 1,
+    "SR": 720
+  }
+}

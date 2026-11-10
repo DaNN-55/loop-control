@@ -1,0 +1,12 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/worker/modelSettingsBoundary.test.ts src/worker/officialVideoErrors.test.ts src/worker/mediaToolsContract.test.ts src/local-app/providerNetwork.test.ts src/local-app/WorkspaceMaterialShelf.test.tsx src/local-app/WorkspaceVisualFeedback.test.tsx --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+···············································································
+
+ Test Files  6 passed (6)
+      Tests  79 passed (79)
+   Start at  16:36:50
+   Duration  2.16s (transform 303ms, setup 39ms, collect 2.03s, tests 2.30s, environment 945ms, prepare 191ms)
+

@@ -1,0 +1,13 @@
+{
+  "taskId": "c6cc2b02-5f40-4c28-82af-75e4b8107d16",
+  "originalRelease": "4b3b769585c6",
+  "mode": "references",
+  "durationSeconds": 4,
+  "imageFileSizes": [
+    1723937
+  ],
+  "requestRole": "reference_image",
+  "originalRoleCheck": "Invalid video body",
+  "onlyChangeToFirstFrame": "generate",
+  "networkCalls": 0
+}

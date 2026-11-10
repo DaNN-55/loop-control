@@ -1,0 +1,244 @@
+{
+  "preparedFilesRestored": true,
+  "committedFilesCleaned": true,
+  "noticeCaseCleanedAfterRetry": true,
+  "manualFilesPreserved": true,
+  "initialFailureDiagnosticNotYetPersisted": true,
+  "calls": [
+    {
+      "command": "retryDeletionCleanup",
+      "data": {
+        "deletionKey": "24b55f7c-5c72-45dd-b547-52f918edd79c"
+      },
+      "status": 200,
+      "result": {
+        "cleanupKey": "24b55f7c-5c72-45dd-b547-52f918edd79c",
+        "episodeId": "6085b162-efda-4f7e-a979-403b16648d16",
+        "title": "恢复未提交删除核对",
+        "path": "/private/tmp/loop-153-8ETBjU/account/episodes/6085b162-efda-4f7e-a979-403b16648d16",
+        "stagingPaths": [
+          "/private/tmp/loop-153-8ETBjU/account/episodes/6085b162-efda-4f7e-a979-403b16648d16/board.json.loop-control-deletion",
+          "/private/tmp/loop-153-8ETBjU/account/episodes/6085b162-efda-4f7e-a979-403b16648d16/shot.mp4.loop-control-deletion",
+          "/private/tmp/loop-153-8ETBjU/account/episodes/6085b162-efda-4f7e-a979-403b16648d16/voice.mp3.loop-control-deletion"
+        ],
+        "phase": "prepared",
+        "cleanupPending": false,
+        "message": "未提交的删除已恢复，请重新检查范围后确认。",
+        "recovered": true
+      }
+    },
+    {
+      "command": "retryDeletionCleanup",
+      "data": {
+        "deletionKey": "fe1e1c86-9bc9-4877-9eb1-aa486a6fa281"
+      },
+      "status": 200,
+      "result": {
+        "path": "/private/tmp/loop-153-8ETBjU/account/未分系列--beb08564-26b5-40cf-bd6a-56076ed3ba3a/继续文件清理核对--ee989754-bd35-4e49-9ccc-2072a7383bc3",
+        "paths": [
+          "/private/tmp/loop-153-8ETBjU/account/未分系列--beb08564-26b5-40cf-bd6a-56076ed3ba3a/继续文件清理核对--ee989754-bd35-4e49-9ccc-2072a7383bc3"
+        ],
+        "title": "继续文件清理核对",
+        "summary": {
+          "title": "继续文件清理核对",
+          "counts": {
+            "tasks": 0,
+            "approvals": 0,
+            "artifacts": 0,
+            "asset_locks": 0,
+            "experiments": 0,
+            "audio_tracks": 0,
+            "audit_events": 2,
+            "review_packages": 0,
+            "metric_snapshots": 0,
+            "state_transitions": 0,
+            "review_annotations": 0,
+            "audio_track_annotations": 0,
+            "production_dependencies": 0,
+            "production_invalidations": 0,
+            "pre_render_review_members": 0,
+            "production_material_revisions": 1,
+            "pre_render_review_member_decisions": 0,
+            "review_render_composition_revisions": 0
+          },
+          "account_id": "c319f1a6-a49e-4fbc-9ea4-9e86985007fa",
+          "deleted_at": "2026-11-10T05:30:18.425996+00:00",
+          "episode_id": "ee989754-bd35-4e49-9ccc-2072a7383bc3"
+        },
+        "episodeId": "ee989754-bd35-4e49-9ccc-2072a7383bc3",
+        "cleanupKey": "fe1e1c86-9bc9-4877-9eb1-aa486a6fa281",
+        "stagingPath": "/private/tmp/loop-153-8ETBjU/account/未分系列--beb08564-26b5-40cf-bd6a-56076ed3ba3a/继续文件清理核对--ee989754-bd35-4e49-9ccc-2072a7383bc3",
+        "localRemoved": true,
+        "stagingPaths": [
+          "/private/tmp/loop-153-8ETBjU/account/未分系列--beb08564-26b5-40cf-bd6a-56076ed3ba3a/继续文件清理核对--ee989754-bd35-4e49-9ccc-2072a7383bc3/镜头素材.mp4.loop-control-deletion"
+        ],
+        "cleanupPending": false
+      }
+    },
+    {
+      "command": "archiveEpisode",
+      "data": {
+        "episodeId": "d8bf8665-be9e-49a7-ba31-50b3d5835d6f",
+        "archived": true
+      },
+      "status": 200,
+      "result": {
+        "id": "d8bf8665-be9e-49a7-ba31-50b3d5835d6f",
+        "stage": "waiting_input",
+        "title": "清理未完成提示核对",
+        "is_test": false,
+        "tts_voice": null,
+        "account_id": "c319f1a6-a49e-4fbc-9ea4-9e86985007fa",
+        "created_at": "2026-11-10T05:30:16.648132+00:00",
+        "updated_at": "2026-11-10T05:34:56.856121+00:00",
+        "archived_at": "2026-11-10T05:34:56.856121+00:00",
+        "script_source": "provided",
+        "audio_source_mode": "tts",
+        "series_version_id": null,
+        "tts_language_code": null,
+        "tts_speaking_rate": null,
+        "worker_preflight_at": null,
+        "blueprint_version_id": "c319f1a6-a49e-4fbc-9ea4-9e86985007fa",
+        "main_script_revision_id": null
+      }
+    },
+    {
+      "command": "planDeletion",
+      "data": {
+        "episodeId": "d8bf8665-be9e-49a7-ba31-50b3d5835d6f"
+      },
+      "status": 200,
+      "result": {
+        "episodeId": "d8bf8665-be9e-49a7-ba31-50b3d5835d6f",
+        "title": "清理未完成提示核对",
+        "path": "/private/tmp/loop-153-8ETBjU/account/未分系列--beb08564-26b5-40cf-bd6a-56076ed3ba3a/清理未完成提示核对--d8bf8665-be9e-49a7-ba31-50b3d5835d6f",
+        "stagingPath": "/private/tmp/loop-153-8ETBjU/account/未分系列--beb08564-26b5-40cf-bd6a-56076ed3ba3a/清理未完成提示核对--d8bf8665-be9e-49a7-ba31-50b3d5835d6f",
+        "paths": [
+          "/private/tmp/loop-153-8ETBjU/account/未分系列--beb08564-26b5-40cf-bd6a-56076ed3ba3a/清理未完成提示核对--d8bf8665-be9e-49a7-ba31-50b3d5835d6f"
+        ],
+        "stagingPaths": [
+          "/private/tmp/loop-153-8ETBjU/account/未分系列--beb08564-26b5-40cf-bd6a-56076ed3ba3a/清理未完成提示核对--d8bf8665-be9e-49a7-ba31-50b3d5835d6f/镜头素材.mp4.loop-control-deletion"
+        ],
+        "files": [
+          {
+            "path": "/private/tmp/loop-153-8ETBjU/account/未分系列--beb08564-26b5-40cf-bd6a-56076ed3ba3a/清理未完成提示核对--d8bf8665-be9e-49a7-ba31-50b3d5835d6f/镜头素材.mp4",
+            "bytes": 210288,
+            "authority": "material:0f8df02e-6b64-4d5c-ac4f-c1cfbcec2c5c"
+          }
+        ],
+        "preserved": [
+          {
+            "path": "/private/tmp/loop-153-8ETBjU/account/未分系列--beb08564-26b5-40cf-bd6a-56076ed3ba3a/清理未完成提示核对--d8bf8665-be9e-49a7-ba31-50b3d5835d6f/手放保留.txt",
+            "reason": "未登记或无法证明属于本单的文件，保留。"
+          }
+        ],
+        "confirmation": "清理未完成提示核对",
+        "archived": true,
+        "isTest": false,
+        "revision": "04b0849ca7341e91e5cb9282a4d424f87d8a6e0fa0d369e5736d05980509b756"
+      }
+    },
+    {
+      "command": "deleteEpisode",
+      "data": {
+        "episodeId": "d8bf8665-be9e-49a7-ba31-50b3d5835d6f",
+        "confirmation": "清理未完成提示核对",
+        "expectedPath": "/private/tmp/loop-153-8ETBjU/account/未分系列--beb08564-26b5-40cf-bd6a-56076ed3ba3a/清理未完成提示核对--d8bf8665-be9e-49a7-ba31-50b3d5835d6f",
+        "expectedPaths": [
+          "/private/tmp/loop-153-8ETBjU/account/未分系列--beb08564-26b5-40cf-bd6a-56076ed3ba3a/清理未完成提示核对--d8bf8665-be9e-49a7-ba31-50b3d5835d6f"
+        ],
+        "expectedRevision": "04b0849ca7341e91e5cb9282a4d424f87d8a6e0fa0d369e5736d05980509b756"
+      },
+      "status": 200,
+      "result": {
+        "path": "/private/tmp/loop-153-8ETBjU/account/未分系列--beb08564-26b5-40cf-bd6a-56076ed3ba3a/清理未完成提示核对--d8bf8665-be9e-49a7-ba31-50b3d5835d6f",
+        "paths": [
+          "/private/tmp/loop-153-8ETBjU/account/未分系列--beb08564-26b5-40cf-bd6a-56076ed3ba3a/清理未完成提示核对--d8bf8665-be9e-49a7-ba31-50b3d5835d6f"
+        ],
+        "title": "清理未完成提示核对",
+        "summary": {
+          "title": "清理未完成提示核对",
+          "counts": {
+            "tasks": 0,
+            "approvals": 0,
+            "artifacts": 0,
+            "asset_locks": 0,
+            "experiments": 0,
+            "audio_tracks": 0,
+            "audit_events": 2,
+            "review_packages": 0,
+            "metric_snapshots": 0,
+            "state_transitions": 0,
+            "review_annotations": 0,
+            "audio_track_annotations": 0,
+            "production_dependencies": 0,
+            "production_invalidations": 0,
+            "pre_render_review_members": 0,
+            "production_material_revisions": 1,
+            "pre_render_review_member_decisions": 0,
+            "review_render_composition_revisions": 0
+          },
+          "account_id": "c319f1a6-a49e-4fbc-9ea4-9e86985007fa",
+          "deleted_at": "2026-11-10T05:34:57.239129+00:00",
+          "episode_id": "d8bf8665-be9e-49a7-ba31-50b3d5835d6f"
+        },
+        "episodeId": "d8bf8665-be9e-49a7-ba31-50b3d5835d6f",
+        "cleanupKey": "3c068cd0-a3d1-4dec-8a6e-3260aae38582",
+        "stagingPath": "/private/tmp/loop-153-8ETBjU/account/未分系列--beb08564-26b5-40cf-bd6a-56076ed3ba3a/清理未完成提示核对--d8bf8665-be9e-49a7-ba31-50b3d5835d6f",
+        "stagingPaths": [
+          "/private/tmp/loop-153-8ETBjU/account/未分系列--beb08564-26b5-40cf-bd6a-56076ed3ba3a/清理未完成提示核对--d8bf8665-be9e-49a7-ba31-50b3d5835d6f/镜头素材.mp4.loop-control-deletion"
+        ],
+        "cleanupPending": true,
+        "message": "Some directories need retry"
+      }
+    },
+    {
+      "command": "retryDeletionCleanup",
+      "data": {
+        "deletionKey": "3c068cd0-a3d1-4dec-8a6e-3260aae38582"
+      },
+      "status": 200,
+      "result": {
+        "path": "/private/tmp/loop-153-8ETBjU/account/未分系列--beb08564-26b5-40cf-bd6a-56076ed3ba3a/清理未完成提示核对--d8bf8665-be9e-49a7-ba31-50b3d5835d6f",
+        "paths": [
+          "/private/tmp/loop-153-8ETBjU/account/未分系列--beb08564-26b5-40cf-bd6a-56076ed3ba3a/清理未完成提示核对--d8bf8665-be9e-49a7-ba31-50b3d5835d6f"
+        ],
+        "title": "清理未完成提示核对",
+        "summary": {
+          "title": "清理未完成提示核对",
+          "counts": {
+            "tasks": 0,
+            "approvals": 0,
+            "artifacts": 0,
+            "asset_locks": 0,
+            "experiments": 0,
+            "audio_tracks": 0,
+            "audit_events": 2,
+            "review_packages": 0,
+            "metric_snapshots": 0,
+            "state_transitions": 0,
+            "review_annotations": 0,
+            "audio_track_annotations": 0,
+            "production_dependencies": 0,
+            "production_invalidations": 0,
+            "pre_render_review_members": 0,
+            "production_material_revisions": 1,
+            "pre_render_review_member_decisions": 0,
+            "review_render_composition_revisions": 0
+          },
+          "account_id": "c319f1a6-a49e-4fbc-9ea4-9e86985007fa",
+          "deleted_at": "2026-11-10T05:34:57.239129+00:00",
+          "episode_id": "d8bf8665-be9e-49a7-ba31-50b3d5835d6f"
+        },
+        "episodeId": "d8bf8665-be9e-49a7-ba31-50b3d5835d6f",
+        "cleanupKey": "3c068cd0-a3d1-4dec-8a6e-3260aae38582",
+        "stagingPath": "/private/tmp/loop-153-8ETBjU/account/未分系列--beb08564-26b5-40cf-bd6a-56076ed3ba3a/清理未完成提示核对--d8bf8665-be9e-49a7-ba31-50b3d5835d6f",
+        "localRemoved": true,
+        "stagingPaths": [
+          "/private/tmp/loop-153-8ETBjU/account/未分系列--beb08564-26b5-40cf-bd6a-56076ed3ba3a/清理未完成提示核对--d8bf8665-be9e-49a7-ba31-50b3d5835d6f/镜头素材.mp4.loop-control-deletion"
+        ],
+        "cleanupPending": false
+      }
+    }
+  ]
+}

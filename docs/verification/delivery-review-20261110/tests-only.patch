@@ -1,0 +1,66 @@
+diff --git a/Users/dan/Programs/loop-control/.scratch/delivery-review-20261110/before/src/local-app/WorkspaceExportPanel.test.tsx b/Users/dan/Programs/loop-control/.scratch/delivery-review-20261110/pending/src/local-app/WorkspaceExportPanel.test.tsx
+index c659d986..06f93bc2 100644
+--- a/Users/dan/Programs/loop-control/.scratch/delivery-review-20261110/before/src/local-app/WorkspaceExportPanel.test.tsx
++++ b/Users/dan/Programs/loop-control/.scratch/delivery-review-20261110/pending/src/local-app/WorkspaceExportPanel.test.tsx
+@@ -9,10 +9,10 @@ it('Owner sees the actual final MP4 and confirms its exact file and content iden
+  expect(screen.getByLabelText('最终导出视频').getAttribute('src')).toContain('final.mp4');fireEvent.click(screen.getByRole('button',{name:'确认成片与字幕'}));await waitFor(()=>expect(command).toHaveBeenCalledWith('confirmWorkspaceExport',{episodeId:'e',workspaceId:'w',expectedRevision:3,exportId:'ex',expectedExportSha256:'final-sha',expectedContentSha256:'content'}));
+ });
+ 
+-it('puts checks first and file information below the preview without exposing raw paths or hashes',()=>{
+- const w={id:'w',episodeId:'e',revision:1,stale:false,readiness:{placeholders:[]},exports:[{id:'ex',current:true,confirmed:true,status:'ready',projectContentVersion:8,artifact:{relativePath:'opaque-file.mp4',sha256:'raw-fingerprint',fileSize:6148396},checks:[{name:'decode',passed:true,detail:'可播放'}]}],deliveries:[{id:'d',status:'completed',verified:true,artifacts:[]}]} as unknown as ProductionWorkspace;
++it('groups issues below checks and secondary file details with export history',()=>{
++ const w={id:'w',episodeId:'e',revision:1,stale:false,readiness:{placeholders:[]},exports:[{id:'ex',current:true,confirmed:true,status:'ready',projectContentVersion:8,artifact:{relativePath:'opaque-file.mp4',sha256:'raw-fingerprint',fileSize:6148396},checks:[{name:'decode',passed:true,detail:'可播放'}]}],exportIssues:[{id:'issue',reason:'已处理的问题',resolved:true}],deliveries:[{id:'d',status:'completed',verified:true,artifacts:[]}]} as unknown as ProductionWorkspace;
+  render(<WorkspaceExportPanel workspace={w} readOnly pending={false} command={vi.fn()} onChange={()=>{}}/>);
+- const review=document.querySelector('.workspace-export-review')!;expect(review.firstElementChild?.getAttribute('aria-label')).toBe('技术检查');expect(review.textContent).not.toContain('文件信息');expect(document.querySelector('.workspace-final-preview .workspace-final-details summary')?.textContent).toBe('文件信息');expect(screen.queryByText('raw-fingerprint')).toBeNull();expect(screen.queryByText('opaque-file.mp4')).toBeNull();expect(screen.getByRole('button',{name:'重新导出视频'}).textContent).toBe('重新导出视频');expect(screen.getByRole('button',{name:'重新导出视频'}).hasAttribute('disabled')).toBe(true);
++ const review=document.querySelector('.workspace-export-review')!;expect(review.firstElementChild?.getAttribute('aria-label')).toBe('技术检查');expect(review.children[1]?.getAttribute('aria-label')).toBe('导出问题');expect(review.children[2]?.getAttribute('aria-label')).toBe('交付包');expect(document.querySelector('.workspace-final-preview .workspace-final-details')).toBeNull();expect(review.querySelector('.workspace-export-secondary summary')?.textContent).toBe('文件信息与导出历史');expect(review.querySelector('.workspace-export-secondary')?.textContent).toContain('v8');expect(screen.queryByText('raw-fingerprint')).toBeNull();expect(screen.queryByText('opaque-file.mp4')).toBeNull();expect(screen.queryByRole('button',{name:'重新导出视频'})).toBeNull();
+ });
+ it('opens failed checks so their explanation stays visible',()=>{
+  const w={id:'w',episodeId:'e',revision:1,stale:false,readiness:{placeholders:[]},exports:[{id:'ex',current:true,confirmed:false,status:'failed',checks:[{name:'decode',passed:false,detail:'视频无法解码'}]}]} as unknown as ProductionWorkspace;
+@@ -22,7 +22,14 @@ it('opens failed checks so their explanation stays visible',()=>{
+ it('keeps the next issue during a slow submission and preserves input after errors',async()=>{
+  const w={id:'w',episodeId:'e',revision:1,readiness:{placeholders:[]},exports:[]} as unknown as ProductionWorkspace;
+  let finish!:(value:ProductionWorkspace)=>void,reject!:(error:Error)=>void;const command=vi.fn(()=>new Promise<ProductionWorkspace>((resolve,fail)=>{finish=resolve;reject=fail;}));render(<WorkspaceExportPanel workspace={w} pending={false} command={command} onChange={()=>{}}/>);
+- const input=screen.getByRole('textbox',{name:'问题记录'});fireEvent.change(input,{target:{value:'第一条问题'}});fireEvent.click(screen.getByRole('button',{name:'记录问题'}));fireEvent.click(screen.getByRole('button',{name:/记录问题/}));expect(command).toHaveBeenCalledTimes(1);fireEvent.change(input,{target:{value:'第二条问题'}});await act(async()=>finish(w));expect((input as HTMLTextAreaElement).value).toBe('第二条问题');
++ fireEvent.click(screen.getByText('问题记录',{selector:'summary h4'}));const input=screen.getByRole('textbox',{name:'问题记录'});fireEvent.change(input,{target:{value:'第一条问题'}});fireEvent.click(screen.getByRole('button',{name:'记录问题'}));fireEvent.click(screen.getByRole('button',{name:/记录问题/}));expect(command).toHaveBeenCalledTimes(1);fireEvent.change(input,{target:{value:'第二条问题'}});await act(async()=>finish(w));expect((input as HTMLTextAreaElement).value).toBe('第二条问题');
+  fireEvent.click(screen.getByRole('button',{name:'记录问题'}));await act(async()=>reject(Error('记录失败，请重试。')));expect((input as HTMLTextAreaElement).value).toBe('第二条问题');expect(screen.getByRole('alert').textContent).toContain('记录失败');
+  fireEvent.click(screen.getByRole('button',{name:'记录问题'}));await act(async()=>finish(w));expect((input as HTMLTextAreaElement).value).toBe('');
+ });
++
++it('requires a new export after content changes even when an old confirmation remains in history',()=>{
++ const w={id:'w',episodeId:'e',revision:4,contentSha256:'new',stale:false,readiness:{placeholders:[]},exports:[{id:'old',current:false,confirmed:true,status:'ready',artifact:{relativePath:'old.mp4',sha256:'old',fileSize:12},checks:[{passed:true,detail:'历史检查通过'}]}]}as unknown as ProductionWorkspace;const command=vi.fn();render(<WorkspaceExportPanel workspace={w} pending={false} command={command} onChange={()=>{}}/>);expect(screen.getByText('需重新导出')).toBeTruthy();expect(screen.queryByText('已确认这份最终文件')).toBeNull();expect((screen.getByRole('button',{name:'确认成片与字幕'})as HTMLButtonElement).disabled).toBe(true);expect(screen.queryByRole('textbox',{name:'标题'})).toBeNull();expect(command).not.toHaveBeenCalled();
++});
++it('prevents repeated export submission and names only the active export as running',async()=>{
++ const w={id:'w',episodeId:'e',revision:1,stale:false,readiness:{placeholders:[]},exports:[]}as unknown as ProductionWorkspace;let finish!:(w:ProductionWorkspace)=>void;const command=vi.fn(()=>new Promise<ProductionWorkspace>(resolve=>{finish=resolve;}));render(<WorkspaceExportPanel workspace={w} pending={false} command={command} onChange={()=>{}}/>);fireEvent.click(screen.getByRole('button',{name:'导出视频'}));expect(screen.getByRole('button',{name:'正在导出与检查…'})).toBeTruthy();fireEvent.click(screen.getByRole('button',{name:'正在导出与检查…'}));expect(command).toHaveBeenCalledOnce();await act(async()=>finish(w));expect(screen.getByRole('button',{name:'导出视频'})).toBeTruthy();
++});
+diff --git a/Users/dan/Programs/loop-control/.scratch/delivery-review-20261110/before/src/local-app/WorkspaceDeliveryPanel.test.tsx b/Users/dan/Programs/loop-control/.scratch/delivery-review-20261110/pending/src/local-app/WorkspaceDeliveryPanel.test.tsx
+index 893a8693..5790fc93 100644
+--- a/Users/dan/Programs/loop-control/.scratch/delivery-review-20261110/before/src/local-app/WorkspaceDeliveryPanel.test.tsx
++++ b/Users/dan/Programs/loop-control/.scratch/delivery-review-20261110/pending/src/local-app/WorkspaceDeliveryPanel.test.tsx
+@@ -10,7 +10,7 @@ beforeEach(()=>{createObjectURL.mockClear();revokeObjectURL.mockClear();Object.d
+ afterEach(()=>{cleanup();localStorage.clear();vi.useRealTimers();});
+ const pngBytes=new Uint8Array([137,80,78,71,13,10,26,10,0,0,0,0]);
+ const pngFile=(name:string)=>new File([pngBytes],name,{type:'image/png'});
+-const workspace=()=>({id:'workspace',episodeId:'episode',revision:7,stale:false,exports:[{id:'export',confirmed:true,contentSha256:'confirmed-content',artifact:{sha256:'confirmed-video'}}]}) as unknown as ProductionWorkspace;
++const workspace=()=>({id:'workspace',episodeId:'episode',revision:7,stale:false,exports:[{id:'export',current:true,confirmed:true,contentSha256:'confirmed-content',artifact:{sha256:'confirmed-video'}}]}) as unknown as ProductionWorkspace;
+ it('registers the selected real cover and binds delivery metadata to the confirmed export',async()=>{
+  const w=workspace(),command=vi.fn(async()=>w);render(<WorkspaceDeliveryPanel workspace={w} pending={false} command={command} onChange={()=>{}}/>);
+  fireEvent.change(screen.getByRole('textbox',{name:'标题'}),{target:{value:'晨光样片'}});fireEvent.change(screen.getByRole('textbox',{name:'标签'}),{target:{value:'山野，清晨'}});fireEvent.change(screen.getByRole('textbox',{name:'简介'}),{target:{value:'清晨山脊的光线。'}});
+@@ -18,7 +18,7 @@ it('registers the selected real cover and binds delivery metadata to the confirm
+  fireEvent.click(screen.getByRole('button',{name:'生成并验证交付包'}));await waitFor(()=>expect(command).toHaveBeenCalledWith('prepareWorkspaceDelivery',{episodeId:'episode',workspaceId:'workspace',expectedRevision:7,exportId:'export',expectedExportSha256:'confirmed-video',expectedContentSha256:'confirmed-content',title:'晨光样片',description:'清晨山脊的光线。',tags:['山野','清晨'],coverBase64:'AQID'}));
+ });
+ it('keeps metadata unavailable before confirmation and retains the retry action for the original failed delivery',async()=>{
+- const w=workspace();w.exports![0].confirmed=false;const command=vi.fn(async()=>w);const view=render(<WorkspaceDeliveryPanel workspace={w} pending={false} command={command} onChange={()=>{}}/>);expect((screen.getByRole('textbox',{name:'标题'}) as HTMLInputElement).disabled).toBe(true);expect((screen.getByRole('button',{name:'选择封面'}) as HTMLButtonElement).disabled).toBe(true);
++ const w=workspace();w.exports![0].confirmed=false;const command=vi.fn(async()=>w);const view=render(<WorkspaceDeliveryPanel workspace={w} pending={false} command={command} onChange={()=>{}}/>);expect(screen.queryByRole('textbox',{name:'标题'})).toBeNull();expect(screen.queryByRole('button',{name:'选择封面'})).toBeNull();expect(screen.getByText('确认这份成片后，再设置封面与发布文案。')).toBeTruthy();
+  w.exports![0].confirmed=true;w.deliveries=[{id:'original-delivery',status:'failed',error:'文件校验失败，请重试。'}] as ProductionWorkspace['deliveries'];view.rerender(<WorkspaceDeliveryPanel workspace={w} pending={false} command={command} onChange={()=>{}}/>);fireEvent.click(screen.getByRole('button',{name:'重试原交付'}));await waitFor(()=>expect(command).toHaveBeenCalledWith('retryWorkspaceDelivery',{episodeId:'episode',workspaceId:'workspace',expectedRevision:7,deliveryId:'original-delivery'}));
+ });
+ it('keeps verified file links bound to actual paths and hashes',()=>{
+@@ -85,3 +85,9 @@ it('retains a replacement cover with the same filename while the previous delive
+  fireEvent.change(screen.getByLabelText('标题'),{target:{value:'封面替换'}});const first=pngFile('same.png');Object.defineProperty(first,'arrayBuffer',{value:async()=>pngBytes.buffer});fireEvent.change(screen.getByLabelText('封面'),{target:{files:[first]}});await screen.findByRole('img',{name:'交付封面预览'});fireEvent.click(screen.getByRole('button',{name:'生成并验证交付包'}));await waitFor(()=>expect(command).toHaveBeenCalledOnce());
+  const replacement=pngFile('same.png');fireEvent.change(screen.getByLabelText('封面'),{target:{files:[replacement]}});await waitFor(()=>expect(createObjectURL.mock.calls.at(-1)?.[0]).toBe(replacement));await act(async()=>finish(w));expect(screen.getByRole('img',{name:'交付封面预览'})).toBeTruthy();expect((screen.getByLabelText('标题') as HTMLInputElement).value).toBe('封面替换');
+ });
++
++it('hides a stale confirmed export and preserves the draft when its current confirmation returns',async()=>{
++ const w=workspace(),command=vi.fn(),view=render(<WorkspaceDeliveryPanel workspace={w} pending={false} command={command} onChange={()=>{}}/>);fireEvent.change(screen.getByRole('textbox',{name:'标题'}),{target:{value:'保留这份交付文案'}});const cover=pngFile('keep.png');fireEvent.change(screen.getByLabelText('封面'),{target:{files:[cover]}});await screen.findByRole('img',{name:'交付封面预览'});
++ const stale={...w,exports:[{...w.exports![0],current:false,confirmed:true}]};view.rerender(<WorkspaceDeliveryPanel workspace={stale} pending={false} command={command} onChange={()=>{}}/>);expect(screen.queryByRole('textbox',{name:'标题'})).toBeNull();expect(screen.queryByRole('button',{name:'生成并验证交付包'})).toBeNull();expect(screen.getByText('工程已变化，请重新导出并确认成片。')).toBeTruthy();expect(revokeObjectURL).toHaveBeenCalled();expect(command).not.toHaveBeenCalled();
++ view.rerender(<WorkspaceDeliveryPanel workspace={w} pending={false} command={command} onChange={()=>{}}/>);expect((screen.getByRole('textbox',{name:'标题'})as HTMLInputElement).value).toBe('保留这份交付文案');expect(screen.getByText('keep.png')).toBeTruthy();await screen.findByRole('img',{name:'交付封面预览'});
++});

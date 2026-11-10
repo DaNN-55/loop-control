@@ -1,0 +1,16 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/platform/SeriesConfigurationForm.test.tsx src/episodes/EpisodeForm.test.tsx src/local-app/LocalCatalogApp.episode-dialog.test.tsx src/accounts/AccountRules.test.tsx
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control/.scratch/series-context-review-20261110/pending
+
+ ✓ src/accounts/AccountRules.test.tsx (4 tests) 223ms
+ ✓ src/episodes/EpisodeForm.test.tsx (5 tests) 320ms
+ ✓ src/platform/SeriesConfigurationForm.test.tsx (6 tests) 647ms
+ ✓ src/local-app/LocalCatalogApp.episode-dialog.test.tsx (2 tests) 599ms
+   ✓ inherits the filtered account into creation and resets every list scope with valid pagination  411ms
+
+ Test Files  4 passed (4)
+      Tests  17 passed (17)
+   Start at  08:47:11
+   Duration  3.09s (transform 988ms, setup 35ms, collect 4.47s, tests 1.79s, environment 1.33s, prepare 158ms)
+

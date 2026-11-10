@@ -1,0 +1,121 @@
+--- a/src/local-app/main.tsx
++++ b/src/local-app/main.tsx
+@@ -7,6 +7,7 @@
+ import '../ui/impeccable/maintenance.css';
+ import '../ui/impeccable/production.css';
+ import '../ui/impeccable/scroll-layout.css';
++import '../ui/impeccable/surface-polish.css';
+ const root=document.getElementById('root');
+ if(!root)throw Error('The application root is missing.');
+ createRoot(root).render(<StrictMode><LocalCatalogApp/></StrictMode>);
+--- /dev/null
++++ b/src/ui/impeccable/surface-polish.css
+@@ -0,0 +1,108 @@
++/* Approved demo: depth, surface tones and control finish only.
++   Keep dimensions, layout, typography, content and behavior in their owning styles. */
++html[data-interface="impeccable"]:not([data-theme="dark"]) {
++  --lc-bg: #f1f3f7;
++  --lc-surface-2: #f8f9fc;
++  --lc-line: #e1e6ee;
++  --lc-line-strong: #c5cedd;
++  --lc-surface-inset: #fafbfd;
++  --lc-surface-detail: #f5f7fb;
++  --lc-control-well: #e9edf4;
++}
++
++html[data-interface="impeccable"] {
++  --lc-shadow-field: inset 0 1px 2px rgb(23 38 62 / .025), 0 1px 2px rgb(23 38 62 / .025);
++  --lc-shadow-control: 0 1px 2px rgb(23 38 62 / .04);
++  --lc-shadow-selected: 0 1px 3px rgb(23 38 62 / .1);
++  --lc-shadow-composer: 0 1px 3px rgb(23 38 62 / .05), 0 8px 20px rgb(23 38 62 / .065);
++  --lc-shadow-popover: 0 3px 7px rgb(23 38 62 / .07), 0 16px 40px rgb(23 38 62 / .15);
++  --lc-shadow-dialog: 0 3px 8px rgb(16 24 40 / .08), 0 25px 70px rgb(16 24 40 / .18);
++  --lc-shadow-primary: inset 0 1px 0 rgb(255 255 255 / .16), 0 1px 2px rgb(25 48 121 / .18);
++}
++
++html[data-interface="impeccable"][data-theme="dark"] {
++  --lc-surface-inset: #172437;
++  --lc-surface-detail: #172437;
++  --lc-control-well: #111c2d;
++  --lc-shadow-field: inset 0 1px 2px rgb(0 0 0 / .06), 0 1px 2px rgb(0 0 0 / .08);
++  --lc-shadow-control: 0 1px 2px rgb(0 0 0 / .12);
++  --lc-shadow-selected: 0 1px 3px rgb(0 0 0 / .2);
++  --lc-shadow-composer: 0 1px 3px rgb(0 0 0 / .12), 0 8px 20px rgb(0 0 0 / .16);
++  --lc-shadow-popover: 0 3px 7px rgb(0 0 0 / .15), 0 16px 40px rgb(0 0 0 / .3);
++  --lc-shadow-dialog: 0 3px 8px rgb(0 0 0 / .16), 0 25px 70px rgb(0 0 0 / .32);
++  --lc-shadow-primary: inset 0 1px 0 rgb(255 255 255 / .12), 0 1px 2px rgb(0 0 0 / .16);
++}
++
++/* Surface tones preserve every existing border's occupied space. */
++html[data-interface="impeccable"] .impeccable-app.product-ui :is(.sidebar, .page-header) {
++  border-color: transparent;
++}
++html[data-interface="impeccable"] .impeccable-app.product-ui .page-header {
++  background-color: var(--lc-surface);
++}
++html[data-interface="impeccable"] .product-ui .account-workspace-layout > aside {
++  background-color: var(--lc-surface-inset);
++}
++html[data-interface="impeccable"] .product-ui .workspace-preparation-detail {
++  background-color: var(--lc-surface-detail);
++}
++
++/* Contact shadows belong to actual controls, not list rows or navigation. */
++html[data-interface="impeccable"] .product-ui button[data-color="primary"] {
++  box-shadow: var(--lc-shadow-primary);
++}
++html[data-interface="impeccable"] .product-ui button[data-color="secondary"] {
++  border-color: var(--lc-line);
++  box-shadow: var(--lc-shadow-control);
++}
++html[data-interface="impeccable"] .product-ui :is(.dan-select-trigger, textarea):not(:focus-visible):not([aria-invalid="true"]):not(.workspace-composer-prompt textarea),
++html[data-interface="impeccable"] .product-ui [data-input-wrapper]:not([data-invalid]):not(:focus-within) {
++  box-shadow: var(--lc-shadow-field);
++}
++html[data-interface="impeccable"] .product-ui .account-workspace-layout nav > button.is-active {
++  background-color: var(--lc-surface);
++  box-shadow: var(--lc-shadow-selected);
++}
++html[data-interface="impeccable"] .product-ui .workspace-visual-preview-tabs {
++  background-color: var(--lc-control-well);
++  border-radius: 7px;
++}
++html[data-interface="impeccable"] .product-ui .workspace-visual-preview-tabs > button[aria-selected="true"] {
++  background-color: var(--lc-surface);
++  box-shadow: var(--lc-shadow-selected);
++}
++
++/* Keep prompt editing, validation, drag feedback and all toolbar geometry intact. */
++html[data-interface="impeccable"] .product-ui .workspace-generation-composer {
++  border-color: transparent;
++  border-radius: 14px;
++  box-shadow: var(--lc-shadow-composer);
++}
++html[data-interface="impeccable"] .product-ui .workspace-composer-input {
++  background-color: transparent;
++}
++html[data-interface="impeccable"] .product-ui .workspace-composer-input:not(:has(textarea[aria-invalid="true"])) {
++  border-color: transparent;
++}
++html[data-interface="impeccable"] .product-ui .workspace-composer-toolbar button.workspace-composer-chip {
++  background-color: var(--lc-surface-2);
++}
++html[data-interface="impeccable"] .product-ui .workspace-composer-toolbar button.workspace-composer-chip:hover:not(:disabled):not([data-disabled]) {
++  background-color: var(--lc-accent-soft);
++}
++
++/* Portaled overlays retain their own sizing, placement and focus handling. */
++html[data-interface="impeccable"] :is(.workspace-composer-popover, .dan-select-popover, .workspace-attention-popover, .workspace-search-popup, .owner-menu-panel, .account-menu-overlay),
++html[data-interface="impeccable"] .product-ui .workspace-prompt-mentions {
++  border-color: transparent;
++  box-shadow: var(--lc-shadow-popover);
++}
++html[data-interface="impeccable"] :is(.workspace-composer-popover, .dan-select-popover) {
++  border-radius: 12px;
++}
++html[data-interface="impeccable"] .product-ui :is(.modal-card, .confirmation-modal, .owner-preferences-dialog, .status-drawer-drawer) {
++  box-shadow: var(--lc-shadow-dialog);
++}
++html[data-interface="impeccable"] .product-ui :is(.modal-card, .owner-preferences-dialog):not(.modal-card-danger) {
++  border-color: transparent;
++}

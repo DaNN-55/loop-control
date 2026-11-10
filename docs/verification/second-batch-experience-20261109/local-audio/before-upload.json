@@ -1,0 +1,25 @@
+{
+  "revision": 3,
+  "sha": "77acb7133701e89a9d77e14a734fe65599e317d8be454fe5a9d12a172f247957",
+  "enabled": {
+    "bgm": true,
+    "sfx": true
+  },
+  "preparations": [],
+  "sounds": [],
+  "nativeAudio": [],
+  "visuals": [
+    {
+      "id": "shot-shot-01-c844733b-ad5c-475f-a814-c30060d40ea2",
+      "kind": "video",
+      "startFrame": 0,
+      "durationInFrames": 60
+    },
+    {
+      "id": "shot-shot-02-be04c04e-e5a9-4567-a21a-7ae0f2ce3c0c",
+      "kind": "video",
+      "startFrame": 60,
+      "durationInFrames": 60
+    }
+  ]
+}

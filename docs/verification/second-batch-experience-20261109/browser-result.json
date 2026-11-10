@@ -1,0 +1,103 @@
+{
+  "passed": true,
+  "paidCalls": 0,
+  "calls": [
+    {
+      "command": "importMaterial",
+      "data": {
+        "episodeId": "5bd0e165-b150-4d06-829a-d54723ac2e11",
+        "materialType": "script",
+        "materialPurpose": "main_script",
+        "sourceKind": "file",
+        "sourcePath": "script.md",
+        "mimeType": "text/markdown",
+        "isMainScript": true
+      }
+    },
+    {
+      "command": "start",
+      "data": {
+        "episodeId": "5bd0e165-b150-4d06-829a-d54723ac2e11"
+      }
+    },
+    {
+      "command": "prepareWorkspace",
+      "data": {
+        "episodeId": "5bd0e165-b150-4d06-829a-d54723ac2e11",
+        "expectedScriptRevisionId": "fe026f69-93a9-4951-9d5d-3dfd9960c401"
+      }
+    },
+    {
+      "command": "importMaterial",
+      "data": {
+        "episodeId": "5bd0e165-b150-4d06-829a-d54723ac2e11",
+        "materialType": "image",
+        "sourceKind": "file",
+        "sourcePath": "local-image.png",
+        "mimeType": "image/png",
+        "isMainScript": false,
+        "materialPurpose": "visual_reference"
+      }
+    },
+    {
+      "command": "registerWorkspaceVisualCandidate",
+      "data": {
+        "episodeId": "5bd0e165-b150-4d06-829a-d54723ac2e11",
+        "workspaceId": "27fc652d-8510-4d15-bf8f-3234080b9b23",
+        "expectedRevision": 1,
+        "targetItemId": "shot-shot-01-a907236f-fd03-431a-ac49-a1be7ded9c77",
+        "materialRevisionId": "00a5d851-a1bd-443a-bbce-9a12ffc6ac84",
+        "usage": "still",
+        "durationSeconds": 3
+      }
+    },
+    {
+      "command": "prepareWorkspaceVisualCandidate",
+      "data": {
+        "episodeId": "5bd0e165-b150-4d06-829a-d54723ac2e11",
+        "workspaceId": "27fc652d-8510-4d15-bf8f-3234080b9b23",
+        "expectedRevision": 1,
+        "candidateId": "d3360aba-de83-4279-9ba3-1ea0b42632bb",
+        "durationPolicy": "keep-target",
+        "acceptTimelineImpact": false,
+        "motionPolicy": "preserve-target"
+      }
+    },
+    {
+      "command": "adoptWorkspaceVisualCandidate",
+      "data": {
+        "episodeId": "5bd0e165-b150-4d06-829a-d54723ac2e11",
+        "workspaceId": "27fc652d-8510-4d15-bf8f-3234080b9b23",
+        "expectedRevision": 1,
+        "candidateId": "d3360aba-de83-4279-9ba3-1ea0b42632bb",
+        "adoptionId": "588963e0-0f07-4115-a8b4-e5600300fe9d"
+      }
+    },
+    {
+      "command": "importMaterial",
+      "data": {
+        "episodeId": "5bd0e165-b150-4d06-829a-d54723ac2e11",
+        "materialType": "audio",
+        "sourceKind": "file",
+        "sourcePath": "local-music.mp3",
+        "mimeType": "audio/mpeg",
+        "isMainScript": false,
+        "materialPurpose": "background_music"
+      }
+    },
+    {
+      "command": "prepareWorkspaceAudio",
+      "data": {
+        "episodeId": "5bd0e165-b150-4d06-829a-d54723ac2e11",
+        "workspaceId": "27fc652d-8510-4d15-bf8f-3234080b9b23",
+        "expectedRevision": 2,
+        "kind": "bgm",
+        "description": "local-music.mp3",
+        "materialRevisionId": "6d474796-19d4-4282-bd0d-eacfb250434e",
+        "durationSeconds": 10,
+        "anchor": "absolute",
+        "offsetSeconds": 0
+      }
+    }
+  ]
+}

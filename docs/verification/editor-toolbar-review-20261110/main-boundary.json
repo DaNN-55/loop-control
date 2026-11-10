@@ -1,0 +1,14 @@
+{
+  "migrated": false,
+  "mainFilesUnchanged": true,
+  "mainPid": 78102,
+  "runtimeRelease": "2b3b75f8fb71599e7790dc0238a4d6911a3d44ca932c295c6120a3347d0a2335",
+  "runtimeIntegrity": true,
+  "mainHttp200": true,
+  "mainServesOldToolbar": true,
+  "pendingHashes": {
+    "src/local-app/EmbeddedStudioHost.tsx": "14956891921ac101d3951d8778f2f2e19ea5c11dc0dc94b4a85872e49f301f71",
+    "src/local-app/embedded-studio.css": "d31050166b47cae4131f8f8b2bfab4e08e6119f2b90e0370c726627bc085da3f",
+    "src/local-app/EmbeddedStudioHost.test.tsx": "2b305ce5f5f460210d3cce2a64c9ce034b28bbeb264fd8a3e1000cbc1c3de378"
+  }
+}

@@ -1,0 +1,13 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/EmbeddedStudioHost.test.tsx src/local-app/ProductionWorkspacePanel.navigation.test.tsx
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control/.scratch/editor-toolbar-review-20261110/pending
+
+ ✓ src/local-app/EmbeddedStudioHost.test.tsx (14 tests) 536ms
+ ✓ src/local-app/ProductionWorkspacePanel.navigation.test.tsx (1 test) 65ms
+
+ Test Files  2 passed (2)
+      Tests  15 passed (15)
+   Start at  07:08:09
+   Duration  1.76s (transform 409ms, setup 17ms, collect 2.00s, tests 601ms, environment 254ms, prepare 59ms)
+

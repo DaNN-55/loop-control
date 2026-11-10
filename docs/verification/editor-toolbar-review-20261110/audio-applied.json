@@ -1,0 +1,103 @@
+{
+  "revision": 5,
+  "nativeEditRevision": 2,
+  "sha": "fc11dd782b1d6e56e3cae8b7f63318f775f7acaca914cc99e8941342747a4c4e",
+  "sounds": [
+    {
+      "itemId": "workspace-sfx-091bb487-041c-45d4-a482-e179d1f5d7b1",
+      "kind": "sfx",
+      "gainDb": 0,
+      "duckDepthDb": 0,
+      "startSeconds": 0.2,
+      "durationSeconds": 0.6
+    }
+  ],
+  "nativeSounds": [
+    {
+      "id": "workspace-sfx-091bb487-041c-45d4-a482-e179d1f5d7b1",
+      "volume": 1,
+      "startFrame": 6,
+      "durationInFrames": 18
+    }
+  ],
+  "nativeVisuals": [
+    {
+      "id": "shot-shot-1-8c3ee42f-110f-407c-850b-f7198aa981c5",
+      "track": "track_loop-control-3c3848ca-c8c6-403a-9e5b-de4041ce2862_1",
+      "kind": "video",
+      "name": "shot-1",
+      "startFrame": 0,
+      "durationInFrames": 60,
+      "width": 360,
+      "height": 640,
+      "transform": {
+        "scale": 1,
+        "x": 0,
+        "y": 0,
+        "rotation": 0
+      },
+      "loopControlShot": {
+        "workspaceId": "85158b2f-6fc3-4f67-8141-a7a6728de544",
+        "shotId": "shot-1",
+        "clipId": "8c3ee42f-110f-407c-850b-f7198aa981c5",
+        "text": "第一镜",
+        "provenance": {
+          "materialRevisionId": "0b53e954-f289-40fc-8abe-e568d770e9ee",
+          "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+          "fileSize": 210288,
+          "kind": "video"
+        }
+      },
+      "src": "episodes/3c3848ca-c8c6-403a-9e5b-de4041ce2862/shot.mp4",
+      "sourceAssetId": "material-0b53e954-f289-40fc-8abe-e568d770e9ee",
+      "srcInFrame": 0,
+      "volume": 0,
+      "sourceContentHash": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+      "sourceRevision": "source-sha256-a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da"
+    },
+    {
+      "id": "shot-shot-2-11c3515b-351d-46f4-b102-1fd7cfcc00ca",
+      "track": "track_loop-control-3c3848ca-c8c6-403a-9e5b-de4041ce2862_1",
+      "kind": "video",
+      "name": "shot-2",
+      "startFrame": 60,
+      "durationInFrames": 60,
+      "width": 360,
+      "height": 640,
+      "transform": {
+        "scale": 1,
+        "x": 0,
+        "y": 0,
+        "rotation": 0
+      },
+      "loopControlShot": {
+        "workspaceId": "85158b2f-6fc3-4f67-8141-a7a6728de544",
+        "shotId": "shot-2",
+        "clipId": "11c3515b-351d-46f4-b102-1fd7cfcc00ca",
+        "text": "缺少素材的第二镜。",
+        "provenance": {
+          "materialRevisionId": "0b53e954-f289-40fc-8abe-e568d770e9ee",
+          "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+          "fileSize": 210288,
+          "kind": "video"
+        }
+      },
+      "src": "episodes/3c3848ca-c8c6-403a-9e5b-de4041ce2862/shot.mp4",
+      "sourceAssetId": "material-0b53e954-f289-40fc-8abe-e568d770e9ee",
+      "srcInFrame": 0,
+      "volume": 0,
+      "sourceContentHash": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+      "sourceRevision": "source-sha256-a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da"
+    }
+  ],
+  "calls": [
+    {
+      "command": "openWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "saveWorkspaceStudio",
+      "status": 200
+    }
+  ]
+}

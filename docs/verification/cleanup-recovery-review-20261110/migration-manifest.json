@@ -1,0 +1,96 @@
+{
+  "migrated": false,
+  "baselineFiles": 1165,
+  "files": [
+    {
+      "path": "db/local/157-deletion-cleanup-diagnostics.sql",
+      "action": "add",
+      "mainBeforeSha256": null,
+      "pendingSha256": "9c186c64c65c99cbd46f7824dd30690c61da26866b7d487421af1fd62efaa078"
+    },
+    {
+      "path": "src/local-app/LocalCatalogApp.tsx",
+      "action": "modify",
+      "mainBeforeSha256": "64f574fb113671569bb9d0056a3a8ddd718d796674e4124de0dfa44edaf3d22a",
+      "pendingSha256": "7d5aafd8cf494a5f8181b357a8a69dd8c8cb395a1d3c33800c992b2a6a9d7069"
+    },
+    {
+      "path": "src/local-app/LocalCatalogApp.workspace.test.tsx",
+      "action": "modify",
+      "mainBeforeSha256": "d85f44153e555f9e9d998c41d66261fd47e6cd62b91a18827c964e672e0a96bd",
+      "pendingSha256": "ae686b7b8f46c340167aa56eeac7be0f4b358921bff1f20499bb1d3470959b18"
+    },
+    {
+      "path": "src/local-app/LocalDeletionRecovery.test.tsx",
+      "action": "add",
+      "mainBeforeSha256": null,
+      "pendingSha256": "668e6e100b4a622c9f054effb95a0dd199f33062cd8ac3ace8c863ff0d920464"
+    },
+    {
+      "path": "src/local-app/LocalDeletionRecovery.tsx",
+      "action": "modify",
+      "mainBeforeSha256": "f85e9e91e6d6690c49fb8666629c409c340676d9a16682731343e2558ee692fe",
+      "pendingSha256": "9d26ac1cd73d4baca920b5da3eac5ff8f76394044b4ee63904683fc2ec927e99"
+    },
+    {
+      "path": "src/local-app/LocalMaintenanceEmbedded.test.tsx",
+      "action": "modify",
+      "mainBeforeSha256": "596b302a9b9cf2b9f8bdca70f8bec3cd628cdaf09c5e8b63a3536dcee4b5081c",
+      "pendingSha256": "27320e7ba3cb66383a6348f0eccc56c585ef35fa5aa3d0a7f20a0c8f3e9377d2"
+    },
+    {
+      "path": "src/local-app/LocalMaintenancePanel.tsx",
+      "action": "modify",
+      "mainBeforeSha256": "efc96652efdaa7b2a21e9ef6139ac74f6fc518f53e2056ee511014b909858c96",
+      "pendingSha256": "3b5c21daab92a1d6437f42d9e3bedea904f497dedfa304e428ac372169a9b565"
+    },
+    {
+      "path": "src/local-app/catalogNavigation.test.ts",
+      "action": "modify",
+      "mainBeforeSha256": "ba76972a1d59750cb78d030f03167a6e8aa1daa01b8ab1b202b1f5d97cdb6aeb",
+      "pendingSha256": "78d45f0f808a5d87cb00c296f5ae68d8757826b4513093dd3009ae91ba798069"
+    },
+    {
+      "path": "src/local-app/catalogNavigation.tsx",
+      "action": "modify",
+      "mainBeforeSha256": "0bd05f96c3a5f8a9b7da3dcd2124c121cb0f6696980f1e9bb185dd1ca2718a96",
+      "pendingSha256": "b03f1a368e60096480ce1a4296b3d6b046316e0ec4f30b8d56e14cc8f252e6da"
+    },
+    {
+      "path": "src/local-app/cleanupRecovery.integration.test.ts",
+      "action": "add",
+      "mainBeforeSha256": null,
+      "pendingSha256": "f859eca6955912f29502531f73957271ab86a766b497c76c0a11d6613ea7da9b"
+    },
+    {
+      "path": "src/local-app/cleanupRecoveryProcess.fixture.ts",
+      "action": "add",
+      "mainBeforeSha256": null,
+      "pendingSha256": "804e48ec2e2690fe3d694f8e41a67e272c482dbf047f56e20e39fbd959544f7d"
+    },
+    {
+      "path": "src/local-app/deletion-cleanup.css",
+      "action": "add",
+      "mainBeforeSha256": null,
+      "pendingSha256": "ac901569bb129f916d474bcde38454ee8ea503f3dee8e101d83239c8fdae8d45"
+    },
+    {
+      "path": "src/local-app/episodeDeletionProcess.fixture.ts",
+      "action": "modify",
+      "mainBeforeSha256": "741b7e38005342cdbc996747875f225dd2ed737103ce8a23d2232095999903bf",
+      "pendingSha256": "bdf1d70d842cd275cd418f2bc6b76e420b1f926ed5fe40dd70891424a2466448"
+    },
+    {
+      "path": "src/local-app/episodeLifecycle.ts",
+      "action": "modify",
+      "mainBeforeSha256": "a852f39992b6711d4b343d3cac518cfa68af048986260b090e7cb4431be36f28",
+      "pendingSha256": "a5e684e130c049de03955114d99e004ba1f210374a054aaaa3ef1a89718a4cc4"
+    },
+    {
+      "path": "src/workspace/WorkspaceViews.tsx",
+      "action": "modify",
+      "mainBeforeSha256": "4edcd1b5c4218a2ee3b6234d94e575c3c753023f75a86d646ed0afb22b78b7fd",
+      "pendingSha256": "26aac827e4c3a517f7adac970a6971b59f11816b996facaa26bf744362e09c26"
+    }
+  ]
+}

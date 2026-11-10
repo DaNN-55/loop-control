@@ -1,0 +1,175 @@
+--- a/src/local-app/WorkspaceVisualPreparation.tsx
++++ b/src/local-app/WorkspaceVisualPreparation.tsx
+@@ -31,7 +31,9 @@
+ import {productionModelSelection} from './productionModelSelection';
+ import {WorkspacePexelsSearch} from './WorkspacePexelsSearch';
+ import {useEffect,useId,useRef,useState,useSyncExternalStore,type ReactNode} from 'react';
+-import {Check,ChevronDown,Upload,Image as ImageIcon,Video,Maximize2,Download} from 'lucide-react';
++import {Check,Upload,Image as ImageIcon,Video,Maximize2,Download,Scissors,AudioLines,Trash2} from 'lucide-react';
++import {Dialog,DialogTrigger,Popover} from 'react-aria-components';
++import {Tooltip} from '../ui/dan-ui/components/base/tooltip/tooltip';
+ import {Button} from '../ui/dan-ui/components/base/buttons/button';
+ import {NativeSelect} from '../ui/dan-ui/components/base/select/select-native';
+ import type {ProductionWorkspace} from '../productionWorkspace';
+@@ -109,6 +111,8 @@
+  const [busy,setBusy]=useState(false),[error,setError]=useState(''),[notice,setNotice]=useState(''),[rangeStart,setRangeStart]=useState(''),[rangeEnd,setRangeEnd]=useState(''),[policy,setPolicy]=useState('keep-target'),[acceptImpact,setAcceptImpact]=useState(false),[zoom,setZoom]=useState(false);
+  const [clearVisual,setClearVisual]=useState<{revision:number;candidateId?:string;sourcePath?:string;sourceSha256?:string}|null>(null);
+  const [clearError,setClearError]=useState('');
++ const [trimOpen,setTrimOpen]=useState(false);
++
+  const [imagePreviewError,setImagePreviewError]=useState(''),[imagePreviewAttempt,retryImagePreview]=useState(0);
+  const [arrivingCandidates,setArrivingCandidates]=useState<string[]>([]),[adoptionFeedback,setAdoptionFeedback]=useState('');
+  const observedVisuals=useRef({candidates:new Set((workspace.visualCandidates??[]).map(c=>c.id)),tasks:new Set<string>()});
+@@ -124,7 +128,7 @@
+  const [uploadState]=useState(()=>uploadSession(`${workspace.episodeId}:${workspace.id}:${targetItemId}`));
+  const {rows:uploadRows,running:uploading,notice:uploadNotice}=useSyncExternalStore(uploadState.subscribe,uploadState.read);
+  const formRef=useRef<HTMLDivElement>(null);
+- const working=useRef(false),fileInput=useRef<HTMLInputElement>(null),referenceInput=useRef<HTMLInputElement>(null),mounted=useRef(true),zoomTrigger=useRef<HTMLButtonElement>(null),resultMore=useRef<HTMLDetailsElement>(null),adoptTrigger=useRef<HTMLButtonElement>(null),thumbnailRail=useRef<HTMLDivElement>(null);
++ const working=useRef(false),fileInput=useRef<HTMLInputElement>(null),referenceInput=useRef<HTMLInputElement>(null),mounted=useRef(true),zoomTrigger=useRef<HTMLButtonElement>(null),trimTrigger=useRef<HTMLButtonElement>(null),adoptTrigger=useRef<HTMLButtonElement>(null),thumbnailRail=useRef<HTMLDivElement>(null);
+  useEffect(()=>{mounted.current=true;return()=>{mounted.current=false;};},[]);
+  useEffect(()=>{try{sessionStorage.setItem(storageKey,JSON.stringify(draft));}catch{/* Storage is optional. */}},[storageKey,draft]);
+  useEffect(()=>{if(!zoom)return;return()=>zoomTrigger.current?.focus();},[zoom]);
+@@ -149,6 +153,7 @@
+  const active=entries.find(e=>e.id===draft.selected[tab])??(tab==='image'&&applicableImages.length===1?applicableImages[0]:undefined)??entries.find(e=>e.id==='current'||!!currentCandidate&&e.candidate===currentCandidate),index=entries.findIndex(e=>e.id===active?.id),candidate=active?.candidate;
+  const reader=useWorkspaceReading(workspace,updated,targetItemId,'无法读取当前工程，请重试。');
+  const {read:fresh,publish:onChange}=reader;
++ useEffect(()=>setTrimOpen(false),[targetItemId,tab,candidate?.id]);
+  const candidateReview=useCandidateReviewLifecycle({workspace,scope:JSON.stringify([targetItemId,candidate?.id,policy,acceptImpact,draft.usage,rangeStart,rangeEnd,props.currentVisualKind]),reader,
+   prepare:async(w,choice:{candidate:WorkspaceVisualCandidate;replaceCurrentVisual:boolean}):Promise<VisualReviewPlan>=>{
+    const c=choice.candidate;
+@@ -278,13 +283,7 @@
+   catch(cause){if(mounted.current&&!(cause instanceof Error&&cause.name==='AbortError'))setError(cause instanceof Error?cause.message:'操作未完成，请重试。');}
+  }
+  function returnAdoptionFocus(){
+-  if(inlineReview)requestAnimationFrame(()=>{
+-   const menu=resultMore.current;
+-   if(tab==='image'&&menu)menu.open=false;
+-   const summary=menu?.querySelector('summary');
+-   const trigger=tab==='image'?summary:adoptTrigger.current;
+-   (trigger&&!trigger.matches(':disabled')?trigger:summary)?.focus();
+-  });
++  if(inlineReview)requestAnimationFrame(()=>adoptTrigger.current?.focus());
+  }
+  function closeAdoption(){candidateReview.cancel();returnAdoptionFocus();}
+  async function confirmAdoption(){
+@@ -297,8 +296,6 @@
+   });}catch(cause){if(mounted.current&&!(cause instanceof Error&&cause.name==='AbortError'))setError(cause instanceof Error?cause.message:'操作未完成，请重试。');}
+  }
+  function removeSelected(){
+-  const menu=resultMore.current;
+-  if(menu){menu.open=false;menu.querySelector('summary')?.focus();}
+   if(current||imageChosen){
+    setClearError('');
+    setClearVisual({revision:workspace.revision,candidateId:candidate?.id,...(current?{sourcePath:props.currentVisualPath,sourceSha256:props.currentVisualSha256??candidate?.sha256}:{})});
+@@ -336,8 +333,8 @@
+   ?{start:rangeStartSeconds,end:rangeEndSeconds}:undefined;
+  const canAdopt=rangeValid&&!!candidate&&candidate.status==='available'&&(candidate.kind==='image'||(policy==='keep-target'?candidate.currentDurationSeconds===null||(selectedVideoDuration??candidate.durationSeconds)+0.05>=candidate.currentDurationSeconds:acceptImpact));
+  const shortCandidate=candidate?.kind==='video'&&!current&&policy==='keep-target'&&candidate.currentDurationSeconds!==null&&rangeValid&&(selectedVideoDuration??0)+.05<candidate.currentDurationSeconds;
+- const adoptionLabel=current?'已采用':imageChosen?'图片已选用':tab==='image'&&props.currentVisualKind==='video'?'保留为备用图片':'采用到当前镜头';
+- const adoptionAction=<Button ref={adoptTrigger} size="sm" color="primary" aria-label={adoptionLabel} aria-describedby={tab==='image'?adoptionDescriptionId:undefined} isDisabled={disabled||current||imageChosen||!canAdopt} onPress={()=>{if(candidate)void adopt(candidate);}}>{adoptionLabel}</Button>;
++ const adoptionLabel=current?'已采用':imageChosen?'图片已选用':tab==='image'&&props.currentVisualKind==='video'?'保留备用图片':`采用${kindName}到当前镜头`;
++ const adoptionAction=<Button ref={adoptTrigger} size="sm" color="primary" aria-label={adoptionLabel} aria-describedby={tab==='image'?adoptionDescriptionId:undefined} isDisabled={disabled||current||imageChosen||!canAdopt} onPress={()=>{if(candidate)void adopt(candidate);}}>{tab==='image'&&props.currentVisualKind==='video'?'保留备用':`采用${kindName}`}</Button>;
+  const selectedService=tab==='image'?imageService:videoService,selectedSelection=tab==='image'?draft.imageSelection:draft.videoSelection;
+  const qualityLabels=imageQualityLabels;
+  const selectionProblems=selectedSelection?[
+@@ -409,53 +406,41 @@
+        {thumbnailTasks.flatMap(task=>Array.from({length:Math.max(1,Math.min(4,task.kind==='image'?task.generation?.imageSettings?.count??1:1))},(_,i)=><div className="workspace-thumbnail-pending" key={`${task.id}:${i}`}><WorkspaceVisualTaskProgress task={task} label={kindName} thumbnail/></div>))}
+       </div>}
+    <div className="workspace-unified-preview" onKeyDown={e=>{if(e.target!==e.currentTarget||entries.length<2)return;if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();select(entries[(index+(e.key==='ArrowRight'?1:-1)+entries.length)%entries.length].id);}}} tabIndex={entries.length>1?0:undefined} aria-label={`${kindName}预览`}>
+-    {active?.id==='current'?props.preview:candidate?(tab==='image'?imagePreviewFailed?<div className="workspace-visual-empty"><p role="alert">图片未能加载。</p><Button size="sm" color="secondary" onPress={()=>{setImagePreviewError('');retryImagePreview(value=>value+1);}}>重试预览</Button></div>:<img key={`${candidate.id}:${imagePreviewAttempt}`} src={url(candidate.relativePath,candidate.sha256)} alt={`${kindName}候选 ${index+1}`} onError={()=>setImagePreviewError(candidate.id)}/>:<VideoPreview key={candidate.id} title="视频候选预览" aria-label="视频候选预览" src={url(candidate.relativePath,candidate.sha256)} downloadHref={url(candidate.relativePath,candidate.sha256)+'&download=1'} segment={previewSegment}/>):pendingUpload?<div className="workspace-upload-preview" role="status" aria-label={`${kindName}候选上传中`}><div className="workspace-upload-preview-placeholder" style={{aspectRatio:`${target?.width??9}/${target?.height??16}`}} aria-hidden="true"/><p>正在准备{kindName}候选…</p><small>{pendingUpload.name}</small></div>:!showEmptyCandidateDrop&&<div className="workspace-visual-empty">{tab==='image'?<ImageIcon size={28} aria-hidden="true"/>:<Video size={28} aria-hidden="true"/>}<p>{entries.length?'选择左侧缩略图预览':`尚未添加${kindName}`}</p>{!entries.length&&<span>{shelf?'从左侧本期素材拖入，或使用 AI 生成':'上传素材，或使用 AI 生成'}</span>}</div>}
+-    {candidate&&tab==='image'&&!imagePreviewFailed&&<div className="workspace-preview-actions"><a className="workspace-preview-zoom" href={url(candidate.relativePath,candidate.sha256)+'&download=1'} download aria-label="下载图片" title="下载原图"><Download size={16} aria-hidden="true"/></a><button ref={zoomTrigger} className="workspace-preview-zoom" type="button" aria-label="放大图片" title="放大图片" onClick={()=>setZoom(true)}><Maximize2 size={16} aria-hidden="true"/></button></div>}
++    {active?.id==='current'?props.preview:candidate?(tab==='image'?imagePreviewFailed?<div className="workspace-visual-empty"><p role="alert">图片未能加载。</p><Button size="sm" color="secondary" onPress={()=>{setImagePreviewError('');retryImagePreview(value=>value+1);}}>重试预览</Button></div>:<img key={`${candidate.id}:${imagePreviewAttempt}`} src={url(candidate.relativePath,candidate.sha256)} alt={`${kindName}候选 ${index+1}`} onError={()=>setImagePreviewError(candidate.id)}/>:<VideoPreview key={candidate.id} title="视频候选预览" aria-label="视频候选预览" src={url(candidate.relativePath,candidate.sha256)} segment={previewSegment}/>):pendingUpload?<div className="workspace-upload-preview" role="status" aria-label={`${kindName}候选上传中`}><div className="workspace-upload-preview-placeholder" style={{aspectRatio:`${target?.width??9}/${target?.height??16}`}} aria-hidden="true"/><p>正在准备{kindName}候选…</p><small>{pendingUpload.name}</small></div>:!showEmptyCandidateDrop&&<div className="workspace-visual-empty">{tab==='image'?<ImageIcon size={28} aria-hidden="true"/>:<Video size={28} aria-hidden="true"/>}<p>{entries.length?'选择左侧缩略图预览':`尚未添加${kindName}`}</p>{!entries.length&&<span>{shelf?'从左侧本期素材拖入，或使用 AI 生成':'上传素材，或使用 AI 生成'}</span>}</div>}
++    {active&&<div className="workspace-preview-actions workspace-candidate-tools" role="group" aria-label="候选工具">
++     {tab==='image'&&candidate?.materialRevisionId&&<Tooltip title="用作视频首帧"><Button className="workspace-candidate-tool-first-frame" size="xs" color="secondary" aria-label="用作视频首帧" iconLeading={ImageIcon} isDisabled={disabled||!!review||candidate.status==='stale'} onPress={linkFirstFrame}>首帧</Button></Tooltip>}
++     {tab==='video'&&candidate&&!current&&<DialogTrigger isOpen={trimOpen} onOpenChange={setTrimOpen}>
++      <Tooltip title="裁剪与时长"><Button ref={trimTrigger} size="xs" color="secondary" aria-label="裁剪与时长" iconLeading={Scissors} isDisabled={disabled||!!review}/></Tooltip>
++      <Popover className="dan-ui product-ui workspace-composer-popover workspace-candidate-trim-popover" placement="top end" offset={8} containerPadding={12} shouldFlip>
++       <Dialog aria-label="裁剪与时长" className="workspace-composer-settings"><header><h3>裁剪与时长</h3><Button size="xs" color="tertiary" onPress={()=>setTrimOpen(false)}>完成</Button></header><div className="workspace-adoption-settings">
++    <div className="workspace-visual-fields"><label>使用起点（秒）<input type="number" aria-label="视频使用起点（秒）" min="0" max={candidate.durationSeconds} step="0.1" disabled={disabled} value={rangeStart||String(existingVideoIn)} onChange={e=>setRangeStart(e.target.value)}/></label><label>使用终点（秒）<input type="number" aria-label="视频使用终点（秒）" min="0.1" max={candidate.durationSeconds} step="0.1" disabled={disabled} value={rangeEnd||candidate.durationSeconds} onChange={e=>setRangeEnd(e.target.value)}/></label></div>
++    <label>采用时长<NativeSelect size="sm" aria-label="视觉候选时长处理" disabled={disabled} value={policy} onChange={e=>{setPolicy(e.target.value);setAcceptImpact(false);}}><option value="keep-target">保留镜头时长</option><option value="use-candidate">使用素材完整时长</option></NativeSelect></label>
++    {policy==='use-candidate'&&<label className="workspace-visual-checkbox"><input type="checkbox" disabled={disabled} checked={acceptImpact} onChange={e=>setAcceptImpact(e.target.checked)}/>保留其他片段位置，接受空隙或覆盖</label>}
++    {policy==='keep-target'&&candidate.kind==='video'&&candidate.currentDurationSeconds!==null&&(!rangeValid||(selectedVideoDuration??candidate.durationSeconds)+0.05<candidate.currentDurationSeconds)&&<p role="alert">所选区间无法保留当前片段时长，请调整起止点或采用素材区间的时长。</p>}
++
++       </div></Dialog>
++      </Popover>
++     </DialogTrigger>}
++     {tab==='video'&&current&&canSplitVideo&&<Tooltip title="拆分视频原声"><Button size="xs" color="secondary" aria-label="拆分视频原声" iconLeading={AudioLines} isDisabled={disabled||!!review} onPress={()=>void run(async()=>{const w=await fresh();onChange(await command('splitWorkspaceVideoSound',{...base(w),targetItemId}) as ProductionWorkspace);setNotice('视频原声已拆分，可在剪辑工作台单独编辑。');})}/></Tooltip>}
++     {candidate&&tab==='video'&&<a className="workspace-preview-zoom" href={url(candidate.relativePath,candidate.sha256)+'&download=1'} download aria-label="下载视频" title="下载视频"><Download size={16} aria-hidden="true"/></a>}
++     {candidate&&tab==='image'&&!imagePreviewFailed&&<><a className="workspace-preview-zoom" href={url(candidate.relativePath,candidate.sha256)+'&download=1'} download aria-label="下载图片" title="下载原图"><Download size={16} aria-hidden="true"/></a><button ref={zoomTrigger} className="workspace-preview-zoom" type="button" aria-label="放大图片" title="放大图片" onClick={()=>setZoom(true)}><Maximize2 size={16} aria-hidden="true"/></button></>}
++     {candidate&&!current&&!imageChosen&&<Tooltip title="移除候选"><Button className="workspace-candidate-tool-remove" size="xs" color="secondary" aria-label="移除候选" iconLeading={Trash2} isDisabled={disabled||!!review||!!candidate.pendingConfirmation} onPress={removeSelected}/></Tooltip>}
++    </div>}
+     {dropCandidate}
+    </div>
+ 
+       {active&&<div className="workspace-result-footer">
+-       <p title={inlineReview?reviewSummary:candidateMeta||candidate?.relativePath}><strong>{candidate?`候选 ${String(index+1).padStart(2,'0')} / ${String(entries.length).padStart(2,'0')}`:'当前画面'}</strong>{inlineReview?<span role="status">{reviewSummary}</span>:candidateMeta&&<span>{candidateMeta}</span>}</p>
++       <p title={inlineReview?reviewSummary:candidateMeta||candidate?.relativePath}><strong>{candidate?`候选 ${String(index+1).padStart(2,'0')} / ${String(entries.length).padStart(2,'0')}`:'当前画面'}</strong>{inlineReview?<span role="status">{reviewSummary}</span>:candidateMeta&&<span className={current||imageChosen?'workspace-candidate-used-status':undefined}>{current?'已采用':candidateMeta}</span>}</p>
+        {inlineReview?<div className="workspace-result-actions workspace-result-confirmation" role="group" aria-label="采用前核对" onKeyDown={event=>{if(event.key==='Escape'&&!candidateReview.pending&&!busy){event.stopPropagation();closeAdoption();}}}>
+         <Button autoFocus size="sm" color="secondary" isDisabled={disabled} onPress={closeAdoption}>取消</Button>
+         <Button size="sm" color="primary" isDisabled={disabled} onPress={()=>void confirmAdoption()}>确认采用</Button>
+        </div>:<div className="workspace-result-actions">
+-         <details key={active.id} ref={resultMore} className="workspace-result-more workspace-candidate-actions"
+-          onBlur={e=>{
+-           const next=e.relatedTarget;
+-           if(!e.currentTarget.contains(next)&&!next?.closest('[data-select-popup]'))e.currentTarget.open=false;
+-          }}
+-          onKeyDown={e=>{if(e.key==='Escape'&&e.currentTarget.open){e.stopPropagation();e.currentTarget.open=false;e.currentTarget.querySelector('summary')?.focus();}}}>
+-          <summary>更多操作 <ChevronDown size={14} aria-hidden="true"/></summary>
+-          <div className="workspace-result-more-content">
+-
+-           {tab==='image'&&candidate?.status==='available'&&props.currentVisualKind==='video'&&
+-            <button type="button" disabled={disabled} onClick={()=>{if(resultMore.current)resultMore.current.open=false;void adopt(candidate,true);}}>
+-             <span>替换当前视频</span><small>保留片段时长和已有画面调整</small>
+-            </button>}
+-           {tab==='video'&&current&&canSplitVideo&&<button type="button" disabled={disabled} onClick={()=>{
+-            if(resultMore.current)resultMore.current.open=false;
+-            void run(async()=>{
+-             const w=await fresh();
+-             onChange(await command('splitWorkspaceVideoSound',{...base(w),targetItemId}) as ProductionWorkspace);
+-             setNotice('视频原声已拆分，可在剪辑工作台单独编辑。');
+-            });
+-           }}>拆分视频原声</button>}
+-           {tab==='video'&&candidate&&!current&&<details data-adoption-duration><summary aria-label="裁剪与时长">裁剪与时长<small>选择使用区间，调整采用后的镜头时长</small></summary><div className="workspace-adoption-settings">
+-    <div className="workspace-visual-fields"><label>使用起点（秒）<input type="number" aria-label="视频使用起点（秒）" min="0" max={candidate.durationSeconds} step="0.1" disabled={disabled} value={rangeStart||String(existingVideoIn)} onChange={e=>setRangeStart(e.target.value)}/></label><label>使用终点（秒）<input type="number" aria-label="视频使用终点（秒）" min="0.1" max={candidate.durationSeconds} step="0.1" disabled={disabled} value={rangeEnd||candidate.durationSeconds} onChange={e=>setRangeEnd(e.target.value)}/></label></div>
+-    <label>采用时长<NativeSelect size="sm" aria-label="视觉候选时长处理" disabled={disabled} value={policy} onChange={e=>{setPolicy(e.target.value);setAcceptImpact(false);}}><option value="keep-target">保留镜头时长</option><option value="use-candidate">使用素材完整时长</option></NativeSelect></label>
+-    {policy==='use-candidate'&&<label className="workspace-visual-checkbox"><input type="checkbox" disabled={disabled} checked={acceptImpact} onChange={e=>setAcceptImpact(e.target.checked)}/>保留其他片段位置，接受空隙或覆盖</label>}
+-    {policy==='keep-target'&&candidate.kind==='video'&&candidate.currentDurationSeconds!==null&&(!rangeValid||(selectedVideoDuration??candidate.durationSeconds)+0.05<candidate.currentDurationSeconds)&&<p role="alert">所选区间无法保留当前片段时长，请调整起止点或采用素材区间的时长。</p>}
+-
+-    </div></details>}
+-{candidate?.source&&<p><a href={candidate.source.sourceUrl} target="_blank" rel="noreferrer">Pexels #{candidate.source.id}</a> · <a href={candidate.source.creatorUrl} target="_blank" rel="noreferrer">{candidate.source.creator}</a> · {candidate.source.connectionName} · {candidate.source.query}</p>}
+-            <button type="button" className="workspace-candidate-remove" disabled={disabled||(!current&&!imageChosen&&!!candidate?.pendingConfirmation)} onClick={removeSelected}>{current?'取消采用':imageChosen?'取消备用图片':'移除候选'}</button>
+-          </div>
+-         </details>
+-         {adoptionAction}{tab==='image'&&candidate?.materialRevisionId&&<Button size="sm" color="secondary" isDisabled={disabled||candidate.status==='stale'} onPress={linkFirstFrame}>用作视频首帧</Button>}
++        {tab==='image'&&candidate?.status==='available'&&props.currentVisualKind==='video'&&<Button className="workspace-candidate-replace" size="xs" color="tertiary" aria-label="替换视频为当前图片" isDisabled={disabled} onPress={()=>void adopt(candidate,true)}>替换视频</Button>}
++        {current||imageChosen?<Button ref={adoptTrigger} className="workspace-candidate-withdraw" size="sm" color="tertiary" aria-label={current?`撤回${kindName}采用`:'撤回备用图片'} isDisabled={disabled} onPress={removeSelected}>撤回</Button>:adoptionAction}
+        </div>}
+-       {shortCandidate&&<div className="workspace-adoption-duration-warning" role="status"><p>素材可用 {selectedVideoDuration!.toFixed(2)} 秒，短于当前镜头 {candidate.currentDurationSeconds!.toFixed(2)} 秒。</p><Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>{if(resultMore.current){resultMore.current.open=true;const details=resultMore.current.querySelector<HTMLDetailsElement>('[data-adoption-duration]');if(details){details.open=true;requestAnimationFrame(()=>details.querySelector<HTMLSelectElement>('select')?.focus());}}}}>调整采用时长</Button></div>}
++       {shortCandidate&&<div className="workspace-adoption-duration-warning" role="status"><p>素材可用 {selectedVideoDuration!.toFixed(2)} 秒，短于当前镜头 {candidate.currentDurationSeconds!.toFixed(2)} 秒。</p><Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>setTrimOpen(true)}>调整采用时长</Button></div>}
+       </div>}
++      {candidate?.source&&<p className="workspace-candidate-source"><a href={candidate.source.sourceUrl} target="_blank" rel="noreferrer">Pexels #{candidate.source.id}</a> · <a href={candidate.source.creatorUrl} target="_blank" rel="noreferrer">{candidate.source.creator}</a> · {candidate.source.connectionName} · {candidate.source.query}</p>}
+       {tab==='image'&&<span hidden id={adoptionDescriptionId}>{current?'当前镜头正在使用此图':imageChosen?'此图已保留为备用图片':props.currentVisualKind==='video'?'仅保留备用，当前视频不变':'用作镜头画面，保持时长不变'}</span>}
+       <ConfirmationModalPresence>{needsImpactDialog&&review&&review.kind==='adoption'&&createPortal(<div className="workspace-visual-adoption-overlay">
+        <ConfirmationModal title="采用前核对" confirmLabel="确认采用" isPending={busy||candidateReview.pending} confirmDisabled={!!disabled} onConfirm={confirmAdoption} onCancel={closeAdoption}>
+--- a/src/local-app/workspace-visual-preparation.css
++++ b/src/local-app/workspace-visual-preparation.css
+@@ -250,3 +250,19 @@
+ .workspace-result-footer:has(>.workspace-adoption-duration-warning){flex-wrap:wrap}
+ .workspace-adoption-duration-warning{display:flex;flex-basis:100%;align-items:center;flex-wrap:wrap;gap:8px;margin-block:4px;color:var(--lc-ink)}
+ .workspace-adoption-duration-warning p{margin:0;line-height:1.6}
++
++/* Candidate tools stay beside the preview; adoption and withdrawal stay below it. */
++.workspace-candidate-tools{z-index:2;max-width:calc(100% - 20px);flex-wrap:wrap;justify-content:flex-end;gap:4px}
++.workspace-candidate-tools :is(button,a){position:static!important;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;gap:4px;width:32px;min-width:32px;min-height:32px;height:32px;padding:6px!important;border:0!important;box-shadow:none!important;border-radius:6px;background:var(--lc-surface)!important;color:var(--lc-muted);font-size:12px!important}
++.workspace-candidate-tools .workspace-candidate-tool-first-frame{width:auto;padding-inline:8px!important;color:var(--lc-ink)}
++.workspace-candidate-tools :is(button,a):hover:not(:disabled){background:var(--lc-accent-soft)!important;color:var(--lc-accent)}
++html[data-interface="impeccable"] .product-ui .workspace-candidate-tools .workspace-candidate-tool-remove:is(:hover,[data-hovered]):not(:disabled){background:var(--lc-danger-soft)!important;color:var(--lc-danger)!important}
++html[data-interface="impeccable"] .product-ui .workspace-candidate-tools .workspace-candidate-tool-remove:is(:hover,[data-hovered]):not(:disabled) svg{color:inherit!important}
++.workspace-candidate-tools :is(button,a):focus-visible{outline:2px solid var(--lc-accent);outline-offset:2px}
++.workspace-result-footer .workspace-candidate-used-status{color:var(--lc-success)}
++.workspace-result-actions>.workspace-candidate-withdraw,.workspace-result-actions>.workspace-candidate-replace{border:0!important;background:transparent!important;padding-inline:0!important;box-shadow:none!important;font-size:12px!important;color:var(--lc-muted)!important}
++.workspace-result-actions>.workspace-candidate-withdraw:hover,.workspace-result-actions>.workspace-candidate-replace:hover{color:var(--lc-accent)!important}
++.workspace-candidate-source{font-size:12px;color:var(--lc-muted);overflow-wrap:anywhere}
++.workspace-candidate-trim-popover .workspace-adoption-settings{display:grid;gap:12px}
++.workspace-candidate-trim-popover .workspace-visual-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
++@media(pointer:coarse){.workspace-candidate-tools :is(button,a){min-width:40px;min-height:40px;height:40px}}

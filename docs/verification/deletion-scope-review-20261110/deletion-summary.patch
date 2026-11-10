@@ -1,0 +1,108 @@
+--- a/src/workspace/EpisodeDeletionScope.test.tsx
++++ b/src/workspace/EpisodeDeletionScope.test.tsx
+@@ -0,0 +1,33 @@
++import {afterEach,expect,it} from 'vitest';
++import {cleanup,fireEvent,render,screen} from '@testing-library/react';
++import {EpisodeDeletionScope} from './EpisodeDeletionScope';
++afterEach(cleanup);
++it('shows the total size of the confirmed files and reveals individual sizes on demand',()=>{
++ render(<EpisodeDeletionScope files={[{path:'/episode/脚本.md',bytes:1024,authority:'material'},{path:'/episode/画面.mp4',bytes:2048,authority:'artifact'}]}/>);
++ expect(screen.getByText('将删除 2 个文件')).toBeTruthy();
++ expect(screen.getByText('共 3.0 KB')).toBeTruthy();
++ const toggle=screen.getByText('查看文件明细'),details=toggle.closest('details')!;
++ expect(details.open).toBe(false);fireEvent.click(toggle);expect(details.open).toBe(true);
++ expect(screen.getByText('/episode/脚本.md')).toBeTruthy();expect(screen.getByText('1.0 KB')).toBeTruthy();expect(screen.getByText('2.0 KB')).toBeTruthy();
++ expect(screen.queryByText(/释放|回收/)).toBeNull();
++});
++it('groups preserved paths by the exact server reason, outside the deletion size',()=>{
++ render(<EpisodeDeletionScope files={[{path:'/delete',bytes:512,authority:'artifact'}]} preserved={[
++  {path:'/keep/shared-one',reason:'其他生产单或历史资料仍引用，保留。'},
++  {path:'/keep/shared-two',reason:'其他生产单或历史资料仍引用，保留。'},
++  {path:'/keep/manual',reason:'未登记或无法证明属于本单的文件，保留。'},
++ ]}/>);
++ expect(screen.getByText('共 512 字节')).toBeTruthy();expect(screen.getByText('保留 3 项')).toBeTruthy();
++ const shared=screen.getByText('其他生产单或历史资料仍引用，保留。'),details=shared.closest('details')!;
++ expect(details.textContent).toContain('2 项');expect(details.open).toBe(false);fireEvent.click(shared);expect(details.open).toBe(true);
++ expect(details.textContent).toContain('/keep/shared-one');expect(details.textContent).toContain('/keep/shared-two');expect(details.textContent).not.toContain('/keep/manual');
++});
++it('does not turn an unavailable file inventory into a zero-file plan',()=>{
++ const view=render(<EpisodeDeletionScope preserved={[{path:'/manual',reason:'保留。'}]}/>);
++ expect(screen.queryByText(/将删除/)).toBeNull();expect(screen.queryByText(/共.*字节/)).toBeNull();expect(screen.getByText('保留 1 项')).toBeTruthy();
++ view.rerender(<EpisodeDeletionScope/>);expect(view.container.textContent).toBe('');
++});
++it('shows a confirmed empty file inventory without an empty disclosure',()=>{
++ render(<EpisodeDeletionScope files={[]} preserved={[]}/>);
++ expect(screen.getByText('将删除 0 个文件')).toBeTruthy();expect(screen.getByText('共 0 字节')).toBeTruthy();expect(screen.queryByText('查看文件明细')).toBeNull();expect(screen.queryByText(/保留/)).toBeNull();
++});
+--- a/src/workspace/EpisodeDeletionScope.tsx
++++ b/src/workspace/EpisodeDeletionScope.tsx
+@@ -1,9 +1,25 @@
++import {historySize} from '../local-app/historyPresentation';
++
+ export interface DeletionFileScope {
+  files?:{path:string;bytes:number;authority:string}[];
+  preserved?:{path:string;reason:string}[];
+ }
+-/** All permanent-delete entry points show the same server-confirmed file scope. */
+-export function EpisodeDeletionScope({files,preserved}:DeletionFileScope){return<>
+- {files&&<details open><summary>将删除 {files.length} 个已登记文件</summary><ul className="episode-deletion-paths" aria-label="将删除的生产单文件">{files.map(file=><li key={file.path}><code>{file.path}</code></li>)}</ul></details>}
+- {Boolean(preserved?.length)&&<details open><summary>保留 {preserved!.length} 项</summary><ul className="episode-deletion-paths" aria-label="保留的生产单文件">{preserved!.map(file=><li key={file.path}><code>{file.path}</code><small>{file.reason}</small></li>)}</ul></details>}
+- </>;}
++/** Summarize the server-confirmed plan; sizes describe files, not disk space reclaimed. */
++export function EpisodeDeletionScope({files,preserved}:DeletionFileScope){
++ if(!files&&!preserved?.length)return null;
++ const groups=new Map<string,NonNullable<DeletionFileScope['preserved']>>();
++ for(const item of preserved??[]){
++  const group=groups.get(item.reason);
++  if(group)group.push(item);else groups.set(item.reason,[item]);
++ }
++ return <section className="episode-deletion-scope" aria-label="文件范围摘要">
++  {files&&<>
++   <p className="episode-deletion-summary"><strong>将删除 {files.length} 个文件</strong><span>共 {historySize(files.reduce((total,file)=>total+file.bytes,0))}</span></p>
++   {files.length>0&&<details><summary>查看文件明细</summary><ul className="episode-deletion-paths" aria-label="将删除的生产单文件">{files.map(file=><li key={file.path}><code>{file.path}</code><span className="episode-deletion-file-size">{historySize(file.bytes)}</span></li>)}</ul></details>}
++  </>}
++  {Boolean(preserved?.length)&&<section className="episode-deletion-preserved" aria-label="保留内容">
++   <h3>保留 {preserved!.length} 项</h3>
++   {[...groups].map(([reason,items])=><details key={reason}><summary>{reason}<span className="episode-deletion-reason-count">{items.length} 项</span></summary><ul className="episode-deletion-paths" aria-label={reason}>{items.map(file=><li key={file.path}><code>{file.path}</code></li>)}</ul></details>)}
++  </section>}
++ </section>;
++}
+--- a/src/workspace/WorkspaceViews.tsx
++++ b/src/workspace/WorkspaceViews.tsx
+@@ -154,13 +154,13 @@
+       </header>
+       <section className="episode-deletion-body" aria-label="删除范围" tabIndex={localEpisodePath ? 0 : undefined}>
+         {loading ? <p role="status">正在检查删除范围…</p> : localEpisodePath ? <>
++          <EpisodeDeletionScope files={plan?.files} preserved={plan?.preserved}/>
+           <section aria-label="已核查位置">
+             <h3>已核查位置</h3>
+             <ul className="episode-deletion-paths" aria-label="已核查的生产单目录">
+               {deletionPaths.map(path => <li key={path}><code>{path}</code></li>)}
+             </ul>
+           </section>
+-          <EpisodeDeletionScope files={plan?.files} preserved={plan?.preserved}/>
+           <p>只清理已确认文件及身份相符的空目录。共享、手放和未知资料保留。</p>
+         </> : null}
+         {error && <p className="form-error" role="alert">{error}</p>}
+--- a/src/workspace/episode-list.css
++++ b/src/workspace/episode-list.css
+@@ -113,3 +113,19 @@
+ html[data-interface="impeccable"] .product-ui .episode-list-workspace .episode-table{overflow-x:visible}
+ @media(max-width:1200px){html[data-interface="impeccable"] .product-ui .episode-list-workspace .table-row{gap:8px;padding-inline:12px;grid-template-columns:minmax(120px,1.8fr) minmax(60px,.9fr) 60px 76px minmax(85px,1fr) minmax(70px,.9fr) minmax(90px,1fr) 24px}html[data-interface="impeccable"] .product-ui .episode-list-workspace time{white-space:normal}}
+ @media(max-width:1000px){html[data-interface="impeccable"] .product-ui .episode-list-workspace .table-header{display:none}html[data-interface="impeccable"] .product-ui .episode-list-workspace .episode-row{grid-template-columns:repeat(3,minmax(0,1fr)) 28px;gap:12px;align-items:start}html[data-interface="impeccable"] .product-ui .episode-list-workspace .episode-name{grid-column:1/4;grid-row:1}html[data-interface="impeccable"] .product-ui .episode-list-workspace .episode-action-cell{grid-column:4;grid-row:1}html[data-interface="impeccable"] .product-ui .episode-list-workspace .episode-row>[role=cell]:nth-child(2){grid-column:1;grid-row:2}html[data-interface="impeccable"] .product-ui .episode-list-workspace .episode-row>[role=cell]:nth-child(3){grid-column:2;grid-row:2}html[data-interface="impeccable"] .product-ui .episode-list-workspace .episode-row>[role=cell]:nth-child(4){grid-column:3/5;grid-row:2}html[data-interface="impeccable"] .product-ui .episode-list-workspace .episode-cost{grid-column:1;grid-row:3}html[data-interface="impeccable"] .product-ui .episode-list-workspace .episode-stage-durations{grid-column:2;grid-row:3}html[data-interface="impeccable"] .product-ui .episode-list-workspace .episode-generation-counts{grid-column:3/5;grid-row:3}.episode-cost:before{content:"花费（元）"}.episode-stage-durations:before{content:"后台任务用时"}.episode-generation-counts:before{content:"生成次数"}.episode-cost:before,.episode-stage-durations:before,.episode-generation-counts:before{display:block;font-size:10px;color:var(--lc-muted);margin-bottom:4px}}
++
++/* The confirmed plan stays readable before opening its path details. */
++.episode-deletion-scope{display:grid;gap:12px;min-width:0}
++.episode-deletion-summary{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 12px;font-size:13px}
++.episode-deletion-summary strong{font-size:14px;font-weight:600}
++.episode-deletion-summary>span,.episode-deletion-file-size,.episode-deletion-reason-count{color:var(--lc-muted);font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap}
++.episode-deletion-scope summary{cursor:pointer;overflow-wrap:anywhere}
++.episode-deletion-scope summary:focus-visible{outline:2px solid var(--lc-accent);outline-offset:3px;border-radius:2px}
++.episode-deletion-preserved{display:grid;gap:6px;min-width:0}
++.episode-deletion-reason-count{margin-left:8px;font-weight:400}
++.episode-deletion-scope details>.episode-deletion-paths li{min-width:0}
++.episode-deletion-scope>details>.episode-deletion-paths li{display:flex;align-items:baseline;gap:12px}
++.episode-deletion-scope>details>.episode-deletion-paths code{flex:1;min-width:0}
++.episode-deletion-file-size{flex:none}
++.episode-deletion-summary strong{color:var(--lc-ink)}
++.episode-deletion-modal .episode-deletion-preserved summary{font-weight:400;color:var(--lc-muted)}

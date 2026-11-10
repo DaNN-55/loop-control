@@ -1,0 +1,12 @@
+{
+  "checkedFiles": 1174,
+  "srcFiles": 909,
+  "changed": [],
+  "stagedDiffUnchanged": true,
+  "dailyPid": 78102,
+  "dailyPort": 5174,
+  "dailyRuntimeRelease": {
+    "id": "2b3b75f8fb71599e7790dc0238a4d6911a3d44ca932c295c6120a3347d0a2335",
+    "root": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/2b3b75f8fb71599e7790dc0238a4d6911a3d44ca932c295c6120a3347d0a2335"
+  }
+}

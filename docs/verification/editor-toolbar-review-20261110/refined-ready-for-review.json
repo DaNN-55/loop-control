@@ -1,0 +1,159 @@
+{
+  "url": "http://127.0.0.1:5187/__editor_review",
+  "episodeId": "3c3848ca-c8c6-403a-9e5b-de4041ce2862",
+  "workspaceId": "85158b2f-6fc3-4f67-8141-a7a6728de544",
+  "assetRoot": "/private/tmp/loop-153-QjH9Kq/account",
+  "projectPath": "episodes/3c3848ca-c8c6-403a-9e5b-de4041ce2862/production-workspace/versions/8a84cc702a7a1485e9917c78bfbdfa7e5b0bbbc08cfb3ecdcf6e2a1fd1aeb7f2.json",
+  "paidCalls": 0,
+  "revision": 6,
+  "nativeEditRevision": 3,
+  "projectSha": "a354aa62a4c3962f231d9f9ec55b996185ee79cba2c6323fd5173c2453ac5836",
+  "sounds": [
+    {
+      "itemId": "workspace-sfx-091bb487-041c-45d4-a482-e179d1f5d7b1",
+      "kind": "sfx",
+      "gainDb": -6,
+      "duckDepthDb": 0,
+      "startSeconds": 0.2,
+      "durationSeconds": 0.6
+    }
+  ],
+  "nativeAudio": [
+    {
+      "id": "workspace-sfx-091bb487-041c-45d4-a482-e179d1f5d7b1",
+      "volume": 0.5011872336272722,
+      "startFrame": 6,
+      "durationInFrames": 18
+    }
+  ],
+  "calls": [
+    {
+      "command": "openWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "saveWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "saveWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "closeWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "openWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "saveWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "closeWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "openWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "saveWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "saveWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "saveWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "closeWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "openWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "saveWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "closeWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "openWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "openWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "saveWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "closeWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "openWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "openWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "openWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "openWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "saveWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "saveWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "closeWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "openWorkspaceStudio",
+      "status": 200
+    },
+    {
+      "command": "saveWorkspaceStudio",
+      "status": 200
+    }
+  ],
+  "mainUnchanged": true,
+  "mainPid": 78102,
+  "files": [
+    "src/local-app/EmbeddedStudioHost.tsx",
+    "src/local-app/embedded-studio.css",
+    "src/local-app/EmbeddedStudioHost.test.tsx",
+    "src/local-app/ProductionWorkspacePanel.tsx",
+    "src/local-app/ProductionWorkspacePanel.navigation.test.tsx"
+  ],
+  "pendingHashes": {
+    "src/local-app/EmbeddedStudioHost.tsx": "45b9578741fc4e63dd1a8459c51e2d7764a346b8c176bbff161dbad149f6fa75",
+    "src/local-app/embedded-studio.css": "32df5138a0628a66a06ef3acffd0358c343d9499eed4a101a465477fb32673f4",
+    "src/local-app/EmbeddedStudioHost.test.tsx": "32628fac4f080391f1f50cc07040592e612c14c8240f74a6da77630fb6afa2f6",
+    "src/local-app/ProductionWorkspacePanel.tsx": "64c82846893b03d10b30176dcf421d9fb3e189d69d33cebaf8128b86c2a6500e",
+    "src/local-app/ProductionWorkspacePanel.navigation.test.tsx": "b63ae69cce04a54082a5adb195df1fa7b034f48a19d23f223b73385f64337c07"
+  }
+}

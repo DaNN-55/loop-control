@@ -1,0 +1,32 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+(node:37224) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ✓ src/local-app/promptReferenceModels.integration.test.ts (16 tests) 38924ms
+   ✓ 'doubao-seedance-2-0-260128': every mode carries bound mentions through HTTP, frozen queue, actual Worker and provider request  3243ms
+   ✓ 'doubao-seedance-2-5-260628': every mode carries bound mentions through HTTP, frozen queue, actual Worker and provider request  2760ms
+   ✓ 'MiniMax-H3': every mode carries bound mentions through HTTP, frozen queue, actual Worker and provider request  2668ms
+   ✓ 'MiniMax-H3-Highspeed': every mode carries bound mentions through HTTP, frozen queue, actual Worker and provider request  2625ms
+   ✓ 'MiniMax-H3-Lite': every mode carries bound mentions through HTTP, frozen queue, actual Worker and provider request  2692ms
+   ✓ 'kling-v3': every mode carries bound mentions through HTTP, frozen queue, actual Worker and provider request  2152ms
+   ✓ 'kling-v3-omni': every mode carries bound mentions through HTTP, frozen queue, actual Worker and provider request  1822ms
+   ✓ 'wan2.6-i2v-flash': every mode carries bound mentions through HTTP, frozen queue, actual Worker and provider request  1766ms
+   ✓ 'wan2.6-i2v': every mode carries bound mentions through HTTP, frozen queue, actual Worker and provider request  2087ms
+   ✓ 'wan2.6-r2v': every mode carries bound mentions through HTTP, frozen queue, actual Worker and provider request  2221ms
+   ✓ 'wan2.5-i2v-preview': every mode carries bound mentions through HTTP, frozen queue, actual Worker and provider request  1850ms
+   ✓ 'wan2.2-i2v-flash': every mode carries bound mentions through HTTP, frozen queue, actual Worker and provider request  1746ms
+   ✓ 'wan2.2-i2v-plus': every mode carries bound mentions through HTTP, frozen queue, actual Worker and provider request  2251ms
+   ✓ 'wanx2.1-i2v-plus': every mode carries bound mentions through HTTP, frozen queue, actual Worker and provider request  1741ms
+   ✓ 'wanx2.1-i2v-turbo': every mode carries bound mentions through HTTP, frozen queue, actual Worker and provider request  1752ms
+   ✓ all seven image models preserve bound IDs and reordered distinct image bytes through the actual Worker  5382ms
+ ✓ src/local-app/promptReferences.integration.test.ts (2 tests) 3298ms
+   ✓ free isolated Owner HTTP freezes @ references and the actual image Worker submits resolved text  1791ms
+   ✓ free isolated MiniMax confirmation and queue preserve bindings while translating reordered media labels  1506ms
+
+ Test Files  2 passed (2)
+      Tests  18 passed (18)
+   Start at  20:02:44
+   Duration  43.56s (transform 628ms, setup 12ms, collect 1.07s, tests 42.22s, environment 0ms, prepare 63ms)
+
+JSON report written to /private/tmp/loop-story-e2e-9W96GI/evidence/vitest.json

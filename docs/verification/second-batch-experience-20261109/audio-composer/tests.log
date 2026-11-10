@@ -1,0 +1,86 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/WorkspaceAudioPanel.test.tsx src/local-app/WorkspaceSecondBatch.test.tsx src/workspaceAudio.test.ts
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control/.scratch/audio-composer-review-20261109/pending
+
+ ✓ src/workspaceAudio.test.ts (4 tests) 5ms
+stderr | src/local-app/WorkspaceAudioPanel.test.tsx > preserves music drafts while switching shots without exposing effect creation
+An update to EditableWorkspaceAudioPreparation inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/local-app/WorkspaceSecondBatch.test.tsx > keeps a prepared local candidate available for audition without offering duplicate preparation
+An update to EditableWorkspaceAudioPreparation inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/local-app/WorkspaceSecondBatch.test.tsx (9 tests) 394ms
+stderr | src/local-app/WorkspaceAudioPanel.test.tsx > does not expose duplicate source extraction and preserves legacy source records
+An update to EditableWorkspaceAudioPreparation inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/local-app/WorkspaceAudioPanel.test.tsx > saves shared episode music settings across shots and reloads the server values
+An update to EditableWorkspaceAudioPreparation inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/local-app/WorkspaceAudioPanel.test.tsx > keeps compact sound candidates directly playable with attribution and licence available
+An update to EditableWorkspaceAudioPreparation inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/local-app/WorkspaceAudioPanel.test.tsx > keeps placement and duration out of the composer before a candidate is adopted
+An update to EditableWorkspaceAudioPreparation inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/local-app/WorkspaceAudioPanel.test.tsx (22 tests) 990ms
+
+ Test Files  3 passed (3)
+      Tests  35 passed (35)
+   Start at  22:12:14
+   Duration  2.79s (transform 347ms, setup 26ms, collect 2.63s, tests 1.39s, environment 1.20s, prepare 123ms)
+

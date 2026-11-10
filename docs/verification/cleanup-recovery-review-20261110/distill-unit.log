@@ -1,0 +1,18 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/LocalDeletionRecovery.test.tsx src/local-app/catalogNavigation.test.ts src/local-app/LocalCatalogApp.workspace.test.tsx src/local-app/LocalMaintenanceEmbedded.test.tsx src/workspace/EpisodeDeletionScope.test.tsx
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control/.scratch/cleanup-recovery-review-20261110/pending
+
+ ✓ src/local-app/catalogNavigation.test.ts (5 tests) 9ms
+ ✓ src/workspace/EpisodeDeletionScope.test.tsx (4 tests) 33ms
+ ✓ src/local-app/LocalDeletionRecovery.test.tsx (6 tests) 143ms
+ ✓ src/local-app/LocalMaintenanceEmbedded.test.tsx (2 tests) 156ms
+ ✓ src/local-app/LocalCatalogApp.workspace.test.tsx (11 tests) 2231ms
+   ✓ 保留安全弹窗焦点，从所有者菜单打开连接配置且跨页保留连接草稿  409ms
+   ✓ keeps one topbar instance and places the Owner menu after theme in workspace and episode  407ms
+
+ Test Files  5 passed (5)
+      Tests  28 passed (28)
+   Start at  14:18:16
+   Duration  4.13s (transform 565ms, setup 33ms, collect 3.16s, tests 2.57s, environment 1.47s, prepare 194ms)
+

@@ -1,0 +1,12 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/WorkspaceConfigBinding.test.tsx src/worker/minimaxVariants.test.ts src/worker/registeredAdapters.test.ts src/worker/officialVideoProvider.test.ts src/worker/officialVideoErrors.test.ts src/worker/videoTaskExecution.test.ts src/local-app/workspaceCallEstimate.test.ts --maxWorkers=2 --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+·······································································································································································
+
+ Test Files  7 passed (7)
+      Tests  167 passed (167)
+   Start at  18:51:00
+   Duration  10.68s (transform 254ms, setup 25ms, collect 1.45s, tests 9.01s, environment 616ms, prepare 203ms)
+

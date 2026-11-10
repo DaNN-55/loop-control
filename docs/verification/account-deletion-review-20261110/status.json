@@ -1,0 +1,15 @@
+{
+  "status": "migrated",
+  "migrated": true,
+  "productFiles": 7,
+  "testFiles": 3,
+  "targetedTestsPassed": 42,
+  "realIntegrationTestsPassed": 6,
+  "mainBaselineFilesUnchanged": 1170,
+  "stagingUnchanged": true,
+  "paidCalls": 0,
+  "previewPort": 5201,
+  "fixtureWritesPerformedByBrowser": 0,
+  "migrationRegressionTestsPassed": 42,
+  "migrationRealIntegrationTestsPassed": 6
+}

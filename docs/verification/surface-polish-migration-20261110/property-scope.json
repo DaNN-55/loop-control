@@ -1,0 +1,10 @@
+{
+  "declarations": 50,
+  "allowed": [
+    "background-color",
+    "border-color",
+    "border-radius",
+    "box-shadow"
+  ],
+  "violations": []
+}

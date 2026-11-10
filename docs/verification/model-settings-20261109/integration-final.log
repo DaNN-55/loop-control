@@ -1,0 +1,12 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+(node:83172) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+·······················
+
+ Test Files  7 passed (7)
+      Tests  23 passed (23)
+   Start at  16:33:09
+   Duration  42.70s (transform 512ms, setup 23ms, collect 1.86s, tests 74.32s, environment 0ms, prepare 193ms)
+

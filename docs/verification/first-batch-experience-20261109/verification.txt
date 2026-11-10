@@ -1,0 +1,114 @@
+## unit
+ ✓ scripts/runtime/keychain.test.mjs (4 tests) 2ms
+ ✓ src/local-app/inputPreflight.test.ts (1 test) 3ms
+ ✓ src/local-app/databaseConfig.test.ts (1 test) 2ms
+ ✓ src/local-app/runtimeStatus.test.ts (2 tests) 8ms
+ ✓ src/orchestration/workerOutcome.test.ts (1 test) 7ms
+ ✓ src/local-app/configurationCommands.test.ts (1 test) 4ms
+
+ Test Files  249 passed (249)
+      Tests  1803 passed | 1 skipped (1804)
+   Start at  15:09:03
+   Duration  84.12s (transform 5.79s, setup 571ms, collect 105.82s, tests 213.98s, environment 49.21s, prepare 12.56s)
+
+
+## catalog2
+ ✓ src/local-app/catalogFilters.integration.test.ts (5 tests) 3703ms
+   ✓ searches all matching records before pagination, treats SQL wildcards literally, and searches UUID fragments  338ms
+   ✓ sorts across pages with a stable id tie break and bounds filtered page counts  733ms
+   ✓ uses actual pending decisions and prioritises blockers, review, done, running, draft  578ms
+   ✓ retains independent pending/blocker queues, historical fences and Owner-only membership selection  821ms
+   ✓ projects workspace current export and delivery facts without blocking on unused failed candidates  732ms
+
+ Test Files  2 passed (2)
+      Tests  9 passed (9)
+   Start at  15:16:51
+   Duration  3.98s (transform 544ms, setup 38ms, collect 770ms, tests 3.71s, environment 0ms, prepare 112ms)
+
+
+## catalog-final
+ ✓ src/local-app/catalogFilters.integration.test.ts (5 tests) 5393ms
+   ✓ searches all matching records before pagination, treats SQL wildcards literally, and searches UUID fragments  603ms
+   ✓ sorts across pages with a stable id tie break and bounds filtered page counts  1178ms
+   ✓ uses actual pending decisions and prioritises blockers, review, done, running, draft  820ms
+   ✓ retains independent pending/blocker queues, historical fences and Owner-only membership selection  822ms
+   ✓ projects workspace current export and delivery facts without blocking on unused failed candidates  901ms
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  15:17:44
+   Duration  6.12s (transform 93ms, setup 24ms, collect 77ms, tests 5.39s, environment 0ms, prepare 165ms)
+
+
+## db-release
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/firstBatchAcceptance.integration.test.ts (2 tests) 15578ms
+   ✓ initial native subtitles export directly without an empty editor save and detect later visual gaps  13802ms
+   ✓ unknown speech exposes original reservation and cannot resubmit; catalog surfaces the failed current task  1775ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  15:21:50
+   Duration  16.27s (transform 398ms, setup 7ms, collect 552ms, tests 15.58s, environment 0ms, prepare 27ms)
+
+
+## existing-integrations
+
+ ✓ src/local-app/workspaceCaptions.integration.test.ts (6 tests | 4 skipped) 11872ms
+   ✓ Owner edits only the chosen native caption lane and persists manual timing without shot approval  8633ms
+   ✓ current native caption evidence follows the real alignment queue and rejects a late Worker result after a text edit  3238ms
+ ✓ src/local-app/workspaceExport.integration.test.ts (1 test) 47854ms
+   ✓ Owner checks actual used content before exporting and confirms exact final bytes  47853ms
+
+ Test Files  2 passed (2)
+      Tests  3 passed | 4 skipped (7)
+   Start at  15:17:00
+   Duration  49.21s (transform 740ms, setup 28ms, collect 2.20s, tests 59.73s, environment 0ms, prepare 105ms)
+
+
+## browser2
+
+stdout | src/local-app/firstBatchBrowser.integration.test.ts > first batch controls use real isolated Owner data
+3:16:30 PM [vite] (client) hmr update /src/local-app/workspace-visual-preparation.css
+
+ ✓ src/local-app/firstBatchBrowser.integration.test.ts (1 test) 423106ms
+   ✓ first batch controls use real isolated Owner data  423105ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  15:09:36
+   Duration  425.80s (transform 1.53s, setup 22ms, collect 2.38s, tests 423.11s, environment 0ms, prepare 44ms)
+
+
+## build
+dist/assets/hi-B8xcPIYR.js                 4.41 kB │ gzip:   1.40 kB
+dist/assets/th-BUZ0xAoY.js                 4.50 kB │ gzip:   1.36 kB
+dist/assets/mr-D0HYiV2l.js                 4.52 kB │ gzip:   1.38 kB
+dist/assets/ne-N8DqN1TM.js                 4.68 kB │ gzip:   1.37 kB
+dist/assets/te-BF9P08tJ.js                 5.19 kB │ gzip:   1.43 kB
+dist/assets/index-Ct3nODhX.js          1,419.81 kB │ gzip: 433.51 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 4.37s
+
+## runtime-final
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+## restart-final
+npm notice run loop-control@0.1.0 stop
+npm notice run node scripts/stop.mjs
+本地服务已停止。
+npm notice run loop-control@0.1.0 start
+npm notice run node scripts/start.mjs
+本地服务启动成功，访问地址：http://127.0.0.1:5174

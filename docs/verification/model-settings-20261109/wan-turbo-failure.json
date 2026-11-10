@@ -1,0 +1,12 @@
+{
+  "model": "wanx2.1-i2v-turbo",
+  "providerTaskId": "fdd397d5-fdfc-4afb-97ab-a0808cad6bf6",
+  "http": 200,
+  "task_id": "fdd397d5-fdfc-4afb-97ab-a0808cad6bf6",
+  "task_status": "FAILED",
+  "submit_time": "2026-11-09 16:32:05.430",
+  "scheduled_time": "2026-11-09 16:32:05.485",
+  "end_time": "2026-11-09 16:34:09.405",
+  "code": "AlgoError",
+  "message": "Traceback (most recent call last):\n  File \"/home/workspace/wanx_pipeline/core/core.py\", line 254, in worker\n    syn_vid_path = runner.inference(*args)\n  File \"/home/workspace/wanx_pipeline/core/runner.py\", line 558, in inference\n    self.inter_model.interpolate(self.inference_cfg.target_fps, cache_file, \"/tmp\")\n  File \"/home/workspace/wanx_pipeline/sora/interpolation/model.py\", line 160, in interpolate\n    lastframe = next(videogen)\n  File \"/usr/local/lib/python3.10/site-packages/skvideo/io/io.py\", line 251, in vreader\n    reader = FFmpegReader(fname, inputdict=inputdict, outputdict=outputdict, verbosity=verbosity)\n  File \"/usr/local/lib/python3.10/site-packages/skvideo/io/ffmpeg.py\", line 83, in __init__\n    _, self.extension = os.path.splitext(filename)\n  File \"/usr/local/lib/python3.10/posixpath.py\", line 118, in splitext\n    p = os.fspath(p)\nTypeError: expected str, bytes or os.PathLike object, not NoneType\n"
+}

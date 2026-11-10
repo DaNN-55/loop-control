@@ -1,0 +1,30 @@
+{
+  "migrated": false,
+  "mainFilesUnchanged": true,
+  "approved32StillPresent": true,
+  "dailyPid": 78102,
+  "dailyRuntimeUnchanged": true,
+  "nameOnlyRules": {},
+  "optionalRules": {
+    "visual_style": "胶片颗粒"
+  },
+  "cityEpisode": {
+    "id": "76abcd7a-f07b-4c85-b6b8-34f3eb19aa26",
+    "account_id": "591fa805-ae89-453a-b33a-a89e73f2a913",
+    "title": "上下文核对-城市",
+    "series_version_id": "373c57ee-e9e1-4bf6-894e-34fd357e57ab"
+  },
+  "craftEpisode": {
+    "id": "050ac11c-c189-4723-9241-f79097c3bea0",
+    "account_id": "a1438fd7-9f56-4e19-8124-fbbab8a45ea7",
+    "title": "上下文核对-手作",
+    "series_version_id": "cbdcbcd6-3bb7-4664-b3f9-e04ad29697b3"
+  },
+  "oldEpisodeFrozenAt": 2,
+  "seriesLatestVersion": 3,
+  "allRecordedRequestsSuccessful": true,
+  "tests": 17,
+  "types": true,
+  "paidCalls": 0,
+  "previewUrl": "http://127.0.0.1:5189/__series_review?view=accounts&account=591fa805-ae89-453a-b33a-a89e73f2a913&rulesSeries=2d0caebf-771c-4f2b-b876-675fe0fe1326"
+}

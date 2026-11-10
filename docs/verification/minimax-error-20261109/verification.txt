@@ -1,0 +1,135 @@
+## red
+"视频提交缺少有效任务 ID；禁止自动重提。"
+
+ ❯ src/worker/officialVideoErrors.test.ts:6:2
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  15:35:50
+   Duration  196ms (transform 41ms, setup 8ms, collect 40ms, tests 5ms, environment 0ms, prepare 33ms)
+
+
+## boundary-red
+ ❯ requestOperation src/local-app/providerNetwork.ts:104:51
+ ❯ Object.fetcher src/local-app/providerNetwork.ts:185:19
+ ❯ Object.submit src/worker/officialVideoProvider.ts:105:42
+ ❯ executeVideoTask src/worker/videoTaskExecution.ts:38:34
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  15:37:07
+   Duration  222ms (transform 58ms, setup 8ms, collect 43ms, tests 31ms, environment 0ms, prepare 36ms)
+
+
+## integration
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/minimaxFailure.integration.test.ts (4 tests) 6646ms
+   ✓ MiniMax reference request: actual Owner/Worker preserves $s outcome and duplicate guard  1885ms
+   ✓ MiniMax reference request: actual Owner/Worker preserves $s outcome and duplicate guard  1555ms
+   ✓ MiniMax reference request: actual Owner/Worker preserves $s outcome and duplicate guard  1677ms
+   ✓ MiniMax reference request: actual Owner/Worker preserves $s outcome and duplicate guard  1529ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  15:49:20
+   Duration  7.45s (transform 467ms, setup 8ms, collect 642ms, tests 6.65s, environment 0ms, prepare 40ms)
+
+
+## integration-final
+     64|   expect((await f.execute(f.job.taskId,false))?.status).toBe('failed');
+       |                                                         ^
+     65|   await f.c.query('GRANT EXECUTE ON FUNCTION local_identity.record_wan…
+     66|   await f.restart();await f.restartWorker();const w=await f.read();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 9 passed (10)
+   Start at  15:54:30
+   Duration  33.48s (transform 1.42s, setup 28ms, collect 4.13s, tests 51.48s, environment 0ms, prepare 73ms)
+
+
+## registration-final
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/videoTaskExecution.integration.test.ts (6 tests | 4 skipped) 7135ms
+   ✓ 'bailian' stops after a real ID-registration permission failure and preserves unknown submission protection  3521ms
+   ✓ 'volcengine' stops after a real ID-registration permission failure and preserves unknown submission protection  3614ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed | 4 skipped (6)
+   Start at  16:02:00
+   Duration  8.32s (transform 648ms, setup 11ms, collect 950ms, tests 7.13s, environment 0ms, prepare 36ms)
+
+
+## unit-clean
+ ✓ src/local-app/runtimeStatus.test.ts (2 tests) 2ms
+ ✓ scripts/runtime/environment.test.mjs (7 tests) 2ms
+ ✓ src/orchestration/workerOutcome.test.ts (1 test) 1ms
+ ✓ src/local-app/inputPreflight.test.ts (1 test) 2ms
+ ✓ src/local-app/mediaWorker.test.ts (4 tests) 3ms
+ ✓ src/local-app/configurationCommands.test.ts (1 test) 2ms
+ ✓ src/local-app/databaseConfig.test.ts (1 test) 1ms
+
+ Test Files  250 passed (250)
+      Tests  1812 passed | 1 skipped (1813)
+   Start at  16:01:50
+   Duration  113.45s (transform 3.13s, setup 245ms, collect 54.43s, tests 122.35s, environment 24.47s, prepare 5.80s)
+
+
+## followup-tests
+   ✓ retains an ordinary typed search on refresh without adding one history entry per query  664ms
+   ✓ clears the saved ordinary search at the same debounce boundary  621ms
+   ✓ exposes rich search results as a controlled region and keeps the keyboard preview path  353ms
+   ✓ Escape from file preview restores the result controls while leaving search open  342ms
+   ✓ previews a PNG even when an older search response labels it as a generic file  321ms
+   ✓ offers the correct file actions for 'checks.json'  331ms
+   ✓ offers the correct file actions for 'delivery.zip'  318ms
+
+ Test Files  3 passed (3)
+      Tests  44 passed (44)
+   Start at  15:58:43
+   Duration  6.76s (transform 903ms, setup 25ms, collect 4.23s, tests 5.54s, environment 930ms, prepare 107ms)
+
+
+## build-final
+dist/assets/bn-xIbqMZu5.js                 4.39 kB │ gzip:   1.38 kB
+dist/assets/hi-B8xcPIYR.js                 4.41 kB │ gzip:   1.40 kB
+dist/assets/th-BUZ0xAoY.js                 4.50 kB │ gzip:   1.36 kB
+dist/assets/mr-D0HYiV2l.js                 4.52 kB │ gzip:   1.38 kB
+dist/assets/ne-N8DqN1TM.js                 4.68 kB │ gzip:   1.37 kB
+dist/assets/te-BF9P08tJ.js                 5.19 kB │ gzip:   1.43 kB
+dist/assets/index-BuYrRyVG.js          1,421.74 kB │ gzip: 434.04 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 3.82s
+
+## runtime-final
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+## restart-final
+npm notice run loop-control@0.1.0 stop
+npm notice run node scripts/stop.mjs
+本地服务已停止。
+npm notice run loop-control@0.1.0 start
+npm notice run node scripts/start.mjs
+本地服务启动成功，访问地址：http://127.0.0.1:5174

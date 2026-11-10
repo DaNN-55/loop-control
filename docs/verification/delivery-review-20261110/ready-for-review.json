@@ -1,0 +1,13 @@
+{
+  "url": "http://127.0.0.1:5188/__delivery_review",
+  "episodeId": "d63fca0b-9919-4bc3-a17a-e01caac69f62",
+  "workspaceId": "3495b5a1-62a9-4d74-9392-b44b4148c314",
+  "assetRoot": "/private/tmp/loop-153-PGNRxm/account",
+  "cover": "/Users/dan/Programs/loop-control/.scratch/delivery-review-20261110/pending/.scratch/delivery-review-20261110/review-cover.png",
+  "paidCalls": 0,
+  "migrated": false,
+  "sample": "current export ready, unconfirmed; one resolved issue; no delivery queued",
+  "tests": 20,
+  "types": true,
+  "mainBoundaryVerified": true
+}

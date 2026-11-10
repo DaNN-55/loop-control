@@ -1,0 +1,132 @@
+{
+  "collapsed": [
+    {
+      "viewport": [
+        1280,
+        953
+      ],
+      "modal": {
+        "x": 280,
+        "y": 164.90625,
+        "width": 720,
+        "height": 623.1875,
+        "top": 164.90625,
+        "right": 1000,
+        "bottom": 788.09375,
+        "left": 280
+      },
+      "modalClient": 718,
+      "modalScroll": 718,
+      "footer": {
+        "x": 305,
+        "y": 612.09375,
+        "width": 670,
+        "height": 151,
+        "top": 612.09375,
+        "right": 975,
+        "bottom": 763.09375,
+        "left": 305
+      },
+      "summary": "将删除 3 个文件\n共 221.7 KB",
+      "preserved": "保留 4 项",
+      "openDetails": [
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "viewport": [
+        640,
+        953
+      ],
+      "modal": {
+        "x": 16,
+        "y": 153.8125,
+        "width": 608,
+        "height": 645.375,
+        "top": 153.8125,
+        "right": 624,
+        "bottom": 799.1875,
+        "left": 16
+      },
+      "modalClient": 606,
+      "modalScroll": 606,
+      "footer": {
+        "x": 41,
+        "y": 623.1875,
+        "width": 558,
+        "height": 151,
+        "top": 623.1875,
+        "right": 599,
+        "bottom": 774.1875,
+        "left": 41
+      },
+      "summary": "将删除 3 个文件\n共 221.7 KB",
+      "preserved": "保留 4 项",
+      "openDetails": [
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "modal": {
+        "x": 16,
+        "y": 78.21875,
+        "width": 358,
+        "height": 687.5625,
+        "top": 78.21875,
+        "right": 374,
+        "bottom": 765.78125,
+        "left": 16
+      },
+      "modalClient": 356,
+      "modalScroll": 356,
+      "footer": {
+        "x": 33,
+        "y": 597.78125,
+        "width": 324,
+        "height": 151,
+        "top": 597.78125,
+        "right": 357,
+        "bottom": 748.78125,
+        "left": 33
+      },
+      "summary": "将删除 3 个文件\n共 221.7 KB",
+      "preserved": "保留 4 项",
+      "openDetails": [
+        false,
+        false,
+        false,
+        false
+      ]
+    }
+  ],
+  "keyboardExpanded": true,
+  "expanded": {
+    "filePaths": [
+      "/private/tmp/loop-153-laoxBQ/account/episodes/feacdbde-a47f-4eb4-85a4-42a9fa77f78f/board.json\n204 字节",
+      "/private/tmp/loop-153-laoxBQ/account/episodes/feacdbde-a47f-4eb4-85a4-42a9fa77f78f/voice.mp3\n16.2 KB",
+      "/private/tmp/loop-153-laoxBQ/account/episodes/feacdbde-a47f-4eb4-85a4-42a9fa77f78f/候选待删.mp4\n205.4 KB"
+    ],
+    "footer": {
+      "x": 33,
+      "y": 648,
+      "width": 324,
+      "height": 151,
+      "top": 648,
+      "right": 357,
+      "bottom": 799,
+      "left": 33
+    },
+    "modalScroll": 356,
+    "modalClient": 356
+  }
+}

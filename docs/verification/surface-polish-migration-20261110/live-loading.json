@@ -1,0 +1,15 @@
+{
+  "entry": {
+    "status": 200,
+    "containsApprovedStyle": true
+  },
+  "css": {
+    "status": 200,
+    "containsApprovedStyle": true
+  },
+  "entryOnlyAddsStyleImport": true,
+  "sourceFiles": {
+    "src/local-app/main.tsx": "fad77f887a7a4f10d45ce10bf329da0351a19402970b6d2861664869e0ed9bb2",
+    "src/ui/impeccable/surface-polish.css": "7b2398f632008edb8dc25a8e44b1aed9c884b1e7c71b239825c427082f32e8be"
+  }
+}

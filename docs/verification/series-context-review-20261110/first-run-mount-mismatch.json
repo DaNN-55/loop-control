@@ -1,0 +1,100 @@
+{
+  "series": [
+    {
+      "id": "ec825f34-2eb4-4d21-842d-13273d651727",
+      "account_id": "23d23f07-56c4-4025-92ee-7e341938d094",
+      "name": "木工练习"
+    },
+    {
+      "id": "2cadb07e-9fcf-49f3-9479-62cb91f8e1c6",
+      "account_id": "f1ede139-8964-45d2-876b-eeeb7e23a729",
+      "name": "街角故事"
+    },
+    {
+      "id": "a0b879c6-a1ef-4466-bace-eff98ff6710b",
+      "account_id": "f1ede139-8964-45d2-876b-eeeb7e23a729",
+      "name": "雨后街景"
+    }
+  ],
+  "versions": [
+    {
+      "id": "82e7b681-7e7c-40be-a946-8ad0a5f5d2fc",
+      "account_id": "f1ede139-8964-45d2-876b-eeeb7e23a729",
+      "series_id": "2cadb07e-9fcf-49f3-9479-62cb91f8e1c6",
+      "version": 1,
+      "rules": {
+        "positioning": "街道与日常人物"
+      }
+    },
+    {
+      "id": "e14727a9-67d1-45d1-bcb9-1fa8ea571d27",
+      "account_id": "f1ede139-8964-45d2-876b-eeeb7e23a729",
+      "series_id": "2cadb07e-9fcf-49f3-9479-62cb91f8e1c6",
+      "version": 2,
+      "rules": {
+        "positioning": "街道与日常人物",
+        "visual_style": "自然光"
+      }
+    },
+    {
+      "id": "0b585e9f-996e-40ef-9d91-83f5dd2d8437",
+      "account_id": "f1ede139-8964-45d2-876b-eeeb7e23a729",
+      "series_id": "a0b879c6-a1ef-4466-bace-eff98ff6710b",
+      "version": 1,
+      "rules": {}
+    },
+    {
+      "id": "b1cfa149-38d1-433f-8eb2-b0af02cd154b",
+      "account_id": "23d23f07-56c4-4025-92ee-7e341938d094",
+      "series_id": "ec825f34-2eb4-4d21-842d-13273d651727",
+      "version": 1,
+      "rules": {
+        "positioning": "木工练习记录"
+      }
+    }
+  ],
+  "episodes": [
+    {
+      "id": "81a7f1e6-e1a2-4957-a261-d128342892af",
+      "account_id": "f1ede139-8964-45d2-876b-eeeb7e23a729",
+      "title": "隔离 Studio153 验收",
+      "series_version_id": null
+    }
+  ],
+  "calls": [
+    {
+      "command": "readSeriesDirectory",
+      "status": 200,
+      "data": {
+        "seriesId": "2cadb07e-9fcf-49f3-9479-62cb91f8e1c6"
+      }
+    },
+    {
+      "command": "createSeries",
+      "status": 200,
+      "data": {
+        "accountId": "f1ede139-8964-45d2-876b-eeeb7e23a729",
+        "name": "雨后街景",
+        "rules": {}
+      }
+    },
+    {
+      "command": "readSeriesDirectory",
+      "status": 200,
+      "data": {
+        "seriesId": "a0b879c6-a1ef-4466-bace-eff98ff6710b"
+      }
+    },
+    {
+      "command": "create",
+      "status": 409,
+      "data": {
+        "accountId": "23d23f07-56c4-4025-92ee-7e341938d094",
+        "isTest": false,
+        "seriesVersionId": "b1cfa149-38d1-433f-8eb2-b0af02cd154b",
+        "title": "上下文核对-手作"
+      }
+    }
+  ],
+  "paidCalls": 0
+}

@@ -1,0 +1,17 @@
+[
+  "src/local-app/ProductionWorkspacePanel.tsx",
+  "src/local-app/WorkspaceMaterialShelf.test.tsx",
+  "src/local-app/WorkspaceMaterialShelf.tsx",
+  "src/local-app/WorkspaceVisualFeedback.test.tsx",
+  "src/local-app/WorkspaceVisualPreparation.tsx",
+  "src/local-app/mediaWorker.ts",
+  "src/local-app/modelSettings.integration.test.ts",
+  "src/local-app/narrationWorker.ts",
+  "src/local-app/officialVideoNetwork.ts",
+  "src/local-app/providerNetwork.ts",
+  "src/worker/mediaProviders.ts",
+  "src/worker/mediaTools.ts",
+  "src/worker/modelSettingsBoundary.test.ts",
+  "src/worker/officialVideoErrors.test.ts",
+  "src/worker/wanVideoProvider.ts"
+]

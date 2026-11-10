@@ -1,0 +1,66 @@
+{
+  "migrated": false,
+  "baselineFiles": 1170,
+  "files": [
+    {
+      "path": "src/accounts/AccountWorkspace.test.tsx",
+      "action": "modify",
+      "mainBeforeSha256": "a995cbe2db593b2a73089035e6447a2920a62cc093c3c04aaaaa140a70f69595",
+      "pendingSha256": "b07f714750ee4510499e19b6f59f9960eea0552696253eaf7b1481cd4890e306"
+    },
+    {
+      "path": "src/accounts/AccountWorkspace.tsx",
+      "action": "modify",
+      "mainBeforeSha256": "7b69d838fa2446f8ce1326d2fbe4cb9ba30b584daa119853afd42e58094d43aa",
+      "pendingSha256": "e3e2c837cebfca725f81c8cf7a5510f5e2bce4bf099fd83ab2adac3a7537c7e2"
+    },
+    {
+      "path": "src/accounts/account-deletion.css",
+      "action": "add",
+      "mainBeforeSha256": null,
+      "pendingSha256": "aebfb4ac4b8009f4bd191d2fa68eb794c0af9d7a84eb96fddca91491cad3dbef"
+    },
+    {
+      "path": "src/accounts/accountDeletionStatus.ts",
+      "action": "add",
+      "mainBeforeSha256": null,
+      "pendingSha256": "ce8c67cd6080ea628becf5c245d4f8da4051fa46836e691545dd0698c439f784"
+    },
+    {
+      "path": "src/local-app/LocalCatalogApp.tsx",
+      "action": "modify",
+      "mainBeforeSha256": "7d5aafd8cf494a5f8181b357a8a69dd8c8cb395a1d3c33800c992b2a6a9d7069",
+      "pendingSha256": "fa3922b4040fedc9d98304c954c8745c21aed584cd55a3e1db0129e3d9ca00d4"
+    },
+    {
+      "path": "src/local-app/LocalCatalogApp.workspace.test.tsx",
+      "action": "modify",
+      "mainBeforeSha256": "ae686b7b8f46c340167aa56eeac7be0f4b358921bff1f20499bb1d3470959b18",
+      "pendingSha256": "c30d975f27a15ab835af87a8c3445890e0bfafe63527416dc24d43e050d45c53"
+    },
+    {
+      "path": "src/local-app/accountDeletion.ts",
+      "action": "add",
+      "mainBeforeSha256": null,
+      "pendingSha256": "339792f68365e28b249c5eca60740e7bcc2bb21e84ef5fe459833615e28719f1"
+    },
+    {
+      "path": "src/local-app/accountDeletionStatus.integration.test.ts",
+      "action": "add",
+      "mainBeforeSha256": null,
+      "pendingSha256": "b979f11571d76935d50871a58a28083644cc7effea653e80c3ed0e3909cb9b24"
+    },
+    {
+      "path": "src/local-app/configurationCommands.ts",
+      "action": "modify",
+      "mainBeforeSha256": "dc4ee46b985806c662b4471f3b18893533ae21cb31ffa0ddab4221e5f08496c9",
+      "pendingSha256": "48a51fc0e5d57f2dfdfa3964ee10357fb03d50f384c372414a86977e3e29b4b1"
+    },
+    {
+      "path": "src/local-app/localRoute.ts",
+      "action": "modify",
+      "mainBeforeSha256": "57e1668d68d6f8d2421f6b595b598b8601a91637d7bba3e099ddc758a9dd53dc",
+      "pendingSha256": "ab8c4ff27e871b1226211faf1b344a7484f532e2b8a6740d7ca12ed1b33ead00"
+    }
+  ]
+}

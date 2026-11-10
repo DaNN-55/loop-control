@@ -1,0 +1,52 @@
+{
+  "revision": 3,
+  "sha": "77acb7133701e89a9d77e14a734fe65599e317d8be454fe5a9d12a172f247957",
+  "enabled": {
+    "bgm": true,
+    "sfx": true
+  },
+  "preparations": [
+    {
+      "id": "f1930d06-8eea-4788-878e-066045a17e58",
+      "kind": "bgm",
+      "shotId": null,
+      "sourceItemId": null,
+      "sourceSha256": null,
+      "description": "local-music.mp3",
+      "query": null,
+      "selection": null,
+      "connection": null,
+      "anchor": "absolute",
+      "offsetSeconds": 0,
+      "durationSeconds": 4,
+      "taskId": null,
+      "status": "ready",
+      "error": null,
+      "audioTrackId": null,
+      "relativePath": "episodes/b1d13f6f-dcb3-4e8d-a8bd-3b407147815d/materials/74b682cc27103655eb1b22bb2522d732823f27e3b8f7b35c3e9dc400065ac2da-local-music.mp3",
+      "sha256": "74b682cc27103655eb1b22bb2522d732823f27e3b8f7b35c3e9dc400065ac2da",
+      "fileSize": 96565,
+      "adoptedItemId": null,
+      "source": {
+        "provider": "manual",
+        "materialRevisionId": "0fae9aef-f879-42a4-9005-cf1f48d423bb"
+      }
+    }
+  ],
+  "sounds": [],
+  "nativeAudio": [],
+  "visuals": [
+    {
+      "id": "shot-shot-01-c844733b-ad5c-475f-a814-c30060d40ea2",
+      "kind": "video",
+      "startFrame": 0,
+      "durationInFrames": 60
+    },
+    {
+      "id": "shot-shot-02-be04c04e-e5a9-4567-a21a-7ae0f2ce3c0c",
+      "kind": "video",
+      "startFrame": 60,
+      "durationInFrames": 60
+    }
+  ]
+}

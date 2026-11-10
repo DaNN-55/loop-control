@@ -1,0 +1,24 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+x
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/minimaxVariants.live.integration.test.ts > two new MiniMax models: isolated Owner confirmation → queue → actual Worker → existing live API
+AssertionError: 视频不可播放或时长不足：实际 3.75 秒，要求至少 4 秒；请核对供应商原任务与视频产物。: expected 'failed' to be 'completed' // Object.is equality
+
+Expected: [32m"[7mcomplet[27med"[39m
+Received: [31m"[7mfail[27med"[39m
+
+ ❯ src/local-app/minimaxVariants.live.integration.test.ts:38:52
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  18:52:30
+   Duration  24.06s (transform 448ms, setup 8ms, collect 616ms, tests 23.32s, environment 0ms, prepare 29ms)
+

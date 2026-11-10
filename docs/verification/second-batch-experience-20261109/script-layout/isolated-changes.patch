@@ -1,0 +1,55 @@
+--- a/src/local-app/WorkspaceScriptPanel.tsx
++++ b/src/local-app/WorkspaceScriptPanel.tsx
+@@ -60,11 +60,16 @@
+   <div className="workspace-script-layout">
+    <div className="workspace-script-main">
+     {draft.restored&&<p role="status" className="workspace-script-restored">已恢复草稿，尚未确认。</p>}
+-    {isEditing?<div className="workspace-script-text"><textarea ref={textInput} aria-label="主脚本" aria-required="true" aria-invalid={invalid==='script'||undefined} aria-describedby={invalid==='script'?errorId:undefined} value={text} disabled={pending||busy} onChange={event=>{setText(event.target.value);if(invalid==='script'){setInvalid(null);setError('');}}} placeholder="直接粘贴正文，空行分隔镜头；也可上传 Markdown / TXT 结构化脚本。"/>{invalid==='script'&&<span id={errorId} className="form-error" role="alert">{error||'请填写主脚本。'}</span>}</div>:<div className="workspace-script-preview" role="document" aria-label="主脚本预览" tabIndex={0}>{preview?<MarkdownPreview content={preview}/>: '正在读取主脚本…'}</div>}
+-    {isEditing&&<div className="workspace-script-input-help">
+-     <details><summary>脚本格式与模板</summary><p>普通正文按空行拆分镜头，正文直接作为字幕。需要分别填写口播和画面说明时，使用结构化脚本。</p><pre>{workspaceScriptExample}</pre><Button size="sm" color="secondary" isDisabled={disabled||!!text.trim()} onPress={()=>{setText(workspaceScriptExample);setError('');setInvalid(null);}}>使用结构化模板</Button></details>
+-     {text.trim()&&<details><summary>镜头与字幕预览 · {scriptInput.shots.length} 个镜头</summary><div role="region" aria-label="镜头与字幕预览">{scriptInput.error?<p>{scriptInput.error}</p>:scriptInput.shots.map((shot,index)=><article key={shot.id}><strong>镜头 {String(index+1).padStart(2,'0')}</strong><dl><div><dt>字幕</dt><dd>{shot.subtitle}</dd></div>{shot.visual&&<div><dt>画面说明</dt><dd>{shot.visual}</dd></div>}</dl></article>)}</div></details>}
+-    </div>}
++    {isEditing?<div className="workspace-script-comparison">
++     <div className="workspace-script-editor">
++      <div className="workspace-script-editor-heading"><span>脚本正文</span>{!text.trim()&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>{setText(workspaceScriptExample);setError('');setInvalid(null);requestAnimationFrame(()=>textInput.current?.focus());}}>使用示例</Button>}</div>
++      <div className="workspace-script-text"><textarea ref={textInput} aria-label="主脚本" aria-required="true" aria-invalid={invalid==='script'||undefined} aria-describedby={invalid==='script'?errorId:undefined} value={text} disabled={pending||busy} onChange={event=>{setText(event.target.value);if(invalid==='script'){setInvalid(null);setError('');}}} placeholder="直接粘贴正文，空行分隔镜头；也可上传 Markdown / TXT 结构化脚本。"/>{invalid==='script'&&<span id={errorId} className="form-error" role="alert">{error||'请填写主脚本。'}</span>}</div>
++     </div>
++     <section className="workspace-script-shot-preview" aria-label="镜头与字幕预览">
++      <header><h4>镜头与字幕预览</h4><span>{scriptInput.shots.length} 个镜头</span></header>
++      {scriptInput.error?<p className="workspace-script-preview-message">{text.trim()?scriptInput.error:'填写正文后显示镜头预览。'}</p>:scriptInput.shots.map((shot,index)=><article key={shot.id}><strong>镜头 {String(index+1).padStart(2,'0')}</strong><dl><div><dt>字幕</dt><dd>{shot.subtitle}</dd></div>{shot.visual&&<div><dt>画面说明</dt><dd>{shot.visual}</dd></div>}</dl></article>)}
++     </section>
++    </div>:<div className="workspace-script-preview" role="document" aria-label="主脚本预览" tabIndex={0}>{preview?<MarkdownPreview content={preview}/>: '正在读取主脚本…'}</div>}
+     <div className="workspace-script-statistics" role="group" aria-label="脚本字数"><span title="完整脚本的 Unicode 字符数，包含空白、标点与格式。">脚本字符 {statistics.characters.toLocaleString()}</span><span title={statistics.textKind==='narration'?'仅统计口播字段中的文字和数字，不计空白与标点。':'仅统计正文中的文字和数字，未区分口播与说明。'}>{statistics.textKind==='narration'?'口播字数':'正文文字数'} {statistics.textCharacters===null?'暂无法统计':statistics.textCharacters.toLocaleString()}</span>{isEditing&&changed&&<span>有未确认修改</span>}</div>
+ 
+    </div>
+--- a/src/local-app/workspace-compact-panels.css
++++ b/src/local-app/workspace-compact-panels.css
+@@ -165,9 +165,22 @@
+  .workspace-export-compact.production-workspace-section > header { flex-direction: row; flex-wrap: nowrap; justify-content: space-between; }
+ }
+ 
+-.workspace-script-input-help{display:grid;gap:8px;margin-block:12px;font-size:12px;line-height:1.6}
+-.workspace-script-input-help summary{cursor:pointer;color:var(--lc-muted)}
+-.workspace-script-input-help pre{white-space:pre-wrap;overflow-wrap:anywhere}
+-.workspace-script-input-help article{padding-block:10px;border-bottom:1px solid var(--lc-line)}
+-.workspace-script-input-help dl{margin-block:6px 0}.workspace-script-input-help dt{color:var(--lc-muted)}
+-.workspace-script-input-help dd{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
++.workspace-script-main{container:script-input / inline-size}
++.workspace-script-comparison{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:16px;flex:1;min-height:340px}
++.workspace-script-editor{display:flex;flex-direction:column;gap:12px;min-width:0;min-height:0}
++.workspace-script-editor-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:32px;font-size:13px;font-weight:600;color:var(--lc-ink)}
++.workspace-script-shot-preview{min-width:0;padding:0 0 0 16px;border-left:1px solid var(--lc-line);overflow-wrap:anywhere}
++.workspace-script-shot-preview>header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;min-height:32px;margin-bottom:12px}
++.workspace-script-shot-preview h4{margin:0;font-size:13px;font-weight:600;color:var(--lc-ink)}
++.workspace-script-shot-preview>header>span,.workspace-script-preview-message{margin:0;font-size:12px;color:var(--lc-muted)}
++.workspace-script-shot-preview article{padding-block:16px;border-bottom:1px solid var(--lc-line);font-size:13px;line-height:1.7}
++.workspace-script-shot-preview article:first-of-type{padding-top:0}
++.workspace-script-shot-preview article:last-child{border-bottom:0}
++.workspace-script-shot-preview article>strong{font-size:12px;font-weight:600;color:var(--lc-muted)}
++.workspace-script-shot-preview dl{display:grid;gap:12px;margin:8px 0 0}
++.workspace-script-shot-preview dt{font-size:12px;color:var(--lc-muted)}
++.workspace-script-shot-preview dd{margin:4px 0 0;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--lc-ink)}
++@container script-input (max-width:640px){
++ .workspace-script-comparison{grid-template-columns:minmax(0,1fr);flex:0 0 auto}
++ .workspace-script-shot-preview{padding:16px 0 0;border-left:0;border-top:1px solid var(--lc-line)}
++}

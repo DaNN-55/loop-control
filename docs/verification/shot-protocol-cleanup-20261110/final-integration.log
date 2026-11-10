@@ -1,0 +1,30 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control/.scratch/current-flow-cleanup-20261110/pending
+
+ ✓ src/local-app/shotVideoProtocol.integration.test.ts (3 tests) 7805ms
+   ✓ shot protocol current tasks share the same actual resource limit and immutable lease fence  2636ms
+   ✓ shot protocol mixed tasks share the same actual resource limit and immutable lease fence  2489ms
+   ✓ shot protocol legacy tasks share the same actual resource limit and immutable lease fence  2680ms
+ ✓ src/local-app/workspaceVisualCandidates.integration.test.ts (23 tests | 20 skipped) 8627ms
+   ✓ unknown paid visual submissions cannot be bypassed by retry or a new prompt  2625ms
+   ✓ a visual task with a saved Provider ID resumes polling without a second paid submission (current protocol)  2908ms
+   ✓ a visual task with a saved Provider ID resumes polling without a second paid submission (legacy protocol)  3092ms
+ ✓ src/local-app/currentShotSemantics.integration.test.ts (3 tests) 13827ms
+   ✓ current new script → neutral workspace → actual video queue and Worker  4998ms
+   ✓ current legacy-script script → neutral workspace → actual video queue and Worker  4682ms
+   ✓ current plain script → neutral workspace → actual video queue and Worker  4146ms
+(node:22311) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ✓ src/local-app/workspacePexels.integration.test.ts (6 tests) 42831ms
+   ✓ Owner queries Pexels, previews an explicit result, imports and explicitly adopts managed bytes after restart  16715ms
+   ✓ Pexels failures stay recoverable, validate external URLs and bytes, and never generate or adopt automatically  3420ms
+   ✓ queued Pexels requests retain exact credentials across rotation and old candidates remain selectable after a new query  2820ms
+   ✓ a short Pexels video gives recoverable duration feedback and only an explicit duration choice changes the native window  2275ms
+   ✓ Pexels results and unimported previews for one shot survive many searches on another shot  15420ms
+   ✓ thumbnail search metadata survives Owner reads and duplicate preview/import cannot change the project before adoption  2180ms
+
+ Test Files  4 passed (4)
+      Tests  15 passed | 20 skipped (35)
+   Start at  10:52:17
+   Duration  43.64s (transform 667ms, setup 61ms, collect 2.57s, tests 73.09s, environment 0ms, prepare 167ms)
+

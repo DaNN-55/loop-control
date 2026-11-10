@@ -1,0 +1,179 @@
+--- a/src/local-app/WorkspaceVisualAdoption.test.tsx
++++ b/src/local-app/WorkspaceVisualAdoption.test.tsx
+@@ -12,8 +12,8 @@
+  fireEvent.click(screen.getByRole('button',{name:'预览图片候选 01，已采用'}));expect(screen.getByAltText('当前画面')).toBeTruthy();expect(command).not.toHaveBeenCalled();
+ });
+ function adoptImage(){
+- fireEvent.click(screen.getByText('更多操作',{selector:'summary'}));
+- fireEvent.click(screen.getByRole('button',{name:'采用到当前镜头'}));
++
++ fireEvent.click(screen.getByRole('button',{name:/采用(?:图片|视频)到当前镜头/}));
+ }
+ const plan={adoptionId:'prepared',candidateId:'image',projectSha256:'original',edit:{},impact:{currentSeconds:2,sourceSeconds:3,appliedSeconds:3,deltaSeconds:1,startSeconds:0,endSeconds:3,fps:30,affectedFragments:[{itemId:'visual-2',label:'下一镜山谷',kind:'image',track:'visual',startSeconds:2,endSeconds:4,changedStartSeconds:2,changedEndSeconds:3}]}};
+ it('shows the prepared native duration and affected fragment before a second explicit adoption action',async()=>{
+@@ -41,15 +41,15 @@
+  const command=vi.fn(async()=>cleared),onChange=vi.fn();
+  const props={command,onChange,materials:[],workspace:current,currentVisualKind:kind,currentVisualPath:used.relativePath,currentVisualSha256:used.sha256};
+  const view=render(<WorkspaceVisualPreparation {...props}/>);
+- fireEvent.click(screen.getByText('更多操作',{selector:'summary'}));
+- fireEvent.click(screen.getByRole('button',{name:'取消采用'}));
++
++ fireEvent.click(screen.getByRole('button',{name:/撤回(?:图片|视频)采用/}));
+  expect(screen.getByRole('dialog',{name:`取消采用${label}`})).toBeTruthy();
+  expect(command).not.toHaveBeenCalled();
+  fireEvent.click(screen.getByRole('button',{name:'取消'}));
+  expect(screen.queryByRole('dialog')).toBeNull();
+  expect(command).not.toHaveBeenCalled();
+- fireEvent.click(screen.getByText('更多操作',{selector:'summary'}));
+- fireEvent.click(screen.getByRole('button',{name:'取消采用'}));
++
++ fireEvent.click(screen.getByRole('button',{name:/撤回(?:图片|视频)采用/}));
+  fireEvent.click(screen.getByRole('button',{name:'确认取消采用'}));
+  await waitFor(()=>expect(onChange).toHaveBeenCalledWith(cleared));
+  expect(command).toHaveBeenCalledExactlyOnceWith('clearWorkspaceVisualCandidate',expect.objectContaining({
+@@ -57,7 +57,7 @@
+  }));
+  view.rerender(<WorkspaceVisualPreparation {...props} workspace={cleared} currentVisualKind={undefined} currentVisualPath={undefined}/>);
+  expect(screen.getByRole('button',{name:`预览${label}候选 01`})).toBeTruthy();
+- fireEvent.click(screen.getByText('更多操作',{selector:'summary'}));
++
+  expect(screen.getByRole('button',{name:'移除候选'})).toBeTruthy();
+  expect(screen.queryByRole('dialog')).toBeNull();
+ });
+@@ -72,7 +72,7 @@
+  render(<WorkspaceVisualPreparation workspace={current} command={command} onChange={()=>{}} materials={[]} project={project} currentVisualKind="video" currentVisualPath="used.mp4"/>);
+  fireEvent.click(screen.getByRole('tab',{name:'视频'}));
+  fireEvent.click(screen.getByRole('button',{name:'预览视频候选 02'}));
+- fireEvent.click(screen.getByRole('button',{name:'采用到当前镜头'}));
++ fireEvent.click(screen.getByRole('button',{name:/采用(?:图片|视频)到当前镜头/}));
+  expect(await screen.findByRole('dialog',{name:'采用前核对'})).toBeTruthy();
+  expect(screen.getByText('采用后需要重新核对本镜头字幕时序。')).toBeTruthy();
+  expect(command).toHaveBeenCalledExactlyOnceWith('prepareWorkspaceVisualCandidate',expect.objectContaining({durationPolicy:'keep-target',sourceInSeconds:1,sourceOutSeconds:5,motionPolicy:'preserve-target'}));
+--- a/src/local-app/WorkspaceVisualCandidatesPanel.test.tsx
++++ b/src/local-app/WorkspaceVisualCandidatesPanel.test.tsx
+@@ -33,8 +33,8 @@
+ it('image thumbnails preview without adopting or changing the explicitly chosen video first frame',()=>{
+  const images=[1,2,3,4].map(i=>({...workspace.visualCandidates![0],id:'image-'+i,kind:'image' as const,usage:'still' as const,materialRevisionId:'material-'+i,relativePath:'image-'+i+'.png'}));
+  const w={...workspace,visualCandidates:images};const command=vi.fn();render(<WorkspaceVisualPreparation workspace={w} command={command} onChange={vi.fn()} materials={[]}/>);
+- expect(screen.queryByRole('button',{name:'采用到当前镜头'})).toBeNull();fireEvent.click(screen.getByRole('button',{name:'预览图片候选 02'}));expect(screen.getByAltText('图片候选 2').getAttribute('src')).toContain('image-2.png');expect(command).not.toHaveBeenCalled();
+- fireEvent.click(screen.getByText('更多操作',{selector:'summary'}));fireEvent.click(screen.getByRole('button',{name:'用作视频首帧'}));expect(screen.getByAltText('已选视频首帧').getAttribute('src')).toContain('image-2.png');
++ expect(screen.queryByRole('button',{name:/采用(?:图片|视频)到当前镜头/})).toBeNull();fireEvent.click(screen.getByRole('button',{name:'预览图片候选 02'}));expect(screen.getByAltText('图片候选 2').getAttribute('src')).toContain('image-2.png');expect(command).not.toHaveBeenCalled();
++ fireEvent.click(screen.getByRole('button',{name:'用作视频首帧'}));expect(screen.getByAltText('已选视频首帧').getAttribute('src')).toContain('image-2.png');
+  fireEvent.click(screen.getByRole('tab',{name:'图片'}));fireEvent.click(screen.getByRole('button',{name:'预览图片候选 03'}));fireEvent.click(screen.getByRole('tab',{name:'视频'}));expect(screen.getByAltText('已选视频首帧').getAttribute('src')).toContain('image-2.png');expect(command).not.toHaveBeenCalled();
+ });
+ it('explicit image generation freezes reference IDs, count, quality and dimensions without adopting',async()=>{
+@@ -55,7 +55,7 @@
+ });
+ it('keeps the adopted video when manually choosing an image as fallback',async()=>{
+  const image={...workspace.visualCandidates![0],kind:'image' as const,id:'still',materialRevisionId:'image',usage:'still' as const,relativePath:'image.png'};const w={...workspace,visualCandidates:[image]};vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:w})));const command=vi.fn(async()=>w);
+- render(<WorkspaceVisualPreparation workspace={w} command={command} onChange={vi.fn()} materials={[]} currentVisualKind="video" currentVisualPath="current.mp4"/>);fireEvent.click(screen.getByRole('tab',{name:'图片'}));fireEvent.click(screen.getByRole('button',{name:'预览图片候选 01'}));fireEvent.click(screen.getByText('更多操作',{selector:'summary'}));expect(screen.getByText('仅保留备用，当前视频不变')).toBeTruthy();fireEvent.click(screen.getByRole('button',{name:'保留为备用图片'}));const review=await screen.findByRole('group',{name:'采用前核对'});expect(command).not.toHaveBeenCalled();fireEvent.click(within(review).getByRole('button',{name:'确认采用'}));await waitFor(()=>expect(command).toHaveBeenCalledWith('retainWorkspaceImageCandidate',expect.objectContaining({candidateId:'still'})));expect(command).toHaveBeenCalledTimes(1);
++ render(<WorkspaceVisualPreparation workspace={w} command={command} onChange={vi.fn()} materials={[]} currentVisualKind="video" currentVisualPath="current.mp4"/>);fireEvent.click(screen.getByRole('tab',{name:'图片'}));fireEvent.click(screen.getByRole('button',{name:'预览图片候选 01'}));expect(screen.getByText('仅保留备用，当前视频不变')).toBeTruthy();fireEvent.click(screen.getByRole('button',{name:'保留备用图片'}));const review=await screen.findByRole('group',{name:'采用前核对'});expect(command).not.toHaveBeenCalled();fireEvent.click(within(review).getByRole('button',{name:'确认采用'}));await waitFor(()=>expect(command).toHaveBeenCalledWith('retainWorkspaceImageCandidate',expect.objectContaining({candidateId:'still'})));expect(command).toHaveBeenCalledTimes(1);
+ });
+ it.each(['图片','视频'] as const)('keeps %s candidate actions without a generation settings entry',label=>{
+  const kind=label==='图片'?'image':'video';
+@@ -63,8 +63,8 @@
+  render(<WorkspaceVisualPreparation workspace={{...workspace,visualCandidates:[candidate]}} command={vi.fn()} onChange={vi.fn()} materials={[]}/>);
+  if(kind==='video')fireEvent.click(screen.getByRole('tab',{name:'视频'}));
+  fireEvent.click(screen.getByRole('button',{name:`预览${label}候选 01`}));
+- fireEvent.click(screen.getByText('更多操作',{selector:'summary'}));
+- const adopt=screen.getByRole('button',{name:'采用到当前镜头'});
++
++ const adopt=screen.getByRole('button',{name:/采用(?:图片|视频)到当前镜头/});
+  expect(adopt.closest('details')).toBeNull();
+  expect(screen.getByRole('button',{name:'移除候选'})).toBeTruthy();
+  expect(screen.queryByText('查看生成设置')).toBeNull();
+@@ -115,26 +115,26 @@
+ it.each(['image','video'] as const)('requires explicit %s selection and adoption and preserves old candidates on append',async kind=>{
+  const candidates=[1,2].map(i=>({...workspace.visualCandidates![0],id:kind+i,kind,usage:kind==='image'?'still' as const:'video' as const,relativePath:`${kind}-${i}.${kind==='image'?'png':'mp4'}`,durationSeconds:5}));
+  const w={...workspace,clips:[workspace.clips[0]],visualCandidates:candidates};vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:w})));const command=vi.fn(async(name:string)=>name==='prepareWorkspaceVisualCandidate'?{...preparation,adoptionId:'explicit',candidateId:kind+'2',impact:{...preparation.impact,appliedSeconds:3,deltaSeconds:0}}:w);const props={workspace:w,command,onChange:vi.fn(),materials:[]};const view=render(<WorkspaceVisualPreparation {...props}/>);
+- if(kind==='video')fireEvent.click(screen.getByRole('tab',{name:'视频'}));const label=kind==='image'?'图片':'视频';expect(screen.queryByRole('button',{name:'采用到当前镜头'})).toBeNull();fireEvent.click(screen.getByRole('button',{name:`预览${label}候选 02`}));expect(command).not.toHaveBeenCalled();
++ if(kind==='video')fireEvent.click(screen.getByRole('tab',{name:'视频'}));const label=kind==='image'?'图片':'视频';expect(screen.queryByRole('button',{name:/采用(?:图片|视频)到当前镜头/})).toBeNull();fireEvent.click(screen.getByRole('button',{name:`预览${label}候选 02`}));expect(command).not.toHaveBeenCalled();
+  const strip=screen.getByRole('group',{name:`${label}候选缩略图`});
+  expect(within(strip).getByText('02')).toBeTruthy();
+  expect(screen.getByText('候选 02 / 02')).toBeTruthy();
+  if(kind==='video'){
+-  fireEvent.click(screen.getByText('更多操作',{selector:'summary'}));
+-  fireEvent.click(screen.getByText('裁剪与时长',{selector:'summary'}));
++
++  fireEvent.click(screen.getByRole('button',{name:'裁剪与时长'}));
+   fireEvent.change(screen.getByLabelText('视频使用起点（秒）'),{target:{value:'0.5'}});
+   fireEvent.change(screen.getByLabelText('视频使用终点（秒）'),{target:{value:'4'}});
+-  expect(command).not.toHaveBeenCalled();
++  expect(command).not.toHaveBeenCalled();fireEvent.click(screen.getByRole('button',{name:'完成'}));
+  }
+- if(kind==='image')fireEvent.click(screen.getByText('更多操作',{selector:'summary'}));
+- fireEvent.click(screen.getByRole('button',{name:'采用到当前镜头'}));const review=await screen.findByRole('group',{name:'采用前核对'});expect(review.closest('.workspace-result-footer')).toBeTruthy();expect(screen.getByText(/镜头时长保持 3.00 秒/)).toBeTruthy();expect(screen.queryByRole('dialog',{name:'采用前核对'})).toBeNull();fireEvent.click(within(review).getByRole('button',{name:'确认采用'}));await waitFor(()=>expect(command).toHaveBeenCalledWith('adoptWorkspaceVisualCandidate',{episodeId:'episode',workspaceId:'workspace',expectedRevision:3,candidateId:kind+'2',adoptionId:'explicit'}));expect(command).toHaveBeenCalledWith('prepareWorkspaceVisualCandidate',expect.objectContaining({candidateId:kind+'2',durationPolicy:'keep-target',motionPolicy:'preserve-target',...(kind==='video'?{sourceInSeconds:0.5,sourceOutSeconds:4}:{})}));
++
++ fireEvent.click(screen.getByRole('button',{name:/采用(?:图片|视频)到当前镜头/}));const review=await screen.findByRole('group',{name:'采用前核对'});expect(review.closest('.workspace-result-footer')).toBeTruthy();expect(screen.getByText(/镜头时长保持 3.00 秒/)).toBeTruthy();expect(screen.queryByRole('dialog',{name:'采用前核对'})).toBeNull();fireEvent.click(within(review).getByRole('button',{name:'确认采用'}));await waitFor(()=>expect(command).toHaveBeenCalledWith('adoptWorkspaceVisualCandidate',{episodeId:'episode',workspaceId:'workspace',expectedRevision:3,candidateId:kind+'2',adoptionId:'explicit'}));expect(command).toHaveBeenCalledWith('prepareWorkspaceVisualCandidate',expect.objectContaining({candidateId:kind+'2',durationPolicy:'keep-target',motionPolicy:'preserve-target',...(kind==='video'?{sourceInSeconds:0.5,sourceOutSeconds:4}:{})}));
+  view.rerender(<WorkspaceVisualPreparation {...props} currentVisualKind={kind} currentVisualPath={candidates[1].relativePath} workspace={{...w,visualCandidates:[...candidates,{...candidates[0],id:'added',relativePath:'added'}]}}/>);
+- expect(screen.getAllByRole('button',{name:new RegExp(`预览${label}候选`)})).toHaveLength(3);expect(screen.getByRole('button',{name:`预览${label}候选 02，已采用`}).getAttribute('aria-pressed')).toBe('true');if(kind==='image')fireEvent.click(screen.getByText('更多操作',{selector:'summary'}));expect((screen.getByRole('button',{name:'已采用'}) as HTMLButtonElement).disabled).toBe(true);
++ expect(screen.getAllByRole('button',{name:new RegExp(`预览${label}候选`)})).toHaveLength(3);expect(screen.getByRole('button',{name:`预览${label}候选 02，已采用`}).getAttribute('aria-pressed')).toBe('true');expect(screen.queryByRole('button',{name:'已采用'})).toBeNull();expect(screen.getByText('已采用')).toBeTruthy();expect(screen.getByRole('button',{name:/撤回(?:图片|视频)采用/})).toBeTruthy();
+  fireEvent.click(screen.getByRole('button',{name:`预览${label}候选 03`}));expect(command).toHaveBeenCalledTimes(2);
+ });
+ it('keeps stale and read-only candidates visible while disallowing adoption',()=>{
+- const w={...workspace,visualCandidates:[{...workspace.visualCandidates![0],kind:'image' as const,status:'stale' as const}]};const props={workspace:w,command:vi.fn(),onChange:vi.fn(),materials:[]};const view=render(<WorkspaceVisualPreparation {...props}/>);fireEvent.click(screen.getByRole('button',{name:'预览图片候选 01'}));fireEvent.click(screen.getByText('更多操作',{selector:'summary'}));expect((screen.getByRole('button',{name:'采用到当前镜头'}) as HTMLButtonElement).disabled).toBe(true);expect(screen.getByText(/输入已变化/)).toBeTruthy();
+- view.rerender(<WorkspaceVisualPreparation {...props} workspace={{...w,visualCandidates:[{...w.visualCandidates[0],status:'available'}]}} readOnly/>);expect(screen.queryByRole('button',{name:'采用到当前镜头'})).toBeNull();expect(screen.getByRole('region',{name:'画面制作记录'})).toBeTruthy();expect(props.command).not.toHaveBeenCalled();
++ const w={...workspace,visualCandidates:[{...workspace.visualCandidates![0],kind:'image' as const,status:'stale' as const}]};const props={workspace:w,command:vi.fn(),onChange:vi.fn(),materials:[]};const view=render(<WorkspaceVisualPreparation {...props}/>);fireEvent.click(screen.getByRole('button',{name:'预览图片候选 01'}));expect((screen.getByRole('button',{name:/采用(?:图片|视频)到当前镜头/}) as HTMLButtonElement).disabled).toBe(true);expect(screen.getByText(/输入已变化/)).toBeTruthy();
++ view.rerender(<WorkspaceVisualPreparation {...props} workspace={{...w,visualCandidates:[{...w.visualCandidates[0],status:'available'}]}} readOnly/>);expect(screen.queryByRole('button',{name:/采用(?:图片|视频)到当前镜头/})).toBeNull();expect(screen.getByRole('region',{name:'画面制作记录'})).toBeTruthy();expect(props.command).not.toHaveBeenCalled();
+ });
+ 
+ it.each(['image','video'] as const)('adds an existing episode %s to results without adopting or submitting generation',async kind=>{
+@@ -227,20 +227,20 @@
+  expect(JSON.stringify(payload)).not.toMatch(/"first"|"image-ref"|"video-ref"/);
+ });
+ 
+-it('returns focus to the image action menu after cancelling inline adoption',async()=>{
++it('returns focus to the direct image action after cancelling inline adoption',async()=>{
+  const image={...workspace.visualCandidates![0],kind:'image' as const};
+  const w={...workspace,visualCandidates:[image]};
+  vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:w})));
+  const command=vi.fn(async()=>({...preparation,impact:{...preparation.impact,currentSeconds:3,sourceSeconds:3,appliedSeconds:3,deltaSeconds:0,endSeconds:3}}));
+  render(<WorkspaceVisualPreparation workspace={w} command={command} onChange={vi.fn()} materials={[]}/>);
+- const menu=screen.getByText('更多操作',{selector:'summary'});
+- fireEvent.click(menu);fireEvent.click(screen.getByRole('button',{name:'采用到当前镜头'}));
++ const menu=screen.getByRole('button',{name:/采用(?:图片|视频)到当前镜头/});
++ fireEvent.click(menu);
+  const review=await screen.findByRole('group',{name:'采用前核对'});
+  fireEvent.click(within(review).getByRole('button',{name:'取消'}));
+- await waitFor(()=>expect(document.activeElement).toBe(screen.getByText('更多操作',{selector:'summary'})));
++ await waitFor(()=>expect(document.activeElement).toBe(screen.getByRole('button',{name:/采用(?:图片|视频)到当前镜头/})));
+  expect(command).toHaveBeenCalledTimes(1);
+  expect(command).not.toHaveBeenCalledWith('adoptWorkspaceVisualCandidate',expect.anything());
+- expect(screen.getByText('更多操作',{selector:'summary'}).closest('details')?.open).toBe(false);
++ expect(screen.queryByText('更多操作')).toBeNull();
+ });
+ 
+ it('navigates the vertical candidate rail with up/down and retains left/right, Home/End without adopting',()=>{
+--- a/src/local-app/WorkspaceImageOptions.test.tsx
++++ b/src/local-app/WorkspaceImageOptions.test.tsx
+@@ -24,7 +24,7 @@
+ });
+ it('keeps direct image adoption primary and first-frame selection explicit',()=>{
+  const candidate={id:'candidate',kind:'image',status:'available',targetItemId:'item',relativePath:'photo.png',sha256:'sha',materialRevisionId:'ref',durationSeconds:3,currentDurationSeconds:3};
+- const command=vi.fn();render(<WorkspaceVisualPreparation workspace={{...w,visualCandidates:[candidate as any]}} command={command} onChange={()=>{}} materials={[{id:'ref',material_type:'image',source_path:'产品.png',storage_path:'photo.png'}]}/>);fireEvent.click(screen.getByRole('button',{name:'预览图片候选 01'}));fireEvent.click(screen.getByText('更多操作',{selector:'summary'}));const adopt=screen.getByRole('button',{name:'采用到当前镜头'}),first=screen.getByRole('button',{name:'用作视频首帧'});expect(first.closest('details')).toBeNull();expect(adopt.closest('details')).toBeNull();expect(screen.getByText('用作镜头画面，保持时长不变').id).toBe(adopt.getAttribute('aria-describedby'));expect(screen.queryByText('使用设置')).toBeNull();fireEvent.click(first);expect(command).not.toHaveBeenCalled();expect(screen.getByAltText('已选视频首帧').getAttribute('src')).toContain('photo.png');expect(screen.getByText('已选定视频首帧，尚未提交生成。')).toBeTruthy();
++ const command=vi.fn();render(<WorkspaceVisualPreparation workspace={{...w,visualCandidates:[candidate as any]}} command={command} onChange={()=>{}} materials={[{id:'ref',material_type:'image',source_path:'产品.png',storage_path:'photo.png'}]}/>);fireEvent.click(screen.getByRole('button',{name:'预览图片候选 01'}));const adopt=screen.getByRole('button',{name:/采用(?:图片|视频)到当前镜头/}),first=screen.getByRole('button',{name:'用作视频首帧'});expect(first.closest('details')).toBeNull();expect(adopt.closest('details')).toBeNull();expect(screen.getByText('用作镜头画面，保持时长不变').id).toBe(adopt.getAttribute('aria-describedby'));expect(screen.queryByText('使用设置')).toBeNull();fireEvent.click(first);expect(command).not.toHaveBeenCalled();expect(screen.getByAltText('已选视频首帧').getAttribute('src')).toContain('photo.png');expect(screen.getByText('已选定视频首帧，尚未提交生成。')).toBeTruthy();
+ });
+ 
+ it.each(['gpt-image-2.5-flare','gpt-image-2.6-sunburst','gpt-image-2.6-flare'])('uses enhanced quality for %s and preserves incompatible drafts when switching back',async model=>{
+--- a/src/local-app/WorkspaceVisualFeedback.test.tsx
++++ b/src/local-app/WorkspaceVisualFeedback.test.tsx
+@@ -42,7 +42,7 @@
+  const command=vi.fn(async(name:string)=>name==='prepareWorkspaceVisualCandidate'?plan:new Promise<ProductionWorkspace>((resolve,no)=>{finish=resolve;reject=no;}));
+  function App(){const [workspace,setWorkspace]=useState(base);return <WorkspaceVisualPreparation workspace={workspace} command={command} onChange={value=>{current=value;setWorkspace(value);}} materials={[]} currentVisualKind="image" currentVisualPath={workspace.visualCandidates?.find(c=>c.status==='adopted')?.relativePath}/>;}
+  render(<App/>);
+- fireEvent.click(screen.getByText('更多操作',{selector:'summary'}));fireEvent.click(screen.getByRole('button',{name:'采用到当前镜头'}));
++ fireEvent.click(screen.getByRole('button',{name:/采用(?:图片|视频)到当前镜头/}));
+  fireEvent.click(await screen.findByRole('button',{name:'确认采用'}));
+  await waitFor(()=>expect(command).toHaveBeenCalledTimes(2));expect(document.querySelector('[data-adoption-feedback]')).toBeNull();
+  await act(async()=>{if(failed)reject(Error('采用失败'));else finish({...base,revision:2,visualCandidates:[{...base.visualCandidates![0],status:'adopted'}]});});
+--- a/src/local-app/WorkspaceSecondBatch.test.tsx
++++ b/src/local-app/WorkspaceSecondBatch.test.tsx
+@@ -36,7 +36,7 @@
+ it('places image adoption outside more actions and keeps first-frame selection secondary',()=>{
+  const c={id:'image',kind:'image',usage:'still',targetItemId:'visual',shotId:'shot-1',materialRevisionId:'m',relativePath:'image.png',sha256:'a'.repeat(64),status:'available',durationSeconds:5,currentDurationSeconds:5};
+  render(<WorkspaceVisualPreparation workspace={{...workspace,visualCandidates:[c]} as unknown as ProductionWorkspace} materials={[]} command={vi.fn()} onChange={()=>{}}/>);
+- const adopt=screen.getByRole('button',{name:'采用到当前镜头'});expect(adopt.closest('details')).toBeNull();expect(screen.getByRole('button',{name:'用作视频首帧'}).closest('details')).toBeNull();
++ const adopt=screen.getByRole('button',{name:/采用(?:图片|视频)到当前镜头/});expect(adopt.closest('details')).toBeNull();expect(screen.getByRole('button',{name:'用作视频首帧'}).closest('details')).toBeNull();
+ });
+ it('offers local MP3 immediately without configuring search and prepares only a candidate after upload',async()=>{
+  const command=vi.fn(async(name:string)=>name==='importMaterial'?{id:'music'}:workspace);

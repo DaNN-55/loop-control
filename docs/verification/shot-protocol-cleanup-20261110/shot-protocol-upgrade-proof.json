@@ -1,0 +1,13 @@
+{
+  "oldTaskType": "generate_b_roll",
+  "oldFrozenSnapshotUnchanged": true,
+  "newTaskType": "generate_shot_video",
+  "newCapability": "shot_video_generation",
+  "outputTypes": [
+    "shot_video"
+  ],
+  "legacyProviderPosts": 1,
+  "totalProviderPosts": 2,
+  "migrationSha256": "ff7b1f6db805b2c0bdc665669559a2560db85808708b75515b6c09e7b9cb7f8a",
+  "paidCalls": 0
+}

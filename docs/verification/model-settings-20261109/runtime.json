@@ -1,0 +1,14 @@
+{
+  "checkedAt": "2026-11-09T08:45:56.478Z",
+  "pid": 88158,
+  "port": 5174,
+  "httpStatus": 200,
+  "runtimeRelease": {
+    "id": "234cb4743676b6e1c64c3e01870871b3ce17a1dfd5dc487254a10481e11384ff",
+    "root": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/234cb4743676b6e1c64c3e01870871b3ce17a1dfd5dc487254a10481e11384ff"
+  },
+  "activeTasks": 0,
+  "scriptVersions": 3,
+  "oldFailureStatus": "failed",
+  "userMinimaxStatus": "completed"
+}

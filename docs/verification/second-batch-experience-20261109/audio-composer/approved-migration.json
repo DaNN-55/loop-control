@@ -1,0 +1,30 @@
+{
+  "at": "2026-11-09T14:45:30.451Z",
+  "files": [
+    "src/local-app/WorkspaceAudioPanel.tsx",
+    "src/local-app/workspace-audio.css",
+    "src/workspaceAudio.ts",
+    "src/local-app/WorkspaceAudioPanel.test.tsx",
+    "src/workspaceAudio.test.ts",
+    "src/local-app/WorkspaceSecondBatch.test.tsx",
+    "src/local-app/WorkspaceAudioSourceOptions.tsx",
+    "src/local-app/WorkspaceAudioInstanceSettings.tsx"
+  ],
+  "hashes": {
+    "src/local-app/WorkspaceAudioPanel.tsx": "8d42085f1bf3ae442cc9d5c143bf77843bad4c829ff1cd7ed8d6e31a14e1c191",
+    "src/local-app/workspace-audio.css": "afbdb103f3f74bc395789d26a9a423916f637c1e615caca50198d2e7bf81d830",
+    "src/workspaceAudio.ts": "e459e39ea25340018d715bd28eedc8151793c7bf7e9295f50335050e6217f095",
+    "src/local-app/WorkspaceAudioPanel.test.tsx": "adbe162d61d93ff8a356b96c00ce8b3733e123f8a05b7672c5f83bd842a4c1cc",
+    "src/workspaceAudio.test.ts": "de19437a2fc2c5db88578630463860f619c21e4787be164fab48394fb00eba08",
+    "src/local-app/WorkspaceSecondBatch.test.tsx": "be7f3c2214ca234a6e5e0a7311d4e549af3018020a1eb0ddc2d2529b57a8a347",
+    "src/local-app/WorkspaceAudioSourceOptions.tsx": "25d491569a84aa1f6686d138ed4d47edd96c9cc7a9eb0bd7b2316c2d0d169c2a",
+    "src/local-app/WorkspaceAudioInstanceSettings.tsx": "9c0f8b852596988d5f77f4cb33a55341769bd65667e0b2e3bbd1b8f79b4d016d"
+  },
+  "runtimeRelease": "2b3b75f8fb71599e7790dc0238a4d6911a3d44ca932c295c6120a3347d0a2335",
+  "backendChangedSources": [
+    "src/workspaceAudio.ts"
+  ],
+  "unchangedBusinessTables": 9,
+  "activeTasks": 0,
+  "paidCalls": 0
+}

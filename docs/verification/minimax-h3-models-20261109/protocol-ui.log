@@ -1,0 +1,12 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/worker/minimaxVariants.test.ts src/worker/modelSettingsBoundary.test.ts src/local-app/workspaceCallEstimate.test.ts src/local-app/WorkspaceConfigBinding.test.tsx --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+··········································································
+
+ Test Files  4 passed (4)
+      Tests  74 passed (74)
+   Start at  18:49:04
+   Duration  10.58s (transform 318ms, setup 48ms, collect 1.50s, tests 9.05s, environment 351ms, prepare 186ms)
+

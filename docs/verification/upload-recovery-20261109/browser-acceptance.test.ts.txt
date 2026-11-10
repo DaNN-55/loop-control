@@ -1,0 +1,31 @@
+// @vitest-environment node
+import {it,expect} from 'vitest';
+import {execFileSync} from 'node:child_process';
+import {mkdir,writeFile,readFile,rm} from 'node:fs/promises';
+import {join} from 'node:path';
+import {setTimeout as pause} from 'node:timers/promises';
+import {productionWorkspaceFixture} from './productionWorkspace.fixture';
+it.skipIf(process.env.LOOP_UPLOAD_RECOVERY_BROWSER!=='1')('imports shelf files through the real Owner HTTP boundary',async()=>{
+ const attempts:string[]=[];let failOnce=true;const f=await productionWorkspaceFixture();let vite:import('vite').ViteDevServer|undefined;
+ const evidence=join(process.cwd(),'.scratch/upload-recovery-20261109'),entry=join(evidence,'entry.tsx');
+ try{
+  const made=await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script});expect(made.status).toBe(200);
+  const before=Number((await f.c.query('SELECT count(*) FROM public.production_material_revisions WHERE episode_id=$1',[f.episode])).rows[0].count);
+  await mkdir(evidence,{recursive:true});await writeFile(join(evidence,'notes.txt'),'unsupported test file');await writeFile(join(evidence,'broken.png'),'invalid image bytes');execFileSync('ffmpeg',['-nostdin','-v','error','-f','lavfi','-i','color=c=green:s=80x120','-frames:v','1',join(evidence,'retry.png')]);
+  await writeFile(entry,`import React from 'react';import{createRoot}from'react-dom/client';import{ProductionWorkspacePanel}from'/src/local-app/ProductionWorkspacePanel';import{localCommand}from'/src/local-app/client';import '/src/styles.css';import '/src/ui/impeccable/foundation.css';import '/src/ui/impeccable/production.css';import '/src/ui/impeccable/scroll-layout.css';document.documentElement.dataset.interface='impeccable';createRoot(document.getElementById('root')!).render(<main className="dan-ui product-ui" style={{height:'100vh',padding:24}}><ProductionWorkspacePanel episodeId=${JSON.stringify(f.episode)} title="上传恢复验收" scriptRevisionId=${JSON.stringify(f.script)} boardId=${JSON.stringify(f.board)} materials={[]} command={(name,data)=>localCommand(name,data,undefined,'episode-commands')} onLegacy={()=>{}}/></main>);`);
+  const {createServer}=await import('vite'),{default:react}=await import('@vitejs/plugin-react');
+  const proxy={target:f.origin,changeOrigin:true,configure(p:any){p.on('proxyReq',(req:any)=>{req.setHeader('origin',f.origin);req.setHeader('cookie','loop_owner_session='+f.token);});}};
+  vite=await createServer({configFile:false,envFile:false,root:process.cwd(),cacheDir:join(f.root,'vite-cache'),define:{'import.meta.env.VITE_LOOP_BACKEND':JSON.stringify('local')},plugins:[react(),{name:'shelf-acceptance',configureServer(s){s.middlewares.use(async(req,res,next)=>{
+   if(req.method!=='POST'||req.url!=='/api/local/episode-commands'){next();return;}
+   let body='';for await(const chunk of req)body+=chunk;const value=JSON.parse(body);
+   if(value.command==='importMaterial')attempts.push(value.data.sourcePath);
+   res.setHeader('Content-Type','application/json');
+   if(value.command==='importMaterial'&&value.data.sourcePath==='retry.png'&&failOnce){failOnce=false;res.statusCode=503;res.end(JSON.stringify({error:'测试网络中断，请重试。'}));return;}
+   const upstream=await fetch(f.origin+req.url,{method:'POST',headers:{Origin:f.origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+f.token,'X-CSRF-Token':String(req.headers['x-csrf-token']??'')},body});res.statusCode=upstream.status;res.end(await upstream.text());
+  });s.middlewares.use('/__recovery',async(_req,res)=>{res.setHeader('Content-Type','text/html');res.end(await s.transformIndexHtml('/__recovery','<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>上传恢复验收</title><div id="root"></div><script type="module" src="/.scratch/upload-recovery-20261109/entry.tsx"></script>'));});}}],server:{host:'127.0.0.1',port:0,proxy:{'/api':proxy,'/_local-artifact':proxy}}});await vite.listen();
+  const address=vite.httpServer!.address() as {port:number};await writeFile(join(evidence,'browser.json'),JSON.stringify({url:`http://127.0.0.1:${address.port}/__recovery`,video:join(f.assetRoot,f.videoPath)}));
+  let done=false;for(let i=0;i<480;i++){try{done=JSON.parse(await readFile(join(evidence,'browser-done.json'),'utf8')).passed===true;if(done)break;}catch{}await pause(1000);}expect(done).toBe(true);
+  const after=Number((await f.c.query('SELECT count(*) FROM public.production_material_revisions WHERE episode_id=$1',[f.episode])).rows[0].count);expect(after-before).toBe(2);
+  expect(attempts).toEqual(['still-striped.png','retry.png','retry.png']);await writeFile(join(evidence,'result.json'),JSON.stringify({passed:true,imported:after-before,attempts,isolatedDatabase:f.database}));
+ }finally{await vite?.close();await f.close();await rm(entry,{force:true});}
+},540000);

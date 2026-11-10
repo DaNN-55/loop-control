@@ -1,0 +1,396 @@
+{
+  "removedContainers": [],
+  "removedDirectories": [
+    {
+      "path": "/Users/dan/Programs/loop-control/.scratch/account-deletion-review-20261110",
+      "allocatedBytesBefore": 46710784
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.scratch/cleanup-recovery-review-20261110",
+      "allocatedBytesBefore": 49991680
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.scratch/deletion-scope-review-20261110",
+      "allocatedBytesBefore": 36642816
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.scratch/history-boundary-review-20261110",
+      "allocatedBytesBefore": 53477376
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.scratch/retired-history-cleanup-20261110",
+      "allocatedBytesBefore": 63066112
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.scratch/surface-polish-migration-20261110",
+      "allocatedBytesBefore": 16465920
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.scratch/first-batch-20261109",
+      "allocatedBytesBefore": 4096
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.scratch/minimax-h3-models-20261109",
+      "allocatedBytesBefore": 4096
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/docs/verification/history-boundary-review-20261110",
+      "allocatedBytesBefore": 610304
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/local/OpenChatCut-v0.2.14-backup-20261030",
+      "allocatedBytesBefore": 92958720
+    },
+    {
+      "path": "/Users/dan/.codex/visualizations/2026/11/10/01a1c3f5-82e9-7f41-88a0-4d6b42ff615b/loop-control-polish-demo",
+      "allocatedBytesBefore": 5304320
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/9b01872c89b030514b01cf0c9898749748012c168c392cbb4b2edf939dbbe5fd",
+      "allocatedBytesBefore": 3244032
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/4c912e777efaf745605674649a187a88b9a1202aca1cbde245d218676dab69db",
+      "allocatedBytesBefore": 3244032
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/a5a19e322a415ac44429c4bf96f88372a7425f566e13de9b73a90dcd7a1c1ce7",
+      "allocatedBytesBefore": 3289088
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/e40d58155b23a62772d1cc9fd35732e17a957b98d42a3cf135b53c141ce9e04c",
+      "allocatedBytesBefore": 3108864
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/c782714cf2f7882e4f01808d9a6d7cd0a15d7e502364d72cb55dd2892b1d883c",
+      "allocatedBytesBefore": 3338240
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/c09d7895e7c008e3069a2da27c18f48a14e3993ac99990fa62793a82d0ba2644",
+      "allocatedBytesBefore": 3239936
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/2b293cef289c229b5d24a5137f624adafb3fe2783f17428122169de64ba8d240",
+      "allocatedBytesBefore": 3301376
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/8fff5e88ec3c7c9d5ce438f56c274325c88ca4c3522eaf710e50a785f4d51240",
+      "allocatedBytesBefore": 3244032
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/5fdf17dccb0573d10cdac0a0e36fc8890f8fbd1b1e304599f1c96f108863de84",
+      "allocatedBytesBefore": 2895872
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/72314022dae988459918125394cdfd4516582520014cfcd215f9cb226626d53d",
+      "allocatedBytesBefore": 3055616
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/1f8df96a3393d6553b5e231b5b74af5874d400683bf81a1199d2d883339b5a69",
+      "allocatedBytesBefore": 3276800
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/a71e0153e38e3018ba3af9d6144691d59fda0b6566b79a8bbb5e15f55777935a",
+      "allocatedBytesBefore": 3244032
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/543e0e9899720d5c50a79bde2da2a0a5fe9f9e89dc88d41404f786a5946c74e5",
+      "allocatedBytesBefore": 3063808
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/556e3cd8fb07a73dad55f4b3ba7abd91d8930a5133bc1ae2b5cd4fab5a351ca1",
+      "allocatedBytesBefore": 3022848
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/1262440d0fb56646da1fbb8b71b43c3cc8950297027fe388d8ef72c9dada69ea",
+      "allocatedBytesBefore": 3276800
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/268707c96dd78dca1e611e73c9b0c6567a54c0d31d288bb7a2049e96da07a6ac",
+      "allocatedBytesBefore": 3280896
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/5c4b85491dcf41099ac8d6ae24d5cba7d7dfc53c5ecbceff760200af14696152",
+      "allocatedBytesBefore": 3276800
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/d18111cd6894d92aca611ff75317c111ba133277bf8fd69832621d2bba51339f",
+      "allocatedBytesBefore": 3244032
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/2815fbff2170aaac875d0dd0ce4bd159aa17b4db3db5ff47cd86d24a3073ce70",
+      "allocatedBytesBefore": 3276800
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/015f4627492825836758a681e0556d795bd2f7d32a73c4a5cde74e33842420c5",
+      "allocatedBytesBefore": 3014656
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/afa55ffd50ddd7c6da0c421d2e3e23b9071e3d6dd4a5b9952daad6948136a3ec",
+      "allocatedBytesBefore": 3055616
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/42a909750a81c043b7dc2e5e4a650ccfc44158873380345bf06129e176c47789",
+      "allocatedBytesBefore": 3002368
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/f571b167a926161ce603018ac5536ec9c62a7036b0a228d3a66f8e237a21d283",
+      "allocatedBytesBefore": 3117056
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/f63e0de65b85b76dfd51fdaba2ffac7d4e53806119e76d63de15b44184f70dff",
+      "allocatedBytesBefore": 3321856
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/6186b336b9b43c64116f3ffb879faf1dce1c07f3582687373bd43fdfab152cd3",
+      "allocatedBytesBefore": 3055616
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/bde83ff2b522b24920d3a36f50a083577ee931c2fe8bc68dff960ef2f241de12",
+      "allocatedBytesBefore": 3149824
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/45b0538c33345c6de5978f3abbcb4a53ff6fc955bb523fd62ee7bdc0dc589325",
+      "allocatedBytesBefore": 2908160
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/eae24115e75a4a3674c5c002164dc1734eac6cbcc9a0b2eabaf4c6e0afb21db0",
+      "allocatedBytesBefore": 3022848
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/54dd441ee080413e1d76a4924279ebb931a619b3760ef8a16b41e2e80883a67e",
+      "allocatedBytesBefore": 3280896
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/df0745bf83fabc7fd802dcf3371f099a22ff81fa2a224b1cbf2442ae0e2763f0",
+      "allocatedBytesBefore": 3284992
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/713cbe713c2d1581ec7d35c7f667d68c1b35402041f61f685e5edcd893acd5d7",
+      "allocatedBytesBefore": 3276800
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/763612165899b765c58c6d90635110f33cc5d60b1ef231cb11c24805d2c1fdcd",
+      "allocatedBytesBefore": 3244032
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/59d74250f36a14434ff76975c23e1eecaa7d11108c87518b1a9e007fd7d5fc2e",
+      "allocatedBytesBefore": 3055616
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/6e38791bd3ecf43a96d631cebd37ed19d87160c30c07a098f107bee1e63c472a",
+      "allocatedBytesBefore": 3321856
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/9420c5946f809b62e3f7f009f497558b223ef8b51207458a06c62c755057eb70",
+      "allocatedBytesBefore": 3260416
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/878832afaf27ccc7504c3cd85f353c250e55ab04a3c76f2c531a4fbd96117afd",
+      "allocatedBytesBefore": 3055616
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/5f8aeb65a12e84f41d4cc67ea18ef2bc0c62ed67aea8a5ad8ff43b0462b5e990",
+      "allocatedBytesBefore": 2899968
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/2197b311316bd2a120b1a83108c5b8398d670111671c92a69e0672457835a850",
+      "allocatedBytesBefore": 3248128
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/4b3b769585c695f1e2f93402f9ec97ee7a8fdd4f367c5fd960668ae5292769ed",
+      "allocatedBytesBefore": 3284992
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/60810aff75ad4e15c92a8a0351304836fa929a7d276a5dbde236582d11283d0c",
+      "allocatedBytesBefore": 3321856
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/8197a22d75a7cc55831270ac30a2509a2b78c7f47fb2c0661d35341685dfd6af",
+      "allocatedBytesBefore": 3321856
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/183afaff1c380f97fee76bc664a0936d0826550f47b013aa52a5b0366870eba8",
+      "allocatedBytesBefore": 3317760
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/f643af121ca61cce9eedd77d136c563a8157f78decab0459fe9c24921743d42c",
+      "allocatedBytesBefore": 3321856
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/5275ac17c6b86a5e8f6eaf48eebfb890ab154deabfe8b201e8ba9bdadfe3de2f",
+      "allocatedBytesBefore": 2899968
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/a6de1199bbd52b5c586869c97234c97df305985e15ca8913e6709db9f13c55ee",
+      "allocatedBytesBefore": 3055616
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/ecab7dc0864e0d67daa788179d2f91a36568e62dd354974d99634c7f8dc0b13c",
+      "allocatedBytesBefore": 3276800
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/c436eafd588830dd232be59242371cf8919c8035bea6b9ad6402d5124f2d5b2c",
+      "allocatedBytesBefore": 3284992
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/72280b51d5139b8acba9d2c92febda09c696fcc8a2fc6be9106c721c42988fa6",
+      "allocatedBytesBefore": 3317760
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/be0d610595ffb18462bb9137120a5b74cbd6dc936c6afa03876ad199ec17a678",
+      "allocatedBytesBefore": 3248128
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/2b3b75f8fb71599e7790dc0238a4d6911a3d44ca932c295c6120a3347d0a2335",
+      "allocatedBytesBefore": 3321856
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/a50020e01596f6e8a9e9e9cf448d4b322e97bce95e46e3778f6304a7155b9b26",
+      "allocatedBytesBefore": 3031040
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/2ed4ca9a91dc77aac6551140a86d4aefd899920db6f480849bc6d34a180fb3c2",
+      "allocatedBytesBefore": 3149824
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/7ebaec98c1790a64b2f821b912cf2162fe69f0b19984e55826003627af681280",
+      "allocatedBytesBefore": 3284992
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/2d19bd0ce5ee0e56ffe458c5bc57852654102a31cf9da62776d104193409df2d",
+      "allocatedBytesBefore": 3321856
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/2c1f8f537fe54d69c06ed72b1124b0fd5a6ff3c0e273ec7b276e295c53c95847",
+      "allocatedBytesBefore": 3031040
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/97f3c0888527dfc3d4b4913c73b28c4b052440f1ae176184c427d7cc66ae723c",
+      "allocatedBytesBefore": 3276800
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/94ad1a33eef74ecdc310f36bed51671ba47a99acb8584e4b614b01bf9a94e2ee",
+      "allocatedBytesBefore": 2994176
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/4f2bbfb039285187d20950c9bb315640941a140889aa6c3e0252821691318838",
+      "allocatedBytesBefore": 3301376
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/1466effafd1c8175aed1b554750461d22e7ea65bdcaa258dfb8251693209619e",
+      "allocatedBytesBefore": 3244032
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/d3e1875d0df38fc5e009a5e3df18f20d23f54482e9043ffbedb8e59b23985e55",
+      "allocatedBytesBefore": 3276800
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/37d32e15698ad77ac69b436c7dbb57c3fc7ecfe5ef7d2536eec6c8857d0d47ad",
+      "allocatedBytesBefore": 3244032
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/9e40425635ba4e65d11c9c77924c528cd371c5600380952b89a0930644fae668",
+      "allocatedBytesBefore": 3244032
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/d780bd14056830714c9a8040616c157b2bff9f99b50942f2cc7d7164e3766d0e",
+      "allocatedBytesBefore": 2895872
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/60bf73cc7f1110d1dc0563358dea94dc38475d13947f7d5d8e0b249a16d56654",
+      "allocatedBytesBefore": 3153920
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/46adc911a8b73767aa198ba290f844c6a8b3714a192e261ef361bd32047357fd",
+      "allocatedBytesBefore": 3149824
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/3cc0e7e4ad253919f4fc943160e110b7735cdc4dfa9cea50b8f137cd5593a4bf",
+      "allocatedBytesBefore": 2899968
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/605713fa692f300f409f269d13c8d2789a64828c21d86f152564786ac7ca10e7",
+      "allocatedBytesBefore": 3203072
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/b405445d2a9cc28ea6494f418e0ce346c0cd6d446ffcb5ef7dbcd37484349439",
+      "allocatedBytesBefore": 3248128
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/c8638176121bbc80b703ed8b0e9be12586036d47bcffdfb161cab30bc1a9bc72",
+      "allocatedBytesBefore": 3284992
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/5a80b0f35caa714f63ac393546a23ecdae350bf1b4f7a5371881957ff39b41da",
+      "allocatedBytesBefore": 3252224
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/069cb537234d562cdd6795cbfd27b6a5619bd0939c9d344c74e3559d290bdbfe",
+      "allocatedBytesBefore": 3276800
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/e4f05cbfd6c6786bc070ba4ae106c67f38427c379a2ad70c0902c5bb25047439",
+      "allocatedBytesBefore": 3317760
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/11651d9347870b55a02992b36cf634b8d9d0b706b91f44c7880d294112d1d092",
+      "allocatedBytesBefore": 3289088
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/a6fb87a7a1c7ea207c54253e50605468b3cf7c470133d28c68a9da5c9b3f521c",
+      "allocatedBytesBefore": 3239936
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/a9b0143e87813e10e2f92faf4d6880c09a0bab8c4621b26af5d7d21e36e63d95",
+      "allocatedBytesBefore": 3022848
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/4796deedf863b415cfed528a0c782a4176295701db0c606774bb0f4f9ee37220",
+      "allocatedBytesBefore": 3244032
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/8ed1b7aae007b920a0fd560c7f51c8871352b9f8dfb87b243632a0248d5cb47f",
+      "allocatedBytesBefore": 3252224
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/234cb4743676b6e1c64c3e01870871b3ce17a1dfd5dc487254a10481e11384ff",
+      "allocatedBytesBefore": 3317760
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/09e19012dc6d39ea1257e5cb2118afd226f0abbd585d9ed0a21f90553f58306e",
+      "allocatedBytesBefore": 2908160
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/6948fd7a8a3a277cb9a1a6521be32096186a03ceb2a3fc46311c36578760f1bf",
+      "allocatedBytesBefore": 3063808
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/a1a73216ab5f16a0a8596c8daf6e952dcb2f85856be4ab816c125c76a0571d8a",
+      "allocatedBytesBefore": 3244032
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/ecf89c820994966c329e1a855f0967fe546ec1779feff543712ac6fc939a3567",
+      "allocatedBytesBefore": 3321856
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/3b8c8b1d4f945ad3ee5f65fb9ecbcf2a4cf172abc98e94331183a9b6528dd6c7",
+      "allocatedBytesBefore": 3276800
+    }
+  ],
+  "oldReleaseCount": 83,
+  "protectedReleaseIds": [
+    "9b88a52ec70dd1788fee24218fdf9f14f61e7edff2814235e11a964cf82f87fb",
+    "cffec33f8811c77b44e405442802df6bab19ff1a58a7bf9ab06bab6ee4938e05"
+  ],
+  "allocatedBytesBefore": 629972992,
+  "dailyPid": 2229,
+  "rebootInterruptedEarlierCleanup": true,
+  "verifiedAbsentContainers": [
+    "loop-upload-recovery-e2e-f8d824ec792e",
+    "loop-upload-recovery-e2e-c43c1e77738f",
+    "loop-upload-recovery-e2e-e761dbe7f453",
+    "loop-upload-recovery-e2e-419f8effbd62",
+    "loop-upload-recovery-e2e-71fb86e15378"
+  ]
+}

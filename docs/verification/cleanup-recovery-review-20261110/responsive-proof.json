@@ -1,0 +1,126 @@
+{
+  "views": [
+    {
+      "viewport": [
+        1280,
+        953
+      ],
+      "rect": {
+        "x": 280,
+        "y": 263.5,
+        "width": 720,
+        "height": 426,
+        "top": 263.5,
+        "right": 1000,
+        "bottom": 689.5,
+        "left": 280
+      },
+      "client": 718,
+      "scroll": 718,
+      "buttons": [
+        {
+          "x": 855,
+          "y": 425.5,
+          "width": 124,
+          "height": 36,
+          "top": 425.5,
+          "right": 979,
+          "bottom": 461.5,
+          "left": 855
+        },
+        {
+          "x": 879,
+          "y": 566.5,
+          "width": 100,
+          "height": 36,
+          "top": 566.5,
+          "right": 979,
+          "bottom": 602.5,
+          "left": 879
+        }
+      ]
+    },
+    {
+      "viewport": [
+        640,
+        953
+      ],
+      "rect": {
+        "x": 16,
+        "y": 263.5,
+        "width": 608,
+        "height": 426,
+        "top": 263.5,
+        "right": 624,
+        "bottom": 689.5,
+        "left": 16
+      },
+      "client": 606,
+      "scroll": 606,
+      "buttons": [
+        {
+          "x": 479,
+          "y": 425.5,
+          "width": 124,
+          "height": 36,
+          "top": 425.5,
+          "right": 603,
+          "bottom": 461.5,
+          "left": 479
+        },
+        {
+          "x": 503,
+          "y": 566.5,
+          "width": 100,
+          "height": 36,
+          "top": 566.5,
+          "right": 603,
+          "bottom": 602.5,
+          "left": 503
+        }
+      ]
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "rect": {
+        "x": 16,
+        "y": 161,
+        "width": 358,
+        "height": 522,
+        "top": 161,
+        "right": 374,
+        "bottom": 683,
+        "left": 16
+      },
+      "client": 356,
+      "scroll": 356,
+      "buttons": [
+        {
+          "x": 37,
+          "y": 381,
+          "width": 124,
+          "height": 36,
+          "top": 381,
+          "right": 161,
+          "bottom": 417,
+          "left": 37
+        },
+        {
+          "x": 37,
+          "y": 570,
+          "width": 100,
+          "height": 36,
+          "top": 570,
+          "right": 137,
+          "bottom": 606,
+          "left": 37
+        }
+      ]
+    }
+  ],
+  "keyboardDetails": true,
+  "darkCssFlagOnly": true
+}

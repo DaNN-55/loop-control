@@ -1,0 +1,1 @@
+- 在线 runner 首次被仓库默认排除 docs/verification，已改为显式单文件配置；第二次在读凭据前发现运行 Keychain 自动锁定，未发出任何供应商请求。改用已有启动流程的 keychainState('unlock')，不读取或更换密钥。

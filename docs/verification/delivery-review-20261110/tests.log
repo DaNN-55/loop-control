@@ -1,0 +1,118 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/WorkspaceExportPanel.test.tsx src/local-app/WorkspaceDeliveryPanel.test.tsx
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control/.scratch/delivery-review-20261110/pending
+
+stderr | src/local-app/WorkspaceDeliveryPanel.test.tsx > registers the selected real cover and binds delivery metadata to the confirmed export
+In HTML, <button> cannot be a descendant of <button>.
+This will cause a hydration error.
+
+  <WorkspaceDeliveryPanel workspace={{id:"workspace", ...}} pending={false} command={function spy} ...>
+    <section className="workspace-..." aria-label="交付包">
+      <div>
+      <div className="workspace-...">
+        <div className="workspace-...">
+          <span>
+          <Button className="workspace-..." noTextPadding={true} size="sm" color="secondary" aria-label="替换封面" ...>
+            <Button data-loading={undefined} data-color="secondary" data-icon-only={undefined} aria-label="替换封面" ...>
+              <bound $7230ffa83bc0c2cf$var$DOMElement data-loading={undefined} data-color="secondary" ...>
+>               <button
+>                 data-loading={undefined}
+>                 data-color="secondary"
+>                 data-icon-only={undefined}
+>                 className="group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-no..."
+>                 style={undefined}
+>                 data-rac=""
+>                 type="button"
+>                 disabled={false}
+>                 form={undefined}
+>                 formAction={undefined}
+>                 formEncType={undefined}
+>                 formMethod={undefined}
+>                 formNoValidate={undefined}
+>                 formTarget={undefined}
+>                 name={undefined}
+>                 value={undefined}
+>                 onFocus={function}
+>                 onBlur={function}
+>                 onKeyDown={function onKeyDown}
+>                 onKeyUp={undefined}
+>                 tabIndex={0}
+>                 onClick={function onClick}
+>                 onMouseDown={function}
+>                 onMouseEnter={function}
+>                 onMouseLeave={function}
+>                 onMouseUp={function}
+>                 onTouchStart={function}
+>                 onTouchMove={function}
+>                 onTouchEnd={function}
+>                 onTouchCancel={function}
+>                 onDragStart={function}
+>                 data-react-aria-pressable={true}
+>                 aria-label="替换封面"
+>                 aria-describedby="_r_0_-hint"
+>                 aria-haspopup={undefined}
+>                 aria-expanded={undefined}
+>                 aria-controls={undefined}
+>                 aria-pressed={undefined}
+>                 aria-current={undefined}
+>                 aria-disabled={undefined}
+>                 id="react-aria-_r_2_"
+>                 aria-labelledby={undefined}
+>                 slot={undefined}
+>                 data-disabled={undefined}
+>                 data-pressed={undefined}
+>                 data-hovered={undefined}
+>                 data-focused={undefined}
+>                 data-pending={undefined}
+>                 data-focus-visible={undefined}
+>                 ref={function}
+>               >
+                  <span data-text={true} className="transition...">
+                    <ImagePreview src="blob:cover..." alt="交付封面预览">
+>                     <button
+>                       type="button"
+>                       className="media-image-trigger"
+>                       aria-label="放大交付封面预览"
+>                       disabled={false}
+>                       onClick={function onClick}
+>                     >
+          ...
+        ...
+      ...
+
+<button> cannot contain a nested <button>.
+See this log for the ancestor stack trace.
+
+stderr | src/local-app/WorkspaceExportPanel.test.tsx > puts checks first and file information below the preview without exposing raw paths or hashes
+An update to ForwardRef(VolumeSliderRoot) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/local-app/WorkspaceExportPanel.test.tsx > requires a new export after content changes even when an old confirmation remains in history
+An update to ForwardRef(VolumeSliderRoot) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/local-app/WorkspaceExportPanel.test.tsx (6 tests) 145ms
+ ✓ src/local-app/WorkspaceDeliveryPanel.test.tsx (14 tests) 424ms
+
+ Test Files  2 passed (2)
+      Tests  20 passed (20)
+   Start at  08:06:10
+   Duration  1.51s (transform 135ms, setup 15ms, collect 1.32s, tests 569ms, environment 599ms, prepare 80ms)
+

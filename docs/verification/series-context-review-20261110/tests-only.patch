@@ -1,0 +1,51 @@
+diff --git a/Users/dan/Programs/loop-control/.scratch/series-context-review-20261110/before/src/platform/SeriesConfigurationForm.test.tsx b/Users/dan/Programs/loop-control/.scratch/series-context-review-20261110/pending/src/platform/SeriesConfigurationForm.test.tsx
+index caa7a51c..79c4e811 100644
+--- a/Users/dan/Programs/loop-control/.scratch/series-context-review-20261110/before/src/platform/SeriesConfigurationForm.test.tsx
++++ b/Users/dan/Programs/loop-control/.scratch/series-context-review-20261110/pending/src/platform/SeriesConfigurationForm.test.tsx
+@@ -66,6 +66,15 @@ it('新建系列立即可填写并通过原创建接口提交',async()=>{
+  vi.spyOn(window,'confirm').mockReturnValue(true);const user=userEvent.setup(),onSave=vi.fn().mockResolvedValue(undefined);
+  render(<SeriesConfigurationForm {...props} isEditing={false} initialName="" initialRules={{}} onSave={onSave}/>);
+  expect(screen.getByLabelText('系列名称')).toHaveProperty('disabled',false);
+- await user.type(screen.getByLabelText('系列名称'),'新系列');await user.click(screen.getByRole('button',{name:'创建系列'}));await user.click(screen.getByRole('button',{name:'确认创建系列'}));
+- expect(onSave).toHaveBeenCalledExactlyOnceWith('新系列',{});
++ await user.type(screen.getByLabelText('系列名称'),'新系列');expect(document.querySelector('.series-creation-rules')?.hasAttribute('open')).toBe(false);await user.click(screen.getByRole('button',{name:'创建系列'}));
++ expect(onSave).toHaveBeenCalledExactlyOnceWith('新系列',{});expect(screen.queryByRole('dialog')).toBeNull();
++});
++
++it('新建失败保留名称与规则，重试只提交一次且不复制账号默认值',async()=>{
++ const user=userEvent.setup();let finish!:()=>void;const onSave=vi.fn().mockRejectedValueOnce(Error('目录暂不可写')).mockImplementation(()=>new Promise<void>(resolve=>{finish=resolve;}));
++ render(<SeriesConfigurationForm {...props} isEditing={false} initialName="" initialRules={{}} accountPolicy={{positioning:'账号默认定位',restrictions:'保留账号限制'}} onSave={onSave}/>);
++ await user.type(screen.getByLabelText('系列名称'),'晚间观察');await user.click(screen.getByText('创作规则（选填）'));await user.type(screen.getByLabelText('视觉风格'),'胶片');
++ await user.click(screen.getByRole('button',{name:'创建系列'}));expect(await screen.findByRole('alert')).toHaveProperty('textContent','目录暂不可写');expect(screen.getByLabelText('系列名称')).toHaveProperty('value','晚间观察');expect(screen.getByLabelText('视觉风格')).toHaveProperty('value','胶片');
++ await user.dblClick(screen.getByRole('button',{name:'创建系列'}));expect(onSave).toHaveBeenCalledTimes(2);expect(onSave).toHaveBeenLastCalledWith('晚间观察',{visual_style:'胶片'});expect(screen.getByRole('button',{name:'保存中…'})).toHaveProperty('disabled',true);
++ finish();await waitFor(()=>expect(screen.getByRole('button',{name:'创建系列'})).toBeTruthy());
+ });
+diff --git a/Users/dan/Programs/loop-control/.scratch/series-context-review-20261110/before/src/episodes/EpisodeForm.test.tsx b/Users/dan/Programs/loop-control/.scratch/series-context-review-20261110/pending/src/episodes/EpisodeForm.test.tsx
+index 8c2db2b1..ed24240b 100644
+--- a/Users/dan/Programs/loop-control/.scratch/series-context-review-20261110/before/src/episodes/EpisodeForm.test.tsx
++++ b/Users/dan/Programs/loop-control/.scratch/series-context-review-20261110/pending/src/episodes/EpisodeForm.test.tsx
+@@ -38,14 +38,22 @@ it('inherits the current account and offers only its current series versions for
+  const other={...accounts[0],id:'other',name:'其他账号'};
+  const series=[{id:'series',account_id:'other',name:'其他系列'},{id:'daily-series',account_id:'fixture',name:'日常系列'}] as Parameters<typeof EpisodeForm>[0]['series'];
+  const versions=[{id:'old',account_id:'fixture',series_id:'daily-series',version:1},{id:'current',account_id:'fixture',series_id:'daily-series',version:3},{id:'other-version',account_id:'other',series_id:'series',version:2}] as Parameters<typeof EpisodeForm>[0]['seriesVersions'];
+- render(<EpisodeForm accounts={[other,...accounts]} initialAccountId="fixture" isPending={false} onClose={()=>{}} onSubmit={submit} series={series} seriesVersions={versions}/>);
++ render(<EpisodeForm accounts={[other,...accounts]} initialAccountId="fixture" initialSeriesVersionId="current" isPending={false} onClose={()=>{}} onSubmit={submit} series={series} seriesVersions={versions}/>);
+  expect((screen.getByRole('combobox',{name:'账号'}) as HTMLSelectElement).value).toBe('fixture');
+  expect(screen.getByRole('option',{name:'日常系列 · 当前 v3'})).toBeTruthy();
+  expect(screen.queryByRole('option',{name:/v1/})).toBeNull();expect(screen.queryByRole('option',{name:/其他系列/})).toBeNull();
+- await user.selectOptions(screen.getByRole('combobox',{name:'系列版本'}),'current');
++ expect((screen.getByRole('combobox',{name:'系列版本'}) as HTMLSelectElement).value).toBe('current');
+  await user.selectOptions(screen.getByRole('combobox',{name:'账号'}),'other');
+  expect((screen.getByRole('combobox',{name:'系列版本'}) as HTMLSelectElement).value).toBe('');
+  await user.selectOptions(screen.getByRole('combobox',{name:'系列版本'}),'other-version');
+  await user.click(screen.getByRole('button',{name:'创建生产单'}));
+  expect(submit).toHaveBeenCalledWith({accountId:'other',seriesVersionId:'other-version',title:'',isTest:false});
+ });
++
++it('does not preselect an obsolete or foreign series version',()=>{
++ const series=[{id:'s',account_id:'fixture',name:'本账号系列'}] as Parameters<typeof EpisodeForm>[0]['series'];
++ const versions=[{id:'old',account_id:'fixture',series_id:'s',version:1},{id:'current',account_id:'fixture',series_id:'s',version:2},{id:'foreign',account_id:'other',series_id:'s',version:3}] as Parameters<typeof EpisodeForm>[0]['seriesVersions'];
++ const props={accounts,initialAccountId:'fixture',isPending:false,onClose:()=>{},onSubmit:async()=>null,series,seriesVersions:versions};
++ const view=render(<EpisodeForm {...props} initialSeriesVersionId="old"/>);expect((screen.getByRole('combobox',{name:'系列版本'}) as HTMLSelectElement).value).toBe('');view.unmount();
++ render(<EpisodeForm {...props} initialSeriesVersionId="foreign"/>);expect((screen.getByRole('combobox',{name:'系列版本'}) as HTMLSelectElement).value).toBe('');
++});

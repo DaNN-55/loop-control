@@ -1,0 +1,17 @@
+{
+  "pid": 70075,
+  "release": "c782714cf2f7882e4f01808d9a6d7cd0a15d7e502364d72cb55dd2892b1d883c",
+  "http": 200,
+  "ownerStatusApi": 200,
+  "result": {
+    "episodeCount": 2,
+    "archivedEpisodeCount": 0,
+    "creationCount": 0,
+    "deletionCount": 0,
+    "cleanupKey": null
+  },
+  "activeRuntimeIntegrityPassed": true,
+  "businessTablesUnchanged": 5,
+  "databaseVersion": "157-deletion-cleanup-diagnostics.sql",
+  "temporaryProbeSessionRemoved": true
+}

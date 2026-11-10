@@ -1,0 +1,15 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/LocalCatalogApp.search.test.tsx src/worker/mediaToolsContract.test.ts --maxWorkers=1 --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+·············stderr | src/local-app/LocalCatalogApp.search.test.tsx > opens view=history with search closed even when its keyword is saved
+<Focusable> child must be focusable. Please ensure the tabIndex prop is passed through.
+
+·····
+
+ Test Files  2 passed (2)
+      Tests  18 passed (18)
+   Start at  16:41:54
+   Duration  6.74s (transform 716ms, setup 8ms, collect 1.97s, tests 4.34s, environment 224ms, prepare 43ms)
+

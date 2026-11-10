@@ -1,0 +1,12 @@
+{
+  "runtime": "4b3b769585c6",
+  "prepared": true,
+  "service": true,
+  "http": 200,
+  "catalogMs": 57,
+  "activeCatalogRows": 3,
+  "queue": {
+    "ready": 0,
+    "running": 0
+  }
+}

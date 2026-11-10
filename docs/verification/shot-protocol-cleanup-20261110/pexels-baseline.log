@@ -1,0 +1,11 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control/.scratch/current-flow-cleanup-20261110/baseline
+
+ ✓ src/local-app/workspacePexels.integration.test.ts (6 tests | 5 skipped) 21536ms
+   ✓ Owner queries Pexels, previews an explicit result, imports and explicitly adopts managed bytes after restart  21535ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 5 skipped (6)
+   Start at  10:43:07
+   Duration  22.76s (transform 702ms, setup 11ms, collect 1.02s, tests 21.54s, environment 0ms, prepare 45ms)
+

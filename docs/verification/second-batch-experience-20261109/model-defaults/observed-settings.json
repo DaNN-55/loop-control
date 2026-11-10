@@ -1,0 +1,42 @@
+{
+  "firstSelections": [
+    {
+      "model": "wan2.6-i2v",
+      "settings": {
+        "resolution": "720P",
+        "audio": true,
+        "promptExtend": false,
+        "shotType": "single",
+        "watermark": false,
+        "negativePrompt": ""
+      }
+    },
+    {
+      "model": "wan2.2-i2v-plus",
+      "settings": {
+        "resolution": "1080P",
+        "audio": false,
+        "promptExtend": false,
+        "shotType": "single",
+        "watermark": false,
+        "negativePrompt": ""
+      }
+    }
+  ],
+  "customPreservedAfterSwitch": {
+    "from": "wan2.6-i2v",
+    "to": "wan2.6-i2v-flash",
+    "negativePrompt": "保留我的测试词",
+    "seed": 91,
+    "resolution": "720P",
+    "audio": true
+  },
+  "explicitReset": {
+    "model": "wan2.2-i2v-plus",
+    "resolution": "1080P",
+    "audio": false,
+    "negativePrompt": "",
+    "seed": null
+  },
+  "paidCalls": 0
+}

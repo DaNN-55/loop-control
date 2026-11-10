@@ -1,0 +1,428 @@
+{
+  "modelCount": 22,
+  "pathCount": 33,
+  "rows": [
+    {
+      "provider": "volcengine",
+      "model": "doubao-seedance-2-0-260128",
+      "mode": "first-frame",
+      "passed": true,
+      "checks": [
+        "Owner HTTP confirmation",
+        "frozen prompt and binding IDs",
+        "actual Worker fetch",
+        "native prompt labels",
+        "distinct image/video content and order"
+      ]
+    },
+    {
+      "provider": "volcengine",
+      "model": "doubao-seedance-2-0-260128",
+      "mode": "keyframes",
+      "passed": true,
+      "checks": [
+        "Owner HTTP confirmation",
+        "frozen prompt and binding IDs",
+        "actual Worker fetch",
+        "native prompt labels",
+        "distinct image/video content and order"
+      ]
+    },
+    {
+      "provider": "volcengine",
+      "model": "doubao-seedance-2-0-260128",
+      "mode": "references",
+      "passed": true,
+      "checks": [
+        "Owner HTTP confirmation",
+        "frozen prompt and binding IDs",
+        "actual Worker fetch",
+        "native prompt labels",
+        "distinct image/video content and order"
+      ]
+    },
+    {
+      "provider": "volcengine",
+      "model": "doubao-seedance-2-5-260628",
+      "mode": "first-frame",
+      "passed": true,
+      "checks": [
+        "Owner HTTP confirmation",
+        "frozen prompt and binding IDs",
+        "actual Worker fetch",
+        "native prompt labels",
+        "distinct image/video content and order"
+      ]
+    },
+    {
+      "provider": "volcengine",
+      "model": "doubao-seedance-2-5-260628",
+      "mode": "keyframes",
+      "passed": true,
+      "checks": [
+        "Owner HTTP confirmation",
+        "frozen prompt and binding IDs",
+        "actual Worker fetch",
+        "native prompt labels",
+        "distinct image/video content and order"
+      ]
+    },
+    {
+      "provider": "volcengine",
+      "model": "doubao-seedance-2-5-260628",
+      "mode": "references",
+      "passed": true,
+      "checks": [
+        "Owner HTTP confirmation",
+        "frozen prompt and binding IDs",
+        "actual Worker fetch",
+        "native prompt labels",
+        "distinct image/video content and order"
+      ]
+    },
+    {
+      "provider": "minimax",
+      "model": "MiniMax-H3",
+      "mode": "first-frame",
+      "passed": true,
+      "checks": [
+        "Owner HTTP confirmation",
+        "frozen prompt and binding IDs",
+        "actual Worker fetch",
+        "native prompt labels",
+        "distinct image/video content and order"
+      ]
+    },
+    {
+      "provider": "minimax",
+      "model": "MiniMax-H3",
+      "mode": "keyframes",
+      "passed": true,
+      "checks": [
+        "Owner HTTP confirmation",
+        "frozen prompt and binding IDs",
+        "actual Worker fetch",
+        "native prompt labels",
+        "distinct image/video content and order"
+      ]
+    },
+    {
+      "provider": "minimax",
+      "model": "MiniMax-H3",
+      "mode": "references",
+      "passed": true,
+      "checks": [
+        "Owner HTTP confirmation",
+        "frozen prompt and binding IDs",
+        "actual Worker fetch",
+        "native prompt labels",
+        "distinct image/video content and order"
+      ]
+    },
+    {
+      "provider": "minimax",
+      "model": "MiniMax-H3-Highspeed",
+      "mode": "first-frame",
+      "passed": true,
+      "checks": [
+        "Owner HTTP confirmation",
+        "frozen prompt and binding IDs",
+        "actual Worker fetch",
+        "native prompt labels",
+        "distinct image/video content and order"
+      ]
+    },
+    {
+      "provider": "minimax",
+      "model": "MiniMax-H3-Highspeed",
+      "mode": "keyframes",
+      "passed": true,
+      "checks": [
+        "Owner HTTP confirmation",
+        "frozen prompt and binding IDs",
+        "actual Worker fetch",
+        "native prompt labels",
+        "distinct image/video content and order"
+      ]
+    },
+    {
+      "provider": "minimax",
+      "model": "MiniMax-H3-Highspeed",
+      "mode": "references",
+      "passed": true,
+      "checks": [
+        "Owner HTTP confirmation",
+        "frozen prompt and binding IDs",
+        "actual Worker fetch",
+        "native prompt labels",
+        "distinct image/video content and order"
+      ]
+    },
+    {
+      "provider": "minimax",
+      "model": "MiniMax-H3-Lite",
+      "mode": "first-frame",
+      "passed": true,
+      "checks": [
+        "Owner HTTP confirmation",
+        "frozen prompt and binding IDs",
+        "actual Worker fetch",
+        "native prompt labels",
+        "distinct image/video content and order"
+      ]
+    },
+    {
+      "provider": "minimax",
+      "model": "MiniMax-H3-Lite",
+      "mode": "keyframes",
+      "passed": true,
+      "checks": [
+        "Owner HTTP confirmation",
+        "frozen prompt and binding IDs",
+        "actual Worker fetch",
+        "native prompt labels",
+        "distinct image/video content and order"
+      ]
+    },
+    {
+      "provider": "minimax",
+      "model": "MiniMax-H3-Lite",
+      "mode": "references",
+      "passed": true,
+      "checks": [
+        "Owner HTTP confirmation",
+        "frozen prompt and binding IDs",
+        "actual Worker fetch",
+        "native prompt labels",
+        "distinct image/video content and order"
+      ]
+    },
+    {
+      "provider": "kling",
+      "model": "kling-v3",
+      "mode": "first-frame",
+      "passed": true,
+      "checks": [
+        "Owner HTTP confirmation",
+        "frozen prompt and binding IDs",
+        "actual Worker fetch",
+        "native prompt labels",
+        "distinct image/video content and order"
+      ]
+    },
+    {
+      "provider": "kling",
+      "model": "kling-v3",
+      "mode": "keyframes",
+      "passed": true,
+      "checks": [
+        "Owner HTTP confirmation",
+        "frozen prompt and binding IDs",
+        "actual Worker fetch",
+        "native prompt labels",
+        "distinct image/video content and order"
+      ]
+    },
+    {
+      "provider": "kling",
+      "model": "kling-v3-omni",
+      "mode": "references",
+      "passed": true,
+      "checks": [
+        "Owner HTTP confirmation",
+        "frozen prompt and binding IDs",
+        "actual Worker fetch",
+        "native prompt labels",
+        "distinct image/video content and order"
+      ]
+    },
+    {
+      "provider": "bailian",
+      "model": "wan2.6-i2v-flash",
+      "mode": "first-frame",
+      "passed": true,
+      "checks": [
+        "Owner HTTP confirmation",
+        "frozen prompt and binding IDs",
+        "actual Worker fetch",
+        "native prompt labels",
+        "distinct image/video content and order"
+      ]
+    },
+    {
+      "provider": "bailian",
+      "model": "wan2.6-i2v",
+      "mode": "first-frame",
+      "passed": true,
+      "checks": [
+        "Owner HTTP confirmation",
+        "frozen prompt and binding IDs",
+        "actual Worker fetch",
+        "native prompt labels",
+        "distinct image/video content and order"
+      ]
+    },
+    {
+      "provider": "bailian",
+      "model": "wan2.6-r2v",
+      "mode": "references",
+      "passed": true,
+      "checks": [
+        "Owner HTTP confirmation",
+        "frozen prompt and binding IDs",
+        "actual Worker fetch",
+        "native prompt labels",
+        "distinct image/video content and order"
+      ]
+    },
+    {
+      "provider": "bailian",
+      "model": "wan2.5-i2v-preview",
+      "mode": "first-frame",
+      "passed": true,
+      "checks": [
+        "Owner HTTP confirmation",
+        "frozen prompt and binding IDs",
+        "actual Worker fetch",
+        "native prompt labels",
+        "distinct image/video content and order"
+      ]
+    },
+    {
+      "provider": "bailian",
+      "model": "wan2.2-i2v-flash",
+      "mode": "first-frame",
+      "passed": true,
+      "checks": [
+        "Owner HTTP confirmation",
+        "frozen prompt and binding IDs",
+        "actual Worker fetch",
+        "native prompt labels",
+        "distinct image/video content and order"
+      ]
+    },
+    {
+      "provider": "bailian",
+      "model": "wan2.2-i2v-plus",
+      "mode": "first-frame",
+      "passed": true,
+      "checks": [
+        "Owner HTTP confirmation",
+        "frozen prompt and binding IDs",
+        "actual Worker fetch",
+        "native prompt labels",
+        "distinct image/video content and order"
+      ]
+    },
+    {
+      "provider": "bailian",
+      "model": "wanx2.1-i2v-plus",
+      "mode": "first-frame",
+      "passed": true,
+      "checks": [
+        "Owner HTTP confirmation",
+        "frozen prompt and binding IDs",
+        "actual Worker fetch",
+        "native prompt labels",
+        "distinct image/video content and order"
+      ]
+    },
+    {
+      "provider": "bailian",
+      "model": "wanx2.1-i2v-turbo",
+      "mode": "first-frame",
+      "passed": true,
+      "checks": [
+        "Owner HTTP confirmation",
+        "frozen prompt and binding IDs",
+        "actual Worker fetch",
+        "native prompt labels",
+        "distinct image/video content and order"
+      ]
+    },
+    {
+      "provider": "openai",
+      "model": "gpt-image-2",
+      "mode": "image-edit",
+      "passed": true,
+      "checks": [
+        "Owner HTTP confirmation",
+        "actual image Worker fetch",
+        "reordered distinct image bytes",
+        "resolved prompt"
+      ]
+    },
+    {
+      "provider": "openai",
+      "model": "gpt-image-2.5-sunburst",
+      "mode": "image-edit",
+      "passed": true,
+      "checks": [
+        "Owner HTTP confirmation",
+        "actual image Worker fetch",
+        "reordered distinct image bytes",
+        "resolved prompt"
+      ]
+    },
+    {
+      "provider": "openai",
+      "model": "gpt-image-2.5-flare",
+      "mode": "image-edit",
+      "passed": true,
+      "checks": [
+        "Owner HTTP confirmation",
+        "actual image Worker fetch",
+        "reordered distinct image bytes",
+        "resolved prompt"
+      ]
+    },
+    {
+      "provider": "openai",
+      "model": "gpt-image-2.5-sunburst-2026-09-08",
+      "mode": "image-edit",
+      "passed": true,
+      "checks": [
+        "Owner HTTP confirmation",
+        "actual image Worker fetch",
+        "reordered distinct image bytes",
+        "resolved prompt"
+      ]
+    },
+    {
+      "provider": "openai",
+      "model": "gpt-image-2.5-flare-2026-09-08",
+      "mode": "image-edit",
+      "passed": true,
+      "checks": [
+        "Owner HTTP confirmation",
+        "actual image Worker fetch",
+        "reordered distinct image bytes",
+        "resolved prompt"
+      ]
+    },
+    {
+      "provider": "openai",
+      "model": "gpt-image-2.6-sunburst",
+      "mode": "image-edit",
+      "passed": true,
+      "checks": [
+        "Owner HTTP confirmation",
+        "actual image Worker fetch",
+        "reordered distinct image bytes",
+        "resolved prompt"
+      ]
+    },
+    {
+      "provider": "openai",
+      "model": "gpt-image-2.6-flare",
+      "mode": "image-edit",
+      "passed": true,
+      "checks": [
+        "Owner HTTP confirmation",
+        "actual image Worker fetch",
+        "reordered distinct image bytes",
+        "resolved prompt"
+      ]
+    }
+  ]
+}

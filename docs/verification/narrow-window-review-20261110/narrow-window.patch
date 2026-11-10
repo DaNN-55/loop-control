@@ -1,0 +1,26 @@
+--- a/src/local-app/production-compact.css
++++ b/src/local-app/production-compact.css
+@@ -425,3 +425,23 @@
+ .workspace-script-analysis>span{width:16px;height:16px;border:2px solid var(--lc-line);border-top-color:var(--lc-accent);border-radius:50%;animation:workspace-script-spin .8s linear infinite}
+ @keyframes workspace-script-spin{to{transform:rotate(360deg)}}
+ @media(prefers-reduced-motion:reduce){.workspace-script-analysis>span{animation:none}}
++
++/* Keep narrow-window navigation and shot actions reachable. */
++@media(max-width:900px){
++ .workspace-shot-table :is(th,td):nth-child(n+3){padding-inline:6px;white-space:nowrap}
++ .workspace-shot-table :is(.is-ready,.is-pending){white-space:normal;word-break:keep-all}
++}
++@media(max-width:600px){
++ [data-compact-workflow]>.production-workspace-title .production-workspace-heading{grid-column:1;min-width:0;overflow-wrap:anywhere}
++ [data-compact-workflow]>.production-workspace-title .production-workspace-title-actions{grid-column:2;grid-row:1}
++ [data-compact-workflow]>.production-workspace-title>nav{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;overflow:visible}
++ [data-compact-workflow]>.production-workspace-title>nav>button{min-width:0;margin:0;padding:4px 8px;justify-content:flex-start}
++ .workspace-shot-table th:first-child,.workspace-shot-table tbody td:first-child,.workspace-shot-table .workspace-shot-table-actions-cell,.workspace-shot-table th:nth-child(6){position:sticky;z-index:1;background:var(--lc-surface)}
++ .workspace-shot-table th:first-child,.workspace-shot-table tbody td:first-child{left:0}
++ .workspace-shot-table th:nth-child(6),.workspace-shot-table .workspace-shot-table-actions-cell{right:0}
++ .workspace-shot-table th:first-child,.workspace-shot-table th:nth-child(6){z-index:3;background:var(--lc-surface-2)}
++ .workspace-shot-table tr[aria-selected=true] :is(td:first-child,.workspace-shot-table-actions-cell){background:var(--lc-accent-soft)}
++ .workspace-shot-table tbody tr:hover :is(td:first-child,.workspace-shot-table-actions-cell){background:var(--lc-surface-2)}
++ .workspace-shot-table-scroll{container-type:inline-size}
++ .workspace-shot-table .workspace-shot-add,.workspace-shot-insert-form{position:sticky!important;left:0;box-sizing:border-box;width:100cqw;max-width:100%}
++}

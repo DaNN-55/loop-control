@@ -1,0 +1,32 @@
+{
+  "at": "2026-11-10T03:50:05.458Z",
+  "pid": 99148,
+  "release": "72280b51d5139b8acba9d2c92febda09c696fcc8a2fc6be9106c721c42988fa6",
+  "releaseAndSourceIntegrity": true,
+  "http": 200,
+  "dataUnchanged": true,
+  "data": {
+    "tasks": {
+      "count": 18,
+      "sha": "f14562e300d142dd5fb10c8405db0db4"
+    },
+    "episodes": {
+      "count": 6,
+      "sha": "26615d89853aaece9128dd04fab71daa"
+    },
+    "artifacts": {
+      "count": 33,
+      "sha": "622983c6ae6e054b9789687005113668"
+    },
+    "audit_events": {
+      "count": 113,
+      "sha": "7f78f051c3e827a3cdfcd5d2fc22d695"
+    },
+    "production_material_revisions": {
+      "count": 42,
+      "sha": "c92d59d58ef55b4c6a396a2f38a7227d"
+    }
+  },
+  "previousMigrationHashesUnchanged": true,
+  "liveUnhandledErrors": 0
+}

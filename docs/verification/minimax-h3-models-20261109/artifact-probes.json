@@ -1,0 +1,62 @@
+[
+  {
+    "model": "MiniMax-H3-Highspeed",
+    "file": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-minimax-h3-models-20261109-vganztre/artifacts/MiniMax-H3-Highspeed.mp4",
+    "requestedSeconds": 4,
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 480,
+          "height": 640,
+          "avg_frame_rate": "24/1",
+          "duration": "3.750000",
+          "nb_frames": "90"
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "avg_frame_rate": "0/0",
+          "duration": "3.750000",
+          "nb_frames": "119"
+        }
+      ],
+      "format": {
+        "duration": "3.750000"
+      }
+    }
+  },
+  {
+    "model": "MiniMax-H3-Lite",
+    "file": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-minimax-h3-models-20261109-vganztre/artifacts/MiniMax-H3-Lite.mp4",
+    "requestedSeconds": 4,
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 480,
+          "height": 864,
+          "avg_frame_rate": "24/1",
+          "duration": "4.458333",
+          "nb_frames": "107"
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "avg_frame_rate": "0/0",
+          "duration": "4.450000",
+          "nb_frames": "141"
+        }
+      ],
+      "format": {
+        "duration": "4.458333"
+      }
+    }
+  }
+]

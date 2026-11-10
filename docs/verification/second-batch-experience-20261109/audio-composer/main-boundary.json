@@ -1,0 +1,13 @@
+{
+  "mainFilesUnchanged": true,
+  "newComponentAbsentFromMain": true,
+  "migrate": false,
+  "previewUrl": "http://127.0.0.1:5186/__audio_composer",
+  "files": [
+    "src/local-app/WorkspaceAudioPanel.tsx",
+    "src/local-app/workspace-audio.css",
+    "src/workspaceAudio.ts",
+    "src/local-app/WorkspaceAudioInstanceSettings.tsx"
+  ],
+  "paidCalls": 0
+}

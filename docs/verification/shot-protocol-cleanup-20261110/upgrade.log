@@ -1,0 +1,11 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control/.scratch/current-flow-cleanup-20261110/pending
+
+ ✓ src/local-app/shotVideoProtocolUpgrade.integration.test.ts (1 test) 2662ms
+   ✓ real 155 → 156 upgrade preserves an already submitted legacy task and creates canonical subsequent tasks  2661ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  10:51:12
+   Duration  3.62s (transform 555ms, setup 8ms, collect 789ms, tests 2.66s, environment 0ms, prepare 46ms)
+

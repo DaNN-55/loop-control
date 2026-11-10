@@ -1,0 +1,567 @@
+--- a/db/local/157-deletion-cleanup-diagnostics.sql
++++ b/db/local/157-deletion-cleanup-diagnostics.sql
+@@ -0,0 +1,22 @@
++-- Keep the latest cleanup error on the existing owned receipt, without changing
++-- its immutable file scope or advancing the deletion state.
++ALTER TABLE local_identity.episode_deletion_intents ADD COLUMN last_error text;
++
++CREATE FUNCTION local_identity.record_owned_deletion_cleanup_error(p_key uuid,p_message text) RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path='' AS $$
++DECLARE r jsonb;
++BEGIN
++ IF session_user<>'loop_app' OR p_message IS NULL THEN RAISE EXCEPTION 'Owned cleanup diagnostic required';END IF;
++ SELECT result INTO r FROM local_identity.command_receipts WHERE owner_id=local_identity.owner_id() AND idempotency_key=p_key AND result->>'cleanupKey'=p_key::text AND result ? 'cleanupRoot' FOR UPDATE;
++ IF r IS NULL THEN
++  UPDATE local_identity.episode_deletion_intents SET last_error=p_message WHERE owner_id=local_identity.owner_id() AND idempotency_key=p_key AND state='prepared';
++  IF NOT FOUND THEN RAISE EXCEPTION 'Owned cleanup receipt unavailable';END IF;
++  RETURN NULL;
++ END IF;
++ IF r->>'cleanupPending'='true' THEN
++  r:=jsonb_set(r,'{message}',to_jsonb(p_message));
++  UPDATE local_identity.command_receipts SET result=r WHERE owner_id=local_identity.owner_id() AND idempotency_key=p_key;
++ END IF;
++ RETURN r;
++END $$;
++REVOKE ALL ON FUNCTION local_identity.record_owned_deletion_cleanup_error(uuid,text) FROM PUBLIC,loop_app,loop_worker,loop_anonymous;
++GRANT EXECUTE ON FUNCTION local_identity.record_owned_deletion_cleanup_error(uuid,text) TO loop_owner;
+--- a/src/local-app/LocalCatalogApp.tsx
++++ b/src/local-app/LocalCatalogApp.tsx
+@@ -1,4 +1,4 @@
+-import {readCatalogNavigation,useCatalogHistory,WorkspaceNavigationContext,CatalogPanelNavigationContext,type CatalogNavigation} from './catalogNavigation';
++import {readCatalogNavigation,catalogNavigationUrl,useCatalogHistory,WorkspaceNavigationContext,CatalogPanelNavigationContext,type CatalogNavigation} from './catalogNavigation';
+ import {WorkspaceDraftProvider,useWorkspaceDraftLeave} from './WorkspaceDraft';
+ import {EpisodeCollectionDialog} from './EpisodeCollectionDialog';
+ import {OwnerPreferencesDialog,type PreferencesPage} from './OwnerPreferencesDialog';
+@@ -25,6 +25,7 @@
+ import {AccountSidebar} from '../accounts/AccountSidebar';
+ import {AccountForm} from '../accounts/AccountForm';
+ import {ConnectionsSettingsDialog,LocalMaintenancePanel} from './LocalMaintenancePanel';
++import {DeletionCleanupDialog} from './LocalDeletionRecovery';
+ import {useConnectionActions} from './useConnectionActions';
+ import type {ExternalConnection,ExternalConnectionVersion} from '../connections/ConnectionWorkspace';
+ import type {Json} from '../lib/database.types';
+@@ -60,6 +61,10 @@
+  const[accountDirty,setAccountDirty]=useState(false);const[repair,setRepair]=useState<{blocker:WorkerBlocker;blueprintVersionId:string;episodeId:string}|null>(null);
+  const[canManageSecrets,setCanManageSecrets]=useState(false),[secrets,setSecrets]=useState(false);
+  const[ownerPreferences,setOwnerPreferences]=useState<OwnerPreferences>(defaultOwnerPreferences),[preferencesPage,setPreferencesPage]=useState<PreferencesPage|null>(null),[preferencesLoaded,setPreferencesLoaded]=useState(false),[preferencesLoading,setPreferencesLoading]=useState(false),[preferencesSaving,setPreferencesSaving]=useState(false),[preferencesError,setPreferencesError]=useState(''),[preferencesRevision,setPreferencesRevision]=useState(0);
++ const[cleanupNotice,setCleanupNotice]=useState<{key:string}|null>(null);
++ useEffect(()=>{setCleanupNotice(null);},[ownerId]);
++ const cleanupOpen=Boolean(panels.cleanup?.open);
++ function openCleanup(task=''){if(task)ownerPanelTrigger.current=document.querySelector<HTMLElement>('.owner-menu-trigger');setSettings(false);setSecrets(false);setPreferencesPage(null);setPanels(current=>({...current,connections:{...current.connections,open:false},cleanup:{open:true,task}}));setCleanupNotice(null);}
+  const [preparationReturn,setPreparationReturn]=useState<{episodeId:string;shotId?:string;targetItemId?:string}|null>(null);
+  const[settings,setSettings]=useState(false);const studio=useRef<(()=>void)|null>(null);const[studioReady,setStudioReady]=useState(false),[studioOpening,setStudioOpening]=useState(false);
+  useEffect(()=>{let current=true;setPreferencesLoaded(false);setPreferencesSaving(false);setPreferencesError('');setOwnerPreferences(defaultOwnerPreferences);if(!ownerId){setPreferencesPage(null);return;}setPreferencesLoading(true);void localRequest('preferences').then(value=>{if(current){setOwnerPreferences(parseOwnerPreferences(value));setPreferencesLoaded(true);}}).catch(error=>{if(current)setPreferencesError(error instanceof Error?error.message:'偏好读取失败。');}).finally(()=>{if(current)setPreferencesLoading(false);});return()=>{current=false;};},[ownerId,preferencesRevision]);
+@@ -72,7 +77,7 @@
+  function closeOwnerPanels(){setSettings(false);setSecrets(false);setPreferencesPage(null);ownerPanelTrigger.current?.focus();}
+  const studioOpeningRef=useRef(false);
+  function navigate(next:NativeView,after?:()=>void){if(view==='accounts'&&next!=='accounts'&&accountDirty){if(!window.confirm('当前配置有未保存修改，确定放弃吗？'))return false;setAccountDirty(false);}return requestDraftLeave(()=>{const destination=next==='reviews'?'episodes':next;setPreparationReturn(null);setSecrets(false);setView(destination);setEpisodeId('');if(['operations','episodes','accounts'].includes(destination))filter({view:destination,...(next==='reviews'?{visibility:'active',status:'review' as const}:destination==='operations'?{visibility:'active',status:'all' as const,q:'',accountId:''}:{}),pendingPage:1,blockedPage:1});after?.();});}
+- const setConnectionsOpen=useCallback((open:boolean)=>setPanels(current=>({...current,connections:{...current.connections,open}})),[]);
++ const setConnectionsOpen=useCallback((open:boolean)=>setPanels(current=>({...current,connections:{...current.connections,open},...(open?{cleanup:{open:false,task:''}}:{})})),[]);
+  const openConnectionsFromShortcut=useCallback(()=>{
+   ownerPanelTrigger.current=document.activeElement instanceof HTMLElement?document.activeElement:null;
+   setConnectionsOpen(true);
+@@ -105,7 +110,10 @@
+  },[episodeId]);
+  function restoreNavigation(next:CatalogNavigation){requestGeneration.current++;setPreparationReturn(null);setSecrets(false);setRepair(null);setView(next.view);setFilters(next.filters);setSelectedId(next.account);applyEpisodeId(next.episode);setWorkspaceStep(next.step);setWorkspaceTab(next.tab);setPanels(next.panels);}
+  useCatalogHistory({panels,view:view==='reviews'?'episodes':view,account:selectedId,episode:episodeId,step:workspaceStep,tab:workspaceTab,filters},ownerId,restoreNavigation,(action,target)=>{
+-  const sameAccountRules=(panels.connections.open||target.panels.connections.open)&&target.view===view&&target.account===selectedId&&target.panels.rules.series===panels.rules.series;
++  const withoutCleanup={open:false,task:''};
++  const cleanupOnly=(panels.cleanup?.open||target.panels.cleanup?.open)&&catalogNavigationUrl({panels:{...panels,cleanup:withoutCleanup},view:view==='reviews'?'episodes':view,account:selectedId,episode:episodeId,step:workspaceStep,tab:workspaceTab,filters})===catalogNavigationUrl({...target,panels:{...target.panels,cleanup:withoutCleanup}});
++  if(cleanupOnly){action();return true;}
++  const sameAccountRules=(panels.connections.open||target.panels.connections.open||panels.cleanup?.open||target.panels.cleanup?.open)&&target.view===view&&target.account===selectedId&&target.panels.rules.series===panels.rules.series;
+   if(accountDirty&&!sameAccountRules&&!window.confirm('当前配置有未保存修改，确定放弃吗？'))return false;
+   return requestDraftLeave(()=>{if(!sameAccountRules)setAccountDirty(false);action();});
+  });
+@@ -191,10 +199,10 @@
+  const creationAccountId=view==='accounts'?selectedId:filters.accountId||selectedEpisode?.account_id||selectedId;
+  const creationSeriesId=view==='accounts'?panels.rules.series:filters.seriesId;
+  const creationSeriesVersion=catalog.seriesVersions.filter(version=>version.account_id===creationAccountId&&version.series_id===creationSeriesId).sort((left,right)=>right.version-left.version)[0];
+- const topbar=<WorkspaceTopbar searchScope={JSON.stringify([view,episodeId,workspaceStep,workspaceTab,view==='accounts'?selectedId:null,view==='history'?panels.history.tab:null])} ownerId={ownerId} ownerMenu={<OwnerMenu isActive={panels.connections.open||settings||secrets||preferencesPage!==null} displayName={ownerPreferences.displayName} avatar={ownerPreferences.avatar} email={ownerEmail} onOpenPreferences={()=>openPreferences('personal')} onOpenNotifications={()=>openPreferences('notifications')} onBeforeOpen={rememberOwnerFocus} onOpenConnections={()=>setConnectionsOpen(true)} onOpenSecrets={canManageSecrets?()=>{setSettings(false);setPreferencesPage(null);setSecrets(true);}:undefined} onOpenSettings={()=>{setSecrets(false);setPreferencesPage(null);setSettings(true);}} onSignOut={()=>requestDraftLeave(()=>void logout())}/>} theme={theme} notificationPreferences={ownerPreferences.notifications} notificationEventsEnabled={preferencesLoaded} episodeTitles={new Map(catalog.episodes.map(episode=>[episode.id,episode.title||'未命名生产单']))} taskQueue={taskQueue} onOpenTaskQueue={openTaskQueue} onOpenConnections={openConnectionsFromShortcut} themeSaving={preferencesSaving} onToggleTheme={()=>{const next=theme==='light'?'dark':'light';if(preferencesLoaded){void savePreferences({...ownerPreferences,appearance:next},message=>setError(`外观偏好未保存。${message}`));}else{setTheme(next);localStorage.setItem('loop-control.theme.v1',next);}}} onOpenEpisode={(id,search)=>{navigate('episodes',()=>{if(search)setPanels(current=>({...current,search}));setEpisodeId(id);});}} onOpenAccount={selectAccount} onOpenCatalog={status=>{navigate('episodes',()=>filter({view:'episodes',visibility:'active',status,q:'',accountId:'',seriesId:'all'}));}}/>;
++ const topbar=<WorkspaceTopbar searchScope={JSON.stringify([view,episodeId,workspaceStep,workspaceTab,view==='accounts'?selectedId:null,view==='history'?panels.history.tab:null])} ownerId={ownerId} ownerMenu={<OwnerMenu isActive={panels.connections.open||cleanupOpen||settings||secrets||preferencesPage!==null} displayName={ownerPreferences.displayName} avatar={ownerPreferences.avatar} email={ownerEmail} onOpenPreferences={()=>openPreferences('personal')} onOpenNotifications={()=>openPreferences('notifications')} onBeforeOpen={rememberOwnerFocus} onOpenConnections={()=>setConnectionsOpen(true)} onOpenCleanup={()=>openCleanup()} onOpenSecrets={canManageSecrets?()=>{setSettings(false);setPreferencesPage(null);setSecrets(true);}:undefined} onOpenSettings={()=>{setSecrets(false);setPreferencesPage(null);setSettings(true);}} onSignOut={()=>requestDraftLeave(()=>void logout())}/>} theme={theme} notificationPreferences={ownerPreferences.notifications} notificationEventsEnabled={preferencesLoaded} episodeTitles={new Map(catalog.episodes.map(episode=>[episode.id,episode.title||'未命名生产单']))} taskQueue={taskQueue} onOpenTaskQueue={openTaskQueue} onOpenConnections={openConnectionsFromShortcut} themeSaving={preferencesSaving} onToggleTheme={()=>{const next=theme==='light'?'dark':'light';if(preferencesLoaded){void savePreferences({...ownerPreferences,appearance:next},message=>setError(`外观偏好未保存。${message}`));}else{setTheme(next);localStorage.setItem('loop-control.theme.v1',next);}}} onOpenEpisode={(id,search)=>{navigate('episodes',()=>{if(search)setPanels(current=>({...current,search}));setEpisodeId(id);});}} onOpenAccount={selectAccount} onOpenCatalog={status=>{navigate('episodes',()=>filter({view:'episodes',visibility:'active',status,q:'',accountId:'',seriesId:'all'}));}}/>;
+  const workspaceActions=<div className="workspace-actions">{view!=='episodes'&&view!=='accounts'&&view!=='operations'&&<Tooltip title="刷新" className="dan-ui dan-ui-tooltip"><Button size="sm" color="secondary" aria-label="刷新" className="button button-secondary refresh-button" onClick={()=>void refresh().catch(e=>setError(e instanceof Error?e.message:String(e)))}  type="button"><Icon name="Refresh"/></Button></Tooltip>}{(view==='episodes'||view==='operations')&&<Button size="sm" color="primary" iconLeading={Plus} className="button button-primary" onClick={()=>setNewEpisode(true)} type="button">新建生产单</Button>}</div>;
+  return <CatalogPanelNavigationContext.Provider value={{openArchivedProductions:()=>{navigate('episodes',()=>filter({view:'episodes',visibility:'archived',status:'all',q:'',accountId:'',seriesId:'all',page:1}));},value:panels,change:(key,patch)=>setPanels(current=>({...current,[key]:{...current[key],...patch}}))}}><WorkspaceNavigationContext.Provider value={{episode:episodeId,step:workspaceStep,tab:workspaceTab,change:patch=>{if(patch.step)setWorkspaceStep(patch.step);if(patch.tab)setWorkspaceTab(patch.tab);}}}><div className="app-shell dan-ui product-ui impeccable-app" data-sidebar={collapsed?'collapsed':'expanded'} data-theme={theme}>
+- <a className="skip-link" href="#main-content">跳到主要内容</a><aside className="sidebar" aria-label="主导航" inert={panels.connections.open}>
++ <a className="skip-link" href="#main-content">跳到主要内容</a><aside className="sidebar" aria-label="主导航" inert={panels.connections.open||cleanupOpen}>
+  <div className="lc-brand" role="img" aria-label="Loop Control"><LoopControlMark/><span>Loop Control</span></div>
+  <nav className="navigation" aria-label="工作区">
+   <div role="group" aria-label="生产工作" className="navigation-group">
+@@ -205,8 +213,8 @@
+  </nav>
+  <div className="sidebar-footer"><Tooltip title={studioReady?"打开当前生产单工程":"打开独立剪辑工作区"} className="dan-ui dan-ui-tooltip"><Button size="sm" color="tertiary" aria-label={studioReady?"打开当前生产单的 OpenChatCut":"打开 OpenChatCut 独立剪辑"} className="sidebar-studio-shortcut" iconLeading={Video} isDisabled={studioOpening} onClick={()=>requestDraftLeave(()=>void openSidebarStudio())} type="button"><span>{studioOpening?"正在打开…":"OpenChatCut"}</span></Button></Tooltip>
+  <div className="sidebar-utilities"><LocalSystemStatus triggerLabel="系统状态" queueRequest={queueRequest} onQueueChange={setTaskQueue} onOpenEpisode={id=>{return navigate('episodes',()=>setEpisodeId(id));}}/><Tooltip title={collapsed?'展开侧栏':'收起侧栏'} className="dan-ui dan-ui-tooltip"><Button size="sm" color="tertiary" type="button" className="sidebar-collapse-button sidebar-utility" aria-pressed={collapsed} aria-label={collapsed?'展开侧栏':'收起侧栏'} onClick={()=>setSidebarCollapsed(!collapsed)}><Icon name="PanelLeft"/><span className="sidebar-tool-label">{collapsed?"展开侧栏":"收起侧栏"}</span></Button></Tooltip></div></div></aside>
+- {errorMessage&&<div className="floating-notices" aria-live="polite"><div role="alert" className="error-message"><CircleAlert className="notice-icon" size={18} aria-hidden="true"/><span className="notice-copy">{errorMessage}</span><div className="notice-actions">{view==='episodes'&&error&&<Button size="sm" color="tertiary" onPress={()=>void refresh().then(()=>setError('')).catch(e=>setError(e instanceof Error?e.message:String(e)))}>重新读取</Button>}<Button size="sm" color="tertiary" type="button" aria-label="关闭错误通知" onClick={()=>{setError('');connectionActions.setError('');}}><XClose aria-hidden="true" width={16} height={16}/></Button></div></div></div>}
+- <section inert={Boolean(episodeId)||panels.connections.open} className={`content-pane${view === 'accounts' ? ' account-workspace-page' : ''}`} id="main-content" aria-label="平台工作台" tabIndex={-1}><header className="page-header"><nav className="workspace-breadcrumbs" aria-label="当前位置"><span>个人工作区</span><ChevronRight size={14} aria-hidden="true"/><strong aria-current="page">{pageLabel}</strong></nav><div className="page-header-actions">{!episodeId&&topbar}</div></header>{view!=='operations'&&view!=='accounts'&&<div className={`workspace-page-heading${view==='history'?' is-maintenance':''}`}><h1>{pageLabel}</h1>{view==='episodes'&&workspaceActions}</div>}
++ {(errorMessage||cleanupNotice)&&<div className="floating-notices" aria-live="polite">{errorMessage&&<div role="alert" className="error-message"><CircleAlert className="notice-icon" size={18} aria-hidden="true"/><span className="notice-copy">{errorMessage}</span><div className="notice-actions">{view==='episodes'&&error&&<Button size="sm" color="tertiary" onPress={()=>void refresh().then(()=>setError('')).catch(e=>setError(e instanceof Error?e.message:String(e)))}>重新读取</Button>}<Button size="sm" color="tertiary" type="button" aria-label="关闭错误通知" onClick={()=>{setError('');connectionActions.setError('');}}><XClose aria-hidden="true" width={16} height={16}/></Button></div></div>}{cleanupNotice&&<div role="status" className="error-message deletion-cleanup-notice"><CircleAlert className="notice-icon" size={18} aria-hidden="true"/><span className="notice-copy">生产单记录已删除，文件清理尚未完成。</span><div className="notice-actions"><Button size="sm" color="tertiary" onPress={()=>openCleanup(cleanupNotice.key)}>查看清理任务</Button><Button size="sm" color="tertiary" aria-label="关闭清理通知" onPress={()=>setCleanupNotice(null)}><XClose aria-hidden="true" width={16} height={16}/></Button></div></div>}</div>}
++ <section inert={Boolean(episodeId)||panels.connections.open||cleanupOpen} className={`content-pane${view === 'accounts' ? ' account-workspace-page' : ''}`} id="main-content" aria-label="平台工作台" tabIndex={-1}><header className="page-header"><nav className="workspace-breadcrumbs" aria-label="当前位置"><span>个人工作区</span><ChevronRight size={14} aria-hidden="true"/><strong aria-current="page">{pageLabel}</strong></nav><div className="page-header-actions">{!episodeId&&topbar}</div></header>{view!=='operations'&&view!=='accounts'&&<div className={`workspace-page-heading${view==='history'?' is-maintenance':''}`}><h1>{pageLabel}</h1>{view==='episodes'&&workspaceActions}</div>}
+ 
+  {view==='history'?<LocalMaintenancePanel embedded activeTab="history" onClose={()=>navigate('operations')} revision={catalog}/>:view==='accounts'?<>
+ <AccountWorkspace onCreateEpisode={()=>setNewEpisode(true)} navigation={{value:panels.rules,change:patch=>setPanels(current=>({...current,rules:{...current.rules,...patch}}))}} onRefresh={()=>refresh().catch(e=>setError(e instanceof Error?e.message:String(e)))} onDirtyChange={setAccountDirty} blueprintRepairContext={repair} onDismissBlueprintRepair={()=>{if(repair){setEpisodeId(repair.episodeId);setView('episodes');filter({view:'episodes'});}setRepair(null);}} onApplyEpisodeRepair={async input=>{try{await localCommand('repairConfiguration',{episodeId:input.context.episodeId,policy:input.policy,blockerCode:input.context.blocker.code,blockerDetail:input.context.blocker.detail},undefined,'episode-commands');await refresh();setRepair(null);setEpisodeId(input.context.episodeId);setView('episodes');filter({view:'episodes'});return true;}catch(e){setError(e instanceof Error?e.message:String(e));return false;}}} externalConnections={connections} connectionVersions={connectionVersions} account={account} accountEpisodeCount={catalog.accountCounts[account?.id??'']??0} blueprints={catalog.blueprints} isPending={connectionActions.pending?'connection':pending} promptVersions={catalog.promptVersions.filter(p=>p.account_id===account?.id)} series={catalog.series.filter(s=>s.account_id===account?.id)} seriesVersions={catalog.seriesVersions.filter(s=>s.account_id===account?.id)}
+@@ -223,10 +231,11 @@
+  onSetAccountArchived={async(id,archived)=>{try{await command(`archive-account-${id}`,'archiveAccount',{accountId:id,archived});return true;}catch{return false;}}}
+  onDeleteAccount={async(id,confirmation)=>{try{await command(`delete-account-${id}`,'deleteAccount',{accountId:id,confirmation});return true;}catch{return false;}}}
+  />
+- </>:view==='operations'?<OperationsWorkspace onOpenTaskQueue={openTaskQueue} taskQueue={taskQueue} onOpenAllEpisodes={()=>{navigate('episodes',()=>filter({status:'all',q:'',accountId:'',seriesId:'all',visibility:'active'}));}} catalogControls={{query:filters.q,status:filters.status,sort:filters.sort,accountId:filters.accountId,stage:filters.catalogStage,onStage:catalogStage=>filter({catalogStage}),onSearch:q=>filter({q}),onReset:()=>filter({q:'',accountId:'',seriesId:'all',visibility:'active',status:'all',sort:'updated',catalogStage:'all'}),onStatus:status=>filter({status}),onSort:sort=>filter({sort}),onAccount:accountId=>filter({accountId,seriesId:'all'})}} isLoading={catalogKey!==queryKey} accounts={catalog.accounts} blueprints={catalog.blueprints} onOpenReviewQueue={()=>navigate('reviews')} actions={workspaceActions} remote={{catalog,seriesId:filters.seriesId,onSeriesChange:seriesId=>filter({seriesId}),onPageChange:page=>filter({page}),onPendingPageChange:pendingPage=>filter({pendingPage}),onBlockedPageChange:blockedPage=>filter({blockedPage})}} episodes={catalog.episodes} series={catalog.series} seriesVersions={catalog.seriesVersions} tasks={[]} reviewPackages={[]} preRenderReviewMembers={[]} preRenderReviewMemberDecisions={[]} selectedEpisode={selectedEpisode} onSelectEpisode={openCatalogEpisode} onOpenBlueprint={(id,context)=>{navigate('accounts',()=>{setSelectedId(id);setRepair(context??null);});}}/>:<EpisodeWorkspace metrics={catalog.metrics} filterAccountCounts={catalog.filterAccountCounts} visibilityCounts={catalog.visibilityCounts} seriesEpisodeCounts={catalog.seriesEpisodeCounts} collections={catalog.collections} onMoveCollection={setCollectionEpisode} onOpenDirectory={async episodeId=>{try{await localCommand('openDirectory',{episodeId},undefined,'episode-commands');}catch(e){setError(e instanceof Error?e.message:String(e));}}} isPageLoading={catalogKey!==queryKey} operationRows={catalog.operationRows} catalogControls={{query:filters.q,status:filters.status,sort:filters.sort,counts:catalog.statusCounts,onSearch:q=>filter({q}),onClearAccount:()=>filter({accountId:''}),onReset:()=>filter({q:'',accountId:'',seriesId:'all',visibility:'active',status:'all',sort:'updated'}),onStatus:status=>filter({status}),onSort:sort=>filter({sort})}} serverPage={page} accounts={catalog.accounts} accountsById={accountsById} artifacts={[]} artifactCounts={catalog.artifactCounts} blueprintsById={blueprintsById} episodes={catalog.episodes} episodeVisibility={filters.visibility as 'active'|'archived'|'all'} onEpisodeVisibilityChange={visibility=>filter({visibility})} filter={filters.accountId||'全部账号'} onFilter={accountId=>filter({accountId:accountId==='全部账号'?'':accountId,seriesId:'all'})} seriesFilter={filters.seriesId==='all'?'全部系列':filters.seriesId} onSeriesFilter={seriesId=>filter({seriesId:seriesId==='全部系列'?'all':seriesId})} series={catalog.series} seriesById={seriesById} seriesVersionsById={versionsById} selectedEpisode={selectedEpisode} onSelectEpisode={openCatalogEpisode} onUpdateTitle={(episodeId,title)=>life('renameEpisode',{episodeId,title})} onSetArchived={(episodeId,archived)=>life('archiveEpisode',{episodeId,archived},false)} onPlanDelete={planDeletion} onDelete={async(episodeId,confirmation,plan)=>{if(!plan)throw new Error('请重新检查删除范围。');const result=await life<{cleanupPending:boolean}>('deleteEpisode',{episodeId,confirmation,expectedPath:plan.path,expectedPaths:plan.paths??[plan.path],expectedRevision:plan.revision});if(result.cleanupPending)setError('生产单记录已删除，文件清理尚未完成。请在连接配置中重试文件清理。');}}/>}</section>
++ </>:view==='operations'?<OperationsWorkspace onOpenTaskQueue={openTaskQueue} taskQueue={taskQueue} onOpenAllEpisodes={()=>{navigate('episodes',()=>filter({status:'all',q:'',accountId:'',seriesId:'all',visibility:'active'}));}} catalogControls={{query:filters.q,status:filters.status,sort:filters.sort,accountId:filters.accountId,stage:filters.catalogStage,onStage:catalogStage=>filter({catalogStage}),onSearch:q=>filter({q}),onReset:()=>filter({q:'',accountId:'',seriesId:'all',visibility:'active',status:'all',sort:'updated',catalogStage:'all'}),onStatus:status=>filter({status}),onSort:sort=>filter({sort}),onAccount:accountId=>filter({accountId,seriesId:'all'})}} isLoading={catalogKey!==queryKey} accounts={catalog.accounts} blueprints={catalog.blueprints} onOpenReviewQueue={()=>navigate('reviews')} actions={workspaceActions} remote={{catalog,seriesId:filters.seriesId,onSeriesChange:seriesId=>filter({seriesId}),onPageChange:page=>filter({page}),onPendingPageChange:pendingPage=>filter({pendingPage}),onBlockedPageChange:blockedPage=>filter({blockedPage})}} episodes={catalog.episodes} series={catalog.series} seriesVersions={catalog.seriesVersions} tasks={[]} reviewPackages={[]} preRenderReviewMembers={[]} preRenderReviewMemberDecisions={[]} selectedEpisode={selectedEpisode} onSelectEpisode={openCatalogEpisode} onOpenBlueprint={(id,context)=>{navigate('accounts',()=>{setSelectedId(id);setRepair(context??null);});}}/>:<EpisodeWorkspace metrics={catalog.metrics} filterAccountCounts={catalog.filterAccountCounts} visibilityCounts={catalog.visibilityCounts} seriesEpisodeCounts={catalog.seriesEpisodeCounts} collections={catalog.collections} onMoveCollection={setCollectionEpisode} onOpenDirectory={async episodeId=>{try{await localCommand('openDirectory',{episodeId},undefined,'episode-commands');}catch(e){setError(e instanceof Error?e.message:String(e));}}} isPageLoading={catalogKey!==queryKey} operationRows={catalog.operationRows} catalogControls={{query:filters.q,status:filters.status,sort:filters.sort,counts:catalog.statusCounts,onSearch:q=>filter({q}),onClearAccount:()=>filter({accountId:''}),onReset:()=>filter({q:'',accountId:'',seriesId:'all',visibility:'active',status:'all',sort:'updated'}),onStatus:status=>filter({status}),onSort:sort=>filter({sort})}} serverPage={page} accounts={catalog.accounts} accountsById={accountsById} artifacts={[]} artifactCounts={catalog.artifactCounts} blueprintsById={blueprintsById} episodes={catalog.episodes} episodeVisibility={filters.visibility as 'active'|'archived'|'all'} onEpisodeVisibilityChange={visibility=>filter({visibility})} filter={filters.accountId||'全部账号'} onFilter={accountId=>filter({accountId:accountId==='全部账号'?'':accountId,seriesId:'all'})} seriesFilter={filters.seriesId==='all'?'全部系列':filters.seriesId} onSeriesFilter={seriesId=>filter({seriesId:seriesId==='全部系列'?'all':seriesId})} series={catalog.series} seriesById={seriesById} seriesVersionsById={versionsById} selectedEpisode={selectedEpisode} onSelectEpisode={openCatalogEpisode} onUpdateTitle={(episodeId,title)=>life('renameEpisode',{episodeId,title})} onSetArchived={(episodeId,archived)=>life('archiveEpisode',{episodeId,archived},false)} onPlanDelete={planDeletion} onDelete={async(episodeId,confirmation,plan)=>{if(!plan)throw new Error('请重新检查删除范围。');const result=await life<{cleanupPending:boolean;cleanupKey:string}>('deleteEpisode',{episodeId,confirmation,expectedPath:plan.path,expectedPaths:plan.paths??[plan.path],expectedRevision:plan.revision});if(result.cleanupPending)setCleanupNotice({key:result.cleanupKey});}}/>}</section>
+ 
+  {collectionEpisode?<EpisodeCollectionDialog episodeId={collectionEpisode} onClose={()=>setCollectionEpisode(null)} onChanged={refresh}/>:null}
+- {episodeId&&<EpisodeDetailDrawer tools={topbar} inert={panels.connections.open} isOpen onClose={closeEpisode}><LocalEpisodeDetail preparationEntry={preparationReturn?.episodeId===episodeId?preparationReturn:undefined} key={episodeId} ownerId={ownerId} episodeId={episodeId} onClose={closeEpisode} onChanged={refresh} onOpenAccount={(id,context)=>{navigate('accounts',()=>{setSelectedId(id);setRepair(context??null);});}} onStudioAction={action=>{studio.current=action;setStudioReady(Boolean(action));}}/></EpisodeDetailDrawer>}
++ {episodeId&&<EpisodeDetailDrawer tools={topbar} inert={panels.connections.open||cleanupOpen} isOpen onClose={closeEpisode}><LocalEpisodeDetail preparationEntry={preparationReturn?.episodeId===episodeId?preparationReturn:undefined} key={episodeId} ownerId={ownerId} episodeId={episodeId} onClose={closeEpisode} onChanged={refresh} onOpenAccount={(id,context)=>{navigate('accounts',()=>{setSelectedId(id);setRepair(context??null);});}} onStudioAction={action=>{studio.current=action;setStudioReady(Boolean(action));}}/></EpisodeDetailDrawer>}
++ {cleanupOpen&&<DeletionCleanupDialog key={ownerId} revision={catalog} targetKey={panels.cleanup?.task} returnFocusRef={ownerPanelTrigger} onClose={()=>setPanels(current=>({...current,cleanup:{open:false,task:''}}))} onResolved={key=>setPanels(current=>current.cleanup?.task===key?{...current,cleanup:{...current.cleanup,task:''}}:current)} onChanged={()=>void refresh().catch(e=>setError(e instanceof Error?e.message:String(e)))}/>}
+  {panels.connections.open&&<ConnectionsSettingsDialog returnFocusRef={ownerPanelTrigger} onClose={()=>setConnectionsOpen(false)}/>}
+  {preferencesPage&&<OwnerPreferencesDialog csrf={csrf} key={`${ownerId}:${preferencesLoaded}:${preferencesPage}`} preferences={ownerPreferences} page={preferencesPage} loading={preferencesLoading} saving={preferencesSaving} unavailable={!preferencesLoaded} error={preferencesError} onReload={()=>setPreferencesRevision(value=>value+1)} onSave={savePreferences} onClose={closeOwnerPanels}/>}
+  {settings&&<PasswordForm identity={<section aria-label="当前登录身份" className="owner-identity review-section"><h3>当前登录身份</h3><dl><div><dt>登录邮箱</dt><dd>{ownerEmail||'未读取'}</dd></div></dl></section>} isPending={pending==='password'} onClose={closeOwnerPanels} onSubmit={async password=>{setPending('password');try{await localRequest('password',{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':csrf},body:JSON.stringify({password})});setSettings(false);}finally{setPending('');}}}/> }
+--- a/src/local-app/LocalCatalogApp.workspace.test.tsx
++++ b/src/local-app/LocalCatalogApp.workspace.test.tsx
+@@ -49,7 +49,7 @@
+  }));
+  await act(async()=>{render(<LocalCatalogApp/>);});
+  const owner=screen.getByRole('button',{name:'所有者设置'});
+- await user.click(owner);expect(screen.getAllByRole('menuitem').map(item=>item.textContent)).toEqual(['个人偏好','通知','登录与安全','连接配置','退出登录']);
++ await user.click(owner);expect(screen.getAllByRole('menuitem').map(item=>item.textContent)).toEqual(['个人偏好','通知','登录与安全','文件清理','连接配置','退出登录']);
+  await user.click(screen.getByRole('menuitem',{name:'登录与安全'}));
+  const security=screen.getByRole('dialog',{name:'登录与安全'}),password=within(security).getByRole('form',{name:'登录与安全'});
+  expect(within(security).getByRole('region',{name:'当前登录身份'}).textContent).toContain('owner@example.test');
+@@ -91,13 +91,14 @@
+  vi.stubGlobal('fetch',vi.fn(async(path:string,init?:RequestInit)=>{
+   if(path.endsWith('/session'))return Response.json({csrfToken:'delete-csrf',owner:{id,email:'owner@example.test'}});
+   if(path.includes('/catalog?'))return Response.json({...data,total:deleted?0:1,episodeCount:deleted?0:1,accountCounts:{[id]:deleted?0:1},episodes:deleted?[]:[{...data.episodes[0],is_test:false,archived_at:archived?at:null}]});
++  if(path.endsWith('/deletion-cleanups'))return Response.json([{cleanupKey:'pending-cleanup',title:'待清理样例',path:'/fixture/episode',stagingPaths:['/fixture/staged']}]);
+   if(path.endsWith('/episode-lifecycle')){
+    expect(new Headers(init?.headers).get('X-CSRF-Token')).toBe('delete-csrf');
+    const body=JSON.parse(String(init?.body));commands.push(body);
+    if(body.command==='archiveEpisode'){expect(body.data).toEqual({episodeId:episode,archived:true});archived=true;return Response.json({archived});}
+    if(body.command==='planDeletion')return Response.json({path:'/fixture/episodes/'+episode,paths:['/fixture/episodes/'+episode,'/external/account/episodes/'+episode],revision:'fixture-revision',confirmation:'普通长度完整生产单'});
+    expect(body).toMatchObject({command:'deleteEpisode',data:{episodeId:episode,confirmation:'普通长度完整生产单',expectedPath:'/fixture/episodes/'+episode,expectedPaths:['/fixture/episodes/'+episode,'/external/account/episodes/'+episode],expectedRevision:'fixture-revision'}});
+-   deleted=true;return Response.json({cleanupPending});
++   deleted=true;return Response.json({cleanupPending,cleanupKey:'pending-cleanup'});
+   }
+   return Response.json({connections:[],versions:[]});
+  }));
+@@ -124,7 +125,7 @@
+  await waitFor(()=>expect(screen.queryByRole('form',{name:'永久删除生产单'})).toBeNull());
+  expect(commands.map(c=>c.command)).toEqual([...expectedCommands,'deleteEpisode']);
+  expect(screen.queryByText('普通长度完整生产单')).toBeNull();
+- if(cleanupPending)expect(screen.getByRole('alert').textContent).toContain('文件清理尚未完成');
++ if(cleanupPending){const action=screen.getByRole('button',{name:'查看清理任务'});expect(action.closest('[role=status]')?.textContent).toContain('文件清理尚未完成');await user.click(action);const task=await screen.findByRole('article',{name:'待清理样例'});expect(document.activeElement).toBe(task);expect(location.search).toContain('cleanupTask=pending-cleanup');await user.click(screen.getByRole('button',{name:'关闭文件清理'}));await waitFor(()=>expect(screen.queryByRole('dialog',{name:'文件清理'})).toBeNull());expect(document.activeElement).toBe(screen.getByRole('button',{name:'所有者设置'}));}
+ });
+ 
+ it.each(['plan','delete'])('shows a %s failure inside the confirmation dialog instead of leaving the click without feedback',async(failureAt)=>{
+@@ -189,3 +190,11 @@
+  expect((within(modal).getByRole('button',{name:'确认恢复'}) as HTMLButtonElement).disabled).toBe(false);
+  await user.click(within(modal).getByRole('button',{name:'确认恢复'}));await waitFor(()=>expect(screen.queryByRole('form',{name:'恢复生产单'})).toBeNull());expect(calls).toBe(2);
+ });
++it('opens durable file cleanup from the Owner menu, preserves list context and restores focus on close',async()=>{
++ history.replaceState(null,'','/?view=episodes&page=2');vi.stubGlobal('crypto',webcrypto);const requests:string[]=[];
++ vi.stubGlobal('fetch',vi.fn(async(path:string)=>{requests.push(path);if(path.endsWith('/session'))return Response.json({csrfToken:'fixture',owner:{id,email:'owner@example.test'}});if(path.includes('/catalog?'))return Response.json(data);if(path.endsWith('/deletion-cleanups'))return Response.json([{cleanupKey:'pending-one',title:'待清理样例',path:'/fixture/episode',stagingPaths:['/fixture/staged']}]);return Response.json({connections:[],versions:[]});}));
++ const user=userEvent.setup();await act(async()=>{render(<LocalCatalogApp/>);});expect(requests.some(path=>path.endsWith('/deletion-cleanups'))).toBe(false);
++ const owner=screen.getByRole('button',{name:'所有者设置'});await user.click(owner);await user.click(screen.getByRole('menuitem',{name:'文件清理'}));const dialog=await screen.findByRole('dialog',{name:'文件清理'});await within(dialog).findByRole('article',{name:'待清理样例'});await waitFor(()=>expect(location.search).toContain('cleanupOpen=1'));expect(location.search).toContain('page=2');
++ await user.click(within(dialog).getByRole('button',{name:'关闭文件清理'}));await waitFor(()=>expect(screen.queryByRole('dialog',{name:'文件清理'})).toBeNull());expect(document.activeElement).toBe(owner);expect(location.search).not.toContain('cleanupOpen');
++ await user.click(owner);await user.click(screen.getByRole('menuitem',{name:'文件清理'}));await screen.findByRole('dialog',{name:'文件清理'});await waitFor(()=>expect(location.search).toContain('cleanupOpen=1'));await act(async()=>{history.back();});await waitFor(()=>expect(screen.queryByRole('dialog',{name:'文件清理'})).toBeNull());expect(location.search).toContain('page=2');
++});
+--- a/src/local-app/LocalDeletionRecovery.test.tsx
++++ b/src/local-app/LocalDeletionRecovery.test.tsx
+@@ -0,0 +1,37 @@
++import {afterEach,expect,it,vi} from 'vitest';
++import {cleanup,fireEvent,render,screen,waitFor,within} from '@testing-library/react';
++import userEvent from '@testing-library/user-event';
++import {LocalDeletionRecovery} from './LocalDeletionRecovery';
++import {localRequest,localCommand} from './client';
++vi.mock('./client',()=>({localRequest:vi.fn(),localCommand:vi.fn()}));
++afterEach(()=>{cleanup();vi.resetAllMocks();});
++const prepared={cleanupKey:'prepared-key',title:'未提交的生产单',path:'/media/order-one',stagingPaths:['/media/order-one/file.stage'],phase:'prepared',message:'删除尚未提交，可恢复已暂存的文件。'};
++const committed={cleanupKey:'committed-key',title:'文件待清理的生产单',path:'/media/order-two',stagingPaths:['/media/order-two/file.stage']};
++it('reads durable tasks without retrying, distinguishes actions and focuses the requested task',async()=>{
++ vi.mocked(localRequest).mockResolvedValue([prepared,committed]);render(<LocalDeletionRecovery revision={1} targetKey={committed.cleanupKey}/>);
++ const target=await screen.findByRole('article',{name:committed.title});expect(document.activeElement).toBe(target);
++ expect(within(target).getByRole('button',{name:'继续清理'})).toBeTruthy();expect(screen.getByRole('button',{name:'恢复文件'})).toBeTruthy();expect(localCommand).not.toHaveBeenCalled();
++ expect(screen.queryByRole('heading',{name:'待完成删除'})).toBeNull();expect(screen.queryByText(prepared.message)).toBeNull();expect(screen.getByText('删除未生效')).toBeTruthy();expect(screen.getByText('记录已删除')).toBeTruthy();
++});
++it('restores an uncommitted task once even when clicked twice and leaves other tasks alone',async()=>{
++ vi.mocked(localRequest).mockResolvedValueOnce([prepared,committed]).mockResolvedValue([committed]);let finish!:(value:any)=>void;
++ vi.mocked(localCommand).mockImplementation(()=>new Promise(resolve=>{finish=resolve;}) as any);const onResolved=vi.fn();render(<LocalDeletionRecovery revision={1} onResolved={onResolved}/>);
++ const button=await screen.findByRole('button',{name:'恢复文件'});fireEvent.click(button);fireEvent.click(button);expect(localCommand).toHaveBeenCalledTimes(1);expect(localCommand).toHaveBeenCalledWith('retryDeletionCleanup',{deletionKey:prepared.cleanupKey},undefined,'episode-lifecycle');
++ finish({cleanupPending:false,recovered:true});await screen.findByText('文件已恢复，请重新核对后再删除。');expect(onResolved).toHaveBeenCalledWith(prepared.cleanupKey);expect(screen.queryByRole('article',{name:prepared.title})).toBeNull();expect(screen.getByRole('article',{name:committed.title})).toBeTruthy();
++});
++it('keeps the task and full failure message when cleanup remains pending, then reports confirmed completion',async()=>{
++ vi.mocked(localRequest).mockResolvedValueOnce([committed]).mockResolvedValueOnce([committed]).mockResolvedValue([]);vi.mocked(localCommand).mockResolvedValueOnce({cleanupPending:true,message:'目录身份已变化，请检查原位置后重试。'}).mockResolvedValueOnce({cleanupPending:false});const user=userEvent.setup();render(<LocalDeletionRecovery revision={1}/>);
++ await user.click(await screen.findByRole('button',{name:'继续清理'}));expect((await screen.findByRole('alert')).textContent).toContain('目录身份已变化');expect(screen.getByRole('article',{name:committed.title})).toBeTruthy();
++ await waitFor(()=>expect((screen.getByRole('button',{name:'继续清理'})as HTMLButtonElement).disabled).toBe(false));await user.click(screen.getByRole('button',{name:'继续清理'}));await screen.findByText('文件清理已完成。');expect(screen.queryByRole('article')).toBeNull();
++});
++it('shows read failures and a working refresh without presenting them as an empty queue',async()=>{
++ vi.mocked(localRequest).mockRejectedValueOnce(new Error('读取失败。')).mockResolvedValue([]);const user=userEvent.setup();render(<LocalDeletionRecovery revision={1}/>);expect((await screen.findByRole('alert')).textContent).toBe('读取失败。');expect(screen.queryByText('暂无待处理任务。')).toBeNull();await user.click(screen.getByRole('button',{name:'刷新清理任务'}));await screen.findByText('暂无待处理任务。');expect(screen.queryByRole('alert')).toBeNull();
++});
++it('does not replace a newer queue with a late previous response',async()=>{
++ let old!:(value:any)=>void;vi.mocked(localRequest).mockImplementationOnce(()=>new Promise(resolve=>{old=resolve;})).mockResolvedValue([committed]);const view=render(<LocalDeletionRecovery revision={1}/>);view.rerender(<LocalDeletionRecovery revision={2}/>);await screen.findByRole('article',{name:committed.title});old([prepared]);await waitFor(()=>expect(screen.queryByRole('article',{name:prepared.title})).toBeNull());expect(screen.getByRole('article',{name:committed.title})).toBeTruthy();
++});
++
++it('keeps a concrete prepared recovery failure visible while removing only the normal explanation',async()=>{
++ const failure='文件恢复尚未完成：原位置已存在文件，请先检查。';vi.mocked(localRequest).mockResolvedValue([{...prepared,message:failure}]);render(<LocalDeletionRecovery revision={1}/>);
++ await screen.findByText(failure);expect(screen.getByRole('button',{name:'恢复文件'})).toBeTruthy();expect(screen.getByText('查看位置')).toBeTruthy();
++});
+--- a/src/local-app/LocalDeletionRecovery.tsx
++++ b/src/local-app/LocalDeletionRecovery.tsx
+@@ -1,10 +1,59 @@
+-import {useState,useEffect} from 'react';
++import {useState,useEffect,useRef,useCallback,type RefObject} from 'react';
++import {X} from 'lucide-react';
+ import {Button} from '../ui/dan-ui/components/base/buttons/button';
++import {useDialogFocus} from '../ui/useDialogFocus';
+ import {localCommand,localRequest} from './client';
+-interface PendingCleanup{cleanupKey:string;title:string;path:string;stagingPath:string;stagingPaths?:string[];phase?:string;message?:string;}
+-export function LocalDeletionRecovery({revision}:{revision:unknown}){
+- const[items,setItems]=useState<PendingCleanup[]>([]),[error,setError]=useState(''),[notice,setNotice]=useState(''),[messages,setMessages]=useState<Record<string,string>>({}),[pending,setPending]=useState('');
+- const refresh=()=>localRequest('deletion-cleanups').then(setItems);
+- useEffect(()=>{let current=true;void localRequest('deletion-cleanups').then(items=>{if(current)setItems(items);}).catch(e=>{if(current)setError(e.message);});return()=>{current=false;};},[revision]);
+- return items.length||error||notice?<section className="review-section"><h3>待完成的删除</h3>{notice&&<p role="status">{notice}</p>}{error&&<p role="alert">{error}</p>}{items.map(item=><div key={item.cleanupKey}><strong>{item.title}</strong>{(messages[item.cleanupKey]??item.message)&&<p>{messages[item.cleanupKey]??item.message}</p>}<ul className="episode-deletion-paths">{(item.stagingPaths??[item.stagingPath]).map(path=><li key={path}><code>{path}</code></li>)}</ul><Button size="sm" color="secondary" type="submit" className="button button-secondary" isDisabled={!!pending} onClick={()=>{setPending(item.cleanupKey);void localCommand<{cleanupPending:boolean;recovered?:boolean;message?:string}>('retryDeletionCleanup',{deletionKey:item.cleanupKey},undefined,'episode-lifecycle').then(r=>{if(r.cleanupPending){setMessages(current=>({...current,[item.cleanupKey]:r.message??'文件处理尚未完成，请检查原位置后重试。'}));setError('');setNotice('');}else{setError('');setNotice(r.recovered?'未提交的删除已恢复，请重新检查范围后确认。':'');}return refresh();}).catch(e=>setError(e.message)).finally(()=>setPending(''));}}>{item.phase==='prepared'?'恢复未提交的删除':'重试文件清理'}</Button></div>)}</section>:null;
++import './deletion-cleanup.css';
++interface PendingCleanup{cleanupKey:string;title:string;path:string;paths?:string[];stagingPath?:string;stagingPaths?:string[];phase?:string;message?:string;}
++interface RecoveryProps{revision:unknown;targetKey?:string;onResolved?:(key:string)=>void;onChanged?:()=>void;}
++export function LocalDeletionRecovery({revision,targetKey='',onResolved,onChanged}:RecoveryProps){
++ const[items,setItems]=useState<PendingCleanup[]|null>(null),[error,setError]=useState(''),[notice,setNotice]=useState(''),[messages,setMessages]=useState<Record<string,string>>({}),[pending,setPending]=useState(''),[loading,setLoading]=useState(false);
++ const mounted=useRef(false),generation=useRef(0),busy=useRef(false),focused=useRef(''),list=useRef<HTMLDivElement>(null);
++ useEffect(()=>{mounted.current=true;return()=>{mounted.current=false;generation.current++;};},[]);
++ const refresh=useCallback(async()=>{
++  const request=++generation.current;setLoading(true);setError('');
++  try{const next:PendingCleanup[]=await localRequest('deletion-cleanups');if(mounted.current&&request===generation.current)setItems(next);}
++  catch(reason){if(mounted.current&&request===generation.current)setError(reason instanceof Error?reason.message:'无法读取清理任务，请重试。');}
++  finally{if(mounted.current&&request===generation.current)setLoading(false);}
++ },[]);
++ useEffect(()=>{void refresh();},[revision,refresh]);
++ useEffect(()=>{
++  if(!targetKey){focused.current='';return;}
++  if(focused.current===targetKey||!items?.some(item=>item.cleanupKey===targetKey))return;
++  const target=Array.from(list.current?.querySelectorAll<HTMLElement>('[data-cleanup-key]')??[]).find(element=>element.dataset.cleanupKey===targetKey);
++  target?.focus({preventScroll:true});target?.scrollIntoView?.({block:'nearest'});focused.current=targetKey;
++ },[items,targetKey]);
++ async function retry(item:PendingCleanup){
++  if(busy.current)return;busy.current=true;setPending(item.cleanupKey);setNotice('');setMessages(current=>({...current,[item.cleanupKey]:''}));
++  try{
++   const result=await localCommand<{cleanupPending:boolean;recovered?:boolean;message?:string}>('retryDeletionCleanup',{deletionKey:item.cleanupKey},undefined,'episode-lifecycle');
++   if(!result.cleanupPending){onResolved?.(item.cleanupKey);onChanged?.();}
++   if(!mounted.current)return;
++   if(result.cleanupPending)setMessages(current=>({...current,[item.cleanupKey]:result.message??'文件处理尚未完成，请检查原位置后重试。'}));
++   else{setItems(current=>current?.filter(row=>row.cleanupKey!==item.cleanupKey)??[]);setNotice(result.recovered?'文件已恢复，请重新核对后再删除。':'文件清理已完成。');}
++   await refresh();
++  }catch(reason){if(mounted.current)setMessages(current=>({...current,[item.cleanupKey]:reason instanceof Error?reason.message:'处理未确认完成，请重新读取任务后再试。'}));}
++  finally{busy.current=false;if(mounted.current)setPending('');}
++ }
++ return <section className="deletion-cleanup-panel" aria-label="待处理的文件清理">
++  {notice&&<p role="status" className="deletion-cleanup-success">{notice}</p>}
++  {error&&<p role="alert" className="deletion-cleanup-error">{error}</p>}
++  {items===null&&loading&&<p role="status">正在读取清理任务…</p>}
++  {items?.length===0&&!error&&!notice&&<p className="deletion-cleanup-empty">暂无待处理任务。</p>}
++  {targetKey&&items&&!loading&&!error&&!items.some(item=>item.cleanupKey===targetKey)&&<p role="status">该任务当前不在待处理列表中。</p>}
++  <div ref={list}>{items?.map(item=>{
++   const prepared=item.phase==='prepared';
++   const message=messages[item.cleanupKey]||(prepared&&item.message==='删除尚未提交，可恢复已暂存的文件。'?'':item.message);
++   return <article className="deletion-cleanup-task" data-cleanup-key={item.cleanupKey} data-targeted={item.cleanupKey===targetKey||undefined} tabIndex={-1} key={item.cleanupKey} aria-label={item.title||'未命名生产单'}>
++    <header><div><h3>{item.title||'未命名生产单'}</h3><span>{prepared?'删除未生效':'记录已删除'}</span></div><Button size="sm" color="secondary" isDisabled={!!pending||loading} isLoading={pending===item.cleanupKey} showTextWhileLoading onPress={()=>void retry(item)}>{pending===item.cleanupKey?(prepared?'恢复中…':'清理中…'):prepared?'恢复文件':'继续清理'}</Button></header>
++    {message&&<p role={messages[item.cleanupKey]?'alert':undefined}>{message}</p>}
++    <details><summary>查看位置</summary><dl><dt>原位置</dt><dd>{(item.paths??[item.path]).map(path=><code key={path}>{path}</code>)}</dd><dt>暂存位置</dt><dd>{(item.stagingPaths??(item.stagingPath?[item.stagingPath]:[])).map(path=><code key={path}>{path}</code>)}</dd></dl></details>
++   </article>;
++  })}</div>
++  <div className="deletion-cleanup-toolbar"><Button size="sm" color="tertiary" aria-label="刷新清理任务" isDisabled={loading||!!pending} onPress={()=>void refresh()}>刷新</Button></div>
++ </section>;
+ }
++export function DeletionCleanupDialog({onClose,returnFocusRef,...props}:RecoveryProps&{onClose:()=>void;returnFocusRef:RefObject<HTMLElement|null>}){
++ const ref=useDialogFocus<HTMLElement>(true,onClose,returnFocusRef);
++ return <div className="modal-backdrop" role="presentation"><section ref={ref} role="dialog" aria-modal="true" aria-label="文件清理" className="modal-card deletion-cleanup-dialog"><header><h2>文件清理</h2><Button size="sm" color="tertiary" aria-label="关闭文件清理" data-dialog-initial-focus iconLeading={X} onPress={onClose}/></header><div className="deletion-cleanup-body"><LocalDeletionRecovery {...props}/></div></section></div>;
++}
+--- a/src/local-app/LocalMaintenanceEmbedded.test.tsx
++++ b/src/local-app/LocalMaintenanceEmbedded.test.tsx
+@@ -10,12 +10,12 @@
+ vi.mock('./LocalHistory',()=>({LocalHistory:()=> <label>历史搜索<input aria-label="历史搜索"/></label>}));
+ vi.mock('./LocalDeletionRecovery',()=>({LocalDeletionRecovery:()=> <p>待完成文件清理</p>}));
+ afterEach(()=>{cleanup();vi.mocked(localRequest).mockReset();});
+-it('嵌入式导航保留同一维护实例的草稿，历史首次访问才挂载，文件清理入口仍存在',async()=>{
++it('嵌入式导航保留同一维护实例的草稿，历史首次访问才挂载，文件清理由独立入口提供',async()=>{
+   function Fixture(){const[tab,setTab]=useState<'connections'|'history'>('connections');return <><button onClick={()=>setTab('history')}>侧栏历史</button><button onClick={()=>setTab('connections')}>侧栏连接</button><LocalMaintenancePanel embedded activeTab={tab} onTabChange={setTab} onClose={()=>{}} revision={null}/></>;}
+   const user=userEvent.setup();render(<Fixture/>);
+   expect(screen.queryByRole('dialog')).toBeNull();
+   expect(screen.queryByLabelText('历史搜索')).toBeNull();
+-  expect(screen.getByText('待完成文件清理')).toBeTruthy();
++  expect(screen.queryByText('待完成文件清理')).toBeNull();
+   await user.type(screen.getByRole('textbox',{name:'连接草稿'}),'未保存连接');
+   await user.click(screen.getByRole('button',{name:'侧栏历史'}));
+   await user.type(await screen.findByRole('textbox',{name:'历史搜索'}),'历史第二页条件');
+--- a/src/local-app/LocalMaintenancePanel.tsx
++++ b/src/local-app/LocalMaintenancePanel.tsx
+@@ -4,7 +4,6 @@
+ import {Tabs} from '../ui/dan-ui/components/application/tabs/tabs';
+ import {useDialogFocus} from '../ui/useDialogFocus';
+ import {LocalConnectionsPanel} from './LocalConnectionsPanel';
+-import {LocalDeletionRecovery} from './LocalDeletionRecovery';
+ import {LocalHistory} from './LocalHistory';
+ const tabs = [{id:'connections', label:'连接管理'}, {id:'history', label:'历史资料'}] as const;
+ type Tab = typeof tabs[number]['id'];
+@@ -22,21 +21,21 @@
+   </div>;
+ }
+ 
+-export function LocalMaintenancePanel({onClose, revision, embedded=false, initialTab='connections', activeTab, onTabChange}: {onClose: () => void; revision: unknown; embedded?: boolean; initialTab?: Tab; activeTab?: Tab; onTabChange?: (tab: Tab) => void}) {
++export function LocalMaintenancePanel({onClose, embedded=false, initialTab='connections', activeTab, onTabChange}: {onClose: () => void; revision: unknown; embedded?: boolean; initialTab?: Tab; activeTab?: Tab; onTabChange?: (tab: Tab) => void}) {
+   const [selectedTab, setSelectedTab] = useState<Tab>(initialTab);
+   const active = activeTab ?? selectedTab;
+   const [historyVisited, setHistoryVisited] = useState(initialTab === 'history' || activeTab === 'history');
+   useEffect(()=>{if(active==='history')setHistoryVisited(true);},[active]);
+   const dialogRef = useDialogFocus(!embedded, onClose);
+   if(embedded)return <section aria-label={active==='connections'?'连接配置内容':'历史资料内容'} className="maintenance-embedded">
+-    <div className="maintenance-panel-content connection-settings-content" hidden={active!=='connections'} inert={active!=='connections'} data-inert={active!=='connections'||undefined}><LocalConnectionsPanel inlineBilling/><LocalDeletionRecovery revision={revision}/></div>
++    <div className="maintenance-panel-content connection-settings-content" hidden={active!=='connections'} inert={active!=='connections'} data-inert={active!=='connections'||undefined}><LocalConnectionsPanel inlineBilling/></div>
+     <div className="maintenance-panel-content" hidden={active!=='history'} inert={active!=='history'} data-inert={active!=='history'||undefined}>{historyVisited&&<LocalHistory/>}</div>
+   </section>;
+   const contents = <>
+       {!embedded&&<header><h2>系统维护</h2><Button size="sm" color="tertiary" aria-label="关闭系统维护" onClick={onClose} iconLeading={X}/></header>}
+       <Tabs selectedKey={active} keyboardActivation="automatic" onSelectionChange={key=>{setSelectedTab(key as Tab);onTabChange?.(key as Tab);if(key==='history')setHistoryVisited(true);}}>
+         <Tabs.List aria-label="系统维护分区" type="underline" className="account-tabs maintenance-tabs">{tabs.map(tab=><Tabs.Item id={tab.id} key={tab.id}>{tab.label}</Tabs.Item>)}</Tabs.List>
+-        <Tabs.Panel className="maintenance-panel-content" id="connections" shouldForceMount><LocalConnectionsPanel/><LocalDeletionRecovery revision={revision}/></Tabs.Panel>
++        <Tabs.Panel className="maintenance-panel-content" id="connections" shouldForceMount><LocalConnectionsPanel/></Tabs.Panel>
+         <Tabs.Panel className="maintenance-panel-content" id="history" shouldForceMount>{historyVisited&&<LocalHistory/>}</Tabs.Panel>
+       </Tabs>
+     </>;
+--- a/src/local-app/catalogNavigation.test.ts
++++ b/src/local-app/catalogNavigation.test.ts
+@@ -16,3 +16,9 @@
+ it('serializes a closed search destination without losing the full-result return context',()=>{
+  const value=readCatalogNavigation('?view=episodes&episode=episode-one&searchQ=金山&searchCategory=materials&searchPage=2&searchOpen=0');expect(value.panels.search).toEqual({q:'金山',category:'materials',page:2,open:false});const url=catalogNavigationUrl(value,'http://localhost/?outside=kept');expect(url).toContain('searchOpen=0');expect(url).toContain('outside=kept');expect(readCatalogNavigation(new URL(url,'http://localhost').search).panels.search.open).toBe(false);
+ });
++it('keeps cleanup task links with the current workspace and removes them when the panel closes',()=>{
++ const value=readCatalogNavigation('?view=episodes&episode=episode-one&step=delivery&cleanupOpen=1&cleanupTask=task-one');expect(value.panels.cleanup).toEqual({open:true,task:'task-one'});
++ const url=catalogNavigationUrl(value,'http://localhost/?outside=kept');expect(url).toContain('cleanupOpen=1');expect(url).toContain('cleanupTask=task-one');expect(url).toContain('episode=episode-one');
++ value.panels.cleanup={open:false,task:''};const closed=catalogNavigationUrl(value,'http://localhost'+url);expect(closed).not.toContain('cleanupOpen');expect(closed).not.toContain('cleanupTask');expect(closed).toContain('outside=kept');
++ expect(readCatalogNavigation('?cleanupOpen=1&cleanupTask=../../outside').panels.cleanup).toEqual({open:true,task:''});
++});
+--- a/src/local-app/catalogNavigation.tsx
++++ b/src/local-app/catalogNavigation.tsx
+@@ -4,6 +4,7 @@
+ export type CatalogView='operations'|'episodes'|'accounts'|'history';
+ export type PreparationTab='visual'|'voice'|'sound';
+ export interface CatalogPanels {
++ cleanup?:{open:boolean;task:string};
+  search:WorkspaceSearchLocation;
+  sources:{source:string;q:string;sourcesQ:string;category:string;scope:string;filesPage:number;recordsPage:number};
+  rules:{series:string;q:string;page:number};
+@@ -18,14 +19,14 @@
+ const views:CatalogView[]=['operations','episodes','accounts','history'];
+ export const productionSteps:ProductionStep[]=['script','preparation','editing','delivery'];
+ const tabs:PreparationTab[]=['visual','voice','sound'];
+-const panelKeys=['searchQ','searchCategory','searchPage','searchOpen','source','sourceQ','sourcesQ','sourceCategory','sourceScope','sourceFilesPage','sourceRecordsPage','rulesSeries','rulesQ','rulesPage','connectionsOpen','connectionsQ','capability','connectionStatus','connection','historyTab','historyQ','historyScope','historyContent','historyEpisode','historyPage','filesPage','recordsPage'];
++const panelKeys=['cleanupOpen','cleanupTask','searchQ','searchCategory','searchPage','searchOpen','source','sourceQ','sourcesQ','sourceCategory','sourceScope','sourceFilesPage','sourceRecordsPage','rulesSeries','rulesQ','rulesPage','connectionsOpen','connectionsQ','capability','connectionStatus','connection','historyTab','historyQ','historyScope','historyContent','historyEpisode','historyPage','filesPage','recordsPage'];
+ const keys=[...panelKeys,'view','account','episode','step','tab','page','pageSize','accountId','seriesId','visibility','pendingPage','blockedPage','q','sort','status','catalogStage'];
+ export function readCatalogNavigation(search:string):CatalogNavigation {
+  const p=new URLSearchParams(search),choice=<T extends string>(key:string,values:readonly T[],fallback:T)=>values.find(value=>value===p.get(key))??fallback;
+  const id=(key:string)=>{const value=p.get(key)??'';return /^[\w-]{1,128}$/.test(value)?value:'';};
+  const page=(key:string)=>{const value=p.get(key)??'';return /^\d{1,6}$/.test(value)&&Number(value)>0?Number(value):1;};
+  const episode=id('episode'),view=choice('view',views,episode?'episodes':'operations');
+- return {panels:{search:{q:(p.get('searchQ')??'').trim().slice(0,200),category:choice('searchCategory',['all','episodes','materials','accounts'],'all'),page:page('searchPage'),...(p.get('searchOpen')==='0'?{open:false}:{})},sources:{source:id('source'),q:(p.get('sourceQ')??'').trim().slice(0,200),sourcesQ:(p.get('sourcesQ')??'').trim().slice(0,200),category:choice('sourceCategory',['','business','configuration','diagnostics'],''),scope:choice('sourceScope',['active','archived','all'],'active'),filesPage:page('sourceFilesPage'),recordsPage:page('sourceRecordsPage')},rules:{series:id('rulesSeries')||'__common',q:(p.get('rulesQ')??'').slice(0,200),page:page('rulesPage')},connections:{open:p.get('connectionsOpen')==='1'||p.get('view')==='connections',q:(p.get('connectionsQ')??'').trim().slice(0,200),capability:choice('capability',['all','image','video','speech','music_sound','unsupported'],'all'),status:choice('connectionStatus',['','verified','unverified','invalid','retryable'],''),connection:id('connection')},history:{tab:choice('historyTab',['episodes','sources'],'episodes'),q:(p.get('historyQ')??'').trim().slice(0,200),scope:choice('historyScope',['active','archived','all'],'active'),contentOnly:p.get('historyContent')!=='all',episode:id('historyEpisode'),page:page('historyPage'),filesPage:page('filesPage'),recordsPage:page('recordsPage')}},view,account:id('account'),episode,step:productionSteps.find(value=>value===p.get('step'))??null,tab:choice('tab',tabs,'visual'),filters:{view:['operations','episodes','accounts'].includes(view)?view:'operations',page:page('page'),pageSize:episodePageSizes.find(size=>String(size)===p.get('pageSize'))??defaultEpisodePageSize,pendingPage:page('pendingPage'),blockedPage:page('blockedPage'),accountId:id('accountId'),seriesId:id('seriesId')||'all',visibility:choice('visibility',['active','archived','all'],'active'),q:(p.get('q')??'').trim().slice(0,1000),sort:choice('sort',view==='operations'?['updated','oldest','title']:['updated','oldest','title','cost_desc','cost_asc'],'updated'),catalogStage:view==='operations'?choice('catalogStage',['all',...productionSteps],'all'):'all',status:choice('status',['all','review','running','blocked','done'],'all')}};
++ return {panels:{cleanup:{open:p.get('cleanupOpen')==='1',task:id('cleanupTask')},search:{q:(p.get('searchQ')??'').trim().slice(0,200),category:choice('searchCategory',['all','episodes','materials','accounts'],'all'),page:page('searchPage'),...(p.get('searchOpen')==='0'?{open:false}:{})},sources:{source:id('source'),q:(p.get('sourceQ')??'').trim().slice(0,200),sourcesQ:(p.get('sourcesQ')??'').trim().slice(0,200),category:choice('sourceCategory',['','business','configuration','diagnostics'],''),scope:choice('sourceScope',['active','archived','all'],'active'),filesPage:page('sourceFilesPage'),recordsPage:page('sourceRecordsPage')},rules:{series:id('rulesSeries')||'__common',q:(p.get('rulesQ')??'').slice(0,200),page:page('rulesPage')},connections:{open:p.get('connectionsOpen')==='1'||p.get('view')==='connections',q:(p.get('connectionsQ')??'').trim().slice(0,200),capability:choice('capability',['all','image','video','speech','music_sound','unsupported'],'all'),status:choice('connectionStatus',['','verified','unverified','invalid','retryable'],''),connection:id('connection')},history:{tab:choice('historyTab',['episodes','sources'],'episodes'),q:(p.get('historyQ')??'').trim().slice(0,200),scope:choice('historyScope',['active','archived','all'],'active'),contentOnly:p.get('historyContent')!=='all',episode:id('historyEpisode'),page:page('historyPage'),filesPage:page('filesPage'),recordsPage:page('recordsPage')}},view,account:id('account'),episode,step:productionSteps.find(value=>value===p.get('step'))??null,tab:choice('tab',tabs,'visual'),filters:{view:['operations','episodes','accounts'].includes(view)?view:'operations',page:page('page'),pageSize:episodePageSizes.find(size=>String(size)===p.get('pageSize'))??defaultEpisodePageSize,pendingPage:page('pendingPage'),blockedPage:page('blockedPage'),accountId:id('accountId'),seriesId:id('seriesId')||'all',visibility:choice('visibility',['active','archived','all'],'active'),q:(p.get('q')??'').trim().slice(0,1000),sort:choice('sort',view==='operations'?['updated','oldest','title']:['updated','oldest','title','cost_desc','cost_asc'],'updated'),catalogStage:view==='operations'?choice('catalogStage',['all',...productionSteps],'all'):'all',status:choice('status',['all','review','running','blocked','done'],'all')}};
+ }
+ export function catalogNavigationUrl(value:CatalogNavigation,href=location.href):string {
+  const url=new URL(href);for(const key of keys)url.searchParams.delete(key);
+@@ -35,8 +36,8 @@
+  const defaults=readCatalogNavigation('').filters;
+  for(const [key,entry] of Object.entries(value.filters)){if(key!=='view'&&entry!==defaults[key as keyof typeof defaults])url.searchParams.set(key,String(entry));}
+  const panels=value.panels,defaultsPanels=readCatalogNavigation('').panels;
+- const values:Record<string,string|number|boolean>={searchQ:panels.search.q,searchCategory:panels.search.category,searchPage:panels.search.page,searchOpen:panels.search.q&&panels.search.open===false?'0':'',source:panels.sources.source,sourceQ:panels.sources.q,sourcesQ:panels.sources.sourcesQ,sourceCategory:panels.sources.category,sourceScope:panels.sources.scope,sourceFilesPage:panels.sources.filesPage,sourceRecordsPage:panels.sources.recordsPage,rulesSeries:panels.rules.series,rulesQ:panels.rules.q,rulesPage:panels.rules.page,connectionsOpen:panels.connections.open?'1':'',connectionsQ:panels.connections.q,capability:panels.connections.capability,connectionStatus:panels.connections.status,connection:panels.connections.connection,historyTab:panels.history.tab,historyQ:panels.history.q,historyScope:panels.history.scope,historyContent:panels.history.contentOnly?'content':'all',historyEpisode:panels.history.episode,historyPage:panels.history.page,filesPage:panels.history.filesPage,recordsPage:panels.history.recordsPage};
+- const defaultsValues:Record<string,string|number|boolean>={searchQ:'',searchCategory:'all',searchPage:1,searchOpen:'',source:'',sourceQ:'',sourcesQ:'',sourceCategory:'',sourceScope:'active',sourceFilesPage:1,sourceRecordsPage:1,rulesSeries:defaultsPanels.rules.series,rulesQ:'',rulesPage:1,connectionsOpen:'',connectionsQ:'',capability:'all',connectionStatus:'',connection:'',historyTab:'episodes',historyQ:'',historyScope:'active',historyContent:'content',historyEpisode:'',historyPage:1,filesPage:1,recordsPage:1};
++ const values:Record<string,string|number|boolean>={cleanupOpen:panels.cleanup?.open?'1':'',cleanupTask:panels.cleanup?.open?panels.cleanup.task:'',searchQ:panels.search.q,searchCategory:panels.search.category,searchPage:panels.search.page,searchOpen:panels.search.q&&panels.search.open===false?'0':'',source:panels.sources.source,sourceQ:panels.sources.q,sourcesQ:panels.sources.sourcesQ,sourceCategory:panels.sources.category,sourceScope:panels.sources.scope,sourceFilesPage:panels.sources.filesPage,sourceRecordsPage:panels.sources.recordsPage,rulesSeries:panels.rules.series,rulesQ:panels.rules.q,rulesPage:panels.rules.page,connectionsOpen:panels.connections.open?'1':'',connectionsQ:panels.connections.q,capability:panels.connections.capability,connectionStatus:panels.connections.status,connection:panels.connections.connection,historyTab:panels.history.tab,historyQ:panels.history.q,historyScope:panels.history.scope,historyContent:panels.history.contentOnly?'content':'all',historyEpisode:panels.history.episode,historyPage:panels.history.page,filesPage:panels.history.filesPage,recordsPage:panels.history.recordsPage};
++ const defaultsValues:Record<string,string|number|boolean>={cleanupOpen:'',cleanupTask:'',searchQ:'',searchCategory:'all',searchPage:1,searchOpen:'',source:'',sourceQ:'',sourcesQ:'',sourceCategory:'',sourceScope:'active',sourceFilesPage:1,sourceRecordsPage:1,rulesSeries:defaultsPanels.rules.series,rulesQ:'',rulesPage:1,connectionsOpen:'',connectionsQ:'',capability:'all',connectionStatus:'',connection:'',historyTab:'episodes',historyQ:'',historyScope:'active',historyContent:'content',historyEpisode:'',historyPage:1,filesPage:1,recordsPage:1};
+  for(const key of panelKeys){if(values[key]!==defaultsValues[key])url.searchParams.set(key,String(values[key]));}
+  return url.pathname+url.search+url.hash;
+ }
+--- a/src/local-app/cleanupRecovery.integration.test.ts
++++ b/src/local-app/cleanupRecovery.integration.test.ts
+@@ -0,0 +1,53 @@
++// @vitest-environment node
++import {it,expect} from 'vitest';
++import {once} from 'node:events';
++import {existsSync} from 'node:fs';
++import {randomUUID} from 'node:crypto';
++import {writeFile,readFile,access,lstat,unlink} from 'node:fs/promises';
++import {join} from 'node:path';
++import {embeddedStudioFixture} from './embeddedStudio.fixture';
++import {cleanupRecoveryProcess} from './cleanupRecoveryProcess.fixture';
++it.skipIf(process.env.LOOP_EPISODE_DELETION_ACCEPTANCE!=='1').each(['link-before-unlink','before-finalize','after-first-finalize'] as const)('the recovery entry resumes %s after process death using only the durable scope',async crash=>{
++ const f=await embeddedStudioFixture(),processes:Awaited<ReturnType<typeof cleanupRecoveryProcess>>[]=[];
++ try{
++  const manual=join(f.assetRoot,f.episodeRelativePath,'手放保留.txt');await writeFile(manual,'untouched across recovery');const before=await lstat(manual);
++  const first=await cleanupRecoveryProcess(f,crash);processes.push(first);expect((await first.post('archiveEpisode',{episodeId:f.episode,archived:true})).status).toBe(200);
++  const plan=await first.post('planDeletion',{episodeId:f.episode});expect(plan.status).toBe(200);const key=randomUUID(),dead=once(first.child,'exit',{signal:AbortSignal.timeout(10000)});
++  await first.post('deleteEpisode',{episodeId:f.episode,confirmation:plan.body.confirmation,expectedPath:plan.body.path,expectedPaths:plan.body.paths,expectedRevision:plan.body.revision},key).catch(()=>null);await dead;
++  const prepared=crash==='link-before-unlink';expect((await f.c.query('SELECT state FROM local_identity.episode_deletion_intents WHERE idempotency_key=$1',[key])).rows[0].state).toBe(prepared?'prepared':'committed');
++  const second=await cleanupRecoveryProcess(f);processes.push(second);expect(second.pid).not.toBe(first.pid);
++  const readPending=async()=>{const r=await fetch(second.origin+'/api/local/deletion-cleanups',{headers:{Cookie:'loop_owner_session='+f.token}});expect(r.status).toBe(200);return r.json();};
++  expect(await readPending()).toEqual(expect.arrayContaining([expect.objectContaining({cleanupKey:key,...(prepared?{phase:'prepared'}:{})})]));
++  const result=await second.post('retryDeletionCleanup',{deletionKey:key});expect(result.status,JSON.stringify(result.body)).toBe(200);expect(result.body.cleanupPending).toBe(false);if(prepared)expect(result.body.recovered).toBe(true);
++  for(const file of plan.body.files){if(prepared)await access(file.path);else await expect(access(file.path)).rejects.toMatchObject({code:'ENOENT'});}
++  expect((await f.c.query('SELECT count(*)::integer n FROM public.episodes WHERE id=$1',[f.episode])).rows[0].n).toBe(prepared?1:0);
++  expect(await readFile(manual,'utf8')).toBe('untouched across recovery');expect((await lstat(manual)).ino).toBe(before.ino);expect(await readPending()).toEqual([]);
++  const again=await second.post('retryDeletionCleanup',{deletionKey:key});expect(again.status).toBe(200);expect(again.body.cleanupPending).toBe(false);expect(await readFile(manual,'utf8')).toBe('untouched across recovery');
++ }finally{for(const child of processes)await child.close();await f.close();}
++},120000);
++it.skipIf(process.env.LOOP_EPISODE_DELETION_ACCEPTANCE!=='1')('keeps the concrete cleanup failure after restart and exposes it only to its Owner',async()=>{
++ const f=await embeddedStudioFixture(),processes:Awaited<ReturnType<typeof cleanupRecoveryProcess>>[]=[];
++ try{
++  const first=await cleanupRecoveryProcess(f,'fail-finalize');processes.push(first);await first.post('archiveEpisode',{episodeId:f.episode,archived:true});const plan=await first.post('planDeletion',{episodeId:f.episode}),key=randomUUID();
++  const result=await first.post('deleteEpisode',{episodeId:f.episode,confirmation:plan.body.confirmation,expectedPath:plan.body.path,expectedPaths:plan.body.paths,expectedRevision:plan.body.revision},key);expect(result.status,JSON.stringify(result.body)).toBe(200);expect(result.body).toMatchObject({cleanupPending:true,message:expect.stringContaining('文件暂时被占用')});await first.close();
++  const second=await cleanupRecoveryProcess(f);processes.push(second);const read=async(token:string)=>{const r=await fetch(second.origin+'/api/local/deletion-cleanups',{headers:{Cookie:'loop_owner_session='+token}});expect(r.status).toBe(200);return r.json();};
++  expect(await read(f.token)).toEqual(expect.arrayContaining([expect.objectContaining({cleanupKey:key,message:result.body.message})]));expect(await read(f.otherToken)).toEqual([]);
++  expect((await f.c.query("SELECT has_function_privilege('loop_worker','local_identity.record_owned_deletion_cleanup_error(uuid,text)','EXECUTE') allowed")).rows[0].allowed).toBe(false);
++  const retried=await second.post('retryDeletionCleanup',{deletionKey:key});expect(retried.status).toBe(200);expect(retried.body.cleanupPending).toBe(false);expect(retried.body.message).toBeUndefined();expect(await read(f.token)).toEqual([]);
++ }finally{for(const child of processes)await child.close();await f.close();}
++},120000);
++it.skipIf(process.env.LOOP_EPISODE_DELETION_ACCEPTANCE!=='1')('keeps a restore conflict across restart without changing the frozen manifest or overwriting the blocker',async()=>{
++ const f=await embeddedStudioFixture(),processes:Awaited<ReturnType<typeof cleanupRecoveryProcess>>[]=[];
++ try{
++  const first=await cleanupRecoveryProcess(f,'link-before-unlink');processes.push(first);await first.post('archiveEpisode',{episodeId:f.episode,archived:true});const plan=await first.post('planDeletion',{episodeId:f.episode}),key=randomUUID(),dead=once(first.child,'exit',{signal:AbortSignal.timeout(10000)});
++  await first.post('deleteEpisode',{episodeId:f.episode,confirmation:plan.body.confirmation,expectedPath:plan.body.path,expectedPaths:plan.body.paths,expectedRevision:plan.body.revision},key).catch(()=>null);await dead;
++  const intent=(await f.c.query('SELECT manifest,payload_hash FROM local_identity.episode_deletion_intents WHERE idempotency_key=$1',[key])).rows[0];
++  const file=intent.manifest.targets.flatMap((t:any)=>t.files).find((file:any)=>existsSync(file.stagingPath));
++  expect(file).toBeTruthy();const expected=await readFile(file.stagingPath);await unlink(file.path);await writeFile(file.path,'unconfirmed occupied file',{flag:'wx'});const blocker=await lstat(file.path);
++  const second=await cleanupRecoveryProcess(f);processes.push(second);const failed=await second.post('retryDeletionCleanup',{deletionKey:key});expect(failed.status).toBe(200);expect(failed.body).toMatchObject({cleanupPending:true,message:expect.stringContaining('文件恢复尚未完成')});await second.close();
++  expect(await readFile(file.path,'utf8')).toBe('unconfirmed occupied file');expect((await lstat(file.path)).ino).toBe(blocker.ino);
++  const after=(await f.c.query('SELECT manifest,payload_hash FROM local_identity.episode_deletion_intents WHERE idempotency_key=$1',[key])).rows[0];expect(after).toEqual(intent);
++  const third=await cleanupRecoveryProcess(f);processes.push(third);const pending=await fetch(third.origin+'/api/local/deletion-cleanups',{headers:{Cookie:'loop_owner_session='+f.token}});expect(await pending.json()).toEqual(expect.arrayContaining([expect.objectContaining({cleanupKey:key,message:failed.body.message})]));
++  await unlink(file.path);const recovered=await third.post('retryDeletionCleanup',{deletionKey:key});expect(recovered.status).toBe(200);expect(recovered.body).toMatchObject({cleanupPending:false,recovered:true});expect(await readFile(file.path)).toEqual(expected);
++ }finally{for(const child of processes)await child.close();await f.close();}
++},120000);
+--- a/src/local-app/cleanupRecoveryProcess.fixture.ts
++++ b/src/local-app/cleanupRecoveryProcess.fixture.ts
+@@ -0,0 +1,19 @@
++import {spawn} from 'node:child_process';
++import {once} from 'node:events';
++import {createInterface} from 'node:readline';
++import {join} from 'node:path';
++import {randomUUID} from 'node:crypto';
++import {csrfFor} from './sessions';
++type Fixture={database:string;root:string;token:string};
++export async function cleanupRecoveryProcess(f:Fixture,crash?:'link-before-unlink'|'before-finalize'|'after-first-finalize'|'fail-finalize'){
++ const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MODULE!);const context=runtimeContext();context.assertDatabase();if(context.dailyRuntime!==false)throw Error('Owned isolated cluster required');
++ const child=spawn(join(process.cwd(),'node_modules/.bin/vite-node'),['--config','src/local-app/episodeDeletionProcess.config.mjs','src/local-app/episodeDeletionProcess.fixture.ts'],{cwd:process.cwd(),env:process.env,stdio:['pipe','pipe','pipe']});let errors='';child.stderr!.on('data',bytes=>{errors=(errors+bytes).slice(-4000);});
++ const lines=createInterface({input:child.stdout!});child.stdin!.end(JSON.stringify({database:f.database,root:f.root,crash})+'\n');
++ let ready:{origin:string;pid:number};try{ready=await Promise.race([once(lines,'line',{signal:AbortSignal.timeout(15000)}).then(([line])=>JSON.parse(String(line))),once(child,'exit').then(()=>{throw Error(errors||'Recovery fixture exited before readiness');})]);}catch(error){child.kill('SIGTERM');throw error;}finally{lines.close();}
++ return{child,...ready,
++  async post(command:string,data:Record<string,unknown>,key=randomUUID()){
++   const response=await fetch(ready.origin+'/api/local/episode-lifecycle',{method:'POST',headers:{Origin:ready.origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+f.token,'X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command,idempotencyKey:key,data})});return{status:response.status,body:await response.json()};
++  },
++  async close(){if(child.exitCode===null&&child.signalCode===null){const ended=once(child,'exit');child.kill('SIGTERM');await ended;}}
++ };
++}
+--- a/src/local-app/deletion-cleanup.css
++++ b/src/local-app/deletion-cleanup.css
+@@ -0,0 +1,27 @@
++html[data-interface="impeccable"] .product-ui .deletion-cleanup-dialog{display:flex;flex-direction:column;width:720px;max-width:calc(100vw - 32px);max-height:calc(100dvh - 32px);padding:20px;overflow:hidden}
++.deletion-cleanup-dialog>header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--lc-line)}
++.deletion-cleanup-dialog h2{margin:0;font-size:18px;font-weight:600}
++.deletion-cleanup-body{min-height:0;overflow:auto;overscroll-behavior:contain;padding-top:12px}
++.deletion-cleanup-toolbar{display:flex;align-items:center;justify-content:flex-end;margin-top:8px}
++.deletion-cleanup-task{padding:12px 0;border-top:1px solid var(--lc-line);outline:none;min-width:0}
++.deletion-cleanup-task:first-child{border-top:0}
++.deletion-cleanup-task:focus-visible{outline:2px solid var(--lc-accent);outline-offset:-2px;border-radius:6px}
++.deletion-cleanup-task>header{display:flex;justify-content:space-between;align-items:center;gap:12px}
++.deletion-cleanup-task h3{font-size:14px;margin:0 0 4px;font-weight:600;overflow-wrap:anywhere}
++.deletion-cleanup-task header span,.deletion-cleanup-task summary{font-size:12px;color:var(--lc-muted)}
++.deletion-cleanup-task header>button{flex:none}
++.deletion-cleanup-task p,.deletion-cleanup-panel>p{font-size:13px;line-height:1.7;overflow-wrap:anywhere;margin:8px 0}
++.deletion-cleanup-task p[role=alert],.deletion-cleanup-error{color:var(--lc-danger)}
++.deletion-cleanup-success{color:var(--lc-success)}
++.deletion-cleanup-empty{padding:24px 0;color:var(--lc-muted)}
++.deletion-cleanup-task details{margin-top:8px}
++.deletion-cleanup-task summary{cursor:pointer}
++.deletion-cleanup-task dl{margin:8px 0 0;font-size:12px;line-height:1.6}
++.deletion-cleanup-task dt{color:var(--lc-muted);margin-top:8px}
++.deletion-cleanup-task dd{margin:4px 0 0}
++.deletion-cleanup-task code{display:block;overflow-wrap:anywhere;white-space:normal;font-size:11px}
++.deletion-cleanup-notice{border-color:var(--lc-warning)!important;color:var(--lc-ink)!important}
++.deletion-cleanup-notice>.notice-icon{color:var(--lc-warning)}
++@media(max-width:480px){.deletion-cleanup-task>header{align-items:flex-start;flex-wrap:wrap}.deletion-cleanup-task header>div{width:100%}}
++.deletion-cleanup-task[data-targeted]{outline:2px solid var(--lc-accent);outline-offset:-2px;border-radius:6px;padding-inline:12px}
++.deletion-cleanup-notice{background:var(--lc-warning-soft,var(--lc-surface))!important}
+--- a/src/local-app/episodeDeletionProcess.fixture.ts
++++ b/src/local-app/episodeDeletionProcess.fixture.ts
+@@ -9,11 +9,12 @@
+ import {syncBuiltinESMExports} from 'node:module';
+ const input=createInterface({input:process.stdin});
+ const [line]=await once(input,'line');input.close();
+-const configuration=JSON.parse(line as string) as {database:string;root:string;crash?:'before-finalize'|'after-first-finalize'|'link-before-unlink'};
++const configuration=JSON.parse(line as string) as {database:string;root:string;crash?:'before-finalize'|'after-first-finalize'|'link-before-unlink'|'fail-finalize'};
+ if(!/^loop_(?:studio_153|t24_restore)_[a-f0-9]{12}$/.test(configuration.database)||!process.env.LOOP_TEST_CONTEXT_MODULE)throw Error('Owned isolated fixture required');
+ const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MODULE),context=runtimeContext();context.assertDatabase();
+ if(configuration.crash){const unlink=fs.promises.unlink;fs.promises.unlink=async path=>{
+  const staged=String(path).endsWith('.loop-control-deletion');
++ if(configuration.crash==='fail-finalize'&&staged)throw Object.assign(Error('文件暂时被占用，未清理：'+String(path)),{code:'EACCES'});
+  if(configuration.crash==='before-finalize'&&staged||configuration.crash==='link-before-unlink'&&!staged&&String(path).startsWith(configuration.root+'/account/'))process.kill(process.pid,'SIGKILL');
+  await unlink(path);if(configuration.crash==='after-first-finalize'&&staged)process.kill(process.pid,'SIGKILL');
+ };syncBuiltinESMExports();}
+--- a/src/local-app/episodeLifecycle.ts
++++ b/src/local-app/episodeLifecycle.ts
+@@ -15,15 +15,15 @@
+ import {stageConfirmedEpisodeFiles,restoreConfirmedEpisodeFiles,finalizeConfirmedEpisodeFiles} from '../worker/episodeDeletion.js';
+ const uuid=/^[0-9a-f-]{36}$/;
+ const fingerprint=(v:unknown)=>createHash('sha256').update(JSON.stringify(canonical(v))).digest('hex');
+-interface DeletionResult{episodeId:string;title:string;path:string;stagingPath:string;cleanupKey:string;cleanupPending:boolean;localRemoved?:boolean;summary:unknown;cleanupRoot:string;paths?:string[];stagingPaths?:string[];cleanupTargets?:EpisodeDeletionTarget[];historyCleanupTargets?:HistoryBlobTarget[];historyScanRoots?:string[];historyRemovedPaths?:string[];}
++interface DeletionResult{episodeId:string;title:string;path:string;stagingPath:string;cleanupKey:string;cleanupPending:boolean;localRemoved?:boolean;summary:unknown;cleanupRoot:string;paths?:string[];stagingPaths?:string[];cleanupTargets?:EpisodeDeletionTarget[];historyCleanupTargets?:HistoryBlobTarget[];historyScanRoots?:string[];historyRemovedPaths?:string[];message?:string;}
+ export class LocalEpisodeLifecycle{
+  constructor(private pool:Pool,private mediaRoot:string,private beforeDelete:(id:string)=>Promise<void>=async()=>{},private historyRoot?:string){}
+  async pending(session:OwnerSession){return ownerTransaction(this.pool,session.id,true,async c=>{
+   const committed=(await c.query("SELECT result FROM local_identity.command_receipts WHERE owner_id=$1 AND result->>'cleanupPending'='true' AND result ? 'cleanupRoot'",[session.id])).rows.map(r=>this.publicResult(r.result));
+   const prepared=(await c.query("SELECT * FROM local_identity.episode_deletion_intents WHERE owner_id=$1 AND state='prepared'",[session.id])).rows.map(intent=>this.preparedResult(intent));return[...prepared,...committed];
+  });}
+- private publicResult(result:DeletionResult){const{cleanupRoot:_root,cleanupTargets:_targets,historyCleanupTargets:_history,historyScanRoots:_scan,historyRemovedPaths:_removed,...visible}=result;return{...visible,...(result.cleanupPending&&(!result.cleanupTargets||result.cleanupTargets.some(target=>!target.files))?{message:'旧回执没有可验证的精确文件清单；暂存与未知文件保留。'}:{})};}
+- private preparedResult(intent:{idempotency_key:string;episode_id:string;manifest:{title?:string;path?:string;targets:EpisodeDeletionTarget[]}}){return{cleanupKey:intent.idempotency_key,episodeId:intent.episode_id,title:intent.manifest.title??intent.episode_id,path:intent.manifest.path??intent.manifest.targets[0]?.path??'',stagingPaths:intent.manifest.targets.flatMap(target=>target.files?.map(file=>file.stagingPath)??[]),phase:'prepared',cleanupPending:true,message:'删除尚未提交，可恢复已暂存的文件。'};}
++ private publicResult(result:DeletionResult){const{cleanupRoot:_root,cleanupTargets:_targets,historyCleanupTargets:_history,historyScanRoots:_scan,historyRemovedPaths:_removed,message,...visible}=result;return{...visible,...(result.cleanupPending&&message?{message}:{}),...(result.cleanupPending&&(!result.cleanupTargets||result.cleanupTargets.some(target=>!target.files))?{message:'旧回执没有可验证的精确文件清单；暂存与未知文件保留。'}:{})};}
++ private preparedResult(intent:{idempotency_key:string;episode_id:string;manifest:{title?:string;path?:string;targets:EpisodeDeletionTarget[]};last_error?:string}){return{cleanupKey:intent.idempotency_key,episodeId:intent.episode_id,title:intent.manifest.title??intent.episode_id,path:intent.manifest.path??intent.manifest.targets[0]?.path??'',stagingPaths:intent.manifest.targets.flatMap(target=>target.files?.map(file=>file.stagingPath)??[]),phase:'prepared',cleanupPending:true,message:intent.last_error??'删除尚未提交，可恢复已暂存的文件。'};}
+  private async retry(session:OwnerSession,key:string){
+   const connection=await this.pool.connect();let lock:string|undefined;
+   try{
+@@ -34,7 +34,7 @@
+    if(current.intent.state==='prepared')try{
+     for(const target of [...current.intent.manifest.targets as EpisodeDeletionTarget[]].reverse())await restoreConfirmedEpisodeFiles(target);
+     await sessionTransaction(this.pool,session,c=>c.query('SELECT local_identity.reserve_episode_deletion_intent($1,false)',[key]),connection);
+-   }catch(error){return{...this.preparedResult(current.intent),message:'文件恢复尚未完成：'+(error instanceof Error?error.message:'请恢复原位置后重试。')};}
++   }catch(error){const message='文件恢复尚未完成：'+(error instanceof Error?error.message:'请恢复原位置后重试。');await sessionTransaction(this.pool,session,c=>c.query('SELECT local_identity.record_owned_deletion_cleanup_error($1,$2)',[key,message]),connection);return{...this.preparedResult(current.intent),message};}
+    return{...this.preparedResult(current.intent),cleanupPending:false,recovered:true,message:'未提交的删除已恢复，请重新检查范围后确认。'};
+   }finally{if(lock)await connection.query('SELECT pg_advisory_unlock(hashtextextended($1,0))',[lock]).catch(()=>{});connection.release();}
+  }
+@@ -170,11 +170,11 @@
+   if(command==='deleteEpisode'||command==='deleteHistoryEpisode')return this.finish(session,key,connection);return result;
+  }
+  private async finish(session:OwnerSession,key:string,connection?:PoolClient){
+-  return sessionTransaction(this.pool,session,async c=>{
++  const result=await sessionTransaction(this.pool,session,async c=>{
+    await c.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[session.id+':'+key]);const row=(await c.query('SELECT result FROM local_identity.command_receipts WHERE owner_id=$1 AND idempotency_key=$2',[session.id,key])).rows[0];const r=row?.result as DeletionResult|undefined;
+    if(!r?.cleanupRoot||r.cleanupKey!==key)throw new ConfigurationError(404,'删除清理记录不可见。');if(!r.cleanupPending)return this.publicResult(r);
+    try{
+-    if(r.cleanupTargets){let failed=false;for(const target of r.cleanupTargets)try{await verifyEpisodeDeletionTarget(target,'staged');if(target.files)await finalizeConfirmedEpisodeFiles(target);else throw Error('旧回执没有精确文件清单，原范围保留。');}catch{failed=true;}if(failed)throw Error('Some directories need retry');}
++    if(r.cleanupTargets){const failures:string[]=[];for(const target of r.cleanupTargets)try{await verifyEpisodeDeletionTarget(target,'staged');if(target.files)await finalizeConfirmedEpisodeFiles(target);else throw Error('旧回执没有精确文件清单，原范围保留。');}catch(error){failures.push(error instanceof Error?error.message:'文件清理尚未完成。');}if(failures.length)throw Error(failures.join('；'));}
+     else throw Error('旧回执没有可验证的精确文件清单；暂存文件保留，请核对列出的位置。');
+     if(r.historyCleanupTargets?.length){
+      await c.query('SELECT local_identity.lock_history_deletion_inventory($1)',[tokenHash(session.token)]);
+@@ -185,5 +185,13 @@
+     const completed=(await c.query('SELECT local_identity.complete_owned_deletion_cleanup($1) result',[key])).rows[0].result;await c.query("SELECT local_identity.advance_episode_deletion_intent($1,'completed')",[key]);return this.publicResult(completed);
+    }catch(error){return{...this.publicResult(r),cleanupPending:true,message:error instanceof Error?error.message:'文件清理尚未确认，请检查原删除范围后重试。'};}
+   },connection);
++  if(!result.cleanupPending||!result.message)return result;
++  // Persist after the attempt transaction ends: a database error may have
++  // aborted it. Recheck the owned receipt under the same lock in a fresh one.
++  return sessionTransaction(this.pool,session,async c=>{
++   await c.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[session.id+':'+key]);
++   const persisted=(await c.query('SELECT local_identity.record_owned_deletion_cleanup_error($1,$2) result',[key,result.message])).rows[0].result as DeletionResult;
++   return this.publicResult(persisted);
++  },connection);
+  }
+ }
+--- a/src/workspace/WorkspaceViews.tsx
++++ b/src/workspace/WorkspaceViews.tsx
+@@ -32,10 +32,10 @@
+   { id: "accounts", label: "账号" },
+ ];
+ 
+-export function OwnerMenu({ onOpenSettings, onOpenStorage, onOpenMaintenance, onOpenSecrets, onOpenPreferences, onOpenNotifications, onOpenConnections, displayName, avatar, email, onSignOut, onBeforeOpen, isActive=false }: { displayName?: string; avatar?: string | null; email?: string; onOpenPreferences?: () => void; onOpenNotifications?: () => void; onOpenConnections?: () => void; isActive?: boolean; onBeforeOpen?: (trigger: HTMLButtonElement | null) => void; onOpenSettings: () => void; onOpenStorage?: () => void; onOpenMaintenance?: () => void; onOpenSecrets?: () => void; onSignOut: () => void }) {
++export function OwnerMenu({ onOpenSettings, onOpenStorage, onOpenMaintenance, onOpenCleanup, onOpenSecrets, onOpenPreferences, onOpenNotifications, onOpenConnections, displayName, avatar, email, onSignOut, onBeforeOpen, isActive=false }: { displayName?: string; avatar?: string | null; email?: string; onOpenPreferences?: () => void; onOpenNotifications?: () => void; onOpenConnections?: () => void; isActive?: boolean; onBeforeOpen?: (trigger: HTMLButtonElement | null) => void; onOpenSettings: () => void; onOpenStorage?: () => void; onOpenMaintenance?: () => void; onOpenCleanup?: () => void; onOpenSecrets?: () => void; onSignOut: () => void }) {
+   const trigger = useRef<HTMLButtonElement>(null);
+   const select = (action: () => void) => {onBeforeOpen?.(trigger.current); trigger.current?.focus(); action();};
+-  return <div className="owner-menu"><Dropdown.Root><Button size="sm" color="tertiary" aria-label="所有者设置" ref={trigger} className="owner-menu-trigger" data-active={isActive||undefined} type="button">{avatar?<img className="owner-menu-avatar" src={avatar} alt=""/>:<Icon name="User" />}</Button><Dropdown.Popover className="dan-ui product-ui"><Dropdown.Menu aria-label="所有者设置"><Dropdown.Section>{displayName||email?<Dropdown.SectionHeader><div className="owner-profile-summary"><strong>{displayName||email}</strong>{displayName&&email?<span>{email}</span>:null}</div></Dropdown.SectionHeader>:null}{onOpenPreferences&&<Dropdown.Item icon={SlidersHorizontal} id="preferences" onAction={()=>select(onOpenPreferences)}>个人偏好</Dropdown.Item>}{onOpenNotifications&&<Dropdown.Item icon={Bell} id="notifications" onAction={()=>select(onOpenNotifications)}>通知</Dropdown.Item>}</Dropdown.Section>{(onOpenPreferences || onOpenNotifications) && <Dropdown.Separator/>}<Dropdown.Section><Dropdown.Item icon={ShieldCheck} id="security" onAction={()=>select(onOpenSettings)}>登录与安全</Dropdown.Item>{onOpenStorage&&<Dropdown.Item icon={FolderOpen} id="storage" onAction={()=>select(onOpenStorage)}>本机存储</Dropdown.Item>}{onOpenMaintenance&&<Dropdown.Item icon={Settings} id="maintenance" onAction={()=>select(onOpenMaintenance)}>系统维护</Dropdown.Item>}{onOpenConnections&&<Dropdown.Item icon={Plug} id="connections" onAction={()=>select(onOpenConnections)}>连接配置</Dropdown.Item>}{onOpenSecrets&&<Dropdown.Item icon={KeyRound} id="secrets" onAction={()=>select(onOpenSecrets)}>密钥管理</Dropdown.Item>}</Dropdown.Section><Dropdown.Separator/><Dropdown.Section><Dropdown.Item icon={LogOut} id="logout" onAction={()=>select(onSignOut)}>退出登录</Dropdown.Item></Dropdown.Section></Dropdown.Menu></Dropdown.Popover></Dropdown.Root></div>;
++  return <div className="owner-menu"><Dropdown.Root><Button size="sm" color="tertiary" aria-label="所有者设置" ref={trigger} className="owner-menu-trigger" data-active={isActive||undefined} type="button">{avatar?<img className="owner-menu-avatar" src={avatar} alt=""/>:<Icon name="User" />}</Button><Dropdown.Popover className="dan-ui product-ui"><Dropdown.Menu aria-label="所有者设置"><Dropdown.Section>{displayName||email?<Dropdown.SectionHeader><div className="owner-profile-summary"><strong>{displayName||email}</strong>{displayName&&email?<span>{email}</span>:null}</div></Dropdown.SectionHeader>:null}{onOpenPreferences&&<Dropdown.Item icon={SlidersHorizontal} id="preferences" onAction={()=>select(onOpenPreferences)}>个人偏好</Dropdown.Item>}{onOpenNotifications&&<Dropdown.Item icon={Bell} id="notifications" onAction={()=>select(onOpenNotifications)}>通知</Dropdown.Item>}</Dropdown.Section>{(onOpenPreferences || onOpenNotifications) && <Dropdown.Separator/>}<Dropdown.Section><Dropdown.Item icon={ShieldCheck} id="security" onAction={()=>select(onOpenSettings)}>登录与安全</Dropdown.Item>{onOpenStorage&&<Dropdown.Item icon={FolderOpen} id="storage" onAction={()=>select(onOpenStorage)}>本机存储</Dropdown.Item>}{onOpenCleanup&&<Dropdown.Item icon={Trash2} id="cleanup" onAction={()=>select(onOpenCleanup)}>文件清理</Dropdown.Item>}{onOpenMaintenance&&<Dropdown.Item icon={Settings} id="maintenance" onAction={()=>select(onOpenMaintenance)}>系统维护</Dropdown.Item>}{onOpenConnections&&<Dropdown.Item icon={Plug} id="connections" onAction={()=>select(onOpenConnections)}>连接配置</Dropdown.Item>}{onOpenSecrets&&<Dropdown.Item icon={KeyRound} id="secrets" onAction={()=>select(onOpenSecrets)}>密钥管理</Dropdown.Item>}</Dropdown.Section><Dropdown.Separator/><Dropdown.Section><Dropdown.Item icon={LogOut} id="logout" onAction={()=>select(onSignOut)}>退出登录</Dropdown.Item></Dropdown.Section></Dropdown.Menu></Dropdown.Popover></Dropdown.Root></div>;
+ }
+ 
+ export const stageLabels: Record<EpisodeStage, string> = {

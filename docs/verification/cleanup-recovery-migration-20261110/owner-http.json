@@ -1,0 +1,15 @@
+{
+  "responses": [
+    {
+      "path": "deletion-cleanups",
+      "status": 200,
+      "rows": 0
+    },
+    {
+      "path": "catalog?view=episodes&page=1&pageSize=20&visibility=all&seriesId=all&pendingPage=1&blockedPage=1&q=&sort=updated&status=all",
+      "status": 200,
+      "rows": 6
+    }
+  ],
+  "temporaryProbeSessionRemoved": true
+}

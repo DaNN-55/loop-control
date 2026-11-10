@@ -1,0 +1,14 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+stderr | src/local-app/shelfUploadAcceptance.browser.integration.test.ts > imports shelf files through the real Owner HTTP boundary
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-153-jKwZXv/vite-cache/deps/react-dom_client.js?v=cbc2ac9c as it exceeds the max of 500KB.
+
+ ✓ src/local-app/shelfUploadAcceptance.browser.integration.test.ts (1 test) 126053ms
+   ✓ imports shelf files through the real Owner HTTP boundary  126052ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  13:27:03
+   Duration  126.92s (transform 482ms, setup 8ms, collect 687ms, tests 126.05s, environment 0ms, prepare 36ms)
+

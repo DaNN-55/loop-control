@@ -1,0 +1,14 @@
+{
+  "revision": 5,
+  "nativeEditRevision": 2,
+  "sounds": [
+    {
+      "itemId": "workspace-sfx-3bc19136-48a8-4365-9df5-ef9fccc4518b",
+      "kind": "sfx",
+      "gainDb": -6,
+      "duckDepthDb": 0,
+      "startSeconds": 0.2,
+      "durationSeconds": 0.6
+    }
+  ]
+}

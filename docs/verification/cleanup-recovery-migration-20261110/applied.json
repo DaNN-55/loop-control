@@ -1,0 +1,8 @@
+{
+  "migration": "157-deletion-cleanup-diagnostics.sql",
+  "sha256": "9c186c64c65c99cbd46f7824dd30690c61da26866b7d487421af1fd62efaa078",
+  "rehearsalRolledBack": true,
+  "onlyNewMigrationApplied": true,
+  "previousLedgerUnchanged": true,
+  "existingHistorical139DriftRetained": true
+}

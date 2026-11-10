@@ -1,0 +1,14 @@
+[
+  {
+    "command": "exportWorkspace",
+    "status": 200
+  },
+  {
+    "command": "confirmWorkspaceExport",
+    "status": 200
+  },
+  {
+    "command": "prepareWorkspaceDelivery",
+    "status": 200
+  }
+]

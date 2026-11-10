@@ -1,0 +1,94 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+··x···(node:79623) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+········xxxx·(node:81015) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+·(node:81179) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+··x····x·
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/modelSettings.integration.test.ts > 'wan2.5-i2v-preview': confirmation → actual Owner HTTP → frozen queue → Worker → network boundary for every mode
+Error: {"stack":"Error: 媒体执行或产物验证失败，请检查冻结输入和本机执行状态。\n    at executeNativeMedia (/Users/dan/Programs/loop-control/src/local-app/mediaWorker.ts:122:385)\n    at Object.execute (/Users/dan/Programs/loop-control/src/local-app/workspaceNarration.fixture.ts:67:1047)\n    at runCodexWorker (/Users/dan/Programs/loop-control/src/worker/codexRunner.ts:139:20)\n    at Object.execute (/Users/dan/Programs/loop-control/src/local-app/workspaceNarration.fixture.ts:67:16)\n    at /Users/dan/Programs/loop-control/src/local-app/modelSettings.integration.test.ts:36:4\n    at file:///Users/dan/Programs/loop-control/node_modules/@vitest/runner/dist/chunk-hooks.js:752:20","message":"媒体执行或产物验证失败，请检查冻结输入和本机执行状态。","cause":{"stack":"Error: 视频不可播放或时长不足：4 秒。\n    at Object.validateMp4Artifact [as validateMp4] (/Users/dan/Programs/loop-control/src/worker/mediaTools.ts:94:11)\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at validateTemporaryMedia (/Users/dan/Programs/loop-control/src/worker/controlledMediaExecutor.ts:223:7)\n    at executeControlledMediaTask (/Users/dan/Programs/loop-control/src/worker/controlledMediaExecutor.ts:44:49)\n    at executeNativeMedia (/Users/dan/Programs/loop-control/src/local-app/mediaWorker.ts:94:16)\n    at Object.execute (/Users/dan/Programs/loop-control/src/local-app/workspaceNarration.fixture.ts:67:1047)\n    at runCodexWorker (/Users/dan/Programs/loop-control/src/worker/codexRunner.ts:139:20)\n    at Object.execute (/Users/dan/Programs/loop-control/src/local-app/workspaceNarration.fixture.ts:67:16)\n    at /Users/dan/Programs/loop-control/src/local-app/modelSettings.integration.test.ts:36:4\n    at file:///Users/dan/Programs/loop-control/node_modules/@vitest/runner/dist/chunk-hooks.js:752:20","message":"视频不可播放或时长不足：4 秒。"}} {"last_result":{"retry":{"reason":"媒体执行或产物验证失败，请检查冻结输入和本机执行状态。","shouldRetry":false},"status":"failed","taskId":"59d64fcf-aa8a-4449-8676-1cc8da0023e4","version":"worker-result/v1","blockers":[],"nextStep":"Retry only after the reported failure is understood.","artifacts":[],"validation":{"checks":[{"name":"codex_execution","detail":"媒体执行或产物验证失败，请检查冻结输入和本机执行状态。","passed":false}],"passed":false},"actualCostCents":1}}
+ ❯ Object.execute src/local-app/workspaceNarration.fixture.ts:68:105
+
+ ❯ src/local-app/modelSettings.integration.test.ts:36:4
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  src/local-app/modelSettings.integration.test.ts > 'wan2.2-i2v-flash': confirmation → actual Owner HTTP → frozen queue → Worker → network boundary for every mode
+Error: {"stack":"Error: 媒体执行或产物验证失败，请检查冻结输入和本机执行状态。\n    at executeNativeMedia (/Users/dan/Programs/loop-control/src/local-app/mediaWorker.ts:122:385)\n    at Object.execute (/Users/dan/Programs/loop-control/src/local-app/workspaceNarration.fixture.ts:67:1047)\n    at runCodexWorker (/Users/dan/Programs/loop-control/src/worker/codexRunner.ts:139:20)\n    at Object.execute (/Users/dan/Programs/loop-control/src/local-app/workspaceNarration.fixture.ts:67:16)\n    at /Users/dan/Programs/loop-control/src/local-app/modelSettings.integration.test.ts:36:4\n    at file:///Users/dan/Programs/loop-control/node_modules/@vitest/runner/dist/chunk-hooks.js:752:20","message":"媒体执行或产物验证失败，请检查冻结输入和本机执行状态。","cause":{"stack":"Error: 视频不可播放或时长不足：4 秒。\n    at Object.validateMp4Artifact [as validateMp4] (/Users/dan/Programs/loop-control/src/worker/mediaTools.ts:94:11)\n    at validateTemporaryMedia (/Users/dan/Programs/loop-control/src/worker/controlledMediaExecutor.ts:223:7)\n    at executeControlledMediaTask (/Users/dan/Programs/loop-control/src/worker/controlledMediaExecutor.ts:44:49)\n    at executeNativeMedia (/Users/dan/Programs/loop-control/src/local-app/mediaWorker.ts:94:16)\n    at Object.execute (/Users/dan/Programs/loop-control/src/local-app/workspaceNarration.fixture.ts:67:1047)\n    at runCodexWorker (/Users/dan/Programs/loop-control/src/worker/codexRunner.ts:139:20)\n    at Object.execute (/Users/dan/Programs/loop-control/src/local-app/workspaceNarration.fixture.ts:67:16)\n    at /Users/dan/Programs/loop-control/src/local-app/modelSettings.integration.test.ts:36:4\n    at file:///Users/dan/Programs/loop-control/node_modules/@vitest/runner/dist/chunk-hooks.js:752:20","message":"视频不可播放或时长不足：4 秒。"}} {"last_result":{"retry":{"reason":"媒体执行或产物验证失败，请检查冻结输入和本机执行状态。","shouldRetry":false},"status":"failed","taskId":"dce08241-2c80-4ac8-bf8d-290c38e5e895","version":"worker-result/v1","blockers":[],"nextStep":"Retry only after the reported failure is understood.","artifacts":[],"validation":{"checks":[{"name":"codex_execution","detail":"媒体执行或产物验证失败，请检查冻结输入和本机执行状态。","passed":false}],"passed":false},"actualCostCents":1}}
+ ❯ Object.execute src/local-app/workspaceNarration.fixture.ts:68:105
+
+ ❯ src/local-app/modelSettings.integration.test.ts:36:4
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+ FAIL  src/local-app/modelSettings.integration.test.ts > 'wan2.2-i2v-plus': confirmation → actual Owner HTTP → frozen queue → Worker → network boundary for every mode
+Error: {"stack":"Error: 媒体执行或产物验证失败，请检查冻结输入和本机执行状态。\n    at executeNativeMedia (/Users/dan/Programs/loop-control/src/local-app/mediaWorker.ts:122:385)\n    at Object.execute (/Users/dan/Programs/loop-control/src/local-app/workspaceNarration.fixture.ts:67:1047)\n    at runCodexWorker (/Users/dan/Programs/loop-control/src/worker/codexRunner.ts:139:20)\n    at Object.execute (/Users/dan/Programs/loop-control/src/local-app/workspaceNarration.fixture.ts:67:16)\n    at /Users/dan/Programs/loop-control/src/local-app/modelSettings.integration.test.ts:36:4\n    at file:///Users/dan/Programs/loop-control/node_modules/@vitest/runner/dist/chunk-hooks.js:752:20","message":"媒体执行或产物验证失败，请检查冻结输入和本机执行状态。","cause":{"stack":"Error: 视频不可播放或时长不足：4 秒。\n    at Object.validateMp4Artifact [as validateMp4] (/Users/dan/Programs/loop-control/src/worker/mediaTools.ts:94:11)\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at validateTemporaryMedia (/Users/dan/Programs/loop-control/src/worker/controlledMediaExecutor.ts:223:7)\n    at executeControlledMediaTask (/Users/dan/Programs/loop-control/src/worker/controlledMediaExecutor.ts:44:49)\n    at executeNativeMedia (/Users/dan/Programs/loop-control/src/local-app/mediaWorker.ts:94:16)\n    at Object.execute (/Users/dan/Programs/loop-control/src/local-app/workspaceNarration.fixture.ts:67:1047)\n    at runCodexWorker (/Users/dan/Programs/loop-control/src/worker/codexRunner.ts:139:20)\n    at Object.execute (/Users/dan/Programs/loop-control/src/local-app/workspaceNarration.fixture.ts:67:16)\n    at /Users/dan/Programs/loop-control/src/local-app/modelSettings.integration.test.ts:36:4\n    at file:///Users/dan/Programs/loop-control/node_modules/@vitest/runner/dist/chunk-hooks.js:752:20","message":"视频不可播放或时长不足：4 秒。"}} {"last_result":{"retry":{"reason":"媒体执行或产物验证失败，请检查冻结输入和本机执行状态。","shouldRetry":false},"status":"failed","taskId":"87999499-edbf-48fb-a26b-8dcd721821c7","version":"worker-result/v1","blockers":[],"nextStep":"Retry only after the reported failure is understood.","artifacts":[],"validation":{"checks":[{"name":"codex_execution","detail":"媒体执行或产物验证失败，请检查冻结输入和本机执行状态。","passed":false}],"passed":false},"actualCostCents":1}}
+ ❯ Object.execute src/local-app/workspaceNarration.fixture.ts:68:105
+
+ ❯ src/local-app/modelSettings.integration.test.ts:36:4
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+ FAIL  src/local-app/modelSettings.integration.test.ts > 'wanx2.1-i2v-plus': confirmation → actual Owner HTTP → frozen queue → Worker → network boundary for every mode
+Error: {"stack":"Error: 媒体执行或产物验证失败，请检查冻结输入和本机执行状态。\n    at executeNativeMedia (/Users/dan/Programs/loop-control/src/local-app/mediaWorker.ts:122:385)\n    at Object.execute (/Users/dan/Programs/loop-control/src/local-app/workspaceNarration.fixture.ts:67:1047)\n    at runCodexWorker (/Users/dan/Programs/loop-control/src/worker/codexRunner.ts:139:20)\n    at Object.execute (/Users/dan/Programs/loop-control/src/local-app/workspaceNarration.fixture.ts:67:16)\n    at /Users/dan/Programs/loop-control/src/local-app/modelSettings.integration.test.ts:36:4\n    at file:///Users/dan/Programs/loop-control/node_modules/@vitest/runner/dist/chunk-hooks.js:752:20","message":"媒体执行或产物验证失败，请检查冻结输入和本机执行状态。","cause":{"stack":"Error: 视频不可播放或时长不足：4 秒。\n    at Object.validateMp4Artifact [as validateMp4] (/Users/dan/Programs/loop-control/src/worker/mediaTools.ts:94:11)\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at validateTemporaryMedia (/Users/dan/Programs/loop-control/src/worker/controlledMediaExecutor.ts:223:7)\n    at executeControlledMediaTask (/Users/dan/Programs/loop-control/src/worker/controlledMediaExecutor.ts:44:49)\n    at executeNativeMedia (/Users/dan/Programs/loop-control/src/local-app/mediaWorker.ts:94:16)\n    at Object.execute (/Users/dan/Programs/loop-control/src/local-app/workspaceNarration.fixture.ts:67:1047)\n    at runCodexWorker (/Users/dan/Programs/loop-control/src/worker/codexRunner.ts:139:20)\n    at Object.execute (/Users/dan/Programs/loop-control/src/local-app/workspaceNarration.fixture.ts:67:16)\n    at /Users/dan/Programs/loop-control/src/local-app/modelSettings.integration.test.ts:36:4\n    at file:///Users/dan/Programs/loop-control/node_modules/@vitest/runner/dist/chunk-hooks.js:752:20","message":"视频不可播放或时长不足：4 秒。"}} {"last_result":{"retry":{"reason":"媒体执行或产物验证失败，请检查冻结输入和本机执行状态。","shouldRetry":false},"status":"failed","taskId":"2a02b4d8-fa5e-4f61-9a8b-354b30e41593","version":"worker-result/v1","blockers":[],"nextStep":"Retry only after the reported failure is understood.","artifacts":[],"validation":{"checks":[{"name":"codex_execution","detail":"媒体执行或产物验证失败，请检查冻结输入和本机执行状态。","passed":false}],"passed":false},"actualCostCents":1}}
+ ❯ Object.execute src/local-app/workspaceNarration.fixture.ts:68:105
+
+ ❯ src/local-app/modelSettings.integration.test.ts:36:4
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯
+
+ FAIL  src/local-app/workspaceAudio.integration.test.ts > Freesound preparation traverses actual Worker lease and result, records attribution, retries failed work and restores after restart
+AssertionError: expected 200 to be 409 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 409[39m
+[31m+ 200[39m
+
+ ❯ src/local-app/workspaceAudio.integration.test.ts:29:121
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯
+
+ FAIL  src/local-app/workspaceAudio.integration.test.ts > source mode uses real native source extraction task without fabricating a legacy video-ready draft
+AssertionError: {"error":"调整范围超出独立原声，请先解除联动或重新采用视频区间。"}: expected 409 to be 200 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 200[39m
+[31m+ 409[39m
+
+ ❯ src/local-app/workspaceAudio.integration.test.ts:51:180
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯
+
+ FAIL  src/local-app/workspaceAudio.integration.test.ts > nonzero source extraction freezes the selected native window and partial coverage cannot align an entire shot
+AssertionError: {"error":"删除后画面短于完整字幕，请先明确调整字幕或画面时长。"}: expected 409 to be 200 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 200[39m
+[31m+ 409[39m
+
+ ❯ send src/local-app/workspaceAudio.integration.test.ts:94:186
+
+ ❯ src/local-app/workspaceAudio.integration.test.ts:105:71
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/7]⎯
+
+
+ Test Files  2 failed | 7 passed (9)
+      Tests  7 failed | 22 passed (29)
+   Start at  16:28:31
+   Duration  77.72s (transform 569ms, setup 29ms, collect 1.90s, tests 136.92s, environment 1ms, prepare 229ms)
+

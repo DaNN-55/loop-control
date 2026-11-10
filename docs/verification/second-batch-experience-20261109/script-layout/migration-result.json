@@ -1,0 +1,18 @@
+{
+  "approved": true,
+  "migratedFiles": [
+    "src/local-app/WorkspaceScriptPanel.tsx",
+    "src/local-app/workspace-compact-panels.css"
+  ],
+  "rightAsideAndCommandsUnchanged": true,
+  "mainHttp": 200,
+  "mainUiObserved": true,
+  "savedProductionData": false,
+  "backendRestarted": false,
+  "checks": {
+    "scriptComponentPassed": 17,
+    "types": true,
+    "subtitleOwnerIntegrationPassed": 2
+  },
+  "backup": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-script-approved-migration-20261109-fz_weibl"
+}

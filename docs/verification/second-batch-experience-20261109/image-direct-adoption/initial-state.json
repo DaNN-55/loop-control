@@ -1,0 +1,18 @@
+{
+  "paidCalls": 0,
+  "firstShot": "placeholder",
+  "secondShot": "video",
+  "imageCandidates": [
+    {
+      "id": "2d6a2984-2cde-41c4-a324-66d86d4e53f8",
+      "targetItemId": "shot-shot-02-5c37a99a-5711-4a2a-8f56-6e5e230e82f7",
+      "status": "available"
+    },
+    {
+      "id": "cbb1f0b3-d116-4828-b8ae-de591443afae",
+      "targetItemId": "shot-shot-01-35b9363b-53d6-4669-9abd-09e0e0fafac4",
+      "status": "available"
+    }
+  ],
+  "workspaceId": "b852714a-cb3b-4e99-8eda-9fce5708ab24"
+}

@@ -1,0 +1,15 @@
+{
+  "mainUnchanged": true,
+  "runtimeUnchanged": true,
+  "pidUnchanged": true,
+  "productFilesChangedThisRefinement": [
+    "WorkspaceExportPanel.tsx",
+    "workspace-compact-panels.css"
+  ],
+  "tests": 20,
+  "preview": "http://127.0.0.1:5188/__delivery_review",
+  "migrated": false,
+  "rightColumnGap": 12,
+  "playerSizingRulesChanged": false,
+  "paidCalls": 0
+}
