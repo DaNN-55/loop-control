@@ -1,0 +1,10 @@
+{
+  "fixture.mp4": {
+    "sha256": "b7e7778772d2c344df3965c30de5c9b3b3a96f97d2a48a7f8b9953fb68f7797b",
+    "fileSize": 1700
+  },
+  "cover.png": {
+    "sha256": "f401292e002daeb6efba92cc22b4433368677c3b991ac28a4326368f4c8d2fe3",
+    "fileSize": 316
+  }
+}

@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/Users/dan/Programs/loop-control/docs/verification/state-machines-batch4-20261110/verify-browser.py", line 38, in <module>
+    failure()
+    ~~~~~~~^^
+  File "/Users/dan/Programs/loop-control/docs/verification/state-machines-batch4-20261110/verify-browser.py", line 28, in failure
+    assert 'prepareWorkspace' not in [c['command'] for c in stats()['calls']]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

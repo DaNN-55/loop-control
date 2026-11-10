@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/Users/dan/Programs/loop-control/docs/verification/state-machines-batch5-20261110/verify-browser.py", line 30, in <module>
+    choose('open-failed');wait_button('进入剪辑工作台');click('进入剪辑工作台');run('wait','--text','夹具打开失败');assert not js("!!document.querySelector('iframe')");open_editor();edit('打开重试后的正文');click('保存并返回分镜台');wait_button('进入剪辑工作台');mark('open failure, save and return with selected shot')
+                                                                                                                                                                                                                                         ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/Users/dan/Programs/loop-control/docs/verification/state-machines-batch5-20261110/verify-browser.py", line 14, in wait_button
+    def wait_button(name):wait_condition("[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()==="+json.dumps(name)+"||b.getAttribute('aria-label')==="+json.dumps(name)+")&&!b.disabled&&b.checkVisibility())")
+                          ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/dan/Programs/loop-control/docs/verification/state-machines-batch5-20261110/verify-browser.py", line 12, in wait_condition
+    assert time.monotonic()<deadline,expression
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: [...document.querySelectorAll('button')].some(b=>(b.textContent.trim()==="\u8fdb\u5165\u526a\u8f91\u5de5\u4f5c\u53f0"||b.getAttribute('aria-label')==="\u8fdb\u5165\u526a\u8f91\u5de5\u4f5c\u53f0")&&!b.disabled&&b.checkVisibility())

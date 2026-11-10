@@ -1,0 +1,124 @@
+[
+  {
+    "batch": 1,
+    "commit": "1ba18aabc138a9315032bb468efd81fc06f821d5",
+    "message": "feat: unify generation controls and task feedback",
+    "files": [
+      "public/brand/models/LICENSE",
+      "public/brand/models/README.md",
+      "public/brand/models/claude-color.svg",
+      "public/brand/models/doubao-color.svg",
+      "public/brand/models/gemini-color.svg",
+      "public/brand/models/googlecloud-color.svg",
+      "public/brand/models/hailuo-color.svg",
+      "public/brand/models/kling-color.svg",
+      "public/brand/models/minimax-color.svg",
+      "public/brand/models/openai.svg",
+      "public/brand/models/qwen-color.svg",
+      "public/brand/models/wan.png",
+      "src/local-app/ProductionWorkspacePanel.test.tsx",
+      "src/local-app/WorkspaceAudioPanel.tsx",
+      "src/local-app/WorkspaceGenerationActivity.tsx",
+      "src/local-app/WorkspaceGenerationComposer.tsx",
+      "src/local-app/WorkspaceGenerationModel.test.tsx",
+      "src/local-app/WorkspaceGenerationModel.tsx",
+      "src/local-app/WorkspaceModelLogo.tsx",
+      "src/local-app/WorkspaceModelPicker.tsx",
+      "src/local-app/WorkspaceNarrationPanel.test.tsx",
+      "src/local-app/WorkspaceNarrationPanel.tsx",
+      "src/local-app/WorkspaceNarrationToolbar.tsx",
+      "src/local-app/WorkspaceVisualPreparation.activity.test.tsx",
+      "src/local-app/WorkspaceVisualPreparation.form.test.tsx",
+      "src/local-app/WorkspaceVisualPreparation.tsx",
+      "src/local-app/WorkspaceVisualTaskStatus.test.tsx",
+      "src/local-app/WorkspaceVisualTaskStatus.tsx",
+      "src/local-app/workspace-generation-activity.css",
+      "src/local-app/workspace-model-picker.css",
+      "src/workspaceTaskPresentation.ts"
+    ],
+    "indexTypecheck": "passed"
+  },
+  {
+    "batch": 2,
+    "commit": "ca4e0c3819feab8aa06fdba7a1563a5ef21e64d3",
+    "message": "fix: isolate per-call confirmation lifecycle",
+    "files": [
+      "src/local-app/useWorkspaceCallConfirmation.test.tsx",
+      "src/local-app/useWorkspaceCallConfirmation.tsx"
+    ],
+    "indexTypecheck": "passed"
+  },
+  {
+    "batch": 3,
+    "commit": "eb514104aea221e850eb39dec16463d5ff15cbcc",
+    "message": "fix: preserve workspace lifecycle and delivery recovery",
+    "files": [
+      "src/local-app/ProductionWorkspacePanel.operations.test.tsx",
+      "src/local-app/ProductionWorkspacePanel.test.tsx",
+      "src/local-app/ProductionWorkspacePanel.tsx",
+      "src/local-app/WorkspaceDeliveryPanel.test.tsx",
+      "src/local-app/WorkspaceDeliveryPanel.tsx",
+      "src/local-app/WorkspaceExportPanel.test.tsx",
+      "src/local-app/WorkspaceExportPanel.tsx",
+      "src/local-app/WorkspaceScriptPanel.test.tsx",
+      "src/local-app/WorkspaceScriptPanel.tsx",
+      "src/local-app/useWorkspaceOperations.ts",
+      "src/workspaceExportDelivery.test.ts",
+      "src/workspaceExportDelivery.ts"
+    ],
+    "indexTypecheck": "passed"
+  },
+  {
+    "batch": 4,
+    "commit": "b20c2b30dfca82ccdec736405fd27150715b4246",
+    "message": "fix: bind speech samples to their selection identity",
+    "files": [
+      "src/local-app/WorkspaceSpeechSample.lifecycle.test.tsx",
+      "src/local-app/WorkspaceSpeechSample.tsx"
+    ],
+    "indexTypecheck": "passed"
+  },
+  {
+    "batch": 5,
+    "commit": "836e8f67efd6b4da438ca633e446c6e165e46fb0",
+    "message": "fix: preserve model editing baselines during discovery",
+    "files": [
+      "src/connections/ConnectionModelsDialog.test.tsx",
+      "src/connections/ConnectionModelsDialog.tsx"
+    ],
+    "indexTypecheck": "passed"
+  },
+  {
+    "batch": 6,
+    "commit": "e7fdc462670134bafd8c0bb89c08db036b2d3d48",
+    "message": "fix: apply end-only video ranges and verify recovery fences",
+    "files": [
+      "src/local-app/mediaRootDirectoryReceipt.integration.test.ts",
+      "src/local-app/workspaceGenerationState.integration.test.ts",
+      "src/local-app/workspaceRecoveryFences.integration.test.ts",
+      "src/local-app/workspaceVisualCandidates.ts",
+      "src/local-app/workspaceVisualTrim.integration.test.ts"
+    ],
+    "indexTypecheck": "passed"
+  },
+  {
+    "batch": 7,
+    "commit": "83e5f5255b69c7e7c0314371d8087a97028db16d",
+    "message": "refactor: remove unreachable legacy helpers and unused range dependency",
+    "files": [
+      "package-lock.json",
+      "package.json",
+      "src/observability/TaskProgressPanel.tsx",
+      "src/operationDraft.ts",
+      "src/reviews/materialImportDraftStore.ts",
+      "src/reviews/productionScript.ts",
+      "src/reviews/reviewRevision.ts",
+      "src/shotAudioMix.ts",
+      "src/shotComposition.ts",
+      "src/styles.css",
+      "src/worker/manualMaterialChecklist.ts",
+      "src/workspace/WorkspaceViews.tsx"
+    ],
+    "indexTypecheck": "passed"
+  }
+]

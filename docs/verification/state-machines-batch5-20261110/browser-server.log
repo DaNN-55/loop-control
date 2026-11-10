@@ -1,0 +1,8 @@
+http://127.0.0.1:5194/__stage5
+[BABEL] Note: The code generator has deoptimised the styling of /Users/dan/Programs/loop-control/.scratch/state-machines-batch5-20261110/vite-cache/deps/react-dom_client.js?v=356aec69 as it exceeds the max of 500KB.
+8:06:07 PM [vite] (client) hmr update /src/local-app/workspace-generation-activity.css
+8:10:19 PM [vite] (client) page reload .scratch/state-machines-batch5-20261110/baseline-check/src/local-app/connections.prototype.html
+8:10:19 PM [vite] (client) page reload .scratch/state-machines-batch5-20261110/baseline-check/src/accounts/series-rules.prototype.html
+8:11:14 PM [vite] (client) hmr update /docs/verification/state-machines-batch5-20261110/browser-fixture.tsx
+8:11:14 PM [vite] (client) hmr invalidate /docs/verification/state-machines-batch5-20261110/browser-fixture.tsx Could not Fast Refresh ("true" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+8:11:14 PM [vite] (client) page reload docs/verification/state-machines-batch5-20261110/browser-fixture.tsx

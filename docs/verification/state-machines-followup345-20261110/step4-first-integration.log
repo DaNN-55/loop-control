@@ -1,0 +1,44 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workspaceRecoveryFences.integration.test.ts src/local-app/workspaceGenerationState.integration.test.ts src/local-app/workerOutcomes.integration.test.ts src/local-app/workspaceCallConfirmation.integration.test.ts --maxWorkers=1 --reporter=verbose
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/workerOutcomes.integration.test.ts > a failure report already waiting on the lease cannot cross a newly committed publication fence 1821ms
+ ✓ src/local-app/workerOutcomes.integration.test.ts > the final prepare failure records a terminal result through the real fenced Worker port 1498ms
+ ✓ src/local-app/workerOutcomes.integration.test.ts > the final execute failure records a terminal result through the real fenced Worker port 1494ms
+ ✓ src/local-app/workerOutcomes.integration.test.ts > ordinary execution failure retries within its allowance and stops at the final attempt 1428ms
+ ✓ src/local-app/workerOutcomes.integration.test.ts > the real scheduler observes unknown publication and restart does not regenerate (committed=false) 2086ms
+ ✓ src/local-app/workerOutcomes.integration.test.ts > the real scheduler observes unknown publication and restart does not regenerate (committed=true) 1873ms
+ ✓ src/local-app/workerOutcomes.integration.test.ts > actual compiled Worker preserves unknown publication across its process boundary (committed=false) 1571ms
+ ✓ src/local-app/workerOutcomes.integration.test.ts > actual compiled Worker preserves unknown publication across its process boundary (committed=true) 1569ms
+ ✓ src/local-app/workerOutcomes.integration.test.ts > lost COMMIT acknowledgement (committed=false) survives expiry and reconciles from a new connection without generation 1642ms
+ ✓ src/local-app/workerOutcomes.integration.test.ts > lost COMMIT acknowledgement (committed=true) survives expiry and reconciles from a new connection without generation 1476ms
+ ✓ src/local-app/workspaceGenerationState.integration.test.ts > HTTP image unknown preserves the original submission and a successful retry can supply a video first frame 2506ms
+ ✓ src/local-app/workspaceGenerationState.integration.test.ts > HTTP image reject preserves the original submission and a successful retry can supply a video first frame 1828ms
+ × src/local-app/workspaceGenerationState.integration.test.ts > HTTP video polling resumes the same frozen task and original remote ID, never a second POST 1579ms
+   → Cannot read properties of undefined (reading 'prompt')
+ ✓ src/local-app/workspaceGenerationState.integration.test.ts > Owner HTTP reconciles a held publication after lost COMMIT without a new attempt or supplier POST 1696ms
+ ✓ src/local-app/workspaceGenerationState.integration.test.ts > HTTP speech preserves unknown original submission evidence even after current input is changed 1515ms
+ ✓ src/local-app/workspaceCallConfirmation.integration.test.ts > confirmation does not queue, legacy enablement cannot bypass it, and one confirmation queues exactly once without enabling the episode 1617ms
+ ✓ src/local-app/workspaceCallConfirmation.integration.test.ts > expired and changed-input confirmations fail without consuming the proposal or queueing a task 1338ms
+ ✓ src/local-app/workspaceCallConfirmation.integration.test.ts > connection or reference changes require a fresh confirmation and failed validation rolls consumption back 1203ms
+ ✓ src/local-app/workspaceCallConfirmation.integration.test.ts > confirmation records follow the existing guarded production-order deletion 1312ms
+ ✓ src/local-app/workspaceCallConfirmation.integration.test.ts > automatically estimates a call and atomically freezes the Owner-adjusted reservation in the actual queued task 1671ms
+ ✓ src/local-app/workspaceCallConfirmation.integration.test.ts > rolls confirmation consumption back when the real candidate write fails and permits the same confirmation after repair 1310ms
+ ✓ src/local-app/workspaceRecoveryFences.integration.test.ts > a superseded attempt cannot refresh, report, reserve submission or begin publication for the current attempt 1576ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workspaceGenerationState.integration.test.ts > HTTP video polling resumes the same frozen task and original remote ID, never a second POST
+TypeError: Cannot read properties of undefined (reading 'prompt')
+ ❯ src/local-app/workspaceGenerationState.integration.test.ts:66:190
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 21 passed (22)
+   Start at  21:16:11
+   Duration  36.89s (transform 462ms, setup 10ms, collect 897ms, tests 35.61s, environment 0ms, prepare 86ms)
+

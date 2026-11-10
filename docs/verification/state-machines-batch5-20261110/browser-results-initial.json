@@ -1,0 +1,805 @@
+[
+  {
+    "args": [
+      "open",
+      "http://127.0.0.1:5194/__stage5"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "targetId": "7F41199331E1BF245B660ABA2D69977A",
+        "title": "工作区操作核对",
+        "url": "http://127.0.0.1:5194/__stage5"
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "set",
+      "viewport",
+      "1280",
+      "900"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "deviceScaleFactor": 1.0,
+        "height": 900,
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "mobile": false,
+        "width": 1280
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "frame",
+      "main"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "frame": "main",
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        }
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "select",
+      "select[aria-label=\"核对场景\"]",
+      "prepare-failed"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "selected": [
+          "prepare-failed"
+        ]
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "wait",
+      "--fn",
+      "document.querySelector('select').value===\"prepare-failed\"&&!document.body.innerText.includes('正在读取制作流程')"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "result": true
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "wait",
+      "--fn",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u91cd\\u8bd5\"||b.getAttribute('aria-label')===\"\\u91cd\\u8bd5\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "result": true
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "fetch('/__stats').then(r=>r.json())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=preparation",
+        "result": {
+          "calls": [
+            {
+              "command": "prepareWorkspace",
+              "data": {
+                "episodeId": "e",
+                "expectedScriptRevisionId": "s"
+              },
+              "idempotencyKey": "4dad5dd2-2566-4e55-92a8-268e997bba2f"
+            }
+          ],
+          "counts": {
+            "prepareWorkspace": 1
+          },
+          "mode": "prepare-failed",
+          "studio": {
+            "fileSize": 2,
+            "projectId": "loop-control-e",
+            "relativePath": "work/project.json",
+            "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          },
+          "text": "尚未保存的编辑",
+          "w": null
+        }
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "find",
+      "role",
+      "button",
+      "click",
+      "--name",
+      "重试",
+      "--exact"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "clicked": "@e1",
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        }
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "wait",
+      "--fn",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "result": true
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "fetch('/__stats').then(r=>r.json())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=preparation",
+        "result": {
+          "calls": [
+            {
+              "command": "prepareWorkspace",
+              "data": {
+                "episodeId": "e",
+                "expectedScriptRevisionId": "s"
+              },
+              "idempotencyKey": "4dad5dd2-2566-4e55-92a8-268e997bba2f"
+            },
+            {
+              "command": "prepareWorkspace",
+              "data": {
+                "episodeId": "e",
+                "expectedScriptRevisionId": "s"
+              },
+              "idempotencyKey": "4dad5dd2-2566-4e55-92a8-268e997bba2f"
+            }
+          ],
+          "counts": {
+            "prepareWorkspace": 2
+          },
+          "mode": "prepare-failed",
+          "studio": {
+            "fileSize": 2,
+            "projectId": "loop-control-e",
+            "relativePath": "work/project.json",
+            "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          },
+          "text": "尚未保存的编辑",
+          "w": {
+            "clips": [
+              {
+                "id": "clip",
+                "itemId": "item",
+                "shotId": "S01",
+                "source": null,
+                "text": "第一镜"
+              }
+            ],
+            "contentSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "episodeId": "e",
+            "id": "w",
+            "project": {
+              "fileSize": 2,
+              "projectId": "loop-control-e",
+              "relativePath": "project.json",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            "readiness": {
+              "deliverable": false,
+              "missingSources": [],
+              "placeholders": []
+            },
+            "revision": 1,
+            "scriptRevisionId": "s",
+            "stale": false,
+            "workflowVersion": "four-step/v1"
+          }
+        }
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "fetch('/__stats').then(r=>r.json())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=preparation",
+        "result": {
+          "calls": [
+            {
+              "command": "prepareWorkspace",
+              "data": {
+                "episodeId": "e",
+                "expectedScriptRevisionId": "s"
+              },
+              "idempotencyKey": "4dad5dd2-2566-4e55-92a8-268e997bba2f"
+            },
+            {
+              "command": "prepareWorkspace",
+              "data": {
+                "episodeId": "e",
+                "expectedScriptRevisionId": "s"
+              },
+              "idempotencyKey": "4dad5dd2-2566-4e55-92a8-268e997bba2f"
+            }
+          ],
+          "counts": {
+            "prepareWorkspace": 2
+          },
+          "mode": "prepare-failed",
+          "studio": {
+            "fileSize": 2,
+            "projectId": "loop-control-e",
+            "relativePath": "work/project.json",
+            "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          },
+          "text": "尚未保存的编辑",
+          "w": {
+            "clips": [
+              {
+                "id": "clip",
+                "itemId": "item",
+                "shotId": "S01",
+                "source": null,
+                "text": "第一镜"
+              }
+            ],
+            "contentSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "episodeId": "e",
+            "id": "w",
+            "project": {
+              "fileSize": 2,
+              "projectId": "loop-control-e",
+              "relativePath": "project.json",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            "readiness": {
+              "deliverable": false,
+              "missingSources": [],
+              "placeholders": []
+            },
+            "revision": 1,
+            "scriptRevisionId": "s",
+            "stale": false,
+            "workflowVersion": "four-step/v1"
+          }
+        }
+      },
+      "error": null
+    }
+  },
+  {
+    "scenario": "prepare failure, explicit retry",
+    "passed": true,
+    "stats": {
+      "calls": [
+        {
+          "command": "prepareWorkspace",
+          "data": {
+            "episodeId": "e",
+            "expectedScriptRevisionId": "s"
+          },
+          "idempotencyKey": "4dad5dd2-2566-4e55-92a8-268e997bba2f"
+        },
+        {
+          "command": "prepareWorkspace",
+          "data": {
+            "episodeId": "e",
+            "expectedScriptRevisionId": "s"
+          },
+          "idempotencyKey": "4dad5dd2-2566-4e55-92a8-268e997bba2f"
+        }
+      ],
+      "counts": {
+        "prepareWorkspace": 2
+      },
+      "mode": "prepare-failed",
+      "studio": {
+        "fileSize": 2,
+        "projectId": "loop-control-e",
+        "relativePath": "work/project.json",
+        "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "text": "尚未保存的编辑",
+      "w": {
+        "clips": [
+          {
+            "id": "clip",
+            "itemId": "item",
+            "shotId": "S01",
+            "source": null,
+            "text": "第一镜"
+          }
+        ],
+        "contentSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "episodeId": "e",
+        "id": "w",
+        "project": {
+          "fileSize": 2,
+          "projectId": "loop-control-e",
+          "relativePath": "project.json",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "readiness": {
+          "deliverable": false,
+          "missingSources": [],
+          "placeholders": []
+        },
+        "revision": 1,
+        "scriptRevisionId": "s",
+        "stale": false,
+        "workflowVersion": "four-step/v1"
+      }
+    }
+  },
+  {
+    "args": [
+      "frame",
+      "main"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "frame": "main",
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        }
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "select",
+      "select[aria-label=\"核对场景\"]",
+      "open-failed"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "selected": [
+          "open-failed"
+        ]
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "wait",
+      "--fn",
+      "document.querySelector('select').value===\"open-failed\"&&!document.body.innerText.includes('正在读取制作流程')"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "result": true
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "wait",
+      "--fn",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "result": true
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "find",
+      "role",
+      "button",
+      "click",
+      "--name",
+      "进入剪辑工作台",
+      "--exact"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "clicked": "@e2",
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        }
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "wait",
+      "--text",
+      "夹具打开失败"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "text": "夹具打开失败",
+        "waited": "text"
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "!!document.querySelector('iframe')"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=preparation",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "wait",
+      "--fn",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "result": true
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "find",
+      "role",
+      "button",
+      "click",
+      "--name",
+      "进入剪辑工作台",
+      "--exact"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "clicked": "@e3",
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        }
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "wait",
+      "--fn",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u4fdd\\u5b58\"||b.getAttribute('aria-label')===\"\\u4fdd\\u5b58\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "result": true
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "frame",
+      "iframe[title=\"OpenChatCut 剪辑工程\"]"
+    ],
+    "result": {
+      "success": false,
+      "data": null,
+      "error": "Frame not found"
+    }
+  }
+]

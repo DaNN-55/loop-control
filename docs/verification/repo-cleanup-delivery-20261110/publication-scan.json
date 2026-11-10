@@ -1,0 +1,11 @@
+{
+  "filesChecked": 344,
+  "scope": "all code and staged documentation since 62885252",
+  "patterns": [
+    "private-key",
+    "openai-key",
+    "aws-key",
+    "google-key"
+  ],
+  "hits": []
+}

@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/Users/dan/Programs/loop-control/docs/verification/state-machines-batch4-20261110/verify-browser.py", line 33, in <module>
+    choose(name);submit(name)
+    ~~~~~~^^^^^^
+  File "/Users/dan/Programs/loop-control/docs/verification/state-machines-batch4-20261110/verify-browser.py", line 20, in choose
+    if name=='revision-start-failed':click('脚本确认');wait_button('修改脚本');click('修改脚本')
+                                                       ~~~~~~~~~~~^^^^^^^^^^^^
+  File "/Users/dan/Programs/loop-control/docs/verification/state-machines-batch4-20261110/verify-browser.py", line 14, in wait_button
+    def wait_button(label):run('wait','--fn',"[...document.querySelectorAll('button')].some(b=>b.textContent.trim()==="+json.dumps(label)+"&&!b.disabled&&b.checkVisibility())")
+                           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/dan/Programs/loop-control/docs/verification/state-machines-batch4-20261110/verify-browser.py", line 10, in run
+    assert p.returncode==0 and r.get('success'),(args,r)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: (('wait', '--fn', '[...document.querySelectorAll(\'button\')].some(b=>b.textContent.trim()==="\\u4fee\\u6539\\u811a\\u672c"&&!b.disabled&&b.checkVisibility())'), {'success': False, 'data': None, 'error': 'Wait timed out after 25000ms'})

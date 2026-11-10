@@ -1,0 +1,33 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workspaceRecoveryFences.integration.test.ts src/local-app/workspaceGenerationState.integration.test.ts src/local-app/workerOutcomes.integration.test.ts src/local-app/workspaceCallConfirmation.integration.test.ts --maxWorkers=1 --reporter=verbose
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/workspaceGenerationState.integration.test.ts > HTTP image unknown preserves the original submission and a successful retry can supply a video first frame 2502ms
+ ✓ src/local-app/workspaceGenerationState.integration.test.ts > HTTP image reject preserves the original submission and a successful retry can supply a video first frame 1823ms
+ ✓ src/local-app/workspaceGenerationState.integration.test.ts > HTTP video polling resumes the same frozen task and original remote ID, never a second POST 1608ms
+ ✓ src/local-app/workspaceGenerationState.integration.test.ts > Owner HTTP reconciles a held publication after lost COMMIT without a new attempt or supplier POST 1691ms
+ ✓ src/local-app/workspaceGenerationState.integration.test.ts > HTTP speech preserves unknown original submission evidence even after current input is changed 1509ms
+ ✓ src/local-app/workerOutcomes.integration.test.ts > a failure report already waiting on the lease cannot cross a newly committed publication fence 1419ms
+ ✓ src/local-app/workerOutcomes.integration.test.ts > the final prepare failure records a terminal result through the real fenced Worker port 1264ms
+ ✓ src/local-app/workerOutcomes.integration.test.ts > the final execute failure records a terminal result through the real fenced Worker port 1253ms
+ ✓ src/local-app/workerOutcomes.integration.test.ts > ordinary execution failure retries within its allowance and stops at the final attempt 1505ms
+ ✓ src/local-app/workerOutcomes.integration.test.ts > the real scheduler observes unknown publication and restart does not regenerate (committed=false) 1810ms
+ ✓ src/local-app/workerOutcomes.integration.test.ts > the real scheduler observes unknown publication and restart does not regenerate (committed=true) 1794ms
+ ✓ src/local-app/workerOutcomes.integration.test.ts > actual compiled Worker preserves unknown publication across its process boundary (committed=false) 1561ms
+ ✓ src/local-app/workerOutcomes.integration.test.ts > actual compiled Worker preserves unknown publication across its process boundary (committed=true) 1510ms
+ ✓ src/local-app/workerOutcomes.integration.test.ts > lost COMMIT acknowledgement (committed=false) survives expiry and reconciles from a new connection without generation 1605ms
+ ✓ src/local-app/workerOutcomes.integration.test.ts > lost COMMIT acknowledgement (committed=true) survives expiry and reconciles from a new connection without generation 1507ms
+ ✓ src/local-app/workspaceCallConfirmation.integration.test.ts > confirmation does not queue, legacy enablement cannot bypass it, and one confirmation queues exactly once without enabling the episode 1646ms
+ ✓ src/local-app/workspaceCallConfirmation.integration.test.ts > expired and changed-input confirmations fail without consuming the proposal or queueing a task 1342ms
+ ✓ src/local-app/workspaceCallConfirmation.integration.test.ts > connection or reference changes require a fresh confirmation and failed validation rolls consumption back 1229ms
+ ✓ src/local-app/workspaceCallConfirmation.integration.test.ts > confirmation records follow the existing guarded production-order deletion 1328ms
+ ✓ src/local-app/workspaceCallConfirmation.integration.test.ts > automatically estimates a call and atomically freezes the Owner-adjusted reservation in the actual queued task 1682ms
+ ✓ src/local-app/workspaceCallConfirmation.integration.test.ts > rolls confirmation consumption back when the real candidate write fails and permits the same confirmation after repair 1352ms
+ ✓ src/local-app/workspaceRecoveryFences.integration.test.ts > a superseded attempt cannot refresh, report, reserve submission or begin publication for the current attempt 1580ms
+
+ Test Files  4 passed (4)
+      Tests  22 passed (22)
+   Start at  21:17:38
+   Duration  35.76s (transform 449ms, setup 10ms, collect 863ms, tests 34.52s, environment 0ms, prepare 84ms)
+

@@ -1,0 +1,7 @@
+{
+  "src/local-app/useWorkspaceCallConfirmation.tsx": "44bbaf16f40c7eec1ca015b9eda22f5fcfacf6c03fee3a1e5194ed67203f076d",
+  "src/local-app/useWorkspaceCallConfirmation.test.tsx": "7b8207fda884c847d13c839dec67ad2d2196beb6f42c74eba70dcedc76e15173",
+  "docs/adr/0033-workspace-call-confirmation-lifecycle.md": "22865ec3c13cb807feac8cf8c2e1028a7b63e2da23740b26844d2153fd18a9dc",
+  "docs/research/2026-11-10-cloudflare-deployment-feasibility-sources.md": "2cd848a554f5b40e0516f1b3e4ee61667eafc4cb56de2e3ea16e7ac6d700bef2",
+  "docs/research/2026-11-10-public-deployment-assessment.md": "81f6a5de46e49a966b7540c5414288aac85a09375dfeed639f25f34d316cc93a"
+}

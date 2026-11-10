@@ -1,0 +1,242 @@
+{
+  "counts": {
+    "files": 1165,
+    "code": 914,
+    "exportDeclarations": 1439,
+    "roots": 541,
+    "staticallyReached": 968
+  },
+  "candidates": [
+    {
+      "file": "scripts/openchatcut-caption-layout.mjs",
+      "line": 7,
+      "name": "captionSlotLayoutPatch",
+      "kind": "FunctionDeclaration"
+    },
+    {
+      "file": "scripts/openchatcut-embed-client.mjs",
+      "line": 15,
+      "name": "redirectLoopControlImport",
+      "kind": "FunctionDeclaration"
+    },
+    {
+      "file": "scripts/openchatcut-embed-client.mjs",
+      "line": 21,
+      "name": "LoopControlCaptionAlignment",
+      "kind": "FunctionDeclaration"
+    },
+    {
+      "file": "scripts/openchatcut-embed-client.mjs",
+      "line": 30,
+      "name": "useLoopControlHost",
+      "kind": "FunctionDeclaration"
+    },
+    {
+      "file": "src/lib/database.types.ts",
+      "line": 2036,
+      "name": "TablesInsert",
+      "kind": "TypeAliasDeclaration"
+    },
+    {
+      "file": "src/lib/database.types.ts",
+      "line": 2061,
+      "name": "TablesUpdate",
+      "kind": "TypeAliasDeclaration"
+    },
+    {
+      "file": "src/lib/database.types.ts",
+      "line": 2120,
+      "name": "Constants",
+      "kind": "VariableDeclaration"
+    },
+    {
+      "file": "src/ui/dan-ui/components/base/badges/badges.tsx",
+      "line": 166,
+      "name": "BadgeWithDot",
+      "kind": "VariableDeclaration"
+    },
+    {
+      "file": "src/ui/dan-ui/components/base/badges/badges.tsx",
+      "line": 214,
+      "name": "BadgeWithIcon",
+      "kind": "VariableDeclaration"
+    },
+    {
+      "file": "src/ui/dan-ui/components/base/badges/badges.tsx",
+      "line": 278,
+      "name": "BadgeWithFlag",
+      "kind": "VariableDeclaration"
+    },
+    {
+      "file": "src/ui/dan-ui/components/base/badges/badges.tsx",
+      "line": 321,
+      "name": "BadgeWithImage",
+      "kind": "VariableDeclaration"
+    },
+    {
+      "file": "src/ui/dan-ui/components/base/badges/badges.tsx",
+      "line": 372,
+      "name": "BadgeWithButton",
+      "kind": "VariableDeclaration"
+    },
+    {
+      "file": "src/ui/dan-ui/components/base/badges/badges.tsx",
+      "line": 426,
+      "name": "BadgeIcon",
+      "kind": "VariableDeclaration"
+    },
+    {
+      "file": "src/ui/dan-ui/components/base/badges/badge-types.ts",
+      "line": 256,
+      "name": "BadgeTypeColors",
+      "kind": "TypeAliasDeclaration"
+    },
+    {
+      "file": "src/ui/dan-ui/components/base/avatar/base-components/avatar-add-button.tsx",
+      "line": 20,
+      "name": "AvatarAddButton",
+      "kind": "VariableDeclaration"
+    },
+    {
+      "file": "src/ui/dan-ui/components/base/avatar/base-components/avatar-company-icon.tsx",
+      "line": 20,
+      "name": "AvatarCompanyIcon",
+      "kind": "VariableDeclaration"
+    }
+  ],
+  "orphan": [
+    "src/worker/storyboardRevisionExecutor.ts",
+    "src/vite-env.d.ts",
+    "src/worker/workerResultSchema.ts",
+    "src/worker/workspaceDeliveryWorker.ts",
+    "src/ui/dan-ui/test-setup.ts",
+    "src/ui/dan-ui/components/application/modals/modal.tsx",
+    "src/local-app/localWorkerCli.ts",
+    "src/local-app/nativeBackup.ts",
+    "src/local-app/connections.prototype.config.mjs",
+    "src/local-app/episodeDeletionProcess.config.mjs"
+  ],
+  "unresolved": [],
+  "packageImports": [
+    [
+      "/src/persist/projectStore.ts",
+      1
+    ],
+    [
+      "/src/persist/projectStoreTransport.ts",
+      1
+    ],
+    [
+      "@supabase/supabase-js",
+      1
+    ],
+    [
+      "@testing-library/react",
+      122
+    ],
+    [
+      "@testing-library/user-event",
+      46
+    ],
+    [
+      "@untitledui/icons",
+      11
+    ],
+    [
+      "@videojs/react",
+      2
+    ],
+    [
+      "@videojs/react/audio",
+      1
+    ],
+    [
+      "@videojs/react/audio/skin.css",
+      1
+    ],
+    [
+      "@videojs/react/i18n/locales/zh-CN/register",
+      2
+    ],
+    [
+      "@videojs/react/video",
+      1
+    ],
+    [
+      "@vitejs/plugin-react",
+      39
+    ],
+    [
+      "data:text/javascript;base64,",
+      2
+    ],
+    [
+      "esbuild",
+      5
+    ],
+    [
+      "jsdom",
+      1
+    ],
+    [
+      "lucide-react",
+      59
+    ],
+    [
+      "pg",
+      117
+    ],
+    [
+      "postcss",
+      1
+    ],
+    [
+      "react",
+      157
+    ],
+    [
+      "react-aria-components",
+      40
+    ],
+    [
+      "react-dom",
+      9
+    ],
+    [
+      "react-dom/client",
+      2
+    ],
+    [
+      "tailwind-merge",
+      1
+    ],
+    [
+      "typescript",
+      2
+    ],
+    [
+      "virtual:loop-control-audio",
+      1
+    ],
+    [
+      "virtual:loop-control-candidates",
+      1
+    ],
+    [
+      "virtual:loop-control-captions",
+      1
+    ],
+    [
+      "virtual:loop-control-structure",
+      1
+    ],
+    [
+      "vite",
+      57
+    ],
+    [
+      "vitest",
+      461
+    ]
+  ]
+}

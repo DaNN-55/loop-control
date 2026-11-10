@@ -48,3 +48,15 @@
 - [ADR-0029：视频任务恢复与下载协议集中管理](0029-video-task-execution.md)
 
 - [ADR-0032：统一镜头视频任务与历史协议兼容](0032-unified-shot-video-protocol.md)
+
+- [ADR-0033：逐次调用确认的客户端生命周期](0033-workspace-call-confirmation-lifecycle.md)
+
+- [ADR-0034：生成任务展示与交付读取保护](0034-workspace-task-presentation-and-delivery-reading.md)
+
+- [ADR-0035：导出与交付的下一步判断](0035-export-delivery-next-step.md)
+
+- [ADR-0036：脚本保存与启动的分步恢复](0036-script-save-start-recovery.md)
+
+- [ADR-0037：四步工作区操作转换](0037-workspace-operation-transitions.md)
+
+- [ADR-0038：样音选择归属与模型编辑基线](0038-speech-sample-and-model-edit-ownership.md)

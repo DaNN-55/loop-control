@@ -1,0 +1,8 @@
+npm notice run loop-control@0.1.0 check
+npm notice run tsc -b --pretty false
+src/local-app/ProductionWorkspacePanel.operations.test.tsx(1,45): error TS6133: 'waitFor' is declared but its value is never read.
+src/local-app/ProductionWorkspacePanel.operations.test.tsx(34,85): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(role: ByRoleMatcher, options?: ByRoleOptions | undefined): HTMLElement', gave the following error.
+    Object literal may only specify known properties, and 'exact' does not exist in type 'ByRoleOptions'.
+  Overload 2 of 2, '(role: ByRoleMatcher, options?: ByRoleOptions | undefined): HTMLElement', gave the following error.
+    Object literal may only specify known properties, and 'exact' does not exist in type 'ByRoleOptions'.

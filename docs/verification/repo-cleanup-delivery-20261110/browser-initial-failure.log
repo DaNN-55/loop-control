@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/Users/dan/Programs/loop-control/.scratch/repo-cleanup-delivery-20261110/verify-browser.py", line 10, in <module>
+    assert time.monotonic()<end,'real task panel did not mount';time.sleep(.2)
+           ^^^^^^^^^^^^^^^^^^^^
+AssertionError: real task panel did not mount

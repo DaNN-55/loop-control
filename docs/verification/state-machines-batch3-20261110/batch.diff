@@ -1,0 +1,299 @@
+--- a/PLAN.md
++++ b/PLAN.md
+@@ -10,3 +10,14 @@
++# 状态机第 3 项：导出与交付下一步判断（2026-11-10）
++
++用户批准集中状态标题、下一步提示及主操作禁用依据；保留业务规则与历史交付行为，不提交、不推送。初始 HEAD 491a123a；执行期间另一会话独立完成视觉提交 951a368e，原样保留，本批未操作暂存或提交。本批精确差异与保护清单归档于 `docs/verification/state-machines-batch3-20261110/`，PLAN 差异只包含本段，不纳入并行会话段落。
++
++- [x] 真实组件新增历史兼容用例，收拢前通过；共享入口固定总览历史存在性与最新交付两个上下文。
++- [x] 新增纯判断入口与公开测试，接入两个组件；保留命令、草稿、读取保护、文案和历史文件身份。
++- [x] 94 条定向回归、类型、前端／后端顺序构建通过；浏览器 13 状态、历史 MP4 实际 SHA／ZIP、390px 和四项操作参数核对通过。
++- [x] 双轴审查均无发现；唯一一次全量 253 文件／1878 通过、1 跳过。浏览器动作初次读取早于状态收敛，保留失败证据并等待可见状态后重验通过；无产品代码修补。临时浏览器／预览关闭。
++
++测试接口为公开共享入口及真实导出／交付组件。总览历史存在性和最新状态保留独立维度，不扩展为新工作流、自动恢复或表单状态改造。完成报告 `docs/verification/state-machines-batch3-20261110/REPORT.md`。53 个先前变更文件核验，52 个字节不变；并行视觉 CSS 外部更新由 951a368e 保留，不还原、不计入本批。无 SQL、依赖、CSS 或服务端修改，无业务写入、付费、日常重启、暂存、提交或推送；真实数据库／供应商未验证。
++
+ # 状态机下一批第 1、2 项（2026-11-10）
+ 
+ 用户批准统一生成任务的状态／恢复展示，以及交付轮询复用现有读取保护；保留业务规则和恢复限制，不提交、不推送。初始 HEAD 为 491a123a；前轮确认 hook、状态机盘点和另一会话部署研究文件保持，本批准确差异及保护清单保存在 `docs/verification/state-machines-batch12-20261110/`。
+--- a/src/local-app/WorkspaceDeliveryPanel.tsx
++++ b/src/local-app/WorkspaceDeliveryPanel.tsx
+@@ -4,6 +4,7 @@
+ import {Button} from '../ui/dan-ui/components/base/buttons/button';
+ import {Tooltip} from '../ui/dan-ui/components/base/tooltip/tooltip';
+ import type {ProductionWorkspace} from '../productionWorkspace';
++import {workspaceExportDeliveryState} from '../workspaceExportDelivery';
+ import {useWorkspaceReading,useWorkspacePolling} from './useWorkspaceReading';
+ import {normalizeDeliveryTags,deliveryTagsError} from '../publishing/deliveryMetadata';
+ import {coverImageExtension} from '../publishing/coverImage';
+@@ -26,7 +27,8 @@
+   }catch{if(check===coverCheck.current&&scope===currentScope.current)setCoverError('封面读取失败，请重新选择。');}finally{if(check===coverCheck.current&&scope===currentScope.current)setCheckingCover(false);}
+  }
+  const [published,setPublished]=useState<{key:string;title:string;description:string;tags:string[]}|null>(null),[metadataError,setMetadataError]=useState(''),[metadataReload,setMetadataReload]=useState(0),[copied,setCopied]=useState('');
+- const latest=w.deliveries?.[0],running=latest&&['ready','running'].includes(latest.status),completed=latest?.status==='completed',confirmed=!!source?.confirmed&&source.current&&!w.stale,coverVisible=confirmed&&!latest?.verified&&!running&&!completed;
++ const {delivery}=workspaceExportDeliveryState(w,{pending,preparing,checkingCover,title,hasCover:!!cover});
++ const {latest,running,coverVisible,stage}=delivery,retryDelivery=delivery.retryAction.target;
+  const reading=useWorkspaceReading(w,onChange,JSON.stringify([latest?.id,!!running]),'交付状态暂不可用，请刷新重试。');
+  useWorkspacePolling(reading,!!running,2500,()=>setError('交付状态暂不可用，请刷新重试。'));
+  useEffect(()=>{if(!cover||!coverVisible){setCoverPreview('');return;}const url=URL.createObjectURL(cover);setCoverPreview(url);return()=>URL.revokeObjectURL(url);},[cover,coverVisible]);
+@@ -42,10 +44,10 @@
+  async function run(name:string,extra:Record<string,unknown>){setError('');try{reading.publish(await command(name,{episodeId:w.episodeId,workspaceId:w.id,expectedRevision:w.revision,...extra}) as ProductionWorkspace);return true;}catch(cause){const message=cause instanceof Error?cause.message:'交付未完成，请重试。';if(name==='prepareWorkspaceDelivery'&&message.includes('封面'))setCoverError(message);else setError(message);return false;}}
+  async function prepare(){if(!cover||preparingRef.current)return;const normalizedTags=normalizeDeliveryTags(tags.split(/[,，]/).map(t=>t.trim()).filter(Boolean)),invalidTags=deliveryTagsError(normalizedTags);setTagsError(invalidTags);if(invalidTags)return;const submitted={...draft.value};preparingRef.current=true;setPreparing(true);try{const bytes=new Uint8Array(await cover.arrayBuffer());let binary='';for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,i+8192));const e=w.exports![0];const succeeded=await run('prepareWorkspaceDelivery',{exportId:e.id,expectedExportSha256:e.artifact?.sha256,expectedContentSha256:e.contentSha256,title,description,tags:normalizedTags,coverBase64:btoa(binary)});if(succeeded&&currentCover.current===cover&&draft.acknowledge(submitted,{title:'',description:'',tags:'',coverName:''}))setCover(null);}catch{setCoverError('封面读取失败，请重新选择。');}finally{preparingRef.current=false;setPreparing(false);}}
+  return <section className="workspace-delivery workspace-delivery-compact" aria-label="交付包">
+- <div className="workspace-review-heading"><h4>交付包</h4><span>{latest?.verified?'验证完成':running?'正在准备':completed?'需核验':latest&&['failed','blocked'].includes(latest.status)?'交付失败':!source?'尚未开始':confirmed?'可准备':'待确认'}</span></div>
+- {latest?.verified?<>
++ <div className="workspace-review-heading"><h4>交付包</h4><span>{delivery.status}</span></div>
++ {stage.kind==='verified'?<>
+  <div className="workspace-delivery-published">
+-  {latest.artifacts.filter(a=>a.artifactType==='cover').map(a=><div className="workspace-delivery-published-cover" key={a.relativePath}><ImagePreview src={artifactUrl(a)} alt="交付封面"/><a className="workspace-delivery-cover-download" href={artifactUrl(a,true)} download aria-label="下载封面" title="下载封面"><Download size={16} aria-hidden="true"/></a></div>)}
++  {stage.record.artifacts.filter(a=>a.artifactType==='cover').map(a=><div className="workspace-delivery-published-cover" key={a.relativePath}><ImagePreview src={artifactUrl(a)} alt="交付封面"/><a className="workspace-delivery-cover-download" href={artifactUrl(a,true)} download aria-label="下载封面" title="下载封面"><Download size={16} aria-hidden="true"/></a></div>)}
+   <div className="workspace-delivery-copy">
+    {saved?<>
+     <div className="workspace-delivery-title-row"><h5>{saved.title}</h5><CopyButton label="复制标题" onCopy={()=>void copy(saved.title,'标题')}/></div>
+@@ -55,16 +57,16 @@
+    {copied&&<p role="status">{copied}</p>}
+   </div>
+  </div>
+- <div className="workspace-delivery-downloads">{latest.artifacts.filter(a=>a.artifactType==='final_render').map(a=><a className="workspace-download-primary" key={a.relativePath} href={artifactUrl(a,true)} download><Download size={16} aria-hidden="true"/>下载最终视频</a>)}<a className="workspace-download-secondary" href={`/api/local/episodes/${encodeURIComponent(w.episodeId)}/delivery-download?delivery=${encodeURIComponent(latest.id)}`} download aria-label="下载全部交付文件（ZIP）" title="下载交付文件 ZIP，不含源素材"><FileArchive size={16} aria-hidden="true"/>交付包</a>{latest.artifacts.filter(a=>a.artifactType==='editable_project').map(a=><a className="workspace-download-secondary" key={a.relativePath} href={artifactUrl(a,true)} download aria-label="下载可编辑工程" title="下载可编辑工程，打开时需保留本机原素材"><FileJson size={16} aria-hidden="true"/>工程</a>)}</div>
++ <div className="workspace-delivery-downloads">{stage.record.artifacts.filter(a=>a.artifactType==='final_render').map(a=><a className="workspace-download-primary" key={a.relativePath} href={artifactUrl(a,true)} download><Download size={16} aria-hidden="true"/>下载最终视频</a>)}<a className="workspace-download-secondary" href={`/api/local/episodes/${encodeURIComponent(w.episodeId)}/delivery-download?delivery=${encodeURIComponent(stage.record.id)}`} download aria-label="下载全部交付文件（ZIP）" title="下载交付文件 ZIP，不含源素材"><FileArchive size={16} aria-hidden="true"/>交付包</a>{stage.record.artifacts.filter(a=>a.artifactType==='editable_project').map(a=><a className="workspace-download-secondary" key={a.relativePath} href={artifactUrl(a,true)} download aria-label="下载可编辑工程" title="下载可编辑工程，打开时需保留本机原素材"><FileJson size={16} aria-hidden="true"/>工程</a>)}</div>
+  <p className="workspace-delivery-project-note">工程需保留原素材；交付包不含源素材。</p>
+- </>:running?<p role="status">{latest.status==='running'?'正在校验交付文件…':'交付已排队…'}</p>:completed?<p role="alert">{latest.error||'交付文件需重新核验，请读取原交付状态。'}</p>:!confirmed?<><p className="workspace-delivery-locked">{!source?'导出并确认成片后，再设置封面与发布文案。':!source.current||w.stale?'工程已变化，请重新导出并确认成片。':'确认这份成片后，再设置封面与发布文案。'}</p>{latest?.error&&<p role="alert">{latest.error}</p>}</>:<>
++ </>:stage.kind==='running'?<p role="status">{stage.message}</p>:stage.kind==='completed'?<p role="alert">{stage.message}</p>:stage.kind==='locked'?<><p className="workspace-delivery-locked">{stage.message}</p>{latest?.error&&<p role="alert">{latest.error}</p>}</>:<>
+  {draft.restored&&<p role="status">已恢复本机交付草稿，尚未提交。</p>}{draft.storageError&&<p role="alert" className="form-error">本机草稿暂无法保存，请保持此页面打开。</p>}
+  <div className="workspace-delivery-fields">
+-  <div className="workspace-delivery-cover"><span>封面</span><Button className="workspace-delivery-cover-picker" noTextPadding size="sm" color="secondary" aria-label={cover?'替换封面':'选择封面'} aria-describedby={`${coverFieldId}-hint${coverError?` ${coverFieldId}-error`:''}`} aria-invalid={!!coverError} isDisabled={pending||!confirmed} onPress={()=>coverInput.current?.click()}>{coverPreview?<ImagePreview src={coverPreview} alt="交付封面预览"/>:<span className="workspace-delivery-cover-placeholder"><ImageIcon size={28} aria-hidden="true"/><span>选择封面图片</span></span>}</Button><span className="workspace-delivery-cover-name" title={cover?.name}>{cover?.name??(coverName?`请重新选择封面：${coverName}`:'尚未选择封面')}</span><span id={`${coverFieldId}-hint`}>JPG、PNG、WebP · 单张不超过 20 MB</span>{checkingCover&&<span role="status">正在检查封面…</span>}{coverError&&<span id={`${coverFieldId}-error`} role="alert" className="form-error">{coverError}</span>}<input ref={coverInput} hidden aria-label="封面" aria-describedby={`${coverFieldId}-hint${coverError?` ${coverFieldId}-error`:''}`} aria-invalid={!!coverError} type="file" accept="image/png,image/jpeg,image/webp" disabled={pending||!confirmed} onChange={e=>{const file=e.target.files?.[0]??null;e.target.value='';void selectCover(file);setError('');}}/></div>
+-  <div className="workspace-delivery-text-fields"><label>标题<input value={title} maxLength={200} disabled={pending||!confirmed} onChange={e=>setTitle(e.target.value)}/></label><label>简介<textarea value={description} rows={4} maxLength={5000} disabled={pending||!confirmed} onChange={e=>setDescription(e.target.value)}/></label><label>标签<input aria-label="标签" value={tags} placeholder="用逗号分隔" aria-invalid={!!tagsError} aria-describedby={`${tagsFieldId}-hint${tagsError?` ${tagsFieldId}-error`:''}`} disabled={pending||!confirmed} onChange={e=>{setTags(e.target.value);setTagsError('');}}/><span id={`${tagsFieldId}-hint`}>最多 20 个，每个最多 50 个字符</span>{tagsError&&<span id={`${tagsFieldId}-error`} role="alert" className="form-error">{tagsError}</span>}</label></div>
++  <div className="workspace-delivery-cover"><span>封面</span><Button className="workspace-delivery-cover-picker" noTextPadding size="sm" color="secondary" aria-label={cover?'替换封面':'选择封面'} aria-describedby={`${coverFieldId}-hint${coverError?` ${coverFieldId}-error`:''}`} aria-invalid={!!coverError} isDisabled={delivery.fieldsDisabledReason!==null} onPress={()=>coverInput.current?.click()}>{coverPreview?<ImagePreview src={coverPreview} alt="交付封面预览"/>:<span className="workspace-delivery-cover-placeholder"><ImageIcon size={28} aria-hidden="true"/><span>选择封面图片</span></span>}</Button><span className="workspace-delivery-cover-name" title={cover?.name}>{cover?.name??(coverName?`请重新选择封面：${coverName}`:'尚未选择封面')}</span><span id={`${coverFieldId}-hint`}>JPG、PNG、WebP · 单张不超过 20 MB</span>{checkingCover&&<span role="status">正在检查封面…</span>}{coverError&&<span id={`${coverFieldId}-error`} role="alert" className="form-error">{coverError}</span>}<input ref={coverInput} hidden aria-label="封面" aria-describedby={`${coverFieldId}-hint${coverError?` ${coverFieldId}-error`:''}`} aria-invalid={!!coverError} type="file" accept="image/png,image/jpeg,image/webp" disabled={delivery.fieldsDisabledReason!==null} onChange={e=>{const file=e.target.files?.[0]??null;e.target.value='';void selectCover(file);setError('');}}/></div>
++  <div className="workspace-delivery-text-fields"><label>标题<input value={title} maxLength={200} disabled={delivery.fieldsDisabledReason!==null} onChange={e=>setTitle(e.target.value)}/></label><label>简介<textarea value={description} rows={4} maxLength={5000} disabled={delivery.fieldsDisabledReason!==null} onChange={e=>setDescription(e.target.value)}/></label><label>标签<input aria-label="标签" value={tags} placeholder="用逗号分隔" aria-invalid={!!tagsError} aria-describedby={`${tagsFieldId}-hint${tagsError?` ${tagsFieldId}-error`:''}`} disabled={delivery.fieldsDisabledReason!==null} onChange={e=>{setTags(e.target.value);setTagsError('');}}/><span id={`${tagsFieldId}-hint`}>最多 20 个，每个最多 50 个字符</span>{tagsError&&<span id={`${tagsFieldId}-error`} role="alert" className="form-error">{tagsError}</span>}</label></div>
+  </div>
+- <Button size="sm" color="primary" iconLeading={PackageCheck} isDisabled={pending||preparing||checkingCover||!confirmed||!title.trim()||!cover||w.stale} onPress={()=>void prepare()}>生成并验证交付包</Button>
+- {latest&&['failed','blocked'].includes(latest.status)&&<><p role="alert">{latest.error}</p><Tooltip title="重试原交付" className="dan-ui dan-ui-tooltip"><Button size="sm" color="tertiary" iconLeading={RefreshCw} aria-label="重试原交付" title="重试原交付" isDisabled={pending||!confirmed} onPress={()=>void run('retryWorkspaceDelivery',{deliveryId:latest.id})}/></Tooltip></>}
++ <Button size="sm" color="primary" iconLeading={PackageCheck} isDisabled={delivery.prepareAction.disabledReason!==null} onPress={()=>void prepare()}>{delivery.prepareAction.label}</Button>
++ {retryDelivery&&<><p role="alert">{retryDelivery.error}</p><Tooltip title="重试原交付" className="dan-ui dan-ui-tooltip"><Button size="sm" color="tertiary" iconLeading={RefreshCw} aria-label="重试原交付" title="重试原交付" isDisabled={delivery.retryAction.disabledReason!==null} onPress={()=>void run('retryWorkspaceDelivery',{deliveryId:retryDelivery.id})}/></Tooltip></>}
+  </>}
+  {error&&<p role="alert">{error}</p>}
+  </section>;
+--- a/src/local-app/WorkspaceExportPanel.test.tsx
++++ b/src/local-app/WorkspaceExportPanel.test.tsx
+@@ -2,7 +2,19 @@
+ import {afterEach,it,expect,vi} from 'vitest';
+ import {WorkspaceExportPanel} from './WorkspaceExportPanel';
+ import type {ProductionWorkspace} from '../productionWorkspace';
+-afterEach(cleanup);
++afterEach(()=>{cleanup();vi.useRealTimers();vi.unstubAllGlobals();});
++it('keeps historical completion in the overview while the latest failed delivery retains its original retry',async()=>{
++ const w={id:'w',episodeId:'e',revision:4,stale:false,contentSha256:'current-content',readiness:{placeholders:[]},exports:[{id:'current',status:'ready',current:true,confirmed:true,contentSha256:'current-content',artifact:{relativePath:'current.mp4',sha256:'current-video',fileSize:12},checks:[]}],deliveries:[{id:'latest-failed',exportId:'current',status:'failed',verified:false,error:'最近一次交付失败',artifacts:[]},{id:'historical-completed',exportId:'older-export',status:'completed',verified:true,artifacts:[]}]} as unknown as ProductionWorkspace;
++ const command=vi.fn(async()=>w);render(<WorkspaceExportPanel workspace={w} pending={false} command={command} onChange={()=>{}}/>);
++ expect(screen.getByText('交付已完成')).toBeTruthy();expect(screen.getByText('交付失败')).toBeTruthy();expect(screen.queryByRole('button',{name:'重新导出视频'})).toBeNull();
++ fireEvent.click(screen.getByRole('button',{name:'重试原交付'}));await waitFor(()=>expect(command).toHaveBeenCalledWith('retryWorkspaceDelivery',{episodeId:'e',workspaceId:'w',expectedRevision:4,deliveryId:'latest-failed'}));
++});
++it('retains verified historical delivery downloads when the latest export is outdated',()=>{
++ const w={id:'w',episodeId:'e',revision:4,stale:false,readiness:{placeholders:[]},exports:[{id:'old-export',status:'ready',current:false,confirmed:true,artifact:{relativePath:'old.mp4',sha256:'old-video',fileSize:12},checks:[]}],deliveries:[{id:'verified-history',exportId:'old-export',status:'completed',verified:true,artifacts:[{artifactType:'final_render',relativePath:'history/final.mp4',sha256:'historical-sha',fileSize:12}]}]} as unknown as ProductionWorkspace;
++ const command=vi.fn();render(<WorkspaceExportPanel workspace={w} pending={false} command={command} onChange={()=>{}}/>);
++ expect(screen.getByText('交付已完成')).toBeTruthy();expect(screen.getByText('这是旧导出，请先重新导出。')).toBeTruthy();expect(screen.getByRole('button',{name:'确认成片与字幕'})).toHaveProperty('disabled',true);
++ expect(screen.getByRole('link',{name:'下载最终视频'}).getAttribute('href')).toContain('path=history%2Ffinal.mp4&sha256=historical-sha');expect(screen.queryByRole('button',{name:'重新导出视频'})).toBeNull();expect(command).not.toHaveBeenCalled();
++});
+ it('Owner sees the actual final MP4 and confirms its exact file and content identities',async()=>{
+  const workspace={id:'w',episodeId:'e',revision:3,contentSha256:'content',stale:false,readiness:{deliverable:false,placeholders:[],missingSources:[]},exports:[{id:'ex',status:'ready',current:true,confirmed:false,artifact:{relativePath:'episodes/e/final.mp4',sha256:'final-sha',fileSize:1234},checks:[{name:'technical',passed:true,detail:'技术检查通过'}]}]} as unknown as ProductionWorkspace;
+  const command=vi.fn(async()=>workspace);render(<WorkspaceExportPanel workspace={workspace} pending={false} command={command} onChange={()=>{}}/>);
+--- a/src/local-app/WorkspaceExportPanel.tsx
++++ b/src/local-app/WorkspaceExportPanel.tsx
+@@ -5,28 +5,27 @@
+ import {Button} from '../ui/dan-ui/components/base/buttons/button';
+ import {Tooltip} from '../ui/dan-ui/components/base/tooltip/tooltip';
+ import type {ProductionWorkspace} from '../productionWorkspace';
++import {workspaceExportDeliveryState,type WorkspaceExportAction} from '../workspaceExportDelivery';
+ import './workspace-compact-panels.css';
+ export function WorkspaceExportPanel({workspace:w,pending,command,onChange,readOnly=false}:{workspace:ProductionWorkspace;pending:boolean;readOnly?:boolean;command:(name:string,data:unknown)=>Promise<unknown>;onChange:(w:ProductionWorkspace)=>void}){
+- const [reason,setReason]=useState(''),[recording,setRecording]=useState(false),[issueError,setIssueError]=useState(''),issueErrorId=useId(),recordingRef=useRef(false),issueScope=useRef('');issueScope.current=`${w.episodeId}:${w.id}`;const completed=w.deliveries?.some(d=>d.status==='completed'),delivered=w.deliveries?.some(d=>d.verified);const latest=w.exports?.[0],issues=w.exportIssues??[],blocked=issues.some(x=>!x.resolved);
+- const [action,setAction]=useState<string|null>(null),actionRef=useRef(false),[issuesOpen,setIssuesOpen]=useState(false);
+- const deliveryPending=!!w.deliveries?.[0]&&['ready','running'].includes(w.deliveries[0].status);
+- const confirmed=!!latest?.confirmed&&latest.current&&!w.stale,failed=!!latest&&(latest.status!=='ready'||latest.checks.some(c=>!c.passed)),outdated=!!latest&&(!latest.current||w.stale);
+- const status=action==='exportWorkspace'?'正在导出与检查…':delivered?'交付已完成':completed?'交付文件需核验':deliveryPending?'正在准备交付':!latest?'尚未导出':outdated?'需重新导出':failed?'检查未通过':confirmed?'成片已确认':blocked?'有待处理问题':'待确认成片与字幕';
+- async function run(name:string,extra:Record<string,unknown>={}){if(actionRef.current)return;actionRef.current=true;setAction(name);try{const result=await command(name,{episodeId:w.episodeId,workspaceId:w.id,expectedRevision:w.revision,...extra});onChange(result as ProductionWorkspace);}finally{actionRef.current=false;setAction(null);}}
++ const [reason,setReason]=useState(''),[recording,setRecording]=useState(false),[issueError,setIssueError]=useState(''),issueErrorId=useId(),recordingRef=useRef(false),issueScope=useRef('');issueScope.current=`${w.episodeId}:${w.id}`;
++ const [action,setAction]=useState<WorkspaceExportAction|null>(null),actionRef=useRef(false),[issuesOpen,setIssuesOpen]=useState(false);
++ const {review}=workspaceExportDeliveryState(w,{readOnly,pending,action}),{latest,issues,blocked,completed,confirmed,outdated}=review;
++ async function run(name:WorkspaceExportAction,extra:Record<string,unknown>={}){if(actionRef.current)return;actionRef.current=true;setAction(name);try{const result=await command(name,{episodeId:w.episodeId,workspaceId:w.id,expectedRevision:w.revision,...extra});onChange(result as ProductionWorkspace);}finally{actionRef.current=false;setAction(null);}}
+  async function recordIssue(){if(recordingRef.current||!reason.trim())return;const submitted=reason,scope=issueScope.current;recordingRef.current=true;setRecording(true);setIssueError('');try{await run('recordWorkspaceExportIssue',{...(latest?{exportId:latest.id}:{}),reason:submitted});if(issueScope.current===scope)setReason(current=>current===submitted?'':current);}catch(cause){if(issueScope.current===scope)setIssueError(cause instanceof Error?cause.message:'问题记录失败，请重试。');}finally{recordingRef.current=false;setRecording(false);}}
+  return <section className="production-workspace-section workspace-export workspace-export-compact workspace-review-flow">
+-  <header><div className="workspace-compact-heading"><h3>检查与交付</h3><span role="status" className={confirmed||delivered?'is-confirmed':outdated||failed?'is-failed':''}>{status}</span></div>{!completed&&<Button size="sm" color={latest?'secondary':'primary'} isDisabled={readOnly||pending||!!action||w.stale} onPress={()=>void run('exportWorkspace').catch(()=>{})}>
+-   {action==='exportWorkspace'?'正在导出与检查…':latest?'重新导出视频':'导出视频'}
++  <header><div className="workspace-compact-heading"><h3>检查与交付</h3><span role="status" className={review.tone}>{review.status}</span></div>{review.exportAction.visible&&<Button size="sm" color={latest?'secondary':'primary'} isDisabled={review.exportAction.disabledReason!==null} onPress={()=>void run('exportWorkspace').catch(()=>{})}>
++   {review.exportAction.label}
+   </Button>}</header>
+   {w.readiness.placeholders.length>0&&<p className="workspace-export-notice">还有 {w.readiness.placeholders.length} 处占位</p>}
+   {outdated&&<p role="status" className="workspace-export-notice">工程已变化，请重新导出当前内容。</p>}
+   <div className="workspace-export-layout">
+    <div className="workspace-final-preview">
+     <div className="workspace-final-heading"><h4>成片预览</h4></div>
+-    {latest?.artifact?<VideoPreview title="最终导出视频" aria-label="最终导出视频" sourceLabel="成片" src={`/_local-artifact?episode=${encodeURIComponent(w.episodeId)}&path=${encodeURIComponent(latest.artifact.relativePath)}&sha256=${latest.artifact.sha256}`}/>:<div className="workspace-final-empty"><FileVideo aria-hidden="true"/><p>{latest?'最终文件尚未就绪。':'先导出最终视频，检查后确认这份文件。'}</p></div>}
++    {latest?.artifact?<VideoPreview title="最终导出视频" aria-label="最终导出视频" sourceLabel="成片" src={`/_local-artifact?episode=${encodeURIComponent(w.episodeId)}&path=${encodeURIComponent(latest.artifact.relativePath)}&sha256=${latest.artifact.sha256}`}/>:<div className="workspace-final-empty"><FileVideo aria-hidden="true"/><p>{review.previewMessage}</p></div>}
+     {latest&&<div className="workspace-final-actions">{confirmed?<p role="status" className="workspace-final-confirmed"><Check size={15} aria-hidden="true"/>已确认这份最终文件</p>:<>
+-     <span className="workspace-final-next">{outdated?'这是旧导出，请先重新导出。':failed?'先处理未通过的检查。':blocked?'先处理已记录的问题。':'检查画面与字幕后，确认这份文件。'}</span>
+-     <Button size="sm" color="primary" iconLeading={Check} isDisabled={readOnly||pending||!!action||outdated||failed||!latest.artifact||blocked} onPress={()=>void run('confirmWorkspaceExport',{exportId:latest.id,expectedExportSha256:latest.artifact?.sha256,expectedContentSha256:w.contentSha256}).catch(()=>{})}>{action==='confirmWorkspaceExport'?'正在确认…':'确认成片与字幕'}</Button>
++     <span className="workspace-final-next">{review.nextMessage}</span>
++     <Button size="sm" color="primary" iconLeading={Check} isDisabled={review.confirmAction.disabledReason!==null} onPress={()=>void run('confirmWorkspaceExport',{exportId:latest.id,expectedExportSha256:latest.artifact?.sha256,expectedContentSha256:w.contentSha256}).catch(()=>{})}>{review.confirmAction.label}</Button>
+     </>}</div>}
+    </div>
+    <div className="workspace-export-review">
+--- a/src/local-app/WorkspaceDeliveryPanel.test.tsx
++++ b/src/local-app/WorkspaceDeliveryPanel.test.tsx
+@@ -8,7 +8,7 @@
+ afterEach(()=>{cleanup();localStorage.clear();vi.useRealTimers();vi.unstubAllGlobals();});
+ const pngBytes=new Uint8Array([137,80,78,71,13,10,26,10,0,0,0,0]);
+ const pngFile=(name:string)=>new File([pngBytes],name,{type:'image/png'});
+-const workspace=()=>({id:'workspace',episodeId:'episode',revision:7,stale:false,exports:[{id:'export',current:true,confirmed:true,contentSha256:'confirmed-content',artifact:{sha256:'confirmed-video'}}]}) as unknown as ProductionWorkspace;
++const workspace=()=>({id:'workspace',episodeId:'episode',revision:7,stale:false,exports:[{id:'export',status:'ready',checks:[],current:true,confirmed:true,contentSha256:'confirmed-content',artifact:{sha256:'confirmed-video'}}]}) as unknown as ProductionWorkspace;
+ it('does not publish an older delivery poll after a newer workspace was provided',async()=>{
+  vi.useFakeTimers();let reply!:(value:unknown)=>void;
+  const w={...workspace(),deliveries:[{id:'delivery',status:'running'}]} as ProductionWorkspace;
+--- a/docs/adr/README.md
++++ b/docs/adr/README.md
+@@ -52,3 +52,5 @@
+ - [ADR-0033：逐次调用确认的客户端生命周期](0033-workspace-call-confirmation-lifecycle.md)
+ 
+ - [ADR-0034：生成任务展示与交付读取保护](0034-workspace-task-presentation-and-delivery-reading.md)
++
++- [ADR-0035：导出与交付的下一步判断](0035-export-delivery-next-step.md)
+--- a/docs/architecture/state-machines.md
++++ b/docs/architecture/state-machines.md
+@@ -7,6 +7,8 @@
+ 按状态的**权威归属**组织，保留现有模块。数据库约束管理持久业务事实；Worker 管理一次尝试；供应商记录管理是否已经发送；文件回执管理发布是否完成；UI owner 管理当前访问期间的意图。这些状态可以同时存在，不应合并成一个全局枚举。
+ 
+ 初轮修改 M19：逐次调用确认改为类型联合和独立 owner，修复延迟回包跨工作版本污染。后续经批准实施 M22 的共享只读展示及 M18 的交付读取接入：音效未知提交摘要、口播输入与原任务状态差异、交付旧 revision 覆盖均有失败回归证据。决定见 [ADR-0034](../adr/0034-workspace-task-presentation-and-delivery-reading.md)，验收见 [第 1、2 项报告](../verification/state-machines-batch12-20261110/REPORT.md)。其他状态机继续保留各自权威。
++
++第 3 项将 M13／M14／M27 的界面判断收拢到 [workspaceExportDeliveryState](../../src/workspaceExportDelivery.ts)，保留总览历史存在性、最新交付状态和过期导出下的历史下载；持久状态权威不变。决定见 [ADR-0035](../adr/0035-export-delivery-next-step.md)，验证见 [第 3 项报告](../verification/state-machines-batch3-20261110/REPORT.md)。
+ 
+ 开发者与 Agent 修改某条流程前，先找对应行的 owner，再读相关测试；改变持久状态时沿用最新迁移、事务和恢复协议。表中测试是已有验证入口，不代表本次运行了所有集成测试。`ready` 在任务中表示待执行，在导出中表示导出成功，不能跨上下文互换。
+ 
+--- /dev/null
++++ b/src/workspaceExportDelivery.ts
+@@ -0,0 +1,41 @@
++import type {ProductionWorkspace} from './productionWorkspace';
++
++export type WorkspaceExportAction='exportWorkspace'|'confirmWorkspaceExport'|'recordWorkspaceExportIssue'|'resolveWorkspaceExportIssue';
++interface ReviewActivity {
++ readOnly?:boolean;pending?:boolean;action?:WorkspaceExportAction|null;
++ preparing?:boolean;checkingCover?:boolean;title?:string;hasCover?:boolean;
++}
++type ReviewWorkspace=Pick<ProductionWorkspace,'exports'|'exportIssues'|'deliveries'|'stale'>;
++
++/** Read-only UI decisions. Historical completion and latest delivery are distinct authorities. See ADR-0035. */
++export function workspaceExportDeliveryState(workspace:ReviewWorkspace,activity:ReviewActivity={}){
++ const latest=workspace.exports?.[0],issues=workspace.exportIssues??[],blocked=issues.some(issue=>!issue.resolved);
++ const completed=!!workspace.deliveries?.some(delivery=>delivery.status==='completed'),delivered=!!workspace.deliveries?.some(delivery=>delivery.verified);
++ const delivery=workspace.deliveries?.[0],running=!!delivery&&['ready','running'].includes(delivery.status),deliveryCompleted=delivery?.status==='completed';
++ const confirmed=!!latest?.confirmed&&latest.current&&!workspace.stale;
++ const failed=!!latest&&(latest.status!=='ready'||latest.checks.some(check=>!check.passed)),outdated=!!latest&&(!latest.current||workspace.stale);
++ const status=activity.action==='exportWorkspace'?'正在导出与检查…':delivered?'交付已完成':completed?'交付文件需核验':running?'正在准备交付':!latest?'尚未导出':outdated?'需重新导出':failed?'检查未通过':confirmed?'成片已确认':blocked?'有待处理问题':'待确认成片与字幕';
++ const previewMessage=latest?'最终文件尚未就绪。':'先导出最终视频，检查后确认这份文件。';
++ const nextMessage=!latest?previewMessage:outdated?'这是旧导出，请先重新导出。':failed?'先处理未通过的检查。':blocked?'先处理已记录的问题。':'检查画面与字幕后，确认这份文件。';
++ const busyReason=activity.readOnly?'read-only':activity.pending?'pending':activity.action?'operation-pending':null;
++ const confirmReason=busyReason??(!latest?'missing-export':outdated?'export-outdated':failed?'checks-failed':!latest.artifact?'missing-file':blocked?'unresolved-issues':null);
++ const fieldReason=activity.pending?'pending':!confirmed?'export-unconfirmed':null;
++ const prepareReason=activity.pending?'pending':activity.preparing?'delivery-preparing':activity.checkingCover?'cover-checking':!confirmed?'export-unconfirmed':!activity.title?.trim()?'missing-title':!activity.hasCover?'missing-cover':null;
++ const stage=delivery?.verified?{kind:'verified' as const,record:delivery}
++  :running?{kind:'running' as const,record:delivery,message:delivery.status==='running'?'正在校验交付文件…':'交付已排队…'}
++  :deliveryCompleted?{kind:'completed' as const,record:delivery,message:delivery.error||'交付文件需重新核验，请读取原交付状态。'}
++  :!confirmed?{kind:'locked' as const,message:!latest?'导出并确认成片后，再设置封面与发布文案。':!latest.current||workspace.stale?'工程已变化，请重新导出并确认成片。':'确认这份成片后，再设置封面与发布文案。'}
++  :{kind:'preparation' as const};
++ return{
++  review:{latest,issues,blocked,completed,delivered,confirmed,failed,outdated,status,nextMessage,previewMessage,
++   tone:confirmed||delivered?'is-confirmed':outdated||failed?'is-failed':'',
++   exportAction:{visible:!completed,label:activity.action==='exportWorkspace'?'正在导出与检查…':latest?'重新导出视频':'导出视频',disabledReason:busyReason??(workspace.stale?'workspace-stale':null)},
++   confirmAction:{label:activity.action==='confirmWorkspaceExport'?'正在确认…':'确认成片与字幕',disabledReason:confirmReason},
++  },
++  delivery:{latest:delivery,running,stage,confirmed,coverVisible:stage.kind==='preparation',fieldsDisabledReason:fieldReason,
++   status:delivery?.verified?'验证完成':running?'正在准备':deliveryCompleted?'需核验':delivery&&['failed','blocked'].includes(delivery.status)?'交付失败':!latest?'尚未开始':confirmed?'可准备':'待确认',
++   prepareAction:{label:'生成并验证交付包',disabledReason:prepareReason},
++   retryAction:{target:stage.kind==='preparation'&&delivery&&['failed','blocked'].includes(delivery.status)?delivery:null,disabledReason:fieldReason},
++  },
++ };
++}
+--- /dev/null
++++ b/src/workspaceExportDelivery.test.ts
+@@ -0,0 +1,66 @@
++import {expect,it} from 'vitest';
++import type {ProductionWorkspace} from './productionWorkspace';
++import {workspaceExportDeliveryState} from './workspaceExportDelivery';
++
++const base={stale:false,exports:[{id:'export',status:'ready',current:true,confirmed:false,artifact:{relativePath:'final.mp4',sha256:'video',fileSize:12},checks:[]}],deliveries:[],exportIssues:[]} as unknown as ProductionWorkspace;
++const confirmed={...base,exports:[{...base.exports![0],confirmed:true}]};
++const delivery=(status:string,verified=false)=>({id:'delivery',exportId:'export',taskId:'task',status,verified,error:null,artifacts:[],createdAt:'2026-11-10T00:00:00Z'});
++it('uses the current export to offer confirmation before delivery preparation',()=>{
++ const state=workspaceExportDeliveryState(base);
++ expect(state.review.status).toBe('待确认成片与字幕');expect(state.review.nextMessage).toBe('检查画面与字幕后，确认这份文件。');
++ expect(state.review.confirmAction.disabledReason).toBeNull();expect(state.delivery.stage.kind).toBe('locked');expect(state.delivery.stage.message).toBe('确认这份成片后，再设置封面与发布文案。');
++});
++it.each([
++ {name:'no export',workspace:{...base,exports:[]},status:'尚未导出',next:'先导出最终视频，检查后确认这份文件。',reason:'missing-export'},
++ {name:'failed export',workspace:{...base,exports:[{...base.exports![0],status:'failed' as const}]},status:'检查未通过',next:'先处理未通过的检查。',reason:'checks-failed'},
++ {name:'failed check on ready export',workspace:{...base,exports:[{...base.exports![0],checks:[{name:'file',passed:false,detail:'文件不可用'}]}]},status:'检查未通过',next:'先处理未通过的检查。',reason:'checks-failed'},
++ {name:'missing artifact',workspace:{...base,exports:[{...base.exports![0],artifact:null}]},status:'待确认成片与字幕',next:'检查画面与字幕后，确认这份文件。',reason:'missing-file'},
++ {name:'unresolved issue',workspace:{...base,exportIssues:[{id:'issue',exportId:'export',reason:'画面需修改',resolved:false}]},status:'有待处理问题',next:'先处理已记录的问题。',reason:'unresolved-issues'},
++ {name:'outdated confirmed export',workspace:{...confirmed,exports:[{...confirmed.exports![0],current:false}]},status:'需重新导出',next:'这是旧导出，请先重新导出。',reason:'export-outdated'},
++ {name:'stale workspace',workspace:{...confirmed,stale:true},status:'需重新导出',next:'这是旧导出，请先重新导出。',reason:'export-outdated'},
++])('keeps review guidance and confirmation gates for $name',row=>{
++ const state=workspaceExportDeliveryState(row.workspace);
++ expect(state.review.status).toBe(row.status);expect(state.review.nextMessage).toBe(row.next);expect(state.review.confirmAction.disabledReason).toBe(row.reason);
++ expect(state.delivery.stage.kind).toBe('locked');expect(state.delivery.coverVisible).toBe(false);
++});
++it.each([
++ {status:'ready',verified:false,view:'running',overview:'正在准备交付',label:'正在准备',message:'交付已排队…',retry:false,exportVisible:true},
++ {status:'running',verified:false,view:'running',overview:'正在准备交付',label:'正在准备',message:'正在校验交付文件…',retry:false,exportVisible:true},
++ {status:'failed',verified:false,view:'preparation',overview:'成片已确认',label:'交付失败',message:undefined,retry:true,exportVisible:true},
++ {status:'blocked',verified:false,view:'preparation',overview:'成片已确认',label:'交付失败',message:undefined,retry:true,exportVisible:true},
++ {status:'completed',verified:false,view:'completed',overview:'交付文件需核验',label:'需核验',message:'交付文件需重新核验，请读取原交付状态。',retry:false,exportVisible:false},
++ {status:'completed',verified:true,view:'verified',overview:'交付已完成',label:'验证完成',message:undefined,retry:false,exportVisible:false},
++])('keeps delivery view and original retry target for $status / verified=$verified',row=>{
++ const record=delivery(row.status,row.verified),state=workspaceExportDeliveryState({...confirmed,deliveries:[record]});
++ expect(state.review.status).toBe(row.overview);expect(state.review.exportAction.visible).toBe(row.exportVisible);expect(state.delivery.stage.kind).toBe(row.view);expect(state.delivery.status).toBe(row.label);expect(state.delivery.stage.message).toBe(row.message);
++ expect(state.delivery.retryAction.target).toBe(row.retry?record:null);
++});
++it('keeps historical completion independent from the latest failure and current export',()=>{
++ const failed=delivery('failed'),history={...delivery('completed',true),id:'history',exportId:'old-export'};
++ const state=workspaceExportDeliveryState({...confirmed,deliveries:[failed,history]});
++ expect(state.review.status).toBe('交付已完成');expect(state.review.exportAction.visible).toBe(false);expect(state.delivery.stage.kind).toBe('preparation');expect(state.delivery.retryAction.target).toBe(failed);
++ const old=workspaceExportDeliveryState({...confirmed,exports:[{...confirmed.exports![0],current:false}],deliveries:[history]});
++ expect(old.delivery.stage.kind).toBe('verified');if(old.delivery.stage.kind==='verified')expect(old.delivery.stage.record).toBe(history);
++});
++it.each([
++ {activity:{readOnly:true},reason:'read-only'},
++ {activity:{pending:true},reason:'pending'},
++ {activity:{action:'recordWorkspaceExportIssue' as const},reason:'operation-pending'},
++])('keeps export operations disabled for $reason',row=>{
++ const state=workspaceExportDeliveryState(base,row.activity);expect(state.review.exportAction.disabledReason).toBe(row.reason);expect(state.review.confirmAction.disabledReason).toBe(row.reason);
++});
++it.each([
++ {activity:{title:'   ',hasCover:true},reason:'missing-title'},
++ {activity:{title:'发布标题',hasCover:false},reason:'missing-cover'},
++ {activity:{title:'发布标题',hasCover:true,preparing:true},reason:'delivery-preparing'},
++ {activity:{title:'发布标题',hasCover:true,checkingCover:true},reason:'cover-checking'},
++ {activity:{title:'发布标题',hasCover:true,pending:true},reason:'pending'},
++ {activity:{title:'发布标题',hasCover:true},reason:null},
++])('keeps delivery submission disabled reasons without locking editable drafts: $reason',row=>{
++ const state=workspaceExportDeliveryState(confirmed,row.activity);expect(state.delivery.prepareAction.disabledReason).toBe(row.reason);
++ expect(state.delivery.fieldsDisabledReason).toBe(row.activity.pending?'pending':null);
++});
++it('does not require a new cover or title when retrying the original failed delivery',()=>{
++ const record=delivery('failed'),state=workspaceExportDeliveryState({...confirmed,deliveries:[record]},{preparing:true,checkingCover:true});
++ expect(state.delivery.prepareAction.disabledReason).toBe('delivery-preparing');expect(state.delivery.retryAction.target).toBe(record);expect(state.delivery.retryAction.disabledReason).toBeNull();
++});
+--- /dev/null
++++ b/docs/adr/0035-export-delivery-next-step.md
+@@ -0,0 +1,15 @@
++# ADR-0035：导出与交付的下一步判断
++
++状态：Accepted。日期：2026-11-10。Owner 已批准状态机建议第 3 项；不提交、不推送。
++
++## 决定
++
++新增共享纯函数 `workspaceExportDeliveryState`，统一当前导出、检查、未解决问题、确认资格及交付视图的解释。它返回两个展示上下文：检查与交付总览，以及最新一次交付；同时集中下一步提示、主操作标签和禁用原因。禁用原因使用内部语义标识，界面沿用现有文案与组件，不新增说明层。
++
++历史语义保持：总览依据所有交付记录判断「曾完成／有已验证交付」，包括隐藏重新导出及问题写入的原规则；交付区继续依据数组首条记录显示最新状态、重试和下载。不能把两者统一成「只看最新」，也不按当前导出 ID 过滤历史交付。已验证交付即使当前导出过期，仍可下载原文件。
++
++本地活动仅影响已有按钮资格。准备交付期间仍允许按原规则继续编辑文案，确认失败、过期工程、封面检查、标题／文件缺失各自保留原限制；原交付重试不新增封面或标题要求。标签和封面验证、草稿、2500ms 读取保护、命令参数、服务端 SHA／版本校验均不改变。
++
++## 验证
++
++先通过真实组件固定历史行为，再对公开纯函数验证已批准状态表，两个页面实际使用同一结果。验证无导出、检查失败、未解决问题、当前／旧／stale 导出、确认、排队／运行、失败／受阻、完成待核验及已验证交付；包含历史已验证而最新失败的读入记录。使用隔离浏览器核对状态、按钮、历史下载路径与命令参数，不以合成状态推断线上缺陷，不调用真实供应商或操作正式数据。

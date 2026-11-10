@@ -1,0 +1,12 @@
+npm notice run loop-control@0.1.0 test
+npm notice run vitest run --exclude '**/*.integration.test.ts' src/local-app/ProductionWorkspacePanel.operations.test.tsx --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+··········
+
+ Test Files  1 passed (1)
+      Tests  10 passed (10)
+   Start at  20:04:18
+   Duration  1.91s (transform 330ms, setup 7ms, collect 1.05s, tests 490ms, environment 230ms, prepare 33ms)
+

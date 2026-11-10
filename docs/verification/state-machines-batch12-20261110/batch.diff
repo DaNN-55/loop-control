@@ -1,0 +1,454 @@
+--- a/PLAN.md
++++ b/PLAN.md
+@@ -1,3 +1,16 @@
++# 状态机下一批第 1、2 项（2026-11-10）
++
++用户批准统一生成任务的状态／恢复展示，以及交付轮询复用现有读取保护；保留业务规则和恢复限制，不提交、不推送。初始 HEAD 为 491a123a；前轮确认 hook、状态机盘点和另一会话部署研究文件保持，本批准确差异及保护清单保存在 `docs/verification/state-machines-batch12-20261110/`。
++
++- [x] TDD：音效未知摘要先失败后修复；共享只读投影与原恢复资格，已加入／时长独立保留。
++- [x] TDD：交付旧 revision 覆盖先失败后修复；复用真实读取 hook，保留 2500ms 与命令协议。
++- [x] 最终定向 101 条、类型与前端／后端顺序构建通过；真实组件／HTTP 宽窄屏通过。全量运行一次 1849 通过、1 跳过、1 个未改动的删除页焦点断言失败；单独重跑其文件 6/6 通过，保留首轮限制。
++- [x] 双轴只读审查：规范无发现；范围 1 个口播准备／原任务状态差异，经红测试修复并复核通过。证据归档，本轮预览／浏览器关闭，日常服务保持。
++
++测试接口已由上轮建议和本次批准确定：任务组件可见状态／操作；交付组件 HTTP 读取与 `onChange` 结果。保留真实读取 hook，不测试内部私有实现。审查基线采用本轮工作区快照，只审本批差异；Skill 的提交要求由用户「不提交推送」明确覆盖。
++
++完成：报告 `docs/verification/state-machines-batch12-20261110/REPORT.md`。类型检查曾两次暴露新增 fetch spy 的零参数推断及可空 signal，已修正并通过最终构建。无新依赖、SQL、业务写入、付费、日常重启、暂存、提交或推送；第 3–5 项未实施。
++
+ # 隐式状态机盘点与边界显式化（2026-11-10）
+ 
+ 目标：盘点当前应用中持久化业务流程、异步操作及 UI 交互的状态机，按 UX、DX、AX 同时受益的标准选择改动。以现有 SQL、Worker 和原生工程为权威；保持接口、付费授权、未知提交与恢复协议兼容，不引入通用状态机依赖。初始 HEAD：491a123a，工作区干净。
+--- a/src/local-app/WorkspaceAudioPanel.tsx
++++ b/src/local-app/WorkspaceAudioPanel.tsx
+@@ -8,6 +8,7 @@
+ import {WorkspaceMaterialDrop,workspaceMaterialDragType} from './WorkspaceMaterialDrop';
+ import {WorkspaceAudioRecord} from './WorkspaceSoundRecords';
+ import {WorkspaceVisualTaskStatus} from './WorkspaceVisualTaskStatus';
++import {workspaceTaskPresentation} from '../workspaceTaskPresentation';
+ import {reconcileWorkspaceOutput} from './workspaceOutputReconciliationClient';
+ import {WorkspaceAudioAudition} from './WorkspaceAudioAudition';
+ import {useEffect,useRef,useState} from 'react';
+@@ -104,19 +105,20 @@
+  async function reconcile(p:typeof preparations[number],recover=false){setBusy(true);setError('');try{if(recover&&p.generationTask)await reconcileWorkspaceOutput(w.episodeId,p.generationTask);reading.publish(await reading.read());}catch(cause){setError(cause instanceof Error?cause.message:'音频状态未能核对，请重试。');}finally{setBusy(false);}}
+  function candidate(p:typeof preparations[number]){
+   const sound=currentSound(p),ready=['completed','ready'].includes(p.status)&&(!p.taskId||p.status==='completed');
++  const task=workspaceTaskPresentation(p.generationTask??{status:p.status});
+   const timeline=doc?.timelines.find(t=>t.items.some(i=>shotIds[p.shotId??'']?.includes(String(i.id)))),start=timeline?Math.min(...timeline.items.filter(i=>shotIds[p.shotId??'']?.includes(String(i.id))).map(i=>Number(i.startFrame)/timeline.fps)):null;
+   const usedPlacement=placement(p),offsetSeconds=sound?(usedPlacement.anchor==='shot'&&start!==null?sound.startSeconds-start:sound.startSeconds):p.offsetSeconds;
+   return <div className="workspace-audio-candidate" key={p.id}>
+    <div className="workspace-audio-candidate-row">
+-   <div className="workspace-audio-candidate-summary"><strong title={[p.source?.title??p.description,p.connection?`${p.connection.name} v${p.connection.version} · ${p.selection?.provider} · 检索：${p.query}`:p.source?.provider==='manual'?'人工来源':null].filter(Boolean).join('\n')}>{p.source?.provider==='freesound'?String(p.source.title??p.description):p.description}</strong><span>{p.kind==='bgm'?'整期':p.kind==='source'?'原片':usedPlacement.anchor==='shot'?`${selectedShotId?'':usedPlacement.shotId+' · '}+${offsetSeconds.toFixed(2)} 秒`:`整期 ${sound?.startSeconds??p.offsetSeconds} 秒`} · {sound?'已加入':p.generationTask?.publicationAttempt!=null?'发布待核对':p.status==='completed'||!p.taskId?'可用':p.status==='ready'||p.status==='running'?'准备中':p.status==='failed'?'失败':p.status==='blocked'?'待重试':p.status}{sound?` · ${sound.durationSeconds.toFixed(2)} 秒 · ${sound.gainDb} dB`:p.kind==='sfx'?` · ${p.durationSeconds.toFixed(2)} 秒`:''}</span></div>
++   <div className="workspace-audio-candidate-summary"><strong title={[p.source?.title??p.description,p.connection?`${p.connection.name} v${p.connection.version} · ${p.selection?.provider} · 检索：${p.query}`:p.source?.provider==='manual'?'人工来源':null].filter(Boolean).join('\n')}>{p.source?.provider==='freesound'?String(p.source.title??p.description):p.description}</strong><span>{p.kind==='bgm'?'整期':p.kind==='source'?'原片':usedPlacement.anchor==='shot'?`${selectedShotId?'':usedPlacement.shotId+' · '}+${offsetSeconds.toFixed(2)} 秒`:`整期 ${sound?.startSeconds??p.offsetSeconds} 秒`} · {sound?'已加入':!task.held&&!task.unknown&&(p.status==='completed'||!p.taskId)?'可用':task.summary}{sound?` · ${sound.durationSeconds.toFixed(2)} 秒 · ${sound.gainDb} dB`:p.kind==='sfx'?` · ${p.durationSeconds.toFixed(2)} 秒`:''}</span></div>
+    {p.relativePath&&<WorkspaceAudioAudition label={p.source?.title?String(p.source.title):p.description} showControls={false} aria-label={`${p.description}试听`} preload="none" src={`/_local-artifact?episode=${w.episodeId}&path=${encodeURIComponent(p.relativePath)}&sha256=${p.sha256}`}/>}
+    <div className="workspace-audio-actions">{p.source?.provider==='freesound'&&<><a className="workspace-audio-creator" title={String(p.source.creator)} href={String(p.source.sourceUrl)} target="_blank" rel="noreferrer">{String(p.source.creator)}</a><a href={String(p.source.license)} target="_blank" rel="noreferrer">许可</a></>}
+     {sound&&<><Button size="xs" color="tertiary" iconLeading={SlidersHorizontal} aria-label={`设置 ${p.description}`} aria-expanded={expandedCandidate===p.id} isDisabled={disabled} onPress={()=>setExpandedCandidate(expandedCandidate===p.id?'':p.id)}>设置</Button><Button size="xs" color="tertiary" aria-label={`撤回 ${p.description}`} isDisabled={disabled} onPress={()=>void applySound({kind:'sound',workspaceId:w.id,itemId:sound.itemId,gainDb:sound.gainDb,duckDepthDb:sound.duckDepthDb,remove:true})}>撤回</Button></>}
+     {ready&&!sound&&<Button size="sm" color="primary" isDisabled={disabled||!!bridge} onPress={()=>void run('adoptWorkspaceAudio',{preparationId:p.id}).then(ok=>{if(ok)setExpandedCandidate(p.id);})}>{p.kind==='sfx'?p.anchor==='shot'?'加入镜头':'加入时间线':p.adoptedItemId?'重新采用':'采用'}</Button>}
+-    {['failed','blocked'].includes(p.status)&&p.generationTask?.publicationAttempt==null&&!p.generationTask?.submissionUnknown&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>void run('prepareWorkspaceAudio',{kind:p.kind,preparationId:p.id,retry:true})}>重试原音频准备</Button>}
++    {workspaceTaskPresentation({...p.generationTask,status:p.status}).canRetry&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>void run('prepareWorkspaceAudio',{kind:p.kind,preparationId:p.id,retry:true})}>重试原音频准备</Button>}
+    </div>
+    </div>
+-   {p.generationTask&&(p.generationTask.publicationAttempt!=null||p.generationTask.submissionUnknown)&&<WorkspaceVisualTaskStatus task={p.generationTask} label="音频" taskNoun="音频任务" resumeLabel="恢复音频任务" disabled={disabled} onRefresh={()=>void reconcile(p)} onReconcile={()=>void reconcile(p,true)} onResume={()=>{}}/>}
++   {p.generationTask&&(task.held||task.unknown)&&<WorkspaceVisualTaskStatus task={p.generationTask} label="音频" taskNoun="音频任务" resumeLabel="恢复音频任务" disabled={disabled} onRefresh={()=>void reconcile(p)} onReconcile={()=>void reconcile(p,true)} onResume={()=>{}}/>}
+    {sound&&expandedCandidate===p.id&&<div role="group" aria-label={`${p.description}设置`}><WorkspaceAudioInstanceSettings key={sound.itemId+JSON.stringify(sound)+JSON.stringify(nativeItems.get(sound.itemId)?.loopControlAudio)} sound={sound} workspaceId={w.id} project={doc} shotId={placement(p).shotId??selectedShotId} shotItemIds={shotIds[placement(p).shotId??selectedShotId??'']??[]} disabled={disabled} apply={applySound} onApplied={()=>setExpandedCandidate('')}/></div>}{p.error&&<p role="alert">{p.error}</p>}
+   </div>;
+  }
+--- a/src/local-app/WorkspaceVisualTaskStatus.tsx
++++ b/src/local-app/WorkspaceVisualTaskStatus.tsx
+@@ -6,6 +6,7 @@
+ import {useSurfacePresence} from '../ui/SurfacePresence';
+ import {Button} from '../ui/dan-ui/components/base/buttons/button';
+ import type {WorkspaceVisualTask} from '../workspaceVisualCandidates';
++import {workspaceTaskPresentation} from '../workspaceTaskPresentation';
+ export function WorkspaceVisualTaskProgress({task,label,thumbnail=false}:{task:WorkspaceVisualTask;label:string;thumbnail?:boolean}){
+  const [now,setNow]=useState(Date.now);
+  useEffect(()=>{
+@@ -27,12 +28,11 @@
+ }
+ export function WorkspaceVisualTaskStatus({task,label,disabled,onResume,onRefresh,onReconcile,onRetryUnknown,taskNoun='视觉任务',resumeLabel='恢复画面任务'}:{task:WorkspaceVisualTask;label:string;taskNoun?:string;resumeLabel?:string;disabled?:boolean;onResume:()=>void;onRefresh:()=>void;onReconcile:()=>void;onRetryUnknown?:()=>void}){
+  const [open,setOpen]=useState(false);
+- if(task.retryTaskId)return null;
+- const held=task.publicationAttempt!=null,unknown=task.submissionUnknown;
+- const state=held?'发布结果待核对':task.submissionOutcome==='not_sent'?'未提交':unknown?(task.submissionOutcome==='received'?'供应商结果待核对':'提交结果未知'):task.status==='running'?'生成中':task.status==='ready'?'等待生成':task.status==='failed'?'生成失败':task.status==='blocked'?'生成受阻':task.status==='completed'?'生成完成':task.status==='superseded'?'已失效':'状态待核对';
++ const presentation=workspaceTaskPresentation(task),{held,unknown,label:state}=presentation;
++ if(presentation.hidden)return null;
+  const actions=<>
+   {onRetryUnknown&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={onRetryUnknown}>重试图片生成</Button>}
+-  {task.canResume&&!held&&['failed','blocked'].includes(task.status)&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={onResume}>{resumeLabel}</Button>}
++  {presentation.canResume&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={onResume}>{resumeLabel}</Button>}
+   {held&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={onReconcile}>核对并恢复产物</Button>}
+   {(unknown||held)&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={onRefresh}>刷新核对结果</Button>}
+  </>;
+@@ -42,13 +42,13 @@
+     <p role={task.error||held?'alert':'status'} aria-label={taskNoun+' '+task.taskId} title={task.error??undefined}>{label}{state}{task.error?' · '+task.error:''}</p>
+     <div className="workspace-task-actions">{actions}<Button size="sm" color="tertiary" aria-label={`查看${label}任务详情`} onPress={()=>setOpen(true)}>详情</Button></div>
+    </div>
+-   {!held&&!unknown&&(task.status==='running'||task.status==='ready')&&<WorkspaceVisualTaskProgress task={task} label={label}/>}
++   {presentation.active&&<WorkspaceVisualTaskProgress task={task} label={label}/>}
+   </div>
+   <ConfirmationModalPresence>{open&&createPortal(<TaskDetails title={`${label}任务详情`} onClose={()=>setOpen(false)}>
+    <p className="workspace-task-diagnostic" role="alert">{label}{state}{task.error?' · '+task.error:''}</p>
+    {task.submissionOutcome==='not_sent'&&<p>本次请求在本机被拦截，未向供应商发送。请检查设置，重新确认后生成。</p>}
+    {task.submissionOutcome==='rejected'&&<p>供应商已明确拒绝本次请求，请根据错误原因检查设置后重新确认。</p>}
+-   {task.kind==='image'&&!unknown&&!held&&['failed','blocked'].includes(task.status)&&<p>可检查设置后点击「重新生成图片」，核对费用并再次确认。</p>}
++   {task.kind==='image'&&presentation.canRetry&&<p>可检查设置后点击「重新生成图片」，核对费用并再次确认。</p>}
+    {unknown&&<p>{onRetryUnknown?'上一次可能已产生费用。你可以先核对供应商记录，也可以重新确认后提交新请求。':'请先在原供应商核对本次请求；当前结果未知，不能再次提交生成。'}</p>}
+    {task.canResume&&!held&&<p>恢复只查询原供应商任务，沿用原输入，不会重新提交生成。</p>}
+    {held&&<p>已有产物等待核对。核对只恢复本次发布，不会重新生成。</p>}
+--- a/src/local-app/WorkspaceDeliveryPanel.tsx
++++ b/src/local-app/WorkspaceDeliveryPanel.tsx
+@@ -4,7 +4,7 @@
+ import {Button} from '../ui/dan-ui/components/base/buttons/button';
+ import {Tooltip} from '../ui/dan-ui/components/base/tooltip/tooltip';
+ import type {ProductionWorkspace} from '../productionWorkspace';
+-import {localRequest} from './client';
++import {useWorkspaceReading,useWorkspacePolling} from './useWorkspaceReading';
+ import {normalizeDeliveryTags,deliveryTagsError} from '../publishing/deliveryMetadata';
+ import {coverImageExtension} from '../publishing/coverImage';
+ import {useWorkspaceDraft} from './WorkspaceDraft';
+@@ -26,10 +26,10 @@
+   }catch{if(check===coverCheck.current&&scope===currentScope.current)setCoverError('封面读取失败，请重新选择。');}finally{if(check===coverCheck.current&&scope===currentScope.current)setCheckingCover(false);}
+  }
+  const [published,setPublished]=useState<{key:string;title:string;description:string;tags:string[]}|null>(null),[metadataError,setMetadataError]=useState(''),[metadataReload,setMetadataReload]=useState(0),[copied,setCopied]=useState('');
+- const notify=useRef(onChange);notify.current=onChange;
+  const latest=w.deliveries?.[0],running=latest&&['ready','running'].includes(latest.status),completed=latest?.status==='completed',confirmed=!!source?.confirmed&&source.current&&!w.stale,coverVisible=confirmed&&!latest?.verified&&!running&&!completed;
++ const reading=useWorkspaceReading(w,onChange,JSON.stringify([latest?.id,!!running]),'交付状态暂不可用，请刷新重试。');
++ useWorkspacePolling(reading,!!running,2500,()=>setError('交付状态暂不可用，请刷新重试。'));
+  useEffect(()=>{if(!cover||!coverVisible){setCoverPreview('');return;}const url=URL.createObjectURL(cover);setCoverPreview(url);return()=>URL.revokeObjectURL(url);},[cover,coverVisible]);
+- useEffect(()=>{if(!running)return;let active=true,busy=false;const timer=setInterval(()=>{if(busy)return;busy=true;void localRequest(`episodes/${w.episodeId}/workspace`).then(r=>{if(active)notify.current(r.workspace);}).catch(()=>{if(active)setError('交付状态暂不可用，请刷新重试。');}).finally(()=>{busy=false;});},2500);return()=>{active=false;clearInterval(timer);};},[w.episodeId,running]);
+  const metadata=latest?.verified?latest.artifacts.find(a=>a.artifactType==='metadata'):undefined;
+  const metadataKey=`${w.episodeId}:${latest?.id}:${metadata?.sha256}`;
+  const artifactUrl=(a:NonNullable<typeof latest>['artifacts'][number],download=false)=>`/_local-artifact?${new URLSearchParams({episode:w.episodeId,path:a.relativePath,sha256:a.sha256,...(download?{download:'1'}:{})})}`;
+@@ -39,7 +39,7 @@
+  },[metadataKey,metadataReload]);
+  async function copy(text:string,label:string){try{await navigator.clipboard.writeText(text);setCopied(`已复制${label}`);}catch{setCopied('复制失败，请选择文案后手动复制。');}}
+  const saved=published?.key===metadataKey?published:null;
+- async function run(name:string,extra:Record<string,unknown>){setError('');try{onChange(await command(name,{episodeId:w.episodeId,workspaceId:w.id,expectedRevision:w.revision,...extra}) as ProductionWorkspace);return true;}catch(cause){const message=cause instanceof Error?cause.message:'交付未完成，请重试。';if(name==='prepareWorkspaceDelivery'&&message.includes('封面'))setCoverError(message);else setError(message);return false;}}
++ async function run(name:string,extra:Record<string,unknown>){setError('');try{reading.publish(await command(name,{episodeId:w.episodeId,workspaceId:w.id,expectedRevision:w.revision,...extra}) as ProductionWorkspace);return true;}catch(cause){const message=cause instanceof Error?cause.message:'交付未完成，请重试。';if(name==='prepareWorkspaceDelivery'&&message.includes('封面'))setCoverError(message);else setError(message);return false;}}
+  async function prepare(){if(!cover||preparingRef.current)return;const normalizedTags=normalizeDeliveryTags(tags.split(/[,，]/).map(t=>t.trim()).filter(Boolean)),invalidTags=deliveryTagsError(normalizedTags);setTagsError(invalidTags);if(invalidTags)return;const submitted={...draft.value};preparingRef.current=true;setPreparing(true);try{const bytes=new Uint8Array(await cover.arrayBuffer());let binary='';for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,i+8192));const e=w.exports![0];const succeeded=await run('prepareWorkspaceDelivery',{exportId:e.id,expectedExportSha256:e.artifact?.sha256,expectedContentSha256:e.contentSha256,title,description,tags:normalizedTags,coverBase64:btoa(binary)});if(succeeded&&currentCover.current===cover&&draft.acknowledge(submitted,{title:'',description:'',tags:'',coverName:''}))setCover(null);}catch{setCoverError('封面读取失败，请重新选择。');}finally{preparingRef.current=false;setPreparing(false);}}
+  return <section className="workspace-delivery workspace-delivery-compact" aria-label="交付包">
+  <div className="workspace-review-heading"><h4>交付包</h4><span>{latest?.verified?'验证完成':running?'正在准备':completed?'需核验':latest&&['failed','blocked'].includes(latest.status)?'交付失败':!source?'尚未开始':confirmed?'可准备':'待确认'}</span></div>
+--- a/src/local-app/WorkspaceNarrationPanel.tsx
++++ b/src/local-app/WorkspaceNarrationPanel.tsx
+@@ -7,6 +7,7 @@
+ import {useWorkspaceReading} from './useWorkspaceReading';
+ import {WorkspaceNarrationRecord} from './WorkspaceSoundRecords';
+ import {WorkspaceVisualTaskStatus} from './WorkspaceVisualTaskStatus';
++import {workspaceTaskPresentation} from '../workspaceTaskPresentation';
+ import {reconcileWorkspaceOutput} from './workspaceOutputReconciliationClient';
+ import {restoreWorkspaceSettingsDraft,storeWorkspaceSettingsDraft,workspaceSettingsFingerprint} from './workspaceSettingsDraft';
+ import {localRequest} from './client';
+@@ -85,7 +86,8 @@
+  const [mode,setMode]=useState<WorkspaceNarration['mode']>(()=>{try{const value=sessionStorage.getItem(key+':mode');return value&&['tts','manual'].includes(value)?value as WorkspaceNarration['mode']:n.mode==='manual'?'manual':'tts';}catch{return n.mode==='manual'?'manual':'tts';}}),[manual,setManual]=useState(()=>{try{return sessionStorage.getItem(key+':manual')??(n.mode==='manual'?n.audioTrackId??'':'');}catch{return n.mode==='manual'?n.audioTrackId??'':'';}}),[busy,setBusy]=useState(false),[error,setError]=useState('');
+  useEffect(()=>{try{if(textDraft===null)sessionStorage.removeItem(key+':text');else sessionStorage.setItem(key+':text',textDraft);sessionStorage.setItem(key+':mode',mode);sessionStorage.setItem(key+':manual',manual);}catch{/* Optional browser draft. */}},[key,textDraft,mode,manual]);
+  const speechSettings:Settings=defaults??{selection:null,voice:'',languageCode:'zh-CN',speakingRate:1};
+- const canGenerate=compatible(speechSettings,services)&&!!text.trim()&&!n.generationTask?.submissionUnknown&&n.generationTask?.publicationAttempt==null;
++ const task=workspaceTaskPresentation(n.generationTask??{status:n.status});
++ const canGenerate=compatible(speechSettings,services)&&!!text.trim()&&!task.unknown&&!task.held;
+  const reader=useWorkspaceReading(workspace,onChanged,n.shotId,'无法读取当前工程版本。');
+  const review=useWorkspaceCandidateReview({workspace,scope:JSON.stringify([n.shotId,expanded,mode]),reader,command});
+  const narrationMaterials=materials.filter(m=>m.material_type==='audio'&&canUseWorkspaceAudioMaterial(m.material_purpose,'narration'));
+@@ -259,7 +261,7 @@
+  {(error||n.error&&!n.generationTask)&&<p role="alert">{error||n.error}</p>}
+  </div>;
+  return expanded?fields:<details className="workspace-narration-row">
+-  <summary>{n.shotId}<span>{n.generationTask?.publicationAttempt!=null?'发布待核对':n.generationTask?.submissionUnknown?'结果待核对':n.status==='running'||n.status==='ready'?'准备中':n.status==='blocked'?'待核对':n.status==='failed'?'失败':n.durationSeconds?`${n.durationSeconds.toFixed(2)} 秒`:mode==='none'?'关闭':'待准备'}</span></summary>
++  <summary>{n.shotId}<span>{task.held||task.unknown||task.active||task.stopped||task.state==='not-sent'?task.summary:n.durationSeconds?`${n.durationSeconds.toFixed(2)} 秒`:mode==='none'?'关闭':'待准备'}</span></summary>
+   {fields}
+  </details>;
+ }
+--- a/src/local-app/WorkspaceVisualTaskStatus.test.tsx
++++ b/src/local-app/WorkspaceVisualTaskStatus.test.tsx
+@@ -1,9 +1,44 @@
+-import {render,screen,fireEvent,cleanup,waitFor} from '@testing-library/react';
++import {render,screen,fireEvent,cleanup,waitFor,within} from '@testing-library/react';
+ import {afterEach,it,expect,vi} from 'vitest';
+ import {WorkspaceVisualPreparation} from './WorkspaceVisualPreparation';
+ import type {ProductionWorkspace} from '../productionWorkspace';
++import {WorkspaceVisualTaskStatus} from './WorkspaceVisualTaskStatus';
++import type {WorkspaceVisualTask} from '../workspaceVisualCandidates';
+ const base={id:'workspace',episodeId:'episode',revision:1,stale:false,project:{sha256:'project'},clips:[{id:'clip',itemId:'target',shotId:'shot',text:'镜头'}],visualCandidates:[],selectedImages:[]} as unknown as ProductionWorkspace;
+ afterEach(()=>{cleanup();sessionStorage.clear();vi.unstubAllGlobals();});
++it.each([
++ {name:'queued',evidence:{status:'ready'},label:'等待生成',resume:false,reconcile:false,refresh:false,progress:true},
++ {name:'running',evidence:{status:'running'},label:'生成中',resume:false,reconcile:false,refresh:false,progress:true},
++ {name:'not sent',evidence:{status:'failed',submissionOutcome:'not_sent'},label:'未提交',resume:false,reconcile:false,refresh:false,progress:false},
++ {name:'rejected',evidence:{status:'failed',submissionOutcome:'rejected'},label:'生成失败',resume:false,reconcile:false,refresh:false,progress:false},
++ {name:'resumable',evidence:{status:'blocked',canResume:true,providerTaskId:'original'},label:'生成受阻',resume:true,reconcile:false,refresh:false,progress:false},
++ {name:'unknown submission',evidence:{status:'failed',submissionUnknown:true,submissionOutcome:'started'},label:'提交结果未知',resume:false,reconcile:false,refresh:true,progress:false},
++ {name:'received result unknown',evidence:{status:'blocked',submissionUnknown:true,submissionOutcome:'received'},label:'供应商结果待核对',resume:false,reconcile:false,refresh:true,progress:false},
++ {name:'publication attempt zero',evidence:{status:'blocked',publicationAttempt:0,submissionUnknown:true,canResume:true},label:'发布结果待核对',resume:false,reconcile:true,refresh:true,progress:false},
++ {name:'completed',evidence:{status:'completed'},label:'生成完成',resume:false,reconcile:false,refresh:false,progress:false},
++ {name:'superseded',evidence:{status:'superseded'},label:'已失效',resume:false,reconcile:false,refresh:false,progress:false},
++])('preserves task evidence and recovery actions for $name',row=>{
++ const task={id:'candidate',taskId:'task',error:null,...row.evidence} as WorkspaceVisualTask;
++ const onResume=vi.fn(),onRefresh=vi.fn(),onReconcile=vi.fn();
++ render(<WorkspaceVisualTaskStatus task={task} label="视频" onResume={onResume} onRefresh={onRefresh} onReconcile={onReconcile}/>);
++ expect(screen.getByLabelText('视觉任务 task').textContent).toBe('视频'+row.label);
++ expect(!!screen.queryByRole('button',{name:'恢复画面任务'})).toBe(row.resume);
++ expect(!!screen.queryByRole('button',{name:'核对并恢复产物'})).toBe(row.reconcile);
++ expect(!!screen.queryByRole('button',{name:'刷新核对结果'})).toBe(row.refresh);
++ expect(!!screen.queryByRole('progressbar')).toBe(row.progress);
++ if(row.resume){fireEvent.click(screen.getByRole('button',{name:'恢复画面任务'}));expect(onResume).toHaveBeenCalledOnce();}
++ if(row.reconcile){fireEvent.click(screen.getByRole('button',{name:'核对并恢复产物'}));expect(onReconcile).toHaveBeenCalledOnce();}
++ if(row.refresh){fireEvent.click(screen.getByRole('button',{name:'刷新核对结果'}));expect(onRefresh).toHaveBeenCalledOnce();}
++});
++it('hides a task with an explicitly linked replacement without exposing its recovery actions',()=>{
++ render(<WorkspaceVisualTaskStatus task={{id:'old',taskId:'old-task',status:'failed',error:null,retryTaskId:'replacement',submissionUnknown:true}} label="图片" onResume={vi.fn()} onRefresh={vi.fn()} onReconcile={vi.fn()}/>);
++ expect(screen.queryByLabelText('视觉任务 old-task')).toBeNull();expect(screen.queryByRole('button')).toBeNull();
++});
++it('keeps the explicit unknown-image retry route separate from ordinary recovery',()=>{
++ const retry=vi.fn();render(<WorkspaceVisualTaskStatus task={{id:'image',taskId:'image-task',status:'failed',kind:'image',error:null,submissionUnknown:true,submissionOutcome:'started'}} label="图片" onRetryUnknown={retry} onResume={vi.fn()} onRefresh={vi.fn()} onReconcile={vi.fn()}/>);
++ fireEvent.click(screen.getByRole('button',{name:'重试图片生成'}));expect(retry).toHaveBeenCalledOnce();
++ fireEvent.click(screen.getByRole('button',{name:'查看图片任务详情'}));expect(screen.getByText(/上一次可能已产生费用/)).toBeTruthy();expect(screen.queryByRole('button',{name:'恢复画面任务'})).toBeNull();
++});
+ it('distinguishes unknown submission from failure and only offers a read-only reconciliation',async()=>{
+  const workspace={...base,visualTasks:[{id:'unknown',taskId:'task-unknown',shotId:'shot',kind:'image' as const,status:'failed',error:'图片请求回执未收到',submissionOutcome:'started' as const,providerTaskId:null,requestState:'submitting',submissionUnknown:true,canResume:false}]};const command=vi.fn(),read=vi.fn(async()=>Response.json({workspace}));vi.stubGlobal('fetch',read);
+  render(<WorkspaceVisualPreparation workspace={workspace} command={command} onChange={()=>{}} materials={[]}/>);
+@@ -28,6 +63,49 @@
+  render(<WorkspaceAudioPreparation workspace={{...base,audio:{mix:{voices:[],sounds:[]},preparations:[p]}} as unknown as ProductionWorkspace} command={vi.fn()} onChange={()=>{}} selectedShotId="shot"/>);
+  fireEvent.click(screen.getByRole('button',{name:'音效'}));
+  expect(screen.getByText('音频发布结果待核对')).toBeTruthy();expect(screen.getByRole('button',{name:'核对并恢复产物'})).toBeTruthy();expect(screen.queryByRole('button',{name:'重试'})).toBeNull();
++});
++
++it('keeps unknown audio submission consistent between its candidate summary and task details',async()=>{
++ const {WorkspaceAudioPreparation}=await import('./WorkspaceAudioPanel');vi.stubGlobal('fetch',vi.fn(async()=>Response.json({serviceCatalog:{groups:[]}})));
++ const p={id:'audio-unknown',kind:'sfx',shotId:'shot',description:'雨声',durationSeconds:1,offsetSeconds:0,anchor:'shot',taskId:'audio-task',status:'failed',generationTask:{id:'audio-unknown',taskId:'audio-task',status:'failed',error:null,submissionOutcome:'started',submissionUnknown:true}};
++ const command=vi.fn();
++ render(<WorkspaceAudioPreparation workspace={{...base,audio:{mix:{voices:[],sounds:[]},preparations:[p]}} as unknown as ProductionWorkspace} command={command} onChange={()=>{}} selectedShotId="shot"/>);
++ fireEvent.click(screen.getByRole('button',{name:'音效'}));
++ expect(within(screen.getByRole('region',{name:'本镜头音效'})).getByText(/· 结果待核对/)).toBeTruthy();
++ expect(screen.getByText('音频提交结果未知')).toBeTruthy();
++ expect(screen.queryByRole('button',{name:'重试原音频准备'})).toBeNull();
++ fireEvent.click(screen.getByRole('button',{name:'查看音频任务详情'}));
++ expect(screen.getByText(/当前结果未知，不能再次提交生成/)).toBeTruthy();expect(command).not.toHaveBeenCalled();
++});
++it('keeps adopted audio separate from the status of its generating task',async()=>{
++ const {WorkspaceAudioPreparation}=await import('./WorkspaceAudioPanel');vi.stubGlobal('fetch',vi.fn(async()=>Response.json({serviceCatalog:{groups:[]}})));
++ const p={id:'audio',kind:'sfx',shotId:'shot',description:'已加入雨声',durationSeconds:1,offsetSeconds:0,anchor:'shot',taskId:'task',status:'failed',adoptedItemId:'used-sound',generationTask:{id:'audio',taskId:'task',status:'failed',error:null,submissionUnknown:true}};
++ const sounds=[{itemId:'used-sound',kind:'sfx',startSeconds:0,durationSeconds:1,gainDb:-6,duckDepthDb:0}];
++ render(<WorkspaceAudioPreparation workspace={{...base,audio:{mix:{voices:[],sounds},preparations:[p]}} as unknown as ProductionWorkspace} command={vi.fn()} onChange={()=>{}} selectedShotId="shot"/>);
++ fireEvent.click(screen.getByRole('button',{name:'音效'}));
++ expect(screen.getByText(/· 已加入 · 1.00 秒 · -6 dB/)).toBeTruthy();expect(screen.getByText('音频提交结果未知')).toBeTruthy();expect(screen.getByRole('button',{name:'撤回 已加入雨声'})).toBeTruthy();
++});
++it('does not widen audio preparation retry eligibility when its task has a different status',async()=>{
++ const {WorkspaceAudioPreparation}=await import('./WorkspaceAudioPanel');vi.stubGlobal('fetch',vi.fn(async()=>Response.json({serviceCatalog:{groups:[]}})));
++ const p={id:'local-audio',kind:'sfx',shotId:'shot',description:'本地准备',durationSeconds:1,offsetSeconds:0,anchor:'shot',taskId:'original',status:'ready',generationTask:{id:'local-audio',taskId:'original',status:'failed',error:null}};
++ render(<WorkspaceAudioPreparation workspace={{...base,audio:{mix:{voices:[],sounds:[]},preparations:[p]}} as unknown as ProductionWorkspace} command={vi.fn()} onChange={()=>{}} selectedShotId="shot"/>);
++ fireEvent.click(screen.getByRole('button',{name:'音效'}));
++ expect(screen.getByText(/· 失败 · 1.00 秒/)).toBeTruthy();expect(screen.queryByRole('button',{name:'重试原音频准备'})).toBeNull();
++});
++it.each([
++ {status:'completed',durationSeconds:2.35,submissionOutcome:undefined,expected:'2.35 秒'},
++ {status:'failed',durationSeconds:null,submissionOutcome:'not_sent',expected:'未提交'},
++])('preserves narration duration and local-not-sent summaries: $expected',async(row)=>{
++ const {WorkspaceNarrationPanel}=await import('./WorkspaceNarrationPanel');vi.stubGlobal('fetch',vi.fn(async()=>Response.json({serviceCatalog:{groups:[]}})));
++ const n={clipId:'clip',shotId:'shot',mode:'tts',text:'正文',status:row.status,durationSeconds:row.durationSeconds,error:null,confirmed:true,generationTask:{id:'speech',taskId:'speech',status:row.status,error:null,submissionOutcome:row.submissionOutcome}};
++ const command=vi.fn();render(<WorkspaceNarrationPanel episodeId="episode" workspace={{...base,narration:[n]} as unknown as ProductionWorkspace} pending={false} command={command} onChanged={()=>{}}/>);
++ expect(screen.getByText('shot',{selector:'summary'}).textContent).toContain(row.expected);expect(command).not.toHaveBeenCalled();
++});
++it('describes the original running narration task while the edited input is pending',async()=>{
++ const {WorkspaceNarrationPanel}=await import('./WorkspaceNarrationPanel');vi.stubGlobal('fetch',vi.fn(async()=>Response.json({serviceCatalog:{groups:[]}})));
++ const n={clipId:'clip',shotId:'shot',mode:'tts',text:'修改后的正文',status:'pending',durationSeconds:null,error:null,confirmed:false,generationTask:{id:'speech',taskId:'speech',status:'running',error:null}};
++ render(<WorkspaceNarrationPanel episodeId="episode" workspace={{...base,narration:[n]} as unknown as ProductionWorkspace} pending={false} command={vi.fn()} onChanged={()=>{}}/>);
++ expect(screen.getByText('shot',{selector:'summary'}).textContent).toContain('准备中');expect(screen.getByText('口播生成中')).toBeTruthy();
+ });
+ 
+ it('shows real image and video milestones without reporting a made-up percentage',()=>{
+--- a/src/local-app/WorkspaceVisualPreparation.tsx
++++ b/src/local-app/WorkspaceVisualPreparation.tsx
+@@ -12,6 +12,7 @@
+ import {ImageFocusDialog} from '../ui/media/ImagePreview';
+ import {VideoPreview} from '../ui/media/VideoPreview';
+ import {WorkspaceVisualRecord} from './WorkspaceVisualRecord';
++import {workspaceTaskPresentation} from '../workspaceTaskPresentation';
+ import {needsCandidateImpactDialog,WorkspaceCandidateImpactDetails} from './WorkspaceCandidateImpact';
+ import {ConfirmationModal,ConfirmationModalPresence} from '../ui/ConfirmationModal';
+ import {createPortal} from 'react-dom';
+@@ -354,7 +355,7 @@
+  const unknownTasks=tasks.filter(t=>t.targetItemId===targetItemId&&t.submissionUnknown&&!t.retryTaskId);
+  const unknownImageTask=tab==='image'&&unknownTasks.length===1&&unknownTasks[0].kind==='image'
+   &&unknownTasks[0].submissionOutcome!=='received'&&unknownTasks[0].publicationAttempt==null?unknownTasks[0]:undefined;
+- const retryImage=!!latestImageTask&&['failed','blocked'].includes(latestImageTask.status)&&!latestImageTask.submissionUnknown&&latestImageTask.publicationAttempt==null;
++ const retryImage=!!latestImageTask&&workspaceTaskPresentation(latestImageTask).canRetry;
+  const showEmptyCandidateDrop=!!shelf&&!entries.length&&!pendingUpload;
+  const dropCandidate=<WorkspaceMaterialDrop label={`拖入${kindName}加入候选`} kind={tab} disabled={disabled} surface="preview" persistent={showEmptyCandidateDrop}
+   onSelect={id=>void run(async()=>{await register(id,tab);})}/>;
+--- a/src/local-app/WorkspaceDeliveryPanel.test.tsx
++++ b/src/local-app/WorkspaceDeliveryPanel.test.tsx
+@@ -3,14 +3,76 @@
+ import {WorkspaceDeliveryPanel} from './WorkspaceDeliveryPanel';
+ import {WorkspaceDraftProvider} from './WorkspaceDraft';
+ import type {ProductionWorkspace} from '../productionWorkspace';
+-vi.mock('./client',()=>({localRequest:vi.fn()}));
+-import {localRequest} from './client';
+ const createObjectURL=vi.fn((_file:Blob)=> 'blob:cover-preview'),revokeObjectURL=vi.fn();
+ beforeEach(()=>{createObjectURL.mockClear();revokeObjectURL.mockClear();Object.defineProperty(URL,'createObjectURL',{configurable:true,value:createObjectURL});Object.defineProperty(URL,'revokeObjectURL',{configurable:true,value:revokeObjectURL});});
+-afterEach(()=>{cleanup();localStorage.clear();vi.useRealTimers();});
++afterEach(()=>{cleanup();localStorage.clear();vi.useRealTimers();vi.unstubAllGlobals();});
+ const pngBytes=new Uint8Array([137,80,78,71,13,10,26,10,0,0,0,0]);
+ const pngFile=(name:string)=>new File([pngBytes],name,{type:'image/png'});
+ const workspace=()=>({id:'workspace',episodeId:'episode',revision:7,stale:false,exports:[{id:'export',current:true,confirmed:true,contentSha256:'confirmed-content',artifact:{sha256:'confirmed-video'}}]}) as unknown as ProductionWorkspace;
++it('does not publish an older delivery poll after a newer workspace was provided',async()=>{
++ vi.useFakeTimers();let reply!:(value:unknown)=>void;
++ const w={...workspace(),deliveries:[{id:'delivery',status:'running'}]} as ProductionWorkspace;
++ const received=vi.fn(),slow=new Promise(resolve=>{reply=resolve;});
++ vi.stubGlobal('fetch',vi.fn(()=>slow.then(value=>Response.json(value))));
++ const view=render(<WorkspaceDeliveryPanel workspace={w} pending={false} command={vi.fn()} onChange={received}/>);
++ await act(async()=>vi.advanceTimersByTimeAsync(2500));
++ const newer={...w,revision:8};view.rerender(<WorkspaceDeliveryPanel workspace={newer} pending={false} command={vi.fn()} onChange={received}/>);
++ await act(async()=>reply({workspace:w}));
++ expect(received).not.toHaveBeenCalled();
++ vi.unstubAllGlobals();
++});
++it.each(['workspace','delivery','stopped','unmount'] as const)('ignores a late delivery reply after %s changes',async(change)=>{
++ vi.useFakeTimers();let reply!:(value:Response)=>void;
++ const w={...workspace(),deliveries:[{id:'original',status:'running'}]} as ProductionWorkspace,received=vi.fn();
++ const read=vi.fn((_url:RequestInfo|URL,_options?:RequestInit)=>new Promise<Response>(resolve=>{reply=resolve;}));vi.stubGlobal('fetch',read);
++ const view=render(<WorkspaceDeliveryPanel workspace={w} pending={false} command={vi.fn()} onChange={received}/>);
++ await act(async()=>vi.advanceTimersByTimeAsync(2500));
++ if(change==='unmount')view.unmount();
++ else{
++  const next={...w,...(change==='workspace'?{id:'replacement'}:{}),deliveries:[{id:change==='delivery'?'replacement':'original',status:change==='stopped'?'completed':'running'}]} as ProductionWorkspace;
++  view.rerender(<WorkspaceDeliveryPanel workspace={next} pending={false} command={vi.fn()} onChange={received}/>);
++ }
++ await act(async()=>reply(Response.json({workspace:{...w,revision:99}})));
++ expect(received).not.toHaveBeenCalled();expect(read.mock.calls[0][1]?.signal?.aborted).toBe(true);
++});
++it('ignores an old delivery error after same-revision authoritative state is provided',async()=>{
++ vi.useFakeTimers();let reject!:(error:Error)=>void;
++ const w={...workspace(),deliveries:[{id:'delivery',status:'running'}]} as ProductionWorkspace;
++ vi.stubGlobal('fetch',vi.fn(()=>new Promise<Response>((_resolve,fail)=>{reject=fail;})));
++ const view=render(<WorkspaceDeliveryPanel workspace={w} pending={false} command={vi.fn()} onChange={vi.fn()}/>);
++ await act(async()=>vi.advanceTimersByTimeAsync(2500));
++ view.rerender(<WorkspaceDeliveryPanel workspace={{...w,exports:[{...w.exports![0],confirmed:false}]}} pending={false} command={vi.fn()} onChange={vi.fn()}/>);
++ await act(async()=>reject(Error('old read failed')));
++ expect(screen.queryByText('交付状态暂不可用，请刷新重试。')).toBeNull();
++});
++it('keeps same-revision supplied state when an older delivery reply arrives',async()=>{
++ vi.useFakeTimers();let reply!:(value:Response)=>void;
++ const w={...workspace(),deliveries:[{id:'delivery',status:'running'}]} as ProductionWorkspace,received=vi.fn();
++ vi.stubGlobal('fetch',vi.fn(()=>new Promise<Response>(resolve=>{reply=resolve;})));
++ const view=render(<WorkspaceDeliveryPanel workspace={w} pending={false} command={vi.fn()} onChange={received}/>);
++ await act(async()=>vi.advanceTimersByTimeAsync(2500));
++ view.rerender(<WorkspaceDeliveryPanel workspace={{...w,exports:[{...w.exports![0],confirmed:false}]}} pending={false} command={vi.fn()} onChange={received}/>);
++ await act(async()=>reply(Response.json({workspace:w})));
++ expect(received).not.toHaveBeenCalled();
++});
++it('shows a current delivery read failure and can read again on the next polling tick',async()=>{
++ vi.useFakeTimers();const w={...workspace(),deliveries:[{id:'delivery',status:'running'}]} as ProductionWorkspace,received=vi.fn();
++ const read=vi.fn().mockResolvedValueOnce(Response.json({error:'unavailable'},{status:503})).mockResolvedValueOnce(Response.json({workspace:w}));vi.stubGlobal('fetch',read);
++ render(<WorkspaceDeliveryPanel workspace={w} pending={false} command={vi.fn()} onChange={received}/>);
++ await act(async()=>vi.advanceTimersByTimeAsync(2500));expect(screen.getByText('交付状态暂不可用，请刷新重试。')).toBeTruthy();
++ await act(async()=>vi.advanceTimersByTimeAsync(2500));expect(received).toHaveBeenCalledWith(w);expect(read).toHaveBeenCalledTimes(2);
++});
++it('keeps the 2500ms cadence and avoids overlapping delivery reads',async()=>{
++ vi.useFakeTimers();let reply!:(value:Response)=>void;
++ const w={...workspace(),deliveries:[{id:'delivery',status:'running'}]} as ProductionWorkspace;
++ const read=vi.fn(()=>new Promise<Response>(resolve=>{reply=resolve;}));vi.stubGlobal('fetch',read);
++ const received=vi.fn();render(<WorkspaceDeliveryPanel workspace={w} pending={false} command={vi.fn()} onChange={received}/>);
++ await act(async()=>vi.advanceTimersByTimeAsync(2499));expect(read).not.toHaveBeenCalled();
++ await act(async()=>vi.advanceTimersByTimeAsync(1));expect(read).toHaveBeenCalledOnce();
++ await act(async()=>vi.advanceTimersByTimeAsync(10000));expect(read).toHaveBeenCalledOnce();
++ await act(async()=>reply(Response.json({workspace:w})));expect(received).toHaveBeenCalledWith(w);
++ await act(async()=>vi.advanceTimersByTimeAsync(2500));expect(read).toHaveBeenCalledTimes(2);
++});
+ it('registers the selected real cover and binds delivery metadata to the confirmed export',async()=>{
+  const w=workspace(),command=vi.fn(async()=>w);render(<WorkspaceDeliveryPanel workspace={w} pending={false} command={command} onChange={()=>{}}/>);
+  fireEvent.change(screen.getByRole('textbox',{name:'标题'}),{target:{value:'晨光样片'}});fireEvent.change(screen.getByRole('textbox',{name:'标签'}),{target:{value:'山野，清晨'}});fireEvent.change(screen.getByRole('textbox',{name:'简介'}),{target:{value:'清晨山脊的光线。'}});
+@@ -35,10 +97,10 @@
+ 
+ it('continues delivery polling when parent refreshes replace the callback',async()=>{
+  vi.useFakeTimers();const w={...workspace(),deliveries:[{id:'d',status:'ready'}]} as ProductionWorkspace,finished={...w,deliveries:[{id:'d',exportId:'export',taskId:'task',status:'completed',verified:true,artifacts:[],error:null,createdAt:'2026-10-30T00:00:00Z'}]} as ProductionWorkspace;
+- vi.mocked(localRequest).mockResolvedValue({workspace:finished});const view=render(<WorkspaceDeliveryPanel workspace={w} pending={false} command={vi.fn()} onChange={vi.fn()}/>);
++ const read=vi.fn(async()=>Response.json({workspace:finished}));vi.stubGlobal('fetch',read);const view=render(<WorkspaceDeliveryPanel workspace={w} pending={false} command={vi.fn()} onChange={vi.fn()}/>);
+  await act(async()=>vi.advanceTimersByTimeAsync(1000));view.rerender(<WorkspaceDeliveryPanel workspace={w} pending={false} command={vi.fn()} onChange={vi.fn()}/>);
+  await act(async()=>vi.advanceTimersByTimeAsync(1000));const latest=vi.fn();view.rerender(<WorkspaceDeliveryPanel workspace={w} pending={false} command={vi.fn()} onChange={latest}/>);
+- await act(async()=>vi.advanceTimersByTimeAsync(500));expect(latest).toHaveBeenCalledWith(finished);expect(localRequest).toHaveBeenCalledWith('episodes/episode/workspace');
++ await act(async()=>vi.advanceTimersByTimeAsync(500));expect(latest).toHaveBeenCalledWith(finished);expect(read).toHaveBeenCalledWith('/api/local/episodes/episode/workspace',expect.objectContaining({signal:expect.any(AbortSignal)}));
+ });
+ 
+  it('renders publishable metadata and hides raw technical files while providing real downloads',async()=>{
+--- a/docs/adr/README.md
++++ b/docs/adr/README.md
+@@ -50,3 +50,5 @@
+ - [ADR-0032：统一镜头视频任务与历史协议兼容](0032-unified-shot-video-protocol.md)
+ 
+ - [ADR-0033：逐次调用确认的客户端生命周期](0033-workspace-call-confirmation-lifecycle.md)
++
++- [ADR-0034：生成任务展示与交付读取保护](0034-workspace-task-presentation-and-delivery-reading.md)
+--- a/docs/architecture/state-machines.md
++++ b/docs/architecture/state-machines.md
+@@ -6,7 +6,7 @@
+ 
+ 按状态的**权威归属**组织，保留现有模块。数据库约束管理持久业务事实；Worker 管理一次尝试；供应商记录管理是否已经发送；文件回执管理发布是否完成；UI owner 管理当前访问期间的意图。这些状态可以同时存在，不应合并成一个全局枚举。
+ 
+-本次只修改 M19：逐次调用确认改为类型联合和独立 owner，修复延迟回包跨生产单污染。其余状态机登记入口、守卫和验证依据，保留现有实现。提取纯展示函数有利于统一任务文案，但未发现需要立即改变现有映射的已复现缺陷；暂不扩大改动。
++初轮修改 M19：逐次调用确认改为类型联合和独立 owner，修复延迟回包跨工作版本污染。后续经批准实施 M22 的共享只读展示及 M18 的交付读取接入：音效未知提交摘要、口播输入与原任务状态差异、交付旧 revision 覆盖均有失败回归证据。决定见 [ADR-0034](../adr/0034-workspace-task-presentation-and-delivery-reading.md)，验收见 [第 1、2 项报告](../verification/state-machines-batch12-20261110/REPORT.md)。其他状态机继续保留各自权威。
+ 
+ 开发者与 Agent 修改某条流程前，先找对应行的 owner，再读相关测试；改变持久状态时沿用最新迁移、事务和恢复协议。表中测试是已有验证入口，不代表本次运行了所有集成测试。`ready` 在任务中表示待执行，在导出中表示导出成功，不能跨上下文互换。
+ 
+@@ -36,11 +36,11 @@
+ | M15 登录、会话与客户端请求 | checking/loading → ready/anonymous/error；登录、退出、跨窗口身份变化，CSRF 恢复 | [LocalCatalogApp](../../src/local-app/LocalCatalogApp.tsx)、[client](../../src/local-app/client.ts)、[sessions](../../src/local-app/sessions.ts)。session/request generation 隔离旧请求；服务端依据 hash、撤销和期限判断有效会话。验证：`LocalCatalogApp.test.tsx`、`clientCsrfRecovery.test.ts`、`ownerPasswordRoute.test.ts`。 |
+ | M16 导航、筛选与离开确认 | URL route、目录选择、drawer/panel、back/forward；离开脏草稿时 return/apply 两阶段 | [catalogNavigation](../../src/local-app/catalogNavigation.tsx)、[LocalCatalogApp](../../src/local-app/LocalCatalogApp.tsx)。保留 history entry 与草稿注册表；搜索、分页、选中不是独立持久状态机。验证：`catalogNavigation.test.ts`、`LocalCatalogApp.drafts.test.tsx`。 |
+ | M17 四步制作与编辑器入口 | script → preparation → editor → delivery；loaded/error、opening/session、readonly/stale 是独立维度 | [ProductionWorkspacePanel](../../src/local-app/ProductionWorkspacePanel.tsx)。准备条件、归档／完成只读、占位素材、同步 opening lock。`step=2 && session=null` 可以是合法入口，不能仅凭组合判为 bug。验证：`ProductionWorkspacePanel.test.tsx`、`.navigation.test.tsx`、`.legacy.test.tsx`。 |
+-| M18 工程读取与轮询 | active/ended；issued/accepted 序号；读取、发布、观察写入、poll；允许 idle/paused | [useWorkspaceReading](../../src/local-app/useWorkspaceReading.ts)、[LocalEpisodeDetail](../../src/local-app/LocalEpisodeDetail.tsx)。owner、target、revision、请求顺序及 AbortController 防旧结果覆盖；后台页面暂停。验证：`ProductionWorkspaceReading.test.tsx`。 |
++| M18 工程读取与轮询 | active/ended；issued/accepted 序号；读取、发布、观察写入、poll；允许 idle/paused | [useWorkspaceReading](../../src/local-app/useWorkspaceReading.ts)、[LocalEpisodeDetail](../../src/local-app/LocalEpisodeDetail.tsx)、[交付轮询](../../src/local-app/WorkspaceDeliveryPanel.tsx)。owner、target、revision、请求顺序及 AbortController 防旧结果覆盖；后台页面暂停。验证：`ProductionWorkspaceReading.test.tsx`。 |
+ | **M19 客户端逐次调用确认（本次修复）** | `idle → preparing → review → submitting → idle / failed`；review/failed 取消回 idle；离开 → closed | [useWorkspaceCallConfirmation](../../src/local-app/useWorkspaceCallConfirmation.tsx)、ADR-0033。每次进入独立 owner；同步 phase 锁；过期与整数分校验；失败不重复确认。验证：`useWorkspaceCallConfirmation.test.tsx`。 |
+ | M20 候选核对与确认 | idle → prepare-read → preparing → plan；confirm-read → adopting；取消、SHA 或 owner 变化使核对失效 | [useWorkspaceCandidateReview](../../src/local-app/useWorkspaceCandidateReview.ts)、ADR-0030。sequence、owner、工程 SHA、当前读取；已经发出的采用命令不能由本地取消撤销。验证：`useWorkspaceCandidateReview.test.tsx`、`WorkspaceCandidateReviewLifecycle.test.tsx`。 |
+ | M21 上传队列、恢复与通知 | 每文件 pending/running/succeeded/failed；失败可重试，完成短通知；模块 session 保留未完成上下文 | [WorkspaceVisualPreparation](../../src/local-app/WorkspaceVisualPreparation.tsx)、[WorkspaceUploadFeedback](../../src/local-app/WorkspaceUploadFeedback.tsx)、[ProductionWorkspacePanel](../../src/local-app/ProductionWorkspacePanel.tsx)。运行锁、文件类型／大小、reference 上限、卸载归属；不永久堆积成功记录。验证：`WorkspaceVisualPreparation.upload.test.tsx`、`LocalEpisodeDetail.upload.test.tsx`。 |
+-| M22 任务诊断与恢复展示 | task status × submission outcome × unknown × publication hold × retryTaskId 派生用户状态 | [WorkspaceVisualTaskStatus](../../src/local-app/WorkspaceVisualTaskStatus.tsx)、[WorkspaceNarrationPanel](../../src/local-app/WorkspaceNarrationPanel.tsx)、[WorkspaceAudioPanel](../../src/local-app/WorkspaceAudioPanel.tsx)。发布核对优先；未知不能显示为普通重试；已保存远端 ID 的恢复只查询原任务。验证：`WorkspaceVisualTaskStatus.test.tsx`。 |
++| M22 任务诊断与恢复展示 | task status × submission outcome × unknown × publication hold × retryTaskId 派生用户状态 | [共享投影](../../src/workspaceTaskPresentation.ts)、[WorkspaceVisualTaskStatus](../../src/local-app/WorkspaceVisualTaskStatus.tsx)、[WorkspaceNarrationPanel](../../src/local-app/WorkspaceNarrationPanel.tsx)、[WorkspaceAudioPanel](../../src/local-app/WorkspaceAudioPanel.tsx)。发布核对优先；未知不能显示为普通重试；已保存远端 ID 的恢复只查询原任务。验证：`WorkspaceVisualTaskStatus.test.tsx`。 |
+ | M23 操作草稿与保存 | baseline、accepted、dirty、restored；保存／撤销、保存失败、外部版本变化、离开确认 | [WorkspaceDraft](../../src/local-app/WorkspaceDraft.tsx)、[operationDraft](../../src/operationDraft.ts)、[WorkspaceScriptPanel](../../src/local-app/WorkspaceScriptPanel.tsx)、[AccountWorkspace](../../src/accounts/AccountWorkspace.tsx)、[ConfigurationForms](../../src/platform/ConfigurationForms.tsx)。身份+基准归属；acknowledge 不删除更新输入；脚本修订需理由。验证：`LocalCatalogApp.drafts.test.tsx`、`WorkspaceScriptPanel.test.tsx`、`AccountWorkspace.test.tsx`。 |
+ | M24 连接编辑、模型与测试 | new/edit/detail；saving/testing；模型 loading/syncing/saving；离开保留／丢弃非秘密草稿 | [ConnectionWorkspace](../../src/connections/ConnectionWorkspace.tsx)、[ConnectionModelsDialog](../../src/connections/ConnectionModelsDialog.tsx)、[ConnectionDraftSession](../../src/connections/ConnectionDraftSession.tsx)、[ConnectionTestButton](../../src/connections/ConnectionTestButton.tsx)。operation lock、基准版本、身份失效清草稿；秘密不存草稿。验证：`ConnectionWorkspace.test.tsx`、`ConnectionDrafts.test.tsx`。 |
+ | M25 原生 Studio 通道与保存 | connecting → writable；request pending → result/timeout；flush/save → saved/error；失去写连接后保留编辑 | [EmbeddedStudioHost](../../src/local-app/EmbeddedStudioHost.tsx)、[嵌入客户端](../../scripts/openchatcut-embed-client.mjs)、[studioCommands](../../src/local-app/studioCommands.ts)。origin/source/channel/project/request ID、revision 与指纹；请求 Map、同步锁与超时。验证：`EmbeddedStudioHost.test.tsx`、`embeddedStudio.integration.test.ts`。 |
+--- /dev/null
++++ b/src/workspaceTaskPresentation.ts
+@@ -0,0 +1,29 @@
++import type {WorkspaceVisualTask} from './workspaceVisualCandidates';
++
++type TaskEvidence=Pick<WorkspaceVisualTask,'status'|'publicationAttempt'|'submissionUnknown'|'submissionOutcome'|'canResume'|'retryTaskId'>;
++const presentations={
++ 'publication-held':{label:'发布结果待核对',summary:'发布待核对'},
++ 'not-sent':{label:'未提交',summary:'未提交'},
++ 'provider-result-unknown':{label:'供应商结果待核对',summary:'结果待核对'},
++ 'submission-unknown':{label:'提交结果未知',summary:'结果待核对'},
++ ready:{label:'等待生成',summary:'准备中'},
++ running:{label:'生成中',summary:'准备中'},
++ failed:{label:'生成失败',summary:'失败'},
++ blocked:{label:'生成受阻',summary:'待核对'},
++ completed:{label:'生成完成',summary:'可用'},
++ superseded:{label:'已失效',summary:'已失效'},
++ unknown:{label:'状态待核对',summary:'状态待核对'},
++} as const;
++
++/** Read-only projection of existing authorities, never permission to submit work. See ADR-0034. */
++export function workspaceTaskPresentation(task:TaskEvidence){
++ const held=task.publicationAttempt!=null,unknown=!!task.submissionUnknown;
++ const stopped=task.status==='failed'||task.status==='blocked';
++ const state=held?'publication-held':task.submissionOutcome==='not_sent'?'not-sent':unknown?(task.submissionOutcome==='received'?'provider-result-unknown':'submission-unknown')
++  :task.status==='ready'||task.status==='running'||task.status==='failed'||task.status==='blocked'||task.status==='completed'||task.status==='superseded'?task.status:'unknown';
++ return{state,...presentations[state],held,unknown,stopped,hidden:!!task.retryTaskId,
++  active:!held&&!unknown&&(task.status==='ready'||task.status==='running'),
++  canResume:!!task.canResume&&!held&&stopped,
++  canRetry:stopped&&!held&&!unknown,
++ };
++}
+--- /dev/null
++++ b/docs/adr/0034-workspace-task-presentation-and-delivery-reading.md
+@@ -0,0 +1,17 @@
++# ADR-0034：生成任务展示与交付读取保护
++
++状态：Accepted。日期：2026-11-10。Owner 已批准状态机建议第 1、2 项，不提交、不推送。
++
++## 决定
++
++在 `workspaceTaskPresentation` 中集中任务状态的只读投影：完整标签、紧凑摘要、发布 hold、提交未知、普通重试与原任务恢复入口的现有可用条件。图片、视频、口播和音效复用该投影；已加入、已采用、实际时长和本地素材可用性继续由各自工程／素材状态表示。投影不发命令，不替代服务端权限，也不推断新的付费重试资格；图片未知提交例外仍由原入口判断并再次确认。
++
++准备状态与原任务状态可以不同，例如当前口播输入修改后为 pending，而原任务仍在 running。摘要与详情优先解释实际任务；普通音频准备重试仍按准备记录的 status 加原 hold／unknown 条件判断，不因任务状态不同而扩大资格。
++
++`WorkspaceDeliveryPanel` 复用已有 `useWorkspaceReading/useWorkspacePolling`，保留 2500ms 轮询间隔、原 HTTP 读取地址和错误文案。读取归属于 episode、workspace 及当前交付；变更工程、交付或停止轮询后，旧回复与旧错误不能发布。接收命令结果先观察／发布，以阻止待返回旧读取覆盖新结果。沿用现有 revision 和请求排序规则，不增加第二套读取状态机。
++
++## 约束与验证
++
++服务端确认、费用、任务租约、未知提交、publication hold、候选采用及交付导出绑定不变。没有 SQL 迁移、新依赖或自动恢复。展示与读取是两个独立模块，不合并持久状态。
++
++通过真实任务摘要／详情和交付组件验证；受控 HTTP 延迟仅替代网络，不 mock 读取 hook。覆盖状态优先级、恢复入口与回调、已加入／时长保留、旧 revision、同 revision 新命令、交付／工程切换、卸载、过期请求失败、2500ms 节奏及不重叠。实际浏览器核对宽窄屏和恢复交互；不使用正式账本或真实供应商。

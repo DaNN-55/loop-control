@@ -1,0 +1,13 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/mediaRootDirectoryReceipt.integration.test.ts --maxWorkers=1 --reporter=verbose
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/mediaRootDirectoryReceipt.integration.test.ts > a crash before the directory receipt commits preserves empty-directory and permits guarded manual continuation 5083ms
+ ✓ src/local-app/mediaRootDirectoryReceipt.integration.test.ts > a crash before the directory receipt commits preserves unknown-content and permits guarded manual continuation 4233ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  21:20:43
+   Duration  9.47s (transform 382ms, setup 7ms, collect 25ms, tests 9.32s, environment 0ms, prepare 22ms)
+

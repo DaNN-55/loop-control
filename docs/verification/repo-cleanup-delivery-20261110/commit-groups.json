@@ -1,0 +1,92 @@
+[
+  {
+    "message": "feat: unify generation controls and task feedback",
+    "files": [
+      "public/brand/models",
+      "src/local-app/WorkspaceGenerationActivity.tsx",
+      "src/local-app/WorkspaceModelLogo.tsx",
+      "src/local-app/WorkspaceModelPicker.tsx",
+      "src/local-app/workspace-generation-activity.css",
+      "src/local-app/workspace-model-picker.css",
+      "src/local-app/WorkspaceGenerationComposer.tsx",
+      "src/local-app/WorkspaceGenerationModel.tsx",
+      "src/local-app/WorkspaceGenerationModel.test.tsx",
+      "src/local-app/WorkspaceNarrationToolbar.tsx",
+      "src/local-app/WorkspaceNarrationPanel.tsx",
+      "src/local-app/WorkspaceNarrationPanel.test.tsx",
+      "src/local-app/WorkspaceVisualPreparation.tsx",
+      "src/local-app/WorkspaceVisualPreparation.form.test.tsx",
+      "src/local-app/WorkspaceVisualPreparation.activity.test.tsx",
+      "src/local-app/WorkspaceAudioPanel.tsx",
+      "src/local-app/WorkspaceVisualTaskStatus.tsx",
+      "src/local-app/WorkspaceVisualTaskStatus.test.tsx",
+      "src/workspaceTaskPresentation.ts"
+    ],
+    "partialProductionTest": true
+  },
+  {
+    "message": "fix: isolate per-call confirmation lifecycle",
+    "files": [
+      "src/local-app/useWorkspaceCallConfirmation.tsx",
+      "src/local-app/useWorkspaceCallConfirmation.test.tsx"
+    ]
+  },
+  {
+    "message": "fix: preserve workspace lifecycle and delivery recovery",
+    "files": [
+      "src/local-app/ProductionWorkspacePanel.tsx",
+      "src/local-app/ProductionWorkspacePanel.test.tsx",
+      "src/local-app/ProductionWorkspacePanel.operations.test.tsx",
+      "src/local-app/useWorkspaceOperations.ts",
+      "src/local-app/WorkspaceScriptPanel.tsx",
+      "src/local-app/WorkspaceScriptPanel.test.tsx",
+      "src/local-app/WorkspaceExportPanel.tsx",
+      "src/local-app/WorkspaceExportPanel.test.tsx",
+      "src/local-app/WorkspaceDeliveryPanel.tsx",
+      "src/local-app/WorkspaceDeliveryPanel.test.tsx",
+      "src/workspaceExportDelivery.ts",
+      "src/workspaceExportDelivery.test.ts"
+    ]
+  },
+  {
+    "message": "fix: bind speech samples to their selection identity",
+    "files": [
+      "src/local-app/WorkspaceSpeechSample.tsx",
+      "src/local-app/WorkspaceSpeechSample.lifecycle.test.tsx"
+    ]
+  },
+  {
+    "message": "fix: preserve model editing baselines during discovery",
+    "files": [
+      "src/connections/ConnectionModelsDialog.tsx",
+      "src/connections/ConnectionModelsDialog.test.tsx"
+    ]
+  },
+  {
+    "message": "fix: apply end-only video ranges and verify recovery fences",
+    "files": [
+      "src/local-app/workspaceVisualCandidates.ts",
+      "src/local-app/workspaceVisualTrim.integration.test.ts",
+      "src/local-app/workspaceRecoveryFences.integration.test.ts",
+      "src/local-app/mediaRootDirectoryReceipt.integration.test.ts",
+      "src/local-app/workspaceGenerationState.integration.test.ts"
+    ]
+  },
+  {
+    "message": "refactor: remove unreachable legacy helpers and unused range dependency",
+    "files": [
+      "package-lock.json",
+      "package.json",
+      "src/observability/TaskProgressPanel.tsx",
+      "src/operationDraft.ts",
+      "src/reviews/materialImportDraftStore.ts",
+      "src/reviews/productionScript.ts",
+      "src/reviews/reviewRevision.ts",
+      "src/shotAudioMix.ts",
+      "src/shotComposition.ts",
+      "src/styles.css",
+      "src/worker/manualMaterialChecklist.ts",
+      "src/workspace/WorkspaceViews.tsx"
+    ]
+  }
+]

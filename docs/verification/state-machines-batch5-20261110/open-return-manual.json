@@ -1,0 +1,91 @@
+{
+  "passed": true,
+  "input": "打开重试后的正文",
+  "activation": "focus + Enter after frame main",
+  "stats": {
+    "mode": "open-failed",
+    "w": {
+      "id": "w",
+      "episodeId": "e",
+      "workflowVersion": "four-step/v1",
+      "scriptRevisionId": "s",
+      "revision": 3,
+      "contentSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "clips": [
+        {
+          "id": "clip",
+          "itemId": "item",
+          "shotId": "S01",
+          "text": "第一镜",
+          "source": null
+        }
+      ],
+      "project": {
+        "relativePath": "project.json",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "fileSize": 2,
+        "projectId": "loop-control-e"
+      },
+      "readiness": {
+        "deliverable": false,
+        "placeholders": [],
+        "missingSources": []
+      },
+      "stale": false
+    },
+    "studio": {
+      "projectId": "loop-control-e",
+      "relativePath": "work/project.json",
+      "sha256": "3b23e65b2a8f18412dc08c2cdf55ef4b1815c4dfb981595cbe04781e69bbfcc8",
+      "fileSize": 24
+    },
+    "text": "打开重试后的正文",
+    "calls": [
+      {
+        "command": "openWorkspaceStudio",
+        "data": {
+          "episodeId": "e",
+          "workspaceId": "w",
+          "expectedRevision": 1
+        },
+        "idempotencyKey": "667e43ff-9e15-4e21-9892-b37ae4590df3"
+      },
+      {
+        "command": "openWorkspaceStudio",
+        "data": {
+          "episodeId": "e",
+          "workspaceId": "w",
+          "expectedRevision": 1
+        },
+        "idempotencyKey": "667e43ff-9e15-4e21-9892-b37ae4590df3"
+      },
+      {
+        "command": "saveWorkspaceStudio",
+        "data": {
+          "episodeId": "e",
+          "workspaceId": "w",
+          "expectedRevision": 1,
+          "workspaceRelativePath": "work/project.json",
+          "projectId": "loop-control-e",
+          "expectedWorkspaceSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "idempotencyKey": "7933f499-601b-4e6c-9b79-9aa03c1181e0"
+      },
+      {
+        "command": "closeWorkspaceStudio",
+        "data": {
+          "episodeId": "e",
+          "workspaceId": "w",
+          "expectedRevision": 2
+        },
+        "idempotencyKey": "4b215403-7866-4812-bcf8-1bde40538d00"
+      }
+    ],
+    "counts": {
+      "openWorkspaceStudio": 2,
+      "flush": 1,
+      "saveWorkspaceStudio": 1,
+      "closeWorkspaceStudio": 1
+    }
+  }
+}

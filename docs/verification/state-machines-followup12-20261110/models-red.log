@@ -1,0 +1,29 @@
+npm notice run loop-control@0.1.0 test
+npm notice run vitest run --exclude '**/*.integration.test.ts' src/connections/ConnectionModelsDialog.test.tsx --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+·········x
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/connections/ConnectionModelsDialog.test.tsx > refreshes an unedited enabled selection from the server instead of creating a draft against a newer revision
+AssertionError: expected <input aria-label="model-2" …(4)></input> to have property "checked" with value true
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/connections/ConnectionModelsDialog.test.tsx:76:88
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 9 passed (10)
+   Start at  20:47:22
+   Duration  1.55s (transform 112ms, setup 7ms, collect 438ms, tests 873ms, environment 112ms, prepare 27ms)
+
