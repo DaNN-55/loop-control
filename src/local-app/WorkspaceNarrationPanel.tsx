@@ -7,6 +7,7 @@ import {useWorkspaceCandidateReview} from './useWorkspaceCandidateReview';
 import {useWorkspaceReading} from './useWorkspaceReading';
 import {WorkspaceNarrationRecord} from './WorkspaceSoundRecords';
 import {WorkspaceVisualTaskStatus} from './WorkspaceVisualTaskStatus';
+import {workspaceTaskPresentation} from '../workspaceTaskPresentation';
 import {reconcileWorkspaceOutput} from './workspaceOutputReconciliationClient';
 import {restoreWorkspaceSettingsDraft,storeWorkspaceSettingsDraft,workspaceSettingsFingerprint} from './workspaceSettingsDraft';
 import {localRequest} from './client';
@@ -85,7 +86,8 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
  const [mode,setMode]=useState<WorkspaceNarration['mode']>(()=>{try{const value=sessionStorage.getItem(key+':mode');return value&&['tts','manual'].includes(value)?value as WorkspaceNarration['mode']:n.mode==='manual'?'manual':'tts';}catch{return n.mode==='manual'?'manual':'tts';}}),[manual,setManual]=useState(()=>{try{return sessionStorage.getItem(key+':manual')??(n.mode==='manual'?n.audioTrackId??'':'');}catch{return n.mode==='manual'?n.audioTrackId??'':'';}}),[busy,setBusy]=useState(false),[error,setError]=useState('');
  useEffect(()=>{try{if(textDraft===null)sessionStorage.removeItem(key+':text');else sessionStorage.setItem(key+':text',textDraft);sessionStorage.setItem(key+':mode',mode);sessionStorage.setItem(key+':manual',manual);}catch{/* Optional browser draft. */}},[key,textDraft,mode,manual]);
  const speechSettings:Settings=defaults??{selection:null,voice:'',languageCode:'zh-CN',speakingRate:1};
- const canGenerate=compatible(speechSettings,services)&&!!text.trim()&&!n.generationTask?.submissionUnknown&&n.generationTask?.publicationAttempt==null;
+ const task=workspaceTaskPresentation(n.generationTask??{status:n.status});
+ const canGenerate=compatible(speechSettings,services)&&!!text.trim()&&!task.unknown&&!task.held;
  const reader=useWorkspaceReading(workspace,onChanged,n.shotId,'无法读取当前工程版本。');
  const review=useWorkspaceCandidateReview({workspace,scope:JSON.stringify([n.shotId,expanded,mode]),reader,command});
  const narrationMaterials=materials.filter(m=>m.material_type==='audio'&&canUseWorkspaceAudioMaterial(m.material_purpose,'narration'));
@@ -259,7 +261,7 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
  {(error||n.error&&!n.generationTask)&&<p role="alert">{error||n.error}</p>}
  </div>;
  return expanded?fields:<details className="workspace-narration-row">
-  <summary>{n.shotId}<span>{n.generationTask?.publicationAttempt!=null?'发布待核对':n.generationTask?.submissionUnknown?'结果待核对':n.status==='running'||n.status==='ready'?'准备中':n.status==='blocked'?'待核对':n.status==='failed'?'失败':n.durationSeconds?`${n.durationSeconds.toFixed(2)} 秒`:mode==='none'?'关闭':'待准备'}</span></summary>
+  <summary>{n.shotId}<span>{task.held||task.unknown||task.active||task.stopped||task.state==='not-sent'?task.summary:n.durationSeconds?`${n.durationSeconds.toFixed(2)} 秒`:mode==='none'?'关闭':'待准备'}</span></summary>
   {fields}
  </details>;
 }

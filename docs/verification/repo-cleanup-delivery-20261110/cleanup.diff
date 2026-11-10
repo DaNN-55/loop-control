@@ -1,0 +1,344 @@
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -15,7 +15,6 @@
+         "react": "^19.1.1",
+         "react-aria-components": "1.21.1",
+         "react-dom": "^19.1.1",
+-        "react-range": "^1.10.0",
+         "tailwind-merge": "3.7.0"
+       },
+       "devDependencies": {
+@@ -3865,16 +3864,6 @@
+       "license": "MIT",
+       "peer": true
+     },
+-    "node_modules/react-range": {
+-      "version": "1.10.0",
+-      "resolved": "https://registry.npmjs.org/react-range/-/react-range-1.10.0.tgz",
+-      "integrity": "sha512-kDo0LiBUHIQIP8menx0UoxTnHr7UXBYpIYl/DR9jCaO1o29VwvCLpkP/qOTNQz5hkJadPg1uEM07XJcJ1XGoKw==",
+-      "license": "MIT",
+-      "peerDependencies": {
+-        "react": "*",
+-        "react-dom": "*"
+-      }
+-    },
+     "node_modules/react-refresh": {
+       "version": "0.18.0",
+       "resolved": "https://registry.npmjs.org/react-refresh/-/react-refresh-0.18.0.tgz",
+--- a/package.json
++++ b/package.json
+@@ -36,7 +36,6 @@
+     "react": "^19.1.1",
+     "react-aria-components": "1.21.1",
+     "react-dom": "^19.1.1",
+-    "react-range": "^1.10.0",
+     "tailwind-merge": "3.7.0"
+   },
+   "devDependencies": {
+--- a/src/observability/TaskProgressPanel.tsx
++++ b/src/observability/TaskProgressPanel.tsx
+@@ -89,21 +89,6 @@
+   return taskStatusLabels[status];
+ }
+ 
+-export function TaskTimelineDetail({ task, taskRuns }: { task: Task; taskRuns: TaskRun[] }) {
+-  const run = latestRunFor(task, taskRuns);
+-  const blocker = resultBlocker(task);
+-  const concurrency = effectiveConcurrency(task);
+-  const progress = taskProgress(task);
+-  const progressIndex = progress ? workerProgressSteps.findIndex(([step]) => step === progress.step) : -1;
+-
+-  return <article className={`timeline-task-detail timeline-task-detail-${task.status}`}>
+-    <header><strong>{taskTypeLabel(task.task_type)} · {taskStatusLabels[task.status]}</strong><code>{task.id.slice(0, 8)}</code></header>
+-    <dl><div><dt>排队</dt><dd>{formatDate(task.created_at)}</dd></div>{task.claimed_at ? <div><dt>领取</dt><dd>{formatDate(task.claimed_at)}</dd></div> : null}{run ? <div><dt>运行</dt><dd>{formatDate(run.started_at)}</dd></div> : null}{task.completed_at ? <div><dt>完成</dt><dd>{formatDate(task.completed_at)}</dd></div> : null}<div><dt>尝试</dt><dd>{task.attempt} / {task.max_attempts}</dd></div>{concurrency !== null ? <div><dt>并发</dt><dd>{concurrency}</dd></div> : null}</dl>
+-    {progress && task.status === "running" ? <div aria-live="polite" className="worker-internal-progress"><strong>{progress.detail}</strong><ol aria-label="Worker 内部执行步骤">{workerProgressSteps.map(([step, label], index) => <li aria-current={index === progressIndex ? "step" : undefined} className={index < progressIndex ? "is-complete" : index === progressIndex ? "is-current" : "is-upcoming"} key={step}><span>{label}</span></li>)}</ol><small>最近更新：{formatDate(progress.observedAt)}</small></div> : null}
+-    {blocker ? <p className="worker-task-blocker">{blocker}</p> : null}
+-  </article>;
+-}
+-
+ export function TaskProgressPanel({ dispatchRequested = false, embedded = false, taskRuns, tasks }: { dispatchRequested?: boolean; embedded?: boolean; taskRuns: TaskRun[]; tasks: Task[] }) {
+   const groups = useMemo(() => {
+     const grouped = new Map<string, Task[]>();
+--- a/src/operationDraft.ts
++++ /dev/null
+@@ -1,34 +0,0 @@
+-const storagePrefix = "loop-control.operation-draft.v1";
+-
+-export type OperationDraftKind = "review-decision";
+-
+-function storageKey(ownerId: string, episodeId: string, kind: OperationDraftKind) {
+-  return `${storagePrefix}:${ownerId}:${episodeId}:${kind}`;
+-}
+-
+-export function readOperationDraft<T extends object>(ownerId: string, episodeId: string, kind: OperationDraftKind): T | null {
+-  try {
+-    const value = localStorage.getItem(storageKey(ownerId, episodeId, kind));
+-    if (!value) return null;
+-    const parsed: unknown = JSON.parse(value);
+-    return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed as T : null;
+-  } catch {
+-    return null;
+-  }
+-}
+-
+-export function writeOperationDraft(ownerId: string, episodeId: string, kind: OperationDraftKind, value: object) {
+-  try {
+-    localStorage.setItem(storageKey(ownerId, episodeId, kind), JSON.stringify(value));
+-  } catch {
+-    // 浏览器禁用本地存储时，填写内容仍在当前打开的抽屉中保留。
+-  }
+-}
+-
+-export function clearOperationDraft(ownerId: string, episodeId: string, kind: OperationDraftKind) {
+-  try {
+-    localStorage.removeItem(storageKey(ownerId, episodeId, kind));
+-  } catch {
+-    // 忽略本地存储不可用的情况。
+-  }
+-}
+--- a/src/reviews/materialImportDraftStore.ts
++++ /dev/null
+@@ -1,48 +0,0 @@
+-import type { MaterialPurpose, MaterialType } from "./materialImport";
+-
+-export interface StoredMaterialImportDraft {
+-  file: File;
+-  id: string;
+-  isMainScript: boolean;
+-  materialPurpose: MaterialPurpose | null;
+-  materialType: MaterialType;
+-}
+-
+-const databaseName = "loop-control-material-imports";
+-const storeName = "episode-drafts";
+-
+-export const materialImportDraftStorageAvailable = () => typeof indexedDB !== "undefined";
+-
+-function openDatabase(): Promise<IDBDatabase | null> {
+-  if (!materialImportDraftStorageAvailable()) return Promise.resolve(null);
+-  return new Promise<IDBDatabase>((resolve, reject) => {
+-    const request = indexedDB.open(databaseName, 1);
+-    request.onupgradeneeded = () => {
+-      if (!request.result.objectStoreNames.contains(storeName)) request.result.createObjectStore(storeName);
+-    };
+-    request.onsuccess = () => resolve(request.result);
+-    request.onerror = () => reject(request.error ?? new Error("无法打开材料草稿存储。"));
+-  });
+-}
+-
+-export async function readMaterialImportDrafts(episodeId: string): Promise<StoredMaterialImportDraft[]> {
+-  const database = await openDatabase();
+-  if (!database) return [];
+-  return new Promise<StoredMaterialImportDraft[]>((resolve, reject) => {
+-    const request = database.transaction(storeName, "readonly").objectStore(storeName).get(episodeId);
+-    request.onsuccess = () => resolve(Array.isArray(request.result) ? request.result : []);
+-    request.onerror = () => reject(request.error ?? new Error("无法读取材料草稿。"));
+-  }).finally(() => database.close());
+-}
+-
+-export async function writeMaterialImportDrafts(episodeId: string, drafts: StoredMaterialImportDraft[]): Promise<void> {
+-  const database = await openDatabase();
+-  if (!database) return;
+-  await new Promise<void>((resolve, reject) => {
+-    const transaction = database.transaction(storeName, "readwrite");
+-    if (drafts.length) transaction.objectStore(storeName).put(drafts, episodeId);
+-    else transaction.objectStore(storeName).delete(episodeId);
+-    transaction.oncomplete = () => resolve();
+-    transaction.onerror = () => reject(transaction.error ?? new Error("无法保存材料草稿。"));
+-  }).finally(() => database.close());
+-}
+--- a/src/reviews/productionScript.ts
++++ b/src/reviews/productionScript.ts
+@@ -68,7 +68,6 @@
+   '音效起点（秒）': { key: 'sfxStart', parse: number(0, 3600) },
+   '音效时长（秒）': { key: 'sfxDuration', parse: number(0.01, 3600) },
+ };
+-export function isProductionScriptV2(text: string) { return /^-\s*模板版本[：:]\s*2\s*$/m.test(text); }
+ export function validateProductionDefaults(value:unknown):ProductionSettings {
+  if(!value||typeof value!=='object'||Array.isArray(value))throw Error('系列 production_defaults 必须是对象。');
+  const result:Record<string,unknown>={};
+--- a/src/reviews/reviewRevision.ts
++++ b/src/reviews/reviewRevision.ts
+@@ -1,5 +1,4 @@
+-import type { Database, Json } from "../lib/database.types";
+-import type { StoryboardStructureOperation } from "../worker/storyboardRevision";
++import type { Json } from "../lib/database.types";
+ import { defaultAllowedDurationFrames, defaultDurationFrameRate } from "../worker/durationDecision";
+ import { defaultReviewRenderComposition, reviewRenderCompositionFromJson, reviewRenderCompositionToJson, type ReviewRenderComposition } from "./reviewComposition";
+ export { defaultReviewRenderComposition, reviewRenderCompositionFromJson } from "./reviewComposition";
+@@ -23,13 +22,6 @@
+ export type ReviewRevisionRequest =
+   | { kind: "composition"; reviewPackageId: string; composition?: ReviewRenderComposition; reason: string; studioProject?: OpenChatCutStudioWorkspace }
+   | { kind: "storyboard"; reviewPackageId: string; reason: string };
+-
+-export type ShotStructureRevisionRequest = {
+-  episodeId: string;
+-  operation: StoryboardStructureOperation;
+-  reason: string;
+-  reviewPackageId: string;
+-};
+ 
+ export type ReviewRevisionOutcome =
+   | { kind: "composition"; message: "合成调整已冻结；会复用已批准媒体和音轨生成新的审核渲染。" }
+@@ -81,18 +73,6 @@
+   return { kind: "composition", message: "合成调整已冻结；会复用已批准媒体和音轨生成新的审核渲染。" };
+ }
+ 
+-export async function requestShotStructureRevision(input: ShotStructureRevisionRequest): Promise<Database["public"]["Tables"]["tasks"]["Row"]> {
+-  const { viewTransport } = await import("../lib/viewTransport");
+-  const { data, error } = await viewTransport.rpc("request_shot_structure_revision", {
+-    p_episode_id: input.episodeId,
+-    p_operation: input.operation as unknown as Json,
+-    p_reason: input.reason,
+-    p_review_package_id: input.reviewPackageId,
+-  });
+-  if (error) throw error;
+-  return data;
+-}
+-
+ export async function submitStudioReviewRevision(input: StudioReviewRevisionRequest): Promise<ReviewRevisionOutcome> {
+   const response = await fetch(`/_freeze-openchatcut-studio?episode=${encodeURIComponent(input.episodeId)}`, {
+     body: JSON.stringify({ sourceProjectRelativePath: input.sourceProjectRelativePath, workspaceRelativePath: input.workspaceRelativePath }),
+@@ -119,13 +99,6 @@
+   return { relativePath: workspace.relativePath, sha256: workspace.sha256, fileSize: workspace.fileSize, ...(typeof workspace.projectId === "string" ? { projectId: workspace.projectId } : {}) };
+ }
+ 
+-export function studioReplacementWarningFromPayload(value: unknown): OpenChatCutStudioWorkspace["replacementWarning"] {
+-  if (!value || typeof value !== "object" || Array.isArray(value)) return undefined;
+-  const warning = value as Record<string, unknown>;
+-  if (warning.code !== "openchatcut_workspace_replacement" || typeof warning.studioHasChanges !== "boolean" || !Array.isArray(warning.modifiedScopes) || warning.modifiedScopes.some((scope) => typeof scope !== "string")) return undefined;
+-  return { code: warning.code, studioHasChanges: warning.studioHasChanges, modifiedScopes: warning.modifiedScopes as string[] };
+-}
+-
+ function frozenStudioWorkspaceFromPayload(value: unknown): OpenChatCutStudioWorkspace {
+   const workspace = studioWorkspaceFromPayload(value);
+   const composition = reviewRenderCompositionFromJson((value as Record<string, unknown>).composition);
+--- a/src/shotAudioMix.ts
++++ b/src/shotAudioMix.ts
+@@ -28,13 +28,6 @@
+     automaticDucking: false;
+   };
+ }
+-
+-export const bgmDuckingLabels: Record<BgmDuckingLevel, string> = {
+-  off: "关闭",
+-  light: "轻",
+-  medium: "中",
+-  strong: "强",
+-};
+ 
+ export const bgmDuckingDepthDb: Record<BgmDuckingLevel, number> = {
+   off: 0,
+--- a/src/shotComposition.ts
++++ b/src/shotComposition.ts
+@@ -37,12 +37,6 @@
+   "2up-vertical": "上下双屏",
+   pip: "画中画",
+   "grid-4": "四宫格",
+-};
+-
+-export const shotTransitionModeLabels: Record<ShotTransitionMode, string> = {
+-  cut: "硬切",
+-  fade: "基础淡化",
+-  studio: "交给 Studio",
+ };
+ 
+ export const shotCompositionSlotLabels: Record<string, string> = {
+--- a/src/styles.css
++++ b/src/styles.css
+@@ -13,9 +13,9 @@
+ .worker-internal-progress { background: var(--color-bg-primary, #f5f8ff); border-radius: 5px; display: grid; gap: 7px; margin-top: 8px; padding: 8px; }
+ .worker-internal-progress > strong { color: var(--color-text-brand-secondary, #2f4e7e); font-size: 12px; line-height: 1.45; }
+ .worker-internal-progress ol { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); list-style: none; margin: 0; padding: 0; }
+-.worker-task-group .worker-internal-progress li, .timeline-task-detail .worker-internal-progress li { background: transparent; border: 0; border-top: 2px solid var(--color-border-secondary, #d8e0eb); border-radius: 0; color: var(--color-text-tertiary, #8792a3); font-size: 12px; padding: 5px 2px 0; }
+-.worker-task-group .worker-internal-progress li.is-complete, .timeline-task-detail .worker-internal-progress li.is-complete { border-color: var(--color-success-300, #69a47e); color: var(--color-text-success-primary, #348157); }
+-.worker-task-group .worker-internal-progress li.is-current, .timeline-task-detail .worker-internal-progress li.is-current { border-color: var(--color-border-brand, #2f6fba); color: var(--color-text-brand-secondary, #2f6fba); font-weight: 750; }
++.worker-task-group .worker-internal-progress li { background: transparent; border: 0; border-top: 2px solid var(--color-border-secondary, #d8e0eb); border-radius: 0; color: var(--color-text-tertiary, #8792a3); font-size: 12px; padding: 5px 2px 0; }
++.worker-task-group .worker-internal-progress li.is-complete { border-color: var(--color-success-300, #69a47e); color: var(--color-text-success-primary, #348157); }
++.worker-task-group .worker-internal-progress li.is-current { border-color: var(--color-border-brand, #2f6fba); color: var(--color-text-brand-secondary, #2f6fba); font-weight: 750; }
+ .worker-internal-progress small { color: var(--color-text-tertiary, #778293); font-size: 12px; }
+ .app-shell[data-theme="dark"] .worker-internal-progress { background: #191f29; border-color: var(--color-border-secondary, #3b4658); }
+ .app-shell[data-theme="dark"] .worker-internal-progress > strong { color: var(--color-text-brand-secondary, #c5dcff); }
+@@ -482,19 +482,6 @@
+ .episode-state-history { display: grid; gap: 10px; }
+ .episode-state-history > h3 { color: var(--color-text-primary, #263244); font-size: 12px; line-height: 1.2; margin: 0; }
+ .timeline-entry { min-width: 0; }
+-.timeline-task-details { display: grid; gap: 10px; margin-top: 9px; }
+-.timeline-task-detail { border-inline-start: 2px solid var(--color-border-secondary, #d8e0eb); display: grid; gap: 6px; padding: 1px 0 1px 10px; }
+-.timeline-task-detail > header { align-items: baseline; display: flex; gap: 8px; justify-content: space-between; }
+-.timeline-task-detail > header strong { color: var(--color-text-secondary, #344054); font-size: 12px; line-height: 1.4; }
+-.timeline-task-detail > header code { color: var(--color-text-tertiary, #7b8798); font-size: 12px; font-variant-numeric: tabular-nums; }
+-.timeline-task-detail > dl { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 0; }
+-.timeline-task-detail > dl > div { display: inline-flex; gap: 4px; }
+-.timeline-task-detail dt, .timeline-task-detail dd { font-size: 12px; line-height: 1.45; }
+-.timeline-task-detail dt { color: var(--color-text-tertiary, #8a95a5); }
+-.timeline-task-detail dd { color: var(--color-text-tertiary, #667386); font-variant-numeric: tabular-nums; margin: 0; }
+-.timeline-task-detail-running { border-color: var(--color-border-brand, #4f7fc5); }
+-.timeline-task-detail-completed { border-color: var(--color-success-300, #69a47e); }
+-.timeline-task-detail-blocked, .timeline-task-detail-failed { border-color: var(--color-border-error_subtle, #c84955); }
+ .timeline-dispatch-status { color: var(--color-text-tertiary, #667386); font-size: 12px; line-height: 1.5; margin: 0; }
+ .text-review-package-embedded { display: grid; gap: 12px; }
+ .episode-detail-drawer .detail-card-collapsible > summary { align-items: center; cursor: pointer; list-style: none; }
+@@ -515,12 +502,8 @@
+ .app-shell[data-theme="dark"] .episode-next-step-card span { color: var(--color-text-tertiary, #9aa9bc); }
+ .app-shell[data-theme="dark"] .episode-next-step-card p { color: var(--color-text-brand-secondary, #c5dcff); }
+ .app-shell[data-theme="dark"] .episode-current-approval strong, .app-shell[data-theme="dark"] .episode-current-approval p { color: var(--color-text-warning-primary, #f0c36b); }
+-.app-shell[data-theme="dark"] .episode-state-history > h3, .app-shell[data-theme="dark"] .timeline-task-detail > header strong { color: var(--color-text-white, #eef3fb); }
+-.app-shell[data-theme="dark"] .timeline-task-detail { border-color: var(--color-border-secondary, #465161); }
+-.app-shell[data-theme="dark"] .timeline-task-detail-running { border-color: var(--color-border-brand, #6e9ee0); }
+-.app-shell[data-theme="dark"] .timeline-task-detail-completed { border-color: var(--color-success-300, #69a47e); }
+-.app-shell[data-theme="dark"] .timeline-task-detail-blocked, .app-shell[data-theme="dark"] .timeline-task-detail-failed { border-color: var(--color-border-error_subtle, #b96069); }
+-.app-shell[data-theme="dark"] .timeline-task-detail dt, .app-shell[data-theme="dark"] .timeline-task-detail dd, .app-shell[data-theme="dark"] .timeline-task-detail > header code, .app-shell[data-theme="dark"] .timeline-dispatch-status { color: var(--color-text-tertiary, #9ba9bb); }
++.app-shell[data-theme="dark"] .episode-state-history > h3 { color: var(--color-text-white, #eef3fb); }
++.app-shell[data-theme="dark"] .timeline-dispatch-status { color: var(--color-text-tertiary, #9ba9bb); }
+ .app-shell[data-theme="dark"] .episode-worker-status-running strong { color: var(--color-text-warning-primary, #f0c36b); }
+ .app-shell[data-theme="dark"] .episode-worker-status-review strong { color: var(--color-text-brand-secondary, #8dbbff); }
+ .app-shell[data-theme="dark"] .episode-worker-status-completed strong { color: var(--color-text-success-primary, #8ed0a3); }
+--- a/src/worker/manualMaterialChecklist.ts
++++ b/src/worker/manualMaterialChecklist.ts
+@@ -31,11 +31,6 @@
+   return typeof manualSource.material_revision_id === "string" ? manualSource.material_revision_id : null;
+ }
+ 
+-export function boundManualClipSelection(capability: ManualMaterialChecklistItem["capability"], targetId: string, tasks: readonly { input_snapshot: unknown; status?: string; provider?: string }[] = [], reviewPackageId = ""): { startSeconds: number; endSeconds: number } | null {
+-  const clip = record(record(boundManualTask(capability, targetId, tasks, reviewPackageId)?.input_snapshot).clip_selection);
+-  return typeof clip.start_seconds === "number" && typeof clip.end_seconds === "number" ? { startSeconds: clip.start_seconds, endSeconds: clip.end_seconds } : null;
+-}
+-
+ export function manualMaterialChecklistForStoryboard(policy: unknown, episodeId: string, storyboard: Pick<StoryboardManifest, "shots" | "audioCues">, materials: readonly MaterialAvailability[], tasks: readonly { input_snapshot: unknown; status?: string; provider?: string }[] = [], reviewPackageId = ""): ManualMaterialChecklistItem[] {
+   const root = record(policy);
+   const items: ManualMaterialChecklistItem[] = [];
+--- a/src/workspace/WorkspaceViews.tsx
++++ b/src/workspace/WorkspaceViews.tsx
+@@ -25,7 +25,6 @@
+ export type NavigationItem='accounts'|'episodes'|'operations'|'reviews';
+ type EpisodeVisibility='active'|'archived'|'all';type EpisodeAction='rename'|'archive'|null;type EpisodeWithArchive=Episode&{archived_at?:string|null};
+ export interface EpisodeDeletionPlan extends DeletionFileScope {path:string;paths?:string[];revision:string;confirmation:string}
+-interface ReviewAction{approveStage:EpisodeStage;requestChangesStage:EpisodeStage}
+ export const navigation: Array<{ id: NavigationItem; label: string }> = [
+   { id: "operations", label: "系列运营" },
+   { id: "episodes", label: "生产单" },
+@@ -57,23 +56,12 @@
+   production_completed: "生产完成",
+ };
+ 
+-const reviewActions: Partial<Record<EpisodeStage, ReviewAction>> = {
+-  script_review: { approveStage: "script_approved", requestChangesStage: "script_draft" },
+-  visual_review: { approveStage: "visual_approved", requestChangesStage: "visual_draft" },
+-  storyboard_review: { approveStage: "storyboard_approved", requestChangesStage: "storyboard_draft" },
+-  qc_review: { approveStage: "qc_passed", requestChangesStage: "render_ready" },
+-};
+-
+ export function formatDate(source: string) {
+   return new Intl.DateTimeFormat("zh-CN", { dateStyle: "medium", timeStyle: "short" }).format(new Date(source));
+ }
+ 
+ export function episodeIsArchived(episode: Episode): boolean {
+   return Boolean((episode as EpisodeWithArchive).archived_at);
+-}
+-
+-export function reviewActionFor(stage: EpisodeStage): ReviewAction | null {
+-  return reviewActions[stage] ?? null;
+ }
+ 
+ function EpisodeActionsMenu({ artifactCount, blueprint, episode, isArchivePending, isTitlePending, onOpenDelete, onOpenDirectory, onMoveCollection, onSetArchived, onUpdateTitle }: { artifactCount?:number; blueprint: Blueprint | undefined; episode: Episode; isArchivePending: boolean; isTitlePending: boolean; onOpenDelete?: ()=>void; onOpenDirectory?: (episodeId:string)=>Promise<void>; onMoveCollection?: (episodeId:string)=>void; onSetArchived: (episodeId: string, archived: boolean) => Promise<void>; onUpdateTitle: (episodeId: string, title: string) => Promise<void> }) {

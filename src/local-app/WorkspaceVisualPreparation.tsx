@@ -12,12 +12,15 @@ import {useWorkspaceMaterialSelection,WorkspaceMaterialDrop} from './WorkspaceMa
 import {ImageFocusDialog} from '../ui/media/ImagePreview';
 import {VideoPreview} from '../ui/media/VideoPreview';
 import {WorkspaceVisualRecord} from './WorkspaceVisualRecord';
+import {workspaceTaskPresentation} from '../workspaceTaskPresentation';
 import {needsCandidateImpactDialog,WorkspaceCandidateImpactDetails} from './WorkspaceCandidateImpact';
 import {ConfirmationModal,ConfirmationModalPresence} from '../ui/ConfirmationModal';
 import {createPortal} from 'react-dom';
 import type {WorkspaceCandidatePreparation} from '../workspaceCandidates';
 import {WorkspaceImageSettings,WorkspaceImageCount} from './WorkspaceImageSettings';
 import {WorkspaceGenerationModel} from './WorkspaceGenerationModel';
+import {WorkspaceGenerationActivity} from './WorkspaceGenerationActivity';
+import type {WorkspaceVisualTask} from '../workspaceVisualCandidates';
 import {WorkspaceComposerSetting,WorkspaceGenerationComposer} from './WorkspaceGenerationComposer';
 import {WorkspaceVideoInputs,resolveVideoInputs,type VideoInputDraft,type VideoInputMaterial} from './WorkspaceVideoInputs';
 import {firstFrameVideoMode} from '../worker/registeredAdapters';
@@ -108,6 +111,7 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
  const videoServices=catalogReading.catalog?.groups.find(g=>g.capability==='video')?.services.filter(s=>s.mode==='generation'||s.mode==='search'&&s.provider==='pexels'&&s.adapter==='pexels_video')??[];
  const catalogError=catalogReading.error?'无法读取制作连接，请刷新后重试。':'';
  const [composerPanel,setComposerPanel]=useState('');
+ const [generationSubmitting,setGenerationSubmitting]=useState<{kind:Kind;targetItemId:string;model?:string;provider?:string}|null>(null);
  const [busy,setBusy]=useState(false),[error,setError]=useState(''),[notice,setNotice]=useState(''),[rangeStart,setRangeStart]=useState(''),[rangeEnd,setRangeEnd]=useState(''),[policy,setPolicy]=useState('keep-target'),[acceptImpact,setAcceptImpact]=useState(false),[zoom,setZoom]=useState(false);
  const [clearVisual,setClearVisual]=useState<{revision:number;candidateId?:string;sourcePath?:string;sourceSha256?:string}|null>(null);
  const [clearError,setClearError]=useState('');
@@ -310,6 +314,9 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
   });
  }
  async function generate(retryOfTaskId?:string){await run(async()=>{
+   const selection=tab==='image'?draft.imageSelection:draft.videoSelection;
+   setGenerationSubmitting({kind:tab,targetItemId,model:selection?.model,provider:selection?.provider});
+   try{
    const w=await fresh();
    if(tab==='video'){
     if(!canSubmitVideoMode||videoInputProblem||!advancedVideo&&!submitFirstFrame)throw Error(videoInputProblem||'请先选择当前模式可用的画面。');
@@ -320,7 +327,8 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
     ...base(w),targetItemId,prompt:tab==='image'?draft.imagePrompt:draft.videoPrompt,...(usedPromptReferences.length?{promptReferences:usedPromptReferences}:{}),
     ...(tab==='image'?{selection:draft.imageSelection,settings:draft.settings,imageBrief:{...draft.imageBrief,references:draft.references.map(id=>draft.imageBrief.references.find(r=>r.materialRevisionId===id)??{materialRevisionId:id,purpose:'subject',preserve:'',change:''})},referenceMaterialRevisionIds:draft.references,...(retryOfTaskId?{retryOfTaskId}:{})}:{selection:draft.videoSelection,...(advancedVideo?{videoMode:videoMode!.id,visualInputs:submittedVideoInputs}:{firstFrameMaterialRevisionId:submitFirstFrame?.id}),durationSeconds:actualDuration,...(submitFirstFrame?{firstFrameFit:draft.firstFrameFit}:{}),...(videoProvider==='bailian'?{videoSettings}:videoProvider==='minimax'?{videoResolution:draft.videoResolution??'768P'}:{})})
    }) as ProductionWorkspace;
-   onChange(next);setNotice('生成任务已提交，完成后请预览并手动采用。');
+   onChange(next);
+   }finally{if(mounted.current)setGenerationSubmitting(null);}
   });}
  function referenceBrief(id:string,patch:Partial<ImageBrief['references'][number]>) {setDraft(d=>({...d,imageBrief:{...d.imageBrief,references:[...d.imageBrief.references.filter(r=>r.materialRevisionId!==id),{materialRevisionId:id,purpose:'subject',preserve:'',change:'',...d.imageBrief.references.find(r=>r.materialRevisionId===id),...patch}]}}));}
  const sizePreset=imageSizePresets.find(p=>p.standard===draft.settings.size||p.high===draft.settings.size)??imageSizePresets[0];
@@ -354,10 +362,12 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
  const unknownTasks=tasks.filter(t=>t.targetItemId===targetItemId&&t.submissionUnknown&&!t.retryTaskId);
  const unknownImageTask=tab==='image'&&unknownTasks.length===1&&unknownTasks[0].kind==='image'
   &&unknownTasks[0].submissionOutcome!=='received'&&unknownTasks[0].publicationAttempt==null?unknownTasks[0]:undefined;
- const retryImage=!!latestImageTask&&['failed','blocked'].includes(latestImageTask.status)&&!latestImageTask.submissionUnknown&&latestImageTask.publicationAttempt==null;
+ const retryImage=!!latestImageTask&&workspaceTaskPresentation(latestImageTask).canRetry;
  const showEmptyCandidateDrop=!!shelf&&!entries.length&&!pendingUpload;
  const dropCandidate=<WorkspaceMaterialDrop label={`拖入${kindName}加入候选`} kind={tab} disabled={disabled} surface="preview" persistent={showEmptyCandidateDrop}
   onSelect={id=>void run(async()=>{await register(id,tab);})}/>;
+ const activeGenerationTasks=tasks.filter(t=>t.targetItemId===targetItemId&&(t.kind??'video')===tab&&workspaceTaskPresentation(t).active&&!workspaceTaskPresentation(t).hidden);
+ const taskStatus=(t:WorkspaceVisualTask)=><WorkspaceVisualTaskStatus key={t.id} task={t} label={(t.kind??'video')==='image'?'图片':'视频'} disabled={disabled} onRetryUnknown={t===unknownImageTask?()=>{if(origin==='generate'&&canGenerate)void generate(t.taskId);else{setDraft(d=>({...d,origin:{...d.origin,image:'generate'}}));requestAnimationFrame(()=>formRef.current?.scrollIntoView({block:'nearest'}));}}:undefined} onRefresh={()=>void run(async()=>{await fresh();setCatalogReload(value=>value+1);})} onResume={()=>void run(async()=>{const w=await fresh();onChange(await command('retryWorkspaceVisualCandidate',{...base(w),candidateId:t.id}) as ProductionWorkspace);})} onReconcile={()=>void run(async()=>{await reconcileWorkspaceOutput(workspace.episodeId,t);onChange(await fresh());})}/>;
  const generationBlocker=pending.some(t=>(t.kind??'video')===tab)?'正在生成，请等待结果。'
   :tasks.some(t=>t.targetItemId===targetItemId&&(t.publicationAttempt!=null||t.submissionUnknown&&!t.retryTaskId&&t!==unknownImageTask))?'请先核对上一条生成任务。'
   :workspace.stale?'脚本已更新，请先核对当前素材。'
@@ -448,7 +458,7 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
        </ConfirmationModal>
       </div>,document.querySelector('.app-shell')??document.body)}</ConfirmationModalPresence>
     </div>
-  {tasks.filter(t=>t.status!=='completed'&&!thumbnailTasks.includes(t)&&(t.submissionUnknown&&!t.retryTaskId||t.publicationAttempt!=null||!tasks.some(newer=>newer.taskId!==t.taskId&&newer.targetItemId===t.targetItemId&&(newer.kind??'video')===(t.kind??'video')&&!!newer.createdAt&&!!t.createdAt&&Date.parse(newer.createdAt)>Date.parse(t.createdAt)))).map(t=><WorkspaceVisualTaskStatus key={t.id} task={t} label={(t.kind??'video')==='image'?'图片':'视频'} disabled={disabled} onRetryUnknown={t===unknownImageTask?()=>{if(origin==='generate'&&canGenerate)void generate(t.taskId);else{setDraft(d=>({...d,origin:{...d.origin,image:'generate'}}));requestAnimationFrame(()=>formRef.current?.scrollIntoView({block:'nearest'}));}}:undefined} onRefresh={()=>void run(async()=>{await fresh();setCatalogReload(value=>value+1);})} onResume={()=>void run(async()=>{const w=await fresh();onChange(await command('retryWorkspaceVisualCandidate',{...base(w),candidateId:t.id}) as ProductionWorkspace);})} onReconcile={()=>void run(async()=>{await reconcileWorkspaceOutput(workspace.episodeId,t);onChange(await fresh());})}/>)}
+  {tasks.filter(t=>t.status!=='completed'&&!(origin==='generate'&&activeGenerationTasks.includes(t))&&!thumbnailTasks.includes(t)&&(t.submissionUnknown&&!t.retryTaskId||t.publicationAttempt!=null||!tasks.some(newer=>newer.taskId!==t.taskId&&newer.targetItemId===t.targetItemId&&(newer.kind??'video')===(t.kind??'video')&&!!newer.createdAt&&!!t.createdAt&&Date.parse(newer.createdAt)>Date.parse(t.createdAt)))).map(taskStatus)}
    </section>
    {!shelf&&<div className="workspace-visual-origin" role="group" aria-label={`${kindName}来源`}>{(['material','generate'] as const).filter(value=>!shelf||value!=='material').map(value=><button key={value} type="button" aria-pressed={origin===value||value==='generate'&&origin==='search'} onClick={()=>setDraft(d=>({...d,origin:{...d.origin,[tab]:value}}))}>{value==='material'?'上传素材':'AI 生成'}</button>)}</div>}
    {origin==='material'?<div className="workspace-visual-import">
@@ -460,7 +470,7 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
     {selectionProblems.length>0&&<ul className="workspace-generation-problems" aria-label={`${kindName}设置不兼容`} role="list">{selectionProblems.map(problem=><li key={problem}>{problem}</li>)}</ul>}
     {tab==='video'&&incompatibleWan&&<p role="alert">{wanSettingsProblem??`当前模型不支持万相专用设置：${Object.entries(draft.videoSettings).filter(([key,value])=>value!==defaultWanSettings[key as keyof typeof defaultWanSettings]).map(([key])=>wanSettingLabels[key as keyof WanGenerationSettings]??key).join('、')}。`}<Button size="sm" color="tertiary" onPress={()=>change('videoSettings',videoProvider==='bailian'&&videoModel?defaultWanModelSettings(videoModel):{...defaultWanSettings})}>按此模型恢复默认参数</Button></p>}
 
-    <WorkspaceGenerationComposer kind={tab} disabled={disabled} reference={tab==='image'?<WorkspaceReferencePicker compact maxCount={imageService?.constraints.referenceImages?.max??16} materials={allMaterials} selected={draft.references} disabled={disabled} onChange={ids=>change('references',ids)} onUpload={files=>upload(files,true)} url={url} summary={id=>referencePurposeLabels[draft.imageBrief.references.find(r=>r.materialRevisionId===id)?.purpose??'subject']} renderDetails={(id,i)=>{const r=draft.imageBrief.references.find(r=>r.materialRevisionId===id);return <fieldset key={id} className="workspace-image-reference-brief" disabled={disabled}><legend>参考图 {i+1} · {allMaterials.find(m=>m.id===id)?.source_path.split('/').pop()}</legend><label>参考用途<NativeSelect size="sm" aria-label={`参考图 ${i+1} 用途`} value={r?.purpose??'subject'} onChange={e=>referenceBrief(id,{purpose:e.target.value as keyof typeof referencePurposeLabels})}>{Object.entries(referencePurposeLabels).map(([v,label])=><option key={v} value={v}>{label}</option>)}</NativeSelect></label><label>需要保留<input maxLength={160} aria-label={`参考图 ${i+1} 需要保留`} value={r?.preserve??''} placeholder="例如：产品图案、人物外观" onChange={e=>referenceBrief(id,{preserve:e.target.value})}/></label><label>允许改变<input maxLength={160} aria-label={`参考图 ${i+1} 允许改变`} value={r?.change??''} placeholder="例如：背景、光线" onChange={e=>referenceBrief(id,{change:e.target.value})}/></label></fieldset>;}}/>:<WorkspaceVideoInputs compact modes={videoModes} mode={videoMode} entries={videoInputs} disabled={disabled}
+    <WorkspaceGenerationComposer kind={tab} disabled={disabled} activity={<>{activeGenerationTasks.map(task=><WorkspaceGenerationActivity key={task.id} model={task.model} provider={task.provider}>{taskStatus(task)}</WorkspaceGenerationActivity>)}{!activeGenerationTasks.length&&generationSubmitting?.kind===tab&&generationSubmitting.targetItemId===targetItemId&&<WorkspaceGenerationActivity model={generationSubmitting.model} provider={generationSubmitting.provider}/>}</>} reference={tab==='image'?<WorkspaceReferencePicker compact maxCount={imageService?.constraints.referenceImages?.max??16} materials={allMaterials} selected={draft.references} disabled={disabled} onChange={ids=>change('references',ids)} onUpload={files=>upload(files,true)} url={url} summary={id=>referencePurposeLabels[draft.imageBrief.references.find(r=>r.materialRevisionId===id)?.purpose??'subject']} renderDetails={(id,i)=>{const r=draft.imageBrief.references.find(r=>r.materialRevisionId===id);return <fieldset key={id} className="workspace-image-reference-brief" disabled={disabled}><legend>参考图 {i+1} · {allMaterials.find(m=>m.id===id)?.source_path.split('/').pop()}</legend><label>参考用途<NativeSelect size="sm" aria-label={`参考图 ${i+1} 用途`} value={r?.purpose??'subject'} onChange={e=>referenceBrief(id,{purpose:e.target.value as keyof typeof referencePurposeLabels})}>{Object.entries(referencePurposeLabels).map(([v,label])=><option key={v} value={v}>{label}</option>)}</NativeSelect></label><label>需要保留<input maxLength={160} aria-label={`参考图 ${i+1} 需要保留`} value={r?.preserve??''} placeholder="例如：产品图案、人物外观" onChange={e=>referenceBrief(id,{preserve:e.target.value})}/></label><label>允许改变<input maxLength={160} aria-label={`参考图 ${i+1} 允许改变`} value={r?.change??''} placeholder="例如：背景、光线" onChange={e=>referenceBrief(id,{change:e.target.value})}/></label></fieldset>;}}/>:<WorkspaceVideoInputs compact modes={videoModes} mode={videoMode} entries={videoInputs} disabled={disabled}
      onMode={id=>change('videoModeId',id)} onAdd={addVideoInput} onMove={moveVideoInput} onRemove={index=>setDraft(previous=>({...previous,videoInputIds:videoDraftIds(previous).filter((_,position)=>position!==index)}))}
      videoSources={videoSources} onVideoSource={(id,source)=>setDraft(previous=>({...previous,referenceVideoSources:{...previous.referenceVideoSources,[id]:source}}))}
      url={url} firstFrameFit={draft.firstFrameFit} ratio={(target?.width??9)/(target?.height??16)}
@@ -508,7 +518,7 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
       <small>分辨率、时长和声音会影响费用；种子相同也不保证结果完全一致。</small>
     </div></div>}</WorkspaceComposerSetting>}</>}
 </>} submit={<Button size="sm" color="primary" isDisabled={disabled||!canGenerate} onPress={()=>void generate(unknownImageTask?.taskId)}>{pending.some(t=>(t.kind??'video')===tab)?'正在生成…':(retryImage||unknownImageTask)?'重新生成图片':`生成${kindName}`}</Button>}>
-     {generationBlocker&&generationBlocker!=='请填写提示词。'&&<p className="workspace-visual-generation-note" role="status">{generationBlocker}</p>}
+     {generationBlocker&&(generationBlocker!=='正在生成，请等待结果。'||!activeGenerationTasks.length)&&generationBlocker!=='请填写提示词。'&&<p className="workspace-visual-generation-note" role="status">{generationBlocker}</p>}
     </WorkspaceGenerationComposer>
    </div>}
   </div>

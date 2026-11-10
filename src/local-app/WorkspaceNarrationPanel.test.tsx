@@ -11,6 +11,7 @@ const plan={adoptionId:'adoption',candidateId:'candidate',projectSha256:'saved-s
 const selection={capability:'speech' as const,provider:'volcengine_tts',adapter:'volcengine_tts',model:'seed-tts-2.0',connectionVersionId:'a'};
 function setup(candidates:unknown[]=[]){const choice=registeredAdapters.productionChoices().find(c=>c.capability==='speech')!;const services=['a','b'].map(id=>({...choice,id,connectionVersionId:id,connectionName:id.toUpperCase(),connectionVersion:1,executable:true}));vi.stubGlobal('fetch',vi.fn(async(path:string)=>({ok:true,json:async()=>path.endsWith('/workspace')?{workspace}:{serviceCatalog:{groups:[{capability:'speech',services}]}}})));
  const workspace={id:'w',episodeId:'e',revision:1,stale:false,project:{sha256:'saved-sha'},candidates,narration:[{clipId:'c',shotId:'S01',mode:'tts',text:'完整口播',voice:'zh_female_vv_uranus_bigtts',speakingRate:1,languageCode:'zh-CN',selection,inputFingerprint:'f',status:'pending',defaults:{selection,voice:'zh_female_vv_uranus_bigtts',speakingRate:1,languageCode:'zh-CN'}}]} as unknown as ProductionWorkspace;const command=vi.fn(async(_name:string,_data?:unknown)=>workspace);render(<WorkspaceNarrationPanel episodeId="e" workspace={workspace} selectedShotId="S01" pending={false} command={command} onChanged={vi.fn()}/>);return{workspace,command};}
+async function sourceReady(){await waitFor(()=>expect(screen.getByRole('button',{name:'口播来源'}).textContent).toContain('seed-tts-2.0'));}
 it('uses the saved episode voice even when the shot has an older voice and rate',async()=>{
  const {workspace,command}=setup();cleanup();
  const shot=workspace.narration![0],defaults={...shot.defaults!,speakingRate:.85};
@@ -34,8 +35,8 @@ it('refreshes the connection choices on window focus and offers a retry only aft
  expect(fetchMock).toHaveBeenCalledTimes(3);
  expect(command).not.toHaveBeenCalled();
 });
-it('persists only an explicit default choice without generating or adopting',async()=>{const{command}=setup();const select=await screen.findByRole('combobox',{name:'口播来源'});await waitFor(()=>expect((select as HTMLSelectElement).options).toHaveLength(3));fireEvent.change(select,{target:{value:'b:seed-tts-2.0'}});fireEvent.click(screen.getByRole('button',{name:'保存口播设置'}));await waitFor(()=>expect(command).toHaveBeenCalledWith('saveWorkspaceNarrationDefaults',{episodeId:'e',workspaceId:'w',expectedRevision:1,selection:{...selection,connectionVersionId:'b'},voice:'zh_female_vv_uranus_bigtts',languageCode:'zh-CN',speakingRate:1}));expect(command).toHaveBeenCalledTimes(1);});
-it('retains an incompatible saved voice and explains the conflict instead of replacing it',async()=>{const{command,workspace}=setup();cleanup();const saved={...workspace,narration:[{...workspace.narration![0],defaults:{...workspace.narration![0].defaults!,voice:'foreign_voice_mars_bigtts'}}]};render(<WorkspaceNarrationPanel episodeId="e" workspace={saved} selectedShotId="S01" pending={false} command={command} onChanged={vi.fn()}/>);await waitFor(()=>expect((screen.getByRole('combobox',{name:'口播来源'}) as HTMLSelectElement).options).toHaveLength(3));expect(screen.getByRole('alert').textContent).toContain('不兼容');expect(screen.getByRole('combobox',{name:'声音'})).toHaveProperty('value','foreign_voice_mars_bigtts');expect(command).not.toHaveBeenCalled();});
+it('persists only an explicit default choice without generating or adopting',async()=>{const{command}=setup();await sourceReady();fireEvent.click(screen.getByRole('button',{name:'口播来源'}));fireEvent.click(screen.getByRole('menuitemradio',{name:'seed-tts-2.0 B · v1'}));fireEvent.click(screen.getByRole('button',{name:'保存口播设置'}));await waitFor(()=>expect(command).toHaveBeenCalledWith('saveWorkspaceNarrationDefaults',{episodeId:'e',workspaceId:'w',expectedRevision:1,selection:{...selection,connectionVersionId:'b'},voice:'zh_female_vv_uranus_bigtts',languageCode:'zh-CN',speakingRate:1}));expect(command).toHaveBeenCalledTimes(1);});
+it('retains an incompatible saved voice and explains the conflict instead of replacing it',async()=>{const{command,workspace}=setup();cleanup();const saved={...workspace,narration:[{...workspace.narration![0],defaults:{...workspace.narration![0].defaults!,voice:'foreign_voice_mars_bigtts'}}]};render(<WorkspaceNarrationPanel episodeId="e" workspace={saved} selectedShotId="S01" pending={false} command={command} onChanged={vi.fn()}/>);await sourceReady();expect(screen.getByRole('alert').textContent).toContain('不兼容');expect(screen.getByRole('combobox',{name:'声音'})).toHaveProperty('value','foreign_voice_mars_bigtts');expect(command).not.toHaveBeenCalled();});
 
 it('adopts a completed candidate through the public candidate command fields without submitting speech',async()=>{const{command,workspace}=setup([{id:'candidate',kind:'audio',shotId:'S01',text:'完整口播',relativePath:'voice.mp3',durationSeconds:2.4,targetDurationSeconds:2.4,status:'available'}]);command.mockImplementation(async(name:string)=>name==='prepareWorkspaceCandidate'?plan as unknown as ProductionWorkspace:workspace);fireEvent.click(screen.getByRole('button',{name:'采用'}));await waitFor(()=>expect(command).toHaveBeenCalledWith('prepareWorkspaceCandidate',{episodeId:'e',workspaceId:'w',expectedRevision:1,candidateId:'candidate',durationPolicy:'use-candidate'}));expect(command.mock.calls.some(call=>call[0]==='adoptWorkspaceCandidate')).toBe(false);expect(screen.getByRole('dialog',{name:'采用前核对'}).textContent).toContain('下一镜头');fireEvent.click(screen.getByRole('button',{name:'确认采用'}));await waitFor(()=>expect(command).toHaveBeenCalledWith('adoptWorkspaceCandidate',{episodeId:'e',workspaceId:'w',expectedRevision:1,candidateId:'candidate',adoptionId:'adoption'}));});
 
@@ -60,7 +61,7 @@ it('hides narration completely when switched off and restores the draft when ree
  const command=vi.fn(async(_name:string,data:any)=>({...workspace,narration:[{...workspace.narration![0],enabled:data.enabled}]}));
  function Harness(){const [w,setW]=useState(workspace);return <WorkspaceNarrationPanel episodeId="e" workspace={w} selectedShotId="S01" pending={false} command={command} onChanged={setW}/>;}
  render(<Harness/>);fireEvent.change(screen.getByRole('textbox',{name:'口播文案'}),{target:{value:'关闭后保留的文案'}});fireEvent.click(screen.getByRole('switch',{name:'启用口播'}));
- await waitFor(()=>expect(screen.queryByRole('textbox',{name:'口播文案'})).toBeNull());expect(screen.queryByRole('combobox',{name:'口播来源'})).toBeNull();expect(screen.getByRole('switch',{name:'启用口播'})).toHaveProperty('checked',false);
+ await waitFor(()=>expect(screen.queryByRole('textbox',{name:'口播文案'})).toBeNull());expect(screen.queryByRole('button',{name:'口播来源'})).toBeNull();expect(screen.getByRole('switch',{name:'启用口播'})).toHaveProperty('checked',false);
  fireEvent.click(screen.getByRole('switch',{name:'启用口播'}));await waitFor(()=>expect(screen.getByRole('textbox',{name:'口播文案'})).toHaveProperty('value','关闭后保留的文案'));
  expect(command.mock.calls.map(([name])=>name)).toEqual(['setWorkspaceNarrationEnabled','setWorkspaceNarrationEnabled']);
 });
@@ -78,7 +79,7 @@ it('separates generated candidates and uploaded audio across modes, including a 
   materials={[upload]} tracks={[{id:'generated',track_kind:'narration',cue_id:'S01',source_material_revision_id:null}]}/>);
  expect(screen.getByText('生成的口播',{selector:'.workspace-speech-result-heading p'})).toBeTruthy();
  expect(screen.queryByText('上传的口播')).toBeNull();
- fireEvent.change(screen.getByRole('combobox',{name:'口播来源'}),{target:{value:'manual'}});
+ fireEvent.click(screen.getByRole('button',{name:'口播来源'}));fireEvent.click(screen.getByRole('menuitemradio',{name:'人工口播'}));
  expect(screen.getByText('上传的口播',{selector:'.workspace-speech-result-heading p'})).toBeTruthy();
  expect(screen.queryByText('生成的口播')).toBeNull();
  expect(screen.getByRole<HTMLSelectElement>('combobox',{name:'口播素材或上传音轨'}).value).toBe('');
@@ -91,7 +92,7 @@ it('selects uploaded narration material and explicitly adopts its registered can
  const ready={...workspace,narration:[{...workspace.narration![0],mode:'manual' as const,audioTrackId:'track',inputFingerprint:'manual-hash'}],candidates:[{id:'track',kind:'audio',shotId:'S01',status:'available',relativePath:'voice.mp3',audioTrackId:'track',text:'人工口播'}]} as unknown as ProductionWorkspace;
  const command=vi.fn(async(name:string)=>name==='prepareWorkspaceCandidate'?{...plan,candidateId:'track',adoptionId:'manual-adoption'}:ready);
  const view=render(<WorkspaceNarrationPanel episodeId="e" workspace={workspace} selectedShotId="S01" pending={false} command={command} onChanged={vi.fn()} materials={[{id:'material',source_path:'voice.mp3',storage_path:'voice.mp3',material_type:'audio',material_purpose:'narration'},{id:'music',source_path:'music.mp3',material_type:'audio',material_purpose:'background_music'}]}/>);
- fireEvent.change(screen.getByRole('combobox',{name:'口播来源'}),{target:{value:'manual'}});
+ fireEvent.click(screen.getByRole('button',{name:'口播来源'}));fireEvent.click(screen.getByRole('menuitemradio',{name:'人工口播'}));
  expect(screen.getByRole('option',{name:'voice.mp3'})).toBeTruthy();expect(screen.queryByRole('option',{name:'music.mp3'})).toBeNull();
  const picker=screen.getByRole<HTMLSelectElement>('combobox',{name:'口播素材或上传音轨'});
  fireEvent.change(picker,{target:{value:'material:material'}});
@@ -108,7 +109,7 @@ it('selects uploaded narration material and explicitly adopts its registered can
 });
 
 it('reopens from the latest persisted default without repeating frozen execution details',async()=>{
- const {workspace,command}=setup();await waitFor(()=>expect((screen.getByRole('combobox',{name:'口播来源'}) as HTMLSelectElement).options.length).toBe(3));
+ const {workspace,command}=setup();await sourceReady();
  fireEvent.change(screen.getByRole('spinbutton',{name:'语速'}),{target:{value:'1.5'}});cleanup();
  const latest={...workspace,narration:[{...workspace.narration![0],speakingRate:1.25,defaults:{...workspace.narration![0].defaults!,speakingRate:.85},execution:{taskId:'original-task',selection,voice:'原任务声音',languageCode:'zh-CN',speakingRate:1,text:'冻结口播正文'}}]};
  render(<WorkspaceNarrationPanel episodeId="e" workspace={latest} selectedShotId="S01" pending={false} command={command} onChanged={vi.fn()}/>);await waitFor(()=>expect((screen.getByRole('spinbutton',{name:'语速'}) as HTMLInputElement).value).toBe('0.85'));
@@ -121,7 +122,7 @@ it('reopens from the latest persisted default without repeating frozen execution
 
 it('keeps an actively edited default when another window saves and offers an explicit reload',async()=>{
  const {workspace,command}=setup();cleanup();const props={episodeId:'e',pending:false,command,onChanged:vi.fn(),selectedShotId:'S01'},view=render(<WorkspaceNarrationPanel {...props} workspace={workspace}/>);
- await waitFor(()=>expect((screen.getByRole('combobox',{name:'口播来源'}) as HTMLSelectElement).options.length).toBe(3));fireEvent.change(screen.getByRole('spinbutton',{name:'语速'}),{target:{value:'1.4'}});
+ await sourceReady();fireEvent.change(screen.getByRole('spinbutton',{name:'语速'}),{target:{value:'1.4'}});
  const updated={...workspace,narration:[{...workspace.narration![0],defaults:{...workspace.narration![0].defaults!,speakingRate:.85}}]};view.rerender(<WorkspaceNarrationPanel {...props} workspace={updated}/>);
  expect((screen.getByRole('spinbutton',{name:'语速'}) as HTMLInputElement).value).toBe('1.4');expect(screen.getByRole('status').textContent).toContain('其他窗口更新');fireEvent.click(screen.getByRole('button',{name:'载入已保存设置'}));expect((screen.getByRole('spinbutton',{name:'语速'}) as HTMLInputElement).value).toBe('0.85');expect(command).not.toHaveBeenCalled();
 });
@@ -131,7 +132,7 @@ it.each([null,{}, {selection:42,voice:'v',languageCode:'zh-CN',speakingRate:1},{
  sessionStorage.setItem('loop-speech-default-draft:w',JSON.stringify({baseline:workspaceSettingsFingerprint(initial),value}));
  render(<WorkspaceNarrationPanel episodeId="e" workspace={workspace} selectedShotId="S01" pending={false} command={command} onChanged={vi.fn()}/>);
 
- await waitFor(()=>expect((screen.getByRole('combobox',{name:'口播来源'}) as HTMLSelectElement).options.length).toBe(3));expect((screen.getByLabelText('声音') as HTMLInputElement).value).toContain('Vivi 2.0');expect(command).not.toHaveBeenCalled();
+ await sourceReady();expect((screen.getByLabelText('声音') as HTMLInputElement).value).toContain('Vivi 2.0');expect(command).not.toHaveBeenCalled();
 });
 
 it('reviews historical text and restores the existing candidate without generating again',async()=>{
@@ -179,7 +180,7 @@ it('uses saved episode settings across shots while leaving frozen executions unc
  const props={episodeId:'e',pending:false,command,onChanged:vi.fn()};
  const two={...workspace,narration:[{...workspace.narration![0],execution:frozen},{...workspace.narration![0],clipId:'c2',shotId:'S02'}]};
  const view=render(<WorkspaceNarrationPanel {...props} workspace={two} selectedShotId="S01"/>);
- await waitFor(()=>expect((screen.getByRole('combobox',{name:'口播来源'}) as HTMLSelectElement).options.length).toBe(3));
+ await sourceReady();
  fireEvent.change(screen.getByRole('spinbutton',{name:'语速'}),{target:{value:'.85'}});fireEvent.click(screen.getByRole('button',{name:'保存口播设置'}));
  await waitFor(()=>expect(command).toHaveBeenCalledWith('saveWorkspaceNarrationDefaults',expect.objectContaining({speakingRate:.85})));
  const saved={...two,narration:two.narration.map(n=>({...n,defaults:{...n.defaults!,speakingRate:.85}}))};
@@ -235,10 +236,10 @@ it('keeps the two switches independent and preserves an unsaved caption through 
  expect(command.mock.calls.every(([name])=>name==='setWorkspaceCaptionsEnabled')).toBe(true);
 });
 
-it('switches the upper input with the bottom source picker and preserves the narration draft',()=>{
- const {command}=setup();fireEvent.change(screen.getByRole('textbox',{name:'口播文案'}),{target:{value:'保留这份口播草稿'}});
- fireEvent.change(screen.getByRole('combobox',{name:'口播来源'}),{target:{value:'manual'}});expect(screen.queryByRole('textbox',{name:'口播文案'})).toBeNull();expect(screen.queryByRole('combobox',{name:'声音'})).toBeNull();expect(screen.queryByRole('spinbutton',{name:'语速'})).toBeNull();expect(screen.getByRole('button',{name:'加入候选'})).toHaveProperty('disabled',true);
- fireEvent.change(screen.getByRole('combobox',{name:'口播来源'}),{target:{value:'a:seed-tts-2.0'}});expect(screen.getByRole('textbox',{name:'口播文案'})).toHaveProperty('value','保留这份口播草稿');expect(command).not.toHaveBeenCalled();
+it('switches the upper input with the bottom source picker and preserves the narration draft',async()=>{
+ const {command}=setup();await sourceReady();fireEvent.change(screen.getByRole('textbox',{name:'口播文案'}),{target:{value:'保留这份口播草稿'}});
+ fireEvent.click(screen.getByRole('button',{name:'口播来源'}));fireEvent.click(screen.getByRole('menuitemradio',{name:'人工口播'}));expect(screen.queryByRole('textbox',{name:'口播文案'})).toBeNull();expect(screen.queryByRole('combobox',{name:'声音'})).toBeNull();expect(screen.queryByRole('spinbutton',{name:'语速'})).toBeNull();expect(screen.getByRole('button',{name:'加入候选'})).toHaveProperty('disabled',true);
+ fireEvent.click(screen.getByRole('button',{name:'口播来源'}));fireEvent.click(screen.getByRole('menuitemradio',{name:'seed-tts-2.0 A · v1'}));expect(screen.getByRole('textbox',{name:'口播文案'})).toHaveProperty('value','保留这份口播草稿');expect(command).not.toHaveBeenCalled();
  expect(screen.getByRole('spinbutton',{name:'语速'}).closest('.workspace-narration-rate-control')?.querySelector('svg')).toBeTruthy();
 });
 
@@ -247,7 +248,7 @@ it('selects a newly imported MP3 in the file slot without adopting it',async()=>
  const imported={id:'new-file',source_path:'new-voice.mp3',storage_path:'voice/new.mp3',material_type:'audio',material_purpose:'general_reference'};
  const onImport=vi.fn(async(_files:File[])=>['new-file']);
  function Harness(){const [materials,setMaterials]=useState<typeof imported[]>([]);return <WorkspaceNarrationPanel episodeId="e" workspace={workspace} selectedShotId="S01" pending={false} command={command} onChanged={vi.fn()} materials={materials} onImportAudio={async files=>{const ids=await onImport(files);setMaterials([imported]);return ids;}}/>;}
- render(<Harness/>);fireEvent.change(screen.getByRole('combobox',{name:'口播来源'}),{target:{value:'manual'}});const file=new File(['synthetic'],'new-voice.mp3',{type:'audio/mpeg'});fireEvent.change(screen.getByLabelText('导入人工口播'),{target:{files:[file]}});
+ render(<Harness/>);fireEvent.click(screen.getByRole('button',{name:'口播来源'}));fireEvent.click(screen.getByRole('menuitemradio',{name:'人工口播'}));const file=new File(['synthetic'],'new-voice.mp3',{type:'audio/mpeg'});fireEvent.change(screen.getByLabelText('导入人工口播'),{target:{files:[file]}});
  await waitFor(()=>expect(screen.getByRole('combobox',{name:'口播素材或上传音轨'})).toHaveProperty('value','material:new-file'));expect(onImport).toHaveBeenCalledWith([file]);expect(screen.getByRole('button',{name:'拖入口播文件，已选 new-voice.mp3'})).toBeTruthy();expect(command).not.toHaveBeenCalled();
 });
 

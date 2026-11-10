@@ -14,24 +14,37 @@ export interface ConnectionModelActions {
  onSaveModels?:(input:ConnectionModelRequest)=>Promise<ConnectionModelSettings>;
 }
 export type ConnectionModelDraft={versionId:string;revision:string;enabledModels:string[]};
+const sameModels=(a:string[],b:string[])=>JSON.stringify([...a].sort())===JSON.stringify([...b].sort());
 export function ConnectionModelsDialog({connection,onClose,onReadModels,onSyncModels,onSaveModels,draft,onDraftChange}:{connection:{id:string;name:string};onClose:()=>void;draft?:ConnectionModelDraft;onDraftChange?:(draft:ConnectionModelDraft|null)=>void}&ConnectionModelActions){
- const [settings,setSettings]=useState<ConnectionModelSettings|null>(null),[enabled,setEnabled]=useState<string[]>([]);
+ const [settings,setSettings]=useState<ConnectionModelSettings|null>(null),[baseline,setBaseline]=useState<ConnectionModelDraft|null>(null),[enabled,setEnabled]=useState<string[]>([]);
  const [operation,setOperation]=useState<'loading'|'syncing'|'saving'|''>('loading'),[error,setError]=useState('');
  const [query,setQuery]=useState(''),[filter,setFilter]=useState('all'),[capability,setCapability]=useState('all');
  const lock=useRef(false),dialogRef=useRef<HTMLDivElement>(null),busy=operation!=='';
  useEffect(()=>{if(!busy&&error&&document.activeElement===document.body)dialogRef.current?.focus();},[busy,error]);
  const [leavePrompt,setLeavePrompt]=useState(false),[draftNotice,setDraftNotice]=useState('');
  function requestClose(){if(busy)return;if(changed)setLeavePrompt(true);else onClose();}
- function leave(keep:boolean){if(keep&&settings)onDraftChange?.({versionId:settings.versionId,revision:settings.revision,enabledModels:enabled});else onDraftChange?.(null);onClose();}
+ function leave(keep:boolean){if(keep&&baseline)onDraftChange?.({versionId:baseline.versionId,revision:baseline.revision,enabledModels:enabled});else onDraftChange?.(null);onClose();}
 
- async function load(){if(lock.current||!onReadModels)return;lock.current=true;setOperation('loading');setError('');try{const data=await onReadModels(connection.id);setSettings(data);if(draft&&draft.versionId===data.versionId&&draft.revision===data.revision)setEnabled(draft.enabledModels);else{setEnabled(data.enabledModels);if(draft){onDraftChange?.(null);setDraftNotice('保留的修改所依据的版本已变化，已读取当前设置。');}}}catch(e){setError(e instanceof Error?e.message:'模型设置读取失败，请重试。');}finally{lock.current=false;setOperation('');}}
+ async function load(){if(lock.current||!onReadModels)return;lock.current=true;setOperation('loading');setError('');try{const data=await onReadModels(connection.id);setSettings(data);setBaseline(data);if(draft&&draft.versionId===data.versionId&&draft.revision===data.revision)setEnabled(draft.enabledModels);else{setEnabled(data.enabledModels);if(draft){onDraftChange?.(null);setDraftNotice('保留的修改所依据的版本已变化，已读取当前设置。');}}}catch(e){setError(e instanceof Error?e.message:'模型设置读取失败，请重试。');}finally{lock.current=false;setOperation('');}}
  useEffect(()=>{void load();},[connection.id]);
- async function sync(){if(lock.current||!settings||!onSyncModels)return;lock.current=true;setOperation('syncing');setError('');try{const result=await onSyncModels({connectionId:connection.id,versionId:settings.versionId});setSettings(result);}catch(e){setError(e instanceof Error?e.message:'模型目录读取失败，请重试。');}finally{lock.current=false;setOperation('');}}
- async function save(){if(lock.current||!settings||!onSaveModels)return;lock.current=true;setOperation('saving');setError('');try{const result=await onSaveModels({connectionId:connection.id,versionId:settings.versionId,revision:settings.revision,enabledModels:enabled});if(!result||result.connectionId!==connection.id||result.versionId!==settings.versionId)throw Error('模型设置保存未确认完成，请重新读取后核对。');onDraftChange?.(null);onClose();}catch(e){setError(e instanceof Error?e.message:'模型设置保存失败，请重试。');}finally{lock.current=false;setOperation('');}}
+ async function sync(){
+  if(lock.current||!baseline||!onSyncModels)return;lock.current=true;setOperation('syncing');setError('');
+  try{
+   const result=await onSyncModels({connectionId:connection.id,versionId:baseline.versionId});
+   if(result.connectionId!==connection.id||result.versionId!==baseline.versionId)throw Error('连接版本已变化，请重新打开模型设置；本次勾选已保留。');
+   setSettings(result);
+   // Discovery may advance revision without changing enabled models. Rebase only an unchanged edit baseline.
+   if(!changed){setBaseline(result);setEnabled(result.enabledModels);}
+   else if(sameModels(result.enabledModels,baseline.enabledModels))setBaseline(result);
+   else setError('启用模型已在其他窗口修改，本次勾选已保留。请重新打开设置核对后再保存。');
+  }catch(e){setError(e instanceof Error?e.message:'模型目录读取失败，请重试。');}finally{lock.current=false;setOperation('');}
+ }
+ async function save(){if(lock.current||!baseline||conflict||!onSaveModels)return;lock.current=true;setOperation('saving');setError('');try{const result=await onSaveModels({connectionId:connection.id,versionId:baseline.versionId,revision:baseline.revision,enabledModels:enabled});if(!result||result.connectionId!==connection.id||result.versionId!==baseline.versionId)throw Error('模型设置保存未确认完成，请重新读取后核对。');onDraftChange?.(null);onClose();}catch(e){setError(e instanceof Error?e.message:'模型设置保存失败，请重试。');}finally{lock.current=false;setOperation('');}}
  const visible=settings?.models.filter(m=>(filter==='all'||filter==='adapted'&&m.adapted||filter==='enabled'&&enabled.includes(m.id)||filter==='unadapted'&&!m.adapted)&&(capability==='all'||m.capability===capability)&&m.id.toLowerCase().includes(query.trim().toLowerCase()))??[];
- const changed=settings&&JSON.stringify([...settings.enabledModels].sort())!==JSON.stringify([...enabled].sort());
+ const changed=baseline&&!sameModels(baseline.enabledModels,enabled);
+ const conflict=!!settings&&!!baseline&&(!sameModels(settings.enabledModels,baseline.enabledModels)||settings.versionId!==baseline.versionId);
  useEffect(()=>{if(settings&&!changed)onDraftChange?.(null);},[Boolean(settings),changed]);
- useWorkspaceLeaveEntry({kind:'models',dirty:()=>Boolean(changed),keep:()=>{leave(true);return true;},discard:()=>leave(false),beforeUnload:()=>{if(changed&&settings)onDraftChange?.({versionId:settings.versionId,revision:settings.revision,enabledModels:enabled});}});
+ useWorkspaceLeaveEntry({kind:'models',dirty:()=>Boolean(changed),keep:()=>{leave(true);return true;},discard:()=>leave(false),beforeUnload:()=>{if(changed&&baseline)onDraftChange?.({versionId:baseline.versionId,revision:baseline.revision,enabledModels:enabled});}});
  return <><ModalOverlay className="product-ui reference-connections-overlay" isOpen isDismissable={!busy&&!leavePrompt} isKeyboardDismissDisabled={busy||leavePrompt} onOpenChange={open=>{if(!open)requestClose();}}><Modal className="reference-connections-modal"><Dialog ref={dialogRef} aria-label={`${connection.name} 模型设置`} className="dan-ui connection-workspace reference-connections reference-connections-dialog">
   <header className="reference-connections-dialog-header"><h2>模型设置</h2><Button color="tertiary" size="sm" iconLeading={X} aria-label="关闭模型设置" isDisabled={busy} onPress={requestClose}/></header>
   <div className="connection-models-body">
@@ -48,6 +61,6 @@ export function ConnectionModelsDialog({connection,onClose,onReadModels,onSyncMo
    </>}
    {error&&<p className="form-error" role="alert">{error}</p>}{!settings&&!busy&&<Button color="secondary" size="sm" onPress={()=>void load()}>重新读取设置</Button>}
   </div>
-  <footer className="reference-connections-dialog-footer"><Button color="secondary" size="sm" isDisabled={busy} onPress={requestClose}>取消</Button><Button color="primary" size="sm" isLoading={operation==='saving'} showTextWhileLoading isDisabled={busy||!changed||!onSaveModels} onPress={()=>void save()}>保存设置</Button></footer>
+  <footer className="reference-connections-dialog-footer"><Button color="secondary" size="sm" isDisabled={busy} onPress={requestClose}>取消</Button><Button color="primary" size="sm" isLoading={operation==='saving'} showTextWhileLoading isDisabled={busy||conflict||!changed||!onSaveModels} onPress={()=>void save()}>保存设置</Button></footer>
  </Dialog></Modal></ModalOverlay>{leavePrompt&&<ConnectionDraftLeaveDialog onContinue={()=>setLeavePrompt(false)} onDiscard={()=>leave(false)} onKeep={onDraftChange?()=>leave(true):undefined}/>}</>;
 }

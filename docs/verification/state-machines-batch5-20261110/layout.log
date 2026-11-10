@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/Users/dan/Programs/loop-control/.scratch/state-machines-batch5-20261110/layout.py", line 5, in <module>
+    r=ns['run'];j=ns['js'];r('set','viewport','1280','900');ns['choose']('close-failed');ns['open_editor']();ns['edit']('关闭失败后的正文仍在');ns['click']('保存');r('wait','--text','夹具关闭失败');ns['wait_button']('保存')
+                                                                                         ~~~~~~~~~~~~~~~~~^^
+  File "<string>", line 21, in open_editor
+  File "<string>", line 10, in click
+  File "<string>", line 6, in run
+AssertionError: (('focus', '@e20'), {'success': False, 'data': None, 'error': 'Could not locate element with role=button name=进入剪辑工作台'})

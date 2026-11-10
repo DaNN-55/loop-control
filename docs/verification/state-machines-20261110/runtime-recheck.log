@@ -1,0 +1,12 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run scripts/runtime/application.test.mjs --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+·······
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Start at  18:18:31
+   Duration  181ms (transform 31ms, setup 8ms, collect 30ms, tests 5ms, environment 0ms, prepare 32ms)
+

@@ -1,0 +1,9 @@
+ M PLAN.md
+ M docs/adr/README.md
+ M src/local-app/useWorkspaceCallConfirmation.test.tsx
+ M src/local-app/useWorkspaceCallConfirmation.tsx
+?? docs/adr/0033-workspace-call-confirmation-lifecycle.md
+?? docs/architecture/
+?? docs/research/2026-11-10-cloudflare-deployment-feasibility-sources.md
+?? docs/research/2026-11-10-public-deployment-assessment.md
+?? docs/verification/state-machines-20261110/

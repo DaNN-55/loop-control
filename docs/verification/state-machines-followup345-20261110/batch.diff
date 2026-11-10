@@ -1,0 +1,151 @@
+--- a/PLAN.md
++++ b/PLAN.md
+@@ -1,3 +1,16 @@
++# 状态机专项复查后第 3–5 项（2026-11-10）
++
++按用户批准顺序推进，每项公开接口验证通过后才开始下一项。第 3 项修复 M09 仅裁剪终点未应用；第 4 项验收 M02／M04／M07／M08 的旧 attempt、未知提交、原任务恢复、发布核对和授权事务；第 5 项补 M36 建目录后、回执落盘前中断的故障注入。HEAD 62885252，其他未提交内容保留，不提交推送。
++
++测试边界由专项复查建议及本次批准确定：第 3 项隔离 Owner HTTP 的准备结果与最终采用工程；第 4 项现有 Worker／Owner HTTP 与真实隔离 PostgreSQL；第 5 项独立迁移进程、持久回执及临时文件目录。保留 Owner、版本、费用确认、未知提交、文件指纹与未知目录不得自动认领／删除限制。仅在第 3 项修改产品逻辑；第 4、5 项先验证现有实现，不擅自重写协议。
++
++- [x] 第 3 项：HTTP 红测试复现，最小修复后 14 条真实数据库／Owner HTTP／原生工程采用回归通过；区间矩阵含 7 种非法输入，类型及前后端顺序构建通过。
++- [x] 第 4 项：4 文件、22 条真实数据库／Worker／Owner HTTP 恢复验收通过，无跳过；旧 attempt、新旧租约、未知提交、原任务恢复、COMMIT 已提交／未提交、重复核对、确认回滚均通过。首轮旧视频字段断言已按迁移 156 更新，未改恢复协议。
++- [x] 第 5 项：2 条真实原生进程／APFS／PostgreSQL 验收通过；mkdir 后首次目录回执提交前 SIGKILL，空目录与未知内容均保留。重启拒绝续写，显式回滚后选择干净位置、重新盘点并迁移成功；原文件与迁后 Owner 下载字节一致。
++- [x] 双轴只读审查无发现；最终默认全量一次 1915 通过、1 跳过、2 条已知素材栏旧标题断言失败，未修改无关断言。38 条专项真实集成验收全部通过；范围核对与证据归档完成，本轮数据库／进程／目录清理。
++
++上轮全量遗留两条素材栏旧 heading 断言，与并行视觉提交 62885252 相关；本轮不默认把它们算作通过，也不顺手改动无关断言。报告 `docs/verification/state-machines-followup345-20261110/REPORT.md`。
++
+ # 状态机专项复查后第 1、2 项（2026-11-10）
+ 
+ 仅实施 M26 样音归属与 M24 模型发现／编辑基线；保留业务规则、首次合成确认、CAS 和按版本恢复限制，不提交推送。初始 HEAD 951a368e，执行期间另一会话完成两笔视觉提交至 62885252，原样保留。验证通过真实组件、客户端 HTTP 与外部回调，不 mock 私有实现。
+--- a/src/local-app/workspaceGenerationState.integration.test.ts
++++ b/src/local-app/workspaceGenerationState.integration.test.ts
+@@ -63,7 +63,7 @@
+  expect(w.visualTasks[0]).toMatchObject({taskId:job.taskId,status:'failed',providerTaskId:'controlled-t05-video',submissionOutcome:'received',submissionUnknown:false,canResume:true});expect(w.visualTasks[0].error).toBeTruthy();
+  const resumed=await f.request('retryWorkspaceVisualCandidate',{workspaceId:w.id,expectedRevision:w.revision,candidateId:job.id});expect(resumed.status).toBe(200);expect(resumed.body.visualTasks[0].taskId).toBe(job.taskId);await writeFile(mode,'success');await f.execute(job.taskId);w=await f.read();expect(w.visualTasks[0]).toMatchObject({status:'completed',videoPhase:'saving'});
+  expect((await readFile(f.videoSubmissions,'utf8')).trim().split('\n')).toHaveLength(1);const urls=(await readFile(queries,'utf8')).trim().split('\n');expect(urls.length).toBeGreaterThanOrEqual(2);expect(urls.every(url=>url.endsWith('/controlled-t05-video'))).toBe(true);
+- const state=(await f.c.query('SELECT attempt,input_snapshot FROM public.tasks WHERE id=$1',[job.taskId])).rows[0];expect(state.attempt).toBe(2);expect(state.input_snapshot.media.wan_video.prompt).toContain('原冻结动作');await evidence('video-resume',{taskId:job.taskId,providerTaskId:'controlled-t05-video',supplierPosts:1,attemptCount:2,pollQueries:urls,completedState:w.visualTasks[0]});
++ const state=(await f.c.query('SELECT attempt,input_snapshot FROM public.tasks WHERE id=$1',[job.taskId])).rows[0];expect(state.attempt).toBe(2);expect(state.input_snapshot.capability).toBe('shot_video_generation');expect(state.input_snapshot.media.video.prompt).toContain('原冻结动作');await evidence('video-resume',{taskId:job.taskId,providerTaskId:'controlled-t05-video',supplierPosts:1,attemptCount:2,pollQueries:urls,completedState:w.visualTasks[0]});
+  }finally{await f.close();}
+ },120000);
+ 
+--- a/src/local-app/workspaceVisualCandidates.ts
++++ b/src/local-app/workspaceVisualCandidates.ts
+@@ -170,7 +170,7 @@
+   if(candidate.usage==='pan-zoom'&&!data.motionPolicy)throw new ConfigurationError(400,'请选择保留当前运动或采用新图片推拉。');
+   const sourceIn=data.sourceInSeconds??0,sourceOut=data.sourceOutSeconds??candidate.durationSeconds;
+   if((data.sourceInSeconds!==undefined||data.sourceOutSeconds!==undefined)&&(candidate.kind!=='video'||typeof sourceIn!=='number'||!Number.isFinite(sourceIn)||sourceIn<0||typeof sourceOut!=='number'||!Number.isFinite(sourceOut)||sourceOut<=sourceIn||sourceOut>candidate.durationSeconds+0.001))throw new ConfigurationError(400,'视频使用区间无效。');
+-  candidate.visual={...(candidate.kind==='video'&&data.sourceInSeconds!==undefined?{sourceInSeconds:Number(sourceIn),sourceOutSeconds:Number(sourceOut)}:{}),usage:candidate.usage,motionPolicy:(data.motionPolicy??'preserve-target') as 'preserve-target'|'replace-motion',acceptTimelineImpact:data.acceptTimelineImpact===true,expectedAppearance:workspaceCandidateAppearance(item),placeholder:item.kind==='text'};
++  candidate.visual={...(candidate.kind==='video'&&(data.sourceInSeconds!==undefined||data.sourceOutSeconds!==undefined)?{sourceInSeconds:Number(sourceIn),sourceOutSeconds:Number(sourceOut)}:{}),usage:candidate.usage,motionPolicy:(data.motionPolicy??'preserve-target') as 'preserve-target'|'replace-motion',acceptTimelineImpact:data.acceptTimelineImpact===true,expectedAppearance:workspaceCandidateAppearance(item),placeholder:item.kind==='text'};
+   return prepareRegisteredWorkspaceCandidate(c,root,row,project,candidate,data.durationPolicy);
+  }
+  if(command==='adoptWorkspaceVisualCandidate'){await finishRegisteredWorkspaceCandidate(c,root,row,project,candidate,data);return readProductionWorkspace(c,row.episode_id,root);}
+--- /dev/null
++++ b/src/local-app/workspaceVisualTrim.integration.test.ts
+@@ -0,0 +1,44 @@
++// @vitest-environment node
++import {it,expect} from 'vitest';
++import {readFile} from 'node:fs/promises';
++import {join} from 'node:path';
++import {productionWorkspaceFixture} from './productionWorkspace.fixture';
++const enabled=process.env.LOOP_WORKSPACE_ACCEPTANCE==='1';
++
++it.skipIf(!enabled)('Owner HTTP applies an end-only video range to preparation and final adoption',async()=>{
++ const f=await productionWorkspaceFixture();try{
++  const prepared=await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script});expect(prepared.status,JSON.stringify(prepared.body)).toBe(200);let w=prepared.body;
++  const registered=await f.request('registerWorkspaceVisualCandidate',{workspaceId:w.id,expectedRevision:w.revision,targetItemId:w.clips[0].itemId,materialRevisionId:f.material,usage:'video'});expect(registered.status,JSON.stringify(registered.body)).toBe(200);w=registered.body;
++  const candidate=w.visualCandidates[0],plan=await f.request('prepareWorkspaceVisualCandidate',{workspaceId:w.id,expectedRevision:w.revision,candidateId:candidate.id,durationPolicy:'use-candidate',acceptTimelineImpact:true,sourceOutSeconds:1});expect(plan.status,JSON.stringify(plan.body)).toBe(200);
++  expect(plan.body.edit.source).toMatchObject({sourceInSeconds:0,durationSeconds:1,fullDurationSeconds:2});expect(plan.body.impact).toMatchObject({sourceSeconds:1,appliedSeconds:1});
++  const adopted=await f.request('adoptWorkspaceVisualCandidate',{workspaceId:w.id,expectedRevision:w.revision,candidateId:candidate.id,adoptionId:plan.body.adoptionId});expect(adopted.status,JSON.stringify(adopted.body)).toBe(200);w=adopted.body;
++  const project=JSON.parse(await readFile(join(f.assetRoot,w.project.relativePath),'utf8')),item=project.timelines[0].items.find((i:{id:string})=>i.id===candidate.targetItemId);expect(item).toMatchObject({srcInFrame:0,durationInFrames:30,sourceAssetId:'candidate-'+candidate.id});
++ }finally{await f.close();}
++},120000);
++
++it.skipIf(!enabled).each([
++ {name:'start only',range:{sourceInSeconds:0.5},start:15,frames:45,seconds:1.5},
++ {name:'both endpoints',range:{sourceInSeconds:0.5,sourceOutSeconds:1.5},start:15,frames:30,seconds:1},
++ {name:'omitted',range:{},start:0,frames:60,seconds:2},
++])('Owner HTTP preserves $name video range semantics through adoption',async({range,start,frames,seconds})=>{
++ const f=await productionWorkspaceFixture();try{
++  let r=await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script});expect(r.status,JSON.stringify(r.body)).toBe(200);let w=r.body;
++  r=await f.request('registerWorkspaceVisualCandidate',{workspaceId:w.id,expectedRevision:w.revision,targetItemId:w.clips[0].itemId,materialRevisionId:f.material,usage:'video'});expect(r.status,JSON.stringify(r.body)).toBe(200);w=r.body;
++  const candidate=w.visualCandidates[0],base={workspaceId:w.id,expectedRevision:w.revision,candidateId:candidate.id},before=JSON.parse(await readFile(join(f.assetRoot,w.project.relativePath),'utf8'));
++  const plan=await f.request('prepareWorkspaceVisualCandidate',{...base,durationPolicy:'use-candidate',acceptTimelineImpact:true,...range});expect(plan.status,JSON.stringify(plan.body)).toBe(200);expect(plan.body.impact).toMatchObject({sourceSeconds:seconds,appliedSeconds:seconds});
++  if(!Object.keys(range).length)expect(plan.body.edit.source).not.toHaveProperty('sourceInSeconds');
++  r=await f.request('adoptWorkspaceVisualCandidate',{...base,adoptionId:plan.body.adoptionId});expect(r.status,JSON.stringify(r.body)).toBe(200);w=r.body;
++  const project=JSON.parse(await readFile(join(f.assetRoot,w.project.relativePath),'utf8'));expect(project.timelines[0].items.find((i:{id:string})=>i.id===candidate.targetItemId)).toMatchObject({srcInFrame:start,durationInFrames:frames,sourceAssetId:'candidate-'+candidate.id});expect(project.timelines[0].items.filter((i:{id:string})=>i.id!==candidate.targetItemId)).toEqual(before.timelines[0].items.filter((i:{id:string})=>i.id!==candidate.targetItemId));
++ }finally{await f.close();}
++},120000);
++
++it.skipIf(!enabled)('Owner HTTP rejects invalid video ranges and retains the current project and candidate',async()=>{
++ const f=await productionWorkspaceFixture();try{
++  let r=await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script});expect(r.status,JSON.stringify(r.body)).toBe(200);let w=r.body;
++  r=await f.request('registerWorkspaceVisualCandidate',{workspaceId:w.id,expectedRevision:w.revision,targetItemId:w.clips[0].itemId,materialRevisionId:f.material,usage:'video'});expect(r.status,JSON.stringify(r.body)).toBe(200);w=r.body;const candidate=w.visualCandidates[0],before=await readFile(join(f.assetRoot,w.project.relativePath));
++  for(const range of [{sourceOutSeconds:0},{sourceOutSeconds:-1},{sourceOutSeconds:3},{sourceOutSeconds:'1'},{sourceInSeconds:-1},{sourceInSeconds:2},{sourceInSeconds:1,sourceOutSeconds:0.5}]){
++   const result=await f.request('prepareWorkspaceVisualCandidate',{workspaceId:w.id,expectedRevision:w.revision,candidateId:candidate.id,durationPolicy:'use-candidate',acceptTimelineImpact:true,...range});expect(result.status,JSON.stringify({range,body:result.body})).toBe(400);expect(result.body.error).toContain('视频使用区间无效');
++  }
++  const response=await fetch(f.origin+`/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(response.status).toBe(200);const current=(await response.json()).workspace;expect(current.revision).toBe(w.revision);expect(current.project.sha256).toBe(w.project.sha256);expect(current.visualCandidates.find((v:{id:string})=>v.id===candidate.id).status).toBe('available');expect(await readFile(join(f.assetRoot,current.project.relativePath))).toEqual(before);
++ }finally{await f.close();}
++},120000);
+--- /dev/null
++++ b/src/local-app/workspaceRecoveryFences.integration.test.ts
+@@ -0,0 +1,20 @@
++// @vitest-environment node
++import {it,expect} from 'vitest';
++import {narrationFixture} from './workspaceNarration.fixture';
++import {nativeWorkerPort} from './workerDatabase';
++it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('a superseded attempt cannot refresh, report, reserve submission or begin publication for the current attempt',async()=>{
++ const f=await narrationFixture();try{
++  await f.authorize();const w=f.made,base={workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[0].id};
++  for(const [name,data] of [['saveWorkspaceNarration',{...base,mode:'tts',...f.narrationSettings,text:'旧尝试不能操作新租约。'}],['confirmWorkspaceNarration',base],['generateWorkspaceNarration',{...base,reservationCents:100}]] as const){const r=await f.request(name,data);expect(r.status,JSON.stringify(r.body)).toBe(200);}
++  const taskId=(await f.read()).narration[0].generationTask.taskId,worker=f.workerPool(),port=nativeWorkerPort(worker);
++  await f.c.query('UPDATE public.tasks SET max_attempts=2 WHERE id=$1',[taskId]);
++  const first=(await port.rpc('claim_next_worker_task',{p_task_id:taskId,p_worker_capacity:1}))[0] as {attempt:number;lease_token:string};
++  const old={p_task_id:taskId,p_attempt:first.attempt,p_lease_token:first.lease_token},result={version:'worker-result/v1',taskId,status:'failed',artifacts:[],validation:{passed:false,checks:[]},actualCostCents:0,blockers:[],retry:{shouldRetry:true,reason:'Controlled failure before supplier submission'},nextStep:'Retry original task'};
++  await port.rpc('report_worker_result',{...old,p_result:result});await f.c.query('UPDATE public.tasks SET available_at=clock_timestamp() WHERE id=$1',[taskId]);
++  const second=(await port.rpc('claim_next_worker_task',{p_task_id:taskId,p_worker_capacity:1}))[0] as {attempt:number;lease_token:string};expect(second.attempt).toBe(first.attempt+1);expect(second.lease_token).not.toBe(first.lease_token);
++  await expect(port.rpc('refresh_worker_task_lease',old)).rejects.toThrow();await expect(port.rpc('report_worker_result',{...old,p_result:result})).rejects.toThrow();
++  await expect(worker.query('SELECT local_identity.reserve_workspace_narration_submission($1,$2,$3)',[taskId,first.attempt,first.lease_token])).rejects.toThrow();await expect(worker.query('SELECT local_identity.begin_native_output_publication($1,$2,$3)',[taskId,first.attempt,first.lease_token])).rejects.toThrow();
++  const current={p_task_id:taskId,p_attempt:second.attempt,p_lease_token:second.lease_token};await port.rpc('refresh_worker_task_lease',current);expect((await f.read()).narration[0].generationTask).toMatchObject({taskId,status:'running',submissionUnknown:false});
++  await port.rpc('report_worker_result',{...current,p_result:{...result,retry:{shouldRetry:false,reason:'Controlled test completed without a supplier request'}}});expect((await f.read()).narration[0].generationTask).toMatchObject({taskId,status:'failed'});
++ }finally{await f.close();}
++},120000);
+--- /dev/null
++++ b/src/local-app/mediaRootDirectoryReceipt.integration.test.ts
+@@ -0,0 +1,37 @@
++// @vitest-environment node
++import {it,expect,vi} from 'vitest';
++import {randomUUID} from 'node:crypto';
++import {readFile,writeFile,readdir,lstat,mkdir} from 'node:fs/promises';
++import {join} from 'node:path';
++import {nativeMediaRootFixture} from './mediaRootRuntime.fixture';
++import {csrfFor} from './sessions';
++
++it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each(['empty-directory','unknown-content'] as const)('a crash before the directory receipt commits preserves %s and permits guarded manual continuation',async scenario=>{
++ const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/local/125-global-media-root-plans.sql','db/local/126-global-media-root-execution.sql']}),{f,target,source,configFile}=fixture;let pending:Promise<unknown>|undefined;
++ try{
++  const config=JSON.parse(await readFile(configFile,'utf8'));config.projectRoot=process.env.LOOP_TEST_RUNTIME_ROOT??process.cwd();await writeFile(configFile,JSON.stringify(config),{mode:0o600});
++  let runtime=await fixture.launch();
++  const call=async(command?:string,data:Record<string,unknown>={})=>{const r=await fetch(runtime.origin+'/api/local/media-root',{method:command?'POST':'GET',headers:{Cookie:'loop_owner_session='+f.token,Origin:runtime.origin,'Content-Type':'application/json','X-CSRF-Token':csrfFor(f.token)},...(command?{body:JSON.stringify({command,idempotencyKey:randomUUID(),...data})}:{})});return{status:r.status,body:await r.json()};};
++  const original=await readFile(join(f.assetRoot,f.videoPath)),plan=await call('planMigration',{path:target});expect(plan.status,JSON.stringify(plan.body)).toBe(200);expect(plan.body.manifest.canExecute).toBe(true);
++  // Stop the real progress transaction before its first directory receipt is durable.
++  // mkdir has completed; killing the native process rolls this transaction back.
++  await f.c.query("CREATE FUNCTION public.pause_directory_receipt() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF jsonb_array_length(coalesce(NEW.progress->'createdDirectories','[]'::jsonb))>jsonb_array_length(coalesce(OLD.progress->'createdDirectories','[]'::jsonb)) THEN PERFORM pg_advisory_xact_lock(17819435);END IF;RETURN NEW;END $$;CREATE TRIGGER pause_directory_receipt BEFORE UPDATE ON local_identity.media_root_migrations FOR EACH ROW EXECUTE FUNCTION public.pause_directory_receipt()");await f.c.query('SELECT pg_advisory_lock(17819435)');
++  pending=call('executeMigration',{migrationId:plan.body.id}).catch(error=>({disconnected:true,message:error.message}));
++  await vi.waitFor(async()=>expect(Number((await f.c.query("SELECT count(*) n FROM pg_locks WHERE locktype='advisory' AND objid=17819435 AND NOT granted")).rows[0].n)).toBe(1),{timeout:15000,interval:25});
++  const children=await readdir(target);expect(children).toHaveLength(1);const orphan=join(target,children[0]),identity=await lstat(orphan,{bigint:true});expect(identity.isDirectory()).toBe(true);expect(await readdir(orphan)).toEqual([]);
++  const beforeCrash=(await call()).body;expect(beforeCrash).toMatchObject({path:source,migration:{id:plan.body.id,status:'copying',progress:{createdDirectories:[],copiedFiles:0,copiedBytes:0}}});
++  const firstPid=runtime.pid;await fixture.crash();await pending;pending=undefined;await f.c.query('SELECT pg_advisory_unlock(17819435)');await f.c.query('DROP TRIGGER pause_directory_receipt ON local_identity.media_root_migrations;DROP FUNCTION public.pause_directory_receipt()');
++  const sentinel=join(orphan,'manual.txt');if(scenario==='unknown-content')await writeFile(sentinel,'Unknown content must remain untouched');
++  runtime=await fixture.launch();expect(runtime.pid).not.toBe(firstPid);const restarted=(await call()).body;expect(restarted).toMatchObject({path:source,executing:false,migration:{id:plan.body.id,status:'copying',progress:{createdDirectories:[]}}});
++  const refused=await call('executeMigration',{migrationId:plan.body.id});expect(refused.status,JSON.stringify(refused.body)).toBe(409);expect(refused.body.error).toContain('未登记目标目录');
++  const failed=(await call()).body;expect(failed).toMatchObject({path:source,migration:{status:'failed',progress:{createdDirectories:[]}}});expect((await lstat(orphan,{bigint:true})).ino).toBe(identity.ino);expect(await readFile(join(f.assetRoot,f.videoPath))).toEqual(original);
++  const rolled=await call('rollbackMigration',{migrationId:plan.body.id});expect(rolled.status,JSON.stringify(rolled.body)).toBe(200);expect(rolled.body.status).toBe('rolled_back');expect((await lstat(orphan,{bigint:true})).ino).toBe(identity.ino);
++  if(scenario==='unknown-content')expect(await readFile(sentinel,'utf8')).toBe('Unknown content must remain untouched');else expect(await readdir(orphan)).toEqual([]);
++  // Owner can retain the uncertain target and explicitly select a clean target.
++  const clean=join(fixture.volume.mountPath,'clean-target');await mkdir(clean);const replanned=await call('planMigration',{path:clean});expect(replanned.status,JSON.stringify(replanned.body)).toBe(200);expect(replanned.body.id).not.toBe(plan.body.id);expect(replanned.body.manifest.canExecute).toBe(true);
++  const completed=await call('executeMigration',{migrationId:replanned.body.id});expect(completed.status,JSON.stringify(completed.body)).toBe(200);expect(completed.body.status).toBe('completed');expect((await call()).body.path).toBe(clean);expect((await lstat(orphan,{bigint:true})).ino).toBe(identity.ino);expect(await readFile(join(f.assetRoot,f.videoPath))).toEqual(original);
++  const artifact=await fetch(runtime.origin+'/_local-artifact?episode='+f.episode+'&path='+encodeURIComponent(f.videoPath)+'&sha256='+f.files[0].sha256,{headers:{Cookie:'loop_owner_session='+f.token}});expect(artifact.status).toBe(200);expect(Buffer.from(await artifact.arrayBuffer())).toEqual(original);
++  if(scenario==='unknown-content')expect(await readFile(sentinel,'utf8')).toBe('Unknown content must remain untouched');else expect(await readdir(orphan)).toEqual([]);
++  if(process.env.LOOP_DIRECTORY_RECEIPT_EVIDENCE)await writeFile(join(process.env.LOOP_DIRECTORY_RECEIPT_EVIDENCE,'directory-receipt-'+scenario+'.json'),JSON.stringify({scenario,firstPid,restartedPid:runtime.pid,planId:plan.body.id,orphan,identity:{device:String(identity.dev),inode:String(identity.ino)},beforeCrash,restarted,refused,failed,rollbackStatus:rolled.body.status,nextPlanId:replanned.body.id,completedStatus:completed.body.status,orphanUnchanged:true,originalBytesUnchanged:true,ownerReadsMigratedArtifact:true},null,2));
++ }finally{await fixture.crash();await pending?.catch(()=>{});await f.c.query('SELECT pg_advisory_unlock(17819435)').catch(()=>{});await fixture.close();}
++},180000);

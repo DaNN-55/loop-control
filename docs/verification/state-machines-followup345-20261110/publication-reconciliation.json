@@ -1,0 +1,62 @@
+{
+  "taskId": "ed71bd8d-2e4b-49d9-9a1b-578eb0f31295",
+  "heldAttempt": 0,
+  "attemptCount": 1,
+  "supplierPosts": 1,
+  "missingProofStatus": 409,
+  "tamperedProofStatus": 409,
+  "foreignOwnerStatus": 404,
+  "wrongAttemptStatus": 409,
+  "extraLeaseStatus": 400,
+  "repeatedReconciliationRegistered": false,
+  "completedState": {
+    "id": "8af158a9-8c12-49c9-88fb-1a045313fac6",
+    "shotId": "shot-1",
+    "targetItemId": "shot-shot-1-8a58e5cc-e832-4186-afac-10534d586910",
+    "kind": "image",
+    "taskId": "ed71bd8d-2e4b-49d9-9a1b-578eb0f31295",
+    "status": "completed",
+    "provider": "openai",
+    "model": "gpt-image-2",
+    "createdAt": "2026-11-10T13:17:45.841Z",
+    "connectionName": "Controlled image batch",
+    "error": "Completed",
+    "retryTaskId": null,
+    "submissionOutcome": "received",
+    "videoPhase": null,
+    "providerTaskId": null,
+    "requestState": "succeeded",
+    "publicationAttempt": null,
+    "submissionUnknown": false,
+    "reservationCents": 100,
+    "canResume": false,
+    "generation": {
+      "selection": {
+        "model": "gpt-image-2",
+        "adapter": "openai_images",
+        "provider": "openai",
+        "capability": "image",
+        "connectionVersionId": "bc78117a-ac61-419d-8c52-b2528a48e10e"
+      },
+      "connectionName": "Controlled image batch",
+      "prompt": "核对发布",
+      "actualPrompt": "核对发布\n\n账号创作规则：{}\n系列创作规则：null",
+      "firstFrameMaterialRevisionId": "",
+      "durationSeconds": 2,
+      "imageSettings": {
+        "size": "1152x2048",
+        "count": 1,
+        "quality": "high"
+      },
+      "imageBrief": {
+        "crop": "allow",
+        "framing": "auto",
+        "references": [],
+        "captionSpace": "none"
+      },
+      "referenceMaterialRevisionIds": [
+        "1cde0683-a2ff-4691-9f99-8e1b387e7af9"
+      ]
+    }
+  }
+}

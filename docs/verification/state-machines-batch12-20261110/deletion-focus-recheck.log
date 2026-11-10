@@ -1,0 +1,12 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/LocalDeletionRecovery.test.tsx --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+······
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  18:45:43
+   Duration  696ms (transform 40ms, setup 8ms, collect 300ms, tests 135ms, environment 123ms, prepare 29ms)
+

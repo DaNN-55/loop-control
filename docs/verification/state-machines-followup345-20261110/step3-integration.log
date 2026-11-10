@@ -1,0 +1,25 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workspaceVisualTrim.integration.test.ts src/local-app/workspaceVisualAdoption.integration.test.ts src/local-app/workspaceCandidateImpact.integration.test.ts --maxWorkers=1 --reporter=verbose
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/workspaceVisualAdoption.integration.test.ts > a saved native image recovers only its missing adoption receipt and remains identical after reopening 8925ms
+ ✓ src/local-app/workspaceVisualAdoption.integration.test.ts > a saved native video recovers only its missing adoption receipt and remains identical after reopening 6666ms
+ ✓ src/local-app/workspaceVisualAdoption.integration.test.ts > a prepared image cannot overwrite a newer saved target 1567ms
+ ✓ src/local-app/workspaceVisualAdoption.integration.test.ts > a prepared video cannot overwrite a newer saved target 1489ms
+ ✓ src/local-app/workspaceVisualAdoption.integration.test.ts > changed prepared image bytes prevent native save without recording adoption 3400ms
+ ✓ src/local-app/workspaceVisualAdoption.integration.test.ts > changed prepared video bytes prevent native save without recording adoption 3570ms
+ ✓ src/local-app/workspaceCandidateImpact.integration.test.ts > prepared visual impact matches native adoption, persistence and reopen for 2 seconds 5857ms
+ ✓ src/local-app/workspaceCandidateImpact.integration.test.ts > prepared visual impact matches native adoption, persistence and reopen for 1 seconds 5863ms
+ ✓ src/local-app/workspaceCandidateImpact.integration.test.ts > prepared visual impact matches native adoption, persistence and reopen for 3 seconds 6005ms
+ ✓ src/local-app/workspaceVisualTrim.integration.test.ts > Owner HTTP applies an end-only video range to preparation and final adoption 1244ms
+ ✓ src/local-app/workspaceVisualTrim.integration.test.ts > Owner HTTP preserves 'start only' video range semantics through adoption 1241ms
+ ✓ src/local-app/workspaceVisualTrim.integration.test.ts > Owner HTTP preserves 'both endpoints' video range semantics through adoption 1212ms
+ ✓ src/local-app/workspaceVisualTrim.integration.test.ts > Owner HTTP preserves 'omitted' video range semantics through adoption 1181ms
+ ✓ src/local-app/workspaceVisualTrim.integration.test.ts > Owner HTTP rejects invalid video ranges and retains the current project and candidate 1238ms
+
+ Test Files  3 passed (3)
+      Tests  14 passed (14)
+   Start at  21:12:42
+   Duration  50.47s (transform 401ms, setup 9ms, collect 724ms, tests 49.46s, environment 0ms, prepare 62ms)
+

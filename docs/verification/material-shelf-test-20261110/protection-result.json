@@ -1,0 +1,12 @@
+{
+  "preexisting": 283,
+  "unchanged": 281,
+  "intentional": [
+    "PLAN.md",
+    "src/local-app/ProductionWorkspacePanel.test.tsx"
+  ],
+  "head": "62885252",
+  "stagedByTask": false,
+  "committed": false,
+  "pushed": false
+}

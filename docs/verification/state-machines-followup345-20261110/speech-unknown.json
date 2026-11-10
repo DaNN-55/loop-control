@@ -1,0 +1,21 @@
+{
+  "taskId": "a450b7d9-a88f-4d5d-9970-73aaa2614e04",
+  "supplierPosts": 1,
+  "inputChanged": true,
+  "state": {
+    "id": "a450b7d9-a88f-4d5d-9970-73aaa2614e04",
+    "shotId": "shot-1",
+    "taskId": "a450b7d9-a88f-4d5d-9970-73aaa2614e04",
+    "status": "blocked",
+    "provider": "volcengine_tts",
+    "model": "seed-tts-2.0",
+    "createdAt": "2026-11-10T13:17:47.510Z",
+    "connectionName": "Controlled narration",
+    "submissionOutcome": "started",
+    "reservationCents": 100,
+    "publicationAttempt": null,
+    "error": "Provider 请求结果未知；已消费的请求预算保留。请先核对请求账本与供应商记录，不会自动重发。",
+    "submissionUnknown": true
+  },
+  "retryStatus": 409
+}

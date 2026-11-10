@@ -1,0 +1,12 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workspaceVisualTrim.integration.test.ts --maxWorkers=1 --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+·
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  21:11:57
+   Duration  1.89s (transform 377ms, setup 7ms, collect 522ms, tests 1.26s, environment 0ms, prepare 23ms)
+

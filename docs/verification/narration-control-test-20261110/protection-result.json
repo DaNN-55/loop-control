@@ -1,0 +1,11 @@
+{
+  "preexisting": 199,
+  "unchanged": 196,
+  "intentional": [
+    "PLAN.md",
+    "src/local-app/ProductionWorkspacePanel.test.tsx"
+  ],
+  "externalUpdatesPreserved": [
+    "src/ui/impeccable/interaction-refinement.css"
+  ]
+}

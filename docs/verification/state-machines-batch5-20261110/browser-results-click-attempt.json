@@ -1,0 +1,4243 @@
+[
+  {
+    "args": [
+      "open",
+      "http://127.0.0.1:5194/__stage5"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "targetId": "7F41199331E1BF245B660ABA2D69977A",
+        "title": "工作区操作核对",
+        "url": "http://127.0.0.1:5194/__stage5"
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "set",
+      "viewport",
+      "1280",
+      "900"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "deviceScaleFactor": 1.0,
+        "height": 900,
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "mobile": false,
+        "width": 1280
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "frame",
+      "main"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "frame": "main",
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        }
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "select",
+      "select[aria-label=\"核对场景\"]",
+      "open-failed"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "selected": [
+          "open-failed"
+        ]
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "wait",
+      "--fn",
+      "document.querySelector('select').value===\"open-failed\"&&!document.body.innerText.includes('正在读取制作流程')"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "result": true
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=preparation",
+        "result": true
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "find",
+      "role",
+      "button",
+      "click",
+      "--name",
+      "进入剪辑工作台",
+      "--exact"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "clicked": "@e1",
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        }
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "wait",
+      "--text",
+      "夹具打开失败"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "text": "夹具打开失败",
+        "waited": "text"
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "!!document.querySelector('iframe')"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=preparation",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=preparation",
+        "result": true
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "find",
+      "role",
+      "button",
+      "click",
+      "--name",
+      "进入剪辑工作台",
+      "--exact"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "clicked": "@e2",
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        }
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u4fdd\\u5b58\"||b.getAttribute('aria-label')===\"\\u4fdd\\u5b58\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u4fdd\\u5b58\"||b.getAttribute('aria-label')===\"\\u4fdd\\u5b58\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": true
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "snapshot",
+      "-i"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "refs": {
+          "e1": {
+            "name": "",
+            "role": "generic"
+          },
+          "e10": {
+            "name": "open-failed",
+            "role": "option"
+          },
+          "e11": {
+            "name": "save-failed",
+            "role": "option"
+          },
+          "e12": {
+            "name": "close-failed",
+            "role": "option"
+          },
+          "e13": {
+            "name": "flush-failed",
+            "role": "option"
+          },
+          "e14": {
+            "name": "slow-open",
+            "role": "option"
+          },
+          "e15": {
+            "name": "脚本确认",
+            "role": "button"
+          },
+          "e16": {
+            "name": "分镜台",
+            "role": "button"
+          },
+          "e17": {
+            "name": "剪辑工作台，当前查看",
+            "role": "button"
+          },
+          "e18": {
+            "name": "检查与交付",
+            "role": "button"
+          },
+          "e19": {
+            "name": "保存并返回分镜台",
+            "role": "button"
+          },
+          "e2": {
+            "name": "释放旧打开结果",
+            "role": "button"
+          },
+          "e20": {
+            "name": "当前剪辑工程",
+            "role": "region"
+          },
+          "e21": {
+            "name": "剪辑操作",
+            "role": "navigation"
+          },
+          "e22": {
+            "name": "镜头 1",
+            "role": "heading"
+          },
+          "e23": {
+            "name": "折叠镜头导航",
+            "role": "button"
+          },
+          "e24": {
+            "name": "定位镜头 S01",
+            "role": "button"
+          },
+          "e25": {
+            "name": "OpenChatCut 剪辑工程",
+            "role": "Iframe"
+          },
+          "e26": {
+            "name": "操作转换核对",
+            "role": "heading"
+          },
+          "e27": {
+            "name": "专注剪辑",
+            "role": "button"
+          },
+          "e28": {
+            "name": "保存",
+            "role": "button"
+          },
+          "e29": {
+            "name": "原生夹具正文",
+            "role": "textbox"
+          },
+          "e3": {
+            "name": "四步制作工作流",
+            "role": "region"
+          },
+          "e4": {
+            "name": "核对场景",
+            "role": "combobox"
+          },
+          "e5": {
+            "name": "操作转换核对",
+            "role": "heading"
+          },
+          "e6": {
+            "name": "四步制作步骤",
+            "role": "navigation"
+          },
+          "e7": {
+            "name": "整期剪辑工作台",
+            "role": "region"
+          },
+          "e8": {
+            "name": "ready",
+            "role": "option"
+          },
+          "e9": {
+            "name": "prepare-failed",
+            "role": "option"
+          }
+        },
+        "snapshot": "- generic \"核对场景readyprepare-failedopen-failedsave-failedclose-failedflush-failedslow-open释放旧打开结果操作转换核对1脚本确认已确认2\" [ref=e1] clickable [onclick]\n  - combobox \"核对场景\" [expanded=false, ref=e4]: open-failed\n    - option \"ready\" [ref=e8]\n    - option \"prepare-failed\" [ref=e9]\n    - option \"open-failed\" [selected, ref=e10]\n    - option \"save-failed\" [ref=e11]\n    - option \"close-failed\" [ref=e12]\n    - option \"flush-failed\" [ref=e13]\n    - option \"slow-open\" [ref=e14]\n  - button \"释放旧打开结果\" [ref=e2]\n  - region \"四步制作工作流\" [ref=e3]\n    - heading \"操作转换核对\" [level=2, ref=e5]\n    - navigation \"四步制作步骤\" [ref=e6]\n      - button \"脚本确认\" [disabled, ref=e15]\n      - button \"分镜台\" [disabled, ref=e16]\n      - button \"剪辑工作台，当前查看\" [disabled, ref=e17]\n      - button \"检查与交付\" [disabled, ref=e18]\n    - region \"整期剪辑工作台\" [ref=e7]\n      - button \"保存并返回分镜台\" [ref=e19]\n      - region \"当前剪辑工程\" [ref=e20]\n        - heading \"操作转换核对\" [level=2, ref=e26]\n      - navigation \"剪辑操作\" [ref=e21]\n        - button \"专注剪辑\" [ref=e27]\n        - button \"保存\" [ref=e28]\n      - heading \"镜头 1\" [level=3, ref=e22]\n      - button \"折叠镜头导航\" [ref=e23]\n      - button \"定位镜头 S01\" [ref=e24]\n      - Iframe \"OpenChatCut 剪辑工程\" [ref=e25] focusable [tabindex]\n        - textbox \"原生夹具正文\" [ref=e29]: 尚未保存的编辑"
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "fill",
+      "@e29",
+      "打开重试后的正文"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "filled": "@e29",
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        }
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "find",
+      "role",
+      "button",
+      "click",
+      "--name",
+      "保存并返回分镜台",
+      "--exact"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "clicked": "@e30",
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        }
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "eval",
+      "[...document.querySelectorAll('button')].some(b=>(b.textContent.trim()===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\"||b.getAttribute('aria-label')===\"\\u8fdb\\u5165\\u526a\\u8f91\\u5de5\\u4f5c\\u53f0\")&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "origin": "http://127.0.0.1:5194/__stage5?step=editing",
+        "result": false
+      },
+      "error": null
+    }
+  }
+]

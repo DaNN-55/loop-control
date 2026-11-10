@@ -1,0 +1,7 @@
+export function audioFixture(){
+ const entry=(id,status,evidence={})=>({id,kind:'sfx',shotId:'shot',description:{unknown:'雨声待核对',held:'风声待恢复',failed:'脚步声失败',used:'已加入环境声'}[id],durationSeconds:1,offsetSeconds:0,anchor:'shot',taskId:`task-${id}`,status,error:null,adoptedItemId:id==='used'?'used-sound':null,generationTask:{id,taskId:`task-${id}`,status,error:null,...evidence}});
+ return{id:'audio-workspace',episodeId:'audio-fixture',revision:1,stale:false,project:{sha256:'audio-project'},clips:[{id:'clip',itemId:'target',shotId:'shot',text:'核对镜头',source:null}],audio:{mix:{voices:[],sounds:[{itemId:'used-sound',kind:'sfx',startSeconds:0,durationSeconds:1,gainDb:-6,duckDepthDb:0}]},preparations:[entry('unknown','failed',{submissionOutcome:'started',submissionUnknown:true}),entry('held','blocked',{publicationAttempt:0,submissionOutcome:'received'}),entry('failed','failed',{submissionOutcome:'rejected'}),entry('used','completed')]}};
+}
+export function deliveryFixture(revision=7,deliveryId='delivery-original',status='running'){
+ return{id:'delivery-workspace',episodeId:'delivery-fixture',revision,stale:false,project:{sha256:`project-${revision}`},exports:[{id:'export',current:true,confirmed:true,status:'ready',contentSha256:'content',artifact:{relativePath:'final.mp4',sha256:'video',fileSize:1},checks:[]}],deliveries:[{id:deliveryId,exportId:'export',taskId:'delivery-task',status,verified:status==='completed',error:null,artifacts:[],createdAt:'2026-11-10T10:00:00Z'}]};
+}

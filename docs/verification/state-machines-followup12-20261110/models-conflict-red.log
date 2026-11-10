@@ -1,0 +1,272 @@
+npm notice run loop-control@0.1.0 test
+npm notice run vitest run --exclude '**/*.integration.test.ts' src/connections/ConnectionModelsDialog.test.tsx --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+··········x
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/connections/ConnectionModelsDialog.test.tsx > preserves a dirty selection and its original version after discovery observes a concurrent settings change
+TestingLibraryElementError: Unable to find role="alert"
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div[39m
+    [33mdata-live-announcer[39m=[32m"true"[39m
+    [33mstyle[39m=[32m"border: 0px; clip-path: inset(50%); height: 1px; margin: -1px; overflow: hidden; padding: 0px; position: absolute; width: 1px; white-space: nowrap;"[39m
+  [36m>[39m
+    [36m<div[39m
+      [33maria-live[39m=[32m"assertive"[39m
+      [33maria-relevant[39m=[32m"additions"[39m
+      [33mrole[39m=[32m"log"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33maria-labelledby[39m=[32m"react-aria-_r_3a_"[39m
+        [33mrole[39m=[32m"img"[39m
+      [36m/>[39m
+      [36m<div[39m
+        [33maria-labelledby[39m=[32m"react-aria-_r_37_"[39m
+        [33mrole[39m=[32m"img"[39m
+      [36m/>[39m
+      [36m<div[39m
+        [33maria-labelledby[39m=[32m"react-aria-_r_45_"[39m
+        [33mrole[39m=[32m"img"[39m
+      [36m/>[39m
+      [36m<div[39m
+        [33maria-labelledby[39m=[32m"react-aria-_r_3v_"[39m
+        [33mrole[39m=[32m"img"[39m
+      [36m/>[39m
+      [36m<div[39m
+        [33maria-labelledby[39m=[32m"react-aria-_r_fn_"[39m
+        [33mrole[39m=[32m"img"[39m
+      [36m/>[39m
+    [36m</div>[39m
+    [36m<div[39m
+      [33maria-live[39m=[32m"polite"[39m
+      [33maria-relevant[39m=[32m"additions"[39m
+      [33mrole[39m=[32m"log"[39m
+    [36m/>[39m
+  [36m</div>[39m
+  [36m<div[39m
+    [33maria-hidden[39m=[32m"true"[39m
+  [36m/>[39m
+  [36m<span[39m
+    [33maria-hidden[39m=[32m"true"[39m
+    [33mdata-focus-scope-start[39m=[32m"true"[39m
+    [33mhidden[39m=[32m""[39m
+  [36m/>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"product-ui reference-connections-overlay"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mstyle[39m=[32m"--visual-viewport-width: 0px; --visual-viewport-height: 0px; --page-width: 0px; --page-height: 0px;"[39m
+  [36m>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"reference-connections-modal"[39m
+      [33mdata-rac[39m=[32m""[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mstyle[39m=[32m"border: 0px; clip-path: inset(50%); height: 1px; margin: -1px; overflow: hidden; padding: 0px; position: absolute; width: 1px; white-space: nowrap;"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33maria-label[39m=[32m"Dismiss"[39m
+          [33mid[39m=[32m"react-aria-_r_hs_"[39m
+          [33mstyle[39m=[32m"width: 1px; height: 1px;"[39m
+          [33mtabindex[39m=[32m"-1"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"Images 模型设置"[39m
+        [33mclass[39m=[32m"dan-ui connection-workspace reference-connections reference-connections-dialog"[39m
+        [33mdata-rac[39m=[32m""[39m
+        [33mrole[39m=[32m"dialog"[39m
+        [33mtabindex[39m=[32m"-1"[39m
+      [36m>[39m
+        [36m<header[39m
+          [33mclass[39m=[32m"reference-connections-dialog-header"[39m
+        [36m>[39m
+          [36m<h2>[39m
+            [0m模型设置[0m
+          [36m</h2>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"关闭模型设置"[39m
+            [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+            [33mdata-color[39m=[32m"tertiary"[39m
+            [33mdata-icon-only[39m=[32m"true"[39m
+            [33mdata-rac[39m=[32m""[39m
+            [33mdata-react-aria-pressable[39m=[32m"true"[39m
+            [33mid[39m=[32m"react-aria-_r_h6_"[39m
+            [33mtabindex[39m=[32m"0"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-x pointer-events-none size-5 shrink-0 transition-inherit-all"[39m
+              [33mdata-icon[39m=[32m"leading"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M18 6 6 18"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m6 6 12 12"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</button>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"connection-models-body"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"connection-models-heading"[39m
+          [36m>[39m
+            [36m<strong>[39m
+              [0mImages[0m
+            [36m</strong>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold b...
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div[39m
+    [33mdata-live-announcer[39m=[32m"true"[39m
+    [33mstyle[39m=[32m"border: 0px; clip-path: inset(50%); height: 1px; margin: -1px; overflow: hidden; padding: 0px; position: absolute; width: 1px; white-space: nowrap;"[39m
+  [36m>[39m
+    [36m<div[39m
+      [33maria-live[39m=[32m"assertive"[39m
+      [33maria-relevant[39m=[32m"additions"[39m
+      [33mrole[39m=[32m"log"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33maria-labelledby[39m=[32m"react-aria-_r_3a_"[39m
+        [33mrole[39m=[32m"img"[39m
+      [36m/>[39m
+      [36m<div[39m
+        [33maria-labelledby[39m=[32m"react-aria-_r_37_"[39m
+        [33mrole[39m=[32m"img"[39m
+      [36m/>[39m
+      [36m<div[39m
+        [33maria-labelledby[39m=[32m"react-aria-_r_45_"[39m
+        [33mrole[39m=[32m"img"[39m
+      [36m/>[39m
+      [36m<div[39m
+        [33maria-labelledby[39m=[32m"react-aria-_r_3v_"[39m
+        [33mrole[39m=[32m"img"[39m
+      [36m/>[39m
+      [36m<div[39m
+        [33maria-labelledby[39m=[32m"react-aria-_r_fn_"[39m
+        [33mrole[39m=[32m"img"[39m
+      [36m/>[39m
+    [36m</div>[39m
+    [36m<div[39m
+      [33maria-live[39m=[32m"polite"[39m
+      [33maria-relevant[39m=[32m"additions"[39m
+      [33mrole[39m=[32m"log"[39m
+    [36m/>[39m
+  [36m</div>[39m
+  [36m<div[39m
+    [33maria-hidden[39m=[32m"true"[39m
+  [36m/>[39m
+  [36m<span[39m
+    [33maria-hidden[39m=[32m"true"[39m
+    [33mdata-focus-scope-start[39m=[32m"true"[39m
+    [33mhidden[39m=[32m""[39m
+  [36m/>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"product-ui reference-connections-overlay"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mstyle[39m=[32m"--visual-viewport-width: 0px; --visual-viewport-height: 0px; --page-width: 0px; --page-height: 0px;"[39m
+  [36m>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"reference-connections-modal"[39m
+      [33mdata-rac[39m=[32m""[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mstyle[39m=[32m"border: 0px; clip-path: inset(50%); height: 1px; margin: -1px; overflow: hidden; padding: 0px; position: absolute; width: 1px; white-space: nowrap;"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33maria-label[39m=[32m"Dismiss"[39m
+          [33mid[39m=[32m"react-aria-_r_hs_"[39m
+          [33mstyle[39m=[32m"width: 1px; height: 1px;"[39m
+          [33mtabindex[39m=[32m"-1"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"Images 模型设置"[39m
+        [33mclass[39m=[32m"dan-ui connection-workspace reference-connections reference-connections-dialog"[39m
+        [33mdata-rac[39m=[32m""[39m
+        [33mrole[39m=[32m"dialog"[39m
+        [33mtabindex[39m=[32m"-1"[39m
+      [36m>[39m
+        [36m<header[39m
+          [33mclass[39m=[32m"reference-connections-dialog-header"[39m
+        [36m>[39m
+          [36m<h2>[39m
+            [0m模型设置[0m
+          [36m</h2>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"关闭模型设置"[39m
+            [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+            [33mdata-color[39m=[32m"tertiary"[39m
+            [33mdata-icon-only[39m=[32m"true"[39m
+            [33mdata-rac[39m=[32m""[39m
+            [33mdata-react-aria-pressable[39m=[32m"true"[39m
+            [33mid[39m=[32m"react-aria-_r_h6_"[39m
+            [33mtabindex[39m=[32m"0"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-x pointer-events-none size-5 shrink-0 transition-inherit-all"[39m
+              [33mdata-icon[39m=[32m"leading"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M18 6 6 18"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m6 6 12 12"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</button>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"connection-models-body"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"connection-models-heading"[39m
+          [36m>[39m
+            [36m<strong>[39m
+              [0mImages[0m
+            [36m</strong>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold b...
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/connections/ConnectionModelsDialog.test.tsx:82:23
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 10 passed (11)
+   Start at  20:48:58
+   Duration  3.22s (transform 127ms, setup 8ms, collect 887ms, tests 1.91s, environment 267ms, prepare 34ms)
+

@@ -1,0 +1,4 @@
+npm notice run loop-control@0.1.0 check
+npm notice run tsc -b --pretty false
+src/local-app/WorkspaceScriptPanel.tsx(38,48): error TS2339: Property 'intent' does not exist on type 'ScriptConfirmationState'.
+  Property 'intent' does not exist on type '{ phase: "idle"; }'.

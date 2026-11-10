@@ -31,11 +31,6 @@ export function boundManualMaterialRevisionId(capability: ManualMaterialChecklis
   return typeof manualSource.material_revision_id === "string" ? manualSource.material_revision_id : null;
 }
 
-export function boundManualClipSelection(capability: ManualMaterialChecklistItem["capability"], targetId: string, tasks: readonly { input_snapshot: unknown; status?: string; provider?: string }[] = [], reviewPackageId = ""): { startSeconds: number; endSeconds: number } | null {
-  const clip = record(record(boundManualTask(capability, targetId, tasks, reviewPackageId)?.input_snapshot).clip_selection);
-  return typeof clip.start_seconds === "number" && typeof clip.end_seconds === "number" ? { startSeconds: clip.start_seconds, endSeconds: clip.end_seconds } : null;
-}
-
 export function manualMaterialChecklistForStoryboard(policy: unknown, episodeId: string, storyboard: Pick<StoryboardManifest, "shots" | "audioCues">, materials: readonly MaterialAvailability[], tasks: readonly { input_snapshot: unknown; status?: string; provider?: string }[] = [], reviewPackageId = ""): ManualMaterialChecklistItem[] {
   const root = record(policy);
   const items: ManualMaterialChecklistItem[] = [];

@@ -1,0 +1,61 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/WorkspaceDeliveryPanel.test.tsx -t older delivery poll --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+x--------------
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/WorkspaceDeliveryPanel.test.tsx > does not publish an older delivery poll after a newer workspace was provided
+AssertionError: expected "spy" to not be called at all, but actually been called 1 times
+
+Received: 
+
+  1st spy call:
+
+    Array [
+      Object {
+        "deliveries": Array [
+          Object {
+            "id": "delivery",
+            "status": "running",
+          },
+        ],
+        "episodeId": "episode",
+        "exports": Array [
+          Object {
+            "artifact": Object {
+              "sha256": "confirmed-video",
+            },
+            "confirmed": true,
+            "contentSha256": "confirmed-content",
+            "current": true,
+            "id": "export",
+          },
+        ],
+        "id": "workspace",
+        "revision": 7,
+        "stale": false,
+      },
+    ]
+
+
+Number of calls: 1
+
+ ❯ src/local-app/WorkspaceDeliveryPanel.test.tsx:24:23
+     22|  const newer={...w,revision:8};view.rerender(<WorkspaceDeliveryPanel w…
+     23|  await act(async()=>reply({workspace:w}));
+     24|  expect(received).not.toHaveBeenCalled();
+       |                       ^
+     25|  vi.unstubAllGlobals();
+     26| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 14 skipped (15)
+   Start at  18:32:23
+   Duration  1.09s (transform 88ms, setup 8ms, collect 620ms, tests 16ms, environment 271ms, prepare 33ms)
+

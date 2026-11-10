@@ -1,0 +1,323 @@
+--- a/PLAN.md
++++ b/PLAN.md
+@@ -1,3 +1,16 @@
++# 状态机第 5 项：四步工作区操作转换（2026-11-10）
++
++已批准仅集中 prepare/open/save/close 转换；导航、只读和工程有效性保持独立，保留业务规则、恢复限制，不提交推送。基线 HEAD 951a368e，工作区其他改动原样保留。验证接口为真实 ProductionWorkspacePanel、导航上下文及 EmbeddedStudioHost 消息／命令边界，不 mock 内部操作实现。
++
++- [x] 公开组件先复现迟到打开结果覆盖浏览器返回；记录既有深链接与失败恢复行为。
++- [x] 提取局部工作区操作模块，集中同步互斥、会话及失败转换，保持原命令与准备／编辑规则。
++- [x] 定向回归与类型检查、真实组件浏览器准备／打开／保存／关闭和宽窄屏；双轴只读审查。
++- [x] 前端／后端顺序构建，完整测试一次，核对范围、归档证据，关闭隔离预览；不提交推送。
++
++导航变化仅结束本地待打开意图，不撤回已发出的服务端命令；回到工作区仍由原权威读取恢复，不增加自动重试。保存或关闭失败保留当前会话，沿用真实 iframe flush、来源版本和文件指纹校验。
++
++完成：10 条新增真实宿主／公开组件回归与 7 条受控浏览器流程通过，类型与前端／后端顺序构建通过。定向最终 122 通过、1 失败；全量一次 1904 通过、1 跳过、1 失败。唯一失败为旧口播下拉框断言与并行模型选择器按钮不一致，在隔离副本换回本批改动前主入口仍复现，未修改该控件／旧断言。双轴审查发现取消打开后可能遗留旧 revision，已修复并复核。130 个先前变更中 126 个字节不变；三个本批共享文件限域修改，另一个视觉准备文件为外部更新并保留。报告 `docs/verification/state-machines-batch5-20261110/REPORT.md`。隔离预览／浏览器关闭，日常入口保留；无 SQL、依赖、正式业务写入、付费、暂存、提交或推送。
++
+ # 状态机第 4 项：脚本保存与启动分步恢复（2026-11-10）
+ 
+ 用户批准明确保存成功和启动成功、失败恢复；保留草稿、既有修订校验与历史业务规则，不提交、不推送。基线 HEAD 951a368e，原工作区修改保留。公开验证接口为脚本面板实际输入、按钮、草稿与父页面刷新，以及命令／生产单 HTTP 读回；不测试私有实现。
+--- a/docs/adr/README.md
++++ b/docs/adr/README.md
+@@ -56,3 +56,5 @@
+ - [ADR-0035：导出与交付的下一步判断](0035-export-delivery-next-step.md)
+ 
+ - [ADR-0036：脚本保存与启动的分步恢复](0036-script-save-start-recovery.md)
++
++- [ADR-0037：四步工作区操作转换](0037-workspace-operation-transitions.md)
+--- a/src/local-app/ProductionWorkspacePanel.tsx
++++ b/src/local-app/ProductionWorkspacePanel.tsx
+@@ -4,6 +4,7 @@
+ import {productionSteps,useWorkspaceNavigation} from './catalogNavigation';
+ import {useWorkspaceDraftLeave} from './WorkspaceDraft';
+ import {useWorkspaceCallConfirmation} from './useWorkspaceCallConfirmation';
++import {useWorkspaceOperations} from './useWorkspaceOperations';
+ import {parseStoryboardScript} from '../reviews/productionScript';
+ import {ConfirmationModal,ConfirmationModalPresence} from '../ui/ConfirmationModal';
+ import {useWorkspaceCanvas} from './useWorkspaceCanvas';
+@@ -25,12 +26,11 @@
+ import {WorkspaceCaptionsPanel} from './WorkspaceCaptionsPanel';
+ import {Activity,useEffect,useMemo,useRef,useState,type ComponentProps,type ReactNode} from 'react';
+ import {Button} from '../ui/dan-ui/components/base/buttons/button';
+-import {EmbeddedStudioHost,type EmbeddedStudioSession} from './EmbeddedStudioHost';
++import {EmbeddedStudioHost} from './EmbeddedStudioHost';
+ import {localRequest} from './client';
+ import {useWorkspaceReading} from './useWorkspaceReading';
+ import type {OpenChatCutProject} from '../worker/openchatcutProject';
+ import type {ProductionWorkspace} from '../productionWorkspace';
+-import type {OpenChatCutStudioWorkspace} from '../reviews/reviewRevision';
+ import './production-workspace.css';
+ import './production-compact.css';
+ interface Material {id:string;material_type:string;source_path:string;storage_path:string;is_main_script:boolean;material_purpose?:string}
+@@ -42,10 +42,10 @@
+  const {root:workspaceRoot,canvas:workspaceCanvas}=useWorkspaceCanvas();
+  const legacyContent=legacySnapshot&&hasLegacyProductionContent(legacySnapshot)?legacySnapshot:null;
+  const [workspace,setWorkspace]=useState<ProductionWorkspace|null>(null),[loaded,setLoaded]=useState(false),[loadError,setLoadError]=useState(''),[loadAttempt,setLoadAttempt]=useState(0),[step,applyStep]=useState(navigation?.step?productionSteps.indexOf(navigation.step):stage==='waiting_input'?0:preparationEntry?1:legacyContent&&['qc_review','qc_passed','production_completed'].includes(stage)?3:1),[pending,setPending]=useState(false),[error,setError]=useState(''),[script,setScript]=useState(''),[loadedScriptPath,setLoadedScriptPath]=useState('');
+- const [preparing,setPreparing]=useState(false),[legacyPrompt,setLegacyPrompt]=useState(false);
++ const [legacyPrompt,setLegacyPrompt]=useState(false);
+  const readOnly=historicalReadOnly||!!archivedAt||stage==='production_completed';
+- const [deliveryVisited,setDeliveryVisited]=useState(false),[editorOpening,setEditorOpening]=useState(false);
+- const openingEditor=useRef(false),studioRequested=useRef(false);
++ const [deliveryVisited,setDeliveryVisited]=useState(false);
++ const studioRequested=useRef(false);
+  useEffect(()=>{if(workspace&&step===3)setDeliveryVisited(true);},[workspace?.id,step]);
+  const [shotToDelete,setShotToDelete]=useState<{episodeId:string;workspaceId:string;revision:number;shotId:string;text:string}|null>(null);
+  const [selectedShotId,setSelectedShotId]=useState(preparationEntry?.shotId??''),[previewItemId,setPreviewItemId]=useState(preparationEntry?.targetItemId??''),[preparationTab,applyPreparationTab]=useState<'visual'|'voice'|'sound'>(navigation?.tab??'visual');
+@@ -53,7 +53,7 @@
+ 
+  function setStep(next:number){applyStep(next);navigation?.change({step:productionSteps[next]});}
+  function setPreparationTab(next:'visual'|'voice'|'sound'){applyPreparationTab(next);navigation?.change({tab:next});}
+- useEffect(()=>{if(navigation){const next=navigation.step?productionSteps.indexOf(navigation.step):stage==='waiting_input'?0:preparationEntry?1:stage==='production_completed'||workspace?.exports?.some(entry=>entry.current)?3:workspace?.nativeEditRevision?2:1;if(next!==step){applyStep(next);studioRequested.current=false;}}if(navigation)applyPreparationTab(navigation.tab);},[navigation?.step,navigation?.tab]);
++ useEffect(()=>{if(navigation){const next=navigation.step?productionSteps.indexOf(navigation.step):stage==='waiting_input'?0:preparationEntry?1:stage==='production_completed'||workspace?.exports?.some(entry=>entry.current)?3:workspace?.nativeEditRevision?2:1;if(next!==step){operations.cancelOpening();applyStep(next);studioRequested.current=false;}}if(navigation)applyPreparationTab(navigation.tab);},[navigation?.step,navigation?.tab]);
+  const [materialUploadStatus,setMaterialUploadStatus]=useState('');
+  const [materialUploadFailures,setMaterialUploadFailures]=useState<string[]>([]);
+  const [materialUploadBusy,setMaterialUploadBusy]=useState(false);
+@@ -66,7 +66,12 @@
+  const narrationRefreshes=useRef(new Set<string>());
+  const [nativeProject,setNativeProject]=useState<OpenChatCutProject|null>(null);
+  const nativeProjectIdentity=useRef('');
+- const [session,setSession]=useState<EmbeddedStudioSession|null>(null),current=useRef<ProductionWorkspace|null>(null),openAction=useRef<()=>Promise<void>>(async()=>{});
++ const current=useRef<ProductionWorkspace|null>(null),openAction=useRef<()=>Promise<void>>(async()=>{});
++ const operations=useWorkspaceOperations({episodeId,readOnly,reopen:!!error,current:()=>current.current,command:run,publish:update,error:setError,recover:()=>setLoadAttempt(value=>value+1),prepared:stay=>{setLegacyPrompt(false);if(!stay)setStep(1);},opened:()=>setStep(2),closed:(destination,selection,next)=>{
++  if(destination==='preparation'&&selection&&next.clips.some(clip=>clip.shotId===selection.shotId)){setSelectedShotId(selection.shotId);setPreviewItemId(selection.itemId);revealReturnedShot.current=true;}
++  studioRequested.current=false;setStep(productionSteps.indexOf(destination));
++ },missingSources:()=>{setError('请先为每个镜头采用可用的图片或视频，再进入剪辑工作台。');setStep(1);}});
++ const {session,preparing,opening:editorOpening}=operations;
+  useEffect(()=>{
+   if(step!==1||session||!revealReturnedShot.current)return;
+   revealReturnedShot.current=false;
+@@ -79,8 +84,8 @@
+  useEffect(()=>{let active=true;const identity=episodeId+':'+(workspace?.id??'');if(nativeProjectIdentity.current!==identity){nativeProjectIdentity.current=identity;setNativeProject(null);}if(workspace)void localRequest(`episodes/${episodeId}/workspace/project?sha=${workspace.project.sha256}`).then(value=>{if(active){setNativeProject(value.project);}}).catch(()=>{});return()=>{active=false;};},[episodeId,workspace?.id,workspace?.project.sha256]);
+  const scriptPath=materials.find(m=>m.id===scriptRevisionId)?.storage_path;
+  useEffect(()=>{if(!scriptPath)return;let active=true;void fetch(`/_local-artifact?episode=${encodeURIComponent(episodeId)}&path=${encodeURIComponent(scriptPath)}`).then(async r=>{if(!r.ok)throw Error('主脚本读取失败，请检查原脚本文件。');const text=await r.text();if(active){setScript(text);setLoadedScriptPath(scriptPath);}}).catch(cause=>{if(active)setError(cause instanceof Error?cause.message:'主脚本读取失败。');});return()=>{active=false;};},[episodeId,scriptPath]);
+- async function run(name:string,data:unknown){if(readOnly)throw Error('归档或已完成生产单只读。');setPending(true);setError('');try{return await callConfirmation.request(name,data);}catch(cause){if(cause instanceof Error&&cause.name==='AbortError')throw cause;const message=cause instanceof Error?cause.message:'操作未完成。';if(name!=='importMaterial'&&name!=='registerWorkspaceVisualCandidate')setError(message);if(message.includes('旧剪辑工作版本'))setLegacyPrompt(true);throw cause;}finally{setPending(false);}}
+- async function openEditor(){const state=current.current;if(state&&(state.readiness.placeholders.length||state.readiness.missingSources.length)){setError('请先为每个镜头采用可用的图片或视频，再进入剪辑工作台。');setStep(1);return;}if(openingEditor.current||session&&!error)return;const w=current.current;if(!w)return;openingEditor.current=true;setEditorOpening(true);try{const result=await run('openWorkspaceStudio',{episodeId,workspaceId:w.id,expectedRevision:w.revision}) as {studioUrl:string;workspace:OpenChatCutStudioWorkspace;productionWorkspace:ProductionWorkspace};update(result.productionWorkspace);setStep(2);setSession({studioUrl:result.studioUrl,workspace:result.workspace,sourcePath:w.project.relativePath,launchId:crypto.randomUUID()});}finally{openingEditor.current=false;setEditorOpening(false);}}
++ async function run(name:string,data:unknown,owns:()=>boolean=()=>true){if(readOnly)throw Error('归档或已完成生产单只读。');setPending(true);setError('');try{return await callConfirmation.request(name,data);}catch(cause){if(!owns()||cause instanceof Error&&cause.name==='AbortError')throw cause;const message=cause instanceof Error?cause.message:'操作未完成。';if(name!=='importMaterial'&&name!=='registerWorkspaceVisualCandidate')setError(message);if(message.includes('旧剪辑工作版本'))setLegacyPrompt(true);throw cause;}finally{setPending(false);}}
++ const openEditor=operations.open;
+  async function resumeLegacy(source:LegacyWorkspaceSource,edit=true){const w=await run('adoptLegacyWorkspace',{episodeId,expectedScriptRevisionId:scriptRevisionId,reviewPackageId:boardId,...source}) as ProductionWorkspace;update(w);setStep(edit?2:1);if(edit)await openEditor();}
+  openAction.current=openEditor;
+  useEffect(()=>{if(step!==2||!loaded||!workspace||session||readOnly||pending||workspace.stale||!studioRequested.current)return;studioRequested.current=false;void openAction.current().catch(()=>{});},[step,loaded,workspace?.id,session,readOnly,pending,workspace?.stale]);
+@@ -90,21 +95,7 @@
+   void tick();const timer=setInterval(()=>void tick(),3000);return()=>{active=false;clearInterval(timer);};
+  },[loaded,narrationReading,session,workspace?.stale,pending,episodeId,readOnly]);
+  async function prepare(legacyDecision?:'preserve'|'fresh',confirmedScriptId=scriptRevisionId,revisionReason?:string,stayOnCurrentStep=false){
+-  if(!confirmedScriptId)return;
+-  setPreparing(true);
+-  try{
+-   const w=current.current,replan=w&&(w.stale||w.scriptRevisionId!==confirmedScriptId);
+-   const result=await run(replan?'replanWorkspace':'prepareWorkspace',{episodeId,...(boardId&&(!workspace||confirmedScriptId===workspace.scriptRevisionId)?{reviewPackageId:boardId}:{}),expectedScriptRevisionId:confirmedScriptId,...(replan?{workspaceId:w.id,expectedRevision:w.revision,...(revisionReason?{reason:revisionReason}:{})}:{}),...(legacyDecision?{legacyDecision}:{})}) as ProductionWorkspace | {planning:true} | null;
+-   if(result&&typeof result==='object'&&'planning' in result){
+-    setError('后端仍在使用旧版分镜流程。更新本地服务后，再进入分镜台。');
+-    return;
+-   }
+-   if(!result||!Array.isArray(result.clips)){
+-    setError('未收到有效的分镜工程，请重试。');
+-    return;
+-   }
+-   setLegacyPrompt(false);update(result);if(!stayOnCurrentStep)setStep(1);
+-  }finally{setPreparing(false);}
++  if(confirmedScriptId)await operations.prepare({scriptRevisionId:confirmedScriptId,boardId,reason:revisionReason,legacyDecision,stayOnCurrentStep});
+  }
+  const scriptState = useMemo(() => {
+   if (!scriptPath || loadedScriptPath !== scriptPath) return {format:'unread'} as const;
+@@ -204,17 +195,7 @@
+    <fieldset hidden={!loaded} ref={workspaceCanvas} disabled={readOnly&&!workspace&&!legacyContent} className="production-workspace-body"><div hidden={step!==0||!!session}><WorkspaceScriptPanel errorPresented={!!notice||!!error} episodeId={episodeId} scriptRevisionId={scriptRevisionId} script={script} stage={stage} readOnly={readOnly} pending={pending||!loaded||!!scriptPath&&loadedScriptPath!==scriptPath} command={run} onConfirmed={(confirmedScriptId,revisionReason)=>{setStep(1);if(confirmedScriptId&&!legacyContent){autoPreparedScript.current=confirmedScriptId;void prepare(undefined,confirmedScriptId,revisionReason,true).catch(()=>{});}}}/></div>{!loaded||step===0&&!session?null:!workspace&&legacyContent?(step===1?<LegacyPreparation key={episodeId} snapshot={legacyContent} onResume={source=>resumeLegacy(source,false)} pending={pending} readOnly={readOnly}/>:step===2?<LegacyEditing key={episodeId} snapshot={legacyContent} onResume={resumeLegacy} pending={pending} readOnly={readOnly}/>:<LegacyDelivery key={episodeId} snapshot={legacyContent}/>):!workspace&&step!==1?<section className="production-workspace-section"><h3>{steps[step]}</h3><p>{step===2?'尚未建立剪辑工程。':'尚无导出或交付文件。'}</p><Button size="sm" color="secondary" onPress={()=>requestDraftLeave(()=>setStep(step===2?1:2))}>{step===2?'前往分镜台':'前往剪辑工作台'}</Button></section>:step===1&&preparing?<div className="workspace-script-analysis" role="status"><span aria-hidden="true"/>正在分析脚本并拆分镜头…</div>:!workspace?<section className="production-workspace-section"><h3>{steps[step]}</h3>{!scriptRevisionId||stage==='waiting_input'?<p>请先确认脚本。</p>:error&&!readOnly&&!legacyPrompt?<Button size="sm" color="secondary" isDisabled={pending} onPress={()=>void prepare(undefined,scriptRevisionId,undefined,true).catch(()=>{})}>重试</Button>:null}</section>:
+    session?<EmbeddedStudioHost initialShotId={selectedShot?.shotId} initialItemId={selectedPreview?.itemId} key={session.launchId} episodeId={episodeId} title={title} session={session} shots={workspace.clips.filter((clip,index,all)=>all.findIndex(c=>c.shotId===clip.shotId)===index).map(c=>({id:c.shotId,text:c.text,soundIntent:c.soundIntent}))}  captionEditor={workspace.captions?.some(caption=>caption.contract.enabled)
+     ?bridge=><WorkspaceCaptionsPanel workspace={workspace} command={run} onChange={update} bridge={bridge} alignmentOnly/>
+-    :undefined} onSave={async file=>{const w=current.current!;const result=await run('saveWorkspaceStudio',{episodeId,workspaceId:w.id,expectedRevision:w.revision,workspaceRelativePath:file.relativePath,projectId:file.projectId,expectedWorkspaceSha256:file.sha256}) as OpenChatCutStudioWorkspace&{productionWorkspace:ProductionWorkspace};update(result.productionWorkspace);return result;}} onClose={async (destination,selection)=>{
+-     const w=current.current!;
+-     const next=await run('closeWorkspaceStudio',{episodeId,workspaceId:w.id,expectedRevision:w.revision}) as ProductionWorkspace;
+-     update(next);
+-     if(destination==='preparation'&&selection&&next.clips.some(clip=>clip.shotId===selection.shotId)){
+-      setSelectedShotId(selection.shotId);
+-      setPreviewItemId(selection.itemId);
+-      revealReturnedShot.current=true;
+-     }
+-     setSession(null);studioRequested.current=false;setStep(productionSteps.indexOf(destination));
+-    }}/> :step===1?<section className="production-workspace-section workspace-preparation"><header><div className="workspace-preparation-heading"><h3>{workflowStepLabels.preparation}</h3><span>{visualReady} / {uniqueClips.length} 画面就绪</span></div><div><Button size="sm" color="primary" isDisabled={pending||readOnly||workspace.stale} onPress={()=>void openEditor().catch(()=>{})}>进入剪辑工作台</Button></div></header><WorkspaceMaterialSelectionProvider key={episodeId} materials={allMaterials}><WorkspacePreparationLayout><section className="workspace-shot-table-pane" aria-label="素材镜头列表"><WorkspaceShotTable readOnly={readOnly} workspace={workspace} project={nativeProject} materials={allMaterials} selectedShotId={selectedShot?.shotId} disabled={pending||readOnly||workspace.stale} onSelect={setSelectedShotId} onDelete={clip=>{setError('');setShotToDelete({episodeId,workspaceId:workspace.id,revision:workspace.revision,shotId:clip.shotId,text:clip.text});}} onEdit={editShots}/><WorkspaceMaterialShelf episodeId={episodeId} scriptRevisionId={scriptRevisionId} shotCount={uniqueClips.length} materials={allMaterials}
++    :undefined} onSave={file=>operations.save(session,file)} onClose={(destination,selection)=>operations.close(session,destination,selection)}/> :step===1?<section className="production-workspace-section workspace-preparation"><header><div className="workspace-preparation-heading"><h3>{workflowStepLabels.preparation}</h3><span>{visualReady} / {uniqueClips.length} 画面就绪</span></div><div><Button size="sm" color="primary" isDisabled={pending||readOnly||workspace.stale} onPress={()=>void openEditor().catch(()=>{})}>进入剪辑工作台</Button></div></header><WorkspaceMaterialSelectionProvider key={episodeId} materials={allMaterials}><WorkspacePreparationLayout><section className="workspace-shot-table-pane" aria-label="素材镜头列表"><WorkspaceShotTable readOnly={readOnly} workspace={workspace} project={nativeProject} materials={allMaterials} selectedShotId={selectedShot?.shotId} disabled={pending||readOnly||workspace.stale} onSelect={setSelectedShotId} onDelete={clip=>{setError('');setShotToDelete({episodeId,workspaceId:workspace.id,revision:workspace.revision,shotId:clip.shotId,text:clip.text});}} onEdit={editShots}/><WorkspaceMaterialShelf episodeId={episodeId} scriptRevisionId={scriptRevisionId} shotCount={uniqueClips.length} materials={allMaterials}
+     readOnly={readOnly} busy={pending||materialUploadBusy} status={materialUploadStatus} notice={materialUploadNotice} onDismissNotice={id=>setMaterialUploadNotice(current=>current?.id===id?undefined:current)}
+     failures={materialUploadFailures} onImport={uploadMaterials}/></section><aside className="workspace-preparation-detail"><div className="workspace-detail-tabs" role="tablist" aria-label="素材设置">{([['visual','画面'],['voice','字幕与口播'],['sound','配乐与声音']] as const).map(([id,label])=><button key={id} id={`preparation-tab-${id}`} type="button" role="tab" aria-selected={preparationTab===id} aria-controls={`preparation-panel-${id}`} tabIndex={preparationTab===id?0:-1} onClick={()=>setPreparationTab(id)} onKeyDown={event=>{const ids=['visual','voice','sound'] as const,index=ids.indexOf(id);const next=event.key==='ArrowRight'?ids[(index+1)%3]:event.key==='ArrowLeft'?ids[(index+2)%3]:event.key==='Home'?ids[0]:event.key==='End'?ids[2]:null;if(next){event.preventDefault();setPreparationTab(next);requestAnimationFrame(()=>document.getElementById(`preparation-tab-${next}`)?.focus());}}}>{label}</button>)}</div><div role="tabpanel" id="preparation-panel-visual" aria-labelledby="preparation-tab-visual" hidden={preparationTab!=='visual'}><section className="workspace-visual-replacement" aria-label="上传与生成画面">{selectedSegment?.visual&&<p><strong>画面提示</strong> {selectedSegment.visual}</p>}<WorkspaceVisualPreparation workspace={workspace} command={run} onChange={update} materials={allMaterials} selectedShotId={selectedShot?.shotId} selectedTargetItemId={selectedPreview?.itemId} onTargetChange={setPreviewItemId} readOnly={readOnly} project={nativeProject} currentVisualPath={selectedPreview?workspaceShotSource(selectedPreview,nativeProject)?.relativePath:undefined} currentVisualSha256={selectedPreview?workspaceShotSource(selectedPreview,nativeProject)?.sha256:undefined} currentMaterialRevisionId={allMaterials.find(m=>m.storage_path===(selectedPreview?workspaceShotSource(selectedPreview,nativeProject)?.relativePath:undefined))?.id??workspace.visualCandidates?.find(c=>c.relativePath===(selectedPreview?workspaceShotSource(selectedPreview,nativeProject)?.relativePath:undefined))?.materialRevisionId} currentVisualKind={selectedPreview?workspaceShotSource(selectedPreview,nativeProject)?.kind:undefined} preview={<WorkspaceShotPreview readOnly={readOnly} workspace={workspace} clips={selectedClips} selectedItemId={selectedPreview?.itemId} onSelect={setPreviewItemId} project={nativeProject} materials={allMaterials}/>} onImported={material=>setImportedMaterials(rows=>[...rows,{...material,is_main_script:false}])}/></section></div><div role="tabpanel" id="preparation-panel-voice" aria-labelledby="preparation-tab-voice" hidden={preparationTab!=='voice'}><fieldset className="workspace-readonly-fields"><WorkspaceNarrationPanel onImportAudio={uploadMaterials} active={preparationTab==='voice'} readOnly={readOnly} narrationConfiguration={(legacySnapshot?.blueprint?.policy&&typeof legacySnapshot.blueprint.policy==='object'&&!Array.isArray(legacySnapshot.blueprint.policy)?legacySnapshot.blueprint.policy.narration:undefined)} episodeId={episodeId} workspace={workspace} pending={pending||materialUploadBusy||readOnly} command={run} onChanged={update} tracks={audioTracks} materials={allMaterials} defaultSettings={{voice:legacySnapshot?.episode.tts_voice??null,speakingRate:legacySnapshot?.episode.tts_speaking_rate??null,languageCode:legacySnapshot?.episode.tts_language_code??null}} selectedShotId={selectedShot?.shotId}/></fieldset></div><div role="tabpanel" id="preparation-panel-sound" aria-labelledby="preparation-tab-sound" hidden={preparationTab!=='sound'}><fieldset className="workspace-readonly-fields"><WorkspaceAudioPreparation readOnly={readOnly} workspace={workspace} selectedShotId={selectedShot?.shotId} command={run} onChange={update} materials={allMaterials} project={nativeProject}/></fieldset>{readOnly&&selectedShot&&<WorkspaceSoundIntent key={selectedShot.shotId} workspace={workspace} shot={selectedShot} pending={pending} readOnly={readOnly} command={run} onChange={update}/>}</div></aside></WorkspacePreparationLayout></WorkspaceMaterialSelectionProvider></section>:step===2&&!readOnly?<section className="production-workspace-section workspace-editing-opening" aria-label="剪辑工作台连接"><p role="status">{editorOpening?'正在打开剪辑工作台…':workspace.stale?'脚本基准已变化，请先核对素材。':'剪辑工作台尚未连接。'}</p>{!editorOpening&&<Button size="sm" color="primary" isDisabled={pending||workspace.stale} onPress={()=>void openEditor().catch(()=>{})}>重试打开剪辑工作台</Button>}</section>:step===2?<section className="production-workspace-section workspace-editing-entry is-readonly"><header><div><h3>{stage==='production_completed'?'已完成工程':'工程查看'}</h3><p>{stage==='production_completed'?'当前工程已交付，按镜头查看成片与已保存配置。':'当前工程只读，按镜头查看已保存配置。'}</p></div>{workspace.exports?.some(entry=>entry.artifact)&&<Button size="sm" color="secondary" onPress={()=>setStep(3)}>查看成片与交付</Button>}</header><WorkspaceCompletedShots workspace={workspace} project={nativeProject} materials={allMaterials}/></section>:null}
+    {loaded&&workspace&&deliveryVisited&&<Activity mode={step===3&&!session?'visible':'hidden'}><div hidden={step!==3||!!session}><WorkspaceExportPanel workspace={workspace} pending={pending} readOnly={readOnly} command={run} onChange={update}/></div></Activity>}
+--- /dev/null
++++ b/src/local-app/useWorkspaceOperations.ts
+@@ -0,0 +1,87 @@
++import {useEffect,useMemo,useReducer,useRef} from 'react';
++import type {ProductionWorkspace} from '../productionWorkspace';
++import type {OpenChatCutStudioWorkspace} from '../reviews/reviewRevision';
++import type {EmbeddedStudioSession} from './EmbeddedStudioHost';
++
++type Selection={shotId:string;itemId:string};
++type State=
++ |{phase:'ready'|'preparing'|'closed'}
++ |{phase:'opening';session:EmbeddedStudioSession|null;destination:'editor'|'stay'}
++ |{phase:'editing'|'saving'|'closing';session:EmbeddedStudioSession};
++type Prepare={scriptRevisionId:string;boardId?:string;reason?:string;legacyDecision?:'preserve'|'fresh';stayOnCurrentStep?:boolean};
++interface Options {
++ episodeId:string;readOnly:boolean;reopen:boolean;
++ current:()=>ProductionWorkspace|null;
++ command:(name:string,data:unknown,owns:()=>boolean)=>Promise<unknown>;
++ publish:(workspace:ProductionWorkspace)=>void;
++ error:(message:string)=>void;
++ prepared:(stayOnCurrentStep:boolean)=>void;
++ opened:()=>void;
++ closed:(destination:'preparation'|'delivery',selection:Selection|undefined,workspace:ProductionWorkspace)=>void;
++ missingSources:()=>void;
++ recover:()=>void;
++}
++const cancelled=()=>Object.assign(Error('工作区操作已结束，请重新打开当前工程。'),{name:'AbortError'});
++/** ADR-0037: local operation ownership; navigation, business validity and native flush remain independent. */
++export function useWorkspaceOperations(options:Options){
++ const latest=useRef(options);latest.current=options;
++ const owner=useMemo(()=>({state:{phase:'ready'} as State}),[options.episodeId]);
++ const active=useRef(owner);active.current=owner;
++ const [,render]=useReducer((version:number)=>version+1,0);
++ function transition(state:State){owner.state=state;render();}
++ function owns(state:State){return active.current===owner&&owner.state===state&&state.phase!=='closed';}
++ function available(){return active.current===owner&&owner.state.phase!=='closed'&&!latest.current.readOnly;}
++ useEffect(()=>{if(owner.state.phase==='closed')transition({phase:'ready'});return()=>{owner.state={phase:'closed'};};},[owner]);
++ function publish(state:State,result:ProductionWorkspace,source:ProductionWorkspace|null){
++  if(!owns(state)||!available())throw cancelled();
++  const current=latest.current.current();
++  if(result.episodeId!==options.episodeId||source&&(current?.id!==source.id||result.id!==source.id||current.scriptRevisionId!==source.scriptRevisionId||result.revision<current.revision))throw cancelled();
++  latest.current.publish(result);
++ }
++ async function prepare(input:Prepare){
++  if(!available()||owner.state.phase!=='ready')return;
++  const state:State={phase:'preparing'},source=latest.current.current();transition(state);
++  const replan=source&&(source.stale||source.scriptRevisionId!==input.scriptRevisionId);
++  try{
++   const result=await latest.current.command(replan?'replanWorkspace':'prepareWorkspace',{episodeId:options.episodeId,...(input.boardId&&(!source||input.scriptRevisionId===source.scriptRevisionId)?{reviewPackageId:input.boardId}:{}),expectedScriptRevisionId:input.scriptRevisionId,...(replan?{workspaceId:source.id,expectedRevision:source.revision,...(input.reason?{reason:input.reason}:{})}:{}),...(input.legacyDecision?{legacyDecision:input.legacyDecision}:{})},()=>owns(state));
++   if(!owns(state)||!available())return;
++   if(result&&typeof result==='object'&&'planning' in result){latest.current.error('后端仍在使用旧版分镜流程。更新本地服务后，再进入分镜台。');return;}
++   if(!result||!Array.isArray((result as ProductionWorkspace).clips)){latest.current.error('未收到有效的分镜工程，请重试。');return;}
++   publish(state,result as ProductionWorkspace,source);latest.current.prepared(!!input.stayOnCurrentStep);
++  }finally{if(owns(state))transition({phase:'ready'});}
++ }
++ async function open(){
++  const previous=owner.state;
++  if(!available()||previous.phase!=='ready'&&(previous.phase!=='editing'||!latest.current.reopen))return;
++  const source=latest.current.current();if(!source)return;
++  if(source.readiness.placeholders.length||source.readiness.missingSources.length){latest.current.missingSources();return;}
++  const state:State={phase:'opening',session:'session' in previous?previous.session:null,destination:'editor'};transition(state);
++  try{
++   const result=await latest.current.command('openWorkspaceStudio',{episodeId:options.episodeId,workspaceId:source.id,expectedRevision:source.revision},()=>owns(state)&&state.destination==='editor') as {studioUrl:string;workspace:OpenChatCutStudioWorkspace;productionWorkspace:ProductionWorkspace};
++   publish(state,result.productionWorkspace,source);
++   if(state.destination==='stay'){transition(previous);return;}
++   transition({phase:'editing',session:{studioUrl:result.studioUrl,workspace:result.workspace,sourcePath:source.project.relativePath,launchId:crypto.randomUUID()}});latest.current.opened();
++  }finally{if(owns(state)){transition(previous);if(state.destination==='stay')latest.current.recover();}}
++ }
++ function editing(session:EmbeddedStudioSession){
++  const state=owner.state;if(!available()||state.phase!=='editing'||state.session!==session)throw cancelled();
++  const source=latest.current.current();if(!source)throw cancelled();return source;
++ }
++ async function save(session:EmbeddedStudioSession,file:OpenChatCutStudioWorkspace){
++  const source=editing(session),state:State={phase:'saving',session};transition(state);
++  try{
++   const result=await latest.current.command('saveWorkspaceStudio',{episodeId:options.episodeId,workspaceId:source.id,expectedRevision:source.revision,workspaceRelativePath:file.relativePath,projectId:file.projectId,expectedWorkspaceSha256:file.sha256},()=>owns(state)) as OpenChatCutStudioWorkspace&{productionWorkspace:ProductionWorkspace};
++   publish(state,result.productionWorkspace,source);return result;
++  }finally{if(owns(state))transition({phase:'editing',session});}
++ }
++ async function close(session:EmbeddedStudioSession,destination:'preparation'|'delivery',selection?:Selection){
++  const source=editing(session),state:State={phase:'closing',session};transition(state);
++  try{
++   const result=await latest.current.command('closeWorkspaceStudio',{episodeId:options.episodeId,workspaceId:source.id,expectedRevision:source.revision},()=>owns(state)) as ProductionWorkspace;
++   publish(state,result,source);transition({phase:'ready'});latest.current.closed(destination,selection,result);
++  }finally{if(owns(state))transition({phase:'editing',session});}
++ }
++ function cancelOpening(){const state=owner.state;if(owns(state)&&state.phase==='opening'){state.destination='stay';render();}}
++ const state=owner.state;
++ return {prepare,open,save,close,cancelOpening,preparing:state.phase==='preparing',opening:state.phase==='opening'&&state.destination==='editor',session:'session' in state?state.session:null};
++}
+--- /dev/null
++++ b/src/local-app/ProductionWorkspacePanel.operations.test.tsx
+@@ -0,0 +1,71 @@
++import {act,cleanup,fireEvent,render,screen} from '@testing-library/react';
++import {afterEach,expect,it,vi} from 'vitest';
++import {ProductionWorkspacePanel} from './ProductionWorkspacePanel';
++import {WorkspaceNavigationContext} from './catalogNavigation';
++import type {ProductionStep} from '../episodes/episodeCatalogTypes';
++const workspace={id:'w',episodeId:'e',workflowVersion:'four-step/v1',scriptRevisionId:'s',revision:1,contentSha256:'a'.repeat(64),clips:[{id:'clip',itemId:'item',shotId:'S01',text:'第一镜',source:null}],project:{relativePath:'project.json',sha256:'a'.repeat(64),fileSize:2,projectId:'loop-control-e'},readiness:{deliverable:false,placeholders:[],missingSources:[]},stale:false};
++const studio={projectId:'loop-control-e',relativePath:'work/project.json',sha256:'b'.repeat(64),fileSize:2};
++const opened={studioUrl:'http://127.0.0.1:5175/#/editor/loop-control-e',workspace:studio,productionWorkspace:workspace};
++afterEach(()=>{cleanup();vi.unstubAllGlobals();vi.restoreAllMocks();});
++function readWorkspace(){vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace})));}
++it('keeps browser navigation after a delayed Studio open succeeds',async()=>{
++ readWorkspace();let finish!:(value:unknown)=>void;const command=vi.fn(()=>new Promise(resolve=>{finish=resolve;}));
++ const view=(step:ProductionStep)=><WorkspaceNavigationContext.Provider value={{episode:'e',step,tab:'visual',change:()=>{}}}><ProductionWorkspacePanel episodeId="e" title="操作转换" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/></WorkspaceNavigationContext.Provider>;
++ const app=render(view('editing'));fireEvent.click(await screen.findByRole('button',{name:'重试打开剪辑工作台'}));app.rerender(view('delivery'));await screen.findByRole('button',{name:'检查与交付，当前查看'});
++ await act(async()=>finish(opened));expect(screen.getByRole('button',{name:'检查与交付，当前查看'})).toBeTruthy();expect(screen.queryByTitle('OpenChatCut 剪辑工程')).toBeNull();
++});
++it('does not present an old opening failure after browser navigation',async()=>{
++ readWorkspace();let fail!:(value:unknown)=>void;const command=vi.fn(()=>new Promise((_resolve,reject)=>{fail=reject;}));
++ const view=(step:ProductionStep)=><WorkspaceNavigationContext.Provider value={{episode:'e',step,tab:'visual',change:()=>{}}}><ProductionWorkspacePanel episodeId="e" title="操作转换" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/></WorkspaceNavigationContext.Provider>;
++ const app=render(view('editing'));fireEvent.click(await screen.findByRole('button',{name:'重试打开剪辑工作台'}));app.rerender(view('delivery'));await act(async()=>fail(Error('旧打开失败')));expect(screen.queryByText('旧打开失败')).toBeNull();expect(screen.getByRole('button',{name:'检查与交付，当前查看'})).toBeTruthy();
++});
++it('shares one synchronous opening guard with the external Studio action',async()=>{
++ readWorkspace();let open:(()=>void)|null=null,finish!:(value:unknown)=>void;
++ const command=vi.fn(()=>new Promise(resolve=>{finish=resolve;}));render(<ProductionWorkspacePanel episodeId="e" title="操作转换" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}} onStudioActionChange={action=>{open=action;}}/>);await screen.findByText('第一镜');
++ act(()=>{open?.();open?.();});expect(command).toHaveBeenCalledTimes(1);await act(async()=>finish(opened));expect(await screen.findByTitle('OpenChatCut 剪辑工程')).toBeTruthy();
++});
++async function enterStudio(command:(name:string,data:unknown)=>Promise<unknown>){
++ readWorkspace();const app=render(<ProductionWorkspacePanel episodeId="e" title="操作转换" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);
++ fireEvent.click(await screen.findByRole('button',{name:'进入剪辑工作台'}));const frame=await screen.findByTitle('OpenChatCut 剪辑工程') as HTMLIFrameElement;
++ const url=new URL(frame.src),channel=url.searchParams.get('lcChannel'),post=vi.spyOn(frame.contentWindow!,'postMessage');
++ const deliver=(data:Record<string,unknown>)=>fireEvent(window,new MessageEvent('message',{origin:url.origin,source:frame.contentWindow!,data:{channel,projectId:'loop-control-e',...data}}));
++ deliver({type:'loop-control:state',writable:true,revision:1,items:[{id:'item',startFrame:0,durationInFrames:60}],selectedIds:['item'],shots:[{id:'S01',text:'第一镜',itemIds:['item']}]});
++ for(const[message]of post.mock.calls)deliver({type:'loop-control:result',requestId:message.requestId,ok:true});
++ function flush(button='保存'){fireEvent.click(screen.getByRole('button',{name:button}));const request=post.mock.calls.at(-1)![0];expect(request.action).toBe('flush');deliver({type:'loop-control:result',requestId:request.requestId,ok:true});}
++ return{...app,frame,flush};
++}
++it('keeps the same real host after save fails and closes only after a successful save with the newest revision',async()=>{
++ let saves=0;const command=vi.fn(async(name:string,_data:unknown)=>{if(name==='openWorkspaceStudio')return opened;if(name==='saveWorkspaceStudio'){if(++saves===1)throw Error('保存失败，修改保留');return{...studio,sha256:'c'.repeat(64),productionWorkspace:{...workspace,revision:2}};}return{...workspace,revision:3};});
++ const{frame,flush}=await enterStudio(command);flush();await screen.findAllByText('保存失败，修改保留');expect(screen.getByTitle('OpenChatCut 剪辑工程')).toBe(frame);expect(command.mock.calls.map(([name])=>name)).toEqual(['openWorkspaceStudio','saveWorkspaceStudio']);
++ flush('保存并返回分镜台');await screen.findByRole('button',{name:'进入剪辑工作台'});expect(screen.queryByTitle('OpenChatCut 剪辑工程')).toBeNull();expect(command).toHaveBeenLastCalledWith('closeWorkspaceStudio',{episodeId:'e',workspaceId:'w',expectedRevision:2});expect(command.mock.calls[2]).toEqual(['saveWorkspaceStudio',{episodeId:'e',workspaceId:'w',expectedRevision:1,workspaceRelativePath:studio.relativePath,projectId:studio.projectId,expectedWorkspaceSha256:studio.sha256}]);
++ expect(screen.getByRole('row',{name:'镜头 01'}).getAttribute('aria-selected')).toBe('true');
++});
++it('retains the editor and saved file identity after close fails, then retries the existing save/close path',async()=>{
++ let closes=0,saves=0;const command=vi.fn(async(name:string,_data:unknown)=>{if(name==='openWorkspaceStudio')return opened;if(name==='saveWorkspaceStudio')return{...studio,sha256:'c'.repeat(64),productionWorkspace:{...workspace,revision:++saves+1}};if(++closes===1)throw Error('关闭失败，工程保留');return{...workspace,revision:4};});
++ const{frame,flush}=await enterStudio(command);flush();await screen.findAllByText('关闭失败，工程保留');expect(screen.getByTitle('OpenChatCut 剪辑工程')).toBe(frame);
++ flush();await screen.findByRole('button',{name:'检查与交付，当前查看'});expect(screen.queryByTitle('OpenChatCut 剪辑工程')).toBeNull();expect(command.mock.calls[3]).toEqual(['saveWorkspaceStudio',{episodeId:'e',workspaceId:'w',expectedRevision:2,workspaceRelativePath:studio.relativePath,projectId:studio.projectId,expectedWorkspaceSha256:'c'.repeat(64)}]);expect(command.mock.calls[4]).toEqual(['closeWorkspaceStudio',{episodeId:'e',workspaceId:'w',expectedRevision:3}]);
++});
++it('keeps an explicit viewing step on refresh without opening the saved native project',async()=>{
++ readWorkspace();const command=vi.fn(),panel=<WorkspaceNavigationContext.Provider value={{episode:'e',step:'editing',tab:'visual',change:()=>{}}}><ProductionWorkspacePanel episodeId="e" title="操作转换" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/></WorkspaceNavigationContext.Provider>;
++ const first=render(panel);await screen.findByRole('button',{name:'重试打开剪辑工作台'});first.unmount();render(panel);await screen.findByRole('button',{name:'重试打开剪辑工作台'});expect(command).not.toHaveBeenCalled();
++});
++it('ignores a pending open result if the current episode becomes read-only',async()=>{
++ readWorkspace();let finish!:(value:unknown)=>void;const command=vi.fn(()=>new Promise(resolve=>{finish=resolve;})),props={episodeId:'e',title:'操作转换',scriptRevisionId:'s',materials:[],command,onLegacy:()=>{}};
++ const app=render(<ProductionWorkspacePanel {...props}/>);fireEvent.click(await screen.findByRole('button',{name:'进入剪辑工作台'}));app.rerender(<ProductionWorkspacePanel {...props} historicalReadOnly/>);await act(async()=>finish(opened));expect(screen.queryByTitle('OpenChatCut 剪辑工程')).toBeNull();expect(command).toHaveBeenCalledTimes(1);
++});
++it('retains the in-flight lock after navigation and uses the completed open revision on the next explicit open',async()=>{
++ readWorkspace();let finish!:(value:unknown)=>void,open:(()=>void)|null=null;let calls=0;
++ const command=vi.fn(async()=>++calls===1?await new Promise(resolve=>{finish=resolve;}):{...opened,productionWorkspace:{...workspace,revision:2}});
++ const view=(step:ProductionStep)=><WorkspaceNavigationContext.Provider value={{episode:'e',step,tab:'visual',change:()=>{}}}><ProductionWorkspacePanel episodeId="e" title="操作转换" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}} onStudioActionChange={action=>{open=action;}}/></WorkspaceNavigationContext.Provider>;
++ const app=render(view('editing'));fireEvent.click(await screen.findByRole('button',{name:'重试打开剪辑工作台'}));app.rerender(view('delivery'));await screen.findByRole('button',{name:'检查与交付，当前查看'});act(()=>open?.());expect(command).toHaveBeenCalledTimes(1);
++ await act(async()=>finish({...opened,productionWorkspace:{...workspace,revision:2}}));expect(screen.queryByTitle('OpenChatCut 剪辑工程')).toBeNull();act(()=>open?.());await screen.findByTitle('OpenChatCut 剪辑工程');expect(command).toHaveBeenLastCalledWith('openWorkspaceStudio',{episodeId:'e',workspaceId:'w',expectedRevision:2});
++});
++it('recovers the authoritative revision after a cancelled open fails without replaying it',async()=>{
++ let reads=0;vi.stubGlobal('fetch',vi.fn(async(path:string)=>Response.json({workspace:path.endsWith('/workspace')&&++reads>1?{...workspace,revision:2}:workspace})));let fail!:(value:unknown)=>void;
++ const command=vi.fn(()=>new Promise((_resolve,reject)=>{fail=reject;}));const view=(step:ProductionStep)=><WorkspaceNavigationContext.Provider value={{episode:'e',step,tab:'visual',change:()=>{}}}><ProductionWorkspacePanel episodeId="e" title="操作转换" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/></WorkspaceNavigationContext.Provider>;
++ const app=render(view('editing'));fireEvent.click(await screen.findByRole('button',{name:'重试打开剪辑工作台'}));app.rerender(view('delivery'));await act(async()=>fail(Error('响应丢失')));await screen.findByText('先导出最终视频，检查后确认这份文件。');expect(reads).toBe(2);expect(command).toHaveBeenCalledTimes(1);expect(screen.queryByText('响应丢失')).toBeNull();expect(screen.getByRole('button',{name:'检查与交付，当前查看'})).toBeTruthy();
++});
++it('retries preparation explicitly after failure and does not add another automatic attempt',async()=>{
++ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:null})));let prepares=0;const command=vi.fn(async()=>{if(++prepares===1)throw Error('准备失败');return workspace;});
++ render(<ProductionWorkspacePanel episodeId="e" title="操作转换" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);await screen.findByRole('button',{name:'重试'});expect(command).toHaveBeenCalledTimes(1);fireEvent.click(screen.getByRole('button',{name:'重试'}));await screen.findByText('第一镜');expect(command).toHaveBeenCalledTimes(2);expect(command).toHaveBeenLastCalledWith('prepareWorkspace',{episodeId:'e',expectedScriptRevisionId:'s'});
++});
+--- /dev/null
++++ b/docs/adr/0037-workspace-operation-transitions.md
+@@ -0,0 +1,15 @@
++# ADR-0037：四步工作区操作转换
++
++状态：Accepted。日期：2026-11-10。Owner 批准状态机第 5 项，不提交、不推送。
++
++## 决定
++
++在局部 `useWorkspaceOperations` 集中准备、打开、保存、关闭及其异步转换。操作状态为 ready、preparing、opening、editing、saving、closing；每次进入生产单具有独立 owner，同步状态兼任互斥守卫。保存或关闭失败回到同一 editing 会话，打开失败恢复原会话或 ready；准备失败回到 ready，保留原草稿与工程。没有通用状态机、依赖或新持久化协议。
++
++导航步骤、只读、加载、工程有效性和稿件状态仍由原入口负责，不合并进操作枚举。浏览器返回／深链接改变查看步骤时，结束待打开的本地意图，保持在途互斥直至返回。成功的完整工程读回仍通过 owner／来源／revision 守卫更新当前工程，但不创建新会话或更改步骤；报错则触发原加载流程恢复，不重发打开命令。已发出的服务端命令不能撤回。卸载或切换生产单后，旧操作不能发布工程、导航、会话或错误；回到生产单由原权威读取恢复，不自动重发命令。
++
++原命令及参数保持，准备保留首次／replan、旧工程 preserve／fresh 决策及兼容响应提示；打开仍检查占位和缺失来源。保存仍先由真实 EmbeddedStudioHost flush，再以来源工程、预期 revision 和文件 SHA 保存；关闭是独立命令，成功后才退出会话并恢复所选镜头。失败保留当前编辑器及原错误恢复路径，不重建工程、不放宽只读、stale 或恢复限制。原 legacy adopt 与内容、导航和读取协议保留。
++
++## 验证
++
++以 ProductionWorkspacePanel、真实导航上下文、EmbeddedStudioHost 消息和命令为公开接口；不 mock 操作模块。验证深链接、刷新、返回、延迟打开、重复操作、准备／打开／保存／关闭失败、保存后关闭使用最新 revision 和返回镜头。浏览器使用真实宿主及受控 iframe 协议／HTTP；不将模拟 iframe flush 描述为真实 OpenChatCut 持久化验证，不操作正式数据或供应商。

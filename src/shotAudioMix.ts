@@ -29,13 +29,6 @@ export interface ShotAudioMixContract {
   };
 }
 
-export const bgmDuckingLabels: Record<BgmDuckingLevel, string> = {
-  off: "关闭",
-  light: "轻",
-  medium: "中",
-  strong: "强",
-};
-
 export const bgmDuckingDepthDb: Record<BgmDuckingLevel, number> = {
   off: 0,
   light: -6,

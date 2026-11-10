@@ -1,0 +1,12 @@
+[
+  {
+    "scenario": "empty-directory",
+    "temporaryVolumeParent": "/private/tmp/loop-t06-volume-noPVwA",
+    "removed": true
+  },
+  {
+    "scenario": "unknown-content",
+    "temporaryVolumeParent": "/private/tmp/loop-t06-volume-y11F0Z",
+    "removed": true
+  }
+]

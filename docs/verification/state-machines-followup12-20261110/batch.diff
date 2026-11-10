@@ -1,0 +1,202 @@
+--- a/PLAN.md
++++ b/PLAN.md
+@@ -1,3 +1,14 @@
++# 状态机专项复查后第 1、2 项（2026-11-10）
++
++仅实施 M26 样音归属与 M24 模型发现／编辑基线；保留业务规则、首次合成确认、CAS 和按版本恢复限制，不提交推送。初始 HEAD 951a368e，执行期间另一会话完成两笔视觉提交至 62885252，原样保留。验证通过真实组件、客户端 HTTP 与外部回调，不 mock 私有实现。
++
++- [x] 公开回归先复现旧样音复用、干净刷新和并发启用基线问题。
++- [x] 样音按来源隔离播放器／请求／确认；模型目录与编辑基线分开，保留草稿与原 CAS。
++- [x] 64 条定向、类型、前后端顺序构建、7 条隔离浏览器路径与宽窄屏通过；双轴只读审查均无发现。
++- [x] 最终全量测试一次，归档本批差异并核对保护范围，关闭本轮预览与浏览器。
++
++完成：全量一次 256 文件，1915 通过、1 跳过、2 失败；两条为并行素材栏提交移除标题后的旧断言。单文件复跑及隔离换回本批两个产品文件均为相同 2 失败、36 通过，保留该限制，不顺手改动。报告：`docs/verification/state-machines-followup12-20261110/REPORT.md`。真实供应商与业务数据库未调用；客户端取消不能撤回已发出的供应商请求。重开模型弹窗仍拒绝跨版本草稿，不新增强制覆盖或自动恢复。
++
+ # 四项质感与本期素材栏交付（2026-11-10）
+ 
+ 用户批准仅迁移图标规范、素材预览、菜单弹窗、反馈与深色，随后批准本期素材栏精简、导入字体／图标对齐及底栏40px；本轮授权独立提交、推送并清理已完成用途的 Demo。其余业务及模型选择器改动保留，不纳入提交。
+--- a/docs/adr/README.md
++++ b/docs/adr/README.md
+@@ -58,3 +58,5 @@
+ - [ADR-0036：脚本保存与启动的分步恢复](0036-script-save-start-recovery.md)
+ 
+ - [ADR-0037：四步工作区操作转换](0037-workspace-operation-transitions.md)
++
++- [ADR-0038：样音选择归属与模型编辑基线](0038-speech-sample-and-model-edit-ownership.md)
+--- a/src/connections/ConnectionModelsDialog.test.tsx
++++ b/src/connections/ConnectionModelsDialog.test.tsx
+@@ -1,4 +1,4 @@
+-import {act,cleanup,fireEvent,render,screen,within} from '@testing-library/react';
++import {act,cleanup,fireEvent,render,screen,within,waitFor} from '@testing-library/react';
+ import userEvent from '@testing-library/user-event';
+ import {afterEach,expect,it,vi} from 'vitest';
+ import {ConnectionModelsDialog} from './ConnectionModelsDialog';
+@@ -69,3 +69,30 @@
+ it('restores keyboard focus after an asynchronous failed save loses the disabled submit button',async()=>{
+  const user=userEvent.setup();let reject!:(cause:Error)=>void;render(<ConnectionModelsDialog connection={{id:'c',name:'Images'}} onClose={vi.fn()} onReadModels={async()=>data} onSaveModels={()=>new Promise((_resolve,fail)=>{reject=fail;})}/>);await user.click(await screen.findByRole('checkbox',{name:'gpt-image-2'}));await user.click(screen.getByRole('button',{name:'保存设置'}));act(()=>{document.body.tabIndex=-1;document.body.focus();});await act(async()=>reject(Error('保存冲突')));expect(await screen.findByRole('alert')).toHaveProperty('textContent','保存冲突');expect(document.activeElement).toBe(screen.getByRole('dialog',{name:'Images 模型设置'}));await user.keyboard('{Escape}');expect(screen.getByRole('dialog',{name:'关闭前处理修改'})).toBeTruthy();document.body.removeAttribute('tabindex');
+ });
++it('refreshes an unedited enabled selection from the server instead of creating a draft against a newer revision',async()=>{
++ const initial={...data,revision:'r1',models:[...data.models,{id:'model-2',adapted:true,listed:true,capability:'图片'}]},newer={...initial,revision:'r2',enabledModels:['model-2']},save=vi.fn();
++ render(<ConnectionModelsDialog connection={{id:'c',name:'Images'}} onClose={vi.fn()} onReadModels={async()=>initial} onSyncModels={async()=>newer} onSaveModels={save}/>);
++ await screen.findByRole('checkbox',{name:'gpt-image-2'});expect(screen.getByRole('button',{name:'保存设置'})).toHaveProperty('disabled',true);fireEvent.click(screen.getByRole('button',{name:'读取模型'}));
++ await waitFor(()=>expect(screen.getByRole('checkbox',{name:'model-2'})).toHaveProperty('checked',true));expect(screen.getByText('尚未修改')).toBeTruthy();expect(screen.getByRole('checkbox',{name:'gpt-image-2'})).toHaveProperty('checked',false);expect(screen.getByRole('button',{name:'保存设置'})).toHaveProperty('disabled',true);expect(save).not.toHaveBeenCalled();
++});
++it('preserves a dirty selection and its original version after discovery observes a concurrent settings change',async()=>{
++ const initial={...data,revision:'r1',models:[...data.models,...['model-2','model-3'].map(id=>({id,adapted:true,listed:true,capability:'图片'}))]},newer={...initial,revision:'r2',enabledModels:['model-2']},save=vi.fn(),keep=vi.fn();
++ render(<ConnectionModelsDialog connection={{id:'c',name:'Images'}} onClose={vi.fn()} onReadModels={async()=>initial} onSyncModels={async()=>newer} onSaveModels={save} onDraftChange={keep}/>);
++ fireEvent.click(await screen.findByRole('checkbox',{name:'gpt-image-2'}));fireEvent.click(screen.getByRole('checkbox',{name:'model-3'}));fireEvent.click(screen.getByRole('button',{name:'读取模型'}));
++ expect((await screen.findByRole('alert')).textContent).toContain('其他窗口');expect(screen.getByRole('checkbox',{name:'model-3'})).toHaveProperty('checked',true);expect(screen.getByRole('button',{name:'保存设置'})).toHaveProperty('disabled',true);fireEvent.click(screen.getByRole('button',{name:'保存设置'}));expect(save).not.toHaveBeenCalled();
++ fireEvent.click(screen.getByRole('button',{name:'取消'}));fireEvent.click(screen.getByRole('button',{name:'保留修改并关闭'}));expect(keep).toHaveBeenLastCalledWith({versionId:'v',revision:'r1',enabledModels:['model-3']});
++});
++it('keeps a real draft while discovery advances only the revision and saves against that unchanged server selection',async()=>{
++ const initial={...data,revision:'r1'},newer={...data,revision:'r2'},save=vi.fn().mockResolvedValue({...newer,enabledModels:[]});
++ render(<ConnectionModelsDialog connection={{id:'c',name:'Images'}} onClose={vi.fn()} onReadModels={async()=>initial} onSyncModels={async()=>newer} onSaveModels={save}/>);fireEvent.click(await screen.findByRole('checkbox',{name:'gpt-image-2'}));fireEvent.click(screen.getByRole('button',{name:'读取模型'}));await waitFor(()=>expect(screen.getByRole('button',{name:'保存设置'})).toHaveProperty('disabled',false));
++ expect(screen.getByRole('checkbox',{name:'gpt-image-2'})).toHaveProperty('checked',false);expect(screen.queryByRole('alert')).toBeNull();fireEvent.click(screen.getByRole('button',{name:'保存设置'}));await waitFor(()=>expect(save).toHaveBeenCalledExactlyOnceWith({connectionId:'c',versionId:'v',revision:'r2',enabledModels:[]}));
++});
++it('keeps the draft when a later server change rejects save and never retries with another baseline',async()=>{
++ const initial={...data,revision:'r1'},save=vi.fn().mockRejectedValue(Error('模型设置已被修改，请重新打开后保存。')),keep=vi.fn(),close=vi.fn();
++ render(<ConnectionModelsDialog connection={{id:'c',name:'Images'}} onClose={close} onReadModels={async()=>initial} onSaveModels={save} onDraftChange={keep}/>);fireEvent.click(await screen.findByRole('checkbox',{name:'gpt-image-2'}));fireEvent.click(screen.getByRole('button',{name:'保存设置'}));await screen.findByRole('alert');expect(save).toHaveBeenCalledExactlyOnceWith({connectionId:'c',versionId:'v',revision:'r1',enabledModels:[]});expect(close).not.toHaveBeenCalled();expect(screen.getByRole('checkbox',{name:'gpt-image-2'})).toHaveProperty('checked',false);
++ fireEvent.click(screen.getByRole('button',{name:'取消'}));fireEvent.click(screen.getByRole('button',{name:'保留修改并关闭'}));expect(keep).toHaveBeenLastCalledWith({versionId:'v',revision:'r1',enabledModels:[]});
++});
++it('does not transplant a draft when a discovery response belongs to another connection version',async()=>{
++ const initial={...data,revision:'r1'},keep=vi.fn(),save=vi.fn();render(<ConnectionModelsDialog connection={{id:'c',name:'Images'}} onClose={vi.fn()} onReadModels={async()=>initial} onSyncModels={async()=>({...data,versionId:'rotated',revision:'r2'})} onSaveModels={save} onDraftChange={keep}/>);
++ fireEvent.click(await screen.findByRole('checkbox',{name:'gpt-image-2'}));fireEvent.click(screen.getByRole('button',{name:'读取模型'}));expect((await screen.findByRole('alert')).textContent).toContain('连接版本已变化');expect(screen.getByRole('checkbox',{name:'gpt-image-2'})).toHaveProperty('checked',false);fireEvent.click(screen.getByRole('button',{name:'取消'}));fireEvent.click(screen.getByRole('button',{name:'保留修改并关闭'}));expect(keep).toHaveBeenLastCalledWith({versionId:'v',revision:'r1',enabledModels:[]});expect(save).not.toHaveBeenCalled();
++});
+--- a/src/connections/ConnectionModelsDialog.tsx
++++ b/src/connections/ConnectionModelsDialog.tsx
+@@ -14,24 +14,37 @@
+  onSaveModels?:(input:ConnectionModelRequest)=>Promise<ConnectionModelSettings>;
+ }
+ export type ConnectionModelDraft={versionId:string;revision:string;enabledModels:string[]};
++const sameModels=(a:string[],b:string[])=>JSON.stringify([...a].sort())===JSON.stringify([...b].sort());
+ export function ConnectionModelsDialog({connection,onClose,onReadModels,onSyncModels,onSaveModels,draft,onDraftChange}:{connection:{id:string;name:string};onClose:()=>void;draft?:ConnectionModelDraft;onDraftChange?:(draft:ConnectionModelDraft|null)=>void}&ConnectionModelActions){
+- const [settings,setSettings]=useState<ConnectionModelSettings|null>(null),[enabled,setEnabled]=useState<string[]>([]);
++ const [settings,setSettings]=useState<ConnectionModelSettings|null>(null),[baseline,setBaseline]=useState<ConnectionModelDraft|null>(null),[enabled,setEnabled]=useState<string[]>([]);
+  const [operation,setOperation]=useState<'loading'|'syncing'|'saving'|''>('loading'),[error,setError]=useState('');
+  const [query,setQuery]=useState(''),[filter,setFilter]=useState('all'),[capability,setCapability]=useState('all');
+  const lock=useRef(false),dialogRef=useRef<HTMLDivElement>(null),busy=operation!=='';
+  useEffect(()=>{if(!busy&&error&&document.activeElement===document.body)dialogRef.current?.focus();},[busy,error]);
+  const [leavePrompt,setLeavePrompt]=useState(false),[draftNotice,setDraftNotice]=useState('');
+  function requestClose(){if(busy)return;if(changed)setLeavePrompt(true);else onClose();}
+- function leave(keep:boolean){if(keep&&settings)onDraftChange?.({versionId:settings.versionId,revision:settings.revision,enabledModels:enabled});else onDraftChange?.(null);onClose();}
++ function leave(keep:boolean){if(keep&&baseline)onDraftChange?.({versionId:baseline.versionId,revision:baseline.revision,enabledModels:enabled});else onDraftChange?.(null);onClose();}
+ 
+- async function load(){if(lock.current||!onReadModels)return;lock.current=true;setOperation('loading');setError('');try{const data=await onReadModels(connection.id);setSettings(data);if(draft&&draft.versionId===data.versionId&&draft.revision===data.revision)setEnabled(draft.enabledModels);else{setEnabled(data.enabledModels);if(draft){onDraftChange?.(null);setDraftNotice('保留的修改所依据的版本已变化，已读取当前设置。');}}}catch(e){setError(e instanceof Error?e.message:'模型设置读取失败，请重试。');}finally{lock.current=false;setOperation('');}}
++ async function load(){if(lock.current||!onReadModels)return;lock.current=true;setOperation('loading');setError('');try{const data=await onReadModels(connection.id);setSettings(data);setBaseline(data);if(draft&&draft.versionId===data.versionId&&draft.revision===data.revision)setEnabled(draft.enabledModels);else{setEnabled(data.enabledModels);if(draft){onDraftChange?.(null);setDraftNotice('保留的修改所依据的版本已变化，已读取当前设置。');}}}catch(e){setError(e instanceof Error?e.message:'模型设置读取失败，请重试。');}finally{lock.current=false;setOperation('');}}
+  useEffect(()=>{void load();},[connection.id]);
+- async function sync(){if(lock.current||!settings||!onSyncModels)return;lock.current=true;setOperation('syncing');setError('');try{const result=await onSyncModels({connectionId:connection.id,versionId:settings.versionId});setSettings(result);}catch(e){setError(e instanceof Error?e.message:'模型目录读取失败，请重试。');}finally{lock.current=false;setOperation('');}}
+- async function save(){if(lock.current||!settings||!onSaveModels)return;lock.current=true;setOperation('saving');setError('');try{const result=await onSaveModels({connectionId:connection.id,versionId:settings.versionId,revision:settings.revision,enabledModels:enabled});if(!result||result.connectionId!==connection.id||result.versionId!==settings.versionId)throw Error('模型设置保存未确认完成，请重新读取后核对。');onDraftChange?.(null);onClose();}catch(e){setError(e instanceof Error?e.message:'模型设置保存失败，请重试。');}finally{lock.current=false;setOperation('');}}
++ async function sync(){
++  if(lock.current||!baseline||!onSyncModels)return;lock.current=true;setOperation('syncing');setError('');
++  try{
++   const result=await onSyncModels({connectionId:connection.id,versionId:baseline.versionId});
++   if(result.connectionId!==connection.id||result.versionId!==baseline.versionId)throw Error('连接版本已变化，请重新打开模型设置；本次勾选已保留。');
++   setSettings(result);
++   // Discovery may advance revision without changing enabled models. Rebase only an unchanged edit baseline.
++   if(!changed){setBaseline(result);setEnabled(result.enabledModels);}
++   else if(sameModels(result.enabledModels,baseline.enabledModels))setBaseline(result);
++   else setError('启用模型已在其他窗口修改，本次勾选已保留。请重新打开设置核对后再保存。');
++  }catch(e){setError(e instanceof Error?e.message:'模型目录读取失败，请重试。');}finally{lock.current=false;setOperation('');}
++ }
++ async function save(){if(lock.current||!baseline||conflict||!onSaveModels)return;lock.current=true;setOperation('saving');setError('');try{const result=await onSaveModels({connectionId:connection.id,versionId:baseline.versionId,revision:baseline.revision,enabledModels:enabled});if(!result||result.connectionId!==connection.id||result.versionId!==baseline.versionId)throw Error('模型设置保存未确认完成，请重新读取后核对。');onDraftChange?.(null);onClose();}catch(e){setError(e instanceof Error?e.message:'模型设置保存失败，请重试。');}finally{lock.current=false;setOperation('');}}
+  const visible=settings?.models.filter(m=>(filter==='all'||filter==='adapted'&&m.adapted||filter==='enabled'&&enabled.includes(m.id)||filter==='unadapted'&&!m.adapted)&&(capability==='all'||m.capability===capability)&&m.id.toLowerCase().includes(query.trim().toLowerCase()))??[];
+- const changed=settings&&JSON.stringify([...settings.enabledModels].sort())!==JSON.stringify([...enabled].sort());
++ const changed=baseline&&!sameModels(baseline.enabledModels,enabled);
++ const conflict=!!settings&&!!baseline&&(!sameModels(settings.enabledModels,baseline.enabledModels)||settings.versionId!==baseline.versionId);
+  useEffect(()=>{if(settings&&!changed)onDraftChange?.(null);},[Boolean(settings),changed]);
+- useWorkspaceLeaveEntry({kind:'models',dirty:()=>Boolean(changed),keep:()=>{leave(true);return true;},discard:()=>leave(false),beforeUnload:()=>{if(changed&&settings)onDraftChange?.({versionId:settings.versionId,revision:settings.revision,enabledModels:enabled});}});
++ useWorkspaceLeaveEntry({kind:'models',dirty:()=>Boolean(changed),keep:()=>{leave(true);return true;},discard:()=>leave(false),beforeUnload:()=>{if(changed&&baseline)onDraftChange?.({versionId:baseline.versionId,revision:baseline.revision,enabledModels:enabled});}});
+  return <><ModalOverlay className="product-ui reference-connections-overlay" isOpen isDismissable={!busy&&!leavePrompt} isKeyboardDismissDisabled={busy||leavePrompt} onOpenChange={open=>{if(!open)requestClose();}}><Modal className="reference-connections-modal"><Dialog ref={dialogRef} aria-label={`${connection.name} 模型设置`} className="dan-ui connection-workspace reference-connections reference-connections-dialog">
+   <header className="reference-connections-dialog-header"><h2>模型设置</h2><Button color="tertiary" size="sm" iconLeading={X} aria-label="关闭模型设置" isDisabled={busy} onPress={requestClose}/></header>
+   <div className="connection-models-body">
+@@ -48,6 +61,6 @@
+    </>}
+    {error&&<p className="form-error" role="alert">{error}</p>}{!settings&&!busy&&<Button color="secondary" size="sm" onPress={()=>void load()}>重新读取设置</Button>}
+   </div>
+-  <footer className="reference-connections-dialog-footer"><Button color="secondary" size="sm" isDisabled={busy} onPress={requestClose}>取消</Button><Button color="primary" size="sm" isLoading={operation==='saving'} showTextWhileLoading isDisabled={busy||!changed||!onSaveModels} onPress={()=>void save()}>保存设置</Button></footer>
++  <footer className="reference-connections-dialog-footer"><Button color="secondary" size="sm" isDisabled={busy} onPress={requestClose}>取消</Button><Button color="primary" size="sm" isLoading={operation==='saving'} showTextWhileLoading isDisabled={busy||conflict||!changed||!onSaveModels} onPress={()=>void save()}>保存设置</Button></footer>
+  </Dialog></Modal></ModalOverlay>{leavePrompt&&<ConnectionDraftLeaveDialog onContinue={()=>setLeavePrompt(false)} onDiscard={()=>leave(false)} onKeep={onDraftChange?()=>leave(true):undefined}/>}</>;
+ }
+--- a/src/local-app/WorkspaceSpeechSample.tsx
++++ b/src/local-app/WorkspaceSpeechSample.tsx
+@@ -8,7 +8,14 @@
+ 
+ let activeSample:HTMLAudioElement|undefined;
+ 
+-export function WorkspaceSpeechSample({label,selection,voice,rate,disabled,buttonColor='secondary'}:{label:string;selection:ProductionSelection|null;voice:string;rate:number;disabled:boolean;buttonColor?:'secondary'|'tertiary'}){
++type Props={label:string;selection:ProductionSelection|null;voice:string;rate:number;disabled:boolean;buttonColor?:'secondary'|'tertiary'};
++export function WorkspaceSpeechSample(props:Props){
++ const {selection,voice}=props;
++ const identity=JSON.stringify([selection?.capability,selection?.provider,selection?.adapter,selection?.model,selection?.preset,selection?.connectionVersionId,voice]);
++ // Playback speed is local; a different source owns a new player, request and confirmation.
++ return <SpeechSample key={identity} {...props}/>;
++}
++function SpeechSample({label,selection,voice,rate,disabled,buttonColor='secondary'}:Props){
+  const audio=useRef<HTMLAudioElement>(null),request=useRef<AbortController|null>(null);
+  const [busy,setBusy]=useState(false),[playing,setPlaying]=useState(false),[confirm,setConfirm]=useState(false),[error,setError]=useState('');
+  const rateRef=useRef(rate);
+--- /dev/null
++++ b/src/local-app/WorkspaceSpeechSample.lifecycle.test.tsx
+@@ -0,0 +1,44 @@
++import {act,cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
++import {afterEach,expect,it,vi} from 'vitest';
++import {WorkspaceSpeechSample} from './WorkspaceSpeechSample';
++const selection={capability:'speech',provider:'volcengine_tts',adapter:'volcengine_tts',model:'seed-tts-2.0',connectionVersionId:'voice-connection'} as const;
++const props={label:'当前',selection,rate:1,disabled:false};
++afterEach(()=>{cleanup();vi.restoreAllMocks();vi.unstubAllGlobals();});
++it('requests the current voice after a selection change instead of replaying the cached previous voice',async()=>{
++ const voices:string[]=[],played:string[]=[];
++ vi.stubGlobal('fetch',vi.fn(async(path:string,init?:RequestInit)=>{if(path.endsWith('/session'))return Response.json({csrfToken:'test-csrf'});const body=JSON.parse(String(init?.body));voices.push(body.voice);return Response.json({audioBase64:body.voice==='voice-A'?'dm9pY2UtQQ==':'dm9pY2UtQg=='});}));
++ vi.spyOn(HTMLMediaElement.prototype,'play').mockImplementation(function(this:HTMLMediaElement){played.push(this.src);return Promise.resolve();});vi.spyOn(HTMLMediaElement.prototype,'pause').mockImplementation(()=>{});
++ const view=render(<WorkspaceSpeechSample {...props} voice="voice-A"/>);fireEvent.click(screen.getByRole('button',{name:'试听当前音色'}));await waitFor(()=>expect(played).toHaveLength(1));
++ view.rerender(<WorkspaceSpeechSample {...props} voice="voice-B"/>);fireEvent.click(screen.getByRole('button',{name:'试听当前音色'}));await waitFor(()=>expect(played).toHaveLength(2));expect(voices).toEqual(['voice-A','voice-B']);expect(played[1]).toBe('data:audio/mpeg;base64,dm9pY2UtQg==');
++});
++it('does not let a late previous voice response play or unlock the current voice request',async()=>{
++ const requests:Array<{voice:string;signal:AbortSignal|null|undefined;finish:(response:Response)=>void}>=[];
++ vi.stubGlobal('fetch',vi.fn(async(path:string,init?:RequestInit)=>path.endsWith('/session')?Response.json({csrfToken:'test-csrf'}):new Promise<Response>(finish=>{requests.push({voice:JSON.parse(String(init?.body)).voice,signal:init?.signal,finish});})));
++ const play=vi.spyOn(HTMLMediaElement.prototype,'play').mockResolvedValue();vi.spyOn(HTMLMediaElement.prototype,'pause').mockImplementation(()=>{});
++ const view=render(<WorkspaceSpeechSample {...props} voice="voice-A"/>);fireEvent.click(screen.getByRole('button',{name:'试听当前音色'}));await waitFor(()=>expect(requests).toHaveLength(1));
++ view.rerender(<WorkspaceSpeechSample {...props} voice="voice-B"/>);expect(requests[0].signal?.aborted).toBe(true);fireEvent.click(screen.getByRole('button',{name:'试听当前音色'}));await waitFor(()=>expect(requests).toHaveLength(2));
++ await act(async()=>requests[0].finish(Response.json({audioBase64:'dm9pY2UtQQ=='})));expect(play).not.toHaveBeenCalled();expect(screen.getByRole('button',{name:'试听当前音色'})).toHaveProperty('disabled',true);
++ await act(async()=>requests[1].finish(Response.json({audioBase64:'dm9pY2UtQg=='})));expect(play).toHaveBeenCalledOnce();expect(screen.getByRole('button',{name:'试听当前音色'})).toHaveProperty('disabled',false);
++});
++it('isolates A to B to A visits, including old errors and completion',async()=>{
++ const requests:Array<{finish:(response:Response)=>void;fail:(error:Error)=>void}>=[];vi.stubGlobal('fetch',vi.fn(async(path:string)=>path.endsWith('/session')?Response.json({csrfToken:'test-csrf'}):new Promise<Response>((finish,fail)=>requests.push({finish,fail}))));
++ const play=vi.spyOn(HTMLMediaElement.prototype,'play').mockResolvedValue();vi.spyOn(HTMLMediaElement.prototype,'pause').mockImplementation(()=>{});const view=render(<WorkspaceSpeechSample {...props} voice="voice-A"/>);
++ for(const [index,voice] of ['voice-A','voice-B','voice-A'].entries()){view.rerender(<WorkspaceSpeechSample {...props} voice={voice}/>);fireEvent.click(screen.getByRole('button',{name:'试听当前音色'}));await waitFor(()=>expect(requests).toHaveLength(index+1));}
++ await act(async()=>{requests[0].finish(Response.json({audioBase64:'b2xk'}));requests[1].fail(Error('旧音色失败'));});expect(play).not.toHaveBeenCalled();expect(screen.queryByRole('alert')).toBeNull();expect(screen.getByRole('button',{name:'试听当前音色'})).toHaveProperty('disabled',true);
++ await act(async()=>requests[2].finish(Response.json({audioBase64:'bmV3'})));expect(play).toHaveBeenCalledOnce();
++});
++it.each([{model:'another-model'},{connectionVersionId:'another-connection'}])('does not reuse a player across a source selection change %j',async patch=>{
++ const bodies:Array<{selection:Record<string,string>}> =[];vi.stubGlobal('fetch',vi.fn(async(path:string,init?:RequestInit)=>{if(path.endsWith('/session'))return Response.json({csrfToken:'test-csrf'});bodies.push(JSON.parse(String(init?.body)));return Response.json({audioBase64:'c2FtcGxl'});}));
++ const play=vi.spyOn(HTMLMediaElement.prototype,'play').mockResolvedValue();vi.spyOn(HTMLMediaElement.prototype,'pause').mockImplementation(()=>{});const view=render(<WorkspaceSpeechSample {...props} voice="voice-A"/>);fireEvent.click(screen.getByRole('button',{name:'试听当前音色'}));await waitFor(()=>expect(play).toHaveBeenCalledOnce());
++ view.rerender(<WorkspaceSpeechSample {...props} voice="voice-A" selection={{...selection,...patch}}/>);fireEvent.click(screen.getByRole('button',{name:'试听当前音色'}));await waitFor(()=>expect(play).toHaveBeenCalledTimes(2));expect(bodies).toHaveLength(2);expect(bodies[1].selection).toEqual({...selection,...patch});
++});
++it('keeps each first synthesis explicitly confirmed and ignores an old synthesis reply',async()=>{
++ const bodies:Array<{voice:string;generate:boolean}>=[];let old!:(response:Response)=>void;vi.stubGlobal('fetch',vi.fn(async(path:string,init?:RequestInit)=>{if(path.endsWith('/session'))return Response.json({csrfToken:'test-csrf'});const body=JSON.parse(String(init?.body));bodies.push(body);return body.generate?new Promise<Response>(resolve=>{old=resolve;}):Response.json({audioBase64:null});}));
++ const play=vi.spyOn(HTMLMediaElement.prototype,'play').mockResolvedValue();vi.spyOn(HTMLMediaElement.prototype,'pause').mockImplementation(()=>{});const view=render(<WorkspaceSpeechSample {...props} voice="voice-A"/>);fireEvent.click(screen.getByRole('button',{name:'试听当前音色'}));await screen.findByRole('dialog',{name:'准备音色样音'});fireEvent.click(screen.getByRole('button',{name:'确认合成并试听'}));await waitFor(()=>expect(bodies).toHaveLength(2));
++ view.rerender(<WorkspaceSpeechSample {...props} voice="voice-B"/>);expect(screen.queryByRole('dialog')).toBeNull();fireEvent.click(screen.getByRole('button',{name:'试听当前音色'}));await screen.findByRole('dialog',{name:'准备音色样音'});await act(async()=>old(Response.json({audioBase64:'b2xk'})));
++ expect(play).not.toHaveBeenCalled();expect(screen.getByRole('button',{name:'确认合成并试听'})).toHaveProperty('disabled',false);expect(bodies.map(({voice,generate})=>({voice,generate}))).toEqual([{voice:'voice-A',generate:false},{voice:'voice-A',generate:true},{voice:'voice-B',generate:false}]);
++});
++it('ends client waiting on unmount without playing a late sample response',async()=>{
++ let finish!:(response:Response)=>void,signal:AbortSignal|null|undefined;vi.stubGlobal('fetch',vi.fn(async(path:string,init?:RequestInit)=>path.endsWith('/session')?Response.json({csrfToken:'test-csrf'}):new Promise<Response>(resolve=>{finish=resolve;signal=init?.signal;})));
++ const play=vi.spyOn(HTMLMediaElement.prototype,'play').mockResolvedValue();vi.spyOn(HTMLMediaElement.prototype,'pause').mockImplementation(()=>{});const view=render(<WorkspaceSpeechSample {...props} voice="voice-A"/>);fireEvent.click(screen.getByRole('button',{name:'试听当前音色'}));await waitFor(()=>expect(finish).toBeTypeOf('function'));view.unmount();expect(signal?.aborted).toBe(true);await act(async()=>finish(Response.json({audioBase64:'bGF0ZQ=='})));expect(play).not.toHaveBeenCalled();
++});
+--- /dev/null
++++ b/docs/adr/0038-speech-sample-and-model-edit-ownership.md
+@@ -0,0 +1,15 @@
++# ADR-0038：样音选择归属与模型编辑基线
++
++状态：Accepted。日期：2026-11-10。Owner 批准剩余状态机专项复查的第 1、2 项；不提交、不推送。
++
++## 决定
++
++样音组件按语音选择的 capability／provider／adapter／model／preset／connectionVersionId 与 voice 分配独立播放器实例。选择变化卸载原实例，取消客户端等待、停止播放并结束原确认；迟到回复和 finally 不能操作新实例，A→B→A 也属于新一次访问。语速、标签与按钮样式不改变样音身份；相同来源复用原缓存并按最新语速播放。保留服务端样音缓存、首次合成确认与供应商恢复限制，不自动重新合成，客户端取消不能撤回已经发出的供应商请求。
++
++模型弹窗把最新目录／服务端设置与编辑基线分开。未编辑时刷新随服务端启用值更新，不制造草稿；真实草稿在启用基线未变时保留，并允许采用仅目录发现引起的新 revision。若服务端启用值已改变，保留本地勾选与原 revision、显示冲突并阻止保存；不把旧勾选与新 CAS 拼接。连接版本不符的响应拒绝接入。关闭／保留草稿仍记录原编辑基线，重开沿用既有按版本恢复规则，不跨版本移植草稿，也不提供强制覆盖入口。
++
++服务端 Owner、连接版本、启用模型校验、幂等保存及 CAS 语义保持不变。无需新依赖、SQL、公共状态框架或新恢复协议。
++
++## 验证
++
++通过真实样音组件与客户端 HTTP、真实模型弹窗公开交互／保存参数验证；只在网络或外部回调处控制响应，不 mock 新私有实现。覆盖语速复用、音色／模型／连接切换、迟到与 ABA、首次合成确认，以及无编辑刷新、真实草稿、并发设置、仅发现 revision 变化、保存拒绝和连接版本变化。隔离浏览器检查真实播放、宽窄屏、冲突草稿与保存参数，不调用真实供应商或操作业务数据库。

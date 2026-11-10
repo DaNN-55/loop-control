@@ -1,0 +1,31 @@
+npm notice run loop-control@0.1.0 test
+npm notice run vitest run --exclude '**/*.integration.test.ts' src/local-app/WorkspaceSpeechSample.lifecycle.test.tsx --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+x
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/WorkspaceSpeechSample.lifecycle.test.tsx > requests the current voice after a selection change instead of replaying the cached previous voice
+AssertionError: expected [ 'voice-A' ] to deeply equal [ 'voice-A', 'voice-B' ]
+
+- Expected
++ Received
+
+  [
+    "voice-A",
+-   "voice-B",
+  ]
+
+ ❯ src/local-app/WorkspaceSpeechSample.lifecycle.test.tsx:12:194
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  20:46:28
+   Duration  1.07s (transform 40ms, setup 8ms, collect 588ms, tests 48ms, environment 284ms, prepare 36ms)
+

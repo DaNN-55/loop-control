@@ -1,0 +1,34 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workspaceVisualTrim.integration.test.ts --maxWorkers=1 --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+x
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workspaceVisualTrim.integration.test.ts > Owner HTTP applies an end-only video range to preparation and final adoption
+AssertionError: expected { …(8) } to match object { sourceInSeconds: +0, …(2) }
+(7 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "durationSeconds": 1,
+-   "fullDurationSeconds": 2,
+-   "sourceInSeconds": 0,
++   "durationSeconds": 2,
+  }
+
+ ❯ src/local-app/workspaceVisualTrim.integration.test.ts:13:33
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  21:11:40
+   Duration  2.03s (transform 387ms, setup 7ms, collect 534ms, tests 1.40s, environment 0ms, prepare 23ms)
+

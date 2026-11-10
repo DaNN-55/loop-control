@@ -6,6 +6,7 @@ import {ConfirmationModalPresence} from '../ui/ConfirmationModal';
 import {useSurfacePresence} from '../ui/SurfacePresence';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import type {WorkspaceVisualTask} from '../workspaceVisualCandidates';
+import {workspaceTaskPresentation} from '../workspaceTaskPresentation';
 export function WorkspaceVisualTaskProgress({task,label,thumbnail=false}:{task:WorkspaceVisualTask;label:string;thumbnail?:boolean}){
  const [now,setNow]=useState(Date.now);
  useEffect(()=>{
@@ -27,12 +28,11 @@ export function WorkspaceVisualTaskProgress({task,label,thumbnail=false}:{task:W
 }
 export function WorkspaceVisualTaskStatus({task,label,disabled,onResume,onRefresh,onReconcile,onRetryUnknown,taskNoun='视觉任务',resumeLabel='恢复画面任务'}:{task:WorkspaceVisualTask;label:string;taskNoun?:string;resumeLabel?:string;disabled?:boolean;onResume:()=>void;onRefresh:()=>void;onReconcile:()=>void;onRetryUnknown?:()=>void}){
  const [open,setOpen]=useState(false);
- if(task.retryTaskId)return null;
- const held=task.publicationAttempt!=null,unknown=task.submissionUnknown;
- const state=held?'发布结果待核对':task.submissionOutcome==='not_sent'?'未提交':unknown?(task.submissionOutcome==='received'?'供应商结果待核对':'提交结果未知'):task.status==='running'?'生成中':task.status==='ready'?'等待生成':task.status==='failed'?'生成失败':task.status==='blocked'?'生成受阻':task.status==='completed'?'生成完成':task.status==='superseded'?'已失效':'状态待核对';
+ const presentation=workspaceTaskPresentation(task),{held,unknown,label:state}=presentation;
+ if(presentation.hidden)return null;
  const actions=<>
   {onRetryUnknown&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={onRetryUnknown}>重试图片生成</Button>}
-  {task.canResume&&!held&&['failed','blocked'].includes(task.status)&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={onResume}>{resumeLabel}</Button>}
+  {presentation.canResume&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={onResume}>{resumeLabel}</Button>}
   {held&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={onReconcile}>核对并恢复产物</Button>}
   {(unknown||held)&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={onRefresh}>刷新核对结果</Button>}
  </>;
@@ -42,13 +42,13 @@ export function WorkspaceVisualTaskStatus({task,label,disabled,onResume,onRefres
     <p role={task.error||held?'alert':'status'} aria-label={taskNoun+' '+task.taskId} title={task.error??undefined}>{label}{state}{task.error?' · '+task.error:''}</p>
     <div className="workspace-task-actions">{actions}<Button size="sm" color="tertiary" aria-label={`查看${label}任务详情`} onPress={()=>setOpen(true)}>详情</Button></div>
    </div>
-   {!held&&!unknown&&(task.status==='running'||task.status==='ready')&&<WorkspaceVisualTaskProgress task={task} label={label}/>}
+   {presentation.active&&<WorkspaceVisualTaskProgress task={task} label={label}/>}
   </div>
   <ConfirmationModalPresence>{open&&createPortal(<TaskDetails title={`${label}任务详情`} onClose={()=>setOpen(false)}>
    <p className="workspace-task-diagnostic" role="alert">{label}{state}{task.error?' · '+task.error:''}</p>
    {task.submissionOutcome==='not_sent'&&<p>本次请求在本机被拦截，未向供应商发送。请检查设置，重新确认后生成。</p>}
    {task.submissionOutcome==='rejected'&&<p>供应商已明确拒绝本次请求，请根据错误原因检查设置后重新确认。</p>}
-   {task.kind==='image'&&!unknown&&!held&&['failed','blocked'].includes(task.status)&&<p>可检查设置后点击「重新生成图片」，核对费用并再次确认。</p>}
+   {task.kind==='image'&&presentation.canRetry&&<p>可检查设置后点击「重新生成图片」，核对费用并再次确认。</p>}
    {unknown&&<p>{onRetryUnknown?'上一次可能已产生费用。你可以先核对供应商记录，也可以重新确认后提交新请求。':'请先在原供应商核对本次请求；当前结果未知，不能再次提交生成。'}</p>}
    {task.canResume&&!held&&<p>恢复只查询原供应商任务，沿用原输入，不会重新提交生成。</p>}
    {held&&<p>已有产物等待核对。核对只恢复本次发布，不会重新生成。</p>}

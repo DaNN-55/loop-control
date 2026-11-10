@@ -1,0 +1,24 @@
+--- a/PLAN.md
++++ b/PLAN.md
+@@ -20,6 +20,8 @@
+ 导航变化仅结束本地待打开意图，不撤回已发出的服务端命令；回到工作区仍由原权威读取恢复，不增加自动重试。保存或关闭失败保留当前会话，沿用真实 iframe flush、来源版本和文件指纹校验。
+ 
+ 完成：10 条新增真实宿主／公开组件回归与 7 条受控浏览器流程通过，类型与前端／后端顺序构建通过。定向最终 122 通过、1 失败；全量一次 1904 通过、1 跳过、1 失败。唯一失败为旧口播下拉框断言与并行模型选择器按钮不一致，在隔离副本换回本批改动前主入口仍复现，未修改该控件／旧断言。双轴审查发现取消打开后可能遗留旧 revision，已修复并复核。130 个先前变更中 126 个字节不变；三个本批共享文件限域修改，另一个视觉准备文件为外部更新并保留。报告 `docs/verification/state-machines-batch5-20261110/REPORT.md`。隔离预览／浏览器关闭，日常入口保留；无 SQL、依赖、正式业务写入、付费、暂存、提交或推送。
++
++后续验收（2026-11-10）：已按当前「口播来源」按钮 →「人工口播」菜单单选交互更新剩余旧断言，保留素材限制及不自动采用／生成验证。65 条定向、类型检查通过；新一轮默认全量 255 文件、1905 通过、1 跳过，无失败。仅修改测试与记录，未提交推送。证据：`docs/verification/narration-control-test-20261110/REPORT.md`。
+ 
+ # 状态机第 4 项：脚本保存与启动分步恢复（2026-11-10）
+ 
+--- a/src/local-app/ProductionWorkspacePanel.test.tsx
++++ b/src/local-app/ProductionWorkspacePanel.test.tsx
+@@ -166,7 +166,9 @@
+  fireEvent.click(screen.getByRole('button',{name:'本期素材 · 2'}));
+  const audio=screen.getByRole('button',{name:'预览 unassigned.mp3'}),music=screen.getByRole('button',{name:'预览 music.mp3'});
+  fireEvent.click(screen.getByRole('tab',{name:'字幕与口播'}));
+- fireEvent.change(screen.getByRole('combobox',{name:'口播来源'}),{target:{value:'manual'}});
++ fireEvent.click(screen.getByRole('button',{name:'口播来源'}));
++ fireEvent.click(screen.getByRole('menuitemradio',{name:'人工口播'}));
++ expect(screen.getByRole('button',{name:'口播来源'}).textContent).toContain('人工口播');
+  const musicDrag=startMaterialDrag(music);
+  expect(screen.getByRole('button',{name:'拖入口播文件'}).getAttribute('data-drag-over')).toBeNull();
+  fireEvent.dragEnd(music,{dataTransfer:musicDrag});

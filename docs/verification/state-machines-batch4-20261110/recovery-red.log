@@ -1,0 +1,22 @@
+npm notice run loop-control@0.1.0 test
+npm notice run vitest run --exclude '**/*.integration.test.ts' src/local-app/WorkspaceScriptPanel.test.tsx --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+·························x
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/WorkspaceScriptPanel.test.tsx > does not start after the view becomes read-only during recovery
+AssertionError: expected "spy" to be called 2 times, but got 3 times
+ ❯ src/local-app/WorkspaceScriptPanel.test.tsx:147:160
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 25 passed (26)
+   Start at  19:26:27
+   Duration  1.41s (transform 81ms, setup 7ms, collect 583ms, tests 475ms, environment 217ms, prepare 25ms)
+

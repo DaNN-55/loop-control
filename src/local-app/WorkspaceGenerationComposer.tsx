@@ -14,9 +14,9 @@ export function WorkspaceComposerSetting({label,summary,open,onOpenChange,disabl
  </DialogTrigger>;
 }
 
-export function WorkspaceGenerationComposer({kind,operation='generate',disabled,reference,prompt,model,settings,submit,onMaterial,onFiles,children}:{kind:'image'|'video';operation?:'generate'|'search';disabled?:boolean;reference:ReactNode;prompt:ReactNode;model:ReactNode;settings:ReactNode;submit:ReactNode;onMaterial:(id:string)=>void;onFiles:(files:File[])=>void;children?:ReactNode}){
+export function WorkspaceGenerationComposer({kind,operation='generate',disabled,reference,prompt,model,settings,submit,onMaterial,onFiles,children,activity}:{kind:'image'|'video';operation?:'generate'|'search';disabled?:boolean;reference:ReactNode;prompt:ReactNode;model:ReactNode;settings:ReactNode;submit:ReactNode;onMaterial:(id:string)=>void;onFiles:(files:File[])=>void;children?:ReactNode;activity?:ReactNode}){
  const shelf=useWorkspaceMaterialSelection(),[over,setOver]=useState(false);
- return <div className="workspace-generation-composer" data-kind={kind} data-operation={operation} data-drag-over={over||undefined} aria-label={operation==='search'?'视频检索输入框':kind==='image'?'图片生成输入框':'视频生成输入框'}
+ return <div className="workspace-generation-shell"><div className="workspace-generation-composer" data-kind={kind} data-operation={operation} data-drag-over={over||undefined} aria-label={operation==='search'?'视频检索输入框':kind==='image'?'图片生成输入框':'视频生成输入框'}
   onDragOver={event=>{
    if(operation==='search'||disabled||!Array.from(event.dataTransfer.types??[]).some(type=>type===workspaceMaterialDragType||type==='Files'))return;
    const material=shelf?.materials.find(m=>m.id===shelf.draggingId),accept=event.dataTransfer.types.includes('Files')||material&&(kind==='video'?['image','video'].includes(material.material_type):material.material_type==='image');
@@ -32,5 +32,5 @@ export function WorkspaceGenerationComposer({kind,operation='generate',disabled,
   <div className="workspace-composer-prompt">{prompt}</div></div>
   <div className="workspace-composer-toolbar"><span className="workspace-composer-kind">{operation==='search'?<Search size={14}/>:kind==='image'?<ImageIcon size={14}/>:<Video size={14}/>} {operation==='search'?'视频检索':kind==='image'?'图片生成':'视频生成'}</span>{model}{settings}<div className="workspace-composer-submit">{submit}</div></div>
   {children}
- </div>;
+ </div>{activity}</div>;
 }

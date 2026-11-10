@@ -170,7 +170,7 @@ export async function executeWorkspaceVisualCandidate(c:PoolClient,root:string,r
   if(candidate.usage==='pan-zoom'&&!data.motionPolicy)throw new ConfigurationError(400,'请选择保留当前运动或采用新图片推拉。');
   const sourceIn=data.sourceInSeconds??0,sourceOut=data.sourceOutSeconds??candidate.durationSeconds;
   if((data.sourceInSeconds!==undefined||data.sourceOutSeconds!==undefined)&&(candidate.kind!=='video'||typeof sourceIn!=='number'||!Number.isFinite(sourceIn)||sourceIn<0||typeof sourceOut!=='number'||!Number.isFinite(sourceOut)||sourceOut<=sourceIn||sourceOut>candidate.durationSeconds+0.001))throw new ConfigurationError(400,'视频使用区间无效。');
-  candidate.visual={...(candidate.kind==='video'&&data.sourceInSeconds!==undefined?{sourceInSeconds:Number(sourceIn),sourceOutSeconds:Number(sourceOut)}:{}),usage:candidate.usage,motionPolicy:(data.motionPolicy??'preserve-target') as 'preserve-target'|'replace-motion',acceptTimelineImpact:data.acceptTimelineImpact===true,expectedAppearance:workspaceCandidateAppearance(item),placeholder:item.kind==='text'};
+  candidate.visual={...(candidate.kind==='video'&&(data.sourceInSeconds!==undefined||data.sourceOutSeconds!==undefined)?{sourceInSeconds:Number(sourceIn),sourceOutSeconds:Number(sourceOut)}:{}),usage:candidate.usage,motionPolicy:(data.motionPolicy??'preserve-target') as 'preserve-target'|'replace-motion',acceptTimelineImpact:data.acceptTimelineImpact===true,expectedAppearance:workspaceCandidateAppearance(item),placeholder:item.kind==='text'};
   return prepareRegisteredWorkspaceCandidate(c,root,row,project,candidate,data.durationPolicy);
  }
  if(command==='adoptWorkspaceVisualCandidate'){await finishRegisteredWorkspaceCandidate(c,root,row,project,candidate,data);return readProductionWorkspace(c,row.episode_id,root);}

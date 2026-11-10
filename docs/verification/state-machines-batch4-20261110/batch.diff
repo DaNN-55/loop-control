@@ -1,0 +1,332 @@
+--- a/PLAN.md
++++ b/PLAN.md
+@@ -1,3 +1,16 @@
++# 状态机第 4 项：脚本保存与启动分步恢复（2026-11-10）
++
++用户批准明确保存成功和启动成功、失败恢复；保留草稿、既有修订校验与历史业务规则，不提交、不推送。基线 HEAD 951a368e，原工作区修改保留。公开验证接口为脚本面板实际输入、按钮、草稿与父页面刷新，以及命令／生产单 HTTP 读回；不测试私有实现。
++
++- [x] 先复现保存成功但启动失败和父页面版本刷新造成的状态／草稿问题。
++- [x] 使用局部显式分步状态，保留已保存版本，重试启动前读取权威；同步防重复、离开后忽略旧结果。
++- [x] 组件回归、类型与构建、真实浏览器失败恢复／宽窄屏验证；双轴只读审查。
++- [x] 最终完整测试一次，归档证据，核对其他改动；清理本轮临时预览，不提交推送。
++
++恢复不越过 Owner、版本、只读、运行中任务、文件指纹和输入校验；不引入新持久化恢复协议或通用状态机。刷新后继续使用现有 Owner／episode／服务端版本草稿隔离规则，已保存但未启动的脚本通过现有确认入口继续。
++
++完成：84 条定向回归、类型、前端／后端顺序构建和 7 条隔离浏览器恢复路径通过。双轴审查发现旧 start 回执可能误认新版成功，已以真实客户端 HTTP 回归修复并复核。全量一次：1892 通过、1 跳过，1 条未改动的列表导航测试超时；该文件独立复跑 16/16 通过，保留全量首轮限制。80 个原变更文件字节不变，两个共享文档只追加本批内容。报告 `docs/verification/state-machines-batch4-20261110/REPORT.md`；本轮预览及浏览器关闭，日常服务保留，无业务写入、付费、SQL、依赖、暂存、提交或推送。
++
+ # 已批准三项细节精修迁移与独立提交（2026-11-10）
+ 
+ 仅迁移分镜台、图片／视频生成区、账号通用规则中批准的对齐与间距、文字与数字、状态色。保留结构、文案、图标、阴影、交互、业务判断和真实数据；不迁移原型外壳／示例列表／本地状态。用户后续明确授权仅提交、推送本次视觉精修，并清理本轮 Demo 和临时进程；并行状态机和部署研究改动不纳入。
+--- a/docs/adr/README.md
++++ b/docs/adr/README.md
+@@ -54,3 +54,5 @@
+ - [ADR-0034：生成任务展示与交付读取保护](0034-workspace-task-presentation-and-delivery-reading.md)
+ 
+ - [ADR-0035：导出与交付的下一步判断](0035-export-delivery-next-step.md)
++
++- [ADR-0036：脚本保存与启动的分步恢复](0036-script-save-start-recovery.md)
+--- a/src/local-app/ProductionWorkspacePanel.test.tsx
++++ b/src/local-app/ProductionWorkspacePanel.test.tsx
+@@ -401,3 +401,12 @@
+  expect(screen.queryByLabelText('上传记录')).toBeNull();fireEvent.click(screen.getByRole('button',{name:'关闭上传提示'}));expect(screen.queryByRole('status',{name:'上传提示'})).toBeNull();expect(screen.queryByRole('alert')).toBeNull();
+  expect(screen.getByRole('region',{name:'上传结果'}).textContent).toContain('文件内容无法解码');expect(command).toHaveBeenCalledTimes(1);
+ });
++
++it('keeps script confirmation mounted while its saved version refreshes the real workspace parent',async()=>{
++ const {useState}=await import('react');let reads=0,resolveRefresh!:(response:Response)=>void;
++ vi.stubGlobal('fetch',vi.fn(async()=>{if(++reads===1)return Response.json({workspace:null});return new Promise<Response>(resolve=>{resolveRefresh=resolve;});}));
++ function Host(){const[id,setId]=useState<string|null>(null);return <ProductionWorkspacePanel episodeId="phase-e" title="脚本分步" scriptRevisionId={id} stage="waiting_input" materials={[]} onLegacy={()=>{}} command={async name=>{if(name==='importMaterial'){setId('saved');return{id:'saved'};}throw Error('启动中断');}}/>;}
++ render(<Host/>);await screen.findByRole('button',{name:'确认脚本'});fireEvent.change(screen.getByLabelText('主脚本'),{target:{value:'保留本次正文'}});fireEvent.click(screen.getByRole('button',{name:'确认脚本'}));await waitFor(()=>expect(reads).toBe(2));
++ await act(async()=>resolveRefresh(Response.json({workspace:null})));
++ expect((await screen.findByLabelText('主脚本') as HTMLTextAreaElement).value).toBe('保留本次正文');expect(await screen.findByRole('button',{name:'继续启动'})).toBeTruthy();
++});
+--- a/src/local-app/ProductionWorkspacePanel.tsx
++++ b/src/local-app/ProductionWorkspacePanel.tsx
+@@ -201,7 +201,7 @@
+    {!loaded&&!loadError&&<p role="status">正在读取制作流程…</p>}{loadError&&<div role="alert"><p>{loadError}</p><Button size="sm" color="secondary" onPress={()=>setLoadAttempt(value=>value+1)}>重新读取制作流程</Button></div>}
+    {workspace?.stale&&!readOnly&&stage==='waiting_input'&&<section className="production-workspace-section workspace-replan-notice" aria-label="恢复原工程"><p role="status">{workspace.scriptResume?.reason??'脚本修改待确认，原工程已暂停编辑。请先确认脚本，原工程与素材均已保留。'}</p>{workspace.scriptResume?.canReuse?<Button size="sm" color="primary" isDisabled={pending} onPress={()=>{const w=current.current!;void run('resumeWorkspaceEditing',{episodeId,workspaceId:w.id,expectedRevision:w.revision,expectedScriptRevisionId:scriptRevisionId,expectedProjectSha256:w.project.sha256}).then(v=>{update(v as ProductionWorkspace);setStep(1);}).catch(()=>{});}}>确认排版修订，继续原工程</Button>:<Button size="sm" color="secondary" onPress={()=>requestDraftLeave(()=>setStep(0))}>核对脚本</Button>}</section>}
+    {workspace?.stale&&!readOnly&&stage!=='waiting_input'&&!preparing&&<section className="production-workspace-section workspace-replan-notice"><p role="status">脚本已更新，原工程与媒体已保留。</p>{error&&!legacyPrompt&&<Button size="sm" color="secondary" isDisabled={pending} onPress={()=>void prepare(undefined,scriptRevisionId,undefined,true).catch(()=>{})}>重试</Button>}</section>}
+-   {loaded&&<fieldset ref={workspaceCanvas} disabled={readOnly&&!workspace&&!legacyContent} className="production-workspace-body"><div hidden={step!==0||!!session}><WorkspaceScriptPanel errorPresented={!!notice||!!error} episodeId={episodeId} scriptRevisionId={scriptRevisionId} script={script} stage={stage} readOnly={readOnly} pending={pending||!!scriptPath&&loadedScriptPath!==scriptPath} command={run} onConfirmed={(confirmedScriptId,revisionReason)=>{setStep(1);if(confirmedScriptId&&!legacyContent){autoPreparedScript.current=confirmedScriptId;void prepare(undefined,confirmedScriptId,revisionReason,true).catch(()=>{});}}}/></div>{step===0&&!session?null:!workspace&&legacyContent?(step===1?<LegacyPreparation key={episodeId} snapshot={legacyContent} onResume={source=>resumeLegacy(source,false)} pending={pending} readOnly={readOnly}/>:step===2?<LegacyEditing key={episodeId} snapshot={legacyContent} onResume={resumeLegacy} pending={pending} readOnly={readOnly}/>:<LegacyDelivery key={episodeId} snapshot={legacyContent}/>):!workspace&&step!==1?<section className="production-workspace-section"><h3>{steps[step]}</h3><p>{step===2?'尚未建立剪辑工程。':'尚无导出或交付文件。'}</p><Button size="sm" color="secondary" onPress={()=>requestDraftLeave(()=>setStep(step===2?1:2))}>{step===2?'前往分镜台':'前往剪辑工作台'}</Button></section>:step===1&&preparing?<div className="workspace-script-analysis" role="status"><span aria-hidden="true"/>正在分析脚本并拆分镜头…</div>:!workspace?<section className="production-workspace-section"><h3>{steps[step]}</h3>{!scriptRevisionId||stage==='waiting_input'?<p>请先确认脚本。</p>:error&&!readOnly&&!legacyPrompt?<Button size="sm" color="secondary" isDisabled={pending} onPress={()=>void prepare(undefined,scriptRevisionId,undefined,true).catch(()=>{})}>重试</Button>:null}</section>:
++   <fieldset hidden={!loaded} ref={workspaceCanvas} disabled={readOnly&&!workspace&&!legacyContent} className="production-workspace-body"><div hidden={step!==0||!!session}><WorkspaceScriptPanel errorPresented={!!notice||!!error} episodeId={episodeId} scriptRevisionId={scriptRevisionId} script={script} stage={stage} readOnly={readOnly} pending={pending||!loaded||!!scriptPath&&loadedScriptPath!==scriptPath} command={run} onConfirmed={(confirmedScriptId,revisionReason)=>{setStep(1);if(confirmedScriptId&&!legacyContent){autoPreparedScript.current=confirmedScriptId;void prepare(undefined,confirmedScriptId,revisionReason,true).catch(()=>{});}}}/></div>{!loaded||step===0&&!session?null:!workspace&&legacyContent?(step===1?<LegacyPreparation key={episodeId} snapshot={legacyContent} onResume={source=>resumeLegacy(source,false)} pending={pending} readOnly={readOnly}/>:step===2?<LegacyEditing key={episodeId} snapshot={legacyContent} onResume={resumeLegacy} pending={pending} readOnly={readOnly}/>:<LegacyDelivery key={episodeId} snapshot={legacyContent}/>):!workspace&&step!==1?<section className="production-workspace-section"><h3>{steps[step]}</h3><p>{step===2?'尚未建立剪辑工程。':'尚无导出或交付文件。'}</p><Button size="sm" color="secondary" onPress={()=>requestDraftLeave(()=>setStep(step===2?1:2))}>{step===2?'前往分镜台':'前往剪辑工作台'}</Button></section>:step===1&&preparing?<div className="workspace-script-analysis" role="status"><span aria-hidden="true"/>正在分析脚本并拆分镜头…</div>:!workspace?<section className="production-workspace-section"><h3>{steps[step]}</h3>{!scriptRevisionId||stage==='waiting_input'?<p>请先确认脚本。</p>:error&&!readOnly&&!legacyPrompt?<Button size="sm" color="secondary" isDisabled={pending} onPress={()=>void prepare(undefined,scriptRevisionId,undefined,true).catch(()=>{})}>重试</Button>:null}</section>:
+    session?<EmbeddedStudioHost initialShotId={selectedShot?.shotId} initialItemId={selectedPreview?.itemId} key={session.launchId} episodeId={episodeId} title={title} session={session} shots={workspace.clips.filter((clip,index,all)=>all.findIndex(c=>c.shotId===clip.shotId)===index).map(c=>({id:c.shotId,text:c.text,soundIntent:c.soundIntent}))}  captionEditor={workspace.captions?.some(caption=>caption.contract.enabled)
+     ?bridge=><WorkspaceCaptionsPanel workspace={workspace} command={run} onChange={update} bridge={bridge} alignmentOnly/>
+     :undefined} onSave={async file=>{const w=current.current!;const result=await run('saveWorkspaceStudio',{episodeId,workspaceId:w.id,expectedRevision:w.revision,workspaceRelativePath:file.relativePath,projectId:file.projectId,expectedWorkspaceSha256:file.sha256}) as OpenChatCutStudioWorkspace&{productionWorkspace:ProductionWorkspace};update(result.productionWorkspace);return result;}} onClose={async (destination,selection)=>{
+@@ -217,8 +217,8 @@
+     }}/> :step===1?<section className="production-workspace-section workspace-preparation"><header><div className="workspace-preparation-heading"><h3>{workflowStepLabels.preparation}</h3><span>{visualReady} / {uniqueClips.length} 画面就绪</span></div><div><Button size="sm" color="primary" isDisabled={pending||readOnly||workspace.stale} onPress={()=>void openEditor().catch(()=>{})}>进入剪辑工作台</Button></div></header><WorkspaceMaterialSelectionProvider key={episodeId} materials={allMaterials}><WorkspacePreparationLayout><section className="workspace-shot-table-pane" aria-label="素材镜头列表"><WorkspaceShotTable readOnly={readOnly} workspace={workspace} project={nativeProject} materials={allMaterials} selectedShotId={selectedShot?.shotId} disabled={pending||readOnly||workspace.stale} onSelect={setSelectedShotId} onDelete={clip=>{setError('');setShotToDelete({episodeId,workspaceId:workspace.id,revision:workspace.revision,shotId:clip.shotId,text:clip.text});}} onEdit={editShots}/><WorkspaceMaterialShelf episodeId={episodeId} scriptRevisionId={scriptRevisionId} shotCount={uniqueClips.length} materials={allMaterials}
+     readOnly={readOnly} busy={pending||materialUploadBusy} status={materialUploadStatus} notice={materialUploadNotice} onDismissNotice={id=>setMaterialUploadNotice(current=>current?.id===id?undefined:current)}
+     failures={materialUploadFailures} onImport={uploadMaterials}/></section><aside className="workspace-preparation-detail"><div className="workspace-detail-tabs" role="tablist" aria-label="素材设置">{([['visual','画面'],['voice','字幕与口播'],['sound','配乐与声音']] as const).map(([id,label])=><button key={id} id={`preparation-tab-${id}`} type="button" role="tab" aria-selected={preparationTab===id} aria-controls={`preparation-panel-${id}`} tabIndex={preparationTab===id?0:-1} onClick={()=>setPreparationTab(id)} onKeyDown={event=>{const ids=['visual','voice','sound'] as const,index=ids.indexOf(id);const next=event.key==='ArrowRight'?ids[(index+1)%3]:event.key==='ArrowLeft'?ids[(index+2)%3]:event.key==='Home'?ids[0]:event.key==='End'?ids[2]:null;if(next){event.preventDefault();setPreparationTab(next);requestAnimationFrame(()=>document.getElementById(`preparation-tab-${next}`)?.focus());}}}>{label}</button>)}</div><div role="tabpanel" id="preparation-panel-visual" aria-labelledby="preparation-tab-visual" hidden={preparationTab!=='visual'}><section className="workspace-visual-replacement" aria-label="上传与生成画面">{selectedSegment?.visual&&<p><strong>画面提示</strong> {selectedSegment.visual}</p>}<WorkspaceVisualPreparation workspace={workspace} command={run} onChange={update} materials={allMaterials} selectedShotId={selectedShot?.shotId} selectedTargetItemId={selectedPreview?.itemId} onTargetChange={setPreviewItemId} readOnly={readOnly} project={nativeProject} currentVisualPath={selectedPreview?workspaceShotSource(selectedPreview,nativeProject)?.relativePath:undefined} currentVisualSha256={selectedPreview?workspaceShotSource(selectedPreview,nativeProject)?.sha256:undefined} currentMaterialRevisionId={allMaterials.find(m=>m.storage_path===(selectedPreview?workspaceShotSource(selectedPreview,nativeProject)?.relativePath:undefined))?.id??workspace.visualCandidates?.find(c=>c.relativePath===(selectedPreview?workspaceShotSource(selectedPreview,nativeProject)?.relativePath:undefined))?.materialRevisionId} currentVisualKind={selectedPreview?workspaceShotSource(selectedPreview,nativeProject)?.kind:undefined} preview={<WorkspaceShotPreview readOnly={readOnly} workspace={workspace} clips={selectedClips} selectedItemId={selectedPreview?.itemId} onSelect={setPreviewItemId} project={nativeProject} materials={allMaterials}/>} onImported={material=>setImportedMaterials(rows=>[...rows,{...material,is_main_script:false}])}/></section></div><div role="tabpanel" id="preparation-panel-voice" aria-labelledby="preparation-tab-voice" hidden={preparationTab!=='voice'}><fieldset className="workspace-readonly-fields"><WorkspaceNarrationPanel onImportAudio={uploadMaterials} active={preparationTab==='voice'} readOnly={readOnly} narrationConfiguration={(legacySnapshot?.blueprint?.policy&&typeof legacySnapshot.blueprint.policy==='object'&&!Array.isArray(legacySnapshot.blueprint.policy)?legacySnapshot.blueprint.policy.narration:undefined)} episodeId={episodeId} workspace={workspace} pending={pending||materialUploadBusy||readOnly} command={run} onChanged={update} tracks={audioTracks} materials={allMaterials} defaultSettings={{voice:legacySnapshot?.episode.tts_voice??null,speakingRate:legacySnapshot?.episode.tts_speaking_rate??null,languageCode:legacySnapshot?.episode.tts_language_code??null}} selectedShotId={selectedShot?.shotId}/></fieldset></div><div role="tabpanel" id="preparation-panel-sound" aria-labelledby="preparation-tab-sound" hidden={preparationTab!=='sound'}><fieldset className="workspace-readonly-fields"><WorkspaceAudioPreparation readOnly={readOnly} workspace={workspace} selectedShotId={selectedShot?.shotId} command={run} onChange={update} materials={allMaterials} project={nativeProject}/></fieldset>{readOnly&&selectedShot&&<WorkspaceSoundIntent key={selectedShot.shotId} workspace={workspace} shot={selectedShot} pending={pending} readOnly={readOnly} command={run} onChange={update}/>}</div></aside></WorkspacePreparationLayout></WorkspaceMaterialSelectionProvider></section>:step===2&&!readOnly?<section className="production-workspace-section workspace-editing-opening" aria-label="剪辑工作台连接"><p role="status">{editorOpening?'正在打开剪辑工作台…':workspace.stale?'脚本基准已变化，请先核对素材。':'剪辑工作台尚未连接。'}</p>{!editorOpening&&<Button size="sm" color="primary" isDisabled={pending||workspace.stale} onPress={()=>void openEditor().catch(()=>{})}>重试打开剪辑工作台</Button>}</section>:step===2?<section className="production-workspace-section workspace-editing-entry is-readonly"><header><div><h3>{stage==='production_completed'?'已完成工程':'工程查看'}</h3><p>{stage==='production_completed'?'当前工程已交付，按镜头查看成片与已保存配置。':'当前工程只读，按镜头查看已保存配置。'}</p></div>{workspace.exports?.some(entry=>entry.artifact)&&<Button size="sm" color="secondary" onPress={()=>setStep(3)}>查看成片与交付</Button>}</header><WorkspaceCompletedShots workspace={workspace} project={nativeProject} materials={allMaterials}/></section>:null}
+-   {workspace&&deliveryVisited&&<Activity mode={step===3&&!session?'visible':'hidden'}><div hidden={step!==3||!!session}><WorkspaceExportPanel workspace={workspace} pending={pending} readOnly={readOnly} command={run} onChange={update}/></div></Activity>}
+-   </fieldset>}
++   {loaded&&workspace&&deliveryVisited&&<Activity mode={step===3&&!session?'visible':'hidden'}><div hidden={step!==3||!!session}><WorkspaceExportPanel workspace={workspace} pending={pending} readOnly={readOnly} command={run} onChange={update}/></div></Activity>}
++   </fieldset>
+    <ConfirmationModalPresence>{shotToDelete&&<ConfirmationModal title="删除镜头" confirmLabel="确认删除镜头" pendingLabel="正在删除…" tone="danger" isPending={pending} onCancel={()=>{setShotToDelete(null);setError('');}} onConfirm={deleteShot}><p>删除 {shotToDelete.shotId} 及其画面、声音和字幕引用，后续镜头会依次前移。原素材文件和历史工程保留。</p><p>{shotToDelete.text}</p>{error&&<p role="alert" className="form-error">{error}</p>}</ConfirmationModal>}</ConfirmationModalPresence>
+ 
+   {callConfirmation.dialog}</section>
+--- a/src/local-app/WorkspaceScriptPanel.test.tsx
++++ b/src/local-app/WorkspaceScriptPanel.test.tsx
+@@ -1,15 +1,15 @@
+-import {render,screen,fireEvent,cleanup,waitFor,within} from '@testing-library/react';
++import {render,screen,fireEvent,cleanup,waitFor,within,act} from '@testing-library/react';
+ import {afterEach,it,expect,vi} from 'vitest';
+ import {WorkspaceScriptPanel} from './WorkspaceScriptPanel';
+ import {WorkspaceDraftProvider} from './WorkspaceDraft';
+-afterEach(()=>{cleanup();localStorage.clear();});
++afterEach(()=>{cleanup();localStorage.clear();vi.restoreAllMocks();vi.unstubAllGlobals();sessionStorage.clear();});
+ it('confirms a new script through material registration and start, then locks a copyable preview',async()=>{
+  const command=vi.fn(async()=>({id:'new-script'})),confirmed=vi.fn();render(<WorkspaceScriptPanel episodeId="e" scriptRevisionId={null} script="" stage="waiting_input" readOnly={false} pending={false} command={command} onConfirmed={confirmed}/>);
+  expect(screen.getByRole('button',{name:'确认脚本'}).closest('aside')).toBeTruthy();fireEvent.change(screen.getByRole('textbox',{name:'主脚本'}),{target:{value:'第一镜。\n第二镜。'}});fireEvent.click(screen.getByRole('button',{name:'确认脚本'}));
+  await waitFor(()=>expect(confirmed).toHaveBeenCalledOnce());expect(command.mock.calls).toEqual([['importMaterial',expect.objectContaining({episodeId:'e',materialType:'script',isMainScript:true,sourcePath:'script.md'})],['start',{episodeId:'e'}]]);expect(within(screen.getByRole('document',{name:'主脚本预览'})).getAllByText(/第[一二]镜。/).map(p=>p.textContent)).toEqual(['第一镜。','第二镜。']);expect(screen.queryByRole('textbox',{name:'主脚本'})).toBeNull();expect(screen.getByRole('button',{name:'修改脚本'})).toBeTruthy();
+ });
+ it('opens confirmed scripts as preview and requires a second confirmation before saving a revision',async()=>{
+- const command=vi.fn(async()=>({})),confirmed=vi.fn();render(<WorkspaceScriptPanel episodeId="e" scriptRevisionId="old" script="原文" stage="storyboard_approved" readOnly={false} pending={false} command={command} onConfirmed={confirmed}/>);
++ const command=vi.fn(async()=>({id:'revised'})),confirmed=vi.fn();render(<WorkspaceScriptPanel episodeId="e" scriptRevisionId="old" script="原文" stage="storyboard_approved" readOnly={false} pending={false} command={command} onConfirmed={confirmed}/>);
+  expect(screen.queryByRole('textbox',{name:'主脚本'})).toBeNull();expect(screen.getByRole('button',{name:'修改脚本'}).closest('aside')).toBeTruthy();expect(screen.queryByRole('button',{name:'上传脚本'})).toBeNull();fireEvent.click(screen.getByRole('button',{name:'修改脚本'}));fireEvent.change(screen.getByRole('textbox',{name:'主脚本'}),{target:{value:'新口播'}});fireEvent.change(screen.getByRole('textbox',{name:'脚本修订原因'}),{target:{value:'调整叙事'}});fireEvent.click(screen.getByRole('button',{name:'确认脚本修订'}));
+  expect(screen.getByRole('button',{name:'确认脚本修订'}).closest('aside')).toBeTruthy();expect(screen.getByRole('button',{name:'取消编辑'}).closest('aside')).toBeTruthy();expect(screen.getByRole('textbox',{name:'脚本修订原因'}).closest('aside')).toBeTruthy();const dialog=screen.getByRole('dialog',{name:'确认脚本修订'});expect(command).not.toHaveBeenCalled();expect(dialog.textContent).toContain('调整叙事');fireEvent.click(within(dialog).getByRole('button',{name:'取消'}));expect((screen.getByRole('textbox',{name:'主脚本'}) as HTMLTextAreaElement).value).toBe('新口播');fireEvent.click(screen.getByRole('button',{name:'确认脚本修订'}));fireEvent.click(screen.getByRole('button',{name:'确认保存修订'}));await waitFor(()=>expect(confirmed).toHaveBeenCalledOnce());expect(command).toHaveBeenCalledWith('reconfirmScript',{episodeId:'e',expectedScriptRevisionId:'old',text:'# 主脚本\n\n## 正文\n\n新口播\n',reason:'调整叙事'});expect(screen.getByRole('document',{name:'主脚本预览'}).textContent).toContain('新口播');
+ });
+@@ -100,3 +100,84 @@
+  const props={episodeId:'revert-e',scriptRevisionId:'revert-v1',script:'原文',stage:'storyboard_approved',readOnly:false,pending:false,command:vi.fn(),onConfirmed:()=>{}},panel=<WorkspaceDraftProvider ownerId="revert-owner"><WorkspaceScriptPanel {...props}/></WorkspaceDraftProvider>;
+  const view=render(panel);fireEvent.click(screen.getByRole('button',{name:'修改脚本'}));fireEvent.change(screen.getByLabelText('主脚本'),{target:{value:'临时修改'}});fireEvent.change(screen.getByLabelText('主脚本'),{target:{value:'原文'}});view.unmount();render(panel);expect(screen.queryByLabelText('主脚本')).toBeNull();expect(screen.getByRole('document').textContent).toBe('原文');
+ });
++
++it('keeps the saved revision and draft through parent refresh, then resumes only start after an authoritative read',async()=>{
++ const {useState}=await import('react');let starts=0;const commands:string[]=[],confirmed=vi.fn();
++ vi.spyOn(globalThis,'fetch').mockResolvedValue(new Response(JSON.stringify({sections:{episode:{id:'e',main_script_revision_id:'saved',stage:'waiting_input',archived_at:null},historicalReadOnly:false}}),{status:200}));
++ function Host(){const [id,setId]=useState('old'),[script,setScript]=useState('原文');
++  return <WorkspaceDraftProvider ownerId="owner"><WorkspaceScriptPanel episodeId="e" scriptRevisionId={id} script={script} stage={id==='old'?'storyboard_approved':'waiting_input'} readOnly={false} pending={false} onConfirmed={confirmed} command={async name=>{commands.push(name);if(name==='reconfirmScript'){setId('saved');setScript('# 主脚本\n\n## 正文\n\n新口播\n');return{id:'saved'};}if(++starts===1)throw Error('启动连接中断');return{id:'e'};}}/></WorkspaceDraftProvider>;
++ }
++ render(<Host/>);fireEvent.click(screen.getByRole('button',{name:'修改脚本'}));fireEvent.change(screen.getByLabelText('主脚本'),{target:{value:'新口播'}});fireEvent.change(screen.getByLabelText('脚本修订原因'),{target:{value:'调整叙事'}});fireEvent.click(screen.getByRole('button',{name:'确认脚本修订'}));fireEvent.click(screen.getByRole('button',{name:'确认保存修订'}));
++ await screen.findByText('脚本已保存，制作尚未确认启动。');expect((screen.getByLabelText('主脚本') as HTMLTextAreaElement).value).toBe('新口播');expect((screen.getByLabelText('脚本修订原因') as HTMLInputElement).value).toBe('调整叙事');expect(confirmed).not.toHaveBeenCalled();
++ fireEvent.click(screen.getByRole('button',{name:'继续启动'}));await waitFor(()=>expect(confirmed).toHaveBeenCalledWith('saved','调整叙事'));expect(commands).toEqual(['reconfirmScript','start','start']);expect(screen.getByRole('document',{name:'主脚本预览'}).textContent).toContain('新口播');
++ vi.restoreAllMocks();
++});
++
++function startFailure(command:(name:string,data:unknown)=>Promise<unknown>,confirmed=vi.fn()){
++ const props={episodeId:'e',scriptRevisionId:null,script:'',stage:'waiting_input',readOnly:false,pending:false,command,onConfirmed:confirmed};
++ const view=render(<WorkspaceScriptPanel {...props}/>);fireEvent.change(screen.getByLabelText('主脚本'),{target:{value:'恢复正文'}});fireEvent.click(screen.getByRole('button',{name:'确认脚本'}));return{...view,props,confirmed};
++}
++it('reconciles an already-started saved script without replaying start or clearing another visit',async()=>{
++ const command=vi.fn(async(name:string)=>{if(name==='importMaterial')return{id:'saved'};throw Error('响应丢失');});const{confirmed}=startFailure(command);
++ await screen.findByRole('button',{name:'继续启动'});vi.spyOn(globalThis,'fetch').mockResolvedValue(Response.json({sections:{episode:{id:'e',main_script_revision_id:'saved',stage:'script_approved',archived_at:null}}}));
++ fireEvent.click(screen.getByRole('button',{name:'继续启动'}));await waitFor(()=>expect(confirmed).toHaveBeenCalledExactlyOnceWith('saved',undefined));expect(command.mock.calls.map(([name])=>name)).toEqual(['importMaterial','start']);expect(screen.getByText('制作已启动')).toBeTruthy();
++});
++it.each([
++ ['different revision',{id:'e',main_script_revision_id:'other',stage:'waiting_input',archived_at:null}],
++ ['archive',{id:'e',main_script_revision_id:'saved',stage:'waiting_input',archived_at:'today'}],
++ ['completed',{id:'e',main_script_revision_id:'saved',stage:'production_completed',archived_at:null}],
++ ['missing episode',null]
++])('does not resume a saved script after %s is read',async(_case,episode)=>{
++ const command=vi.fn(async(name:string)=>{if(name==='importMaterial')return{id:'saved'};throw Error('启动未完成');});const{confirmed}=startFailure(command);
++ await screen.findByRole('button',{name:'继续启动'});vi.spyOn(globalThis,'fetch').mockResolvedValue(Response.json({sections:{episode}}));fireEvent.click(screen.getByRole('button',{name:'继续启动'}));await screen.findByText(/当前脚本版本或生产单状态已变化/);expect(confirmed).not.toHaveBeenCalled();expect(command).toHaveBeenCalledTimes(2);expect((screen.getByLabelText('主脚本') as HTMLTextAreaElement).value).toBe('恢复正文');
++});
++it('keeps saving and starting separate and blocks rapid duplicate confirmation',async()=>{
++ let save!:(value:unknown)=>void,start!:(value:unknown)=>void;const confirmed=vi.fn(),command=vi.fn((name:string)=>new Promise(resolve=>{if(name==='importMaterial')save=resolve;else start=resolve;}));startFailure(command,confirmed);
++ fireEvent.click(screen.getByRole('button',{name:'正在保存…'}));expect(command).toHaveBeenCalledTimes(1);expect(screen.getByText('正在保存脚本…')).toBeTruthy();
++ await act(async()=>save({id:'saved'}));expect(screen.getByText('脚本已保存，正在启动制作…')).toBeTruthy();expect(confirmed).not.toHaveBeenCalled();expect(screen.getByLabelText('主脚本')).toHaveProperty('disabled',true);
++ await act(async()=>start({id:'e'}));expect(confirmed).toHaveBeenCalledOnce();
++});
++it('ignores a late save after switching episodes and does not start the old episode',async()=>{
++ let resolve!:(value:unknown)=>void;const command=vi.fn(()=>new Promise(value=>{resolve=value;})),{rerender,props,confirmed}=startFailure(command);
++ rerender(<WorkspaceScriptPanel {...props} episodeId="other"/>);fireEvent.change(screen.getByLabelText('主脚本'),{target:{value:'另一生产单正文'}});await act(async()=>resolve({id:'saved'}));expect(confirmed).not.toHaveBeenCalled();expect(command).toHaveBeenCalledTimes(1);expect((screen.getByLabelText('主脚本') as HTMLTextAreaElement).value).toBe('另一生产单正文');
++});
++it('does not start after the view becomes read-only during recovery',async()=>{
++ const command=vi.fn(async(name:string)=>{if(name==='importMaterial')return{id:'saved'};throw Error('响应丢失');});const{rerender,props,confirmed}=startFailure(command);await screen.findByRole('button',{name:'继续启动'});
++ let read!:(value:Response)=>void;vi.spyOn(globalThis,'fetch').mockImplementation(()=>new Promise(resolve=>{read=resolve;}));fireEvent.click(screen.getByRole('button',{name:'继续启动'}));rerender(<WorkspaceScriptPanel {...props} readOnly/>);
++ await act(async()=>read(Response.json({sections:{episode:{id:'e',main_script_revision_id:'saved',stage:'waiting_input',archived_at:null}}})));expect(command).toHaveBeenCalledTimes(2);expect(confirmed).not.toHaveBeenCalled();
++});
++it('retains a draft after a failed recovery read and permits another read without saving again',async()=>{
++ const command=vi.fn(async(name:string)=>{if(name==='importMaterial')return{id:'saved'};throw Error('启动未完成');});const{confirmed}=startFailure(command);await screen.findByRole('button',{name:'继续启动'});
++ const fetcher=vi.spyOn(globalThis,'fetch').mockRejectedValueOnce(Error('核对连接中断')).mockResolvedValueOnce(Response.json({sections:{episode:{id:'e',main_script_revision_id:'saved',stage:'script_approved',archived_at:null}}}));
++ fireEvent.click(screen.getByRole('button',{name:'继续启动'}));await screen.findByText('核对连接中断');expect((screen.getByLabelText('主脚本') as HTMLTextAreaElement).value).toBe('恢复正文');expect(confirmed).not.toHaveBeenCalled();fireEvent.click(screen.getByRole('button',{name:'继续启动'}));await waitFor(()=>expect(confirmed).toHaveBeenCalledOnce());expect(fetcher).toHaveBeenCalledTimes(2);expect(command).toHaveBeenCalledTimes(2);
++});
++it('requires a reason and a new confirmation when editing an already-saved script after start failure',async()=>{
++ let revisions=0;const command=vi.fn(async(name:string)=>{if(name==='importMaterial')return{id:'saved'};if(name==='reconfirmScript'){if(++revisions===1)throw Error('保存连接中断');return{id:'newer'};}throw Error('启动中断');});startFailure(command);await screen.findByRole('button',{name:'继续启动'});
++ fireEvent.change(screen.getByLabelText('主脚本'),{target:{value:'继续修改的正文'}});expect(screen.queryByRole('button',{name:'继续启动'})).toBeNull();fireEvent.click(screen.getByRole('button',{name:'确认脚本修订'}));await screen.findByText('请填写修订原因。');fireEvent.change(screen.getByLabelText('脚本修订原因'),{target:{value:'修改叙事'}});fireEvent.click(screen.getByRole('button',{name:'确认脚本修订'}));fireEvent.click(screen.getByRole('button',{name:'确认保存修订'}));await screen.findByText('保存连接中断');
++ fireEvent.click(screen.getByRole('button',{name:'确认脚本修订'}));fireEvent.click(screen.getByRole('button',{name:'确认保存修订'}));await screen.findByRole('button',{name:'继续启动'});expect(command.mock.calls.filter(([name])=>name==='reconfirmScript')).toEqual([['reconfirmScript',{episodeId:'e',expectedScriptRevisionId:'saved',text:'# 主脚本\n\n## 正文\n\n继续修改的正文\n',reason:'修改叙事'}],['reconfirmScript',expect.objectContaining({expectedScriptRevisionId:'saved'})]]);
++});
++it('continues a saved waiting-input script after remount without importing or revising it',async()=>{
++ const command=vi.fn(async()=>({id:'e'})),confirmed=vi.fn();render(<WorkspaceScriptPanel episodeId="saved-e" scriptRevisionId="saved" script={'# 主脚本\n\n## 正文\n\n已保存正文\n'} stage="waiting_input" readOnly={false} pending={false} command={command} onConfirmed={confirmed}/>);fireEvent.click(screen.getByRole('button',{name:'确认脚本'}));await waitFor(()=>expect(confirmed).toHaveBeenCalledExactlyOnceWith('saved',undefined));expect(command).toHaveBeenCalledExactlyOnceWith('start',{episodeId:'saved-e'});
++});
++it('does not treat an old idempotent start receipt as successful startup of a newer revision',async()=>{
++ const {webcrypto}=await import('node:crypto');vi.stubGlobal('crypto',webcrypto);const{localCommand}=await import('./client');const keys:string[]=[],confirmed=vi.fn();let starts=0;
++ vi.spyOn(globalThis,'fetch').mockImplementation(async(path,init)=>{
++  if(String(path).endsWith('/session'))return Response.json({csrfToken:'test-csrf'});
++  if(String(path).includes('/episodes/receipt-e'))return Response.json({sections:{episode:{id:'receipt-e',main_script_revision_id:'newer',stage:'waiting_input',archived_at:null}}});
++  const body=JSON.parse(String(init?.body));
++  if(body.command==='importMaterial')return Response.json({id:'saved'});
++  if(body.command==='reconfirmScript')return Response.json({id:'newer'});
++  keys.push(body.idempotencyKey);if(++starts===1)return Response.json({error:'启动结果丢失'},{status:503});
++  return Response.json({id:'receipt-e',main_script_revision_id:starts===2?'saved':'newer',stage:'script_approved'});
++ });
++ render(<WorkspaceScriptPanel episodeId="receipt-e" scriptRevisionId={null} script="" stage="waiting_input" readOnly={false} pending={false} command={(name,data)=>localCommand(name,data,undefined,'episode-commands')} onConfirmed={confirmed}/>);
++ fireEvent.change(screen.getByLabelText('主脚本'),{target:{value:'首次正文'}});fireEvent.click(screen.getByRole('button',{name:'确认脚本'}));await screen.findByRole('button',{name:'继续启动'});
++ fireEvent.change(screen.getByLabelText('主脚本'),{target:{value:'再次修改'}});fireEvent.change(screen.getByLabelText('脚本修订原因'),{target:{value:'调整叙事'}});fireEvent.click(screen.getByRole('button',{name:'确认脚本修订'}));fireEvent.click(screen.getByRole('button',{name:'确认保存修订'}));
++ await screen.findByRole('button',{name:'继续启动'});expect(confirmed).not.toHaveBeenCalled();expect((screen.getByLabelText('主脚本') as HTMLTextAreaElement).value).toBe('再次修改');expect(keys[0]).toBe(keys[1]);
++ fireEvent.click(screen.getByRole('button',{name:'继续启动'}));await waitFor(()=>expect(confirmed).toHaveBeenCalledExactlyOnceWith('newer','调整叙事'));expect(keys[2]).not.toBe(keys[1]);
++ vi.unstubAllGlobals();sessionStorage.clear();
++});
++it('shows recovery-read errors locally even when the parent presents the original start failure',async()=>{
++ const command=vi.fn(async(name:string)=>{if(name==='importMaterial')return{id:'saved'};throw Error('启动未完成');});const{rerender,props}=startFailure(command);await screen.findByRole('button',{name:'继续启动'});rerender(<WorkspaceScriptPanel {...props} errorPresented/>);
++ vi.spyOn(globalThis,'fetch').mockRejectedValue(Error('重新核对连接中断'));fireEvent.click(screen.getByRole('button',{name:'继续启动'}));await screen.findByText('重新核对连接中断');
++});
+--- a/src/local-app/WorkspaceScriptPanel.tsx
++++ b/src/local-app/WorkspaceScriptPanel.tsx
+@@ -6,48 +6,101 @@
+ import {workspaceScriptInput,workspaceScriptExample} from './workspaceScriptInput';
+ import {ConfirmationModal,ConfirmationModalPresence} from '../ui/ConfirmationModal';
+ import {useWorkspaceDraft} from './WorkspaceDraft';
++import {localRequest} from './client';
++import type {EpisodeProductionSnapshot} from '../episodes/episodeSnapshot';
+ import './workspace-compact-panels.css';
+ 
+ interface Props {
+  episodeId:string;scriptRevisionId:string|null;script:string;stage:string;readOnly:boolean;pending:boolean;
+  command:(name:string,data:unknown)=>Promise<unknown>;onConfirmed:(scriptRevisionId?:string,revisionReason?:string)=>void;history?:ReactNode;errorPresented?:boolean;
+ }
+-export function WorkspaceScriptPanel({episodeId,scriptRevisionId,script,stage,readOnly,pending,command,onConfirmed,history,errorPresented=false}:Props){
+- const draft=useWorkspaceDraft({episodeId,kind:'script',version:scriptRevisionId??'new',initial:{text:script,reason:'',filename:'script.md'},enabled:!readOnly});
++type ScriptIntent={baseline:{id:string|null;text:string};source:{id:string|null;text:string};text:string;finish:(id:string)=>void};
++type ScriptConfirmationState=
++ |{phase:'idle'}
++ |{phase:'saving'|'save_failed';intent:ScriptIntent}
++ |{phase:'starting'|'checking'|'started';intent:ScriptIntent;savedId:string}
++ |{phase:'start_failed';intent:ScriptIntent;savedId:string;readError:boolean};
++const confirmationStatus:Record<ScriptConfirmationState['phase'],string>={idle:'',saving:'正在保存脚本…',save_failed:'保存结果未确认，尚未启动制作。',starting:'脚本已保存，正在启动制作…',checking:'脚本已保存，正在核对启动状态…',start_failed:'脚本已保存，制作尚未确认启动。',started:'制作已启动'};
++export function WorkspaceScriptPanel(props:Props){return <WorkspaceScriptEditor key={props.episodeId} {...props}/>;}
++function WorkspaceScriptEditor({episodeId,scriptRevisionId,script,stage,readOnly,pending,command,onConfirmed,history,errorPresented=false}:Props){
++ const [flow,setFlow]=useState<ScriptConfirmationState>({phase:'idle'});
++ // A successful save refreshes the parent's version before start settles. Keep its draft scope until completion.
++ const baseline='intent' in flow?flow.intent.baseline:{id:scriptRevisionId,text:script};
++ const savedId='savedId' in flow?flow.savedId:null;
++ const draft=useWorkspaceDraft({episodeId,kind:'script',version:baseline.id??'new',initial:{text:baseline.text,reason:'',filename:'script.md'},enabled:!readOnly});
+  const {text,reason,filename}=draft.value,setText=(text:string)=>draft.setValue(value=>({...value,text})),setReason=(reason:string)=>draft.setValue(value=>({...value,reason})),setFilename=(filename:string)=>draft.setValue(value=>({...value,filename}));
+- const [preview,setPreview]=useState(script),[error,setError]=useState(''),[busy,setBusy]=useState(false);
++ const [preview,setPreview]=useState(script),[error,setError]=useState('');
+  const [editing,setEditing]=useState(!readOnly&&(!scriptRevisionId||stage==='waiting_input')),[confirmation,setConfirmation]=useState<'save'|'discard'|null>(null),[locallyConfirmed,setLocallyConfirmed]=useState(false);
+  const [invalid,setInvalid]=useState<'script'|'reason'|null>(null),errorId=useId(),reasonInput=useRef<HTMLInputElement>(null),textInput=useRef<HTMLTextAreaElement>(null);
+- const input=useRef<HTMLInputElement>(null);
+- useEffect(()=>{setPreview(script);},[script,scriptRevisionId]);
+- const changed=text!==preview,revision=!!scriptRevisionId&&stage!=='waiting_input',disabled=readOnly||pending||busy,isEditing=(editing||draft.dirty)&&!readOnly;
+- const scriptInput=workspaceScriptInput(text);
+- const baselineStatus=revision||locallyConfirmed?'已确认基准':'待确认';
++ const input=useRef<HTMLInputElement>(null),lock=useRef(false),active=useRef(true),writable=useRef(!readOnly);writable.current=!readOnly;
++ useEffect(()=>{active.current=true;return()=>{active.current=false;};},[]);
++ useEffect(()=>{if(flow.phase==='idle')setPreview(script);},[script,scriptRevisionId,flow.phase]);
++ useEffect(()=>{if(flow.phase==='started'&&scriptRevisionId===flow.savedId&&script===flow.intent.text)setFlow({phase:'idle'});},[flow,scriptRevisionId,script]);
++ const scriptInput=workspaceScriptInput(text),source='intent' in flow?flow.intent.source:baseline,basisId=savedId??source.id;
++ const busy=['saving','starting','checking'].includes(flow.phase);
++ const changed='savedId' in flow?scriptInput.text!==flow.intent.text:source.id!==baseline.id?scriptInput.text!==source.text:text!==preview,revision=!!basisId&&(stage!=='waiting_input'||!!savedId||basisId!==baseline.id),disabled=readOnly||pending||busy,isEditing=(editing||draft.dirty)&&!readOnly;
++ const canResume=flow.phase==='start_failed'&&!changed;
++ const showError=!errorPresented||flow.phase==='start_failed'&&flow.readError;
++ const baselineStatus=confirmationStatus[flow.phase]||(revision||locallyConfirmed?'已确认基准':'待确认');
+  const statistics=mainScriptStatistics(isEditing?text:preview),confirmedCharacters=Array.from(preview).length;
+  function requestSave(){
+   setError('');setInvalid(null);
+   if(!text.trim()){setInvalid('script');textInput.current?.focus();return;}
+   if(scriptInput.error){setInvalid('script');setError(scriptInput.error);textInput.current?.focus();return;}
+-  if(scriptRevisionId&&changed&&!reason.trim()){setInvalid('reason');reasonInput.current?.focus();return;}
+-  if(revision||scriptRevisionId&&changed)setConfirmation('save');else void confirm();
++  if(basisId&&changed&&!reason.trim()){setInvalid('reason');reasonInput.current?.focus();return;}
++  if(revision||basisId&&changed)setConfirmation('save');else void confirm();
+  }
+- function discard(){setInvalid(null);draft.reset();setError('');setEditing(false);setConfirmation(null);}
++ function discard(){setFlow({phase:'idle'});setInvalid(null);draft.reset();setError('');setEditing(false);setConfirmation(null);}
++ async function startSaved(intent:ScriptIntent,id:string,check=false){
++  let commandStarted=false;
++  try{
++   if(check){
++    setFlow({phase:'checking',intent,savedId:id});
++    const value=await localRequest(`episodes/${encodeURIComponent(episodeId)}`) as {sections:Partial<EpisodeProductionSnapshot>&{historicalReadOnly?:boolean}};
++    if(!active.current)return;
++    if(!writable.current)throw Error('当前生产单已只读，本次草稿已保留。');
++    const episode=value.sections?.episode;
++    if(!episode||typeof episode.stage!=='string'||episode.id!==episodeId||episode.main_script_revision_id!==id||episode.archived_at||episode.stage==='production_completed'||value.sections.historicalReadOnly)throw Error('当前脚本版本或生产单状态已变化，请重新打开核对；本次草稿已保留。');
++    if(episode.stage!=='waiting_input'){
++     setFlow({phase:'started',intent,savedId:id});intent.finish(id);return;
++    }
++   }
++   if(!writable.current)throw Error('当前生产单已只读，本次草稿已保留。');
++   setFlow({phase:'starting',intent,savedId:id});
++   commandStarted=true;
++   const result=await command('start',{episodeId}) as Partial<EpisodeProductionSnapshot['episode']>;
++   // A previous start may have committed with a lost response; its receipt belongs to that script only.
++   if(result.main_script_revision_id!==undefined&&result.main_script_revision_id!==id||result.stage==='waiting_input')throw Error('启动回执对应的脚本或阶段已变化，请核对后继续启动。');
++   if(!active.current||!writable.current)return;
++   setFlow({phase:'started',intent,savedId:id});intent.finish(id);
++  }catch(cause){if(active.current){setFlow({phase:'start_failed',intent,savedId:id,readError:!commandStarted});setError(cause instanceof Error?cause.message:'制作启动未完成。');}}
++ }
+  async function confirm(){
+-  if(disabled)return;
++  if(disabled||lock.current)return;
++  lock.current=true;setError('');setConfirmation(null);
+   const submitted={...draft.value};
+-  setBusy(true);setError('');
++  const intent:ScriptIntent={baseline,source:{id:basisId,text:'savedId' in flow?flow.intent.text:source.text},text:scriptInput.text,finish:id=>{
++   if(draft.acknowledge(submitted,{...submitted,text:scriptInput.text,reason:''})){setPreview(scriptInput.text);setEditing(false);}
++   setLocallyConfirmed(true);onConfirmed(id,submitted.reason.trim()||undefined);
++  }};
++  setFlow({phase:'saving',intent});
+   try{
+-   let confirmedScriptId=scriptRevisionId??undefined;
+-   if(!text.trim())throw Error('请填写主脚本。');
+-   if(!scriptRevisionId){
+-    const bytes=new TextEncoder().encode(scriptInput.text);let binary='';for(const byte of bytes)binary+=String.fromCharCode(byte);
+-    const registered=await command('importMaterial',{episodeId,materialType:'script',materialPurpose:'main_script',sourceKind:'file',sourcePath:filename,mimeType:'text/markdown',contentBase64:btoa(binary),isMainScript:true}) as {id:string};confirmedScriptId=registered.id;
++   let id=basisId;
++   if(!id){
++    const bytes=new TextEncoder().encode(intent.text);let binary='';for(const byte of bytes)binary+=String.fromCharCode(byte);
++    const registered=await command('importMaterial',{episodeId,materialType:'script',materialPurpose:'main_script',sourceKind:'file',sourcePath:submitted.filename,mimeType:'text/markdown',contentBase64:btoa(binary),isMainScript:true}) as {id:string};id=registered.id;
+    }else if(changed){
+-    if(!reason.trim())throw Error('请填写修订原因。');
+-    const revised=await command('reconfirmScript',{episodeId,expectedScriptRevisionId:scriptRevisionId,text:scriptInput.text,reason:reason.trim()}) as {id:string};confirmedScriptId=revised.id;
++    const revised=await command('reconfirmScript',{episodeId,expectedScriptRevisionId:id,text:intent.text,reason:submitted.reason.trim()}) as {id:string};id=revised.id;
+    }
+-   await command('start',{episodeId});if(draft.acknowledge(submitted,{...submitted,text:scriptInput.text,reason:''})){setPreview(scriptInput.text);setEditing(false);}setLocallyConfirmed(true);setConfirmation(null);onConfirmed(confirmedScriptId,submitted.reason.trim()||undefined);
+-  }catch(cause){setConfirmation(null);setError(cause instanceof Error?cause.message:'脚本确认未完成。');}finally{setBusy(false);}
++   if(!active.current)return;
++   setPreview(intent.text);await startSaved(intent,id!);
++  }catch(cause){if(active.current){setFlow({phase:'save_failed',intent});setError(cause instanceof Error?cause.message:'脚本保存未完成。');}}
++  finally{lock.current=false;}
++ }
++ async function resume(){
++  if(disabled||lock.current||flow.phase!=='start_failed'||!canResume)return;
++  lock.current=true;setError('');
++  try{await startSaved(flow.intent,flow.savedId,true);}finally{lock.current=false;}
+  }
+  async function readScriptFile(file:File){
+   if(disabled||!isEditing)return;
+@@ -78,11 +131,11 @@
+      <input ref={input} hidden type="file" accept=".md,.txt,text/plain,text/markdown" aria-label="上传主脚本" disabled={disabled||!isEditing} onChange={event=>{const file=event.target.files?.[0];event.target.value='';if(file)void readScriptFile(file);}}/>
+      {isEditing?<button type="button" className="workspace-script-file-slot" aria-label="上传脚本" disabled={disabled} onClick={()=>input.current?.click()}><FileText size={20} aria-hidden="true"/><span><strong>{filename==='script.md'?'拖入或选择脚本':filename}</strong><small>Markdown / TXT · 最大 2 MB</small></span></button>:<div className="workspace-script-file-slot is-locked"><FileText size={20} aria-hidden="true"/><span><strong>{filename==='script.md'?'主脚本':filename}</strong><small>已确认脚本</small></span></div>}
+     </div>
+-    {(!readOnly||invalid||error&&!errorPresented)&&<div className="workspace-script-controls" role="group" aria-label="脚本操作">
++    {(!readOnly||invalid||error&&showError)&&<div className="workspace-script-controls" role="group" aria-label="脚本操作">
+      {!isEditing&&!readOnly&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>{setText(preview);setError('');setEditing(true);}}>修改脚本</Button>}
+-    {isEditing&&scriptRevisionId&&changed&&<label className="workspace-script-reason">修订原因<input ref={reasonInput} aria-label="脚本修订原因" aria-required="true" aria-invalid={invalid==='reason'||undefined} aria-describedby={invalid==='reason'?errorId:undefined} placeholder="简述本次修改原因" value={reason} disabled={disabled} onChange={event=>{setReason(event.target.value);if(invalid==='reason')setInvalid(null);}}/>{invalid==='reason'&&<span id={errorId} className="form-error" role="alert">请填写修订原因。</span>}</label>}
+-    {isEditing&&<div className="workspace-script-actions"><Button size="sm" color="primary" isDisabled={disabled||!!scriptRevisionId&&!changed&&stage!=='waiting_input'} onPress={requestSave}>{busy?'正在确认…':revision?'确认脚本修订':'确认脚本'}</Button>{(revision||locallyConfirmed)&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>{if(changed||reason.trim())setConfirmation('discard');else discard();}}>取消编辑</Button>}</div>}
+-    {error&&invalid!=='script'&&!errorPresented&&<p role="alert" className="form-error">{error}</p>}
++    {isEditing&&basisId&&(changed||!!reason)&&<label className="workspace-script-reason">修订原因<input ref={reasonInput} aria-label="脚本修订原因" aria-required="true" aria-invalid={invalid==='reason'||undefined} aria-describedby={invalid==='reason'?errorId:undefined} placeholder="简述本次修改原因" value={reason} disabled={disabled} onChange={event=>{setReason(event.target.value);if(invalid==='reason')setInvalid(null);}}/>{invalid==='reason'&&<span id={errorId} className="form-error" role="alert">请填写修订原因。</span>}</label>}
++    {isEditing&&<div className="workspace-script-actions"><Button size="sm" color="primary" isDisabled={disabled||!canResume&&!!basisId&&!changed&&stage!=='waiting_input'} onPress={canResume?()=>void resume():requestSave}>{flow.phase==='saving'?'正在保存…':flow.phase==='starting'?'正在启动…':flow.phase==='checking'?'正在核对…':canResume?'继续启动':revision?'确认脚本修订':'确认脚本'}</Button>{(revision||locallyConfirmed)&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>{if(changed||reason.trim())setConfirmation('discard');else discard();}}>取消编辑</Button>}</div>}
++    {error&&invalid!=='script'&&showError&&<p role="alert" className="form-error">{error}</p>}
+     </div>}
+     <h4>脚本基准</h4>
+     <dl><div><dt>基准版本</dt><dd>{scriptRevisionId?.slice(0,8)??'尚无版本'}</dd></div><div><dt>基准字数</dt><dd>{scriptRevisionId||locallyConfirmed?`${confirmedCharacters.toLocaleString()} 字符`:'尚未确认'}</dd></div></dl>
+--- /dev/null
++++ b/docs/adr/0036-script-save-start-recovery.md
+@@ -0,0 +1,17 @@
++# ADR-0036：脚本保存与启动的分步恢复
++
++状态：Accepted。日期：2026-11-10。Owner 批准状态机第 4 项；不提交、不推送。
++
++## 决定
++
++脚本确认仍按原命令顺序保存材料或修订，再启动生产。面板显式区分保存中、保存结果未确认、启动中、核对中、已保存但启动未确认、已启动。只有启动成功或权威读回证明同一脚本已进入制作，才确认草稿并触发后续准备。启动失败不能显示成保存失败，也不能重复创建已知成功的修订。
++
++保存命令会刷新父页面版本，工作区重读也会暂时隐藏内容。脚本面板在重读期间保持实例并禁用；本次提交保留原草稿的 Owner／episode／版本范围，防止自身的保存刷新清空正文、原因及文件名。启动完成且父页面脚本已同步后，恢复普通版本跟随。切换生产单或卸载后的迟到结果不继续启动或通知新页面。
++
++保存结果未确认时保留原草稿，用户可重试原确认，沿用现有客户端幂等键与服务端回执。已保存但启动未确认时提供「继续启动」；先通过现有生产单读取接口核对当前脚本 ID、只读及阶段。同一版本仍为 `waiting_input` 才重试原启动命令，已进入制作则直接继续；版本改变、归档、完成、历史只读、读取失败均保留草稿并停止。若继续修改正文，则仍需修订原因及二次确认，并携带最近已保存版本作为预期版本。
++
++不增加自动恢复或跨版本草稿迁移协议。页面刷新后，已保存脚本按现有 `waiting_input` 确认入口继续；原草稿仍遵守现有 Owner／episode／服务端版本隔离。保存快照、文件校验、运行中任务限制、下游失效、历史媒体、Owner／CSRF／行锁、输入校验和幂等协议保持不变，不修改 SQL 或服务端命令。
++
++## 验证
++
++通过脚本面板与真实工作区父组件的公开输入、按钮、状态和回调验证，使用受控 HTTP 返回生产单状态。覆盖分步延迟、保存失败、保存成功而启动失败、已启动的未知响应、版本冲突、只读、读取失败、重复操作、编辑后的修订、切换生产单，以及草稿隔离。浏览器使用真实组件、客户端和隔离 HTTP，检查宽窄屏及失败恢复，不操作正式业务数据。

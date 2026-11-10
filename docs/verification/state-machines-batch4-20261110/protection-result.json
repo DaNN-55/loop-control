@@ -1,0 +1,9 @@
+{
+  "totalPreexistingFiles": 82,
+  "unchanged": 80,
+  "intentionalSharedFiles": [
+    "PLAN.md",
+    "docs/adr/README.md"
+  ],
+  "sharedContentPreserved": true
+}

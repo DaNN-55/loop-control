@@ -1,0 +1,7 @@
+{
+  "databases": [
+    "loop_state_baseline",
+    "postgres"
+  ],
+  "fixtureDatabasesRemaining": 0
+}

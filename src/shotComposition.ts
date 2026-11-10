@@ -39,12 +39,6 @@ export const shotCompositionLayoutLabels: Record<ShotCompositionLayout, string> 
   "grid-4": "四宫格",
 };
 
-export const shotTransitionModeLabels: Record<ShotTransitionMode, string> = {
-  cut: "硬切",
-  fade: "基础淡化",
-  studio: "交给 Studio",
-};
-
 export const shotCompositionSlotLabels: Record<string, string> = {
   full: "主画面",
   left: "左侧",

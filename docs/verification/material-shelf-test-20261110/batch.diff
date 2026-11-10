@@ -1,0 +1,32 @@
+--- a/PLAN.md
++++ b/PLAN.md
+@@ -10,6 +10,8 @@
+ - [x] 双轴只读审查无发现；最终默认全量一次 1915 通过、1 跳过、2 条已知素材栏旧标题断言失败，未修改无关断言。38 条专项真实集成验收全部通过；范围核对与证据归档完成，本轮数据库／进程／目录清理。
+ 
+ 上轮全量遗留两条素材栏旧 heading 断言，与并行视觉提交 62885252 相关；本轮不默认把它们算作通过，也不顺手改动无关断言。报告 `docs/verification/state-machines-followup345-20261110/REPORT.md`。
++
++后续验收（2026-11-10）：经用户明确批准，仅按当前素材栏按钮计数及实际素材清单更新两条旧断言，保留原上传结果与业务断言。47 条相关回归及类型检查通过；默认全量一次 256 文件通过、1917 条通过、1 条跳过，无失败。产品代码与恢复规则未修改，未提交推送；记录 `docs/verification/material-shelf-test-20261110/REPORT.md`。
+ 
+ # 状态机专项复查后第 1、2 项（2026-11-10）
+ 
+--- a/src/local-app/ProductionWorkspacePanel.test.tsx
++++ b/src/local-app/ProductionWorkspacePanel.test.tsx
+@@ -38,7 +38,8 @@
+   ['importMaterial',expect.objectContaining({materialType:'video',materialPurpose:'visual_reference',sourcePath:'clip.mov',mimeType:'application/octet-stream'})],
+  ]);
+  expect(screen.getByRole('alert').textContent).toContain('notes.txt');
+- expect(screen.getByRole('heading',{name:'本期素材 · 3'})).toBeTruthy();
++ expect(screen.getByRole('button',{name:'收起本期素材'}).textContent).toBe('本期素材 · 3');
++ expect(within(screen.getByRole('list',{name:'素材清单'})).getAllByRole('listitem')).toHaveLength(3);
+ });
+ it('shows a dismissible success toast from the actual shelf upload and retains the imported material',async()=>{
+  vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace})));
+@@ -48,7 +49,7 @@
+  fireEvent.change(screen.getByLabelText('上传制作素材'),{target:{files:[new File(['image'],'image.png',{type:'image/png'})]}});
+  expect((await screen.findByRole('status',{name:'上传提示'})).textContent).toContain('已导入 1 项素材');
+  fireEvent.click(screen.getByRole('button',{name:'关闭上传提示'}));expect(screen.queryByRole('status',{name:'上传提示'})).toBeNull();
+- expect(screen.getByRole('heading',{name:'本期素材 · 1'})).toBeTruthy();expect(screen.getByText('已导入 1 项素材')).toBeTruthy();expect(command).toHaveBeenCalledExactlyOnceWith('importMaterial',expect.objectContaining({sourcePath:'image.png'}));
++ expect(screen.getByRole('button',{name:'收起本期素材'}).textContent).toBe('本期素材 · 1');expect(within(screen.getByRole('list',{name:'素材清单'})).getByRole('button',{name:'预览 image.png'})).toBeTruthy();expect(screen.getByText('已导入 1 项素材')).toBeTruthy();expect(command).toHaveBeenCalledExactlyOnceWith('importMaterial',expect.objectContaining({sourcePath:'image.png'}));
+ });
+ it('shows shelf validation failures in the same toast and can reopen their retained details',async()=>{
+  vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace})));const command=vi.fn();

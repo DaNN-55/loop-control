@@ -38,7 +38,8 @@ it('opens a single file picker and detects mixed media formats in one batch',asy
   ['importMaterial',expect.objectContaining({materialType:'video',materialPurpose:'visual_reference',sourcePath:'clip.mov',mimeType:'application/octet-stream'})],
  ]);
  expect(screen.getByRole('alert').textContent).toContain('notes.txt');
- expect(screen.getByRole('heading',{name:'本期素材 · 3'})).toBeTruthy();
+ expect(screen.getByRole('button',{name:'收起本期素材'}).textContent).toBe('本期素材 · 3');
+ expect(within(screen.getByRole('list',{name:'素材清单'})).getAllByRole('listitem')).toHaveLength(3);
 });
 it('shows a dismissible success toast from the actual shelf upload and retains the imported material',async()=>{
  vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace})));
@@ -48,7 +49,7 @@ it('shows a dismissible success toast from the actual shelf upload and retains t
  fireEvent.change(screen.getByLabelText('上传制作素材'),{target:{files:[new File(['image'],'image.png',{type:'image/png'})]}});
  expect((await screen.findByRole('status',{name:'上传提示'})).textContent).toContain('已导入 1 项素材');
  fireEvent.click(screen.getByRole('button',{name:'关闭上传提示'}));expect(screen.queryByRole('status',{name:'上传提示'})).toBeNull();
- expect(screen.getByRole('heading',{name:'本期素材 · 1'})).toBeTruthy();expect(screen.getByText('已导入 1 项素材')).toBeTruthy();expect(command).toHaveBeenCalledExactlyOnceWith('importMaterial',expect.objectContaining({sourcePath:'image.png'}));
+ expect(screen.getByRole('button',{name:'收起本期素材'}).textContent).toBe('本期素材 · 1');expect(within(screen.getByRole('list',{name:'素材清单'})).getByRole('button',{name:'预览 image.png'})).toBeTruthy();expect(screen.getByText('已导入 1 项素材')).toBeTruthy();expect(command).toHaveBeenCalledExactlyOnceWith('importMaterial',expect.objectContaining({sourcePath:'image.png'}));
 });
 it('shows shelf validation failures in the same toast and can reopen their retained details',async()=>{
  vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace})));const command=vi.fn();
@@ -166,7 +167,9 @@ it('accepts one unassigned MP3 for voice and queues local audio candidates witho
  fireEvent.click(screen.getByRole('button',{name:'本期素材 · 2'}));
  const audio=screen.getByRole('button',{name:'预览 unassigned.mp3'}),music=screen.getByRole('button',{name:'预览 music.mp3'});
  fireEvent.click(screen.getByRole('tab',{name:'字幕与口播'}));
- fireEvent.change(screen.getByRole('combobox',{name:'口播来源'}),{target:{value:'manual'}});
+ fireEvent.click(screen.getByRole('button',{name:'口播来源'}));
+ fireEvent.click(screen.getByRole('menuitemradio',{name:'人工口播'}));
+ expect(screen.getByRole('button',{name:'口播来源'}).textContent).toContain('人工口播');
  const musicDrag=startMaterialDrag(music);
  expect(screen.getByRole('button',{name:'拖入口播文件'}).getAttribute('data-drag-over')).toBeNull();
  fireEvent.dragEnd(music,{dataTransfer:musicDrag});
@@ -400,4 +403,13 @@ it('keeps a visual upload failure in transient feedback and recovery instead of 
  await screen.findByRole('status',{name:'上传提示'});expect(screen.getByRole('status',{name:'上传提示'}).textContent).toContain('文件内容无法解码');expect(screen.queryByRole('alert')).toBeNull();
  expect(screen.queryByLabelText('上传记录')).toBeNull();fireEvent.click(screen.getByRole('button',{name:'关闭上传提示'}));expect(screen.queryByRole('status',{name:'上传提示'})).toBeNull();expect(screen.queryByRole('alert')).toBeNull();
  expect(screen.getByRole('region',{name:'上传结果'}).textContent).toContain('文件内容无法解码');expect(command).toHaveBeenCalledTimes(1);
+});
+
+it('keeps script confirmation mounted while its saved version refreshes the real workspace parent',async()=>{
+ const {useState}=await import('react');let reads=0,resolveRefresh!:(response:Response)=>void;
+ vi.stubGlobal('fetch',vi.fn(async()=>{if(++reads===1)return Response.json({workspace:null});return new Promise<Response>(resolve=>{resolveRefresh=resolve;});}));
+ function Host(){const[id,setId]=useState<string|null>(null);return <ProductionWorkspacePanel episodeId="phase-e" title="脚本分步" scriptRevisionId={id} stage="waiting_input" materials={[]} onLegacy={()=>{}} command={async name=>{if(name==='importMaterial'){setId('saved');return{id:'saved'};}throw Error('启动中断');}}/>;}
+ render(<Host/>);await screen.findByRole('button',{name:'确认脚本'});fireEvent.change(screen.getByLabelText('主脚本'),{target:{value:'保留本次正文'}});fireEvent.click(screen.getByRole('button',{name:'确认脚本'}));await waitFor(()=>expect(reads).toBe(2));
+ await act(async()=>resolveRefresh(Response.json({workspace:null})));
+ expect((await screen.findByLabelText('主脚本') as HTMLTextAreaElement).value).toBe('保留本次正文');expect(await screen.findByRole('button',{name:'继续启动'})).toBeTruthy();
 });

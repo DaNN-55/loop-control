@@ -27,11 +27,12 @@ it('提示词接近实际输入上限时提示计数，完整保留超限输入�
  expect(screen.getByRole('button',{name:'生成图片'})).toHaveProperty('disabled',true);
  expect(command).not.toHaveBeenCalled();
 });
-it('模型选项直接显示服务商和模型，不兼容反馈定位具体已注册参数且不改草稿',async()=>{
+it('模型选项平铺展示并保留连接提示，不兼容反馈定位具体已注册参数且不改草稿',async()=>{
  const {command}=setup({settings:{size:'1536x1024',quality:'high',count:4},imagePrompt:'画面'});
  await modelReady();
  fireEvent.click(screen.getByRole('button',{name:'图片连接与模型'}));
- expect(screen.getByRole('group',{name:/OpenAI/}).textContent).toContain('工作室图片连接');
+ expect(screen.queryByRole('group',{name:/OpenAI/})).toBeNull();
+ expect(screen.getByRole('menuitemradio',{name:/^gpt-image-2/}).querySelector('strong')?.title).toContain('工作室图片连接');
  expect(screen.getByRole('menuitemradio',{name:/^gpt-image-2/}).textContent).toBe('gpt-image-2');
  fireEvent.click(screen.getByRole('button',{name:'关闭模型选择'}));
  const problems=screen.getByRole('list',{name:'图片设置不兼容'});

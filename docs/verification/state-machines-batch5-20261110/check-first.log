@@ -1,0 +1,3 @@
+npm notice run loop-control@0.1.0 check
+npm notice run tsc -b --pretty false
+src/local-app/ProductionWorkspacePanel.operations.test.tsx(1,45): error TS6133: 'waitFor' is declared but its value is never read.

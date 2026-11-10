@@ -1,0 +1,160 @@
+[
+  {
+    "args": [
+      "open",
+      "http://127.0.0.1:5193/__stage4"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "targetId": "610330EEBC2FC20D2D895CDFD152A154",
+        "title": "脚本分步核对",
+        "url": "http://127.0.0.1:5193/__stage4"
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "set",
+      "viewport",
+      "1280",
+      "900"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "deviceScaleFactor": 1.0,
+        "height": 900,
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "mobile": false,
+        "width": 1280
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "select",
+      "select[aria-label=\"核对场景\"]",
+      "revision-start-failed"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "selected": [
+          "revision-start-failed"
+        ]
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "wait",
+      "--fn",
+      "document.querySelector('select').value===\"revision-start-failed\"&&!document.body.innerText.includes('正在读取制作流程')"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        },
+        "result": true
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "find",
+      "role",
+      "button",
+      "click",
+      "--name",
+      "脚本确认",
+      "--exact"
+    ],
+    "result": {
+      "success": true,
+      "data": {
+        "clicked": "@e1",
+        "lifecycle": {
+          "effectiveLaunch": {
+            "browserLaunched": true,
+            "engine": "chrome",
+            "launchHash": 11677035664275010974
+          },
+          "launched": false,
+          "relaunchedBrowser": false,
+          "restartedBackground": false,
+          "restoreStatus": "not_configured",
+          "reused": true,
+          "saveStatus": "not_attempted"
+        }
+      },
+      "error": null
+    }
+  },
+  {
+    "args": [
+      "wait",
+      "--fn",
+      "[...document.querySelectorAll('button')].some(b=>b.textContent.trim()===\"\\u4fee\\u6539\\u811a\\u672c\"&&!b.disabled&&b.checkVisibility())"
+    ],
+    "result": {
+      "success": false,
+      "data": null,
+      "error": "Wait timed out after 25000ms"
+    }
+  }
+]

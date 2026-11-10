@@ -1,0 +1,14 @@
+{
+  "preexisting": 130,
+  "unchanged": 126,
+  "intentional": [
+    "PLAN.md",
+    "docs/adr/README.md",
+    "src/local-app/ProductionWorkspacePanel.tsx"
+  ],
+  "externalChanged": [
+    "src/local-app/WorkspaceVisualPreparation.tsx"
+  ],
+  "sharedDocumentContentPreserved": true,
+  "head": "951a368e"
+}

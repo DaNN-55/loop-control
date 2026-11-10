@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/Users/dan/Programs/loop-control/docs/verification/state-machines-batch5-20261110/verify-browser.py", line 21, in <module>
+    choose('open-failed');wait_button('进入剪辑工作台');click('进入剪辑工作台');run('wait','--text','夹具打开失败');assert not js("!!document.querySelector('iframe')");open_editor();edit('打开重试后的正文');click('保存并返回分镜台');wait_button('进入剪辑工作台');mark('open failure, save and return with selected shot')
+                                                                                                                                                                                      ~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/Users/dan/Programs/loop-control/docs/verification/state-machines-batch5-20261110/verify-browser.py", line 14, in edit
+    def edit(value):run('frame','iframe[title="OpenChatCut 剪辑工程"]');run('find','label','原生夹具正文','fill',value);run('frame','main')
+                    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/dan/Programs/loop-control/docs/verification/state-machines-batch5-20261110/verify-browser.py", line 6, in run
+    r=json.loads(p.stdout);events.append({'args':args,'result':r});(out/'browser-results.json').write_text(json.dumps(events,ensure_ascii=False,indent=2));assert p.returncode==0 and r.get('success'),(args,r);return r.get('data')
+                                                                                                                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: (('frame', 'iframe[title="OpenChatCut 剪辑工程"]'), {'success': False, 'data': None, 'error': 'Frame not found'})

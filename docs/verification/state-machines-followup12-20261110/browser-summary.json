@@ -1,0 +1,553 @@
+[
+  {
+    "scenario": "cached voice change and speed-only reuse with actual MP3 playback",
+    "passed": true,
+    "stats": {
+      "drafts": [],
+      "held": [],
+      "modelCase": "clean",
+      "models": [],
+      "sampleCase": "cached",
+      "samples": [
+        {
+          "generate": false,
+          "selection": {
+            "adapter": "volcengine_tts",
+            "capability": "speech",
+            "connectionVersionId": "fixture",
+            "model": "seed-tts-2.0",
+            "provider": "volcengine_tts"
+          },
+          "voice": "A"
+        },
+        {
+          "generate": false,
+          "selection": {
+            "adapter": "volcengine_tts",
+            "capability": "speech",
+            "connectionVersionId": "fixture",
+            "model": "seed-tts-2.0",
+            "provider": "volcengine_tts"
+          },
+          "voice": "B"
+        }
+      ],
+      "settings": {
+        "connectionId": "c",
+        "discovery": {
+          "detail": "受控模型目录",
+          "readAt": null,
+          "supported": true
+        },
+        "enabledModels": [
+          "model-1"
+        ],
+        "models": [
+          {
+            "adapted": true,
+            "capability": "图片",
+            "id": "model-1",
+            "listed": true
+          },
+          {
+            "adapted": true,
+            "capability": "图片",
+            "id": "model-2",
+            "listed": true
+          },
+          {
+            "adapted": true,
+            "capability": "图片",
+            "id": "model-3",
+            "listed": true
+          }
+        ],
+        "revision": "r1",
+        "versionId": "v"
+      }
+    }
+  },
+  {
+    "scenario": "new voice retains first-synthesis confirmation and never synthesizes automatically",
+    "passed": true,
+    "stats": {
+      "drafts": [],
+      "held": [],
+      "modelCase": "clean",
+      "models": [],
+      "sampleCase": "missing",
+      "samples": [
+        {
+          "generate": false,
+          "selection": {
+            "adapter": "volcengine_tts",
+            "capability": "speech",
+            "connectionVersionId": "fixture",
+            "model": "seed-tts-2.0",
+            "provider": "volcengine_tts"
+          },
+          "voice": "A"
+        },
+        {
+          "generate": true,
+          "selection": {
+            "adapter": "volcengine_tts",
+            "capability": "speech",
+            "connectionVersionId": "fixture",
+            "model": "seed-tts-2.0",
+            "provider": "volcengine_tts"
+          },
+          "voice": "A"
+        },
+        {
+          "generate": false,
+          "selection": {
+            "adapter": "volcengine_tts",
+            "capability": "speech",
+            "connectionVersionId": "fixture",
+            "model": "seed-tts-2.0",
+            "provider": "volcengine_tts"
+          },
+          "voice": "B"
+        }
+      ],
+      "settings": {
+        "connectionId": "c",
+        "discovery": {
+          "detail": "受控模型目录",
+          "readAt": null,
+          "supported": true
+        },
+        "enabledModels": [
+          "model-1"
+        ],
+        "models": [
+          {
+            "adapted": true,
+            "capability": "图片",
+            "id": "model-1",
+            "listed": true
+          },
+          {
+            "adapted": true,
+            "capability": "图片",
+            "id": "model-2",
+            "listed": true
+          },
+          {
+            "adapted": true,
+            "capability": "图片",
+            "id": "model-3",
+            "listed": true
+          }
+        ],
+        "revision": "r1",
+        "versionId": "v"
+      }
+    }
+  },
+  {
+    "scenario": "late old source cannot play or release the new source request",
+    "passed": true,
+    "stats": {
+      "drafts": [],
+      "held": [],
+      "modelCase": "clean",
+      "models": [],
+      "sampleCase": "delayed",
+      "samples": [
+        {
+          "generate": false,
+          "selection": {
+            "adapter": "volcengine_tts",
+            "capability": "speech",
+            "connectionVersionId": "fixture",
+            "model": "seed-tts-2.0",
+            "provider": "volcengine_tts"
+          },
+          "voice": "A"
+        },
+        {
+          "generate": false,
+          "selection": {
+            "adapter": "volcengine_tts",
+            "capability": "speech",
+            "connectionVersionId": "fixture",
+            "model": "seed-tts-2.0",
+            "provider": "volcengine_tts"
+          },
+          "voice": "B"
+        }
+      ],
+      "settings": {
+        "connectionId": "c",
+        "discovery": {
+          "detail": "受控模型目录",
+          "readAt": null,
+          "supported": true
+        },
+        "enabledModels": [
+          "model-1"
+        ],
+        "models": [
+          {
+            "adapted": true,
+            "capability": "图片",
+            "id": "model-1",
+            "listed": true
+          },
+          {
+            "adapted": true,
+            "capability": "图片",
+            "id": "model-2",
+            "listed": true
+          },
+          {
+            "adapted": true,
+            "capability": "图片",
+            "id": "model-3",
+            "listed": true
+          }
+        ],
+        "revision": "r1",
+        "versionId": "v"
+      }
+    }
+  },
+  {
+    "scenario": "clean refresh follows current server enabled models without creating a draft",
+    "passed": true,
+    "stats": {
+      "drafts": [
+        null
+      ],
+      "held": [],
+      "modelCase": "concurrent",
+      "models": [
+        {
+          "data": {
+            "connectionId": "c",
+            "versionId": "v"
+          },
+          "operation": "sync"
+        }
+      ],
+      "sampleCase": "delayed",
+      "samples": [
+        {
+          "generate": false,
+          "selection": {
+            "adapter": "volcengine_tts",
+            "capability": "speech",
+            "connectionVersionId": "fixture",
+            "model": "seed-tts-2.0",
+            "provider": "volcengine_tts"
+          },
+          "voice": "A"
+        },
+        {
+          "generate": false,
+          "selection": {
+            "adapter": "volcengine_tts",
+            "capability": "speech",
+            "connectionVersionId": "fixture",
+            "model": "seed-tts-2.0",
+            "provider": "volcengine_tts"
+          },
+          "voice": "B"
+        }
+      ],
+      "settings": {
+        "connectionId": "c",
+        "discovery": {
+          "detail": "受控模型目录",
+          "readAt": "now",
+          "supported": true
+        },
+        "enabledModels": [
+          "model-2"
+        ],
+        "models": [
+          {
+            "adapted": true,
+            "capability": "图片",
+            "id": "model-1",
+            "listed": true
+          },
+          {
+            "adapted": true,
+            "capability": "图片",
+            "id": "model-2",
+            "listed": true
+          },
+          {
+            "adapted": true,
+            "capability": "图片",
+            "id": "model-3",
+            "listed": true
+          }
+        ],
+        "revision": "r2",
+        "versionId": "v"
+      }
+    }
+  },
+  {
+    "scenario": "concurrent edits keep old CAS and draft; reopen preserves existing version-isolation restriction",
+    "passed": true,
+    "stats": {
+      "drafts": [
+        null,
+        {
+          "enabledModels": [
+            "model-3"
+          ],
+          "revision": "r1",
+          "versionId": "v"
+        },
+        null,
+        null
+      ],
+      "held": [],
+      "modelCase": "concurrent",
+      "models": [
+        {
+          "data": {
+            "connectionId": "c",
+            "versionId": "v"
+          },
+          "operation": "sync"
+        }
+      ],
+      "sampleCase": "delayed",
+      "samples": [
+        {
+          "generate": false,
+          "selection": {
+            "adapter": "volcengine_tts",
+            "capability": "speech",
+            "connectionVersionId": "fixture",
+            "model": "seed-tts-2.0",
+            "provider": "volcengine_tts"
+          },
+          "voice": "A"
+        },
+        {
+          "generate": false,
+          "selection": {
+            "adapter": "volcengine_tts",
+            "capability": "speech",
+            "connectionVersionId": "fixture",
+            "model": "seed-tts-2.0",
+            "provider": "volcengine_tts"
+          },
+          "voice": "B"
+        }
+      ],
+      "settings": {
+        "connectionId": "c",
+        "discovery": {
+          "detail": "受控模型目录",
+          "readAt": "now",
+          "supported": true
+        },
+        "enabledModels": [
+          "model-2"
+        ],
+        "models": [
+          {
+            "adapted": true,
+            "capability": "图片",
+            "id": "model-1",
+            "listed": true
+          },
+          {
+            "adapted": true,
+            "capability": "图片",
+            "id": "model-2",
+            "listed": true
+          },
+          {
+            "adapted": true,
+            "capability": "图片",
+            "id": "model-3",
+            "listed": true
+          }
+        ],
+        "revision": "r2",
+        "versionId": "v"
+      }
+    }
+  },
+  {
+    "scenario": "discovery-only revision advance preserves a real draft and saves with current CAS",
+    "passed": true,
+    "stats": {
+      "drafts": [
+        null,
+        null
+      ],
+      "held": [],
+      "modelCase": "discovery",
+      "models": [
+        {
+          "data": {
+            "connectionId": "c",
+            "versionId": "v"
+          },
+          "operation": "sync"
+        },
+        {
+          "data": {
+            "connectionId": "c",
+            "enabledModels": [],
+            "revision": "r2",
+            "versionId": "v"
+          },
+          "operation": "save"
+        }
+      ],
+      "sampleCase": "delayed",
+      "samples": [
+        {
+          "generate": false,
+          "selection": {
+            "adapter": "volcengine_tts",
+            "capability": "speech",
+            "connectionVersionId": "fixture",
+            "model": "seed-tts-2.0",
+            "provider": "volcengine_tts"
+          },
+          "voice": "A"
+        },
+        {
+          "generate": false,
+          "selection": {
+            "adapter": "volcengine_tts",
+            "capability": "speech",
+            "connectionVersionId": "fixture",
+            "model": "seed-tts-2.0",
+            "provider": "volcengine_tts"
+          },
+          "voice": "B"
+        }
+      ],
+      "settings": {
+        "connectionId": "c",
+        "discovery": {
+          "detail": "受控模型目录",
+          "readAt": "now",
+          "supported": true
+        },
+        "enabledModels": [],
+        "models": [
+          {
+            "adapted": true,
+            "capability": "图片",
+            "id": "model-1",
+            "listed": true
+          },
+          {
+            "adapted": true,
+            "capability": "图片",
+            "id": "model-2",
+            "listed": true
+          },
+          {
+            "adapted": true,
+            "capability": "图片",
+            "id": "model-3",
+            "listed": true
+          }
+        ],
+        "revision": "r3",
+        "versionId": "v"
+      }
+    }
+  },
+  {
+    "scenario": "save rejected after another change retains draft without automatic retry",
+    "passed": true,
+    "stats": {
+      "drafts": [
+        null,
+        {
+          "enabledModels": [],
+          "revision": "r1",
+          "versionId": "v"
+        }
+      ],
+      "held": [],
+      "modelCase": "save-race",
+      "models": [
+        {
+          "data": {
+            "connectionId": "c",
+            "enabledModels": [],
+            "revision": "r1",
+            "versionId": "v"
+          },
+          "operation": "save"
+        }
+      ],
+      "sampleCase": "delayed",
+      "samples": [
+        {
+          "generate": false,
+          "selection": {
+            "adapter": "volcengine_tts",
+            "capability": "speech",
+            "connectionVersionId": "fixture",
+            "model": "seed-tts-2.0",
+            "provider": "volcengine_tts"
+          },
+          "voice": "A"
+        },
+        {
+          "generate": false,
+          "selection": {
+            "adapter": "volcengine_tts",
+            "capability": "speech",
+            "connectionVersionId": "fixture",
+            "model": "seed-tts-2.0",
+            "provider": "volcengine_tts"
+          },
+          "voice": "B"
+        }
+      ],
+      "settings": {
+        "connectionId": "c",
+        "discovery": {
+          "detail": "受控模型目录",
+          "readAt": null,
+          "supported": true
+        },
+        "enabledModels": [
+          "model-2"
+        ],
+        "models": [
+          {
+            "adapted": true,
+            "capability": "图片",
+            "id": "model-1",
+            "listed": true
+          },
+          {
+            "adapted": true,
+            "capability": "图片",
+            "id": "model-2",
+            "listed": true
+          },
+          {
+            "adapted": true,
+            "capability": "图片",
+            "id": "model-3",
+            "listed": true
+          }
+        ],
+        "revision": "r3",
+        "versionId": "v"
+      }
+    }
+  }
+]

@@ -1,0 +1,25 @@
+npm notice run loop-control@0.1.0 test
+npm notice run vitest run --exclude '**/*.integration.test.ts' src/connections/ConnectionModelsDialog.test.tsx src/local-app/WorkspaceSpeechSample.lifecycle.test.tsx src/local-app/WorkspaceSpeechSample.test.tsx --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+stderr | src/local-app/WorkspaceSpeechSample.test.tsx > requires confirmation for the first sample and replays it at the current speed
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:25:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+·····················
+
+ Test Files  3 passed (3)
+      Tests  21 passed (21)
+   Start at  20:51:06
+   Duration  2.27s (transform 156ms, setup 27ms, collect 2.07s, tests 1.12s, environment 810ms, prepare 116ms)
+
