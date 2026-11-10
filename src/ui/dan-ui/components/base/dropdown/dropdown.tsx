@@ -143,6 +143,7 @@ const DropdownPopover = (props: DropdownPopoverProps) => {
         <AriaPopover
             placement="bottom right"
             {...props}
+            data-lc-dropdown=""
             className={(state) =>
                 cx(
                     "w-62 origin-(--trigger-anchor-point) overflow-auto rounded-lg bg-primary shadow-lg ring-1 ring-secondary_alt will-change-transform",
