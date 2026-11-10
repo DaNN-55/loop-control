@@ -4,11 +4,11 @@ import {NativeSelect} from '../ui/dan-ui/components/base/select/select-native';
 import {InputBase} from '../ui/dan-ui/components/base/input/input';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import type {ProductionService} from '../connections/serviceCatalog';
-import type {ProductionSelection} from '../productionSelection';
+import type {SpeechSettings as WorkspaceNarrationSettings} from './workspaceSettingsDraft';
+export type {SpeechSettings as WorkspaceNarrationSettings} from './workspaceSettingsDraft';
 import {productionModelSelection} from './productionModelSelection';
 import {WorkspaceVoicePicker} from './WorkspaceVoicePicker';
 import {WorkspaceSpeechSample} from './WorkspaceSpeechSample';
-export interface WorkspaceNarrationSettings {selection:ProductionSelection|null;voice:string;languageCode:string;speakingRate:number}
 export function WorkspaceNarrationToolbar({mode,value,services,disabled,changed,onMode,onChange,onSave,children}:{mode:'tts'|'manual';value:WorkspaceNarrationSettings;services:ProductionService[];disabled:boolean;changed:boolean;onMode:(mode:'tts'|'manual')=>void;onChange:(value:WorkspaceNarrationSettings)=>void;onSave:()=>void;children:ReactNode}){
  const service=services.find(s=>s.connectionVersionId===value.selection?.connectionVersionId&&s.provider===value.selection?.provider&&s.adapter===value.selection?.adapter);
  const choice=service&&service.models.includes(value.selection?.model??'')?`${service.id}:${value.selection?.model}`:'';

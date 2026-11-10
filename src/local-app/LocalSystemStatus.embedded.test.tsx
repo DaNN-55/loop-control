@@ -1,0 +1,26 @@
+import {cleanup, render, screen, waitFor, within} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import {afterEach, expect, it, vi} from 'vitest';
+import {LocalSystemStatus} from './LocalSystemStatus';
+import {localRequest} from './client';
+vi.mock('./client',()=>({localRequest:vi.fn()}));
+afterEach(()=>{cleanup();vi.mocked(localRequest).mockReset();});
+it('系统整页直接展示同源实际证据，保留已关闭/未启用语义及刷新恢复',async()=>{
+  const at='2026-10-28T02:00:00Z';
+  const report={observedAt:at,automation:{stopped:false,lastError:null,lastScanAt:at,backupsEnabled:false},plans:[],jobs:[],operations:{notification:{latest:{at,passed:false,detail:'事件投递失败'}}}};
+  vi.mocked(localRequest).mockResolvedValue(report);
+  const user=userEvent.setup();render(<LocalSystemStatus embedded/>);
+  const table=screen.getByRole('table',{name:'运行状态'});
+  await within(table).findByText('事件投递失败');
+  expect(localRequest).toHaveBeenCalledTimes(1);
+  expect(within(table).getByRole('cell',{name:'已关闭'})).toBeTruthy();
+  expect(within(table).getByRole('cell',{name:'未启用'})).toBeTruthy();
+  expect(screen.queryByRole('button',{name:/系统状态：/})).toBeNull();
+  vi.mocked(localRequest).mockRejectedValueOnce(new Error('状态读取失败。'));
+  await user.click(screen.getByRole('button',{name:'刷新系统状态'}));
+  expect((await screen.findByRole('alert')).textContent).toBe('状态读取失败。');
+  expect(within(table).queryByText('事件投递失败')).toBeNull();
+  await user.click(screen.getByRole('button',{name:'刷新系统状态'}));
+  await waitFor(()=>expect(screen.queryByRole('alert')).toBeNull());
+  expect(await within(table).findByText('事件投递失败')).toBeTruthy();
+});

@@ -1,7 +1,6 @@
 import {useEffect,useMemo,useRef,useState} from 'react';
 import type {ProductionWorkspace} from '../productionWorkspace';
 import type {WorkspaceCandidatePreparation} from '../workspaceCandidates';
-import type {EmbeddedStudioBridge} from './EmbeddedStudioHost';
 import type {WorkspaceReading} from './useWorkspaceReading';
 
 interface ReviewPlan {candidateId:string;projectSha256:string;}
@@ -53,32 +52,15 @@ export function useCandidateReviewLifecycle<Choice,Plan extends ReviewPlan>({wor
  return{plan,pending:owner.stage==='adopting'||pending?.owner===owner&&pending.sequence===owner.sequence,prepare,confirm,cancel};
 }
 
-/** Narration and the retained native entry point keep their command protocols here. */
-export function useWorkspaceCandidateReview({workspace,scope,reader,command,bridge}:{workspace:ProductionWorkspace;scope:string;reader:WorkspaceReading;command:(name:string,data:unknown)=>Promise<unknown>;bridge?:EmbeddedStudioBridge}){
- const identity=JSON.stringify([workspace.episodeId,workspace.id,scope]);
- const nativeOwner=useMemo(()=>({active:true,sequence:0,provided:undefined as ProductionWorkspace|undefined}),[identity]),activeNativeOwner=useRef(nativeOwner);activeNativeOwner.current=nativeOwner;
- useEffect(()=>{nativeOwner.active=true;return()=>{nativeOwner.active=false;};},[nativeOwner]);
- const review=useCandidateReviewLifecycle({workspace,scope,reader:{...reader,read:async()=>{
-  const provided=nativeOwner.provided;nativeOwner.provided=undefined;
-  if(bridge)await bridge.save();return provided??reader.read();
- }},
-  prepare:async(current,choice:{candidateId:string;durationPolicy:'keep-target'|'use-candidate';restoreNarration:boolean})=>{
-   const prepared=await command('prepareWorkspaceCandidate',{episodeId:workspace.episodeId,workspaceId:current.id,expectedRevision:current.revision,candidateId:choice.candidateId,durationPolicy:choice.durationPolicy,...(choice.restoreNarration?{restoreNarration:true}:{})}) as WorkspaceCandidatePreparation;
+/** Narration keeps its command fields and restoration semantics at this adapter. */
+export function useWorkspaceCandidateReview({workspace,scope,reader,command}:{workspace:ProductionWorkspace;scope:string;reader:WorkspaceReading;command:(name:string,data:unknown)=>Promise<unknown>}){
+ const review=useCandidateReviewLifecycle({workspace,scope,reader,
+  prepare:async(current,choice:{candidateId:string;restoreNarration:boolean})=>{
+   const prepared=await command('prepareWorkspaceCandidate',{episodeId:workspace.episodeId,workspaceId:current.id,expectedRevision:current.revision,candidateId:choice.candidateId,durationPolicy:'use-candidate',...(choice.restoreNarration?{restoreNarration:true}:{})}) as WorkspaceCandidatePreparation;
    if(!prepared.impact||choice.restoreNarration&&!prepared.restoration)throw Error('无法读取采用影响，请刷新后重新核对。');
    return prepared;
   },
-  adopt:async(current,plan)=>{
-   if(bridge){
-    const sequence=nativeOwner.sequence;
-    await bridge.applyNativeEdit('apply-candidate',{edit:plan.edit});current=await reader.read();
-    if(!nativeOwner.active||activeNativeOwner.current!==nativeOwner||sequence!==nativeOwner.sequence)return current;
-   }
-   return command('adoptWorkspaceCandidate',{episodeId:workspace.episodeId,workspaceId:current.id,expectedRevision:current.revision,candidateId:plan.candidateId,adoptionId:plan.adoptionId,...(bridge?{nativeApplied:true}:{}),...(plan.restoration?{restoreNarration:true}:{})}) as Promise<ProductionWorkspace>;
-  },
+  adopt:async(current,plan)=>command('adoptWorkspaceCandidate',{episodeId:workspace.episodeId,workspaceId:current.id,expectedRevision:current.revision,candidateId:plan.candidateId,adoptionId:plan.adoptionId,...(plan.restoration?{restoreNarration:true}:{})}) as Promise<ProductionWorkspace>,
  });
- return{...review,cancel:()=>{nativeOwner.sequence++;review.cancel();},prepare:async(candidateId:string,durationPolicy:'keep-target'|'use-candidate'='use-candidate',provided?:ProductionWorkspace,restoreNarration=false)=>{
-  nativeOwner.provided=provided;
-  try{await review.prepare({candidateId,durationPolicy,restoreNarration});}
-  finally{nativeOwner.provided=undefined;}
- }};
+ return{...review,prepare:(candidateId:string,restoreNarration=false)=>review.prepare({candidateId,restoreNarration})};
 }

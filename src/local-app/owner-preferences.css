@@ -29,8 +29,7 @@ html[data-interface="impeccable"] .product-ui .owner-menu-trigger .owner-menu-av
 .owner-profile-summary span{font-size:12px;color:var(--lc-muted);overflow-wrap:anywhere}
 /* Comfort changes row padding only; the default compact density retains existing layouts. */
 html[data-interface="impeccable"][data-row-density="comfortable"] .product-ui .account-blueprint-form .capability-matrix-row:not(.capability-matrix-heading){padding-block:18px;min-height:64px}
-html[data-interface="impeccable"][data-row-density="comfortable"] .product-ui :is(.work-table-scroll,.reference-connections-table-wrap) tbody td,
-html[data-interface="impeccable"][data-row-density="comfortable"] .product-ui .reference-history.history-ui.history-workspace .reference-history-table tbody td{padding-top:22px;padding-bottom:22px}
+html[data-interface="impeccable"][data-row-density="comfortable"] .product-ui :is(.work-table-scroll, .reference-connections-table-wrap) tbody td{padding-top:22px;padding-bottom:22px}
 html[data-interface="impeccable"][data-row-density="comfortable"] .product-ui .episode-list-workspace .table-row:not(.table-header){padding-block:22px;min-height:82px}
 @media(max-width:480px){.owner-preferences-dialog form>footer{flex-wrap:wrap;padding:16px}.owner-preferences-dialog form>footer>div{margin-left:auto;flex-wrap:wrap}.owner-preferences-card{padding:20px 16px}.owner-preferences-dialog>header{padding:18px 16px 10px}}
 .owner-preferences-storage{max-height:calc(100dvh - 32px);display:flex;flex-direction:column}.owner-preferences-storage>header{flex-shrink:0}.owner-preferences-storage>form{display:flex;flex-direction:column;min-height:0}.owner-preferences-storage .owner-preferences-card{min-height:0;overflow:auto}.owner-preferences-storage form>footer{flex-shrink:0}

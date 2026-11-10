@@ -1,3 +1,4 @@
+import {readAccountDeletionStatus} from './accountDeletion.js';
 import {reconcileOwnerNativeOutput} from './workspaceOutputReconciliation.js';
 import{runtimeErrorMessages}from'../orchestration/runtimeBuild.js';
 import {LocalMediaRootSettings} from './mediaRootSettings.js';
@@ -10,9 +11,6 @@ import {readGlobalPlanning,updateGlobalPlanning} from './globalPlanningStore.js'
 import {readWorkspaceSearch} from './workspaceSearch.js';
 import {readOwnerPreferences,saveOwnerPreferences,readOwnerNotificationEvents} from './ownerPreferences.js';
 import {ScriptProductionStore} from './scriptProductionStore.js';
-import{readHistory,historyFile,manageHistory}from'./history.js';
-import{readHistoryEpisodes,manageHistoryEpisode}from'./historyEpisodes.js';
-import{verifyNativeFile}from'./localFiles.js';
 import{hashPassword}from'./password.js';
 import{tokenHash}from'./sessions.js';
 import{readMediaDeployment}from'./mediaDeployment.js';
@@ -145,6 +143,13 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
    }
    if(url.pathname==='/api/local/episode-lifecycle'&&request.method==='POST'){let body;try{body=await readBody(request,16384);}catch{send(400,{error:'生命周期请求格式无效。'});return;}send(200,await lifecycle.execute(session,body));return;}
    if(url.pathname==='/api/local/deletion-cleanups'&&request.method==='GET'){send(200,await lifecycle.pending(session));return;}
+   if(url.pathname==='/api/local/account-deletion-status'){
+    if(request.method!=='GET'){send(405,{error:'只支持读取账号删除条件。'});return;}
+    const accountId=url.searchParams.get('accountId')??'';
+    if(!uuid.test(accountId)||[...url.searchParams.keys()].some(key=>key!=='accountId')||url.searchParams.getAll('accountId').length!==1){send(400,{error:'账号标识无效。'});return;}
+    const status=await readAccountDeletionStatus(options.pool,session.id,accountId);
+    if(!status)throw new ConfigurationError(404,'账号不可见。');send(200,status);return;
+   }
    if(url.pathname==='/api/local/connection-usage'){
     if(request.method!=='GET'){send(405,{error:'只支持读取连接用量。'});return;}
     const connectionId=url.searchParams.get('connectionId')??'';if(!uuid.test(connectionId)||[...url.searchParams.keys()].some(key=>key!=='connectionId')){send(400,{error:'连接标识无效。'});return;}
@@ -187,27 +192,8 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
      send(200,await connections.command(session,body));return;
     }
    }
-   if(url.pathname==='/api/local/history-management'){
-    if(request.method!=='POST'||url.search){send(405,{error:'历史资料操作需要 POST。'});return;}
-    let body;try{body=await readBody(request,4096);}catch{send(400,{error:'历史资料操作格式无效。'});return;}
-    send(200,await manageHistory(options.pool,session,body));return;
-   }
-   if(url.pathname==='/api/local/history-episode-management'){
-    if(request.method!=='POST'||url.search){send(405,{error:'历史生产单操作需要 POST。'});return;}
-    let body;try{body=await readBody(request,4096);}catch{send(400,{error:'历史生产单操作格式无效。'});return;}send(200,await manageHistoryEpisode(options.pool,session,body));return;
-   }
    if(request.method!=='GET'){send(405,{error:'该本地命令尚未开放。'});return;}
    if(url.pathname==='/api/local/workspace-search'){send(200,await readWorkspaceSearch(options.pool,session.id,url.searchParams));return;}
-   if(url.pathname==='/api/local/history-episodes'){send(200,await readHistoryEpisodes(options.pool,session.id,url.searchParams));return;}
-   if(url.pathname==='/api/local/history'){
-    if(request.method!=='GET'){send(405,{error:'历史资料查询需要 GET。'});return;}
-    send(200,await readHistory(options.pool,session.id,url.searchParams));return;
-   }
-   if(url.pathname==='/api/local/history-file'){
-    if(!options.historyRoot)throw new ConfigurationError(503,'历史文件库尚未配置。');
-    const sha=url.searchParams.get('sha')??'',file=await historyFile(options.pool,session.id,sha),bytes=await verifyNativeFile(options.historyRoot,file.sha256,file.sha256,file.bytes);
-    response.writeHead(200,{'Content-Type':'application/octet-stream','Content-Length':bytes.length,'Content-Disposition':`attachment; filename="history-${sha}.bin"`});response.end(bytes);return;
-   }
    if(url.pathname==='/api/local/catalog'){send(200,await readLocalCatalog(options.pool,session.id,parseCatalogQuery(url.searchParams)));return;}
    if(url.pathname==='/api/local/script-production'){
     const id=url.searchParams.get('episode')??'';

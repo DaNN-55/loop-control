@@ -1,25 +1,25 @@
-import {AppliedFilters} from './AppliedFilters';
-import {EpisodeMetricsCells,MetricColumnHeader} from './EpisodeMetricsCells';
-import {PopulatedFilterSelect} from '../ui/PopulatedFilterSelect';
-import {EpisodeDeletionScope,type DeletionFileScope} from './EpisodeDeletionScope';
-import {Tooltip,TooltipTrigger} from '../ui/dan-ui/components/base/tooltip/tooltip';
-import {Dropdown} from '../ui/dan-ui/components/base/dropdown/dropdown';
-import {MoreHorizontal,Plug,FolderOpen,Archive,ArchiveRestore,KeyRound,ShieldCheck,Settings,Layers,Search,ArrowDownWideNarrow,SlidersHorizontal,Bell} from 'lucide-react';
-import {NativeSelect} from '../ui/dan-ui/components/base/select/select-native';
-import {InputBase} from '../ui/dan-ui/components/base/input/input';
-import {Button} from '../ui/dan-ui/components/base/buttons/button';
+import { Archive,ArchiveRestore,ArrowDownWideNarrow,Bell,FolderOpen,KeyRound,Layers,MoreHorizontal,Plug,Search,ShieldCheck,SlidersHorizontal } from 'lucide-react';
+import { Button } from '../ui/dan-ui/components/base/buttons/button';
+import { Dropdown } from '../ui/dan-ui/components/base/dropdown/dropdown';
+import { InputBase } from '../ui/dan-ui/components/base/input/input';
+import { NativeSelect } from '../ui/dan-ui/components/base/select/select-native';
+import { Tooltip,TooltipTrigger } from '../ui/dan-ui/components/base/tooltip/tooltip';
+import { PopulatedFilterSelect } from '../ui/PopulatedFilterSelect';
+import { AppliedFilters } from './AppliedFilters';
+import { EpisodeDeletionScope,type DeletionFileScope } from './EpisodeDeletionScope';
+import { EpisodeMetricsCells,MetricColumnHeader } from './EpisodeMetricsCells';
 // Shared original workspace views. Data and authentication are supplied by each backend.
-import {useState,useEffect,useRef,useId,type FormEvent,type ReactNode} from 'react';
-import {BarChart3,LogOut,MessageSquare,Moon,PanelLeft,Pencil,Play,RefreshCw,Sun,Table2,Trash2,User,Users,Video,X,type LucideIcon} from 'lucide-react';
-import type {Database} from '../lib/database.types';
-import type {EpisodeStage} from '../platform/types';
-import {defaultEpisodePageSize,episodePageSizes,type EpisodePageSize,type ServerPage,type EpisodeCatalog,type CatalogSort} from '../episodes/episodeCatalogTypes';
-import {EpisodeStatus,episodeActionState,episodeWorkflowLabel} from './episodePresentation';
+import { BarChart3,LogOut,MessageSquare,Moon,PanelLeft,Pencil,Play,RefreshCw,Sun,Table2,Trash2,User,Users,Video,X,type LucideIcon } from 'lucide-react';
+import { useEffect,useId,useRef,useState,type FormEvent,type ReactNode } from 'react';
+import { defaultEpisodePageSize,episodePageSizes,type CatalogSort,type EpisodeCatalog,type EpisodePageSize,type ServerPage } from '../episodes/episodeCatalogTypes';
+import type { Database } from '../lib/database.types';
+import { blueprintAssetRoot } from '../platform/blueprintPolicy';
+import type { EpisodeStage } from '../platform/types';
+import { ConfirmationModal,ConfirmationModalPresence } from '../ui/ConfirmationModal';
+import { PaginationControls } from '../ui/PaginationControls';
+import { useDialogFocus } from '../ui/useDialogFocus';
 import './episode-list.css';
-import {blueprintAssetRoot} from '../platform/blueprintPolicy';
-import {useDialogFocus} from '../ui/useDialogFocus';
-import {ConfirmationModal} from '../ui/ConfirmationModal';
-import {PaginationControls} from '../ui/PaginationControls';
+import { EpisodeStatus,episodeActionState,episodeWorkflowLabel } from './episodePresentation';
 type Row<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row'];
 type Account=Row<'accounts'>;type Episode=Row<'episodes'>;type Blueprint=Row<'account_blueprint_versions'>;type Artifact=Row<'artifacts'>;type Series=Row<'series'>;type SeriesVersion=Row<'series_versions'>;
 export type NavigationItem='accounts'|'episodes'|'operations'|'reviews';
@@ -32,14 +32,10 @@ export const navigation: Array<{ id: NavigationItem; label: string }> = [
   { id: "accounts", label: "账号" },
 ];
 
-export function NavigationButtons({ activeNavigation, badges = {}, onSelect }: { activeNavigation: NavigationItem; badges?: Partial<Record<NavigationItem, number>>; onSelect: (item: NavigationItem) => void }) {
-  return <>{navigation.map((item) => <Button size="sm" color="tertiary" aria-current={activeNavigation === item.id ? "page" : undefined} aria-label={item.label} className={`navigation-item ${activeNavigation === item.id ? "is-active" : ""}`} key={item.id} onClick={() => onSelect(item.id)} type="button"><Icon name={item.id} /><span className="navigation-label">{item.label}</span>{badges[item.id] ? <span aria-label={`${badges[item.id]} 个待处理`} className="navigation-badge">{badges[item.id]}</span> : null}</Button>)}</>;
-}
-
-export function OwnerMenu({ onOpenSettings, onOpenStorage, onOpenMaintenance, onOpenSecrets, onOpenPreferences, onOpenNotifications, onOpenConnections, displayName, avatar, email, onSignOut, onBeforeOpen, isActive=false }: { displayName?: string; avatar?: string | null; email?: string; onOpenPreferences?: () => void; onOpenNotifications?: () => void; onOpenConnections?: () => void; isActive?: boolean; onBeforeOpen?: (trigger: HTMLButtonElement | null) => void; onOpenSettings: () => void; onOpenStorage?: () => void; onOpenMaintenance?: () => void; onOpenSecrets?: () => void; onSignOut: () => void }) {
+export function OwnerMenu({ onOpenSettings, onOpenCleanup, onOpenSecrets, onOpenPreferences, onOpenNotifications, onOpenConnections, displayName, avatar, email, onSignOut, onBeforeOpen, isActive=false }: { displayName?: string; avatar?: string | null; email?: string; onOpenPreferences?: () => void; onOpenNotifications?: () => void; onOpenConnections?: () => void; isActive?: boolean; onBeforeOpen?: (trigger: HTMLButtonElement | null) => void; onOpenSettings: () => void;   onOpenCleanup?: () => void; onOpenSecrets?: () => void; onSignOut: () => void }) {
   const trigger = useRef<HTMLButtonElement>(null);
   const select = (action: () => void) => {onBeforeOpen?.(trigger.current); trigger.current?.focus(); action();};
-  return <div className="owner-menu"><Dropdown.Root><Button size="sm" color="tertiary" aria-label="所有者设置" ref={trigger} className="owner-menu-trigger" data-active={isActive||undefined} type="button">{avatar?<img className="owner-menu-avatar" src={avatar} alt=""/>:<Icon name="User" />}</Button><Dropdown.Popover className="dan-ui product-ui"><Dropdown.Menu aria-label="所有者设置"><Dropdown.Section>{displayName||email?<Dropdown.SectionHeader><div className="owner-profile-summary"><strong>{displayName||email}</strong>{displayName&&email?<span>{email}</span>:null}</div></Dropdown.SectionHeader>:null}{onOpenPreferences&&<Dropdown.Item icon={SlidersHorizontal} id="preferences" onAction={()=>select(onOpenPreferences)}>个人偏好</Dropdown.Item>}{onOpenNotifications&&<Dropdown.Item icon={Bell} id="notifications" onAction={()=>select(onOpenNotifications)}>通知</Dropdown.Item>}</Dropdown.Section>{(onOpenPreferences || onOpenNotifications) && <Dropdown.Separator/>}<Dropdown.Section><Dropdown.Item icon={ShieldCheck} id="security" onAction={()=>select(onOpenSettings)}>登录与安全</Dropdown.Item>{onOpenStorage&&<Dropdown.Item icon={FolderOpen} id="storage" onAction={()=>select(onOpenStorage)}>本机存储</Dropdown.Item>}{onOpenMaintenance&&<Dropdown.Item icon={Settings} id="maintenance" onAction={()=>select(onOpenMaintenance)}>系统维护</Dropdown.Item>}{onOpenConnections&&<Dropdown.Item icon={Plug} id="connections" onAction={()=>select(onOpenConnections)}>连接配置</Dropdown.Item>}{onOpenSecrets&&<Dropdown.Item icon={KeyRound} id="secrets" onAction={()=>select(onOpenSecrets)}>密钥管理</Dropdown.Item>}</Dropdown.Section><Dropdown.Separator/><Dropdown.Section><Dropdown.Item icon={LogOut} id="logout" onAction={()=>select(onSignOut)}>退出登录</Dropdown.Item></Dropdown.Section></Dropdown.Menu></Dropdown.Popover></Dropdown.Root></div>;
+  return <div className="owner-menu"><Dropdown.Root><Button size="sm" color="tertiary" aria-label="所有者设置" ref={trigger} className="owner-menu-trigger" data-active={isActive||undefined} type="button">{avatar?<img className="owner-menu-avatar" src={avatar} alt=""/>:<Icon name="User" />}</Button><Dropdown.Popover className="dan-ui product-ui"><Dropdown.Menu aria-label="所有者设置"><Dropdown.Section>{displayName||email?<Dropdown.SectionHeader><div className="owner-profile-summary"><strong>{displayName||email}</strong>{displayName&&email?<span>{email}</span>:null}</div></Dropdown.SectionHeader>:null}{onOpenPreferences&&<Dropdown.Item icon={SlidersHorizontal} id="preferences" onAction={()=>select(onOpenPreferences)}>个人偏好</Dropdown.Item>}{onOpenNotifications&&<Dropdown.Item icon={Bell} id="notifications" onAction={()=>select(onOpenNotifications)}>通知</Dropdown.Item>}</Dropdown.Section>{(onOpenPreferences || onOpenNotifications) && <Dropdown.Separator/>}<Dropdown.Section><Dropdown.Item icon={ShieldCheck} id="security" onAction={()=>select(onOpenSettings)}>登录与安全</Dropdown.Item>{onOpenCleanup&&<Dropdown.Item icon={Trash2} id="cleanup" onAction={()=>select(onOpenCleanup)}>文件清理</Dropdown.Item>}{onOpenConnections&&<Dropdown.Item icon={Plug} id="connections" onAction={()=>select(onOpenConnections)}>连接配置</Dropdown.Item>}{onOpenSecrets&&<Dropdown.Item icon={KeyRound} id="secrets" onAction={()=>select(onOpenSecrets)}>密钥管理</Dropdown.Item>}</Dropdown.Section><Dropdown.Separator/><Dropdown.Section><Dropdown.Item icon={LogOut} id="logout" onAction={()=>select(onSignOut)}>退出登录</Dropdown.Item></Dropdown.Section></Dropdown.Menu></Dropdown.Popover></Dropdown.Root></div>;
 }
 
 export const stageLabels: Record<EpisodeStage, string> = {
@@ -158,13 +154,13 @@ function EpisodeDeleteModal({ assetRoot, episode, isPending, onClose, onArchive,
       </header>
       <section className="episode-deletion-body" aria-label="删除范围" tabIndex={localEpisodePath ? 0 : undefined}>
         {loading ? <p role="status">正在检查删除范围…</p> : localEpisodePath ? <>
+          <EpisodeDeletionScope files={plan?.files} preserved={plan?.preserved}/>
           <section aria-label="已核查位置">
             <h3>已核查位置</h3>
             <ul className="episode-deletion-paths" aria-label="已核查的生产单目录">
               {deletionPaths.map(path => <li key={path}><code>{path}</code></li>)}
             </ul>
           </section>
-          <EpisodeDeletionScope files={plan?.files} preserved={plan?.preserved}/>
           <p>只清理已确认文件及身份相符的空目录。共享、手放和未知资料保留。</p>
         </> : null}
         {error && <p className="form-error" role="alert">{error}</p>}
@@ -268,19 +264,8 @@ export function EpisodeWorkspace({ catalogControls, metrics, operationRows, acti
           </label> : undefined}/>}
     </footer>
     </div>
-    {deletionEpisode&&<EpisodeDeleteModal assetRoot={blueprintAssetRoot(blueprintsById.get(deletionEpisode.blueprint_version_id)?.policy??{})} episode={deletionEpisode} isPending={isDeletePending(deletionEpisode.id)||isArchivePending(deletionEpisode.id)} onClose={()=>setDeletionEpisode(null)} onArchive={id=>onSetArchived(id,true)} onDelete={onDelete} onPlanDelete={onPlanDelete}/>}
+    <ConfirmationModalPresence>{deletionEpisode&&<EpisodeDeleteModal assetRoot={blueprintAssetRoot(blueprintsById.get(deletionEpisode.blueprint_version_id)?.policy??{})} episode={deletionEpisode} isPending={isDeletePending(deletionEpisode.id)||isArchivePending(deletionEpisode.id)} onClose={()=>setDeletionEpisode(null)} onArchive={id=>onSetArchived(id,true)} onDelete={onDelete} onPlanDelete={onPlanDelete}/>}</ConfirmationModalPresence>
   </div>;
-}
-
-export function ReviewWorkspace({ serverPage, accountsById, episodes, onSelectEpisode, selectedEpisode }: { serverPage?: ServerPage; accountsById: Map<string, Account>; episodes: Episode[]; onSelectEpisode: (id: string) => void; selectedEpisode: Episode | null }) {
-  const reviewEpisodes = episodes.filter((episode) => !episode.archived_at && (reviewActionFor(episode.stage) || episode.stage === "production_ready"));
-  const [page, setPage] = useState(1);
-  const pageSize = 20;
-  const pageCount = Math.max(1, Math.ceil(reviewEpisodes.length / pageSize));
-  const safePage = serverPage?.page ?? Math.min(page, pageCount);
-  const pageItems = serverPage ? reviewEpisodes : reviewEpisodes.slice((safePage - 1) * pageSize, safePage * pageSize);
-  useEffect(() => setPage((current) => Math.min(current, pageCount)), [pageCount]);
-  return <><p className="muted-copy">审核决定会通过受控状态迁移写入审批与审计记录；Worker 的阻塞项会显示在右侧 Episode 详情中。</p><section className="review-queue" aria-label="待审核 Episode"><h2>待审核 Episode</h2>{reviewEpisodes.length ? <><div className="review-queue-list">{pageItems.map((episode) => <Button size="sm" color="tertiary" className={`review-queue-item ${selectedEpisode?.id === episode.id ? "is-selected" : ""}`} key={episode.id} onClick={() => onSelectEpisode(episode.id)} type="button"><strong>{episode.title}</strong><span>{accountsById.get(episode.account_id)?.name ?? "未知账号"} · {stageLabels[episode.stage]}</span></Button>)}</div><PaginationControls page={safePage} pageSize={pageSize} total={serverPage?.total ?? reviewEpisodes.length} onPageChange={serverPage?.onPageChange ?? setPage} /></> : <div className="empty-state compact"><h2>没有待审核 Episode</h2><p>Worker 将产物推进到审核阶段后，会在这里显示。</p></div>}</section></>;
 }
 
 

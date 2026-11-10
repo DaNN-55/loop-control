@@ -1,4 +1,5 @@
 import {PexelsVideoError} from '../worker/pexelsVideos.js';
+import {VideoGenerationError} from '../worker/videoGenerationError.js';
 import {FreesoundSearchError,OpenAiImageRequestError} from '../worker/mediaProviders.js';
 import {assertWorkspaceVisualExecution} from './workspaceVisualWorker.js';
 import {executeWorkspaceImages} from './workspaceImageGenerationWorker.js';
@@ -14,21 +15,21 @@ import {executeControlledMediaTask} from '../worker/controlledMediaExecutor.js';
 import {executeOpenChatCutRender} from '../worker/openchatcutRenderer.js';
 import {generateVisualAssets} from '../worker/visualAssetExecutor.js';
 import {runtimeCommandInvocation} from '../worker/runtimeEvidence.js';
-import {extractMp3Artifact,trimMp3Artifact,trimMp4Artifact,trimMp4SegmentsArtifact,probeMp3Artifact,validateMp4Artifact,inspectMp4Artifact} from '../worker/mediaTools.js';
+import {MediaArtifactValidationError,extractMp3Artifact,trimMp3Artifact,trimMp4Artifact,trimMp4SegmentsArtifact,probeMp3Artifact,validateMp4Artifact,inspectMp4Artifact} from '../worker/mediaTools.js';
 import type {WorkerTaskPackage} from '../worker/contracts.js';
 import {narrationPorts,type NativeNarrationConfiguration} from './narrationWorker.js';
 import {SecretStoreError} from './connectionPorts.js';
 export type NativeMediaConfiguration=(NativeNarrationConfiguration&{workspaceGenerationFromConnections?:boolean})|{mode:'local'};
 export async function assertMediaReady(config:NativeMediaConfiguration|undefined,policy:Record<string,unknown>={},environment:NodeJS.ProcessEnv=process.env,requiresExternal=false){
  if(!config)throw Error('本地媒体执行尚未配置。');
- const external=requiresExternal||['static_visual','a_roll','b_roll','soundtrack'].some(k=>(policy[k] as {execution_path?:string}|undefined)?.execution_path==='external');
+ const external=requiresExternal||['static_visual','video','a_roll','b_roll','soundtrack'].some(k=>(policy[k] as {execution_path?:string}|undefined)?.execution_path==='external');
  if(external&&config.mode==='local')throw Error('在线媒体执行尚未配置；当前部署仅允许本机媒体。');
  await promisify(execFile)('ffmpeg',['-version'],{env:environment,timeout:3000,maxBuffer:65536});
  await promisify(execFile)('ffprobe',['-version'],{env:environment,timeout:3000,maxBuffer:65536});
  for(const c of Object.values(policy) as Array<{execution_path?:string;executor?:{provider?:string}}>)if(c?.execution_path==='local'&&c.executor?.provider==='openchatcut'){const i=runtimeCommandInvocation('openchatcut',['--version']);await promisify(execFile)(i.command,i.argumentsList,{env:environment,timeout:5000,maxBuffer:65536});}
  if(external){const ports=await narrationPorts(config.mode==='local'?undefined:config,config.mode==='live'&&config.workspaceGenerationFromConnections);if(ports.store.mode!=='keychain')throw Error('在线媒体密钥存储尚未配置。');}
 }
-export function nativeMediaTask(type:string,provider:string){return (type==='generate_static_visual'&&provider==='openai')||(['generate_shot_sync_preview','generate_review_render','generate_final_render'].includes(type)&&provider==='openchatcut')||(['generate_a_roll','generate_b_roll'].includes(type)&&(['openchatcut','ffmpeg','pexels','bailian'].includes(provider)||isVideoProvider(provider)))||(type==='generate_soundtrack'&&provider==='freesound')||(type==='extract_embedded_audio'&&provider==='ffmpeg');}
+export function nativeMediaTask(type:string,provider:string){return (['search_shot_video','preview_shot_video'].includes(type)&&provider==='pexels')||(type==='generate_static_visual'&&provider==='openai')||(['generate_shot_sync_preview','generate_review_render','generate_final_render'].includes(type)&&provider==='openchatcut')||(['generate_shot_video','generate_a_roll','generate_b_roll'].includes(type)&&(['openchatcut','ffmpeg','pexels','bailian'].includes(provider)||isVideoProvider(provider)))||(type==='generate_soundtrack'&&provider==='freesound')||(type==='extract_embedded_audio'&&provider==='ffmpeg');}
 // A frozen reference may come from the Episode blueprint even for a local clip.
 // Only the registered executor determines whether execution needs credentials.
 export function nativeMediaRequiresExternal(p:WorkerTaskPackage){
@@ -90,7 +91,7 @@ export async function executeNativeMedia(pool:Pool,config:NativeMediaConfigurati
      return async(url,init)=>{await reserve();return observeVideo(url,init);};
     });
    }else{
-    output=await executeControlledMediaTask({
+    try{output=await executeControlledMediaTask({
      taskPackage:p,fetcher:observeVideo,pexelsApiKey:p.provider==='pexels'?secret:undefined,googleTtsApiKey:undefined,
      bailianCredentials:p.provider==='bailian'?secret:undefined,officialVideoCredentials:isVideoProvider(p.provider)?secret:undefined,
      reserveWan:videoProvider?async()=>{
@@ -111,9 +112,12 @@ export async function executeNativeMedia(pool:Pool,config:NativeMediaConfigurati
       lastVideoPhase=phase;
      }:undefined,
      freesoundApiKey:p.provider==='freesound'?secret:undefined,validateMp4:validateMp4Artifact,probeMp3:probeMp3Artifact,extractMp3:extractMp3Artifact,trimMp3:trimMp3Artifact,trimMp4:trimMp4Artifact,trimMp4Segments:trimMp4SegmentsArtifact
-    });
+    });}catch(error){
+     if(videoProvider&&workspaceVideoReserved&&!providerTaskId&&error instanceof VideoGenerationError&&['not_sent','rejected'].includes(error.outcome))await pool.query('SELECT local_identity.record_workspace_visual_submission($1,$2,$3,$4)',[fence.p_task_id,fence.p_attempt,fence.p_lease_token,'rejected']);
+     throw error;
+    }
    }
   }
   const result=JSON.parse(output);result.validation.checks.push({name:'native_media_mode',passed:true,detail:ports?.mode==='controlled'?'受控Provider响应和SecretStore替身；没有在线资格或在线生成证明。':external?'在线执行路径。':'本机媒体执行。'});return JSON.stringify(result);
- }catch(error){if(error instanceof ProviderOutcomeUnknownError||error instanceof PexelsVideoError||error instanceof FreesoundSearchError||error instanceof OpenAiImageRequestError)throw error;if(p.provider==='pexels')throw Error(error instanceof SecretStoreError?'Pexels 所选连接不可用，请检查原连接后重新检索。':'Pexels 视频文件无效或无法读取，请重新预览其他结果。');throw Error('媒体执行或产物验证失败，请检查冻结输入和本机执行状态。',{cause:error});}
+ }catch(error){if(error instanceof VideoGenerationError||error instanceof MediaArtifactValidationError)throw error;if(error instanceof ProviderOutcomeUnknownError||error instanceof PexelsVideoError||error instanceof FreesoundSearchError||error instanceof OpenAiImageRequestError)throw error;if(p.provider==='pexels')throw Error(error instanceof SecretStoreError?'Pexels 所选连接不可用，请检查原连接后重新检索。':'Pexels 视频文件无效或无法读取，请重新预览其他结果。');throw Error('媒体执行或产物验证失败，请检查冻结输入和本机执行状态。',{cause:error});}
 }

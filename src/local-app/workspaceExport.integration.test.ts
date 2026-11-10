@@ -15,7 +15,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner checks actual used
   const send=(name:string,extra={})=>f.request(name,{workspaceId:w.id,expectedRevision:w.revision,...extra});
   const blocked=await send('exportWorkspace');expect(blocked.status,JSON.stringify(blocked.body)).toBe(200);w=blocked.body;expect(w.exports[0].status).toBe('failed');expect(w.exports[0].checks.some((x:{name:string;passed:boolean})=>x.name==='used_content'&&!x.passed)).toBe(true);
   for(const clip of w.clips){const matched=await send('matchWorkspaceMaterial',{clipId:clip.id,materialRevisionId:f.material});expect(matched.status,JSON.stringify(matched.body)).toBe(200);w=matched.body;}
-  const captionsMissing=await send('exportWorkspace');expect(captionsMissing.status).toBe(200);w=captionsMissing.body;expect(w.exports[0].status).toBe('failed');expect(w.exports[0].checks.find((x:{name:string})=>x.name==='captions').passed).toBe(false);
+  const defaultCaptions=await send('exportWorkspace');expect(defaultCaptions.status).toBe(200);w=defaultCaptions.body;expect(w.exports[0].status).toBe('ready');expect(w.exports[0].checks.find((x:{name:string})=>x.name==='captions').passed).toBe(true);
   for(const clip of w.clips){const saved=await send('saveWorkspaceCaptions',{clipId:clip.id,captionContract:defaultShotCaptionContract(clip.text,'independent',false)});expect(saved.status,JSON.stringify(saved.body)).toBe(200);w=saved.body;}
   // Native project-store is the real editor persistence boundary; Owner save still performs CAS.
   async function nativeEdit(edit:(doc:any)=>void){

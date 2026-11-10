@@ -1,0 +1,27 @@
+html[data-interface="impeccable"] .product-ui .deletion-cleanup-dialog{display:flex;flex-direction:column;width:720px;max-width:calc(100vw - 32px);max-height:calc(100dvh - 32px);padding:20px;overflow:hidden}
+.deletion-cleanup-dialog>header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--lc-line)}
+.deletion-cleanup-dialog h2{margin:0;font-size:18px;font-weight:600}
+.deletion-cleanup-body{min-height:0;overflow:auto;overscroll-behavior:contain;padding-top:12px}
+.deletion-cleanup-toolbar{display:flex;align-items:center;justify-content:flex-end;margin-top:8px}
+.deletion-cleanup-task{padding:12px 0;border-top:1px solid var(--lc-line);outline:none;min-width:0}
+.deletion-cleanup-task:first-child{border-top:0}
+.deletion-cleanup-task:focus-visible{outline:2px solid var(--lc-accent);outline-offset:-2px;border-radius:6px}
+.deletion-cleanup-task>header{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.deletion-cleanup-task h3{font-size:14px;margin:0 0 4px;font-weight:600;overflow-wrap:anywhere}
+.deletion-cleanup-task header span,.deletion-cleanup-task summary{font-size:12px;color:var(--lc-muted)}
+.deletion-cleanup-task header>button{flex:none}
+.deletion-cleanup-task p,.deletion-cleanup-panel>p{font-size:13px;line-height:1.7;overflow-wrap:anywhere;margin:8px 0}
+.deletion-cleanup-task p[role=alert],.deletion-cleanup-error{color:var(--lc-danger)}
+.deletion-cleanup-success{color:var(--lc-success)}
+.deletion-cleanup-empty{padding:24px 0;color:var(--lc-muted)}
+.deletion-cleanup-task details{margin-top:8px}
+.deletion-cleanup-task summary{cursor:pointer}
+.deletion-cleanup-task dl{margin:8px 0 0;font-size:12px;line-height:1.6}
+.deletion-cleanup-task dt{color:var(--lc-muted);margin-top:8px}
+.deletion-cleanup-task dd{margin:4px 0 0}
+.deletion-cleanup-task code{display:block;overflow-wrap:anywhere;white-space:normal;font-size:11px}
+.deletion-cleanup-notice{border-color:var(--lc-warning)!important;color:var(--lc-ink)!important}
+.deletion-cleanup-notice>.notice-icon{color:var(--lc-warning)}
+@media(max-width:480px){.deletion-cleanup-task>header{align-items:flex-start;flex-wrap:wrap}.deletion-cleanup-task header>div{width:100%}}
+.deletion-cleanup-task[data-targeted]{outline:2px solid var(--lc-accent);outline-offset:-2px;border-radius:6px;padding-inline:12px}
+.deletion-cleanup-notice{background:var(--lc-warning-soft,var(--lc-surface))!important}

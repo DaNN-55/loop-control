@@ -48,7 +48,7 @@ export async function executeWorkspaceCandidateCommand(c:PoolClient,root:string,
  return readProductionWorkspace(c,row.episode_id,root);
 }
 /** Delivery metadata follows actual native use, never the mutable narration draft. */
-export async function readUsedWorkspaceNarrationVersions(c:PoolClient,row:ProductionWorkspaceRecord,project:OpenChatCutProject){
+export async function readUsedWorkspaceNarrationVersions(c:PoolClient,row:Pick<ProductionWorkspaceRecord,'id'|'episode_id'|'storyboard_package_id'|'bindings'>,project:OpenChatCutProject){
  const results:WorkspaceUsedNarration[]=[];
  for(const clip of row.bindings.filter((b,index,all)=>all.findIndex(v=>v.shotId===b.shotId)===index)){
   const route=resolveWorkspaceMainVoice(project,clip.shotId),item=route.item??(!route.explicitRoute?project.timelines.flatMap(t=>t.items.filter(i=>Number(i.volume??1)>0&&(t.tracks[String(i.track)] as {muted?:boolean}|undefined)?.muted!==true)).find(i=>i.id===`workspace-narration-${clip.id}`):undefined);if(!item||typeof item.src!=='string')continue;

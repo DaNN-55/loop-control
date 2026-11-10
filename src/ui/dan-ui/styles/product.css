@@ -87,7 +87,7 @@
 .product-ui summary::after { display: none !important; }
 .product-ui summary:hover { color: var(--color-text-primary); background: var(--color-bg-primary_hover); }
 .product-ui summary > :where(h2,h3,h4) { margin: 0; }
-.product-ui :where(.maintenance-modal,.secret-modal) { padding: 0; }
+.product-ui :where(.secret-modal) { padding: 0; }
 .product-ui .maintenance-panel-content { padding: 20px 24px; }
 .product-ui .maintenance-section-header { align-items: center; }
 .product-ui .secret-filters { display: grid; grid-template-columns: minmax(0,1fr) minmax(230px,.5fr); }
@@ -97,10 +97,9 @@
 .product-ui .secret-metadata > div { display: grid; grid-template-columns: 120px minmax(0,1fr); gap: 12px; }
 .product-ui :where(code,pre) { overflow-wrap: anywhere; }
 .product-ui pre { white-space: pre-wrap; max-width: 100%; }
-.product-ui .history-ui :where(.history-header,.history-source-heading) { gap: 8px; }
 .product-ui .connection-fields { gap: 12px; }
 .product-ui .connection-field { column-gap: 16px !important; }
-.product-ui .connection-panel-header p,.product-ui .history-header p { margin-top: 4px; }
+.product-ui .connection-panel-header p { margin-top: 4px; }
 @media (max-width: 950px) {
   .product-ui .sidebar { padding-inline: 8px; }
   .product-ui .navigation-item { justify-content: center !important; }
@@ -112,7 +111,7 @@
   .product-ui .configuration-form label > :where(.field-hint,.form-hint) { grid-column: 1; }
   .product-ui .secret-filters { grid-template-columns: minmax(0,1fr); }
   .product-ui .modal-card { padding: 20px 16px; }
-  .product-ui :where(.maintenance-modal,.secret-modal) { padding: 0; }
+  .product-ui :where(.secret-modal) { padding: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   .product-ui *, .dan-ui-tooltip * { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
@@ -145,7 +144,6 @@
 .product-ui .operations-stage-grid article { border: 0; border-radius: 0; box-shadow: none; border-right: 1px solid var(--color-border-secondary); }
 .product-ui .operations-stage-grid article:last-child { border-right: 0; }
 .product-ui :where(.shot-settings-dialog,.stage-configuration-dialog > section,.episode-configuration-repair-form,.worker-blocker-card) { border-radius: 12px; }
-.product-ui .maintenance-tabs { margin: 0; padding: 0 24px; }
 .product-ui .system-status-trigger { padding: 10px !important; background: transparent !important; box-shadow: none !important; }
 .product-ui .system-status-trigger > [data-text] { padding: 0 !important; }
 .product-ui .system-status-trigger i { width: 8px; height: 8px; display: block; border-radius: 50%; }
@@ -181,7 +179,6 @@
 @media(max-width:640px) { .product-ui .studio-revision-options, .product-ui .shot-deviation-options { grid-template-columns: minmax(0,1fr); } }
 .product-ui.access-shell { grid-template-columns: minmax(0,1fr); width: 100%; padding: 24px; }
 .product-ui .access-card { width: 100%; max-width: 420px; }
-.product-ui .maintenance-modal > header { margin-bottom: 0; }
 .product-ui .secret-workspace .maintenance-section-header p { margin: 0; }
 .product-ui .operations-intro { justify-content: flex-end; }
 .product-ui .operations-workspace { margin-top: 0; }

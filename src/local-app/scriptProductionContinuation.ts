@@ -17,7 +17,7 @@ export interface ContinuationSnapshot {
 export interface ProductionAction {command:string;data:Record<string,unknown>;identity:unknown}
 export type ProductionDecision={wait:string}|{action:ProductionAction};
 const action=(command:string,data:Record<string,unknown>,identity:unknown=data):ProductionDecision=>({action:{command,data,identity}});
-function shotTask(tasks:ContinuationTask[],shotId:string){return tasks.filter(t=>!t.invalidated_at&&['generate_a_roll','generate_b_roll'].includes(t.task_type)&&(t.input_snapshot.shot as {id?:string})?.id===shotId).sort((a,b)=>(b.created_at??'').localeCompare(a.created_at??''))[0];}
+function shotTask(tasks:ContinuationTask[],shotId:string){return tasks.filter(t=>!t.invalidated_at&&['generate_shot_video','generate_a_roll','generate_b_roll'].includes(t.task_type)&&(t.input_snapshot.shot as {id?:string})?.id===shotId).sort((a,b)=>(b.created_at??'').localeCompare(a.created_at??''))[0];}
 function generationDuration(segment:ResolvedProductionSegment,draft:ContinuationDraft,provider:string){
  const n=segment.settings.duration??Math.ceil(Number(draft.tts_actual_duration_seconds??5));
  return Math.max(provider==='kling'?3:provider==='bailian'?2:4,n);
@@ -51,7 +51,7 @@ export function nextScriptProductionAction(state:ContinuationSnapshot):Productio
    return action('generateTts',data,{...data,text:d.tts_text,voice:d.tts_voice,rate:d.tts_speaking_rate});
   }
   if(segment.sfx.status==='bound'&&d.audio_mode==='tts'&&(segment.settings.sfxStart??0)+(segment.settings.sfxDuration??1)>Number(d.tts_actual_duration_seconds)+0.05)return{wait:segment.id+'：音效区间超出实际口播，请修改镜头设置后确认'};
-  const cfg=e.policy[segment.shotType] as {executor?:{provider?:string};budget_cents?:number};
+  const cfg=e.policy[segment.shotType??'b_roll'] as {executor?:{provider?:string};budget_cents?:number};
   const provider=cfg?.executor?.provider??'';
   if(!d.selected_material_revision_id){
    const task=shotTask(tasks,segment.id);

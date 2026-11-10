@@ -12,7 +12,7 @@ interface MetricTask {
  request:Record<string,any>|null;estimate:{estimatedCents:number}|null;reserved_cents:number|null;
  request_region?:'cn'|'international'|null;
 }
-const generationKinds:Record<string,'image'|'video'|'narration'|'sound'>={generate_static_visual:'image',generate_a_roll:'video',generate_b_roll:'video',generate_narration:'narration',generate_sound_effect:'sound',generate_music:'sound',generate_soundtrack:'sound'};
+const generationKinds:Record<string,'image'|'video'|'narration'|'sound'>={generate_static_visual:'image',generate_shot_video:'video',search_shot_video:'video',preview_shot_video:'video',generate_a_roll:'video',generate_b_roll:'video',generate_narration:'narration',generate_sound_effect:'sound',generate_music:'sound',generate_soundtrack:'sound'};
 function estimateTask(task:MetricTask):{cents:number;recalculated:boolean}|null {
  if(task.estimate&&Number.isSafeInteger(task.estimate.estimatedCents)&&task.estimate.estimatedCents>=0)return {cents:task.estimate.estimatedCents,recalculated:false};
  const request=task.request,input=task.input_snapshot,kind=generationKinds[task.task_type];

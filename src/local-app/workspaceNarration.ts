@@ -1,3 +1,4 @@
+import {legacyVideoDefault} from './legacyVideoCompatibility.js';
 import {readWorkspaceNarrationEnabled,setWorkspaceNarrationEnabled} from '../workspaceNarrationToggle.js';
 import {followWorkspaceNarrationCaption} from '../workspaceCaptions.js';
 import {readWorkspaceCaptions} from './workspaceCaptionsCommands.js';
@@ -41,7 +42,7 @@ export async function readWorkspaceNarration(c:PoolClient,row:ProductionWorkspac
  const defaults=(await c.query('SELECT narration_defaults FROM local_identity.production_workspaces WHERE id=$1',[row.id])).rows[0]?.narration_defaults;
  const legacyTracks=project?.timelines.some(t=>t.items.some(i=>(i.loopControlAudio as {origin?:string}|undefined)?.origin==='legacy-frozen'))?(await c.query("SELECT a.*,t.input_snapshot FROM public.audio_tracks a LEFT JOIN public.tasks t ON t.id=a.source_task_id WHERE a.episode_id=$1 AND a.track_kind='narration'",[row.episode_id])).rows:[];
  return(await inputs(c,row)).map(({clip,d,hash})=>{const s=state.find(s=>s.shot_id===clip.shotId),current=s?.input_fingerprint===hash,track=current?s?.audio_track_id:null;
-  const shot=context?.context_snapshot?.worker_result?.storyboard?.shots?.find((shot:{id:string})=>shot.id===clip.shotId),provider=context?.policy?.[shot?.shotType]?.executor?.provider,bounds=isVideoProvider(provider??'')?videoProviders[provider as keyof typeof videoProviders]:provider==='bailian'?{minDuration:2,maxDuration:15}:null;
+  const provider=legacyVideoDefault(context?.policy)?.executor?.provider,bounds=isVideoProvider(provider??'')?videoProviders[provider as keyof typeof videoProviders]:provider==='bailian'?{minDuration:2,maxDuration:15}:null;
   const fps=project?.timelines.find(t=>t.items.some(i=>i.id===clip.itemId))?.fps,duration=track&&fps?Math.ceil(Number(s.duration_seconds)*fps)/fps:null;
   const ids=new Set(row.bindings.filter(b=>b.shotId===clip.shotId).map(b=>b.itemId)),visuals=project?.timelines.flatMap(t=>t.items.filter(i=>ids.has(String(i.id))).map(i=>({start:Number(i.startFrame),end:Number(i.startFrame)+Number(i.durationInFrames),fps:t.fps,locked:!!(i.loopControlVideo as {durationLocked?:boolean}|undefined)?.durationLocked})))??[];
   const requiresCandidateAdoption=Number(row.native_edit_revision??0)>0||!!(track&&visuals.some(v=>v.locked)&&Math.max(...visuals.map(v=>v.end))-Math.min(...visuals.map(v=>v.start))!==Math.ceil(Number(s.duration_seconds)*visuals[0].fps));
@@ -142,8 +143,8 @@ export async function executeWorkspaceNarration(c:PoolClient,root:string,row:Pro
  if(n.enabled===false||n.mode!=='tts'||!n.confirmed)throw new ConfigurationError(409,'请先保存并确认当前镜头匹配与口播。');
  if(data.retry!==undefined&&typeof data.retry!=='boolean')throw new ConfigurationError(400,'重试参数无效。');
  const authorized=await currentWorkspaceCallAuthorization(c,row);
+ const active=await c.query(`SELECT 1 FROM local_identity.workspace_narration_requests r JOIN public.tasks t ON t.id=r.task_id LEFT JOIN local_identity.workspace_narration_submissions s ON s.task_id=t.id WHERE r.workspace_id=$1 AND r.shot_id=$2 AND ((t.status IN ('ready','running') AND r.input_fingerprint<>$3) OR (t.status IN ('failed','blocked') AND coalesce(t.last_result#>'{preflight,checks}','[]'::jsonb) @> '[{"check":"provider_result_unknown"}]'::jsonb) OR (s.outcome IN ('started','received') AND t.status<>'completed'))`,[row.id,clip.shotId,n.inputFingerprint]);if(active.rowCount)throw new ConfigurationError(409,'上次口播仍在执行或提交结果未知；请先核对，不会重复发送。');
  if(n.selection){
-  const active=await c.query(`SELECT 1 FROM local_identity.workspace_narration_requests r JOIN public.tasks t ON t.id=r.task_id LEFT JOIN local_identity.workspace_narration_submissions s ON s.task_id=t.id WHERE r.workspace_id=$1 AND r.shot_id=$2 AND ((t.status IN ('ready','running') AND r.input_fingerprint<>$3) OR (s.outcome IN ('started','received') AND t.status<>'completed'))`,[row.id,clip.shotId,n.inputFingerprint]);if(active.rowCount)throw new ConfigurationError(409,'上次口播仍在执行或提交结果未知；请先核对，不会重复发送。');
   const resolved=await resolveProductionSelection(c,n.selection,'speech');validateSpeechParameters(resolved.selection,n.voice,n.languageCode,n.speakingRate);
   if(typeof data.reservationCents!=='number'||!Number.isSafeInteger(data.reservationCents)||data.reservationCents<Math.max(1,n.text.length)||data.reservationCents>100000)throw new ConfigurationError(400,'请填写足够的本次口播费用预留（分）；按每字至少 1 分保守预留。');
   if(!runtime.narrationReady)throw new ConfigurationError(503,'本地口播执行器未就绪。');await runtime.narrationReady();await runtime.checkReferences(c,[resolved.selection.connectionVersionId!],{purpose:'workspace-generation'});

@@ -16,7 +16,7 @@ export interface ProductionSettings {
 }
 export interface ProductionSegment {
   id: string; paragraph: string; narration: string; visual: string;
-  videoPrompt: string; shotType: 'a_roll' | 'b_roll'; settings: ProductionSettings; subtitle?: string;
+  videoPrompt: string; /** @deprecated Explicit legacy script field; current scripts do not classify shots. */ shotType?: 'a_roll' | 'b_roll'; settings: ProductionSettings; subtitle?: string;
 }
 export interface ProductionScript {
   version: 2; title: string; settings: ProductionSettings;
@@ -111,7 +111,7 @@ export function parseProductionScript(text: string): ProductionScript | null {
       if(section!=='正文') throw new ProductionScriptError('段落须位于正文中',i+1);
       checkSegment(i+1);seen=new Set();
       if(result.segments.some(s=>s.paragraph===paragraph[1])) throw new ProductionScriptError('段落编号重复',i+1);
-      segment={id:'shot-'+paragraph[1],paragraph:paragraph[1],narration:'',visual:'',videoPrompt:'',shotType:'b_roll',settings:{}};result.segments.push(segment);continue;
+      segment={id:'shot-'+paragraph[1],paragraph:paragraph[1],narration:'',visual:'',videoPrompt:'',settings:{}};result.segments.push(segment);continue;
     }
     const field = line.match(/^-\s+([^：:]+)[：:]\s*(.*)$/);
     if (!field) throw new ProductionScriptError('请使用模板字段，不使用未标注的长句',i+1);
@@ -173,7 +173,6 @@ export const productionScriptTemplate = `# 本期标题
 
 - 口播：填写本段完整口播。
 - 画面提示：填写画面意图，可使用长句。
-- 镜头类型：b_roll
 - 首帧素材：填写已上传图片的素材名称
 - 视频生成提示词：填写直接提交视频模型的画面与动作描述。
 - 生成时长（秒）：默认

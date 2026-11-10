@@ -15,17 +15,3 @@ export function adaptBusinessSchema(source) {
  if(/\bauth\.|\bvault\./.test(sql))throw Error('Unadapted platform dependency');
  return {sql,dependencies,sourceSha256:createHash('sha256').update(source).digest('hex')};
 }
-
-// Compare the archive's actual COPY records, independent of host libc collation.
-// The v2 manifest sorted jsonb text under the source's locale; its ordered md5
-// cannot be used across different libc versions even when every row is identical.
-export function businessCopies(data) {
- const copies=[];
- const pattern=/^COPY public\.([a-z_]+) \(([^\n]+)\) FROM stdin;\n([\s\S]*?)^\\\.\n/gm;
- for(const match of data.matchAll(pattern)){
-  if(!/^[a-z_][a-z0-9_]*(?:, [a-z_][a-z0-9_]*)*$/.test(match[2]))throw Error('Unsupported archive column identifiers');
-  copies.push({table:match[1],columns:match[2],records:match[3]});
- }
- return copies;
-}
-export function recordFingerprint(records){return createHash('sha256').update(records.split('\n').filter((_,i,a)=>i<a.length-1).sort().join('\n')).digest('hex');}

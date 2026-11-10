@@ -1,5 +1,5 @@
 import {useId,useState} from 'react';
-import {Dialog,DialogTrigger,Menu,MenuItem,Popover} from 'react-aria-components';
+import {Dialog,DialogTrigger,Header,Menu,MenuItem,MenuSection,Popover} from 'react-aria-components';
 import {Check,ChevronDown,X} from 'lucide-react';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {NativeSelect} from '../ui/dan-ui/components/base/select/select-native';
@@ -19,6 +19,12 @@ export function WorkspaceGenerationModel({kind,services,selection,disabled,onCha
  const modelOptions=availableServices.flatMap(service=>service.mode==='search'
   ?[{service,id:`${service.id}:search`,label:'Pexels 素材检索'}]
   :service.models.map(model=>({service,id:`${service.id}:${model}`,label:model})));
+ const grouped=new Map<string,typeof modelOptions>();
+ for(const option of modelOptions.filter(({service,label})=>!compact||`${label} ${service.connectionName??''} ${providerDisplayNames[service.provider]??service.provider}`.toLowerCase().includes(query.toLowerCase().trim()))){
+  const options=grouped.get(option.service.provider)??[];options.push(option);grouped.set(option.service.provider,options);
+ }
+ const modelGroups=[...grouped].map(([provider,options])=>({provider,label:providerDisplayNames[provider]??provider,options,connections:[...new Map(options.map(option=>[option.service.id,option.service])).values()]}));
+ const connectionLabel=(service:ProductionService)=>`${service.connectionName??service.label} · v${service.connectionVersion??'—'}`;
  const value=selectedService?`${selectedService.id}:${selectedService.mode==='search'?'search':selectedModel}`:'';
  const selectedLabel=modelOptions.find(option=>option.id===value)?.label;
  const unavailable=kind==='图片'&&!availableServices.length
@@ -31,7 +37,10 @@ export function WorkspaceGenerationModel({kind,services,selection,disabled,onCha
     <header><h3>选择{kind}模型</h3><Button size="xs" color="tertiary" aria-label="关闭模型选择" iconLeading={X} onPress={()=>setOpen(false)}/></header>
     <input type="search" className="workspace-composer-model-search" aria-label={`筛选${kind}模型`} placeholder="搜索模型、服务商或连接" value={query} onChange={event=>setQuery(event.target.value)}/>
     <Menu aria-label={`${kind}可用模型`} className="workspace-composer-model-list" selectionMode="single" selectedKeys={value?[value]:[]} onAction={key=>{setOpen(false);onChange(String(key));}} renderEmptyState={()=><p role="status">{unavailable??(availableServices.length?'没有匹配模型。':`暂无可用${kind}模型。`)}</p>}>
-     {modelOptions.filter(({service,label})=>`${label} ${service.connectionName??''} ${providerDisplayNames[service.provider]??service.provider}`.toLowerCase().includes(query.toLowerCase().trim())).map(({service,id,label})=><MenuItem key={id} id={id} textValue={label} className="workspace-composer-model-option"><span><strong>{label}</strong><small>{providerDisplayNames[service.provider]??service.provider} · {service.connectionName??service.label} · v{service.connectionVersion??'—'}</small></span>{id===value&&<Check size={16} aria-hidden="true"/>}</MenuItem>)}
+     {modelGroups.map(group=><MenuSection key={group.provider} id={group.provider} aria-label={group.label} className="workspace-composer-model-group">
+      <Header className="workspace-composer-model-group-heading"><span>{group.label}</span>{group.connections.length===1&&<small title={connectionLabel(group.connections[0])}>{connectionLabel(group.connections[0])}</small>}</Header>
+      {group.options.map(({service,id,label})=><MenuItem key={id} id={id} textValue={`${label}${group.connections.length>1?` ${connectionLabel(service)}`:''}`} className="workspace-composer-model-option"><strong>{label}</strong>{group.connections.length>1&&<small title={connectionLabel(service)}>{connectionLabel(service)}</small>}{id===value&&<Check size={14} aria-hidden="true"/>}</MenuItem>)}
+     </MenuSection>)}
     </Menu>
     {selection&&<Button size="xs" color="tertiary" onPress={()=>{setOpen(false);onChange('');}}>清除模型选择</Button>}
    </Dialog>
@@ -42,7 +51,7 @@ export function WorkspaceGenerationModel({kind,services,selection,disabled,onCha
    <label htmlFor={selectId}>模型</label>
    <NativeSelect id={selectId} size="sm" aria-label={`${kind}连接与模型`} value={value} disabled={disabled||(kind==='图片'&&!availableServices.length)} onChange={event=>onChange(event.target.value)}>
     <option value="">选择{kind}模型</option>
-    {modelOptions.map(({service,id,label})=><option key={id} value={id}>{providerDisplayNames[service.provider]??service.provider} · {label}</option>)}
+    {modelGroups.map(group=><optgroup key={group.provider} label={group.label}>{group.options.map(({service,id,label})=><option key={id} value={id}>{label}{group.connections.length>1?` · ${connectionLabel(service)}`:''}</option>)}</optgroup>)}
    </NativeSelect>
   </div>
   {selectedService&&selectedModel&&<>

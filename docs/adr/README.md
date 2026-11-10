@@ -46,3 +46,5 @@
 - [ADR-0028：工程写入与完整状态读回分离](0028-workspace-write-readback-boundary.md)
 
 - [ADR-0029：视频任务恢复与下载协议集中管理](0029-video-task-execution.md)
+
+- [ADR-0032：统一镜头视频任务与历史协议兼容](0032-unified-shot-video-protocol.md)

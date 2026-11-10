@@ -4,13 +4,11 @@ import {Copy,FolderOpen,Layers,MoreHorizontal} from 'lucide-react';
 import {Dropdown} from '../ui/dan-ui/components/base/dropdown/dropdown';
 import './episode-directory.css';
 import {ProductionWorkspacePanel} from './ProductionWorkspacePanel';
-import {Disclosure} from '../ui/dan-ui/components/base/disclosure/disclosure';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import type {WorkerBlocker} from '../reviews/reviewSelectors';
 import {episodeCatalogChanged} from '../episodes/episodeCatalogChanged';
 import {useCallback,useEffect,useMemo,useRef,useState} from 'react';
-import {ArtifactPreview} from '../episodes/EpisodeProduction';
-import type {EpisodeProductionSnapshot} from '../episodes/EpisodeProductionContainer';
+import type {EpisodeProductionSnapshot} from '../episodes/episodeSnapshot';
 import {createEpisodeReader} from '../episodes/episodeReadService';
 import {localCommand,localRequest} from './client';
 import type {WorkerPreflightResult} from '../worker/contracts';
@@ -56,7 +54,6 @@ export function LocalEpisodeDetail({episodeId,ownerId='',onChanged,onStudioActio
  const studioListener=useRef(onStudioAction);studioListener.current=onStudioAction;
  useEffect(()=>{studioListener.current?.(workspaceStudioAction);return()=>studioListener.current?.(null);},[episodeId,workspaceStudioAction]);
  if(!snapshot)return <section className="local-episode-detail">{error?<p role="alert">{error}</p>:<p role="status">正在加载生产单…</p>}</section>;
- const evidence=<><Disclosure label={<h3>任务与审核记录</h3>} className="review-section detail-card-collapsible"><div className="detail-card-body"><pre style={{maxHeight:400,overflow:'auto',whiteSpace:'pre-wrap',overflowWrap:'anywhere'}}>{JSON.stringify({tasks:snapshot.tasks,reviewPackages:snapshot.reviewPackages,transitions:snapshot.transitions},null,2)}</pre></div></Disclosure><ArtifactPreview artifacts={snapshot.artifacts}/></>;
 
  const directoryActions = (
   <div className="production-directory">
@@ -91,6 +88,6 @@ export function LocalEpisodeDetail({episodeId,ownerId='',onChanged,onStudioActio
   {collectionOpen?<EpisodeCollectionDialog episodeId={episodeId} onClose={()=>setCollectionOpen(false)} onChanged={async()=>{await refresh();await onChanged();}}/>:null}
   {error&&<p role="alert" className="form-error">{error}</p>}
   {directoryNotice&&<p role="status">{directoryNotice}</p>}
-  <WorkspaceDraftOwner ownerId={ownerId}><ProductionWorkspacePanel titleActions={directoryActions} preparationEntry={preparationEntry} notice={preflight&&<section className="workspace-preflight-notice" aria-label="制作前置检查" role="alert"><div><strong>在线制作暂不可用</strong><ul>{preflight.checks.filter(check=>check.status!=='passed').map((check,index)=><li key={index}>{check.check==='provider_network_policy'?'本机在线制作授权或请求预算不可用，不会发出在线请求。手动连接测试使用独立授权。':check.reason==='连接版本不可见。'?'当前配置引用的连接不属于本地执行所有者，或连接已不可用。请在账号配置中重新选择可用连接。':check.reason}</li>)}</ul></div>{onOpenAccount&&<Button size="sm" color="secondary" onPress={()=>onOpenAccount(snapshot.episode.account_id)}>打开账号配置</Button>}</section>} key={episodeId} legacySnapshot={snapshot} historicalReadOnly={snapshot.historicalReadOnly} episodeId={episodeId} title={snapshot.episode.title} stage={snapshot.episode.stage} archivedAt={snapshot.episode.archived_at} scriptRevisionId={snapshot.episode.main_script_revision_id??null} boardId={board?.id} materials={snapshot.materialRevisions} audioTracks={snapshot.audioTracks} command={command} onLegacy={()=>{}} onStudioActionChange={changeWorkspaceAction}>{evidence}</ProductionWorkspacePanel></WorkspaceDraftOwner>
+  <WorkspaceDraftOwner ownerId={ownerId}><ProductionWorkspacePanel titleActions={directoryActions} preparationEntry={preparationEntry} notice={preflight&&<section className="workspace-preflight-notice" aria-label="制作前置检查" role="alert"><div><strong>在线制作暂不可用</strong><ul>{preflight.checks.filter(check=>check.status!=='passed').map((check,index)=><li key={index}>{check.check==='provider_network_policy'?'本机在线制作授权或请求预算不可用，不会发出在线请求。手动连接测试使用独立授权。':check.reason==='连接版本不可见。'?'当前配置引用的连接不属于本地执行所有者，或连接已不可用。请在账号配置中重新选择可用连接。':check.reason}</li>)}</ul></div>{onOpenAccount&&<Button size="sm" color="secondary" onPress={()=>onOpenAccount(snapshot.episode.account_id)}>打开账号配置</Button>}</section>} key={episodeId} legacySnapshot={snapshot} historicalReadOnly={snapshot.historicalReadOnly} episodeId={episodeId} title={snapshot.episode.title} stage={snapshot.episode.stage} archivedAt={snapshot.episode.archived_at} scriptRevisionId={snapshot.episode.main_script_revision_id??null} boardId={board?.id} materials={snapshot.materialRevisions} audioTracks={snapshot.audioTracks} command={command} onLegacy={()=>{}} onStudioActionChange={changeWorkspaceAction}/></WorkspaceDraftOwner>
  </section>;
 }

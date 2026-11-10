@@ -61,10 +61,10 @@ it.skipIf(!enabled).each([configurations[0],configurations[1]])('$provider stops
  const f=await videoFixture(configuration);let revoked=false;
  try{
   await f.c.query('REVOKE EXECUTE ON FUNCTION local_identity.record_wan_submission(uuid,integer,uuid,text) FROM loop_worker');revoked=true;
-  expect((await f.execute(f.job.taskId,false))?.status).toBe('failed');
+  expect((await f.execute(f.job.taskId,false))?.status).toBe(configuration.provider==='bailian'?'failed':'blocked');
   await f.c.query('GRANT EXECUTE ON FUNCTION local_identity.record_wan_submission(uuid,integer,uuid,text) TO loop_worker');revoked=false;
   await f.restart();await f.restartWorker();const w=await f.read();
-  expect(w.visualTasks.find((t:any)=>t.taskId===f.job.taskId)).toMatchObject({status:'failed',providerTaskId:null,submissionUnknown:true,submissionOutcome:'started',canResume:false});expect(w.visualCandidates).toHaveLength(0);
+  expect(w.visualTasks.find((t:any)=>t.taskId===f.job.taskId)).toMatchObject({status:configuration.provider==='bailian'?'failed':'blocked',providerTaskId:null,submissionUnknown:true,submissionOutcome:'started',canResume:false});expect(w.visualCandidates).toHaveLength(0);
   expect((await f.request('retryWorkspaceVisualCandidate',{workspaceId:w.id,expectedRevision:w.revision,candidateId:f.job.id})).status).toBe(409);expect((await f.chosenRequest('requestWorkspaceVisualCandidate',{...f.args,expectedRevision:w.revision,prompt:'修改描述也不重复生成'})).status).toBe(409);
   expect((await f.events()).map(e=>e.kind)).toEqual(['POST']);expect((await f.c.query('SELECT count(*)::int n FROM public.paid_generation_reservations WHERE task_id=$1',[f.job.taskId])).rows[0].n).toBe(1);
  }finally{if(revoked)await f.c.query('GRANT EXECUTE ON FUNCTION local_identity.record_wan_submission(uuid,integer,uuid,text) TO loop_worker');await f.close();}

@@ -293,7 +293,7 @@ export function buildOpenChatCutCardProject(shot: StoryboardShotManifest, projec
   const durationInFrames = Math.max(1, Math.round(shot.durationSeconds * fps));
   const timeline: OpenChatCutTimeline = {
     id: projectId,
-    name: `${shot.shotType === "a_roll" ? "A-roll" : "B-roll"} 卡片`,
+    name: `镜头卡片`,
     order: 0,
     fps,
     width: 1080,
@@ -308,7 +308,7 @@ export function buildOpenChatCutCardProject(shot: StoryboardShotManifest, projec
       name: shot.id,
       width: 1080,
       height: 1920,
-      props: { text: `${shot.shotType === "a_roll" ? "A-ROLL" : "B-ROLL"}\n${shot.scriptSegment}\n${shot.productionMethod}`, align: "center", color: "#ffffff", fontSize: 64, fontWeight: 700 },
+      props: { text: `镜头\n${shot.scriptSegment}\n${shot.productionMethod}`, align: "center", color: "#ffffff", fontSize: 64, fontWeight: 700 },
     }],
     trackOrder: ["V1"],
     tracks: { V1: { kind: "video", name: "卡片" } },

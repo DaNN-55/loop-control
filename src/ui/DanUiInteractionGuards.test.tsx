@@ -6,9 +6,6 @@ import {AccountForm} from '../accounts/AccountForm';
 import {ConfirmationModal} from './ConfirmationModal';
 import {useDialogFocus} from './useDialogFocus';
 import {HelpTip} from './HelpTip';
-import {LocalDeliveryPanel} from '../local-app/LocalDeliveryPanel';
-import type {EpisodeProductionSnapshot} from '../episodes/EpisodeProductionContainer';
-vi.mock('../local-app/client',()=>({localRequest:vi.fn().mockResolvedValue([]),localCommand:vi.fn()}));
 afterEach(cleanup);
 it('opens help on the first Enter and Space activation and closes on Escape',async()=>{
  const user=userEvent.setup();render(<HelpTip label="键盘提示">提示内容</HelpTip>);
@@ -42,13 +39,4 @@ it('routes Escape and Tab to the active child dialog',async()=>{
  const child=screen.getByRole('dialog',{name:'子对话框'});
  await user.tab({shift:true});expect(child.contains(document.activeElement)).toBe(true);
  await user.keyboard('{Escape}');expect(screen.queryByRole('dialog',{name:'子对话框'})).toBeNull();expect(closed).not.toHaveBeenCalled();
-});
-it.each([['确认已处理','accepted'],['忽略问题','ignored']])('QC %s only resolves the selected issue',async(label,status)=>{
- const user=userEvent.setup(),command=vi.fn().mockResolvedValue(undefined);
- const snapshot={episode:{id:'fixture',stage:'qc_review'},reviewPackages:[{id:'qc',stage:'qc_review',revision_number:1,context_snapshot:{}}],qcReviewIssues:[{id:'issue',review_package_id:'qc',status:'open',severity:'blocking',at_seconds:0,reason:'合成测试问题'}],preRenderReviewMembers:[],tasks:[],artifacts:[]} as unknown as EpisodeProductionSnapshot;
- render(<LocalDeliveryPanel snapshot={snapshot} command={command} pending={false} onRefresh={vi.fn()} onDeleted={vi.fn()}/>);
- await user.click(screen.getByText('QC 问题与处理').closest('summary')!);
- const action=screen.getByRole('button',{name:label});expect(action.getAttribute('type')).toBe('button');
- await user.type(screen.getByLabelText('QC 问题原因'),'尚未提交的新问题');
- await user.click(action);expect(command.mock.calls).toEqual([['resolveQcIssue',{episodeId:'fixture',reviewPackageId:'qc',issueId:'issue',status}]]);
 });

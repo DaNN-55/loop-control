@@ -1,5 +1,9 @@
 import './workspace-task-status.css';
-import {useEffect,useState} from 'react';
+import {useEffect,useState,useId} from 'react';
+import {createPortal} from 'react-dom';
+import {useDialogFocus} from '../ui/useDialogFocus';
+import {ConfirmationModalPresence} from '../ui/ConfirmationModal';
+import {useSurfacePresence} from '../ui/SurfacePresence';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import type {WorkspaceVisualTask} from '../workspaceVisualCandidates';
 export function WorkspaceVisualTaskProgress({task,label,thumbnail=false}:{task:WorkspaceVisualTask;label:string;thumbnail?:boolean}){
@@ -22,18 +26,45 @@ export function WorkspaceVisualTaskProgress({task,label,thumbnail=false}:{task:W
  </div>;
 }
 export function WorkspaceVisualTaskStatus({task,label,disabled,onResume,onRefresh,onReconcile,onRetryUnknown,taskNoun='视觉任务',resumeLabel='恢复画面任务'}:{task:WorkspaceVisualTask;label:string;taskNoun?:string;resumeLabel?:string;disabled?:boolean;onResume:()=>void;onRefresh:()=>void;onReconcile:()=>void;onRetryUnknown?:()=>void}){
+ const [open,setOpen]=useState(false);
  if(task.retryTaskId)return null;
  const held=task.publicationAttempt!=null,unknown=task.submissionUnknown;
- const state=held?'发布结果待核对':unknown?(task.submissionOutcome==='received'?'供应商结果待核对':'提交结果未知'):task.status==='running'?'生成中':task.status==='ready'?'等待生成':task.status==='failed'?'生成失败':task.status==='blocked'?'生成受阻':task.status==='completed'?'生成完成':task.status==='superseded'?'已失效':'状态待核对';
- return <div className="workspace-visual-task"><p role={task.error||held?'alert':'status'} aria-label={taskNoun+' '+task.taskId}>{label}{state}{task.error?' · '+task.error:''}</p>
- {!held&&!unknown&&(task.status==='running'||task.status==='ready')&&<WorkspaceVisualTaskProgress task={task} label={label}/>}
- {task.submissionOutcome==='rejected'&&<p>供应商已明确拒绝本次请求。</p>}
- {task.kind==='image'&&!unknown&&!held&&['failed','blocked'].includes(task.status)&&<p>可检查设置后点击「重新生成图片」，核对费用并再次确认。</p>}
- {unknown&&<p>{onRetryUnknown?'上一次可能已产生费用。你可以先核对供应商记录，也可以重新确认后提交新请求。':'请先在原供应商核对本次请求；当前结果未知，不能再次提交生成。'}</p>}
- {onRetryUnknown&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={onRetryUnknown}>重试图片生成</Button>}
- {task.canResume&&!held&&['failed','blocked'].includes(task.status)&&<><p>恢复只查询原供应商任务，沿用已冻结的输入，不会重新提交生成。</p><Button size="sm" color="secondary" isDisabled={disabled} onPress={onResume}>{resumeLabel}</Button></>}
- {held&&<><p>已有产物等待核对。核对只恢复本次发布，不会重新生成。</p><Button size="sm" color="secondary" isDisabled={disabled} onPress={onReconcile}>核对并恢复产物</Button></>}
- {(unknown||held)&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={onRefresh}>刷新核对结果</Button>}
- {(unknown||held||task.canResume)&&<details><summary>任务信息</summary>{(task.connectionName||task.provider)&&<p>{task.connectionName??task.provider}{task.model?` · ${task.model}`:''}</p>}{task.createdAt&&<p>提交时间 {new Date(task.createdAt).toLocaleString('zh-CN',{hour12:false})}</p>}<p>原任务 {task.taskId}{held?` · 尝试 ${task.publicationAttempt}`:''}</p>{task.providerTaskId&&<p>供应商任务 {task.providerTaskId}</p>}</details>}
- </div>;
+ const state=held?'发布结果待核对':task.submissionOutcome==='not_sent'?'未提交':unknown?(task.submissionOutcome==='received'?'供应商结果待核对':'提交结果未知'):task.status==='running'?'生成中':task.status==='ready'?'等待生成':task.status==='failed'?'生成失败':task.status==='blocked'?'生成受阻':task.status==='completed'?'生成完成':task.status==='superseded'?'已失效':'状态待核对';
+ const actions=<>
+  {onRetryUnknown&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={onRetryUnknown}>重试图片生成</Button>}
+  {task.canResume&&!held&&['failed','blocked'].includes(task.status)&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={onResume}>{resumeLabel}</Button>}
+  {held&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={onReconcile}>核对并恢复产物</Button>}
+  {(unknown||held)&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={onRefresh}>刷新核对结果</Button>}
+ </>;
+ return <>
+  <div className="workspace-visual-task" inert={open} aria-hidden={open||undefined}>
+   <div className="workspace-task-summary">
+    <p role={task.error||held?'alert':'status'} aria-label={taskNoun+' '+task.taskId} title={task.error??undefined}>{label}{state}{task.error?' · '+task.error:''}</p>
+    <div className="workspace-task-actions">{actions}<Button size="sm" color="tertiary" aria-label={`查看${label}任务详情`} onPress={()=>setOpen(true)}>详情</Button></div>
+   </div>
+   {!held&&!unknown&&(task.status==='running'||task.status==='ready')&&<WorkspaceVisualTaskProgress task={task} label={label}/>}
+  </div>
+  <ConfirmationModalPresence>{open&&createPortal(<TaskDetails title={`${label}任务详情`} onClose={()=>setOpen(false)}>
+   <p className="workspace-task-diagnostic" role="alert">{label}{state}{task.error?' · '+task.error:''}</p>
+   {task.submissionOutcome==='not_sent'&&<p>本次请求在本机被拦截，未向供应商发送。请检查设置，重新确认后生成。</p>}
+   {task.submissionOutcome==='rejected'&&<p>供应商已明确拒绝本次请求，请根据错误原因检查设置后重新确认。</p>}
+   {task.kind==='image'&&!unknown&&!held&&['failed','blocked'].includes(task.status)&&<p>可检查设置后点击「重新生成图片」，核对费用并再次确认。</p>}
+   {unknown&&<p>{onRetryUnknown?'上一次可能已产生费用。你可以先核对供应商记录，也可以重新确认后提交新请求。':'请先在原供应商核对本次请求；当前结果未知，不能再次提交生成。'}</p>}
+   {task.canResume&&!held&&<p>恢复只查询原供应商任务，沿用原输入，不会重新提交生成。</p>}
+   {held&&<p>已有产物等待核对。核对只恢复本次发布，不会重新生成。</p>}
+   <dl className="workspace-task-metadata">
+    {(task.connectionName||task.provider)&&<><dt>连接与模型</dt><dd>{task.connectionName??task.provider}{task.model?` · ${task.model}`:''}</dd></>}
+    {task.createdAt&&<><dt>提交时间</dt><dd>{new Date(task.createdAt).toLocaleString('zh-CN',{hour12:false})}</dd></>}
+    {task.reservationCents!=null&&<><dt>费用预留</dt><dd>¥{(task.reservationCents/100).toFixed(2)}<small>实际扣费以供应商账单为准</small></dd></>}
+    <dt>原任务</dt><dd>{task.taskId}{held?` · 尝试 ${task.publicationAttempt}`:''}</dd>
+    {task.providerTaskId&&<><dt>供应商任务</dt><dd>{task.providerTaskId}</dd></>}
+   </dl>
+   {unknown&&!task.providerTaskId&&<p>本机未保存供应商任务编号，请按连接、模型和提交时间核对供应商调用记录。</p>}
+   <div className="modal-actions">{actions}{(unknown||task.submissionOutcome==='rejected'||task.submissionOutcome==='not_sent')&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>{setOpen(false);window.dispatchEvent(new Event('open-external-connections'));}}>打开连接配置</Button>}</div>
+  </TaskDetails>,document.body)}</ConfirmationModalPresence>
+ </>;
+}
+function TaskDetails({title,onClose,children}:{title:string;onClose:()=>void;children:import('react').ReactNode}){
+ const presence=useSurfacePresence(),present=presence?.present??true,id=useId(),ref=useDialogFocus<HTMLDivElement>(present,onClose);
+ return <div className="dan-ui product-ui workspace-task-overlay"><div ref={presence?.ref} className="modal-backdrop workspace-task-backdrop" inert={!present} aria-hidden={!present||undefined} onMouseDown={event=>{if(event.target===event.currentTarget)onClose();}}><div ref={ref} role="dialog" aria-modal="true" aria-labelledby={id} className="modal-card confirmation-modal workspace-task-detail"><header><h2 id={id}>{title}</h2><Button size="sm" color="tertiary" data-dialog-initial-focus onPress={onClose} aria-label={`关闭${title}`}>关闭</Button></header><div className="workspace-task-detail-body">{children}</div></div></div></div>;
 }

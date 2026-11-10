@@ -20,8 +20,6 @@ export interface OpenChatCutStudioWorkspace {
   };
 }
 
-export interface OpenChatCutStudioOpenOptions { durationSettings?: ReviewRenderDurationSettings; replaceWorkspace?: boolean; }
-
 export type ReviewRevisionRequest =
   | { kind: "composition"; reviewPackageId: string; composition?: ReviewRenderComposition; reason: string; studioProject?: OpenChatCutStudioWorkspace }
   | { kind: "storyboard"; reviewPackageId: string; reason: string };

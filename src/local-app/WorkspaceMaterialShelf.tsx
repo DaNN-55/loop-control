@@ -3,6 +3,7 @@ import {useEffect,useId,useRef,useState,type PointerEvent} from 'react';
 import {AudioLines,ChevronDown,ChevronUp,Film,FileText,Image as ImageIcon,Eye,Upload,X} from 'lucide-react';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {Dialog,Modal,ModalOverlay} from 'react-aria-components';
+import {WorkspaceUploadToast,type UploadNotice} from './WorkspaceUploadFeedback';
 import './workspace-material-shelf.css';
 
 const images = '.png,.jpg,.jpeg,.webp,.bmp';
@@ -22,15 +23,18 @@ const fileName = (material:ShelfMaterial) => material.source_path.split('/').pop
 interface Props {
  episodeId:string;
  shotCount:number;
+ scriptRevisionId?:string|null;
  materials:readonly ShelfMaterial[];
  readOnly:boolean;
  busy:boolean;
  status:string;
  failures:readonly string[];
  onImport:(files:File[])=>Promise<unknown>;
+ notice?:UploadNotice;
+ onDismissNotice?:(id:number)=>void;
 }
 
-export function WorkspaceMaterialShelf({episodeId,shotCount,materials,readOnly,busy,status,failures,onImport}:Props){
+export function WorkspaceMaterialShelf({episodeId,shotCount,scriptRevisionId,materials,readOnly,busy,status,failures,onImport,notice,onDismissNotice=()=>{}}:Props){
  const shelf=useWorkspaceMaterialSelection();
  const [open,setOpen]=useState(false);
  const [height,setHeight]=useState(defaultHeight);
@@ -40,9 +44,10 @@ export function WorkspaceMaterialShelf({episodeId,shotCount,materials,readOnly,b
  const input=useRef<HTMLInputElement>(null);
  const resize=useRef<{pointer:number;y:number;height:number}|null>(null);
  const drawer=useRef<HTMLElement>(null);
+ const feedback=useRef<HTMLDivElement>(null);
  const toggle=useRef<HTMLButtonElement>(null);
  const id=useId();
- const files=materials.filter(m=>m.material_type in media);
+ const files=materials.filter(m=>m.material_type in media&&(m.material_type!=='script'||scriptRevisionId===undefined||m.id===scriptRevisionId));
  const preview=files.find(m=>m.id===previewId),selected=files.find(m=>m.id===(shelf&&!readOnly?shelf.selectedId:previewId));
  const filtered=files.filter(m=>filter==='all'||m.material_type===filter);
  const uploadDisabled=readOnly||busy;
@@ -105,7 +110,7 @@ export function WorkspaceMaterialShelf({episodeId,shotCount,materials,readOnly,b
     event.currentTarget.value='';
     if(selected.length)void onImport(selected);
    }}/>}
-   {(status||failures.length>0)&&<div className="workspace-material-feedback">
+   {(status||failures.length>0)&&<div ref={feedback} tabIndex={-1} aria-label="素材导入结果" className="workspace-material-feedback">
     {status&&<div role="status">{status}</div>}
     {failures.length>0&&<ul role="alert">{failures.map((failure,index)=><li key={index}>{failure}</li>)}</ul>}
    </div>}
@@ -130,6 +135,7 @@ export function WorkspaceMaterialShelf({episodeId,shotCount,materials,readOnly,b
    {showPreview&&preview&&<ModalOverlay className="modal-backdrop dan-ui product-ui" isOpen isDismissable onOpenChange={setShowPreview}><Modal className="modal-card workspace-material-modal"><Dialog aria-label={fileName(preview)}><header><h3>{fileName(preview)}</h3><Button size="xs" color="tertiary" className="workspace-material-preview-close" aria-label="关闭素材预览" iconLeading={X} onPress={()=>setShowPreview(false)}/></header><div className="workspace-material-preview"><MaterialPreview key={preview.id} episodeId={episodeId} material={preview}/></div></Dialog></Modal></ModalOverlay>}
    {dragOver&&<div className="workspace-material-upload-overlay">松开导入素材</div>}
   </section>}
+  <WorkspaceUploadToast notice={notice} onDismiss={onDismissNotice} onView={failures.length?()=>{setOpen(true);requestAnimationFrame(()=>feedback.current?.focus());}:undefined}/>
  </div>;
 }
 

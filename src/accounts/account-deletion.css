@@ -1,0 +1,7 @@
+.account-delete-blockers{display:grid;gap:12px;margin:16px 0}
+.account-delete-blockers>div{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.account-delete-blockers span,.account-delete-blockers p{overflow-wrap:anywhere}
+.account-delete-blockers p{margin:0}
+.account-delete-blockers button{flex:none}
+.account-delete-options{display:flex;flex-wrap:wrap;gap:8px}
+@media(max-width:480px){.account-delete-blockers>div{align-items:flex-start;flex-wrap:wrap}}

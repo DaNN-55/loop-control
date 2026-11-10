@@ -13,7 +13,6 @@ import type {StoryboardManifest} from '../worker/contracts.js';
 import {storyboardFromScript} from '../worker/scriptPlanning.js';
 import {verifyNativeFile} from './localFiles.js';
 import {safeAssetOutputPath} from '../worker/controlledMediaExecutor.js';
-import {productionHash} from './scriptProductionStore.js';
 import {ConfigurationError} from './configurationCommands.js';
 import type {ProductionWorkspaceRecord} from './productionWorkspaceCommands.js';
 import type {WorkspaceClip} from '../productionWorkspace.js';
@@ -28,7 +27,9 @@ export async function prepareAuthoredWorkspace(c:PoolClient,root:string,e:{id:st
  if(!script&&!paragraphs.length)throw new ConfigurationError(409,'脚本正文为空，请补充正文后重新确认。');
  const board:StoryboardManifest=script?storyboardFromScript(script,inputs,{},true):{
   version:'storyboard/v1',audioCues:[],shots:paragraphs.map((scriptSegment,index)=>({
-   id:'shot-'+String(index+1).padStart(2,'0'),scriptSegment,durationSeconds:5,shotType:'b_roll',
+   id:'shot-'+String(index+1).padStart(2,'0'),scriptSegment,durationSeconds:5,
+   // Required only by frozen storyboard/v1; never copied into new workspace shot classification.
+   shotType:'b_roll',
    productionMethod:'待匹配素材',targetSpec:'9:16',inputBasis:[{relativePath:source.storage_path,sha256:source.sha256}],
   })),
  };
@@ -40,27 +41,19 @@ export async function prepareAuthoredWorkspace(c:PoolClient,root:string,e:{id:st
 export async function readWorkspacePlanning(c:PoolClient,taskId:string){const task=(await c.query('SELECT status,last_result FROM public.tasks WHERE id=$1',[taskId])).rows[0];return{planning:true as const,taskId,status:task.status,detail:task.last_result?.blockers?.[0]?.detail??task.last_result?.retry?.reason??null};}
 export async function syncWorkspaceShotInputs(c:PoolClient,row:ProductionWorkspaceRecord,bindings:WorkspaceClip[]){
  const p=(await c.query('SELECT p.context_snapshot,b.origin FROM public.review_packages p LEFT JOIN local_identity.workspace_preparations b ON b.package_id=p.id WHERE p.id=$1',[row.storyboard_package_id])).rows[0];
- for(const clip of bindings){const shot=p?.context_snapshot?.worker_result?.storyboard?.shots?.find((s:{id:string})=>s.id===clip.shotId);
- await c.query('INSERT INTO local_identity.workspace_shot_inputs(workspace_id,preparation_id,shot_id,origin,baseline_text,shot_type,snapshot) VALUES($1,$7,$2,$3,$4,$5,$6) ON CONFLICT DO NOTHING',[row.id,clip.shotId,shot?p.origin??'legacy-board':'local-added',shot?.scriptSegment??'',shot?.shotType??null,shot??{id:clip.shotId},row.storyboard_package_id]);}
+ for(const clip of bindings){const shot=p?.context_snapshot?.worker_result?.storyboard?.shots?.find((s:{id:string})=>s.id===clip.shotId),legacy=!p?.origin||p.origin==='legacy-board',snapshot={...(shot??{id:clip.shotId})};if(!legacy)delete snapshot.shotType;
+ await c.query('INSERT INTO local_identity.workspace_shot_inputs(workspace_id,preparation_id,shot_id,origin,baseline_text,shot_type,snapshot) VALUES($1,$7,$2,$3,$4,$5,$6) ON CONFLICT DO NOTHING',[row.id,clip.shotId,shot?p.origin??'legacy-board':'local-added',shot?.scriptSegment??'',legacy?shot?.shotType??null:null,snapshot,row.storyboard_package_id]);}
 }
-export async function resolveWorkspaceShotLineage(c:PoolClient,row:ProductionWorkspaceRecord,shotId:string,preparationId=row.storyboard_package_id){
+export async function resolveWorkspaceShotLineage(c:PoolClient,row:Pick<ProductionWorkspaceRecord,'id'|'episode_id'|'storyboard_package_id'|'bindings'>,shotId:string,preparationId=row.storyboard_package_id){
  let result=(await c.query('SELECT * FROM local_identity.workspace_shot_inputs WHERE workspace_id=$1 AND shot_id=$2 AND preparation_id=$3',[row.id,shotId,preparationId])).rows[0];
- if(!result){const p=(await c.query('SELECT p.context_snapshot,b.origin FROM public.review_packages p LEFT JOIN local_identity.workspace_preparations b ON b.package_id=p.id WHERE p.id=$1 AND p.episode_id=$2',[preparationId,row.episode_id])).rows[0],shot=p?.context_snapshot?.worker_result?.storyboard?.shots?.find((s:{id:string})=>s.id===shotId);if(!shot&&!row.bindings.some(b=>b.shotId===shotId))throw new ConfigurationError(409,'镜头制作依据已变化，请保存并重新确认。');result={origin:shot?p?.origin??'legacy-board':'local-added',baseline_text:shot?.scriptSegment??'',shot_type:shot?.shotType??null,snapshot:shot??{id:shotId}};}
- return{...result,id:shotId,shotType:result.shot_type,scriptSegment:result.baseline_text};
+ if(!result){const p=(await c.query('SELECT p.context_snapshot,b.origin FROM public.review_packages p LEFT JOIN local_identity.workspace_preparations b ON b.package_id=p.id WHERE p.id=$1 AND p.episode_id=$2',[preparationId,row.episode_id])).rows[0],shot=p?.context_snapshot?.worker_result?.storyboard?.shots?.find((s:{id:string})=>s.id===shotId);if(!shot&&!row.bindings.some(b=>b.shotId===shotId))throw new ConfigurationError(409,'镜头制作依据已变化，请保存并重新确认。');result={origin:shot?p?.origin??'legacy-board':'local-added',baseline_text:shot?.scriptSegment??'',shot_type:p?.origin==='legacy-board'||!p?.origin?shot?.shotType??null:null,snapshot:shot??{id:shotId}};}
+ return{...result,id:shotId,scriptSegment:result.baseline_text};
 }
 
-export async function authorizeWorkspacePreparation(c:PoolClient,row:ProductionWorkspaceRecord,enabled:unknown){
- if(typeof enabled!=='boolean')throw new ConfigurationError(400,'制作授权无效。');
- const e=(await c.query('SELECT e.*,b.policy FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE e.id=$1',[row.episode_id])).rows[0];
- const inputs=(await c.query('SELECT shot_id,origin,baseline_text,shot_type FROM local_identity.workspace_shot_inputs WHERE workspace_id=$1 AND preparation_id=$2 ORDER BY shot_id',[row.id,row.storyboard_package_id])).rows;
- const plan={version:'workspace/v1',executionFingerprint:productionHash(e.policy),preparationId:row.storyboard_package_id,segments:inputs},authorization=productionHash({script:row.script_revision_id,preparation:row.storyboard_package_id,plan});
- await c.query(`INSERT INTO local_identity.script_productions(episode_id,owner_id,script_revision_id,script_sha256,plan,enabled,authorization_hash,authorized_at,last_status) SELECT $1,local_identity.owner_id(),$2,m.sha256,$3,$4,$5,CASE WHEN $4 THEN clock_timestamp() END,'四步制作授权' FROM public.production_material_revisions m WHERE m.id=$2 ON CONFLICT(episode_id) DO UPDATE SET script_revision_id=excluded.script_revision_id,script_sha256=excluded.script_sha256,plan=excluded.plan,enabled=excluded.enabled,authorization_hash=excluded.authorization_hash,authorized_at=excluded.authorized_at,last_status=excluded.last_status`,[row.episode_id,row.script_revision_id,plan,enabled,authorization]);
- await c.query('SELECT local_identity.record_script_production_configuration($1,$2)',[row.episode_id,authorization]);
-}
 export async function readWorkspacePreparation(c:PoolClient,row:ProductionWorkspaceRecord){
  const prep=(await c.query('SELECT origin FROM local_identity.workspace_preparations WHERE package_id=$1',[row.storyboard_package_id])).rows[0],auth=(await c.query('SELECT enabled,authorization_hash,plan FROM local_identity.script_productions WHERE episode_id=$1 AND script_revision_id=$2 AND authorized_at IS NOT NULL',[row.episode_id,row.script_revision_id])).rows[0];
- const shots:Array<{shot_id:string;origin:string;shot_type:'a_roll'|'b_roll'|null}>=[];for(const clip of row.bindings){if(shots.some(s=>s.shot_id===clip.shotId))continue;const source=await resolveWorkspaceShotLineage(c,row,clip.shotId);shots.push({shot_id:clip.shotId,origin:source.origin,shot_type:source.shot_type});}
- return{origin:prep?.origin??'legacy-board',scriptRevisionId:row.script_revision_id,authorized:!!auth?.enabled,authorizationHash:auth?.authorization_hash,shots:shots.map(s=>({shotId:s.shot_id,origin:s.origin,shotType:s.shot_type}))};
+ const shots:Array<{shot_id:string;origin:string}>=[];for(const clip of row.bindings){if(shots.some(s=>s.shot_id===clip.shotId))continue;const source=await resolveWorkspaceShotLineage(c,row,clip.shotId);shots.push({shot_id:clip.shotId,origin:source.origin});}
+ return{origin:prep?.origin??'legacy-board',scriptRevisionId:row.script_revision_id,authorized:!!auth?.enabled,authorizationHash:auth?.authorization_hash,shots:shots.map(s=>({shotId:s.shot_id,origin:s.origin}))};
 }
 
 export async function preserveLegacyWorkspace(c:PoolClient,root:string,episodeId:string,decision:unknown){

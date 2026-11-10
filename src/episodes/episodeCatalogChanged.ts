@@ -1,6 +1,6 @@
 // Catalog fields depend on business state, not lease heartbeats or task-run
 // polling array identity. Compare only changed rows; frozen history keeps refs.
-export function episodeCatalogChanged(previous: import('./EpisodeProductionContainer').EpisodeProductionSnapshot | null, next: import('./EpisodeProductionContainer').EpisodeProductionSnapshot): boolean {
+export function episodeCatalogChanged(previous: import('./episodeSnapshot').EpisodeProductionSnapshot | null, next: import('./episodeSnapshot').EpisodeProductionSnapshot): boolean {
   if (!previous || previous.episode !== next.episode) return true;
   const sameJson = (left: unknown, right: unknown) => left === right || JSON.stringify(left) === JSON.stringify(right);
   const sameRows = <T,>(left: T[], right: T[], key: (row: T) => string, equal: (a: T, b: T) => boolean): boolean => {

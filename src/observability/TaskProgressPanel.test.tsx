@@ -78,3 +78,9 @@ describe("Worker 任务进度", () => {
     expect(screen.queryByText(/%/)).toBeNull();
   });
 });
+
+it('labels canonical shot video operations without exposing protocol names',()=>{
+ render(<TaskProgressPanel taskRuns={[]} tasks={['generate_shot_video','search_shot_video','preview_shot_video'].map((task_type,index)=>({...baseTask,id:'canonical-'+index,task_type}))}/>);
+ for(const label of ['生成镜头视频','检索镜头视频','预览镜头视频'])expect(screen.getAllByText(new RegExp(label)).length).toBeGreaterThan(0);
+ expect(screen.queryByText('generate_shot_video')).toBeNull();
+});

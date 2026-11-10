@@ -22,8 +22,8 @@ const purposeLabels: Record<MaterialPurpose, string> = {
   supplemental_script: "补充脚本",
   general_reference: "一般参考",
   visual_reference: "视觉参考",
-  a_roll: "A-roll / 人工出镜视频",
-  b_roll: "B-roll / 视频参考",
+  a_roll: "视频素材（旧分类）",
+  b_roll: "视频素材（旧分类）",
   narration: "旁白 / 人声",
   background_music: "背景音乐",
   sound_effect: "音效",
@@ -32,10 +32,10 @@ const purposeLabels: Record<MaterialPurpose, string> = {
 
 const purposeOptions: Record<MaterialType, readonly MaterialPurpose[]> = {
   script: ["main_script", "supplemental_script", "general_reference"],
-  reference: ["general_reference", "visual_reference", "b_roll"],
+  reference: ["general_reference", "visual_reference"],
   image: ["visual_reference", "cover", "general_reference"],
   audio: ["narration", "background_music", "sound_effect", "general_reference"],
-  video: ["b_roll", "a_roll", "visual_reference", "general_reference"],
+  video: ["visual_reference", "general_reference"],
 };
 
 const extensionPattern = (file: File, extensions: readonly string[]) => {
@@ -51,14 +51,6 @@ export function materialTypeForFile(file: File): MaterialType {
   return "reference";
 }
 
-export function isSupportedManualARollVideo(sourcePath: string, materialType: string, mimeType: string): boolean {
-  return materialType === "video" && /\.(mp4|mov|webm)$/i.test(sourcePath) && (mimeType === "application/octet-stream" || mimeType.toLowerCase().startsWith("video/"));
-}
-
-export function isSupportedManualAudio(sourcePath: string, materialType: string, mimeType: string): boolean {
-  return materialType === "audio" && /\.(mp3|wav|m4a|aac|flac|ogg)$/i.test(sourcePath) && (mimeType === "application/octet-stream" || mimeType.toLowerCase().startsWith("audio/"));
-}
-
 export function materialPurposeLabel(purpose: MaterialPurpose): string {
   return purposeLabels[purpose];
 }
@@ -72,7 +64,7 @@ function extensionFor(sourcePath: string, materialType: MaterialType): string {
 export function canonicalMaterialName(purpose: MaterialPurpose, sourcePath: string, materialType: MaterialType, ordinal = 1): string {
   const extension = extensionFor(sourcePath, materialType);
   if (purpose === "main_script") return "script.md";
-  if (purpose === "visual_reference") return `actor${extension}`;
+  if (purpose === "visual_reference") return materialType === "video" ? `shot-${String(ordinal).padStart(3, "0")}${extension}` : `actor${extension}`;
   if (purpose === "cover") return `cover${extension}`;
   if (purpose === "a_roll") return `a-shot-${String(ordinal).padStart(3, "0")}${extension}`;
   if (purpose === "b_roll") return `b-shot-${String(ordinal).padStart(3, "0")}${extension}`;

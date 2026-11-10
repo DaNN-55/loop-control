@@ -19,3 +19,21 @@ it('mixes music and effects independently and refuses unprepared voice sources',
  const next=applyWorkspaceAudioMix(p,{kind:'sound',workspaceId:'w',itemId:'music',gainDb:-18,duckDepthDb:14});expect(next.timelines[0].tracks['music-track']).toMatchObject({role:'follower',audioRouting:{duckDepthDb:-14}});expect(next.timelines[0].items.find(i=>i.id==='effect')).toEqual(before);expect(next.timelines[0].tracks.captions).toEqual(p.timelines[0].tracks.captions);
  expect(()=>applyWorkspaceAudioMix(p,{kind:'voice',workspaceId:'w',shotId:'s1',visualItemIds:['visual-1','visual-2'],mode:'source',gainDb:0,ambienceGainDb:null})).toThrow('准备');
 });
+
+it('places one adopted effect without changing another effect or its native source window',()=>{
+ const p=project();const tl=p.timelines[0];tl.items[0].loopControlShot={shotId:'s1'};tl.items[0].startFrame=60;
+ for(const id of ['a','b']){tl.items.push({id,kind:'audio',track:id,sourceAssetId:'audio-track-source',src:'source.mp3',srcInFrame:30,startFrame:60,durationInFrames:30,volume:.5,playbackRate:1.5,loopControlAudio:{workspaceId:'w',kind:'sfx',shotId:'s1',anchor:'shot'}});tl.tracks[id]={kind:'audio',name:id};}
+ const before=structuredClone(p),next=applyWorkspaceAudioMix(p,{kind:'sound',workspaceId:'w',itemId:'a',gainDb:-8,duckDepthDb:4,placement:{anchor:'shot',shotId:'s1',offsetSeconds:.2,durationSeconds:1.2}});
+ expect(next.timelines[0].items.find(i=>i.id==='a')).toMatchObject({startFrame:66,durationInFrames:36,srcInFrame:30,playbackRate:1.5,loopControlAudio:{anchor:'shot',offsetSeconds:.2,shotId:'s1'}});
+ expect(next.timelines[0].items.find(i=>i.id==='b')).toEqual(before.timelines[0].items.find(i=>i.id==='b'));expect(next.timelines[0].tracks.b).toEqual(before.timelines[0].tracks.b);expect(p).toEqual(before);
+ expect(()=>applyWorkspaceAudioMix(p,{kind:'sound',workspaceId:'w',itemId:'a',gainDb:-8,duckDepthDb:0,placement:{anchor:'shot',shotId:'missing',offsetSeconds:0,durationSeconds:1}})).toThrow('镜头');
+ expect(()=>applyWorkspaceAudioMix(p,{kind:'sound',workspaceId:'w',itemId:'a',gainDb:-8,duckDepthDb:0,placement:{anchor:'absolute',offsetSeconds:0,durationSeconds:4}})).toThrow('可用区间');
+ expect(()=>applyWorkspaceAudioMix(p,{kind:'sound',workspaceId:'w',itemId:'a',gainDb:-8,duckDepthDb:0,placement:{anchor:'absolute',offsetSeconds:Number.MAX_VALUE,durationSeconds:1}})).toThrow('无效');
+ expect(()=>applyWorkspaceAudioMix(p,{kind:'sound',workspaceId:'other',itemId:'a',gainDb:-8,duckDepthDb:0,placement:{anchor:'absolute',offsetSeconds:0,durationSeconds:1}})).toThrow('无效');
+});
+it('keeps whole-episode music on an absolute position without a shot placeholder',()=>{
+ const p=project(),tl=p.timelines[0];tl.items.push({id:'bgm',kind:'audio',track:'bgm',sourceAssetId:'audio-track-source',src:'source.mp3',startFrame:0,durationInFrames:90,volume:1,loopControlAudio:{workspaceId:'w',kind:'bgm',anchor:'absolute'}});tl.tracks.bgm={kind:'audio',name:'整期配乐'};
+ const next=applyWorkspaceAudioMix(p,{kind:'sound',workspaceId:'w',itemId:'bgm',gainDb:-12,duckDepthDb:10,placement:{anchor:'absolute',offsetSeconds:.5,durationSeconds:2}});
+ expect(next.timelines[0].items.find(i=>i.id==='bgm')).toMatchObject({startFrame:15,durationInFrames:60});
+ expect(()=>applyWorkspaceAudioMix(p,{kind:'sound',workspaceId:'w',itemId:'bgm',gainDb:-12,duckDepthDb:10,placement:{anchor:'shot',shotId:'s1',offsetSeconds:0,durationSeconds:1}})).toThrow('无效');
+});

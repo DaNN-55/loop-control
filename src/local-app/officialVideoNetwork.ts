@@ -1,5 +1,8 @@
 import {isPublicMediaUrl,videoOutputRatios} from '../videoVisualInputs.js';
-import {officialVideoDownloadUrl} from '../worker/officialVideoProvider.js';
+import {isDeepStrictEqual} from 'node:util';
+import {registeredAdapters} from '../worker/registeredAdapters.js';
+import {VideoGenerationError} from '../worker/videoGenerationError.js';
+import {officialVideoBody,officialVideoDownloadUrl} from '../worker/officialVideoProvider.js';
 import {klingOmniModel,klingOmniPath,videoProviders,minimaxEndpoints, type VideoProvider} from '../worker/videoProviderCatalog.js';
 // Endpoint boundary for signed, deployment-owned network policies.
 export function officialVideoOperation(provider: VideoProvider, phase: 'verify'|'execute', url: URL, init: RequestInit): string {
@@ -28,17 +31,45 @@ export function officialVideoOperation(provider: VideoProvider, phase: 'verify'|
    return'generate';
   }
   if(phase==='execute'&&method==='POST'&&path===create&&!url.search){
-   if(typeof init.body!=='string'||Buffer.byteLength(init.body)>15*1024*1024)throw Error('Invalid video body');
+   if(typeof init.body!=='string'||Buffer.byteLength(init.body)>55*1024*1024)throw Error('Invalid video body');
    const body=JSON.parse(init.body),duration=Number(body.duration),p=videoProviders[provider];
    if(!Number.isInteger(duration)||duration<p.minDuration||duration>p.maxDuration)throw Error('Invalid video duration');
    if(provider==='kling'){
-    if(body.model_name!=='kling-v3'||body.mode!=='std'||body.sound!=='off'||typeof body.image!=='string'||!body.image||typeof body.prompt!=='string'||!body.prompt.trim()||body.prompt.length>1500||Object.keys(body).some(k=>!['model_name','image','prompt','mode','duration','sound'].includes(k)))throw Error('Invalid Kling video body');
+    const decode=(value:unknown)=>typeof value==='string'&&value.length<=Math.ceil(10*1024*1024/3)*4&&/^[A-Za-z0-9+/]+={0,2}$/.test(value)?Buffer.from(value,'base64'):undefined;
+    const image=decode(body.image),tail=body.image_tail===undefined?undefined:decode(body.image_tail);
+    if(!image||body.image_tail!==undefined&&!tail)throw new VideoGenerationError('可灵首尾帧格式或大小无效，未向供应商发送。','not_sent');
+    const expected=officialVideoBody({provider,model:body.model_name,prompt:body.prompt,durationSeconds:duration,...(tail?{visualMode:'keyframes',visualInputs:[{role:'firstFrame',materialRevisionId:'first',image,mimeType:'image/png'},{role:'lastFrame',materialRevisionId:'last',image:tail,mimeType:'image/png'}]}:{image,imageMime:'image/png'})});
+    if(!isDeepStrictEqual(body,expected))throw new VideoGenerationError('可灵请求参数与已登记模式不一致，未向供应商发送。','not_sent');
    }else{
-    if(!(p.models as readonly string[]).includes(body.model)||body.ratio!=='adaptive'||body.resolution!==(provider==='minimax'?'768P':'720p')||!Array.isArray(body.content)||body.content.length!==2||body.content[0]?.type!=='text'||typeof body.content[0].text!=='string'||!body.content[0].text.trim()||body.content[0].text.length>1500||body.content[1]?.type!=='image_url'||body.content[1]?.role!=='first_frame'||!/^data:image\/(png|jpeg);base64,[A-Za-z0-9+/=]+$/.test(body.content[1]?.image_url?.url??'')||Object.keys(body).some(k=>!['model','content','duration','ratio','resolution',...(provider==='volcengine'?['generate_audio','watermark']:[])].includes(k))||provider==='volcengine'&&(body.generate_audio!==false||body.watermark!==false))throw Error('Invalid video body');
+    if(!matchesRegisteredVisualBody(provider,body))throw new VideoGenerationError(`${p.label} 请求的模型、画面输入或参数与已登记模式不一致，未向供应商发送。`,'not_sent');
    }
    return'generate';
   }
  }
  if(phase==='execute'&&method==='GET'&&!new Headers(init.headers).has('Authorization')){officialVideoDownloadUrl(provider,url.href);return'download';}
  throw Error('Unregistered official video request');
+}
+
+/** Reuse the exact registered serializer so reference modes cannot drift from first-frame validation. */
+function matchesRegisteredVisualBody(provider:'minimax'|'volcengine',body:Record<string,any>){
+ if(!Array.isArray(body.content)||body.content[0]?.type!=='text'||typeof body.content[0].text!=='string')return false;
+ const roles={first_frame:'firstFrame',last_frame:'lastFrame',reference_image:'referenceImages',reference_video:'referenceVideos'} as const;
+ const inputs:import('../worker/officialVideoProvider.js').OfficialVideoVisualInput[]=[];
+ for(const [index,entry] of body.content.slice(1).entries()){
+  const role=roles[entry?.role as keyof typeof roles];if(!role)return false;
+  const url=entry.type==='image_url'?entry.image_url?.url:entry.type==='video_url'?entry.video_url?.url:undefined;
+  if(typeof url!=='string')return false;
+  const data=/^data:(image\/(?:png|jpeg|webp)|video\/mp4);base64,([A-Za-z0-9+/]+={0,2})$/.exec(url);
+  if(data)inputs.push({role,materialRevisionId:String(index),mimeType:data[1],...(entry.type==='video_url'?{video:Buffer.from(data[2],'base64')}:{image:Buffer.from(data[2],'base64')})});
+  else if(entry.type==='video_url'&&role==='referenceVideos')inputs.push({role,materialRevisionId:String(index),source:url,mimeType:'video/mp4'});
+  else return false;
+ }
+ const modes=registeredAdapters.productionChoices().find(c=>c.provider===provider&&c.adapter===videoProviders[provider].adapter)?.videoGenerationModes?.[body.model]??[];
+ for(const mode of modes)try{
+  const base={provider,model:body.model,prompt:body.content[0].text,durationSeconds:body.duration,...(provider==='minimax'?{resolution:body.resolution,referenceRatio:body.ratio==='adaptive'?undefined:body.ratio}:{})};
+  if(mode.id==='first-frame'&&(inputs.length!==1||inputs[0].role!=='firstFrame'))continue;
+  const expected=mode.id==='first-frame'?officialVideoBody({...base,image:inputs[0].image,imageMime:inputs[0].mimeType}):officialVideoBody({...base,visualInputs:inputs,visualMode:mode.id});
+  if(isDeepStrictEqual(body,expected))return true;
+ }catch{/* Another registered mode may match; no network or reservation occurs here. */}
+ return false;
 }

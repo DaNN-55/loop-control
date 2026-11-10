@@ -1,7 +1,7 @@
 import {shotCompositionLayouts,type ShotCompositionLayout} from '../shotComposition.js';
 import type {FrozenVideoVisualInput} from '../videoVisualInputs.js';
 import {wanVideoModel,wanVideoParameters,defaultWanModelSettings} from '../wanVideoModels.js';
-import {isVideoProvider, videoAdapters, videoProviders} from "./videoProviderCatalog.js";
+import {isVideoProvider, videoAdapters, videoProviders,minimaxVideoResolution} from "./videoProviderCatalog.js";
 import{openChatCutProjectPath}from"./openchatcutPaths.js";
 import {videoOutputRatios,videoVisualInputProblem,type VideoOutputRatio} from '../videoVisualInputs.js';
 import { registeredAdapters } from "./registeredAdapters.js";
@@ -199,7 +199,7 @@ export interface WorkerTaskPackageInput {
     shot: StoryboardShotManifest;
   };
   media?:
-    | { adapter: "wan_video" | "seedance_video" | "minimax_video" | "kling_video"; wanVideo: { settings?:import('../videoGenerationSettings.js').WanGenerationSettings;composition?:import('../videoGenerationSettings.js').FirstFrameComposition;firstFrame?: ArtifactManifest; visualInputs?: FrozenVideoVisualInput[]; visualMode?: string; referenceRatio?:VideoOutputRatio; prompt: string; durationSeconds: number; imageMime?: string } }
+    | { adapter: "wan_video" | "seedance_video" | "minimax_video" | "kling_video"; wanVideo: { candidateOnly?:boolean;resolution?:string;settings?:import('../videoGenerationSettings.js').WanGenerationSettings;composition?:import('../videoGenerationSettings.js').FirstFrameComposition;firstFrame?: ArtifactManifest; visualInputs?: FrozenVideoVisualInput[]; visualMode?: string; referenceRatio?:VideoOutputRatio; prompt: string; durationSeconds: number; imageMime?: string } }
     | {
       adapter: "google_tts" | "volcengine_tts";
       narration: {
@@ -472,7 +472,7 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
   if (input.reviewFeedback && (!isNonEmptyString(input.reviewFeedback.reviewPackageId) || !isNonEmptyString(input.reviewFeedback.reason))) throw new Error("review feedback must contain its package and reason.");
   if (input.reviewAnnotations?.some((annotation) => !isNonEmptyString(annotation.shotId) || !isNonEmptyString(annotation.reason))) throw new Error("review annotations must contain a shot and reason.");
   if (input.capability === "a_roll_generation" && !input.aRoll && input.media?.adapter !== "wan_video" && !videoAdapters.includes(input.media?.adapter ?? "")) throw new Error("a-roll generation requires its frozen adapter and shot.");
-  if (input.capability !== "a_roll_generation" && input.aRoll) throw new Error("only a-roll generation may include a frozen shot.");
+  if (!["a_roll_generation","shot_video_generation"].includes(input.capability) && input.aRoll) throw new Error("only a-roll generation may include a frozen shot.");
   if (input.aRoll) {
     if (!isNonEmptyString(input.aRoll.adapter)) throw new Error("a-roll generation requires an adapter.");
     if (input.aRoll.adapter === "openchatcut_card_video" && input.task.provider !== "openchatcut") throw new Error("A-roll 卡片视频任务 Provider 必须是 OpenChatCut。");
@@ -480,7 +480,9 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
   }
   if (input.media && "wanVideo" in input.media) {
     const video = input.media.wanVideo;
-    if (!(input.task.provider === "bailian" && input.media.adapter === "wan_video" && !!wanVideoModel(input.task.model) || isVideoProvider(input.task.provider) && videoProviders[input.task.provider].adapter === input.media.adapter && (videoProviders[input.task.provider].models as readonly string[]).includes(input.task.model)) || !["a_roll_generation", "b_roll_generation"].includes(input.capability) || !isConnectionId(input.credentialRef) || !Number.isInteger(video.durationSeconds) || video.durationSeconds < 2 || video.durationSeconds > 15 || !isNonEmptyString(video.prompt) || video.prompt.length > 1500) throw new Error("万相任务的冻结配置无效。");
+    if (!(input.task.provider === "bailian" && input.media.adapter === "wan_video" && !!wanVideoModel(input.task.model) || isVideoProvider(input.task.provider) && videoProviders[input.task.provider].adapter === input.media.adapter && (videoProviders[input.task.provider].models as readonly string[]).includes(input.task.model)) || !["shot_video_generation", "a_roll_generation", "b_roll_generation"].includes(input.capability) || !isConnectionId(input.credentialRef) || !Number.isInteger(video.durationSeconds) || video.durationSeconds < 2 || video.durationSeconds > 15 || !isNonEmptyString(video.prompt) || video.prompt.length > 1500) throw new Error("万相任务的冻结配置无效。");
+    if(video.candidateOnly&&input.task.provider!=='minimax')throw Error('候选视频时长策略不适用于当前供应商。');
+    if(input.task.provider==='minimax')minimaxVideoResolution(input.task.model,video.resolution??'768P');
     if(input.task.provider==='bailian')wanVideoParameters(input.task.model,video.durationSeconds,video.settings??defaultWanModelSettings(input.task.model));
     if(video.referenceRatio!==undefined&&!videoOutputRatios.includes(video.referenceRatio))throw Error('参考视频输出比例无效。');
     if(video.visualInputs){
@@ -498,6 +500,7 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
         throw new Error('视频素材不属于冻结输入。');
     }
   }
+  if (["shot_video_search","shot_video_preview"].includes(input.capability) && (input.task.provider!=="pexels" || input.media?.adapter!=="pexels_video" || input.media.bRoll.request?.operation!==(input.capability==="shot_video_search"?"search":"preview"))) throw new Error("镜头视频检索或预览必须使用匹配的 Pexels 操作。");
   if (input.capability === "narration_generation" && (!input.media || (input.media.adapter !== "google_tts" && input.media.adapter !== "volcengine_tts"))) throw new Error("旁白生成必须包含冻结的 TTS 配置。");
   if (input.capability === "narration_generation" && !isConnectionId(input.credentialRef)) throw new Error("旁白生成必须包含冻结的外部连接版本 ID。");
   if (input.acousticAlignment && (!isNonEmptyString(input.acousticAlignment.confirmedText) || !isSha256(input.acousticAlignment.textFingerprint))) throw new Error("声学对齐必须冻结 Owner 字幕正文及其版本。");
@@ -508,8 +511,8 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
   if (input.capability !== "narration_generation" && input.capability !== "acoustic_alignment" && input.acousticAlignment) throw new Error("只有旁白生成或独立字幕对齐任务可以冻结声学对齐输入。");
   if (input.capability === "acoustic_alignment" && (!input.acousticAlignment?.audioRelativePath || !isSha256(input.acousticAlignment.audioSha256) || !isSha256(input.acousticAlignment.inputVersion))) throw new Error("独立字幕对齐任务必须冻结音频路径、哈希与输入版本。");
   if (input.capability === "acoustic_alignment" && input.task.provider !== "whisperx") throw new Error("独立字幕对齐任务必须使用本地 WhisperX Provider。");
-  if (input.capability === "b_roll_generation" && (!input.media || (input.media.adapter !== "pexels_video" && input.media.adapter !== "openchatcut_card_video" && input.media.adapter !== "wan_video" && !videoAdapters.includes(input.media.adapter)))) throw new Error("B-roll 生成必须包含冻结的媒体配置。");
-  if (input.capability === "b_roll_generation" && input.media?.adapter === "pexels_video" && !isConnectionId(input.credentialRef)) throw new Error("B-roll 生成必须包含冻结的外部连接版本 ID。");
+  if (["shot_video_generation","shot_video_search","shot_video_preview","b_roll_generation"].includes(input.capability) && (!input.media || (input.media.adapter !== "pexels_video" && input.media.adapter !== "openchatcut_card_video" && input.media.adapter !== "wan_video" && !videoAdapters.includes(input.media.adapter)))) throw new Error("镜头视频必须包含冻结的媒体配置。");
+  if (["shot_video_generation","shot_video_search","shot_video_preview","b_roll_generation"].includes(input.capability) && input.media?.adapter === "pexels_video" && !isConnectionId(input.credentialRef)) throw new Error("镜头视频必须包含冻结的外部连接版本 ID。");
   if (input.credentialRef !== undefined && !isNonEmptyString(input.credentialRef)) throw new Error("外部连接引用格式无效。");
   if (input.capability === "embedded_audio_extraction" && (!input.media || input.media.adapter !== "ffmpeg_extract_audio")) throw new Error("派生音频提取必须包含冻结的视频输入。");
   if (input.capability === "shot_clip_preparation" && (!input.media || input.media.adapter !== "ffmpeg_trim_video")) throw new Error("镜头裁剪任务必须包含冻结的视频输入。");

@@ -355,7 +355,7 @@ describe("账号配置工作区", () => {
     renderWorkspace({ accountEpisodeCount: 1 });
     await user.click(screen.getByRole("button", { name: "账号设置" }));
     await user.click(screen.getByRole("button", { name: "删除账号" }));
-    expect(screen.getByText(/该账号有 1 个生产单，当前不能删除/)).toBeTruthy();
+    expect(await screen.findByText("1 个生产单")).toBeTruthy();
     expect((screen.getByRole("button", { name: "确认删除账号" }) as HTMLButtonElement).disabled).toBe(true);
   });
 
@@ -397,4 +397,24 @@ describe("账号配置工作区", () => {
 
     await waitFor(() => expect(onApplyEpisodeRepair).toHaveBeenCalledWith(expect.objectContaining({ policy: expect.objectContaining({ executors: expect.objectContaining({ storyboard_planning: expect.objectContaining({ harness_id: storyboardHarness.id }) }) }) })));
   });
+});
+
+
+describe('账号删除条件与直达',()=>{
+ const empty={episodeCount:0,archivedEpisodeCount:0,creationCount:0,deletionCount:0,cleanupKey:null};
+ async function open(user:ReturnType<typeof userEvent.setup>){await user.click(screen.getByRole('button',{name:'账号设置'}));await user.click(screen.getByRole('button',{name:'删除账号'}));}
+ it('uses complete server counts and opens all associated orders without a disabled confirmation field',async()=>{
+  const user=userEvent.setup(),readDeletionStatus=vi.fn().mockResolvedValue({...empty,episodeCount:25,archivedEpisodeCount:24}),onViewAccountEpisodes=vi.fn();renderWorkspace({accountEpisodeCount:1,readDeletionStatus,onViewAccountEpisodes});await open(user);
+  await screen.findByText('25 个生产单（含 24 个已归档）');expect(screen.queryByLabelText('删除账号确认文本')).toBeNull();expect((screen.getByRole('button',{name:'确认删除账号'})as HTMLButtonElement).disabled).toBe(true);
+  await user.click(screen.getByRole('button',{name:'查看生产单'}));expect(onViewAccountEpisodes).toHaveBeenCalledWith(account.id);
+ });
+ it('blocks an empty account with unfinished cleanup and routes to the exact cleanup key',async()=>{
+  const user=userEvent.setup(),onViewDeletionCleanup=vi.fn();renderWorkspace({readDeletionStatus:vi.fn().mockResolvedValue({...empty,deletionCount:1,cleanupKey:'cleanup-key'}),onViewDeletionCleanup});await open(user);await screen.findByText('1 项文件清理未完成');expect((screen.getByRole('button',{name:'确认删除账号'})as HTMLButtonElement).disabled).toBe(true);await user.click(screen.getByRole('button',{name:'查看清理任务'}));expect(onViewDeletionCleanup).toHaveBeenCalledWith('cleanup-key');
+ });
+ it('fails closed on a read error and enables name confirmation only after a successful retry',async()=>{
+  const user=userEvent.setup(),readDeletionStatus=vi.fn().mockRejectedValueOnce(new Error('暂时无法读取。')).mockResolvedValue(empty);renderWorkspace({readDeletionStatus});await open(user);await screen.findByRole('alert');expect(screen.queryByLabelText('删除账号确认文本')).toBeNull();expect((screen.getByRole('button',{name:'确认删除账号'})as HTMLButtonElement).disabled).toBe(true);await user.click(screen.getByRole('button',{name:'重新检查'}));await screen.findByLabelText('删除账号确认文本');expect(readDeletionStatus).toHaveBeenCalledTimes(2);
+ });
+ it('offers archive through the existing confirmation instead of deleting associated content',async()=>{
+  const user=userEvent.setup(),onSetAccountArchived=vi.fn().mockResolvedValue(true),onDeleteAccount=vi.fn();renderWorkspace({accountEpisodeCount:1,onSetAccountArchived,onDeleteAccount});await open(user);await screen.findByText('1 个生产单');await user.click(screen.getByRole('button',{name:'归档账号'}));expect(onSetAccountArchived).not.toHaveBeenCalled();await user.click(await screen.findByRole('button',{name:'确认归档账号'}));expect(onSetAccountArchived).toHaveBeenCalledWith(account.id,true);expect(onDeleteAccount).not.toHaveBeenCalled();
+ });
 });

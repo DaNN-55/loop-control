@@ -1,4 +1,4 @@
-import {useEffect, useState, type ReactNode} from 'react';
+import {useEffect, useRef, useState, type ReactNode} from 'react';
 import {createPortal} from 'react-dom';
 import {ChevronDown, X} from 'lucide-react';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
@@ -32,7 +32,28 @@ function Section({title,summary,attention=false,children,initialOpen=false}:{tit
 }
 export function SystemStatusDrawer({open,onOpen,onClose,runtime,maintenance,maintenanceAvailable,pending,error,observedAt,onRefresh,onPage,onOpenEpisode,triggerLabel}:Props) {
   const [expanded,setExpanded]=useState(false),[hovering,setHovering]=useState(false);
-  const ref=useDialogFocus<HTMLElement>(open,onClose);
+  const [present,setPresent]=useState(false);
+  const ref=useDialogFocus<HTMLElement>(open,onClose),layer=useRef<HTMLDivElement>(null),animations=useRef<Animation[]>([]);
+  useEffect(()=>{
+    const panel=ref.current,overlay=layer.current;
+    if(!panel||!overlay)return;
+    const preference=window.matchMedia?.('(prefers-reduced-motion: reduce)');
+    // Read the in-flight position before cancellation so quick reversals remain continuous.
+    const opacity=present?getComputedStyle(overlay).opacity:'0',transform=present?getComputedStyle(panel).transform:'translateX(24px)';
+    animations.current.forEach(animation=>animation.cancel());
+    if(preference?.matches||typeof panel.animate!=='function'){setPresent(open);return;}
+    if(open)setPresent(true);
+    const duration=open?220:160;
+    const running=[overlay.animate([{opacity},{opacity:open?'1':'0'}],{duration,easing:'ease-out',fill:'both'}),panel.animate([{transform},{transform:open?'translateX(0)':'translateX(24px)'}],{duration,easing:'cubic-bezier(.32,.72,0,1)',fill:'both'})];
+    animations.current=running;
+    let active=true;
+    const reduce=()=>{if(preference?.matches)running.forEach(animation=>animation.finish());};
+    preference?.addEventListener('change',reduce);
+    void Promise.allSettled(running.map(animation=>animation.finished)).then(()=>{if(active&&!open)setPresent(false);});
+    return()=>{active=false;preference?.removeEventListener('change',reduce);};
+    // Presence is the result of this transition, not another transition trigger.
+  },[open]);
+  useEffect(()=>()=>{animations.current.forEach(animation=>animation.cancel());},[]);
   useEffect(()=>{
     if(!open)return;
     const previous=document.body.style.overflow;document.body.style.overflow='hidden';
@@ -53,7 +74,7 @@ export function SystemStatusDrawer({open,onOpen,onClose,runtime,maintenance,main
   return <div className="system-status">
     <Button size="sm" color="tertiary" aria-label={`系统状态：${statusText}`} aria-expanded={open} aria-haspopup="dialog" data-status-summary={hoverSummary} className={`system-status-trigger system-status-${overall}`} onClick={open?onClose:onOpen} onMouseEnter={()=>setHovering(true)} onMouseLeave={()=>setHovering(false)} onFocus={()=>setHovering(true)} onBlur={()=>setHovering(false)}><i aria-hidden="true"/>{triggerLabel&&<span className="sidebar-tool-label">{triggerLabel}</span>}</Button>
     {hovering&&!open&&<div className="system-status-hover-card" aria-hidden="true"><div className="system-status-hover-row"><i className={`system-status-hover-dot system-status-hover-dot-${worker?.state??'unknown'}`}/><strong>Worker</strong><span>{workerSummary}</span></div><div className="system-status-hover-row"><i className={`system-status-hover-dot system-status-hover-dot-${!queue?'unknown':queue.blocked+queue.failed?'attention':'healthy'}`}/><strong>任务队列</strong><span>{queueSummary}</span></div></div>}
-    {open&&createPortal(<div className="status-drawer-layer dan-ui product-ui"><div className="status-drawer-scrim" onClick={onClose}/><aside role="dialog" aria-modal="true" aria-label="系统状态详情" className="status-drawer-drawer" ref={ref}>
+    {(open||present)&&createPortal(<div ref={layer} className="status-drawer-layer dan-ui product-ui" inert={!open}><div className="status-drawer-scrim" onClick={onClose}/><aside role="dialog" aria-modal="true" aria-label="系统状态详情" className="status-drawer-drawer" ref={ref}>
       <header className="status-drawer-heading"><h2>系统状态</h2><span className={`status-drawer-status${overall==='healthy'?'':overall==='unknown'?' is-muted':' is-warning'}`} role="status"><i/>{statusText}</span><Button size="sm" color="tertiary" aria-label="关闭系统状态详情" iconLeading={X} onClick={onClose}/></header>
       <div className="status-drawer-body" aria-busy={pending}>
         {error&&<p role="alert" className="status-drawer-problem">{error}</p>}

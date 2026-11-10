@@ -38,14 +38,22 @@ it('inherits the current account and offers only its current series versions for
  const other={...accounts[0],id:'other',name:'其他账号'};
  const series=[{id:'series',account_id:'other',name:'其他系列'},{id:'daily-series',account_id:'fixture',name:'日常系列'}] as Parameters<typeof EpisodeForm>[0]['series'];
  const versions=[{id:'old',account_id:'fixture',series_id:'daily-series',version:1},{id:'current',account_id:'fixture',series_id:'daily-series',version:3},{id:'other-version',account_id:'other',series_id:'series',version:2}] as Parameters<typeof EpisodeForm>[0]['seriesVersions'];
- render(<EpisodeForm accounts={[other,...accounts]} initialAccountId="fixture" isPending={false} onClose={()=>{}} onSubmit={submit} series={series} seriesVersions={versions}/>);
+ render(<EpisodeForm accounts={[other,...accounts]} initialAccountId="fixture" initialSeriesVersionId="current" isPending={false} onClose={()=>{}} onSubmit={submit} series={series} seriesVersions={versions}/>);
  expect((screen.getByRole('combobox',{name:'账号'}) as HTMLSelectElement).value).toBe('fixture');
  expect(screen.getByRole('option',{name:'日常系列 · 当前 v3'})).toBeTruthy();
  expect(screen.queryByRole('option',{name:/v1/})).toBeNull();expect(screen.queryByRole('option',{name:/其他系列/})).toBeNull();
- await user.selectOptions(screen.getByRole('combobox',{name:'系列版本'}),'current');
+ expect((screen.getByRole('combobox',{name:'系列版本'}) as HTMLSelectElement).value).toBe('current');
  await user.selectOptions(screen.getByRole('combobox',{name:'账号'}),'other');
  expect((screen.getByRole('combobox',{name:'系列版本'}) as HTMLSelectElement).value).toBe('');
  await user.selectOptions(screen.getByRole('combobox',{name:'系列版本'}),'other-version');
  await user.click(screen.getByRole('button',{name:'创建生产单'}));
  expect(submit).toHaveBeenCalledWith({accountId:'other',seriesVersionId:'other-version',title:'',isTest:false});
+});
+
+it('does not preselect an obsolete or foreign series version',()=>{
+ const series=[{id:'s',account_id:'fixture',name:'本账号系列'}] as Parameters<typeof EpisodeForm>[0]['series'];
+ const versions=[{id:'old',account_id:'fixture',series_id:'s',version:1},{id:'current',account_id:'fixture',series_id:'s',version:2},{id:'foreign',account_id:'other',series_id:'s',version:3}] as Parameters<typeof EpisodeForm>[0]['seriesVersions'];
+ const props={accounts,initialAccountId:'fixture',isPending:false,onClose:()=>{},onSubmit:async()=>null,series,seriesVersions:versions};
+ const view=render(<EpisodeForm {...props} initialSeriesVersionId="old"/>);expect((screen.getByRole('combobox',{name:'系列版本'}) as HTMLSelectElement).value).toBe('');view.unmount();
+ render(<EpisodeForm {...props} initialSeriesVersionId="foreign"/>);expect((screen.getByRole('combobox',{name:'系列版本'}) as HTMLSelectElement).value).toBe('');
 });

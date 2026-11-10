@@ -6,7 +6,7 @@ export interface ProductionMaterial {
 }
 export interface MaterialResolution {reference:string;kind:'image'|'bgm'|'sfx'|'cover';status:'bound'|'missing'|'ambiguous'|'none';material?:ProductionMaterial;candidates:ProductionMaterial[]}
 export interface ResolvedProductionSegment {
- id:string;narration:string;subtitle:string;visual:string;videoPrompt:string;shotType:'a_roll'|'b_roll';
+ id:string;narration:string;subtitle:string;visual:string;videoPrompt:string;shotType?:'a_roll'|'b_roll';
  settings:ProductionSettings;firstFrame:MaterialResolution;sfx:MaterialResolution;
 }
 export interface ResolvedProductionPlan {
@@ -27,7 +27,7 @@ export function resolveProductionPlan(text:string,defaults:ProductionSettings,ma
  const script=parseProductionScript(text);if(!script)throw Error('自动制作需要 v2 主脚本。');
  const settings={...defaults,...script.settings};
  const resolve=(ref:string|undefined,kind:MaterialResolution['kind'])=>resolveProductionMaterial(ref,kind,materials,episodeId,seriesId,ref?choices[kind+':'+ref]:undefined);
- const segments=script.segments.map(s=>{const combined={...defaults,...segmentSettings(script,s)};return{id:s.id,narration:s.narration,subtitle:s.subtitle??s.narration,visual:s.visual,videoPrompt:s.videoPrompt,shotType:s.shotType,settings:combined,firstFrame:resolve(combined.firstFrame,'image'),sfx:resolve(combined.sfx??'none','sfx')};});
+ const segments=script.segments.map(s=>{const combined={...defaults,...segmentSettings(script,s)};return{id:s.id,narration:s.narration,subtitle:s.subtitle??s.narration,visual:s.visual,videoPrompt:s.videoPrompt,...(s.shotType?{shotType:s.shotType}:{}),settings:combined,firstFrame:resolve(combined.firstFrame,'image'),sfx:resolve(combined.sfx??'none','sfx')};});
  const bgm=resolve(settings.bgm??'none','bgm'),cover=resolve((settings as ProductionSettings&{cover?:string}).cover??'none','cover');
  const issues=[bgm,...segments.flatMap(s=>[s.firstFrame,s.sfx])].filter(r=>['missing','ambiguous'].includes(r.status)).map(r=>`${r.reference}：${r.status==='missing'?'待上传':'存在多个匹配，请选择'}`);
  for(const [i,segment]of segments.entries())if(segment.settings.captionMode==='independent'&&!script.segments[i].subtitle)issues.push(segment.id+'：独立字幕需要填写字幕正文');

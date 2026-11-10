@@ -43,3 +43,8 @@ it('counts only worker intervals and merges overlapping runs',()=>{
  ],Date.parse('2026-11-02T00:04:00Z')).episode;
  expect(metrics.workerRunSeconds).toBe(180);
 });
+
+it('keeps canonical and legacy video operations equivalent in cost and work statistics',()=>{
+ const legacy=summarizeEpisodeMetrics([task]);
+ for(const task_type of ['generate_shot_video','search_shot_video','preview_shot_video'])expect(summarizeEpisodeMetrics([{...task,task_type}])).toEqual(legacy);
+});

@@ -1,15 +1,11 @@
 import {retiredProviderMessage} from './providerLifecycle.js';
 import { randomUUID } from "node:crypto";
 import {isImageGenerationSettings,openAiImageModels,openAiImageQualities, type ImageGenerationSettings} from '../imageGeneration.js';
+import type {GoogleTtsVoice} from './contracts.js';
+export type {GoogleTtsVoice} from './contracts.js';
 
 export interface MediaFetcher {
   (input: string | URL, init?: RequestInit): Promise<Response>;
-}
-
-export interface GoogleTtsVoice {
-  languageCode: string;
-  name: string;
-  speakingRate: number;
 }
 
 export interface FreesoundPreview {
@@ -22,9 +18,9 @@ export interface FreesoundPreview {
 }
 
 export class OpenAiImageRequestError extends Error {
- constructor(status:number){
+ constructor(status:number,detail=''){
   const action=status===429?'请检查供应商额度或稍后重试。':status===401||status===403?'请检查 OpenAI 连接权限后重试。':'';
-  super(`OpenAI 图片请求返回 HTTP ${status}。${action}`);
+  super(`OpenAI 图片请求返回 HTTP ${status}。${detail?`${detail}。`:""}${action}`);
  }
 }
 
@@ -43,7 +39,10 @@ export async function generateOpenAiImages(input: { apiKey: string; fetcher: Med
     headers: { Authorization: `Bearer ${input.apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify({ model: input.model, prompt: input.prompt, n: input.settings?.count??1, size: input.settings?.size??"1024x1536", output_format: "png", ...(input.settings?{quality:input.settings.quality}:{}), ...(refs.length?{images:refs.map(r=>({image_url:`data:${r.mimeType};base64,${Buffer.from(r.bytes).toString('base64')}`}))}:{}) }),
   });
-  if (!response.ok) throw new OpenAiImageRequestError(response.status);
+  if (!response.ok) {
+    let detail='';try{const value=await response.json(),error=value?.error;detail=[error?.code,error?.message].filter(v=>typeof v==='string').join(' · ').split(input.apiKey).join('<REDACTED>').replace(/Bearer\s+[^\s,;"']+/gi,'Bearer <REDACTED>').replace(/data:[^\s"']+/gi,'<MEDIA>').replace(/https?:\/\/[^\s"']+/gi,'<URL>').replace(/[\u0000-\u001f]/g,' ').slice(0,500);}catch{/* Never display raw HTML or malformed bodies. */}
+    throw new OpenAiImageRequestError(response.status,detail);
+  }
   const payload: unknown = await response.json();
   if(!isRecord(payload)||!Array.isArray(payload.data)||!payload.data.length)throw Error('OpenAI Images 响应缺少 PNG 数据。');
   if(payload.data.length!==(input.settings?.count??1))throw Error('OpenAI Images 返回的图片数量不完整。');

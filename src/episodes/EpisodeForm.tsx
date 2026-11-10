@@ -20,7 +20,7 @@ const episodeCreationSteps: Array<{ id: Exclude<EpisodeCreationStep, "idle">; la
   { id: "refresh", label: "打开生产单", note: "同步最新状态和待导入材料。" },
 ];
 
-export function EpisodeForm({ accounts, initialAccountId, creationStartedAt = null, creationStep = "idle", isPending, onClose, onOpenBlueprint, onSubmit, preflight = null, series, seriesVersions }: { accounts: Account[]; initialAccountId?: string; creationStartedAt?: number | null; creationStep?: EpisodeCreationStep; isPending: boolean; onClose: () => void; onOpenBlueprint?: (accountId: string) => void; onSubmit: (input: { title: string; accountId: string; isTest: boolean; seriesVersionId: string | null }) => Promise<WorkerPreflightResult | null>; preflight?: WorkerPreflightResult | null; series: Series[]; seriesVersions: SeriesVersion[] }) {
+export function EpisodeForm({ accounts, initialAccountId, initialSeriesVersionId, creationStartedAt = null, creationStep = "idle", isPending, onClose, onOpenBlueprint, onSubmit, preflight = null, series, seriesVersions }: { accounts: Account[]; initialAccountId?: string; initialSeriesVersionId?: string; creationStartedAt?: number | null; creationStep?: EpisodeCreationStep; isPending: boolean; onClose: () => void; onOpenBlueprint?: (accountId: string) => void; onSubmit: (input: { title: string; accountId: string; isTest: boolean; seriesVersionId: string | null }) => Promise<WorkerPreflightResult | null>; preflight?: WorkerPreflightResult | null; series: Series[]; seriesVersions: SeriesVersion[] }) {
   const [submitting, setSubmitting] = useState(false);
   const busy = isPending || submitting;
   const dialogRef = useDialogFocus<HTMLFormElement>(true, () => { if (!busy) onClose(); });
@@ -30,7 +30,6 @@ export function EpisodeForm({ accounts, initialAccountId, creationStartedAt = nu
   const [error, setError] = useState("");
   const [title, setTitle] = useState("");
   const [accountId, setAccountId] = useState(() => accounts.find(account => account.id === initialAccountId)?.id ?? accounts[0]?.id ?? "");
-  const [seriesVersionId, setSeriesVersionId] = useState("");
   const [episodePreflight, setEpisodePreflight] = useState<WorkerPreflightResult | null>(preflight);
   const [now, setNow] = useState(Date.now());
   const seriesById = new Map(series.map((candidate) => [candidate.id, candidate]));
@@ -38,6 +37,7 @@ export function EpisodeForm({ accounts, initialAccountId, creationStartedAt = nu
     const current = seriesVersions.filter(version => version.account_id === accountId && version.series_id === candidate.id).sort((left, right) => right.version - left.version)[0];
     return current ? [current] : [];
   });
+  const [seriesVersionId, setSeriesVersionId] = useState(() => availableVersions.find(version => version.id === initialSeriesVersionId)?.id ?? "");
   const selectedAccount = accounts.find((account) => account.id === accountId);
   const canCreateEpisode = Boolean(selectedAccount?.current_blueprint_version_id);
   const blockers = workerBlockersFromPreflight(episodePreflight);

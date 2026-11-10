@@ -1,3 +1,4 @@
+import {resolvePromptReferences} from '../promptReferences.js';
 import type {PoolClient} from 'pg';
 import {relative} from 'node:path';
 import type {ProductionWorkspaceRecord} from './productionWorkspaceCommands.js';
@@ -14,7 +15,7 @@ import {creativeAccountRules,creativeMediaPrompt} from '../creativeAccountRules.
 import {emptyImageBrief,isImageBrief,isImageGenerationSettings,imageBriefPrompt,imageRequestPrompt} from '../imageGeneration.js';
 import {defaultWanModelSettings,wanProviderDuration,wanVideoSettingsError} from '../wanVideoModels.js';
 import {isWanGenerationSettings} from '../videoGenerationSettings.js';
-import {isVideoProvider,videoProviders} from '../worker/videoProviderCatalog.js';
+import {isVideoProvider,videoProviders,minimaxVideoResolution} from '../worker/videoProviderCatalog.js';
 import {ConfigurationError} from './configurationCommands.js';
 
 // Confirmation retains its existing acceptance rules and measured image metadata.
@@ -54,7 +55,8 @@ export async function resolveWorkspaceImageRequest(c:PoolClient,root:string,epis
   if(fileIO){const measured=await inspectWorkspaceVisualFile(root,relative(root,await fileIO.resolveReference(material.storage_path)),'image');material.width=measured.width;material.height=measured.height;}
   materials.push(material);
  }
- const actualPrompt=imageRequestPrompt(prompt,brief,ids,creativeContext.accountRules,creativeContext.seriesRules);
+ let referencePrompt:string;try{referencePrompt=resolvePromptReferences(prompt,data.promptReferences,materials.map(m=>({materialRevisionId:m.id,kind:'image',name:m.source_path})));}catch(error){throw new ConfigurationError(400,(error as Error).message);}
+ const actualPrompt=imageRequestPrompt(referencePrompt,brief,ids,creativeContext.accountRules,creativeContext.seriesRules);
  if(phase==='queue'&&actualPrompt.length>(constraints.prompt?.maxLength??1200))throw new ConfigurationError(400,'图片提示词与账号、系列规则合并后过长，请精简后提交。');
  const references=materials.map(material=>({artifactType:'static_visual',relativePath:material.storage_path,sha256:material.sha256,fileSize:Number(material.file_size),mimeType:material.mime_type,materialRevisionId:material.id}));
  return{context,creativeContext,resolved,brief,materials,references,actualPrompt,prompt,ids,displayPrompt:[prompt,imageBriefPrompt(brief,ids)].filter(Boolean).join('\n\n')};
@@ -81,6 +83,8 @@ export async function resolveWorkspaceVideoRequest(c:PoolClient,root:string,row:
   if(provider==='bailian'){const problem=wanVideoSettingsError(resolved.selection.model!,videoSettings);if(problem)throw new ConfigurationError(400,problem);}
   if(data.firstFrameFit!==undefined&&!['contain','cover'].includes(String(data.firstFrameFit)))throw new ConfigurationError(400,'首帧构图无效。');
  }
+ let videoResolution:string|undefined;
+ try{if(provider==='minimax')videoResolution=minimaxVideoResolution(resolved.selection.model!,data.videoResolution??'768P');else if(data.videoResolution!==undefined)throw Error('所选模型不支持 MiniMax 分辨率设置。');}catch(error){throw new ConfigurationError(400,error instanceof Error?error.message:'视频分辨率无效。');}
  const clip=row.bindings.find(binding=>binding.itemId===data.targetItemId||binding.id===data.clipId);if(!clip)throw new ConfigurationError(409,'当前镜头已变化。');
  const mainVoice=await workspaceVisualMainVoice(c,root,row,project,clip.shotId),targetSeconds=mainVoice.windowDurationSeconds??Number(data.durationSeconds),bounds=resolved.choice.constraints.durationSeconds!,min=bounds?.min??2;
  const providerSeconds=provider==='bailian'?wanProviderDuration(resolved.selection.model!,targetSeconds,mainVoice.windowDurationSeconds!==null)??NaN:mainVoice.windowDurationSeconds!==null?Math.max(min,Math.ceil(targetSeconds)):targetSeconds;
@@ -90,7 +94,9 @@ export async function resolveWorkspaceVideoRequest(c:PoolClient,root:string,row:
   if(!Number.isInteger(providerSeconds)||providerSeconds<bounds.min||providerSeconds>bounds.max)throw new ConfigurationError(409,`当前画面时长不在所选服务 ${bounds.min}～${bounds.max} 秒范围，请明确拆分或调整；不会变速或循环。`);
   if(!Number.isSafeInteger(data.reservationCents)||Number(data.reservationCents)<1||Number(data.reservationCents)>100000)throw new ConfigurationError(400,'请填写本次费用预留。');
  }
- const visual=await resolveWorkspaceVideoInputs(c,root,row.episode_id,data,resolved),actualPrompt=creativeMediaPrompt(prompt,creativeContext.accountRules,creativeContext.seriesRules);
+ const visual=await resolveWorkspaceVideoInputs(c,root,row.episode_id,data,resolved);
+ let referencePrompt:string;try{referencePrompt=resolvePromptReferences(prompt,data.promptReferences,visual.frozen.map(input=>({materialRevisionId:input.materialRevisionId,kind:input.role==='referenceVideos'?'video':'image',name:input.name,role:input.role})),{provider,characterOrder:visual.mode.characterOrder,referenceMode:visual.mode.id==='references'});}catch(error){throw new ConfigurationError(400,(error as Error).message);}
+ const actualPrompt=creativeMediaPrompt(referencePrompt,creativeContext.accountRules,creativeContext.seriesRules);
  if(phase==='queue'&&actualPrompt.length>(resolved.choice.constraints.prompt?.maxLength??1500))throw new ConfigurationError(400,'动作描述与账号、系列规则合并后过长，请精简后提交。');
- return{context,creativeContext,resolved,visual,mainVoice,targetSeconds,providerSeconds,actualPrompt,videoSettings,prompt};
+ return{context,creativeContext,resolved,visual,mainVoice,targetSeconds,providerSeconds,actualPrompt,videoSettings,videoResolution,prompt};
 }

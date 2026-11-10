@@ -20,7 +20,7 @@ it.skipIf(process.env.LOOP_FORMAL_ACCEPTANCE!=='1')('Owner builds a formal incom
  const authorized=await f.send('authorizeWorkspacePreparation',{workspaceId:w.id,expectedRevision:w.revision,enabled:true});expect(authorized.status).toBe(409);expect(authorized.body.error).toContain('请在生成时确认本次调用');
  const added=await f.send('editWorkspaceStructure',{workspaceId:w.id,expectedRevision:w.revision,operation:{kind:'insert',afterShotId:w.clips[0].shotId,text:'新增的本地口播。'}});expect(added.status,JSON.stringify(added.body)).toBe(200);w=added.body;const local=w.clips.find((c:any)=>c.shotId.startsWith('added-'));
  const saved=await f.send('saveWorkspaceNarration',{workspaceId:w.id,expectedRevision:w.revision,clipId:local.id,mode:'none',text:'新增的本地口播。'});expect(saved.status,JSON.stringify(saved.body)).toBe(200);
- const type=await f.send('confirmWorkspaceShot',{workspaceId:w.id,expectedRevision:w.revision,clipId:local.id,shotType:'a_roll'});expect(type.status,JSON.stringify(type.body)).toBe(200);
+ expect((await f.c.query('SELECT shot_type FROM local_identity.workspace_shot_inputs WHERE workspace_id=$1 AND shot_id=$2',[w.id,local.shotId])).rows[0].shot_type).toBeNull();
  expect((await f.c.query('SELECT baseline_text,origin FROM local_identity.workspace_shot_inputs WHERE workspace_id=$1 AND shot_id=$2',[w.id,local.shotId])).rows[0]).toEqual({baseline_text:'',origin:'local-added'});
  expect((await f.c.query('SELECT count(*)::int n FROM public.approvals WHERE episode_id=$1',[f.newEpisode])).rows[0].n).toBe(0);
  }finally{await f.close();}},120000);
@@ -69,7 +69,7 @@ it.skipIf(process.env.LOOP_FORMAL_ACCEPTANCE!=='1')('fresh formal and added shot
  }
  expect((await f.c.query('SELECT count(*)::int n FROM public.approvals WHERE episode_id=$1',[f.newEpisode])).rows[0].n).toBe(0);
  expect(w.candidates.find((n:any)=>n.shotId.startsWith('added-')).mainScriptText).toBe('');
- const local=w.clips.find((c:any)=>c.shotId.startsWith('added-'));await send('confirmWorkspaceShot',{clipId:local.id,shotType:'a_roll'});
+ const local=w.clips.find((c:any)=>c.shotId.startsWith('added-'));
 
  const image=await f.send('importMaterial',{sourceKind:'file',sourcePath:'local-first.png',materialType:'image',materialPurpose:'visual_reference',mimeType:'image/png',isMainScript:false,contentBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64')});expect(image.status).toBe(200);
  await send('requestWorkspaceVisualCandidate',{selection:{capability:'video',provider:'volcengine',adapter:'seedance_video',model:'doubao-seedance-2-0-260128',connectionVersionId:videoVersion},targetItemId:local.itemId,firstFrameMaterialRevisionId:image.body.id,prompt:'局部新镜头的受控视觉生成。',durationSeconds:4,reservationCents:90});const visual=w.visualTasks[0];expect(visual.taskId).toBeTruthy();expect((await f.controlled!.execute(visual.taskId))?.status).toBe('completed');

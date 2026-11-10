@@ -2,6 +2,7 @@
 .status-drawer-layer { position: fixed; inset: 0; z-index: 300; color: var(--lc-ink); font-size: 13px; }
 html[data-interface="impeccable"] .status-drawer-layer { background: transparent; }
 .status-drawer-scrim { position: absolute; inset: 0; background: rgb(13 27 48 / .18); }
+.status-drawer-layer[inert] { pointer-events: none; }
 .status-drawer-drawer { position: absolute; top: 0; right: 0; bottom: 0; width: min(520px,100%); display: flex; flex-direction: column; background: var(--lc-surface); border-left: 1px solid var(--lc-line); box-shadow: -12px 0 40px rgb(13 27 48 / .10); }
 .status-drawer-heading { display: flex; align-items: center; gap: 16px; min-height: 84px; padding: 20px 24px; border-bottom: 1px solid var(--lc-line); }
 .status-drawer-heading h2 { margin: 0; font-size: 20px; line-height: 1.4; font-weight: 650; letter-spacing: -.02em; }

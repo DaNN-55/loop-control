@@ -3,7 +3,7 @@ import {Square,Volume2} from 'lucide-react';
 import {speechSampleText} from '../speechSample';
 import type {ProductionSelection} from '../productionSelection';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
-import {ConfirmationModal} from '../ui/ConfirmationModal';
+import {ConfirmationModal,ConfirmationModalPresence} from '../ui/ConfirmationModal';
 import {localRequest} from './client';
 
 let activeSample:HTMLAudioElement|undefined;
@@ -55,9 +55,9 @@ export function WorkspaceSpeechSample({label,selection,voice,rate,disabled,butto
   <audio ref={audio} onPlaying={()=>setPlaying(true)} onPause={()=>setPlaying(false)} onEnded={()=>setPlaying(false)}/>
   </div>
   {error&&!confirm&&<p className="workspace-speech-sample-error" role="alert">{error}</p>}
-  {confirm&&<ConfirmationModal title="准备音色样音" confirmLabel="确认合成并试听" isPending={busy} onCancel={()=>setConfirm(false)} onConfirm={()=>load(true)}>
+  <ConfirmationModalPresence>{confirm&&<ConfirmationModal title="准备音色样音" confirmLabel="确认合成并试听" isPending={busy} onCancel={()=>setConfirm(false)} onConfirm={()=>load(true)}>
    <p>首次试听会合成一句「{speechSampleText}」，供应商可能按字数计费。样音保存到本机，之后可直接试听和调整播放语速。</p>
    {error&&<p role="alert">{error}</p>}
-  </ConfirmationModal>}
+  </ConfirmationModal>}</ConfirmationModalPresence>
  </>;
 }

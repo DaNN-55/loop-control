@@ -1,7 +1,7 @@
 import type {OpenChatCutProject} from './worker/openchatcutProject.js';
 export type WorkspaceVoiceMode='source'|'tts'|'none';
 export interface WorkspaceVoiceEdit {kind:'voice';workspaceId:string;shotId:string;visualItemIds:string[];mode:WorkspaceVoiceMode;gainDb:number;ambienceGainDb:number|null;sourceItemId?:string;sourceAssetId?:string;narrationAssetId?:string}
-export interface WorkspaceSoundEdit {kind:'sound';workspaceId:string;itemId:string;gainDb:number;duckDepthDb:number;remove?:boolean}
+export interface WorkspaceSoundEdit {kind:'sound';workspaceId:string;itemId:string;gainDb:number;duckDepthDb:number;remove?:boolean;placement?:{anchor:'absolute'|'shot';shotId?:string;offsetSeconds:number;durationSeconds:number}}
 export type WorkspaceAudioEdit=WorkspaceVoiceEdit|WorkspaceSoundEdit;
 export interface WorkspaceAudioMix {voices:Array<{shotId:string;mode:WorkspaceVoiceMode;gainDb:number;ambienceGainDb:number|null;sourceItemId:string|null;sourceAssetId:string|null;coverage?:'full'|'partial'|'none';startSeconds?:number|null;durationSeconds?:number|null;shotDurationSeconds?:number;sourceStartSeconds?:number|null;sourceLabel?:string|null;alignmentReady?:boolean}>;sounds:Array<{itemId:string;kind:'bgm'|'sfx';gainDb:number;duckDepthDb:number;startSeconds:number;durationSeconds:number}>}
 export const workspaceAudioFields:Record<string,string[]>={
@@ -27,6 +27,22 @@ export function applyWorkspaceAudioMix(project:OpenChatCutProject,edit:Workspace
   if(!timeline||!item||item.kind!=='audio'||!['bgm','sfx'].includes(metadata(item)?.kind??''))throw Error('当前配乐或音效实例不存在。');
   if(item.loopControlSoundMute&&!edit.remove)throw Error('声音已关闭，请先开启后调整音量。');
   if(edit.remove){timeline.items=timeline.items.filter(i=>i.id!==edit.itemId);return next;}
+  if(edit.placement!==undefined){
+   const placement=edit.placement,meta=metadata(item)!;
+   if(!placement||typeof placement!=='object'||Object.keys(placement).some(key=>!['anchor','shotId','offsetSeconds','durationSeconds'].includes(key))||!['absolute','shot'].includes(placement.anchor)||placement.shotId!==undefined&&(typeof placement.shotId!=='string'||!placement.shotId)||!Number.isFinite(placement.offsetSeconds)||placement.offsetSeconds<0||!Number.isFinite(placement.durationSeconds)||placement.durationSeconds<=0||placement.durationSeconds>7200||meta.workspaceId!==edit.workspaceId||meta.kind==='bgm'&&placement.anchor!=='absolute')throw Error('声音位置或使用时长无效。');
+   let shotStart=0;
+   if(placement.anchor==='shot'){
+    if(typeof placement.shotId!=='string'||!placement.shotId)throw Error('请选择声音跟随的镜头。');
+    const visuals=timeline.items.filter(i=>['video','image','text','sequence'].includes(String(i.kind))&&((i.loopControlShot as {shotId?:string}|undefined)?.shotId===placement.shotId||String(i.id).startsWith(`shot-${placement.shotId}-`)));
+    if(!visuals.length)throw Error('声音跟随的镜头已变化，请刷新。');
+    shotStart=Math.min(...visuals.map(i=>Number(i.startFrame)));
+   }
+   const asset=next.assets.find(a=>a.id===item.sourceAssetId&&a.kind==='audio'),rate=Number(item.playbackRate??1),sourceIn=Number(item.srcInFrame??0),frames=Math.round(placement.durationSeconds*timeline.fps);
+   if(!asset||!Number.isFinite(asset.durationInFrames)||!Number.isFinite(rate)||rate<=0||!Number.isFinite(sourceIn)||sourceIn<0||frames<1||sourceIn+frames*rate>asset.durationInFrames+1)throw Error('使用时长超出当前音频的可用区间。');
+   const startFrame=shotStart+Math.round(placement.offsetSeconds*timeline.fps);if(!Number.isSafeInteger(startFrame)||!Number.isSafeInteger(frames))throw Error('声音位置或使用时长无效。');
+   item.startFrame=startFrame;item.durationInFrames=frames;
+   item.loopControlAudio={...meta,anchor:placement.anchor,offsetSeconds:placement.offsetSeconds,...(placement.shotId?{shotId:placement.shotId}:{})};
+  }
   item.volume=gain(edit.gainDb);const track=timeline.tracks[String(item.track)];
   if(!track)throw Error('声音轨道不存在。');track.role=edit.duckDepthDb>0?'follower':undefined;track.audioRouting={duckDepthDb:-edit.duckDepthDb};return next;
  }

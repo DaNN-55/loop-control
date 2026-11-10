@@ -1,3 +1,4 @@
+import {legacyVideoDefault} from './legacyVideoCompatibility.js';
 import {resolveWorkspaceVideoRequest,workspaceVisualMainVoice} from './workspaceVisualRequest.js';
 import {prepareWorkspaceVideoSound} from './workspaceVideoSound.js';
 import {applyWorkspaceVideoSound,hasSeparatedVideoSound,removeLinkedVideoSound} from '../workspaceVideoSound.js';
@@ -33,7 +34,7 @@ function target(row:ProductionWorkspaceRecord,project:OpenChatCutProject,id:unkn
 /** Only nonsecret execution facts cross the Owner read boundary. */
 function workspaceVisualGenerationRecord(snapshot:Record<string,any>):WorkspaceVisualCandidate['generation'] {
  if(typeof snapshot.prompt!=='string')return undefined;
- return {...(snapshot.selection?{selection:snapshot.selection,connectionName:snapshot.connection?.name}:{}),prompt:snapshot.prompt,...(typeof snapshot.actualPrompt==='string'?{actualPrompt:snapshot.actualPrompt}:{}),firstFrameMaterialRevisionId:snapshot.firstFrameId??'',durationSeconds:snapshot.providerDurationSeconds??snapshot.durationSeconds,...(snapshot.videoSettings?{videoSettings:snapshot.videoSettings}:{}),...(snapshot.firstFrameComposition?{firstFrameFit:snapshot.firstFrameComposition.fit}:{}),...(snapshot.imageSettings?{imageSettings:snapshot.imageSettings,imageBrief:snapshot.imageBrief,referenceMaterialRevisionIds:snapshot.referenceMaterialRevisionIds}:{})};
+ return {...(snapshot.selection?{selection:snapshot.selection,connectionName:snapshot.connection?.name}:{}),prompt:snapshot.prompt,...(snapshot.videoResolution?{videoResolution:snapshot.videoResolution}:{}),...(typeof snapshot.actualPrompt==='string'?{actualPrompt:snapshot.actualPrompt}:{}),firstFrameMaterialRevisionId:snapshot.firstFrameId??'',durationSeconds:snapshot.providerDurationSeconds??snapshot.durationSeconds,...(snapshot.videoSettings?{videoSettings:snapshot.videoSettings}:{}),...(snapshot.firstFrameComposition?{firstFrameFit:snapshot.firstFrameComposition.fit}:{}),...(snapshot.imageSettings?{imageSettings:snapshot.imageSettings,imageBrief:snapshot.imageBrief,referenceMaterialRevisionIds:snapshot.referenceMaterialRevisionIds}:{})};
 }
 export async function readWorkspaceVisualCandidates(c:PoolClient,row:ProductionWorkspaceRecord,project:OpenChatCutProject,root:string):Promise<WorkspaceVisualCandidate[]>{
  const records=(await c.query(`SELECT v.*,m.id output_material_id,coalesce(m.storage_path,a.relative_path) storage_path,coalesce(m.sha256,a.sha256) sha256,coalesce(m.file_size,a.file_size) file_size,coalesce(m.material_type,v.request_snapshot->>'kind') material_type FROM local_identity.workspace_visual_candidates v LEFT JOIN public.paid_generation_reservations r ON r.task_id=v.task_id LEFT JOIN public.production_material_revisions m ON m.id=coalesce(v.material_revision_id,r.material_revision_id) AND m.episode_id=v.episode_id LEFT JOIN public.artifacts a ON a.id=v.source_artifact_id AND a.episode_id=v.episode_id WHERE v.workspace_id=$1 AND (m.id IS NOT NULL OR a.id IS NOT NULL) ORDER BY v.created_at DESC`,[row.id])).rows;
@@ -48,12 +49,12 @@ export async function readWorkspaceVisualCandidates(c:PoolClient,row:ProductionW
 /** One real authorization, frozen input and private queue boundary for first fill and later candidates. */
 export async function queueWorkspaceVisualGeneration(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,data:Record<string,unknown>,runtime:InputRuntime,mode:'candidate'|'first'='candidate'){
   await requireVisualStorageLocation(c,root,row.episode_id,runtime.minimumFreeBytes);
-  const {clip,item,timeline}=target(row,project,data.targetItemId),lineage={shotType:'b_roll' as const};
-  const {resolved,creativeContext:context,visual,mainVoice,targetSeconds,providerSeconds:seconds,actualPrompt,videoSettings,prompt}=await resolveWorkspaceVideoRequest(c,root,row,project,data,'queue');
+  const {clip,item,timeline}=target(row,project,data.targetItemId);
+  const {resolved,creativeContext:context,visual,mainVoice,targetSeconds,providerSeconds:seconds,actualPrompt,videoSettings,videoResolution,prompt}=await resolveWorkspaceVideoRequest(c,root,row,project,data,'queue');
   const config={...resolved.execution,max_attempts:1},authorized=await currentWorkspaceCallAuthorization(c,row),first=visual.frozen.find(input=>input.role==='firstFrame');
   if(mode==='first'&&visual.advanced)throw new ConfigurationError(400,'占位首次生成仅支持首帧模式。');
   if(data.firstFrameFit!==undefined&&!first)throw new ConfigurationError(400,'当前生成模式不使用首帧构图。');
-  await runtime.checkReferences(c,[config.credential_ref!],{purpose:'workspace-generation'});if(!runtime.mediaReady)throw new ConfigurationError(503,'视频Worker未配置。');await runtime.mediaReady({[lineage.shotType]:config});
+  await runtime.checkReferences(c,[config.credential_ref!],{purpose:'workspace-generation'});if(!runtime.mediaReady)throw new ConfigurationError(503,'视频Worker未配置。');await runtime.mediaReady({video:config});
   if(mode==='first'){
    if(clip.source||clip.image||item.kind!=='text')throw new ConfigurationError(409,'首次生成只填入尚未匹配的占位。');
    const frames=Math.max(1,Math.ceil(targetSeconds*timeline.fps)),end=Number(item.startFrame)+Number(item.durationInFrames),delta=frames-Number(item.durationInFrames);
@@ -61,8 +62,8 @@ export async function queueWorkspaceVisualGeneration(c:PoolClient,root:string,ro
    item.durationInFrames=frames;
   }
   const referenceOutputRatio:VideoOutputRatio=timeline.width>timeline.height?'16:9':timeline.width<timeline.height?'9:16':'1:1';
-  const referenceRatio=visual.mode.characterOrder||resolved.selection.model===klingOmniModel?referenceOutputRatio:undefined;
-  const id=randomUUID(),expected=workspaceCandidateTarget(item),snapshot={...(resolved?{selectionVersion:1,selection:resolved.selection,connection:resolved.connection,context,actualPrompt,target:{targetItemId:item.id,shotId:clip.shotId,workspaceRevision:Number(row.revision),projectSha256:row.project_sha256,scriptRevisionId:row.script_revision_id},costBasis:{kind:'owner-reservation',reservationCents:data.reservationCents,model:resolved.selection.model,providerDurationSeconds:seconds}}:{}),origin:mode==='first'?'first-fill':'candidate',kind:'video',usage:'video',capability:lineage.shotType,execution:config,...(first?{firstFrameId:first.materialRevisionId,firstFrameSha256:first.sha256}:{}),...(visual.advanced?{videoMode:visual.mode.id,visualInputs:visual.frozen,...(referenceRatio?{referenceRatio}:{})}:{}),prompt:prompt.trim(),providerDurationSeconds:seconds,targetDurationSeconds:targetSeconds,reservationCents:data.reservationCents??null,authorizationHash:authorized.authorization_hash,nativeEditRevision:Number(row.native_edit_revision),expectedRevision:Number(row.revision),mainVoice,...(videoSettings?{videoSettings}:{}),...(data.firstFrameFit?{firstFrameComposition:{fit:data.firstFrameFit,width:timeline.width,height:timeline.height}}:{})};
+  const referenceRatio=visual.mode.characterOrder||resolved.selection.model===klingOmniModel||resolved.selection.model==='MiniMax-H3-Lite'&&visual.mode.id==='references'?referenceOutputRatio:undefined;
+  const id=randomUUID(),expected=workspaceCandidateTarget(item),snapshot={...(resolved?{selectionVersion:1,selection:resolved.selection,connection:resolved.connection,context,actualPrompt,target:{targetItemId:item.id,shotId:clip.shotId,workspaceRevision:Number(row.revision),projectSha256:row.project_sha256,scriptRevisionId:row.script_revision_id},costBasis:{kind:'owner-reservation',reservationCents:data.reservationCents,model:resolved.selection.model,providerDurationSeconds:seconds}}:{}),origin:mode==='first'?'first-fill':'candidate',kind:'video',usage:'video',capability:'video',execution:config,...(first?{firstFrameId:first.materialRevisionId,firstFrameSha256:first.sha256}:{}),...(visual.advanced?{videoMode:visual.mode.id,visualInputs:visual.frozen,...(referenceRatio?{referenceRatio}:{})}:{}),prompt:prompt.trim(),...(data.promptReferences!==undefined?{promptReferences:data.promptReferences}:{}),providerDurationSeconds:seconds,targetDurationSeconds:targetSeconds,reservationCents:data.reservationCents??null,authorizationHash:authorized.authorization_hash,nativeEditRevision:Number(row.native_edit_revision),expectedRevision:Number(row.revision),mainVoice,...(videoSettings?{videoSettings}:{}),...(videoResolution?{videoResolution}:{}),...(data.firstFrameFit?{firstFrameComposition:{fit:data.firstFrameFit,width:timeline.width,height:timeline.height}}:{})};
   await c.query('INSERT INTO local_identity.workspace_visual_candidates(id,workspace_id,episode_id,clip_id,shot_id,target_item_id,input_fingerprint,target_snapshot,request_snapshot) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)',[id,row.id,row.episode_id,clip.id,clip.shotId,item.id,hash({expected,snapshot}),JSON.stringify(expected),JSON.stringify(snapshot)]);
   let taskId:string;
   try{taskId=(await c.query('SELECT local_identity.queue_workspace_visual($1) id',[id])).rows[0].id;}catch(error){if((error as {code?:string}).code==='55000')throw new ConfigurationError(409,'已有画面任务正在进行或供应商提交结果未知，请先恢复已有任务或核对结果；不会重复付费提交。');if((error as {code?:string}).code==='22023')throw new ConfigurationError(409,'本次视频费用预留或生成参数无效，请检查后重试。');throw error;}
@@ -187,7 +188,9 @@ export async function executeWorkspaceVisualCandidate(c:PoolClient,root:string,r
 /** Existing approved-board lineage only; T13 may extend this resolver with a versioned local-shot contract. */
 export async function resolveWorkspaceVisualLineage(c:PoolClient,row:ProductionWorkspaceRecord,shotId:string){
  const shot=await resolveWorkspaceShotLineage(c,row,shotId);
- if(!['a_roll','b_roll'].includes(shot.shotType))throw new ConfigurationError(409,'请选择并确认此镜头的生成能力。');return{id:shotId,shotType:shot.shotType as 'a_roll'|'b_roll'};
+ // Invoked only for pre-selection candidates; never used by current video requests.
+ const legacyType=shot.shot_type??shot.snapshot?.shotType;
+ if(!['a_roll','b_roll'].includes(legacyType))throw new ConfigurationError(409,'旧候选缺少冻结镜头分类，请使用当前视频来源重新制作。');return{id:shotId,shotType:legacyType as 'a_roll'|'b_roll'};
 }
 export async function readWorkspaceVisualTasks(c:PoolClient,row:ProductionWorkspaceRecord){
  return(await c.query(`SELECT v.id,v.request_snapshot,v.shot_id "shotId",v.target_item_id "targetItemId",v.request_snapshot->>'kind' kind,t.id "taskId",t.status,t.provider,t.model,t.created_at "createdAt",v.request_snapshot#>>'{connection,name}' "connectionName",
@@ -195,8 +198,8 @@ export async function readWorkspaceVisualTasks(c:PoolClient,row:ProductionWorksp
  (SELECT retry.task_id FROM local_identity.workspace_visual_candidates retry
   WHERE retry.workspace_id=v.workspace_id AND retry.target_item_id=v.target_item_id
     AND retry.task_id IS NOT NULL AND retry.request_snapshot->>'retryOfTaskId'=t.id::text LIMIT 1) "retryTaskId",
- s.outcome "submissionOutcome",to_jsonb(s)->>'video_phase' "videoPhase",r.provider_task_id "providerTaskId",r.request_state "requestState",h.attempt "publicationAttempt",
- (t.status IN ('failed','blocked') AND r.request_state='submitting' AND r.provider_task_id IS NULL AND coalesce(s.outcome,'started')<>'rejected') "submissionUnknown",
+ CASE WHEN t.last_result#>>'{blockers,0,code}'='VIDEO_REQUEST_NOT_SENT' THEN 'not_sent' ELSE s.outcome END "submissionOutcome",to_jsonb(s)->>'video_phase' "videoPhase",r.provider_task_id "providerTaskId",r.request_state "requestState",h.attempt "publicationAttempt",
+ (t.status IN ('failed','blocked') AND r.request_state='submitting' AND r.provider_task_id IS NULL AND coalesce(s.outcome,'started')<>'rejected') "submissionUnknown",r.reserved_cents "reservationCents",
  (t.status IN ('failed','blocked') AND r.provider_task_id IS NOT NULL AND s.outcome<>'rejected' AND h.task_id IS NULL) "canResume"
  FROM local_identity.workspace_visual_candidates v JOIN public.tasks t ON t.id=v.task_id LEFT JOIN public.paid_generation_reservations r ON r.task_id=t.id LEFT JOIN local_identity.workspace_visual_submissions s ON s.task_id=t.id LEFT JOIN local_identity.workspace_publication_holds($2) h ON h.task_id=t.id WHERE v.workspace_id=$1 ORDER BY v.created_at DESC`,[row.id,row.episode_id])).rows.map(({request_snapshot,...task})=>({...task,...(typeof request_snapshot.prompt==='string'?{generation:workspaceVisualGenerationRecord(request_snapshot)}:{})}));
 }
@@ -208,8 +211,8 @@ async function visualContextCurrent(c:PoolClient,root:string,row:ProductionWorks
   if(record.request_snapshot.selectionVersion!==1&&hash(current?.policy.static_visual)!==hash(record.request_snapshot.execution))return false;
   try{for(const ref of record.request_snapshot.references??[])await verifyEpisodeFile(c,root,row.episode_id,ref.relativePath,ref.sha256,Number(ref.fileSize));return true;}catch{return false;}
  }
- try{const e=(await c.query('SELECT b.policy FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE e.id=$1',[row.episode_id])).rows[0],lineage=record.request_snapshot.selectionVersion===1?{shotType:'b_roll'}:await resolveWorkspaceVisualLineage(c,row,record.shot_id),first=(await c.query('SELECT * FROM public.production_material_revisions WHERE id=$1 AND episode_id=$2',[record.request_snapshot.firstFrameId,row.episode_id])).rows[0];
- if(record.request_snapshot.selectionVersion!==1&&hash(e.policy[lineage.shotType])!==hash(record.request_snapshot.execution))return false;
+ try{const e=(await c.query('SELECT b.policy FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE e.id=$1',[row.episode_id])).rows[0],first=(await c.query('SELECT * FROM public.production_material_revisions WHERE id=$1 AND episode_id=$2',[record.request_snapshot.firstFrameId,row.episode_id])).rows[0];
+ if(record.request_snapshot.selectionVersion!==1){const legacy=await resolveWorkspaceVisualLineage(c,row,record.shot_id);if(hash(e.policy[legacy.shotType])!==hash(record.request_snapshot.execution))return false;}
  if(record.request_snapshot.visualInputs){
   for(const input of record.request_snapshot.visualInputs as FrozenVideoVisualInput[])await verifyEpisodeFile(c,root,row.episode_id,input.relativePath,input.sha256,input.fileSize);
  }else{
@@ -234,8 +237,8 @@ export async function validateWorkspaceVisualUses(c:PoolClient,root:string,row:P
 
 export async function readWorkspaceVisualTargets(c:PoolClient,row:ProductionWorkspaceRecord,project:OpenChatCutProject){
  const data=(await c.query('SELECT b.policy,p.context_snapshot FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id JOIN public.review_packages p ON p.id=$2 WHERE e.id=$1',[row.episode_id,row.storyboard_package_id])).rows[0];
- const shotInputs=(await c.query('SELECT shot_id,shot_type FROM local_identity.workspace_shot_inputs WHERE workspace_id=$1 AND preparation_id=$2',[row.id,row.storyboard_package_id])).rows;
- return row.bindings.map(clip=>{const route=resolveWorkspaceMainVoice(project,clip.shotId),shot=data?.context_snapshot?.worker_result?.storyboard?.shots?.find((s:{id:string})=>s.id===clip.shotId),shotType=shotInputs.find(s=>s.shot_id===clip.shotId)?.shot_type??shot?.shotType,provider=data?.policy[shotType]?.executor?.provider??'',bounds=isVideoProvider(provider)?videoProviders[provider]:{minDuration:2,maxDuration:15},duration=route.item?Number(route.window.durationSeconds):null;
+ const legacyDefault=legacyVideoDefault(data?.policy);
+ return row.bindings.map(clip=>{const route=resolveWorkspaceMainVoice(project,clip.shotId),provider=legacyDefault?.executor?.provider??'',bounds=isVideoProvider(provider)?videoProviders[provider]:{minDuration:2,maxDuration:15},duration=route.item?Number(route.window.durationSeconds):null;
  const timeline=project.timelines.find(t=>t.items.some(i=>i.id===clip.itemId))!;
- return{...(data?.policy[shotType]?.credential_ref?{defaultSelection:{capability:'video' as const,provider,adapter:data.policy[shotType].executor?.adapter,model:data.policy[shotType].executor?.model,connectionVersionId:data.policy[shotType].credential_ref}}:{}),targetItemId:clip.itemId,width:timeline.width,height:timeline.height,model:data?.policy[shotType]?.executor?.model,provider,voiceMode:(route.item?.id===`workspace-source-shot-${clip.shotId}`?'source':route.item?'tts':'none') as 'source'|'tts'|'none',durationSeconds:duration,providerDurationSeconds:duration===null?null:Math.max(bounds.minDuration,Math.ceil(duration)),minimumSeconds:bounds.minDuration,maximumSeconds:bounds.maxDuration};});
+ return{...(legacyDefault?.credential_ref?{defaultSelection:{capability:'video' as const,provider,adapter:legacyDefault.executor?.adapter,model:legacyDefault.executor?.model,connectionVersionId:legacyDefault.credential_ref}}:{}),targetItemId:clip.itemId,width:timeline.width,height:timeline.height,model:legacyDefault?.executor?.model,provider,voiceMode:(route.item?.id===`workspace-source-shot-${clip.shotId}`?'source':route.item?'tts':'none') as 'source'|'tts'|'none',durationSeconds:duration,providerDurationSeconds:duration===null?null:Math.max(bounds.minDuration,Math.ceil(duration)),minimumSeconds:bounds.minDuration,maximumSeconds:bounds.maxDuration};});
 }

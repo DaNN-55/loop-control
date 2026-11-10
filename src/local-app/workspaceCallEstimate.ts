@@ -1,3 +1,4 @@
+import {minimaxVideoModels,minimaxVideoResolution} from '../worker/videoProviderCatalog.js';
 import {openAiEnhancedImageModels} from '../imageGeneration.js';
 import {gptImage2EstimateRates,type WorkspaceCallEstimate} from '../workspaceCall.js';
 import {defaultWanModelSettings,wanReferenceModel} from '../wanVideoModels.js';
@@ -35,7 +36,7 @@ export function imagePromptTokens(text:string){
 }
 /** Local high-fidelity allowance plus original pixel area; no undocumented resize. */
 export function imageReferenceTokens(width:number,height:number){return 2048+Math.ceil(width*height/128);}
-export function estimateWorkspaceCall(input:{kind:'image'|'video'|'speech'|'sound';provider:string;model?:string;seconds?:number;referenceVideoSeconds?:number;referenceVideoDurations?:readonly number[];videoImageCount?:number;text:string;settings?:{size:string;quality:string;count:number};referenceImages?:Array<{width:number;height:number}>;videoSettings?:WanGenerationSettings;region?:'cn'|'international'}):WorkspaceCallEstimate{
+export function estimateWorkspaceCall(input:{kind:'image'|'video'|'speech'|'sound';provider:string;model?:string;seconds?:number;referenceVideoSeconds?:number;referenceVideoDurations?:readonly number[];videoImageCount?:number;text:string;settings?:{size:string;quality:string;count:number};referenceImages?:Array<{width:number;height:number}>;videoSettings?:WanGenerationSettings;videoResolution?:string;region?:'cn'|'international'}):WorkspaceCallEstimate{
  let yuan=0,minimumCents=input.kind==='sound'?0:1,basis='',sourceUrl='',conservative=false,imageInputs:WorkspaceCallEstimate['imageInputs'];
  if(input.kind==='sound')basis='Freesound 预览检索沿用 0 元费用预留。';
  else if(input.kind==='speech'){
@@ -78,14 +79,14 @@ export function estimateWorkspaceCall(input:{kind:'image'|'video'|'speech'|'soun
     ?`（参考视频约 ${referenceSeconds.toFixed(2)} 秒 + 输出 ${seconds} 秒）× 720 × 1280 × 24 ÷ 1024 × ¥${rate}/百万 token。参考时长取本期预览素材，平台另有最低用量。`
     :`${seconds} 秒，按 720P 参考像素、24 fps、¥${rate}/百万 token 估算；以实际返回 token 为准。`;
    sourceUrl='https://docs.volcengine.com/docs/ark/model-pricing?lang=zh';
-  }else if(input.provider==='minimax'&&input.model==='MiniMax-H3'){
+  }else if(input.provider==='minimax'&&Object.hasOwn(minimaxVideoModels,input.model??'')){
    const domestic=input.region==='cn',referenceSeconds=input.referenceVideoSeconds??0,extraImages=Math.max(0,(input.videoImageCount??1)-5);
-   const secondsRate=domestic?0.5:0.08,imageRate=domestic?0.2:0.04,currency=domestic?'¥':'$';
+   const resolution=minimaxVideoResolution(input.model!,input.videoResolution??'768P'),profile=minimaxVideoModels[input.model!],secondsRate=(domestic?profile.cn:profile.international)[resolution],imageRate=domestic?profile.imageCn:profile.imageInternational,currency=domestic?'¥':'$';
    yuan=((seconds+referenceSeconds)*secondsRate+extraImages*imageRate)*(domestic?1:usdCny);
    const terms=[`输出 ${seconds} 秒 × ${currency}${secondsRate}/秒`];
    if(referenceSeconds>0)terms.push(`参考视频 ${referenceSeconds.toFixed(2)} 秒 × ${currency}${secondsRate}/秒`);
    if(extraImages>0)terms.push(`超出免费额度的 ${extraImages} 张图 × ${currency}${imageRate}/张`);
-   basis=`${terms.join(' + ')}（768P${domestic?'，国内站':`，美元按 ${usdCny} 折算`}）。`;
+   basis=`${terms.join(' + ')}（${resolution}${domestic?'，国内站':`，美元按 ${usdCny} 折算`}）。`;
    sourceUrl=`https://platform.minimax.${domestic?'cn':'io'}/docs/pricing/overview`;
   }else if(input.provider==='kling'&&input.model==='kling-v3'){
    yuan=seconds*.084*usdCny;basis=`${seconds} 秒 × $0.084/秒，Kling 3.0 标准无声 720P，API 余额原价；美元按 7.2 折算。`;sourceUrl='https://kling.ai/dev/pricing';

@@ -1,0 +1,1 @@
+export function formatFileSize(bytes:number|string){const value=Number(bytes);return value>=1024**3?`${(value/1024**3).toFixed(2)} GB`:value>=1024**2?`${(value/1024**2).toFixed(1)} MB`:value>=1024?`${(value/1024).toFixed(1)} KB`:`${value.toLocaleString()} 字节`;}

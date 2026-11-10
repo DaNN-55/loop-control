@@ -74,7 +74,7 @@ describe.each(providers)('%s video execution contract',provider=>{
    if(new URL(value).origin===origin){step('download');return new Response('video',{headers:{'content-type':'video/mp4'}});}
    step('poll');return completed(provider,origin+'/result.mp4');
   };
-  await expect(generate(provider,fetcher,{reserve:async()=>{step('reserve');return{new:true};},recordSubmission:async()=>{step('record');},onProgress:async phase=>{step(phase);}})).rejects.toBe(failure);
+  await expect(generate(provider,fetcher,{reserve:async()=>{step('reserve');return{new:true};},recordSubmission:async()=>{step('record');},onProgress:async phase=>{step(phase);}})).rejects.toSatisfy((error:Error)=>error===failure||error.cause===failure);
   const expected={reserve:['reserve'],POST:['reserve','POST'],record:['reserve','POST','record'],poll:['reserve','POST','record','poll'],saving:['reserve','POST','record','poll','saving'],download:['reserve','POST','record','poll','saving','download']};
   expect(events).toEqual(expected[stage]);
  });
@@ -105,7 +105,7 @@ describe.each(providers)('%s video execution contract',provider=>{
    queries.push(new URL(value).pathname);return completed(provider,origin+'/result.mp4');
   };
   const ports={reserve:async()=>({new:!id,provider_task_id:id}),recordSubmission:record};
-  await expect(generate(provider,fetcher,ports)).rejects.toBe(failure);broken=false;
+  await expect(generate(provider,fetcher,ports)).rejects.toSatisfy((error:Error)=>error===failure||error.cause===failure);broken=false;
   expect(await generate(provider,fetcher,ports)).toEqual(Uint8Array.of(8));expect(posts).toBe(1);expect(record).toHaveBeenCalledOnce();expect(queries).toHaveLength(2);expect(queries.every(path=>path.endsWith('/durable-task'))).toBe(true);
  });
 });

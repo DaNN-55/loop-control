@@ -2,7 +2,7 @@ import {VideoPreview} from '../ui/media/VideoPreview';
 import {ImagePreview} from '../ui/media/ImagePreview';
 import {AudioPreview} from '../ui/media/AudioPreview';
 import {useEffect,useState,type ReactNode} from 'react';
-import type {EpisodeProductionSnapshot} from '../episodes/EpisodeProductionContainer';
+import type {EpisodeProductionSnapshot} from '../episodes/episodeSnapshot';
 import type {OpenChatCutProject} from '../worker/openchatcutProject';
 import {localArtifactUrl,artifactPreviewKind,useLocalArtifactBlob,useLocalArtifactText} from '../reviews/localArtifactPreview';
 import {NativeSelect} from '../ui/dan-ui/components/base/select/select-native';
@@ -37,7 +37,7 @@ function ReviewVersion({values,value,onChange,label}:{values:Review[];value:Revi
  return values.length?<NativeSelect size="sm" aria-label={label} value={value?.id??''} onChange={e=>onChange(e.target.value)}>{values.map(p=><option key={p.id} value={p.id}>v{p.revision_number}{p.invalidated_at?' · 已失效':p.id===values.find(v=>!v.invalidated_at)?.id?' · 当前记录':' · 历史版本'}</option>)}</NativeSelect>:null;
 }
 interface LegacyShot {id:string;scriptSegment:string;shotType?:string;productionMethod?:string;targetSpec?:string;durationSeconds?:number;inputBasis?:Array<{relativePath:string}>}
-export function LegacyPreparation({snapshot,history,onResume,readOnly=false,pending=false}:{snapshot:EpisodeProductionSnapshot;history?:ReactNode;onResume?:(source:LegacyWorkspaceSource)=>Promise<void>;readOnly?:boolean;pending?:boolean}){
+export function LegacyPreparation({snapshot,onResume,readOnly=false,pending=false}:{snapshot:EpisodeProductionSnapshot;onResume?:(source:LegacyWorkspaceSource)=>Promise<void>;readOnly?:boolean;pending?:boolean}){
  const boards=reviews(snapshot,'storyboard_review'),[boardId,setBoardId]=useState(''),[shotId,setShotId]=useState('');
  const board=boards.find(p=>p.id===boardId)??boards[0],context=object(board?.context_snapshot),rawBoard=object(object(context.worker_result).storyboard??context.storyboard);
  const [saved,setSaved]=useState<{project:OpenChatCutProject|null;sha256?:string}|null>(null);
@@ -57,14 +57,14 @@ export function LegacyPreparation({snapshot,history,onResume,readOnly=false,pend
    </section>
    <aside className="legacy-preparation-detail">
     {shot&&<section className="legacy-compact-detail-section"><header><h4>{shot.id} · 已有匹配</h4><span>{shot.durationSeconds??'—'} 秒</span></header><dl className="legacy-facts"><div><dt>画面要求</dt><dd>{shot.productionMethod&&!/^[a-z][a-z0-9_-]*$/i.test(shot.productionMethod)?shot.productionMethod:shot.targetSpec||'未记录画面要求'}</dd></div><div><dt>已选画面</dt><dd>{selected?.source_path.split('/').pop()??video?.relative_path.split('/').pop()??'未保存画面匹配'}</dd></div><div><dt>声音</dt><dd>{draft?.audio_mode==='tts'?'TTS 口播':draft?.audio_mode==='source'?'素材原声':draft?.audio_mode==='none'?'静音':audio?'已冻结旁白':'未记录声音设置'}{audio?` · ${Number(audio.duration_seconds).toFixed(2)} 秒`:''}</dd></div><div><dt>字幕</dt><dd>{draft?draft.subtitles_enabled?draft.subtitle_text||'未填写字幕':'字幕已关闭':'未记录独立字幕设置，字幕以原工程为准'}</dd></div></dl>{(selected||video)&&<Media episodeId={snapshot.episode.id} path={selected?.storage_path??video!.relative_path} sha256={selected?.sha256??video?.sha256} label={`${shot.id} 已选画面`}/>} {audio&&<Media episodeId={snapshot.episode.id} path={audio.relative_path} sha256={audio.sha256} label={`${shot.id} 已有口播`}/>}</section>}
-    {history}
+
    </aside>
   </div>
  </div>;
 }
 
 export interface LegacyWorkspaceSource {artifactId?:string;expectedSourceSha256?:string;savedProjectSha256?:string}
-export function LegacyEditing({snapshot,onResume,readOnly=false,pending=false,history}:{snapshot:EpisodeProductionSnapshot;history?:ReactNode;onResume?:(source:LegacyWorkspaceSource)=>Promise<void>;readOnly?:boolean;pending?:boolean}){
+export function LegacyEditing({snapshot,onResume,readOnly=false,pending=false}:{snapshot:EpisodeProductionSnapshot;onResume?:(source:LegacyWorkspaceSource)=>Promise<void>;readOnly?:boolean;pending?:boolean}){
  const qc=reviews(snapshot,'qc_review')[0],render=snapshot.artifacts.find(a=>a.id===qc?.artifact_id);
  const allProjects=snapshot.artifacts.filter(a=>['review_render_project','final_render_project','shot_editable_project'].includes(a.artifact_type)).sort(newest);
  const current=allProjects.find(a=>render&&a.producer_task_id===render.producer_task_id)??allProjects[0];
@@ -87,13 +87,13 @@ export function LegacyEditing({snapshot,onResume,readOnly=false,pending=false,hi
    <aside className="legacy-project-detail">
     <section className="legacy-compact-detail-section"><h4>工程文件</h4>{selectedId==='saved'&&saved?.sha256&&<a href={`/api/local/episodes/${snapshot.episode.id}/legacy-project?download=${saved.sha256}`} download>下载已保存工程</a>}{artifact&&<><FileLink episodeId={artifact.episode_id} path={artifact.relative_path} sha256={artifact.sha256}>下载工程 {artifact.relative_path.split('/').pop()}</FileLink><p className="legacy-file-path">{artifact.relative_path}</p>{!artifact.relative_path.endsWith('.json')&&<details><summary>查看原工程源码</summary><TextFile episodeId={artifact.episode_id} path={artifact.relative_path} sha256={artifact.sha256}/></details>}</>}{!projects.length&&!saved?.project&&saved&&<p>尚无已保存的剪辑工程。</p>}</section>
     {project&&project.timelines.map(t=><section className="legacy-compact-detail-section legacy-timeline" key={t.id}><h4>{t.name||'已有时间线'}</h4><p className="legacy-project-spec">{t.width} × {t.height} · {t.fps} fps · {t.items.length} 个片段</p><details open><summary>已有工程时间线</summary><div className="legacy-table-scroll"><table aria-label="已有工程时间线"><thead><tr><th>轨道</th><th>片段</th><th>起点</th><th>时长</th><th>声音</th></tr></thead><tbody>{t.items.map((item,index)=><tr key={String(item.id??index)}><td>{text(t.tracks?.[text(item.track)]?.name)||text(item.track)}</td><td>{text(item.name)||text(object(item.props).text)||text(item.kind)}</td><td>{(Number(item.startFrame??0)/t.fps).toFixed(2)} 秒</td><td>{(Number(item.durationInFrames??0)/t.fps).toFixed(2)} 秒</td><td>{item.volume===0?'静音':item.volume!==undefined?String(item.volume):'—'}</td></tr>)}</tbody></table></div></details>{Object.entries(t.tracks??{}).filter(([,track])=>track.captions).map(([id,track])=><details key={id}><summary>{track.name||id} · 已有字幕</summary>{track.captions?.sourceEntries.map(entry=><p key={entry.id}>{entry.label}：{entry.words.map(word=>word.text).join('')}</p>)}</details>)}</section>)}
-    {history}
+
    </aside>
   </div>
  </div>;
 }
 
-export function LegacyDelivery({snapshot,history}:{snapshot:EpisodeProductionSnapshot;history?:ReactNode}){
+export function LegacyDelivery({snapshot}:{snapshot:EpisodeProductionSnapshot;history?:ReactNode}){
  const versions=reviews(snapshot,'qc_review'),[reviewId,setReviewId]=useState(''),[finalId,setFinalId]=useState('');
  const review=versions.find(p=>p.id===reviewId)??versions[0],context=object(review?.context_snapshot),render=snapshot.artifacts.find(a=>a.id===review?.artifact_id);
  const finalVideos=uniqueArtifacts(snapshot.artifacts.filter(a=>a.artifact_type==='final_render').sort(newest)),finalVideo=finalVideos.find(a=>a.id===finalId)??finalVideos[0];
@@ -112,7 +112,7 @@ export function LegacyDelivery({snapshot,history}:{snapshot:EpisodeProductionSna
     {!!snapshot.qcReviewIssues?.filter(issue=>issue.review_package_id===review?.id).length&&<section className="legacy-compact-detail-section"><h4>问题记录</h4>{snapshot.qcReviewIssues.filter(issue=>issue.review_package_id===review?.id).map(issue=><p key={issue.id}>{({open:'待处理',resolved:'已解决',accepted:'已接受',ignored:'已忽略'} as Record<string,string>)[issue.status]??'待核对'} · {issue.reason}</p>)}</section>}
     {!!reports.length&&<section className="legacy-compact-detail-section"><h4>检查报告</h4>{reports.map(a=><details key={a.id}><summary>{a.artifact_type==='final_qc_report'?'最终 QC 报告':'审核 QC 报告'} · {a.relative_path.split('/').slice(-2).join('/')}</summary><TextFile episodeId={a.episode_id} path={a.relative_path} sha256={a.sha256}/><FileLink episodeId={a.episode_id} path={a.relative_path} sha256={a.sha256}>下载报告</FileLink></details>)}</section>}
     <section className="legacy-compact-detail-section"><h3>已有交付文件</h3>{files.length?<ul className="legacy-file-list">{files.map(a=><li key={a.id}><FileLink episodeId={a.episode_id} path={a.relative_path} sha256={a.sha256}>{a.artifact_type==='publish_package'?'交付包':a.artifact_type==='cover'?'封面':'发布信息'} · {a.relative_path.split('/').pop()}</FileLink></li>)}</ul>:<p>{render?'尚未登记交付包；已有审核成片可以查看和下载。':'尚未生成交付文件。'}</p>}</section>
-    {history}
+
    </aside>
   </div>
  </div>;

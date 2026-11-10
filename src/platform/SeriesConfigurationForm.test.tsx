@@ -66,6 +66,15 @@ it('新建系列立即可填写并通过原创建接口提交',async()=>{
  vi.spyOn(window,'confirm').mockReturnValue(true);const user=userEvent.setup(),onSave=vi.fn().mockResolvedValue(undefined);
  render(<SeriesConfigurationForm {...props} isEditing={false} initialName="" initialRules={{}} onSave={onSave}/>);
  expect(screen.getByLabelText('系列名称')).toHaveProperty('disabled',false);
- await user.type(screen.getByLabelText('系列名称'),'新系列');await user.click(screen.getByRole('button',{name:'创建系列'}));await user.click(screen.getByRole('button',{name:'确认创建系列'}));
- expect(onSave).toHaveBeenCalledExactlyOnceWith('新系列',{});
+ await user.type(screen.getByLabelText('系列名称'),'新系列');expect(document.querySelector('.series-creation-rules')?.hasAttribute('open')).toBe(false);await user.click(screen.getByRole('button',{name:'创建系列'}));
+ expect(onSave).toHaveBeenCalledExactlyOnceWith('新系列',{});expect(screen.queryByRole('dialog')).toBeNull();
+});
+
+it('新建失败保留名称与规则，重试只提交一次且不复制账号默认值',async()=>{
+ const user=userEvent.setup();let finish!:()=>void;const onSave=vi.fn().mockRejectedValueOnce(Error('目录暂不可写')).mockImplementation(()=>new Promise<void>(resolve=>{finish=resolve;}));
+ render(<SeriesConfigurationForm {...props} isEditing={false} initialName="" initialRules={{}} accountPolicy={{positioning:'账号默认定位',restrictions:'保留账号限制'}} onSave={onSave}/>);
+ await user.type(screen.getByLabelText('系列名称'),'晚间观察');await user.click(screen.getByText('创作规则（选填）'));await user.type(screen.getByLabelText('视觉风格'),'胶片');
+ await user.click(screen.getByRole('button',{name:'创建系列'}));expect(await screen.findByRole('alert')).toHaveProperty('textContent','目录暂不可写');expect(screen.getByLabelText('系列名称')).toHaveProperty('value','晚间观察');expect(screen.getByLabelText('视觉风格')).toHaveProperty('value','胶片');
+ await user.dblClick(screen.getByRole('button',{name:'创建系列'}));expect(onSave).toHaveBeenCalledTimes(2);expect(onSave).toHaveBeenLastCalledWith('晚间观察',{visual_style:'胶片'});expect(screen.getByRole('button',{name:'保存中…'})).toHaveProperty('disabled',true);
+ finish();await waitFor(()=>expect(screen.getByRole('button',{name:'创建系列'})).toBeTruthy());
 });

@@ -6,8 +6,9 @@ export function assertWorkerDatabaseBinding(worker:PoolConfig,application:Pick<P
 export function createWorkerDatabase(config:PoolConfig){
  if(config.host!=='127.0.0.1'||config.user!=='loop_worker'||!Number.isInteger(config.port)||(config.port??0)<1||(config.port??0)>65535||typeof config.database!=='string'||!config.database||!config.password||Object.keys(config).some(k=>!['host','port','user','database','password'].includes(k)))throw Error('Invalid native Worker database configuration');
  const pool=new Pool({...config,max:4,connectionTimeoutMillis:3000,idleTimeoutMillis:10000});
- // pg discards a disconnected idle client. Keep the service alive; the next
- // readiness check reports connection failures without serializing pg clients.
+ // A client can disconnect while idle or checked out between queries. Keep
+ // error events handled; query promises still reject and pg removes bad clients.
+ pool.on('connect',client=>client.on('error',()=>{}));
  pool.on('error',()=>{});
  return pool;
 }

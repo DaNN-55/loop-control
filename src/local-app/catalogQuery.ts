@@ -2,9 +2,16 @@ import {operationsEpisodePageSize} from '../episodes/episodeCatalogTypes.js';
 
 // Native parameterization of the C-stage catalog contract (ADR-0008).
 // Executed inside the same Owner/RLS repeatable-read transaction as metadata.
-export const localCatalogSql=` with owned as materialized (
+export const localCatalogSql=` with owned_base as materialized (
   select e.* from public.episodes e where exists (
    select 1 from public.account_memberships m where m.account_id=e.account_id and m.user_id=$1::uuid and m.role='owner')
+ ), owned as materialized (
+  select e.*,greatest(e.updated_at,
+   (select max(w.updated_at) from local_identity.production_workspaces w where w.episode_id=e.id),
+   (select max(coalesce(t.completed_at,t.claimed_at,t.created_at)) from public.tasks t where t.episode_id=e.id and t.invalidated_at is null and not local_identity.is_historical_task(t.id)),
+   (select max(greatest(x.created_at,x.confirmed_at)) from local_identity.workspace_exports x where x.episode_id=e.id),
+   (select max(greatest(i.created_at,i.resolved_at)) from local_identity.workspace_export_issues i join local_identity.production_workspaces w on w.id=i.workspace_id where w.episode_id=e.id)) activity_at
+  from owned_base e
  ), current_collections as materialized (
   select e.id episode_id,c.container_id,c.series_id from owned e cross join lateral local_identity.episode_storage_collection(e.id) c
  ), scoped as materialized (
@@ -50,8 +57,24 @@ export const localCatalogSql=` with owned as materialized (
   from public.tasks t join scoped e on e.id=t.episode_id where $2::text<>'accounts' and e.archived_at is null and t.invalidated_at is null and not local_identity.is_historical_task(t.id)
  ), latest_tasks as materialized (
   select distinct on (episode_id,scope) * from scoped_tasks order by episode_id,scope,created_at desc,id
+ ), workspace_task_links as materialized (
+  select n.task_id,w.episode_id from workspace_facts w join local_identity.workspace_narrations n on n.workspace_id=w.id where w.basis_current
+  union select a.task_id,w.episode_id from workspace_facts w join local_identity.workspace_audio_preparations a on a.workspace_id=w.id where w.basis_current
+  union select v.task_id,w.episode_id from workspace_facts w join local_identity.workspace_visual_candidates v on v.workspace_id=w.id
+   where w.basis_current and v.dismissed_at is null and not exists(
+    select 1 from local_identity.workspace_visual_candidates newer where newer.workspace_id=v.workspace_id and newer.target_item_id=v.target_item_id
+     and newer.request_snapshot->>'kind'=v.request_snapshot->>'kind' and newer.dismissed_at is null and (newer.created_at,newer.id)>(v.created_at,v.id))
+  union select r.task_id,w.episode_id from workspace_facts w join local_identity.workspace_narration_requests r on r.workspace_id=w.id
+   join public.tasks t on t.id=r.task_id left join local_identity.workspace_narration_submissions s on s.task_id=r.task_id
+   where s.outcome in ('started','received') or coalesce(t.last_result#>'{preflight,checks}','[]'::jsonb) @> '[{"check":"provider_result_unknown"}]'::jsonb
+ ), actionable_tasks as materialized (
+  select t.*,exists(select 1 from workspace_task_links l where l.task_id=t.id and l.episode_id=t.episode_id) workspace_relevant
+  from latest_tasks t join scoped e on e.id=t.episode_id where
+   not exists(select 1 from workspace_facts w where w.episode_id=t.episode_id)
+   or e.stage<>'production_completed' and (exists(select 1 from workspace_task_links l where l.task_id=t.id and l.episode_id=t.episode_id)
+    or exists(select 1 from workspace_facts w where w.episode_id=t.episode_id and w.delivery_task_id=t.id and w.export_current))
  ), task_blockers as materialized (
-  select t.id task_id,t.task_type,t.episode_id,b.value blocker from latest_tasks t
+  select t.id task_id,t.task_type,t.episode_id,b.value blocker from actionable_tasks t
   cross join lateral (
    select coalesce(jsonb_agg(value),'[]') items from jsonb_array_elements(case when jsonb_typeof(t.last_result->'blockers')='array' then t.last_result->'blockers' else '[]' end)
    where jsonb_typeof(value->'code')='string' and value->>'code'<>'' and jsonb_typeof(value->'detail')='string' and value->>'detail'<>''
@@ -59,19 +82,19 @@ export const localCatalogSql=` with owned as materialized (
   cross join lateral jsonb_array_elements(case when jsonb_array_length(explicit.items)>0 then explicit.items else
    coalesce((select jsonb_agg(value||jsonb_build_object('code',value->>'check','detail',value->>'reason'))
     from jsonb_array_elements(case when jsonb_typeof(t.last_result#>'{preflight,checks}')='array' then t.last_result#>'{preflight,checks}' else '[]' end)
-    where value->>'status' is distinct from 'passed' and jsonb_typeof(value->'check')='string' and value->>'check'<>'' and jsonb_typeof(value->'reason')='string' and value->>'reason'<>''),'[]') end) b
-  where t.status in ('blocked','failed') and not exists(select 1 from workspace_facts w where w.episode_id=t.episode_id and (w.delivery_task_id is distinct from t.id or not w.export_current))
+    where value->>'status' is distinct from 'passed' and jsonb_typeof(value->'check')='string' and value->>'check'<>'' and jsonb_typeof(value->'reason')='string' and value->>'reason'<>''),case when t.workspace_relevant then jsonb_build_array(jsonb_build_object('code','WORKSPACE_TASK_FAILED','detail',coalesce(t.last_result#>>'{retry,reason}','生成未完成，请打开素材准备核对本次任务。'))) else '[]'::jsonb end) end) b
+  where t.status in ('blocked','failed')
   union all select w.delivery_task_id,'prepare_publish_package',w.episode_id,jsonb_build_object('code','WORKSPACE_DELIVERY_FAILED','detail','交付失败，请检查本次结果后重试。')
    from workspace_facts w join public.tasks t on t.id=w.delivery_task_id join scoped e on e.id=w.episode_id
    where e.archived_at is null and not local_identity.is_historical_episode(e.id) and e.stage<>'production_completed' and w.export_current and t.status in ('failed','blocked') and (jsonb_typeof(t.last_result->'blockers') is distinct from 'array' or jsonb_array_length(t.last_result->'blockers')=0)
   union all select w.export_id,'workspace_export',w.episode_id,jsonb_build_object('code','WORKSPACE_EXPORT_FAILED','detail','成片检查未通过，请打开检查与交付处理。')
-   from workspace_facts w join scoped e on e.id=w.episode_id where e.archived_at is null and not local_identity.is_historical_episode(e.id) and e.stage<>'production_completed' and w.basis_current and w.export_current and (w.export_status='failed' or w.open_issue)
+   from workspace_facts w join scoped e on e.id=w.episode_id where e.archived_at is null and not local_identity.is_historical_episode(e.id) and e.stage<>'production_completed' and (w.basis_current and w.export_current and w.export_status='failed' or w.open_issue)
  ), episode_states as materialized (
   select e.id episode_id,case
    when w.id is not null and e.stage='production_completed' then 'done'
    when w.id is not null then case
     when e.archived_at is not null or local_identity.is_historical_episode(e.id) then 'draft'
-    when w.export_current and (w.delivery_status in ('failed','blocked') or w.export_status='failed' or w.open_issue) then 'blocked'
+    when w.open_issue or exists(select 1 from task_blockers b where b.episode_id=e.id) then 'blocked'
     when exists(select 1 from pending p where p.episode_id=e.id) then 'review'
     else 'running' end
    when exists(select 1 from latest_tasks t where t.episode_id=e.id and t.status in ('blocked','failed') and not exists(
@@ -103,16 +126,16 @@ export const localCatalogSql=` with owned as materialized (
   select e.* from filtered e left join cost_order cost on cost.episode_id=e.id where $2::text<>'accounts'
   order by case when $10::text='cost_desc' then cost.cents end desc nulls last,
    case when $10::text='cost_asc' then cost.cents end asc nulls last,case when $10::text='title' then lower(e.title) end asc,
-   case when $10::text='oldest' then e.updated_at end asc,e.updated_at desc,e.id
+   case when $10::text='oldest' then e.activity_at end asc,e.activity_at desc,e.id
   limit (select page_size from page_settings) offset ((select page from bounds)-1)*(select page_size from page_settings)
  ), pending_bounds as (
   select count(*) total,least(greatest(coalesce($7::integer,1),1),greatest(1,ceil(count(*)/20.0)::int)) page from pending
  ), pending_rows as materialized (
   select e.*,r.revision_number from scoped e join pending r on r.episode_id=e.id
-  order by e.updated_at desc,e.id limit 20 offset ((select page from pending_bounds)-1)*20
+  order by e.activity_at desc,e.id limit 20 offset ((select page from pending_bounds)-1)*20
  ), blocked as materialized (
-  select row_number() over(order by e.updated_at desc,e.id,b.task_id,b.blocker::text) position,
-   jsonb_build_object('episode',to_jsonb(e),'blocker',b.blocker||jsonb_build_object('taskId',b.task_id,'taskType',b.task_type)) item
+  select row_number() over(order by e.activity_at desc,e.id,b.task_id,b.blocker::text) position,
+   jsonb_build_object('episode',(to_jsonb(e)-'activity_at'||jsonb_build_object('updated_at',e.activity_at)),'blocker',b.blocker||jsonb_build_object('taskId',b.task_id,'taskType',b.task_type)) item
   from task_blockers b join scoped e on e.id=b.episode_id
  ), blocked_bounds as (
   select count(*) total,least(greatest(coalesce($8::integer,1),1),greatest(1,ceil(count(*)/20.0)::int)) page from blocked
@@ -133,7 +156,7 @@ export const localCatalogSql=` with owned as materialized (
  )
  select jsonb_build_object(
   'metrics',coalesce((select jsonb_object_agg(e.id,$12::jsonb->e.id::text) from page_rows e where $12::jsonb ? e.id::text),'{}'),
-  'episodes',coalesce((select jsonb_agg(to_jsonb(e) order by case when $10::text='cost_desc' then cost.cents end desc nulls last,case when $10::text='cost_asc' then cost.cents end asc nulls last,case when $10::text='title' then lower(e.title) end asc,case when $10::text='oldest' then e.updated_at end asc,e.updated_at desc,e.id) from page_rows e left join cost_order cost on cost.episode_id=e.id),'[]'),
+  'episodes',coalesce((select jsonb_agg((to_jsonb(e)-'activity_at'||jsonb_build_object('updated_at',e.activity_at)) order by case when $10::text='cost_desc' then cost.cents end desc nulls last,case when $10::text='cost_asc' then cost.cents end asc nulls last,case when $10::text='title' then lower(e.title) end asc,case when $10::text='oldest' then e.activity_at end asc,e.activity_at desc,e.id) from page_rows e left join cost_order cost on cost.episode_id=e.id),'[]'),
   'collections',coalesce((select jsonb_object_agg(c.episode_id,jsonb_build_object('containerId',c.container_id,'seriesId',c.series_id)) from current_collections c join page_rows e on e.id=c.episode_id),'{}'),
   'total',(select total from bounds),'page',(select page from bounds),'pageSize',(select page_size from page_settings),
   'episodeCount',(select count(*) from owned),
@@ -160,7 +183,7 @@ export const localCatalogSql=` with owned as materialized (
   'stages',coalesce((select jsonb_object_agg(stage,n) from(select stage,count(*) n from filtered group by stage)s),'{}'),
   'artifactCounts',coalesce((select jsonb_object_agg(episode_id,n) from(select a.episode_id,count(*) n from public.artifacts a join page_rows e on e.id=a.episode_id group by a.episode_id)s),'{}'),
   'pending',case when $2::text='operations' then jsonb_build_object('total',(select total from pending_bounds),'page',(select page from pending_bounds),
-   'items',coalesce((select jsonb_agg(to_jsonb(e) order by updated_at desc,id) from pending_rows e),'[]')) else jsonb_build_object('total',0,'page',1,'items','[]'::jsonb) end,
+   'items',coalesce((select jsonb_agg((to_jsonb(e)-'activity_at'||jsonb_build_object('updated_at',e.activity_at)) order by activity_at desc,id) from pending_rows e),'[]')) else jsonb_build_object('total',0,'page',1,'items','[]'::jsonb) end,
   'blocked',case when $2::text='operations' then jsonb_build_object('total',(select total from blocked_bounds),'page',(select page from blocked_bounds),
    'items',coalesce((select jsonb_agg(item order by position) from blocked where position between ((select page from blocked_bounds)-1)*20+1 and (select page from blocked_bounds)*20),'[]')) else jsonb_build_object('total',0,'page',1,'items','[]'::jsonb) end,
   'worker',jsonb_build_object('running',(select count(*) from current_worker where status='running'),

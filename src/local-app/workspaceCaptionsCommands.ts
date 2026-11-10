@@ -1,3 +1,4 @@
+import {parseStoryboardScript,segmentSettings} from '../reviews/productionScript.js';
 import {workspaceCaptionFieldErrors} from '../workspaceCaptionValidation.js';
 import {episodeStorageLocationAtRoot,requireEpisodeStorageDirectory,requireWritableEpisodeStorage} from './episodeStorageLocation.js';
 import {readUsedWorkspaceNarrationVersions} from './workspaceCandidates.js';
@@ -15,7 +16,7 @@ import {ConfigurationError} from './configurationCommands.js';
 import {readProductionWorkspace,updateWorkspaceProject,type ProductionWorkspaceRecord} from './productionWorkspaceCommands.js';
 const fingerprint=(v:unknown)=>createHash('sha256').update(JSON.stringify(v)).digest('hex');
 const comparable=(v:string)=>v.replace(/\s/gu,'');
-async function captionContext(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,clipId:unknown){
+async function captionContext(c:PoolClient,root:string,row:Pick<ProductionWorkspaceRecord,'id'|'episode_id'|'storyboard_package_id'|'bindings'>,project:OpenChatCutProject,clipId:unknown){
  await requireEpisodeStorageDirectory(c,await episodeStorageLocationAtRoot(c,root,row.episode_id));
  const clip=row.bindings.find(b=>b.id===clipId);if(!clip)throw new ConfigurationError(404,'当前片段不存在。');
  const window=readWorkspaceShotWindow(project,clip.itemId),timeline=window?.timeline,item=window?{...window.item,startFrame:window.startFrame,durationInFrames:window.durationInFrames}:undefined;if(!timeline||!item)throw new ConfigurationError(409,'片段已从当前工程删除。');
@@ -47,13 +48,19 @@ async function recordEvidence(c:PoolClient,row:ProductionWorkspaceRecord,clipId:
  confirmed_at=CASE WHEN workspace_caption_evidence.input_fingerprint=excluded.input_fingerprint AND workspace_caption_evidence.lane_fingerprint=excluded.lane_fingerprint THEN workspace_caption_evidence.confirmed_at END`,[row.id,clipId,input,lane,method,taskId,alignment,row.bindings.find(b=>b.id===clipId)!.shotId]);
 }
 /** First assembly seeds frozen subtitles as editable native lanes; later opens preserve native edits. */
-export async function assembleWorkspaceCaptions(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject){
+export async function assembleWorkspaceCaptions(c:PoolClient,root:string,row:Pick<ProductionWorkspaceRecord,'id'|'episode_id'|'storyboard_package_id'|'bindings'>&{script_revision_id?:string},project:OpenChatCutProject){
  if((await c.query("SELECT 1 FROM local_identity.production_workspace_versions WHERE workspace_id=$1 AND reason='保存原生剪辑' LIMIT 1",[row.id])).rowCount)return project;
+ if(row.bindings.every(clip=>readWorkspaceCaption(project,clip.itemId)))return project;
+ const source=row.script_revision_id?(await c.query("SELECT storage_path,sha256,file_size FROM public.production_material_revisions WHERE id=$1 AND episode_id=$2 AND material_type='script'",[row.script_revision_id,row.episode_id])).rows[0]:null;
+ const script=source?parseStoryboardScript((await verifyEpisodeFile(c,root,row.episode_id,source.storage_path,source.sha256,Number(source.file_size))).toString('utf8')):null;
  let next=project;const seen=new Set<string>();
  for(const clip of row.bindings){
   if(seen.has(clip.shotId)||readWorkspaceCaption(next,clip.itemId))continue;seen.add(clip.shotId);
-  const x=await captionContext(c,root,row,next,clip.id);if(!x.contract.enabled||!x.contract.text.trim())continue;
-  const contract={...x.contract,cues:x.contract.cues.length?x.contract.cues:[{id:`initial-${clip.shotId}`,text:x.contract.text,startMs:0,endMs:Math.round(Number(x.item.durationInFrames)*1000/x.timeline.fps)}]};
+  const x=await captionContext(c,root,row,next,clip.id),segment=script?.segments.find(segment=>segment.id===clip.shotId),settings=script&&segment?segmentSettings(script,segment):null;
+  // The initial native lane must match the confirmed script's subtitle content and switch.
+  const base=segment?{...x.contract,text:segment.subtitle??segment.narration,enabled:settings?.captionsEnabled!==false,contentMode:settings?.captionMode??'follow_tts' as const,cues:[]}:x.contract;
+  if(!base.text.trim()||!base.enabled&&!segment)continue;
+  const contract={...base,cues:base.cues.length?base.cues:[{id:`initial-${clip.shotId}`,text:base.text,startMs:0,endMs:Math.round(Number(x.item.durationInFrames)*1000/x.timeline.fps)}]};
   next=applyWorkspaceCaptionEdit(next,clip.itemId,contract);
  }
  return next;

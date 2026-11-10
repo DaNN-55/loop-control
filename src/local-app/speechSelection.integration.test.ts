@@ -62,7 +62,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('speech requests freeze c
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('fresh formal speech adoption drives actual video duration and invalidates subtitle evidence when a longer voice is adopted',async()=>{
  const {formalWorkflowFixture}=await import('./formalWorkflow.fixture'),{workspaceTestMedia}=await import('./workspaceTestMedia.fixture'),{productionScriptTemplate}=await import('../reviews/productionScript'),{defaultShotCaptionContract}=await import('../shotCaptions'),{editStudioDocument}=await import('./studioDocument.fixture');
  const {execFile}=await import('node:child_process'),{promisify}=await import('node:util');
- const f=await formalWorkflowFixture({controlled:true,scriptText:productionScriptTemplate.replace('镜头类型：b_roll','镜头类型：a_roll')});try{
+ const f=await formalWorkflowFixture({controlled:true,scriptText:productionScriptTemplate.replace('### 段落 01','### 段落 01\n- 镜头类型：a_roll')});try{
  expect((await f.send('start')).status).toBe(200);let r=await f.send('prepareWorkspace',{expectedScriptRevisionId:f.main});expect(r.status,JSON.stringify(r.body)).toBe(200);let w=r.body;const clip=w.clips[0];
  const send=async(command:string,data:Record<string,unknown>={})=>{const r=await f.send(command,{workspaceId:w.id,expectedRevision:w.revision,...data});expect(r.status,JSON.stringify(r.body)).toBe(200);if(r.body.id===w.id)w=r.body;return r.body;};
  const a=(await f.c.query("SELECT id FROM public.external_connection_versions WHERE adapter='volcengine_tts'")).rows[0].id,selection={capability:'speech',provider:'volcengine_tts',adapter:'volcengine_tts',model:'seed-tts-2.0',connectionVersionId:a};

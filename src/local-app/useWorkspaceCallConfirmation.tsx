@@ -1,6 +1,6 @@
 import {useEffect,useRef,useState} from 'react';
 import {createPortal} from 'react-dom';
-import {ConfirmationModal} from '../ui/ConfirmationModal';
+import {ConfirmationModal,ConfirmationModalPresence} from '../ui/ConfirmationModal';
 import {gptImage2EstimateRates,requiresWorkspaceCall,type WorkspaceCallProposal} from '../workspaceCall';
 
 const cancelled=()=>{const error=new Error('');error.name='AbortError';return error;};
@@ -39,7 +39,7 @@ export function useWorkspaceCallConfirmation(command:(name:string,data:unknown)=
  const imageInputs=summary?.kind==='图片生成'?limits?.imageInputs:undefined;
  const imageCount=(requestData?.settings as {count?:number}|undefined)?.count;
  const rates=gptImage2EstimateRates;
- const dialog=proposal&&summary?createPortal(<div className="workspace-call-overlay"><ConfirmationModal title={`确认本次${summary.kind}`} confirmLabel="确认并提交本次调用" pendingLabel="正在提交…" isPending={submitting} confirmDisabled={!!error||!validReservation||new Date(proposal.expiresAt).getTime()<=Date.now()} onCancel={cancel} onConfirm={confirm}>
+ const dialog=<ConfirmationModalPresence>{proposal&&summary?createPortal(<div className="workspace-call-overlay"><ConfirmationModal title={`确认本次${summary.kind}`} confirmLabel="确认并提交本次调用" pendingLabel="正在提交…" isPending={submitting} confirmDisabled={!!error||!validReservation||new Date(proposal.expiresAt).getTime()<=Date.now()} onCancel={cancel} onConfirm={confirm}>
   {summary.retryOfTaskId&&<p role="alert">上一次请求的结果仍未知，可能已产生费用。确认后将按下方设置提交一次新的请求，供应商可能对两次请求分别计费。</p>}
   <dl className="workspace-call-facts"><div><dt>镜头</dt><dd>{summary.target}</dd></div><div><dt>连接</dt><dd>{summary.connection}</dd></div><div><dt>供应商</dt><dd>{summary.provider}</dd></div><div><dt>模型</dt><dd>{summary.model}</dd></div></dl>
   <p className="workspace-call-parameters">{summary.parameters.join(' · ')}</p>
@@ -68,6 +68,6 @@ export function useWorkspaceCallConfirmation(command:(name:string,data:unknown)=
   {!validReservation&&<p role="status">请输入有效金额，范围为 ¥{((limits?.minimumCents??1)/100).toFixed(2)}～¥{((limits?.maximumCents??100000)/100).toFixed(2)}，最多两位小数。</p>}
   <p className="workspace-call-cost-note">费用预留不是精确报价，实际费用以供应商结算为准。此次确认仅适用于本次调用。</p>
   {error&&<p role="alert">{error} 请取消后重新核对本次调用；提交结果未知时请先查看已有任务。</p>}
- </ConfirmationModal></div>,document.querySelector('.app-shell')??document.body):null;
+ </ConfirmationModal></div>,document.querySelector('.app-shell')??document.body):null}</ConfirmationModalPresence>;
  return{request,dialog};
 }

@@ -18,6 +18,7 @@ import {
   validateWorkerResult,
 } from "./contracts.js";
 import { registeredAdapters } from "./registeredAdapters.js";
+import {VideoGenerationError} from './videoGenerationError.js';
 import {ProviderOutcomeUnknownError} from "./providerOutcome.js";
 import { validateStoryboardManifest } from "./contracts.js";
 import type { StoryboardStructureRevision } from "./storyboardRevision.js";
@@ -521,33 +522,34 @@ function media(snapshot: Record<string, unknown>): WorkerTaskPackageInput["media
     };
   }
   if (value.adapter === "wan_video" || videoAdapters.includes(String(value.adapter))) {
-    const video = value.wan_video;
+    const video = value.video ?? value.wan_video;
     if(!isRecord(video))throw new Error('缺少冻结视频配置。');
     const advanced=Array.isArray(video.visual_inputs);
     if(!advanced&&!isRecord(video.first_frame))throw new Error('视频镜头缺少冻结首帧。');
-    return { adapter: value.adapter as "wan_video" | "seedance_video" | "minimax_video" | "kling_video", wanVideo: { settings:video.settings as import('../videoGenerationSettings.js').WanGenerationSettings,composition:video.composition as import('../videoGenerationSettings.js').FirstFrameComposition,...(advanced?{visualInputs:video.visual_inputs as FrozenVideoVisualInput[],visualMode:requiredString(video.visual_mode,'缺少视频生成模式。'),...(video.reference_ratio!=null?{referenceRatio:video.reference_ratio as import('../videoVisualInputs.js').VideoOutputRatio}:{})}:{firstFrame:video.first_frame as unknown as ArtifactManifest,imageMime:requiredString(video.image_mime,'缺少首帧 MIME。')}), prompt: requiredString(video.prompt, "缺少视频提示词。"), durationSeconds: requiredPositiveNumber(video.duration_seconds, "缺少视频时长。") } };
+    return { adapter: value.adapter as "wan_video" | "seedance_video" | "minimax_video" | "kling_video", wanVideo: { ...(video.candidate_only===true?{candidateOnly:true}:{}),...(value.adapter==='minimax_video'&&video.resolution!=null?{resolution:requiredString(video.resolution,'缺少 MiniMax 分辨率。')} :{}),settings:video.settings as import('../videoGenerationSettings.js').WanGenerationSettings,composition:video.composition as import('../videoGenerationSettings.js').FirstFrameComposition,...(advanced?{visualInputs:video.visual_inputs as FrozenVideoVisualInput[],visualMode:requiredString(video.visual_mode,'缺少视频生成模式。'),...(video.reference_ratio!=null?{referenceRatio:video.reference_ratio as import('../videoVisualInputs.js').VideoOutputRatio}:{})}:{firstFrame:video.first_frame as unknown as ArtifactManifest,imageMime:requiredString(video.image_mime,'缺少首帧 MIME。')}), prompt: requiredString(video.prompt, "缺少视频提示词。"), durationSeconds: requiredPositiveNumber(video.duration_seconds, "缺少视频时长。") } };
   }
   if (value.adapter === "pexels_video") {
-    const bRoll = value.b_roll;
+    // Older snapshots retain b_roll; new snapshots store one neutral video payload.
+    const bRoll = value.video ?? value.b_roll;
     if(isRecord(bRoll)&&isRecord(bRoll.request))return {adapter:'pexels_video',bRoll:{query:requiredString(bRoll.query,'Pexels 任务缺少检索词。'),targetDurationSeconds:requiredPositiveNumber(bRoll.target_duration_seconds,'Pexels 任务缺少目标窗口。'),request:bRoll.request as unknown as import('./pexelsVideos.js').PexelsVideoRequest}};
-    if (!isRecord(bRoll) || !isRecord(bRoll.shot) || !Array.isArray(bRoll.shot.inputBasis)) throw new Error("B-roll 任务冻结配置无效。");
+    if (!isRecord(bRoll) || !isRecord(bRoll.shot) || !Array.isArray(bRoll.shot.inputBasis)) throw new Error("镜头视频任务冻结配置无效。");
     return {
       adapter: "pexels_video",
       bRoll: {
         ...(bRoll.request ? {request:bRoll.request as import('./pexelsVideos.js').PexelsVideoRequest} : {}),
-        query: requiredString(bRoll.query, "B-roll 任务缺少冻结检索词。"),
-        targetDurationSeconds: requiredPositiveNumber(bRoll.target_duration_seconds, "B-roll 任务缺少有效时长。"),
+        query: requiredString(bRoll.query, "镜头视频任务缺少冻结检索词。"),
+        targetDurationSeconds: requiredPositiveNumber(bRoll.target_duration_seconds, "镜头视频任务缺少有效时长。"),
         shot: {
-          id: requiredString(bRoll.shot.id, "B-roll 任务缺少镜头 ID。"),
-          scriptSegment: requiredString(bRoll.shot.scriptSegment, "B-roll 任务缺少脚本片段。"),
-          durationSeconds: requiredPositiveNumber(bRoll.shot.durationSeconds, "B-roll 任务缺少镜头时长。"),
+          id: requiredString(bRoll.shot.id, "镜头视频任务缺少镜头 ID。"),
+          scriptSegment: requiredString(bRoll.shot.scriptSegment, "镜头视频任务缺少脚本片段。"),
+          durationSeconds: requiredPositiveNumber(bRoll.shot.durationSeconds, "镜头视频任务缺少镜头时长。"),
           shotType: requiredShotType(bRoll.shot.shotType),
-          productionMethod: requiredString(bRoll.shot.productionMethod, "B-roll 任务缺少制作方法。"),
+          productionMethod: requiredString(bRoll.shot.productionMethod, "镜头视频任务缺少制作方法。"),
           inputBasis: bRoll.shot.inputBasis.map((input) => {
             if (!isRecord(input)) throw new Error("B-roll 输入依据格式无效。");
             return { relativePath: requiredString(input.relativePath, "B-roll 输入依据缺少路径。"), sha256: requiredString(input.sha256, "B-roll 输入依据缺少哈希。") };
           }),
-          targetSpec: requiredString(bRoll.shot.targetSpec, "B-roll 任务缺少目标规格。"),
+          targetSpec: requiredString(bRoll.shot.targetSpec, "镜头视频任务缺少目标规格。"),
         },
       },
     };
@@ -855,7 +857,7 @@ function preflightBlocker(check: WorkerPreflightCheck): NonNullable<WorkerResult
 }
 
 function createFailedResult(taskPackage: WorkerTaskPackage, actualCostCents: number, error: unknown): WorkerResult {
-  const unknown = error instanceof ProviderOutcomeUnknownError;
+  const unknown = error instanceof ProviderOutcomeUnknownError||error instanceof VideoGenerationError&&error.outcome==='unknown';
   return {
     version: "worker-result/v1",
     taskId: taskPackage.task.id,
@@ -863,7 +865,7 @@ function createFailedResult(taskPackage: WorkerTaskPackage, actualCostCents: num
     artifacts: [],
     validation: { passed: false, checks: [{ name: "codex_execution", passed: false, detail: errorMessage(error) }] },
     actualCostCents,
-    blockers: [],
+    blockers: error instanceof VideoGenerationError?[{code:error.code,detail:error.message}]:[],
     retry: {
       shouldRetry: !unknown && taskPackage.budget.attempt + 1 < taskPackage.budget.maxAttempts,
       reason: errorMessage(error),
@@ -874,7 +876,7 @@ function createFailedResult(taskPackage: WorkerTaskPackage, actualCostCents: num
 
 function executionPreflightCheck(taskPackage: WorkerTaskPackage, error: unknown): WorkerPreflightCheck | undefined {
   const detail = errorMessage(error);
-  if(error instanceof ProviderOutcomeUnknownError)return {capability:taskPackage.capability,check:"provider_result_unknown",phase:"execution",status:"blocked",reason:detail,action:"contact_environment_admin",scope:"worker"};
+  if(error instanceof ProviderOutcomeUnknownError||error instanceof VideoGenerationError&&error.outcome==='unknown')return {capability:taskPackage.capability,check:"provider_result_unknown",phase:"execution",status:"blocked",reason:detail,action:"contact_environment_admin",scope:"worker"};
   const imageGeneration = taskPackage.visualAssetPreparation?.imageGeneration;
   const isOpenAiStaticVisual = (taskPackage.provider === "openai" && taskPackage.media?.adapter === "openai_images") || (imageGeneration?.provider === "openai" && imageGeneration.adapter === "openai_images");
   const isCloudflareStaticVisual = (taskPackage.provider === "cloudflare" && taskPackage.media?.adapter === "workers_ai_images") || (imageGeneration?.provider === "cloudflare" && imageGeneration.adapter === "workers_ai_images");

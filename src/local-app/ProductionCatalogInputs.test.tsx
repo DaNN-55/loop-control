@@ -1,3 +1,4 @@
+import {Component,type ReactNode} from 'react';
 import userEvent from '@testing-library/user-event';
 import {act,cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
 import {afterEach,expect,it,vi} from 'vitest';
@@ -31,4 +32,25 @@ it('keeps the previous display and query draft when malformed catalog groups arr
  fireEvent.click(screen.getByRole('tab',{name:'视频'}));fireEvent.click(screen.getByRole('button',{name:'AI 生成'}));await userEvent.click(screen.getByRole('button',{name:'视频连接与模型'}));await userEvent.click(await screen.findByRole('menuitemradio',{name:/^Pexels 素材检索/}));
  fireEvent.change(screen.getByRole('textbox',{name:'检索词'}),{target:{value:'保留查询'}});malformed=true;fireEvent.focus(window);
  await screen.findByRole('button',{name:'重试读取连接'});expect(screen.getByRole('textbox',{name:'检索词'})).toHaveProperty('value','保留查询');expect(screen.getByRole('button',{name:'视频连接与模型'}).textContent).toContain('Pexels 素材检索');expect(command).not.toHaveBeenCalled();
+});
+
+class CatalogErrorBoundary extends Component<{children:ReactNode},{error:Error|null}>{
+ state={error:null as Error|null};
+ static getDerivedStateFromError(error:Error){return{error};}
+ render(){return this.state.error?<output aria-label="目录渲染异常">{this.state.error.message}</output>:this.props.children;}
+}
+it('rejects malformed video modes on focus, keeps the selected model and prompt, and recovers on retry',async()=>{
+ const model='doubao-seedance-2-0-260128',selection={capability:'video',provider:'volcengine',adapter:'seedance_video',model,connectionVersionId:'video'};
+ const mode={id:'first-frame',label:'首帧生成',inputs:{firstFrame:{max:1,min:1,maxBytes:1024,mimeTypes:['image/png']}}};
+ sessionStorage.setItem('loop-visual-draft:workspace:visual',JSON.stringify({tab:'video',origin:{image:'material',video:'generate'},videoSelection:selection,settings:{size:'864x1536',quality:'auto',count:1}}));
+ let malformed=false;
+ vi.stubGlobal('fetch',vi.fn(async(path:string)=>Response.json(path.endsWith('/workspace')?{workspace}:{serviceCatalog:{version:1,groups:[{capability:'video',services:[{id:'video',...selection,mode:'generation',models:[model],executable:true,constraints:{durationSeconds:{min:4,max:15,integer:true}},videoGenerationModes:{[model]:malformed?{id:'broken-mode'}:[mode]}}]}]}})));
+ const command=vi.fn();render(<CatalogErrorBoundary><WorkspaceVisualPreparation workspace={workspace} command={command} onChange={()=>{}} materials={[]}/></CatalogErrorBoundary>);
+ await waitFor(()=>expect(screen.getByRole('button',{name:'视频连接与模型'}).textContent).toContain(model));
+ fireEvent.change(screen.getByRole('textbox',{name:'画面动作'}),{target:{value:'保留视频动作草稿'}});
+ malformed=true;await act(async()=>{fireEvent.focus(window);});
+ expect(screen.queryByLabelText('目录渲染异常')).toBeNull();expect(screen.getByRole('alert').textContent).toBe('无法读取制作连接，请刷新后重试。');
+ expect(screen.getByRole('button',{name:'视频连接与模型'}).textContent).toContain(model);expect(screen.getByRole('textbox',{name:'画面动作'})).toHaveProperty('value','保留视频动作草稿');
+ malformed=false;await act(async()=>{fireEvent.focus(window);});await waitFor(()=>expect(screen.queryByRole('alert')).toBeNull());
+ expect(screen.getByRole('button',{name:'视频连接与模型'}).textContent).toContain(model);expect(screen.getByRole('textbox',{name:'画面动作'})).toHaveProperty('value','保留视频动作草稿');expect(command).not.toHaveBeenCalled();
 });

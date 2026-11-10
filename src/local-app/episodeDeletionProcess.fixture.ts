@@ -9,11 +9,12 @@ import fs from 'node:fs';
 import {syncBuiltinESMExports} from 'node:module';
 const input=createInterface({input:process.stdin});
 const [line]=await once(input,'line');input.close();
-const configuration=JSON.parse(line as string) as {database:string;root:string;crash?:'before-finalize'|'after-first-finalize'|'link-before-unlink'};
+const configuration=JSON.parse(line as string) as {database:string;root:string;crash?:'before-finalize'|'after-first-finalize'|'link-before-unlink'|'fail-finalize'};
 if(!/^loop_(?:studio_153|t24_restore)_[a-f0-9]{12}$/.test(configuration.database)||!process.env.LOOP_TEST_CONTEXT_MODULE)throw Error('Owned isolated fixture required');
 const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MODULE),context=runtimeContext();context.assertDatabase();
 if(configuration.crash){const unlink=fs.promises.unlink;fs.promises.unlink=async path=>{
  const staged=String(path).endsWith('.loop-control-deletion');
+ if(configuration.crash==='fail-finalize'&&staged)throw Object.assign(Error('文件暂时被占用，未清理：'+String(path)),{code:'EACCES'});
  if(configuration.crash==='before-finalize'&&staged||configuration.crash==='link-before-unlink'&&!staged&&String(path).startsWith(configuration.root+'/account/'))process.kill(process.pid,'SIGKILL');
  await unlink(path);if(configuration.crash==='after-first-finalize'&&staged)process.kill(process.pid,'SIGKILL');
 };syncBuiltinESMExports();}

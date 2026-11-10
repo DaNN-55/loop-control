@@ -17,6 +17,7 @@ import {ConfigurationError} from './configurationCommands.js';
 import {safeAssetOutputPath} from '../worker/controlledMediaExecutor.js';
 import {inspectMp4Artifact} from '../worker/mediaTools.js';
 import {isOpenChatCutStudio} from '../worker/openchatcutStudio.js';
+import {workspaceVisualGaps} from './workspaceVisualCoverage.js';
 
 /** Native timeline graph, excluding the unused media pool and unreachable sequences. */
 export function usedWorkspaceContent(project:OpenChatCutProject){
@@ -36,6 +37,10 @@ export async function workspaceExportReadiness(c:PoolClient,root:string,row:Prod
   for(const path of used.paths){const s=await resolveWorkspaceSource(c,root,row.episode_id,path);sources.push({relativePath:s.relative_path,sha256:s.sha256,fileSize:Number(s.file_size)});}
   checks.push({name:'used_content',passed:true,detail:`已核对 ${used.paths.size} 个实际来源。`,sources});
  }catch(error){checks.push({name:'used_content',passed:false,detail:error instanceof Error?error.message:'实际来源不可用。'});}
+ try{
+  const gaps=workspaceVisualGaps(project);
+  checks.push({name:'visual_coverage',passed:gaps.length===0,detail:gaps.length?`画面空档 ${gaps.slice(0,6).map(g=>`${g.startSeconds.toFixed(2)}–${g.endSeconds.toFixed(2)} 秒`).join('、')}。请在剪辑工作台合拢片段，或添加明确的背景画面后重新导出。`:'整期画面连续，无未填充空档。',gaps});
+ }catch(error){checks.push({name:'visual_coverage',passed:false,detail:error instanceof Error?error.message:'画面覆盖检查未完成。'});}
  try{
   for(const timeline of project.timelines.filter(t=>used?.timelineIds.has(t.id))){
    if(timeline.captionsHidden)continue;const endMs=Math.max(0,...timeline.items.map(i=>Number(i.startFrame)+Number(i.durationInFrames)))*1000/timeline.fps;

@@ -47,7 +47,7 @@ html[data-interface="impeccable"] .product-ui .stage-approved {background:var(--
 html[data-interface="impeccable"] .product-ui .empty-state {background:var(--lc-surface);border:1px dashed var(--lc-line);box-shadow:none;padding:40px 24px;color:var(--lc-muted)}
 html[data-interface="impeccable"] .product-ui .empty-state h2 {font-size:16px}
 html[data-interface="impeccable"] .product-ui .pagination-controls {font-size:12px;padding:16px 0;color:var(--lc-muted)}
-.impeccable-app.app-shell {--lc-rail-width:208px;display:block;min-height:100vh;background:var(--lc-bg);padding-left:var(--lc-rail-width)}
+.impeccable-app.app-shell {--lc-rail-width:180px;display:block;min-height:100vh;background:var(--lc-bg);padding-left:var(--lc-rail-width)}
 .impeccable-app.app-shell[data-sidebar="collapsed"] {--lc-rail-width:64px}
 .impeccable-app.product-ui .sidebar {--lc-rail:var(--lc-surface-2);--lc-rail-ink:var(--lc-ink);position:fixed;inset:0 auto 0 0;width:var(--lc-rail-width);height:100dvh;display:flex;flex-direction:column;background:var(--lc-rail);border:0;border-right:1px solid var(--lc-line);padding:22px 12px var(--lc-workspace-bottom-inset);color:var(--lc-rail-ink);z-index:50;overflow:visible}
 .lc-brand {display:flex;gap:10px;align-items:center;padding:0 8px 30px;color:var(--lc-rail-ink);white-space:nowrap}

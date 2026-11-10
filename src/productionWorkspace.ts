@@ -12,7 +12,7 @@ export interface ProductionWorkspace {
  selectedImages?:Array<{targetItemId:string;candidateId:string;materialRevisionId:string}>;
  visualConfiguration?:{imageSelection?:import('./productionSelection.js').ProductionSelection;imageModel:string|null;videoModel:string|null;videoProvider:string|null};
  recovery?:{decision:'preserve'|'fresh';relativePath:string;sha256:string;fileSize:number};
- preparation?:{origin:string;authorized:boolean;authorizationHash?:string;scriptRevisionId:string;shots:Array<{shotId:string;origin:string;shotType:'a_roll'|'b_roll'|null}>};
+ preparation?:{origin:string;authorized:boolean;authorizationHash?:string;scriptRevisionId:string;shots:Array<{shotId:string;origin:string}>};
  pexels?:import('./workspacePexels.js').WorkspacePexelsState;visualCandidates?:WorkspaceVisualCandidate[];visualTasks?:WorkspaceVisualTask[];visualTargets?:WorkspaceVisualTarget[];
  id:string;episodeId:string;workflowVersion:'four-step/v1';scriptRevisionId:string;storyboardPackageId:string;revision:number;contentSha256:string;nativeEditRevision?:number;
  audio?:{enabled?:{bgm:boolean;sfx:boolean};defaults?:{selection?:import('./productionSelection.js').ProductionSelection;settings?:{description:string;query:string;materialRevisionId:string}}|null;mix:WorkspaceAudioMix;preparations:Array<{generationTask?:import('./workspaceVisualCandidates.js').WorkspaceVisualTask;id:string;kind:string;shotId:string|null;sourceItemId:string|null;description:string;query:string|null;selection?:import('./productionSelection.js').ProductionSelection|null;connection?:{name:string;version:number}|null;anchor:string;offsetSeconds:number;durationSeconds:number;taskId:string|null;status:string;error:string|null;audioTrackId:string|null;relativePath:string|null;sha256:string|null;fileSize:number;adoptedItemId:string|null;source:Record<string,unknown>|null}>};usedNarration?:WorkspaceUsedNarration[];candidates?:WorkspaceCandidate[];deliveries?:WorkspaceDelivery[];exports?:WorkspaceExport[];exportIssues?:WorkspaceExportIssue[];captions?:WorkspaceCaptionState[];narration?:WorkspaceNarration[];clips:WorkspaceClip[];project:{relativePath:string;sha256:string;fileSize:number;projectId:string};
@@ -27,7 +27,6 @@ export const productionWorkspaceFields:Record<string,string[]>={
  adoptLegacyWorkspace:['episodeId','artifactId','savedProjectSha256','expectedSourceSha256','expectedScriptRevisionId','reviewPackageId'],
  authorizeWorkspacePreparation:['episodeId','workspaceId','expectedRevision','enabled'],
  saveWorkspaceSoundIntent:['episodeId','workspaceId','expectedRevision','expectedProjectSha256','shotId','soundIntent'],
- confirmWorkspaceShot:['episodeId','workspaceId','expectedRevision','clipId','shotType'],
  ...workspaceVisualFields,
  prepareWorkspaceCandidate:['episodeId','workspaceId','expectedRevision','candidateId','durationPolicy','restoreNarration'],
  adoptWorkspaceCandidate:['episodeId','workspaceId','expectedRevision','candidateId','adoptionId','nativeApplied','restoreNarration'],

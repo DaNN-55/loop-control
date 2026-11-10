@@ -43,13 +43,11 @@ it('保留安全弹窗焦点，从所有者菜单打开连接配置且跨页保�
   if(path.endsWith('/session'))return Response.json({csrfToken:'fixture',owner:{id,email:'owner@example.test'}});
   if(path.includes('/catalog?'))return Response.json({...data,episodes:[]});
   if(path.endsWith('/deletion-cleanups'))return Response.json([]);
-  if(path.includes('/history-episodes?'))return Response.json({items:[],total:0,page:1,pageSize:30,selected:null,files:[],versions:[],pagination:{filesPage:1,recordsPage:1,fileTotal:0,recordTotal:0}});
-  if(path.includes('/history?'))return Response.json({summary:{versions:'0',files:'0'},sources:[],source:null,versions:[],files:[],pagination:{filesPage:1,recordsPage:1,fileTotal:0,versionTotal:0},sourceCounts:{active:0,archived:0}});
   return Response.json({connections:[],versions:[],pending:[],capabilities:{secrets:'keychain',verification:'live',externalReady:false,networkAvailable:false}});
  }));
  await act(async()=>{render(<LocalCatalogApp/>);});
  const owner=screen.getByRole('button',{name:'所有者设置'});
- await user.click(owner);expect(screen.getAllByRole('menuitem').map(item=>item.textContent)).toEqual(['个人偏好','通知','登录与安全','连接配置','退出登录']);
+ await user.click(owner);expect(screen.getAllByRole('menuitem').map(item=>item.textContent)).toEqual(['个人偏好','通知','登录与安全','文件清理','连接配置','退出登录']);
  await user.click(screen.getByRole('menuitem',{name:'登录与安全'}));
  const security=screen.getByRole('dialog',{name:'登录与安全'}),password=within(security).getByRole('form',{name:'登录与安全'});
  expect(within(security).getByRole('region',{name:'当前登录身份'}).textContent).toContain('owner@example.test');
@@ -91,13 +89,14 @@ it.each([[false,true],[true,true],[false,false]])('cleanupPending=%s, initially 
  vi.stubGlobal('fetch',vi.fn(async(path:string,init?:RequestInit)=>{
   if(path.endsWith('/session'))return Response.json({csrfToken:'delete-csrf',owner:{id,email:'owner@example.test'}});
   if(path.includes('/catalog?'))return Response.json({...data,total:deleted?0:1,episodeCount:deleted?0:1,accountCounts:{[id]:deleted?0:1},episodes:deleted?[]:[{...data.episodes[0],is_test:false,archived_at:archived?at:null}]});
+  if(path.endsWith('/deletion-cleanups'))return Response.json([{cleanupKey:'pending-cleanup',title:'待清理样例',path:'/fixture/episode',stagingPaths:['/fixture/staged']}]);
   if(path.endsWith('/episode-lifecycle')){
    expect(new Headers(init?.headers).get('X-CSRF-Token')).toBe('delete-csrf');
    const body=JSON.parse(String(init?.body));commands.push(body);
    if(body.command==='archiveEpisode'){expect(body.data).toEqual({episodeId:episode,archived:true});archived=true;return Response.json({archived});}
    if(body.command==='planDeletion')return Response.json({path:'/fixture/episodes/'+episode,paths:['/fixture/episodes/'+episode,'/external/account/episodes/'+episode],revision:'fixture-revision',confirmation:'普通长度完整生产单'});
    expect(body).toMatchObject({command:'deleteEpisode',data:{episodeId:episode,confirmation:'普通长度完整生产单',expectedPath:'/fixture/episodes/'+episode,expectedPaths:['/fixture/episodes/'+episode,'/external/account/episodes/'+episode],expectedRevision:'fixture-revision'}});
-   deleted=true;return Response.json({cleanupPending});
+   deleted=true;return Response.json({cleanupPending,cleanupKey:'pending-cleanup'});
   }
   return Response.json({connections:[],versions:[]});
  }));
@@ -124,7 +123,7 @@ it.each([[false,true],[true,true],[false,false]])('cleanupPending=%s, initially 
  await waitFor(()=>expect(screen.queryByRole('form',{name:'永久删除生产单'})).toBeNull());
  expect(commands.map(c=>c.command)).toEqual([...expectedCommands,'deleteEpisode']);
  expect(screen.queryByText('普通长度完整生产单')).toBeNull();
- if(cleanupPending)expect(screen.getByRole('alert').textContent).toContain('文件清理尚未完成');
+ if(cleanupPending){const action=screen.getByRole('button',{name:'查看清理任务'});expect(action.closest('[role=status]')?.textContent).toContain('文件清理尚未完成');await user.click(action);const task=await screen.findByRole('article',{name:'待清理样例'});expect(document.activeElement).toBe(task);expect(location.search).toContain('cleanupTask=pending-cleanup');await user.click(screen.getByRole('button',{name:'关闭文件清理'}));await waitFor(()=>expect(screen.queryByRole('dialog',{name:'文件清理'})).toBeNull());expect(document.activeElement).toBe(screen.getByRole('button',{name:'所有者设置'}));}
 });
 
 it.each(['plan','delete'])('shows a %s failure inside the confirmation dialog instead of leaving the click without feedback',async(failureAt)=>{
@@ -188,4 +187,26 @@ it('恢复失败留在确认框内且可重试，成功后关闭；操作错误�
  expect((await within(modal).findByRole('alert')).textContent).toBe('恢复未完成，请重试。');expect(document.querySelector('.floating-notices')).toBeNull();
  expect((within(modal).getByRole('button',{name:'确认恢复'}) as HTMLButtonElement).disabled).toBe(false);
  await user.click(within(modal).getByRole('button',{name:'确认恢复'}));await waitFor(()=>expect(screen.queryByRole('form',{name:'恢复生产单'})).toBeNull());expect(calls).toBe(2);
+});
+it('opens durable file cleanup from the Owner menu, preserves list context and restores focus on close',async()=>{
+ history.replaceState(null,'','/?view=episodes&page=2');vi.stubGlobal('crypto',webcrypto);const requests:string[]=[];
+ vi.stubGlobal('fetch',vi.fn(async(path:string)=>{requests.push(path);if(path.endsWith('/session'))return Response.json({csrfToken:'fixture',owner:{id,email:'owner@example.test'}});if(path.includes('/catalog?'))return Response.json(data);if(path.endsWith('/deletion-cleanups'))return Response.json([{cleanupKey:'pending-one',title:'待清理样例',path:'/fixture/episode',stagingPaths:['/fixture/staged']}]);return Response.json({connections:[],versions:[]});}));
+ const user=userEvent.setup();await act(async()=>{render(<LocalCatalogApp/>);});expect(requests.some(path=>path.endsWith('/deletion-cleanups'))).toBe(false);
+ const owner=screen.getByRole('button',{name:'所有者设置'});await user.click(owner);await user.click(screen.getByRole('menuitem',{name:'文件清理'}));const dialog=await screen.findByRole('dialog',{name:'文件清理'});await within(dialog).findByRole('article',{name:'待清理样例'});await waitFor(()=>expect(location.search).toContain('cleanupOpen=1'));expect(location.search).toContain('page=2');
+ await user.click(within(dialog).getByRole('button',{name:'关闭文件清理'}));await waitFor(()=>expect(screen.queryByRole('dialog',{name:'文件清理'})).toBeNull());expect(document.activeElement).toBe(owner);expect(location.search).not.toContain('cleanupOpen');
+ await user.click(owner);await user.click(screen.getByRole('menuitem',{name:'文件清理'}));await screen.findByRole('dialog',{name:'文件清理'});await waitFor(()=>expect(location.search).toContain('cleanupOpen=1'));await act(async()=>{history.back();});await waitFor(()=>expect(screen.queryByRole('dialog',{name:'文件清理'})).toBeNull());expect(location.search).toContain('page=2');
+});
+
+it('opens the full associated catalog from an account deletion blocker and clears stale scope filters',async()=>{
+ const requests:string[]=[];vi.stubGlobal('crypto',webcrypto);vi.stubGlobal('fetch',vi.fn(async(path:string)=>{
+ requests.push(path);if(path.endsWith('/session'))return Response.json({csrfToken:'fixture',owner:{id,email:'owner@example.test'}});
+ if(path.includes('/account-deletion-status?'))return Response.json({episodeCount:25,archivedEpisodeCount:24,creationCount:0,deletionCount:0,cleanupKey:null});
+ if(path.includes('/catalog?'))return Response.json(data);return Response.json({connections:[],versions:[]});
+ }));history.replaceState(null,'','/?view=accounts&account='+id+'&accountId='+id+'&q=old&status=blocked&visibility=active&page=3&seriesId=unassigned');
+ const user=userEvent.setup();await act(async()=>{render(<LocalCatalogApp/>);});await user.click(await screen.findByRole('button',{name:'账号设置'}));await user.click(screen.getByRole('button',{name:'删除账号'}));await screen.findByText('25 个生产单（含 24 个已归档）');await user.click(screen.getByRole('button',{name:'查看生产单'}));
+ await waitFor(()=>{const last=requests.filter(path=>path.includes('/catalog?')).at(-1)!;const q=new URL(last,'http://localhost').searchParams;expect(q.get('view')).toBe('episodes');expect(q.get('accountId')).toBe(id);expect(q.get('visibility')).toBe('all');expect(q.get('seriesId')).toBe('all');expect(q.get('q')).toBe('');expect(q.get('status')).toBe('all');expect(q.get('page')).toBe('1');});
+});
+
+it('opens the workbench for retired history bookmarks without mounting old pages or requesting their APIs',async()=>{
+ vi.stubGlobal('crypto',webcrypto);const requests:string[]=[];vi.stubGlobal('fetch',vi.fn(async(path:string)=>{requests.push(path);if(path.endsWith('/session'))return Response.json({csrfToken:'fixture',owner:{id,email:'owner@example.test'}});if(path.includes('/catalog?'))return Response.json(data);return Response.json({connections:[],versions:[]});}));history.replaceState(null,'','/?view=history&source=old&historyTab=sources');await act(async()=>{render(<LocalCatalogApp/>);});await screen.findByRole('heading',{name:'内容工作台'});expect(screen.queryByRole('region',{name:'历史资料'})).toBeNull();expect(requests.some(path=>/\/history(?:[?/-]|$)/.test(path))).toBe(false);await waitFor(()=>expect(location.search).not.toContain('source='));expect(location.search).toContain('view=operations');
 });

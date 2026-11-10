@@ -79,3 +79,32 @@ it.each([{groups:[{capability:'image',services:[{id:'x',provider:'x',adapter:'x'
  await act(async()=>{f.requests[1].resolve(Response.json({serviceCatalog:malformed}));});
  expect(f.result.current.error?.message).toBe('制作目录格式无效。');expect(f.result.current.catalog).toEqual(catalog('valid'));
 });
+const validVideoMode={id:'references',label:'参考素材',inputs:{referenceImages:{max:3,min:1,maxBytes:1024,mimeTypes:['image/png']}}};
+const videoCatalog=(videoGenerationModes:unknown)=>({version:1,groups:[{capability:'video',services:[{id:'video',provider:'volcengine',adapter:'seedance_video',mode:'generation',executable:true,models:['model'],constraints:{},videoGenerationModes}]}]});
+it.each([
+ null,[],{model:{}},{model:'first-frame'},{model:[]},{model:[null]},
+ {model:[{id:'first-frame',label:'首帧'}]},
+ {model:[{...validVideoMode,inputs:null}]},
+ {model:[{...validVideoMode,inputs:{referenceImages:null}}]},
+ {model:[{...validVideoMode,inputs:{referenceImages:{max:'3'}}}]},
+ {model:[{...validVideoMode,inputs:{referenceImages:{max:3,mimeTypes:'image/png'}}}]},
+ {model:[{...validVideoMode,allowInlineMp4:'yes'}]},
+ {model:[{...validVideoMode,videoSeconds:{min:3,max:'15'}}]},
+])('rejects malformed video mode metadata and preserves the last accepted directory',async modes=>{
+ const f=setup();await act(async()=>{f.requests[0].resolve(Response.json({serviceCatalog:catalog('accepted')}));});act(()=>f.result.current.refresh());
+ await act(async()=>{f.requests[1].resolve(Response.json({serviceCatalog:videoCatalog(modes)}));});
+ expect(f.result.current.error?.message).toBe('制作目录格式无效。');expect(f.result.current.catalog).toEqual(catalog('accepted'));expect(f.result.current.pending).toBe(false);
+});
+it('accepts optional video-mode metadata and the legacy first-frame fallback',async()=>{
+ const modes={
+  model:[{...validVideoMode,allowAssetVideoSource:true,allowInlineMp4:false,characterOrder:false,referenceImageSource:'https',maxReferences:9,maxImagesWithVideo:4,videoSeconds:{min:3,max:15}}],
+  disabledModel:[{id:'first-frame',label:'首帧生成',inputs:{firstFrame:{max:1,min:1}}}],
+ };
+ const f=setup(),expected=videoCatalog(modes);await act(async()=>{f.requests[0].resolve(Response.json({serviceCatalog:expected}));});expect(f.result.current.catalog).toEqual(expected);expect(f.result.current.error).toBeNull();
+ act(()=>f.result.current.refresh());const legacy=videoCatalog(undefined);await act(async()=>{f.requests[1].resolve(Response.json({serviceCatalog:legacy}));});expect(f.result.current.catalog).toEqual(JSON.parse(JSON.stringify(legacy)));expect(f.result.current.error).toBeNull();
+});
+it('accepts the complete registered production catalog without rewriting video modes',async()=>{
+ const {buildProductionServiceCatalog}=await import('../connections/serviceCatalog');
+ const expected=buildProductionServiceCatalog({connections:[],versions:[],externalReady:false}),f=setup();
+ await act(async()=>{f.requests[0].resolve(Response.json({serviceCatalog:expected}));});expect(f.result.current.error).toBeNull();expect(f.result.current.catalog).toEqual(JSON.parse(JSON.stringify(expected)));
+});

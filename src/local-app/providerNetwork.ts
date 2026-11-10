@@ -1,3 +1,4 @@
+import {VideoGenerationError} from '../worker/videoGenerationError.js';
 import {isWanVideoRequest} from '../wanVideoModels.js';
 import {imageSizes,openAiImageModels,openAiImageQualities} from '../imageGeneration.js';
 import {isRetiredProvider} from '../worker/providerLifecycle.js';
@@ -126,7 +127,7 @@ function requestOperation(provider:OnlineProvider,phase:'verify'|'execute',input
   if(apiHost&&method==='GET'&&phase==='verify'&&u.pathname==='/api/v1/models'&&u.searchParams.get('model')==='wan2.6-i2v-flash'&&[...u.searchParams.keys()].every(k=>['model','page_no','page_size'].includes(k)))op='verify';
   if(apiHost&&phase==='execute'&&method==='POST'&&u.pathname==='/api/v1/services/aigc/video-generation/video-synthesis'&&!u.search)op='generate';
   if(apiHost&&phase==='execute'&&method==='GET'&&/^\/api\/v1\/tasks\/[a-zA-Z0-9_-]{1,128}$/.test(u.pathname)&&!u.search)op='poll';
-  if(phase==='execute'&&method==='GET'&&(u.hostname==='dashscope-a717.oss-accelerate.aliyuncs.com'||/^dashscope-result-[a-z0-9-]+\.oss-[a-z0-9-]+\.aliyuncs\.com$/.test(u.hostname))&&!new Headers(init.headers).has('Authorization'))op='download';
+  if(phase==='execute'&&method==='GET'&&(['dashscope-a717.oss-accelerate.aliyuncs.com','dashscope-f4de.oss-accelerate.aliyuncs.com','dashscope-7c2c.oss-cn-shanghai.aliyuncs.com'].includes(u.hostname)||/^dashscope-result-[a-z0-9-]+\.oss-[a-z0-9-]+\.aliyuncs\.com$/.test(u.hostname))&&!new Headers(init.headers).has('Authorization'))op='download';
  }else if(provider==='volcengine_tts'&&method==='POST'&&api('openspeech.bytedance.com','/api/v3/tts/unidirectional/sse'))op=phase==='verify'?'verify':'generate';
  if(!op)throw denied();
  if(method==='POST'){
@@ -182,7 +183,7 @@ async function readProviderResponse(r:Response,maxBytes:number){
 export function createWorkspaceGenerationFetcher(provider:WorkspaceGenerationProvider|'volcengine_tts',authorization:{reserve:()=>Promise<void>;videoTaskId?:()=>string|undefined;speech?:{text:string;voice:string;model:string}},transport:MediaFetcher=provider==='openai'?waitForImageResponse:fetch):MediaFetcher{
  let started=false;
  return async(input,init={})=>{
-  const operation=requestOperation(provider,'execute',input,init);
+  let operation:string;try{operation=requestOperation(provider,'execute',input,init);}catch(error){if(isVideoProvider(provider)&&init.method==='POST')throw error instanceof VideoGenerationError?error:new VideoGenerationError('本机视频请求校验未通过，未向供应商发送。','not_sent');throw error;}
   const generate=operation===provider+'.generate',download=operation===provider+'.download';
   if(init.signal?.aborted)throw denied();
   if(generate){
@@ -204,7 +205,11 @@ export function createWorkspaceGenerationFetcher(provider:WorkspaceGenerationPro
    const maxBytes=(provider==='openai'?64:provider==='volcengine_tts'?20:download?100:1)*1024*1024;
    return (await readProviderResponse(response,maxBytes)).response;
   }catch(error){
-   if(generate)throw new ProviderOutcomeUnknownError();
+   if(generate){
+    const failure=error as {name?:string;code?:string;cause?:{code?:string}},code=failure?.cause?.code??failure?.code;
+    const reason=signal.aborted||failure?.name==='TimeoutError'?'供应商响应超时':code&&['ECONNRESET','ECONNREFUSED','ENOTFOUND','ETIMEDOUT','UND_ERR_CONNECT_TIMEOUT'].includes(code)?`网络连接异常：${code}`:'网络连接中断或响应未完整收到';
+    throw new ProviderOutcomeUnknownError(undefined,reason);
+   }
    throw error;
   }finally{controller.abort();}
  };

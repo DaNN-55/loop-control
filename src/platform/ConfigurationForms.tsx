@@ -7,11 +7,11 @@ import {InputBase} from '../ui/dan-ui/components/base/input/input';
 import {NativeSelect} from '../ui/dan-ui/components/base/select/select-native';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {videoProviders,isVideoProvider} from "../worker/videoProviderCatalog";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import type { Database, Json } from "../lib/database.types";
 import { HelpTip } from "../ui/HelpTip";
-import { ConfirmationModal } from "../ui/ConfirmationModal";
+import {ConfirmationModal,ConfirmationModalPresence} from "../ui/ConfirmationModal";
 import { useDialogFocus } from "../ui/useDialogFocus";
 import type { LocalSystemStatusReport } from "../observability/SystemStatusPanel";
 import { registeredAdapters, type LocalAdapterReadiness } from "../worker/registeredAdapters";
@@ -168,7 +168,7 @@ export function BlueprintConfigurationForm({ accountLayout = false, footerStatus
   <fieldset><legend>创作规则</legend><CreativeRuleFields source={form.advancedJson} readOnly={fieldsReadOnly} isDisabled={busy} showDefaults onChange={advancedJson=>{setForm(current=>({...current,advancedJson}));onDirtyChange?.(true);}}/></fieldset>
   {error&&!confirming?<p role="alert" className="form-error">{error}</p>:null}
   {!readOnly?<div className={accountLayout?'account-blueprint-footer':undefined}>{footerStatus}<div className="configuration-actions">{locked?<><Button size="sm" color="secondary" isDisabled={busy} onPress={()=>setEditing(true)}>修改</Button></>:<>{saveState}<Button size="sm" color="secondary" isDisabled={busy} onPress={reset}>{accountLayout?(dirty?"放弃修改":"取消编辑"):"撤销修改"}</Button><Button size="sm" color="primary" isDisabled={busy} onPress={()=>{try{blueprintFormToPolicy(form);setError('');setConfirming(true);}catch(cause){setError(cause instanceof Error?cause.message:'创作规则无效。');}}}>{busy?'保存中…':accountLayout?'保存通用规则':'保存蓝图'}</Button></>}</div></div>:null}
-  {confirming?<ConfirmationModal title={accountLayout ? "确认保存通用规则" : "确认保存蓝图"} confirmLabel={accountLayout ? "确认保存通用规则" : "确认保存蓝图"} isPending={busy} onCancel={()=>setConfirming(false)} onConfirm={save}><p>创作规则应用于之后新建的生产单；已有生产单保留原规则。</p>{error?<p role="alert" className="form-error">{error}</p>:null}</ConfirmationModal>:null}
+  <ConfirmationModalPresence>{confirming?<ConfirmationModal title={accountLayout ? "确认保存通用规则" : "确认保存蓝图"} confirmLabel={accountLayout ? "确认保存通用规则" : "确认保存蓝图"} isPending={busy} onCancel={()=>setConfirming(false)} onConfirm={save}><p>创作规则应用于之后新建的生产单；已有生产单保留原规则。</p>{error?<p role="alert" className="form-error">{error}</p>:null}</ConfirmationModal>:null}</ConfirmationModalPresence>
  </section>;
 }
 
@@ -231,13 +231,14 @@ export function EpisodeConfigurationRepairForm({ blocker, initialPolicy, isPendi
   </form>;
 }
 
-export function SeriesConfigurationForm({ headingContent, onRename, accountPolicy, currentVersion = 0, initialName, initialRules, isEditing, isPending, onCancel, onDirtyChange, onSave }: { headingContent?: ReactNode; onRename?: (name: string) => Promise<boolean | void>; accountPolicy?: Json; currentVersion?: number; initialName: string; initialRules: Json; isEditing: boolean; isPending: boolean; onCancel: () => void; onDirtyChange?: (dirty: boolean) => void; onSave: (name: string, rules: Json) => Promise<void> }) {
+export function SeriesConfigurationForm({ headingContent, onCreateEpisode, onRename, accountPolicy, currentVersion = 0, initialName, initialRules, isEditing, isPending, onCancel, onDirtyChange, onSave }: { headingContent?: ReactNode; onCreateEpisode?: () => void; onRename?: (name: string) => Promise<boolean | void>; accountPolicy?: Json; currentVersion?: number; initialName: string; initialRules: Json; isEditing: boolean; isPending: boolean; onCancel: () => void; onDirtyChange?: (dirty: boolean) => void; onSave: (name: string, rules: Json) => Promise<void> }) {
   const [name, setName] = useState(initialName);
   const [form, setForm] = useState<SeriesFormValues>(() => seriesRulesToForm(initialRules));
   const [savedName, setSavedName] = useState(initialName);
   const [savedForm, setSavedForm] = useState<SeriesFormValues>(() => seriesRulesToForm(initialRules));
   const [editing, setEditing] = useState(!isEditing);
   const [saving, setSaving] = useState(false);
+  const savingRef = useRef(false);
   const locked = isEditing && !editing;
   const busy = isPending || saving;
   const [error, setError] = useState("");
@@ -254,14 +255,16 @@ export function SeriesConfigurationForm({ headingContent, onRename, accountPolic
       if (!name.trim()) throw new Error("请填写系列名称。");
       const rules = seriesFormToRules(form);
       validateSeriesRules(rules);
-      setSaveConfirmationOpen(true);
+      if (isEditing) setSaveConfirmationOpen(true);
+      else void confirmSubmit();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "系列规则无法保存。");
     }
   }
 
   async function confirmSubmit() {
-    if (busy || locked) return;
+    if (busy || locked || savingRef.current) return;
+    savingRef.current = true;
     setSaving(true);
     let nameSaved = false;
     try {
@@ -284,7 +287,7 @@ export function SeriesConfigurationForm({ headingContent, onRename, accountPolic
     } catch (cause) {
       const message = cause instanceof Error ? cause.message : "系列规则无法保存。";
       setError(nameSaved ? `名称已保存，规则未应用：${message}` : message);
-    } finally { setSaving(false); }
+    } finally { savingRef.current = false; setSaving(false); }
   }
 
   function reset() {
@@ -321,8 +324,7 @@ export function SeriesConfigurationForm({ headingContent, onRename, accountPolic
     }
     return form[key] || accountDefaults[key] || "未设置";
   };
-  return <><header className="account-editor-heading"><h2>{isEditing ? savedName : "新建系列"}</h2>{isEditing ? <span className="account-save-state" role="status">已应用 · v{currentVersion}</span> : null}</header><form className={`configuration-form series-configuration-form${locked ? " is-locked" : ""}`} onChangeCapture={() => {if (!locked && !busy) {setDirty(true); onDirtyChange?.(true);}}} onSubmit={requestSubmit}>
-    <fieldset><legend>系列资料</legend><label><FieldLabel>{isEditing ? "系列显示名称" : "系列名称"}</FieldLabel><InputBase size="sm" aria-label={isEditing ? "系列显示名称" : "系列名称"} readOnly={locked || (isEditing && !onRename)} isDisabled={busy} onChange={(event) => setName(event.target.value)} placeholder="例如：城市观察短片" isRequired value={name} /></label>{headingContent}</fieldset>
+  const creativeRuleFields = (
     <fieldset><legend>创作规则</legend><p className="series-inheritance-note">定位和视觉风格优先使用系列值，留空时沿用账号通用规则。两处填写的限制同时生效。</p>
       <label><FieldLabel>系列定位<small className="series-rule-source">{ruleSource('positioning')}</small></FieldLabel><TextAreaBase readOnly={locked} disabled={busy} size="sm" aria-label="系列定位" onChange={(event) => setForm((current) => ({ ...current, positioning: event.target.value }))} placeholder={locked?undefined:inheritedPlaceholder("positioning") ?? "受众、主题与内容方向"} rows={2} value={locked ? savedValue("positioning") : form.positioning} /></label>
       <label><FieldLabel>内容格式{locked&&<small className="series-rule-source">{form.format?'来自系列规则':accountDefaults.format?'来自账号通用规则':'未设置'}</small>}</FieldLabel><InputBase readOnly={locked} isDisabled={busy} size="sm" aria-label="内容格式" onChange={(event) => setForm((current) => ({ ...current, format: event.target.value }))} placeholder={locked?undefined:inheritedPlaceholder("format") ?? "例如：9:16 竖屏，中文旁白"} value={locked ? savedValue("format") : form.format} /></label>
@@ -334,8 +336,12 @@ export function SeriesConfigurationForm({ headingContent, onRename, accountPolic
     ] as const).map(([key, label, placeholder]) => <label key={key}><FieldLabel>{label}{key==='visualStyle'?<small className="series-rule-source">{ruleSource(key)}</small>:locked&&<small className="series-rule-source">{form[key]?'来自系列规则':accountDefaults[key]?'来自账号通用规则':'未设置'}</small>}</FieldLabel><TextAreaBase readOnly={locked} disabled={busy} size="sm" aria-label={label} onChange={(event) => setForm((current) => ({...current, [key]: event.target.value}))} placeholder={locked?undefined:inheritedPlaceholder(key) ?? placeholder} rows={2} value={locked ? savedValue(key) : form[key]} /></label>)}</div>
     <label><FieldLabel>限制与禁用内容</FieldLabel><TextAreaBase readOnly={locked} disabled={busy} size="sm" aria-label="限制与禁用内容" onChange={(event) => setForm((current) => ({ ...current, restrictions: event.target.value }))} placeholder="不能出现的事实、表达、人物、素材或画面" rows={locked&&accountRestrictions&&seriesRestrictions?5:2} value={locked ? restrictionValues || "未设置" : form.restrictions} />{!locked&&accountRestrictions&&<small className="field-hint series-account-restriction">同时生效的账号限制 · {accountRestrictions}</small>}</label>
     </fieldset>
+  );
+  return <><header className="account-editor-heading"><h2>{isEditing ? savedName : "新建系列"}</h2>{isEditing ? <div className="series-header-actions"><span className="account-save-state" role="status">已应用 · v{currentVersion}</span>{locked && onCreateEpisode && <Button size="sm" color="primary" type="button" isDisabled={busy} onClick={onCreateEpisode}>新建生产单</Button>}</div> : null}</header><form className={`configuration-form series-configuration-form${locked ? " is-locked" : ""}`} onChangeCapture={() => {if (!locked && !busy) {setDirty(true); onDirtyChange?.(true);}}} onSubmit={requestSubmit}>
+    <fieldset><legend>系列资料</legend><label><FieldLabel>{isEditing ? "系列显示名称" : "系列名称"}</FieldLabel><InputBase size="sm" aria-label={isEditing ? "系列显示名称" : "系列名称"} readOnly={locked || (isEditing && !onRename)} isDisabled={busy} onChange={(event) => setName(event.target.value)} placeholder="例如：城市观察短片" isRequired value={name} /></label>{headingContent}</fieldset>
+    {isEditing ? creativeRuleFields : <Disclosure className="series-creation-rules" label="创作规则（选填）">{creativeRuleFields}</Disclosure>}
     {error && !saveConfirmationOpen ? <p className="form-error" role="alert">{error}</p> : null}
     <footer className="series-form-footer">{!locked ? <span className={`account-save-state${dirty ? " is-dirty" : ""}`} role="status">{busy ? "保存中…" : dirty ? "有未应用更改" : isEditing ? "修改中" : "未创建"}</span> : null}<div className="configuration-actions">{locked ? <Button size="sm" color="secondary" className="button button-secondary" onClick={() => setEditing(true)} type="button">修改</Button> : <><Button size="sm" color="secondary" className="button button-secondary" isDisabled={busy} onClick={()=>{if(!dirty||window.confirm(isEditing?"放弃当前系列的未保存修改？":"放弃新建系列的草稿？"))reset();}} type="button">{isEditing ? dirty?"放弃修改":"取消编辑" : "取消"}</Button><Button size="sm" color="primary" className="button button-primary" isDisabled={busy} type="submit">{busy ? "保存中…" : isEditing ? "保存系列设置" : "创建系列"}</Button></>}</div></footer>
-    {saveConfirmationOpen ? <ConfirmationModal confirmLabel={isEditing ? `确认保存为 v${currentVersion + 1}` : "确认创建系列"} isPending={busy} onCancel={() => setSaveConfirmationOpen(false)} onConfirm={confirmSubmit} pendingLabel="保存中…" title={isEditing ? "确认保存系列版本" : "确认创建系列"}>{error ? <p className="form-error" role="alert">{error}</p> : null}<section aria-label="本次保存影响" className="configuration-impact"><p>{isEditing ? `创建系列 v${currentVersion + 1}，供之后新建生产单选择；已有生产单继续使用冻结版本。` : "创建系列 v1，之后可在新建生产单时选择；不会改动已有生产单。"}</p></section></ConfirmationModal> : null}
+    <ConfirmationModalPresence>{saveConfirmationOpen ? <ConfirmationModal confirmLabel={isEditing ? `确认保存为 v${currentVersion + 1}` : "确认创建系列"} isPending={busy} onCancel={() => setSaveConfirmationOpen(false)} onConfirm={confirmSubmit} pendingLabel="保存中…" title={isEditing ? "确认保存系列版本" : "确认创建系列"}>{error ? <p className="form-error" role="alert">{error}</p> : null}<section aria-label="本次保存影响" className="configuration-impact"><p>{isEditing ? `创建系列 v${currentVersion + 1}，供之后新建生产单选择；已有生产单继续使用冻结版本。` : "创建系列 v1，之后可在新建生产单时选择；不会改动已有生产单。"}</p></section></ConfirmationModal> : null}</ConfirmationModalPresence>
   </form></>;
 }

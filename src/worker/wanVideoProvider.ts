@@ -1,3 +1,5 @@
+import {VideoGenerationError} from './videoGenerationError.js';
+import {isDefiniteProviderRejection} from './providerOutcome.js';
 import {videoVisualInputProblem,type VideoOutputRatio,type VideoVisualInputSelection} from '../videoVisualInputs.js';
 import {isWanGenerationSettings,type WanGenerationSettings} from '../videoGenerationSettings.js';
 import {defaultWanModel,defaultWanModelSettings,wanReferenceMode,wanReferenceModel,wanVideoModel,wanVideoParameters} from '../wanVideoModels.js';
@@ -65,15 +67,15 @@ export async function generateWanVideo(input: WanVideoInput): Promise<Uint8Array
         headers:{Authorization:`Bearer ${apiKey}`,'Content-Type':'application/json','X-DashScope-Async':'enable'},
         body:JSON.stringify({model,input:{prompt:input.prompt.trim(),...(settings.negativePrompt?{negative_prompt:settings.negativePrompt}:{}),...media},parameters}),
       });
-      return (await supplierJson(response)).task_id;
+      return (await supplierJson(response,'提交',[input.credentials,apiKey])).task_id;
     },
     query:async taskId=>{
-      const data=await supplierJson(await input.fetcher(`${origin}/api/v1/tasks/${encodeURIComponent(taskId)}`,{headers:{Authorization:`Bearer ${apiKey}`},signal:AbortSignal.timeout(30_000)}));
+      const data=await supplierJson(await input.fetcher(`${origin}/api/v1/tasks/${encodeURIComponent(taskId)}`,{headers:{Authorization:`Bearer ${apiKey}`},signal:AbortSignal.timeout(30_000)}),'查询',[input.credentials,apiKey]);
       if(data.task_status==='SUCCEEDED'){
         if(typeof data.video_url!=='string')throw Error('万相任务成功但缺少视频地址；请按原任务恢复下载。');
         return{url:data.video_url};
       }
-      if(!['PENDING','RUNNING'].includes(String(data.task_status)))throw Error(`万相任务状态 ${String(data.task_status)}；费用预留已保留，重做前请核对。`);
+      if(!['PENDING','RUNNING'].includes(String(data.task_status)))throw new VideoGenerationError(`万相任务状态 ${String(data.task_status)}${typeof data.code==='string'?`（${data.code}）`:''}${typeof data.message==='string'?`：${safeDetail(data.message,[input.credentials,apiKey])}`:''}；费用预留已保留，重做前请核对。`,'accepted');
       return{phase:data.task_status==='PENDING'?'queued':'processing'};
     },
     pollDelayMs:attempt=>Math.min(5_000+attempt*1_000,10_000),
@@ -82,18 +84,26 @@ export async function generateWanVideo(input: WanVideoInput): Promise<Uint8Array
   });
 }
 
-async function supplierJson(response: Response): Promise<Record<string, unknown>> {
-  if (!response.ok) throw new Error(`百炼万相请求失败：HTTP ${response.status}。`);
-  const data: unknown = await response.json();
-  if (!data || typeof data !== "object" || !((data as Record<string, unknown>).output) || typeof (data as Record<string, unknown>).output !== "object") throw new Error("百炼万相响应缺少 output。");
-  return (data as { output: Record<string, unknown> }).output;
+function safeDetail(value:string,secrets:string[]){
+ if(value.includes('Traceback (most recent call last)'))value='供应商内部执行错误：'+(value.trim().split('\n').at(-1)??'AlgoError');
+ for(const secret of secrets.filter(Boolean))value=value.split(secret).join('<REDACTED>');
+ return value.replace(/Bearer\s+[^\s,;"']+/gi,'Bearer <REDACTED>').replace(/data:[^\s"']+/gi,'<MEDIA>').replace(/https?:\/\/[^\s"']+/gi,'<URL>').replace(/[\u0000-\u001f]/g,' ').slice(0,500);
+}
+async function supplierJson(response:Response,phase:'提交'|'查询',secrets:string[]):Promise<Record<string,unknown>>{
+ let data:any;try{data=await response.json();}catch{/* Do not expose raw responses. */}
+ if(!response.ok||data?.code){
+  const detail=safeDetail([data?.code,data?.message].filter(v=>typeof v==='string').join(' · '),secrets),request=data?.request_id;
+  throw new VideoGenerationError(`百炼万相${phase}失败：HTTP ${response.status}${detail?`，${detail}`:'。'}${typeof request==='string'&&/^[a-zA-Z0-9_-]{1,128}$/.test(request)?` 请求编号 ${request}`:''}`,phase==='查询'?'accepted':isDefiniteProviderRejection(response.status)?'rejected':'unknown');
+ }
+ if(!data||typeof data!=='object'||!data.output||typeof data.output!=='object')throw new VideoGenerationError('百炼万相响应缺少 output。',phase==='查询'?'accepted':'unknown');
+ return data.output;
 }
 
 function officialVideoUrl(value: string): URL {
   const url = new URL(value);
   // This exact accelerated bucket is documented by Alibaba and was returned by
   // the authenticated task API. Keep redirect and credential checks unchanged.
-  const allowedHost = url.hostname === "dashscope-a717.oss-accelerate.aliyuncs.com" || /^dashscope-result-[a-z0-9-]+\.oss-[a-z0-9-]+\.aliyuncs\.com$/.test(url.hostname);
+  const allowedHost = ["dashscope-a717.oss-accelerate.aliyuncs.com","dashscope-f4de.oss-accelerate.aliyuncs.com","dashscope-7c2c.oss-cn-shanghai.aliyuncs.com"].includes(url.hostname) || /^dashscope-result-[a-z0-9-]+\.oss-[a-z0-9-]+\.aliyuncs\.com$/.test(url.hostname);
   if (url.protocol !== "https:" || url.username || url.password || url.port || !allowedHost) throw new Error("万相视频地址不属于官方结果存储域名。");
   return url;
 }

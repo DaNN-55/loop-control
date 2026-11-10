@@ -1,3 +1,4 @@
+import {accountDeletionOperations} from './accountDeletion.js';
 import {createStorageContainer} from './seriesDirectories.js';
 import {createAccountDirectory} from './accountCreation.js';
 import {creativeAccountRules} from '../creativeAccountRules.js';
@@ -78,7 +79,7 @@ export async function executeConfiguration(pool:Pool,session:OwnerSession,body:R
    if(command==='updateBlueprint'&&body.expectedRevision!==account.rows[0].revision)throw new ConfigurationError(409,'蓝图已变化，请刷新后重试。');
   }
   // Capture exact roots before their blueprints are deleted; filesystem writes wait for COMMIT.
-  if(command==='deleteAccount'&&(await client.query("SELECT 1 FROM local_identity.episode_creation_intents WHERE account_id=$1 AND result IS NULL UNION ALL SELECT 1 FROM local_identity.container_creation_intents WHERE account_id=$1 AND result IS NULL UNION ALL SELECT 1 FROM local_identity.account_creation_intents WHERE account_id=$1 AND result IS NULL UNION ALL SELECT 1 FROM local_identity.episode_deletion_intents i WHERE i.manifest->>'accountId'=$1::text AND i.state IN ('prepared','committed')",[data.accountId])).rowCount)throw new ConfigurationError(409,'账号有未完成的目录创建或删除操作，请先恢复原操作。');
+  if(command==='deleteAccount'){const operations=await accountDeletionOperations(client,String(data.accountId));if(operations.creationCount||operations.deletionCount)throw new ConfigurationError(409,'账号有未完成的目录创建或删除操作，请先恢复原操作。');}
   const registeredAccountRoot=command==='deleteAccount'?(await client.query('SELECT actual_root,device_id,inode_id FROM local_identity.account_asset_directories WHERE account_id=$1',[data.accountId])).rows[0]:undefined;
   const registeredContainers=command==='deleteAccount'?(await client.query('SELECT directory_relative_path,device_id,inode_id FROM local_identity.account_storage_containers WHERE account_id=$1',[data.accountId])).rows:[];
   const accountAssetRoots=command==='deleteAccount'?(await client.query("SELECT COALESCE(d.actual_root,b.policy->>'asset_root') asset_root FROM public.accounts a LEFT JOIN public.account_blueprint_versions b ON b.id=a.current_blueprint_version_id LEFT JOIN local_identity.account_asset_directories d ON d.account_id=a.id WHERE a.id=$1",[data.accountId])).rows.map(row=>row.asset_root):[];

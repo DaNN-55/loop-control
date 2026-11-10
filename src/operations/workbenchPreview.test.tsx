@@ -1,7 +1,7 @@
 import {act,cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
 import {afterEach,beforeEach,expect,it,vi} from 'vitest';
 import {WorkbenchArtwork,useWorkbenchPreview} from './workbenchPreview';
-import type {EpisodeProductionSnapshot} from '../episodes/EpisodeProductionContainer';
+import type {EpisodeProductionSnapshot} from '../episodes/episodeSnapshot';
 beforeEach(()=>{vi.spyOn(HTMLMediaElement.prototype,'pause').mockImplementation(()=>{});vi.spyOn(HTMLMediaElement.prototype,'play').mockImplementation(function(this:HTMLMediaElement){Object.defineProperty(this,'paused',{value:false,configurable:true});this.dispatchEvent(new Event('play'));return Promise.resolve();});});
 afterEach(()=>{cleanup();vi.unstubAllGlobals();vi.restoreAllMocks();});
 const artifact=(id:string,type:string,path:string)=>({id,artifact_type:type,relative_path:path,sha256:id.repeat(64),created_at:'2026-10-28T00:00:00Z'}) as EpisodeProductionSnapshot['artifacts'][number];

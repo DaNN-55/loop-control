@@ -1,7 +1,19 @@
-.workspace-visual-task{display:flex;flex-wrap:wrap;align-items:flex-start;gap:8px;min-width:0;margin-block:12px}
-.workspace-visual-task>p,.workspace-visual-task>details{flex-basis:100%;min-width:0;margin:0;overflow-wrap:anywhere;line-height:1.6}
-.workspace-visual-task>details p{margin:6px 0 0;overflow-wrap:anywhere}
-.workspace-visual-task>details summary{cursor:pointer}
+.workspace-visual-task{display:flex;flex-direction:column;gap:8px;min-width:0;margin-block:8px}
+.workspace-task-summary{display:flex;align-items:center;gap:12px;min-width:0;padding:8px 10px;border:1px solid var(--lc-line);border-radius:6px;background:var(--lc-surface)}
+.workspace-task-summary>p{flex:1;min-width:0;margin:0;font-size:12px;line-height:1.6;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;overflow-wrap:anywhere}
+.workspace-task-summary>p[role=alert]{color:var(--lc-danger,#b42318)}
+.workspace-task-actions{display:flex;align-items:center;flex:none;flex-wrap:wrap;justify-content:flex-end;gap:6px}
+.workspace-task-overlay .workspace-task-backdrop{z-index:130;align-items:center;padding:24px;box-sizing:border-box}
+.workspace-task-overlay .workspace-task-detail{width:min(600px,calc(100vw - 32px));max-width:600px;max-height:calc(100dvh - 48px);display:flex;flex-direction:column;min-width:0}
+.workspace-task-detail>header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex:none}
+.workspace-task-detail-body{overflow:auto;min-height:0;font-size:13px;line-height:1.7;overflow-wrap:anywhere}
+.workspace-task-detail-body>p{margin:12px 0}
+.workspace-task-diagnostic{color:var(--lc-danger,#b42318)}
+.workspace-task-metadata{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:10px 16px;margin-block:16px}
+.workspace-task-metadata dt{color:var(--lc-muted)}
+.workspace-task-metadata dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.workspace-task-metadata small{display:block;color:var(--lc-muted);font-size:12px}
+@media(max-width:640px){.workspace-task-summary{align-items:flex-start;flex-wrap:wrap}.workspace-task-summary>p{flex-basis:100%}.workspace-task-actions{margin-inline-start:auto}.workspace-task-metadata{grid-template-columns:1fr;gap:4px}.workspace-task-metadata dd{margin-bottom:8px}}
 .workspace-visual-progress{flex-basis:100%;display:flex;align-items:center;gap:9px;font-size:var(--text-xs,12px)}
 .workspace-visual-progress-heading{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px 12px;flex:1;min-width:0}
 .workspace-visual-progress-heading>span:last-child{font-variant-numeric:tabular-nums}

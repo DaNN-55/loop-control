@@ -7,7 +7,7 @@ import {workspaceTestMedia} from './workspaceTestMedia.fixture';
 import {productionScriptTemplate} from '../reviews/productionScript';
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each([false,true])('fresh authored first video uses current preparation without a legacy approval (actual voice=%s)',async withVoice=>{
- const script=productionScriptTemplate.replace('镜头类型：b_roll','镜头类型：a_roll');
+ const script=productionScriptTemplate.replace('### 段落 01','### 段落 01\n- 镜头类型：a_roll');
  const f=await formalWorkflowFixture({controlled:true,scriptText:script});
  try{
   expect((await f.send('start')).status).toBe(200);
@@ -42,7 +42,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each([false,true])('fresh
 
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('replanning discards current voice adoption without discarding historical decisions, then adopts the first new voice',async()=>{
- const script=productionScriptTemplate.replace('镜头类型：b_roll','镜头类型：a_roll');
+ const script=productionScriptTemplate.replace('### 段落 01','### 段落 01\n- 镜头类型：a_roll');
  const f=await formalWorkflowFixture({controlled:true,scriptText:script});
  try{
   expect((await f.send('start')).status).toBe(200);

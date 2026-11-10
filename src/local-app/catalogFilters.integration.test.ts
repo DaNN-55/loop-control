@@ -31,12 +31,17 @@ beforeAll(()=>{
  CREATE TABLE public.pre_render_review_member_decisions(review_package_id uuid,member_key text);
  CREATE TABLE public.tasks(id uuid PRIMARY KEY,episode_id uuid,task_type text,status text,input_snapshot jsonb,last_result jsonb,created_at timestamptz,invalidated_at timestamptz,completed_at timestamptz,claimed_at timestamptz);
  CREATE TABLE public.artifacts(episode_id uuid);
- CREATE TABLE local_identity.production_workspaces(id uuid PRIMARY KEY,episode_id uuid,script_revision_id uuid,storyboard_package_id uuid,revision bigint,content_sha256 text,native_edit_revision bigint);
+ CREATE TABLE local_identity.production_workspaces(id uuid PRIMARY KEY,episode_id uuid,script_revision_id uuid,storyboard_package_id uuid,revision bigint,content_sha256 text,native_edit_revision bigint,updated_at timestamptz);
  CREATE TABLE local_identity.workspace_preparations(package_id uuid,episode_id uuid,script_revision_id uuid);
  CREATE TABLE local_identity.workspace_exports(id uuid PRIMARY KEY,workspace_id uuid,episode_id uuid,project_content_version bigint,content_sha256 text,status text,artifact jsonb,checks jsonb,confirmed_at timestamptz,created_at timestamptz);
- CREATE TABLE local_identity.workspace_export_issues(workspace_id uuid,resolved_at timestamptz);
+ CREATE TABLE local_identity.workspace_export_issues(workspace_id uuid,resolved_at timestamptz,created_at timestamptz);
  CREATE TABLE local_identity.workspace_deliveries(id uuid,workspace_id uuid,export_id uuid,task_id uuid,created_at timestamptz);
 
+ CREATE TABLE local_identity.workspace_narrations(workspace_id uuid,task_id uuid);
+ CREATE TABLE local_identity.workspace_audio_preparations(workspace_id uuid,task_id uuid);
+ CREATE TABLE local_identity.workspace_visual_candidates(id uuid,workspace_id uuid,task_id uuid,target_item_id text,request_snapshot jsonb,dismissed_at timestamptz,created_at timestamptz);
+ CREATE TABLE local_identity.workspace_narration_requests(workspace_id uuid,task_id uuid);
+ CREATE TABLE local_identity.workspace_narration_submissions(task_id uuid,outcome text);
  CREATE TABLE local_identity.historical_episodes(id uuid);
  CREATE TABLE local_identity.historical_tasks(id uuid);
  CREATE FUNCTION local_identity.is_historical_episode(uuid) RETURNS boolean LANGUAGE sql STABLE AS 'SELECT EXISTS(SELECT 1 FROM local_identity.historical_episodes WHERE id=$1)';
@@ -86,8 +91,8 @@ it('searches all matching records before pagination, treats SQL wildcards litera
  expect(catalog({q:'not present',page:999})).toMatchObject({episodes:[],total:0,page:1});
 });
 it('sorts across pages with a stable id tie break and bounds filtered page counts',()=>{
- expect(catalog().episodes[0].id).toBe(episode(29));
- const oldest=catalog({sort:'oldest'});expect(oldest.episodes.slice(0,3).map(e=>e.id)).toEqual([episode(33),episode(34),episode(35)]);
+ expect(catalog().episodes[0].id).toBe(episode(34));
+ const oldest=catalog({sort:'oldest'});expect(oldest.episodes.slice(0,3).map(e=>e.id)).toEqual([episode(33),episode(1),episode(2)]);
  expect(catalog({sort:'oldest',page:2}).episodes).toHaveLength(12);
  const titles=catalog({sort:'title'});expect(titles.episodes[0].id).toBe(episode(23));
  expect(catalog({q:'作品',page:999}).page).toBe(2);
@@ -156,5 +161,13 @@ it('projects workspace current export and delivery facts without blocking on unu
  expect(rows.get(episode(36))?.actionStatus).toBe('running');expect(rows.get(episode(37))).toMatchObject({actionStatus:'review',reviewPending:true});expect(rows.get(episode(38))?.actionStatus).toBe('blocked');expect(rows.get(episode(39))?.actionStatus).toBe('done');expect(rows.get(episode(40))?.actionStatus).toBe('running');
  expect(catalog({q:'四步',status:'review'}).episodes.map(e=>e.id)).toEqual([episode(37)]);expect(catalog({q:'四步',view:'operations'}).blocked.items.map(row=>row.blocker.code)).toEqual(['DELIVERY_FAILED']);
  psql(`UPDATE local_identity.production_workspaces SET revision=2,content_sha256=repeat('b',64) WHERE episode_id='${episode(37)}';`);expect(catalog({q:'四步',status:'review'}).episodes).toEqual([]);
+ psql(`INSERT INTO local_identity.workspace_narrations VALUES('40000000-0000-4000-8000-000000000036','${taskId(36)}');
+ INSERT INTO local_identity.workspace_export_issues VALUES('40000000-0000-4000-8000-000000000037',null,'2026-01-05');
+ UPDATE local_identity.production_workspaces SET updated_at='2026-01-06' WHERE episode_id='${episode(36)}';`);
+ const active=catalog({q:'四步',view:'operations'});expect(active.episodes[0].id).toBe(episode(36));expect(new Date(active.episodes[0].updated_at).toISOString()).toBe('2026-01-06T00:00:00.000Z');
+ expect(active.operationRows.find(r=>r.episodeId===episode(36))).toMatchObject({actionStatus:'blocked',blockerCount:1});
+ expect(active.operationRows.find(r=>r.episodeId===episode(37))).toMatchObject({actionStatus:'blocked',blockerCount:1});
+ psql(`UPDATE local_identity.workspace_narrations SET task_id=null;UPDATE local_identity.workspace_export_issues SET resolved_at='2026-01-07';`);
+ expect(catalog({q:'四步'}).operationRows.find(r=>r.episodeId===episode(37))?.actionStatus).toBe('running');
  psql(`UPDATE public.episodes SET archived_at='2026-01-04' WHERE id='${episode(38)}';`);expect(catalog({q:'四步',visibility:'archived'}).operationRows[0]).toMatchObject({actionStatus:'draft',blockerCount:0,reviewPending:false});
 });

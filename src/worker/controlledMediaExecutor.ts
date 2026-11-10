@@ -117,11 +117,11 @@ async function mediaBytes(input: {
         const frame=await readFrame(entry,entry.mimeType,entry.role==='firstFrame'?video.composition:undefined);
         return {...entry,image:frame.image,mimeType:frame.imageMime};
       }));
-      return {bytes:await generateOfficialVideo({provider:taskPackage.provider,model:taskPackage.model,credentials:input.officialVideoCredentials!,fetcher:input.fetcher,visualInputs,visualMode:video.visualMode,referenceRatio:video.referenceRatio,prompt:video.prompt,durationSeconds:video.durationSeconds,reserve:input.reserveWan,recordSubmission:input.recordWanSubmission,onProgress:input.recordVideoProgress})};
+      return {bytes:await generateOfficialVideo({provider:taskPackage.provider,resolution:video.resolution,model:taskPackage.model,credentials:input.officialVideoCredentials!,fetcher:input.fetcher,visualInputs,visualMode:video.visualMode,referenceRatio:video.referenceRatio,prompt:video.prompt,durationSeconds:video.durationSeconds,reserve:input.reserveWan,recordSubmission:input.recordWanSubmission,onProgress:input.recordVideoProgress})};
     }
     if(!video.firstFrame||!video.imageMime)throw Error('缺少冻结首帧。');
     const {image,imageMime}=await readFrame(video.firstFrame,video.imageMime,video.composition);
-    if (isVideoProvider(taskPackage.provider)) return {bytes: await generateOfficialVideo({provider: taskPackage.provider, model: taskPackage.model, credentials: input.officialVideoCredentials!, fetcher: input.fetcher, image, imageMime, prompt: video.prompt, durationSeconds: video.durationSeconds, reserve: input.reserveWan, recordSubmission: input.recordWanSubmission, onProgress: input.recordVideoProgress})};
+    if (isVideoProvider(taskPackage.provider)) return {bytes: await generateOfficialVideo({provider: taskPackage.provider,resolution:video.resolution, model: taskPackage.model, credentials: input.officialVideoCredentials!, fetcher: input.fetcher, image, imageMime, prompt: video.prompt, durationSeconds: video.durationSeconds, reserve: input.reserveWan, recordSubmission: input.recordWanSubmission, onProgress: input.recordVideoProgress})};
     return { bytes: await generateWanVideo({ model:taskPackage.model,settings:video.settings,credentials: input.bailianCredentials!, fetcher: input.fetcher, image, imageMime, prompt: video.prompt, durationSeconds: video.durationSeconds, reserve: input.reserveWan, recordSubmission: input.recordWanSubmission, onProgress: input.recordVideoProgress }) };
   }
   if (taskPackage.provider === "volcengine_tts" && taskPackage.media?.adapter === "volcengine_tts") {
@@ -220,7 +220,11 @@ async function validateTemporaryMedia(input: Parameters<typeof executeControlled
   try {
     await writeFile(path, bytes);
     if (input.taskPackage.media && "wanVideo" in input.taskPackage.media) {
-      await input.validateMp4(path, input.taskPackage.media.wanVideo.durationSeconds);
+      // MiniMax billing seconds can exceed encoded duration. Workspace output is a
+      // candidate: retain valid media at its measured length; adoption keeps its
+      // existing coverage guard. Legacy production still requires the full length.
+      const candidate=input.taskPackage.provider==='minimax'&&input.taskPackage.media.wanVideo.candidateOnly===true;
+      await input.validateMp4(path, candidate?0.001:input.taskPackage.media.wanVideo.durationSeconds);
       return undefined;
     }
     if (input.taskPackage.provider === "pexels" && input.taskPackage.media?.adapter === "pexels_video") {

@@ -73,3 +73,10 @@ html[data-interface="impeccable"] .impeccable-app.product-ui .maintenance-embedd
 html[data-interface="impeccable"] .impeccable-app.product-ui .maintenance-embedded>.maintenance-panel-content{padding:0}
 
 .workspace-recent-notifications{border-top:1px solid var(--lc-line);padding-top:12px;margin-top:12px}.workspace-recent-notifications h3{padding-inline:16px;font-size:12px;font-weight:500;color:var(--lc-muted);margin:0 0 8px}
+
+/* Shared drawer layout survives retirement of the six-node production page. */
+.impeccable-app.product-ui .lc-production-return{min-height:56px;gap:12px;padding-block:0}
+.production-return-tools{margin-left:auto;display:flex;align-items:center;gap:12px;min-width:0;--lc-icon-control-size:32px}
+.impeccable-app.product-ui .production-return-tools>.drawer-close{position:static;inset:auto;padding:0}
+.impeccable-app .sidebar-utilities{grid-template-columns:repeat(2,minmax(0,1fr))}.impeccable-app[data-sidebar="collapsed"] .sidebar-utilities{grid-template-columns:1fr}
+@media(max-width:850px){.impeccable-app.product-ui .lc-production-return>span{display:none}.production-return-tools{gap:6px}}

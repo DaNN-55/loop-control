@@ -26,6 +26,14 @@ html[data-interface="impeccable"] .impeccable-app.product-ui [data-compact-workf
 .workspace-thumbnail-select:hover{border-color:var(--lc-line-strong)}
 .workspace-thumbnail-select[aria-pressed=true]{border-color:var(--lc-accent);outline:1px solid var(--lc-accent);outline-offset:0}
 .workspace-thumbnail-select:focus-visible{outline:2px solid var(--lc-accent);outline-offset:2px}
+.workspace-thumbnail-select[data-arriving]{animation:workspace-candidate-arrive 160ms ease-out}
+.workspace-thumbnail-select[data-adoption-feedback]{position:relative}
+.workspace-thumbnail-select[data-adoption-feedback]::after{content:'';position:absolute;inset:0;border:2px solid var(--lc-success);border-radius:inherit;pointer-events:none;animation:workspace-adoption-feedback 300ms ease-out both}
+.workspace-thumbnail-select[data-adoption-feedback] .workspace-thumbnail-adopted{animation:workspace-adoption-check 160ms ease-out}
+@keyframes workspace-candidate-arrive{from{opacity:.35}to{opacity:1}}
+@keyframes workspace-adoption-feedback{from{opacity:1}to{opacity:0}}
+@keyframes workspace-adoption-check{from{opacity:.35;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){.workspace-thumbnail-select[data-arriving],.workspace-thumbnail-select[data-adoption-feedback]::after,.workspace-thumbnail-select[data-adoption-feedback] .workspace-thumbnail-adopted{animation:none}.workspace-thumbnail-select[data-adoption-feedback]::after{display:none}}
 .workspace-thumbnail-media{display:grid;grid-template:minmax(0,1fr) / minmax(0,1fr);place-items:center;height:56px;overflow:hidden;background:var(--lc-bg)}
 .workspace-thumbnail-media>img,.workspace-thumbnail-media>video{display:block;width:100%;height:100%;object-fit:cover}
 .workspace-thumbnail-caption{display:flex;align-items:center;justify-content:space-between;padding:2px 6px;min-height:22px;font-size:12px;font-variant-numeric:tabular-nums}
@@ -238,3 +246,23 @@ html[data-interface="impeccable"] .product-ui .workspace-result-actions>button[d
 .workspace-candidate-actions .workspace-result-more-content>details>summary>small{display:block;margin-top:2px;color:var(--lc-muted);font-size:12px;line-height:inherit}
 .workspace-duration-follow{color:var(--lc-muted);font-size:12px;font-weight:400}
 .workspace-composer-settings .workspace-duration-locked{background:var(--lc-surface-2)!important;color:var(--lc-muted)}
+
+.workspace-result-footer:has(>.workspace-adoption-duration-warning){flex-wrap:wrap}
+.workspace-adoption-duration-warning{display:flex;flex-basis:100%;align-items:center;flex-wrap:wrap;gap:8px;margin-block:4px;color:var(--lc-ink)}
+.workspace-adoption-duration-warning p{margin:0;line-height:1.6}
+
+/* Candidate tools stay beside the preview; adoption and withdrawal stay below it. */
+.workspace-candidate-tools{z-index:2;max-width:calc(100% - 20px);flex-wrap:wrap;justify-content:flex-end;gap:4px}
+.workspace-candidate-tools :is(button,a){position:static!important;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;gap:4px;width:32px;min-width:32px;min-height:32px;height:32px;padding:6px!important;border:0!important;box-shadow:none!important;border-radius:6px;background:var(--lc-surface)!important;color:var(--lc-muted);font-size:12px!important}
+.workspace-candidate-tools .workspace-candidate-tool-first-frame{width:auto;padding-inline:8px!important;color:var(--lc-ink)}
+.workspace-candidate-tools :is(button,a):hover:not(:disabled){background:var(--lc-accent-soft)!important;color:var(--lc-accent)}
+html[data-interface="impeccable"] .product-ui .workspace-candidate-tools .workspace-candidate-tool-remove:is(:hover,[data-hovered]):not(:disabled){background:var(--lc-danger-soft)!important;color:var(--lc-danger)!important}
+html[data-interface="impeccable"] .product-ui .workspace-candidate-tools .workspace-candidate-tool-remove:is(:hover,[data-hovered]):not(:disabled) svg{color:inherit!important}
+.workspace-candidate-tools :is(button,a):focus-visible{outline:2px solid var(--lc-accent);outline-offset:2px}
+.workspace-result-footer .workspace-candidate-used-status{color:var(--lc-success)}
+.workspace-result-actions>.workspace-candidate-withdraw,.workspace-result-actions>.workspace-candidate-replace{border:0!important;background:transparent!important;padding-inline:0!important;box-shadow:none!important;font-size:12px!important;color:var(--lc-muted)!important}
+.workspace-result-actions>.workspace-candidate-withdraw:hover,.workspace-result-actions>.workspace-candidate-replace:hover{color:var(--lc-accent)!important}
+.workspace-candidate-source{font-size:12px;color:var(--lc-muted);overflow-wrap:anywhere}
+.workspace-candidate-trim-popover .workspace-adoption-settings{display:grid;gap:12px}
+.workspace-candidate-trim-popover .workspace-visual-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media(pointer:coarse){.workspace-candidate-tools :is(button,a){min-width:40px;min-height:40px;height:40px}}

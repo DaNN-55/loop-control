@@ -1,5 +1,5 @@
 import type {ProductionSelection} from '../productionSelection';
-interface SpeechSettings {selection:ProductionSelection|null;voice:string;languageCode:string;speakingRate:number}
+export interface SpeechSettings {selection:ProductionSelection|null;voice:string;languageCode:string;speakingRate:number}
 function isSpeechSettings(value:unknown):value is SpeechSettings {
  if(!value||typeof value!=='object')return false;
  const fields=value as Record<string,unknown>,selection=fields.selection;

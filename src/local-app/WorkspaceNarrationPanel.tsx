@@ -22,7 +22,7 @@ import {NativeSelect} from '../ui/dan-ui/components/base/select/select-native';
 import type {ProductionWorkspace,WorkspaceNarration} from '../productionWorkspace';
 import type {ProductionService} from '../connections/serviceCatalog';
 import {useProductionServiceCatalog} from './useProductionServiceCatalog';
-import {ConfirmationModal} from '../ui/ConfirmationModal';
+import {ConfirmationModal,ConfirmationModalPresence} from '../ui/ConfirmationModal';
 import './workspace-narration-settings.css';
 interface NarrationMaterial {id:string;source_path:string;storage_path?:string;material_type:string;material_purpose?:string|null}
 interface Track {id:string;track_kind:string;cue_id:string|null;source_material_revision_id?:string|null;relative_path?:string}
@@ -141,7 +141,7 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
   }catch(e){setError(e instanceof Error?e.message:'采用未完成。');}finally{setBusy(false);}
  }
  async function reconcile(recover=false){setBusy(true);setError('');try{if(recover&&n.generationTask)await reconcileWorkspaceOutput(episodeId,n.generationTask);onChanged((await localRequest(`episodes/${encodeURIComponent(episodeId)}/workspace`)).workspace);}catch(e){setError(e instanceof Error?e.message:'口播状态未能核对，请重试。');}finally{setBusy(false);}}
- async function adopt(candidateId:string,restore=false){setError('');try{await review.prepare(candidateId,'use-candidate',undefined,restore);}catch(e){setError(e instanceof Error?e.message:'采用未完成。');}}
+ async function adopt(candidateId:string,restore=false){setError('');try{await review.prepare(candidateId,restore);}catch(e){setError(e instanceof Error?e.message:'采用未完成。');}}
  async function confirmAdoption(){setError('');try{await review.confirm((changed,plan)=>{if(plan.restoration){const restored=changed.narration?.find(v=>v.shotId===n.shotId);if(restored)setText(restored.text);}});}catch(e){setError(e instanceof Error?e.message:'采用未完成。');}}
  async function withdraw(){
   setBusy(true);setError('');review.cancel();
@@ -235,7 +235,7 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
     })}
    </div>
   </section>}
-  {plan&&needsImpactDialog&&createPortal(<div className="workspace-visual-adoption-overlay">
+  <ConfirmationModalPresence>{plan&&needsImpactDialog&&createPortal(<div className="workspace-visual-adoption-overlay">
    <ConfirmationModal title={plan.restoration?'恢复口播前核对':'采用前核对'} confirmLabel="确认采用" isPending={busy||review.pending} confirmDisabled={disabled}
     onConfirm={confirmAdoption} onCancel={cancelAdoption}>
     {plan.restoration&&<div className="workspace-candidate-impact-details">
@@ -244,15 +244,15 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
     </div>}
     <div className="workspace-candidate-impact-details"><WorkspaceCandidateImpactDetails plan={plan}/></div>
    </ConfirmationModal>
-  </div>,document.querySelector('.app-shell')??document.body)}
-  {manualReview&&expanded&&createPortal(<div className="workspace-visual-adoption-overlay">
+  </div>,document.querySelector('.app-shell')??document.body)}</ConfirmationModalPresence>
+  <ConfirmationModalPresence>{manualReview&&expanded&&createPortal(<div className="workspace-visual-adoption-overlay">
    <ConfirmationModal title="采用人工口播前核对" confirmLabel="确认采用" isPending={busy} confirmDisabled={disabled}
     onConfirm={confirmManualReview} onCancel={()=>setManualReview(null)}>
     {manualReview.durationSeconds!=null&&<p>录音时长 {manualReview.durationSeconds.toFixed(2)} 秒。</p>}
     <p>采用后请核对镜头时长和字幕时序。</p>
     {error&&<p role="alert">{error}</p>}
    </ConfirmationModal>
-  </div>,document.querySelector('.app-shell')??document.body)}
+  </div>,document.querySelector('.app-shell')??document.body)}</ConfirmationModalPresence>
   {mode==='tts'&&n.generationTask&&<WorkspaceVisualTaskStatus task={n.generationTask} label="口播" taskNoun="口播任务" resumeLabel="恢复口播任务" disabled={disabled} onRefresh={()=>void reconcile()} onReconcile={()=>void reconcile(true)} onResume={()=>{}}/>}
 
   </div></div>

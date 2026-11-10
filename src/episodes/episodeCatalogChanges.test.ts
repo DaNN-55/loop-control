@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { episodeCatalogChanged } from './episodeCatalog';
-import type { EpisodeProductionSnapshot } from './EpisodeProductionContainer';
+import type { EpisodeProductionSnapshot } from './episodeSnapshot';
 import { vi } from 'vitest';
 vi.mock('../lib/viewTransport', () => ({ viewTransport: {} }));
 const episode = { id: 'episode-one', stage: 'waiting_input' };

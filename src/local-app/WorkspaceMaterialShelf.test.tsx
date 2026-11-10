@@ -29,3 +29,14 @@ it('opens a tile preview without changing its selection and keeps the close acti
  expect(image.getAttribute('aria-pressed')).toBe('true');
  expect(screen.getByRole('button',{name:'收起本期素材'})).toBeTruthy();
 });
+
+it('shows only the explicitly current script while retaining all media',async()=>{
+ vi.stubGlobal('fetch',vi.fn(async()=>new Response('当前脚本')));
+ const scripts=[{...materials[2],id:'old',storage_path:'old.md'},{...materials[2],id:'current',storage_path:'current.md'}];
+ render(<WorkspaceMaterialShelf episodeId="e" shotCount={1} materials={[...materials.slice(0,2),...scripts]} scriptRevisionId="current" readOnly={false} busy={false} status="" failures={[]} onImport={vi.fn()}/>);
+ fireEvent.click(screen.getByRole('button',{name:'本期素材 · 3'}));
+ expect(screen.getAllByRole('button',{name:'预览 script.md'})).toHaveLength(1);
+ fireEvent.doubleClick(screen.getByRole('button',{name:'预览 script.md'}));
+ expect(await screen.findByText('当前脚本')).toBeTruthy();
+ expect(screen.getByRole('dialog')).toBeTruthy();
+});

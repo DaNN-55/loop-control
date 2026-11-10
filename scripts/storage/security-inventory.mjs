@@ -14,11 +14,3 @@ with objects as (
 )
 select jsonb_build_object('count',count(*),'md5',md5(coalesce(jsonb_agg(to_jsonb(normalized) order by kind,identity),'[]'::jsonb)::text)) from normalized;commit;`;
 }
-// Clear only per-schema defaults on the brand-new target. pg_restore's DEFAULT ACL
-// entries recreate source defaults after objects/explicit ACLs have been restored.
-export const clearRestoreDefaultsSql=`do $$ declare d record; begin
-for d in select distinct pg_get_userbyid(defaclrole) owner,defaclobjtype kind,case when a.grantee=0 then 'PUBLIC' else quote_ident(pg_get_userbyid(a.grantee)) end grantee
- from pg_default_acl cross join lateral aclexplode(defaclacl) a where defaclnamespace='public'::regnamespace
-loop
- execute format('alter default privileges for role %I in schema public revoke all on %s from %s',d.owner,case d.kind when 'f' then 'functions' when 'r' then 'tables' when 'S' then 'sequences' when 'T' then 'types' else 'schemas' end,d.grantee);
-end loop;end $$;`;

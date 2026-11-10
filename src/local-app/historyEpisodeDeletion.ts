@@ -1,3 +1,4 @@
+// Compatibility for already committed deletion receipts; no new history deletion entry.
 import {createHash} from 'node:crypto';
 import {createReadStream} from 'node:fs';
 import {lstat,realpath,readdir,unlink} from 'node:fs/promises';
@@ -13,11 +14,6 @@ export interface HistoryDeleteInventory {
 }
 const identity=(s:{dev:bigint;ino:bigint;size:bigint;mtimeNs:bigint})=>[s.dev,s.ino,s.size,s.mtimeNs].join(':');
 const nodeIdentity=(s:{dev:bigint;ino:bigint})=>[s.dev,s.ino].join(':');
-export async function historyDeleteInventory(c:PoolClient,id:unknown,session:OwnerSession):Promise<HistoryDeleteInventory>{
- if(typeof id!=='string'||!/^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/.test(id))throw new ConfigurationError(400,'生产单标识无效。');
- try{await c.query('SET LOCAL enable_nestloop=off');const result=(await c.query('SELECT local_identity.history_episode_delete_plan($1,$2) result',[id,tokenHash(session.token)])).rows[0].result as HistoryDeleteInventory;return{...result,title:result.title.trim()||'未命名生产单 · '+id.slice(0,8)};}
- catch(error){if((error as {code?:string}).code==='42501')throw new ConfigurationError(404,'历史生产单不存在，或没有永久删除权限。');if((error as {code?:string}).code==='55000'&&(error as Error).message.includes('dependency'))throw new ConfigurationError(409,'其他生产单仍引用此条目的素材、任务或记录，请先解除相关依赖，再重新检查。');if(['55000','55P03'].includes((error as {code?:string}).code??''))throw new ConfigurationError(409,'生产单有运行任务、资产锁、并发操作或已被删除，请稍后重新检查。');throw error;}
-}
 // Standalone raster/audio/video bytes do not carry executable project references.
 function standaloneMedia(bytes:Buffer){
  return bytes.length>=12&&(bytes.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10]))
@@ -63,25 +59,6 @@ export async function historyBlobTargets(root:string|undefined,inventory:History
  let changed=true;while(changed){changed=false;for(const sha of [...referenced])for(const dependency of dependencies.get(sha)??[])if(!referenced.has(dependency)){referenced.add(dependency);changed=true;}}
  if([...pathReferences].some(path=>!excluded.has(path)||targets.some(t=>t.path===path&&referenced.has(t.sha))))throw new ConfigurationError(409,'其他留存文件仍引用该生产单目录，未执行删除。');
  return{targets:targets.filter(x=>!referenced.has(x.sha)),retainedShas:[...referenced].sort()};
-}
-// Bind every directory entry to the reviewed plan without buffering or re-hashing large media.
-export async function historyDirectoryRevision(paths:string[]){
- const hash=createHash('sha256');
- async function visit(path:string){
-  let stat;try{stat=await lstat(path,{bigint:true});}catch(error){if((error as NodeJS.ErrnoException).code==='ENOENT'){hash.update(path+':absent');return;}throw error;}
-  hash.update(JSON.stringify([path,identity(stat),String(stat.mode)]));
-  if(stat.isDirectory()&&!stat.isSymbolicLink()){
-   for(const name of (await readdir(path)).sort())await visit(join(path,name));
-   const after=await lstat(path,{bigint:true});if(identity(after)!==identity(stat))throw new ConfigurationError(409,'生产单目录正在变化，请稍后重新检查。');
-  }
- }
- for(const path of paths)await visit(path);return hash.digest('hex');
-}
-export async function assertHistoryMediaUnshared(c:PoolClient,paths:string[],episode:string){
- for(const path of paths){
-  const r=await c.query('SELECT local_identity.history_media_path_referenced($1,$2) referenced',[path,episode]);
-  if(r.rows[0].referenced)throw new ConfigurationError(409,'其他生产单或历史资料仍引用该目录，不能删除：'+path);
- }
 }
 export async function finishHistoryBlob(c:PoolClient,target:HistoryBlobTarget,session:OwnerSession){
  if(target.path!==join(target.root,target.sha)||!/^[a-f0-9]{64}$/.test(target.sha)||await realpath(target.root)!==target.root)throw Error('历史清理位置无效。');

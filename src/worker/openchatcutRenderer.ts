@@ -140,7 +140,7 @@ async function executeCardVideo(
     taskId: input.taskPackage.task.id,
     status: "completed",
     artifacts: [{ artifactType: input.taskPackage.output.requiredArtifactTypes[0], relativePath: input.taskPackage.output.relativePath, sha256: createHash("sha256").update(bytes).digest("hex"), fileSize: bytes.byteLength }],
-    validation: { passed: true, checks: [{ name: "openchatcut_card_video", passed: true, detail: `已按冻结分镜渲染 ${shot.shotType} 卡片视频，工程为 ${projectRelativePath}。` }] },
+    validation: { passed: true, checks: [{ name: "openchatcut_card_video", passed: true, detail: `已按冻结分镜渲染 镜头卡片视频，工程为 ${projectRelativePath}。` }] },
     actualCostCents: 0,
     blockers: [],
     retry: { shouldRetry: false, reason: "Completed successfully." },

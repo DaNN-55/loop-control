@@ -2,7 +2,7 @@ import {isRetiredProvider,retiredProviderMessage} from './providerLifecycle.js';
 import {wanReferenceModel,wanReferenceMode,wanVideoModel,wanVideoModels} from '../wanVideoModels.js';
 import {imageSizes,openAiImageModels,openAiEnhancedImageModels,openAiImageQualities} from '../imageGeneration.js';
 import type {VideoGenerationMode} from '../videoVisualInputs.js';
-import {klingOmniModel,videoProviders} from "./videoProviderCatalog.js";
+import {klingOmniModel,videoProviders,minimaxVideoModels} from "./videoProviderCatalog.js";
 export const executionPathKeys = ["external", "local", "manual"] as const;
 
 export type ExecutionPath = typeof executionPathKeys[number];
@@ -68,7 +68,7 @@ export function normalizeProductionCapability(value: string): ProductionCapabili
   if (Object.hasOwn(productionCapabilityLabels, value)) return value as ProductionCapability;
   switch (value) {
     case 'static_visual_generation': return 'image';
-    case 'a_roll_generation': case 'b_roll_generation': case 'video_generation': return 'video';
+    case 'shot_video_search': case 'shot_video_preview': case 'shot_video_generation': case 'a_roll_generation': case 'b_roll_generation': case 'video_generation': return 'video';
     case 'narration_generation': return 'speech';
     case 'soundtrack_generation': return 'music_sound';
     default: return undefined;
@@ -134,14 +134,14 @@ const seedanceModes=Object.fromEntries(videoProviders.volcengine.models.map((mod
 ] satisfies VideoGenerationMode[]]));
 const officialVideoModes:Record<string,Readonly<Record<string,readonly VideoGenerationMode[]>>> = {
  volcengine:seedanceModes,
- minimax:{'MiniMax-H3':[
+ minimax:Object.fromEntries(videoProviders.minimax.models.map(model=>[model,[
   firstFrameVideoMode(officialFirstFrame),
   {id:'keyframes',label:'首尾帧生成',inputs:{firstFrame:officialFrame,lastFrame:officialFrame}},
   {id:'references',label:'参考素材生成',allowInlineMp4:true,inputs:{
    referenceImages:{max:9,maxBytes:30*1024*1024,mimeTypes:['image/png','image/jpeg','image/webp']},
    referenceVideos:{max:3,maxBytes:50*1024*1024,mimeTypes:['video/mp4','video/quicktime']},
   }},
- ]},
+ ] satisfies VideoGenerationMode[]])),
  kling:{'kling-v3':[
   firstFrameVideoMode(officialFirstFrame),
   {id:'keyframes',label:'首尾帧生成',inputs:{firstFrame:officialFrame,lastFrame:officialFrame}},
@@ -152,9 +152,9 @@ const officialVideoModes:Record<string,Readonly<Record<string,readonly VideoGene
   }},
  ]},
 };
-const manifest: readonly RegisteredAdapterDefinition[] = [
+const legacyManifest: readonly RegisteredAdapterDefinition[] = [
   ...Object.entries(videoProviders).map(([provider, definition]): RegisteredAdapterDefinition => ({
-    production: [{capability: 'video', label: definition.label, mode: 'generation', inputModes: ['text', 'first_frame'], constraints: {prompt: {maxLength: 1500}, durationSeconds: {min: definition.minDuration, max: definition.maxDuration, integer: true}, firstFrame: officialFirstFrame, ...(provider==='kling'?{}:{resolutions: [provider === 'minimax' ? '768P' : '720p'], aspectRatios: ['adaptive']})}, videoGenerationModes:officialVideoModes[provider]}],
+    production: [{capability: 'video', label: definition.label, mode: 'generation', inputModes: ['text', 'first_frame'], constraints: {prompt: {maxLength: 1500}, durationSeconds: {min: definition.minDuration, max: definition.maxDuration, integer: true}, firstFrame: officialFirstFrame, ...(provider==='kling'?{}:{resolutions: [provider === 'minimax' ? '768P' : '720p'], aspectRatios: ['adaptive']})}, ...(provider==='minimax'?{modelConstraints:Object.fromEntries(Object.entries(minimaxVideoModels).map(([model,profile])=>[model,{resolutions:profile.resolutions}]))}:{}),videoGenerationModes:officialVideoModes[provider]}],
     provider, adapter: definition.adapter, executionPath: "external", connection: {kind: "owner_managed", type: provider+"_video_api", endpoint: definition.endpoint}, execution: {kind: "controlled_media", safetyLimit: 1},
     capabilities: ["a_roll_generation", "b_roll_generation"].map(capability => ({capability, configurationFields: ["credential_ref", "max_attempts"], modelCatalog: definition.models, presetCatalog: ["official-video-v1"]})),
   })),
@@ -197,6 +197,12 @@ const manifest: readonly RegisteredAdapterDefinition[] = [
     { capability: "final_rendering", configurationFields: [], modelCatalog: ["openchatcut@0.2.14"], presetCatalog: ["final-render-v1"] },
   ] },
 ] as const;
+
+// Retain legacy declarations for frozen tasks; all new workspace videos use this capability.
+const manifest:readonly RegisteredAdapterDefinition[]=legacyManifest.map(definition=>{
+ const video=definition.capabilities.find(c=>c.capability==='b_roll_generation'||c.capability==='a_roll_generation');
+ return video?{...definition,capabilities:[...definition.capabilities,{...video,capability:'shot_video_generation'},...(definition.adapter==='pexels_video'?['shot_video_search','shot_video_preview'].map(capability=>({...video,capability})):[])]}:definition;
+});
 
 function identityKey(provider: string, adapter: string): string {
   return `${provider}:${adapter}`;

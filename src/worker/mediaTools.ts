@@ -85,13 +85,15 @@ export async function probeMp3Artifact(path: string): Promise<number> {
   return duration;
 }
 
+export class MediaArtifactValidationError extends Error {}
+
 export async function validateMp4Artifact(path: string, minimumDurationSeconds: number, frameRate?: number, allowedFrames?: number): Promise<void> {
   const { stdout } = await runCommandWithOutput("ffprobe", [
     "-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", path,
   ]);
   const duration = Number(stdout.trim());
   if (!videoDurationMeetsMinimum(duration, minimumDurationSeconds, frameRate, allowedFrames)) {
-    throw new Error(`视频不可播放或时长不足：${duration || "未知"} 秒。`);
+    throw new MediaArtifactValidationError(`视频不可播放或时长不足：实际 ${Number.isFinite(duration)?duration:"未知"} 秒，要求至少 ${minimumDurationSeconds} 秒；请核对供应商原任务与视频产物。`);
   }
 }
 

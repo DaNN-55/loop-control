@@ -4,7 +4,7 @@ import {ImagePreview} from '../ui/media/ImagePreview';
 import {WorkbenchVideoPlayer} from './WorkbenchVideoPlayer';
 import {localRequest} from '../local-app/client';
 import {artifactPreviewKind,localArtifactUrl,localArtifactThumbnailUrl} from '../reviews/localArtifactPreview';
-import type {EpisodeProductionSnapshot} from '../episodes/EpisodeProductionContainer';
+import type {EpisodeProductionSnapshot} from '../episodes/episodeSnapshot';
 import type {WorkspaceExport,WorkspaceExportArtifact} from '../workspaceExport';
 
 type Preview=Pick<EpisodeProductionSnapshot,'artifacts'|'materialRevisions'|'shotPreparationDrafts'|'reviewPackages'>&{exportedVideo?:WorkspaceExportArtifact|null};

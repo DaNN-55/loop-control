@@ -1,18 +1,7 @@
-import {useEffect,useRef} from 'react';
-import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import type {WorkspaceCandidatePreparation} from '../workspaceCandidates';
 import './workspace-candidate-impact.css';
 export function needsCandidateImpactDialog(impact:WorkspaceCandidatePreparation['impact']|undefined){
  return !!impact&&(impact.deltaSeconds!==0||impact.captionRecheck||impact.affectedFragments.length>0);
-}
-export function WorkspaceCandidateImpact({plan,disabled,onConfirm,onCancel}:{plan:WorkspaceCandidatePreparation;disabled:boolean;onConfirm:()=>void;onCancel:()=>void}){
- const region=useRef<HTMLElement>(null);
- useEffect(()=>{const trigger=document.activeElement as HTMLElement|null;region.current?.focus();return()=>{if(trigger?.isConnected)trigger.focus();};},[]);
- return <section ref={region} tabIndex={-1} className="workspace-candidate-impact" aria-label="采用前核对">
-  <h4>采用前核对</h4>
-  <WorkspaceCandidateImpactDetails plan={plan}/>
-  <div><Button size="sm" color="primary" isDisabled={disabled} onPress={onConfirm}>确认采用</Button><Button size="sm" color="secondary" isDisabled={disabled} onPress={onCancel}>取消</Button></div>
- </section>;
 }
 export function WorkspaceCandidateImpactDetails({plan}:{plan:WorkspaceCandidatePreparation}){
  const {impact}=plan;

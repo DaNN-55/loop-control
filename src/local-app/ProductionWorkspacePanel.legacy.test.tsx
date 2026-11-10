@@ -1,7 +1,7 @@
 import {afterEach,it,expect,vi} from 'vitest';
 import {render,screen,fireEvent,act,cleanup,waitFor,within} from '@testing-library/react';
 import {ProductionWorkspacePanel} from './ProductionWorkspacePanel';
-import type {EpisodeProductionSnapshot} from '../episodes/EpisodeProductionContainer';
+import type {EpisodeProductionSnapshot} from '../episodes/episodeSnapshot';
 const episode='legacy-order',script='main';
 const legacySnapshot={episode:{id:episode,stage:'qc_review'},artifacts:[{id:'board-file',episode_id:episode,artifact_type:'storyboard',relative_path:'board.json',sha256:'a'.repeat(64),created_at:'2026-10-01'},{id:'render',episode_id:episode,artifact_type:'render',relative_path:'review.mp4',sha256:'b'.repeat(64),producer_task_id:'render-task',created_at:'2026-10-01'},{id:'project',episode_id:episode,artifact_type:'review_render_project',relative_path:'project.json',sha256:'c'.repeat(64),producer_task_id:'render-task',created_at:'2026-10-01'}],reviewPackages:[{id:'board',stage:'storyboard_review',revision_number:1,artifact_id:'board-file',context_snapshot:{worker_result:{storyboard:{shots:[{id:'S01',scriptSegment:'已有分镜正文',shotType:'a_roll',durationSeconds:3,productionMethod:'原画面'}]}}}},{id:'qc',stage:'qc_review',revision_number:2,artifact_id:'render',context_snapshot:{technical_evidence:{checks:[{name:'resolution',passed:true,detail:'原片分辨率通过'}]}}}],materialRevisions:[{id:script,material_type:'script',source_path:'原脚本.md',storage_path:'main.md',is_main_script:true}],shotPreparationDrafts:[],audioTracks:[],tasks:[],qcReviewIssues:[]} as unknown as EpisodeProductionSnapshot;
 afterEach(()=>{cleanup();vi.unstubAllGlobals();});

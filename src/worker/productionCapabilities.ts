@@ -1,3 +1,4 @@
+// Legacy frozen-blueprint configuration only. Current shot routing uses ProductionSelection and shot_video_* Worker capabilities.
 export const mediaCapabilityKeys = ["static_visual", "a_roll", "b_roll", "narration", "soundtrack"] as const;
 
 export type MediaCapabilityKey = typeof mediaCapabilityKeys[number];
