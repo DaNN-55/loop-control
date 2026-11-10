@@ -404,3 +404,12 @@ it('keeps a visual upload failure in transient feedback and recovery instead of 
  expect(screen.queryByLabelText('上传记录')).toBeNull();fireEvent.click(screen.getByRole('button',{name:'关闭上传提示'}));expect(screen.queryByRole('status',{name:'上传提示'})).toBeNull();expect(screen.queryByRole('alert')).toBeNull();
  expect(screen.getByRole('region',{name:'上传结果'}).textContent).toContain('文件内容无法解码');expect(command).toHaveBeenCalledTimes(1);
 });
+
+it('keeps script confirmation mounted while its saved version refreshes the real workspace parent',async()=>{
+ const {useState}=await import('react');let reads=0,resolveRefresh!:(response:Response)=>void;
+ vi.stubGlobal('fetch',vi.fn(async()=>{if(++reads===1)return Response.json({workspace:null});return new Promise<Response>(resolve=>{resolveRefresh=resolve;});}));
+ function Host(){const[id,setId]=useState<string|null>(null);return <ProductionWorkspacePanel episodeId="phase-e" title="脚本分步" scriptRevisionId={id} stage="waiting_input" materials={[]} onLegacy={()=>{}} command={async name=>{if(name==='importMaterial'){setId('saved');return{id:'saved'};}throw Error('启动中断');}}/>;}
+ render(<Host/>);await screen.findByRole('button',{name:'确认脚本'});fireEvent.change(screen.getByLabelText('主脚本'),{target:{value:'保留本次正文'}});fireEvent.click(screen.getByRole('button',{name:'确认脚本'}));await waitFor(()=>expect(reads).toBe(2));
+ await act(async()=>resolveRefresh(Response.json({workspace:null})));
+ expect((await screen.findByLabelText('主脚本') as HTMLTextAreaElement).value).toBe('保留本次正文');expect(await screen.findByRole('button',{name:'继续启动'})).toBeTruthy();
+});

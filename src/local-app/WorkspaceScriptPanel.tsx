@@ -6,48 +6,101 @@ import {mainScriptStatistics} from '../reviews/mainScript';
 import {workspaceScriptInput,workspaceScriptExample} from './workspaceScriptInput';
 import {ConfirmationModal,ConfirmationModalPresence} from '../ui/ConfirmationModal';
 import {useWorkspaceDraft} from './WorkspaceDraft';
+import {localRequest} from './client';
+import type {EpisodeProductionSnapshot} from '../episodes/episodeSnapshot';
 import './workspace-compact-panels.css';
 
 interface Props {
  episodeId:string;scriptRevisionId:string|null;script:string;stage:string;readOnly:boolean;pending:boolean;
  command:(name:string,data:unknown)=>Promise<unknown>;onConfirmed:(scriptRevisionId?:string,revisionReason?:string)=>void;history?:ReactNode;errorPresented?:boolean;
 }
-export function WorkspaceScriptPanel({episodeId,scriptRevisionId,script,stage,readOnly,pending,command,onConfirmed,history,errorPresented=false}:Props){
- const draft=useWorkspaceDraft({episodeId,kind:'script',version:scriptRevisionId??'new',initial:{text:script,reason:'',filename:'script.md'},enabled:!readOnly});
+type ScriptIntent={baseline:{id:string|null;text:string};source:{id:string|null;text:string};text:string;finish:(id:string)=>void};
+type ScriptConfirmationState=
+ |{phase:'idle'}
+ |{phase:'saving'|'save_failed';intent:ScriptIntent}
+ |{phase:'starting'|'checking'|'started';intent:ScriptIntent;savedId:string}
+ |{phase:'start_failed';intent:ScriptIntent;savedId:string;readError:boolean};
+const confirmationStatus:Record<ScriptConfirmationState['phase'],string>={idle:'',saving:'正在保存脚本…',save_failed:'保存结果未确认，尚未启动制作。',starting:'脚本已保存，正在启动制作…',checking:'脚本已保存，正在核对启动状态…',start_failed:'脚本已保存，制作尚未确认启动。',started:'制作已启动'};
+export function WorkspaceScriptPanel(props:Props){return <WorkspaceScriptEditor key={props.episodeId} {...props}/>;}
+function WorkspaceScriptEditor({episodeId,scriptRevisionId,script,stage,readOnly,pending,command,onConfirmed,history,errorPresented=false}:Props){
+ const [flow,setFlow]=useState<ScriptConfirmationState>({phase:'idle'});
+ // A successful save refreshes the parent's version before start settles. Keep its draft scope until completion.
+ const baseline='intent' in flow?flow.intent.baseline:{id:scriptRevisionId,text:script};
+ const savedId='savedId' in flow?flow.savedId:null;
+ const draft=useWorkspaceDraft({episodeId,kind:'script',version:baseline.id??'new',initial:{text:baseline.text,reason:'',filename:'script.md'},enabled:!readOnly});
  const {text,reason,filename}=draft.value,setText=(text:string)=>draft.setValue(value=>({...value,text})),setReason=(reason:string)=>draft.setValue(value=>({...value,reason})),setFilename=(filename:string)=>draft.setValue(value=>({...value,filename}));
- const [preview,setPreview]=useState(script),[error,setError]=useState(''),[busy,setBusy]=useState(false);
+ const [preview,setPreview]=useState(script),[error,setError]=useState('');
  const [editing,setEditing]=useState(!readOnly&&(!scriptRevisionId||stage==='waiting_input')),[confirmation,setConfirmation]=useState<'save'|'discard'|null>(null),[locallyConfirmed,setLocallyConfirmed]=useState(false);
  const [invalid,setInvalid]=useState<'script'|'reason'|null>(null),errorId=useId(),reasonInput=useRef<HTMLInputElement>(null),textInput=useRef<HTMLTextAreaElement>(null);
- const input=useRef<HTMLInputElement>(null);
- useEffect(()=>{setPreview(script);},[script,scriptRevisionId]);
- const changed=text!==preview,revision=!!scriptRevisionId&&stage!=='waiting_input',disabled=readOnly||pending||busy,isEditing=(editing||draft.dirty)&&!readOnly;
- const scriptInput=workspaceScriptInput(text);
- const baselineStatus=revision||locallyConfirmed?'已确认基准':'待确认';
+ const input=useRef<HTMLInputElement>(null),lock=useRef(false),active=useRef(true),writable=useRef(!readOnly);writable.current=!readOnly;
+ useEffect(()=>{active.current=true;return()=>{active.current=false;};},[]);
+ useEffect(()=>{if(flow.phase==='idle')setPreview(script);},[script,scriptRevisionId,flow.phase]);
+ useEffect(()=>{if(flow.phase==='started'&&scriptRevisionId===flow.savedId&&script===flow.intent.text)setFlow({phase:'idle'});},[flow,scriptRevisionId,script]);
+ const scriptInput=workspaceScriptInput(text),source='intent' in flow?flow.intent.source:baseline,basisId=savedId??source.id;
+ const busy=['saving','starting','checking'].includes(flow.phase);
+ const changed='savedId' in flow?scriptInput.text!==flow.intent.text:source.id!==baseline.id?scriptInput.text!==source.text:text!==preview,revision=!!basisId&&(stage!=='waiting_input'||!!savedId||basisId!==baseline.id),disabled=readOnly||pending||busy,isEditing=(editing||draft.dirty)&&!readOnly;
+ const canResume=flow.phase==='start_failed'&&!changed;
+ const showError=!errorPresented||flow.phase==='start_failed'&&flow.readError;
+ const baselineStatus=confirmationStatus[flow.phase]||(revision||locallyConfirmed?'已确认基准':'待确认');
  const statistics=mainScriptStatistics(isEditing?text:preview),confirmedCharacters=Array.from(preview).length;
  function requestSave(){
   setError('');setInvalid(null);
   if(!text.trim()){setInvalid('script');textInput.current?.focus();return;}
   if(scriptInput.error){setInvalid('script');setError(scriptInput.error);textInput.current?.focus();return;}
-  if(scriptRevisionId&&changed&&!reason.trim()){setInvalid('reason');reasonInput.current?.focus();return;}
-  if(revision||scriptRevisionId&&changed)setConfirmation('save');else void confirm();
+  if(basisId&&changed&&!reason.trim()){setInvalid('reason');reasonInput.current?.focus();return;}
+  if(revision||basisId&&changed)setConfirmation('save');else void confirm();
  }
- function discard(){setInvalid(null);draft.reset();setError('');setEditing(false);setConfirmation(null);}
- async function confirm(){
-  if(disabled)return;
-  const submitted={...draft.value};
-  setBusy(true);setError('');
+ function discard(){setFlow({phase:'idle'});setInvalid(null);draft.reset();setError('');setEditing(false);setConfirmation(null);}
+ async function startSaved(intent:ScriptIntent,id:string,check=false){
+  let commandStarted=false;
   try{
-   let confirmedScriptId=scriptRevisionId??undefined;
-   if(!text.trim())throw Error('请填写主脚本。');
-   if(!scriptRevisionId){
-    const bytes=new TextEncoder().encode(scriptInput.text);let binary='';for(const byte of bytes)binary+=String.fromCharCode(byte);
-    const registered=await command('importMaterial',{episodeId,materialType:'script',materialPurpose:'main_script',sourceKind:'file',sourcePath:filename,mimeType:'text/markdown',contentBase64:btoa(binary),isMainScript:true}) as {id:string};confirmedScriptId=registered.id;
-   }else if(changed){
-    if(!reason.trim())throw Error('请填写修订原因。');
-    const revised=await command('reconfirmScript',{episodeId,expectedScriptRevisionId:scriptRevisionId,text:scriptInput.text,reason:reason.trim()}) as {id:string};confirmedScriptId=revised.id;
+   if(check){
+    setFlow({phase:'checking',intent,savedId:id});
+    const value=await localRequest(`episodes/${encodeURIComponent(episodeId)}`) as {sections:Partial<EpisodeProductionSnapshot>&{historicalReadOnly?:boolean}};
+    if(!active.current)return;
+    if(!writable.current)throw Error('当前生产单已只读，本次草稿已保留。');
+    const episode=value.sections?.episode;
+    if(!episode||typeof episode.stage!=='string'||episode.id!==episodeId||episode.main_script_revision_id!==id||episode.archived_at||episode.stage==='production_completed'||value.sections.historicalReadOnly)throw Error('当前脚本版本或生产单状态已变化，请重新打开核对；本次草稿已保留。');
+    if(episode.stage!=='waiting_input'){
+     setFlow({phase:'started',intent,savedId:id});intent.finish(id);return;
+    }
    }
-   await command('start',{episodeId});if(draft.acknowledge(submitted,{...submitted,text:scriptInput.text,reason:''})){setPreview(scriptInput.text);setEditing(false);}setLocallyConfirmed(true);setConfirmation(null);onConfirmed(confirmedScriptId,submitted.reason.trim()||undefined);
-  }catch(cause){setConfirmation(null);setError(cause instanceof Error?cause.message:'脚本确认未完成。');}finally{setBusy(false);}
+   if(!writable.current)throw Error('当前生产单已只读，本次草稿已保留。');
+   setFlow({phase:'starting',intent,savedId:id});
+   commandStarted=true;
+   const result=await command('start',{episodeId}) as Partial<EpisodeProductionSnapshot['episode']>;
+   // A previous start may have committed with a lost response; its receipt belongs to that script only.
+   if(result.main_script_revision_id!==undefined&&result.main_script_revision_id!==id||result.stage==='waiting_input')throw Error('启动回执对应的脚本或阶段已变化，请核对后继续启动。');
+   if(!active.current||!writable.current)return;
+   setFlow({phase:'started',intent,savedId:id});intent.finish(id);
+  }catch(cause){if(active.current){setFlow({phase:'start_failed',intent,savedId:id,readError:!commandStarted});setError(cause instanceof Error?cause.message:'制作启动未完成。');}}
+ }
+ async function confirm(){
+  if(disabled||lock.current)return;
+  lock.current=true;setError('');setConfirmation(null);
+  const submitted={...draft.value};
+  const intent:ScriptIntent={baseline,source:{id:basisId,text:'savedId' in flow?flow.intent.text:source.text},text:scriptInput.text,finish:id=>{
+   if(draft.acknowledge(submitted,{...submitted,text:scriptInput.text,reason:''})){setPreview(scriptInput.text);setEditing(false);}
+   setLocallyConfirmed(true);onConfirmed(id,submitted.reason.trim()||undefined);
+  }};
+  setFlow({phase:'saving',intent});
+  try{
+   let id=basisId;
+   if(!id){
+    const bytes=new TextEncoder().encode(intent.text);let binary='';for(const byte of bytes)binary+=String.fromCharCode(byte);
+    const registered=await command('importMaterial',{episodeId,materialType:'script',materialPurpose:'main_script',sourceKind:'file',sourcePath:submitted.filename,mimeType:'text/markdown',contentBase64:btoa(binary),isMainScript:true}) as {id:string};id=registered.id;
+   }else if(changed){
+    const revised=await command('reconfirmScript',{episodeId,expectedScriptRevisionId:id,text:intent.text,reason:submitted.reason.trim()}) as {id:string};id=revised.id;
+   }
+   if(!active.current)return;
+   setPreview(intent.text);await startSaved(intent,id!);
+  }catch(cause){if(active.current){setFlow({phase:'save_failed',intent});setError(cause instanceof Error?cause.message:'脚本保存未完成。');}}
+  finally{lock.current=false;}
+ }
+ async function resume(){
+  if(disabled||lock.current||flow.phase!=='start_failed'||!canResume)return;
+  lock.current=true;setError('');
+  try{await startSaved(flow.intent,flow.savedId,true);}finally{lock.current=false;}
  }
  async function readScriptFile(file:File){
   if(disabled||!isEditing)return;
@@ -78,11 +131,11 @@ export function WorkspaceScriptPanel({episodeId,scriptRevisionId,script,stage,re
      <input ref={input} hidden type="file" accept=".md,.txt,text/plain,text/markdown" aria-label="上传主脚本" disabled={disabled||!isEditing} onChange={event=>{const file=event.target.files?.[0];event.target.value='';if(file)void readScriptFile(file);}}/>
      {isEditing?<button type="button" className="workspace-script-file-slot" aria-label="上传脚本" disabled={disabled} onClick={()=>input.current?.click()}><FileText size={20} aria-hidden="true"/><span><strong>{filename==='script.md'?'拖入或选择脚本':filename}</strong><small>Markdown / TXT · 最大 2 MB</small></span></button>:<div className="workspace-script-file-slot is-locked"><FileText size={20} aria-hidden="true"/><span><strong>{filename==='script.md'?'主脚本':filename}</strong><small>已确认脚本</small></span></div>}
     </div>
-    {(!readOnly||invalid||error&&!errorPresented)&&<div className="workspace-script-controls" role="group" aria-label="脚本操作">
+    {(!readOnly||invalid||error&&showError)&&<div className="workspace-script-controls" role="group" aria-label="脚本操作">
      {!isEditing&&!readOnly&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>{setText(preview);setError('');setEditing(true);}}>修改脚本</Button>}
-    {isEditing&&scriptRevisionId&&changed&&<label className="workspace-script-reason">修订原因<input ref={reasonInput} aria-label="脚本修订原因" aria-required="true" aria-invalid={invalid==='reason'||undefined} aria-describedby={invalid==='reason'?errorId:undefined} placeholder="简述本次修改原因" value={reason} disabled={disabled} onChange={event=>{setReason(event.target.value);if(invalid==='reason')setInvalid(null);}}/>{invalid==='reason'&&<span id={errorId} className="form-error" role="alert">请填写修订原因。</span>}</label>}
-    {isEditing&&<div className="workspace-script-actions"><Button size="sm" color="primary" isDisabled={disabled||!!scriptRevisionId&&!changed&&stage!=='waiting_input'} onPress={requestSave}>{busy?'正在确认…':revision?'确认脚本修订':'确认脚本'}</Button>{(revision||locallyConfirmed)&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>{if(changed||reason.trim())setConfirmation('discard');else discard();}}>取消编辑</Button>}</div>}
-    {error&&invalid!=='script'&&!errorPresented&&<p role="alert" className="form-error">{error}</p>}
+    {isEditing&&basisId&&(changed||!!reason)&&<label className="workspace-script-reason">修订原因<input ref={reasonInput} aria-label="脚本修订原因" aria-required="true" aria-invalid={invalid==='reason'||undefined} aria-describedby={invalid==='reason'?errorId:undefined} placeholder="简述本次修改原因" value={reason} disabled={disabled} onChange={event=>{setReason(event.target.value);if(invalid==='reason')setInvalid(null);}}/>{invalid==='reason'&&<span id={errorId} className="form-error" role="alert">请填写修订原因。</span>}</label>}
+    {isEditing&&<div className="workspace-script-actions"><Button size="sm" color="primary" isDisabled={disabled||!canResume&&!!basisId&&!changed&&stage!=='waiting_input'} onPress={canResume?()=>void resume():requestSave}>{flow.phase==='saving'?'正在保存…':flow.phase==='starting'?'正在启动…':flow.phase==='checking'?'正在核对…':canResume?'继续启动':revision?'确认脚本修订':'确认脚本'}</Button>{(revision||locallyConfirmed)&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>{if(changed||reason.trim())setConfirmation('discard');else discard();}}>取消编辑</Button>}</div>}
+    {error&&invalid!=='script'&&showError&&<p role="alert" className="form-error">{error}</p>}
     </div>}
     <h4>脚本基准</h4>
     <dl><div><dt>基准版本</dt><dd>{scriptRevisionId?.slice(0,8)??'尚无版本'}</dd></div><div><dt>基准字数</dt><dd>{scriptRevisionId||locallyConfirmed?`${confirmedCharacters.toLocaleString()} 字符`:'尚未确认'}</dd></div></dl>

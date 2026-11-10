@@ -3,14 +3,76 @@ import {afterEach,beforeEach,it,expect,vi} from 'vitest';
 import {WorkspaceDeliveryPanel} from './WorkspaceDeliveryPanel';
 import {WorkspaceDraftProvider} from './WorkspaceDraft';
 import type {ProductionWorkspace} from '../productionWorkspace';
-vi.mock('./client',()=>({localRequest:vi.fn()}));
-import {localRequest} from './client';
 const createObjectURL=vi.fn((_file:Blob)=> 'blob:cover-preview'),revokeObjectURL=vi.fn();
 beforeEach(()=>{createObjectURL.mockClear();revokeObjectURL.mockClear();Object.defineProperty(URL,'createObjectURL',{configurable:true,value:createObjectURL});Object.defineProperty(URL,'revokeObjectURL',{configurable:true,value:revokeObjectURL});});
-afterEach(()=>{cleanup();localStorage.clear();vi.useRealTimers();});
+afterEach(()=>{cleanup();localStorage.clear();vi.useRealTimers();vi.unstubAllGlobals();});
 const pngBytes=new Uint8Array([137,80,78,71,13,10,26,10,0,0,0,0]);
 const pngFile=(name:string)=>new File([pngBytes],name,{type:'image/png'});
-const workspace=()=>({id:'workspace',episodeId:'episode',revision:7,stale:false,exports:[{id:'export',current:true,confirmed:true,contentSha256:'confirmed-content',artifact:{sha256:'confirmed-video'}}]}) as unknown as ProductionWorkspace;
+const workspace=()=>({id:'workspace',episodeId:'episode',revision:7,stale:false,exports:[{id:'export',status:'ready',checks:[],current:true,confirmed:true,contentSha256:'confirmed-content',artifact:{sha256:'confirmed-video'}}]}) as unknown as ProductionWorkspace;
+it('does not publish an older delivery poll after a newer workspace was provided',async()=>{
+ vi.useFakeTimers();let reply!:(value:unknown)=>void;
+ const w={...workspace(),deliveries:[{id:'delivery',status:'running'}]} as ProductionWorkspace;
+ const received=vi.fn(),slow=new Promise(resolve=>{reply=resolve;});
+ vi.stubGlobal('fetch',vi.fn(()=>slow.then(value=>Response.json(value))));
+ const view=render(<WorkspaceDeliveryPanel workspace={w} pending={false} command={vi.fn()} onChange={received}/>);
+ await act(async()=>vi.advanceTimersByTimeAsync(2500));
+ const newer={...w,revision:8};view.rerender(<WorkspaceDeliveryPanel workspace={newer} pending={false} command={vi.fn()} onChange={received}/>);
+ await act(async()=>reply({workspace:w}));
+ expect(received).not.toHaveBeenCalled();
+ vi.unstubAllGlobals();
+});
+it.each(['workspace','delivery','stopped','unmount'] as const)('ignores a late delivery reply after %s changes',async(change)=>{
+ vi.useFakeTimers();let reply!:(value:Response)=>void;
+ const w={...workspace(),deliveries:[{id:'original',status:'running'}]} as ProductionWorkspace,received=vi.fn();
+ const read=vi.fn((_url:RequestInfo|URL,_options?:RequestInit)=>new Promise<Response>(resolve=>{reply=resolve;}));vi.stubGlobal('fetch',read);
+ const view=render(<WorkspaceDeliveryPanel workspace={w} pending={false} command={vi.fn()} onChange={received}/>);
+ await act(async()=>vi.advanceTimersByTimeAsync(2500));
+ if(change==='unmount')view.unmount();
+ else{
+  const next={...w,...(change==='workspace'?{id:'replacement'}:{}),deliveries:[{id:change==='delivery'?'replacement':'original',status:change==='stopped'?'completed':'running'}]} as ProductionWorkspace;
+  view.rerender(<WorkspaceDeliveryPanel workspace={next} pending={false} command={vi.fn()} onChange={received}/>);
+ }
+ await act(async()=>reply(Response.json({workspace:{...w,revision:99}})));
+ expect(received).not.toHaveBeenCalled();expect(read.mock.calls[0][1]?.signal?.aborted).toBe(true);
+});
+it('ignores an old delivery error after same-revision authoritative state is provided',async()=>{
+ vi.useFakeTimers();let reject!:(error:Error)=>void;
+ const w={...workspace(),deliveries:[{id:'delivery',status:'running'}]} as ProductionWorkspace;
+ vi.stubGlobal('fetch',vi.fn(()=>new Promise<Response>((_resolve,fail)=>{reject=fail;})));
+ const view=render(<WorkspaceDeliveryPanel workspace={w} pending={false} command={vi.fn()} onChange={vi.fn()}/>);
+ await act(async()=>vi.advanceTimersByTimeAsync(2500));
+ view.rerender(<WorkspaceDeliveryPanel workspace={{...w,exports:[{...w.exports![0],confirmed:false}]}} pending={false} command={vi.fn()} onChange={vi.fn()}/>);
+ await act(async()=>reject(Error('old read failed')));
+ expect(screen.queryByText('交付状态暂不可用，请刷新重试。')).toBeNull();
+});
+it('keeps same-revision supplied state when an older delivery reply arrives',async()=>{
+ vi.useFakeTimers();let reply!:(value:Response)=>void;
+ const w={...workspace(),deliveries:[{id:'delivery',status:'running'}]} as ProductionWorkspace,received=vi.fn();
+ vi.stubGlobal('fetch',vi.fn(()=>new Promise<Response>(resolve=>{reply=resolve;})));
+ const view=render(<WorkspaceDeliveryPanel workspace={w} pending={false} command={vi.fn()} onChange={received}/>);
+ await act(async()=>vi.advanceTimersByTimeAsync(2500));
+ view.rerender(<WorkspaceDeliveryPanel workspace={{...w,exports:[{...w.exports![0],confirmed:false}]}} pending={false} command={vi.fn()} onChange={received}/>);
+ await act(async()=>reply(Response.json({workspace:w})));
+ expect(received).not.toHaveBeenCalled();
+});
+it('shows a current delivery read failure and can read again on the next polling tick',async()=>{
+ vi.useFakeTimers();const w={...workspace(),deliveries:[{id:'delivery',status:'running'}]} as ProductionWorkspace,received=vi.fn();
+ const read=vi.fn().mockResolvedValueOnce(Response.json({error:'unavailable'},{status:503})).mockResolvedValueOnce(Response.json({workspace:w}));vi.stubGlobal('fetch',read);
+ render(<WorkspaceDeliveryPanel workspace={w} pending={false} command={vi.fn()} onChange={received}/>);
+ await act(async()=>vi.advanceTimersByTimeAsync(2500));expect(screen.getByText('交付状态暂不可用，请刷新重试。')).toBeTruthy();
+ await act(async()=>vi.advanceTimersByTimeAsync(2500));expect(received).toHaveBeenCalledWith(w);expect(read).toHaveBeenCalledTimes(2);
+});
+it('keeps the 2500ms cadence and avoids overlapping delivery reads',async()=>{
+ vi.useFakeTimers();let reply!:(value:Response)=>void;
+ const w={...workspace(),deliveries:[{id:'delivery',status:'running'}]} as ProductionWorkspace;
+ const read=vi.fn(()=>new Promise<Response>(resolve=>{reply=resolve;}));vi.stubGlobal('fetch',read);
+ const received=vi.fn();render(<WorkspaceDeliveryPanel workspace={w} pending={false} command={vi.fn()} onChange={received}/>);
+ await act(async()=>vi.advanceTimersByTimeAsync(2499));expect(read).not.toHaveBeenCalled();
+ await act(async()=>vi.advanceTimersByTimeAsync(1));expect(read).toHaveBeenCalledOnce();
+ await act(async()=>vi.advanceTimersByTimeAsync(10000));expect(read).toHaveBeenCalledOnce();
+ await act(async()=>reply(Response.json({workspace:w})));expect(received).toHaveBeenCalledWith(w);
+ await act(async()=>vi.advanceTimersByTimeAsync(2500));expect(read).toHaveBeenCalledTimes(2);
+});
 it('registers the selected real cover and binds delivery metadata to the confirmed export',async()=>{
  const w=workspace(),command=vi.fn(async()=>w);render(<WorkspaceDeliveryPanel workspace={w} pending={false} command={command} onChange={()=>{}}/>);
  fireEvent.change(screen.getByRole('textbox',{name:'标题'}),{target:{value:'晨光样片'}});fireEvent.change(screen.getByRole('textbox',{name:'标签'}),{target:{value:'山野，清晨'}});fireEvent.change(screen.getByRole('textbox',{name:'简介'}),{target:{value:'清晨山脊的光线。'}});
@@ -35,10 +97,10 @@ it('releases the preview while delivery runs and restores it with the existing d
 
 it('continues delivery polling when parent refreshes replace the callback',async()=>{
  vi.useFakeTimers();const w={...workspace(),deliveries:[{id:'d',status:'ready'}]} as ProductionWorkspace,finished={...w,deliveries:[{id:'d',exportId:'export',taskId:'task',status:'completed',verified:true,artifacts:[],error:null,createdAt:'2026-10-30T00:00:00Z'}]} as ProductionWorkspace;
- vi.mocked(localRequest).mockResolvedValue({workspace:finished});const view=render(<WorkspaceDeliveryPanel workspace={w} pending={false} command={vi.fn()} onChange={vi.fn()}/>);
+ const read=vi.fn(async()=>Response.json({workspace:finished}));vi.stubGlobal('fetch',read);const view=render(<WorkspaceDeliveryPanel workspace={w} pending={false} command={vi.fn()} onChange={vi.fn()}/>);
  await act(async()=>vi.advanceTimersByTimeAsync(1000));view.rerender(<WorkspaceDeliveryPanel workspace={w} pending={false} command={vi.fn()} onChange={vi.fn()}/>);
  await act(async()=>vi.advanceTimersByTimeAsync(1000));const latest=vi.fn();view.rerender(<WorkspaceDeliveryPanel workspace={w} pending={false} command={vi.fn()} onChange={latest}/>);
- await act(async()=>vi.advanceTimersByTimeAsync(500));expect(latest).toHaveBeenCalledWith(finished);expect(localRequest).toHaveBeenCalledWith('episodes/episode/workspace');
+ await act(async()=>vi.advanceTimersByTimeAsync(500));expect(latest).toHaveBeenCalledWith(finished);expect(read).toHaveBeenCalledWith('/api/local/episodes/episode/workspace',expect.objectContaining({signal:expect.any(AbortSignal)}));
 });
 
  it('renders publishable metadata and hides raw technical files while providing real downloads',async()=>{
