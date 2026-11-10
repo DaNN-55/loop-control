@@ -1,0 +1,27 @@
+{
+  "allowed": true,
+  "properties": [
+    "align-items",
+    "background",
+    "color",
+    "font-size",
+    "font-variant-numeric",
+    "font-weight",
+    "gap",
+    "grid-column",
+    "grid-row",
+    "grid-template-columns",
+    "letter-spacing",
+    "line-height",
+    "margin-top",
+    "min-height",
+    "padding",
+    "padding-block",
+    "padding-inline",
+    "padding-left",
+    "padding-right",
+    "text-align",
+    "vertical-align",
+    "white-space"
+  ]
+}

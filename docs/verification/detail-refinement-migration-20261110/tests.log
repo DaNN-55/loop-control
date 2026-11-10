@@ -1,0 +1,18 @@
+npm notice run loop-control@0.1.0 test
+npm notice run vitest run --exclude '**/*.integration.test.ts' src/local-app/WorkspaceShotTable.test.tsx src/accounts/AccountRules.test.tsx src/accounts/AccountGeneralSettings.test.tsx src/accounts/AccountForm.test.tsx src/accounts/AccountWorkspace.test.tsx
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/accounts/AccountForm.test.tsx (2 tests) 569ms
+   ✓ shows submission failure inside the account form and keeps entered values for retry  328ms
+ ✓ src/accounts/AccountGeneralSettings.test.tsx (2 tests) 497ms
+   ✓ account rules save and recover drafts without account budget settings or commands  395ms
+ ✓ src/accounts/AccountRules.test.tsx (4 tests) 568ms
+ ✓ src/local-app/WorkspaceShotTable.test.tsx (3 tests) 187ms
+ ✓ src/accounts/AccountWorkspace.test.tsx (29 tests) 3379ms
+   ✓ 账号配置工作区 > 系列分组调整后仍保存全部字段，并在标题显示已应用状态  308ms
+
+ Test Files  5 passed (5)
+      Tests  40 passed (40)
+   Start at  18:54:26
+   Duration  5.41s (transform 653ms, setup 82ms, collect 7.68s, tests 5.20s, environment 1.82s, prepare 244ms)

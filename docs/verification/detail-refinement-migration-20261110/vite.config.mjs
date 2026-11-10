@@ -1,0 +1,2 @@
+import {defineConfig} from '/Users/dan/Programs/loop-control/node_modules/vite/dist/node/index.js';
+export default defineConfig({root:'/Users/dan/Programs/loop-control',envFile:false,optimizeDeps:{entries:['docs/verification/detail-refinement-migration-20261110/fixture.html']},esbuild:{jsx:'automatic'},cacheDir:'/Users/dan/.codex/visualizations/2026/11/10/01a1c3f5-82e9-7f41-88a0-4d6b42ff615b/detail-migration-vite-cache',define:{'import.meta.env.VITE_LOOP_BACKEND':JSON.stringify('contract')},server:{host:'127.0.0.1',port:5207,strictPort:true}});

@@ -1,0 +1,28 @@
+{
+  "removed": [
+    {
+      "purpose": "icon comparison",
+      "path": "/Users/dan/.codex/visualizations/2026/11/10/01a1c3f5-82e9-7f41-88a0-4d6b42ff615b/loop-control-icon-comparison",
+      "pid": 6977,
+      "port": 5199,
+      "files": 17,
+      "logicalBytes": 476626,
+      "processStopped": true,
+      "directoryRemoved": true
+    },
+    {
+      "purpose": "approved three-dimension detail refinement demo",
+      "path": "/Users/dan/.codex/visualizations/2026/11/10/01a1c3f5-82e9-7f41-88a0-4d6b42ff615b/loop-control-detail-refinement-demo",
+      "pid": 12875,
+      "port": 5200,
+      "files": 27,
+      "logicalBytes": 1805570,
+      "processStopped": true,
+      "directoryRemoved": true
+    }
+  ],
+  "retainedDailyPort": 5174,
+  "retainedDailyPid": 3988,
+  "verificationPort5207AlreadyStopped": true,
+  "verificationScreenshotsAndPatchRetained": true
+}

@@ -8,6 +8,7 @@ import '../ui/impeccable/maintenance.css';
 import '../ui/impeccable/production.css';
 import '../ui/impeccable/scroll-layout.css';
 import '../ui/impeccable/surface-polish.css';
+import '../ui/impeccable/detail-refinement.css';
 const root=document.getElementById('root');
 if(!root)throw Error('The application root is missing.');
 createRoot(root).render(<StrictMode><LocalCatalogApp/></StrictMode>);

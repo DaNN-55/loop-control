@@ -1,0 +1,482 @@
+[
+  {
+    "businessRequests": [],
+    "colors": [
+      {
+        "color": "rgb(89, 107, 131)",
+        "label": "关闭",
+        "tone": "neutral"
+      },
+      {
+        "color": "rgb(54, 95, 224)",
+        "label": "准备中",
+        "tone": "busy"
+      },
+      {
+        "color": "rgb(22, 117, 86)",
+        "label": "已采用",
+        "tone": "success"
+      },
+      {
+        "color": "rgb(189, 65, 71)",
+        "label": "失败",
+        "tone": "error"
+      }
+    ],
+    "contentValuesStructureIconsShadowsPreserved": true,
+    "fields": [],
+    "noPageOverflow": true,
+    "page": "shots",
+    "theme": "light",
+    "viewport": 1440
+  },
+  {
+    "businessRequests": [],
+    "colors": [
+      {
+        "color": "rgb(179, 194, 214)",
+        "label": "关闭",
+        "tone": "neutral"
+      },
+      {
+        "color": "rgb(135, 166, 255)",
+        "label": "准备中",
+        "tone": "busy"
+      },
+      {
+        "color": "rgb(116, 210, 172)",
+        "label": "已采用",
+        "tone": "success"
+      },
+      {
+        "color": "rgb(255, 157, 163)",
+        "label": "失败",
+        "tone": "error"
+      }
+    ],
+    "contentValuesStructureIconsShadowsPreserved": true,
+    "fields": [],
+    "noPageOverflow": true,
+    "page": "shots",
+    "theme": "dark",
+    "viewport": 1440
+  },
+  {
+    "businessRequests": [],
+    "colors": [],
+    "contentValuesStructureIconsShadowsPreserved": true,
+    "fields": [],
+    "noPageOverflow": true,
+    "page": "generate",
+    "theme": "light",
+    "viewport": 1440
+  },
+  {
+    "businessRequests": [],
+    "colors": [],
+    "contentValuesStructureIconsShadowsPreserved": true,
+    "fields": [],
+    "noPageOverflow": true,
+    "page": "generate",
+    "theme": "dark",
+    "viewport": 1440
+  },
+  {
+    "businessRequests": [],
+    "colors": [],
+    "contentValuesStructureIconsShadowsPreserved": true,
+    "fields": [
+      {
+        "columns": "124px 1106px",
+        "inputLeft": 279,
+        "label": "账号定位",
+        "noOverflow": true,
+        "width": 1106
+      },
+      {
+        "columns": "124px 1106px",
+        "inputLeft": 279,
+        "label": "语气风格",
+        "noOverflow": true,
+        "width": 1106
+      },
+      {
+        "columns": "124px 1106px",
+        "inputLeft": 279,
+        "label": "视觉风格",
+        "noOverflow": true,
+        "width": 1106
+      },
+      {
+        "columns": "124px 1106px",
+        "inputLeft": 279,
+        "label": "限制与禁用内容",
+        "noOverflow": true,
+        "width": 1106
+      }
+    ],
+    "noPageOverflow": true,
+    "page": "account",
+    "theme": "light",
+    "viewport": 1440
+  },
+  {
+    "businessRequests": [],
+    "colors": [],
+    "contentValuesStructureIconsShadowsPreserved": true,
+    "fields": [
+      {
+        "columns": "124px 1106px",
+        "inputLeft": 279,
+        "label": "账号定位",
+        "noOverflow": true,
+        "width": 1106
+      },
+      {
+        "columns": "124px 1106px",
+        "inputLeft": 279,
+        "label": "语气风格",
+        "noOverflow": true,
+        "width": 1106
+      },
+      {
+        "columns": "124px 1106px",
+        "inputLeft": 279,
+        "label": "视觉风格",
+        "noOverflow": true,
+        "width": 1106
+      },
+      {
+        "columns": "124px 1106px",
+        "inputLeft": 279,
+        "label": "限制与禁用内容",
+        "noOverflow": true,
+        "width": 1106
+      }
+    ],
+    "noPageOverflow": true,
+    "page": "account",
+    "theme": "dark",
+    "viewport": 1440
+  },
+  {
+    "businessRequests": [],
+    "colors": [
+      {
+        "color": "rgb(89, 107, 131)",
+        "label": "关闭",
+        "tone": "neutral"
+      },
+      {
+        "color": "rgb(54, 95, 224)",
+        "label": "准备中",
+        "tone": "busy"
+      },
+      {
+        "color": "rgb(22, 117, 86)",
+        "label": "已采用",
+        "tone": "success"
+      },
+      {
+        "color": "rgb(189, 65, 71)",
+        "label": "失败",
+        "tone": "error"
+      }
+    ],
+    "contentValuesStructureIconsShadowsPreserved": true,
+    "fields": [],
+    "noPageOverflow": true,
+    "page": "shots",
+    "theme": "light",
+    "viewport": 1024
+  },
+  {
+    "businessRequests": [],
+    "colors": [
+      {
+        "color": "rgb(179, 194, 214)",
+        "label": "关闭",
+        "tone": "neutral"
+      },
+      {
+        "color": "rgb(135, 166, 255)",
+        "label": "准备中",
+        "tone": "busy"
+      },
+      {
+        "color": "rgb(116, 210, 172)",
+        "label": "已采用",
+        "tone": "success"
+      },
+      {
+        "color": "rgb(255, 157, 163)",
+        "label": "失败",
+        "tone": "error"
+      }
+    ],
+    "contentValuesStructureIconsShadowsPreserved": true,
+    "fields": [],
+    "noPageOverflow": true,
+    "page": "shots",
+    "theme": "dark",
+    "viewport": 1024
+  },
+  {
+    "businessRequests": [],
+    "colors": [],
+    "contentValuesStructureIconsShadowsPreserved": true,
+    "fields": [],
+    "noPageOverflow": true,
+    "page": "generate",
+    "theme": "light",
+    "viewport": 1024
+  },
+  {
+    "businessRequests": [],
+    "colors": [],
+    "contentValuesStructureIconsShadowsPreserved": true,
+    "fields": [],
+    "noPageOverflow": true,
+    "page": "generate",
+    "theme": "dark",
+    "viewport": 1024
+  },
+  {
+    "businessRequests": [],
+    "colors": [],
+    "contentValuesStructureIconsShadowsPreserved": true,
+    "fields": [
+      {
+        "columns": "124px 702px",
+        "inputLeft": 273,
+        "label": "账号定位",
+        "noOverflow": true,
+        "width": 702
+      },
+      {
+        "columns": "124px 702px",
+        "inputLeft": 273,
+        "label": "语气风格",
+        "noOverflow": true,
+        "width": 702
+      },
+      {
+        "columns": "124px 702px",
+        "inputLeft": 273,
+        "label": "视觉风格",
+        "noOverflow": true,
+        "width": 702
+      },
+      {
+        "columns": "124px 702px",
+        "inputLeft": 273,
+        "label": "限制与禁用内容",
+        "noOverflow": true,
+        "width": 702
+      }
+    ],
+    "noPageOverflow": true,
+    "page": "account",
+    "theme": "light",
+    "viewport": 1024
+  },
+  {
+    "businessRequests": [],
+    "colors": [],
+    "contentValuesStructureIconsShadowsPreserved": true,
+    "fields": [
+      {
+        "columns": "124px 702px",
+        "inputLeft": 273,
+        "label": "账号定位",
+        "noOverflow": true,
+        "width": 702
+      },
+      {
+        "columns": "124px 702px",
+        "inputLeft": 273,
+        "label": "语气风格",
+        "noOverflow": true,
+        "width": 702
+      },
+      {
+        "columns": "124px 702px",
+        "inputLeft": 273,
+        "label": "视觉风格",
+        "noOverflow": true,
+        "width": 702
+      },
+      {
+        "columns": "124px 702px",
+        "inputLeft": 273,
+        "label": "限制与禁用内容",
+        "noOverflow": true,
+        "width": 702
+      }
+    ],
+    "noPageOverflow": true,
+    "page": "account",
+    "theme": "dark",
+    "viewport": 1024
+  },
+  {
+    "businessRequests": [],
+    "colors": [
+      {
+        "color": "rgb(89, 107, 131)",
+        "label": "关闭",
+        "tone": "neutral"
+      },
+      {
+        "color": "rgb(54, 95, 224)",
+        "label": "准备中",
+        "tone": "busy"
+      },
+      {
+        "color": "rgb(22, 117, 86)",
+        "label": "已采用",
+        "tone": "success"
+      },
+      {
+        "color": "rgb(189, 65, 71)",
+        "label": "失败",
+        "tone": "error"
+      }
+    ],
+    "contentValuesStructureIconsShadowsPreserved": true,
+    "fields": [],
+    "noPageOverflow": true,
+    "page": "shots",
+    "theme": "light",
+    "viewport": 390
+  },
+  {
+    "businessRequests": [],
+    "colors": [
+      {
+        "color": "rgb(179, 194, 214)",
+        "label": "关闭",
+        "tone": "neutral"
+      },
+      {
+        "color": "rgb(135, 166, 255)",
+        "label": "准备中",
+        "tone": "busy"
+      },
+      {
+        "color": "rgb(116, 210, 172)",
+        "label": "已采用",
+        "tone": "success"
+      },
+      {
+        "color": "rgb(255, 157, 163)",
+        "label": "失败",
+        "tone": "error"
+      }
+    ],
+    "contentValuesStructureIconsShadowsPreserved": true,
+    "fields": [],
+    "noPageOverflow": true,
+    "page": "shots",
+    "theme": "dark",
+    "viewport": 390
+  },
+  {
+    "businessRequests": [],
+    "colors": [],
+    "contentValuesStructureIconsShadowsPreserved": true,
+    "fields": [],
+    "noPageOverflow": true,
+    "page": "generate",
+    "theme": "light",
+    "viewport": 390
+  },
+  {
+    "businessRequests": [],
+    "colors": [],
+    "contentValuesStructureIconsShadowsPreserved": true,
+    "fields": [],
+    "noPageOverflow": true,
+    "page": "generate",
+    "theme": "dark",
+    "viewport": 390
+  },
+  {
+    "businessRequests": [],
+    "colors": [],
+    "contentValuesStructureIconsShadowsPreserved": true,
+    "fields": [
+      {
+        "columns": "260px",
+        "inputLeft": 97,
+        "label": "账号定位",
+        "noOverflow": true,
+        "width": 260
+      },
+      {
+        "columns": "260px",
+        "inputLeft": 97,
+        "label": "语气风格",
+        "noOverflow": true,
+        "width": 260
+      },
+      {
+        "columns": "260px",
+        "inputLeft": 97,
+        "label": "视觉风格",
+        "noOverflow": true,
+        "width": 260
+      },
+      {
+        "columns": "260px",
+        "inputLeft": 97,
+        "label": "限制与禁用内容",
+        "noOverflow": true,
+        "width": 260
+      }
+    ],
+    "noPageOverflow": true,
+    "page": "account",
+    "theme": "light",
+    "viewport": 390
+  },
+  {
+    "businessRequests": [],
+    "colors": [],
+    "contentValuesStructureIconsShadowsPreserved": true,
+    "fields": [
+      {
+        "columns": "260px",
+        "inputLeft": 97,
+        "label": "账号定位",
+        "noOverflow": true,
+        "width": 260
+      },
+      {
+        "columns": "260px",
+        "inputLeft": 97,
+        "label": "语气风格",
+        "noOverflow": true,
+        "width": 260
+      },
+      {
+        "columns": "260px",
+        "inputLeft": 97,
+        "label": "视觉风格",
+        "noOverflow": true,
+        "width": 260
+      },
+      {
+        "columns": "260px",
+        "inputLeft": 97,
+        "label": "限制与禁用内容",
+        "noOverflow": true,
+        "width": 260
+      }
+    ],
+    "noPageOverflow": true,
+    "page": "account",
+    "theme": "dark",
+    "viewport": 390
+  }
+]

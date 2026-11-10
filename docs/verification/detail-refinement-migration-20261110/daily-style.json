@@ -1,0 +1,10 @@
+{
+  "entry": {
+    "http": 200,
+    "containsNewStyle": true
+  },
+  "style": {
+    "http": 200,
+    "containsNewStyle": true
+  }
+}

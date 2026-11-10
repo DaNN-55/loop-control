@@ -1,0 +1,122 @@
+--- a/src/local-app/main.tsx
++++ b/src/local-app/main.tsx
+@@ -8,6 +8,7 @@
+ import '../ui/impeccable/production.css';
+ import '../ui/impeccable/scroll-layout.css';
+ import '../ui/impeccable/surface-polish.css';
++import '../ui/impeccable/detail-refinement.css';
+ const root=document.getElementById('root');
+ if(!root)throw Error('The application root is missing.');
+ createRoot(root).render(<StrictMode><LocalCatalogApp/></StrictMode>);
+--- a/src/local-app/WorkspaceShotTable.tsx
++++ b/src/local-app/WorkspaceShotTable.tsx
+@@ -61,7 +61,7 @@
+       <td><div className="workspace-shot-text"><span>{clip.text}</span><small title={sourceName}>{sourceName?.replace(/^(?:(?:wan-)?added-[0-9a-f-]{36}-|[0-9a-f]{64}-)/i,'')||sourceName||'保留占位'}</small></div></td>
+       <td>{Number.isFinite(duration)?`${duration!.toFixed(1)} s`:'—'}</td>
+       <td><span className={matched===slots.length?'is-ready':'is-pending'}>{slots.length>1?`${matched} / ${slots.length} 画面`:currentSource?'已匹配':clip.image?.taskId?'待填入':'待匹配'}</span></td>
+-      <td><span className={narration?.adoptedAudioTrackId?'is-ready':'is-pending'}>{!narration||narration.mode==='none'?'关闭':narration.adoptedAudioTrackId?'已采用':['ready','running'].includes(narration.status)?'准备中':narration.status==='failed'?'失败':'待准备'}</span></td>
++      <td><span data-narration-tone={!narration||narration.mode==='none'?'neutral':narration.adoptedAudioTrackId?'success':['ready','running'].includes(narration.status)?'busy':narration.status==='failed'?'error':'pending'} className={narration?.adoptedAudioTrackId?'is-ready':'is-pending'}>{!narration||narration.mode==='none'?'关闭':narration.adoptedAudioTrackId?'已采用':['ready','running'].includes(narration.status)?'准备中':narration.status==='failed'?'失败':'待准备'}</span></td>
+       {!readOnly&&<td className="workspace-shot-table-actions-cell" onClick={event=>event.stopPropagation()} onKeyDown={event=>event.stopPropagation()} onDragStart={event=>{event.preventDefault();event.stopPropagation();}}>
+        <Dropdown.Root><Button size="sm" color="tertiary" className="workspace-shot-menu-trigger" aria-label={`${shotLabel}操作`} isDisabled={disabled} iconLeading={MoreHorizontal}/><Dropdown.Popover className="dan-ui product-ui workspace-shot-menu" placement="bottom end" offset={4}><Dropdown.Menu aria-label={`${shotLabel}操作`}><Dropdown.Item id="delete" icon={Trash2} className="menu-item-danger" isDisabled={clips.length<=1} onAction={()=>onDelete(clip)}>删除镜头</Dropdown.Item></Dropdown.Menu></Dropdown.Popover></Dropdown.Root>
+       </td>}
+--- a/src/local-app/WorkspaceShotTable.test.tsx
++++ b/src/local-app/WorkspaceShotTable.test.tsx
+@@ -1,4 +1,4 @@
+-import {cleanup,fireEvent,render,screen} from '@testing-library/react';
++import {cleanup,fireEvent,render,screen,within} from '@testing-library/react';
+ import {afterEach,expect,it,vi} from 'vitest';
+ import {WorkspaceShotTable} from './WorkspaceShotTable';
+ import type {ProductionWorkspace} from '../productionWorkspace';
+@@ -13,3 +13,17 @@
+  render(<WorkspaceShotTable workspace={workspace} project={null} materials={[]} readOnly disabled={false} selectedShotId="S1" onSelect={vi.fn()} onDelete={vi.fn()} onEdit={onEdit}/>);
+  fireEvent.keyDown(screen.getByRole('row',{name:'镜头 01'}),{altKey:true,key:'ArrowDown'});expect(onEdit).not.toHaveBeenCalled();expect(screen.getByRole('row',{name:'镜头 01'}).draggable).toBe(false);
+ });
++
++it('colors narration presentation without changing off, adopted, pending or failure precedence',()=>{
++ const cases=[
++  {shotId:'none',narration:undefined,text:'关闭',tone:'neutral'},
++  {shotId:'off',narration:{mode:'none',status:'failed'},text:'关闭',tone:'neutral'},
++  {shotId:'adopted',narration:{mode:'generate',status:'failed',adoptedAudioTrackId:'audio'},text:'已采用',tone:'success'},
++  {shotId:'running',narration:{mode:'generate',status:'running'},text:'准备中',tone:'busy'},
++  {shotId:'failed',narration:{mode:'generate',status:'failed'},text:'失败',tone:'error'},
++  {shotId:'pending',narration:{mode:'generate',status:'draft'},text:'待准备',tone:'pending'},
++ ];
++ const workspace={clips:cases.map(c=>({id:c.shotId,itemId:c.shotId,shotId:c.shotId,text:c.shotId,source:null})),narration:cases.filter(c=>c.narration).map(c=>({shotId:c.shotId,...c.narration}))} as unknown as ProductionWorkspace;
++ render(<WorkspaceShotTable workspace={workspace} project={null} materials={[]} selectedShotId="none" disabled={false} onSelect={vi.fn()} onDelete={vi.fn()} onEdit={vi.fn()}/>);
++ cases.forEach((c,index)=>{const row=screen.getByRole('row',{name:`镜头 ${String(index+1).padStart(2,'0')}`});expect(within(row).getByText(c.text).getAttribute('data-narration-tone')).toBe(c.tone);});
++});
+--- a/src/ui/impeccable/detail-refinement.css
++++ b/src/ui/impeccable/detail-refinement.css
+@@ -0,0 +1,72 @@
++/* Approved detail refinement: spacing/alignment, typography/numerals and state colors.
++   Scope to shot preparation, image/video generation and account common rules. */
++html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace-preparation > header {
++  padding: 14px 16px; gap: 16px;
++}
++html[data-interface="impeccable"] .product-ui .workspace-preparation-heading h3 {
++  font-size: 16px; font-weight: 600; line-height: 1.5; letter-spacing: 0;
++}
++html[data-interface="impeccable"] .product-ui .workspace-preparation-heading > span {
++  font-size: 12px; line-height: 1.6; font-variant-numeric: tabular-nums lining-nums;
++  background: transparent;
++}
++html[data-interface="impeccable"] .product-ui .workspace-preparation-detail > #preparation-panel-visual { padding: 16px; }
++html[data-interface="impeccable"] .product-ui .workspace-table-caption { padding: 14px 16px; }
++html[data-interface="impeccable"] .product-ui .workspace-shot-table :is(th,td) { padding: 12px 10px; vertical-align: middle; }
++html[data-interface="impeccable"] .product-ui .workspace-shot-table :is(th,td):first-child { padding-left: 16px; }
++html[data-interface="impeccable"] .product-ui .workspace-shot-table :is(th,td):nth-child(3) {
++  text-align: right; white-space: nowrap; padding-right: 16px; font-variant-numeric: tabular-nums lining-nums;
++}
++html[data-interface="impeccable"] .product-ui .workspace-shot-table :is(td,td:first-child button) { font-size: 12px; line-height: 1.6; }
++html[data-interface="impeccable"] .product-ui .workspace-shot-table th { font-size: 12px; font-weight: 500; line-height: 1.5; }
++html[data-interface="impeccable"] .product-ui .workspace-shot-text > span { font-size: 13px; line-height: 1.6; }
++html[data-interface="impeccable"] .product-ui .workspace-shot-text > small { margin-top: 4px; font-size: 12px; line-height: 1.5; }
++html[data-interface="impeccable"] .product-ui .workspace-shot-table [data-narration-tone="neutral"] { color: var(--lc-muted); }
++html[data-interface="impeccable"] .product-ui .workspace-shot-table [data-narration-tone="busy"] { color: var(--lc-accent); }
++html[data-interface="impeccable"] .product-ui .workspace-shot-table [data-narration-tone="error"] { color: var(--lc-danger); }
++html[data-interface="impeccable"] .product-ui .workspace-table-footer {
++  padding: 12px 16px; font-size: 12px; line-height: 1.6; font-variant-numeric: tabular-nums lining-nums;
++}
++html[data-interface="impeccable"] .product-ui .workspace-visual-unified .workspace-result-footer { padding-block: 12px; align-items: center; }
++html[data-interface="impeccable"] .product-ui .workspace-visual-unified .workspace-candidate-source { font-size: 12px; line-height: 1.6; }
++html[data-interface="impeccable"] .product-ui .workspace-generation-composer[data-operation="generate"] { padding: 16px; gap: 12px; }
++html[data-interface="impeccable"] .product-ui .workspace-generation-composer[data-operation="generate"] .workspace-composer-toolbar { gap: 8px; align-items: center; }
++html[data-interface="impeccable"] .product-ui .workspace-generation-composer[data-operation="generate"] .workspace-composer-toolbar :is(button,.workspace-composer-kind) { min-height: 32px; padding-block: 6px; }
++html[data-interface="impeccable"] .product-ui .workspace-generation-composer[data-operation="generate"] :is(.workspace-composer-chip,.workspace-composer-kind) {
++  font-size: 12px !important; line-height: 20px; font-weight: 500;
++}
++html[data-interface="impeccable"] .product-ui .account-blueprint-workspace .account-editor-heading:has(+ .account-configuration-form) { padding: 20px 24px; align-items: center; }
++html[data-interface="impeccable"] .product-ui .account-blueprint-workspace .account-editor-heading:has(+ .account-configuration-form) h2,
++html[data-interface="impeccable"] .product-ui .account-blueprint-workspace .account-blueprint-form > fieldset > legend {
++  font-size: 16px; font-weight: 600; line-height: 1.5; letter-spacing: 0;
++}
++html[data-interface="impeccable"] .product-ui .account-blueprint-workspace .account-blueprint-form > fieldset,
++html[data-interface="impeccable"] .product-ui .account-blueprint-workspace .account-blueprint-form .creative-rule-fields { gap: 20px; }
++html[data-interface="impeccable"] .product-ui .account-blueprint-workspace .account-blueprint-form > fieldset { padding: 20px 24px; }
++html[data-interface="impeccable"] .product-ui .account-blueprint-workspace .account-blueprint-form label:has(> textarea,> [role="group"]) {
++  grid-template-columns: 124px minmax(0,1fr); gap: 20px; align-items: start;
++}
++html[data-interface="impeccable"] .product-ui .account-blueprint-workspace .account-blueprint-form label:has(> [role="group"]) { align-items: center; }
++html[data-interface="impeccable"] .product-ui .account-blueprint-workspace .account-blueprint-form label:has(> textarea) > .field-label { grid-column: 1; grid-row: 1; }
++html[data-interface="impeccable"] .product-ui .account-blueprint-workspace .account-blueprint-form label > textarea { grid-column: 2; grid-row: 1; }
++html[data-interface="impeccable"] .product-ui .account-blueprint-workspace .account-blueprint-form .field-label { font-size: 13px; line-height: 1.6; font-weight: 500; }
++html[data-interface="impeccable"] .product-ui .account-blueprint-workspace .account-blueprint-form textarea { font-size: 13px; line-height: 1.7; font-weight: 400; }
++html[data-interface="impeccable"] .product-ui .account-blueprint-workspace .account-blueprint-footer { padding: 20px 24px; gap: 12px; align-items: center; }
++html[data-interface="impeccable"] .product-ui .account-blueprint-workspace .account-blueprint-footer .configuration-actions { gap: 12px; }
++html[data-interface="impeccable"] .product-ui .account-blueprint-workspace .account-editor-heading:has(+ .account-configuration-form) .account-save-state,
++html[data-interface="impeccable"] .product-ui .account-blueprint-workspace .account-blueprint-form .account-save-state {
++  font-size: 12px; line-height: 1.6; font-variant-numeric: tabular-nums lining-nums;
++}
++html[data-interface="impeccable"] .product-ui .account-blueprint-workspace .account-editor-heading:has(+ .account-configuration-form) .account-save-state { color: var(--lc-success); }
++html[data-interface="impeccable"] .product-ui .account-blueprint-workspace .account-blueprint-form .account-save-state.is-dirty { color: var(--lc-warning); }
++@media(max-width:640px) {
++  html[data-interface="impeccable"] .product-ui .workspace-preparation-detail > #preparation-panel-visual,
++  html[data-interface="impeccable"] .product-ui .workspace-generation-composer[data-operation="generate"] { padding: 12px; }
++  html[data-interface="impeccable"] .product-ui .workspace-shot-table :is(th,td) { padding-inline: 8px; }
++  html[data-interface="impeccable"] .product-ui .account-blueprint-workspace .account-editor-heading:has(+ .account-configuration-form),
++  html[data-interface="impeccable"] .product-ui .account-blueprint-workspace .account-blueprint-form > fieldset,
++  html[data-interface="impeccable"] .product-ui .account-blueprint-workspace .account-blueprint-footer { padding: 16px; }
++  html[data-interface="impeccable"] .product-ui .account-blueprint-workspace .account-blueprint-form label:has(> textarea,> [role="group"]) { grid-template-columns: minmax(0,1fr); gap: 8px; }
++  html[data-interface="impeccable"] .product-ui .account-blueprint-workspace .account-blueprint-form label > textarea,
++  html[data-interface="impeccable"] .product-ui .account-blueprint-workspace .account-blueprint-form label:has(> textarea) > .field-label { grid-column: 1; grid-row: auto; }
++}

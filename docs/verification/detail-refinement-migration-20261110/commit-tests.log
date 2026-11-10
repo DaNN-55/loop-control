@@ -1,0 +1,15 @@
+npm notice run loop-control@0.1.0 test
+npm notice run vitest run --exclude '**/*.integration.test.ts' src/local-app/WorkspaceShotTable.test.tsx src/accounts/AccountRules.test.tsx src/accounts/AccountGeneralSettings.test.tsx src/accounts/AccountForm.test.tsx src/accounts/AccountWorkspace.test.tsx
+
+ RUN  v3.2.7 /Users/dan/.codex/visualizations/2026/11/10/01a1c3f5-82e9-7f41-88a0-4d6b42ff615b/loop-visual-commit-pgcztls2
+
+ ✓ src/accounts/AccountForm.test.tsx (2 tests) 269ms
+ ✓ src/accounts/AccountGeneralSettings.test.tsx (2 tests) 190ms
+ ✓ src/accounts/AccountRules.test.tsx (4 tests) 235ms
+ ✓ src/local-app/WorkspaceShotTable.test.tsx (3 tests) 91ms
+ ✓ src/accounts/AccountWorkspace.test.tsx (29 tests) 1698ms
+
+ Test Files  5 passed (5)
+      Tests  40 passed (40)
+   Start at  19:07:41
+   Duration  3.03s (transform 428ms, setup 31ms, collect 4.53s, tests 2.48s, environment 1.45s, prepare 184ms)

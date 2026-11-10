@@ -1,0 +1,12 @@
+{
+  "base": "491a123abcf97970f70d1b12f3ba4ac8b9c42fc0",
+  "validatedTree": "9c2411b1a4ebee979e5a159f052b7c596965c62e",
+  "productFiles": [
+    "src/local-app/main.tsx",
+    "src/local-app/WorkspaceShotTable.tsx",
+    "src/local-app/WorkspaceShotTable.test.tsx",
+    "src/ui/impeccable/detail-refinement.css"
+  ],
+  "plan": "only this visual refinement section",
+  "otherChangesExcluded": true
+}

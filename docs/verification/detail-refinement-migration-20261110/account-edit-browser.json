@@ -1,0 +1,39 @@
+{
+  "businessRequests": [],
+  "colors": [],
+  "contentValuesStructureIconsShadowsPreserved": true,
+  "fields": [
+    {
+      "columns": "260px",
+      "inputLeft": 77,
+      "label": "账号定位",
+      "noOverflow": true,
+      "width": 260
+    },
+    {
+      "columns": "260px",
+      "inputLeft": 77,
+      "label": "语气风格",
+      "noOverflow": true,
+      "width": 260
+    },
+    {
+      "columns": "260px",
+      "inputLeft": 77,
+      "label": "视觉风格",
+      "noOverflow": true,
+      "width": 260
+    },
+    {
+      "columns": "260px",
+      "inputLeft": 77,
+      "label": "限制与禁用内容",
+      "noOverflow": true,
+      "width": 260
+    }
+  ],
+  "noPageOverflow": true,
+  "page": "account",
+  "theme": "light",
+  "viewport": 390
+}

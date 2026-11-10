@@ -1,0 +1,13 @@
+{
+  "voiceAndSoundPanelPaddingPreserved": true,
+  "before": [
+    "16px",
+    "16px"
+  ],
+  "after": [
+    "16px",
+    "16px"
+  ],
+  "visualPaddingAt390": "12px",
+  "generationSelectorRequiresDataOperationGenerate": true
+}
