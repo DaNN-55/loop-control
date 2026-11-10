@@ -38,7 +38,8 @@ it('opens a single file picker and detects mixed media formats in one batch',asy
   ['importMaterial',expect.objectContaining({materialType:'video',materialPurpose:'visual_reference',sourcePath:'clip.mov',mimeType:'application/octet-stream'})],
  ]);
  expect(screen.getByRole('alert').textContent).toContain('notes.txt');
- expect(screen.getByRole('heading',{name:'本期素材 · 3'})).toBeTruthy();
+ expect(screen.getByRole('button',{name:'收起本期素材'}).textContent).toBe('本期素材 · 3');
+ expect(within(screen.getByRole('list',{name:'素材清单'})).getAllByRole('listitem')).toHaveLength(3);
 });
 it('shows a dismissible success toast from the actual shelf upload and retains the imported material',async()=>{
  vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace})));
@@ -48,7 +49,7 @@ it('shows a dismissible success toast from the actual shelf upload and retains t
  fireEvent.change(screen.getByLabelText('上传制作素材'),{target:{files:[new File(['image'],'image.png',{type:'image/png'})]}});
  expect((await screen.findByRole('status',{name:'上传提示'})).textContent).toContain('已导入 1 项素材');
  fireEvent.click(screen.getByRole('button',{name:'关闭上传提示'}));expect(screen.queryByRole('status',{name:'上传提示'})).toBeNull();
- expect(screen.getByRole('heading',{name:'本期素材 · 1'})).toBeTruthy();expect(screen.getByText('已导入 1 项素材')).toBeTruthy();expect(command).toHaveBeenCalledExactlyOnceWith('importMaterial',expect.objectContaining({sourcePath:'image.png'}));
+ expect(screen.getByRole('button',{name:'收起本期素材'}).textContent).toBe('本期素材 · 1');expect(within(screen.getByRole('list',{name:'素材清单'})).getByRole('button',{name:'预览 image.png'})).toBeTruthy();expect(screen.getByText('已导入 1 项素材')).toBeTruthy();expect(command).toHaveBeenCalledExactlyOnceWith('importMaterial',expect.objectContaining({sourcePath:'image.png'}));
 });
 it('shows shelf validation failures in the same toast and can reopen their retained details',async()=>{
  vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace})));const command=vi.fn();
@@ -166,7 +167,9 @@ it('accepts one unassigned MP3 for voice and queues local audio candidates witho
  fireEvent.click(screen.getByRole('button',{name:'本期素材 · 2'}));
  const audio=screen.getByRole('button',{name:'预览 unassigned.mp3'}),music=screen.getByRole('button',{name:'预览 music.mp3'});
  fireEvent.click(screen.getByRole('tab',{name:'字幕与口播'}));
- fireEvent.change(screen.getByRole('combobox',{name:'口播来源'}),{target:{value:'manual'}});
+ fireEvent.click(screen.getByRole('button',{name:'口播来源'}));
+ fireEvent.click(screen.getByRole('menuitemradio',{name:'人工口播'}));
+ expect(screen.getByRole('button',{name:'口播来源'}).textContent).toContain('人工口播');
  const musicDrag=startMaterialDrag(music);
  expect(screen.getByRole('button',{name:'拖入口播文件'}).getAttribute('data-drag-over')).toBeNull();
  fireEvent.dragEnd(music,{dataTransfer:musicDrag});

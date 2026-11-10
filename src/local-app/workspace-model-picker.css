@@ -1,0 +1,4 @@
+.workspace-model-logo{display:inline-block;width:16px;height:16px;flex:0 0 16px;object-fit:contain;vertical-align:middle}
+.workspace-model-picker-trigger>span{display:inline-flex;align-items:center;gap:6px;min-width:0}
+.workspace-composer-model-option[data-disabled]{opacity:.45}
+html[data-theme=dark] .workspace-model-logo[data-monochrome]{filter:invert(1)}
