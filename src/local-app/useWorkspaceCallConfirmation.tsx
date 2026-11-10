@@ -1,36 +1,66 @@
-import {useEffect,useRef,useState} from 'react';
+import {useEffect,useMemo,useReducer,useRef} from 'react';
 import {createPortal} from 'react-dom';
 import {ConfirmationModal,ConfirmationModalPresence} from '../ui/ConfirmationModal';
 import {gptImage2EstimateRates,requiresWorkspaceCall,type WorkspaceCallProposal} from '../workspaceCall';
 
 const cancelled=()=>{const error=new Error('');error.name='AbortError';return error;};
+type CallRequest={resolve:(value:unknown)=>void;reject:(error:unknown)=>void;data:Record<string,unknown>};
+type CallDetails={request:CallRequest;proposal:WorkspaceCallProposal;reservation:string};
+type CallState=
+ |{phase:'idle'}|{phase:'closed'}
+ |{phase:'preparing';request:CallRequest}
+ |(CallDetails&{phase:'review'})
+ |(CallDetails&{phase:'submitting'})
+ |(CallDetails&{phase:'failed';error:string});
+function reservationCents({proposal,reservation}:CallDetails){
+ const summary=proposal.summary,limits=summary.estimate,amount=Number(reservation)*100;
+ return reservation.trim()!==''&&Number.isFinite(amount)&&Math.abs(amount-Math.round(amount))<1e-6&&amount>=(limits?.minimumCents??(summary.kind==='在线音效'?0:1))&&amount<=(limits?.maximumCents??100000)?Math.round(amount):null;
+}
+/** See ADR-0033: one owner per visit; late replies cannot advance another visit's call. */
 export function useWorkspaceCallConfirmation(command:(name:string,data:unknown)=>Promise<unknown>,identity:string,materials:readonly {id:string;material_type:string;storage_path:string}[]=[]){
- const [proposal,setProposal]=useState<WorkspaceCallProposal|null>(null),[reservation,setReservation]=useState(''),[submitting,setSubmitting]=useState(false),[error,setError]=useState('');
+ const owner=useMemo(()=>({state:{phase:'idle'} as CallState}),[identity]);
+ const active=useRef(owner);active.current=owner;
+ const [,render]=useReducer((version:number)=>version+1,0);
  const action=useRef(command);action.current=command;
- const scope=useRef(identity);scope.current=identity;
- const busy=useRef(false),pending=useRef<{resolve:(value:unknown)=>void;reject:(error:unknown)=>void;data:Record<string,unknown>}|null>(null);
- useEffect(()=>{setProposal(null);setSubmitting(false);setError('');return()=>{pending.current?.reject(cancelled());pending.current=null;busy.current=false;};},[identity]);
+ const rendered=owner.state;
+ const owns=(state:CallState)=>active.current===owner&&owner.state===state;
+ function transition(state:CallState){owner.state=state;render();}
+ useEffect(()=>{
+  if(owner.state.phase==='closed'){owner.state={phase:'idle'};render();}
+  return()=>{const state=owner.state;owner.state={phase:'closed'};if('request' in state)state.request.reject(cancelled());};
+ },[owner]);
+ async function prepare(preparing:Extract<CallState,{phase:'preparing'}>,name:string){
+  const {data}=preparing.request;
+  try{
+   const proposal=await action.current('prepareWorkspaceCall',{episodeId:data.episodeId,workspaceId:data.workspaceId,expectedRevision:data.expectedRevision,callCommand:name,callData:data}) as WorkspaceCallProposal;
+   if(!owns(preparing))return;
+   transition({phase:'review',request:preparing.request,proposal,reservation:proposal.summary.estimate?.manualReservation?'':(proposal.summary.reservationCents/100).toFixed(2)});
+  }catch(cause){if(owns(preparing)){transition({phase:'idle'});preparing.request.reject(cause);}}
+ }
  async function request(name:string,value:unknown){
   const data=value as Record<string,unknown>;
   if(!requiresWorkspaceCall(name,data))return action.current(name,value);
-  if(busy.current)throw Error('已有本次调用等待确认或提交，请先完成当前操作。');
-  busy.current=true;const initial=scope.current;
+  if(active.current!==owner||owner.state.phase==='closed')throw cancelled();
+  if(owner.state.phase!=='idle')throw Error('已有本次调用等待确认或提交，请先完成当前操作。');
+  return new Promise<unknown>((resolve,reject)=>{const preparing={phase:'preparing' as const,request:{resolve,reject,data}};transition(preparing);void prepare(preparing,name);});
+ }
+ function cancel(){const state=owner.state;if(!owns(rendered)||state.phase!=='review'&&state.phase!=='failed')return;transition({phase:'idle'});state.request.reject(cancelled());}
+ async function confirm(){
+  const state=owner.state;if(!owns(rendered)||state.phase!=='review')return;
+  const cents=reservationCents(state);if(cents===null||new Date(state.proposal.expiresAt).getTime()<=Date.now())return;
+  const submitting={...state,phase:'submitting' as const};transition(submitting);
+  const {data}=state.request;
   try{
-   const next=await action.current('prepareWorkspaceCall',{episodeId:data.episodeId,workspaceId:data.workspaceId,expectedRevision:data.expectedRevision,callCommand:name,callData:data}) as WorkspaceCallProposal;
-   if(initial!==scope.current)throw cancelled();
-   setError('');setReservation(next.summary.estimate?.manualReservation?'':(next.summary.reservationCents/100).toFixed(2));setProposal(next);
-   return await new Promise<unknown>((resolve,reject)=>{pending.current={resolve,reject,data};});
-  }finally{busy.current=false;}
+   const value=await action.current('confirmWorkspaceCall',{episodeId:data.episodeId,workspaceId:data.workspaceId,expectedRevision:data.expectedRevision,confirmationId:state.proposal.confirmationId,reservationCents:cents});
+   if(owns(submitting)){transition({phase:'idle'});state.request.resolve(value);}
+  }catch(cause){if(owns(submitting))transition({...state,phase:'failed',error:cause instanceof Error?cause.message:'提交未完成，请核对任务状态后重试。'});}
  }
- function cancel(){if(submitting)return;const current=pending.current;pending.current=null;setProposal(null);current?.reject(cancelled());}
- async function confirm(){const current=pending.current;if(!current||!proposal||submitting||!validReservation)return;setSubmitting(true);setError('');
-  try{const value=await action.current('confirmWorkspaceCall',{episodeId:current.data.episodeId,workspaceId:current.data.workspaceId,expectedRevision:current.data.expectedRevision,confirmationId:proposal.confirmationId,reservationCents:Math.round(Number(reservation)*100)});pending.current=null;setProposal(null);current.resolve(value);}
-  catch(cause){setError(cause instanceof Error?cause.message:'提交未完成，请核对任务状态后重试。');}
-  finally{setSubmitting(false);}
- }
- const summary=proposal?.summary,limits=summary?.estimate,amount=Number(reservation)*100;
- const validReservation=reservation.trim()!==''&&Number.isFinite(amount)&&Math.abs(amount-Math.round(amount))<1e-6&&amount>=(limits?.minimumCents??(summary?.kind==='在线音效'?0:1))&&amount<=(limits?.maximumCents??100000);
- const requestData=pending.current?.data;
+ function setReservation(reservation:string){const state=owner.state;if(owns(rendered)&&(state.phase==='review'||state.phase==='failed'))transition({...state,reservation});}
+ const state=owner.state,call='proposal' in state?state:null;
+ const proposal=call?.proposal,reservation=call?.reservation??'',submitting=state.phase==='submitting',error=state.phase==='failed'?state.error:'';
+ const summary=proposal?.summary,limits=summary?.estimate;
+ const validReservation=call?reservationCents(call)!==null:false;
+ const requestData=call?.request.data;
  const referenceIds=Array.isArray(requestData?.referenceMaterialRevisionIds)
   ?requestData.referenceMaterialRevisionIds
   :Array.isArray(requestData?.visualInputs)
