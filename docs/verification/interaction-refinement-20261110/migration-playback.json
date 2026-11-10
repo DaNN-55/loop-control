@@ -1,0 +1,19 @@
+{
+  "audio": [
+    {
+      "ended": true,
+      "paused": true,
+      "ready": 4,
+      "time": 3
+    }
+  ],
+  "errors": [],
+  "video": [
+    {
+      "ended": true,
+      "paused": true,
+      "ready": 4,
+      "time": 3.349333
+    }
+  ]
+}

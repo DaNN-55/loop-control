@@ -16,6 +16,12 @@
  color: var(--lc-muted);
  font-size: 11px;
 }
+html[data-interface="impeccable"] .product-ui .workspace-material-shelf > .workspace-table-footer {
+ block-size: 40px;
+ min-block-size: 40px;
+ box-sizing: border-box;
+ padding-block: 0;
+}
 .workspace-material-shelf.is-drop-target > .workspace-table-footer {
  background: var(--lc-accent-soft);
  border-block-start-color: var(--lc-accent);
@@ -50,10 +56,6 @@
  gap: 8px;
  padding: 4px 12px;
  border-block-end: 1px solid var(--lc-line);
-}
-html[data-interface="impeccable"] .product-ui .workspace-material-heading h3 {
- margin: 0;
- font-size: 15px;
 }
 html[data-interface="impeccable"] .product-ui .workspace-material-heading > button.workspace-material-import {
  min-height: 30px !important;
@@ -173,10 +175,9 @@ html[data-interface="impeccable"] .product-ui .workspace-material-heading > butt
 
 /* Thumbnail inventory follows the approved flow template. */
 .workspace-material-inventory{max-block-size:min(65dvh,440px);background:var(--lc-surface-2)}
-.workspace-material-heading{border:0;padding:6px 12px 2px}.workspace-material-heading-actions{display:flex;align-items:center;gap:4px}
-html[data-interface="impeccable"] .product-ui .workspace-material-heading h3{font-size:13px}
-html[data-interface="impeccable"] .product-ui .workspace-material-heading>div>button.workspace-material-import{font-size:13px!important;line-height:20px!important;min-height:28px!important;padding:4px 0!important;gap:5px!important}
-.workspace-material-filters{display:flex;gap:4px;padding:5px 12px 7px;flex:none}.workspace-material-filters button{border:0;border-radius:5px;padding:3px 7px;background:transparent;color:var(--lc-muted);font:inherit;font-size:12px;cursor:pointer}.workspace-material-filters button[aria-pressed=true]{background:var(--lc-accent-soft);color:var(--lc-accent)}
+.workspace-material-heading{border:0;padding:6px 12px 8px;flex-wrap:wrap}.workspace-material-heading-actions{display:flex;align-items:center;gap:4px;margin-inline-start:auto}
+html[data-interface="impeccable"] .product-ui .workspace-material-heading>div>button.workspace-material-import{font-family:inherit;font-size:13px!important;font-weight:400!important;line-height:1.5!important;color:var(--lc-muted)!important;min-height:28px!important;padding:4px 0!important;gap:5px!important}
+.workspace-material-filters{display:flex;flex-wrap:wrap;gap:4px;min-width:0;padding:0;flex:none}.workspace-material-filters button{border:0;border-radius:5px;padding:3px 7px;background:transparent;color:var(--lc-muted);font:inherit;font-size:12px;cursor:pointer}.workspace-material-filters button[aria-pressed=true]{background:var(--lc-accent-soft);color:var(--lc-accent)}
 .workspace-material-content{display:block;overflow:auto;flex:1;min-height:0}.workspace-material-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:7px;padding:0 12px 6px;overflow:visible;align-content:start}
 .workspace-material-list li{position:relative;min-width:0}.workspace-material-list .workspace-material-select{display:grid;gap:4px;padding:4px;border:1px solid var(--lc-line);border-radius:5px;background:var(--lc-surface);min-width:0;min-height:0}.workspace-material-list .workspace-material-select:is(:hover,[aria-pressed=true]){background:var(--lc-surface);border-color:var(--lc-accent)}.workspace-material-list .workspace-material-select[data-picked]{box-shadow:none}
 .workspace-material-thumb{position:relative;display:grid;place-items:center;width:100%;aspect-ratio:1;height:auto;border-radius:3px;overflow:hidden;background:var(--lc-bg);color:var(--lc-muted)}.workspace-material-thumb :is(img,video){width:100%;height:100%;object-fit:contain}.workspace-material-thumb .workspace-material-video-mark{position:absolute;right:4px;bottom:4px;color:white;filter:drop-shadow(0 1px 2px #0008)}
@@ -186,10 +187,15 @@ html[data-interface="impeccable"] .product-ui .workspace-material-heading>div>bu
 .workspace-material-modal{width:min(760px,calc(100vw - 32px));max-width:760px}.workspace-material-modal [role=dialog]{outline:none}.workspace-material-modal header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}.workspace-material-modal h3{font-size:14px;min-width:0;overflow-wrap:anywhere;margin:0}
 html[data-interface="impeccable"] .product-ui .workspace-material-thumb :is(img,video){height:100%!important;block-size:100%!important;min-height:0!important;max-height:none!important;width:100%!important;object-fit:contain}
 
-html[data-interface="impeccable"] .product-ui .workspace-material-heading .workspace-material-import[data-color]>svg[data-icon]:not([data-icon="loading"]){flex:none!important;width:15px!important;height:15px!important}
+html[data-interface="impeccable"] .product-ui .workspace-material-heading .workspace-material-import[data-color]>svg[data-icon]:not([data-icon="loading"]){flex:none!important;width:1em!important;height:1em!important;color:inherit!important}
 .workspace-material-list .workspace-material-open-preview{position:absolute;top:9px;right:9px;display:grid;place-items:center;width:28px;height:28px;min-block-size:0;padding:0;border:1px solid var(--lc-line);border-radius:5px;background:var(--lc-surface);color:var(--lc-muted);cursor:zoom-in}
 .workspace-material-list .workspace-material-open-preview:hover{background:var(--lc-accent-soft);color:var(--lc-accent);border-color:var(--lc-accent)}
 .workspace-material-list .workspace-material-open-preview:focus-visible{outline:2px solid var(--lc-accent);outline-offset:2px}
+@media(hover:hover) and (pointer:fine){
+ .workspace-material-list .workspace-material-open-preview{opacity:0;pointer-events:none;transition:opacity 150ms ease-out}
+ .workspace-material-list li:is(:hover,:focus-within) .workspace-material-open-preview{opacity:1;pointer-events:auto}
+}
+@media(prefers-reduced-motion:reduce){.workspace-material-list .workspace-material-open-preview{transition:none}}
 
 html[data-interface="impeccable"] .product-ui .workspace-material-modal .workspace-material-preview-close{display:inline-grid;place-items:center;flex:none;width:30px;height:30px;min-height:30px!important;padding:6px!important;border:0!important;border-radius:6px!important;background:transparent!important;color:var(--lc-muted)!important;box-shadow:none!important}
 html[data-interface="impeccable"] .product-ui .workspace-material-modal .workspace-material-preview-close:hover{background:var(--lc-surface-2)!important;color:var(--lc-ink)!important}

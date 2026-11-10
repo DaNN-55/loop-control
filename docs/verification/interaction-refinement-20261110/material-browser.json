@@ -1,0 +1,37 @@
+{
+  "initial": {
+    "hasEye": false,
+    "hasZoom": true,
+    "headerText": "全部图片视频音频脚本导入本期素材",
+    "idleOpacity": "0",
+    "sameRow": true,
+    "toggle": "本期素材 · 24",
+    "zoomPoint": {
+      "x": 183.515625,
+      "y": 588.5625
+    }
+  },
+  "hover": {
+    "hover": true,
+    "focus": false,
+    "opacity": "1"
+  },
+  "keyboard": {
+    "focused": "workspace-material-open-preview",
+    "opacity": "1",
+    "previewOpened": true,
+    "previewClosed": true
+  },
+  "titlePositionUnchanged": true,
+  "touch": {
+    "coarse": true,
+    "hover": false,
+    "opacity": "1"
+  },
+  "final": {
+    "eyes": 0,
+    "idleOpacity": "0",
+    "toggle": "本期素材 · 24",
+    "zoomIcons": 24
+  }
+}

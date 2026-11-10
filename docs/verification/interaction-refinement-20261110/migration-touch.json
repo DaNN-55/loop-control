@@ -1,0 +1,69 @@
+{
+  "pointer": {
+    "hover": false,
+    "coarse": true,
+    "touch": 1
+  },
+  "rows": [
+    {
+      "kind": "图片",
+      "opacity": "1",
+      "buttons": [
+        {
+          "name": "用作视频首帧",
+          "tabIndex": 0
+        },
+        {
+          "name": "下载图片",
+          "tabIndex": 0
+        },
+        {
+          "name": "放大图片",
+          "tabIndex": 0
+        },
+        {
+          "name": "移除候选",
+          "tabIndex": 0
+        }
+      ],
+      "inside": true
+    },
+    {
+      "kind": "视频",
+      "opacity": "1",
+      "buttons": [
+        {
+          "name": "裁剪与时长",
+          "tabIndex": 0
+        },
+        {
+          "name": "下载视频",
+          "tabIndex": 0
+        },
+        {
+          "name": "移除候选",
+          "tabIndex": 0
+        }
+      ],
+      "inside": true
+    },
+    {
+      "kind": "audio",
+      "opacity": "1"
+    },
+    {
+      "kind": "cover-download",
+      "opacity": "1"
+    },
+    {
+      "kind": "video-download",
+      "opacity": "1"
+    }
+  ],
+  "reduced": {
+    "matches": true,
+    "buttonTransition": "0s",
+    "toolbarTransition": "0s"
+  },
+  "requests": []
+}

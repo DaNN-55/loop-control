@@ -1,6 +1,6 @@
 import {useWorkspaceMaterialSelection,workspaceMaterialDragType} from './WorkspaceMaterialDrop';
 import {useEffect,useId,useRef,useState,type PointerEvent} from 'react';
-import {AudioLines,ChevronDown,ChevronUp,Film,FileText,Image as ImageIcon,Eye,Upload,X} from 'lucide-react';
+import {AudioLines,ChevronDown,ChevronUp,Film,FileText,Image as ImageIcon,Maximize2,Upload,X} from 'lucide-react';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {Dialog,Modal,ModalOverlay} from 'react-aria-components';
 import {WorkspaceUploadToast,type UploadNotice} from './WorkspaceUploadFeedback';
@@ -85,7 +85,7 @@ export function WorkspaceMaterialShelf({episodeId,shotCount,scriptRevisionId,mat
   <div className="workspace-table-footer">
    <span>{shotCount} 个镜头</span>
    <Button ref={toggle} type="button" size="sm" color="tertiary" iconTrailing={open?ChevronDown:ChevronUp}
-    aria-label={open?'收起本期素材':undefined} aria-expanded={open} aria-controls={id} onPress={()=>setOpen(value=>!value)}>{open?undefined:`本期素材 · ${files.length}`}</Button>
+    aria-label={open?'收起本期素材':undefined} aria-expanded={open} aria-controls={id} onPress={()=>setOpen(value=>!value)}>{`本期素材 · ${files.length}`}</Button>
   </div>
   {open&&<section ref={drawer} id={id} className="workspace-material-inventory"
    aria-label="本期素材" style={{blockSize:height}}>
@@ -101,7 +101,8 @@ export function WorkspaceMaterialShelf({episodeId,shotCount,scriptRevisionId,mat
      setHeight(value=>event.key==='Home'?minHeight:event.key==='End'?maxHeight:clampHeight(value+(event.key==='ArrowUp'?16:-16)));
     }}><span aria-hidden="true"/></div>
    <header className="workspace-material-heading">
-    <h3>本期素材 · {files.length}</h3><div className="workspace-material-heading-actions">
+    <div className="workspace-material-filters" role="group" aria-label="素材类型">{[['all','全部'],['image','图片'],['video','视频'],['audio','音频'],['script','脚本']].map(([value,label])=><button type="button" key={value} aria-pressed={filter===value} onClick={()=>setFilter(value)}>{label}</button>)}</div>
+    <div className="workspace-material-heading-actions">
     {!readOnly&&<Button size="xs" color="tertiary" className="workspace-material-import" noTextPadding iconLeading={Upload}
      isDisabled={uploadDisabled} onPress={()=>input.current?.click()}>导入本期素材</Button>}</div>
    </header>
@@ -114,7 +115,6 @@ export function WorkspaceMaterialShelf({episodeId,shotCount,scriptRevisionId,mat
     {status&&<div role="status">{status}</div>}
     {failures.length>0&&<ul role="alert">{failures.map((failure,index)=><li key={index}>{failure}</li>)}</ul>}
    </div>}
-   <div className="workspace-material-filters" role="group" aria-label="素材类型">{[['all','全部'],['image','图片'],['video','视频'],['audio','音频'],['script','脚本']].map(([value,label])=><button type="button" key={value} aria-pressed={filter===value} onClick={()=>setFilter(value)}>{label}</button>)}</div>
    <div className="workspace-material-content">
     {filtered.length?<ul className="workspace-material-list" aria-label="素材清单">
      {filtered.map(material=>{
@@ -127,7 +127,7 @@ export function WorkspaceMaterialShelf({episodeId,shotCount,scriptRevisionId,mat
        onDoubleClick={()=>{setPreviewId(material.id);setShowPreview(true);}}>
        <span className="workspace-material-thumb">{material.material_type==='image'?<img src={src} alt="" loading="lazy"/>:material.material_type==='video'?<><video src={`${src}#t=0.001`} muted playsInline preload="metadata"/><Film size={15} className="workspace-material-video-mark" aria-hidden="true"/></>:<Icon size={material.material_type==='audio'?34:28} aria-hidden="true"/>}</span>
        <span className="workspace-material-name">{name}</span>
-      </button><button type="button" className="workspace-material-open-preview" aria-label={`预览素材 ${name}`} title="预览素材" onClick={()=>{setPreviewId(material.id);setShowPreview(true);}}><Eye size={15} aria-hidden="true"/></button></li>;
+      </button><button type="button" className="workspace-material-open-preview" aria-label={`预览素材 ${name}`} title="预览素材" onClick={()=>{setPreviewId(material.id);setShowPreview(true);}}><Maximize2 size={16} aria-hidden="true"/></button></li>;
      })}
     </ul>:<p className="workspace-material-empty">{files.length?'此类型暂无素材':readOnly?'暂无素材':'可拖入图片、视频或 MP3，每个文件不超过 100 MB。'}</p>}
    </div>
