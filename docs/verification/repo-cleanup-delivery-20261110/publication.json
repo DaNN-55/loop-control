@@ -1,0 +1,15 @@
+{
+  "baseline": "62885252",
+  "sourceBatches": 7,
+  "documentationBatch": "87132c1c",
+  "contentMerge": "efdd7c84826b15d2b4780ea63be4692f301244f7",
+  "originMainConfirmed": "efdd7c84826b15d2b4780ea63be4692f301244f7",
+  "mergedTreeMatchesValidatedTree": true,
+  "validation": {
+    "testFilesPassed": 256,
+    "testsPassed": 1917,
+    "testsSkipped": 1,
+    "failed": 0
+  },
+  "followup": "This receipt is committed after the verified content merge; no product changes."
+}

@@ -35,7 +35,7 @@
 | 6 | `e7fdc462` | fix: apply end-only video ranges and verify recovery fences |
 | 7 | `83e5f525` | refactor: remove unreachable legacy helpers and unused range dependency |
 
-ADR、状态机盘点、既有验证记录与部署研究作为文档批次保存；部署研究仍为未实施评估，不代表部署授权或完成。合并与远端核对结果在最终交付记录中更新。
+ADR、状态机盘点、既有验证记录与部署研究作为文档批次保存；部署研究仍为未实施评估，不代表部署授权或完成。已通过 `efdd7c84` 合并至 main 并成功推送，远端核对 SHA 一致；合并树严格等于验收通过的文件树。见 `merge-result.json`、`publication.json`、`push.log`。本交付回执作为随后文档收尾提交同步，不改变产品文件。
 
 ## 工作区与运行环境
 
