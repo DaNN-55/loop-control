@@ -1,0 +1,38 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/MediaRootSettingsDialog.recovery.test.tsx
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/local-app/MediaRootSettingsDialog.recovery.test.tsx (4 tests | 1 failed) 119ms
+   ✓ pauses polling while hidden and immediately reads on return without overlapping reads 32ms
+   ✓ a late progress response cannot replace the completed command readback 43ms
+   ✓ guards repeated keyboard submissions synchronously and ignores command completion after closing 15ms
+   × finishing a command supersedes a pending manual retry and releases its reading state 29ms
+     → expected true to be false // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/MediaRootSettingsDialog.recovery.test.tsx > finishing a command supersedes a pending manual retry and releases its reading state
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/local-app/MediaRootSettingsDialog.recovery.test.tsx:58:85
+     56|  await screen.findByText('暂时断开');fireEvent.click(screen.getByRole('but…
+     57|  await act(async()=>finish(Response.json({status:'completed'})));
+     58|  expect((screen.getByRole('button',{name:'更换存储位置'}) as HTMLButtonEleme…
+       |                                                                                     ^
+     59|  await act(async()=>retry(Response.json(copying)));expect(screen.query…
+     60| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  11:39:48
+   Duration  720ms (transform 49ms, setup 7ms, collect 350ms, tests 119ms, environment 114ms, prepare 23ms)

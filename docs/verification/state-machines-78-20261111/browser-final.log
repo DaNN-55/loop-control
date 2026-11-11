@@ -1,0 +1,21 @@
+{
+  "storageVisibility": {
+    "hiddenReads": 2,
+    "returnedReads": 3,
+    "method": "instrumented visibility event on real component"
+  },
+  "storageReopen": true,
+  "visual": {
+    "imports": 3,
+    "newBatch": true,
+    "retainedImport": true,
+    "noAbandonedRetry": true
+  },
+  "shelf": {
+    "imports": 3,
+    "newBatch": true,
+    "retainedImport": true,
+    "noAbandonedRetry": true
+  },
+  "errors": ""
+}

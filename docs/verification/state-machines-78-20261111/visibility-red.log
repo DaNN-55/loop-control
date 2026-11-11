@@ -1,0 +1,35 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/MediaRootSettingsDialog.recovery.test.tsx
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/local-app/MediaRootSettingsDialog.recovery.test.tsx (1 test | 1 failed) 31ms
+   × pauses polling while hidden and immediately reads on return without overlapping reads 30ms
+     → expected 6 to be 2 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/MediaRootSettingsDialog.recovery.test.tsx > pauses polling while hidden and immediately reads on return without overlapping reads
+AssertionError: expected 6 to be 2 // Object.is equality
+
+- Expected
++ Received
+
+- 2
++ 6
+
+ ❯ src/local-app/MediaRootSettingsDialog.recovery.test.tsx:14:70
+     12|  await act(async()=>{});expect(reads).toBe(2);
+     13|  hidden=true;act(()=>document.dispatchEvent(new Event('visibilitychang…
+     14|  await act(async()=>vi.advanceTimersByTimeAsync(2000));expect(reads).t…
+       |                                                                      ^
+     15|  hidden=false;await act(async()=>document.dispatchEvent(new Event('vis…
+     16| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  11:36:20
+   Duration  1.21s (transform 53ms, setup 7ms, collect 766ms, tests 31ms, environment 271ms, prepare 32ms)

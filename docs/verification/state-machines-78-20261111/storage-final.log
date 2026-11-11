@@ -1,0 +1,12 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/MediaRootSettingsDialog.recovery.test.tsx src/local-app/MediaRootSettingsDialog.test.tsx
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/MediaRootSettingsDialog.recovery.test.tsx (4 tests) 123ms
+ ✓ src/local-app/MediaRootSettingsDialog.test.tsx (7 tests) 658ms
+
+ Test Files  2 passed (2)
+      Tests  11 passed (11)
+   Start at  11:39:56
+   Duration  1.32s (transform 97ms, setup 15ms, collect 802ms, tests 781ms, environment 248ms, prepare 58ms)

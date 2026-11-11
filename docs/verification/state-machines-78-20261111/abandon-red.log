@@ -1,0 +1,798 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/WorkspaceVisualPreparation.upload.test.tsx
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/local-app/WorkspaceVisualPreparation.upload.test.tsx (11 tests | 1 failed) 455ms
+   ✓ 批量上传仅保留未完成项，只重试失败项，成功后移除恢复区并支持下一批 150ms
+   ✓ 关闭重开保留真实处理中与未处理项，收到导入回执后只补登记候选 63ms
+   ✓ 素材导入成功但候选登记失败后，关闭重开重试不会再次导入 43ms
+   ✓ 候选已登记但响应丢失时，重试核对现有候选，不重复导入或登记 36ms
+   ✓ 候选登记进行中关闭并立即重开，完成后同步已登记候选 29ms
+   ✓ 导入提交成功但网络回执丢失时，真实命令客户端复用幂等回执 42ms
+   ✓ 切换目标或生产单不显示上一目标的上传结果，返回原目标可继续 21ms
+   ✓ 逐文件保留空文件与超过 100 MB 的拒绝结果，继续导入有效文件 31ms
+   ✓ 参考图保留每张 20 MB 与每次最多 16 张的接收限制 19ms
+   ✓ 不支持的本地文件显示提示及可恢复详情，不发起素材导入 5ms
+   × 放弃停止后的未完成项，保留已导入图片供参考且不补候选，重开后可上传新批次 14ms
+     → Unable to find an accessible element with the role "button" and name "放弃未完成项"
+
+Here are the accessible roles:
+
+  region:
+
+  Name "镜头图片与视频":
+  [36m<section[39m
+    [33maria-label[39m=[32m"镜头图片与视频"[39m
+    [33mclass[39m=[32m"workspace-visual-candidates workspace-visual-unified"[39m
+  [36m/>[39m
+
+  Name "上传结果":
+  [36m<section[39m
+    [33maria-label[39m=[32m"上传结果"[39m
+    [33mclass[39m=[32m"workspace-upload-results"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m/>[39m
+
+  Name "图片候选结果":
+  [36m<section[39m
+    [33maria-label[39m=[32m"图片候选结果"[39m
+    [33mclass[39m=[32m"workspace-visual-results"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  banner:
+
+  Name "":
+  [36m<header />[39m
+
+  Name "":
+  [36m<header />[39m
+
+  --------------------------------------------------
+  tablist:
+
+  Name "画面类型":
+  [36m<div[39m
+    [33maria-label[39m=[32m"画面类型"[39m
+    [33mclass[39m=[32m"workspace-visual-preview-tabs"[39m
+    [33mrole[39m=[32m"tablist"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  tab:
+
+  Name "图片":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"visual-content-target"[39m
+    [33maria-selected[39m=[32m"true"[39m
+    [33mid[39m=[32m"visual-kind-target-image"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "视频":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"visual-content-target"[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mid[39m=[32m"visual-kind-target-video"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  status:
+
+  Name "":
+  [36m<span[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  Name "图片候选上传中":
+  [36m<div[39m
+    [33maria-label[39m=[32m"图片候选上传中"[39m
+    [33mclass[39m=[32m"workspace-upload-preview"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "重试未完成项":
+  [36m<button[39m
+    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+    [33mdata-color[39m=[32m"secondary"[39m
+    [33mdata-disabled[39m=[32m"true"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mdisabled[39m=[32m""[39m
+    [33mid[39m=[32m"react-aria-_r_5r_"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "上传素材":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"true"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "AI 生成":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"false"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "选择或拖入图片 PNG、JPEG、WebP、BMP · 每张不超过 100 MB · 可多选":
+  [36m<button[39m
+    [33mclass[39m=[32m"workspace-visual-dropzone"[39m
+    [33mdisabled[39m=[32m""[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  list:
+
+  Name "":
+  [36m<ul />[39m
+
+  --------------------------------------------------
+  listitem:
+
+  Name "":
+  [36m<li[39m
+    [33maria-busy[39m=[32m"true"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<li[39m
+    [33maria-busy[39m=[32m"false"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  strong:
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  --------------------------------------------------
+  tabpanel:
+
+  Name "图片":
+  [36m<div[39m
+    [33maria-labelledby[39m=[32m"visual-kind-target-image"[39m
+    [33mclass[39m=[32m"workspace-visual-content"[39m
+    [33mid[39m=[32m"visual-content-target"[39m
+    [33mrole[39m=[32m"tabpanel"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p />[39m
+
+  --------------------------------------------------
+  group:
+
+  Name "图片来源":
+  [36m<div[39m
+    [33maria-label[39m=[32m"图片来源"[39m
+    [33mclass[39m=[32m"workspace-visual-origin"[39m
+    [33mrole[39m=[32m"group"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"镜头图片与视频"[39m
+      [33mclass[39m=[32m"workspace-visual-candidates workspace-visual-unified"[39m
+    [36m>[39m
+      [36m<header>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"画面类型"[39m
+          [33mclass[39m=[32m"workspace-visual-preview-tabs"[39m
+          [33mrole[39m=[32m"tablist"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-controls[39m=[32m"visual-content-target"[39m
+            [33maria-selected[39m=[32m"true"[39m
+            [33mid[39m=[32m"visual-kind-target-image"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"0"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m图片[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-controls[39m=[32m"visual-content-target"[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mid[39m=[32m"visual-kind-target-video"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"-1"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m视频[0m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</header>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"上传结果"[39m
+        [33mclass[39m=[32m"workspace-upload-results"[39m
+        [33mtabindex[39m=[32m"-1"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<span[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [0m正在上传[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+            [33mdata-color[39m=[32m"secondary"[39m
+            [33mdata-disabled[39m=[32m"true"[39m
+            [33mdata-rac[39m=[32m""[39m
+            [33mdata-react-aria-pressable[39m=[32m"true"[39m
+            [33mdisabled[39m=[32m""[39m
+            [33mid[39m=[32m"react-aria-_r_5r_"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"transition-inherit-all px-0.5"[39m
+              [33mdata-text[39m=[32m"true"[39m
+            [36m>[39m
+              [0m重试未完成项[0m
+            [36m</span>[39m
+          [36m</button>[39m
+        [36m</header>[39m
+        [36m<ul>[39m
+          [36m<li[39m
+            [33maria-busy[39m=[32m"true"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<strong>[39m
+                [0mimported.png[0m
+              [36m</strong>[39m
+              [36m<span>[39m
+                [0m处理中…[0m
+              [36m</span>[39m
+            [36m</div>[39m
+          [36m</li>[39m
+          [36m<li[39m
+            [33maria-busy[39m=[32m"false"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<strong>[39m
+                [0mbad.png[0m
+              [36m</strong>[39m
+              [36m<span>[39m
+                [0m未处理[0m
+              [36m</span>[39m
+            [36m</div>[39m
+          [36m</li>[39m
+        [36m</ul>[39m
+      [36m</section>[39m
+      [36m<div[39m
+        [33maria-labelledby[39m=[32m"visual-kind-target-image"[39m
+        [33mclass[39m=[32m"workspace-visual-content"[39m
+        [33mid[39m=[32m"visual-content-target"[39m
+        [33mrole[39m=[32m"tabpanel"[39m
+      [36m>[39m
+        [36m<section[39m
+          [33maria-label[39m=[32m"图片候选结果"[39m
+          [33mclass[39m=[32m"workspace-visual-results"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"workspace-results-gallery"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33maria-label[39m=[32m"图片预览"[39m
+              [33mclass[39m=[32m"workspace-unified-preview"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33maria-label[39m=[32m"图片候选上传中"[39m
+                [33mclass[39m=[32m"workspace-upload-preview"[39m
+                [33mrole[39m=[32m"status"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"workspace-upload-preview-placeholder"[39m
+                  [33mstyle[39m=[32m"aspect-ratio: 9/16;"[39m
+                [36m/>[39m
+                [36m<p>[39m
+                  [0m正在准备[0m
+                  [0m图片[0m
+                  [0m候选…[0m
+                [36m</p>[39m
+                [36m<small>[39m
+                  [0mimported.png[0m
+                [36m</small>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<span[39m
+              [33mhidden[39m=[32m""[39m
+              [33mid[39m=[32m"_r_5q_"[39m
+            [36m>[39m
+              [0m用作镜头画面，保持时长不变[0m
+            [36m</span>[39m
+          [36m</div>[39m
+        [36m</section>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"图片来源"[39m
+          [33mclass[39m=[32m"workspace-visual-origin"[39m
+          [33mrole[39m=[32m"group"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-pressed[39m=[32m"true"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m上传素材[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-pressed[39m=[32m"false"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mAI 生成[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"workspace-visual-import"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"workspace-visual-dropzone"[39m
+            [33mdisabled[39m=[32m""[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-upload"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"18"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 3v12"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m17 8-5-5-5 5"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span>[39m
+              [0m选择或拖入[0m
+              [0m图片[0m
+            [36m</span>[39m
+            [36m<small>[39m
+              [0mPNG、JPEG、WebP、BMP · 每张不超过 100 MB · 可多选[0m
+            [36m</small>[39m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<input[39m
+        [33maccept[39m=[32m"image/png,image/jpeg,image/webp,image/bmp"[39m
+        [33maria-label[39m=[32m"上传图片素材"[39m
+        [33mdisabled[39m=[32m""[39m
+        [33mhidden[39m=[32m""[39m
+        [33mmultiple[39m=[32m""[39m
+        [33mtype[39m=[32m"file"[39m
+      [36m/>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/WorkspaceVisualPreparation.upload.test.tsx > 放弃停止后的未完成项，保留已导入图片供参考且不补候选，重开后可上传新批次
+TestingLibraryElementError: Unable to find an accessible element with the role "button" and name "放弃未完成项"
+
+Here are the accessible roles:
+
+  region:
+
+  Name "镜头图片与视频":
+  [36m<section[39m
+    [33maria-label[39m=[32m"镜头图片与视频"[39m
+    [33mclass[39m=[32m"workspace-visual-candidates workspace-visual-unified"[39m
+  [36m/>[39m
+
+  Name "上传结果":
+  [36m<section[39m
+    [33maria-label[39m=[32m"上传结果"[39m
+    [33mclass[39m=[32m"workspace-upload-results"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m/>[39m
+
+  Name "图片候选结果":
+  [36m<section[39m
+    [33maria-label[39m=[32m"图片候选结果"[39m
+    [33mclass[39m=[32m"workspace-visual-results"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  banner:
+
+  Name "":
+  [36m<header />[39m
+
+  Name "":
+  [36m<header />[39m
+
+  --------------------------------------------------
+  tablist:
+
+  Name "画面类型":
+  [36m<div[39m
+    [33maria-label[39m=[32m"画面类型"[39m
+    [33mclass[39m=[32m"workspace-visual-preview-tabs"[39m
+    [33mrole[39m=[32m"tablist"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  tab:
+
+  Name "图片":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"visual-content-target"[39m
+    [33maria-selected[39m=[32m"true"[39m
+    [33mid[39m=[32m"visual-kind-target-image"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "视频":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"visual-content-target"[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mid[39m=[32m"visual-kind-target-video"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  status:
+
+  Name "":
+  [36m<span[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  Name "图片候选上传中":
+  [36m<div[39m
+    [33maria-label[39m=[32m"图片候选上传中"[39m
+    [33mclass[39m=[32m"workspace-upload-preview"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "重试未完成项":
+  [36m<button[39m
+    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+    [33mdata-color[39m=[32m"secondary"[39m
+    [33mdata-disabled[39m=[32m"true"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mdisabled[39m=[32m""[39m
+    [33mid[39m=[32m"react-aria-_r_5r_"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "上传素材":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"true"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "AI 生成":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"false"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "选择或拖入图片 PNG、JPEG、WebP、BMP · 每张不超过 100 MB · 可多选":
+  [36m<button[39m
+    [33mclass[39m=[32m"workspace-visual-dropzone"[39m
+    [33mdisabled[39m=[32m""[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  list:
+
+  Name "":
+  [36m<ul />[39m
+
+  --------------------------------------------------
+  listitem:
+
+  Name "":
+  [36m<li[39m
+    [33maria-busy[39m=[32m"true"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<li[39m
+    [33maria-busy[39m=[32m"false"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  strong:
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  --------------------------------------------------
+  tabpanel:
+
+  Name "图片":
+  [36m<div[39m
+    [33maria-labelledby[39m=[32m"visual-kind-target-image"[39m
+    [33mclass[39m=[32m"workspace-visual-content"[39m
+    [33mid[39m=[32m"visual-content-target"[39m
+    [33mrole[39m=[32m"tabpanel"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p />[39m
+
+  --------------------------------------------------
+  group:
+
+  Name "图片来源":
+  [36m<div[39m
+    [33maria-label[39m=[32m"图片来源"[39m
+    [33mclass[39m=[32m"workspace-visual-origin"[39m
+    [33mrole[39m=[32m"group"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"镜头图片与视频"[39m
+      [33mclass[39m=[32m"workspace-visual-candidates workspace-visual-unified"[39m
+    [36m>[39m
+      [36m<header>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"画面类型"[39m
+          [33mclass[39m=[32m"workspace-visual-preview-tabs"[39m
+          [33mrole[39m=[32m"tablist"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-controls[39m=[32m"visual-content-target"[39m
+            [33maria-selected[39m=[32m"true"[39m
+            [33mid[39m=[32m"visual-kind-target-image"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"0"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m图片[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-controls[39m=[32m"visual-content-target"[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mid[39m=[32m"visual-kind-target-video"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"-1"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m视频[0m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</header>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"上传结果"[39m
+        [33mclass[39m=[32m"workspace-upload-results"[39m
+        [33mtabindex[39m=[32m"-1"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<span[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [0m正在上传[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+            [33mdata-color[39m=[32m"secondary"[39m
+            [33mdata-disabled[39m=[32m"true"[39m
+            [33mdata-rac[39m=[32m""[39m
+            [33mdata-react-aria-pressable[39m=[32m"true"[39m
+            [33mdisabled[39m=[32m""[39m
+            [33mid[39m=[32m"react-aria-_r_5r_"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"transition-inherit-all px-0.5"[39m
+              [33mdata-text[39m=[32m"true"[39m
+            [36m>[39m
+              [0m重试未完成项[0m
+            [36m</span>[39m
+          [36m</button>[39m
+        [36m</header>[39m
+        [36m<ul>[39m
+          [36m<li[39m
+            [33maria-busy[39m=[32m"true"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<strong>[39m
+                [0mimported.png[0m
+              [36m</strong>[39m
+              [36m<span>[39m
+                [0m处理中…[0m
+              [36m</span>[39m
+            [36m</div>[39m
+          [36m</li>[39m
+          [36m<li[39m
+            [33maria-busy[39m=[32m"false"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<strong>[39m
+                [0mbad.png[0m
+              [36m</strong>[39m
+              [36m<span>[39m
+                [0m未处理[0m
+              [36m</span>[39m
+            [36m</div>[39m
+          [36m</li>[39m
+        [36m</ul>[39m
+      [36m</section>[39m
+      [36m<div[39m
+        [33maria-labelledby[39m=[32m"visual-kind-target-image"[39m
+        [33mclass[39m=[32m"workspace-visual-content"[39m
+        [33mid[39m=[32m"visual-content-target"[39m
+        [33mrole[39m=[32m"tabpanel"[39m
+      [36m>[39m
+        [36m<section[39m
+          [33maria-label[39m=[32m"图片候选结果"[39m
+          [33mclass[39m=[32m"workspace-visual-results"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"workspace-results-gallery"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33maria-label[39m=[32m"图片预览"[39m
+              [33mclass[39m=[32m"workspace-unified-preview"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33maria-label[39m=[32m"图片候选上传中"[39m
+                [33mclass[39m=[32m"workspace-upload-preview"[39m
+                [33mrole[39m=[32m"status"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"workspace-upload-preview-placeholder"[39m
+                  [33mstyle[39m=[32m"aspect-ratio: 9/16;"[39m
+                [36m/>[39m
+                [36m<p>[39m
+                  [0m正在准备[0m
+                  [0m图片[0m
+                  [0m候选…[0m
+                [36m</p>[39m
+                [36m<small>[39m
+                  [0mimported.png[0m
+                [36m</small>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<span[39m
+              [33mhidden[39m=[32m""[39m
+              [33mid[39m=[32m"_r_5q_"[39m
+            [36m>[39m
+              [0m用作镜头画面，保持时长不变[0m
+            [36m</span>[39m
+          [36m</div>[39m
+        [36m</section>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"图片来源"[39m
+          [33mclass[39m=[32m"workspace-visual-origin"[39m
+          [33mrole[39m=[32m"group"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-pressed[39m=[32m"true"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m上传素材[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-pressed[39m=[32m"false"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mAI 生成[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"workspace-visual-import"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"workspace-visual-dropzone"[39m
+            [33mdisabled[39m=[32m""[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-upload"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"18"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 3v12"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m17 8-5-5-5 5"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span>[39m
+              [0m选择或拖入[0m
+              [0m图片[0m
+            [36m</span>[39m
+            [36m<small>[39m
+              [0mPNG、JPEG、WebP、BMP · 每张不超过 100 MB · 可多选[0m
+            [36m</small>[39m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<input[39m
+        [33maccept[39m=[32m"image/png,image/jpeg,image/webp,image/bmp"[39m
+        [33maria-label[39m=[32m"上传图片素材"[39m
+        [33mdisabled[39m=[32m""[39m
+        [33mhidden[39m=[32m""[39m
+        [33mmultiple[39m=[32m""[39m
+        [33mtype[39m=[32m"file"[39m
+      [36m/>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/local-app/WorkspaceVisualPreparation.upload.test.tsx:190:17
+    188|  const fixture=setup();fixture.failRegistration='imported.png';const r…
+    189|  const view=render(<fixture.View/>);choose([image('imported.png'),imag…
+    190|  expect((screen.getByRole('button',{name:'放弃未完成项'}) as HTMLButtonEleme…
+       |                 ^
+    191|  await act(async()=>resume());await waitFor(()=>expect(screen.getByRol…
+    192|  fireEvent.click(screen.getByRole('button',{name:'放弃未完成项'}));expect(sc…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 10 passed (11)
+   Start at  11:38:01
+   Duration  1.47s (transform 180ms, setup 7ms, collect 772ms, tests 455ms, environment 111ms, prepare 24ms)
