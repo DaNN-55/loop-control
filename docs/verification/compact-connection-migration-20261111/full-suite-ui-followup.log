@@ -1,0 +1,16 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/LocalConnectionsPanel.reading.test.tsx src/local-app/LocalCatalogApp.workspace.test.tsx src/local-app/CompactConnectionWorkspace.test.tsx
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/LocalConnectionsPanel.reading.test.tsx (6 tests) 482ms
+ ✓ src/local-app/CompactConnectionWorkspace.test.tsx (16 tests) 1092ms
+ ✓ src/local-app/LocalCatalogApp.workspace.test.tsx (12 tests) 1997ms
+   ✓ 保留安全弹窗焦点，从所有者菜单打开连接配置且跨页保留连接草稿  398ms
+   ✓ keeps one topbar instance and places the Owner menu after theme in workspace and episode  470ms
+
+ Test Files  3 passed (3)
+      Tests  34 passed (34)
+   Start at  22:01:54
+   Duration  3.41s (transform 518ms, setup 21ms, collect 2.40s, tests 3.57s, environment 748ms, prepare 85ms)
+

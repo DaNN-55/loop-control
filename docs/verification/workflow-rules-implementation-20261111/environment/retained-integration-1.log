@@ -1,0 +1,83 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workspaceScriptResume.integration.test.ts src/local-app/productionWorkspace.integration.test.ts src/local-app/workspacePexels.integration.test.ts src/local-app/workspaceCandidates.integration.test.ts src/local-app/workspaceCaptions.integration.test.ts --maxWorkers=1 --fileParallelism=false --reporter=verbose
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/workspaceCandidates.integration.test.ts > completed local speech versions stay immutable and rejecting a candidate preserves the native project 2738ms
+ × src/local-app/workspaceCandidates.integration.test.ts > explicit candidate duration changes only the stable main voice and stale attempts preserve the saved edit 7223ms
+   → expected { …(4) } to deeply equal { …(4) }
+ ✓ src/local-app/workspaceCandidates.integration.test.ts > prepared old speech and changed candidate bytes cannot overwrite a newer input 3043ms
+ ✓ src/local-app/workspaceCandidates.integration.test.ts > adopting actual speech expires only affected caption evidence and a late alignment cannot restore it 3387ms
+ ✓ src/local-app/workspaceCandidates.integration.test.ts > new registered speech enters the existing Studio media session before relink and cannot be finalized before native save 8944ms
+ ✓ src/local-app/workspaceCandidates.integration.test.ts > a saved native candidate can recover its missing adoption receipt after restart without regenerating speech 7596ms
+(node:88183) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ✓ src/local-app/workspaceCandidates.integration.test.ts > explicit main-voice candidate adoption switches source and none atomically while preserving native sounds 13981ms
+ ✓ src/local-app/workspacePexels.integration.test.ts > Owner queries Pexels, previews an explicit result, imports and explicitly adopts managed bytes after restart 14007ms
+ ✓ src/local-app/workspacePexels.integration.test.ts > Pexels failures stay recoverable, validate external URLs and bytes, and never generate or adopt automatically 3620ms
+ ✓ src/local-app/workspacePexels.integration.test.ts > queued Pexels requests retain exact credentials across rotation and old candidates remain selectable after a new query 3248ms
+ ✓ src/local-app/workspacePexels.integration.test.ts > a short Pexels video gives recoverable duration feedback and only an explicit duration choice changes the native window 3255ms
+(node:90573) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ✓ src/local-app/workspacePexels.integration.test.ts > Pexels results and unimported previews for one shot survive many searches on another shot 16752ms
+ ✓ src/local-app/workspacePexels.integration.test.ts > thumbnail search metadata survives Owner reads and duplicate preview/import cannot change the project before adoption 2064ms
+ ✓ src/local-app/workspaceCaptions.integration.test.ts > Owner edits only the chosen native caption lane and persists manual timing without shot approval 3580ms
+ ✓ src/local-app/workspaceCaptions.integration.test.ts > current native caption evidence follows the real alignment queue and rejects a late Worker result after a text edit 2353ms
+ ✓ src/local-app/workspaceCaptions.integration.test.ts > real landscape and portrait Remotion frames contain caption pixels inside the chosen safe area 18352ms
+ ✓ src/local-app/workspaceCaptions.integration.test.ts > Owner caption errors identify the field and current shot window without changing the saved native captions 1403ms
+ ✓ src/local-app/workspaceCaptions.integration.test.ts > percentage margins and second timings survive Owner save, native dragging, save and reopen 6256ms
+ ↓ src/local-app/workspaceCaptions.integration.test.ts > browser edits and reopens percentage margins and second timing through the actual Owner HTTP boundary
+ ✓ src/local-app/productionWorkspace.integration.test.ts > Owner persists incomplete matches, gates native entry until visuals are ready and reopens safely 6066ms
+ ✓ src/local-app/workspaceScriptResume.integration.test.ts > Owner confirms a formatting-only revision while preserving the exact edited project and old invalidated evidence 3442ms
+ ✓ src/local-app/workspaceScriptResume.integration.test.ts > substantive script edits cannot bypass the stale-project guard through formatting recovery 1410ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workspaceCandidates.integration.test.ts > explicit candidate duration changes only the stable main voice and stale attempts preserve the saved edit
+AssertionError: expected { …(4) } to deeply equal { …(4) }
+
+- Expected
++ Received
+
+@@ -57,11 +57,11 @@
+                "maxCharactersPerLine": 16,
+                "maxLines": 2,
+                "safeArea": "title-safe",
+                "version": "shot-caption-space/v2",
+              },
+-             "text": "原始完整口播。",
++             "text": "简短新口播。",
+              "version": "workspace-caption/v1",
+            },
+            "offsetXRatio": 0,
+            "offsetYRatio": 0.09999999999999999,
+            "slotId": "workspace-caption-shot-shot-1-slot",
+@@ -74,14 +74,14 @@
+            },
+            "visible": true,
+            "widthRatio": 0.8400000000000001,
+            "words": [
+              {
+-               "end": 2000,
++               "end": 1400,
+                "id": "narration-caption~0",
+                "start": 0,
+-               "text": "原始完整口播。",
++               "text": "简短新口播。",
+              },
+            ],
+          },
+          {
+            "anchor": "bottom-center",
+
+ ❯ src/local-app/workspaceCandidates.integration.test.ts:37:278
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 4 passed (5)
+      Tests  1 failed | 20 passed | 1 skipped (22)
+   Start at  18:21:48
+   Duration  134.72s (transform 573ms, setup 13ms, collect 1.38s, tests 132.72s, environment 0ms, prepare 161ms)
+

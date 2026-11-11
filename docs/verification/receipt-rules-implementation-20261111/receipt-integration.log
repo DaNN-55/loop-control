@@ -1,0 +1,29 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/receiptRules.integration.test.ts --maxWorkers=1 --fileParallelism=false
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/local-app/receiptRules.integration.test.ts (6 tests | 1 failed) 9694ms
+   ✓ 4/24 persists exactly two local recoveries across attempts and reuses a reserved request without an extra send  1781ms
+   ✓ 4 changed input is proven not sent, while historical reservations remain unknown  1389ms
+   ✓ 5/9/24 verified files recover the original publication with no new Provider request: received-write  1630ms
+   ✓ 5/9/24 verified files recover the original publication with no new Provider request: commit-rejected  1599ms
+   ✓ 5/9/24 verified files recover the original publication with no new Provider request: commit-ack-lost  1604ms
+   × 24 unknown speech only allows a separately confirmed new generation, preserves old receipt, and cannot reuse that exception 1689ms
+     → Cannot read properties of undefined (reading 'find')
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/receiptRules.integration.test.ts > 24 unknown speech only allows a separately confirmed new generation, preserves old receipt, and cannot reuse that exception
+TypeError: Cannot read properties of undefined (reading 'find')
+ ❯ src/local-app/receiptRules.integration.test.ts:75:58
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+   Start at  21:50:54
+   Duration  10.42s (transform 447ms, setup 7ms, collect 618ms, tests 9.69s, environment 0ms, prepare 23ms)
+

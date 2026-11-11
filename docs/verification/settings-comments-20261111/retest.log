@@ -1,0 +1,12 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/sharedViews.test.tsx src/local-app/LocalCatalogApp.account.test.tsx src/local-app/WorkspaceGenerationLocale.test.tsx --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+···············
+
+ Test Files  3 passed (3)
+      Tests  15 passed (15)
+   Start at  17:45:47
+   Duration  2.50s (transform 1.01s, setup 23ms, collect 3.44s, tests 1.32s, environment 473ms, prepare 98ms)
+

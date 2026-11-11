@@ -1,0 +1,21 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/runtimeRequestLog.test.ts --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+x
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/runtimeRequestLog.test.ts > records real successful and unknown writes with one request identity without logging credentials or treating HTTP success as production completion
+TypeError: .toMatch() expects to receive a string, but got object
+ ❯ src/local-app/runtimeRequestLog.test.ts:18:149
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  17:06:22
+   Duration  679ms (transform 380ms, setup 8ms, collect 519ms, tests 16ms, environment 0ms, prepare 29ms)

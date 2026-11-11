@@ -1,0 +1,14 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/blueprintContraction.integration.test.ts --maxWorkers=1 --fileParallelism=false --reporter=verbose
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/blueprintContraction.integration.test.ts > Owner saves creative-only accounts without media connections and retains referenced legacy blueprint evidence 1135ms
+ ✓ src/local-app/blueprintContraction.integration.test.ts > ordinary planning drafts persist before workspace creation and failed retries retain their frozen selection 2795ms
+ ✓ src/local-app/blueprintContraction.integration.test.ts > v2 direct preparation needs no planner and new media requests require explicit service selection 2755ms
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  18:26:27
+   Duration  7.37s (transform 439ms, setup 7ms, collect 574ms, tests 6.69s, environment 0ms, prepare 24ms)
+

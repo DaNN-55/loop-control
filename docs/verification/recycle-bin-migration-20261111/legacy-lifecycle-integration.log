@@ -1,0 +1,89 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/episodeArchive.integration.test.ts src/local-app/episodeDeletion.integration.test.ts --maxWorkers=1 --fileParallelism=false
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/local-app/episodeDeletion.integration.test.ts (2 tests | 2 failed) 12867ms
+   × managed=true: deletes an archived ordinary order and then its empty account through Owner HTTP, retaining deletion fences 4391ms
+     → expected 503 to be 200 // Object.is equality
+   × managed=false: deletes an archived ordinary order and then its empty account through Owner HTTP, retaining deletion fences 8474ms
+     → {"error":"删除事务失败，部分文件仍保留在删除暂存位置；请恢复外部盘并重试原操作。"}: expected 500 to be 200 // Object.is equality
+ ❯ src/local-app/episodeArchive.integration.test.ts (1 test | 1 failed) 3723ms
+   × restores an owned legacy order without enabling native production; retains ownership, history and CSRF fences 3720ms
+     → {"status":503,"body":{"code":"local_service_unavailable","error":"本机操作结果暂未确认，请查看系统状态并核对已有任务或保存结果，再继续操作。"}}: expected { status: 503, body: { …(2) } } to match object { status: 200, body: { …(2) } }
+(2 matching properties omitted from actual)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/episodeArchive.integration.test.ts > restores an owned legacy order without enabling native production; retains ownership, history and CSRF fences
+AssertionError: {"status":503,"body":{"code":"local_service_unavailable","error":"本机操作结果暂未确认，请查看系统状态并核对已有任务或保存结果，再继续操作。"}}: expected { status: 503, body: { …(2) } } to match object { status: 200, body: { …(2) } }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "body": {
+-     "archived_at": null,
+-     "id": "2fb12771-130f-4c07-b1ce-9e6d3e4e409d",
++     "code": "local_service_unavailable",
++     "error": "本机操作结果暂未确认，请查看系统状态并核对已有任务或保存结果，再继续操作。",
+    },
+-   "status": 200,
++   "status": 503,
+  }
+
+ ❯ src/local-app/episodeArchive.integration.test.ts:52:45
+     50|   expect((await post(outsider,false)).status).toBe(404);expect((await …
+     51|   const key=randomUUID(),restored=await post(legacy,false,key);
+     52|   expect(restored,JSON.stringify(restored)).toMatchObject({status:200,…
+       |                                             ^
+     53|   expect(await post(legacy,false,key)).toEqual(restored);
+     54|   expect((await post(legacy,true)).status).toBe(200);expect((await pos…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/local-app/episodeDeletion.integration.test.ts > managed=true: deletes an archived ordinary order and then its empty account through Owner HTTP, retaining deletion fences
+AssertionError: expected 503 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 503
+
+ ❯ src/local-app/episodeDeletion.integration.test.ts:94:94
+     92|   expect((await post('planDeletion',{episodeId:foreignEpisode})).statu…
+     93|   expect((await post('deleteEpisode',await plan())).status).toBe(409);
+     94|   if(managed)expect((await post('archiveEpisode',{episodeId:episode,ar…
+       |                                                                                              ^
+     95|   else await asAdmin('UPDATE public.episodes SET archived_at=now() WHE…
+     96|   expect((await removeAccount()).status).toBe(409);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/local-app/episodeDeletion.integration.test.ts > managed=false: deletes an archived ordinary order and then its empty account through Owner HTTP, retaining deletion fences
+AssertionError: {"error":"删除事务失败，部分文件仍保留在删除暂存位置；请恢复外部盘并重试原操作。"}: expected 500 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 500
+
+ ❯ src/local-app/episodeDeletion.integration.test.ts:138:55
+    136|   cleanupPermissionFault.directory=directory;cleanupPermissionFault.tr…
+    137|   const deleted=await post('deleteEpisode',args,key);
+    138|   expect(deleted.status,JSON.stringify(deleted.body)).toBe(200);expect…
+       |                                                       ^
+    139|   expect(existsSync(directory)).toBe(true);
+    140|   const stagedCopy=join(directory,'output.txt.loop-control-deletion');…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  3 failed (3)
+   Start at  20:17:31
+   Duration  20.90s (transform 1.96s, setup 40ms, collect 3.25s, tests 16.59s, environment 2ms, prepare 269ms)
+

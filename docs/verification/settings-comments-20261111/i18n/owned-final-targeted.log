@@ -1,0 +1,11 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/connections/ConnectionLocale.test.tsx src/connections/ConnectionModelsDialog.test.tsx src/connections/ConnectionOrganization.test.tsx --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+·································
+
+ Test Files  3 passed (3)
+      Tests  33 passed (33)
+   Start at  17:27:45
+   Duration  2.46s (transform 255ms, setup 26ms, collect 2.95s, tests 1.91s, environment 776ms, prepare 94ms)

@@ -1,0 +1,95 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workflowLegacyRules.integration.test.ts --maxWorkers=1 --fileParallelism=false --reporter=verbose
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ × src/local-app/workflowLegacyRules.integration.test.ts > 48 composition revision freezes the current QC edit, fences permission/stale/running requests and preserves prior evidence 2465ms
+   → expected 403 to be 409 // Object.is equality
+ × src/local-app/workflowLegacyRules.integration.test.ts > 48 storyboard return invalidates downstream packages while retaining the approved storyboard and immutable QC files 2317ms
+   → expected 403 to be 409 // Object.is equality
+ × src/local-app/workflowLegacyRules.integration.test.ts > 48 a running storyboard revision blocks a QC structural return before any downstream evidence changes 2425ms
+   → {"error":"所有者权限不足。"}: expected 403 to be 409 // Object.is equality
+ × src/local-app/workflowLegacyRules.integration.test.ts > 48 per-shot input changes remain drafts until a new local preview is confirmed and a new review snapshot is frozen 2518ms
+   → Worker scheduler capacity is not configured
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workflowLegacyRules.integration.test.ts > 48 composition revision freezes the current QC edit, fences permission/stale/running requests and preserves prior evidence
+AssertionError: expected 403 to be 409 // Object.is equality
+
+- Expected
++ Received
+
+- 409
++ 403
+
+ ❯ src/local-app/workflowLegacyRules.integration.test.ts:65:111
+     63|   expect((await f.request('requestStudioCompositionRevision',data,{tok…
+     64|   expect((await f.request('requestStudioCompositionRevision',data,{csr…
+     65|   expect((await f.request('requestStudioCompositionRevision',{...data,…
+       |                                                                                                               ^
+     66|   const running=randomUUID();await f.c.query("INSERT INTO public.tasks…
+     67|   const conflict=await f.request('requestStudioCompositionRevision',da…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/local-app/workflowLegacyRules.integration.test.ts > 48 storyboard return invalidates downstream packages while retaining the approved storyboard and immutable QC files
+AssertionError: expected 403 to be 409 // Object.is equality
+
+- Expected
++ Received
+
+- 409
++ 403
+
+ ❯ src/local-app/workflowLegacyRules.integration.test.ts:84:110
+     82|  const f=await legacyFixture();try{
+     83|   const before=await f.original(),data={reviewPackageId:f.qc,reason:'R…
+     84|   expect((await f.request('requestStudioStoryboardRevision',{...data,r…
+       |                                                                                                              ^
+     85|   const revised=await f.request('requestStudioStoryboardRevision',data…
+     86|   expect((await f.c.query('SELECT stage FROM public.episodes WHERE id=…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/local-app/workflowLegacyRules.integration.test.ts > 48 a running storyboard revision blocks a QC structural return before any downstream evidence changes
+AssertionError: {"error":"所有者权限不足。"}: expected 403 to be 409 // Object.is equality
+
+- Expected
++ Received
+
+- 409
++ 403
+
+ ❯ src/local-app/workflowLegacyRules.integration.test.ts:98:55
+     96|   const before=await f.original();await f.c.query("INSERT INTO public.…
+     97|   const revised=await f.request('requestStudioStoryboardRevision',{rev…
+     98|   expect(revised.status,JSON.stringify(revised.body)).toBe(409);
+       |                                                       ^
+     99|   expect((await f.c.query('SELECT stage FROM public.episodes WHERE id=…
+    100|   expect(await f.original()).toEqual(before);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  src/local-app/workflowLegacyRules.integration.test.ts > 48 per-shot input changes remain drafts until a new local preview is confirmed and a new review snapshot is frozen
+error: Worker scheduler capacity is not configured
+ ❯ node_modules/pg-pool/index.js:45:11
+ ❯ Object.rpc src/local-app/workerDatabase.ts:24:47
+     22|   async plan(scope){return (await pool.query('SELECT id FROM local_ide…
+     23|   async rpc(name,args){
+     24|    if(name==='claim_next_worker_task')return (await pool.query('SELECT…
+       |                                               ^
+     25|    if(!['report_worker_result','report_worker_progress','refresh_worke…
+     26|    await pool.query('SELECT local_identity.input_worker_call($1,$2)',[…
+ ❯ src/local-app/workflowLegacyRules.integration.test.ts:114:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { length: 292, severity: 'ERROR', code: '55000', detail: undefined, hint: undefined, position: undefined, internalPosition: undefined, internalQuery: undefined, where: 'PL/pgSQL function local_identity.claim_input_task_pre_lease(uuid,integer) line 18 at RAISE\nPL/pgSQL function local_identity.claim_input_task(uuid,integer) line 6 at FOR over SELECT rows', schema: undefined, table: undefined, dataType: undefined, constraint: undefined, file: 'pl_exec.c', routine: 'exec_stmt_raise' }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed (4)
+   Start at  18:36:03
+   Duration  10.63s (transform 534ms, setup 8ms, collect 778ms, tests 9.73s, environment 0ms, prepare 29ms)
+

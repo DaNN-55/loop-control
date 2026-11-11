@@ -1,0 +1,115 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workspaceNarration.integration.test.ts -t confirmed narration uses --maxWorkers=1 --fileParallelism=false
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+stderr | src/local-app/workspaceNarration.integration.test.ts > confirmed narration uses the real Worker, survives restart and assembles actual duration without duplicate submissions
+ConfigurationError: 请先保存并确认当前口播。
+    at describe (/Users/dan/Programs/loop-control/src/local-app/workspaceCallConfirmation.ts:25:144)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at prepareWorkspaceCall (/Users/dan/Programs/loop-control/src/local-app/workspaceCallConfirmation.ts:74:65)
+    at /Users/dan/Programs/loop-control/src/local-app/episodeCommands.ts:129:77
+    at ownerTransaction (/Users/dan/Programs/loop-control/src/local-app/ownerTransaction.ts:8:16)
+    at LocalEpisodeCommands.executeCommand (/Users/dan/Programs/loop-control/src/local-app/episodeCommands.ts:86:16)
+    at /Users/dan/Programs/loop-control/src/local-app/localRoute.ts:171:14 {
+  status: 409,
+  preflight: undefined
+}
+
+stderr | src/local-app/workspaceNarration.integration.test.ts > confirmed narration uses the real Worker, survives restart and assembles actual duration without duplicate submissions
+ConfigurationError: 请先确认本次调用与费用预留。
+    at ProductionWorkspaceCommands.execute (/Users/dan/Programs/loop-control/src/local-app/productionWorkspaceCommands.ts:82:64)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at /Users/dan/Programs/loop-control/src/local-app/episodeCommands.ts:129:77
+    at ownerTransaction (/Users/dan/Programs/loop-control/src/local-app/ownerTransaction.ts:8:16)
+    at LocalEpisodeCommands.executeCommand (/Users/dan/Programs/loop-control/src/local-app/episodeCommands.ts:86:16)
+    at /Users/dan/Programs/loop-control/src/local-app/localRoute.ts:171:14 {
+  status: 409,
+  preflight: undefined
+}
+
+stderr | src/local-app/workspaceNarration.integration.test.ts > confirmed narration uses the real Worker, survives restart and assembles actual duration without duplicate submissions
+error: operator does not exist: text = uuid
+    at /Users/dan/Programs/loop-control/node_modules/pg/lib/client.js:694:17
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at executeWorkspaceNarration (/Users/dan/Programs/loop-control/src/local-app/workspaceNarration.ts:155:12)
+    at ProductionWorkspaceCommands.execute (/Users/dan/Programs/loop-control/src/local-app/productionWorkspaceCommands.ts:242:132)
+    at /Users/dan/Programs/loop-control/src/local-app/episodeCommands.ts:129:77
+    at ownerTransaction (/Users/dan/Programs/loop-control/src/local-app/ownerTransaction.ts:8:16)
+    at LocalEpisodeCommands.executeCommand (/Users/dan/Programs/loop-control/src/local-app/episodeCommands.ts:86:16)
+    at /Users/dan/Programs/loop-control/src/local-app/localRoute.ts:171:14 {
+  length: 1704,
+  severity: 'ERROR',
+  code: '42883',
+  detail: undefined,
+  hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+  position: undefined,
+  internalPosition: '1197',
+  internalQuery: 'EXISTS(\n' +
+    '  WITH prior AS(\n' +
+    '   SELECT task.id,task.status,s.outcome,\n' +
+    '    EXISTS(SELECT 1 FROM local_identity.native_output_publications h WHERE h.task_id=task.id) held,\n' +
+    "    EXISTS(SELECT 1 FROM local_identity.workspace_narration_requests child WHERE child.workspace_id=w.id AND child.shot_id=p_shot AND child.request_snapshot->>'retryOfTaskId'=task.id::text) retried\n" +
+    '   FROM local_identity.workspace_narration_requests r JOIN public.tasks task ON task.id=r.task_id\n' +
+    '   LEFT JOIN local_identity.workspace_narration_submissions s ON s.task_id=task.id\n' +
+    '   WHERE r.workspace_id=w.id AND r.shot_id=p_shot\n' +
+    '  ), unresolved AS(\n' +
+    "   SELECT * FROM prior WHERE status IN ('ready','running') OR held OR(outcome IN ('started','received') AND status<>'completed' AND NOT retried)\n" +
+    '  ), approved AS(\n' +
+    '   SELECT u.id FROM unresolved u JOIN local_identity.workspace_call_confirmations c ON c.authorization_hash=local_identity.current_workspace_call_hash(w.id)\n' +
+    "   WHERE u.status IN ('failed','blocked') AND u.outcome='started' AND NOT u.held AND NOT u.retried\n" +
+    "    AND u.id::text=p_snapshot->>'retryOfTaskId' AND c.command='generateWorkspaceNarration'\n" +
+    "    AND c.payload->>'retryOfTaskId'=u.id::text AND c.payload->>'clipId'=n.clip_id\n" +
+    '  )\n' +
+    '  SELECT 1 FROM unresolved u WHERE NOT EXISTS(SELECT 1 FROM approved x WHERE x.id=u.id)\n' +
+    "  UNION ALL SELECT 1 WHERE p_snapshot ? 'retryOfTaskId' AND NOT EXISTS(SELECT 1 FROM approved)\n" +
+    ' )',
+  where: 'PL/pgSQL function local_identity.queue_selected_workspace_narration(uuid,text,jsonb,boolean) line 16 at IF',
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_oper.c',
+  line: '635',
+  routine: 'op_error'
+}
+
+ ❯ src/local-app/workspaceNarration.integration.test.ts (13 tests | 1 failed | 12 skipped) 1414ms
+   ↓ Owner can prepare disabled narration before editing without queuing external tasks
+   × confirmed narration uses the real Worker, survives restart and assembles actual duration without duplicate submissions 1413ms
+     → {"code":"local_service_unavailable","error":"本机操作结果暂未确认，请查看系统状态并核对已有任务或保存结果，再继续操作。"}: expected 503 to be 200 // Object.is equality
+   ↓ unknown paid submissions stay blocked across restart and input changes; definite rejection allows one explicit retry
+   ↓ both first narration tracks assemble and crop an available source without invalidating the other shot
+   ↓ a running task may register its immutable output but late speech cannot replace changed input or advance delivery
+   ↓ manual narration and disabled modes never enqueue TTS, while short pictures preserve a recoverable conflict
+   ↓ actual narration drives the paid video window and freezes speech provenance (changed=false)
+   ↓ actual narration drives the paid video window and freezes speech provenance (changed=true)
+   ↓ first speech remains a candidate after a real native save and never overwrites the edited project
+   ↓ speech beyond the Provider maximum blocks a video submission without cutting words
+   ↓ legacy narration already running before workspace activation cannot promote the new draft or delivery
+   ↓ one shot with two visual ranges keeps one voice and its original task after deleting the first range
+   ↓ registered completed task media resolve directly without a fake material and reject changed bytes
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workspaceNarration.integration.test.ts > confirmed narration uses the real Worker, survives restart and assembles actual duration without duplicate submissions
+AssertionError: {"code":"local_service_unavailable","error":"本机操作结果暂未确认，请查看系统状态并核对已有任务或保存结果，再继续操作。"}: expected 503 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 503
+
+ ❯ src/local-app/workspaceNarration.integration.test.ts:32:152
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 12 skipped (13)
+   Start at  21:48:37
+   Duration  2.12s (transform 432ms, setup 7ms, collect 603ms, tests 1.41s, environment 0ms, prepare 23ms)
+

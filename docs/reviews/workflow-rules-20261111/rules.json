@@ -1,0 +1,997 @@
+{
+  "title": "制作流程与操作规则审阅",
+  "date": "2026-11-11",
+  "status": "48类逐项实施与代表性验收已完成；本轮发送阶段、原回执恢复、图片与口播显式新请求已实现，最终部署回执另列。",
+  "rows": [
+    {
+      "id": 1,
+      "group": "通用",
+      "action": "只读浏览、切步骤、关闭提示/详情",
+      "current": "切换查看阶段不会审批、取消任务或解决错误。关闭错误详情只关闭界面。",
+      "passRule": "已有授权的记录可查看。",
+      "block": "读取不可用时阻止本次读取，不把旧成功记录改为失败。",
+      "afterOff": "任务和已保存内容保持；关闭提示不等于舍弃制作内容。",
+      "retry": "GET可重新读取；不应由刷新自动重放POST。",
+      "proposal": "保留；明确区分「关闭提示」「停用此内容」「取消任务」。",
+      "source": "src/local-app/useWorkspaceOperations.ts;src/local-app/WorkspaceVisualTaskStatus.tsx",
+      "implementationStatus": "验证保留",
+      "implementation": "查看步骤/关闭详情只改变视图，不撤销已保存内容或自动重放写命令；导航、保存关闭分离测试通过。"
+    },
+    {
+      "id": 2,
+      "group": "通用",
+      "action": "保存/修改的共同前置条件",
+      "current": "所有者权限、CSRF、输入校验、目录授权、工作区/脚本基准、expectedRevision共同校验。",
+      "passRule": "权限有效、可写、目录可访问、版本一致。",
+      "block": "未登录/无权、已归档/完成/历史、基准过期、盘离线、路径/指纹异常。",
+      "afterOff": "关闭窗口不撤回已发送写入；再次进入需读取权威状态。",
+      "retry": "确定未提交的校验失败：修正后提交；冲突：先重读，不覆盖新版本。",
+      "proposal": "保留；这些是针对当前动作的前置条件，不应将无关旧任务升级为整期阻塞。",
+      "source": "src/local-app/episodeCommands.ts;src/local-app/productionWorkspaceCommands.ts",
+      "implementationStatus": "验证保留",
+      "implementation": "Owner、CSRF、Origin、工程版本/路径/指纹及只读状态拒绝有实际断言；158/159新增入口另验非法scope与过期基准。"
+    },
+    {
+      "id": 3,
+      "group": "通用",
+      "action": "重复点击、并发写入、切换生产单",
+      "current": "前端互斥、幂等键、服务端事务/版本锁、异步所有权共同保护。",
+      "passRule": "同一明确意图只接收一个结果；旧回包不能污染新工程。",
+      "block": "同一动作进行中、版本已变、同幂等键不同输入。",
+      "afterOff": "离页不代表服务端停止；在途结果回旧对象时不得覆盖新对象。",
+      "retry": "重读/恢复原操作；不要用新随机幂等键自动重试未知写入。",
+      "proposal": "保留；需明确回执对应请求、脚本、工程与费用授权。",
+      "source": "src/local-app/client.ts;src/local-app/useWorkspaceOperations.ts;src/local-app/useWorkspaceReading.ts",
+      "implementationStatus": "验证保留",
+      "implementation": "同一请求互斥、迟到回包归属、候选旧版本拒绝；真实退避不重复入队，重开不自动请求。"
+    },
+    {
+      "id": 4,
+      "group": "通用",
+      "action": "请求未发出 / 明确被拒绝",
+      "current": "校验、前置条件或明确供应商拒绝时应能区分未提交和失败；口播目前有误归unknown路径。",
+      "passRule": "修正配置后允许新的明确提交。",
+      "block": "只阻止当前失败动作及其必需依赖。",
+      "afterOff": "不再需要此内容时从当前依赖中移除，保留失败记录。",
+      "retry": "not_sent/rejected可在修正和必要费用确认后重试。",
+      "proposal": "统一分类：未发送、明确拒绝、已发送未知不能共用一个unknown。",
+      "source": "src/local-app/narrationWorker.ts;src/workspaceTaskPresentation.ts",
+      "implementationStatus": "修复并验证",
+      "implementation": "新协议持久区分准备/预留/进入发送/已收/拒绝；明确未发临时故障跨attempt最多2次恢复；参数、权限、输入变化与可能外发不自动重试。合法首音频前已知SSE拒绝与HTTP4xx明确拒绝可经新确认重试；旧未知不倒推。"
+    },
+    {
+      "id": 5,
+      "group": "通用",
+      "action": "本机写入503/超时/断线，回执未知",
+      "current": "前端保留未知状态并可GET已保存工程。原503尚无足够日志证明根因。",
+      "passRule": "读取到对应版本/任务后按权威状态继续。",
+      "block": "未确认前不自动重复写入或付费。",
+      "afterOff": "离页只结束UI等待，不证明写入失败。",
+      "retry": "先GET核对/读取原任务；确定没做或有幂等证明后才重试。",
+      "proposal": "为每次请求关联requestId、命令与提交阶段；不能将所有异常等同已向供应商发送。",
+      "source": "src/local-app/localRoute.ts;src/local-app/client.ts;src/local-app/ProductionWorkspacePanel.tsx",
+      "implementationStatus": "修复并验证",
+      "implementation": "本机写入断线/503后只读核对同Owner同完整意图回执，命中恢复原成功；缺回执仍未知且不自动POST。私有删除清单复用正常公开投影；工作台提供重新读取。不能追溯旧503唯一原因。"
+    },
+    {
+      "id": 6,
+      "group": "通用",
+      "action": "后台ready/running",
+      "current": "任务已入队或执行；当前输入和任务冻结输入可能不同。",
+      "passRule": "允许阅读和不冲突的其他操作。",
+      "block": "同一目标冲突修改、重复提交及实际依赖尚未满足。",
+      "afterOff": "停用当前内容不等于供应商支持取消；任务可继续但结果不应自动采用。",
+      "retry": "已有providerTaskId优先恢复查询；不是再生成。",
+      "proposal": "当前仍需要的任务显示制作中；已舍弃任务从主流程摘下，保留后台运行/费用提醒。",
+      "source": "src/local-app/workspaceGenerationTasks.ts;src/local-app/useWorkspaceOperations.ts",
+      "implementationStatus": "已修复并验证",
+      "implementation": "当前需求才影响制作；关闭的未知任务转独立提醒；未发送ready停止，已发送结果仍可完成但不自动采用。"
+    },
+    {
+      "id": 7,
+      "group": "通用",
+      "action": "后台failed/blocked",
+      "current": "列表会聚合关联任务的失败；目前未统一检查当前是否已舍弃/停用。",
+      "passRule": "不被当前工程引用的失败结果不应妨碍导出。",
+      "block": "当前必需内容缺失或已用内容校验失败才阻止相应动作。",
+      "afterOff": "关闭/替换后不应继续算当前待准备；历史保留。",
+      "retry": "明确失败可重试原输入；未知请求不能直接当普通失败。",
+      "proposal": "按「当前是否需要」决定流程阻塞，按「可能费用」决定独立提醒。",
+      "source": "src/local-app/catalogQuery.ts;src/workspaceTaskPresentation.ts",
+      "implementationStatus": "已修复并验证",
+      "implementation": "旧失败不再无条件整期阻塞；替换/删除/停用后目录阻塞解除，任务历史仍保留。列表不是媒体实时全量哈希证明。"
+    },
+    {
+      "id": 8,
+      "group": "通用",
+      "action": "生成完成但尚未采用",
+      "current": "候选可用与当前时间线已使用是不同状态。",
+      "passRule": "已用内容完整时可继续，不必采用所有候选。",
+      "block": "当前必需画面仍是占位、必要音轨/字幕未满足。",
+      "afterOff": "拒绝或停用候选不删除费用/任务历史。",
+      "retry": "不是生成失败；可采用、预览或舍弃，不需要重试。",
+      "proposal": "保留；候选失败/未采用不应单独形成整期硬阻塞。",
+      "source": "src/local-app/workspaceCandidates.ts;src/local-app/workspaceVisualCandidates.ts",
+      "implementationStatus": "已修复并验证",
+      "implementation": "候选与已用内容分开；失败未采用候选不会阻塞已完整画面，采用仍需显式确认。"
+    },
+    {
+      "id": 9,
+      "group": "通用",
+      "action": "文件已产生但登记/发布未完成（hold）",
+      "current": "产物与数据库发布有独立恢复状态。",
+      "passRule": "核对后登记同一次产物，再继续使用。",
+      "block": "尚未校验登记时不得冒充可用/完成。",
+      "afterOff": "舍弃当前用途可解除制作依赖，保留恢复与费用记录。",
+      "retry": "只核对并恢复本次发布，不重新生成。",
+      "proposal": "保留独立「产物待恢复」；已不用时作为提醒，不阻塞无关交付。",
+      "source": "src/local-app/WorkspaceVisualTaskStatus.tsx;src/local-app/workspaceOutputReconciliation.ts",
+      "implementationStatus": "已修复并验证",
+      "implementation": "hold有独立恢复入口与防重发；取消未用队列显式保留publication hold。此次未重做丢COMMIT产物登记恢复的故障注入。"
+    },
+    {
+      "id": 10,
+      "group": "脚本与规划",
+      "action": "导入/填写主脚本",
+      "current": "空、格式、大小等检查；导入保存与start分开。",
+      "passRule": "有效脚本已保存并确认对应基准。",
+      "block": "空脚本、格式不支持、超过限制、无当前基准。",
+      "afterOff": "未提交草稿可放弃；已确认源版本和材料保留。",
+      "retry": "文件读取可重试；保存未知先核对登记。",
+      "proposal": "保留；输入失败留在脚本层，不污染已确认旧版。",
+      "source": "src/local-app/WorkspaceScriptPanel.tsx;src/local-app/workspaceScriptInput.ts",
+      "implementationStatus": "验证保留",
+      "implementation": "脚本空/无效/过限等校验、草稿保留、导入保存与启动分离；不声称覆盖每种不支持文件格式。"
+    },
+    {
+      "id": 11,
+      "group": "脚本与规划",
+      "action": "脚本保存成功但制作启动失败/未知",
+      "current": "脚本已保存与生产已启动分开呈现；继续启动先读取episode状态。",
+      "passRule": "对应脚本已进入启动后的阶段即可继续。",
+      "block": "当前脚本/episode身份变化或start未确认。",
+      "afterOff": "放弃新草稿不会删除已保存脚本；不能把关闭窗口视为撤销start。",
+      "retry": "继续启动先GET确认，避免重导入脚本或重复启动。",
+      "proposal": "保留；以该脚本版本的启动证据为准。",
+      "source": "src/local-app/WorkspaceScriptPanel.tsx",
+      "implementationStatus": "验证保留",
+      "implementation": "保存成功/start失败或未知后保留脚本，用权威读取恢复启动；旧回包或旧脚本回执不能启动新版本。"
+    },
+    {
+      "id": 12,
+      "group": "脚本与规划",
+      "action": "修改已确认脚本/排版修订",
+      "current": "修订有原因、预期基准；实际内容变更会使下游基准过期，旧文件保留。",
+      "passRule": "同基准且允许修订；纯排版满足复用条件可继续原工程。",
+      "block": "进行中冲突、只读、基准变化、复用条件不成立。",
+      "afterOff": "取消编辑保留原确认版本；确认新内容后旧工程只读/待重新核对。",
+      "retry": "失败保留草稿；先读对应脚本版本后再继续。",
+      "proposal": "保留；区分内容变化与排版变化，不因为文本换行机械重做媒体。",
+      "source": "src/local-app/workspaceScriptResume.ts;src/local-app/productionWorkspaceCommands.ts",
+      "implementationStatus": "验证保留",
+      "implementation": "实际排版修订保留精确原生工程和历史证据；实质内容变化不能借排版恢复绕过stale。"
+    },
+    {
+      "id": 13,
+      "group": "脚本与规划",
+      "action": "保存规划模型/Harness/默认值",
+      "current": "保存选择不发生成调用；已有任务使用冻结配置。",
+      "passRule": "登记版本与模型有效，保存成功。",
+      "block": "无版本、输入无效、不可访问模型或并发版本冲突。",
+      "afterOff": "关闭未保存需保护草稿；已运行任务不随选择变化。",
+      "retry": "保存可按幂等/版本规则重试；更换模型后是新明确规划。",
+      "proposal": "保留；设置更新不自动重新提交旧任务。",
+      "source": "src/local-app/WorkspacePlanningSelection.tsx;src/local-app/planningSelectionStore.ts",
+      "implementationStatus": "验证保留",
+      "implementation": "保存规划选择不生成；真实HTTP持久化；旧失败重试沿用冻结model/budget/harness/tools，新明确规划使用新选择。"
+    },
+    {
+      "id": 14,
+      "group": "脚本与规划",
+      "action": "建立/重建分镜工程",
+      "current": "普通脚本规划与已编写结构化脚本准备有不同路径；旧工程保留。",
+      "passRule": "脚本已确认、规划必要输入及执行环境可用。",
+      "block": "脚本/工作区基准变化、原生编辑器占用、规划失败。",
+      "afterOff": "停止查看不取消已发规划；旧工程和媒体应保留。",
+      "retry": "原规划失败按原输入重试；未知先读任务和已保存工程。",
+      "proposal": "保留；错误须定位到规划，不按未使用媒体连接阻塞。",
+      "source": "src/local-app/workspacePreparation.ts;src/local-app/useWorkspaceOperations.ts",
+      "implementationStatus": "验证保留",
+      "implementation": "不完整匹配可保存，画面不足不能进Studio；补齐后安全重开；v2本地准备不要求未使用的规划/媒体连接。"
+    },
+    {
+      "id": 15,
+      "group": "画面",
+      "action": "上传/导入本地图片或视频",
+      "current": "文件格式/内容/大小/登记和候选分开；可逐项重试上传。",
+      "passRule": "素材登记、指纹和类型有效。",
+      "block": "空/损坏文件、类型不符、大小或目录边界不满足。",
+      "afterOff": "关闭上传提示不删除已导入文件；暂停只处理上传队列意图。",
+      "retry": "失败行单独重试；已成功项不重复导入。",
+      "proposal": "保留；部分失败不让成功项回滚，也不阻塞无关已用内容。",
+      "source": "src/local-app/ProductionWorkspacePanel.tsx;src/local-app/workspaceUploads.ts",
+      "implementationStatus": "验证保留",
+      "implementation": "逐行上传/登记恢复、成功项不重传；实际Pexels导入和重启可读亦通过。"
+    },
+    {
+      "id": 16,
+      "group": "画面",
+      "action": "Pexels搜索/预览/导入",
+      "current": "搜索、预览、导入是不同步骤；来源和许可保留。",
+      "passRule": "合法查询、连接/网络可用、选中素材能下载验证。",
+      "block": "搜索条件无效、鉴权/下载失败、素材身份变化。",
+      "afterOff": "关闭搜索不代表取消已提交导入；未采用候选不占主流程依赖。",
+      "retry": "搜索可重查；导入按源身份核对后重试，不重新生成。",
+      "proposal": "保留；搜索无结果是空状态，不是整期失败。",
+      "source": "src/local-app/workspacePexels.ts;src/local-app/WorkspacePexelsSearch.tsx",
+      "implementationStatus": "验证保留",
+      "implementation": "受控Pexels查询→预览→导入→采用，坏URL/字节拒绝，连接轮换不改旧请求，多镜头结果保留且不自动采用。"
+    },
+    {
+      "id": 17,
+      "group": "画面",
+      "action": "生成图片",
+      "current": "每次明确确认模型/参数/费用；生成结果进入候选。",
+      "passRule": "本次输入、连接版本、引用、费用预留、执行环境有效。",
+      "block": "缺输入/引用不兼容、凭据无效、调用未确认、同目标冲突。",
+      "afterOff": "舍弃画面需求不撤销可能费用；生成结果不得自动替换新画面。",
+      "retry": "明确失败可重新确认；未知图片当前存在允许再次付费确认的新请求例外。",
+      "proposal": "保留显式费用二次确认；建议对未发送与已发送未知使用不同入口。",
+      "source": "src/local-app/workspaceImages.ts;src/local-app/workspaceCallConfirmation.ts;src/local-app/WorkspaceVisualPreparation.tsx",
+      "implementationStatus": "修复并验证",
+      "implementation": "图片接入持久发送事实与同一未发恢复预算；完整文件+私有发布凭据后才登记received，失败恢复原产物不重发。未知可先核对后经新费用风险确认建retryOf新任务，保留原请求。 163另补旧received且无任何新事实/hold的风险确认替代，保留旧记录；新协议received不走该例外。"
+    },
+    {
+      "id": 18,
+      "group": "画面",
+      "action": "生成视频/从图片生成视频",
+      "current": "视频提交、providerTaskId、查询、下载、登记各有状态。",
+      "passRule": "目标/首帧/时长/声音策略/模型条件满足并确认费用。",
+      "block": "输入无效、未知原提交、失效目标、文件或网络权限不足。",
+      "afterOff": "替换/删除目标不应让旧结果自动采用；在途费用提醒保留。",
+      "retry": "有编号只查原任务；产物已收只恢复发布；无编号未知先核对。",
+      "proposal": "保留原任务恢复；用新模型或新输入必须新请求，不能叫原任务重试。",
+      "source": "src/local-app/workspaceVisualCandidates.ts;src/worker/wanVideoProvider.ts",
+      "implementationStatus": "已修复并验证",
+      "implementation": "保存Provider ID恢复原任务且不再POST的current/legacy路径通过；已删除目标不可继续旧请求，UI不可恢复。"
+    },
+    {
+      "id": 19,
+      "group": "画面",
+      "action": "采用图片/视频候选、比较时长影响",
+      "current": "准备采用和真正写入原生工程分开，需核对输入/文件/时长影响。",
+      "passRule": "候选可用，目标/指纹/工程版本一致，影响被明确接受。",
+      "block": "来源失效、目标删除、版本变化、口播/片段时长冲突。",
+      "afterOff": "取消比较不改时间线；拒绝只舍弃候选用途。",
+      "retry": "采用失败先重读当前版本；无需重复生成。",
+      "proposal": "保留；已采用项与候选项状态分别显示。",
+      "source": "src/local-app/workspaceCandidates.ts;src/local-app/workspaceVisualCandidates.ts",
+      "implementationStatus": "验证保留",
+      "implementation": "2/1/3秒预备影响与实际采用、持久化和SDK重开一致；旧输入/被篡改字节拒绝。字幕跟随新口播的旧断言已校正，样式/其他lane仍完整比较。"
+    },
+    {
+      "id": 20,
+      "group": "画面",
+      "action": "清除画面引用/删除镜头/重排与片段范围",
+      "current": "写原生工程并更新revision；删除镜头可前移后续内容，原文件历史保留。",
+      "passRule": "可写、目标存在、范围合法且当前版本一致。",
+      "block": "原生会话冲突、范围越界、结构或来源指纹变化。",
+      "afterOff": "清除画面后有实际占位时会阻塞进入编辑/导出；旧失败候选仍可能留列表。",
+      "retry": "本地编辑失败重读后重试，不重新生成。",
+      "proposal": "被删除目标的旧失败任务不阻塞当前工程；真实画面空档仍须填补。",
+      "source": "src/local-app/productionWorkspaceCommands.ts;src/workspaceShots.ts;src/local-app/workspaceExportCommands.ts",
+      "implementationStatus": "已修复并验证",
+      "implementation": "本地替换/删除原目标后旧失败不阻塞；删除还停止未发送ready。最后一个有效镜头仍不能删除，真实画面空档校验保留。"
+    },
+    {
+      "id": 21,
+      "group": "口播",
+      "action": "关闭镜头口播开关",
+      "current": "仅写原生loopControlNarrationEnabled并静音保留音轨；不清旧workspace_narrations.task_id。目录汇总不检查关闭标记；待准备计数也只检查mode/采用。",
+      "passRule": "当前不需要口播时，导出不要求生成口播。",
+      "block": "当前实现仍可因旧任务显示需处理；不等于导出实际依赖。",
+      "afterOff": "应保留旧文件/任务和费用事实，但不再要求这镜口播完成。",
+      "retry": "关闭本身不应触发重试。重新启用时核对旧输入与已有音轨。",
+      "proposal": "关闭=舍弃当前口播用途：移除当前依赖/待准备数/整期阻塞；未知费用单列提醒，禁止偷偷重发或自动采用。",
+      "source": "src/workspaceNarrationToggle.ts;src/local-app/workspaceNarration.ts;src/local-app/catalogQuery.ts;src/local-app/ProductionWorkspacePanel.tsx",
+      "implementationStatus": "已修复并验证",
+      "implementation": "关闭口播同步当前用途/待准备/目录与执行图；保留任务和可逆媒体；关闭刷新仍生效，已发送请求不被伪装取消。"
+    },
+    {
+      "id": 22,
+      "group": "口播",
+      "action": "关闭口播详情或错误提示",
+      "current": "只关界面，不改enabled、mode、任务或采用。",
+      "passRule": "可随时返回查看。",
+      "block": "原任务实际依赖仍未满足时继续提示。",
+      "afterOff": "内容仍启用；真正停用须独立明确动作。",
+      "retry": "不触发任何任务重试。",
+      "proposal": "保留；文案必须区分「关闭窗口」与「不使用口播」。",
+      "source": "src/local-app/WorkspaceVisualTaskStatus.tsx;src/local-app/WorkspaceNarrationPanel.tsx",
+      "implementationStatus": "验证保留",
+      "implementation": "关详情仍只是UI动作，不清未知证据；实际浏览器操作开关后才改变需求。没有把关闭错误弹窗等同舍弃内容。"
+    },
+    {
+      "id": 23,
+      "group": "口播",
+      "action": "保存模式/模型/文案/音色/语速、确认本镜",
+      "current": "保存设置与生成分开；确认绑定当前输入指纹。",
+      "passRule": "模式/文本/音色/模型合法且匹配当前镜头。",
+      "block": "不兼容参数、人工音轨不属于本期、基准变化。",
+      "afterOff": "mode=none与enabled=false是两条不同实现路径，当前未统一任务依赖语义。",
+      "retry": "保存失败保留输入，重读后处理冲突；不自动生成。",
+      "proposal": "统一「不使用」语义；所有入口都应同步当前需求，保留历史请求。",
+      "source": "src/local-app/workspaceNarration.ts;src/local-app/WorkspaceNarrationPanel.tsx",
+      "implementationStatus": "已修复并验证",
+      "implementation": "mode=none与原生enabled统一；tts/manual显式保存可重启用途；历史请求/素材保留，重启并重新启用仍不绕过旧unknown。"
+    },
+    {
+      "id": 24,
+      "group": "口播",
+      "action": "TTS生成/失败重试",
+      "current": "需启用、tts模式、当前输入已确认；未知旧提交阻止再次发送。部分发送前拦截误归unknown。",
+      "passRule": "明确确认本次费用，输入/连接/执行环境满足。",
+      "block": "未确认、未启用、上次在途/未知、目录或服务不可用。",
+      "afterOff": "关闭用途解除当前制作依赖，但旧请求如可能扣费仍需独立核对。",
+      "retry": "明确失败沿原请求重试；未知先核对；参数/模型变化是新请求。",
+      "proposal": "修正错误归类；本机未发送可纠正后重试，真正已发送未知继续限制自动重发。",
+      "source": "src/local-app/workspaceNarration.ts;src/local-app/narrationWorker.ts",
+      "implementationStatus": "修复并验证",
+      "implementation": "口播接入同阶段/计数/发布恢复；未知请求经独立风险确认可建唯一新子请求，保留原记录和费用预留；新完成不再被旧unknown遮蔽。无全期默认时回填当前镜已保存配置，仍需明确确认且只进候选。 163另补旧received且无任何新事实/hold的风险确认替代，保留旧记录；新协议received不走该例外。"
+    },
+    {
+      "id": 25,
+      "group": "口播",
+      "action": "人工录音导入/登记/加入候选",
+      "current": "上传成功、登记音轨和加入候选各有回执；上传内容需要实际MP3验证。",
+      "passRule": "有效MP3与本镜/本期身份、时长匹配。",
+      "block": "格式/大小/解码无效、登记未确认或版本冲突。",
+      "afterOff": "舍弃用途保留素材，不强制采用录音。",
+      "retry": "已上传可继续登记/加入，不重复上传成功文件。",
+      "proposal": "保留；无需外部语音连接，不因无关TTS连接阻塞。",
+      "source": "src/local-app/workspaceManualNarration.ts;src/local-app/workspaceNarration.ts",
+      "implementationStatus": "验证保留",
+      "implementation": "真实录音登记/保存，manual或none不发TTS；时长冲突不伪造成功，无关语音连接不成为上传前置。"
+    },
+    {
+      "id": 26,
+      "group": "口播",
+      "action": "采用/恢复口播版本、撤回已采用音轨",
+      "current": "实际原生音轨、当前输入和采用指纹校验；人工编辑后的时长影响需明确处理。旧初稿仅在未人工编辑、已确认、没有已用主声等限定条件下自动组装首个口播；有显式制作选择的新生成不自动采用。",
+      "passRule": "音轨文件完整，口播启用，当前目标和时长策略一致。",
+      "block": "输入/文件变化、原生会话占用、时长冲突、无可用音轨。",
+      "afterOff": "撤回已用音轨不删除素材/任务；关闭后重新启用可恢复保留音量。",
+      "retry": "采用失败先核对工程；不是重新生成。",
+      "proposal": "保留；关闭后迟到结果仅作为候选，不能自动恢复口播。",
+      "source": "src/local-app/workspaceNarration.ts;src/local-app/workspaceCandidates.ts",
+      "implementationStatus": "已修复并验证",
+      "implementation": "已发送口播关闭后仍可完成为候选，但不会恢复用途/自动采用；重开亦需明确采用；原候选不可变、恢复不重生成。"
+    },
+    {
+      "id": 27,
+      "group": "声音",
+      "action": "原片声音提取/切换主声/分离视频声音",
+      "current": "实际来源、范围和主声路由决定可用性；主声与环境声分开。",
+      "passRule": "真实来源可读、区间合法，音轨可验证。",
+      "block": "来源缺失、区间越界、完整主声覆盖不满足对齐条件。",
+      "afterOff": "不使用原声后不应继续要求提取成功；保留文件和历史。",
+      "retry": "提取/登记失败可恢复本地步骤；不会重发付费生成。",
+      "proposal": "保留；无主声是合法选择，不机械要求口播或原声二选一。",
+      "source": "src/workspaceAudio.ts;src/local-app/workspaceAudio.ts;src/local-app/workspaceVideoSound.ts",
+      "implementationStatus": "已修复并验证",
+      "implementation": "实际原片ffmpeg提取、当前窗口校验与原准备失败恢复通过；无主声是合法状态；修正冻结relativePath键名误判失效。"
+    },
+    {
+      "id": 28,
+      "group": "声音",
+      "action": "配乐/音效开关",
+      "current": "开关修改原生静音标记并保留原内容；后台准备记录仍可关联到目录状态。",
+      "passRule": "关闭的配乐/音效不应是当前交付必要项。",
+      "block": "实际已用文件不可用、开启后当前使用区间不合法。",
+      "afterOff": "关闭应不阻塞当前流程；在途/费用历史可单独提醒。",
+      "retry": "重新开启只恢复已有设置；不自动重新检索或生成。",
+      "proposal": "与口播采用同一「当前需求」规则，避免关了还待处理。",
+      "source": "src/local-app/workspaceAudio.ts;src/workspaceAudio.ts;src/local-app/catalogQuery.ts",
+      "implementationStatus": "已修复并验证",
+      "implementation": "配乐/音效关闭从当前依赖移除；未采用声音失败只留提醒；配乐ready退避停止，running/unknown/hold保留，重开不检索。"
+    },
+    {
+      "id": 29,
+      "group": "声音",
+      "action": "音乐/音效检索、上传、在线准备",
+      "current": "来源不同：人工上传、本地原片、Freesound等在线检索/生成分开。",
+      "passRule": "本次所用来源所需的输入/连接/权限有效。",
+      "block": "未选来源、查询/文件无效、服务不可用、在途未知或冲突。",
+      "afterOff": "不再需要该声音后失败仅留历史；不强迫所有准备记录成功。",
+      "retry": "确定失败可重试原准备；已有结果只恢复保存/登记。",
+      "proposal": "按来源解释「重试」与费用，不把检索失败当成片硬错误。",
+      "source": "src/local-app/workspaceAudio.ts;src/local-app/WorkspaceAudioPanel.tsx",
+      "implementationStatus": "已修复并验证",
+      "implementation": "真实source失败恢复同一文件可重试，改范围/删目标409且不建任务；Freesound合成响应冻结多候选、来源和许可，采用显式。"
+    },
+    {
+      "id": 30,
+      "group": "声音",
+      "action": "试听候选/音色样音",
+      "current": "播放与生成样音不同；首次样音会明确确认可能费用。",
+      "passRule": "可播放本地样音；未生成时先明确确认。",
+      "block": "浏览器拒绝播放、样音文件缺失、首次生成前条件不满足。",
+      "afterOff": "关闭试听不等于取消后台生成；不影响当前生产内容。",
+      "retry": "播放失败可重播；生成失败按真实发送状态处理。",
+      "proposal": "保留；播放错误不阻塞制作。",
+      "source": "src/local-app/WorkspaceSpeechSample.tsx;src/local-app/WorkspaceAudioAudition.tsx",
+      "implementationStatus": "验证保留",
+      "implementation": "试听关闭/离页清理、旧样音归属和播放错误局部呈现通过；没有把播放错误升级为制作阻塞。"
+    },
+    {
+      "id": 31,
+      "group": "声音",
+      "action": "采用声音/音量/闪避/位置/移除",
+      "current": "修改当前原生节点，保留素材准备历史。",
+      "passRule": "当前音轨存在、区间/音量合法、工程版本一致。",
+      "block": "轨道/音频源变化、越界、关闭声音未先开启。",
+      "afterOff": "移除后不再是当前必需项；不清除费用历史。",
+      "retry": "本地保存失败保留输入，重读后再应用。",
+      "proposal": "保留；只对实际已用内容实施导出检查。",
+      "source": "src/workspaceAudio.ts;src/local-app/workspaceAudio.ts",
+      "implementationStatus": "已修复并验证",
+      "implementation": "原生音量/闪避/位置逻辑保留；导出依赖移除显式停用音轨，普通音量0仍是文件依赖；实际启用媒体仍校验字节。"
+    },
+    {
+      "id": 32,
+      "group": "字幕",
+      "action": "关闭字幕",
+      "current": "当前字幕contract.enabled及原生可见性决定是否需要时序。",
+      "passRule": "关闭字幕的已用镜头不必进行字幕对齐。",
+      "block": "关闭操作保存失败或工程版本冲突。",
+      "afterOff": "旧对齐任务/失败结果不应继续阻塞当前交付。",
+      "retry": "不重试对齐；重新开启后重新核对正文/声音/时序。",
+      "proposal": "与音频同样按当前启用/实际使用决定依赖；历史保留。",
+      "source": "src/local-app/workspaceCaptionsCommands.ts;src/local-app/workspaceExportCommands.ts",
+      "implementationStatus": "验证保留",
+      "implementation": "关闭字幕保留正文与cue，实际原生保存读回与导出enabled过滤通过；旧对齐不强制当前已关闭字幕。"
+    },
+    {
+      "id": 33,
+      "group": "字幕",
+      "action": "编辑/保存字幕正文、模式、安全区、手工校时",
+      "current": "正文与口播可绑定或独立；编辑时序需要合法区间。",
+      "passRule": "正文/条目/安全区/起止时间有效。",
+      "block": "空正文、重叠/越界、旧镜头/声音指纹导致时序过期。",
+      "afterOff": "取消未保存编辑不改已保存字幕；关闭启用才解除字幕依赖。",
+      "retry": "保存失败保留输入；冲突先读取当前工程。",
+      "proposal": "保留；不可因为历史对齐失败而覆盖最新手工有效时序。",
+      "source": "src/local-app/WorkspaceCaptionsPanel.tsx;src/local-app/workspaceCaptionsCommands.ts",
+      "implementationStatus": "验证保留",
+      "implementation": "每镜lane、手工时序/安全区/原生拖动重开、无效字段不写工程；有效手工证据不被旧失败覆盖。"
+    },
+    {
+      "id": 34,
+      "group": "字幕",
+      "action": "请求声学对齐、采用结果、确认正文",
+      "current": "对齐任务冻结输入；最新正文/音轨/窗口指纹必须匹配。",
+      "passRule": "有完整可用主声、字幕启用且当前输入有效。",
+      "block": "无主声、仅局部覆盖、模型未就绪、原声音/正文已变。",
+      "afterOff": "关闭字幕或改用手工时序后旧失败只留历史。",
+      "retry": "明确本地对齐失败可重试；旧结果失效需对新输入重做。",
+      "proposal": "保留；已不使用旧结果时不让旧任务成为整期阻塞。",
+      "source": "src/local-app/workspaceCaptionsCommands.ts;src/workspaceCaptions.ts",
+      "implementationStatus": "验证保留",
+      "implementation": "真实队列+当前正文/声音指纹；正文变化后迟到对齐拒绝，采用新口播只过期受影响字幕证据。不是WhisperX真实识别质量测评。"
+    },
+    {
+      "id": 35,
+      "group": "剪辑",
+      "action": "进入/重开剪辑工作台",
+      "current": "先检查占位和缺失来源；打开是独立服务端命令。",
+      "passRule": "画面齐全、来源有效、工程/脚本一致、Studio可用。",
+      "block": "占位、文件缺失、过期脚本、会话或工程身份不符。",
+      "afterOff": "取消打开只撤回前端进入意图，已发送命令仍需核对。",
+      "retry": "打开失败先重读；不是重建新工程。",
+      "proposal": "保留；不因已关闭的口播旧任务阻止打开。",
+      "source": "src/local-app/useWorkspaceOperations.ts;src/local-app/productionWorkspaceCommands.ts",
+      "implementationStatus": "已修复并验证",
+      "implementation": "剪辑入口仍检查实际画面/来源和工程身份；执行图排除停用音轨，旧口播失败不再是整期入口门槛。"
+    },
+    {
+      "id": 36,
+      "group": "剪辑",
+      "action": "保存编辑器/保存并返回/结束剪辑",
+      "current": "flush成功后以文件SHA和revision保存；关闭是另一步。",
+      "passRule": "当前会话、工程、文件指纹和版本一致。",
+      "block": "连接断开、flush未确认、写入失败、版本变化。",
+      "afterOff": "失败留在原编辑会话，不丢修改，不伪造已保存。",
+      "retry": "重读已保存状态或重连原会话后重试保存；不重做媒体。",
+      "proposal": "保留；把保存失败与关闭失败分别说明。",
+      "source": "src/local-app/EmbeddedStudioHost.tsx;src/local-app/useWorkspaceOperations.ts",
+      "implementationStatus": "验证保留",
+      "implementation": "真实frame flush→save→close分开；错误不关闭会话、不伪造已保存；外项目/路径/指纹拒绝，SDK重开保留实际修改。"
+    },
+    {
+      "id": 37,
+      "group": "检查与交付",
+      "action": "导出并技术检查",
+      "current": "检查实际时间线来源、画面连续性、启用的字幕时序、原生渲染与最终文件。不是检查所有历史任务成功。",
+      "passRule": "实际已用内容完整、已用画面无空档、必要字幕有效、运行时可渲染。",
+      "block": "已用文件缺失/指纹变、占位/空时间线/画面空档、必要字幕无效、渲染失败。",
+      "afterOff": "不使用的失败口播本不应进入交付依赖；静音保留节点当前仍可能保留文件引用。",
+      "retry": "修正实际检查后重新导出；导出未知先核对是否已登记文件。",
+      "proposal": "保留实际内容校验；建议停用内容彻底从可执行依赖图排除，而非仅volume=0仍要求源文件。",
+      "source": "src/local-app/workspaceExportCommands.ts",
+      "implementationStatus": "已修复并验证",
+      "implementation": "实际渲染用裁剪执行图，停用且文件缺失/长尾的口播不影响导出；重开该媒体后used_content失败；成片技术检查仍针对执行图。"
+    },
+    {
+      "id": 38,
+      "group": "检查与交付",
+      "action": "记录问题、标为解决、确认成片",
+      "current": "未解决问题阻止确认；确认绑定实际导出文件和当前内容指纹。",
+      "passRule": "当前ready导出、检查全通过、问题已解决、文件身份一致。",
+      "block": "旧导出、检查失败、未解决问题、文件变化。",
+      "afterOff": "关闭问题面板不等于解决问题；明确标为已解决才解除这项门槛。",
+      "retry": "确认冲突先重读，不自动改成已确认。",
+      "proposal": "保留；将用户记录的当前成片问题与后台历史任务提醒分开。",
+      "source": "src/local-app/workspaceExportCommands.ts;src/workspaceExportDelivery.ts",
+      "implementationStatus": "验证保留",
+      "implementation": "成片未解决问题、旧导出、检查失败不能确认；用户问题与历史后台提醒分开；关闭面板不等于解决问题。"
+    },
+    {
+      "id": 39,
+      "group": "检查与交付",
+      "action": "确认后继续编辑/修改实际已用内容",
+      "current": "工程内容/版本变化会使原导出不再current，旧确认不适用于新内容。",
+      "passRule": "旧版本可只读查看和核对。",
+      "block": "新内容交付前须重新导出/确认。",
+      "afterOff": "不能靠关闭提示恢复旧确认资格。",
+      "retry": "本地修改保存后重新导出，不重跑未变的生成。",
+      "proposal": "保留；清楚指出是哪个内容版本已变化。",
+      "source": "src/local-app/workspaceExportCommands.ts",
+      "implementationStatus": "验证保留",
+      "implementation": "原生样式或已用内容变化后旧导出current/confirmed失效，修正后重新导出确认；显示变化提示与导出版本，不声称有逐项剪辑差异分析。 界面补充导出版本 vX → 当前版本 vY，33 条相关界面测试通过。"
+    },
+    {
+      "id": 40,
+      "group": "检查与交付",
+      "action": "封面、标题、简介、标签",
+      "current": "交付输入草稿不改变最终视频；需文件真实格式和限制校验。",
+      "passRule": "当前成片已确认，封面和标题/标签有效。",
+      "block": "未确认成片、封面格式/大小/解码无效、标题/标签超限。",
+      "afterOff": "放弃草稿不删除已确认成片；封面文件刷新后可能需重新选择。",
+      "retry": "修正字段再提交；已生成交付先核对状态。",
+      "proposal": "保留；不因未使用的外部连接缺失阻止本地打包。",
+      "source": "src/local-app/WorkspaceDeliveryPanel.tsx;src/local-app/workspaceDeliveryCommands.ts",
+      "implementationStatus": "验证保留",
+      "implementation": "真实封面内容、伪格式、大小、标签数量和字符边界及当前确认版绑定；不因不使用的外部服务阻止本地打包。"
+    },
+    {
+      "id": 41,
+      "group": "检查与交付",
+      "action": "生成交付包、失败重试、下载",
+      "current": "绑定当前已确认成片和metadata；生成后实际验证文件完整性。",
+      "passRule": "打包任务完成并验证、文件齐全可下载。",
+      "block": "已用文件变化、存储/权限错误、打包失败、最终文件不是当前确认版。",
+      "afterOff": "关闭页面不取消任务；包完成但校验失败不可显示交付成功。",
+      "retry": "只重试当前确认版失败交付；已完成待核验先重读校验，不重新渲染成片。",
+      "proposal": "保留；生产完成以实际交付校验为准，不能被无关历史失败倒退。",
+      "source": "src/local-app/workspaceDeliveryCommands.ts;src/worker/workspaceDeliveryWorker.ts",
+      "implementationStatus": "验证保留",
+      "implementation": "实际Worker打包、完整性校验、篡改/缺失拒绝、重试、下载及重启通过；当前确认版变化不得完成旧请求，完成状态不由历史失败倒退。"
+    },
+    {
+      "id": 42,
+      "group": "生命周期",
+      "action": "归档/恢复归档",
+      "current": "归档隐藏默认列表并只读，保留数据/文件/审计，不等于永久删除。",
+      "passRule": "无冲突且权限有效。",
+      "block": "状态/事务冲突或不允许操作的依赖。",
+      "afterOff": "后台已提交请求不因归档物理撤销；不再作为当前制作待办。",
+      "retry": "操作失败按原意图重读幂等结果。",
+      "proposal": "保留；归档与回收站分开命名。",
+      "source": "src/local-app/episodeLifecycle.ts;docs/adr/0001-episode-archive-and-permanent-delete.md",
+      "implementationStatus": "验证保留",
+      "implementation": "真实归档恢复保留状态、权限/历史/CSRF保护；恢复legacy不启用新生产；只读scope不能执行新的队列停止函数。"
+    },
+    {
+      "id": 43,
+      "group": "生命周期",
+      "action": "当前永久删除与文件清理恢复",
+      "current": "现有流程是精确清单暂存→提交DB删除→最终清理；只有提交前暂存可恢复，不是生产单回收站。",
+      "passRule": "依赖清单、路径身份、共享引用及确认均满足。",
+      "block": "活动/未知任务、共享依赖、文件变化、盘离线等保护。",
+      "afterOff": "DB提交后不能用现有恢复按钮恢复整张生产单。",
+      "retry": "提交后清理失败只重试已批准文件清单；不扩大删除范围。",
+      "proposal": "新增回收站需单独软删除/恢复模型；本轮只Demo，不实施自动永久删除。",
+      "source": "src/local-app/episodeLifecycle.ts;src/local-app/episodeDeletionTargets.ts",
+      "implementationStatus": "验证保留",
+      "implementation": "managed/legacy精确清单删除与旧online/offline来源保护通过；提交前暂存恢复不冒充生产单回收站，未扩大自动永久删除。"
+    },
+    {
+      "id": 44,
+      "group": "生命周期",
+      "action": "回收站容量与恢复",
+      "current": "当前正式产品无业务回收站。Demo为合成数据。",
+      "passRule": "删除先软删除入站，原关联和文件核验通过后恢复原身份与原归档状态。",
+      "block": "活动/未知任务、文件锁和未结删除阻止入站；离线/变化文件拒绝恢复或清理，不覆盖现有内容。",
+      "afterOff": "默认5GB可调；超限按入站最早安全项清理至上限内，不一次清空。",
+      "retry": "离线/保护项清理失败保留超限提醒；待恢复后只处理原批准清单。",
+      "proposal": "默认5GB可调；刚入站和单项超限保留；仅显式入站/保存上限触发最早安全项清理，父账号不可遗弃回收项目。",
+      "source": "src/local-app/recycleBin.ts;db/local/160-episode-recycle-bin.sql;docs/verification/recycle-bin-migration-20261111/REPORT.md",
+      "implementationStatus": "已修复并验证",
+      "implementation": "正式160已启用。12项真实集成、新UI4项、16布局组通过；恢复保留原身份/归档，默认可调5GB，按最早安全项清理。刚入站/单项超限/共享/未知/离线保留；启动与读取不清理，未操作真实作品。"
+    },
+    {
+      "id": 45,
+      "group": "设置与运行",
+      "action": "连接/密钥/模型/额度/目录",
+      "current": "只校验本次实际使用的连接与运行条件；连接版本不可变。查看/复制密钥独立鉴权。",
+      "passRule": "输入合法、权限有效；保存与验证分别有回执。",
+      "block": "所用连接未验证/撤销/密钥失效、模型不兼容、目录不可写或空间不足。",
+      "afterOff": "停用不相关服务不阻塞使用本地/其他服务的生产；未完成保存有离开保护。",
+      "retry": "临时验证失败与凭据失效分开；密钥保存成功但测试失败不重复轮换。",
+      "proposal": "保留；不要将设置页临时读取错误直接标成整期内容阻塞。",
+      "source": "src/local-app/LocalConnectionsPanel.tsx;src/connections/ConnectionWorkspace.tsx;src/local-app/MediaRootSettingsDialog.tsx",
+      "implementationStatus": "验证保留",
+      "implementation": "本次实际所用连接/本地路径与冻结执行选择门槛保留；设置页临时错误不成为内容状态。秘密/目录设置未在本轮做真实修改；既有设置单测沿用。"
+    },
+    {
+      "id": 46,
+      "group": "通用",
+      "action": "自动退避、重试次数耗尽、旧版本被替代",
+      "current": "Worker按retryable和预算maxAttempts决定是否再次尝试；未知结果不走普通自动重试。已被替代/失效输入有独立有效性约束。",
+      "passRule": "建议只在原输入仍有效、尝试数未耗尽且退避时间已到时恢复原任务。",
+      "block": "建议退避期间不重复排队；次数耗尽不可无限自动重试；被替代输入不再继续旧生成。",
+      "afterOff": "建议舍弃当前用途后停止后续自动尝试；已经发送的请求继续保留核对记录。",
+      "retry": "建议明确显示等待重试时间、已达重试上限、输入已失效三个原因；新输入/新模型为新请求。",
+      "proposal": "重试权限以真实服务端证据为准，不能仅凭status=failed就总显示重试。",
+      "source": "src/worker/codexRunner.ts;src/local-app/workspaceGenerationTasks.ts",
+      "implementationStatus": "已修复并验证",
+      "implementation": "真实available_at拒绝提前claim；过期/删目标禁止旧任务重试；自动尝试耗尽不剥夺新明确意图；未发送退避ready停止，已发送/费用/hold证据保留。"
+    },
+    {
+      "id": 47,
+      "group": "兼容流程",
+      "action": "旧整期自动续作的配置、暂停和恢复",
+      "current": "configureScriptProduction/pauseScriptProduction与runner授权绑定；旧自动继续只允许特定命令并核对脚本、计划和授权。不是新四步的通用付费授权。",
+      "passRule": "建议只有相同有效授权/脚本/计划且下一步仍适用时继续原流程。",
+      "block": "建议已暂停、授权失效、脚本变更或不在允许命令集合时停止新增步骤。",
+      "afterOff": "暂停停止后续调度，不承诺取消已经发出的供应商请求。",
+      "retry": "建议恢复前重新核对授权与实际阶段；不因关页面自动重新开启。",
+      "proposal": "保留旧资料可读，但新四步每次调用的确认不能被旧整期授权替代。",
+      "source": "src/local-app/episodeCommands.ts;src/local-app/scriptProductionRunner.ts;src/local-app/scriptProductionContinuation.ts",
+      "implementationStatus": "验证保留",
+      "implementation": "暂停、稳定授权身份、在途/失败付费不重发、workspace_enabled停止legacy调度的决策测试通过；未运行依赖日常命名fixture的旧整期跨进程集成。"
+    },
+    {
+      "id": 48,
+      "group": "兼容流程",
+      "action": "受控QC合成修订、分镜结构退回、逐镜输入修订",
+      "current": "旧审核修订分为保留媒体重新合成、返回分镜审核、返回镜头输入三个受控路径；旧审核包和证据不可原地覆盖。",
+      "passRule": "建议仅在所选审核包/阶段/修订范围有效时执行对应修订。",
+      "block": "建议审核基准过期、任务冲突、原生工程不属于本次范围时阻止修改。",
+      "afterOff": "取消修订草稿不改变已批准内容；正式结构修订后旧下游审核不再代表新版本。",
+      "retry": "建议原输入技术失败可按原任务恢复；内容/结构变化要建立新冻结快照再确认。",
+      "proposal": "与正式四步的脚本再确认、工程改动和导出失效规则保持一致，保留历史证据。",
+      "source": "src/local-app/studioCommands.ts;src/local-app/episodeCommands.ts;docs/adr/0016-formal-preparation-lineage.md",
+      "implementationStatus": "已修复并验证",
+      "implementation": "三类旧QC实际HTTP/PG/文件与SDK预览/确认/打开/新冻结4例通过；修复running结构退回、123登记前置与queue后登记死结；非法/旧基准/冲突拒绝、幂等登记和本次task绑定通过。"
+    }
+  ],
+  "commands": [
+    {
+      "name": "prepareWorkspaceCall",
+      "source": "src/productionWorkspace.ts"
+    },
+    {
+      "name": "confirmWorkspaceCall",
+      "source": "src/productionWorkspace.ts"
+    },
+    {
+      "name": "saveWorkspacePlanningSelection",
+      "source": "src/productionWorkspace.ts"
+    },
+    {
+      "name": "resumeWorkspaceEditing",
+      "source": "src/productionWorkspace.ts"
+    },
+    {
+      "name": "adoptLegacyWorkspace",
+      "source": "src/productionWorkspace.ts"
+    },
+    {
+      "name": "authorizeWorkspacePreparation",
+      "source": "src/productionWorkspace.ts"
+    },
+    {
+      "name": "saveWorkspaceSoundIntent",
+      "source": "src/productionWorkspace.ts"
+    },
+    {
+      "name": "prepareWorkspaceCandidate",
+      "source": "src/productionWorkspace.ts"
+    },
+    {
+      "name": "adoptWorkspaceCandidate",
+      "source": "src/productionWorkspace.ts"
+    },
+    {
+      "name": "rejectWorkspaceCandidate",
+      "source": "src/productionWorkspace.ts"
+    },
+    {
+      "name": "setWorkspaceNarrationEnabled",
+      "source": "src/productionWorkspace.ts"
+    },
+    {
+      "name": "saveWorkspaceNarrationDefaults",
+      "source": "src/productionWorkspace.ts"
+    },
+    {
+      "name": "saveWorkspaceNarration",
+      "source": "src/productionWorkspace.ts"
+    },
+    {
+      "name": "confirmWorkspaceNarration",
+      "source": "src/productionWorkspace.ts"
+    },
+    {
+      "name": "generateWorkspaceNarration",
+      "source": "src/productionWorkspace.ts"
+    },
+    {
+      "name": "adoptWorkspaceNarration",
+      "source": "src/productionWorkspace.ts"
+    },
+    {
+      "name": "withdrawWorkspaceNarration",
+      "source": "src/productionWorkspace.ts"
+    },
+    {
+      "name": "refreshWorkspaceNarration",
+      "source": "src/productionWorkspace.ts"
+    },
+    {
+      "name": "editWorkspaceStructure",
+      "source": "src/productionWorkspace.ts"
+    },
+    {
+      "name": "saveWorkspaceVideoRanges",
+      "source": "src/productionWorkspace.ts"
+    },
+    {
+      "name": "generateWorkspaceImage",
+      "source": "src/productionWorkspace.ts"
+    },
+    {
+      "name": "fillWorkspaceImageResult",
+      "source": "src/productionWorkspace.ts"
+    },
+    {
+      "name": "matchWorkspaceImage",
+      "source": "src/productionWorkspace.ts"
+    },
+    {
+      "name": "replanWorkspace",
+      "source": "src/productionWorkspace.ts"
+    },
+    {
+      "name": "retryWorkspacePlanning",
+      "source": "src/productionWorkspace.ts"
+    },
+    {
+      "name": "prepareWorkspace",
+      "source": "src/productionWorkspace.ts"
+    },
+    {
+      "name": "matchWorkspaceMaterial",
+      "source": "src/productionWorkspace.ts"
+    },
+    {
+      "name": "openWorkspaceStudio",
+      "source": "src/productionWorkspace.ts"
+    },
+    {
+      "name": "saveWorkspaceStudio",
+      "source": "src/productionWorkspace.ts"
+    },
+    {
+      "name": "closeWorkspaceStudio",
+      "source": "src/productionWorkspace.ts"
+    },
+    {
+      "name": "searchWorkspacePexelsVideos",
+      "source": "src/workspaceVisualCandidates.ts"
+    },
+    {
+      "name": "previewWorkspacePexelsVideo",
+      "source": "src/workspaceVisualCandidates.ts"
+    },
+    {
+      "name": "importWorkspacePexelsVideo",
+      "source": "src/workspaceVisualCandidates.ts"
+    },
+    {
+      "name": "requestWorkspaceVisualCandidate",
+      "source": "src/workspaceVisualCandidates.ts"
+    },
+    {
+      "name": "retainWorkspaceImageCandidate",
+      "source": "src/workspaceVisualCandidates.ts"
+    },
+    {
+      "name": "requestWorkspaceImageCandidates",
+      "source": "src/workspaceVisualCandidates.ts"
+    },
+    {
+      "name": "retryWorkspaceVisualCandidate",
+      "source": "src/workspaceVisualCandidates.ts"
+    },
+    {
+      "name": "prepareWorkspaceVisualPool",
+      "source": "src/workspaceVisualCandidates.ts"
+    },
+    {
+      "name": "registerWorkspaceVisualCandidate",
+      "source": "src/workspaceVisualCandidates.ts"
+    },
+    {
+      "name": "prepareWorkspaceVisualCandidate",
+      "source": "src/workspaceVisualCandidates.ts"
+    },
+    {
+      "name": "adoptWorkspaceVisualCandidate",
+      "source": "src/workspaceVisualCandidates.ts"
+    },
+    {
+      "name": "rejectWorkspaceVisualCandidate",
+      "source": "src/workspaceVisualCandidates.ts"
+    },
+    {
+      "name": "splitWorkspaceVideoSound",
+      "source": "src/workspaceVisualCandidates.ts"
+    },
+    {
+      "name": "clearWorkspaceVisualCandidate",
+      "source": "src/workspaceVisualCandidates.ts"
+    },
+    {
+      "name": "setWorkspaceAudioEnabled",
+      "source": "src/workspaceAudio.ts"
+    },
+    {
+      "name": "saveWorkspaceAudioDefaults",
+      "source": "src/workspaceAudio.ts"
+    },
+    {
+      "name": "prepareWorkspaceAudio",
+      "source": "src/workspaceAudio.ts"
+    },
+    {
+      "name": "saveWorkspaceMusicSettings",
+      "source": "src/workspaceAudio.ts"
+    },
+    {
+      "name": "adoptWorkspaceAudio",
+      "source": "src/workspaceAudio.ts"
+    },
+    {
+      "name": "mixWorkspaceAudio",
+      "source": "src/workspaceAudio.ts"
+    },
+    {
+      "name": "refreshWorkspaceAudio",
+      "source": "src/workspaceAudio.ts"
+    },
+    {
+      "name": "setWorkspaceCaptionsEnabled",
+      "source": "src/workspaceCaptions.ts"
+    },
+    {
+      "name": "saveWorkspaceNarrationCaptions",
+      "source": "src/workspaceCaptions.ts"
+    },
+    {
+      "name": "saveWorkspaceCaptions",
+      "source": "src/workspaceCaptions.ts"
+    },
+    {
+      "name": "requestWorkspaceCaptionAlignment",
+      "source": "src/workspaceCaptions.ts"
+    },
+    {
+      "name": "prepareWorkspaceCaptionAlignment",
+      "source": "src/workspaceCaptions.ts"
+    },
+    {
+      "name": "applyWorkspaceCaptionAlignment",
+      "source": "src/workspaceCaptions.ts"
+    },
+    {
+      "name": "confirmWorkspaceCaptionText",
+      "source": "src/workspaceCaptions.ts"
+    },
+    {
+      "name": "prepareWorkspaceDelivery",
+      "source": "src/workspaceDelivery.ts"
+    },
+    {
+      "name": "retryWorkspaceDelivery",
+      "source": "src/workspaceDelivery.ts"
+    },
+    {
+      "name": "exportWorkspace",
+      "source": "src/workspaceExport.ts"
+    },
+    {
+      "name": "confirmWorkspaceExport",
+      "source": "src/workspaceExport.ts"
+    },
+    {
+      "name": "recordWorkspaceExportIssue",
+      "source": "src/workspaceExport.ts"
+    },
+    {
+      "name": "resolveWorkspaceExportIssue",
+      "source": "src/workspaceExport.ts"
+    }
+  ],
+  "legacyCommands": [
+    "prepareScriptPublish",
+    "configureScriptProduction",
+    "pauseScriptProduction",
+    "applyScriptSettings",
+    "bindScriptVideo",
+    "renderScriptReview",
+    "generateOfficialVideo",
+    "generateWan",
+    "resumeWan",
+    "annotateAudio",
+    "requestQcMemberRevision",
+    "repairConnection",
+    "repairConfiguration",
+    "create",
+    "reconfirmScript",
+    "importMaterial",
+    "start",
+    "review",
+    "openDirectory",
+    "openStandaloneStudio",
+    "planStoryboard",
+    "annotateStoryboard",
+    "requestStructureRevision",
+    "saveTtsSettings",
+    "saveTtsDraft",
+    "generateTts",
+    "registerManualMedia",
+    "saveAudioSelection",
+    "planMedia",
+    "retryMedia",
+    "saveMediaDraft",
+    "generateClip",
+    "setAudioSourceMode",
+    "generateSourceAudio",
+    "requestAlignment",
+    "saveManualAlignment",
+    "confirmCaptionText",
+    "generateSyncPreview",
+    "confirmSyncPreview",
+    "openStudio",
+    "saveStudio",
+    "generateReviewVideo",
+    "submitStudioRevision",
+    "requestStudioCompositionRevision",
+    "requestStudioStoryboardRevision",
+    "createQcIssue",
+    "resolveQcIssue",
+    "approveQc",
+    "retryFinalRender",
+    "preparePublishPackage"
+  ],
+  "receiptDecisionUpdate": {
+    "date": "2026-11-11",
+    "status": "用户已确认；回执业务代码尚未修改",
+    "unknownRequest": "先核对原请求；仍未知时允许明确确认可能重复收费后发起新请求，保留原任务；不得自动重发。",
+    "notSentRecovery": "仅能明确证明尚未外发的临时本机准备失败，初次失败后最多自动恢复2次；参数/权限/输入变化不自动重试，可能外发立即停止。",
+    "existingRules": "完整有效产物恢复原登记；无可恢复文件仍按未知处理。停用内容解除制作依赖，旧费用与结果核对提醒保留。"
+  },
+  "receiptImplementationEvidence": "docs/verification/receipt-rules-implementation-20261111/REPORT.md"
+}

@@ -1,0 +1,8 @@
+{
+  "executed": false,
+  "requiresExplicitApproval": true,
+  "oldSha256": "224dca6cdd1b687c058e4f7f62c90f17179606bcae79aaac08b07245b6272cfa",
+  "currentFileSha256": "06b128797679bfe4a04ec04584df93f573a24094b069d9d4917a5d80ecd3a777",
+  "schemaEquivalent": true,
+  "changesOnlyHistoricalChecksum": true
+}

@@ -1,0 +1,675 @@
+[
+  {
+    "viewport": 320,
+    "page": 320,
+    "dialog": 304,
+    "dialogWidth": 304,
+    "names": [
+      {
+        "height": 36,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "gpt-image2 / 跨账号长期制作连接与历史版本核对—ExtremelyLongUnbrokenConnectionIdentifierForResponsiveVerification20261111"
+      },
+      {
+        "height": 24,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "seedance"
+      },
+      {
+        "height": 24,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "minimax"
+      },
+      {
+        "height": 24,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "kling"
+      },
+      {
+        "height": 24,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "百炼-万象"
+      },
+      {
+        "height": 24,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "Pexels 素材连接"
+      },
+      {
+        "height": 24,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "火山语音连接"
+      },
+      {
+        "height": 24,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "Freesound 本地"
+      }
+    ],
+    "contrast": [
+      {
+        "selector": ".sr2-pages > button:nth-child(3)",
+        "foreground": [
+          179,
+          194,
+          214
+        ],
+        "background": [
+          32,
+          49,
+          72
+        ],
+        "ratio": 7.278646100785541
+      },
+      {
+        "selector": "footer > span",
+        "foreground": [
+          179,
+          194,
+          214
+        ],
+        "background": [
+          26,
+          40,
+          60
+        ],
+        "ratio": 8.214456119924238
+      }
+    ],
+    "pageName": "connections",
+    "variant": "rows"
+  },
+  {
+    "viewport": 320,
+    "page": 320,
+    "dialog": 304,
+    "dialogWidth": 304,
+    "names": [
+      {
+        "height": 36,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "gpt-image2 / 跨账号长期制作连接与历史版本核对—ExtremelyLongUnbrokenConnectionIdentifierForResponsiveVerification20261111"
+      },
+      {
+        "height": 18,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "seedance"
+      },
+      {
+        "height": 18,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "minimax"
+      },
+      {
+        "height": 18,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "kling"
+      },
+      {
+        "height": 18,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "百炼-万象"
+      },
+      {
+        "height": 18,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "Pexels 素材连接"
+      },
+      {
+        "height": 18,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "火山语音连接"
+      },
+      {
+        "height": 18,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "Freesound 本地"
+      }
+    ],
+    "contrast": [
+      {
+        "selector": ".sr2-pages > button:nth-child(3)",
+        "foreground": [
+          179,
+          194,
+          214
+        ],
+        "background": [
+          32,
+          49,
+          72
+        ],
+        "ratio": 7.278646100785541
+      }
+    ],
+    "pageName": "secrets",
+    "variant": "rows"
+  },
+  {
+    "viewport": 320,
+    "page": 320,
+    "dialog": 304,
+    "dialogWidth": 304,
+    "names": [],
+    "contrast": [
+      {
+        "selector": "button[aria-current=\"page\"]",
+        "foreground": [
+          135,
+          166,
+          255
+        ],
+        "background": [
+          41,
+          61,
+          101
+        ],
+        "ratio": 4.579513032085421
+      },
+      {
+        "selector": ".sr2-toolbar-summary > span",
+        "foreground": [
+          179,
+          194,
+          214
+        ],
+        "background": [
+          26,
+          40,
+          60
+        ],
+        "ratio": 8.214456119924238
+      },
+      {
+        "selector": "strong > span",
+        "foreground": [
+          179,
+          194,
+          214
+        ],
+        "background": [
+          26,
+          40,
+          60
+        ],
+        "ratio": 8.214456119924238
+      },
+      {
+        "selector": ".sr2-recycle-row:nth-child(4) > div:nth-child(1) > strong",
+        "foreground": [
+          231,
+          237,
+          247
+        ],
+        "background": [
+          26,
+          40,
+          60
+        ],
+        "ratio": 12.638699758967999
+      }
+    ],
+    "pageName": "recycle",
+    "variant": "rows"
+  },
+  {
+    "viewport": 320,
+    "page": 320,
+    "dialog": 304,
+    "dialogWidth": 304,
+    "names": [
+      {
+        "height": 36,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "gpt-image2 / 跨账号长期制作连接与历史版本核对—ExtremelyLongUnbrokenConnectionIdentifierForResponsiveVerification20261111"
+      },
+      {
+        "height": 24,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "seedance"
+      },
+      {
+        "height": 24,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "minimax"
+      },
+      {
+        "height": 24,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "kling"
+      },
+      {
+        "height": 24,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "百炼-万象"
+      },
+      {
+        "height": 24,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "Pexels 素材连接"
+      },
+      {
+        "height": 24,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "火山语音连接"
+      },
+      {
+        "height": 24,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "Freesound 本地"
+      }
+    ],
+    "contrast": [
+      {
+        "selector": ".sr2-pages > button:nth-child(3)",
+        "foreground": [
+          179,
+          194,
+          214
+        ],
+        "background": [
+          32,
+          49,
+          72
+        ],
+        "ratio": 7.278646100785541
+      },
+      {
+        "selector": "footer > span",
+        "foreground": [
+          179,
+          194,
+          214
+        ],
+        "background": [
+          26,
+          40,
+          60
+        ],
+        "ratio": 8.214456119924238
+      }
+    ],
+    "pageName": "connections",
+    "variant": "split"
+  },
+  {
+    "viewport": 320,
+    "page": 320,
+    "dialog": 304,
+    "dialogWidth": 304,
+    "names": [
+      {
+        "height": 36,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "gpt-image2 / 跨账号长期制作连接与历史版本核对—ExtremelyLongUnbrokenConnectionIdentifierForResponsiveVerification20261111"
+      },
+      {
+        "height": 18,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "seedance"
+      },
+      {
+        "height": 18,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "minimax"
+      },
+      {
+        "height": 18,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "kling"
+      },
+      {
+        "height": 18,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "百炼-万象"
+      },
+      {
+        "height": 18,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "Pexels 素材连接"
+      },
+      {
+        "height": 18,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "火山语音连接"
+      },
+      {
+        "height": 18,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "Freesound 本地"
+      }
+    ],
+    "contrast": [
+      {
+        "selector": ".sr2-pages > button:nth-child(3)",
+        "foreground": [
+          179,
+          194,
+          214
+        ],
+        "background": [
+          32,
+          49,
+          72
+        ],
+        "ratio": 7.278646100785541
+      },
+      {
+        "selector": ".sr2-detail > h3",
+        "foreground": [
+          231,
+          237,
+          247
+        ],
+        "background": [
+          26,
+          40,
+          60
+        ],
+        "ratio": 12.638699758967999
+      }
+    ],
+    "pageName": "secrets",
+    "variant": "split"
+  },
+  {
+    "viewport": 320,
+    "page": 320,
+    "dialog": 304,
+    "dialogWidth": 304,
+    "names": [],
+    "contrast": [
+      {
+        "selector": "button[aria-current=\"page\"]",
+        "foreground": [
+          135,
+          166,
+          255
+        ],
+        "background": [
+          41,
+          61,
+          101
+        ],
+        "ratio": 4.579513032085421
+      },
+      {
+        "selector": ".sr2-toolbar-summary > span",
+        "foreground": [
+          179,
+          194,
+          214
+        ],
+        "background": [
+          26,
+          40,
+          60
+        ],
+        "ratio": 8.214456119924238
+      },
+      {
+        "selector": ".sr2-recycle-row:nth-child(3) > div:nth-child(1) > strong",
+        "foreground": [
+          231,
+          237,
+          247
+        ],
+        "background": [
+          26,
+          40,
+          60
+        ],
+        "ratio": 12.638699758967999
+      },
+      {
+        "selector": ".sr2-recycle-row:nth-child(5) > div:nth-child(1) > small",
+        "foreground": [
+          179,
+          194,
+          214
+        ],
+        "background": [
+          26,
+          40,
+          60
+        ],
+        "ratio": 8.214456119924238
+      }
+    ],
+    "pageName": "recycle",
+    "variant": "split"
+  },
+  {
+    "viewport": 320,
+    "page": 320,
+    "dialog": 304,
+    "dialogWidth": 304,
+    "names": [
+      {
+        "height": 36,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "gpt-image2 / 跨账号长期制作连接与历史版本核对—ExtremelyLongUnbrokenConnectionIdentifierForResponsiveVerification20261111"
+      },
+      {
+        "height": 24,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "seedance"
+      },
+      {
+        "height": 24,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "minimax"
+      },
+      {
+        "height": 24,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "kling"
+      },
+      {
+        "height": 24,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "百炼-万象"
+      },
+      {
+        "height": 24,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "Pexels 素材连接"
+      },
+      {
+        "height": 24,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "火山语音连接"
+      },
+      {
+        "height": 24,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "Freesound 本地"
+      }
+    ],
+    "contrast": [
+      {
+        "selector": ".sr2-pages > button:nth-child(3)",
+        "foreground": [
+          179,
+          194,
+          214
+        ],
+        "background": [
+          32,
+          49,
+          72
+        ],
+        "ratio": 7.278646100785541
+      },
+      {
+        "selector": "footer > span",
+        "foreground": [
+          179,
+          194,
+          214
+        ],
+        "background": [
+          26,
+          40,
+          60
+        ],
+        "ratio": 8.214456119924238
+      }
+    ],
+    "pageName": "connections",
+    "variant": "groups"
+  },
+  {
+    "viewport": 320,
+    "page": 320,
+    "dialog": 304,
+    "dialogWidth": 304,
+    "names": [
+      {
+        "height": 36,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "gpt-image2 / 跨账号长期制作连接与历史版本核对—ExtremelyLongUnbrokenConnectionIdentifierForResponsiveVerification20261111"
+      },
+      {
+        "height": 18,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "seedance"
+      },
+      {
+        "height": 18,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "minimax"
+      },
+      {
+        "height": 18,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "kling"
+      },
+      {
+        "height": 18,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "百炼-万象"
+      },
+      {
+        "height": 18,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "Pexels 素材连接"
+      },
+      {
+        "height": 18,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "火山语音连接"
+      },
+      {
+        "height": 18,
+        "lineHeight": "18px",
+        "clamp": "2",
+        "title": "Freesound 本地"
+      }
+    ],
+    "contrast": [
+      {
+        "selector": ".sr2-pages > button:nth-child(3)",
+        "foreground": [
+          179,
+          194,
+          214
+        ],
+        "background": [
+          32,
+          49,
+          72
+        ],
+        "ratio": 7.278646100785541
+      }
+    ],
+    "pageName": "secrets",
+    "variant": "groups"
+  },
+  {
+    "viewport": 320,
+    "page": 320,
+    "dialog": 304,
+    "dialogWidth": 304,
+    "names": [],
+    "contrast": [
+      {
+        "selector": "button[aria-current=\"page\"]",
+        "foreground": [
+          135,
+          166,
+          255
+        ],
+        "background": [
+          41,
+          61,
+          101
+        ],
+        "ratio": 4.579513032085421
+      },
+      {
+        "selector": ".sr2-toolbar-summary > span",
+        "foreground": [
+          179,
+          194,
+          214
+        ],
+        "background": [
+          26,
+          40,
+          60
+        ],
+        "ratio": 8.214456119924238
+      }
+    ],
+    "pageName": "recycle",
+    "variant": "groups"
+  }
+]

@@ -1,0 +1,263 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/LocalCatalogApp.navigation.test.tsx src/local-app/LocalCatalogApp.receipts.test.tsx src/local-app/WorkspaceScriptPanel.test.tsx src/local-app/WorkspacePlanningSelection.test.tsx src/local-app/ProductionWorkspaceUploadRecovery.test.tsx src/local-app/ProductionWorkspaceManualUpload.test.tsx src/local-app/EmbeddedStudioHost.test.tsx src/local-app/WorkspaceSpeechSample.lifecycle.test.tsx src/local-app/scriptProductionContinuation.test.ts src/local-app/useWorkspaceCandidateReview.test.tsx src/local-app/WorkspaceCandidateReviewLifecycle.test.tsx src/local-app/WorkspaceCandidateReviewInputs.test.tsx src/local-app/WorkspaceDeliveryPanel.test.tsx src/workspaceCaptions.test.ts src/workspaceExportDelivery.test.ts src/reviews/reviewRevision.test.ts --maxWorkers=1 --fileParallelism=false --reporter=verbose
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/LocalCatalogApp.navigation.test.tsx > opens and reloads the URL list context while keeping unsubmitted search out of navigation 203ms
+ ✓ src/local-app/LocalCatalogApp.navigation.test.tsx > restores episode delivery on direct opening without issuing production commands 132ms
+ ✓ src/local-app/LocalCatalogApp.navigation.test.tsx > moves through list, episode and viewing steps with browser Back and Forward 338ms
+ ✓ src/local-app/LocalCatalogApp.navigation.test.tsx > cancels browser Back with the draft and address intact, then keeps and completes the deferred navigation 200ms
+ ✓ src/local-app/LocalCatalogApp.navigation.test.tsx > restores account series selection 33ms
+ ✓ src/local-app/LocalCatalogApp.navigation.test.tsx > normalizes a retired production-history bookmark without reading retired APIs 29ms
+ ✓ src/local-app/LocalCatalogApp.navigation.test.tsx > restores only the connection viewing dialog and list filters, keeping credentials and edit forms ephemeral 84ms
+ ✓ src/local-app/LocalCatalogApp.navigation.test.tsx > does not reopen a previous Owner location after the session identity changes 58ms
+ ✓ src/local-app/LocalCatalogApp.navigation.test.tsx > handles an unavailable production order through the authorized read boundary with a usable close action 81ms
+ ✓ src/local-app/LocalCatalogApp.navigation.test.tsx > drops a retired source bookmark and does not resurrect it after reload 98ms
+ ✓ src/local-app/LocalCatalogApp.navigation.test.tsx > explains stale account and series list scopes and returns to readable filters 40ms
+ ✓ src/local-app/LocalCatalogApp.navigation.test.tsx > ignores an older catalog response after browser Back restores the original query 68ms
+ ✓ src/local-app/LocalCatalogApp.navigation.test.tsx > restores the editing viewing position without opening or rebuilding a native project 54ms
+ ✓ src/local-app/LocalCatalogApp.navigation.test.tsx > keeps archived production filtering and browser Back through current navigation 102ms
+ ✓ src/local-app/LocalCatalogApp.navigation.test.tsx > shows the preference save error when the topbar appearance change is rejected 77ms
+ ✓ src/local-app/LocalCatalogApp.navigation.test.tsx > clears one applied production filter while keeping the other filters and returning to page one 62ms
+ ✓ src/local-app/WorkspaceScriptPanel.test.tsx > confirms a new script through material registration and start, then locks a copyable preview 67ms
+ ✓ src/local-app/WorkspaceScriptPanel.test.tsx > opens confirmed scripts as preview and requires a second confirmation before saving a revision 56ms
+ ✓ src/local-app/WorkspaceScriptPanel.test.tsx > keeps revision text and reason after a failed confirmed save 46ms
+ ✓ src/local-app/WorkspaceScriptPanel.test.tsx > keeps edits when discard is cancelled and returns to the saved preview only after confirmation 50ms
+ ✓ src/local-app/WorkspaceScriptPanel.test.tsx > leaves unchanged editing without a discard dialog 15ms
+ ✓ src/local-app/WorkspaceScriptPanel.test.tsx > keeps completed script evidence copyable with no edit or upload action 5ms
+ ✓ src/local-app/WorkspaceScriptPanel.test.tsx > marks missing required fields inline, focuses them and clears the invalid state as the user types 23ms
+ ✓ src/local-app/WorkspaceScriptPanel.test.tsx > accepts a dropped script as an unconfirmed draft and rejects unsupported files 24ms
+ ✓ src/local-app/WorkspaceScriptPanel.test.tsx > renders confirmed Markdown semantically and keeps the exact source when editing 14ms
+ ✓ src/local-app/WorkspaceScriptPanel.test.tsx > shows a visible script error beside an empty field before submitting any command 14ms
+ ✓ src/local-app/WorkspaceScriptPanel.test.tsx > separates complete characters from spoken letters and numbers for v2 11ms
+ ✓ src/local-app/WorkspaceScriptPanel.test.tsx > separates complete characters from spoken letters and numbers for legacy Markdown 12ms
+ ✓ src/local-app/WorkspaceScriptPanel.test.tsx > separates complete characters from spoken letters and numbers for plain text 9ms
+ ✓ src/local-app/WorkspaceScriptPanel.test.tsx > does not report v2 settings as spoken text while the draft is invalid 4ms
+ ✓ src/local-app/WorkspaceScriptPanel.test.tsx > updates draft counts while preserving the exact UTF-8 source submitted for confirmation 28ms
+ ✓ src/local-app/WorkspaceScriptPanel.test.tsx > recovers unsent script text and reason only for the same Owner, episode and server version 106ms
+ ✓ src/local-app/WorkspaceScriptPanel.test.tsx > does not resurrect a draft after the user manually returns all fields to the saved baseline 48ms
+ ✓ src/local-app/WorkspaceScriptPanel.test.tsx > keeps the saved revision and draft through parent refresh, then resumes only start after an authoritative read 51ms
+ ✓ src/local-app/WorkspaceScriptPanel.test.tsx > reconciles an already-started saved script without replaying start or clearing another visit 32ms
+ ✓ src/local-app/WorkspaceScriptPanel.test.tsx > does not resume a saved script after different revision is read 26ms
+ ✓ src/local-app/WorkspaceScriptPanel.test.tsx > does not resume a saved script after archive is read 26ms
+ ✓ src/local-app/WorkspaceScriptPanel.test.tsx > does not resume a saved script after completed is read 23ms
+ ✓ src/local-app/WorkspaceScriptPanel.test.tsx > does not resume a saved script after missing episode is read 22ms
+ ✓ src/local-app/WorkspaceScriptPanel.test.tsx > keeps saving and starting separate and blocks rapid duplicate confirmation 16ms
+ ✓ src/local-app/WorkspaceScriptPanel.test.tsx > ignores a late save after switching episodes and does not start the old episode 12ms
+ ✓ src/local-app/WorkspaceScriptPanel.test.tsx > does not start after the view becomes read-only during recovery 24ms
+ ✓ src/local-app/WorkspaceScriptPanel.test.tsx > retains a draft after a failed recovery read and permits another read without saving again 33ms
+ ✓ src/local-app/WorkspaceScriptPanel.test.tsx > requires a reason and a new confirmation when editing an already-saved script after start failure 59ms
+ ✓ src/local-app/WorkspaceScriptPanel.test.tsx > continues a saved waiting-input script after remount without importing or revising it 11ms
+ ✓ src/local-app/WorkspaceScriptPanel.test.tsx > does not treat an old idempotent start receipt as successful startup of a newer revision 56ms
+ ✓ src/local-app/WorkspaceScriptPanel.test.tsx > shows recovery-read errors locally even when the parent presents the original start failure 22ms
+ ✓ src/local-app/LocalCatalogApp.receipts.test.tsx > accepts the created order after refresh failure and supports retry without another write 253ms
+ ✓ src/local-app/LocalCatalogApp.receipts.test.tsx > accepts the created order after refresh failure and supports dismiss without another write 161ms
+ ✓ src/local-app/LocalCatalogApp.receipts.test.tsx > accepts the created order after refresh failure and supports stale without another write 121ms
+ ✓ src/local-app/LocalCatalogApp.receipts.test.tsx > accepts archive acknowledgement even when the following read fails and only retries the read 133ms
+ ✓ src/local-app/LocalCatalogApp.receipts.test.tsx > from operations, closes creation on acknowledgement while directory reading is pending 95ms
+ ✓ src/local-app/LocalCatalogApp.receipts.test.tsx > from episodes, closes creation on acknowledgement while directory reading is pending 87ms
+ ✓ src/local-app/ProductionWorkspaceUploadRecovery.test.tsx > keeps unfinished shelf files through closing and reopens with the received material instead of importing it twice 875ms
+ ✓ src/local-app/ProductionWorkspaceUploadRecovery.test.tsx > abandons failed shelf files after the batch stops, preserves imports through reopening, and accepts a new batch 569ms
+ ✓ src/local-app/EmbeddedStudioHost.test.tsx > waits for the real frame flush before saving and rejects foreign messages 75ms
+ ✓ src/local-app/EmbeddedStudioHost.test.tsx > keeps the editor open when its real flush fails and ignores a wrong channel 86ms
+ ✓ src/local-app/EmbeddedStudioHost.test.tsx > does not load a frame for a mismatched project 4ms
+ ✓ src/local-app/EmbeddedStudioHost.test.tsx > uses the same flush and save boundary for the native home action 15ms
+ ✓ src/local-app/EmbeddedStudioHost.test.tsx > binds incremental caption edits to the inspected live document before flush and save 69ms
+ ✓ src/local-app/EmbeddedStudioHost.test.tsx > keeps shot navigation available after collapsing the rail 16ms
+ ✓ src/local-app/EmbeddedStudioHost.test.tsx > uses the latest persisted file when a caller reuses its bridge for a save then a native edit 69ms
+ ✓ src/local-app/EmbeddedStudioHost.test.tsx > keeps the native frame and content actions locked until the real SDK write ownership is ready 31ms
+ ✓ src/local-app/EmbeddedStudioHost.test.tsx > does not treat a connected state without SDK ownership as write readiness 31ms
+ ✓ src/local-app/EmbeddedStudioHost.test.tsx > directs file imports to the storyboard once the native editor is writable 11ms
+ ✓ src/local-app/EmbeddedStudioHost.test.tsx > opens alignment from the native subtitle tab and returns the last selected shot after save 24ms
+ ✓ src/local-app/EmbeddedStudioHost.test.tsx > shows only the selected shot sound intent beside the native editor without adding an editing command 13ms
+ ✓ src/local-app/EmbeddedStudioHost.test.tsx > exposes focus directly without a tools menu or duplicate audio panel 41ms
+ ✓ src/local-app/EmbeddedStudioHost.test.tsx > ends the leave intent when its host unmounts during Owner saving 13ms
+stderr | src/local-app/WorkspaceDeliveryPanel.test.tsx > registers the selected real cover and binds delivery metadata to the confirmed export
+In HTML, <button> cannot be a descendant of <button>.
+This will cause a hydration error.
+
+  <WorkspaceDeliveryPanel workspace={{id:"workspace", ...}} pending={false} command={function spy} ...>
+    <section className="workspace-..." aria-label="交付包">
+      <div>
+      <div className="workspace-...">
+        <div className="workspace-...">
+          <span>
+          <Button className="workspace-..." noTextPadding={true} size="sm" color="secondary" aria-label="替换封面" ...>
+            <Button data-loading={undefined} data-color="secondary" data-icon-only={undefined} aria-label="替换封面" ...>
+              <bound $7230ffa83bc0c2cf$var$DOMElement data-loading={undefined} data-color="secondary" ...>
+>               <button
+>                 data-loading={undefined}
+>                 data-color="secondary"
+>                 data-icon-only={undefined}
+>                 className="group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-no..."
+>                 style={undefined}
+>                 data-rac=""
+>                 type="button"
+>                 disabled={false}
+>                 form={undefined}
+>                 formAction={undefined}
+>                 formEncType={undefined}
+>                 formMethod={undefined}
+>                 formNoValidate={undefined}
+>                 formTarget={undefined}
+>                 name={undefined}
+>                 value={undefined}
+>                 onFocus={function}
+>                 onBlur={function}
+>                 onKeyDown={function onKeyDown}
+>                 onKeyUp={undefined}
+>                 tabIndex={0}
+>                 onClick={function onClick}
+>                 onMouseDown={function}
+>                 onMouseEnter={function}
+>                 onMouseLeave={function}
+>                 onMouseUp={function}
+>                 onTouchStart={function}
+>                 onTouchMove={function}
+>                 onTouchEnd={function}
+>                 onTouchCancel={function}
+>                 onDragStart={function}
+>                 data-react-aria-pressable={true}
+>                 aria-label="替换封面"
+>                 aria-describedby="_r_i_-hint"
+>                 aria-haspopup={undefined}
+>                 aria-expanded={undefined}
+>                 aria-controls={undefined}
+>                 aria-pressed={undefined}
+>                 aria-current={undefined}
+>                 aria-disabled={undefined}
+>                 id="react-aria-_r_k_"
+>                 aria-labelledby={undefined}
+>                 slot={undefined}
+>                 data-disabled={undefined}
+>                 data-pressed={undefined}
+>                 data-hovered={undefined}
+>                 data-focused={undefined}
+>                 data-pending={undefined}
+>                 data-focus-visible={undefined}
+>                 ref={function}
+>               >
+                  <span data-text={true} className="transition...">
+                    <ImagePreview src="blob:cover..." alt="交付封面预览">
+>                     <button
+>                       type="button"
+>                       className="media-image-trigger"
+>                       aria-label="放大交付封面预览"
+>                       disabled={false}
+>                       onClick={function onClick}
+>                     >
+          ...
+        ...
+      ...
+
+<button> cannot contain a nested <button>.
+See this log for the ancestor stack trace.
+
+ ✓ src/local-app/WorkspaceDeliveryPanel.test.tsx > does not publish an older delivery poll after a newer workspace was provided 13ms
+ ✓ src/local-app/WorkspaceDeliveryPanel.test.tsx > ignores a late delivery reply after workspace changes 2ms
+ ✓ src/local-app/WorkspaceDeliveryPanel.test.tsx > ignores a late delivery reply after delivery changes 2ms
+ ✓ src/local-app/WorkspaceDeliveryPanel.test.tsx > ignores a late delivery reply after stopped changes 2ms
+ ✓ src/local-app/WorkspaceDeliveryPanel.test.tsx > ignores a late delivery reply after unmount changes 1ms
+ ✓ src/local-app/WorkspaceDeliveryPanel.test.tsx > ignores an old delivery error after same-revision authoritative state is provided 5ms
+ ✓ src/local-app/WorkspaceDeliveryPanel.test.tsx > keeps same-revision supplied state when an older delivery reply arrives 1ms
+ ✓ src/local-app/WorkspaceDeliveryPanel.test.tsx > shows a current delivery read failure and can read again on the next polling tick 3ms
+ ✓ src/local-app/WorkspaceDeliveryPanel.test.tsx > keeps the 2500ms cadence and avoids overlapping delivery reads 2ms
+ ✓ src/local-app/WorkspaceDeliveryPanel.test.tsx > registers the selected real cover and binds delivery metadata to the confirmed export 67ms
+ ✓ src/local-app/WorkspaceDeliveryPanel.test.tsx > keeps metadata unavailable before confirmation and retains the retry action for the original failed delivery 9ms
+ ✓ src/local-app/WorkspaceDeliveryPanel.test.tsx > keeps verified file links bound to actual paths and hashes 3ms
+ ✓ src/local-app/WorkspaceDeliveryPanel.test.tsx > releases cover preview URLs when replaced and on unmount, while leaving the real file selection intact 18ms
+ ✓ src/local-app/WorkspaceDeliveryPanel.test.tsx > releases the preview while delivery runs and restores it with the existing draft after a failed attempt 18ms
+ ✓ src/local-app/WorkspaceDeliveryPanel.test.tsx > continues delivery polling when parent refreshes replace the callback 2ms
+ ✓ src/local-app/WorkspaceDeliveryPanel.test.tsx > renders publishable metadata and hides raw technical files while providing real downloads 18ms
+ ✓ src/local-app/WorkspaceDeliveryPanel.test.tsx > restores non-secret delivery text after reopening but requires the cover file again 17ms
+ ✓ src/local-app/WorkspaceDeliveryPanel.test.tsx > keeps text entered during a delivery request and clears only the successfully submitted draft 79ms
+ ✓ src/local-app/WorkspaceDeliveryPanel.test.tsx > does not carry a live cover file into another export even when its recovered filename matches 30ms
+ ✓ src/local-app/WorkspaceDeliveryPanel.test.tsx > rejects empty, oversized and disguised covers before reading the full file, with a field error 22ms
+ ✓ src/local-app/WorkspaceDeliveryPanel.test.tsx > normalizes leading hashes and validates tag limits before submitting the cover bytes 50ms
+ ✓ src/local-app/WorkspaceDeliveryPanel.test.tsx > retains a replacement cover with the same filename while the previous delivery is submitted 80ms
+ ✓ src/local-app/WorkspaceDeliveryPanel.test.tsx > hides a stale confirmed export and preserves the draft when its current confirmation returns 22ms
+ ✓ src/local-app/WorkspaceDeliveryPanel.test.tsx > pauses delivery polling in a hidden page and reads immediately when it becomes visible 1ms
+ ✓ src/local-app/WorkspaceDeliveryPanel.test.tsx > waits for a pending delivery read before the visibility refresh and clears a recovered poll error 2ms
+ ✓ src/local-app/WorkspacePlanningSelection.test.tsx > selects the existing Codex model and Harness at preparation and saves a persistent draft without submitting work 136ms
+ ✓ src/local-app/WorkspacePlanningSelection.test.tsx > accepts the saved episode selection without a second workspace read 62ms
+ ✓ src/local-app/WorkspacePlanningSelection.test.tsx > keeps an acknowledged account Harness when refreshing its list fails 121ms
+ ✓ src/local-app/WorkspaceCandidateReviewInputs.test.tsx > does not reopen a late visual impact dialog after an external project change 136ms
+ ✓ src/local-app/WorkspaceCandidateReviewInputs.test.tsx > keeps a fresh read baseline and publishes the adoption new SHA through the real visual input 54ms
+ ✓ src/local-app/WorkspaceCandidateReviewInputs.test.tsx > requires explicit backup confirmation and never invents a visual adoption identity 89ms
+ ✓ src/local-app/ProductionWorkspaceManualUpload.test.tsx > hands narration its imported material even when the parent acknowledges and consumes the shelf receipt 200ms
+ ✓ src/local-app/WorkspaceSpeechSample.lifecycle.test.tsx > requests the current voice after a selection change instead of replaying the cached previous voice 55ms
+ ✓ src/local-app/WorkspaceSpeechSample.lifecycle.test.tsx > does not let a late previous voice response play or unlock the current voice request 12ms
+ ✓ src/local-app/WorkspaceSpeechSample.lifecycle.test.tsx > isolates A to B to A visits, including old errors and completion 14ms
+ ✓ src/local-app/WorkspaceSpeechSample.lifecycle.test.tsx > does not reuse a player across a source selection change {"model":"another-model"} 9ms
+ ✓ src/local-app/WorkspaceSpeechSample.lifecycle.test.tsx > does not reuse a player across a source selection change {"connectionVersionId":"another-connection"} 6ms
+ ✓ src/local-app/WorkspaceSpeechSample.lifecycle.test.tsx > keeps each first synthesis explicitly confirmed and ignores an old synthesis reply 24ms
+ ✓ src/local-app/WorkspaceSpeechSample.lifecycle.test.tsx > ends client waiting on unmount without playing a late sample response 4ms
+ ✓ src/local-app/WorkspaceCandidateReviewLifecycle.test.tsx > cancel invalidates an in-flight preparation instead of reviving its review 13ms
+ ✓ src/local-app/WorkspaceCandidateReviewLifecycle.test.tsx > invalidates a pending preparation when the provided project changes 1ms
+ ✓ src/local-app/WorkspaceCandidateReviewLifecycle.test.tsx > does not allow a confirmation callback captured before cancellation to adopt 1ms
+ ✓ src/local-app/WorkspaceCandidateReviewLifecycle.test.tsx > keeps the newest preparation when an older response arrives last 1ms
+ ✓ src/local-app/WorkspaceCandidateReviewLifecycle.test.tsx > suppresses stale errors and leaves the newest pending request locked 2ms
+ ✓ src/local-app/WorkspaceCandidateReviewLifecycle.test.tsx > fresh preparation reads can establish a new project baseline 2ms
+ ✓ src/local-app/WorkspaceCandidateReviewLifecycle.test.tsx > keeps a same-SHA review and confirms with the latest revision exactly once 1ms
+ ✓ src/local-app/WorkspaceCandidateReviewLifecycle.test.tsx > cancellation before the confirmation read completes sends no adoption 1ms
+ ✓ src/local-app/WorkspaceCandidateReviewLifecycle.test.tsx > publishes a posted adoption after local cancellation without claiming rollback or running local success 1ms
+ ✓ src/local-app/WorkspaceCandidateReviewLifecycle.test.tsx > adoption new SHA does not swallow its success callback 1ms
+ ✓ src/local-app/WorkspaceCandidateReviewLifecycle.test.tsx > a posted result from an abandoned owner cannot publish into a returned scope 1ms
+ ✓ src/local-app/WorkspaceCandidateReviewLifecycle.test.tsx > locks out a new preparation while the confirmation read is pending 1ms
+ ✓ src/local-app/useWorkspaceCandidateReview.test.tsx > requires explicit confirmation and sends the server adoption identity with the latest revision 16ms
+ ✓ src/local-app/useWorkspaceCandidateReview.test.tsx > rejects an authoritative project change before confirming and does not post adoption 4ms
+ ✓ src/local-app/useWorkspaceCandidateReview.test.tsx > never revives a prepared plan after switching review scope away and back 2ms
+ ✓ src/local-app/useWorkspaceCandidateReview.test.tsx > ignores a prepared response that arrives after the review owner unmounts 4ms
+ ✓ src/reviews/reviewRevision.test.ts > 审核修订 > 按动作分流，并返回明确结果 5ms
+ ✓ src/reviews/reviewRevision.test.ts > 审核修订 > 保留数据库返回的失败原因 1ms
+ ✓ src/reviews/reviewRevision.test.ts > 审核修订 > 冻结 Studio 工程后才提交合成修订 1ms
+ ✓ src/reviews/reviewRevision.test.ts > 审核修订 > 恢复失败的最终渲染时复用已批准工程 1ms
+ ✓ src/reviews/reviewRevision.test.ts > 审核修订 > 冻结工程缺少合成配置时拒绝提交，不能沿用打开工程的宽松要求 1ms
+ ✓ src/local-app/scriptProductionContinuation.test.ts > never approves the waiting_input review automatically 1ms
+ ✓ src/local-app/scriptProductionContinuation.test.ts > never approves the visual_review review automatically 0ms
+ ✓ src/local-app/scriptProductionContinuation.test.ts > never approves the storyboard_review review automatically 0ms
+ ✓ src/local-app/scriptProductionContinuation.test.ts > never approves the qc_review review automatically 0ms
+ ✓ src/local-app/scriptProductionContinuation.test.ts > applies initial settings only once and plans after visual approval 0ms
+ ✓ src/local-app/scriptProductionContinuation.test.ts > waits at both current text and synchronization review gates 0ms
+ ✓ src/local-app/scriptProductionContinuation.test.ts > uses the exact script prompt and frozen first frame after narration is ready 1ms
+ ✓ src/local-app/scriptProductionContinuation.test.ts > does not resubmit an in-flight or failed paid request 0ms
+ ✓ src/local-app/scriptProductionContinuation.test.ts > fails closed on missing material, absent reservation and overlong narration 0ms
+ ✓ src/local-app/scriptProductionContinuation.test.ts > keeps a manual video binding and never resets a completed review 0ms
+ ✓ src/local-app/scriptProductionContinuation.test.ts > uses durable action identities across restart and changes them for changed inputs 0ms
+ ✓ src/local-app/scriptProductionContinuation.test.ts > uses a changed prompt only from the current approved storyboard 0ms
+ ✓ src/local-app/scriptProductionContinuation.test.ts > leaves legacy authorization intact but schedules no legacy actions after workspace adoption 1ms
+ ✓ src/workspaceCaptions.test.ts > native workspace captions > renders explicit character budgets as manual pages at absolute timeline milliseconds without changing the picture 2ms
+ ✓ src/workspaceCaptions.test.ts > updates the existing lane after the native runtime has normalized caption track IDs 1ms
+ ✓ src/workspaceCaptions.test.ts > keeps other native lanes and their shared allocation policy when editing one lane 0ms
+ ✓ src/workspaceCaptions.test.ts > uses the actual native canvas for safe-area presets after changing aspect ratio 0ms
+ ✓ src/workspaceExportDelivery.test.ts > uses the current export to offer confirmation before delivery preparation 2ms
+ ✓ src/workspaceExportDelivery.test.ts > keeps review guidance and confirmation gates for 'no export' 0ms
+ ✓ src/workspaceExportDelivery.test.ts > keeps review guidance and confirmation gates for 'failed export' 0ms
+ ✓ src/workspaceExportDelivery.test.ts > keeps review guidance and confirmation gates for 'failed check on ready export' 0ms
+ ✓ src/workspaceExportDelivery.test.ts > keeps review guidance and confirmation gates for 'missing artifact' 0ms
+ ✓ src/workspaceExportDelivery.test.ts > keeps review guidance and confirmation gates for 'unresolved issue' 0ms
+ ✓ src/workspaceExportDelivery.test.ts > keeps review guidance and confirmation gates for 'outdated confirmed export' 0ms
+ ✓ src/workspaceExportDelivery.test.ts > keeps review guidance and confirmation gates for 'stale workspace' 0ms
+ ✓ src/workspaceExportDelivery.test.ts > keeps delivery view and original retry target for 'ready' / verified=false 0ms
+ ✓ src/workspaceExportDelivery.test.ts > keeps delivery view and original retry target for 'running' / verified=false 0ms
+ ✓ src/workspaceExportDelivery.test.ts > keeps delivery view and original retry target for 'failed' / verified=false 0ms
+ ✓ src/workspaceExportDelivery.test.ts > keeps delivery view and original retry target for 'blocked' / verified=false 0ms
+ ✓ src/workspaceExportDelivery.test.ts > keeps delivery view and original retry target for 'completed' / verified=false 0ms
+ ✓ src/workspaceExportDelivery.test.ts > keeps delivery view and original retry target for 'completed' / verified=true 0ms
+ ✓ src/workspaceExportDelivery.test.ts > keeps historical completion independent from the latest failure and current export 0ms
+ ✓ src/workspaceExportDelivery.test.ts > keeps export operations disabled for 'read-only' 0ms
+ ✓ src/workspaceExportDelivery.test.ts > keeps export operations disabled for 'pending' 0ms
+ ✓ src/workspaceExportDelivery.test.ts > keeps export operations disabled for 'operation-pending' 0ms
+ ✓ src/workspaceExportDelivery.test.ts > keeps delivery submission disabled reasons without locking editable drafts: 'missing-title' 0ms
+ ✓ src/workspaceExportDelivery.test.ts > keeps delivery submission disabled reasons without locking editable drafts: 'missing-cover' 0ms
+ ✓ src/workspaceExportDelivery.test.ts > keeps delivery submission disabled reasons without locking editable drafts: 'delivery-preparing' 0ms
+ ✓ src/workspaceExportDelivery.test.ts > keeps delivery submission disabled reasons without locking editable drafts: 'cover-checking' 0ms
+ ✓ src/workspaceExportDelivery.test.ts > keeps delivery submission disabled reasons without locking editable drafts: 'pending' 0ms
+ ✓ src/workspaceExportDelivery.test.ts > keeps delivery submission disabled reasons without locking editable drafts: null 0ms
+ ✓ src/workspaceExportDelivery.test.ts > does not require a new cover or title when retrying the original failed delivery 0ms
+
+ Test Files  16 passed (16)
+      Tests  171 passed (171)
+   Start at  18:22:02
+   Duration  20.36s (transform 905ms, setup 21ms, collect 7.98s, tests 6.87s, environment 3.22s, prepare 598ms)
+

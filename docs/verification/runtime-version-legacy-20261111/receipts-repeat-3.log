@@ -1,0 +1,12 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/LocalCatalogApp.receipts.test.tsx -t from operations --maxWorkers=1 --fileParallelism=false
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/LocalCatalogApp.receipts.test.tsx (6 tests | 5 skipped) 198ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 5 skipped (6)
+   Start at  22:39:45
+   Duration  2.01s (transform 729ms, setup 7ms, collect 1.56s, tests 198ms, environment 123ms, prepare 26ms)
+

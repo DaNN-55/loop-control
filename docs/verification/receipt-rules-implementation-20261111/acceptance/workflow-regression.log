@@ -1,0 +1,24 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workflowRules.integration.test.ts src/local-app/workflowRetryRules.independent.integration.test.ts src/local-app/workflowQueueStop.independent.integration.test.ts src/local-app/workflowLegacyRules.integration.test.ts --maxWorkers=1 --fileParallelism=false --reporter=verbose
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/workflowLegacyRules.integration.test.ts > 48 composition revision freezes the current QC edit, fences permission/stale/running requests and preserves prior evidence 5027ms
+ ✓ src/local-app/workflowLegacyRules.integration.test.ts > 48 storyboard return invalidates downstream packages while retaining the approved storyboard and immutable QC files 2545ms
+ ✓ src/local-app/workflowLegacyRules.integration.test.ts > 48 a running storyboard revision blocks a QC structural return before any downstream evidence changes 2627ms
+ ✓ src/local-app/workflowLegacyRules.integration.test.ts > 48 per-shot input changes remain drafts until a new local preview is confirmed and a new review snapshot is frozen 11939ms
+ ✓ src/local-app/workflowRules.integration.test.ts > 48/6/7/21/23: disabling unknown speech removes current blockers but retains reconciliation and prevents resend 2440ms
+ ✓ src/local-app/workflowRules.integration.test.ts > 48/21/26/37: unused missing voice and its long tail cannot block real native export, while re-enabled media must validate 11738ms
+ ✓ src/local-app/workflowRules.integration.test.ts > 48/7/8/20/28/29: replacing or deleting a visual target and unused sound failures leave only background reminders 1821ms
+ ✓ src/local-app/workflowRules.integration.test.ts > 48/6/21/26: an already sent speech request may finish after disabling but never restores or adopts its content 5800ms
+ ✓ src/local-app/workflowRetryRules.independent.integration.test.ts > 48/27/29/46 independent: persisted source backoff cannot duplicate work, unchanged failure retries, changed or removed targets cannot 4853ms
+ ✓ src/local-app/workflowQueueStop.independent.integration.test.ts > 48/6/28/46 independent: disabling stops only unsent queued attempts, preserves running and unknown evidence, and re-enabling does not submit 3477ms
+ ✓ src/local-app/workflowQueueStop.independent.integration.test.ts > 48/20/46 independent: deleting a visual target stops its unsent queued task and retains its immutable request 1390ms
+ ✓ src/local-app/workflowQueueStop.independent.integration.test.ts > 48/21/24/46 independent: reopening stopped speech submits nothing and a new confirmed same-input request gets a fresh task 1872ms
+ ✓ src/local-app/workflowQueueStop.independent.integration.test.ts > 48/2/42/46 independent: queue stopping rejects foreign Owners, illegal scopes, current-shot removal and read-only workspaces 1511ms
+
+ Test Files  4 passed (4)
+      Tests  13 passed (13)
+   Start at  21:52:27
+   Duration  58.46s (transform 466ms, setup 10ms, collect 982ms, tests 57.04s, environment 0ms, prepare 87ms)
+

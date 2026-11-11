@@ -1,0 +1,19 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workspaceDeliveryInputs.integration.test.ts src/local-app/nativeStudioPrimary.integration.test.ts src/local-app/embeddedStudio.integration.test.ts src/local-app/episodeArchive.integration.test.ts src/local-app/episodeDeletion.integration.test.ts src/local-app/episodeDeletionRetainedSources.integration.test.ts --maxWorkers=1 --fileParallelism=false --reporter=verbose
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/workspaceDeliveryInputs.integration.test.ts > Owner validates cover content and tag boundaries before queuing a package and preserves the exact confirmed delivery 14423ms
+ ✓ src/local-app/embeddedStudio.integration.test.ts > Owner opens the real Studio and saves its versioned workspace through native HTTP 6989ms
+ ✓ src/local-app/episodeDeletionRetainedSources.integration.test.ts > only current registered files are confirmed; online deployment sources remain outside deletion authority 1186ms
+ ✓ src/local-app/episodeDeletionRetainedSources.integration.test.ts > only current registered files are confirmed; offline deployment sources remain outside deletion authority 1338ms
+ ✓ src/local-app/episodeArchive.integration.test.ts > restores an owned legacy order without enabling native production; retains ownership, history and CSRF fences 898ms
+ ✓ src/local-app/episodeDeletion.integration.test.ts > managed=true: deletes an archived ordinary order and then its empty account through Owner HTTP, retaining deletion fences 2058ms
+ ✓ src/local-app/episodeDeletion.integration.test.ts > managed=false: deletes an archived ordinary order and then its empty account through Owner HTTP, retaining deletion fences 1537ms
+ ✓ src/local-app/nativeStudioPrimary.integration.test.ts > native text, style and timing save once, final-file approval confirms captions and later edits invalidate it 28129ms
+
+ Test Files  6 passed (6)
+      Tests  8 passed (8)
+   Start at  18:24:04
+   Duration  58.28s (transform 435ms, setup 12ms, collect 1.10s, tests 56.56s, environment 0ms, prepare 147ms)
+

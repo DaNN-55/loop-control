@@ -1,0 +1,13 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/worker/mediaProviders.test.ts src/local-app/narrationReceiptBoundary.test.ts --maxWorkers=1 --fileParallelism=false
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/worker/mediaProviders.test.ts (17 tests) 10ms
+ ✓ src/local-app/narrationReceiptBoundary.test.ts (4 tests) 13ms
+
+ Test Files  2 passed (2)
+      Tests  21 passed (21)
+   Start at  21:56:12
+   Duration  529ms (transform 125ms, setup 11ms, collect 160ms, tests 23ms, environment 128ms, prepare 47ms)
+

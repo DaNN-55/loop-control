@@ -1,0 +1,12 @@
+{
+  "episodes": 6,
+  "tasks": 19,
+  "recycled": 4,
+  "activeTasks": 0,
+  "dispatchFacts": 0,
+  "latestMigration": "162-confirmed-narration-unknown-retry.sql",
+  "pid": 68900,
+  "runningRelease": "2f0f44993eb1a3f4132516e6f8fa3c107d7c944bad7bb0de73f63578257a291d",
+  "preparedRelease": "2f0f44993eb1a3f4132516e6f8fa3c107d7c944bad7bb0de73f63578257a291d",
+  "releaseMatches": true
+}

@@ -1,0 +1,12 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workflowRetryRules.independent.integration.test.ts --fileParallelism=false --maxWorkers=1 --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+·
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  18:32:50
+   Duration  5.55s (transform 458ms, setup 8ms, collect 624ms, tests 4.81s, environment 0ms, prepare 23ms)
+

@@ -1,0 +1,104 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workflowRules.browser.integration.test.ts --maxWorkers=1 --fileParallelism=false
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+stderr | src/local-app/workflowRules.browser.integration.test.ts > 48/7/21/22: real browser disables speech without discarding the unknown request and sees the unblocked catalog after refresh
+(!) Failed to run dependency scan. Skipping dependency pre-bundling. Error:   Failed to scan for dependencies from entries:
+  /Users/dan/Programs/loop-control/index.html
+/Users/dan/Programs/loop-control/docs/architecture-map/index.html
+/Users/dan/Programs/loop-control/docs/architecture-map/template.html
+/Users/dan/Programs/loop-control/src/accounts/series-rules.prototype.html
+/Users/dan/Programs/loop-control/docs/architecture/state-machine-map/index.html
+/Users/dan/Programs/loop-control/docs/reviews/workflow-rules-20261111/index.html
+/Users/dan/Programs/loop-control/docs/samples/rizhao-jinshan/storyboard-review.html
+/Users/dan/Programs/loop-control/docs/prototypes/account-workspace-20261031/index.html
+/Users/dan/Programs/loop-control/docs/prototypes/markdown-shots-20261031/index.html
+/Users/dan/Programs/loop-control/docs/prototypes/generated-candidates-20261031/index.html
+/Users/dan/Programs/loop-control/docs/verification/account-blueprint-a-20261029/fixture.html
+/Users/dan/Programs/loop-control/docs/verification/account-rules-compact-20261101/index.html
+/Users/dan/Programs/loop-control/src/local-app/connections.prototype.html
+/Users/dan/Programs/loop-control/src/local-app/logs.prototype.html
+/Users/dan/Programs/loop-control/src/local-app/owner-settings.prototype.html
+/Users/dan/Programs/loop-control/src/local-app/settings-review-v2.prototype.html
+/Users/dan/Programs/loop-control/docs/verification/dan-ui-rollout-20261027/fixture.html
+/Users/dan/Programs/loop-control/docs/verification/detail-refinement-migration-20261110/fixture.html
+/Users/dan/Programs/loop-control/docs/verification/generated-gallery-20261031/browser-fixture.html
+/Users/dan/Programs/loop-control/docs/verification/impeccable-migration-20261028/fixture.html
+/Users/dan/Programs/loop-control/docs/verification/log-viewer-migration-20261111/theme.html
+/Users/dan/Programs/loop-control/docs/verification/owner-credentials-embedded-20261111/index.html
+/Users/dan/Programs/loop-control/docs/verification/owner-preferences-20261029/fixture.html
+/Users/dan/Programs/loop-control/docs/verification/page-consistency-20261028/fixture.html
+/Users/dan/Programs/loop-control/docs/verification/prototype-alignment-20261028/fixture.html
+/Users/dan/Programs/loop-control/docs/verification/reference-budget-20261101/index.html
+/Users/dan/Programs/loop-control/docs/verification/secret-management-a-20261029/fixture.html
+/Users/dan/Programs/loop-control/docs/verification/surface-polish-migration-20261110/fixture.html
+/Users/dan/Programs/loop-control/docs/verification/visual-audit-20261028/fixture.html
+/Users/dan/Programs/loop-control/docs/verification/settings-comments-20261111/demo/english.html
+/Users/dan/Programs/loop-control/docs/verification/script-production-v2-20261028/ui/fixture.html
+/Users/dan/Programs/loop-control/docs/verification/browser-comments-20261111/status-feedback/fixture/index.html
+
+  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNo matching export in "src/workspace/WorkspaceViews.tsx" for import "NavigationButtons"[0m
+
+    docs/verification/dan-ui-rollout-20261027/fixture.tsx:13:25:
+[37m      13 │ import {EpisodeWorkspace,[32mNavigationButtons[37m,OwnerMenu,PasswordForm}...
+         ╵                          [32m~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNo matching export in "src/workspace/WorkspaceViews.tsx" for import "NavigationButtons"[0m
+
+    docs/verification/impeccable-migration-20261028/fixture.tsx:13:25:
+[37m      13 │ import {EpisodeWorkspace,[32mNavigationButtons[37m,OwnerMenu,PasswordForm}...
+         ╵                          [32m~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNo matching export in "src/workspace/WorkspaceViews.tsx" for import "NavigationButtons"[0m
+
+    docs/verification/page-consistency-20261028/fixture.tsx:13:25:
+[37m      13 │ import {EpisodeWorkspace,[32mNavigationButtons[37m,OwnerMenu,PasswordForm}...
+         ╵                          [32m~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNo matching export in "src/workspace/WorkspaceViews.tsx" for import "NavigationButtons"[0m
+
+    docs/verification/prototype-alignment-20261028/fixture.tsx:13:25:
+[37m      13 │ import {EpisodeWorkspace,[32mNavigationButtons[37m,OwnerMenu,PasswordForm}...
+         ╵                          [32m~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNo matching export in "src/workspace/WorkspaceViews.tsx" for import "NavigationButtons"[0m
+
+    docs/verification/visual-audit-20261028/fixture.tsx:13:25:
+[37m      13 │ import {EpisodeWorkspace,[32mNavigationButtons[37m,OwnerMenu,PasswordForm}...
+         ╵                          [32m~~~~~~~~~~~~~~~~~[0m
+
+
+    at failureErrorWithLog (/Users/dan/Programs/loop-control/node_modules/esbuild/lib/main.js:1752:15)
+    at /Users/dan/Programs/loop-control/node_modules/esbuild/lib/main.js:1211:25
+    at runOnEndCallbacks (/Users/dan/Programs/loop-control/node_modules/esbuild/lib/main.js:1592:45)
+    at buildResponseToResult (/Users/dan/Programs/loop-control/node_modules/esbuild/lib/main.js:1209:7)
+    at /Users/dan/Programs/loop-control/node_modules/esbuild/lib/main.js:1221:9
+    at new Promise (<anonymous>)
+    at requestCallbacks.on-end (/Users/dan/Programs/loop-control/node_modules/esbuild/lib/main.js:1220:54)
+    at handleRequest (/Users/dan/Programs/loop-control/node_modules/esbuild/lib/main.js:911:17)
+    at handleIncomingPacket (/Users/dan/Programs/loop-control/node_modules/esbuild/lib/main.js:936:7)
+    at Socket.readFromStdout (/Users/dan/Programs/loop-control/node_modules/esbuild/lib/main.js:864:7)
+
+stdout | src/local-app/workflowRules.browser.integration.test.ts > 48/7/21/22: real browser disables speech without discarding the unknown request and sees the unblocked catalog after refresh
+6:37:58 PM [vite] (client) ✨ new dependencies optimized: react-dom/client, react-aria-components, lucide-react, @untitledui/icons, tailwind-merge, @videojs/react, @videojs/react/audio, @videojs/react/i18n/locales/zh-CN/register, @videojs/react/video
+6:37:58 PM [vite] (client) ✨ optimized dependencies changed. reloading
+
+stderr | src/local-app/workflowRules.browser.integration.test.ts > 48/7/21/22: real browser disables speech without discarding the unknown request and sees the unblocked catalog after refresh
+[BABEL] Note: The code generator has deoptimised the styling of /Users/dan/Programs/loop-control/.scratch/workflow48-browser/cache/deps/react-dom_client.js?v=03cd412c as it exceeds the max of 500KB.
+
+stderr | src/local-app/workflowRules.browser.integration.test.ts > 48/7/21/22: real browser disables speech without discarding the unknown request and sees the unblocked catalog after refresh
+[BABEL] Note: The code generator has deoptimised the styling of /Users/dan/Programs/loop-control/.scratch/workflow48-browser/cache/deps/react-dom_client.js?v=62adeac9 as it exceeds the max of 500KB.
+
+ ✓ src/local-app/workflowRules.browser.integration.test.ts (1 test) 8944ms
+   ✓ 48/7/21/22: real browser disables speech without discarding the unknown request and sees the unblocked catalog after refresh  8943ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  18:37:53
+   Duration  9.74s (transform 446ms, setup 7ms, collect 668ms, tests 8.94s, environment 0ms, prepare 23ms)
+

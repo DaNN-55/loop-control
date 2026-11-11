@@ -1,0 +1,12 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/narrationReceiptBoundary.test.ts --maxWorkers=1
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/narrationReceiptBoundary.test.ts (4 tests) 11ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  21:42:53
+   Duration  237ms (transform 92ms, setup 8ms, collect 109ms, tests 11ms, environment 0ms, prepare 30ms)
+

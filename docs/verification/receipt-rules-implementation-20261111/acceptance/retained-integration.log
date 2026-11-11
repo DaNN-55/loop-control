@@ -1,0 +1,41 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workspaceScriptResume.integration.test.ts src/local-app/workspaceDeliveryInputs.integration.test.ts src/local-app/workspaceDelivery.integration.test.ts src/local-app/workspaceCaptions.integration.test.ts src/local-app/workspaceCandidates.integration.test.ts src/local-app/workspacePexels.integration.test.ts --maxWorkers=1 --fileParallelism=false --reporter=verbose
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/workspaceDelivery.integration.test.ts > Owner delivery requires an exact confirmed export 1157ms
+ ✓ src/local-app/workspaceDelivery.integration.test.ts > real Worker verifies exact package, fences tamper and missing inputs, retries and survives restart 19702ms
+ ✓ src/local-app/workspaceDelivery.integration.test.ts > a queued package cannot complete or retry against a different final export 16764ms
+ ✓ src/local-app/workspaceDelivery.integration.test.ts > delivery records the used trimmed voice source and never substitutes an unadopted draft text 13873ms
+ ✓ src/local-app/workspacePexels.integration.test.ts > Owner queries Pexels, previews an explicit result, imports and explicitly adopts managed bytes after restart 11526ms
+ ✓ src/local-app/workspacePexels.integration.test.ts > Pexels failures stay recoverable, validate external URLs and bytes, and never generate or adopt automatically 3169ms
+ ✓ src/local-app/workspacePexels.integration.test.ts > queued Pexels requests retain exact credentials across rotation and old candidates remain selectable after a new query 2832ms
+ ✓ src/local-app/workspacePexels.integration.test.ts > a short Pexels video gives recoverable duration feedback and only an explicit duration choice changes the native window 2093ms
+(node:54894) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ✓ src/local-app/workspacePexels.integration.test.ts > Pexels results and unimported previews for one shot survive many searches on another shot 14731ms
+ ✓ src/local-app/workspacePexels.integration.test.ts > thumbnail search metadata survives Owner reads and duplicate preview/import cannot change the project before adoption 2075ms
+ ✓ src/local-app/workspaceCaptions.integration.test.ts > Owner edits only the chosen native caption lane and persists manual timing without shot approval 4025ms
+ ✓ src/local-app/workspaceCaptions.integration.test.ts > current native caption evidence follows the real alignment queue and rejects a late Worker result after a text edit 1699ms
+ ✓ src/local-app/workspaceCaptions.integration.test.ts > real landscape and portrait Remotion frames contain caption pixels inside the chosen safe area 17445ms
+ ✓ src/local-app/workspaceCaptions.integration.test.ts > Owner caption errors identify the field and current shot window without changing the saved native captions 1294ms
+ ✓ src/local-app/workspaceCaptions.integration.test.ts > percentage margins and second timings survive Owner save, native dragging, save and reopen 5800ms
+ ↓ src/local-app/workspaceCaptions.integration.test.ts > browser edits and reopens percentage margins and second timing through the actual Owner HTTP boundary
+ ✓ src/local-app/workspaceDeliveryInputs.integration.test.ts > Owner validates cover content and tag boundaries before queuing a package and preserves the exact confirmed delivery 15130ms
+ ✓ src/local-app/workspaceCandidates.integration.test.ts > completed local speech versions stay immutable and rejecting a candidate preserves the native project 2475ms
+ ✓ src/local-app/workspaceCandidates.integration.test.ts > explicit candidate duration changes the stable main voice and its followed captions while stale attempts preserve the saved edit 5416ms
+ ✓ src/local-app/workspaceCandidates.integration.test.ts > prepared old speech and changed candidate bytes cannot overwrite a newer input 2383ms
+ ✓ src/local-app/workspaceCandidates.integration.test.ts > adopting actual speech expires only affected caption evidence and a late alignment cannot restore it 2837ms
+ ✓ src/local-app/workspaceCandidates.integration.test.ts > new registered speech enters the existing Studio media session before relink and cannot be finalized before native save 5268ms
+ ✓ src/local-app/workspaceCandidates.integration.test.ts > a saved native candidate can recover its missing adoption receipt after restart without regenerating speech 5101ms
+(node:58449) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ✓ src/local-app/workspaceCandidates.integration.test.ts > explicit main-voice candidate adoption switches source and none atomically while preserving native sounds 10329ms
+ ✓ src/local-app/workspaceScriptResume.integration.test.ts > Owner confirms a formatting-only revision while preserving the exact edited project and old invalidated evidence 3413ms
+ ✓ src/local-app/workspaceScriptResume.integration.test.ts > substantive script edits cannot bypass the stale-project guard through formatting recovery 1377ms
+
+ Test Files  6 passed (6)
+      Tests  25 passed | 1 skipped (26)
+   Start at  21:53:44
+   Duration  173.71s (transform 479ms, setup 12ms, collect 1.17s, tests 171.92s, environment 0ms, prepare 132ms)
+

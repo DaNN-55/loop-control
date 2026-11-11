@@ -1,0 +1,11 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/accounts src/platform/ConfigurationForms.local.test.tsx src/platform/SeriesConfigurationForm.test.tsx src/episodes/EpisodeForm.test.tsx src/episodes/EpisodeDetailDrawer.test.tsx src/local-app/LocalSecretAdministration.test.tsx src/local-app/LocalDeletionRecovery.test.tsx src/local-app/OwnerSettingsDialog.test.tsx src/local-app/LocalCatalogApp.ownerSettings.test.tsx src/i18n/ui.test.tsx src/local-app/OwnerPreferencesDialog.comments.test.tsx --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+··································································································
+
+ Test Files  16 passed (16)
+      Tests  98 passed (98)
+   Start at  17:17:28
+   Duration  7.97s (transform 1.21s, setup 40ms, collect 11.09s, tests 13.23s, environment 3.52s, prepare 555ms)

@@ -1,0 +1,13 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workspaceCatalog.integration.test.ts --maxWorkers=1 --fileParallelism=false
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/workspaceCatalog.integration.test.ts (1 test) 1491ms
+   ✓ Owner catalog projects only current workspace export and delivery evidence  1491ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  18:17:05
+   Duration  2.20s (transform 434ms, setup 7ms, collect 595ms, tests 1.49s, environment 0ms, prepare 29ms)
+

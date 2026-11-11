@@ -1,0 +1,37 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workspaceNarrationTabs.integration.test.ts src/local-app/workspaceAudioStorage.integration.test.ts src/local-app/workspaceExport.integration.test.ts --fileParallelism=false --maxWorkers=1 --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+·······xx···
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workspaceAudioStorage.integration.test.ts > legacy synchronized preview renders actual approved source audio and keeps the native project beside the proxy
+AssertionError: {"last_result":{"retry":{"reason":"媒体执行或产物验证失败，请检查冻结输入和本机执行状态。","shouldRetry":false},"status":"failed","taskId":"08500582-206a-480e-a781-7a235daaec70","version":"worker-result/v1","blockers":[],"nextStep":"Retry only after the reported failure is understood.","artifacts":[],"preflight":{"checks":[{"check":"command_availability","phase":"preflight","scope":"worker","action":"none","reason":"本地受控规划执行路径；不自动调用在线Provider。","status":"passed","capability":"review_rendering"}],"version":"worker-preflight/v2"},"validation":{"checks":[{"name":"codex_execution","detail":"媒体执行或产物验证失败，请检查冻结输入和本机执行状态。","passed":false}],"passed":false},"actualCostCents":0}}: expected 'failed' to be 'completed' // Object.is equality
+
+Expected: "completed"
+Received: "failed"
+
+ ❯ src/local-app/workspaceAudioStorage.integration.test.ts:60:458
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/local-app/workspaceAudioStorage.integration.test.ts > registered synchronized preview renders actual approved source audio and keeps the native project beside the proxy
+AssertionError: {"last_result":{"retry":{"reason":"媒体执行或产物验证失败，请检查冻结输入和本机执行状态。","shouldRetry":false},"status":"failed","taskId":"95ee0111-c3d1-4070-ade4-3dff9b38ea3c","version":"worker-result/v1","blockers":[],"nextStep":"Retry only after the reported failure is understood.","artifacts":[],"preflight":{"checks":[{"check":"command_availability","phase":"preflight","scope":"worker","action":"none","reason":"本地受控规划执行路径；不自动调用在线Provider。","status":"passed","capability":"review_rendering"}],"version":"worker-preflight/v2"},"validation":{"checks":[{"name":"codex_execution","detail":"媒体执行或产物验证失败，请检查冻结输入和本机执行状态。","passed":false}],"passed":false},"actualCostCents":0}}: expected 'failed' to be 'completed' // Object.is equality
+
+Expected: "completed"
+Received: "failed"
+
+ ❯ src/local-app/workspaceAudioStorage.integration.test.ts:60:458
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  2 failed | 10 passed (12)
+   Start at  18:17:41
+   Duration  72.32s (transform 425ms, setup 9ms, collect 744ms, tests 71.24s, environment 0ms, prepare 63ms)
+

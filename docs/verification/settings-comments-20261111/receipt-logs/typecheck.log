@@ -1,0 +1,2 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'tsc' --noEmit --pretty false --target es2022 --module esnext --moduleResolution bundler --lib es2022,dom,dom.iterable --strict --skipLibCheck --types node,vite/client --jsx react-jsx --esModuleInterop src/local-app/runtimeRequestLog.ts src/local-app/runtimeRequestLog.test.ts src/local-app/narrationReceiptBoundary.test.ts src/local-app/runtimeLogs.ts src/local-app/localRoute.ts src/local-app/RuntimeLogsDialog.tsx src/local-app/SystemStatusDrawer.tsx src/local-app/LocalSystemStatus.tsx

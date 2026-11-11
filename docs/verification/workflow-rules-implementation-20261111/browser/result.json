@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "realOwnerHttp": true,
+  "realPostgres": true,
+  "controlledSupplier": true,
+  "disabledSurvivesRefresh": true,
+  "backgroundReminder": true,
+  "mobileOverflow": false
+}

@@ -1,0 +1,3 @@
+npm notice run loop-control@0.1.0 runtime:migrate
+npm notice run node scripts/runtime/migrate.mjs
+{"passed":true,"applied":["161-provider-dispatch-facts.sql","162-confirmed-narration-unknown-retry.sql"],"database":"loop_control","oldMigrationsUnchanged":true,"backupSkippedByExplicitOption":false,"backupDisabledByOwner":true}

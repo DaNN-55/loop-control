@@ -64,3 +64,9 @@
 - [ADR-0039 工作区局部恢复与轮询生命周期](0039-workspace-local-recovery-and-polling.md)
 
 - [ADR-0040：Owner 日志查看与独立存储位置](0040-owner-runtime-log-viewer.md)
+
+- [ADR-0041：当前作品依赖与后台请求记录分离](0041-current-workspace-dependencies.md)
+
+- [ADR-0042：生产单回收站](0042-episode-recycle-bin.md)
+
+- [ADR-0043：发送阶段与原操作回执恢复](0043-request-outcomes-and-receipt-recovery.md)

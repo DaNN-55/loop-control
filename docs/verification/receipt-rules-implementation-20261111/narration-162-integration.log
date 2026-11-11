@@ -1,0 +1,14 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workspaceNarration.integration.test.ts -t confirmed narration uses|unknown paid submissions --maxWorkers=1 --fileParallelism=false
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/workspaceNarration.integration.test.ts (13 tests | 11 skipped) 8881ms
+   ✓ confirmed narration uses the real Worker, survives restart and assembles actual duration without duplicate submissions  4873ms
+   ✓ unknown paid submissions stay blocked across restart and input changes; definite rejection allows one explicit retry  4008ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed | 11 skipped (13)
+   Start at  21:48:52
+   Duration  9.60s (transform 426ms, setup 7ms, collect 596ms, tests 8.88s, environment 0ms, prepare 23ms)
+

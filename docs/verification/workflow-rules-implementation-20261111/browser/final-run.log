@@ -1,0 +1,16 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workflowRules.browser.integration.test.ts --maxWorkers=1 --fileParallelism=false
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+stderr | src/local-app/workflowRules.browser.integration.test.ts > 48/7/21/22: real browser disables speech without discarding the unknown request and sees the unblocked catalog after refresh
+[BABEL] Note: The code generator has deoptimised the styling of /Users/dan/Programs/loop-control/.scratch/workflow48-browser/cache/deps/react-dom_client.js?v=62adeac9 as it exceeds the max of 500KB.
+
+ ✓ src/local-app/workflowRules.browser.integration.test.ts (1 test) 12457ms
+   ✓ 48/7/21/22: real browser disables speech without discarding the unknown request and sees the unblocked catalog after refresh  12456ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  18:39:50
+   Duration  14.73s (transform 1.18s, setup 62ms, collect 1.93s, tests 12.46s, environment 0ms, prepare 72ms)
+

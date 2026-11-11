@@ -1,0 +1,138 @@
+[
+  {
+    "width": 1340,
+    "scroll": 1340,
+    "height": 82,
+    "panes": [
+      {
+        "width": 1160,
+        "scroll": 1160
+      },
+      {
+        "width": 976,
+        "scroll": 976
+      }
+    ],
+    "lang": "zh",
+    "theme": "light"
+  },
+  {
+    "width": 1340,
+    "scroll": 1340,
+    "height": 82,
+    "panes": [
+      {
+        "width": 1160,
+        "scroll": 1160
+      },
+      {
+        "width": 976,
+        "scroll": 976
+      }
+    ],
+    "lang": "zh",
+    "theme": "dark"
+  },
+  {
+    "width": 1340,
+    "scroll": 1340,
+    "height": 82,
+    "panes": [
+      {
+        "width": 1160,
+        "scroll": 1160
+      },
+      {
+        "width": 976,
+        "scroll": 976
+      }
+    ],
+    "lang": "en",
+    "theme": "light"
+  },
+  {
+    "width": 1340,
+    "scroll": 1340,
+    "height": 82,
+    "panes": [
+      {
+        "width": 1160,
+        "scroll": 1160
+      },
+      {
+        "width": 976,
+        "scroll": 976
+      }
+    ],
+    "lang": "en",
+    "theme": "dark"
+  },
+  {
+    "width": 390,
+    "scroll": 390,
+    "height": 130,
+    "panes": [
+      {
+        "width": 366,
+        "scroll": 366
+      },
+      {
+        "width": 366,
+        "scroll": 366
+      }
+    ],
+    "lang": "zh",
+    "theme": "light"
+  },
+  {
+    "width": 390,
+    "scroll": 390,
+    "height": 130,
+    "panes": [
+      {
+        "width": 366,
+        "scroll": 366
+      },
+      {
+        "width": 366,
+        "scroll": 366
+      }
+    ],
+    "lang": "zh",
+    "theme": "dark"
+  },
+  {
+    "width": 390,
+    "scroll": 390,
+    "height": 130,
+    "panes": [
+      {
+        "width": 366,
+        "scroll": 366
+      },
+      {
+        "width": 366,
+        "scroll": 366
+      }
+    ],
+    "lang": "en",
+    "theme": "light"
+  },
+  {
+    "width": 390,
+    "scroll": 390,
+    "height": 130,
+    "panes": [
+      {
+        "width": 366,
+        "scroll": 366
+      },
+      {
+        "width": 366,
+        "scroll": 366
+      }
+    ],
+    "lang": "en",
+    "theme": "dark"
+  }
+]

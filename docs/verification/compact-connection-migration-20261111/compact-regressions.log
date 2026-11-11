@@ -1,0 +1,15 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/CompactConnectionWorkspace.test.tsx src/local-app/LocalCatalogApp.ownerSettings.test.tsx
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/CompactConnectionWorkspace.test.tsx (16 tests) 1138ms
+ ✓ src/local-app/LocalCatalogApp.ownerSettings.test.tsx (4 tests) 1080ms
+   ✓ opens every real settings page in one frame with its actual content and restores focus  343ms
+   ✓ links connection keys to one fixed sensitive pane and global metadata back to the connection  444ms
+
+ Test Files  2 passed (2)
+      Tests  20 passed (20)
+   Start at  21:50:47
+   Duration  3.28s (transform 752ms, setup 16ms, collect 2.64s, tests 2.22s, environment 520ms, prepare 61ms)
+

@@ -1,0 +1,11 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/i18n/accounts.locale.test.tsx --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+····
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  17:18:50
+   Duration  1.41s (transform 100ms, setup 7ms, collect 851ms, tests 170ms, environment 237ms, prepare 29ms)

@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/Users/dan/Programs/loop-control/docs/verification/connection-detail-demo-v4-20261111/check-interactions.py", line 17, in <module>
+    field('连接名称','unsaved draft');button('返回列表');assert '放弃未保存修改' in run('snapshot','-i');button('继续编辑');assert 'unsaved draft' in run('find','role','textbox','text','--name','连接名称');button('返回列表');button('放弃修改');record('dirty离开可继续编辑或明确丢弃')
+                                                                                                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

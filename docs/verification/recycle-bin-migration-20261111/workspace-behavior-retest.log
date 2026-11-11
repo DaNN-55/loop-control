@@ -1,0 +1,5 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/LocalCatalogApp.workspace.test.tsx --maxWorkers=1 --fileParallelism=false --testTimeout=20000
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+

@@ -1,0 +1,14 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workspaceCandidateImpact.integration.test.ts --maxWorkers=1 --fileParallelism=false --reporter=verbose
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/workspaceCandidateImpact.integration.test.ts > prepared visual impact matches native adoption, persistence and reopen for 2 seconds 7638ms
+ ✓ src/local-app/workspaceCandidateImpact.integration.test.ts > prepared visual impact matches native adoption, persistence and reopen for 1 seconds 7911ms
+ ✓ src/local-app/workspaceCandidateImpact.integration.test.ts > prepared visual impact matches native adoption, persistence and reopen for 3 seconds 10479ms
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  18:25:56
+   Duration  26.89s (transform 508ms, setup 9ms, collect 731ms, tests 26.03s, environment 0ms, prepare 25ms)
+

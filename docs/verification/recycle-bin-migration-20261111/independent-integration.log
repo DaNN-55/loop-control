@@ -1,0 +1,53 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/recycleBin.independent.integration.test.ts --maxWorkers=1 --fileParallelism=false
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/local-app/recycleBin.independent.integration.test.ts (3 tests | 2 failed) 34821ms
+   × independent recycle: foreign Owner, CSRF and Origin cannot recycle or restore; membership preserves the original graph 10500ms
+     → {"error":"生产单不存在或无管理权限。"}: expected 404 to be 200 // Object.is equality
+   × independent recycle: edited files reject restore and permanent-delete planning without losing membership or bytes 11141ms
+     → expected 404 to be 409 // Object.is equality
+   ✓ independent recycle: capacity is validated at HTTP boundary and stale settings never overwrite the saved limit  13176ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/recycleBin.independent.integration.test.ts > independent recycle: foreign Owner, CSRF and Origin cannot recycle or restore; membership preserves the original graph
+AssertionError: {"error":"生产单不存在或无管理权限。"}: expected 404 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 404
+
+ ❯ src/local-app/recycleBin.independent.integration.test.ts:27:120
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/local-app/recycleBin.independent.integration.test.ts > independent recycle: edited files reject restore and permanent-delete planning without losing membership or bytes
+AssertionError: expected 404 to be 409 // Object.is equality
+
+- Expected
++ Received
+
+- 409
++ 404
+
+ ❯ src/local-app/recycleBin.independent.integration.test.ts:41:68
+     39|   const revision=moved.body.revision;
+     40|   const changed=Buffer.from('用户在回收期间改过的脚本，必须保留。');await writeFile(path…
+     41|   expect((await send('restoreRecycledEpisode',{revision})).status).toB…
+       |                                                                    ^
+     42|   expect((await send('planRecyclePurge',{revision})).status).toBe(409);
+     43|   expect(await readFile(path)).toEqual(changed);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 1 passed (3)
+   Start at  19:53:04
+   Duration  46.04s (transform 6.92s, setup 89ms, collect 9.90s, tests 34.82s, environment 0ms, prepare 335ms)
+

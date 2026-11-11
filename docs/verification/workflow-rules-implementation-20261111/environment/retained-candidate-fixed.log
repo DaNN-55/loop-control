@@ -1,0 +1,18 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workspaceCandidates.integration.test.ts -t explicit candidate duration changes --maxWorkers=1 --fileParallelism=false --reporter=verbose
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ↓ src/local-app/workspaceCandidates.integration.test.ts > completed local speech versions stay immutable and rejecting a candidate preserves the native project
+ ✓ src/local-app/workspaceCandidates.integration.test.ts > explicit candidate duration changes only the stable main voice and stale attempts preserve the saved edit 6087ms
+ ↓ src/local-app/workspaceCandidates.integration.test.ts > prepared old speech and changed candidate bytes cannot overwrite a newer input
+ ↓ src/local-app/workspaceCandidates.integration.test.ts > adopting actual speech expires only affected caption evidence and a late alignment cannot restore it
+ ↓ src/local-app/workspaceCandidates.integration.test.ts > new registered speech enters the existing Studio media session before relink and cannot be finalized before native save
+ ↓ src/local-app/workspaceCandidates.integration.test.ts > a saved native candidate can recover its missing adoption receipt after restart without regenerating speech
+ ↓ src/local-app/workspaceCandidates.integration.test.ts > explicit main-voice candidate adoption switches source and none atomically while preserving native sounds
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 6 skipped (7)
+   Start at  18:28:50
+   Duration  6.79s (transform 418ms, setup 7ms, collect 583ms, tests 6.09s, environment 0ms, prepare 31ms)
+

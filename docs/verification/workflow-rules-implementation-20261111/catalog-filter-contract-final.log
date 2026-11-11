@@ -1,0 +1,17 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/catalogFilters.integration.test.ts --maxWorkers=1 --fileParallelism=false
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/catalogFilters.integration.test.ts (6 tests) 4529ms
+   ✓ searches all matching records before pagination, treats SQL wildcards literally, and searches UUID fragments  403ms
+   ✓ sorts across pages with a stable id tie break and bounds filtered page counts  916ms
+   ✓ uses actual pending decisions and prioritises blockers, review, done, running, draft  816ms
+   ✓ retains independent pending/blocker queues, historical fences and Owner-only membership selection  992ms
+   ✓ projects workspace current export and delivery facts without blocking on unused failed candidates  844ms
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  18:47:54
+   Duration  4.75s (transform 57ms, setup 19ms, collect 50ms, tests 4.53s, environment 0ms, prepare 44ms)
+

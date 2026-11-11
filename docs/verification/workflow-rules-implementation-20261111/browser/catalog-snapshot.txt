@@ -1,0 +1,166 @@
+- generic [ref=e1] clickable [onclick]
+  - link "跳到主要内容" [ref=e2]
+  - complementary "主导航"
+    - image "Loop Control"
+      - StaticText "Loop Control"
+    - navigation "工作区" [ref=e4]
+      - group "生产工作"
+        - button "工作台" [ref=e9]
+          - StaticText "工作台"
+        - button "生产单" [ref=e10]
+          - StaticText "生产单"
+      - group "账号管理"
+        - button "账号" [expanded=false, ref=e11]
+          - StaticText "账号"
+        - button "新建账号" [ref=e12]
+    - generic
+      - button "打开 OpenChatCut 独立剪辑" [ref=e6]
+        - StaticText "OpenChatCut"
+      - button "系统状态：不可用" [expanded=false, ref=e13]
+        - StaticText "系统状态"
+      - button "收起侧栏" [ref=e7]
+        - StaticText "收起侧栏"
+  - region "平台工作台" [ref=e3]
+    - sectionheader
+      - navigation "当前位置" [ref=e8]
+        - StaticText "个人工作区"
+        - strong
+          - StaticText "工作台"
+      - group "工作区工具"
+        - textbox "查找生产单、账号或素材" [ref=e27]
+        - button "待处理通知" [expanded=false, ref=e14]
+        - button "切换至深色模式" [ref=e15]
+        - button "所有者设置" [expanded=false, ref=e28]
+    - region "系列运营概览" [ref=e5]
+      - sectionheader
+        - heading "内容工作台" [level=1, ref=e16]
+        - button "新建生产单" [ref=e17]
+          - StaticText "新建生产单"
+      - status
+        - strong
+          - StaticText "有后台记录待核对"
+        - StaticText "不阻塞当前制作。"
+        - StaticText " 1 项后台记录"
+        - button "查看后台任务" [ref=e18]
+          - StaticText "查看后台任务"
+      - tablist "工作台状态筛选"
+        - tab "全部制作 1" [selected, ref=e19]
+          - StaticText "全部制作"
+          - StaticText "1"
+        - tab "待审核 0" [ref=e20]
+          - StaticText "待审核"
+          - StaticText "0"
+        - tab "制作中 1" [ref=e21]
+          - StaticText "制作中"
+          - StaticText "1"
+        - tab "需处理 0" [ref=e22]
+          - StaticText "需处理"
+          - StaticText "0"
+        - tab "已完成 0" [ref=e23]
+          - StaticText "已完成"
+          - StaticText "0"
+      - tabpanel "全部制作 1"
+        - search "搜索工作台生产单"
+          - textbox "搜索标题或编号" [ref=e29]
+          - button "搜索" [ref=e30]
+        - combobox "工作台账号筛选" [expanded=false, ref=e31]: 全部账号
+          - MenuListPopup
+            - option "全部账号" [selected, ref=e42]
+            - option "Studio153 fixture" [ref=e43]
+        - combobox "运营系列筛选" [expanded=false, ref=e32]: 全部系列
+          - MenuListPopup
+            - option "全部系列" [selected, ref=e44]
+            - option "未归属系列" [ref=e45]
+        - combobox "工作台阶段筛选" [expanded=false, ref=e33]: 全部阶段
+          - MenuListPopup
+            - option "全部阶段" [selected, ref=e46]
+            - option "脚本确认" [ref=e47]
+            - option "分镜台" [ref=e48]
+            - option "剪辑工作台" [ref=e49]
+            - option "检查与交付" [ref=e50]
+        - combobox "工作台排序" [expanded=false, ref=e34]: 最近更新
+          - MenuListPopup
+            - option "最近更新" [selected, ref=e51]
+            - option "最早更新" [ref=e52]
+            - option "标题顺序" [ref=e53]
+        - region "系列生产单" [ref=e24]
+          - table
+            - rowgroup
+              - row
+                - columnheader "生产单" [ref=e60]
+                - columnheader "当前阶段" [ref=e61]
+                - columnheader "状态" [ref=e62]
+                - columnheader "最近更新" [ref=e63]
+                - columnheader "操作" [ref=e64]
+                  - StaticText "操作"
+            - row [ref=e54] clickable [cursor:pointer, onclick]
+              - cell "四步制作 T02 验收 Studio153 fixture · 未关联系列" [ref=e55]
+                - button "四步制作 T02 验收 Studio153 fixture · 未关联系列" [ref=e65]
+                  - strong
+                    - StaticText "四步制作 T02 验收"
+                  - StaticText "Studio153 fixture · 未关联系列"
+              - cell "剪辑工作台" [ref=e56]
+              - cell "制作中" [ref=e57]
+              - cell "11/11 18:40" [ref=e58]
+                - time
+                  - StaticText "11/11 18:40"
+              - cell "打开生产单 四步制作 T02 验收" [ref=e59]
+                - button "打开生产单 四步制作 T02 验收" [ref=e66]
+        - sectionfooter
+          - StaticText "1"
+          - StaticText " 张生产单"
+          - button "查看全部" [ref=e35]
+            - StaticText "查看全部"
+      - complementary "当前作品"
+        - sectionheader
+          - heading "继续处理" [level=2, ref=e36]
+          - StaticText "5c1d4f62"
+        - generic
+          - strong
+            - StaticText "四步制作 T02 验收"
+          - StaticText "预览暂不可用"
+          - group "作品预览切换"
+            - button "查看封面" [disabled, ref=e40]
+            - status
+              - StaticText "封面预览"
+            - button "查看视频" [ref=e41]
+        - heading "四步制作 T02 验收" [level=3, ref=e25]
+        - paragraph
+          - StaticText "Studio153 fixture · 2 个镜头"
+        - list "当前生产阶段"
+          - listitem [level=1]
+            - StaticText "脚本确认"
+          - listitem [level=1]
+            - StaticText "分镜台"
+          - listitem [level=1]
+            - StaticText "剪辑工作台"
+          - listitem [level=1]
+            - StaticText "检查与交付"
+        - region "下一步" [ref=e26]
+          - strong
+            - StaticText "剪辑工作台"
+            - StaticText "制作中"
+          - paragraph
+            - StaticText "打开生产单，接着完成当前步骤。"
+          - button "继续剪辑" [ref=e37]
+            - StaticText "继续剪辑"
+        - status
+          - StaticText "另有 1 项后台记录，不阻塞当前制作。"
+          - button "查看后台任务" [ref=e38]
+            - StaticText "查看后台任务"
+        - DescriptionList
+          - term "脚本"
+          - definition
+            - StaticText "已确认"
+          - term "蓝图快照"
+          - definition
+            - StaticText "v1"
+          - term "创建时系列基线"
+          - definition
+            - StaticText "未关联"
+          - term "最近更新"
+          - definition
+            - StaticText "11/11 18:40"
+        - sectionfooter
+          - button "查看完整生产单" [ref=e39]
+            - StaticText "查看完整生产单"

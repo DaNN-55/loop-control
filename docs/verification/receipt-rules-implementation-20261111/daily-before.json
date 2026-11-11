@@ -1,0 +1,7 @@
+{
+  "episodes": 6,
+  "tasks": 19,
+  "recycled": 4,
+  "activeTasks": 0,
+  "latestMigration": "160-episode-recycle-bin.sql"
+}

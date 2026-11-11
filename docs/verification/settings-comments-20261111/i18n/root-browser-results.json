@@ -1,0 +1,612 @@
+[
+  {
+    "theme": "light",
+    "viewport": [
+      1348,
+      953
+    ],
+    "page": "Preferences",
+    "label": "Preferences",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": [
+      "我的中文名称"
+    ]
+  },
+  {
+    "theme": "light",
+    "viewport": [
+      1348,
+      953
+    ],
+    "page": "Notifications",
+    "label": "Notifications",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": [
+      "我的中文名称"
+    ]
+  },
+  {
+    "theme": "light",
+    "viewport": [
+      1348,
+      953
+    ],
+    "page": "Login & security",
+    "label": "Login & security",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": [
+      "我的中文名称"
+    ]
+  },
+  {
+    "theme": "light",
+    "viewport": [
+      1348,
+      953
+    ],
+    "page": "Logs",
+    "label": "Logs",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": [
+      "我的中文名称",
+      "文件导入",
+      "素材已登记"
+    ]
+  },
+  {
+    "theme": "light",
+    "viewport": [
+      1348,
+      953
+    ],
+    "page": "File cleanup",
+    "label": "File cleanup",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": [
+      "我的中文名称"
+    ]
+  },
+  {
+    "theme": "light",
+    "viewport": [
+      1348,
+      953
+    ],
+    "page": "Connections",
+    "label": "Connections",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": [
+      "我的中文名称",
+      "演示图片连接"
+    ]
+  },
+  {
+    "theme": "light",
+    "viewport": [
+      1348,
+      953
+    ],
+    "page": "Secrets",
+    "label": "Secrets",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": [
+      "我的中文名称",
+      "演示图片连接"
+    ]
+  },
+  {
+    "theme": "light",
+    "viewport": [
+      375,
+      812
+    ],
+    "page": "Preferences",
+    "label": "Preferences",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": []
+  },
+  {
+    "theme": "light",
+    "viewport": [
+      375,
+      812
+    ],
+    "page": "Notifications",
+    "label": "Notifications",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": []
+  },
+  {
+    "theme": "light",
+    "viewport": [
+      375,
+      812
+    ],
+    "page": "Login & security",
+    "label": "Login & security",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": []
+  },
+  {
+    "theme": "light",
+    "viewport": [
+      375,
+      812
+    ],
+    "page": "Logs",
+    "label": "Logs",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": [
+      "文件导入",
+      "素材已登记"
+    ]
+  },
+  {
+    "theme": "light",
+    "viewport": [
+      375,
+      812
+    ],
+    "page": "File cleanup",
+    "label": "File cleanup",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": []
+  },
+  {
+    "theme": "light",
+    "viewport": [
+      375,
+      812
+    ],
+    "page": "Connections",
+    "label": "Connections",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": [
+      "演示图片连接"
+    ]
+  },
+  {
+    "theme": "light",
+    "viewport": [
+      375,
+      812
+    ],
+    "page": "Secrets",
+    "label": "Secrets",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": [
+      "演示图片连接"
+    ]
+  },
+  {
+    "theme": "light",
+    "viewport": [
+      320,
+      640
+    ],
+    "page": "Preferences",
+    "label": "Preferences",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": []
+  },
+  {
+    "theme": "light",
+    "viewport": [
+      320,
+      640
+    ],
+    "page": "Notifications",
+    "label": "Notifications",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": []
+  },
+  {
+    "theme": "light",
+    "viewport": [
+      320,
+      640
+    ],
+    "page": "Login & security",
+    "label": "Login & security",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": []
+  },
+  {
+    "theme": "light",
+    "viewport": [
+      320,
+      640
+    ],
+    "page": "Logs",
+    "label": "Logs",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": [
+      "文件导入",
+      "素材已登记"
+    ]
+  },
+  {
+    "theme": "light",
+    "viewport": [
+      320,
+      640
+    ],
+    "page": "File cleanup",
+    "label": "File cleanup",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": []
+  },
+  {
+    "theme": "light",
+    "viewport": [
+      320,
+      640
+    ],
+    "page": "Connections",
+    "label": "Connections",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": [
+      "演示图片连接"
+    ]
+  },
+  {
+    "theme": "light",
+    "viewport": [
+      320,
+      640
+    ],
+    "page": "Secrets",
+    "label": "Secrets",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": [
+      "演示图片连接"
+    ]
+  },
+  {
+    "theme": "dark",
+    "viewport": [
+      1348,
+      953
+    ],
+    "page": "Preferences",
+    "label": "Preferences",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": [
+      "我的中文名称"
+    ]
+  },
+  {
+    "theme": "dark",
+    "viewport": [
+      1348,
+      953
+    ],
+    "page": "Notifications",
+    "label": "Notifications",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": [
+      "我的中文名称"
+    ]
+  },
+  {
+    "theme": "dark",
+    "viewport": [
+      1348,
+      953
+    ],
+    "page": "Login & security",
+    "label": "Login & security",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": [
+      "我的中文名称"
+    ]
+  },
+  {
+    "theme": "dark",
+    "viewport": [
+      1348,
+      953
+    ],
+    "page": "Logs",
+    "label": "Logs",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": [
+      "我的中文名称",
+      "文件导入",
+      "素材已登记"
+    ]
+  },
+  {
+    "theme": "dark",
+    "viewport": [
+      1348,
+      953
+    ],
+    "page": "File cleanup",
+    "label": "File cleanup",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": [
+      "我的中文名称"
+    ]
+  },
+  {
+    "theme": "dark",
+    "viewport": [
+      1348,
+      953
+    ],
+    "page": "Connections",
+    "label": "Connections",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": [
+      "我的中文名称",
+      "演示图片连接"
+    ]
+  },
+  {
+    "theme": "dark",
+    "viewport": [
+      1348,
+      953
+    ],
+    "page": "Secrets",
+    "label": "Secrets",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": [
+      "我的中文名称",
+      "演示图片连接"
+    ]
+  },
+  {
+    "theme": "dark",
+    "viewport": [
+      375,
+      812
+    ],
+    "page": "Preferences",
+    "label": "Preferences",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": []
+  },
+  {
+    "theme": "dark",
+    "viewport": [
+      375,
+      812
+    ],
+    "page": "Notifications",
+    "label": "Notifications",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": []
+  },
+  {
+    "theme": "dark",
+    "viewport": [
+      375,
+      812
+    ],
+    "page": "Login & security",
+    "label": "Login & security",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": []
+  },
+  {
+    "theme": "dark",
+    "viewport": [
+      375,
+      812
+    ],
+    "page": "Logs",
+    "label": "Logs",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": [
+      "文件导入",
+      "素材已登记"
+    ]
+  },
+  {
+    "theme": "dark",
+    "viewport": [
+      375,
+      812
+    ],
+    "page": "File cleanup",
+    "label": "File cleanup",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": []
+  },
+  {
+    "theme": "dark",
+    "viewport": [
+      375,
+      812
+    ],
+    "page": "Connections",
+    "label": "Connections",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": [
+      "演示图片连接"
+    ]
+  },
+  {
+    "theme": "dark",
+    "viewport": [
+      375,
+      812
+    ],
+    "page": "Secrets",
+    "label": "Secrets",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": [
+      "演示图片连接"
+    ]
+  },
+  {
+    "theme": "dark",
+    "viewport": [
+      320,
+      640
+    ],
+    "page": "Preferences",
+    "label": "Preferences",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": []
+  },
+  {
+    "theme": "dark",
+    "viewport": [
+      320,
+      640
+    ],
+    "page": "Notifications",
+    "label": "Notifications",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": []
+  },
+  {
+    "theme": "dark",
+    "viewport": [
+      320,
+      640
+    ],
+    "page": "Login & security",
+    "label": "Login & security",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": []
+  },
+  {
+    "theme": "dark",
+    "viewport": [
+      320,
+      640
+    ],
+    "page": "Logs",
+    "label": "Logs",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": [
+      "文件导入",
+      "素材已登记"
+    ]
+  },
+  {
+    "theme": "dark",
+    "viewport": [
+      320,
+      640
+    ],
+    "page": "File cleanup",
+    "label": "File cleanup",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": []
+  },
+  {
+    "theme": "dark",
+    "viewport": [
+      320,
+      640
+    ],
+    "page": "Connections",
+    "label": "Connections",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": [
+      "演示图片连接"
+    ]
+  },
+  {
+    "theme": "dark",
+    "viewport": [
+      320,
+      640
+    ],
+    "page": "Secrets",
+    "label": "Secrets",
+    "dialogs": 1,
+    "overflow": 0,
+    "mainOverflow": 0,
+    "chinese": [
+      "演示图片连接"
+    ]
+  }
+]

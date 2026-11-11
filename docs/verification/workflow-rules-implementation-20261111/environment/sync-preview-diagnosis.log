@@ -1,0 +1,14 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workspaceAudioStorage.integration.test.ts -t synchronized preview --maxWorkers=1 --fileParallelism=false
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/workspaceAudioStorage.integration.test.ts (10 tests | 8 skipped) 19647ms
+   ✓ legacy synchronized preview renders actual approved source audio and keeps the native project beside the proxy  9693ms
+   ✓ registered synchronized preview renders actual approved source audio and keeps the native project beside the proxy  9953ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed | 8 skipped (10)
+   Start at  18:20:11
+   Duration  20.37s (transform 438ms, setup 8ms, collect 597ms, tests 19.65s, environment 0ms, prepare 26ms)
+

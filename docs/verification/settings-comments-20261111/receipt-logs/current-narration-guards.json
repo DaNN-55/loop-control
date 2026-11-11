@@ -1,0 +1,32 @@
+[
+  {
+    "taskId": "0836c8fc-2a80-4ac4-b34b-34db62c16118",
+    "archived": false,
+    "episodeStage": "script_approved",
+    "narrationMode": "tts",
+    "requestExists": true,
+    "projectMatches": false,
+    "workspaceAuthorized": true,
+    "authorizationMatches": false,
+    "scriptRevisionMatches": true,
+    "requestSelectionVersion": "1",
+    "currentNarrationTaskMatches": true,
+    "hasConsumedCallConfirmation": true,
+    "workspaceAuthorizationEnabled": true
+  },
+  {
+    "taskId": "0836c8fc-2a80-4ac4-b34b-34db62c16118",
+    "archived": false,
+    "episodeStage": "script_approved",
+    "narrationMode": "tts",
+    "requestExists": true,
+    "projectMatches": false,
+    "workspaceAuthorized": true,
+    "authorizationMatches": true,
+    "scriptRevisionMatches": true,
+    "requestSelectionVersion": "1",
+    "currentNarrationTaskMatches": true,
+    "hasConsumedCallConfirmation": true,
+    "workspaceAuthorizationEnabled": true
+  }
+]

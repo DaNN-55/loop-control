@@ -1,0 +1,31 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/recycleBin.integration.test.ts --maxWorkers=1 --fileParallelism=false --reporter=verbose
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/recycleBin.integration.test.ts > quota counts real registered bytes, sweeps safe FIFO on mutation, preserves newest and oversized item 12096ms
+ ✓ src/local-app/recycleBin.integration.test.ts > unknown and running work block entry; offline or changed files block restore; protected manual files survive quota 10283ms
+ ✓ src/local-app/recycleBin.integration.test.ts > hardlinked bytes are counted once and protected, account cannot orphan trash, concurrent restore has one winner 6180ms
+ × src/local-app/recycleBin.integration.test.ts > real Owner recycle hides catalog, survives restart and restores IDs, frozen evidence and original archive state 4920ms
+   → permission denied for function input_task_allowed
+ ✓ src/local-app/recycleBin.integration.test.ts > recycle enforces Owner, CSRF, revision, durable duplicate receipts and explicit permanent confirmation 10207ms
+ ✓ src/local-app/recycleBin.integration.test.ts > recycle schema applies forward without rewriting existing migration checksums 4859ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/recycleBin.integration.test.ts > real Owner recycle hides catalog, survives restart and restores IDs, frozen evidence and original archive state
+error: permission denied for function input_task_allowed
+ ❯ node_modules/pg-pool/index.js:45:11
+ ❯ src/local-app/recycleBin.integration.test.ts:86:39
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { length: 109, severity: 'ERROR', code: '42501', detail: undefined, hint: undefined, position: undefined, internalPosition: undefined, internalQuery: undefined, where: undefined, schema: undefined, table: undefined, dataType: undefined, constraint: undefined, file: 'aclchk.c', routine: 'aclcheck_error' }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+   Start at  19:55:53
+   Duration  51.54s (transform 1.71s, setup 28ms, collect 2.48s, tests 48.55s, environment 0ms, prepare 155ms)
+

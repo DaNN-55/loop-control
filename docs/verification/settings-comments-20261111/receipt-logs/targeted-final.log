@@ -1,0 +1,11 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/runtimeRequestLog.test.ts src/local-app/narrationReceiptBoundary.test.ts src/local-app/runtimeLogs.test.ts src/local-app/localRoute.test.ts src/local-app/RuntimeLogsDialog.test.tsx src/local-app/SystemStatusMotion.test.tsx src/local-app/LocalSystemStatus.embedded.test.tsx src/local-app/LocalSystemStatus.test.tsx src/local-app/SystemStatusResources.test.tsx src/local-app/SystemStatusVersion.test.tsx src/local-app/providerNetwork.test.ts src/worker/videoTaskExecution.test.ts --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+··················································································································································································
+
+ Test Files  12 passed (12)
+      Tests  178 passed (178)
+   Start at  17:19:21
+   Duration  2.99s (transform 894ms, setup 75ms, collect 6.81s, tests 3.28s, environment 1.20s, prepare 389ms)

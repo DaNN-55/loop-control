@@ -1,0 +1,23 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/commandReceipt.integration.test.ts src/local-app/receiptRules.integration.test.ts --maxWorkers=1 --fileParallelism=false
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/commandReceipt.integration.test.ts (2 tests) 3559ms
+   ✓ 5 real HTTP receipt recovery binds Owner, full payload, session and CSRF without repeating mutation  978ms
+   ✓ 5 lifecycle receipt readback never exposes a private deletion inventory or executes cleanup  2581ms
+ ✓ src/local-app/receiptRules.integration.test.ts (8 tests) 13525ms
+   ✓ 4/24 persists exactly two local recoveries across attempts and reuses a reserved request without an extra send  2121ms
+   ✓ 4 changed input is proven not sent, while historical reservations remain unknown  1443ms
+   ✓ 5/9/24 verified files recover the original publication with no new Provider request: received-write  1599ms
+   ✓ 5/9/24 verified files recover the original publication with no new Provider request: commit-rejected  1612ms
+   ✓ 5/9/24 verified files recover the original publication with no new Provider request: commit-ack-lost  1661ms
+   ✓ 24 unknown speech only allows a separately confirmed new generation, preserves old receipt, and cannot reuse that exception  1756ms
+   ✓ 4/24 a temporary local failure stops after two recovery attempts and a new explicit confirmation can retry without unknown warning  1693ms
+   ✓ 24 a documented business refusal over HTTP 200 is rejected, preserves the code and allows explicit retry  1639ms
+
+ Test Files  2 passed (2)
+      Tests  10 passed (10)
+   Start at  22:01:01
+   Duration  18.20s (transform 544ms, setup 10ms, collect 887ms, tests 17.08s, environment 0ms, prepare 50ms)
+

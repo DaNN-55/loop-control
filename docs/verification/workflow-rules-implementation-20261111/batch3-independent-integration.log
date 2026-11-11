@@ -1,0 +1,30 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workflowRetryRules.independent.integration.test.ts src/local-app/workflowRules.integration.test.ts --fileParallelism=false --maxWorkers=1 --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+···x
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workflowRetryRules.independent.integration.test.ts > 48/27/29/46 independent: persisted source backoff cannot duplicate work, unchanged failure retries, changed or removed targets cannot
+AssertionError: {"error":"不能删除最后一个有效镜头。"}: expected 409 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 409
+
+ ❯ send src/local-app/workflowRetryRules.independent.integration.test.ts:16:44
+
+ ❯ src/local-app/workflowRetryRules.independent.integration.test.ts:52:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 3 passed (4)
+   Start at  18:31:45
+   Duration  20.26s (transform 415ms, setup 8ms, collect 696ms, tests 19.35s, environment 0ms, prepare 49ms)
+

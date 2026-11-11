@@ -1,0 +1,12 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workflowQueueStop.independent.integration.test.ts --fileParallelism=false --maxWorkers=1 --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+··
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  18:36:01
+   Duration  5.79s (transform 410ms, setup 7ms, collect 567ms, tests 5.11s, environment 0ms, prepare 23ms)
+

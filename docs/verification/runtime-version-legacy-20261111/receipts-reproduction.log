@@ -1,0 +1,17 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/LocalCatalogApp.receipts.test.tsx --maxWorkers=1 --fileParallelism=false --reporter=verbose
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/LocalCatalogApp.receipts.test.tsx > accepts the created order after refresh failure and supports retry without another write 215ms
+ ✓ src/local-app/LocalCatalogApp.receipts.test.tsx > accepts the created order after refresh failure and supports dismiss without another write 139ms
+ ✓ src/local-app/LocalCatalogApp.receipts.test.tsx > accepts the created order after refresh failure and supports stale without another write 95ms
+ ✓ src/local-app/LocalCatalogApp.receipts.test.tsx > accepts archive acknowledgement even when the following read fails and only retries the read 112ms
+ ✓ src/local-app/LocalCatalogApp.receipts.test.tsx > from operations, closes creation on acknowledgement while directory reading is pending 57ms
+ ✓ src/local-app/LocalCatalogApp.receipts.test.tsx > from episodes, closes creation on acknowledgement while directory reading is pending 59ms
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  22:38:59
+   Duration  2.44s (transform 718ms, setup 10ms, collect 1.51s, tests 678ms, environment 126ms, prepare 24ms)
+

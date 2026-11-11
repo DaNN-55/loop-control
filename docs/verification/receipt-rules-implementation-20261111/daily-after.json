@@ -1,0 +1,13 @@
+{
+  "episodes": 6,
+  "tasks": 19,
+  "recycled": 4,
+  "activeTasks": 0,
+  "dispatchFacts": 0,
+  "latestMigration": "163-legacy-received-explicit-retry.sql",
+  "pid": 74264,
+  "runningRelease": "2557fbeb5f3e846ff4b521f91d365ceb532c50d491fbcb36eb2b9f76c24698a2",
+  "preparedRelease": "2557fbeb5f3e846ff4b521f91d365ceb532c50d491fbcb36eb2b9f76c24698a2",
+  "releaseMatches": true,
+  "unauthenticatedSessionStatus": 401
+}

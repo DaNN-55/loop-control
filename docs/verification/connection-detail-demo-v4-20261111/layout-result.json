@@ -1,0 +1,554 @@
+[
+  {
+    "variant": "compact",
+    "width": 1340,
+    "lang": "zh",
+    "theme": "light",
+    "tab": "connection",
+    "metrics": {
+      "body": 1340,
+      "width": 1340,
+      "panes": [
+        {
+          "width": 1120,
+          "scroll": 1120
+        },
+        {
+          "width": 946,
+          "scroll": 946
+        }
+      ],
+      "panels": 1,
+      "footer": 689
+    }
+  },
+  {
+    "variant": "compact",
+    "width": 1340,
+    "lang": "zh",
+    "theme": "light",
+    "tab": "models",
+    "metrics": {
+      "body": 1340,
+      "width": 1340,
+      "panes": [
+        {
+          "width": 1120,
+          "scroll": 1120
+        },
+        {
+          "width": 946,
+          "scroll": 946
+        }
+      ],
+      "panels": 1,
+      "footer": 689
+    }
+  },
+  {
+    "variant": "compact",
+    "width": 1340,
+    "lang": "zh",
+    "theme": "light",
+    "tab": "billing",
+    "metrics": {
+      "body": 1340,
+      "width": 1340,
+      "panes": [
+        {
+          "width": 1120,
+          "scroll": 1120
+        },
+        {
+          "width": 946,
+          "scroll": 946
+        }
+      ],
+      "panels": 1,
+      "footer": 689
+    }
+  },
+  {
+    "variant": "compact",
+    "width": 1340,
+    "lang": "zh",
+    "theme": "light",
+    "tab": "history",
+    "metrics": {
+      "body": 1340,
+      "width": 1340,
+      "panes": [
+        {
+          "width": 1120,
+          "scroll": 1120
+        },
+        {
+          "width": 946,
+          "scroll": 946
+        }
+      ],
+      "panels": 1,
+      "footer": 689
+    }
+  },
+  {
+    "variant": "compact",
+    "width": 390,
+    "lang": "en",
+    "theme": "dark",
+    "tab": "connection",
+    "metrics": {
+      "body": 390,
+      "width": 390,
+      "panes": [
+        {
+          "width": 370,
+          "scroll": 370
+        },
+        {
+          "width": 370,
+          "scroll": 370
+        }
+      ],
+      "panels": 1,
+      "footer": 710
+    }
+  },
+  {
+    "variant": "compact",
+    "width": 390,
+    "lang": "en",
+    "theme": "dark",
+    "tab": "models",
+    "metrics": {
+      "body": 390,
+      "width": 390,
+      "panes": [
+        {
+          "width": 370,
+          "scroll": 370
+        },
+        {
+          "width": 370,
+          "scroll": 370
+        }
+      ],
+      "panels": 1,
+      "footer": 710
+    }
+  },
+  {
+    "variant": "compact",
+    "width": 390,
+    "lang": "en",
+    "theme": "dark",
+    "tab": "billing",
+    "metrics": {
+      "body": 390,
+      "width": 390,
+      "panes": [
+        {
+          "width": 370,
+          "scroll": 370
+        },
+        {
+          "width": 370,
+          "scroll": 370
+        }
+      ],
+      "panels": 1,
+      "footer": 710
+    }
+  },
+  {
+    "variant": "compact",
+    "width": 390,
+    "lang": "en",
+    "theme": "dark",
+    "tab": "history",
+    "metrics": {
+      "body": 390,
+      "width": 390,
+      "panes": [
+        {
+          "width": 370,
+          "scroll": 370
+        },
+        {
+          "width": 370,
+          "scroll": 370
+        }
+      ],
+      "panels": 1,
+      "footer": 710
+    }
+  },
+  {
+    "variant": "balanced",
+    "width": 1340,
+    "lang": "zh",
+    "theme": "light",
+    "tab": "connection",
+    "metrics": {
+      "body": 1340,
+      "width": 1340,
+      "panes": [
+        {
+          "width": 1120,
+          "scroll": 1120
+        },
+        {
+          "width": 946,
+          "scroll": 946
+        }
+      ],
+      "panels": 1,
+      "footer": 689
+    }
+  },
+  {
+    "variant": "balanced",
+    "width": 1340,
+    "lang": "zh",
+    "theme": "light",
+    "tab": "models",
+    "metrics": {
+      "body": 1340,
+      "width": 1340,
+      "panes": [
+        {
+          "width": 1120,
+          "scroll": 1120
+        },
+        {
+          "width": 946,
+          "scroll": 946
+        }
+      ],
+      "panels": 1,
+      "footer": 689
+    }
+  },
+  {
+    "variant": "balanced",
+    "width": 1340,
+    "lang": "zh",
+    "theme": "light",
+    "tab": "billing",
+    "metrics": {
+      "body": 1340,
+      "width": 1340,
+      "panes": [
+        {
+          "width": 1120,
+          "scroll": 1120
+        },
+        {
+          "width": 946,
+          "scroll": 946
+        }
+      ],
+      "panels": 1,
+      "footer": 689
+    }
+  },
+  {
+    "variant": "balanced",
+    "width": 1340,
+    "lang": "zh",
+    "theme": "light",
+    "tab": "history",
+    "metrics": {
+      "body": 1340,
+      "width": 1340,
+      "panes": [
+        {
+          "width": 1120,
+          "scroll": 1120
+        },
+        {
+          "width": 946,
+          "scroll": 946
+        }
+      ],
+      "panels": 1,
+      "footer": 689
+    }
+  },
+  {
+    "variant": "balanced",
+    "width": 390,
+    "lang": "en",
+    "theme": "dark",
+    "tab": "connection",
+    "metrics": {
+      "body": 390,
+      "width": 390,
+      "panes": [
+        {
+          "width": 370,
+          "scroll": 370
+        },
+        {
+          "width": 370,
+          "scroll": 370
+        }
+      ],
+      "panels": 1,
+      "footer": 710
+    }
+  },
+  {
+    "variant": "balanced",
+    "width": 390,
+    "lang": "en",
+    "theme": "dark",
+    "tab": "models",
+    "metrics": {
+      "body": 390,
+      "width": 390,
+      "panes": [
+        {
+          "width": 370,
+          "scroll": 370
+        },
+        {
+          "width": 370,
+          "scroll": 370
+        }
+      ],
+      "panels": 1,
+      "footer": 710
+    }
+  },
+  {
+    "variant": "balanced",
+    "width": 390,
+    "lang": "en",
+    "theme": "dark",
+    "tab": "billing",
+    "metrics": {
+      "body": 390,
+      "width": 390,
+      "panes": [
+        {
+          "width": 370,
+          "scroll": 370
+        },
+        {
+          "width": 370,
+          "scroll": 370
+        }
+      ],
+      "panels": 1,
+      "footer": 710
+    }
+  },
+  {
+    "variant": "balanced",
+    "width": 390,
+    "lang": "en",
+    "theme": "dark",
+    "tab": "history",
+    "metrics": {
+      "body": 390,
+      "width": 390,
+      "panes": [
+        {
+          "width": 370,
+          "scroll": 370
+        },
+        {
+          "width": 370,
+          "scroll": 370
+        }
+      ],
+      "panels": 1,
+      "footer": 710
+    }
+  },
+  {
+    "variant": "dense",
+    "width": 1340,
+    "lang": "zh",
+    "theme": "light",
+    "tab": "connection",
+    "metrics": {
+      "body": 1340,
+      "width": 1340,
+      "panes": [
+        {
+          "width": 1120,
+          "scroll": 1120
+        },
+        {
+          "width": 946,
+          "scroll": 946
+        }
+      ],
+      "panels": 1,
+      "footer": 689
+    }
+  },
+  {
+    "variant": "dense",
+    "width": 1340,
+    "lang": "zh",
+    "theme": "light",
+    "tab": "models",
+    "metrics": {
+      "body": 1340,
+      "width": 1340,
+      "panes": [
+        {
+          "width": 1120,
+          "scroll": 1120
+        },
+        {
+          "width": 946,
+          "scroll": 946
+        }
+      ],
+      "panels": 1,
+      "footer": 689
+    }
+  },
+  {
+    "variant": "dense",
+    "width": 1340,
+    "lang": "zh",
+    "theme": "light",
+    "tab": "billing",
+    "metrics": {
+      "body": 1340,
+      "width": 1340,
+      "panes": [
+        {
+          "width": 1120,
+          "scroll": 1120
+        },
+        {
+          "width": 946,
+          "scroll": 946
+        }
+      ],
+      "panels": 1,
+      "footer": 689
+    }
+  },
+  {
+    "variant": "dense",
+    "width": 1340,
+    "lang": "zh",
+    "theme": "light",
+    "tab": "history",
+    "metrics": {
+      "body": 1340,
+      "width": 1340,
+      "panes": [
+        {
+          "width": 1120,
+          "scroll": 1120
+        },
+        {
+          "width": 946,
+          "scroll": 946
+        }
+      ],
+      "panels": 1,
+      "footer": 689
+    }
+  },
+  {
+    "variant": "dense",
+    "width": 390,
+    "lang": "en",
+    "theme": "dark",
+    "tab": "connection",
+    "metrics": {
+      "body": 390,
+      "width": 390,
+      "panes": [
+        {
+          "width": 370,
+          "scroll": 370
+        },
+        {
+          "width": 370,
+          "scroll": 370
+        }
+      ],
+      "panels": 1,
+      "footer": 710
+    }
+  },
+  {
+    "variant": "dense",
+    "width": 390,
+    "lang": "en",
+    "theme": "dark",
+    "tab": "models",
+    "metrics": {
+      "body": 390,
+      "width": 390,
+      "panes": [
+        {
+          "width": 370,
+          "scroll": 370
+        },
+        {
+          "width": 370,
+          "scroll": 370
+        }
+      ],
+      "panels": 1,
+      "footer": 710
+    }
+  },
+  {
+    "variant": "dense",
+    "width": 390,
+    "lang": "en",
+    "theme": "dark",
+    "tab": "billing",
+    "metrics": {
+      "body": 390,
+      "width": 390,
+      "panes": [
+        {
+          "width": 370,
+          "scroll": 370
+        },
+        {
+          "width": 370,
+          "scroll": 370
+        }
+      ],
+      "panels": 1,
+      "footer": 710
+    }
+  },
+  {
+    "variant": "dense",
+    "width": 390,
+    "lang": "en",
+    "theme": "dark",
+    "tab": "history",
+    "metrics": {
+      "body": 390,
+      "width": 390,
+      "panes": [
+        {
+          "width": 370,
+          "scroll": 370
+        },
+        {
+          "width": 370,
+          "scroll": 370
+        }
+      ],
+      "panels": 1,
+      "footer": 710
+    }
+  }
+]

@@ -1,0 +1,11 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/preferences/preferences.test.ts src/i18n/ui.test.tsx src/i18n/accounts.locale.test.tsx src/local-app/OwnerPreferencesDialog.test.tsx src/local-app/OwnerPreferencesDialog.embedded.test.tsx src/local-app/OwnerPreferencesDialog.comments.test.tsx src/local-app/MediaRootSettingsDialog.test.tsx src/local-app/MediaRootSettingsDialog.recovery.test.tsx --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+·······································
+
+ Test Files  8 passed (8)
+      Tests  39 passed (39)
+   Start at  17:24:19
+   Duration  2.81s (transform 335ms, setup 41ms, collect 5.67s, tests 3.06s, environment 2.10s, prepare 355ms)

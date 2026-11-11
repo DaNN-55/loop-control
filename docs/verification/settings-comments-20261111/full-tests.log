@@ -1,0 +1,2420 @@
+npm notice run loop-control@0.1.0 test
+npm notice run vitest run --exclude '**/*.integration.test.ts' --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+····································stderr | src/local-app/ProductionWorkspacePanel.test.tsx > accepts one unassigned MP3 for voice and queues local audio candidates without adopting them
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+·····················stderr | src/local-app/ProductionWorkspacePanel.test.tsx > keeps one delivery form and its metadata, cover and issue drafts across workflow navigation
+In HTML, <button> cannot be a descendant of <button>.
+This will cause a hydration error.
+
+  ...
+    <Activity mode="visible">
+      <div hidden={false}>
+        <WorkspaceExportPanel workspace={{id:"w", ...}} pending={false} readOnly={false} command={function run} ...>
+          <section className="production...">
+            <header>
+            <p>
+            <div className="workspace-...">
+              <div>
+              <div className="workspace-...">
+                <details>
+                <details>
+                <WorkspaceDeliveryPanel workspace={{id:"w", ...}} pending={false} command={function run} ...>
+                  <section className="workspace-..." aria-label="交付包">
+                    <div>
+                    <div className="workspace-...">
+                      <div className="workspace-...">
+                        <span>
+                        <Button className="workspace-..." noTextPadding={true} size="sm" color="secondary" ...>
+                          <Button data-loading={undefined} data-color="secondary" data-icon-only={undefined} ...>
+                            <bound $7230ffa83bc0c2cf$var$DOMElement data-loading={undefined} data-color="secondary" ...>
+>                             <button
+>                               data-loading={undefined}
+>                               data-color="secondary"
+>                               data-icon-only={undefined}
+>                               className="group relative inline-flex h-max cursor-pointer items-center justify-center..."
+>                               style={undefined}
+>                               data-rac=""
+>                               type="button"
+>                               disabled={false}
+>                               form={undefined}
+>                               formAction={undefined}
+>                               formEncType={undefined}
+>                               formMethod={undefined}
+>                               formNoValidate={undefined}
+>                               formTarget={undefined}
+>                               name={undefined}
+>                               value={undefined}
+>                               onFocus={function}
+>                               onBlur={function}
+>                               onKeyDown={function onKeyDown}
+>                               onKeyUp={undefined}
+>                               tabIndex={0}
+>                               onClick={function onClick}
+>                               onMouseDown={function}
+>                               onMouseEnter={function}
+>                               onMouseLeave={function}
+>                               onMouseUp={function}
+>                               onTouchStart={function}
+>                               onTouchMove={function}
+>                               onTouchEnd={function}
+>                               onTouchCancel={function}
+>                               onDragStart={function}
+>                               data-react-aria-pressable={true}
+>                               aria-label="替换封面"
+>                               aria-describedby="_r_p9_-hint"
+>                               aria-haspopup={undefined}
+>                               aria-expanded={undefined}
+>                               aria-controls={undefined}
+>                               aria-pressed={undefined}
+>                               aria-current={undefined}
+>                               aria-disabled={undefined}
+>                               id="react-aria-_r_pb_"
+>                               aria-labelledby={undefined}
+>                               slot={undefined}
+>                               data-disabled={undefined}
+>                               data-pressed={undefined}
+>                               data-hovered={undefined}
+>                               data-focused={undefined}
+>                               data-pending={undefined}
+>                               data-focus-visible={undefined}
+>                               ref={function}
+>                             >
+                                <span data-text={true} className="transition...">
+                                  <ImagePreview src="blob:cover" alt="交付封面预览">
+>                                   <button
+>                                     type="button"
+>                                     className="media-image-trigger"
+>                                     aria-label="放大交付封面预览"
+>                                     disabled={false}
+>                                     onClick={function onClick}
+>                                   >
+                        ...
+                      ...
+                    ...
+                ...
+
+<button> cannot contain a nested <button>.
+See this log for the ancestor stack trace.
+
+·stderr | src/local-app/ProductionWorkspacePanel.test.tsx > keeps one delivery form and its metadata, cover and issue drafts across workflow navigation
+An update to ForwardRef(VolumeSliderRoot) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+··················································stderr | src/local-app/WorkspaceVisualCandidatesPanel.test.tsx > preserves each target’s generation draft across tabs and shot selection
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+··stderr | src/local-app/WorkspaceVisualCandidatesPanel.test.tsx > image thumbnails preview without adopting or changing the explicitly chosen video first frame
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+·················stderr | src/local-app/WorkspaceVisualCandidatesPanel.test.tsx > keeps 视频 candidate actions without a generation settings entry
+An update to ForwardRef(VolumeSliderRoot) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+···········stderr | src/local-app/WorkspaceVisualCandidatesPanel.test.tsx > keeps a cleared image override blank across target switches and reopening with a legacy default
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+·····stderr | src/local-app/WorkspaceVisualCandidatesPanel.test.tsx > keeps a cleared video override blank across target switches and reopening with a legacy default
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+·stderr | src/local-app/WorkspaceVisualCandidatesPanel.test.tsx > keeps a cleared Pexels connection and query across target switches and reopening without searching
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+···stderr | src/local-app/WorkspaceVisualCandidatesPanel.test.tsx > requires explicit video selection and adoption and preserves old candidates on append
+An update to ForwardRef(VolumeSliderRoot) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+···················stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > uses the saved episode voice even when the shot has an older voice and rate
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > uses the saved episode voice even when the shot has an older voice and rate
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+··stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > refreshes the connection choices on window focus and offers a retry only after an error
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+··stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > persists only an explicit default choice without generating or adopting
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > persists only an explicit default choice without generating or adopting
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+··stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > persists only an explicit default choice without generating or adopting
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > retains an incompatible saved voice and explains the conflict instead of replacing it
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > retains an incompatible saved voice and explains the conflict instead of replacing it
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+··stderr | src/local-app/WorkspaceVisualCandidatesPanel.test.tsx > switches video generation and Pexels in one picker while preserving independent drafts and search settings
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > adopts a completed candidate through the public candidate command fields without submitting speech
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+····stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > confirms an unchanged duration in its own candidate card and cancels with Escape
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+···stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > hides narration completely when switched off and restores the draft when reenabled
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+·stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > hides narration completely when switched off and restores the draft when reenabled
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > separates generated candidates and uploaded audio across modes, including a previously selected generated track
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > separates generated candidates and uploaded audio across modes, including a previously selected generated track
+An update to EditableWorkspaceNarrationPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+··stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > drops uploaded narration material and explicitly adopts its registered candidate without generating speech
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > reopens from the latest persisted default without repeating frozen execution details
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+··stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > reopens from the latest persisted default without repeating frozen execution details
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > keeps an actively edited default when another window saves and offers an explicit reload
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+·stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > keeps an actively edited default when another window saves and offers an explicit reload
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > ignores malformed persisted speech settings and preserves the saved form (null)
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > ignores malformed persisted speech settings and preserves the saved form (null)
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+··stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > ignores malformed persisted speech settings and preserves the saved form ({})
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > ignores malformed persisted speech settings and preserves the saved form ({})
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > ignores malformed persisted speech settings and preserves the saved form ({"selection":42,"voice":"v","languageCode":"zh-CN","speakingRate":1})
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+····stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > ignores malformed persisted speech settings and preserves the saved form ({"selection":42,"voice":"v","languageCode":"zh-CN","speakingRate":1})
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > ignores malformed persisted speech settings and preserves the saved form ({"selection":null,"voice":42,"languageCode":"zh-CN","speakingRate":1})
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+·stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > ignores malformed persisted speech settings and preserves the saved form ({"selection":null,"voice":42,"languageCode":"zh-CN","speakingRate":1})
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > reviews historical text and restores the existing candidate without generating again
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > keeps independent captions separate from the single narration input and records text on generation
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+···stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > keeps independent captions separate from the single narration input and records text on generation
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > edits subtitles separately and can explicitly return to the adopted narration text
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > edits subtitles separately and can explicitly return to the adopted narration text
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+·stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > uses saved episode settings across shots while leaving frozen executions unchanged
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+··stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > uses saved episode settings across shots while leaving frozen executions unchanged
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > uses saved episode settings across shots while leaving frozen executions unchanged
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+·stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > saves the searched Chinese voice as an episode setting without generating
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > saves the searched Chinese voice as an episode setting without generating
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+·stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > saves the searched Chinese voice as an episode setting without generating
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+··stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > ignores old shot settings for new requests without removing the stored snapshot
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > ignores old shot settings for new requests without removing the stored snapshot
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > shows the chosen text-then-player layout without caption controls or disclosure
+An update to EditableWorkspaceNarrationPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > shows the chosen text-then-player layout without caption controls or disclosure
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > marks the adopted text inline and withdraws its original audio without generation
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+···stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > marks the adopted text inline and withdraws its original audio without generation
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+··stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > keeps the two switches independent and preserves an unsaved caption through hiding
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > keeps the two switches independent and preserves an unsaved caption through hiding
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+······stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > switches the upper input with the bottom source picker and preserves the narration draft
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > switches the upper input with the bottom source picker and preserves the narration draft
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > adds a newly imported MP3 as an audition candidate without adopting it
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+·stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > retains a failed subtitle edit for retry without changing narration
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+stderr | src/local-app/WorkspaceNarrationPanel.test.tsx > retains a failed subtitle edit for retry without changing narration
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+·············································································································stderr | src/local-app/WorkspaceAudioPanel.test.tsx > does not expose duplicate source extraction and preserves legacy source records
+An update to EditableWorkspaceAudioPreparation inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+········stderr | src/local-app/WorkspaceAudioPanel.test.tsx > saves a changed music query across shots while preserving historical description and server reload
+An update to EditableWorkspaceAudioPreparation inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+······stderr | src/local-app/WorkspaceAudioPanel.test.tsx > keeps compact sound candidates directly playable with attribution and licence available
+An update to EditableWorkspaceAudioPreparation inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/local-app/WorkspaceAudioPanel.test.tsx > keeps placement and duration out of the composer before a candidate is adopted
+An update to EditableWorkspaceAudioPreparation inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+······································································································stderr | src/connections/ConnectionBillingDialog.test.tsx > confirms a dirty billing close without offering to retain credentials and clears reporting on unmount
+An update to ForwardRef(Input) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(Input) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(Group) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(Group) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(Button) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(Button) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $8b8d26808cb8cb53$var$ModalOverlayInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(TextField) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/connections/ConnectionBillingDialog.test.tsx > confirms a dirty billing close without offering to retain credentials and clears reporting on unmount
+A component suspended inside an `act` scope, but the `act` call was not awaited. When testing React components that depend on asynchronous data, you must await the result:
+
+await act(() => ...)
+
+····················stderr | src/local-app/WorkspaceImageOptions.test.tsx > keeps direct image adoption primary and first-frame selection explicit
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+··································x·································stderr | src/local-app/WorkspaceVisualPreparation.form.test.tsx > 视频负面提示词也显示真实限制，完整保留超限内容
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+·········x································stderr | src/local-app/WorkspaceDeliveryPanel.test.tsx > registers the selected real cover and binds delivery metadata to the confirmed export
+In HTML, <button> cannot be a descendant of <button>.
+This will cause a hydration error.
+
+  <WorkspaceDeliveryPanel workspace={{id:"workspace", ...}} pending={false} command={function spy} ...>
+    <section className="workspace-..." aria-label="交付包">
+      <div>
+      <div className="workspace-...">
+        <div className="workspace-...">
+          <span>
+          <Button className="workspace-..." noTextPadding={true} size="sm" color="secondary" aria-label="替换封面" ...>
+            <Button data-loading={undefined} data-color="secondary" data-icon-only={undefined} aria-label="替换封面" ...>
+              <bound $7230ffa83bc0c2cf$var$DOMElement data-loading={undefined} data-color="secondary" ...>
+>               <button
+>                 data-loading={undefined}
+>                 data-color="secondary"
+>                 data-icon-only={undefined}
+>                 className="group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-no..."
+>                 style={undefined}
+>                 data-rac=""
+>                 type="button"
+>                 disabled={false}
+>                 form={undefined}
+>                 formAction={undefined}
+>                 formEncType={undefined}
+>                 formMethod={undefined}
+>                 formNoValidate={undefined}
+>                 formTarget={undefined}
+>                 name={undefined}
+>                 value={undefined}
+>                 onFocus={function}
+>                 onBlur={function}
+>                 onKeyDown={function onKeyDown}
+>                 onKeyUp={undefined}
+>                 tabIndex={0}
+>                 onClick={function onClick}
+>                 onMouseDown={function}
+>                 onMouseEnter={function}
+>                 onMouseLeave={function}
+>                 onMouseUp={function}
+>                 onTouchStart={function}
+>                 onTouchMove={function}
+>                 onTouchEnd={function}
+>                 onTouchCancel={function}
+>                 onDragStart={function}
+>                 data-react-aria-pressable={true}
+>                 aria-label="替换封面"
+>                 aria-describedby="_r_i_-hint"
+>                 aria-haspopup={undefined}
+>                 aria-expanded={undefined}
+>                 aria-controls={undefined}
+>                 aria-pressed={undefined}
+>                 aria-current={undefined}
+>                 aria-disabled={undefined}
+>                 id="react-aria-_r_k_"
+>                 aria-labelledby={undefined}
+>                 slot={undefined}
+>                 data-disabled={undefined}
+>                 data-pressed={undefined}
+>                 data-hovered={undefined}
+>                 data-focused={undefined}
+>                 data-pending={undefined}
+>                 data-focus-visible={undefined}
+>                 ref={function}
+>               >
+                  <span data-text={true} className="transition...">
+                    <ImagePreview src="blob:cover..." alt="交付封面预览">
+>                     <button
+>                       type="button"
+>                       className="media-image-trigger"
+>                       aria-label="放大交付封面预览"
+>                       disabled={false}
+>                       onClick={function onClick}
+>                     >
+          ...
+        ...
+      ...
+
+<button> cannot contain a nested <button>.
+See this log for the ancestor stack trace.
+
+······························································································································································stderr | src/local-app/WorkspaceSecondBatch.test.tsx > keeps a prepared local candidate available for audition without offering duplicate preparation
+An update to EditableWorkspaceAudioPreparation inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+·······stderr | src/local-app/WorkspaceVisualTaskStatus.test.tsx > narration retains unknown submission evidence and blocks another paid preparation
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+··stderr | src/local-app/WorkspaceVisualTaskStatus.test.tsx > audio publication remains explicitly recoverable and never offers ordinary retry
+An update to EditableWorkspaceAudioPreparation inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/local-app/WorkspaceVisualTaskStatus.test.tsx > keeps unknown audio submission consistent between its candidate summary and task details
+An update to EditableWorkspaceAudioPreparation inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/local-app/WorkspaceVisualTaskStatus.test.tsx > keeps adopted audio separate from the status of its generating task
+An update to EditableWorkspaceAudioPreparation inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+··stderr | src/local-app/WorkspaceVisualTaskStatus.test.tsx > does not widen audio preparation retry eligibility when its task has a different status
+An update to EditableWorkspaceAudioPreparation inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/local-app/WorkspaceVisualTaskStatus.test.tsx > preserves narration duration and local-not-sent summaries: '2.35 秒'
+An update to EditableWorkspaceNarrationPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+·····stderr | src/local-app/WorkspaceVisualTaskStatus.test.tsx > preserves narration duration and local-not-sent summaries: '未提交'
+An update to EditableWorkspaceNarrationPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+stderr | src/local-app/WorkspaceVisualTaskStatus.test.tsx > describes the original running narration task while the edited input is pending
+An update to EditableWorkspaceNarrationPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+stderr | src/local-app/WorkspaceVisualTaskStatus.test.tsx > shows a local rejection compactly and opens full details without growing the result area
+An update to ForwardRef(Button) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(Button) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+·······stderr | src/local-app/WorkspaceSpeechReading.test.tsx > keeps sound drafts through refresh, shot switches and reopening
+An update to EditableWorkspaceAudioPreparation inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+··stderr | src/local-app/WorkspaceSpeechReading.test.tsx > keeps narration preparation text after refreshed status and reopening
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+···stderr | src/local-app/WorkspaceSpeechReading.test.tsx > keeps narration preparation text after refreshed status and reopening
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+·······stderr | src/local-app/WorkspaceCompletedShots.test.tsx > groups every shot with its own combined render window, expanded properties and overlapping music
+An update to ForwardRef(VolumeSliderRoot) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+································stderr | src/local-app/WorkspaceVisualReading.test.tsx > automatic task refresh preserves the unsubmitted video draft without a manual refresh button
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+··························stderr | src/ui/media/AudioPreview.test.tsx > 音频加载失败可原位重试，页面隐藏会暂停试听
+An update to ForwardRef(BufferingIndicator) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to PlayButton inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(TimeSliderRoot) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(StatusAnnouncer) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TooltipRoot inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TooltipRoot inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+··································stderr | src/local-app/WorkspaceVisualPreparation.activity.test.tsx > shows the actual submission and active task below the composer, removes it on completion, and preserves the request parameters
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+·················stderr | src/local-app/WorkspaceExportPanel.test.tsx > retains verified historical delivery downloads when the latest export is outdated
+An update to ForwardRef(VolumeSliderRoot) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+···stderr | src/local-app/WorkspaceExportPanel.test.tsx > groups issues below checks and secondary file details with export history
+An update to ForwardRef(VolumeSliderRoot) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+····stderr | src/local-app/WorkspaceExportPanel.test.tsx > requires a new export after content changes even when an old confirmation remains in history
+An update to ForwardRef(VolumeSliderRoot) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+·················································stderr | src/local-app/WorkspaceFirstBatch.test.tsx > prefills generation from the actual five-second shot instead of an unrelated three-second default
+An update to VisualPreparationTarget inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+··········stderr | src/operations/workbenchPreview.test.tsx > uses the registered video thumbnail as the initial cover when no cover exists
+An update to ForwardRef(VolumeSliderRoot) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/operations/workbenchPreview.test.tsx > reads the existing workspace export even when it is not listed among public artifacts
+An update to ForwardRef(VolumeSliderRoot) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+···················stderr | src/local-app/WorkspaceShotPreview.test.tsx > keeps clip selection available for viewing multiple references
+An update to ForwardRef(VolumeSliderRoot) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/local-app/WorkspaceShotPreview.test.tsx > previews the saved video after adopting it over an original image binding
+An update to ForwardRef(VolumeSliderRoot) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+·······stderr | src/local-app/WorkspaceShotPreview.test.tsx > 加载失败提供原位重试，切换片段释放原视频
+An update to ForwardRef(VolumeSliderRoot) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+··········································stderr | src/local-app/WorkspaceSoundRecords.test.tsx > shows actual adopted speech separately from a later request without mounting editable defaults or drafts
+An update to ForwardRef(Value) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(TimeSliderRoot) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(Value) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to VolumePopoverState$1 inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TooltipRoot inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TooltipRoot inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to MuteButton inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TooltipRoot inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TooltipRoot inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/local-app/WorkspaceSoundRecords.test.tsx > shows frozen music selection and native adoption without polling, searching or writing
+An update to ForwardRef(Value) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(TimeSliderRoot) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(Value) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to VolumePopoverState$1 inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TooltipRoot inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TooltipRoot inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to MuteButton inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TooltipRoot inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to TooltipRoot inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+·············xxstderr | src/local-app/WorkspaceSpeechSample.test.tsx > requires confirmation for the first sample and replays it at the current speed
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+·····································································································································································································································································································································································································································································································································································································································································································································-···································································································································································································································································································································
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/sharedViews.test.tsx > approval console > 创建时分步显示当前进度
+TestingLibraryElementError: Unable to find an element with the text: /冻结当前蓝图和系列版本。 本阶段已等待 0 秒。/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33maria-label[39m=[32m"新建生产单"[39m
+      [33maria-modal[39m=[32m"true"[39m
+      [33mclass[39m=[32m"modal-backdrop"[39m
+      [33mrole[39m=[32m"dialog"[39m
+    [36m>[39m
+      [36m<form[39m
+        [33maria-busy[39m=[32m"true"[39m
+        [33maria-label[39m=[32m"新建生产单"[39m
+        [33mclass[39m=[32m"modal-card episode-form-modal"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<div>[39m
+            [36m<h2>[39m
+              [0m新建生产单[0m
+            [36m</h2>[39m
+            [36m<p>[39m
+              [0m使用当前蓝图与系列快照。[0m
+            [36m</p>[39m
+          [36m</div>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"关闭新建生产单"[39m
+            [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover icon-button"[39m
+            [33mdata-color[39m=[32m"tertiary"[39m
+            [33mdata-disabled[39m=[32m"true"[39m
+            [33mdata-rac[39m=[32m""[39m
+            [33mdata-react-aria-pressable[39m=[32m"true"[39m
+            [33mdisabled[39m=[32m""[39m
+            [33mid[39m=[32m"react-aria-_r_f_"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"transition-inherit-all px-0.5"[39m
+              [33mdata-text[39m=[32m"true"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-x"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"18"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M18 6 6 18"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m6 6 12 12"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</span>[39m
+          [36m</button>[39m
+        [36m</header>[39m
+        [36m<label>[39m
+          [0m账号[0m
+          [36m<div[39m
+            [33mclass[39m=[32m"w-full in-data-input-wrapper:w-max dan-select-field"[39m
+            [33mdata-select-size[39m=[32m"sm"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"relative grid w-full items-center dan-select-control"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-sliders-horizontal dan-select-leading"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M10 5H3"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 19H3"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M14 3v4"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 17v4"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M21 12h-9"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M21 19h-5"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M21 5h-7"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M8 10v4"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M8 12H3"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [36m<select[39m
+                [33maria-expanded[39m=[32m"false"[39m
+                [33maria-haspopup[39m=[32m"listbox"[39m
+                [33mclass[39m=[32m"dan-select-trigger appearance-none rounded-lg bg-primary font-medium text-primary shadow-xs ring-1 ring-primary outline-hidden transition duration-100 ease-linear ring-inset placeholder:text-fg-quaternary focus-visible:ring-2 focus-visible:ring-brand disabled:cursor-not-allowed disabled:opacity-50 py-2 pl-3 text-sm in-data-input-wrapper:flex in-data-input-wrapper:h-full in-data-input-wrapper:gap-1 in-data-input-wrapper:bg-inherit in-data-input-wrapper:px-3 in-data-input-wrapper:py-2 in-data-input-wrapper:font-normal in-data-input-wrapper:text-tertiary in-data-input-wrapper:shadow-none in-data-input-wrapper:ring-transparent in-data-input-wrapper:in-data-[size=sm]:text-sm in-data-input-wrapper:group-disabled:pointer-events-none in-data-input-wrapper:group-disabled:cursor-not-allowed in-data-input-wrapper:group-disabled:bg-transparent in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-[input-size=lg]:py-2.5 in-data-input-wrapper:in-data-[input-size=md]:py-2 in-data-input-wrapper:in-data-[input-size=md]:pl-3 in-data-input-wrap...
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/sharedViews.test.tsx:49:19
+     47|     expect(screen.getByRole("status").textContent).toContain("正在创建生产单"…
+     48|     expect(screen.getByText("创建生产单")).toBeTruthy();
+     49|     expect(screen.getByText(/冻结当前蓝图和系列版本。 本阶段已等待 0 秒。/)).toBeTruthy();
+       |                   ^
+     50|     expect(screen.getByText("创建生产单")).toBeTruthy();
+     51|     expect(screen.getByRole("button", { name: "正在处理…" }).hasAttribute(…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/local-app/LocalCatalogApp.account.test.tsx > shows five active accounts, keeps archived accounts reachable, and opens a newly created account
+TestingLibraryElementError: Unable to find an accessible element with the role "button" and name "已归档 · 1"
+
+Here are the accessible roles:
+
+  button:
+
+  Name "账号":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"_r_24_"[39m
+    [33maria-expanded[39m=[32m"true"[39m
+    [33maria-label[39m=[32m"账号"[39m
+    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover navigation-item is-active"[39m
+    [33mdata-color[39m=[32m"tertiary"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mid[39m=[32m"react-aria-_r_25_"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "新建账号":
+  [36m<button[39m
+    [33maria-label[39m=[32m"新建账号"[39m
+    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover sidebar-account-add"[39m
+    [33mdata-color[39m=[32m"tertiary"[39m
+    [33mdata-icon-only[39m=[32m"true"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mid[39m=[32m"react-aria-_r_27_"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------list:
+
+  Name "使用中的账号":
+  [36m<ul[39m
+    [33maria-label[39m=[32m"使用中的账号"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  listitem:
+
+  Name "":
+  [36m<li />[39m
+
+  Name "":
+  [36m<li />[39m
+
+  Name "":
+  [36m<li />[39m
+
+  Name "":
+  [36m<li />[39m
+
+  Name "":
+  [36m<li />[39m
+
+  Name "":
+  [36m<li />[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "测试账号 1":
+  [36m<button[39m
+    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover sidebar-account-entry"[39m
+    [33mdata-color[39m=[32m"tertiary"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mid[39m=[32m"react-aria-_r_29_"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "测试账号 2":
+  [36m<button[39m
+    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover sidebar-account-entry"[39m
+    [33mdata-color[39m=[32m"tertiary"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mid[39m=[32m"react-aria-_r_2b_"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "测试账号 3":
+  [36m<button[39m
+    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover sidebar-account-entry"[39m
+    [33mdata-color[39m=[32m"tertiary"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mid[39m=[32m"react-aria-_r_2d_"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "测试账号 4":
+  [36m<button[39m
+    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover sidebar-account-entry"[39m
+    [33mdata-color[39m=[32m"tertiary"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mid[39m=[32m"react-aria-_r_2f_"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "测试账号 5":
+  [36m<button[39m
+    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover sidebar-account-entry"[39m
+    [33mdata-color[39m=[32m"tertiary"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mid[39m=[32m"react-aria-_r_2h_"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "测试账号 6":
+  [36m<button[39m
+    [33maria-current[39m=[32m"page"[39m
+    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover sidebar-account-entry"[39m
+    [33mdata-color[39m=[32m"tertiary"[39m
+    [33mdata-focused[39m=[32m"true"[39m
+    [33mdata-hovered[39m=[32m"true"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mid[39m=[32m"react-aria-_r_3j_"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "收起账号列表":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"true"[39m
+    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover sidebar-account-entry sidebar-account-more"[39m
+    [33mdata-color[39m=[32m"tertiary"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mid[39m=[32m"react-aria-_r_2j_"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "已归档 ·1":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"_r_24_-archived"[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover sidebar-account-entry sidebar-account-more"[39m
+    [33mdata-color[39m=[32m"tertiary"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mid[39m=[32m"react-aria-_r_2l_"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<div[39m
+  [33maria-label[39m=[32m"账号管理"[39m
+  [33mclass[39m=[32m"navigation-group sidebar-account-group"[39m
+  [33mrole[39m=[32m"group"[39m
+[36m>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"sidebar-account-heading"[39m
+  [36m>[39m
+    [36m<button[39m
+      [33maria-controls[39m=[32m"_r_24_"[39m
+      [33maria-expanded[39m=[32m"true"[39m
+      [33maria-label[39m=[32m"账号"[39m
+      [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover navigation-item is-active"[39m
+      [33mdata-color[39m=[32m"tertiary"[39m
+      [33mdata-rac[39m=[32m""[39m
+      [33mdata-react-aria-pressable[39m=[32m"true"[39m
+      [33mid[39m=[32m"react-aria-_r_25_"[39m
+      [33mtabindex[39m=[32m"0"[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [36m<svg[39m
+        [33maria-hidden[39m=[32m"true"[39m
+        [33mclass[39m=[32m"lucide lucide-users pointer-events-none size-5 shrink-0 transition-inherit-all"[39m
+        [33mdata-icon[39m=[32m"leading"[39m
+        [33mfill[39m=[32m"none"[39m
+        [33mheight[39m=[32m"24"[39m
+        [33mstroke[39m=[32m"currentColor"[39m
+        [33mstroke-linecap[39m=[32m"round"[39m
+        [33mstroke-linejoin[39m=[32m"round"[39m
+        [33mstroke-width[39m=[32m"2"[39m
+        [33mviewBox[39m=[32m"0 0 24 24"[39m
+        [33mwidth[39m=[32m"24"[39m
+        [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+      [36m>[39m
+        [36m<path[39m
+          [33md[39m=[32m"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"[39m
+        [36m/>[39m
+        [36m<path[39m
+          [33md[39m=[32m"M16 3.128a4 4 0 0 1 0 7.744"[39m
+        [36m/>[39m
+        [36m<path[39m
+          [33md[39m=[32m"M22 21v-2a4 4 0 0 0-3-3.87"[39m
+        [36m/>[39m
+        [36m<circle[39m
+          [33mcx[39m=[32m"9"[39m
+          [33mcy[39m=[32m"7"[39m
+          [33mr[39m=[32m"4"[39m
+        [36m/>[39m
+      [36m</svg>[39m
+      [36m<span[39m
+        [33mclass[39m=[32m"transition-inherit-all px-0.5"[39m
+        [33mdata-text[39m=[32m"true"[39m
+      [36m>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"navigation-label"[39m
+        [36m>[39m
+          [0m账号[0m
+        [36m</span>[39m
+        [36m<svg[39m
+          [33maria-hidden[39m=[32m"true"[39m
+          [33mclass[39m=[32m"lucide lucide-chevron-down sidebar-account-chevron"[39m
+          [33mfill[39m=[32m"none"[39m
+          [33mheight[39m=[32m"14"[39m
+          [33mstroke[39m=[32m"currentColor"[39m
+          [33mstroke-linecap[39m=[32m"round"[39m
+          [33mstroke-linejoin[39m=[32m"round"[39m
+          [33mstroke-width[39m=[32m"2"[39m
+          [33mviewBox[39m=[32m"0 0 24 24"[39m
+          [33mwidth[39m=[32m"14"[39m
+          [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+        [36m>[39m
+          [36m<path[39m
+            [33md[39m=[32m"m6 9 6 6 6-6"[39m
+          [36m/>[39m
+        [36m</svg>[39m
+      [36m</span>[39m
+    [36m</button>[39m
+    [36m<button[39m
+      [33maria-label[39m=[32m"新建账号"[39m
+      [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover sidebar-account-add"[39m
+      [33mdata-color[39m=[32m"tertiary"[39m
+      [33mdata-icon-only[39m=[32m"true"[39m
+      [33mdata-rac[39m=[32m""[39m
+      [33mdata-react-aria-pressable[39m=[32m"true"[39m
+      [33mid[39m=[32m"react-aria-_r_27_"[39m
+      [33mtabindex[39m=[32m"0"[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [36m<svg[39m
+        [33maria-hidden[39m=[32m"true"[39m
+        [33mclass[39m=[32m"lucide lucide-plus pointer-events-none size-5 shrink-0 transition-inherit-all"[39m
+        [33mdata-icon[39m=[32m"leading"[39m
+        [33mfill[39m=[32m"none"[39m
+        [33mheight[39m=[32m"24"[39m
+        [33mstroke[39m=[32m"currentColor"[39m
+        [33mstroke-linecap[39m=[32m"round"[39m
+        [33mstroke-linejoin[39m=[32m"round"[39m
+        [33mstroke-width[39m=[32m"2"[39m
+        [33mviewBox[39m=[32m"0 0 24 24"[39m
+        [33mwidth[39m=[32m"24"[39m
+        [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+      [36m>[39m
+        [36m<path[39m
+          [33md[39m=[32m"M5 12h14"[39m
+        [36m/>[39m
+        [36m<path[39m
+          [33md[39m=[32m"M12 5v14"[39m
+        [36m/>[39m
+      [36m</svg>[39m
+    [36m</button>[39m
+  [36m</div>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"sidebar-account-list"[39m
+    [33mid[39m=[32m"_r_24_"[39m
+  [36m>[39m
+    [36m<ul[39m
+      [33maria-label[39m=[32m"使用中的账号"[39m
+    [36m>[39m
+      [36m<li>[39m
+        [36m<button[39m
+          [33m...
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/local-app/LocalCatalogApp.account.test.tsx:60:27
+     58|  await user.click(sidebar.getByRole('button',{name:'测试账号 6'}));
+     59|  expect(screen.getByRole('heading',{name:'测试账号 6',level:1})).toBeTruth…
+     60|  await user.click(sidebar.getByRole('button',{name:'已归档 · 1'}));
+       |                           ^
+     61|  await user.click(sidebar.getByRole('button',{name:'旧账号'}));
+     62|  expect(screen.getByRole('heading',{name:'旧账号',level:1})).toBeTruthy();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/local-app/WorkspaceGenerationLocale.test.tsx > renders task phases and recovery in English while keeping unknown receipt permissions
+TestingLibraryElementError: Found multiple elements with the text: /图片提交结果未知/
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<p[39m
+  [33maria-label[39m=[32m"视觉任务 raw-task-id"[39m
+  [33mrole[39m=[32m"status"[39m
+[36m>[39m
+  [0m图片[0m
+  [0m提交结果未知[0m
+[36m</p>[39m
+
+Ignored nodes: comments, script, style
+[36m<p[39m
+  [33mclass[39m=[32m"workspace-task-diagnostic"[39m
+  [33mrole[39m=[32m"alert"[39m
+[36m>[39m
+  [0m图片[0m
+  [0m提交结果未知[0m
+[36m</p>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33maria-hidden[39m=[32m"true"[39m
+      [33mclass[39m=[32m"workspace-visual-task"[39m
+      [33minert[39m=[32m""[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"workspace-task-summary"[39m
+      [36m>[39m
+        [36m<p[39m
+          [33maria-label[39m=[32m"视觉任务 raw-task-id"[39m
+          [33mrole[39m=[32m"status"[39m
+        [36m>[39m
+          [0m图片[0m
+          [0m提交结果未知[0m
+        [36m</p>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"workspace-task-actions"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+            [33mdata-color[39m=[32m"secondary"[39m
+            [33mdata-rac[39m=[32m""[39m
+            [33mdata-react-aria-pressable[39m=[32m"true"[39m
+            [33mid[39m=[32m"react-aria-_r_0_"[39m
+            [33mtabindex[39m=[32m"0"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"transition-inherit-all px-0.5"[39m
+              [33mdata-text[39m=[32m"true"[39m
+            [36m>[39m
+              [0m刷新核对结果[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"查看图片任务详情"[39m
+            [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+            [33mdata-color[39m=[32m"tertiary"[39m
+            [33mdata-rac[39m=[32m""[39m
+            [33mdata-react-aria-pressable[39m=[32m"true"[39m
+            [33mid[39m=[32m"react-aria-_r_2_"[39m
+            [33mtabindex[39m=[32m"0"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"transition-inherit-all px-0.5"[39m
+              [33mdata-text[39m=[32m"true"[39m
+            [36m>[39m
+              [0m详情[0m
+            [36m</span>[39m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"dan-ui product-ui workspace-task-overlay"[39m
+  [36m>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"modal-backdrop workspace-task-backdrop"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33maria-labelledby[39m=[32m"_r_4_"[39m
+        [33maria-modal[39m=[32m"true"[39m
+        [33mclass[39m=[32m"modal-card confirmation-modal workspace-task-detail"[39m
+        [33mrole[39m=[32m"dialog"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h2[39m
+            [33mid[39m=[32m"_r_4_"[39m
+          [36m>[39m
+            [0m图片任务详情[0m
+          [36m</h2>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"关闭图片任务详情"[39m
+            [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+            [33mdata-color[39m=[32m"tertiary"[39m
+            [33mdata-dialog-initial-focus[39m=[32m"true"[39m
+            [33mdata-focus-visible[39m=[32m"true"[39m
+            [33mdata-focused[39m=[32m"true"[39m
+            [33mdata-rac[39m=[32m""[39m
+            [33mdata-react-aria-pressable[39m=[32m"true"[39m
+            [33mid[39m=[32m"react-aria-_r_5_"[39m
+            [33mtabindex[39m=[32m"0"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"transition-inherit-all px-0.5"[39m
+        ...
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ getElementError node_modules/@testing-library/dom/dist/query-helpers.js:20:35
+ ❯ getMultipleElementsFoundError node_modules/@testing-library/dom/dist/query-helpers.js:23:10
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:55:13
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/local-app/WorkspaceGenerationLocale.test.tsx:8:765
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  src/local-app/WorkspaceGenerationLocale.test.tsx > translates composition and reference explanations without changing protocol IDs
+TypeError: (0 , firstFrameVideoMode) is not a function
+ ❯ src/local-app/WorkspaceGenerationLocale.test.tsx:9:123
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  3 failed | 279 passed (282)
+      Tests  4 failed | 2050 passed | 1 skipped (2055)
+   Start at  17:43:58
+   Duration  58.89s (transform 4.22s, setup 322ms, collect 82.13s, tests 142.42s, environment 33.91s, prepare 7.90s)
+

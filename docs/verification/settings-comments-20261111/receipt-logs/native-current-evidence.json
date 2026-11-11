@@ -1,0 +1,43 @@
+{
+  "observedAt": "2026-11-11T09:17:17.330Z",
+  "checkedEpisodes": 6,
+  "studioMarkers": [
+    {
+      "episodeId": "2aefed78-4f22-472e-9e5f-2f64796bb017",
+      "markerPresent": true,
+      "pidAlive": true
+    },
+    {
+      "episodeId": "c150f163-f02e-4a80-a13b-599e7e21dff7",
+      "markerPresent": true,
+      "pidAlive": false
+    }
+  ],
+  "coffee": [
+    {
+      "episodeId": "2aefed78-4f22-472e-9e5f-2f64796bb017",
+      "observedAt": "2026-11-11T09:17:17.330Z",
+      "workspaceUpdatedAt": "2026-11-11T08:17:54.145689+00:00",
+      "projectHashMatches": true,
+      "markers": [
+        {
+          "itemId": "shot-shot-01-ef08bc0a-24b7-47ff-a4b9-ae11980243a9",
+          "shotId": "shot-01",
+          "narrationEnabled": null
+        },
+        {
+          "itemId": "shot-shot-02-e50921d2-936d-424e-83c7-bd45f66d02f2",
+          "shotId": "shot-02",
+          "narrationEnabled": false
+        }
+      ],
+      "narrations": [
+        {
+          "mode": "tts",
+          "shotId": "shot-02",
+          "taskId": "0836c8fc-2a80-4ac4-b34b-34db62c16118"
+        }
+      ]
+    }
+  ]
+}

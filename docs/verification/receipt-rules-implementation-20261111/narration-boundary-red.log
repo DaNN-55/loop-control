@@ -1,0 +1,55 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/narrationReceiptBoundary.test.ts --maxWorkers=1 --fileParallelism=false
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/local-app/narrationReceiptBoundary.test.ts (4 tests | 3 failed) 13ms
+   × distinguishes actual narration dispatch evidence: legacy-reserve-false 6ms
+     → expected 'ProviderOutcomeUnknownError' to be 'ProviderRequestNotSentError' // Object.is equality
+   × distinguishes actual narration dispatch evidence: confirmed-route-null 2ms
+     → expected 'ProviderOutcomeUnknownError' to be 'ProviderRequestNotSentError' // Object.is equality
+   ✓ distinguishes actual narration dispatch evidence: transport-disconnected 2ms
+   × distinguishes actual narration dispatch evidence: received-invalid-body 3ms
+     → expected 'Error' to be 'ProviderOutcomeUnknownError' // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/narrationReceiptBoundary.test.ts > distinguishes actual narration dispatch evidence: legacy-reserve-false
+ FAIL  src/local-app/narrationReceiptBoundary.test.ts > distinguishes actual narration dispatch evidence: confirmed-route-null
+AssertionError: expected 'ProviderOutcomeUnknownError' to be 'ProviderRequestNotSentError' // Object.is equality
+
+Expected: "ProviderRequestNotSentError"
+Received: "ProviderOutcomeUnknownError"
+
+ ❯ src/local-app/narrationReceiptBoundary.test.ts:29:24
+     27|   const dispatched=await readFile(calls,'utf8').catch(()=> '');
+     28|   const notSent=failure==='legacy-reserve-false'||failure==='confirmed…
+     29|   expect(outcome.name).toBe(notSent?'ProviderRequestNotSentError':'Pro…
+       |                        ^
+     30|   expect(dispatched).toBe(notSent?'':'sent\n');
+     31|   // An unvalidated HTTP body is not a durable, usable audio result.
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/local-app/narrationReceiptBoundary.test.ts > distinguishes actual narration dispatch evidence: received-invalid-body
+AssertionError: expected 'Error' to be 'ProviderOutcomeUnknownError' // Object.is equality
+
+Expected: "ProviderOutcomeUnknownError"
+Received: "Error"
+
+ ❯ src/local-app/narrationReceiptBoundary.test.ts:29:24
+     27|   const dispatched=await readFile(calls,'utf8').catch(()=> '');
+     28|   const notSent=failure==='legacy-reserve-false'||failure==='confirmed…
+     29|   expect(outcome.name).toBe(notSent?'ProviderRequestNotSentError':'Pro…
+       |                        ^
+     30|   expect(dispatched).toBe(notSent?'':'sent\n');
+     31|   // An unvalidated HTTP body is not a durable, usable audio result.
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 1 passed (4)
+   Start at  21:35:15
+   Duration  225ms (transform 90ms, setup 7ms, collect 108ms, tests 13ms, environment 0ms, prepare 22ms)
+

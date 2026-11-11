@@ -1,0 +1,16 @@
+{
+  "runId": "5a18fd183ee2",
+  "container": "loop-receipt-5a18fd183ee2",
+  "label": "receipt-5a18fd183ee2",
+  "image": "sha256:00bc86618629af00d2937fdc5a5d63db3ff8450acf52f0636ec813c7f4902929",
+  "context": "/Users/dan/Programs/loop-control/docs/verification/receipt-rules-implementation-20261111/environment/runtime-context.mjs",
+  "database": "loop_receipt_baseline",
+  "network": "none",
+  "storage": "tmpfs",
+  "migrationCount": 157,
+  "baselineLatestMigration": "160-episode-recycle-bin.sql",
+  "baselineMaxVersion": 160,
+  "createdAt": "2026-11-11T13:24:15.982Z",
+  "paidCalls": 0,
+  "dailyTouched": false
+}

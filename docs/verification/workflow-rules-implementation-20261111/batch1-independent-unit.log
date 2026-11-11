@@ -1,0 +1,12 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/workspaceExecution.test.ts src/workspaceAudio.test.ts src/workspaceCaptions.test.ts src/local-app/workspaceExportCoverage.test.ts --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+··············
+
+ Test Files  4 passed (4)
+      Tests  14 passed (14)
+   Start at  18:18:03
+   Duration  654ms (transform 406ms, setup 29ms, collect 1.09s, tests 12ms, environment 535ms, prepare 135ms)
+

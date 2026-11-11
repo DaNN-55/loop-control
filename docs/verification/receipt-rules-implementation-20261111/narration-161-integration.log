@@ -1,0 +1,13 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workspaceNarration.integration.test.ts -t confirmed narration uses --maxWorkers=1 --fileParallelism=false
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/workspaceNarration.integration.test.ts (13 tests | 12 skipped) 4923ms
+   ✓ confirmed narration uses the real Worker, survives restart and assembles actual duration without duplicate submissions  4923ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 12 skipped (13)
+   Start at  21:44:30
+   Duration  5.61s (transform 418ms, setup 7ms, collect 583ms, tests 4.92s, environment 0ms, prepare 22ms)
+

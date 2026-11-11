@@ -1,0 +1,12 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run --config docs/verification/receipt-rules-implementation-20261111/acceptance/speech-projection.config.mjs --maxWorkers=1 --reporter=verbose
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ docs/verification/receipt-rules-implementation-20261111/acceptance/speech-replacement-projection.test.ts > 24 a completed replacement becomes the current narration task, retaining the unknown original only in history 1891ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  21:57:54
+   Duration  2.66s (transform 468ms, setup 0ms, collect 671ms, tests 1.89s, environment 0ms, prepare 24ms)
+

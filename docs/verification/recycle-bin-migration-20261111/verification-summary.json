@@ -1,0 +1,1430 @@
+{
+  "files": {
+    "src/local-app/WorkspaceTopbar.test.tsx": {
+      "status": "✓",
+      "tests": 15,
+      "source": "full-test.log"
+    },
+    "src/local-app/LocalSecretAdministration.test.tsx": {
+      "status": "✓",
+      "tests": 17,
+      "source": "full-test.log"
+    },
+    "src/local-app/LocalCatalogApp.search.test.tsx": {
+      "status": "✓",
+      "tests": 16,
+      "source": "failed-files-retest.log"
+    },
+    "src/local-app/LocalCatalogApp.workspace.test.tsx": {
+      "status": "✓",
+      "tests": 12,
+      "source": "failed-files-retest.log"
+    },
+    "src/accounts/AccountWorkspace.test.tsx": {
+      "status": "✓",
+      "tests": 29,
+      "source": "full-test.log"
+    },
+    "src/local-app/ProductionWorkspacePanel.test.tsx": {
+      "status": "✓",
+      "tests": 39,
+      "source": "failed-files-retest.log"
+    },
+    "src/local-app/WorkspaceVisualCandidatesPanel.test.tsx": {
+      "status": "✓",
+      "tests": 27,
+      "source": "failed-files-retest.log"
+    },
+    "src/local-app/LocalCatalogApp.navigation.test.tsx": {
+      "status": "✓",
+      "tests": 16,
+      "source": "failed-files-retest.log"
+    },
+    "src/local-app/LocalCatalogApp.test.tsx": {
+      "status": "✓",
+      "tests": 16,
+      "source": "failed-files-retest.log"
+    },
+    "src/local-app/ImpeccableNavigation.test.tsx": {
+      "status": "✓",
+      "tests": 6,
+      "source": "failed-files-retest.log"
+    },
+    "src/local-app/WorkspaceNarrationPanel.test.tsx": {
+      "status": "✓",
+      "tests": 27,
+      "source": "failed-files-retest.log"
+    },
+    "src/connections/ConnectionDrafts.test.tsx": {
+      "status": "✓",
+      "tests": 7,
+      "source": "failed-files-retest.log"
+    },
+    "src/connections/ConnectionModelsDialog.test.tsx": {
+      "status": "✓",
+      "tests": 16,
+      "source": "failed-files-retest.log"
+    },
+    "src/connections/ConnectionWorkspace.test.tsx": {
+      "status": "✓",
+      "tests": 12,
+      "source": "failed-files-retest.log"
+    },
+    "src/local-app/LocalCatalogApp.connectionDrafts.test.tsx": {
+      "status": "✓",
+      "tests": 3,
+      "source": "failed-files-retest.log"
+    },
+    "src/local-app/WorkspaceTopbar.account-safety.test.tsx": {
+      "status": "✓",
+      "tests": 4,
+      "source": "full-test.log"
+    },
+    "src/local-app/LocalCatalogApp.ownerSettings.test.tsx": {
+      "status": "✓",
+      "tests": 4,
+      "source": "failed-files-retest.log"
+    },
+    "src/local-app/ProductionWorkspacePanel.operations.test.tsx": {
+      "status": "✓",
+      "tests": 18,
+      "source": "full-test.log"
+    },
+    "src/ui/PcVisualFixes.test.tsx": {
+      "status": "✓",
+      "tests": 5,
+      "source": "failed-files-retest.log"
+    },
+    "src/local-app/MediaRootSettingsDialog.test.tsx": {
+      "status": "✓",
+      "tests": 7,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspaceAudioPanel.test.tsx": {
+      "status": "✓",
+      "tests": 25,
+      "source": "full-test.log"
+    },
+    "src/connections/ConnectionOrganization.test.tsx": {
+      "status": "✓",
+      "tests": 13,
+      "source": "failed-files-retest.log"
+    },
+    "src/local-app/LocalCatalogApp.drafts.test.tsx": {
+      "status": "✓",
+      "tests": 5,
+      "source": "failed-files-retest.log"
+    },
+    "src/local-app/WorkspaceScriptPanel.test.tsx": {
+      "status": "✓",
+      "tests": 31,
+      "source": "full-test.log"
+    },
+    "src/connections/ConnectionBillingDialog.test.tsx": {
+      "status": "✓",
+      "tests": 3,
+      "source": "failed-files-retest.log"
+    },
+    "src/local-app/LocalCatalogApp.receipts.test.tsx": {
+      "status": "✓",
+      "tests": 6,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspaceVisualPreparation.upload.test.tsx": {
+      "status": "✓",
+      "tests": 11,
+      "source": "full-test.log"
+    },
+    "src/local-app/OwnerPreferencesDialog.test.tsx": {
+      "status": "✓",
+      "tests": 10,
+      "source": "full-test.log"
+    },
+    "src/local-app/LocalCatalogApp.episode-dialog.test.tsx": {
+      "status": "✓",
+      "tests": 2,
+      "source": "failed-files-retest.log"
+    },
+    "src/local-app/LocalConnectionsPanel.test.tsx": {
+      "status": "✓",
+      "tests": 9,
+      "source": "full-test.log"
+    },
+    "src/local-app/ProductionWorkspaceUploadRecovery.test.tsx": {
+      "status": "✓",
+      "tests": 2,
+      "source": "failed-files-retest.log"
+    },
+    "src/platform/SeriesConfigurationForm.test.tsx": {
+      "status": "✓",
+      "tests": 6,
+      "source": "full-test.log"
+    },
+    "src/connections/ConnectionFeedback.test.tsx": {
+      "status": "✓",
+      "tests": 10,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspaceImageOptions.test.tsx": {
+      "status": "✓",
+      "tests": 5,
+      "source": "full-test.log"
+    },
+    "src/sharedViews.test.tsx": {
+      "status": "✓",
+      "tests": 11,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspaceVisualPreparation.form.test.tsx": {
+      "status": "✓",
+      "tests": 7,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspaceConfigBinding.test.tsx": {
+      "status": "✓",
+      "tests": 57,
+      "source": "failed-files-retest.log"
+    },
+    "src/local-app/LocalConnectionsPanel.reading.test.tsx": {
+      "status": "✓",
+      "tests": 6,
+      "source": "full-test.log"
+    },
+    "src/local-app/LocalSystemStatus.test.tsx": {
+      "status": "✓",
+      "tests": 9,
+      "source": "full-test.log"
+    },
+    "src/local-app/LocalEpisodeDetail.upload.test.tsx": {
+      "status": "✓",
+      "tests": 2,
+      "source": "failed-files-retest.log"
+    },
+    "src/ui/SelectMenuInteraction.test.tsx": {
+      "status": "✓",
+      "tests": 11,
+      "source": "full-test.log"
+    },
+    "src/local-app/LocalCatalogApp.account.test.tsx": {
+      "status": "✓",
+      "tests": 2,
+      "source": "failed-files-retest.log"
+    },
+    "src/operations/OperationsWorkspace.test.tsx": {
+      "status": "✓",
+      "tests": 25,
+      "source": "full-test.log"
+    },
+    "src/local-app/LocalCatalogApp.password-dialog.test.tsx": {
+      "status": "✓",
+      "tests": 1,
+      "source": "failed-files-retest.log"
+    },
+    "src/local-app/LocalCatalogApp.language.test.tsx": {
+      "status": "✓",
+      "tests": 3,
+      "source": "failed-files-retest.log"
+    },
+    "src/local-app/WorkspaceVisualAdoption.test.tsx": {
+      "status": "✓",
+      "tests": 7,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspaceNarrationPanel.manual.test.tsx": {
+      "status": "✓",
+      "tests": 11,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspaceVisualFeedback.test.tsx": {
+      "status": "✓",
+      "tests": 5,
+      "source": "full-test.log"
+    },
+    "src/local-app/EmbeddedStudioHost.test.tsx": {
+      "status": "✓",
+      "tests": 14,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspaceDeliveryPanel.test.tsx": {
+      "status": "✓",
+      "tests": 25,
+      "source": "full-test.log"
+    },
+    "src/ui/IconComboBox.test.tsx": {
+      "status": "✓",
+      "tests": 6,
+      "source": "full-test.log"
+    },
+    "src/local-app/ProductionCatalogInputs.test.tsx": {
+      "status": "✓",
+      "tests": 4,
+      "source": "full-test.log"
+    },
+    "src/connections/ConnectionDanUi.test.tsx": {
+      "status": "✓",
+      "tests": 2,
+      "source": "failed-files-retest.log"
+    },
+    "src/local-app/WorkspaceCaptionsRecovery.test.tsx": {
+      "status": "✓",
+      "tests": 8,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspaceReferencePicker.test.tsx": {
+      "status": "✓",
+      "tests": 4,
+      "source": "full-test.log"
+    },
+    "scripts/local-service-record.test.mjs": {
+      "status": "✓",
+      "tests": 6,
+      "source": "full-test.log"
+    },
+    "src/local-app/OwnerPreferencesDialog.embedded.test.tsx": {
+      "status": "✓",
+      "tests": 5,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspaceSpeechReading.test.tsx": {
+      "status": "✓",
+      "tests": 8,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspaceVoicePicker.test.tsx": {
+      "status": "✓",
+      "tests": 4,
+      "source": "full-test.log"
+    },
+    "src/local-app/ProductionWorkspacePanel.legacy.test.tsx": {
+      "status": "✓",
+      "tests": 9,
+      "source": "full-test.log"
+    },
+    "src/observability/SystemStatusPanel.test.tsx": {
+      "status": "✓",
+      "tests": 19,
+      "source": "full-test.log"
+    },
+    "src/worker/controlledMediaExecutor.test.ts": {
+      "status": "✓",
+      "tests": 13,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspaceSecondBatch.test.tsx": {
+      "status": "✓",
+      "tests": 9,
+      "source": "full-test.log"
+    },
+    "src/local-app/ProductionWorkspaceReading.test.tsx": {
+      "status": "✓",
+      "tests": 6,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspacePlanningSelection.test.tsx": {
+      "status": "✓",
+      "tests": 3,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspaceVisualTaskStatus.test.tsx": {
+      "status": "✓",
+      "tests": 24,
+      "source": "full-test.log"
+    },
+    "src/episodes/EpisodeForm.test.tsx": {
+      "status": "✓",
+      "tests": 5,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspaceCompletedShots.test.tsx": {
+      "status": "✓",
+      "tests": 6,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspaceCandidateReviewInputs.test.tsx": {
+      "status": "✓",
+      "tests": 3,
+      "source": "full-test.log"
+    },
+    "src/connections/ConnectionReadStatus.test.tsx": {
+      "status": "✓",
+      "tests": 4,
+      "source": "full-test.log"
+    },
+    "src/local-app/OwnerPreferencesDialog.comments.test.tsx": {
+      "status": "✓",
+      "tests": 3,
+      "source": "full-test.log"
+    },
+    "src/accounts/AccountForm.test.tsx": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/local-app/RuntimeLogsDialog.test.tsx": {
+      "status": "✓",
+      "tests": 4,
+      "source": "full-test.log"
+    },
+    "src/local-app/LocalCatalogApp.list-refresh.test.tsx": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/local-app/GlobalPlanningSettings.test.tsx": {
+      "status": "✓",
+      "tests": 5,
+      "source": "full-test.log"
+    },
+    "src/ui/media/AudioPreview.test.tsx": {
+      "status": "✓",
+      "tests": 6,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspacePexelsSearch.test.tsx": {
+      "status": "✓",
+      "tests": 4,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspaceVisualReading.test.tsx": {
+      "status": "✓",
+      "tests": 6,
+      "source": "full-test.log"
+    },
+    "src/accounts/AccountDirectoryPanel.recovery.test.tsx": {
+      "status": "✓",
+      "tests": 5,
+      "source": "full-test.log"
+    },
+    "src/i18n/accounts.locale.test.tsx": {
+      "status": "✓",
+      "tests": 4,
+      "source": "full-test.log"
+    },
+    "src/local-app/LocalCatalogApp.folder.test.tsx": {
+      "status": "✓",
+      "tests": 1,
+      "source": "full-test.log"
+    },
+    "src/local-app/useWorkspaceCallConfirmation.test.tsx": {
+      "status": "✓",
+      "tests": 15,
+      "source": "full-test.log"
+    },
+    "src/accounts/AccountRules.test.tsx": {
+      "status": "✓",
+      "tests": 4,
+      "source": "full-test.log"
+    },
+    "src/ui/useDialogFocus.test.tsx": {
+      "status": "✓",
+      "tests": 8,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspaceVisualPreparation.activity.test.tsx": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspaceGenerationModel.test.tsx": {
+      "status": "✓",
+      "tests": 3,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspaceCaptionsPanel.test.tsx": {
+      "status": "✓",
+      "tests": 5,
+      "source": "full-test.log"
+    },
+    "src/local-app/SystemStatusResources.test.tsx": {
+      "status": "✓",
+      "tests": 10,
+      "source": "full-test.log"
+    },
+    "src/local-app/LocalCatalogApp.logs.test.tsx": {
+      "status": "✓",
+      "tests": 1,
+      "source": "full-test.log"
+    },
+    "src/local-app/ProductionWorkspaceManualUpload.test.tsx": {
+      "status": "✓",
+      "tests": 1,
+      "source": "full-test.log"
+    },
+    "scripts/openchatcut-render.test.mjs": {
+      "status": "✓",
+      "tests": 5,
+      "source": "full-test.log"
+    },
+    "scripts/openchatcut-embed-client.test.tsx": {
+      "status": "✓",
+      "tests": 3,
+      "source": "full-test.log"
+    },
+    "src/platform/ConfigurationForms.local.test.tsx": {
+      "status": "✓",
+      "tests": 5,
+      "source": "full-test.log"
+    },
+    "src/accounts/AccountGeneralSettings.test.tsx": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspaceAudioSourceOptions.test.tsx": {
+      "status": "✓",
+      "tests": 4,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspaceSpeechSample.lifecycle.test.tsx": {
+      "status": "✓",
+      "tests": 7,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspaceMaterialShelf.test.tsx": {
+      "status": "✓",
+      "tests": 4,
+      "source": "full-test.log"
+    },
+    "src/ui/DanUiInteractionGuards.test.tsx": {
+      "status": "✓",
+      "tests": 4,
+      "source": "full-test.log"
+    },
+    "src/local-app/SystemStatusVersion.test.tsx": {
+      "status": "✓",
+      "tests": 10,
+      "source": "full-test.log"
+    },
+    "src/operations/workbenchPreview.test.tsx": {
+      "status": "✓",
+      "tests": 9,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspaceExportPanel.test.tsx": {
+      "status": "✓",
+      "tests": 8,
+      "source": "full-test.log"
+    },
+    "src/local-app/ProductionCatalogSession.test.tsx": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/connections/ConnectionLocale.test.tsx": {
+      "status": "✓",
+      "tests": 4,
+      "source": "full-test.log"
+    },
+    "src/connections/ConnectionServiceCatalog.test.tsx": {
+      "status": "✓",
+      "tests": 4,
+      "source": "full-test.log"
+    },
+    "src/local-app/LocalDeletionRecovery.test.tsx": {
+      "status": "✓",
+      "tests": 6,
+      "source": "full-test.log"
+    },
+    "src/local-app/MediaRootSettingsDialog.recovery.test.tsx": {
+      "status": "✓",
+      "tests": 4,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspaceShotPreview.test.tsx": {
+      "status": "✓",
+      "tests": 7,
+      "source": "full-test.log"
+    },
+    "src/ui/media/VideoPreview.test.tsx": {
+      "status": "✓",
+      "tests": 4,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspaceAudioAudition.test.tsx": {
+      "status": "✓",
+      "tests": 5,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspacePromptField.test.tsx": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/local-app/LocalEpisodeDetail.polling.test.tsx": {
+      "status": "✓",
+      "tests": 5,
+      "source": "full-test.log"
+    },
+    "src/local-app/RecycleBinPanel.test.tsx": {
+      "status": "✓",
+      "tests": 4,
+      "source": "failed-files-retest.log"
+    },
+    "src/local-app/WorkspaceFirstBatch.test.tsx": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/ui/SurfacePresence.test.tsx": {
+      "status": "✓",
+      "tests": 6,
+      "source": "full-test.log"
+    },
+    "src/local-app/SystemStatusMotion.test.tsx": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/workspace/PasswordForm.test.tsx": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/workspace/EpisodeWorkspace.filters.test.tsx": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/accounts/AccountDirectoryPanel.test.tsx": {
+      "status": "✓",
+      "tests": 4,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspaceSoundRecords.test.tsx": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/local-app/LocalSystemStatus.embedded.test.tsx": {
+      "status": "✓",
+      "tests": 1,
+      "source": "full-test.log"
+    },
+    "src/local-app/RuntimeLogsDialog.language.test.tsx": {
+      "status": "✓",
+      "tests": 1,
+      "source": "full-test.log"
+    },
+    "src/observability/TaskProgressPanel.test.tsx": {
+      "status": "✓",
+      "tests": 5,
+      "source": "full-test.log"
+    },
+    "src/local-app/ProductionWorkspacePanel.navigation.test.tsx": {
+      "status": "✓",
+      "tests": 1,
+      "source": "full-test.log"
+    },
+    "src/reviews/WorkerBlockerCard.test.tsx": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/local-app/OwnerSettingsDialog.test.tsx": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/worker/whisperxAlignment.test.ts": {
+      "status": "✓",
+      "tests": 11,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspaceNativeControls.test.tsx": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspaceSpeechSample.test.tsx": {
+      "status": "✓",
+      "tests": 1,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspaceUploadFeedback.test.tsx": {
+      "status": "✓",
+      "tests": 5,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspaceShotTable.test.tsx": {
+      "status": "✓",
+      "tests": 3,
+      "source": "full-test.log"
+    },
+    "src/episodes/EpisodeDetailDrawer.test.tsx": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspaceGenerationChoices.test.tsx": {
+      "status": "✓",
+      "tests": 3,
+      "source": "full-test.log"
+    },
+    "src/local-app/useProductionServiceCatalog.test.tsx": {
+      "status": "✓",
+      "tests": 32,
+      "source": "full-test.log"
+    },
+    "src/ui/PaginationControls.test.tsx": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspaceGenerationLocale.test.tsx": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "scripts/openchatcut-accessibility.test.mjs": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/ui/MarkdownPreview.test.tsx": {
+      "status": "✓",
+      "tests": 1,
+      "source": "full-test.log"
+    },
+    "src/publishing/publishPackage.test.ts": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspacePreparationLayout.test.tsx": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/i18n/ui.test.tsx": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspaceCandidateReviewLifecycle.test.tsx": {
+      "status": "✓",
+      "tests": 12,
+      "source": "full-test.log"
+    },
+    "src/workspace/EpisodeDeletionScope.test.tsx": {
+      "status": "✓",
+      "tests": 4,
+      "source": "full-test.log"
+    },
+    "src/ui/PopulatedFilterSelect.test.tsx": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/local-app/WorkspaceVisualPreparation.readonly.test.tsx": {
+      "status": "✓",
+      "tests": 4,
+      "source": "full-test.log"
+    },
+    "src/worker/episodeDeletion.test.ts": {
+      "status": "✓",
+      "tests": 5,
+      "source": "full-test.log"
+    },
+    "src/worker/mediaLibrary.test.ts": {
+      "status": "✓",
+      "tests": 9,
+      "source": "full-test.log"
+    },
+    "src/reviews/localArtifactPreview.test.tsx": {
+      "status": "✓",
+      "tests": 3,
+      "source": "full-test.log"
+    },
+    "src/worker/openchatcutRenderer.test.ts": {
+      "status": "✓",
+      "tests": 3,
+      "source": "full-test.log"
+    },
+    "src/worker/renderReuse.test.ts": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/local-app/useWorkspaceCandidateReview.test.tsx": {
+      "status": "✓",
+      "tests": 4,
+      "source": "full-test.log"
+    },
+    "src/orchestration/operationsEvidence.test.ts": {
+      "status": "✓",
+      "tests": 5,
+      "source": "full-test.log"
+    },
+    "src/workspace/EpisodeMetricsCells.test.tsx": {
+      "status": "✓",
+      "tests": 1,
+      "source": "full-test.log"
+    },
+    "src/local-app/legacyWorkspaceMetadata.test.ts": {
+      "status": "✓",
+      "tests": 9,
+      "source": "full-test.log"
+    },
+    "src/local-app/useWorkspaceCanvas.test.tsx": {
+      "status": "✓",
+      "tests": 1,
+      "source": "full-test.log"
+    },
+    "src/worker/mediaProviders.test.ts": {
+      "status": "✓",
+      "tests": 16,
+      "source": "full-test.log"
+    },
+    "src/worker/openchatcutProject.test.ts": {
+      "status": "✓",
+      "tests": 26,
+      "source": "full-test.log"
+    },
+    "src/worker/codexRunner.test.ts": {
+      "status": "✓",
+      "tests": 29,
+      "source": "full-test.log"
+    },
+    "scripts/storage/schema-import.test.mjs": {
+      "status": "✓",
+      "tests": 1,
+      "source": "full-test.log"
+    },
+    "src/worker/wanVideoProvider.test.ts": {
+      "status": "✓",
+      "tests": 15,
+      "source": "full-test.log"
+    },
+    "src/orchestration/notificationConsumer.test.ts": {
+      "status": "✓",
+      "tests": 6,
+      "source": "full-test.log"
+    },
+    "src/local-app/legacyHtmlWorkspace.test.ts": {
+      "status": "✓",
+      "tests": 12,
+      "source": "full-test.log"
+    },
+    "src/reviews/productionScript.test.ts": {
+      "status": "✓",
+      "tests": 21,
+      "source": "full-test.log"
+    },
+    "src/reviews/reviewSelectors.test.ts": {
+      "status": "✓",
+      "tests": 7,
+      "source": "full-test.log"
+    },
+    "src/local-app/avatarUpload.test.ts": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/local-app/catalogNavigation.test.ts": {
+      "status": "✓",
+      "tests": 6,
+      "source": "full-test.log"
+    },
+    "src/worker/scriptRenderSettings.test.ts": {
+      "status": "✓",
+      "tests": 3,
+      "source": "full-test.log"
+    },
+    "src/orchestration/notificationPolicy.test.ts": {
+      "status": "✓",
+      "tests": 5,
+      "source": "full-test.log"
+    },
+    "src/local-app/clientCsrfRecovery.test.ts": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/worker/storyboardArtifact.test.ts": {
+      "status": "✓",
+      "tests": 4,
+      "source": "full-test.log"
+    },
+    "src/local-app/connections.test.ts": {
+      "status": "✓",
+      "tests": 4,
+      "source": "full-test.log"
+    },
+    "src/worker/contracts.test.ts": {
+      "status": "✓",
+      "tests": 18,
+      "source": "full-test.log"
+    },
+    "src/local-app/clientBilling.test.ts": {
+      "status": "✓",
+      "tests": 1,
+      "source": "full-test.log"
+    },
+    "src/worker/acousticAlignment.test.ts": {
+      "status": "✓",
+      "tests": 7,
+      "source": "full-test.log"
+    },
+    "src/reviews/reviewRevision.test.ts": {
+      "status": "✓",
+      "tests": 5,
+      "source": "full-test.log"
+    },
+    "src/platform/configurationForms.test.ts": {
+      "status": "✓",
+      "tests": 24,
+      "source": "full-test.log"
+    },
+    "src/local-app/scriptProductionContinuation.test.ts": {
+      "status": "✓",
+      "tests": 13,
+      "source": "full-test.log"
+    },
+    "src/worker/wanTaskContract.test.ts": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/local-app/keychainStore.test.ts": {
+      "status": "✓",
+      "tests": 7,
+      "source": "full-test.log"
+    },
+    "src/promptReferences.test.ts": {
+      "status": "✓",
+      "tests": 4,
+      "source": "full-test.log"
+    },
+    "src/workspaceAudio.test.ts": {
+      "status": "✓",
+      "tests": 4,
+      "source": "full-test.log"
+    },
+    "src/worker/storyboardRevision.test.ts": {
+      "status": "✓",
+      "tests": 3,
+      "source": "full-test.log"
+    },
+    "src/episodes/episodeReadService.test.ts": {
+      "status": "✓",
+      "tests": 3,
+      "source": "full-test.log"
+    },
+    "src/worker/legacyPexelsReference.test.ts": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/local-app/mediaPaths.test.ts": {
+      "status": "✓",
+      "tests": 3,
+      "source": "full-test.log"
+    },
+    "scripts/openchatcut-caption-drag.test.mjs": {
+      "status": "✓",
+      "tests": 3,
+      "source": "full-test.log"
+    },
+    "src/worker/registeredAdapters.test.ts": {
+      "status": "✓",
+      "tests": 7,
+      "source": "full-test.log"
+    },
+    "src/shotCaptions.test.ts": {
+      "status": "✓",
+      "tests": 3,
+      "source": "full-test.log"
+    },
+    "src/worker/manualMaterialChecklist.test.ts": {
+      "status": "✓",
+      "tests": 1,
+      "source": "full-test.log"
+    },
+    "src/worker/durationDecision.test.ts": {
+      "status": "✓",
+      "tests": 13,
+      "source": "full-test.log"
+    },
+    "src/shotComposition.test.ts": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/local-app/pexelsLiveProbe.test.ts": {
+      "status": "✓",
+      "tests": 11,
+      "source": "full-test.log"
+    },
+    "src/reviews/blockerGuidance.test.ts": {
+      "status": "✓",
+      "tests": 19,
+      "source": "full-test.log"
+    },
+    "src/worker/runtimePreflight.test.ts": {
+      "status": "✓",
+      "tests": 4,
+      "source": "full-test.log"
+    },
+    "src/worker/productionCapabilities.test.ts": {
+      "status": "✓",
+      "tests": 1,
+      "source": "full-test.log"
+    },
+    "src/preferences/preferences.test.ts": {
+      "status": "✓",
+      "tests": 4,
+      "source": "full-test.log"
+    },
+    "src/wanVideoModels.test.ts": {
+      "status": "✓",
+      "tests": 9,
+      "source": "full-test.log"
+    },
+    "src/workspaceCaptions.test.ts": {
+      "status": "✓",
+      "tests": 4,
+      "source": "full-test.log"
+    },
+    "src/episodes/episodeCatalogChanges.test.ts": {
+      "status": "✓",
+      "tests": 4,
+      "source": "full-test.log"
+    },
+    "src/local-app/nativeStorage.fixture.test.ts": {
+      "status": "✓",
+      "tests": 1,
+      "source": "full-test.log"
+    },
+    "src/reviews/materialImport.test.ts": {
+      "status": "✓",
+      "tests": 3,
+      "source": "full-test.log"
+    },
+    "src/worker/scriptPlanning.test.ts": {
+      "status": "✓",
+      "tests": 1,
+      "source": "full-test.log"
+    },
+    "src/workspaceExportDelivery.test.ts": {
+      "status": "✓",
+      "tests": 25,
+      "source": "full-test.log"
+    },
+    "src/i18n/ui.test.ts": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/imageGeneration.test.ts": {
+      "status": "✓",
+      "tests": 4,
+      "source": "full-test.log"
+    },
+    "scripts/openchatcut-media-imports.test.mjs": {
+      "status": "✓",
+      "tests": 1,
+      "source": "full-test.log"
+    },
+    "scripts/openchatcut-bridge-retry.test.mjs": {
+      "status": "✓",
+      "tests": 3,
+      "source": "full-test.log"
+    },
+    "src/worker/shotWorkbenchStudio.test.ts": {
+      "status": "✓",
+      "tests": 1,
+      "source": "full-test.log"
+    },
+    "src/lib/viewTransport.test.ts": {
+      "status": "✓",
+      "tests": 1,
+      "source": "full-test.log"
+    },
+    "src/worker/mediaToolsContract.test.ts": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/soundIntent.test.ts": {
+      "status": "✓",
+      "tests": 1,
+      "source": "full-test.log"
+    },
+    "src/reviews/mainScript.test.ts": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/worker/runtimeConstraints.test.ts": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/reviews/repairTarget.test.ts": {
+      "status": "✓",
+      "tests": 3,
+      "source": "full-test.log"
+    },
+    "src/workspaceVideo.test.ts": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/shotAcceptance.test.ts": {
+      "status": "✓",
+      "tests": 3,
+      "source": "full-test.log"
+    },
+    "src/lib/backend.test.ts": {
+      "status": "✓",
+      "tests": 1,
+      "source": "full-test.log"
+    },
+    "src/clipTiming.test.ts": {
+      "status": "✓",
+      "tests": 3,
+      "source": "full-test.log"
+    },
+    "src/local-app/providerUsage.test.ts": {
+      "status": "✓",
+      "tests": 10,
+      "source": "full-test.log"
+    },
+    "scripts/runtime/media-root.test.mjs": {
+      "status": "✓",
+      "tests": 1,
+      "source": "failed-files-retest.log"
+    },
+    "scripts/openchatcut-cache.test.mjs": {
+      "status": "✓",
+      "tests": 7,
+      "source": "failed-files-retest.log"
+    },
+    "src/local-app/providerNetwork.test.ts": {
+      "status": "✓",
+      "tests": 44,
+      "source": "full-test.log"
+    },
+    "src/orchestration/runtimeRelease.test.ts": {
+      "status": "✓",
+      "tests": 3,
+      "source": "failed-files-retest.log"
+    },
+    "src/orchestration/runtimeBuild.test.ts": {
+      "status": "✓",
+      "tests": 2,
+      "source": "failed-files-retest.log"
+    },
+    "src/local-app/nativeAttemptOutput.test.ts": {
+      "status": "✓",
+      "tests": 20,
+      "source": "full-test.log"
+    },
+    "src/local-app/deliveryArchive.test.ts": {
+      "status": "✓",
+      "tests": 1,
+      "source": "failed-files-retest.log"
+    },
+    "scripts/openchatcut-host-modules.test.mjs": {
+      "status": "✓",
+      "tests": 4,
+      "source": "full-test.log"
+    },
+    "src/local-app/providerProbe.test.ts": {
+      "status": "✓",
+      "tests": 55,
+      "source": "full-test.log"
+    },
+    "src/local-app/password.test.ts": {
+      "status": "✓",
+      "tests": 1,
+      "source": "full-test.log"
+    },
+    "src/local-app/mediaWorker.reference.test.ts": {
+      "status": "✓",
+      "tests": 5,
+      "source": "full-test.log"
+    },
+    "src/local-app/artifactRoute.test.ts": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/worker/modelSettingsBoundary.test.ts": {
+      "status": "✓",
+      "tests": 21,
+      "source": "full-test.log"
+    },
+    "src/local-app/readOnlyVerification.test.ts": {
+      "status": "✓",
+      "tests": 3,
+      "source": "full-test.log"
+    },
+    "src/local-app/localFiles.test.ts": {
+      "status": "✓",
+      "tests": 8,
+      "source": "full-test.log"
+    },
+    "src/local-app/ownerPasswordRoute.test.ts": {
+      "status": "✓",
+      "tests": 1,
+      "source": "full-test.log"
+    },
+    "src/orchestration/workerScheduler.test.ts": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/local-app/captionTextConfirmationRoute.test.ts": {
+      "status": "✓",
+      "tests": 11,
+      "source": "failed-files-retest.log"
+    },
+    "src/local-app/standaloneStudioRoute.test.ts": {
+      "status": "✓",
+      "tests": 1,
+      "source": "full-test.log"
+    },
+    "src/local-app/episodeDeletionTargets.test.ts": {
+      "status": "✓",
+      "tests": 4,
+      "source": "full-test.log"
+    },
+    "src/local-app/runtimeLogs.test.ts": {
+      "status": "✓",
+      "tests": 4,
+      "source": "full-test.log"
+    },
+    "src/local-app/videoTaskNetwork.test.ts": {
+      "status": "✓",
+      "tests": 12,
+      "source": "full-test.log"
+    },
+    "src/worker/videoTaskExecution.test.ts": {
+      "status": "✓",
+      "tests": 84,
+      "source": "full-test.log"
+    },
+    "src/local-app/narrationWorker.network.test.ts": {
+      "status": "✓",
+      "tests": 1,
+      "source": "full-test.log"
+    },
+    "src/local-app/providerBilling.test.ts": {
+      "status": "✓",
+      "tests": 9,
+      "source": "full-test.log"
+    },
+    "src/local-app/runtimeRequestLog.test.ts": {
+      "status": "✓",
+      "tests": 1,
+      "source": "full-test.log"
+    },
+    "src/worker/officialVideoErrors.test.ts": {
+      "status": "✓",
+      "tests": 9,
+      "source": "full-test.log"
+    },
+    "src/local-app/localRoute.test.ts": {
+      "status": "✓",
+      "tests": 5,
+      "source": "full-test.log"
+    },
+    "src/local-app/narrationReceiptBoundary.test.ts": {
+      "status": "✓",
+      "tests": 4,
+      "source": "full-test.log"
+    },
+    "src/local-app/manualVerification.test.ts": {
+      "status": "✓",
+      "tests": 7,
+      "source": "full-test.log"
+    },
+    "src/local-app/accountDirectoryCleanup.test.ts": {
+      "status": "✓",
+      "tests": 3,
+      "source": "full-test.log"
+    },
+    "scripts/runtime/services.test.mjs": {
+      "status": "✓",
+      "tests": 7,
+      "source": "full-test.log"
+    },
+    "src/worker/officialVideoProvider.test.ts": {
+      "status": "✓",
+      "tests": 8,
+      "source": "full-test.log"
+    },
+    "scripts/runtime/application.test.mjs": {
+      "status": "✓",
+      "tests": 7,
+      "source": "failed-files-retest.log"
+    },
+    "scripts/runtime/start.test.mjs": {
+      "status": "✓",
+      "tests": 3,
+      "source": "full-test.log"
+    },
+    "src/local-app/secretInventory.test.ts": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/worker/visualAssetExecutor.test.ts": {
+      "status": "✓",
+      "tests": 1,
+      "source": "full-test.log"
+    },
+    "src/local-app/nativeHealth.test.ts": {
+      "status": "✓",
+      "tests": 7,
+      "source": "full-test.log"
+    },
+    "src/local-app/historyEpisodeDeletion.test.ts": {
+      "status": "✓",
+      "tests": 1,
+      "source": "full-test.log"
+    },
+    "src/local-app/providerModels.test.ts": {
+      "status": "✓",
+      "tests": 3,
+      "source": "full-test.log"
+    },
+    "src/local-app/speechSampleCache.test.ts": {
+      "status": "✓",
+      "tests": 1,
+      "source": "full-test.log"
+    },
+    "scripts/runtime/keychainReadiness.test.mjs": {
+      "status": "✓",
+      "tests": 3,
+      "source": "full-test.log"
+    },
+    "src/local-app/fixtureResources.test.ts": {
+      "status": "✓",
+      "tests": 3,
+      "source": "full-test.log"
+    },
+    "src/local-app/workspaceCallEstimate.test.ts": {
+      "status": "✓",
+      "tests": 22,
+      "source": "full-test.log"
+    },
+    "src/worker/minimaxVariants.test.ts": {
+      "status": "✓",
+      "tests": 13,
+      "source": "full-test.log"
+    },
+    "src/local-app/workspaceSearch.test.ts": {
+      "status": "✓",
+      "tests": 15,
+      "source": "full-test.log"
+    },
+    "src/local-app/workspaceExportCoverage.test.ts": {
+      "status": "✓",
+      "tests": 4,
+      "source": "full-test.log"
+    },
+    "src/local-app/catalogQuery.test.ts": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/local-app/workspaceTaskRetry.test.ts": {
+      "status": "✓",
+      "tests": 3,
+      "source": "full-test.log"
+    },
+    "src/workspaceExecution.test.ts": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/worker/pexelsVideos.test.ts": {
+      "status": "✓",
+      "tests": 1,
+      "source": "full-test.log"
+    },
+    "scripts/runtime/history-consolidation.test.mjs": {
+      "status": "✓",
+      "tests": 3,
+      "source": "full-test.log"
+    },
+    "scripts/runtime/keychain.test.mjs": {
+      "status": "✓",
+      "tests": 4,
+      "source": "full-test.log"
+    },
+    "src/local-app/storageInventory.test.ts": {
+      "status": "✓",
+      "tests": 11,
+      "source": "failed-files-retest.log"
+    },
+    "src/local-app/episodeMetrics.test.ts": {
+      "status": "✓",
+      "tests": 6,
+      "source": "full-test.log"
+    },
+    "scripts/runtime/environment.test.mjs": {
+      "status": "✓",
+      "tests": 7,
+      "source": "full-test.log"
+    },
+    "src/local-app/workerDatabase.test.ts": {
+      "status": "✓",
+      "tests": 1,
+      "source": "full-test.log"
+    },
+    "src/local-app/inputPreflight.test.ts": {
+      "status": "✓",
+      "tests": 1,
+      "source": "full-test.log"
+    },
+    "scripts/storage/reference-integrity.test.mjs": {
+      "status": "✓",
+      "tests": 10,
+      "source": "full-test.log"
+    },
+    "src/local-app/runtimeStatus.test.ts": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "src/local-app/databaseDisconnect.test.ts": {
+      "status": "✓",
+      "tests": 2,
+      "source": "full-test.log"
+    },
+    "scripts/runtime/secrets.test.mjs": {
+      "status": "✓",
+      "tests": 1,
+      "source": "full-test.log"
+    },
+    "src/local-app/mediaWorker.test.ts": {
+      "status": "✓",
+      "tests": 5,
+      "source": "full-test.log"
+    },
+    "src/local-app/databaseConfig.test.ts": {
+      "status": "✓",
+      "tests": 1,
+      "source": "full-test.log"
+    },
+    "src/orchestration/workerOutcome.test.ts": {
+      "status": "✓",
+      "tests": 1,
+      "source": "full-test.log"
+    },
+    "src/local-app/configurationCommands.test.ts": {
+      "status": "✓",
+      "tests": 1,
+      "source": "full-test.log"
+    },
+    "src/local-app/runtimeVersion.test.ts": {
+      "status": "✓",
+      "tests": 10,
+      "source": "failed-files-retest.log"
+    }
+  },
+  "note": "Per-file final evidence; runs overlap and must not be summed. One existing runtimeVersion conditional test is skipped."
+}

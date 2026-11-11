@@ -1,0 +1,3 @@
+npm notice run loop-control@0.1.0 stop
+npm notice run node scripts/stop.mjs
+本地服务已停止。

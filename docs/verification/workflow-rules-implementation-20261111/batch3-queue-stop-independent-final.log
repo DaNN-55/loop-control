@@ -1,0 +1,28 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workflowQueueStop.independent.integration.test.ts --fileParallelism=false --maxWorkers=1 --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+··x
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workflowQueueStop.independent.integration.test.ts > 48/2/42/46 independent: queue stopping rejects foreign Owners, illegal scopes, current-shot removal and read-only workspaces
+error: new row for relation "review_packages" violates check constraint "review_packages_invalidation_reason_check"
+ ❯ node_modules/pg/lib/client.js:694:17
+ ❯ src/local-app/workflowQueueStop.independent.integration.test.ts:88:3
+     86|   await expect(stop(f.owner,'bgm')).rejects.toMatchObject({code:'55000…
+     87|   await f.c.query('UPDATE local_identity.production_workspaces SET scr…
+     88|   await f.c.query('UPDATE public.review_packages SET invalidated_at=no…
+       |   ^
+     89|   await expect(stop(f.owner,'bgm')).rejects.toMatchObject({code:'55000…
+     90|   await expect(ownerTransaction(f.pool,f.owner,false,c=>c.query("UPDAT…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  18:38:57
+   Duration  6.54s (transform 420ms, setup 7ms, collect 583ms, tests 5.85s, environment 0ms, prepare 23ms)
+

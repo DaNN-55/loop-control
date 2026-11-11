@@ -1,0 +1,56 @@
+{
+  "observedAt": "2026-11-11T09:04:32.971Z",
+  "sourceAvailable": true,
+  "truncated": true,
+  "maxEntries": 200,
+  "total": 200,
+  "levels": {
+    "INFO": 0,
+    "WARN": 0,
+    "ERROR": 200
+  },
+  "sources": {
+    "运行服务": 199,
+    "数据库连接": 1
+  },
+  "knownRequestIds": 0,
+  "knownOperationIds": 0,
+  "messages": [
+    {
+      "level": "ERROR",
+      "message": "4:12:19 PM [vite] Internal server error: [本机路径]: Unexpected token, expected \"}\" (276:564)",
+      "occurredAt": null,
+      "time": "16:12:19"
+    },
+    {
+      "level": "ERROR",
+      "message": "4:12:19 PM [vite] Internal server error: [本机路径]: Unexpected token, expected \"}\" (276:564)",
+      "occurredAt": null,
+      "time": "16:12:19"
+    },
+    {
+      "level": "ERROR",
+      "message": "4:12:19 PM [vite] Internal server error: [本机路径]: Unexpected token, expected \"}\" (276:564)",
+      "occurredAt": null,
+      "time": "16:12:19"
+    },
+    {
+      "level": "ERROR",
+      "message": "4:12:19 PM [vite] Internal server error: [本机路径]: Unexpected token, expected \"}\" (276:564)",
+      "occurredAt": null,
+      "time": "16:12:19"
+    },
+    {
+      "level": "ERROR",
+      "message": "4:12:19 PM [vite] Internal server error: [本机路径]: Unexpected token, expected \"}\" (276:564)",
+      "occurredAt": null,
+      "time": "16:12:19"
+    },
+    {
+      "level": "ERROR",
+      "message": "scripts/runtime/media-root.mjs:80:63: ERROR: Could not resolve \"../../dist/local-app/local-app/mediaRootSettings.js\"",
+      "occurredAt": null,
+      "time": null
+    }
+  ]
+}

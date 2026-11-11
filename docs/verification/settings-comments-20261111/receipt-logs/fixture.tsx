@@ -1,0 +1,14 @@
+import {createRoot} from 'react-dom/client';
+import {RuntimeLogsDialog} from '../../../../src/local-app/RuntimeLogsDialog';
+import {SystemStatusDrawer} from '../../../../src/local-app/SystemStatusDrawer';
+import {setUiLocale} from '../../../../src/i18n/ui';
+import type {RuntimeStatus} from '../../../../src/observability/runtimeStatus';
+import '../../../../src/styles.css';
+import '../../../../src/ui/impeccable/foundation.css';
+import '../../../../src/ui/impeccable/surface-polish.css';
+document.title='Receipt UI verification';const params=new URLSearchParams(location.search);document.documentElement.lang=params.get('lang')==='en'?'en-US':'zh-CN';setUiLocale(params.get('lang')==='en'?'en-US':'zh-CN');document.documentElement.dataset.interface='impeccable';document.documentElement.dataset.theme=params.get('theme')==='dark'?'dark':'light';
+const at='2026-11-11T09:00:00Z';
+const entry=(level:'INFO'|'ERROR',id:string)=>({id,level,occurredAt:at,time:null,episodeId:'synthetic-episode',episodeName:'中文作品名保留',operationId:'synthetic-operation',requestId:'synthetic-request',source:'Synthetic HTTP',message:level==='INFO'?'Request responded with HTTP 200':'Request failed with HTTP 503',raw:'Synthetic raw log: 中文原文保留',sourceFile:'synthetic.log',line:1,explanation:{what:level==='INFO'?'Request responded with HTTP 200':'Request failed with HTTP 503',result:'Synthetic event; no real API or production action.'}});
+window.fetch=async()=>Response.json({observedAt:at,sourceAvailable:true,truncated:false,maxEntries:200,entries:params.get('onlyErrors')?[entry('ERROR','e')]:[entry('INFO','i'),entry('ERROR','e')]});
+const runtime={version:{state:'source_changed',backendReleaseId:'synthetic-backend',workerReleaseId:'synthetic-backend',preparedReleaseId:'synthetic-next',startedAt:at},worker:{state:'healthy',active:0,capacity:2,heartbeatAt:at,lastScanAt:at},queue:{items:[],total:0,running:0,queued:0,failed:0,blocked:0,page:1,pageSize:10},resources:{cpuPercent:21,memory:{freeBytes:4*1024**3,totalBytes:16*1024**3},systemDisk:{availableBytes:64*1024**3,totalBytes:256*1024**3,sourcePath:'/synthetic/system'},media:{state:'healthy',availableBytes:600*1024**3,totalBytes:1000*1024**3,sameVolume:false,sourcePath:'/synthetic/media',mountPath:'/synthetic',minimumFreeBytes:1024**3}},observedAt:at} as unknown as RuntimeStatus;
+createRoot(document.getElementById('root')!).render(<main className="dan-ui product-ui">{params.get('page')==='system'?<SystemStatusDrawer open onOpen={()=>{}} onClose={()=>{}} runtime={runtime} maintenance={[]} maintenanceAvailable pending={false} error="" observedAt={at} onRefresh={()=>{}} onPage={()=>{}}/>:<RuntimeLogsDialog returnFocusRef={{current:null}} onClose={()=>{}}/>}</main>);

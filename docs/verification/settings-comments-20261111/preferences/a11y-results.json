@@ -1,0 +1,106 @@
+[
+  {
+    "language": "zh",
+    "theme": "light",
+    "width": 1348,
+    "page": "profile",
+    "counts": {
+      "inapplicable": 60,
+      "incomplete": 0,
+      "passes": 28,
+      "violations": 0
+    },
+    "violations": []
+  },
+  {
+    "language": "zh",
+    "theme": "light",
+    "width": 1348,
+    "page": "storage",
+    "counts": {
+      "inapplicable": 63,
+      "incomplete": 0,
+      "passes": 25,
+      "violations": 0
+    },
+    "violations": []
+  },
+  {
+    "language": "zh",
+    "theme": "dark",
+    "width": 320,
+    "page": "profile",
+    "counts": {
+      "inapplicable": 60,
+      "incomplete": 0,
+      "passes": 28,
+      "violations": 0
+    },
+    "violations": []
+  },
+  {
+    "language": "zh",
+    "theme": "dark",
+    "width": 320,
+    "page": "storage",
+    "counts": {
+      "inapplicable": 62,
+      "incomplete": 0,
+      "passes": 26,
+      "violations": 0
+    },
+    "violations": []
+  },
+  {
+    "language": "en",
+    "theme": "light",
+    "width": 1348,
+    "page": "profile",
+    "counts": {
+      "inapplicable": 60,
+      "incomplete": 0,
+      "passes": 28,
+      "violations": 0
+    },
+    "violations": []
+  },
+  {
+    "language": "en",
+    "theme": "light",
+    "width": 1348,
+    "page": "storage",
+    "counts": {
+      "inapplicable": 63,
+      "incomplete": 0,
+      "passes": 25,
+      "violations": 0
+    },
+    "violations": []
+  },
+  {
+    "language": "en",
+    "theme": "dark",
+    "width": 320,
+    "page": "profile",
+    "counts": {
+      "inapplicable": 60,
+      "incomplete": 0,
+      "passes": 28,
+      "violations": 0
+    },
+    "violations": []
+  },
+  {
+    "language": "en",
+    "theme": "dark",
+    "width": 320,
+    "page": "storage",
+    "counts": {
+      "inapplicable": 62,
+      "incomplete": 0,
+      "passes": 26,
+      "violations": 0
+    },
+    "violations": []
+  }
+]

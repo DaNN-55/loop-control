@@ -1,0 +1,15 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/WorkspaceVisualPreparation.upload.test.tsx src/local-app/WorkspaceNarrationPanel.manual.test.tsx src/local-app/ImpeccableNavigation.test.tsx --maxWorkers=1 --fileParallelism=false
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/WorkspaceVisualPreparation.upload.test.tsx (11 tests) 587ms
+ ✓ src/local-app/WorkspaceNarrationPanel.manual.test.tsx (11 tests) 486ms
+ ✓ src/local-app/ImpeccableNavigation.test.tsx (6 tests) 1373ms
+   ✓ 待审核合并到生产单，工作台审核入口使用真实目录筛选  393ms
+
+ Test Files  3 passed (3)
+      Tests  28 passed (28)
+   Start at  21:59:43
+   Duration  5.37s (transform 577ms, setup 8ms, collect 2.22s, tests 2.45s, environment 365ms, prepare 74ms)
+

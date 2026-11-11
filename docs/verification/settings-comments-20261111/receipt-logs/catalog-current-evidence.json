@@ -1,0 +1,18 @@
+{
+  "observedAt": "2026-11-11T09:20:52.083Z",
+  "operationRow": {
+    "blocker": {
+      "code": "provider_result_unknown",
+      "detail": "Provider 请求结果未知；已消费的请求预算保留。请先核对请求账本与供应商记录，不会自动重发。",
+      "taskId": "0836c8fc-2a80-4ac4-b34b-34db62c16118",
+      "taskType": "generate_narration"
+    },
+    "episodeId": "2aefed78-4f22-472e-9e5f-2f64796bb017",
+    "actionStatus": "blocked",
+    "blockerCount": 1,
+    "workflowStep": "editing",
+    "reviewPending": false,
+    "reviewRevision": null
+  },
+  "blockedTotal": 1
+}

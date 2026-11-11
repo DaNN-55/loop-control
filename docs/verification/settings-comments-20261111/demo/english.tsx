@@ -1,0 +1,8 @@
+import{useState}from'react';import{createRoot}from'react-dom/client';
+import{ConnectionWorkspace,type ExternalConnection}from'../../../../src/connections/ConnectionWorkspace';
+import{OwnerSettingsDialog}from'../../../../src/local-app/OwnerSettingsDialog';
+import{setUiLocale,useUiLocale}from'../../../../src/i18n/ui';
+import'../../../../src/styles.css';import'../../../../src/ui/impeccable/foundation.css';import'../../../../src/ui/impeccable/surface-polish.css';
+setUiLocale('en-US');
+const data=[{id:'fixture-bailian',name:'百炼-万象 · 保留用户名称',provider:'bailian',adapter:'wan_video',status:'verified',current_version_id:'v3',description:''},{id:'fixture-tts',name:'语音',provider:'volcengine_tts',adapter:'volcengine_tts',status:'verified',current_version_id:'v1',description:''}] as ExternalConnection[];
+function Fixture(){useUiLocale();const[records,setRecords]=useState(data);return <div className="impeccable-app dan-ui product-ui"><OwnerSettingsDialog page="connections" onNavigate={()=>{}} onClose={()=>{}} returnFocusRef={{current:null}} canManageSecrets busy={false} email="synthetic@example.invalid"><section className="owner-settings-pane"><header><h2 id="connections-settings-title">Connection settings</h2></header><ConnectionWorkspace inlineEditor inlineBilling settingsLayout connections={records} onTestConnection={async()=>({ready:true,detail:'Synthetic verification passed.'})} onUpdateConnection={async value=>setRecords(items=>items.map(item=>item.id===value.connectionId?{...item,...value}:item))} onRotateConnection={async value=>{const item=records.find(item=>item.id===value.connectionId)!;return{...item};}}/></section></OwnerSettingsDialog></div>;}createRoot(document.getElementById('root')!).render(<Fixture/>);

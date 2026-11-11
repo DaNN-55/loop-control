@@ -1,0 +1,15 @@
+{
+  "liveLocks": 0,
+  "taskCount": 19,
+  "activeTasks": 0,
+  "episodeCount": 6,
+  "recycledCount": 0,
+  "settingsCount": 0,
+  "latestMigration": "160-episode-recycle-bin.sql",
+  "pid": 38293,
+  "preparedReleaseId": "fffbc7843f4c24c76c83bc72568bb657fbc80869c84cc111638712c4188cd9df",
+  "runningRelease": {
+    "id": "fffbc7843f4c24c76c83bc72568bb657fbc80869c84cc111638712c4188cd9df",
+    "root": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/fffbc7843f4c24c76c83bc72568bb657fbc80869c84cc111638712c4188cd9df"
+  }
+}

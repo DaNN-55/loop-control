@@ -1,0 +1,17 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/recycleBin.integration.test.ts --maxWorkers=1 --fileParallelism=false --reporter=verbose -t real Owner recycle|unknown and running
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ↓ src/local-app/recycleBin.integration.test.ts > quota counts real registered bytes, sweeps safe FIFO on mutation, preserves newest and oversized item
+ ✓ src/local-app/recycleBin.integration.test.ts > unknown and running work block entry; offline or changed files block restore; protected manual files survive quota 13095ms
+ ↓ src/local-app/recycleBin.integration.test.ts > hardlinked bytes are counted once and protected, account cannot orphan trash, concurrent restore has one winner
+ ✓ src/local-app/recycleBin.integration.test.ts > real Owner recycle hides catalog, survives restart and restores IDs, frozen evidence and original archive state 15393ms
+ ↓ src/local-app/recycleBin.integration.test.ts > recycle enforces Owner, CSRF, revision, durable duplicate receipts and explicit permanent confirmation
+ ↓ src/local-app/recycleBin.integration.test.ts > recycle schema applies forward without rewriting existing migration checksums
+
+ Test Files  1 passed (1)
+      Tests  2 passed | 4 skipped (6)
+   Start at  19:57:20
+   Duration  33.08s (transform 2.69s, setup 33ms, collect 3.86s, tests 28.50s, environment 0ms, prepare 150ms)
+

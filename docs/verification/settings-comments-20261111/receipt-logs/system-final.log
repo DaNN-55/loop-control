@@ -1,0 +1,11 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/SystemStatusMotion.test.tsx src/local-app/LocalSystemStatus.embedded.test.tsx src/local-app/LocalSystemStatus.test.tsx src/local-app/SystemStatusResources.test.tsx src/local-app/SystemStatusVersion.test.tsx --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+································
+
+ Test Files  5 passed (5)
+      Tests  32 passed (32)
+   Start at  17:22:24
+   Duration  2.13s (transform 242ms, setup 45ms, collect 4.84s, tests 1.29s, environment 1.66s, prepare 244ms)

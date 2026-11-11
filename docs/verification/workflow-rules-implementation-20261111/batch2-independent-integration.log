@@ -1,0 +1,47 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workspaceVisualCandidates.integration.test.ts src/local-app/workspaceSoundCandidates.integration.test.ts src/local-app/workspaceDelivery.integration.test.ts src/local-app/workflowRules.integration.test.ts --fileParallelism=false --maxWorkers=1 --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+·········x········x·xxxxxxx···
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 9 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workspaceVisualCandidates.integration.test.ts > visual generation freezes the actual source voice window instead of retained muted TTS and rejects a later route change
+TypeError: Cannot read properties of undefined (reading 'duration_seconds')
+ ❯ src/local-app/workspaceVisualCandidates.integration.test.ts:83:588
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯
+
+ FAIL  src/local-app/workspaceVisualCandidates.integration.test.ts > video generation freezes and applies the first-frame composition without changing the source image
+TypeError: Cannot read properties of undefined (reading 'composition')
+ ❯ src/local-app/workspaceVisualCandidates.integration.test.ts:193:163
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/9]⎯
+
+ FAIL  src/local-app/workspaceVisualCandidates.integration.test.ts > freezes volcengine keyframes inputs and sends the right roles to a simulated provider
+ FAIL  src/local-app/workspaceVisualCandidates.integration.test.ts > freezes volcengine references inputs and sends the right roles to a simulated provider
+ FAIL  src/local-app/workspaceVisualCandidates.integration.test.ts > freezes minimax keyframes inputs and sends the right roles to a simulated provider
+ FAIL  src/local-app/workspaceVisualCandidates.integration.test.ts > freezes minimax references inputs and sends the right roles to a simulated provider
+ FAIL  src/local-app/workspaceVisualCandidates.integration.test.ts > freezes kling keyframes inputs and sends the right roles to a simulated provider
+ FAIL  src/local-app/workspaceVisualCandidates.integration.test.ts > freezes kling references inputs and sends the right roles to a simulated provider
+ FAIL  src/local-app/workspaceVisualCandidates.integration.test.ts > freezes bailian references inputs and sends the right roles to a simulated provider
+TypeError: Cannot read properties of undefined (reading 'visual_mode')
+ ❯ src/local-app/workspaceVisualCandidates.integration.test.ts:270:35
+    268|   const taskId=requested.body.visualTasks[0].taskId;
+    269|   const snapshot=(await f.c.query('SELECT input_snapshot FROM public.t…
+    270|   expect(snapshot.media.wan_video.visual_mode).toBe(videoMode);
+       |                                   ^
+    271|   expect(snapshot.media.wan_video.visual_inputs.map((input:{role:strin…
+    272|   expect(snapshot.input_artifacts).toHaveLength(2);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/9]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  9 failed | 21 passed (30)
+   Start at  18:21:40
+   Duration  133.64s (transform 460ms, setup 11ms, collect 1.18s, tests 131.98s, environment 0ms, prepare 113ms)
+

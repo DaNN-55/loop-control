@@ -1,0 +1,16 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/episodeArchive.integration.test.ts src/local-app/episodeDeletion.integration.test.ts --maxWorkers=1 --fileParallelism=false
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/episodeDeletion.integration.test.ts (2 tests) 16632ms
+   ✓ managed=true: deletes an archived ordinary order and then its empty account through Owner HTTP, retaining deletion fences  8784ms
+   ✓ managed=false: deletes an archived ordinary order and then its empty account through Owner HTTP, retaining deletion fences  7841ms
+ ✓ src/local-app/episodeArchive.integration.test.ts (1 test) 3876ms
+   ✓ restores an owned legacy order without enabling native production; retains ownership, history and CSRF fences  3875ms
+
+ Test Files  2 passed (2)
+      Tests  3 passed (3)
+   Start at  20:18:20
+   Duration  24.29s (transform 1.72s, setup 36ms, collect 2.88s, tests 20.51s, environment 0ms, prepare 217ms)
+

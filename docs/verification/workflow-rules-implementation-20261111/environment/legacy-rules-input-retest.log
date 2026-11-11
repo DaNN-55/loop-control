@@ -1,0 +1,33 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workflowLegacyRules.integration.test.ts -t per-shot input --maxWorkers=1 --fileParallelism=false --reporter=verbose
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ↓ src/local-app/workflowLegacyRules.integration.test.ts > 48 composition revision freezes the current QC edit, fences permission/stale/running requests and preserves prior evidence
+ ↓ src/local-app/workflowLegacyRules.integration.test.ts > 48 storyboard return invalidates downstream packages while retaining the approved storyboard and immutable QC files
+ ↓ src/local-app/workflowLegacyRules.integration.test.ts > 48 a running storyboard revision blocks a QC structural return before any downstream evidence changes
+ × src/local-app/workflowLegacyRules.integration.test.ts > 48 per-shot input changes remain drafts until a new local preview is confirmed and a new review snapshot is frozen 2580ms
+   → expected undefined to be 'a51ac6b4-6444-489d-a1b8-c21a550cd71f' // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workflowLegacyRules.integration.test.ts > 48 per-shot input changes remain drafts until a new local preview is confirmed and a new review snapshot is frozen
+AssertionError: expected undefined to be 'a51ac6b4-6444-489d-a1b8-c21a550cd71f' // Object.is equality
+
+- Expected: 
+"a51ac6b4-6444-489d-a1b8-c21a550cd71f"
+
++ Received: 
+undefined
+
+ ❯ src/local-app/workflowLegacyRules.integration.test.ts:115:160
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 skipped (4)
+   Start at  18:36:50
+   Duration  3.26s (transform 419ms, setup 7ms, collect 571ms, tests 2.58s, environment 0ms, prepare 23ms)
+

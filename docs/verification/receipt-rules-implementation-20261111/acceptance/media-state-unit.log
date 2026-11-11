@@ -1,0 +1,289 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/WorkspaceAudioAudition.test.tsx src/local-app/WorkspaceSpeechSample.test.tsx src/local-app/WorkspaceSpeechSample.lifecycle.test.tsx src/local-app/WorkspaceAudioPanel.test.tsx src/local-app/WorkspaceVisualTaskStatus.test.tsx src/local-app/workspaceTaskRetry.test.ts --maxWorkers=1 --fileParallelism=false --reporter=verbose
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/WorkspaceAudioPanel.test.tsx > editing the main-voice form does not alter the native timeline until explicit apply 52ms
+ ✓ src/local-app/WorkspaceAudioPanel.test.tsx > prepares a selected shelf audio explicitly without changing connection or adding search fields 26ms
+ ✓ src/local-app/WorkspaceAudioPanel.test.tsx > shows the selected native source window and never presents partial source coverage as a whole-shot voice 5ms
+ ✓ src/local-app/WorkspaceAudioPanel.test.tsx > keeps two adopted effects on the selected shot and removes only the explicit sound instance 36ms
+ ✓ src/local-app/WorkspaceAudioPanel.test.tsx > preserves music query and historical custom description across shots without a separate purpose field 21ms
+ ✓ src/local-app/WorkspaceAudioPanel.test.tsx > explicitly adopts successive historical effects without replacing the first one 65ms
+ ✓ src/local-app/WorkspaceAudioPanel.test.tsx > registers a local MP3 and prepares a candidate without replacing the existing prompt or adopting 15ms
+ ✓ src/local-app/WorkspaceAudioPanel.test.tsx > adjusts only adopted sound effects through the native bridge 6ms
+stderr | src/local-app/WorkspaceAudioPanel.test.tsx > does not expose duplicate source extraction and preserves legacy source records
+An update to EditableWorkspaceAudioPreparation inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/local-app/WorkspaceAudioPanel.test.tsx > keeps a cleared music connection blank after switching shots and reopening 122ms
+ ✓ src/local-app/WorkspaceAudioPanel.test.tsx > presents completed-project mixing as saved facts without write controls 4ms
+ ✓ src/local-app/WorkspaceAudioPanel.test.tsx > retires sound-effect creation and default entry even when an old effect draft is stored 14ms
+ ✓ src/local-app/WorkspaceAudioPanel.test.tsx > keeps a historical failed audio preparation recoverable with frozen inputs and protects unknown results 32ms
+ ✓ src/local-app/WorkspaceAudioPanel.test.tsx > does not expose duplicate source extraction and preserves legacy source records 9ms
+ ✓ src/local-app/WorkspaceAudioPanel.test.tsx > keeps local sound-effect import and explicit preparation without search, connection or default controls 18ms
+stderr | src/local-app/WorkspaceAudioPanel.test.tsx > saves a changed music query across shots while preserving historical description and server reload
+An update to EditableWorkspaceAudioPreparation inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/local-app/WorkspaceAudioPanel.test.tsx > reads existing episode music defaults without offering refresh or default-saving controls 47ms
+ ✓ src/local-app/WorkspaceAudioPanel.test.tsx > derives editable sound candidates from intent without adopting or changing music 23ms
+ ✓ src/local-app/WorkspaceAudioPanel.test.tsx > saves a changed music query across shots while preserving historical description and server reload 15ms
+stderr | src/local-app/WorkspaceAudioPanel.test.tsx > keeps compact sound candidates directly playable with attribution and licence available
+An update to EditableWorkspaceAudioPreparation inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/local-app/WorkspaceAudioPanel.test.tsx > keeps placement and duration out of the composer before a candidate is adopted
+An update to EditableWorkspaceAudioPreparation inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/local-app/WorkspaceAudioPanel.test.tsx > blocks a new sound search while its intent is being saved 74ms
+ ✓ src/local-app/WorkspaceAudioPanel.test.tsx > keeps compact sound candidates directly playable with attribution and licence available 10ms
+ ✓ src/local-app/WorkspaceAudioPanel.test.tsx > keeps placement and duration out of the composer before a candidate is adopted 7ms
+ ✓ src/local-app/WorkspaceAudioPanel.test.tsx > toggles episode music and all effects independently while retaining input drafts 26ms
+ ✓ src/local-app/WorkspaceAudioPanel.test.tsx > keeps the provider picker focused on services and preserves provider and query after local upload 23ms
+ ✓ src/local-app/WorkspaceAudioPanel.test.tsx > waits for the user audio write before scheduling a background refresh 9ms
+ ✓ src/local-app/WorkspaceAudioPanel.test.tsx > waits for a running audio refresh and writes against its returned revision 8ms
+ ✓ src/local-app/WorkspaceAudioPanel.test.tsx > selects a current audio connection without refresh or default-saving controls 24ms
+ ✓ src/local-app/WorkspaceSpeechSample.lifecycle.test.tsx > requests the current voice after a selection change instead of replaying the cached previous voice 60ms
+ ✓ src/local-app/WorkspaceSpeechSample.lifecycle.test.tsx > does not let a late previous voice response play or unlock the current voice request 12ms
+ ✓ src/local-app/WorkspaceSpeechSample.lifecycle.test.tsx > isolates A to B to A visits, including old errors and completion 13ms
+ ✓ src/local-app/WorkspaceSpeechSample.lifecycle.test.tsx > does not reuse a player across a source selection change {"model":"another-model"} 8ms
+ ✓ src/local-app/WorkspaceSpeechSample.lifecycle.test.tsx > does not reuse a player across a source selection change {"connectionVersionId":"another-connection"} 7ms
+ ✓ src/local-app/WorkspaceSpeechSample.lifecycle.test.tsx > keeps each first synthesis explicitly confirmed and ignores an old synthesis reply 21ms
+ ✓ src/local-app/WorkspaceSpeechSample.lifecycle.test.tsx > ends client waiting on unmount without playing a late sample response 4ms
+ ✓ src/local-app/WorkspaceAudioAudition.test.tsx > plays the original media from the compact button and keeps the full player available 78ms
+ ✓ src/local-app/WorkspaceAudioAudition.test.tsx > auditions compact narration without disclosure and releases the original media on unmount 7ms
+ ✓ src/local-app/WorkspaceAudioAudition.test.tsx > keeps a compact playback failure visible and permits retrying without a hidden player 9ms
+ ✓ src/local-app/WorkspaceAudioAudition.test.tsx > seeks the original audio and updates the bar from media playback 5ms
+ ✓ src/local-app/WorkspaceAudioAudition.test.tsx > loads before seeking and resets the progress when the source changes 5ms
+stderr | src/local-app/WorkspaceSpeechSample.test.tsx > requires confirmation for the first sample and replays it at the current speed
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+ ✓ src/local-app/WorkspaceSpeechSample.test.tsx > requires confirmation for the first sample and replays it at the current speed 66ms
+ ✓ src/local-app/WorkspaceVisualTaskStatus.test.tsx > preserves task evidence and recovery actions for 'queued' 36ms
+ ✓ src/local-app/WorkspaceVisualTaskStatus.test.tsx > preserves task evidence and recovery actions for 'running' 3ms
+ ✓ src/local-app/WorkspaceVisualTaskStatus.test.tsx > preserves task evidence and recovery actions for 'not sent' 3ms
+ ✓ src/local-app/WorkspaceVisualTaskStatus.test.tsx > preserves task evidence and recovery actions for 'rejected' 2ms
+ ✓ src/local-app/WorkspaceVisualTaskStatus.test.tsx > preserves task evidence and recovery actions for 'resumable' 7ms
+ ✓ src/local-app/WorkspaceVisualTaskStatus.test.tsx > preserves task evidence and recovery actions for 'unknown submission' 4ms
+ ✓ src/local-app/WorkspaceVisualTaskStatus.test.tsx > preserves task evidence and recovery actions for 'received result unknown' 4ms
+ ✓ src/local-app/WorkspaceVisualTaskStatus.test.tsx > preserves task evidence and recovery actions for 'publication attempt zero' 5ms
+ ✓ src/local-app/WorkspaceVisualTaskStatus.test.tsx > preserves task evidence and recovery actions for 'completed' 2ms
+ ✓ src/local-app/WorkspaceVisualTaskStatus.test.tsx > preserves task evidence and recovery actions for 'superseded' 1ms
+ ✓ src/local-app/WorkspaceVisualTaskStatus.test.tsx > hides a task with an explicitly linked replacement without exposing its recovery actions 0ms
+ ✓ src/local-app/WorkspaceVisualTaskStatus.test.tsx > keeps the explicit unknown-image retry route separate from ordinary recovery 12ms
+ ✓ src/local-app/WorkspaceVisualTaskStatus.test.tsx > distinguishes unknown submission from failure and only offers a read-only reconciliation 30ms
+ ✓ src/local-app/WorkspaceVisualTaskStatus.test.tsx > held publication exposes the original attempt and reconciliation route without allowing provider retry 13ms
+stderr | src/local-app/WorkspaceVisualTaskStatus.test.tsx > narration retains unknown submission evidence and blocks another paid preparation
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+stderr | src/local-app/WorkspaceVisualTaskStatus.test.tsx > audio publication remains explicitly recoverable and never offers ordinary retry
+An update to EditableWorkspaceAudioPreparation inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/local-app/WorkspaceVisualTaskStatus.test.tsx > keeps unknown audio submission consistent between its candidate summary and task details
+An update to EditableWorkspaceAudioPreparation inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/local-app/WorkspaceVisualTaskStatus.test.tsx > keeps adopted audio separate from the status of its generating task
+An update to EditableWorkspaceAudioPreparation inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/local-app/WorkspaceVisualTaskStatus.test.tsx > does not widen audio preparation retry eligibility when its task has a different status
+An update to EditableWorkspaceAudioPreparation inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/local-app/WorkspaceVisualTaskStatus.test.tsx > preserves narration duration and local-not-sent summaries: '2.35 秒'
+An update to EditableWorkspaceNarrationPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+stderr | src/local-app/WorkspaceVisualTaskStatus.test.tsx > preserves narration duration and local-not-sent summaries: '未提交'
+An update to EditableWorkspaceNarrationPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+stderr | src/local-app/WorkspaceVisualTaskStatus.test.tsx > describes the original running narration task while the edited input is pending
+An update to EditableWorkspaceNarrationPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/Users/dan/Programs/loop-control/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /Users/dan/Programs/loop-control/src/local-app/WorkspaceSpeechSample.tsx:26:47
+    at Object.react_stack_bottom_frame (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:26001:13)
+    at runWithFiberInDEV (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListUnmount (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13316:17)
+    at commitHookPassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:13347:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16264:13)
+    at recursivelyTraversePassiveUnmountEffects (/Users/dan/Programs/loop-control/node_modules/react-dom/cjs/react-dom-client.development.js:16085:13) undefined
+
+stderr | src/local-app/WorkspaceVisualTaskStatus.test.tsx > shows a local rejection compactly and opens full details without growing the result area
+An update to ForwardRef(Button) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(Button) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/local-app/WorkspaceVisualTaskStatus.test.tsx > narration retains unknown submission evidence and blocks another paid preparation 121ms
+ ✓ src/local-app/WorkspaceVisualTaskStatus.test.tsx > audio publication remains explicitly recoverable and never offers ordinary retry 18ms
+ ✓ src/local-app/WorkspaceVisualTaskStatus.test.tsx > keeps unknown audio submission consistent between its candidate summary and task details 15ms
+ ✓ src/local-app/WorkspaceVisualTaskStatus.test.tsx > keeps adopted audio separate from the status of its generating task 13ms
+ ✓ src/local-app/WorkspaceVisualTaskStatus.test.tsx > does not widen audio preparation retry eligibility when its task has a different status 12ms
+ ✓ src/local-app/WorkspaceVisualTaskStatus.test.tsx > preserves narration duration and local-not-sent summaries: '2.35 秒' 10ms
+ ✓ src/local-app/WorkspaceVisualTaskStatus.test.tsx > preserves narration duration and local-not-sent summaries: '未提交' 8ms
+ ✓ src/local-app/WorkspaceVisualTaskStatus.test.tsx > describes the original running narration task while the edited input is pending 9ms
+ ✓ src/local-app/WorkspaceVisualTaskStatus.test.tsx > shows real image and video milestones without reporting a made-up percentage 7ms
+ ✓ src/local-app/WorkspaceVisualTaskStatus.test.tsx > shows a local rejection compactly and opens full details without growing the result area 10ms
+ ✓ src/local-app/workspaceTaskRetry.test.ts > 48/46: persisted backoff cannot offer a duplicate retry 1ms
+ ✓ src/local-app/workspaceTaskRetry.test.ts > 48/46: automatic exhaustion does not revoke a new explicit Owner intention 0ms
+ ✓ src/local-app/workspaceTaskRetry.test.ts > 48/46: invalidated input cannot retry or resume, while unknown evidence remains visible 0ms
+
+ Test Files  6 passed (6)
+      Tests  65 passed (65)
+   Start at  21:55:46
+   Duration  5.57s (transform 363ms, setup 13ms, collect 2.88s, tests 1.34s, environment 745ms, prepare 134ms)
+

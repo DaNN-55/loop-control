@@ -1,0 +1,17 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/LocalCatalogApp.connectionDrafts.test.tsx src/local-app/CompactConnectionWorkspace.test.tsx src/local-app/LocalCatalogApp.ownerSettings.test.tsx
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/CompactConnectionWorkspace.test.tsx (16 tests) 1212ms
+ ✓ src/local-app/LocalCatalogApp.connectionDrafts.test.tsx (3 tests) 1043ms
+   ✓ guards actual App Back, continues in place, and keeps only non-secret edits across leaving and returning  503ms
+ ✓ src/local-app/LocalCatalogApp.ownerSettings.test.tsx (4 tests) 1157ms
+   ✓ opens every real settings page in one frame with its actual content and restores focus  367ms
+   ✓ links connection keys to one fixed sensitive pane and global metadata back to the connection  445ms
+
+ Test Files  3 passed (3)
+      Tests  23 passed (23)
+   Start at  21:53:23
+   Duration  2.93s (transform 824ms, setup 26ms, collect 3.62s, tests 3.41s, environment 402ms, prepare 84ms)
+

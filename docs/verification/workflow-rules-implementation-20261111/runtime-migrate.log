@@ -1,0 +1,13 @@
+npm notice run loop-control@0.1.0 runtime:migrate
+npm notice run node scripts/runtime/migrate.mjs
+file:///Users/dan/Programs/loop-control/scripts/runtime/migrate.mjs:5
+for(const[name,expected]of Object.entries(versions)){if(!/^[0-9]{3}-[a-z0-9-]+\.sql$/.test(name)||sha(readFileSync(join(d.projectRoot,'db/local',name)))!==expected)throw Error('Applied migration changed; refusing to continue');}
+                                                                                                                                                                          ^
+
+Error: Applied migration changed; refusing to continue
+    at file:///Users/dan/Programs/loop-control/scripts/runtime/migrate.mjs:5:171
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+
+Node.js v24.20.0

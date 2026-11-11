@@ -1,0 +1,9 @@
+{
+  "appliedAt": "2026-11-11T10:57:01.662Z",
+  "explicitOwnerApproval": "修复历史校验并启用新流程（推荐）",
+  "version": "139-global-storyboard-planning.sql",
+  "before": "224dca6cdd1b687c058e4f7f62c90f17179606bcae79aaac08b07245b6272cfa",
+  "after": "06b128797679bfe4a04ec04584df93f573a24094b069d9d4917a5d80ecd3a777",
+  "schemaRechecked": true,
+  "productionContentChanged": false
+}

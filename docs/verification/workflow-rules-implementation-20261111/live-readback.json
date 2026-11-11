@@ -1,0 +1,20 @@
+{
+  "observedAt": "2026-11-11T10:57:46.337Z",
+  "pid": 24988,
+  "releaseMatches": true,
+  "operation": {
+    "blocker": null,
+    "episodeId": "2aefed78-4f22-472e-9e5f-2f64796bb017",
+    "actionStatus": "running",
+    "blockerCount": 0,
+    "workflowStep": "editing",
+    "reviewPending": false,
+    "reviewRevision": null,
+    "backgroundTaskCount": 1
+  },
+  "migrations": [
+    "158-workspace-unused-queued-tasks.sql",
+    "159-owned-studio-freeze-registration.sql"
+  ],
+  "readOnly": true
+}

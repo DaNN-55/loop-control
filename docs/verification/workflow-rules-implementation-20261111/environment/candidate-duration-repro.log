@@ -1,0 +1,64 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workspaceCandidates.integration.test.ts -t explicit candidate duration changes --maxWorkers=1 --fileParallelism=false --reporter=verbose
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ↓ src/local-app/workspaceCandidates.integration.test.ts > completed local speech versions stay immutable and rejecting a candidate preserves the native project
+ × src/local-app/workspaceCandidates.integration.test.ts > explicit candidate duration changes only the stable main voice and stale attempts preserve the saved edit 7086ms
+   → expected { …(4) } to deeply equal { …(4) }
+ ↓ src/local-app/workspaceCandidates.integration.test.ts > prepared old speech and changed candidate bytes cannot overwrite a newer input
+ ↓ src/local-app/workspaceCandidates.integration.test.ts > adopting actual speech expires only affected caption evidence and a late alignment cannot restore it
+ ↓ src/local-app/workspaceCandidates.integration.test.ts > new registered speech enters the existing Studio media session before relink and cannot be finalized before native save
+ ↓ src/local-app/workspaceCandidates.integration.test.ts > a saved native candidate can recover its missing adoption receipt after restart without regenerating speech
+ ↓ src/local-app/workspaceCandidates.integration.test.ts > explicit main-voice candidate adoption switches source and none atomically while preserving native sounds
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workspaceCandidates.integration.test.ts > explicit candidate duration changes only the stable main voice and stale attempts preserve the saved edit
+AssertionError: expected { …(4) } to deeply equal { …(4) }
+
+- Expected
++ Received
+
+@@ -57,11 +57,11 @@
+                "maxCharactersPerLine": 16,
+                "maxLines": 2,
+                "safeArea": "title-safe",
+                "version": "shot-caption-space/v2",
+              },
+-             "text": "原始完整口播。",
++             "text": "简短新口播。",
+              "version": "workspace-caption/v1",
+            },
+            "offsetXRatio": 0,
+            "offsetYRatio": 0.09999999999999999,
+            "slotId": "workspace-caption-shot-shot-1-slot",
+@@ -74,14 +74,14 @@
+            },
+            "visible": true,
+            "widthRatio": 0.8400000000000001,
+            "words": [
+              {
+-               "end": 2000,
++               "end": 1400,
+                "id": "narration-caption~0",
+                "start": 0,
+-               "text": "原始完整口播。",
++               "text": "简短新口播。",
+              },
+            ],
+          },
+          {
+            "anchor": "bottom-center",
+
+ ❯ src/local-app/workspaceCandidates.integration.test.ts:37:278
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 6 skipped (7)
+   Start at  18:22:54
+   Duration  8.12s (transform 631ms, setup 9ms, collect 900ms, tests 7.09s, environment 0ms, prepare 33ms)
+

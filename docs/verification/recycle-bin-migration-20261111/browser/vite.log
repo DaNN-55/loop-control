@@ -1,0 +1,214 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vite' --config docs/verification/recycle-bin-migration-20261111/browser/vite.config.mjs
+
+  VITE v7.3.6  ready in 361 ms
+
+  ➜  Local:   http://127.0.0.1:5210/
+(!) Failed to run dependency scan. Skipping dependency pre-bundling. Error:   Failed to scan for dependencies from entries:
+  /Users/dan/Programs/loop-control/index.html
+/Users/dan/Programs/loop-control/docs/architecture-map/index.html
+/Users/dan/Programs/loop-control/docs/architecture-map/template.html
+/Users/dan/Programs/loop-control/src/accounts/series-rules.prototype.html
+/Users/dan/Programs/loop-control/docs/prototypes/account-workspace-20261031/index.html
+/Users/dan/Programs/loop-control/src/local-app/connections.prototype.html
+/Users/dan/Programs/loop-control/src/local-app/logs.prototype.html
+/Users/dan/Programs/loop-control/src/local-app/owner-settings.prototype.html
+/Users/dan/Programs/loop-control/src/local-app/settings-review-v2.prototype.html
+/Users/dan/Programs/loop-control/docs/prototypes/markdown-shots-20261031/index.html
+/Users/dan/Programs/loop-control/docs/architecture/state-machine-map/index.html
+/Users/dan/Programs/loop-control/docs/reviews/workflow-rules-20261111/index.html
+/Users/dan/Programs/loop-control/docs/prototypes/generated-candidates-20261031/index.html
+/Users/dan/Programs/loop-control/docs/samples/rizhao-jinshan/storyboard-review.html
+/Users/dan/Programs/loop-control/docs/verification/account-blueprint-a-20261029/fixture.html
+/Users/dan/Programs/loop-control/docs/verification/account-rules-compact-20261101/index.html
+/Users/dan/Programs/loop-control/docs/verification/dan-ui-rollout-20261027/fixture.html
+/Users/dan/Programs/loop-control/docs/verification/detail-refinement-migration-20261110/fixture.html
+/Users/dan/Programs/loop-control/docs/verification/generated-gallery-20261031/browser-fixture.html
+/Users/dan/Programs/loop-control/docs/verification/impeccable-migration-20261028/fixture.html
+/Users/dan/Programs/loop-control/docs/verification/log-viewer-migration-20261111/theme.html
+/Users/dan/Programs/loop-control/docs/verification/owner-credentials-embedded-20261111/index.html
+/Users/dan/Programs/loop-control/docs/verification/owner-preferences-20261029/fixture.html
+/Users/dan/Programs/loop-control/docs/verification/page-consistency-20261028/fixture.html
+/Users/dan/Programs/loop-control/docs/verification/prototype-alignment-20261028/fixture.html
+/Users/dan/Programs/loop-control/docs/verification/reference-budget-20261101/index.html
+/Users/dan/Programs/loop-control/docs/verification/secret-management-a-20261029/fixture.html
+/Users/dan/Programs/loop-control/docs/verification/surface-polish-migration-20261110/fixture.html
+/Users/dan/Programs/loop-control/docs/verification/visual-audit-20261028/fixture.html
+/Users/dan/Programs/loop-control/docs/verification/recycle-bin-migration-20261111/browser/index.html
+/Users/dan/Programs/loop-control/docs/verification/script-production-v2-20261028/ui/fixture.html
+/Users/dan/Programs/loop-control/docs/verification/settings-comments-20261111/demo/english.html
+/Users/dan/Programs/loop-control/docs/verification/browser-comments-20261111/status-feedback/fixture/index.html
+
+  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNo matching export in "src/workspace/WorkspaceViews.tsx" for import "NavigationButtons"[0m
+
+    docs/verification/dan-ui-rollout-20261027/fixture.tsx:13:25:
+[37m      13 │ import {EpisodeWorkspace,[32mNavigationButtons[37m,OwnerMenu,PasswordForm}...
+         ╵                          [32m~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNo matching export in "src/workspace/WorkspaceViews.tsx" for import "NavigationButtons"[0m
+
+    docs/verification/impeccable-migration-20261028/fixture.tsx:13:25:
+[37m      13 │ import {EpisodeWorkspace,[32mNavigationButtons[37m,OwnerMenu,PasswordForm}...
+         ╵                          [32m~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNo matching export in "src/workspace/WorkspaceViews.tsx" for import "NavigationButtons"[0m
+
+    docs/verification/page-consistency-20261028/fixture.tsx:13:25:
+[37m      13 │ import {EpisodeWorkspace,[32mNavigationButtons[37m,OwnerMenu,PasswordForm}...
+         ╵                          [32m~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNo matching export in "src/workspace/WorkspaceViews.tsx" for import "NavigationButtons"[0m
+
+    docs/verification/prototype-alignment-20261028/fixture.tsx:13:25:
+[37m      13 │ import {EpisodeWorkspace,[32mNavigationButtons[37m,OwnerMenu,PasswordForm}...
+         ╵                          [32m~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNo matching export in "src/workspace/WorkspaceViews.tsx" for import "NavigationButtons"[0m
+
+    docs/verification/visual-audit-20261028/fixture.tsx:13:25:
+[37m      13 │ import {EpisodeWorkspace,[32mNavigationButtons[37m,OwnerMenu,PasswordForm}...
+         ╵                          [32m~~~~~~~~~~~~~~~~~[0m
+
+
+    at failureErrorWithLog (/Users/dan/Programs/loop-control/node_modules/esbuild/lib/main.js:1752:15)
+    at /Users/dan/Programs/loop-control/node_modules/esbuild/lib/main.js:1211:25
+    at runOnEndCallbacks (/Users/dan/Programs/loop-control/node_modules/esbuild/lib/main.js:1592:45)
+    at buildResponseToResult (/Users/dan/Programs/loop-control/node_modules/esbuild/lib/main.js:1209:7)
+    at /Users/dan/Programs/loop-control/node_modules/esbuild/lib/main.js:1221:9
+    at new Promise (<anonymous>)
+    at requestCallbacks.on-end (/Users/dan/Programs/loop-control/node_modules/esbuild/lib/main.js:1220:54)
+    at handleRequest (/Users/dan/Programs/loop-control/node_modules/esbuild/lib/main.js:911:17)
+    at handleIncomingPacket (/Users/dan/Programs/loop-control/node_modules/esbuild/lib/main.js:936:7)
+    at Socket.readFromStdout (/Users/dan/Programs/loop-control/node_modules/esbuild/lib/main.js:864:7)
+7:56:54 PM [vite] (client) ✨ new dependencies optimized: react-dom/client, lucide-react, react-aria-components, @untitledui/icons, tailwind-merge
+7:56:54 PM [vite] (client) ✨ optimized dependencies changed. reloading
+7:57:05 PM [vite] docs/verification/recycle-bin-migration-20261111/browser/vite.config.mjs changed, restarting server...
+7:57:06 PM [vite] server restarted.
+7:57:32 PM [vite] (client) hmr update /docs/verification/recycle-bin-migration-20261111/browser/harness.tsx
+7:57:33 PM [vite] (client) hmr invalidate /docs/verification/recycle-bin-migration-20261111/browser/harness.tsx Could not Fast Refresh ("true" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+7:57:33 PM [vite] (client) page reload docs/verification/recycle-bin-migration-20261111/browser/harness.tsx
+7:57:48 PM [vite] (client) hmr update /docs/verification/recycle-bin-migration-20261111/browser/harness.tsx, /src/local-app/RecycleBinPanel.tsx, /src/local-app/OwnerSettingsDialog.tsx, /src/workspace/EpisodeDeletionScope.tsx, /src/local-app/LocalDeletionRecovery.tsx
+7:57:48 PM [vite] (client) hmr invalidate /docs/verification/recycle-bin-migration-20261111/browser/harness.tsx Could not Fast Refresh ("true" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+7:57:48 PM [vite] (client) page reload docs/verification/recycle-bin-migration-20261111/browser/harness.tsx
+7:57:48 PM [vite] (client) hmr invalidate /src/local-app/OwnerSettingsDialog.tsx Could not Fast Refresh ("ownerSettingsPages" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+7:57:48 PM [vite] (client) hmr update /docs/verification/recycle-bin-migration-20261111/browser/harness.tsx
+7:58:49 PM [vite] (client) hmr update /src/local-app/RecycleBinPanel.tsx
+8:00:16 PM [vite] (client) hmr update /src/local-app/RecycleBinPanel.tsx
+8:21:25 PM [vite] (client) page reload docs/reviews/workflow-rules-20261111/index.html
+8:22:12 PM [vite] (client) page reload docs/reviews/workflow-rules-20261111/index.html
+8:22:43 PM [vite] (client) page reload docs/reviews/workflow-rules-20261111/index.html
+9:02:23 PM [vite] (client) hmr update /src/local-app/RecycleBinPanel.tsx
+9:02:23 PM [vite] (client) hmr update /docs/verification/recycle-bin-migration-20261111/browser/harness.tsx, /src/local-app/RecycleBinPanel.tsx, /src/local-app/OwnerSettingsDialog.tsx, /src/workspace/EpisodeDeletionScope.tsx, /src/local-app/LocalDeletionRecovery.tsx
+9:02:23 PM [vite] (client) hmr update /src/local-app/recycle-bin.css
+9:03:35 PM [vite] (client) hmr update /src/local-app/recycle-bin.css
+9:03:56 PM [vite] (client) hmr update /src/local-app/recycle-bin.css
+9:04:34 PM [vite] (client) page reload src/local-app/connection-detail-v4.prototype.html
+9:04:45 PM [vite] (client) hmr update /src/local-app/recycle-bin.css
+9:05:21 PM [vite] (client) page reload docs/verification/recycle-bin-compact-20261111/before.html
+9:05:21 PM [vite] (client) hmr update /docs/verification/recycle-bin-compact-20261111/before.tsx
+9:05:21 PM [vite] (client) hmr invalidate /docs/verification/recycle-bin-compact-20261111/before.tsx Could not Fast Refresh ("true" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:05:21 PM [vite] (client) page reload docs/verification/recycle-bin-compact-20261111/before.tsx
+9:07:34 PM [vite] (client) hmr update /src/local-app/connection-detail-v4.prototype.css
+9:08:22 PM [vite] (client) hmr update /src/local-app/connection-detail-v4.prototype.tsx
+9:08:22 PM [vite] (client) hmr invalidate /src/local-app/connection-detail-v4.prototype.tsx Could not Fast Refresh ("true" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:08:22 PM [vite] (client) page reload src/local-app/connection-detail-v4.prototype.tsx
+9:08:56 PM [vite] (client) hmr update /src/local-app/connection-detail-v4.prototype.tsx
+9:08:56 PM [vite] (client) hmr invalidate /src/local-app/connection-detail-v4.prototype.tsx Could not Fast Refresh ("true" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:08:56 PM [vite] (client) page reload src/local-app/connection-detail-v4.prototype.tsx
+9:09:11 PM [vite] (client) hmr update /src/local-app/RecycleBinPanel.tsx
+9:09:11 PM [vite] (client) hmr update /docs/verification/recycle-bin-migration-20261111/browser/harness.tsx, /src/local-app/RecycleBinPanel.tsx, /src/local-app/OwnerSettingsDialog.tsx, /src/workspace/EpisodeDeletionScope.tsx, /src/local-app/LocalDeletionRecovery.tsx, /src/ui/HelpTip.tsx
+9:09:11 PM [vite] (client) hmr update /src/local-app/recycle-bin.css
+9:09:11 PM [vite] (client) hmr invalidate /docs/verification/recycle-bin-migration-20261111/browser/harness.tsx Could not Fast Refresh ("true" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:09:11 PM [vite] (client) page reload docs/verification/recycle-bin-migration-20261111/browser/harness.tsx
+9:09:11 PM [vite] (client) hmr invalidate /src/local-app/OwnerSettingsDialog.tsx Could not Fast Refresh ("ownerSettingsPages" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:09:11 PM [vite] (client) hmr update /docs/verification/recycle-bin-migration-20261111/browser/harness.tsx, /docs/verification/recycle-bin-compact-20261111/before.tsx
+9:09:54 PM [vite] (client) hmr update /src/local-app/connection-detail-v4.prototype.tsx
+9:09:54 PM [vite] (client) hmr invalidate /src/local-app/connection-detail-v4.prototype.tsx Could not Fast Refresh ("true" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:09:54 PM [vite] (client) page reload src/local-app/connection-detail-v4.prototype.tsx
+9:10:45 PM [vite] (client) hmr update /src/local-app/connection-detail-v4.prototype.tsx
+9:10:45 PM [vite] (client) hmr invalidate /src/local-app/connection-detail-v4.prototype.tsx Could not Fast Refresh ("true" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:10:45 PM [vite] (client) page reload src/local-app/connection-detail-v4.prototype.tsx
+9:10:51 PM [vite] (client) hmr update /src/local-app/recycle-bin.css
+9:13:01 PM [vite] (client) hmr update /src/local-app/connection-detail-v4.prototype.tsx
+9:13:01 PM [vite] (client) hmr invalidate /src/local-app/connection-detail-v4.prototype.tsx Could not Fast Refresh ("true" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:13:01 PM [vite] (client) page reload src/local-app/connection-detail-v4.prototype.tsx
+9:17:24 PM [vite] (client) page reload docs/reviews/workflow-rules-20261111/index.html
+9:35:41 PM [vite] (client) page reload docs/verification/compact-connection-migration-20261111/secrets/index.html
+9:36:33 PM [vite] (client) hmr update /src/local-app/SecretDetailPane.css
+9:37:35 PM [vite] (client) hmr update /src/local-app/SecretDetailPane.tsx
+9:37:59 PM [vite] (client) hmr update /src/local-app/SecretDetailPane.css
+9:37:59 PM [vite] (client) hmr update /src/local-app/secret-management.css
+9:39:03 PM [vite] (client) hmr update /src/local-app/SecretDetailPane.tsx
+9:39:14 PM [vite] (client) hmr update /docs/verification/recycle-bin-migration-20261111/browser/harness.tsx, /src/local-app/RecycleBinPanel.tsx, /src/local-app/OwnerSettingsDialog.tsx, /src/workspace/EpisodeDeletionScope.tsx, /src/local-app/LocalDeletionRecovery.tsx, /src/ui/HelpTip.tsx, /docs/verification/compact-connection-migration-20261111/secrets/harness.tsx, /src/local-app/LocalSecretAdministration.tsx, /src/local-app/SecretDetailPane.tsx, /src/ui/dan-ui/components/base/select/select-native.tsx
+9:39:14 PM [vite] (client) hmr invalidate /src/local-app/OwnerSettingsDialog.tsx Could not Fast Refresh ("ownerSettingsPages" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:39:14 PM [vite] (client) hmr update /docs/verification/recycle-bin-migration-20261111/browser/harness.tsx, /docs/verification/recycle-bin-compact-20261111/before.tsx, /docs/verification/compact-connection-migration-20261111/secrets/harness.tsx
+9:39:14 PM [vite] (client) hmr invalidate /docs/verification/compact-connection-migration-20261111/secrets/harness.tsx Could not Fast Refresh ("true" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:39:14 PM [vite] (client) page reload docs/verification/compact-connection-migration-20261111/secrets/harness.tsx
+9:41:40 PM [vite] (client) page reload docs/verification/compact-connection-migration-20261111/browser/index.html
+9:42:35 PM [vite] (client) hmr update /src/local-app/compact-connections.css
+9:42:56 PM [vite] (client) hmr update /src/local-app/CompactConnectionWorkspace.tsx
+9:43:35 PM [vite] (client) hmr update /src/connections/ConnectionModelsDialog.tsx
+9:43:35 PM [vite] (client) hmr update /src/local-app/compact-connections.css
+9:44:01 PM [vite] (client) hmr update /src/connections/ConnectionModelsDialog.tsx
+9:44:49 PM [vite] (client) hmr update /src/local-app/RecycleBinPanel.tsx, /src/local-app/LocalDeletionRecovery.tsx, /src/local-app/LocalSecretAdministration.tsx, /src/local-app/SecretDetailPane.tsx, /src/local-app/LocalConnectionsPanel.tsx, /src/local-app/CompactConnectionWorkspace.tsx
+9:45:18 PM [vite] (client) hmr update /src/local-app/compact-connections.css
+9:45:18 PM [vite] (client) hmr update /docs/verification/recycle-bin-migration-20261111/browser/harness.tsx, /src/local-app/RecycleBinPanel.tsx, /src/local-app/OwnerSettingsDialog.tsx, /src/workspace/EpisodeDeletionScope.tsx, /src/local-app/LocalDeletionRecovery.tsx, /src/ui/HelpTip.tsx, /docs/verification/compact-connection-migration-20261111/secrets/harness.tsx, /src/local-app/LocalSecretAdministration.tsx, /src/local-app/SecretDetailPane.tsx, /src/ui/dan-ui/components/base/select/select-native.tsx, /docs/verification/compact-connection-migration-20261111/browser/fixture.tsx, /src/local-app/ConnectionsSettingsDialog.tsx, /src/local-app/LocalConnectionsPanel.tsx, /src/local-app/CompactConnectionWorkspace.tsx, /src/connections/ConnectionWorkspace.tsx, /src/connections/ConnectionModelsDialog.tsx, /src/local-app/WorkspaceDraft.tsx, /src/connections/ConnectionBillingDialog.tsx, /src/connections/ConnectionDraftLeaveDialog.tsx, /src/connections/ConnectionTestButton.tsx
+9:45:18 PM [vite] (client) hmr update /docs/verification/recycle-bin-migration-20261111/browser/harness.tsx, /src/local-app/RecycleBinPanel.tsx, /src/local-app/OwnerSettingsDialog.tsx, /src/workspace/EpisodeDeletionScope.tsx, /src/local-app/LocalDeletionRecovery.tsx, /src/ui/HelpTip.tsx, /docs/verification/compact-connection-migration-20261111/secrets/harness.tsx, /src/local-app/LocalSecretAdministration.tsx, /src/local-app/SecretDetailPane.tsx, /src/ui/dan-ui/components/base/select/select-native.tsx, /docs/verification/compact-connection-migration-20261111/browser/fixture.tsx, /src/local-app/ConnectionsSettingsDialog.tsx, /src/local-app/LocalConnectionsPanel.tsx, /src/local-app/CompactConnectionWorkspace.tsx, /src/connections/ConnectionWorkspace.tsx, /src/connections/ConnectionModelsDialog.tsx, /src/local-app/WorkspaceDraft.tsx, /src/connections/ConnectionBillingDialog.tsx, /src/connections/ConnectionDraftLeaveDialog.tsx, /src/connections/ConnectionTestButton.tsx
+9:45:18 PM [vite] (client) hmr invalidate /src/local-app/OwnerSettingsDialog.tsx Could not Fast Refresh ("ownerSettingsPages" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:45:18 PM [vite] (client) hmr update /docs/verification/recycle-bin-migration-20261111/browser/harness.tsx, /docs/verification/recycle-bin-compact-20261111/before.tsx, /docs/verification/compact-connection-migration-20261111/secrets/harness.tsx, /docs/verification/compact-connection-migration-20261111/browser/fixture.tsx
+9:45:18 PM [vite] (client) hmr invalidate /docs/verification/compact-connection-migration-20261111/browser/fixture.tsx Could not Fast Refresh ("true" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:45:18 PM [vite] (client) page reload docs/verification/compact-connection-migration-20261111/browser/fixture.tsx
+9:45:18 PM [vite] (client) hmr invalidate /src/local-app/WorkspaceDraft.tsx Could not Fast Refresh ("useWorkspaceDraft" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:45:18 PM [vite] (client) hmr update /src/local-app/CompactConnectionWorkspace.tsx, /src/connections/ConnectionWorkspace.tsx, /src/connections/ConnectionModelsDialog.tsx
+9:46:41 PM [vite] (client) hmr update /src/local-app/SecretDetailPane.tsx
+9:46:41 PM [vite] (client) hmr update /src/local-app/CompactConnectionWorkspace.tsx
+9:47:19 PM [vite] (client) hmr update /src/local-app/CompactConnectionWorkspace.tsx
+9:47:19 PM [vite] (client) hmr update /src/local-app/ConnectionsSettingsDialog.tsx
+9:47:19 PM [vite] (client) hmr update /docs/verification/recycle-bin-migration-20261111/browser/harness.tsx, /src/local-app/RecycleBinPanel.tsx, /src/local-app/OwnerSettingsDialog.tsx, /src/workspace/EpisodeDeletionScope.tsx, /src/local-app/LocalDeletionRecovery.tsx, /src/ui/HelpTip.tsx, /docs/verification/compact-connection-migration-20261111/secrets/harness.tsx, /src/local-app/LocalSecretAdministration.tsx, /src/local-app/SecretDetailPane.tsx, /src/ui/dan-ui/components/base/select/select-native.tsx, /docs/verification/compact-connection-migration-20261111/browser/fixture.tsx, /src/local-app/ConnectionsSettingsDialog.tsx, /src/local-app/LocalConnectionsPanel.tsx, /src/local-app/CompactConnectionWorkspace.tsx, /src/connections/ConnectionWorkspace.tsx, /src/connections/ConnectionModelsDialog.tsx, /src/local-app/WorkspaceDraft.tsx, /src/connections/ConnectionBillingDialog.tsx, /src/connections/ConnectionDraftLeaveDialog.tsx, /src/connections/ConnectionTestButton.tsx
+9:47:19 PM [vite] (client) hmr invalidate /src/local-app/OwnerSettingsDialog.tsx Could not Fast Refresh ("ownerSettingsPages" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:47:19 PM [vite] (client) hmr update /docs/verification/recycle-bin-migration-20261111/browser/harness.tsx, /docs/verification/recycle-bin-compact-20261111/before.tsx, /docs/verification/compact-connection-migration-20261111/secrets/harness.tsx, /docs/verification/compact-connection-migration-20261111/browser/fixture.tsx
+9:47:19 PM [vite] (client) hmr invalidate /docs/verification/compact-connection-migration-20261111/browser/fixture.tsx Could not Fast Refresh ("true" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:47:19 PM [vite] (client) page reload docs/verification/compact-connection-migration-20261111/browser/fixture.tsx
+9:48:58 PM [vite] (client) hmr update /src/local-app/CompactConnectionWorkspace.tsx
+9:50:47 PM [vite] (client) hmr update /src/local-app/CompactConnectionWorkspace.tsx
+9:52:44 PM [vite] (client) hmr update /src/local-app/CompactConnectionWorkspace.tsx
+9:53:23 PM [vite] (client) hmr update /src/local-app/CompactConnectionWorkspace.tsx
+9:54:24 PM [vite] (client) hmr update /docs/verification/recycle-bin-migration-20261111/browser/harness.tsx, /src/local-app/RecycleBinPanel.tsx, /src/local-app/OwnerSettingsDialog.tsx, /src/workspace/EpisodeDeletionScope.tsx, /src/local-app/LocalDeletionRecovery.tsx, /src/ui/HelpTip.tsx, /docs/verification/compact-connection-migration-20261111/secrets/harness.tsx, /src/local-app/LocalSecretAdministration.tsx, /src/local-app/SecretDetailPane.tsx, /src/ui/dan-ui/components/base/select/select-native.tsx, /docs/verification/compact-connection-migration-20261111/browser/fixture.tsx, /src/local-app/ConnectionsSettingsDialog.tsx, /src/local-app/LocalConnectionsPanel.tsx, /src/local-app/CompactConnectionWorkspace.tsx, /src/connections/ConnectionWorkspace.tsx, /src/connections/ConnectionModelsDialog.tsx, /src/local-app/WorkspaceDraft.tsx, /src/connections/ConnectionBillingDialog.tsx, /src/connections/ConnectionDraftLeaveDialog.tsx, /src/connections/ConnectionTestButton.tsx
+9:54:24 PM [vite] (client) hmr invalidate /src/local-app/OwnerSettingsDialog.tsx Could not Fast Refresh ("ownerSettingsPages" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:54:24 PM [vite] (client) hmr update /docs/verification/recycle-bin-migration-20261111/browser/harness.tsx, /docs/verification/recycle-bin-compact-20261111/before.tsx, /docs/verification/compact-connection-migration-20261111/secrets/harness.tsx, /docs/verification/compact-connection-migration-20261111/browser/fixture.tsx
+9:54:24 PM [vite] (client) hmr invalidate /docs/verification/compact-connection-migration-20261111/browser/fixture.tsx Could not Fast Refresh ("true" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:54:24 PM [vite] (client) page reload docs/verification/compact-connection-migration-20261111/browser/fixture.tsx
+9:54:24 PM [vite] (client) hmr invalidate /src/local-app/WorkspaceDraft.tsx Could not Fast Refresh ("useWorkspaceDraft" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:54:24 PM [vite] (client) hmr update /src/local-app/CompactConnectionWorkspace.tsx, /src/connections/ConnectionWorkspace.tsx, /src/connections/ConnectionModelsDialog.tsx
+9:54:53 PM [vite] (client) hmr update /src/local-app/RecycleBinPanel.tsx, /src/local-app/LocalDeletionRecovery.tsx, /src/local-app/LocalSecretAdministration.tsx, /src/local-app/SecretDetailPane.tsx, /src/local-app/LocalConnectionsPanel.tsx, /src/local-app/CompactConnectionWorkspace.tsx
+9:58:14 PM [vite] (client) hmr update /src/ui/dan-ui/components/base/input/input.tsx
+9:58:14 PM [vite] (client) hmr update /docs/verification/recycle-bin-migration-20261111/browser/harness.tsx, /src/local-app/RecycleBinPanel.tsx, /src/local-app/OwnerSettingsDialog.tsx, /src/workspace/EpisodeDeletionScope.tsx, /src/local-app/LocalDeletionRecovery.tsx, /src/ui/HelpTip.tsx, /docs/verification/compact-connection-migration-20261111/secrets/harness.tsx, /src/local-app/LocalSecretAdministration.tsx, /src/local-app/SecretDetailPane.tsx, /src/ui/dan-ui/components/base/select/select-native.tsx, /docs/verification/compact-connection-migration-20261111/browser/fixture.tsx, /src/local-app/ConnectionsSettingsDialog.tsx, /src/local-app/LocalConnectionsPanel.tsx, /src/local-app/CompactConnectionWorkspace.tsx, /src/connections/ConnectionWorkspace.tsx, /src/connections/ConnectionModelsDialog.tsx, /src/local-app/WorkspaceDraft.tsx, /src/connections/ConnectionBillingDialog.tsx, /src/connections/ConnectionDraftLeaveDialog.tsx, /src/connections/ConnectionTestButton.tsx
+9:58:37 PM [vite] (client) hmr update /src/local-app/RecycleBinPanel.tsx, /src/local-app/LocalDeletionRecovery.tsx, /src/local-app/LocalSecretAdministration.tsx, /src/local-app/SecretDetailPane.tsx, /src/local-app/LocalConnectionsPanel.tsx, /src/local-app/CompactConnectionWorkspace.tsx
+9:58:37 PM [vite] (client) hmr update /src/ui/dan-ui/components/base/input/input.tsx
+10:00:12 PM [vite] (client) hmr update /src/local-app/CompactConnectionWorkspace.tsx
+10:00:12 PM [vite] (client) hmr update /src/local-app/compact-connections.css
+10:01:03 PM [vite] (client) hmr update /docs/verification/compact-connection-migration-20261111/browser/fixture.tsx
+10:01:03 PM [vite] (client) hmr invalidate /docs/verification/compact-connection-migration-20261111/browser/fixture.tsx Could not Fast Refresh ("true" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+10:01:03 PM [vite] (client) page reload docs/verification/compact-connection-migration-20261111/browser/fixture.tsx
+10:01:58 PM [vite] (client) hmr update /src/local-app/RecycleBinPanel.tsx, /src/local-app/LocalDeletionRecovery.tsx, /src/local-app/LocalSecretAdministration.tsx, /src/local-app/SecretDetailPane.tsx, /src/local-app/LocalConnectionsPanel.tsx, /src/local-app/CompactConnectionWorkspace.tsx
+10:06:38 PM [vite] (client) page reload docs/reviews/workflow-rules-20261111/index.html
+10:15:43 PM [vite] (client) hmr update /src/local-app/LocalSecretAdministration.tsx
+10:15:43 PM [vite] (client) hmr update /src/local-app/secret-management.css
+10:15:43 PM [vite] (client) hmr update /docs/verification/compact-connection-migration-20261111/secrets/harness.tsx, /docs/verification/recycle-bin-migration-20261111/browser/harness.tsx, /src/local-app/RecycleBinPanel.tsx, /src/local-app/OwnerSettingsDialog.tsx, /src/workspace/EpisodeDeletionScope.tsx, /src/local-app/LocalDeletionRecovery.tsx, /src/ui/HelpTip.tsx, /src/local-app/LocalSecretAdministration.tsx, /src/local-app/SecretDetailPane.tsx, /src/ui/dan-ui/components/base/select/select-native.tsx, /docs/verification/compact-connection-migration-20261111/browser/fixture.tsx, /src/local-app/ConnectionsSettingsDialog.tsx, /src/local-app/LocalConnectionsPanel.tsx, /src/local-app/CompactConnectionWorkspace.tsx, /src/connections/ConnectionWorkspace.tsx, /src/connections/ConnectionModelsDialog.tsx, /src/local-app/WorkspaceDraft.tsx, /src/connections/ConnectionBillingDialog.tsx, /src/connections/ConnectionDraftLeaveDialog.tsx, /src/connections/ConnectionTestButton.tsx, /src/ui/dan-ui/components/base/input/input.tsx
+10:16:36 PM [vite] (client) hmr update /docs/verification/compact-connection-migration-20261111/secrets/harness.tsx
+10:18:17 PM [vite] (client) hmr update /src/local-app/LocalSecretAdministration.tsx
+10:18:17 PM [vite] (client) hmr update /docs/verification/compact-connection-migration-20261111/secrets/harness.tsx, /docs/verification/recycle-bin-migration-20261111/browser/harness.tsx, /src/local-app/RecycleBinPanel.tsx, /src/local-app/OwnerSettingsDialog.tsx, /src/workspace/EpisodeDeletionScope.tsx, /src/local-app/LocalDeletionRecovery.tsx, /src/ui/HelpTip.tsx, /src/local-app/LocalSecretAdministration.tsx, /src/local-app/SecretDetailPane.tsx, /src/ui/dan-ui/components/base/select/select-native.tsx, /docs/verification/compact-connection-migration-20261111/browser/fixture.tsx, /src/local-app/ConnectionsSettingsDialog.tsx, /src/local-app/LocalConnectionsPanel.tsx, /src/local-app/CompactConnectionWorkspace.tsx, /src/connections/ConnectionWorkspace.tsx, /src/connections/ConnectionModelsDialog.tsx, /src/local-app/WorkspaceDraft.tsx, /src/connections/ConnectionBillingDialog.tsx, /src/connections/ConnectionDraftLeaveDialog.tsx, /src/connections/ConnectionTestButton.tsx, /src/ui/dan-ui/components/base/input/input.tsx
+10:18:17 PM [vite] (client) hmr invalidate /docs/verification/compact-connection-migration-20261111/secrets/harness.tsx Could not Fast Refresh ("true" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+10:18:17 PM [vite] (client) page reload docs/verification/compact-connection-migration-20261111/secrets/harness.tsx
+10:18:17 PM [vite] (client) hmr invalidate /src/local-app/OwnerSettingsDialog.tsx Could not Fast Refresh ("ownerSettingsPages" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+10:18:17 PM [vite] (client) hmr update /docs/verification/recycle-bin-migration-20261111/browser/harness.tsx, /docs/verification/recycle-bin-compact-20261111/before.tsx, /docs/verification/compact-connection-migration-20261111/secrets/harness.tsx, /docs/verification/compact-connection-migration-20261111/browser/fixture.tsx
+10:19:30 PM [vite] (client) hmr update /docs/verification/compact-connection-migration-20261111/secrets/harness.tsx, /docs/verification/recycle-bin-migration-20261111/browser/harness.tsx, /src/local-app/RecycleBinPanel.tsx, /src/local-app/OwnerSettingsDialog.tsx, /src/workspace/EpisodeDeletionScope.tsx, /src/local-app/LocalDeletionRecovery.tsx, /src/ui/HelpTip.tsx, /src/local-app/LocalSecretAdministration.tsx, /src/local-app/SecretDetailPane.tsx, /src/ui/dan-ui/components/base/select/select-native.tsx, /docs/verification/compact-connection-migration-20261111/browser/fixture.tsx, /src/local-app/ConnectionsSettingsDialog.tsx, /src/local-app/LocalConnectionsPanel.tsx, /src/local-app/CompactConnectionWorkspace.tsx, /src/connections/ConnectionWorkspace.tsx, /src/connections/ConnectionModelsDialog.tsx, /src/local-app/WorkspaceDraft.tsx, /src/connections/ConnectionBillingDialog.tsx, /src/connections/ConnectionDraftLeaveDialog.tsx, /src/connections/ConnectionTestButton.tsx, /src/ui/dan-ui/components/base/input/input.tsx
+10:19:30 PM [vite] (client) hmr invalidate /docs/verification/compact-connection-migration-20261111/secrets/harness.tsx Could not Fast Refresh ("true" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+10:19:30 PM [vite] (client) page reload docs/verification/compact-connection-migration-20261111/secrets/harness.tsx
+10:19:30 PM [vite] (client) hmr invalidate /src/local-app/OwnerSettingsDialog.tsx Could not Fast Refresh ("ownerSettingsPages" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+10:19:30 PM [vite] (client) hmr update /docs/verification/recycle-bin-migration-20261111/browser/harness.tsx, /docs/verification/recycle-bin-compact-20261111/before.tsx, /docs/verification/compact-connection-migration-20261111/secrets/harness.tsx, /docs/verification/compact-connection-migration-20261111/browser/fixture.tsx
+10:27:51 PM [vite] (client) page reload docs/reviews/workflow-rules-20261111/index.html

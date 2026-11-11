@@ -1,0 +1,21 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/runtimeVersion.test.ts src/local-app/runtimeVersion.legacy.test.ts --maxWorkers=1 --fileParallelism=false --reporter=verbose
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/runtimeVersion.test.ts > reports the actual pinned identities and startup time from verified release files 906ms
+ ✓ src/local-app/runtimeVersion.test.ts > development edits are pending updates while the pinned version remains valid 554ms
+ ✓ src/local-app/runtimeVersion.test.ts > preparing another release never relabels the running backend and worker 1031ms
+ ✓ src/local-app/runtimeVersion.test.ts > damaged running files override pending development changes and do not expose internal paths 520ms
+ ✓ src/local-app/runtimeVersion.test.ts > a worker pinned to another release is a mismatch even with a healthy prepared version 497ms
+ ✓ src/local-app/runtimeVersion.test.ts > does not guess a legacy process identity from the currently prepared manifest 510ms
+ ✓ src/local-app/runtimeVersion.test.ts > preparation in progress and missing prepared pointers preserve the running identity 497ms
+ ✓ src/local-app/runtimeVersion.test.ts > coalesces concurrent checks and refreshes bounded cached observations without background timers 516ms
+ ✓ src/local-app/runtimeVersion.test.ts > a damaged newly prepared release is distinct from damaged running files 1017ms
+ ✓ src/local-app/runtimeVersion.legacy.test.ts > legacy runtime APIs remain unverified instead of borrowing a real prepared version 740ms
+
+ Test Files  2 passed (2)
+      Tests  10 passed (10)
+   Start at  22:36:38
+   Duration  7.05s (transform 29ms, setup 9ms, collect 29ms, tests 6.79s, environment 0ms, prepare 51ms)
+

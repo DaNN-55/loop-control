@@ -1,0 +1,38 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workflowRules.integration.test.ts --maxWorkers=1 --fileParallelism=false
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/local-app/workflowRules.integration.test.ts (3 tests | 1 failed) 17399ms
+   ✓ 48/6/7/21/23: disabling unknown speech removes current blockers but retains reconciliation and prevents resend  2453ms
+   ✓ 48/21/26/37: unused missing voice and its long tail cannot block real native export, while re-enabled media must validate  13248ms
+   × 48/7/8/20/28/29: replacing or deleting a visual target and unused sound failures leave only background reminders 1698ms
+     → {"error":"不能删除最后一个有效镜头。"}: expected 409 to be 200 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workflowRules.integration.test.ts > 48/7/8/20/28/29: replacing or deleting a visual target and unused sound failures leave only background reminders
+AssertionError: {"error":"不能删除最后一个有效镜头。"}: expected 409 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 409
+
+ ❯ src/local-app/workflowRules.integration.test.ts:82:179
+     80|   r=await f.request('setWorkspaceAudioEnabled',{workspaceId:w.id,expec…
+     81|   expect((await catalog()).operationRows[0].blockerCount).toBe(0);
+     82|   r=await f.request('editWorkspaceStructure',{workspaceId:w.id,expecte…
+       |                                                                                                                                                                                   ^
+     83|   expect((await catalog()).operationRows[0]).toMatchObject({blockerCou…
+     84|   expect((await f.c.query('SELECT status FROM public.tasks WHERE id=AN…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  18:29:54
+   Duration  18.18s (transform 469ms, setup 8ms, collect 655ms, tests 17.40s, environment 0ms, prepare 29ms)
+

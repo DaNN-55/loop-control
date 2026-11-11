@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "originalQueriedBeforeConfirmation": true,
+  "explicitDuplicateChargeWarning": true,
+  "newTaskOnlyAfterConfirm": true,
+  "originalReceiptPreserved": true,
+  "noAutomaticAdoption": true,
+  "providerPosts": 1
+}

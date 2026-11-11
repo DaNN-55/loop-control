@@ -1,0 +1,2 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'tsc' --noEmit --noUnusedLocals --noUnusedParameters --jsx react-jsx --moduleResolution bundler --module esnext --target es2022 --lib es2022,dom,dom.iterable --skipLibCheck --strict --types vite/client,node src/connections/ConnectionWorkspace.tsx src/connections/ConnectionModelsDialog.tsx src/connections/ConnectionBillingDialog.tsx src/observability/SystemStatusPanel.tsx src/observability/TaskProgressPanel.tsx src/reviews/WorkerBlockerCard.tsx

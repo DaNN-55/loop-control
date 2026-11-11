@@ -1,0 +1,42 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workflowLegacyRules.integration.test.ts -t composition revision|per-shot input --maxWorkers=1 --fileParallelism=false --reporter=verbose
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ × src/local-app/workflowLegacyRules.integration.test.ts > 48 composition revision freezes the current QC edit, fences permission/stale/running requests and preserves prior evidence 2338ms
+   → Owner membership is required to save a shot preparation draft
+ ↓ src/local-app/workflowLegacyRules.integration.test.ts > 48 storyboard return invalidates downstream packages while retaining the approved storyboard and immutable QC files
+ ↓ src/local-app/workflowLegacyRules.integration.test.ts > 48 a running storyboard revision blocks a QC structural return before any downstream evidence changes
+ × src/local-app/workflowLegacyRules.integration.test.ts > 48 per-shot input changes remain drafts until a new local preview is confirmed and a new review snapshot is frozen 2345ms
+   → Owner membership is required to save a shot preparation draft
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workflowLegacyRules.integration.test.ts > 48 composition revision freezes the current QC edit, fences permission/stale/running requests and preserves prior evidence
+error: Owner membership is required to save a shot preparation draft
+ ❯ node_modules/pg/lib/client.js:694:17
+ ❯ legacyFixture src/local-app/workflowLegacyRules.integration.test.ts:51:3
+
+ ❯ src/local-app/workflowLegacyRules.integration.test.ts:59:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { length: 246, severity: 'ERROR', code: '42501', detail: undefined, hint: undefined, position: undefined, internalPosition: undefined, internalQuery: undefined, where: 'PL/pgSQL function public.save_shot_preparation_draft(uuid,uuid,text,text,text,boolean,text,text,numeric) line 24 at RAISE', schema: undefined, table: undefined, dataType: undefined, constraint: undefined, file: 'pl_exec.c', routine: 'exec_stmt_raise' }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/local-app/workflowLegacyRules.integration.test.ts > 48 per-shot input changes remain drafts until a new local preview is confirmed and a new review snapshot is frozen
+error: Owner membership is required to save a shot preparation draft
+ ❯ node_modules/pg/lib/client.js:694:17
+ ❯ legacyFixture src/local-app/workflowLegacyRules.integration.test.ts:51:3
+
+ ❯ src/local-app/workflowLegacyRules.integration.test.ts:103:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { length: 246, severity: 'ERROR', code: '42501', detail: undefined, hint: undefined, position: undefined, internalPosition: undefined, internalQuery: undefined, where: 'PL/pgSQL function public.save_shot_preparation_draft(uuid,uuid,text,text,text,boolean,text,text,numeric) line 24 at RAISE', schema: undefined, table: undefined, dataType: undefined, constraint: undefined, file: 'pl_exec.c', routine: 'exec_stmt_raise' }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 2 skipped (4)
+   Start at  18:35:20
+   Duration  5.86s (transform 710ms, setup 9ms, collect 1.05s, tests 4.68s, environment 0ms, prepare 29ms)
+

@@ -1,0 +1,15 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workflowLegacyRules.integration.test.ts --maxWorkers=1 --fileParallelism=false --reporter=verbose
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/workflowLegacyRules.integration.test.ts > 48 composition revision freezes the current QC edit, fences permission/stale/running requests and preserves prior evidence 5163ms
+ ✓ src/local-app/workflowLegacyRules.integration.test.ts > 48 storyboard return invalidates downstream packages while retaining the approved storyboard and immutable QC files 2436ms
+ ✓ src/local-app/workflowLegacyRules.integration.test.ts > 48 a running storyboard revision blocks a QC structural return before any downstream evidence changes 2344ms
+ ✓ src/local-app/workflowLegacyRules.integration.test.ts > 48 per-shot input changes remain drafts until a new local preview is confirmed and a new review snapshot is frozen 10827ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  18:42:54
+   Duration  21.48s (transform 419ms, setup 8ms, collect 582ms, tests 20.77s, environment 0ms, prepare 32ms)
+

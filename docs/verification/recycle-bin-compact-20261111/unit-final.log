@@ -1,0 +1,12 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/RecycleBinPanel.test.tsx --maxWorkers=1 --fileParallelism=false
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/RecycleBinPanel.test.tsx (5 tests) 201ms
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  21:10:52
+   Duration  1.49s (transform 125ms, setup 11ms, collect 861ms, tests 201ms, environment 290ms, prepare 32ms)
+

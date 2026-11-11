@@ -1,0 +1,11 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/RuntimeLogsDialog.language.test.tsx --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+·
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  17:25:35
+   Duration  988ms (transform 101ms, setup 7ms, collect 524ms, tests 71ms, environment 250ms, prepare 33ms)

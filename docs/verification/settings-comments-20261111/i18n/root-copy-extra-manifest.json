@@ -1,0 +1,58 @@
+[
+  {
+    "file": "src/operations/workbenchPreview.tsx",
+    "edits": 1,
+    "keys": [
+      "{value0}作品预览"
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspaceReferencePicker.tsx",
+    "edits": 1,
+    "keys": [
+      "参考图 {value0}"
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspaceVideoInputs.tsx",
+    "edits": 3,
+    "keys": [
+      "已选视频首帧",
+      "已选视频尾帧",
+      "画面输入 · "
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspacePexelsSearch.tsx",
+    "edits": 3,
+    "keys": [
+      "Pexels {value0} 缩略图",
+      "检索词",
+      "第 {value0} 页"
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspaceVisualPreparation.tsx",
+    "edits": 11,
+    "keys": [
+      "{value0}候选 {value1}",
+      "图片提示词",
+      "画面动作",
+      "规格",
+      "{value0} 张",
+      "构图",
+      "时长跟随已采用的{value0}",
+      "设置本次视频时长",
+      "{value0} 秒",
+      "高级",
+      "视频负面提示词"
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspaceShotPreview.tsx",
+    "edits": 1,
+    "keys": [
+      "{value0} 当前图片"
+    ]
+  }
+]

@@ -1,0 +1,32 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/legacyReceivedRetry.integration.test.ts src/local-app/receiptRules.integration.test.ts src/local-app/workspaceGenerationState.integration.test.ts src/local-app/commandReceipt.integration.test.ts --maxWorkers=1 --fileParallelism=false
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/receiptRules.integration.test.ts (8 tests) 14243ms
+   ✓ 4/24 persists exactly two local recoveries across attempts and reuses a reserved request without an extra send  1927ms
+   ✓ 4 changed input is proven not sent, while historical reservations remain unknown  1441ms
+   ✓ 5/9/24 verified files recover the original publication with no new Provider request: received-write  1670ms
+   ✓ 5/9/24 verified files recover the original publication with no new Provider request: commit-rejected  1653ms
+   ✓ 5/9/24 verified files recover the original publication with no new Provider request: commit-ack-lost  1677ms
+   ✓ 24 unknown speech only allows a separately confirmed new generation, preserves old receipt, and cannot reuse that exception  1878ms
+   ✓ 4/24 a temporary local failure stops after two recovery attempts and a new explicit confirmation can retry without unknown warning  1878ms
+   ✓ 24 a documented business refusal over HTTP 200 is rejected, preserves the code and allows explicit retry  2117ms
+ ✓ src/local-app/workspaceGenerationState.integration.test.ts (5 tests) 10400ms
+   ✓ HTTP image unknown preserves the original submission and a successful retry can supply a video first frame  2980ms
+   ✓ HTTP image reject preserves the original submission and a successful retry can supply a video first frame  2091ms
+   ✓ HTTP video polling resumes the same frozen task and original remote ID, never a second POST  1767ms
+   ✓ Owner HTTP reconciles a held publication after lost COMMIT without a new attempt or supplier POST  1834ms
+   ✓ HTTP speech preserves unknown original submission evidence even after current input is changed  1727ms
+ ✓ src/local-app/legacyReceivedRetry.integration.test.ts (2 tests) 3666ms
+   ✓ 17/24 legacy received without recoverable evidence requires a new confirmation; fact/hold still prohibit it: image  1922ms
+   ✓ 17/24 legacy received without recoverable evidence requires a new confirmation; fact/hold still prohibit it: speech  1744ms
+ ✓ src/local-app/commandReceipt.integration.test.ts (2 tests) 1723ms
+   ✓ 5 real HTTP receipt recovery binds Owner, full payload, session and CSRF without repeating mutation  882ms
+   ✓ 5 lifecycle receipt readback never exposes a private deletion inventory or executes cleanup  841ms
+
+ Test Files  4 passed (4)
+      Tests  17 passed (17)
+   Start at  22:22:39
+   Duration  31.31s (transform 440ms, setup 10ms, collect 893ms, tests 30.03s, environment 0ms, prepare 83ms)
+

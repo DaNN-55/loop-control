@@ -1,0 +1,10 @@
+{
+  "container": "loop-receipt-5a18fd183ee2",
+  "database": "loop_receipt_baseline",
+  "identityVerified": true,
+  "migrationCount": 157,
+  "latestMigration": "160-episode-recycle-bin.sql",
+  "baselineLedgerSha256": "052d16efb24428f1cd26b0c0c3fb7652b1054aae3ca73668dc860529640532d0",
+  "has161": false,
+  "checkedAt": "2026-11-11T13:25:21.532Z"
+}

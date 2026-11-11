@@ -1,0 +1,74 @@
+[
+  {
+    "name": "Synthetic key saved as a new unverified version",
+    "passed": true
+  },
+  {
+    "name": "Secret entry is cleared after saving",
+    "passed": true
+  },
+  {
+    "name": "Simulated connection test restores verified status",
+    "passed": true
+  },
+  {
+    "name": "Rename preserves entered content",
+    "passed": true
+  },
+  {
+    "name": "Connection empty state appears",
+    "passed": true
+  },
+  {
+    "name": "Split inspector retains direct key replacement",
+    "passed": true
+  },
+  {
+    "name": "Connection-to-secret navigation preserves selected stable ID",
+    "passed": true
+  },
+  {
+    "name": "Historical secret versions expand within their connection",
+    "passed": true
+  },
+  {
+    "name": "Incorrect password shows error without revealing value",
+    "passed": true
+  },
+  {
+    "name": "Correct demo password reveals only synthetic value",
+    "passed": true
+  },
+  {
+    "name": "Leaving secrets clears plaintext and password",
+    "passed": true
+  },
+  {
+    "name": "Exceeding 5GB removes oldest safe item and retains 3.9GB",
+    "passed": true
+  },
+  {
+    "name": "Shared item survives automatic cleanup",
+    "passed": true
+  },
+  {
+    "name": "Restore removes item from bin and records restored order",
+    "passed": true
+  },
+  {
+    "name": "Offline drive stops automatic cleanup and reports limit overrun",
+    "passed": true
+  },
+  {
+    "name": "Permanent deletion requires an explicit dialog",
+    "passed": true
+  },
+  {
+    "name": "Canceling deletion leaves bin contents intact",
+    "passed": true
+  },
+  {
+    "name": "Capacity limit can be manually adjusted",
+    "passed": true
+  }
+]

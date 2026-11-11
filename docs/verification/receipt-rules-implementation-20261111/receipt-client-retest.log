@@ -1,0 +1,14 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/WorkspaceCaptionsRecovery.test.tsx src/local-app/WorkspaceScriptPanel.test.tsx src/local-app/clientCommandReceipt.test.ts --maxWorkers=1 --fileParallelism=false
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/WorkspaceCaptionsRecovery.test.tsx (8 tests) 406ms
+ ✓ src/local-app/WorkspaceScriptPanel.test.tsx (31 tests) 730ms
+ ✓ src/local-app/clientCommandReceipt.test.ts (3 tests) 7ms
+
+ Test Files  3 passed (3)
+      Tests  42 passed (42)
+   Start at  21:54:25
+   Duration  3.42s (transform 233ms, setup 14ms, collect 1.31s, tests 1.14s, environment 556ms, prepare 117ms)
+

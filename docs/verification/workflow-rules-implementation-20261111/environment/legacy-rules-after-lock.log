@@ -1,0 +1,46 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workflowLegacyRules.integration.test.ts --maxWorkers=1 --fileParallelism=false --reporter=verbose
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ × src/local-app/workflowLegacyRules.integration.test.ts > 48 composition revision freezes the current QC edit, fences permission/stale/running requests and preserves prior evidence 5473ms
+   → {"error":"配置校验未通过。"}: expected 400 to be 200 // Object.is equality
+ ✓ src/local-app/workflowLegacyRules.integration.test.ts > 48 storyboard return invalidates downstream packages while retaining the approved storyboard and immutable QC files 2556ms
+ ✓ src/local-app/workflowLegacyRules.integration.test.ts > 48 a running storyboard revision blocks a QC structural return before any downstream evidence changes 2451ms
+ × src/local-app/workflowLegacyRules.integration.test.ts > 48 per-shot input changes remain drafts until a new local preview is confirmed and a new review snapshot is frozen 11564ms
+   → {"error":"配置校验未通过。"} error: Invalid frozen Studio project
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workflowLegacyRules.integration.test.ts > 48 composition revision freezes the current QC edit, fences permission/stale/running requests and preserves prior evidence
+AssertionError: {"error":"配置校验未通过。"}: expected 400 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 400
+
+ ❯ src/local-app/workflowLegacyRules.integration.test.ts:72:126
+     70|   expect(await f.original()).toEqual(before);
+     71|   await f.c.query("UPDATE public.tasks SET status='failed',invalidated…
+     72|   const revised=await f.request('requestStudioCompositionRevision',dat…
+       |                                                                                                                              ^
+     73|   expect(revised.body).toMatchObject({task_type:'generate_review_rende…
+     74|   const frozen=revised.body.input_snapshot.review_render.adjustments.s…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/local-app/workflowLegacyRules.integration.test.ts > 48 per-shot input changes remain drafts until a new local preview is confirmed and a new review snapshot is frozen
+Error: {"error":"配置校验未通过。"} error: Invalid frozen Studio project
+ ❯ src/local-app/workflowLegacyRules.integration.test.ts:126:10
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 2 passed (4)
+   Start at  18:39:29
+   Duration  22.97s (transform 549ms, setup 8ms, collect 783ms, tests 22.05s, environment 0ms, prepare 30ms)
+

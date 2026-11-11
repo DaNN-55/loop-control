@@ -1,0 +1,16 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/receiptRules.browser.integration.test.ts --maxWorkers=1 --fileParallelism=false
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+stderr | src/local-app/receiptRules.browser.integration.test.ts > 24 actual browser queries original speech, warns before a new paid request and leaves it unadopted
+[BABEL] Note: The code generator has deoptimised the styling of /Users/dan/Programs/loop-control/.scratch/receipt-browser/cache/deps/react-dom_client.js?v=45eaf5f2 as it exceeds the max of 500KB.
+
+ ✓ src/local-app/receiptRules.browser.integration.test.ts (1 test) 6209ms
+   ✓ 24 actual browser queries original speech, warns before a new paid request and leaves it unadopted  6209ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  22:05:03
+   Duration  7.05s (transform 475ms, setup 8ms, collect 710ms, tests 6.21s, environment 0ms, prepare 28ms)
+

@@ -1,0 +1,12 @@
+file:///Users/dan/Programs/loop-control/docs/verification/receipt-rules-implementation-20261111/environment/setup.mjs:15
+const assertIdentity=()=>{const m=JSON.parse(docker(['inspect',container]))[0];if(m.Image!==image||m.Config.Labels?.['com.loop-control.test']!==label||m.HostConfig.NetworkMode!=='none'||Object.keys(m.HostConfig.PortBindings??{}).length||m.Mounts.some(x=>x.Type==='volume'||x.Type==='bind')||!m.HostConfig.Tmpfs?.['/var/lib/postgresql/data'])throw Error('Dedicated cluster identity mismatch');};
+                                                                                                                                                                                                                                                                                                                                                           ^
+
+Error: Dedicated cluster identity mismatch
+    at assertIdentity (file:///Users/dan/Programs/loop-control/docs/verification/receipt-rules-implementation-20261111/environment/setup.mjs:15:348)
+    at file:///Users/dan/Programs/loop-control/docs/verification/receipt-rules-implementation-20261111/environment/setup.mjs:43:29
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+
+Node.js v24.20.0

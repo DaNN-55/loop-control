@@ -1,0 +1,55 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/receiptRules.integration.test.ts src/local-app/commandReceipt.integration.test.ts src/local-app/workspaceGenerationState.integration.test.ts --maxWorkers=1 --fileParallelism=false
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/receiptRules.integration.test.ts (8 tests) 14791ms
+   ✓ 4/24 persists exactly two local recoveries across attempts and reuses a reserved request without an extra send  1815ms
+   ✓ 4 changed input is proven not sent, while historical reservations remain unknown  1526ms
+   ✓ 5/9/24 verified files recover the original publication with no new Provider request: received-write  1784ms
+   ✓ 5/9/24 verified files recover the original publication with no new Provider request: commit-rejected  1777ms
+   ✓ 5/9/24 verified files recover the original publication with no new Provider request: commit-ack-lost  1898ms
+   ✓ 24 unknown speech only allows a separately confirmed new generation, preserves old receipt, and cannot reuse that exception  2064ms
+   ✓ 4/24 a temporary local failure stops after two recovery attempts and a new explicit confirmation can retry without unknown warning  2018ms
+   ✓ 24 a documented business refusal over HTTP 200 is rejected, preserves the code and allows explicit retry  1909ms
+ ✓ src/local-app/workspaceGenerationState.integration.test.ts (5 tests) 10953ms
+   ✓ HTTP image unknown preserves the original submission and a successful retry can supply a video first frame  3094ms
+   ✓ HTTP image reject preserves the original submission and a successful retry can supply a video first frame  2175ms
+   ✓ HTTP video polling resumes the same frozen task and original remote ID, never a second POST  1931ms
+   ✓ Owner HTTP reconciles a held publication after lost COMMIT without a new attempt or supplier POST  1983ms
+   ✓ HTTP speech preserves unknown original submission evidence even after current input is changed  1769ms
+ ❯ src/local-app/commandReceipt.integration.test.ts (2 tests | 1 failed) 1959ms
+   ✓ 5 real HTTP receipt recovery binds Owner, full payload, session and CSRF without repeating mutation  1021ms
+   × 5 lifecycle receipt readback never exposes a private deletion inventory or executes cleanup 937ms
+     → expected { status: 'committed', …(1) } to deeply equal { status: 'committed', …(1) }
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/commandReceipt.integration.test.ts > 5 lifecycle receipt readback never exposes a private deletion inventory or executes cleanup
+AssertionError: expected { status: 'committed', …(1) } to deeply equal { status: 'committed', …(1) }
+
+- Expected
++ Received
+
+  {
+    "result": {
+      "cleanupKey": "f9fffdbd-6e36-4b11-ab77-d9cd57caaf48",
+      "cleanupPending": true,
+      "episodeId": "public-id",
+-     "message": "旧回执没有可验证的精确文件清单；暂存与未知文件保留。",
+      "title": "public title",
+    },
+    "status": "committed",
+  }
+
+ ❯ src/local-app/commandReceipt.integration.test.ts:29:85
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 14 passed (15)
+   Start at  21:57:15
+   Duration  28.80s (transform 434ms, setup 9ms, collect 792ms, tests 27.70s, environment 0ms, prepare 66ms)
+

@@ -1,0 +1,14 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workflowRules.integration.test.ts --maxWorkers=1 --fileParallelism=false
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/workflowRules.integration.test.ts (2 tests) 15714ms
+   ✓ 48/6/7/21/23: disabling unknown speech removes current blockers but retains reconciliation and prevents resend  2759ms
+   ✓ 48/21/26/37: unused missing voice and its long tail cannot block real native export, while re-enabled media must validate  12954ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  18:20:19
+   Duration  17.49s (transform 977ms, setup 10ms, collect 1.60s, tests 15.71s, environment 0ms, prepare 31ms)
+

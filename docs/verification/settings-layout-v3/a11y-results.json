@@ -1,0 +1,934 @@
+[
+  {
+    "success": true,
+    "data": {
+      "axeVersion": "4.12.1",
+      "counts": {
+        "inapplicable": 41,
+        "incomplete": 0,
+        "passes": 18,
+        "violations": 0
+      },
+      "incomplete": [],
+      "lifecycle": {
+        "effectiveLaunch": {
+          "browserLaunched": true,
+          "engine": "chrome",
+          "launchHash": 11677035664275010974
+        },
+        "launched": false,
+        "relaunchedBrowser": false,
+        "restartedBackground": false,
+        "restoreStatus": "not_configured",
+        "reused": true,
+        "saveStatus": "not_attempted"
+      },
+      "url": "http://127.0.0.1:5210/src/local-app/settings-review-v2.prototype.html?page=connections&variant=rows&theme=light&lang=zh&stress=1",
+      "violations": []
+    },
+    "error": null,
+    "width": 1348,
+    "page": "connections",
+    "variant": "rows",
+    "theme": "light"
+  },
+  {
+    "success": true,
+    "data": {
+      "axeVersion": "4.12.1",
+      "counts": {
+        "inapplicable": 43,
+        "incomplete": 0,
+        "passes": 16,
+        "violations": 0
+      },
+      "incomplete": [],
+      "lifecycle": {
+        "effectiveLaunch": {
+          "browserLaunched": true,
+          "engine": "chrome",
+          "launchHash": 11677035664275010974
+        },
+        "launched": false,
+        "relaunchedBrowser": false,
+        "restartedBackground": false,
+        "restoreStatus": "not_configured",
+        "reused": true,
+        "saveStatus": "not_attempted"
+      },
+      "url": "http://127.0.0.1:5210/src/local-app/settings-review-v2.prototype.html?page=secrets&variant=rows&theme=light&lang=zh&stress=1",
+      "violations": []
+    },
+    "error": null,
+    "width": 1348,
+    "page": "secrets",
+    "variant": "rows",
+    "theme": "light"
+  },
+  {
+    "success": true,
+    "data": {
+      "axeVersion": "4.12.1",
+      "counts": {
+        "inapplicable": 43,
+        "incomplete": 0,
+        "passes": 16,
+        "violations": 0
+      },
+      "incomplete": [],
+      "lifecycle": {
+        "effectiveLaunch": {
+          "browserLaunched": true,
+          "engine": "chrome",
+          "launchHash": 11677035664275010974
+        },
+        "launched": false,
+        "relaunchedBrowser": false,
+        "restartedBackground": false,
+        "restoreStatus": "not_configured",
+        "reused": true,
+        "saveStatus": "not_attempted"
+      },
+      "url": "http://127.0.0.1:5210/src/local-app/settings-review-v2.prototype.html?page=recycle&variant=rows&theme=light&lang=zh&stress=1",
+      "violations": []
+    },
+    "error": null,
+    "width": 1348,
+    "page": "recycle",
+    "variant": "rows",
+    "theme": "light"
+  },
+  {
+    "success": true,
+    "data": {
+      "axeVersion": "4.12.1",
+      "counts": {
+        "inapplicable": 41,
+        "incomplete": 0,
+        "passes": 18,
+        "violations": 0
+      },
+      "incomplete": [],
+      "lifecycle": {
+        "effectiveLaunch": {
+          "browserLaunched": true,
+          "engine": "chrome",
+          "launchHash": 11677035664275010974
+        },
+        "launched": false,
+        "relaunchedBrowser": false,
+        "restartedBackground": false,
+        "restoreStatus": "not_configured",
+        "reused": true,
+        "saveStatus": "not_attempted"
+      },
+      "url": "http://127.0.0.1:5210/src/local-app/settings-review-v2.prototype.html?page=connections&variant=split&theme=light&lang=zh&stress=1",
+      "violations": []
+    },
+    "error": null,
+    "width": 1348,
+    "page": "connections",
+    "variant": "split",
+    "theme": "light"
+  },
+  {
+    "success": true,
+    "data": {
+      "axeVersion": "4.12.1",
+      "counts": {
+        "inapplicable": 43,
+        "incomplete": 0,
+        "passes": 16,
+        "violations": 0
+      },
+      "incomplete": [],
+      "lifecycle": {
+        "effectiveLaunch": {
+          "browserLaunched": true,
+          "engine": "chrome",
+          "launchHash": 11677035664275010974
+        },
+        "launched": false,
+        "relaunchedBrowser": false,
+        "restartedBackground": false,
+        "restoreStatus": "not_configured",
+        "reused": true,
+        "saveStatus": "not_attempted"
+      },
+      "url": "http://127.0.0.1:5210/src/local-app/settings-review-v2.prototype.html?page=secrets&variant=split&theme=light&lang=zh&stress=1",
+      "violations": []
+    },
+    "error": null,
+    "width": 1348,
+    "page": "secrets",
+    "variant": "split",
+    "theme": "light"
+  },
+  {
+    "success": true,
+    "data": {
+      "axeVersion": "4.12.1",
+      "counts": {
+        "inapplicable": 43,
+        "incomplete": 0,
+        "passes": 16,
+        "violations": 0
+      },
+      "incomplete": [],
+      "lifecycle": {
+        "effectiveLaunch": {
+          "browserLaunched": true,
+          "engine": "chrome",
+          "launchHash": 11677035664275010974
+        },
+        "launched": false,
+        "relaunchedBrowser": false,
+        "restartedBackground": false,
+        "restoreStatus": "not_configured",
+        "reused": true,
+        "saveStatus": "not_attempted"
+      },
+      "url": "http://127.0.0.1:5210/src/local-app/settings-review-v2.prototype.html?page=recycle&variant=split&theme=light&lang=zh&stress=1",
+      "violations": []
+    },
+    "error": null,
+    "width": 1348,
+    "page": "recycle",
+    "variant": "split",
+    "theme": "light"
+  },
+  {
+    "success": true,
+    "data": {
+      "axeVersion": "4.12.1",
+      "counts": {
+        "inapplicable": 41,
+        "incomplete": 0,
+        "passes": 18,
+        "violations": 0
+      },
+      "incomplete": [],
+      "lifecycle": {
+        "effectiveLaunch": {
+          "browserLaunched": true,
+          "engine": "chrome",
+          "launchHash": 11677035664275010974
+        },
+        "launched": false,
+        "relaunchedBrowser": false,
+        "restartedBackground": false,
+        "restoreStatus": "not_configured",
+        "reused": true,
+        "saveStatus": "not_attempted"
+      },
+      "url": "http://127.0.0.1:5210/src/local-app/settings-review-v2.prototype.html?page=connections&variant=groups&theme=light&lang=zh&stress=1",
+      "violations": []
+    },
+    "error": null,
+    "width": 1348,
+    "page": "connections",
+    "variant": "groups",
+    "theme": "light"
+  },
+  {
+    "success": true,
+    "data": {
+      "axeVersion": "4.12.1",
+      "counts": {
+        "inapplicable": 43,
+        "incomplete": 0,
+        "passes": 16,
+        "violations": 0
+      },
+      "incomplete": [],
+      "lifecycle": {
+        "effectiveLaunch": {
+          "browserLaunched": true,
+          "engine": "chrome",
+          "launchHash": 11677035664275010974
+        },
+        "launched": false,
+        "relaunchedBrowser": false,
+        "restartedBackground": false,
+        "restoreStatus": "not_configured",
+        "reused": true,
+        "saveStatus": "not_attempted"
+      },
+      "url": "http://127.0.0.1:5210/src/local-app/settings-review-v2.prototype.html?page=secrets&variant=groups&theme=light&lang=zh&stress=1",
+      "violations": []
+    },
+    "error": null,
+    "width": 1348,
+    "page": "secrets",
+    "variant": "groups",
+    "theme": "light"
+  },
+  {
+    "success": true,
+    "data": {
+      "axeVersion": "4.12.1",
+      "counts": {
+        "inapplicable": 43,
+        "incomplete": 0,
+        "passes": 16,
+        "violations": 0
+      },
+      "incomplete": [],
+      "lifecycle": {
+        "effectiveLaunch": {
+          "browserLaunched": true,
+          "engine": "chrome",
+          "launchHash": 11677035664275010974
+        },
+        "launched": false,
+        "relaunchedBrowser": false,
+        "restartedBackground": false,
+        "restoreStatus": "not_configured",
+        "reused": true,
+        "saveStatus": "not_attempted"
+      },
+      "url": "http://127.0.0.1:5210/src/local-app/settings-review-v2.prototype.html?page=recycle&variant=groups&theme=light&lang=zh&stress=1",
+      "violations": []
+    },
+    "error": null,
+    "width": 1348,
+    "page": "recycle",
+    "variant": "groups",
+    "theme": "light"
+  },
+  {
+    "success": true,
+    "data": {
+      "axeVersion": "4.12.1",
+      "counts": {
+        "inapplicable": 41,
+        "incomplete": 1,
+        "passes": 18,
+        "violations": 0
+      },
+      "incomplete": [
+        {
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/color-contrast?application=axeAPI",
+          "id": "color-contrast",
+          "impact": "serious",
+          "nodeCount": 2,
+          "nodes": [
+            {
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it partially overlaps other elements",
+              "html": "<button type=\"button\">",
+              "target": [
+                ".sr2-pages > button:nth-child(3)"
+              ]
+            },
+            {
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it partially overlaps other elements",
+              "html": "<span>8 connections</span>",
+              "target": [
+                "footer > span"
+              ]
+            }
+          ],
+          "tags": [
+            "cat.color",
+            "wcag2aa",
+            "wcag143",
+            "TTv5",
+            "TT13.c",
+            "EN-301-549",
+            "EN-9.1.4.3",
+            "ACT",
+            "RGAAv4",
+            "RGAA-3.2.1"
+          ]
+        }
+      ],
+      "lifecycle": {
+        "effectiveLaunch": {
+          "browserLaunched": true,
+          "engine": "chrome",
+          "launchHash": 11677035664275010974
+        },
+        "launched": false,
+        "relaunchedBrowser": false,
+        "restartedBackground": false,
+        "restoreStatus": "not_configured",
+        "reused": true,
+        "saveStatus": "not_attempted"
+      },
+      "url": "http://127.0.0.1:5210/src/local-app/settings-review-v2.prototype.html?page=connections&variant=rows&theme=dark&lang=en&stress=1",
+      "violations": []
+    },
+    "error": null,
+    "width": 320,
+    "page": "connections",
+    "variant": "rows",
+    "theme": "dark"
+  },
+  {
+    "success": true,
+    "data": {
+      "axeVersion": "4.12.1",
+      "counts": {
+        "inapplicable": 43,
+        "incomplete": 1,
+        "passes": 16,
+        "violations": 0
+      },
+      "incomplete": [
+        {
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/color-contrast?application=axeAPI",
+          "id": "color-contrast",
+          "impact": "serious",
+          "nodeCount": 1,
+          "nodes": [
+            {
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it partially overlaps other elements",
+              "html": "<button type=\"button\">",
+              "target": [
+                ".sr2-pages > button:nth-child(3)"
+              ]
+            }
+          ],
+          "tags": [
+            "cat.color",
+            "wcag2aa",
+            "wcag143",
+            "TTv5",
+            "TT13.c",
+            "EN-301-549",
+            "EN-9.1.4.3",
+            "ACT",
+            "RGAAv4",
+            "RGAA-3.2.1"
+          ]
+        }
+      ],
+      "lifecycle": {
+        "effectiveLaunch": {
+          "browserLaunched": true,
+          "engine": "chrome",
+          "launchHash": 11677035664275010974
+        },
+        "launched": false,
+        "relaunchedBrowser": false,
+        "restartedBackground": false,
+        "restoreStatus": "not_configured",
+        "reused": true,
+        "saveStatus": "not_attempted"
+      },
+      "url": "http://127.0.0.1:5210/src/local-app/settings-review-v2.prototype.html?page=secrets&variant=rows&theme=dark&lang=en&stress=1",
+      "violations": []
+    },
+    "error": null,
+    "width": 320,
+    "page": "secrets",
+    "variant": "rows",
+    "theme": "dark"
+  },
+  {
+    "success": true,
+    "data": {
+      "axeVersion": "4.12.1",
+      "counts": {
+        "inapplicable": 43,
+        "incomplete": 1,
+        "passes": 16,
+        "violations": 0
+      },
+      "incomplete": [
+        {
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/color-contrast?application=axeAPI",
+          "id": "color-contrast",
+          "impact": "serious",
+          "nodeCount": 4,
+          "nodes": [
+            {
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it partially overlaps other elements",
+              "html": "<button type=\"button\" aria-current=\"page\">",
+              "target": [
+                "button[aria-current=\"page\"]"
+              ]
+            },
+            {
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it partially overlaps other elements",
+              "html": "<span>4.3 GB / 5.0 GB</span>",
+              "target": [
+                ".sr2-toolbar-summary > span"
+              ]
+            },
+            {
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it partially overlaps other elements",
+              "html": "<span>/ 5.0 GB</span>",
+              "target": [
+                "strong > span"
+              ]
+            },
+            {
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it partially overlaps other elements",
+              "html": "<strong>末班车前的一把伞 · 废弃初稿</strong>",
+              "target": [
+                ".sr2-recycle-row:nth-child(4) > div:nth-child(1) > strong"
+              ]
+            }
+          ],
+          "tags": [
+            "cat.color",
+            "wcag2aa",
+            "wcag143",
+            "TTv5",
+            "TT13.c",
+            "EN-301-549",
+            "EN-9.1.4.3",
+            "ACT",
+            "RGAAv4",
+            "RGAA-3.2.1"
+          ]
+        }
+      ],
+      "lifecycle": {
+        "effectiveLaunch": {
+          "browserLaunched": true,
+          "engine": "chrome",
+          "launchHash": 11677035664275010974
+        },
+        "launched": false,
+        "relaunchedBrowser": false,
+        "restartedBackground": false,
+        "restoreStatus": "not_configured",
+        "reused": true,
+        "saveStatus": "not_attempted"
+      },
+      "url": "http://127.0.0.1:5210/src/local-app/settings-review-v2.prototype.html?page=recycle&variant=rows&theme=dark&lang=en&stress=1",
+      "violations": []
+    },
+    "error": null,
+    "width": 320,
+    "page": "recycle",
+    "variant": "rows",
+    "theme": "dark"
+  },
+  {
+    "success": true,
+    "data": {
+      "axeVersion": "4.12.1",
+      "counts": {
+        "inapplicable": 41,
+        "incomplete": 1,
+        "passes": 18,
+        "violations": 0
+      },
+      "incomplete": [
+        {
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/color-contrast?application=axeAPI",
+          "id": "color-contrast",
+          "impact": "serious",
+          "nodeCount": 2,
+          "nodes": [
+            {
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it partially overlaps other elements",
+              "html": "<button type=\"button\">",
+              "target": [
+                ".sr2-pages > button:nth-child(3)"
+              ]
+            },
+            {
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it partially overlaps other elements",
+              "html": "<span>8 connections</span>",
+              "target": [
+                "footer > span"
+              ]
+            }
+          ],
+          "tags": [
+            "cat.color",
+            "wcag2aa",
+            "wcag143",
+            "TTv5",
+            "TT13.c",
+            "EN-301-549",
+            "EN-9.1.4.3",
+            "ACT",
+            "RGAAv4",
+            "RGAA-3.2.1"
+          ]
+        }
+      ],
+      "lifecycle": {
+        "effectiveLaunch": {
+          "browserLaunched": true,
+          "engine": "chrome",
+          "launchHash": 11677035664275010974
+        },
+        "launched": false,
+        "relaunchedBrowser": false,
+        "restartedBackground": false,
+        "restoreStatus": "not_configured",
+        "reused": true,
+        "saveStatus": "not_attempted"
+      },
+      "url": "http://127.0.0.1:5210/src/local-app/settings-review-v2.prototype.html?page=connections&variant=split&theme=dark&lang=en&stress=1",
+      "violations": []
+    },
+    "error": null,
+    "width": 320,
+    "page": "connections",
+    "variant": "split",
+    "theme": "dark"
+  },
+  {
+    "success": true,
+    "data": {
+      "axeVersion": "4.12.1",
+      "counts": {
+        "inapplicable": 43,
+        "incomplete": 1,
+        "passes": 16,
+        "violations": 0
+      },
+      "incomplete": [
+        {
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/color-contrast?application=axeAPI",
+          "id": "color-contrast",
+          "impact": "serious",
+          "nodeCount": 2,
+          "nodes": [
+            {
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it partially overlaps other elements",
+              "html": "<button type=\"button\">",
+              "target": [
+                ".sr2-pages > button:nth-child(3)"
+              ]
+            },
+            {
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it partially overlaps other elements",
+              "html": "<h3>gpt-image2 / 跨账号长期制作连接与历史版本核对—ExtremelyLongUnbrokenConnectionIdentifierForResponsiveVerification20261111</h3>",
+              "target": [
+                ".sr2-detail > h3"
+              ]
+            }
+          ],
+          "tags": [
+            "cat.color",
+            "wcag2aa",
+            "wcag143",
+            "TTv5",
+            "TT13.c",
+            "EN-301-549",
+            "EN-9.1.4.3",
+            "ACT",
+            "RGAAv4",
+            "RGAA-3.2.1"
+          ]
+        }
+      ],
+      "lifecycle": {
+        "effectiveLaunch": {
+          "browserLaunched": true,
+          "engine": "chrome",
+          "launchHash": 11677035664275010974
+        },
+        "launched": false,
+        "relaunchedBrowser": false,
+        "restartedBackground": false,
+        "restoreStatus": "not_configured",
+        "reused": true,
+        "saveStatus": "not_attempted"
+      },
+      "url": "http://127.0.0.1:5210/src/local-app/settings-review-v2.prototype.html?page=secrets&variant=split&theme=dark&lang=en&stress=1",
+      "violations": []
+    },
+    "error": null,
+    "width": 320,
+    "page": "secrets",
+    "variant": "split",
+    "theme": "dark"
+  },
+  {
+    "success": true,
+    "data": {
+      "axeVersion": "4.12.1",
+      "counts": {
+        "inapplicable": 43,
+        "incomplete": 1,
+        "passes": 16,
+        "violations": 0
+      },
+      "incomplete": [
+        {
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/color-contrast?application=axeAPI",
+          "id": "color-contrast",
+          "impact": "serious",
+          "nodeCount": 4,
+          "nodes": [
+            {
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it partially overlaps other elements",
+              "html": "<button type=\"button\" aria-current=\"page\">",
+              "target": [
+                "button[aria-current=\"page\"]"
+              ]
+            },
+            {
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it partially overlaps other elements",
+              "html": "<span>4.3 GB / 5.0 GB</span>",
+              "target": [
+                ".sr2-toolbar-summary > span"
+              ]
+            },
+            {
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it partially overlaps other elements",
+              "html": "<strong>末班车前的一把伞 · 废弃初稿</strong>",
+              "target": [
+                ".sr2-recycle-row:nth-child(3) > div:nth-child(1) > strong"
+              ]
+            },
+            {
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it partially overlaps other elements",
+              "html": "<small>Shared references · skipped by auto-cleanup</small>",
+              "target": [
+                ".sr2-recycle-row:nth-child(5) > div:nth-child(1) > small"
+              ]
+            }
+          ],
+          "tags": [
+            "cat.color",
+            "wcag2aa",
+            "wcag143",
+            "TTv5",
+            "TT13.c",
+            "EN-301-549",
+            "EN-9.1.4.3",
+            "ACT",
+            "RGAAv4",
+            "RGAA-3.2.1"
+          ]
+        }
+      ],
+      "lifecycle": {
+        "effectiveLaunch": {
+          "browserLaunched": true,
+          "engine": "chrome",
+          "launchHash": 11677035664275010974
+        },
+        "launched": false,
+        "relaunchedBrowser": false,
+        "restartedBackground": false,
+        "restoreStatus": "not_configured",
+        "reused": true,
+        "saveStatus": "not_attempted"
+      },
+      "url": "http://127.0.0.1:5210/src/local-app/settings-review-v2.prototype.html?page=recycle&variant=split&theme=dark&lang=en&stress=1",
+      "violations": []
+    },
+    "error": null,
+    "width": 320,
+    "page": "recycle",
+    "variant": "split",
+    "theme": "dark"
+  },
+  {
+    "success": true,
+    "data": {
+      "axeVersion": "4.12.1",
+      "counts": {
+        "inapplicable": 41,
+        "incomplete": 1,
+        "passes": 18,
+        "violations": 0
+      },
+      "incomplete": [
+        {
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/color-contrast?application=axeAPI",
+          "id": "color-contrast",
+          "impact": "serious",
+          "nodeCount": 2,
+          "nodes": [
+            {
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it partially overlaps other elements",
+              "html": "<button type=\"button\">",
+              "target": [
+                ".sr2-pages > button:nth-child(3)"
+              ]
+            },
+            {
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it partially overlaps other elements",
+              "html": "<span>8 connections</span>",
+              "target": [
+                "footer > span"
+              ]
+            }
+          ],
+          "tags": [
+            "cat.color",
+            "wcag2aa",
+            "wcag143",
+            "TTv5",
+            "TT13.c",
+            "EN-301-549",
+            "EN-9.1.4.3",
+            "ACT",
+            "RGAAv4",
+            "RGAA-3.2.1"
+          ]
+        }
+      ],
+      "lifecycle": {
+        "effectiveLaunch": {
+          "browserLaunched": true,
+          "engine": "chrome",
+          "launchHash": 11677035664275010974
+        },
+        "launched": false,
+        "relaunchedBrowser": false,
+        "restartedBackground": false,
+        "restoreStatus": "not_configured",
+        "reused": true,
+        "saveStatus": "not_attempted"
+      },
+      "url": "http://127.0.0.1:5210/src/local-app/settings-review-v2.prototype.html?page=connections&variant=groups&theme=dark&lang=en&stress=1",
+      "violations": []
+    },
+    "error": null,
+    "width": 320,
+    "page": "connections",
+    "variant": "groups",
+    "theme": "dark"
+  },
+  {
+    "success": true,
+    "data": {
+      "axeVersion": "4.12.1",
+      "counts": {
+        "inapplicable": 43,
+        "incomplete": 1,
+        "passes": 16,
+        "violations": 0
+      },
+      "incomplete": [
+        {
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/color-contrast?application=axeAPI",
+          "id": "color-contrast",
+          "impact": "serious",
+          "nodeCount": 1,
+          "nodes": [
+            {
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it partially overlaps other elements",
+              "html": "<button type=\"button\">",
+              "target": [
+                ".sr2-pages > button:nth-child(3)"
+              ]
+            }
+          ],
+          "tags": [
+            "cat.color",
+            "wcag2aa",
+            "wcag143",
+            "TTv5",
+            "TT13.c",
+            "EN-301-549",
+            "EN-9.1.4.3",
+            "ACT",
+            "RGAAv4",
+            "RGAA-3.2.1"
+          ]
+        }
+      ],
+      "lifecycle": {
+        "effectiveLaunch": {
+          "browserLaunched": true,
+          "engine": "chrome",
+          "launchHash": 11677035664275010974
+        },
+        "launched": false,
+        "relaunchedBrowser": false,
+        "restartedBackground": false,
+        "restoreStatus": "not_configured",
+        "reused": true,
+        "saveStatus": "not_attempted"
+      },
+      "url": "http://127.0.0.1:5210/src/local-app/settings-review-v2.prototype.html?page=secrets&variant=groups&theme=dark&lang=en&stress=1",
+      "violations": []
+    },
+    "error": null,
+    "width": 320,
+    "page": "secrets",
+    "variant": "groups",
+    "theme": "dark"
+  },
+  {
+    "success": true,
+    "data": {
+      "axeVersion": "4.12.1",
+      "counts": {
+        "inapplicable": 42,
+        "incomplete": 1,
+        "passes": 17,
+        "violations": 0
+      },
+      "incomplete": [
+        {
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/color-contrast?application=axeAPI",
+          "id": "color-contrast",
+          "impact": "serious",
+          "nodeCount": 2,
+          "nodes": [
+            {
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it partially overlaps other elements",
+              "html": "<button type=\"button\" aria-current=\"page\">",
+              "target": [
+                "button[aria-current=\"page\"]"
+              ]
+            },
+            {
+              "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it partially overlaps other elements",
+              "html": "<span>4.3 GB / 5.0 GB</span>",
+              "target": [
+                ".sr2-toolbar-summary > span"
+              ]
+            }
+          ],
+          "tags": [
+            "cat.color",
+            "wcag2aa",
+            "wcag143",
+            "TTv5",
+            "TT13.c",
+            "EN-301-549",
+            "EN-9.1.4.3",
+            "ACT",
+            "RGAAv4",
+            "RGAA-3.2.1"
+          ]
+        }
+      ],
+      "lifecycle": {
+        "effectiveLaunch": {
+          "browserLaunched": true,
+          "engine": "chrome",
+          "launchHash": 11677035664275010974
+        },
+        "launched": false,
+        "relaunchedBrowser": false,
+        "restartedBackground": false,
+        "restoreStatus": "not_configured",
+        "reused": true,
+        "saveStatus": "not_attempted"
+      },
+      "url": "http://127.0.0.1:5210/src/local-app/settings-review-v2.prototype.html?page=recycle&variant=groups&theme=dark&lang=en&stress=1",
+      "violations": []
+    },
+    "error": null,
+    "width": 320,
+    "page": "recycle",
+    "variant": "groups",
+    "theme": "dark"
+  }
+]

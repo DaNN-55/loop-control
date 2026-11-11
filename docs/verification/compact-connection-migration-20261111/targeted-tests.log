@@ -1,0 +1,119 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/CompactConnectionWorkspace.test.tsx src/local-app/LocalCatalogApp.ownerSettings.test.tsx src/local-app/LocalCatalogApp.connectionDrafts.test.tsx src/local-app/LocalSecretAdministration.test.tsx src/local-app/SecretDetailPane.test.tsx src/connections/ConnectionModelsDialog.test.tsx src/connections/ConnectionBillingDialog.test.tsx src/connections/ConnectionLocale.test.tsx
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/CompactConnectionWorkspace.test.tsx (16 tests) 1493ms
+ ✓ src/connections/ConnectionModelsDialog.test.tsx (16 tests) 1532ms
+ ✓ src/connections/ConnectionLocale.test.tsx (4 tests) 177ms
+ ✓ src/local-app/LocalCatalogApp.connectionDrafts.test.tsx (3 tests) 1386ms
+   ✓ guards actual App Back, continues in place, and keeps only non-secret edits across leaving and returning  599ms
+   ✓ keeps model choices across actual App Back and Forward in a fixed detail surface  352ms
+   ✓ drops pending leave destinations and retained connection drafts when the Owner session expires  435ms
+ ✓ src/local-app/LocalCatalogApp.ownerSettings.test.tsx (4 tests) 1432ms
+   ✓ opens every real settings page in one frame with its actual content and restores focus  426ms
+   ✓ links connection keys to one fixed sensitive pane and global metadata back to the connection  546ms
+stderr | src/connections/ConnectionBillingDialog.test.tsx > confirms a dirty billing close without offering to retain credentials and clears reporting on unmount
+An update to ForwardRef(Input) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(Input) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(Group) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(Group) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(Button) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(Button) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $8b8d26808cb8cb53$var$ModalOverlayInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(TextField) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/connections/ConnectionBillingDialog.test.tsx > confirms a dirty billing close without offering to retain credentials and clears reporting on unmount
+A component suspended inside an `act` scope, but the `act` call was not awaited. When testing React components that depend on asynchronous data, you must await the result:
+
+await act(() => ...)
+
+ ✓ src/connections/ConnectionBillingDialog.test.tsx (3 tests) 822ms
+   ✓ keeps secrets masked and out of storage, supports failure, retry, success cleanup and disconnect  536ms
+ ✓ src/local-app/SecretDetailPane.test.tsx (9 tests) 128ms
+ ✓ src/local-app/LocalSecretAdministration.test.tsx (17 tests) 5880ms
+   ✓ embeds inside one settings dialog and clears displayed credentials before leaving for the real connection  354ms
+   ✓ uses the requested search and reference without opening a nested dialog or revealing any credential  549ms
+   ✓ reveals only after POST password verification and clears on selection/filter/visibility  611ms
+   ✓ copies through browser clipboard after verification and never renders returned plaintext  305ms
+   ✓ blocks stale reveal responses after close, filter and expired-session event  310ms
+   ✓ hides plaintext after thirty seconds and never offers control-secret reveal  604ms
+   ✓ preserves server paging and clears the expanded secret before requesting the next page  562ms
+
+ Test Files  8 passed (8)
+      Tests  72 passed (72)
+   Start at  21:53:56
+   Duration  7.99s (transform 1.40s, setup 71ms, collect 10.34s, tests 12.85s, environment 3.29s, prepare 432ms)
+

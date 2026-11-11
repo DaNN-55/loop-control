@@ -1,0 +1,12 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run --config docs/verification/receipt-rules-implementation-20261111/acceptance/provider-marker.config.mjs --maxWorkers=1 --reporter=verbose
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ docs/verification/receipt-rules-implementation-20261111/acceptance/provider-marker.test.ts > keeps a definite mark-before-send refusal as not sent, with no transport send 1ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  21:56:01
+   Duration  184ms (transform 59ms, setup 0ms, collect 76ms, tests 2ms, environment 0ms, prepare 26ms)
+

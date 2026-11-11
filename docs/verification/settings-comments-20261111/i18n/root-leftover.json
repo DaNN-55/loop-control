@@ -1,0 +1,3382 @@
+[
+  {
+    "file": "src/operations/OperationsWorkspace.tsx",
+    "rows": [
+      {
+        "text": "输入与脚本",
+        "line": 29,
+        "context": "label: \"输入与脚本\""
+      },
+      {
+        "text": "视觉准备",
+        "line": 30,
+        "context": "label: \"视觉准备\""
+      },
+      {
+        "text": "分镜与媒体",
+        "line": 31,
+        "context": "label: \"分镜与媒体\""
+      },
+      {
+        "text": "合成与 QC",
+        "line": 32,
+        "context": "label: \"合成与 QC\""
+      },
+      {
+        "text": "生产完成",
+        "line": 33,
+        "context": "label: \"生产完成\""
+      },
+      {
+        "text": "未知阶段",
+        "line": 37,
+        "context": "stageGroups.find((group) => group.stages.includes(stage))?.label ?? \"未知阶段\""
+      },
+      {
+        "text": "全部制作",
+        "line": 53,
+        "context": "['all','全部制作']"
+      },
+      {
+        "text": "待审核",
+        "line": 53,
+        "context": "['review','待审核']"
+      },
+      {
+        "text": "制作中",
+        "line": 53,
+        "context": "['running','制作中']"
+      },
+      {
+        "text": "需处理",
+        "line": 53,
+        "context": "['blocked','需处理']"
+      },
+      {
+        "text": "已完成",
+        "line": 53,
+        "context": "['done','已完成']"
+      },
+      {
+        "text": "未分系列",
+        "line": 75,
+        "context": "name: \"未分系列\""
+      },
+      {
+        "text": "关联系列不可用",
+        "line": 76,
+        "context": "name: \"关联系列不可用\""
+      },
+      {
+        "text": "未归属系列",
+        "line": 94,
+        "context": "name:'未归属系列'"
+      },
+      {
+        "text": "关联系列不可用",
+        "line": 94,
+        "context": "name:'关联系列不可用'"
+      },
+      {
+        "text": "有后台任务需要处理",
+        "line": 131,
+        "context": "title:'有后台任务需要处理'"
+      },
+      {
+        "text": "查看审核证据，确认后继续制作。",
+        "line": 133,
+        "context": "detail:'查看审核证据，确认后继续制作。'"
+      },
+      {
+        "text": "内容正在制作中",
+        "line": 135,
+        "context": "title:'内容正在制作中'"
+      },
+      {
+        "text": "可以查看制作进度，或继续其他生产单。",
+        "line": 135,
+        "context": "detail:'可以查看制作进度，或继续其他生产单。'"
+      },
+      {
+        "text": "当前没有待审核项",
+        "line": 136,
+        "context": "title:'当前没有待审核项'"
+      },
+      {
+        "text": "搜索",
+        "line": 144,
+        "context": "label:'搜索'"
+      },
+      {
+        "text": "状态",
+        "line": 145,
+        "context": "label:'状态'"
+      },
+      {
+        "text": "账号",
+        "line": 146,
+        "context": "label:'账号'"
+      },
+      {
+        "text": "账号不可用",
+        "line": 146,
+        "context": "accounts.find(account=>account.id===catalogControls.accountId)?.name??'账号不可用'"
+      },
+      {
+        "text": "系列",
+        "line": 147,
+        "context": "label:'系列'"
+      },
+      {
+        "text": "系列不可用",
+        "line": 147,
+        "context": "seriesOptions.find(option=>option.id===effectiveSeriesId)?.name??'系列不可用'"
+      },
+      {
+        "text": "阶段",
+        "line": 148,
+        "context": "label:'阶段'"
+      },
+      {
+        "text": "全部账号",
+        "line": 167,
+        "context": "label:\"全部账号\""
+      },
+      {
+        "text": "全部系列",
+        "line": 168,
+        "context": "label:\"全部系列\""
+      },
+      {
+        "text": "全部阶段",
+        "line": 169,
+        "context": "label:'全部阶段'"
+      },
+      {
+        "text": "最近更新",
+        "line": 170,
+        "context": "label:'最近更新'"
+      },
+      {
+        "text": "最早更新",
+        "line": 170,
+        "context": "label:'最早更新'"
+      },
+      {
+        "text": "标题顺序",
+        "line": 170,
+        "context": "label:'标题顺序'"
+      },
+      {
+        "text": "未关联系列",
+        "line": 181,
+        "context": "itemSeries?.name??'未关联系列'"
+      }
+    ]
+  },
+  {
+    "file": "src/workspace/WorkspaceViews.tsx",
+    "rows": [
+      {
+        "text": "系列运营",
+        "line": 30,
+        "context": "label: \"系列运营\""
+      },
+      {
+        "text": "生产单",
+        "line": 31,
+        "context": "label: \"生产单\""
+      },
+      {
+        "text": "账号",
+        "line": 32,
+        "context": "label: \"账号\""
+      },
+      {
+        "text": "等待输入",
+        "line": 42,
+        "context": "waiting_input: \"等待输入\""
+      },
+      {
+        "text": "等待输入",
+        "line": 43,
+        "context": "brief_draft: \"等待输入\""
+      },
+      {
+        "text": "脚本生成与审核",
+        "line": 44,
+        "context": "script_draft: \"脚本生成与审核\""
+      },
+      {
+        "text": "脚本生成与审核",
+        "line": 45,
+        "context": "script_review: \"脚本生成与审核\""
+      },
+      {
+        "text": "视觉素材准备与审核",
+        "line": 46,
+        "context": "script_approved: \"视觉素材准备与审核\""
+      },
+      {
+        "text": "视觉素材准备与审核",
+        "line": 47,
+        "context": "visual_draft: \"视觉素材准备与审核\""
+      },
+      {
+        "text": "视觉素材准备与审核",
+        "line": 48,
+        "context": "visual_review: \"视觉素材准备与审核\""
+      },
+      {
+        "text": "视觉素材准备与审核",
+        "line": 49,
+        "context": "visual_approved: \"视觉素材准备与审核\""
+      },
+      {
+        "text": "分镜生成与审核",
+        "line": 50,
+        "context": "storyboard_draft: \"分镜生成与审核\""
+      },
+      {
+        "text": "分镜生成与审核",
+        "line": 51,
+        "context": "storyboard_review: \"分镜生成与审核\""
+      },
+      {
+        "text": "逐镜头准备工作台",
+        "line": 52,
+        "context": "storyboard_approved: \"逐镜头准备工作台\""
+      },
+      {
+        "text": "合成与 QC",
+        "line": 53,
+        "context": "production_ready: \"合成与 QC\""
+      },
+      {
+        "text": "合成与 QC",
+        "line": 54,
+        "context": "render_ready: \"合成与 QC\""
+      },
+      {
+        "text": "合成与 QC 审核",
+        "line": 55,
+        "context": "qc_review: \"合成与 QC 审核\""
+      },
+      {
+        "text": "合成与 QC 审核",
+        "line": 56,
+        "context": "qc_passed: \"合成与 QC 审核\""
+      },
+      {
+        "text": "生产完成",
+        "line": 57,
+        "context": "production_completed: \"生产完成\""
+      },
+      {
+        "text": "未命名生产单",
+        "line": 73,
+        "context": "episode.title || \"未命名生产单\""
+      },
+      {
+        "text": "操作未完成，请重试。",
+        "line": 92,
+        "context": "reason instanceof Error?reason.message:'操作未完成，请重试。'"
+      },
+      {
+        "text": "无法读取删除范围，请重试。",
+        "line": 112,
+        "context": "reason instanceof Error ? reason.message : \"无法读取删除范围，请重试。\""
+      },
+      {
+        "text": "删除失败，请重试。",
+        "line": 124,
+        "context": "reason instanceof Error ? reason.message : \"删除失败，请重试。\""
+      },
+      {
+        "text": "归档失败，请重试。",
+        "line": 131,
+        "context": "reason instanceof Error?reason.message:\"归档失败，请重试。\""
+      },
+      {
+        "text": "全部",
+        "line": 170,
+        "context": "['all','全部']"
+      },
+      {
+        "text": "待审核",
+        "line": 170,
+        "context": "['review','待审核']"
+      },
+      {
+        "text": "制作中",
+        "line": 170,
+        "context": "['running','制作中']"
+      },
+      {
+        "text": "需处理",
+        "line": 170,
+        "context": "['blocked','需处理']"
+      },
+      {
+        "text": "已完成",
+        "line": 170,
+        "context": "['done','已完成']"
+      },
+      {
+        "text": "全部账号",
+        "line": 188,
+        "context": "filter==='全部账号'"
+      },
+      {
+        "text": "未分系列",
+        "line": 193,
+        "context": "name:'未分系列'"
+      },
+      {
+        "text": "旧系列不可用",
+        "line": 193,
+        "context": "name:'旧系列不可用'"
+      },
+      {
+        "text": "全部账号",
+        "line": 195,
+        "context": "filter==='全部账号'"
+      },
+      {
+        "text": "全部账号",
+        "line": 195,
+        "context": "filter==='全部账号'"
+      },
+      {
+        "text": "全部账号",
+        "line": 196,
+        "context": "filter !== \"全部账号\""
+      },
+      {
+        "text": "全部系列",
+        "line": 196,
+        "context": "seriesFilter !== \"全部系列\""
+      },
+      {
+        "text": "搜索",
+        "line": 202,
+        "context": "label:'搜索'"
+      },
+      {
+        "text": "状态",
+        "line": 203,
+        "context": "label:'状态'"
+      },
+      {
+        "text": "全部账号",
+        "line": 204,
+        "context": "filter!=='全部账号'"
+      },
+      {
+        "text": "账号",
+        "line": 204,
+        "context": "label:'账号'"
+      },
+      {
+        "text": "账号不可用",
+        "line": 204,
+        "context": "accountsById.get(filter)?.name??'账号不可用'"
+      },
+      {
+        "text": "全部账号",
+        "line": 204,
+        "context": "onFilter('全部账号')"
+      },
+      {
+        "text": "全部系列",
+        "line": 205,
+        "context": "seriesFilter!=='全部系列'"
+      },
+      {
+        "text": "系列",
+        "line": 205,
+        "context": "label:'系列'"
+      },
+      {
+        "text": "系列不可用",
+        "line": 205,
+        "context": "seriesOptions.find(option=>option.id===seriesFilter)?.name??'系列不可用'"
+      },
+      {
+        "text": "全部系列",
+        "line": 205,
+        "context": "onSeriesFilter('全部系列')"
+      },
+      {
+        "text": "归档",
+        "line": 206,
+        "context": "label:'归档'"
+      },
+      {
+        "text": "已归档",
+        "line": 206,
+        "context": "episodeVisibility==='archived'?'已归档':'全部范围'"
+      },
+      {
+        "text": "全部范围",
+        "line": 206,
+        "context": "episodeVisibility==='archived'?'已归档':'全部范围'"
+      },
+      {
+        "text": "全部账号",
+        "line": 212,
+        "context": "onFilter(\"全部账号\")"
+      },
+      {
+        "text": "全部系列",
+        "line": 212,
+        "context": "onSeriesFilter(\"全部系列\")"
+      },
+      {
+        "text": "全部账号",
+        "line": 224,
+        "context": "allValue=\"全部账号\""
+      },
+      {
+        "text": "全部账号",
+        "line": 224,
+        "context": "value:\"全部账号\""
+      },
+      {
+        "text": "全部账号",
+        "line": 224,
+        "context": "label:\"全部账号\""
+      },
+      {
+        "text": "全部系列",
+        "line": 225,
+        "context": "allValue=\"全部系列\""
+      },
+      {
+        "text": "全部系列",
+        "line": 225,
+        "context": "value:\"全部系列\""
+      },
+      {
+        "text": "全部系列",
+        "line": 225,
+        "context": "label:\"全部系列\""
+      },
+      {
+        "text": "未归档",
+        "line": 226,
+        "context": "label:\"未归档\""
+      },
+      {
+        "text": "已归档",
+        "line": 226,
+        "context": "label:\"已归档\""
+      },
+      {
+        "text": "全部范围",
+        "line": 226,
+        "context": "label:\"全部范围\""
+      },
+      {
+        "text": "最近更新",
+        "line": 227,
+        "context": "label:'最近更新'"
+      },
+      {
+        "text": "最早更新",
+        "line": 227,
+        "context": "label:'最早更新'"
+      },
+      {
+        "text": "标题顺序",
+        "line": 227,
+        "context": "label:'标题顺序'"
+      },
+      {
+        "text": "花费从高到低",
+        "line": 227,
+        "context": "label:'花费从高到低'"
+      },
+      {
+        "text": "花费从低到高",
+        "line": 227,
+        "context": "label:'花费从低到高'"
+      },
+      {
+        "text": "生产单",
+        "line": 232,
+        "context": "['生产单','当前阶段','状态','最近更新']"
+      },
+      {
+        "text": "当前阶段",
+        "line": 232,
+        "context": "['生产单','当前阶段','状态','最近更新']"
+      },
+      {
+        "text": "状态",
+        "line": 232,
+        "context": "['生产单','当前阶段','状态','最近更新']"
+      },
+      {
+        "text": "最近更新",
+        "line": 232,
+        "context": "['生产单','当前阶段','状态','最近更新']"
+      },
+      {
+        "text": "未知账号",
+        "line": 233,
+        "context": "account?.name??'未知账号'"
+      },
+      {
+        "text": "系列不可用",
+        "line": 233,
+        "context": "seriesById.get(collection.seriesId)?.name??'系列不可用'"
+      },
+      {
+        "text": "未分系列",
+        "line": 233,
+        "context": "collection.seriesId?seriesById.get(collection.seriesId)?.name??'系列不可用':'未分系列'"
+      },
+      {
+        "text": "未知系列",
+        "line": 233,
+        "context": "seriesById.get(seriesVersion.series_id)?.name??'未知系列'"
+      },
+      {
+        "text": "未关联系列",
+        "line": 233,
+        "context": "seriesVersion?`${seriesById.get(seriesVersion.series_id)?.name??'未知系列'} v${seriesVersion.version}`:'未关联系列'"
+      },
+      {
+        "text": "请设置至少 12 位、最多 1024 位的密码。",
+        "line": 273,
+        "context": "setFormError(\"请设置至少 12 位、最多 1024 位的密码。\")"
+      },
+      {
+        "text": "两次输入的密码不一致。",
+        "line": 277,
+        "context": "setFormError(\"两次输入的密码不一致。\")"
+      },
+      {
+        "text": "密码保存失败，请重试。",
+        "line": 282,
+        "context": "error instanceof Error?error.message:'密码保存失败，请重试。'"
+      }
+    ]
+  },
+  {
+    "file": "src/ui/media/AudioPreview.tsx",
+    "rows": [
+      {
+        "text": "无法播放音频。",
+        "line": 20,
+        "context": "error instanceof Error?error.message:'无法播放音频。'"
+      },
+      {
+        "text": "音频未能加载，请重试。",
+        "line": 29,
+        "context": "onPlaybackError?.('音频未能加载，请重试。')"
+      }
+    ]
+  },
+  {
+    "file": "src/ui/media/ImagePreview.tsx",
+    "rows": [
+      {
+        "text": "关闭放大预览",
+        "line": 8,
+        "context": "closeLabel='关闭放大预览'"
+      },
+      {
+        "text": "图片",
+        "line": 21,
+        "context": "alt||'图片'"
+      }
+    ]
+  },
+  {
+    "file": "src/ui/media/VideoPreview.tsx",
+    "rows": [
+      {
+        "text": "源视频",
+        "line": 20,
+        "context": "sourceLabel='源视频'"
+      },
+      {
+        "text": "片段 ",
+        "line": 48,
+        "context": "hasTrim?'片段 ':''"
+      }
+    ]
+  },
+  {
+    "file": "src/ui/PaginationControls.tsx",
+    "rows": [
+      {
+        "text": "分页",
+        "line": 13,
+        "context": "label = \"分页\""
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspaceNarrationToolbar.tsx",
+    "rows": [
+      {
+        "text": "筛选语音模型",
+        "line": 19,
+        "context": "searchLabel=\"筛选语音模型\""
+      },
+      {
+        "text": "人工口播",
+        "line": 19,
+        "context": "label:'人工口播'"
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspaceNarrationCaptions.tsx",
+    "rows": [
+      {
+        "text": "字幕已跟随口播。",
+        "line": 11,
+        "context": "mode==='follow_tts'?'字幕已跟随口播。':'字幕已保存。'"
+      },
+      {
+        "text": "字幕已保存。",
+        "line": 11,
+        "context": "mode==='follow_tts'?'字幕已跟随口播。':'字幕已保存。'"
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspaceShotRail.tsx",
+    "rows": [
+      {
+        "text": "镜头修改未完成。",
+        "line": 9,
+        "context": "cause instanceof Error?cause.message:'镜头修改未完成。'"
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspaceModelPicker.tsx",
+    "rows": [
+      {
+        "text": "搜索模型、服务商或连接",
+        "line": 10,
+        "context": "searchPlaceholder='搜索模型、服务商或连接'"
+      },
+      {
+        "text": "关闭模型选择",
+        "line": 10,
+        "context": "closeLabel='关闭模型选择'"
+      },
+      {
+        "text": "没有匹配模型。",
+        "line": 10,
+        "context": "noResults='没有匹配模型。'"
+      },
+      {
+        "text": "清除模型选择",
+        "line": 10,
+        "context": "clearLabel='清除模型选择'"
+      },
+      {
+        "text": "连接与模型",
+        "line": 22,
+        "context": "label.replace('连接与模型','可用模型')"
+      },
+      {
+        "text": "可用模型",
+        "line": 22,
+        "context": "label.replace('连接与模型','可用模型')"
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspaceGenerationChoices.tsx",
+    "rows": [
+      {
+        "text": "完整保留",
+        "line": 18,
+        "context": "['contain','完整保留','必要时留边']"
+      },
+      {
+        "text": "必要时留边",
+        "line": 18,
+        "context": "['contain','完整保留','必要时留边']"
+      },
+      {
+        "text": "居中裁切",
+        "line": 18,
+        "context": "['cover','居中裁切','填满画面']"
+      },
+      {
+        "text": "填满画面",
+        "line": 18,
+        "context": "['cover','居中裁切','填满画面']"
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspaceExportPanel.tsx",
+    "rows": [
+      {
+        "text": "问题记录失败，请重试。",
+        "line": 16,
+        "context": "cause instanceof Error?cause.message:'问题记录失败，请重试。'"
+      },
+      {
+        "text": "成片",
+        "line": 26,
+        "context": "sourceLabel=\"成片\""
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspaceReferencePicker.tsx",
+    "rows": [
+      {
+        "text": "图片核对",
+        "line": 17,
+        "context": "preview.index===undefined?'图片核对':`参考图 ${preview.index+1}`"
+      },
+      {
+        "text": "关闭参考图放大",
+        "line": 17,
+        "context": "closeLabel=\"关闭参考图放大\""
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspaceAudioAudition.tsx",
+    "rows": [
+      {
+        "text": "音频暂时无法播放，可展开播放控制重试。",
+        "line": 16,
+        "context": "showControls?'音频暂时无法播放，可展开播放控制重试。':'音频暂时无法播放，请再次试听。'"
+      },
+      {
+        "text": "音频暂时无法播放，请再次试听。",
+        "line": 16,
+        "context": "showControls?'音频暂时无法播放，可展开播放控制重试。':'音频暂时无法播放，请再次试听。'"
+      },
+      {
+        "text": "暂停",
+        "line": 18,
+        "context": "playing?'暂停':'试听'"
+      },
+      {
+        "text": "试听",
+        "line": 18,
+        "context": "playing?'暂停':'试听'"
+      },
+      {
+        "text": "音频暂时无法播放，请再次试听。",
+        "line": 21,
+        "context": "setError('音频暂时无法播放，请再次试听。')"
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspaceVideoInputs.tsx",
+    "rows": [
+      {
+        "text": "素材已不可用",
+        "line": 35,
+        "context": "!material?.storage_path?'素材已不可用'\n   :!limit?'当前模式不使用此素材'\n   :material.mime_type&&limit.mimeTypes&&!limit.mimeTypes.includes(material.mime_type)?'格式不兼容'\n   "
+      },
+      {
+        "text": "当前模式不使用此素材",
+        "line": 36,
+        "context": "!limit?'当前模式不使用此素材'\n   :material.mime_type&&limit.mimeTypes&&!limit.mimeTypes.includes(material.mime_type)?'格式不兼容'\n   :limit.maxBytes&&Number(material.file"
+      },
+      {
+        "text": "格式不兼容",
+        "line": 37,
+        "context": "material.mime_type&&limit.mimeTypes&&!limit.mimeTypes.includes(material.mime_type)?'格式不兼容'\n   :limit.maxBytes&&Number(material.file_size)>limit.maxBytes?'文"
+      },
+      {
+        "text": "文件大小超过上限",
+        "line": 38,
+        "context": "limit.maxBytes&&Number(material.file_size)>limit.maxBytes?'文件大小超过上限'\n   :mode.id==='references'&&referenced.has(id)?'与已选参考素材重复'\n   :count>=limit.max||mode."
+      },
+      {
+        "text": "与已选参考素材重复",
+        "line": 39,
+        "context": "mode.id==='references'&&referenced.has(id)?'与已选参考素材重复'\n   :count>=limit.max||mode.maxReferences&&referenced.size>=mode.maxReferences||\n    role==='referenc"
+      },
+      {
+        "text": "超过当前模式的数量上限",
+        "line": 41,
+        "context": "count>=limit.max||mode.maxReferences&&referenced.size>=mode.maxReferences||\n    role==='referenceImages'&&hasReferenceVideo&&mode.maxImagesWithVideo&&count"
+      },
+      {
+        "text": "拖入图片作为首帧",
+        "line": 60,
+        "context": "mode.id==='first-frame'?'拖入图片作为首帧'\n  :mode.characterOrder||mode.maxImagesWithVideo?'拖入参考图或参考视频':'拖入画面素材'"
+      },
+      {
+        "text": "拖入参考图或参考视频",
+        "line": 61,
+        "context": "mode.characterOrder||mode.maxImagesWithVideo?'拖入参考图或参考视频':'拖入画面素材'"
+      },
+      {
+        "text": "拖入画面素材",
+        "line": 61,
+        "context": "mode.characterOrder||mode.maxImagesWithVideo?'拖入参考图或参考视频':'拖入画面素材'"
+      },
+      {
+        "text": "素材已不可用",
+        "line": 77,
+        "context": "material?.source_path.split('/').pop()??'素材已不可用'"
+      },
+      {
+        "text": "已选视频首帧",
+        "line": 86,
+        "context": "role==='firstFrame'?'已选视频首帧':role==='lastFrame'?'已选视频尾帧':'画面输入 · '+name"
+      },
+      {
+        "text": "已选视频尾帧",
+        "line": 86,
+        "context": "role==='lastFrame'?'已选视频尾帧':'画面输入 · '+name"
+      },
+      {
+        "text": "画面输入 · ",
+        "line": 86,
+        "context": "'画面输入 · '+name"
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/GlobalPlanningSettings.tsx",
+    "rows": [
+      {
+        "text": "A · 列表内新增",
+        "line": 85,
+        "context": "['inline','A · 列表内新增']"
+      },
+      {
+        "text": "B · 双栏编辑",
+        "line": 85,
+        "context": "['side','B · 双栏编辑']"
+      },
+      {
+        "text": "C · 内容预览",
+        "line": 85,
+        "context": "['preview','C · 内容预览']"
+      },
+      {
+        "text": "请填写版本名称、摘要和 Harness 内容。",
+        "line": 120,
+        "context": "setRegistrationStatus('请填写版本名称、摘要和 Harness 内容。')"
+      },
+      {
+        "text": "新版本已登记并选中，保存默认设置后生效。",
+        "line": 131,
+        "context": "setRegistrationStatus('新版本已登记并选中，保存默认设置后生效。')"
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspacePexelsSearch.tsx",
+    "rows": [
+      {
+        "text": "无法读取 Pexels 连接。",
+        "line": 33,
+        "context": "composer?.catalogError||'无法读取 Pexels 连接。'"
+      },
+      {
+        "text": "无法读取 Pexels 结果。",
+        "line": 40,
+        "context": "cause instanceof Error?cause.message:'无法读取 Pexels 结果。'"
+      },
+      {
+        "text": "Pexels 操作未完成，请重试。",
+        "line": 43,
+        "context": "e instanceof Error?e.message:'Pexels 操作未完成，请重试。'"
+      },
+      {
+        "text": "检索词",
+        "line": 52,
+        "context": "ariaLabel=\"检索词\""
+      },
+      {
+        "text": "视频",
+        "line": 53,
+        "context": "kind=\"视频\""
+      },
+      {
+        "text": "竖屏",
+        "line": 54,
+        "context": "portrait:'竖屏'"
+      },
+      {
+        "text": "横屏",
+        "line": 54,
+        "context": "landscape:'横屏'"
+      },
+      {
+        "text": "方形",
+        "line": 54,
+        "context": "square:'方形'"
+      },
+      {
+        "text": "大",
+        "line": 54,
+        "context": "large:'大'"
+      },
+      {
+        "text": "中",
+        "line": 54,
+        "context": "medium:'中'"
+      },
+      {
+        "text": "小",
+        "line": 54,
+        "context": "small:'小'"
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspacePlanningSelection.tsx",
+    "rows": [
+      {
+        "text": "规划选择未保存。",
+        "line": 22,
+        "context": "cause instanceof Error?cause.message:'规划选择未保存。'"
+      },
+      {
+        "text": "版本已登记，列表读取失败：",
+        "line": 42,
+        "context": "createdVersions.current.has(key)?'版本已登记，列表读取失败：':''"
+      },
+      {
+        "text": "版本登记未完成。",
+        "line": 42,
+        "context": "cause instanceof Error?cause.message:'版本登记未完成。'"
+      },
+      {
+        "text": "无法读取规划配置。",
+        "line": 61,
+        "context": "cause instanceof Error?cause.message:'无法读取规划配置。'"
+      },
+      {
+        "text": "无法读取生产单。",
+        "line": 95,
+        "context": "cause instanceof Error?cause.message:'无法读取生产单。'"
+      },
+      {
+        "text": "未命名生产单",
+        "line": 100,
+        "context": "item.title||'未命名生产单'"
+      },
+      {
+        "text": "正在读取生产单…",
+        "line": 109,
+        "context": "loading?'正在读取生产单…':options.length?'选择生产单':'没有可选生产单'"
+      },
+      {
+        "text": "选择生产单",
+        "line": 109,
+        "context": "options.length?'选择生产单':'没有可选生产单'"
+      },
+      {
+        "text": "没有可选生产单",
+        "line": 109,
+        "context": "options.length?'选择生产单':'没有可选生产单'"
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/useWorkspaceCallConfirmation.tsx",
+    "rows": [
+      {
+        "text": "在线音效",
+        "line": 18,
+        "context": "summary.kind==='在线音效'"
+      },
+      {
+        "text": "已有本次调用等待确认或提交，请先完成当前操作。",
+        "line": 45,
+        "context": "Error('已有本次调用等待确认或提交，请先完成当前操作。')"
+      },
+      {
+        "text": "提交未完成，请核对任务状态后重试。",
+        "line": 57,
+        "context": "cause instanceof Error?cause.message:'提交未完成，请核对任务状态后重试。'"
+      },
+      {
+        "text": "图片生成",
+        "line": 70,
+        "context": "summary?.kind==='图片生成'"
+      },
+      {
+        "text": "在线音效",
+        "line": 89,
+        "context": "summary.kind==='在线音效'"
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspaceTopbar.tsx",
+    "rows": [
+      {
+        "text": "待处理信息暂不可用。",
+        "line": 51,
+        "context": "error instanceof Error?error.message:'待处理信息暂不可用。'"
+      },
+      {
+        "text": "最近提醒格式无效。",
+        "line": 55,
+        "context": "Error('最近提醒格式无效。')"
+      },
+      {
+        "text": "最近提醒暂不可用。",
+        "line": 55,
+        "context": "error instanceof Error?error.message:'最近提醒暂不可用。'"
+      },
+      {
+        "text": "未命名生产单",
+        "line": 61,
+        "context": "episode.title||'未命名生产单'"
+      },
+      {
+        "text": "审核包已就绪",
+        "line": 61,
+        "context": "detail:'审核包已就绪'"
+      },
+      {
+        "text": "未命名生产单",
+        "line": 64,
+        "context": "item.episode.title||'未命名生产单'"
+      },
+      {
+        "text": "存在需要处理的阻塞",
+        "line": 64,
+        "context": "item.blocker.detail||'存在需要处理的阻塞'"
+      },
+      {
+        "text": "交付包已完成",
+        "line": 88,
+        "context": "event.event_type==='publish_package_verified'?'交付包已完成':event.event_type==='production_task_failed'?'生产任务失败':`${event.payload.name||'连接'}验证失败`"
+      },
+      {
+        "text": "生产任务失败",
+        "line": 88,
+        "context": "event.event_type==='production_task_failed'?'生产任务失败':`${event.payload.name||'连接'}验证失败`"
+      },
+      {
+        "text": "连接",
+        "line": 88,
+        "context": "event.payload.name||'连接'"
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspaceVisualPreparation.tsx",
+    "rows": [
+      {
+        "text": "图片",
+        "line": 96,
+        "context": "tab==='image'?'图片':'视频'"
+      },
+      {
+        "text": "视频",
+        "line": 96,
+        "context": "tab==='image'?'图片':'视频'"
+      },
+      {
+        "text": "无法读取制作连接，请刷新后重试。",
+        "line": 101,
+        "context": "catalogReading.error?'无法读取制作连接，请刷新后重试。':''"
+      },
+      {
+        "text": "生成图片",
+        "line": 130,
+        "context": "c.relativePath.split('/').pop()??'生成图片'"
+      },
+      {
+        "text": "无法读取当前工程，请重试。",
+        "line": 153,
+        "context": "useWorkspaceReading(workspace,updated,targetItemId,'无法读取当前工程，请重试。')"
+      },
+      {
+        "text": "无法读取采用影响，请刷新后重新核对。",
+        "line": 167,
+        "context": "Error('无法读取采用影响，请刷新后重新核对。')"
+      },
+      {
+        "text": "保留为备用图片",
+        "line": 179,
+        "context": "impact?(impact.deltaSeconds===0?`镜头时长保持 ${impact.appliedSeconds.toFixed(2)} 秒`:`${impact.currentSeconds.toFixed(2)} → ${impact.appliedSeconds.toFixed(2)} 秒"
+      },
+      {
+        "text": "本地参考视频须为 MP4，其他格式需要 HTTPS 地址。",
+        "line": 198,
+        "context": "videoMode.allowInlineMp4&&videoInputs.some(entry=>entry.role==='referenceVideos'&&!entry.reason&&entry.material?.mime_type!=='video/mp4'&&!videoSources[ent"
+      },
+      {
+        "text": "当前镜头画面",
+        "line": 212,
+        "context": "current?'当前镜头画面':imageChosen?'备用图片':candidate?.generation?.selection?.model"
+      },
+      {
+        "text": "备用图片",
+        "line": 212,
+        "context": "imageChosen?'备用图片':candidate?.generation?.selection?.model"
+      },
+      {
+        "text": "输入已变化",
+        "line": 212,
+        "context": "candidate?.status==='stale'?'输入已变化':null"
+      },
+      {
+        "text": "素材已导入，候选列表暂未更新，请刷新重试。",
+        "line": 228,
+        "context": "setError('素材已导入，候选列表暂未更新，请刷新重试。')"
+      },
+      {
+        "text": "操作未完成，请重试。",
+        "line": 232,
+        "context": "cause instanceof Error?cause.message:'操作未完成，请重试。'"
+      },
+      {
+        "text": "素材不能为空或超过 100 MB。",
+        "line": 244,
+        "context": "Error('素材不能为空或超过 100 MB。')"
+      },
+      {
+        "text": "请选择有效的图片或视频文件。",
+        "line": 245,
+        "context": "row.tab==='video'?'请选择有效的图片或视频文件。':'请选择 PNG、JPEG 或 WebP 参考图。'"
+      },
+      {
+        "text": "请选择 PNG、JPEG 或 WebP 参考图。",
+        "line": 245,
+        "context": "row.tab==='video'?'请选择有效的图片或视频文件。':'请选择 PNG、JPEG 或 WebP 参考图。'"
+      },
+      {
+        "text": "图片",
+        "line": 245,
+        "context": "row.tab==='image'?'图片':'视频'"
+      },
+      {
+        "text": "视频",
+        "line": 245,
+        "context": "row.tab==='image'?'图片':'视频'"
+      },
+      {
+        "text": "每张参考图不能超过 20 MB。",
+        "line": 246,
+        "context": "Error('每张参考图不能超过 20 MB。')"
+      },
+      {
+        "text": "最多可添加 16 张参考图。",
+        "line": 247,
+        "context": "Error('最多可添加 16 张参考图。')"
+      },
+      {
+        "text": "上传已暂停。",
+        "line": 249,
+        "context": "Error('上传已暂停。')"
+      },
+      {
+        "text": "最多可添加 16 张参考图。",
+        "line": 256,
+        "context": "Error('最多可添加 16 张参考图。')"
+      },
+      {
+        "text": "素材已导入，尚未选为参考图。",
+        "line": 261,
+        "context": "row.asReference?'素材已导入，尚未选为参考图。':'素材已导入，尚未加入候选。'"
+      },
+      {
+        "text": "素材已导入，尚未加入候选。",
+        "line": 261,
+        "context": "row.asReference?'素材已导入，尚未选为参考图。':'素材已导入，尚未加入候选。'"
+      },
+      {
+        "text": "已暂停，重试可继续。",
+        "line": 261,
+        "context": "imported?(row.asReference?'素材已导入，尚未选为参考图。':'素材已导入，尚未加入候选。'):'已暂停，重试可继续。'"
+      },
+      {
+        "text": "素材已导入，参考图未选入：",
+        "line": 262,
+        "context": "row.asReference?'素材已导入，参考图未选入：':'素材已导入，候选未完成：'"
+      },
+      {
+        "text": "素材已导入，候选未完成：",
+        "line": 262,
+        "context": "row.asReference?'素材已导入，参考图未选入：':'素材已导入，候选未完成：'"
+      },
+      {
+        "text": "最多可添加 16 张参考图。",
+        "line": 268,
+        "context": "reportUpload('最多可添加 16 张参考图。')"
+      },
+      {
+        "text": "操作未完成，请重试。",
+        "line": 275,
+        "context": "cause instanceof Error?cause.message:'操作未完成，请重试。'"
+      },
+      {
+        "text": "图片已保留为备用。",
+        "line": 287,
+        "context": "plan.kind==='image-backup'?'图片已保留为备用。':`已采用${c.kind==='image'?'图片':'视频'}。`"
+      },
+      {
+        "text": "图片",
+        "line": 287,
+        "context": "c.kind==='image'?'图片':'视频'"
+      },
+      {
+        "text": "视频",
+        "line": 287,
+        "context": "c.kind==='image'?'图片':'视频'"
+      },
+      {
+        "text": "操作未完成，请重试。",
+        "line": 288,
+        "context": "cause instanceof Error?cause.message:'操作未完成，请重试。'"
+      },
+      {
+        "text": "请先选择当前模式可用的画面。",
+        "line": 310,
+        "context": "videoInputProblem||'请先选择当前模式可用的画面。'"
+      },
+      {
+        "text": "当前口播窗口已变化，请重新确认时长后生成。",
+        "line": 312,
+        "context": "Error('当前口播窗口已变化，请重新确认时长后生成。')"
+      },
+      {
+        "text": "已选定视频首帧，尚未提交生成。",
+        "line": 323,
+        "context": "setNotice('已选定视频首帧，尚未提交生成。')"
+      },
+      {
+        "text": "已采用",
+        "line": 332,
+        "context": "current?'已采用':imageChosen?'图片已选用':tab==='image'&&props.currentVisualKind==='video'?'保留备用图片':`采用${kindName}到当前镜头`"
+      },
+      {
+        "text": "图片已选用",
+        "line": 332,
+        "context": "imageChosen?'图片已选用':tab==='image'&&props.currentVisualKind==='video'?'保留备用图片':`采用${kindName}到当前镜头`"
+      },
+      {
+        "text": "保留备用图片",
+        "line": 332,
+        "context": "tab==='image'&&props.currentVisualKind==='video'?'保留备用图片':`采用${kindName}到当前镜头`"
+      },
+      {
+        "text": "连接：原连接版本不在当前服务目录中，请重新选择模型。",
+        "line": 337,
+        "context": "['连接：原连接版本不在当前服务目录中，请重新选择模型。']"
+      },
+      {
+        "text": "当前不可执行，请检查连接。",
+        "line": 337,
+        "context": "selectedService.unavailableReason??'当前不可执行，请检查连接。'"
+      },
+      {
+        "text": "未选择",
+        "line": 338,
+        "context": "selectedSelection.model??'未选择'"
+      },
+      {
+        "text": "未注册",
+        "line": 340,
+        "context": "(imageService.constraints.sizes??[]).map(s=>s.replace('x',' × ')).join(' / ')||'未注册'"
+      },
+      {
+        "text": "未注册",
+        "line": 341,
+        "context": "(imageService.constraints.qualities??[]).map(q=>qualityLabels[q as keyof typeof qualityLabels]??q).join(' / ')||'未注册'"
+      },
+      {
+        "text": "未注册",
+        "line": 342,
+        "context": "(imageService.constraints.counts??[]).map(n=>`${n} 张`).join(' / ')||'未注册'"
+      },
+      {
+        "text": "正在生成，请等待结果。",
+        "line": 359,
+        "context": "pending.some(t=>(t.kind??'video')===tab)?'正在生成，请等待结果。'\n  :tasks.some(t=>t.targetItemId===targetItemId&&(t.publicationAttempt!=null||t.submissionUnknown&&!t"
+      },
+      {
+        "text": "请先核对上一条生成任务。",
+        "line": 360,
+        "context": "tasks.some(t=>t.targetItemId===targetItemId&&(t.publicationAttempt!=null||t.submissionUnknown&&!t.retryTaskId&&t!==unknownImageTask))?'请先核对上一条生成任务。'\n  :wor"
+      },
+      {
+        "text": "脚本已更新，请先核对当前素材。",
+        "line": 361,
+        "context": "workspace.stale?'脚本已更新，请先核对当前素材。'\n  :tab==='image'&&!imageCompatible?'请选择可用的图片模型和规格。'\n  :tab==='video'&&!videoCompatible?'请选择可用的视频模型。'\n  :tab==='video'&&(!"
+      },
+      {
+        "text": "请选择可用的图片模型和规格。",
+        "line": 362,
+        "context": "tab==='image'&&!imageCompatible?'请选择可用的图片模型和规格。'\n  :tab==='video'&&!videoCompatible?'请选择可用的视频模型。'\n  :tab==='video'&&(!canSubmitVideoMode||videoInputProblem"
+      },
+      {
+        "text": "请选择可用的视频模型。",
+        "line": 363,
+        "context": "tab==='video'&&!videoCompatible?'请选择可用的视频模型。'\n  :tab==='video'&&(!canSubmitVideoMode||videoInputProblem||!advancedVideo&&!submitFirstFrame)?'请检查生成模式和画面素材。'"
+      },
+      {
+        "text": "请检查生成模式和画面素材。",
+        "line": 364,
+        "context": "tab==='video'&&(!canSubmitVideoMode||videoInputProblem||!advancedVideo&&!submitFirstFrame)?'请检查生成模式和画面素材。'\n  :tab==='video'&&invalidDuration?'请调整到模型支持的时长。'"
+      },
+      {
+        "text": "请调整到模型支持的时长。",
+        "line": 365,
+        "context": "tab==='video'&&invalidDuration?'请调整到模型支持的时长。'\n  :tab==='video'&&draft.videoSettings.negativePrompt.length>500?'负面提示词最多 500 字。'\n  :missingMention?`${missing"
+      },
+      {
+        "text": "负面提示词最多 500 字。",
+        "line": 366,
+        "context": "tab==='video'&&draft.videoSettings.negativePrompt.length>500?'负面提示词最多 500 字。'\n  :missingMention?`${missingMention} 对应的素材已移除或不适用于当前模式，请重新插入引用。`\n  :!prompt.t"
+      },
+      {
+        "text": "请填写提示词。",
+        "line": 368,
+        "context": "!prompt.trim()?'请填写提示词。':prompt.length>promptLimit?`提示词最多 ${promptLimit} 字。`:''"
+      },
+      {
+        "text": "，已采用",
+        "line": 399,
+        "context": "adopted?'，已采用':''"
+      },
+      {
+        "text": "视频原声已拆分，可在剪辑工作台单独编辑。",
+        "line": 422,
+        "context": "setNotice('视频原声已拆分，可在剪辑工作台单独编辑。')"
+      },
+      {
+        "text": "图片提示词",
+        "line": 465,
+        "context": "tab==='image'?'图片提示词':'画面动作'"
+      },
+      {
+        "text": "画面动作",
+        "line": 465,
+        "context": "tab==='image'?'图片提示词':'画面动作'"
+      },
+      {
+        "text": "规格",
+        "line": 467,
+        "context": "videoService?.constraints.resolutions?.join(' / ')??'规格'"
+      },
+      {
+        "text": "构图",
+        "line": 471,
+        "context": "summary=\"构图\""
+      },
+      {
+        "text": "视频原声",
+        "line": 495,
+        "context": "target?.voiceMode==='source'?'视频原声':'口播'"
+      },
+      {
+        "text": "口播",
+        "line": 495,
+        "context": "target?.voiceMode==='source'?'视频原声':'口播'"
+      },
+      {
+        "text": "设置本次视频时长",
+        "line": 495,
+        "context": "voiceDriven?`时长跟随已采用的${target?.voiceMode==='source'?'视频原声':'口播'}`:'设置本次视频时长'"
+      },
+      {
+        "text": "高级",
+        "line": 495,
+        "context": "summary=\"高级\""
+      },
+      {
+        "text": "视频负面提示词",
+        "line": 497,
+        "context": "ariaLabel=\"视频负面提示词\""
+      },
+      {
+        "text": "正在生成，请等待结果。",
+        "line": 507,
+        "context": "generationBlocker!=='正在生成，请等待结果。'"
+      },
+      {
+        "text": "请填写提示词。",
+        "line": 507,
+        "context": "generationBlocker!=='请填写提示词。'"
+      },
+      {
+        "text": "取消采用未完成，请重试。",
+        "line": 521,
+        "context": "cause instanceof Error?cause.message:'取消采用未完成，请重试。'"
+      },
+      {
+        "text": "图片候选大图",
+        "line": 529,
+        "context": "imageAlt=\"图片候选大图\""
+      },
+      {
+        "text": "关闭大图预览",
+        "line": 529,
+        "context": "closeLabel=\"关闭大图预览\""
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspaceScriptPanel.tsx",
+    "rows": [
+      {
+        "text": "正在保存脚本…",
+        "line": 24,
+        "context": "saving:'正在保存脚本…'"
+      },
+      {
+        "text": "保存结果未确认，尚未启动制作。",
+        "line": 24,
+        "context": "save_failed:'保存结果未确认，尚未启动制作。'"
+      },
+      {
+        "text": "脚本已保存，正在启动制作…",
+        "line": 24,
+        "context": "starting:'脚本已保存，正在启动制作…'"
+      },
+      {
+        "text": "脚本已保存，正在核对启动状态…",
+        "line": 24,
+        "context": "checking:'脚本已保存，正在核对启动状态…'"
+      },
+      {
+        "text": "脚本已保存，制作尚未确认启动。",
+        "line": 24,
+        "context": "start_failed:'脚本已保存，制作尚未确认启动。'"
+      },
+      {
+        "text": "制作已启动",
+        "line": 24,
+        "context": "started:'制作已启动'"
+      },
+      {
+        "text": "已确认基准",
+        "line": 45,
+        "context": "revision||locallyConfirmed?'已确认基准':'待确认'"
+      },
+      {
+        "text": "待确认",
+        "line": 45,
+        "context": "revision||locallyConfirmed?'已确认基准':'待确认'"
+      },
+      {
+        "text": "当前生产单已只读，本次草稿已保留。",
+        "line": 62,
+        "context": "Error('当前生产单已只读，本次草稿已保留。')"
+      },
+      {
+        "text": "当前脚本版本或生产单状态已变化，请重新打开核对；本次草稿已保留。",
+        "line": 64,
+        "context": "Error('当前脚本版本或生产单状态已变化，请重新打开核对；本次草稿已保留。')"
+      },
+      {
+        "text": "当前生产单已只读，本次草稿已保留。",
+        "line": 69,
+        "context": "Error('当前生产单已只读，本次草稿已保留。')"
+      },
+      {
+        "text": "启动回执对应的脚本或阶段已变化，请核对后继续启动。",
+        "line": 74,
+        "context": "Error('启动回执对应的脚本或阶段已变化，请核对后继续启动。')"
+      },
+      {
+        "text": "制作启动未完成。",
+        "line": 77,
+        "context": "cause instanceof Error?cause.message:'制作启动未完成。'"
+      },
+      {
+        "text": "脚本保存未完成。",
+        "line": 98,
+        "context": "cause instanceof Error?cause.message:'脚本保存未完成。'"
+      },
+      {
+        "text": "请选择 Markdown 或 TXT 脚本。",
+        "line": 108,
+        "context": "Error('请选择 Markdown 或 TXT 脚本。')"
+      },
+      {
+        "text": "脚本不能为空或超过2MB。",
+        "line": 108,
+        "context": "Error('脚本不能为空或超过2MB。')"
+      },
+      {
+        "text": "脚本读取失败。",
+        "line": 108,
+        "context": "cause instanceof Error?cause.message:'脚本读取失败。'"
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/EpisodeCollectionDialog.tsx",
+    "rows": [
+      {
+        "text": "系列已调整，原文件保留。",
+        "line": 20,
+        "context": "setNotice('系列已调整，原文件保留。')"
+      },
+      {
+        "text": "调整已放弃，原位置继续使用；目标副本保留。",
+        "line": 21,
+        "context": "setNotice('调整已放弃，原位置继续使用；目标副本保留。')"
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspaceShotTable.tsx",
+    "rows": [
+      {
+        "text": "已在末尾新增镜头。",
+        "line": 27,
+        "context": "setAnnouncement('已在末尾新增镜头。')"
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspaceNarrationPanel.tsx",
+    "rows": [
+      {
+        "text": "无法读取语音连接。",
+        "line": 45,
+        "context": "catalogReading.error?'无法读取语音连接。':''"
+      },
+      {
+        "text": "请核对连接、模型、音色和语速。",
+        "line": 50,
+        "context": "Error('请核对连接、模型、音色和语速。')"
+      },
+      {
+        "text": "保存未完成。",
+        "line": 59,
+        "context": "e instanceof Error?e.message:'保存未完成。'"
+      },
+      {
+        "text": "无法读取当前工程版本。",
+        "line": 100,
+        "context": "useWorkspaceReading(workspace,onChanged,JSON.stringify([manualKey,expanded,mode]),'无法读取当前工程版本。')"
+      },
+      {
+        "text": "字幕未保存。",
+        "line": 116,
+        "context": "e instanceof Error?e.message:'字幕未保存。'"
+      },
+      {
+        "text": "开关未保存。",
+        "line": 121,
+        "context": "e instanceof Error?e.message:'开关未保存。'"
+      },
+      {
+        "text": "口播候选未完成，请重试。",
+        "line": 149,
+        "context": "cause instanceof Error?cause.message:'口播候选未完成，请重试。'"
+      },
+      {
+        "text": "无法读取当前工程版本。",
+        "line": 150,
+        "context": "cause instanceof Error?cause.message:'无法读取当前工程版本。'"
+      },
+      {
+        "text": "请选择 MP3 口播文件。",
+        "line": 161,
+        "context": "Error('请选择 MP3 口播文件。')"
+      },
+      {
+        "text": "音频导入未完成。",
+        "line": 165,
+        "context": "cause instanceof Error?cause.message:'音频导入未完成。'"
+      },
+      {
+        "text": "口播准备未完成。",
+        "line": 178,
+        "context": "e instanceof Error?e.message:'口播准备未完成。'"
+      },
+      {
+        "text": "工程或口播已变化，请重新核对。",
+        "line": 188,
+        "context": "Error('工程或口播已变化，请重新核对。')"
+      },
+      {
+        "text": "采用未完成。",
+        "line": 192,
+        "context": "e instanceof Error?e.message:'采用未完成。'"
+      },
+      {
+        "text": "口播状态未能核对，请重试。",
+        "line": 194,
+        "context": "e instanceof Error?e.message:'口播状态未能核对，请重试。'"
+      },
+      {
+        "text": "采用未完成。",
+        "line": 195,
+        "context": "e instanceof Error?e.message:'采用未完成。'"
+      },
+      {
+        "text": "采用未完成。",
+        "line": 196,
+        "context": "e instanceof Error?e.message:'采用未完成。'"
+      },
+      {
+        "text": "撤销未完成。",
+        "line": 200,
+        "context": "e instanceof Error?e.message:'撤销未完成。'"
+      },
+      {
+        "text": "口播",
+        "line": 232,
+        "context": "['voice','口播']"
+      },
+      {
+        "text": "字幕",
+        "line": 232,
+        "context": "['captions','字幕']"
+      },
+      {
+        "text": "人工口播",
+        "line": 277,
+        "context": "sourceName||'人工口播'"
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspaceDraft.tsx",
+    "rows": [
+      {
+        "text": "本机草稿保存失败，请继续编辑或明确放弃修改。",
+        "line": 34,
+        "context": "setError('本机草稿保存失败，请继续编辑或明确放弃修改。')"
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspaceCompletedShots.tsx",
+    "rows": [
+      {
+        "text": "水平位置",
+        "line": 12,
+        "context": "x:'水平位置'"
+      },
+      {
+        "text": "垂直位置",
+        "line": 12,
+        "context": "y:'垂直位置'"
+      },
+      {
+        "text": "缩放",
+        "line": 12,
+        "context": "scale:'缩放'"
+      },
+      {
+        "text": "水平缩放",
+        "line": 12,
+        "context": "scaleX:'水平缩放'"
+      },
+      {
+        "text": "垂直缩放",
+        "line": 12,
+        "context": "scaleY:'垂直缩放'"
+      },
+      {
+        "text": "旋转",
+        "line": 12,
+        "context": "rotation:'旋转'"
+      },
+      {
+        "text": "透明度",
+        "line": 12,
+        "context": "opacity:'透明度'"
+      },
+      {
+        "text": "成片",
+        "line": 16,
+        "context": "sourceLabel=\"成片\""
+      },
+      {
+        "text": "收起",
+        "line": 38,
+        "context": "previewShot===shot.id?'收起':'展开'"
+      },
+      {
+        "text": "展开",
+        "line": 38,
+        "context": "previewShot===shot.id?'收起':'展开'"
+      },
+      {
+        "text": "画布",
+        "line": 42,
+        "context": "['画布',`${timeline.width} × ${timeline.height} · ${fps} fps`]"
+      },
+      {
+        "text": "片段数量",
+        "line": 42,
+        "context": "['片段数量',items.length]"
+      },
+      {
+        "text": "素材",
+        "line": 44,
+        "context": "['素材',(materials.find(m=>m.storage_path===item.src)?.source_path??project?.assets.find(a=>a.id===item.sourceAssetId)?.name??String(item.src??'尚未匹配')).split"
+      },
+      {
+        "text": "尚未匹配",
+        "line": 44,
+        "context": "item.src??'尚未匹配'"
+      },
+      {
+        "text": "时间线",
+        "line": 44,
+        "context": "['时间线',`${seconds(Number(item.startFrame)/fps)}–${seconds((Number(item.startFrame)+Number(item.durationInFrames))/fps)}`]"
+      },
+      {
+        "text": "素材区间",
+        "line": 45,
+        "context": "['素材区间',item.kind==='image'?'静态图片':`${seconds(Number(item.srcInFrame??0)/fps)}–${seconds((Number(item.srcInFrame??0)+Number(item.durationInFrames)*Number(i"
+      },
+      {
+        "text": "静态图片",
+        "line": 45,
+        "context": "item.kind==='image'?'静态图片':`${seconds(Number(item.srcInFrame??0)/fps)}–${seconds((Number(item.srcInFrame??0)+Number(item.durationInFrames)*Number(item.play"
+      },
+      {
+        "text": "播放速度",
+        "line": 45,
+        "context": "['播放速度',`${workspaceDisplayNumber(Number(item.playbackRate??1))} ×`]"
+      },
+      {
+        "text": "淡入／淡出",
+        "line": 45,
+        "context": "['淡入／淡出',`${seconds(Number(item.fadeInFrames??0)/fps)} / ${seconds(Number(item.fadeOutFrames??0)/fps)}`]"
+      },
+      {
+        "text": "片段原声",
+        "line": 45,
+        "context": "['片段原声',isWorkspaceItemAudible(item,timeline!)?`${(20*Math.log10(Number(item.volume??1))).toFixed(1)} dB`:'静音']"
+      },
+      {
+        "text": "静音",
+        "line": 45,
+        "context": "isWorkspaceItemAudible(item,timeline!)?`${(20*Math.log10(Number(item.volume??1))).toFixed(1)} dB`:'静音'"
+      },
+      {
+        "text": "填充方式",
+        "line": 45,
+        "context": "['填充方式',fit==='contain'?'完整显示':'填满画布']"
+      },
+      {
+        "text": "完整显示",
+        "line": 45,
+        "context": "fit==='contain'?'完整显示':'填满画布'"
+      },
+      {
+        "text": "填满画布",
+        "line": 45,
+        "context": "fit==='contain'?'完整显示':'填满画布'"
+      },
+      {
+        "text": "图片用法",
+        "line": 46,
+        "context": "['图片用法',clip.image.usage==='pan-zoom'?'轻微推拉':clip.image.usage==='ai-video'?'图生视频':'静帧']"
+      },
+      {
+        "text": "轻微推拉",
+        "line": 46,
+        "context": "clip.image.usage==='pan-zoom'?'轻微推拉':clip.image.usage==='ai-video'?'图生视频':'静帧'"
+      },
+      {
+        "text": "图生视频",
+        "line": 46,
+        "context": "clip.image.usage==='ai-video'?'图生视频':'静帧'"
+      },
+      {
+        "text": "静帧",
+        "line": 46,
+        "context": "clip.image.usage==='ai-video'?'图生视频':'静帧'"
+      },
+      {
+        "text": "焦点",
+        "line": 46,
+        "context": "['焦点',`${workspaceDisplayNumber(clip.image.focusX)} / ${workspaceDisplayNumber(clip.image.focusY)}`]"
+      },
+      {
+        "text": "已设置",
+        "line": 48,
+        "context": "t.type??t.kind??'已设置'"
+      },
+      {
+        "text": "主声音",
+        "line": 50,
+        "context": "['主声音',!voice||voice.mode==='none'?'无主声':voice.mode==='tts'?'口播':'原片声音']"
+      },
+      {
+        "text": "无主声",
+        "line": 50,
+        "context": "!voice||voice.mode==='none'?'无主声':voice.mode==='tts'?'口播':'原片声音'"
+      },
+      {
+        "text": "口播",
+        "line": 50,
+        "context": "voice.mode==='tts'?'口播':'原片声音'"
+      },
+      {
+        "text": "原片声音",
+        "line": 50,
+        "context": "voice.mode==='tts'?'口播':'原片声音'"
+      },
+      {
+        "text": "主声音量",
+        "line": 50,
+        "context": "['主声音量',voice&&voice.mode!=='none'?`${workspaceDisplayNumber(voice.gainDb,1)} dB`:'—']"
+      },
+      {
+        "text": "环境声",
+        "line": 50,
+        "context": "['环境声',voice?.ambienceGainDb!=null?`${workspaceDisplayNumber(voice.ambienceGainDb,1)} dB`:'关闭']"
+      },
+      {
+        "text": "关闭",
+        "line": 50,
+        "context": "voice?.ambienceGainDb!=null?`${workspaceDisplayNumber(voice.ambienceGainDb,1)} dB`:'关闭'"
+      },
+      {
+        "text": "主声区间",
+        "line": 51,
+        "context": "['主声区间',`${seconds(voice.startSeconds??0)}–${seconds((voice.startSeconds??0)+voice.durationSeconds)}`]"
+      },
+      {
+        "text": "源音频起点",
+        "line": 51,
+        "context": "['源音频起点',seconds(voice.sourceStartSeconds??0)]"
+      },
+      {
+        "text": "覆盖范围",
+        "line": 51,
+        "context": "['覆盖范围',voice.coverage==='partial'?'部分镜头':voice.coverage==='full'?'完整镜头':'无']"
+      },
+      {
+        "text": "部分镜头",
+        "line": 51,
+        "context": "voice.coverage==='partial'?'部分镜头':voice.coverage==='full'?'完整镜头':'无'"
+      },
+      {
+        "text": "完整镜头",
+        "line": 51,
+        "context": "voice.coverage==='full'?'完整镜头':'无'"
+      },
+      {
+        "text": "无",
+        "line": 51,
+        "context": "voice.coverage==='full'?'完整镜头':'无'"
+      },
+      {
+        "text": "原声来源",
+        "line": 52,
+        "context": "['原声来源',voice.sourceLabel]"
+      },
+      {
+        "text": "配音模式",
+        "line": 54,
+        "context": "['配音模式','在线配音']"
+      },
+      {
+        "text": "在线配音",
+        "line": 54,
+        "context": "['配音模式','在线配音']"
+      },
+      {
+        "text": "音色",
+        "line": 54,
+        "context": "['音色',speech.voice]"
+      },
+      {
+        "text": "语速",
+        "line": 54,
+        "context": "['语速',workspaceDisplayNumber(speech.speakingRate)]"
+      },
+      {
+        "text": "语言",
+        "line": 54,
+        "context": "['语言',speech.languageCode]"
+      },
+      {
+        "text": "模型",
+        "line": 54,
+        "context": "['模型',speech.selection.model]"
+      },
+      {
+        "text": "时间线区间",
+        "line": 57,
+        "context": "['时间线区间',`${seconds(sound.startSeconds)}–${seconds(sound.startSeconds+sound.durationSeconds)}`]"
+      },
+      {
+        "text": "本镜播放区间",
+        "line": 57,
+        "context": "['本镜播放区间',`${seconds(Math.max(start,sound.startSeconds)-start)}–${seconds(Math.min(end,sound.startSeconds+sound.durationSeconds)-start)}`]"
+      },
+      {
+        "text": "音量",
+        "line": 57,
+        "context": "['音量',`${workspaceDisplayNumber(sound.gainDb,1)} dB`]"
+      },
+      {
+        "text": "主声闪避",
+        "line": 57,
+        "context": "['主声闪避',`${workspaceDisplayNumber(sound.duckDepthDb,1)} dB`]"
+      },
+      {
+        "text": "状态",
+        "line": 57,
+        "context": "['状态',item&&timeline&&!isWorkspaceItemAudible(item,timeline)?'已静音':'参与混音']"
+      },
+      {
+        "text": "已静音",
+        "line": 57,
+        "context": "item&&timeline&&!isWorkspaceItemAudible(item,timeline)?'已静音':'参与混音'"
+      },
+      {
+        "text": "参与混音",
+        "line": 57,
+        "context": "item&&timeline&&!isWorkspaceItemAudible(item,timeline)?'已静音':'参与混音'"
+      },
+      {
+        "text": "素材起点",
+        "line": 57,
+        "context": "['素材起点',seconds(Number(item?.srcInFrame??0)/fps)]"
+      },
+      {
+        "text": "播放速度",
+        "line": 57,
+        "context": "['播放速度',`${workspaceDisplayNumber(Number(item?.playbackRate??1))} ×`]"
+      },
+      {
+        "text": "淡入／淡出",
+        "line": 57,
+        "context": "['淡入／淡出',`${seconds(Number(item?.fadeInFrames??0)/fps)} / ${seconds(Number(item?.fadeOutFrames??0)/fps)}`]"
+      },
+      {
+        "text": "模式",
+        "line": 60,
+        "context": "['模式',!caption.contract.enabled?'关闭':caption.contract.contentMode==='follow_tts'?'跟随口播':'独立字幕']"
+      },
+      {
+        "text": "关闭",
+        "line": 60,
+        "context": "!caption.contract.enabled?'关闭':caption.contract.contentMode==='follow_tts'?'跟随口播':'独立字幕'"
+      },
+      {
+        "text": "跟随口播",
+        "line": 60,
+        "context": "caption.contract.contentMode==='follow_tts'?'跟随口播':'独立字幕'"
+      },
+      {
+        "text": "独立字幕",
+        "line": 60,
+        "context": "caption.contract.contentMode==='follow_tts'?'跟随口播':'独立字幕'"
+      },
+      {
+        "text": "位置",
+        "line": 60,
+        "context": "['位置',shotCaptionAnchorLabels[caption.contract.spatial.anchor]]"
+      },
+      {
+        "text": "安全区",
+        "line": 60,
+        "context": "['安全区',shotCaptionSafeAreaLabels[caption.contract.spatial.safeArea]]"
+      },
+      {
+        "text": "排版",
+        "line": 60,
+        "context": "['排版',`${caption.contract.spatial.maxLines} 行 · 每行 ${caption.contract.spatial.maxCharactersPerLine} 字`]"
+      },
+      {
+        "text": "正文核对",
+        "line": 60,
+        "context": "['正文核对',caption.textConfirmed?'已核对':'未核对']"
+      },
+      {
+        "text": "已核对",
+        "line": 60,
+        "context": "caption.textConfirmed?'已核对':'未核对'"
+      },
+      {
+        "text": "未核对",
+        "line": 60,
+        "context": "caption.textConfirmed?'已核对':'未核对'"
+      },
+      {
+        "text": "时序",
+        "line": 60,
+        "context": "['时序',({current:'有效',missing:'缺少',stale:'已过期',waiting:'等待',failed:'失败'})[caption.timing]]"
+      },
+      {
+        "text": "有效",
+        "line": 60,
+        "context": "current:'有效'"
+      },
+      {
+        "text": "缺少",
+        "line": 60,
+        "context": "missing:'缺少'"
+      },
+      {
+        "text": "已过期",
+        "line": 60,
+        "context": "stale:'已过期'"
+      },
+      {
+        "text": "等待",
+        "line": 60,
+        "context": "waiting:'等待'"
+      },
+      {
+        "text": "失败",
+        "line": 60,
+        "context": "failed:'失败'"
+      },
+      {
+        "text": "上",
+        "line": 61,
+        "context": "top:'上'"
+      },
+      {
+        "text": "右",
+        "line": 61,
+        "context": "right:'右'"
+      },
+      {
+        "text": "下",
+        "line": 61,
+        "context": "bottom:'下'"
+      },
+      {
+        "text": "左",
+        "line": 61,
+        "context": "left:'左'"
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/LegacyProductionSteps.tsx",
+    "rows": [
+      {
+        "text": "已有工程读取失败。",
+        "line": 74,
+        "context": "cause instanceof Error?cause.message:'已有工程读取失败。'"
+      },
+      {
+        "text": "已有冻结工程文件读取失败。",
+        "line": 79,
+        "context": "Error('已有冻结工程文件读取失败。')"
+      },
+      {
+        "text": "此工程不是 OpenChatCut 时间线格式，原文件仍可下载。",
+        "line": 79,
+        "context": "Error('此工程不是 OpenChatCut 时间线格式，原文件仍可下载。')"
+      },
+      {
+        "text": "工程读取失败。",
+        "line": 79,
+        "context": "cause instanceof Error?cause.message:'工程读取失败。'"
+      },
+      {
+        "text": "待处理",
+        "line": 113,
+        "context": "open:'待处理'"
+      },
+      {
+        "text": "已解决",
+        "line": 113,
+        "context": "resolved:'已解决'"
+      },
+      {
+        "text": "已接受",
+        "line": 113,
+        "context": "accepted:'已接受'"
+      },
+      {
+        "text": "已忽略",
+        "line": 113,
+        "context": "ignored:'已忽略'"
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/LocalCatalogApp.tsx",
+    "rows": [
+      {
+        "text": "工作台",
+        "line": 41,
+        "context": "label:'工作台'"
+      },
+      {
+        "text": "生产单",
+        "line": 41,
+        "context": "label:'生产单'"
+      },
+      {
+        "text": "账号",
+        "line": 41,
+        "context": "label:'账号'"
+      },
+      {
+        "text": "偏好读取失败。",
+        "line": 78,
+        "context": "error instanceof Error?error.message:'偏好读取失败。'"
+      },
+      {
+        "text": "请重试。",
+        "line": 81,
+        "context": "error instanceof Error?error.message:'请重试。'"
+      },
+      {
+        "text": "当前配置有未保存修改，确定放弃吗？",
+        "line": 109,
+        "context": "window.confirm('当前配置有未保存修改，确定放弃吗？')"
+      },
+      {
+        "text": "当前配置有未保存修改，确定放弃吗？",
+        "line": 146,
+        "context": "window.confirm('当前配置有未保存修改，确定放弃吗？')"
+      },
+      {
+        "text": "原账号或系列已不可用，已清除对应筛选。",
+        "line": 159,
+        "context": "setError('原账号或系列已不可用，已清除对应筛选。')"
+      },
+      {
+        "text": "原账号已不可用，请从当前账号中重新选择。",
+        "line": 160,
+        "context": "setError('原账号已不可用，请从当前账号中重新选择。')"
+      },
+      {
+        "text": "；目录刷新失败，请重新读取。",
+        "line": 161,
+        "context": "savedWrite.current.message+'；目录刷新失败，请重新读取。'"
+      },
+      {
+        "text": "会话已失效，请重新登录。",
+        "line": 166,
+        "context": "setError('会话已失效，请重新登录。')"
+      },
+      {
+        "text": "无法读取工作区，请重试。",
+        "line": 178,
+        "context": "cause instanceof Error?cause.message:'无法读取工作区，请重试。'"
+      },
+      {
+        "text": "未能确认退出，请重新登录。",
+        "line": 186,
+        "context": "setError('未能确认退出，请重新登录。')"
+      },
+      {
+        "text": "配置已保存；目录刷新失败，请重新读取。",
+        "line": 195,
+        "context": "setSavedRefreshNotice('配置已保存；目录刷新失败，请重新读取。')"
+      },
+      {
+        "text": "Studio 地址无效。",
+        "line": 205,
+        "context": "Error('Studio 地址无效。')"
+      },
+      {
+        "text": "无法打开 OpenChatCut。",
+        "line": 207,
+        "context": "error instanceof Error?error.message:'无法打开 OpenChatCut。'"
+      },
+      {
+        "text": "操作已保存",
+        "line": 215,
+        "context": "refreshAfterWrite('操作已保存')"
+      },
+      {
+        "text": "当前配置有未保存修改，确定放弃吗？",
+        "line": 220,
+        "context": "window.confirm('当前配置有未保存修改，确定放弃吗？')"
+      },
+      {
+        "text": "当前配置有未保存修改，确定放弃吗？",
+        "line": 230,
+        "context": "window.confirm('当前配置有未保存修改，确定放弃吗？')"
+      },
+      {
+        "text": "未命名生产单",
+        "line": 237,
+        "context": "episode.title||'未命名生产单'"
+      },
+      {
+        "text": "系统状态",
+        "line": 250,
+        "context": "triggerLabel=\"系统状态\""
+      },
+      {
+        "text": "全部账号",
+        "line": 269,
+        "context": "filters.accountId||'全部账号'"
+      },
+      {
+        "text": "全部账号",
+        "line": 269,
+        "context": "accountId==='全部账号'"
+      },
+      {
+        "text": "全部系列",
+        "line": 269,
+        "context": "filters.seriesId==='all'?'全部系列':filters.seriesId"
+      },
+      {
+        "text": "全部系列",
+        "line": 269,
+        "context": "seriesId==='全部系列'"
+      },
+      {
+        "text": "请重新检查删除范围。",
+        "line": 269,
+        "context": "new Error('请重新检查删除范围。')"
+      },
+      {
+        "text": "生产单已创建",
+        "line": 282,
+        "context": "refreshAfterWrite('生产单已创建')"
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspaceDeliveryPanel.tsx",
+    "rows": [
+      {
+        "text": "封面为空，请重新选择。",
+        "line": 24,
+        "context": "setCoverError('封面为空，请重新选择。')"
+      },
+      {
+        "text": "封面不能超过 20 MB，请选择较小的图片。",
+        "line": 24,
+        "context": "setCoverError('封面不能超过 20 MB，请选择较小的图片。')"
+      },
+      {
+        "text": "请选择真实 JPG、PNG 或 WebP 图片，文件扩展名与类型须一致。",
+        "line": 27,
+        "context": "setCoverError('请选择真实 JPG、PNG 或 WebP 图片，文件扩展名与类型须一致。')"
+      },
+      {
+        "text": "封面读取失败，请重新选择。",
+        "line": 28,
+        "context": "setCoverError('封面读取失败，请重新选择。')"
+      },
+      {
+        "text": "交付状态暂不可用，请刷新重试。",
+        "line": 33,
+        "context": "useWorkspaceReading(w,onChange,JSON.stringify([latest?.id,!!running]),'交付状态暂不可用，请刷新重试。')"
+      },
+      {
+        "text": "发布文案读取失败，请重试。",
+        "line": 40,
+        "context": "setMetadataError('发布文案读取失败，请重试。')"
+      },
+      {
+        "text": "复制失败，请选择文案后手动复制。",
+        "line": 43,
+        "context": "setCopied('复制失败，请选择文案后手动复制。')"
+      },
+      {
+        "text": "交付未完成，请重试。",
+        "line": 45,
+        "context": "cause instanceof Error?cause.message:'交付未完成，请重试。'"
+      },
+      {
+        "text": "封面",
+        "line": 45,
+        "context": "message.includes('封面')"
+      },
+      {
+        "text": "封面读取失败，请重新选择。",
+        "line": 46,
+        "context": "setCoverError('封面读取失败，请重新选择。')"
+      },
+      {
+        "text": "交付封面",
+        "line": 51,
+        "context": "alt=\"交付封面\""
+      },
+      {
+        "text": "标题",
+        "line": 54,
+        "context": "copy(saved.title,'标题')"
+      },
+      {
+        "text": "简介",
+        "line": 55,
+        "context": "copy(saved.description,'简介')"
+      },
+      {
+        "text": "标签",
+        "line": 56,
+        "context": "copy(saved.tags.map(t=>`#${t}`).join(' '),'标签')"
+      },
+      {
+        "text": "交付封面预览",
+        "line": 66,
+        "context": "alt=\"交付封面预览\""
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspaceVisualTaskStatus.tsx",
+    "rows": [
+      {
+        "text": "等待后台开始任务",
+        "line": 20,
+        "context": "task.status==='ready'?'等待后台开始任务':task.videoPhase==='queued'?'供应商排队中'\n  :task.videoPhase==='saving'?'正在下载并保存视频':task.videoPhase==='processing'?'供应商正在生成视频'\n "
+      },
+      {
+        "text": "供应商排队中",
+        "line": 20,
+        "context": "task.videoPhase==='queued'?'供应商排队中'\n  :task.videoPhase==='saving'?'正在下载并保存视频':task.videoPhase==='processing'?'供应商正在生成视频'\n  :stage===2?'已收到图片，正在验证并保存':task."
+      },
+      {
+        "text": "正在下载并保存视频",
+        "line": 21,
+        "context": "task.videoPhase==='saving'?'正在下载并保存视频':task.videoPhase==='processing'?'供应商正在生成视频'\n  :stage===2?'已收到图片，正在验证并保存':task.kind==='image'\n  ?task.submissionOutcom"
+      },
+      {
+        "text": "供应商正在生成视频",
+        "line": 21,
+        "context": "task.videoPhase==='processing'?'供应商正在生成视频'\n  :stage===2?'已收到图片，正在验证并保存':task.kind==='image'\n  ?task.submissionOutcome==='started'?'等待供应商返回图片':'正在准备生成请求'\n  "
+      },
+      {
+        "text": "已收到图片，正在验证并保存",
+        "line": 22,
+        "context": "stage===2?'已收到图片，正在验证并保存':task.kind==='image'\n  ?task.submissionOutcome==='started'?'等待供应商返回图片':'正在准备生成请求'\n  :task.providerTaskId?'正在查询供应商任务':'正在提交视频任务'"
+      },
+      {
+        "text": "等待供应商返回图片",
+        "line": 23,
+        "context": "task.submissionOutcome==='started'?'等待供应商返回图片':'正在准备生成请求'"
+      },
+      {
+        "text": "正在准备生成请求",
+        "line": 23,
+        "context": "task.submissionOutcome==='started'?'等待供应商返回图片':'正在准备生成请求'"
+      },
+      {
+        "text": "正在查询供应商任务",
+        "line": 24,
+        "context": "task.providerTaskId?'正在查询供应商任务':'正在提交视频任务'"
+      },
+      {
+        "text": "正在提交视频任务",
+        "line": 24,
+        "context": "task.providerTaskId?'正在查询供应商任务':'正在提交视频任务'"
+      },
+      {
+        "text": "视觉任务",
+        "line": 30,
+        "context": "taskNoun='视觉任务'"
+      },
+      {
+        "text": "恢复画面任务",
+        "line": 30,
+        "context": "resumeLabel='恢复画面任务'"
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspaceSpeechSample.tsx",
+    "rows": [
+      {
+        "text": "无法播放样音，请重试。",
+        "line": 52,
+        "context": "cause instanceof Error?cause.message:'无法播放样音，请重试。'"
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspaceCaptionsPanel.tsx",
+    "rows": [
+      {
+        "text": "待校时",
+        "line": 12,
+        "context": "missing:'待校时'"
+      },
+      {
+        "text": "时序有效",
+        "line": 12,
+        "context": "current:'时序有效'"
+      },
+      {
+        "text": "时序已过期",
+        "line": 12,
+        "context": "stale:'时序已过期'"
+      },
+      {
+        "text": "对齐处理中",
+        "line": 12,
+        "context": "waiting:'对齐处理中'"
+      },
+      {
+        "text": "对齐失败",
+        "line": 12,
+        "context": "failed:'对齐失败'"
+      },
+      {
+        "text": "请修正标出的字幕字段后保存。",
+        "line": 32,
+        "context": "setError('请修正标出的字幕字段后保存。')"
+      },
+      {
+        "text": "上",
+        "line": 47,
+        "context": "['上','右','下','左']"
+      },
+      {
+        "text": "右",
+        "line": 47,
+        "context": "['上','右','下','左']"
+      },
+      {
+        "text": "下",
+        "line": 47,
+        "context": "['上','右','下','左']"
+      },
+      {
+        "text": "左",
+        "line": 47,
+        "context": "['上','右','下','左']"
+      },
+      {
+        "text": " · 正文已核对",
+        "line": 52,
+        "context": "state.textConfirmed?' · 正文已核对':''"
+      },
+      {
+        "text": "上",
+        "line": 58,
+        "context": "['上','右','下','左']"
+      },
+      {
+        "text": "右",
+        "line": 58,
+        "context": "['上','右','下','左']"
+      },
+      {
+        "text": "下",
+        "line": 58,
+        "context": "['上','右','下','左']"
+      },
+      {
+        "text": "左",
+        "line": 58,
+        "context": "['上','右','下','左']"
+      },
+      {
+        "text": "上",
+        "line": 58,
+        "context": "['上','右','下','左']"
+      },
+      {
+        "text": "右",
+        "line": 58,
+        "context": "['上','右','下','左']"
+      },
+      {
+        "text": "下",
+        "line": 58,
+        "context": "['上','右','下','左']"
+      },
+      {
+        "text": "左",
+        "line": 58,
+        "context": "['上','右','下','左']"
+      },
+      {
+        "text": "结束",
+        "line": 62,
+        "context": "i?'结束':'开始'"
+      },
+      {
+        "text": "开始",
+        "line": 62,
+        "context": "i?'结束':'开始'"
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspaceVoicePicker.tsx",
+    "rows": [
+      {
+        "text": "Vivi 2.0 · 多语种女声",
+        "line": 11,
+        "context": "zh_female_vv_uranus_bigtts:'Vivi 2.0 · 多语种女声'"
+      },
+      {
+        "text": "云舟 2.0",
+        "line": 12,
+        "context": "zh_male_m191_uranus_bigtts:'云舟 2.0'"
+      },
+      {
+        "text": "小天 2.0",
+        "line": 13,
+        "context": "zh_male_taocheng_uranus_bigtts:'小天 2.0'"
+      },
+      {
+        "text": "小何 2.0",
+        "line": 14,
+        "context": "zh_female_xiaohe_uranus_bigtts:'小何 2.0'"
+      },
+      {
+        "text": "清新女声 2.0",
+        "line": 15,
+        "context": "zh_female_qingxinnvsheng_uranus_bigtts:'清新女声 2.0'"
+      },
+      {
+        "text": "活力小哥 2.0",
+        "line": 16,
+        "context": "zh_male_huolixiaoge_uranus_bigtts:'活力小哥 2.0'"
+      },
+      {
+        "text": "霸气青叔 2.0",
+        "line": 17,
+        "context": "zh_male_baqiqingshu_uranus_bigtts:'霸气青叔 2.0'"
+      },
+      {
+        "text": "黑猫侦探社咪仔 2.0",
+        "line": 18,
+        "context": "zh_female_mizai_uranus_bigtts:'黑猫侦探社咪仔 2.0'"
+      },
+      {
+        "text": "咆哮小哥 2.0",
+        "line": 19,
+        "context": "ICL_uranus_zh_male_paoxiaoxiaoge_tob:'咆哮小哥 2.0'"
+      },
+      {
+        "text": "熊二 2.0",
+        "line": 20,
+        "context": "zh_male_xionger_uranus_bigtts:'熊二 2.0'"
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspaceSoundIntent.tsx",
+    "rows": [
+      {
+        "text": "音效意图未保存，请重试。",
+        "line": 17,
+        "context": "cause instanceof Error?cause.message:'音效意图未保存，请重试。'"
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspaceGenerationModel.tsx",
+    "rows": [
+      {
+        "text": "图片",
+        "line": 7,
+        "context": "'图片'"
+      },
+      {
+        "text": "视频",
+        "line": 7,
+        "context": "'视频'"
+      },
+      {
+        "text": "Pexels 素材检索",
+        "line": 15,
+        "context": "label:'Pexels 素材检索'"
+      },
+      {
+        "text": "图片",
+        "line": 19,
+        "context": "kind==='图片'"
+      },
+      {
+        "text": "图片",
+        "line": 22,
+        "context": "kind==='图片'"
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspaceSearchPanel.tsx",
+    "rows": [
+      {
+        "text": "生产单",
+        "line": 13,
+        "context": "label:'生产单'"
+      },
+      {
+        "text": "素材",
+        "line": 13,
+        "context": "label:'素材'"
+      },
+      {
+        "text": "账号",
+        "line": 13,
+        "context": "label:'账号'"
+      },
+      {
+        "text": "搜索暂不可用。",
+        "line": 48,
+        "context": "cause instanceof Error?cause.message:'搜索暂不可用。'"
+      },
+      {
+        "text": "[aria-label=\"关闭预览\"]",
+        "line": 55,
+        "context": "container.current?.querySelector<HTMLButtonElement>('[aria-label=\"关闭预览\"]')"
+      },
+      {
+        "text": "文件预览未能加载，请重试。",
+        "line": 71,
+        "context": "Error('文件预览未能加载，请重试。')"
+      },
+      {
+        "text": "文件较大，请下载后查看。",
+        "line": 71,
+        "context": "Error('文件较大，请下载后查看。')"
+      },
+      {
+        "text": "文件预览未能加载。",
+        "line": 71,
+        "context": "cause instanceof Error?cause.message:'文件预览未能加载。'"
+      },
+      {
+        "text": "图片未能加载，请重试。",
+        "line": 72,
+        "context": "setError('图片未能加载，请重试。')"
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspaceAudioSourceOptions.tsx",
+    "rows": [
+      {
+        "text": "筛选音频来源",
+        "line": 6,
+        "context": "searchLabel=\"筛选音频来源\""
+      },
+      {
+        "text": "搜索来源或连接",
+        "line": 6,
+        "context": "searchPlaceholder=\"搜索来源或连接\""
+      },
+      {
+        "text": "关闭音频来源",
+        "line": 6,
+        "context": "closeLabel=\"关闭音频来源\""
+      },
+      {
+        "text": "没有匹配来源。",
+        "line": 6,
+        "context": "noResults=\"没有匹配来源。\""
+      },
+      {
+        "text": "清除来源选择",
+        "line": 6,
+        "context": "clearLabel=\"清除来源选择\""
+      },
+      {
+        "text": "暂无可用音频连接",
+        "line": 6,
+        "context": "empty=\"暂无可用音频连接\""
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspaceMaterialShelf.tsx",
+    "rows": [
+      {
+        "text": "图片",
+        "line": 16,
+        "context": "label:'图片'"
+      },
+      {
+        "text": "视频",
+        "line": 16,
+        "context": "label:'视频'"
+      },
+      {
+        "text": "音频",
+        "line": 16,
+        "context": "label:'音频'"
+      },
+      {
+        "text": "脚本",
+        "line": 16,
+        "context": "label:'脚本'"
+      },
+      {
+        "text": "口播",
+        "line": 17,
+        "context": "narration:'口播'"
+      },
+      {
+        "text": "配乐",
+        "line": 17,
+        "context": "background_music:'配乐'"
+      },
+      {
+        "text": "音效",
+        "line": 17,
+        "context": "sound_effect:'音效'"
+      },
+      {
+        "text": "全部",
+        "line": 107,
+        "context": "['all','全部']"
+      },
+      {
+        "text": "图片",
+        "line": 107,
+        "context": "['image','图片']"
+      },
+      {
+        "text": "视频",
+        "line": 107,
+        "context": "['video','视频']"
+      },
+      {
+        "text": "音频",
+        "line": 107,
+        "context": "['audio','音频']"
+      },
+      {
+        "text": "脚本",
+        "line": 107,
+        "context": "['script','脚本']"
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/LocalEpisodeDetail.tsx",
+    "rows": [
+      {
+        "text": "操作已完成，页面信息更新失败，请重新打开生产单核对。",
+        "line": 52,
+        "context": "setError('操作已完成，页面信息更新失败，请重新打开生产单核对。')"
+      },
+      {
+        "text": "已打开本地文件夹。",
+        "line": 71,
+        "context": "setDirectoryNotice('已打开本地文件夹。')"
+      },
+      {
+        "text": "已复制路径。",
+        "line": 77,
+        "context": "setDirectoryNotice('已复制路径。')"
+      },
+      {
+        "text": "路径复制失败，请选中路径后复制。",
+        "line": 78,
+        "context": "setError('路径复制失败，请选中路径后复制。')"
+      },
+      {
+        "text": "连接版本不可见。",
+        "line": 92,
+        "context": "check.reason==='连接版本不可见。'"
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspaceVisualRecord.tsx",
+    "rows": [
+      {
+        "text": "图片",
+        "line": 25,
+        "context": "candidate.kind==='image'?'图片':'视频'"
+      },
+      {
+        "text": "视频",
+        "line": 25,
+        "context": "candidate.kind==='image'?'图片':'视频'"
+      },
+      {
+        "text": "已完成，未找到产物记录",
+        "line": 37,
+        "context": "completed:'已完成，未找到产物记录'"
+      },
+      {
+        "text": "等待执行",
+        "line": 37,
+        "context": "ready:'等待执行'"
+      },
+      {
+        "text": "执行中",
+        "line": 37,
+        "context": "running:'执行中'"
+      },
+      {
+        "text": "失败",
+        "line": 37,
+        "context": "failed:'失败'"
+      },
+      {
+        "text": "待核对",
+        "line": 37,
+        "context": "blocked:'待核对'"
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspaceNativeControls.tsx",
+    "rows": [
+      {
+        "text": "编辑未保存，当前输入已保留。",
+        "line": 8,
+        "context": "cause instanceof Error?cause.message:'编辑未保存，当前输入已保留。'"
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/ProductionWorkspacePanel.tsx",
+    "rows": [
+      {
+        "text": "准备分镜工程",
+        "line": 41,
+        "context": "prepareWorkspace:'准备分镜工程'"
+      },
+      {
+        "text": "更新分镜工程",
+        "line": 41,
+        "context": "replanWorkspace:'更新分镜工程'"
+      },
+      {
+        "text": "打开剪辑工作台",
+        "line": 41,
+        "context": "openWorkspaceStudio:'打开剪辑工作台'"
+      },
+      {
+        "text": "保存剪辑工程",
+        "line": 41,
+        "context": "saveWorkspaceStudio:'保存剪辑工程'"
+      },
+      {
+        "text": "结束剪辑",
+        "line": 41,
+        "context": "closeWorkspaceStudio:'结束剪辑'"
+      },
+      {
+        "text": "保存镜头调整",
+        "line": 41,
+        "context": "editWorkspaceStructure:'保存镜头调整'"
+      },
+      {
+        "text": "接续已有工程",
+        "line": 41,
+        "context": "adoptLegacyWorkspace:'接续已有工程'"
+      },
+      {
+        "text": "恢复工程编辑",
+        "line": 41,
+        "context": "resumeWorkspaceEditing:'恢复工程编辑'"
+      },
+      {
+        "text": "导出成片",
+        "line": 41,
+        "context": "exportWorkspace:'导出成片'"
+      },
+      {
+        "text": "确认成片",
+        "line": 41,
+        "context": "confirmWorkspaceExport:'确认成片'"
+      },
+      {
+        "text": "生成交付包",
+        "line": 41,
+        "context": "prepareWorkspaceDelivery:'生成交付包'"
+      },
+      {
+        "text": "继续交付",
+        "line": 41,
+        "context": "retryWorkspaceDelivery:'继续交付'"
+      },
+      {
+        "text": "保存字幕",
+        "line": 41,
+        "context": "saveWorkspaceCaptions:'保存字幕'"
+      },
+      {
+        "text": "确认字幕",
+        "line": 41,
+        "context": "confirmWorkspaceCaptionText:'确认字幕'"
+      },
+      {
+        "text": "字幕校时",
+        "line": 41,
+        "context": "requestWorkspaceCaptionAlignment:'字幕校时'"
+      },
+      {
+        "text": "采用字幕校时",
+        "line": 41,
+        "context": "applyWorkspaceCaptionAlignment:'采用字幕校时'"
+      },
+      {
+        "text": "准备声音",
+        "line": 41,
+        "context": "prepareWorkspaceAudio:'准备声音'"
+      },
+      {
+        "text": "采用声音",
+        "line": 41,
+        "context": "adoptWorkspaceAudio:'采用声音'"
+      },
+      {
+        "text": "保存配乐设置",
+        "line": 41,
+        "context": "saveWorkspaceMusicSettings:'保存配乐设置'"
+      },
+      {
+        "text": "保存声音设置",
+        "line": 41,
+        "context": "saveWorkspaceSoundIntent:'保存声音设置'"
+      },
+      {
+        "text": "切换声音",
+        "line": 41,
+        "context": "setWorkspaceAudioEnabled:'切换声音'"
+      },
+      {
+        "text": "尚未导入，可重试。",
+        "line": 71,
+        "context": "row.error??'尚未导入，可重试。'"
+      },
+      {
+        "text": "请先为每个镜头采用可用的图片或视频，再进入剪辑工作台。",
+        "line": 90,
+        "context": "setError('请先为每个镜头采用可用的图片或视频，再进入剪辑工作台。')"
+      },
+      {
+        "text": "无法读取当前工程版本。",
+        "line": 97,
+        "context": "useWorkspaceReading(workspace,applyWorkspace,!loaded||session||readOnly||workspace?.stale||pending?'paused':'narration','无法读取当前工程版本。')"
+      },
+      {
+        "text": "制作流程读取失败。",
+        "line": 120,
+        "context": "cause instanceof Error?cause.message:'制作流程读取失败。'"
+      },
+      {
+        "text": "主脚本读取失败，请检查原脚本文件。",
+        "line": 125,
+        "context": "Error('主脚本读取失败，请检查原脚本文件。')"
+      },
+      {
+        "text": "主脚本读取失败。",
+        "line": 125,
+        "context": "cause instanceof Error?cause.message:'主脚本读取失败。'"
+      },
+      {
+        "text": "归档或已完成生产单只读。",
+        "line": 126,
+        "context": "Error('归档或已完成生产单只读。')"
+      },
+      {
+        "text": "操作未完成。",
+        "line": 126,
+        "context": "cause instanceof Error?cause.message:'操作未完成。'"
+      },
+      {
+        "text": "本次操作",
+        "line": 126,
+        "context": "operationLabels[name]??'本次操作'"
+      },
+      {
+        "text": "旧剪辑工作版本",
+        "line": 126,
+        "context": "message.includes('旧剪辑工作版本')"
+      },
+      {
+        "text": "读取失败，请稍后重试。",
+        "line": 137,
+        "context": "cause instanceof Error?cause.message:'读取失败，请稍后重试。'"
+      },
+      {
+        "text": "没有待更新的口播。",
+        "line": 149,
+        "context": "Error('没有待更新的口播。')"
+      },
+      {
+        "text": "正在导入素材…",
+        "line": 176,
+        "context": "setMaterialUploadStatus('正在导入素材…')"
+      },
+      {
+        "text": "文件为空或超过 100 MB。",
+        "line": 181,
+        "context": "Error('文件为空或超过 100 MB。')"
+      },
+      {
+        "text": "请选择图片、视频或 MP3。",
+        "line": 184,
+        "context": "Error('请选择图片、视频或 MP3。')"
+      },
+      {
+        "text": "上传已暂停。",
+        "line": 187,
+        "context": "Error('上传已暂停。')"
+      },
+      {
+        "text": "已暂停，重试可继续。",
+        "line": 192,
+        "context": "()=> '已暂停，重试可继续。'"
+      },
+      {
+        "text": "当前工程不可修改。",
+        "line": 207,
+        "context": "Error('当前工程不可修改。')"
+      },
+      {
+        "text": "已确认",
+        "line": 224,
+        "context": "scriptConfirmed?'已确认':'待确认'"
+      },
+      {
+        "text": "待确认",
+        "line": 224,
+        "context": "scriptConfirmed?'已确认':'待确认'"
+      },
+      {
+        "text": "尚未准备",
+        "line": 224,
+        "context": "workspace?`${uniqueClips.length-visualReady+pendingVoices} 项待准备`:'尚未准备'"
+      },
+      {
+        "text": "只读",
+        "line": 224,
+        "context": "readOnly?'只读':workspace?.captions?.length?workspace.captions.every(c=>!c.contract.enabled||c.timing==='current')?'可剪辑':'字幕待校时':'待剪辑'"
+      },
+      {
+        "text": "可剪辑",
+        "line": 224,
+        "context": "workspace.captions.every(c=>!c.contract.enabled||c.timing==='current')?'可剪辑':'字幕待校时'"
+      },
+      {
+        "text": "字幕待校时",
+        "line": 224,
+        "context": "workspace.captions.every(c=>!c.contract.enabled||c.timing==='current')?'可剪辑':'字幕待校时'"
+      },
+      {
+        "text": "待剪辑",
+        "line": 224,
+        "context": "workspace?.captions?.length?workspace.captions.every(c=>!c.contract.enabled||c.timing==='current')?'可剪辑':'字幕待校时':'待剪辑'"
+      },
+      {
+        "text": "已交付",
+        "line": 224,
+        "context": "delivered?'已交付':exportConfirmed?'已确认':'待确认'"
+      },
+      {
+        "text": "已确认",
+        "line": 224,
+        "context": "exportConfirmed?'已确认':'待确认'"
+      },
+      {
+        "text": "待确认",
+        "line": 224,
+        "context": "exportConfirmed?'已确认':'待确认'"
+      },
+      {
+        "text": "画面",
+        "line": 241,
+        "context": "['visual','画面']"
+      },
+      {
+        "text": "字幕与口播",
+        "line": 241,
+        "context": "['voice','字幕与口播']"
+      },
+      {
+        "text": "配乐与声音",
+        "line": 241,
+        "context": "['sound','配乐与声音']"
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspaceAudioPanel.tsx",
+    "rows": [
+      {
+        "text": "整期配乐",
+        "line": 32,
+        "context": "description:'整期配乐'"
+      },
+      {
+        "text": "导入音效",
+        "line": 52,
+        "context": "kind==='sfx'?'导入音效':'整期配乐'"
+      },
+      {
+        "text": "整期配乐",
+        "line": 52,
+        "context": "kind==='sfx'?'导入音效':'整期配乐'"
+      },
+      {
+        "text": "无法读取音频连接，请刷新页面后重试。",
+        "line": 62,
+        "context": "catalogReading.error?'无法读取音频连接，请刷新页面后重试。':''"
+      },
+      {
+        "text": "无法读取当前工程版本。",
+        "line": 69,
+        "context": "useWorkspaceReading(w,onChange,selectedShotId??'episode','无法读取当前工程版本。')"
+      },
+      {
+        "text": "音频操作正在进行。",
+        "line": 71,
+        "context": "Error('音频操作正在进行。')"
+      },
+      {
+        "text": "音频操作已结束。",
+        "line": 79,
+        "context": "Error('音频操作已结束。')"
+      },
+      {
+        "text": "音频准备未完成。",
+        "line": 86,
+        "context": "perform(async()=>{\n  const saved=await savedWorkspace();reading.publish(await command(name,{episodeId:saved.episodeId,workspaceId:saved.id,expectedRevision"
+      },
+      {
+        "text": "已加入声音候选，试听后可采用。",
+        "line": 95,
+        "context": "prepared?'已加入声音候选，试听后可采用。':'素材已导入，请检查使用时长后加入候选。'"
+      },
+      {
+        "text": "素材已导入，请检查使用时长后加入候选。",
+        "line": 95,
+        "context": "prepared?'已加入声音候选，试听后可采用。':'素材已导入，请检查使用时长后加入候选。'"
+      },
+      {
+        "text": "声音素材不能为空或超过100MB。",
+        "line": 101,
+        "context": "Error('声音素材不能为空或超过100MB。')"
+      },
+      {
+        "text": "请选择 MP3 声音素材。",
+        "line": 102,
+        "context": "Error('请选择 MP3 声音素材。')"
+      },
+      {
+        "text": "文件读取失败，请重新选择。",
+        "line": 104,
+        "context": "Error('文件读取失败，请重新选择。')"
+      },
+      {
+        "text": "文件读取已取消。",
+        "line": 104,
+        "context": "Error('文件读取已取消。')"
+      },
+      {
+        "text": "音频上传已结束。",
+        "line": 105,
+        "context": "Error('音频上传已结束。')"
+      },
+      {
+        "text": "声音素材登记未完成。",
+        "line": 109,
+        "context": "perform(async()=>{\n   setUploadStatus(`正在读取 ${file.name}…`);\n   if(!file.size||file.size>100*1024*1024)throw Error('声音素材不能为空或超过100MB。');\n   if(!/\\.mp3$/i.t"
+      },
+      {
+        "text": "音效修改未保存。",
+        "line": 123,
+        "context": "perform(async saved=>{\n  if(bridge)setLive(await bridge.applyNativeEdit('apply-audio-mix',{edit}));\n  else reading.publish(await command('mixWorkspaceAudio"
+      },
+      {
+        "text": "音频状态未能核对，请重试。",
+        "line": 126,
+        "context": "perform(async()=>{\n  if(recover&&p.generationTask)await reconcileWorkspaceOutput(w.episodeId,p.generationTask);await reading.read();\n },'音频状态未能核对，请重试。')"
+      },
+      {
+        "text": "人工来源",
+        "line": 134,
+        "context": "p.source?.provider==='manual'?'人工来源':null"
+      },
+      {
+        "text": "音效",
+        "line": 148,
+        "context": "['sfx','音效']"
+      },
+      {
+        "text": "整期配乐",
+        "line": 148,
+        "context": "['bgm','整期配乐']"
+      },
+      {
+        "text": "整期配乐",
+        "line": 148,
+        "context": "next==='bgm'?'整期配乐':'导入音效'"
+      },
+      {
+        "text": "导入音效",
+        "line": 148,
+        "context": "next==='bgm'?'整期配乐':'导入音效'"
+      },
+      {
+        "text": "混音保存失败。",
+        "line": 181,
+        "context": "e instanceof Error?e.message:'混音保存失败。'"
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/LocalConnectionsPanel.tsx",
+    "rows": [
+      {
+        "text": "余量",
+        "line": 28,
+        "context": "label:'余量'"
+      },
+      {
+        "text": "读取失败",
+        "line": 28,
+        "context": "text:'读取失败'"
+      },
+      {
+        "text": "未能读取供应商数据，请稍后重新打开连接页。",
+        "line": 28,
+        "context": "detail:'未能读取供应商数据，请稍后重新打开连接页。'"
+      },
+      {
+        "text": "近7天",
+        "line": 28,
+        "context": "label:'近7天'"
+      },
+      {
+        "text": "读取失败",
+        "line": 28,
+        "context": "text:'读取失败'"
+      },
+      {
+        "text": "未能读取供应商数据，请稍后重新打开连接页。",
+        "line": 28,
+        "context": "detail:'未能读取供应商数据，请稍后重新打开连接页。'"
+      },
+      {
+        "text": "模型设置已保存；连接目录刷新失败，请重新读取。",
+        "line": 42,
+        "context": "savedModels.current?'模型设置已保存；连接目录刷新失败，请重新读取。':'连接目录读取失败，请重试。'"
+      },
+      {
+        "text": "连接目录读取失败，请重试。",
+        "line": 42,
+        "context": "savedModels.current?'模型设置已保存；连接目录刷新失败，请重新读取。':'连接目录读取失败，请重试。'"
+      },
+      {
+        "text": "本机 Keychain（需授权）",
+        "line": 47,
+        "context": "secretStorage=\"本机 Keychain（需授权）\""
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/WorkspaceCandidateImpact.tsx",
+    "rows": [
+      {
+        "text": "播放此口播",
+        "line": 12,
+        "context": "plan.edit.source.kind==='audio'?'播放此口播':'显示此画面'"
+      },
+      {
+        "text": "显示此画面",
+        "line": 12,
+        "context": "plan.edit.source.kind==='audio'?'播放此口播':'显示此画面'"
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/EmbeddedStudioHost.tsx",
+    "rows": [
+      {
+        "text": "编辑器访问已结束。",
+        "line": 31,
+        "context": "Error('编辑器访问已结束。')"
+      },
+      {
+        "text": "编辑器写连接尚未就绪，请稍后重试。",
+        "line": 33,
+        "context": "Error('编辑器写连接尚未就绪，请稍后重试。')"
+      },
+      {
+        "text": "请等待当前保存完成。",
+        "line": 33,
+        "context": "Error('请等待当前保存完成。')"
+      },
+      {
+        "text": "请返回分镜台，从「本期素材」导入文件。",
+        "line": 51,
+        "context": "setError('请返回分镜台，从「本期素材」导入文件。')"
+      },
+      {
+        "text": "本期没有启用字幕。",
+        "line": 55,
+        "context": "setError('本期没有启用字幕。')"
+      },
+      {
+        "text": "编辑器操作未完成。",
+        "line": 64,
+        "context": "typeof data.error==='string'?data.error:'编辑器操作未完成。'"
+      },
+      {
+        "text": "编辑器连接已关闭，修改尚未确认保存。",
+        "line": 68,
+        "context": "new Error('编辑器连接已关闭，修改尚未确认保存。')"
+      },
+      {
+        "text": "编辑器尚未连接。",
+        "line": 72,
+        "context": "new Error('编辑器尚未连接。')"
+      },
+      {
+        "text": "编辑器未确认操作，请检查编辑器状态后重试。",
+        "line": 74,
+        "context": "new Error('编辑器未确认操作，请检查编辑器状态后重试。')"
+      },
+      {
+        "text": "保存未完成，当前修改仍保留。",
+        "line": 86,
+        "context": "cause instanceof Error?cause.message:'保存未完成，当前修改仍保留。'"
+      },
+      {
+        "text": "修改未保存，当前编辑仍保留。",
+        "line": 95,
+        "context": "cause instanceof Error?cause.message:'修改未保存，当前编辑仍保留。'"
+      },
+      {
+        "text": "保存未完成，当前修改仍保留。",
+        "line": 103,
+        "context": "cause instanceof Error?cause.message:'保存未完成，当前修改仍保留。'"
+      },
+      {
+        "text": "工程已有新修改，请核对字幕后重新操作。",
+        "line": 112,
+        "context": "Error('工程已有新修改，请核对字幕后重新操作。')"
+      },
+      {
+        "text": "编辑器未返回当前字幕。",
+        "line": 116,
+        "context": "Error('编辑器未返回当前字幕。')"
+      },
+      {
+        "text": "字幕已写入编辑器，工程保存尚未确认。",
+        "line": 121,
+        "context": "captionReceipt.current?'字幕已写入编辑器，工程保存尚未确认。':''"
+      },
+      {
+        "text": "字幕保存失败。",
+        "line": 121,
+        "context": "cause instanceof Error?cause.message:'字幕保存失败。'"
+      },
+      {
+        "text": "原生面板尚未就绪，请重试。",
+        "line": 124,
+        "context": "cause instanceof Error?cause.message:'原生面板尚未就绪，请重试。'"
+      }
+    ]
+  }
+]

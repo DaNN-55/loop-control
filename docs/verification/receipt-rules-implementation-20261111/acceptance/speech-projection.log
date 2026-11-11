@@ -1,0 +1,63 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run --config docs/verification/receipt-rules-implementation-20261111/acceptance/speech-projection.config.mjs --maxWorkers=1 --reporter=verbose
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ × docs/verification/receipt-rules-implementation-20261111/acceptance/speech-replacement-projection.test.ts > 24 a completed replacement becomes the current narration task, retaining the unknown original only in history 1743ms
+   → expected { attempt: 1, maxAttempts: 1, …(21) } to be undefined
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  docs/verification/receipt-rules-implementation-20261111/acceptance/speech-replacement-projection.test.ts > 24 a completed replacement becomes the current narration task, retaining the unknown original only in history
+AssertionError: expected { attempt: 1, maxAttempts: 1, …(21) } to be undefined
+
+- Expected: 
+undefined
+
++ Received: 
+{
+  "attempt": 1,
+  "automaticRetryExhausted": true,
+  "connectionName": "Controlled narration",
+  "createdAt": "2026-11-11T13:57:13.688Z",
+  "dispatchObservation": {
+    "localRecoveries": 0,
+    "phase": "dispatching",
+    "reason": null,
+  },
+  "error": "Provider 请求结果未知；已消费的请求预算保留。请先核对请求账本与供应商记录，不会自动重发。",
+  "id": "ab8fb83a-8baa-4ef8-943a-9c43dc2dd164",
+  "invalidated": false,
+  "invalidatedAt": null,
+  "maxAttempts": 1,
+  "model": "seed-tts-2.0",
+  "provider": "volcengine_tts",
+  "publicationAttempt": null,
+  "reservationCents": 100,
+  "retryAllowed": true,
+  "retryAt": null,
+  "retryTaskId": "5b3516e2-eff8-43f9-81b2-f10da208b55c",
+  "shotId": "shot-1",
+  "status": "blocked",
+  "submissionOutcome": "started",
+  "submissionUnknown": true,
+  "taskId": "ab8fb83a-8baa-4ef8-943a-9c43dc2dd164",
+  "waitingForRetry": false,
+}
+
+ ❯ docs/verification/receipt-rules-implementation-20261111/acceptance/speech-replacement-projection.test.ts:14:45
+     12|   await writeFile(f.responseMode,'success');expect((await f.execute(ne…
+     13|   const state=await f.read();expect(state.narration[0].taskId).toBe(ne…
+     14|   expect(state.narration[0].generationTask).toBeUndefined();
+       |                                             ^
+     15|   expect((await f.c.query('SELECT outcome FROM local_identity.workspac…
+     16|  }finally{await f.close();}
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  21:57:11
+   Duration  2.42s (transform 421ms, setup 0ms, collect 578ms, tests 1.74s, environment 0ms, prepare 23ms)
+

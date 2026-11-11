@@ -1,0 +1,167 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/LocalCatalogApp.workspace.test.tsx src/local-app/RecycleBinPanel.test.tsx --maxWorkers=1 --fileParallelism=false
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/RecycleBinPanel.test.tsx (4 tests) 4121ms
+   ✓ opens without mutating, preserves legacy recovery and saves an explicit versioned quota  2035ms
+   ✓ binds restore to membership revision and keeps a failed entry visible  503ms
+   ✓ locks parent navigation while permanent confirmation is open and requires its current plan name  1025ms
+   ✓ retains an unsaved quota draft when the catalog revision refreshes  549ms
+stderr | src/local-app/LocalCatalogApp.workspace.test.tsx > moves archived=true production orders to the recycle bin without archiving or permanently deleting
+An update to LocalCatalogContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to LocalCatalogContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to LocalCatalogContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to LocalCatalogContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to LocalCatalogContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to LocalCatalogContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ❯ src/local-app/LocalCatalogApp.workspace.test.tsx (12 tests | 6 failed) 50421ms
+   ✓ opens standalone OpenChatCut from the initial account page without selecting a production order  3019ms
+   ✓ uses the approved navigation with real table paging and a contextual production workspace  3261ms
+   × 保留安全弹窗焦点，从所有者菜单打开连接配置且跨页保留连接草稿 5588ms
+     → Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   × moves archived=true production orders to the recycle bin without archiving or permanently deleting 5174ms
+     → Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   × moves archived=false production orders to the recycle bin without archiving or permanently deleting 5173ms
+     → Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   ✓ keeps a rejected recycle operation (404) inside its confirmation for retry  4734ms
+   ✓ keeps a rejected recycle operation (409) inside its confirmation for retry  3056ms
+   × keeps one topbar instance and places the Owner menu after theme in workspace and episode 5679ms
+     → Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   × 恢复失败留在确认框内且可重试，成功后关闭；操作错误不显示重复全局通知 5182ms
+     → Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   × opens durable file cleanup from the Owner menu, preserves list context and restores focus on close 5490ms
+     → Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   ✓ opens the full associated catalog from an account deletion blocker and clears stale scope filters  3292ms
+   ✓ opens the workbench for retired history bookmarks without mounting old pages or requesting their APIs  764ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/LocalCatalogApp.workspace.test.tsx > 保留安全弹窗焦点，从所有者菜单打开连接配置且跨页保留连接草稿
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/local-app/LocalCatalogApp.workspace.test.tsx:39:1
+     37|  expect(requests.every(p=>p.startsWith('/api/local/'))).toBe(true);
+     38| });
+     39| it('保留安全弹窗焦点，从所有者菜单打开连接配置且跨页保留连接草稿',async()=>{
+       | ^
+     40|  const user=userEvent.setup(),requests:string[]=[];
+     41|  vi.stubGlobal('fetch',vi.fn(async(path:string)=>{
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  src/local-app/LocalCatalogApp.workspace.test.tsx > moves archived=true production orders to the recycle bin without archiving or permanently deleting
+ FAIL  src/local-app/LocalCatalogApp.workspace.test.tsx > moves archived=false production orders to the recycle bin without archiving or permanently deleting
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/local-app/LocalCatalogApp.workspace.test.tsx:85:21
+     83| });
+     84| 
+     85| it.each([true,false])('moves archived=%s production orders to the recy…
+       |                     ^
+     86|  const user=userEvent.setup(),commands:Array<{command:string;data:unkn…
+     87|  vi.stubGlobal('crypto',webcrypto);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  src/local-app/LocalCatalogApp.workspace.test.tsx > keeps one topbar instance and places the Owner menu after theme in workspace and episode
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/local-app/LocalCatalogApp.workspace.test.tsx:115:1
+    113| });
+    114| 
+    115| it('keeps one topbar instance and places the Owner menu after theme in…
+       | ^
+    116|  const user=userEvent.setup();vi.stubGlobal('crypto',webcrypto);
+    117|  vi.stubGlobal('fetch',vi.fn(async(path:string)=>{
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  src/local-app/LocalCatalogApp.workspace.test.tsx > 恢复失败留在确认框内且可重试，成功后关闭；操作错误不显示重复全局通知
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/local-app/LocalCatalogApp.workspace.test.tsx:134:1
+    132| });
+    133| 
+    134| it('恢复失败留在确认框内且可重试，成功后关闭；操作错误不显示重复全局通知',async()=>{
+       | ^
+    135|  const user=userEvent.setup();let calls=0,restored=false;vi.stubGlobal…
+    136|  vi.stubGlobal('fetch',vi.fn(async(path:string,init?:RequestInit)=>{
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  src/local-app/LocalCatalogApp.workspace.test.tsx > opens durable file cleanup from the Owner menu, preserves list context and restores focus on close
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/local-app/LocalCatalogApp.workspace.test.tsx:154:1
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  6 failed | 10 passed (16)
+   Start at  20:01:40
+   Duration  92.08s (transform 6.61s, setup 105ms, collect 29.87s, tests 54.54s, environment 4.93s, prepare 576ms)
+

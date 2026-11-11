@@ -1,0 +1,188 @@
+- generic [ref=e1] clickable [onclick]
+  - generic [ref=e2] clickable [onclick]
+    - link "跳到主要内容" [ref=e3]
+    - complementary "主导航"
+      - image "Loop Control"
+        - StaticText "Loop Control"
+      - navigation "工作区" [ref=e4]
+        - group "生产工作"
+          - button "工作台" [ref=e12]
+            - StaticText "工作台"
+          - button "生产单" [ref=e13]
+            - StaticText "生产单"
+        - group "账号管理"
+          - button "账号" [expanded=false, ref=e14]
+            - StaticText "账号"
+          - button "新建账号" [ref=e15]
+      - generic
+        - button "打开当前生产单的 OpenChatCut" [ref=e7]
+          - StaticText "OpenChatCut"
+        - button "系统状态：不可用" [expanded=false, ref=e16]
+          - StaticText "系统状态"
+        - button "收起侧栏" [ref=e8]
+          - StaticText "收起侧栏"
+    - complementary "当前生产单详情"
+      - button "返回工作区" [ref=e5]
+        - StaticText "返回工作区"
+      - StaticText "生产单"
+      - group "工作区工具"
+        - textbox "查找生产单、账号或素材" [ref=e17]
+        - button "待处理通知" [expanded=false, ref=e9]
+        - button "切换至深色模式" [ref=e10]
+        - button "所有者设置" [expanded=false, ref=e18]
+      - button "关闭生产单详情" [ref=e6]
+      - region "四步制作工作流" [ref=e11]
+        - sectionheader
+          - heading "四步制作 T02 验收" [level=2, ref=e22]
+          - navigation "四步制作步骤" [ref=e23]
+            - button "脚本确认" [ref=e26]
+              - StaticText "脚本确认"
+              - StaticText "已确认"
+            - button "分镜台，当前查看" [ref=e27]
+              - StaticText "分镜台"
+              - StaticText "1 项待准备"
+            - button "剪辑工作台" [ref=e28]
+              - StaticText "剪辑工作台"
+              - StaticText "字幕待校时"
+            - button "检查与交付" [ref=e29]
+              - StaticText "检查与交付"
+              - StaticText "待确认"
+          - button "文件夹更多操作" [expanded=false, ref=e24]
+        - group
+          - generic
+            - sectionheader
+              - heading "分镜台" [level=3, ref=e32]
+              - StaticText "2"
+              - StaticText " / "
+              - StaticText "2"
+              - StaticText " 画面就绪"
+              - button "进入剪辑工作台" [disabled, ref=e33]
+                - StaticText "进入剪辑工作台"
+            - region "素材镜头列表" [ref=e30]
+              - heading "镜头" [level=3, ref=e34]
+              - table "镜头"
+                - rowgroup
+                  - row
+                    - columnheader "镜头" [ref=e54]
+                    - columnheader "脚本与素材" [ref=e55]
+                    - columnheader "时长" [ref=e56]
+                    - columnheader "画面" [ref=e57]
+                    - columnheader "口播" [ref=e58]
+                    - columnheader "操作" [ref=e59]
+                - row "镜头 01" [ref=e35] clickable [onclick, tabindex]
+                  - cell "选择镜头 01" [ref=e41]
+                    - button "选择镜头 01" [ref=e60]
+                      - StaticText "镜头 01"
+                  - cell "第一镜 shot.mp4" [ref=e42]
+                    - StaticText "第一镜"
+                    - StaticText "shot.mp4"
+                  - cell "2.0 s" [ref=e43]
+                  - cell "已匹配" [ref=e44]
+                  - cell "待准备" [ref=e45]
+                  - cell "镜头 01操作" [ref=e46] clickable [onclick]
+                    - button "镜头 01操作" [expanded=false, disabled, ref=e61]
+                - row "镜头 02" [ref=e36] clickable [onclick, tabindex]
+                  - cell "选择镜头 02" [ref=e47]
+                    - button "选择镜头 02" [ref=e62]
+                      - StaticText "镜头 02"
+                  - cell "缺少素材的第二镜。 shot.mp4" [ref=e48]
+                    - StaticText "缺少素材的第二镜。"
+                    - StaticText "shot.mp4"
+                  - cell "2.0 s" [ref=e49]
+                  - cell "已匹配" [ref=e50]
+                  - cell "关闭" [ref=e51]
+                  - cell "镜头 02操作" [ref=e52] clickable [onclick]
+                    - button "镜头 02操作" [expanded=false, disabled, ref=e63]
+                - rowgroup
+                  - row
+                    - cell "新增镜头" [ref=e64]
+                      - button "新增镜头" [disabled, ref=e65]
+              - status
+              - StaticText "2"
+              - StaticText " 个镜头"
+              - button "本期素材 · 2" [expanded=false, ref=e37]
+                - StaticText "本期素材 · 2"
+            - separator "调整镜头列表宽度" [ref=e31] focusable [tabindex]: 41
+            - generic
+              - tablist "素材设置"
+                - tab "画面" [ref=e38]
+                - tab "字幕与口播" [selected, ref=e39]
+                - tab "配乐与声音" [ref=e40]
+              - tabpanel "字幕与口播"
+                - group
+                  - region "逐镜口播" [ref=e53]
+                    - sectionheader
+                      - tablist "字幕与口播"
+                        - tab "口播" [selected, ref=e71]
+                        - tab "字幕" [ref=e72]
+                      - LabelText [ref=e66] clickable [onclick]
+                        - switch "启用口播" [checked=true, disabled, ref=e73]
+                        - paragraph
+                          - StaticText "已开启"
+                    - tabpanel "口播"
+                      - region "口播文案" [ref=e67]
+                        - sectionheader
+                          - heading "口播文案" [level=3, ref=e77]
+                        - textbox "口播文案" [disabled, ref=e74]: 验证明确确认的新口播。
+                          - StaticText "验证明确确认的新口播。"
+                        - button "口播来源" [expanded=false, disabled, ref=e75]
+                          - StaticText "seed-tts-2.0"
+                        - generic
+                          - combobox "声音" [expanded=false, disabled, ref=e78]: Vivi 2.0 · 多语种女声
+                            - StaticText "Vivi 2.0 · 多语种女声"
+                          - button "声音选项" [expanded=false, disabled, ref=e79]
+                        - group
+                          - spinbutton "语速" [disabled, ref=e81]: 1
+                            - StaticText "1"
+                        - generic
+                          - button "试听音色" [disabled, ref=e80]
+                        - button "正在处理…" [disabled, ref=e76]
+                          - StaticText "正在处理…"
+                      - status
+                        - StaticText "请先核对上一条口播任务。"
+                      - alert "口播任务 c8d87738-01a3-4668-9e80-1e9f2e311f67"
+                        - StaticText "口播提交结果未知 · Provider 请求结果未知；已消费的请求预算保留。请先核对请求账本与供应商记录，不会自动重发。"
+                      - button "重新生成" [disabled, ref=e68]
+                        - StaticText "重新生成"
+                      - button "刷新核对结果" [disabled, ref=e69]
+                        - StaticText "刷新核对结果"
+                      - button "查看口播任务详情" [ref=e70]
+                        - StaticText "详情"
+    - dialog "确认本次口播生成"
+      - banner
+        - heading "确认本次口播生成" [level=2, ref=e25]
+      - alert
+        - StaticText "上一次请求的结果仍未知，可能已产生费用。确认后将按下方设置提交一次新的请求，供应商可能对两次请求分别计费。"
+      - DescriptionList
+        - term "镜头"
+        - definition
+          - StaticText "shot-1"
+        - term "连接"
+        - definition
+          - StaticText "Controlled narration · v1"
+        - term "供应商"
+        - definition
+          - StaticText "volcengine_tts"
+        - term "模型"
+        - definition
+          - StaticText "seed-tts-2.0"
+      - paragraph
+        - StaticText "11 字 · 音色：zh_female_vv_uranus_bigtts · 语速：1"
+      - strong
+        - StaticText "本次内容"
+      - paragraph
+        - StaticText "验证明确确认的新口播。"
+      - LabelText
+        - StaticText "本次费用预留（元）"
+      - spinbutton "本次费用预留（元）" [ref=e19]: 0.10999999940395357
+        - StaticText "0.11"
+      - paragraph
+        - StaticText "自动建议 ¥0.11，已计入 20% 余量和最低预留限制。"
+      - group
+        - DisclosureTriangle "估算依据" [expanded=false]
+      - paragraph
+        - StaticText "费用预留不是精确报价，实际费用以供应商结算为准。此次确认仅适用于本次调用。"
+      - button "取消" [ref=e20]
+        - StaticText "取消"
+      - button "确认并提交本次调用" [ref=e21]
+        - StaticText "确认并提交本次调用"

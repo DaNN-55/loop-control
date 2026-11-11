@@ -1,0 +1,27 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/LocalCatalogApp.receipts.test.tsx src/local-app/runtimeVersion.test.ts src/local-app/runtimeVersion.legacy.test.ts --maxWorkers=1 --fileParallelism=false --reporter=verbose
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/LocalCatalogApp.receipts.test.tsx > accepts the created order after refresh failure and supports retry without another write 222ms
+ ✓ src/local-app/LocalCatalogApp.receipts.test.tsx > accepts the created order after refresh failure and supports dismiss without another write 124ms
+ ✓ src/local-app/LocalCatalogApp.receipts.test.tsx > accepts the created order after refresh failure and supports stale without another write 90ms
+ ✓ src/local-app/LocalCatalogApp.receipts.test.tsx > accepts archive acknowledgement even when the following read fails and only retries the read 106ms
+ ✓ src/local-app/LocalCatalogApp.receipts.test.tsx > from operations, closes creation on acknowledgement while directory reading is pending 54ms
+ ✓ src/local-app/LocalCatalogApp.receipts.test.tsx > from episodes, closes creation on acknowledgement while directory reading is pending 56ms
+ ✓ src/local-app/runtimeVersion.test.ts > reports the actual pinned identities and startup time from verified release files 922ms
+ ✓ src/local-app/runtimeVersion.test.ts > development edits are pending updates while the pinned version remains valid 649ms
+ ✓ src/local-app/runtimeVersion.test.ts > preparing another release never relabels the running backend and worker 1145ms
+ ✓ src/local-app/runtimeVersion.test.ts > damaged running files override pending development changes and do not expose internal paths 656ms
+ ✓ src/local-app/runtimeVersion.test.ts > a worker pinned to another release is a mismatch even with a healthy prepared version 657ms
+ ✓ src/local-app/runtimeVersion.test.ts > does not guess a legacy process identity from the currently prepared manifest 546ms
+ ✓ src/local-app/runtimeVersion.test.ts > preparation in progress and missing prepared pointers preserve the running identity 585ms
+ ✓ src/local-app/runtimeVersion.test.ts > coalesces concurrent checks and refreshes bounded cached observations without background timers 599ms
+ ✓ src/local-app/runtimeVersion.test.ts > a damaged newly prepared release is distinct from damaged running files 1071ms
+ ✓ src/local-app/runtimeVersion.legacy.test.ts > legacy runtime APIs remain unverified instead of borrowing a real prepared version 770ms
+
+ Test Files  3 passed (3)
+      Tests  16 passed (16)
+   Start at  22:41:40
+   Duration  11.03s (transform 686ms, setup 12ms, collect 2.09s, tests 8.25s, environment 297ms, prepare 80ms)
+

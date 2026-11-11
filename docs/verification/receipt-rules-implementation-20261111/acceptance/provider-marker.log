@@ -1,0 +1,33 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run --config docs/verification/receipt-rules-implementation-20261111/acceptance/provider-marker.config.mjs --maxWorkers=1 --reporter=verbose
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ × docs/verification/receipt-rules-implementation-20261111/acceptance/provider-marker.test.ts > keeps a definite mark-before-send refusal as not sent, with no transport send 25ms
+   → expected ProviderOutcomeUnknownError: Provider 请求结… to match object { name: 'ProviderRequestNotSentError' }
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  docs/verification/receipt-rules-implementation-20261111/acceptance/provider-marker.test.ts > keeps a definite mark-before-send refusal as not sent, with no transport send
+AssertionError: expected ProviderOutcomeUnknownError: Provider 请求结… to match object { name: 'ProviderRequestNotSentError' }
+
+- Expected
++ Received
+
+- {
+-   "name": "ProviderRequestNotSentError",
++ ProviderOutcomeUnknownError {
++   "name": "ProviderOutcomeUnknownError",
+  }
+
+ ❯ docs/verification/receipt-rules-implementation-20261111/acceptance/provider-marker.test.ts:9:2
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  21:54:31
+   Duration  259ms (transform 61ms, setup 0ms, collect 83ms, tests 26ms, environment 0ms, prepare 24ms)
+

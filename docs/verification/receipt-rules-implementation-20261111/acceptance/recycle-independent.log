@@ -1,0 +1,14 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/recycleBin.independent.integration.test.ts --maxWorkers=1 --fileParallelism=false --reporter=verbose
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ↓ src/local-app/recycleBin.independent.integration.test.ts > independent recycle: foreign Owner, CSRF and Origin cannot recycle or restore; membership preserves the original graph
+ ↓ src/local-app/recycleBin.independent.integration.test.ts > independent recycle: edited files reject restore and permanent-delete planning without losing membership or bytes
+ ↓ src/local-app/recycleBin.independent.integration.test.ts > independent recycle: capacity is validated at HTTP boundary and stale settings never overwrite the saved limit
+
+ Test Files  1 skipped (1)
+      Tests  3 skipped (3)
+   Start at  21:58:05
+   Duration  719ms (transform 433ms, setup 8ms, collect 605ms, tests 0ms, environment 0ms, prepare 25ms)
+

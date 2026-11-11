@@ -1,0 +1,14 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/operations/OperationsWorkspace.test.tsx src/local-app/workspaceTaskRetry.test.ts src/local-app/WorkspaceGenerationLocale.test.tsx
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/workspaceTaskRetry.test.ts (3 tests) 2ms
+ ✓ src/local-app/WorkspaceGenerationLocale.test.tsx (2 tests) 71ms
+ ✓ src/operations/OperationsWorkspace.test.tsx (25 tests) 752ms
+
+ Test Files  3 passed (3)
+      Tests  30 passed (30)
+   Start at  18:43:06
+   Duration  2.49s (transform 208ms, setup 16ms, collect 2.05s, tests 825ms, environment 575ms, prepare 84ms)
+

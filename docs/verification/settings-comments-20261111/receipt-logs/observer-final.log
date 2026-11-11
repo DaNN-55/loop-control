@@ -1,0 +1,11 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/runtimeRequestLog.test.ts src/local-app/runtimeLogs.test.ts src/local-app/localRoute.test.ts --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+··········
+
+ Test Files  3 passed (3)
+      Tests  10 passed (10)
+   Start at  17:22:54
+   Duration  716ms (transform 409ms, setup 32ms, collect 1.61s, tests 103ms, environment 0ms, prepare 88ms)

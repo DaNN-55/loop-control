@@ -1,0 +1,17 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workflowRules.integration.test.ts src/local-app/workflowRetryRules.independent.integration.test.ts --maxWorkers=1 --fileParallelism=false
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/workflowRules.integration.test.ts (3 tests) 14676ms
+   ✓ 48/6/7/21/23: disabling unknown speech removes current blockers but retains reconciliation and prevents resend  1932ms
+   ✓ 48/21/26/37: unused missing voice and its long tail cannot block real native export, while re-enabled media must validate  11158ms
+   ✓ 48/7/8/20/28/29: replacing or deleting a visual target and unused sound failures leave only background reminders  1586ms
+ ✓ src/local-app/workflowRetryRules.independent.integration.test.ts (1 test) 4822ms
+   ✓ 48/27/29/46 independent: persisted source backoff cannot duplicate work, unchanged failure retries, changed or removed targets cannot  4821ms
+
+ Test Files  2 passed (2)
+      Tests  4 passed (4)
+   Start at  18:34:53
+   Duration  20.45s (transform 434ms, setup 9ms, collect 719ms, tests 19.50s, environment 0ms, prepare 51ms)
+
