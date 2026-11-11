@@ -9,7 +9,7 @@ import{join,isAbsolute}from'node:path';import{createHash,randomUUID}from'node:cr
 import{request as httpsRequest}from'node:https';
 import{Readable}from'node:stream';
 import type{MediaFetcher}from'../worker/mediaProviders.js';
-import{isDefiniteProviderRejection,ProviderOutcomeUnknownError}from'../worker/providerOutcome.js';
+import{ProviderRequestNotSentError,isDefiniteProviderRejection,ProviderOutcomeUnknownError}from'../worker/providerOutcome.js';
 export type OnlineProvider='openai'|'cloudflare'|'pexels'|'freesound'|'google_tts'|'volcengine_tts'|'bailian'|'volcengine'|'minimax'|'kling';
 type WorkspaceGenerationProvider='openai'|'bailian'|VideoProvider;
 export function isWorkspaceGenerationProvider(provider:string):provider is WorkspaceGenerationProvider{
@@ -149,7 +149,7 @@ function assertTtsRequest(provider:OnlineProvider,init:RequestInit,limit:Limit){
  if(Array.from(text).length>rules.maxCharacters||!rules.voices.includes(voice)||(google?!rules.languageCodes?.includes(b.voice?.languageCode):!rules.resourceIds?.includes(new Headers(init.headers).get('X-Api-Resource-Id')??'')))throw denied();
 }
 // Native fetch has HTTP header/body timeouts even without an AbortSignal deadline.
-const waitForImageResponse:MediaFetcher=(url,init)=>new Promise((resolve,reject)=>{
+export const waitForImageResponse:MediaFetcher=(url,init)=>new Promise((resolve,reject)=>{
  const headers=new Headers(init?.headers);
  headers.set('accept-encoding','identity');
  const request=httpsRequest(url,{method:init?.method,headers:Object.fromEntries(headers),signal:init?.signal??undefined,agent:false,timeout:0},incoming=>{
@@ -205,6 +205,7 @@ export function createWorkspaceGenerationFetcher(provider:WorkspaceGenerationPro
    const maxBytes=(provider==='openai'?64:provider==='volcengine_tts'?20:download?100:1)*1024*1024;
    return (await readProviderResponse(response,maxBytes)).response;
   }catch(error){
+   if(error instanceof ProviderRequestNotSentError)throw error;
    if(generate){
     const failure=error as {name?:string;code?:string;cause?:{code?:string}},code=failure?.cause?.code??failure?.code;
     const reason=signal.aborted||failure?.name==='TimeoutError'?'供应商响应超时':code&&['ECONNRESET','ECONNREFUSED','ENOTFOUND','ETIMEDOUT','UND_ERR_CONNECT_TIMEOUT'].includes(code)?`网络连接异常：${code}`:'网络连接中断或响应未完整收到';

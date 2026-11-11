@@ -10,7 +10,7 @@ import type {CatalogQuery,EpisodeCatalog} from '../episodes/episodeCatalogTypes'
 const database=process.env.LOOP_CATALOG_FILTERS_TEST_DATABASE;
 assert(database&&/^loop_ui_catalog_test_[a-z0-9_]+$/.test(database),'Set a disposable LOOP_CATALOG_FILTERS_TEST_DATABASE');
 assert(process.env.DOCKER_HOST?.startsWith('unix://'),'Explicit local Docker socket required');
-const container='loop-control-local-postgres';
+const container=process.env.LOOP_CATALOG_FILTERS_TEST_CONTAINER??'loop-control-local-postgres';
 const owner=randomUUID(),foreignOwner=randomUUID(),account=randomUUID(),foreignAccount=randomUUID(),memberAccount=randomUUID();
 const episode=(n:number)=>`00000000-0000-4000-8000-${String(n).padStart(12,'0')}`;
 const packageId=(n:number)=>`10000000-0000-4000-8000-${String(n).padStart(12,'0')}`;
@@ -37,10 +37,10 @@ beforeAll(()=>{
  CREATE TABLE local_identity.workspace_export_issues(workspace_id uuid,resolved_at timestamptz,created_at timestamptz);
  CREATE TABLE local_identity.workspace_deliveries(id uuid,workspace_id uuid,export_id uuid,task_id uuid,created_at timestamptz);
 
- CREATE TABLE local_identity.workspace_narrations(workspace_id uuid,task_id uuid);
- CREATE TABLE local_identity.workspace_audio_preparations(workspace_id uuid,task_id uuid);
+ CREATE TABLE local_identity.workspace_narrations(workspace_id uuid,task_id uuid,shot_id text,mode text);
+ CREATE TABLE local_identity.workspace_audio_preparations(workspace_id uuid,task_id uuid,adopted_item_id text);
  CREATE TABLE local_identity.workspace_visual_candidates(id uuid,workspace_id uuid,task_id uuid,target_item_id text,request_snapshot jsonb,dismissed_at timestamptz,created_at timestamptz);
- CREATE TABLE local_identity.workspace_narration_requests(workspace_id uuid,task_id uuid);
+ CREATE TABLE local_identity.workspace_narration_requests(workspace_id uuid,task_id uuid,shot_id text);
  CREATE TABLE local_identity.workspace_narration_submissions(task_id uuid,outcome text);
  CREATE TABLE local_identity.historical_episodes(id uuid);
  CREATE TABLE local_identity.historical_tasks(id uuid);
@@ -77,10 +77,10 @@ beforeAll(()=>{
  INSERT INTO public.review_packages VALUES('${packageId(124)}','${episode(24)}','script_review',2,'2026-01-02','{}'); ALTER TABLE public.episodes ADD COLUMN main_script_revision_id uuid;`);
 },20000);
 afterAll(()=>{if(created)psql(`DROP DATABASE ${database};`,'postgres');},10000);
-function catalog(query:Partial<CatalogQuery>={},asOwner=owner):EpisodeCatalog{
- const parameters=[asOwner,query.view??'episodes',query.page??1,query.accountId||null,query.seriesId??'all',query.visibility??'active',query.pendingPage??1,query.blockedPage??1,query.q??'',query.sort??'updated',query.status??'all','{}',query.catalogStage??'all',query.pageSize??20];
+function catalog(query:Partial<CatalogQuery>={},asOwner=owner,usage:Record<string,unknown>={}):EpisodeCatalog{
+ const parameters=[asOwner,query.view??'episodes',query.page??1,query.accountId||null,query.seriesId??'all',query.visibility??'active',query.pendingPage??1,query.blockedPage??1,query.q??'',query.sort??'updated',query.status??'all','{}',query.catalogStage??'all',query.pageSize??20,JSON.stringify(usage)];
  const values=parameters.map(v=>v===null?'NULL':typeof v==='number'?String(v):sqlString(v)).join(',');
- const result=psql(`SET ROLE loop_app;BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY;SELECT set_config('loop.owner_id','${asOwner}',true);PREPARE catalog_filter(uuid,text,integer,uuid,text,text,integer,integer,text,text,text,jsonb,text,integer) AS ${localCatalogSql};EXECUTE catalog_filter(${values});ROLLBACK;`);
+ const result=psql(`SET ROLE loop_app;BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY;SELECT set_config('loop.owner_id','${asOwner}',true);PREPARE catalog_filter(uuid,text,integer,uuid,text,text,integer,integer,text,text,text,jsonb,text,integer,jsonb) AS ${localCatalogSql};EXECUTE catalog_filter(${values});ROLLBACK;`);
  return JSON.parse(result.trim().split('\n').at(-1)!);
 }
 it('searches all matching records before pagination, treats SQL wildcards literally, and searches UUID fragments',()=>{
@@ -169,10 +169,10 @@ it('projects workspace current export and delivery facts without blocking on unu
  expect(rows.get(episode(36))?.actionStatus).toBe('running');expect(rows.get(episode(37))).toMatchObject({actionStatus:'review',reviewPending:true});expect(rows.get(episode(38))?.actionStatus).toBe('blocked');expect(rows.get(episode(39))?.actionStatus).toBe('done');expect(rows.get(episode(40))?.actionStatus).toBe('running');
  expect(catalog({q:'四步',status:'review'}).episodes.map(e=>e.id)).toEqual([episode(37)]);expect(catalog({q:'四步',view:'operations'}).blocked.items.map(row=>row.blocker.code)).toEqual(['DELIVERY_FAILED']);
  psql(`UPDATE local_identity.production_workspaces SET revision=2,content_sha256=repeat('b',64) WHERE episode_id='${episode(37)}';`);expect(catalog({q:'四步',status:'review'}).episodes).toEqual([]);
- psql(`INSERT INTO local_identity.workspace_narrations VALUES('40000000-0000-4000-8000-000000000036','${taskId(36)}');
+ psql(`INSERT INTO local_identity.workspace_narrations VALUES('40000000-0000-4000-8000-000000000036','${taskId(36)}','shot-1','tts');
  INSERT INTO local_identity.workspace_export_issues VALUES('40000000-0000-4000-8000-000000000037',null,'2026-01-05');
  UPDATE local_identity.production_workspaces SET updated_at='2026-01-06' WHERE episode_id='${episode(36)}';`);
- const active=catalog({q:'四步',view:'operations'});expect(active.episodes[0].id).toBe(episode(36));expect(new Date(active.episodes[0].updated_at).toISOString()).toBe('2026-01-06T00:00:00.000Z');
+ const active=catalog({q:'四步',view:'operations'},owner,{'40000000-0000-4000-8000-000000000036':{shots:[{shotId:'shot-1',used:true,enabled:true,hasVoice:false}]}});expect(active.episodes[0].id).toBe(episode(36));expect(new Date(active.episodes[0].updated_at).toISOString()).toBe('2026-01-06T00:00:00.000Z');
  expect(active.operationRows.find(r=>r.episodeId===episode(36))).toMatchObject({actionStatus:'blocked',blockerCount:1});
  expect(active.operationRows.find(r=>r.episodeId===episode(37))).toMatchObject({actionStatus:'blocked',blockerCount:1});
  psql(`UPDATE local_identity.workspace_narrations SET task_id=null;UPDATE local_identity.workspace_export_issues SET resolved_at='2026-01-07';`);

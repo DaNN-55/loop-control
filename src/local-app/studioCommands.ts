@@ -30,6 +30,10 @@ export class NativeStudioCommands {
   if(!e.storyboard_enabled||!editableStages.includes(e.stage))throw new ConfigurationError(409,'当前阶段不能编辑或冻结 Studio 工程。');
   let config:OpenChatCutRuntimeConfig;
   try{if(!runtime.studioRuntime)throw Error();config=await runtime.studioRuntime();}catch{throw new ConfigurationError(503,'本地 Studio 执行环境尚未就绪。',{version:workerPreflightVersion,checks:[{capability:'review_rendering',check:'command_availability',phase:'preflight',status:'unavailable',reason:'请检查本地 OpenChatCut、Node 与媒体工具；不会切换到在线执行。',action:'contact_environment_admin',scope:'worker'}]});}
+  if(command==='requestStudioCompositionRevision'||command==='requestStudioStoryboardRevision'){
+   try{await c.query('SELECT local_identity.lock_owned_revision_tasks($1)',[e.id]);}
+   catch(error){if((error as {code?:string}).code==='55000')throw new ConfigurationError(409,'当前审核已变化或有任务正在运行，请重新读取后再修订。');throw error;}
+  }
   if(command==='requestStudioCompositionRevision'){
    const qc=await this.currentPackage(c,e.id,'qc_review');if(e.stage!=='qc_review'||!qc||qc.id!==data.reviewPackageId)throw new ConfigurationError(409,'当前审核包已变化，请刷新。');
    const sourcePath=qc.context_snapshot.project_relative_path,basis=await this.basis(c,e,root,sourcePath),binding=this.bindings.get(e.id);
@@ -76,6 +80,7 @@ export class NativeStudioCommands {
   const frozen=await freezeOpenChatCutStudio(root,e.id,binding.workspaceRelativePath,workspace.sha256,storage);
   await this.verifyProjectSources(c,e.id,root,frozen,basis.render);
   const reference={relative_path:frozen.relativePath,sha256:frozen.sha256,file_size:frozen.fileSize};
+  await c.query('SELECT local_identity.register_owned_studio_freeze($1,$2,$3)',[e.id,basis.reviewPackageId,reference]);
   await c.query('UPDATE local_identity.input_episodes SET studio_enabled=true WHERE episode_id=$1',[e.id]);
   let task;
   if(command==='generateReviewVideo'){

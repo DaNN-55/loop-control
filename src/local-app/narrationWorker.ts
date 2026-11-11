@@ -1,7 +1,8 @@
 import {isRetiredProvider} from '../worker/providerLifecycle.js';
 import {videoProviders,minimaxEndpoints} from "../worker/videoProviderCatalog.js";
 import {officialVideoDownloadUrl} from "../worker/officialVideoProvider.js";
-import{ProviderOutcomeUnknownError}from'../worker/providerOutcome.js';
+import{ProviderRequestRejectedError,ProviderOutcomeUnknownError,ProviderRequestNotSentError}from'../worker/providerOutcome.js';
+import{prepareProviderDispatch,markProviderDispatching}from'./providerDispatch.js';
 import type{Pool}from'pg';
 import{pathToFileURL}from'node:url';
 import{execFile}from'node:child_process';
@@ -45,27 +46,26 @@ export async function executeNativeNarration(pool:Pool,config:NativeNarrationCon
  }catch{throw new SecretStoreError('unavailable');}
  const unavailable=async():Promise<never>=>{throw Error('Task outside native narration scope');};
  const fenceArgs=[fence.p_task_id,fence.p_attempt,fence.p_lease_token];
- let route:string|undefined;
+ let route:string|undefined,dispatched=false,rejected=false,rejectionStatus=0;
  const fetchConfirmedSpeech=speech?createWorkspaceGenerationFetcher('volcengine_tts',{
   speech:{text:speech.text,voice:speech.voice.name,model:p.model},
   reserve:async()=>{
-   route=(await pool.query('SELECT local_identity.reserve_workspace_narration_route($1,$2,$3) route',fenceArgs)).rows[0]?.route;
-   if(route!=='confirmed'&&route!=='legacy')throw new ProviderOutcomeUnknownError();
+   route=await prepareProviderDispatch(pool,fence,'speech');
   },
- },(url,init)=>route==='confirmed'&&ports.mode==='live'?fetch(url,init):ports.fetcher(url,init)):undefined;
+ },async(url,init)=>{await markProviderDispatching(pool,fence);dispatched=true;return route==='confirmed'&&ports.mode==='live'?fetch(url,init):ports.fetcher(url,init);}):undefined;
  let output:string;
  try{output=await executeControlledMediaTask({taskPackage:p,fetcher:async(url,init)=>{
    if(!fetchConfirmedSpeech){
-    const reserved=(await pool.query('SELECT local_identity.reserve_workspace_narration_submission($1,$2,$3) reserved',fenceArgs)).rows[0]?.reserved;
-    if(!reserved)throw new ProviderOutcomeUnknownError();
+    await prepareProviderDispatch(pool,fence,'speech');
+    await markProviderDispatching(pool,fence);dispatched=true;
    }
-   let response:Response;try{response=await (fetchConfirmedSpeech??ports.fetcher)(url,init);}catch{throw new ProviderOutcomeUnknownError();}
+   let response:Response;try{response=await (fetchConfirmedSpeech??ports.fetcher)(url,init);}catch(error){if(error instanceof ProviderRequestNotSentError)throw error;throw new ProviderOutcomeUnknownError();}
    // A transport break or accepted-but-malformed response must never resend a paid request.
    // Only a definite client rejection permits Owner's explicit retry.
-   const outcome=response.status>=400&&response.status<500&&response.status!==408?'rejected':'received';
-   await pool.query('SELECT local_identity.record_workspace_narration_submission($1,$2,$3,$4)',[...fenceArgs,outcome]);
+   rejectionStatus=response.status;rejected=response.status>=400&&response.status<500&&response.status!==408;
+   if(rejected)await pool.query('SELECT local_identity.record_workspace_narration_submission($1,$2,$3,$4)',[...fenceArgs,'rejected']);
    return response;
   },pexelsApiKey:undefined,googleTtsApiKey:undefined,volcengineTtsApiKey:p.provider==='volcengine_tts'?secret:undefined,validateMp4:unavailable,extractMp3:unavailable,trimMp3:unavailable,
-  async probeMp3(path){const{stdout}=await promisify(execFile)('ffprobe',['-v','error','-show_entries','format=duration','-of','default=noprint_wrappers=1:nokey=1',path],{env:{PATH:process.env.PATH},timeout:5000,maxBuffer:65536});const duration=Number(stdout.trim());if(!Number.isFinite(duration)||duration<=0)throw Error('音频不可播放或时长无效。');return duration;}});}catch(error){if(error instanceof ProviderOutcomeUnknownError)throw error;throw Error('口播生成或音频验证失败，请检查连接和本机执行状态。');}
+  async probeMp3(path){const{stdout}=await promisify(execFile)('ffprobe',['-v','error','-show_entries','format=duration','-of','default=noprint_wrappers=1:nokey=1',path],{env:{PATH:process.env.PATH},timeout:5000,maxBuffer:65536});const duration=Number(stdout.trim());if(!Number.isFinite(duration)||duration<=0)throw Error('音频不可播放或时长无效。');return duration;}});}catch(error){if(error instanceof ProviderRequestRejectedError){try{await pool.query('SELECT local_identity.record_workspace_narration_submission($1,$2,$3,$4)',[...fenceArgs,'rejected']);}catch{throw new ProviderOutcomeUnknownError(undefined,'拒绝回执尚未登记');}throw error;}if(error instanceof ProviderOutcomeUnknownError||error instanceof ProviderRequestNotSentError)throw error;if(rejected)throw new ProviderRequestRejectedError(rejectionStatus);if(dispatched&&!rejected)throw new ProviderOutcomeUnknownError(undefined,'返回内容尚未通过音频校验');throw Error(rejected?'供应商已明确拒绝本次口播请求，请检查连接或参数后重试。':'口播生成或音频验证失败，请检查连接和本机执行状态。');}
  const result=JSON.parse(output);result.validation.checks.push({name:'native_narration_mode',passed:true,detail:ports.mode==='controlled'?'受控响应及密钥存储替身；没有在线Provider请求或真实语音生成证明。':'实际在线Provider执行。'});return JSON.stringify(result);
 }

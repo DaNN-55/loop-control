@@ -4,9 +4,9 @@ import {FreesoundSearchError,OpenAiImageRequestError} from '../worker/mediaProvi
 import {assertWorkspaceVisualExecution} from './workspaceVisualWorker.js';
 import {executeWorkspaceImages} from './workspaceImageGenerationWorker.js';
 import type {VideoGenerationPhase} from '../worker/videoTaskExecution.js';
-import {createProviderFetcher,createVideoContinuationFetcher,createWorkspaceGenerationFetcher,createWorkspaceSearchFetcher} from './providerNetwork.js';
+import {waitForImageResponse,createProviderFetcher,createVideoContinuationFetcher,createWorkspaceGenerationFetcher,createWorkspaceSearchFetcher} from './providerNetwork.js';
 import {isVideoProvider} from "../worker/videoProviderCatalog.js";
-import{ProviderOutcomeUnknownError}from'../worker/providerOutcome.js';
+import{ProviderOutcomeUnknownError,ProviderRequestNotSentError}from'../worker/providerOutcome.js';
 import{registeredAdapters}from'../worker/registeredAdapters.js';
 import type {Pool} from 'pg';
 import {execFile} from 'node:child_process';
@@ -84,11 +84,11 @@ export async function executeNativeMedia(pool:Pool,config:NativeMediaConfigurati
     return response;
    };
    if(p.task.type==='generate_static_visual'){
-    output=await executeWorkspaceImages(pool,p,fence,secret!,reserve=>{
+    output=await executeWorkspaceImages(pool,p,fence,secret!,(reserve,dispatch)=>{
      if(config?.mode==='live'&&p.provider==='openai')return configuredGeneration
-      ?createWorkspaceGenerationFetcher('openai',{reserve})
-      :createProviderFetcher(config.network,'openai','execute',undefined,undefined,reserve);
-     return async(url,init)=>{await reserve();return observeVideo(url,init);};
+      ?createWorkspaceGenerationFetcher('openai',{reserve},async(url,init)=>{await dispatch();return waitForImageResponse(url,init);})
+      :createProviderFetcher(config.network,'openai','execute',async(url,init)=>{await dispatch();return waitForImageResponse(url,init);},undefined,reserve);
+     return async(url,init)=>{await reserve();await dispatch();return observeVideo(url,init);};
     });
    }else{
     try{output=await executeControlledMediaTask({
@@ -119,5 +119,5 @@ export async function executeNativeMedia(pool:Pool,config:NativeMediaConfigurati
    }
   }
   const result=JSON.parse(output);result.validation.checks.push({name:'native_media_mode',passed:true,detail:ports?.mode==='controlled'?'受控Provider响应和SecretStore替身；没有在线资格或在线生成证明。':external?'在线执行路径。':'本机媒体执行。'});return JSON.stringify(result);
- }catch(error){if(error instanceof VideoGenerationError||error instanceof MediaArtifactValidationError)throw error;if(error instanceof ProviderOutcomeUnknownError||error instanceof PexelsVideoError||error instanceof FreesoundSearchError||error instanceof OpenAiImageRequestError)throw error;if(p.provider==='pexels')throw Error(error instanceof SecretStoreError?'Pexels 所选连接不可用，请检查原连接后重新检索。':'Pexels 视频文件无效或无法读取，请重新预览其他结果。');throw Error('媒体执行或产物验证失败，请检查冻结输入和本机执行状态。',{cause:error});}
+ }catch(error){if(error instanceof VideoGenerationError||error instanceof MediaArtifactValidationError)throw error;if(error instanceof ProviderRequestNotSentError||error instanceof ProviderOutcomeUnknownError||error instanceof PexelsVideoError||error instanceof FreesoundSearchError||error instanceof OpenAiImageRequestError)throw error;if(p.provider==='pexels')throw Error(error instanceof SecretStoreError?'Pexels 所选连接不可用，请检查原连接后重新检索。':'Pexels 视频文件无效或无法读取，请重新预览其他结果。');throw Error('媒体执行或产物验证失败，请检查冻结输入和本机执行状态。',{cause:error});}
 }

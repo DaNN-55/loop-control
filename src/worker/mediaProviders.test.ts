@@ -97,3 +97,11 @@ it.each(['gpt-image-2.5-sunburst','gpt-image-2.5-flare','gpt-image-2.5-sunburst-
  }
  const fetcher=vi.fn();await expect(generateOpenAiImages({apiKey:'synthetic',fetcher,model:'gpt-image-2',prompt:'test',settings:{size:'864x1536',quality:'max',count:1}})).rejects.toThrow('参数无效');expect(fetcher).not.toHaveBeenCalled();
 });
+
+it('recognizes documented speech input rejection before audio, while partial audio and unknown codes remain uncertain',async()=>{
+ const {parseVolcengineTtsAudio}=await import('./mediaProviders');
+ for(const code of [45000000,45000001])expect(()=>parseVolcengineTtsAudio('data: '+JSON.stringify({code})+'\n')).toThrow(expect.objectContaining({name:'ProviderRequestRejectedError'}));
+ for(const body of ['data: {"code":55000000}\n','data: {"code":0,"data":"SUQz"}\ndata: {"code":45000001}\n','data: {"code":0,"data":"SUQz"}\ndata: broken\n']){
+  let failure:unknown;try{parseVolcengineTtsAudio(body);}catch(error){failure=error;}expect(failure).toBeInstanceOf(Error);expect(failure).not.toMatchObject({name:'ProviderRequestRejectedError'});
+ }
+});

@@ -21,7 +21,26 @@ export async function localCommand<T>(command:string,data:unknown,expectedRevisi
  const existing=inFlight.get(digest);if(existing)return existing as Promise<T>;
  const key='loop.local.pending.'+digest;
  let idempotencyKey=sessionStorage.getItem(key);if(!idempotencyKey){idempotencyKey=crypto.randomUUID();sessionStorage.setItem(key,idempotencyKey);}
- const request=localRequest(endpoint,{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':csrf},body:JSON.stringify({...body,idempotencyKey})}).then(value=>{sessionStorage.removeItem(key);return value;}).finally(()=>inFlight.delete(digest));
+ const operation={...body,idempotencyKey},recoverable=['configuration','episode-commands','episode-lifecycle','recycle-bin'].includes(endpoint)&&!['planRecyclePurge','retryDeletionCleanup','openDirectory','openStudio','openStandaloneStudio','openWorkspaceStudio'].includes(command);
+ const pending=sessionStorage.getItem(key+'.uncertain')==='1';
+ const unknown=(detail?:string)=>Object.assign(new Error((detail?detail+' ':'')+'本次操作结果暂未确认；请刷新核对已有任务或保存结果，不会自动重复执行。'),{code:'LOCAL_COMMAND_OUTCOME_UNKNOWN'});
+ const readback=async()=>{
+  const receipt=await localRequest('command-receipt',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({endpoint,operation}),signal:AbortSignal.timeout(10000)});
+  if(receipt.status!=='committed')throw unknown();return receipt.result;
+ };
+ const request=(async()=>{
+  try{
+   if(recoverable&&pending)return await readback();
+   try{return await localRequest(endpoint,{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':csrf},body:JSON.stringify(operation)});}
+   catch(error){
+    const status=(error as {status?:number}).status;
+    if(status&&status<500){sessionStorage.removeItem(key);throw error;}
+    if(!recoverable)throw error;
+    sessionStorage.setItem(key+'.uncertain','1');
+    try{return await readback();}catch{throw unknown(status&&error instanceof Error?error.message:undefined);}
+   }
+  }catch(error){throw error;}
+ })().then(value=>{sessionStorage.removeItem(key);sessionStorage.removeItem(key+'.uncertain');return value;}).finally(()=>inFlight.delete(digest));
  inFlight.set(digest,request);return request as Promise<T>;
 }
 export async function localConnectionCommand<T>(command:string,data:Record<string,unknown>,resumeKey?:string):Promise<T>{

@@ -1,3 +1,6 @@
+import {LocalRecycleBin} from './recycleBin.js';
+import {readCommandReceipt} from './commandReceipt.js';
+import {observeLocalRequest,type RuntimeRequestLogEvent} from './runtimeRequestLog.js';
 import {readAccountDeletionStatus} from './accountDeletion.js';
 import {reconcileOwnerNativeOutput} from './workspaceOutputReconciliation.js';
 import{runtimeErrorMessages}from'../orchestration/runtimeBuild.js';
@@ -33,7 +36,7 @@ import type {LocalEpisodeCommands} from './episodeCommands.js';
 import type {SecretAdministration,SecretOperation} from './secretAdministration.js';
 import type {RuntimeStatus} from '../observability/runtimeStatus.js';
 import type {RuntimeLogReport,LogStoragePort} from '../observability/logTypes.js';
-interface LocalOptions {logs?:{read:()=>Promise<RuntimeLogReport>;storage:LogStoragePort};recoverOutput?:(taskId:string,attempt:number)=>Promise<{status:'completed';registered:boolean}>;mediaRootSettings?:LocalMediaRootSettings;pool:Pool;origin:string;mediaRoot:string;historyRoot?:string;secrets?:SecretAdministration;connections?:LocalConnections;episodes?:LocalEpisodeCommands;automation?:NativeAutomation;accounts?:LocalAccountCommands;runtimeStatus?:(ownerId:string,page:number)=>Promise<RuntimeStatus>}
+interface LocalOptions {log?:(event:RuntimeRequestLogEvent)=>void;logs?:{read:()=>Promise<RuntimeLogReport>;storage:LogStoragePort};recoverOutput?:(taskId:string,attempt:number)=>Promise<{status:'completed';registered:boolean}>;mediaRootSettings?:LocalMediaRootSettings;pool:Pool;origin:string;mediaRoot:string;historyRoot?:string;secrets?:SecretAdministration;connections?:LocalConnections;episodes?:LocalEpisodeCommands;automation?:NativeAutomation;accounts?:LocalAccountCommands;runtimeStatus?:(ownerId:string,page:number)=>Promise<RuntimeStatus>}
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 async function readBody(request:IncomingMessage,limit=8192):Promise<Record<string,unknown>>{
  if(request.headers['content-type']?.split(';')[0]!=='application/json')throw Error('JSON required');
@@ -44,9 +47,11 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
  const host=new URL(options.origin).host;
  const mediaRootSettings=options.mediaRootSettings??new LocalMediaRootSettings(options.pool,options.mediaRoot);
  const lifecycle=new LocalEpisodeLifecycle(options.pool,options.mediaRoot,id=>options.episodes?.closeStudio(id)??Promise.resolve(),options.historyRoot);
+ const recycleBin=new LocalRecycleBin(options.pool,lifecycle);
  const connections=options.connections??new LocalConnections(options.pool);
  const accounts=options.accounts??new LocalAccountCommands(options.pool,options.mediaRoot,options.episodes);
  return async(request:IncomingMessage,response:ServerResponse)=>{
+  const observation=observeLocalRequest(request,response,options.log);
   response.setHeader('Cache-Control','no-store');response.setHeader('X-Content-Type-Options','nosniff');
   const send=(status:number,value:unknown)=>{response.writeHead(status,{'Content-Type':'application/json; charset=utf-8'});response.end(JSON.stringify(value));};
   try{
@@ -57,6 +62,7 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
    if(secretPath){response.setHeader('Cache-Control','no-store, max-age=0');response.setHeader('Pragma','no-cache');response.setHeader('Expires','0');response.setHeader('Referrer-Policy','no-referrer');}
    if(request.headers.host!==host||request.headers.origin&&request.headers.origin!==options.origin||request.headers['sec-fetch-site']==='cross-site'){await reject(null,'invalid_origin');send(403,{error:'本机来源不匹配。'});return;}
    if(request.method!=='GET'&&request.headers.origin!==options.origin){await reject(null,'invalid_origin');send(403,{error:'变更请求需要精确来源。'});return;}
+   if(request.method!=='GET')observation.start();
    if(url.pathname==='/api/local/login'){
     if(request.method!=='POST'){send(405,{error:'需要POST。'});return;}
     let body;try{body=await readBody(request);}catch{send(400,{error:'登录请求格式无效。'});return;}
@@ -81,6 +87,8 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
     const changed=(await options.pool.query('SELECT local_identity.change_owner_password($1,$2,$3) changed',[session.id,tokenHash(session.token),JSON.stringify(digest)])).rows[0]?.changed;
     if(!changed){send(401,{error:'会话已失效，请重新登录。'});return;}send(200,{changed:true});return;
    }
+   const recycleRead=url.pathname.match(/^\/api\/local\/episodes\/([0-9a-f-]{36})(?:\/|$)/);
+   if(recycleRead&&request.method==='GET'&&uuid.test(recycleRead[1])&&(await ownerTransaction(options.pool,session.id,true,async c=>(await c.query('SELECT 1 FROM local_identity.episode_recycle_bin WHERE episode_id=$1',[recycleRead[1]])).rowCount)))throw new ConfigurationError(409,'生产单已移入回收站，请恢复后再打开。');
    if(url.pathname==='/api/local/session'&&request.method==='GET'){send(200,{owner:{id:session.id,email:session.email},secretAdministration:!!options.secrets?.allowed(session),csrfToken:csrfFor(session.token)});return;}
    if(url.pathname==='/api/local/storyboard-planning'){
     if(request.method==='GET'){send(200,await ownerTransaction(options.pool,session.id,true,readGlobalPlanning));return;}
@@ -138,9 +146,13 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
     if(!maintenance&&!runtime){send(503,{error:'系统状态暂不可用，请稍后重试。'});return;}
     send(200,{...maintenance,observedAt:runtime?.observedAt??maintenance?.observedAt,runtime:runtime??null,maintenanceAvailable:!!maintenance});return;
    }
+   if(url.pathname==='/api/local/command-receipt'&&request.method==='POST'){
+    send(200,await readCommandReceipt(options.pool,session,await readBody(request,140*1024*1024)));return;
+   }
    await readMediaDeployment(options.pool,options.mediaRoot,request.method!=='GET');
    if(url.pathname==='/api/local/account-commands'&&request.method==='POST'){
     let body;try{body=await readBody(request,16384);}catch{send(400,{error:'账号本机操作请求格式无效。'});return;}
+    if(typeof (body.data as Record<string,unknown>|undefined)?.episodeId==='string'&&uuid.test(String((body.data as Record<string,unknown>).episodeId))&&(await ownerTransaction(options.pool,session.id,true,async c=>(await c.query('SELECT 1 FROM local_identity.episode_recycle_bin WHERE episode_id=$1',[(body.data as Record<string,unknown>).episodeId])).rowCount)))throw new ConfigurationError(409,'生产单已移入回收站，请先恢复。');
     const controller=new AbortController(),closed=()=>{if(!response.writableEnded)controller.abort();};response.once('close',closed);
     try{const result=await accounts.execute(session,body,controller.signal);if(!response.destroyed)send(200,result);}catch(error){if(!response.destroyed)throw error;}finally{response.off('close',closed);}return;
    }
@@ -155,9 +167,11 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
    if(url.pathname==='/api/local/episode-commands'&&request.method==='POST'){
     if(!options.episodes){send(503,{error:'本地Episode执行服务尚未配置。'});return;}
     let body;try{body=await readBody(request,140*1024*1024);}catch{send(400,{error:'Episode请求格式无效。'});return;}
+    if(typeof (body.data as Record<string,unknown>|undefined)?.episodeId==='string'&&uuid.test(String((body.data as Record<string,unknown>).episodeId))&&(await ownerTransaction(options.pool,session.id,true,async c=>(await c.query('SELECT 1 FROM local_identity.episode_recycle_bin WHERE episode_id=$1',[(body.data as Record<string,unknown>).episodeId])).rowCount)))throw new ConfigurationError(409,'生产单已移入回收站，请先恢复。');
     send(200,await options.episodes.execute(session,body));return;
    }
    if(url.pathname==='/api/local/episode-lifecycle'&&request.method==='POST'){let body;try{body=await readBody(request,16384);}catch{send(400,{error:'生命周期请求格式无效。'});return;}send(200,await lifecycle.execute(session,body));return;}
+   if(url.pathname==='/api/local/recycle-bin'){if(request.method==='GET'){send(200,await recycleBin.read(session));return;}if(request.method==='POST'){send(200,await recycleBin.execute(session,await readBody(request,16384)));return;}throw new ConfigurationError(405,'回收站请求方法无效。');}
    if(url.pathname==='/api/local/deletion-cleanups'&&request.method==='GET'){send(200,await lifecycle.pending(session));return;}
    if(url.pathname==='/api/local/account-deletion-status'){
     if(request.method!=='GET'){send(405,{error:'只支持读取账号删除条件。'});return;}
@@ -275,7 +289,7 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
     try{await serveOwnedArtifact(options.mediaRoot,record,response,request.headers.range);}catch{if(response.headersSent)response.destroy();else send(409,{error:'产物路径或指纹校验失败。'});}return;
    }
    send(404,{error:'本地路径尚未迁移。'});
-  }catch(error){const runtimeCode=(error as {code?:string})?.code;if(runtimeCode&&Object.hasOwn(runtimeErrorMessages,runtimeCode)){send(503,{code:runtimeCode,error:runtimeErrorMessages[runtimeCode as keyof typeof runtimeErrorMessages]});return;}if(error instanceof ConfigurationError){send(error.status,{error:error.message,...(error.preflight?{preflight:error.preflight}:{})});return;}
+  }catch(error){observation.fail(error);const runtimeCode=(error as {code?:string})?.code;if(runtimeCode&&Object.hasOwn(runtimeErrorMessages,runtimeCode)){send(503,{code:runtimeCode,error:runtimeErrorMessages[runtimeCode as keyof typeof runtimeErrorMessages]});return;}if(error instanceof ConfigurationError){send(error.status,{error:error.message,...(error.preflight?{preflight:error.preflight}:{})});return;}
    if(error instanceof SecretStoreError){send(error.code==='conflict'?409:503,{...(error.code==='denied'?{code:'keychain_access_denied'}:{}),error:error.code==='conflict'?'旧密钥引用不能覆盖；请显式创建新版本。':error.code==='denied'?'本机 Keychain 已锁定或拒绝访问；请运行 npm start 解锁，若仍不可用请检查系统授权。此次操作未确认完成。':'密钥存储或验证未就绪；请检查授权、绑定和本机状态。'});return;}
    if((error as {status?:number})?.status===401){send(401,{error:'会话已失效。'});return;}
    if((error as {code?:string})?.code==='P0002'){send(404,{error:'连接或版本不可见。'});return;}

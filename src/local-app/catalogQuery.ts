@@ -4,7 +4,7 @@ import {operationsEpisodePageSize} from '../episodes/episodeCatalogTypes.js';
 // Executed inside the same Owner/RLS repeatable-read transaction as metadata.
 export const localCatalogSql=` with owned_base as materialized (
   select e.* from public.episodes e where exists (
-   select 1 from public.account_memberships m where m.account_id=e.account_id and m.user_id=$1::uuid and m.role='owner')
+   select 1 from public.account_memberships m where m.account_id=e.account_id and m.user_id=$1::uuid and m.role='owner') and not local_identity.is_recycled_episode(e.id)
  ), owned as materialized (
   select e.*,greatest(e.updated_at,
    (select max(w.updated_at) from local_identity.production_workspaces w where w.episode_id=e.id),
@@ -26,7 +26,7 @@ export const localCatalogSql=` with owned_base as materialized (
    and ($2::text not in ('reviews','operations') or e.archived_at is null and not local_identity.is_historical_episode(e.id))
    and ($9::text='' or strpos(lower(e.title),lower($9::text))>0 or strpos(lower(e.id::text),lower($9::text))>0)
  ), workspace_facts as materialized (
-  select w.*,x.id export_id,x.status export_status,x.confirmed_at,x.created_at export_created_at,
+  select w.*,$15::jsonb->w.id::text native_usage,x.id export_id,x.status export_status,x.confirmed_at,x.created_at export_created_at,
    coalesce(x.project_content_version=w.revision and x.content_sha256=w.content_sha256,false) export_current,
    coalesce(x.status='ready' and x.artifact is not null and not exists(select 1 from jsonb_array_elements(case when jsonb_typeof(x.checks)='array' then x.checks else '[]'::jsonb end) check_row where check_row->>'passed' is distinct from 'true'),false) export_ready,
    d.task_id delivery_task_id,d.status delivery_status,
@@ -58,15 +58,21 @@ export const localCatalogSql=` with owned_base as materialized (
  ), latest_tasks as materialized (
   select distinct on (episode_id,scope) * from scoped_tasks order by episode_id,scope,created_at desc,id
  ), workspace_task_links as materialized (
-  select n.task_id,w.episode_id from workspace_facts w join local_identity.workspace_narrations n on n.workspace_id=w.id where w.basis_current
-  union select a.task_id,w.episode_id from workspace_facts w join local_identity.workspace_audio_preparations a on a.workspace_id=w.id where w.basis_current
+  select n.task_id,w.episode_id from workspace_facts w join local_identity.workspace_narrations n on n.workspace_id=w.id
+   where w.basis_current and n.mode<>'none' and exists(select 1 from jsonb_array_elements(coalesce(w.native_usage->'shots','[]')) shot
+    where shot->>'shotId'=n.shot_id and shot->>'used'='true' and shot->>'enabled'='true' and shot->>'hasVoice'='false')
+  union select a.task_id,w.episode_id from workspace_facts w join local_identity.workspace_audio_preparations a on a.workspace_id=w.id
+   where w.basis_current and w.native_usage->'usedItemIds' ? a.adopted_item_id
+  union select r.task_id,w.episode_id from workspace_facts w join local_identity.workspace_narration_requests r on r.workspace_id=w.id
+   join local_identity.workspace_narrations n on n.workspace_id=w.id and n.shot_id=r.shot_id
+   join public.tasks t on t.id=r.task_id left join local_identity.workspace_narration_submissions s on s.task_id=r.task_id
+   where w.basis_current and n.mode<>'none' and not exists(select 1 from local_identity.workspace_narration_requests child where child.workspace_id=r.workspace_id and child.shot_id=r.shot_id and child.request_snapshot->>'retryOfTaskId'=r.task_id::text) and (s.outcome in ('started','received') or coalesce(t.last_result#>'{preflight,checks}','[]'::jsonb) @> '[{"check":"provider_result_unknown"}]'::jsonb)
+   and exists(select 1 from jsonb_array_elements(coalesce(w.native_usage->'shots','[]')) shot
+    where shot->>'shotId'=r.shot_id and shot->>'used'='true' and shot->>'enabled'='true' and shot->>'hasVoice'='false')
   union select v.task_id,w.episode_id from workspace_facts w join local_identity.workspace_visual_candidates v on v.workspace_id=w.id
-   where w.basis_current and v.dismissed_at is null and not exists(
+   where w.basis_current and w.native_usage->'missingVisualIds' ? v.target_item_id and v.dismissed_at is null and not exists(
     select 1 from local_identity.workspace_visual_candidates newer where newer.workspace_id=v.workspace_id and newer.target_item_id=v.target_item_id
      and newer.request_snapshot->>'kind'=v.request_snapshot->>'kind' and newer.dismissed_at is null and (newer.created_at,newer.id)>(v.created_at,v.id))
-  union select r.task_id,w.episode_id from workspace_facts w join local_identity.workspace_narration_requests r on r.workspace_id=w.id
-   join public.tasks t on t.id=r.task_id left join local_identity.workspace_narration_submissions s on s.task_id=r.task_id
-   where s.outcome in ('started','received') or coalesce(t.last_result#>'{preflight,checks}','[]'::jsonb) @> '[{"check":"provider_result_unknown"}]'::jsonb
  ), actionable_tasks as materialized (
   select t.*,exists(select 1 from workspace_task_links l where l.task_id=t.id and l.episode_id=t.episode_id) workspace_relevant
   from latest_tasks t join scoped e on e.id=t.episode_id where
@@ -87,6 +93,8 @@ export const localCatalogSql=` with owned_base as materialized (
   union all select w.delivery_task_id,'prepare_publish_package',w.episode_id,jsonb_build_object('code','WORKSPACE_DELIVERY_FAILED','detail','交付失败，请检查本次结果后重试。')
    from workspace_facts w join public.tasks t on t.id=w.delivery_task_id join scoped e on e.id=w.episode_id
    where e.archived_at is null and not local_identity.is_historical_episode(e.id) and e.stage<>'production_completed' and w.export_current and t.status in ('failed','blocked') and (jsonb_typeof(t.last_result->'blockers') is distinct from 'array' or jsonb_array_length(t.last_result->'blockers')=0)
+  union all select w.id,'workspace_content',w.episode_id,jsonb_build_object('code','WORKSPACE_CONTENT_UNAVAILABLE','detail','当前工程或存储位置不可读取，请检查系统状态后重试。')
+   from workspace_facts w join scoped e on e.id=w.episode_id where e.archived_at is null and e.stage<>'production_completed' and w.basis_current and w.native_usage->>'unavailable'='true'
   union all select w.export_id,'workspace_export',w.episode_id,jsonb_build_object('code','WORKSPACE_EXPORT_FAILED','detail','成片检查未通过，请打开检查与交付处理。')
    from workspace_facts w join scoped e on e.id=w.episode_id where e.archived_at is null and not local_identity.is_historical_episode(e.id) and e.stage<>'production_completed' and (w.basis_current and w.export_current and w.export_status='failed' or w.open_issue)
  ), episode_states as materialized (
@@ -193,6 +201,7 @@ export const localCatalogSql=` with owned_base as materialized (
   'statusCounts',(select jsonb_build_object('all',count(*),'review',count(*) filter(where exists(select 1 from pending p where p.episode_id=state.episode_id)),'running',count(*) filter(where action_status='running'),'blocked',count(*) filter(where action_status='blocked'),'done',count(*) filter(where action_status='done')) from episode_states state where $13::text='all' or state.workflow_step=$13::text),
   'operationRows',coalesce((select jsonb_agg(jsonb_build_object('episodeId',e.id,'reviewRevision',coalesce((select p.revision_number from pending p where p.episode_id=e.id),r.revision_number),'reviewPending',exists(select 1 from pending p where p.episode_id=e.id),'workflowStep',state.workflow_step,
    'blockerCount',(select count(*) from task_blockers b where b.episode_id=e.id),
+   'backgroundTaskCount',(select count(*) from latest_tasks t where t.episode_id=e.id and t.status in ('ready','running','failed','blocked') and exists(select 1 from workspace_facts w where w.episode_id=e.id) and not exists(select 1 from actionable_tasks a where a.id=t.id)),
    'blocker',(select jsonb_build_object('code',b.blocker->>'code','detail',b.blocker->>'detail','taskId',b.task_id,'taskType',b.task_type) from task_blockers b where b.episode_id=e.id order by (b.blocker->>'code'='provider_result_unknown') desc,b.task_id,b.blocker->>'code' limit 1),
    'actionStatus',state.action_status)) from page_rows e left join current_packages r on r.episode_id=e.id join episode_states state on state.episode_id=e.id),'[]')
  ) AS catalog`;

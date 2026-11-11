@@ -28,10 +28,10 @@ function entry(line:string,offset:number,file:string):RuntimeLogEntry|null{
  const clock=stamp&&/^\d\d:\d\d:\d\d(?:\.\d{1,3})?$/.test(stamp)?stamp:legacyClock&&hour<=23&&Number(legacyClock[2])<60&&Number(legacyClock[3])<60?`${String(legacyClock[4]?(hour%12)+(legacyClock[4]==='PM'?12:0):hour).padStart(2,'0')}:${legacyClock[2]}:${legacyClock[3]}`:null;
  const severity=(['INFO','WARN','ERROR'].includes(level)?level:'ERROR') as RuntimeLogEntry['level'];
  const database=/Connection terminated unexpectedly/.test(message);
- const allowed=['timestamp','time','level','episodeId','episodeName','operationId','requestId','source','message','taskId','attempt','errorCode','httpStatus','durationMs','fileSize','sourcePath'];
+ const allowed=['timestamp','time','level','episodeId','episodeName','operationId','requestId','source','message','taskId','attempt','errorCode','httpStatus','durationMs','fileSize','sourcePath','phase','method','route','errorName','stackFrames','runtimeReleaseId'];
  const raw=(json?redactRuntimeLog(JSON.stringify(Object.fromEntries(allowed.filter(key=>Object.hasOwn(json!,key)&&['string','number','boolean'].includes(typeof json![key])).map(key=>[key,json![key]])),null,2)):message).slice(0,maxRecord);
  return{id:createHash('sha256').update(file+':'+offset+':'+clean).digest('hex').slice(0,24),level:severity,occurredAt,time:clock,episodeId:safe('episodeId'),episodeName:safe('episodeName'),operationId:safe('operationId'),requestId:safe('requestId'),source:safe('source')??'运行服务',message,raw,sourceFile:basename(file),line:offset,
- explanation:database?{what:'连接意外中断。',result:'这条连接已断开；日志未说明哪些请求或生产单受到影响。',reason:'日志未记录具体中断原因。',suggestion:'若再次出现，检查相关服务与连接情况，并核对原操作结果。'}:{what:message,result:severity==='ERROR'?'记录到异常；业务影响和恢复结果请以相关任务或后续日志为准。':'仅表示本条记录所述事件，不能据此判断整次制作已完成。'}};
+ explanation:json?.phase==='started'?{what:message,result:'请求已进入本机处理，尚无完成回执。'}:json?.phase==='interrupted'?{what:message,result:'响应连接提前关闭，客户端是否收到结果未知；请先核对原操作。'}:json?.phase==='responded'?{what:message,result:severity==='INFO'?'本机接口已返回成功响应；这不代表后台任务或整次制作已完成。':'本机接口未返回成功响应；是否已保存或创建任务须另行核对。'}:database?{what:'连接意外中断。',result:'这条连接已断开；日志未说明哪些请求或生产单受到影响。',reason:'日志未记录具体中断原因。',suggestion:'若再次出现，检查相关服务与连接情况，并核对原操作结果。'}:{what:message,result:severity==='ERROR'?'记录到异常；业务影响和恢复结果请以相关任务或后续日志为准。':'仅表示本条记录所述事件，不能据此判断整次制作已完成。'}};
 }
 export async function readRuntimeLogs(files:string[]):Promise<RuntimeLogReport>{
  const entries:RuntimeLogEntry[]=[];let truncated=false,sourceAvailable=false;

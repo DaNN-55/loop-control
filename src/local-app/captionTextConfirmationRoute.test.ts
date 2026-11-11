@@ -26,6 +26,7 @@ async function fixture(){
   if(sql.includes('JOIN local_identity.owners'))return{rows:[{id:ownerId,email:'owner@example.test'}],rowCount:1};
   if(sql.includes('token_hash FROM local_identity.sessions'))return{rows:[{token_hash:'fixture'}],rowCount:1};
   if(sql.includes('lock_owned_input_episode'))return{rows:[{owned:true}],rowCount:1};
+  if(sql.includes('FROM local_identity.episode_recycle_bin'))return{rows:[],rowCount:0};
   if(sql.includes('SELECT e.*,b.policy'))return{rows:[{id:episodeId,account_id:'account',policy:{asset_root:root},stage:'storyboard_approved',storyboard_enabled:true}],rowCount:1};
   if(sql.includes('local_identity.account_mapped_asset_root('))return{rows:[{root}],rowCount:1};
   if(sql.includes('local_identity.episode_storage_location'))return{rows:[{account_id:'account',asset_root:root,directory_relative_path:dir,directory_device_id:null,directory_inode_id:null,storage_series_id:null,layout_version:1}],rowCount:1};

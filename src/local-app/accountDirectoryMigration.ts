@@ -179,6 +179,7 @@ export async function planEpisodeCollectionMove(c:Client,mediaRoot:string,episod
  const episode=(await c.query('SELECT e.id,e.account_id,e.title FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id AND m.user_id=local_identity.owner_id() AND m.role=\'owner\' WHERE e.id=$1',[episodeId])).rows[0];
  if(!episode)throw new ConfigurationError(404,'生产单不可见。');
  const account=episode.account_id;await lock(c,account);
+ if((await c.query('SELECT local_identity.is_recycled_episode($1) recycled',[episodeId])).rows[0].recycled)throw new ConfigurationError(409,'生产单已移入回收站，请先恢复。');
  if((await c.query("SELECT 1 FROM local_identity.account_directory_migrations WHERE account_id=$1 AND status IN ('planned','copying','failed')",[account])).rowCount)throw new ConfigurationError(409,'请先恢复或回滚已有目录计划。');
  const location=await resolveEpisodeStorageLocation(c,mediaRoot,episodeId);await requireEpisodeStorageDirectory(c,location);
  const sourceCollection=await resolveEpisodeStorageCollection(c,location);if(sourceCollection.status!=='registered')throw new ConfigurationError(409,'请先在账号中盘点旧资料纳管，再调整系列。');

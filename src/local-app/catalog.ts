@@ -1,4 +1,5 @@
 import{localCatalogSql}from'./catalogQuery.js';
+import{readCatalogWorkspaceUsage}from'./catalogWorkspaceUsage.js';
 import{ConfigurationError}from'./configurationCommands.js';
 import {defaultEpisodePageSize,episodePageSizes,type EpisodeCatalog,type CatalogQuery} from '../episodes/episodeCatalogTypes.js';
 import {ownerTransaction} from './ownerTransaction.js';
@@ -46,7 +47,8 @@ export async function readLocalCatalog(pool:Pool,ownerId:string,query:CatalogQue
   const blueprints=(await client.query('SELECT * FROM public.account_blueprint_versions WHERE account_id=ANY($1::uuid[]) ORDER BY version DESC,id',[ids])).rows;
   const costSort=query.sort?.startsWith('cost_');
   const metrics=costSort?await readEpisodeMetrics(client,ownerId):{};
-  const {rows:[{catalog}]}=await client.query(localCatalogSql,[ownerId,query.view,query.page,query.accountId||null,query.seriesId,query.visibility,query.pendingPage,query.blockedPage,query.q??'',query.sort??'updated',query.status??'all',JSON.stringify(metrics),query.catalogStage??'all',query.pageSize??defaultEpisodePageSize]);
+  const usage=query.view==='accounts'?{}:await readCatalogWorkspaceUsage(client,query);
+  const {rows:[{catalog}]}=await client.query(localCatalogSql,[ownerId,query.view,query.page,query.accountId||null,query.seriesId,query.visibility,query.pendingPage,query.blockedPage,query.q??'',query.sort??'updated',query.status??'all',JSON.stringify(metrics),query.catalogStage??'all',query.pageSize??defaultEpisodePageSize,JSON.stringify(usage)]);
   if(query.view==='episodes'&&!costSort)catalog.metrics=await readEpisodeMetrics(client,ownerId,catalog.episodes.map((episode:{id:string})=>episode.id));
   const series=(await client.query('SELECT * FROM public.series WHERE account_id=ANY($1::uuid[]) ORDER BY name,id',[ids])).rows;
   const seriesVersions=(await client.query('SELECT * FROM public.series_versions WHERE account_id=ANY($1::uuid[]) ORDER BY version DESC,id',[ids])).rows;

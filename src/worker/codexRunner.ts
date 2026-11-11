@@ -1,3 +1,4 @@
+import {NativePublicationUnknownError} from '../orchestration/workerOutcome.js';
 import type {FrozenVideoVisualInput} from '../videoVisualInputs.js';
 import {applyScriptRenderSettings} from './scriptRenderSettings.js';
 import {videoAdapters} from "./videoProviderCatalog.js";
@@ -19,7 +20,7 @@ import {
 } from "./contracts.js";
 import { registeredAdapters } from "./registeredAdapters.js";
 import {VideoGenerationError} from './videoGenerationError.js';
-import {ProviderOutcomeUnknownError} from "./providerOutcome.js";
+import {ProviderRequestRejectedError,ProviderOutcomeUnknownError,ProviderRequestNotSentError} from "./providerOutcome.js";
 import { validateStoryboardManifest } from "./contracts.js";
 import type { StoryboardStructureRevision } from "./storyboardRevision.js";
 import { defaultAllowedDurationFrames, defaultDurationFrameRate, shotDurationDecisionFromJson } from "./durationDecision.js";
@@ -145,6 +146,7 @@ export async function runCodexWorker(dependencies: CodexWorkerDependencies): Pro
     await dependencies.reportResult(task.taskId, task.attempt, result);
     return { status: result.status, taskId: task.taskId };
   } catch (error) {
+    if(error instanceof NativePublicationUnknownError)throw error;
     const failure = executionPreflightCheck(taskPackage, error);
     const executionCheck = failure?currentRequestCheck(task,failure):undefined;
     const result = createFailedResult(taskPackage, dependencies.actualCostCents, error);
@@ -865,9 +867,9 @@ function createFailedResult(taskPackage: WorkerTaskPackage, actualCostCents: num
     artifacts: [],
     validation: { passed: false, checks: [{ name: "codex_execution", passed: false, detail: errorMessage(error) }] },
     actualCostCents,
-    blockers: error instanceof VideoGenerationError?[{code:error.code,detail:error.message}]:[],
+    blockers: (error instanceof ProviderRequestNotSentError||error instanceof ProviderRequestRejectedError)?[{code:error.code,detail:error.message}]:error instanceof VideoGenerationError?[{code:error.code,detail:error.message}]:[],
     retry: {
-      shouldRetry: !unknown && taskPackage.budget.attempt + 1 < taskPackage.budget.maxAttempts,
+      shouldRetry: !unknown && !(error instanceof ProviderRequestNotSentError||error instanceof ProviderRequestRejectedError) && taskPackage.budget.attempt + 1 < taskPackage.budget.maxAttempts,
       reason: errorMessage(error),
     },
     nextStep: unknown ? "先核对请求账本及供应商记录，再由 Owner 明确决定后续操作；不会自动重发。" : "Retry only after the reported failure is understood.",

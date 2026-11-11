@@ -11,6 +11,7 @@ import {productionWorkspaceFields} from '../productionWorkspace.js';
 import {requiresWorkspaceCall,type WorkspaceCallSummary,type WorkspaceCallProposal} from '../workspaceCall.js';
 import {resolveProductionSelection} from './productionSelection.js';
 import {readWorkspaceNarration} from './workspaceNarration.js';
+import {readWorkspaceNarrationTasks} from './workspaceGenerationTasks.js';
 import {readWorkspaceVisualTasks} from './workspaceVisualCandidates.js';
 import {productionHash} from './scriptProductionStore.js';
 import {ConfigurationError,canonical} from './configurationCommands.js';
@@ -28,10 +29,15 @@ async function describe(c:PoolClient,root:string,row:ProductionWorkspaceRecord,p
   amount=0;
  }
  let retryOfTaskId:string|undefined;
+ if(speech&&Object.hasOwn(payload,'retryOfTaskId')){
+  const original=(await readWorkspaceNarrationTasks(c,row)).find(t=>t.taskId===payload.retryOfTaskId&&t.shotId===target);
+  if(!original?.unknownRetryAllowed)throw new ConfigurationError(409,'原口播任务已变化，请刷新后核对。');
+  retryOfTaskId=original.taskId;
+ }
  if(image&&Object.hasOwn(payload,'retryOfTaskId')){
   const tasks=await readWorkspaceVisualTasks(c,row);
   const original=tasks.find(t=>t.taskId===payload.retryOfTaskId&&t.kind==='image'&&t.targetItemId===payload.targetItemId);
-  if(!original?.submissionUnknown||original.submissionOutcome==='received'||original.retryTaskId||original.publicationAttempt!=null)throw new ConfigurationError(409,'原图片任务已变化，请刷新后核对。');
+  if(!original?.unknownRetryAllowed)throw new ConfigurationError(409,'原图片任务已变化，请刷新后核对。');
   retryOfTaskId=original.taskId;
  }
  const imageRequest=image?await resolveWorkspaceImageRequest(c,root,row.episode_id,payload,'confirmation'):null;

@@ -18,9 +18,11 @@ import {safeAssetOutputPath} from '../worker/controlledMediaExecutor.js';
 import {inspectMp4Artifact} from '../worker/mediaTools.js';
 import {isOpenChatCutStudio} from '../worker/openchatcutStudio.js';
 import {workspaceVisualGaps} from './workspaceVisualCoverage.js';
+import {workspaceExecutionProject} from '../workspaceExecution.js';
 
 /** Native timeline graph, excluding the unused media pool and unreachable sequences. */
 export function usedWorkspaceContent(project:OpenChatCutProject){
+ project=workspaceExecutionProject(project);
  const timelines=new Map(project.timelines.map(t=>[t.id,t])),ids=new Set<string>(),paths=new Set<string>(),items:Array<Record<string,unknown>>=[],visited=new Set<string>();
  let nodes=0;const visit=(id:string,stack:Set<string>,from=0,to=Infinity)=>{
   if(stack.has(id))throw Error('嵌套序列存在循环引用。');if(stack.size>32||++nodes>4096)throw Error('嵌套序列超出检查范围。');const t=timelines.get(id);if(!t)throw Error('已用嵌套序列不存在。');stack=new Set(stack).add(id);visited.add(id);
@@ -31,6 +33,7 @@ export function usedWorkspaceContent(project:OpenChatCutProject){
  visit(project.activeTimelineId,new Set());return{ids,paths,items,timelineIds:visited};
 }
 export async function workspaceExportReadiness(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject){
+ project=workspaceExecutionProject(project);
  const checks:WorkspaceExportCheck[]=[],sources:Array<{relativePath:string;sha256:string;fileSize:number}>=[];let used:ReturnType<typeof usedWorkspaceContent>|null=null;
  try{used=usedWorkspaceContent(project);if(!used.items.length)throw Error('当前时间线没有内容。');
   const placeholders=row.bindings.filter(b=>used!.items.some(i=>i.id===b.itemId&&i.kind==='text'&&!i.src&&!b.source));if(placeholders.length)throw Error(`还有 ${placeholders.length} 处已用画面占位。`);
@@ -87,9 +90,12 @@ export async function executeWorkspaceExport(c:PoolClient,root:string,row:Produc
  if(checks.every(x=>x.passed))try{
   if(!runtime.studioRuntime)throw Error('本机渲染运行时未配置。');const config=await runtime.studioRuntime(),dir=await mkdtemp(join(tmpdir(),'loop-workspace-export-'));
   try{
-   const output=join(dir,'final.mp4'),spec=join(dir,'spec.json');await writeFile(spec,JSON.stringify({openchatcutRoot:config.root,nodePath:config.nodePath,assetRoot:root,outputPath:output,state:activeOpenChatCutState(project),project,timelineId:project.activeTimelineId,sources:await Promise.all(ready.sources.map(async source=>({...source,sourcePath:await storage.resolveReference(source.relativePath)})))}));
+   const renderProject=workspaceExecutionProject(project);
+   renderProject.assets=renderProject.assets.filter(asset=>ready.used?.paths.has(asset.src));
+   renderProject.timelines=renderProject.timelines.filter(timeline=>ready.used?.timelineIds.has(timeline.id)) as OpenChatCutProject['timelines'];
+   const output=join(dir,'final.mp4'),spec=join(dir,'spec.json');await writeFile(spec,JSON.stringify({openchatcutRoot:config.root,nodePath:config.nodePath,assetRoot:root,outputPath:output,state:activeOpenChatCutState(renderProject),project:renderProject,timelineId:renderProject.activeTimelineId,sources:await Promise.all(ready.sources.map(async source=>({...source,sourcePath:await storage.resolveReference(source.relativePath)})))}));
    await promisify(execFile)(config.nodePath??process.execPath,[resolve('scripts/openchatcut-render.mjs'),spec],{env:{...process.env,...config.environment},timeout:300000,maxBuffer:4*1024*1024});
-   const inspection=await inspectMp4Artifact(output),probe=JSON.parse((await promisify(execFile)('ffprobe',['-v','error','-show_entries','stream=codec_type,duration,nb_frames:format=duration','-of','json',output],{timeout:30000})).stdout),video=probe.streams?.find((s:{codec_type:string})=>s.codec_type==='video'),videoDurationSeconds=Number(video?.duration),timeline=project.timelines.find(t=>t.id===project.activeTimelineId)!;
+   const inspection=await inspectMp4Artifact(output),probe=JSON.parse((await promisify(execFile)('ffprobe',['-v','error','-show_entries','stream=codec_type,duration,nb_frames:format=duration','-of','json',output],{timeout:30000})).stdout),video=probe.streams?.find((s:{codec_type:string})=>s.codec_type==='video'),videoDurationSeconds=Number(video?.duration),timeline=renderProject.timelines.find(t=>t.id===renderProject.activeTimelineId)!;
    const duration=Math.max(...timeline.items.map(i=>Number(i.startFrame)+Number(i.durationInFrames)))/timeline.fps;
    const audioExpected=ready.used!.items.some(i=>(i.kind==='audio'||i.kind==='video')&&Number(i.volume??1)>0);
    const passed=inspection.width===timeline.width&&inspection.height===timeline.height&&Number.isFinite(videoDurationSeconds)&&Math.abs(videoDurationSeconds-duration)<Math.max(.15,2/timeline.fps)&&(!audioExpected||inspection.hasAudio)&&inspection.blackFrameCount===0;

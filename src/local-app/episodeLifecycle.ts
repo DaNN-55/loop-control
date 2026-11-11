@@ -15,14 +15,14 @@ import {relative} from 'node:path';
 import {stageConfirmedEpisodeFiles,restoreConfirmedEpisodeFiles,finalizeConfirmedEpisodeFiles} from '../worker/episodeDeletion.js';
 const uuid=/^[0-9a-f-]{36}$/;
 const fingerprint=(v:unknown)=>createHash('sha256').update(JSON.stringify(canonical(v))).digest('hex');
-interface DeletionResult{episodeId:string;title:string;path:string;stagingPath:string;cleanupKey:string;cleanupPending:boolean;localRemoved?:boolean;summary:unknown;cleanupRoot:string;paths?:string[];stagingPaths?:string[];cleanupTargets?:EpisodeDeletionTarget[];historyCleanupTargets?:HistoryBlobTarget[];historyScanRoots?:string[];historyRemovedPaths?:string[];message?:string;}
+interface DeletionResult{recycleInventory?:unknown;episodeId:string;title:string;path:string;stagingPath:string;cleanupKey:string;cleanupPending:boolean;localRemoved?:boolean;summary:unknown;cleanupRoot:string;paths?:string[];stagingPaths?:string[];cleanupTargets?:EpisodeDeletionTarget[];historyCleanupTargets?:HistoryBlobTarget[];historyScanRoots?:string[];historyRemovedPaths?:string[];message?:string;}
+export function publicDeletionResult(result:DeletionResult){const{recycleInventory:_inventory,cleanupRoot:_root,cleanupTargets:_targets,historyCleanupTargets:_history,historyScanRoots:_scan,historyRemovedPaths:_removed,message,...visible}=result;return{...visible,...(result.cleanupPending&&message?{message}:{}),...(result.cleanupPending&&(!result.cleanupTargets||result.cleanupTargets.some(target=>!target.files))?{message:'旧回执没有可验证的精确文件清单；暂存与未知文件保留。'}:{})};}
 export class LocalEpisodeLifecycle{
  constructor(private pool:Pool,private mediaRoot:string,private beforeDelete:(id:string)=>Promise<void>=async()=>{},private historyRoot?:string){}
  async pending(session:OwnerSession){return ownerTransaction(this.pool,session.id,true,async c=>{
-  const committed=(await c.query("SELECT result FROM local_identity.command_receipts WHERE owner_id=$1 AND result->>'cleanupPending'='true' AND result ? 'cleanupRoot'",[session.id])).rows.map(r=>this.publicResult(r.result));
+  const committed=(await c.query("SELECT result FROM local_identity.command_receipts WHERE owner_id=$1 AND result->>'cleanupPending'='true' AND result ? 'cleanupRoot'",[session.id])).rows.map(r=>publicDeletionResult(r.result));
   const prepared=(await c.query("SELECT * FROM local_identity.episode_deletion_intents WHERE owner_id=$1 AND state='prepared'",[session.id])).rows.map(intent=>this.preparedResult(intent));return[...prepared,...committed];
  });}
- private publicResult(result:DeletionResult){const{cleanupRoot:_root,cleanupTargets:_targets,historyCleanupTargets:_history,historyScanRoots:_scan,historyRemovedPaths:_removed,message,...visible}=result;return{...visible,...(result.cleanupPending&&message?{message}:{}),...(result.cleanupPending&&(!result.cleanupTargets||result.cleanupTargets.some(target=>!target.files))?{message:'旧回执没有可验证的精确文件清单；暂存与未知文件保留。'}:{})};}
  private preparedResult(intent:{idempotency_key:string;episode_id:string;manifest:{title?:string;path?:string;targets:EpisodeDeletionTarget[]};last_error?:string}){return{cleanupKey:intent.idempotency_key,episodeId:intent.episode_id,title:intent.manifest.title??intent.episode_id,path:intent.manifest.path??intent.manifest.targets[0]?.path??'',stagingPaths:intent.manifest.targets.flatMap(target=>target.files?.map(file=>file.stagingPath)??[]),phase:'prepared',cleanupPending:true,message:intent.last_error??'删除尚未提交，可恢复已暂存的文件。'};}
  private async retry(session:OwnerSession,key:string){
   const connection=await this.pool.connect();let lock:string|undefined;
@@ -51,8 +51,9 @@ export class LocalEpisodeLifecycle{
   const path=location.directoryPath,stagingPath=path,paths=targets.map(t=>t.path),stagingPaths=targets.flatMap(t=>t.files?.map(f=>f.stagingPath)??[]),files=targets.flatMap(t=>t.files??[]).map(({path,bytes,authority})=>({path,bytes,authority})),preserved=targets.flatMap(t=>t.preserved??[]).map(({path,reason})=>({path,reason}));
   return{e,root,targets,visible:{episodeId:e.id,title:e.title,path,stagingPath,paths,stagingPaths,files,preserved,confirmation:e.title.trim()||'DELETE',archived:Boolean(e.archived_at),isTest:e.is_test,revision:fingerprint({id:e.id,title:e.title,archivedAt:e.archived_at?new Date(e.archived_at).toISOString():null,updatedAt:new Date(e.updated_at).toISOString(),stage:e.stage,targets})}};
  }
+ async recycleSnapshot(c:PoolClient,id:string){const p=await this.plan(c,id);await this.assertNativeClosed(p.targets,id);return p;}
  private async verifyStorageRoot(c:PoolClient,accountId:string,root:string){
-  if((await c.query("SELECT 1 FROM local_identity.account_directory_migrations WHERE account_id=$1 AND status='copying'",[accountId])).rowCount)throw new ConfigurationError(409,'账号资料正在迁移，请先完成、恢复或回滚原操作。');
+    if((await c.query("SELECT 1 FROM local_identity.account_directory_migrations WHERE account_id=$1 AND status='copying'",[accountId])).rowCount)throw new ConfigurationError(409,'账号资料正在迁移，请先完成、恢复或回滚原操作。');
   const binding=(await c.query('SELECT local_identity.media_root_binding() binding')).rows[0].binding;if(binding){if(binding.path!==this.mediaRoot)throw new ConfigurationError(409,'服务媒体根与登记位置不一致，请重启本机服务。');await verifyMediaRootBinding(binding);}
   const account=(await c.query('SELECT actual_root FROM local_identity.account_asset_directories WHERE account_id=$1',[accountId])).rows[0];if(account?.actual_root===root)await requireAccountAssetRoot(c,this.mediaRoot,accountId);
  }
@@ -113,6 +114,8 @@ export class LocalEpisodeLifecycle{
     if(typeof data.archived!=='boolean')throw new ConfigurationError(400,'归档状态无效。');
     if(typeof data.episodeId!=='string'||!uuid.test(data.episodeId))throw new ConfigurationError(400,'生产单标识无效。');
     if(!(await c.query('SELECT local_identity.lock_owned_episode_cleanup($1) owned',[data.episodeId])).rows[0]?.owned)throw new ConfigurationError(404,'生产单不存在、无管理权限或属于只读历史资料。');
+  if((await c.query('SELECT local_identity.is_recycled_episode($1) recycled',[data.episodeId])).rows[0].recycled)throw new ConfigurationError(409,'生产单已移入回收站，请先恢复。');
+
     if((await c.query("SELECT 1 FROM local_identity.account_directory_migrations m JOIN public.episodes e ON e.account_id=m.account_id WHERE e.id=$1 AND m.status='copying'",[data.episodeId])).rowCount)throw new ConfigurationError(409,'账号资料正在迁移，请先完成、恢复或回滚原操作。');
     value=(await c.query('SELECT to_jsonb(local_identity.archive_owned_input_episode($1,$2)) result',[data.episodeId,data.archived])).rows[0].result;
    }
@@ -126,8 +129,9 @@ export class LocalEpisodeLifecycle{
     await this.beforeDelete(p.e.id);
     await this.assertNativeClosed(p.targets,p.e.id);
     try{for(const target of p.targets){staged.push(target);await stageConfirmedEpisodeFiles(target);}}catch(error){throw new ConfigurationError(409,error instanceof Error?error.message:'删除目录边界校验失败。');}
+    const recycleInventory=(await c.query('SELECT inventory FROM local_identity.episode_recycle_bin WHERE episode_id=$1',[p.e.id])).rows[0]?.inventory;
     const summary=(await c.query('SELECT local_identity.delete_owned_input_episode($1) result',[p.e.id])).rows[0].result;
-    value={episodeId:p.e.id,title:p.e.title,path:p.visible.path,stagingPath:p.visible.stagingPath,cleanupKey:key,cleanupPending:true,summary,cleanupRoot:p.root,paths:p.visible.paths,stagingPaths:p.visible.stagingPaths,cleanupTargets:p.targets} satisfies DeletionResult;
+    value={episodeId:p.e.id,title:p.e.title,path:p.visible.path,stagingPath:p.visible.stagingPath,cleanupKey:key,cleanupPending:true,summary,cleanupRoot:p.root,paths:p.visible.paths,stagingPaths:p.visible.stagingPaths,cleanupTargets:p.targets,...(recycleInventory?{recycleInventory}:{})} satisfies DeletionResult;
    }
    await c.query('INSERT INTO local_identity.command_receipts(owner_id,idempotency_key,payload_hash,result) VALUES($1,$2,$3,$4)',[session.id,key,hash,value]);if(command==='deleteEpisode')await c.query("SELECT local_identity.advance_episode_deletion_intent($1,'committed')",[key]);return value;
   },connection);}catch(error){if(staged.length){
@@ -142,7 +146,7 @@ export class LocalEpisodeLifecycle{
  private async finish(session:OwnerSession,key:string,connection?:PoolClient){
   const result=await sessionTransaction(this.pool,session,async c=>{
    await c.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[session.id+':'+key]);const row=(await c.query('SELECT result FROM local_identity.command_receipts WHERE owner_id=$1 AND idempotency_key=$2',[session.id,key])).rows[0];const r=row?.result as DeletionResult|undefined;
-   if(!r?.cleanupRoot||r.cleanupKey!==key)throw new ConfigurationError(404,'删除清理记录不可见。');if(!r.cleanupPending)return this.publicResult(r);
+   if(!r?.cleanupRoot||r.cleanupKey!==key)throw new ConfigurationError(404,'删除清理记录不可见。');if(!r.cleanupPending)return publicDeletionResult(r);
    try{
     if(r.cleanupTargets){const failures:string[]=[];for(const target of r.cleanupTargets)try{await verifyEpisodeDeletionTarget(target,'staged');if(target.files)await finalizeConfirmedEpisodeFiles(target);else throw Error('旧回执没有精确文件清单，原范围保留。');}catch(error){failures.push(error instanceof Error?error.message:'文件清理尚未完成。');}if(failures.length)throw Error(failures.join('；'));}
     else throw Error('旧回执没有可验证的精确文件清单；暂存文件保留，请核对列出的位置。');
@@ -152,8 +156,8 @@ export class LocalEpisodeLifecycle{
      const retained=new Set(scanned.retainedShas);
      for(const target of r.historyCleanupTargets)if(retained.has(target.sha)||!await finishHistoryBlob(c,target,session))await c.query('SELECT local_identity.retain_history_cleanup_file($1,$2,$3)',[key,target.sha,tokenHash(session.token)]);
     }
-    const completed=(await c.query('SELECT local_identity.complete_owned_deletion_cleanup($1) result',[key])).rows[0].result;await c.query("SELECT local_identity.advance_episode_deletion_intent($1,'completed')",[key]);return this.publicResult(completed);
-   }catch(error){return{...this.publicResult(r),cleanupPending:true,message:error instanceof Error?error.message:'文件清理尚未确认，请检查原删除范围后重试。'};}
+    const completed=(await c.query('SELECT local_identity.complete_owned_deletion_cleanup($1) result',[key])).rows[0].result;await c.query("SELECT local_identity.advance_episode_deletion_intent($1,'completed')",[key]);return publicDeletionResult(completed);
+   }catch(error){return{...publicDeletionResult(r),cleanupPending:true,message:error instanceof Error?error.message:'文件清理尚未确认，请检查原删除范围后重试。'};}
   },connection);
   if(!result.cleanupPending||!result.message)return result;
   // Persist after the attempt transaction ends: a database error may have
@@ -161,7 +165,7 @@ export class LocalEpisodeLifecycle{
   return sessionTransaction(this.pool,session,async c=>{
    await c.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[session.id+':'+key]);
    const persisted=(await c.query('SELECT local_identity.record_owned_deletion_cleanup_error($1,$2) result',[key,result.message])).rows[0].result as DeletionResult;
-   return this.publicResult(persisted);
+   return publicDeletionResult(persisted);
   },connection);
  }
 }

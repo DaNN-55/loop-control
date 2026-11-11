@@ -89,7 +89,7 @@ async function createNativeInstance(d,activate,lifecycle){
  const logFile=process.env.LOOP_RUNTIME_LOG_PATH??d.logPath??join(d.runtimeRoot,'app-private.log');
  const storage=createLogStorage(d.runtimeRoot,logFile);
  const choose=async()=>{try{const {stdout}=await promisify(execFile)('/usr/bin/osascript',['-e','on run argv\nactivate\nreturn POSIX path of (choose folder with prompt "选择日志存储文件夹" default location (POSIX file (item 1 of argv)))\nend run','--',storage.read().activeDirectory],{timeout:120000,maxBuffer:8192});return{path:stdout.trim()};}catch(error){if(/\(-128\)/.test(String(error.stderr)))return{cancelled:true};throw Error('Directory chooser unavailable');}};
- return{handler:createLocalHandler({origin:`http://127.0.0.1:${d.port}`,pool,mediaRoot:d.mediaRoot,stateDirectory:d.stateDirectory,historyRoot,mediaRootSettings,secrets,connections,episodes,accounts,automation,runtimeStatus,recoverOutput:worker?.recoverOutput,logs:{read:()=>readRuntimeLogs([join(d.runtimeRoot,'app-private.log'),logFile]),storage:{...storage,choose}}}),close};
+ return{handler:createLocalHandler({log:event=>console.log(JSON.stringify({...event,runtimeReleaseId:runtimeRelease.id})),origin:`http://127.0.0.1:${d.port}`,pool,mediaRoot:d.mediaRoot,stateDirectory:d.stateDirectory,historyRoot,mediaRootSettings,secrets,connections,episodes,accounts,automation,runtimeStatus,recoverOutput:worker?.recoverOutput,logs:{read:()=>readRuntimeLogs([join(d.runtimeRoot,'app-private.log'),logFile]),storage:{...storage,choose}}}),close};
  }catch(error){await close();throw error;}
 }
 

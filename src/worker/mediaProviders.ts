@@ -1,3 +1,4 @@
+import {ProviderRequestRejectedError} from './providerOutcome.js';
 import {retiredProviderMessage} from './providerLifecycle.js';
 import { randomUUID } from "node:crypto";
 import {isImageGenerationSettings,openAiImageModels,openAiImageQualities, type ImageGenerationSettings} from '../imageGeneration.js';
@@ -90,9 +91,10 @@ export function parseVolcengineTtsAudio(contents:string):Uint8Array {
   for (const line of contents.split(/\r?\n/)) {
     if (!line.startsWith("data:")) continue;
     let payload: unknown;
-    try { payload = JSON.parse(line.slice(5).trim()); } catch { continue; }
+    try { payload = JSON.parse(line.slice(5).trim()); } catch { throw new Error("豆包语音 V3 音频响应不完整。"); }
     if (!isRecord(payload)) continue;
     const code = payload.code;
+    if(!chunks.length&&(code===45000000||code===45000001))throw new ProviderRequestRejectedError(code);
     if (code !== 0 && code !== 20000000) throw new Error(`豆包语音 V3 合成失败：${typeof payload.message === "string" ? payload.message : `code ${String(code)}`}。`);
     if (typeof payload.data === "string" && payload.data) chunks.push(Uint8Array.from(Buffer.from(payload.data, "base64")));
   }

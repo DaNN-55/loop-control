@@ -1,3 +1,4 @@
+import {workspaceUnknownRetryAllowed,workspaceTaskRetryColumns,projectWorkspaceTaskRetry} from './workspaceTaskRetry.js';
 import {legacyVideoDefault} from './legacyVideoCompatibility.js';
 import {resolveWorkspaceVideoRequest,workspaceVisualMainVoice} from './workspaceVisualRequest.js';
 import {prepareWorkspaceVideoSound} from './workspaceVideoSound.js';
@@ -78,7 +79,9 @@ export async function executeWorkspaceVisualCandidate(c:PoolClient,root:string,r
 
  if(command==='retryWorkspaceVisualCandidate'){
   if(typeof data.candidateId!=='string'||!uuid.test(data.candidateId))throw new ConfigurationError(400,'候选标识无效。');
-  if(!(await c.query('SELECT 1 FROM local_identity.workspace_visual_candidates WHERE id=$1 AND workspace_id=$2 AND episode_id=$3',[data.candidateId,row.id,row.episode_id])).rowCount)throw new ConfigurationError(404,'本工作空间视觉候选不存在。');
+  const record=(await c.query('SELECT * FROM local_identity.workspace_visual_candidates WHERE id=$1 AND workspace_id=$2 AND episode_id=$3',[data.candidateId,row.id,row.episode_id])).rows[0];
+  if(!record)throw new ConfigurationError(404,'本工作空间视觉候选不存在。');
+  if(record.dismissed_at||!row.bindings.some(b=>b.itemId===record.target_item_id))throw new ConfigurationError(409,'目标或输入已失效，请核对当前内容后重新准备。');
   try{await c.query('SELECT local_identity.retry_workspace_visual($1)',[data.candidateId]);}catch(error){if((error as {code?:string}).code==='55000')throw new ConfigurationError(409,'供应商提交结果未知或不能恢复；必须核对已有结果，不会创建重复付费任务。');throw error;}return readProductionWorkspace(c,row.episode_id,root);
  }
  if(command==='requestWorkspaceVisualCandidate'){
@@ -192,16 +195,19 @@ export async function resolveWorkspaceVisualLineage(c:PoolClient,row:ProductionW
  const legacyType=shot.shot_type??shot.snapshot?.shotType;
  if(!['a_roll','b_roll'].includes(legacyType))throw new ConfigurationError(409,'旧候选缺少冻结镜头分类，请使用当前视频来源重新制作。');return{id:shotId,shotType:legacyType as 'a_roll'|'b_roll'};
 }
-export async function readWorkspaceVisualTasks(c:PoolClient,row:ProductionWorkspaceRecord){
- return(await c.query(`SELECT v.id,v.request_snapshot,v.shot_id "shotId",v.target_item_id "targetItemId",v.request_snapshot->>'kind' kind,t.id "taskId",t.status,t.provider,t.model,t.created_at "createdAt",v.request_snapshot#>>'{connection,name}' "connectionName",
+export async function readWorkspaceVisualTasks(c:PoolClient,row:ProductionWorkspaceRecord,usedItemIds?:Set<string>){
+ return(await c.query(`SELECT ${workspaceTaskRetryColumns},v.id,v.request_snapshot,v.shot_id "shotId",v.target_item_id "targetItemId",v.request_snapshot->>'kind' kind,t.id "taskId",t.status,t.provider,t.model,t.created_at "createdAt",v.request_snapshot#>>'{connection,name}' "connectionName",
  coalesce(t.last_result#>>'{blockers,0,detail}',t.last_result#>>'{retry,reason}',CASE WHEN t.status IN ('failed','blocked') THEN '生成未完成，请核对原任务与连接。' END) error,
  (SELECT retry.task_id FROM local_identity.workspace_visual_candidates retry
   WHERE retry.workspace_id=v.workspace_id AND retry.target_item_id=v.target_item_id
     AND retry.task_id IS NOT NULL AND retry.request_snapshot->>'retryOfTaskId'=t.id::text LIMIT 1) "retryTaskId",
- CASE WHEN t.last_result#>>'{blockers,0,code}'='VIDEO_REQUEST_NOT_SENT' THEN 'not_sent' ELSE s.outcome END "submissionOutcome",to_jsonb(s)->>'video_phase' "videoPhase",r.provider_task_id "providerTaskId",r.request_state "requestState",h.attempt "publicationAttempt",
- (t.status IN ('failed','blocked') AND r.request_state='submitting' AND r.provider_task_id IS NULL AND coalesce(s.outcome,'started')<>'rejected') "submissionUnknown",r.reserved_cents "reservationCents",
- (t.status IN ('failed','blocked') AND r.provider_task_id IS NOT NULL AND s.outcome<>'rejected' AND h.task_id IS NULL) "canResume"
- FROM local_identity.workspace_visual_candidates v JOIN public.tasks t ON t.id=v.task_id LEFT JOIN public.paid_generation_reservations r ON r.task_id=t.id LEFT JOIN local_identity.workspace_visual_submissions s ON s.task_id=t.id LEFT JOIN local_identity.workspace_publication_holds($2) h ON h.task_id=t.id WHERE v.workspace_id=$1 ORDER BY v.created_at DESC`,[row.id,row.episode_id])).rows.map(({request_snapshot,...task})=>({...task,...(typeof request_snapshot.prompt==='string'?{generation:workspaceVisualGenerationRecord(request_snapshot)}:{})}));
+ local_identity.provider_dispatch_observation(t.id) "dispatchObservation",CASE WHEN t.last_result#>>'{blockers,0,code}' IN ('VIDEO_REQUEST_NOT_SENT','PROVIDER_REQUEST_NOT_SENT') OR local_identity.provider_dispatch_observation(t.id)->>'phase' IN ('preparing','reserved') THEN 'not_sent' ELSE s.outcome END "submissionOutcome",to_jsonb(s)->>'video_phase' "videoPhase",r.provider_task_id "providerTaskId",r.request_state "requestState",h.attempt "publicationAttempt",
+ (t.status IN ('failed','blocked') AND coalesce(local_identity.provider_dispatch_observation(t.id)->>'phase','dispatching') NOT IN ('preparing','reserved','rejected') AND r.request_state='submitting' AND r.provider_task_id IS NULL AND coalesce(s.outcome,'started')<>'rejected') "submissionUnknown",r.reserved_cents "reservationCents",
+ (t.status IN ('failed','blocked') AND t.invalidated_at IS NULL AND r.provider_task_id IS NOT NULL AND s.outcome<>'rejected' AND h.task_id IS NULL) "canResume"
+ FROM local_identity.workspace_visual_candidates v JOIN public.tasks t ON t.id=v.task_id LEFT JOIN public.paid_generation_reservations r ON r.task_id=t.id LEFT JOIN local_identity.workspace_visual_submissions s ON s.task_id=t.id LEFT JOIN local_identity.workspace_publication_holds($2) h ON h.task_id=t.id WHERE v.workspace_id=$1 ORDER BY v.created_at DESC`,[row.id,row.episode_id])).rows.map(({request_snapshot,...task})=>{
+  const evidence=projectWorkspaceTaskRetry(task),removed=usedItemIds!==undefined&&!usedItemIds.has(task.targetItemId);
+  return{...evidence,unknownRetryAllowed:!removed&&workspaceUnknownRetryAllowed(evidence),invalidated:evidence.invalidated||removed,retryAllowed:evidence.retryAllowed&&!removed,canResume:task.canResume&&!removed,...(typeof request_snapshot.prompt==='string'?{generation:workspaceVisualGenerationRecord(request_snapshot)}:{})};
+ });
 }
 
 async function visualContextCurrent(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,record:Record<string,any>){

@@ -39,6 +39,7 @@ export function ownerSettingsFixture(){
   if(path==='connection-models')return Response.json({connectionId,versionId:connection.current_version_id,revision:'fixture-models',enabledModels:['gpt-image-2'],models:[{id:'gpt-image-2',adapted:true,listed:false,capability:'图片'}],discovery:{supported:false,detail:'合成目录。',readAt:null}});
   if(path==='logs')return Response.json({observedAt:at,sourceAvailable:true,truncated:false,maxEntries:200,entries:[{id:'fixture-log',level:'INFO',occurredAt:at,time:null,episodeId:null,episodeName:null,operationId:null,requestId:null,source:'文件导入',message:'合成素材已登记',raw:'Synthetic log; no user content.',sourceFile:'fixture.log',line:1,explanation:{what:'素材已登记',result:'可在分镜台查看。'}}]});
   if(path==='deletion-cleanups')return Response.json([]);
+  if(path==='recycle-bin')return Response.json({items:[],limitBytes:5e9,settingsRevision:1,usedBytes:0,pendingBytes:0,overLimit:false});
   if(path==='log-storage'){if(body?.command==='choose')return Response.json({path:'/tmp/settings-fixture/new-logs'});if(body?.command==='save')Object.assign(storage,{configuredDirectory:body.path,pending:body.path!==storage.activeDirectory});return Response.json(storage);}
   if(path==='media-root')return Response.json({path:'/Volumes/示例素材盘/Media',canInitialize:false,status:'ready',migration:null});
   if(path==='password')return Response.json({ok:true});

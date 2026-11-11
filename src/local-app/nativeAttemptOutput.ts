@@ -96,6 +96,7 @@ export async function prepareNativeAttemptOutput(taskPackage:WorkerTaskPackage,f
    const physical=new Set<string>();
    for(const artifact of files){const output=storage?relative(taskPackage.assets.allowedRoot,await storage.resolveReference(artifact.relativePath)):artifact.relativePath;if(physical.has(output))throw Error('多个逻辑产物指向同一实际目标，拒绝覆盖。');physical.add(output);prepared.push(await preparePublication(taskPackage.assets.allowedRoot,stagingRoot,backupRoot,artifact,output));}
    await durableReceipt(stagingRoot,{version:1,fence,taskPackage,assetRoot:taskPackage.assets.allowedRoot,inputHash:authority.inputHash,result,files:prepared.map(file=>({artifact:file.artifact,previous:file.previous})),status:'prepared'});
+   await recordVerifiedProviderResult(client,taskPackage,fence);
    for(const file of prepared){modified.push(file);await atomicReplace(file.temporary,file.destination);}
    await client.query('SELECT local_identity.input_worker_call($1,$2)',['report_worker_result',{...fence,p_result:result}]);
    await client.query('SELECT local_identity.finish_native_output_publication($1,$2,$3)',[fence.p_task_id,fence.p_attempt,fence.p_lease_token]);
@@ -117,6 +118,7 @@ export async function prepareNativeAttemptOutput(taskPackage:WorkerTaskPackage,f
    // bytes already referenced by a committed result or a newer attempt. Keep
    // both generations and do not automatically report a new failed result.
    if(!commitSent)await client.query('ROLLBACK').catch(()=>{});
+   if(armed&&paidSynchronousTask(taskPackage))uncertain=true;
    if(armed&&!uncertain)try{await client.query('SELECT local_identity.finish_native_output_publication($1,$2,$3)',[fence.p_task_id,fence.p_attempt,fence.p_lease_token]);}catch{uncertain=true;}
    if(uncertain){await outcome(commitSent?'commit_unknown':'restore_unknown');throw new NativePublicationUnknownError(error instanceof Error?error.message:undefined,{cause:error});}
    throw error;
@@ -222,7 +224,7 @@ export async function recoverNativeAttemptOutput(pool:Pick<Pool,'connect'>,paths
   if(!registered){for(const file of files)await restorePublication(backupRoot,file);}
   await client.query('SAVEPOINT native_output_publication');
   for(const file of files){modified=true;await atomicReplace(file.temporary,file.destination);}
-  if(!registered)await client.query('SELECT local_identity.input_worker_call($1,$2)',['report_worker_result',{...fence,p_result:receipt.result}]);
+  if(!registered){await recordVerifiedProviderResult(client,receipt.taskPackage,fence);await client.query('SELECT local_identity.input_worker_call($1,$2)',['report_worker_result',{...fence,p_result:receipt.result}]);}
   await client.query('SELECT local_identity.finish_native_output_publication($1,$2,$3)',[fence.p_task_id,fence.p_attempt,fence.p_lease_token]);
   commitSent=true;await client.query('COMMIT');
   await durableReceipt(paths.stagingRoot,{...receipt,status:'reconciled_completed'});
@@ -251,4 +253,11 @@ async function atomicReplace(source:string,destination:string){
 function assertFrozenOutput(authority:OutputAuthority,p:WorkerTaskPackage,result:WorkerResult){
  const output=authority.output;
  if(!output||output.relative_path!==p.output.relativePath||output.content_type!==p.output.contentType||output.review_stage!==p.output.reviewStage||!isDeepStrictEqual(output.required_artifact_types,p.output.requiredArtifactTypes)||authority.reviewProjectPath!==(p.reviewRender?.projectRelativePath??null)||authority.finalProjectPath!==(p.finalRender?.projectRelativePath??null)||!result.artifacts.some(artifact=>artifact.artifactType===output.required_artifact_types[0]&&artifact.relativePath===output.relative_path))throw Error('产物或私有凭据与数据库冻结输出不一致。');
+}
+
+function paidSynchronousTask(p:WorkerTaskPackage){return p.task.type==='generate_narration'&&p.provider==='volcengine_tts'||p.task.type==='generate_static_visual'&&p.provider==='openai';}
+async function recordVerifiedProviderResult(client:Pick<PoolClient,'query'>,p:WorkerTaskPackage,fence:NativeAttemptFence){
+ if(!paidSynchronousTask(p))return;
+ const fn=p.task.type==='generate_narration'?'record_workspace_narration_submission':'record_workspace_visual_submission';
+ await client.query(`SELECT local_identity.${fn}($1,$2,$3,$4)`,[fence.p_task_id,fence.p_attempt,fence.p_lease_token,'received']);
 }
