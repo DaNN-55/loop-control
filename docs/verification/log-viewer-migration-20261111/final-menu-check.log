@@ -1,0 +1,16 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/LocalCatalogApp.logs.test.tsx src/local-app/LocalCatalogApp.workspace.test.tsx
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/LocalCatalogApp.logs.test.tsx (1 test) 230ms
+ ✓ src/local-app/LocalCatalogApp.workspace.test.tsx (13 tests) 2714ms
+   ✓ 保留安全弹窗焦点，从所有者菜单打开连接配置且跨页保留连接草稿  494ms
+   ✓ cleanupPending=true, initially archived=true: confirms the directory and title before deleting  309ms
+   ✓ keeps one topbar instance and places the Owner menu after theme in workspace and episode  430ms
+
+ Test Files  2 passed (2)
+      Tests  14 passed (14)
+   Start at  14:00:37
+   Duration  4.47s (transform 911ms, setup 13ms, collect 3.16s, tests 2.94s, environment 504ms, prepare 66ms)
+

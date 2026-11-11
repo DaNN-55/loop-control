@@ -32,7 +32,8 @@ import {SecretStoreError} from './connectionPorts.js';
 import type {LocalEpisodeCommands} from './episodeCommands.js';
 import type {SecretAdministration,SecretOperation} from './secretAdministration.js';
 import type {RuntimeStatus} from '../observability/runtimeStatus.js';
-interface LocalOptions {recoverOutput?:(taskId:string,attempt:number)=>Promise<{status:'completed';registered:boolean}>;mediaRootSettings?:LocalMediaRootSettings;pool:Pool;origin:string;mediaRoot:string;historyRoot?:string;secrets?:SecretAdministration;connections?:LocalConnections;episodes?:LocalEpisodeCommands;automation?:NativeAutomation;accounts?:LocalAccountCommands;runtimeStatus?:(ownerId:string,page:number)=>Promise<RuntimeStatus>}
+import type {RuntimeLogReport,LogStoragePort} from '../observability/logTypes.js';
+interface LocalOptions {logs?:{read:()=>Promise<RuntimeLogReport>;storage:LogStoragePort};recoverOutput?:(taskId:string,attempt:number)=>Promise<{status:'completed';registered:boolean}>;mediaRootSettings?:LocalMediaRootSettings;pool:Pool;origin:string;mediaRoot:string;historyRoot?:string;secrets?:SecretAdministration;connections?:LocalConnections;episodes?:LocalEpisodeCommands;automation?:NativeAutomation;accounts?:LocalAccountCommands;runtimeStatus?:(ownerId:string,page:number)=>Promise<RuntimeStatus>}
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 async function readBody(request:IncomingMessage,limit=8192):Promise<Record<string,unknown>>{
  if(request.headers['content-type']?.split(';')[0]!=='application/json')throw Error('JSON required');
@@ -94,6 +95,21 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
     send(200,await saveOwnerPreferences(options.pool,session,body.data));return;
    }
    if(url.pathname==='/api/local/notification-events'&&request.method==='GET'){send(200,await readOwnerNotificationEvents(options.pool,session.id));return;}
+   if(url.pathname==='/api/local/logs'||url.pathname==='/api/local/log-storage'){
+    if(url.search){send(400,{error:'日志请求不接受文件路径或查询参数。'});return;}
+    if(!options.logs){send(503,{error:'日志服务尚未配置。'});return;}
+    if(url.pathname==='/api/local/logs'){
+     if(request.method!=='GET'){send(405,{error:'日志仅支持读取。'});return;}
+     send(200,await options.logs.read());return;
+    }
+    if(request.method==='GET'){send(200,options.logs.storage.read());return;}
+    if(request.method!=='POST'){send(405,{error:'日志位置请求方法无效。'});return;}
+    let body;try{body=await readBody(request);if(!['choose','save'].includes(String(body.command))||Object.keys(body).some(key=>!['command','path'].includes(key))||body.command==='choose'&&body.path!==undefined||body.command==='save'&&(typeof body.path!=='string'||body.path.length>4096))throw Error();}catch{send(400,{error:'日志位置请求格式无效。'});return;}
+    try{
+     if(body.command==='choose'){if(!options.logs.storage.choose){send(503,{error:'本机目录选择不可用，请填写绝对路径。'});return;}send(200,await options.logs.storage.choose());}
+     else send(200,options.logs.storage.save(body.path as string));
+    }catch{send(400,{error:'日志目录不可用，请选择当前用户拥有且可写的普通目录。'});}return;
+   }
    if(secretPath){
     const service=options.secrets;
     if(!service){send(403,{error:'密钥管理未启用。'});return;}

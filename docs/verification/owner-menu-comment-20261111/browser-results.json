@@ -1,0 +1,394 @@
+{
+  "checks": [
+    {
+      "viewport": [
+        1440,
+        1000
+      ],
+      "mode": "long",
+      "menu": {
+        "client": 270,
+        "scroll": 270
+      },
+      "popover": {
+        "client": 278,
+        "h": 398,
+        "scroll": 278,
+        "sh": 398
+      },
+      "profiles": [
+        {
+          "ellipsis": "ellipsis",
+          "nowrap": "nowrap",
+          "scroll": 882,
+          "text": "所有者显示名称很长用于检查菜单是否横向滚动所有者显示名称很长用于检查菜单是否横向滚动所有者显示名称很长用于检查菜单是否横向滚动",
+          "title": "所有者显示名称很长用于检查菜单是否横向滚动所有者显示名称很长用于检查菜单是否横向滚动所有者显示名称很长用于检查菜单是否横向滚动",
+          "width": 226
+        },
+        {
+          "ellipsis": "ellipsis",
+          "nowrap": "nowrap",
+          "scroll": 357,
+          "text": "very-long-owner-address-for-overflow-check@example.invalid",
+          "title": "very-long-owner-address-for-overflow-check@example.invalid",
+          "width": 226
+        }
+      ]
+    },
+    {
+      "viewport": [
+        1440,
+        1000
+      ],
+      "mode": "email",
+      "menu": {
+        "client": 270,
+        "scroll": 270
+      },
+      "popover": {
+        "client": 278,
+        "h": 376,
+        "scroll": 278,
+        "sh": 376
+      },
+      "profiles": [
+        {
+          "ellipsis": "ellipsis",
+          "nowrap": "nowrap",
+          "scroll": 438,
+          "text": "very-long-owner-address-for-overflow-check@example.invalid",
+          "title": "very-long-owner-address-for-overflow-check@example.invalid",
+          "width": 226
+        }
+      ]
+    },
+    {
+      "viewport": [
+        1440,
+        1000
+      ],
+      "mode": "short",
+      "menu": {
+        "client": 270,
+        "scroll": 270
+      },
+      "popover": {
+        "client": 278,
+        "h": 398,
+        "scroll": 278,
+        "sh": 398
+      },
+      "profiles": [
+        {
+          "ellipsis": "ellipsis",
+          "nowrap": "nowrap",
+          "scroll": 226,
+          "text": "示例所有者",
+          "title": "示例所有者",
+          "width": 226
+        },
+        {
+          "ellipsis": "ellipsis",
+          "nowrap": "nowrap",
+          "scroll": 357,
+          "text": "very-long-owner-address-for-overflow-check@example.invalid",
+          "title": "very-long-owner-address-for-overflow-check@example.invalid",
+          "width": 226
+        }
+      ]
+    },
+    {
+      "viewport": [
+        375,
+        812
+      ],
+      "mode": "long",
+      "menu": {
+        "client": 270,
+        "scroll": 270
+      },
+      "popover": {
+        "client": 278,
+        "h": 398,
+        "scroll": 278,
+        "sh": 398
+      },
+      "profiles": [
+        {
+          "ellipsis": "ellipsis",
+          "nowrap": "nowrap",
+          "scroll": 882,
+          "text": "所有者显示名称很长用于检查菜单是否横向滚动所有者显示名称很长用于检查菜单是否横向滚动所有者显示名称很长用于检查菜单是否横向滚动",
+          "title": "所有者显示名称很长用于检查菜单是否横向滚动所有者显示名称很长用于检查菜单是否横向滚动所有者显示名称很长用于检查菜单是否横向滚动",
+          "width": 226
+        },
+        {
+          "ellipsis": "ellipsis",
+          "nowrap": "nowrap",
+          "scroll": 357,
+          "text": "very-long-owner-address-for-overflow-check@example.invalid",
+          "title": "very-long-owner-address-for-overflow-check@example.invalid",
+          "width": 226
+        }
+      ]
+    },
+    {
+      "viewport": [
+        375,
+        812
+      ],
+      "mode": "email",
+      "menu": {
+        "client": 270,
+        "scroll": 270
+      },
+      "popover": {
+        "client": 278,
+        "h": 376,
+        "scroll": 278,
+        "sh": 376
+      },
+      "profiles": [
+        {
+          "ellipsis": "ellipsis",
+          "nowrap": "nowrap",
+          "scroll": 438,
+          "text": "very-long-owner-address-for-overflow-check@example.invalid",
+          "title": "very-long-owner-address-for-overflow-check@example.invalid",
+          "width": 226
+        }
+      ]
+    },
+    {
+      "viewport": [
+        375,
+        812
+      ],
+      "mode": "short",
+      "menu": {
+        "client": 270,
+        "scroll": 270
+      },
+      "popover": {
+        "client": 278,
+        "h": 398,
+        "scroll": 278,
+        "sh": 398
+      },
+      "profiles": [
+        {
+          "ellipsis": "ellipsis",
+          "nowrap": "nowrap",
+          "scroll": 226,
+          "text": "示例所有者",
+          "title": "示例所有者",
+          "width": 226
+        },
+        {
+          "ellipsis": "ellipsis",
+          "nowrap": "nowrap",
+          "scroll": 357,
+          "text": "very-long-owner-address-for-overflow-check@example.invalid",
+          "title": "very-long-owner-address-for-overflow-check@example.invalid",
+          "width": 226
+        }
+      ]
+    },
+    {
+      "viewport": [
+        320,
+        568
+      ],
+      "mode": "long",
+      "menu": {
+        "client": 270,
+        "scroll": 270
+      },
+      "popover": {
+        "client": 278,
+        "h": 398,
+        "scroll": 278,
+        "sh": 398
+      },
+      "profiles": [
+        {
+          "ellipsis": "ellipsis",
+          "nowrap": "nowrap",
+          "scroll": 882,
+          "text": "所有者显示名称很长用于检查菜单是否横向滚动所有者显示名称很长用于检查菜单是否横向滚动所有者显示名称很长用于检查菜单是否横向滚动",
+          "title": "所有者显示名称很长用于检查菜单是否横向滚动所有者显示名称很长用于检查菜单是否横向滚动所有者显示名称很长用于检查菜单是否横向滚动",
+          "width": 226
+        },
+        {
+          "ellipsis": "ellipsis",
+          "nowrap": "nowrap",
+          "scroll": 357,
+          "text": "very-long-owner-address-for-overflow-check@example.invalid",
+          "title": "very-long-owner-address-for-overflow-check@example.invalid",
+          "width": 226
+        }
+      ]
+    },
+    {
+      "viewport": [
+        320,
+        568
+      ],
+      "mode": "email",
+      "menu": {
+        "client": 270,
+        "scroll": 270
+      },
+      "popover": {
+        "client": 278,
+        "h": 376,
+        "scroll": 278,
+        "sh": 376
+      },
+      "profiles": [
+        {
+          "ellipsis": "ellipsis",
+          "nowrap": "nowrap",
+          "scroll": 438,
+          "text": "very-long-owner-address-for-overflow-check@example.invalid",
+          "title": "very-long-owner-address-for-overflow-check@example.invalid",
+          "width": 226
+        }
+      ]
+    },
+    {
+      "viewport": [
+        320,
+        568
+      ],
+      "mode": "short",
+      "menu": {
+        "client": 270,
+        "scroll": 270
+      },
+      "popover": {
+        "client": 278,
+        "h": 398,
+        "scroll": 278,
+        "sh": 398
+      },
+      "profiles": [
+        {
+          "ellipsis": "ellipsis",
+          "nowrap": "nowrap",
+          "scroll": 226,
+          "text": "示例所有者",
+          "title": "示例所有者",
+          "width": 226
+        },
+        {
+          "ellipsis": "ellipsis",
+          "nowrap": "nowrap",
+          "scroll": 357,
+          "text": "very-long-owner-address-for-overflow-check@example.invalid",
+          "title": "very-long-owner-address-for-overflow-check@example.invalid",
+          "width": 226
+        }
+      ]
+    },
+    {
+      "viewport": [
+        320,
+        260
+      ],
+      "lowHeightScrollable": true,
+      "logoutKeyboardAccessible": true,
+      "menu": {
+        "client": 270,
+        "scroll": 270
+      },
+      "popover": {
+        "client": 278,
+        "h": 190,
+        "scroll": 278,
+        "sh": 398
+      },
+      "profiles": [
+        {
+          "ellipsis": "ellipsis",
+          "nowrap": "nowrap",
+          "scroll": 226,
+          "text": "示例所有者",
+          "title": "示例所有者",
+          "width": 226
+        },
+        {
+          "ellipsis": "ellipsis",
+          "nowrap": "nowrap",
+          "scroll": 357,
+          "text": "very-long-owner-address-for-overflow-check@example.invalid",
+          "title": "very-long-owner-address-for-overflow-check@example.invalid",
+          "width": 226
+        }
+      ]
+    },
+    {
+      "action": "个人偏好",
+      "passed": true
+    },
+    {
+      "action": "通知",
+      "passed": true
+    },
+    {
+      "action": "登录与安全",
+      "passed": true
+    },
+    {
+      "action": "日志",
+      "passed": true
+    },
+    {
+      "action": "文件清理",
+      "passed": true
+    },
+    {
+      "action": "连接配置",
+      "passed": true
+    },
+    {
+      "action": "密钥管理",
+      "passed": true
+    },
+    {
+      "action": "退出登录",
+      "passed": true
+    },
+    {
+      "darkTheme": true,
+      "menu": {
+        "client": 270,
+        "scroll": 270
+      },
+      "popover": {
+        "client": 278,
+        "h": 398,
+        "scroll": 278,
+        "sh": 398
+      },
+      "profiles": [
+        {
+          "ellipsis": "ellipsis",
+          "nowrap": "nowrap",
+          "scroll": 226,
+          "text": "示例所有者",
+          "title": "示例所有者",
+          "width": 226
+        },
+        {
+          "ellipsis": "ellipsis",
+          "nowrap": "nowrap",
+          "scroll": 357,
+          "text": "very-long-owner-address-for-overflow-check@example.invalid",
+          "title": "very-long-owner-address-for-overflow-check@example.invalid",
+          "width": 226
+        }
+      ]
+    }
+  ]
+}

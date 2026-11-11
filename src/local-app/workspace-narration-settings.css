@@ -137,7 +137,6 @@ html[data-interface="impeccable"] .product-ui .workspace-narration-composer-tool
 .workspace-narration-file-slot>.workspace-material-drop>span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .workspace-narration-file-slot>.workspace-material-drop>small{font-size:12px}
 .workspace-narration-file-slot>.workspace-material-drop[data-drag-over]{border-color:var(--lc-accent);background:var(--lc-accent-soft)}
-.workspace-narration-file-slot>button[aria-label="清除选择"]{position:absolute;right:16px;top:16px;--lc-icon-control-size:28px}
 .workspace-narration-caption-editor{display:grid;gap:10px;min-width:0}
 .workspace-caption-reference{display:flex;align-items:baseline;gap:8px;margin:0;color:var(--lc-muted);font-size:12px;min-width:0;white-space:nowrap}
 .workspace-caption-reference>span{overflow:hidden;text-overflow:ellipsis;min-width:0}

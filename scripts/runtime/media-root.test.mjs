@@ -11,7 +11,7 @@ it('fresh processes read the shipped deployment reader with initialized external
  const temp=await realpath(await mkdtemp(join(tmpdir(),'loop-root-reader-'))),projectRoot=join(temp,'project'),root=join(projectRoot,'.loop-control/local'),scripts=join(projectRoot,'scripts/runtime');
  try{
   await mkdir(scripts,{recursive:true,mode:0o700});await mkdir(root,{recursive:true,mode:0o700});
-  for(const name of ['environment.mjs','keychain.mjs','media-root.mjs'])await cp(join(process.cwd(),'scripts/runtime',name),join(scripts,name));
+  for(const name of ['environment.mjs','keychain.mjs','media-root.mjs','log-storage.mjs'])await cp(join(process.cwd(),'scripts/runtime',name),join(scripts,name));
   await mkdir(join(projectRoot,'scripts/storage'),{recursive:true});await cp(join(process.cwd(),'scripts/storage/file-io.mjs'),join(projectRoot,'scripts/storage/file-io.mjs'));
   await exec(process.execPath,[join(process.cwd(),'node_modules/typescript/bin/tsc'),'-p',join(process.cwd(),'tsconfig.local-app.json'),'--outDir',join(projectRoot,'dist/local-app')]);
   const {persistMediaRootDeployment}=await import(pathToFileURL(join(scripts,'media-root.mjs')).href),{inspectMediaRoot}=await import(pathToFileURL(join(projectRoot,'dist/local-app/local-app/mediaRootSettings.js')).href);

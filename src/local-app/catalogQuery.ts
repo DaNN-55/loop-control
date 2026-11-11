@@ -192,5 +192,7 @@ export const localCatalogSql=` with owned_base as materialized (
    'latestCompleted',coalesce((select status='completed' from worker_tasks order by coalesce(completed_at,claimed_at,created_at) desc,created_at desc,id limit 1),false)),
   'statusCounts',(select jsonb_build_object('all',count(*),'review',count(*) filter(where exists(select 1 from pending p where p.episode_id=state.episode_id)),'running',count(*) filter(where action_status='running'),'blocked',count(*) filter(where action_status='blocked'),'done',count(*) filter(where action_status='done')) from episode_states state where $13::text='all' or state.workflow_step=$13::text),
   'operationRows',coalesce((select jsonb_agg(jsonb_build_object('episodeId',e.id,'reviewRevision',coalesce((select p.revision_number from pending p where p.episode_id=e.id),r.revision_number),'reviewPending',exists(select 1 from pending p where p.episode_id=e.id),'workflowStep',state.workflow_step,
-   'blockerCount',(select count(*) from task_blockers b where b.episode_id=e.id),'actionStatus',state.action_status)) from page_rows e left join current_packages r on r.episode_id=e.id join episode_states state on state.episode_id=e.id),'[]')
+   'blockerCount',(select count(*) from task_blockers b where b.episode_id=e.id),
+   'blocker',(select jsonb_build_object('code',b.blocker->>'code','detail',b.blocker->>'detail','taskId',b.task_id,'taskType',b.task_type) from task_blockers b where b.episode_id=e.id order by (b.blocker->>'code'='provider_result_unknown') desc,b.task_id,b.blocker->>'code' limit 1),
+   'actionStatus',state.action_status)) from page_rows e left join current_packages r on r.episode_id=e.id join episode_states state on state.episode_id=e.id),'[]')
  ) AS catalog`;

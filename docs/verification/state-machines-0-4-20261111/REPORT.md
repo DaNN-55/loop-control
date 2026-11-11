@@ -18,7 +18,7 @@
 
 - 逐项失败回归覆盖迟到模型保存、偏好同周期重复提交、Studio 旧关闭意图、字幕部分成功与未知回执、上传关闭重开和未完成重试、隐藏恢复及音频双向互斥。相关 `*-red.log` 保留首次有效失败证据。
 - 实施阶段 21 文件、232 条定向通过：[targeted.log](targeted.log)。审查后补充修复，再由 3 文件、40 条受影响回归通过：[reading-compatibility-green.log](reading-compatibility-green.log)。字幕恢复文件共 8 条，包含真实 localCommand／HTTP 幂等边界。
-- 首轮默认全量为 1940 通过、1 失败、1 跳过：[full-tests.log](full-tests.log)。唯一失败为旧音频并发测试前提；经独立审查，改以外部权威更新保持原迟到覆盖保护。随后默认全量 258 文件全部通过，1941 条通过、1 条跳过：[full-tests-final.log](full-tests-final.log)。默认命令排除 `*.integration.test.ts`，不能视为真实数据库集成通过。
+- 首轮默认全量为 1940 通过、1 失败、1 跳过。唯一失败为旧音频并发测试前提；经独立审查，改以外部权威更新保持原迟到覆盖保护。随后默认全量 258 文件全部通过，1941 条通过、1 条跳过：[full-tests-final.log](full-tests-final.log)。默认命令排除 `*.integration.test.ts`，不能视为真实数据库集成通过。
 - 全量之后仅调整上传反馈的布局，将错误和重试放入同一反馈容器；3 文件、44 条相关回归及类型检查通过：[upload-layout-green.log](upload-layout-green.log)、[check-final.log](check-final.log)。没有在这次低风险布局后重复全量。
 - 最终前端构建通过：[build.log](build.log)。仍有现有的大于 500 kB chunk 提示。运行包准备顺序构建 Worker／后端并通过源码和产物完整性检查：[runtime-prepare.log](runtime-prepare.log)、[runtime-release.json](runtime-release.json)。测试日志中的 jsdom 媒体 API 与 React act 提示保留，不计作失败。
 - 同一候选脚本最终扫描 548 个文件，246 个文件含 1525 个信号：[census-summary.json](census-summary.json)。这是候选扫描，不是完整性证明；仍归为 48 个已人工核查的状态机族。
@@ -48,3 +48,5 @@
 未调用付费供应商，未登录真实业务会话，未在本批运行真实 PostgreSQL 或 OpenChatCut 持久化。字幕与上传接续记录保存在当前浏览器页面内存中，整页重载后按原权威数据重新进入；未完成 File 的页面内保留属于恢复责任。日常 Owner／episode 上传队列支持关闭重开；无 Owner 的独立素材栏维持每次访问的局部会话。
 
 本地产品提交为 `8eaab228`、`8e30037a`、`5b121841`、`a310349a`。远端 main 核对仍为 `1bedac1035a38a6399b931ad8cb4e42781a5216d`。无关 `docs/research/log-api-tools-20261111.md` 的 SHA 与 [protected.json](protected.json) 一致，保留且不暂存。本报告及更新地图另作收尾提交，不推送。
+
+2026-11-11 后续清理：移除已被最终全量替代的首轮原始日志；其失败数量、原因与处理方式保留在上文。本报告的「不推送」为当时交付状态；上述优化后来已获授权，随 `86bc9e66` 推送。清理前版本可从该提交恢复。

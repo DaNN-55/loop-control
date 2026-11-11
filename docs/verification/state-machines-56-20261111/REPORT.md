@@ -31,7 +31,7 @@
 
 宽窄屏实际查看：[全局登记失败宽屏](planning-interrupted-1440.png)、[窄屏](planning-interrupted-390.png)、[保存后宽屏](planning-1440.png)、[窄屏](planning-390.png)、[账号登记失败窄屏](account-harness-interrupted.png)。1440／390 px 无横向溢出，见 [宽屏尺寸](planning-layout-1440.json)、[窄屏尺寸](planning-layout-390.json)。
 
-验收夹具调试期间的失败保留在 `integration-first.log` 至 `integration-seventh.log`：默认依赖扫描包含旧 Demo、跨域 frame 定位、恢复开始时按钮暂时隐藏导致等待过早、允许域名限制拒绝 about:blank、上传 input 为 hidden、CLI JSON 字符串编码，以及 fixture 已含一个 Harness 的计数基线。分别修正验收入口／等待／断言后，完整真实链路通过；这些不是被掩盖的产品失败。
+验收夹具调试期间出现以下失败：默认依赖扫描包含旧 Demo、跨域 frame 定位、恢复开始时按钮暂时隐藏导致等待过早、允许域名限制拒绝 about:blank、上传 input 为 hidden、CLI JSON 字符串编码，以及 fixture 已含一个 Harness 的计数基线。分别修正验收入口／等待／断言后，完整真实链路通过；这些不是被掩盖的产品失败。
 
 复跑先执行 `node docs/verification/state-machines-56-20261111/isolation.mjs`，等到 READY，再在另一个终端执行 `node docs/verification/state-machines-56-20261111/run-acceptance.mjs integration-final.log`。前者仅创建本任务的隔离环境；完成后向它发送 SIGINT，按 label 校验后删除容器与临时 SDK。`isolation.json` 是本次已清理环境的历史定位，复跑会重建。
 
@@ -45,3 +45,5 @@
 - 远端 main 核对仍为 `1bedac1035a38a6399b931ad8cb4e42781a5216d`，没有推送。两份无关研究文件保持未暂存，保护清单见 [protected.json](protected.json)，[最终 SHA 核对](protected-final.json) 一致；其中 ClickStack 研究在本轮执行期间由其他会话新增。
 
 本轮未验证付费生成、真实生产数据或全流程最终成片。已确认创建回执的客户端接续仍限于当前访问内存；关闭后重新读取服务端既存版本，不新增跨整页刷新恢复协议。字幕关闭重开验收发生在恢复完成后，失败时仍在原访问继续；不把它描述成未完成客户端 attempt 的跨重启持久化。
+
+2026-11-11 后续清理：移除七次夹具调试日志和中途原生字幕 DOM 快照；失败原因保留在上文，最终完整链路日志、首次有效产品失败证据、截图与复跑脚本保留。本报告的「不推送」为当时交付状态；上述优化后来已获授权，随 `86bc9e66` 推送。清理前版本可从该提交恢复。

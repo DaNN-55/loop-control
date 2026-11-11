@@ -1,0 +1,2 @@
+import {defineConfig} from 'vite';import react from '@vitejs/plugin-react';
+export default defineConfig({root:process.cwd(),envFile:false,publicDir:false,plugins:[react()],optimizeDeps:{entries:['docs/verification/browser-comments-20261111/status-feedback/fixture/index.html']},cacheDir:'.scratch/status-feedback-preview/cache',server:{host:'127.0.0.1',port:5221,strictPort:true,open:false,fs:{strict:true,deny:['.env','.env.*','**/.loop-control/**','**/.git/**']}}});

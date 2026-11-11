@@ -1,0 +1,32 @@
+{
+  "source": "Read-only CUA inspection of authenticated 127.0.0.1:5174 UI",
+  "date": "2026-11-11",
+  "workbench": {
+    "episodeId": "2aefed78-4f22-472e-9e5f-2f64796bb017",
+    "workflowStep": "检查与交付",
+    "status": "需处理",
+    "reason": "口播结果待核对",
+    "inspectorAction": "核对口播结果",
+    "unknownProviderResultPreserved": true
+  },
+  "ownerMenu": {
+    "clientWidth": 270,
+    "scrollWidth": 270,
+    "actions": 8,
+    "identityWhiteSpace": "nowrap",
+    "fullIdentityInTitle": true
+  },
+  "resources": {
+    "ringCount": 4,
+    "labelsObserved": ["CPU 使用 32%", "内存 非空闲 97%", "系统盘 已用 73%", "素材盘 已用 34%"],
+    "horizontalOverflow": false,
+    "valuesAreObservationsNotCurrentPromises": true
+  },
+  "backend": {
+    "restartPerformed": false,
+    "runningVersionShowsSourceChanges": true,
+    "oldCatalogResponseFallbackObserved": true,
+    "newPerRowBlockerRequiresPreparedRuntimeUpdate": true
+  },
+  "productionWritesPerformed": false
+}

@@ -3,15 +3,15 @@ import userEvent from '@testing-library/user-event';
 import {afterEach,expect,it,vi} from 'vitest';
 import {OwnerPreferencesDialog} from './OwnerPreferencesDialog';
 import {defaultOwnerPreferences} from '../preferences/preferences';
-import {localRequest} from './client';
-vi.mock('./client',()=>({localRequest:vi.fn()}));
-afterEach(()=>{cleanup();vi.mocked(localRequest).mockReset();});
+const mediaRequest=vi.hoisted(()=>vi.fn());
+vi.mock('./client',()=>({localRequest:(path:string,init?:RequestInit)=>path==='log-storage'?Promise.resolve({activeDirectory:'/test/logs',configuredDirectory:'/test/logs',defaultDirectory:'/test/logs',pending:false,warning:null}):mediaRequest(path,init)}));
+afterEach(()=>{cleanup();mediaRequest.mockReset();});
 const manifest={sourceBinding:{path:'/test/old'},targetBinding:{path:'/test/new'},accounts:[{id:'account',name:'测试账号'}],episodes:[{id:'one',title:'第一期'},{id:'two',title:'第二期'}],fileCount:2,directoryCount:3,totalBytes:1572864,space:{freeBytes:3221225472,reserveBytes:1048576,requiredBytes:2621440},canExecute:true,conflicts:[],blockers:[]};
 const root={path:'/test/old',canInitialize:false,status:'ready',migration:{id:'old',status:'completed',manifest}};
 const props={preferences:defaultOwnerPreferences,page:'personal' as const,loading:false,saving:false,unavailable:false,error:'',onReload:vi.fn(),onSave:vi.fn(),onClose:vi.fn(),csrf:'synthetic'};
 it('embeds storage in personal preferences, omits old migration details, and shows active progress then completion',async()=>{
  const commands:string[]=[];let state:any=root,finish!:(value:unknown)=>void;
- vi.mocked(localRequest).mockImplementation(async(_path,init)=>{
+ mediaRequest.mockImplementation(async(_path,init)=>{
   if(!init?.body)return state;
   const body=JSON.parse(String(init.body));commands.push(body.command);
   if(body.command==='choose')return {path:'/test/new'};
@@ -33,7 +33,7 @@ it('embeds storage in personal preferences, omits old migration details, and sho
 
 it('retries storage reads locally without replacing a personal preference draft or its saved feedback',async()=>{
  const user=userEvent.setup(),save=vi.fn(async()=>true);
- vi.mocked(localRequest).mockRejectedValueOnce(new Error('存储暂时无法读取')).mockResolvedValue(root);
+ mediaRequest.mockRejectedValueOnce(new Error('存储暂时无法读取')).mockResolvedValue(root);
  render(<OwnerPreferencesDialog {...props} onSave={save}/>);
  await screen.findByText('存储暂时无法读取');
  await user.type(screen.getByRole('textbox',{name:'显示名称'}),'个人草稿');
@@ -48,7 +48,7 @@ it('retries storage reads locally without replacing a personal preference draft 
 
 it('checks a readable migration scope before explicit confirmation and invalidates a changed destination',async()=>{
  const commands:string[]=[],user=userEvent.setup();
- vi.mocked(localRequest).mockImplementation(async(_path,init)=>{
+ mediaRequest.mockImplementation(async(_path,init)=>{
   if(!init?.body)return root;const body=JSON.parse(String(init.body));commands.push(body.command);
   return {id:'plan',status:'planned',manifest};
  });
@@ -69,7 +69,7 @@ it('checks a readable migration scope before explicit confirmation and invalidat
 it('distinguishes a finished copy from migration completion and resumes the same interrupted plan',async()=>{
  const user=userEvent.setup(),commands:any[]=[];
  let state:any={...root,executing:false,migration:{id:'interrupted',status:'copying',manifest,progress:{copiedFiles:2,copiedBytes:1572864}}};
- vi.mocked(localRequest).mockImplementation(async(_path,init)=>{
+ mediaRequest.mockImplementation(async(_path,init)=>{
   if(!init?.body)return state;const body=JSON.parse(String(init.body));commands.push(body);
   state={...state,migration:{...state.migration,status:'completed'},path:'/test/new'};return {status:'completed'};
  });
@@ -84,7 +84,7 @@ it('distinguishes a finished copy from migration completion and resumes the same
 it('keeps preference and migration pending and failure feedback independent',async()=>{
  const user=userEvent.setup();let finishPlan!:(value:unknown)=>void,finishSave!:(value:boolean)=>void;
  const save=vi.fn(()=>new Promise<boolean>(resolve=>{finishSave=resolve;}));
- vi.mocked(localRequest).mockImplementation(async(_path,init)=>{
+ mediaRequest.mockImplementation(async(_path,init)=>{
   if(!init?.body)return root;return new Promise(resolve=>{finishPlan=resolve;});
  });
  render(<OwnerPreferencesDialog {...props} onSave={save}/>);await screen.findByText('/test/old');
@@ -101,7 +101,7 @@ it('keeps preference and migration pending and failure feedback independent',asy
 it('does not release a pending migration command when its progress read is retried',async()=>{
  const user=userEvent.setup();let executing=false,retry=false,finish!:(value:unknown)=>void;
  const planned={...root,migration:{id:'plan',status:'planned',manifest}};
- vi.mocked(localRequest).mockImplementation(async(_path,init)=>{
+ mediaRequest.mockImplementation(async(_path,init)=>{
   if(!init?.body){if(executing&&!retry)throw new Error('进度暂时无法读取');return planned;}
   return new Promise(resolve=>{finish=resolve;});
  });
@@ -113,7 +113,7 @@ it('does not release a pending migration command when its progress read is retri
  await act(async()=>finish({status:'completed'}));
 });
 it('rechecks an unavailable registered storage location in place',async()=>{
- vi.mocked(localRequest).mockResolvedValueOnce({...root,status:'unavailable',reason:'存储卷暂时不可用'}).mockResolvedValue(root);
+ mediaRequest.mockResolvedValueOnce({...root,status:'unavailable',reason:'存储卷暂时不可用'}).mockResolvedValue(root);
  render(<OwnerPreferencesDialog {...props}/>);await screen.findByText('存储卷暂时不可用');
  await userEvent.setup().click(screen.getByRole('button',{name:'重新读取存储位置'}));
  await waitFor(()=>expect(screen.queryByText('存储卷暂时不可用')).toBeNull());expect(screen.getByText('/test/old')).toBeTruthy();

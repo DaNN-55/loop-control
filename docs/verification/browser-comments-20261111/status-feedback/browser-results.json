@@ -1,0 +1,49 @@
+{
+  "passed": 4,
+  "evidence": [
+    {
+      "width": 1440,
+      "theme": "light",
+      "commandsDuringRecovery": 0,
+      "requests": [
+        {
+          "method": "GET",
+          "url": "/api/local/episodes/e/workspace"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "theme": "dark",
+      "commandsDuringRecovery": 0,
+      "requests": [
+        {
+          "method": "GET",
+          "url": "/api/local/episodes/e/workspace"
+        }
+      ]
+    },
+    {
+      "width": 375,
+      "theme": "light",
+      "commandsDuringRecovery": 0,
+      "requests": [
+        {
+          "method": "GET",
+          "url": "/api/local/episodes/e/workspace"
+        }
+      ]
+    },
+    {
+      "width": 375,
+      "theme": "dark",
+      "commandsDuringRecovery": 0,
+      "requests": [
+        {
+          "method": "GET",
+          "url": "/api/local/episodes/e/workspace"
+        }
+      ]
+    }
+  ]
+}

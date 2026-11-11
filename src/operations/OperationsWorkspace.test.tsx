@@ -25,6 +25,17 @@ const reviewPackages: ReviewPackage[] = [
 
 const tasks: Task[] = [{ actual_cost_cents: null, attempt: 0, budget_limit_cents: 0, claimed_at: null, completed_at: null, created_at: "2026-08-15T00:00:00.000Z", episode_id: "episode-blocked", id: "blocked-task", input_snapshot: {}, last_result: { blockers: [{ code: "media_provider_unavailable", detail: "测试媒体适配器未配置。" }] }, max_attempts: 1, model: "", prompt_version: "", provider: "", status: "blocked", task_type: "generate_b_roll" }];
 
+it.each(['per-row blocker','old-response queue fallback'])('explains an unknown narration result in delivery using %s',async source=>{
+ const episode={...episodes[1],title:'咖啡两镜头'},open=vi.fn(),queue=vi.fn();
+ const catalog={episodes:[episode],page:2,total:21,pageSize:20,episodeCount:21,accountCounts:{},reviewCount:0,stages:{},artifactCounts:{},pending:{page:1,total:0,items:[]},blocked:{page:2,total:21,items:[]},worker:{running:0,blocked:1,failed:0,latestCompleted:false},operationRows:[{episodeId:episode.id,reviewRevision:null,reviewPending:false,blockerCount:1,actionStatus:'blocked',workflowStep:'delivery',blocker:{code:'provider_result_unknown',detail:'供应商请求结果未知，请核对请求账本。',taskType:'generate_narration'}}]} as unknown as import('../episodes/episodeCatalogTypes').EpisodeCatalog;
+ if(source==='old-response queue fallback'){catalog.blocked.items=[{episode,blocker:catalog.operationRows[0].blocker!}];delete catalog.operationRows[0].blocker;}
+ await act(async()=>render(<OperationsWorkspace onOpenTaskQueue={source==='old-response queue fallback'?queue:undefined} remote={{catalog,seriesId:'all',onSeriesChange:vi.fn(),onPageChange:vi.fn(),onPendingPageChange:vi.fn(),onBlockedPageChange:vi.fn()}} episodes={[episode]} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[]} reviewPackages={[]} series={[]} seriesVersions={[]} tasks={[]} onSelectEpisode={open} selectedEpisode={episode}/>));
+ const row=within(screen.getByRole('region',{name:'系列生产单'})).getAllByRole('row')[1];
+ expect(row.textContent).toContain('检查与交付');expect(row.textContent).toContain('需处理');expect(row.textContent).toContain('口播结果待核对');
+ const current=within(screen.getByRole('complementary',{name:'当前作品'}));expect(current.getByText('供应商请求结果未知，请核对请求账本。')).toBeTruthy();
+ await userEvent.setup().click(current.getByRole('button',{name:'核对口播结果'}));if(source==='old-response queue fallback'){expect(queue).toHaveBeenCalledOnce();expect(open).not.toHaveBeenCalled();}else expect(open).toHaveBeenCalledWith(episode.id);expect(current.queryByRole('button',{name:'处理交付问题'})).toBeNull();
+});
+
 it('preserves server ordering across series instead of regrouping recent episodes',async()=>{
  const ordered=[{...episodes[2],title:'最新作品',updated_at:'2026-11-02T00:00:00Z'},episodes[0],episodes[1]];
  const catalog={episodes:ordered,page:1,total:3,pageSize:20,episodeCount:3,accountCounts:{},reviewCount:0,stages:{},artifactCounts:{},pending:{page:1,total:0,items:[]},blocked:{page:1,total:0,items:[]},worker:{running:0,blocked:0,failed:0,latestCompleted:false},operationRows:[]} satisfies import('../episodes/episodeCatalogTypes').EpisodeCatalog;

@@ -1,5 +1,8 @@
 import{readPreparedRuntimeRelease,assertRuntimeRelease}from'../../src/orchestration/runtimeBuild.ts';
 import{pathToFileURL}from'node:url';
+import{createLogStorage}from'./log-storage.mjs';
+import{execFile}from'node:child_process';
+import{promisify}from'node:util';
 
 import {mediaRootWorkerSettings,persistMediaRootDeployment,readMediaRootAuthorization,readPendingMediaRootDeployment,recoverMediaRootDeployment,migrationProofQuery,verifyMediaRootMigrationProof,mediaRootPendingPath} from './media-root.mjs';
 
@@ -22,6 +25,7 @@ export async function createNativeApplication(d){
  const {LocalAccountCommands}=await load('local-app/accountCommands.js');
  const {createLocalDatabase}=await load('local-app/catalog.js');
  const {createLocalHandler}=await load('local-app/localRoute.js');
+ const {readRuntimeLogs}=await load('local-app/runtimeLogs.js');
  const {readMediaDeployment}=await load('local-app/mediaDeployment.js');
  const {startNativeWorkerService}=await load('local-app/localWorkerService.js');
  const {LocalEpisodeCommands}=await load('local-app/episodeCommands.js');
@@ -82,7 +86,10 @@ async function createNativeInstance(d,activate,lifecycle){
  const storageResources=[{kind:'program',path:d.projectRoot},{kind:'runtime',path:d.runtimeRoot},{kind:'state',path:d.stateDirectory},{kind:'program',path:d.openChatCut?.root},{kind:'model-cache',path:d.worker?.alignment?.cacheDirectory},{kind:'history',path:historyRoot},{kind:'backup',path:d.backupRoot},{kind:'secrets'}].filter(r=>r.path||r.kind==='secrets');
  mediaRootSettings=new LocalMediaRootSettings(pool,d.mediaRoot,{resources:storageResources,pendingOperations:async()=>readPendingMediaRootDeployment(d)?[{kind:'publication',reason:'本机存储配置发布尚未完成，请先恢复原操作。'}]:[],minimumFreeBytes:d.worker?.minimumFreeBytes??0,retainedRoots:[d.worker?.alignment?.cacheDirectory].filter(p=>typeof p==='string'),protectedRoots:[...sourceRoots,historyRoot,d.runtimeRoot,d.projectRoot,d.stateDirectory,d.backupRoot,d.openChatCut?.root,d.worker?.alignment?.cacheDirectory].filter(p=>typeof p==='string'),...lifecycle,persist:(binding,publication)=>persistMediaRootDeployment(d,binding,publication),activate});
  const runtimeStatus=createRuntimeStatusReader({pool,projectRoot:d.projectRoot,mediaRoot:d.mediaRoot,mountPath:d.worker?.mountPath,minimumFreeBytes:d.worker?.minimumFreeBytes,worker:worker?.status,runtimeRelease:d.runtimeRelease,workerRelease:()=>worker?.runtimeRelease?.id??null});
- return{handler:createLocalHandler({origin:`http://127.0.0.1:${d.port}`,pool,mediaRoot:d.mediaRoot,stateDirectory:d.stateDirectory,historyRoot,mediaRootSettings,secrets,connections,episodes,accounts,automation,runtimeStatus,recoverOutput:worker?.recoverOutput}),close};
+ const logFile=process.env.LOOP_RUNTIME_LOG_PATH??d.logPath??join(d.runtimeRoot,'app-private.log');
+ const storage=createLogStorage(d.runtimeRoot,logFile);
+ const choose=async()=>{try{const {stdout}=await promisify(execFile)('/usr/bin/osascript',['-e','on run argv\nactivate\nreturn POSIX path of (choose folder with prompt "选择日志存储文件夹" default location (POSIX file (item 1 of argv)))\nend run','--',storage.read().activeDirectory],{timeout:120000,maxBuffer:8192});return{path:stdout.trim()};}catch(error){if(/\(-128\)/.test(String(error.stderr)))return{cancelled:true};throw Error('Directory chooser unavailable');}};
+ return{handler:createLocalHandler({origin:`http://127.0.0.1:${d.port}`,pool,mediaRoot:d.mediaRoot,stateDirectory:d.stateDirectory,historyRoot,mediaRootSettings,secrets,connections,episodes,accounts,automation,runtimeStatus,recoverOutput:worker?.recoverOutput,logs:{read:()=>readRuntimeLogs([join(d.runtimeRoot,'app-private.log'),logFile]),storage:{...storage,choose}}}),close};
  }catch(error){await close();throw error;}
 }
 

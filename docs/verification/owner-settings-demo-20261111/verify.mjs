@@ -1,0 +1,30 @@
+import {execFileSync} from 'node:child_process';
+import {writeFileSync} from 'node:fs';
+import assert from 'node:assert/strict';
+const dir='/Users/dan/.codex/visualizations/2026/11/11/01a1c963-5027-7232-9b62-71eaa4fbfb25';
+const checks=[];
+function cli(...args){const r=JSON.parse(execFileSync('agent-browser',['--session','lc-owner-demo','--json',...args],{encoding:'utf8',maxBuffer:5e6}));assert(r.success,r.error);return r.data;}
+function evaluate(code){return cli('eval',code).result;}
+function click(name){cli('find','role','button','click','--name',name,'--exact');}
+function check(name,fn){fn();checks.push(name);}
+function fit(){assert.equal(evaluate('document.documentElement.scrollWidth<=innerWidth'),true);assert.equal(evaluate('Array.from(document.querySelectorAll(".os-window,.os-body")).every(e=>e.scrollWidth<=e.clientWidth+1)'),true);}
+function shot(file){cli('wait','--fn','document.getAnimations().every(a=>a.playState!=="running")');cli('screenshot',`${dir}/${file}.png`);}
+cli('open','http://127.0.0.1:5201/src/local-app/owner-settings.prototype.html');
+cli('set','viewport','1543','953');
+check('个人偏好改名与保存',()=>{cli('find','label','显示名称','fill','示例修改名称');click('保存偏好');assert.match(evaluate('document.querySelector("[role=status]").textContent'),/已保存/);});
+check('个人偏好存储位置分区',()=>{cli('find','role','tab','click','--name','存储位置','--exact');assert.equal(evaluate('document.querySelectorAll(".os-field input").length'),2);click('选择文件夹');click('保存日志位置');assert.match(evaluate('document.querySelector("[role=status]").textContent'),/下次启动/);fit();shot('owner-settings-storage');});
+check('通知开关与保存',()=>{click('通知');cli('find','role','switch','click','--name','交付包完成','--exact');click('保存通知');assert.match(evaluate('document.querySelector("[role=status]").textContent'),/已保存/);shot('owner-settings-notifications');});
+check('登录与安全密码不一致反馈',()=>{click('登录与安全');cli('find','label','新密码','fill','demo-only-12345');cli('find','label','再次输入','fill','demo-only-12346');click('保存密码');assert.match(evaluate('document.querySelector("[role=status]").textContent'),/不一致/);shot('owner-settings-security');});
+check('日志筛选与同次操作',()=>{click('日志');cli('find','label','只看错误','check');assert.equal(evaluate('document.querySelectorAll(".os-log-row").length'),1);click('查看同次操作');assert.equal(evaluate('document.querySelectorAll(".os-log-row").length'),2);click('返回筛选结果');assert.equal(evaluate('document.querySelectorAll(".os-log-row").length'),1);shot('owner-settings-logs');});
+check('文件清理示例完成与空态',()=>{click('文件清理');click('继续清理');assert.match(evaluate('document.querySelector(".os-body").textContent'),/暂无待处理/);shot('owner-settings-cleanup');});
+check('连接能力与编辑保存',()=>{click('连接配置');click('视频');cli('fill','#os-connection-form input','视频测试连接');click('保存连接');cli('wait','--fn','document.querySelector(".os-action-feedback").textContent.includes("连接修改已保存")');assert.match(evaluate('document.querySelector("[role=status]").textContent'),/连接修改已保存/);shot('owner-settings-connections');});
+check('密钥筛选、展开、验证边界',()=>{click('密钥管理');cli('find','label','搜索密钥','fill','图片');assert.equal(evaluate('document.querySelectorAll(".os-secret-row").length'),1);cli('click','.os-secret-row');click('查看密钥');assert.match(evaluate('document.querySelector(".os-credential-verification").textContent'),/演示密码/);assert.equal(evaluate('document.querySelector(".os-credential-verification input")!==null'),true);shot('owner-settings-secrets');});
+check('Escape 与菜单长名称无横滚',()=>{cli('press','Escape');assert.equal(evaluate('document.activeElement.getAttribute("aria-label")'),'所有者设置');cli('find','label','长名称','check');click('所有者设置');const m=evaluate('(()=>{const e=document.querySelector("[role=menu]");return {w:e.clientWidth,s:e.scrollWidth,title:e.querySelector(".os-profile strong").title,text:e.querySelector(".os-profile strong").textContent}})()');assert(m.s<=m.w+1);assert.equal(m.title,m.text);assert(m.title.length>25);shot('owner-settings-menu');});
+check('每个菜单入口均打开对应窗口',()=>{for(const name of ['个人偏好','通知','登录与安全','日志','文件清理','连接配置','密钥管理','退出登录']){if(!evaluate('!!document.querySelector("[role=menu]")'))click('所有者设置');cli('find','role','menuitem','click','--name',name,'--exact');assert.equal(evaluate('document.querySelector("[role=dialog]").getAttribute("aria-label")'),name);if(name==='退出登录'){shot('owner-settings-logout');click('取消');}else click('关闭设置');}});
+check('资源圆环与未知状态',()=>{cli('click','.os-launchers button:first-child');assert.equal(evaluate('document.querySelectorAll(".os-ring").length'),4);fit();shot('owner-settings-resources');cli('find','label','空数据','check');assert.deepEqual(evaluate('Array.from(document.querySelectorAll(".os-ring strong")).map(e=>e.textContent)'),['—','—','—','—']);cli('find','label','空数据','click');click('关闭设置');});
+check('375px 与 320px 逐入口、空态、深浅色',()=>{for(const width of [375,320]){cli('set','viewport',String(width),'860');for(const theme of ['light','dark']){if(evaluate('document.documentElement.dataset.theme')!==theme)click('切换预览主题');click('所有者设置');cli('find','role','menuitem','click','--name','个人偏好','--exact');for(const name of ['个人偏好','通知','登录与安全','日志','文件清理','连接配置','密钥管理']){click(name);fit();if(width===375&&theme==='dark'&&name==='个人偏好')shot('owner-settings-narrow-dark');}click('关闭设置');} } });
+check('所有请求均为预览静态资源',()=>{const requests=cli('network','requests').requests;assert(requests.every(r=>r.url.startsWith('http://127.0.0.1:5201/')||r.url.startsWith('ws://127.0.0.1:5201/')||r.url.startsWith('data:image/')));assert(!requests.some(r=>new URL(r.url).pathname.startsWith('/api/')));});
+check('无浏览器运行错误',()=>assert.deepEqual(cli('errors').errors,[]));
+cli('set','viewport','1543','953');if(evaluate('document.documentElement.dataset.theme')!=='light')click('切换预览主题');cli('find','label','长名称','click');click('所有者设置');cli('find','role','menuitem','click','--name','个人偏好','--exact');cli('find','role','tab','click','--name','个人与界面','--exact');click('恢复默认');shot('owner-settings-personal');
+writeFileSync('docs/verification/owner-settings-demo-20261111/browser-results.json',JSON.stringify({passed:checks.length,checks},null,2)+'\n');
+console.log(JSON.stringify({passed:checks.length,checks},null,2));

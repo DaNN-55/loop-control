@@ -7,7 +7,7 @@ vi.mock('./keychain.mjs',()=>({keychainState:ports.unlock}));
 vi.mock('./services.mjs',()=>({ensureServices:ports.ensure}));
 vi.mock('./environment.mjs',()=>({projectRoot:'/fixture/project',readDeployment:()=>({port:5174,recordPath:'/fixture/runtime/app.json',logPath:'/fixture/runtime/app-private.log',home:'/fixture/home',deploymentFile:'/fixture/runtime/deployment.json'}),writePrivateFile:ports.write}));
 vi.mock('../local-service-record.mjs',()=>({inspectRecordedService:ports.inspect}));
-vi.mock('node:fs',()=>({existsSync:()=>ports.exists,readFileSync:()=>JSON.stringify({pid:444,port:5174,projectRoot:'/fixture/project'}),renameSync:ports.rename,openSync:()=>10,closeSync:vi.fn()}));
+vi.mock('node:fs',async()=>({constants:(await vi.importActual('node:fs')).constants,existsSync:()=>ports.exists,readFileSync:()=>JSON.stringify({pid:444,port:5174,projectRoot:'/fixture/project'}),renameSync:ports.rename,openSync:()=>10,closeSync:vi.fn()}));
 vi.mock('node:child_process',()=>({spawn:ports.spawn,execFileSync:ports.prepare}));
 beforeEach(()=>{
  vi.resetModules();vi.clearAllMocks();ports.exists=true;ports.matching=false;

@@ -149,6 +149,14 @@ it('retains independent pending/blocker queues, historical fences and Owner-only
  expect(catalog({},foreignOwner).episodes.map(e=>e.id)).toEqual([episode(31)]);
 });
 
+it('includes each visible row blocker independently of blocked queue pagination and filters',()=>{
+ const secondPage=catalog({view:'operations',blockedPage:2,status:'blocked'});
+ expect(secondPage.operationRows.find(row=>row.episodeId===episode(1))?.blocker).toMatchObject({code:'fixture-0',detail:'Synthetic blocker',taskId:taskId(1),taskType:'generate_a_roll'});
+ const filtered=catalog({view:'operations',q:'作品 01',blockedPage:2});
+ expect(filtered.episodes).toHaveLength(1);expect(filtered.operationRows[0].blocker).toMatchObject({code:'fixture-0',detail:'Synthetic blocker'});
+ expect(filtered.blocked.items.every(item=>item.blocker.code!=='fixture-0')).toBe(true);
+});
+
 it('projects workspace current export and delivery facts without blocking on unused failed candidates',()=>{
  psql(`INSERT INTO public.episodes(id,account_id,title,stage,updated_at,main_script_revision_id) SELECT ('00000000-0000-4000-8000-'||lpad(n::text,12,'0'))::uuid,'${account}','四步 '||n,CASE WHEN n=39 THEN 'production_completed' ELSE 'script_approved' END,'2026-01-03',('50000000-0000-4000-8000-'||lpad(n::text,12,'0'))::uuid FROM generate_series(36,40)n;
  INSERT INTO public.review_packages SELECT ('10000000-0000-4000-8000-'||lpad(n::text,12,'0'))::uuid,('00000000-0000-4000-8000-'||lpad(n::text,12,'0'))::uuid,'storyboard_review',1,null,'{}' FROM generate_series(36,40)n;

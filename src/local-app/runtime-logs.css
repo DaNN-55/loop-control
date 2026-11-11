@@ -1,0 +1,47 @@
+.runtime-logs-backdrop{z-index:160}
+html[data-interface="impeccable"] .product-ui .runtime-logs-dialog{width:min(1440px,calc(100vw - 48px));max-width:1440px;max-height:calc(100dvh - 48px);padding:0;display:flex;flex-direction:column;overflow:hidden}
+.runtime-logs-dialog>header{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;gap:16px;border-bottom:1px solid var(--lc-line)}
+.runtime-logs-dialog>header h2{margin:0}
+.runtime-logs-dialog>header>div{display:flex;align-items:center;gap:8px}
+.runtime-logs-body{padding:20px 24px;min-height:0;overflow:auto}
+.runtime-logs-dialog .rl-filters{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin:0;padding:0;border:0;min-width:0}
+.runtime-logs-dialog .rl-filters:disabled{opacity:.5}
+.runtime-logs-dialog .rl-filter{width:240px;max-width:100%;min-width:0}
+.runtime-logs-dialog .rl-errors{display:flex;align-items:center;gap:8px;font-size:13px;white-space:nowrap}
+.runtime-logs-dialog .rl-errors input{accent-color:var(--lc-accent)}
+.runtime-logs-dialog .rl-custom{display:flex;flex-wrap:wrap;gap:12px;width:100%}
+.runtime-logs-dialog .rl-custom label{display:grid;gap:4px;font-size:12px;min-width:0;color:var(--lc-muted)}
+.runtime-logs-dialog .rl-custom input{height:36px;max-width:100%;border:1px solid var(--lc-line-strong);border-radius:7px;padding:6px 10px;background:var(--lc-surface);color:var(--lc-ink);font:inherit}
+.runtime-logs-dialog .rl-result{font-size:12px;color:var(--lc-muted);margin:16px 0 10px}
+.runtime-logs-dialog .rl-context{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:14px 18px;margin-top:16px;background:var(--lc-accent-soft);border-radius:9px;font-size:13px}
+.runtime-logs-dialog .rl-context span{display:block;font-size:12px;color:var(--lc-muted);margin-top:4px}
+.runtime-logs-dialog .rl-table-surface{border:1px solid var(--lc-line);border-radius:12px;background:var(--lc-surface);overflow:hidden}
+.runtime-logs-dialog table{width:100%;table-layout:fixed;border-collapse:collapse;font-size:12px;text-align:left}
+.runtime-logs-dialog .rl-col-time{width:155px}.runtime-logs-dialog .rl-col-level{width:64px}.runtime-logs-dialog .rl-col-name{width:110px}.runtime-logs-dialog .rl-col-id{width:130px}.runtime-logs-dialog .rl-col-source{width:100px}
+.runtime-logs-dialog th{background:var(--lc-surface-2);color:var(--lc-muted);font-size:11px;font-weight:500}
+.runtime-logs-dialog :is(th,td){padding:12px 14px;border-bottom:1px solid var(--lc-line);vertical-align:top;overflow-wrap:anywhere}
+.runtime-logs-dialog tbody tr:last-child td{border-bottom:0}
+.runtime-logs-dialog :is(.rl-time,.rl-id,.rl-source){color:var(--lc-muted)}
+.runtime-logs-dialog :is(.rl-time,.rl-id){font-size:11px;font-variant-numeric:tabular-nums}
+.runtime-logs-dialog .rl-row:hover,.runtime-logs-dialog .rl-row.is-open{background:var(--lc-accent-soft)}
+.runtime-logs-dialog .rl-row.is-error :is(.rl-level,.rl-message){color:var(--lc-danger)}
+.runtime-logs-dialog .rl-message>button{display:flex;align-items:baseline;gap:8px;text-align:left;font:inherit;color:inherit;background:transparent;border:0;padding:0;width:100%;cursor:pointer}
+.runtime-logs-dialog .rl-message svg{width:14px;height:14px;flex-shrink:0;align-self:flex-start;margin-top:2px;color:var(--lc-muted)}
+.runtime-logs-dialog .rl-detail>td{padding:20px 24px;background:var(--lc-surface-2)}
+.runtime-logs-dialog .rl-detail-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:28px;align-items:start}
+.runtime-logs-dialog .rl-detail-grid section{min-width:0}
+.runtime-logs-dialog .rl-detail h3{font-size:13px;margin:0 0 14px}
+.runtime-logs-dialog dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:10px 18px;font-size:12px;line-height:1.7;margin:0 0 18px}
+.runtime-logs-dialog dt{color:var(--lc-muted)}
+.runtime-logs-dialog dd{margin:0;overflow-wrap:anywhere}
+.runtime-logs-dialog pre{white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.8 ui-monospace,SFMono-Regular,Menlo,monospace;margin:0;padding:14px 16px;background:var(--lc-surface);border:1px solid var(--lc-line);border-radius:7px;color:var(--lc-ink)}
+.runtime-logs-dialog .rl-empty{padding:40px 18px;color:var(--lc-muted);text-align:center}
+.rl-note{font-size:12px;color:var(--lc-muted);line-height:1.7;overflow-wrap:anywhere}
+.runtime-logs-dialog footer.rl-note{margin-top:14px}
+.log-storage-settings{display:grid;gap:12px;border-top:1px solid var(--lc-line);padding-top:20px;margin-top:20px;min-width:0}
+.log-storage-settings h3,.log-storage-settings p{margin:0}
+.log-storage-settings>label{display:grid;gap:6px;font-size:12px;min-width:0}
+.log-storage-actions{display:flex;gap:8px;flex-wrap:wrap}
+@media(max-width:1000px){.runtime-logs-dialog .rl-col-time{width:118px}.runtime-logs-dialog .rl-col-name{width:90px}.runtime-logs-dialog .rl-col-id{width:94px}.runtime-logs-dialog .rl-col-source{width:88px}.runtime-logs-dialog :is(th,td){padding-inline:10px}}
+@media(max-width:760px){html[data-interface="impeccable"] .product-ui .runtime-logs-dialog{width:calc(100vw - 24px);max-height:calc(100dvh - 24px)}.runtime-logs-dialog>header{padding:14px 16px}.runtime-logs-body{padding:16px}.runtime-logs-dialog .rl-filter{flex:1 1 190px;width:auto}.runtime-logs-dialog .rl-detail-grid{grid-template-columns:minmax(0,1fr);gap:24px}}
+@media(max-width:650px){.runtime-logs-dialog :is(colgroup,thead){display:none}.runtime-logs-dialog :is(table,tbody){display:block}.runtime-logs-dialog .rl-row{display:grid;grid-template-columns:100px 42px minmax(0,1fr) 64px;gap:6px 0;padding:14px 12px;border-bottom:1px solid var(--lc-line)}.runtime-logs-dialog .rl-row td{display:block;width:auto;padding:0;border:0}.runtime-logs-dialog .rl-row :is(.rl-source,.rl-message){grid-column:1/-1}.runtime-logs-dialog .rl-row .rl-message{padding-top:3px}.runtime-logs-dialog :is(.rl-detail,.rl-detail>td){display:block}.runtime-logs-dialog .rl-detail>td{padding:16px 12px}.runtime-logs-dialog .rl-empty{display:block}.runtime-logs-dialog dl{gap:10px 12px}.runtime-logs-dialog .rl-custom label{width:100%}.runtime-logs-dialog .rl-custom input{width:100%;min-width:0}}

@@ -8,6 +8,44 @@ const studio={projectId:'loop-control-e',relativePath:'work/project.json',sha256
 const opened={studioUrl:'http://127.0.0.1:5175/#/editor/loop-control-e',workspace:studio,productionWorkspace:workspace};
 afterEach(()=>{cleanup();vi.unstubAllGlobals();vi.restoreAllMocks();});
 function readWorkspace(){vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace})));}
+it('offers only a read to check an unknown Studio operation result without replaying it',async()=>{
+ let reads=0;const fetcher=vi.fn(async(path:string)=>Response.json(path==='/api/local/connections'?{serviceCatalog:{version:1,groups:[]}}:{workspace:path.endsWith('/workspace')&&++reads>1?{...workspace,revision:2,clips:[{...workspace.clips[0],text:'已保存的最新镜头'}]}:workspace}));vi.stubGlobal('fetch',fetcher);
+ const command=vi.fn(async()=>{throw Object.assign(Error('本机操作结果暂未确认，请查看系统状态并核对已有任务或保存结果，再继续操作。'),{status:503,code:'local_service_unavailable'});});
+ render(<ProductionWorkspacePanel episodeId="e" title="操作转换" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);
+ fireEvent.click(await screen.findByRole('button',{name:'进入剪辑工作台'}));await screen.findByText('打开剪辑工作台结果暂未确认');
+ expect(command).toHaveBeenCalledTimes(1);fireEvent.click(screen.getByRole('button',{name:'重新读取已保存工程'}));
+ await screen.findByText('已保存的最新镜头');expect(reads).toBe(2);expect(command).toHaveBeenCalledTimes(1);
+ expect(screen.getByText('打开剪辑工作台结果暂未确认').closest('[role="alert"]')?.textContent).toContain('原操作是否完成仍未确认');expect(screen.queryByTitle('OpenChatCut 剪辑工程')).toBeNull();
+});
+it('does not automatically prepare again when checking an unknown preparation result without a workspace',async()=>{
+ const fetcher=vi.fn(async()=>Response.json({workspace:null}));vi.stubGlobal('fetch',fetcher);
+ const command=vi.fn(async()=>{throw Object.assign(Error('结果暂未确认'),{code:'local_service_unavailable'});});
+ render(<ProductionWorkspacePanel episodeId="e" title="操作转换" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);
+ await screen.findByText('准备分镜工程结果暂未确认');fireEvent.click(screen.getByRole('button',{name:'重新读取已保存工程'}));
+ await screen.findByText('已重新读取当前工程，原操作是否完成仍未确认。请核对已有任务和保存结果。');
+ expect(command).toHaveBeenCalledExactlyOnceWith('prepareWorkspace',{episodeId:'e',expectedScriptRevisionId:'s'});expect(fetcher).toHaveBeenCalledTimes(2);
+});
+it('keeps the unknown result when a check fails and permits a read-only retry',async()=>{
+ let reads=0;vi.stubGlobal('fetch',vi.fn(async(path:string)=>path.endsWith('/workspace')&&++reads===2?Response.json({}, {status:503}):Response.json({workspace})));
+ const command=vi.fn(async()=>{throw Object.assign(Error('结果暂未确认'),{code:'local_service_unavailable'});});
+ render(<ProductionWorkspacePanel episodeId="e" title="操作转换" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);
+ fireEvent.click(await screen.findByRole('button',{name:'进入剪辑工作台'}));await screen.findByText('打开剪辑工作台结果暂未确认');
+ fireEvent.click(screen.getByRole('button',{name:'重新读取已保存工程'}));await screen.findByText('无法读取当前工程版本。');
+ fireEvent.click(screen.getByRole('button',{name:'重新读取已保存工程'}));await screen.findByText('已重新读取当前工程，原操作是否完成仍未确认。请核对已有任务和保存结果。');expect(command).toHaveBeenCalledTimes(1);expect(reads).toBe(3);
+});
+it('does not attach a delayed check failure to the next unknown operation',async()=>{
+ let reads=0,failRead!:(cause:Error)=>void;vi.stubGlobal('fetch',vi.fn(async(path:string)=>{
+  if(path.endsWith('/workspace')&&++reads===2)return new Promise<Response>((_resolve,reject)=>{failRead=reject;});
+  return Response.json({workspace});
+ }));
+ const command=vi.fn(async()=>{throw Object.assign(Error('结果暂未确认'),{code:'local_service_unavailable'});});
+ render(<ProductionWorkspacePanel episodeId="e" title="操作转换" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);
+ fireEvent.click(await screen.findByRole('button',{name:'进入剪辑工作台'}));await screen.findByText('打开剪辑工作台结果暂未确认');
+ fireEvent.click(screen.getByRole('button',{name:'重新读取已保存工程'}));await screen.findByRole('button',{name:'读取中…'});
+ fireEvent.click(screen.getByRole('button',{name:'进入剪辑工作台'}));await screen.findByText('打开剪辑工作台结果暂未确认');
+ await act(async()=>failRead(Error('旧核对读取失败')));expect(screen.queryByText('旧核对读取失败')).toBeNull();expect(screen.queryByText('Workspace reading ended.')).toBeNull();expect(command).toHaveBeenCalledTimes(2);
+ expect(screen.getByRole('button',{name:'重新读取已保存工程'}).hasAttribute('disabled')).toBe(false);
+});
 it('keeps browser navigation after a delayed Studio open succeeds',async()=>{
  readWorkspace();let finish!:(value:unknown)=>void;const command=vi.fn(()=>new Promise(resolve=>{finish=resolve;}));
  const view=(step:ProductionStep)=><WorkspaceNavigationContext.Provider value={{episode:'e',step,tab:'visual',change:()=>{}}}><ProductionWorkspacePanel episodeId="e" title="操作转换" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/></WorkspaceNavigationContext.Provider>;

@@ -27,6 +27,19 @@ html[data-interface="impeccable"] .status-drawer-layer { background: transparent
 .status-drawer-facts > div { display: flex; align-items: baseline; gap: 20px; justify-content: space-between; }
 .status-drawer-facts dt { flex-shrink: 0; color: var(--lc-muted); font-size: 12px; }
 .status-drawer-facts dd { min-width: 0; overflow-wrap: anywhere; margin: 0; font-size: 12px; text-align: right; font-variant-numeric: tabular-nums; }
+.status-drawer-resource-readings { gap:20px; margin-bottom:24px; }
+.status-drawer-resource-readings > div { align-items:center; gap:16px; }
+.status-drawer-resource-readings dt { display:flex; align-items:center; gap:12px; flex-shrink:1; min-width:0; color:var(--lc-ink); }
+.status-drawer-resource-readings dt > span:last-child { display:grid; gap:4px; }
+.status-drawer-resource-readings dd { display:grid; gap:4px; max-width:55%; }
+.status-drawer-resource-readings small { color:var(--lc-muted); font-size:11px; font-weight:400; }
+.status-drawer-resource-ring { position:relative; display:block; flex:0 0 46px; width:46px; height:46px; color:var(--lc-accent); }
+.status-drawer-resource-ring svg { width:100%; height:100%; fill:none; stroke:var(--lc-line); stroke-width:3; }
+.status-drawer-resource-ring .status-drawer-resource-ring-value { stroke:currentColor; stroke-linecap:round; }
+.status-drawer-resource-ring > span { position:absolute; inset:0; display:grid; place-items:center; color:var(--lc-ink); font-size:11px; font-variant-numeric:tabular-nums; }
+.status-drawer-resource-ring.is-unknown { color:var(--lc-muted); }
+.status-drawer-resource-ring.is-unknown > span { color:var(--lc-muted); }
+.status-drawer-resource-ring.is-warning { color:var(--lc-warning); }
 .status-drawer-tasks { list-style: none; padding: 0; margin: 0; }
 .status-drawer-tasks > li { padding: 16px 0; border-top: 1px solid var(--lc-line); }
 .status-drawer-tasks > li:first-child { border-top: 0; padding-top: 0; }

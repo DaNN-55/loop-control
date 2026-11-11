@@ -1,0 +1,23 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/MediaRootSettingsDialog.test.tsx src/local-app/LocalCatalogApp.workspace.test.tsx scripts/runtime/start.test.mjs scripts/runtime/media-root.test.mjs src/local-app/RuntimeLogsDialog.test.tsx src/local-app/WorkspaceNarrationPanel.manual.test.tsx
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/RuntimeLogsDialog.test.tsx (3 tests) 416ms
+ ✓ scripts/runtime/start.test.mjs (3 tests) 11ms
+ ✓ src/local-app/WorkspaceNarrationPanel.manual.test.tsx (10 tests) 788ms
+ ✓ src/local-app/MediaRootSettingsDialog.test.tsx (7 tests) 1264ms
+   ✓ embeds storage in personal preferences, omits old migration details, and shows active progress then completion  324ms
+   ✓ checks a readable migration scope before explicit confirmation and invalidates a changed destination  325ms
+ ✓ scripts/runtime/media-root.test.mjs (1 test) 3401ms
+   ✓ fresh processes read the shipped deployment reader with initialized external media, preserve private capabilities, and reject replaced roots or receipts  3400ms
+ ✓ src/local-app/LocalCatalogApp.workspace.test.tsx (13 tests) 2819ms
+   ✓ 保留安全弹窗焦点，从所有者菜单打开连接配置且跨页保留连接草稿  573ms
+   ✓ cleanupPending=true, initially archived=true: confirms the directory and title before deleting  314ms
+   ✓ keeps one topbar instance and places the Owner menu after theme in workspace and episode  426ms
+
+ Test Files  6 passed (6)
+      Tests  37 passed (37)
+   Start at  13:51:42
+   Duration  5.03s (transform 1.00s, setup 36ms, collect 5.48s, tests 8.70s, environment 664ms, prepare 198ms)
+

@@ -25,6 +25,11 @@ function combined(states:SystemState[]):SystemState {
 function HealthChecks({checks}:{checks:HealthCheck[]}) {
   return <ul className="status-drawer-checks" aria-label="健康检查分项">{checks.map(check=><li key={check.id}><div><span>{healthCheckLabels[check.id]}</span><span className={check.passed?'is-healthy':'is-failed'}>{check.passed?'通过':'失败'}</span></div>{!check.passed&&<p>{check.detail}</p>}</li>)}</ul>;
 }
+const usedPercent=(available:number|null|undefined,total:number|null|undefined)=>available==null||total==null||!Number.isFinite(available)||!Number.isFinite(total)||total<=0||available<0||available>total?null:(1-available/total)*100;
+function ResourceReading({label,basis,percent,value,valueLabel,unknownLabel='未读取',warning=false}:{label:string;basis:string;percent:number|null;value:string;valueLabel?:string;unknownLabel?:string;warning?:boolean}) {
+  const display=percent===null?'—':`${Math.round(percent)}%`;
+  return <div><dt><span className={`status-drawer-resource-ring${percent===null?' is-unknown':warning?' is-warning':''}`} role="img" aria-label={percent===null?`${label} ${basis}比例${unknownLabel}`:`${label} ${basis} ${display}`}><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="20"/>{percent!==null&&<circle className="status-drawer-resource-ring-value" cx="24" cy="24" r="20" pathLength="100" strokeDasharray={`${percent} 100`} transform="rotate(-90 24 24)"/>}</svg><span aria-hidden="true">{display}</span></span><span>{label}<small>{basis}</small></span></dt><dd>{valueLabel&&<small>{valueLabel}</small>}<span>{value}</span></dd></div>;
+}
 function Section({title,summary,attention=false,children,initialOpen=false}:{title:string;summary:string;attention?:boolean;children:ReactNode;initialOpen?:boolean}) {
   const [open,setOpen]=useState(initialOpen);
   useEffect(()=>{if(attention)setOpen(true);},[attention]);
@@ -70,6 +75,9 @@ export function SystemStatusDrawer({open,onOpen,onClose,runtime,maintenance,main
   const systemDiskSummary=!resources?'系统盘未读取':resources.systemDisk?`系统盘可用 ${bytes(resources.systemDisk.availableBytes)}`:resources.systemDisk===null?'系统盘读取失败':'系统盘待确认';
   const mediaDiskSummary=!resources?'素材盘未读取':resources.media.state==='offline'?'素材盘不可用':resources.media.state==='unknown'?'素材盘待确认':`素材盘${resources.media.state==='attention'?'空间不足，':''}可用 ${bytes(resources.media.availableBytes)}`;
   const resourceSummary=!resources?'未读取':resources.systemDisk&&resources.media.sameVolume&&resources.media.state==='healthy'?`系统盘与素材盘共用空间 · 可用 ${bytes(resources.systemDisk.availableBytes)}`:`${systemDiskSummary} · ${mediaDiskSummary}`;
+  const cpuPercent=resources?.cpuPercent;
+  const mediaReadable=resources&&(resources.media.state==='healthy'||resources.media.state==='attention');
+  const mediaVolume=resources?.media.sameVolume&&resources.systemDisk?resources.systemDisk:resources?.media;
   const hoverSummary=`Worker ${workerSummary}；${queueSummary}；最近读取 ${date(observedAt)}`;
   return <div className="system-status">
     <Button size="sm" color="tertiary" aria-label={`系统状态：${statusText}`} aria-expanded={open} aria-haspopup="dialog" data-status-summary={hoverSummary} className={`system-status-trigger system-status-${overall}`} onClick={open?onClose:onOpen} onMouseEnter={()=>setHovering(true)} onMouseLeave={()=>setHovering(false)} onFocus={()=>setHovering(true)} onBlur={()=>setHovering(false)}><i aria-hidden="true"/>{triggerLabel&&<span className="sidebar-tool-label">{triggerLabel}</span>}</Button>
@@ -104,7 +112,13 @@ export function SystemStatusDrawer({open,onOpen,onClose,runtime,maintenance,main
           </>}
         </Section>
         <Section title="资源状态" summary={resourceSummary} attention={resourceState==='offline'||resourceState==='attention'}>
-          <dl className="status-drawer-facts"><div><dt>CPU 使用</dt><dd>{resources?.cpuPercent==null?'未读取':`${resources.cpuPercent}%`}</dd></div><div><dt>空闲内存 / 总计</dt><dd>{resources?`${bytes(resources.memory.freeBytes)} / ${bytes(resources.memory.totalBytes)}`:'未读取'}</dd></div><div><dt>系统盘可用 / 总计</dt><dd>{!resources?'未读取':!resources.systemDisk?resources.systemDisk===null?'读取失败':'待确认':`${bytes(resources.systemDisk.availableBytes)} / ${bytes(resources.systemDisk.totalBytes)}`}</dd></div><div><dt>素材盘可用 / 总计</dt><dd>{!resources?'未读取':resources.media.state==='unknown'?'待确认':resources.media.state==='offline'?'不可用':resources.systemDisk&&resources.media.sameVolume?'与系统盘同卷，共用上述空间':`${bytes(resources.media.availableBytes)} / ${bytes(resources.media.totalBytes)}`}</dd></div><div><dt>系统盘来源（用户数据卷）</dt><dd>{resources?.systemDisk?.sourcePath??'来源待确认'}</dd></div><div><dt>素材目录</dt><dd>{resources?.media.sourcePath??'来源待确认'}</dd></div>{resources?.media.mountPath&&<div><dt>素材盘挂载点</dt><dd>{resources.media.mountPath}</dd></div>}</dl>
+          <dl className="status-drawer-facts status-drawer-resource-readings">
+            <ResourceReading label="CPU" basis="使用" percent={cpuPercent!=null&&cpuPercent>=0&&cpuPercent<=100?cpuPercent:null} value={cpuPercent==null?'未读取':`${cpuPercent}%`}/>
+            <ResourceReading label="内存" basis="非空闲" percent={usedPercent(resources?.memory.freeBytes,resources?.memory.totalBytes)} valueLabel="空闲 / 总计" value={resources?`${bytes(resources.memory.freeBytes)} / ${bytes(resources.memory.totalBytes)}`:'未读取'}/>
+            <ResourceReading label="系统盘" basis="已用" percent={usedPercent(resources?.systemDisk?.availableBytes,resources?.systemDisk?.totalBytes)} valueLabel="可用 / 总计" unknownLabel={!resources?'未读取':resources.systemDisk===null?'读取失败':'待确认'} value={!resources?'未读取':!resources.systemDisk?resources.systemDisk===null?'读取失败':'待确认':`${bytes(resources.systemDisk.availableBytes)} / ${bytes(resources.systemDisk.totalBytes)}`}/>
+            <ResourceReading label="素材盘" basis="已用" percent={mediaReadable?usedPercent(mediaVolume?.availableBytes,mediaVolume?.totalBytes):null} valueLabel="可用 / 总计" unknownLabel={!resources?'未读取':resources.media.state==='offline'?'不可用':'待确认'} warning={resources?.media.state==='attention'} value={!resources?'未读取':resources.media.state==='unknown'?'待确认':resources.media.state==='offline'?'不可用':resources.systemDisk&&resources.media.sameVolume?'与系统盘同卷，共用上述空间':`${bytes(resources.media.availableBytes)} / ${bytes(resources.media.totalBytes)}`}/>
+          </dl>
+          <dl className="status-drawer-facts"><div><dt>系统盘来源（用户数据卷）</dt><dd>{resources?.systemDisk?.sourcePath??'来源待确认'}</dd></div><div><dt>素材目录</dt><dd>{resources?.media.sourcePath??'来源待确认'}</dd></div>{resources?.media.mountPath&&<div><dt>素材盘挂载点</dt><dd>{resources.media.mountPath}</dd></div>}</dl>
           {resources?.media.state==='offline'&&<p className="status-drawer-problem">检查素材盘挂载及媒体目录读写权限。</p>}
           {resources?.media.state==='attention'&&<p className="status-drawer-problem">素材盘可用空间低于运行要求（{bytes(resources.media.minimumFreeBytes)}）。</p>}
         </Section>

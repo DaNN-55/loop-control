@@ -42,6 +42,7 @@ html[data-interface="impeccable"] .product-ui .work-table-scroll td:first-child{
 .work-table-scroll time{font-size:11px;color:var(--lc-muted);white-space:nowrap;font-variant-numeric:tabular-nums}
 .work-table-scroll td:last-child{--lc-icon-control-size:28px;padding-inline:4px}
 .work-table-scroll td:last-child button{color:var(--lc-muted)}
+.work-blocker-reason{display:block;max-width:100%;margin-top:5px;color:var(--lc-muted);font-size:11px;line-height:1.5;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .work-episode-select:focus-visible,.work-main-column [role=tab]:focus-visible{outline:2px solid var(--lc-accent);outline-offset:3px}
 .work-empty{padding:56px 24px;text-align:center}.work-empty h3{font-size:14px;margin:0 0 8px}.work-empty p{color:var(--lc-muted);font-size:12px;margin:0}
 html[data-interface="impeccable"] .impeccable-app.product-ui .work-continuation{grid-column:2;grid-row:2 / span 2;position:static;display:flex;flex-direction:column;min-height:740px;min-width:0;border:1px solid var(--lc-line);border-radius:12px;background:var(--lc-surface);overflow:hidden}

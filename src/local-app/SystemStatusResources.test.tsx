@@ -24,3 +24,29 @@ it('a failed system disk read remains explicit instead of claiming a healthy zer
 it('does not relabel a legacy program-volume reading as the system disk',()=>{
  const value=fixture();delete value.resources!.systemDisk;const section=show(value);expect(section.querySelector('summary')!.textContent).toContain('系统盘待确认');expect(within(section).queryByText('/Applications/Loop Control')).toBeNull();expect(screen.getByRole('button',{name:'系统状态：待确认'})).toBeTruthy();
 });
+it('visualizes measured usage without treating a real zero CPU reading as unknown',()=>{
+ const section=show(fixture());fireEvent.click(within(section).getByText('资源状态'));
+ expect(within(section).getByRole('img',{name:'CPU 使用 0%'})).toBeTruthy();
+ expect(within(section).getByRole('img',{name:'内存 非空闲 75%'})).toBeTruthy();
+ expect(within(section).getByRole('img',{name:'系统盘 已用 80%'})).toBeTruthy();
+ expect(within(section).getByRole('img',{name:'素材盘 已用 75%'})).toBeTruthy();
+ expect(within(section).getByText('8 GB / 32 GB')).toBeTruthy();
+});
+it('shows non-free memory proportion without claiming memory pressure from free memory alone',()=>{
+ const value=fixture();value.resources!.memory={freeBytes:.1*gb,totalBytes:16*gb};const section=show(value);fireEvent.click(within(section).getByText('资源状态'));
+ const memory=within(section).getByRole('img',{name:'内存 非空闲 99%'});expect(memory.classList.contains('is-warning')).toBe(false);
+ expect(within(section).getByText('0.1 GB / 16 GB')).toBeTruthy();expect(screen.getByRole('button',{name:'系统状态：正常'})).toBeTruthy();
+});
+it('uses the system disk measurement for an explicitly shared media volume',()=>{
+ const value=fixture();Object.assign(value.resources!.media,{sameVolume:true,availableBytes:1,totalBytes:2});const section=show(value);fireEvent.click(within(section).getByText('资源状态'));
+ expect(within(section).getByRole('img',{name:'素材盘 已用 80%'})).toBeTruthy();expect(within(section).getByText('与系统盘同卷，共用上述空间')).toBeTruthy();expect(within(section).getAllByText('100 GB / 500 GB')).toHaveLength(1);
+});
+it('does not visualize stale media capacity while the volume is offline',()=>{
+ const value=fixture();value.resources!.media.state='offline';const section=show(value);fireEvent.click(within(section).getByText('资源状态'));
+ const media=within(section).getByRole('img',{name:'素材盘 已用比例不可用'});expect(media.querySelector('.status-drawer-resource-ring-value')).toBeNull();expect(within(section).queryByText('50 GB / 200 GB')).toBeNull();
+});
+it('leaves missing or mathematically invalid ratios unknown rather than showing zero or NaN',()=>{
+ const value=fixture();value.resources!.cpuPercent=null;value.resources!.memory.totalBytes=0;value.resources!.systemDisk!.availableBytes=600*gb;value.resources!.media.totalBytes=null;const section=show(value);fireEvent.click(within(section).getByText('资源状态'));
+ expect(within(section).getAllByRole('img')).toHaveLength(4);expect(section.querySelectorAll('.status-drawer-resource-ring-value')).toHaveLength(0);expect(section.textContent).not.toMatch(/NaN|Infinity/);
+ expect(within(section).getByRole('img',{name:'CPU 使用比例未读取'})).toBeTruthy();
+});
