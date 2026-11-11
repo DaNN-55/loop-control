@@ -1,0 +1,10 @@
+import {readFile,open} from 'node:fs/promises';
+import {spawn} from 'node:child_process';
+import {join} from 'node:path';
+const evidence=join(process.cwd(),'docs/verification/state-machines-56-20261111');
+const d=JSON.parse(await readFile(join(evidence,'isolation.json'),'utf8'));
+const name=process.argv[2]??'integration-final.log';if(!/^[a-z0-9-]+\.log$/.test(name))throw Error('Invalid log name');
+const tests=process.argv.slice(3);if(!tests.length)tests.push('src/local-app/workspaceRecovery56.browser.integration.test.ts');
+const log=await open(join(evidence,name),'w');
+const child=spawn('npx',['vitest','run',...tests,'--maxWorkers=1','--fileParallelism=false','--reporter=dot'],{env:{...process.env,LOOP_STATE56_ACCEPTANCE:'1',LOOP_WORKSPACE_ACCEPTANCE:'1',LOOP_EMBEDDED_STUDIO_ACCEPTANCE:'1',LOOP_TEST_CONTEXT_MODULE:d.context,LOOP_TEST_OPENCHATCUT_ROOT:d.sdk,OPENCHATCUT_ROOT:d.sdk,LOOP_STORY_EVIDENCE:evidence},stdio:['ignore',log.fd,log.fd]});
+child.on('exit',async code=>{await log.close();process.exitCode=code;});
