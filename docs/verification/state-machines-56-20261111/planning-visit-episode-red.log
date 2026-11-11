@@ -1,0 +1,290 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/GlobalPlanningSettings.test.tsx src/local-app/WorkspacePlanningSelection.test.tsx --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+··x·x
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/GlobalPlanningSettings.test.tsx > does not start a list read after a registration visit has ended
+AssertionError: expected 2 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 2
+
+ ❯ src/local-app/GlobalPlanningSettings.test.tsx:66:16
+     64|  view.unmount();
+     65|  await act(async()=>{finish(Response.json({id:harness.id}));await new …
+     66|  expect(reads).toBe(1);
+       |                ^
+     67| });
+     68| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/local-app/WorkspacePlanningSelection.test.tsx > accepts the saved episode selection without a second workspace read
+TestingLibraryElementError: Unable to find an element with the text: 已保存规划配置. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"分镜规划"[39m
+      [33mclass[39m=[32m"connection-planning"[39m
+    [36m>[39m
+      [36m<h2>[39m
+        [0m分镜规划[0m
+      [36m</h2>[39m
+      [36m<div[39m
+        [33maria-label[39m=[32m"分镜规划配置"[39m
+        [33mclass[39m=[32m"connection-planning-bar"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"connection-planning-picker"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"w-full in-data-input-wrapper:w-max dan-select-field"[39m
+            [33mdata-select-size[39m=[32m"sm"[39m
+          [36m>[39m
+            [36m<label[39m
+              [33mclass[39m=[32m"flex cursor-default items-center gap-0.5 text-sm font-medium text-secondary mb-1.5"[39m
+              [33mdata-label[39m=[32m"true"[39m
+              [33mfor[39m=[32m"select-native-_r_t_"[39m
+              [33mid[39m=[32m"select-native-_r_t_-label"[39m
+            [36m>[39m
+              [0m生产单[0m
+              [36m<span[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"hidden text-brand-tertiary group-required:block group-invalid:text-error-primary"[39m
+              [36m>[39m
+                [0m*[0m
+              [36m</span>[39m
+            [36m</label>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"relative grid w-full items-center dan-select-control"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-sliders-horizontal dan-select-leading"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M10 5H3"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 19H3"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M14 3v4"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 17v4"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M21 12h-9"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M21 19h-5"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M21 5h-7"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M8 10v4"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M8 12H3"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [36m<select[39m
+                [33maria-expanded[39m=[32m"false"[39m
+                [33maria-haspopup[39m=[32m"listbox"[39m
+                [33maria-label[39m=[32m"选择规划生产单"[39m
+                [33maria-labelledby[39m=[32m"select-native-_r_t_-label"[39m
+                [33mclass[39m=[32m"dan-select-trigger appearance-none rounded-lg bg-primary font-medium text-primary shadow-xs ring-1 ring-primary outline-hidden transition duration-100 ease-linear ring-inset placeholder:text-fg-quaternary focus-visible:ring-2 focus-visible:ring-brand disabled:cursor-not-allowed disabled:opacity-50 py-2 pl-3 text-sm in-data-input-wrapper:flex in-data-input-wrapper:h-full in-data-input-wrapper:gap-1 in-data-input-wrapper:bg-inherit in-data-input-wrapper:px-3 in-data-input-wrapper:py-2 in-data-input-wrapper:font-normal in-data-input-wrapper:text-tertiary in-data-input-wrapper:shadow-none in-data-input-wrapper:ring-transparent in-data-input-wrapper:in-data-[size=sm]:text-sm in-data-input-wrapper:group-disabled:pointer-events-none in-data-input-wrapper:group-disabled:cursor-not-allowed in-data-input-wrapper:group-disabled:bg-transparent in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-[input-size=lg]:py-2.5 in-data-input-wrapper:in-data-[input-size=md]:py-2 in-data-input-wrapper:in-data-[input-size=md]:pl-3 in-data-input-wrapper:in-data-[input-size=sm]:text-sm in-data-input-wrapper:in-data-leading:pr-4.5 in-data-input-wrapper:in-data-leading:in-data-[input-size=lg]:pl-3.5 in-data-input-wrapper:in-data-leading:in-data-[input-size=md]:pr-4.5 in-data-input-wrapper:in-data-leading:in-data-[input-size=md]:pl-3 in-data-input-wrapper:in-data-leading:in-data-[input-size=sm]:pr-3.5 in-data-input-wrapper:in-data-trailing:in-data-[input-size=lg]:pr-8 in-data-input-wrapper:in-data-trailing:in-data-[input-size=md]:pr-7.5 in-data-input-wrapper:in-data-trailing:in-data-[input-size=sm]:pr-6.5"[39m
+                [33mid[39m=[32m"select-native-_r_t_"[39m
+              [36m>[39m
+                [36m<option[39m
+                  [33mvalue[39m=[32m""[39m
+                [36m>[39m
+                  [0m选择生产单[0m
+                [36m</option>[39m
+                [36m<option[39m
+                  [33mvalue[39m=[32m"episode"[39m
+                [36m>[39m
+                  [0m隔离生产单[0m
+                [36m</option>[39m
+              [36m</select>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"pointer-events-none absolute text-fg-quaternary dan-select-caret size-4 right-2.5 stroke-[2.25px] in-data-input-wrapper:right-0 in-data-input-wrapper:size-4 in-data-input-wrapper:stroke-[2.625px] in-data-input-wrapper:in-data-trailing:in-data-[input-size=md]:right-3 in-data-input-wrapper:in-data-trailing:in-data-[input-size=sm]:right-3"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m6 9 6 6 6-6"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<details>[39m
+            [36m<summary>[39m
+              [0m搜索生产单[0m
+       ...
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"分镜规划"[39m
+      [33mclass[39m=[32m"connection-planning"[39m
+    [36m>[39m
+      [36m<h2>[39m
+        [0m分镜规划[0m
+      [36m</h2>[39m
+      [36m<div[39m
+        [33maria-label[39m=[32m"分镜规划配置"[39m
+        [33mclass[39m=[32m"connection-planning-bar"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"connection-planning-picker"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"w-full in-data-input-wrapper:w-max dan-select-field"[39m
+            [33mdata-select-size[39m=[32m"sm"[39m
+          [36m>[39m
+            [36m<label[39m
+              [33mclass[39m=[32m"flex cursor-default items-center gap-0.5 text-sm font-medium text-secondary mb-1.5"[39m
+              [33mdata-label[39m=[32m"true"[39m
+              [33mfor[39m=[32m"select-native-_r_t_"[39m
+              [33mid[39m=[32m"select-native-_r_t_-label"[39m
+            [36m>[39m
+              [0m生产单[0m
+              [36m<span[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"hidden text-brand-tertiary group-required:block group-invalid:text-error-primary"[39m
+              [36m>[39m
+                [0m*[0m
+              [36m</span>[39m
+            [36m</label>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"relative grid w-full items-center dan-select-control"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-sliders-horizontal dan-select-leading"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M10 5H3"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 19H3"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M14 3v4"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 17v4"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M21 12h-9"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M21 19h-5"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M21 5h-7"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M8 10v4"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M8 12H3"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [36m<select[39m
+                [33maria-expanded[39m=[32m"false"[39m
+                [33maria-haspopup[39m=[32m"listbox"[39m
+                [33maria-label[39m=[32m"选择规划生产单"[39m
+                [33maria-labelledby[39m=[32m"select-native-_r_t_-label"[39m
+                [33mclass[39m=[32m"dan-select-trigger appearance-none rounded-lg bg-primary font-medium text-primary shadow-xs ring-1 ring-primary outline-hidden transition duration-100 ease-linear ring-inset placeholder:text-fg-quaternary focus-visible:ring-2 focus-visible:ring-brand disabled:cursor-not-allowed disabled:opacity-50 py-2 pl-3 text-sm in-data-input-wrapper:flex in-data-input-wrapper:h-full in-data-input-wrapper:gap-1 in-data-input-wrapper:bg-inherit in-data-input-wrapper:px-3 in-data-input-wrapper:py-2 in-data-input-wrapper:font-normal in-data-input-wrapper:text-tertiary in-data-input-wrapper:shadow-none in-data-input-wrapper:ring-transparent in-data-input-wrapper:in-data-[size=sm]:text-sm in-data-input-wrapper:group-disabled:pointer-events-none in-data-input-wrapper:group-disabled:cursor-not-allowed in-data-input-wrapper:group-disabled:bg-transparent in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-[input-size=lg]:py-2.5 in-data-input-wrapper:in-data-[input-size=md]:py-2 in-data-input-wrapper:in-data-[input-size=md]:pl-3 in-data-input-wrapper:in-data-[input-size=sm]:text-sm in-data-input-wrapper:in-data-leading:pr-4.5 in-data-input-wrapper:in-data-leading:in-data-[input-size=lg]:pl-3.5 in-data-input-wrapper:in-data-leading:in-data-[input-size=md]:pr-4.5 in-data-input-wrapper:in-data-leading:in-data-[input-size=md]:pl-3 in-data-input-wrapper:in-data-leading:in-data-[input-size=sm]:pr-3.5 in-data-input-wrapper:in-data-trailing:in-data-[input-size=lg]:pr-8 in-data-input-wrapper:in-data-trailing:in-data-[input-size=md]:pr-7.5 in-data-input-wrapper:in-data-trailing:in-data-[input-size=sm]:pr-6.5"[39m
+                [33mid[39m=[32m"select-native-_r_t_"[39m
+              [36m>[39m
+                [36m<option[39m
+                  [33mvalue[39m=[32m""[39m
+                [36m>[39m
+                  [0m选择生产单[0m
+                [36m</option>[39m
+                [36m<option[39m
+                  [33mvalue[39m=[32m"episode"[39m
+                [36m>[39m
+                  [0m隔离生产单[0m
+                [36m</option>[39m
+              [36m</select>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"pointer-events-none absolute text-fg-quaternary dan-select-caret size-4 right-2.5 stroke-[2.25px] in-data-input-wrapper:right-0 in-data-input-wrapper:size-4 in-data-input-wrapper:stroke-[2.625px] in-data-input-wrapper:in-data-trailing:in-data-[input-size=md]:right-3 in-data-input-wrapper:in-data-trailing:in-data-[input-size=sm]:right-3"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m6 9 6 6 6-6"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<details>[39m
+            [36m<summary>[39m
+              [0m搜索生产单[0m
+       ...
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/local-app/WorkspacePlanningSelection.test.tsx:35:15
+     33|  render(<ConnectionPlanningTable initialEpisode={{episodeId:'episode',…
+     34|  fireEvent.click(await screen.findByRole('button',{name:'保存规划选择'}));
+     35|  await screen.findByText('已保存规划配置');
+       |               ^
+     36|  expect(reads).toBe(1);expect(writes).toBe(1);
+     37| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 3 passed (5)
+   Start at  10:29:52
+   Duration  2.79s (transform 265ms, setup 16ms, collect 2.04s, tests 1.35s, environment 679ms, prepare 80ms)
+

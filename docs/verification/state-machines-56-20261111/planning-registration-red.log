@@ -1,0 +1,361 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/GlobalPlanningSettings.test.tsx --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+·x
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/GlobalPlanningSettings.test.tsx > continues only the list read after a Harness version was created
+TestingLibraryElementError: Unable to find an accessible element with the role "button" and name "重新读取版本"
+
+Here are the accessible roles:
+
+  region:
+
+  Name "分镜规划默认设置":
+  [36m<section[39m
+    [33maria-labelledby[39m=[32m"storyboard-planning-title"[39m
+    [33mclass[39m=[32m"connection-planning storyboard-planning"[39m
+  [36m/>[39m
+
+  Name "登记 Harness 版本":
+  [36m<section[39m
+    [33maria-labelledby[39m=[32m"storyboard-version-title"[39m
+    [33mclass[39m=[32m"storyboard-version-registration"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  banner:
+
+  Name "":
+  [36m<header[39m
+    [33mclass[39m=[32m"storyboard-planning-header"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "分镜规划默认设置":
+  [36m<h3[39m
+    [33mid[39m=[32m"storyboard-planning-title"[39m
+  [36m/>[39m
+
+  Name "登记 Harness 版本":
+  [36m<h3[39m
+    [33mid[39m=[32m"storyboard-version-title"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p />[39m
+
+  Name "":
+  [36m<p />[39m
+
+  --------------------------------------------------
+  group:
+
+  Name "":
+  [36m<div[39m
+    [33mclass[39m=[32m"group/input relative flex w-full flex-row place-content-center place-items-center rounded-lg bg-primary shadow-xs ring-1 ring-primary transition-shadow duration-100 ease-linear ring-inset group-disabled:cursor-not-allowed group-disabled:opacity-50 group-invalid:ring-error_subtle"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mrole[39m=[32m"group"[39m
+  [36m/>[39m
+
+  Name "Prompt Harness":
+  [36m<fieldset[39m
+    [33mclass[39m=[32m"storyboard-harness"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  textbox:
+
+  Name "分镜规划 模型":
+  [36m<input[39m
+    [33maria-label[39m=[32m"分镜规划 模型"[39m
+    [33mclass[39m=[32m"m-0 w-full bg-transparent text-primary ring-0 outline-hidden placeholder:text-placeholder autofill:rounded-lg autofill:text-primary disabled:cursor-not-allowed px-3 py-2 text-sm"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mtype[39m=[32m"text"[39m
+    [33mvalue[39m=[32m"gpt-5.6-luna"[39m
+  [36m/>[39m
+
+  Name "版本名称":
+  [36m<input[39m
+    [33mname[39m=[32m"name"[39m
+    [33mrequired[39m=[32m""[39m
+  [36m/>[39m
+
+  Name "版本摘要":
+  [36m<input[39m
+    [33mname[39m=[32m"summary"[39m
+    [33mrequired[39m=[32m""[39m
+  [36m/>[39m
+
+  Name "Harness 内容":
+  [36m<textarea[39m
+    [33mname[39m=[32m"instructions"[39m
+    [33mrequired[39m=[32m""[39m
+    [33mrows[39m=[32m"4"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  radio:
+
+  Name "事实规划 planning-v1 · v1 保留事实":
+  [36m<input[39m
+    [33mname[39m=[32m"storyboard-harness"[39m
+    [33mtype[39m=[32m"radio"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  strong:
+
+  Name "":
+  [36m<strong />[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "保存新版本":
+  [36m<button[39m
+    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+    [33mdata-color[39m=[32m"secondary"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mid[39m=[32m"react-aria-_r_4_"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"submit"[39m
+  [36m/>[39m
+
+  Name "保存默认设置":
+  [36m<button[39m
+    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 bg-brand-solid text-white shadow-xs-skeuomorphic ring-1 ring-transparent ring-inset hover:bg-brand-solid_hover data-loading:bg-brand-solid_hover before:absolute before:inset-px before:border before:border-white/12 before:mask-b-from-0% *:data-icon:text-white/60 hover:*:data-icon:text-white/70"[39m
+    [33mdata-color[39m=[32m"primary"[39m
+    [33mdata-disabled[39m=[32m"true"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mdisabled[39m=[32m""[39m
+    [33mid[39m=[32m"react-aria-_r_6_"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  status:
+
+  Name "":
+  [36m<span[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  contentinfo:
+
+  Name "":
+  [36m<footer[39m
+    [33mclass[39m=[32m"storyboard-planning-footer"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-labelledby[39m=[32m"storyboard-planning-title"[39m
+      [33mclass[39m=[32m"connection-planning storyboard-planning"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"storyboard-planning-card"[39m
+      [36m>[39m
+        [36m<header[39m
+          [33mclass[39m=[32m"storyboard-planning-header"[39m
+        [36m>[39m
+          [36m<h3[39m
+            [33mid[39m=[32m"storyboard-planning-title"[39m
+          [36m>[39m
+            [0m分镜规划默认设置[0m
+          [36m</h3>[39m
+          [36m<p>[39m
+            [0m适用于所有账号和生产单。[0m
+          [36m</p>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"storyboard-planning-fields"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mclass[39m=[32m"storyboard-planning-model"[39m
+          [36m>[39m
+            [0m模型[0m
+            [36m<div[39m
+              [33mclass[39m=[32m"group/input relative flex w-full flex-row place-content-center place-items-center rounded-lg bg-primary shadow-xs ring-1 ring-primary transition-shadow duration-100 ease-linear ring-inset group-disabled:cursor-not-allowed group-disabled:opacity-50 group-invalid:ring-error_subtle"[39m
+              [33mdata-rac[39m=[32m""[39m
+              [33mrole[39m=[32m"group"[39m
+            [36m>[39m
+              [36m<input[39m
+                [33maria-label[39m=[32m"分镜规划 模型"[39m
+                [33mclass[39m=[32m"m-0 w-full bg-transparent text-primary ring-0 outline-hidden placeholder:text-placeholder autofill:rounded-lg autofill:text-primary disabled:cursor-not-allowed px-3 py-2 text-sm"[39m
+                [33mdata-rac[39m=[32m""[39m
+                [33mtype[39m=[32m"text"[39m
+                [33mvalue[39m=[32m"gpt-5.6-luna"[39m
+              [36m/>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"pointer-events-none absolute hidden size-4 stroke-[2.25px] text-fg-error-secondary group-invalid/input:block right-3"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 16v-4m0-4h.01M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10Z"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</div>[39m
+          [36m</label>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"storyboard-harness-workbench"[39m
+          [33mdata-layout[39m=[32m"side"[39m
+        [36m>[39m
+          [36m<div>[39m
+            [36m<fieldset[39m
+              [33mclass[39m=[32m"storyboard-harness"[39m
+            [36m>[39m
+              [36m<legend>[39m
+                [0mPrompt Harness[0m
+              [36m</legend>[39m
+              [36m<label>[39m
+                [36m<input[39m
+                  [33mname[39m=[32m"storyboard-harness"[39m
+                  [33mtype[39m=[32m"radio"[39m
+                [36m/>[39m
+                [36m<span>[39m
+                  [36m<strong>[39m
+                    [0m事实规划[0m
+                  [36m</strong>[39m
+                  [36m<small>[39m
+                    [0mplanning-v1[0m
+                    [0m · v[0m
+                    [0m1[0m
+                  [36m</small>[39m
+                  [36m<small>[39m
+                    [0m保留事实[0m
+                  [36m</small>[39m
+                [36m</span>[39m
+              [36m</label>[39m
+            [36m</fieldset>[39m
+          [36m</div>[39m
+          [36m<section[39m
+            [33maria-labelledby[39m=[32m"storyboard-version-title"[39m
+            [33mclass[39m=[32m"storyboard-version-registration"[39m
+          [36m>[39m
+            [36m<h3[39m
+              [33mid[39m=[32m"storyboard-version-title"[39m
+            [36m>[39m
+              [0m登记 Harness 版本[0m
+            [36m</h3>[39m
+            [36m<p>[39m
+              [0m现有生产单保留已冻结的版本。新版本登记后可设为默认。[0m
+            [36m</p>[39m
+            [36m<form>[39m
+              [36m<label>[39m
+                [0m版本名称[0m
+                [36m<input[39m
+                  [33mname[39m=[32m"name"[39m
+                  [33mrequired[39m=[32m""[39m
+                [36m/>[39m
+              [36m</label>[39m
+              [36m<label>[39m
+                [0m版本摘要[0m
+                [36m<input[39m
+                  [33mname[39m=[32m"summary"[39m
+                  [33mrequired[39m=[32m""[39m
+                [36m/>[39m
+              [36m</label>[39m
+              [36m<label>[39m
+                [0mHarness 内容[0m
+                [36m<textarea[39m
+                  [33mname[39m=[32m"instructions"[39m
+                  [33mrequired[39m=[32m""[39m
+                  [33mrows[39m=[32m"4"[39m
+                [36m/>[39m
+              [36m</label>[39m
+              [36m<div>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+                  [33mdata-color[39m=[32m"secondary"[39m
+                  [33mdata-rac[39m=[32m""[39m
+                  [33mdata-react-aria-pressable[39m=[32m"true"[39m
+                  [33mid[39m=[32m"react-aria-_r_4_"[39m
+                  [33mtabindex[39m=[32m"0"[39m
+                  [33mtype[39m=[32m"submit"[39m
+                [36m>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"transition-inherit-all px-0.5"[39m
+                    [33mdata-text[39m=[32m"true"[39m
+                  [36m>[39m
+                    [0m保存新版本[0m
+                  [36m</span>[39m
+                [36m</button>[39m
+                [36m<span[39m
+                  [33mrole[39m=[32m"status"[39m
+                [36m>[39m
+                  [0m列表暂不可读[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</form>[39m
+          [36m</section>[39m
+        [36m</div>[39m
+        [36m<footer[39m
+          [33mclass[39m=[32m"storyboard-planning-footer"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 bg-brand-solid text-white shadow-xs-skeuomorphic ring-1 ring-transparent ring-inset hover:bg-brand-solid_hover data-loading:bg-brand-solid_hover before:absolute before:inset-px before:border before:border-white/12 before:mask-b-from-0% *:data-icon:text-white/60 hover:*:data-icon:text-white/70"[39m
+            [33mdata-color[39m=[32m"primary"[39m
+            [33mdata-disabled[39m=[32m"true"[39m
+            [33mdata-rac[39m=[32m""[39m
+            [33mdata-react-aria-pressable[39m=[32m"true"[39m
+            [33mdisabled[39m=[32m""[39m
+            [33mid[39m=[32m"react-aria-_r_6_"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"transition-inherit-all px-0.5"[39m
+              [33mdata-text[39m=[32m"true"[39m
+            [36m>[39m
+              [0m保存默认设置[0m
+            [36m</span>[39m
+          [36m</button>[39m
+        [36m</footer>[39m
+      [36m</div>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/local-app/GlobalPlanningSettings.test.tsx:45:25
+     43|  fireEvent.click(screen.getByRole('button',{name:'保存新版本'}));
+     44|  await screen.findByText(/列表暂不可读/);
+     45|  fireEvent.click(screen.getByRole('button',{name:'重新读取版本'}));
+       |                         ^
+     46|  await screen.findByText('新版本已登记并选中，保存默认设置后生效。');
+     47|  expect(creates).toBe(1);expect(reads).toBe(3);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  10:27:20
+   Duration  1.25s (transform 60ms, setup 9ms, collect 752ms, tests 119ms, environment 241ms, prepare 37ms)
+

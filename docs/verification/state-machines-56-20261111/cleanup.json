@@ -1,0 +1,12 @@
+{
+  "fixtureDatabasesRemoved": true,
+  "remainingDatabases": [
+    "loop_story_baseline"
+  ],
+  "sdkSourceCommit": "72ddb3300cda4ed31cbd0bccbfc94fb29b8cffca",
+  "container": "loop-state56-524a87768e4c",
+  "scratchRoot": "/private/tmp/loop-state56-mtfB0t",
+  "previewClosed": true,
+  "containerRemoved": true,
+  "scratchRemoved": true
+}

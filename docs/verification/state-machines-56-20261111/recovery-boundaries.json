@@ -1,0 +1,61 @@
+{
+  "passed": true,
+  "episodePlanningRevision": 1,
+  "accountHarnessCount": 2,
+  "globalPlanningRevision": 1,
+  "globalHarnessCount": 1,
+  "inspectorEntry": "host notification injected; native edit and persistence unmocked",
+  "nativeSaves": 1,
+  "registrationAttempts": [
+    {
+      "name": "saveWorkspaceCaptions",
+      "key": "2e21a895-95d8-4aee-812b-27175ded74ec",
+      "forwarded": false,
+      "status": 503
+    },
+    {
+      "name": "saveWorkspaceCaptions",
+      "key": "2e21a895-95d8-4aee-812b-27175ded74ec",
+      "forwarded": true,
+      "status": 200
+    }
+  ],
+  "unknownAttempts": [
+    {
+      "name": "saveWorkspaceCaptions",
+      "key": "4e8a853a-d19e-496a-8022-357087973ff8",
+      "forwarded": true,
+      "status": 200
+    },
+    {
+      "name": "saveWorkspaceCaptions",
+      "key": "4e8a853a-d19e-496a-8022-357087973ff8",
+      "forwarded": true,
+      "status": 200
+    }
+  ],
+  "imports": [
+    {
+      "name": "importMaterial",
+      "key": "33731d2b-aa84-4634-89c4-26d1b12bbb7d",
+      "forwarded": true,
+      "status": 200
+    }
+  ],
+  "candidates": [
+    {
+      "name": "registerWorkspaceVisualCandidate",
+      "key": "c6014544-0b2d-44b0-9145-8b1a27de0f55",
+      "forwarded": false,
+      "status": 503
+    },
+    {
+      "name": "registerWorkspaceVisualCandidate",
+      "key": "c6014544-0b2d-44b0-9145-8b1a27de0f55",
+      "forwarded": true,
+      "status": 200
+    }
+  ],
+  "captionAfterRestart": "真实保存后继续",
+  "unknownRevision": 6
+}

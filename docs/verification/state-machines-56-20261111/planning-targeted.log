@@ -1,0 +1,12 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/GlobalPlanningSettings.test.tsx src/local-app/WorkspacePlanningSelection.test.tsx src/platform/ConfigurationForms.local.test.tsx --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+·············
+
+ Test Files  3 passed (3)
+      Tests  13 passed (13)
+   Start at  10:43:44
+   Duration  2.09s (transform 526ms, setup 31ms, collect 3.65s, tests 741ms, environment 1.10s, prepare 116ms)
+

@@ -1,0 +1,15 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workspaceRecovery56.browser.integration.test.ts --maxWorkers=1 --fileParallelism=false --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+stderr | src/local-app/workspaceRecovery56.browser.integration.test.ts > resumes caption and upload operations through real Owner HTTP, PostgreSQL and the Studio document store
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-153-fJ9z1D/recovery-vite/deps/react-dom_client.js?v=e554ce54 as it exceeds the max of 500KB.
+
+·
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  10:42:03
+   Duration  17.63s (transform 516ms, setup 8ms, collect 827ms, tests 16.65s, environment 0ms, prepare 32ms)
+

@@ -1,0 +1,299 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/WorkspacePlanningSelection.test.tsx --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+··x
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/WorkspacePlanningSelection.test.tsx > keeps an acknowledged account Harness when refreshing its list fails
+TestingLibraryElementError: Unable to find an element with the text: /版本列表中断/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"分镜规划选择"[39m
+      [33mclass[39m=[32m"workspace-planning-selection"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"workspace-planning-summary"[39m
+      [36m>[39m
+        [36m<strong>[39m
+          [0m分镜规划[0m
+        [36m</strong>[39m
+        [36m<span>[39m
+          [0mCodex[0m
+        [36m</span>[39m
+        [36m<span>[39m
+          [0m尚未选择[0m
+        [36m</span>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+          [33mdata-color[39m=[32m"secondary"[39m
+          [33mdata-rac[39m=[32m""[39m
+          [33mdata-react-aria-pressable[39m=[32m"true"[39m
+          [33mid[39m=[32m"react-aria-_r_1i_"[39m
+          [33mtabindex[39m=[32m"0"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"transition-inherit-all px-0.5"[39m
+            [33mdata-text[39m=[32m"true"[39m
+          [36m>[39m
+            [0m选择规划模型[0m
+          [36m</span>[39m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"规划配置"[39m
+        [33mclass[39m=[32m"configuration-form"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"stage-configuration-dialog is-inline"[39m
+        [36m>[39m
+          [36m<section>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"stage-configuration-fields"[39m
+            [36m>[39m
+              [36m<label>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"field-label"[39m
+                [36m>[39m
+                  [0m模型[0m
+                  [36m<span[39m
+                    [33maria-label[39m=[32m"模型说明"[39m
+                    [33mclass[39m=[32m"help-tip"[39m
+                    [33mrole[39m=[32m"button"[39m
+                    [33mtabindex[39m=[32m"0"[39m
+                  [36m>[39m
+                    [36m<svg[39m
+                      [33maria-hidden[39m=[32m"true"[39m
+                      [33mclass[39m=[32m"lucide lucide-info help-tip-icon"[39m
+                      [33mfill[39m=[32m"none"[39m
+                      [33mheight[39m=[32m"24"[39m
+                      [33mstroke[39m=[32m"currentColor"[39m
+                      [33mstroke-linecap[39m=[32m"round"[39m
+                      [33mstroke-linejoin[39m=[32m"round"[39m
+                      [33mstroke-width[39m=[32m"1.8"[39m
+                      [33mviewBox[39m=[32m"0 0 24 24"[39m
+                      [33mwidth[39m=[32m"24"[39m
+                      [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                    [36m>[39m
+                      [36m<circle[39m
+                        [33mcx[39m=[32m"12"[39m
+                        [33mcy[39m=[32m"12"[39m
+                        [33mr[39m=[32m"10"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M12 16v-4"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M12 8h.01"[39m
+                      [36m/>[39m
+                    [36m</svg>[39m
+                  [36m</span>[39m
+                [36m</span>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"group/input relative flex w-full flex-row place-content-center place-items-center rounded-lg bg-primary shadow-xs ring-1 ring-primary transition-shadow duration-100 ease-linear ring-inset group-disabled:cursor-not-allowed group-disabled:opacity-50 group-invalid:ring-error_subtle"[39m
+                  [33mdata-rac[39m=[32m""[39m
+                  [33mrole[39m=[32m"group"[39m
+                [36m>[39m
+                  [36m<input[39m
+                    [33maria-label[39m=[32m"分镜规划 模型"[39m
+                    [33mclass[39m=[32m"m-0 w-full bg-transparent text-primary ring-0 outline-hidden placeholder:text-placeholder autofill:rounded-lg autofill:text-primary disabled:cursor-not-allowed px-3 py-2 text-sm"[39m
+                    [33mdata-rac[39m=[32m""[39m
+                    [33mtype[39m=[32m"text"[39m
+                    [33mvalue[39m=[32m"gpt-5.6-luna"[39m
+                  [36m/>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"pointer-events-none absolute hidden size-4 stroke-[2.25px] text-fg-error-secondary group-invalid/input:block right-3"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"24"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+                    [33mstroke-linejoin[39m=[32m"round"[39m
+                    [33mstroke-width[39m=[32m"2"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"24"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"M12 16v-4m0-4h.01M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10Z"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                [36m</div>[39m
+              [36m</label>[39m
+              [36m<label>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"field-label"[39m
+                [36m>[39m
+                  [0mPrompt Harness[0m
+                  [36m<span[39m
+                    [33maria-label[39m=[32m"Prompt Harness说明"[39m
+               ...
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"分镜规划选择"[39m
+      [33mclass[39m=[32m"workspace-planning-selection"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"workspace-planning-summary"[39m
+      [36m>[39m
+        [36m<strong>[39m
+          [0m分镜规划[0m
+        [36m</strong>[39m
+        [36m<span>[39m
+          [0mCodex[0m
+        [36m</span>[39m
+        [36m<span>[39m
+          [0m尚未选择[0m
+        [36m</span>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+          [33mdata-color[39m=[32m"secondary"[39m
+          [33mdata-rac[39m=[32m""[39m
+          [33mdata-react-aria-pressable[39m=[32m"true"[39m
+          [33mid[39m=[32m"react-aria-_r_1i_"[39m
+          [33mtabindex[39m=[32m"0"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"transition-inherit-all px-0.5"[39m
+            [33mdata-text[39m=[32m"true"[39m
+          [36m>[39m
+            [0m选择规划模型[0m
+          [36m</span>[39m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"规划配置"[39m
+        [33mclass[39m=[32m"configuration-form"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"stage-configuration-dialog is-inline"[39m
+        [36m>[39m
+          [36m<section>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"stage-configuration-fields"[39m
+            [36m>[39m
+              [36m<label>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"field-label"[39m
+                [36m>[39m
+                  [0m模型[0m
+                  [36m<span[39m
+                    [33maria-label[39m=[32m"模型说明"[39m
+                    [33mclass[39m=[32m"help-tip"[39m
+                    [33mrole[39m=[32m"button"[39m
+                    [33mtabindex[39m=[32m"0"[39m
+                  [36m>[39m
+                    [36m<svg[39m
+                      [33maria-hidden[39m=[32m"true"[39m
+                      [33mclass[39m=[32m"lucide lucide-info help-tip-icon"[39m
+                      [33mfill[39m=[32m"none"[39m
+                      [33mheight[39m=[32m"24"[39m
+                      [33mstroke[39m=[32m"currentColor"[39m
+                      [33mstroke-linecap[39m=[32m"round"[39m
+                      [33mstroke-linejoin[39m=[32m"round"[39m
+                      [33mstroke-width[39m=[32m"1.8"[39m
+                      [33mviewBox[39m=[32m"0 0 24 24"[39m
+                      [33mwidth[39m=[32m"24"[39m
+                      [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                    [36m>[39m
+                      [36m<circle[39m
+                        [33mcx[39m=[32m"12"[39m
+                        [33mcy[39m=[32m"12"[39m
+                        [33mr[39m=[32m"10"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M12 16v-4"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M12 8h.01"[39m
+                      [36m/>[39m
+                    [36m</svg>[39m
+                  [36m</span>[39m
+                [36m</span>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"group/input relative flex w-full flex-row place-content-center place-items-center rounded-lg bg-primary shadow-xs ring-1 ring-primary transition-shadow duration-100 ease-linear ring-inset group-disabled:cursor-not-allowed group-disabled:opacity-50 group-invalid:ring-error_subtle"[39m
+                  [33mdata-rac[39m=[32m""[39m
+                  [33mrole[39m=[32m"group"[39m
+                [36m>[39m
+                  [36m<input[39m
+                    [33maria-label[39m=[32m"分镜规划 模型"[39m
+                    [33mclass[39m=[32m"m-0 w-full bg-transparent text-primary ring-0 outline-hidden placeholder:text-placeholder autofill:rounded-lg autofill:text-primary disabled:cursor-not-allowed px-3 py-2 text-sm"[39m
+                    [33mdata-rac[39m=[32m""[39m
+                    [33mtype[39m=[32m"text"[39m
+                    [33mvalue[39m=[32m"gpt-5.6-luna"[39m
+                  [36m/>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"pointer-events-none absolute hidden size-4 stroke-[2.25px] text-fg-error-secondary group-invalid/input:block right-3"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"24"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+                    [33mstroke-linejoin[39m=[32m"round"[39m
+                    [33mstroke-width[39m=[32m"2"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"24"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"M12 16v-4m0-4h.01M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10Z"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                [36m</div>[39m
+              [36m</label>[39m
+              [36m<label>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"field-label"[39m
+                [36m>[39m
+                  [0mPrompt Harness[0m
+                  [36m<span[39m
+                    [33maria-label[39m=[32m"Prompt Harness说明"[39m
+               ...
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/local-app/WorkspacePlanningSelection.test.tsx:55:15
+     53|  fireEvent.change(screen.getByRole('textbox',{name:'Harness 内容'}),{tar…
+     54|  fireEvent.click(screen.getByRole('button',{name:'保存新版本'}));
+     55|  await screen.findByText(/版本列表中断/);
+       |               ^
+     56|  fireEvent.click(screen.getByRole('button',{name:'保存新版本'}));
+     57|  await waitFor(()=>expect(screen.queryByRole('textbox',{name:'版本名称'}))…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯ Unhandled Rejection ⎯⎯⎯⎯⎯
+Error: 版本列表中断
+ ❯ localRequest src/local-app/client.ts:15:218
+
+ ❯ onReload src/local-app/WorkspacePlanningSelection.test.tsx:47:192
+ ❯ onCreate src/local-app/WorkspacePlanningSelection.tsx:27:439
+ ❯ submit src/platform/ConfigurationForms.tsx:70:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { status: 503 }
+This error originated in "src/local-app/WorkspacePlanningSelection.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "keeps an acknowledged account Harness when refreshing its list fails". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+     Errors  1 error
+   Start at  10:31:23
+   Duration  2.70s (transform 174ms, setup 8ms, collect 985ms, tests 1.25s, environment 282ms, prepare 33ms)
+

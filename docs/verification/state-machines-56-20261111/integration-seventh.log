@@ -1,0 +1,32 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workspaceRecovery56.browser.integration.test.ts --maxWorkers=1 --fileParallelism=false --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+stderr | src/local-app/workspaceRecovery56.browser.integration.test.ts > resumes caption and upload operations through real Owner HTTP, PostgreSQL and the Studio document store
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-153-4IvJea/recovery-vite/deps/react-dom_client.js?v=7769588e as it exceeds the max of 500KB.
+
+x
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workspaceRecovery56.browser.integration.test.ts > resumes caption and upload operations through real Owner HTTP, PostgreSQL and the Studio document store
+AssertionError: expected [ { …(12) }, { …(12) } ] to have a length of 1 but got 2
+
+- Expected
++ Received
+
+- 1
++ 2
+
+ ❯ src/local-app/workspaceRecovery56.browser.integration.test.ts:89:149
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  10:41:19
+   Duration  16.63s (transform 436ms, setup 8ms, collect 656ms, tests 15.82s, environment 0ms, prepare 30ms)
+

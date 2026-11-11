@@ -1,0 +1,33 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workspaceRecovery56.browser.integration.test.ts --maxWorkers=1 --fileParallelism=false --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+stderr | src/local-app/workspaceRecovery56.browser.integration.test.ts > resumes caption and upload operations through real Owner HTTP, PostgreSQL and the Studio document store
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-153-lM3ULw/recovery-vite/deps/react-dom_client.js?v=2b26653e as it exceeds the max of 500KB.
+
+x
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workspaceRecovery56.browser.integration.test.ts > resumes caption and upload operations through real Owner HTTP, PostgreSQL and the Studio document store
+AssertionError: expected '"{\"width\":1440,\"scrollWidth\":1440…' to contain '"scrollWidth":1440'
+
+- Expected
++ Received
+
+- "scrollWidth":1440
++ "{\"width\":1440,\"scrollWidth\":1440}"
++
+
+ ❯ src/local-app/workspaceRecovery56.browser.integration.test.ts:84:366
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  10:40:27
+   Duration  15.40s (transform 476ms, setup 8ms, collect 699ms, tests 14.56s, environment 0ms, prepare 32ms)
+
