@@ -335,7 +335,7 @@ export function ConnectionWorkspace({ inlineBilling=false,settingsLayout=false,n
       {onRebindVersion && !version.revoked_at && version.secretState === 'unbound' && <Disclosure label={<>恢复缺失的密钥绑定</>}><p>此版本不会自动使用其他版本的认证材料。</p><Input aria-label={`v${version.version} 恢复认证材料`} size="sm" type="password" autoComplete="off" isDisabled={busy} value={rebindSecrets[version.id] ?? ''} onChange={value => setRebindSecrets(current => ({...current,[version.id]:value}))}/><Button color="secondary" size="sm" isDisabled={busy || !rebindSecrets[version.id]} onPress={() => void rebind(version)}>重新绑定此版本</Button></Disclosure>}
     </li>)}</ul></Disclosure>;
   const operationResult=(operation || errorMessage || error || notice) && <div aria-label="连接操作结果" className="connection-operation-result" data-status={operation ? 'pending' : errorMessage || error ? 'failed' : 'success'} ref={resultRef} role={operation ? 'status' : errorMessage || error ? 'alert' : 'status'}>
-    <strong>{operation === 'saving' ? '正在保存连接' : operation === 'testing' ? '正在测试连接' : resultTitle || '操作未确认完成'}</strong>
+    <strong>{operation === 'saving' ? '正在保存连接' : operation === 'testing' ? '正在测试连接' : resultTitle || '连接操作结果'}</strong>
     {resultName && <span>{resultName}</span>}
     {!operation && <span>{errorMessage || error || notice}</span>}
     {!operation && error && resultConnectionId && <Button color="secondary" size="sm" iconLeading={RefreshCw} isDisabled={busy || !(verificationByProvider?.[connections.find(connection=>connection.id===resultConnectionId)?.provider??connectionType.provider]?.available??verificationEnabled)} onPress={()=>void testSelected(resultConnectionId)}>重新测试</Button>}
