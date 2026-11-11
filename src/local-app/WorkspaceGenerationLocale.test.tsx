@@ -1,0 +1,9 @@
+import {act,cleanup,fireEvent,render,screen,within} from '@testing-library/react';
+import {afterEach,expect,it,vi} from 'vitest';
+import {setUiLocale,uiText,useUiLocale} from '../i18n/ui';
+import {WorkspaceVisualTaskStatus} from './WorkspaceVisualTaskStatus';
+import {WorkspaceFrameFitChoices,WorkspaceVideoModeChoices} from './WorkspaceGenerationChoices';
+import {firstFrameVideoMode} from '../worker/registeredAdapters';
+afterEach(()=>{cleanup();setUiLocale('zh-CN');});
+it('renders task phases and recovery in English while keeping unknown receipt permissions',()=>{setUiLocale('en-US');const retry=vi.fn(),reconcile=vi.fn();function Host(){useUiLocale();return <WorkspaceVisualTaskStatus task={{id:'x',taskId:'raw-task-id',status:'failed',kind:'image',error:null,submissionOutcome:'started',submissionUnknown:true}} label={uiText('图片')} onResume={retry} onRefresh={reconcile} onReconcile={reconcile}/>;}render(<Host/>);expect(screen.getByText(/Image.*Submission result unknown/i)).toBeTruthy();expect(screen.queryByRole('button',{name:/Retry image generation/})).toBeNull();fireEvent.click(screen.getByRole('button',{name:/details/i}));expect(screen.getByText(/raw-task-id/)).toBeTruthy();act(()=>setUiLocale('zh-CN'));expect(within(screen.getByRole('dialog')).getByText(/图片提交结果未知/)).toBeTruthy();expect(retry).not.toHaveBeenCalled();});
+it('translates composition and reference explanations without changing protocol IDs',()=>{setUiLocale('en-US');const mode=firstFrameVideoMode(),change=vi.fn();render(<><WorkspaceFrameFitChoices value="contain" onChange={change}/><WorkspaceVideoModeChoices modes={[mode]} value={mode.id} onChange={change}/></>);expect(screen.getByRole('group',{name:'First-frame composition'})).toBeTruthy();const modes=screen.getByRole('group',{name:'Generation mode'});fireEvent.click(within(modes).getByRole('button'));expect(change).toHaveBeenCalledWith(mode.id);expect(mode.id).toBe('first-frame');});

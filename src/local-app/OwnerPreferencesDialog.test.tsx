@@ -37,11 +37,11 @@ it('shows upload errors without losing the existing avatar',async()=>{
  await userEvent.setup({applyAccept:false}).upload(screen.getByLabelText('上传头像图片'),new File(['<svg/>'],'bad.svg',{type:'image/svg+xml'}));
  expect((await screen.findByRole('alert')).textContent).toContain('PNG、JPEG 或 WebP');expect(screen.getByRole('img',{name:'头像预览'}).getAttribute('src')).toBe(avatar);
 });
-it('shows static language and distinguishes unchanged, draft, saving, saved and failed preferences',async()=>{
+it('offers supported languages and distinguishes unchanged, draft, saving, saved and failed preferences',async()=>{
  const user=userEvent.setup();let finish:(saved:boolean)=>void=()=>{};
  const save=vi.fn(()=>new Promise<boolean>(resolve=>{finish=resolve;}));
  const {rerender}=render(<OwnerPreferencesDialog {...base} onSave={save}/>);
- expect(screen.queryByRole('combobox',{name:'界面语言'})).toBeNull();expect(screen.getByText('简体中文')).toBeTruthy();
+ expect(screen.getByRole('combobox',{name:'界面语言'})).toHaveProperty('value','zh-CN');expect(screen.getByText('简体中文')).toBeTruthy();
  expect(screen.getByRole('status').textContent).toBe('未修改');expect((screen.getByRole('button',{name:'保存偏好'}) as HTMLButtonElement).disabled).toBe(true);
  await user.type(screen.getByRole('textbox',{name:'显示名称'}),'修改');expect(screen.getByRole('status').textContent).toBe('有未保存修改');
  await user.click(screen.getByRole('button',{name:'保存偏好'}));expect(screen.getByRole('status').textContent).toBe('保存中…');finish(true);

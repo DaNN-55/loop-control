@@ -1,3 +1,4 @@
+import {uiText} from '../i18n/ui';
 import {Children,useEffect,useRef,useState,type CSSProperties,type ReactNode} from 'react';
 
 const storageKey='loop.production.preparation.listRatio.v1',defaultRatio=41;
@@ -10,7 +11,7 @@ export function WorkspacePreparationLayout({children}:{children:ReactNode}){
  function move(clientX:number){const bounds=grid.current!.getBoundingClientRect();if(bounds.width<=0)return;const pixels=Math.max(280,Math.min(bounds.width-369,clientX-bounds.left));setRatio(clamp(pixels/bounds.width*100));}
  return <div ref={grid} className={'workspace-preparation-grid is-resizable'+(dragging?' is-resizing':'')} style={{'--workspace-list-size':ratio+'%'} as CSSProperties}>
   {panes[0]}
-  <div className="workspace-preparation-resizer" role="separator" tabIndex={0} aria-label="调整镜头列表宽度" aria-orientation="vertical" aria-valuemin={20} aria-valuemax={75} aria-valuenow={Math.round(ratio)} aria-valuetext={`镜头列表 ${Math.round(ratio)}%`} title="拖动调整宽度；双击恢复默认；方向键微调"
+  <div className="workspace-preparation-resizer" role="separator" tabIndex={0} aria-label={uiText("调整镜头列表宽度")} aria-orientation="vertical" aria-valuemin={20} aria-valuemax={75} aria-valuenow={Math.round(ratio)} aria-valuetext={uiText("镜头列表 {value0}%",{value0:String(Math.round(ratio))})} title={uiText("拖动调整宽度；双击恢复默认；方向键微调")}
    onPointerDown={e=>{if(e.button!==0)return;e.preventDefault();pointer.current=e.pointerId;e.currentTarget.focus();e.currentTarget.setPointerCapture?.(e.pointerId);setDragging(true);}}
    onPointerMove={e=>{if(pointer.current===e.pointerId)move(e.clientX);}}
    onPointerUp={e=>{if(pointer.current===e.pointerId){pointer.current=null;setDragging(false);}}}

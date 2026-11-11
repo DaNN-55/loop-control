@@ -170,22 +170,24 @@ it('shows only populated series options using full catalog counts across pages a
 });
 
 it.each([
- {pending:0,running:0,blocked:0,failed:0,production:0,tone:'success',title:'当前没有待审核项'},
- {pending:2,running:0,blocked:0,failed:0,production:0,tone:'warning',title:'2 项审核，等待你的决定'},
- {pending:0,running:1,blocked:0,failed:0,production:0,tone:'info',title:'内容正在制作中'},
- {pending:0,running:0,blocked:0,failed:0,production:1,tone:'info',title:'内容正在制作中'},
- {pending:0,running:0,blocked:1,failed:0,production:0,tone:'danger',title:'有后台任务需要处理'},
- {pending:0,running:0,blocked:0,failed:1,production:0,tone:'danger',title:'有后台任务需要处理'},
- {pending:2,running:1,blocked:1,failed:1,production:1,tone:'danger',title:'有后台任务需要处理'},
- {pending:2,running:1,blocked:0,failed:0,production:1,tone:'warning',title:'2 项审核，等待你的决定'},
-])('uses $tone for pending=$pending, running=$running, blocked=$blocked, failed=$failed, production=$production',async({pending,running,blocked,failed,production,tone,title})=>{
+ {pending:0,running:0,blocked:0,failed:0,production:0,currentBlockers:0,tone:'success',title:'当前没有待审核项'},
+ {pending:2,running:0,blocked:0,failed:0,production:0,currentBlockers:0,tone:'warning',title:'2 项审核，等待你的决定'},
+ {pending:0,running:1,blocked:0,failed:0,production:0,currentBlockers:0,tone:'info',title:'内容正在制作中'},
+ {pending:0,running:0,blocked:0,failed:0,production:1,currentBlockers:0,tone:'info',title:'内容正在制作中'},
+ {pending:0,running:0,blocked:1,failed:0,production:0,currentBlockers:1,tone:'danger',title:'有后台任务需要处理'},
+ {pending:0,running:0,blocked:0,failed:1,production:0,currentBlockers:1,tone:'danger',title:'有后台任务需要处理'},
+ {pending:2,running:1,blocked:1,failed:1,production:1,currentBlockers:1,tone:'danger',title:'有后台任务需要处理'},
+ {pending:2,running:1,blocked:0,failed:0,production:1,currentBlockers:0,tone:'warning',title:'2 项审核，等待你的决定'},
+ {pending:0,running:0,blocked:1,failed:0,production:1,currentBlockers:0,tone:'warning',title:'有后台记录待核对'},
+ {pending:0,running:0,blocked:0,failed:1,production:1,currentBlockers:0,tone:'warning',title:'有后台记录待核对'},
+])('uses $tone for pending=$pending, running=$running, blocked=$blocked, failed=$failed, production=$production',async({pending,running,blocked,failed,production,currentBlockers,tone,title})=>{
  const openReviews=vi.fn();
- const catalog={pending:{total:pending,items:[],page:1},blocked:{total:0,items:[],page:1},worker:{running,blocked,failed},operationRows:[],statusCounts:{all:0,review:pending,running:production,blocked,done:0},page:1,total:0,stages:{}} as unknown as import('../episodes/episodeCatalogTypes').EpisodeCatalog;
+ const catalog={pending:{total:pending,items:[],page:1},blocked:{total:currentBlockers,items:[],page:1},worker:{running,blocked,failed},operationRows:[],statusCounts:{all:0,review:pending,running:production,blocked,done:0},page:1,total:0,stages:{}} as unknown as import('../episodes/episodeCatalogTypes').EpisodeCatalog;
  render(<OperationsWorkspace remote={{catalog,seriesId:'all',onSeriesChange:vi.fn(),onPageChange:vi.fn(),onPendingPageChange:vi.fn(),onBlockedPageChange:vi.fn()}} episodes={[]} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[]} reviewPackages={[]} series={[]} seriesVersions={[]} tasks={[]} selectedEpisode={null} onSelectEpisode={vi.fn()} onOpenReviewQueue={openReviews}/>);
  const notice=screen.getByRole('status');expect(notice.getAttribute('data-tone')).toBe(tone);expect(within(notice).getByText(title)).toBeTruthy();
  if(pending){await userEvent.setup().click(within(notice).getByRole('button',{name:'开始审核'}));expect(openReviews).toHaveBeenCalledOnce();}
  else expect(within(notice).queryByRole('button',{name:'开始审核'})).toBeNull();
- if(blocked+failed)expect(notice.textContent).toContain([blocked&&`${blocked} 项阻塞`,failed&&`${failed} 项失败`].filter(Boolean).join(' · '));
+ if(blocked+failed)expect(notice.textContent).toContain(currentBlockers?[blocked&&`${blocked} 项阻塞`,failed&&`${failed} 项失败`].filter(Boolean).join(' · '):`${blocked+failed} 项后台记录`);
 });
 
 it('opens completed work as results and never marks its final stage as still in progress',async()=>{

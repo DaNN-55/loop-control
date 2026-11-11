@@ -15,11 +15,11 @@ it('embeds one preference pane without adding a nested dialog and retains its dr
  reads();const user=userEvent.setup(),state=vi.fn();render(<section role="dialog" aria-label="所有者设置"><OwnerPreferencesDialog {...props} onStateChange={state}/></section>);
  await waitFor(()=>expect(request).toHaveBeenCalledTimes(2));
  expect(screen.getAllByRole('dialog')).toHaveLength(1);expect(document.querySelector('.owner-settings-pane')).toBeTruthy();
- expect(screen.getByText('/test/media').closest('[role=tabpanel]')).toHaveProperty('hidden',true);
+ expect(screen.getByRole('textbox',{name:'素材保存目录',hidden:true}).closest('[role=tabpanel]')).toHaveProperty('hidden',true);
  fireEvent.change(screen.getByRole('textbox',{name:'显示名称'}),{target:{value:'保留的名称草稿'}});
  await waitFor(()=>expect(state).toHaveBeenLastCalledWith({busy:false,dirty:true}));
  await user.click(screen.getByRole('tab',{name:'存储位置'}));
- expect(screen.getByText('/test/media')).toBeTruthy();expect(screen.queryByRole('button',{name:'保存偏好'})).toBeNull();
+ expect(screen.getByRole('textbox',{name:'素材保存目录',hidden:true})).toBeTruthy();expect(screen.queryByRole('button',{name:'保存偏好'})).toBeNull();
  expect(screen.queryByRole('textbox',{name:'显示名称'})).toBeNull();
  await user.click(screen.getByRole('tab',{name:'个人与界面'}));
  expect(screen.getByRole('textbox',{name:'显示名称'})).toHaveProperty('value','保留的名称草稿');
@@ -58,8 +58,8 @@ it('keeps notifications separate from personal data while using the embedded sec
 it('reports an edited production location without treating a directory read as a pending write',async()=>{
  reads();const user=userEvent.setup(),state=vi.fn();render(<OwnerPreferencesDialog {...props} onStateChange={state}/>);
  await waitFor(()=>expect(request).toHaveBeenCalledTimes(2));
- await user.click(screen.getByRole('tab',{name:'存储位置'}));await user.click(screen.getByRole('button',{name:'更换存储位置'}));
- fireEvent.change(screen.getByRole('textbox',{name:'新位置'}),{target:{value:'/test/new-media'}});
+ await user.click(screen.getByRole('tab',{name:'存储位置'}));
+ fireEvent.change(screen.getByRole('textbox',{name:'素材保存目录'}),{target:{value:'/test/new-media'}});
  await waitFor(()=>expect(state).toHaveBeenLastCalledWith({busy:false,dirty:true}));
  expect(screen.getByRole('tab',{name:'个人与界面'})).toHaveProperty('disabled',false);
 });

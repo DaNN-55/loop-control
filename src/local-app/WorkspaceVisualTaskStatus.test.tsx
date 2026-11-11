@@ -36,7 +36,7 @@ it('hides a task with an explicitly linked replacement without exposing its reco
 });
 it('keeps the explicit unknown-image retry route separate from ordinary recovery',()=>{
  const retry=vi.fn();render(<WorkspaceVisualTaskStatus task={{id:'image',taskId:'image-task',status:'failed',kind:'image',error:null,submissionUnknown:true,submissionOutcome:'started'}} label="图片" onRetryUnknown={retry} onResume={vi.fn()} onRefresh={vi.fn()} onReconcile={vi.fn()}/>);
- fireEvent.click(screen.getByRole('button',{name:'重试图片生成'}));expect(retry).toHaveBeenCalledOnce();
+ fireEvent.click(screen.getByRole('button',{name:'重新生成'}));expect(retry).toHaveBeenCalledOnce();
  fireEvent.click(screen.getByRole('button',{name:'查看图片任务详情'}));expect(screen.getByText(/上一次可能已产生费用/)).toBeTruthy();expect(screen.queryByRole('button',{name:'恢复画面任务'})).toBeNull();
 });
 it('distinguishes unknown submission from failure and only offers a read-only reconciliation',async()=>{

@@ -116,11 +116,12 @@ it('候选登记进行中关闭并立即重开，完成后同步已登记候选'
 
 it('导入提交成功但网络回执丢失时，真实命令客户端复用幂等回执',async()=>{
  const fixture=setup();let workspace=fixture.workspace,imported=0,lost=false;
- const receipts=new Map<string,unknown>(),importKeys:string[]=[];
+ const receipts=new Map<string,unknown>(),importKeys:string[]=[],readbackKeys:string[]=[];
  vi.stubGlobal('crypto',webcrypto);
  vi.stubGlobal('fetch',vi.fn(async(path:string,init?:RequestInit)=>{
   if(path.endsWith('/session'))return Response.json({csrfToken:'upload-csrf'});
   if(!init?.method)return Response.json({workspace});
+  if(path.endsWith('/command-receipt')){const query=JSON.parse(String(init.body));readbackKeys.push(query.operation.idempotencyKey);return Response.json({status:'committed',result:receipts.get(query.operation.idempotencyKey)});}
   const body=JSON.parse(String(init.body)) as {command:string;idempotencyKey:string;data:Record<string,string>};
   if(body.command==='importMaterial')importKeys.push(body.idempotencyKey);
   if(receipts.has(body.idempotencyKey))return Response.json(receipts.get(body.idempotencyKey));
@@ -139,10 +140,8 @@ it('导入提交成功但网络回执丢失时，真实命令客户端复用幂�
  }));
  function View(){const [value,setValue]=useState(workspace);return <WorkspaceVisualPreparation workspace={value} command={(name,data)=>localCommand(name,data,undefined,'episode-commands')} onChange={setValue} materials={[]}/>;}
  render(<View/>);choose([image('network-retry.png')]);
- await waitFor(()=>expect(uploadResults().textContent).toContain('网络连接中断。'));
- fireEvent.click(screen.getByRole('button',{name:'重试未完成项'}));
  await waitFor(()=>expect(screen.getAllByRole('button',{name:/预览图片候选/})).toHaveLength(1));
- expect(imported).toBe(1);expect(importKeys).toHaveLength(2);expect(importKeys[1]).toBe(importKeys[0]);
+ expect(imported).toBe(1);expect(importKeys).toHaveLength(1);expect(readbackKeys).toEqual(importKeys);
 });
 
 it('切换目标或生产单不显示上一目标的上传结果，返回原目标可继续',async()=>{

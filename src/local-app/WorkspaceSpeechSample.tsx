@@ -1,3 +1,4 @@
+import {uiText} from '../i18n/ui';
 import {useEffect,useRef,useState} from 'react';
 import {Square,Volume2} from 'lucide-react';
 import {speechSampleText} from '../speechSample';
@@ -57,14 +58,14 @@ function SpeechSample({label,selection,voice,rate,disabled,buttonColor='secondar
  return <>
   <div className="workspace-speech-sample">
   <Button size="sm" color={buttonColor} iconLeading={playing?Square:Volume2}
-   aria-label={playing?`停止${label}音色试听`:`试听${label}音色`} title={playing?'停止试听':'试听音色'}
+   aria-label={playing?uiText("停止{value0}音色试听",{value0:String(label)}):uiText("试听{value0}音色",{value0:String(label)})} title={playing?uiText("停止试听"):uiText("试听音色")}
    isDisabled={disabled||busy} onPress={()=>playing?audio.current?.pause():void load(false)}/>
   <audio ref={audio} onPlaying={()=>setPlaying(true)} onPause={()=>setPlaying(false)} onEnded={()=>setPlaying(false)}/>
   </div>
-  {error&&!confirm&&<p className="workspace-speech-sample-error" role="alert">{error}</p>}
-  <ConfirmationModalPresence>{confirm&&<ConfirmationModal title="准备音色样音" confirmLabel="确认合成并试听" isPending={busy} onCancel={()=>setConfirm(false)} onConfirm={()=>load(true)}>
-   <p>首次试听会合成一句「{speechSampleText}」，供应商可能按字数计费。样音保存到本机，之后可直接试听和调整播放语速。</p>
-   {error&&<p role="alert">{error}</p>}
+  {error&&!confirm&&<p className="workspace-speech-sample-error" role="alert">{uiText(error||'')}</p>}
+  <ConfirmationModalPresence>{confirm&&<ConfirmationModal title={uiText("准备音色样音")} confirmLabel={uiText("确认合成并试听")} isPending={busy} onCancel={()=>setConfirm(false)} onConfirm={()=>load(true)}>
+   <p>{uiText("首次试听会合成一句「")}{speechSampleText}{uiText("」，供应商可能按字数计费。样音保存到本机，之后可直接试听和调整播放语速。")}</p>
+   {error&&<p role="alert">{uiText(error||'')}</p>}
   </ConfirmationModal>}</ConfirmationModalPresence>
  </>;
 }

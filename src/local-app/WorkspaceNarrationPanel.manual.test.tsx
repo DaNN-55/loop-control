@@ -117,12 +117,13 @@ it('receives a late save in the original session and lets a reopened visit expli
  await act(async()=>release());await screen.findByRole('button',{name:'重试加入候选'});expect(f.calls.some(c=>c.name==='confirmWorkspaceNarration')).toBe(false);
  fireEvent.click(screen.getByRole('button',{name:'重试加入候选'}));await screen.findByRole('button',{name:'采用'});expect(f.calls.filter(c=>c.name==='saveWorkspaceNarration')).toHaveLength(1);expect(f.calls.filter(c=>c.name==='confirmWorkspaceNarration')).toHaveLength(1);
 });
-it('reopens after an unknown HTTP confirmation and replays its frozen key without confirming twice',async()=>{
- const f=setup(),execute=f.command.getMockImplementation()!,receipts=new Map<string,unknown>(),confirmKeys:string[]=[];let lost=false;
+it('reopens after an unknown HTTP confirmation and reads its frozen receipt without confirming twice',async()=>{
+ const f=setup(),execute=f.command.getMockImplementation()!,receipts=new Map<string,unknown>(),confirmKeys:string[]=[],readbackKeys:string[]=[];let lost=false;
  vi.stubGlobal('crypto',webcrypto);
  vi.stubGlobal('fetch',vi.fn(async(path:string,init?:RequestInit)=>{
   if(path.endsWith('/session'))return Response.json({csrfToken:'manual-http-fixture'});
   if(init?.method==='POST'){
+   if(path.endsWith('/command-receipt')){const query=JSON.parse(String(init.body));readbackKeys.push(query.operation.idempotencyKey);return Response.json(readbackKeys.length===1?{status:'unknown'}:{status:'committed',result:receipts.get(query.operation.idempotencyKey)});}
    const body=JSON.parse(String(init.body));if(body.command==='confirmWorkspaceNarration')confirmKeys.push(body.idempotencyKey);
    if(receipts.has(body.idempotencyKey))return Response.json(receipts.get(body.idempotencyKey));
    const value=await execute(body.command,body.data);receipts.set(body.idempotencyKey,value);
@@ -130,9 +131,9 @@ it('reopens after an unknown HTTP confirmation and replays its frozen key withou
   }
   return Response.json(path.endsWith('/workspace')?{workspace:f.stored}:{serviceCatalog:{version:1,groups:[]}});
  }));await localRequest('session');f.command.mockImplementation((name,data)=>localCommand(name,data,undefined,'episode-commands'));
- const first=render(<f.View ownerId="http-manual-owner"/>);drop('first');await screen.findByText('确认回包中断');first.unmount();
+ const first=render(<f.View ownerId="http-manual-owner"/>);drop('first');await screen.findByText(/本次操作结果暂未确认/);first.unmount();
  render(<f.View ownerId="http-manual-owner"/>);fireEvent.click(screen.getByRole('button',{name:'重试加入候选'}));await screen.findByRole('button',{name:'采用'});
- expect(confirmKeys).toHaveLength(2);expect(confirmKeys[1]).toBe(confirmKeys[0]);expect(f.calls.filter(c=>c.name==='saveWorkspaceNarration')).toHaveLength(1);expect(f.calls.filter(c=>c.name==='confirmWorkspaceNarration')).toHaveLength(1);expect(f.stored.revision).toBe(3);
+ expect(confirmKeys).toHaveLength(1);expect(readbackKeys).toEqual([confirmKeys[0],confirmKeys[0]]);expect(f.calls.filter(c=>c.name==='saveWorkspaceNarration')).toHaveLength(1);expect(f.calls.filter(c=>c.name==='confirmWorkspaceNarration')).toHaveLength(1);expect(f.stored.revision).toBe(3);
 });
 it('does not publish a late initial read after the manual narration visit switches shots',async()=>{
  const f=setup(),changed=vi.fn();let finish!:(r:Response)=>void;

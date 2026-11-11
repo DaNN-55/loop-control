@@ -1,3 +1,4 @@
+import {uiText} from '../i18n/ui';
 import {useEffect,useRef,useState} from 'react';
 import {createPortal} from 'react-dom';
 import type {Database} from '../lib/database.types';
@@ -19,14 +20,14 @@ export function WorkspacePlanningSelection({draft,pending,readOnly,onSave,onRelo
  useEffect(()=>{active.current=true;return()=>{active.current=false;};},[]);
  const harness=draft.promptVersions.find(h=>h.id===selection.harnessId);
  async function save(){try{setError('');await onSave(selection,draft.revision);}catch(cause){setError(cause instanceof Error?cause.message:'规划选择未保存。');}}
- return <section className="workspace-planning-selection" aria-label="分镜规划选择">
-  {!compact&&<div className="workspace-planning-summary"><strong>分镜规划</strong><span>Codex</span><span>{draft.selection?`${draft.selection.model} · ${draft.promptVersions.find(h=>h.id===draft.selection?.harnessId)?.name??'Harness'}`:'尚未选择'}</span><Button size="sm" color="secondary" isDisabled={pending||readOnly} onPress={()=>setConfiguring(true)}>选择规划模型</Button></div>}
-  {(compact||configuring)?<section className="configuration-form" aria-label="规划配置"><StageConfigurationDialog inline hideFixedIdentity executor={{provider:'codex',adapter:'codex',model:selection.model,harnessId:selection.harnessId,promptVersion:harness?.slug??''}} executorKey="storyboard_planning" onClose={()=>setConfiguring(false)} onManagePromptVersions={()=>setManaging(true)} onSelectPromptVersion={h=>setSelection(s=>({...s,harnessId:h.id}))} onUpdateExecutor={(field,value)=>{if(field==='model')setSelection(s=>({...s,model:value}));}} promptVersions={draft.promptVersions} readOnly={readOnly||pending}/>
-  <details className="connection-planning-advanced" open={!compact}><summary>额度与文件工具</summary><div className="workspace-planning-options">
-  <label>规划额度（分）<InputBase size="sm" aria-label="规划额度（分）" type="number" min={0} step={1} value={String(selection.budgetCents)} isDisabled={pending||readOnly} onChange={event=>setSelection(s=>({...s,budgetCents:Number(event.target.value)}))}/></label>
-  <fieldset><legend>文件工具</legend><div className="workspace-planning-tools">{['read','write'].map(tool=><Checkbox key={tool} label={tool} isSelected={selection.allowedTools.includes(tool)} isDisabled={pending||readOnly} onChange={checked=>setSelection(s=>({...s,allowedTools:checked?[...s.allowedTools,tool]:s.allowedTools.filter(t=>t!==tool)}))}/>)}</div></fieldset>
+ return <section className="workspace-planning-selection" aria-label={uiText("分镜规划选择")}>
+  {!compact&&<div className="workspace-planning-summary"><strong>{uiText("分镜规划")}</strong><span>Codex</span><span>{draft.selection?`${draft.selection.model} · ${draft.promptVersions.find(h=>h.id===draft.selection?.harnessId)?.name??'Harness'}`:uiText("尚未选择")}</span><Button size="sm" color="secondary" isDisabled={pending||readOnly} onPress={()=>setConfiguring(true)}>{uiText("选择规划模型")}</Button></div>}
+  {(compact||configuring)?<section className="configuration-form" aria-label={uiText("规划配置")}><StageConfigurationDialog inline hideFixedIdentity executor={{provider:'codex',adapter:'codex',model:selection.model,harnessId:selection.harnessId,promptVersion:harness?.slug??''}} executorKey="storyboard_planning" onClose={()=>setConfiguring(false)} onManagePromptVersions={()=>setManaging(true)} onSelectPromptVersion={h=>setSelection(s=>({...s,harnessId:h.id}))} onUpdateExecutor={(field,value)=>{if(field==='model')setSelection(s=>({...s,model:value}));}} promptVersions={draft.promptVersions} readOnly={readOnly||pending}/>
+  <details className="connection-planning-advanced" open={!compact}><summary>{uiText("额度与文件工具")}</summary><div className="workspace-planning-options">
+  <label>{uiText("规划额度（分）")}<InputBase size="sm" aria-label={uiText("规划额度（分）")} type="number" min={0} step={1} value={String(selection.budgetCents)} isDisabled={pending||readOnly} onChange={event=>setSelection(s=>({...s,budgetCents:Number(event.target.value)}))}/></label>
+  <fieldset><legend>{uiText("文件工具")}</legend><div className="workspace-planning-tools">{['read','write'].map(tool=><Checkbox key={tool} label={tool} isSelected={selection.allowedTools.includes(tool)} isDisabled={pending||readOnly} onChange={checked=>setSelection(s=>({...s,allowedTools:checked?[...s.allowedTools,tool]:s.allowedTools.filter(t=>t!==tool)}))}/>)}</div></fieldset>
   </div></details>
-  <div className="configuration-actions">{!compact&&<Button size="sm" color="secondary" onPress={()=>setConfiguring(false)}>收起</Button>}<Button size="sm" color="primary" isDisabled={pending||readOnly} onPress={()=>void save().then(()=>{}).catch(()=>{})}>保存规划选择</Button>{saved&&selection===draft.selection&&<span role="status">已保存规划配置</span>}</div>{error?<p role="alert" className="form-error">{error}</p>:null}</section>:null}
+  <div className="configuration-actions">{!compact&&<Button size="sm" color="secondary" onPress={()=>setConfiguring(false)}>{uiText("收起")}</Button>}<Button size="sm" color="primary" isDisabled={pending||readOnly} onPress={()=>void save().then(()=>{}).catch(()=>{})}>{uiText("保存规划选择")}</Button>{saved&&selection===draft.selection&&<span role="status">{uiText("已保存规划配置")}</span>}</div>{error?<p role="alert" className="form-error">{uiText(error||'')}</p>:null}</section>:null}
   {managing?createPortal(<div className="dan-ui product-ui"><PromptVersionManager fixedCapability="storyboard_planning" isPending={pending||registering} onClose={()=>setManaging(false)} onSelect={h=>setSelection(s=>({...s,harnessId:h.id}))} selectedVersionId={selection.harnessId} promptVersions={draft.promptVersions} onCreate={async input=>{
    if(registrationLock.current||pending||readOnly)return null;
    registrationLock.current=true;setRegistering(true);
@@ -69,10 +70,10 @@ function EpisodePlanningConfiguration({episodeId}:{episodeId:string}){
    if(active.current){setDraft(current=>current?{...current,...accepted}:current);setSaved(true);}
   }finally{if(active.current){running.current=false;setPending(false);}}
  }
- return <section aria-label="本期分镜规划配置">
+ return <section aria-label={uiText("本期分镜规划配置")}>
   {draft?<WorkspacePlanningSelection compact saved={saved} key={draft.revision} draft={draft} pending={pending} readOnly={false} onSave={save} onReload={reload}/>
-   :error?<><p role="alert">{error}</p><Button size="sm" color="secondary" onPress={()=>{setError('');setAttempt(value=>value+1);}}>重新读取配置</Button></>
-   :<p role="status">正在读取规划配置…</p>}
+   :error?<><p role="alert">{uiText(error||'')}</p><Button size="sm" color="secondary" onPress={()=>{setError('');setAttempt(value=>value+1);}}>{uiText("重新读取配置")}</Button></>
+   :<p role="status">{uiText("正在读取规划配置…")}</p>}
  </section>;
 }
 
@@ -98,28 +99,28 @@ export function ConnectionPlanningTable({initialEpisode}:{initialEpisode:Plannin
  const options=(results?.episodes??[]).filter(item=>item.stage!=='production_completed')
   .map(item=>({value:item.id,label:`${item.title||'未命名生产单'} · ${item.id.slice(0,8)}`}));
  if(episode&&!options.some(option=>option.value===episode.episodeId))options.unshift({value:episode.episodeId,label:episode.title});
- return <section className="connection-planning" aria-label="分镜规划">
-  <h2>分镜规划</h2>
-  <div className="connection-planning-bar" aria-label="分镜规划配置">
+ return <section className="connection-planning" aria-label={uiText("分镜规划")}>
+  <h2>{uiText("分镜规划")}</h2>
+  <div className="connection-planning-bar" aria-label={uiText("分镜规划配置")}>
     <div className="connection-planning-picker">
-     <NativeSelect size="sm" label="生产单" aria-label="选择规划生产单" disabled={loading} value={episode?.episodeId??''} onChange={event=>{
+     <NativeSelect size="sm" label={uiText("生产单")} aria-label={uiText("选择规划生产单")} disabled={loading} value={episode?.episodeId??''} onChange={event=>{
       const item=options.find(option=>option.value===event.target.value);
       setEpisode(item?{episodeId:item.value,title:item.label}:null);
      }} options={[{value:'',label:loading?'正在读取生产单…':options.length?'选择生产单':'没有可选生产单'},...options]}/>
-     <details><summary>搜索生产单</summary>
-     <form role="search" aria-label="搜索规划生产单" onSubmit={event=>{event.preventDefault();setRequest({query:input.trim(),page:1});}}>
-      <InputBase size="sm" aria-label="搜索生产单标题或编号" placeholder="搜索标题或编号" maxLength={200} value={input} onChange={event=>setInput(event.target.value)}/>
-      <Button size="sm" color="secondary" type="submit">搜索</Button>
+     <details><summary>{uiText("搜索生产单")}</summary>
+     <form role="search" aria-label={uiText("搜索规划生产单")} onSubmit={event=>{event.preventDefault();setRequest({query:input.trim(),page:1});}}>
+      <InputBase size="sm" aria-label={uiText("搜索生产单标题或编号")} placeholder={uiText("搜索标题或编号")} maxLength={200} value={input} onChange={event=>setInput(event.target.value)}/>
+      <Button size="sm" color="secondary" type="submit">{uiText("搜索")}</Button>
      </form>
      {results&&results.total>results.pageSize&&<div className="connection-planning-pages">
-      <Button size="sm" color="tertiary" isDisabled={loading||results.page<=1} onPress={()=>setRequest({...request,page:results.page-1})}>上一页</Button>
+      <Button size="sm" color="tertiary" isDisabled={loading||results.page<=1} onPress={()=>setRequest({...request,page:results.page-1})}>{uiText("上一页")}</Button>
       <span>{results.page} / {Math.ceil(results.total/results.pageSize)}</span>
-      <Button size="sm" color="tertiary" isDisabled={loading||results.page*results.pageSize>=results.total} onPress={()=>setRequest({...request,page:results.page+1})}>下一页</Button>
+      <Button size="sm" color="tertiary" isDisabled={loading||results.page*results.pageSize>=results.total} onPress={()=>setRequest({...request,page:results.page+1})}>{uiText("下一页")}</Button>
      </div>}
-     {error&&<p role="alert">{error}</p>}
+     {error&&<p role="alert">{uiText(error||'')}</p>}
      </details>
     </div>
-    {episode?<EpisodePlanningConfiguration key={episode.episodeId} episodeId={episode.episodeId}/>:<p className="connection-planning-hint">选定生产单后即可配置模型和 Prompt Harness。</p>}
+    {episode?<EpisodePlanningConfiguration key={episode.episodeId} episodeId={episode.episodeId}/>:<p className="connection-planning-hint">{uiText("选定生产单后即可配置模型和 Prompt Harness。")}</p>}
   </div>
  </section>;
 }

@@ -1,3 +1,4 @@
+import {uiText} from '../i18n/ui';
 import {ConnectionDraftSession} from '../connections/ConnectionDraftSession';
 import {ConnectionDraftLeaveDialog} from '../connections/ConnectionDraftLeaveDialog';
 import {createContext,useCallback,useContext,useEffect,useMemo,useRef,useState,type ReactNode,type SetStateAction} from 'react';
@@ -22,7 +23,7 @@ export function useWorkspaceLeaveEntry(entry:DraftEntry){
 
 function DraftLeaveDialog({onContinue,onKeep,onDiscard,error}:{onContinue:()=>void;onKeep:()=>void;onDiscard:()=>void;error:string}){
  const ref=useDialogFocus<HTMLDivElement>(true,onContinue);
- return <div className="modal-backdrop dan-ui product-ui impeccable-app workspace-draft-leave"><div ref={ref} role="dialog" aria-modal="true" aria-label="保留未提交内容" className="modal-card confirmation-modal"><header><h2>保留未提交内容</h2></header><div className="confirmation-modal-content"><p>脚本或交付内容尚未提交。</p><p>保留草稿后，可在本机继续编辑。</p><p>保留草稿不会确认脚本或生成交付包。</p><p>封面图片在关闭或刷新后需要重新选择。</p>{error&&<p role="alert" className="form-error">{error}</p>}</div><div className="modal-actions"><Button size="sm" color="secondary" data-dialog-initial-focus onPress={onContinue}>继续编辑</Button><Button size="sm" color="primary" onPress={onKeep}>保留草稿并离开</Button><Button size="sm" color="primary-destructive" onPress={onDiscard}>放弃修改并离开</Button></div></div></div>;
+ return <div className="modal-backdrop dan-ui product-ui impeccable-app workspace-draft-leave"><div ref={ref} role="dialog" aria-modal="true" aria-label={uiText("保留未提交内容")} className="modal-card confirmation-modal"><header><h2>{uiText("保留未提交内容")}</h2></header><div className="confirmation-modal-content"><p>{uiText("脚本或交付内容尚未提交。")}</p><p>{uiText("保留草稿后，可在本机继续编辑。")}</p><p>{uiText("保留草稿不会确认脚本或生成交付包。")}</p><p>{uiText("封面图片在关闭或刷新后需要重新选择。")}</p>{error&&<p role="alert" className="form-error">{uiText(error||'')}</p>}</div><div className="modal-actions"><Button size="sm" color="secondary" data-dialog-initial-focus onPress={onContinue}>{uiText("继续编辑")}</Button><Button size="sm" color="primary" onPress={onKeep}>{uiText("保留草稿并离开")}</Button><Button size="sm" color="primary-destructive" onPress={onDiscard}>{uiText("放弃修改并离开")}</Button></div></div></div>;
 }
 export function WorkspaceDraftProvider({children,ownerId=''}:{children:ReactNode;ownerId?:string}){
  const entries=useRef(new Map<symbol,DraftEntry>()),destination=useRef<(()=>void)|null>(null),destinationScope=useRef<DraftScope|undefined>(undefined);

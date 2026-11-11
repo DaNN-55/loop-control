@@ -73,3 +73,15 @@ html[data-interface="impeccable"] .impeccable-app.product-ui .modal-backdrop>.ow
 .owner-preferences-embedded form>footer{border-radius:0;padding:16px 28px;background:var(--lc-surface);flex-shrink:0}
 .owner-preferences-embedded .owner-restore-scope{font-size:11px}
 @media(max-width:720px){.owner-preferences-embedded>header{padding:16px 20px;min-height:64px}.owner-preferences-embedded .owner-preferences-card{padding:0 20px 20px}.owner-preferences-tabs{margin:0 20px}.owner-preferences-embedded .owner-preferences-section,.owner-preferences-embedded .owner-preferences-storage-panel>.media-root-content,.owner-preferences-embedded .log-storage-settings{display:flex;flex-direction:column;gap:20px;padding-block:24px}.owner-preferences-embedded form>footer{padding:12px 16px;grid-template-columns:minmax(0,1fr);gap:8px}.owner-preferences-embedded form>footer>div{justify-self:end;margin-left:0}.owner-preferences-embedded .owner-preferences-storage-panel :is(.media-root-content,.log-storage-settings)>:not(h3){width:100%}}
+
+/* Name is the primary profile field; avatar editing stays beside it at desktop widths. */
+.owner-preferences-embedded .owner-profile-fields{grid-template-columns:minmax(160px,1fr) minmax(220px,1fr);align-items:start;gap:24px}
+.owner-preferences-embedded .owner-profile-fields .owner-avatar-field{align-items:flex-start;gap:12px}
+.owner-preferences-embedded .owner-profile-fields .owner-avatar-actions>div{flex-wrap:wrap}
+.owner-preferences-embedded .owner-profile-fields .owner-avatar-preview{width:56px;height:56px}
+.owner-preferences-embedded .media-root-embedded-location{margin:0}
+.owner-preferences-embedded .media-root-embedded-location .media-root-actions{justify-content:flex-start;flex-wrap:wrap}
+.owner-preferences-embedded .media-root-embedded-location .media-root-help{font-size:12px;line-height:1.6;margin-top:12px}
+@media(max-width:1000px){.owner-preferences-embedded .owner-profile-fields{grid-template-columns:minmax(0,1fr)}.owner-preferences-embedded .owner-profile-fields .owner-avatar-field{align-items:center}}
+
+@media(max-width:480px){.owner-preferences-embedded form>footer>div{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);width:100%;justify-self:stretch}.owner-preferences-embedded form>footer>div>button{white-space:normal;min-height:40px}.owner-preferences-embedded form>footer>div>button [data-text]{white-space:normal}.owner-preferences-embedded .owner-restore-scope{text-align:left;justify-self:start}}

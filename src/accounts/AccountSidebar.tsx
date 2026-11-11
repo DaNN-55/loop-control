@@ -1,3 +1,4 @@
+import {uiText} from '../i18n/ui';
 import {ChevronDown, Plus, Search, Users} from 'lucide-react';
 import {useEffect, useId, useState} from 'react';
 import type {Database} from '../lib/database.types';
@@ -38,41 +39,41 @@ export function AccountSidebar({accounts, activeId, collapsed, onExpandSidebar, 
     return items.map(account => <li key={account.id}>
       <Button size="sm" color="tertiary" type="button" className="sidebar-account-entry" title={account.name}
         aria-current={account.id === activeId ? 'page' : undefined} onClick={() => onSelect(account.id)}>
-        <span className="sidebar-account-initial" aria-hidden="true">{Array.from(account.name.trim())[0] ?? '账'}</span>
+        <span className="sidebar-account-initial" aria-hidden="true">{Array.from(account.name.trim())[0] ?? uiText("账")}</span>
         <span className="sidebar-account-name">{account.name}</span>
       </Button>
     </li>);
   }
 
-  return <div role="group" aria-label="账号管理" className="navigation-group sidebar-account-group">
+  return <div role="group" aria-label={uiText("账号管理")} className="navigation-group sidebar-account-group">
     <div className="sidebar-account-heading">
-      <Button size="sm" color="tertiary" type="button" aria-label="账号" aria-expanded={open && !collapsed} aria-controls={id}
+      <Button size="sm" color="tertiary" type="button" aria-label={uiText("账号")} aria-expanded={open && !collapsed} aria-controls={id}
         className={`navigation-item${activeId ? ' is-active' : ''}`} iconLeading={Users}
         onClick={() => {
           if (collapsed) { onExpandSidebar(); setOpen(true); }
           else setOpen(!open);
         }}>
-        <span className="navigation-label">账号</span>
+        <span className="navigation-label">{uiText("账号")}</span>
         <ChevronDown className="sidebar-account-chevron" size={14} aria-hidden="true" />
       </Button>
-      <Button size="sm" color="tertiary" type="button" aria-label="新建账号" title="新建账号"
+      <Button size="sm" color="tertiary" type="button" aria-label={uiText("新建账号")} title={uiText("新建账号")}
         className="sidebar-account-add" iconLeading={Plus} onClick={onCreate} />
     </div>
     <div id={id} className="sidebar-account-list" hidden={!open || collapsed}>
-      {showAll && active.length > 8 && <InputBase size="sm" icon={Search} type="search" aria-label="查找账号"
-        placeholder="查找账号" value={query} onChange={event => setQuery(event.target.value)} />}
-      <ul aria-label="使用中的账号">{rows(visible)}</ul>
-      {!visible.length && <p>{search ? '没有匹配的账号' : '暂无使用中的账号'}</p>}
+      {showAll && active.length > 8 && <InputBase size="sm" icon={Search} type="search" aria-label={uiText("查找账号")}
+        placeholder={uiText("查找账号")} value={query} onChange={event => setQuery(event.target.value)} />}
+      <ul aria-label={uiText("使用中的账号")}>{rows(visible)}</ul>
+      {!visible.length && <p>{search ? uiText("没有匹配的账号") : uiText("暂无使用中的账号")}</p>}
       {active.length > previewSize && <Button size="sm" color="tertiary" type="button" className="sidebar-account-entry sidebar-account-more"
         aria-expanded={showAll} onClick={() => { setShowAll(!showAll); setQuery(''); }}>
-        {showAll ? '收起账号列表' : `查看全部 ${active.length} 个账号`}
+        {showAll ? uiText("收起账号列表") : uiText("查看全部 {value1} 个账号",{value1:active.length})}
       </Button>}
       {!!archived.length && <>
         <Button size="sm" color="tertiary" type="button" className="sidebar-account-entry sidebar-account-more"
           aria-expanded={showArchived} aria-controls={`${id}-archived`} iconTrailing={ChevronDown} onClick={() => setShowArchived(!showArchived)}>
-          已归档 · {archived.length}
+          {uiText("已归档 ·")} {archived.length}
         </Button>
-        <ul aria-label="已归档的账号" id={`${id}-archived`} hidden={!showArchived}>{rows(archived)}</ul>
+        <ul aria-label={uiText("已归档的账号")} id={`${id}-archived`} hidden={!showArchived}>{rows(archived)}</ul>
       </>}
     </div>
   </div>;

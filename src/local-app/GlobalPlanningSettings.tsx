@@ -1,3 +1,4 @@
+import {uiText} from '../i18n/ui';
 import {useEffect,useRef,useState} from 'react';
 import {InputBase} from '../ui/dan-ui/components/base/input/input';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
@@ -9,8 +10,8 @@ export function GlobalPlanningSettings({demo=false}:{demo?:boolean}={}){
  return <section className="connection-planning storyboard-planning" aria-labelledby="storyboard-planning-title">
    <div className="storyboard-planning-card">
      <header className="storyboard-planning-header">
-       <h3 id="storyboard-planning-title">分镜规划默认设置</h3>
-       <p>适用于所有账号和生产单。</p>
+       <h3 id="storyboard-planning-title">{uiText("分镜规划默认设置")}</h3>
+       <p>{uiText("适用于所有账号和生产单。")}</p>
      </header>
      <PlanningFields key={String(demo)} demo={demo}/>
    </div>
@@ -72,16 +73,15 @@ function PlanningFields({demo}:{demo:boolean}){
    }catch(cause){if(active.current)setError((cause as Error).message);}
    finally{if(active.current){running.current=false;setPending(false);}}
  }
- if(!draft)return <p className="storyboard-planning-message" role={error?'alert':'status'}>{error||'正在读取规划配置…'}</p>;
+ if(!draft)return <p className="storyboard-planning-message" role={error?'alert':'status'}>{error||uiText("正在读取规划配置…")}</p>;
  const harnesses=draft.promptVersions.filter(version=>version.is_active);
  return <>
    <div className="storyboard-planning-fields">
-     <label className="storyboard-planning-model">模型
-       <InputBase aria-label="分镜规划 模型" size="sm" value={model} isDisabled={pending}
+     <label className="storyboard-planning-model">{uiText("模型")}<InputBase aria-label={uiText("分镜规划 模型")} size="sm" value={model} isDisabled={pending}
          onChange={event=>{setModel(event.target.value);setSaved(false);}}/>
      </label>
    </div>
-   {demo&&<nav className="storyboard-harness-layouts" aria-label="Harness 登记方案">
+   {demo&&<nav className="storyboard-harness-layouts" aria-label={uiText("Harness 登记方案")}>
      {[['inline','A · 列表内新增'],['side','B · 双栏编辑'],['preview','C · 内容预览']].map(([value,label])=>
        <button key={value} type="button" aria-pressed={layout===value} onClick={()=>selectLayout(value)}>{label}</button>)}
    </nav>}
@@ -89,7 +89,7 @@ function PlanningFields({demo}:{demo:boolean}){
      <div>
      <fieldset className="storyboard-harness">
        <legend>Prompt Harness</legend>
-       {harnesses.length===0&&<p>暂无可用版本。</p>}
+       {harnesses.length===0&&<p>{uiText("暂无可用版本。")}</p>}
        {harnesses.map(version=><label key={version.id}>
          <input type="radio" name="storyboard-harness" checked={harnessId===version.id} disabled={pending}
            onChange={()=>{setHarnessId(version.id);setSaved(false);}}/>
@@ -97,15 +97,15 @@ function PlanningFields({demo}:{demo:boolean}){
        </label>)}
      </fieldset>
      {layout!=='side'&&<Button size="sm" color="secondary" aria-expanded={editing}
-       onPress={()=>setEditing(value=>!value)}>{editing?'收起登记表单':'＋ 登记新版本'}</Button>}
+       onPress={()=>setEditing(value=>!value)}>{editing?uiText("收起登记表单"):uiText("＋ 登记新版本")}</Button>}
      {layout==='preview'&&<section className="storyboard-harness-preview">
-       <h3>所选版本内容</h3>
-       <pre>{harnesses.find(version=>version.id===harnessId)?.instructions||'请选择一个版本。'}</pre>
+       <h3>{uiText("所选版本内容")}</h3>
+       <pre>{harnesses.find(version=>version.id===harnessId)?.instructions||uiText("请选择一个版本。")}</pre>
      </section>}
      </div>
    {(layout==='side'||editing)&&<section className="storyboard-version-registration" aria-labelledby="storyboard-version-title">
-     <h3 id="storyboard-version-title">登记 Harness 版本</h3>
-     <p>现有生产单保留已冻结的版本。新版本登记后可设为默认。</p>
+     <h3 id="storyboard-version-title">{uiText("登记 Harness 版本")}</h3>
+     <p>{uiText("现有生产单保留已冻结的版本。新版本登记后可设为默认。")}</p>
      <form onSubmit={async event=>{
        event.preventDefault();
        if(running.current)return;
@@ -132,18 +132,18 @@ function PlanningFields({demo}:{demo:boolean}){
        }catch(cause){if(active.current)setRegistrationStatus((cause as Error).message);}
        finally{if(active.current){running.current=false;setRegistering(false);}}
      }}>
-       <label>版本名称<input name="name" required disabled={registering||pending||!!createdVersion}/></label>
-       <label>版本摘要<input name="summary" required disabled={registering||pending||!!createdVersion}/></label>
-       <label>Harness 内容<textarea name="instructions" rows={4} required disabled={registering||pending||!!createdVersion}/></label>
-       <div><Button size="sm" color="secondary" type="submit" isDisabled={registering||pending}>{createdVersion?'重新读取版本':'保存新版本'}</Button>
-         {registrationStatus&&<span role="status">{createdVersion?'新版本已登记，列表读取未完成：':''}{registrationStatus}</span>}</div>
+       <label>{uiText("版本名称")}<input name="name" required disabled={registering||pending||!!createdVersion}/></label>
+       <label>{uiText("版本摘要")}<input name="summary" required disabled={registering||pending||!!createdVersion}/></label>
+       <label>{uiText("Harness 内容")}<textarea name="instructions" rows={4} required disabled={registering||pending||!!createdVersion}/></label>
+       <div><Button size="sm" color="secondary" type="submit" isDisabled={registering||pending}>{createdVersion?uiText("重新读取版本"):uiText("保存新版本")}</Button>
+         {registrationStatus&&<span role="status">{createdVersion?uiText("新版本已登记，列表读取未完成："):''}{registrationStatus}</span>}</div>
      </form>
    </section>}
    </div>
    <footer className="storyboard-planning-footer">
-     {error&&<span role="alert">{error}</span>}
-     {saved&&<span role="status">已保存全局默认设置</span>}
-     <Button size="sm" color="primary" isDisabled={pending||registering||!!createdVersion||!model.trim()||!harnesses.some(version=>version.id===harnessId)} onPress={()=>void save()}>保存默认设置</Button>
+     {error&&<span role="alert">{uiText(error||'')}</span>}
+     {saved&&<span role="status">{uiText("已保存全局默认设置")}</span>}
+     <Button size="sm" color="primary" isDisabled={pending||registering||!!createdVersion||!model.trim()||!harnesses.some(version=>version.id===harnessId)} onPress={()=>void save()}>{uiText("保存默认设置")}</Button>
    </footer>
  </>;
 }

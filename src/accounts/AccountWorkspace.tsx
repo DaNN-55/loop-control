@@ -1,3 +1,4 @@
+import {uiText} from '../i18n/ui';
 import type {AccountDeletionStatus} from './accountDeletionStatus';
 import './account-deletion.css';
 import type {PanelNavigation} from '../local-app/catalogNavigation';
@@ -89,30 +90,30 @@ export function AccountWorkspace({ navigation, account, accountEpisodeCount = 0,
     window.addEventListener("beforeunload", guard);
     return () => window.removeEventListener("beforeunload", guard);
   }, [dirty]);
-  if (!account) return <div className="account-blueprint-workspace"><h1>账号</h1><div className="empty-state">没有可读取的账号。</div></div>;
+  if (!account) return <div className="account-blueprint-workspace"><h1>{uiText("账号")}</h1><div className="empty-state">{uiText("没有可读取的账号。")}</div></div>;
 
   const policy = currentBlueprint?.policy ?? defaultBlueprintPolicy;
   const localAdapterReadiness: Record<string, boolean> = systemStatus?.dependencies.some((dependency) => dependency.name === "OpenChatCut" && dependency.state === "healthy") ? { "openchatcut:openchatcut_card_video": true } : {};
   function leaveConfiguration(action: () => void) {
     if(isPending==='blueprint'||isPending==='series'||isPending.startsWith('series-version-'))return;
-    if (dirty && !window.confirm("当前配置有未保存修改，确定放弃吗？")) return;
+    if (dirty && !window.confirm(uiText("当前配置有未保存修改，确定放弃吗？"))) return;
     setAccountSettingsOpen(false);
     setConfigurationDirty(false);
     action();
   }
-  return <section className="impeccable-config-workspace account-blueprint-workspace" aria-label="账号工作区">
+  return <section className="impeccable-config-workspace account-blueprint-workspace" aria-label={uiText("账号工作区")}>
     <header className="account-page-heading">
-      <div><h1>{account.name}</h1>{account.archived_at && <span className="account-archived-badge">已归档</span>}</div>
+      <div><h1>{account.name}</h1>{account.archived_at && <span className="account-archived-badge">{uiText("已归档")}</span>}</div>
       <Button size="sm" color="secondary" iconLeading={Settings} ref={accountSettingsRef} type="button"
-        aria-haspopup="dialog" onClick={() => setAccountSettingsOpen(true)}>账号设置</Button>
+        aria-haspopup="dialog" onClick={() => setAccountSettingsOpen(true)}>{uiText("账号设置")}</Button>
     </header>
-    {account.archived_at ? <p className="account-archived-note" role="status">此账号已归档，不会出现在新建生产单的账号列表中；恢复后可继续生产。</p> : null}
-    {!currentBlueprint ? <div className="empty-state">该账号没有可读取的蓝图配置。</div> : blueprintRepairContext ? <EpisodeConfigurationRepairForm blocker={blueprintRepairContext.blocker} initialPolicy={policy} isPending={isPending === `apply-episode-repair-${blueprintRepairContext.episodeId}`} onCancel={() => onDismissBlueprintRepair?.()} onSave={async (nextPolicy) => { if (onApplyEpisodeRepair) await onApplyEpisodeRepair({ context: blueprintRepairContext, policy: nextPolicy }); }} promptVersions={promptVersions} /> : <SeriesSettings onCreateEpisode={onCreateEpisode} navigation={navigation} key={account.id} accountId={account.id} onRename={onRenameSeries} commonEditor={<>
+    {account.archived_at ? <p className="account-archived-note" role="status">{uiText("此账号已归档，不会出现在新建生产单的账号列表中；恢复后可继续生产。")}</p> : null}
+    {!currentBlueprint ? <div className="empty-state">{uiText("该账号没有可读取的蓝图配置。")}</div> : blueprintRepairContext ? <EpisodeConfigurationRepairForm blocker={blueprintRepairContext.blocker} initialPolicy={policy} isPending={isPending === `apply-episode-repair-${blueprintRepairContext.episodeId}`} onCancel={() => onDismissBlueprintRepair?.()} onSave={async (nextPolicy) => { if (onApplyEpisodeRepair) await onApplyEpisodeRepair({ context: blueprintRepairContext, policy: nextPolicy }); }} promptVersions={promptVersions} /> : <SeriesSettings onCreateEpisode={onCreateEpisode} navigation={navigation} key={account.id} accountId={account.id} onRename={onRenameSeries} commonEditor={<>
       <header className="account-editor-heading">
-        <div><h2>通用规则</h2><p className="account-rule-scope">作为此账号下各系列的默认规则。</p></div>
-        <span className="account-save-state" role="status">已应用 · v{currentBlueprint.version}</span>
+        <div><h2>{uiText("通用规则")}</h2><p className="account-rule-scope">{uiText("作为此账号下各系列的默认规则。")}</p></div>
+        <span className="account-save-state" role="status">{uiText("已应用 · v")}{currentBlueprint.version}</span>
       </header>
-      <div className="account-configuration-form"><BlueprintConfigurationForm accountLayout saveState={<span className={`account-save-state${dirty ? " is-dirty" : ""}`} role="status">{dirty ? "有未应用更改" : "修改中"}</span>} accountId={account.id} connectionVersions={connectionVersions} externalConnections={externalConnections} initialAssetRoot={blueprintAssetRoot(policy)} initialPolicy={policy} isPending={isPending === "blueprint" || isPending === "prompt-version"} localAdapterReadiness={localAdapterReadiness} onCancel={() => {}} onCreateConnection={onCreateConnection} onCreatePromptVersion={onCreatePromptVersion} onDirtyChange={setConfigurationDirty} onRotateConnection={onRotateConnection} onSave={async (nextPolicy) => { if(onUpdateBlueprint){const result=await onUpdateBlueprint(nextPolicy);if(result===null)throw new Error("规则未保存，请处理错误后重试。");} }} onTestConnection={onTestConnection} onUpdateConnection={onUpdateConnection} promptVersions={promptVersions} /></div>
+      <div className="account-configuration-form"><BlueprintConfigurationForm accountLayout saveState={<span className={`account-save-state${dirty ? " is-dirty" : ""}`} role="status">{dirty ? uiText("有未应用更改") : uiText("修改中")}</span>} accountId={account.id} connectionVersions={connectionVersions} externalConnections={externalConnections} initialAssetRoot={blueprintAssetRoot(policy)} initialPolicy={policy} isPending={isPending === "blueprint" || isPending === "prompt-version"} localAdapterReadiness={localAdapterReadiness} onCancel={() => {}} onCreateConnection={onCreateConnection} onCreatePromptVersion={onCreatePromptVersion} onDirtyChange={setConfigurationDirty} onRotateConnection={onRotateConnection} onSave={async (nextPolicy) => { if(onUpdateBlueprint){const result=await onUpdateBlueprint(nextPolicy);if(result===null)throw new Error(uiText("规则未保存，请处理错误后重试。"));} }} onTestConnection={onTestConnection} onUpdateConnection={onUpdateConnection} promptVersions={promptVersions} /></div>
 
     </>} accountPolicy={policy} isPending={isPending} onCreate={onCreateSeries} onDirtyChange={setConfigurationDirty} onLeave={leaveConfiguration} onCreateVersion={onCreateSeriesVersion} series={series} seriesVersions={seriesVersions}/>}
     {accountSettingsOpen && <AccountSettingsDialog account={account} episodeCount={accountEpisodeCount} returnFocusRef={accountSettingsRef}
@@ -122,7 +123,7 @@ export function AccountWorkspace({ navigation, account, accountEpisodeCount = 0,
       onArchive={() => {accountSettingsRef.current?.focus();setAccountSettingsOpen(false);setArchiveOpen(true);}}
       onDelete={() => {accountSettingsRef.current?.focus();setAccountSettingsOpen(false);setDeleteOpen(true);}} />}
     {renameOpen ? <AccountRenameModal account={account} isPending={isPending === `rename-account-${account.id}`} onClose={() => setRenameOpen(false)} onSave={(name) => onRenameAccount(account.id, name)} /> : null}
-    <ConfirmationModalPresence>{archiveOpen ? <ConfirmationModal confirmLabel={account.archived_at ? "确认恢复账号" : "确认归档账号"} isPending={isPending === `archive-account-${account.id}`} onCancel={() => setArchiveOpen(false)} onConfirm={async () => { if (await onSetAccountArchived(account.id, !account.archived_at) !== false) setArchiveOpen(false); }} pendingLabel={account.archived_at ? "恢复中…" : "归档中…"} title={account.archived_at ? "恢复账号" : "归档账号"}><p>{account.archived_at ? `恢复“${account.name}”后，它会重新出现在新建生产单的账号列表中。` : `归档“${account.name}”后，它不会出现在新建生产单的账号列表中；已有生产单、系列和历史配置都会保留。`}</p></ConfirmationModal> : null}</ConfirmationModalPresence>
+    <ConfirmationModalPresence>{archiveOpen ? <ConfirmationModal confirmLabel={account.archived_at ? uiText("确认恢复账号") : uiText("确认归档账号")} isPending={isPending === `archive-account-${account.id}`} onCancel={() => setArchiveOpen(false)} onConfirm={async () => { if (await onSetAccountArchived(account.id, !account.archived_at) !== false) setArchiveOpen(false); }} pendingLabel={account.archived_at ? uiText("恢复中…") : uiText("归档中…")} title={account.archived_at ? uiText("恢复账号") : uiText("归档账号")}><p>{account.archived_at ? uiText("恢复“{value1}”后，它会重新出现在新建生产单的账号列表中。",{value1:account.name}) : uiText("归档“{value1}”后，它不会出现在新建生产单的账号列表中；已有生产单、系列和历史配置都会保留。",{value1:account.name})}</p></ConfirmationModal> : null}</ConfirmationModalPresence>
     <ConfirmationModalPresence>{deleteOpen ? <AccountDeleteModal account={account} episodeCount={accountEpisodeCount} readStatus={readDeletionStatus} onViewEpisodes={onViewAccountEpisodes} onViewCleanup={onViewDeletionCleanup} onArchive={!account.archived_at?()=>{setDeleteOpen(false);setArchiveOpen(true);}:undefined} isPending={isPending === `delete-account-${account.id}`} onClose={() => setDeleteOpen(false)} onDelete={(confirmation) => onDeleteAccount(account.id, confirmation)} /> : null}</ConfirmationModalPresence>
   </section>;
 }
@@ -139,20 +140,20 @@ function AccountSettingsDialog({account, episodeCount, returnFocusRef, onClose, 
 }) {
   const dialogRef = useDialogFocus<HTMLElement>(true, onClose, returnFocusRef);
   return <div className="modal-backdrop">
-    <section className="modal-card account-settings-dialog" role="dialog" aria-modal="true" aria-label="账号设置" ref={dialogRef}>
-      <header><h2>账号设置</h2><Button size="sm" color="tertiary" aria-label="关闭账号设置" type="button" iconLeading={X} onClick={onClose} /></header>
+    <section className="modal-card account-settings-dialog" role="dialog" aria-modal="true" aria-label={uiText("账号设置")} ref={dialogRef}>
+      <header><h2>{uiText("账号设置")}</h2><Button size="sm" color="tertiary" aria-label={uiText("关闭账号设置")} type="button" iconLeading={X} onClick={onClose} /></header>
       <dl className="account-settings-facts">
-        <div><dt>账号名称</dt><dd>{account.name}</dd></div>
-        <div><dt>标识</dt><dd>{account.slug}</dd></div>
-        <div><dt>时区</dt><dd>{account.timezone}</dd></div>
-        <div><dt>生产单</dt><dd>{episodeCount} 个</dd></div>
+        <div><dt>{uiText("账号名称")}</dt><dd>{account.name}</dd></div>
+        <div><dt>{uiText("标识")}</dt><dd>{account.slug}</dd></div>
+        <div><dt>{uiText("时区")}</dt><dd>{account.timezone}</dd></div>
+        <div><dt>{uiText("生产单")}</dt><dd>{episodeCount} {uiText("个")}</dd></div>
       </dl>
       <AccountDirectoryPanel accountId={account.id} />
       <footer className="account-settings-actions">
-        {onRefresh && <Button size="sm" color="secondary" iconLeading={RefreshCw} onClick={onRefresh}>刷新账号</Button>}
-        <Button size="sm" color="secondary" iconLeading={Pencil} onClick={onRename}>重命名</Button>
-        <Button size="sm" color="secondary" iconLeading={Archive} onClick={onArchive}>{account.archived_at ? "恢复账号" : "归档账号"}</Button>
-        <Button size="sm" color="secondary-destructive" iconLeading={Trash2} onClick={onDelete}>删除账号</Button>
+        {onRefresh && <Button size="sm" color="secondary" iconLeading={RefreshCw} onClick={onRefresh}>{uiText("刷新账号")}</Button>}
+        <Button size="sm" color="secondary" iconLeading={Pencil} onClick={onRename}>{uiText("重命名")}</Button>
+        <Button size="sm" color="secondary" iconLeading={Archive} onClick={onArchive}>{account.archived_at ? uiText("恢复账号") : uiText("归档账号")}</Button>
+        <Button size="sm" color="secondary-destructive" iconLeading={Trash2} onClick={onDelete}>{uiText("删除账号")}</Button>
       </footer>
     </section>
   </div>;
@@ -216,20 +217,20 @@ export function SeriesSettings({ onCreateEpisode, navigation,commonRequested=fal
       setCreating(false);
     });
   }
-  const seriesContent = <section className={`series-current-layout${commonEditor ? " account-workspace-layout" : ""}`} aria-label="系列规则与版本">
-    <aside><nav aria-label="系列导航">
-      <header><strong>系列</strong><Button size="sm" color="tertiary" aria-label="新建系列" title="新建系列" iconLeading={Plus}
+  const seriesContent = <section className={`series-current-layout${commonEditor ? " account-workspace-layout" : ""}`} aria-label={uiText("系列规则与版本")}>
+    <aside><nav aria-label={uiText("系列导航")}>
+      <header><strong>{uiText("系列")}</strong><Button size="sm" color="tertiary" aria-label={uiText("新建系列")} title={uiText("新建系列")} iconLeading={Plus}
         onClick={() => leave(() => setCreating(true))} type="button" /></header>
-      {showSeriesSearch && <InputBase size="sm" icon={Search} wrapperClassName="account-series-search" type="search" aria-label="查找系列"
-        placeholder="查找系列" maxLength={200} value={query} onChange={event => { setQuery(event.target.value); setPage(1); }} />}
+      {showSeriesSearch && <InputBase size="sm" icon={Search} wrapperClassName="account-series-search" type="search" aria-label={uiText("查找系列")}
+        placeholder={uiText("查找系列")} maxLength={200} value={query} onChange={event => { setQuery(event.target.value); setPage(1); }} />}
       {navigationSeries.map(candidate => {
         const active = !creating && candidate.id === selected?.id;
         return <Button size="sm" color="tertiary" className={`account-series-entry${active ? " is-active" : ""}`} key={candidate.id}
           onClick={() => { if (!active) leave(() => {setSelectedId(candidate.id);setCreating(false);}); }}
           aria-current={active ? "page" : undefined} type="button"><strong>{candidate.name}</strong></Button>;
       })}
-      {query && !filteredSeries.length && <p role="status" className="muted-copy">没有匹配的系列。</p>}
-      <PaginationControls label="系列分页" page={safePage} pageSize={pageSize} total={filteredSeries.length} onPageChange={setPage} />
+      {query && !filteredSeries.length && <p role="status" className="muted-copy">{uiText("没有匹配的系列。")}</p>}
+      <PaginationControls label={uiText("系列分页")} page={safePage} pageSize={pageSize} total={filteredSeries.length} onPageChange={setPage} />
     </nav></aside>
     <div>
       {creating || !selected ? <SeriesConfigurationForm accountPolicy={accountPolicy} initialName="" initialRules={emptySeriesRules} isEditing={false}
@@ -244,7 +245,7 @@ export function SeriesSettings({ onCreateEpisode, navigation,commonRequested=fal
   </section>;
   if (!commonEditor) return seriesContent;
   return <>
-    <div className="account-rule-tabs" role="tablist" aria-label="账号规则"
+    <div className="account-rule-tabs" role="tablist" aria-label={uiText("账号规则")}
       onKeyDown={event => {
         if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
         const tabs = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('[role="tab"]'));
@@ -255,11 +256,11 @@ export function SeriesSettings({ onCreateEpisode, navigation,commonRequested=fal
         const active = (tab === "common") === commonActive;
         return <button key={tab} role="tab" type="button" id={`${tabsId}-${tab}`} aria-controls={`${tabsId}-${tab}-panel`}
           aria-selected={active} tabIndex={active ? 0 : -1} onClick={() => activateTab(tab)}>
-          {tab === "common" ? "通用规则" : "系列规则"}
+          {tab === "common" ? uiText("通用规则") : uiText("系列规则")}
         </button>;
       })}
     </div>
-    {invalidSeries && commonActive && <p role="status">该系列已不可用，已返回通用规则。</p>}
+    {invalidSeries && commonActive && <p role="status">{uiText("该系列已不可用，已返回通用规则。")}</p>}
     <div className="account-common-panel" role="tabpanel" id={`${tabsId}-common-panel`} aria-labelledby={`${tabsId}-common`} hidden={!commonActive}>
       {commonActive && commonEditor}
     </div>
@@ -275,7 +276,7 @@ function AccountRenameModal({ account, isPending, onClose, onSave }: { account: 
 
   const [name, setName] = useState(account.name);
   async function submit(event: FormEvent<HTMLFormElement>) { event.preventDefault(); if (await onSave(name.trim()) !== false) onClose(); }
-  return <div className="modal-backdrop" role="dialog" aria-modal="true" aria-label="重命名账号"><form ref={dialogRef} aria-label="重命名账号" className="modal-card" onSubmit={(event) => void submit(event)}><header><div><h2>重命名账号</h2></div></header><label>账号显示名称<InputBase size="sm" aria-label="账号显示名称" onChange={(event) => setName(event.target.value)} value={name} /></label><div className="modal-actions"><Button size="sm" color="secondary" className="button button-secondary" onClick={onClose} type="button">取消</Button><Button size="sm" color="primary" className="button button-primary" isDisabled={isPending || !name.trim()} type="submit">{isPending ? "保存中…" : "保存名称"}</Button></div></form></div>;
+  return <div className="modal-backdrop" role="dialog" aria-modal="true" aria-label={uiText("重命名账号")}><form ref={dialogRef} aria-label={uiText("重命名账号")} className="modal-card" onSubmit={(event) => void submit(event)}><header><div><h2>{uiText("重命名账号")}</h2></div></header><label>{uiText("账号显示名称")}<InputBase size="sm" aria-label={uiText("账号显示名称")} onChange={(event) => setName(event.target.value)} value={name} /></label><div className="modal-actions"><Button size="sm" color="secondary" className="button button-secondary" onClick={onClose} type="button">{uiText("取消")}</Button><Button size="sm" color="primary" className="button button-primary" isDisabled={isPending || !name.trim()} type="submit">{isPending ? uiText("保存中…") : uiText("保存名称")}</Button></div></form></div>;
 }
 
 function AccountDeleteModal({account,episodeCount,isPending,onClose,onDelete,readStatus,onViewEpisodes,onViewCleanup,onArchive}:{account:Account;episodeCount:number;isPending:boolean;onClose:()=>void;onDelete:(confirmation:string)=>Promise<boolean|void>;readStatus?:(id:string)=>Promise<AccountDeletionStatus>;onViewEpisodes?:(id:string)=>boolean|void;onViewCleanup?:(key:string)=>void;onArchive?:()=>void}) {
@@ -284,18 +285,18 @@ function AccountDeleteModal({account,episodeCount,isPending,onClose,onDelete,rea
  const refresh=useCallback(async()=>{
   const request=++generation.current;setLoading(true);setError('');
   try{const next=readStatus?await readStatus(account.id):{episodeCount,archivedEpisodeCount:0,creationCount:0,deletionCount:0,cleanupKey:null};if(request===generation.current)setStatus(next);}
-  catch(reason){if(request===generation.current){setStatus(null);setError(reason instanceof Error?reason.message:'无法检查删除条件，请重试。');}}
+  catch(reason){if(request===generation.current){setStatus(null);setError(reason instanceof Error?reason.message:uiText("无法检查删除条件，请重试。"));}}
   finally{if(request===generation.current)setLoading(false);}
  },[account.id,episodeCount,readStatus]);
  useEffect(()=>{void refresh();return()=>{generation.current++;};},[refresh]);
  const blocked=!!status&&(status.episodeCount>0||status.creationCount>0||status.deletionCount>0);
- return <ConfirmationModal confirmDisabled={loading||!!error||!status||blocked||confirmation!==account.name} confirmLabel="确认删除账号" isPending={isPending} onCancel={onClose} onConfirm={async()=>{if(loading||!status||blocked||error)return;if(await onDelete(confirmation)!==false)onClose();else await refresh();}} pendingLabel="删除中…" title="删除账号" tone="danger">
-  {loading?<p role="status">正在检查…</p>:error?<><p role="alert">{error}</p><Button size="sm" color="secondary" onPress={()=>void refresh()}>重新检查</Button></>:status&&blocked?<>
-   <p>暂不能删除此账号。</p><div className="account-delete-blockers">
-    {status.episodeCount>0&&<div><span>{status.episodeCount} 个生产单{status.archivedEpisodeCount>0?`（含 ${status.archivedEpisodeCount} 个已归档）`:''}</span>{onViewEpisodes&&<Button size="sm" color="secondary" isDisabled={isPending} onPress={()=>{if(onViewEpisodes(account.id)!==false)onClose();}}>查看生产单</Button>}</div>}
-    {status.deletionCount>0&&<div><span>{status.deletionCount} 项文件清理未完成</span>{status.cleanupKey&&onViewCleanup&&<Button size="sm" color="secondary" isDisabled={isPending} onPress={()=>{onClose();onViewCleanup(status.cleanupKey!);}}>查看清理任务</Button>}</div>}
-    {status.creationCount>0&&<p>{status.creationCount} 项目录创建未完成，请先恢复原操作。</p>}
-   </div><div className="account-delete-options"><Button size="sm" color="tertiary" isDisabled={isPending} onPress={()=>void refresh()}>重新检查</Button>{onArchive&&<Button size="sm" color="tertiary" isDisabled={isPending} onPress={onArchive}>归档账号</Button>}</div>
-  </>:status?<><p>此操作不可撤销。输入“{account.name}”确认删除。</p><label>确认文本<InputBase size="sm" aria-label="删除账号确认文本" isDisabled={isPending} onChange={event=>setConfirmation(event.target.value)} value={confirmation}/></label></>:null}
+ return <ConfirmationModal confirmDisabled={loading||!!error||!status||blocked||confirmation!==account.name} confirmLabel={uiText("确认删除账号")} isPending={isPending} onCancel={onClose} onConfirm={async()=>{if(loading||!status||blocked||error)return;if(await onDelete(confirmation)!==false)onClose();else await refresh();}} pendingLabel={uiText("删除中…")} title={uiText("删除账号")} tone="danger">
+  {loading?<p role="status">{uiText("正在检查…")}</p>:error?<><p role="alert">{uiText(error)}</p><Button size="sm" color="secondary" onPress={()=>void refresh()}>{uiText("重新检查")}</Button></>:status&&blocked?<>
+   <p>{uiText("暂不能删除此账号。")}</p><div className="account-delete-blockers">
+    {status.episodeCount>0&&<div><span>{status.episodeCount} {uiText("个生产单")}{status.archivedEpisodeCount>0?uiText("（含 {value1} 个已归档）",{value1:status.archivedEpisodeCount}):''}</span>{onViewEpisodes&&<Button size="sm" color="secondary" isDisabled={isPending} onPress={()=>{if(onViewEpisodes(account.id)!==false)onClose();}}>{uiText("查看生产单")}</Button>}</div>}
+    {status.deletionCount>0&&<div><span>{status.deletionCount} {uiText("项文件清理未完成")}</span>{status.cleanupKey&&onViewCleanup&&<Button size="sm" color="secondary" isDisabled={isPending} onPress={()=>{onClose();onViewCleanup(status.cleanupKey!);}}>{uiText("查看清理任务")}</Button>}</div>}
+    {status.creationCount>0&&<p>{status.creationCount} {uiText("项目录创建未完成，请先恢复原操作。")}</p>}
+   </div><div className="account-delete-options"><Button size="sm" color="tertiary" isDisabled={isPending} onPress={()=>void refresh()}>{uiText("重新检查")}</Button>{onArchive&&<Button size="sm" color="tertiary" isDisabled={isPending} onPress={onArchive}>{uiText("归档账号")}</Button>}</div>
+  </>:status?<><p>{uiText("此操作不可撤销。输入“")}{account.name}{uiText("”确认删除。")}</p><label>{uiText("确认文本")}<InputBase size="sm" aria-label={uiText("删除账号确认文本")} isDisabled={isPending} onChange={event=>setConfirmation(event.target.value)} value={confirmation}/></label></>:null}
  </ConfirmationModal>;
 }

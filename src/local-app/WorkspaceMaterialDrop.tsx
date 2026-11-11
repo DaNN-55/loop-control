@@ -1,3 +1,4 @@
+import {uiText} from '../i18n/ui';
 import {canUseWorkspaceAudioMaterial,type WorkspaceAudioMaterialPurpose} from './workspaceAudioMaterial';
 import {createContext,useContext,useState,type PropsWithChildren} from 'react';
 import {MoveDown} from 'lucide-react';
@@ -39,8 +40,8 @@ export function WorkspaceMaterialDrop({label,kind,purpose,disabled,selectedName,
  };
  return <button type="button" className="workspace-material-drop" data-surface={surface} data-drag-over={over||undefined}
   disabled={disabled} aria-disabled={!canPick&&!onBrowse||undefined}
-  aria-label={selectedName?`${label}，已选 ${selectedName}`:label}
-  title={selectedName?'拖入其他素材可替换当前选择':'也可先点击左侧素材，再点击这里'}
+  aria-label={selectedName?uiText("{value0}，已选 {value1}",{value0:String(label),value1:String(selectedName)}):label}
+  title={selectedName?uiText("拖入其他素材可替换当前选择"):uiText("也可先点击左侧素材，再点击这里")}
   onClick={()=>{if(canPick&&selected)choose(selected.id);else onBrowse?.();}}
   onDragOver={event=>{
    const fromShelf=event.dataTransfer.types.includes(workspaceMaterialDragType);
@@ -61,6 +62,6 @@ export function WorkspaceMaterialDrop({label,kind,purpose,disabled,selectedName,
    else if(onFiles&&event.dataTransfer.files?.length)onFiles([...event.dataTransfer.files]);
   }}>
   <MoveDown size={surface?20:14} aria-hidden="true"/><span>{selectedName||label}</span>
-  {surface&&<small>{canDrop?'松开即可选取':canPick?'使用已选素材':onBrowse?'点击上传，或从本期素材拖入':'从左侧本期素材拖入'}</small>}
+  {surface&&<small>{canDrop?uiText("松开即可选取"):canPick?uiText("使用已选素材"):onBrowse?uiText("点击上传，或从本期素材拖入"):uiText("从左侧本期素材拖入")}</small>}
  </button>;
 }

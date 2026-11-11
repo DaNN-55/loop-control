@@ -1,3 +1,4 @@
+import {uiText} from '../i18n/ui';
 import './workspace-feature-switch.css';
 import {canUseWorkspaceAudioMaterial} from './workspaceAudioMaterial';
 import {WorkspaceMaterialDrop} from './WorkspaceMaterialDrop';
@@ -35,7 +36,8 @@ export function WorkspaceNarrationPanel(props:Parameters<typeof EditableWorkspac
 function EditableWorkspaceNarrationPanel({episodeId,workspace,pending,command,onChanged,tracks=[],materials=[],selectedShotId,active=true,defaultSettings,narrationConfiguration,onImportAudio}:{episodeId:string;workspace:ProductionWorkspace;pending:boolean;command:(name:string,data:unknown)=>Promise<unknown>;onChanged:(w:ProductionWorkspace)=>void;tracks?:Track[];materials?:NarrationMaterial[];selectedShotId?:string;active?:boolean;defaultSettings?:{voice:string|null;speakingRate:number|null;languageCode:string|null};narrationConfiguration?:unknown;onImportAudio?:(files:File[])=>Promise<unknown>}){
  const legacy=narrationConfiguration as {credential_ref?:string;executor?:{provider:string;adapter:string;model:string}}|undefined;
  const persisted=workspace.narration?.find(n=>n.defaults)?.defaults;
- const initial:Settings=persisted??{selection:legacy?.executor&&legacy.credential_ref?{capability:'speech',provider:legacy.executor.provider,adapter:legacy.executor.adapter,model:legacy.executor.model,connectionVersionId:legacy.credential_ref}:null,voice:defaultSettings?.voice??'',languageCode:defaultSettings?.languageCode??'zh-CN',speakingRate:defaultSettings?.speakingRate??1};
+ const saved=workspace.narration?.find(n=>(!selectedShotId||n.shotId===selectedShotId)&&n.selection);
+ const initial:Settings=persisted??(saved?.selection?{selection:saved.selection,voice:saved.voice??'',languageCode:saved.languageCode??'zh-CN',speakingRate:saved.speakingRate??1}: {selection:legacy?.executor&&legacy.credential_ref?{capability:'speech',provider:legacy.executor.provider,adapter:legacy.executor.adapter,model:legacy.executor.model,connectionVersionId:legacy.credential_ref}:null,voice:defaultSettings?.voice??'',languageCode:defaultSettings?.languageCode??'zh-CN',speakingRate:defaultSettings?.speakingRate??1});
  const key=`loop-speech-default-draft:${workspace.id}`,[defaultDraft,setDefaultDraft]=useState(()=>({baseline:workspaceSettingsFingerprint(initial),value:restoreWorkspaceSettingsDraft(key,initial)})),[busy,setBusy]=useState(false),[error,setError]=useState(''),[tab,setTab]=useState<'voice'|'captions'>(()=>{try{return sessionStorage.getItem(`loop-narration-tab:${workspace.id}`)==='captions'?'captions':'voice';}catch{return 'voice';}});
  const settings=defaultDraft.value,defaultChanged=workspaceSettingsFingerprint(settings)!==workspaceSettingsFingerprint(initial),defaultUpdated=defaultDraft.baseline!==workspaceSettingsFingerprint(initial);
  const setSettings=(value:Settings)=>setDefaultDraft({...defaultDraft,value});
@@ -58,11 +60,11 @@ function EditableWorkspaceNarrationPanel({episodeId,workspace,pending,command,on
   }catch(e){setError(e instanceof Error?e.message:'保存未完成。');}
   finally{setBusy(false);}
  }
- const catalogFailure=catalogError&&<div className="workspace-narration-default-actions"><span role="alert">{catalogError}</span><Button size="sm" color="tertiary" onPress={catalogReading.refresh}>重试</Button></div>;
+ const catalogFailure=catalogError&&<div className="workspace-narration-default-actions"><span role="alert">{uiText(catalogError||'')}</span><Button size="sm" color="tertiary" onPress={catalogReading.refresh}>{uiText("重试")}</Button></div>;
  const settingsFeedback=<>{catalogFailure}
-  {defaultUpdated&&workspaceSettingsFingerprint(settings)!==defaultDraft.baseline&&<div className="workspace-narration-default-actions"><span role="status">口播设置已在其他窗口更新。</span><Button size="sm" color="tertiary" isDisabled={pending||busy} onPress={()=>setDefaultDraft({baseline:workspaceSettingsFingerprint(initial),value:initial})}>载入已保存设置</Button></div>}
-  {error&&<p role="alert">{error}</p>}</>;
- return <section className="workspace-narration" aria-label="逐镜口播">
+  {defaultUpdated&&workspaceSettingsFingerprint(settings)!==defaultDraft.baseline&&<div className="workspace-narration-default-actions"><span role="status">{uiText("口播设置已在其他窗口更新。")}</span><Button size="sm" color="tertiary" isDisabled={pending||busy} onPress={()=>setDefaultDraft({baseline:workspaceSettingsFingerprint(initial),value:initial})}>{uiText("载入已保存设置")}</Button></div>}
+  {error&&<p role="alert">{uiText(error||'')}</p>}</>;
+ return <section className="workspace-narration" aria-label={uiText("逐镜口播")}>
   {workspace.narration?.map(n=><div key={n.clipId} hidden={selectedShotId!==undefined&&n.shotId!==selectedShotId}>
    <NarrationRow episodeId={episodeId} workspace={workspace} narration={n} defaults={settings} services={services} onSettings={setSettings} persistSettings={persistSettings} settingsChanged={defaultChanged} saveSettings={()=>void saveDefaults()} settingsFeedback={settingsFeedback} tab={tab} onTab={setTab}
     onImportAudio={onImportAudio} tracks={tracks} materials={materials} expanded={selectedShotId===n.shotId} pending={pending||busy} command={command} onChanged={onChanged}/>
@@ -165,14 +167,14 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
   finally{manualSession.running=false;showManual();}
   if(ownsManual())await processManual();
  }
- async function prepare(){
-  if(mode!=='tts'||!canGenerate)return;
+ async function prepare(retryOfTaskId?:string,current=workspace){
+  if(mode!=='tts'||(!canGenerate&&!retryOfTaskId))return;
   setBusy(true);setError('');
   try{
-   let w=await persistSettings(workspace);
+   let w=await persistSettings(current);
    w=await command('saveWorkspaceNarration',{...base(w),mode:'tts',text,...speechSettings}) as ProductionWorkspace;
    w=await command('confirmWorkspaceNarration',base(w)) as ProductionWorkspace;
-   w=await command('generateWorkspaceNarration',{...base(w),retry:n.status==='failed'}) as ProductionWorkspace;
+   w=await command('generateWorkspaceNarration',{...base(w),retry:n.status==='failed',...(retryOfTaskId?{retryOfTaskId}:{})}) as ProductionWorkspace;
    onChanged(w);
   }catch(e){setError(e instanceof Error?e.message:'口播准备未完成。');}finally{setBusy(false);}
  }
@@ -191,6 +193,15 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
   }catch(e){setError(e instanceof Error?e.message:'采用未完成。');}finally{setBusy(false);}
  }
  async function reconcile(recover=false){setBusy(true);setError('');try{if(recover&&n.generationTask)await reconcileWorkspaceOutput(episodeId,n.generationTask);onChanged((await localRequest(`episodes/${encodeURIComponent(episodeId)}/workspace`)).workspace);}catch(e){setError(e instanceof Error?e.message:'口播状态未能核对，请重试。');}finally{setBusy(false);}}
+ async function retryUnknown(){
+  setError('');
+  try{
+   const latest=await reader.read(),original=latest.narration?.find(value=>value.shotId===n.shotId)?.generationTask;
+   onChanged(latest);
+   if(!original?.unknownRetryAllowed)throw Error('原任务已变化，请核对最新结果。');
+   await prepare(original.taskId,latest);
+  }catch(cause){setError(cause instanceof Error?cause.message:'原任务未能核对。');}
+ }
  async function adopt(candidateId:string,restore=false){setError('');try{await review.prepare(candidateId,restore);}catch(e){setError(e instanceof Error?e.message:'采用未完成。');}}
  async function confirmAdoption(){setError('');try{await review.confirm((changed,plan)=>{if(plan.restoration){const restored=changed.narration?.find(v=>v.shotId===n.shotId);if(restored)setText(restored.text);}});}catch(e){setError(e instanceof Error?e.message:'采用未完成。');}}
  async function withdraw(){
@@ -207,7 +218,7 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
  })??[];
  const disabled=pending||busy||manualSession.running||review.pending||workspace.stale;
  const adoptedTrack=uploadedTracks.find(t=>t.id===n.adoptedAudioTrackId);
- const withdrawAction=<Button className="workspace-narration-withdraw" size="sm" color="tertiary-destructive" aria-label="撤销" isDisabled={disabled} onPress={()=>void withdraw()}>撤销</Button>;
+ const withdrawAction=<Button className="workspace-narration-withdraw" size="sm" color="tertiary-destructive" aria-label={uiText("撤销")} isDisabled={disabled} onPress={()=>void withdraw()}>{uiText("撤销")}</Button>;
  const plan=review.plan;
  const needsImpactDialog=!!plan?.restoration||needsCandidateImpactDialog(plan?.impact);
  const inlineReview=plan&&!needsImpactDialog?plan:null;
@@ -220,17 +231,17 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
   const trigger=adoptionTrigger.current;
   if(trigger instanceof HTMLElement)requestAnimationFrame(()=>trigger.focus());
  }
- const inlineActions=inlineReview&&<div className="workspace-result-actions workspace-result-confirmation" role="group" aria-label="采用前核对"
+ const inlineActions=inlineReview&&<div className="workspace-result-actions workspace-result-confirmation" role="group" aria-label={uiText("采用前核对")}
   onKeyDown={event=>{if(event.key==='Escape'&&!review.pending&&!busy){event.stopPropagation();cancelAdoption();}}}>
-  <Button autoFocus size="sm" color="secondary" isDisabled={disabled} onPress={cancelAdoption}>取消</Button>
-  <Button size="sm" color="primary" isDisabled={disabled} onPress={()=>void confirmAdoption()}>确认采用</Button>
+  <Button autoFocus size="sm" color="secondary" isDisabled={disabled} onPress={cancelAdoption}>{uiText("取消")}</Button>
+  <Button size="sm" color="primary" isDisabled={disabled} onPress={()=>void confirmAdoption()}>{uiText("确认采用")}</Button>
  </div>;
  const fields=<div className="workspace-narration-fields">
   <header className="workspace-narration-subheader">
-   <div className="workspace-visual-preview-tabs" role="tablist" aria-label="字幕与口播">
+   <div className="workspace-visual-preview-tabs" role="tablist" aria-label={uiText("字幕与口播")}>
     {([['voice','口播'],['captions','字幕']] as const).map(([value,label])=><button key={value} id={`${tabId}-${value}`} type="button" role="tab" aria-selected={tab===value} aria-controls={`${tabId}-${value}-panel`} tabIndex={tab===value?0:-1} onClick={()=>onTab(value)} onKeyDown={event=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(event.key)){event.preventDefault();const next=event.key==='Home'?'voice':event.key==='End'?'captions':tab==='voice'?'captions':'voice';onTab(next);requestAnimationFrame(()=>document.getElementById(`${tabId}-${next}`)?.focus());}}}>{label}</button>)}
    </div>
-   <Toggle className="workspace-feature-switch" label={(tab==='voice'?voiceEnabled:captionEnabled)?'已开启':'已关闭'} size="sm" aria-label={tab==='voice'?'启用口播':'启用字幕'} isSelected={tab==='voice'?voiceEnabled:captionEnabled} isDisabled={disabled} onChange={enabled=>void toggleEnabled(enabled)}/>
+   <Toggle className="workspace-feature-switch" label={(tab==='voice'?voiceEnabled:captionEnabled)?uiText("已开启"):uiText("已关闭")} size="sm" aria-label={tab==='voice'?uiText("启用口播"):uiText("启用字幕")} isSelected={tab==='voice'?voiceEnabled:captionEnabled} isDisabled={disabled} onChange={enabled=>void toggleEnabled(enabled)}/>
   </header>
   <div id={`${tabId}-captions-panel`} role="tabpanel" aria-labelledby={`${tabId}-captions`} hidden={tab!=='captions'}>
    <div hidden={!captionEnabled}><WorkspaceNarrationCaptions storageKey={`${key}:caption-text`} contract={savedCaption} followText={followText} disabled={disabled} onSave={saveCaptions}/></div>
@@ -242,33 +253,33 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
    <div className="workspace-generation-composer workspace-speech-composer">
     <div className="workspace-narration-editor workspace-narration-input">
     {mode==='manual'?<div className="workspace-narration-file-slot">
-     <header className="workspace-caption-editor-heading"><h3 id={textHeadingId}>人工口播</h3></header>
-     <WorkspaceMaterialDrop label="拖入口播文件" kind="audio" purpose="narration" surface="preview" persistent disabled={disabled}
+     <header className="workspace-caption-editor-heading"><h3 id={textHeadingId}>{uiText("人工口播")}</h3></header>
+     <WorkspaceMaterialDrop label={uiText("拖入口播文件")} kind="audio" purpose="narration" surface="preview" persistent disabled={disabled}
       onSelect={id=>void addManualMaterial(id)} onBrowse={onImportAudio?()=>audioInput.current?.click():undefined} onFiles={files=>void importAudio(files)}/>
-     <input ref={audioInput} aria-label="导入人工口播" hidden type="file" multiple accept=".mp3,audio/mpeg" disabled={disabled} onChange={event=>{const files=Array.from(event.target.files??[]);event.target.value='';if(files.length)void importAudio(files);}}/>
-    </div>:<><header className="workspace-caption-editor-heading"><h3 id={textHeadingId}>口播文案</h3></header><textarea aria-label="口播文案" rows={4} maxLength={100000} disabled={disabled} value={text} onChange={e=>setText(e.target.value)}/></>}
+     <input ref={audioInput} aria-label={uiText("导入人工口播")} hidden type="file" multiple accept=".mp3,audio/mpeg" disabled={disabled} onChange={event=>{const files=Array.from(event.target.files??[]);event.target.value='';if(files.length)void importAudio(files);}}/>
+    </div>:<><header className="workspace-caption-editor-heading"><h3 id={textHeadingId}>{uiText("口播文案")}</h3></header><textarea aria-label={uiText("口播文案")} rows={4} maxLength={100000} disabled={disabled} value={text} onChange={e=>setText(e.target.value)}/></>}
     </div>
     <WorkspaceNarrationToolbar mode={mode==='manual'?'manual':'tts'} value={speechSettings} services={services} disabled={disabled} changed={settingsChanged} onMode={setMode} onChange={onSettings} onSave={saveSettings}>
      {inlineReview&&!inlineCandidate&&<><span role="status">{reviewSummary}</span>{inlineActions}</>}
-     {mode==='tts'&&<Button className="workspace-narration-primary" hidden={!!inlineReview&&!inlineCandidate} size="sm" color="primary" isDisabled={disabled||!canGenerate} onPress={event=>{adoptionTrigger.current=event.target;void prepare();}}>{busy?'正在处理…':'生成口播'}</Button>}
-     {mode==='manual'&&manualSession.running&&<span role="status">正在加入口播候选…</span>}
+     {mode==='tts'&&<Button className="workspace-narration-primary" hidden={!!inlineReview&&!inlineCandidate} size="sm" color="primary" isDisabled={disabled||!canGenerate} onPress={event=>{adoptionTrigger.current=event.target;void prepare();}}>{busy?uiText("正在处理…"):uiText("生成口播")}</Button>}
+     {mode==='manual'&&manualSession.running&&<span role="status">{uiText("正在加入口播候选…")}</span>}
     </WorkspaceNarrationToolbar>
    </div>
   </section>
-  {mode==='manual'&&manualSession.rows.some(row=>row.status!=='succeeded')&&<section aria-label="人工口播登记" className="workspace-narration-default-actions">
+  {mode==='manual'&&manualSession.rows.some(row=>row.status!=='succeeded')&&<section aria-label={uiText("人工口播登记")} className="workspace-narration-default-actions">
    {manualSession.rows.filter(row=>row.status!=='succeeded').map(row=><div key={row.materialId+row.text}>
-    <span>{row.name??'已导入口播'} · {row.status==='running'?'正在加入候选':row.stage==='confirm'?'口播已保存，等待确认':'等待加入候选'}</span>
-    {row.error&&<p role="alert">{row.error}</p>}
+    <span>{row.name??uiText("已导入口播")} · {row.status==='running'?uiText("正在加入候选"):row.stage==='confirm'?uiText("口播已保存，等待确认"):uiText("等待加入候选")}</span>
+    {row.error&&<p role="alert">{uiText(row.error)}</p>}
    </div>)}
-   {!manualSession.running&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>void processManual()}>重试加入候选</Button>}
+   {!manualSession.running&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>void processManual()}>{uiText("重试加入候选")}</Button>}
   </section>}
   {mode==='tts'&&!canGenerate&&
-   <p className="workspace-narration-model-note" role="status">{!compatible(speechSettings,services)?'请在口播设置中检查连接、音色和语速。':!text.trim()?'请填写口播文案。':'请先核对上一条口播任务。'}</p>}
+   <p className="workspace-narration-model-note" role="status">{!compatible(speechSettings,services)?uiText("请在口播设置中检查连接、音色和语速。"):!text.trim()?uiText("请填写口播文案。"):uiText("请先核对上一条口播任务。")}</p>}
   {n.adoptedAudioTrackId&&!!adoptedTrack===(mode==='manual')&&!candidates.some(c=>c.status==='adopted')&&
-   <div className="workspace-speech-result-footer"><p>已采用口播</p>{withdrawAction}</div>}
-  {mode==='manual'&&n.mode==='manual'&&n.audioTrackId&&!candidates.some(c=>c.id===n.audioTrackId)&&n.audioTrackId!==n.adoptedAudioTrackId&&<div className="workspace-speech-result-player"><span>已登记人工口播</span><Button size="sm" color="primary" isDisabled={disabled} onPress={()=>setManualReview({projectSha256:workspace.project.sha256,audioTrackId:n.audioTrackId!,inputFingerprint:n.inputFingerprint,durationSeconds:n.durationSeconds})}>采用</Button></div>}
-  {candidates.length>0&&<section className="workspace-speech-results" aria-label="口播候选">
-   <div className="workspace-results-heading"><h3>口播候选</h3><span>{candidates.length} 个</span></div>
+   <div className="workspace-speech-result-footer"><p>{uiText("已采用口播")}</p>{withdrawAction}</div>}
+  {mode==='manual'&&n.mode==='manual'&&n.audioTrackId&&!candidates.some(c=>c.id===n.audioTrackId)&&n.audioTrackId!==n.adoptedAudioTrackId&&<div className="workspace-speech-result-player"><span>{uiText("已登记人工口播")}</span><Button size="sm" color="primary" isDisabled={disabled} onPress={()=>setManualReview({projectSha256:workspace.project.sha256,audioTrackId:n.audioTrackId!,inputFingerprint:n.inputFingerprint,durationSeconds:n.durationSeconds})}>{uiText("采用")}</Button></div>}
+  {candidates.length>0&&<section className="workspace-speech-results" aria-label={uiText("口播候选")}>
+   <div className="workspace-results-heading"><h3>{uiText("口播候选")}</h3><span>{candidates.length}{uiText(" 个")}</span></div>
    <div className="workspace-speech-results-list">
     {candidates.map(c=>{
      const confirming=inlineCandidate?.id===c.id;
@@ -276,17 +287,17 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
      const label=mode==='manual'?sourceName||'人工口播':c.text;
      return <article key={c.id} className="workspace-speech-result">
       <div className="workspace-speech-result-heading" title={mode==='manual'?[label,c.text].filter(Boolean).join('\n'):c.text}>
-       <div className="workspace-speech-result-copy"><p>{label}</p>{c.status==='adopted'&&<Badge type="color" color="success" size="sm" className="workspace-speech-adopted">已采用</Badge>}</div>
+       <div className="workspace-speech-result-copy"><p>{label}</p>{c.status==='adopted'&&<Badge type="color" color="success" size="sm" className="workspace-speech-adopted">{uiText("已采用")}</Badge>}</div>
       </div>
-      <div className="workspace-speech-result-player"><WorkspaceAudioAudition layout="bar" durationSeconds={c.durationSeconds} label={label.slice(0,32)||n.shotId} showControls={false} preload="none" aria-label={`${n.shotId} ${c.id} 口播试听`}
+      <div className="workspace-speech-result-player"><WorkspaceAudioAudition layout="bar" durationSeconds={c.durationSeconds} label={label.slice(0,32)||n.shotId} showControls={false} preload="none" aria-label={uiText("{value0} {value1} 口播试听",{value0:String(n.shotId),value1:String(c.id)})}
        src={`/_local-artifact?episode=${encodeURIComponent(episodeId)}&path=${encodeURIComponent(c.relativePath)}`}/>
       <div className="workspace-speech-result-footer">
        {confirming&&<p role="status">{reviewSummary}</p>}
        {confirming&&inlineActions}
        {c.status==='available'||c.canRestoreNarration?<div hidden={confirming}>
-        <Button size="sm" color="primary" aria-label="采用" isDisabled={disabled} onPress={event=>{adoptionTrigger.current=event.target;void adopt(c.id,c.canRestoreNarration);}}>采用</Button>
+        <Button size="sm" color="primary" aria-label={uiText("采用")} isDisabled={disabled} onPress={event=>{adoptionTrigger.current=event.target;void adopt(c.id,c.canRestoreNarration);}}>{uiText("采用")}</Button>
        </div>
-        :c.status==='adopted'?<div className="workspace-result-actions">{withdrawAction}</div>:<span>输入已变化</span>}
+        :c.status==='adopted'?<div className="workspace-result-actions">{withdrawAction}</div>:<span>{uiText("输入已变化")}</span>}
       </div>
       </div>
      </article>;
@@ -294,30 +305,30 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
    </div>
   </section>}
   <ConfirmationModalPresence>{plan&&needsImpactDialog&&createPortal(<div className="workspace-visual-adoption-overlay">
-   <ConfirmationModal title={plan.restoration?'恢复口播前核对':'采用前核对'} confirmLabel="确认采用" isPending={busy||review.pending} confirmDisabled={disabled}
+   <ConfirmationModal title={plan.restoration?uiText("恢复口播前核对"):uiText("采用前核对")} confirmLabel={uiText("确认采用")} isPending={busy||review.pending} confirmDisabled={disabled}
     onConfirm={confirmAdoption} onCancel={cancelAdoption}>
     {plan.restoration&&<div className="workspace-candidate-impact-details">
-     <div><strong>当前正文</strong><p style={{whiteSpace:'pre-wrap'}}>{text||'（空）'}</p></div>
-     <div><strong>恢复为</strong><p style={{whiteSpace:'pre-wrap'}}>{plan.restoration.restoredText||'（空）'}</p></div>
+     <div><strong>{uiText("当前正文")}</strong><p style={{whiteSpace:'pre-wrap'}}>{text||uiText("（空）")}</p></div>
+     <div><strong>{uiText("恢复为")}</strong><p style={{whiteSpace:'pre-wrap'}}>{plan.restoration.restoredText||uiText("（空）")}</p></div>
     </div>}
     <div className="workspace-candidate-impact-details"><WorkspaceCandidateImpactDetails plan={plan}/></div>
    </ConfirmationModal>
   </div>,document.querySelector('.app-shell')??document.body)}</ConfirmationModalPresence>
   <ConfirmationModalPresence>{manualReview&&expanded&&createPortal(<div className="workspace-visual-adoption-overlay">
-   <ConfirmationModal title="采用人工口播前核对" confirmLabel="确认采用" isPending={busy} confirmDisabled={disabled}
+   <ConfirmationModal title={uiText("采用人工口播前核对")} confirmLabel={uiText("确认采用")} isPending={busy} confirmDisabled={disabled}
     onConfirm={confirmManualReview} onCancel={()=>setManualReview(null)}>
-    {manualReview.durationSeconds!=null&&<p>录音时长 {manualReview.durationSeconds.toFixed(2)} 秒。</p>}
-    <p>采用后请核对镜头时长和字幕时序。</p>
-    {error&&<p role="alert">{error}</p>}
+    {manualReview.durationSeconds!=null&&<p>{uiText("录音时长 ")}{manualReview.durationSeconds.toFixed(2)}{uiText(" 秒。")}</p>}
+    <p>{uiText("采用后请核对镜头时长和字幕时序。")}</p>
+    {error&&<p role="alert">{uiText(error||'')}</p>}
    </ConfirmationModal>
   </div>,document.querySelector('.app-shell')??document.body)}</ConfirmationModalPresence>
-  {mode==='tts'&&n.generationTask&&<WorkspaceVisualTaskStatus task={n.generationTask} label="口播" taskNoun="口播任务" resumeLabel="恢复口播任务" disabled={disabled} onRefresh={()=>void reconcile()} onReconcile={()=>void reconcile(true)} onResume={()=>{}}/>}
+  {mode==='tts'&&n.generationTask&&<WorkspaceVisualTaskStatus task={n.generationTask} label={uiText("口播")} taskNoun={uiText("口播任务")} resumeLabel={uiText("恢复口播任务")} disabled={disabled} onRefresh={()=>void reconcile()} onReconcile={()=>void reconcile(true)} onResume={()=>{}} onRetryUnknown={(n.generationTask.unknownRetryAllowed??(task.unknown&&!task.held&&!n.generationTask.retryTaskId&&n.generationTask.submissionOutcome!=='received'&&!n.generationTask.invalidated))?()=>void retryUnknown():undefined}/>}
 
   </div></div>
  {(error||n.error&&!n.generationTask)&&<p role="alert">{error||n.error}</p>}
  </div>;
  return expanded?fields:<details className="workspace-narration-row">
-  <summary>{n.shotId}<span>{task.held||task.unknown||task.active||task.stopped||task.state==='not-sent'?task.summary:n.durationSeconds?`${n.durationSeconds.toFixed(2)} 秒`:mode==='none'?'关闭':'待准备'}</span></summary>
+  <summary>{n.shotId}<span>{task.held||task.unknown||task.active||task.stopped||task.state==='not-sent'?task.summary:n.durationSeconds?uiText("{value0} 秒",{value0:String(n.durationSeconds.toFixed(2))}):mode==='none'?uiText("关闭"):uiText("待准备")}</span></summary>
   {fields}
  </details>;
 }

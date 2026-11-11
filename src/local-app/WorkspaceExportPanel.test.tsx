@@ -10,10 +10,11 @@ it('keeps historical completion in the overview while the latest failed delivery
  fireEvent.click(screen.getByRole('button',{name:'重试原交付'}));await waitFor(()=>expect(command).toHaveBeenCalledWith('retryWorkspaceDelivery',{episodeId:'e',workspaceId:'w',expectedRevision:4,deliveryId:'latest-failed'}));
 });
 it('retains verified historical delivery downloads when the latest export is outdated',()=>{
- const w={id:'w',episodeId:'e',revision:4,stale:false,readiness:{placeholders:[]},exports:[{id:'old-export',status:'ready',current:false,confirmed:true,artifact:{relativePath:'old.mp4',sha256:'old-video',fileSize:12},checks:[]}],deliveries:[{id:'verified-history',exportId:'old-export',status:'completed',verified:true,artifacts:[{artifactType:'final_render',relativePath:'history/final.mp4',sha256:'historical-sha',fileSize:12}]}]} as unknown as ProductionWorkspace;
+ const w={id:'w',episodeId:'e',revision:4,stale:false,readiness:{placeholders:[]},exports:[{id:'old-export',status:'ready',current:false,confirmed:true,projectContentVersion:3,artifact:{relativePath:'old.mp4',sha256:'old-video',fileSize:12},checks:[]}],deliveries:[{id:'verified-history',exportId:'old-export',status:'completed',verified:true,artifacts:[{artifactType:'final_render',relativePath:'history/final.mp4',sha256:'historical-sha',fileSize:12}]}]} as unknown as ProductionWorkspace;
  const command=vi.fn();render(<WorkspaceExportPanel workspace={w} pending={false} command={command} onChange={()=>{}}/>);
  expect(screen.getByText('交付已完成')).toBeTruthy();expect(screen.getByText('这是旧导出，请先重新导出。')).toBeTruthy();expect(screen.getByRole('button',{name:'确认成片与字幕'})).toHaveProperty('disabled',true);
  expect(screen.getByRole('link',{name:'下载最终视频'}).getAttribute('href')).toContain('path=history%2Ffinal.mp4&sha256=historical-sha');expect(screen.queryByRole('button',{name:'重新导出视频'})).toBeNull();expect(command).not.toHaveBeenCalled();
+ expect(screen.getByText('导出 v3 → 当前 v4')).toBeTruthy();
 });
 it('Owner sees the actual final MP4 and confirms its exact file and content identities',async()=>{
  const workspace={id:'w',episodeId:'e',revision:3,contentSha256:'content',stale:false,readiness:{deliverable:false,placeholders:[],missingSources:[]},exports:[{id:'ex',status:'ready',current:true,confirmed:false,artifact:{relativePath:'episodes/e/final.mp4',sha256:'final-sha',fileSize:1234},checks:[{name:'technical',passed:true,detail:'技术检查通过'}]}]} as unknown as ProductionWorkspace;

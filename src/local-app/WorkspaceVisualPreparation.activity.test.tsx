@@ -48,7 +48,7 @@ it('keeps failed and unknown results in the existing diagnostic and recovery pre
  expect(screen.getByRole('button',{name:'查看图片任务详情'})).toBeTruthy();
  await waitFor(()=>expect(screen.getByRole('button',{name:'重新生成图片'})).toHaveProperty('disabled',false));
  view.rerender(<WorkspaceVisualPreparation workspace={{...initial,visualTasks:[{...failed,submissionUnknown:true,submissionOutcome:'started'}]}} materials={[]} command={vi.fn()} onChange={()=>{}}/>);
- expect(screen.getByRole('button',{name:'重试图片生成'})).toBeTruthy();
+ expect(screen.getByRole('button',{name:'重新生成'})).toBeTruthy();
  expect(screen.getByRole('button',{name:'刷新核对结果'})).toBeTruthy();
  expect(view.container.querySelector('.workspace-generation-activity')).toBeNull();
 });

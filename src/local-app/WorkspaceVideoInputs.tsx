@@ -1,3 +1,4 @@
+import {uiText} from '../i18n/ui';
 import {useState} from 'react';
 import {ArrowLeft,ArrowRight,Upload,Plus,X} from 'lucide-react';
 import {ImagePreview} from '../ui/media/ImagePreview';
@@ -39,7 +40,7 @@ export function resolveVideoInputs(mode:VideoGenerationMode,ids:readonly string[
    :count>=limit.max||mode.maxReferences&&referenced.size>=mode.maxReferences||
     role==='referenceImages'&&hasReferenceVideo&&mode.maxImagesWithVideo&&count>=mode.maxImagesWithVideo?'超过当前模式的数量上限':undefined;
   const label=mode.characterOrder&&!reason?`character${referenced.size+1}`
-   :role?videoVisualInputLabels[role]+(role.startsWith('reference')?' '+(count+1):''):undefined;
+   :role?uiText(videoVisualInputLabels[role])+(role.startsWith('reference')?' '+(count+1):''):undefined;
   if(role&&!reason){includedCounts[role]=count+1;referenced.add(id);}
   return {id,index,material,role,reason,label};
  });
@@ -58,16 +59,16 @@ export function WorkspaceVideoInputs({modes,mode,entries,disabled,onMode,onAdd,o
  const [sorting,setSorting]=useState(false),[fileDrag,setFileDrag]=useState(false);
  const dropLabel=mode.id==='first-frame'?'拖入图片作为首帧'
   :mode.characterOrder||mode.maxImagesWithVideo?'拖入参考图或参考视频':'拖入画面素材';
- return <section className="workspace-video-inputs" aria-label="画面输入">
-  {compact&&<button type="button" className="workspace-composer-add" aria-label="添加画面参考素材" disabled={disabled} onClick={()=>{const material=shelf?.materials.find(m=>m.id===shelf.selectedId&&['image','video'].includes(m.material_type));if(material){onAdd(material.id);shelf?.select('');}else onUpload();}}><Plus size={19}/></button>}
+ return <section className="workspace-video-inputs" aria-label={uiText("画面输入")}>
+  {compact&&<button type="button" className="workspace-composer-add" aria-label={uiText("添加画面参考素材")} disabled={disabled} onClick={()=>{const material=shelf?.materials.find(m=>m.id===shelf.selectedId&&['image','video'].includes(m.material_type));if(material){onAdd(material.id);shelf?.select('');}else onUpload();}}><Plus size={19}/></button>}
   {!compact&&<header className="workspace-video-input-heading">
-   <h3>画面输入</h3>
-   {modes.length>1?<NativeSelect aria-label="生成模式" size="sm" value={mode.id} disabled={disabled} onChange={event=>onMode(event.target.value)}>
+   <h3>{uiText("画面输入")}</h3>
+   {modes.length>1?<NativeSelect aria-label={uiText("生成模式")} size="sm" value={mode.id} disabled={disabled} onChange={event=>onMode(event.target.value)}>
     {modes.map(option=><option key={option.id} value={option.id}>{option.label}</option>)}
    </NativeSelect>:<span>{mode.label}</span>}
   </header>}
-  {mode.characterOrder&&<small>图片和视频均需公开 HTTPS 地址，素材顺序对应 character1、character2…</small>}
-  <div className="workspace-first-frame-row workspace-video-input-area" role="group" aria-label="画面素材" tabIndex={-1}
+  {mode.characterOrder&&<small>{uiText("图片和视频均需公开 HTTPS 地址，素材顺序对应 character1、character2…")}</small>}
+  <div className="workspace-first-frame-row workspace-video-input-area" role="group" aria-label={uiText("画面素材")} tabIndex={-1}
    onDragOver={event=>{if(!disabled&&event.dataTransfer.types?.includes('Files')){event.preventDefault();event.dataTransfer.dropEffect='copy';setFileDrag(true);}}}
    onDragLeave={event=>{if(!(event.relatedTarget instanceof Node)||!event.currentTarget.contains(event.relatedTarget))setFileDrag(false);}}
    onDrop={event=>{setFileDrag(false);if(!event.defaultPrevented&&!disabled&&event.dataTransfer.files?.length){event.preventDefault();onFiles([...event.dataTransfer.files]);}}}>
@@ -82,37 +83,37 @@ export function WorkspaceVideoInputs({modes,mode,entries,disabled,onMode,onAdd,o
       onDrop={event=>{const value=event.dataTransfer.getData(sortType);if(!disabled&&value!==''){event.preventDefault();onMove(Number(value),index);setSorting(false);}}}>
       <div className="workspace-first-frame-thumbnail">
        {material?.storage_path&&(material.material_type==='image'
-        ?<ImagePreview src={url(material.storage_path)} alt={role==='firstFrame'?'已选视频首帧':role==='lastFrame'?'已选视频尾帧':'画面输入 · '+name}
+        ?<ImagePreview src={url(material.storage_path)} alt={role==='firstFrame'?uiText("已选视频首帧"):role==='lastFrame'?uiText("已选视频尾帧"):uiText("画面输入 · ")+name}
          style={role==='firstFrame'?{objectFit:firstFrameFit,aspectRatio:ratio,width:Math.min(180,112*ratio)}:undefined}/>
         :<video src={url(material.storage_path)} muted preload="metadata" aria-label={name}/>)}
-       <button type="button" className="workspace-thumbnail-remove" aria-label={role==='firstFrame'?'清除首帧':`移除 ${name}`} disabled={disabled}
+       <button type="button" className="workspace-thumbnail-remove" aria-label={role==='firstFrame'?uiText("清除首帧"):uiText("移除 {value0}",{value0:String(name)})} disabled={disabled}
         onClick={event=>{event.currentTarget.closest<HTMLElement>('[role="group"]')?.focus();onRemove(index);}}><X size={12} aria-hidden="true"/></button>
       </div>
       <div className="workspace-video-input-caption" title={reason?`${name} · ${reason}`:name}>
-       <span>{reason?'本次不会提交':label}</span>
+       <span>{reason?uiText("本次不会提交"):uiText(label??'')}</span>
        {entries.length>1&&<div>
-        <button type="button" disabled={disabled||index===0} aria-label={`前移 ${name}`} onClick={()=>onMove(index,index-1)}><ArrowLeft size={12}/></button>
-        <button type="button" disabled={disabled||index===entries.length-1} aria-label={`后移 ${name}`} onClick={()=>onMove(index,index+1)}><ArrowRight size={12}/></button>
+        <button type="button" disabled={disabled||index===0} aria-label={uiText("前移 {value0}",{value0:String(name)})} onClick={()=>onMove(index,index-1)}><ArrowLeft size={12}/></button>
+        <button type="button" disabled={disabled||index===entries.length-1} aria-label={uiText("后移 {value0}",{value0:String(name)})} onClick={()=>onMove(index,index+1)}><ArrowRight size={12}/></button>
        </div>}
       </div>
-      {reason&&<small>{name} · {reason}</small>}
+      {reason&&<small>{name} · {uiText(reason)}</small>}
      </div>;
     })}
    </div>
-   {!compact&&entries.length>0&&<button type="button" className="workspace-video-input-upload" aria-label="上传画面素材" title="上传画面素材" disabled={disabled} onClick={onUpload}>
+   {!compact&&entries.length>0&&<button type="button" className="workspace-video-input-upload" aria-label={uiText("上传画面素材")} title={uiText("上传画面素材")} disabled={disabled} onClick={onUpload}>
     <Upload size={16} aria-hidden="true"/>
    </button>}
-   {!compact&&!sorting&&<WorkspaceMaterialDrop label={dropLabel} kind="visual" surface="preview" persistent={!entries.length||fileDrag} disabled={disabled}
+   {!compact&&!sorting&&<WorkspaceMaterialDrop label={uiText(dropLabel)} kind="visual" surface="preview" persistent={!entries.length||fileDrag} disabled={disabled}
     onSelect={onAdd} onBrowse={onUpload} onFiles={onFiles}/>}
   </div>
   {entries.filter(entry=>!entry.reason&&(entry.role==='referenceVideos'||entry.role==='referenceImages'&&mode.referenceImageSource)).map(({id,material,role,label})=><label key={id}>
-   {mode.characterOrder?`${label} 地址`:role==='referenceVideos'?'参考视频地址':'参考图地址'} · {material?.source_path.split('/').pop()}
-   <input type="text" maxLength={2048} disabled={disabled} placeholder={mode.allowAssetVideoSource?'HTTPS 地址或 asset:// 素材 ID':mode.allowInlineMp4&&material?.mime_type==='video/mp4'?'可留空，使用已选 MP4':'可公开访问的 HTTPS 地址'}
+   {mode.characterOrder?uiText("{value0} 地址",{value0:String(label)}):role==='referenceVideos'?uiText("参考视频地址"):uiText("参考图地址")} · {material?.source_path.split('/').pop()}
+   <input type="text" maxLength={2048} disabled={disabled} placeholder={mode.allowAssetVideoSource?uiText("HTTPS 地址或 asset:// 素材 ID"):mode.allowInlineMp4&&material?.mime_type==='video/mp4'?uiText("可留空，使用已选 MP4"):uiText("可公开访问的 HTTPS 地址")}
     value={videoSources[id]??''} onChange={event=>onVideoSource(id,event.target.value)}/>
   </label>)}
-  {mode.inputs.firstFrame&&!compact&&<label>首帧构图<NativeSelect size="sm" aria-label="首帧构图" disabled={disabled} value={firstFrameFit}
+  {mode.inputs.firstFrame&&!compact&&<label>{uiText("首帧构图")}<NativeSelect size="sm" aria-label={uiText("首帧构图")} disabled={disabled} value={firstFrameFit}
    onChange={event=>onFit(event.target.value as 'contain'|'cover')}>
-   <option value="contain">完整保留，必要时留边</option><option value="cover">居中裁切，填满画面</option>
+   <option value="contain">{uiText("完整保留，必要时留边")}</option><option value="cover">{uiText("居中裁切，填满画面")}</option>
   </NativeSelect></label>}
  </section>;
 }

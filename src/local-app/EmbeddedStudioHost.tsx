@@ -1,3 +1,4 @@
+import {uiText} from '../i18n/ui';
 import type {WorkspaceNativeItem} from './WorkspaceNativeControls';
 import {WorkspaceShotRail} from './WorkspaceShotRail';
 import type {WorkspaceShot,WorkspaceShotOperation} from '../workspaceShots';
@@ -125,24 +126,24 @@ export function EmbeddedStudioHost({episodeId,title,session,shots,onSave,onClose
   const initialSelection=useRef(false);
   useEffect(()=>{if(initialSelection.current||!writable||!initialShotId)return;const items=editor?.shots?.find(s=>s.id===initialShotId)?.itemIds;const target=initialItemId&&items?.includes(initialItemId)?initialItemId:items?.[0];if(target){initialSelection.current=true;void request('select',{itemId:target}).catch(cause=>setError(cause.message));}},[writable,initialShotId,initialItemId,editor?.shots]);
   leave.current=()=>{void saveAndLeave('preparation');};
-  return <section className={`embedded-studio${focused?' is-focused':''}`} aria-label="整期剪辑工作台" data-episode={episodeId}>
+  return <section className={`embedded-studio${focused?' is-focused':''}`} aria-label={uiText("整期剪辑工作台")} data-episode={episodeId}>
     <header className="embedded-studio-header">
-      <Tooltip title="保存并返回分镜台" className="dan-ui dan-ui-tooltip">
-        <AriaButton className="embedded-studio-back" aria-label="保存并返回分镜台" isDisabled={!writable||pending} onPress={()=>void saveAndLeave('preparation')}><ArrowLeft size={16} aria-hidden="true"/></AriaButton>
+      <Tooltip title={uiText("保存并返回分镜台")} className="dan-ui dan-ui-tooltip">
+        <AriaButton className="embedded-studio-back" aria-label={uiText("保存并返回分镜台")} isDisabled={!writable||pending} onPress={()=>void saveAndLeave('preparation')}><ArrowLeft size={16} aria-hidden="true"/></AriaButton>
       </Tooltip>
-      <section className="embedded-studio-identity" aria-label="当前剪辑工程">
+      <section className="embedded-studio-identity" aria-label={uiText("当前剪辑工程")}>
         <h2 title={title}>{title}</h2>
-        <span role="status">{!writable?everWritable.current?'编辑连接已变化，当前修改仍保留。请在最新窗口继续。':'正在连接编辑器…':saved?<><Check size={14} aria-hidden="true"/>工作版本已保存</>:null}</span>
+        <span role="status">{!writable?everWritable.current?uiText("编辑连接已变化，当前修改仍保留。请在最新窗口继续。"):uiText("正在连接编辑器…"):saved?<><Check size={14} aria-hidden="true"/>{uiText("工作版本已保存")}</>:null}</span>
       </section>
-      <nav className="embedded-studio-actions" aria-label="剪辑操作">
-        <Tooltip title={focused?'退出专注剪辑':'专注剪辑'} className="dan-ui dan-ui-tooltip"><AriaButton className="embedded-studio-focus" aria-label={focused?'退出专注剪辑':'专注剪辑'} aria-pressed={focused} onPress={()=>setFocused(v=>!v)}>{focused?<Minimize2 size={16} aria-hidden="true"/>:<Maximize2 size={16} aria-hidden="true"/>}</AriaButton></Tooltip>
-        <button className="embedded-studio-save" disabled={!writable||pending} onClick={()=>void saveAndLeave('delivery')}>{pending?<LoaderCircle size={15} aria-hidden="true"/>:<Save size={15} aria-hidden="true"/>}{pending?'保存中…':'保存'}</button>
+      <nav className="embedded-studio-actions" aria-label={uiText("剪辑操作")}>
+        <Tooltip title={focused?uiText("退出专注剪辑"):uiText("专注剪辑")} className="dan-ui dan-ui-tooltip"><AriaButton className="embedded-studio-focus" aria-label={focused?uiText("退出专注剪辑"):uiText("专注剪辑")} aria-pressed={focused} onPress={()=>setFocused(v=>!v)}>{focused?<Minimize2 size={16} aria-hidden="true"/>:<Maximize2 size={16} aria-hidden="true"/>}</AriaButton></Tooltip>
+        <button className="embedded-studio-save" disabled={!writable||pending} onClick={()=>void saveAndLeave('delivery')}>{pending?<LoaderCircle size={15} aria-hidden="true"/>:<Save size={15} aria-hidden="true"/>}{pending?uiText("保存中…"):uiText("保存")}</button>
       </nav>
     </header>
-    {selectedSoundIntent&&<p className="embedded-studio-sound-intent" aria-label="当前镜头音效意图">音效意图：{selectedSoundIntent}</p>}
-    {error&&<p role="alert" className="form-error">{error}</p>}
-    {!src?<p role="alert">Studio 地址或工程身份不匹配，未加载编辑器。</p>:<div className={`embedded-studio-body${activePanel?' panel-open':''}${railCollapsed?' rail-collapsed':''}`}><WorkspaceShotRail shots={editor?.shots??shots.map(shot=>{const items=editor?.items.filter(i=>i.id.startsWith(`shot-${shot.id}-`))??[];return{id:shot.id,text:shot.text,timelineId:'',itemIds:items.map(i=>i.id),startFrame:items[0]?.startFrame??0,durationInFrames:0,effective:true};})} selectedIds={editor?.selectedIds??[]} draftKey={workspace.projectId} editable={editor?.structureEnabled===true} disabled={!writable||pending} onCollapse={setRailCollapsed} select={itemId=>{void request('select',{itemId}).catch(cause=>setError(cause.message));}} edit={bridge.applyEdit}/><div className="embedded-studio-canvas"><iframe key="native-studio" ref={frame} inert={!writable} tabIndex={writable?0:-1} aria-busy={!writable} title="OpenChatCut 剪辑工程" src={src} sandbox="allow-scripts allow-same-origin allow-downloads" allow="fullscreen"/>{!writable&&<div className="embedded-studio-connecting" aria-hidden="true">正在连接编辑器…</div>}</div><aside className="embedded-studio-caption-panel" hidden={!activePanel}>
-      <header className="workspace-detail-tabs embedded-inspector-tabs"><strong>字幕</strong><button type="button" onClick={()=>void togglePanel('captions')}>关闭字幕对齐</button></header>
+    {selectedSoundIntent&&<p className="embedded-studio-sound-intent" aria-label={uiText("当前镜头音效意图")}>{uiText("音效意图：")}{selectedSoundIntent}</p>}
+    {error&&<p role="alert" className="form-error">{uiText(error||'')}</p>}
+    {!src?<p role="alert">{uiText("Studio 地址或工程身份不匹配，未加载编辑器。")}</p>:<div className={`embedded-studio-body${activePanel?' panel-open':''}${railCollapsed?' rail-collapsed':''}`}><WorkspaceShotRail shots={editor?.shots??shots.map(shot=>{const items=editor?.items.filter(i=>i.id.startsWith(`shot-${shot.id}-`))??[];return{id:shot.id,text:shot.text,timelineId:'',itemIds:items.map(i=>i.id),startFrame:items[0]?.startFrame??0,durationInFrames:0,effective:true};})} selectedIds={editor?.selectedIds??[]} draftKey={workspace.projectId} editable={editor?.structureEnabled===true} disabled={!writable||pending} onCollapse={setRailCollapsed} select={itemId=>{void request('select',{itemId}).catch(cause=>setError(cause.message));}} edit={bridge.applyEdit}/><div className="embedded-studio-canvas"><iframe key="native-studio" ref={frame} inert={!writable} tabIndex={writable?0:-1} aria-busy={!writable} title={uiText("OpenChatCut 剪辑工程")} src={src} sandbox="allow-scripts allow-same-origin allow-downloads" allow="fullscreen"/>{!writable&&<div className="embedded-studio-connecting" aria-hidden="true">{uiText("正在连接编辑器…")}</div>}</div><aside className="embedded-studio-caption-panel" hidden={!activePanel}>
+      <header className="workspace-detail-tabs embedded-inspector-tabs"><strong>{uiText("字幕")}</strong><button type="button" onClick={()=>void togglePanel('captions')}>{uiText("关闭字幕对齐")}</button></header>
       <div className="embedded-inspector-content">
        {activePanel==='captions'&&captionEditor?.(bridge)}
 </div>{history}</aside></div>}

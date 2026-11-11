@@ -1,3 +1,4 @@
+import {uiText} from '../i18n/ui';
 import {useState} from 'react';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {NativeSelect} from '../ui/dan-ui/components/base/select/select-native';
@@ -13,11 +14,11 @@ export function WorkspaceAudioInstanceSettings({sound,workspaceId,project,shotId
  const canPlace=!!item&&!!asset&&!!timeline,rate=Number(item?.playbackRate??1),sourceAvailable=asset&&timeline?(asset.durationInFrames-Number(item?.srcInFrame??0))/timeline.fps/rate:undefined;
  async function save(){const ok=await apply({kind:'sound',workspaceId,itemId:sound.itemId,gainDb:gain,duckDepthDb:duck,...(canPlace?{placement:{anchor,...(shotId?{shotId}:{}),offsetSeconds:offset,durationSeconds:duration}}:{})});if(ok)onApplied();}
  return <div className="workspace-audio-instance-settings" data-kind={sound.kind}>
-  {sound.kind==='sfx'&&<label>定位方式<NativeSelect aria-label="定位方式" size="sm" disabled={disabled||!canPlace} value={anchor} onChange={event=>{const next=event.target.value as 'absolute'|'shot';setOffset(Math.max(0,anchor===next?offset:next==='shot'?offset-shotStart:offset+shotStart));setAnchor(next);}}><option value="shot" disabled={!shotId||!visuals.length}>跟随镜头</option><option value="absolute">固定时间线</option></NativeSelect></label>}
-  <label>{anchor==='shot'?'距镜头开头（秒）':'时间线位置（秒）'}<input aria-label="开始位置（秒）" type="number" min="0" step="0.1" disabled={disabled||!canPlace} value={offset} onChange={e=>setOffset(Number(e.target.value))}/></label>
-  <label>使用时长（秒）<input aria-label="使用时长（秒）" type="number" min="0.1" max={sourceAvailable} step="0.1" disabled={disabled||!canPlace} value={duration} onChange={e=>setDuration(Number(e.target.value))}/></label>
-  <label>音量（dB）<input aria-label="音量 dB" type="number" min="-60" max="12" disabled={disabled} value={gain} onChange={e=>setGain(Number(e.target.value))}/></label>
-  <label>遇人声降低（dB）<input aria-label="遇人声降低（dB）" type="number" min="0" max="30" disabled={disabled} value={duck} onChange={e=>setDuck(Number(e.target.value))}/></label>
-  <div className="workspace-audio-instance-submit"><Button size="sm" color="primary" isDisabled={disabled} onPress={()=>void save()}>应用设置</Button></div>
+  {sound.kind==='sfx'&&<label>{uiText("定位方式")}<NativeSelect aria-label={uiText("定位方式")} size="sm" disabled={disabled||!canPlace} value={anchor} onChange={event=>{const next=event.target.value as 'absolute'|'shot';setOffset(Math.max(0,anchor===next?offset:next==='shot'?offset-shotStart:offset+shotStart));setAnchor(next);}}><option value="shot" disabled={!shotId||!visuals.length}>{uiText("跟随镜头")}</option><option value="absolute">{uiText("固定时间线")}</option></NativeSelect></label>}
+  <label>{anchor==='shot'?uiText("距镜头开头（秒）"):uiText("时间线位置（秒）")}<input aria-label={uiText("开始位置（秒）")} type="number" min="0" step="0.1" disabled={disabled||!canPlace} value={offset} onChange={e=>setOffset(Number(e.target.value))}/></label>
+  <label>{uiText("使用时长（秒）")}<input aria-label={uiText("使用时长（秒）")} type="number" min="0.1" max={sourceAvailable} step="0.1" disabled={disabled||!canPlace} value={duration} onChange={e=>setDuration(Number(e.target.value))}/></label>
+  <label>{uiText("音量（dB）")}<input aria-label={uiText("音量 dB")} type="number" min="-60" max="12" disabled={disabled} value={gain} onChange={e=>setGain(Number(e.target.value))}/></label>
+  <label>{uiText("遇人声降低（dB）")}<input aria-label={uiText("遇人声降低（dB）")} type="number" min="0" max="30" disabled={disabled} value={duck} onChange={e=>setDuck(Number(e.target.value))}/></label>
+  <div className="workspace-audio-instance-submit"><Button size="sm" color="primary" isDisabled={disabled} onPress={()=>void save()}>{uiText("应用设置")}</Button></div>
  </div>;
 }

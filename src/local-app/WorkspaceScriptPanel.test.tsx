@@ -160,21 +160,22 @@ it('continues a saved waiting-input script after remount without importing or re
  const command=vi.fn(async()=>({id:'e'})),confirmed=vi.fn();render(<WorkspaceScriptPanel episodeId="saved-e" scriptRevisionId="saved" script={'# 主脚本\n\n## 正文\n\n已保存正文\n'} stage="waiting_input" readOnly={false} pending={false} command={command} onConfirmed={confirmed}/>);fireEvent.click(screen.getByRole('button',{name:'确认脚本'}));await waitFor(()=>expect(confirmed).toHaveBeenCalledExactlyOnceWith('saved',undefined));expect(command).toHaveBeenCalledExactlyOnceWith('start',{episodeId:'saved-e'});
 });
 it('does not treat an old idempotent start receipt as successful startup of a newer revision',async()=>{
- const {webcrypto}=await import('node:crypto');vi.stubGlobal('crypto',webcrypto);const{localCommand}=await import('./client');const keys:string[]=[],confirmed=vi.fn();let starts=0;
+ const {webcrypto}=await import('node:crypto');vi.stubGlobal('crypto',webcrypto);const{localCommand}=await import('./client');const keys:string[]=[],readbackKeys:string[]=[],confirmed=vi.fn();let starts=0;
  vi.spyOn(globalThis,'fetch').mockImplementation(async(path,init)=>{
   if(String(path).endsWith('/session'))return Response.json({csrfToken:'test-csrf'});
   if(String(path).includes('/episodes/receipt-e'))return Response.json({sections:{episode:{id:'receipt-e',main_script_revision_id:'newer',stage:'waiting_input',archived_at:null}}});
   const body=JSON.parse(String(init?.body));
+  if(String(path).endsWith('/command-receipt')){readbackKeys.push(body.operation.idempotencyKey);return Response.json(readbackKeys.length===1?{status:'unknown'}:{status:'committed',result:{id:'receipt-e',main_script_revision_id:'saved',stage:'script_approved'}});}
   if(body.command==='importMaterial')return Response.json({id:'saved'});
   if(body.command==='reconfirmScript')return Response.json({id:'newer'});
   keys.push(body.idempotencyKey);if(++starts===1)return Response.json({error:'启动结果丢失'},{status:503});
-  return Response.json({id:'receipt-e',main_script_revision_id:starts===2?'saved':'newer',stage:'script_approved'});
+  return Response.json({id:'receipt-e',main_script_revision_id:'newer',stage:'script_approved'});
  });
  render(<WorkspaceScriptPanel episodeId="receipt-e" scriptRevisionId={null} script="" stage="waiting_input" readOnly={false} pending={false} command={(name,data)=>localCommand(name,data,undefined,'episode-commands')} onConfirmed={confirmed}/>);
  fireEvent.change(screen.getByLabelText('主脚本'),{target:{value:'首次正文'}});fireEvent.click(screen.getByRole('button',{name:'确认脚本'}));await screen.findByRole('button',{name:'继续启动'});
  fireEvent.change(screen.getByLabelText('主脚本'),{target:{value:'再次修改'}});fireEvent.change(screen.getByLabelText('脚本修订原因'),{target:{value:'调整叙事'}});fireEvent.click(screen.getByRole('button',{name:'确认脚本修订'}));fireEvent.click(screen.getByRole('button',{name:'确认保存修订'}));
- await screen.findByRole('button',{name:'继续启动'});expect(confirmed).not.toHaveBeenCalled();expect((screen.getByLabelText('主脚本') as HTMLTextAreaElement).value).toBe('再次修改');expect(keys[0]).toBe(keys[1]);
- fireEvent.click(screen.getByRole('button',{name:'继续启动'}));await waitFor(()=>expect(confirmed).toHaveBeenCalledExactlyOnceWith('newer','调整叙事'));expect(keys[2]).not.toBe(keys[1]);
+ await screen.findByRole('button',{name:'继续启动'});expect(confirmed).not.toHaveBeenCalled();expect((screen.getByLabelText('主脚本') as HTMLTextAreaElement).value).toBe('再次修改');expect(readbackKeys).toEqual([keys[0],keys[0]]);
+ fireEvent.click(screen.getByRole('button',{name:'继续启动'}));await waitFor(()=>expect(confirmed).toHaveBeenCalledExactlyOnceWith('newer','调整叙事'));expect(keys).toHaveLength(2);expect(keys[1]).not.toBe(keys[0]);
  vi.unstubAllGlobals();sessionStorage.clear();
 });
 it('shows recovery-read errors locally even when the parent presents the original start failure',async()=>{

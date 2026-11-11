@@ -10,7 +10,7 @@ afterEach(()=>{cleanup();vi.unstubAllGlobals();vi.restoreAllMocks();});
 function readWorkspace(){vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace})));}
 it('offers only a read to check an unknown Studio operation result without replaying it',async()=>{
  let reads=0;const fetcher=vi.fn(async(path:string)=>Response.json(path==='/api/local/connections'?{serviceCatalog:{version:1,groups:[]}}:{workspace:path.endsWith('/workspace')&&++reads>1?{...workspace,revision:2,clips:[{...workspace.clips[0],text:'已保存的最新镜头'}]}:workspace}));vi.stubGlobal('fetch',fetcher);
- const command=vi.fn(async()=>{throw Object.assign(Error('本机操作结果暂未确认，请查看系统状态并核对已有任务或保存结果，再继续操作。'),{status:503,code:'local_service_unavailable'});});
+ const command=vi.fn(async()=>{throw Object.assign(Error('本机操作结果暂未确认，请查看系统状态并核对已有任务或保存结果，再继续操作。'),{status:503,code:'LOCAL_COMMAND_OUTCOME_UNKNOWN'});});
  render(<ProductionWorkspacePanel episodeId="e" title="操作转换" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);
  fireEvent.click(await screen.findByRole('button',{name:'进入剪辑工作台'}));await screen.findByText('打开剪辑工作台结果暂未确认');
  expect(command).toHaveBeenCalledTimes(1);fireEvent.click(screen.getByRole('button',{name:'重新读取已保存工程'}));
