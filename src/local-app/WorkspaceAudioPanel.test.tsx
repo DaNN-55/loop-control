@@ -218,10 +218,10 @@ it('selects a current audio connection without refresh or default-saving control
  const command=vi.fn(async()=>workspace);
  render(<WorkspaceAudioPreparation workspace={workspace} command={command} onChange={()=>{}}/>);
  fireEvent.click(screen.getByRole('button',{name:'音频来源'}));
- await screen.findByRole('menuitemradio',{name:'Freesound'});
+ await screen.findByRole('menuitemradio',{name:/^Freesound/});
  expect(screen.queryByRole('button',{name:'刷新服务'})).toBeNull();
  expect(screen.queryByRole('button',{name:'设为本期默认'})).toBeNull();
- fireEvent.click(screen.getByRole('menuitemradio',{name:'Freesound'}));
+ fireEvent.click(screen.getByRole('menuitemradio',{name:/^Freesound/}));
  fireEvent.change(screen.getByLabelText('英文检索词'),{target:{value:'calm piano'}});
  fireEvent.click(screen.getByRole('button',{name:'检索并获取'}));
  await waitFor(()=>expect(command).toHaveBeenCalledWith('prepareWorkspaceAudio',expect.objectContaining({selection:{capability:'music_sound',provider:'freesound',adapter:'freesound_preview',connectionVersionId:'version-1'},query:'calm piano'})));

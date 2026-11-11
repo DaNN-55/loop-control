@@ -44,3 +44,10 @@ it('identifies missing sources and searches with no matches without extra footer
  fireEvent.click(screen.getByRole('button',{name:'音频来源'}));fireEvent.change(screen.getByRole('searchbox',{name:'筛选音频来源'}),{target:{value:'不存在的来源'}});
  expect(screen.getByRole('status').textContent).toBe('没有匹配来源。');
 });
+it('shows the exact identity and unavailable reason for a single disabled source',()=>{
+ render(<WorkspaceAudioSourceOptions services={[services[2]]} value="" onChange={()=>{}}/>);
+ fireEvent.click(screen.getByRole('button',{name:'音频来源'}));
+ const item=screen.getByRole('menuitemradio',{name:/Freesound/});
+ expect(item.getAttribute('aria-disabled')).toBe('true');
+ expect(screen.getByText('未验证 · v1 · 连接未验证').closest('[role="menuitemradio"]')).toBe(item);
+});
