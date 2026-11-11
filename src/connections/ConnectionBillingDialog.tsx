@@ -7,11 +7,17 @@ import {Input} from '../ui/dan-ui/components/base/input/input';
 import {billingProvider,billingProviderLabels,type ConnectionBillingActions,type ConnectionBillingSettings} from './connectionBilling';
 import type {ExternalConnection} from './ConnectionWorkspace';
 import {connectionUsagePlaceholder,type ConnectionUsageSummary} from './connectionUsage';
-export function ConnectionBillingDialog({connection,onClose,onReadBilling,onReadUsage,onSaveBilling,onRefreshBilling,onDisconnectBilling}:ConnectionBillingActions&{connection:ExternalConnection;onClose:()=>void;onReadUsage?:(connectionId:string)=>Promise<ConnectionUsageSummary>}){
+import {ConnectionDraftLeaveDialog} from './ConnectionDraftLeaveDialog';
+export function ConnectionBillingDialog({connection,onClose,onReadBilling,onReadUsage,onSaveBilling,onRefreshBilling,onDisconnectBilling,onStateChange}:ConnectionBillingActions&{connection:ExternalConnection;onClose:()=>void;onReadUsage?:(connectionId:string)=>Promise<ConnectionUsageSummary>;onStateChange?:(state:{busy:boolean;dirty:boolean})=>void}){
  const [settings,setSettings]=useState<ConnectionBillingSettings|null>(null),[error,setError]=useState(''),[message,setMessage]=useState(''),[loading,setLoading]=useState(true),[operation,setOperation]=useState('');
  const [accessKeyId,setAccessKeyId]=useState(''),[accessKeySecret,setAccessKeySecret]=useState(''),[apiKey,setApiKey]=useState('');
  const [replacing,setReplacing]=useState(false),lock=useRef(false),attempt=useRef<{body:string;key:string}|null>(null);
  const provider=billingProvider(connection.provider),busy=Boolean(operation);
+ const dirty=Boolean(accessKeyId||accessKeySecret||apiKey),[leavePrompt,setLeavePrompt]=useState(false);
+ const stateChange=useRef(onStateChange);stateChange.current=onStateChange;
+ useEffect(()=>{stateChange.current?.({busy,dirty});},[busy,dirty]);
+ useEffect(()=>()=>{stateChange.current?.({busy:false,dirty:false});},[]);
+ function requestClose(){if(busy)return;if(dirty)setLeavePrompt(true);else onClose();}
  const canConfigure=Boolean(provider&&onReadBilling);
  const [usage,setUsage]=useState<ConnectionUsageSummary|null>(null);
  const [usageLoading,setUsageLoading]=useState(Boolean(onReadUsage)),[usageError,setUsageError]=useState(false);
@@ -51,8 +57,8 @@ export function ConnectionBillingDialog({connection,onClose,onReadBilling,onRead
  const displayUsage=settings?.usage??usage??(provider==='openai'?connectionUsagePlaceholder(connection.provider):null);
  const metrics=displayUsage?[displayUsage.remaining,displayUsage.recent]:[];
  const metricNotes=metrics.filter(item=>item.status!=='unavailable'&&item.status!=='loading');
- return <ModalOverlay className="product-ui reference-connections-overlay" isOpen isDismissable={!busy} isKeyboardDismissDisabled={busy} onOpenChange={open=>{if(!open&&!busy)onClose();}}><Modal className="reference-connections-modal"><Dialog aria-label={`${connection.name} 账务设置`} className="dan-ui connection-workspace reference-connections reference-connections-dialog">
-  <header className="reference-connections-dialog-header"><h2>账务设置</h2><Button color="tertiary" size="sm" iconLeading={X} aria-label="关闭账务设置" isDisabled={busy} onPress={onClose}/></header>
+ return <><ModalOverlay className="product-ui reference-connections-overlay" isOpen isDismissable={!busy&&!leavePrompt} isKeyboardDismissDisabled={busy||leavePrompt} onOpenChange={open=>{if(!open)requestClose();}}><Modal className="reference-connections-modal"><Dialog aria-label={`${connection.name} 账务设置`} className="dan-ui connection-workspace reference-connections reference-connections-dialog">
+  <header className="reference-connections-dialog-header"><h2>账务设置</h2><Button color="tertiary" size="sm" iconLeading={X} aria-label="关闭账务设置" isDisabled={busy} onPress={requestClose}/></header>
   <div className="connection-models-body">
    <strong>{connection.name}{provider?` · ${billingProviderLabels[provider]}`:''}</strong>
    {canConfigure&&(loading?<p role="status">正在读取账务设置…</p>:!settings?<Button color="secondary" size="sm" onPress={()=>void load()}>重试读取设置</Button>:<>
@@ -76,5 +82,5 @@ export function ConnectionBillingDialog({connection,onClose,onReadBilling,onRead
    {usageError&&<div><p role="alert">账务数据读取失败。</p><Button color="secondary" size="sm" isDisabled={busy} onPress={()=>{setUsageError(false);setUsageLoading(true);setUsageAttempt(value=>value+1);}}>重试读取数据</Button></div>}
    {message?<p role="status">{message}</p>:null}{error?<p role="alert" className="form-error">{error}</p>:null}
   </div>
- </Dialog></Modal></ModalOverlay>;
+ </Dialog></Modal></ModalOverlay>{leavePrompt&&<ConnectionDraftLeaveDialog hasSecret onContinue={()=>setLeavePrompt(false)} onDiscard={()=>{clear();onClose();}}/>}</>;
 }

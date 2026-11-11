@@ -5,9 +5,10 @@ import {useDialogFocus} from '../ui/useDialogFocus';
 import {localCommand,localRequest} from './client';
 import './deletion-cleanup.css';
 interface PendingCleanup{cleanupKey:string;title:string;path:string;paths?:string[];stagingPath?:string;stagingPaths?:string[];phase?:string;message?:string;}
-interface RecoveryProps{revision:unknown;targetKey?:string;onResolved?:(key:string)=>void;onChanged?:()=>void;}
-export function LocalDeletionRecovery({revision,targetKey='',onResolved,onChanged}:RecoveryProps){
+interface RecoveryProps{revision:unknown;targetKey?:string;onResolved?:(key:string)=>void;onChanged?:()=>void;onStateChange?:(state:{busy:boolean;dirty:boolean})=>void;}
+export function LocalDeletionRecovery({revision,targetKey='',onResolved,onChanged,onStateChange}:RecoveryProps){
  const[items,setItems]=useState<PendingCleanup[]|null>(null),[error,setError]=useState(''),[notice,setNotice]=useState(''),[messages,setMessages]=useState<Record<string,string>>({}),[pending,setPending]=useState(''),[loading,setLoading]=useState(false);
+ useEffect(()=>{onStateChange?.({busy:!!pending,dirty:false});return()=>onStateChange?.({busy:false,dirty:false});},[pending,onStateChange]);
  const mounted=useRef(false),generation=useRef(0),busy=useRef(false),focused=useRef(''),list=useRef<HTMLDivElement>(null);
  useEffect(()=>{mounted.current=true;return()=>{mounted.current=false;generation.current++;};},[]);
  const refresh=useCallback(async()=>{
@@ -53,7 +54,8 @@ export function LocalDeletionRecovery({revision,targetKey='',onResolved,onChange
   <div className="deletion-cleanup-toolbar"><Button size="sm" color="tertiary" aria-label="刷新清理任务" isDisabled={loading||!!pending} onPress={()=>void refresh()}>刷新</Button></div>
  </section>;
 }
-export function DeletionCleanupDialog({onClose,returnFocusRef,...props}:RecoveryProps&{onClose:()=>void;returnFocusRef:RefObject<HTMLElement|null>}){
- const ref=useDialogFocus<HTMLElement>(true,onClose,returnFocusRef);
- return <div className="modal-backdrop" role="presentation"><section ref={ref} role="dialog" aria-modal="true" aria-label="文件清理" className="modal-card deletion-cleanup-dialog"><header><h2>文件清理</h2><Button size="sm" color="tertiary" aria-label="关闭文件清理" data-dialog-initial-focus iconLeading={X} onPress={onClose}/></header><div className="deletion-cleanup-body"><LocalDeletionRecovery {...props}/></div></section></div>;
+export function DeletionCleanupDialog({onClose,returnFocusRef,embedded=false,...props}:RecoveryProps&{onClose:()=>void;returnFocusRef:RefObject<HTMLElement|null>;embedded?:boolean}){
+ const ref=useDialogFocus<HTMLElement>(!embedded,onClose,returnFocusRef);
+ const content=<section ref={embedded?undefined:ref} role={embedded?undefined:"dialog"} aria-modal={embedded?undefined:true} aria-label={embedded?undefined:"文件清理"} className={`modal-card deletion-cleanup-dialog${embedded?" owner-settings-pane":""}`}><header><h2>文件清理</h2><Button size="sm" color="tertiary" aria-label="关闭文件清理" data-dialog-initial-focus iconLeading={X} onPress={onClose}/></header><div className="deletion-cleanup-body"><LocalDeletionRecovery {...props}/></div></section>;
+ return embedded?content:<div className="modal-backdrop" role="presentation">{content}</div>;
 }

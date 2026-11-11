@@ -3,7 +3,7 @@ import {useConnectionDrafts} from './ConnectionDraftSession';
 import {ConnectionDraftLeaveDialog} from './ConnectionDraftLeaveDialog';
 import type {PanelNavigation} from '../local-app/catalogNavigation';
 import {PopulatedFilterSelect} from '../ui/PopulatedFilterSelect';
-import {Plug,Plus,Play,MoreHorizontal,Pencil,History,X,RefreshCw,CreditCard} from 'lucide-react';
+import {Plug,Plus,Play,MoreHorizontal,Pencil,History,X,RefreshCw,CreditCard,ArrowLeft,KeyRound} from 'lucide-react';
 import {Dialog,Menu,MenuItem,MenuTrigger,Modal,ModalOverlay,Popover} from 'react-aria-components';
 import {Disclosure} from '../ui/dan-ui/components/base/disclosure/disclosure';
 import {InputBase} from '../ui/dan-ui/components/base/input/input';
@@ -23,7 +23,7 @@ import {type MiniMaxRegion} from '../worker/videoProviderCatalog';
 import {connectionUsagePlaceholder,connectionUsageScope,type ConnectionUsageSummary} from './connectionUsage';
 import {providerDisplayNames,buildProductionServiceCatalog,type ProductionServiceCatalog} from './serviceCatalog';
 import { Fragment, useEffect, useId, useRef, useState } from "react";
-import type { FormEvent } from "react";
+import type { FormEvent,ReactNode,RefObject } from "react";
 import type { Database } from "../lib/database.types";
 
 export type ExternalConnection = Database["public"]["Tables"]["external_connections"]["Row"] & {
@@ -164,9 +164,18 @@ const shortVerificationTime=new Intl.DateTimeFormat('zh-CN',{
   timeZone:'Asia/Shanghai',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23',
 });
 
-export function ConnectionWorkspace({ inlineBilling=false,settingsLayout=false,navigation,serviceCatalog, connections, usageByVersion={}, isPending = false, onCreateConnection, onDeleteVersion, onRevokeVersion, onRotateConnection, onChangeRegion, onTestConnection, onUpdateConnection, onRebindVersion, onReadModels,onSyncModels,onSaveModels,onReadBilling,onReadUsage,onSaveBilling,onRefreshBilling,onDisconnectBilling, secretStorage='Vault', verificationEnabled=true, verificationByProvider, errorMessage='', statusMessage='', onRefresh, versions = [] }: ConnectionModelActions & ConnectionBillingActions & {
+function ConnectionEditorSurface({inline,open,busy,blocked,onClose,label,dialogRef,children}:{inline:boolean;open:boolean;busy:boolean;blocked:boolean;onClose:()=>void;label:string|undefined;dialogRef:RefObject<HTMLDivElement|null>;children:ReactNode}){
+  if(inline)return open?<div ref={dialogRef} role="region" tabIndex={-1} aria-label={label} className="dan-ui connection-workspace reference-connections reference-connections-dialog connection-settings-editor">{children}</div>:null;
+  return <ModalOverlay className="product-ui reference-connections-overlay" isOpen={open} isDismissable={!busy&&!blocked} isKeyboardDismissDisabled={busy||blocked} onOpenChange={next=>{if(!next)onClose();}}><Modal className="reference-connections-modal"><Dialog ref={dialogRef} aria-label={label} className="dan-ui connection-workspace reference-connections reference-connections-dialog">{children}</Dialog></Modal></ModalOverlay>;
+}
+
+export function ConnectionWorkspace({ inlineBilling=false,settingsLayout=false,inlineEditor=false,onStateChange,onOpenSecrets,initialConnectionId,navigation,serviceCatalog, connections, usageByVersion={}, isPending = false, onCreateConnection, onDeleteVersion, onRevokeVersion, onRotateConnection, onChangeRegion, onTestConnection, onUpdateConnection, onRebindVersion, onReadModels,onSyncModels,onSaveModels,onReadBilling,onReadUsage,onSaveBilling,onRefreshBilling,onDisconnectBilling, secretStorage='Vault', verificationEnabled=true, verificationByProvider, errorMessage='', statusMessage='', onRefresh, versions = [] }: ConnectionModelActions & ConnectionBillingActions & {
   inlineBilling?:boolean;
   settingsLayout?:boolean;
+  inlineEditor?:boolean;
+  onStateChange?:(state:{busy:boolean;dirty:boolean})=>void;
+  onOpenSecrets?:(connectionId:string,connectionName?:string)=>void;
+  initialConnectionId?:string;
   navigation?:PanelNavigation<'connections'>;
   connections: ExternalConnection[];
   usageByVersion?:Record<string,ConnectionUsageSummary>;
@@ -189,15 +198,16 @@ export function ConnectionWorkspace({ inlineBilling=false,settingsLayout=false,n
   onRefresh?:()=>void;
   versions?: ExternalConnectionVersion[];
 }) {
-  const [selectedId,setSelectedId]=useState(navigation?.value.connection??'');
+  const [selectedId,setSelectedId]=useState(initialConnectionId??navigation?.value.connection??'');
   const viewedConnection=useRef(navigation?.value.connection??'');
   const [modelConnectionId,setModelConnectionId]=useState('');
   const sessionDrafts=useConnectionDrafts();
   const modelDrafts={current:sessionDrafts.models};
   const [billingConnectionId,setBillingConnectionId]=useState('');
+  const [modelBusy,setModelBusy]=useState(false),[billingState,setBillingState]=useState({busy:false,dirty:false});
   const billingConnection=connections.find(c=>c.id===billingConnectionId);
   const modelConnection=connections.find(c=>c.id===modelConnectionId);
-  const [dialog,applyDialog]=useState<''|'new'|'edit'|'detail'>(navigation?.value.connection?'detail':'');
+  const [dialog,applyDialog]=useState<''|'new'|'edit'|'detail'>(initialConnectionId||navigation?.value.connection?'detail':'');
   function setDialog(next:''|'new'|'edit'|'detail'){applyDialog(next);if(next!=='detail'){viewedConnection.current='';navigation?.change({connection:''});}}
   const [showVersions,setShowVersions]=useState(false);
   const [leavePrompt,setLeavePrompt]=useState(false);
@@ -229,6 +239,7 @@ export function ConnectionWorkspace({ inlineBilling=false,settingsLayout=false,n
   const [error,setError]=useState(''),[notice,setNotice]=useState('');
   const [resultTitle,setResultTitle]=useState(''),[resultName,setResultName]=useState('');
   const [resultConnectionId,setResultConnectionId]=useState('');
+  const listRef=useRef<HTMLElement>(null),lastInlineDialog=useRef(dialog);
   const resultRef=useRef<HTMLDivElement>(null),dialogRef=useRef<HTMLDivElement>(null),revokeDialogRef=useRef<HTMLDivElement>(null);
   const [rebindSecrets,setRebindSecrets]=useState<Record<string,string>>({});
   const operationLock=useRef(false),editor=useRef<HTMLFormElement>(null);
@@ -241,6 +252,9 @@ export function ConnectionWorkspace({ inlineBilling=false,settingsLayout=false,n
   const hasChanges=!selected||metadataChanged||Boolean(secret.trim())||regionChanged;
   const nonSecretChanged=dialog==='new'?Boolean(name||description||workspaceId||adapter!=='pexels_video'||minimaxRegion!=='cn'):dialog==='edit'&&Boolean(metadataChanged||regionChanged||workspaceId);
   const busy=isPending||operation!=='';
+  useEffect(()=>{if(inlineEditor){if(dialog)dialogRef.current?.focus();else if(lastInlineDialog.current)listRef.current?.focus();}lastInlineDialog.current=dialog;},[inlineEditor,dialog]);
+  const stateChange=useRef(onStateChange);stateChange.current=onStateChange;
+  useEffect(()=>{stateChange.current?.({busy:busy||modelBusy||billingState.busy,dirty:billingState.dirty});},[busy,modelBusy,billingState.busy,billingState.dirty]);
   useEffect(()=>{if((dialog==='new'||dialog==='edit')&&!nonSecretChanged)drafts.current.delete(selectedId||'__new');},[dialog,nonSecretChanged,selectedId]);
   useWorkspaceLeaveEntry({kind:'connection',dirty:()=>Boolean(dialog&&(nonSecretChanged||secret||Object.values(rebindSecrets).some(Boolean))),hasSecret:()=>Boolean(secret||Object.values(rebindSecrets).some(Boolean)),keep:()=>{leave(true);return true;},discard:()=>leave(false),beforeUnload:()=>{if(nonSecretChanged)keepDraft();}});
   const catalog=serviceCatalog??buildProductionServiceCatalog({connections,versions,externalReady:verificationEnabled});
@@ -351,7 +365,7 @@ export function ConnectionWorkspace({ inlineBilling=false,settingsLayout=false,n
       <h2>外部连接</h2>
       <div className="reference-connections-actions">{createButton}</div>
     </header>}
-    <div className="reference-connections-toolbar">
+    {(!inlineEditor||!dialog)&&<><div className="reference-connections-toolbar">
       <form role="search" aria-label="搜索连接" className="reference-connections-search-form" onSubmit={event=>{event.preventDefault();applyQuery(query);}}>
         <Input aria-label="查找已存连接" size="sm" className="reference-connections-search" placeholder="名称、服务或适配器" onChange={setQuery} type="search" value={query}/>
         {(query||appliedQuery)&&<Button aria-label="清除连接搜索" color="tertiary" size="sm" iconLeading={X} onPress={()=>applyQuery('')}/>}
@@ -362,8 +376,8 @@ export function ConnectionWorkspace({ inlineBilling=false,settingsLayout=false,n
       {settingsLayout&&createButton}
     </div>
     {!dialog&&operationResult}
-    <section aria-label="连接列表" className="reference-connections-table-wrap">
-      <table aria-label="已保存连接"><thead><tr><th scope="col"><span className="reference-connections-column-label">连接<HelpTip label="连接验证">已验证表示凭据曾通过服务检查；内容生成还需单独授权，不代表每次调用必定成功。</HelpTip></span></th>{!settingsLayout&&<th scope="col">能力</th>}<th scope="col" className="reference-connection-service">{settingsLayout?'服务与能力':'服务'}</th><th scope="col" className="reference-connection-model">模型</th>{inlineBilling&&<th scope="col" className="reference-connection-billing-column">{settingsLayout?'连接动态':'账务'}</th>}<th scope="col" className="reference-connection-test" aria-label="测试" /><th scope="col" className="reference-connection-more"><span className="reference-connections-sr-only">更多操作</span></th></tr></thead>
+    <section ref={listRef} tabIndex={inlineEditor?-1:undefined} aria-label="连接列表" className="reference-connections-table-wrap">
+      <table aria-label="已保存连接"><thead><tr><th scope="col"><span className="reference-connections-column-label">连接<HelpTip label="连接验证">已验证表示凭据曾通过服务检查；内容生成还需单独授权，不代表每次调用必定成功。</HelpTip></span></th>{!settingsLayout&&<th scope="col">能力</th>}<th scope="col" className="reference-connection-service">{settingsLayout?'服务与能力':'服务'}</th><th scope="col" className="reference-connection-model">模型</th>{inlineBilling&&<th scope="col" className="reference-connection-billing-column">{settingsLayout?'连接动态':'账务'}</th>}<th scope="col" className="reference-connection-test"><span className="reference-connections-sr-only">测试</span></th><th scope="col" className="reference-connection-more"><span className="reference-connections-sr-only">更多操作</span></th></tr></thead>
       <tbody>
       {filteredConnections.map(({connection,service,capability,label})=>{
         const canTest=verificationByProvider?.[connection.provider]?.available??verificationEnabled;
@@ -406,7 +420,7 @@ export function ConnectionWorkspace({ inlineBilling=false,settingsLayout=false,n
               <span>余量 {remainingValue}</span><span>近 7 天 {usage.recent.text}</span>
             </div>}
           </td>}
-          <td className="reference-connection-test"><div className="reference-connection-row-actions">{!inlineBilling&&<Button size="xs" color="tertiary" aria-label={`${connection.name} 账务与凭据详情`} aria-expanded={expanded} onPress={()=>setExpandedRow(expanded?null:rowKey)}>{expanded?'收起':'详情'}</Button>}<Button className="reference-connection-test-button" color="tertiary" size="xs" iconLeading={RefreshCw} aria-label={`测试 ${connection.name}`} isLoading={testingId===connection.id} showTextWhileLoading isDisabled={busy||!canTest} onPress={()=>void testSelected(connection.id)}>{testingId===connection.id?'测试中…':'测试'}</Button></div></td><td className="reference-connection-more"><MenuTrigger><Button aria-label={`${connection.name} 连接操作`} color="tertiary" size="sm" iconLeading={MoreHorizontal} isDisabled={busy}/><Popover placement="bottom end" className="dan-ui reference-connections-menu"><Menu aria-label={`${connection.name} 操作`} onAction={key=>key==='billing'?setBillingConnectionId(connection.id):key==='models'?setModelConnectionId(connection.id):openConnection(connection.id,key==='edit'?'edit':'detail',key==='versions')}><MenuItem id="edit" textValue="编辑连接"><Pencil aria-hidden="true"/>编辑连接</MenuItem>{onReadModels&&service?.mode==='generation'&&<MenuItem id="models" textValue="模型设置"><RefreshCw aria-hidden="true"/>模型设置</MenuItem>}{(onReadUsage||onReadBilling&&billingProvider(connection.provider))&&<MenuItem id="billing" textValue="账务设置"><CreditCard aria-hidden="true"/>账务设置</MenuItem>}<MenuItem id="versions" textValue="版本详情"><History aria-hidden="true"/>版本详情</MenuItem></Menu></Popover></MenuTrigger></td>
+          <td className="reference-connection-test"><div className="reference-connection-row-actions">{inlineEditor&&<Button size="xs" color="tertiary" aria-label={`更换 ${connection.name} 的密钥`} isDisabled={busy} onPress={()=>{openConnection(connection.id,'edit');requestAnimationFrame(()=>editor.current?.querySelector<HTMLInputElement>('input[type="password"]')?.focus());}}>更换密钥</Button>}{!inlineBilling&&<Button size="xs" color="tertiary" aria-label={`${connection.name} 账务与凭据详情`} aria-expanded={expanded} onPress={()=>setExpandedRow(expanded?null:rowKey)}>{expanded?'收起':'详情'}</Button>}<Button className="reference-connection-test-button" color="tertiary" size="xs" iconLeading={RefreshCw} aria-label={`测试 ${connection.name}`} isLoading={testingId===connection.id} showTextWhileLoading isDisabled={busy||!canTest} onPress={()=>void testSelected(connection.id)}>{testingId===connection.id?'测试中…':'测试'}</Button></div></td><td className="reference-connection-more"><MenuTrigger><Button aria-label={`${connection.name} 连接操作`} color="tertiary" size="sm" iconLeading={MoreHorizontal} isDisabled={busy}/><Popover placement="bottom end" className="dan-ui reference-connections-menu"><Menu aria-label={`${connection.name} 操作`} onAction={key=>key==='billing'?setBillingConnectionId(connection.id):key==='models'?setModelConnectionId(connection.id):openConnection(connection.id,key==='edit'?'edit':'detail',key==='versions')}><MenuItem id="edit" textValue="编辑连接"><Pencil aria-hidden="true"/>编辑连接</MenuItem>{onReadModels&&service?.mode==='generation'&&<MenuItem id="models" textValue="模型设置"><RefreshCw aria-hidden="true"/>模型设置</MenuItem>}{(onReadUsage||onReadBilling&&billingProvider(connection.provider))&&<MenuItem id="billing" textValue="账务设置"><CreditCard aria-hidden="true"/>账务设置</MenuItem>}<MenuItem id="versions" textValue="版本详情"><History aria-hidden="true"/>版本详情</MenuItem></Menu></Popover></MenuTrigger></td>
         </tr>
         {modelsExpanded&&<tr className="reference-connection-models-expanded" id={modelsId}><td colSpan={settingsLayout?6:7}>
           <ul aria-label={`${connection.name}的模型`}>{models.map(model=><li key={model}>{model}</li>)}</ul>
@@ -436,17 +450,17 @@ export function ConnectionWorkspace({ inlineBilling=false,settingsLayout=false,n
         </Fragment>;
       })}{!filteredConnections.length&&<tr><td colSpan={inlineBilling&&!settingsLayout?7:6}><div className="reference-connections-empty"><strong>{connections.length?'没有匹配的连接':'尚未添加连接'}</strong><p>{connections.length?'调整筛选条件，或创建新的服务连接。':'添加服务凭据后，验证其连接状态。'}</p>{connections.length>0&&<Button color="secondary" size="sm" onPress={()=>{applyQuery('');setCapabilityFilter('all');setStatusFilter('');}}>清空筛选</Button>}</div></td></tr>}</tbody></table>
     </section>
-    {billingConnection&&<ConnectionBillingDialog key={billingConnection.id} connection={billingConnection} onClose={()=>setBillingConnectionId('')} onReadBilling={onReadBilling} onReadUsage={onReadUsage} onSaveBilling={onSaveBilling} onRefreshBilling={onRefreshBilling} onDisconnectBilling={onDisconnectBilling}/>}
-    {modelConnection&&<ConnectionModelsDialog key={modelConnection.id} connection={modelConnection} draft={modelDrafts.current.get(modelConnection.id)} onDraftChange={draft=>{if(draft)modelDrafts.current.set(modelConnection.id,draft);else modelDrafts.current.delete(modelConnection.id);}} onClose={()=>setModelConnectionId('')} onReadModels={onReadModels} onSyncModels={onSyncModels} onSaveModels={onSaveModels}/>}
+    </>}{billingConnection&&<ConnectionBillingDialog key={billingConnection.id} connection={billingConnection} onStateChange={setBillingState} onClose={()=>setBillingConnectionId('')} onReadBilling={onReadBilling} onReadUsage={onReadUsage} onSaveBilling={onSaveBilling} onRefreshBilling={onRefreshBilling} onDisconnectBilling={onDisconnectBilling}/>}
+    {modelConnection&&<ConnectionModelsDialog key={modelConnection.id} connection={modelConnection} onStateChange={state=>setModelBusy(state.busy)} draft={modelDrafts.current.get(modelConnection.id)} onDraftChange={draft=>{if(draft)modelDrafts.current.set(modelConnection.id,draft);else modelDrafts.current.delete(modelConnection.id);}} onClose={()=>setModelConnectionId('')} onReadModels={onReadModels} onSyncModels={onSyncModels} onSaveModels={onSaveModels}/>}
     <p className="reference-connections-note" role="status">{statusMessage||`凭据保存在 ${secretStorage}，不会回显。`}</p>
-    <ModalOverlay className="product-ui reference-connections-overlay" isOpen={Boolean(dialog)} isDismissable={!busy&&!leavePrompt&&!revokingId} isKeyboardDismissDisabled={busy||leavePrompt||Boolean(revokingId)} onOpenChange={open=>{if(!open)requestClose();}}><Modal className="reference-connections-modal"><Dialog ref={dialogRef} aria-label={dialog==='detail'?selected?.name:dialog==='new'?'新建连接':'编辑连接'} className="dan-ui connection-workspace reference-connections reference-connections-dialog">
-      <header className="reference-connections-dialog-header"><h2>{dialog==='detail'?selected?.name:dialog==='new'?'新建连接':'编辑连接'}</h2><Button color="tertiary" size="sm" iconLeading={X} aria-label="关闭连接窗口" isDisabled={busy} onPress={requestClose}/></header>
+    <ConnectionEditorSurface inline={inlineEditor} open={Boolean(dialog)} busy={busy} blocked={leavePrompt||Boolean(revokingId)} onClose={requestClose} label={dialog==='detail'?selected?.name:dialog==='new'?'新建连接':'编辑连接'} dialogRef={dialogRef}>
+      <header className="reference-connections-dialog-header"><h2>{dialog==='detail'?selected?.name:dialog==='new'?'新建连接':'编辑连接'}</h2><Button color="tertiary" size="sm" iconLeading={inlineEditor?ArrowLeft:X} aria-label={inlineEditor?'返回连接列表':'关闭连接窗口'} isDisabled={busy} onPress={requestClose}/></header>
       {dialog==='detail'&&selected?<><div className="reference-connections-detail-body">
         <div className="reference-connection-summary" role="status" title={selected.last_verification_detail||undefined}><span className="reference-connection-status" data-status={selected.status}><i aria-hidden="true"/>{statusLabels[selected.status]}</span>{selectedCurrentVersion&&<span>v{selectedCurrentVersion.version}</span>}<span>{selected.last_verified_at?<>最近测试 <time dateTime={selected.last_verified_at}>{new Date(selected.last_verified_at).toLocaleString('zh-CN',{dateStyle:'short',timeStyle:'short'})}</time></>:'尚未测试'}</span></div>
         <dl className="reference-connections-detail-list"><dt>生产能力</dt><dd>{capabilityOf(selected)}</dd><dt>服务提供方</dt><dd>{providerDisplayName(selected.provider)}</dd><dt>技术标识</dt><dd>{selected.provider}</dd><dt>适配器</dt><dd>{selected.adapter}</dd><dt>模型 / 服务</dt><dd>{selectedServices.map(service=>service.models.length?service.models.join('、'):service.label).join('；')||'未注册或不支持当前制作功能。'}</dd>{selected.endpoint&&<><dt>服务地址</dt><dd>{selected.endpoint}</dd></>}{selected.description&&<><dt>备注</dt><dd>{selected.description}</dd></>}{selected.usage&&(selected.usage.currentBlueprints+selected.usage.episodes+selected.usage.tasks)>0&&<><dt>使用范围</dt><dd>当前配置 {selected.usage.currentBlueprints} · 生产单 {selected.usage.episodes} · 任务 {selected.usage.tasks}</dd></>}</dl>
         {!operationResult&&selected.status!=='verified'&&selected.last_verification_detail&&<p className="reference-connections-note form-error" role="alert">{selected.last_verification_detail}</p>}
         {operationResult}{versionDetails}
-      </div><footer className="reference-connections-dialog-footer"><Button color="secondary" size="sm" isDisabled={busy} onPress={()=>{choose(selected.id);setDialog('edit');}}>编辑连接</Button><Button color="primary" size="sm" iconLeading={Play} isDisabled={busy||!canVerify} isLoading={operation==='testing'} showTextWhileLoading onPress={()=>void testSelected(selected.id)}>测试连接</Button></footer></>:<>
+      </div><footer className="reference-connections-dialog-footer"><Button color="secondary" size="sm" isDisabled={busy} onPress={()=>{choose(selected.id);setDialog('edit');}}>编辑连接</Button>{inlineEditor&&<Button color="secondary" size="sm" iconLeading={KeyRound} isDisabled={busy} onPress={()=>{choose(selected.id);setDialog('edit');requestAnimationFrame(()=>editor.current?.querySelector<HTMLInputElement>('input[type="password"]')?.focus());}}>更换密钥</Button>}{onOpenSecrets&&<Button color="tertiary" size="sm" isDisabled={busy} onPress={()=>onOpenSecrets(selected.id,selected.name)}>在密钥管理中查看</Button>}<Button color="primary" size="sm" iconLeading={Play} isDisabled={busy||!canVerify} isLoading={operation==='testing'} showTextWhileLoading onPress={()=>void testSelected(selected.id)}>测试连接</Button></footer></>:<>
     <form aria-label="保存连接" className="connection-editor" onSubmit={event => void submit(event)} ref={editor}>
       <fieldset className="connection-fields" disabled={busy}>
         <p className="reference-connections-note" role="status">{nonSecretChanged||secret?'未保存修改':'尚未修改'}</p>
@@ -468,7 +482,7 @@ export function ConnectionWorkspace({ inlineBilling=false,settingsLayout=false,n
       </fieldset>
     </form>
       </>}
-    </Dialog></Modal></ModalOverlay>
+    </ConnectionEditorSurface>
     {revoking&&<ModalOverlay className="product-ui reference-connections-overlay" isOpen isDismissable={!busy} isKeyboardDismissDisabled={busy} onOpenChange={open=>{if(!open&&!busy)setRevokingId('');}}><Modal className="reference-connections-modal"><Dialog ref={revokeDialogRef} aria-label="撤销连接版本" className="dan-ui connection-workspace reference-connections reference-connections-dialog">
       <header className="reference-connections-dialog-header"><h2>撤销连接版本</h2></header>
       <div className="reference-connections-detail-body"><strong>{revokingConnection?.name} · v{revoking.version}</strong>{revoking.usage?<>

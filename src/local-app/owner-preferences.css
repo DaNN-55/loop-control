@@ -46,3 +46,30 @@ html[data-interface="impeccable"] .impeccable-app.product-ui .modal-backdrop>.ow
 .owner-avatar-preview .media-image-trigger > span { top: auto; right: 4px; bottom: 4px; width: 20px; height: 20px; }
 .owner-preferences-dialog form>footer{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 16px}
 .owner-preferences-dialog .owner-restore-scope{grid-column:1/-1;justify-self:end;text-align:right;color:var(--lc-muted);font-size:12px}
+.owner-preferences-embedded{width:100%;height:100%;max-height:none;border-radius:0;box-shadow:none;display:flex;flex-direction:column;min-width:0;min-height:0}
+.owner-preferences-embedded>header{padding:20px 28px;min-height:76px;flex-shrink:0}
+.owner-preferences-embedded>form{display:flex;flex-direction:column;flex:1;min-height:0}
+.owner-preferences-embedded .owner-preferences-card{display:block;flex:1;padding:0 32px 24px;overflow:auto;min-height:0}
+.owner-preferences-tabs{display:flex;gap:24px;margin:0 32px;border-bottom:1px solid var(--lc-line);flex-shrink:0}
+.owner-preferences-tabs>button{border:0;border-bottom:2px solid transparent;background:none;color:var(--lc-muted);padding:12px 0;cursor:pointer;font:inherit;font-size:13px}
+.owner-preferences-tabs>button[aria-selected=true]{color:var(--lc-accent);border-bottom-color:var(--lc-accent);font-weight:600}
+.owner-preferences-tabs>button:disabled{cursor:default;opacity:.6}
+.owner-preferences-tab-panel[hidden],.owner-preferences-embedded form>footer[hidden]{display:none}
+.owner-preferences-embedded .owner-preferences-section{display:grid;grid-template-columns:132px minmax(0,1fr);gap:24px;padding:28px 0;border-bottom:1px solid var(--lc-line)}
+.owner-preferences-embedded .owner-preferences-section:last-child{border-bottom:0}
+.owner-preferences-embedded .owner-preferences-section>h3{font-size:14px;font-weight:600;margin:0}
+.owner-preferences-section-content{display:grid;gap:20px;min-width:0}
+.owner-preferences-embedded .owner-display-name{max-width:none}
+.owner-preferences-embedded .owner-appearance-field{display:flex;align-items:center;justify-content:space-between;gap:24px;font-size:13px;min-width:0}
+.owner-preferences-embedded .owner-appearance-field>.dan-select-field{width:160px!important;max-width:65%;flex:0 1 160px}
+.owner-preferences-embedded .owner-preferences-language{color:var(--lc-muted)}
+.owner-preferences-embedded .owner-notification-toggles{gap:20px}
+.owner-preferences-embedded .owner-preferences-storage-panel>.media-root-content,.owner-preferences-embedded .log-storage-settings{display:grid;grid-template-columns:132px minmax(0,1fr);gap:16px 24px;padding:28px 0;margin:0;border:0;border-bottom:1px solid var(--lc-line);overflow:visible;min-width:0}
+.owner-preferences-embedded .owner-preferences-storage-panel :is(.media-root-content,.log-storage-settings)>h3{grid-column:1;font-size:14px;margin:0;font-weight:600}
+.owner-preferences-embedded .owner-preferences-storage-panel :is(.media-root-content,.log-storage-settings)>:not(h3){grid-column:2;min-width:0}
+.owner-preferences-embedded .media-root-current{margin:0}
+.owner-preferences-embedded .media-root-plan{margin-top:0;padding-top:16px}
+.owner-preferences-embedded .log-storage-settings{border-bottom:0}
+.owner-preferences-embedded form>footer{border-radius:0;padding:16px 28px;background:var(--lc-surface);flex-shrink:0}
+.owner-preferences-embedded .owner-restore-scope{font-size:11px}
+@media(max-width:720px){.owner-preferences-embedded>header{padding:16px 20px;min-height:64px}.owner-preferences-embedded .owner-preferences-card{padding:0 20px 20px}.owner-preferences-tabs{margin:0 20px}.owner-preferences-embedded .owner-preferences-section,.owner-preferences-embedded .owner-preferences-storage-panel>.media-root-content,.owner-preferences-embedded .log-storage-settings{display:flex;flex-direction:column;gap:20px;padding-block:24px}.owner-preferences-embedded form>footer{padding:12px 16px;grid-template-columns:minmax(0,1fr);gap:8px}.owner-preferences-embedded form>footer>div{justify-self:end;margin-left:0}.owner-preferences-embedded .owner-preferences-storage-panel :is(.media-root-content,.log-storage-settings)>:not(h3){width:100%}}

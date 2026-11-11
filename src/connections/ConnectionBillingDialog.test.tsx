@@ -1,4 +1,5 @@
 import {render,screen,within,waitFor} from '@testing-library/react';
+import {useState} from 'react';
 import userEvent from '@testing-library/user-event';
 import {expect,it,vi} from 'vitest';
 import {webcrypto} from 'node:crypto';
@@ -29,4 +30,16 @@ it('OpenAI uses the Admin field and disables duplicate submissions while the rea
  expect(screen.getByLabelText('OpenAI Admin API Key')).toHaveProperty('disabled',true);expect(screen.getByRole('button',{name:'关闭账务设置'})).toHaveProperty('disabled',true);
  expect(onSave).toHaveBeenCalledTimes(1);finish({...settings,provider:'openai',configured:true,revision:'new'});await waitFor(()=>expect(screen.queryByLabelText('OpenAI Admin API Key')).toBeNull());
  expect(within(screen.getByRole('dialog')).getByRole('button',{name:'刷新账务'})).toBeTruthy();
+});
+it('confirms a dirty billing close without offering to retain credentials and clears reporting on unmount',async()=>{
+ const user=userEvent.setup(),onClose=vi.fn(),onStateChange=vi.fn(),storage=vi.spyOn(Storage.prototype,'setItem');
+ function Host(){const [open,setOpen]=useState(true);return open?<ConnectionBillingDialog connection={connection} onClose={()=>{onClose();setOpen(false);}} onStateChange={onStateChange} onReadBilling={async()=>settings}/>:null;}
+ render(<Host/>);
+ await user.type(await screen.findByLabelText('账务 AccessKey ID'),'synthetic-id');
+ expect(onStateChange).toHaveBeenLastCalledWith({busy:false,dirty:true});await user.keyboard('{Escape}');
+ expect(screen.getByRole('dialog',{name:'关闭前处理修改'})).toBeTruthy();expect(screen.queryByRole('button',{name:'保留修改并关闭'})).toBeNull();expect(onClose).not.toHaveBeenCalled();
+ await user.click(screen.getByRole('button',{name:'关闭确认，继续编辑'}));expect(screen.getByLabelText('账务 AccessKey ID')).toHaveProperty('value','synthetic-id');
+ await user.click(screen.getByRole('button',{name:'关闭账务设置'}));await user.click(screen.getByRole('button',{name:'放弃修改并关闭'}));
+ expect(onClose).toHaveBeenCalledOnce();expect(screen.queryByLabelText('账务 AccessKey ID')).toBeNull();expect(onStateChange).toHaveBeenLastCalledWith({busy:false,dirty:false});
+ expect(storage).not.toHaveBeenCalled();storage.mockRestore();
 });

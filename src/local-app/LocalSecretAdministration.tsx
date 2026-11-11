@@ -9,15 +9,17 @@ import type {SecretCategory,SecretList,SecretMetadata} from './secretAdministrat
 import './secret-management.css';
 
 const categories:Record<SecretCategory,string>={system:'系统控制',connection:'连接使用',history:'历史还原',unreferenced:'未发现引用'};
-export function LocalSecretAdministration({csrf,onClose}:{csrf:string;onClose:()=>void}){
- const id=useId(),dialog=useDialogFocus<HTMLElement>(true,()=>{clearSensitive();onClose();});
- const [query,setQuery]=useState(''),[category,setCategory]=useState('all'),[page,setPage]=useState(1),[refresh,setRefresh]=useState(0);
+export function LocalSecretAdministration({csrf,onClose,embedded=false,onStateChange,onOpenConnection,initialQuery='',initialReference}:{csrf:string;onClose:()=>void;embedded?:boolean;onStateChange?:(state:{busy:boolean;dirty:boolean})=>void;onOpenConnection?:(connectionId:string)=>void;initialQuery?:string;initialReference?:string}){
+ const id=useId(),dialog=useDialogFocus<HTMLElement>(!embedded,()=>{clearSensitive();onClose();});
+ const [query,setQuery]=useState(initialQuery||initialReference||''),[category,setCategory]=useState('all'),[page,setPage]=useState(1),[refresh,setRefresh]=useState(0);
  const [expanded,setExpanded]=useState<string|null>(null),[help,setHelp]=useState(false);
  const [list,setList]=useState<SecretList|null>(null),[selected,setSelected]=useState<SecretMetadata|null>(null);
  const [action,setAction]=useState<'view'|'copy'|null>(null),[password,setPassword]=useState(''),[plain,setPlain]=useState(''),[expiresAt,setExpiresAt]=useState(0);
  const [error,setError]=useState(''),[notice,setNotice]=useState(''),[loading,setLoading]=useState(true),[busy,setBusy]=useState(false);
  const passwordInput=useRef<HTMLInputElement>(null);
  const [verificationError,setVerificationError]=useState('');
+ const [remaining,setRemaining]=useState(0);
+ const initialSelection=useRef('');
  const generation=useRef(0),sensitiveRequest=useRef<AbortController|null>(null);
  function clearSensitive(){generation.current++;sensitiveRequest.current?.abort();sensitiveRequest.current=null;setPassword('');setVerificationError('');setPlain('');setExpiresAt(0);setAction(null);setBusy(false);}
  useEffect(()=>{
@@ -26,11 +28,15 @@ export function LocalSecretAdministration({csrf,onClose}:{csrf:string;onClose:()
   return()=>{generation.current++;sensitiveRequest.current?.abort();document.removeEventListener('visibilitychange',clear);window.removeEventListener('pagehide',clear);window.removeEventListener('loop-local-session-expired',clear);};
  },[]);
  useEffect(()=>{if(!plain&&!action)return;const timer=setTimeout(()=>{clearSensitive();setNotice('敏感内容已清除。');},plain?Math.max(0,Math.min(30000,expiresAt-Date.now())):30000);return()=>clearTimeout(timer);},[plain,action,expiresAt]);
+ const stateChange=useRef(onStateChange);stateChange.current=onStateChange;
+ useEffect(()=>{stateChange.current?.({busy:false,dirty:false});},[]);
+ useEffect(()=>{if(!plain)return;const update=()=>setRemaining(Math.max(0,Math.ceil((expiresAt-Date.now())/1000)));update();const timer=setInterval(update,1000);return()=>clearInterval(timer);},[plain,expiresAt]);
  useEffect(()=>{
   const controller=new AbortController();let active=true;setLoading(true);setError('');setSelected(null);setExpanded(null);
   const timer=setTimeout(()=>{void localRequest('secrets?'+new URLSearchParams({q:query,category,page:String(page)}),{signal:controller.signal,cache:'no-store'}).then(value=>{if(active)setList(value);}).catch(()=>{if(active){setList(null);setError('密钥列表读取失败，请检查会话和本机服务。');}}).finally(()=>{if(active)setLoading(false);});},250);
   return()=>{active=false;clearTimeout(timer);controller.abort();};
  },[query,category,page,refresh]);
+ useEffect(()=>{if(initialReference&&!loading&&initialSelection.current!==initialReference){initialSelection.current=initialReference;void select(initialReference);}},[initialReference,loading]);
  async function select(reference:string,nextAction:'view'|'copy'|null=null){
   clearSensitive();setError('');setNotice('');setSelected(null);setExpanded(reference);const current=generation.current,controller=new AbortController();sensitiveRequest.current=controller;
   try{const value=await localRequest('secrets/detail?'+new URLSearchParams({reference}),{signal:controller.signal,cache:'no-store'});if(current===generation.current){setSelected(value.item);if(nextAction&&value.item.revealAllowed)setAction(nextAction);}}
@@ -53,7 +59,7 @@ export function LocalSecretAdministration({csrf,onClose}:{csrf:string;onClose:()
   finally{verification='';if(current===generation.current){setBusy(false);requestAnimationFrame(()=>{if(current===generation.current){passwordInput.current?.focus();passwordInput.current?.closest('form')?.scrollIntoView?.({block:'nearest'});}});}}
  }
  function change(){clearSensitive();setSelected(null);setExpanded(null);setNotice('');setError('');}
- return <div className="modal-backdrop" role="presentation"><section aria-labelledby={id+'-title'} aria-modal="true" className="modal-card secret-table-modal" ref={dialog} role="dialog">
+ const content=<section aria-labelledby={id+'-title'} aria-modal={embedded?undefined:true} className={`modal-card secret-table-modal${embedded?' owner-settings-pane':''}`} ref={dialog} role={embedded?undefined:'dialog'}>
   <header className="secret-table-heading"><h2 id={id+'-title'}>密钥管理</h2><div><Button size="sm" color="tertiary" iconLeading={HelpCircle} aria-label="密钥管理帮助" aria-expanded={help} aria-controls={id+'-help'} onClick={()=>setHelp(!help)}/><Button size="sm" color="tertiary" iconLeading={RefreshCw} aria-label="刷新密钥列表" isDisabled={loading||busy} onClick={()=>{change();setRefresh(v=>v+1);}}/><Button size="sm" color="tertiary" iconLeading={X} aria-label="关闭密钥管理" onClick={()=>{clearSensitive();onClose();}}/></div></header>
   {help&&<div id={id+'-help'} className="secret-table-help"><p>查看、复制需验证当前登录密码，明文最多显示 30 秒。</p><p>引用编号用于定位 Keychain 条目，不能作为 API Key 使用。系统控制密钥仅展示用途；未发现引用不代表可以删除。</p></div>}
   <div className="secret-table-toolbar"><InputBase size="sm" aria-label="搜索密钥" type="search" maxLength={200} placeholder="搜索名称、用途或引用编号" value={query} onChange={e=>{change();setQuery(e.target.value);setPage(1);}}/><PopulatedFilterSelect size="sm" aria-label="分类" disabled={loading} counts={list?.categoryCounts} allValue="all" value={category} onValueChange={value=>{change();setCategory(value);setPage(1);}} options={[{value:'all',label:'全部分类'},...Object.entries(categories).map(([value,label])=>({value,label}))]}/></div>
@@ -68,8 +74,9 @@ export function LocalSecretAdministration({csrf,onClose}:{csrf:string;onClose:()
      {!selected?<p role="status">正在读取详情…</p>:<><dl className="secret-inline-metadata"><div><dt>引用编号</dt><dd><code>{selected.reference}</code></dd></div>{selected.connections.some(c=>c.current&&!c.revoked)&&<div><dt>当前连接</dt><dd>{selected.connections.filter(c=>c.current&&!c.revoked).map(c=>`${c.name} · ${c.provider} · v${c.version}`).join('；')}</dd></div>}{selected.pendingUses.length>0&&<div><dt>待恢复操作</dt><dd>{selected.pendingUses.join('；')}</dd></div>}</dl>
       <details className="secret-inline-more"><summary>历史与技术信息</summary><dl className="secret-inline-metadata">{selected.names.length>1&&<div><dt>其他名称</dt><dd>{selected.names.slice(1).join('、')}</dd></div>}{selected.runtimeUses.length>0&&<div><dt>运行用途</dt><dd>{selected.runtimeUses.join('；')}</dd></div>}{selected.aliases.length>0&&<div><dt>历史引用别名</dt><dd>{selected.aliases.map(alias=><code key={alias}>{alias}<br/></code>)}</dd></div>}{selected.connections.some(c=>!c.current||c.revoked)&&<div><dt>连接历史</dt><dd>{selected.connections.filter(c=>!c.current||c.revoked).map(c=>`${c.name} · ${c.provider} · v${c.version}${c.revoked?' · 已撤销':''}`).join('；')}</dd></div>}{(selected.history.metadataOccurrences>0||selected.history.fileOccurrences>0||selected.history.files.length>0)&&<div><dt>历史还原</dt><dd>元数据 {selected.history.metadataOccurrences} 处 · 文件 {selected.history.fileOccurrences} 项{selected.history.files.map(path=><small className="secret-file-path" key={path}>{path}</small>)}</dd></div>}<div><dt>状态</dt><dd>{selected.state}</dd></div></dl></details>
       {!selected.revealAllowed&&<p className="secret-inline-note">系统控制密钥仅展示用途与状态，不提供网页读取。</p>}
+      {onOpenConnection&&selected.connections.some(connection=>connection.current&&!connection.revoked)&&<div className="secret-connection-links">{selected.connections.filter(connection=>connection.current&&!connection.revoked).map(connection=><Button key={connection.connectionId} size="sm" color="secondary" onPress={()=>{clearSensitive();onOpenConnection(connection.connectionId);}}>前往{selected.connections.filter(value=>value.current&&!value.revoked).length>1?`「${connection.name}」`:''}连接更换密钥</Button>)}</div>}
       {selected.revealAllowed&&action&&<form aria-label="验证管理员身份" className="secret-verification" onSubmit={reveal}><label>{action==='copy'?'复制密钥':'查看密钥'}<span className="secret-password-label">当前登录密码</span><InputBase size="sm" ref={passwordInput} autoFocus autoComplete="current-password" type="password" aria-label="当前登录密码" aria-describedby={[id+'-verify-purpose',verificationError?id+'-verify-error':null].filter(Boolean).join(' ')} aria-invalid={!!verificationError||undefined} isInvalid={!!verificationError} maxLength={1024} isRequired value={password} onChange={e=>{setPassword(e.target.value);setVerificationError('');}} isDisabled={busy}/><span id={id+'-verify-purpose'} className="secret-verification-purpose">使用当前登录密码验证本机身份，仅用于此次查看或复制。</span>{verificationError&&<span id={id+'-verify-error'} role="alert" className="form-error">{verificationError}</span>}</label><div className="secret-verification-actions"><Button size="sm" color="primary" isDisabled={busy||!password} type="submit">{busy?'正在验证…':action==='copy'?'验证并复制':'验证并查看'}</Button><Button size="sm" color="secondary" type="button" onClick={clearSensitive}>取消</Button></div></form>}
-      {selected.revealAllowed&&plain&&<div className="secret-plaintext"><div><span>30 秒后自动隐藏</span><Button size="xs" color="secondary" type="button" onClick={clearSensitive}>立即隐藏</Button></div><pre aria-label="密钥明文">{plain}</pre></div>}
+      {selected.revealAllowed&&plain&&<div className="secret-plaintext"><div><span>{remaining} 秒后自动隐藏</span><Button size="xs" color="secondary" type="button" onClick={clearSensitive}>立即隐藏</Button></div><pre aria-label="密钥明文">{plain}</pre></div>}
      </>}
     </section></td></tr>}
     </Fragment>;
@@ -77,5 +84,6 @@ export function LocalSecretAdministration({csrf,onClose}:{csrf:string;onClose:()
   </tbody></table>{!loading&&list?.items.length===0&&<p className="secret-table-empty">没有匹配的密钥。</p>}</div>
   {loading&&<span className="sr-only" role="status">正在加载密钥列表</span>}
   <footer className="secret-table-footer"><span>{loading?<span className="secret-skeleton secret-skeleton-count" aria-hidden="true"/>:list?`共 ${list.total} 项`:error?'读取失败':'尚未读取'}</span>{list&&list.total>list.pageSize&&<nav aria-label="密钥分页"><Button size="xs" color="tertiary" type="button" isDisabled={loading||list.page<=1} onClick={()=>{change();setPage(list.page-1);}}>上一页</Button><span>{list.page} / {Math.ceil(list.total/list.pageSize)}</span><Button size="xs" color="tertiary" type="button" isDisabled={loading||list.page*list.pageSize>=list.total} onClick={()=>{change();setPage(list.page+1);}}>下一页</Button></nav>}</footer>
- </section></div>;
+ </section>;
+ return embedded?content:<div className="modal-backdrop" role="presentation">{content}</div>;
 }

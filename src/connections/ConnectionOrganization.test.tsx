@@ -8,7 +8,7 @@ it('starts with the reference table and opens the single editor on demand',()=>{
  const active=row('active','TTS multishot pexels fixture',1),fresh=row('fresh','My Pexels');
  render(<ConnectionWorkspace connections={[active,fresh]} onCreateConnection={vi.fn()} onTestConnection={vi.fn()} onUpdateConnection={vi.fn()}/>);
  const table=screen.getByRole('table',{name:'已保存连接'});
- expect(within(table).getAllByRole('columnheader').map(cell=>cell.textContent)).toEqual(['连接','能力','服务','模型','','更多操作']);
+ expect(within(table).getAllByRole('columnheader').map(cell=>cell.textContent)).toEqual(['连接','能力','服务','模型','测试','更多操作']);
  const searchCells=screen.getByRole('button',{name:fresh.name}).closest('tr')!.querySelectorAll('td');expect(searchCells[2].textContent).toBe('Pexels');expect(searchCells[3].textContent).toBe('Pexels 素材检索');
  expect(within(searchCells[0]).getByText('已验证')).toBeTruthy();
  const testCell=screen.getByRole('button',{name:'测试 '+fresh.name}).closest('td');const moreCell=screen.getByRole('button',{name:fresh.name+' 连接操作'}).closest('td');expect(testCell).not.toBe(moreCell);

@@ -15,13 +15,17 @@ export interface ConnectionModelActions {
 }
 export type ConnectionModelDraft={versionId:string;revision:string;enabledModels:string[]};
 const sameModels=(a:string[],b:string[])=>JSON.stringify([...a].sort())===JSON.stringify([...b].sort());
-type ModelDialogProps={connection:{id:string;name:string};onClose:()=>void;draft?:ConnectionModelDraft;onDraftChange?:(draft:ConnectionModelDraft|null)=>void}&ConnectionModelActions;
+type ModelDialogProps={connection:{id:string;name:string};onClose:()=>void;draft?:ConnectionModelDraft;onDraftChange?:(draft:ConnectionModelDraft|null)=>void;onStateChange?:(state:{busy:boolean;dirty:boolean})=>void}&ConnectionModelActions;
 export function ConnectionModelsDialog(props:ModelDialogProps){return <ConnectionModelsSession key={props.connection.id} {...props}/>;}
-function ConnectionModelsSession({connection,onClose,onReadModels,onSyncModels,onSaveModels,draft,onDraftChange}:ModelDialogProps){
+function ConnectionModelsSession({connection,onClose,onReadModels,onSyncModels,onSaveModels,draft,onDraftChange,onStateChange}:ModelDialogProps){
  const [settings,setSettings]=useState<ConnectionModelSettings|null>(null),[baseline,setBaseline]=useState<ConnectionModelDraft|null>(null),[enabled,setEnabled]=useState<string[]>([]);
  const [operation,setOperation]=useState<'loading'|'syncing'|'saving'|''>('loading'),[error,setError]=useState('');
  const [query,setQuery]=useState(''),[filter,setFilter]=useState('all'),[capability,setCapability]=useState('all');
  const generation=useRef(0),lock=useRef(false),dialogRef=useRef<HTMLDivElement>(null),busy=operation!=='';
+ const stateChange=useRef(onStateChange);stateChange.current=onStateChange;
+ const writing=operation==='syncing'||operation==='saving';
+ useEffect(()=>{stateChange.current?.({busy:writing,dirty:false});},[writing]);
+ useEffect(()=>()=>{stateChange.current?.({busy:false,dirty:false});},[]);
  useEffect(()=>{generation.current++;return()=>{generation.current++;lock.current=false;};},[]);
  useEffect(()=>{if(!busy&&error&&document.activeElement===document.body)dialogRef.current?.focus();},[busy,error]);
  const [leavePrompt,setLeavePrompt]=useState(false),[draftNotice,setDraftNotice]=useState('');

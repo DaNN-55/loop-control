@@ -6,9 +6,13 @@ import {localRequest} from './client';
 import {parseLogStorageState,type LogStorageState} from '../observability/logTypes';
 import './runtime-logs.css';
 
-export function LogStorageSettings({csrf}:{csrf:string}){
+export function LogStorageSettings({csrf,onStateChange}:{csrf:string;onStateChange?:(state:{busy:boolean;dirty:boolean})=>void}){
  const [state,setState]=useState<LogStorageState|null>(null),[path,setPath]=useState(''),[reading,setReading]=useState(true),[pending,setPending]=useState(false),[error,setError]=useState(''),[saved,setSaved]=useState(false);
  const mounted=useRef(false),busy=useRef(false),read=useRef<AbortController|null>(null);
+ const stateChanged=useRef(onStateChange);stateChanged.current=onStateChange;
+ const dirty=!!state&&path.trim()!==state.configuredDirectory;
+ useEffect(()=>{stateChanged.current?.({busy:pending,dirty});},[pending,dirty]);
+ useEffect(()=>()=>stateChanged.current?.({busy:false,dirty:false}),[]);
  async function reload(){if(read.current)return;const controller=new AbortController();read.current=controller;setReading(true);setError('');try{const value=parseLogStorageState(await localRequest('log-storage',{signal:controller.signal}));if(mounted.current){setState(value);setPath(value.configuredDirectory);}}catch(e){if(mounted.current&&!controller.signal.aborted)setError(e instanceof Error?e.message:'日志位置读取失败。');}finally{if(read.current===controller){read.current=null;if(mounted.current)setReading(false);}}}
  useEffect(()=>{mounted.current=true;void reload();return()=>{mounted.current=false;read.current?.abort();read.current=null;};},[]);
  async function command(command:'choose'|'save'){

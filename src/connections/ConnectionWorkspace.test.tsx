@@ -1,7 +1,53 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act,fireEvent, render, screen,waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { ConnectionWorkspace, ExternalConnectionPicker } from "./ConnectionWorkspace";
+import type {ConnectionModelSettings} from './connectionModels';
+import type {ConnectionBillingSettings} from './connectionBilling';
+
+const embeddedConnection={id:'embedded-connection',name:'嵌入连接',provider:'pexels',adapter:'pexels_video',status:'verified' as const,created_at:'',created_by:'owner',last_verification_detail:null,last_verified_at:null,description:'',endpoint:'https://api.example.invalid',current_version_id:'version-1'};
+it('embeds the real credential editor without another dialog and preserves save-before-verification failure semantics',async()=>{
+ const user=userEvent.setup(),onStateChange=vi.fn(),onRotateConnection=vi.fn().mockResolvedValue({...embeddedConnection,current_version_id:'version-2'}),onTestConnection=vi.fn().mockResolvedValue({ready:false,detail:'示例供应商拒绝验证'});
+ render(<ConnectionWorkspace connections={[embeddedConnection]} inlineBilling settingsLayout inlineEditor onStateChange={onStateChange} onCreateConnection={vi.fn()} onRotateConnection={onRotateConnection} onTestConnection={onTestConnection}/>);
+ await user.click(screen.getByRole('button',{name:'更换 嵌入连接 的密钥'}));
+ expect(screen.getByRole('region',{name:'编辑连接'})).toBeTruthy();expect(screen.queryByRole('dialog')).toBeNull();expect(screen.queryByRole('table',{name:'已保存连接'})).toBeNull();
+ await user.type(screen.getByLabelText(/^新的 API Key/),'synthetic-new-credential');await user.click(screen.getByRole('button',{name:'保存并测试'}));
+ expect(onRotateConnection).toHaveBeenCalledOnce();expect(onRotateConnection).toHaveBeenCalledWith({connectionId:embeddedConnection.id,provider:'pexels',adapter:'pexels_video',secret:'synthetic-new-credential'});expect(onTestConnection).toHaveBeenCalledWith(embeddedConnection.id);
+ await screen.findByText('凭据已保存，连接测试未通过');expect((screen.getByLabelText(/^新的 API Key/) as HTMLInputElement).value).toBe('');expect(onStateChange).toHaveBeenCalledWith({busy:true,dirty:false});expect(onStateChange).toHaveBeenLastCalledWith({busy:false,dirty:false});
+});
+it('keeps credential lookup discoverable in an embedded detail and can open the requested connection',async()=>{
+ const onOpenSecrets=vi.fn();render(<ConnectionWorkspace connections={[embeddedConnection]} initialConnectionId={embeddedConnection.id} inlineBilling settingsLayout inlineEditor onOpenSecrets={onOpenSecrets} onCreateConnection={vi.fn()} onTestConnection={vi.fn()}/>);
+ expect(screen.getByRole('region',{name:embeddedConnection.name})).toBeTruthy();expect(screen.queryByRole('dialog')).toBeNull();fireEvent.click(screen.getByRole('button',{name:'在密钥管理中查看'}));expect(onOpenSecrets).toHaveBeenCalledWith(embeddedConnection.id,embeddedConnection.name);
+ fireEvent.click(screen.getByRole('button',{name:'返回连接列表'}));expect(screen.getByRole('table',{name:'已保存连接'})).toBeTruthy();
+});
+it('reports child model writes to the owner shell and releases it when save closes the child',async()=>{
+ const user=userEvent.setup(),onStateChange=vi.fn(),connection={...embeddedConnection,provider:'openai',adapter:'openai_images'};
+ const data:ConnectionModelSettings={connectionId:connection.id,versionId:'version-1',revision:'r1',enabledModels:['gpt-image-2'],models:[{id:'gpt-image-2',adapted:true,listed:true,capability:'图片'}],discovery:{supported:true,detail:'合成目录',readAt:null}};
+ let finishRead!:(data:ConnectionModelSettings)=>void,finishWrite!:(data:ConnectionModelSettings)=>void;
+ render(<ConnectionWorkspace connections={[connection]} inlineBilling settingsLayout inlineEditor onStateChange={onStateChange} onCreateConnection={vi.fn()} onTestConnection={vi.fn()} onReadModels={()=>new Promise(resolve=>{finishRead=resolve;})} onSyncModels={()=>new Promise(resolve=>{finishWrite=resolve;})} onSaveModels={()=>new Promise(resolve=>{finishWrite=resolve;})}/>);
+ await user.click(screen.getByRole('button',{name:'嵌入连接 连接操作'}));await user.click(screen.getByRole('menuitem',{name:'模型设置'}));
+ expect(onStateChange).toHaveBeenLastCalledWith({busy:false,dirty:false});
+ await act(async()=>finishRead(data));await user.click(screen.getByRole('button',{name:'读取模型'}));
+ expect(onStateChange).toHaveBeenLastCalledWith({busy:true,dirty:false});await act(async()=>finishWrite(data));
+ expect(onStateChange).toHaveBeenLastCalledWith({busy:false,dirty:false});await user.click(screen.getByRole('checkbox',{name:'gpt-image-2'}));
+ expect(onStateChange).toHaveBeenLastCalledWith({busy:false,dirty:false});await user.click(screen.getByRole('button',{name:'保存设置'}));
+ expect(onStateChange).toHaveBeenLastCalledWith({busy:true,dirty:false});await act(async()=>finishWrite({...data,enabledModels:[]}));
+ await waitFor(()=>expect(screen.queryByRole('dialog',{name:'嵌入连接 模型设置'})).toBeNull());expect(onStateChange).toHaveBeenLastCalledWith({busy:false,dirty:false});
+});
+it('reports billing credential edits and every billing write through the connection pane',async()=>{
+ const user=userEvent.setup(),onStateChange=vi.fn(),connection={...embeddedConnection,provider:'openai',adapter:'openai_images'};
+ const initial:ConnectionBillingSettings={connectionId:connection.id,provider:'openai',configured:false,revision:'r1',updatedAt:null},saved={...initial,configured:true,revision:'r2'};
+ let finish!:(data:ConnectionBillingSettings)=>void;const write=()=>new Promise<ConnectionBillingSettings>(resolve=>{finish=resolve;});
+ render(<ConnectionWorkspace connections={[connection]} inlineBilling settingsLayout inlineEditor onStateChange={onStateChange} onCreateConnection={vi.fn()} onTestConnection={vi.fn()} onReadBilling={async()=>initial} onSaveBilling={write} onRefreshBilling={write} onDisconnectBilling={write}/>);
+ await user.click(screen.getByRole('button',{name:'嵌入连接 连接操作'}));await user.click(screen.getByRole('menuitem',{name:'账务设置'}));await user.type(await screen.findByLabelText('OpenAI Admin API Key'),'synthetic-billing-key');
+ expect(onStateChange).toHaveBeenLastCalledWith({busy:false,dirty:true});await user.click(screen.getByRole('button',{name:'验证并保存'}));
+ expect(onStateChange).toHaveBeenLastCalledWith({busy:true,dirty:true});await act(async()=>finish(saved));
+ expect(onStateChange).toHaveBeenLastCalledWith({busy:false,dirty:false});await user.click(screen.getByRole('button',{name:'刷新账务'}));
+ expect(onStateChange).toHaveBeenLastCalledWith({busy:true,dirty:false});await act(async()=>finish(saved));
+ expect(onStateChange).toHaveBeenLastCalledWith({busy:false,dirty:false});await user.click(screen.getByRole('button',{name:'断开「嵌入连接」的账务关联'}));
+ expect(onStateChange).toHaveBeenLastCalledWith({busy:true,dirty:false});await act(async()=>finish(initial));
+ expect(onStateChange).toHaveBeenLastCalledWith({busy:false,dirty:false});
+});
 
 describe("外部连接工作区", () => {
   it("说明连接名称和认证材料应填写的内容", () => {

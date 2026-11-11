@@ -1,0 +1,45 @@
+/* Shared Owner setting frame; feature forms retain their own data and handlers. */
+html[data-interface="impeccable"] .product-ui .owner-settings-backdrop{padding:24px;align-items:center;overflow:hidden;z-index:70}
+.owner-settings-dialog{position:relative;display:grid;grid-template-columns:184px minmax(0,1fr);width:min(1160px,100%);height:min(760px,calc(100dvh - 48px));min-height:0;overflow:hidden;background:var(--lc-surface);color:var(--lc-ink);border-radius:14px;box-shadow:0 18px 50px #0002}
+.owner-settings-nav{display:flex;flex-direction:column;gap:24px;min-width:0;min-height:0;padding:28px 12px 20px;background:var(--lc-surface-2);border-right:1px solid var(--lc-line)}
+.owner-settings-nav>h2{margin:0;padding-inline:12px;font-size:14px;font-weight:600}
+.owner-settings-pages{display:grid;gap:4px;overflow:auto;min-height:0}
+.owner-settings-pages>button{display:flex;align-items:center;gap:10px;min-height:40px;padding:10px 12px;border:0;border-radius:7px;color:var(--lc-muted);background:transparent;text-align:left;font:inherit;font-size:13px;cursor:pointer}
+.owner-settings-pages>button:hover{background:var(--lc-bg);color:var(--lc-ink)}
+.owner-settings-pages>button[aria-current=page]{color:var(--lc-accent);background:var(--lc-accent-soft);font-weight:600}
+.owner-settings-pages>button:disabled{cursor:default;opacity:.6}
+.owner-settings-pages svg{flex:none}
+.owner-settings-identity{display:flex;align-items:center;gap:10px;min-width:0;margin-top:auto;padding:12px 8px 0;border-top:1px solid var(--lc-line)}
+.owner-settings-identity>svg{flex:none;color:var(--lc-muted)}
+.owner-settings-identity>div{min-width:0}
+.owner-settings-identity strong,.owner-settings-identity span{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}
+.owner-settings-identity span{color:var(--lc-muted);font-size:11px;margin-top:4px}
+.owner-settings-main{display:flex;flex-direction:column;min-width:0;min-height:0;overflow:hidden}
+html[data-interface="impeccable"] .product-ui .owner-settings-dialog .owner-settings-pane{display:flex;flex-direction:column;flex:1;min-width:0;min-height:0;width:100%;max-width:none;height:100%;max-height:none;margin:0;padding:0;overflow:hidden;border:0;border-radius:0;box-shadow:none;background:var(--lc-surface)}
+.owner-settings-dialog .owner-settings-pane>header,.owner-settings-dialog .owner-password-form>header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 28px;min-height:76px;margin:0;border:0;flex:none}
+.owner-settings-dialog .owner-settings-pane>header h2,.owner-settings-dialog .owner-password-form h2{margin:0;font-size:20px;font-weight:650;letter-spacing:-.02em}
+.owner-settings-dialog :is(.runtime-logs-body,.deletion-cleanup-body){flex:1;min-height:0;overflow:auto;padding:0 28px 24px;overscroll-behavior:contain}
+.owner-settings-dialog .runtime-logs-dialog .rl-table-surface{border:0;border-radius:0}
+.owner-settings-dialog .runtime-logs-dialog .rl-detail-grid{grid-template-columns:minmax(0,1fr);gap:20px}
+.owner-settings-dialog .runtime-logs-dialog .rl-detail>td{padding:20px 16px}
+.owner-settings-dialog .runtime-logs-dialog .rl-detail pre{border:0;background:var(--lc-surface)}
+.owner-settings-dialog .runtime-logs-dialog :is(.rl-col-id,.rl-col-source){width:90px}
+.owner-settings-dialog .runtime-logs-dialog .rl-col-time{width:120px}
+.owner-settings-dialog .runtime-logs-dialog .rl-col-name{width:100px}
+.owner-settings-dialog .owner-password-form{display:flex;flex-direction:column;min-height:0;height:100%;overflow:auto;padding:0;margin:0;gap:20px}
+.owner-settings-dialog .owner-password-form>header{padding-bottom:0}
+.owner-settings-dialog .owner-password-form>header p{font-size:12px;color:var(--lc-muted);margin:6px 0 0}
+.owner-settings-dialog .owner-password-form>:is(label,section,p){margin-inline:28px;flex:none;max-width:none}
+.owner-settings-dialog .owner-password-form .owner-identity{padding:0 0 20px;border:0;border-bottom:1px solid var(--lc-line);border-radius:0;background:none}
+.owner-settings-dialog .owner-password-form .owner-identity h3{font-size:13px;margin:0 0 12px}
+.owner-settings-dialog .owner-settings-pane .owner-password-form .modal-actions{margin-top:auto;position:sticky;bottom:0;padding:16px 28px;background:var(--lc-surface);border-top:1px solid var(--lc-line);z-index:1}
+.owner-settings-dialog .owner-password-form label{max-width:500px}
+.owner-settings-dialog .deletion-cleanup-empty{padding-block:40px}
+.owner-settings-dialog .secret-table-toolbar{padding-inline:28px}
+.owner-settings-dialog .secret-table-notices{padding-inline:28px}
+.owner-settings-dialog .secret-table-scroll{padding-inline:28px}
+.owner-settings-dialog .secret-table-footer{padding:16px 28px;border-top:1px solid var(--lc-line)}
+.owner-settings-dialog .secret-inline-detail{border:0;border-radius:0;background:var(--lc-surface-2)}
+@media(max-width:1000px){.owner-settings-dialog{grid-template-columns:164px minmax(0,1fr)}.owner-settings-dialog .runtime-logs-dialog :is(.rl-col-id,.rl-col-source){width:70px}.owner-settings-dialog .runtime-logs-dialog .rl-col-time{width:105px}.owner-settings-dialog .runtime-logs-dialog :is(th,td){padding-inline:8px}}
+@media(max-width:720px){html[data-interface="impeccable"] .product-ui .owner-settings-backdrop{padding:12px}.owner-settings-dialog{display:flex;flex-direction:column;height:calc(100dvh - 24px)}.owner-settings-nav{padding:12px;border-right:0;border-bottom:1px solid var(--lc-line);flex:none;max-height:35dvh;overflow:auto}.owner-settings-nav>h2,.owner-settings-identity{display:none}.owner-settings-pages{display:flex;flex-wrap:wrap;gap:4px;overflow:visible}.owner-settings-pages>button{min-height:36px;padding:8px 10px;gap:6px;font-size:12px}.owner-settings-pages svg{width:14px;height:14px}.owner-settings-main{flex:1}.owner-settings-dialog .owner-settings-pane>header,.owner-settings-dialog .owner-password-form>header{padding:16px 20px;min-height:64px}.owner-settings-dialog .owner-settings-pane>header h2{font-size:18px}.owner-settings-dialog :is(.runtime-logs-body,.deletion-cleanup-body){padding:0 20px 20px}.owner-settings-dialog .owner-password-form>:is(label,section,p){margin-inline:20px}.owner-settings-dialog .owner-password-form .modal-actions{padding-inline:20px}.owner-settings-dialog :is(.secret-table-toolbar,.secret-table-notices,.secret-table-scroll){padding-inline:20px}.owner-settings-dialog .secret-table-footer{padding-inline:20px}.owner-settings-dialog .runtime-logs-dialog .rl-filters{gap:8px}.owner-settings-dialog .runtime-logs-dialog .rl-filter{flex-basis:140px}.owner-settings-dialog .owner-password-form{gap:16px}}
+@media(prefers-reduced-motion:no-preference){.owner-settings-dialog{animation:owner-settings-enter 160ms cubic-bezier(.16,1,.3,1)}@keyframes owner-settings-enter{from{transform:translateY(8px);opacity:.6}to{transform:translateY(0);opacity:1}}}

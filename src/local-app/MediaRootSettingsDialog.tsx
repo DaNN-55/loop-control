@@ -8,12 +8,17 @@ import './media-root-settings.css';
 interface RootPlan{id:string;status:'planned'|'copying'|'failed'|'committed'|'completed'|'rolled_back';manifestSha256:string;progress?:{copiedFiles:number;copiedBytes:number;activeFile?:string;activeFileBytes?:number};error?:string;manifest:{sourceBinding:{path:string};targetBinding:{path:string};accounts:{id:string;name:string}[];episodes:{id:string;title:string}[];files:{episodeId:string;targetRelativePath:string;fileSize:number}[];references:unknown[];fileCount:number;directoryCount:number;totalBytes:number;target:{existingFileCount:number;existingBytes:number};space:{freeBytes:number;reserveBytes:number;requiredBytes:number};incompleteCopies:{path:string;bytes:number;verified:boolean}[];retained:{path?:string;kind:string;reason:string}[];canExecute:boolean;conflicts:string[];blockers:{reason:string}[]}}
 interface RootState{executing?:boolean;path:string;canInitialize:boolean;status:'ready'|'unavailable';reason?:string;migration:RootPlan|null}
 const bytes=(value:number)=>{const unit=value>=1024**3?3:value>=1024**2?2:value>=1024?1:0;return `${new Intl.NumberFormat('zh-CN',{maximumFractionDigits:1}).format(value/1024**unit)} ${['B','KB','MB','GB'][unit]}`;};
-export function MediaRootSettingsDialog({csrf,onClose,embedded=false}:{csrf:string;onClose:()=>void;embedded?:boolean}){
+export function MediaRootSettingsDialog({csrf,onClose,embedded=false,onStateChange}:{csrf:string;onClose:()=>void;embedded?:boolean;onStateChange?:(state:{busy:boolean;dirty:boolean})=>void}){
  const [root,setRoot]=useState<RootState|null>(null),[path,setPath]=useState(''),[pending,setPending]=useState(''),[reading,setReading]=useState(true),[error,setError]=useState(''),[message,setMessage]=useState(''),[readError,setReadError]=useState(''),[editing,setEditing]=useState(false),[confirmed,setConfirmed]=useState(false);
  const readRequest=useRef<{controller:AbortController;kind:'manual'|'poll'|'command'}|null>(null);
  const mounted=useRef(false),operation=useRef(false);
  const planRequest=useRef<{path:string;key:string}|null>(null),ref=useDialogFocus<HTMLDivElement>(!embedded,()=>{if(!pending&&!reading||pending==='executeMigration')onClose();}),busy=!!pending||reading;
  const observing=pending==='executeMigration'||root?.executing===true;
+ const stateChanged=useRef(onStateChange);stateChanged.current=onStateChange;
+ const savedPath=root?.migration&&!['completed','rolled_back'].includes(root.migration.status)?root.migration.manifest.targetBinding.path:root?.path;
+ const pathDirty=!!root&&path.trim()!==savedPath;
+ useEffect(()=>{stateChanged.current?.({busy:!!pending&&pending!=='executeMigration',dirty:pathDirty});},[pending,pathDirty]);
+ useEffect(()=>()=>stateChanged.current?.({busy:false,dirty:false}),[]);
  function cancelRead(){if(mounted.current&&readRequest.current?.kind==='manual')setReading(false);readRequest.current?.controller.abort();readRequest.current=null;}
  async function reload(kind:'manual'|'poll'|'command'='manual'){
   if(kind==='poll'&&(document.visibilityState==='hidden'||readRequest.current))return;

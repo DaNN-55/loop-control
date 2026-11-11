@@ -1,0 +1,15 @@
+import {StrictMode} from 'react';
+import {createRoot} from 'react-dom/client';
+import {LocalCatalogApp} from '../../../src/local-app/LocalCatalogApp';
+import {ownerSettingsFixture} from '../../../src/local-app/fixtures/ownerSettingsFixture';
+import '../../../src/styles.css';
+import '../../../src/ui/impeccable/foundation.css';
+import '../../../src/ui/impeccable/configuration.css';
+import '../../../src/ui/impeccable/maintenance.css';
+import '../../../src/ui/impeccable/production.css';
+import '../../../src/ui/impeccable/scroll-layout.css';
+import '../../../src/ui/impeccable/surface-polish.css';
+import '../../../src/ui/impeccable/detail-refinement.css';
+import '../../../src/ui/impeccable/interaction-refinement.css';
+const fixture=ownerSettingsFixture();window.fetch=fixture.request;
+createRoot(document.getElementById('root')!).render(<StrictMode><LocalCatalogApp/></StrictMode>);

@@ -1,0 +1,115 @@
+{
+  "passed": 18,
+  "draftSurvivesTabSwitch": true,
+  "savePassed": true,
+  "results": [
+    {
+      "width": 1440,
+      "theme": "light",
+      "view": "profile",
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 1440,
+      "theme": "light",
+      "view": "storage",
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 1440,
+      "theme": "light",
+      "view": "notifications",
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 1440,
+      "theme": "dark",
+      "view": "profile",
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 1440,
+      "theme": "dark",
+      "view": "storage",
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 1440,
+      "theme": "dark",
+      "view": "notifications",
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 375,
+      "theme": "light",
+      "view": "profile",
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 375,
+      "theme": "light",
+      "view": "storage",
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 375,
+      "theme": "light",
+      "view": "notifications",
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 375,
+      "theme": "dark",
+      "view": "profile",
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 375,
+      "theme": "dark",
+      "view": "storage",
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 375,
+      "theme": "dark",
+      "view": "notifications",
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 320,
+      "theme": "light",
+      "view": "profile",
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 320,
+      "theme": "light",
+      "view": "storage",
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 320,
+      "theme": "light",
+      "view": "notifications",
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 320,
+      "theme": "dark",
+      "view": "profile",
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 320,
+      "theme": "dark",
+      "view": "storage",
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 320,
+      "theme": "dark",
+      "view": "notifications",
+      "noHorizontalOverflow": true
+    }
+  ]
+}

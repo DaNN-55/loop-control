@@ -23,5 +23,5 @@ it('keeps an actual password HTTP failure inside the open dialog without a stale
  const dialog=within(screen.getByRole('dialog',{name:'登录与安全'}));
  await user.type(dialog.getByLabelText('新密码'),'synthetic-new-password');await user.type(dialog.getByLabelText('确认密码'),'synthetic-new-password');await user.click(dialog.getByRole('button',{name:'保存密码'}));
  const error=await dialog.findByRole('alert');expect(error.textContent).toBe('密码存储暂不可用，请重试。');expect(dialog.getByRole('form',{name:'登录与安全'}).getAttribute('aria-describedby')).toBe(error.id);expect((dialog.getByLabelText('新密码') as HTMLInputElement).value).toBe('synthetic-new-password');
- await user.keyboard('{Escape}');expect(screen.queryByRole('dialog',{name:'登录与安全'})).toBeNull();expect(screen.queryByText('密码存储暂不可用，请重试。')).toBeNull();
+ await user.keyboard('{Escape}');await screen.findByRole('dialog',{name:'离开当前设置？'});await user.click(screen.getByRole('button',{name:'放弃修改并离开'}));expect(screen.queryByRole('dialog',{name:'登录与安全'})).toBeNull();expect(screen.queryByText('密码存储暂不可用，请重试。')).toBeNull();
 });

@@ -9,8 +9,8 @@ import './runtime-logs.css';
 
 const displayDate=(value:string)=>new Intl.DateTimeFormat('zh-CN',{dateStyle:'short',timeStyle:'medium'}).format(new Date(value));
 const sameOperation=(a:RuntimeLogEntry,b:RuntimeLogEntry)=>!!a.operationId&&a.operationId===b.operationId&&a.episodeId===b.episodeId;
-export function RuntimeLogsDialog({onClose,returnFocusRef}:{onClose:()=>void;returnFocusRef:RefObject<HTMLElement|null>}){
- const ref=useDialogFocus<HTMLElement>(true,onClose,returnFocusRef);
+export function RuntimeLogsDialog({onClose,returnFocusRef,embedded=false}:{onClose:()=>void;returnFocusRef:RefObject<HTMLElement|null>;embedded?:boolean}){
+ const ref=useDialogFocus<HTMLElement>(!embedded,onClose,returnFocusRef);
  const [report,setReport]=useState<RuntimeLogReport|null>(null),[error,setError]=useState(''),[pending,setPending]=useState(true);
  const [episode,setEpisode]=useState('all'),[range,setRange]=useState('all'),[errors,setErrors]=useState(false),[start,setStart]=useState(''),[end,setEnd]=useState('');
  const [selected,setSelected]=useState<string|null>(null),[origin,setOrigin]=useState<string|null>(null);
@@ -29,7 +29,7 @@ export function RuntimeLogsDialog({onClose,returnFocusRef}:{onClose:()=>void;ret
  const choices=[...new Map(entries.filter(e=>e.episodeId).map(e=>[e.episodeId!,{value:e.episodeId!,label:`${e.episodeName??'名称未记录'} · ${e.episodeId}`}])).values()];
  function resetSelection(){setSelected(null);}
  function leaveContext(){focusRecord.current=origin;setSelected(origin);setOrigin(null);}
- return <div className="modal-backdrop runtime-logs-backdrop"><section ref={ref} role="dialog" aria-modal="true" aria-labelledby="runtime-logs-title" className="modal-card runtime-logs-dialog">
+ const content=<section ref={embedded?undefined:ref} role={embedded?undefined:"dialog"} aria-modal={embedded?undefined:true} aria-labelledby={embedded?undefined:"runtime-logs-title"} className={`modal-card runtime-logs-dialog${embedded?" owner-settings-pane":""}`}>
   <header><h2 id="runtime-logs-title">日志</h2><div><Button size="sm" color="secondary" iconLeading={RefreshCw} isDisabled={pending} onPress={()=>void refresh()}>{pending?'读取中…':'刷新'}</Button><Button size="sm" color="tertiary" iconLeading={X} aria-label="关闭日志" data-dialog-initial-focus onPress={onClose}/></div></header>
   <div className="runtime-logs-body">
    <fieldset className="rl-filters" disabled={!!anchor} aria-label="日志筛选">
@@ -52,5 +52,6 @@ export function RuntimeLogsDialog({onClose,returnFocusRef}:{onClose:()=>void;ret
    </tbody></table></div>
    <footer className="rl-note">打开或刷新时读取 · {report?`最近读取 ${displayDate(report.observedAt)}`:'尚未读取'}。缺失信息保持未知；日志不代表当前服务状态。</footer>
   </div>
- </section></div>;
+ </section>;
+ return embedded?content:<div className="modal-backdrop runtime-logs-backdrop">{content}</div>;
 }

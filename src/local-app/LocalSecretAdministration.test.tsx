@@ -13,6 +13,18 @@ beforeEach(()=>{copied=[];Object.defineProperty(navigator,'clipboard',{configura
 afterEach(()=>{cleanup();vi.clearAllMocks();vi.useRealTimers();});
 async function select(){await screen.findByRole('button',{name:'Synthetic connection'});await act(async()=>{fireEvent.click(screen.getByRole('button',{name:'Synthetic connection'}));});await screen.findByText(reference);}
 async function verify(action='查看密钥'){await act(async()=>{fireEvent.click(screen.getByRole('button',{name:new RegExp('^'+action+'：')}));});fireEvent.change(screen.getByLabelText('当前登录密码'),{target:{value:'synthetic-password-only'}});await act(async()=>{fireEvent.submit(screen.getByRole('form',{name:'验证管理员身份'}));});}
+it('embeds inside one settings dialog and clears displayed credentials before leaving for the real connection',async()=>{
+ const linked={...item,connections:[{connectionId:'real-connection-id',name:'真实名称',provider:'pexels',version:2,current:true,revoked:false}]},onOpenConnection=vi.fn();
+ vi.mocked(localRequest).mockImplementation(async path=>path.startsWith('secrets?')?{items:[linked],total:1,page:1,pageSize:50}:path.startsWith('secrets/detail?')?{item:linked}:{value,expiresAt:new Date(Date.now()+30000).toISOString()});
+ render(<section role="dialog" aria-label="所有者设置"><LocalSecretAdministration csrf="csrf" embedded onClose={()=>{}} onOpenConnection={onOpenConnection}/></section>);
+ expect(screen.getAllByRole('dialog')).toHaveLength(1);fireEvent.click(await screen.findByRole('button',{name:/^Synthetic connection/}));await screen.findByText(reference);await verify();await screen.findByLabelText('密钥明文');
+ fireEvent.click(screen.getByRole('button',{name:'前往连接更换密钥'}));expect(onOpenConnection).toHaveBeenCalledWith('real-connection-id');expect(screen.queryByLabelText('密钥明文')).toBeNull();expect(screen.queryByLabelText('当前登录密码')).toBeNull();
+});
+it('uses the requested search and reference without opening a nested dialog or revealing any credential',async()=>{
+ render(<LocalSecretAdministration csrf="csrf" embedded initialQuery="Synthetic connection" initialReference={reference} onClose={()=>{}}/>);
+ await screen.findByText(reference);expect(screen.queryByRole('dialog')).toBeNull();expect(vi.mocked(localRequest).mock.calls.some(([path])=>path==='secrets?q=Synthetic+connection&category=all&page=1')).toBe(true);expect(vi.mocked(localRequest).mock.calls.some(([path])=>path==='secrets/reveal')).toBe(false);
+ fireEvent.change(screen.getByLabelText('搜索密钥'),{target:{value:'other'}});await screen.findByRole('button',{name:'Synthetic connection'});expect(screen.queryByText(reference)).toBeNull();
+});
 it('keeps menu capability optional and performs no secret request for other owners',()=>{const v=render(<OwnerMenu onOpenSettings={()=>{}} onSignOut={()=>{}}/>);fireEvent.click(screen.getByLabelText('所有者设置'));expect(screen.queryByRole('menuitem',{name:'密钥管理'})).toBeNull();v.rerender(<OwnerMenu onOpenSettings={()=>{}} onSignOut={()=>{}} onOpenSecrets={()=>{}}/>);expect(screen.getByRole('menuitem',{name:'密钥管理'})).toBeTruthy();expect(localRequest).not.toHaveBeenCalled();});
 it('reveals only after POST password verification and clears on selection/filter/visibility',async()=>{
  const localSet=vi.spyOn(Storage.prototype,'setItem');render(<LocalSecretAdministration csrf="synthetic-csrf" onClose={()=>{}}/>);await select();expect(screen.queryByLabelText('密钥明文')).toBeNull();await verify();await screen.findByLabelText('密钥明文');expect(screen.getByLabelText('密钥明文').textContent===value).toBe(true);

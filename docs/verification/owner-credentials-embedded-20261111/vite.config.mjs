@@ -1,0 +1,2 @@
+import {defineConfig} from 'vite';import react from '@vitejs/plugin-react';
+export default defineConfig({configFile:false,envFile:false,envPrefix:'FIXTURE_ONLY_',publicDir:false,plugins:[react()],cacheDir:'.scratch/owner-credentials-embedded-vite',optimizeDeps:{entries:['docs/verification/owner-credentials-embedded-20261111/index.html']},server:{host:'127.0.0.1',port:5208,strictPort:true,fs:{deny:['.env','.env.*','**/.loop-control/**','**/.git/**']},watch:{ignored:['**/.loop-control/**','**/.scratch/**']}}});

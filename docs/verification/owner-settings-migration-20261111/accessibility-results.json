@@ -1,0 +1,156 @@
+[
+  {
+    "theme": "light",
+    "page": "个人偏好",
+    "counts": {
+      "inapplicable": 60,
+      "incomplete": 0,
+      "passes": 28,
+      "violations": 0
+    },
+    "violations": []
+  },
+  {
+    "theme": "light",
+    "page": "通知",
+    "counts": {
+      "inapplicable": 63,
+      "incomplete": 0,
+      "passes": 25,
+      "violations": 0
+    },
+    "violations": []
+  },
+  {
+    "theme": "light",
+    "page": "登录与安全",
+    "counts": {
+      "inapplicable": 62,
+      "incomplete": 0,
+      "passes": 26,
+      "violations": 0
+    },
+    "violations": []
+  },
+  {
+    "theme": "light",
+    "page": "日志",
+    "counts": {
+      "inapplicable": 59,
+      "incomplete": 1,
+      "passes": 29,
+      "violations": 0
+    },
+    "violations": []
+  },
+  {
+    "theme": "light",
+    "page": "文件清理",
+    "counts": {
+      "inapplicable": 69,
+      "incomplete": 0,
+      "passes": 19,
+      "violations": 0
+    },
+    "violations": []
+  },
+  {
+    "theme": "light",
+    "page": "连接配置",
+    "counts": {
+      "inapplicable": 64,
+      "incomplete": 1,
+      "passes": 24,
+      "violations": 0
+    },
+    "violations": []
+  },
+  {
+    "theme": "light",
+    "page": "密钥管理",
+    "counts": {
+      "inapplicable": 58,
+      "incomplete": 0,
+      "passes": 30,
+      "violations": 0
+    },
+    "violations": []
+  },
+  {
+    "theme": "dark",
+    "page": "个人偏好",
+    "counts": {
+      "inapplicable": 60,
+      "incomplete": 0,
+      "passes": 28,
+      "violations": 0
+    },
+    "violations": []
+  },
+  {
+    "theme": "dark",
+    "page": "通知",
+    "counts": {
+      "inapplicable": 63,
+      "incomplete": 0,
+      "passes": 25,
+      "violations": 0
+    },
+    "violations": []
+  },
+  {
+    "theme": "dark",
+    "page": "登录与安全",
+    "counts": {
+      "inapplicable": 62,
+      "incomplete": 0,
+      "passes": 26,
+      "violations": 0
+    },
+    "violations": []
+  },
+  {
+    "theme": "dark",
+    "page": "日志",
+    "counts": {
+      "inapplicable": 59,
+      "incomplete": 1,
+      "passes": 29,
+      "violations": 0
+    },
+    "violations": []
+  },
+  {
+    "theme": "dark",
+    "page": "文件清理",
+    "counts": {
+      "inapplicable": 69,
+      "incomplete": 0,
+      "passes": 19,
+      "violations": 0
+    },
+    "violations": []
+  },
+  {
+    "theme": "dark",
+    "page": "连接配置",
+    "counts": {
+      "inapplicable": 64,
+      "incomplete": 1,
+      "passes": 24,
+      "violations": 0
+    },
+    "violations": []
+  },
+  {
+    "theme": "dark",
+    "page": "密钥管理",
+    "counts": {
+      "inapplicable": 58,
+      "incomplete": 0,
+      "passes": 30,
+      "violations": 0
+    },
+    "violations": []
+  }
+]

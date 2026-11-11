@@ -453,3 +453,41 @@ html[data-interface="impeccable"] .product-ui .connection-settings-layout table 
   }
   .connection-settings-layout .reference-connections-toolbar > button {grid-column:1/-1;justify-self:end}
 }
+
+/* Embedded settings retain the real connection workflow in the shared window. */
+.owner-settings-pane.connections-settings-dialog>.local-connections-panel{min-height:0;flex:1;overflow:auto;padding:0 28px 28px;overscroll-behavior:contain;align-content:start}
+html[data-interface="impeccable"] .product-ui .owner-settings-pane .connection-settings-editor.reference-connections-dialog{border:0;border-radius:0;box-shadow:none;background:transparent;padding:0;width:100%;min-width:0}
+html[data-interface="impeccable"] .product-ui .owner-settings-pane .connection-settings-editor .reference-connections-dialog-header{padding:4px 0 16px}
+html[data-interface="impeccable"] .product-ui .owner-settings-pane .connection-settings-editor .reference-connections-dialog-header h2{font-size:16px}
+html[data-interface="impeccable"] .product-ui .owner-settings-pane .connection-settings-editor .connection-editor{padding:20px 0 0}
+html[data-interface="impeccable"] .product-ui .owner-settings-pane .connection-settings-editor .connection-submit-row{margin:0;padding:16px 0 0;flex-wrap:wrap}
+html[data-interface="impeccable"] .product-ui .owner-settings-pane .connection-settings-editor .reference-connections-detail-body{padding:20px 0}
+html[data-interface="impeccable"] .product-ui .owner-settings-pane .connection-settings-editor .reference-connections-dialog-footer{padding:16px 0;justify-content:flex-start}
+html[data-interface="impeccable"] .product-ui .owner-settings-pane .connection-settings-layout.reference-connections .reference-connections-table-wrap{overflow:visible;contain:none}
+html[data-interface="impeccable"] .product-ui .owner-settings-pane .connection-settings-layout.reference-connections table{min-width:0;width:100%;table-layout:fixed}
+html[data-interface="impeccable"] .product-ui .owner-settings-pane .connection-settings-layout.reference-connections table th.reference-connection-service{width:18%}
+html[data-interface="impeccable"] .product-ui .owner-settings-pane .connection-settings-layout.reference-connections table th.reference-connection-test{width:104px}
+html[data-interface="impeccable"] .product-ui .owner-settings-pane .connection-settings-layout.reference-connections .reference-connection-row-actions{flex-direction:column;align-items:flex-start;gap:4px}
+html[data-interface="impeccable"] .product-ui .owner-settings-pane .reference-connections-toolbar{padding-bottom:20px}
+@media(max-width:1050px){
+ html[data-interface="impeccable"] .product-ui .owner-settings-pane .connection-settings-layout.reference-connections :is(table,tbody){display:block}
+ html[data-interface="impeccable"] .product-ui .owner-settings-pane .connection-settings-layout.reference-connections thead{display:none}
+ html[data-interface="impeccable"] .product-ui .owner-settings-pane .connection-settings-layout.reference-connections tbody>tr:not(.reference-connection-models-expanded){display:grid;grid-template-columns:minmax(0,1fr) 104px 36px;padding:16px 0;border-bottom:1px solid var(--lc-line);gap:8px 12px;min-width:0}
+ html[data-interface="impeccable"] .product-ui .owner-settings-pane .connection-settings-layout.reference-connections tr>td{display:block;min-width:0;width:auto;padding:0!important;border:0;grid-row:auto}
+ html[data-interface="impeccable"] .product-ui .owner-settings-pane .connection-settings-layout.reference-connections tr>td:first-child{grid-column:1;padding-inline-start:0!important}
+ html[data-interface="impeccable"] .product-ui .owner-settings-pane .connection-settings-layout.reference-connections :is(.reference-connection-service,.reference-connection-model,.reference-connection-billing-column){grid-column:1}
+ html[data-interface="impeccable"] .product-ui .owner-settings-pane .connection-settings-layout.reference-connections .reference-connection-test{grid-column:2;grid-row:1/5;align-self:center}
+ html[data-interface="impeccable"] .product-ui .owner-settings-pane .connection-settings-layout.reference-connections .reference-connection-more{grid-column:3;grid-row:1/5;align-self:center}
+ html[data-interface="impeccable"] .product-ui .owner-settings-pane .connection-settings-layout.reference-connections .reference-connection-models-expanded{display:block}
+}
+@media(max-width:720px){
+ .owner-settings-pane.connections-settings-dialog>.local-connections-panel{padding:0 20px 20px}
+ html[data-interface="impeccable"] .product-ui .owner-settings-pane .connection-settings-layout.reference-connections tbody>tr:not(.reference-connection-models-expanded){grid-template-columns:minmax(0,1fr) 36px}
+ html[data-interface="impeccable"] .product-ui .owner-settings-pane .connection-settings-layout.reference-connections .reference-connection-test{grid-column:1;grid-row:auto;justify-self:start}
+ html[data-interface="impeccable"] .product-ui .owner-settings-pane .connection-settings-layout.reference-connections .reference-connection-row-actions{flex-direction:row;flex-wrap:wrap}
+ html[data-interface="impeccable"] .product-ui .owner-settings-pane .connection-settings-layout.reference-connections .reference-connection-more{grid-column:2;grid-row:1}
+}
+
+html[data-interface="impeccable"] .product-ui .owner-settings-pane .connection-management-workspace{align-content:start}
+
+html[data-interface="impeccable"] .product-ui .owner-settings-pane .reference-connection-more>button{min-width:32px;width:32px;padding:6px}
