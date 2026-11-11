@@ -1,0 +1,19 @@
+{
+  "validatedCommit": "4e115024",
+  "isolatedTrackedDiffBeforeCleanup": [],
+  "isolatedWorktreeRemoved": true,
+  "ownBrowserClosed": true,
+  "ownPreviewStopped": true,
+  "ownedPostgresRemoved": true,
+  "ownedSdkRemoved": true,
+  "ownedMediaVolumeRemoved": true,
+  "ports": {
+    "5198": "",
+    "5174": "COMMAND   PID USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME\nnode    25878  dan   27u  IPv4 0x3efaf256a5187a52      0t0  TCP 127.0.0.1:5174 (LISTEN)",
+    "5199": "COMMAND   PID USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME\nnode    95745  dan   25u  IPv4 0x1a8049261c488e63      0t0  TCP 127.0.0.1:5199 (LISTEN)"
+  },
+  "dailyInitialPid": 46204,
+  "dailyObservedFinalPid": 25878,
+  "dailyStartStopCommandsByThisTask": false,
+  "pushed": false
+}

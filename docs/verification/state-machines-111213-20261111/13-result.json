@@ -1,0 +1,19 @@
+{
+  "firstPid": 27688,
+  "restartedPid": 28255,
+  "planId": "38fb86d7-5a45-4019-882e-d874a7edfd0b",
+  "manifestSha256": "d2237e1d5a5b42809d6a4244e30a61f5a11fe57a16068f07e77218387aa5c2d2",
+  "sourceSha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+  "completedPath": "/private/tmp/loop-t06-volume-3H9jBc/mounted/chosen-library",
+  "reopenedWhileCopying": true,
+  "reloadedWhileCopying": true,
+  "disconnectedReadRecovered": true,
+  "failedCutoverResumedSamePlan": true,
+  "oldSourceOfflineAfterCopy": true,
+  "ownerArtifactSha256Matches": true,
+  "tasksUnchanged": true,
+  "size": {
+    "scroll": 390,
+    "width": 390
+  }
+}

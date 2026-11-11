@@ -1,0 +1,20 @@
+{
+  "manual": {
+    "shotSwitch": true,
+    "reopened": true,
+    "ownerIsolated": true,
+    "imports": 1,
+    "saves": 1,
+    "confirmRequests": 2,
+    "sameConfirmationKey": true,
+    "noAutomaticAdoption": true
+  },
+  "directory": {
+    "readRecovered": true,
+    "oldOpenIgnored": true,
+    "newCopyRemainedLocked": true,
+    "copiedOnlyNewPath": true,
+    "clipboardBoundary": "controlled promise, no OS clipboard write"
+  },
+  "errors": ""
+}

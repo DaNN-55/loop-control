@@ -1,0 +1,14 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/mediaRootRecovery13.browser.integration.test.ts --maxWorkers=1 --fileParallelism=false --reporter=verbose
+
+ RUN  v3.2.7 /private/tmp/loop-control-state111213
+
+stderr | src/local-app/mediaRootRecovery13.browser.integration.test.ts > real Owner storage UI reopens a copying plan, retries disconnected reads, resumes a failed cutover and serves the same media after restart
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-t06-volume-3H9jBc/mounted/loop-153-vhwe9z/runtime/vite-cache/deps/react-dom_client.js?v=6e811f04 as it exceeds the max of 500KB.
+
+ ✓ src/local-app/mediaRootRecovery13.browser.integration.test.ts > real Owner storage UI reopens a copying plan, retries disconnected reads, resumes a failed cutover and serves the same media after restart 12205ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  14:04:27
+   Duration  12.44s (transform 437ms, setup 9ms, collect 76ms, tests 12.21s, environment 0ms, prepare 31ms)

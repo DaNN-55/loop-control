@@ -1,0 +1,127 @@
+=== manual-red (excerpt) ===
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/WorkspaceNarrationPanel.manual.test.tsx
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/local-app/WorkspaceNarrationPanel.manual.test.tsx (8 tests | 1 failed) 329ms
+   ✓ adds each dropped narration to the same audition and explicit adoption flow as TTS 114ms
+   ✓ registers every uploaded ID without waiting for parent material props 21ms
+   ✓ retries confirmation without reimporting or repeating a confirmed save 26ms
+   ✓ stops the old target after a late material registration receipt 18ms
+   ✓ retries registration from its imported material ID after an HTTP command failure 24ms
+   ✓ does not register imported files after the narration visit unmounts 11ms
+   ✓ accepts a new batch upload after adopting an earlier manual candidate 50ms
+... [DOM / middle output omitted] ...
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"workspace-narration-controls workspace-narration-actions"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"workspace-caption-feedback"[39m
+                      [33mid[39m=[32m"_r_6b_"[39m
+                    [36m>[39m
+                      [0m直接修改正文，保存后单独使用[0m
+                    [36m</span>[39m
+                    [36m<button[39m
+                      [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 ...
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/local-app/WorkspaceNarrationPanel.manual.test.tsx:107:84
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  13:47:43
+   Duration  1.78s (transform 128ms, setup 8ms, collect 1.04s, tests 329ms, environment 247ms, prepare 32ms)
+
+
+=== directory-red (excerpt) ===
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/accounts/AccountDirectoryPanel.recovery.test.tsx
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/accounts/AccountDirectoryPanel.recovery.test.tsx (1 test | 1 failed) 55ms
+   × retries an unavailable directory in place and clears the earlier read error 55ms
+     → Unable to find an accessible element with the role "button" and name "重新读取账号目录"
+
+Here are the accessible roles:
+
+  button:
+
+... [DOM / middle output omitted] ...
+        [33mrole[39m=[32m"alert"[39m
+      [36m>[39m
+        [0m素材盘暂时断开[0m
+      [36m</p>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/accounts/AccountDirectoryPanel.recovery.test.tsx:11:119
+      9| it('retries an unavailable directory in place and clears the earlier r…
+     10|  let reads=0;vi.stubGlobal('fetch',vi.fn(async()=>++reads===1?Response…
+     11|  render(<AccountDirectoryPanel accountId="retry-account"/>);await scre…
+       |                                                                                                                       ^
+     12|  await screen.findByText('/fixture/account');expect(screen.queryByRole…
+     13| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  13:51:47
+   Duration  639ms (transform 30ms, setup 8ms, collect 300ms, tests 55ms, environment 134ms, prepare 28ms)
+
+
+=== review-red (excerpt) ===
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/WorkspaceNarrationPanel.manual.test.tsx
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/local-app/WorkspaceNarrationPanel.manual.test.tsx (11 tests | 1 failed) 408ms
+   ✓ adds each dropped narration to the same audition and explicit adoption flow as TTS 126ms
+   ✓ registers every uploaded ID without waiting for parent material props 34ms
+   ✓ retries confirmation without reimporting or repeating a confirmed save 34ms
+   ✓ stops the old target after a late material registration receipt 21ms
+   ✓ retries registration from its imported material ID after an HTTP command failure 34ms
+   ✓ does not register imported files after the narration visit unmounts 9ms
+   ✓ accepts a new batch upload after adopting an earlier manual candidate 52ms
+... [DOM / middle output omitted] ...
+            "shotId": "S01",
+            "status": "pending",
+            "text": "镜头正文",
+          },
+        ],
+        "project": Object {
+          "sha256": "saved-sha",
+        },
+        "revision": 2,
+        "stale": false,
+      },
+    ]
+
+
+Number of calls: 1
+
+ ❯ src/local-app/WorkspaceNarrationPanel.manual.test.tsx:142:102
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 10 passed (11)
+   Start at  14:17:49
+   Duration  1.80s (transform 139ms, setup 8ms, collect 1.04s, tests 408ms, environment 215ms, prepare 26ms)

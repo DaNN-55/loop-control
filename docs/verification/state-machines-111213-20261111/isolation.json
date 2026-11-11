@@ -1,0 +1,9 @@
+{
+  "root": "/private/tmp/loop-state111213-ZaimfD",
+  "context": "/private/tmp/loop-state111213-ZaimfD/context.mjs",
+  "sdk": "/private/tmp/loop-state111213-ZaimfD/OpenChatCut",
+  "container": "loop-state111213-7a9e66c482ba",
+  "image": "sha256:00bc86618629af00d2937fdc5a5d63db3ff8450acf52f0636ec813c7f4902929",
+  "network": "none",
+  "dailyData": false
+}

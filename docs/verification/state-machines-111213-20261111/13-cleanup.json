@@ -1,0 +1,7 @@
+{
+  "container": "loop-state111213-7a9e66c482ba",
+  "isolatedEnvironmentRemoved": true,
+  "testMediaVolumeRemoved": true,
+  "beforeCleanupDatabaseInventory": "not captured; diagnostic attempted from the isolated checkout instead of the evidence directory",
+  "fixtureCloseAwaitedByPassingTest": true
+}
