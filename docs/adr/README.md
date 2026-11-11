@@ -60,3 +60,5 @@
 - [ADR-0037：四步工作区操作转换](0037-workspace-operation-transitions.md)
 
 - [ADR-0038：样音选择归属与模型编辑基线](0038-speech-sample-and-model-edit-ownership.md)
+
+- [ADR-0039 工作区局部恢复与轮询生命周期](0039-workspace-local-recovery-and-polling.md)

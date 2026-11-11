@@ -30,7 +30,7 @@ export function WorkspaceDeliveryPanel({workspace:w,pending,command,onChange}:{w
  const {delivery}=workspaceExportDeliveryState(w,{pending,preparing,checkingCover,title,hasCover:!!cover});
  const {latest,running,coverVisible,stage}=delivery,retryDelivery=delivery.retryAction.target;
  const reading=useWorkspaceReading(w,onChange,JSON.stringify([latest?.id,!!running]),'交付状态暂不可用，请刷新重试。');
- useWorkspacePolling(reading,!!running,2500,()=>setError('交付状态暂不可用，请刷新重试。'));
+ const pollingError=useWorkspacePolling(reading,{enabled:!!running,interval:2500});
  useEffect(()=>{if(!cover||!coverVisible){setCoverPreview('');return;}const url=URL.createObjectURL(cover);setCoverPreview(url);return()=>URL.revokeObjectURL(url);},[cover,coverVisible]);
  const metadata=latest?.verified?latest.artifacts.find(a=>a.artifactType==='metadata'):undefined;
  const metadataKey=`${w.episodeId}:${latest?.id}:${metadata?.sha256}`;
@@ -68,6 +68,6 @@ export function WorkspaceDeliveryPanel({workspace:w,pending,command,onChange}:{w
  <Button size="sm" color="primary" iconLeading={PackageCheck} isDisabled={delivery.prepareAction.disabledReason!==null} onPress={()=>void prepare()}>{delivery.prepareAction.label}</Button>
  {retryDelivery&&<><p role="alert">{retryDelivery.error}</p><Tooltip title="重试原交付" className="dan-ui dan-ui-tooltip"><Button size="sm" color="tertiary" iconLeading={RefreshCw} aria-label="重试原交付" title="重试原交付" isDisabled={delivery.retryAction.disabledReason!==null} onPress={()=>void run('retryWorkspaceDelivery',{deliveryId:retryDelivery.id})}/></Tooltip></>}
  </>}
- {error&&<p role="alert">{error}</p>}
+ {(error||pollingError)&&<p role="alert">{error||pollingError?.message}</p>}
  </section>;
 }

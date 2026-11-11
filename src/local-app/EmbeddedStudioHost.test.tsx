@@ -140,3 +140,14 @@ it('exposes focus directly without a tools menu or duplicate audio panel',async(
  act(()=>focus.focus());await user.keyboard('{Enter}');expect(document.querySelector('.embedded-studio.is-focused')).toBeTruthy();expect(screen.getByRole('button',{name:'退出专注剪辑'})).toBe(focus);
  await user.keyboard('{Enter}');expect(document.querySelector('.embedded-studio.is-focused')).toBeNull();expect(screen.getByTitle('OpenChatCut 剪辑工程')).toBe(frame);expect(save).not.toHaveBeenCalled();expect(close).not.toHaveBeenCalled();
 });
+it('ends the leave intent when its host unmounts during Owner saving',async()=>{
+ let finish!:(value:typeof workspace)=>void;
+ const save=vi.fn(()=>new Promise<typeof workspace>(resolve=>{finish=resolve;})),close=vi.fn();
+ const app=render(<EmbeddedStudioHost episodeId="e" title="旧访问" session={{studioUrl:'http://127.0.0.1:5175/#/editor/loop-control-e',workspace,sourcePath:'project.json'}} shots={[]} onSave={save} onClose={close}/>);
+ const frame=screen.getByTitle('OpenChatCut 剪辑工程') as HTMLIFrameElement,channel=new URL(frame.src).searchParams.get('lcChannel');
+ const post=vi.spyOn(frame.contentWindow!,'postMessage');
+ const deliver=(data:Record<string,unknown>)=>fireEvent(window,new MessageEvent('message',{origin:'http://127.0.0.1:5175',source:frame.contentWindow!,data:{channel,projectId:workspace.projectId,...data}}));
+ deliver({type:'loop-control:state',writable:true,revision:1,items:[],selectedIds:[]});fireEvent.click(screen.getByRole('button',{name:'保存'}));
+ const request=post.mock.calls.at(-1)![0];await act(async()=>deliver({type:'loop-control:result',requestId:request.requestId,ok:true}));
+ expect(save).toHaveBeenCalledOnce();app.unmount();await act(async()=>finish(workspace));expect(close).not.toHaveBeenCalled();
+});

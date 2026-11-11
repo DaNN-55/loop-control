@@ -5,7 +5,7 @@ import {WorkspaceDraftProvider} from './WorkspaceDraft';
 import type {ProductionWorkspace} from '../productionWorkspace';
 const createObjectURL=vi.fn((_file:Blob)=> 'blob:cover-preview'),revokeObjectURL=vi.fn();
 beforeEach(()=>{createObjectURL.mockClear();revokeObjectURL.mockClear();Object.defineProperty(URL,'createObjectURL',{configurable:true,value:createObjectURL});Object.defineProperty(URL,'revokeObjectURL',{configurable:true,value:revokeObjectURL});});
-afterEach(()=>{cleanup();localStorage.clear();vi.useRealTimers();vi.unstubAllGlobals();});
+afterEach(()=>{cleanup();localStorage.clear();vi.useRealTimers();vi.unstubAllGlobals();vi.restoreAllMocks();});
 const pngBytes=new Uint8Array([137,80,78,71,13,10,26,10,0,0,0,0]);
 const pngFile=(name:string)=>new File([pngBytes],name,{type:'image/png'});
 const workspace=()=>({id:'workspace',episodeId:'episode',revision:7,stale:false,exports:[{id:'export',status:'ready',checks:[],current:true,confirmed:true,contentSha256:'confirmed-content',artifact:{sha256:'confirmed-video'}}]}) as unknown as ProductionWorkspace;
@@ -152,4 +152,29 @@ it('hides a stale confirmed export and preserves the draft when its current conf
  const w=workspace(),command=vi.fn(),view=render(<WorkspaceDeliveryPanel workspace={w} pending={false} command={command} onChange={()=>{}}/>);fireEvent.change(screen.getByRole('textbox',{name:'标题'}),{target:{value:'保留这份交付文案'}});const cover=pngFile('keep.png');fireEvent.change(screen.getByLabelText('封面'),{target:{files:[cover]}});await screen.findByRole('img',{name:'交付封面预览'});
  const stale={...w,exports:[{...w.exports![0],current:false,confirmed:true}]};view.rerender(<WorkspaceDeliveryPanel workspace={stale} pending={false} command={command} onChange={()=>{}}/>);expect(screen.queryByRole('textbox',{name:'标题'})).toBeNull();expect(screen.queryByRole('button',{name:'生成并验证交付包'})).toBeNull();expect(screen.getByText('工程已变化，请重新导出并确认成片。')).toBeTruthy();expect(revokeObjectURL).toHaveBeenCalled();expect(command).not.toHaveBeenCalled();
  view.rerender(<WorkspaceDeliveryPanel workspace={w} pending={false} command={command} onChange={()=>{}}/>);expect((screen.getByRole('textbox',{name:'标题'})as HTMLInputElement).value).toBe('保留这份交付文案');expect(screen.getByText('keep.png')).toBeTruthy();await screen.findByRole('img',{name:'交付封面预览'});
+});
+it('pauses delivery polling in a hidden page and reads immediately when it becomes visible',async()=>{
+ vi.useFakeTimers();let hidden=true;
+ const visibility=vi.spyOn(document,'hidden','get').mockImplementation(()=>hidden);
+ const w={...workspace(),deliveries:[{id:'delivery',status:'running'}]} as ProductionWorkspace;
+ const read=vi.fn(async()=>Response.json({workspace:w}));vi.stubGlobal('fetch',read);
+ render(<WorkspaceDeliveryPanel workspace={w} pending={false} command={vi.fn()} onChange={()=>{}}/>);
+ await act(async()=>vi.advanceTimersByTimeAsync(10000));expect(read).not.toHaveBeenCalled();
+ hidden=false;await act(async()=>document.dispatchEvent(new Event('visibilitychange')));
+ expect(read).toHaveBeenCalledTimes(1);
+ await act(async()=>vi.advanceTimersByTimeAsync(2500));expect(read).toHaveBeenCalledTimes(2);
+ visibility.mockRestore();
+});
+it('waits for a pending delivery read before the visibility refresh and clears a recovered poll error',async()=>{
+ vi.useFakeTimers();let hidden=false,finish!:(value:Response)=>void;
+ vi.spyOn(document,'hidden','get').mockImplementation(()=>hidden);
+ const w={...workspace(),deliveries:[{id:'delivery',status:'running'}]} as ProductionWorkspace;
+ const read=vi.fn().mockImplementationOnce(()=>new Promise<Response>(resolve=>{finish=resolve;})).mockResolvedValueOnce(Response.json({error:'read failed'},{status:503})).mockImplementation(async()=>Response.json({workspace:w}));
+ vi.stubGlobal('fetch',read);render(<WorkspaceDeliveryPanel workspace={w} pending={false} command={vi.fn()} onChange={()=>{}}/>);
+ await act(async()=>vi.advanceTimersByTimeAsync(2500));expect(read).toHaveBeenCalledTimes(1);
+ hidden=true;act(()=>document.dispatchEvent(new Event('visibilitychange')));hidden=false;
+ await act(async()=>document.dispatchEvent(new Event('visibilitychange')));expect(read).toHaveBeenCalledTimes(1);
+ await act(async()=>finish(Response.json({workspace:w})));expect(read).toHaveBeenCalledTimes(2);
+ expect(screen.getByRole('alert').textContent).toBe('交付状态暂不可用，请刷新重试。');
+ await act(async()=>vi.advanceTimersByTimeAsync(2500));expect(read).toHaveBeenCalledTimes(3);expect(screen.queryByRole('alert')).toBeNull();
 });

@@ -15,31 +15,59 @@ export interface ConnectionModelActions {
 }
 export type ConnectionModelDraft={versionId:string;revision:string;enabledModels:string[]};
 const sameModels=(a:string[],b:string[])=>JSON.stringify([...a].sort())===JSON.stringify([...b].sort());
-export function ConnectionModelsDialog({connection,onClose,onReadModels,onSyncModels,onSaveModels,draft,onDraftChange}:{connection:{id:string;name:string};onClose:()=>void;draft?:ConnectionModelDraft;onDraftChange?:(draft:ConnectionModelDraft|null)=>void}&ConnectionModelActions){
+type ModelDialogProps={connection:{id:string;name:string};onClose:()=>void;draft?:ConnectionModelDraft;onDraftChange?:(draft:ConnectionModelDraft|null)=>void}&ConnectionModelActions;
+export function ConnectionModelsDialog(props:ModelDialogProps){return <ConnectionModelsSession key={props.connection.id} {...props}/>;}
+function ConnectionModelsSession({connection,onClose,onReadModels,onSyncModels,onSaveModels,draft,onDraftChange}:ModelDialogProps){
  const [settings,setSettings]=useState<ConnectionModelSettings|null>(null),[baseline,setBaseline]=useState<ConnectionModelDraft|null>(null),[enabled,setEnabled]=useState<string[]>([]);
  const [operation,setOperation]=useState<'loading'|'syncing'|'saving'|''>('loading'),[error,setError]=useState('');
  const [query,setQuery]=useState(''),[filter,setFilter]=useState('all'),[capability,setCapability]=useState('all');
- const lock=useRef(false),dialogRef=useRef<HTMLDivElement>(null),busy=operation!=='';
+ const generation=useRef(0),lock=useRef(false),dialogRef=useRef<HTMLDivElement>(null),busy=operation!=='';
+ useEffect(()=>{generation.current++;return()=>{generation.current++;lock.current=false;};},[]);
  useEffect(()=>{if(!busy&&error&&document.activeElement===document.body)dialogRef.current?.focus();},[busy,error]);
  const [leavePrompt,setLeavePrompt]=useState(false),[draftNotice,setDraftNotice]=useState('');
  function requestClose(){if(busy)return;if(changed)setLeavePrompt(true);else onClose();}
  function leave(keep:boolean){if(keep&&baseline)onDraftChange?.({versionId:baseline.versionId,revision:baseline.revision,enabledModels:enabled});else onDraftChange?.(null);onClose();}
 
- async function load(){if(lock.current||!onReadModels)return;lock.current=true;setOperation('loading');setError('');try{const data=await onReadModels(connection.id);setSettings(data);setBaseline(data);if(draft&&draft.versionId===data.versionId&&draft.revision===data.revision)setEnabled(draft.enabledModels);else{setEnabled(data.enabledModels);if(draft){onDraftChange?.(null);setDraftNotice('保留的修改所依据的版本已变化，已读取当前设置。');}}}catch(e){setError(e instanceof Error?e.message:'模型设置读取失败，请重试。');}finally{lock.current=false;setOperation('');}}
+ async function load(){
+  if(lock.current||!onReadModels)return;
+  const request=generation.current;lock.current=true;setOperation('loading');setError('');
+  try{
+   const data=await onReadModels(connection.id);
+   if(request!==generation.current)return;
+   if(data.connectionId!==connection.id)throw Error('连接已变化，请重新打开模型设置。');
+   setSettings(data);setBaseline(data);
+   if(draft&&draft.versionId===data.versionId&&draft.revision===data.revision)setEnabled(draft.enabledModels);
+   else{setEnabled(data.enabledModels);if(draft){onDraftChange?.(null);setDraftNotice('保留的修改所依据的版本已变化，已读取当前设置。');}}
+  }catch(e){if(request===generation.current)setError(e instanceof Error?e.message:'模型设置读取失败，请重试。');}
+  finally{if(request===generation.current){lock.current=false;setOperation('');}}
+ }
  useEffect(()=>{void load();},[connection.id]);
  async function sync(){
-  if(lock.current||!baseline||!onSyncModels)return;lock.current=true;setOperation('syncing');setError('');
+  if(lock.current||!baseline||!onSyncModels)return;
+  const request=generation.current;lock.current=true;setOperation('syncing');setError('');
   try{
    const result=await onSyncModels({connectionId:connection.id,versionId:baseline.versionId});
+   if(request!==generation.current)return;
    if(result.connectionId!==connection.id||result.versionId!==baseline.versionId)throw Error('连接版本已变化，请重新打开模型设置；本次勾选已保留。');
    setSettings(result);
    // Discovery may advance revision without changing enabled models. Rebase only an unchanged edit baseline.
    if(!changed){setBaseline(result);setEnabled(result.enabledModels);}
    else if(sameModels(result.enabledModels,baseline.enabledModels))setBaseline(result);
    else setError('启用模型已在其他窗口修改，本次勾选已保留。请重新打开设置核对后再保存。');
-  }catch(e){setError(e instanceof Error?e.message:'模型目录读取失败，请重试。');}finally{lock.current=false;setOperation('');}
+  }catch(e){if(request===generation.current)setError(e instanceof Error?e.message:'模型目录读取失败，请重试。');}
+  finally{if(request===generation.current){lock.current=false;setOperation('');}}
  }
- async function save(){if(lock.current||!baseline||conflict||!onSaveModels)return;lock.current=true;setOperation('saving');setError('');try{const result=await onSaveModels({connectionId:connection.id,versionId:baseline.versionId,revision:baseline.revision,enabledModels:enabled});if(!result||result.connectionId!==connection.id||result.versionId!==baseline.versionId)throw Error('模型设置保存未确认完成，请重新读取后核对。');onDraftChange?.(null);onClose();}catch(e){setError(e instanceof Error?e.message:'模型设置保存失败，请重试。');}finally{lock.current=false;setOperation('');}}
+ async function save(){
+  if(lock.current||!baseline||conflict||!onSaveModels)return;
+  const request=generation.current;lock.current=true;setOperation('saving');setError('');
+  try{
+   const result=await onSaveModels({connectionId:connection.id,versionId:baseline.versionId,revision:baseline.revision,enabledModels:enabled});
+   if(request!==generation.current)return;
+   if(!result||result.connectionId!==connection.id||result.versionId!==baseline.versionId)throw Error('模型设置保存未确认完成，请重新读取后核对。');
+   onDraftChange?.(null);onClose();
+  }catch(e){if(request===generation.current)setError(e instanceof Error?e.message:'模型设置保存失败，请重试。');}
+  finally{if(request===generation.current){lock.current=false;setOperation('');}}
+ }
  const visible=settings?.models.filter(m=>(filter==='all'||filter==='adapted'&&m.adapted||filter==='enabled'&&enabled.includes(m.id)||filter==='unadapted'&&!m.adapted)&&(capability==='all'||m.capability===capability)&&m.id.toLowerCase().includes(query.trim().toLowerCase()))??[];
  const changed=baseline&&!sameModels(baseline.enabledModels,enabled);
  const conflict=!!settings&&!!baseline&&(!sameModels(settings.enabledModels,baseline.enabledModels)||settings.versionId!==baseline.versionId);

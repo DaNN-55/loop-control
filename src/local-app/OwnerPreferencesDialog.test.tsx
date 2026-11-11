@@ -1,4 +1,4 @@
-import {cleanup,render,screen,waitFor} from '@testing-library/react';
+import {act,cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {afterEach,expect,it,vi} from 'vitest';
 import {OwnerPreferencesDialog} from './OwnerPreferencesDialog';
@@ -61,4 +61,30 @@ it('saves independent reminder channels and keeps channel edits until explicitly
 it('compares notification values independently of JSON key order',async()=>{
  const user=userEvent.setup();render(<OwnerPreferencesDialog {...base} page="notifications" preferences={{...base.preferences,notifications:{macOS:true,inApp:true,delivery:true,failure:true,review:true}}} onSave={vi.fn(async()=>true)}/>);
  await user.click(screen.getByRole('button',{name:'恢复默认'}));expect(screen.getByRole('status').textContent).toBe('未修改');expect((screen.getByRole('button',{name:'保存偏好'}) as HTMLButtonElement).disabled).toBe(true);
+});
+
+it('starts a separate notification visit while a personal save is still pending',async()=>{
+ let finish!:(saved:boolean)=>void;
+ const save=vi.fn(()=>new Promise<boolean>(resolve=>{finish=resolve;}));
+ const app=render(<OwnerPreferencesDialog key="personal" {...base} onSave={save}/>);
+ fireEvent.change(screen.getByRole('textbox',{name:'显示名称'}),{target:{value:'旧页面修改'}});
+ fireEvent.submit(screen.getByRole('button',{name:'保存偏好'}).closest('form')!);
+ app.rerender(<OwnerPreferencesDialog key="notifications" {...base} page="notifications" onSave={save}/>);
+ expect(screen.getByRole('status').textContent).toBe('未修改');
+ fireEvent.click(screen.getByRole('switch',{name:'需要人工确认时通知'}));
+ await act(async()=>finish(true));
+ expect(screen.getByRole('status').textContent).toBe('有未保存修改');
+ expect(screen.getByRole('switch',{name:'需要人工确认时通知'})).toHaveProperty('checked',false);
+});
+
+it('accepts one preference save when the form is submitted twice before a render',async()=>{
+ let finish!:(saved:boolean)=>void;
+ const save=vi.fn(()=>new Promise<boolean>(resolve=>{finish=resolve;}));
+ render(<OwnerPreferencesDialog {...base} onSave={save}/>);
+ fireEvent.change(screen.getByRole('textbox',{name:'显示名称'}),{target:{value:'新名称'}});
+ const form=screen.getByRole('button',{name:'保存偏好'}).closest('form')!;
+ act(()=>{form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));});
+ expect(save).toHaveBeenCalledTimes(1);
+ await act(async()=>finish(true));
+ expect(screen.getByRole('status').textContent).toBe('已保存');
 });

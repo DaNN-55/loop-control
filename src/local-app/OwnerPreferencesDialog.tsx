@@ -15,10 +15,10 @@ export function OwnerPreferencesDialog({preferences,page,loading,saving,unavaila
  csrf?:string;preferences:OwnerPreferences;page:PreferencesPage;loading:boolean;saving:boolean;unavailable:boolean;error:string;
  onReload:()=>void;onSave:(value:OwnerPreferences)=>Promise<boolean>;onClose:()=>void;
 }){
- const fieldId=useId(),fileInput=useRef<HTMLInputElement>(null),avatarRequest=useRef(0);
+ const fieldId=useId(),fileInput=useRef<HTMLInputElement>(null),avatarRequest=useRef(0),saveRequest=useRef(0),saveLock=useRef(false);
  const [draft,setDraft]=useState(preferences),[baseline,setBaseline]=useState(preferences),[saved,setSaved]=useState(false),[pending,setPending]=useState(false),[failed,setFailed]=useState(false),[avatarError,setAvatarError]=useState(''),[uploading,setUploading]=useState(false);
  const ref=useDialogFocus<HTMLDivElement>(true,()=>{if(!saving&&!pending)onClose();});
- useEffect(()=>()=>{avatarRequest.current++;},[]);
+ useEffect(()=>()=>{avatarRequest.current++;saveRequest.current++;saveLock.current=false;},[]);
  const personal=page==='personal',title=personal?'个人偏好':'通知',busy=saving||pending,disabled=busy||unavailable||uploading;
  const selection=(value:OwnerPreferences)=>personal?[value.displayName,value.avatar,value.language,value.appearance,value.compactRows]:[value.notifications.review,value.notifications.failure,value.notifications.delivery,value.notifications.inApp!==false,value.notifications.macOS!==false];
  const dirty=JSON.stringify(selection(draft))!==JSON.stringify(selection(baseline));
@@ -34,11 +34,14 @@ export function OwnerPreferencesDialog({preferences,page,loading,saving,unavaila
  }
  async function save(){
   const next=personal?{...preferences,displayName:draft.displayName,avatar:draft.avatar,language:draft.language,appearance:draft.appearance,compactRows:draft.compactRows}:{...preferences,notifications:draft.notifications};
-  if(disabled||!dirty)return;
-  setPending(true);setFailed(false);
-  try{if(await onSave(next)){const normalized={...next,displayName:next.displayName.trim()};setDraft(normalized);setBaseline(normalized);setSaved(true);}else setFailed(true);}
-  catch{setFailed(true);}
-  finally{setPending(false);}
+  if(disabled||!dirty||saveLock.current)return;
+  const request=++saveRequest.current;saveLock.current=true;setPending(true);setFailed(false);
+  try{
+   const accepted=await onSave(next);
+   if(request!==saveRequest.current)return;
+   if(accepted){const normalized={...next,displayName:next.displayName.trim()};setDraft(normalized);setBaseline(normalized);setSaved(true);}else setFailed(true);
+  }catch{if(request===saveRequest.current)setFailed(true);}
+  finally{if(request===saveRequest.current){saveLock.current=false;setPending(false);}}
  }
  return <div className="modal-backdrop owner-preferences-backdrop"><div className={`owner-preferences-dialog${personal&&csrf?' owner-preferences-storage':''}`} role="dialog" aria-modal="true" aria-label={title} ref={ref}>
   <header><h2>{title}</h2><Button size="sm" color="tertiary" iconLeading={X} aria-label={`关闭${title}`} isDisabled={busy} onClick={onClose}/></header>

@@ -68,8 +68,8 @@ function EditableWorkspaceAudioPreparation({workspace:w,command,onChange,materia
  const soundQuery=soundIntentQuery(prompt);
  const input=useRef<HTMLInputElement>(null),current=useRef(w);current.current=w;
  const reading=useWorkspaceReading(w,onChange,selectedShotId??'episode','无法读取当前工程版本。');
- useWorkspacePolling(reading,!!w.audio?.preparations.some(p=>p.taskId&&['ready','running'].includes(p.status)),3000,undefined,
-  value=>command('refreshWorkspaceAudio',{episodeId:value.episodeId,workspaceId:value.id,expectedRevision:value.revision}) as Promise<ProductionWorkspace>);
+ const pollingError=useWorkspacePolling(reading,{enabled:!!w.audio?.preparations.some(p=>p.taskId&&['ready','running'].includes(p.status)),interval:3000,
+  load:value=>command('refreshWorkspaceAudio',{episodeId:value.episodeId,workspaceId:value.id,expectedRevision:value.revision}) as Promise<ProductionWorkspace>});
  useEffect(()=>{if(!bridge?.connected)return;let active=true;void bridge.inspect().then(value=>{if(active)setLive(value.document);}).catch(()=>{});return()=>{active=false;};},[bridge?.connected,w.project.sha256]);
  async function savedWorkspace(){if(!bridge)return current.current;await bridge.save();return reading.read();}
  async function run(name:string,extra:Record<string,unknown>){setBusy(true);setError('');try{const saved=await savedWorkspace();reading.publish(await command(name,{episodeId:saved.episodeId,workspaceId:saved.id,expectedRevision:saved.revision,...extra}) as ProductionWorkspace);return true;}catch(e){if(!(e instanceof Error&&e.name==='AbortError'))setError(e instanceof Error?e.message:'音频准备未完成。');return false;}finally{setBusy(false);}}
@@ -154,7 +154,7 @@ function EditableWorkspaceAudioPreparation({workspace:w,command,onChange,materia
   {bridge&&kind==='sfx' &&<p className="workspace-audio-note">导入音效准备后，先保存并返回素材准备，再加入镜头。</p>}
   {busy&&uploadStatus&&<p role="status">{uploadStatus}</p>}
   </div>
-  {error&&<p role="alert">{error}</p>}
+  {(error||pollingError)&&<p role="alert">{error||'音频状态暂时无法更新，请重试。'}</p>}
  </section>;
 }
 export function WorkspaceAudioPanel({workspace:w,command,onChange,project,bridge,readOnly=false,effectsOnly=false}:Props&{effectsOnly?:boolean}){

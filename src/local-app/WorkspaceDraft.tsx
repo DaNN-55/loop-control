@@ -9,6 +9,7 @@ type DraftEntry={dirty:()=>boolean;keep:()=>boolean;discard:()=>void;beforeUnloa
 type DraftGuard={register:(id:symbol,entry:DraftEntry)=>()=>void;request:(action:()=>void)=>boolean};
 const immediate:DraftGuard={register:()=>()=>{},request:action=>{action();return true;}};
 const GuardContext=createContext<DraftGuard>(immediate),OwnerContext=createContext('');
+export function useWorkspaceOwnerId(){return useContext(OwnerContext);}
 export function WorkspaceDraftOwner({ownerId,children}:{ownerId:string;children:ReactNode}){return <OwnerContext.Provider value={ownerId}>{children}</OwnerContext.Provider>;}
 /** Put all navigation mutations inside the callback; false means a leave decision is pending. */
 export function useWorkspaceDraftLeave(){return useContext(GuardContext).request;}

@@ -24,8 +24,12 @@ export function EmbeddedStudioHost({episodeId,title,session,shots,onSave,onClose
   const captionAvailable=useRef(false);
   captionAvailable.current=!!captionEditor;
   const workspaceRef=useRef(session.workspace),pendingRef=useRef(false),everWritable=useRef(false);
+  const captionReceipt=useRef<{key:string;documentFingerprint:string;contract:ShotCaptionContract}|null>(null);
+  const visit=useRef(0);
+  useEffect(()=>{visit.current++;return()=>{visit.current++;captionReceipt.current=null;};},[]);
+  function checkVisit(generation:number){if(generation!==visit.current)throw Object.assign(Error('编辑器访问已结束。'),{name:'AbortError'});}
   function remember(next:OpenChatCutStudioWorkspace){workspaceRef.current=next;setWorkspace(next);setSaved(true);}
-  function begin(){if(!writable)throw Error('编辑器写连接尚未就绪，请稍后重试。');if(pendingRef.current)throw Error('请等待当前保存完成。');pendingRef.current=true;setPending(true);setError('');}
+  function begin(){if(!writableRef.current)throw Error('编辑器写连接尚未就绪，请稍后重试。');if(pendingRef.current)throw Error('请等待当前保存完成。');pendingRef.current=true;setPending(true);setError('');return visit.current;}
   function finish(){pendingRef.current=false;setPending(false);}
   const leave=useRef<()=>void>(()=>{});
   const requests=useRef(new Map<string,{resolve:(value:unknown)=>void;reject:(error:Error)=>void;timer:ReturnType<typeof setTimeout>}>());
@@ -72,20 +76,50 @@ export function EmbeddedStudioHost({episodeId,title,session,shots,onSave,onClose
     });
   }
   async function saveAndLeave(destination:'preparation'|'delivery'){
-    if(pendingRef.current)return;begin();
+    if(pendingRef.current||!writableRef.current)return;
+    const generation=begin();
     try{
-      await request('flush');
-      const next=await onSave(workspaceRef.current);
-      remember(next);
-      await onClose(destination,lastShotSelection.current);
-    }
-    catch(cause){setError(cause instanceof Error?cause.message:'保存未完成，当前修改仍保留。');}
-    finally{finish();}
+      await request('flush');checkVisit(generation);
+      const next=await onSave(workspaceRef.current);checkVisit(generation);
+      remember(next);await onClose(destination,lastShotSelection.current);
+    }catch(cause){if(generation===visit.current)setError(cause instanceof Error?cause.message:'保存未完成，当前修改仍保留。');}
+    finally{if(generation===visit.current)finish();}
   }
-  async function applyNativeEdit(action:'apply-workspace-edit'|'apply-candidate'|'apply-audio-mix'|'add-registered-source',payload:Record<string,unknown>){begin();try{const current=await request<{revision:number;documentFingerprint:string}>('inspect');const applied=await request<{document:OpenChatCutProject}>(action,{...payload,expectedRevision:current.revision,expectedDocumentFingerprint:current.documentFingerprint});const next=await onSave(workspaceRef.current);remember(next);return applied.document;}catch(cause){setError(cause instanceof Error?cause.message:'修改未保存，当前编辑仍保留。');throw cause;}finally{finish();}}
+  async function applyNativeEdit(action:'apply-workspace-edit'|'apply-candidate'|'apply-audio-mix'|'add-registered-source',payload:Record<string,unknown>){
+    const generation=begin();
+    try{
+      const current=await request<{revision:number;documentFingerprint:string}>('inspect');checkVisit(generation);
+      const applied=await request<{document:OpenChatCutProject}>(action,{...payload,expectedRevision:current.revision,expectedDocumentFingerprint:current.documentFingerprint});checkVisit(generation);
+      const next=await onSave(workspaceRef.current);checkVisit(generation);remember(next);return applied.document;
+    }catch(cause){if(generation===visit.current)setError(cause instanceof Error?cause.message:'修改未保存，当前编辑仍保留。');throw cause;}
+    finally{if(generation===visit.current)finish();}
+  }
   const selectedItem=editor?.items.find(i=>editor.selectedIds.includes(i.id)),selectedShot=editor?.shots?.find(s=>s.itemIds.includes(selectedItem?.id??''));
   const selectedSoundIntent=shots.find(shot=>shot.id===selectedShot?.id)?.soundIntent;
-  const bridge:EmbeddedStudioBridge={selectedShotId:selectedShot?.id,connected:writable&&!pending,applyNativeEdit,applyEdit:operation=>applyNativeEdit('apply-workspace-edit',{operation}),inspect:()=>request('inspect'),save:async()=>{begin();try{await request('flush');const next=await onSave(workspaceRef.current);remember(next);}catch(cause){setError(cause instanceof Error?cause.message:'保存未完成，当前修改仍保留。');throw cause;}finally{finish();}},applyCaptions:async(itemId,contract,timingOnly=false)=>{begin();try{const current=await request<{revision:number;documentFingerprint:string}>('inspect');const applied=await request<{document:OpenChatCutProject}>('apply-captions',{itemId,contract,timingOnly,expectedRevision:current.revision,expectedDocumentFingerprint:current.documentFingerprint});const caption=readWorkspaceCaption(applied.document,itemId);if(!caption)throw Error('编辑器未返回当前字幕。');const next=await onSave(workspaceRef.current);remember(next);return caption.contract;}catch(cause){setError(cause instanceof Error?cause.message:'字幕保存失败。');throw cause;}finally{finish();}}};
+  const bridge:EmbeddedStudioBridge={selectedShotId:selectedShot?.id,connected:writable&&!pending,applyNativeEdit,applyEdit:operation=>applyNativeEdit('apply-workspace-edit',{operation}),inspect:()=>request('inspect'),save:async()=>{
+    const generation=begin();
+    try{await request('flush');checkVisit(generation);const next=await onSave(workspaceRef.current);checkVisit(generation);remember(next);}
+    catch(cause){if(generation===visit.current)setError(cause instanceof Error?cause.message:'保存未完成，当前修改仍保留。');throw cause;}
+    finally{if(generation===visit.current)finish();}
+  },applyCaptions:async(itemId,contract,timingOnly=false)=>{
+    const generation=begin();
+    try{
+      const current=await request<{revision:number;documentFingerprint:string}>('inspect');checkVisit(generation);
+      const key=JSON.stringify({itemId,contract,timingOnly});
+      let receipt=captionReceipt.current;
+      if(receipt?.key===key){
+        if(current.documentFingerprint!==receipt.documentFingerprint){captionReceipt.current=null;throw Error('工程已有新修改，请核对字幕后重新操作。');}
+      }else{
+        const applied=await request<{document:OpenChatCutProject;documentFingerprint:string}>('apply-captions',{itemId,contract,timingOnly,expectedRevision:current.revision,expectedDocumentFingerprint:current.documentFingerprint});checkVisit(generation);
+        const caption=readWorkspaceCaption(applied.document,itemId);
+        if(!caption)throw Error('编辑器未返回当前字幕。');
+        receipt={key,documentFingerprint:applied.documentFingerprint,contract:caption.contract};
+        captionReceipt.current=receipt;
+      }
+      const next=await onSave(workspaceRef.current);checkVisit(generation);remember(next);captionReceipt.current=null;return receipt.contract;
+    }catch(cause){if(generation===visit.current)setError((captionReceipt.current?'字幕已写入编辑器，工程保存尚未确认。':'')+(cause instanceof Error?cause.message:'字幕保存失败。'));throw cause;}
+    finally{if(generation===visit.current)finish();}
+  }};
   async function togglePanel(id:'captions'){const next=activePanel===id?null:id;try{if(editor?.structureEnabled)await request('host-panel',{open:!!next});setActivePanel(next);}catch(cause){setError(cause instanceof Error?cause.message:'原生面板尚未就绪，请重试。');}}
   useEffect(()=>{if(editor?.structureEnabled)void request('host-panel',{open:!!activePanel}).catch(()=>{});},[activePanel,editor?.structureEnabled]);
   const initialSelection=useRef(false);

@@ -413,3 +413,16 @@ it('keeps script confirmation mounted while its saved version refreshes the real
  await act(async()=>resolveRefresh(Response.json({workspace:null})));
  expect((await screen.findByLabelText('主脚本') as HTMLTextAreaElement).value).toBe('保留本次正文');expect(await screen.findByRole('button',{name:'继续启动'})).toBeTruthy();
 });
+it('retries only unfinished shelf files and preserves successful import receipts',async()=>{
+ const current={...workspace,id:'shelf-retry-workspace',episodeId:'shelf-retry'};let failure=true;
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:current})));
+ const command=vi.fn(async(_name:string,value:unknown)=>{const data=value as {sourcePath:string};if(data.sourcePath==='retry.png'&&failure)throw Error('导入连接中断');return {id:data.sourcePath,storage_path:`media/${data.sourcePath}`};});
+ render(<ProductionWorkspacePanel episodeId="shelf-retry" title="队列恢复" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);
+ fireEvent.click(await screen.findByRole('button',{name:'本期素材 · 0'}));
+ fireEvent.change(screen.getByLabelText('上传制作素材'),{target:{files:[new File(['first'],'first.png',{type:'image/png'}),new File(['retry'],'retry.png',{type:'image/png'})]}});
+ await screen.findByText('retry.png：导入连接中断');failure=false;
+ fireEvent.click(screen.getByRole('button',{name:'重试未完成项'}));
+ await waitFor(()=>expect(screen.getByRole('button',{name:'收起本期素材'}).textContent).toBe('本期素材 · 2'));
+ expect(command.mock.calls.map(([,data])=>(data as {sourcePath:string}).sourcePath)).toEqual(['first.png','retry.png','retry.png']);
+ expect(screen.queryByText('retry.png：导入连接中断')).toBeNull();
+});

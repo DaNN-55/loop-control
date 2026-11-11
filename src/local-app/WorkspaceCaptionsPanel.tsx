@@ -7,39 +7,30 @@ import {workspaceCaptionFieldErrors} from '../workspaceCaptionValidation';
 import type {ProductionWorkspace} from '../productionWorkspace';
 import type {EmbeddedStudioBridge} from './EmbeddedStudioHost';
 import './workspace-captions.css';
+import {useWorkspaceCaptionOperation} from './useWorkspaceCaptionOperation';
 const timingLabels={missing:'待校时',current:'时序有效',stale:'时序已过期',waiting:'对齐处理中',failed:'对齐失败'};
 export function WorkspaceCaptionsPanel({workspace,command,onChange,bridge,readOnly=false,alignmentOnly=false}:{workspace:ProductionWorkspace;command:(name:string,data:unknown)=>Promise<unknown>;onChange:(workspace:ProductionWorkspace)=>void;bridge?:EmbeddedStudioBridge;readOnly?:boolean;alignmentOnly?:boolean}){
- const [clipId,setClipId]=useState(workspace.clips[0]?.id??''),[contract,setContract]=useState<ShotCaptionContract>(()=>workspace.captions?.[0]?.contract??defaultShotCaptionContract('','independent')),[pending,setPending]=useState(false),[error,setError]=useState(''),[dirty,setDirty]=useState(false);
+ const [clipId,setClipId]=useState(workspace.clips[0]?.id??''),[contract,setContract]=useState<ShotCaptionContract>(()=>workspace.captions?.[0]?.contract??defaultShotCaptionContract('','independent')),[error,setError]=useState(''),[dirty,setDirty]=useState(false);
  useEffect(()=>{if(!bridge?.selectedShotId)return;const selected=workspace.clips.find(c=>c.shotId===bridge.selectedShotId);if(selected)setClipId(selected.id);},[bridge?.selectedShotId]);
  const drafts=useRef(new Map<string,{contract:ShotCaptionContract;fingerprint:string|undefined}>());
- const clip=workspace.clips.find(c=>c.id===clipId),state=workspace.captions?.find(c=>c.shotId===clip?.shotId),disabled=readOnly||pending||workspace.stale||!!bridge&&!bridge.connected;
+ const clip=workspace.clips.find(c=>c.id===clipId),state=workspace.captions?.find(c=>c.shotId===clip?.shotId);
  useEffect(()=>{if(!workspace.clips.some(c=>c.id===clipId))setClipId(workspace.clips[0]?.id??'');},[workspace.clips,clipId]);
  useEffect(()=>{const draft=drafts.current.get(clipId);if(draft){setContract(draft.contract);setDirty(true);}else{setContract(state?.contract??defaultShotCaptionContract(clip?.text??'','independent'));setDirty(false);}},[clipId,workspace.project?.sha256,state?.inputFingerprint,state?.textConfirmed]);
- function change(next:ShotCaptionContract){drafts.current.set(clipId,{contract:next,fingerprint:state?.inputFingerprint});setContract(next);setDirty(true);setError('');}
+ function change(next:ShotCaptionContract){operation.reset();drafts.current.set(clipId,{contract:next,fingerprint:state?.inputFingerprint});setContract(next);setDirty(true);setError('');}
  function spatial(patch:Partial<ShotCaptionContract['spatial']>){const next={...contract,spatial:{...contract.spatial,...patch}};change(patch.safeArea?{...next,spatial:normalizeShotCaptionContract(next,{enabled:contract.enabled,text:contract.text}).spatial}:next);}
  const fieldErrors=workspaceCaptionFieldErrors(contract,state?.durationMs);
  function fieldFeedback(key:string){return fieldErrors[key]?<span id={`caption-${clipId}-${key}-error`} role="alert">{fieldErrors[key]}</span>:null;}
  function fieldAccessibility(key:string){return {'aria-invalid':!!fieldErrors[key],'aria-describedby':fieldErrors[key]?`caption-${clipId}-${key}-error`:undefined};}
  function numberInput(value:string,scale=1){return value.trim()===''?NaN:Number(value)*scale;}
- async function run(name:string,extra:Record<string,unknown>={}){if(!clip)return;if(name==='saveWorkspaceCaptions'&&Object.keys(fieldErrors).length){setError('请修正标出的字幕字段后保存。');return;}setPending(true);setError('');try{
-  let current=workspace;
-  if(name==='saveWorkspaceCaptions'){
-   const native=bridge?await bridge.applyCaptions(clip.itemId,contract):contract;
-   // A native flush may have advanced the project revision; read that receipt
-   // before issuing the provenance command against the same Owner boundary.
-   if(bridge){const response=await fetch(`/api/local/episodes/${workspace.episodeId}/workspace`);if(!response.ok)throw Error('无法读取当前保存版本。');current=(await response.json()).workspace;}
-   const value=await command(name,{episodeId:workspace.episodeId,workspaceId:current.id,expectedRevision:current.revision,clipId,captionContract:native,...(bridge?{nativeApplied:true}:{})});drafts.current.delete(clipId);onChange(value as ProductionWorkspace);setDirty(false);
-  }else if(name==='applyWorkspaceCaptionAlignment'&&bridge){
-   await bridge.save();const response=await fetch(`/api/local/episodes/${workspace.episodeId}/workspace`);if(!response.ok)throw Error('无法读取当前保存版本。');current=(await response.json()).workspace;
-   const prepared=await command('prepareWorkspaceCaptionAlignment',{episodeId:workspace.episodeId,workspaceId:current.id,expectedRevision:current.revision,clipId,expectedInputFingerprint:state?.inputFingerprint,...extra}) as {captionContract:ShotCaptionContract};
-   await bridge.applyCaptions(clip.itemId,prepared.captionContract,true);
-   const updated=await fetch(`/api/local/episodes/${workspace.episodeId}/workspace`);if(!updated.ok)throw Error('无法读取当前保存版本。');current=(await updated.json()).workspace;
-   onChange(await command(name,{episodeId:workspace.episodeId,workspaceId:current.id,expectedRevision:current.revision,clipId,expectedInputFingerprint:state?.inputFingerprint,nativeApplied:true,...extra}) as ProductionWorkspace);
-  }else{
-   if(bridge){await bridge.save();const response=await fetch(`/api/local/episodes/${workspace.episodeId}/workspace`);if(!response.ok)throw Error('无法读取当前保存版本。');current=(await response.json()).workspace;}
-   const value=await command(name,{episodeId:workspace.episodeId,workspaceId:current.id,expectedRevision:current.revision,clipId,...(name==='requestWorkspaceCaptionAlignment'?{}:{expectedInputFingerprint:state?.inputFingerprint}),...extra}) as ProductionWorkspace|{workspace:ProductionWorkspace};onChange('workspace' in value?value.workspace:value);
-  }
- }catch(cause){setError(cause instanceof Error?cause.message:'字幕操作未完成。');}finally{setPending(false);}}
+ const operation=useWorkspaceCaptionOperation({workspace,clipId,itemId:clip?.itemId,inputFingerprint:state?.inputFingerprint,contract,bridge,readOnly,command,onChange,onSaved:submitted=>{
+  if(drafts.current.get(clipId)?.contract===submitted){drafts.current.delete(clipId);setDirty(false);}
+ }});
+ const pending=operation.pending,disabled=readOnly||pending||workspace.stale||!!bridge&&!bridge.connected;
+ async function run(name:Parameters<typeof operation.run>[0],extra:Record<string,unknown>={}){
+  if(!clip)return;
+  if(name==='saveWorkspaceCaptions'&&Object.keys(fieldErrors).length){setError('请修正标出的字幕字段后保存。');return;}
+  setError('');await operation.run(name,extra);
+ }
  if(readOnly){
   const saved=state?.contract??defaultShotCaptionContract(clip?.text??'','independent');
   return <section className="workspace-captions workspace-captions-readonly" aria-label="工作台字幕">
@@ -71,7 +62,7 @@ export function WorkspaceCaptionsPanel({workspace,command,onChange,bridge,readOn
     <td><button type="button" aria-label={`删除字幕条目 ${index+1}`} disabled={disabled} onClick={()=>change({...contract,cues:contract.cues.filter((_,i)=>i!==index)})}><Trash2 size={14}/></button></td></tr>)}</tbody></table></div>
    <Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>{const start=contract.cues.at(-1)?.endMs??0;change({...contract,cues:[...contract.cues,{id:crypto.randomUUID(),text:contract.cues.length?'':contract.text,startMs:start,endMs:Math.min(start+1000,state?.durationMs??start+1000)}]});}}>添加字幕条目</Button></details></>}
 
-  {error&&<p role="alert">{error}</p>}{state?.detail&&<p role="alert">{state.detail}</p>}
+  {(error||operation.error)&&<p role="alert">{error||operation.error}</p>}{operation.progress&&<p role="status">{operation.progress}</p>}{operation.canResume&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>void operation.resume()}>继续保存字幕</Button>}{state?.detail&&<p role="alert">{state.detail}</p>}
   <footer>{!alignmentOnly&&<Button size="sm" color="primary" isDisabled={disabled} onPress={()=>void run('saveWorkspaceCaptions')}>保存字幕</Button>}<Button size="sm" color="secondary" isDisabled={disabled||dirty||!state?.audioTrackId} onPress={()=>void run('requestWorkspaceCaptionAlignment',{localOnly:true})}>声学对齐</Button>{state?.taskId&&<Button size="sm" color="secondary" isDisabled={disabled||dirty} onPress={()=>void run('applyWorkspaceCaptionAlignment',{taskId:state.taskId})}>采用对齐</Button>}{!alignmentOnly&&<Button size="sm" color="secondary" isDisabled={disabled||dirty||state?.timing!=='current'||state.textConfirmed} onPress={()=>void run('confirmWorkspaceCaptionText')}>正文已核对</Button>}</footer>
  </section>;
 }

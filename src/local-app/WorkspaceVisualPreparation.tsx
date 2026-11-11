@@ -1,7 +1,7 @@
 import {WorkspaceResolutionChoices,WorkspaceVideoModeChoices,WorkspaceDurationControl,WorkspaceFrameFitChoices} from './WorkspaceGenerationChoices';
 import {promptReferenceOptions,type PromptReferenceBinding} from '../promptReferences';
 import {minimaxVideoModels} from '../worker/videoProviderCatalog';
-import {WorkspaceUploadFeedback,type UploadNotice} from './WorkspaceUploadFeedback';
+import {WorkspaceUploadFeedback} from './WorkspaceUploadFeedback';
 import {imageQualityLabels} from '../imageGeneration';
 import {shotCompositionSlotLabels} from '../shotComposition';
 import {hasSeparatedVideoSound} from '../workspaceVideoSound';
@@ -45,28 +45,16 @@ import {useProductionServiceCatalog} from './useProductionServiceCatalog';
 import type {ProductionSelection} from '../productionSelection';
 import {imageSizePresets,emptyImageBrief,referencePurposeLabels,framingLabels,captionSpaceLabels,type ImageBrief,type ImageGenerationSettings} from '../imageGeneration';
 import {defaultWanSettings,wanSettingLabels,type WanGenerationSettings} from '../videoGenerationSettings';
+import {useWorkspaceOwnerId} from './WorkspaceDraft';
+import {workspaceUploadSessions,readWorkspaceUploadFile,type WorkspaceUploadEntry} from './workspaceUploads';
 import './workspace-visual-preparation.css';
 import './workspace-visual-candidates.css';
 
 type Kind='image'|'video';
 type VisualReviewPlan=(WorkspaceCandidatePreparation&{kind:'adoption';candidate:WorkspaceVisualCandidate})|{kind:'image-backup';candidateId:string;projectSha256:string;candidate:WorkspaceVisualCandidate;impact?:undefined};
 type Material=VideoInputMaterial;
-interface UploadEntry {id:number;name:string;file?:File;kind:Kind;asReference:boolean;tab:Kind;usage:Draft['usage'];status:'pending'|'running'|'succeeded'|'failed';material?:Material&{storage_path:string};error?:string}
-let uploadEntryId=0,uploadNoticeId=0;
-interface UploadSnapshot {rows:UploadEntry[];running:boolean;notice?:UploadNotice}
-interface UploadSession {read:()=>UploadSnapshot;subscribe:(listener:()=>void)=>()=>void;update:(change:(value:UploadSnapshot)=>UploadSnapshot)=>void}
-// Keep unresolved File objects and import receipts while this browser page is open.
-// Closing a panel stops the loop at the next completed boundary, rather than losing its result.
-const uploadSessions=new Map<string,UploadSession>();
-function uploadSession(key:string):UploadSession {
- let session=uploadSessions.get(key);
- if(!session){
-  let value:UploadSnapshot={rows:[],running:false};const listeners=new Set<()=>void>();
-  session={read:()=>value,subscribe(listener){listeners.add(listener);return()=>{listeners.delete(listener);};},update(change){value=change(value);for(const listener of listeners)listener();}};
-  uploadSessions.set(key,session);
- }
- return session;
-}
+interface UploadEntry extends WorkspaceUploadEntry {kind:Kind;asReference:boolean;tab:Kind;usage:Draft['usage']}
+const uploadSession=workspaceUploadSessions<UploadEntry>();
 export interface VisualPreparationProps {
  workspace:ProductionWorkspace;command:(name:string,data:unknown)=>Promise<unknown>;onChange:(w:ProductionWorkspace)=>void;
  materials:Material[];selectedShotId?:string;selectedTargetItemId?:string;onTargetChange?:(id:string)=>void;
@@ -129,7 +117,8 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
  },[workspace.visualCandidates,workspace.visualTasks,targetItemId,draft.tab]);
  useEffect(()=>{if(!arrivingCandidates.length)return;const timer=setTimeout(()=>setArrivingCandidates([]),200);return()=>clearTimeout(timer);},[arrivingCandidates]);
  useEffect(()=>{if(!adoptionFeedback)return;const timer=setTimeout(()=>setAdoptionFeedback(''),300);return()=>clearTimeout(timer);},[adoptionFeedback]);
- const [uploadState]=useState(()=>uploadSession(`${workspace.episodeId}:${workspace.id}:${targetItemId}`));
+ const uploadOwnerId=useWorkspaceOwnerId();
+ const [uploadState]=useState(()=>uploadSession(`visual:${uploadOwnerId}:${workspace.episodeId}:${workspace.id}:${targetItemId}`));
  const {rows:uploadRows,running:uploading,notice:uploadNotice}=useSyncExternalStore(uploadState.subscribe,uploadState.read);
  const formRef=useRef<HTMLDivElement>(null);
  const working=useRef(false),fileInput=useRef<HTMLInputElement>(null),referenceInput=useRef<HTMLInputElement>(null),mounted=useRef(true),zoomTrigger=useRef<HTMLButtonElement>(null),trimTrigger=useRef<HTMLButtonElement>(null),adoptTrigger=useRef<HTMLButtonElement>(null),thumbnailRail=useRef<HTMLDivElement>(null);
@@ -138,6 +127,11 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
  useEffect(()=>{if(!zoom)return;return()=>zoomTrigger.current?.focus();},[zoom]);
  const candidates=(workspace.visualCandidates??[]).filter(c=>c.targetItemId===targetItemId&&c.status!=='rejected');
  const allMaterials=[...props.materials,...uploadRows.flatMap(row=>row.material?[row.material]:[]),...(workspace.visualCandidates??[]).filter(c=>c.kind==='image'&&c.materialRevisionId).map(c=>({id:c.materialRevisionId!,material_type:'image',source_path:c.relativePath.split('/').pop()??'生成图片',storage_path:c.relativePath}))].filter((m,i,a)=>a.findIndex(x=>x.id===m.id)===i);
+ useEffect(()=>{
+  if(uploading)return;
+  const known=new Set([...props.materials.map(material=>material.id),...(workspace.visualCandidates??[]).filter(candidate=>candidate.targetItemId===targetItemId).map(candidate=>candidate.materialRevisionId)]);
+  if(uploadRows.some(row=>row.status==='succeeded'&&known.has(row.material?.id)))uploadState.update(value=>({...value,rows:value.rows.filter(row=>row.status!=='succeeded'||!known.has(row.material?.id))}));
+ },[uploading,uploadRows,props.materials,workspace.visualCandidates,targetItemId]);
  const chosenVideoService=videoServices.find(s=>s.mode==='generation'&&s.connectionVersionId===draft.videoSelection?.connectionVersionId&&s.provider===draft.videoSelection.provider&&s.adapter===draft.videoSelection.adapter),videoProvider=draft.videoSelection?.provider,videoModel=draft.videoSelection?.model;
  const videoService=chosenVideoService?{...chosenVideoService,constraints:{...chosenVideoService.constraints,...chosenVideoService.modelConstraints?.[videoModel??'']}}:undefined;
  const videoSettings=videoModel===wanReferenceModel?{...draft.videoSettings,audio:true,promptExtend:false}:draft.videoSettings;
@@ -232,54 +226,47 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
   if(uploading||!uploadRows.some(row=>row.status==='succeeded'&&!row.asReference&&!workspace.visualCandidates?.some(candidate=>candidate.targetItemId===targetItemId&&candidate.materialRevisionId===row.material?.id&&candidate.status!=='rejected')))return;
   void fresh().catch(cause=>{if(mounted.current&&!(cause instanceof Error&&cause.name==='AbortError'))setError('素材已导入，候选列表暂未更新，请刷新重试。');});
  },[uploading,uploadRows,fresh]);
- useWorkspacePolling(reader,!!taskKey&&!busy&&!candidateReview.pending&&!uploading,2000,()=>setError('任务状态暂时无法更新，将自动重试。'));
+ const pollingError=useWorkspacePolling(reader,{enabled:!!taskKey&&!busy&&!candidateReview.pending&&!uploading,interval:2000});
  function base(w:ProductionWorkspace){return {episodeId:w.episodeId,workspaceId:w.id,expectedRevision:w.revision};}
  async function run(action:()=>Promise<void>){if(working.current)return;working.current=true;setBusy(true);setError('');setNotice('');try{await action();}catch(cause){if(mounted.current&&!(cause instanceof Error&&cause.name==='AbortError'))setError(cause instanceof Error?cause.message:'操作未完成，请重试。');}finally{working.current=false;if(mounted.current)setBusy(false);}}
 
- async function register(materialId:string,kind:Kind,usage=draft.usage){const w=await fresh(),existing=w.visualCandidates?.find(c=>c.targetItemId===targetItemId&&c.materialRevisionId===materialId&&c.status!=='rejected');const next=existing?w:await command('registerWorkspaceVisualCandidate',{...base(w),targetItemId,materialRevisionId:materialId,usage:kind==='video'?'video':usage,durationSeconds:3}) as ProductionWorkspace;onChange(next);const added=next.visualCandidates?.find(c=>c.targetItemId===targetItemId&&c.materialRevisionId===materialId&&c.status!=='rejected');if(mounted.current&&added)setDraft(d=>({...d,tab:kind,selected:{...d.selected,[kind]:added.id}}));}
- function reportUpload(message:string,failed=true){uploadNoticeId=Math.max(uploadNoticeId,uploadState.read().notice?.id??0)+1;uploadState.update(value=>({...value,notice:{id:uploadNoticeId,message,failed,expiresAt:Date.now()+5000}}));}
- function updateUpload(id:number,patch:Partial<UploadEntry>){uploadState.update(value=>({...value,rows:value.rows.map(row=>row.id===id?{...row,...patch}:row)}));}
+ async function register(materialId:string,kind:Kind,usage=draft.usage){const w=await fresh(),existing=w.visualCandidates?.find(c=>c.targetItemId===targetItemId&&c.materialRevisionId===materialId&&c.status!=='rejected');const next=existing?w:await command('registerWorkspaceVisualCandidate',{...base(w),targetItemId,materialRevisionId:materialId,usage:kind==='video'?'video':usage,durationSeconds:3}) as ProductionWorkspace;if(mounted.current)reader.publish(next);const added=next.visualCandidates?.find(c=>c.targetItemId===targetItemId&&c.materialRevisionId===materialId&&c.status!=='rejected');if(mounted.current&&added)setDraft(d=>({...d,tab:kind,selected:{...d.selected,[kind]:added.id}}));}
+ function reportUpload(message:string,failed=true){uploadState.report(message,failed);}
  async function processUploads(rows:UploadEntry[]){
   if(working.current||uploadState.read().running)return;
-  uploadState.update(value=>({...value,running:true}));
-  try{await run(async()=>{
-  const referenceIds=new Set(draft.references);
-  for(const row of rows){
-   if(!mounted.current)break;
-   updateUpload(row.id,{status:'running',error:undefined});
-   let material=row.material;
-   try{
-    if(!material){
+  await run(async()=>{
+   const referenceIds=new Set(draft.references);
+   await uploadState.run(rows,{
+    active:()=>mounted.current,
+    async importFile(row){
      const file=row.file!;
      if(!file.size||file.size>100*1024*1024)throw Error('素材不能为空或超过 100 MB。');
      if(row.asReference&&!(row.tab==='video'?['image/png','image/jpeg','image/webp','image/bmp','video/mp4','video/quicktime','video/webm']:['image/png','image/jpeg','image/webp']).includes(file.type)||!row.asReference&&(row.kind!==row.tab||!['image/png','image/jpeg','image/webp','image/bmp','video/mp4'].includes(file.type)))throw Error(row.asReference?(row.tab==='video'?'请选择有效的图片或视频文件。':'请选择 PNG、JPEG 或 WebP 参考图。'):`请选择有效的${row.tab==='image'?'图片':'视频'}文件。`);
      if(row.asReference&&row.tab==='image'&&file.size>20*1024*1024)throw Error('每张参考图不能超过 20 MB。');
      if(row.asReference&&row.tab==='image'&&referenceIds.size>=16)throw Error('最多可添加 16 张参考图。');
-     const contentBase64=await new Promise<string>((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(String(r.result).split(',')[1]);r.onerror=()=>reject(Error('文件读取失败。'));r.readAsDataURL(file);});
-     if(!mounted.current){updateUpload(row.id,{status:'pending'});break;}
-     const m=await command('importMaterial',{episodeId:workspace.episodeId,sourceKind:'file',sourcePath:file.name,materialType:row.kind,mimeType:file.type,contentBase64,isMainScript:false,materialPurpose:'visual_reference'}) as Material&{storage_path:string};
-     material={...m,source_path:file.name,material_type:row.kind};
-     updateUpload(row.id,{material,file:undefined});
-     if(mounted.current)props.onImported?.(material);
-    }
-    if(!mounted.current){updateUpload(row.id,{status:'pending',error:row.asReference?'素材已导入，尚未选为参考图。':'素材已导入，尚未加入候选。'});break;}
-    if(row.asReference){if(row.tab==='image'&&!referenceIds.has(material.id)&&referenceIds.size>=16)throw Error('最多可添加 16 张参考图。');referenceIds.add(material.id);if(mounted.current)setDraft(d=>row.tab==='image'?{...d,references:[...new Set([...d.references,material!.id])].slice(0,16)}:{...d,videoInputIds:[...new Set([...videoDraftIds(d),material!.id])]});}
-    else await register(material.id,row.kind,row.usage);
-    updateUpload(row.id,{status:'succeeded',file:undefined});
-   }catch(cause){updateUpload(row.id,{status:cause instanceof Error&&cause.name==='AbortError'?'pending':'failed',error:(material?row.asReference?'素材已导入，参考图未选入：':'素材已导入，候选未完成：':'')+(cause instanceof Error&&cause.name==='AbortError'?'已暂停，重试可继续。':cause instanceof Error?cause.message:'上传未完成，请重试。')});}
-  }
- });}finally{
-   uploadState.update(value=>({...value,running:false}));
-   const completed=uploadState.read().rows.filter(row=>rows.some(attempt=>attempt.id===row.id)),unfinished=completed.filter(row=>row.status!=='succeeded');
-   reportUpload(unfinished.length===1?`${unfinished[0].name}：${unfinished[0].error??'上传未完成，请重试。'}`:unfinished.length?`${unfinished.length} 个文件未完成，请查看失败详情并重试。`:`已添加 ${completed.length} 个文件。`,unfinished.length>0);
-  }
+     const contentBase64=await readWorkspaceUploadFile(file);
+     if(!mounted.current)throw Object.assign(Error('上传已暂停。'),{name:'AbortError'});
+     const material=await command('importMaterial',{episodeId:workspace.episodeId,sourceKind:'file',sourcePath:file.name,materialType:row.kind,mimeType:file.type,contentBase64,isMainScript:false,materialPurpose:'visual_reference'}) as Material&{storage_path:string};
+     return {...material,source_path:file.name,material_type:row.kind};
+    },
+    onImported:props.onImported,
+    async complete(row,material){
+     if(row.asReference){
+      if(row.tab==='image'&&!referenceIds.has(material.id)&&referenceIds.size>=16)throw Error('最多可添加 16 张参考图。');
+      referenceIds.add(material.id);
+      setDraft(d=>row.tab==='image'?{...d,references:[...new Set([...d.references,material.id])].slice(0,16)}:{...d,videoInputIds:[...new Set([...videoDraftIds(d),material.id])]});
+     }else await register(material.id,row.kind,row.usage);
+    },
+    paused:(row,imported)=>imported?(row.asReference?'素材已导入，尚未选为参考图。':'素材已导入，尚未加入候选。'):'已暂停，重试可继续。',
+    failed:(row,imported,message)=>(imported?(row.asReference?'素材已导入，参考图未选入：':'素材已导入，候选未完成：'):'')+message,
+   });
+  });
  }
  async function upload(files:File[],asReference=false){
   if(working.current||uploadState.read().running)return;
   if(asReference&&tab==='image'&&files.length+draft.references.length>16){reportUpload('最多可添加 16 张参考图。');return;}
-  uploadEntryId=Math.max(uploadEntryId,0,...uploadState.read().rows.map(row=>row.id));
-  const rows=files.map(file=>({id:++uploadEntryId,name:file.name,file,kind:file.type.startsWith('image/')?'image' as const:'video' as const,asReference,tab,usage:draft.usage,status:'pending' as const}));
-  uploadState.update(value=>({...value,rows:[...value.rows,...rows]}));await processUploads(rows);
+  const rows=uploadState.enqueue(files.map(file=>({name:file.name,file,kind:file.type.startsWith('image/')?'image' as const:'video' as const,asReference,tab,usage:draft.usage})));
+  await processUploads(rows);
  }
  async function adopt(c:WorkspaceVisualCandidate,replaceCurrentVisual=false){
   if(working.current)return;setError('');setNotice('');
@@ -537,7 +524,7 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
    <p>{clearVisual.sourcePath?'当前片段将恢复为待匹配，时长保持原样。素材留在候选区，可重新采用。':'图片将取消备用，仍留在候选区。'}</p>
    {clearError&&<p role="alert">{clearError}</p>}
   </ConfirmationModal>}</ConfirmationModalPresence>
-  {notice&&<p role="status">{notice}</p>}{error&&<p role="alert">{error}</p>}
+  {notice&&<p role="status">{notice}</p>}{(error||pollingError)&&<p role="alert">{error||'任务状态暂时无法更新，将自动重试。'}</p>}
   {!shelf&&<input ref={fileInput} hidden aria-label={`上传${kindName}素材`} type="file" multiple={tab==='image'} accept={tab==='image'?'image/png,image/jpeg,image/webp,image/bmp':'video/mp4'} disabled={disabled} onChange={e=>{const files=[...e.target.files??[]];e.target.value='';if(files.length)void upload(files);}}/>}
   {tab==='video'&&<input ref={referenceInput} hidden aria-label="上传画面素材文件" type="file" multiple accept="image/png,image/jpeg,image/webp,image/bmp,video/mp4,video/quicktime,video/webm" disabled={disabled} onChange={e=>{const files=[...e.target.files??[]];e.target.value='';if(files.length)void upload(files,true);}}/>}
   {zoom&&candidate&&<ImageFocusDialog src={url(candidate.relativePath,candidate.sha256)} title="图片大图预览" imageAlt="图片候选大图" closeLabel="关闭大图预览" onClose={()=>setZoom(false)}/>}

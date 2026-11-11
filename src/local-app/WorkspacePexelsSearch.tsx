@@ -32,7 +32,7 @@ export function WorkspacePexelsSearch({workspace,targetItemId,command,onChange,p
  const connectionLoading=catalogReading.pending,connectionError=catalogReading.error?(composer?.catalogError||'无法读取 Pexels 连接。'):'';
  const requests=(workspace.pexels?.requests??[]).filter(r=>r.targetItemId===targetItemId),pending=requests.filter(r=>['ready','running'].includes(r.status)),taskKey=pending.map(r=>r.taskId).join(':'),search=requests.find(r=>r.operation==='search'),previews=requests.filter(r=>r.operation==='preview'&&r.source?.searchId===search?.id),service=services.find(s=>s.connectionVersionId===selection?.connectionVersionId);
  useEffect(()=>setResultsError(''),[workspace]);
- useWorkspacePolling(reader,!!taskKey,1500,()=>setResultsError('无法读取 Pexels 结果。'));
+ const pollingError=useWorkspacePolling(reader,{enabled:!!taskKey,interval:1500});
  async function retryResults(){
   if(reading.current)return;reading.current=true;setResultsLoading(true);
   try{await reader.read();setResultsError('');}
@@ -60,7 +60,7 @@ export function WorkspacePexelsSearch({workspace,targetItemId,command,onChange,p
   {connectionError&&<div className="workspace-pexels-retry"><p role="alert">{connectionError}</p><Button size="sm" color="secondary" isDisabled={connectionLoading} onPress={catalogReading.refresh}>{connectionLoading?'正在读取连接…':'重试读取连接'}</Button></div>}
   {selection&&!service&&!connectionLoading&&!connectionError&&<p role="alert">原 Pexels 连接不可用，请重新选择。</p>}
   <a href="https://www.pexels.com" target="_blank" rel="noreferrer">视频来源 Pexels</a>
-  {resultsError&&<div className="workspace-pexels-retry"><p role="alert">{resultsError}</p><Button size="sm" color="secondary" isDisabled={resultsLoading} onPress={()=>void retryResults()}>{resultsLoading?'正在读取结果…':'重试读取结果'}</Button></div>}
+  {(resultsError||pollingError)&&<div className="workspace-pexels-retry"><p role="alert">{resultsError||'无法读取 Pexels 结果。'}</p><Button size="sm" color="secondary" isDisabled={resultsLoading} onPress={()=>void retryResults()}>{resultsLoading?'正在读取结果…':'重试读取结果'}</Button></div>}
   {pending.length>0&&<p role="status">{pending.some(r=>r.operation==='search')?'正在检索…':'正在下载所选预览…'}</p>}
   {search&&<p>{search.connectionName} · {search.query} · 第 {search.parameters.page} 页</p>}
   {search?.results?.length===0&&<p role="status">没有找到视频，请修改检索词、方向或页码后重试。</p>}

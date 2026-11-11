@@ -96,3 +96,29 @@ it('does not transplant a draft when a discovery response belongs to another con
  const initial={...data,revision:'r1'},keep=vi.fn(),save=vi.fn();render(<ConnectionModelsDialog connection={{id:'c',name:'Images'}} onClose={vi.fn()} onReadModels={async()=>initial} onSyncModels={async()=>({...data,versionId:'rotated',revision:'r2'})} onSaveModels={save} onDraftChange={keep}/>);
  fireEvent.click(await screen.findByRole('checkbox',{name:'gpt-image-2'}));fireEvent.click(screen.getByRole('button',{name:'读取模型'}));expect((await screen.findByRole('alert')).textContent).toContain('连接版本已变化');expect(screen.getByRole('checkbox',{name:'gpt-image-2'})).toHaveProperty('checked',false);fireEvent.click(screen.getByRole('button',{name:'取消'}));fireEvent.click(screen.getByRole('button',{name:'保留修改并关闭'}));expect(keep).toHaveBeenLastCalledWith({versionId:'v',revision:'r1',enabledModels:[]});expect(save).not.toHaveBeenCalled();
 });
+it('ends a pending model read when another connection is opened and ignores its late reply',async()=>{
+ let finishOld!:(value:ConnectionModelSettings)=>void,finishCurrent!:(value:ConnectionModelSettings)=>void;
+ const read=vi.fn((id:string)=>new Promise<ConnectionModelSettings>(resolve=>{if(id==='c')finishOld=resolve;else finishCurrent=resolve;}));
+ const props={onClose:vi.fn(),onReadModels:read};
+ const app=render(<ConnectionModelsDialog {...props} connection={{id:'c',name:'旧连接'}}/>);
+ app.rerender(<ConnectionModelsDialog {...props} connection={{id:'new',name:'新连接'}}/>);
+ expect(read).toHaveBeenCalledWith('new');
+ await act(async()=>finishOld(data));
+ expect(screen.queryByRole('checkbox',{name:'gpt-image-2'})).toBeNull();
+ expect(screen.getByRole('button',{name:'关闭模型设置'})).toHaveProperty('disabled',true);
+ await act(async()=>finishCurrent({...data,connectionId:'new',versionId:'new-version',models:[{...data.models[0],id:'new-model'}],enabledModels:['new-model']}));
+ expect(screen.getByRole('checkbox',{name:'new-model'})).toHaveProperty('checked',true);
+});
+it('does not close a reopened model dialog when an old save finishes',async()=>{
+ let finish!:(value:ConnectionModelSettings)=>void;
+ const save=vi.fn(()=>new Promise<ConnectionModelSettings>(resolve=>{finish=resolve;})),close=vi.fn(),draft=vi.fn();
+ const props={connection:{id:'c',name:'Images'},onClose:close,onReadModels:async()=>data,onSaveModels:save,onDraftChange:draft};
+ const first=render(<ConnectionModelsDialog {...props}/>);
+ fireEvent.click(await screen.findByRole('checkbox',{name:'gpt-image-2'}));fireEvent.click(screen.getByRole('button',{name:'保存设置'}));
+ first.unmount();render(<ConnectionModelsDialog {...props}/>);
+ await screen.findByRole('checkbox',{name:'gpt-image-2'});
+ const draftCalls=draft.mock.calls.length;
+ await act(async()=>finish({...data,enabledModels:[]}));
+ expect(close).not.toHaveBeenCalled();expect(draft).toHaveBeenCalledTimes(draftCalls);
+ expect(screen.getByRole('checkbox',{name:'gpt-image-2'})).toHaveProperty('checked',true);
+});
