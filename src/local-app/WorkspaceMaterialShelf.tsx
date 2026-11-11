@@ -113,8 +113,8 @@ export function WorkspaceMaterialShelf({episodeId,shotCount,scriptRevisionId,mat
     if(selected.length)void onImport(selected);
    }}/>}
    {(status||failures.length>0)&&<div ref={feedback} tabIndex={-1} aria-label="素材导入结果" className="workspace-material-feedback">
-    {status&&<div role="status">{status}</div>}
-    {failures.length>0&&onRetry&&<Button size="sm" color="secondary" isDisabled={uploadDisabled} onPress={onRetry}>重试未完成项</Button>}
+    <div className="workspace-material-feedback-header">{status&&<div role="status">{status}</div>}
+     {failures.length>0&&onRetry&&<Button size="sm" color="secondary" isDisabled={uploadDisabled} onPress={onRetry}>重试未完成项</Button>}</div>
     {failures.length>0&&<ul role="alert">{failures.map((failure,index)=><li key={index}>{failure}</li>)}</ul>}
    </div>}
    <div className="workspace-material-content">

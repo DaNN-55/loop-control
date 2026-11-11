@@ -127,7 +127,8 @@ html[data-interface="impeccable"] .product-ui .workspace-material-heading > butt
 .workspace-material-preview p { max-inline-size: 100%; }
 .workspace-material-empty,
 .workspace-material-feedback { padding: 6px 12px; }
-.workspace-material-feedback { max-block-size: 56px; overflow: auto; }
+.workspace-material-feedback { max-block-size: 88px; overflow: auto; }
+.workspace-material-feedback-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .workspace-material-feedback ul { margin: 0; padding-inline-start: 16px; color: var(--lc-danger); }
 
 .workspace-material-upload-overlay {

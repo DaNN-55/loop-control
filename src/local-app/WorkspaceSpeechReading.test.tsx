@@ -18,6 +18,7 @@ function Host({command,changed=()=>{},target='S1',bridge}:{command:(name:string,
  const onChange=(value:ProductionWorkspace)=>{set(value);changed(value);};
  return <><output data-testid="revision">{w.revision}</output><output data-testid="status">{w.narration?.[0].status}</output>
  <button onClick={()=>set({...w,revision:9})}>external save</button>
+ <button onClick={()=>onChange({...w,narration:w.narration!.map(n=>({...n,status:'completed'}))})}>external completion</button>
  <WorkspaceAudioPreparation workspace={w} command={command} onChange={onChange} selectedShotId={target} materials={[{id:'manual',material_type:'audio',source_path:'click.mp3',material_purpose:'background_music'}]} bridge={bridge}/></>;
 }
 function setupFetch(read:()=>Promise<Response>){vi.stubGlobal('fetch',vi.fn((url:string)=>url==='/api/local/connections'?Promise.resolve(Response.json({serviceCatalog:{groups:[]}})):read()));}
@@ -25,7 +26,7 @@ function setPurpose(value:string){fireEvent.change(screen.queryByLabelText('音�
 function purpose(){return ((screen.queryByLabelText('音效意图或检索词')??screen.getByLabelText('英文检索词')) as HTMLTextAreaElement).value;}
 function prepareSound(){fireEvent.drop(screen.getByRole('group',{name:'音频输入'}),{dataTransfer:{types:['application/x-loop-workspace-material'],getData:()=> 'manual',files:[]}});}
 
-it('ignores a slow sound refresh after a same-revision command response',async()=>{
+it('keeps a same-revision authoritative update when an older sound refresh returns',async()=>{
  vi.useFakeTimers();const sound=deferred<ProductionWorkspace>();
  const next={...workspace,narration:workspace.narration!.map(n=>({...n,status:'completed' as const}))};
  setupFetch(async()=>Response.json({workspace:next}));
@@ -33,7 +34,7 @@ it('ignores a slow sound refresh after a same-revision command response',async()
  render(<Host command={command} changed={changed}/>);
  await act(async()=>{await vi.advanceTimersByTimeAsync(9000);});
  expect(command.mock.calls.filter(([name])=>name==='refreshWorkspaceAudio')).toHaveLength(1);
- prepareSound();await act(async()=>{});expect(screen.getByTestId('status').textContent).toBe('completed');
+ fireEvent.click(screen.getByRole('button',{name:'external completion'}));await act(async()=>{});expect(screen.getByTestId('status').textContent).toBe('completed');
  const before=changed.mock.calls.length;await act(async()=>{sound.resolve(workspace);});
  expect(changed).toHaveBeenCalledTimes(before);expect(screen.getByTestId('revision').textContent).toBe('3');
  expect(screen.getByTestId('status').textContent).toBe('completed');
