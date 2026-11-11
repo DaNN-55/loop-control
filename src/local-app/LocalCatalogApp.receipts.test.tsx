@@ -5,13 +5,13 @@ import {webcrypto} from 'node:crypto';
 import {LocalCatalogApp} from './LocalCatalogApp';
 import {draftCatalog,draftSnapshot,draftWorkspace} from './fixtures/workspaceDraftFixture';
 afterEach(()=>{cleanup();vi.unstubAllGlobals();sessionStorage.clear();localStorage.clear();history.replaceState(null,'','/');});
-it.each(['retry','dismiss'])('accepts the created order after refresh failure and supports %s without another write',async(action)=>{
- let created=false,offline=false,posts=0;
+it.each(['retry','dismiss','stale'])('accepts the created order after refresh failure and supports %s without another write',async(action)=>{
+ let created=false,offline=false,posts=0,holdNext=false;let release!: (r:Response)=>void;
  vi.stubGlobal('crypto',webcrypto);
  vi.stubGlobal('fetch',vi.fn(async(path:string,init?:RequestInit)=>{
   if(path.endsWith('/session'))return Response.json({owner:{id:'receipt-owner'},csrfToken:'fixture'});
   if(init?.method==='POST'){expect(JSON.parse(String(init.body)).command).toBe('create');posts++;created=true;offline=true;return Response.json({id:'created-episode'});}
-  if(path.includes('/catalog?')){if(offline)return Response.json({error:'列表暂时断开'},{status:503});return Response.json({...draftCatalog,episodes:created?[{...draftCatalog.episodes[0],id:'created-episode',title:'已确认创建'}]:[],total:created?1:0});}
+  if(path.includes('/catalog?')){if(holdNext){holdNext=false;return new Promise<Response>(resolve=>{release=resolve;});}if(offline)return Response.json({error:'列表暂时断开'},{status:503});return Response.json({...draftCatalog,episodes:created?[{...draftCatalog.episodes[0],id:'created-episode',title:'已确认创建'}]:[],total:created?1:0});}
   if(path.endsWith('/workspace'))return Response.json({workspace:draftWorkspace('created-episode')});
   if(path.includes('?known='))return Response.json({hashes:{},sections:{...draftSnapshot(),episode:{...draftCatalog.episodes[0],id:'created-episode',title:'已确认创建'}}});
   return Response.json({connections:[],versions:[],serviceCatalog:{groups:[]}});
@@ -20,8 +20,9 @@ it.each(['retry','dismiss'])('accepts the created order after refresh failure an
  fireEvent.change(screen.getByRole('textbox',{name:'工作标题（可留空）'}),{target:{value:'已确认创建'}});fireEvent.click(screen.getByRole('button',{name:'创建生产单'}));
  await waitFor(()=>expect(screen.queryByRole('dialog',{name:'新建生产单'})).toBeNull());
  expect(screen.getByRole('alert').textContent).toContain('生产单已创建');expect(posts).toBe(1);
+ if(action==='stale'){holdNext=true;fireEvent.click(screen.getByRole('button',{name:'重新读取'}));fireEvent.click(screen.getByRole('button',{name:'重新读取'}));await act(async()=>{});await act(async()=>release(Response.json({...draftCatalog,episodes:[]})));expect(screen.getByRole('alert').textContent).toContain('生产单已创建');}
  if(action==='dismiss'){fireEvent.click(screen.getByRole('button',{name:'关闭错误通知'}));expect(screen.queryByRole('alert')).toBeNull();}
- offline=false;await act(async()=>{if(action==='retry')fireEvent.click(screen.getByRole('button',{name:'重新读取'}));else document.dispatchEvent(new Event('visibilitychange'));});
+ offline=false;await act(async()=>{if(action!=='dismiss')fireEvent.click(screen.getByRole('button',{name:'重新读取'}));else document.dispatchEvent(new Event('visibilitychange'));});
  await screen.findByRole('heading',{name:'已确认创建'});expect(posts).toBe(1);expect(within(document.body).queryByText('列表暂时断开')).toBeNull();
 });
 it('accepts archive acknowledgement even when the following read fails and only retries the read',async()=>{

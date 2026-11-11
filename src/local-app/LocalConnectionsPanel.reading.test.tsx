@@ -19,6 +19,7 @@ it('closes an acknowledged model save despite a failed directory read and retry 
  const user=userEvent.setup();render(<LocalConnectionsPanel settingsLayout/>);await user.click(await screen.findByRole('button',{name:'Images 连接操作'}));await user.click(screen.getByRole('menuitem',{name:'模型设置'}));
  await user.click(await screen.findByRole('checkbox',{name:'gpt-image-2'}));await user.click(screen.getByRole('button',{name:'保存设置'}));
  await waitFor(()=>expect(screen.queryByRole('dialog',{name:'Images 模型设置'})).toBeNull());expect(screen.getByRole('alert').textContent).toContain('模型设置已保存');expect(screen.getByRole('alert').textContent).not.toContain('操作未确认完成');
+ await user.click(screen.getByRole('button',{name:'重新读取连接'}));expect(screen.getByRole('alert').textContent).toContain('模型设置已保存');expect(posts).toBe(1);
  offline=false;await user.click(screen.getByRole('button',{name:'重新读取连接'}));await waitFor(()=>expect(screen.queryByRole('button',{name:'重新读取连接'})).toBeNull());expect(posts).toBe(1);
 });
 it.each(['success','failure'])('does not let an earlier %s replace a newer directory or its feedback',async(late)=>{
