@@ -53,6 +53,8 @@ function FieldLabel({ children, help }: { children: ReactNode; help?: ReactNode 
 }
 
 export function PromptVersionManager({ fixedCapability, isPending, onClose, onCreate, onSelect, promptVersions, selectedVersionId }: { fixedCapability?: PromptCapability; isPending: boolean; onClose: () => void; onCreate?: (input: { capability: PromptCapability; name: string; summary: string; instructions: string }) => Promise<PromptVersion | null>; onSelect: (version: PromptVersion) => void; promptVersions: PromptVersion[]; selectedVersionId?: string }) {
+  const active=useRef(true),running=useRef(false);
+  useEffect(()=>{active.current=true;return()=>{active.current=false;};},[]);
   const [capability, setCapability] = useState<PromptCapability>(fixedCapability ?? "storyboard_planning");
   const [name, setName] = useState("");
   const [summary, setSummary] = useState("");
@@ -61,19 +63,23 @@ export function PromptVersionManager({ fixedCapability, isPending, onClose, onCr
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!onCreate) return;
+    if (!onCreate||isPending||running.current) return;
     if (!name.trim() || !summary.trim() || !instructions.trim()) {
       setError("请填写版本名称、摘要和 Harness 内容。");
       return;
     }
     setError("");
+    running.current=true;
+    try{
     const created = await onCreate({ capability, name: name.trim(), summary: summary.trim(), instructions: instructions.trim() });
-    if (!created) return;
+    if (!active.current||!created) return;
     onSelect(created);
     setName("");
     setSummary("");
     setInstructions("");
     setIsCreateOpen(false);
+    }catch(cause){if(active.current)setError(cause instanceof Error?cause.message:'版本登记未完成，请重试。');}
+    finally{running.current=false;}
   }
 
   const visibleCapabilities = fixedCapability ? promptCapabilityOptions.filter(([key]) => key === fixedCapability) : promptCapabilityOptions;

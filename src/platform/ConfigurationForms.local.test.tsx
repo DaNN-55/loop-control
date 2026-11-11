@@ -1,6 +1,6 @@
-import {cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
+import {act,cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
 import {afterEach,it,expect,vi} from 'vitest';
-import {BlueprintConfigurationForm} from './ConfigurationForms';
+import {BlueprintConfigurationForm,PromptVersionManager} from './ConfigurationForms';
 afterEach(cleanup);
 it('saves content rules without connected services or a planner and excludes legacy configuration',async()=>{
  const save=vi.fn(async()=>{});render(<BlueprintConfigurationForm initialAssetRoot="/old" initialPolicy={{positioning:'事实',tone:'克制',asset_root:'/old',narration:{credential_ref:'old'},executors:{},allowed_tools:['read']}} isPending={false} onCancel={()=>{}} onSave={save}/>);
@@ -26,4 +26,16 @@ it('keeps boolean and numeric rule types when editing nested fields',async()=>{
  fireEvent.change(screen.getByRole('spinbutton',{name:'limit'}),{target:{value:'5'}});
  fireEvent.click(screen.getByRole('button',{name:'保存蓝图'}));fireEvent.click(screen.getByRole('button',{name:'确认保存蓝图'}));
  await waitFor(()=>expect(save).toHaveBeenCalledWith({positioning:'',extension:{enabled:false,limit:5}},true));
+});
+
+it('does not select a late Harness after its manager was closed',async()=>{
+ const late={id:'late',account_id:'account',capability:'storyboard_planning' as const,version:1,name:'旧规划',slug:'late',summary:'摘要',instructions:'内容',content_hash:'a'.repeat(64),is_active:true,created_at:'2026-11-11',created_by:'owner'};
+ let finish!:(value:typeof late)=>void;const create=vi.fn(()=>new Promise<typeof late>(resolve=>{finish=resolve;})),select=vi.fn();
+ const view=render(<PromptVersionManager fixedCapability="storyboard_planning" isPending={false} onClose={()=>{}} onCreate={create} onSelect={select} promptVersions={[]}/>);
+ fireEvent.click(screen.getByRole('button',{name:'登记新版本'}));
+ const name=screen.getByRole('textbox',{name:'版本名称'});
+ fireEvent.change(name,{target:{value:'新规划'}});fireEvent.change(screen.getByRole('textbox',{name:'版本摘要'}),{target:{value:'摘要'}});fireEvent.change(screen.getByRole('textbox',{name:'Harness 内容'}),{target:{value:'内容'}});
+ act(()=>{fireEvent.submit(name.closest('form')!);fireEvent.submit(name.closest('form')!);});
+ expect(create).toHaveBeenCalledTimes(1);view.unmount();
+ await act(async()=>{finish(late);});expect(select).not.toHaveBeenCalled();
 });

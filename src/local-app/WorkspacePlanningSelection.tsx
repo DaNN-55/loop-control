@@ -1,4 +1,4 @@
-import {useEffect,useState} from 'react';
+import {useEffect,useRef,useState} from 'react';
 import {createPortal} from 'react-dom';
 import type {Database} from '../lib/database.types';
 import type {PlanningSelection,PlanningSelectionDraft} from '../planningSelection';
@@ -14,6 +14,9 @@ export type WorkspacePlanningDraft=PlanningSelectionDraft&{accountId:string;prom
 export function WorkspacePlanningSelection({draft,pending,readOnly,onSave,onReload,compact=false,saved=false}:{compact?:boolean;saved?:boolean;draft:WorkspacePlanningDraft;pending:boolean;readOnly:boolean;onSave:(selection:PlanningSelection,revision:number)=>Promise<void>;onReload:()=>Promise<void>}){
  const [selection,setSelection]=useState<PlanningSelection>(draft.selection??{provider:'codex',adapter:'codex',model:'gpt-5.6-luna',harnessId:'',budgetCents:0,allowedTools:['read','write']});
  const [configuring,setConfiguring]=useState(false),[managing,setManaging]=useState(false),[error,setError]=useState('');
+ const [registering,setRegistering]=useState(false);
+ const active=useRef(true),registrationLock=useRef(false),createdVersions=useRef(new Map<string,PromptVersion>());
+ useEffect(()=>{active.current=true;return()=>{active.current=false;};},[]);
  const harness=draft.promptVersions.find(h=>h.id===selection.harnessId);
  async function save(){try{setError('');await onSave(selection,draft.revision);}catch(cause){setError(cause instanceof Error?cause.message:'规划选择未保存。');}}
  return <section className="workspace-planning-selection" aria-label="分镜规划选择">
@@ -24,18 +27,33 @@ export function WorkspacePlanningSelection({draft,pending,readOnly,onSave,onRelo
   <fieldset><legend>文件工具</legend><div className="workspace-planning-tools">{['read','write'].map(tool=><Checkbox key={tool} label={tool} isSelected={selection.allowedTools.includes(tool)} isDisabled={pending||readOnly} onChange={checked=>setSelection(s=>({...s,allowedTools:checked?[...s.allowedTools,tool]:s.allowedTools.filter(t=>t!==tool)}))}/>)}</div></fieldset>
   </div></details>
   <div className="configuration-actions">{!compact&&<Button size="sm" color="secondary" onPress={()=>setConfiguring(false)}>收起</Button>}<Button size="sm" color="primary" isDisabled={pending||readOnly} onPress={()=>void save().then(()=>{}).catch(()=>{})}>保存规划选择</Button>{saved&&selection===draft.selection&&<span role="status">已保存规划配置</span>}</div>{error?<p role="alert" className="form-error">{error}</p>:null}</section>:null}
-  {managing?createPortal(<div className="dan-ui product-ui"><PromptVersionManager fixedCapability="storyboard_planning" isPending={pending} onClose={()=>setManaging(false)} onSelect={h=>setSelection(s=>({...s,harnessId:h.id}))} selectedVersionId={selection.harnessId} promptVersions={draft.promptVersions} onCreate={async input=>{const version=await localCommand<PromptVersion>('createPromptVersion',{accountId:draft.accountId,...input});await onReload();return version;}}/></div>,document.body):null}
+  {managing?createPortal(<div className="dan-ui product-ui"><PromptVersionManager fixedCapability="storyboard_planning" isPending={pending||registering} onClose={()=>setManaging(false)} onSelect={h=>setSelection(s=>({...s,harnessId:h.id}))} selectedVersionId={selection.harnessId} promptVersions={draft.promptVersions} onCreate={async input=>{
+   if(registrationLock.current||pending||readOnly)return null;
+   registrationLock.current=true;setRegistering(true);
+   const key=JSON.stringify({accountId:draft.accountId,...input});
+   try{
+    let version=createdVersions.current.get(key);
+    if(!version){version=await localCommand<PromptVersion>('createPromptVersion',{accountId:draft.accountId,...input});createdVersions.current.set(key,version);}
+    if(!active.current)return null;
+    await onReload();
+    if(!active.current)return null;
+    createdVersions.current.clear();return version;
+   }catch(cause){throw Error(`${createdVersions.current.has(key)?'版本已登记，列表读取失败：':''}${cause instanceof Error?cause.message:'版本登记未完成。'}`);}
+   finally{registrationLock.current=false;if(active.current)setRegistering(false);}
+  }}/></div>,document.body):null}
  </section>;
 }
 
 function EpisodePlanningConfiguration({episodeId}:{episodeId:string}){
+ const active=useRef(true),running=useRef(false);
+ useEffect(()=>{active.current=true;return()=>{active.current=false;};},[]);
  const [draft,setDraft]=useState<WorkspacePlanningDraft|null>(null);
  const [error,setError]=useState('');
  const [pending,setPending]=useState(false);
  const [attempt,setAttempt]=useState(0);
  const [saved,setSaved]=useState(false);
  const path=`episodes/${encodeURIComponent(episodeId)}/workspace`;
- async function reload(){const value=await localRequest(path);setDraft(value.planningSelection);}
+ async function reload(){const value=await localRequest(path);if(active.current)setDraft(value.planningSelection);}
  useEffect(()=>{
   let active=true;
   void localRequest(path).then(value=>{if(active)setDraft(value.planningSelection);})
@@ -43,11 +61,13 @@ function EpisodePlanningConfiguration({episodeId}:{episodeId:string}){
   return()=>{active=false;};
  },[path,attempt]);
  async function save(selection:PlanningSelection,expectedSelectionRevision:number){
+  if(running.current)return;
+  running.current=true;
   setPending(true);setSaved(false);
   try{
-   await localCommand('saveWorkspacePlanningSelection',{episodeId,selection,expectedSelectionRevision},undefined,'episode-commands');
-   await reload();setSaved(true);
-  }finally{setPending(false);}
+   const accepted=await localCommand<PlanningSelectionDraft>('saveWorkspacePlanningSelection',{episodeId,selection,expectedSelectionRevision},undefined,'episode-commands');
+   if(active.current){setDraft(current=>current?{...current,...accepted}:current);setSaved(true);}
+  }finally{if(active.current){running.current=false;setPending(false);}}
  }
  return <section aria-label="本期分镜规划配置">
   {draft?<WorkspacePlanningSelection compact saved={saved} key={draft.revision} draft={draft} pending={pending} readOnly={false} onSave={save} onReload={reload}/>
