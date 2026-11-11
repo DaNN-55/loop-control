@@ -66,13 +66,25 @@ function EditableWorkspaceAudioPreparation({workspace:w,command,onChange,materia
  const intentShot=w.clips.find(clip=>clip.shotId===shot);
  const prompt=draft.prompt??(kind==='sfx'?draft.query||intentShot?.soundIntent||'':query);
  const soundQuery=soundIntentQuery(prompt);
- const input=useRef<HTMLInputElement>(null),current=useRef(w);current.current=w;
+ const input=useRef<HTMLInputElement>(null),current=useRef(w),working=useRef(false);current.current=w;
  const reading=useWorkspaceReading(w,onChange,selectedShotId??'episode','无法读取当前工程版本。');
- const pollingError=useWorkspacePolling(reading,{enabled:!!w.audio?.preparations.some(p=>p.taskId&&['ready','running'].includes(p.status)),interval:3000,
-  load:value=>command('refreshWorkspaceAudio',{episodeId:value.episodeId,workspaceId:value.id,expectedRevision:value.revision}) as Promise<ProductionWorkspace>});
+ const pollingError=useWorkspacePolling(reading,{enabled:!busy&&!!w.audio?.preparations.some(p=>p.taskId&&['ready','running'].includes(p.status)),interval:3000,
+  load:value=>{if(working.current)throw Object.assign(Error('音频操作正在进行。'),{name:'AbortError'});return command('refreshWorkspaceAudio',{episodeId:value.episodeId,workspaceId:value.id,expectedRevision:value.revision}) as Promise<ProductionWorkspace>;}});
  useEffect(()=>{if(!bridge?.connected)return;let active=true;void bridge.inspect().then(value=>{if(active)setLive(value.document);}).catch(()=>{});return()=>{active=false;};},[bridge?.connected,w.project.sha256]);
  async function savedWorkspace(){if(!bridge)return current.current;await bridge.save();return reading.read();}
- async function run(name:string,extra:Record<string,unknown>){setBusy(true);setError('');try{const saved=await savedWorkspace();reading.publish(await command(name,{episodeId:saved.episodeId,workspaceId:saved.id,expectedRevision:saved.revision,...extra}) as ProductionWorkspace);return true;}catch(e){if(!(e instanceof Error&&e.name==='AbortError'))setError(e instanceof Error?e.message:'音频准备未完成。');return false;}finally{setBusy(false);}}
+ async function perform(action:(workspace:ProductionWorkspace)=>Promise<void>,fallback:string){
+  if(working.current)return false;
+  working.current=true;setBusy(true);setError('');
+  try{
+   const observed=await reading.idle();
+   if(!observed)throw Object.assign(Error('音频操作已结束。'),{name:'AbortError'});
+   current.current=observed;await action(observed);return true;
+  }catch(cause){if(!(cause instanceof Error&&cause.name==='AbortError'))setError(cause instanceof Error?cause.message:fallback);return false;}
+  finally{working.current=false;setBusy(false);}
+ }
+ async function run(name:string,extra:Record<string,unknown>){return perform(async()=>{
+  const saved=await savedWorkspace();reading.publish(await command(name,{episodeId:saved.episodeId,workspaceId:saved.id,expectedRevision:saved.revision,...extra}) as ProductionWorkspace);
+ },'音频准备未完成。');}
  function musicSelection(chosen:ProductionService):ProductionSelection{
   return {capability:'music_sound',provider:chosen.provider,adapter:chosen.adapter,
    ...(chosen.connectionVersionId?{connectionVersionId:chosen.connectionVersionId}:{})};
@@ -87,13 +99,22 @@ function EditableWorkspaceAudioPreparation({workspace:w,command,onChange,materia
   const prepared=await run('prepareWorkspaceAudio',{kind,description:name?.slice(0,100)||description,materialRevisionId:id,durationSeconds:kind==='sfx'?duration:episodeDuration,anchor:kind==='sfx'?anchor:'absolute',offsetSeconds:kind==='sfx'?offset:0,...(kind==='sfx'&&anchor==='shot'?{shotId:shot}:{})});
   setUploadStatus(prepared?'已加入声音候选，试听后可采用。':'素材已导入，请检查使用时长后加入候选。');
  }
- async function upload(file:File){setBusy(true);setError('');setUploadStatus(`正在读取 ${file.name}…`);try{
-  if(!file.size||file.size>100*1024*1024)throw Error('声音素材不能为空或超过100MB。');if(!/\.mp3$/i.test(file.name)||file.type&&!['audio/mpeg','audio/mp3'].includes(file.type))throw Error('请选择 MP3 声音素材。');
-  if(bridge)await bridge.save();const contentBase64=await new Promise<string>((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result).split(',')[1]);reader.onerror=()=>reject(Error('文件读取失败，请重新选择。'));reader.onabort=()=>reject(Error('文件读取已取消。'));reader.readAsDataURL(file);});
-  setUploadStatus(`正在上传 ${file.name}…`);
-  const result=await command('importMaterial',{episodeId:w.episodeId,materialType:'audio',sourceKind:'file',sourcePath:file.name,mimeType:'audio/mpeg',contentBase64,isMainScript:false,materialPurpose:audioPurpose}) as {id:string};
-  setUploaded(rows=>[...rows,{id:result.id,material_type:'audio',source_path:file.name,material_purpose:audioPurpose}]);await addLocalMaterial(result.id,file.name);
- }catch(cause){setUploadStatus('');setError(cause instanceof Error?cause.message:'声音素材登记未完成。');}finally{setBusy(false);}}
+ async function upload(file:File){
+  let materialId='';
+  const imported=await perform(async()=>{
+   setUploadStatus(`正在读取 ${file.name}…`);
+   if(!file.size||file.size>100*1024*1024)throw Error('声音素材不能为空或超过100MB。');
+   if(!/\.mp3$/i.test(file.name)||file.type&&!['audio/mpeg','audio/mp3'].includes(file.type))throw Error('请选择 MP3 声音素材。');
+   if(bridge)await bridge.save();
+   const contentBase64=await new Promise<string>((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result).split(',')[1]);reader.onerror=()=>reject(Error('文件读取失败，请重新选择。'));reader.onabort=()=>reject(Error('文件读取已取消。'));reader.readAsDataURL(file);});
+   if(!await reading.idle())throw Object.assign(Error('音频上传已结束。'),{name:'AbortError'});
+   setUploadStatus(`正在上传 ${file.name}…`);
+   const result=await command('importMaterial',{episodeId:w.episodeId,materialType:'audio',sourceKind:'file',sourcePath:file.name,mimeType:'audio/mpeg',contentBase64,isMainScript:false,materialPurpose:audioPurpose}) as {id:string};
+   materialId=result.id;setUploaded(rows=>[...rows,{id:result.id,material_type:'audio',source_path:file.name,material_purpose:audioPurpose}]);
+  },'声音素材登记未完成。');
+  if(imported)await addLocalMaterial(materialId,file.name);else setUploadStatus('');
+ }
+
  const mix=doc?readWorkspaceAudioMix(doc,shotIds):w.audio?.mix;
  const activeTimeline=doc?.timelines.find(t=>t.id===doc.activeTimelineId),episodeDuration=activeTimeline?Math.max(0,...activeTimeline.items.filter(i=>['video','image','text','sequence'].includes(String(i.kind))).map(i=>(Number(i.startFrame)+Number(i.durationInFrames))/activeTimeline.fps)):duration;
  const disabled=readOnly||busy||w.stale||!!bridge&&!bridge.connected,preparations=(w.audio?.preparations??[]).filter(p=>p.kind!=='bgm'&&p.kind!=='sfx'||w.audio?.enabled?.[p.kind]!==false);
@@ -101,8 +122,13 @@ function EditableWorkspaceAudioPreparation({workspace:w,command,onChange,materia
  function currentSound(p:NonNullable<ProductionWorkspace['audio']>['preparations'][number]){const sound=mix?.sounds.find(s=>s.itemId===p.adoptedItemId),native=sound?nativeItems.get(sound.itemId):undefined,meta=native?.loopControlAudio as {preparationId?:string}|undefined;return meta?.preparationId&&meta.preparationId!==p.id?undefined:sound;}
  function placement(p:NonNullable<ProductionWorkspace['audio']>['preparations'][number]){const native=currentSound(p)?nativeItems.get(p.adoptedItemId!):undefined,meta=native?.loopControlAudio as {anchor?:string;shotId?:string}|undefined;return {anchor:meta?.anchor??p.anchor,shotId:meta?.shotId??p.shotId};}
  const effects=preparations.filter(p=>p.kind==='sfx'&&(!selectedShotId||placement(p).anchor==='shot'&&placement(p).shotId===selectedShotId)),absoluteEffects=selectedShotId?preparations.filter(p=>p.kind==='sfx'&&placement(p).anchor==='absolute'):[],other=preparations.filter(p=>p.kind==='bgm'?kind==='bgm':p.kind==='source'&&(!selectedShotId||p.shotId===selectedShotId));
- async function applySound(edit:WorkspaceAudioEdit){setBusy(true);setError('');try{if(bridge)setLive(await bridge.applyNativeEdit('apply-audio-mix',{edit}));else{const saved=current.current;reading.publish(await command('mixWorkspaceAudio',{episodeId:saved.episodeId,workspaceId:saved.id,expectedRevision:saved.revision,edit}) as ProductionWorkspace);}return true;}catch(cause){setError(cause instanceof Error?cause.message:'音效修改未保存。');return false;}finally{setBusy(false);}}
- async function reconcile(p:typeof preparations[number],recover=false){setBusy(true);setError('');try{if(recover&&p.generationTask)await reconcileWorkspaceOutput(w.episodeId,p.generationTask);reading.publish(await reading.read());}catch(cause){setError(cause instanceof Error?cause.message:'音频状态未能核对，请重试。');}finally{setBusy(false);}}
+ async function applySound(edit:WorkspaceAudioEdit){return perform(async saved=>{
+  if(bridge)setLive(await bridge.applyNativeEdit('apply-audio-mix',{edit}));
+  else reading.publish(await command('mixWorkspaceAudio',{episodeId:saved.episodeId,workspaceId:saved.id,expectedRevision:saved.revision,edit}) as ProductionWorkspace);
+ },'音效修改未保存。');}
+ async function reconcile(p:typeof preparations[number],recover=false){await perform(async()=>{
+  if(recover&&p.generationTask)await reconcileWorkspaceOutput(w.episodeId,p.generationTask);await reading.read();
+ },'音频状态未能核对，请重试。');}
  function candidate(p:typeof preparations[number]){
   const sound=currentSound(p),ready=['completed','ready'].includes(p.status)&&(!p.taskId||p.status==='completed');
   const task=workspaceTaskPresentation(p.generationTask??{status:p.status});

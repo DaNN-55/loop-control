@@ -56,7 +56,8 @@ export function useWorkspaceCaptionOperation(options:Options){
     if(observed.scriptRevisionId!==attempt.base.scriptRevisionId)throw Error('工程脚本已变化，请重新核对字幕。');
     const saved=observed.captions?.find(c=>c.clipId===options.clipId||c.itemId===options.itemId);
     if(attempt.native&&JSON.stringify(saved?.contract)!==JSON.stringify(attempt.native))throw Error('工程字幕已变化，请核对当前内容后重新操作。');
-    if(!attempt.native&&observed.project.sha256!==attempt.base.project.sha256)throw Error('工程内容已变化，请重新核对字幕。');
+    // A non-native save may have committed a new SHA. The frozen command must reach
+    // the Owner receipt lookup before its original CAS can reject an unrelated change.
    }
    if(attempt.phase==='save-native'){
     await current.bridge!.save();check();phase('read-base');

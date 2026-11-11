@@ -8,7 +8,7 @@ export interface WorkspaceReading {
  /** Fence outstanding replies synchronously when the owner accepts a command result. */
  observe(value:ProductionWorkspace|null):void;
  poll(load?:WorkspaceLoader):Promise<boolean>;
- idle():Promise<void>;
+ idle():Promise<ProductionWorkspace|null>;
 }
 /** Reading belongs to one workspace and target. Drafts and mutations stay with their callers. */
 export function useWorkspaceReading(workspace:ProductionWorkspace|null,onChange:(value:ProductionWorkspace)=>void,targetItemId:string,readError:string):WorkspaceReading{
@@ -43,7 +43,7 @@ export function useWorkspaceReading(workspace:ProductionWorkspace|null,onChange:
   }
   return {read,publish(value:ProductionWorkspace){publish(value);},
    async poll(load?:WorkspaceLoader){if(!active||requests.size)return false;await read(load);return true;},
-   async idle(){if(active&&requests.size)await new Promise<void>(resolve=>idleWaiters.add(resolve));},
+   async idle(){if(active&&requests.size)await new Promise<void>(resolve=>idleWaiters.add(resolve));return active?latest:null;},
    observe(value:ProductionWorkspace|null){
     if(value&&workspace&&(value.id!==workspace.id||value.episodeId!==workspace.episodeId)){end();return;}
     if(value!==provided){provided=value;if(value&&value!==latest&&(!latest||value.revision>=latest.revision)){latest=value;accepted=++issued;}}
