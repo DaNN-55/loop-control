@@ -1,3 +1,4 @@
+import {uiText} from '../../i18n/ui';
 import {useState,type ComponentProps} from 'react';
 import {Dialog,Modal,ModalOverlay} from 'react-aria-components';
 import {Maximize,X} from 'lucide-react';
@@ -19,7 +20,7 @@ export function ImagePreview({src,alt='',...props}:ComponentProps<'img'>){
  const [expandedSource,setExpandedSource]=useState<string|null>(null);
  const title=alt||'图片';
  return <>
-  <button type="button" className="media-image-trigger" aria-label={`放大${title}`} disabled={!src} onClick={()=>setExpandedSource(src??null)}>
+  <button type="button" className="media-image-trigger" aria-label={uiText("放大{value0}",{value0:String(title)})} disabled={!src} onClick={()=>setExpandedSource(src??null)}>
    <img {...props} src={src} alt={alt}/>
    <span aria-hidden="true"><Maximize size={16}/></span>
   </button>

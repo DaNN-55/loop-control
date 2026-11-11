@@ -1,5 +1,7 @@
 "use client";
 
+import {uiText} from '../../../../../i18n/ui';
+
 import { type ComponentType, type HTMLAttributes, type ReactNode, type Ref, createContext, useContext, useState } from "react";
 import { Eye, EyeOff, HelpCircle, InfoCircle } from "@untitledui/icons";
 import type { InputProps as AriaInputProps, TextFieldProps as AriaTextFieldProps } from "react-aria-components";
@@ -176,7 +178,7 @@ export const InputBase = ({
             {type === "password" && (
                 <AriaButton
                     isDisabled={isDisabled || inputProps.disabled || context?.isDisabled || undefined}
-                    aria-label={`${isPasswordVisible?"隐藏":"显示"}${passwordVisibilityLabel}`}
+                    aria-label={uiText(isPasswordVisible?"隐藏{label}":"显示{label}",{label:uiText(passwordVisibilityLabel)})}
                     aria-pressed={isPasswordVisible}
                     onPress={() => setIsPasswordVisible(!isPasswordVisible)}
                     className={cx(

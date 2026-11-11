@@ -1,0 +1,20 @@
+export const compactConnections:Record<string,string>={
+ '连接资料已变化，请重新打开核对；本次修改保留。':'Connection details changed. Reopen to review; your edits are retained.',
+ '此连接资料暂不可修改。':'Connection details cannot be edited right now.',
+ '此连接暂不可更换密钥。':'The key cannot be replaced right now.',
+ '已保存；测试连接需单独执行。':'Saved. Test the connection separately.',
+ '未找到该版本的密钥引用，请重新读取连接。':'No key reference found for this version. Reload connections.',
+ '当前版本':'Current version','历史版本':'Previous version','保存时间':'Saved','已记录引用':'Recorded usage','其他引用':'Other references',
+ '生产单 {episodes} · 任务 {tasks} · 在途 {active}':'Orders {episodes} · Tasks {tasks} · Active {active}',
+ '蓝图 {blueprints} · 请求 {requests} · 已保存选择 {selections}':'Blueprints {blueprints} · Requests {requests} · Saved selections {selections}',
+ '密钥已重新绑定，需重新测试。':'Key rebound. Test this version again.',
+ '恢复认证材料':'Restore credentials','版本':'Version','当前':'Current','查看版本 {version}':'View version {version}',
+ '尚无版本记录。':'No versions yet.','连接设置':'Connection settings','名称、服务或模型':'Name, service or model',
+ '连接 / 服务':'Connection / service','模型 / 状态':'Model / status','在途 {count}':'Active {count}',
+ '管理连接 {name}':'Manage connection {name}','共 {count} 个连接':'{count} connections',
+ '留空保留原 Key；填写后创建新版本。':'Leave blank to keep the key. A new key creates a new version.',
+ '此服务没有可用的账务接口。':'This service has no available billing API.','历史任务保持原连接版本。':'Existing tasks retain their original version.',
+ '确认撤销 v{version}':'Revoke v{version}','关闭连接配置':'Close connection settings','模型设置暂不可用。':'Model settings are unavailable.',
+ '未分类':'Uncategorized','返回连接详情':'Back to connection','返回版本记录':'Back to version history','已保存':'Saved','连接':'Connection','模型':'Models','用量与计费':'Usage & billing','记录':'History',
+ '查看历史密钥':'View previous key','复制历史密钥':'Copy previous key','连接说明':'Description','测试当前版本':'Test current version'
+};

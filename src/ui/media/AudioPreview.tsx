@@ -1,3 +1,4 @@
+import {uiText} from '../../i18n/ui';
 import {useEffect,useImperativeHandle,useRef,useState,type AudioHTMLAttributes,type Ref} from 'react';
 import {I18nProvider} from '@videojs/react';
 import {Audio,AudioPlayer,AudioSkin} from '@videojs/react/audio';
@@ -25,5 +26,5 @@ export function AudioPreview({ref,src,autoPlay=false,onPlaybackError,preload='me
   onWaiting={event=>{setLoading(true);onWaiting?.(event);}}
   onCanPlay={event=>{setLoading(false);onCanPlay?.(event);}}
   onPlaying={event=>{setLoading(false);onPlaying?.(event);}}
-  onError={event=>{setFailed(true);setLoading(false);onError?.(event);onPlaybackError?.('音频未能加载，请重试。');}}/></AudioSkin>{loading&&!failed&&<p className="app-media-feedback" role="status">正在加载音频…</p>}{failed&&<div className="app-media-feedback"><p role="alert">音频未能加载，请重试。</p><button type="button" onClick={()=>{setFailed(false);setLoading(true);retry(value=>value+1);}}>重试加载音频</button></div>}</AudioPlayer></I18nProvider>;
+  onError={event=>{setFailed(true);setLoading(false);onError?.(event);onPlaybackError?.('音频未能加载，请重试。');}}/></AudioSkin>{loading&&!failed&&<p className="app-media-feedback" role="status">{uiText("正在加载音频…")}</p>}{failed&&<div className="app-media-feedback"><p role="alert">{uiText("音频未能加载，请重试。")}</p><button type="button" onClick={()=>{setFailed(false);setLoading(true);retry(value=>value+1);}}>{uiText("重试加载音频")}</button></div>}</AudioPlayer></I18nProvider>;
 }

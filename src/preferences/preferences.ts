@@ -1,8 +1,9 @@
+import type {UiLocale} from '../i18n/types.js';
 export type NotificationKind = 'review' | 'failure' | 'delivery';
 export interface OwnerPreferences {
   displayName: string;
   avatar: string | null;
-  language: 'zh-CN';
+  language: UiLocale;
   appearance: 'light' | 'dark' | 'system';
   compactRows: boolean;
   notifications: Record<NotificationKind, boolean> & {inApp?:boolean;macOS?:boolean};
@@ -18,7 +19,7 @@ export function parseOwnerPreferences(value: unknown): OwnerPreferences {
   const n = p.notifications as Record<string, unknown> | undefined;
   if (Object.keys(p).some(key=>!['displayName','avatar','language','appearance','compactRows','notifications'].includes(key)) ||
       typeof p.displayName !== 'string' || p.displayName.trim().length > 60 || /[\u0000-\u001f\u007f]/.test(p.displayName) ||
-      p.language !== 'zh-CN' || !['light','dark','system'].includes(String(p.appearance)) || typeof p.compactRows !== 'boolean' ||
+      !['zh-CN','en-US'].includes(String(p.language)) || !['light','dark','system'].includes(String(p.appearance)) || typeof p.compactRows !== 'boolean' ||
       !n || typeof n !== 'object' || Array.isArray(n) || Object.keys(n).some(key=>!['review','failure','delivery','inApp','macOS'].includes(key)) ||
       ['review','failure','delivery'].some(key=>typeof n[key] !== 'boolean') ||
       ['inApp','macOS'].some(key=>key in n&&typeof n[key]!=='boolean')) throw Error('偏好字段无效。');

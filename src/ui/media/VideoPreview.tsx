@@ -1,3 +1,4 @@
+import {uiText} from '../../i18n/ui';
 import {useCallback,useEffect,useRef,useState} from 'react';
 import {Container,Controls,Gesture,Hotkey,I18nProvider,MuteButton,PlayButton,StatusAnnouncer,VolumeSlider} from '@videojs/react';
 import {Video,VideoPlayer} from '@videojs/react/video';
@@ -47,28 +48,28 @@ function VideoPreviewSource({src,title,poster,className,'aria-label':label,prelo
  const displayTime=clipped?`${hasTrim?'片段 ':''}${clipTime.toFixed(2)} / ${clipDuration.toFixed(2)}`:`${hasTrim?sourceLabel+' ':''}${time.toFixed(2)} / ${duration.toFixed(2)}`;
  const update=()=>{if(media.current){setTime(media.current.currentTime);onTimeChange?.(media.current.currentTime);}};
  const mode=()=>{const element=media.current;setWhole(!whole);if(element){element.pause();element.playbackRate=whole?playbackRate:1;if(whole&&segment)element.currentTime=segment.start;setTime(element.currentTime);}};
- return <>{expanded&&<div aria-hidden="true" className={className} style={inlineSize}/>}<I18nProvider locale="zh-CN"><VideoPlayer key={attempt}><Container ref={dialog} popover={expanded?"manual":undefined} data-expanded={expanded||undefined} role={expanded?"dialog":undefined} aria-modal={expanded||undefined} onKeyDown={event=>{if(expanded&&event.key==='Escape'){event.preventDefault();event.stopPropagation();setExpanded(false);}}} className={`app-video-player ${className??''}`} tabIndex={0} aria-label={`${title}播放器`}>
-  {expanded&&<button className="media-focus-close" type="button" aria-label="关闭放大预览" data-dialog-initial-focus onClick={()=>setExpanded(false)}><X size={22}/></button>}
-  {downloadHref&&<a className="app-video-download" href={downloadHref} download aria-label="下载视频" title="下载视频"><Download size={16} aria-hidden="true"/></a>}
-  <Video ref={attachMedia} src={src} poster={poster} aria-label={label??`${title}视频预览`} preload={preload} playsInline
+ return <>{expanded&&<div aria-hidden="true" className={className} style={inlineSize}/>}<I18nProvider locale="zh-CN"><VideoPlayer key={attempt}><Container ref={dialog} popover={expanded?"manual":undefined} data-expanded={expanded||undefined} role={expanded?"dialog":undefined} aria-modal={expanded||undefined} onKeyDown={event=>{if(expanded&&event.key==='Escape'){event.preventDefault();event.stopPropagation();setExpanded(false);}}} className={`app-video-player ${className??''}`} tabIndex={0} aria-label={uiText("{value0}播放器",{value0:String(title)})}>
+  {expanded&&<button className="media-focus-close" type="button" aria-label={uiText("关闭放大预览")} data-dialog-initial-focus onClick={()=>setExpanded(false)}><X size={22}/></button>}
+  {downloadHref&&<a className="app-video-download" href={downloadHref} download aria-label={uiText("下载视频")} title={uiText("下载视频")}><Download size={16} aria-hidden="true"/></a>}
+  <Video ref={attachMedia} src={src} poster={poster} aria-label={label??uiText("{value0}视频预览",{value0:String(title)})} preload={preload} playsInline
    onLoadStart={()=>{if(preload!=='none')setLoading(true);}} onWaiting={()=>setLoading(true)} onCanPlay={()=>setLoading(false)} onPlaying={()=>setLoading(false)}
    onError={()=>{setFailed(true);setLoading(false);onError?.();}}
    onLoadedMetadata={event=>{const player=event.currentTarget;setDuration(Number.isFinite(player.duration)?player.duration:0);if(Number.isFinite(player.duration))onDuration?.(player.duration);player.playbackRate=clipped?playbackRate:1;if(clipped)player.currentTime=start;setTime(player.currentTime);setLoading(false);}}
    onPlay={event=>{const player=event.currentTarget;player.playbackRate=clipped?playbackRate:1;if(clipped&&(player.currentTime<start||player.currentTime>=lastFrame))player.currentTime=start;update();}}
    onSeeking={event=>{const player=event.currentTarget;if(clipped&&(player.currentTime<start||player.currentTime>lastFrame))player.currentTime=Math.max(start,Math.min(lastFrame,player.currentTime));update();}}
    onTimeUpdate={event=>{const player=event.currentTarget;if(clipped){if(player.currentTime<start)player.currentTime=start;else if(player.currentTime>=lastFrame){if(!player.paused)player.pause();player.currentTime=lastFrame;}}update();}}/>
-  {loading&&!failed&&<p className="app-media-feedback" role="status">正在加载视频…</p>}
-  {failed&&<div className="app-media-feedback"><p role="alert">视频未能加载，请重试。</p><button type="button" onClick={()=>{setFailed(false);setLoading(true);retry(value=>value+1);}}>重试加载视频</button></div>}
+  {loading&&!failed&&<p className="app-media-feedback" role="status">{uiText("正在加载视频…")}</p>}
+  {failed&&<div className="app-media-feedback"><p role="alert">{uiText("视频未能加载，请重试。")}</p><button type="button" onClick={()=>{setFailed(false);setLoading(true);retry(value=>value+1);}}>{uiText("重试加载视频")}</button></div>}
   <Controls.Root visibility="always"><Controls.Content className="app-video-controls">
-   <input className="app-video-progress" type="range" aria-label={hasTrim&&clipped?'片段进度':'视频进度'} aria-valuetext={`${displayTime} 秒`} min={start} max={Math.max(start,lastFrame)} step={segment?.frameDuration??0.01} value={Math.max(start,Math.min(lastFrame,time))} disabled={failed||end<=start} onChange={event=>{if(media.current){media.current.currentTime=Number(event.target.value);update();}}}/>
-   <Controls.Group className="app-video-toolbar" aria-label="视频播放控制">
-    <PlayButton render={(button,state)=><button {...button} aria-label={state.paused?'播放视频':'暂停视频'}>{state.paused?<Play size={16}/>:<Pause size={16}/>}</button>}/>
+   <input className="app-video-progress" type="range" aria-label={hasTrim&&clipped?uiText("片段进度"):uiText("视频进度")} aria-valuetext={uiText("{value0} 秒",{value0:String(displayTime)})} min={start} max={Math.max(start,lastFrame)} step={segment?.frameDuration??0.01} value={Math.max(start,Math.min(lastFrame,time))} disabled={failed||end<=start} onChange={event=>{if(media.current){media.current.currentTime=Number(event.target.value);update();}}}/>
+   <Controls.Group className="app-video-toolbar" aria-label={uiText("视频播放控制")}>
+    <PlayButton render={(button,state)=><button {...button} aria-label={state.paused?uiText("播放视频"):uiText("暂停视频")}>{state.paused?<Play size={16}/>:<Pause size={16}/>}</button>}/>
     <span className="app-video-time">{displayTime} s</span>
-    {hasTrim&&<span className="app-video-range-context">{clipped?`${sourceLabel} ${time.toFixed(2)} / ${duration.toFixed(2)} s`:`当前片段 ${segment.start.toFixed(2)}–${segment.end.toFixed(2)} s`}</span>}
-    {hasTrim&&<button className="app-video-range-toggle" type="button" onClick={mode}>{whole?'仅播放当前片段':`查看整段${sourceLabel}`}</button>}
-    <MuteButton render={(button,state)=><button {...button} aria-label={state.muted?'取消静音':'静音'}>{state.muted?<VolumeX size={16}/>:<Volume2 size={16}/>}</button>}/>
-    <VolumeSlider.Root className="app-video-volume"><VolumeSlider.Track className="app-video-volume-track"><VolumeSlider.Fill className="app-video-volume-fill"/></VolumeSlider.Track><VolumeSlider.Thumb className="app-video-volume-thumb" aria-label="音量"/></VolumeSlider.Root>
-    <button type="button" aria-label="放大视频预览" hidden={expanded} onClick={openFocus}><Maximize size={16}/></button>
+    {hasTrim&&<span className="app-video-range-context">{clipped?`${sourceLabel} ${time.toFixed(2)} / ${duration.toFixed(2)} s`:uiText("当前片段 {value0}–{value1} s",{value0:String(segment.start.toFixed(2)),value1:String(segment.end.toFixed(2))})}</span>}
+    {hasTrim&&<button className="app-video-range-toggle" type="button" onClick={mode}>{whole?uiText("仅播放当前片段"):uiText("查看整段{value0}",{value0:String(sourceLabel)})}</button>}
+    <MuteButton render={(button,state)=><button {...button} aria-label={state.muted?uiText("取消静音"):uiText("静音")}>{state.muted?<VolumeX size={16}/>:<Volume2 size={16}/>}</button>}/>
+    <VolumeSlider.Root className="app-video-volume"><VolumeSlider.Track className="app-video-volume-track"><VolumeSlider.Fill className="app-video-volume-fill"/></VolumeSlider.Track><VolumeSlider.Thumb className="app-video-volume-thumb" aria-label={uiText("音量")}/></VolumeSlider.Root>
+    <button type="button" aria-label={uiText("放大视频预览")} hidden={expanded} onClick={openFocus}><Maximize size={16}/></button>
    </Controls.Group>
   </Controls.Content></Controls.Root>
   <Gesture type="tap" pointer="mouse" action="togglePaused"/>

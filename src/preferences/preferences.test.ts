@@ -2,7 +2,7 @@ import {expect,it} from 'vitest';
 import {defaultOwnerPreferences,parseOwnerPreferences} from './preferences';
 it('normalizes display names and rejects unsupported preference fields at the boundary',()=>{
  expect(parseOwnerPreferences({...defaultOwnerPreferences,displayName:'  Dan  '})).toEqual({...defaultOwnerPreferences,displayName:'Dan'});
- for(const patch of [{displayName:'x'.repeat(61)},{displayName:'a\nb'},{language:'en-US'},{appearance:'blue'},{compactRows:'yes'},{unknown:true},{notifications:{review:true,failure:false}},{notifications:{review:true,failure:true,delivery:true,unknown:true}}])expect(()=>parseOwnerPreferences({...defaultOwnerPreferences,...patch})).toThrow();
+ for(const patch of [{displayName:'x'.repeat(61)},{displayName:'a\nb'},{language:'fr-FR'},{appearance:'blue'},{compactRows:'yes'},{unknown:true},{notifications:{review:true,failure:false}},{notifications:{review:true,failure:true,delivery:true,unknown:true}}])expect(()=>parseOwnerPreferences({...defaultOwnerPreferences,...patch})).toThrow();
 });
 it('reads legacy preferences without an avatar and validates bounded raster data URLs',()=>{
  const {avatar,...legacy}=defaultOwnerPreferences;expect(parseOwnerPreferences(legacy).avatar).toBeNull();
@@ -16,3 +16,5 @@ it('keeps channels independent while reading legacy category preferences',()=>{
  expect(parseOwnerPreferences({...legacy,notifications:{...legacy.notifications,inApp:false,macOS:true}}).notifications).toEqual({review:false,failure:true,delivery:true,inApp:false,macOS:true});
  for(const patch of [{inApp:'false'},{macOS:null}])expect(()=>parseOwnerPreferences({...legacy,notifications:{...legacy.notifications,...patch}})).toThrow();
 });
+
+it('accepts supported product languages and keeps the stored selection',()=>{expect(parseOwnerPreferences({...defaultOwnerPreferences,language:'en-US'}).language).toBe('en-US');});

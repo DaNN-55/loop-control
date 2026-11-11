@@ -1,5 +1,7 @@
 "use client";
 
+import {uiText} from "../../../../../i18n/ui";
+
 import { type FC, type KeyboardEvent, type SelectHTMLAttributes, useEffect, useId, useRef, useState } from "react";
 import { Header, ListBox, ListBoxItem, ListBoxSection, Popover } from "react-aria-components";
 import { ArrowUpRight, Check, Settings, SlidersHorizontal } from "lucide-react";
@@ -12,6 +14,8 @@ import { cx } from "../../../utils/cx";
 interface NativeSelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, "size"> {
     /** Context icon inside the control and options. Pass null to omit it. */
     icon?: FC<{ className?: string; "aria-hidden"?: boolean | "true" | "false" }> | null;
+    /** Optional per-value icons in the popup; an explicit null omits the icon. */
+    optionIcons?: Record<string, FC<{ className?: string; "aria-hidden"?: boolean | "true" | "false" }> | null>;
     /** Text rendered in a label above the select and linked to it by a generated id. */
     label?: string;
     /** Helper text rendered below the select and referenced by its `aria-describedby`. */
@@ -45,7 +49,7 @@ type MenuOption = { id: string; value: string; label: string; disabled: boolean;
 type MenuGroup = { id: string; label?: string; options: MenuOption[] };
 type MenuSnapshot = { groups: MenuGroup[]; label: string };
 
-export const NativeSelect = ({ icon: Icon = SlidersHorizontal, label, hint, options, popupAction, children, className, selectClassName, size = "md", id: providedId, ...props }: NativeSelectProps) => {
+export const NativeSelect = ({ icon: Icon = SlidersHorizontal, label, hint, options, optionIcons, popupAction, children, className, selectClassName, size = "md", id: providedId, ...props }: NativeSelectProps) => {
     const id = useId();
     const selectId = providedId ?? `select-native-${id}`;
     const labelId = `${selectId}-label`;
@@ -73,7 +77,7 @@ export const NativeSelect = ({ icon: Icon = SlidersHorizontal, label, hint, opti
         });
         const caption = select.labels?.[0]?.cloneNode(true) as HTMLElement | undefined;
         caption?.querySelectorAll("select,.dan-select-field,.help-tip,input,button,textarea,[role=button],small,.field-hint").forEach(element => element.remove());
-        setMenu({ groups, label: props["aria-label"] || label || caption?.textContent?.trim() || "选项" });
+        setMenu({ groups, label: props["aria-label"] || label || caption?.textContent?.trim() || uiText("选项") });
         setOpen(true);
     }
 
@@ -194,7 +198,7 @@ export const NativeSelect = ({ icon: Icon = SlidersHorizontal, label, hint, opti
     }, [props.form]);
 
     const menuOptions = menu?.groups.flatMap(group => group.options) ?? [];
-    const renderOption = (option: MenuOption) => <ListBoxItem id={option.id} key={option.id} textValue={option.label || "空选项"} onAction={() => { if (!props.multiple) closeMenu(); }} className="dan-select-option">{Icon && <Icon aria-hidden="true" className="dan-select-option-icon"/>}<span>{option.label}</span><Check aria-hidden="true" className="dan-select-option-check"/></ListBoxItem>;
+    const renderOption = (option: MenuOption) => { const OptionIcon = optionIcons && Object.prototype.hasOwnProperty.call(optionIcons,option.value) ? optionIcons[option.value] : Icon; return <ListBoxItem id={option.id} key={option.id} textValue={option.label || uiText("空选项")} onAction={() => { if (!props.multiple) closeMenu(); }} className="dan-select-option">{OptionIcon && <OptionIcon aria-hidden="true" className="dan-select-option-icon"/>}<span>{option.label}</span><Check aria-hidden="true" className="dan-select-option-check"/></ListBoxItem>; };
 
     return (
         <div className={cx("w-full in-data-input-wrapper:w-max dan-select-field", className)} data-select-size={size}>
@@ -274,7 +278,7 @@ export const NativeSelect = ({ icon: Icon = SlidersHorizontal, label, hint, opti
                 />
             </div>
 
-            <Popover isOpen={open} onOpenChange={next => { if (next) setOpen(true); else closeMenu(); }} triggerRef={selectRef} placement="bottom start" offset={6} containerPadding={12} className="dan-ui product-ui dan-select-popover" aria-label={menu ? `${menu.label}选项` : "选项"} data-select-popup="true"><div onKeyDownCapture={leaveMenu} onClickCapture={event => {
+            <Popover isOpen={open} onOpenChange={next => { if (next) setOpen(true); else closeMenu(); }} triggerRef={selectRef} placement="bottom start" offset={6} containerPadding={12} className="dan-ui product-ui dan-select-popover" aria-label={menu ? uiText("{label}选项",{label:menu.label}) : uiText("选项")} data-select-popup="true"><div onKeyDownCapture={leaveMenu} onClickCapture={event => {
                 if (props.multiple) return;
                 const item = (event.target as Element).closest('[role="option"]');
                 const key = item?.getAttribute("data-key");
@@ -285,7 +289,7 @@ export const NativeSelect = ({ icon: Icon = SlidersHorizontal, label, hint, opti
                     choose(new Set([key]));
                 }
             }}>
-                <ListBox id={listId} aria-label={menu?.label || "选项"} selectionMode={props.multiple ? "multiple" : "single"} selectedKeys={new Set(menuOptions.filter(option => option.selected).map(option => option.id))} disabledKeys={menuOptions.filter(option => option.disabled).map(option => option.id)} onSelectionChange={choose} autoFocus="first" className="dan-select-listbox">
+                <ListBox id={listId} aria-label={menu?.label || uiText("选项")} selectionMode={props.multiple ? "multiple" : "single"} selectedKeys={new Set(menuOptions.filter(option => option.selected).map(option => option.id))} disabledKeys={menuOptions.filter(option => option.disabled).map(option => option.id)} onSelectionChange={choose} autoFocus="first" className="dan-select-listbox">
                     {menu?.groups.map(group => group.label ? <ListBoxSection id={group.id} key={group.id}><Header className="dan-select-group-label">{group.label}</Header>{group.options.map(renderOption)}</ListBoxSection> : group.options.map(renderOption))}
                 </ListBox>
                 {popupAction && <div className="dan-select-action-footer">
