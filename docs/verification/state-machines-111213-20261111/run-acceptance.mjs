@@ -1,0 +1,10 @@
+import {readFile,open} from 'node:fs/promises';
+import {spawn} from 'node:child_process';
+import {join} from 'node:path';
+const evidence=join(process.cwd(),'docs/verification/state-machines-111213-20261111'),worktree=process.env.LOOP_ACCEPTANCE_WORKTREE;
+if(!worktree)throw Error('Set LOOP_ACCEPTANCE_WORKTREE to the owned isolated checkout');
+const d=JSON.parse(await readFile(join(evidence,'isolation.json'),'utf8')),name=process.argv[2]??'13-integration-final.log';
+if(!/^[a-z0-9-]+\.log$/.test(name))throw Error('Invalid log name');
+const log=await open(join(evidence,name),'w');
+const child=spawn('npx',['vitest','run','src/local-app/mediaRootRecovery13.browser.integration.test.ts','--maxWorkers=1','--fileParallelism=false','--reporter=verbose'],{cwd:worktree,env:{PATH:process.env.PATH,HOME:process.env.HOME,TMPDIR:process.env.TMPDIR,DOCKER_HOST:'unix://'+join(process.env.HOME,'.colima/loop-control/docker.sock'),LOOP_STATE13_ACCEPTANCE:'1',LOOP_TEST_CONTEXT_MODULE:d.context,LOOP_TEST_OPENCHATCUT_ROOT:d.sdk,OPENCHATCUT_ROOT:d.sdk,LOOP_STATE13_EVIDENCE:evidence,LOOP_T16_EVIDENCE:evidence,LOOP_T06_EVIDENCE_DIR:evidence},stdio:['ignore',log.fd,log.fd]});
+child.on('exit',async code=>{await log.close();process.exitCode=code;});

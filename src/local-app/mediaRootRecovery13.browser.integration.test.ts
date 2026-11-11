@@ -17,7 +17,7 @@ it.skipIf(process.env.LOOP_STATE13_ACCEPTANCE!=='1')('real Owner storage UI reop
  const browser=async(...args:string[])=>(await exec('agent-browser',['--session',session,...args],{timeout:30000,maxBuffer:4*1024*1024})).stdout;
  const click=(name:string)=>browser('find','role','button','click','--name',name,'--exact');
  const text=(value:string)=>browser('wait','--text',value);
- const capture=async(name:string)=>{await browser('wait','--fn','document.getAnimations().every(a=>a.playState!=="running")');await browser('screenshot',join(output,name));};
+ const capture=async(name:string)=>{await browser('wait','--fn','document.getAnimations().filter(a=>a.effect?.getTiming().iterations!==Infinity).every(a=>a.playState!=="running")');await browser('screenshot',join(output,name));};
  try{
   await prepareCollectionTargets(f);
   const old=(await f.c.query('SELECT * FROM local_identity.episode_storage_location($1)',[f.episode])).rows[0];
