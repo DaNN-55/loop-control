@@ -1,0 +1,285 @@
+=== create-red (excerpt) ===
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/LocalCatalogApp.receipts.test.tsx
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/local-app/LocalCatalogApp.receipts.test.tsx (1 test | 1 failed) 1144ms
+   × accepts the created order when catalog refresh fails, and retry only reads the catalog 1143ms
+     → expected <div class="modal-backdrop" …(3)>…(1)</div> to be null
+
+Ignored nodes: comments, script, style
+[36m<html[39m
+  [33mdata-interface[39m=[32m"impeccable"[39m
+... [DOM / middle output omitted] ...
+          创建生产单
+        </span>
+      </button>
+    </div>
+  </form>
+</div>
+
+ ❯ src/local-app/LocalCatalogApp.receipts.test.tsx:20:72
+     18|  render(<LocalCatalogApp/>);fireEvent.click(await screen.findByRole('b…
+     19|  fireEvent.change(screen.getByRole('textbox',{name:'工作标题（可留空）'}),{targ…
+     20|  await waitFor(()=>expect(screen.queryByRole('dialog',{name:'新建生产单'}))…
+       |                                                                        ^
+     21|  expect(screen.getByRole('alert').textContent).toContain('生产单已创建');exp…
+     22|  offline=false;await act(async()=>fireEvent.click(screen.getByRole('bu…
+ ❯ runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  13:17:17
+   Duration  3.40s (transform 559ms, setup 8ms, collect 1.77s, tests 1.14s, environment 297ms, prepare 38ms)
+
+
+=== life-red (excerpt) ===
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/LocalCatalogApp.receipts.test.tsx
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/local-app/LocalCatalogApp.receipts.test.tsx (2 tests | 1 failed) 1331ms
+   ✓ accepts the created order when catalog refresh fails, and retry only reads the catalog 192ms
+   × accepts archive acknowledgement even when the following read fails and only retries the read 1139ms
+     → expected <div class="modal-backdrop" …(3)>…(1)</div> to be null
+
+Ignored nodes: comments, script, style
+[36m<html[39m
+... [DOM / middle output omitted] ...
+          确认归档
+        </span>
+      </button>
+    </div>
+  </form>
+</div>
+
+ ❯ src/local-app/LocalCatalogApp.receipts.test.tsx:36:72
+     34|  const user=userEvent.setup();render(<LocalCatalogApp/>);await user.cl…
+     35|  await user.click(within(screen.getByRole('dialog',{name:'归档生产单'})).ge…
+     36|  await waitFor(()=>expect(screen.queryByRole('dialog',{name:'归档生产单'}))…
+       |                                                                        ^
+     37|  offline=false;await user.click(screen.getByRole('button',{name:'重新读取'…
+     38| });
+ ❯ runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  13:18:50
+   Duration  3.53s (transform 564ms, setup 7ms, collect 1.76s, tests 1.33s, environment 266ms, prepare 36ms)
+
+
+=== model-red (excerpt) ===
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/LocalConnectionsPanel.reading.test.tsx
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/local-app/LocalConnectionsPanel.reading.test.tsx (1 test | 1 failed) 1190ms
+   × closes an acknowledged model save despite a failed directory read and retry only reads 1189ms
+     → expected <section …(5)>…(3)</section> to be null
+
+Ignored nodes: comments, script, style
+[36m<html[39m
+  [33mstyle[39m=[32m"scrollbar-gutter: stable; overflow: hidden;"[39m
+... [DOM / middle output omitted] ...
+      type="button"
+    >
+      <span
+        class="transition-inherit-all px-0.5"
+        data-text="true"
+      >
+        保存设置
+      </span>
+    </button>
+  </footer>
+</section>
+
+ ❯ src/local-app/LocalConnectionsPanel.reading.test.tsx:21:78
+
+ ❯ runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  13:20:12
+   Duration  2.30s (transform 126ms, setup 8ms, collect 831ms, tests 1.19s, environment 120ms, prepare 26ms)
+
+
+=== reading-red (excerpt) ===
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/LocalConnectionsPanel.reading.test.tsx
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/local-app/LocalConnectionsPanel.reading.test.tsx (3 tests | 2 failed) 263ms
+   ✓ closes an acknowledged model save despite a failed directory read and retry only reads 178ms
+   × does not let an earlier success replace a newer directory or its feedback 58ms
+     → Unable to find an accessible element with the role "button" and name "新目录"
+
+Here are the accessible roles:
+
+... [DOM / middle output omitted] ...
+    </svg>
+    <span
+      class="transition-inherit-all px-0.5"
+      data-text="true"
+    >
+      重新读取连接
+    </span>
+  </button>
+</div>
+
+ ❯ src/local-app/LocalConnectionsPanel.reading.test.tsx:31:160
+     29|  await act(async()=>reads[1].finish(Response.json(catalog('新目录'))));aw…
+     30|  await act(async()=>reads[0].finish(late==='success'?Response.json(cat…
+     31|  expect(screen.getByRole('button',{name:'新目录'})).toBeTruthy();expect(s…
+       |                                                                                                                                                                ^
+     32| });
+     33|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 1 passed (3)
+   Start at  13:20:57
+   Duration  1.52s (transform 125ms, setup 7ms, collect 873ms, tests 263ms, environment 232ms, prepare 31ms)
+
+
+=== pending-read-red (excerpt) ===
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/LocalCatalogApp.receipts.test.tsx
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/local-app/LocalCatalogApp.receipts.test.tsx (4 tests | 1 failed) 1475ms
+   ✓ accepts the created order after refresh failure and supports retry without another write 184ms
+   ✓ accepts the created order after refresh failure and supports dismiss without another write 117ms
+   ✓ accepts archive acknowledgement even when the following read fails and only retries the read 118ms
+   × closes creation as soon as the write is acknowledged while the directory read is still pending 1055ms
+     → expected <div class="modal-backdrop" …(3)>…(1)</div> to be null
+
+... [DOM / middle output omitted] ...
+          正在处理…
+        </span>
+      </button>
+    </div>
+  </form>
+</div>
+
+ ❯ src/local-app/LocalCatalogApp.receipts.test.tsx:49:72
+     47|  }));
+     48|  render(<LocalCatalogApp/>);fireEvent.click(await screen.findByRole('b…
+     49|  await waitFor(()=>expect(screen.queryByRole('dialog',{name:'新建生产单'}))…
+       |                                                                        ^
+     50|  await act(async()=>{for(const finish of waiting)finish(Response.json(…
+     51| });
+ ❯ runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  13:24:12
+   Duration  3.58s (transform 540ms, setup 7ms, collect 1.70s, tests 1.48s, environment 245ms, prepare 34ms)
+
+
+=== label-red (excerpt) ===
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/LocalConnectionsPanel.reading.test.tsx
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/local-app/LocalConnectionsPanel.reading.test.tsx (6 tests | 2 failed) 408ms
+   × closes an acknowledged model save despite a failed directory read and retry only reads 165ms
+     → expected '操作未确认完成模型设置已保存；连接目录刷新失败，请重新读取。重新读取连接' not to contain '操作未确认完成'
+   ✓ does not let an earlier success replace a newer directory or its feedback 17ms
+   ✓ does not let an earlier failure replace a newer directory or its feedback 21ms
+   ✓ retains a rejected model edit and retries the same unacknowledged write instead of claiming success 104ms
+   ✓ aborts the directory request when leaving and keeps a reopened visit independent of the late result 16ms
+... [DOM / middle output omitted] ...
+
+Expected: "操作未确认完成"
+Received: "操作未确认完成模型设置已保存；连接目录刷新失败，请重新读取。重新读取连接"
+
+ ❯ src/local-app/LocalConnectionsPanel.reading.test.tsx:21:207
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/local-app/LocalConnectionsPanel.reading.test.tsx > accepts a model acknowledgement before a held follow-up read finishes
+AssertionError: expected '操作未确认完成模型设置已保存；连接目录刷新失败，请重新读取。重新读取连接' not to contain '操作未确认完成'
+
+Expected: "操作未确认完成"
+Received: "操作未确认完成模型设置已保存；连接目录刷新失败，请重新读取。重新读取连接"
+
+ ❯ src/local-app/LocalConnectionsPanel.reading.test.tsx:61:190
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 4 passed (6)
+   Start at  13:32:24
+   Duration  1.77s (transform 137ms, setup 8ms, collect 926ms, tests 408ms, environment 283ms, prepare 38ms)
+
+
+=== review-red (excerpt) ===
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/LocalCatalogApp.receipts.test.tsx src/local-app/LocalConnectionsPanel.reading.test.tsx
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/local-app/LocalConnectionsPanel.reading.test.tsx (6 tests | 1 failed) 484ms
+   × closes an acknowledged model save despite a failed directory read and retry only reads 205ms
+     → expected '连接操作结果连接目录读取失败。重新读取连接' to contain '模型设置已保存'
+   ✓ does not let an earlier success replace a newer directory or its feedback 23ms
+   ✓ does not let an earlier failure replace a newer directory or its feedback 18ms
+   ✓ retains a rejected model edit and retries the same unacknowledged write instead of claiming success 117ms
+   ✓ aborts the directory request when leaving and keeps a reopened visit independent of the late result 19ms
+... [DOM / middle output omitted] ...
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/local-app/LocalCatalogApp.receipts.test.tsx:23:264
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/local-app/LocalConnectionsPanel.reading.test.tsx > closes an acknowledged model save despite a failed directory read and retry only reads
+AssertionError: expected '连接操作结果连接目录读取失败。重新读取连接' to contain '模型设置已保存'
+
+Expected: "模型设置已保存"
+Received: "连接操作结果连接目录读取失败。重新读取连接"
+
+ ❯ src/local-app/LocalConnectionsPanel.reading.test.tsx:22:109
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 10 passed (12)
+   Start at  13:36:19
+   Duration  3.07s (transform 697ms, setup 17ms, collect 3.02s, tests 1.14s, environment 619ms, prepare 79ms)

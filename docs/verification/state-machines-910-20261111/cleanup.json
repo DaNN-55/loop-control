@@ -1,0 +1,13 @@
+{
+  "validatedCommit": "3a6cd124",
+  "isolatedTrackedDiffBeforeCleanup": [],
+  "isolatedWorktreeRemoved": true,
+  "ownScratchRemoved": true,
+  "ownBrowserClosed": true,
+  "ports": {
+    "5198": "",
+    "5174": "COMMAND   PID USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME\nnode    46204  dan   27u  IPv4 0xf421a6ac54ffcef1      0t0  TCP 127.0.0.1:5174 (LISTEN)",
+    "5199": "COMMAND   PID USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME\nnode    95745  dan   25u  IPv4 0x1a8049261c488e63      0t0  TCP 127.0.0.1:5199 (LISTEN)"
+  },
+  "pushed": false
+}

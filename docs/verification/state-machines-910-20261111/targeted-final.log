@@ -1,0 +1,27 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/LocalCatalogApp.receipts.test.tsx src/local-app/LocalConnectionsPanel.reading.test.tsx src/local-app/LocalConnectionsPanel.test.tsx src/local-app/LocalCatalogApp.test.tsx src/local-app/LocalCatalogApp.workspace.test.tsx src/local-app/LocalCatalogApp.episode-dialog.test.tsx src/connections/ConnectionModelsDialog.test.tsx src/connections/ConnectionOrganization.test.tsx
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/LocalConnectionsPanel.reading.test.tsx (6 tests) 607ms
+   ✓ closes an acknowledged model save despite a failed directory read and retry only reads  303ms
+ ✓ src/connections/ConnectionModelsDialog.test.tsx (16 tests) 1531ms
+   ✓ offers models only in generation connection actions and leaves the create form unchanged  320ms
+ ✓ src/local-app/LocalCatalogApp.receipts.test.tsx (6 tests) 918ms
+ ✓ src/local-app/LocalCatalogApp.episode-dialog.test.tsx (2 tests) 850ms
+   ✓ inherits the filtered account into creation and resets every list scope with valid pagination  604ms
+ ✓ src/local-app/LocalCatalogApp.test.tsx (16 tests) 1939ms
+   ✓ keeps a committed series save successful when its follow-up read fails  412ms
+ ✓ src/connections/ConnectionOrganization.test.tsx (13 tests) 909ms
+   ✓ starts with the reference table and opens the single editor on demand  374ms
+ ✓ src/local-app/LocalConnectionsPanel.test.tsx (9 tests) 675ms
+ ✓ src/local-app/LocalCatalogApp.workspace.test.tsx (13 tests) 3156ms
+   ✓ 保留安全弹窗焦点，从所有者菜单打开连接配置且跨页保留连接草稿  634ms
+   ✓ cleanupPending=false, initially archived=true: confirms the directory and title before deleting  320ms
+   ✓ cleanupPending=true, initially archived=true: confirms the directory and title before deleting  399ms
+   ✓ keeps one topbar instance and places the Owner menu after theme in workspace and episode  431ms
+
+ Test Files  8 passed (8)
+      Tests  81 passed (81)
+   Start at  13:36:48
+   Duration  5.32s (transform 1.10s, setup 31ms, collect 9.91s, tests 10.58s, environment 2.01s, prepare 277ms)
