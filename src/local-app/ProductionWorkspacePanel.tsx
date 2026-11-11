@@ -24,7 +24,8 @@ import {WorkspaceAudioPreparation} from './WorkspaceAudioPanel';
 import {WorkspaceExportPanel} from './WorkspaceExportPanel';
 import {WorkspaceNarrationPanel} from './WorkspaceNarrationPanel';
 import {WorkspaceCaptionsPanel} from './WorkspaceCaptionsPanel';
-import {Activity,useEffect,useMemo,useRef,useState,useSyncExternalStore,type ComponentProps,type ReactNode} from 'react';
+import {Activity,useEffect,useId,useMemo,useRef,useState,useSyncExternalStore,type ComponentProps,type ReactNode} from 'react';
+import {Check} from 'lucide-react';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {EmbeddedStudioHost} from './EmbeddedStudioHost';
 import {localRequest} from './client';
@@ -37,6 +38,7 @@ interface Material {id:string;material_type:string;source_path:string;storage_pa
 const materialUploadSession=workspaceUploadSessions<WorkspaceUploadEntry>();
 const steps=[workflowStepLabels.script,workflowStepLabels.preparation,workflowStepLabels.editing,workflowStepLabels.delivery] as const;
 export function ProductionWorkspacePanel({episodeId,title,titleActions,scriptRevisionId,boardId,materials,command,onStudioActionChange,audioTracks,legacySnapshot,historicalReadOnly=false,stage='storyboard_approved',archivedAt,notice,preparationEntry}:{preparationEntry?:{shotId?:string;targetItemId?:string};episodeId:string;title:string;titleActions?:ReactNode;scriptRevisionId:string|null;boardId?:string;materials:Material[];command:(name:string,data:unknown)=>Promise<unknown>;onLegacy:()=>void;audioTracks?:ComponentProps<typeof WorkspaceNarrationPanel>['tracks'];onStudioActionChange?:(action:(()=>void)|null)=>void;legacySnapshot?:EpisodeProductionSnapshot;historicalReadOnly?:boolean;stage?:string;archivedAt?:string|null;notice?:ReactNode}){
+ const stepStatusId=useId();
  const requestDraftLeave=useWorkspaceDraftLeave();
  const navigation=useWorkspaceNavigation(episodeId);
  const navigationRef=useRef(navigation);navigationRef.current=navigation;
@@ -199,14 +201,16 @@ export function ProductionWorkspacePanel({episodeId,title,titleActions,scriptRev
   .filter(clip=>clip.shotId===shot.shotId)
   .every(clip=>workspaceShotSource(clip,nativeProject)&&!workspace.readiness.placeholders.includes(clip.itemId))).length;
  const pendingVoices=workspace?.narration?.filter(n=>n.mode!=='none'&&!n.adoptedAudioTrackId).length??0;
- const stepSummaries=[scriptRevisionId&&stage!=='waiting_input'?'已确认':'待确认',workspace?`${uniqueClips.length-visualReady+pendingVoices} 项待准备`:'尚未准备',readOnly?'只读':workspace?.captions?.length?workspace.captions.every(c=>!c.contract.enabled||c.timing==='current')?'可剪辑':'字幕待校时':'待剪辑',workspace?.deliveries?.some(d=>d.verified)?'已交付':workspace?.exports?.[0]?.confirmed?'已确认':'待确认'];
+ const scriptConfirmed=!!scriptRevisionId&&stage!=='waiting_input',delivered=!!workspace?.deliveries?.some(d=>d.verified),exportConfirmed=!!workspace?.exports?.[0]?.confirmed;
+ const confirmedSteps=[scriptConfirmed,false,false,delivered||exportConfirmed];
+ const stepSummaries=[scriptConfirmed?'已确认':'待确认',workspace?`${uniqueClips.length-visualReady+pendingVoices} 项待准备`:'尚未准备',readOnly?'只读':workspace?.captions?.length?workspace.captions.every(c=>!c.contract.enabled||c.timing==='current')?'可剪辑':'字幕待校时':'待剪辑',delivered?'已交付':exportConfirmed?'已确认':'待确认'];
  const selectedSegment=scriptState.format==='structured'&&workspace?.scriptRevisionId===scriptRevisionId?scriptState.parsed.segments.find(segment=>segment.id===selectedShot?.shotId):undefined;
  const selectedClips=workspace?.clips.filter(clip=>clip.shotId===selectedShot?.shotId)??[];
  const selectedPreview=selectedClips.find(clip=>clip.itemId===previewItemId)??selectedClips[0];
  return <>
   <section ref={workspaceRoot} data-compact-workflow className={`production-workspace${session?' is-editing':''}`} aria-label="四步制作工作流">
    <header className="production-workspace-title">{(title?.trim()||readOnly)&&<div className="production-workspace-heading">{title?.trim()&&<h2>{title}</h2>}{readOnly&&<span>{historicalReadOnly?'历史只读':stage==='production_completed'?'制作已完成':'已归档'}</span>}</div>}
-   <nav aria-label="四步制作步骤">{steps.map((label,index)=><button key={label} aria-label={step===index?`${label}，当前查看`:label} aria-current={step===index?'page':undefined} disabled={!!session||editorOpening} onClick={()=>{if(index!==step)requestDraftLeave(()=>{manuallySelectedStep.current=true;studioRequested.current=index===2;setStep(index);});}}><span>{index+1}</span>{label}<small>{loaded?stepSummaries[index]:loadError?'读取失败':'读取中'}</small></button>)}</nav>{titleActions&&<div className="production-workspace-title-actions">{titleActions}</div>}</header>
+   <nav aria-label="四步制作步骤">{steps.map((label,index)=><button key={label} aria-label={step===index?`${label}，当前查看`:label} aria-describedby={`${stepStatusId}-${index}`} aria-current={step===index?'page':undefined} data-complete={loaded&&confirmedSteps[index]||undefined} disabled={!!session||editorOpening} onClick={()=>{if(index!==step)requestDraftLeave(()=>{manuallySelectedStep.current=true;studioRequested.current=index===2;setStep(index);});}}><span aria-hidden="true">{loaded&&confirmedSteps[index]?<Check size={14} strokeWidth={2.5}/>:index+1}</span>{label}<small id={`${stepStatusId}-${index}`}>{loaded?stepSummaries[index]:loadError?'读取失败':'读取中'}</small></button>)}</nav>{titleActions&&<div className="production-workspace-title-actions">{titleActions}</div>}</header>
    {notice}{displayedError&&!notice&&!shotToDelete&&<p role="alert" className="workspace-operation-error">{displayedError}</p>}{legacyPrompt&&!readOnly&&<section className="production-workspace-section workspace-legacy-choice" aria-label="旧剪辑工作版本处理"><Button size="sm" color="primary" isDisabled={pending} onPress={()=>void prepare('preserve').catch(()=>{})}>保留旧编辑并继续</Button><Button size="sm" color="secondary" isDisabled={pending} onPress={()=>void prepare('fresh').catch(()=>{})}>封存旧工程并建立初稿</Button></section>}
    {!loaded&&!loadError&&<p role="status">正在读取制作流程…</p>}{loadError&&<div role="alert"><p>{loadError}</p><Button size="sm" color="secondary" onPress={()=>setLoadAttempt(value=>value+1)}>重新读取制作流程</Button></div>}
    {workspace?.stale&&!readOnly&&stage==='waiting_input'&&<section className="production-workspace-section workspace-replan-notice" aria-label="恢复原工程"><p role="status">{workspace.scriptResume?.reason??'脚本修改待确认，原工程已暂停编辑。请先确认脚本，原工程与素材均已保留。'}</p>{workspace.scriptResume?.canReuse?<Button size="sm" color="primary" isDisabled={pending} onPress={()=>{const w=current.current!;void run('resumeWorkspaceEditing',{episodeId,workspaceId:w.id,expectedRevision:w.revision,expectedScriptRevisionId:scriptRevisionId,expectedProjectSha256:w.project.sha256}).then(v=>{update(v as ProductionWorkspace);setStep(1);}).catch(()=>{});}}>确认排版修订，继续原工程</Button>:<Button size="sm" color="secondary" onPress={()=>requestDraftLeave(()=>setStep(0))}>核对脚本</Button>}</section>}

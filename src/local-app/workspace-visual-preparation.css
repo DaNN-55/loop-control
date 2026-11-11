@@ -233,7 +233,7 @@ html[data-interface="impeccable"] .product-ui .workspace-result-actions>button[d
 .workspace-results-gallery>.workspace-thumbnail-rail .workspace-thumbnail-adopted{width:12px;height:12px}
 .workspace-results-gallery>.workspace-thumbnail-rail .workspace-thumbnail-pending .workspace-visual-progress{box-sizing:border-box;height:78px;padding:3px;gap:3px;font-size:10px}
 
-.workspace-results-gallery:has(>.workspace-thumbnail-rail[data-kind=image]){--workspace-thumbnail-rail-width:60px}
+.workspace-results-gallery:has(>.workspace-thumbnail-rail[data-kind=image]){--workspace-thumbnail-rail-width:76px}
 
 .workspace-preview-actions{position:absolute;top:10px;right:10px;display:flex;align-items:center;gap:6px}
 .workspace-preview-actions>.workspace-preview-zoom{position:static;box-sizing:border-box;display:grid;place-items:center;width:32px;height:32px;padding:7px;border-radius:6px;text-decoration:none}
