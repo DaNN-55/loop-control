@@ -96,7 +96,7 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
  const speechSettings:Settings=defaults??{selection:null,voice:'',languageCode:'zh-CN',speakingRate:1};
  const task=workspaceTaskPresentation(n.generationTask??{status:n.status});
  const canGenerate=compatible(speechSettings,services)&&!!text.trim()&&!task.unknown&&!task.held;
- const reader=useWorkspaceReading(workspace,onChanged,n.shotId,'无法读取当前工程版本。');
+ const reader=useWorkspaceReading(workspace,onChanged,JSON.stringify([manualKey,expanded,mode]),'无法读取当前工程版本。');
  const review=useWorkspaceCandidateReview({workspace,scope:JSON.stringify([n.shotId,expanded,mode]),reader,command});
  const narrationMaterials=materials.filter(m=>m.material_type==='audio'&&canUseWorkspaceAudioMaterial(m.material_purpose,'narration'));
  const narrationTracks=tracks.filter(t=>t.track_kind==='narration');

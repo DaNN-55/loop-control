@@ -134,3 +134,10 @@ it('reopens after an unknown HTTP confirmation and replays its frozen key withou
  render(<f.View ownerId="http-manual-owner"/>);fireEvent.click(screen.getByRole('button',{name:'重试加入候选'}));await screen.findByRole('button',{name:'采用'});
  expect(confirmKeys).toHaveLength(2);expect(confirmKeys[1]).toBe(confirmKeys[0]);expect(f.calls.filter(c=>c.name==='saveWorkspaceNarration')).toHaveLength(1);expect(f.calls.filter(c=>c.name==='confirmWorkspaceNarration')).toHaveLength(1);expect(f.stored.revision).toBe(3);
 });
+it('does not publish a late initial read after the manual narration visit switches shots',async()=>{
+ const f=setup(),changed=vi.fn();let finish!:(r:Response)=>void;
+ vi.stubGlobal('fetch',vi.fn(async(path:string)=>path.endsWith('/workspace')?new Promise<Response>(resolve=>{finish=resolve;}):Response.json({serviceCatalog:{version:1,groups:[]}})));
+ const viewFor=(shot:string)=><WorkspaceDraftOwner ownerId="manual-read-owner"><WorkspaceMaterialSelectionProvider materials={materials}><WorkspaceNarrationPanel episodeId="e" workspace={f.stored} selectedShotId={shot} pending={false} command={f.command} onChanged={changed} materials={materials}/></WorkspaceMaterialSelectionProvider></WorkspaceDraftOwner>;
+ const view=render(viewFor('S01'));drop('first');await waitFor(()=>expect(finish).toBeTypeOf('function'));view.rerender(viewFor('S02'));
+ await act(async()=>finish(Response.json({workspace:{...f.stored,revision:2}})));expect(changed).not.toHaveBeenCalled();expect(f.command).not.toHaveBeenCalled();
+});
