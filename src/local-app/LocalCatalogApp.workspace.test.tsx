@@ -42,12 +42,12 @@ it('保留安全弹窗焦点，从所有者菜单打开连接配置且跨页保�
   requests.push(path);
   if(path.endsWith('/session'))return Response.json({csrfToken:'fixture',owner:{id,email:'owner@example.test'}});
   if(path.includes('/catalog?'))return Response.json({...data,episodes:[]});
-  if(path.endsWith('/deletion-cleanups'))return Response.json([]);
+  if(path.endsWith('/recycle-bin'))return Response.json({items:[],limitBytes:5e9,settingsRevision:1,usedBytes:0,pendingBytes:0,overLimit:false});if(path.endsWith('/deletion-cleanups'))return Response.json([]);
   return Response.json({connections:[],versions:[],pending:[],capabilities:{secrets:'keychain',verification:'live',externalReady:false,networkAvailable:false}});
  }));
  await act(async()=>{render(<LocalCatalogApp/>);});
  const owner=screen.getByRole('button',{name:'所有者设置'});
- await user.click(owner);expect(screen.getAllByRole('menuitem').map(item=>item.textContent)).toEqual(['个人偏好','通知','登录与安全','日志','文件清理','连接配置','退出登录']);
+ await user.click(owner);expect(screen.getAllByRole('menuitem').map(item=>item.textContent)).toEqual(['个人偏好','通知','登录与安全','日志','回收站','连接配置','退出登录']);
  await user.click(screen.getByRole('menuitem',{name:'登录与安全'}));
  const security=screen.getByRole('dialog',{name:'登录与安全'}),password=within(security).getByRole('form',{name:'登录与安全'});
  expect(within(security).getByRole('region',{name:'当前登录身份'}).textContent).toContain('owner@example.test');
@@ -64,7 +64,7 @@ it('保留安全弹窗焦点，从所有者菜单打开连接配置且跨页保�
  await user.click(within(maintenance).getByRole('button',{name:'新建连接'}));
  await user.type(await screen.findByRole('textbox',{name:'连接名称'}),'未提交的连接草稿');
  await user.click(screen.getByRole('button',{name:'返回连接列表'}));
- await user.click(screen.getByRole('button',{name:'保留修改并关闭'}));
+ await user.click(screen.getByRole('button',{name:'保留修改并离开'}));
  await user.click(within(maintenance).getByRole('button',{name:'关闭连接配置'}));
  expect(screen.queryByRole('dialog',{name:'连接配置'})).toBeNull();
  expect(screen.getByRole('heading',{name:'内容工作台'})).toBeTruthy();
@@ -76,78 +76,41 @@ it('保留安全弹窗焦点，从所有者菜单打开连接配置且跨页保�
  await user.click(await within(maintenance).findByRole('button',{name:'新建连接'}));
  expect((screen.getByRole('textbox',{name:'连接名称'})as HTMLInputElement).value).toBe('未提交的连接草稿');
  await user.click(screen.getByRole('button',{name:'返回连接列表'}));
- await user.click(screen.getByRole('button',{name:'保留修改并关闭'}));
+ await user.click(screen.getByRole('button',{name:'保留修改并离开'}));
  await user.keyboard('{Escape}');
  expect(screen.queryByRole('dialog',{name:'连接配置'})).toBeNull();
  expect(requests.filter(path=>path.includes('/history-episodes?'))).toHaveLength(0);
 });
 
-it.each([[false,true],[true,true],[false,false]])('cleanupPending=%s, initially archived=%s: confirms the directory and title before deleting',async(cleanupPending,initiallyArchived)=>{
- const user=userEvent.setup(),commands:Array<{command:string;data:unknown}>=[];
- let deleted=false,archived=initiallyArchived;
+it.each([true,false])('moves archived=%s production orders to the recycle bin without archiving or permanently deleting',async(initiallyArchived)=>{
+ const user=userEvent.setup(),commands:Array<{command:string;data:unknown}>=[];let recycled=false;
  vi.stubGlobal('crypto',webcrypto);
  vi.stubGlobal('fetch',vi.fn(async(path:string,init?:RequestInit)=>{
   if(path.endsWith('/session'))return Response.json({csrfToken:'delete-csrf',owner:{id,email:'owner@example.test'}});
-  if(path.includes('/catalog?'))return Response.json({...data,total:deleted?0:1,episodeCount:deleted?0:1,accountCounts:{[id]:deleted?0:1},episodes:deleted?[]:[{...data.episodes[0],is_test:false,archived_at:archived?at:null}]});
-  if(path.endsWith('/deletion-cleanups'))return Response.json([{cleanupKey:'pending-cleanup',title:'待清理样例',path:'/fixture/episode',stagingPaths:['/fixture/staged']}]);
-  if(path.endsWith('/episode-lifecycle')){
-   expect(new Headers(init?.headers).get('X-CSRF-Token')).toBe('delete-csrf');
-   const body=JSON.parse(String(init?.body));commands.push(body);
-   if(body.command==='archiveEpisode'){expect(body.data).toEqual({episodeId:episode,archived:true});archived=true;return Response.json({archived});}
-   if(body.command==='planDeletion')return Response.json({path:'/fixture/episodes/'+episode,paths:['/fixture/episodes/'+episode,'/external/account/episodes/'+episode],revision:'fixture-revision',confirmation:'普通长度完整生产单'});
-   expect(body).toMatchObject({command:'deleteEpisode',data:{episodeId:episode,confirmation:'普通长度完整生产单',expectedPath:'/fixture/episodes/'+episode,expectedPaths:['/fixture/episodes/'+episode,'/external/account/episodes/'+episode],expectedRevision:'fixture-revision'}});
-   deleted=true;return Response.json({cleanupPending,cleanupKey:'pending-cleanup'});
-  }
+  if(path.includes('/catalog?'))return Response.json({...data,total:recycled?0:1,episodes:recycled?[]:[{...data.episodes[0],is_test:false,archived_at:initiallyArchived?at:null}]});
+  if(path.endsWith('/recycle-bin')){expect(new Headers(init?.headers).get('X-CSRF-Token')).toBe('delete-csrf');const body=JSON.parse(String(init?.body));commands.push(body);expect(body).toMatchObject({command:'recycleEpisode',data:{episodeId:episode}});recycled=true;return Response.json({recycled:true,revision:'member-revision',sizeBytes:1200});}
   return Response.json({connections:[],versions:[]});
  }));
- await act(async()=>{render(<LocalCatalogApp/>);});
- await user.click(within(screen.getByRole('complementary',{name:'主导航'})).getByRole('button',{name:'生产单'}));
+ await act(async()=>{render(<LocalCatalogApp/>);});await user.click(within(screen.getByRole('complementary',{name:'主导航'})).getByRole('button',{name:'生产单'}));
  if(initiallyArchived)await user.selectOptions(await screen.findByRole('combobox',{name:'归档范围'}),'archived');
- await user.click(await screen.findByRole('button',{name:'生产单操作：普通长度完整生产单'}));
- await user.click(screen.getByRole('menuitem',{name:initiallyArchived?'永久删除':'删除生产单'}));
- if(!initiallyArchived){
-  expect(commands).toHaveLength(0);
-  await user.click(screen.getByRole('button',{name:'归档并继续'}));
- }
- const expectedCommands=initiallyArchived?['planDeletion']:['archiveEpisode','planDeletion'];
- const modal=await screen.findByRole('form',{name:'永久删除生产单'}),confirm=within(modal).getByRole('button',{name:'确认永久删除'});
- expect((confirm as HTMLButtonElement).disabled).toBe(true);
- expect(await within(modal).findByText('/fixture/episodes/'+episode)).toBeTruthy();
- expect(within(modal).getByText('/external/account/episodes/'+episode)).toBeTruthy();
- expect(within(modal).getByRole('list',{name:'已核查的生产单目录'}).children).toHaveLength(2);
- await user.type(within(modal).getByLabelText('永久删除确认文本'),'错误标题');
- expect((confirm as HTMLButtonElement).disabled).toBe(true);expect(commands.map(c=>c.command)).toEqual(expectedCommands);
- await user.clear(within(modal).getByLabelText('永久删除确认文本'));
- await user.type(within(modal).getByLabelText('永久删除确认文本'),'普通长度完整生产单');
- await user.click(confirm);
- await waitFor(()=>expect(screen.queryByRole('form',{name:'永久删除生产单'})).toBeNull());
- expect(commands.map(c=>c.command)).toEqual([...expectedCommands,'deleteEpisode']);
- expect(screen.queryByText('普通长度完整生产单')).toBeNull();
- if(cleanupPending){const action=screen.getByRole('button',{name:'查看清理任务'});expect(action.closest('[role=status]')?.textContent).toContain('文件清理尚未完成');await user.click(action);const task=await screen.findByRole('article',{name:'待清理样例'});expect(document.activeElement).toBe(task);expect(location.search).toContain('cleanupTask=pending-cleanup');await user.click(screen.getByRole('button',{name:'关闭文件清理'}));await waitFor(()=>expect(screen.queryByRole('dialog',{name:'文件清理'})).toBeNull());expect(document.activeElement).toBe(screen.getByRole('button',{name:'所有者设置'}));}
+ await user.click(await screen.findByRole('button',{name:'生产单操作：普通长度完整生产单'}));await user.click(screen.getByRole('menuitem',{name:'删除生产单'}));
+ const modal=screen.getByRole('dialog',{name:'移入回收站'});expect(commands).toHaveLength(0);expect(within(modal).getByText(/可恢复到原账号与系列/)).toBeTruthy();
+ expect(screen.queryByRole('textbox',{name:'永久删除确认文本'})).toBeNull();await user.click(within(modal).getByRole('button',{name:'移入回收站'}));
+ await waitFor(()=>expect(screen.queryByRole('dialog',{name:'移入回收站'})).toBeNull());await waitFor(()=>expect(screen.queryByText('普通长度完整生产单')).toBeNull());expect(commands.map(c=>c.command)).toEqual(['recycleEpisode']);
 });
 
-it.each(['plan','delete'])('shows a %s failure inside the confirmation dialog instead of leaving the click without feedback',async(failureAt)=>{
- const user=userEvent.setup(),commands:string[]=[];
- vi.stubGlobal('crypto',webcrypto);
+it.each([404,409])('keeps a rejected recycle operation (%s) inside its confirmation for retry',async(status)=>{
+ const user=userEvent.setup(),commands:string[]=[];let calls=0;vi.stubGlobal('crypto',webcrypto);
  vi.stubGlobal('fetch',vi.fn(async(path:string,init?:RequestInit)=>{
-  if(path.endsWith('/session'))return Response.json({csrfToken:'plan-error-csrf',owner:{id,email:'owner@example.test'}});
-  if(path.includes('/catalog?'))return Response.json({...data,total:1,episodes:[{...data.episodes[0],title:'测试',is_test:false,archived_at:at}]});
-  if(path.endsWith('/episode-lifecycle')){const body=JSON.parse(String(init?.body));commands.push(body.command);if(body.command==='planDeletion'&&failureAt==='delete')return Response.json({path:'/mapped/episodes/'+episode,revision:'revision',confirmation:'测试'});return Response.json({error:failureAt==='plan'?'本地生产单不可见。':'生产单有运行任务，暂时不能删除。'},{status:failureAt==='plan'?404:409});}
+  if(path.endsWith('/session'))return Response.json({csrfToken:'recycle-csrf',owner:{id,email:'owner@example.test'}});
+  if(path.includes('/catalog?'))return Response.json({...data,total:1,episodes:[{...data.episodes[0],title:'测试',archived_at:null}]});
+  if(path.endsWith('/recycle-bin')){commands.push(JSON.parse(String(init?.body)).command);calls++;return calls===1?Response.json({error:status===404?'本地生产单不可见。':'生产单有运行任务，暂时不能删除。'},{status}):Response.json({recycled:true});}
   return Response.json({connections:[],versions:[]});
  }));
- await act(async()=>{render(<LocalCatalogApp/>);});
- await user.click(within(screen.getByRole('complementary',{name:'主导航'})).getByRole('button',{name:'生产单'}));
- await user.selectOptions(await screen.findByRole('combobox',{name:'归档范围'}),'archived');
- await user.click(await screen.findByRole('button',{name:'生产单操作：测试'}));
- await user.click(screen.getByRole('menuitem',{name:'永久删除'}));
- const modal=screen.getByRole('form',{name:'永久删除生产单'});
- if(failureAt==='delete'){await within(modal).findByText('/mapped/episodes/'+episode);await user.type(within(modal).getByLabelText('永久删除确认文本'),'测试');await user.click(within(modal).getByRole('button',{name:'确认永久删除'}));}
- expect((await within(modal).findByRole('alert')).textContent).toContain(failureAt==='plan'?'本地生产单不可见。':'生产单有运行任务');
- expect(screen.getByRole('form',{name:'永久删除生产单'})).toBeTruthy();
- if(failureAt==='plan')expect((within(modal).getByRole('button',{name:'确认永久删除'}) as HTMLButtonElement).disabled).toBe(true);
- expect(commands).toEqual(failureAt==='plan'?['planDeletion']:['planDeletion','deleteEpisode']);
+ await act(async()=>{render(<LocalCatalogApp/>);});await user.click(within(screen.getByRole('complementary',{name:'主导航'})).getByRole('button',{name:'生产单'}));await user.click(await screen.findByRole('button',{name:'生产单操作：测试'}));await user.click(screen.getByRole('menuitem',{name:'删除生产单'}));
+ const modal=screen.getByRole('dialog',{name:'移入回收站'});await user.click(within(modal).getByRole('button',{name:'移入回收站'}));expect((await within(modal).findByRole('alert')).textContent).toContain(status===404?'本地生产单不可见':'生产单有运行任务');expect(document.querySelector('.floating-notices')).toBeNull();
+ await user.click(within(modal).getByRole('button',{name:'移入回收站'}));await waitFor(()=>expect(screen.queryByRole('dialog',{name:'移入回收站'})).toBeNull());expect(commands).toEqual(['recycleEpisode','recycleEpisode']);
 });
-
 
 it('keeps one topbar instance and places the Owner menu after theme in workspace and episode',async()=>{
  const user=userEvent.setup();vi.stubGlobal('crypto',webcrypto);
@@ -190,11 +153,11 @@ it('恢复失败留在确认框内且可重试，成功后关闭；操作错误�
 });
 it('opens durable file cleanup from the Owner menu, preserves list context and restores focus on close',async()=>{
  history.replaceState(null,'','/?view=episodes&page=2');vi.stubGlobal('crypto',webcrypto);const requests:string[]=[];
- vi.stubGlobal('fetch',vi.fn(async(path:string)=>{requests.push(path);if(path.endsWith('/session'))return Response.json({csrfToken:'fixture',owner:{id,email:'owner@example.test'}});if(path.includes('/catalog?'))return Response.json(data);if(path.endsWith('/deletion-cleanups'))return Response.json([{cleanupKey:'pending-one',title:'待清理样例',path:'/fixture/episode',stagingPaths:['/fixture/staged']}]);return Response.json({connections:[],versions:[]});}));
+ vi.stubGlobal('fetch',vi.fn(async(path:string)=>{requests.push(path);if(path.endsWith('/session'))return Response.json({csrfToken:'fixture',owner:{id,email:'owner@example.test'}});if(path.includes('/catalog?'))return Response.json(data);if(path.endsWith('/recycle-bin'))return Response.json({items:[],limitBytes:5e9,settingsRevision:1,usedBytes:0,pendingBytes:0,overLimit:false});if(path.endsWith('/deletion-cleanups'))return Response.json([{cleanupKey:'pending-one',title:'待清理样例',path:'/fixture/episode',stagingPaths:['/fixture/staged']}]);return Response.json({connections:[],versions:[]});}));
  const user=userEvent.setup();await act(async()=>{render(<LocalCatalogApp/>);});expect(requests.some(path=>path.endsWith('/deletion-cleanups'))).toBe(false);
- const owner=screen.getByRole('button',{name:'所有者设置'});await user.click(owner);await user.click(screen.getByRole('menuitem',{name:'文件清理'}));const dialog=await screen.findByRole('dialog',{name:'文件清理'});await within(dialog).findByRole('article',{name:'待清理样例'});await waitFor(()=>expect(location.search).toContain('cleanupOpen=1'));expect(location.search).toContain('page=2');
- await user.click(within(dialog).getByRole('button',{name:'关闭文件清理'}));await waitFor(()=>expect(screen.queryByRole('dialog',{name:'文件清理'})).toBeNull());expect(document.activeElement).toBe(owner);expect(location.search).not.toContain('cleanupOpen');
- await user.click(owner);await user.click(screen.getByRole('menuitem',{name:'文件清理'}));await screen.findByRole('dialog',{name:'文件清理'});await waitFor(()=>expect(location.search).toContain('cleanupOpen=1'));await act(async()=>{history.back();});await waitFor(()=>expect(screen.queryByRole('dialog',{name:'文件清理'})).toBeNull());expect(location.search).toContain('page=2');
+ const owner=screen.getByRole('button',{name:'所有者设置'});await user.click(owner);await user.click(screen.getByRole('menuitem',{name:'回收站'}));const dialog=await screen.findByRole('dialog',{name:'回收站'});await user.click(within(dialog).getByText('文件恢复与清理'));await within(dialog).findByRole('article',{name:'待清理样例'});await waitFor(()=>expect(location.search).toContain('cleanupOpen=1'));expect(location.search).toContain('page=2');
+ await user.click(within(dialog).getByRole('button',{name:'关闭回收站'}));await waitFor(()=>expect(screen.queryByRole('dialog',{name:'回收站'})).toBeNull());expect(document.activeElement).toBe(owner);expect(location.search).not.toContain('cleanupOpen');
+ await user.click(owner);await user.click(screen.getByRole('menuitem',{name:'回收站'}));await screen.findByRole('dialog',{name:'回收站'});await waitFor(()=>expect(location.search).toContain('cleanupOpen=1'));await act(async()=>{history.back();});await waitFor(()=>expect(screen.queryByRole('dialog',{name:'回收站'})).toBeNull());expect(location.search).toContain('page=2');
 });
 
 it('opens the full associated catalog from an account deletion blocker and clears stale scope filters',async()=>{

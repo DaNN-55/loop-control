@@ -1,3 +1,4 @@
+import {uiText,getUiLocale} from '../i18n/ui';
 import {useWorkspaceLeaveEntry} from '../local-app/WorkspaceDraft';
 import {useConnectionDrafts} from './ConnectionDraftSession';
 import {ConnectionDraftLeaveDialog} from './ConnectionDraftLeaveDialog';
@@ -63,7 +64,7 @@ function connectionCredential(provider:ExternalConnectionInput['provider'],secre
   return provider==='bailian'?JSON.stringify({apiKey:secret.trim(),workspaceId:workspaceId.trim()}):provider==='minimax'?JSON.stringify({apiKey:secret.trim(),region}):secret;
 }
 
-export function ExternalConnectionPicker({ adapter, connections, isPending = false, label = "外部连接", officialEndpoint, onCreateConnection, onRotateConnection, onSelectVersion, onTestConnection, onUpdateConnection, provider, selectedVersionId, versions = [] }: {
+export function ExternalConnectionPicker({ adapter, connections, isPending = false, label = uiText("外部连接"), officialEndpoint, onCreateConnection, onRotateConnection, onSelectVersion, onTestConnection, onUpdateConnection, provider, selectedVersionId, versions = [] }: {
   adapter: ExternalConnectionInput["adapter"];
   navigation?:PanelNavigation<'connections'>;
   connections: ExternalConnection[];
@@ -83,7 +84,7 @@ export function ExternalConnectionPicker({ adapter, connections, isPending = fal
   const [notice,setNotice]=useState('');
   const busy=isPending||operation!=='';
   async function testCurrent(connectionId:string){if(operationLock.current||!onTestConnection)return;operationLock.current=true;setOperation('testing');setError('');setNotice('');try{return await onTestConnection(connectionId);}finally{operationLock.current=false;setOperation('');}}
-  async function testSaved(connectionId:string){if(!onTestConnection)return;setOperation('testing');const result=await onTestConnection(connectionId) as {detail?:string;ready?:boolean}|undefined;if(result?.ready===false)setError(result.detail??'连接尚未验证通过，请检查当前状态。');else setNotice(result?.detail??'测试请求已结束，请查看当前连接状态。');}
+  async function testSaved(connectionId:string){if(!onTestConnection)return;setOperation('testing');const result=await onTestConnection(connectionId) as {detail?:string;ready?:boolean}|undefined;if(result?.ready===false)setError(result.detail??uiText("连接尚未验证通过，请检查当前状态。"));else setNotice(result?.detail??uiText("测试请求已结束，请查看当前连接状态。"));}
   const [name, setName] = useState("");
   const [secret, setSecret] = useState("");
   const [rotationSecret, setRotationSecret] = useState("");
@@ -118,51 +119,51 @@ export function ExternalConnectionPicker({ adapter, connections, isPending = fal
         await testSaved(connection.id);
         if (connection.current_version_id) onSelectVersion(connection.current_version_id);
       }
-    } catch (cause) { setError(cause instanceof Error ? cause.message : "无法创建外部连接。"); }finally{operationLock.current=false;setOperation('');}
+    } catch (cause) { setError(cause instanceof Error ? cause.message : uiText("无法创建外部连接。")); }finally{operationLock.current=false;setOperation('');}
   }
 
   async function updateCurrentConnection() {
     if (!selectedConnection||operationLock.current) return;
     const name = editName.trim();
     const nextSecret = rotationSecret.trim();
-    if (!name) { setError("连接名称不能为空。"); return; }
+    if (!name) { setError(uiText("连接名称不能为空。")); return; }
     operationLock.current=true;setOperation('saving');setNotice('');setError("");
     try {
       if (name !== selectedConnection.name && onUpdateConnection) await onUpdateConnection({ connectionId: selectedConnection.id, description: selectedConnection.description ?? "", name });
       if (nextSecret && onRotateConnection) {
         const connection = await onRotateConnection({ adapter, connectionId: selectedConnection.id, provider, secret: connectionCredential(provider,nextSecret,workspaceId,minimaxRegion) });
-        if(!connection)throw new Error("连接更新未确认完成，请检查提示后重试。");setRotationSecret("");await testSaved(connection.id);
+        if(!connection)throw new Error(uiText("连接更新未确认完成，请检查提示后重试。"));setRotationSecret("");await testSaved(connection.id);
         if (connection?.current_version_id) onSelectVersion(connection.current_version_id);
       }
       setRotationSecret("");
       setIsEditing(false);
-    } catch (cause) { setError(cause instanceof Error ? cause.message : "无法更新外部连接。"); }finally{operationLock.current=false;setOperation('');}
+    } catch (cause) { setError(cause instanceof Error ? cause.message : uiText("无法更新外部连接。")); }finally{operationLock.current=false;setOperation('');}
   }
 
-  const workspaceField = provider === 'minimax' ? <NativeSelect label="MiniMax 站点" size="sm" disabled={busy||Boolean(selectedConnection&&!rotationSecret.trim())} value={minimaxRegion} onChange={event=>setMinimaxRegion(event.target.value as MiniMaxRegion)} options={minimaxSiteOptions}/> : provider === "bailian" ? <label>百炼业务空间 ID<InputBase size="sm" aria-label="百炼业务空间 ID" autoComplete="off" onChange={(event) => setWorkspaceId(event.target.value)} placeholder="ws-… 或控制台复制的 https://… Base URL" value={workspaceId} /><small>认证更新时请重新填写所属空间；留空使用 DashScope。测试只查模型目录，不生成视频。</small></label> : null;
+  const workspaceField = provider === 'minimax' ? <NativeSelect label={uiText("MiniMax 站点")} size="sm" disabled={busy||Boolean(selectedConnection&&!rotationSecret.trim())} value={minimaxRegion} onChange={event=>setMinimaxRegion(event.target.value as MiniMaxRegion)} options={minimaxSiteOptions.map(item=>({...item,label:uiText(item.label)}))}/> : provider === "bailian" ? <label>{uiText("百炼业务空间 ID")}<InputBase size="sm" aria-label={uiText("百炼业务空间 ID")} autoComplete="off" onChange={(event) => setWorkspaceId(event.target.value)} placeholder={uiText("ws-… 或控制台复制的 https://… Base URL")} value={workspaceId} /><small>{uiText("认证更新时请重新填写所属空间；留空使用 DashScope。测试只查模型目录，不生成视频。")}</small></label> : null;
 
-  return <div className="external-connection-picker" aria-label={`${label}连接`}>
-    {compatibleVersions.length>1?<label>使用已保存连接<NativeSelect size="sm" aria-label={`${label} 使用已保存连接`} disabled={busy} value={selectedVersionId} onChange={event=>onSelectVersion(event.target.value)}><option value="">请选择已验证连接</option>{compatibleVersions.map(version=><option key={version.id} value={version.id}>{connectionNames.get(version.connection_id)??"Owner 连接"} · v{version.version}</option>)}</NativeSelect></label>:null}
-    {!selectedVersionId&&compatibleVersions.length===1?<p className="field-hint">已带入唯一匹配的已验证连接，无需再次填写 API Key。</p>:null}
-    {selectedConnection ? <><section className="external-connection-current"><div><span>当前连接</span><strong>{connectionNames.get(selectedConnection.id) ?? "Owner 连接"}{currentVersion ? ` · v${currentVersion.version} · ${statusLabels[currentVersion.status]}` : " · 未测试"}</strong>{selectedConnection.last_verification_detail ? <small>{selectedConnection.last_verification_detail}</small> : null}</div>{onTestConnection ? <ConnectionTestButton testing={operation==='testing'} disabled={busy} onTest={()=>testCurrent(selectedConnection.id)}/> : null}<Button size="xs" color="secondary" aria-expanded={isEditing} className="button button-secondary button-small" isDisabled={busy} onClick={() => setIsEditing((open) => !open)} type="button">更新连接</Button></section>{isEditing ? <div className="external-connection-edit"><label>连接名称<InputBase size="sm" aria-label="编辑连接名称" isDisabled={busy||!onUpdateConnection} onChange={(event) => setEditName(event.target.value)} value={editName} /></label><label>新的 API Key（可选）<InputBase size="sm" aria-label="编辑连接 API Key" autoComplete="new-password" onChange={(event) => setRotationSecret(event.target.value)} placeholder={provider === "kling" ? "API Key 或 Access Key:Secret Key" : provider === "cloudflare" ? "Account ID:API Token" : provider === "volcengine_tts" ? "豆包语音 API Key" : undefined} type="password" value={rotationSecret} /></label>{workspaceField}<p className="field-hint">只改名称不会创建新版本；填写新的 API Key 才会创建新版本并测试。</p><Button size="xs" color="secondary" className="button button-secondary button-small" isDisabled={busy || (!rotationSecret.trim() && (!onUpdateConnection || !editName.trim() || editName.trim() === selectedConnection.name))} onClick={() => void updateCurrentConnection()} type="button">{operation==='saving'?'保存中…':operation==='testing'?'测试中…':'保存连接更新'}</Button></div> : null}</> : onCreateConnection && compatibleConnections.length===0 ? <form className="external-connection-create" onSubmit={(event) => void create(event)}><p>{provider === "cloudflare" ? "填写 Cloudflare Account ID:Workers AI API Token；验证通过后会直接用于此能力。" : provider === "volcengine_tts" ? "填写新版豆包语音控制台生成的 API Key；测试与正式合成使用同一 V3 接口。" : "创建并测试一条当前连接；验证通过后会直接用于此能力。"}</p><label>连接名称（自定义填写）<InputBase size="sm" aria-label="新连接名称" onChange={(event) => setName(event.target.value)} isRequired value={name} /></label><label>认证材料（填写对应服务的 API Key）<InputBase size="sm" aria-label="新连接认证材料" autoComplete="new-password" onChange={(event) => setSecret(event.target.value)} placeholder={provider === "kling" ? "API Key 或 Access Key:Secret Key" : provider === "cloudflare" ? "Account ID:API Token" : provider === "volcengine_tts" ? "豆包语音 API Key" : undefined} isRequired type="password" value={secret} /></label><Button size="xs" color="secondary" className="button button-secondary button-small" isDisabled={busy || !name.trim() || !secret.trim()} type="submit">{operation==='saving'?'保存中…':operation==='testing'?'测试中…':'创建并测试连接'}</Button></form> : null}
-    {!selectedConnection&&compatibleConnections.length>0?<p className="field-hint">{selectedVersionId?"原连接当前不可用，请显式选择可用版本。":"请选择要关联的已验证连接。"}</p>:null}
+  return <div className="external-connection-picker" aria-label={uiText("{value0}连接",{value0:label})}>
+    {compatibleVersions.length>1?<label>{uiText("使用已保存连接")}<NativeSelect size="sm" aria-label={uiText("{value0} 使用已保存连接",{value0:label})} disabled={busy} value={selectedVersionId} onChange={event=>onSelectVersion(event.target.value)}><option value="">{uiText("请选择已验证连接")}</option>{compatibleVersions.map(version=><option key={version.id} value={version.id}>{connectionNames.get(version.connection_id)??uiText("Owner 连接")} · v{version.version}</option>)}</NativeSelect></label>:null}
+    {!selectedVersionId&&compatibleVersions.length===1?<p className="field-hint">{uiText("已带入唯一匹配的已验证连接，无需再次填写 API Key。")}</p>:null}
+    {selectedConnection ? <><section className="external-connection-current"><div><span>{uiText("当前连接")}</span><strong>{connectionNames.get(selectedConnection.id) ?? uiText("Owner 连接")}{currentVersion ? ` · v${currentVersion.version} · ${uiText(statusLabels[currentVersion.status])}` : uiText(" · 未测试")}</strong>{selectedConnection.last_verification_detail ? <small>{selectedConnection.last_verification_detail}</small> : null}</div>{onTestConnection ? <ConnectionTestButton testing={operation==='testing'} disabled={busy} onTest={()=>testCurrent(selectedConnection.id)}/> : null}<Button size="xs" color="secondary" aria-expanded={isEditing} className="button button-secondary button-small" isDisabled={busy} onClick={() => setIsEditing((open) => !open)} type="button">{uiText("更新连接")}</Button></section>{isEditing ? <div className="external-connection-edit"><label>{uiText("连接名称")}<InputBase size="sm" aria-label={uiText("编辑连接名称")} isDisabled={busy||!onUpdateConnection} onChange={(event) => setEditName(event.target.value)} value={editName} /></label><label>{uiText("新的 API Key（可选）")}<InputBase size="sm" aria-label={uiText("编辑连接 API Key")} autoComplete="new-password" onChange={(event) => setRotationSecret(event.target.value)} placeholder={provider === "kling" ? uiText("API Key 或 Access Key:Secret Key") : provider === "cloudflare" ? "Account ID:API Token" : provider === "volcengine_tts" ? uiText("豆包语音 API Key") : undefined} type="password" value={rotationSecret} /></label>{workspaceField}<p className="field-hint">{uiText("只改名称不会创建新版本；填写新的 API Key 才会创建新版本并测试。")}</p><Button size="xs" color="secondary" className="button button-secondary button-small" isDisabled={busy || (!rotationSecret.trim() && (!onUpdateConnection || !editName.trim() || editName.trim() === selectedConnection.name))} onClick={() => void updateCurrentConnection()} type="button">{operation==='saving'?uiText("保存中…"):operation==='testing'?uiText("测试中…"):uiText("保存连接更新")}</Button></div> : null}</> : onCreateConnection && compatibleConnections.length===0 ? <form className="external-connection-create" onSubmit={(event) => void create(event)}><p>{provider === "cloudflare" ? uiText("填写 Cloudflare Account ID:Workers AI API Token；验证通过后会直接用于此能力。") : provider === "volcengine_tts" ? uiText("填写新版豆包语音控制台生成的 API Key；测试与正式合成使用同一 V3 接口。") : uiText("创建并测试一条当前连接；验证通过后会直接用于此能力。")}</p><label>{uiText("连接名称（自定义填写）")}<InputBase size="sm" aria-label={uiText("新连接名称")} onChange={(event) => setName(event.target.value)} isRequired value={name} /></label><label>{uiText("认证材料（填写对应服务的 API Key）")}<InputBase size="sm" aria-label={uiText("新连接认证材料")} autoComplete="new-password" onChange={(event) => setSecret(event.target.value)} placeholder={provider === "kling" ? uiText("API Key 或 Access Key:Secret Key") : provider === "cloudflare" ? "Account ID:API Token" : provider === "volcengine_tts" ? uiText("豆包语音 API Key") : undefined} isRequired type="password" value={secret} /></label><Button size="xs" color="secondary" className="button button-secondary button-small" isDisabled={busy || !name.trim() || !secret.trim()} type="submit">{operation==='saving'?uiText("保存中…"):operation==='testing'?uiText("测试中…"):uiText("创建并测试连接")}</Button></form> : null}
+    {!selectedConnection&&compatibleConnections.length>0?<p className="field-hint">{selectedVersionId?uiText("原连接当前不可用，请显式选择可用版本。"):uiText("请选择要关联的已验证连接。")}</p>:null}
     {!selectedConnection&&compatibleConnections.length===0 ? workspaceField : null}
-    {officialEndpoint || selectedVersion ? <p className="field-hint">官方 Endpoint：{officialEndpoint ?? selectedVersion?.endpoint}</p> : null}
+    {officialEndpoint || selectedVersion ? <p className="field-hint">{uiText("官方 Endpoint：")}{officialEndpoint ?? selectedVersion?.endpoint}</p> : null}
     {notice&&<p role="status" className="muted-copy">{notice}</p>}
     {error ? <p className="form-error" role="alert">{error}</p> : null}
   </div>;
 }
 
-const providerDisplayName=(provider:string)=>providerDisplayNames[provider]??provider;
+const providerDisplayName=(provider:string)=>uiText(providerDisplayNames[provider]??provider);
 
 const connectionTypes = [...new Map(registeredAdapters.productionChoices().filter(choice=>choice.connection.kind==='owner_managed').map(choice=>[choice.identityKey,choice])).values()].map(choice=>({
   provider:choice.provider as ExternalConnectionInput['provider'],adapter:choice.adapter as ExternalConnectionInput['adapter'],label:choice.label,
   secretLabel:choice.provider==='kling'?'API Key（旧版可填 Access Key:Secret Key）':choice.provider==='pexels'?'Pexels API Key':choice.provider==='volcengine_tts'?'豆包语音 API Key':choice.provider==='openai'?'OpenAI API Key':choice.provider==='bailian'?'百炼 API Key':choice.label+' API Key',
 }));
 
-const shortVerificationTime=new Intl.DateTimeFormat('zh-CN',{
+function shortVerificationTime(source:string){return new Intl.DateTimeFormat(getUiLocale(),{
   timeZone:'Asia/Shanghai',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23',
-});
+}).format(new Date(source));}
 
 function ConnectionEditorSurface({inline,open,busy,blocked,onClose,label,dialogRef,children}:{inline:boolean;open:boolean;busy:boolean;blocked:boolean;onClose:()=>void;label:string|undefined;dialogRef:RefObject<HTMLDivElement|null>;children:ReactNode}){
   if(inline)return open?<div ref={dialogRef} role="region" tabIndex={-1} aria-label={label} className="dan-ui connection-workspace reference-connections reference-connections-dialog connection-settings-editor">{children}</div>:null;
@@ -214,7 +215,7 @@ export function ConnectionWorkspace({ inlineBilling=false,settingsLayout=false,i
   const [revokingId,setRevokingId]=useState(''),[revokeError,setRevokeError]=useState('');
   const revoking=versions.find(version=>version.id===revokingId);
   const revokingConnection=connections.find(connection=>connection.id===revoking?.connection_id);
-  async function revoke(){if(!revoking||!onRevokeVersion||operationLock.current||busy)return;operationLock.current=true;setOperation('saving');setRevokeError('');try{await onRevokeVersion(revoking.id);setRevokingId('');}catch(cause){setRevokeError(cause instanceof Error?cause.message:'撤销未确认完成，请重新读取版本后核对。');}finally{operationLock.current=false;setOperation('');}}
+  async function revoke(){if(!revoking||!onRevokeVersion||operationLock.current||busy)return;operationLock.current=true;setOperation('saving');setRevokeError('');try{await onRevokeVersion(revoking.id);setRevokingId('');}catch(cause){setRevokeError(cause instanceof Error?cause.message:uiText("撤销未确认完成，请重新读取版本后核对。"));}finally{operationLock.current=false;setOperation('');}}
   // Session-local non-secret drafts. Never copy credential input into these snapshots.
   const drafts={current:sessionDrafts.connections};
   const editingBaseline=useRef('');
@@ -259,11 +260,11 @@ export function ConnectionWorkspace({ inlineBilling=false,settingsLayout=false,i
   useWorkspaceLeaveEntry({kind:'connection',dirty:()=>Boolean(dialog&&(nonSecretChanged||secret||Object.values(rebindSecrets).some(Boolean))),hasSecret:()=>Boolean(secret||Object.values(rebindSecrets).some(Boolean)),keep:()=>{leave(true);return true;},discard:()=>leave(false),beforeUnload:()=>{if(nonSecretChanged)keepDraft();}});
   const catalog=serviceCatalog??buildProductionServiceCatalog({connections,versions,externalReady:verificationEnabled});
   const selectedServices=catalog.groups.flatMap(group=>group.services.filter(service=>service.connectionId===selected?.id));
-  const capabilityOf=(connection:ExternalConnection)=>catalog.groups.filter(group=>group.services.some(service=>service.connectionId===connection.id)).map(group=>group.label).join('、')||'未注册功能';
+  const capabilityOf=(connection:ExternalConnection)=>catalog.groups.filter(group=>group.services.some(service=>service.connectionId===connection.id)).map(group=>uiText(group.label)).join(getUiLocale()==='en-US'?', ':'、')||uiText("未注册功能");
   const tableGroups=[...catalog.groups.map(group=>({...group,entries:group.services.flatMap(service=>{
     const connection=connections.find(connection=>connection.id===service.connectionId);
     return connection?[{connection,service}]:[];
-  })})),{capability:'unsupported',label:'其他连接',entries:connections.filter(connection=>!catalog.groups.some(group=>group.services.some(service=>service.connectionId===connection.id))).map(connection=>({connection,service:null}))}];
+  })})),{capability:'unsupported',label:uiText("其他连接"),entries:connections.filter(connection=>!catalog.groups.some(group=>group.services.some(service=>service.connectionId===connection.id))).map(connection=>({connection,service:null}))}];
   const filteredGroups=tableGroups.filter(group=>capabilityFilter==='all'||group.capability===capabilityFilter).map(group=>({...group,entries:group.entries.filter(({connection,service})=>(!statusFilter||connection.status===statusFilter)&&[connection.name,providerDisplayName(connection.provider),connection.provider,connection.adapter,group.label,connection.description??'',...(service?.models??[]),...(service?.presets??[])].join(' ').toLocaleLowerCase().includes(appliedQuery.toLocaleLowerCase()))}));
   const selectedVersions=versions.filter(version=>version.connection_id===selectedId);
   const selectedCurrentVersion=selectedVersions.find(version=>version.id===selected?.current_version_id)??selectedVersions.find(version=>version.is_current);
@@ -279,22 +280,22 @@ export function ConnectionWorkspace({ inlineBilling=false,settingsLayout=false,i
     const draft=drafts.current.get(id||'__new');
     if(draft&&draft.baseline===connectionBaseline(connection)){setName(draft.name);setDescription(draft.description);setAdapter(draft.adapter);setWorkspaceId(draft.workspaceId);setMinimaxRegion(draft.region);}else if(draft)drafts.current.delete(id||'__new');
     setSecret('');setRebindSecrets({});setError('');setNotice('');setResultTitle('');setResultName('');setResultConnectionId('');
-    if(draft&&draft.baseline!==connectionBaseline(connection)){setNotice('保留的修改所依据的连接已变化，已读取当前资料。');setResultTitle('已读取当前连接');}
+    if(draft&&draft.baseline!==connectionBaseline(connection)){setNotice(uiText("保留的修改所依据的连接已变化，已读取当前资料。"));setResultTitle(uiText("已读取当前连接"));}
   }
   function openConnection(id:string,mode:'edit'|'detail',versionsOpen=false){if(busy)return;choose(id);setShowVersions(versionsOpen);setDialog(mode);if(mode==='detail'){viewedConnection.current=id;navigation?.change({connection:id});}}
   function createConnection(){if(busy)return;choose('');setShowVersions(false);setDialog('new');}
-  useEffect(()=>{if(selectedId&&!connections.some(connection=>connection.id===selectedId)){setSelectedId('');setName('');setDescription('');setSecret('');applyDialog('');if(navigation?.value.connection){setNotice('该连接已不可用，请从当前列表重新选择。');viewedConnection.current='';navigation.change({connection:''});}}},[connections,selectedId]);
+  useEffect(()=>{if(selectedId&&!connections.some(connection=>connection.id===selectedId)){setSelectedId('');setName('');setDescription('');setSecret('');applyDialog('');if(navigation?.value.connection){setNotice(uiText("该连接已不可用，请从当前列表重新选择。"));viewedConnection.current='';navigation.change({connection:''});}}},[connections,selectedId]);
 
   useEffect(()=>{if(operation===''&&(notice||error||errorMessage))resultRef.current?.scrollIntoView?.({block:'nearest'});if(operation===''&&(error||errorMessage||revokeError)&&document.activeElement===document.body)(revokingId?revokeDialogRef.current:dialogRef.current)?.focus();},[operation,notice,error,errorMessage,revokeError,revokingId]);
 
   async function test(connectionId:string,credentialSaved=false){
     setResultConnectionId(connectionId);
     try{const result=await onTestConnection(connectionId) as {detail?:string;ready?:boolean}|undefined;
-    setResultTitle(result?.ready===true?'连接测试通过':result?.ready===false?credentialSaved?'凭据已保存，连接测试未通过':'连接测试未通过':credentialSaved?'凭据已保存，测试结果待确认':'测试已结束');
-    if(result?.ready===false)setError(result.detail??'连接尚未验证通过。');
-    else setNotice(result?.detail??'测试已结束，请查看连接状态。');
+    setResultTitle(result?.ready===true?uiText("连接测试通过"):result?.ready===false?credentialSaved?uiText("凭据已保存，连接测试未通过"):uiText("连接测试未通过"):credentialSaved?uiText("凭据已保存，测试结果待确认"):uiText("测试已结束"));
+    if(result?.ready===false)setError(result.detail??uiText("连接尚未验证通过。"));
+    else setNotice(result?.detail??uiText("测试已结束，请查看连接状态。"));
     return result;
-    }catch(cause){const detail=cause instanceof Error?cause.message:'连接测试未完成，请重试。';setResultTitle(credentialSaved?'凭据已保存，连接测试未完成':'连接测试未完成');setError(detail);return {ready:false,detail};}
+    }catch(cause){const detail=cause instanceof Error?cause.message:uiText("连接测试未完成，请重试。");setResultTitle(credentialSaved?uiText("凭据已保存，连接测试未完成"):uiText("连接测试未完成"));setError(detail);return {ready:false,detail};}
   }
   async function testSelected(connectionId:string){
     if(operationLock.current)return;
@@ -312,87 +313,87 @@ export function ConnectionWorkspace({ inlineBilling=false,settingsLayout=false,i
         if(onUpdateConnection&&(name.trim()!==selected.name||description!==(selected.description??'')))await onUpdateConnection({connectionId:selected.id,name:name.trim(),description});
         if(secret.trim()&&onRotateConnection){
           connection=await onRotateConnection({connectionId:selected.id,adapter:connectionType.adapter,provider:connectionType.provider,secret:credential});
-          if(!connection)throw new Error('连接保存未确认完成，请检查提示后重试。');
+          if(!connection)throw new Error(uiText("连接保存未确认完成，请检查提示后重试。"));
         }
         else if(regionChanged&&onChangeRegion&&selected.current_version_id){
           connection=await onChangeRegion({connectionId:selected.id,versionId:selected.current_version_id,region:minimaxRegion});
-          if(!connection)throw new Error('连接站点保存未确认完成，请检查提示后重试。');
+          if(!connection)throw new Error(uiText("连接站点保存未确认完成，请检查提示后重试。"));
         }
       }else{
         connection=await onCreateConnection({adapter:connectionType.adapter,name:name.trim(),provider:connectionType.provider,secret:credential});
-        if(!connection)throw new Error('连接保存未确认完成，请检查提示后重试。');
+        if(!connection)throw new Error(uiText("连接保存未确认完成，请检查提示后重试。"));
       }
       const credentialChanged=!selected||Boolean(secret.trim())||regionChanged;
-      if(!connection)throw new Error('连接保存未确认完成，请检查提示后重试。');
+      if(!connection)throw new Error(uiText("连接保存未确认完成，请检查提示后重试。"));
       drafts.current.delete(selectedId||'__new');
       setSecret('');
       if(!selected){setSelectedId(connection.id);setName(connection.name);setDescription(connection.description??'');setWorkspaceId('');}
-      setResultTitle(credentialChanged?'凭据已保存':'连接资料已保存');
-      setNotice(credentialChanged?'认证材料已保存。':'连接资料已保存。');
+      setResultTitle(credentialChanged?uiText("凭据已保存"):uiText("连接资料已保存"));
+      setNotice(credentialChanged?uiText("认证材料已保存。"):uiText("连接资料已保存。"));
       if(canVerify){setOperation('testing');const result=await test(connection.id,credentialChanged);if(result?.ready===true)setDialog('');}
-    }catch(cause){setResultTitle('连接保存未确认完成');setError(cause instanceof Error?cause.message:'连接保存未确认完成，请重试。');}
+    }catch(cause){setResultTitle(uiText("连接保存未确认完成"));setError(cause instanceof Error?cause.message:uiText("连接保存未确认完成，请重试。"));}
     finally{operationLock.current=false;setOperation('');}
   }
   async function rebind(version:ExternalConnectionVersion){
     const value=rebindSecrets[version.id];if(!value||!onRebindVersion||operationLock.current||busy)return;
-    if(!window.confirm(`重新绑定 v${version.version} 的缺失密钥？现有密钥不能覆盖，需重新验证；更换认证材料应创建新版本。`))return;
+    if(!window.confirm(uiText("重新绑定 v{value0} 的缺失密钥？现有密钥不能覆盖，需重新验证；更换认证材料应创建新版本。",{value0:version.version})))return;
     operationLock.current=true;setOperation('saving');
     try{setError('');await onRebindVersion(version.id,value);setRebindSecrets(current=>({...current,[version.id]:''}));}
-    catch{setError('重新绑定失败，请检查缺失状态或使用版本轮换。');}
+    catch{setError(uiText("重新绑定失败，请检查缺失状态或使用版本轮换。"));}
     finally{operationLock.current=false;setOperation('');}
   }
-  const versionDetails=selected && selectedVersions.length > 0 && <Disclosure label={<>连接版本（{selectedVersions.length}）</>} className="connection-versions" open={showVersions} onToggle={event=>setShowVersions(event.currentTarget.open)}><ul>{selectedVersions.map(version => <li key={version.id}>
-      <div className="connection-version-row"><span>v{version.version} · {statusLabels[version.status]}{version.is_current ? ' · 当前' : ''}</span><div className="connection-version-actions">
-        {version.revoked_at ? <small>已撤销</small> : onRevokeVersion && <Button color="tertiary-destructive" size="xs" isDisabled={busy} onPress={() => {setRevokeError('');setRevokingId(version.id);}}>撤销版本</Button>}
-        {version.status === 'unverified' && !version.is_current && onDeleteVersion && <Button color="tertiary" size="xs" isDisabled={busy} onPress={() => {if(window.confirm('删除这个未引用的连接草稿？删除后不可恢复。'))void onDeleteVersion(version.id);}}>删除草稿</Button>}
+  const versionDetails=selected && selectedVersions.length > 0 && <Disclosure label={<>{uiText("连接版本（")}{selectedVersions.length}）</>} className="connection-versions" open={showVersions} onToggle={event=>setShowVersions(event.currentTarget.open)}><ul>{selectedVersions.map(version => <li key={version.id}>
+      <div className="connection-version-row"><span>v{version.version} · {uiText(statusLabels[version.status])}{version.is_current ? uiText(" · 当前") : ''}</span><div className="connection-version-actions">
+        {version.revoked_at ? <small>{uiText("已撤销")}</small> : onRevokeVersion && <Button color="tertiary-destructive" size="xs" isDisabled={busy} onPress={() => {setRevokeError('');setRevokingId(version.id);}}>{uiText("撤销版本")}</Button>}
+        {version.status === 'unverified' && !version.is_current && onDeleteVersion && <Button color="tertiary" size="xs" isDisabled={busy} onPress={() => {if(window.confirm(uiText("删除这个未引用的连接草稿？删除后不可恢复。")))void onDeleteVersion(version.id);}}>{uiText("删除草稿")}</Button>}
       </div></div>
-      {onRebindVersion && !version.revoked_at && version.secretState === 'unbound' && <Disclosure label={<>恢复缺失的密钥绑定</>}><p>此版本不会自动使用其他版本的认证材料。</p><Input aria-label={`v${version.version} 恢复认证材料`} size="sm" type="password" autoComplete="off" isDisabled={busy} value={rebindSecrets[version.id] ?? ''} onChange={value => setRebindSecrets(current => ({...current,[version.id]:value}))}/><Button color="secondary" size="sm" isDisabled={busy || !rebindSecrets[version.id]} onPress={() => void rebind(version)}>重新绑定此版本</Button></Disclosure>}
+      {onRebindVersion && !version.revoked_at && version.secretState === 'unbound' && <Disclosure label={<>{uiText("恢复缺失的密钥绑定")}</>}><p>{uiText("此版本不会自动使用其他版本的认证材料。")}</p><Input aria-label={uiText("v{value0} 恢复认证材料",{value0:version.version})} size="sm" type="password" autoComplete="off" isDisabled={busy} value={rebindSecrets[version.id] ?? ''} onChange={value => setRebindSecrets(current => ({...current,[version.id]:value}))}/><Button color="secondary" size="sm" isDisabled={busy || !rebindSecrets[version.id]} onPress={() => void rebind(version)}>{uiText("重新绑定此版本")}</Button></Disclosure>}
     </li>)}</ul></Disclosure>;
-  const operationResult=(operation || errorMessage || error || notice) && <div aria-label="连接操作结果" className="connection-operation-result" data-status={operation ? 'pending' : errorMessage || error ? 'failed' : 'success'} ref={resultRef} role={operation ? 'status' : errorMessage || error ? 'alert' : 'status'}>
-    <strong>{operation === 'saving' ? '正在保存连接' : operation === 'testing' ? '正在测试连接' : resultTitle || '连接操作结果'}</strong>
+  const operationResult=(operation || errorMessage || error || notice) && <div aria-label={uiText("连接操作结果")} className="connection-operation-result" data-status={operation ? 'pending' : errorMessage || error ? 'failed' : 'success'} ref={resultRef} role={operation ? 'status' : errorMessage || error ? 'alert' : 'status'}>
+    <strong>{operation === 'saving' ? uiText("正在保存连接") : operation === 'testing' ? uiText("正在测试连接") : resultTitle || uiText("连接操作结果")}</strong>
     {resultName && <span>{resultName}</span>}
     {!operation && <span>{errorMessage || error || notice}</span>}
-    {!operation && error && resultConnectionId && <Button color="secondary" size="sm" iconLeading={RefreshCw} isDisabled={busy || !(verificationByProvider?.[connections.find(connection=>connection.id===resultConnectionId)?.provider??connectionType.provider]?.available??verificationEnabled)} onPress={()=>void testSelected(resultConnectionId)}>重新测试</Button>}
-    {!operation && (errorMessage || error && !resultConnectionId) && onRefresh && <Button color="secondary" size="sm" iconLeading={RefreshCw} isDisabled={busy} onPress={onRefresh}>重新读取连接</Button>}
+    {!operation && error && resultConnectionId && <Button color="secondary" size="sm" iconLeading={RefreshCw} isDisabled={busy || !(verificationByProvider?.[connections.find(connection=>connection.id===resultConnectionId)?.provider??connectionType.provider]?.available??verificationEnabled)} onPress={()=>void testSelected(resultConnectionId)}>{uiText("重新测试")}</Button>}
+    {!operation && (errorMessage || error && !resultConnectionId) && onRefresh && <Button color="secondary" size="sm" iconLeading={RefreshCw} isDisabled={busy} onPress={onRefresh}>{uiText("重新读取连接")}</Button>}
   </div>;
   const [expandedRow,setExpandedRow]=useState<string|null>(null);
   const [expandedModelsRow,setExpandedModelsRow]=useState<string|null>(null);
   const modelsRowId=useId();
   const filteredConnections=filteredGroups.flatMap(group=>group.entries.map(entry=>({...entry,capability:group.capability,label:group.label})));
-  const createButton=<Button color="primary" size="sm" iconLeading={Plus} isDisabled={busy} onPress={createConnection}>新建连接</Button>;
-  return <section className={`dan-ui connection-workspace connection-management-workspace reference-connections${inlineBilling?" connection-table-inline-billing":""}${settingsLayout?" connection-settings-layout":""}`} aria-label="外部连接管理">
+  const createButton=<Button color="primary" size="sm" iconLeading={Plus} isDisabled={busy} onPress={createConnection}>{uiText("新建连接")}</Button>;
+  return <section className={`dan-ui connection-workspace connection-management-workspace reference-connections${inlineBilling?" connection-table-inline-billing":""}${settingsLayout?" connection-settings-layout":""}`} aria-label={uiText("外部连接管理")}>
     {!settingsLayout&&<header className="reference-connections-heading">
-      <h2>外部连接</h2>
+      <h2>{uiText("外部连接")}</h2>
       <div className="reference-connections-actions">{createButton}</div>
     </header>}
     {(!inlineEditor||!dialog)&&<><div className="reference-connections-toolbar">
-      <form role="search" aria-label="搜索连接" className="reference-connections-search-form" onSubmit={event=>{event.preventDefault();applyQuery(query);}}>
-        <Input aria-label="查找已存连接" size="sm" className="reference-connections-search" placeholder="名称、服务或适配器" onChange={setQuery} type="search" value={query}/>
-        {(query||appliedQuery)&&<Button aria-label="清除连接搜索" color="tertiary" size="sm" iconLeading={X} onPress={()=>applyQuery('')}/>}
-        <Button color="secondary" size="sm" type="submit">搜索</Button>
+      <form role="search" aria-label={uiText("搜索连接")} className="reference-connections-search-form" onSubmit={event=>{event.preventDefault();applyQuery(query);}}>
+        <Input aria-label={uiText("查找已存连接")} size="sm" className="reference-connections-search" placeholder={uiText("名称、服务或适配器")} onChange={setQuery} type="search" value={query}/>
+        {(query||appliedQuery)&&<Button aria-label={uiText("清除连接搜索")} color="tertiary" size="sm" iconLeading={X} onPress={()=>applyQuery('')}/>}
+        <Button color="secondary" size="sm" type="submit">{uiText("搜索")}</Button>
       </form>
-      <PopulatedFilterSelect aria-label="生产能力" size="sm" value={capabilityFilter} onValueChange={setCapabilityFilter} allValue="all" counts={Object.fromEntries(tableGroups.map(group=>[group.capability,group.entries.length]))} options={[{value:'all',label:'全部能力'},...Object.entries(productionCapabilityLabels).map(([value,label])=>({value,label})),{value:'unsupported',label:'其他连接'}]}/>
-      <PopulatedFilterSelect aria-label="验证状态" size="sm" value={statusFilter} onValueChange={setStatusFilter} allValue="" counts={Object.fromEntries((['verified','unverified','invalid','retryable']as const).map(status=>[status,connections.filter(connection=>connection.status===status).length]))} options={[{value:'',label:'全部状态'},...(['verified','unverified','invalid','retryable']as const).map(value=>({value,label:statusLabels[value]}))]}/>
+      <PopulatedFilterSelect aria-label={uiText("生产能力")} size="sm" value={capabilityFilter} onValueChange={setCapabilityFilter} allValue="all" counts={Object.fromEntries(tableGroups.map(group=>[group.capability,group.entries.length]))} options={[{value:'all',label:uiText("全部能力")},...Object.entries(productionCapabilityLabels).map(([value,label])=>({value,label:uiText(label)})),{value:'unsupported',label:uiText("其他连接")}]}/>
+      <PopulatedFilterSelect aria-label={uiText("验证状态")} size="sm" value={statusFilter} onValueChange={setStatusFilter} allValue="" counts={Object.fromEntries((['verified','unverified','invalid','retryable']as const).map(status=>[status,connections.filter(connection=>connection.status===status).length]))} options={[{value:'',label:uiText("全部状态")},...(['verified','unverified','invalid','retryable']as const).map(value=>({value,label:uiText(statusLabels[value])}))]}/>
       {settingsLayout&&createButton}
     </div>
     {!dialog&&operationResult}
-    <section ref={listRef} tabIndex={inlineEditor?-1:undefined} aria-label="连接列表" className="reference-connections-table-wrap">
-      <table aria-label="已保存连接"><thead><tr><th scope="col"><span className="reference-connections-column-label">连接<HelpTip label="连接验证">已验证表示凭据曾通过服务检查；内容生成还需单独授权，不代表每次调用必定成功。</HelpTip></span></th>{!settingsLayout&&<th scope="col">能力</th>}<th scope="col" className="reference-connection-service">{settingsLayout?'服务与能力':'服务'}</th><th scope="col" className="reference-connection-model">模型</th>{inlineBilling&&<th scope="col" className="reference-connection-billing-column">{settingsLayout?'连接动态':'账务'}</th>}<th scope="col" className="reference-connection-test"><span className="reference-connections-sr-only">测试</span></th><th scope="col" className="reference-connection-more"><span className="reference-connections-sr-only">更多操作</span></th></tr></thead>
+    <section ref={listRef} tabIndex={inlineEditor?-1:undefined} aria-label={uiText("连接列表")} className="reference-connections-table-wrap">
+      <table aria-label={uiText("已保存连接")}><thead><tr><th scope="col"><span className="reference-connections-column-label">{uiText("连接")}<HelpTip label={uiText("连接验证")}>{uiText("已验证表示凭据曾通过服务检查；内容生成还需单独授权，不代表每次调用必定成功。")}</HelpTip></span></th>{!settingsLayout&&<th scope="col">{uiText("能力")}</th>}<th scope="col" className="reference-connection-service">{settingsLayout?uiText("服务与能力"):uiText("服务")}</th><th scope="col" className="reference-connection-model">{uiText("模型")}</th>{inlineBilling&&<th scope="col" className="reference-connection-billing-column">{settingsLayout?uiText("连接动态"):uiText("账务")}</th>}<th scope="col" className="reference-connection-test"><span className="reference-connections-sr-only">{uiText("测试")}</span></th><th scope="col" className="reference-connection-more"><span className="reference-connections-sr-only">{uiText("更多操作")}</span></th></tr></thead>
       <tbody>
       {filteredConnections.map(({connection,service,capability,label})=>{
         const canTest=verificationByProvider?.[connection.provider]?.available??verificationEnabled;
         const executionAuthorizationRequired=service?.unavailableReason==='当前执行网络不可用。';
         const usage=usageByVersion[connection.current_version_id??'']??connectionUsagePlaceholder(connection.provider);
         const remainingValue=connection.provider==='openai'&&usage.remaining.status==='unsupported'
-          ? <a className="connection-billing-console-link" href="https://platform.openai.com/settings/organization/billing/overview" target="_blank" rel="noopener noreferrer" aria-label="在 OpenAI 控制台查看余额（新窗口）">控制台查看</a>
+          ? <a className="connection-billing-console-link" href="https://platform.openai.com/settings/organization/billing/overview" target="_blank" rel="noopener noreferrer" aria-label={uiText("在 OpenAI 控制台查看余额（新窗口）")}>{uiText("控制台查看")}</a>
           : usage.remaining.text;
         const {lastVerificationAt,inFlightTasks}=connection;
         const activeTasks=inFlightTasks&&[
-          inFlightTasks.queued>0?`排队 ${inFlightTasks.queued}`:null,
-          inFlightTasks.running>0?`运行 ${inFlightTasks.running}`:null,
+          inFlightTasks.queued>0?uiText("排队 {value0}",{value0:inFlightTasks.queued}):null,
+          inFlightTasks.running>0?uiText("运行 {value0}",{value0:inFlightTasks.running}):null,
         ].filter(Boolean).join(' · ');
         const models=service?.models.length?service.models:service?.presets??[];
-        const modelLabel=service?.mode==='search'?service.label:models.join(' · ')||(service?.mode==='generation'?'未启用模型':'—');
+        const modelLabel=service?.mode==='search'?uiText(service.label):models.join(' · ')||(service?.mode==='generation'?uiText("未启用模型"):'—');
         const rowKey=capability+':'+connection.id;
         const expanded=expandedRow===rowKey;
         const canExpandModels=inlineBilling&&service?.mode!=='search'&&models.length>1;
@@ -402,97 +403,97 @@ export function ConnectionWorkspace({ inlineBilling=false,settingsLayout=false,i
         return <Fragment key={rowKey}><tr>
           <td><div className="reference-connection-identity">
             <button type="button" className="reference-connection-name" title={connection.name} disabled={busy} onClick={()=>openConnection(connection.id,'detail')}>{connection.name}</button>
-            <span className="reference-connection-status" title={executionAuthorizationRequired?'当前环境未开放自动执行；内容生成需单独授权。这不是实时网络检测结果。':undefined} data-status={connection.status}><i aria-hidden="true"/>{statusLabels[connection.status]}</span>
+            <span className="reference-connection-status" title={executionAuthorizationRequired?uiText("当前环境未开放自动执行；内容生成需单独授权。这不是实时网络检测结果。"):undefined} data-status={connection.status}><i aria-hidden="true"/>{uiText(statusLabels[connection.status])}</span>
           </div></td>
-          {!settingsLayout&&<td>{label}</td>}
-          <td className="reference-connection-service">{providerDisplayName(connection.provider)}{settingsLayout&&<span className="reference-connection-capability">{label}</span>}</td>
+          {!settingsLayout&&<td>{uiText(label)}</td>}
+          <td className="reference-connection-service">{providerDisplayName(connection.provider)}{settingsLayout&&<span className="reference-connection-capability">{uiText(label)}</span>}</td>
           <td className="reference-connection-model"><div className="reference-connection-model-summary">
             <span className="reference-connection-single-line" title={visibleModel}>{visibleModel}</span>
-            {canExpandModels&&<button className="reference-connection-model-toggle" type="button" aria-expanded={modelsExpanded} aria-controls={modelsExpanded?modelsId:undefined} aria-label={`${connection.name} · ${modelsExpanded?'收起模型':`查看 ${models.length} 个模型`}`} onClick={()=>setExpandedModelsRow(current=>current===rowKey?null:rowKey)}>{modelsExpanded?'收起':`+${models.length-1} 个`}</button>}
+            {canExpandModels&&<button className="reference-connection-model-toggle" type="button" aria-expanded={modelsExpanded} aria-controls={modelsExpanded?modelsId:undefined} aria-label={`${connection.name} · ${modelsExpanded?uiText("收起模型"):uiText("查看 {value0} 个模型",{value0:models.length})}`} onClick={()=>setExpandedModelsRow(current=>current===rowKey?null:rowKey)}>{modelsExpanded?uiText("收起"):uiText("+{value0} 个",{value0:models.length-1})}</button>}
           </div></td>
           {inlineBilling&&<td className="reference-connection-billing-column">
             {settingsLayout?<div className="reference-connection-activity">
-              <span><small>最近验证</small>{lastVerificationAt
-                ? <time dateTime={lastVerificationAt} title={new Date(lastVerificationAt).toLocaleString('zh-CN',{timeZone:'Asia/Shanghai'})}>{shortVerificationTime.format(new Date(lastVerificationAt))}</time>
-                : lastVerificationAt===undefined?'未读取':connection.status==='unverified'?'未验证':'无记录'}</span>
-              <span><small>在途任务</small>{inFlightTasks?activeTasks||'—':'未读取'}</span>
+              <span><small>{uiText("最近验证")}</small>{lastVerificationAt
+                ? <time dateTime={lastVerificationAt} title={new Date(lastVerificationAt).toLocaleString(getUiLocale(),{timeZone:'Asia/Shanghai'})}>{shortVerificationTime(lastVerificationAt)}</time>
+                : lastVerificationAt===undefined?uiText("未读取"):connection.status==='unverified'?uiText("未验证"):uiText("无记录")}</span>
+              <span><small>{uiText("在途任务")}</small>{inFlightTasks?activeTasks||'—':uiText("未读取")}</span>
             </div>:<div className="reference-inline-billing">
-              <span>余量 {remainingValue}</span><span>近 7 天 {usage.recent.text}</span>
+              <span>{uiText("余量 ")}{typeof remainingValue==='string'?uiText(remainingValue):remainingValue}</span><span>{uiText("近 7 天 ")}{uiText(usage.recent.text)}</span>
             </div>}
           </td>}
-          <td className="reference-connection-test"><div className="reference-connection-row-actions">{inlineEditor&&<Button size="xs" color="tertiary" aria-label={`更换 ${connection.name} 的密钥`} isDisabled={busy} onPress={()=>{openConnection(connection.id,'edit');requestAnimationFrame(()=>editor.current?.querySelector<HTMLInputElement>('input[type="password"]')?.focus());}}>更换密钥</Button>}{!inlineBilling&&<Button size="xs" color="tertiary" aria-label={`${connection.name} 账务与凭据详情`} aria-expanded={expanded} onPress={()=>setExpandedRow(expanded?null:rowKey)}>{expanded?'收起':'详情'}</Button>}<Button className="reference-connection-test-button" color="tertiary" size="xs" iconLeading={RefreshCw} aria-label={`测试 ${connection.name}`} isLoading={testingId===connection.id} showTextWhileLoading isDisabled={busy||!canTest} onPress={()=>void testSelected(connection.id)}>{testingId===connection.id?'测试中…':'测试'}</Button></div></td><td className="reference-connection-more"><MenuTrigger><Button aria-label={`${connection.name} 连接操作`} color="tertiary" size="sm" iconLeading={MoreHorizontal} isDisabled={busy}/><Popover placement="bottom end" className="dan-ui reference-connections-menu"><Menu aria-label={`${connection.name} 操作`} onAction={key=>key==='billing'?setBillingConnectionId(connection.id):key==='models'?setModelConnectionId(connection.id):openConnection(connection.id,key==='edit'?'edit':'detail',key==='versions')}><MenuItem id="edit" textValue="编辑连接"><Pencil aria-hidden="true"/>编辑连接</MenuItem>{onReadModels&&service?.mode==='generation'&&<MenuItem id="models" textValue="模型设置"><RefreshCw aria-hidden="true"/>模型设置</MenuItem>}{(onReadUsage||onReadBilling&&billingProvider(connection.provider))&&<MenuItem id="billing" textValue="账务设置"><CreditCard aria-hidden="true"/>账务设置</MenuItem>}<MenuItem id="versions" textValue="版本详情"><History aria-hidden="true"/>版本详情</MenuItem></Menu></Popover></MenuTrigger></td>
+          <td className="reference-connection-test"><div className="reference-connection-row-actions">{inlineEditor&&<Button size="xs" color="tertiary" aria-label={uiText("更换 {value0} 的密钥",{value0:connection.name})} isDisabled={busy} onPress={()=>{openConnection(connection.id,'edit');requestAnimationFrame(()=>editor.current?.querySelector<HTMLInputElement>('input[type="password"]')?.focus());}}>{uiText("更换密钥")}</Button>}{!inlineBilling&&<Button size="xs" color="tertiary" aria-label={uiText("{value0} 账务与凭据详情",{value0:connection.name})} aria-expanded={expanded} onPress={()=>setExpandedRow(expanded?null:rowKey)}>{expanded?uiText("收起"):uiText("详情")}</Button>}<Button className="reference-connection-test-button" color="tertiary" size="xs" iconLeading={RefreshCw} aria-label={uiText("测试 {value0}",{value0:connection.name})} isLoading={testingId===connection.id} showTextWhileLoading isDisabled={busy||!canTest} onPress={()=>void testSelected(connection.id)}>{testingId===connection.id?uiText("测试中…"):uiText("测试")}</Button></div></td><td className="reference-connection-more"><MenuTrigger><Button aria-label={uiText("{value0} 连接操作",{value0:connection.name})} color="tertiary" size="sm" iconLeading={MoreHorizontal} isDisabled={busy}/><Popover placement="bottom end" className="dan-ui reference-connections-menu"><Menu aria-label={uiText("{value0} 操作",{value0:connection.name})} onAction={key=>key==='billing'?setBillingConnectionId(connection.id):key==='models'?setModelConnectionId(connection.id):openConnection(connection.id,key==='edit'?'edit':'detail',key==='versions')}><MenuItem id="edit" textValue={uiText("编辑连接")}><Pencil aria-hidden="true"/>{uiText("编辑连接")}</MenuItem>{onReadModels&&service?.mode==='generation'&&<MenuItem id="models" textValue={uiText("模型设置")}><RefreshCw aria-hidden="true"/>{uiText("模型设置")}</MenuItem>}{(onReadUsage||onReadBilling&&billingProvider(connection.provider))&&<MenuItem id="billing" textValue={uiText("账务设置")}><CreditCard aria-hidden="true"/>{uiText("账务设置")}</MenuItem>}<MenuItem id="versions" textValue={uiText("版本详情")}><History aria-hidden="true"/>{uiText("版本详情")}</MenuItem></Menu></Popover></MenuTrigger></td>
         </tr>
         {modelsExpanded&&<tr className="reference-connection-models-expanded" id={modelsId}><td colSpan={settingsLayout?6:7}>
-          <ul aria-label={`${connection.name}的模型`}>{models.map(model=><li key={model}>{model}</li>)}</ul>
+          <ul aria-label={uiText("{value0}的模型",{value0:connection.name})}>{models.map(model=><li key={model}>{model}</li>)}</ul>
         </td></tr>}
         {!inlineBilling&&expanded&&<tr className="reference-connection-expanded"><td colSpan={6}>
           <div className="reference-connection-detail-grid">
-            <section aria-label="账务详情"><strong>账务详情</strong>
-              <div role="group" aria-label={`${connection.name} 额度与用量`}>
-                <p>{connectionUsageScope(connection.provider)??'供应商用量'}</p>
-                {[usage.remaining,usage.recent].map((item,index)=><div key={index} className="reference-connection-usage-line"><span>{item.label}</span><span data-state={item.status}>{index===0?remainingValue:item.text}</span></div>)}
+            <section aria-label={uiText("账务详情")}><strong>{uiText("账务详情")}</strong>
+              <div role="group" aria-label={uiText("{value0} 额度与用量",{value0:connection.name})}>
+                <p>{uiText(connectionUsageScope(connection.provider)??"供应商用量")}</p>
+                {[usage.remaining,usage.recent].map((item,index)=><div key={index} className="reference-connection-usage-line"><span>{uiText(item.label)}</span><span data-state={item.status}>{index===0?typeof remainingValue==='string'?uiText(remainingValue):remainingValue:uiText(item.text)}</span></div>)}
               </div>
-              {usage.updatedAt?<p>读取时间 <time dateTime={usage.updatedAt}>{new Date(usage.updatedAt).toLocaleString('zh-CN')}</time></p>:<p>尚无成功读取时间</p>}
-              <details><summary>账务说明</summary><p>查询结果可能来自缓存，非实时状态；供应商数据可能另有延迟。</p>
-              {['minimax','openai','bailian','volcengine','volcengine_tts','kling','freesound'].includes(connection.provider)&&<p>同一供应商账号的多个 Key 可能共享，不应逐连接相加。</p>}
-              <p>{usage.remaining.label}：{usage.remaining.detail}</p><p>{usage.recent.label}：{usage.recent.detail}</p></details>
+              {usage.updatedAt?<p>{uiText("读取时间 ")}<time dateTime={usage.updatedAt}>{new Date(usage.updatedAt).toLocaleString(getUiLocale())}</time></p>:<p>{uiText("尚无成功读取时间")}</p>}
+              <details><summary>{uiText("账务说明")}</summary><p>{uiText("查询结果可能来自缓存，非实时状态；供应商数据可能另有延迟。")}</p>
+              {['minimax','openai','bailian','volcengine','volcengine_tts','kling','freesound'].includes(connection.provider)&&<p>{uiText("同一供应商账号的多个 Key 可能共享，不应逐连接相加。")}</p>}
+              <p>{uiText(usage.remaining.label)}：{uiText(usage.remaining.detail)}</p><p>{uiText(usage.recent.label)}：{uiText(usage.recent.detail)}</p></details>
             </section>
-            <section aria-label="凭据详情"><strong>凭据详情</strong>
+            <section aria-label={uiText("凭据详情")}><strong>{uiText("凭据详情")}</strong>
               {connection.description&&<p>{connection.description}</p>}
-              {modelLabel!=='—'&&<p>模型 {modelLabel}</p>}
-              {connection.last_verified_at?<p>最近验证 <time dateTime={connection.last_verified_at}>{new Date(connection.last_verified_at).toLocaleString('zh-CN',{dateStyle:'short',timeStyle:'short'})}</time></p>:<p>验证时间未记录</p>}
-              {!service?.executable&&<p>{executionAuthorizationRequired?'当前环境未开放自动执行，内容生成需单独授权。':service?.unavailableReason??'未注册或不支持当前制作功能。'}</p>}
-              <ul>{versions.filter(version=>version.connection_id===connection.id).map(version=><li key={version.id}>v{version.version} · {statusLabels[version.status]}{version.is_current?' · 当前':''}{version.revoked_at?' · 已撤销':''}</li>)}</ul>
-              <Button size="xs" color="tertiary" isDisabled={busy} onPress={()=>openConnection(connection.id,'detail',true)}>管理凭据版本</Button>
+              {modelLabel!=='—'&&<p>{uiText("模型 ")}{modelLabel}</p>}
+              {connection.last_verified_at?<p>{uiText("最近验证 ")}<time dateTime={connection.last_verified_at}>{new Date(connection.last_verified_at).toLocaleString(getUiLocale(),{dateStyle:'short',timeStyle:'short'})}</time></p>:<p>{uiText("验证时间未记录")}</p>}
+              {!service?.executable&&<p>{executionAuthorizationRequired?uiText("当前环境未开放自动执行，内容生成需单独授权。"):uiText(service?.unavailableReason??"未注册或不支持当前制作功能。")}</p>}
+              <ul>{versions.filter(version=>version.connection_id===connection.id).map(version=><li key={version.id}>v{version.version} · {uiText(statusLabels[version.status])}{version.is_current?uiText(" · 当前"):''}{version.revoked_at?uiText(" · 已撤销"):''}</li>)}</ul>
+              <Button size="xs" color="tertiary" isDisabled={busy} onPress={()=>openConnection(connection.id,'detail',true)}>{uiText("管理凭据版本")}</Button>
             </section>
           </div>
         </td></tr>}
         </Fragment>;
-      })}{!filteredConnections.length&&<tr><td colSpan={inlineBilling&&!settingsLayout?7:6}><div className="reference-connections-empty"><strong>{connections.length?'没有匹配的连接':'尚未添加连接'}</strong><p>{connections.length?'调整筛选条件，或创建新的服务连接。':'添加服务凭据后，验证其连接状态。'}</p>{connections.length>0&&<Button color="secondary" size="sm" onPress={()=>{applyQuery('');setCapabilityFilter('all');setStatusFilter('');}}>清空筛选</Button>}</div></td></tr>}</tbody></table>
+      })}{!filteredConnections.length&&<tr><td colSpan={inlineBilling&&!settingsLayout?7:6}><div className="reference-connections-empty"><strong>{connections.length?uiText("没有匹配的连接"):uiText("尚未添加连接")}</strong><p>{connections.length?uiText("调整筛选条件，或创建新的服务连接。"):uiText("添加服务凭据后，验证其连接状态。")}</p>{connections.length>0&&<Button color="secondary" size="sm" onPress={()=>{applyQuery('');setCapabilityFilter('all');setStatusFilter('');}}>{uiText("清空筛选")}</Button>}</div></td></tr>}</tbody></table>
     </section>
     </>}{billingConnection&&<ConnectionBillingDialog key={billingConnection.id} connection={billingConnection} onStateChange={setBillingState} onClose={()=>setBillingConnectionId('')} onReadBilling={onReadBilling} onReadUsage={onReadUsage} onSaveBilling={onSaveBilling} onRefreshBilling={onRefreshBilling} onDisconnectBilling={onDisconnectBilling}/>}
     {modelConnection&&<ConnectionModelsDialog key={modelConnection.id} connection={modelConnection} onStateChange={state=>setModelBusy(state.busy)} draft={modelDrafts.current.get(modelConnection.id)} onDraftChange={draft=>{if(draft)modelDrafts.current.set(modelConnection.id,draft);else modelDrafts.current.delete(modelConnection.id);}} onClose={()=>setModelConnectionId('')} onReadModels={onReadModels} onSyncModels={onSyncModels} onSaveModels={onSaveModels}/>}
-    <p className="reference-connections-note" role="status">{statusMessage||`凭据保存在 ${secretStorage}，不会回显。`}</p>
-    <ConnectionEditorSurface inline={inlineEditor} open={Boolean(dialog)} busy={busy} blocked={leavePrompt||Boolean(revokingId)} onClose={requestClose} label={dialog==='detail'?selected?.name:dialog==='new'?'新建连接':'编辑连接'} dialogRef={dialogRef}>
-      <header className="reference-connections-dialog-header"><h2>{dialog==='detail'?selected?.name:dialog==='new'?'新建连接':'编辑连接'}</h2><Button color="tertiary" size="sm" iconLeading={inlineEditor?ArrowLeft:X} aria-label={inlineEditor?'返回连接列表':'关闭连接窗口'} isDisabled={busy} onPress={requestClose}/></header>
+    <p className="reference-connections-note" role="status">{statusMessage||uiText("凭据保存在 {value0}，不会回显。",{value0:secretStorage})}</p>
+    <ConnectionEditorSurface inline={inlineEditor} open={Boolean(dialog)} busy={busy} blocked={leavePrompt||Boolean(revokingId)} onClose={requestClose} label={dialog==='detail'?selected?.name:dialog==='new'?uiText("新建连接"):uiText("编辑连接")} dialogRef={dialogRef}>
+      <header className="reference-connections-dialog-header"><h2>{dialog==='detail'?selected?.name:dialog==='new'?uiText("新建连接"):uiText("编辑连接")}</h2><Button color="tertiary" size="sm" iconLeading={inlineEditor?ArrowLeft:X} aria-label={inlineEditor?uiText("返回连接列表"):uiText("关闭连接窗口")} isDisabled={busy} onPress={requestClose}/></header>
       {dialog==='detail'&&selected?<><div className="reference-connections-detail-body">
-        <div className="reference-connection-summary" role="status" title={selected.last_verification_detail||undefined}><span className="reference-connection-status" data-status={selected.status}><i aria-hidden="true"/>{statusLabels[selected.status]}</span>{selectedCurrentVersion&&<span>v{selectedCurrentVersion.version}</span>}<span>{selected.last_verified_at?<>最近测试 <time dateTime={selected.last_verified_at}>{new Date(selected.last_verified_at).toLocaleString('zh-CN',{dateStyle:'short',timeStyle:'short'})}</time></>:'尚未测试'}</span></div>
-        <dl className="reference-connections-detail-list"><dt>生产能力</dt><dd>{capabilityOf(selected)}</dd><dt>服务提供方</dt><dd>{providerDisplayName(selected.provider)}</dd><dt>技术标识</dt><dd>{selected.provider}</dd><dt>适配器</dt><dd>{selected.adapter}</dd><dt>模型 / 服务</dt><dd>{selectedServices.map(service=>service.models.length?service.models.join('、'):service.label).join('；')||'未注册或不支持当前制作功能。'}</dd>{selected.endpoint&&<><dt>服务地址</dt><dd>{selected.endpoint}</dd></>}{selected.description&&<><dt>备注</dt><dd>{selected.description}</dd></>}{selected.usage&&(selected.usage.currentBlueprints+selected.usage.episodes+selected.usage.tasks)>0&&<><dt>使用范围</dt><dd>当前配置 {selected.usage.currentBlueprints} · 生产单 {selected.usage.episodes} · 任务 {selected.usage.tasks}</dd></>}</dl>
+        <div className="reference-connection-summary" role="status" title={selected.last_verification_detail||undefined}><span className="reference-connection-status" data-status={selected.status}><i aria-hidden="true"/>{uiText(statusLabels[selected.status])}</span>{selectedCurrentVersion&&<span>v{selectedCurrentVersion.version}</span>}<span>{selected.last_verified_at?<>{uiText("最近测试 ")}<time dateTime={selected.last_verified_at}>{new Date(selected.last_verified_at).toLocaleString(getUiLocale(),{dateStyle:'short',timeStyle:'short'})}</time></>:uiText("尚未测试")}</span></div>
+        <dl className="reference-connections-detail-list"><dt>{uiText("生产能力")}</dt><dd>{capabilityOf(selected)}</dd><dt>{uiText("服务提供方")}</dt><dd>{providerDisplayName(selected.provider)}</dd><dt>{uiText("技术标识")}</dt><dd>{selected.provider}</dd><dt>{uiText("适配器")}</dt><dd>{selected.adapter}</dd><dt>{uiText("模型 / 服务")}</dt><dd>{selectedServices.map(service=>service.models.length?service.models.join('、'):uiText(service.label)).join('；')||uiText("未注册或不支持当前制作功能。")}</dd>{selected.endpoint&&<><dt>{uiText("服务地址")}</dt><dd>{selected.endpoint}</dd></>}{selected.description&&<><dt>{uiText("备注")}</dt><dd>{selected.description}</dd></>}{selected.usage&&(selected.usage.currentBlueprints+selected.usage.episodes+selected.usage.tasks)>0&&<><dt>{uiText("使用范围")}</dt><dd>{uiText("当前配置 ")}{selected.usage.currentBlueprints} {uiText("· 生产单 ")}{selected.usage.episodes} {uiText("· 任务 ")}{selected.usage.tasks}</dd></>}</dl>
         {!operationResult&&selected.status!=='verified'&&selected.last_verification_detail&&<p className="reference-connections-note form-error" role="alert">{selected.last_verification_detail}</p>}
         {operationResult}{versionDetails}
-      </div><footer className="reference-connections-dialog-footer"><Button color="secondary" size="sm" isDisabled={busy} onPress={()=>{choose(selected.id);setDialog('edit');}}>编辑连接</Button>{inlineEditor&&<Button color="secondary" size="sm" iconLeading={KeyRound} isDisabled={busy} onPress={()=>{choose(selected.id);setDialog('edit');requestAnimationFrame(()=>editor.current?.querySelector<HTMLInputElement>('input[type="password"]')?.focus());}}>更换密钥</Button>}{onOpenSecrets&&<Button color="tertiary" size="sm" isDisabled={busy} onPress={()=>onOpenSecrets(selected.id,selected.name)}>在密钥管理中查看</Button>}<Button color="primary" size="sm" iconLeading={Play} isDisabled={busy||!canVerify} isLoading={operation==='testing'} showTextWhileLoading onPress={()=>void testSelected(selected.id)}>测试连接</Button></footer></>:<>
-    <form aria-label="保存连接" className="connection-editor" onSubmit={event => void submit(event)} ref={editor}>
+      </div><footer className="reference-connections-dialog-footer"><Button color="secondary" size="sm" isDisabled={busy} onPress={()=>{choose(selected.id);setDialog('edit');}}>{uiText("编辑连接")}</Button>{inlineEditor&&<Button color="secondary" size="sm" iconLeading={KeyRound} isDisabled={busy} onPress={()=>{choose(selected.id);setDialog('edit');requestAnimationFrame(()=>editor.current?.querySelector<HTMLInputElement>('input[type="password"]')?.focus());}}>{uiText("更换密钥")}</Button>}{onOpenSecrets&&<Button color="tertiary" size="sm" isDisabled={busy} onPress={()=>onOpenSecrets(selected.id,selected.name)}>{uiText("在密钥管理中查看")}</Button>}<Button color="primary" size="sm" iconLeading={Play} isDisabled={busy||!canVerify} isLoading={operation==='testing'} showTextWhileLoading onPress={()=>void testSelected(selected.id)}>{uiText("测试连接")}</Button></footer></>:<>
+    <form aria-label={uiText("保存连接")} className="connection-editor" onSubmit={event => void submit(event)} ref={editor}>
       <fieldset className="connection-fields" disabled={busy}>
-        <p className="reference-connections-note" role="status">{nonSecretChanged||secret?'未保存修改':'尚未修改'}</p>
-        <NativeSelect icon={Plug} aria-label="连接类型" className="connection-field" label="连接类型" size="sm" disabled={busy || Boolean(selected)} value={selected?.adapter ?? adapter} onChange={event => {setCredentialFieldRevision(value=>value+1);setAdapter(event.target.value as ExternalConnectionInput['adapter']);setSecret('');setWorkspaceId('');}} options={[...connectionTypes.map(type => ({value:type.adapter,label:type.label})),...(selected&&!connectionTypes.some(type=>type.adapter===selected.adapter)?[{value:selected.adapter,label:selected.adapter}]:[])]}/>
-        <Input className="connection-field" label="连接名称" size="sm" autoComplete="off" maxLength={100} isRequired isDisabled={busy} onChange={setName} value={name}/>
-        {selected && <TextArea className="connection-field" label="连接说明" size="sm" maxLength={500} isDisabled={busy} onChange={setDescription} rows={2} value={description}/>}
-        {connectionType.provider === 'bailian' && <Input className="connection-field" label="百炼业务空间 ID" hint="选填北京空间 ID 或 Base URL；留空使用 DashScope。" size="sm" autoComplete="off" isDisabled={busy} onChange={setWorkspaceId} value={workspaceId}/>}
-        {connectionType.provider === 'minimax' && <NativeSelect className="connection-field connection-site-field" label="MiniMax 站点" hint={selected&&onChangeRegion?'更换站点会沿用当前 Key 创建新版本。':'选择创建 API Key 的站点。'} size="sm" disabled={busy||Boolean(selected&&!secret.trim()&&!onChangeRegion)} value={minimaxRegion} onChange={event=>setMinimaxRegion(event.target.value as MiniMaxRegion)} options={minimaxSiteOptions}/>}
-        <Input key={credentialFieldRevision} className="connection-field" label={selected ? '新的 API Key（选填）' : connectionType.secretLabel} size="sm" autoComplete="new-password" isRequired={!selected} isDisabled={busy} onChange={setSecret} type="password" value={secret} hint={selected ? `留空保留原 Key；填写后创建新版本${canVerify ? '并测试' : ''}。` : undefined}/>
-        {!canVerify && verificationDetail && <p className="connection-availability">{verificationDetail} 可保存凭据。</p>}
+        <p className="reference-connections-note" role="status">{nonSecretChanged||secret?uiText("未保存修改"):uiText("尚未修改")}</p>
+        <NativeSelect icon={Plug} aria-label={uiText("连接类型")} className="connection-field" label={uiText("连接类型")} size="sm" disabled={busy || Boolean(selected)} value={selected?.adapter ?? adapter} onChange={event => {setCredentialFieldRevision(value=>value+1);setAdapter(event.target.value as ExternalConnectionInput['adapter']);setSecret('');setWorkspaceId('');}} options={[...connectionTypes.map(type => ({value:type.adapter,label:uiText(type.label)})),...(selected&&!connectionTypes.some(type=>type.adapter===selected.adapter)?[{value:selected.adapter,label:selected.adapter}]:[])]}/>
+        <Input className="connection-field" label={uiText("连接名称")} size="sm" autoComplete="off" maxLength={100} isRequired isDisabled={busy} onChange={setName} value={name}/>
+        {selected && <TextArea className="connection-field" label={uiText("连接说明")} size="sm" maxLength={500} isDisabled={busy} onChange={setDescription} rows={2} value={description}/>}
+        {connectionType.provider === 'bailian' && <Input className="connection-field" label={uiText("百炼业务空间 ID")} hint={uiText("选填北京空间 ID 或 Base URL；留空使用 DashScope。")} size="sm" autoComplete="off" isDisabled={busy} onChange={setWorkspaceId} value={workspaceId}/>}
+        {connectionType.provider === 'minimax' && <NativeSelect className="connection-field connection-site-field" label={uiText("MiniMax 站点")} hint={selected&&onChangeRegion?uiText("更换站点会沿用当前 Key 创建新版本。"):uiText("选择创建 API Key 的站点。")} size="sm" disabled={busy||Boolean(selected&&!secret.trim()&&!onChangeRegion)} value={minimaxRegion} onChange={event=>setMinimaxRegion(event.target.value as MiniMaxRegion)} options={minimaxSiteOptions.map(item=>({...item,label:uiText(item.label)}))}/>}
+        <Input key={credentialFieldRevision} className="connection-field" label={selected ? uiText("新的 API Key（选填）") : connectionType.secretLabel} size="sm" autoComplete="new-password" isRequired={!selected} isDisabled={busy} onChange={setSecret} type="password" value={secret} hint={selected ? uiText("留空保留原 Key；填写后创建新版本{value0}。",{value0:canVerify ? uiText("并测试") : ''}) : undefined}/>
+        {!canVerify && verificationDetail && <p className="connection-availability">{verificationDetail} {uiText("可保存凭据。")}</p>}
         {selected&&selected.status!=='verified'&&selected.last_verification_detail&&!operationResult&&<p className="reference-connections-note form-error" role="alert">{selected.last_verification_detail}</p>}
         {versionDetails}
         {operationResult}
-        {canVerify&&hasChanges&&<p className="reference-connections-note">保存后会检查连接是否可用。</p>}
+        {canVerify&&hasChanges&&<p className="reference-connections-note">{uiText("保存后会检查连接是否可用。")}</p>}
         <div className="connection-submit-row">
-          <Button color="secondary" size="sm" isDisabled={busy} onPress={requestClose}>取消</Button>
-          <Button aria-busy={operation !== ''} color="primary" size="sm" isLoading={operation !== ''} showTextWhileLoading isDisabled={busy || !name.trim() || (!selected && !secret.trim()) || (!canVerify && !hasChanges) || Boolean(selected && metadataChanged && !onUpdateConnection) || Boolean(selected && secret.trim() && !onRotateConnection)} type="submit">{operation === 'testing' ? '测试中…' : operation === 'saving' ? '保存中…' : canVerify ? hasChanges ? '保存并测试' : '测试连接' : selected ? '保存更新' : '仅保存凭据'}</Button>
+          <Button color="secondary" size="sm" isDisabled={busy} onPress={requestClose}>{uiText("取消")}</Button>
+          <Button aria-busy={operation !== ''} color="primary" size="sm" isLoading={operation !== ''} showTextWhileLoading isDisabled={busy || !name.trim() || (!selected && !secret.trim()) || (!canVerify && !hasChanges) || Boolean(selected && metadataChanged && !onUpdateConnection) || Boolean(selected && secret.trim() && !onRotateConnection)} type="submit">{operation === 'testing' ? uiText("测试中…") : operation === 'saving' ? uiText("保存中…") : canVerify ? hasChanges ? uiText("保存并测试") : uiText("测试连接") : selected ? uiText("保存更新") : uiText("仅保存凭据")}</Button>
         </div>
       </fieldset>
     </form>
       </>}
     </ConnectionEditorSurface>
-    {revoking&&<ModalOverlay className="product-ui reference-connections-overlay" isOpen isDismissable={!busy} isKeyboardDismissDisabled={busy} onOpenChange={open=>{if(!open&&!busy)setRevokingId('');}}><Modal className="reference-connections-modal"><Dialog ref={revokeDialogRef} aria-label="撤销连接版本" className="dan-ui connection-workspace reference-connections reference-connections-dialog">
-      <header className="reference-connections-dialog-header"><h2>撤销连接版本</h2></header>
+    {revoking&&<ModalOverlay className="product-ui reference-connections-overlay" isOpen isDismissable={!busy} isKeyboardDismissDisabled={busy} onOpenChange={open=>{if(!open&&!busy)setRevokingId('');}}><Modal className="reference-connections-modal"><Dialog ref={revokeDialogRef} aria-label={uiText("撤销连接版本")} className="dan-ui connection-workspace reference-connections reference-connections-dialog">
+      <header className="reference-connections-dialog-header"><h2>{uiText("撤销连接版本")}</h2></header>
       <div className="reference-connections-detail-body"><strong>{revokingConnection?.name} · v{revoking.version}</strong>{revoking.usage?<>
-        <p>已记录引用：生产单 {revoking.usage.episodes} · 任务 {revoking.usage.tasks}（待执行或执行中 {revoking.usage.activeTasks}）· 制作请求 {revoking.usage.requests} · 已保存制作选择 {revoking.usage.savedSelections} 项。</p>
-        <p>统计已保存的蓝图字段、任务、制作请求快照及配乐 / 口播选择；不包含尚未保存的表单。</p>
-        <p>当前蓝图中的旧连接字段引用：{revoking.usage.currentBlueprints}。旧字段仅保留历史记录，不代表当前制作选择。</p>
-      </>:<p role="alert">尚未读取此版本的引用影响，请重新读取连接后再撤销。</p>}
-      <p>撤销后，本机不能再使用这个版本。已提交给供应商的请求和历史记录会保留。系统不会自动换用其他版本，撤销后无法恢复。</p>
-      {revoking.revoked_at&&<p role="status">此版本已撤销。</p>}{revokeError&&<p className="form-error" role="alert">{revokeError}</p>}</div>
-      <footer className="reference-connections-dialog-footer"><Button color="secondary" size="sm" autoFocus isDisabled={busy} onPress={()=>setRevokingId('')}>取消撤销</Button><Button color="primary-destructive" size="sm" isLoading={busy} showTextWhileLoading isDisabled={busy||!revoking.usage||Boolean(revoking.revoked_at)} onPress={()=>void revoke()}>确认撤销 v{revoking.version}</Button></footer>
+        <p>{uiText("已记录引用：生产单 ")}{revoking.usage.episodes} {uiText("· 任务 ")}{revoking.usage.tasks}{uiText("（待执行或执行中 ")}{revoking.usage.activeTasks}{uiText("）· 制作请求 ")}{revoking.usage.requests} {uiText("· 已保存制作选择 ")}{revoking.usage.savedSelections} {uiText("项。")}</p>
+        <p>{uiText("统计已保存的蓝图字段、任务、制作请求快照及配乐 / 口播选择；不包含尚未保存的表单。")}</p>
+        <p>{uiText("当前蓝图中的旧连接字段引用：")}{revoking.usage.currentBlueprints}{uiText("。旧字段仅保留历史记录，不代表当前制作选择。")}</p>
+      </>:<p role="alert">{uiText("尚未读取此版本的引用影响，请重新读取连接后再撤销。")}</p>}
+      <p>{uiText("撤销后，本机不能再使用这个版本。已提交给供应商的请求和历史记录会保留。系统不会自动换用其他版本，撤销后无法恢复。")}</p>
+      {revoking.revoked_at&&<p role="status">{uiText("此版本已撤销。")}</p>}{revokeError&&<p className="form-error" role="alert">{revokeError}</p>}</div>
+      <footer className="reference-connections-dialog-footer"><Button color="secondary" size="sm" autoFocus isDisabled={busy} onPress={()=>setRevokingId('')}>{uiText("取消撤销")}</Button><Button color="primary-destructive" size="sm" isLoading={busy} showTextWhileLoading isDisabled={busy||!revoking.usage||Boolean(revoking.revoked_at)} onPress={()=>void revoke()}>{uiText("确认撤销 v")}{revoking.version}</Button></footer>
     </Dialog></Modal></ModalOverlay>}
     {leavePrompt&&<ConnectionDraftLeaveDialog hasSecret={Boolean(secret||Object.values(rebindSecrets).some(Boolean))} onContinue={()=>setLeavePrompt(false)} onDiscard={()=>leave(false)} onKeep={nonSecretChanged?()=>leave(true):undefined}/>}
   </section>;
