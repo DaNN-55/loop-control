@@ -31,11 +31,12 @@ interface Props {
  failures:readonly string[];
  onImport:(files:File[])=>Promise<unknown>;
  onRetry?:()=>void;
+ onAbandon?:()=>void;
  notice?:UploadNotice;
  onDismissNotice?:(id:number)=>void;
 }
 
-export function WorkspaceMaterialShelf({episodeId,shotCount,scriptRevisionId,materials,readOnly,busy,status,failures,onImport,onRetry,notice,onDismissNotice=()=>{}}:Props){
+export function WorkspaceMaterialShelf({episodeId,shotCount,scriptRevisionId,materials,readOnly,busy,status,failures,onImport,onRetry,onAbandon,notice,onDismissNotice=()=>{}}:Props){
  const shelf=useWorkspaceMaterialSelection();
  const [open,setOpen]=useState(false);
  const [height,setHeight]=useState(defaultHeight);
@@ -114,7 +115,7 @@ export function WorkspaceMaterialShelf({episodeId,shotCount,scriptRevisionId,mat
    }}/>}
    {(status||failures.length>0)&&<div ref={feedback} tabIndex={-1} aria-label="素材导入结果" className="workspace-material-feedback">
     <div className="workspace-material-feedback-header">{status&&<div role="status">{status}</div>}
-     {failures.length>0&&onRetry&&<Button size="sm" color="secondary" isDisabled={uploadDisabled} onPress={onRetry}>重试未完成项</Button>}</div>
+     {failures.length>0&&<div className="workspace-upload-actions">{onAbandon&&<Button size="sm" color="tertiary" isDisabled={uploadDisabled} onPress={onAbandon}>放弃未完成项</Button>}{onRetry&&<Button size="sm" color="secondary" isDisabled={uploadDisabled} onPress={onRetry}>重试未完成项</Button>}</div>}</div>
     {failures.length>0&&<ul role="alert">{failures.map((failure,index)=><li key={index}>{failure}</li>)}</ul>}
    </div>}
    <div className="workspace-material-content">

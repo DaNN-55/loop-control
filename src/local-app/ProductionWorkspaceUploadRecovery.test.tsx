@@ -22,3 +22,18 @@ it('keeps unfinished shelf files through closing and reopens with the received m
  await waitFor(()=>expect(screen.getByRole('button',{name:'收起本期素材'}).textContent).toBe('本期素材 · 2'));
  expect(imported).toEqual(['first.png','second.png']);expect(screen.queryByRole('button',{name:'重试未完成项'})).toBeNull();
 });
+it('abandons failed shelf files after the batch stops, preserves imports through reopening, and accepts a new batch',async()=>{
+ const workspace={id:'shelf-abandon-w',episodeId:'shelf-abandon-e',workflowVersion:'four-step/v1',scriptRevisionId:'s',revision:1,clips:[{id:'clip',itemId:'item',shotId:'S1',text:'镜头'}],project:{relativePath:'project.json',sha256:'sha',fileSize:1,projectId:'project'},readiness:{deliverable:false,placeholders:['item'],missingSources:[]},stale:false};
+ const imported:string[]=[];
+ const command=vi.fn(async(_name:string,value:unknown)=>{const {sourcePath}=value as {sourcePath:string};imported.push(sourcePath);if(sourcePath==='failed.png')throw Error('导入失败');return {id:sourcePath,storage_path:'media/'+sourcePath};});
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace})));
+ const view=()=> <WorkspaceDraftOwner ownerId="abandon-owner"><ProductionWorkspacePanel episodeId={workspace.episodeId} title="放弃上传" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/></WorkspaceDraftOwner>;
+ const first=render(view());fireEvent.click(await screen.findByRole('button',{name:'本期素材 · 0'}));
+ fireEvent.change(screen.getByLabelText('上传制作素材'),{target:{files:[new File(['ok'],'kept.png',{type:'image/png'}),new File(['fail'],'failed.png',{type:'image/png'})]}});
+ await waitFor(()=>expect(screen.getByRole('button',{name:'放弃未完成项'}).hasAttribute('disabled')).toBe(false));
+ fireEvent.click(screen.getByRole('button',{name:'放弃未完成项'}));expect(screen.queryByRole('button',{name:'重试未完成项'})).toBeNull();
+ first.unmount();render(view());fireEvent.click(await screen.findByRole('button',{name:'本期素材 · 1'}));expect(screen.queryByRole('button',{name:'放弃未完成项'})).toBeNull();
+ fireEvent.change(screen.getByLabelText('上传制作素材'),{target:{files:[new File(['next'],'next.png',{type:'image/png'})]}});
+ await waitFor(()=>expect(screen.getByRole('button',{name:'收起本期素材'}).textContent).toBe('本期素材 · 2'));
+ expect(imported).toEqual(['kept.png','failed.png','next.png']);
+});

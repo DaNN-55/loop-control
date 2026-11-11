@@ -11,3 +11,5 @@
 .workspace-upload-toast>svg,.workspace-upload-toast>button{flex:none}
 .workspace-upload-toast-error{color:var(--lc-danger)}
 .workspace-upload-toast-success{color:var(--lc-success)}
+
+.workspace-upload-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}

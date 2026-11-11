@@ -183,3 +183,17 @@ it('不支持的本地文件显示提示及可恢复详情，不发起素材导�
  const fixture=setup();render(<fixture.View/>);choose([new File(['local validation only'],'invalid.txt',{type:'text/plain'})]);
  const notice=await screen.findByRole('status',{name:'上传提示'});expect(notice.textContent).toContain('请选择有效的图片文件');expect(fixture.startedImports).toEqual([]);expect(screen.queryByLabelText('上传记录')).toBeNull();expect(uploadResults().textContent).toContain('invalid.txt');
 });
+
+it('放弃停止后的未完成项，保留已导入图片供参考且不补候选，重开后可上传新批次',async()=>{
+ const fixture=setup();fixture.failRegistration='imported.png';const resume=fixture.pauseImport('imported.png');
+ const view=render(<fixture.View/>);choose([image('imported.png'),image('bad.png')]);
+ expect((screen.getByRole('button',{name:'放弃未完成项'}) as HTMLButtonElement).disabled).toBe(true);
+ await act(async()=>resume());await waitFor(()=>expect(screen.getByRole('button',{name:'放弃未完成项'}).hasAttribute('disabled')).toBe(false));
+ fireEvent.click(screen.getByRole('button',{name:'放弃未完成项'}));expect(screen.queryByRole('region',{name:'上传结果'})).toBeNull();
+ view.unmount();render(<fixture.View/>);expect(screen.queryByRole('button',{name:'重试未完成项'})).toBeNull();
+ fireEvent.click(screen.getByRole('button',{name:'AI 生成'}));fireEvent.click(screen.getByRole('button',{name:'添加参考图'}));
+ expect(await screen.findByRole('checkbox',{name:'参考图 imported.png'})).toBeTruthy();expect(screen.queryByRole('checkbox',{name:'参考图 bad.png'})).toBeNull();
+ fireEvent.click(screen.getByRole('button',{name:'关闭参考图选择'}));fireEvent.click(screen.getByRole('button',{name:'上传素材'}));
+ choose([image('new.png')]);await waitFor(()=>expect(fixture.registrations).toEqual(['new.png']));
+ expect(fixture.startedImports).toEqual(['imported.png','bad.png','new.png']);
+});

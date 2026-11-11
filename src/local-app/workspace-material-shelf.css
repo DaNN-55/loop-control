@@ -128,7 +128,7 @@ html[data-interface="impeccable"] .product-ui .workspace-material-heading > butt
 .workspace-material-empty,
 .workspace-material-feedback { padding: 6px 12px; }
 .workspace-material-feedback { max-block-size: 88px; overflow: auto; }
-.workspace-material-feedback-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.workspace-material-feedback-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
 .workspace-material-feedback ul { margin: 0; padding-inline-start: 16px; color: var(--lc-danger); }
 
 .workspace-material-upload-overlay {
@@ -203,3 +203,6 @@ html[data-interface="impeccable"] .product-ui .workspace-material-modal .workspa
 html[data-interface="impeccable"] .product-ui .workspace-material-modal .workspace-material-preview-close[data-color]>svg[data-icon]:not([data-icon="loading"]){width:18px!important;height:18px!important;flex:none!important}
 
 html[data-interface="impeccable"] .product-ui .workspace-material-modal [role=dialog]>header{align-items:center;flex-wrap:nowrap}
+
+/* Stacked panes need the inventory in flow so recovery actions stay reachable. */
+@media(max-width:900px){.workspace-material-inventory{position:relative;inset:auto}}

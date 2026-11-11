@@ -119,19 +119,19 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
  useEffect(()=>{if(!adoptionFeedback)return;const timer=setTimeout(()=>setAdoptionFeedback(''),300);return()=>clearTimeout(timer);},[adoptionFeedback]);
  const uploadOwnerId=useWorkspaceOwnerId();
  const [uploadState]=useState(()=>uploadSession(`visual:${uploadOwnerId}:${workspace.episodeId}:${workspace.id}:${targetItemId}`));
- const {rows:uploadRows,running:uploading,notice:uploadNotice}=useSyncExternalStore(uploadState.subscribe,uploadState.read);
+ const {rows:uploadRows,running:uploading,notice:uploadNotice,retainedMaterials}=useSyncExternalStore(uploadState.subscribe,uploadState.read);
  const formRef=useRef<HTMLDivElement>(null);
  const working=useRef(false),fileInput=useRef<HTMLInputElement>(null),referenceInput=useRef<HTMLInputElement>(null),mounted=useRef(true),zoomTrigger=useRef<HTMLButtonElement>(null),trimTrigger=useRef<HTMLButtonElement>(null),adoptTrigger=useRef<HTMLButtonElement>(null),thumbnailRail=useRef<HTMLDivElement>(null);
  useEffect(()=>{mounted.current=true;return()=>{mounted.current=false;};},[]);
  useEffect(()=>{try{sessionStorage.setItem(storageKey,JSON.stringify(draft));}catch{/* Storage is optional. */}},[storageKey,draft]);
  useEffect(()=>{if(!zoom)return;return()=>zoomTrigger.current?.focus();},[zoom]);
  const candidates=(workspace.visualCandidates??[]).filter(c=>c.targetItemId===targetItemId&&c.status!=='rejected');
- const allMaterials=[...props.materials,...uploadRows.flatMap(row=>row.material?[row.material]:[]),...(workspace.visualCandidates??[]).filter(c=>c.kind==='image'&&c.materialRevisionId).map(c=>({id:c.materialRevisionId!,material_type:'image',source_path:c.relativePath.split('/').pop()??'生成图片',storage_path:c.relativePath}))].filter((m,i,a)=>a.findIndex(x=>x.id===m.id)===i);
+ const allMaterials=[...props.materials,...retainedMaterials,...uploadRows.flatMap(row=>row.material?[row.material]:[]),...(workspace.visualCandidates??[]).filter(c=>c.kind==='image'&&c.materialRevisionId).map(c=>({id:c.materialRevisionId!,material_type:'image',source_path:c.relativePath.split('/').pop()??'生成图片',storage_path:c.relativePath}))].filter((m,i,a)=>a.findIndex(x=>x.id===m.id)===i);
  useEffect(()=>{
   if(uploading)return;
   const known=new Set([...props.materials.map(material=>material.id),...(workspace.visualCandidates??[]).filter(candidate=>candidate.targetItemId===targetItemId).map(candidate=>candidate.materialRevisionId)]);
-  if(uploadRows.some(row=>row.status==='succeeded'&&known.has(row.material?.id)))uploadState.update(value=>({...value,rows:value.rows.filter(row=>row.status!=='succeeded'||!known.has(row.material?.id))}));
- },[uploading,uploadRows,props.materials,workspace.visualCandidates,targetItemId]);
+  if(retainedMaterials.some(material=>known.has(material.id))||uploadRows.some(row=>row.status==='succeeded'&&known.has(row.material?.id)))uploadState.update(value=>({...value,rows:value.rows.filter(row=>row.status!=='succeeded'||!known.has(row.material?.id)),retainedMaterials:value.retainedMaterials.filter(material=>!known.has(material.id))}));
+ },[uploading,uploadRows,retainedMaterials,props.materials,workspace.visualCandidates,targetItemId]);
  const chosenVideoService=videoServices.find(s=>s.mode==='generation'&&s.connectionVersionId===draft.videoSelection?.connectionVersionId&&s.provider===draft.videoSelection.provider&&s.adapter===draft.videoSelection.adapter),videoProvider=draft.videoSelection?.provider,videoModel=draft.videoSelection?.model;
  const videoService=chosenVideoService?{...chosenVideoService,constraints:{...chosenVideoService.constraints,...chosenVideoService.modelConstraints?.[videoModel??'']}}:undefined;
  const videoSettings=videoModel===wanReferenceModel?{...draft.videoSettings,audio:true,promptExtend:false}:draft.videoSettings;
@@ -370,7 +370,7 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
  const thumbnailTasks=pending.filter(t=>(t.kind??'video')===tab&&(!t.targetItemId||t.targetItemId===targetItemId)&&!t.submissionUnknown&&!t.retryTaskId);
  return <section className="workspace-visual-candidates workspace-visual-unified" aria-label="镜头图片与视频">
   <header><div className="workspace-visual-preview-tabs" role="tablist" aria-label="画面类型">{(['image','video'] as const).map(kind=><button key={kind} id={`visual-kind-${targetItemId}-${kind}`} type="button" role="tab" aria-selected={tab===kind} aria-controls={`visual-content-${targetItemId}`} tabIndex={tab===kind?0:-1} onClick={()=>change('tab',kind)} onKeyDown={e=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(e.key)){e.preventDefault();const next=e.key==='Home'?'image':e.key==='End'?'video':tab==='image'?'video':'image';change('tab',next);document.getElementById(`visual-kind-${targetItemId}-${next}`)?.focus();}}}>{kind==='image'?'图片':'视频'}</button>)}</div></header>
-  <WorkspaceUploadFeedback rows={uploadRows} running={uploading} disabled={disabled} notice={uploadNotice} onDismiss={id=>uploadState.update(value=>value.notice?.id===id?{...value,notice:undefined}:value)} onRetry={()=>void processUploads(uploadRows.filter(row=>row.status==='failed'||row.status==='pending'))}/>
+  <WorkspaceUploadFeedback rows={uploadRows} running={uploading} disabled={disabled} notice={uploadNotice} onDismiss={id=>uploadState.update(value=>value.notice?.id===id?{...value,notice:undefined}:value)} onAbandon={()=>{if(!disabled)uploadState.abandon();}} onRetry={()=>void processUploads(uploadRows.filter(row=>row.status==='failed'||row.status==='pending'))}/>
   {options.length>1&&<label>目标片段<NativeSelect size="sm" aria-label="画面候选目标" value={targetItemId} disabled={disabled} onChange={e=>props.onTargetChange?.(e.target.value)}>{options.map((clip,index)=>{
     const item=timeline?.items.find(entry=>entry.id===clip.itemId);
     const slot=(item?.loopControlComposition as {slotId?:string}|undefined)?.slotId;

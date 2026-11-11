@@ -10,29 +10,46 @@ interface RootState{executing?:boolean;path:string;canInitialize:boolean;status:
 const bytes=(value:number)=>{const unit=value>=1024**3?3:value>=1024**2?2:value>=1024?1:0;return `${new Intl.NumberFormat('zh-CN',{maximumFractionDigits:1}).format(value/1024**unit)} ${['B','KB','MB','GB'][unit]}`;};
 export function MediaRootSettingsDialog({csrf,onClose,embedded=false}:{csrf:string;onClose:()=>void;embedded?:boolean}){
  const [root,setRoot]=useState<RootState|null>(null),[path,setPath]=useState(''),[pending,setPending]=useState(''),[reading,setReading]=useState(true),[error,setError]=useState(''),[message,setMessage]=useState(''),[readError,setReadError]=useState(''),[editing,setEditing]=useState(false),[confirmed,setConfirmed]=useState(false);
- const readRequest=useRef<AbortController|null>(null);
+ const readRequest=useRef<{controller:AbortController;kind:'manual'|'poll'|'command'}|null>(null);
+ const mounted=useRef(false),operation=useRef(false);
  const planRequest=useRef<{path:string;key:string}|null>(null),ref=useDialogFocus<HTMLDivElement>(!embedded,()=>{if(!pending&&!reading||pending==='executeMigration')onClose();}),busy=!!pending||reading;
  const observing=pending==='executeMigration'||root?.executing===true;
- async function reload(){
-  readRequest.current?.abort();const controller=new AbortController();readRequest.current=controller;setReading(true);setReadError('');
-  try{const value:RootState=await localRequest('media-root',{signal:controller.signal});if(!controller.signal.aborted){setRoot(value);setPath(current=>current||(value.migration&&!['completed','rolled_back'].includes(value.migration.status)?value.migration.manifest.targetBinding.path:value.path));}}
-  catch(e){if(!controller.signal.aborted)setReadError(e instanceof Error?e.message:String(e));}
-  finally{if(!controller.signal.aborted)setReading(false);}
+ function cancelRead(){if(mounted.current&&readRequest.current?.kind==='manual')setReading(false);readRequest.current?.controller.abort();readRequest.current=null;}
+ async function reload(kind:'manual'|'poll'|'command'='manual'){
+  if(kind==='poll'&&(document.visibilityState==='hidden'||readRequest.current))return;
+  cancelRead();const request={controller:new AbortController(),kind};readRequest.current=request;
+  if(kind==='manual'){setReading(true);setReadError('');}
+  try{
+   const value:RootState=await localRequest('media-root',{signal:request.controller.signal});
+   if(!mounted.current||readRequest.current!==request)return;
+   setRoot(value);setReadError('');setPath(current=>current||(value.migration&&!['completed','rolled_back'].includes(value.migration.status)?value.migration.manifest.targetBinding.path:value.path));
+   if(kind!=='manual'&&value.migration?.status==='completed'){setPath(value.path);setEditing(false);setMessage('媒体根迁移完成，服务已使用新位置。');}
+   return value;
+  }catch(e){if(mounted.current&&readRequest.current===request&&!request.controller.signal.aborted)setReadError(e instanceof Error?e.message:String(e));}
+  finally{if(mounted.current&&readRequest.current===request){readRequest.current=null;if(kind==='manual')setReading(false);}}
  }
- useEffect(()=>{void reload();return()=>readRequest.current?.abort();},[]);
- useEffect(()=>{if(!observing)return;const controller=new AbortController();let timer:ReturnType<typeof setTimeout>;const refresh=async()=>{try{const value:RootState=await localRequest('media-root',{signal:controller.signal});if(!controller.signal.aborted){setRoot(value);setReadError('');if(value.migration?.status==='completed'){setPath(value.path);setEditing(false);setMessage('媒体根迁移完成，服务已使用新位置。');}}}catch(e){if(!controller.signal.aborted)setReadError(e instanceof Error?e.message:String(e));}finally{if(!controller.signal.aborted)timer=setTimeout(()=>void refresh(),500);}};void refresh();return()=>{controller.abort();clearTimeout(timer);};},[observing]);
+ useEffect(()=>{mounted.current=true;void reload();return()=>{mounted.current=false;cancelRead();};},[]);
+ useEffect(()=>{
+  if(!observing)return;
+  let active=true,generation=0,timer:ReturnType<typeof setTimeout>|undefined;
+  const refresh=async(visit=generation)=>{await reload('poll');if(active&&visit===generation&&document.visibilityState!=='hidden')timer=setTimeout(()=>void refresh(visit),500);};
+  const visibility=()=>{generation++;clearTimeout(timer);if(document.visibilityState==='hidden'){if(readRequest.current?.kind==='poll')cancelRead();}else void refresh();};
+  document.addEventListener('visibilitychange',visibility);void refresh();
+  return()=>{active=false;clearTimeout(timer);document.removeEventListener('visibilitychange',visibility);if(readRequest.current?.kind==='poll')cancelRead();};
+ },[observing]);
  async function command(command:'choose'|'open'|'initialize'|'planMigration'|'executeMigration'|'rollbackMigration'){
 
-  if(busy||command==='executeMigration'&&root?.migration?.status==='planned'&&(!confirmed||path.trim()!==root.migration.manifest.targetBinding.path||!root.migration.manifest.canExecute))return;setPending(command);setError('');setMessage('');
+  if(operation.current||readRequest.current?.kind==='manual'||busy||command==='executeMigration'&&root?.migration?.status==='planned'&&(!confirmed||path.trim()!==root.migration.manifest.targetBinding.path||!root.migration.manifest.canExecute))return;operation.current=true;cancelRead();setPending(command);setError('');setMessage('');
   if(command==='planMigration'&&planRequest.current?.path!==path)planRequest.current={path,key:crypto.randomUUID()};
   try{
    const value=await localRequest('media-root',{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':csrf},body:JSON.stringify({command,idempotencyKey:command==='planMigration'?planRequest.current!.key:crypto.randomUUID(),...(['initialize','planMigration'].includes(command)?{path}:{}),...(['executeMigration','rollbackMigration'].includes(command)?{migrationId:root?.migration?.id}:{})})});
+   if(!mounted.current)return;
    if(command==='choose'){if(!value.cancelled)setPath(value.path);}
    else if(command==='initialize'){setRoot(value);setPath(value.path);setMessage('媒体根已初始化，服务已重新加载。');}
    else if(command==='planMigration'){planRequest.current=null;setRoot(current=>current?{...current,migration:value}:current);setPath(value.manifest.targetBinding.path);setConfirmed(false);setMessage('迁移计划已检查，尚未开始迁移。');}
-   else if(command==='executeMigration'||command==='rollbackMigration'){const state:RootState=await localRequest('media-root');setRoot(state);setReadError('');if(value.status==='completed'){setPath(state.path);setEditing(false);setMessage('媒体根迁移完成，服务已使用新位置。');}else if(value.status==='rolled_back')setMessage('已回滚未完成迁移，副本和原文件已保留。');}
+   else if(command==='executeMigration'||command==='rollbackMigration'){const state=await reload('command');if(!mounted.current||!state)return;if(state.migration?.status==='completed'){setPath(state.path);setEditing(false);setMessage('媒体根迁移完成，服务已使用新位置。');}else if(value.status==='rolled_back')setMessage('已回滚未完成迁移，副本和原文件已保留。');}
    else setMessage('已打开媒体根文件夹。');
-  }catch(e){setError(e instanceof Error?e.message:String(e));if(command==='executeMigration'||command==='rollbackMigration')try{setRoot(await localRequest('media-root'));}catch{setReadError('未能读取最新进度，请重新读取存储位置。');}}finally{setPending('');}
+  }catch(e){if(mounted.current){setError(e instanceof Error?e.message:String(e));if(command==='executeMigration'||command==='rollbackMigration')await reload('command');}}finally{operation.current=false;if(mounted.current)setPending('');}
  }
  const plan=root?.migration,m=plan?.manifest,progress=plan?.progress;
  const targetChanged=plan?.status==='planned'&&path.trim()!==m?.targetBinding.path;

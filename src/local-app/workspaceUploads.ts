@@ -4,7 +4,7 @@ export interface WorkspaceImportedMaterial {id:string;material_type:string;sourc
 export interface WorkspaceUploadEntry {
  id:number;name:string;file?:File;status:'pending'|'running'|'succeeded'|'failed';material?:WorkspaceImportedMaterial;error?:string;
 }
-interface Snapshot<Entry> {rows:Entry[];running:boolean;notice?:UploadNotice}
+interface Snapshot<Entry> {rows:Entry[];running:boolean;retainedMaterials:WorkspaceImportedMaterial[];notice?:UploadNotice}
 interface Executor<Entry> {
  active:()=>boolean;importFile:(row:Entry)=>Promise<WorkspaceImportedMaterial>;
  complete?:(row:Entry,material:WorkspaceImportedMaterial)=>Promise<void>;
@@ -19,6 +19,7 @@ export interface WorkspaceUploadSession<Entry extends WorkspaceUploadEntry> {
  update:(change:(value:Snapshot<Entry>)=>Snapshot<Entry>)=>void;
  enqueue:(entries:Omit<Entry,'id'|'status'>[])=>Entry[];
  report:(message:string,failed?:boolean)=>void;
+ abandon:()=>void;
  run:(entries:Entry[],executor:Executor<Entry>)=>Promise<void>;
 }
 let entryId=0,noticeId=0;
@@ -33,13 +34,22 @@ export function workspaceUploadSessions<Entry extends WorkspaceUploadEntry>(){
 }
 /** Unfinished files and import receipts survive panel closure within this browser page. */
 export function createWorkspaceUploadSession<Entry extends WorkspaceUploadEntry>():WorkspaceUploadSession<Entry>{
- let value:Snapshot<Entry>={rows:[],running:false};const listeners=new Set<()=>void>();
+ let value:Snapshot<Entry>={rows:[],running:false,retainedMaterials:[]};const listeners=new Set<()=>void>();
  function update(change:(snapshot:Snapshot<Entry>)=>Snapshot<Entry>){value=change(value);for(const listener of listeners)listener();}
  function patch(id:number,change:Partial<Entry>){update(snapshot=>({...snapshot,rows:snapshot.rows.map(row=>row.id===id?{...row,...change}:row)}));}
  function report(message:string,failed=true){update(snapshot=>({...snapshot,notice:{id:++noticeId,message,failed,expiresAt:Date.now()+5000}}));}
  const session:WorkspaceUploadSession<Entry>={read:()=>value,subscribe(listener){listeners.add(listener);return()=>{listeners.delete(listener);};},update,report,
   enqueue(entries){const rows=entries.map(entry=>({...entry,id:++entryId,status:'pending'}) as Entry);update(snapshot=>({...snapshot,rows:[...snapshot.rows,...rows]}));return rows;},
+  abandon(){
+   if(value.running)return;
+   const unfinished=value.rows.filter(row=>row.status!=='succeeded');
+   if(!unfinished.length)return;
+   const materials=[...value.retainedMaterials,...unfinished.flatMap(row=>row.material?[row.material]:[])];
+   update(snapshot=>({...snapshot,rows:snapshot.rows.filter(row=>row.status==='succeeded'),retainedMaterials:materials.filter((material,index)=>materials.findIndex(known=>known.id===material.id)===index)}));
+   report(`已放弃 ${unfinished.length} 项未完成上传${materials.length?'，已导入素材已保留':''}。`,false);
+  },
   async run(entries,executor){
+   entries=entries.filter(entry=>value.rows.some(row=>row.id===entry.id&&row.status!=='succeeded'));
    if(value.running||!entries.length)return;
    update(snapshot=>({...snapshot,running:true}));
    try{

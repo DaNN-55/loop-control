@@ -7,12 +7,12 @@ import './workspace-upload-feedback.css';
 
 export interface UploadNotice {id:number;message:string;failed:boolean;expiresAt:number}
 interface UploadRow {id:number;name:string;status:'pending'|'running'|'succeeded'|'failed';error?:string}
-export function WorkspaceUploadFeedback({rows,running,disabled,notice,onDismiss,onRetry}:{rows:UploadRow[];running:boolean;disabled:boolean;notice?:UploadNotice;onDismiss:(id:number)=>void;onRetry:()=>void}){
+export function WorkspaceUploadFeedback({rows,running,disabled,notice,onDismiss,onRetry,onAbandon}:{rows:UploadRow[];running:boolean;disabled:boolean;notice?:UploadNotice;onDismiss:(id:number)=>void;onRetry:()=>void;onAbandon?:()=>void}){
  const results=useRef<HTMLElement>(null);
  const unfinished=rows.filter(row=>row.status!=='succeeded');
  return <>
   {unfinished.length>0&&<section ref={results} className="workspace-upload-results" aria-label="上传结果" tabIndex={-1}>
-   <header><span role="status">{running?'正在上传':`${unfinished.length} 项上传未完成`}</span><Button size="sm" color="secondary" isDisabled={disabled||running} onPress={onRetry}>重试未完成项</Button></header>
+   <header><span role="status">{running?'正在上传':`${unfinished.length} 项上传未完成`}</span><div className="workspace-upload-actions">{onAbandon&&<Button size="sm" color="tertiary" isDisabled={disabled||running} onPress={onAbandon}>放弃未完成项</Button>}<Button size="sm" color="secondary" isDisabled={disabled||running} onPress={onRetry}>重试未完成项</Button></div></header>
    <ul>{unfinished.map(row=><li key={row.id} aria-busy={row.status==='running'}><div><strong>{row.name}</strong><span>{row.status==='failed'?'失败':row.status==='running'?'处理中…':'未处理'}</span>{row.error&&<p>{row.error}</p>}</div></li>)}</ul>
   </section>}
   <WorkspaceUploadToast notice={notice} onDismiss={onDismiss} onView={unfinished.length?()=>{results.current?.focus();results.current?.scrollIntoView?.({block:'nearest'});}:undefined}/>
