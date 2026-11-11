@@ -15,11 +15,9 @@ import {WorkspaceAudioAudition} from './WorkspaceAudioAudition';
 import {WorkspaceNarrationToolbar,type WorkspaceNarrationSettings} from './WorkspaceNarrationToolbar';
 import {WorkspaceNarrationCaptions} from './WorkspaceNarrationCaptions';
 import {Toggle} from '../ui/dan-ui/components/base/toggle/toggle';
-import {useEffect,useId,useRef,useState,type ReactNode} from 'react';
-import {X} from 'lucide-react';
+import {useEffect,useId,useMemo,useReducer,useRef,useState,type ReactNode} from 'react';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {Badge} from '../ui/dan-ui/components/base/badges/badges';
-import {NativeSelect} from '../ui/dan-ui/components/base/select/select-native';
 import type {ProductionWorkspace,WorkspaceNarration} from '../productionWorkspace';
 import type {ProductionService} from '../connections/serviceCatalog';
 import {useProductionServiceCatalog} from './useProductionServiceCatalog';
@@ -28,6 +26,7 @@ import './workspace-narration-settings.css';
 interface NarrationMaterial {id:string;source_path:string;storage_path?:string;material_type:string;material_purpose?:string|null}
 interface Track {id:string;track_kind:string;cue_id:string|null;source_material_revision_id?:string|null;relative_path?:string}
 type Settings=WorkspaceNarrationSettings;
+interface ManualEntry {materialId:string;text:string;name?:string;status:'pending'|'running'|'failed'|'succeeded';stage:'save'|'confirm';data?:Record<string,unknown>;audioTrackId?:string;error?:string}
 function compatible(s:Settings,services:ProductionService[]){const service=services.find(c=>c.connectionVersionId===s.selection?.connectionVersionId&&c.provider===s.selection?.provider&&c.adapter===s.selection?.adapter);return !!service?.executable&&service.models.includes(s.selection?.model??'')&&!!service.voiceCatalog?.[s.languageCode]?.includes(s.voice)&&s.speakingRate>=(service.constraints.speakingRate?.min??.5)&&s.speakingRate<=(service.constraints.speakingRate?.max??2);}
 export function WorkspaceNarrationPanel(props:Parameters<typeof EditableWorkspaceNarrationPanel>[0]&{readOnly?:boolean}){
  return props.readOnly?<WorkspaceNarrationRecord workspace={props.workspace} selectedShotId={props.selectedShotId}/>:<EditableWorkspaceNarrationPanel {...props}/>;
@@ -83,20 +82,26 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
  const text=textDraft??savedText;
  const followText=n.adoptedAudioTrackId||n.retainedAudioTrackId?(savedCaption?.contentMode==='follow_tts'?savedCaption.text:workspace.usedNarration?.find(v=>v.shotId===n.shotId)?.text??n.text):text;
  const setText=(value:string)=>setTextDraft(value);
- const [mode,setMode]=useState<WorkspaceNarration['mode']>(()=>{try{const value=sessionStorage.getItem(key+':mode');return value&&['tts','manual'].includes(value)?value as WorkspaceNarration['mode']:n.mode==='manual'?'manual':'tts';}catch{return n.mode==='manual'?'manual':'tts';}}),[manual,setManual]=useState(()=>{try{return sessionStorage.getItem(key+':manual')??(n.mode==='manual'?n.audioTrackId??'':'');}catch{return n.mode==='manual'?n.audioTrackId??'':'';}}),[busy,setBusy]=useState(false),[error,setError]=useState('');
- useEffect(()=>{try{if(textDraft===null)sessionStorage.removeItem(key+':text');else sessionStorage.setItem(key+':text',textDraft);sessionStorage.setItem(key+':mode',mode);sessionStorage.setItem(key+':manual',manual);}catch{/* Optional browser draft. */}},[key,textDraft,mode,manual]);
+ const [mode,setMode]=useState<WorkspaceNarration['mode']>(()=>{try{const value=sessionStorage.getItem(key+':mode');return value&&['tts','manual'].includes(value)?value as WorkspaceNarration['mode']:n.mode==='manual'?'manual':'tts';}catch{return n.mode==='manual'?'manual':'tts';}}),[busy,setBusy]=useState(false),[error,setError]=useState('');
+ useEffect(()=>{try{if(textDraft===null)sessionStorage.removeItem(key+':text');else sessionStorage.setItem(key+':text',textDraft);sessionStorage.setItem(key+':mode',mode);}catch{/* Optional browser draft. */}},[key,textDraft,mode]);
+ const manualSession=useMemo(()=>({active:true,running:false,rows:[] as ManualEntry[]}),[episodeId,workspace.id,n.shotId]);
+ const manualVisit=useMemo(()=>({active:true}),[manualSession,expanded,mode]),currentManual=useRef({session:manualSession,visit:manualVisit});
+ currentManual.current={session:manualSession,visit:manualVisit};
+ const [,renderManual]=useReducer((value:number)=>value+1,0);
+ useEffect(()=>{manualSession.active=true;return()=>{manualSession.active=false;};},[manualSession]);
+ useEffect(()=>{manualVisit.active=true;return()=>{manualVisit.active=false;};},[manualVisit]);
+ const ownsManual=()=>manualSession.active&&manualVisit.active&&currentManual.current.session===manualSession&&currentManual.current.visit===manualVisit;
+ const showManual=()=>{if(manualSession.active&&currentManual.current.session===manualSession)renderManual();};
  const speechSettings:Settings=defaults??{selection:null,voice:'',languageCode:'zh-CN',speakingRate:1};
  const task=workspaceTaskPresentation(n.generationTask??{status:n.status});
  const canGenerate=compatible(speechSettings,services)&&!!text.trim()&&!task.unknown&&!task.held;
  const reader=useWorkspaceReading(workspace,onChanged,n.shotId,'无法读取当前工程版本。');
  const review=useWorkspaceCandidateReview({workspace,scope:JSON.stringify([n.shotId,expanded,mode]),reader,command});
  const narrationMaterials=materials.filter(m=>m.material_type==='audio'&&canUseWorkspaceAudioMaterial(m.material_purpose,'narration'));
- const selectedMaterial=mode==='manual'?narrationMaterials.find(m=>'material:'+m.id===manual):undefined;
  const narrationTracks=tracks.filter(t=>t.track_kind==='narration');
  const uploadedTracks=narrationTracks.filter(t=>!!t.source_material_revision_id);
- const manualSelection=selectedMaterial||uploadedTracks.some(t=>t.id===manual)?manual:'';
  const [manualReview,setManualReview]=useState<{projectSha256:string;audioTrackId:string;inputFingerprint:string;durationSeconds:number|null}|null>(null);
- useEffect(()=>{setManualReview(null);},[expanded,mode,manual,text,workspace.project.sha256]);
+ useEffect(()=>{setManualReview(null);},[expanded,mode,text,workspace.project.sha256]);
  const base=(w=workspace)=>({episodeId,workspaceId:w.id,expectedRevision:w.revision,clipId:n.clipId});
  async function saveCaptions(contentMode:'follow_tts'|'independent',captionText?:string){
   setBusy(true);setError('');
@@ -108,23 +113,60 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
   try{onChanged(await command(tab==='voice'?'setWorkspaceNarrationEnabled':'setWorkspaceCaptionsEnabled',{...base(),enabled}) as ProductionWorkspace);}
   catch(e){setError(e instanceof Error?e.message:'开关未保存。');}finally{setBusy(false);}
  }
+ function enqueueManual(ids:string[],names:string[]=[]){
+  for(const [index,id]of ids.entries())if(!manualSession.rows.some(row=>row.materialId===id&&row.text===text))manualSession.rows.push({materialId:id,text,name:narrationMaterials.find(material=>material.id===id)?.source_path.split('/').pop()??names[index],stage:'save',status:'pending'});
+  showManual();
+ }
+ async function processManual(){
+  if(manualSession.running||pending||workspace.stale||mode!=='manual'||!ownsManual())return;
+  manualSession.running=true;setError('');showManual();
+  let currentRow:ManualEntry|undefined;
+  try{
+   let w=await reader.read();
+   for(const row of manualSession.rows.filter(entry=>entry.status!=='succeeded')){
+    if(!ownsManual())break;
+    currentRow=row;row.status='running';row.error=undefined;showManual();
+    if(row.stage==='save'){
+     row.data??={...base(w),mode:'manual',text:row.text,materialRevisionId:row.materialId};
+     const saved=await command('saveWorkspaceNarration',row.data) as ProductionWorkspace;
+     row.audioTrackId=saved.narration?.find(value=>value.shotId===n.shotId)?.audioTrackId??undefined;
+     row.stage='confirm';row.data={...base(saved)};
+     if(!ownsManual()){row.status='pending';break;}
+    }
+    const saved=await command('confirmWorkspaceNarration',row.data) as ProductionWorkspace;
+    row.status='succeeded';
+    if(!ownsManual())break;
+    reader.publish(saved);w=await reader.idle()??saved;showManual();
+   }
+  }catch(cause){
+   if(currentRow){currentRow.status=ownsManual()?'failed':'pending';if(ownsManual())currentRow.error=cause instanceof Error?cause.message:'口播候选未完成，请重试。';}
+   else if(ownsManual())setError(cause instanceof Error?cause.message:'无法读取当前工程版本。');
+  }finally{manualSession.running=false;showManual();}
+ }
+ async function addManualMaterial(id:string){
+  if(manualSession.running||pending||workspace.stale||!ownsManual())return;
+  enqueueManual([id]);await processManual();
+ }
  async function importAudio(files:File[]){
-  if(!onImportAudio)return;
-  setBusy(true);setError('');
-  try{if(files.some(file=>!file.name.toLowerCase().endsWith('.mp3')))throw Error('请选择 MP3 口播文件。');const ids=await onImportAudio(files);if(Array.isArray(ids)&&typeof ids[0]==='string')setManual('material:'+ids[0]);}
-  catch(e){setError(e instanceof Error?e.message:'音频导入未完成。');}finally{setBusy(false);}
+  if(!onImportAudio||manualSession.running||pending||workspace.stale||!ownsManual())return;
+  manualSession.running=true;setError('');showManual();
+  try{
+   if(files.some(file=>!file.name.toLowerCase().endsWith('.mp3')))throw Error('请选择 MP3 口播文件。');
+   const result=await onImportAudio(files);
+   const ids=Array.isArray(result)?result.filter((id):id is string=>typeof id==='string'):[];
+   enqueueManual(ids,ids.length===files.length?files.map(file=>file.name):[]);
+  }catch(cause){if(ownsManual())setError(cause instanceof Error?cause.message:'音频导入未完成。');}
+  finally{manualSession.running=false;showManual();}
+  if(ownsManual())await processManual();
  }
  async function prepare(){
-  if(mode==='tts'&&!canGenerate||mode==='manual'&&!manualSelection)return;
+  if(mode!=='tts'||!canGenerate)return;
   setBusy(true);setError('');
   try{
-   const uploadedTrack=uploadedTracks.find(track=>track.id===manualSelection);
-   const materialId=selectedMaterial?.id??narrationMaterials.find(material=>material.id===uploadedTrack?.source_material_revision_id)?.id;
-   const manualInput=mode==='manual'?(materialId?{materialRevisionId:materialId}:{audioTrackId:manualSelection}):{};
-   let w=mode==='tts'?await persistSettings(workspace):workspace;
-   w=await command('saveWorkspaceNarration',{...base(w),mode,text,...(mode==='tts'?speechSettings:{}),...manualInput}) as ProductionWorkspace;
+   let w=await persistSettings(workspace);
+   w=await command('saveWorkspaceNarration',{...base(w),mode:'tts',text,...speechSettings}) as ProductionWorkspace;
    w=await command('confirmWorkspaceNarration',base(w)) as ProductionWorkspace;
-   if(mode==='tts')w=await command('generateWorkspaceNarration',{...base(w),retry:n.status==='failed'}) as ProductionWorkspace;
+   w=await command('generateWorkspaceNarration',{...base(w),retry:n.status==='failed'}) as ProductionWorkspace;
    onChanged(w);
   }catch(e){setError(e instanceof Error?e.message:'口播准备未完成。');}finally{setBusy(false);}
  }
@@ -154,12 +196,11 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
   if(mode==='none'||c.kind!=='audio'||c.shotId!==n.shotId||c.status==='rejected')return false;
   const track=narrationTracks.find(t=>t.id===c.audioTrackId);
   // A newly registered upload can reach the workspace before the episode's track list refreshes.
-  const uploaded=!c.speech&&(track?!!track.source_material_revision_id:narrationMaterials.some(m=>m.storage_path===c.relativePath));
+  const uploaded=!c.speech&&(track?!!track.source_material_revision_id:narrationMaterials.some(m=>m.storage_path===c.relativePath)||n.mode==='manual'&&n.audioTrackId===c.audioTrackId||manualSession.rows.some(row=>row.audioTrackId===c.audioTrackId));
   return mode==='manual'?uploaded:!uploaded;
  })??[];
- const disabled=pending||busy||review.pending||workspace.stale;
+ const disabled=pending||busy||manualSession.running||review.pending||workspace.stale;
  const adoptedTrack=uploadedTracks.find(t=>t.id===n.adoptedAudioTrackId);
- const clearable=mode==='manual'&&!!manualSelection&&manualSelection!==n.adoptedAudioTrackId&&(!selectedMaterial||selectedMaterial.id!==adoptedTrack?.source_material_revision_id);
  const withdrawAction=<Button className="workspace-narration-withdraw" size="sm" color="tertiary-destructive" aria-label="撤销" isDisabled={disabled} onPress={()=>void withdraw()}>撤销</Button>;
  const plan=review.plan;
  const needsImpactDialog=!!plan?.restoration||needsCandidateImpactDialog(plan?.impact);
@@ -195,19 +236,26 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
    <div className="workspace-generation-composer workspace-speech-composer">
     <div className="workspace-narration-editor workspace-narration-input">
     {mode==='manual'?<div className="workspace-narration-file-slot">
+     <header className="workspace-caption-editor-heading"><h3 id={textHeadingId}>人工口播</h3></header>
      <WorkspaceMaterialDrop label="拖入口播文件" kind="audio" purpose="narration" surface="preview" persistent disabled={disabled}
-      selectedName={selectedMaterial?.source_path.split('/').pop()??uploadedTracks.find(t=>t.id===manualSelection)?.relative_path?.split('/').pop()} onSelect={id=>setManual('material:'+id)} onBrowse={onImportAudio?()=>audioInput.current?.click():undefined} onFiles={files=>void importAudio(files)}/>
-     <input ref={audioInput} aria-label="导入人工口播" hidden type="file" accept=".mp3,audio/mpeg" disabled={disabled} onChange={event=>{const files=Array.from(event.target.files??[]);event.target.value='';if(files.length)void importAudio(files);}}/>
-     {(narrationMaterials.length>0||uploadedTracks.length>0)&&<NativeSelect size="sm" aria-label="口播素材或上传音轨" value={manualSelection} disabled={disabled} onChange={e=>setManual(e.target.value)}><option value="">选择已导入的口播</option>{narrationMaterials.map(m=><option key={m.id} value={`material:${m.id}`}>{m.source_path.split('/').pop()}</option>)}{uploadedTracks.map(t=><option key={t.id} value={t.id}>{narrationMaterials.find(m=>m.id===t.source_material_revision_id)?.source_path.split('/').pop()??t.relative_path?.split('/').pop()??t.cue_id??'人工口播'}</option>)}</NativeSelect>}
-     {clearable&&<Button size="xs" color="tertiary" iconLeading={X} aria-label="清除选择" isDisabled={disabled} onPress={()=>setManual('')}/>}
+      onSelect={id=>void addManualMaterial(id)} onBrowse={onImportAudio?()=>audioInput.current?.click():undefined} onFiles={files=>void importAudio(files)}/>
+     <input ref={audioInput} aria-label="导入人工口播" hidden type="file" multiple accept=".mp3,audio/mpeg" disabled={disabled} onChange={event=>{const files=Array.from(event.target.files??[]);event.target.value='';if(files.length)void importAudio(files);}}/>
     </div>:<><header className="workspace-caption-editor-heading"><h3 id={textHeadingId}>口播文案</h3></header><textarea aria-label="口播文案" rows={4} maxLength={100000} disabled={disabled} value={text} onChange={e=>setText(e.target.value)}/></>}
     </div>
     <WorkspaceNarrationToolbar mode={mode==='manual'?'manual':'tts'} value={speechSettings} services={services} disabled={disabled} changed={settingsChanged} onMode={setMode} onChange={onSettings} onSave={saveSettings}>
      {inlineReview&&!inlineCandidate&&<><span role="status">{reviewSummary}</span>{inlineActions}</>}
-     <Button className="workspace-narration-primary" hidden={!!inlineReview&&!inlineCandidate} size="sm" color="primary" isDisabled={disabled||mode==='manual'&&!manualSelection||mode==='tts'&&!canGenerate} onPress={event=>{adoptionTrigger.current=event.target;void prepare();}}>{busy?'正在处理…':mode==='manual'?'加入候选':'生成口播'}</Button>
+     {mode==='tts'&&<Button className="workspace-narration-primary" hidden={!!inlineReview&&!inlineCandidate} size="sm" color="primary" isDisabled={disabled||!canGenerate} onPress={event=>{adoptionTrigger.current=event.target;void prepare();}}>{busy?'正在处理…':'生成口播'}</Button>}
+     {mode==='manual'&&manualSession.running&&<span role="status">正在加入口播候选…</span>}
     </WorkspaceNarrationToolbar>
    </div>
   </section>
+  {mode==='manual'&&manualSession.rows.some(row=>row.status!=='succeeded')&&<section aria-label="人工口播登记" className="workspace-narration-default-actions">
+   {manualSession.rows.filter(row=>row.status!=='succeeded').map(row=><div key={row.materialId+row.text}>
+    <span>{row.name??'已导入口播'} · {row.status==='running'?'正在加入候选':row.stage==='confirm'?'口播已保存，等待确认':'等待加入候选'}</span>
+    {row.error&&<p role="alert">{row.error}</p>}
+   </div>)}
+   {!manualSession.running&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>void processManual()}>重试加入候选</Button>}
+  </section>}
   {mode==='tts'&&!canGenerate&&
    <p className="workspace-narration-model-note" role="status">{!compatible(speechSettings,services)?'请在口播设置中检查连接、音色和语速。':!text.trim()?'请填写口播文案。':'请先核对上一条口播任务。'}</p>}
   {n.adoptedAudioTrackId&&!!adoptedTrack===(mode==='manual')&&!candidates.some(c=>c.status==='adopted')&&
@@ -218,11 +266,13 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
    <div className="workspace-speech-results-list">
     {candidates.map(c=>{
      const confirming=inlineCandidate?.id===c.id;
+     const sourceName=narrationMaterials.find(material=>material.storage_path===c.relativePath)?.source_path.split('/').pop()??manualSession.rows.find(row=>row.audioTrackId===c.audioTrackId)?.name??c.relativePath.split('/').pop();
+     const label=mode==='manual'?sourceName||'人工口播':c.text;
      return <article key={c.id} className="workspace-speech-result">
-      <div className="workspace-speech-result-heading" title={c.text}>
-       <div className="workspace-speech-result-copy"><p>{c.text}</p>{c.status==='adopted'&&<Badge type="color" color="success" size="sm" className="workspace-speech-adopted">已采用</Badge>}</div>
+      <div className="workspace-speech-result-heading" title={mode==='manual'?[label,c.text].filter(Boolean).join('\n'):c.text}>
+       <div className="workspace-speech-result-copy"><p>{label}</p>{c.status==='adopted'&&<Badge type="color" color="success" size="sm" className="workspace-speech-adopted">已采用</Badge>}</div>
       </div>
-      <div className="workspace-speech-result-player"><WorkspaceAudioAudition layout="bar" durationSeconds={c.durationSeconds} label={c.text.slice(0,32)||n.shotId} showControls={false} preload="none" aria-label={`${n.shotId} ${c.id} 口播试听`}
+      <div className="workspace-speech-result-player"><WorkspaceAudioAudition layout="bar" durationSeconds={c.durationSeconds} label={label.slice(0,32)||n.shotId} showControls={false} preload="none" aria-label={`${n.shotId} ${c.id} 口播试听`}
        src={`/_local-artifact?episode=${encodeURIComponent(episodeId)}&path=${encodeURIComponent(c.relativePath)}`}/>
       <div className="workspace-speech-result-footer">
        {confirming&&<p role="status">{reviewSummary}</p>}

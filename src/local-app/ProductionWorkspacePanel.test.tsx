@@ -173,15 +173,17 @@ it('accepts one unassigned MP3 for voice and queues local audio candidates witho
  const musicDrag=startMaterialDrag(music);
  expect(screen.getByRole('button',{name:'拖入口播文件'}).getAttribute('data-drag-over')).toBeNull();
  fireEvent.dragEnd(music,{dataTransfer:musicDrag});
- expect(screen.getByRole('button',{name:'加入候选'})).toHaveProperty('disabled',true);
+ expect(screen.queryByRole('button',{name:'加入候选'})).toBeNull();
+ expect(command).not.toHaveBeenCalled();
  const voiceDrag=startMaterialDrag(audio);
  const voiceTarget=screen.getByRole('button',{name:'拖入口播文件'});
  fireEvent.dragOver(voiceTarget,{dataTransfer:voiceDrag});
  fireEvent.drop(voiceTarget,{dataTransfer:voiceDrag});
  fireEvent.dragEnd(audio,{dataTransfer:voiceDrag});
- expect(screen.getByRole('button',{name:'拖入口播文件，已选 unassigned.mp3'})).toBeTruthy();
- expect(screen.getByRole('button',{name:'加入候选'})).toBeTruthy();
- expect(command).not.toHaveBeenCalled();
+ expect(screen.getByRole('button',{name:'拖入口播文件'})).toBeTruthy();
+ await waitFor(()=>expect(command).toHaveBeenCalledWith('confirmWorkspaceNarration',expect.objectContaining({episodeId:'e',clipId:'clip'})));
+ expect(command).toHaveBeenCalledWith('saveWorkspaceNarration',expect.objectContaining({mode:'manual',materialRevisionId:'audio'}));
+ expect(command.mock.calls.some(([name])=>name.startsWith('adopt')||name==='generateWorkspaceNarration')).toBe(false);
  fireEvent.click(screen.getByRole('tab',{name:'配乐与声音'}));
  for(const [kind,label] of [['bgm','整期配乐'],['sfx','音效']] as const){
   fireEvent.click(screen.getByRole('button',{name:label}));
@@ -189,7 +191,7 @@ it('accepts one unassigned MP3 for voice and queues local audio candidates witho
   fireEvent.dragOver(target,{dataTransfer:transfer});fireEvent.drop(target,{dataTransfer:transfer});fireEvent.dragEnd(audio,{dataTransfer:transfer});
   await waitFor(()=>expect(command).toHaveBeenCalledWith('prepareWorkspaceAudio',expect.objectContaining({kind,materialRevisionId:'audio'})));
  }
- expect(command.mock.calls.map(call=>call[0])).toEqual(['prepareWorkspaceAudio','prepareWorkspaceAudio']);
+ expect(command.mock.calls.map(call=>call[0])).toEqual(['saveWorkspaceNarration','confirmWorkspaceNarration','prepareWorkspaceAudio','prepareWorkspaceAudio']);
 });
 it('four-step navigation reads durable state and does not submit approvals or generation',async()=>{
  vi.stubGlobal('fetch',vi.fn(async()=>new Response(JSON.stringify({workspace}),{status:200,headers:{'Content-Type':'application/json'}})));

@@ -44,9 +44,14 @@ html[data-interface="impeccable"] .product-ui .workspace-composer-prompt .worksp
 .workspace-composer-prompt textarea[aria-invalid=true]{border-color:var(--lc-danger)!important}
 
 .workspace-composer-input{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:start;gap:8px 10px;min-width:0;padding:10px;border:1px solid var(--lc-line);border-radius:7px;background:var(--lc-surface-2)}
-.workspace-composer-input:focus-within{outline:2px solid var(--lc-accent);outline-offset:2px}
+.workspace-composer-input:has(textarea:focus){outline:2px solid var(--lc-accent);outline-offset:2px}
 .workspace-composer-input:has(textarea[aria-invalid=true]){border-color:var(--lc-danger)}
-.workspace-composer-input .workspace-composer-prompt textarea:focus-visible{outline:none}
+/* Compound drafting surfaces own the focus ring; their textareas are not nested fields. */
+html[data-interface="impeccable"] .product-ui .workspace-generation-composer :is(.workspace-composer-input,.workspace-narration-input,.workspace-audio-composer-input):has(textarea:focus){outline:2px solid var(--lc-accent);outline-offset:2px}
+html[data-interface="impeccable"] .product-ui .workspace-generation-composer :is(.workspace-composer-input,.workspace-narration-input,.workspace-audio-composer-input):focus-within:not(:has(textarea:focus)){outline:none}
+html[data-interface="impeccable"] .product-ui .workspace-generation-composer :is(.workspace-composer-input,.workspace-narration-input,.workspace-audio-composer-input) textarea{border:0!important;border-radius:0;box-shadow:none!important}
+html[data-interface="impeccable"] .product-ui .workspace-generation-composer :is(.workspace-composer-input,.workspace-narration-input,.workspace-audio-composer-input) textarea:focus-visible{outline:none}
+html[data-interface="impeccable"] .product-ui .workspace-generation-composer :is(.workspace-composer-input,.workspace-narration-input,.workspace-audio-composer-input):has(textarea[aria-invalid=true]){border-color:var(--lc-danger);outline-color:var(--lc-danger)}
 html[data-interface="impeccable"] .product-ui .workspace-composer-input .workspace-reference-label>button[data-color]{width:44px;min-width:44px!important;height:56px;min-height:56px!important;padding:8px!important;border:1px dashed var(--lc-line-strong);border-radius:6px;background:var(--lc-surface);color:var(--lc-muted)}
 .workspace-composer-popover[data-compact]{width:min(224px,calc(100vw - 24px))}
 .workspace-composer-popover:has(.workspace-image-composition){width:min(288px,calc(100vw - 24px))}

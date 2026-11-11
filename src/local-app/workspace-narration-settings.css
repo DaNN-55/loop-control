@@ -109,7 +109,7 @@ html[data-interface="impeccable"] .product-ui .workspace-narration-voice-row>lab
 .product-ui .workspace-speech-result .workspace-audio-audition[data-layout=bar]>button[data-rac]{inline-size:32px;min-inline-size:32px;padding:0!important}
 
 /* Narration and captions share one preparation destination, with independent switches. */
-.workspace-narration-subheader{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:40px;margin-bottom:12px}
+.workspace-narration-subheader{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;min-height:40px;margin-bottom:12px}
 .workspace-narration-subheader>[role=switch]{flex:none;margin-inline-start:auto;align-items:center}
 .workspace-narration-subheader .workspace-visual-preview-tabs{flex:none}
 .workspace-narration-fields [hidden]{display:none!important}

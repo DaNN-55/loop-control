@@ -2,7 +2,6 @@ import {WorkspaceAudioSourceOptions} from './WorkspaceAudioSourceOptions';
 import {Paperclip,Save,SlidersHorizontal} from 'lucide-react';
 import {Tooltip} from '../ui/dan-ui/components/base/tooltip/tooltip';
 import {WorkspaceAudioInstanceSettings} from './WorkspaceAudioInstanceSettings';
-import {WorkspaceComposerSetting} from './WorkspaceGenerationComposer';
 import {soundIntentQuery} from '../soundIntent';
 import {canUseWorkspaceAudioMaterial} from './workspaceAudioMaterial';
 import {WorkspaceMaterialDrop,workspaceMaterialDragType} from './WorkspaceMaterialDrop';
@@ -36,9 +35,8 @@ export function WorkspaceAudioPreparation(props:Props){
 function EditableWorkspaceAudioPreparation({workspace:w,command,onChange,materials=[],project,bridge,selectedShotId,readOnly=false}:Props){
  const key=w.id+':'+(selectedShotId??'episode'),initial=():AudioDraft=>{const empty=emptyAudioDraft();try{const stored=sessionStorage.getItem(`loop-audio-draft-v2:${key}`),saved=JSON.parse(stored??sessionStorage.getItem(`loop-audio-draft:${key}`)??'{}');return {...empty,...(['bgm','source'].includes(saved.kind)||stored&&saved.kind==='sfx'?saved:{})};}catch{return empty;}};
  const [uploadStatus,setUploadStatus]=useState(''),[expandedCandidate,setExpandedCandidate]=useState('');
- const [audioSetting,setAudioSetting]=useState<'source'|'anchor'|'offset'|'duration'|null>(null);
  const [musicSettingsSaved,setMusicSettingsSaved]=useState(false);
- const [drafts,setDrafts]=useState<Record<string,AudioDraft>>({}),[uploaded,setUploaded]=useState<NonNullable<Props['materials']>>([]),[busy,setBusy]=useState(false),[error,setError]=useState(''),[defaultSaved,setDefaultSaved]=useState(false),[live,setLive]=useState<OpenChatCutProject|null>(null);
+ const [drafts,setDrafts]=useState<Record<string,AudioDraft>>({}),[uploaded,setUploaded]=useState<NonNullable<Props['materials']>>([]),[busy,setBusy]=useState(false),[error,setError]=useState(''),[live,setLive]=useState<OpenChatCutProject|null>(null);
  const doc=bridge?live:project;
  const unique=w.clips.filter((clip,index,clips)=>clips.findIndex(other=>other.shotId===clip.shotId)===index);
  const shotIds=Object.fromEntries(unique.map(clip=>[clip.shotId,w.clips.filter(other=>other.shotId===clip.shotId).map(other=>other.itemId)]));
@@ -60,9 +58,9 @@ function EditableWorkspaceAudioPreparation({workspace:w,command,onChange,materia
  const selectedMaterial=eligibleMaterials.find(m=>m.id===draft.manual);
  const manual=selectedMaterial?.id??'';
  const catalogReading=useProductionServiceCatalog({scope:JSON.stringify([w.episodeId,w.id])});
- const services=catalogReading.catalog?.groups.find(g=>g.capability==='music_sound')?.services??[],catalogError=catalogReading.error?'无法读取音频连接，请刷新服务后重试。':'';
+ const services=catalogReading.catalog?.groups.find(g=>g.capability==='music_sound')?.services??[],catalogError=catalogReading.error?'无法读取音频连接，请刷新页面后重试。':'';
  const service=services.find(s=>s.connectionVersionId===selection?.connectionVersionId&&s.provider===selection?.provider&&s.adapter===selection?.adapter);
- function change(patch:Partial<AudioDraft>){setMusicSettingsSaved(false);if(Object.hasOwn(patch,'selection'))setDefaultSaved(false);const target=Object.hasOwn(patch,'kind')?key:kind==='bgm'?musicKey:key;setDrafts(values=>{const next={...(values[target]??(target===musicKey?initialMusic():initial())),...patch};try{sessionStorage.setItem(`loop-audio-draft-v2:${target}`,JSON.stringify(next));}catch{/* Keep the live form. */}return {...values,[target]:next};});}
+ function change(patch:Partial<AudioDraft>){setMusicSettingsSaved(false);const target=Object.hasOwn(patch,'kind')?key:kind==='bgm'?musicKey:key;setDrafts(values=>{const next={...(values[target]??(target===musicKey?initialMusic():initial())),...patch};try{sessionStorage.setItem(`loop-audio-draft-v2:${target}`,JSON.stringify(next));}catch{/* Keep the live form. */}return {...values,[target]:next};});}
  const intentShot=w.clips.find(clip=>clip.shotId===shot);
  const prompt=draft.prompt??(kind==='sfx'?draft.query||intentShot?.soundIntent||'':query);
  const soundQuery=soundIntentQuery(prompt);
@@ -88,10 +86,6 @@ function EditableWorkspaceAudioPreparation({workspace:w,command,onChange,materia
  function musicSelection(chosen:ProductionService):ProductionSelection{
   return {capability:'music_sound',provider:chosen.provider,adapter:chosen.adapter,
    ...(chosen.connectionVersionId?{connectionVersionId:chosen.connectionVersionId}:{})};
- }
- async function saveMusicDefaults(){
-  if(!service?.executable||busy)return;
-  if(await run('saveWorkspaceAudioDefaults',{selection:musicSelection(service)})){change({selection:undefined});setDefaultSaved(true);}
  }
  async function addLocalMaterial(id:string,name?:string){
   change({manual:id});
@@ -164,11 +158,7 @@ function EditableWorkspaceAudioPreparation({workspace:w,command,onChange,materia
     <label>{kind==='sfx'?'音效意图或检索词':'配乐检索词'}<textarea aria-label={kind==='sfx'?'音效意图或检索词':'英文检索词'} rows={3} maxLength={kind==='sfx'?240:100} value={prompt} disabled={disabled} placeholder={kind==='sfx'?'描述需要的声音，例如：开门时一声轻响；也可输入 door creak':'输入英文检索词，例如：calm ambient piano'} onChange={event=>change({prompt:event.target.value,...(kind==='bgm'?{query:event.target.value}:{})})}/></label>
    </div>
    <div className="workspace-composer-toolbar workspace-audio-submit workspace-audio-composer-toolbar">
-    <WorkspaceComposerSetting label="音频来源" summary={service?.connectionName??'选择音频来源'} open={audioSetting==='source'} onOpenChange={open=>setAudioSetting(open?'source':null)} disabled={disabled}>
-     <WorkspaceAudioSourceOptions services={services} value={service?.id??''} disabled={disabled} onChange={value=>{const chosen=services.find(item=>item.id===value);change({selection:chosen?musicSelection(chosen):null,...(chosen?{manual:''}:{})});}}/>
-     <div className="workspace-audio-default"><Button size="sm" color="tertiary" isDisabled={disabled} onPress={catalogReading.refresh}>刷新服务</Button>{service?.executable&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>void saveMusicDefaults()}>设为本期默认</Button>}</div>
-     {catalogError&&<p role="alert">{catalogError}</p>}{defaultSaved&&<span role="status">本期默认已保存</span>}
-    </WorkspaceComposerSetting>
+    <WorkspaceAudioSourceOptions services={services} value={service?.id??''} disabled={disabled} onChange={value=>{const chosen=services.find(item=>item.id===value);change({selection:chosen?musicSelection(chosen):null,...(chosen?{manual:''}:{})});}}/>
     {<Tooltip title="MP3 · 最大 100 MB"><Button size="xs" color="tertiary" iconLeading={Paperclip} aria-label={kind==='sfx'?'添加本地音效（MP3）':'添加本地配乐（MP3）'} title="MP3 · 最大 100 MB" isDisabled={disabled||!!bridge} onPress={()=>input.current?.click()}/></Tooltip>}
     {kind==='sfx'&&<Button size="sm" color="tertiary" iconLeading={Save} aria-label="保存音效意图" title="保存本镜音效意图" isDisabled={disabled||!prompt.trim()||prompt.trim()===(intentShot?.soundIntent??'')} onPress={()=>void run('saveWorkspaceSoundIntent',{expectedProjectSha256:w.project.sha256,shotId:shot,soundIntent:prompt.trim()})}/>}
     {kind==='bgm'&&<Button size="xs" color="tertiary" iconLeading={Save} aria-label="保存本期配乐配置" title="保存到本生产单，所有镜头共用" isDisabled={disabled||!description.trim()} onPress={()=>void run('saveWorkspaceMusicSettings',{settings:{description,query:prompt,materialRevisionId:manual}}).then(saved=>{if(saved)setMusicSettingsSaved(true);})}/>}
@@ -180,7 +170,7 @@ function EditableWorkspaceAudioPreparation({workspace:w,command,onChange,materia
   {bridge&&kind==='sfx' &&<p className="workspace-audio-note">导入音效准备后，先保存并返回素材准备，再加入镜头。</p>}
   {busy&&uploadStatus&&<p role="status">{uploadStatus}</p>}
   </div>
-  {(error||pollingError)&&<p role="alert">{error||'音频状态暂时无法更新，请重试。'}</p>}
+  {(error||catalogError||pollingError)&&<p role="alert">{error||catalogError||'音频状态暂时无法更新，请重试。'}</p>}
  </section>;
 }
 export function WorkspaceAudioPanel({workspace:w,command,onChange,project,bridge,readOnly=false,effectsOnly=false}:Props&{effectsOnly?:boolean}){

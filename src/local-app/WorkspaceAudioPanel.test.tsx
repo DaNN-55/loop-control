@@ -48,31 +48,29 @@ it('adjusts only adopted sound effects through the native bridge',async()=>{
  const bridge={connected:true,inspect:vi.fn(async()=>({document:doc})),applyNativeEdit:vi.fn(async()=>doc)} as unknown as import('./EmbeddedStudioHost').EmbeddedStudioBridge,command=vi.fn(),w={...workspace,audio:{mix:{voices:[],sounds:[sound('one')]},preparations:[p,pending]}} as ProductionWorkspace;
  render(<WorkspaceAudioPanel effectsOnly workspace={w} command={command} onChange={()=>{}} bridge={bridge}/>);await waitFor(()=>expect(bridge.inspect).toHaveBeenCalled());expect(screen.queryByText('待加入声音')).toBeNull();expect(screen.queryByLabelText('类型')).toBeNull();fireEvent.click(screen.getByRole('button',{name:'应用'}));await waitFor(()=>expect(bridge.applyNativeEdit).toHaveBeenCalledWith('apply-audio-mix',{edit:expect.objectContaining({kind:'sound',itemId:'workspace-sfx-one',workspaceId:'w'})}));expect(command).not.toHaveBeenCalled();
 });
-it('keeps a cleared music connection blank after saving a default, switching shots and reopening',async()=>{
+it('keeps a cleared music connection blank after switching shots and reopening',async()=>{
  sessionStorage.clear();const service={id:'sound-a',provider:'freesound',adapter:'freesound_audio',connectionVersionId:'sound-v1',connectionName:'Sound A',executable:true};vi.stubGlobal('fetch',vi.fn(async()=>Response.json({serviceCatalog:{groups:[{capability:'music_sound',services:[service]}]}})));
  const command=vi.fn(async(_name:string,_data:unknown)=>workspace);
  const props={workspace,command,onChange:vi.fn()};
  const view=render(<WorkspaceAudioPreparation {...props} selectedShotId="S1"/>);
  const openSettings=async()=>{
   fireEvent.click(screen.getByRole('button',{name:'音频来源'}));
-  await screen.findByRole('menuitemradio',{name:/Sound A/});
-  return screen.getByRole('menu',{name:'音频可用来源'});
+  await screen.findByRole('menuitemradio',{name:/Freesound/});
+  return screen.getByRole('menu',{name:'音频来源'});
  };
- await openSettings();fireEvent.click(screen.getByRole('menuitemradio',{name:/Sound A/}));
- fireEvent.click(screen.getByRole('button',{name:'设为本期默认'}));
- await screen.findByText('本期默认已保存');fireEvent.click(screen.getByRole('button',{name:'关闭音频来源'}));
+ await openSettings();fireEvent.click(screen.getByRole('menuitemradio',{name:/Freesound/}));
+ await waitFor(()=>expect(screen.queryByRole('dialog',{name:'选择音频来源'})).toBeNull());
  fireEvent.change(screen.getByLabelText('英文检索词'),{target:{value:'piano'}});
- await openSettings();fireEvent.click(screen.getByRole('menuitemradio',{name:'清除来源选择'}));
- fireEvent.click(screen.getByRole('button',{name:'关闭音频来源'}));
+ await openSettings();fireEvent.click(screen.getByRole('button',{name:'清除来源选择'}));
+ await waitFor(()=>expect(screen.queryByRole('dialog',{name:'选择音频来源'})).toBeNull());
  view.rerender(<WorkspaceAudioPreparation {...props} selectedShotId="S2"/>);
  view.rerender(<WorkspaceAudioPreparation {...props} selectedShotId="S1"/>);
- await openSettings();expect(screen.getByRole('menuitemradio',{name:'清除来源选择'}).getAttribute('aria-checked')).toBe('true');fireEvent.click(screen.getByRole('button',{name:'关闭音频来源'}));
+ await openSettings();expect(screen.getByRole('menuitemradio',{name:/Freesound/}).getAttribute('aria-checked')).toBe('false');fireEvent.click(screen.getByRole('button',{name:'关闭音频来源'}));
  view.unmount();
  render(<WorkspaceAudioPreparation {...props} selectedShotId="S1"/>);
- await openSettings();expect(screen.getByRole('menuitemradio',{name:'清除来源选择'}).getAttribute('aria-checked')).toBe('true');fireEvent.click(screen.getByRole('button',{name:'关闭音频来源'}));
+ await openSettings();expect(screen.getByRole('menuitemradio',{name:/Freesound/}).getAttribute('aria-checked')).toBe('false');fireEvent.click(screen.getByRole('button',{name:'关闭音频来源'}));
  expect((screen.getByLabelText('英文检索词') as HTMLInputElement).value).toBe('piano');
- expect(command).toHaveBeenCalledTimes(1);
- expect(command.mock.calls[0][0]).toBe('saveWorkspaceAudioDefaults');
+ expect(command).not.toHaveBeenCalled();
  vi.unstubAllGlobals();sessionStorage.clear();
 });
 
@@ -118,14 +116,14 @@ it('keeps local sound-effect import and explicit preparation without search, con
  expect(command.mock.calls[0][1]).not.toHaveProperty('selection');
 });
 
-it('reads episode music defaults from the workspace and saves them without preparing audio',async()=>{
+it('reads existing episode music defaults without offering refresh or default-saving controls',async()=>{
  const service={id:'sound-a',provider:'freesound',adapter:'freesound_audio',connectionVersionId:'sound-v1',connectionName:'Sound A',executable:true};vi.stubGlobal('fetch',vi.fn(async()=>Response.json({serviceCatalog:{groups:[{capability:'music_sound',services:[service]}]}})));
  sessionStorage.setItem('loop-audio-music-default:w',JSON.stringify({selection:{capability:'music_sound',provider:'wrong',adapter:'wrong',connectionVersionId:'old'}}));
  const selection={capability:'music_sound' as const,provider:'freesound',adapter:'freesound_audio',connectionVersionId:'sound-v1'},saved={...workspace,audio:{...workspace.audio!,defaults:{selection}}};
- const command=vi.fn(async()=>saved),view=render(<WorkspaceAudioPreparation workspace={saved} command={command} onChange={vi.fn()}/>);fireEvent.click(screen.getByRole('button',{name:'音频来源'}));await screen.findByRole('menuitemradio',{name:/Sound A/});
- expect(screen.getByRole('menuitemradio',{name:/Sound A/}).getAttribute('aria-checked')).toBe('true');fireEvent.click(screen.getByRole('button',{name:'设为本期默认'}));
- await screen.findByText('本期默认已保存');expect(command).toHaveBeenCalledWith('saveWorkspaceAudioDefaults',{episodeId:'e',workspaceId:'w',expectedRevision:2,selection});expect(command).toHaveBeenCalledTimes(1);
- view.unmount();sessionStorage.clear();render(<WorkspaceAudioPreparation workspace={saved} command={command} onChange={vi.fn()}/>);fireEvent.click(screen.getByRole('button',{name:'音频来源'}));await screen.findByRole('menuitemradio',{name:/Sound A/});expect(screen.getByRole('menuitemradio',{name:/Sound A/}).getAttribute('aria-checked')).toBe('true');
+ const command=vi.fn(async()=>saved),view=render(<WorkspaceAudioPreparation workspace={saved} command={command} onChange={vi.fn()}/>);fireEvent.click(screen.getByRole('button',{name:'音频来源'}));await screen.findByRole('menuitemradio',{name:/Freesound/});
+ expect(screen.getByRole('menuitemradio',{name:/Freesound/}).getAttribute('aria-checked')).toBe('true');
+ expect(screen.queryByRole('button',{name:'刷新服务'})).toBeNull();expect(screen.queryByRole('button',{name:'设为本期默认'})).toBeNull();expect(command).not.toHaveBeenCalled();
+ view.unmount();sessionStorage.clear();render(<WorkspaceAudioPreparation workspace={saved} command={command} onChange={vi.fn()}/>);fireEvent.click(screen.getByRole('button',{name:'音频来源'}));await screen.findByRole('menuitemradio',{name:/Freesound/});expect(screen.getByRole('menuitemradio',{name:/Freesound/}).getAttribute('aria-checked')).toBe('true');
 });
 
 it('derives editable sound candidates from intent without adopting or changing music',async()=>{
@@ -187,7 +185,7 @@ it('toggles episode music and all effects independently while retaining input dr
 
 it('keeps the provider picker focused on services and preserves provider and query after local upload',async()=>{
  const selection={capability:'music_sound' as const,provider:'freesound',adapter:'freesound_preview',connectionVersionId:'v'};vi.stubGlobal('fetch',vi.fn(async()=>Response.json({serviceCatalog:{groups:[{capability:'music_sound',services:[{id:'sound',...selection,connectionName:'Freesound',executable:true}]}]}})));
- const command=vi.fn(async(name:string)=>name==='importMaterial'?{id:'local'}:workspace);render(<WorkspaceAudioPreparation workspace={{...workspace,audio:{...workspace.audio!,defaults:{selection}}}} command={command} onChange={()=>{}} materials={[]}/>);await waitFor(()=>expect(screen.getByRole('button',{name:'音频来源'}).textContent).toContain('Freesound'));fireEvent.change(screen.getByLabelText('英文检索词'),{target:{value:'calm piano'}});fireEvent.change(screen.getByLabelText('上传配乐'),{target:{files:[new File(['mp3'],'local.mp3',{type:'audio/mpeg'})]}});await waitFor(()=>expect(command).toHaveBeenCalledWith('prepareWorkspaceAudio',expect.objectContaining({materialRevisionId:'local'})));expect(screen.getByLabelText('英文检索词')).toHaveProperty('value','calm piano');expect(screen.getByRole('button',{name:'音频来源'}).textContent).toContain('Freesound');fireEvent.click(screen.getByRole('button',{name:'音频来源'}));expect(screen.queryByRole('menuitemradio',{name:'上传音频'})).toBeNull();expect(screen.queryByRole('combobox',{name:'本地音频'})).toBeNull();expect(screen.queryByLabelText('用途')).toBeNull();expect(screen.getByRole('menuitemradio',{name:/Freesound 素材检索/}).getAttribute('aria-checked')).toBe('true');expect(command.mock.calls.some(([name])=>name==='adoptWorkspaceAudio')).toBe(false);
+ const command=vi.fn(async(name:string)=>name==='importMaterial'?{id:'local'}:workspace);render(<WorkspaceAudioPreparation workspace={{...workspace,audio:{...workspace.audio!,defaults:{selection}}}} command={command} onChange={()=>{}} materials={[]}/>);await waitFor(()=>expect(screen.getByRole('button',{name:'音频来源'}).textContent).toContain('Freesound'));fireEvent.change(screen.getByLabelText('英文检索词'),{target:{value:'calm piano'}});fireEvent.change(screen.getByLabelText('上传配乐'),{target:{files:[new File(['mp3'],'local.mp3',{type:'audio/mpeg'})]}});await waitFor(()=>expect(command).toHaveBeenCalledWith('prepareWorkspaceAudio',expect.objectContaining({materialRevisionId:'local'})));expect(screen.getByLabelText('英文检索词')).toHaveProperty('value','calm piano');expect(screen.getByRole('button',{name:'音频来源'}).textContent).toContain('Freesound');fireEvent.click(screen.getByRole('button',{name:'音频来源'}));expect(screen.queryByRole('menuitemradio',{name:'上传音频'})).toBeNull();expect(screen.queryByRole('combobox',{name:'本地音频'})).toBeNull();expect(screen.queryByLabelText('用途')).toBeNull();expect(screen.getByRole('menuitemradio',{name:/Freesound/}).getAttribute('aria-checked')).toBe('true');expect(command.mock.calls.some(([name])=>name==='adoptWorkspaceAudio')).toBe(false);
 });
 
 it('waits for the user audio write before scheduling a background refresh',async()=>{
@@ -213,4 +211,18 @@ it('waits for a running audio refresh and writes against its returned revision',
  latest={...latest,revision:3};await act(async()=>finish(latest));
  expect(command.mock.calls.map(([name])=>name)).toEqual(['refreshWorkspaceAudio','saveWorkspaceMusicSettings']);
  expect(command.mock.calls[1][1]).toEqual(expect.objectContaining({expectedRevision:3}));
+});
+it('selects a current audio connection without refresh or default-saving controls',async()=>{
+ const service={id:'sound-current',provider:'freesound',adapter:'freesound_preview',connectionVersionId:'version-1',connectionVersion:1,connectionName:'当前声音',executable:true};
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({serviceCatalog:{groups:[{capability:'music_sound',services:[service]}]}})));
+ const command=vi.fn(async()=>workspace);
+ render(<WorkspaceAudioPreparation workspace={workspace} command={command} onChange={()=>{}}/>);
+ fireEvent.click(screen.getByRole('button',{name:'音频来源'}));
+ await screen.findByRole('menuitemradio',{name:'Freesound'});
+ expect(screen.queryByRole('button',{name:'刷新服务'})).toBeNull();
+ expect(screen.queryByRole('button',{name:'设为本期默认'})).toBeNull();
+ fireEvent.click(screen.getByRole('menuitemradio',{name:'Freesound'}));
+ fireEvent.change(screen.getByLabelText('英文检索词'),{target:{value:'calm piano'}});
+ fireEvent.click(screen.getByRole('button',{name:'检索并获取'}));
+ await waitFor(()=>expect(command).toHaveBeenCalledWith('prepareWorkspaceAudio',expect.objectContaining({selection:{capability:'music_sound',provider:'freesound',adapter:'freesound_preview',connectionVersionId:'version-1'},query:'calm piano'})));
 });

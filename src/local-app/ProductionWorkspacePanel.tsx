@@ -152,6 +152,7 @@ export function ProductionWorkspacePanel({episodeId,title,titleActions,scriptRev
  }, [step, loaded, scriptFormat, scriptPath, scriptRevisionId, stage, workspace, legacyContent, readOnly, pending]);
  async function processMaterialUploads(rows:WorkspaceUploadEntry[]){
   if(readOnly||materialUploads.read().running)return;
+  const imported:string[]=[];
   setError('');setMaterialUploadStatus('正在导入素材…');
   await materialUploads.run(rows,{
    active:()=>materialUploadOwner.active&&activeMaterialUploadOwner.current===materialUploadOwner,
@@ -167,16 +168,16 @@ export function ProductionWorkspacePanel({episodeId,title,titleActions,scriptRev
     const result=await command('importMaterial',{episodeId,materialType,sourceKind:'file',sourcePath:file.name,mimeType:file.type||'application/octet-stream',contentBase64,isMainScript:false,materialPurpose:purpose}) as {id:string;storage_path:string};
     return {...result,material_type:materialType,source_path:file.name,is_main_script:false,material_purpose:purpose};
    },
-   onImported:material=>setImportedMaterials(values=>[...values,{...material,is_main_script:false}]),
+   onImported:material=>{imported.push(material.id);setImportedMaterials(values=>[...values,{...material,is_main_script:false}]);},
    paused:()=> '已暂停，重试可继续。',failed:(_row,_imported,message)=>message,
    summary:(completed,unfinished)=>unfinished.length?`已导入 ${completed.length-unfinished.length} 项，${unfinished.length} 项失败`:`已导入 ${completed.length} 项素材`,
   });
+  return imported;
  }
  async function uploadMaterials(files:File[]){
   if(readOnly||materialUploads.read().running||!files.length)return;
   const rows=materialUploads.enqueue(files.map(file=>({name:file.name,file})));
-  await processMaterialUploads(rows);
-  return materialUploads.read().rows.filter(row=>rows.some(entry=>entry.id===row.id)&&row.material).map(row=>row.material!.id);
+  return processMaterialUploads(rows);
  }
 
  const manuallySelectedStep=useRef(false);
