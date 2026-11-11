@@ -4,8 +4,8 @@
     "title": "Loop-Control 状态机",
     "summary": "按权威归属探索 48 个状态机族，查看事件、守卫、源码和恢复路径。",
     "project": "Loop-Control",
-    "generatedAt": "2026-11-11T09:07:00+08:00",
-    "commit": "1bedac1035a38a6399b931ad8cb4e42781a5216d",
+    "generatedAt": "2026-11-11T10:16:00+08:00",
+    "commit": "a310349a",
     "dirty": true,
     "scope": "应用状态机清单及四条源码执行场景。",
     "limitations": [
@@ -1864,6 +1864,34 @@
       "path": "src/local-app/inputPublicationOwnership.integration.test.ts",
       "locator": "inputPublicationOwnership.integration.test.ts",
       "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "optimization-M12-5",
+      "kind": "static",
+      "path": "src/local-app/useWorkspaceCaptionOperation.ts",
+      "locator": "useWorkspaceCaptionOperation",
+      "note": "0—4项中的状态权威与公开验证入口。"
+    },
+    {
+      "id": "optimization-M12-6",
+      "kind": "test",
+      "path": "src/local-app/WorkspaceCaptionsRecovery.test.tsx",
+      "locator": "字幕分步接续与同数据回执恢复",
+      "note": "0—4项中的状态权威与公开验证入口。"
+    },
+    {
+      "id": "optimization-M21-3",
+      "kind": "static",
+      "path": "src/local-app/workspaceUploads.ts",
+      "locator": "createWorkspaceUploadSession",
+      "note": "0—4项中的状态权威与公开验证入口。"
+    },
+    {
+      "id": "optimization-M21-4",
+      "kind": "test",
+      "path": "src/local-app/ProductionWorkspaceUploadRecovery.test.tsx",
+      "locator": "Owner范围和关闭重开恢复",
+      "note": "0—4项中的状态权威与公开验证入口。"
     }
   ],
   "nodes": [
@@ -2206,11 +2234,14 @@
         "source-34",
         "source-35",
         "test-M12-3",
-        "test-M12-4"
+        "test-M12-4",
+        "optimization-M12-5",
+        "optimization-M12-6"
       ],
       "note": "",
       "details": [
-        "workspaceCaptionsCommands、字幕类型、alignmentWorker。音频、正文及 lane 指纹变化使确认失效；任务 ID、shot 与输入版本匹配。验证：workspaceCaptions.integration.test.ts、workspaceCaptions.test.ts。"
+        "workspaceCaptionsCommands、字幕类型、alignmentWorker。音频、正文及 lane 指纹变化使确认失效；任务 ID、shot 与输入版本匹配。验证：workspaceCaptions.integration.test.ts、workspaceCaptions.test.ts。",
+        "字幕操作保留已完成的原生保存／读取／登记阶段；同数据命令可取回已提交回执，变化的文档要求核对。"
       ],
       "lifecycle": [
         "missing / waiting / current / stale / failed；正文确认独立；Node/Python 对齐进程加载模型、推理、输出或失败退出，对齐结果需再次应用"
@@ -2425,11 +2456,14 @@
       "sourceIds": [
         "source-52",
         "source-53",
-        "source-54"
+        "source-54",
+        "optimization-M21-3",
+        "optimization-M21-4"
       ],
       "note": "",
       "details": [
-        "WorkspaceVisualPreparation、WorkspaceUploadFeedback、ProductionWorkspacePanel。运行锁、文件类型／大小、reference 上限、卸载归属；不永久堆积成功记录。验证：WorkspaceVisualPreparation.upload.test.tsx、LocalEpisodeDetail.upload.test.tsx。"
+        "WorkspaceVisualPreparation、WorkspaceUploadFeedback、ProductionWorkspacePanel。运行锁、文件类型／大小、reference 上限、卸载归属；不永久堆积成功记录。验证：WorkspaceVisualPreparation.upload.test.tsx、LocalEpisodeDetail.upload.test.tsx。",
+        "素材栏和候选区共享队列执行；成功回执经消费移除，未完成文件在当前浏览器页面保留。"
       ],
       "lifecycle": [
         "每文件 pending/running/succeeded/failed；失败可重试，完成短通知；模块 session 保留未完成上下文"
@@ -4052,6 +4086,7 @@
   ],
   "changes": [
     "复用既有 M01—M44，补入 M45—M48。",
-    "标明已合入的局部 owner 与本轮刷新顺序修复。"
+    "标明已合入的局部 owner 与本轮刷新顺序修复。",
+    "状态机优化0—4项完成，更新字幕接续、共享上传、轮询可见性、模型归属与Studio回执入口。"
   ]
 }

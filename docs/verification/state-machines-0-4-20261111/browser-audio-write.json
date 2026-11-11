@@ -1,0 +1,9 @@
+{
+  "commandsWhileUserWriteHeld": [
+    "saveWorkspaceMusicSettings"
+  ],
+  "musicWrites": 1,
+  "passed": true,
+  "refreshesBefore": 0,
+  "refreshesWhileHeld": 0
+}

@@ -1,0 +1,36 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/ProductionWorkspaceReading.test.tsx -t waits until the page --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+-----x
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/ProductionWorkspaceReading.test.tsx > waits until the page is visible before the first narration refresh command
+TypeError: Cannot read properties of undefined (reading 'status')
+ ❯ WorkspaceNarrationPanel src/local-app/ProductionWorkspaceReading.test.tsx:6:83
+      4| import type {ProductionWorkspace} from '../productionWorkspace';
+      5| vi.mock('./WorkspaceNarrationPanel',()=>({WorkspaceNarrationPanel:({wo…
+      6|  <output data-testid="parent-speech">{workspace.revision}:{workspace.n…
+       |                                                                                   ^
+      7|  <button onClick={()=>onChanged({...workspace,narration:workspace.narr…
+      8|  </>}));
+ ❯ Object.react_stack_bottom_frame node_modules/react-dom/cjs/react-dom-client.development.js:25904:20
+ ❯ renderWithHooks node_modules/react-dom/cjs/react-dom-client.development.js:7662:22
+ ❯ updateFunctionComponent node_modules/react-dom/cjs/react-dom-client.development.js:10166:19
+ ❯ beginWork node_modules/react-dom/cjs/react-dom-client.development.js:11778:18
+ ❯ runWithFiberInDEV node_modules/react-dom/cjs/react-dom-client.development.js:874:13
+ ❯ performUnitOfWork node_modules/react-dom/cjs/react-dom-client.development.js:17641:22
+ ❯ workLoopSync node_modules/react-dom/cjs/react-dom-client.development.js:17469:41
+ ❯ renderRootSync node_modules/react-dom/cjs/react-dom-client.development.js:17450:11
+ ❯ performWorkOnRoot node_modules/react-dom/cjs/react-dom-client.development.js:16583:35
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 skipped (6)
+   Start at  09:40:10
+   Duration  2.36s (transform 446ms, setup 11ms, collect 1.73s, tests 91ms, environment 349ms, prepare 43ms)
+

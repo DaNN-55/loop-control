@@ -1,0 +1,12 @@
+{
+  "attempts": [
+    "first.png",
+    "retry.png",
+    "retry.png"
+  ],
+  "imports": 2,
+  "passed": true,
+  "sameRetryIdempotencyKey": true,
+  "scrollWidth": 1440,
+  "width": 1440
+}

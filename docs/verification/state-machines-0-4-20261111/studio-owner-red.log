@@ -1,0 +1,40 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/EmbeddedStudioHost.test.tsx -t ends the leave intent --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+-------------x
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/EmbeddedStudioHost.test.tsx > ends the leave intent when its host unmounts during Owner saving
+AssertionError: expected "spy" to not be called at all, but actually been called 1 times
+
+Received: 
+
+  1st spy call:
+
+    Array [
+      "delivery",
+      undefined,
+    ]
+
+
+Number of calls: 1
+
+ ❯ src/local-app/EmbeddedStudioHost.test.tsx:152:108
+    150|  deliver({type:'loop-control:state',writable:true,revision:1,items:[],…
+    151|  const request=post.mock.calls.at(-1)![0];await act(async()=>deliver({…
+    152|  expect(save).toHaveBeenCalledOnce();app.unmount();await act(async()=>…
+       |                                                                                                            ^
+    153| });
+    154| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 13 skipped (14)
+   Start at  09:37:25
+   Duration  1.13s (transform 72ms, setup 9ms, collect 645ms, tests 54ms, environment 260ms, prepare 33ms)
+

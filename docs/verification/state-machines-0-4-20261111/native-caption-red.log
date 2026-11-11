@@ -1,0 +1,34 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/WorkspaceCaptionsRecovery.test.tsx -t Owner saving failed --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+-x
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/WorkspaceCaptionsRecovery.test.tsx > continues the saved native caption intent when Owner saving failed after the editor applied it
+AssertionError: expected [ 'apply-captions', 'apply-captions' ] to have a length of 1 but got 2
+
+- Expected
++ Received
+
+- 1
++ 2
+
+ ❯ src/local-app/WorkspaceCaptionsRecovery.test.tsx:54:68
+     52|  fireEvent.click(screen.getByRole('button',{name:'继续保存字幕'}));
+     53|  await waitFor(()=>expect(fixture.command).toHaveBeenCalledTimes(1));
+     54|  expect(fixture.actions.filter(action=>action==='apply-captions')).toH…
+       |                                                                    ^
+     55|  expect(fixture.saves).toBe(2);
+     56| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 skipped (2)
+   Start at  09:24:01
+   Duration  1.00s (transform 87ms, setup 7ms, collect 526ms, tests 104ms, environment 231ms, prepare 29ms)
+

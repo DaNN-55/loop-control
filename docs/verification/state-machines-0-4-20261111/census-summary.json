@@ -1,0 +1,18 @@
+{
+  "baseline": "a310349ab7f67c08c1688177c60254a89de70d42",
+  "filesWithSignals": 246,
+  "signalCount": 1525,
+  "scope": "Tracked application TypeScript/TSX, runtime/storage scripts and SQL migrations. Excludes tests, fixtures, prototypes, generated .d.ts, dan-ui primitives and e2e scripts. Includes archived protocol code still tracked. SQL is historical source, not a live database schema.",
+  "limitations": "Candidates only: refs may be DOM handles; literal unions may be choices rather than temporal states. Closure booleans, SQL bodies, timestamps and cross-process protocols require manual review. See docs/architecture/state-machines.md.",
+  "scannedFiles": 548,
+  "newSinceInitial": [
+    "src/local-app/WorkspaceGenerationActivity.tsx",
+    "src/local-app/WorkspaceModelLogo.tsx",
+    "src/local-app/WorkspaceModelPicker.tsx",
+    "src/local-app/useWorkspaceCaptionOperation.ts",
+    "src/local-app/useWorkspaceOperations.ts",
+    "src/local-app/workspaceUploads.ts",
+    "src/workspaceExportDelivery.ts",
+    "src/workspaceTaskPresentation.ts"
+  ]
+}

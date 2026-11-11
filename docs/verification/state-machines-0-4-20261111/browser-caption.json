@@ -1,0 +1,8 @@
+{
+  "errors": [],
+  "nativeWrites": 1,
+  "passed": true,
+  "registrations": 1,
+  "sameIdempotencyKey": true,
+  "saves": 1
+}

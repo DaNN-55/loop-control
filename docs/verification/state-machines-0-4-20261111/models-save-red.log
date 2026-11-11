@@ -1,0 +1,37 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/connections/ConnectionModelsDialog.test.tsx -t does not close a reopened --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+---------------x
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/connections/ConnectionModelsDialog.test.tsx > does not close a reopened model dialog when an old save finishes
+AssertionError: expected "spy" to not be called at all, but actually been called 1 times
+
+Received: 
+
+  1st spy call:
+
+    Array []
+
+
+Number of calls: 1
+
+ ❯ src/connections/ConnectionModelsDialog.test.tsx:121:20
+    119|  await screen.findByRole('checkbox',{name:'gpt-image-2'});
+    120|  await act(async()=>finish({...data,enabledModels:[]}));
+    121|  expect(close).not.toHaveBeenCalled();expect(draft).not.toHaveBeenCall…
+       |                    ^
+    122|  expect(screen.getByRole('checkbox',{name:'gpt-image-2'})).toHavePrope…
+    123| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 15 skipped (16)
+   Start at  09:18:12
+   Duration  1.40s (transform 123ms, setup 7ms, collect 889ms, tests 97ms, environment 261ms, prepare 32ms)
+

@@ -1,0 +1,36 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/WorkspaceAudioPanel.test.tsx -t waits for the user audio write --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+----------------------x
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/WorkspaceAudioPanel.test.tsx > waits for the user audio write before scheduling a background refresh
+AssertionError: expected [ 'saveWorkspaceMusicSettings', …(1) ] to deeply equal [ 'saveWorkspaceMusicSettings' ]
+
+- Expected
++ Received
+
+  [
+    "saveWorkspaceMusicSettings",
++   "refreshWorkspaceAudio",
+  ]
+
+ ❯ src/local-app/WorkspaceAudioPanel.test.tsx:201:49
+    199|  fireEvent.click(screen.getByRole('button',{name:'保存本期配乐配置'}));await a…
+    200|  await act(async()=>vi.advanceTimersByTimeAsync(3000));
+    201|  expect(command.mock.calls.map(([name])=>name)).toEqual(['saveWorkspac…
+       |                                                 ^
+    202|  await act(async()=>finish(w));
+    203| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 22 skipped (23)
+   Start at  09:57:19
+   Duration  1.81s (transform 152ms, setup 8ms, collect 1.25s, tests 73ms, environment 298ms, prepare 38ms)
+

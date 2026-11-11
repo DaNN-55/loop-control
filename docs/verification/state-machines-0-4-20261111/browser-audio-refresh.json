@@ -1,0 +1,10 @@
+{
+  "commands": [
+    "refreshWorkspaceAudio",
+    "saveWorkspaceMusicSettings"
+  ],
+  "musicWrites": 1,
+  "passed": true,
+  "refreshes": 1,
+  "userWriteRevision": 3
+}

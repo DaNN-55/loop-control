@@ -1,0 +1,10 @@
+{
+  "fault": "503 after committed receipt",
+  "nativeWrites": 1,
+  "passed": true,
+  "registrations": 1,
+  "sameIdempotencyKey": true,
+  "saves": 1,
+  "scrollWidth": 390,
+  "width": 390
+}
