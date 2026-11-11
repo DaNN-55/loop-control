@@ -1,0 +1,220 @@
+{
+  "baseline": "1bedac1035a38a6399b931ad8cb4e42781a5216d",
+  "scope": "Tracked application TypeScript/TSX, runtime/storage scripts and SQL migrations. Excludes tests, fixtures, prototypes, generated .d.ts, dan-ui primitives and e2e scripts. Includes archived protocol code still tracked. SQL is historical source, not a live database schema.",
+  "limitations": "Candidates only: refs may be DOM handles; literal unions may be choices rather than temporal states. Closure booleans, SQL bodies, timestamps and cross-process protocols require manual review. See docs/architecture/state-machines.md.",
+  "filesWithSignals": 244,
+  "signalCount": 1517,
+  "scannedFiles": 546,
+  "added": [
+    "src/local-app/WorkspaceGenerationActivity.tsx",
+    "src/local-app/WorkspaceModelLogo.tsx",
+    "src/local-app/WorkspaceModelPicker.tsx",
+    "src/local-app/useWorkspaceOperations.ts",
+    "src/workspaceExportDelivery.ts",
+    "src/workspaceTaskPresentation.ts"
+  ],
+  "removed": [
+    "src/operationDraft.ts",
+    "src/reviews/materialImportDraftStore.ts"
+  ],
+  "families": [
+    {
+      "id": "M01",
+      "name": "Episode 生产阶段"
+    },
+    {
+      "id": "M02",
+      "name": "Worker 任务与尝试"
+    },
+    {
+      "id": "M03",
+      "name": "Worker 结果与重试协议"
+    },
+    {
+      "id": "M04",
+      "name": "供应商提交与费用预留"
+    },
+    {
+      "id": "M05",
+      "name": "视频供应商执行"
+    },
+    {
+      "id": "M06",
+      "name": "图片／口播／音效执行"
+    },
+    {
+      "id": "M07",
+      "name": "本地产物发布与核对"
+    },
+    {
+      "id": "M08",
+      "name": "服务端逐次调用授权"
+    },
+    {
+      "id": "M09",
+      "name": "素材候选与采用"
+    },
+    {
+      "id": "M10",
+      "name": "口播路由与音轨采用"
+    },
+    {
+      "id": "M11",
+      "name": "Pexels 检索与预览"
+    },
+    {
+      "id": "M12",
+      "name": "字幕内容、时序与对齐"
+    },
+    {
+      "id": "M13",
+      "name": "导出与成片确认"
+    },
+    {
+      "id": "M14",
+      "name": "交付包与生产完成"
+    },
+    {
+      "id": "M15",
+      "name": "登录、会话与客户端请求"
+    },
+    {
+      "id": "M16",
+      "name": "导航、筛选与离开确认"
+    },
+    {
+      "id": "M17",
+      "name": "四步制作与编辑器入口"
+    },
+    {
+      "id": "M18",
+      "name": "工程读取与轮询"
+    },
+    {
+      "id": "M19",
+      "name": "客户端逐次调用确认"
+    },
+    {
+      "id": "M20",
+      "name": "候选核对与确认"
+    },
+    {
+      "id": "M21",
+      "name": "上传队列、恢复与通知"
+    },
+    {
+      "id": "M22",
+      "name": "任务诊断与恢复展示"
+    },
+    {
+      "id": "M23",
+      "name": "操作草稿与保存"
+    },
+    {
+      "id": "M24",
+      "name": "连接编辑、模型与测试"
+    },
+    {
+      "id": "M25",
+      "name": "原生 Studio 通道与保存"
+    },
+    {
+      "id": "M26",
+      "name": "媒体加载、播放、试听与预览"
+    },
+    {
+      "id": "M27",
+      "name": "交付表单、封面与导出操作"
+    },
+    {
+      "id": "M28",
+      "name": "搜索、目录与服务模型读取"
+    },
+    {
+      "id": "M29",
+      "name": "局部编辑、选择与布局交互族"
+    },
+    {
+      "id": "M30",
+      "name": "弹层、动效与焦点"
+    },
+    {
+      "id": "M31",
+      "name": "所有者偏好与规划设置"
+    },
+    {
+      "id": "M32",
+      "name": "删除范围与精确删除意图"
+    },
+    {
+      "id": "M33",
+      "name": "文件清理恢复与账号删除"
+    },
+    {
+      "id": "M34",
+      "name": "目录身份、收纳与空目录清理"
+    },
+    {
+      "id": "M35",
+      "name": "账号目录迁移／旧目录采用"
+    },
+    {
+      "id": "M36",
+      "name": "全局媒体根迁移与发布"
+    },
+    {
+      "id": "M37",
+      "name": "外部连接资格与版本"
+    },
+    {
+      "id": "M38",
+      "name": "账务凭据与余额缓存"
+    },
+    {
+      "id": "M39",
+      "name": "密钥单项查看／复制"
+    },
+    {
+      "id": "M40",
+      "name": "原生自动化 job 与 attempt"
+    },
+    {
+      "id": "M41",
+      "name": "通知投递与队列"
+    },
+    {
+      "id": "M42",
+      "name": "备份、恢复与部署激活"
+    },
+    {
+      "id": "M43",
+      "name": "固定运行包与运行健康"
+    },
+    {
+      "id": "M44",
+      "name": "旧协议、审核与修复兼容族"
+    },
+    {
+      "id": "M45",
+      "name": "账号／生产单创建意图"
+    },
+    {
+      "id": "M46",
+      "name": "原生 Keychain 与秘密登记"
+    },
+    {
+      "id": "M47",
+      "name": "创作规则与不可变版本"
+    },
+    {
+      "id": "M48",
+      "name": "导入输入文件发布"
+    }
+  ],
+  "manualSupplement": [
+    "native/*.m — M46",
+    "scripts/whisperx-align.py — M12",
+    "src/ui/dan-ui — M29/M30 与输入控件局部状态",
+    "db/contracts/episode-catalog.sql — M01/M28 读取契约"
+  ]
+}

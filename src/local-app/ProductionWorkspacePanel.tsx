@@ -80,7 +80,29 @@ export function ProductionWorkspacePanel({episodeId,title,titleActions,scriptRev
  const narrationReading=useWorkspaceReading(workspace,applyWorkspace,!loaded||session||readOnly||workspace?.stale||pending?'paused':'narration','无法读取当前工程版本。');
  function applyWorkspace(w:ProductionWorkspace){current.current=w;setWorkspace(w);setSelectedShotId(id=>w.clips.some(clip=>clip.shotId===id)?id:w.clips[0]?.shotId??'');}
  function update(w:ProductionWorkspace){narrationReading.observe(w);applyWorkspace(w);}
- useEffect(()=>{let active=true;setLoaded(false);setLoadError('');void localRequest(`episodes/${episodeId}/workspace`).then(value=>{if(active){if(value.workspace){if(!current.current&&!manuallySelectedStep.current&&!navigationRef.current?.step){const initialStep=stage==='waiting_input'?0:preparationEntry?1:stage==='production_completed'||value.workspace.exports?.some((entry:{current:boolean})=>entry.current)?3:value.workspace.nativeEditRevision?2:1;studioRequested.current=initialStep===2&&!navigationRef.current;applyStep(initialStep);}update(value.workspace);}setLoaded(true);}}).catch(cause=>{if(active){setLoadError(cause instanceof Error?cause.message:'制作流程读取失败。');}});return()=>{active=false;};},[episodeId,scriptRevisionId,boardId,loadAttempt]);
+ useEffect(()=>{
+  let active=true;
+  const source=current.current;
+  setLoaded(false);setLoadError('');
+  void localRequest(`episodes/${episodeId}/workspace`).then(value=>{
+   if(!active)return;
+   const next=value.workspace as ProductionWorkspace|null,accepted=current.current;
+   // A command may publish while this reload is waiting, including at the same revision.
+   const changed=accepted!==source;
+   const superseded=accepted&&next&&(next.id===accepted.id
+    ? next.revision<accepted.revision||changed&&next.revision===accepted.revision
+    : changed);
+   if(next&&!superseded){
+    if(!accepted&&!manuallySelectedStep.current&&!navigationRef.current?.step){
+     const initialStep=stage==='waiting_input'?0:preparationEntry?1:stage==='production_completed'||next.exports?.some(entry=>entry.current)?3:next.nativeEditRevision?2:1;
+     studioRequested.current=initialStep===2&&!navigationRef.current;applyStep(initialStep);
+    }
+    update(next);
+   }
+   setLoaded(true);
+  }).catch(cause=>{if(active)setLoadError(cause instanceof Error?cause.message:'制作流程读取失败。');});
+  return()=>{active=false;};
+ },[episodeId,scriptRevisionId,boardId,loadAttempt]);
  useEffect(()=>{let active=true;const identity=episodeId+':'+(workspace?.id??'');if(nativeProjectIdentity.current!==identity){nativeProjectIdentity.current=identity;setNativeProject(null);}if(workspace)void localRequest(`episodes/${episodeId}/workspace/project?sha=${workspace.project.sha256}`).then(value=>{if(active){setNativeProject(value.project);}}).catch(()=>{});return()=>{active=false;};},[episodeId,workspace?.id,workspace?.project.sha256]);
  const scriptPath=materials.find(m=>m.id===scriptRevisionId)?.storage_path;
  useEffect(()=>{if(!scriptPath)return;let active=true;void fetch(`/_local-artifact?episode=${encodeURIComponent(episodeId)}&path=${encodeURIComponent(scriptPath)}`).then(async r=>{if(!r.ok)throw Error('主脚本读取失败，请检查原脚本文件。');const text=await r.text();if(active){setScript(text);setLoadedScriptPath(scriptPath);}}).catch(cause=>{if(active)setError(cause instanceof Error?cause.message:'主脚本读取失败。');});return()=>{active=false;};},[episodeId,scriptPath]);

@@ -69,3 +69,31 @@ it('retries preparation explicitly after failure and does not add another automa
  vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:null})));let prepares=0;const command=vi.fn(async()=>{if(++prepares===1)throw Error('准备失败');return workspace;});
  render(<ProductionWorkspacePanel episodeId="e" title="操作转换" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);await screen.findByRole('button',{name:'重试'});expect(command).toHaveBeenCalledTimes(1);fireEvent.click(screen.getByRole('button',{name:'重试'}));await screen.findByText('第一镜');expect(command).toHaveBeenCalledTimes(2);expect(command).toHaveBeenLastCalledWith('prepareWorkspace',{episodeId:'e',expectedScriptRevisionId:'s'});
 });
+
+it.each([1,2,3])('orders an open receipt against a delayed workspace reload at revision %s',async revision=>{
+ let reads=0,finishRead!:(value:Response)=>void,finishOpen!:(value:unknown)=>void;
+ vi.stubGlobal('fetch',vi.fn(async(path:string)=>{
+  if(path.endsWith('/workspace')&&++reads===2)return new Promise<Response>(resolve=>{finishRead=resolve;});
+  return Response.json({workspace});
+ }));
+ const command=vi.fn(()=>new Promise(resolve=>{finishOpen=resolve;}));
+ const view=(step:ProductionStep,boardId='board')=><WorkspaceNavigationContext.Provider value={{episode:'e',step,tab:'visual',change:()=>{}}}><ProductionWorkspacePanel episodeId="e" title="读取顺序" scriptRevisionId="s" boardId={boardId} materials={[]} command={command} onLegacy={()=>{}}/></WorkspaceNavigationContext.Provider>;
+ const app=render(view('editing'));
+ fireEvent.click(await screen.findByRole('button',{name:'重试打开剪辑工作台'}));
+ app.rerender(view('preparation','new-board'));
+ const latest={...workspace,revision:2,clips:[{...workspace.clips[0],text:'已接收的新镜头'}]};
+ await act(async()=>finishOpen({...opened,productionWorkspace:latest}));
+ await act(async()=>finishRead(Response.json({workspace:{...workspace,revision}})));
+ expect(await screen.findByText(revision>2?'第一镜':'已接收的新镜头')).toBeTruthy();
+ expect(screen.queryByTitle('OpenChatCut 剪辑工程')).toBeNull();
+ expect(command).toHaveBeenCalledTimes(1);
+});
+
+it('accepts a replacement workspace when a reload has no intervening command receipt',async()=>{
+ let reads=0;
+ vi.stubGlobal('fetch',vi.fn(async(path:string)=>Response.json({workspace:path.endsWith('/workspace')&&++reads>1?{...workspace,id:'replacement',revision:1,clips:[{...workspace.clips[0],text:'新工作版本'}]}:workspace})));
+ const command=vi.fn(),view=(boardId:string)=><ProductionWorkspacePanel episodeId="e" title="版本读取" scriptRevisionId="s" boardId={boardId} materials={[]} command={command} onLegacy={()=>{}}/>;
+ const app=render(view('board'));await screen.findByText('第一镜');
+ app.rerender(view('new-board'));expect(await screen.findByText('新工作版本')).toBeTruthy();
+ expect(command).not.toHaveBeenCalled();
+});

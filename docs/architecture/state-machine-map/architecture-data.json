@@ -1,0 +1,4057 @@
+{
+  "version": 1,
+  "meta": {
+    "title": "Loop-Control 状态机",
+    "summary": "按权威归属探索 48 个状态机族，查看事件、守卫、源码和恢复路径。",
+    "project": "Loop-Control",
+    "generatedAt": "2026-11-11T09:07:00+08:00",
+    "commit": "1bedac1035a38a6399b931ad8cb4e42781a5216d",
+    "dirty": true,
+    "scope": "应用状态机清单及四条源码执行场景。",
+    "limitations": [
+      "状态机族合并同类局部交互，数量不是每个布尔状态的计数。",
+      "源码检查与受控测试不能证明外部供应商或所有跨进程故障的完整行为。",
+      "场景描述为静态源码事实；真实供应商、本轮数据库集成与第三方 OpenChatCut 内部实现未运行。",
+      "主架构地图保留其原核查日期；此图只覆盖状态机。"
+    ],
+    "demo": false
+  },
+  "sources": [
+    {
+      "id": "inventory",
+      "kind": "docs",
+      "path": "docs/architecture/state-machines.md",
+      "locator": "M01—M48",
+      "note": "本轮权威清单与检查边界。"
+    },
+    {
+      "id": "source-1",
+      "kind": "static",
+      "path": "src/platform/types.ts",
+      "locator": "episodeStages",
+      "line": 1,
+      "note": "阶段类型、SQL 迁移、正式流程、脚本优先。transition_episode 与后续迁移共同约束；四步导航不是这个枚举。验证：formalWorkflow.integration.test.ts、scriptProduction.integration.test.ts。"
+    },
+    {
+      "id": "source-2",
+      "kind": "static",
+      "path": "db/local/c-baseline.sql",
+      "locator": "文件级实现与状态约束",
+      "line": 1,
+      "note": "阶段类型、SQL 迁移、正式流程、脚本优先。transition_episode 与后续迁移共同约束；四步导航不是这个枚举。验证：formalWorkflow.integration.test.ts、scriptProduction.integration.test.ts。"
+    },
+    {
+      "id": "source-3",
+      "kind": "static",
+      "path": "db/local/095-formal-workflow.sql",
+      "locator": "文件级实现与状态约束",
+      "line": 1,
+      "note": "阶段类型、SQL 迁移、正式流程、脚本优先。transition_episode 与后续迁移共同约束；四步导航不是这个枚举。验证：formalWorkflow.integration.test.ts、scriptProduction.integration.test.ts。"
+    },
+    {
+      "id": "source-4",
+      "kind": "static",
+      "path": "db/local/140-script-first-storyboard.sql",
+      "locator": "文件级实现与状态约束",
+      "line": 1,
+      "note": "阶段类型、SQL 迁移、正式流程、脚本优先。transition_episode 与后续迁移共同约束；四步导航不是这个枚举。验证：formalWorkflow.integration.test.ts、scriptProduction.integration.test.ts。"
+    },
+    {
+      "id": "source-5",
+      "kind": "static",
+      "path": "src/local-app/workerDatabase.ts",
+      "locator": "assertWorkerDatabaseBinding",
+      "line": 3,
+      "note": "workerDatabase、租约约束、调度。领取、续租、结果必须匹配 task、attempt、token；发布 hold 阻止普通失败重报。验证：workerScheduler.test.ts、nativeAttemptOutput.test.ts。"
+    },
+    {
+      "id": "source-6",
+      "kind": "static",
+      "path": "db/local/009-episode-input.sql",
+      "locator": "文件级实现与状态约束",
+      "line": 1,
+      "note": "workerDatabase、租约约束、调度。领取、续租、结果必须匹配 task、attempt、token；发布 hold 阻止普通失败重报。验证：workerScheduler.test.ts、nativeAttemptOutput.test.ts。"
+    },
+    {
+      "id": "source-7",
+      "kind": "static",
+      "path": "src/orchestration/workerDispatch.ts",
+      "locator": "DispatchScope",
+      "line": 2,
+      "note": "workerDatabase、租约约束、调度。领取、续租、结果必须匹配 task、attempt、token；发布 hold 阻止普通失败重报。验证：workerScheduler.test.ts、nativeAttemptOutput.test.ts。"
+    },
+    {
+      "id": "source-8",
+      "kind": "static",
+      "path": "src/worker/contracts.ts",
+      "locator": "workerTaskPackageVersion",
+      "line": 15,
+      "note": "contracts、workerOutcome。完成必须满足验证及产物契约；blocked 必须有原因。验证：Worker contract 与 workerOutcome.test.ts。"
+    },
+    {
+      "id": "source-9",
+      "kind": "static",
+      "path": "src/orchestration/workerOutcome.ts",
+      "locator": "NativePublicationUnknownError",
+      "line": 2,
+      "note": "contracts、workerOutcome。完成必须满足验证及产物契约；blocked 必须有原因。验证：Worker contract 与 workerOutcome.test.ts。"
+    },
+    {
+      "id": "source-10",
+      "kind": "static",
+      "path": "src/local-app/workspaceVisualRequest.ts",
+      "locator": "resolveWorkspaceImageRequest",
+      "line": 30,
+      "note": "visual request、生成账本、136、143、144。未知提交阻断新发；图片例外重试必须再次确认并绑定 retryOfTaskId。验证：workspaceGenerationState.integration.test.ts。"
+    },
+    {
+      "id": "source-11",
+      "kind": "static",
+      "path": "db/local/049-historical-generation-ledgers.sql",
+      "locator": "文件级实现与状态约束",
+      "line": 1,
+      "note": "visual request、生成账本、136、143、144。未知提交阻断新发；图片例外重试必须再次确认并绑定 retryOfTaskId。验证：workspaceGenerationState.integration.test.ts。"
+    },
+    {
+      "id": "source-12",
+      "kind": "static",
+      "path": "db/local/136-workspace-generation-reconciliation.sql",
+      "locator": "文件级实现与状态约束",
+      "line": 1,
+      "note": "visual request、生成账本、136、143、144。未知提交阻断新发；图片例外重试必须再次确认并绑定 retryOfTaskId。验证：workspaceGenerationState.integration.test.ts。"
+    },
+    {
+      "id": "source-13",
+      "kind": "static",
+      "path": "db/local/143-workspace-unknown-image-retry.sql",
+      "locator": "文件级实现与状态约束",
+      "line": 1,
+      "note": "visual request、生成账本、136、143、144。未知提交阻断新发；图片例外重试必须再次确认并绑定 retryOfTaskId。验证：workspaceGenerationState.integration.test.ts。"
+    },
+    {
+      "id": "source-14",
+      "kind": "static",
+      "path": "db/local/144-workspace-video-submission-guard.sql",
+      "locator": "文件级实现与状态约束",
+      "line": 1,
+      "note": "visual request、生成账本、136、143、144。未知提交阻断新发；图片例外重试必须再次确认并绑定 retryOfTaskId。验证：workspaceGenerationState.integration.test.ts。"
+    },
+    {
+      "id": "source-15",
+      "kind": "static",
+      "path": "src/worker/videoTaskExecution.ts",
+      "locator": "VideoTaskReservation",
+      "line": 3,
+      "note": "videoTaskExecution、providerOutcome、ADR-0029。先成功登记再查询；未知结果不自动重发。验证：videoTaskExecution.test.ts、officialVideoProvider.test.ts。"
+    },
+    {
+      "id": "source-16",
+      "kind": "static",
+      "path": "src/worker/providerOutcome.ts",
+      "locator": "ProviderOutcomeUnknownError",
+      "line": 2,
+      "note": "videoTaskExecution、providerOutcome、ADR-0029。先成功登记再查询；未知结果不自动重发。验证：videoTaskExecution.test.ts、officialVideoProvider.test.ts。"
+    },
+    {
+      "id": "source-17",
+      "kind": "static",
+      "path": "src/local-app/workspaceImageGenerationWorker.ts",
+      "locator": "executeWorkspaceImages",
+      "line": 14,
+      "note": "图片 Worker、口播 Worker、音频。冻结连接、模型、输入与费用；采用结果不等于生成完成。验证：workspaceImageGeneration.integration.test.ts、workspaceNarration.integration.test.ts、workspaceAudioProjection.integration.test.ts。"
+    },
+    {
+      "id": "source-18",
+      "kind": "static",
+      "path": "src/local-app/narrationWorker.ts",
+      "locator": "NativeNarrationConfiguration",
+      "line": 15,
+      "note": "图片 Worker、口播 Worker、音频。冻结连接、模型、输入与费用；采用结果不等于生成完成。验证：workspaceImageGeneration.integration.test.ts、workspaceNarration.integration.test.ts、workspaceAudioProjection.integration.test.ts。"
+    },
+    {
+      "id": "source-19",
+      "kind": "static",
+      "path": "src/local-app/workspaceAudio.ts",
+      "locator": "workspaceAudioShotIds",
+      "line": 19,
+      "note": "图片 Worker、口播 Worker、音频。冻结连接、模型、输入与费用；采用结果不等于生成完成。验证：workspaceImageGeneration.integration.test.ts、workspaceNarration.integration.test.ts、workspaceAudioProjection.integration.test.ts。"
+    },
+    {
+      "id": "source-20",
+      "kind": "static",
+      "path": "src/local-app/nativeAttemptOutput.ts",
+      "locator": "NativeAttemptFence",
+      "line": 18,
+      "note": "nativeAttemptOutput、reconciliation、133、ADR-0023。task+attempt、租约、SHA、私有回执共同 fence；不能降格为普通重试。验证：nativeAttemptOutput.test.ts、workspaceGenerationState.integration.test.ts。"
+    },
+    {
+      "id": "source-21",
+      "kind": "static",
+      "path": "src/local-app/workspaceOutputReconciliation.ts",
+      "locator": "reconcileOwnerNativeOutput",
+      "line": 6,
+      "note": "nativeAttemptOutput、reconciliation、133、ADR-0023。task+attempt、租约、SHA、私有回执共同 fence；不能降格为普通重试。验证：nativeAttemptOutput.test.ts、workspaceGenerationState.integration.test.ts。"
+    },
+    {
+      "id": "source-22",
+      "kind": "static",
+      "path": "db/local/133-native-output-publication-fences.sql",
+      "locator": "文件级实现与状态约束",
+      "line": 1,
+      "note": "nativeAttemptOutput、reconciliation、133、ADR-0023。task+attempt、租约、SHA、私有回执共同 fence；不能降格为普通重试。验证：nativeAttemptOutput.test.ts、workspaceGenerationState.integration.test.ts。"
+    },
+    {
+      "id": "source-23",
+      "kind": "static",
+      "path": "src/local-app/workspaceCallConfirmation.ts",
+      "locator": "prepareWorkspaceCall",
+      "line": 66,
+      "note": "workspaceCallConfirmation、134、135、ADR-0024。Owner、工程版本、脚本、context hash、有效期、txid 同事务校验。验证：workspaceCallConfirmation.integration.test.ts。"
+    },
+    {
+      "id": "source-24",
+      "kind": "static",
+      "path": "db/local/134-workspace-call-confirmations.sql",
+      "locator": "文件级实现与状态约束",
+      "line": 1,
+      "note": "workspaceCallConfirmation、134、135、ADR-0024。Owner、工程版本、脚本、context hash、有效期、txid 同事务校验。验证：workspaceCallConfirmation.integration.test.ts。"
+    },
+    {
+      "id": "source-25",
+      "kind": "static",
+      "path": "db/local/135-workspace-call-confirmation-lifecycle.sql",
+      "locator": "文件级实现与状态约束",
+      "line": 1,
+      "note": "workspaceCallConfirmation、134、135、ADR-0024。Owner、工程版本、脚本、context hash、有效期、txid 同事务校验。验证：workspaceCallConfirmation.integration.test.ts。"
+    },
+    {
+      "id": "source-26",
+      "kind": "static",
+      "path": "src/local-app/workspaceVisualCandidates.ts",
+      "locator": "readWorkspaceVisualCandidates",
+      "line": 39,
+      "note": "visual candidates、candidate adoption。采用重验输入／工程 SHA、来源指纹、时长影响和 restoration。验证：workspaceVisualAdoption.integration.test.ts、workspaceCandidates.integration.test.ts。"
+    },
+    {
+      "id": "source-27",
+      "kind": "static",
+      "path": "src/local-app/workspaceCandidateAdoption.ts",
+      "locator": "prepareRegisteredWorkspaceCandidate",
+      "line": 20,
+      "note": "visual candidates、candidate adoption。采用重验输入／工程 SHA、来源指纹、时长影响和 restoration。验证：workspaceVisualAdoption.integration.test.ts、workspaceCandidates.integration.test.ts。"
+    },
+    {
+      "id": "source-28",
+      "kind": "static",
+      "path": "src/local-app/workspaceNarration.ts",
+      "locator": "workspaceNarrationItemId",
+      "line": 29,
+      "note": "workspaceNarration、路由、narration toggle。正文、输入指纹、主声音路由及实际工程一致。验证：workspaceNarration.integration.test.ts、WorkspaceNarrationPanel.test.tsx。"
+    },
+    {
+      "id": "source-29",
+      "kind": "static",
+      "path": "src/workspaceAudio.ts",
+      "locator": "WorkspaceVoiceMode",
+      "line": 2,
+      "note": "workspaceNarration、路由、narration toggle。正文、输入指纹、主声音路由及实际工程一致。验证：workspaceNarration.integration.test.ts、WorkspaceNarrationPanel.test.tsx。"
+    },
+    {
+      "id": "source-30",
+      "kind": "static",
+      "path": "src/workspaceNarrationToggle.ts",
+      "locator": "readWorkspaceNarrationEnabled",
+      "line": 4,
+      "note": "workspaceNarration、路由、narration toggle。正文、输入指纹、主声音路由及实际工程一致。验证：workspaceNarration.integration.test.ts、WorkspaceNarrationPanel.test.tsx。"
+    },
+    {
+      "id": "source-31",
+      "kind": "static",
+      "path": "src/local-app/workspacePexels.ts",
+      "locator": "readWorkspacePexels",
+      "line": 19,
+      "note": "workspacePexels、102。同目标活动任务互斥；预览完成不自动采用。验证：workspacePexels.integration.test.ts。"
+    },
+    {
+      "id": "source-32",
+      "kind": "static",
+      "path": "db/local/102-workspace-pexels.sql",
+      "locator": "文件级实现与状态约束",
+      "line": 1,
+      "note": "workspacePexels、102。同目标活动任务互斥；预览完成不自动采用。验证：workspacePexels.integration.test.ts。"
+    },
+    {
+      "id": "source-33",
+      "kind": "static",
+      "path": "src/local-app/workspaceCaptionsCommands.ts",
+      "locator": "readWorkspaceCaptions",
+      "line": 35,
+      "note": "workspaceCaptionsCommands、字幕类型、alignmentWorker。音频、正文及 lane 指纹变化使确认失效；任务 ID、shot 与输入版本匹配。验证：workspaceCaptions.integration.test.ts、workspaceCaptions.test.ts。"
+    },
+    {
+      "id": "source-34",
+      "kind": "static",
+      "path": "src/workspaceCaptions.ts",
+      "locator": "WorkspaceCaptionState",
+      "line": 4,
+      "note": "workspaceCaptionsCommands、字幕类型、alignmentWorker。音频、正文及 lane 指纹变化使确认失效；任务 ID、shot 与输入版本匹配。验证：workspaceCaptions.integration.test.ts、workspaceCaptions.test.ts。"
+    },
+    {
+      "id": "source-35",
+      "kind": "static",
+      "path": "src/local-app/alignmentWorker.ts",
+      "locator": "localAlignmentModel",
+      "line": 11,
+      "note": "workspaceCaptionsCommands、字幕类型、alignmentWorker。音频、正文及 lane 指纹变化使确认失效；任务 ID、shot 与输入版本匹配。验证：workspaceCaptions.integration.test.ts、workspaceCaptions.test.ts。"
+    },
+    {
+      "id": "source-36",
+      "kind": "static",
+      "path": "src/local-app/workspaceExportCommands.ts",
+      "locator": "usedWorkspaceContent",
+      "line": 23,
+      "note": "workspaceExportCommands。确认要求最新当前导出、字幕与检查完成、实际文件指纹有效。验证：workspaceExport.integration.test.ts。"
+    },
+    {
+      "id": "source-37",
+      "kind": "static",
+      "path": "src/local-app/workspaceDeliveryCommands.ts",
+      "locator": "readWorkspaceDeliveries",
+      "line": 19,
+      "note": "workspaceDeliveryCommands、094。只消费当前已确认导出；一个活动交付；重试保留合法导出身份。验证：formalWorkflow.delivery.integration.test.ts、workspaceDelivery.integration.test.ts。"
+    },
+    {
+      "id": "source-38",
+      "kind": "static",
+      "path": "db/local/094-workspace-delivery.sql",
+      "locator": "文件级实现与状态约束",
+      "line": 1,
+      "note": "workspaceDeliveryCommands、094。只消费当前已确认导出；一个活动交付；重试保留合法导出身份。验证：formalWorkflow.delivery.integration.test.ts、workspaceDelivery.integration.test.ts。"
+    },
+    {
+      "id": "source-39",
+      "kind": "static",
+      "path": "src/local-app/LocalCatalogApp.tsx",
+      "locator": "LocalCatalogApp",
+      "line": 41,
+      "note": "LocalCatalogApp、client、sessions。session/request generation 隔离旧请求；服务端依据 hash、撤销和期限判断有效会话。验证：LocalCatalogApp.test.tsx、clientCsrfRecovery.test.ts、ownerPasswordRoute.test.ts。"
+    },
+    {
+      "id": "source-40",
+      "kind": "static",
+      "path": "src/local-app/client.ts",
+      "locator": "localRequest",
+      "line": 3,
+      "note": "LocalCatalogApp、client、sessions。session/request generation 隔离旧请求；服务端依据 hash、撤销和期限判断有效会话。验证：LocalCatalogApp.test.tsx、clientCsrfRecovery.test.ts、ownerPasswordRoute.test.ts。"
+    },
+    {
+      "id": "source-41",
+      "kind": "static",
+      "path": "src/local-app/sessions.ts",
+      "locator": "sessionCookie",
+      "line": 5,
+      "note": "LocalCatalogApp、client、sessions。session/request generation 隔离旧请求；服务端依据 hash、撤销和期限判断有效会话。验证：LocalCatalogApp.test.tsx、clientCsrfRecovery.test.ts、ownerPasswordRoute.test.ts。"
+    },
+    {
+      "id": "source-42",
+      "kind": "static",
+      "path": "src/local-app/catalogNavigation.tsx",
+      "locator": "CatalogView",
+      "line": 4,
+      "note": "catalogNavigation、LocalCatalogApp。保留 history entry 与草稿注册表；搜索、分页、选中不是独立持久状态机。验证：catalogNavigation.test.ts、LocalCatalogApp.drafts.test.tsx。"
+    },
+    {
+      "id": "source-43",
+      "kind": "static",
+      "path": "src/local-app/LocalCatalogApp.tsx",
+      "locator": "LocalCatalogApp",
+      "line": 41,
+      "note": "catalogNavigation、LocalCatalogApp。保留 history entry 与草稿注册表；搜索、分页、选中不是独立持久状态机。验证：catalogNavigation.test.ts、LocalCatalogApp.drafts.test.tsx。"
+    },
+    {
+      "id": "source-44",
+      "kind": "static",
+      "path": "src/local-app/ProductionWorkspacePanel.tsx",
+      "locator": "ProductionWorkspacePanel",
+      "line": 38,
+      "note": "ProductionWorkspacePanel、useWorkspaceOperations。操作 ready/preparing/opening/editing/saving/closing/closed 独立于导航；准备条件、归档／完成只读、占位素材及同步锁继续生效。step=2 && session=null 可以是合法入口，不能仅凭组合判为 bug。验证：ProductionWorkspacePanel.test.tsx、.navigation.test.tsx、.legacy.test.tsx。"
+    },
+    {
+      "id": "source-45",
+      "kind": "static",
+      "path": "src/local-app/useWorkspaceOperations.ts",
+      "locator": "useWorkspaceOperations",
+      "line": 26,
+      "note": "ProductionWorkspacePanel、useWorkspaceOperations。操作 ready/preparing/opening/editing/saving/closing/closed 独立于导航；准备条件、归档／完成只读、占位素材及同步锁继续生效。step=2 && session=null 可以是合法入口，不能仅凭组合判为 bug。验证：ProductionWorkspacePanel.test.tsx、.navigation.test.tsx、.legacy.test.tsx。"
+    },
+    {
+      "id": "source-46",
+      "kind": "static",
+      "path": "src/local-app/useWorkspaceReading.ts",
+      "locator": "WorkspaceReading",
+      "line": 5,
+      "note": "useWorkspaceReading、LocalEpisodeDetail、交付轮询、工作区刷新。owner、target、revision、请求顺序及 AbortController 防旧结果覆盖；初始／恢复刷新记录发出时的工程，同 revision 迟到结果也受命令回执保护；后台页面暂停。验证：ProductionWorkspaceReading.test.tsx。"
+    },
+    {
+      "id": "source-47",
+      "kind": "static",
+      "path": "src/local-app/LocalEpisodeDetail.tsx",
+      "locator": "LocalEpisodeDetail",
+      "line": 16,
+      "note": "useWorkspaceReading、LocalEpisodeDetail、交付轮询、工作区刷新。owner、target、revision、请求顺序及 AbortController 防旧结果覆盖；初始／恢复刷新记录发出时的工程，同 revision 迟到结果也受命令回执保护；后台页面暂停。验证：ProductionWorkspaceReading.test.tsx。"
+    },
+    {
+      "id": "source-48",
+      "kind": "static",
+      "path": "src/local-app/WorkspaceDeliveryPanel.tsx",
+      "locator": "WorkspaceDeliveryPanel",
+      "line": 14,
+      "note": "useWorkspaceReading、LocalEpisodeDetail、交付轮询、工作区刷新。owner、target、revision、请求顺序及 AbortController 防旧结果覆盖；初始／恢复刷新记录发出时的工程，同 revision 迟到结果也受命令回执保护；后台页面暂停。验证：ProductionWorkspaceReading.test.tsx。"
+    },
+    {
+      "id": "source-49",
+      "kind": "static",
+      "path": "src/local-app/ProductionWorkspacePanel.tsx",
+      "locator": "ProductionWorkspacePanel",
+      "line": 38,
+      "note": "useWorkspaceReading、LocalEpisodeDetail、交付轮询、工作区刷新。owner、target、revision、请求顺序及 AbortController 防旧结果覆盖；初始／恢复刷新记录发出时的工程，同 revision 迟到结果也受命令回执保护；后台页面暂停。验证：ProductionWorkspaceReading.test.tsx。"
+    },
+    {
+      "id": "source-50",
+      "kind": "static",
+      "path": "src/local-app/useWorkspaceCallConfirmation.tsx",
+      "locator": "useWorkspaceCallConfirmation",
+      "line": 20,
+      "note": "useWorkspaceCallConfirmation、ADR-0033。每次进入独立 owner；同步 phase 锁；过期与整数分校验；失败不重复确认。验证：useWorkspaceCallConfirmation.test.tsx。"
+    },
+    {
+      "id": "source-51",
+      "kind": "static",
+      "path": "src/local-app/useWorkspaceCandidateReview.ts",
+      "locator": "useCandidateReviewLifecycle",
+      "line": 8,
+      "note": "useWorkspaceCandidateReview、ADR-0030。sequence、owner、工程 SHA、当前读取；已经发出的采用命令不能由本地取消撤销。验证：useWorkspaceCandidateReview.test.tsx、WorkspaceCandidateReviewLifecycle.test.tsx。"
+    },
+    {
+      "id": "source-52",
+      "kind": "static",
+      "path": "src/local-app/WorkspaceVisualPreparation.tsx",
+      "locator": "VisualPreparationProps",
+      "line": 70,
+      "note": "WorkspaceVisualPreparation、WorkspaceUploadFeedback、ProductionWorkspacePanel。运行锁、文件类型／大小、reference 上限、卸载归属；不永久堆积成功记录。验证：WorkspaceVisualPreparation.upload.test.tsx、LocalEpisodeDetail.upload.test.tsx。"
+    },
+    {
+      "id": "source-53",
+      "kind": "static",
+      "path": "src/local-app/WorkspaceUploadFeedback.tsx",
+      "locator": "UploadNotice",
+      "line": 8,
+      "note": "WorkspaceVisualPreparation、WorkspaceUploadFeedback、ProductionWorkspacePanel。运行锁、文件类型／大小、reference 上限、卸载归属；不永久堆积成功记录。验证：WorkspaceVisualPreparation.upload.test.tsx、LocalEpisodeDetail.upload.test.tsx。"
+    },
+    {
+      "id": "source-54",
+      "kind": "static",
+      "path": "src/local-app/ProductionWorkspacePanel.tsx",
+      "locator": "ProductionWorkspacePanel",
+      "line": 38,
+      "note": "WorkspaceVisualPreparation、WorkspaceUploadFeedback、ProductionWorkspacePanel。运行锁、文件类型／大小、reference 上限、卸载归属；不永久堆积成功记录。验证：WorkspaceVisualPreparation.upload.test.tsx、LocalEpisodeDetail.upload.test.tsx。"
+    },
+    {
+      "id": "source-55",
+      "kind": "static",
+      "path": "src/workspaceTaskPresentation.ts",
+      "locator": "workspaceTaskPresentation",
+      "line": 19,
+      "note": "共享投影、WorkspaceVisualTaskStatus、WorkspaceNarrationPanel、WorkspaceAudioPanel。发布核对优先；未知不能显示为普通重试；已保存远端 ID 的恢复只查询原任务。验证：WorkspaceVisualTaskStatus.test.tsx。"
+    },
+    {
+      "id": "source-56",
+      "kind": "static",
+      "path": "src/local-app/WorkspaceVisualTaskStatus.tsx",
+      "locator": "WorkspaceVisualTaskProgress",
+      "line": 10,
+      "note": "共享投影、WorkspaceVisualTaskStatus、WorkspaceNarrationPanel、WorkspaceAudioPanel。发布核对优先；未知不能显示为普通重试；已保存远端 ID 的恢复只查询原任务。验证：WorkspaceVisualTaskStatus.test.tsx。"
+    },
+    {
+      "id": "source-57",
+      "kind": "static",
+      "path": "src/local-app/WorkspaceNarrationPanel.tsx",
+      "locator": "WorkspaceNarrationPanel",
+      "line": 32,
+      "note": "共享投影、WorkspaceVisualTaskStatus、WorkspaceNarrationPanel、WorkspaceAudioPanel。发布核对优先；未知不能显示为普通重试；已保存远端 ID 的恢复只查询原任务。验证：WorkspaceVisualTaskStatus.test.tsx。"
+    },
+    {
+      "id": "source-58",
+      "kind": "static",
+      "path": "src/local-app/WorkspaceAudioPanel.tsx",
+      "locator": "WorkspaceAudioPreparation",
+      "line": 33,
+      "note": "共享投影、WorkspaceVisualTaskStatus、WorkspaceNarrationPanel、WorkspaceAudioPanel。发布核对优先；未知不能显示为普通重试；已保存远端 ID 的恢复只查询原任务。验证：WorkspaceVisualTaskStatus.test.tsx。"
+    },
+    {
+      "id": "source-59",
+      "kind": "static",
+      "path": "src/local-app/WorkspaceDraft.tsx",
+      "locator": "WorkspaceDraftOwner",
+      "line": 12,
+      "note": "WorkspaceDraft、WorkspaceScriptPanel、AccountWorkspace、ConfigurationForms。身份+基准归属；acknowledge 不删除更新输入；脚本修订需理由。验证：LocalCatalogApp.drafts.test.tsx、WorkspaceScriptPanel.test.tsx、AccountWorkspace.test.tsx。"
+    },
+    {
+      "id": "source-60",
+      "kind": "static",
+      "path": "src/local-app/WorkspaceScriptPanel.tsx",
+      "locator": "WorkspaceScriptPanel",
+      "line": 24,
+      "note": "WorkspaceDraft、WorkspaceScriptPanel、AccountWorkspace、ConfigurationForms。身份+基准归属；acknowledge 不删除更新输入；脚本修订需理由。验证：LocalCatalogApp.drafts.test.tsx、WorkspaceScriptPanel.test.tsx、AccountWorkspace.test.tsx。"
+    },
+    {
+      "id": "source-61",
+      "kind": "static",
+      "path": "src/accounts/AccountWorkspace.tsx",
+      "locator": "AccountWorkspace",
+      "line": 71,
+      "note": "WorkspaceDraft、WorkspaceScriptPanel、AccountWorkspace、ConfigurationForms。身份+基准归属；acknowledge 不删除更新输入；脚本修订需理由。验证：LocalCatalogApp.drafts.test.tsx、WorkspaceScriptPanel.test.tsx、AccountWorkspace.test.tsx。"
+    },
+    {
+      "id": "source-62",
+      "kind": "static",
+      "path": "src/platform/ConfigurationForms.tsx",
+      "locator": "PromptVersionManager",
+      "line": 55,
+      "note": "WorkspaceDraft、WorkspaceScriptPanel、AccountWorkspace、ConfigurationForms。身份+基准归属；acknowledge 不删除更新输入；脚本修订需理由。验证：LocalCatalogApp.drafts.test.tsx、WorkspaceScriptPanel.test.tsx、AccountWorkspace.test.tsx。"
+    },
+    {
+      "id": "source-63",
+      "kind": "static",
+      "path": "src/connections/ConnectionWorkspace.tsx",
+      "locator": "ExternalConnection",
+      "line": 29,
+      "note": "ConnectionWorkspace、ConnectionModelsDialog、ConnectionDraftSession、ConnectionTestButton。operation lock、基准版本、身份失效清草稿；秘密不存草稿。验证：ConnectionWorkspace.test.tsx、ConnectionDrafts.test.tsx。"
+    },
+    {
+      "id": "source-64",
+      "kind": "static",
+      "path": "src/connections/ConnectionModelsDialog.tsx",
+      "locator": "ConnectionModelActions",
+      "line": 11,
+      "note": "ConnectionWorkspace、ConnectionModelsDialog、ConnectionDraftSession、ConnectionTestButton。operation lock、基准版本、身份失效清草稿；秘密不存草稿。验证：ConnectionWorkspace.test.tsx、ConnectionDrafts.test.tsx。"
+    },
+    {
+      "id": "source-65",
+      "kind": "static",
+      "path": "src/connections/ConnectionDraftSession.tsx",
+      "locator": "ConnectionEditDraft",
+      "line": 5,
+      "note": "ConnectionWorkspace、ConnectionModelsDialog、ConnectionDraftSession、ConnectionTestButton。operation lock、基准版本、身份失效清草稿；秘密不存草稿。验证：ConnectionWorkspace.test.tsx、ConnectionDrafts.test.tsx。"
+    },
+    {
+      "id": "source-66",
+      "kind": "static",
+      "path": "src/connections/ConnectionTestButton.tsx",
+      "locator": "ConnectionTestButton",
+      "line": 3,
+      "note": "ConnectionWorkspace、ConnectionModelsDialog、ConnectionDraftSession、ConnectionTestButton。operation lock、基准版本、身份失效清草稿；秘密不存草稿。验证：ConnectionWorkspace.test.tsx、ConnectionDrafts.test.tsx。"
+    },
+    {
+      "id": "source-67",
+      "kind": "static",
+      "path": "src/local-app/EmbeddedStudioHost.tsx",
+      "locator": "EmbeddedStudioSession",
+      "line": 13,
+      "note": "EmbeddedStudioHost、嵌入客户端、studioCommands。origin/source/channel/project/request ID、revision 与指纹；请求 Map、同步锁与超时。验证：EmbeddedStudioHost.test.tsx、embeddedStudio.integration.test.ts。"
+    },
+    {
+      "id": "source-68",
+      "kind": "static",
+      "path": "scripts/openchatcut-embed-client.mjs",
+      "locator": "redirectLoopControlImport",
+      "line": 15,
+      "note": "EmbeddedStudioHost、嵌入客户端、studioCommands。origin/source/channel/project/request ID、revision 与指纹；请求 Map、同步锁与超时。验证：EmbeddedStudioHost.test.tsx、embeddedStudio.integration.test.ts。"
+    },
+    {
+      "id": "source-69",
+      "kind": "static",
+      "path": "src/local-app/studioCommands.ts",
+      "locator": "StudioRuntime",
+      "line": 18,
+      "note": "EmbeddedStudioHost、嵌入客户端、studioCommands。origin/source/channel/project/request ID、revision 与指纹；请求 Map、同步锁与超时。验证：EmbeddedStudioHost.test.tsx、embeddedStudio.integration.test.ts。"
+    },
+    {
+      "id": "source-70",
+      "kind": "static",
+      "path": "src/ui/media/useMediaLifecycle.ts",
+      "locator": "useMediaLifecycle",
+      "line": 4,
+      "note": "useMediaLifecycle、VideoPreview、WorkspaceAudioAudition、WorkspaceSpeechSample、localArtifactPreview。当前 source/attempt/owner、片段边界；试听生成也走逐次确认。验证：VideoPreview.test.tsx、WorkspaceAudioAudition.test.tsx、WorkspaceSpeechSample.test.tsx。"
+    },
+    {
+      "id": "source-71",
+      "kind": "static",
+      "path": "src/ui/media/VideoPreview.tsx",
+      "locator": "VideoPreviewProps",
+      "line": 10,
+      "note": "useMediaLifecycle、VideoPreview、WorkspaceAudioAudition、WorkspaceSpeechSample、localArtifactPreview。当前 source/attempt/owner、片段边界；试听生成也走逐次确认。验证：VideoPreview.test.tsx、WorkspaceAudioAudition.test.tsx、WorkspaceSpeechSample.test.tsx。"
+    },
+    {
+      "id": "source-72",
+      "kind": "static",
+      "path": "src/local-app/WorkspaceAudioAudition.tsx",
+      "locator": "WorkspaceAudioAudition",
+      "line": 9,
+      "note": "useMediaLifecycle、VideoPreview、WorkspaceAudioAudition、WorkspaceSpeechSample、localArtifactPreview。当前 source/attempt/owner、片段边界；试听生成也走逐次确认。验证：VideoPreview.test.tsx、WorkspaceAudioAudition.test.tsx、WorkspaceSpeechSample.test.tsx。"
+    },
+    {
+      "id": "source-73",
+      "kind": "static",
+      "path": "src/local-app/WorkspaceSpeechSample.tsx",
+      "locator": "WorkspaceSpeechSample",
+      "line": 12,
+      "note": "useMediaLifecycle、VideoPreview、WorkspaceAudioAudition、WorkspaceSpeechSample、localArtifactPreview。当前 source/attempt/owner、片段边界；试听生成也走逐次确认。验证：VideoPreview.test.tsx、WorkspaceAudioAudition.test.tsx、WorkspaceSpeechSample.test.tsx。"
+    },
+    {
+      "id": "source-74",
+      "kind": "static",
+      "path": "src/reviews/localArtifactPreview.ts",
+      "locator": "clearLocalArtifactCache",
+      "line": 12,
+      "note": "useMediaLifecycle、VideoPreview、WorkspaceAudioAudition、WorkspaceSpeechSample、localArtifactPreview。当前 source/attempt/owner、片段边界；试听生成也走逐次确认。验证：VideoPreview.test.tsx、WorkspaceAudioAudition.test.tsx、WorkspaceSpeechSample.test.tsx。"
+    },
+    {
+      "id": "source-75",
+      "kind": "static",
+      "path": "src/local-app/WorkspaceDeliveryPanel.tsx",
+      "locator": "WorkspaceDeliveryPanel",
+      "line": 14,
+      "note": "WorkspaceDeliveryPanel、WorkspaceExportPanel。cover request/scope、同步 ref lock、当前已确认导出；旧封面校验不能写回新草稿。验证：WorkspaceDeliveryPanel.test.tsx、WorkspaceExportPanel.test.tsx。"
+    },
+    {
+      "id": "source-76",
+      "kind": "static",
+      "path": "src/local-app/WorkspaceExportPanel.tsx",
+      "locator": "WorkspaceExportPanel",
+      "line": 10,
+      "note": "WorkspaceDeliveryPanel、WorkspaceExportPanel。cover request/scope、同步 ref lock、当前已确认导出；旧封面校验不能写回新草稿。验证：WorkspaceDeliveryPanel.test.tsx、WorkspaceExportPanel.test.tsx。"
+    },
+    {
+      "id": "source-77",
+      "kind": "static",
+      "path": "src/local-app/WorkspaceSearchPanel.tsx",
+      "locator": "WorkspaceSearch",
+      "line": 24,
+      "note": "WorkspaceSearchPanel、useProductionServiceCatalog、WorkspacePexelsSearch、episodeReadService。请求序号／取消、完整计数、分页与版本；draft 与实际任务选择分开。验证：LocalCatalogApp.search.test.tsx、useProductionServiceCatalog.test.tsx、WorkspacePexelsSearch.test.tsx。"
+    },
+    {
+      "id": "source-78",
+      "kind": "static",
+      "path": "src/local-app/useProductionServiceCatalog.ts",
+      "locator": "ProductionCatalogReading",
+      "line": 6,
+      "note": "WorkspaceSearchPanel、useProductionServiceCatalog、WorkspacePexelsSearch、episodeReadService。请求序号／取消、完整计数、分页与版本；draft 与实际任务选择分开。验证：LocalCatalogApp.search.test.tsx、useProductionServiceCatalog.test.tsx、WorkspacePexelsSearch.test.tsx。"
+    },
+    {
+      "id": "source-79",
+      "kind": "static",
+      "path": "src/local-app/WorkspacePexelsSearch.tsx",
+      "locator": "WorkspacePexelsSearch",
+      "line": 22,
+      "note": "WorkspaceSearchPanel、useProductionServiceCatalog、WorkspacePexelsSearch、episodeReadService。请求序号／取消、完整计数、分页与版本；draft 与实际任务选择分开。验证：LocalCatalogApp.search.test.tsx、useProductionServiceCatalog.test.tsx、WorkspacePexelsSearch.test.tsx。"
+    },
+    {
+      "id": "source-80",
+      "kind": "static",
+      "path": "src/episodes/episodeReadService.ts",
+      "locator": "EpisodeReadChanges",
+      "line": 1,
+      "note": "WorkspaceSearchPanel、useProductionServiceCatalog、WorkspacePexelsSearch、episodeReadService。请求序号／取消、完整计数、分页与版本；draft 与实际任务选择分开。验证：LocalCatalogApp.search.test.tsx、useProductionServiceCatalog.test.tsx、WorkspacePexelsSearch.test.tsx。"
+    },
+    {
+      "id": "source-81",
+      "kind": "static",
+      "path": "src/local-app/WorkspaceShotTable.tsx",
+      "locator": "WorkspaceShotTable",
+      "line": 16,
+      "note": "WorkspaceShotTable、WorkspaceShotRail、WorkspaceMaterialShelf、WorkspacePromptField、WorkspaceVideoInputs、WorkspacePreparationLayout。沿用本地组件状态；提交时的工程版本、输入与忙碌状态才是写入守卫。不将每个开关升级为持久业务状态。验证：同名组件测试。"
+    },
+    {
+      "id": "source-82",
+      "kind": "static",
+      "path": "src/local-app/WorkspaceShotRail.tsx",
+      "locator": "WorkspaceShotRail",
+      "line": 4,
+      "note": "WorkspaceShotTable、WorkspaceShotRail、WorkspaceMaterialShelf、WorkspacePromptField、WorkspaceVideoInputs、WorkspacePreparationLayout。沿用本地组件状态；提交时的工程版本、输入与忙碌状态才是写入守卫。不将每个开关升级为持久业务状态。验证：同名组件测试。"
+    },
+    {
+      "id": "source-83",
+      "kind": "static",
+      "path": "src/local-app/WorkspaceMaterialShelf.tsx",
+      "locator": "WorkspaceMaterialShelf",
+      "line": 37,
+      "note": "WorkspaceShotTable、WorkspaceShotRail、WorkspaceMaterialShelf、WorkspacePromptField、WorkspaceVideoInputs、WorkspacePreparationLayout。沿用本地组件状态；提交时的工程版本、输入与忙碌状态才是写入守卫。不将每个开关升级为持久业务状态。验证：同名组件测试。"
+    },
+    {
+      "id": "source-84",
+      "kind": "static",
+      "path": "src/local-app/WorkspacePromptField.tsx",
+      "locator": "WorkspacePromptField",
+      "line": 5,
+      "note": "WorkspaceShotTable、WorkspaceShotRail、WorkspaceMaterialShelf、WorkspacePromptField、WorkspaceVideoInputs、WorkspacePreparationLayout。沿用本地组件状态；提交时的工程版本、输入与忙碌状态才是写入守卫。不将每个开关升级为持久业务状态。验证：同名组件测试。"
+    },
+    {
+      "id": "source-85",
+      "kind": "static",
+      "path": "src/local-app/WorkspaceVideoInputs.tsx",
+      "locator": "VideoInputMaterial",
+      "line": 8,
+      "note": "WorkspaceShotTable、WorkspaceShotRail、WorkspaceMaterialShelf、WorkspacePromptField、WorkspaceVideoInputs、WorkspacePreparationLayout。沿用本地组件状态；提交时的工程版本、输入与忙碌状态才是写入守卫。不将每个开关升级为持久业务状态。验证：同名组件测试。"
+    },
+    {
+      "id": "source-86",
+      "kind": "static",
+      "path": "src/local-app/WorkspacePreparationLayout.tsx",
+      "locator": "WorkspacePreparationLayout",
+      "line": 5,
+      "note": "WorkspaceShotTable、WorkspaceShotRail、WorkspaceMaterialShelf、WorkspacePromptField、WorkspaceVideoInputs、WorkspacePreparationLayout。沿用本地组件状态；提交时的工程版本、输入与忙碌状态才是写入守卫。不将每个开关升级为持久业务状态。验证：同名组件测试。"
+    },
+    {
+      "id": "source-87",
+      "kind": "static",
+      "path": "src/ui/SurfacePresence.tsx",
+      "locator": "useSurfacePresence",
+      "line": 5,
+      "note": "SurfacePresence、useDialogFocus、SystemStatusDrawer。退出动画期间 inert、防穿透、焦点恢复；不负责业务是否完成。验证：SurfacePresence.test.tsx、useDialogFocus.test.tsx。"
+    },
+    {
+      "id": "source-88",
+      "kind": "static",
+      "path": "src/ui/useDialogFocus.ts",
+      "locator": "useDialogFocus",
+      "line": 7,
+      "note": "SurfacePresence、useDialogFocus、SystemStatusDrawer。退出动画期间 inert、防穿透、焦点恢复；不负责业务是否完成。验证：SurfacePresence.test.tsx、useDialogFocus.test.tsx。"
+    },
+    {
+      "id": "source-89",
+      "kind": "static",
+      "path": "src/local-app/SystemStatusDrawer.tsx",
+      "locator": "SystemStatusDrawer",
+      "line": 33,
+      "note": "SurfacePresence、useDialogFocus、SystemStatusDrawer。退出动画期间 inert、防穿透、焦点恢复；不负责业务是否完成。验证：SurfacePresence.test.tsx、useDialogFocus.test.tsx。"
+    },
+    {
+      "id": "source-90",
+      "kind": "static",
+      "path": "src/local-app/OwnerPreferencesDialog.tsx",
+      "locator": "PreferencesPage",
+      "line": 13,
+      "note": "OwnerPreferencesDialog、GlobalPlanningSettings、WorkspacePlanningSelection。revision、上传请求归属、错误保留草稿；默认选择不自动调用模型。验证：同名组件测试、ownerPreferences.integration.test.ts。"
+    },
+    {
+      "id": "source-91",
+      "kind": "static",
+      "path": "src/local-app/GlobalPlanningSettings.tsx",
+      "locator": "GlobalPlanningSettings",
+      "line": 8,
+      "note": "OwnerPreferencesDialog、GlobalPlanningSettings、WorkspacePlanningSelection。revision、上传请求归属、错误保留草稿；默认选择不自动调用模型。验证：同名组件测试、ownerPreferences.integration.test.ts。"
+    },
+    {
+      "id": "source-92",
+      "kind": "static",
+      "path": "src/local-app/WorkspacePlanningSelection.tsx",
+      "locator": "WorkspacePlanningDraft",
+      "line": 13,
+      "note": "OwnerPreferencesDialog、GlobalPlanningSettings、WorkspacePlanningSelection。revision、上传请求归属、错误保留草稿；默认选择不自动调用模型。验证：同名组件测试、ownerPreferences.integration.test.ts。"
+    },
+    {
+      "id": "source-93",
+      "kind": "static",
+      "path": "src/local-app/episodeLifecycle.ts",
+      "locator": "LocalEpisodeLifecycle",
+      "line": 19,
+      "note": "episodeLifecycle、删除 targets、115。Owner、活动任务、未知提交、精确文件集合、设备/inode、command receipt 与 cleanup key。验证：episodeDeletion.integration.test.ts、episodeDeletionStorage.integration.test.ts、episodeDeletionTargets.test.ts。"
+    },
+    {
+      "id": "source-94",
+      "kind": "static",
+      "path": "src/local-app/episodeDeletionTargets.ts",
+      "locator": "EpisodeDeletionTarget",
+      "line": 15,
+      "note": "episodeLifecycle、删除 targets、115。Owner、活动任务、未知提交、精确文件集合、设备/inode、command receipt 与 cleanup key。验证：episodeDeletion.integration.test.ts、episodeDeletionStorage.integration.test.ts、episodeDeletionTargets.test.ts。"
+    },
+    {
+      "id": "source-95",
+      "kind": "static",
+      "path": "db/local/115-exact-episode-deletion-intents.sql",
+      "locator": "文件级实现与状态约束",
+      "line": 1,
+      "note": "episodeLifecycle、删除 targets、115。Owner、活动任务、未知提交、精确文件集合、设备/inode、command receipt 与 cleanup key。验证：episodeDeletion.integration.test.ts、episodeDeletionStorage.integration.test.ts、episodeDeletionTargets.test.ts。"
+    },
+    {
+      "id": "source-96",
+      "kind": "static",
+      "path": "src/local-app/LocalDeletionRecovery.tsx",
+      "locator": "LocalDeletionRecovery",
+      "line": 9,
+      "note": "LocalDeletionRecovery、删除状态读取、实际账号删除、删除回执与恢复、AccountWorkspace、157。不扩大原删除范围；引用与恢复责任继续保护；完整服务端阻断计数。验证：cleanupRecovery.integration.test.ts、accountDeletionStatus.integration.test.ts、accountDeletionStorage.integration.test.ts、LocalDeletionRecovery.test.tsx。"
+    },
+    {
+      "id": "source-97",
+      "kind": "static",
+      "path": "src/local-app/accountDeletion.ts",
+      "locator": "accountDeletionOperations",
+      "line": 6,
+      "note": "LocalDeletionRecovery、删除状态读取、实际账号删除、删除回执与恢复、AccountWorkspace、157。不扩大原删除范围；引用与恢复责任继续保护；完整服务端阻断计数。验证：cleanupRecovery.integration.test.ts、accountDeletionStatus.integration.test.ts、accountDeletionStorage.integration.test.ts、LocalDeletionRecovery.test.tsx。"
+    },
+    {
+      "id": "source-98",
+      "kind": "static",
+      "path": "src/local-app/configurationCommands.ts",
+      "locator": "ConfigurationError",
+      "line": 12,
+      "note": "LocalDeletionRecovery、删除状态读取、实际账号删除、删除回执与恢复、AccountWorkspace、157。不扩大原删除范围；引用与恢复责任继续保护；完整服务端阻断计数。验证：cleanupRecovery.integration.test.ts、accountDeletionStatus.integration.test.ts、accountDeletionStorage.integration.test.ts、LocalDeletionRecovery.test.tsx。"
+    },
+    {
+      "id": "source-99",
+      "kind": "static",
+      "path": "src/local-app/episodeLifecycle.ts",
+      "locator": "LocalEpisodeLifecycle",
+      "line": 19,
+      "note": "LocalDeletionRecovery、删除状态读取、实际账号删除、删除回执与恢复、AccountWorkspace、157。不扩大原删除范围；引用与恢复责任继续保护；完整服务端阻断计数。验证：cleanupRecovery.integration.test.ts、accountDeletionStatus.integration.test.ts、accountDeletionStorage.integration.test.ts、LocalDeletionRecovery.test.tsx。"
+    },
+    {
+      "id": "source-100",
+      "kind": "static",
+      "path": "src/accounts/AccountWorkspace.tsx",
+      "locator": "AccountWorkspace",
+      "line": 71,
+      "note": "LocalDeletionRecovery、删除状态读取、实际账号删除、删除回执与恢复、AccountWorkspace、157。不扩大原删除范围；引用与恢复责任继续保护；完整服务端阻断计数。验证：cleanupRecovery.integration.test.ts、accountDeletionStatus.integration.test.ts、accountDeletionStorage.integration.test.ts、LocalDeletionRecovery.test.tsx。"
+    },
+    {
+      "id": "source-101",
+      "kind": "static",
+      "path": "db/local/157-deletion-cleanup-diagnostics.sql",
+      "locator": "文件级实现与状态约束",
+      "line": 1,
+      "note": "LocalDeletionRecovery、删除状态读取、实际账号删除、删除回执与恢复、AccountWorkspace、157。不扩大原删除范围；引用与恢复责任继续保护；完整服务端阻断计数。验证：cleanupRecovery.integration.test.ts、accountDeletionStatus.integration.test.ts、accountDeletionStorage.integration.test.ts、LocalDeletionRecovery.test.tsx。"
+    },
+    {
+      "id": "source-102",
+      "kind": "static",
+      "path": "src/local-app/episodeStorageLocation.ts",
+      "locator": "resolveEpisodeStorageLocation",
+      "line": 11,
+      "note": "episodeStorageLocation、episodeCollection、accountDirectoryCleanup、AccountDirectoryPanel。真实目录身份、同账号、文件指纹、无 symlink；空目录仅 rmdir。验证：episodeCollectionMove.integration.test.ts、accountDirectoryCleanup.test.ts。"
+    },
+    {
+      "id": "source-103",
+      "kind": "static",
+      "path": "src/local-app/episodeCollection.ts",
+      "locator": "readEpisodeCollection",
+      "line": 10,
+      "note": "episodeStorageLocation、episodeCollection、accountDirectoryCleanup、AccountDirectoryPanel。真实目录身份、同账号、文件指纹、无 symlink；空目录仅 rmdir。验证：episodeCollectionMove.integration.test.ts、accountDirectoryCleanup.test.ts。"
+    },
+    {
+      "id": "source-104",
+      "kind": "static",
+      "path": "src/local-app/accountDirectoryCleanup.ts",
+      "locator": "EmptyAccountDirectory",
+      "line": 5,
+      "note": "episodeStorageLocation、episodeCollection、accountDirectoryCleanup、AccountDirectoryPanel。真实目录身份、同账号、文件指纹、无 symlink；空目录仅 rmdir。验证：episodeCollectionMove.integration.test.ts、accountDirectoryCleanup.test.ts。"
+    },
+    {
+      "id": "source-105",
+      "kind": "static",
+      "path": "src/accounts/AccountDirectoryPanel.tsx",
+      "locator": "AccountDirectoryPanel",
+      "line": 7,
+      "note": "episodeStorageLocation、episodeCollection、accountDirectoryCleanup、AccountDirectoryPanel。真实目录身份、同账号、文件指纹、无 symlink；空目录仅 rmdir。验证：episodeCollectionMove.integration.test.ts、accountDirectoryCleanup.test.ts。"
+    },
+    {
+      "id": "source-106",
+      "kind": "static",
+      "path": "src/local-app/accountDirectoryMigration.ts",
+      "locator": "planAccountDirectoryMigration",
+      "line": 44,
+      "note": "accountDirectoryMigration、106。盘点、目录身份、拷贝校验、锁与 Studio/未知任务阻断；保留原文件。验证：accountDirectoryMigration*.integration.test.ts、legacyAdoption*.integration.test.ts。"
+    },
+    {
+      "id": "source-107",
+      "kind": "static",
+      "path": "db/local/106-account-directory-migrations.sql",
+      "locator": "文件级实现与状态约束",
+      "line": 1,
+      "note": "accountDirectoryMigration、106。盘点、目录身份、拷贝校验、锁与 Studio/未知任务阻断；保留原文件。验证：accountDirectoryMigration*.integration.test.ts、legacyAdoption*.integration.test.ts。"
+    },
+    {
+      "id": "source-108",
+      "kind": "static",
+      "path": "src/local-app/mediaRootExecution.ts",
+      "locator": "mediaRootExecutionResult",
+      "line": 26,
+      "note": "mediaRootExecution、mediaRootMigration、126、部署发布。不可变 manifest、全局写入 fence、private journal；COMMIT 未知不擅自回滚文件。验证：mediaRootExecutionFaults.integration.test.ts、mediaRootPublication.integration.test.ts。"
+    },
+    {
+      "id": "source-109",
+      "kind": "static",
+      "path": "src/local-app/mediaRootMigration.ts",
+      "locator": "StorageResource",
+      "line": 15,
+      "note": "mediaRootExecution、mediaRootMigration、126、部署发布。不可变 manifest、全局写入 fence、private journal；COMMIT 未知不擅自回滚文件。验证：mediaRootExecutionFaults.integration.test.ts、mediaRootPublication.integration.test.ts。"
+    },
+    {
+      "id": "source-110",
+      "kind": "static",
+      "path": "db/local/126-global-media-root-execution.sql",
+      "locator": "文件级实现与状态约束",
+      "line": 1,
+      "note": "mediaRootExecution、mediaRootMigration、126、部署发布。不可变 manifest、全局写入 fence、private journal；COMMIT 未知不擅自回滚文件。验证：mediaRootExecutionFaults.integration.test.ts、mediaRootPublication.integration.test.ts。"
+    },
+    {
+      "id": "source-111",
+      "kind": "static",
+      "path": "scripts/runtime/media-root.mjs",
+      "locator": "mediaRootReceiptPath",
+      "line": 9,
+      "note": "mediaRootExecution、mediaRootMigration、126、部署发布。不可变 manifest、全局写入 fence、private journal；COMMIT 未知不擅自回滚文件。验证：mediaRootExecutionFaults.integration.test.ts、mediaRootPublication.integration.test.ts。"
+    },
+    {
+      "id": "source-112",
+      "kind": "static",
+      "path": "src/local-app/connections.ts",
+      "locator": "parseConnectionCommand",
+      "line": 29,
+      "note": "connections、providerProbe。临时错误保留已有资格；已引用旧版本不硬删；连接通过不代表模型生成通过。验证：connectionLifecycle.integration.test.ts、providerProbe.test.ts。"
+    },
+    {
+      "id": "source-113",
+      "kind": "static",
+      "path": "src/local-app/providerProbe.ts",
+      "locator": "createProviderProbe",
+      "line": 10,
+      "note": "connections、providerProbe。临时错误保留已有资格；已引用旧版本不硬删；连接通过不代表模型生成通过。验证：connectionLifecycle.integration.test.ts、providerProbe.test.ts。"
+    },
+    {
+      "id": "source-114",
+      "kind": "static",
+      "path": "src/local-app/connectionBilling.ts",
+      "locator": "LocalConnectionBilling",
+      "line": 17,
+      "note": "connectionBilling、providerUsage、132。先验证账务凭据，再 Keychain 写入与事务切换；不混用生成凭据。验证：connectionBilling.integration.test.ts、clientBilling.test.ts。"
+    },
+    {
+      "id": "source-115",
+      "kind": "static",
+      "path": "src/local-app/providerUsage.ts",
+      "locator": "ProviderUsageReader",
+      "line": 4,
+      "note": "connectionBilling、providerUsage、132。先验证账务凭据，再 Keychain 写入与事务切换；不混用生成凭据。验证：connectionBilling.integration.test.ts、clientBilling.test.ts。"
+    },
+    {
+      "id": "source-116",
+      "kind": "static",
+      "path": "db/local/132-connection-billing.sql",
+      "locator": "文件级实现与状态约束",
+      "line": 1,
+      "note": "connectionBilling、providerUsage、132。先验证账务凭据，再 Keychain 写入与事务切换；不混用生成凭据。验证：connectionBilling.integration.test.ts、clientBilling.test.ts。"
+    },
+    {
+      "id": "source-117",
+      "kind": "static",
+      "path": "src/local-app/LocalSecretAdministration.tsx",
+      "locator": "LocalSecretAdministration",
+      "line": 12,
+      "note": "LocalSecretAdministration、secretAdministration。generation、AbortController、no-store、权限与短期有效期；不把明文放进状态清单或日志。验证：LocalSecretAdministration.test.tsx、secretAdministration.integration.test.ts。"
+    },
+    {
+      "id": "source-118",
+      "kind": "static",
+      "path": "src/local-app/secretAdministration.ts",
+      "locator": "SecretOperation",
+      "line": 7,
+      "note": "LocalSecretAdministration、secretAdministration。generation、AbortController、no-store、权限与短期有效期；不把明文放进状态清单或日志。验证：LocalSecretAdministration.test.tsx、secretAdministration.integration.test.ts。"
+    },
+    {
+      "id": "source-119",
+      "kind": "static",
+      "path": "src/local-app/nativeAutomation.ts",
+      "locator": "AutomationJob",
+      "line": 12,
+      "note": "nativeAutomation、036、037。token、租约、续约、有限 attempt；调度扫描不能替代数据库状态。验证：automationHistory.integration.test.ts。"
+    },
+    {
+      "id": "source-120",
+      "kind": "static",
+      "path": "db/local/036-native-automation.sql",
+      "locator": "文件级实现与状态约束",
+      "line": 1,
+      "note": "nativeAutomation、036、037。token、租约、续约、有限 attempt；调度扫描不能替代数据库状态。验证：automationHistory.integration.test.ts。"
+    },
+    {
+      "id": "source-121",
+      "kind": "static",
+      "path": "db/local/037-automation-attempts.sql",
+      "locator": "文件级实现与状态约束",
+      "line": 1,
+      "note": "nativeAutomation、036、037。token、租约、续约、有限 attempt；调度扫描不能替代数据库状态。验证：automationHistory.integration.test.ts。"
+    },
+    {
+      "id": "source-122",
+      "kind": "static",
+      "path": "src/orchestration/notificationConsumer.ts",
+      "locator": "ClaimedNotificationEvent",
+      "line": 2,
+      "note": "notificationConsumer、notificationPolicy、WorkspaceTopbar。投递 claim/finish 与游标；无通知也不应阻断备份。验证：notificationConsumer.test.ts、notificationPolicy.test.ts、notificationStatus.integration.test.ts。"
+    },
+    {
+      "id": "source-123",
+      "kind": "static",
+      "path": "src/orchestration/notificationPolicy.ts",
+      "locator": "AuditEvent",
+      "line": 1,
+      "note": "notificationConsumer、notificationPolicy、WorkspaceTopbar。投递 claim/finish 与游标；无通知也不应阻断备份。验证：notificationConsumer.test.ts、notificationPolicy.test.ts、notificationStatus.integration.test.ts。"
+    },
+    {
+      "id": "source-124",
+      "kind": "static",
+      "path": "src/local-app/WorkspaceTopbar.tsx",
+      "locator": "WorkspaceTopbarProps",
+      "line": 12,
+      "note": "notificationConsumer、notificationPolicy、WorkspaceTopbar。投递 claim/finish 与游标；无通知也不应阻断备份。验证：notificationConsumer.test.ts、notificationPolicy.test.ts、notificationStatus.integration.test.ts。"
+    },
+    {
+      "id": "source-125",
+      "kind": "static",
+      "path": "scripts/storage/backup.mjs",
+      "locator": "createNativeBackup",
+      "line": 18,
+      "note": "backup、restore、nativeBackup。归档、媒体 SHA、数据库 fence、Owner bootstrap、Keychain 重入与资格清空；仅恢复原授权目标。验证：deletionBackupRestore.integration.test.ts、managedMediaRestore.integration.test.ts、restorePublication.integration.test.ts、scripts/storage/reference-integrity.test.mjs。"
+    },
+    {
+      "id": "source-126",
+      "kind": "static",
+      "path": "scripts/storage/restore.mjs",
+      "locator": "restoreTarget",
+      "line": 15,
+      "note": "backup、restore、nativeBackup。归档、媒体 SHA、数据库 fence、Owner bootstrap、Keychain 重入与资格清空；仅恢复原授权目标。验证：deletionBackupRestore.integration.test.ts、managedMediaRestore.integration.test.ts、restorePublication.integration.test.ts、scripts/storage/reference-integrity.test.mjs。"
+    },
+    {
+      "id": "source-127",
+      "kind": "static",
+      "path": "src/local-app/nativeBackup.ts",
+      "locator": "nativeBackup",
+      "line": 3,
+      "note": "backup、restore、nativeBackup。归档、媒体 SHA、数据库 fence、Owner bootstrap、Keychain 重入与资格清空；仅恢复原授权目标。验证：deletionBackupRestore.integration.test.ts、managedMediaRestore.integration.test.ts、restorePublication.integration.test.ts、scripts/storage/reference-integrity.test.mjs。"
+    },
+    {
+      "id": "source-128",
+      "kind": "static",
+      "path": "src/local-app/runtimeVersion.ts",
+      "locator": "RuntimeVersionOptions",
+      "line": 7,
+      "note": "runtimeVersion、runtimeBuild、runtimeStatus、运行入口。release identity、完整性清单、Worker 心跳；观察到源码变化不自动重启。验证：runtimeVersion.test.ts、runtimeBuild.test.ts、runtimeRelease.test.ts。"
+    },
+    {
+      "id": "source-129",
+      "kind": "static",
+      "path": "src/orchestration/runtimeBuild.ts",
+      "locator": "RuntimeRelease",
+      "line": 6,
+      "note": "runtimeVersion、runtimeBuild、runtimeStatus、运行入口。release identity、完整性清单、Worker 心跳；观察到源码变化不自动重启。验证：runtimeVersion.test.ts、runtimeBuild.test.ts、runtimeRelease.test.ts。"
+    },
+    {
+      "id": "source-130",
+      "kind": "static",
+      "path": "src/local-app/runtimeStatus.ts",
+      "locator": "WorkerObservation",
+      "line": 9,
+      "note": "runtimeVersion、runtimeBuild、runtimeStatus、运行入口。release identity、完整性清单、Worker 心跳；观察到源码变化不自动重启。验证：runtimeVersion.test.ts、runtimeBuild.test.ts、runtimeRelease.test.ts。"
+    },
+    {
+      "id": "source-131",
+      "kind": "static",
+      "path": "scripts/runtime/application.mjs",
+      "locator": "createNativeApplication",
+      "line": 12,
+      "note": "runtimeVersion、runtimeBuild、runtimeStatus、运行入口。release identity、完整性清单、Worker 心跳；观察到源码变化不自动重启。验证：runtimeVersion.test.ts、runtimeBuild.test.ts、runtimeRelease.test.ts。"
+    },
+    {
+      "id": "source-132",
+      "kind": "static",
+      "path": "src/local-app/LegacyProductionSteps.tsx",
+      "locator": "hasLegacyProductionContent",
+      "line": 21,
+      "note": "LegacyProductionSteps、reviewRevision、repairTarget、baseline、156。不因当前四步 UI 删除旧协议、不可变快照或恢复责任。验证：ProductionWorkspacePanel.legacy.test.tsx、新旧任务兼容集成测试。"
+    },
+    {
+      "id": "source-133",
+      "kind": "static",
+      "path": "src/reviews/reviewRevision.ts",
+      "locator": "ReviewRenderDurationSettings",
+      "line": 7,
+      "note": "LegacyProductionSteps、reviewRevision、repairTarget、baseline、156。不因当前四步 UI 删除旧协议、不可变快照或恢复责任。验证：ProductionWorkspacePanel.legacy.test.tsx、新旧任务兼容集成测试。"
+    },
+    {
+      "id": "source-134",
+      "kind": "static",
+      "path": "src/reviews/repairTarget.ts",
+      "locator": "RepairTarget",
+      "line": 4,
+      "note": "LegacyProductionSteps、reviewRevision、repairTarget、baseline、156。不因当前四步 UI 删除旧协议、不可变快照或恢复责任。验证：ProductionWorkspacePanel.legacy.test.tsx、新旧任务兼容集成测试。"
+    },
+    {
+      "id": "source-135",
+      "kind": "static",
+      "path": "db/local/c-baseline.sql",
+      "locator": "文件级实现与状态约束",
+      "line": 1,
+      "note": "LegacyProductionSteps、reviewRevision、repairTarget、baseline、156。不因当前四步 UI 删除旧协议、不可变快照或恢复责任。验证：ProductionWorkspacePanel.legacy.test.tsx、新旧任务兼容集成测试。"
+    },
+    {
+      "id": "source-136",
+      "kind": "static",
+      "path": "db/local/156-unified-shot-video-protocol.sql",
+      "locator": "文件级实现与状态约束",
+      "line": 1,
+      "note": "LegacyProductionSteps、reviewRevision、repairTarget、baseline、156。不因当前四步 UI 删除旧协议、不可变快照或恢复责任。验证：ProductionWorkspacePanel.legacy.test.tsx、新旧任务兼容集成测试。"
+    },
+    {
+      "id": "source-137",
+      "kind": "static",
+      "path": "src/local-app/accountCreation.ts",
+      "locator": "createAccountDirectory",
+      "line": 11,
+      "note": "账号创建、生产单创建、目录身份。Owner+幂等键、payload hash、媒体根、父目录与 inode 校验；只清理本次拥有且仅含标记的目录；提交后标记清理失败保留业务成功。验证 accountCreation.integration.test.ts、episodeCreationFaults.integration.test.ts。"
+    },
+    {
+      "id": "source-138",
+      "kind": "static",
+      "path": "src/local-app/episodeCreation.ts",
+      "locator": "createEpisodeDirectory",
+      "line": 15,
+      "note": "账号创建、生产单创建、目录身份。Owner+幂等键、payload hash、媒体根、父目录与 inode 校验；只清理本次拥有且仅含标记的目录；提交后标记清理失败保留业务成功。验证 accountCreation.integration.test.ts、episodeCreationFaults.integration.test.ts。"
+    },
+    {
+      "id": "source-139",
+      "kind": "static",
+      "path": "src/local-app/creationIdentity.ts",
+      "locator": "ownsMarker",
+      "line": 5,
+      "note": "账号创建、生产单创建、目录身份。Owner+幂等键、payload hash、媒体根、父目录与 inode 校验；只清理本次拥有且仅含标记的目录；提交后标记清理失败保留业务成功。验证 accountCreation.integration.test.ts、episodeCreationFaults.integration.test.ts。"
+    },
+    {
+      "id": "source-140",
+      "kind": "static",
+      "path": "src/local-app/keychainStore.ts",
+      "locator": "configuredKeychainStore",
+      "line": 8,
+      "note": "Keychain adapter、运行 Keychain、秘密登记、原生工具、锁控制、引导、历史读取。文件归属、私有权限、helper SHA、超时和输出限制；失败只返回脱敏代码，写入秘密通过 stdin。验证 keychainStore.test.ts、scripts/runtime/keychainReadiness.test.mjs、scripts/runtime/secrets.test.mjs。"
+    },
+    {
+      "id": "source-141",
+      "kind": "static",
+      "path": "scripts/runtime/keychain.mjs",
+      "locator": "KeychainAccessError",
+      "line": 2,
+      "note": "Keychain adapter、运行 Keychain、秘密登记、原生工具、锁控制、引导、历史读取。文件归属、私有权限、helper SHA、超时和输出限制；失败只返回脱敏代码，写入秘密通过 stdin。验证 keychainStore.test.ts、scripts/runtime/keychainReadiness.test.mjs、scripts/runtime/secrets.test.mjs。"
+    },
+    {
+      "id": "source-142",
+      "kind": "static",
+      "path": "scripts/runtime/secrets.mjs",
+      "locator": "secretIndex",
+      "line": 5,
+      "note": "Keychain adapter、运行 Keychain、秘密登记、原生工具、锁控制、引导、历史读取。文件归属、私有权限、helper SHA、超时和输出限制；失败只返回脱敏代码，写入秘密通过 stdin。验证 keychainStore.test.ts、scripts/runtime/keychainReadiness.test.mjs、scripts/runtime/secrets.test.mjs。"
+    },
+    {
+      "id": "source-143",
+      "kind": "static",
+      "path": "native/keychain-helper.m",
+      "locator": "文件级实现与状态约束",
+      "line": 1,
+      "note": "Keychain adapter、运行 Keychain、秘密登记、原生工具、锁控制、引导、历史读取。文件归属、私有权限、helper SHA、超时和输出限制；失败只返回脱敏代码，写入秘密通过 stdin。验证 keychainStore.test.ts、scripts/runtime/keychainReadiness.test.mjs、scripts/runtime/secrets.test.mjs。"
+    },
+    {
+      "id": "source-144",
+      "kind": "static",
+      "path": "native/keychain-control.m",
+      "locator": "文件级实现与状态约束",
+      "line": 1,
+      "note": "Keychain adapter、运行 Keychain、秘密登记、原生工具、锁控制、引导、历史读取。文件归属、私有权限、helper SHA、超时和输出限制；失败只返回脱敏代码，写入秘密通过 stdin。验证 keychainStore.test.ts、scripts/runtime/keychainReadiness.test.mjs、scripts/runtime/secrets.test.mjs。"
+    },
+    {
+      "id": "source-145",
+      "kind": "static",
+      "path": "native/keychain-bootstrap.m",
+      "locator": "文件级实现与状态约束",
+      "line": 1,
+      "note": "Keychain adapter、运行 Keychain、秘密登记、原生工具、锁控制、引导、历史读取。文件归属、私有权限、helper SHA、超时和输出限制；失败只返回脱敏代码，写入秘密通过 stdin。验证 keychainStore.test.ts、scripts/runtime/keychainReadiness.test.mjs、scripts/runtime/secrets.test.mjs。"
+    },
+    {
+      "id": "source-146",
+      "kind": "static",
+      "path": "native/keychain-history-reader.m",
+      "locator": "文件级实现与状态约束",
+      "line": 1,
+      "note": "Keychain adapter、运行 Keychain、秘密登记、原生工具、锁控制、引导、历史读取。文件归属、私有权限、helper SHA、超时和输出限制；失败只返回脱敏代码，写入秘密通过 stdin。验证 keychainStore.test.ts、scripts/runtime/keychainReadiness.test.mjs、scripts/runtime/secrets.test.mjs。"
+    },
+    {
+      "id": "source-147",
+      "kind": "static",
+      "path": "src/local-app/configurationCommands.ts",
+      "locator": "ConfigurationError",
+      "line": 12,
+      "note": "配置命令、蓝图、系列规则、账号界面、基线。Owner、账号归属、引用与版本约束；系列／Prompt 新版本追加保存，执行快照固定原版本。验证 blueprintContraction.integration.test.ts、blueprintReviewRetirement.integration.test.ts、AccountWorkspace.test.tsx。"
+    },
+    {
+      "id": "source-148",
+      "kind": "static",
+      "path": "db/local/122-automatic-episode-directories.sql",
+      "locator": "文件级实现与状态约束",
+      "line": 1,
+      "note": "配置命令、蓝图、系列规则、账号界面、基线。Owner、账号归属、引用与版本约束；系列／Prompt 新版本追加保存，执行快照固定原版本。验证 blueprintContraction.integration.test.ts、blueprintReviewRetirement.integration.test.ts、AccountWorkspace.test.tsx。"
+    },
+    {
+      "id": "source-149",
+      "kind": "static",
+      "path": "db/local/112-series-extension-rules.sql",
+      "locator": "文件级实现与状态约束",
+      "line": 1,
+      "note": "配置命令、蓝图、系列规则、账号界面、基线。Owner、账号归属、引用与版本约束；系列／Prompt 新版本追加保存，执行快照固定原版本。验证 blueprintContraction.integration.test.ts、blueprintReviewRetirement.integration.test.ts、AccountWorkspace.test.tsx。"
+    },
+    {
+      "id": "source-150",
+      "kind": "static",
+      "path": "src/accounts/AccountWorkspace.tsx",
+      "locator": "AccountWorkspace",
+      "line": 71,
+      "note": "配置命令、蓝图、系列规则、账号界面、基线。Owner、账号归属、引用与版本约束；系列／Prompt 新版本追加保存，执行快照固定原版本。验证 blueprintContraction.integration.test.ts、blueprintReviewRetirement.integration.test.ts、AccountWorkspace.test.tsx。"
+    },
+    {
+      "id": "source-151",
+      "kind": "static",
+      "path": "db/local/c-baseline.sql",
+      "locator": "文件级实现与状态约束",
+      "line": 1,
+      "note": "配置命令、蓝图、系列规则、账号界面、基线。Owner、账号归属、引用与版本约束；系列／Prompt 新版本追加保存，执行快照固定原版本。验证 blueprintContraction.integration.test.ts、blueprintReviewRetirement.integration.test.ts、AccountWorkspace.test.tsx。"
+    },
+    {
+      "id": "source-152",
+      "kind": "static",
+      "path": "src/local-app/localFiles.ts",
+      "locator": "safeRelative",
+      "line": 9,
+      "note": "snapshotInput、媒体接收、命令事务。SHA、长度、device/inode、真实路径与文件内容共同验证；未知替换文件保留；原生 Worker 发布属于 M07。验证 localFiles.test.ts、materialAcceptance.integration.test.ts、inputPublicationOwnership.integration.test.ts。"
+    },
+    {
+      "id": "source-153",
+      "kind": "static",
+      "path": "src/local-app/materialAcceptance.ts",
+      "locator": "validateImportedMaterial",
+      "line": 32,
+      "note": "snapshotInput、媒体接收、命令事务。SHA、长度、device/inode、真实路径与文件内容共同验证；未知替换文件保留；原生 Worker 发布属于 M07。验证 localFiles.test.ts、materialAcceptance.integration.test.ts、inputPublicationOwnership.integration.test.ts。"
+    },
+    {
+      "id": "source-154",
+      "kind": "static",
+      "path": "src/local-app/episodeCommands.ts",
+      "locator": "InputRuntime",
+      "line": 37,
+      "note": "snapshotInput、媒体接收、命令事务。SHA、长度、device/inode、真实路径与文件内容共同验证；未知替换文件保留；原生 Worker 发布属于 M07。验证 localFiles.test.ts、materialAcceptance.integration.test.ts、inputPublicationOwnership.integration.test.ts。"
+    },
+    {
+      "id": "test-M01-4",
+      "kind": "test",
+      "path": "src/local-app/formalWorkflow.integration.test.ts",
+      "locator": "formalWorkflow.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M01-5",
+      "kind": "test",
+      "path": "src/local-app/scriptProduction.integration.test.ts",
+      "locator": "scriptProduction.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M02-3",
+      "kind": "test",
+      "path": "src/orchestration/workerScheduler.test.ts",
+      "locator": "workerScheduler.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M02-4",
+      "kind": "test",
+      "path": "src/local-app/nativeAttemptOutput.test.ts",
+      "locator": "nativeAttemptOutput.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M03-2",
+      "kind": "test",
+      "path": "src/orchestration/workerOutcome.test.ts",
+      "locator": "workerOutcome.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M04-5",
+      "kind": "test",
+      "path": "src/local-app/workspaceGenerationState.integration.test.ts",
+      "locator": "workspaceGenerationState.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M05-2",
+      "kind": "test",
+      "path": "src/worker/videoTaskExecution.test.ts",
+      "locator": "videoTaskExecution.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M05-3",
+      "kind": "test",
+      "path": "src/worker/officialVideoProvider.test.ts",
+      "locator": "officialVideoProvider.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M06-3",
+      "kind": "test",
+      "path": "src/local-app/workspaceImageGeneration.integration.test.ts",
+      "locator": "workspaceImageGeneration.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M06-4",
+      "kind": "test",
+      "path": "src/local-app/workspaceNarration.integration.test.ts",
+      "locator": "workspaceNarration.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M06-5",
+      "kind": "test",
+      "path": "src/local-app/workspaceAudioProjection.integration.test.ts",
+      "locator": "workspaceAudioProjection.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M07-3",
+      "kind": "test",
+      "path": "src/local-app/nativeAttemptOutput.test.ts",
+      "locator": "nativeAttemptOutput.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M07-4",
+      "kind": "test",
+      "path": "src/local-app/workspaceGenerationState.integration.test.ts",
+      "locator": "workspaceGenerationState.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M08-3",
+      "kind": "test",
+      "path": "src/local-app/workspaceCallConfirmation.integration.test.ts",
+      "locator": "workspaceCallConfirmation.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M09-2",
+      "kind": "test",
+      "path": "src/local-app/workspaceVisualAdoption.integration.test.ts",
+      "locator": "workspaceVisualAdoption.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M09-3",
+      "kind": "test",
+      "path": "src/local-app/workspaceCandidates.integration.test.ts",
+      "locator": "workspaceCandidates.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M10-3",
+      "kind": "test",
+      "path": "src/local-app/workspaceNarration.integration.test.ts",
+      "locator": "workspaceNarration.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M10-4",
+      "kind": "test",
+      "path": "src/local-app/WorkspaceNarrationPanel.test.tsx",
+      "locator": "WorkspaceNarrationPanel.test.tsx",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M11-2",
+      "kind": "test",
+      "path": "src/local-app/workspacePexels.integration.test.ts",
+      "locator": "workspacePexels.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M12-3",
+      "kind": "test",
+      "path": "src/local-app/workspaceCaptions.integration.test.ts",
+      "locator": "workspaceCaptions.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M12-4",
+      "kind": "test",
+      "path": "src/workspaceCaptions.test.ts",
+      "locator": "workspaceCaptions.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M13-1",
+      "kind": "test",
+      "path": "src/local-app/workspaceExport.integration.test.ts",
+      "locator": "workspaceExport.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M14-2",
+      "kind": "test",
+      "path": "src/local-app/workspaceDelivery.integration.test.ts",
+      "locator": "workspaceDelivery.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M15-3",
+      "kind": "test",
+      "path": "src/local-app/LocalCatalogApp.test.tsx",
+      "locator": "LocalCatalogApp.test.tsx",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M15-4",
+      "kind": "test",
+      "path": "src/local-app/clientCsrfRecovery.test.ts",
+      "locator": "clientCsrfRecovery.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M15-5",
+      "kind": "test",
+      "path": "src/local-app/ownerPasswordRoute.test.ts",
+      "locator": "ownerPasswordRoute.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M16-2",
+      "kind": "test",
+      "path": "src/local-app/catalogNavigation.test.ts",
+      "locator": "catalogNavigation.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M17-2",
+      "kind": "test",
+      "path": "src/local-app/ProductionWorkspacePanel.test.tsx",
+      "locator": "ProductionWorkspacePanel.test.tsx",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M18-4",
+      "kind": "test",
+      "path": "src/local-app/ProductionWorkspaceReading.test.tsx",
+      "locator": "ProductionWorkspaceReading.test.tsx",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M19-1",
+      "kind": "test",
+      "path": "src/local-app/useWorkspaceCallConfirmation.test.tsx",
+      "locator": "useWorkspaceCallConfirmation.test.tsx",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M20-1",
+      "kind": "test",
+      "path": "src/local-app/useWorkspaceCandidateReview.test.tsx",
+      "locator": "useWorkspaceCandidateReview.test.tsx",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M20-2",
+      "kind": "test",
+      "path": "src/local-app/WorkspaceCandidateReviewLifecycle.test.tsx",
+      "locator": "WorkspaceCandidateReviewLifecycle.test.tsx",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M22-4",
+      "kind": "test",
+      "path": "src/local-app/WorkspaceVisualTaskStatus.test.tsx",
+      "locator": "WorkspaceVisualTaskStatus.test.tsx",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M23-4",
+      "kind": "test",
+      "path": "src/local-app/WorkspaceScriptPanel.test.tsx",
+      "locator": "WorkspaceScriptPanel.test.tsx",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M23-5",
+      "kind": "test",
+      "path": "src/accounts/AccountWorkspace.test.tsx",
+      "locator": "AccountWorkspace.test.tsx",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M24-4",
+      "kind": "test",
+      "path": "src/connections/ConnectionWorkspace.test.tsx",
+      "locator": "ConnectionWorkspace.test.tsx",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M24-5",
+      "kind": "test",
+      "path": "src/connections/ConnectionDrafts.test.tsx",
+      "locator": "ConnectionDrafts.test.tsx",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M25-3",
+      "kind": "test",
+      "path": "src/local-app/EmbeddedStudioHost.test.tsx",
+      "locator": "EmbeddedStudioHost.test.tsx",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M25-4",
+      "kind": "test",
+      "path": "src/local-app/embeddedStudio.integration.test.ts",
+      "locator": "embeddedStudio.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M26-5",
+      "kind": "test",
+      "path": "src/ui/media/VideoPreview.test.tsx",
+      "locator": "VideoPreview.test.tsx",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M26-6",
+      "kind": "test",
+      "path": "src/local-app/WorkspaceAudioAudition.test.tsx",
+      "locator": "WorkspaceAudioAudition.test.tsx",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M26-7",
+      "kind": "test",
+      "path": "src/local-app/WorkspaceSpeechSample.test.tsx",
+      "locator": "WorkspaceSpeechSample.test.tsx",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M27-2",
+      "kind": "test",
+      "path": "src/local-app/WorkspaceDeliveryPanel.test.tsx",
+      "locator": "WorkspaceDeliveryPanel.test.tsx",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M27-3",
+      "kind": "test",
+      "path": "src/local-app/WorkspaceExportPanel.test.tsx",
+      "locator": "WorkspaceExportPanel.test.tsx",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M28-4",
+      "kind": "test",
+      "path": "src/local-app/useProductionServiceCatalog.test.tsx",
+      "locator": "useProductionServiceCatalog.test.tsx",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M28-5",
+      "kind": "test",
+      "path": "src/local-app/WorkspacePexelsSearch.test.tsx",
+      "locator": "WorkspacePexelsSearch.test.tsx",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M30-3",
+      "kind": "test",
+      "path": "src/ui/SurfacePresence.test.tsx",
+      "locator": "SurfacePresence.test.tsx",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M30-4",
+      "kind": "test",
+      "path": "src/ui/useDialogFocus.test.tsx",
+      "locator": "useDialogFocus.test.tsx",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M31-3",
+      "kind": "test",
+      "path": "src/local-app/ownerPreferences.integration.test.ts",
+      "locator": "ownerPreferences.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M32-3",
+      "kind": "test",
+      "path": "src/local-app/episodeDeletion.integration.test.ts",
+      "locator": "episodeDeletion.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M32-4",
+      "kind": "test",
+      "path": "src/local-app/episodeDeletionStorage.integration.test.ts",
+      "locator": "episodeDeletionStorage.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M32-5",
+      "kind": "test",
+      "path": "src/local-app/episodeDeletionTargets.test.ts",
+      "locator": "episodeDeletionTargets.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M33-6",
+      "kind": "test",
+      "path": "src/local-app/cleanupRecovery.integration.test.ts",
+      "locator": "cleanupRecovery.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M33-7",
+      "kind": "test",
+      "path": "src/local-app/accountDeletionStatus.integration.test.ts",
+      "locator": "accountDeletionStatus.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M33-8",
+      "kind": "test",
+      "path": "src/local-app/accountDeletionStorage.integration.test.ts",
+      "locator": "accountDeletionStorage.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M33-9",
+      "kind": "test",
+      "path": "src/local-app/LocalDeletionRecovery.test.tsx",
+      "locator": "LocalDeletionRecovery.test.tsx",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M34-4",
+      "kind": "test",
+      "path": "src/local-app/episodeCollectionMove.integration.test.ts",
+      "locator": "episodeCollectionMove.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M34-5",
+      "kind": "test",
+      "path": "src/local-app/accountDirectoryCleanup.test.ts",
+      "locator": "accountDirectoryCleanup.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M36-4",
+      "kind": "test",
+      "path": "src/local-app/mediaRootExecutionFaults.integration.test.ts",
+      "locator": "mediaRootExecutionFaults.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M36-5",
+      "kind": "test",
+      "path": "src/local-app/mediaRootPublication.integration.test.ts",
+      "locator": "mediaRootPublication.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M37-2",
+      "kind": "test",
+      "path": "src/local-app/connectionLifecycle.integration.test.ts",
+      "locator": "connectionLifecycle.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M37-3",
+      "kind": "test",
+      "path": "src/local-app/providerProbe.test.ts",
+      "locator": "providerProbe.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M38-3",
+      "kind": "test",
+      "path": "src/local-app/connectionBilling.integration.test.ts",
+      "locator": "connectionBilling.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M38-4",
+      "kind": "test",
+      "path": "src/local-app/clientBilling.test.ts",
+      "locator": "clientBilling.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M39-2",
+      "kind": "test",
+      "path": "src/local-app/LocalSecretAdministration.test.tsx",
+      "locator": "LocalSecretAdministration.test.tsx",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M39-3",
+      "kind": "test",
+      "path": "src/local-app/secretAdministration.integration.test.ts",
+      "locator": "secretAdministration.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M40-3",
+      "kind": "test",
+      "path": "src/local-app/automationHistory.integration.test.ts",
+      "locator": "automationHistory.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M41-3",
+      "kind": "test",
+      "path": "src/orchestration/notificationConsumer.test.ts",
+      "locator": "notificationConsumer.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M41-4",
+      "kind": "test",
+      "path": "src/orchestration/notificationPolicy.test.ts",
+      "locator": "notificationPolicy.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M41-5",
+      "kind": "test",
+      "path": "src/local-app/notificationStatus.integration.test.ts",
+      "locator": "notificationStatus.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M42-3",
+      "kind": "test",
+      "path": "src/local-app/deletionBackupRestore.integration.test.ts",
+      "locator": "deletionBackupRestore.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M42-4",
+      "kind": "test",
+      "path": "src/local-app/managedMediaRestore.integration.test.ts",
+      "locator": "managedMediaRestore.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M42-5",
+      "kind": "test",
+      "path": "src/local-app/restorePublication.integration.test.ts",
+      "locator": "restorePublication.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M43-4",
+      "kind": "test",
+      "path": "src/local-app/runtimeVersion.test.ts",
+      "locator": "runtimeVersion.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M43-5",
+      "kind": "test",
+      "path": "src/orchestration/runtimeBuild.test.ts",
+      "locator": "runtimeBuild.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M43-6",
+      "kind": "test",
+      "path": "src/orchestration/runtimeRelease.test.ts",
+      "locator": "runtimeRelease.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M45-3",
+      "kind": "test",
+      "path": "src/local-app/accountCreation.integration.test.ts",
+      "locator": "accountCreation.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M45-4",
+      "kind": "test",
+      "path": "src/local-app/episodeCreationFaults.integration.test.ts",
+      "locator": "episodeCreationFaults.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M46-7",
+      "kind": "test",
+      "path": "src/local-app/keychainStore.test.ts",
+      "locator": "keychainStore.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M46-8",
+      "kind": "test",
+      "path": "scripts/runtime/keychainReadiness.test.mjs",
+      "locator": "keychainReadiness.test.mjs",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M46-9",
+      "kind": "test",
+      "path": "scripts/runtime/secrets.test.mjs",
+      "locator": "secrets.test.mjs",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M47-5",
+      "kind": "test",
+      "path": "src/local-app/blueprintContraction.integration.test.ts",
+      "locator": "blueprintContraction.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M47-6",
+      "kind": "test",
+      "path": "src/local-app/blueprintReviewRetirement.integration.test.ts",
+      "locator": "blueprintReviewRetirement.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M47-7",
+      "kind": "test",
+      "path": "src/accounts/AccountWorkspace.test.tsx",
+      "locator": "AccountWorkspace.test.tsx",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M48-3",
+      "kind": "test",
+      "path": "src/local-app/localFiles.test.ts",
+      "locator": "localFiles.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M48-4",
+      "kind": "test",
+      "path": "src/local-app/materialAcceptance.integration.test.ts",
+      "locator": "materialAcceptance.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    },
+    {
+      "id": "test-M48-5",
+      "kind": "test",
+      "path": "src/local-app/inputPublicationOwnership.integration.test.ts",
+      "locator": "inputPublicationOwnership.integration.test.ts",
+      "note": "现有公开行为回归入口，是否在本轮执行见报告。"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "business",
+      "label": "持久业务与执行",
+      "kind": "module",
+      "summary": "M01—M14，生产阶段、任务、提交、发布与交付。",
+      "status": "fact",
+      "sourceIds": [
+        "inventory"
+      ],
+      "note": "",
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": "interaction",
+      "label": "客户端意图与交互",
+      "kind": "module",
+      "summary": "M15—M31，页面访问、读取、草稿和局部操作。",
+      "status": "fact",
+      "sourceIds": [
+        "inventory"
+      ],
+      "note": "",
+      "position": {
+        "x": 320,
+        "y": 0
+      }
+    },
+    {
+      "id": "recovery",
+      "label": "存储、安全与运行恢复",
+      "kind": "module",
+      "summary": "M32—M48，删除、迁移、创建、规则版本及秘密存储。",
+      "status": "fact",
+      "sourceIds": [
+        "inventory"
+      ],
+      "note": "",
+      "position": {
+        "x": 640,
+        "y": 0
+      }
+    },
+    {
+      "id": "M01",
+      "label": "M01 Episode 生产阶段",
+      "kind": "module",
+      "parentId": "business",
+      "summary": "waiting_input、脚本／画面／分镜 draft、review、approved，进入 production、render、QC，最终 production_completed；脚本再确认使下游失效",
+      "status": "fact",
+      "sourceIds": [
+        "source-1",
+        "source-2",
+        "source-3",
+        "source-4",
+        "test-M01-4",
+        "test-M01-5"
+      ],
+      "note": "",
+      "details": [
+        "阶段类型、SQL 迁移、正式流程、脚本优先。transition_episode 与后续迁移共同约束；四步导航不是这个枚举。验证：formalWorkflow.integration.test.ts、scriptProduction.integration.test.ts。"
+      ],
+      "lifecycle": [
+        "waiting_input、脚本／画面／分镜 draft、review、approved，进入 production、render、QC，最终 production_completed；脚本再确认使下游失效"
+      ],
+      "position": {
+        "x": 0,
+        "y": 220
+      }
+    },
+    {
+      "id": "M02",
+      "label": "M02 Worker 任务与尝试",
+      "kind": "module",
+      "parentId": "business",
+      "summary": "ready → running → completed / blocked / failed；允许的重试回到 ready；失效任务 superseded 或标记 invalidated；task_run 按 attempt 留存",
+      "status": "fact",
+      "sourceIds": [
+        "source-5",
+        "source-6",
+        "source-7",
+        "test-M02-3",
+        "test-M02-4"
+      ],
+      "note": "",
+      "details": [
+        "workerDatabase、租约约束、调度。领取、续租、结果必须匹配 task、attempt、token；发布 hold 阻止普通失败重报。验证：workerScheduler.test.ts、nativeAttemptOutput.test.ts。"
+      ],
+      "lifecycle": [
+        "ready → running → completed / blocked / failed；允许的重试回到 ready；失效任务 superseded 或标记 invalidated；task_run 按 attempt 留存"
+      ],
+      "position": {
+        "x": 300,
+        "y": 220
+      }
+    },
+    {
+      "id": "M03",
+      "label": "M03 Worker 结果与重试协议",
+      "kind": "module",
+      "parentId": "business",
+      "summary": "执行产生 completed / blocked / failed；retry 建议经过服务端校验才改变任务",
+      "status": "fact",
+      "sourceIds": [
+        "source-8",
+        "source-9",
+        "test-M03-2"
+      ],
+      "note": "",
+      "details": [
+        "contracts、workerOutcome。完成必须满足验证及产物契约；blocked 必须有原因。验证：Worker contract 与 workerOutcome.test.ts。"
+      ],
+      "lifecycle": [
+        "执行产生 completed / blocked / failed；retry 建议经过服务端校验才改变任务"
+      ],
+      "position": {
+        "x": 600,
+        "y": 220
+      }
+    },
+    {
+      "id": "M04",
+      "label": "M04 供应商提交与费用预留",
+      "kind": "module",
+      "parentId": "business",
+      "summary": "费用记录 submitting / submitted / succeeded；提交记录 started / received / rejected，not_sent 由任务 blocker 派生；保存的任务 ID 决定能否查询恢复",
+      "status": "fact",
+      "sourceIds": [
+        "source-10",
+        "source-11",
+        "source-12",
+        "source-13",
+        "source-14",
+        "test-M04-5"
+      ],
+      "note": "",
+      "details": [
+        "visual request、生成账本、136、143、144。未知提交阻断新发；图片例外重试必须再次确认并绑定 retryOfTaskId。验证：workspaceGenerationState.integration.test.ts。"
+      ],
+      "lifecycle": [
+        "费用记录 submitting / submitted / succeeded；提交记录 started / received / rejected，not_sent 由任务 blocker 派生；保存的任务 ID 决定能否查询恢复"
+      ],
+      "position": {
+        "x": 0,
+        "y": 400
+      }
+    },
+    {
+      "id": "M05",
+      "label": "M05 视频供应商执行",
+      "kind": "module",
+      "parentId": "business",
+      "summary": "新预留 → 提交 → 登记远端 ID → 轮询 → 下载；已有 ID 从轮询恢复；进度 queued / processing / saving",
+      "status": "fact",
+      "sourceIds": [
+        "source-15",
+        "source-16",
+        "test-M05-2",
+        "test-M05-3"
+      ],
+      "note": "",
+      "details": [
+        "videoTaskExecution、providerOutcome、ADR-0029。先成功登记再查询；未知结果不自动重发。验证：videoTaskExecution.test.ts、officialVideoProvider.test.ts。"
+      ],
+      "lifecycle": [
+        "新预留 → 提交 → 登记远端 ID → 轮询 → 下载；已有 ID 从轮询恢复；进度 queued / processing / saving"
+      ],
+      "position": {
+        "x": 300,
+        "y": 400
+      }
+    },
+    {
+      "id": "M06",
+      "label": "M06 图片／口播／音效执行",
+      "kind": "module",
+      "parentId": "business",
+      "summary": "预检 → 预留与提交记录 → 远端响应 → 验证文件 → 发布；失败、未知分别保留证据",
+      "status": "fact",
+      "sourceIds": [
+        "source-17",
+        "source-18",
+        "source-19",
+        "test-M06-3",
+        "test-M06-4",
+        "test-M06-5"
+      ],
+      "note": "",
+      "details": [
+        "图片 Worker、口播 Worker、音频。冻结连接、模型、输入与费用；采用结果不等于生成完成。验证：workspaceImageGeneration.integration.test.ts、workspaceNarration.integration.test.ts、workspaceAudioProjection.integration.test.ts。"
+      ],
+      "lifecycle": [
+        "预检 → 预留与提交记录 → 远端响应 → 验证文件 → 发布；失败、未知分别保留证据"
+      ],
+      "position": {
+        "x": 600,
+        "y": 400
+      }
+    },
+    {
+      "id": "M07",
+      "label": "M07 本地产物发布与核对",
+      "kind": "module",
+      "parentId": "business",
+      "summary": "文件准备 → 替换 → 数据库登记；COMMIT 回执未知时保留 publication hold，显式 reconcile 后确定结果",
+      "status": "fact",
+      "sourceIds": [
+        "source-20",
+        "source-21",
+        "source-22",
+        "test-M07-3",
+        "test-M07-4"
+      ],
+      "note": "",
+      "details": [
+        "nativeAttemptOutput、reconciliation、133、ADR-0023。task+attempt、租约、SHA、私有回执共同 fence；不能降格为普通重试。验证：nativeAttemptOutput.test.ts、workspaceGenerationState.integration.test.ts。"
+      ],
+      "lifecycle": [
+        "文件准备 → 替换 → 数据库登记；COMMIT 回执未知时保留 publication hold，显式 reconcile 后确定结果"
+      ],
+      "position": {
+        "x": 0,
+        "y": 580
+      }
+    },
+    {
+      "id": "M08",
+      "label": "M08 服务端逐次调用授权",
+      "kind": "module",
+      "parentId": "business",
+      "summary": "已准备、未消费 → 有效期内消费；超时／工程或输入变化时拒绝；事务失败回滚消费",
+      "status": "fact",
+      "sourceIds": [
+        "source-23",
+        "source-24",
+        "source-25",
+        "test-M08-3"
+      ],
+      "note": "",
+      "details": [
+        "workspaceCallConfirmation、134、135、ADR-0024。Owner、工程版本、脚本、context hash、有效期、txid 同事务校验。验证：workspaceCallConfirmation.integration.test.ts。"
+      ],
+      "lifecycle": [
+        "已准备、未消费 → 有效期内消费；超时／工程或输入变化时拒绝；事务失败回滚消费"
+      ],
+      "position": {
+        "x": 300,
+        "y": 580
+      }
+    },
+    {
+      "id": "M09",
+      "label": "M09 素材候选与采用",
+      "kind": "module",
+      "parentId": "business",
+      "summary": "available / stale / adopted / rejected 是来源、当前工程与 decision 的投影；prepare 产生 adoption，确认后才写工程",
+      "status": "fact",
+      "sourceIds": [
+        "source-26",
+        "source-27",
+        "test-M09-2",
+        "test-M09-3"
+      ],
+      "note": "",
+      "details": [
+        "visual candidates、candidate adoption。采用重验输入／工程 SHA、来源指纹、时长影响和 restoration。验证：workspaceVisualAdoption.integration.test.ts、workspaceCandidates.integration.test.ts。"
+      ],
+      "lifecycle": [
+        "available / stale / adopted / rejected 是来源、当前工程与 decision 的投影；prepare 产生 adoption，确认后才写工程"
+      ],
+      "position": {
+        "x": 600,
+        "y": 580
+      }
+    },
+    {
+      "id": "M10",
+      "label": "M10 口播路由与音轨采用",
+      "kind": "module",
+      "parentId": "business",
+      "summary": "tts / manual / none 为路由；准备、确认、时长冲突、候选可用、已采用分别派生；关闭可保留已登记音轨",
+      "status": "fact",
+      "sourceIds": [
+        "source-28",
+        "source-29",
+        "source-30",
+        "test-M10-3",
+        "test-M10-4"
+      ],
+      "note": "",
+      "details": [
+        "workspaceNarration、路由、narration toggle。正文、输入指纹、主声音路由及实际工程一致。验证：workspaceNarration.integration.test.ts、WorkspaceNarrationPanel.test.tsx。"
+      ],
+      "lifecycle": [
+        "tts / manual / none 为路由；准备、确认、时长冲突、候选可用、已采用分别派生；关闭可保留已登记音轨"
+      ],
+      "position": {
+        "x": 0,
+        "y": 760
+      }
+    },
+    {
+      "id": "M11",
+      "label": "M11 Pexels 检索与预览",
+      "kind": "module",
+      "parentId": "business",
+      "summary": "search task → 结果选择 → preview task → 可用候选 → 明确采用；失败可重试原操作",
+      "status": "fact",
+      "sourceIds": [
+        "source-31",
+        "source-32",
+        "test-M11-2"
+      ],
+      "note": "",
+      "details": [
+        "workspacePexels、102。同目标活动任务互斥；预览完成不自动采用。验证：workspacePexels.integration.test.ts。"
+      ],
+      "lifecycle": [
+        "search task → 结果选择 → preview task → 可用候选 → 明确采用；失败可重试原操作"
+      ],
+      "position": {
+        "x": 300,
+        "y": 760
+      }
+    },
+    {
+      "id": "M12",
+      "label": "M12 字幕内容、时序与对齐",
+      "kind": "module",
+      "parentId": "business",
+      "summary": "missing / waiting / current / stale / failed；正文确认独立；Node/Python 对齐进程加载模型、推理、输出或失败退出，对齐结果需再次应用",
+      "status": "fact",
+      "sourceIds": [
+        "source-33",
+        "source-34",
+        "source-35",
+        "test-M12-3",
+        "test-M12-4"
+      ],
+      "note": "",
+      "details": [
+        "workspaceCaptionsCommands、字幕类型、alignmentWorker。音频、正文及 lane 指纹变化使确认失效；任务 ID、shot 与输入版本匹配。验证：workspaceCaptions.integration.test.ts、workspaceCaptions.test.ts。"
+      ],
+      "lifecycle": [
+        "missing / waiting / current / stale / failed；正文确认独立；Node/Python 对齐进程加载模型、推理、输出或失败退出，对齐结果需再次应用"
+      ],
+      "position": {
+        "x": 600,
+        "y": 760
+      }
+    },
+    {
+      "id": "M13",
+      "label": "M13 导出与成片确认",
+      "kind": "module",
+      "parentId": "business",
+      "summary": "导出 ready / failed；当前／旧版本、检查是否通过、是否已确认由内容 SHA、文件与 issue 派生",
+      "status": "fact",
+      "sourceIds": [
+        "source-36",
+        "test-M13-1"
+      ],
+      "note": "",
+      "details": [
+        "workspaceExportCommands。确认要求最新当前导出、字幕与检查完成、实际文件指纹有效。验证：workspaceExport.integration.test.ts。"
+      ],
+      "lifecycle": [
+        "导出 ready / failed；当前／旧版本、检查是否通过、是否已确认由内容 SHA、文件与 issue 派生"
+      ],
+      "position": {
+        "x": 0,
+        "y": 940
+      }
+    },
+    {
+      "id": "M14",
+      "label": "M14 交付包与生产完成",
+      "kind": "module",
+      "parentId": "business",
+      "summary": "delivery task ready/running → completed/blocked/failed；验证交付产物后推进 Episode completed",
+      "status": "fact",
+      "sourceIds": [
+        "source-37",
+        "source-38",
+        "test-M14-2"
+      ],
+      "note": "",
+      "details": [
+        "workspaceDeliveryCommands、094。只消费当前已确认导出；一个活动交付；重试保留合法导出身份。验证：formalWorkflow.delivery.integration.test.ts、workspaceDelivery.integration.test.ts。"
+      ],
+      "lifecycle": [
+        "delivery task ready/running → completed/blocked/failed；验证交付产物后推进 Episode completed"
+      ],
+      "position": {
+        "x": 300,
+        "y": 940
+      }
+    },
+    {
+      "id": "M15",
+      "label": "M15 登录、会话与客户端请求",
+      "kind": "module",
+      "parentId": "interaction",
+      "summary": "checking/loading → ready/anonymous/error；登录、退出、跨窗口身份变化，CSRF 恢复",
+      "status": "fact",
+      "sourceIds": [
+        "source-39",
+        "source-40",
+        "source-41",
+        "test-M15-3",
+        "test-M15-4",
+        "test-M15-5"
+      ],
+      "note": "",
+      "details": [
+        "LocalCatalogApp、client、sessions。session/request generation 隔离旧请求；服务端依据 hash、撤销和期限判断有效会话。验证：LocalCatalogApp.test.tsx、clientCsrfRecovery.test.ts、ownerPasswordRoute.test.ts。"
+      ],
+      "lifecycle": [
+        "checking/loading → ready/anonymous/error；登录、退出、跨窗口身份变化，CSRF 恢复"
+      ],
+      "position": {
+        "x": 0,
+        "y": 1300
+      }
+    },
+    {
+      "id": "M16",
+      "label": "M16 导航、筛选与离开确认",
+      "kind": "module",
+      "parentId": "interaction",
+      "summary": "URL route、目录选择、drawer/panel、back/forward；离开脏草稿时 return/apply 两阶段",
+      "status": "fact",
+      "sourceIds": [
+        "source-42",
+        "source-43",
+        "test-M16-2"
+      ],
+      "note": "",
+      "details": [
+        "catalogNavigation、LocalCatalogApp。保留 history entry 与草稿注册表；搜索、分页、选中不是独立持久状态机。验证：catalogNavigation.test.ts、LocalCatalogApp.drafts.test.tsx。"
+      ],
+      "lifecycle": [
+        "URL route、目录选择、drawer/panel、back/forward；离开脏草稿时 return/apply 两阶段"
+      ],
+      "position": {
+        "x": 300,
+        "y": 1300
+      }
+    },
+    {
+      "id": "M17",
+      "label": "M17 四步制作与编辑器入口",
+      "kind": "module",
+      "parentId": "interaction",
+      "summary": "script → preparation → editor → delivery；loaded/error、opening/session、readonly/stale 是独立维度",
+      "status": "fact",
+      "sourceIds": [
+        "source-44",
+        "source-45",
+        "test-M17-2"
+      ],
+      "note": "",
+      "details": [
+        "ProductionWorkspacePanel、useWorkspaceOperations。操作 ready/preparing/opening/editing/saving/closing/closed 独立于导航；准备条件、归档／完成只读、占位素材及同步锁继续生效。step=2 && session=null 可以是合法入口，不能仅凭组合判为 bug。验证：ProductionWorkspacePanel.test.tsx、.navigation.test.tsx、.legacy.test.tsx。"
+      ],
+      "lifecycle": [
+        "script → preparation → editor → delivery；loaded/error、opening/session、readonly/stale 是独立维度"
+      ],
+      "position": {
+        "x": 600,
+        "y": 1300
+      }
+    },
+    {
+      "id": "M18",
+      "label": "M18 工程读取与轮询",
+      "kind": "module",
+      "parentId": "interaction",
+      "summary": "active/ended；issued/accepted 序号；读取、发布、观察写入、poll；允许 idle/paused",
+      "status": "fact",
+      "sourceIds": [
+        "source-46",
+        "source-47",
+        "source-48",
+        "source-49",
+        "test-M18-4"
+      ],
+      "note": "",
+      "details": [
+        "useWorkspaceReading、LocalEpisodeDetail、交付轮询、工作区刷新。owner、target、revision、请求顺序及 AbortController 防旧结果覆盖；初始／恢复刷新记录发出时的工程，同 revision 迟到结果也受命令回执保护；后台页面暂停。验证：ProductionWorkspaceReading.test.tsx。"
+      ],
+      "lifecycle": [
+        "active/ended；issued/accepted 序号；读取、发布、观察写入、poll；允许 idle/paused"
+      ],
+      "position": {
+        "x": 0,
+        "y": 1480
+      }
+    },
+    {
+      "id": "M19",
+      "label": "M19 客户端逐次调用确认",
+      "kind": "module",
+      "parentId": "interaction",
+      "summary": "idle → preparing → review → submitting → idle / failed；review/failed 取消回 idle；离开 → closed",
+      "status": "fact",
+      "sourceIds": [
+        "source-50",
+        "test-M19-1"
+      ],
+      "note": "",
+      "details": [
+        "useWorkspaceCallConfirmation、ADR-0033。每次进入独立 owner；同步 phase 锁；过期与整数分校验；失败不重复确认。验证：useWorkspaceCallConfirmation.test.tsx。"
+      ],
+      "lifecycle": [
+        "idle → preparing → review → submitting → idle / failed；review/failed 取消回 idle；离开 → closed"
+      ],
+      "position": {
+        "x": 300,
+        "y": 1480
+      }
+    },
+    {
+      "id": "M20",
+      "label": "M20 候选核对与确认",
+      "kind": "module",
+      "parentId": "interaction",
+      "summary": "idle → prepare-read → preparing → plan；confirm-read → adopting；取消、SHA 或 owner 变化使核对失效",
+      "status": "fact",
+      "sourceIds": [
+        "source-51",
+        "test-M20-1",
+        "test-M20-2"
+      ],
+      "note": "",
+      "details": [
+        "useWorkspaceCandidateReview、ADR-0030。sequence、owner、工程 SHA、当前读取；已经发出的采用命令不能由本地取消撤销。验证：useWorkspaceCandidateReview.test.tsx、WorkspaceCandidateReviewLifecycle.test.tsx。"
+      ],
+      "lifecycle": [
+        "idle → prepare-read → preparing → plan；confirm-read → adopting；取消、SHA 或 owner 变化使核对失效"
+      ],
+      "position": {
+        "x": 600,
+        "y": 1480
+      }
+    },
+    {
+      "id": "M21",
+      "label": "M21 上传队列、恢复与通知",
+      "kind": "module",
+      "parentId": "interaction",
+      "summary": "每文件 pending/running/succeeded/failed；失败可重试，完成短通知；模块 session 保留未完成上下文",
+      "status": "fact",
+      "sourceIds": [
+        "source-52",
+        "source-53",
+        "source-54"
+      ],
+      "note": "",
+      "details": [
+        "WorkspaceVisualPreparation、WorkspaceUploadFeedback、ProductionWorkspacePanel。运行锁、文件类型／大小、reference 上限、卸载归属；不永久堆积成功记录。验证：WorkspaceVisualPreparation.upload.test.tsx、LocalEpisodeDetail.upload.test.tsx。"
+      ],
+      "lifecycle": [
+        "每文件 pending/running/succeeded/failed；失败可重试，完成短通知；模块 session 保留未完成上下文"
+      ],
+      "position": {
+        "x": 0,
+        "y": 1660
+      }
+    },
+    {
+      "id": "M22",
+      "label": "M22 任务诊断与恢复展示",
+      "kind": "module",
+      "parentId": "interaction",
+      "summary": "task status × submission outcome × unknown × publication hold × retryTaskId 派生用户状态",
+      "status": "fact",
+      "sourceIds": [
+        "source-55",
+        "source-56",
+        "source-57",
+        "source-58",
+        "test-M22-4"
+      ],
+      "note": "",
+      "details": [
+        "共享投影、WorkspaceVisualTaskStatus、WorkspaceNarrationPanel、WorkspaceAudioPanel。发布核对优先；未知不能显示为普通重试；已保存远端 ID 的恢复只查询原任务。验证：WorkspaceVisualTaskStatus.test.tsx。"
+      ],
+      "lifecycle": [
+        "task status × submission outcome × unknown × publication hold × retryTaskId 派生用户状态"
+      ],
+      "position": {
+        "x": 300,
+        "y": 1660
+      }
+    },
+    {
+      "id": "M23",
+      "label": "M23 操作草稿与保存",
+      "kind": "module",
+      "parentId": "interaction",
+      "summary": "baseline、accepted、dirty、restored；保存／撤销、保存失败、外部版本变化、离开确认",
+      "status": "fact",
+      "sourceIds": [
+        "source-59",
+        "source-60",
+        "source-61",
+        "source-62",
+        "test-M23-4",
+        "test-M23-5"
+      ],
+      "note": "",
+      "details": [
+        "WorkspaceDraft、WorkspaceScriptPanel、AccountWorkspace、ConfigurationForms。身份+基准归属；acknowledge 不删除更新输入；脚本修订需理由。验证：LocalCatalogApp.drafts.test.tsx、WorkspaceScriptPanel.test.tsx、AccountWorkspace.test.tsx。"
+      ],
+      "lifecycle": [
+        "baseline、accepted、dirty、restored；保存／撤销、保存失败、外部版本变化、离开确认"
+      ],
+      "position": {
+        "x": 600,
+        "y": 1660
+      }
+    },
+    {
+      "id": "M24",
+      "label": "M24 连接编辑、模型与测试",
+      "kind": "module",
+      "parentId": "interaction",
+      "summary": "new/edit/detail；saving/testing；模型 loading/syncing/saving；离开保留／丢弃非秘密草稿",
+      "status": "fact",
+      "sourceIds": [
+        "source-63",
+        "source-64",
+        "source-65",
+        "source-66",
+        "test-M24-4",
+        "test-M24-5"
+      ],
+      "note": "",
+      "details": [
+        "ConnectionWorkspace、ConnectionModelsDialog、ConnectionDraftSession、ConnectionTestButton。operation lock、基准版本、身份失效清草稿；秘密不存草稿。验证：ConnectionWorkspace.test.tsx、ConnectionDrafts.test.tsx。"
+      ],
+      "lifecycle": [
+        "new/edit/detail；saving/testing；模型 loading/syncing/saving；离开保留／丢弃非秘密草稿"
+      ],
+      "position": {
+        "x": 0,
+        "y": 1840
+      }
+    },
+    {
+      "id": "M25",
+      "label": "M25 原生 Studio 通道与保存",
+      "kind": "module",
+      "parentId": "interaction",
+      "summary": "connecting → writable；request pending → result/timeout；flush/save → saved/error；失去写连接后保留编辑",
+      "status": "fact",
+      "sourceIds": [
+        "source-67",
+        "source-68",
+        "source-69",
+        "test-M25-3",
+        "test-M25-4"
+      ],
+      "note": "",
+      "details": [
+        "EmbeddedStudioHost、嵌入客户端、studioCommands。origin/source/channel/project/request ID、revision 与指纹；请求 Map、同步锁与超时。验证：EmbeddedStudioHost.test.tsx、embeddedStudio.integration.test.ts。"
+      ],
+      "lifecycle": [
+        "connecting → writable；request pending → result/timeout；flush/save → saved/error；失去写连接后保留编辑"
+      ],
+      "position": {
+        "x": 300,
+        "y": 1840
+      }
+    },
+    {
+      "id": "M26",
+      "label": "M26 媒体加载、播放、试听与预览",
+      "kind": "module",
+      "parentId": "interaction",
+      "summary": "loading → playing/paused/failed；retry、seek、source 变化、隐藏与卸载释放",
+      "status": "fact",
+      "sourceIds": [
+        "source-70",
+        "source-71",
+        "source-72",
+        "source-73",
+        "source-74",
+        "test-M26-5",
+        "test-M26-6",
+        "test-M26-7"
+      ],
+      "note": "",
+      "details": [
+        "useMediaLifecycle、VideoPreview、WorkspaceAudioAudition、WorkspaceSpeechSample、localArtifactPreview。当前 source/attempt/owner、片段边界；试听生成也走逐次确认。验证：VideoPreview.test.tsx、WorkspaceAudioAudition.test.tsx、WorkspaceSpeechSample.test.tsx。"
+      ],
+      "lifecycle": [
+        "loading → playing/paused/failed；retry、seek、source 变化、隐藏与卸载释放"
+      ],
+      "position": {
+        "x": 600,
+        "y": 1840
+      }
+    },
+    {
+      "id": "M27",
+      "label": "M27 交付表单、封面与导出操作",
+      "kind": "module",
+      "parentId": "interaction",
+      "summary": "editing/checking-cover/preparing/error；export/confirm 操作互斥；草稿与权威导出分开",
+      "status": "fact",
+      "sourceIds": [
+        "source-75",
+        "source-76",
+        "test-M27-2",
+        "test-M27-3"
+      ],
+      "note": "",
+      "details": [
+        "WorkspaceDeliveryPanel、WorkspaceExportPanel。cover request/scope、同步 ref lock、当前已确认导出；旧封面校验不能写回新草稿。验证：WorkspaceDeliveryPanel.test.tsx、WorkspaceExportPanel.test.tsx。"
+      ],
+      "lifecycle": [
+        "editing/checking-cover/preparing/error；export/confirm 操作互斥；草稿与权威导出分开"
+      ],
+      "position": {
+        "x": 0,
+        "y": 2020
+      }
+    },
+    {
+      "id": "M28",
+      "label": "M28 搜索、目录与服务模型读取",
+      "kind": "module",
+      "parentId": "interaction",
+      "summary": "query/filter/page → loading → results/error；identity、分类、目标变化发新请求",
+      "status": "fact",
+      "sourceIds": [
+        "source-77",
+        "source-78",
+        "source-79",
+        "source-80",
+        "test-M28-4",
+        "test-M28-5"
+      ],
+      "note": "",
+      "details": [
+        "WorkspaceSearchPanel、useProductionServiceCatalog、WorkspacePexelsSearch、episodeReadService。请求序号／取消、完整计数、分页与版本；draft 与实际任务选择分开。验证：LocalCatalogApp.search.test.tsx、useProductionServiceCatalog.test.tsx、WorkspacePexelsSearch.test.tsx。"
+      ],
+      "lifecycle": [
+        "query/filter/page → loading → results/error；identity、分类、目标变化发新请求"
+      ],
+      "position": {
+        "x": 300,
+        "y": 2020
+      }
+    },
+    {
+      "id": "M29",
+      "label": "M29 局部编辑、选择与布局交互族",
+      "kind": "module",
+      "parentId": "interaction",
+      "summary": "镜头 add/drag/reorder、素材 drag/preview/filter、prompt range/mention、reference sort、popover、resize",
+      "status": "fact",
+      "sourceIds": [
+        "source-81",
+        "source-82",
+        "source-83",
+        "source-84",
+        "source-85",
+        "source-86"
+      ],
+      "note": "",
+      "details": [
+        "WorkspaceShotTable、WorkspaceShotRail、WorkspaceMaterialShelf、WorkspacePromptField、WorkspaceVideoInputs、WorkspacePreparationLayout。沿用本地组件状态；提交时的工程版本、输入与忙碌状态才是写入守卫。不将每个开关升级为持久业务状态。验证：同名组件测试。"
+      ],
+      "lifecycle": [
+        "镜头 add/drag/reorder、素材 drag/preview/filter、prompt range/mention、reference sort、popover、resize"
+      ],
+      "position": {
+        "x": 600,
+        "y": 2020
+      }
+    },
+    {
+      "id": "M30",
+      "label": "M30 弹层、动效与焦点",
+      "kind": "module",
+      "parentId": "interaction",
+      "summary": "mounted/present/exiting/unmounted；open/close、Escape、焦点恢复、reduced motion",
+      "status": "fact",
+      "sourceIds": [
+        "source-87",
+        "source-88",
+        "source-89",
+        "test-M30-3",
+        "test-M30-4"
+      ],
+      "note": "",
+      "details": [
+        "SurfacePresence、useDialogFocus、SystemStatusDrawer。退出动画期间 inert、防穿透、焦点恢复；不负责业务是否完成。验证：SurfacePresence.test.tsx、useDialogFocus.test.tsx。"
+      ],
+      "lifecycle": [
+        "mounted/present/exiting/unmounted；open/close、Escape、焦点恢复、reduced motion"
+      ],
+      "position": {
+        "x": 0,
+        "y": 2200
+      }
+    },
+    {
+      "id": "M31",
+      "label": "M31 所有者偏好与规划设置",
+      "kind": "module",
+      "parentId": "interaction",
+      "summary": "loading → editing/dirty → saving/saved/error；avatar upload、规划模型注册与测试另有 pending",
+      "status": "fact",
+      "sourceIds": [
+        "source-90",
+        "source-91",
+        "source-92",
+        "test-M31-3"
+      ],
+      "note": "",
+      "details": [
+        "OwnerPreferencesDialog、GlobalPlanningSettings、WorkspacePlanningSelection。revision、上传请求归属、错误保留草稿；默认选择不自动调用模型。验证：同名组件测试、ownerPreferences.integration.test.ts。"
+      ],
+      "lifecycle": [
+        "loading → editing/dirty → saving/saved/error；avatar upload、规划模型注册与测试另有 pending"
+      ],
+      "position": {
+        "x": 300,
+        "y": 2200
+      }
+    },
+    {
+      "id": "M32",
+      "label": "M32 删除范围与精确删除意图",
+      "kind": "module",
+      "parentId": "recovery",
+      "summary": "plan → 名称／revision 确认 → prepared → committed → completed；提交前失败可 rolled_back，同一幂等操作可重新 prepared",
+      "status": "fact",
+      "sourceIds": [
+        "source-93",
+        "source-94",
+        "source-95",
+        "test-M32-3",
+        "test-M32-4",
+        "test-M32-5"
+      ],
+      "note": "",
+      "details": [
+        "episodeLifecycle、删除 targets、115。Owner、活动任务、未知提交、精确文件集合、设备/inode、command receipt 与 cleanup key。验证：episodeDeletion.integration.test.ts、episodeDeletionStorage.integration.test.ts、episodeDeletionTargets.test.ts。"
+      ],
+      "lifecycle": [
+        "plan → 名称／revision 确认 → prepared → committed → completed；提交前失败可 rolled_back，同一幂等操作可重新 prepared"
+      ],
+      "position": {
+        "x": 0,
+        "y": 2560
+      }
+    },
+    {
+      "id": "M33",
+      "label": "M33 文件清理恢复与账号删除",
+      "kind": "module",
+      "parentId": "recovery",
+      "summary": "prepared 可恢复暂存；记录已删后重试原 cleanup；cleanupPending / last_error 派生展示；账号能否删除取决于完整阻断计数",
+      "status": "fact",
+      "sourceIds": [
+        "source-96",
+        "source-97",
+        "source-98",
+        "source-99",
+        "source-100",
+        "source-101",
+        "test-M33-6",
+        "test-M33-7",
+        "test-M33-8",
+        "test-M33-9"
+      ],
+      "note": "",
+      "details": [
+        "LocalDeletionRecovery、删除状态读取、实际账号删除、删除回执与恢复、AccountWorkspace、157。不扩大原删除范围；引用与恢复责任继续保护；完整服务端阻断计数。验证：cleanupRecovery.integration.test.ts、accountDeletionStatus.integration.test.ts、accountDeletionStorage.integration.test.ts、LocalDeletionRecovery.test.tsx。"
+      ],
+      "lifecycle": [
+        "prepared 可恢复暂存；记录已删后重试原 cleanup；cleanupPending / last_error 派生展示；账号能否删除取决于完整阻断计数"
+      ],
+      "position": {
+        "x": 300,
+        "y": 2560
+      }
+    },
+    {
+      "id": "M34",
+      "label": "M34 目录身份、收纳与空目录清理",
+      "kind": "module",
+      "parentId": "recovery",
+      "summary": "ready/unset/conflict/unavailable；系列 legacy-unmanaged；移动计划后切换登记；空目录 removed/retained/missing",
+      "status": "fact",
+      "sourceIds": [
+        "source-102",
+        "source-103",
+        "source-104",
+        "source-105",
+        "test-M34-4",
+        "test-M34-5"
+      ],
+      "note": "",
+      "details": [
+        "episodeStorageLocation、episodeCollection、accountDirectoryCleanup、AccountDirectoryPanel。真实目录身份、同账号、文件指纹、无 symlink；空目录仅 rmdir。验证：episodeCollectionMove.integration.test.ts、accountDirectoryCleanup.test.ts。"
+      ],
+      "lifecycle": [
+        "ready/unset/conflict/unavailable；系列 legacy-unmanaged；移动计划后切换登记；空目录 removed/retained/missing"
+      ],
+      "position": {
+        "x": 600,
+        "y": 2560
+      }
+    },
+    {
+      "id": "M35",
+      "label": "M35 账号目录迁移／旧目录采用",
+      "kind": "module",
+      "parentId": "recovery",
+      "summary": "planned → copying → completed；失败 → failed，可恢复／rolled_back",
+      "status": "fact",
+      "sourceIds": [
+        "source-106",
+        "source-107"
+      ],
+      "note": "",
+      "details": [
+        "accountDirectoryMigration、106。盘点、目录身份、拷贝校验、锁与 Studio/未知任务阻断；保留原文件。验证：accountDirectoryMigration*.integration.test.ts、legacyAdoption*.integration.test.ts。"
+      ],
+      "lifecycle": [
+        "planned → copying → completed；失败 → failed，可恢复／rolled_back"
+      ],
+      "position": {
+        "x": 0,
+        "y": 2740
+      }
+    },
+    {
+      "id": "M36",
+      "label": "M36 全局媒体根迁移与发布",
+      "kind": "module",
+      "parentId": "recovery",
+      "summary": "planned → copying → committed → completed；failed 可按原计划恢复或回滚允许阶段",
+      "status": "fact",
+      "sourceIds": [
+        "source-108",
+        "source-109",
+        "source-110",
+        "source-111",
+        "test-M36-4",
+        "test-M36-5"
+      ],
+      "note": "",
+      "details": [
+        "mediaRootExecution、mediaRootMigration、126、部署发布。不可变 manifest、全局写入 fence、private journal；COMMIT 未知不擅自回滚文件。验证：mediaRootExecutionFaults.integration.test.ts、mediaRootPublication.integration.test.ts。"
+      ],
+      "lifecycle": [
+        "planned → copying → committed → completed；failed 可按原计划恢复或回滚允许阶段"
+      ],
+      "position": {
+        "x": 300,
+        "y": 2740
+      }
+    },
+    {
+      "id": "M37",
+      "label": "M37 外部连接资格与版本",
+      "kind": "module",
+      "parentId": "recovery",
+      "summary": "unverified/verified/invalid/retryable/revoked；不可变版本、显式测试、撤销、秘密缺失时本地投影",
+      "status": "fact",
+      "sourceIds": [
+        "source-112",
+        "source-113",
+        "test-M37-2",
+        "test-M37-3"
+      ],
+      "note": "",
+      "details": [
+        "connections、providerProbe。临时错误保留已有资格；已引用旧版本不硬删；连接通过不代表模型生成通过。验证：connectionLifecycle.integration.test.ts、providerProbe.test.ts。"
+      ],
+      "lifecycle": [
+        "unverified/verified/invalid/retryable/revoked；不可变版本、显式测试、撤销、秘密缺失时本地投影"
+      ],
+      "position": {
+        "x": 600,
+        "y": 2740
+      }
+    },
+    {
+      "id": "M38",
+      "label": "M38 账务凭据与余额缓存",
+      "kind": "module",
+      "parentId": "recovery",
+      "summary": "pending → current → retired；缓存 absent/pending/fresh/expired，版本变化使旧结果无效",
+      "status": "fact",
+      "sourceIds": [
+        "source-114",
+        "source-115",
+        "source-116",
+        "test-M38-3",
+        "test-M38-4"
+      ],
+      "note": "",
+      "details": [
+        "connectionBilling、providerUsage、132。先验证账务凭据，再 Keychain 写入与事务切换；不混用生成凭据。验证：connectionBilling.integration.test.ts、clientBilling.test.ts。"
+      ],
+      "lifecycle": [
+        "pending → current → retired；缓存 absent/pending/fresh/expired，版本变化使旧结果无效"
+      ],
+      "position": {
+        "x": 0,
+        "y": 2920
+      }
+    },
+    {
+      "id": "M39",
+      "label": "M39 密钥单项查看／复制",
+      "kind": "module",
+      "parentId": "recovery",
+      "summary": "metadata → password challenge → reveal/copy → cleared；超时、隐藏、切项或身份变化立即清除",
+      "status": "fact",
+      "sourceIds": [
+        "source-117",
+        "source-118",
+        "test-M39-2",
+        "test-M39-3"
+      ],
+      "note": "",
+      "details": [
+        "LocalSecretAdministration、secretAdministration。generation、AbortController、no-store、权限与短期有效期；不把明文放进状态清单或日志。验证：LocalSecretAdministration.test.tsx、secretAdministration.integration.test.ts。"
+      ],
+      "lifecycle": [
+        "metadata → password challenge → reveal/copy → cleared；超时、隐藏、切项或身份变化立即清除"
+      ],
+      "position": {
+        "x": 300,
+        "y": 2920
+      }
+    },
+    {
+      "id": "M40",
+      "label": "M40 原生自动化 job 与 attempt",
+      "kind": "module",
+      "parentId": "recovery",
+      "summary": "job ready/failed → running → completed/failed；中断回 ready；attempt 记录 interrupted",
+      "status": "fact",
+      "sourceIds": [
+        "source-119",
+        "source-120",
+        "source-121",
+        "test-M40-3"
+      ],
+      "note": "",
+      "details": [
+        "nativeAutomation、036、037。token、租约、续约、有限 attempt；调度扫描不能替代数据库状态。验证：automationHistory.integration.test.ts。"
+      ],
+      "lifecycle": [
+        "job ready/failed → running → completed/failed；中断回 ready；attempt 记录 interrupted"
+      ],
+      "position": {
+        "x": 600,
+        "y": 2920
+      }
+    },
+    {
+      "id": "M41",
+      "label": "M41 通知投递与队列",
+      "kind": "module",
+      "parentId": "recovery",
+      "summary": "event → claim → accepted/skipped/uncertain；发送结果未知不自动重发；UI unread/read 是另一投影",
+      "status": "fact",
+      "sourceIds": [
+        "source-122",
+        "source-123",
+        "source-124",
+        "test-M41-3",
+        "test-M41-4",
+        "test-M41-5"
+      ],
+      "note": "",
+      "details": [
+        "notificationConsumer、notificationPolicy、WorkspaceTopbar。投递 claim/finish 与游标；无通知也不应阻断备份。验证：notificationConsumer.test.ts、notificationPolicy.test.ts、notificationStatus.integration.test.ts。"
+      ],
+      "lifecycle": [
+        "event → claim → accepted/skipped/uncertain；发送结果未知不自动重发；UI unread/read 是另一投影"
+      ],
+      "position": {
+        "x": 0,
+        "y": 3100
+      }
+    },
+    {
+      "id": "M42",
+      "label": "M42 备份、恢复与部署激活",
+      "kind": "module",
+      "parentId": "recovery",
+      "summary": "backup 工作目录 → 校验 → 发布，失败写 incomplete.json；restore 文件回执 prepared → complete，失败 incomplete，可带 deploymentRecoveryPending；独立数据库 GUC pending → ready",
+      "status": "fact",
+      "sourceIds": [
+        "source-125",
+        "source-126",
+        "source-127",
+        "test-M42-3",
+        "test-M42-4",
+        "test-M42-5"
+      ],
+      "note": "",
+      "details": [
+        "backup、restore、nativeBackup。归档、媒体 SHA、数据库 fence、Owner bootstrap、Keychain 重入与资格清空；仅恢复原授权目标。验证：deletionBackupRestore.integration.test.ts、managedMediaRestore.integration.test.ts、restorePublication.integration.test.ts、scripts/storage/reference-integrity.test.mjs。"
+      ],
+      "lifecycle": [
+        "backup 工作目录 → 校验 → 发布，失败写 incomplete.json；restore 文件回执 prepared → complete，失败 incomplete，可带 deploymentRecoveryPending；独立数据库 GUC pending → ready"
+      ],
+      "position": {
+        "x": 300,
+        "y": 3100
+      }
+    },
+    {
+      "id": "M43",
+      "label": "M43 固定运行包与运行健康",
+      "kind": "module",
+      "parentId": "recovery",
+      "summary": "current/source_changed/restart_required/preparing/not_prepared/prepared_invalid/running_invalid/mismatch/unknown；健康 healthy/attention/offline/unknown",
+      "status": "fact",
+      "sourceIds": [
+        "source-128",
+        "source-129",
+        "source-130",
+        "source-131",
+        "test-M43-4",
+        "test-M43-5",
+        "test-M43-6"
+      ],
+      "note": "",
+      "details": [
+        "runtimeVersion、runtimeBuild、runtimeStatus、运行入口。release identity、完整性清单、Worker 心跳；观察到源码变化不自动重启。验证：runtimeVersion.test.ts、runtimeBuild.test.ts、runtimeRelease.test.ts。"
+      ],
+      "lifecycle": [
+        "current/source_changed/restart_required/preparing/not_prepared/prepared_invalid/running_invalid/mismatch/unknown；健康 healthy/attention/offline/unknown"
+      ],
+      "position": {
+        "x": 600,
+        "y": 3100
+      }
+    },
+    {
+      "id": "M44",
+      "label": "M44 旧协议、审核与修复兼容族",
+      "kind": "module",
+      "parentId": "recovery",
+      "summary": "历史审核修订、shot preparation 音画 pending/running/ready/failed、confirmation pending/confirmed/skipped；旧任务与旧产物保留原身份",
+      "status": "fact",
+      "sourceIds": [
+        "source-132",
+        "source-133",
+        "source-134",
+        "source-135",
+        "source-136"
+      ],
+      "note": "",
+      "details": [
+        "LegacyProductionSteps、reviewRevision、repairTarget、baseline、156。不因当前四步 UI 删除旧协议、不可变快照或恢复责任。验证：ProductionWorkspacePanel.legacy.test.tsx、新旧任务兼容集成测试。"
+      ],
+      "lifecycle": [
+        "历史审核修订、shot preparation 音画 pending/running/ready/failed、confirmation pending/confirmed/skipped；旧任务与旧产物保留原身份"
+      ],
+      "position": {
+        "x": 0,
+        "y": 3280
+      }
+    },
+    {
+      "id": "M45",
+      "label": "M45 账号／生产单创建意图",
+      "kind": "module",
+      "parentId": "recovery",
+      "summary": "未登记 → 保存 intent → mkdir／身份标记 → 记录 inode → 业务记录与命令回执提交 → 清理标记；重试沿用 intent",
+      "status": "fact",
+      "sourceIds": [
+        "source-137",
+        "source-138",
+        "source-139",
+        "test-M45-3",
+        "test-M45-4"
+      ],
+      "note": "",
+      "details": [
+        "账号创建、生产单创建、目录身份。Owner+幂等键、payload hash、媒体根、父目录与 inode 校验；只清理本次拥有且仅含标记的目录；提交后标记清理失败保留业务成功。验证 accountCreation.integration.test.ts、episodeCreationFaults.integration.test.ts。"
+      ],
+      "lifecycle": [
+        "未登记 → 保存 intent → mkdir／身份标记 → 记录 inode → 业务记录与命令回执提交 → 清理标记；重试沿用 intent"
+      ],
+      "position": {
+        "x": 300,
+        "y": 3280
+      }
+    },
+    {
+      "id": "M46",
+      "label": "M46 原生 Keychain 与秘密登记",
+      "kind": "module",
+      "parentId": "recovery",
+      "summary": "未授权／不可用／锁定 → 解锁 → get/put → resolved/stored；重复引用比较内容；命名秘密写入验证后才更新索引",
+      "status": "fact",
+      "sourceIds": [
+        "source-140",
+        "source-141",
+        "source-142",
+        "source-143",
+        "source-144",
+        "source-145",
+        "source-146",
+        "test-M46-7",
+        "test-M46-8",
+        "test-M46-9"
+      ],
+      "note": "",
+      "details": [
+        "Keychain adapter、运行 Keychain、秘密登记、原生工具、锁控制、引导、历史读取。文件归属、私有权限、helper SHA、超时和输出限制；失败只返回脱敏代码，写入秘密通过 stdin。验证 keychainStore.test.ts、scripts/runtime/keychainReadiness.test.mjs、scripts/runtime/secrets.test.mjs。"
+      ],
+      "lifecycle": [
+        "未授权／不可用／锁定 → 解锁 → get/put → resolved/stored；重复引用比较内容；命名秘密写入验证后才更新索引"
+      ],
+      "position": {
+        "x": 600,
+        "y": 3280
+      }
+    },
+    {
+      "id": "M47",
+      "label": "M47 创作规则与不可变版本",
+      "kind": "module",
+      "parentId": "recovery",
+      "summary": "当前未引用规则可原地编辑；被引用后创建新版本并切换当前指针；历史版本可明确激活，Episode 继续固定原基线",
+      "status": "fact",
+      "sourceIds": [
+        "source-147",
+        "source-148",
+        "source-149",
+        "source-150",
+        "source-151",
+        "test-M47-5",
+        "test-M47-6",
+        "test-M47-7"
+      ],
+      "note": "",
+      "details": [
+        "配置命令、蓝图、系列规则、账号界面、基线。Owner、账号归属、引用与版本约束；系列／Prompt 新版本追加保存，执行快照固定原版本。验证 blueprintContraction.integration.test.ts、blueprintReviewRetirement.integration.test.ts、AccountWorkspace.test.tsx。"
+      ],
+      "lifecycle": [
+        "当前未引用规则可原地编辑；被引用后创建新版本并切换当前指针；历史版本可明确激活，Episode 继续固定原基线"
+      ],
+      "position": {
+        "x": 0,
+        "y": 3460
+      }
+    },
+    {
+      "id": "M48",
+      "label": "M48 导入输入文件发布",
+      "kind": "module",
+      "parentId": "recovery",
+      "summary": "解码／校验 → 独占临时文件 → 私有回执 → link 发布目标 → 清理临时文件／回执 → 数据库素材与命令回执；重复提交按原证明恢复",
+      "status": "fact",
+      "sourceIds": [
+        "source-152",
+        "source-153",
+        "source-154",
+        "test-M48-3",
+        "test-M48-4",
+        "test-M48-5"
+      ],
+      "note": "",
+      "details": [
+        "snapshotInput、媒体接收、命令事务。SHA、长度、device/inode、真实路径与文件内容共同验证；未知替换文件保留；原生 Worker 发布属于 M07。验证 localFiles.test.ts、materialAcceptance.integration.test.ts、inputPublicationOwnership.integration.test.ts。"
+      ],
+      "lifecycle": [
+        "解码／校验 → 独占临时文件 → 私有回执 → link 发布目标 → 清理临时文件／回执 → 数据库素材与命令回执；重复提交按原证明恢复"
+      ],
+      "position": {
+        "x": 300,
+        "y": 3460
+      }
+    },
+    {
+      "id": "object-episode",
+      "label": "生产单",
+      "kind": "object",
+      "summary": "waiting_input、脚本／画面／分镜 draft、review、approved，进入 production、render、QC，最终 production_completed；脚本再确认使下游失效",
+      "status": "fact",
+      "sourceIds": [
+        "source-1",
+        "source-2",
+        "source-3",
+        "source-4"
+      ],
+      "note": "",
+      "details": [
+        "阶段类型、SQL 迁移、正式流程、脚本优先。transition_episode 与后续迁移共同约束；四步导航不是这个枚举。验证：formalWorkflow.integration.test.ts、scriptProduction.integration.test.ts。"
+      ],
+      "lifecycle": [
+        "waiting_input、脚本／画面／分镜 draft、review、approved，进入 production、render、QC，最终 production_completed；脚本再确认使下游失效"
+      ],
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": "object-attempt",
+      "label": "任务与尝试",
+      "kind": "object",
+      "summary": "ready → running → completed / blocked / failed；允许的重试回到 ready；失效任务 superseded 或标记 invalidated；task_run 按 attempt 留存",
+      "status": "fact",
+      "sourceIds": [
+        "source-5",
+        "source-6",
+        "source-7"
+      ],
+      "note": "",
+      "details": [
+        "workerDatabase、租约约束、调度。领取、续租、结果必须匹配 task、attempt、token；发布 hold 阻止普通失败重报。验证：workerScheduler.test.ts、nativeAttemptOutput.test.ts。"
+      ],
+      "lifecycle": [
+        "ready → running → completed / blocked / failed；允许的重试回到 ready；失效任务 superseded 或标记 invalidated；task_run 按 attempt 留存"
+      ],
+      "position": {
+        "x": 300,
+        "y": 0
+      }
+    },
+    {
+      "id": "object-submission",
+      "label": "供应商提交记录",
+      "kind": "object",
+      "summary": "费用记录 submitting / submitted / succeeded；提交记录 started / received / rejected，not_sent 由任务 blocker 派生；保存的任务 ID 决定能否查询恢复",
+      "status": "fact",
+      "sourceIds": [
+        "source-10",
+        "source-11",
+        "source-12",
+        "source-13",
+        "source-14"
+      ],
+      "note": "",
+      "details": [
+        "visual request、生成账本、136、143、144。未知提交阻断新发；图片例外重试必须再次确认并绑定 retryOfTaskId。验证：workspaceGenerationState.integration.test.ts。"
+      ],
+      "lifecycle": [
+        "费用记录 submitting / submitted / succeeded；提交记录 started / received / rejected，not_sent 由任务 blocker 派生；保存的任务 ID 决定能否查询恢复"
+      ],
+      "position": {
+        "x": 600,
+        "y": 0
+      }
+    },
+    {
+      "id": "object-publication",
+      "label": "本地产物发布回执",
+      "kind": "object",
+      "summary": "文件准备 → 替换 → 数据库登记；COMMIT 回执未知时保留 publication hold，显式 reconcile 后确定结果",
+      "status": "fact",
+      "sourceIds": [
+        "source-20",
+        "source-21",
+        "source-22"
+      ],
+      "note": "",
+      "details": [
+        "nativeAttemptOutput、reconciliation、133、ADR-0023。task+attempt、租约、SHA、私有回执共同 fence；不能降格为普通重试。验证：nativeAttemptOutput.test.ts、workspaceGenerationState.integration.test.ts。"
+      ],
+      "lifecycle": [
+        "文件准备 → 替换 → 数据库登记；COMMIT 回执未知时保留 publication hold，显式 reconcile 后确定结果"
+      ],
+      "position": {
+        "x": 0,
+        "y": 180
+      }
+    },
+    {
+      "id": "object-authorization",
+      "label": "逐次调用授权",
+      "kind": "object",
+      "summary": "已准备、未消费 → 有效期内消费；超时／工程或输入变化时拒绝；事务失败回滚消费",
+      "status": "fact",
+      "sourceIds": [
+        "source-23",
+        "source-24",
+        "source-25"
+      ],
+      "note": "",
+      "details": [
+        "workspaceCallConfirmation、134、135、ADR-0024。Owner、工程版本、脚本、context hash、有效期、txid 同事务校验。验证：workspaceCallConfirmation.integration.test.ts。"
+      ],
+      "lifecycle": [
+        "已准备、未消费 → 有效期内消费；超时／工程或输入变化时拒绝；事务失败回滚消费"
+      ],
+      "position": {
+        "x": 300,
+        "y": 180
+      }
+    },
+    {
+      "id": "object-workspace",
+      "label": "当前原生工程",
+      "kind": "object",
+      "summary": "script → preparation → editor → delivery；loaded/error、opening/session、readonly/stale 是独立维度",
+      "status": "fact",
+      "sourceIds": [
+        "source-44",
+        "source-45"
+      ],
+      "note": "",
+      "details": [
+        "ProductionWorkspacePanel、useWorkspaceOperations。操作 ready/preparing/opening/editing/saving/closing/closed 独立于导航；准备条件、归档／完成只读、占位素材及同步锁继续生效。step=2 && session=null 可以是合法入口，不能仅凭组合判为 bug。验证：ProductionWorkspacePanel.test.tsx、.navigation.test.tsx、.legacy.test.tsx。"
+      ],
+      "lifecycle": [
+        "script → preparation → editor → delivery；loaded/error、opening/session、readonly/stale 是独立维度"
+      ],
+      "position": {
+        "x": 600,
+        "y": 180
+      }
+    },
+    {
+      "id": "object-visit",
+      "label": "一次客户端确认访问",
+      "kind": "object",
+      "summary": "idle → preparing → review → submitting → idle / failed；review/failed 取消回 idle；离开 → closed",
+      "status": "fact",
+      "sourceIds": [
+        "source-50"
+      ],
+      "note": "",
+      "details": [
+        "useWorkspaceCallConfirmation、ADR-0033。每次进入独立 owner；同步 phase 锁；过期与整数分校验；失败不重复确认。验证：useWorkspaceCallConfirmation.test.tsx。"
+      ],
+      "lifecycle": [
+        "idle → preparing → review → submitting → idle / failed；review/failed 取消回 idle；离开 → closed"
+      ],
+      "position": {
+        "x": 0,
+        "y": 360
+      }
+    },
+    {
+      "id": "object-intent",
+      "label": "目录创建意图",
+      "kind": "object",
+      "summary": "未登记 → 保存 intent → mkdir／身份标记 → 记录 inode → 业务记录与命令回执提交 → 清理标记；重试沿用 intent",
+      "status": "fact",
+      "sourceIds": [
+        "source-137",
+        "source-138",
+        "source-139"
+      ],
+      "note": "",
+      "details": [
+        "账号创建、生产单创建、目录身份。Owner+幂等键、payload hash、媒体根、父目录与 inode 校验；只清理本次拥有且仅含标记的目录；提交后标记清理失败保留业务成功。验证 accountCreation.integration.test.ts、episodeCreationFaults.integration.test.ts。"
+      ],
+      "lifecycle": [
+        "未登记 → 保存 intent → mkdir／身份标记 → 记录 inode → 业务记录与命令回执提交 → 清理标记；重试沿用 intent"
+      ],
+      "position": {
+        "x": 300,
+        "y": 360
+      }
+    },
+    {
+      "id": "object-rules",
+      "label": "当前规则与固定版本",
+      "kind": "object",
+      "summary": "当前未引用规则可原地编辑；被引用后创建新版本并切换当前指针；历史版本可明确激活，Episode 继续固定原基线",
+      "status": "fact",
+      "sourceIds": [
+        "source-147",
+        "source-148",
+        "source-149",
+        "source-150",
+        "source-151"
+      ],
+      "note": "",
+      "details": [
+        "配置命令、蓝图、系列规则、账号界面、基线。Owner、账号归属、引用与版本约束；系列／Prompt 新版本追加保存，执行快照固定原版本。验证 blueprintContraction.integration.test.ts、blueprintReviewRetirement.integration.test.ts、AccountWorkspace.test.tsx。"
+      ],
+      "lifecycle": [
+        "当前未引用规则可原地编辑；被引用后创建新版本并切换当前指针；历史版本可明确激活，Episode 继续固定原基线"
+      ],
+      "position": {
+        "x": 600,
+        "y": 360
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "confirm",
+      "to": "M08",
+      "label": "消费逐次调用授权",
+      "type": "sync",
+      "status": "fact",
+      "sourceIds": [
+        "source-50",
+        "source-23",
+        "source-24",
+        "source-25"
+      ],
+      "note": "",
+      "from": "M19"
+    },
+    {
+      "id": "reserve",
+      "to": "M04",
+      "label": "同事务登记请求与费用预留",
+      "type": "data",
+      "status": "fact",
+      "sourceIds": [
+        "source-23",
+        "source-24",
+        "source-25",
+        "source-10",
+        "source-11",
+        "source-12",
+        "source-13",
+        "source-14"
+      ],
+      "note": "",
+      "from": "M08"
+    },
+    {
+      "id": "dispatch",
+      "to": "M02",
+      "label": "进入任务调度",
+      "type": "async",
+      "status": "fact",
+      "sourceIds": [
+        "source-10",
+        "source-11",
+        "source-12",
+        "source-13",
+        "source-14",
+        "source-5",
+        "source-6",
+        "source-7"
+      ],
+      "note": "",
+      "from": "M04"
+    },
+    {
+      "id": "video",
+      "to": "M05",
+      "label": "按 attempt 执行／恢复视频",
+      "type": "async",
+      "status": "fact",
+      "sourceIds": [
+        "source-5",
+        "source-6",
+        "source-7",
+        "source-15",
+        "source-16"
+      ],
+      "note": "",
+      "from": "M02"
+    },
+    {
+      "id": "publication",
+      "to": "M07",
+      "label": "验证下载并发布本地产物",
+      "type": "data",
+      "status": "fact",
+      "sourceIds": [
+        "source-15",
+        "source-16",
+        "source-20",
+        "source-21",
+        "source-22"
+      ],
+      "note": "",
+      "from": "M05"
+    },
+    {
+      "id": "feedback",
+      "to": "M22",
+      "label": "投影完成／发布待核对状态",
+      "type": "data",
+      "status": "fact",
+      "sourceIds": [
+        "source-20",
+        "source-21",
+        "source-22",
+        "source-55",
+        "source-56",
+        "source-57",
+        "source-58"
+      ],
+      "note": "",
+      "from": "M07"
+    },
+    {
+      "id": "read-request",
+      "to": "M17",
+      "label": "按版本和请求归属发布工程",
+      "type": "data",
+      "status": "fact",
+      "sourceIds": [
+        "source-46",
+        "source-47",
+        "source-48",
+        "source-49",
+        "source-44",
+        "source-45"
+      ],
+      "note": "",
+      "from": "M18"
+    },
+    {
+      "id": "script",
+      "to": "M01",
+      "label": "保存脚本后显式启动制作",
+      "type": "sync",
+      "status": "fact",
+      "sourceIds": [
+        "source-59",
+        "source-60",
+        "source-61",
+        "source-62",
+        "source-1",
+        "source-2",
+        "source-3",
+        "source-4"
+      ],
+      "note": "",
+      "from": "M23"
+    },
+    {
+      "id": "prepare",
+      "to": "M17",
+      "label": "准备当前脚本对应的工程",
+      "type": "sync",
+      "status": "fact",
+      "sourceIds": [
+        "source-1",
+        "source-2",
+        "source-3",
+        "source-4",
+        "source-44",
+        "source-45"
+      ],
+      "note": "",
+      "from": "M01"
+    },
+    {
+      "id": "candidate",
+      "to": "M09",
+      "label": "核对后明确采用候选",
+      "type": "sync",
+      "status": "fact",
+      "sourceIds": [
+        "source-51",
+        "source-26",
+        "source-27"
+      ],
+      "note": "",
+      "from": "M20"
+    },
+    {
+      "id": "studio",
+      "to": "M25",
+      "label": "明确打开当前 Studio 工程",
+      "type": "sync",
+      "status": "fact",
+      "sourceIds": [
+        "source-44",
+        "source-45",
+        "source-67",
+        "source-68",
+        "source-69"
+      ],
+      "note": "",
+      "from": "M17"
+    },
+    {
+      "id": "export",
+      "to": "M14",
+      "label": "只消费当前已确认导出",
+      "type": "sync",
+      "status": "fact",
+      "sourceIds": [
+        "source-36",
+        "source-37",
+        "source-38"
+      ],
+      "note": "",
+      "from": "M13"
+    },
+    {
+      "id": "complete",
+      "to": "M01",
+      "label": "交付产物验证后完成生产",
+      "type": "data",
+      "status": "fact",
+      "sourceIds": [
+        "source-37",
+        "source-38",
+        "source-1",
+        "source-2",
+        "source-3",
+        "source-4"
+      ],
+      "note": "",
+      "from": "M14"
+    },
+    {
+      "id": "creation",
+      "to": "M34",
+      "label": "验证并登记目录身份",
+      "type": "data",
+      "status": "fact",
+      "sourceIds": [
+        "source-137",
+        "source-138",
+        "source-139",
+        "source-102",
+        "source-103",
+        "source-104",
+        "source-105"
+      ],
+      "note": "",
+      "from": "M45"
+    },
+    {
+      "id": "input",
+      "to": "M23",
+      "label": "脚本文件与材料回执保存后继续",
+      "type": "data",
+      "status": "fact",
+      "sourceIds": [
+        "source-152",
+        "source-153",
+        "source-154",
+        "source-59",
+        "source-60",
+        "source-61",
+        "source-62"
+      ],
+      "note": "",
+      "from": "M48"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "generation",
+      "label": "生成与未知结果恢复",
+      "trigger": "Owner 明确发起一次视频生成。",
+      "outcome": "产物发布后展示完成，未知提交或发布待核对分别保留原恢复入口。",
+      "steps": [
+        {
+          "id": "authorization",
+          "title": "逐次确认与服务端消费",
+          "description": "客户端确认和服务端授权各有 owner、版本与期限。",
+          "nodeIds": [
+            "M19",
+            "M08"
+          ],
+          "edgeIds": [
+            "confirm"
+          ],
+          "nextStepId": "submission",
+          "branches": [],
+          "status": "fact",
+          "sourceIds": [
+            "source-50",
+            "source-23",
+            "source-24",
+            "source-25"
+          ],
+          "note": ""
+        },
+        {
+          "id": "submission",
+          "title": "登记提交与执行尝试",
+          "description": "授权、费用预留和任务登记受事务约束。未知提交先核对原请求。",
+          "nodeIds": [
+            "M08",
+            "M04",
+            "M02"
+          ],
+          "edgeIds": [
+            "reserve",
+            "dispatch"
+          ],
+          "nextStepId": "execute",
+          "branches": [
+            {
+              "label": "提交结果未知",
+              "targetStepId": "unknown"
+            }
+          ],
+          "status": "fact",
+          "sourceIds": [
+            "source-23",
+            "source-24",
+            "source-25",
+            "source-10",
+            "source-11",
+            "source-12",
+            "source-13",
+            "source-14",
+            "source-5",
+            "source-6",
+            "source-7"
+          ],
+          "note": ""
+        },
+        {
+          "id": "execute",
+          "title": "执行或查询原任务",
+          "description": "有远端 ID 时恢复查询；结果下载后进入本地发布协议。",
+          "nodeIds": [
+            "M02",
+            "M05",
+            "M07"
+          ],
+          "edgeIds": [
+            "video",
+            "publication"
+          ],
+          "nextStepId": "result",
+          "branches": [],
+          "status": "fact",
+          "sourceIds": [
+            "source-5",
+            "source-6",
+            "source-7",
+            "source-15",
+            "source-16",
+            "source-20",
+            "source-21",
+            "source-22"
+          ],
+          "note": ""
+        },
+        {
+          "id": "result",
+          "title": "发布结果与恢复展示",
+          "description": "任务、提交结果、发布 hold 分别决定可执行的下一步。",
+          "nodeIds": [
+            "M07",
+            "M22"
+          ],
+          "edgeIds": [
+            "feedback"
+          ],
+          "nextStepId": null,
+          "branches": [
+            {
+              "label": "发布提交结果待核对",
+              "targetStepId": "hold"
+            }
+          ],
+          "status": "fact",
+          "sourceIds": [
+            "source-20",
+            "source-21",
+            "source-22",
+            "source-55",
+            "source-56",
+            "source-57",
+            "source-58"
+          ],
+          "note": ""
+        },
+        {
+          "id": "unknown",
+          "title": "保留未知提交证据",
+          "description": "未知提交阻断普通重发；图片已有明确确认的例外，视频按原远端 ID 查询。",
+          "nodeIds": [
+            "M04",
+            "M22"
+          ],
+          "edgeIds": [],
+          "nextStepId": null,
+          "branches": [],
+          "status": "fact",
+          "sourceIds": [
+            "source-10",
+            "source-11",
+            "source-12",
+            "source-13",
+            "source-14",
+            "source-55",
+            "source-56",
+            "source-57",
+            "source-58"
+          ],
+          "note": ""
+        },
+        {
+          "id": "hold",
+          "title": "显式核对本地发布",
+          "description": "使用私有回执与数据库证据确认 COMMIT 结果。",
+          "nodeIds": [
+            "M07",
+            "M22"
+          ],
+          "edgeIds": [
+            "feedback"
+          ],
+          "nextStepId": null,
+          "branches": [],
+          "status": "fact",
+          "sourceIds": [
+            "source-20",
+            "source-21",
+            "source-22",
+            "source-55",
+            "source-56",
+            "source-57",
+            "source-58"
+          ],
+          "note": ""
+        }
+      ]
+    },
+    {
+      "id": "script",
+      "label": "脚本保存、启动与打开",
+      "trigger": "Owner 确认脚本或继续先前未确认的启动。",
+      "outcome": "保留保存进度，启动核对成功后进入当前工作版本。",
+      "steps": [
+        {
+          "id": "save",
+          "title": "保存脚本并启动",
+          "description": "保存成功与启动成功分别记录；启动未知时读取同一脚本与生产阶段。",
+          "nodeIds": [
+            "M23",
+            "M01"
+          ],
+          "edgeIds": [
+            "script"
+          ],
+          "nextStepId": "prepare",
+          "branches": [
+            {
+              "label": "启动未确认",
+              "targetStepId": "retry"
+            }
+          ],
+          "status": "fact",
+          "sourceIds": [
+            "source-59",
+            "source-60",
+            "source-61",
+            "source-62",
+            "source-1",
+            "source-2",
+            "source-3",
+            "source-4"
+          ],
+          "note": ""
+        },
+        {
+          "id": "prepare",
+          "title": "进入制作准备",
+          "description": "工作区操作独立管理准备、打开、保存和关闭。",
+          "nodeIds": [
+            "M01",
+            "M17"
+          ],
+          "edgeIds": [
+            "prepare"
+          ],
+          "nextStepId": "reload",
+          "branches": [],
+          "status": "fact",
+          "sourceIds": [
+            "source-1",
+            "source-2",
+            "source-3",
+            "source-4",
+            "source-44",
+            "source-45"
+          ],
+          "note": ""
+        },
+        {
+          "id": "reload",
+          "title": "保护已接收的工程",
+          "description": "较早发出的刷新不能覆盖较新的命令回包；更高 revision 可接入。",
+          "nodeIds": [
+            "M18",
+            "M17"
+          ],
+          "edgeIds": [
+            "read-request"
+          ],
+          "nextStepId": null,
+          "branches": [],
+          "status": "fact",
+          "sourceIds": [
+            "source-46",
+            "source-47",
+            "source-48",
+            "source-49",
+            "source-44",
+            "source-45"
+          ],
+          "note": ""
+        },
+        {
+          "id": "retry",
+          "title": "继续启动前核对",
+          "description": "同一脚本仍在等待输入才重试，版本或只读条件变化则保留草稿。",
+          "nodeIds": [
+            "M23",
+            "M01"
+          ],
+          "edgeIds": [
+            "script"
+          ],
+          "nextStepId": null,
+          "branches": [],
+          "status": "fact",
+          "sourceIds": [
+            "source-59",
+            "source-60",
+            "source-61",
+            "source-62",
+            "source-1",
+            "source-2",
+            "source-3",
+            "source-4"
+          ],
+          "note": ""
+        }
+      ]
+    },
+    {
+      "id": "adoption",
+      "label": "候选比较与采用",
+      "trigger": "Owner 选择一个生成或导入候选。",
+      "outcome": "重新读取并验证当前工程后采用，原生编辑与保存保留自己的会话协议。",
+      "steps": [
+        {
+          "id": "review",
+          "title": "读取当前版本并核对",
+          "description": "候选核对具有独立序号与访问 owner，切换目标会结束旧意图。",
+          "nodeIds": [
+            "M20",
+            "M09"
+          ],
+          "edgeIds": [
+            "candidate"
+          ],
+          "nextStepId": "write",
+          "branches": [],
+          "status": "fact",
+          "sourceIds": [
+            "source-51",
+            "source-26",
+            "source-27"
+          ],
+          "note": ""
+        },
+        {
+          "id": "write",
+          "title": "采用并保存工程",
+          "description": "服务端重验 SHA、来源与时长后保存原生工程。",
+          "nodeIds": [
+            "M09"
+          ],
+          "edgeIds": [],
+          "nextStepId": "editor",
+          "branches": [],
+          "status": "fact",
+          "sourceIds": [
+            "source-26",
+            "source-27"
+          ],
+          "note": ""
+        },
+        {
+          "id": "editor",
+          "title": "明确打开编辑器",
+          "description": "Owner 继续进入 Studio 时建立会话，保存仍需 iframe flush 与文件证明。",
+          "nodeIds": [
+            "M17",
+            "M25"
+          ],
+          "edgeIds": [
+            "studio"
+          ],
+          "nextStepId": null,
+          "branches": [],
+          "status": "fact",
+          "sourceIds": [
+            "source-44",
+            "source-45",
+            "source-67",
+            "source-68",
+            "source-69"
+          ],
+          "note": ""
+        }
+      ]
+    },
+    {
+      "id": "delivery",
+      "label": "导出确认与交付",
+      "trigger": "Owner 导出成片并明确确认当前文件。",
+      "outcome": "当前已确认导出生成交付包，通过验证后标记生产完成。",
+      "steps": [
+        {
+          "id": "export",
+          "title": "确认当前导出",
+          "description": "字幕、文件指纹、检查问题和内容 SHA 共同决定导出资格。",
+          "nodeIds": [
+            "M13",
+            "M14"
+          ],
+          "edgeIds": [
+            "export"
+          ],
+          "nextStepId": "finish",
+          "branches": [],
+          "status": "fact",
+          "sourceIds": [
+            "source-36",
+            "source-37",
+            "source-38"
+          ],
+          "note": ""
+        },
+        {
+          "id": "finish",
+          "title": "验证交付并完成生产",
+          "description": "同一活动交付互斥，重试保留合法导出身份。",
+          "nodeIds": [
+            "M14",
+            "M01"
+          ],
+          "edgeIds": [
+            "complete"
+          ],
+          "nextStepId": null,
+          "branches": [],
+          "status": "fact",
+          "sourceIds": [
+            "source-37",
+            "source-38",
+            "source-1",
+            "source-2",
+            "source-3",
+            "source-4"
+          ],
+          "note": ""
+        }
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "id": "external",
+      "title": "外部与故障窗口",
+      "detail": "外部供应商及所有跨进程中断组合需要专门运行证据。",
+      "nodeIds": [
+        "M04",
+        "M07",
+        "M36"
+      ],
+      "neededEvidence": "使用隔离 PostgreSQL、文件系统与受控供应商边界进行定向故障注入。"
+    }
+  ],
+  "changes": [
+    "复用既有 M01—M44，补入 M45—M48。",
+    "标明已合入的局部 owner 与本轮刷新顺序修复。"
+  ]
+}
