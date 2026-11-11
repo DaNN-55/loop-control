@@ -1,6 +1,9 @@
+import {webcrypto} from 'node:crypto';
+import {localCommand,localRequest} from './client';
 import {useState} from 'react';
 import {act,cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
 import {afterEach,expect,it,vi} from 'vitest';
+import {WorkspaceDraftOwner} from './WorkspaceDraft';
 import {WorkspaceNarrationPanel} from './WorkspaceNarrationPanel';
 import {WorkspaceMaterialSelectionProvider,workspaceMaterialDragType} from './WorkspaceMaterialDrop';
 import type {ProductionWorkspace} from '../productionWorkspace';
@@ -25,7 +28,7 @@ function setup(){
   }else if(name==='adoptWorkspaceCandidate')stored={...stored,revision:stored.revision+1,project:{...stored.project,sha256:'adopted-sha'},narration:[{...stored.narration![0],adoptedAudioTrackId:String(data.candidateId)}]};
   return stored;
  });
- function View({onImportAudio,knownMaterials=true,selectedShotId='S01'}:{onImportAudio?:(files:File[])=>Promise<unknown>;knownMaterials?:boolean;selectedShotId?:string}){const [w,setW]=useState(stored);return <WorkspaceMaterialSelectionProvider materials={materials}><WorkspaceNarrationPanel episodeId="e" workspace={w} selectedShotId={selectedShotId} pending={false} command={command} onChanged={setW} materials={knownMaterials?materials:[]} onImportAudio={onImportAudio}/></WorkspaceMaterialSelectionProvider>;}
+ function View({onImportAudio,knownMaterials=true,selectedShotId='S01',ownerId=''}:{onImportAudio?:(files:File[])=>Promise<unknown>;knownMaterials?:boolean;selectedShotId?:string;ownerId?:string}){const [w,setW]=useState(stored);return <WorkspaceDraftOwner ownerId={ownerId}><WorkspaceMaterialSelectionProvider materials={materials}><WorkspaceNarrationPanel episodeId="e" workspace={w} selectedShotId={selectedShotId} pending={false} command={command} onChanged={setW} materials={knownMaterials?materials:[]} onImportAudio={onImportAudio}/></WorkspaceMaterialSelectionProvider></WorkspaceDraftOwner>;}
  return {View,command,calls,get stored(){return stored;},set failConfirm(value:boolean){failConfirm=value;}};
 }
 function drop(id:string){fireEvent.drop(screen.getByRole('button',{name:'拖入口播文件'}),{dataTransfer:{types:[workspaceMaterialDragType],getData:(type:string)=>type===workspaceMaterialDragType?id:'',files:[]}});}
@@ -96,4 +99,38 @@ it('accepts a new batch upload after adopting an earlier manual candidate',async
  const input=screen.getByLabelText('导入人工口播');await waitFor(()=>expect(input).not.toHaveProperty('disabled',true));
  fireEvent.change(input,{target:{files:[new File(['three'],'third.mp3',{type:'audio/mpeg'}),new File(['four'],'fourth.mp3',{type:'audio/mpeg'})]}});
  await waitFor(()=>expect(f.calls.filter(c=>c.name==='saveWorkspaceNarration')).toHaveLength(3));expect(upload).toHaveBeenCalledTimes(1);
+});
+it('retains a failed confirmation across shot switching and panel reopening without repeating import or save',async()=>{
+ const f=setup();f.failConfirm=true;const ownerId='reopen-manual-owner',upload=vi.fn(async()=>['first']);
+ const view=render(<f.View ownerId={ownerId} onImportAudio={upload}/>);
+ fireEvent.change(screen.getByLabelText('导入人工口播'),{target:{files:[new File(['one'],'first.mp3',{type:'audio/mpeg'})]}});await screen.findByText('确认读取中断');
+ view.rerender(<f.View ownerId={ownerId} selectedShotId="S02" onImportAudio={upload}/>);view.rerender(<f.View ownerId={ownerId} onImportAudio={upload}/>);expect(screen.getByRole('button',{name:'重试加入候选'})).toBeTruthy();
+ view.unmount();const other=render(<f.View ownerId="different-manual-owner" onImportAudio={upload}/>);expect(screen.queryByRole('button',{name:'重试加入候选'})).toBeNull();other.unmount();
+ render(<f.View ownerId={ownerId} onImportAudio={upload}/>);fireEvent.click(screen.getByRole('button',{name:'重试加入候选'}));await screen.findByRole('button',{name:'采用'});
+ expect(upload).toHaveBeenCalledTimes(1);expect(f.calls.filter(c=>c.name==='saveWorkspaceNarration')).toHaveLength(1);expect(f.calls.filter(c=>c.name==='confirmWorkspaceNarration')).toHaveLength(2);
+});
+it('receives a late save in the original session and lets a reopened visit explicitly finish confirmation',async()=>{
+ const f=setup(),execute=f.command.getMockImplementation()!;let release!:()=>void;const gate=new Promise<void>(resolve=>{release=resolve;});
+ f.command.mockImplementation(async(name,data)=>{const value=await execute(name,data);if(name==='saveWorkspaceNarration')await gate;return value;});
+ const first=render(<f.View ownerId="late-manual-owner"/>);drop('first');await waitFor(()=>expect(f.calls.some(c=>c.name==='saveWorkspaceNarration')).toBe(true));first.unmount();
+ render(<f.View ownerId="late-manual-owner"/>);expect(screen.getByRole('button',{name:'拖入口播文件'})).toHaveProperty('disabled',true);
+ await act(async()=>release());await screen.findByRole('button',{name:'重试加入候选'});expect(f.calls.some(c=>c.name==='confirmWorkspaceNarration')).toBe(false);
+ fireEvent.click(screen.getByRole('button',{name:'重试加入候选'}));await screen.findByRole('button',{name:'采用'});expect(f.calls.filter(c=>c.name==='saveWorkspaceNarration')).toHaveLength(1);expect(f.calls.filter(c=>c.name==='confirmWorkspaceNarration')).toHaveLength(1);
+});
+it('reopens after an unknown HTTP confirmation and replays its frozen key without confirming twice',async()=>{
+ const f=setup(),execute=f.command.getMockImplementation()!,receipts=new Map<string,unknown>(),confirmKeys:string[]=[];let lost=false;
+ vi.stubGlobal('crypto',webcrypto);
+ vi.stubGlobal('fetch',vi.fn(async(path:string,init?:RequestInit)=>{
+  if(path.endsWith('/session'))return Response.json({csrfToken:'manual-http-fixture'});
+  if(init?.method==='POST'){
+   const body=JSON.parse(String(init.body));if(body.command==='confirmWorkspaceNarration')confirmKeys.push(body.idempotencyKey);
+   if(receipts.has(body.idempotencyKey))return Response.json(receipts.get(body.idempotencyKey));
+   const value=await execute(body.command,body.data);receipts.set(body.idempotencyKey,value);
+   if(body.command==='confirmWorkspaceNarration'&&!lost){lost=true;return Response.json({error:'确认回包中断'},{status:503});}return Response.json(value);
+  }
+  return Response.json(path.endsWith('/workspace')?{workspace:f.stored}:{serviceCatalog:{version:1,groups:[]}});
+ }));await localRequest('session');f.command.mockImplementation((name,data)=>localCommand(name,data,undefined,'episode-commands'));
+ const first=render(<f.View ownerId="http-manual-owner"/>);drop('first');await screen.findByText('确认回包中断');first.unmount();
+ render(<f.View ownerId="http-manual-owner"/>);fireEvent.click(screen.getByRole('button',{name:'重试加入候选'}));await screen.findByRole('button',{name:'采用'});
+ expect(confirmKeys).toHaveLength(2);expect(confirmKeys[1]).toBe(confirmKeys[0]);expect(f.calls.filter(c=>c.name==='saveWorkspaceNarration')).toHaveLength(1);expect(f.calls.filter(c=>c.name==='confirmWorkspaceNarration')).toHaveLength(1);expect(f.stored.revision).toBe(3);
 });

@@ -15,18 +15,19 @@ import {WorkspaceAudioAudition} from './WorkspaceAudioAudition';
 import {WorkspaceNarrationToolbar,type WorkspaceNarrationSettings} from './WorkspaceNarrationToolbar';
 import {WorkspaceNarrationCaptions} from './WorkspaceNarrationCaptions';
 import {Toggle} from '../ui/dan-ui/components/base/toggle/toggle';
-import {useEffect,useId,useMemo,useReducer,useRef,useState,type ReactNode} from 'react';
+import {useEffect,useId,useMemo,useRef,useState,useSyncExternalStore,type ReactNode} from 'react';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {Badge} from '../ui/dan-ui/components/base/badges/badges';
 import type {ProductionWorkspace,WorkspaceNarration} from '../productionWorkspace';
 import type {ProductionService} from '../connections/serviceCatalog';
 import {useProductionServiceCatalog} from './useProductionServiceCatalog';
 import {ConfirmationModal,ConfirmationModalPresence} from '../ui/ConfirmationModal';
+import {useWorkspaceOwnerId} from './WorkspaceDraft';
+import {createManualNarrationSession,manualNarrationSession,type ManualNarrationEntry} from './workspaceManualNarration';
 import './workspace-narration-settings.css';
 interface NarrationMaterial {id:string;source_path:string;storage_path?:string;material_type:string;material_purpose?:string|null}
 interface Track {id:string;track_kind:string;cue_id:string|null;source_material_revision_id?:string|null;relative_path?:string}
 type Settings=WorkspaceNarrationSettings;
-interface ManualEntry {materialId:string;text:string;name?:string;status:'pending'|'running'|'failed'|'succeeded';stage:'save'|'confirm';data?:Record<string,unknown>;audioTrackId?:string;error?:string}
 function compatible(s:Settings,services:ProductionService[]){const service=services.find(c=>c.connectionVersionId===s.selection?.connectionVersionId&&c.provider===s.selection?.provider&&c.adapter===s.selection?.adapter);return !!service?.executable&&service.models.includes(s.selection?.model??'')&&!!service.voiceCatalog?.[s.languageCode]?.includes(s.voice)&&s.speakingRate>=(service.constraints.speakingRate?.min??.5)&&s.speakingRate<=(service.constraints.speakingRate?.max??2);}
 export function WorkspaceNarrationPanel(props:Parameters<typeof EditableWorkspaceNarrationPanel>[0]&{readOnly?:boolean}){
  return props.readOnly?<WorkspaceNarrationRecord workspace={props.workspace} selectedShotId={props.selectedShotId}/>:<EditableWorkspaceNarrationPanel {...props}/>;
@@ -84,14 +85,14 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
  const setText=(value:string)=>setTextDraft(value);
  const [mode,setMode]=useState<WorkspaceNarration['mode']>(()=>{try{const value=sessionStorage.getItem(key+':mode');return value&&['tts','manual'].includes(value)?value as WorkspaceNarration['mode']:n.mode==='manual'?'manual':'tts';}catch{return n.mode==='manual'?'manual':'tts';}}),[busy,setBusy]=useState(false),[error,setError]=useState('');
  useEffect(()=>{try{if(textDraft===null)sessionStorage.removeItem(key+':text');else sessionStorage.setItem(key+':text',textDraft);sessionStorage.setItem(key+':mode',mode);}catch{/* Optional browser draft. */}},[key,textDraft,mode]);
- const manualSession=useMemo(()=>({active:true,running:false,rows:[] as ManualEntry[]}),[episodeId,workspace.id,n.shotId]);
+ const ownerId=useWorkspaceOwnerId(),manualKey=JSON.stringify([ownerId,episodeId,workspace.id,n.shotId]);
+ const manualSession=useMemo(()=>ownerId?manualNarrationSession(manualKey):createManualNarrationSession(),[manualKey]);
  const manualVisit=useMemo(()=>({active:true}),[manualSession,expanded,mode]),currentManual=useRef({session:manualSession,visit:manualVisit});
  currentManual.current={session:manualSession,visit:manualVisit};
- const [,renderManual]=useReducer((value:number)=>value+1,0);
- useEffect(()=>{manualSession.active=true;return()=>{manualSession.active=false;};},[manualSession]);
+ const manualVersion=useSyncExternalStore(manualSession.subscribe,manualSession.readVersion);
  useEffect(()=>{manualVisit.active=true;return()=>{manualVisit.active=false;};},[manualVisit]);
- const ownsManual=()=>manualSession.active&&manualVisit.active&&currentManual.current.session===manualSession&&currentManual.current.visit===manualVisit;
- const showManual=()=>{if(manualSession.active&&currentManual.current.session===manualSession)renderManual();};
+ const ownsManual=()=>manualVisit.active&&currentManual.current.session===manualSession&&currentManual.current.visit===manualVisit;
+ const showManual=()=>manualSession.changed();
  const speechSettings:Settings=defaults??{selection:null,voice:'',languageCode:'zh-CN',speakingRate:1};
  const task=workspaceTaskPresentation(n.generationTask??{status:n.status});
  const canGenerate=compatible(speechSettings,services)&&!!text.trim()&&!task.unknown&&!task.held;
@@ -100,6 +101,11 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
  const narrationMaterials=materials.filter(m=>m.material_type==='audio'&&canUseWorkspaceAudioMaterial(m.material_purpose,'narration'));
  const narrationTracks=tracks.filter(t=>t.track_kind==='narration');
  const uploadedTracks=narrationTracks.filter(t=>!!t.source_material_revision_id);
+ useEffect(()=>{
+  if(manualSession.running)return;
+  const received=new Set(uploadedTracks.map(track=>track.id));
+  if(manualSession.rows.some(row=>row.status==='succeeded'&&received.has(row.audioTrackId??''))){manualSession.rows=manualSession.rows.filter(row=>row.status!=='succeeded'||!received.has(row.audioTrackId??''));manualSession.changed();}
+ },[manualSession,tracks,manualVersion]);
  const [manualReview,setManualReview]=useState<{projectSha256:string;audioTrackId:string;inputFingerprint:string;durationSeconds:number|null}|null>(null);
  useEffect(()=>{setManualReview(null);},[expanded,mode,text,workspace.project.sha256]);
  const base=(w=workspace)=>({episodeId,workspaceId:w.id,expectedRevision:w.revision,clipId:n.clipId});
@@ -120,7 +126,7 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
  async function processManual(){
   if(manualSession.running||pending||workspace.stale||mode!=='manual'||!ownsManual())return;
   manualSession.running=true;setError('');showManual();
-  let currentRow:ManualEntry|undefined;
+  let currentRow:ManualNarrationEntry|undefined;
   try{
    let w=await reader.read();
    for(const row of manualSession.rows.filter(entry=>entry.status!=='succeeded')){
