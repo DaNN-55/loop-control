@@ -52,7 +52,7 @@ it('keeps an acknowledged account Harness when refreshing its list fails',async(
  fireEvent.change(screen.getByRole('textbox',{name:'版本摘要'}),{target:{value:'摘要'}});
  fireEvent.change(screen.getByRole('textbox',{name:'Harness 内容'}),{target:{value:'内容'}});
  fireEvent.click(screen.getByRole('button',{name:'保存新版本'}));
- await screen.findByText(/版本列表中断/);
+ expect((await screen.findByRole('alert')).textContent).toContain('版本列表中断');
  fireEvent.click(screen.getByRole('button',{name:'保存新版本'}));
  await waitFor(()=>expect(screen.queryByRole('textbox',{name:'版本名称'})).toBeNull());
  expect(creates).toBe(1);expect(reloads).toBe(2);
