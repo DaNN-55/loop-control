@@ -40,16 +40,20 @@ it('accepts archive acknowledgement even when the following read fails and only 
 });
 it.each(['operations','episodes'])('from %s, closes creation on acknowledgement while directory reading is pending',async(view)=>{
  history.replaceState(null,'','/?view='+view);
- let written=false;const waiting:Array<(r:Response)=>void>=[];vi.stubGlobal('crypto',webcrypto);
+ let written=false,failReads=false,posts=0;const waiting:Array<(r:Response)=>void>=[];vi.stubGlobal('crypto',webcrypto);
  vi.stubGlobal('fetch',vi.fn(async(path:string,init?:RequestInit)=>{
   if(path.endsWith('/session'))return Response.json({owner:{id:'pending-read-owner'},csrfToken:'fixture'});
-  if(init?.method==='POST'){written=true;return Response.json({id:'new-order'});}
-  if(path.includes('/catalog?'))return written?new Promise<Response>(resolve=>waiting.push(resolve)):Response.json({...draftCatalog,episodes:[]});
+  if(init?.method==='POST'){written=true;posts++;return Response.json({id:'new-order'});}
+  if(path.includes('/catalog?'))return !written?Response.json({...draftCatalog,episodes:[]}):failReads?Response.json({error:'只读超时'},{status:503}):new Promise<Response>(resolve=>waiting.push(resolve));
   if(path.includes('?known='))return Response.json({hashes:{},sections:{...draftSnapshot(),episode:{...draftCatalog.episodes[0],id:'new-order'}}});
   if(path.endsWith('/workspace'))return Response.json({workspace:draftWorkspace('new-order')});
   return Response.json({connections:[],versions:[]});
  }));
  render(<LocalCatalogApp/>);fireEvent.click(await screen.findByRole('button',{name:'新建生产单'}));fireEvent.click(screen.getByRole('button',{name:'创建生产单'}));
- await waitFor(()=>expect(screen.queryByRole('dialog',{name:'新建生产单'})).toBeNull());expect(waiting.length).toBeGreaterThan(0);
- await act(async()=>{for(const finish of waiting)finish(Response.json({error:'只读超时'},{status:503}));});expect(screen.getByRole('alert').textContent).toContain('生产单已创建');
+ await waitFor(()=>expect(screen.queryByRole('dialog',{name:'新建生产单'})).toBeNull());await waitFor(()=>expect(waiting.length).toBeGreaterThan(0));
+ // Changing views can start a newer read after an older one is released.
+ // Fail both pending and subsequent reads, then await the authoritative notice.
+ failReads=true;
+ await act(async()=>{for(const finish of waiting.splice(0))finish(Response.json({error:'只读超时'},{status:503}));});
+ expect((await screen.findByRole('alert')).textContent).toContain('生产单已创建');expect(posts).toBe(1);
 });
