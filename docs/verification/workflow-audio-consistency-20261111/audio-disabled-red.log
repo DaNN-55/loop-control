@@ -1,0 +1,34 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/WorkspaceAudioSourceOptions.test.tsx --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+·x
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/WorkspaceAudioSourceOptions.test.tsx > locks source choices and clearing when the current operation becomes busy
+AssertionError: expected null to be 'true' // Object.is equality
+
+- Expected: 
+"true"
+
++ Received: 
+null
+
+ ❯ src/local-app/WorkspaceAudioSourceOptions.test.tsx:34:47
+     32|  view.rerender(<WorkspaceAudioSourceOptions services={services} value=…
+     33|  const choice=screen.getByRole('menuitemradio',{name:/声音 B/});
+     34|  expect(choice.getAttribute('aria-disabled')).toBe('true');
+       |                                               ^
+     35|  expect(screen.getByRole('button',{name:'清除来源选择'}).hasAttribute('disab…
+     36|  fireEvent.click(choice);fireEvent.click(screen.getByRole('button',{na…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  10:55:44
+   Duration  1.39s (transform 98ms, setup 9ms, collect 797ms, tests 131ms, environment 266ms, prepare 40ms)
+

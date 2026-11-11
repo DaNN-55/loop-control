@@ -1,0 +1,601 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/WorkspaceNarrationPanel.manual.test.tsx --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+xxx
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/WorkspaceNarrationPanel.manual.test.tsx > adds each dropped narration to the same audition and explicit adoption flow as TTS
+AssertionError: expected <select …(5)>…(3)</select> to be null
+
+- Expected: 
+null
+
++ Received: 
+<select
+  aria-expanded="false"
+  aria-haspopup="listbox"
+  aria-label="口播素材或上传音轨"
+  class="dan-select-trigger appearance-none rounded-lg bg-primary font-medium text-primary shadow-xs ring-1 ring-primary outline-hidden transition duration-100 ease-linear ring-inset placeholder:text-fg-quaternary focus-visible:ring-2 focus-visible:ring-brand disabled:cursor-not-allowed disabled:opacity-50 py-2 pl-3 text-sm in-data-input-wrapper:flex in-data-input-wrapper:h-full in-data-input-wrapper:gap-1 in-data-input-wrapper:bg-inherit in-data-input-wrapper:px-3 in-data-input-wrapper:py-2 in-data-input-wrapper:font-normal in-data-input-wrapper:text-tertiary in-data-input-wrapper:shadow-none in-data-input-wrapper:ring-transparent in-data-input-wrapper:in-data-[size=sm]:text-sm in-data-input-wrapper:group-disabled:pointer-events-none in-data-input-wrapper:group-disabled:cursor-not-allowed in-data-input-wrapper:group-disabled:bg-transparent in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-[input-size=lg]:py-2.5 in-data-input-wrapper:in-data-[input-size=md]:py-2 in-data-input-wrapper:in-data-[input-size=md]:pl-3 in-data-input-wrapper:in-data-[input-size=sm]:text-sm in-data-input-wrapper:in-data-leading:pr-4.5 in-data-input-wrapper:in-data-leading:in-data-[input-size=lg]:pl-3.5 in-data-input-wrapper:in-data-leading:in-data-[input-size=md]:pr-4.5 in-data-input-wrapper:in-data-leading:in-data-[input-size=md]:pl-3 in-data-input-wrapper:in-data-leading:in-data-[input-size=sm]:pr-3.5 in-data-input-wrapper:in-data-trailing:in-data-[input-size=lg]:pr-8 in-data-input-wrapper:in-data-trailing:in-data-[input-size=md]:pr-7.5 in-data-input-wrapper:in-data-trailing:in-data-[input-size=sm]:pr-6.5"
+  id="select-native-_r_8_"
+>
+  <option
+    value=""
+  >
+    选择已导入的口播
+  </option>
+  <option
+    value="material:first"
+  >
+    first.mp3
+  </option>
+  <option
+    value="material:second"
+  >
+    second.mp3
+  </option>
+</select>
+
+ ❯ src/local-app/WorkspaceNarrationPanel.manual.test.tsx:35:60
+     33| it('adds each dropped narration to the same audition and explicit adop…
+     34|  const f=setup();render(<f.View/>);
+     35|  expect(screen.queryByRole('combobox',{name:'口播素材或上传音轨'})).toBeNull();…
+       |                                                            ^
+     36|  drop('first');await screen.findByRole('button',{name:'试听 镜头正文'});
+     37|  drop('second');await waitFor(()=>expect(screen.getAllByRole('button',…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/local-app/WorkspaceNarrationPanel.manual.test.tsx > registers every uploaded ID without waiting for parent material props
+TestingLibraryElementError: Unable to find role="button" and name "采用"
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"逐镜口播"[39m
+      [33mclass[39m=[32m"workspace-narration"[39m
+    [36m>[39m
+      [36m<div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"workspace-narration-fields"[39m
+        [36m>[39m
+          [36m<header[39m
+            [33mclass[39m=[32m"workspace-narration-subheader"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33maria-label[39m=[32m"字幕与口播"[39m
+              [33mclass[39m=[32m"workspace-visual-preview-tabs"[39m
+              [33mrole[39m=[32m"tablist"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33maria-controls[39m=[32m"_r_f_-voice-panel"[39m
+                [33maria-selected[39m=[32m"true"[39m
+                [33mid[39m=[32m"_r_f_-voice"[39m
+                [33mrole[39m=[32m"tab"[39m
+                [33mtabindex[39m=[32m"0"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0m口播[0m
+              [36m</button>[39m
+              [36m<button[39m
+                [33maria-controls[39m=[32m"_r_f_-captions-panel"[39m
+                [33maria-selected[39m=[32m"false"[39m
+                [33mid[39m=[32m"_r_f_-captions"[39m
+                [33mrole[39m=[32m"tab"[39m
+                [33mtabindex[39m=[32m"-1"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0m字幕[0m
+              [36m</button>[39m
+            [36m</div>[39m
+            [36m<label[39m
+              [33mclass[39m=[32m"relative flex w-max items-start gap-2 workspace-feature-switch"[39m
+              [33mdata-rac[39m=[32m""[39m
+              [33mdata-react-aria-pressable[39m=[32m"true"[39m
+              [33mdata-selected[39m=[32m"true"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mstyle[39m=[32m"border: 0px; clip-path: inset(50%); height: 1px; margin: -1px; overflow: hidden; padding: 0px; position: absolute; width: 1px; white-space: nowrap;"[39m
+              [36m>[39m
+                [36m<input[39m
+                  [33maria-label[39m=[32m"启用口播"[39m
+                  [33mchecked[39m=[32m""[39m
+                  [33mdata-react-aria-pressable[39m=[32m"true"[39m
+                  [33mrole[39m=[32m"switch"[39m
+                  [33mtabindex[39m=[32m"0"[39m
+                  [33mtype[39m=[32m"checkbox"[39m
+                [36m/>[39m
+              [36m</span>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"cursor-pointer rounded-full ring-[0.5px] ring-secondary outline-focus-ring transition duration-150 ease-linear ring-inset bg-brand-solid h-5 w-9 p-0.5"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"rounded-full bg-fg-white shadow-sm size-4 translate-x-4"[39m
+                  [33mstyle[39m=[32m"transition: transform 0.15s ease-in-out, translate 0.15s ease-in-out, border-color 0.1s linear, background-color 0.1s linear;"[39m
+                [36m/>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex flex-col"[39m
+              [36m>[39m
+                [36m<p[39m
+                  [33mclass[39m=[32m"text-secondary select-none text-sm font-medium"[39m
+                [36m>[39m
+                  [0m已开启[0m
+                [36m</p>[39m
+              [36m</div>[39m
+            [36m</label>[39m
+          [36m</header>[39m
+          [36m<div[39m
+            [33maria-labelledby[39m=[32m"_r_f_-captions"[39m
+            [33mhidden[39m=[32m""[39m
+            [33mid[39m=[32m"_r_f_-captions-panel"[39m
+            [33mrole[39m=[32m"tabpanel"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<section[39m
+                [33maria-labelledby[39m=[32m"_r_j_"[39m
+                [33mclass[39m=[32m"workspace-narration-caption-editor"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"workspace-generation-composer workspace-caption-composer"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"workspace-narration-editor workspace-narration-input"[39m
+                  [36m>[39m
+                    [36m<header[39m
+                      [33mclass[39m=[32m"workspace-caption-editor-heading"[39m
+                    [36m>[39m
+                      [36m<h3[39m
+                        [33mid[39m=[32m"_r_j_"[39m
+                      [36m>[39m
+                        [0m字幕内容[0m
+                      [36m</h3>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"size-max flex items-center whitespace-nowrap rounded-md ring-1 ring-inset py-0.5 px-1.5 text-xs font-medium bg-utility-neutral-50 text-utility-neutral-700 ring-utility-neutral-200"[39m
+                      [36m>[39m
+                        [0m跟随口播[0m
+                      [36m</span>[39m
+                    [36m</header>[39m
+                    [36m<textarea[39m
+                      [33maria-describedby[39m=[32m"_r_k_"[39m
+                      [33maria-label[39m=[32m"字幕内容"[39m
+                      [33mmaxlength[39m=[32m"100000"[39m
+                      [33mrows[39m=[32m"5"[39m
+                    [36m>[39m
+                      [0m镜头正文[0m
+                    [36m</textarea>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"workspace-narration-controls workspace-narration-actions"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"workspace-caption-feedback"[39m
+                      [33mid[39m=[32m"_r_k_"[39m
+                    [36m>[39m
+                      [0m直接修改正文，保存后单独使用[0m
+                    [36m</span>[39m
+                    [36m<button[39m
+                      [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] da...
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"逐镜口播"[39m
+        [33mclass[39m=[32m"workspace-narration"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"workspace-narration-fields"[39m
+          [36m>[39m
+            [36m<header[39m
+              [33mclass[39m=[32m"workspace-narration-subheader"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33maria-label[39m=[32m"字幕与口播"[39m
+                [33mclass[39m=[32m"workspace-visual-preview-tabs"[39m
+                [33mrole[39m=[32m"tablist"[39m
+              [36m>[39m
+                [36m<button[39m
+                  [33maria-controls[39m=[32m"_r_f_-voice-panel"[39m
+                  [33maria-selected[39m=[32m"true"[39m
+                  [33mid[39m=[32m"_r_f_-voice"[39m
+                  [33mrole[39m=[32m"tab"[39m
+                  [33mtabindex[39m=[32m"0"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [0m口播[0m
+                [36m</button>[39m
+                [36m<button[39m
+                  [33maria-controls[39m=[32m"_r_f_-captions-panel"[39m
+                  [33maria-selected[39m=[32m"false"[39m
+                  [33mid[39m=[32m"_r_f_-captions"[39m
+                  [33mrole[39m=[32m"tab"[39m
+                  [33mtabindex[39m=[32m"-1"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [0m字幕[0m
+                [36m</button>[39m
+              [36m</div>[39m
+              [36m<label[39m
+                [33mclass[39m=[32m"relative flex w-max items-start gap-2 workspace-feature-switch"[39m
+                [33mdata-rac[39m=[32m""[39m
+                [33mdata-react-aria-pressable[39m=[32m"true"[39m
+                [33mdata-selected[39m=[32m"true"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mstyle[39m=[32m"border: 0px; clip-path: inset(50%); height: 1px; margin: -1px; overflow: hidden; padding: 0px; position: absolute; width: 1px; white-space: nowrap;"[39m
+                [36m>[39m
+                  [36m<input[39m
+                    [33maria-label[39m=[32m"启用口播"[39m
+                    [33mchecked[39m=[32m""[39m
+                    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+                    [33mrole[39m=[32m"switch"[39m
+                    [33mtabindex[39m=[32m"0"[39m
+                    [33mtype[39m=[32m"checkbox"[39m
+                  [36m/>[39m
+                [36m</span>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"cursor-pointer rounded-full ring-[0.5px] ring-secondary outline-focus-ring transition duration-150 ease-linear ring-inset bg-brand-solid h-5 w-9 p-0.5"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"rounded-full bg-fg-white shadow-sm size-4 translate-x-4"[39m
+                    [33mstyle[39m=[32m"transition: transform 0.15s ease-in-out, translate 0.15s ease-in-out, border-color 0.1s linear, background-color 0.1s linear;"[39m
+                  [36m/>[39m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"flex flex-col"[39m
+                [36m>[39m
+                  [36m<p[39m
+                    [33mclass[39m=[32m"text-secondary select-none text-sm font-medium"[39m
+                  [36m>[39m
+                    [0m已开启[0m
+                  [36m</p>[39m
+                [36m</div>[39m
+              [36m</label>[39m
+            [36m</header>[39m
+            [36m<div[39m
+              [33maria-labelledby[39m=[32m"_r_f_-captions"[39m
+              [33mhidden[39m=[32m""[39m
+              [33mid[39m=[32m"_r_f_-captions-panel"[39m
+              [33mrole[39m=[32m"tabpanel"[39m
+            [36m>[39m
+              [36m<div>[39m
+                [36m<section[39m
+                  [33maria-labelledby[39m=[32m"_r_j_"[39m
+                  [33mclass[39m=[32m"workspace-narration-caption-editor"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"workspace-generation-composer workspace-caption-composer"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"workspace-narration-editor workspace-narration-input"[39m
+                    [36m>[39m
+                      [36m<header[39m
+                        [33mclass[39m=[32m"workspace-caption-editor-heading"[39m
+                      [36m>[39m
+                        [36m<h3[39m
+                          [33mid[39m=[32m"_r_j_"[39m
+                        [36m>[39m
+                          [0m字幕内容[0m
+                        [36m</h3>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"size-max flex items-center whitespace-nowrap rounded-md ring-1 ring-inset py-0.5 px-1.5 text-xs font-medium bg-utility-neutral-50 text-utility-neutral-700 ring-utility-neutral-200"[39m
+                        [36m>[39m
+                          [0m跟随口播[0m
+                        [36m</span>[39m
+                      [36m</header>[39m
+                      [36m<textarea[39m
+                        [33maria-describedby[39m=[32m"_r_k_"[39m
+                        [33maria-label[39m=[32m"字幕内容"[39m
+                        [33mmaxlength[39m=[32m"100000"[39m
+                        [33mrows[39m=[32m"5"[39m
+                      [36m>[39m
+                        [0m镜头正文[0m
+                      [36m</textarea>[39m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"workspace-narration-controls workspace-narration-actions"[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"workspace-caption-feedback"[39m
+                        [33mid[39m=[32m"_r_k_"[39m
+                      [36m>[39m
+                        [0m直接修改正文，保存后单独使用[0m
+                      [36m</span>[39m
+                      [36m<button[39m
+                        [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:...
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ src/local-app/WorkspaceNarrationPanel.manual.test.tsx:52:8
+     50|  const files=[new File(['one'],'first.mp3',{type:'audio/mpeg'}),new Fi…
+     51|  fireEvent.change(screen.getByLabelText('导入人工口播'),{target:{files}});
+     52|  await waitFor(()=>expect(screen.getAllByRole('button',{name:'采用'})).t…
+       |        ^
+     53|  expect(upload).toHaveBeenCalledWith(files);expect(f.calls.filter(c=>c…
+     54| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/local-app/WorkspaceNarrationPanel.manual.test.tsx > retries confirmation without reimporting or repeating a confirmed save
+TestingLibraryElementError: Unable to find an element with the text: /确认读取中断/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"逐镜口播"[39m
+      [33mclass[39m=[32m"workspace-narration"[39m
+    [36m>[39m
+      [36m<div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"workspace-narration-fields"[39m
+        [36m>[39m
+          [36m<header[39m
+            [33mclass[39m=[32m"workspace-narration-subheader"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33maria-label[39m=[32m"字幕与口播"[39m
+              [33mclass[39m=[32m"workspace-visual-preview-tabs"[39m
+              [33mrole[39m=[32m"tablist"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33maria-controls[39m=[32m"_r_10_-voice-panel"[39m
+                [33maria-selected[39m=[32m"true"[39m
+                [33mid[39m=[32m"_r_10_-voice"[39m
+                [33mrole[39m=[32m"tab"[39m
+                [33mtabindex[39m=[32m"0"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0m口播[0m
+              [36m</button>[39m
+              [36m<button[39m
+                [33maria-controls[39m=[32m"_r_10_-captions-panel"[39m
+                [33maria-selected[39m=[32m"false"[39m
+                [33mid[39m=[32m"_r_10_-captions"[39m
+                [33mrole[39m=[32m"tab"[39m
+                [33mtabindex[39m=[32m"-1"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0m字幕[0m
+              [36m</button>[39m
+            [36m</div>[39m
+            [36m<label[39m
+              [33mclass[39m=[32m"relative flex w-max items-start gap-2 workspace-feature-switch"[39m
+              [33mdata-rac[39m=[32m""[39m
+              [33mdata-react-aria-pressable[39m=[32m"true"[39m
+              [33mdata-selected[39m=[32m"true"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mstyle[39m=[32m"border: 0px; clip-path: inset(50%); height: 1px; margin: -1px; overflow: hidden; padding: 0px; position: absolute; width: 1px; white-space: nowrap;"[39m
+              [36m>[39m
+                [36m<input[39m
+                  [33maria-label[39m=[32m"启用口播"[39m
+                  [33mchecked[39m=[32m""[39m
+                  [33mdata-react-aria-pressable[39m=[32m"true"[39m
+                  [33mrole[39m=[32m"switch"[39m
+                  [33mtabindex[39m=[32m"0"[39m
+                  [33mtype[39m=[32m"checkbox"[39m
+                [36m/>[39m
+              [36m</span>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"cursor-pointer rounded-full ring-[0.5px] ring-secondary outline-focus-ring transition duration-150 ease-linear ring-inset bg-brand-solid h-5 w-9 p-0.5"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"rounded-full bg-fg-white shadow-sm size-4 translate-x-4"[39m
+                  [33mstyle[39m=[32m"transition: transform 0.15s ease-in-out, translate 0.15s ease-in-out, border-color 0.1s linear, background-color 0.1s linear;"[39m
+                [36m/>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex flex-col"[39m
+              [36m>[39m
+                [36m<p[39m
+                  [33mclass[39m=[32m"text-secondary select-none text-sm font-medium"[39m
+                [36m>[39m
+                  [0m已开启[0m
+                [36m</p>[39m
+              [36m</div>[39m
+            [36m</label>[39m
+          [36m</header>[39m
+          [36m<div[39m
+            [33maria-labelledby[39m=[32m"_r_10_-captions"[39m
+            [33mhidden[39m=[32m""[39m
+            [33mid[39m=[32m"_r_10_-captions-panel"[39m
+            [33mrole[39m=[32m"tabpanel"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<section[39m
+                [33maria-labelledby[39m=[32m"_r_14_"[39m
+                [33mclass[39m=[32m"workspace-narration-caption-editor"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"workspace-generation-composer workspace-caption-composer"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"workspace-narration-editor workspace-narration-input"[39m
+                  [36m>[39m
+                    [36m<header[39m
+                      [33mclass[39m=[32m"workspace-caption-editor-heading"[39m
+                    [36m>[39m
+                      [36m<h3[39m
+                        [33mid[39m=[32m"_r_14_"[39m
+                      [36m>[39m
+                        [0m字幕内容[0m
+                      [36m</h3>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"size-max flex items-center whitespace-nowrap rounded-md ring-1 ring-inset py-0.5 px-1.5 text-xs font-medium bg-utility-neutral-50 text-utility-neutral-700 ring-utility-neutral-200"[39m
+                      [36m>[39m
+                        [0m跟随口播[0m
+                      [36m</span>[39m
+                    [36m</header>[39m
+                    [36m<textarea[39m
+                      [33maria-describedby[39m=[32m"_r_15_"[39m
+                      [33maria-label[39m=[32m"字幕内容"[39m
+                      [33mmaxlength[39m=[32m"100000"[39m
+                      [33mrows[39m=[32m"5"[39m
+                    [36m>[39m
+                      [0m镜头正文[0m
+                    [36m</textarea>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"workspace-narration-controls workspace-narration-actions"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"workspace-caption-feedback"[39m
+                      [33mid[39m=[32m"_r_15_"[39m
+                    [36m>[39m
+                      [0m直接修改正文，保存后单独使用[0m
+                    [36m</span>[39m
+                    [36m<button[39m
+                      [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounde...
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"逐镜口播"[39m
+      [33mclass[39m=[32m"workspace-narration"[39m
+    [36m>[39m
+      [36m<div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"workspace-narration-fields"[39m
+        [36m>[39m
+          [36m<header[39m
+            [33mclass[39m=[32m"workspace-narration-subheader"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33maria-label[39m=[32m"字幕与口播"[39m
+              [33mclass[39m=[32m"workspace-visual-preview-tabs"[39m
+              [33mrole[39m=[32m"tablist"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33maria-controls[39m=[32m"_r_10_-voice-panel"[39m
+                [33maria-selected[39m=[32m"true"[39m
+                [33mid[39m=[32m"_r_10_-voice"[39m
+                [33mrole[39m=[32m"tab"[39m
+                [33mtabindex[39m=[32m"0"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0m口播[0m
+              [36m</button>[39m
+              [36m<button[39m
+                [33maria-controls[39m=[32m"_r_10_-captions-panel"[39m
+                [33maria-selected[39m=[32m"false"[39m
+                [33mid[39m=[32m"_r_10_-captions"[39m
+                [33mrole[39m=[32m"tab"[39m
+                [33mtabindex[39m=[32m"-1"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0m字幕[0m
+              [36m</button>[39m
+            [36m</div>[39m
+            [36m<label[39m
+              [33mclass[39m=[32m"relative flex w-max items-start gap-2 workspace-feature-switch"[39m
+              [33mdata-rac[39m=[32m""[39m
+              [33mdata-react-aria-pressable[39m=[32m"true"[39m
+              [33mdata-selected[39m=[32m"true"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mstyle[39m=[32m"border: 0px; clip-path: inset(50%); height: 1px; margin: -1px; overflow: hidden; padding: 0px; position: absolute; width: 1px; white-space: nowrap;"[39m
+              [36m>[39m
+                [36m<input[39m
+                  [33maria-label[39m=[32m"启用口播"[39m
+                  [33mchecked[39m=[32m""[39m
+                  [33mdata-react-aria-pressable[39m=[32m"true"[39m
+                  [33mrole[39m=[32m"switch"[39m
+                  [33mtabindex[39m=[32m"0"[39m
+                  [33mtype[39m=[32m"checkbox"[39m
+                [36m/>[39m
+              [36m</span>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"cursor-pointer rounded-full ring-[0.5px] ring-secondary outline-focus-ring transition duration-150 ease-linear ring-inset bg-brand-solid h-5 w-9 p-0.5"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"rounded-full bg-fg-white shadow-sm size-4 translate-x-4"[39m
+                  [33mstyle[39m=[32m"transition: transform 0.15s ease-in-out, translate 0.15s ease-in-out, border-color 0.1s linear, background-color 0.1s linear;"[39m
+                [36m/>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex flex-col"[39m
+              [36m>[39m
+                [36m<p[39m
+                  [33mclass[39m=[32m"text-secondary select-none text-sm font-medium"[39m
+                [36m>[39m
+                  [0m已开启[0m
+                [36m</p>[39m
+              [36m</div>[39m
+            [36m</label>[39m
+          [36m</header>[39m
+          [36m<div[39m
+            [33maria-labelledby[39m=[32m"_r_10_-captions"[39m
+            [33mhidden[39m=[32m""[39m
+            [33mid[39m=[32m"_r_10_-captions-panel"[39m
+            [33mrole[39m=[32m"tabpanel"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<section[39m
+                [33maria-labelledby[39m=[32m"_r_14_"[39m
+                [33mclass[39m=[32m"workspace-narration-caption-editor"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"workspace-generation-composer workspace-caption-composer"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"workspace-narration-editor workspace-narration-input"[39m
+                  [36m>[39m
+                    [36m<header[39m
+                      [33mclass[39m=[32m"workspace-caption-editor-heading"[39m
+                    [36m>[39m
+                      [36m<h3[39m
+                        [33mid[39m=[32m"_r_14_"[39m
+                      [36m>[39m
+                        [0m字幕内容[0m
+                      [36m</h3>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"size-max flex items-center whitespace-nowrap rounded-md ring-1 ring-inset py-0.5 px-1.5 text-xs font-medium bg-utility-neutral-50 text-utility-neutral-700 ring-utility-neutral-200"[39m
+                      [36m>[39m
+                        [0m跟随口播[0m
+                      [36m</span>[39m
+                    [36m</header>[39m
+                    [36m<textarea[39m
+                      [33maria-describedby[39m=[32m"_r_15_"[39m
+                      [33maria-label[39m=[32m"字幕内容"[39m
+                      [33mmaxlength[39m=[32m"100000"[39m
+                      [33mrows[39m=[32m"5"[39m
+                    [36m>[39m
+                      [0m镜头正文[0m
+                    [36m</textarea>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"workspace-narration-controls workspace-narration-actions"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"workspace-caption-feedback"[39m
+                      [33mid[39m=[32m"_r_15_"[39m
+                    [36m>[39m
+                      [0m直接修改正文，保存后单独使用[0m
+                    [36m</span>[39m
+                    [36m<button[39m
+                      [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounde...
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/local-app/WorkspaceNarrationPanel.manual.test.tsx:59:15
+     57|  const f=setup();f.failConfirm=true;const upload=vi.fn(async()=>['firs…
+     58|  fireEvent.change(screen.getByLabelText('导入人工口播'),{target:{files:[new …
+     59|  await screen.findByText(/确认读取中断/);
+       |               ^
+     60|  fireEvent.click(screen.getByRole('button',{name:'重试加入候选'}));
+     61|  await screen.findByRole('button',{name:'采用'});
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed (3)
+   Start at  10:54:25
+   Duration  3.59s (transform 133ms, setup 7ms, collect 1.06s, tests 2.11s, environment 246ms, prepare 37ms)
+

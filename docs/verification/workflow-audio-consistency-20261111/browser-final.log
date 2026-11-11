@@ -1,0 +1,24 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+Error: Command failed: agent-browser --session workflow-audio-20261111 wait --fn document.querySelectorAll(".workspace-speech-result").length===1
+✗ Wait timed out after 25000ms
+
+    at genericNodeError (node:internal/errors:986:15)
+    at wrappedFn (node:internal/errors:540:14)
+    at ChildProcess.exithandler (node:child_process:417:12)
+    at ChildProcess.emit (node:events:514:28)
+    at maybeClose (node:internal/child_process:1141:16)
+    at Socket.<anonymous> (node:internal/child_process:498:11)
+    at Socket.emit (node:events:514:28)
+    at Pipe.<anonymous> (node:net:362:12) {
+  code: 1,
+  killed: false,
+  signal: null,
+  cmd: 'agent-browser --session workflow-audio-20261111 wait --fn document.querySelectorAll(".workspace-speech-result").length===1',
+  stdout: '',
+  stderr: '✗ Wait timed out after 25000ms\n'
+}
+
+Node.js v24.20.0

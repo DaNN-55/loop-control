@@ -1,0 +1,44 @@
+import {execFile} from 'node:child_process';import {promisify} from 'node:util';import {writeFile,copyFile} from 'node:fs/promises';import {join} from 'node:path';import assert from 'node:assert/strict';
+const run=promisify(execFile),session='workflow-audio-20261111',dir=join(process.cwd(),'docs/verification/workflow-audio-consistency-20261111'),scratch=join(process.cwd(),'.scratch/workflow-audio-consistency-20261111');
+const b=async(...args)=>(await run('agent-browser',['--session',session,...args],{maxBuffer:4*1024*1024})).stdout;
+const evaluate=async(code)=>JSON.parse(await b('eval',code));
+const open=async(view)=>{await b('open','http://127.0.0.1:5198/__fixture?view='+view);await b('wait','--fn','[...document.querySelectorAll(".workspace-generation-composer")].some(e=>e.getBoundingClientRect().height>0)');};
+const stats=()=>evaluate('(async()=>{const d=await(await fetch("/__stats")).json();return {candidates:d.candidates.length,imports:d.imports,adopts:d.commands.filter(c=>c.command==="adoptWorkspaceCandidate").length,commands:d.commands.map(c=>({name:c.command,materialId:c.data.materialRevisionId,revision:c.data.expectedRevision})),revision:d.revision};})()');
+const shots=async(name)=>b('screenshot',join(dir,name+'.png'));
+const results={};
+try{
+ await b('set','viewport','1543','953');await open('manual');
+ await b('click','[data-material="existing-1"]');await b('click','[aria-label="拖入口播文件"]');await b('wait','--fn','document.querySelectorAll(".workspace-speech-result").length===1');
+ await b('eval','(()=>{const d=new DataTransfer();d.setData("application/x-loop-workspace-material","existing-2");document.querySelector("[aria-label=拖入口播文件]").dispatchEvent(new DragEvent("drop",{bubbles:true,cancelable:true,dataTransfer:d}));})()');await b('wait','--fn','document.querySelectorAll(".workspace-speech-result").length===2');
+ await b('click','.workspace-speech-result:first-child button[aria-label^="试听 "]');await b('wait','--fn','[...document.querySelectorAll("audio")].some(a=>!a.paused)');
+ assert.equal((await stats()).adopts,0);
+ await b('click','.workspace-speech-result:first-child button[aria-label="采用"]');await b('wait','--text','确认采用');assert.equal((await stats()).adopts,0);await shots('manual-confirm-wide');
+ await b('find','role','button','click','--name','确认采用');await b('wait','--text','已采用');
+ const files=['第三段录音.mp3','第四段录音.mp3','重试录音.mp3'];for(const name of files)await copyFile(join(scratch,'sample.mp3'),join(scratch,name));
+ await b('upload','[aria-label="导入人工口播"]',join(scratch,files[0]),join(scratch,files[1]));await b('wait','--fn','document.querySelectorAll(".workspace-speech-result").length===4');
+ const before=await stats();await evaluate('(async()=>{await fetch("/__fail?command=confirmWorkspaceNarration");return true;})()');await b('upload','[aria-label="导入人工口播"]',join(scratch,files[2]));await b('wait','--text','验收：登记连接中断');
+ await b('find','role','button','click','--name','重试加入候选');await b('wait','--fn','document.querySelectorAll(".workspace-speech-result").length===5');const after=await stats();assert.equal(after.imports,before.imports+1);assert.equal(after.commands.filter(c=>c.name==='saveWorkspaceNarration').length,before.commands.filter(c=>c.name==='saveWorkspaceNarration').length+1);assert.equal(after.adopts,1);results.manual={passed:true,drag:'HTML5 DataTransfer event',auditionPlayed:true,...after};await shots('manual-candidates-wide');
+ await b('set','viewport','390','1000');await evaluate('(()=>{document.documentElement.dataset.theme="dark";return true;})()');assert.equal(await evaluate('document.documentElement.scrollWidth'),390);await shots('manual-candidates-mobile-dark');
+ await b('set','viewport','1543','953');await open('music');await b('find','role','button','click','--name','音频来源');await b('wait','[aria-label="筛选音频来源"]');const menu=await b('snapshot');assert(!menu.includes('刷新服务'));assert(!menu.includes('设为本期默认'));await shots('audio-source-wide');
+ await b('fill','[aria-label="筛选音频来源"]','备用');await b('click','[role="menuitemradio"]');await b('wait','--fn','!document.querySelector("[role=dialog]")');await b('find','role','button','click','--name','音频来源');await b('find','role','button','click','--name','清除来源选择');await b('wait','--fn','!document.querySelector("[role=dialog]")');assert((await b('get','text','[aria-label="音频来源"]')).includes('选择音频来源'));results.source={passed:true,searchSelectCloses:true,clearCloses:true,removedFooter:true};
+ await b('set','viewport','390','1000');await evaluate('(()=>{document.documentElement.dataset.theme="dark";return true;})()');await b('find','role','button','click','--name','音频来源');await shots('audio-source-mobile-dark');await b('find','role','button','click','--name','关闭音频来源');
+ await b('open','http://127.0.0.1:5198/__fixture?view=music&single=1');await b('wait','[aria-label="音频来源"]');await b('find','role','button','click','--name','音频来源');await b('wait','--text','连接尚未验证');
+ const single=await b('snapshot');assert(single.includes('本地连接 · v2'));assert(single.includes('连接尚未验证'));const locked=await evaluate("document.querySelector('[role=menuitemradio]').getAttribute('aria-disabled')");assert.equal(locked,'true');results.singleSource={visibleConnection:true,visibleReason:true,disabled:true};await shots('audio-single-unavailable');await b('find','role','button','click','--name','关闭音频来源');
+ const focus=[];
+ for(const view of ['captions','tts','music','image','video'])for(const [width,theme]of [[1543,'light'],[390,'dark']]){
+  await b('set','viewport',String(width),'1000');await open(view);await evaluate(`(()=>{document.documentElement.dataset.theme=${JSON.stringify(theme)};return true;})()`);
+  await b('wait','--fn','[...document.querySelectorAll(".workspace-generation-composer textarea")].some(t=>t.getClientRects().length>0)');await evaluate("(()=>{[...document.querySelectorAll('.workspace-generation-composer textarea')].find(t=>t.getClientRects().length>0).setAttribute('data-check-active','true');return true;})()");await b('click','[data-check-active]');
+  const value=await evaluate(`(()=>{const t=document.querySelector('[data-check-active]'),p=t.closest('.workspace-composer-input,.workspace-narration-input,.workspace-audio-composer-input'),i=getComputedStyle(t),o=getComputedStyle(p);return {view:${JSON.stringify(view)},width:innerWidth,theme:${JSON.stringify(theme)},scrollWidth:document.documentElement.scrollWidth,inner:{outline:i.outlineStyle,border:i.borderWidth,shadow:i.boxShadow},outer:{outline:o.outlineStyle,width:o.outlineWidth,color:o.outlineColor}};})()`);
+  assert.equal(value.inner.outline,'none');assert.equal(value.inner.border,'0px');assert.equal(value.inner.shadow,'none');assert.equal(value.outer.outline,'solid');assert.equal(value.outer.width,'2px');assert.equal(value.scrollWidth,width);focus.push(value);
+  if(view==='captions'||view==='music')await shots(`${view}-focus-${width}-${theme}`);
+  if(view==='captions'){
+   await evaluate("(()=>{document.querySelector('[data-check-active]').setAttribute('aria-invalid','true');return true;})()");const invalid=await evaluate("(()=>{const p=document.querySelector('.workspace-narration-input'),s=getComputedStyle(p);return {border:s.borderColor,outline:s.outlineColor};})()");assert.equal(invalid.border,invalid.outline);assert.notEqual(invalid.border,value.outer.color);
+   await b('click','[aria-label="独立字段"]');const standalone=await evaluate("getComputedStyle(document.querySelector('[aria-label=独立字段]')).outlineStyle");assert.equal(standalone,'solid');
+  }
+ }
+ results.focus=focus;
+ const headers=[];
+ for(const view of ['captions','music']){await b('set','viewport','1100','900');await open(view);const v=await evaluate("(()=>{const h=document.querySelector('.workspace-narration-subheader,.workspace-audio-preparation>.workspace-narration-toolbar'),tabs=h.querySelector('.workspace-visual-preview-tabs'),toggle=h.querySelector('.workspace-feature-switch'),s=getComputedStyle(h),a=tabs.querySelector('[aria-selected=true],[aria-pressed=true]'),as=getComputedStyle(a);return {align:s.alignItems,tabTop:tabs.getBoundingClientRect().top,switchTop:toggle.getBoundingClientRect().top,height:h.getBoundingClientRect().height,selectedBackground:as.backgroundColor,selectedShadow:as.boxShadow};})()");assert.equal(v.align,'flex-start');assert.equal(v.tabTop,v.switchTop);assert(v.height>=40);headers.push({view,...v});}
+ assert.equal(headers[0].selectedBackground,headers[1].selectedBackground);assert.equal(headers[0].selectedShadow,headers[1].selectedShadow);results.headers=headers;
+ await writeFile(join(dir,'browser-results.json'),JSON.stringify({passed:true,...results},null,2)+'\n');console.log('All browser checks passed');
+}catch(error){await writeFile(join(dir,'browser-check-failure.txt'),String(error.stack)+'\n'+await b('snapshot').catch(String));await shots('browser-check-failure').catch(()=>{});throw error;}

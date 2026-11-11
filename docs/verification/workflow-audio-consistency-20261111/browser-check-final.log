@@ -1,0 +1,19 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+20 !== 22
+
+    at file:///Users/dan/Programs/loop-control/docs/verification/workflow-audio-consistency-20261111/browser-check.mjs:39:724
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 20,
+  expected: 22,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.20.0

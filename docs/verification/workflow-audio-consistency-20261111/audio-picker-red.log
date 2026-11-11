@@ -1,0 +1,292 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/WorkspaceAudioSourceOptions.test.tsx --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+x
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/WorkspaceAudioSourceOptions.test.tsx > filters exact audio connections, closes on selection, and clears without choosing another connection
+TestingLibraryElementError: Unable to find an accessible element with the role "button" and name "音频来源"
+
+Here are the accessible roles:
+
+  menu:
+
+  Name "音频可用来源":
+  [36m<div[39m
+    [33maria-label[39m=[32m"音频可用来源"[39m
+    [33mclass[39m=[32m"workspace-composer-model-list"[39m
+    [33mdata-collection[39m=[32m"react-aria-_r_0_"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mrole[39m=[32m"menu"[39m
+    [33mtabindex[39m=[32m"0"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  menuitemradio:
+
+  Name "清除来源选择":
+  [36m<div[39m
+    [33maria-checked[39m=[32m"true"[39m
+    [33mclass[39m=[32m"workspace-composer-model-option"[39m
+    [33mdata-collection[39m=[32m"react-aria-_r_0_"[39m
+    [33mdata-key[39m=[32m"clear"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mdata-selected[39m=[32m"true"[39m
+    [33mdata-selection-mode[39m=[32m"single"[39m
+    [33mid[39m=[32m"react-aria-_r_4_"[39m
+    [33mrole[39m=[32m"menuitemradio"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m/>[39m
+
+  Name "Freesound 素材检索 声音 A":
+  [36m<div[39m
+    [33maria-checked[39m=[32m"false"[39m
+    [33maria-label[39m=[32m"Freesound 素材检索 声音 A"[39m
+    [33mclass[39m=[32m"workspace-composer-model-option"[39m
+    [33mdata-collection[39m=[32m"react-aria-_r_0_"[39m
+    [33mdata-key[39m=[32m"sound-a"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mdata-selection-mode[39m=[32m"single"[39m
+    [33mid[39m=[32m"react-aria-_r_9_"[39m
+    [33mrole[39m=[32m"menuitemradio"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m/>[39m
+
+  Name "Freesound 素材检索 声音 B":
+  [36m<div[39m
+    [33maria-checked[39m=[32m"false"[39m
+    [33maria-label[39m=[32m"Freesound 素材检索 声音 B"[39m
+    [33mclass[39m=[32m"workspace-composer-model-option"[39m
+    [33mdata-collection[39m=[32m"react-aria-_r_0_"[39m
+    [33mdata-key[39m=[32m"sound-b"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mdata-selection-mode[39m=[32m"single"[39m
+    [33mid[39m=[32m"react-aria-_r_d_"[39m
+    [33mrole[39m=[32m"menuitemradio"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m/>[39m
+
+  Name "Freesound 素材检索 未验证":
+  [36m<div[39m
+    [33maria-checked[39m=[32m"false"[39m
+    [33maria-disabled[39m=[32m"true"[39m
+    [33maria-label[39m=[32m"Freesound 素材检索 未验证"[39m
+    [33mclass[39m=[32m"workspace-composer-model-option"[39m
+    [33mdata-collection[39m=[32m"react-aria-_r_0_"[39m
+    [33mdata-disabled[39m=[32m"true"[39m
+    [33mdata-key[39m=[32m"sound-disabled"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mdata-selection-mode[39m=[32m"single"[39m
+    [33mid[39m=[32m"react-aria-_r_h_"[39m
+    [33mrole[39m=[32m"menuitemradio"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  strong:
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  Name "连接未验证":
+  [36m<strong[39m
+    [33mtitle[39m=[32m"连接未验证"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  group:
+
+  Name "Freesound":
+  [36m<section[39m
+    [33maria-labelledby[39m=[32m"react-aria-_r_5_"[39m
+    [33mclass[39m=[32m"workspace-composer-model-group"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mrole[39m=[32m"group"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  presentation:
+
+  Name "":
+  [36m<header[39m
+    [33mclass[39m=[32m"workspace-composer-model-group-heading"[39m
+    [33mid[39m=[32m"react-aria-_r_5_"[39m
+    [33mrole[39m=[32m"presentation"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<template />[39m
+    [36m<span[39m
+      [33mdata-focus-scope-start[39m=[32m"true"[39m
+      [33mhidden[39m=[32m""[39m
+    [36m/>[39m
+    [36m<div[39m
+      [33maria-label[39m=[32m"音频可用来源"[39m
+      [33mclass[39m=[32m"workspace-composer-model-list"[39m
+      [33mdata-collection[39m=[32m"react-aria-_r_0_"[39m
+      [33mdata-rac[39m=[32m""[39m
+      [33mrole[39m=[32m"menu"[39m
+      [33mtabindex[39m=[32m"0"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33maria-checked[39m=[32m"true"[39m
+        [33mclass[39m=[32m"workspace-composer-model-option"[39m
+        [33mdata-collection[39m=[32m"react-aria-_r_0_"[39m
+        [33mdata-key[39m=[32m"clear"[39m
+        [33mdata-rac[39m=[32m""[39m
+        [33mdata-react-aria-pressable[39m=[32m"true"[39m
+        [33mdata-selected[39m=[32m"true"[39m
+        [33mdata-selection-mode[39m=[32m"single"[39m
+        [33mid[39m=[32m"react-aria-_r_4_"[39m
+        [33mrole[39m=[32m"menuitemradio"[39m
+        [33mtabindex[39m=[32m"-1"[39m
+      [36m>[39m
+        [36m<strong>[39m
+          [0m清除来源选择[0m
+        [36m</strong>[39m
+        [36m<svg[39m
+          [33maria-hidden[39m=[32m"true"[39m
+          [33mclass[39m=[32m"lucide lucide-check"[39m
+          [33mfill[39m=[32m"none"[39m
+          [33mheight[39m=[32m"14"[39m
+          [33mstroke[39m=[32m"currentColor"[39m
+          [33mstroke-linecap[39m=[32m"round"[39m
+          [33mstroke-linejoin[39m=[32m"round"[39m
+          [33mstroke-width[39m=[32m"2"[39m
+          [33mviewBox[39m=[32m"0 0 24 24"[39m
+          [33mwidth[39m=[32m"14"[39m
+          [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+        [36m>[39m
+          [36m<path[39m
+            [33md[39m=[32m"M20 6 9 17l-5-5"[39m
+          [36m/>[39m
+        [36m</svg>[39m
+      [36m</div>[39m
+      [36m<section[39m
+        [33maria-labelledby[39m=[32m"react-aria-_r_5_"[39m
+        [33mclass[39m=[32m"workspace-composer-model-group"[39m
+        [33mdata-rac[39m=[32m""[39m
+        [33mrole[39m=[32m"group"[39m
+      [36m>[39m
+        [36m<header[39m
+          [33mclass[39m=[32m"workspace-composer-model-group-heading"[39m
+          [33mid[39m=[32m"react-aria-_r_5_"[39m
+          [33mrole[39m=[32m"presentation"[39m
+        [36m>[39m
+          [36m<span>[39m
+            [0mFreesound[0m
+          [36m</span>[39m
+        [36m</header>[39m
+        [36m<div[39m
+          [33maria-checked[39m=[32m"false"[39m
+          [33maria-label[39m=[32m"Freesound 素材检索 声音 A"[39m
+          [33mclass[39m=[32m"workspace-composer-model-option"[39m
+          [33mdata-collection[39m=[32m"react-aria-_r_0_"[39m
+          [33mdata-key[39m=[32m"sound-a"[39m
+          [33mdata-rac[39m=[32m""[39m
+          [33mdata-react-aria-pressable[39m=[32m"true"[39m
+          [33mdata-selection-mode[39m=[32m"single"[39m
+          [33mid[39m=[32m"react-aria-_r_9_"[39m
+          [33mrole[39m=[32m"menuitemradio"[39m
+          [33mtabindex[39m=[32m"-1"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m素材检索[0m
+          [36m</strong>[39m
+          [36m<small>[39m
+            [0m声音 A[0m
+            [0m · v[0m
+            [0m2[0m
+          [36m</small>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33maria-checked[39m=[32m"false"[39m
+          [33maria-label[39m=[32m"Freesound 素材检索 声音 B"[39m
+          [33mclass[39m=[32m"workspace-composer-model-option"[39m
+          [33mdata-collection[39m=[32m"react-aria-_r_0_"[39m
+          [33mdata-key[39m=[32m"sound-b"[39m
+          [33mdata-rac[39m=[32m""[39m
+          [33mdata-react-aria-pressable[39m=[32m"true"[39m
+          [33mdata-selection-mode[39m=[32m"single"[39m
+          [33mid[39m=[32m"react-aria-_r_d_"[39m
+          [33mrole[39m=[32m"menuitemradio"[39m
+          [33mtabindex[39m=[32m"-1"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0m素材检索[0m
+          [36m</strong>[39m
+          [36m<small>[39m
+            [0m声音 B[0m
+            [0m · v[0m
+            [0m3[0m
+          [36m</small>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33maria-checked[39m=[32m"false"[39m
+          [33maria-disabled[39m=[32m"true"[39m
+          [33maria-label[39m=[32m"Freesound 素材检索 未验证"[39m
+          [33mclass[39m=[32m"workspace-composer-model-option"[39m
+          [33mdata-collection[39m=[32m"react-aria-_r_0_"[39m
+          [33mdata-disabled[39m=[32m"true"[39m
+          [33mdata-key[39m=[32m"sound-disabled"[39m
+          [33mdata-rac[39m=[32m""[39m
+          [33mdata-react-aria-pressable[39m=[32m"true"[39m
+          [33mdata-selection-mode[39m=[32m"single"[39m
+          [33mid[39m=[32m"react-aria-_r_h_"[39m
+          [33mrole[39m=[32m"menuitemradio"[39m
+        [36m>[39m
+          [36m<strong[39m
+            [33mtitle[39m=[32m"连接未验证"[39m
+          [36m>[39m
+            [0m素材检索[0m
+          [36m</strong>[39m
+          [36m<small>[39m
+            [0m未验证[0m
+            [0m · v[0m
+            [0m1[0m
+          [36m</small>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+    [36m</div>[39m
+    [36m<span[39m
+      [33mdata-focus-scope-end[39m=[32m"true"[39m
+      [33mhidden[39m=[32m""[39m
+    [36m/>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/local-app/WorkspaceAudioSourceOptions.test.tsx:16:25
+     14|  function View(){const [value,setValue]=useState('');return <Workspace…
+     15|  render(<View/>);
+     16|  fireEvent.click(screen.getByRole('button',{name:'音频来源'}));
+       |                         ^
+     17|  fireEvent.change(screen.getByRole('searchbox',{name:'筛选音频来源'}),{targe…
+     18|  expect(screen.queryByRole('menuitemradio',{name:/声音 A/})).toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  10:52:29
+   Duration  1.20s (transform 44ms, setup 8ms, collect 591ms, tests 53ms, environment 385ms, prepare 36ms)
+

@@ -1,0 +1,31 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/WorkspaceAudioSourceOptions.test.tsx --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+··x
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/WorkspaceAudioSourceOptions.test.tsx > keeps recovery actions available when no source exists and identifies a search with no matches
+AssertionError: expected '没有匹配模型。' to be '没有匹配来源。' // Object.is equality
+
+Expected: "没有匹配来源。"
+Received: "没有匹配模型。"
+
+ ❯ src/local-app/WorkspaceAudioSourceOptions.test.tsx:46:49
+     44|  view.rerender(<WorkspaceAudioSourceOptions services={services} value=…
+     45|  fireEvent.click(screen.getByRole('button',{name:'音频来源'}));fireEvent.c…
+     46|  expect(screen.getByRole('status').textContent).toBe('没有匹配来源。');
+       |                                                 ^
+     47| });
+     48| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  10:56:39
+   Duration  1.21s (transform 62ms, setup 9ms, collect 624ms, tests 174ms, environment 249ms, prepare 37ms)
+

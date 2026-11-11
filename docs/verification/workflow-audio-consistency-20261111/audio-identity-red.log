@@ -1,0 +1,140 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/WorkspaceAudioSourceOptions.test.tsx --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+···x
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/WorkspaceAudioSourceOptions.test.tsx > shows the exact identity and unavailable reason for a single disabled source
+TestingLibraryElementError: Unable to find an element with the text: 未验证 · v1 · 连接未验证. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div[39m
+    [33maria-hidden[39m=[32m"true"[39m
+  [36m>[39m
+    [36m<button[39m
+      [33maria-controls[39m=[32m"react-aria-_r_39_"[39m
+      [33maria-expanded[39m=[32m"true"[39m
+      [33maria-label[39m=[32m"音频来源"[39m
+      [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-2.5 py-1.5 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 *:data-icon:size-4 *:data-icon:stroke-[2.25px] text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover workspace-composer-chip workspace-model-picker-trigger"[39m
+      [33mdata-color[39m=[32m"tertiary"[39m
+      [33mdata-pressed[39m=[32m"true"[39m
+      [33mdata-rac[39m=[32m""[39m
+      [33mdata-react-aria-pressable[39m=[32m"true"[39m
+      [33mid[39m=[32m"react-aria-_r_3a_"[39m
+      [33mtabindex[39m=[32m"0"[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [36m<span[39m
+        [33mclass[39m=[32m"transition-inherit-all px-0.5"[39m
+        [33mdata-text[39m=[32m"true"[39m
+      [36m>[39m
+        [0m选择音频来源[0m
+      [36m</span>[39m
+      [36m<svg[39m
+        [33maria-hidden[39m=[32m"true"[39m
+        [33mclass[39m=[32m"lucide lucide-chevron-down pointer-events-none size-5 shrink-0 transition-inherit-all"[39m
+        [33mdata-icon[39m=[32m"trailing"[39m
+        [33mfill[39m=[32m"none"[39m
+        [33mheight[39m=[32m"24"[39m
+        [33mstroke[39m=[32m"currentColor"[39m
+        [33mstroke-linecap[39m=[32m"round"[39m
+        [33mstroke-linejoin[39m=[32m"round"[39m
+        [33mstroke-width[39m=[32m"2"[39m
+        [33mviewBox[39m=[32m"0 0 24 24"[39m
+        [33mwidth[39m=[32m"24"[39m
+        [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+      [36m>[39m
+        [36m<path[39m
+          [33md[39m=[32m"m6 9 6 6 6-6"[39m
+        [36m/>[39m
+      [36m</svg>[39m
+    [36m</button>[39m
+  [36m</div>[39m
+  [36m<span[39m
+    [33maria-hidden[39m=[32m"true"[39m
+    [33mdata-focus-scope-start[39m=[32m"true"[39m
+    [33mhidden[39m=[32m""[39m
+  [36m/>[39m
+  [36m<div[39m
+    [33maria-hidden[39m=[32m"true"[39m
+    [33mdata-testid[39m=[32m"underlay"[39m
+    [33mstyle[39m=[32m"position: fixed; inset: 0;"[39m
+  [36m/>[39m
+  [36m<div[39m
+    [33mstyle[39m=[32m"display: contents;"[39m
+  [36m>[39m
+    [36m<div[39m
+      [33maria-labelledby[39m=[32m"react-aria-_r_3a_"[39m
+      [33mclass[39m=[32m"dan-ui product-ui workspace-composer-popover workspace-composer-model-popover"[39m
+      [33mdata-placement[39m=[32m"top"[39m
+      [33mdata-rac[39m=[32m""[39m
+      [33mdata-trigger[39m=[32m"DialogTrigger"[39m
+      [33mdir[39m=[32m"ltr"[39m
+      [33mstyle[39m=[32m"position: absolute; z-index: 100000; max-height: 0px; --trigger-anchor-point: -12px 0px; --trigger-width: 0px; left: 12px; bottom: 8px;"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mstyle[39m=[32m"border: 0px; clip-path: inset(50%); height: 1px; margin: -1px; overflow: hidden; padding: 0px; position: absolute; width: 1px; white-space: nowrap;"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33maria-label[39m=[32m"Dismiss"[39m
+          [33mid[39m=[32m"react-aria-_r_3d_"[39m
+          [33mstyle[39m=[32m"width: 1px; height: 1px;"[39m
+          [33mtabindex[39m=[32m"-1"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"选择音频来源"[39m
+        [33mclass[39m=[32m"workspace-composer-settings"[39m
+        [33mdata-rac[39m=[32m""[39m
+        [33mid[39m=[32m"react-aria-_r_39_"[39m
+        [33mrole[39m=[32m"dialog"[39m
+        [33mtabindex[39m=[32m"-1"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<h3>[39m
+            [0m选择音频来源[0m
+          [36m</h3>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"关闭音频来源"[39m
+            [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-2.5 py-1.5 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 *:data-icon:size-4 *:data-icon:stroke-[2.25px] text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+            [33mdata-color[39m=[32m"tertiary"[39m
+            [33mdata-icon-only[39m=[32m"true"[39m
+            [33mdata-rac[39m=[32m""[39m
+            [33mdata-react-aria-pressable[39m=[32m"true"[39m
+            [33mid[39m=[32m"react-aria-_r_3g_"[39m
+            [33mtabindex[39m=[32m"0"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-x pointer-events-none size-5 shrink-0 transition-inherit-all"[39m
+              [33mdata-icon[39m=[32m"leading"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              ...
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/local-app/WorkspaceAudioSourceOptions.test.tsx:52:16
+     50|  const item=screen.getByRole('menuitemradio',{name:/Freesound/});
+     51|  expect(item.getAttribute('aria-disabled')).toBe('true');
+     52|  expect(screen.getByText('未验证 · v1 · 连接未验证').closest('[role="menuitemr…
+       |                ^
+     53| });
+     54| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  11:14:58
+   Duration  1.06s (transform 66ms, setup 8ms, collect 610ms, tests 180ms, environment 136ms, prepare 33ms)
+

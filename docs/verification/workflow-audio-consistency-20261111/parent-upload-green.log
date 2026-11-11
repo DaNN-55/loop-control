@@ -1,0 +1,12 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/ProductionWorkspaceManualUpload.test.tsx src/local-app/ProductionWorkspaceUploadRecovery.test.tsx src/local-app/LocalEpisodeDetail.upload.test.tsx --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+····
+
+ Test Files  3 passed (3)
+      Tests  4 passed (4)
+   Start at  11:05:23
+   Duration  2.84s (transform 543ms, setup 24ms, collect 5.08s, tests 1.45s, environment 880ms, prepare 116ms)
+

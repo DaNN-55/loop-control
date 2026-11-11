@@ -1,0 +1,228 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/ProductionWorkspaceManualUpload.test.tsx --reporter=dot
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+x
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/ProductionWorkspaceManualUpload.test.tsx > hands narration its imported material even when the parent acknowledges and consumes the shelf receipt
+AssertionError: expected "spy" to be called with arguments: [ 'saveWorkspaceNarration', …(1) ]
+
+Received: 
+
+  1st spy call:
+
+  [
+-   "saveWorkspaceNarration",
+-   ObjectContaining {
+-     "materialRevisionId": "voice-material",
++   "importMaterial",
++   {
++     "contentBase64": "dm9pY2U=",
++     "episodeId": "manual-parent-e",
++     "isMainScript": false,
++     "materialPurpose": "general_reference",
++     "materialType": "audio",
++     "mimeType": "audio/mpeg",
++     "sourceKind": "file",
++     "sourcePath": "recording.mp3",
+    },
+  ]
+
+
+Number of calls: 1
+
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"四步制作工作流"[39m
+        [33mclass[39m=[32m"production-workspace"[39m
+        [33mdata-compact-workflow[39m=[32m"true"[39m
+      [36m>[39m
+        [36m<header[39m
+          [33mclass[39m=[32m"production-workspace-title"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"production-workspace-heading"[39m
+          [36m>[39m
+            [36m<h2>[39m
+              [0m人工口播导入[0m
+            [36m</h2>[39m
+          [36m</div>[39m
+          [36m<nav[39m
+            [33maria-label[39m=[32m"四步制作步骤"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33maria-label[39m=[32m"脚本确认"[39m
+            [36m>[39m
+              [36m<span>[39m
+                [0m1[0m
+              [36m</span>[39m
+              [0m脚本确认[0m
+              [36m<small>[39m
+                [0m已确认[0m
+              [36m</small>[39m
+            [36m</button>[39m
+            [36m<button[39m
+              [33maria-current[39m=[32m"page"[39m
+              [33maria-label[39m=[32m"分镜台，当前查看"[39m
+            [36m>[39m
+              [36m<span>[39m
+                [0m2[0m
+              [36m</span>[39m
+              [0m分镜台[0m
+              [36m<small>[39m
+                [0m2 项待准备[0m
+              [36m</small>[39m
+            [36m</button>[39m
+            [36m<button[39m
+              [33maria-label[39m=[32m"剪辑工作台"[39m
+            [36m>[39m
+              [36m<span>[39m
+                [0m3[0m
+              [36m</span>[39m
+              [0m剪辑工作台[0m
+              [36m<small>[39m
+                [0m待剪辑[0m
+              [36m</small>[39m
+            [36m</button>[39m
+            [36m<button[39m
+              [33maria-label[39m=[32m"检查与交付"[39m
+            [36m>[39m
+              [36m<span>[39m
+                [0m4[0m
+              [36m</span>[39m
+              [0m检查与交付[0m
+              [36m<small>[39m
+                [0m待确认[0m
+              [36m</small>[39m
+            [36m</button>[39m
+          [36m</nav>[39m
+        [36m</header>[39m
+        [36m<fieldset[39m
+          [33mclass[39m=[32m"production-workspace-body"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mhidden[39m=[32m""[39m
+          [36m>[39m
+            [36m<section[39m
+              [33maria-label[39m=[32m"脚本确认"[39m
+              [33mclass[39m=[32m"production-workspace-section workspace-script workspace-script-compact"[39m
+            [36m>[39m
+              [36m<header>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"workspace-compact-heading"[39m
+                [36m>[39m
+                  [36m<h3>[39m
+                    [0m主脚本[0m
+                  [36m</h3>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"is-confirmed"[39m
+                    [33mrole[39m=[32m"status"[39m
+                  [36m>[39m
+                    [0m已确认基准[0m
+                  [36m</span>[39m
+                [36m</div>[39m
+              [36m</header>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"workspace-script-layout"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"workspace-script-main"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33maria-label[39m=[32m"主脚本预览"[39m
+                    [33mclass[39m=[32m"workspace-script-preview"[39m
+                    [33mrole[39m=[32m"document"[39m
+                    [33mtabindex[39m=[32m"0"[39m
+                  [36m>[39m
+                    [0m正在读取主脚本…[0m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33maria-label[39m=[32m"脚本字数"[39m
+                    [33mclass[39m=[32m"workspace-script-statistics"[39m
+                    [33mrole[39m=[32m"group"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mtitle[39m=[32m"完整脚本的 Unicode 字符数，包含空白、标点与格式。"[39m
+                    [36m>[39m
+                      [0m脚本字符 [0m
+                      [0m0[0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mtitle[39m=[32m"仅统计正文中的文字和数字，未区分口播与说明。"[39m
+                    [36m>[39m
+                      [0m正文文字数[0m
+                      [0m [0m
+                      [0m0[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                [36m</div>[39m
+                [36m<aside[39m
+                  [33maria-label[39m=[32m"脚本基准"[39m
+                  [33mclass[39m=[32m"workspace-script-basis"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"workspace-script-file"[39m
+                  [36m>[39m
+                    [36m<input[39m
+                      [33maccept[39m=[32m".md,.txt,text/plain,text/markdown"[39m
+                      [33maria-label[39m=[32m"上传主脚本"[39m
+                      [33mdisabled[39m=[32m""[39m
+                      [33mhidden[39m=[32m""[39m
+                      [33mtype[39m=[32m"file"[39m
+                    [36m/>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"workspace-script-file-slot is-locked"[39m
+                    [36m>[39m
+                      [36m<svg[39m
+                        [33maria-hidden[39m=[32m"true"[39m
+                        [33mclass[39m=[32m"lucide lucide-file-text"[39m
+                        [33mfill[39m=[32m"none"[39m
+                        [33mheight[39m=[32m"20"[39m
+                        [33mstroke[39m=[32m"currentColor"[39m
+                        [33mstroke-linecap[39m=[32m"round"[39m
+                        [33mstroke-linejoin[39m=[32m"round"[39m
+                        [33mstroke-width[39m=[32m"2"[39m
+                        [33mviewBox[39m=[32m"0 0 24 24"[39m
+                        [33mwidth[39m=[32m"20"[39m
+                        [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                      [36m>[39m
+                        [36m<path[39m
+                          [33md[39m=[32m"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"[39m
+                        [36m/>[39m
+                        [36m<path[39m
+                          [33md[39m=[32m"M14 2v5a1 1 0 0 0 1 1h5"[39m
+                        [36m/>[39m
+                        [36m<path[39m
+                          [33md[39m=[32m"M10 9H8"[39m
+                        [36m/>[39m
+                        [36m<path[39m
+                          [33md[39m=[32m"M16 13H8"[39m
+                        [36m/>[39m
+     ...
+ ❯ src/local-app/ProductionWorkspaceManualUpload.test.tsx:24:36
+     22|  render(<Parent/>);fireEvent.click(await screen.findByRole('tab',{name…
+     23|  fireEvent.change(screen.getByLabelText('导入人工口播'),{target:{files:[new …
+     24|  await waitFor(()=>expect(command).toHaveBeenCalledWith('saveWorkspace…
+       |                                    ^
+     25| });
+     26| 
+ ❯ runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  11:05:00
+   Duration  3.02s (transform 372ms, setup 7ms, collect 1.45s, tests 1.14s, environment 252ms, prepare 33ms)
+
