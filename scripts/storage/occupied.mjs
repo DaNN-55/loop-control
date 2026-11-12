@@ -15,7 +15,7 @@ export async function assertStorageUnoccupied(database,mediaRoot,sourceRoots,run
   for(const account of accounts){
    const busy=JSON.parse(query(`SET SESSION AUTHORIZATION loop_app;DO $$BEGIN PERFORM set_config('loop.owner_id',${quote(account.owner)},false);END$$;SELECT local_identity.account_directory_busy(${quote(account.id)}::uuid)`));
    if(!busy.length)continue;
-   // ADR-0045: an archive preserves uncertain history; it does not authorize
+   // ADR-0046: an archive preserves uncertain history; it does not authorize
    // destructive directory operations or settle/resume a superseded request.
    const inactive=new Set(publicationGuard?JSON.parse(query(`SELECT coalesce(jsonb_agg(t.id),'[]') FROM public.tasks t JOIN public.episodes e ON e.id=t.episode_id WHERE e.account_id=${quote(account.id)}::uuid AND t.invalidated_at IS NOT NULL AND t.status IN ('failed','blocked') AND t.completed_at IS NOT NULL AND t.lease_token IS NULL AND NOT EXISTS(SELECT 1 FROM public.task_runs r WHERE r.task_id=t.id AND r.status='running') AND NOT EXISTS(SELECT 1 FROM local_identity.native_output_publications h WHERE h.task_id=t.id)`)):[]);
    const occupied=busy.filter(row=>!row.taskId||!inactive.has(row.taskId));

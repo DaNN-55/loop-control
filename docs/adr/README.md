@@ -71,4 +71,4 @@
 
 - [ADR-0043：发送阶段与原操作回执恢复](0043-request-outcomes-and-receipt-recovery.md)
 
-- [ADR-0045：备份保留已失效终态任务的未知历史](0045-backup-retains-invalidated-task-history.md)
+- [ADR-0046：备份保留已失效终态任务的未知历史](0046-backup-retains-invalidated-task-history.md)
