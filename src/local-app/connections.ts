@@ -195,7 +195,7 @@ export class LocalConnections {
     const region=minimaxRegions.find(r=>r.version_id===connection.current_version_id)?.region??'international';
     connection.region=region;connection.endpoint=minimaxEndpoints[region as MiniMaxRegion];
    }
-   const qualifications=(await client.query('SELECT version_id,qualified FROM local_identity.connection_qualifications WHERE owner_id=$1',[ownerId])).rows;
+   const qualifications=(await client.query("SELECT q.version_id,q.qualified AND EXISTS(SELECT 1 FROM local_identity.connection_probe_evidence e WHERE e.version_id=q.version_id AND e.mode='live' AND e.outcome='verified') qualified FROM local_identity.connection_qualifications q WHERE q.owner_id=$1",[ownerId])).rows;
    const latest=(await client.query('SELECT DISTINCT ON(connection_version_id) connection_version_id,status,created_at FROM public.external_connection_verifications ORDER BY connection_version_id,created_at DESC,id DESC')).rows;
    const pending=(await client.query('SELECT idempotency_key,metadata,created_at FROM local_identity.connection_intents WHERE owner_id=$1 AND applied_at IS NULL ORDER BY created_at',[ownerId])).rows;
    const externalReady=this.externalReady;
