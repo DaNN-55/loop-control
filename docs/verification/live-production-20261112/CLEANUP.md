@@ -1,3 +1,5 @@
+> 2026-11-12 清理回执：本轮隔离运行环境和测试数据已清理，报告与修复代码保留。详见 [`acceptance-cleanup-20261112/REPORT.md`](../acceptance-cleanup-20261112/REPORT.md)。以下内容保留为历史资源清单，不再表示环境仍在运行。
+
 # 验收环境保留与清理
 
 本轮不清理成品。分支为 `codex/live-production-acceptance-20261112`，代码与报告在独立 worktree，应用监听 `127.0.0.1:5217`。右侧使用独立验收账号登录；测试登录信息仅保存在忽略目录 `.scratch/live-production/login.json`，不要提交或转发该文件。
