@@ -4,9 +4,8 @@ import {uiText} from "../../../../../i18n/ui";
 
 import { type FC, type KeyboardEvent, type SelectHTMLAttributes, useEffect, useId, useRef, useState } from "react";
 import { Header, ListBox, ListBoxItem, ListBoxSection, Popover } from "react-aria-components";
-import { ArrowUpRight, Check, Settings, SlidersHorizontal } from "lucide-react";
+import { ArrowUpRight, Check, ChevronDown, Settings, SlidersHorizontal } from "lucide-react";
 import "./select-menu.css";
-import { ChevronDown } from "@untitledui/icons";
 import { HintText } from "../input/hint-text";
 import { Label } from "../input/label";
 import { cx } from "../../../utils/cx";

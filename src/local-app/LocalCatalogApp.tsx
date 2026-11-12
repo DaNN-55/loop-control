@@ -9,10 +9,9 @@ import {ConfirmationModal,ConfirmationModalPresence} from '../ui/ConfirmationMod
 import {OwnerPreferencesDialog,type PreferencesPage} from './OwnerPreferencesDialog';
 import {defaultOwnerPreferences,parseOwnerPreferences,type OwnerPreferences} from '../preferences/preferences';
 import {WorkspaceTopbar} from "./WorkspaceTopbar";
-import {Video,LayoutDashboard,Clapperboard,Users,Plus,ChevronRight,CircleAlert} from 'lucide-react';
+import {Video,LayoutDashboard,Clapperboard,Users,Plus,ChevronRight,CircleAlert,X as XClose} from 'lucide-react';
 import {LoopControlMark} from './LoopControlMark';
 import './brand-mark.css';
-import {XClose} from '@untitledui/icons';
 import {Tooltip} from '../ui/dan-ui/components/base/tooltip/tooltip';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {InputBase} from '../ui/dan-ui/components/base/input/input';

@@ -4,6 +4,7 @@ Upstream: `untitleduico/react@1d410cb8facde8d50869e7bbb5f3d048e2267466`, MIT。�
 
 - 模板 0.5.0：NativeSelect 显式关联 label/id、保留 aria 描述、disabled option；Label 装饰星号 aria-hidden、帮助按钮移到 label 外；Input 中文密码切换、pressed/键盘/焦点及预留空间；Tooltip 帮助触发焦点；theme 中文字体与浅色 success green-700。
 - imports：采用文件的依赖改为相对路径，无全局 alias。
+- 2026-11-12 图标统一：上游控件的图标改用现有 Lucide；关闭、帮助、信息、用户占位及更多操作图标按原用途映射。控件、事件、尺寸样式与键盘协议保留；不再依赖 Untitled 图标包，上游来源与 MIT 许可记录保留。
 - NativeSelect：兼容已有 option/optgroup children，以及官方 options API。
 - Button、Tab：暴露 React 19 DOM ref 类型，用于菜单与实际触发元素的焦点恢复；不改变 AriaButton/Tab 行为。
 - Toggle：允许既有富文本 ReactNode label，仍由官方 switch 处理键盘和状态。

@@ -1,5 +1,5 @@
 import {uiText} from '../i18n/ui';
-import {XClose} from '@untitledui/icons';
+import {X as XClose} from 'lucide-react';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {useState, type ReactNode} from 'react';
 import {useDialogFocus} from '../ui/useDialogFocus';

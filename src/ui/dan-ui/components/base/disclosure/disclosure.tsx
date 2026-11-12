@@ -1,7 +1,7 @@
 "use client";
 
 import type { DetailsHTMLAttributes, ReactNode } from "react";
-import { ChevronRight } from "@untitledui/icons";
+import { ChevronRight } from "lucide-react";
 import { cx } from "../../../utils/cx";
 
 type DisclosureProps = Omit<DetailsHTMLAttributes<HTMLDetailsElement>, "title"> & {
