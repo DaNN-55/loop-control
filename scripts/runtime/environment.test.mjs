@@ -7,3 +7,10 @@ it('selects the daily deployment with no stage pointer or Supabase configuration
 it.each(['host','database','user','port'])('rejects a changed application %s',field=>{fixture.d.database[field]=field==='port'?55472:'other';expect(()=>validateDeployment(fixture.d)).toThrow();});
 it('rejects Worker cross-database bindings and external runtime paths',()=>{fixture.d.workerDatabase.database='loop_imported';expect(()=>validateDeployment(fixture.d)).toThrow();fixture.d.workerDatabase.database='loop_control';fixture.d.openChatCut.root=join(projectRoot,'.loop-control/stage-b/verified/OpenChatCut');expect(()=>validateDeployment(fixture.d)).toThrow();});
 it('rejects foreign runtime identities',()=>{fixture.d.runtimeRoot=join(projectRoot,'.loop-control/stage-d');expect(()=>validateDeployment(fixture.d)).toThrow();});
+
+it('accepts only native database ports bound to its dedicated PostgreSQL configuration',()=>{
+ fixture.d.postgres={kind:'native',binDirectory:'/fixture/postgresql/bin',dataDirectory:join(root,'postgres/data'),socketDirectory:join(root,'postgres/socket'),systemIdentifier:'7542380466584442201',majorVersion:17,port:55431,adminUser:'postgres'};
+ fixture.d.database.port=55431;fixture.d.workerDatabase.port=55431;
+ expect(validateDeployment(fixture.d).postgres.kind).toBe('native');fixture.d.workerDatabase.port=54329;expect(()=>validateDeployment(fixture.d)).toThrow('database binding mismatch');
+});
+it('keeps the pinned container identity checks when a native kind is not selected',()=>{fixture.d.postgres.kind='other';expect(()=>validateDeployment(fixture.d)).toThrow('identity mismatch');delete fixture.d.postgres.kind;fixture.d.postgres.image='foreign';expect(()=>validateDeployment(fixture.d)).toThrow('identity mismatch');});

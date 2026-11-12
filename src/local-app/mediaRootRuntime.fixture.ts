@@ -1,18 +1,24 @@
 import {once} from 'node:events';
-import {createServer} from 'node:net';
+import {createServer,connect} from 'node:net';
+import {join} from 'node:path';
 import {spawn,execFile} from 'node:child_process';
 import {promisify} from 'node:util';
 import {readFileSync,writeFileSync} from 'node:fs';
 export async function mediaRootDatabaseTransport(f:{database:string},options:{loseCommit?:()=>boolean}={}){
  const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MODULE!);const context=runtimeContext();
- const bridges=new Set<ReturnType<typeof spawn>>();
+ const bridges=new Set<{kill:()=>unknown}>();
  const server=createServer(socket=>{
  let startup=Buffer.alloc(0);socket.setTimeout(5000,()=>socket.destroy());socket.on('error',()=>{});
  const receive=(chunk:Buffer)=>{startup=Buffer.concat([startup,chunk]);if(startup.length>8192){socket.destroy();return;}if(startup.length<8)return;const length=startup.readInt32BE(0),protocol=startup.readInt32BE(4);if(length===8&&(protocol===80877103||protocol===80877104)){socket.write('N');startup=startup.subarray(8);return;}if(length<9||length>8192){socket.destroy();return;}if(startup.length<length)return;
  const fields=startup.subarray(8,length).toString('utf8').split('\0'),parameters:Record<string,string>={};for(let i=0;i<fields.length-1&&fields[i];i+=2){if(parameters[fields[i]]!==undefined||!['user','database','application_name','client_encoding'].includes(fields[i])){socket.destroy();return;}parameters[fields[i]]=fields[i+1];}
  if(protocol!==196608||!['loop_app','loop_worker'].includes(parameters.user)||parameters.database!==f.database){socket.destroy();return;}socket.off('data',receive);socket.setTimeout(0);
- const bridge=spawn('docker',['exec','-i',context.container,'perl','-MIO::Socket::UNIX','-MIO::Select','-MSocket=SOCK_STREAM','-e',"my $s=IO::Socket::UNIX->new(Type=>SOCK_STREAM,Peer=>'/var/run/postgresql/.s.PGSQL.5432') or die;my $sel=IO::Select->new(\\*STDIN,$s);while(1){for my $f($sel->can_read){my $n=sysread($f,my $b,65536);exit unless $n;my $o=fileno($f)==0?$s:\\*STDOUT;while(length $b){my $w=syswrite($o,$b);die unless $w;substr($b,0,$w,'');}}}"],{env:context.env,stdio:['pipe','pipe','ignore']});
  let loseCommit=false;socket.on('data',chunk=>{if(chunk.toString('latin1').includes('COMMIT\0')&&options.loseCommit?.())loseCommit=true;});
+ if(context.nativeConnection){
+  socket.pause();const bridge=connect(join(context.nativeConnection.host,`.s.PGSQL.${context.nativeConnection.port}`)),control={kill:()=>bridge.destroy()};bridges.add(control);
+  bridge.once('connect',()=>{bridge.write(startup);socket.pipe(bridge);});bridge.on('error',()=>socket.destroy());bridge.once('close',()=>{bridges.delete(control);socket.destroy();});
+  bridge.on('data',chunk=>{if(loseCommit){socket.destroy();bridge.destroy();return;}if(!socket.write(chunk))bridge.pause();});socket.on('drain',()=>bridge.resume());socket.once('close',()=>bridge.destroy());return;
+ }
+ const bridge=spawn('docker',['exec','-i',context.container,'perl','-MIO::Socket::UNIX','-MIO::Select','-MSocket=SOCK_STREAM','-e',"my $s=IO::Socket::UNIX->new(Type=>SOCK_STREAM,Peer=>'/var/run/postgresql/.s.PGSQL.5432') or die;my $sel=IO::Select->new(\\*STDIN,$s);while(1){for my $f($sel->can_read){my $n=sysread($f,my $b,65536);exit unless $n;my $o=fileno($f)==0?$s:\\*STDOUT;while(length $b){my $w=syswrite($o,$b);die unless $w;substr($b,0,$w,'');}}}"],{env:context.env,stdio:['pipe','pipe','ignore']});
  bridges.add(bridge);bridge.once('exit',()=>{bridges.delete(bridge);socket.destroy();});bridge.stdin.on('error',()=>{});bridge.stdin.write(startup);socket.pipe(bridge.stdin);bridge.stdout.on('data',chunk=>{if(loseCommit){socket.destroy();bridge.kill();return;}if(!socket.write(chunk))bridge.stdout.pause();});socket.on('drain',()=>bridge.stdout.resume());socket.once('close',()=>bridge.kill());
  };socket.on('data',receive);
  });

@@ -46,14 +46,15 @@ export async function nativeWorkspaceFixture(options:NativeWorkspaceFixtureOptio
    const socket=Duplex.from({readable:child.stdout!,writable:child.stdin!});
    return Object.assign(socket,{ref(){return socket;},unref(){return socket;},connect(){queueMicrotask(()=>socket.emit('connect'));return socket;},setNoDelay(){return socket;},setKeepAlive(){return socket;}});
   };
+  const transport=context.nativeConnection??{stream};
   resources.defer(()=>{for(const child of clients)child.kill();});
-  const admin=new Pool({database,user:'postgres',max:1,connectionTimeoutMillis:5000,stream} as ConstructorParameters<typeof Pool>[0]);
+  const admin=new Pool({database,user:'postgres',max:1,connectionTimeoutMillis:5000,...transport} as ConstructorParameters<typeof Pool>[0]);
   resources.defer(async()=>{if(!admin.ended)await admin.end();});
   const c=await admin.connect();resources.defer(()=>c.release());
   const temporary=await mkdtemp(join(options.testRootParent??'/private/tmp','loop-153-'));
   resources.defer(()=>rm(temporary,{recursive:true,force:true}));
   const root=await realpath(temporary);await options.onSetup?.({stage:'directory',database,root});
-  const pool=new Pool({database,user:'loop_app',max:4,connectionTimeoutMillis:5000,stream} as ConstructorParameters<typeof Pool>[0]);
+  const pool=new Pool({database,user:'loop_app',max:4,connectionTimeoutMillis:5000,...transport} as ConstructorParameters<typeof Pool>[0]);
   resources.defer(async()=>{if(!pool.ended)await pool.end();});
   const workerPool=()=>{const worker=new Pool({...pool.options,user:'loop_worker'} as ConstructorParameters<typeof Pool>[0]);resources.defer(async()=>{if(!worker.ended)await worker.end();});return worker;};
   const recoveryPool=workerPool();

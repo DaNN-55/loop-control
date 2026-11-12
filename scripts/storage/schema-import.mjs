@@ -1,5 +1,5 @@
-// Forward adaptation of the frozen C business schema. Historical Supabase migrations
-// is retained in db/local/c-baseline.sql; current local databases have no Auth/Vault schema.
+// Forward adaptation of the frozen C business schema retained in db/local/c-baseline.sql.
+// Current local databases have no hosted identity or remote secret-store schema.
 import {createHash} from 'node:crypto';
 export function adaptBusinessSchema(source) {
  const dependencies={identityForeignKeys:(source.match(/REFERENCES auth\.users\(id\)/g)??[]).length,ownerCalls:(source.match(/auth\.uid\(\)/g)??[]).length,vaultDisabled:[]};

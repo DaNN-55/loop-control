@@ -9,11 +9,13 @@ import {hydrateDeploymentSecrets} from './keychain.mjs';
 
 export async function ensureServices(){
  const d=hydrateDeploymentSecrets(readSettings()),c=runtimeContext();
+ if(c.kind==='native')c.ensureStarted();else{
  try{c.docker(['info','--format','{{.ServerVersion}}']);}
  catch{execFileSync('colima',['start','loop-control','--activate=false','--cpus','2','--memory','2','--disk','20','--port-forwarder','none'],{stdio:'pipe',timeout:240000});}
  c.assertDatabase();
  const info=JSON.parse(c.docker(['inspect',c.container]))[0];
  if(!info.State.Running)c.docker(['start',c.container]);
+ }
 
  let databaseError;
  const describe=error=>`${error?.code?`[${error.code}] `:''}${error?.message??error??'unknown error'}`.replaceAll(d.database.password,'<REDACTED>');
@@ -50,6 +52,8 @@ export async function ensureServices(){
 
  if(!await databaseReady()){
   if(fatalDatabaseError())throw unavailable();
+  if(c.kind==='native'){if(!await waitForDatabase())throw unavailable();}
+  else{
   const sshConfig=join(process.env.HOME,'.colima/_lima/colima-loop-control/ssh.config'),record=join(root,'tunnel.json');
   const valid=value=>inspectRecordedService({pid:value.pid,port:String(d.database.port),commandIdentity:sshConfig},projectRoot).valid;
   if(existsSync(record)){
@@ -90,6 +94,7 @@ export async function ensureServices(){
    if(!await waitForDatabase())throw unavailable();
    if(ownedRecord){writePrivateFile(record,JSON.stringify(ownedRecord)+'\n',{exclusive:true});child.unref();}
   }catch(error){if(ownedRecord&&child.exitCode===null)child.kill();throw error;}
+  }
  }
  if(!listenerAddresses().length)throw Error('Daily PostgreSQL listener disappeared');
  const mount=join(root,'volume');
