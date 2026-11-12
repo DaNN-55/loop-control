@@ -1,0 +1,42 @@
+{
+  "at": "2026-11-12T11:50:42.409Z",
+  "oldPid": 60378,
+  "newPid": 64406,
+  "runningRelease": "f740ff53f1d5b4ea64aa6f750991d3a580aa32533818bb5d603b0688bd6fd0e0",
+  "preparedRelease": "f740ff53f1d5b4ea64aa6f750991d3a580aa32533818bb5d603b0688bd6fd0e0",
+  "preparedMatchesSource": true,
+  "appliedMigration": "165-invalidated-unsent-video-requests.sql",
+  "priorMigrationHashesUnchanged": true,
+  "tableCount": 121,
+  "unchangedTables": 118,
+  "technicalTableChanges": [
+    {
+      "name": "local_identity.media_root_binding",
+      "beforeRows": 1,
+      "afterRows": 1
+    },
+    {
+      "name": "local_identity.schema_migrations",
+      "beforeRows": 161,
+      "afterRows": 162
+    },
+    {
+      "name": "local_identity.sessions",
+      "beforeRows": 93,
+      "afterRows": 94
+    }
+  ],
+  "mediaIdentityUnchanged": true,
+  "mediaUnchanged": true,
+  "configUnchanged": true,
+  "episodesBefore": 0,
+  "episodesAfter": 0,
+  "testDataImported": false,
+  "userPerformedNormalLogin": true,
+  "uiVersion": "current",
+  "worker": "online_idle",
+  "queue": "empty",
+  "dailyRootHttp": 200,
+  "rightWorkbenchOpened": true,
+  "newPaidCalls": 0
+}
