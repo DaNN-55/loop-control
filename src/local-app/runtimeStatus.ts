@@ -1,3 +1,4 @@
+import{completedAudioHistorySql}from'./completedAudioHistory.js';
 import {cpus, freemem, totalmem, homedir} from 'node:os';
 import {stat,statfs,realpath} from 'node:fs/promises';
 import type {Pool} from 'pg';
@@ -36,7 +37,8 @@ export const runtimeQueueSql = `WITH owned_tasks AS MATERIALIZED (
     AND newer.status='completed' AND newer.input_snapshot->>'recovered_from_task_id'=t.id::text)
   ORDER BY episode_id,task_type,operation,created_at DESC,id DESC
 ), active AS MATERIALIZED (
-  SELECT * FROM current_tasks WHERE status IN ('running','ready','blocked','failed')
+  SELECT t.* FROM current_tasks t JOIN public.episodes e ON e.id=t.episode_id
+  WHERE t.status IN ('running','ready','blocked','failed') AND NOT (${completedAudioHistorySql})
 ), bounds AS (
   SELECT count(*)::int total,least($2::int,greatest(1,ceil(count(*)/20.0)::int)) page,
     count(*) FILTER(WHERE status='running')::int running,count(*) FILTER(WHERE status='ready')::int queued,

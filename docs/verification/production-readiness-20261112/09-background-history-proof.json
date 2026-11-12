@@ -1,0 +1,38 @@
+{
+  "preserved": true,
+  "tasks": 41,
+  "failed": [
+    {
+      "id": "48840d97-b80d-4516-9f62-0c9291fcc19a",
+      "status": "failed",
+      "rowHash": "6f59823705deac63614b72c118956a28"
+    },
+    {
+      "id": "f707ad57-2ad2-470a-9071-aa3ddc20cdbf",
+      "status": "failed",
+      "rowHash": "89e007027c3e043f7106a13743bdb042"
+    },
+    {
+      "id": "738e75ef-6e59-4463-8324-e7154f066a51",
+      "status": "failed",
+      "rowHash": "908b18cfb6b3087ecce6970c7f2126fd"
+    },
+    {
+      "id": "a834f154-a1c7-4a4f-9562-4b8e5a88d6a5",
+      "status": "failed",
+      "rowHash": "008d6744b3500a4a7217592d0f76ea58"
+    }
+  ],
+  "paidReservations": 20,
+  "completedEpisodes": 4,
+  "queueAfter": {
+    "page": 1,
+    "items": [],
+    "total": 0,
+    "failed": 0,
+    "queued": 0,
+    "blocked": 0,
+    "running": 0,
+    "pageSize": 20
+  }
+}

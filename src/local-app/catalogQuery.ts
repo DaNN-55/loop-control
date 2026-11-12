@@ -1,3 +1,4 @@
+import{completedAudioHistorySql}from'./completedAudioHistory.js';
 import {operationsEpisodePageSize} from '../episodes/episodeCatalogTypes.js';
 
 // Native parameterization of the C-stage catalog contract (ADR-0008).
@@ -55,8 +56,10 @@ export const localCatalogSql=` with owned_base as materialized (
    when jsonb_typeof(t.input_snapshot#>'{output,relative_path}')='string' then t.task_type||':output:'||(t.input_snapshot#>>'{output,relative_path}')
    else t.task_type||':task:'||t.id end scope
   from public.tasks t join scoped e on e.id=t.episode_id where $2::text<>'accounts' and e.archived_at is null and t.invalidated_at is null and not local_identity.is_historical_task(t.id)
- ), latest_tasks as materialized (
+ ), latest_tasks_unfiltered as materialized (
   select distinct on (episode_id,scope) * from scoped_tasks order by episode_id,scope,created_at desc,id
+ ), latest_tasks as materialized (
+  select t.* from latest_tasks_unfiltered t join scoped e on e.id=t.episode_id where not (${completedAudioHistorySql})
  ), workspace_task_links as materialized (
   select n.task_id,w.episode_id from workspace_facts w join local_identity.workspace_narrations n on n.workspace_id=w.id
    where w.basis_current and n.mode<>'none' and exists(select 1 from jsonb_array_elements(coalesce(w.native_usage->'shots','[]')) shot
@@ -158,9 +161,11 @@ export const localCatalogSql=` with owned_base as materialized (
  ), recovered as (
   select old.id from worker_tasks old join worker_tasks newer on newer.input_snapshot->>'recovered_from_task_id'=old.id::text
    and newer.episode_id=old.episode_id and newer.task_type=old.task_type and newer.status='completed'
- ), current_worker as (
+ ), current_worker_latest as (
   select distinct on (episode_id,task_type,operation) * from worker_tasks t where not exists(select 1 from recovered r where r.id=t.id)
   order by episode_id,task_type,operation,coalesce(completed_at,claimed_at,created_at) desc,id desc
+ ), current_worker as (
+  select t.* from current_worker_latest t join owned e on e.id=t.episode_id where not (${completedAudioHistorySql})
  )
  select jsonb_build_object(
   'metrics',coalesce((select jsonb_object_agg(e.id,$12::jsonb->e.id::text) from page_rows e where $12::jsonb ? e.id::text),'{}'),
