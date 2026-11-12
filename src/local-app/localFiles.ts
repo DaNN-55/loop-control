@@ -58,6 +58,15 @@ type PublicationFile={device:string;inode:string;bytes:Buffer};
 async function publicationFileIdentity(file:Awaited<ReturnType<typeof open>>,bytes:Buffer):Promise<PublicationFile>{
  const stat=await file.stat({bigint:true});return{device:String(stat.dev),inode:String(stat.ino),bytes};
 }
+async function writePublicationFile(file:Awaited<ReturnType<typeof open>>,owned:PublicationFile){
+ try{await file.writeFile(owned.bytes);await file.sync();}catch(error){
+  // A failed sequential write can leave only a prefix. Keep the exclusive
+  // handle's identity and verify those exact bytes before removing our file.
+  const stat=await file.stat({bigint:true});
+  if(stat.size<=BigInt(owned.bytes.length))owned.bytes=owned.bytes.subarray(0,Number(stat.size));
+  throw error;
+ }
+}
 async function verifyPublicationFile(path:string,owned:PublicationFile){
  const stat=await lstat(path,{bigint:true});
  const matches=(s:typeof stat)=>s.isFile()&&!s.isSymbolicLink()&&String(s.dev)===owned.device&&String(s.ino)===owned.inode&&s.size===BigInt(owned.bytes.length);
@@ -74,11 +83,11 @@ async function publishInputSnapshot(root:string,path:string,bytes:Buffer,sha256:
  const destination=await safeAssetOutputPath(root,path),token=randomUUID(),temporary=join(dirname(destination),`.input-${token}.part`),receipt=join(dirname(destination),`.input-${token}.receipt.json`);
  let tempOwned:PublicationFile|undefined,receiptOwned:PublicationFile|undefined;
  try{
-  const file=await open(temporary,'wx',0o600);try{tempOwned=await publicationFileIdentity(file,bytes);await file.writeFile(bytes);await file.sync();}finally{await file.close();}
+  const file=await open(temporary,'wx',0o600);try{tempOwned=await publicationFileIdentity(file,bytes);await writePublicationFile(file,tempOwned);}finally{await file.close();}
   const record=await open(receipt,'wx',0o600);try{
    receiptOwned=await publicationFileIdentity(record,Buffer.alloc(0));
    receiptOwned.bytes=Buffer.from(JSON.stringify({version:1,target:basename(path),sha256,size:bytes.length,device:tempOwned.device,inode:tempOwned.inode,receiptDevice:receiptOwned.device,receiptInode:receiptOwned.inode}));
-   await record.writeFile(receiptOwned.bytes);await record.sync();
+   await writePublicationFile(record,receiptOwned);
   }finally{await record.close();}
   await verifyPublicationFile(temporary,tempOwned);await verifyPublicationFile(receipt,receiptOwned);
   try{await link(temporary,destination);}catch(error){if((error as NodeJS.ErrnoException).code!=='EEXIST')throw error;await verifyNativeFile(root,path,sha256,bytes.length);}

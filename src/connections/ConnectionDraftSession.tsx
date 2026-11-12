@@ -2,7 +2,7 @@ import {createContext,useContext,useEffect,useRef,type ReactNode} from 'react';
 import type {ExternalConnection,ExternalConnectionInput} from './ConnectionWorkspace';
 import type {ConnectionModelDraft} from './ConnectionModelsDialog';
 import type {MiniMaxRegion} from '../worker/videoProviderCatalog';
-export type ConnectionEditDraft={baseline:string;name:string;description:string;adapter:ExternalConnectionInput['adapter'];workspaceId:string;region:MiniMaxRegion};
+export type ConnectionEditDraft={baseline:string;name:string;description:string;adapter:ExternalConnectionInput['adapter'];workspaceId:string;region:MiniMaxRegion|''};
 export const connectionDraftBaseline=(connection?:ExternalConnection)=>JSON.stringify(connection?[connection.name,connection.description??'',connection.current_version_id,connection.region]:[]);
 function createDrafts(){return {connections:new Map<string,ConnectionEditDraft>(),models:new Map<string,ConnectionModelDraft>()};}
 const Context=createContext<ReturnType<typeof createDrafts>|null>(null);

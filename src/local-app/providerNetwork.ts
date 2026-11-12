@@ -222,7 +222,7 @@ export function createWorkspaceSearchFetcher(provider:'pexels'|'freesound',opera
  return async(input,init={})=>{
   const operation=requestOperation(provider,'execute',input,init);
   if(init.signal?.aborted||!remaining.delete(operation))throw denied();
-  const deadline=AbortSignal.timeout(30000);
+  const deadline=AbortSignal.timeout(operation==='freesound.download'?120000:30000);
   const signal=init.signal?AbortSignal.any([init.signal,deadline]):deadline;
   const response=await transport(input,{...init,redirect:'manual',signal});
   return (await readProviderResponse(response,(operation.endsWith('.search')?2:provider==='pexels'?100:20)*1024*1024)).response;

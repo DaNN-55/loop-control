@@ -87,3 +87,13 @@ it('a version conflict is shown without retrying, adopting or clearing choices',
  render(<Host command={command}/>);register();
  expect((await screen.findByRole('alert')).textContent).toContain('工程版本已变化');expect(command).toHaveBeenCalledTimes(1);
 });
+
+it('keeps reading a publication hold until the original worker completes without issuing a command',async()=>{
+ vi.useFakeTimers();const held={...workspace,visualTasks:[{...workspace.visualTasks![0],publicationAttempt:1}]};
+ const finished={...workspace,visualTasks:[{...workspace.visualTasks![0],status:'completed' as const,publicationAttempt:null}]};let reads=0;
+ vi.stubGlobal('fetch',vi.fn(async(url:string)=>Response.json(url==='/api/local/connections'?{serviceCatalog:{groups:[]}}:{workspace:++reads===1?held:finished})));
+ const command=vi.fn();render(<Host initial={held} command={command}/>);
+ await act(async()=>{await vi.advanceTimersByTimeAsync(4000);});
+ expect(reads).toBe(2);expect(screen.getByTestId('tasks').textContent).toBe('completed');expect(command).not.toHaveBeenCalled();
+ await act(async()=>{await vi.advanceTimersByTimeAsync(4000);});expect(reads).toBe(2);
+});

@@ -11,7 +11,16 @@ export async function assertStorageUnoccupied(database,mediaRoot,sourceRoots,run
  }
  if(query("SELECT to_regprocedure('local_identity.account_directory_busy(uuid)') IS NOT NULL")==='t'){
   const accounts=JSON.parse(query("SELECT coalesce(jsonb_agg(jsonb_build_object('id',a.id,'owner',m.user_id)),'[]') FROM public.accounts a JOIN public.account_memberships m ON m.account_id=a.id AND m.role='owner'"));
-  for(const account of accounts){const busy=JSON.parse(query(`SET SESSION AUTHORIZATION loop_app;DO $$BEGIN PERFORM set_config('loop.owner_id',${quote(account.owner)},false);END$$;SELECT local_identity.account_directory_busy(${quote(account.id)}::uuid)`));if(busy.length)throw Error('Storage occupied: '+busy.map(row=>row.reason).join(' '));}
+  const publicationGuard=query("SELECT to_regclass('local_identity.native_output_publications') IS NOT NULL")==='t';
+  for(const account of accounts){
+   const busy=JSON.parse(query(`SET SESSION AUTHORIZATION loop_app;DO $$BEGIN PERFORM set_config('loop.owner_id',${quote(account.owner)},false);END$$;SELECT local_identity.account_directory_busy(${quote(account.id)}::uuid)`));
+   if(!busy.length)continue;
+   // ADR-0045: an archive preserves uncertain history; it does not authorize
+   // destructive directory operations or settle/resume a superseded request.
+   const inactive=new Set(publicationGuard?JSON.parse(query(`SELECT coalesce(jsonb_agg(t.id),'[]') FROM public.tasks t JOIN public.episodes e ON e.id=t.episode_id WHERE e.account_id=${quote(account.id)}::uuid AND t.invalidated_at IS NOT NULL AND t.status IN ('failed','blocked') AND t.completed_at IS NOT NULL AND t.lease_token IS NULL AND NOT EXISTS(SELECT 1 FROM public.task_runs r WHERE r.task_id=t.id AND r.status='running') AND NOT EXISTS(SELECT 1 FROM local_identity.native_output_publications h WHERE h.task_id=t.id)`)):[]);
+   const occupied=busy.filter(row=>!row.taskId||!inactive.has(row.taskId));
+   if(occupied.length)throw Error('Storage occupied: '+occupied.map(row=>row.reason).join(' '));
+  }
  }
  const registered=query("SELECT to_regprocedure('local_identity.episode_storage_location(uuid)') IS NOT NULL")==='t';
  const episodes=JSON.parse(query(`SELECT coalesce(jsonb_agg(jsonb_build_object('id',e.id,'root',local_identity.episode_asset_root(e.id),'prefix',${registered?'l.directory_relative_path':"'episodes/'||e.id::text"})),'[]') FROM public.episodes e ${registered?'CROSS JOIN LATERAL local_identity.episode_storage_location(e.id) l':''}`));

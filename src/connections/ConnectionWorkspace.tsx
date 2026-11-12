@@ -59,8 +59,9 @@ export type ExternalConnectionVersion = {
 const statusLabels: Record<ExternalConnection["status"] | ExternalConnectionVersion["status"], string> = {
   unverified: "未测试", verified: "已验证", invalid: "认证失败", retryable: "暂时失败", revoked: "已撤销",
 };
-const minimaxSiteOptions=[{value:'cn',label:'国内站（api.minimax.cn）'},{value:'international',label:'国际站（api.minimax.io）'}];
-function connectionCredential(provider:ExternalConnectionInput['provider'],secret:string,workspaceId:string,region:MiniMaxRegion){
+const minimaxSiteOptions=[{value:'',label:'站点未核对',disabled:true},{value:'cn',label:'国内站（api.minimax.cn）'},{value:'international',label:'国际站（api.minimax.io）'}];
+function connectionCredential(provider:ExternalConnectionInput['provider'],secret:string,workspaceId:string,region:MiniMaxRegion|''){
+  if(provider==='minimax'&&secret.trim()&&!region)throw new Error(uiText('请选择 MiniMax API Key 所属站点。'));
   return provider==='bailian'?JSON.stringify({apiKey:secret.trim(),workspaceId:workspaceId.trim()}):provider==='minimax'?JSON.stringify({apiKey:secret.trim(),region}):secret;
 }
 
@@ -89,7 +90,7 @@ export function ExternalConnectionPicker({ adapter, connections, isPending = fal
   const [secret, setSecret] = useState("");
   const [rotationSecret, setRotationSecret] = useState("");
   const [workspaceId, setWorkspaceId] = useState("");
-  const [minimaxRegion,setMinimaxRegion]=useState<MiniMaxRegion>('cn');
+  const [minimaxRegion,setMinimaxRegion]=useState<MiniMaxRegion|''>('cn');
   const [editName, setEditName] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState("");
@@ -100,7 +101,7 @@ export function ExternalConnectionPicker({ adapter, connections, isPending = fal
   const currentVersion = selectedReference ? versions.find(version=>version.connection_id===selectedReference.connection_id&&version.is_current&&!version.revoked_at)??selectedReference : selectedVersion??(!selectedVersionId&&compatibleConnections.length===1?versions.find(version=>version.connection_id===compatibleConnections[0].id&&version.is_current&&!version.revoked_at):undefined);
   const connectionNames = new Map(compatibleConnections.map((connection) => [connection.id, connection.name]));
   const selectedConnection = compatibleConnections.find(connection=>connection.id===currentVersion?.connection_id)??(!selectedVersionId&&compatibleConnections.length===1?compatibleConnections[0]:undefined);
-  useEffect(()=>{setMinimaxRegion(selectedConnection?.region??(selectedConnection?'international':'cn'));},[selectedConnection?.id,selectedConnection?.region]);
+  useEffect(()=>{setMinimaxRegion(selectedConnection?.region??(selectedConnection?'':'cn'));},[selectedConnection?.id,selectedConnection?.region]);
 
   useEffect(() => {
     if (!selectedVersionId && selectedVersion) onSelectVersion(selectedVersion.id);
@@ -140,7 +141,7 @@ export function ExternalConnectionPicker({ adapter, connections, isPending = fal
     } catch (cause) { setError(cause instanceof Error ? cause.message : uiText("无法更新外部连接。")); }finally{operationLock.current=false;setOperation('');}
   }
 
-  const workspaceField = provider === 'minimax' ? <NativeSelect label={uiText("MiniMax 站点")} size="sm" disabled={busy||Boolean(selectedConnection&&!rotationSecret.trim())} value={minimaxRegion} onChange={event=>setMinimaxRegion(event.target.value as MiniMaxRegion)} options={minimaxSiteOptions.map(item=>({...item,label:uiText(item.label)}))}/> : provider === "bailian" ? <label>{uiText("百炼业务空间 ID")}<InputBase size="sm" aria-label={uiText("百炼业务空间 ID")} autoComplete="off" onChange={(event) => setWorkspaceId(event.target.value)} placeholder={uiText("ws-… 或控制台复制的 https://… Base URL")} value={workspaceId} /><small>{uiText("认证更新时请重新填写所属空间；留空使用 DashScope。测试只查模型目录，不生成视频。")}</small></label> : null;
+  const workspaceField = provider === 'minimax' ? <NativeSelect label={uiText("MiniMax 站点")} size="sm" required={Boolean(secret.trim()||rotationSecret.trim())} disabled={busy||Boolean(selectedConnection&&!rotationSecret.trim())} value={minimaxRegion} onChange={event=>setMinimaxRegion(event.target.value as MiniMaxRegion)} options={minimaxSiteOptions.map(item=>({...item,label:uiText(item.label)}))}/> : provider === "bailian" ? <label>{uiText("百炼业务空间 ID")}<InputBase size="sm" aria-label={uiText("百炼业务空间 ID")} autoComplete="off" onChange={(event) => setWorkspaceId(event.target.value)} placeholder={uiText("ws-… 或控制台复制的 https://… Base URL")} value={workspaceId} /><small>{uiText("认证更新时请重新填写所属空间；留空使用 DashScope。测试只查模型目录，不生成视频。")}</small></label> : null;
 
   return <div className="external-connection-picker" aria-label={uiText("{value0}连接",{value0:label})}>
     {compatibleVersions.length>1?<label>{uiText("使用已保存连接")}<NativeSelect size="sm" aria-label={uiText("{value0} 使用已保存连接",{value0:label})} disabled={busy} value={selectedVersionId} onChange={event=>onSelectVersion(event.target.value)}><option value="">{uiText("请选择已验证连接")}</option>{compatibleVersions.map(version=><option key={version.id} value={version.id}>{connectionNames.get(version.connection_id)??uiText("Owner 连接")} · v{version.version}</option>)}</NativeSelect></label>:null}
@@ -233,7 +234,7 @@ export function ConnectionWorkspace({ inlineBilling=false,settingsLayout=false,i
   const [workspaceId,setWorkspaceId]=useState(''),[query,setQuery]=useState(navigation?.value.q??''),[appliedQuery,setAppliedQuery]=useState(navigation?.value.q??'');
   function applyQuery(value:string){const q=value.trim();setQuery(q);setAppliedQuery(q);navigation?.change({q});}
   useEffect(()=>{if(navigation){setQuery(navigation.value.q);setAppliedQuery(navigation.value.q);applyCapabilityFilter(navigation.value.capability);applyStatusFilter(navigation.value.status);if(viewedConnection.current!==navigation.value.connection){viewedConnection.current=navigation.value.connection;setSelectedId(navigation.value.connection);applyDialog(navigation.value.connection?'detail':'');}}},[navigation?.value.q,navigation?.value.capability,navigation?.value.status,navigation?.value.connection]);
-  const [minimaxRegion,setMinimaxRegion]=useState<MiniMaxRegion>('cn');
+  const [minimaxRegion,setMinimaxRegion]=useState<MiniMaxRegion|''>('cn');
   const [credentialFieldRevision,setCredentialFieldRevision]=useState(0);
   const [operation,setOperation]=useState<''|'saving'|'testing'>('');
   const [error,setError]=useState(''),[notice,setNotice]=useState('');
@@ -248,7 +249,7 @@ export function ConnectionWorkspace({ inlineBilling=false,settingsLayout=false,i
   const canVerify=verificationByProvider?.[connectionType.provider]?.available??verificationEnabled;
   const verificationDetail=verificationByProvider?.[connectionType.provider]?.detail;
   const metadataChanged=Boolean(selected&&(name.trim()!==selected.name||description!==(selected.description??'')));
-  const regionChanged=Boolean(selected?.provider==='minimax'&&minimaxRegion!==(selected.region??'international'));
+  const regionChanged=Boolean(selected?.provider==='minimax'&&minimaxRegion!==''&&minimaxRegion!==selected.region);
   const hasChanges=!selected||metadataChanged||Boolean(secret.trim())||regionChanged;
   const nonSecretChanged=dialog==='new'?Boolean(name||description||workspaceId||adapter!=='pexels_video'||minimaxRegion!=='cn'):dialog==='edit'&&Boolean(metadataChanged||regionChanged||workspaceId);
   const busy=isPending||operation!=='';
@@ -275,7 +276,7 @@ export function ConnectionWorkspace({ inlineBilling=false,settingsLayout=false,i
     setCredentialFieldRevision(value=>value+1);
     setSelectedId(id);setName(connection?.name??'');setDescription(connection?.description??'');
     setAdapter('pexels_video');setWorkspaceId('');
-    setMinimaxRegion(connection?.region??(connection?'international':'cn'));
+    setMinimaxRegion(connection?.region??(connection?'':'cn'));
     const draft=drafts.current.get(id||'__new');
     if(draft&&draft.baseline===connectionDraftBaseline(connection)){setName(draft.name);setDescription(draft.description);setAdapter(draft.adapter);setWorkspaceId(draft.workspaceId);setMinimaxRegion(draft.region);}else if(draft)drafts.current.delete(id||'__new');
     setSecret('');setRebindSecrets({});setError('');setNotice('');setResultTitle('');setResultName('');setResultConnectionId('');
@@ -314,7 +315,7 @@ export function ConnectionWorkspace({ inlineBilling=false,settingsLayout=false,i
           connection=await onRotateConnection({connectionId:selected.id,adapter:connectionType.adapter,provider:connectionType.provider,secret:credential});
           if(!connection)throw new Error(uiText("连接保存未确认完成，请检查提示后重试。"));
         }
-        else if(regionChanged&&onChangeRegion&&selected.current_version_id){
+        else if(regionChanged&&minimaxRegion&&onChangeRegion&&selected.current_version_id){
           connection=await onChangeRegion({connectionId:selected.id,versionId:selected.current_version_id,region:minimaxRegion});
           if(!connection)throw new Error(uiText("连接站点保存未确认完成，请检查提示后重试。"));
         }
@@ -468,7 +469,7 @@ export function ConnectionWorkspace({ inlineBilling=false,settingsLayout=false,i
         <Input className="connection-field" label={uiText("连接名称")} size="sm" autoComplete="off" maxLength={100} isRequired isDisabled={busy} onChange={setName} value={name}/>
         {selected && <TextArea className="connection-field" label={uiText("连接说明")} size="sm" maxLength={500} isDisabled={busy} onChange={setDescription} rows={2} value={description}/>}
         {connectionType.provider === 'bailian' && <Input className="connection-field" label={uiText("百炼业务空间 ID")} hint={uiText("选填北京空间 ID 或 Base URL；留空使用 DashScope。")} size="sm" autoComplete="off" isDisabled={busy} onChange={setWorkspaceId} value={workspaceId}/>}
-        {connectionType.provider === 'minimax' && <NativeSelect className="connection-field connection-site-field" label={uiText("MiniMax 站点")} hint={selected&&onChangeRegion?uiText("更换站点会沿用当前 Key 创建新版本。"):uiText("选择创建 API Key 的站点。")} size="sm" disabled={busy||Boolean(selected&&!secret.trim()&&!onChangeRegion)} value={minimaxRegion} onChange={event=>setMinimaxRegion(event.target.value as MiniMaxRegion)} options={minimaxSiteOptions.map(item=>({...item,label:uiText(item.label)}))}/>}
+        {connectionType.provider === 'minimax' && <NativeSelect className="connection-field connection-site-field" label={uiText("MiniMax 站点")} hint={selected&&onChangeRegion?uiText("更换站点会沿用当前 Key 创建新版本。"):uiText("选择创建 API Key 的站点。")} size="sm" required={Boolean(secret.trim())} disabled={busy||Boolean(selected&&!secret.trim()&&!onChangeRegion)} value={minimaxRegion} onChange={event=>setMinimaxRegion(event.target.value as MiniMaxRegion)} options={minimaxSiteOptions.map(item=>({...item,label:uiText(item.label)}))}/>}
         <Input key={credentialFieldRevision} className="connection-field" label={selected ? uiText("新的 API Key（选填）") : connectionType.secretLabel} size="sm" autoComplete="new-password" isRequired={!selected} isDisabled={busy} onChange={setSecret} type="password" value={secret} hint={selected ? uiText("留空保留原 Key；填写后创建新版本{value0}。",{value0:canVerify ? uiText("并测试") : ''}) : undefined}/>
         {!canVerify && verificationDetail && <p className="connection-availability">{verificationDetail} {uiText("可保存凭据。")}</p>}
         {selected&&selected.status!=='verified'&&selected.last_verification_detail&&!operationResult&&<p className="reference-connections-note form-error" role="alert">{selected.last_verification_detail}</p>}

@@ -88,7 +88,7 @@ it('retries a failed verification from the result without reloading or saving th
 });
 
 it('keeps credential-save success explicit when verification fails and retries without another rotation',async()=>{
- const connection={...row('saved-minimax','Saved MiniMax'),provider:'minimax',adapter:'minimax_video'};
+ const connection={...row('saved-minimax','Saved MiniMax'),provider:'minimax',adapter:'minimax_video',region:'cn' as const};
  const rotate=vi.fn().mockResolvedValue({...connection,current_version_id:'saved-minimax-v3'});
  const test=vi.fn().mockResolvedValue({ready:false,detail:'服务拒绝认证或权限（HTTP 401）。'});
  const refresh=vi.fn();
@@ -142,4 +142,12 @@ it('hides unused capabilities and verification states and restores them when rec
  fireEvent.change(screen.getByLabelText('查找已存连接'),{target:{value:'absent'}});expect(within(capabilities).getAllByRole('option')).toHaveLength(2);
  rerender(<ConnectionWorkspace {...props} connections={[a,{...a,id:'tts',provider:'volcengine_tts',adapter:'volcengine_tts',status:'invalid'}]}/>);
  expect(within(capabilities).getByRole('option',{name:'语音'})).toBeTruthy();expect(within(statuses).getAllByRole('option')).toHaveLength(3);
+});
+
+it('keeps an unknown legacy MiniMax site empty and requires an explicit site for a replacement key',async()=>{
+ const connection={...row('unknown-minimax','Unknown MiniMax'),provider:'minimax',adapter:'minimax_video'},rotate=vi.fn().mockResolvedValue({...connection,current_version_id:'known-v2',region:'cn'});
+ render(<ConnectionWorkspace connections={[connection]} onCreateConnection={vi.fn()} onRotateConnection={rotate} onTestConnection={vi.fn().mockResolvedValue({ready:true})}/>);
+ edit(connection.name);const site=screen.getByLabelText(/^MiniMax 站点/) as HTMLSelectElement;expect(site.value).toBe('');expect(site.selectedOptions[0].textContent).toBe('站点未核对');
+ fireEvent.change(screen.getByLabelText(/^新的 API Key/),{target:{value:'synthetic-replacement'}});await act(async()=>fireEvent.click(screen.getByRole('button',{name:'保存并测试'})));expect(rotate).not.toHaveBeenCalled();expect((screen.getByLabelText(/^新的 API Key/) as HTMLInputElement).value).toBe('synthetic-replacement');
+ fireEvent.change(site,{target:{value:'cn'}});await act(async()=>fireEvent.click(screen.getByRole('button',{name:'保存并测试'})));expect(rotate).toHaveBeenCalledOnce();expect(rotate).toHaveBeenCalledWith(expect.objectContaining({secret:JSON.stringify({apiKey:'synthetic-replacement',region:'cn'})}));
 });

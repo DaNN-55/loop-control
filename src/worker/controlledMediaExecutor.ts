@@ -10,7 +10,7 @@ import { lstat, mkdir, mkdtemp, open, readFile, realpath, rm, writeFile } from "
 import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import type { ArtifactManifest, WorkerResult, WorkerTaskPackage } from "./contracts.js";
-import { generateOpenAiImage, searchFreesoundPreview, searchPexelsVideo, synthesizeVolcengineTts, type FreesoundPreview, type MediaFetcher } from "./mediaProviders.js";
+import { FreesoundSearchError, generateOpenAiImage, searchFreesoundPreview, searchPexelsVideo, synthesizeVolcengineTts, type FreesoundPreview, type MediaFetcher } from "./mediaProviders.js";
 import { generateWanVideo } from "./wanVideoProvider.js";
 import type {VideoTaskReservation,VideoGenerationPhase} from './videoTaskExecution.js';
 import type { WhisperXExecution } from "./whisperxAlignment.js";
@@ -173,12 +173,16 @@ async function mediaBytes(input: {
       candidateIndex: taskPackage.media.soundtrack.candidateIndex,
       targetDurationSeconds: taskPackage.media.soundtrack.targetDurationSeconds,
     });
-    const response = await input.fetcher(selected.previewUrl);
+    let response: Response;
+    try { response = await input.fetcher(selected.previewUrl); }
+    catch (error) { throw new FreesoundSearchError(typeof error === 'object' && error !== null && 'name' in error && error.name === 'TimeoutError'
+      ? 'Freesound 预览下载超时，请重试原音频准备或选择其他结果。'
+      : 'Freesound 预览下载未完成，请检查网络后重试原音频准备。', {cause:error}); }
     const contentType = response.headers.get("content-type")?.toLowerCase() ?? "";
-    if (!response.ok) throw new Error(`Freesound 预览下载失败：HTTP ${response.status}。`);
-    if (!contentType.startsWith("audio/mpeg")) throw new Error("Freesound 下载响应不是 MP3 音频。");
+    if (!response.ok) throw new FreesoundSearchError(`Freesound 预览下载失败：HTTP ${response.status}。`);
+    if (!contentType.startsWith("audio/mpeg")) throw new FreesoundSearchError("Freesound 下载响应不是 MP3 音频。");
     const bytes = new Uint8Array(await response.arrayBuffer());
-    if (bytes.byteLength === 0) throw new Error("Freesound 下载的音频为空。");
+    if (bytes.byteLength === 0) throw new FreesoundSearchError("Freesound 下载的音频为空。");
     return { bytes: await input.trimMp3(bytes, taskPackage.media.soundtrack.targetDurationSeconds), source: selected };
   }
   if (taskPackage.provider === "openai" && taskPackage.media?.adapter === "openai_images") {

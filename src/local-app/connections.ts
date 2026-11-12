@@ -54,6 +54,7 @@ export function parseConnectionCommand(body:Record<string,unknown>){
 async function lockIntent(client:PoolClient,ownerId:string,key:string){await client.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',['connection:'+ownerId+':'+key]);}
 export class LocalConnections {
  private usageCache=new Map<string,{expires:number;request:Promise<ConnectionUsageRead>}>();
+ private minimaxRegionCache=new Map<string,MiniMaxRegion>();
  readonly models:LocalConnectionModels;
  readonly billing:LocalConnectionBilling;
  constructor(private pool:Pool,private store:SecretStore=disabledSecretStore,private probe:ConnectionProbe=disabledConnectionProbe,private usageReader:ProviderUsageReader=createProviderUsageReader(),modelsReader:ProviderModelsReader=createProviderModelsReader(),billingReader?:BillingReader){
@@ -189,11 +190,20 @@ export class LocalConnections {
    ) usage,v.connection_id,coalesce(activity.queued,0) queued,coalesce(activity.running,0) running
    FROM visible_versions v LEFT JOIN connection_activity activity USING (connection_id)`,[ownerId])).rows;
    const activityByConnection=new Map(versionUsage.map(row=>[row.connection_id,{queued:row.queued,running:row.running}]));
-   const bindings=(await client.query('SELECT version_id,store_mode FROM local_identity.connection_bindings WHERE owner_id=$1',[ownerId])).rows;
+   const bindings=(await client.query('SELECT version_id,store_mode,secret_ref FROM local_identity.connection_bindings WHERE owner_id=$1',[ownerId])).rows;
    const minimaxRegions=(await client.query("SELECT version_id,metadata->>'region' region FROM local_identity.connection_intents WHERE owner_id=$1 AND applied_at IS NOT NULL AND metadata->>'provider'='minimax' AND metadata->>'command' IN('create','rotate')",[ownerId])).rows;
    for(const connection of connections.filter(c=>c.provider==='minimax')){
-    const region=minimaxRegions.find(r=>r.version_id===connection.current_version_id)?.region??'international';
-    connection.region=region;connection.endpoint=minimaxEndpoints[region as MiniMaxRegion];
+    let region:MiniMaxRegion|undefined=minimaxRegions.find(r=>r.version_id===connection.current_version_id)?.region;
+    if(!region){
+     region=this.minimaxRegionCache.get(connection.current_version_id);
+     const binding=bindings.find(b=>b.version_id===connection.current_version_id);
+     if(!region&&this.store.mode==='keychain'&&binding?.store_mode==='keychain')try{
+      region=minimaxCredential(await this.store.get(binding.secret_ref)).region;
+      // Immutable version identity: retain only the non-secret region in memory.
+      this.minimaxRegionCache.set(connection.current_version_id,region);
+     }catch{/* A missing legacy binding is unknown, never an international default. */}
+    }
+    connection.region=region;connection.endpoint=region?minimaxEndpoints[region]:'';
    }
    const qualifications=(await client.query("SELECT q.version_id,q.qualified AND EXISTS(SELECT 1 FROM local_identity.connection_probe_evidence e WHERE e.version_id=q.version_id AND e.mode='live' AND e.outcome='verified') qualified FROM local_identity.connection_qualifications q WHERE q.owner_id=$1",[ownerId])).rows;
    const latest=(await client.query('SELECT DISTINCT ON(connection_version_id) connection_version_id,status,created_at FROM public.external_connection_verifications ORDER BY connection_version_id,created_at DESC,id DESC')).rows;
