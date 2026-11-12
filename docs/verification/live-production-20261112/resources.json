@@ -1,0 +1,16 @@
+{
+  "branch": "codex/live-production-acceptance-20261112",
+  "container": "loop-live-acceptance-20261112",
+  "volume": "loop-live-acceptance-20261112-data",
+  "port": 5217,
+  "mediaRoot": "/Volumes/Ebuget 1T/Loop-Control-Acceptance-20261112",
+  "privateRoot": "/Users/dan/.codex/worktrees/live-production-acceptance-20261112/loop-control/.scratch/live-production",
+  "dailyBusinessDataCopied": false,
+  "credentialValuesCopied": false,
+  "connectionCount": 10,
+  "initialStudioPort": 5218,
+  "studioPortAllocation": "每次原生会话分配，当前无开放剪辑会话",
+  "mainEpisodeId": "830c0ab9-bf92-4ed5-9d71-23ebcc7264f4",
+  "deliveryId": "c707962d-d0d7-4c4c-b4fc-0330cecc0914",
+  "visibleProductionOrders": 3
+}

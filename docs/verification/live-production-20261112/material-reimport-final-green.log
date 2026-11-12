@@ -1,0 +1,13 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/materialReimport.integration.test.ts --maxWorkers=1 --fileParallelism=false
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/live-production-acceptance-20261112/loop-control
+
+ ✓ src/local-app/materialReimport.integration.test.ts (2 tests) 8334ms
+   ✓ identical reference upload keeps the original revision and queued paid video valid; changed bytes still invalidate  4845ms
+   ✓ an invalidated unsent video does not prevent a new explicit request for the updated reference  3488ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  10:38:29
+   Duration  9.82s (transform 874ms, setup 15ms, collect 1.25s, tests 8.33s, environment 0ms, prepare 68ms)

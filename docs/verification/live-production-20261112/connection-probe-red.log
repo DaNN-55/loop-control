@@ -1,0 +1,40 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/connectionProbeEligibility.integration.test.ts --maxWorkers=1 --fileParallelism=false
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/live-production-acceptance-20261112/loop-control
+
+ ❯ src/local-app/connectionProbeEligibility.integration.test.ts (1 test | 1 failed) 1632ms
+   × a retained qualification without live probe evidence is unavailable until explicitly verified again 1632ms
+     → expected { capability: 'image', …(22) } to match object { executable: false, …(1) }
+(34 matching properties omitted from actual)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/connectionProbeEligibility.integration.test.ts > a retained qualification without live probe evidence is unavailable until explicitly verified again
+AssertionError: expected { capability: 'image', …(22) } to match object { executable: false, …(1) }
+(34 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "executable": false,
+-   "status": "retryable",
++   "status": "verified",
+  }
+
+ ❯ src/local-app/connectionProbeEligibility.integration.test.ts:11:27
+      9|   await f.admin.query('DELETE FROM local_identity.connection_probe_evi…
+     10|   expect((await f.admin.query('SELECT qualified FROM local_identity.co…
+     11|   expect(await service()).toMatchObject({executable:false,status:'retr…
+       |                           ^
+     12|   expect((await f.command('verify',{connectionId:connection.id})).body…
+     13|  }finally{await f.close();}
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  11:00:33
+   Duration  2.66s (transform 586ms, setup 11ms, collect 856ms, tests 1.63s, environment 0ms, prepare 43ms)

@@ -1,0 +1,70 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/WorkspaceVisualCandidatesPanel.test.tsx -t invalidated queued --maxWorkers=1
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/live-production-acceptance-20261112/loop-control
+
+ ❯ src/local-app/WorkspaceVisualCandidatesPanel.test.tsx (29 tests | 2 failed | 27 skipped) 92ms
+   × invalidated queued image is historical and cannot keep the generation form busy 71ms
+     → expected <p …(2)></p> to be null
+   × invalidated queued video is historical and cannot keep the generation form busy 20ms
+     → expected <p …(2)></p> to be null
+   ↓ starts both tabs with placeholders and keeps API fields out of the upload flow
+   ↓ preserves each target’s generation draft across tabs and shot selection
+   ↓ image thumbnails preview without adopting or changing the explicitly chosen video first frame
+   ↓ explicit image generation freezes reference IDs, count, quality and dimensions without adopting
+   ↓ keeps the original image draft visible when its model is disabled in connection settings
+   ↓ keeps the original video draft visible when its model is disabled in connection settings
+   ↓ keeps the adopted video when manually choosing an image as fallback
+   ↓ keeps 图片 candidate actions without a generation settings entry
+   ↓ keeps 视频 candidate actions without a generation settings entry
+   ↓ retains explicit connection choices through shot switches and refresh without submitting
+   ↓ video choice and input conflicts survive refresh while actual voice is checked against the chosen model
+   ↓ formal video entry offers Pexels query without a generation model or first frame
+   ↓ keeps a cleared image override blank across target switches and reopening with a legacy default
+   ↓ keeps a cleared video override blank across target switches and reopening with a legacy default
+   ↓ keeps a cleared Pexels connection and query across target switches and reopening without searching
+   ↓ requires explicit image selection and adoption and preserves old candidates on append
+   ↓ requires explicit video selection and adoption and preserves old candidates on append
+   ↓ keeps stale and read-only candidates visible while disallowing adoption
+   ↓ adds an existing episode image to results without adopting or submitting generation
+   ↓ adds an existing episode video to results without adopting or submitting generation
+   ↓ assigns video roles by shared input order and submits only the selected mode’s compatible materials
+   ↓ returns focus to the direct image action after cancelling inline adoption
+   ↓ navigates the vertical candidate rail with up/down and retains left/right, Home/End without adopting
+   ↓ downloads the selected original image through the existing fingerprinted artifact route
+   ↓ switches video generation and Pexels in one picker while preserving independent drafts and search settings
+   ↓ restores legacy Pexels query and connection without converting them to a video generation selection
+   ↓ formats the actual voice duration without rounding the generation request
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/WorkspaceVisualCandidatesPanel.test.tsx > invalidated queued image is historical and cannot keep the generation form busy
+ FAIL  src/local-app/WorkspaceVisualCandidatesPanel.test.tsx > invalidated queued video is historical and cannot keep the generation form busy
+AssertionError: expected <p …(2)></p> to be null
+
+- Expected:
+null
+
++ Received:
+<p
+  class="workspace-visual-generation-note"
+  role="status"
+>
+  正在生成，请等待结果。
+</p>
+
+ ❯ src/local-app/WorkspaceVisualCandidatesPanel.test.tsx:28:44
+     26|  if(kind==='video')fireEvent.click(screen.getByRole('tab',{name:'视频'})…
+     27|  fireEvent.click(screen.getByRole('button',{name:'AI 生成'}));
+     28|  expect(screen.queryByText('正在生成，请等待结果。')).toBeNull();
+       |                                            ^
+     29|  expect(screen.getByRole('button',{name:kind==='image'?'生成图片':'生成视频'})…
+     30| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 27 skipped (29)
+   Start at  09:53:28
+   Duration  2.09s (transform 294ms, setup 8ms, collect 1.52s, tests 92ms, environment 321ms, prepare 34ms)

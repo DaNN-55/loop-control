@@ -1,0 +1,44 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workspaceVisualCandidates.integration.test.ts src/local-app/workspaceSoundCandidates.integration.test.ts src/local-app/workspaceExport.integration.test.ts src/local-app/nativeStudioPrimary.integration.test.ts src/local-app/embeddedStudio.integration.test.ts --maxWorkers=1 --fileParallelism=false --reporter=default --reporter=json --outputFile=docs/verification/live-production-20261112/supplemental.json
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/live-production-acceptance-20261112/loop-control
+
+ ✓ src/local-app/workspaceVisualCandidates.integration.test.ts (23 tests) 83649ms
+   ✓ Owner registers a local visual candidate and replaces only one source instance  4405ms
+   ✓ Owner locally fills a placeholder with a registered still image without video generation  3329ms
+   ✓ Owner locally fills a placeholder with a registered pan-zoom image without video generation  2524ms
+   ✓ Owner registers new media into the existing live pool and can save and reopen it  8458ms
+   ✓ Owner creates a controlled Provider visual candidate during editing without changing Episode stage  3629ms
+   ✓ visual generation freezes the actual source voice window instead of retained muted TTS and rejects a later route change  10482ms
+   ✓ unknown paid visual submissions cannot be bypassed by retry or a new prompt  2708ms
+   ✓ a visual task with a saved Provider ID resumes polling without a second paid submission (current protocol)  2910ms
+   ✓ a visual task with a saved Provider ID resumes polling without a second paid submission (legacy protocol)  3414ms
+   ✓ short visual source requires an explicit duration decision without repeating or moving other clips  2655ms
+   ✓ voice gain and BGM edits do not stale a visual request or overwrite the new mix  5473ms
+   ✓ an unavailable unused visual candidate does not prevent editing and cannot be adopted  2068ms
+   ✓ added shots accept registered local visuals and explicitly selected generation and changed target input blocks a new paid POST  3340ms
+   ✓ manual video adoption preserves the selected source interval and refuses a short range  2726ms
+   ✓ video generation freezes and applies the first-frame composition without changing the source image  2744ms
+   ✓ returns the used video to candidates without moving the shot and allows re-adoption  2939ms
+   ✓ freezes volcengine keyframes inputs and sends the right roles to a simulated provider  2590ms
+   ✓ freezes volcengine references inputs and sends the right roles to a simulated provider  2862ms
+   ✓ freezes minimax keyframes inputs and sends the right roles to a simulated provider  2618ms
+   ✓ freezes minimax references inputs and sends the right roles to a simulated provider  2819ms
+   ✓ freezes kling keyframes inputs and sends the right roles to a simulated provider  2532ms
+   ✓ freezes kling references inputs and sends the right roles to a simulated provider  3117ms
+   ✓ freezes bailian references inputs and sends the right roles to a simulated provider  3302ms
+ ✓ src/local-app/workspaceExport.integration.test.ts (1 test) 46141ms
+   ✓ Owner checks actual used content before exporting and confirms exact final bytes  46140ms
+ ✓ src/local-app/nativeStudioPrimary.integration.test.ts (1 test) 29544ms
+   ✓ native text, style and timing save once, final-file approval confirms captions and later edits invalidate it  29544ms
+ ✓ src/local-app/embeddedStudio.integration.test.ts (1 test) 10620ms
+   ✓ Owner opens the real Studio and saves its versioned workspace through native HTTP  10620ms
+ ✓ src/local-app/workspaceSoundCandidates.integration.test.ts (1 test) 6945ms
+   ✓ freezes distinct sound candidates, requires manual adoption, and keeps music settings on the production order  6944ms
+
+ Test Files  5 passed (5)
+      Tests  27 passed (27)
+   Start at  10:56:40
+   Duration  180.23s (transform 967ms, setup 20ms, collect 2.48s, tests 176.90s, environment 1ms, prepare 227ms)
+
+JSON report written to /Users/dan/.codex/worktrees/live-production-acceptance-20261112/loop-control/docs/verification/live-production-20261112/supplemental.json

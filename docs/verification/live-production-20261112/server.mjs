@@ -1,0 +1,16 @@
+import{readFile,writeFile}from'node:fs/promises';
+import{join}from'node:path';
+import{createServer}from'vite';
+import react from'@vitejs/plugin-react';
+import{createNativeApplication}from'../../../scripts/runtime/application.mjs';
+import{nativeFrontendBoundary}from'../../../src/local-app/frontendBoundary.ts';
+const root=process.cwd(),privateRoot=join(root,'.scratch/live-production');
+const d=JSON.parse(await readFile(join(privateRoot,'deployment.json'),'utf8'));
+const {keychainState}=await import('/Users/dan/Programs/loop-control/scripts/runtime/keychain.mjs');
+d.prepareKeychainAccess=()=>keychainState('unlock');
+keychainState('unlock');
+const app=await createNativeApplication(d);
+const server=await createServer({configFile:false,root,envFile:false,envPrefix:'LOOP_LOCAL_PUBLIC_',cacheDir:join(privateRoot,'vite-cache'),optimizeDeps:{entries:['src/local-app/main.tsx']},plugins:[react(),nativeFrontendBoundary(root),{name:'isolated-real-acceptance',configureServer(s){s.middlewares.use((q,r,next)=>{if(q.url?.startsWith('/api/')||q.url?.startsWith('/_'))void app.handler(q,r);else next();});}}],define:{'import.meta.env.VITE_LOOP_BACKEND':JSON.stringify('local')},server:{host:'127.0.0.1',port:d.port,strictPort:true,fs:{strict:true,deny:['.env','.env.*','**/.git/**','**/.loop-control/**','**/.scratch/**']},watch:{ignored:['**/.loop-control/**','**/.scratch/**','**/node_modules/**']}}});
+await server.listen();await writeFile(join(privateRoot,'server.pid'),String(process.pid));
+console.log('Acceptance application: http://127.0.0.1:'+d.port+'/');
+for(const signal of['SIGINT','SIGTERM'])process.on(signal,async()=>{await server.close();await app.close();process.exit(0);});

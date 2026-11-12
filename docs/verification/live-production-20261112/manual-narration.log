@@ -1,0 +1,12 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/workspaceNarration.integration.test.ts -t manual narration and disabled modes --maxWorkers=1 --fileParallelism=false
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/live-production-acceptance-20261112/loop-control
+
+ ✓ src/local-app/workspaceNarration.integration.test.ts (13 tests | 12 skipped) 5260ms
+   ✓ manual narration and disabled modes never enqueue TTS, while short pictures preserve a recoverable conflict  5260ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 12 skipped (13)
+   Start at  10:56:41
+   Duration  6.78s (transform 876ms, setup 15ms, collect 1.32s, tests 5.26s, environment 0ms, prepare 46ms)

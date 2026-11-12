@@ -1,0 +1,58 @@
+[
+  {
+    "taskId": "7d56f741-8322-42ba-9cd7-236b28b59fa8",
+    "providerTaskId": "462417246343799",
+    "shotId": "shot-01",
+    "source": "/Volumes/Ebuget 1T/Loop-Control-Acceptance-20261112/真人验收｜日照金山--b110b947-7156-420f-96fc-e478781900a6/未分系列--fdc0825d-e816-4769-a0d4-ee1a3b027376/真人验收 A01｜日照金山：讨个好彩头--830c0ab9-bf92-4ed5-9d71-23ebcc7264f4/.native-worker-attempts/da55b2621774f24e186de0120b9f0b2627ce06ed51758f288f86fe820e26c1d9/未分系列--fdc0825d-e816-4769-a0d4-ee1a3b027376/真人验收 A01｜日照金山：讨个好彩头--830c0ab9-bf92-4ed5-9d71-23ebcc7264f4/native-tasks/7d56f741-8322-42ba-9cd7-236b28b59fa8/7d56f741-8322-42ba-9cd7-236b28b59fa8.mp4",
+    "file": "/Users/dan/.codex/worktrees/live-production-acceptance-20261112/loop-control/.scratch/live-production/日照金山-shot-01-原API结果.mp4",
+    "sha256": "55df0d3340e2ab0cbbbde3cbf3e6226a41d8d573ee88b902faff758ce895c6cc",
+    "bytes": 956578,
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_type": "video",
+          "width": 768,
+          "height": 1344
+        },
+        {
+          "codec_type": "audio"
+        }
+      ],
+      "format": {
+        "duration": "6.583333"
+      }
+    },
+    "recovery": "normal UI import of original bytes; historical task remains failed",
+    "newProviderPosts": 0
+  },
+  {
+    "taskId": "4a716457-eaee-4b7c-a3e2-e9285623841f",
+    "providerTaskId": "462417851593300",
+    "shotId": "shot-02",
+    "source": "/Volumes/Ebuget 1T/Loop-Control-Acceptance-20261112/真人验收｜日照金山--b110b947-7156-420f-96fc-e478781900a6/未分系列--fdc0825d-e816-4769-a0d4-ee1a3b027376/真人验收 A01｜日照金山：讨个好彩头--830c0ab9-bf92-4ed5-9d71-23ebcc7264f4/.native-worker-attempts/05e9f2db62618092d03d66a4c6f959b186c2581ca9b24679cc7661d6a4683fde/未分系列--fdc0825d-e816-4769-a0d4-ee1a3b027376/真人验收 A01｜日照金山：讨个好彩头--830c0ab9-bf92-4ed5-9d71-23ebcc7264f4/native-tasks/4a716457-eaee-4b7c-a3e2-e9285623841f/4a716457-eaee-4b7c-a3e2-e9285623841f.mp4",
+    "file": "/Users/dan/.codex/worktrees/live-production-acceptance-20261112/loop-control/.scratch/live-production/日照金山-shot-02-原API结果.mp4",
+    "sha256": "4a50dd598036560722414a87593e31cacbb1a78d2a18962d406a5ab5dbea17ac",
+    "bytes": 1074988,
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_type": "video",
+          "width": 768,
+          "height": 1344
+        },
+        {
+          "codec_type": "audio"
+        }
+      ],
+      "format": {
+        "duration": "6.583333"
+      }
+    },
+    "recovery": "normal UI import of original bytes; historical task remains failed",
+    "newProviderPosts": 0
+  }
+]

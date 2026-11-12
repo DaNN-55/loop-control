@@ -1,0 +1,128 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/materialReimport.integration.test.ts --maxWorkers=1 --fileParallelism=false
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/live-production-acceptance-20261112/loop-control
+
+ ❯ src/local-app/materialReimport.integration.test.ts (2 tests | 2 failed) 5520ms
+   × identical reference upload keeps the original revision and queued paid video valid; changed bytes still invalidate 3491ms
+     → OpenChatCut 真实读取失败：node:internal/modules/esm/resolve:272
+    throw new ERR_MODULE_NOT_FOUND(
+          ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/Users/dan/.codex/worktrees/live-production-acceptance-20261112/loop-control/.loop-control/local/OpenChatCut/node_modules/tsx/dist/loader.mjs' imported from /Users/dan/.codex/worktrees/live-production-acceptance-20261112/loop-control/
+    at finalizeResolution (node:internal/modules/esm/resolve:272:11)
+    at moduleResolve (node:internal/modules/esm/resolve:879:10)
+    at defaultResolve (node:internal/modules/esm/resolve:1006:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:705:20)
+    at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:725:38)
+    at ModuleLoader.resolveSync (node:internal/modules/esm/loader:763:56)
+    at #resolve (node:internal/modules/esm/loader:687:17)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:607:35)
+    at node:internal/modules/esm/loader:636:32
+    at TracingChannel.tracePromise (node:diagnostics_channel:361:14) {
+  code: 'ERR_MODULE_NOT_FOUND',
+  url: 'file:///Users/dan/.codex/worktrees/live-production-acceptance-20261112/loop-control/.loop-control/local/OpenChatCut/node_modules/tsx/dist/loader.mjs'
+}
+
+Node.js v24.20.0
+   × an invalidated unsent video does not prevent a new explicit request for the updated reference 2028ms
+     → OpenChatCut 真实读取失败：node:internal/modules/esm/resolve:272
+    throw new ERR_MODULE_NOT_FOUND(
+          ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/Users/dan/.codex/worktrees/live-production-acceptance-20261112/loop-control/.loop-control/local/OpenChatCut/node_modules/tsx/dist/loader.mjs' imported from /Users/dan/.codex/worktrees/live-production-acceptance-20261112/loop-control/
+    at finalizeResolution (node:internal/modules/esm/resolve:272:11)
+    at moduleResolve (node:internal/modules/esm/resolve:879:10)
+    at defaultResolve (node:internal/modules/esm/resolve:1006:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:705:20)
+    at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:725:38)
+    at ModuleLoader.resolveSync (node:internal/modules/esm/loader:763:56)
+    at #resolve (node:internal/modules/esm/loader:687:17)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:607:35)
+    at node:internal/modules/esm/loader:636:32
+    at TracingChannel.tracePromise (node:diagnostics_channel:361:14) {
+  code: 'ERR_MODULE_NOT_FOUND',
+  url: 'file:///Users/dan/.codex/worktrees/live-production-acceptance-20261112/loop-control/.loop-control/local/OpenChatCut/node_modules/tsx/dist/loader.mjs'
+}
+
+Node.js v24.20.0
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/materialReimport.integration.test.ts > identical reference upload keeps the original revision and queued paid video valid; changed bytes still invalidate
+Error: OpenChatCut 真实读取失败：node:internal/modules/esm/resolve:272
+    throw new ERR_MODULE_NOT_FOUND(
+          ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/Users/dan/.codex/worktrees/live-production-acceptance-20261112/loop-control/.loop-control/local/OpenChatCut/node_modules/tsx/dist/loader.mjs' imported from /Users/dan/.codex/worktrees/live-production-acceptance-20261112/loop-control/
+    at finalizeResolution (node:internal/modules/esm/resolve:272:11)
+    at moduleResolve (node:internal/modules/esm/resolve:879:10)
+    at defaultResolve (node:internal/modules/esm/resolve:1006:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:705:20)
+    at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:725:38)
+    at ModuleLoader.resolveSync (node:internal/modules/esm/loader:763:56)
+    at #resolve (node:internal/modules/esm/loader:687:17)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:607:35)
+    at node:internal/modules/esm/loader:636:32
+    at TracingChannel.tracePromise (node:diagnostics_channel:361:14) {
+  code: 'ERR_MODULE_NOT_FOUND',
+  url: 'file:///Users/dan/.codex/worktrees/live-production-acceptance-20261112/loop-control/.loop-control/local/OpenChatCut/node_modules/tsx/dist/loader.mjs'
+}
+
+Node.js v24.20.0
+ ❯ inspectOpenChatCutProjectWithRuntime src/worker/openchatcutProjectReader.ts:38:11
+     36|     return JSON.parse(stdout) as OpenChatCutProjectObservation;
+     37|   } catch (cause) {
+     38|     throw new Error(`OpenChatCut 真实读取失败：${cause instanceof Error ? cau…
+       |           ^
+     39|   } finally {
+     40|     await rm(directory, { recursive: true, force: true });
+ ❯ verifyOpenChatCutProject src/worker/openchatcutProjectReader.ts:130:23
+ ❯ embeddedStudioFixture src/local-app/embeddedStudio.fixture.ts:31:187
+ ❯ productionWorkspaceFixture src/local-app/productionWorkspace.fixture.ts:8:10
+ ❯ narrationFixture src/local-app/workspaceNarration.fixture.ts:20:10
+ ❯ src/local-app/materialReimport.integration.test.ts:11:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/local-app/materialReimport.integration.test.ts > an invalidated unsent video does not prevent a new explicit request for the updated reference
+Error: OpenChatCut 真实读取失败：node:internal/modules/esm/resolve:272
+    throw new ERR_MODULE_NOT_FOUND(
+          ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/Users/dan/.codex/worktrees/live-production-acceptance-20261112/loop-control/.loop-control/local/OpenChatCut/node_modules/tsx/dist/loader.mjs' imported from /Users/dan/.codex/worktrees/live-production-acceptance-20261112/loop-control/
+    at finalizeResolution (node:internal/modules/esm/resolve:272:11)
+    at moduleResolve (node:internal/modules/esm/resolve:879:10)
+    at defaultResolve (node:internal/modules/esm/resolve:1006:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:705:20)
+    at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:725:38)
+    at ModuleLoader.resolveSync (node:internal/modules/esm/loader:763:56)
+    at #resolve (node:internal/modules/esm/loader:687:17)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:607:35)
+    at node:internal/modules/esm/loader:636:32
+    at TracingChannel.tracePromise (node:diagnostics_channel:361:14) {
+  code: 'ERR_MODULE_NOT_FOUND',
+  url: 'file:///Users/dan/.codex/worktrees/live-production-acceptance-20261112/loop-control/.loop-control/local/OpenChatCut/node_modules/tsx/dist/loader.mjs'
+}
+
+Node.js v24.20.0
+ ❯ inspectOpenChatCutProjectWithRuntime src/worker/openchatcutProjectReader.ts:38:11
+     36|     return JSON.parse(stdout) as OpenChatCutProjectObservation;
+     37|   } catch (cause) {
+     38|     throw new Error(`OpenChatCut 真实读取失败：${cause instanceof Error ? cau…
+       |           ^
+     39|   } finally {
+     40|     await rm(directory, { recursive: true, force: true });
+ ❯ verifyOpenChatCutProject src/worker/openchatcutProjectReader.ts:130:23
+ ❯ embeddedStudioFixture src/local-app/embeddedStudio.fixture.ts:31:187
+ ❯ productionWorkspaceFixture src/local-app/productionWorkspace.fixture.ts:8:10
+ ❯ narrationFixture src/local-app/workspaceNarration.fixture.ts:20:10
+ ❯ src/local-app/materialReimport.integration.test.ts:32:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  10:36:22
+   Duration  7.28s (transform 1.03s, setup 14ms, collect 1.53s, tests 5.52s, environment 0ms, prepare 65ms)

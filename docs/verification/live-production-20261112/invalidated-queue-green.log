@@ -1,0 +1,24 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/materialReimport.integration.test.ts src/local-app/workspaceGenerationState.integration.test.ts src/local-app/workflowQueueStop.independent.integration.test.ts --maxWorkers=1 --fileParallelism=false
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/live-production-acceptance-20261112/loop-control
+
+ ✓ src/local-app/materialReimport.integration.test.ts (2 tests) 4540ms
+   ✓ identical reference upload keeps the original revision and queued paid video valid; changed bytes still invalidate  2377ms
+   ✓ an invalidated unsent video does not prevent a new explicit request for the updated reference  2163ms
+ ✓ src/local-app/workspaceGenerationState.integration.test.ts (5 tests) 11823ms
+   ✓ HTTP image unknown preserves the original submission and a successful retry can supply a video first frame  3328ms
+   ✓ HTTP image reject preserves the original submission and a successful retry can supply a video first frame  2358ms
+   ✓ HTTP video polling resumes the same frozen task and original remote ID, never a second POST  2059ms
+   ✓ Owner HTTP reconciles a held publication after lost COMMIT without a new attempt or supplier POST  2131ms
+   ✓ HTTP speech preserves unknown original submission evidence even after current input is changed  1946ms
+ ✓ src/local-app/workflowQueueStop.independent.integration.test.ts (4 tests) 10328ms
+   ✓ 48/6/28/46 independent: disabling stops only unsent queued attempts, preserves running and unknown evidence, and re-enabling does not submit  3850ms
+   ✓ 48/20/46 independent: deleting a visual target stops its unsent queued task and retains its immutable request  2394ms
+   ✓ 48/21/24/46 independent: reopening stopped speech submits nothing and a new confirmed same-input request gets a fresh task  2549ms
+   ✓ 48/2/42/46 independent: queue stopping rejects foreign Owners, illegal scopes, current-shot removal and read-only workspaces  1535ms
+
+ Test Files  3 passed (3)
+      Tests  11 passed (11)
+   Start at  09:58:23
+   Duration  28.11s (transform 577ms, setup 10ms, collect 1.06s, tests 26.69s, environment 0ms, prepare 85ms)

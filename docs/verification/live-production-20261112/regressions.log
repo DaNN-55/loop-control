@@ -1,0 +1,148 @@
+npm notice run loop-control@0.1.0 npx
+npm notice run 'vitest' run src/local-app/materialReimport.integration.test.ts src/local-app/receiptRules.integration.test.ts src/local-app/commandReceipt.integration.test.ts src/local-app/workspaceGenerationState.integration.test.ts src/local-app/workflowRules.integration.test.ts src/local-app/workflowRetryRules.independent.integration.test.ts src/local-app/workflowQueueStop.independent.integration.test.ts src/local-app/workflowLegacyRules.integration.test.ts src/local-app/recycleBin.integration.test.ts src/local-app/recycleBin.independent.integration.test.ts src/local-app/episodeArchive.integration.test.ts src/local-app/episodeDeletion.integration.test.ts src/local-app/episodeDeletionRetainedSources.integration.test.ts src/local-app/workspaceScriptResume.integration.test.ts src/local-app/workspaceCaptions.integration.test.ts src/local-app/workspaceCandidates.integration.test.ts src/local-app/workspacePexels.integration.test.ts src/local-app/workspaceDeliveryInputs.integration.test.ts src/local-app/workspaceDelivery.integration.test.ts src/local-app/workspaceNarrationTabs.integration.test.ts src/local-app/workspaceAudioStorage.integration.test.ts src/local-app/blueprintContraction.integration.test.ts src/local-app/workspaceCandidateImpact.integration.test.ts --maxWorkers=1 --fileParallelism=false --reporter=default --reporter=json --outputFile=docs/verification/live-production-20261112/regressions.json
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/live-production-acceptance-20261112/loop-control
+
+ ✓ src/local-app/workspaceAudioStorage.integration.test.ts (10 tests) 49140ms
+   ✓ replaced production directory blocks speech submission before reserving fees or contacting the Provider  2205ms
+   ✓ legacy speech retains actual media, confirmed input and one paid submission after rename/restart  1941ms
+   ✓ registered speech retains actual media, confirmed input and one paid submission after rename/restart  1836ms
+   ✓ registered source video extracts only its actual selected audio window into this production  4220ms
+   ✓ registered music and effects retain frozen searches on retry and remain playable managed files after external originals disappear  5156ms
+   ✓ registered speech drives the actual alignment worker and preserves confirmed subtitle text and timing after restart  5841ms
+   ✓ legacy synchronized preview renders actual approved source audio and keeps the native project beside the proxy  14108ms
+   ✓ registered synchronized preview renders actual approved source audio and keeps the native project beside the proxy  8175ms
+   ✓ subtitle readback rejects a replaced production directory instead of reporting the old confirmed state as current  1627ms
+   ✓ uploaded narration music and effects keep owned snapshots at the registered location after all external originals are removed  4029ms
+ ✓ src/local-app/workspaceDelivery.integration.test.ts (4 tests) 52241ms
+   ✓ Owner delivery requires an exact confirmed export  1477ms
+   ✓ real Worker verifies exact package, fences tamper and missing inputs, retries and survives restart  17480ms
+   ✓ a queued package cannot complete or retry against a different final export  17117ms
+   ✓ delivery records the used trimmed voice source and never substitutes an unadopted draft text  16166ms
+(node:26392) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ✓ src/local-app/workspacePexels.integration.test.ts (6 tests) 86266ms
+   ✓ Owner queries Pexels, previews an explicit result, imports and explicitly adopts managed bytes after restart  13289ms
+   ✓ Pexels failures stay recoverable, validate external URLs and bytes, and never generate or adopt automatically  4141ms
+   ✓ queued Pexels requests retain exact credentials across rotation and old candidates remain selectable after a new query  3081ms
+   ✓ a short Pexels video gives recoverable duration feedback and only an explicit duration choice changes the native window  2677ms
+   ✓ Pexels results and unimported previews for one shot survive many searches on another shot  60721ms
+   ✓ thumbnail search metadata survives Owner reads and duplicate preview/import cannot change the project before adoption  2357ms
+(node:34566) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ✓ src/local-app/workspaceCandidates.integration.test.ts (7 tests) 41256ms
+   ✓ completed local speech versions stay immutable and rejecting a candidate preserves the native project  2961ms
+   ✓ explicit candidate duration changes the stable main voice and its followed captions while stale attempts preserve the saved edit  7753ms
+   ✓ prepared old speech and changed candidate bytes cannot overwrite a newer input  3367ms
+   ✓ adopting actual speech expires only affected caption evidence and a late alignment cannot restore it  3635ms
+   ✓ new registered speech enters the existing Studio media session before relink and cannot be finalized before native save  5909ms
+   ✓ a saved native candidate can recover its missing adoption receipt after restart without regenerating speech  6179ms
+   ✓ explicit main-voice candidate adoption switches source and none atomically while preserving native sounds  11451ms
+ ✓ src/local-app/workspaceCaptions.integration.test.ts (6 tests | 1 skipped) 30201ms
+   ✓ Owner edits only the chosen native caption lane and persists manual timing without shot approval  3806ms
+   ✓ current native caption evidence follows the real alignment queue and rejects a late Worker result after a text edit  2169ms
+   ✓ real landscape and portrait Remotion frames contain caption pixels inside the chosen safe area  16417ms
+   ✓ Owner caption errors identify the field and current shot window without changing the saved native captions  1599ms
+   ✓ percentage margins and second timings survive Owner save, native dragging, save and reopen  6209ms
+ ✓ src/local-app/recycleBin.integration.test.ts (6 tests) 12002ms
+   ✓ quota counts real registered bytes, sweeps safe FIFO on mutation, preserves newest and oversized item  3324ms
+   ✓ unknown and running work block entry; offline or changed files block restore; protected manual files survive quota  2416ms
+   ✓ hardlinked bytes are counted once and protected, account cannot orphan trash, concurrent restore has one winner  1387ms
+   ✓ real Owner recycle hides catalog, survives restart and restores IDs, frozen evidence and original archive state  1869ms
+   ✓ recycle enforces Owner, CSRF, revision, durable duplicate receipts and explicit permanent confirmation  1746ms
+   ✓ recycle schema applies forward without rewriting existing migration checksums  1258ms
+ ✓ src/local-app/workspaceCandidateImpact.integration.test.ts (3 tests) 21916ms
+   ✓ prepared visual impact matches native adoption, persistence and reopen for 2 seconds  7049ms
+   ✓ prepared visual impact matches native adoption, persistence and reopen for 1 seconds  7532ms
+   ✓ prepared visual impact matches native adoption, persistence and reopen for 3 seconds  7333ms
+ ✓ src/local-app/workflowLegacyRules.integration.test.ts (4 tests) 19746ms
+   ✓ 48 composition revision freezes the current QC edit, fences permission/stale/running requests and preserves prior evidence  4708ms
+   ✓ 48 storyboard return invalidates downstream packages while retaining the approved storyboard and immutable QC files  2627ms
+   ✓ 48 a running storyboard revision blocks a QC structural return before any downstream evidence changes  2576ms
+   ✓ 48 per-shot input changes remain drafts until a new local preview is confirmed and a new review snapshot is frozen  9834ms
+ ✓ src/local-app/workflowRules.integration.test.ts (4 tests) 21560ms
+   ✓ 48/6/7/21/23: disabling unknown speech removes current blockers but retains reconciliation and prevents resend  2307ms
+   ✓ 48/21/26/37: unused missing voice and its long tail cannot block real native export, while re-enabled media must validate  11082ms
+   ✓ 48/7/8/20/28/29: replacing or deleting a visual target and unused sound failures leave only background reminders  1955ms
+   ✓ 48/6/21/26: an already sent speech request may finish after disabling but never restores or adopts its content  6215ms
+ ✓ src/local-app/episodeDeletion.integration.test.ts (2 tests) 4321ms
+   ✓ managed=true: deletes an archived ordinary order and then its empty account through Owner HTTP, retaining deletion fences  2348ms
+   ✓ managed=false: deletes an archived ordinary order and then its empty account through Owner HTTP, retaining deletion fences  1972ms
+ ✓ src/local-app/workspaceDeliveryInputs.integration.test.ts (1 test) 16085ms
+   ✓ Owner validates cover content and tag boundaries before queuing a package and preserves the exact confirmed delivery  16085ms
+ ✓ src/local-app/receiptRules.integration.test.ts (8 tests) 16142ms
+   ✓ 4/24 persists exactly two local recoveries across attempts and reuses a reserved request without an extra send  2206ms
+   ✓ 4 changed input is proven not sent, while historical reservations remain unknown  1690ms
+   ✓ 5/9/24 verified files recover the original publication with no new Provider request: received-write  1898ms
+   ✓ 5/9/24 verified files recover the original publication with no new Provider request: commit-rejected  2295ms
+   ✓ 5/9/24 verified files recover the original publication with no new Provider request: commit-ack-lost  2157ms
+   ✓ 24 unknown speech only allows a separately confirmed new generation, preserves old receipt, and cannot reuse that exception  2055ms
+   ✓ 4/24 a temporary local failure stops after two recovery attempts and a new explicit confirmation can retry without unknown warning  1935ms
+   ✓ 24 a documented business refusal over HTTP 200 is rejected, preserves the code and allows explicit retry  1906ms
+ ✓ src/local-app/workspaceGenerationState.integration.test.ts (5 tests) 11643ms
+   ✓ HTTP image unknown preserves the original submission and a successful retry can supply a video first frame  3163ms
+   ✓ HTTP image reject preserves the original submission and a successful retry can supply a video first frame  2338ms
+   ✓ HTTP video polling resumes the same frozen task and original remote ID, never a second POST  2089ms
+   ✓ Owner HTTP reconciles a held publication after lost COMMIT without a new attempt or supplier POST  2107ms
+   ✓ HTTP speech preserves unknown original submission evidence even after current input is changed  1945ms
+ ✓ src/local-app/workspaceNarrationTabs.integration.test.ts (1 test) 8604ms
+   ✓ narration and caption switches survive native save without losing media, drafts, gains or independent text  8603ms
+ ✓ src/local-app/blueprintContraction.integration.test.ts (3 tests) 7621ms
+   ✓ Owner saves creative-only accounts without media connections and retains referenced legacy blueprint evidence  1426ms
+   ✓ ordinary planning drafts persist before workspace creation and failed retries retain their frozen selection  3134ms
+   ✓ v2 direct preparation needs no planner and new media requests require explicit service selection  3060ms
+ ✓ src/local-app/workflowRetryRules.independent.integration.test.ts (1 test) 5527ms
+   ✓ 48/27/29/46 independent: persisted source backoff cannot duplicate work, unchanged failure retries, changed or removed targets cannot  5526ms
+ ✓ src/local-app/workspaceScriptResume.integration.test.ts (2 tests) 6447ms
+   ✓ Owner confirms a formatting-only revision while preserving the exact edited project and old invalidated evidence  4364ms
+   ✓ substantive script edits cannot bypass the stale-project guard through formatting recovery  2082ms
+ ✓ src/local-app/recycleBin.independent.integration.test.ts (3 tests) 4939ms
+   ✓ independent recycle: foreign Owner, CSRF and Origin cannot recycle or restore; membership preserves the original graph  1786ms
+   ✓ independent recycle: edited files reject restore and permanent-delete planning without losing membership or bytes  1611ms
+   ✓ independent recycle: capacity is validated at HTTP boundary and stale settings never overwrite the saved limit  1542ms
+ ✓ src/local-app/episodeArchive.integration.test.ts (1 test) 1193ms
+   ✓ restores an owned legacy order without enabling native production; retains ownership, history and CSRF fences  1193ms
+ ✓ src/local-app/episodeDeletionRetainedSources.integration.test.ts (2 tests) 3314ms
+   ✓ only current registered files are confirmed; online deployment sources remain outside deletion authority  1675ms
+   ✓ only current registered files are confirmed; offline deployment sources remain outside deletion authority  1639ms
+ ❯ src/local-app/materialReimport.integration.test.ts (2 tests | 1 failed) 4155ms
+   ✓ identical reference upload keeps the original revision and queued paid video valid; changed bytes still invalidate  2333ms
+   × an invalidated unsent video does not prevent a new explicit request for the updated reference 1821ms
+     → {"error":"已有画面任务正在进行或供应商提交结果未知，请先恢复已有任务或核对结果；不会重复付费提交。"}: expected 409 to be 200 // Object.is equality
+ ✓ src/local-app/commandReceipt.integration.test.ts (2 tests) 2293ms
+   ✓ 5 real HTTP receipt recovery binds Owner, full payload, session and CSRF without repeating mutation  1256ms
+   ✓ 5 lifecycle receipt readback never exposes a private deletion inventory or executes cleanup  1036ms
+ ✓ src/local-app/workflowQueueStop.independent.integration.test.ts (4 tests) 9013ms
+   ✓ 48/6/28/46 independent: disabling stops only unsent queued attempts, preserves running and unknown evidence, and re-enabling does not submit  3780ms
+   ✓ 48/20/46 independent: deleting a visual target stops its unsent queued task and retains its immutable request  1807ms
+   ✓ 48/21/24/46 independent: reopening stopped speech submits nothing and a new confirmed same-input request gets a fresh task  2013ms
+   ✓ 48/2/42/46 independent: queue stopping rejects foreign Owners, illegal scopes, current-shot removal and read-only workspaces  1412ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/materialReimport.integration.test.ts > an invalidated unsent video does not prevent a new explicit request for the updated reference
+AssertionError: {"error":"已有画面任务正在进行或供应商提交结果未知，请先恢复已有任务或核对结果；不会重复付费提交。"}: expected 409 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 409
+
+ ❯ src/local-app/materialReimport.integration.test.ts:43:175
+     41|   const changed=await f.request('importMaterial',{...data,contentBase6…
+     42|   expect((await f.c.query('SELECT status,invalidated_at FROM public.ta…
+     43|   const next=await f.chosenRequest('requestWorkspaceVisualCandidate',{…
+       |                                                                                                                                                                               ^
+     44|   const newTask=next.body.visualTasks.find((t:{taskId:string})=>t.task…
+     45|   expect((await f.execute(newTask))?.status).toBe('completed');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 22 passed (23)
+      Tests  1 failed | 85 passed | 1 skipped (87)
+   Start at  09:50:37
+   Duration  442.12s (transform 769ms, setup 38ms, collect 3.66s, tests 435.63s, environment 1ms, prepare 653ms)
+
+JSON report written to /Users/dan/.codex/worktrees/live-production-acceptance-20261112/loop-control/docs/verification/live-production-20261112/regressions.json
