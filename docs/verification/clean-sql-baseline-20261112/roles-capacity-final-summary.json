@@ -1,0 +1,25 @@
+{
+  "numTotalTestSuites": 1,
+  "numPassedTestSuites": 1,
+  "numFailedTestSuites": 0,
+  "numTotalTests": 2,
+  "numPassedTests": 2,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "success": true,
+  "cases": [
+    {
+      "file": "cleanSchemaBehavior.integration.test.ts",
+      "cases": [
+        {
+          "title": "clean baseline preserves actual Owner RLS and Worker identity boundaries",
+          "status": "passed"
+        },
+        {
+          "title": "actual claims retain global capacity two while local CPU and render resource limits remain one",
+          "status": "passed"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "numTotalTestSuites": 1,
+  "numPassedTestSuites": 1,
+  "numFailedTestSuites": 0,
+  "numTotalTests": 1,
+  "numPassedTests": 1,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "success": true,
+  "cases": [
+    {
+      "file": "deletionBackupRestore.integration.test.ts",
+      "cases": [
+        {
+          "title": "real SQL115 prepared and committed deletion block backup while completed and rolled-back manifests restore unchanged after their source files disappear",
+          "status": "passed"
+        }
+      ]
+    }
+  ]
+}

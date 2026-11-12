@@ -1,0 +1,243 @@
+{
+  "functions": [
+    {
+      "schema": "local_identity",
+      "name": "claim_input_task_pre_lease",
+      "identityArguments": "p_task_id uuid, p_worker_capacity integer",
+      "terms": [
+        "cloudflare",
+        "google_tts"
+      ],
+      "sourceReferences": [],
+      "sqlBodyReferences": [
+        "local_identity.claim_input_task"
+      ],
+      "triggerReferences": []
+    },
+    {
+      "schema": "local_identity",
+      "name": "generate_input_shot_tts",
+      "identityArguments": "p_episode_id uuid, p_review_package_id uuid, p_shot_id text, p_retry boolean",
+      "terms": [
+        "google_tts"
+      ],
+      "sourceReferences": [
+        "src/local-app/workspaceNarration.ts",
+        "src/local-app/episodeCommands.ts"
+      ],
+      "sqlBodyReferences": [],
+      "triggerReferences": []
+    },
+    {
+      "schema": "local_identity",
+      "name": "input_media_connection_before_images",
+      "identityArguments": "p_task_id uuid, p_attempt integer, p_lease_token uuid, p_version_id uuid",
+      "terms": [
+        "cloudflare"
+      ],
+      "sourceReferences": [],
+      "sqlBodyReferences": [
+        "local_identity.input_media_connection_before_video_selection"
+      ],
+      "triggerReferences": []
+    },
+    {
+      "schema": "local_identity",
+      "name": "input_task_connection",
+      "identityArguments": "p_task_id uuid, p_attempt integer, p_lease_token uuid",
+      "terms": [
+        "google_tts"
+      ],
+      "sourceReferences": [
+        "src/local-app/narrationWorker.ts",
+        "src/local-app/workerDatabase.ts"
+      ],
+      "sqlBodyReferences": [],
+      "triggerReferences": []
+    },
+    {
+      "schema": "local_identity",
+      "name": "reject_retired_blueprint_provider",
+      "identityArguments": "",
+      "terms": [
+        "cloudflare",
+        "google_tts"
+      ],
+      "sourceReferences": [],
+      "sqlBodyReferences": [],
+      "triggerReferences": [
+        "public.account_blueprint_versions.reject_retired_blueprint_provider"
+      ]
+    },
+    {
+      "schema": "local_identity",
+      "name": "reserve_wan_generation",
+      "identityArguments": "p_task_id uuid, p_attempt integer, p_lease_token uuid",
+      "terms": [
+        "google_tts"
+      ],
+      "sourceReferences": [],
+      "sqlBodyReferences": [
+        "local_identity.reserve_workspace_visual_generation"
+      ],
+      "triggerReferences": []
+    },
+    {
+      "schema": "local_identity",
+      "name": "without_retired_provider_capabilities",
+      "identityArguments": "p_policy jsonb",
+      "terms": [
+        "cloudflare",
+        "google_tts"
+      ],
+      "sourceReferences": [],
+      "sqlBodyReferences": [
+        "public.validate_blueprint_external_connections"
+      ],
+      "triggerReferences": []
+    },
+    {
+      "schema": "public",
+      "name": "claim_next_worker_task_legacy",
+      "identityArguments": "p_task_id uuid",
+      "terms": [
+        "cloudflare",
+        "google_tts"
+      ],
+      "sourceReferences": [],
+      "sqlBodyReferences": [
+        "local_identity.claim_input_task_pre_lease",
+        "public.claim_next_worker_task_pre_lease"
+      ],
+      "triggerReferences": []
+    },
+    {
+      "schema": "public",
+      "name": "claim_next_worker_task_pre_lease",
+      "identityArguments": "p_task_id uuid, p_worker_capacity integer",
+      "terms": [
+        "cloudflare",
+        "google_tts"
+      ],
+      "sourceReferences": [],
+      "sqlBodyReferences": [
+        "public.claim_next_worker_task"
+      ],
+      "triggerReferences": []
+    },
+    {
+      "schema": "public",
+      "name": "generate_confirmed_shot_tts_batch",
+      "identityArguments": "p_episode_id uuid, p_review_package_id uuid",
+      "terms": [
+        "google_tts"
+      ],
+      "sourceReferences": [],
+      "sqlBodyReferences": [],
+      "triggerReferences": []
+    },
+    {
+      "schema": "public",
+      "name": "generate_shot_tts",
+      "identityArguments": "p_episode_id uuid, p_review_package_id uuid, p_shot_id text, p_retry boolean",
+      "terms": [
+        "google_tts"
+      ],
+      "sourceReferences": [],
+      "sqlBodyReferences": [
+        "public.generate_confirmed_shot_tts_batch"
+      ],
+      "triggerReferences": []
+    },
+    {
+      "schema": "public",
+      "name": "normalize_worker_task_runtime_constraints",
+      "identityArguments": "",
+      "terms": [
+        "cloudflare",
+        "google_tts"
+      ],
+      "sourceReferences": [],
+      "sqlBodyReferences": [],
+      "triggerReferences": [
+        "public.tasks.aa_normalize_worker_task_runtime_constraints"
+      ]
+    },
+    {
+      "schema": "public",
+      "name": "orchestrate_narration_tasks_all",
+      "identityArguments": "",
+      "terms": [
+        "google_tts"
+      ],
+      "sourceReferences": [],
+      "sqlBodyReferences": [],
+      "triggerReferences": []
+    },
+    {
+      "schema": "public",
+      "name": "orchestrate_narration_tasks_without_connection_ref",
+      "identityArguments": "p_episode_id uuid",
+      "terms": [
+        "google_tts"
+      ],
+      "sourceReferences": [],
+      "sqlBodyReferences": [
+        "public.orchestrate_narration_tasks_configured"
+      ],
+      "triggerReferences": []
+    },
+    {
+      "schema": "public",
+      "name": "validate_blueprint_external_connections",
+      "identityArguments": "",
+      "terms": [
+        "cloudflare",
+        "google_tts"
+      ],
+      "sourceReferences": [],
+      "sqlBodyReferences": [],
+      "triggerReferences": [
+        "public.account_blueprint_versions.validate_blueprint_external_connections_before_write"
+      ]
+    },
+    {
+      "schema": "public",
+      "name": "worker_retry_delay_ms",
+      "identityArguments": "",
+      "terms": [
+        "cloudflare",
+        "google_tts"
+      ],
+      "sourceReferences": [],
+      "sqlBodyReferences": [],
+      "triggerReferences": []
+    },
+    {
+      "schema": "public",
+      "name": "worker_runtime_constraints",
+      "identityArguments": "p_input_snapshot jsonb, p_worker_capacity integer",
+      "terms": [
+        "google_tts"
+      ],
+      "sourceReferences": [],
+      "sqlBodyReferences": [
+        "local_identity.claim_input_task_pre_lease",
+        "public.claim_next_worker_task_pre_lease",
+        "public.generate_shot_review_video",
+        "public.normalize_worker_task_runtime_constraints",
+        "public.worker_resource_limits"
+      ],
+      "triggerReferences": []
+    }
+  ],
+  "constraints": [
+    {
+      "schema": "public",
+      "table": "external_connections",
+      "name": "external_connections_provider_adapter_check",
+      "definition": "CHECK ((((provider = 'pexels'::text) AND (adapter = 'pexels_video'::text)) OR ((provider = 'freesound'::text) AND (adapter = 'freesound_preview'::text)) OR ((provider = 'openai'::text) AND (adapter = 'openai_images'::text)) OR ((provider = 'cloudflare'::text) AND (adapter = 'workers_ai_images'::text)) OR ((provider = 'google_tts'::text) AND (adapter = 'google_tts'::text)) OR ((provider = 'volcengine_tts'::text) AND (adapter = 'volcengine_tts'::text)) OR ((provider = 'bailian'::text) AND (adapter = 'wan_video'::text)) OR ((provider = 'volcengine'::text) AND (adapter = 'seedance_video'::text)) OR ((provider = 'minimax'::text) AND (adapter = 'minimax_video'::text)) OR ((provider = 'kling'::text) AND (adapter = 'kling_video'::text))))"
+    }
+  ],
+  "referenceLimits": "Textual references are discovery evidence, not proof of runtime reachability or absence of dynamic SQL callers."
+}

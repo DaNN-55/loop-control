@@ -52,6 +52,8 @@ npm run build
 
 `runtime:prepare` 只编译和核对本地程序，不启动任务、不执行数据库迁移或 Provider 请求。新增本地迁移使用 `npm run runtime:migrate`，它会校验已执行迁移的原始摘要，并尊重 Owner 的备份配置。
 
+当前日常库仍为 `legacy-v1`；普通启动和迁移不会自动采用 `clean-v2`。已完成的基线与旧执行退役代码已分批保存本地，日常采用尚未执行，步骤和回退边界见 [日常数据库切换方案](docs/plans/clean-sql-daily-cutover-20261112.md)。
+
 OpenChatCut 的真实渲染集成检查需要本机对应源码与媒体工具：
 
 ```zsh
@@ -65,7 +67,7 @@ npm run test:openchatcut-integration
 - 连接按实际功能分组；专用 Keychain 存放秘密，运行配置与任务只保存引用，普通连接表单不回显凭据。
 - OpenChatCut、FFmpeg 和本地语音对齐工具承担媒体生产。供应商能力及付费生成始终受当前连接、任务和预算约束。
 - `.loop-control/local/` 保存当前配置、媒体、历史内容与工具环境，受 Git 忽略；它不是可以整体删除的旧缓存。
-- `db/local/` 的基线和已执行迁移保持原样。历史文件、秘密别名及只读生产单保留现行引用和还原能力。
+- `db/current/` 保存隔离验收中的当前 SQL 基线；`db/archive/legacy-v1/` 按原字节保留旧基线和迁移，通过 manifest 校验旧 ledger。日常启动不会自动跨代，历史文件、凭据引用和只读生产单保持。见 [ADR-0047](docs/adr/0047-clean-sql-baseline-generations.md)。
 
 制作与目录归属见 [ADR-0018](docs/adr/0018-per-request-production-and-account-storage.md)；受控验收与未执行范围见 [#166 验收记录](docs/verification/blueprint-166/REPORT.md)。
 

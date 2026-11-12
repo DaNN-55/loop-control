@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "at": "2026-11-12T12:51:40.699Z",
+  "database": "loop_control",
+  "removed": {
+    "connections": 1,
+    "versions": 1,
+    "qualifications": 1
+  },
+  "changedTables": [
+    "local_identity.connection_qualifications",
+    "public.external_connection_versions",
+    "public.external_connections"
+  ],
+  "unchangedTables": 118,
+  "references": {
+    "bindings": 0,
+    "probes": 0,
+    "verifications": 0,
+    "modelSettings": 0,
+    "billing": 0,
+    "tasks": 0,
+    "blueprints": 0,
+    "episodes": 0
+  },
+  "otherRowsRetained": true,
+  "secretsDeleted": false,
+  "mediaDeleted": false,
+  "schemaChanged": false
+}

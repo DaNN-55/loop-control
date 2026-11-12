@@ -1,0 +1,13 @@
+{
+  "unchanged": true,
+  "objects": {
+    "enums": 29,
+    "grants": 1195,
+    "tables": 121,
+    "indexes": 230,
+    "policies": 93,
+    "triggers": 102,
+    "functions": 469,
+    "constraints": 638
+  }
+}

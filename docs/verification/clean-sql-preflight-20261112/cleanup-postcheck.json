@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "legacyConnections": 0,
+  "legacyVersions": 0,
+  "legacyQualifications": 0,
+  "remainingProviders": {
+    "openai": 1,
+    "bailian": 2,
+    "kling": 1,
+    "volcengine": 1,
+    "minimax": 1,
+    "pexels": 2,
+    "freesound": 2,
+    "volcengine_tts": 2
+  },
+  "deploymentUnchanged": true
+}

@@ -1,0 +1,70 @@
+{
+  "enums": {
+    "before": 29,
+    "after": 29,
+    "removedOrChanged": 0,
+    "addedOrChanged": 0
+  },
+  "grants": {
+    "before": 1195,
+    "after": 1195,
+    "removedOrChanged": 0,
+    "addedOrChanged": 0
+  },
+  "tables": {
+    "before": 121,
+    "after": 121,
+    "removedOrChanged": 0,
+    "addedOrChanged": 0
+  },
+  "indexes": {
+    "before": 230,
+    "after": 230,
+    "removedOrChanged": 0,
+    "addedOrChanged": 0
+  },
+  "policies": {
+    "before": 93,
+    "after": 93,
+    "removedOrChanged": 0,
+    "addedOrChanged": 0
+  },
+  "triggers": {
+    "before": 102,
+    "after": 102,
+    "removedOrChanged": 0,
+    "addedOrChanged": 0
+  },
+  "functions": {
+    "before": 469,
+    "after": 469,
+    "removedOrChanged": 15,
+    "addedOrChanged": 15,
+    "changedNames": [
+      "local_identity.claim_input_task_pre_lease",
+      "local_identity.generate_input_shot_tts",
+      "local_identity.input_media_connection_before_images",
+      "local_identity.input_task_connection",
+      "local_identity.reserve_wan_generation",
+      "public.claim_next_worker_task_legacy",
+      "public.claim_next_worker_task_pre_lease",
+      "public.generate_confirmed_shot_tts_batch",
+      "public.generate_shot_tts",
+      "public.normalize_worker_task_runtime_constraints",
+      "public.orchestrate_narration_tasks_all",
+      "public.orchestrate_narration_tasks_without_connection_ref",
+      "public.validate_blueprint_external_connections",
+      "public.worker_retry_delay_ms",
+      "public.worker_runtime_constraints"
+    ]
+  },
+  "constraints": {
+    "before": 638,
+    "after": 638,
+    "removedOrChanged": 1,
+    "addedOrChanged": 1,
+    "changedNames": [
+      "public.external_connections.external_connections_provider_adapter_check"
+    ]
+  }
+}

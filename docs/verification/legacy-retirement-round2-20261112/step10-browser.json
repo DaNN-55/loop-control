@@ -1,0 +1,10 @@
+{
+  "unknownColor": "rgb(89, 107, 131)",
+  "expectedMuted": "#596b83",
+  "originalDetailVisible": true,
+  "repairCallback": "narration_executor_invalid",
+  "genericNoRepairButton": true,
+  "noObsoleteDirections": true,
+  "drawerDot": "rgb(89, 107, 131)",
+  "narrowNoOverflow": true
+}

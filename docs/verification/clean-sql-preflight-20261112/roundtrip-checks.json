@@ -1,0 +1,91 @@
+{
+  "passed": true,
+  "checks": {
+    "enums": {
+      "count": 29,
+      "replayMatches": true,
+      "roundtripMatches": true
+    },
+    "grants": {
+      "count": 1195,
+      "replayMatches": true,
+      "roundtripMatches": true
+    },
+    "tables": {
+      "count": 121,
+      "replayMatches": true,
+      "roundtripMatches": true
+    },
+    "indexes": {
+      "count": 230,
+      "replayMatches": true,
+      "roundtripMatches": true
+    },
+    "policies": {
+      "count": 93,
+      "replayMatches": true,
+      "roundtripMatches": true
+    },
+    "triggers": {
+      "count": 102,
+      "replayMatches": true,
+      "roundtripMatches": true
+    },
+    "functions": {
+      "count": 469,
+      "replayMatches": true,
+      "roundtripMatches": true
+    },
+    "constraints": {
+      "count": 638,
+      "replayMatches": true,
+      "roundtripMatches": true
+    }
+  },
+  "candidateSha256": "73b7b59db3a30cc5c6fd12d70cec2d21d2d5c200bc5ae20105c9aa20a770d195",
+  "candidateIsClean": false,
+  "note": "Unmodified effective-schema consolidation pilot only; legacy provider references intentionally not removed.",
+  "rawOrderChecks": {
+    "enums": {
+      "count": 29,
+      "replayMatches": true,
+      "roundtripMatches": true
+    },
+    "grants": {
+      "count": 1195,
+      "replayMatches": false,
+      "roundtripMatches": true
+    },
+    "tables": {
+      "count": 121,
+      "replayMatches": true,
+      "roundtripMatches": true
+    },
+    "indexes": {
+      "count": 230,
+      "replayMatches": false,
+      "roundtripMatches": true
+    },
+    "policies": {
+      "count": 93,
+      "replayMatches": false,
+      "roundtripMatches": true
+    },
+    "triggers": {
+      "count": 102,
+      "replayMatches": true,
+      "roundtripMatches": true
+    },
+    "functions": {
+      "count": 469,
+      "replayMatches": true,
+      "roundtripMatches": true
+    },
+    "constraints": {
+      "count": 638,
+      "replayMatches": false,
+      "roundtripMatches": true
+    }
+  },
+  "canonicalization": "Compare complete catalog-object rows as sorted sets, retaining ordered column definitions. Host and VM collation ordered some object arrays differently; no object properties or privileges excluded."
+}

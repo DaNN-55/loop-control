@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "checks": {
+    "public.external_connections": {
+      "exactBeforeImage": true
+    },
+    "public.external_connection_versions": {
+      "exactBeforeImage": true
+    },
+    "local_identity.connection_qualifications": {
+      "exactBeforeImage": true
+    }
+  }
+}

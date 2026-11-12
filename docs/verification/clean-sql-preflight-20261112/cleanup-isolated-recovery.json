@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "fieldsEqual": {
+    "connections": true,
+    "versions": true,
+    "qualification": true
+  },
+  "rolledBack": true,
+  "secretValuesCopied": false
+}

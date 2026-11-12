@@ -1,0 +1,39 @@
+{
+  "numTotalTests": 5,
+  "numPassedTests": 5,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "success": true,
+  "cases": [
+    {
+      "file": "planningRetirement.integration.test.ts",
+      "cases": [
+        {
+          "name": "current plain preparation works without CLI planning and retired requests preserve history",
+          "status": "passed"
+        },
+        {
+          "name": "current v2 preparation works without CLI planning and retired requests preserve history",
+          "status": "passed"
+        },
+        {
+          "name": "claim and lease recovery leave retired ready task records byte-equivalent",
+          "status": "passed"
+        },
+        {
+          "name": "claim and lease recovery leave retired running task records byte-equivalent",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "retiredPlanningArchive.integration.test.ts",
+      "cases": [
+        {
+          "name": "retired planning archives retain exact values and are read-only within Owner RLS",
+          "status": "passed"
+        }
+      ]
+    }
+  ]
+}
