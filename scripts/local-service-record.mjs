@@ -6,7 +6,6 @@ import { fileURLToPath } from "node:url";
 export const projectRoot = realpathSync(join(dirname(fileURLToPath(import.meta.url)), ".."));
 export const serviceRecordPath = process.env.LOOP_CONTROL_SERVICE_RECORD || join(projectRoot, ".loop-control", "local-services.json");
 const projectServiceDefinitions = [
-  { commandIdentity: join(projectRoot, "n8n", "node24", "node_modules", "n8n", "bin", "n8n"), name: "n8n" },
   { commandIdentity: join(projectRoot, "node_modules", "vite", "bin", "vite.js"), name: "控制台" },
 ];
 

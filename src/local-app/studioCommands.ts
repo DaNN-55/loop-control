@@ -28,7 +28,7 @@ export class NativeStudioCommands {
   if(!e.storyboard_enabled||!editableStages.includes(e.stage))throw new ConfigurationError(409,'当前阶段不能编辑或冻结 Studio 工程。');
   let config:OpenChatCutRuntimeConfig;
   try{if(!runtime.studioRuntime)throw Error();config=await runtime.studioRuntime();}catch{throw new ConfigurationError(503,'本地 Studio 执行环境尚未就绪。',{version:workerPreflightVersion,checks:[{capability:'review_rendering',check:'command_availability',phase:'preflight',status:'unavailable',reason:'请检查本地 OpenChatCut、Node 与媒体工具；不会切换到在线执行。',action:'contact_environment_admin',scope:'worker'}]});}
-  if(command==='requestStudioCompositionRevision'||command==='requestStudioStoryboardRevision'){
+  if(command==='requestStudioCompositionRevision'){
    try{await c.query('SELECT local_identity.lock_owned_revision_tasks($1)',[e.id]);}
    catch(error){if((error as {code?:string}).code==='55000')throw new ConfigurationError(409,'当前审核已变化或有任务正在运行，请重新读取后再修订。');throw error;}
   }
@@ -37,12 +37,6 @@ export class NativeStudioCommands {
    const sourcePath=qc.context_snapshot.project_relative_path,basis=await this.basis(c,e,root,sourcePath),binding=this.bindings.get(e.id);
    if(!binding||binding.basis.hash!==basis.hash){const opened=await openOpenChatCutStudio(root,e.id,basis.render,config,{storage,validateProject:project=>this.assertProjectSources(project,basis.render)});if(!opened.studioUrl)throw new ConfigurationError(409,'工作版本存在输入变更，请先打开 Studio 确认保留或替换。');this.bindings.set(e.id,{basis,workspaceRelativePath:opened.workspace.relativePath});}
    return this.execute(c,e,root,runtime,'submitStudioRevision',{...data,sourceProjectRelativePath:sourcePath,workspaceRelativePath:this.bindings.get(e.id)!.workspaceRelativePath});
-  }
-  if(command==='requestStudioStoryboardRevision'){
-   const qc=await this.currentPackage(c,e.id,'qc_review');if(e.stage!=='qc_review'||!qc||qc.id!==data.reviewPackageId)throw new ConfigurationError(409,'当前审核包已变化，请刷新。');
-   const reason=this.reason(data.reason);await this.verifyTask(c,root,qc.task_id);
-   const result=(await c.query('SELECT to_jsonb(public.request_studio_storyboard_revision($1,$2)) result',[qc.id,reason])).rows[0].result;
-   await closeOpenChatCutStudio(e.id);this.bindings.delete(e.id);return result;
   }
   await c.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[e.id+':studio']);
   const sourcePath=command==='openStudio'?data.projectRelativePath:data.sourceProjectRelativePath;

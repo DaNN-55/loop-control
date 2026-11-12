@@ -12,7 +12,7 @@ export async function runWorkspaceDeliveryProcess(f:{database:string;root:string
  const runtimeRelease=await readPreparedRuntimeRelease(projectRoot);
  return withWorkspaceWorkerDatabase(f,database=>new Promise<any>((resolve,reject)=>{
  const child=spawn(process.execPath,[join(runtimeRelease.root,'dist/worker/local-app/localWorkerCli.js')],{cwd:projectRoot,env:processOptions.environment??process.env,stdio:['pipe','pipe','pipe']});let stdout='',stderr='';const timer=setTimeout(()=>child.kill('SIGKILL'),60000);timer.unref();
- child.stdin.on('error',()=>{});child.stdin.end(JSON.stringify({task,config:{projectRoot,runtimeRelease,database,applicationDatabase:{host:database.host,port:database.port,database:database.database},mediaRoot:f.root,mountPath:f.root,minimumFreeBytes:0,visualCommand:[],actualCostCents:0,...workerConfig}}));
+ child.stdin.on('error',()=>{});child.stdin.end(JSON.stringify({task,config:{projectRoot,runtimeRelease,database,applicationDatabase:{host:database.host,port:database.port,database:database.database},mediaRoot:f.root,mountPath:f.root,minimumFreeBytes:0,actualCostCents:0,...workerConfig}}));
  child.stdout.on('data',b=>stdout+=String(b));child.stderr.on('data',b=>stderr+=String(b));child.once('error',reject);child.once('close',code=>{clearTimeout(timer);if(code!==0&&isNativePublicationUnknownMessage(stdout,task))return reject(new NativePublicationUnknownError());if(code!==0)return reject(Error(`Worker child exited ${code}: ${stderr.slice(0,4000)}`));try{resolve(JSON.parse(stdout.trim().split('\n').at(-1)!));}catch{reject(Error('Worker returned no persisted result.'));}});
  }));
 }

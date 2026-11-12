@@ -1,7 +1,7 @@
 import {defaultWanModel} from '../wanVideoModels.js';
 import {productionCapabilityLabels,registeredAdapters,type ProductionCapability,type RegisteredProductionChoice} from '../worker/registeredAdapters.js';
 
-export const providerDisplayNames:Record<string,string>={pexels:'Pexels',freesound:'Freesound',openai:'OpenAI',cloudflare:'Cloudflare',google_tts:'Google Cloud',volcengine_tts:'豆包语音',bailian:'阿里云百炼',volcengine:'火山引擎',minimax:'MiniMax',kling:'可灵'};
+export const providerDisplayNames:Record<string,string>={pexels:'Pexels',freesound:'Freesound',openai:'OpenAI',volcengine_tts:'豆包语音',bailian:'阿里云百炼',volcengine:'火山引擎',minimax:'MiniMax',kling:'可灵'};
 
 export interface ProductionService extends RegisteredProductionChoice {
   id: string;

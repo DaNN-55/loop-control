@@ -29,11 +29,7 @@ function rotate(c:ExternalConnection,status:ExternalConnection['status']='unveri
 }
 fixtures.forEach(([name,provider,adapter],i)=>add(name,provider,adapter,i===7?'retryable':'verified'));
 const historical=versions[0];historical.secretState='unbound';rotate(connections[0],'verified');
-const harnesses=[1,2].map(version=>({id:'harness-'+version,account_id:'demo',capability:'storyboard_planning',version,name:version===1?'分镜规划 v1':'测试',slug:'storyboard-planning-v'+version,summary:'按原文顺序拆解镜头',instructions:'保留脚本中的镜头顺序。',content_hash:'a'.repeat(64),is_active:true,created_at:now,created_by:'demo'}));
-const globalHarnesses=harnesses.map(version=>({...version,account_id:'prototype-global'}));
 const episodes=[{id:'d47aba50-demo',title:'测试',stage:'script_confirmed'},...Array.from({length:12},(_,i)=>({id:'demo-shot-'+(i+1),title:i===0?'末班车前的一把伞 · MiniMax':'示例生产单 '+(i+1),stage:'script_confirmed'}))];
-const plans=new Map();
-let globalPlan={revision:0,selection:null};
 const billing=new Map();
 const modelSettings=new Map<string,string[]>();
 let cleanups=[{cleanupKey:'sample-restore',title:'测试生产单 · 删除未提交',phase:'prepared',stagingPath:'/demo/.staging/story-a'},{cleanupKey:'sample-retry',title:'测试生产单 · 文件待清理',phase:'committed',stagingPath:'/demo/.staging/story-b'}];
@@ -53,25 +49,6 @@ window.fetch=async (input,init)=>{
    const list=episodes.filter(e=>(e.title+' '+e.id).includes(url.searchParams.get('q')??''));
    const page=Number(url.searchParams.get('page')??1),pageSize=8;
    return json({episodes:list.slice((page-1)*pageSize,page*pageSize),page,pageSize,total:list.length});
- }
- if(/^episodes\/[^/]+\/workspace$/.test(path)){
-   const plan=plans.get(path.split('/')[1]);
-   return json({planningSelection:{accountId:'demo',revision:plan?.revision??0,selection:plan?.selection??null,promptVersions:harnesses}});
- }
- if(command==='saveWorkspacePlanningSelection'){
-   plans.set(data.episodeId,{selection:data.selection,revision:data.expectedSelectionRevision+1});return json({ok:true});
- }
- if(path==='prototype-global-planning'){
-   if(command==='saveGlobalPlanningDefaults'){
-     if(data.expectedSelectionRevision!==globalPlan.revision)return json({error:'全局设置已更新，请重新打开。'},{status:409});
-     globalPlan={revision:globalPlan.revision+1,selection:data.selection};
-   }
-   if(command!=='createGlobalPromptVersion')return json({planningSelection:{...globalPlan,promptVersions:globalHarnesses}});
- }
- if(command==='createPromptVersion'||path==='prototype-global-planning'&&command==='createGlobalPromptVersion'){
-   const versions=command==='createGlobalPromptVersion'?globalHarnesses:harnesses;
-   const version=versions.length+1;
-   const h={...versions[0],name:data.name,slug:data.slug??'storyboard-planning-v'+version,summary:data.summary,instructions:data.instructions,id:'harness-'+version,version};versions.push(h);return json(h);
  }
  if(path==='deletion-cleanups')return json(cleanups);
  if(command==='retryDeletionCleanup'){

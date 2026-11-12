@@ -1,4 +1,4 @@
-import {isRetiredProvider} from '../worker/providerLifecycle.js';
+import {registeredAdapters} from '../worker/registeredAdapters.js';
 import {videoProviders,minimaxEndpoints} from "../worker/videoProviderCatalog.js";
 import {officialVideoDownloadUrl} from "../worker/officialVideoProvider.js";
 import{ProviderRequestRejectedError,ProviderOutcomeUnknownError,ProviderRequestNotSentError}from'../worker/providerOutcome.js';
@@ -19,7 +19,7 @@ export async function narrationPorts(config?:NativeNarrationConfiguration,allowM
  if(!config)throw new SecretStoreError('disabled');
  if(config.mode==='live'){
   if(!config.network&&!allowMissingNetwork)throw new SecretStoreError('unavailable');
-  const providerFor=(url:string|URL):OnlineProvider=>{const h=new URL(url).hostname;for(const [provider,p] of Object.entries(videoProviders)){if(h===new URL(p.endpoint).hostname||provider==='minimax'&&h===new URL(minimaxEndpoints.cn).hostname)return provider as OnlineProvider;try{officialVideoDownloadUrl(provider as keyof typeof videoProviders,String(url));return provider as OnlineProvider;}catch{/* Try other official result hosts. */}}if(h==='dashscope.aliyuncs.com'||/^ws-[a-z0-9]{8,64}\.cn-beijing\.maas\.aliyuncs\.com$/.test(h)||['dashscope-a717.oss-accelerate.aliyuncs.com','dashscope-f4de.oss-accelerate.aliyuncs.com','dashscope-7c2c.oss-cn-shanghai.aliyuncs.com'].includes(h)||/^dashscope-result-[a-z0-9-]+\.oss-[a-z0-9-]+\.aliyuncs\.com$/.test(h))return'bailian';if(h==='api.openai.com')return'openai';if(h==='api.cloudflare.com')return'cloudflare';if(h==='texttospeech.googleapis.com')return'google_tts';if(h==='openspeech.bytedance.com')return'volcengine_tts';if(['api.pexels.com','videos.pexels.com','images.pexels.com'].includes(h))return'pexels';if(['freesound.org','cdn.freesound.org'].includes(h))return'freesound';throw new SecretStoreError('unavailable');};
+  const providerFor=(url:string|URL):OnlineProvider=>{const h=new URL(url).hostname;for(const [provider,p] of Object.entries(videoProviders)){if(h===new URL(p.endpoint).hostname||provider==='minimax'&&h===new URL(minimaxEndpoints.cn).hostname)return provider as OnlineProvider;try{officialVideoDownloadUrl(provider as keyof typeof videoProviders,String(url));return provider as OnlineProvider;}catch{/* Try other official result hosts. */}}if(h==='dashscope.aliyuncs.com'||/^ws-[a-z0-9]{8,64}\.cn-beijing\.maas\.aliyuncs\.com$/.test(h)||['dashscope-a717.oss-accelerate.aliyuncs.com','dashscope-f4de.oss-accelerate.aliyuncs.com','dashscope-7c2c.oss-cn-shanghai.aliyuncs.com'].includes(h)||/^dashscope-result-[a-z0-9-]+\.oss-[a-z0-9-]+\.aliyuncs\.com$/.test(h))return'bailian';if(h==='api.openai.com')return'openai';if(h==='openspeech.bytedance.com')return'volcengine_tts';if(['api.pexels.com','videos.pexels.com','images.pexels.com'].includes(h))return'pexels';if(['freesound.org','cdn.freesound.org'].includes(h))return'freesound';throw new SecretStoreError('unavailable');};
   return{mode:'live',store:configuredKeychainStore(config.keychain),fetcher:(url,init)=>{
    if(!config.network)throw new SecretStoreError('unavailable');
    return createProviderFetcher(config.network,providerFor(url),'execute')(url,init);
@@ -35,7 +35,7 @@ export async function assertNarrationReady(config?:NativeNarrationConfiguration)
  await promisify(execFile)('ffprobe',['-version'],{env:{PATH:process.env.PATH},timeout:3000,maxBuffer:65536});
 }
 export async function executeNativeNarration(pool:Pool,config:NativeNarrationConfiguration|undefined,p:WorkerTaskPackage,fence:{p_task_id:string;p_attempt:number;p_lease_token:string}){
- if(isRetiredProvider(p.provider))throw new SecretStoreError('disabled');
+ if(!registeredAdapters.isRegisteredProvider(p.provider))throw new SecretStoreError('disabled');
  const speech=config?.workspaceSpeechFromConnections&&p.provider==='volcengine_tts'&&p.media?.adapter==='volcengine_tts'&&p.promptVersion==='production-request-v1'?p.media.narration:undefined;
  const ports=await narrationPorts(config,!!speech);
  let secret:string;
@@ -65,7 +65,7 @@ export async function executeNativeNarration(pool:Pool,config:NativeNarrationCon
    rejectionStatus=response.status;rejected=response.status>=400&&response.status<500&&response.status!==408;
    if(rejected)await pool.query('SELECT local_identity.record_workspace_narration_submission($1,$2,$3,$4)',[...fenceArgs,'rejected']);
    return response;
-  },pexelsApiKey:undefined,googleTtsApiKey:undefined,volcengineTtsApiKey:p.provider==='volcengine_tts'?secret:undefined,validateMp4:unavailable,extractMp3:unavailable,trimMp3:unavailable,
+  },pexelsApiKey:undefined,volcengineTtsApiKey:p.provider==='volcengine_tts'?secret:undefined,validateMp4:unavailable,extractMp3:unavailable,trimMp3:unavailable,
   async probeMp3(path){const{stdout}=await promisify(execFile)('ffprobe',['-v','error','-show_entries','format=duration','-of','default=noprint_wrappers=1:nokey=1',path],{env:{PATH:process.env.PATH},timeout:5000,maxBuffer:65536});const duration=Number(stdout.trim());if(!Number.isFinite(duration)||duration<=0)throw Error('音频不可播放或时长无效。');return duration;}});}catch(error){if(error instanceof ProviderRequestRejectedError){try{await pool.query('SELECT local_identity.record_workspace_narration_submission($1,$2,$3,$4)',[...fenceArgs,'rejected']);}catch{throw new ProviderOutcomeUnknownError(undefined,'拒绝回执尚未登记');}throw error;}if(error instanceof ProviderOutcomeUnknownError||error instanceof ProviderRequestNotSentError)throw error;if(rejected)throw new ProviderRequestRejectedError(rejectionStatus);if(dispatched&&!rejected)throw new ProviderOutcomeUnknownError(undefined,'返回内容尚未通过音频校验');throw Error(rejected?'供应商已明确拒绝本次口播请求，请检查连接或参数后重试。':'口播生成或音频验证失败，请检查连接和本机执行状态。');}
  const result=JSON.parse(output);result.validation.checks.push({name:'native_narration_mode',passed:true,detail:ports.mode==='controlled'?'受控响应及密钥存储替身；没有在线Provider请求或真实语音生成证明。':'实际在线Provider执行。'});return JSON.stringify(result);
 }

@@ -173,10 +173,8 @@ function capabilitiesFor(subject: RuntimePreflightSubject): RuntimeCapability[] 
 
 function runtimeCapabilitiesFromBlueprintPolicy(policy: unknown, requiredMediaCapabilities?: readonly string[]): RuntimeCapability[] {
   const root = record(policy);
-  const executors = record(root.executors);
   const required = requiredMediaCapabilities ? new Set(requiredMediaCapabilities) : undefined;
   const capabilities: RuntimeCapability[] = [
-    capabilityFromExecutor("storyboard_planning", record(executors.storyboard_planning), "codex", { adapter: true, promptHarness: true }),
     { capability: "review_rendering", provider: "openchatcut", adapter: "openchatcut", model: "openchatcut@0.2.14", promptVersion: "review-render-v1", allowedTools: ["read", "write"], command: runtimeCommandForSelection({ capability: "review_rendering", provider: "openchatcut", adapter: "openchatcut" }) },
     { capability: "final_rendering", provider: "openchatcut", adapter: "openchatcut", model: "openchatcut@0.2.14", promptVersion: "final-render-v1", allowedTools: ["read", "write"], command: runtimeCommandForSelection({ capability: "final_rendering", provider: "openchatcut", adapter: "openchatcut" }) },
   ];
@@ -219,8 +217,7 @@ export function blueprintSelectionErrors(policy:unknown):string[]{
 }
 
 function runtimeCapabilityFromTask(taskPackage: WorkerTaskPackage): RuntimeCapability {
-  const sharedPlanning = taskPackage.capability === "storyboard_planning";
-  const adapter = taskPackage.capability === "acoustic_alignment" ? "whisperx_local" : taskPackage.aRoll?.adapter ?? taskPackage.media?.adapter ?? (taskPackage.provider === "codex" && (taskPackage.capability === "script_writing" || taskPackage.capability === "visual_planning") ? "codex" : sharedPlanning ? taskPackage.promptHarness?.adapter : undefined);
+  const adapter = taskPackage.capability === "acoustic_alignment" ? "whisperx_local" : taskPackage.aRoll?.adapter ?? taskPackage.media?.adapter ?? undefined;
   const adapterResolution = registeredAdapters.resolve({ capability: taskPackage.capability, provider: taskPackage.provider, adapter });
   const executionPath = adapterResolution.kind === "registered" && adapterResolution.choice.executionPath === "local" ? "local" : undefined;
   return {
@@ -230,8 +227,6 @@ function runtimeCapabilityFromTask(taskPackage: WorkerTaskPackage): RuntimeCapab
     ...(adapter ? { adapter } : {}),
     model: taskPackage.model,
     promptVersion: taskPackage.promptVersion,
-    ...(sharedPlanning && taskPackage.promptHarness ? { promptHarnessId: taskPackage.promptHarness.id } : {}),
-    ...(sharedPlanning ? { requiresAdapter: true, requiresPromptHarness: true } : {}),
     allowedTools: taskPackage.allowedTools,
     ...(taskPackage.credentialRef ? { credentialRef: taskPackage.credentialRef } : {}),
     credential: credentialEnvironmentForReference(taskPackage.provider, adapter, taskPackage.credentialRef),
@@ -254,8 +249,8 @@ function evidenceDemands(subject: RuntimePreflightSubject, capabilities: readonl
       demands.push({ kind: "credential_presence", key: capability.credentialRef, credentialRef: capability.credentialRef, provider: capability.provider, adapter: capability.adapter });
     }
     if (capability.command) demands.push({ kind: "command_availability", key: capability.command, command: capability.command });
-    if (capability.model && (capability.provider === "codex" || capability.credential || capability.credentialRef)) demands.push({ kind: "model_permission", key: capability.model, provider: capability.provider, adapter: capability.adapter, model: capability.model, credential: capability.credential, credentialRef: capability.credentialRef });
-    if (capability.provider === "codex" || capability.credential || capability.credentialRef) demands.push({ kind: "network_connectivity", key: capability.provider, provider: capability.provider, adapter: capability.adapter, model: capability.model, credential: capability.credential, credentialRef: capability.credentialRef });
+    if (capability.model && (capability.credential || capability.credentialRef)) demands.push({ kind: "model_permission", key: capability.model, provider: capability.provider, adapter: capability.adapter, model: capability.model, credential: capability.credential, credentialRef: capability.credentialRef });
+    if (capability.credential || capability.credentialRef) demands.push({ kind: "network_connectivity", key: capability.provider, provider: capability.provider, adapter: capability.adapter, model: capability.model, credential: capability.credential, credentialRef: capability.credentialRef });
     if (capability.credential || capability.credentialRef) demands.push({ kind: "credential_validity", key: capability.credential ?? capability.credentialRef!, provider: capability.provider, adapter: capability.adapter, model: capability.model, credential: capability.credential, credentialRef: capability.credentialRef });
   }
   demands.push({ kind: subject.kind === "account_blueprint" && subject.target === "new_episode" ? "media_library" : "asset_root", key: "worker_runtime" });
@@ -376,18 +371,10 @@ function runtimeCommandForSelection(selection: { adapter?: string; capability: s
 }
 
 function runtimeCommandForExecution(kind: RegisteredAdapterChoice["execution"]["kind"]): string | undefined {
-  if (kind === "codex") return "codex";
   if (kind === "ffmpeg") return "ffmpeg";
   if (kind === "openchatcut") return "openchatcut";
   if (kind === "whisperx") return process.env.WHISPERX_PYTHON?.trim() || "python3";
   return undefined;
-}
-
-function capabilityFromExecutor(capability: string, executor: Record<string, unknown>, defaultProvider: string, requirements: { adapter?: boolean; promptHarness?: boolean } = {}): RuntimeCapability {
-  const provider = stringValue(executor.provider) || defaultProvider;
-  const adapter = stringValue(executor.adapter);
-  const promptHarnessId = stringValue(executor.harness_id);
-  return { capability, provider, ...(adapter ? { adapter } : {}), model: stringValue(executor.model), promptVersion: stringValue(executor.prompt_version), ...(promptHarnessId ? { promptHarnessId } : {}), ...(requirements.adapter ? { requiresAdapter: true } : {}), ...(requirements.promptHarness ? { requiresPromptHarness: true } : {}), allowedTools: requiredTools(), command: runtimeCommandForSelection({ capability, provider, adapter }) };
 }
 
 function configurationErrorFor(capability: RuntimeCapability): string | undefined {
@@ -397,7 +384,7 @@ function configurationErrorFor(capability: RuntimeCapability): string | undefine
   if (capability.requiresAdapter && !capability.adapter) return `能力 ${capability.capability} 缺少已注册 Adapter。`;
   const resolution = registeredAdapters.resolve({ capability: capability.capability, executionPath: capability.executionPath, provider: capability.provider, adapter: capability.adapter, model: capability.model, preset: capability.promptVersion });
   if (resolution.kind === "invalid" && (resolution.code === "model_unsupported" || resolution.code === "preset_unsupported" || resolution.code === "execution_path_mismatch" || resolution.code === "capability_unsupported")) return resolution.detail;
-  if (resolution.kind === "registered" && resolution.choice.connection.kind === "owner_managed" && !isConnectionId(capability.credentialRef)) return `${capability.provider === "bailian" ? "百炼万相" : capability.provider === "openai" ? "OpenAI Images" : capability.provider === "cloudflare" ? "Cloudflare Workers AI" : capability.provider === "google_tts" ? "Google TTS" : capability.provider === "volcengine_tts" ? "豆包语音" : capability.provider === "freesound" ? "Freesound" : "Pexels"} 必须选择已验证的外部连接版本。`;
+  if (resolution.kind === "registered" && resolution.choice.connection.kind === "owner_managed" && !isConnectionId(capability.credentialRef)) return `${capability.provider === "bailian" ? "百炼万相" : capability.provider === "openai" ? "OpenAI Images" : capability.provider === "volcengine_tts" ? "豆包语音" : capability.provider === "freesound" ? "Freesound" : "Pexels"} 必须选择已验证的外部连接版本。`;
   if (capability.requiresPromptHarness && !capability.promptHarnessId) return `能力 ${capability.capability} 缺少 Prompt Harness。`;
   return undefined;
 }

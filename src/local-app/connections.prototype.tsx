@@ -3,8 +3,6 @@ import {useState} from 'react';
 import {createRoot} from 'react-dom/client';
 import {Clapperboard,LayoutGrid,Plug,Archive,Users} from 'lucide-react';
 import {LocalConnectionsPanel} from './LocalConnectionsPanel';
-import {ConnectionPlanningTable} from './WorkspacePlanningSelection';
-import {ConnectionPlanningPrototype} from './ConnectionPlanning.prototype';
 import './connections.prototype.data';
 
 import '../styles.css';
@@ -16,18 +14,14 @@ import './production-compact.css';
 
 import './connections.prototype.css';
 
-const variants = ['设置条 + 表格', '双栏管理台', '分区切换'];
+const variants = ['设置条 + 表格', '双栏管理台', '紧凑连接表'];
 function Prototype(){
  const [variant,setVariant]=useState(Math.max(0,['A','B','C'].indexOf(new URLSearchParams(location.search).get('variant')??'')));
- const [section,setSection]=useState(new URLSearchParams(location.search).get('section')==='connections'?'connections':'planning');
- function selectSection(key:string){
-   const url=new URL(location.href);url.searchParams.set('section',key);history.replaceState(null,'',url);setSection(key);
- }
  function change(offset:number){
    const next=(variant+offset+variants.length)%variants.length;
    const url=new URL(location.href);url.searchParams.set('variant',['A','B','C'][next]);history.replaceState(null,'',url);setVariant(next);
  }
- return <div className="prototype-shell dan-ui product-ui impeccable-app" data-variant={variant} data-section={section} onKeyDown={event=>{
+ return <div className="prototype-shell dan-ui product-ui impeccable-app" data-variant={variant} data-section="connections" onKeyDown={event=>{
    if(event.target instanceof Element&&event.target.closest('input,textarea,select,[contenteditable],[role="menu"],[role="listbox"],[role="dialog"]'))return;
    if(event.key==='ArrowLeft'||event.key==='ArrowRight'){event.preventDefault();change(event.key==='ArrowLeft'?-1:1);}
  }}>
@@ -35,10 +29,8 @@ function Prototype(){
   <header className="prototype-top"><span>个人工作区　›　<strong>连接配置</strong></span><span>交互原型 · 示例数据</span></header>
   <main className="prototype-main">
    <h1>连接配置</h1>
-   {variant===2&&<nav aria-label="连接配置分区" className="prototype-tabs">{[['planning','分镜规则'],['connections','外部连接']].map(([key,label])=><button key={key} aria-pressed={section===key} onClick={()=>selectSection(key)}>{label}</button>)}</nav>}
    <section aria-label="连接配置内容" className="maintenance-embedded">
     <div className="maintenance-panel-content connection-settings-content">
-     {variant===2?<ConnectionPlanningPrototype/>:<ConnectionPlanningTable initialEpisode={{episodeId:'d47aba50-demo',title:'测试 · d47aba50'}}/>}
      <LocalConnectionsPanel inlineBilling={variant===2}/>
     </div>
    </section>

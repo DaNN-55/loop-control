@@ -1,16 +1,16 @@
 // @vitest-environment node
 import {afterEach,expect,it,vi} from 'vitest';
 import {createServer} from 'node:http';
-import {createManualVerificationFetcher} from './providerNetwork';
+import {createManualVerificationFetcher,type OnlineProvider} from './providerNetwork';
 import {synthesizeVolcengineTts} from '../worker/mediaProviders';
 const url='https://api.pexels.com/v1/videos/search?query=nature&per_page=1';
 afterEach(()=>vi.useRealTimers());
-it('allows one request per test and rejects content-generation paths, retired providers and alternate hosts',async()=>{
+it('allows one request per test and rejects content-generation paths, unregistered providers and alternate hosts',async()=>{
  const transport=vi.fn(async()=>Response.json({}));const fetcher=createManualVerificationFetcher('pexels',transport);
  for(const target of ['https://outside.invalid/v1/videos/search','http://api.pexels.com/v1/videos/search','https://api.pexels.com:444/v1/videos/search'])await expect(fetcher(target)).rejects.toThrow();
  await fetcher(url);await expect(fetcher(url)).rejects.toThrow();expect(transport).toHaveBeenCalledTimes(1);
  await expect(createManualVerificationFetcher('bailian',transport)('https://dashscope.aliyuncs.com/api/v1/services/aigc/video-generation/video-synthesis',{method:'POST',body:'{}'})).rejects.toThrow();
- await expect(createManualVerificationFetcher('google_tts',transport)('https://texttospeech.googleapis.com/v1/voices')).rejects.toThrow();expect(transport).toHaveBeenCalledTimes(1);
+ await expect(createManualVerificationFetcher('unregistered-service' as OnlineProvider,transport)('https://unregistered.invalid/voices')).rejects.toThrow();expect(transport).toHaveBeenCalledTimes(1);
 });
 it.each(['redirect','declared-size','stream-size'])('bounds the manual response on %s without following redirects',async kind=>{
  const transport=vi.fn(async(_url:string|URL,init?:RequestInit)=>{expect(init?.redirect).toBe('manual');return kind==='redirect'?new Response(null,{status:302,headers:{Location:'https://outside.invalid'}}):kind==='declared-size'?new Response('x',{headers:{'content-length':String(1024*1024+1)}}):new Response('x'.repeat(1024*1024+1));});

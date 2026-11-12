@@ -144,7 +144,7 @@ export interface WorkerTaskPackageInput {
     attempt: number;
     budgetLimitCents: number;
     maxAttempts: number;
-    provider: "codex" | "google_tts" | "volcengine_tts" | "pexels" | "ffmpeg" | "freesound" | "openchatcut" | "openai" | "cloudflare" | "whisperx" | "bailian" | "volcengine" | "minimax" | "kling";
+    provider: "codex" | "volcengine_tts" | "pexels" | "ffmpeg" | "freesound" | "openchatcut" | "openai" | "whisperx" | "bailian" | "volcengine" | "minimax" | "kling";
     model: string;
     promptVersion: string;
   };
@@ -202,10 +202,10 @@ export interface WorkerTaskPackageInput {
   media?:
     | { adapter: "wan_video" | "seedance_video" | "minimax_video" | "kling_video"; wanVideo: { candidateOnly?:boolean;resolution?:string;settings?:import('../videoGenerationSettings.js').WanGenerationSettings;composition?:import('../videoGenerationSettings.js').FirstFrameComposition;firstFrame?: ArtifactManifest; visualInputs?: FrozenVideoVisualInput[]; visualMode?: string; referenceRatio?:VideoOutputRatio; prompt: string; durationSeconds: number; imageMime?: string } }
     | {
-      adapter: "google_tts" | "volcengine_tts";
+      adapter: "volcengine_tts";
       narration: {
         text: string;
-        voice: GoogleTtsVoice;
+        voice: TtsVoice;
       };
     }
     | {
@@ -255,7 +255,7 @@ export interface WorkerTaskPackageInput {
       };
     }
     | {
-      adapter: "openai_images" | "workers_ai_images";
+      adapter: "openai_images";
       staticVisual: {
         settings?: import("../imageGeneration.js").ImageGenerationSettings;
         references?: Array<ArtifactManifest & {mimeType:string}>;
@@ -397,7 +397,7 @@ export interface WorkerTaskPackage {
   forbiddenActions: readonly ["approve", "publish", "change_blueprint", "change_episode_stage"];
 }
 
-export interface GoogleTtsVoice {
+export interface TtsVoice {
   languageCode: string;
   name: string;
   speakingRate: number;
@@ -447,6 +447,8 @@ export interface WorkerResult {
 const forbiddenActions = ["approve", "publish", "change_blueprint", "change_episode_stage"] as const;
 
 export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTaskPackage {
+  if (["script_writing", "visual_planning", "storyboard_planning"].includes(input.capability)) throw new Error("旧脚本/视觉/分镜规划已退役；请使用已确认脚本的本地制作准备。");
+  if (!registeredAdapters.isRegisteredProvider(input.task.provider)) throw new Error('未登记的任务服务。');
   if (input.episodeRelativePath !== undefined && !isSafeRelativePath(input.episodeRelativePath)) throw new Error("冻结生产单目录无效。");
   if (input.episodeDirectoryIdentity && ((input.episodeDirectoryIdentity.deviceId===null)!==(input.episodeDirectoryIdentity.inodeId===null) || [input.episodeDirectoryIdentity.deviceId,input.episodeDirectoryIdentity.inodeId].some(id=>id!==null && (typeof id!=="string" || !/^\d+$/.test(id))))) throw new Error("冻结生产单目录身份无效。");
   if (!input.allowedAssetRoot.trim()) throw new Error("allowedAssetRoot is required.");
@@ -502,7 +504,7 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
     }
   }
   if (["shot_video_search","shot_video_preview"].includes(input.capability) && (input.task.provider!=="pexels" || input.media?.adapter!=="pexels_video" || input.media.bRoll.request?.operation!==(input.capability==="shot_video_search"?"search":"preview"))) throw new Error("镜头视频检索或预览必须使用匹配的 Pexels 操作。");
-  if (input.capability === "narration_generation" && (!input.media || (input.media.adapter !== "google_tts" && input.media.adapter !== "volcengine_tts"))) throw new Error("旁白生成必须包含冻结的 TTS 配置。");
+  if (input.capability === "narration_generation" && (!input.media || input.media.adapter !== "volcengine_tts")) throw new Error("旁白生成必须包含冻结的 TTS 配置。");
   if (input.capability === "narration_generation" && !isConnectionId(input.credentialRef)) throw new Error("旁白生成必须包含冻结的外部连接版本 ID。");
   if (input.acousticAlignment && (!isNonEmptyString(input.acousticAlignment.confirmedText) || !isSha256(input.acousticAlignment.textFingerprint))) throw new Error("声学对齐必须冻结 Owner 字幕正文及其版本。");
   if (input.acousticAlignment?.audioRelativePath && !isSafeRelativePath(input.acousticAlignment.audioRelativePath)) throw new Error("声学对齐音频路径必须位于资产根目录内。");
@@ -519,7 +521,7 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
   if (input.capability === "shot_clip_preparation" && (!input.media || input.media.adapter !== "ffmpeg_trim_video")) throw new Error("镜头裁剪任务必须包含冻结的视频输入。");
   if (input.capability === "soundtrack_generation" && (input.task.provider !== "freesound" || !input.media || input.media.adapter !== "freesound_preview")) throw new Error("声轨生成必须包含冻结的 Freesound 配置。");
   if (input.capability === "soundtrack_generation" && !isConnectionId(input.credentialRef)) throw new Error("声轨生成必须包含冻结的外部连接版本 ID。");
-  if (input.capability === "static_visual_generation" && (!input.media || (input.media.adapter !== "openai_images" && input.media.adapter !== "workers_ai_images"))) throw new Error("静态视觉生成必须包含冻结的图片 Adapter 配置。");
+  if (input.capability === "static_visual_generation" && (!input.media || input.media.adapter !== "openai_images")) throw new Error("静态视觉生成必须包含冻结的图片 Adapter 配置。");
   if (input.capability === "static_visual_generation" && !isConnectionId(input.credentialRef)) throw new Error("静态视觉生成必须包含冻结的外部连接版本 ID。");
   if (input.capability === "review_rendering" && !input.reviewRender) throw new Error("审核渲染必须包含冻结的合成工程。 ");
   if (input.capability !== "review_rendering" && input.reviewRender) throw new Error("只有审核渲染任务可以包含合成工程。 ");
@@ -560,7 +562,7 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
     if (source.confirmationMode !== "shot_preparation") throw new Error("OpenChatCut 最终渲染只接受版本化镜头准备契约。 ");
     validateConfirmedShotPreparationRender(source);
   }
-  if (input.media?.adapter === "google_tts" || input.media?.adapter === "volcengine_tts") {
+  if (input.media?.adapter === "volcengine_tts") {
     if (input.task.provider !== input.media.adapter) throw new Error("旁白任务 Provider 必须与冻结 TTS 适配器匹配。");
     const { narration } = input.media;
     if (!isNonEmptyString(narration.text) || !isNonEmptyString(narration.voice.languageCode) || !isNonEmptyString(narration.voice.name) || !isPositiveFiniteNumber(narration.voice.speakingRate)) throw new Error("旁白任务的冻结文本或声音无效。");
@@ -600,9 +602,6 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
   }
   if (input.media?.adapter === "openai_images") {
     if (input.task.provider !== "openai" || !isConnectionId(input.credentialRef) || !isNonEmptyString(input.media.staticVisual.prompt)) throw new Error("静态视觉任务的冻结 OpenAI Images 配置无效，必须使用连接版本 ID。");
-  }
-  if (input.media?.adapter === "workers_ai_images") {
-    if (input.task.provider !== "cloudflare" || !isConnectionId(input.credentialRef) || !isNonEmptyString(input.media.staticVisual.prompt)) throw new Error("静态视觉任务的冻结 Cloudflare Workers AI 配置无效，必须使用连接版本 ID。");
   }
   if (input.allowedTools.some((tool) => !isNonEmptyString(tool))) throw new Error("allowedTools must contain non-empty names.");
   if (input.output.requiredArtifactTypes.length === 0 || input.output.requiredArtifactTypes.some((artifactType) => !isNonEmptyString(artifactType))) throw new Error("至少需要一个输出产物类型。");

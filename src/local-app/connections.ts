@@ -1,7 +1,7 @@
 import {buildProductionServiceCatalog} from '../connections/serviceCatalog.js';
 import {minimaxCredential} from '../worker/officialVideoProvider.js';
 import {minimaxEndpoints,type MiniMaxRegion} from '../worker/videoProviderCatalog.js';
-import {isRetiredProvider,retiredProviderMessage} from '../worker/providerLifecycle.js';
+import {registeredAdapters} from '../worker/registeredAdapters.js';
 import {createHash,randomUUID} from 'node:crypto';
 import type {Pool,PoolClient} from 'pg';
 import type {OwnerSession} from './sessions.js';
@@ -22,6 +22,7 @@ import {synthesizeVolcengineTts} from '../worker/mediaProviders.js';
 import {speechSampleText} from '../speechSample.js';
 import {resolveProductionSelection} from './productionSelection.js';
 import {readSpeechSample} from './speechSampleCache.js';
+const connectionProviders=[...new Set(registeredAdapters.productionChoices().filter(choice=>choice.connection.kind==='owner_managed').map(choice=>choice.provider))];
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 const fields={create:['name','provider','adapter','secret'],rotate:['connectionId','provider','adapter','secret'],region:['connectionId','versionId','region'],rebind:['versionId','secret'],update:['connectionId','name','description'],revoke:['versionId'],verify:['connectionId']} as const;
 const metadataJSON=(value:Record<string,string>)=>JSON.stringify(Object.entries(value).sort());
@@ -41,7 +42,7 @@ export function parseConnectionCommand(body:Record<string,unknown>){
   if(key==='secret'){if(!value.trim()||Buffer.byteLength(value)>4096)invalid('认证材料无效。');secret=value;}
   else{const clean=value.trim();if(clean.length>(key==='description'?500:100)||key!=='description'&&!clean)invalid();metadata[key]=clean;}
  }
- if(isRetiredProvider(metadata.provider??''))throw new ConfigurationError(410,retiredProviderMessage);
+ if(metadata.provider!==undefined&&!connectionProviders.includes(metadata.provider))throw new ConfigurationError(410,'此服务未登记或已停用；历史记录保留。');
  if(metadata.provider==='minimax'&&(command==='create'||command==='rotate')){
   try{metadata.region=minimaxCredential(secret).region;}catch{invalid('MiniMax API Key 或所属站点无效。');}
  }
@@ -141,13 +142,13 @@ export class LocalConnections {
  }
  async read(ownerId:string){
   return ownerTransaction(this.pool,ownerId,true,async client=>{
-   const connections=(await client.query("SELECT * FROM public.external_connections WHERE created_by=$1 AND provider NOT IN('cloudflare','google_tts') ORDER BY created_at,id",[ownerId])).rows;
-   const versions=(await client.query('SELECT * FROM public.list_external_connection_versions(NULL)')).rows.filter(v=>!isRetiredProvider(v.provider));
+   const connections=(await client.query("SELECT * FROM public.external_connections WHERE created_by=$1 AND provider=ANY($2::text[]) ORDER BY created_at,id",[ownerId,connectionProviders])).rows;
+   const versions=(await client.query('SELECT * FROM public.list_external_connection_versions(NULL)')).rows.filter(v=>connectionProviders.includes(v.provider));
    const usage=(await client.query(`WITH visible_versions AS(SELECT * FROM public.list_external_connection_versions(NULL)) SELECT c.id,
     (SELECT count(*)::int FROM public.accounts a JOIN public.account_blueprint_versions b ON b.id=a.current_blueprint_version_id WHERE EXISTS(SELECT 1 FROM visible_versions v WHERE v.connection_id=c.id AND b.policy::text LIKE '%'||v.id::text||'%')) AS "currentBlueprints",
     (SELECT count(*)::int FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE EXISTS(SELECT 1 FROM visible_versions v WHERE v.connection_id=c.id AND b.policy::text LIKE '%'||v.id::text||'%')) AS episodes,
     (SELECT count(*)::int FROM public.tasks t WHERE EXISTS(SELECT 1 FROM visible_versions v WHERE v.connection_id=c.id AND t.input_snapshot::text LIKE '%'||v.id::text||'%')) AS tasks
-    FROM public.external_connections c WHERE c.created_by=$1 AND c.provider NOT IN('cloudflare','google_tts')`,[ownerId])).rows;
+    FROM public.external_connections c WHERE c.created_by=$1 AND c.provider=ANY($2::text[])`,[ownerId,connectionProviders])).rows;
    for(const connection of connections){const entry=usage.find(item=>item.id===connection.id);if(entry){const {id,...counts}=entry;connection.usage=counts;}}
    // Count semantic version references, separately from connection-wide historical usage.
    // One batched read shares the same Owner/RLS snapshot as the directory.

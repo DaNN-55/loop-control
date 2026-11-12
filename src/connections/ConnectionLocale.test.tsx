@@ -33,13 +33,12 @@ it('translates model capability labels without changing model IDs or API filter 
 });
 it('keeps protocol dependency matching intact in English status rendering',async()=>{
  setUiLocale('en-US');
- const report:LocalSystemStatusReport={dependencies:[{name:'Supabase 迁移',state:'attention',detail:'migration raw 原文'},{name:'Codex CLI',state:'healthy',detail:'codex-cli 1.0.0'},{name:'Codex 模型 · gpt-test',state:'healthy',detail:'model raw 原文'}],mediaLibrary:{state:'healthy',detail:'mount raw 原文'},n8n:{state:'healthy',detail:'n8n raw 原文',lastHealthCheckAt:null},observedAt:'2026-11-11T08:00:00Z',viewTransport:{state:'healthy',detail:'database raw 原文'}};
+ const report:LocalSystemStatusReport={dependencies:[{name:'数据库迁移',state:'attention',detail:'migration raw 原文'},{name:'FFmpeg',state:'healthy',detail:'ffmpeg raw 原文'}],mediaLibrary:{state:'healthy',detail:'mount raw 原文'},observedAt:'2026-11-11T08:00:00Z'};
  render(<SystemStatusPanel report={report} tasks={[]} episodes={[]}/>);
  fireEvent.click(screen.getByRole('button',{name:'System status: Needs attention'}));
  const dialog=await screen.findByRole('dialog',{name:'System status details'});
  expect(within(dialog).getByText('migration raw 原文')).toBeTruthy();
- expect(within(dialog).getByText('gpt-test')).toBeTruthy();
- expect(within(dialog).queryByText('Supabase migration status has not been loaded.')).toBeNull();
+ expect(within(dialog).getByText('ffmpeg raw 原文')).toBeTruthy();
 });
 it('translates blocker guidance while preserving its original technical detail',()=>{
  setUiLocale('en-US');render(<WorkerBlockerCard blocker={{code:'provider_result_unknown',detail:'供应商原始错误：sample-id'}}/>);

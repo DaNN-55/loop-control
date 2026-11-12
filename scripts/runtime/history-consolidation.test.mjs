@@ -7,7 +7,7 @@ it('preserves PostgreSQL JSON decimals and integers beyond JavaScript precision 
  expect(count).toBe(1);expect(sql).toContain('0.123456789012345678901');expect(sql).toContain('9007199254740993');expect(sql).toContain('1.0000000000000001');expect(sql).toContain('superseded-import-precision');
 });
 it('keeps empty template keys, following public lines and explicit documentation placeholders out of Keychain',()=>{
- const text='API_KEY=\nMODEL=example-model\nAPI_SECRET=  \r\n# public comment\nSUPABASE_SERVICE_ROLE_KEY=<仅限本机的 service role key>\nVITE_SUPABASE_PUBLISHABLE_KEY=<Supabase publishable key>\n',replacements=[];
+ const text='API_KEY=\nMODEL=example-model\nAPI_SECRET=  \r\n# public comment\nLEGACY_SERVICE_ROLE_KEY=<仅限本机的 service role key>\nPUBLIC_SERVICE_PUBLISHABLE_KEY=<Provider publishable key>\n',replacements=[];
  expect(protectedText(Buffer.from(text),'synthetic.env.example',replacements).toString()).toBe(text);
  expect(replacements).toEqual([]);
 });

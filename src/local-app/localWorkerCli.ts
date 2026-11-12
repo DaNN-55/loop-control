@@ -2,12 +2,10 @@ import {episodeFileIO} from './episodeFiles.js';
 import {resolveEpisodeStorageLocation,requireEpisodeStorageDirectory} from './episodeStorageLocation.js';
 import {requireAccountAssetRoot} from './accountAssetRoots.js';
 import {executeWorkspaceDeliveryWorker} from '../worker/workspaceDeliveryWorker.js';
-import {executeScriptPlanning} from '../worker/scriptPlanning.js';
 import{readMediaDeployment}from'./mediaDeployment.js';
 import{assertAlignmentReady,executeNativeAlignment}from'./alignmentWorker.js';
 import{assertMediaReady,executeNativeMedia,nativeMediaTask,nativeMediaRequiresExternal}from'./mediaWorker.js';
 // Native task process: database authentication arrives over bounded stdin only.
-import {spawn} from 'node:child_process';
 import {runCodexWorker,type ClaimedWorkerTask} from '../worker/codexRunner.js';
 import {verifyMediaLibrary,verifyArtifactIndex} from '../worker/mediaLibrary.js';
 import {assertRuntimeRelease,RuntimePreparationError} from '../orchestration/runtimeBuild.js';
@@ -18,10 +16,8 @@ import {nativeAssetRoot} from './localFiles.js';
 import {createWorkerDatabase,nativeWorkerPort,assertWorkerDatabaseBinding,assertNativeWorkerDatabase} from './workerDatabase.js';
 import type {NativeWorkerConfiguration} from './localWorkerService.js';
 import type {ClaimedTaskRow} from '../orchestration/workerDispatch.js';
-import type {WorkerTaskPackage} from '../worker/contracts.js';
 import {workerPreflightVersion} from '../worker/contracts.js';
 import{verifyReportedStoryboardArtifact}from'../worker/storyboardArtifact.js';
-import{executeStoryboardRevision}from'../worker/storyboardRevisionExecutor.js';
 import{executeNativeNarration,assertNarrationReady}from'./narrationWorker.js';
 import{prepareNativeAttemptOutput}from'./nativeAttemptOutput.js';
 import type{ArtifactManifest}from'../worker/contracts.js';
@@ -45,32 +41,26 @@ try{
  if((await pool.query('SELECT 1 FROM local_identity.account_asset_directories WHERE account_id=$1',[task.account_id])).rowCount)await requireAccountAssetRoot(pool,config.mediaRoot,String(task.account_id));
  await requireEpisodeStorageDirectory(pool,location);
  if(task.task_type==='prepare_publish_package'&&(task.input_snapshot as Record<string,unknown>)?.capability==='workspace_delivery'){const result=await executeWorkspaceDeliveryWorker(pool,physicalRoot,task);process.stdout.write(JSON.stringify(result)+'\n');}else{
- if(typeof task.task_type!=='string'||!((task.task_type==='align_shot_captions'&&task.provider==='whisperx')||nativeMediaTask(task.task_type,String(task.provider))|| (task.task_type==='generate_narration'?['google_tts','volcengine_tts'].includes(String(task.provider)):['prepare_visual_brief','draft_storyboard','draft_storyboard_revision'].includes(task.task_type)&&task.provider==='codex')))throw Error('Task outside native input/storyboard/narration boundary');
+ if(typeof task.task_type!=='string'||!((task.task_type==='align_shot_captions'&&task.provider==='whisperx')||nativeMediaTask(task.task_type,String(task.provider))|| (task.task_type==='generate_narration'&&task.provider==='volcengine_tts')))throw Error('Task outside native input/storyboard/narration boundary');
  let outputs:Awaited<ReturnType<typeof prepareNativeAttemptOutput>>|undefined;
  const result=await runCodexWorker({
   actualCostCents:config.actualCostCents,
   async claimNextTask(){return {taskId:task.task_id,taskType:task.task_type,attempt:task.attempt,budgetLimitCents:task.budget_limit_cents,maxAttempts:task.max_attempts,provider:task.provider,model:task.model,promptVersion:task.prompt_version,episodeId:task.episode_id,accountId:task.account_id,blueprintVersionId:task.blueprint_version_id,title:task.title,allowedAssetRoot:physicalRoot,inputSnapshot:task.input_snapshot} as ClaimedWorkerTask;},
   async verifyAssetRoot(root){if(!(location.layoutVersion===1&&root===config.mediaRoot&&root===location.assetRoot))await nativeAssetRoot(config.mediaRoot,root);await verifyMediaLibrary({mediaRootBinding:(await pool.query("SELECT local_identity.media_deployment()->'binding' binding")).rows[0].binding,assetRoot:root,mountPath:config.mountPath,minimumFreeBytes:config.minimumFreeBytes,requireEpisodesDirectory:false,allowMountRoot:location.layoutVersion===1&&root===config.mediaRoot});},
   async verifyArtifacts(p,artifacts,storyboard){if(outputs){await outputs.verify(artifacts,storyboard);return;}const storage=await episodeFileIO(pool,physicalRoot,String(task.episode_id));await verifyArtifactIndex({assetRoot:p.assets.allowedRoot,episodeId:p.episode.id,episodeRelativePath:p.assets.episodeRelativePath,artifacts,storage});if(storyboard)await verifyReportedStoryboardArtifact({assetRoot:p.assets.allowedRoot,frozenInputs:p.assets.inputs,relativePath:p.output.relativePath,storyboard,storage});},
-  async preflight(p){if(task.task_type==='generate_final_render'&&!config.delivery)throw Error('最终交付尚未配置。');if(p.capability==='acoustic_alignment')await assertAlignmentReady(config.projectRoot,config.mediaRoot,config.alignment,p.model);if(task.task_type==='generate_review_render'&&!config.studio)throw Error('审核视频尚未配置。');if(task.task_type==='generate_shot_sync_preview'&&!config.shotPreview)throw Error('同步预览尚未配置。');if(p.capability==='narration_generation')await assertNarrationReady(config.narration);if(nativeMediaTask(String(task.task_type),String(task.provider))||p.visualAssetPreparation?.imageGeneration)await assertMediaReady(config.media,{},process.env,nativeMediaRequiresExternal(p));return {version:workerPreflightVersion,checks:[{capability:p.capability,check:'command_availability',phase:'preflight',status:config.visualCommand.length&&(!p.visualAssetPreparation?.imageGeneration||Boolean(config.media))?'passed':'unavailable',reason:p.capability==='narration_generation'?`本地口播执行模式：${config.narration?.mode??'disabled'}。`:'本地受控规划执行路径；不自动调用在线Provider。',action:config.visualCommand.length&&(!p.visualAssetPreparation?.imageGeneration||Boolean(config.media))?'none':'contact_environment_admin',scope:'worker'}]};},
+  async preflight(p){if(task.task_type==='generate_final_render'&&!config.delivery)throw Error('最终交付尚未配置。');if(p.capability==='acoustic_alignment')await assertAlignmentReady(config.projectRoot,config.mediaRoot,config.alignment,p.model);if(task.task_type==='generate_review_render'&&!config.studio)throw Error('审核视频尚未配置。');if(task.task_type==='generate_shot_sync_preview'&&!config.shotPreview)throw Error('同步预览尚未配置。');if(p.capability==='narration_generation')await assertNarrationReady(config.narration);if(nativeMediaTask(String(task.task_type),String(task.provider)))await assertMediaReady(config.media,{},process.env,nativeMediaRequiresExternal(p));return {version:workerPreflightVersion,checks:[{capability:p.capability,check:'command_availability',phase:'preflight',status:'passed',reason:p.capability==='narration_generation'?`本地口播执行模式：${config.narration?.mode??'disabled'}。`:'本地已登记的媒体执行路径。',action:'none',scope:'worker'}]};},
   reportProgress:async(_id,_attempt,progress)=>{await port.rpc('report_worker_progress',{...args,p_progress:{version:'worker-progress/v1',progress}});process.stdout.write(JSON.stringify({event:'progress',taskId:task.task_id,step:progress.step})+'\n');},
   reportResult:async(_id,_attempt,result)=>{if(outputs?.uncertain)throw new NativePublicationUnknownError();if(outputs&&result.status==='completed')await outputs.publish(pool,result);else await port.rpc('report_worker_result',{...args,p_result:result});},
   execute:async p=>{
    const additionalInputs:ArtifactManifest[]=[];
    if(p.finalRender){const source=(await pool.query('SELECT local_identity.input_final_reuse_source($1,$2,$3) result',[args.p_task_id,args.p_attempt,args.p_lease_token])).rows[0]?.result;if(source?.inputsMatch&&source.video)additionalInputs.push(source.video);}
    outputs=await prepareNativeAttemptOutput(p,args,additionalInputs,await episodeFileIO(pool,physicalRoot,String(task.episode_id),true));const staged=outputs.taskPackage;
-   const scripted=await executeScriptPlanning(staged);if(scripted!==null)return scripted;
-   return staged.capability==='acoustic_alignment'?executeNativeAlignment(config.projectRoot,config.mediaRoot,config.alignment,staged):staged.capability==='narration_generation'?executeNativeNarration(pool,config.narration,staged,args):nativeMediaTask(String(task.task_type),String(task.provider))?executeNativeMedia(pool,config.media,staged,args):staged.storyboardRevision?executeStoryboardRevision(staged):staged.visualAssetPreparation?.imageGeneration?executeNativeMedia(pool,config.media,staged,args,await executeVisual(staged)):executeVisual(staged);
+   if(staged.capability==='acoustic_alignment')return executeNativeAlignment(config.projectRoot,config.mediaRoot,config.alignment,staged);
+   if(staged.capability==='narration_generation')return executeNativeNarration(pool,config.narration,staged,args);
+   if(nativeMediaTask(String(task.task_type),String(task.provider)))return executeNativeMedia(pool,config.media,staged,args);
+   throw Error('任务未登记到本地媒体执行路径。');
   },
  });
  process.stdout.write(JSON.stringify(result??{status:'failed',taskId:task.task_id})+'\n');
 }
 }catch(error){if(!(error instanceof NativePublicationUnknownError))throw error;process.stdout.write(JSON.stringify({code:NativePublicationUnknownError.code,taskId:task.task_id,attempt:task.attempt})+'\n');process.exitCode=2;}finally{clearInterval(heartbeat);await pool.end();}
-function executeVisual(p:WorkerTaskPackage):Promise<string>{
- return new Promise((resolve,reject)=>{
-  const child=spawn(config.visualCommand[0],config.visualCommand.slice(1),{cwd:p.assets.allowedRoot,env:{PATH:process.env.PATH,HOME:process.env.HOME,TMPDIR:process.env.TMPDIR},stdio:['pipe','pipe','pipe']});
-  let output='',bad=false;const timer=setTimeout(()=>{bad=true;child.kill('SIGKILL');},300000);
-  child.stdin.on('error',()=>{});child.stdin.end(JSON.stringify(p));child.stdout.on('data',b=>{output+=String(b);if(Buffer.byteLength(output)>2*1024*1024){bad=true;child.kill('SIGKILL');}});child.stderr.on('data',()=>{});
-  child.once('error',()=>{clearTimeout(timer);reject(Error('视觉执行器不可用。'));});child.once('close',code=>{clearTimeout(timer);code===0&&!bad?resolve(output):reject(Error('视觉执行器未返回有效结果。'));});
- });
-}

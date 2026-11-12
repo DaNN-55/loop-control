@@ -6,7 +6,6 @@ export interface RuntimeDependencyStatus {
 
 function credentialEnvironmentForProvider(provider: string): string | undefined {
   if (provider === "openai") return "OPENAI_API_KEY";
-  if (provider === "google_tts") return "GOOGLE_TTS_API_KEY";
   if (provider === "freesound") return "FREESOUND_API_KEY";
   return undefined;
 }

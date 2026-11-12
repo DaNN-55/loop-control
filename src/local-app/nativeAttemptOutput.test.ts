@@ -15,21 +15,24 @@ const roots:string[]=[];
 afterEach(async()=>{await Promise.all(roots.splice(0).map(root=>rm(root,{recursive:true,force:true})));});
 const taskId='10000000-0000-4000-8000-000000000001',episodeId='10000000-0000-4000-8000-000000000002';
 const output=`episodes/${episodeId}/output.json`;
-const frozenOutput={relative_path:output,content_type:'application/json',review_stage:'visual_review',required_artifact_types:['visual_brief']};
+const frozenOutput={relative_path:output,content_type:'application/json',review_stage:'production_ready',required_artifact_types:['acoustic_alignment_evidence']};
 const execute=promisify(execFile);
-function result(bytes:string):WorkerResult{return{version:'worker-result/v1',taskId,status:'completed',artifacts:[{artifactType:'visual_brief',relativePath:output,fileSize:Buffer.byteLength(bytes),sha256:createHash('sha256').update(bytes).digest('hex')}],validation:{passed:true,checks:[]},actualCostCents:0,blockers:[],retry:{shouldRetry:false,reason:'complete'},nextStep:'Owner review'};}
+const alignmentAudio=await readFile(new URL('./fixtures/workspace-media/controlled-narration-tone.mp3',import.meta.url)),alignmentAudioSha=createHash('sha256').update(alignmentAudio).digest('hex');
+function result(bytes:string):WorkerResult{return{version:'worker-result/v1',taskId,status:'completed',artifacts:[{artifactType:'acoustic_alignment_evidence',relativePath:output,fileSize:Buffer.byteLength(bytes),sha256:createHash('sha256').update(bytes).digest('hex')}],validation:{passed:true,checks:[]},actualCostCents:0,acousticAlignment:{version:'acoustic-alignment/v1',status:'completed',method:'local_whisperx',granularity:'phrase',inputVersion:'c'.repeat(64),audioSha256:alignmentAudioSha,textFingerprint:createHash('sha256').update('测试对齐').digest('hex'),provider:'whisperx',model:'jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn',connectionVersionId:null,wordCount:1,cues:[{id:'cue-1',text:'测试对齐',startMs:0,endMs:500}],attempts:[{method:'local_whisperx',status:'completed',detail:'Controlled publication fixture'}],detail:'Controlled publication result',generatedAt:'2026-11-12T00:00:00Z'},blockers:[],retry:{shouldRetry:false,reason:'complete'},nextStep:'Owner review'};}
 async function taskPackage(attempt:number,root?:string){
  root??=await realpath(await mkdtemp(join(tmpdir(),'native-attempt-')));if(!roots.includes(root))roots.push(root);
  await mkdir(join(root,'episodes',episodeId),{recursive:true});
- return createWorkerTaskPackage({task:{id:taskId,type:'prepare_visual_brief',attempt,budgetLimitCents:0,maxAttempts:3,provider:'codex',model:'configured-model',promptVersion:'visual-v1'},episode:{id:episodeId,accountId:'account',blueprintVersionId:'blueprint',title:'Attempt isolation'},capability:'visual_asset_preparation',allowedTools:['read','write'],allowedAssetRoot:root,inputArtifacts:[],output:{requiredArtifactTypes:['visual_brief'],relativePath:output,contentType:'application/json',reviewStage:'visual_review'}});
+ const audioPath=`episodes/${episodeId}/source.mp3`,audio=alignmentAudio,audioSha=alignmentAudioSha;
+ await writeSafeAssetFile(root,audioPath,audio);
+ return createWorkerTaskPackage({task:{id:taskId,type:'align_shot_captions',attempt,budgetLimitCents:0,maxAttempts:3,provider:'whisperx',model:'jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn',promptVersion:'whisperx-alignment-v1'},episode:{id:episodeId,accountId:'account',blueprintVersionId:'blueprint',title:'Attempt isolation'},capability:'acoustic_alignment',allowedTools:['read','write'],allowedAssetRoot:root,inputArtifacts:[{artifactType:'audio_track',relativePath:audioPath,sha256:audioSha,fileSize:audio.length}],acousticAlignment:{confirmedText:'测试对齐',textFingerprint:createHash('sha256').update('测试对齐').digest('hex'),audioRelativePath:audioPath,audioSha256:audioSha,inputVersion:'c'.repeat(64),speakingRate:1,strategy:'local'},output:{requiredArtifactTypes:['acoustic_alignment_evidence'],relativePath:output,contentType:'application/json',reviewStage:'production_ready'}});
 }
-function database(activeAttempt:number,failReport=false,failCommit=false){
+function database(activeAttempt:number,failReport=false,failCommit=false,outputContract=frozenOutput){
  const accepted:number[]=[],operations:string[]=[],discarded:boolean[]=[];
  const pool={async connect(){return{async query(sql:string,values?:unknown[]){
   operations.push(sql);
   if(sql==="SELECT (local_identity.media_deployment()->>'writeBlocked')::boolean blocked")return{rows:[{blocked:false}],rowCount:1};
   if(sql.includes('episode_storage_location'))return{rows:[{account_id:'account',directory_relative_path:`episodes/${episodeId}`,directory_device_id:null,directory_inode_id:null,storage_series_id:null,layout_version:1}]};
-  if(sql.includes('native_output_authority')){if(values?.[1]!==activeAttempt)throw Error('Lease expired');return{rows:[{authority:{output:frozenOutput,reviewProjectPath:null,finalProjectPath:null,status:'running',inputHash:'frozen-input',artifacts:[],conflicts:[]}}]};}
+  if(sql.includes('native_output_authority')){if(values?.[1]!==activeAttempt)throw Error('Lease expired');return{rows:[{authority:{output:outputContract,reviewProjectPath:null,finalProjectPath:null,status:'running',inputHash:'frozen-input',artifacts:[],conflicts:[]}}]};}
   if(sql==='COMMIT'&&failCommit)throw Error('Commit outcome unknown');
   if(sql.includes('input_worker_call')){
    const args=values?.[1] as {p_attempt:number};
@@ -55,13 +58,13 @@ it('keeps a late executor in its attempt directory after a newer attempt is acce
  expect(db.accepted).toEqual([1]);
 });
 
-it('prepares the frozen output parent for a normal planner using an exclusive direct write',async()=>{
- const p=await taskPackage(0);p.output.relativePath=`episodes/${episodeId}/visual-assets/manifest.md`;
+it('prepares the frozen output parent for an alignment executor using an exclusive direct write',async()=>{
+ const p=await taskPackage(0);p.output.relativePath=`episodes/${episodeId}/alignment/evidence.json`;
  const attempt=await prepareNativeAttemptOutput(p,{p_task_id:taskId,p_attempt:0,p_lease_token:'10000000-0000-4000-8000-000000000012'});
- const script="import {readFileSync,writeFileSync} from 'node:fs';import {join} from 'node:path';const p=JSON.parse(readFileSync(0,'utf8'));writeFileSync(join(p.assets.allowedRoot,p.output.relativePath),'planner output',{flag:'wx',mode:0o600});";
+ const script="import {readFileSync,writeFileSync} from 'node:fs';import {join} from 'node:path';const p=JSON.parse(readFileSync(0,'utf8'));writeFileSync(join(p.assets.allowedRoot,p.output.relativePath),'alignment output',{flag:'wx',mode:0o600});";
  const child=execute(process.execPath,['--input-type=module','-e',script],{encoding:'utf8'});
  child.child.stdin!.end(JSON.stringify(attempt.taskPackage));await child;
- expect(await readFile(join(attempt.taskPackage.assets.allowedRoot,p.output.relativePath),'utf8')).toBe('planner output');
+ expect(await readFile(join(attempt.taskPackage.assets.allowedRoot,p.output.relativePath),'utf8')).toBe('alignment output');
 });
 
 it('copies frozen inputs without sharing writable inodes with the accepted media',async()=>{
@@ -87,12 +90,17 @@ it('rejects output publication over a frozen input or approved reuse source',asy
 });
 
 it('publishes the existing card-project auxiliary file inside the same lease fence',async()=>{
- const p=await taskPackage(0);p.provider='openchatcut';p.aRoll={adapter:'openchatcut_card_video',shot:{id:'shot-1',scriptSegment:'Caption',durationSeconds:1,shotType:'a_roll',productionMethod:'card',targetSpec:'9:16',inputBasis:[]}};
+ const base=await taskPackage(0),cardPath=`episodes/${episodeId}/card-video/${taskId}/clip.mp4`;
+ const inputs=[{artifactType:'main_script',relativePath:`episodes/${episodeId}/card-script.txt`,text:'Caption'},{artifactType:'static_visual',relativePath:`episodes/${episodeId}/card-image.png`,text:'Frozen frame'}];
+ for(const input of inputs)await writeSafeAssetFile(base.assets.allowedRoot,input.relativePath,input.text);
+ const artifacts=inputs.map(({text,...input})=>({...input,sha256:createHash('sha256').update(text).digest('hex'),fileSize:Buffer.byteLength(text)}));
+ const p=createWorkerTaskPackage({task:{id:taskId,type:'generate_a_roll',attempt:0,budgetLimitCents:0,maxAttempts:3,provider:'openchatcut',model:'openchatcut@0.2.14',promptVersion:'card-video-v1'},episode:{id:episodeId,accountId:'account',blueprintVersionId:'blueprint',title:'Card auxiliary fence'},capability:'a_roll_generation',allowedTools:['read','write'],allowedAssetRoot:base.assets.allowedRoot,inputArtifacts:artifacts,aRoll:{adapter:'openchatcut_card_video',shot:{id:'shot-1',scriptSegment:'Caption',durationSeconds:1,shotType:'a_roll',productionMethod:'card',targetSpec:'9:16',inputBasis:artifacts.map(({relativePath,sha256})=>({relativePath,sha256}))}},output:{requiredArtifactTypes:['a_roll_asset'],relativePath:cardPath,contentType:'video/mp4',reviewStage:'pre_render_review'}});
  const attempt=await prepareNativeAttemptOutput(p,{p_task_id:taskId,p_attempt:0,p_lease_token:'10000000-0000-4000-8000-000000000007'});
  const project=`episodes/${episodeId}/card-video/${taskId}/project.json`;
- await writeSafeAssetFile(attempt.taskPackage.assets.allowedRoot,output,'rendered card');
+ await writeSafeAssetFile(attempt.taskPackage.assets.allowedRoot,cardPath,'rendered card');
  await writeSafeAssetFile(attempt.taskPackage.assets.allowedRoot,project,'{"project":"card"}');
- await attempt.publish(database(0).pool,result('rendered card'));
+ const report=result('rendered card');delete report.acousticAlignment;report.artifacts[0]={...report.artifacts[0],artifactType:'a_roll_asset',relativePath:cardPath};
+ await attempt.publish(database(0,false,false,{relative_path:cardPath,content_type:'video/mp4',review_stage:'pre_render_review',required_artifact_types:['a_roll_asset']}).pool,report);
  expect(await readFile(join(p.assets.allowedRoot,project),'utf8')).toBe('{"project":"card"}');
 });
 
@@ -141,7 +149,7 @@ it('restores earlier replacements and removes newly introduced files after a par
  const fresh=`episodes/${episodeId}/fresh.json`,blocked=`episodes/${episodeId}/blocked.json`;
  await writeSafeAssetFile(p.assets.allowedRoot,output,'previous indexed output');
  await mkdir(join(p.assets.allowedRoot,blocked));
- const artifact=(relativePath:string,text:string)=>({artifactType:'visual_brief',relativePath,fileSize:Buffer.byteLength(text),sha256:createHash('sha256').update(text).digest('hex')});
+ const artifact=(relativePath:string,text:string)=>({artifactType:'acoustic_alignment_evidence',relativePath,fileSize:Buffer.byteLength(text),sha256:createHash('sha256').update(text).digest('hex')});
  for(const [path,text] of [[output,'candidate output'],[fresh,'fresh output'],[blocked,'blocked output']])await writeSafeAssetFile(attempt.taskPackage.assets.allowedRoot,path,text);
  const report=result('candidate output');report.artifacts.push(artifact(fresh,'fresh output'),artifact(blocked,'blocked output'));
  const db=database(0);await expect(attempt.publish(db.pool,report)).rejects.toThrow();

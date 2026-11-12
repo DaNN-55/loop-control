@@ -1,9 +1,8 @@
 // @vitest-environment node
 import {it,expect} from 'vitest';
-import {seedLegacyPlanning} from './legacyPlanning.fixture';
 import {readFile,writeFile,lstat,rename,mkdir} from 'node:fs/promises';
 import {join} from 'node:path';
-import {randomUUID,createHash} from 'node:crypto';
+import {createHash} from 'node:crypto';
 import type {Pool} from 'pg';
 import {narrationFixture} from './workspaceNarration.fixture';
 import {runCodexWorker,type ClaimedWorkerTask} from '../worker/codexRunner';
@@ -14,44 +13,7 @@ import {verifyArtifactIndex} from '../worker/mediaLibrary';
 import {nativeWorkerPort} from './workerDatabase';
 import {prepareCollectionTargets,moveCollection} from './episodeCollection.fixture';
 import {deletionFixtureFingerprint} from './deletionFingerprint.fixture';
-it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('the compiled CLI retries the same frozen failed planner after five collection moves with all old sources offline',async()=>{
- const {productionWorkspaceFixture}=await import('./productionWorkspace.fixture'),{workspaceAudioVolume}=await import('./workspaceAudioVolume.fixture'),{runWorkspaceDeliveryProcess}=await import('./workspaceDelivery.fixture');
- const volume=await workspaceAudioVolume(),f=await productionWorkspaceFixture({testRootParent:volume.mountPath,runtime:{wake(){},mountPath:volume.mountPath},migrations:['db/local/120-native-workspace-storage-locations.sql','db/local/121-restored-media-deployment.sql','db/local/123-legacy-storage-adoption.sql']}),worker=f.workerPool();
- try{
-  const directory=await lstat(join(f.assetRoot,f.episodeRelativePath),{bigint:true});await f.c.query('UPDATE local_identity.episode_asset_locations SET directory_relative_path=$2,directory_device_id=$3,directory_inode_id=$4 WHERE episode_id=$1',[f.episode,f.episodeRelativePath,String(directory.dev),String(directory.ino)]);
-  const account=(await f.c.query('SELECT account_id FROM public.episodes WHERE id=$1',[f.episode])).rows[0].account_id,harness=randomUUID(),instructions='Use only the frozen original script and supplied material.';
-  await f.c.query("INSERT INTO public.prompt_versions(id,account_id,capability,version,slug,name,summary,instructions,content_hash) VALUES($1,$2,'storyboard_planning',100,'t14-frozen','T14 frozen Harness','Controlled', $3,$4)",[harness,account,instructions,createHash('sha256').update(instructions).digest('hex')]);
-  const request=async(command:string,data:Record<string,unknown>={})=>{const r=await f.request(command,data);expect(r.status,command+': '+JSON.stringify(r.body)).toBe(200);return r.body;};
-  const revised=await request('reconfirmScript',{expectedScriptRevisionId:f.script,text:'# 普通脚本\n\n## 正文\n保留原脚本、素材和模型，迁移只改变物理位置。',reason:'T14 controlled ordinary planner retry'});
-  const script=(await f.c.query('SELECT main_script_revision_id FROM public.episodes WHERE id=$1',[f.episode])).rows[0].main_script_revision_id;expect(script).not.toBe(f.script);expect(revised).toBeTruthy();
-  const selection={provider:'codex',adapter:'codex',model:'gpt-5.6-luna',harnessId:harness,budgetCents:0,allowedTools:['read','write']};await request('saveWorkspacePlanningSelection',{expectedSelectionRevision:0,selection});await request('start');let planned=await seedLegacyPlanning(f,f.episode,script);
-  await f.c.query('INSERT INTO public.worker_scheduler_settings(singleton,capacity) VALUES(true,1) ON CONFLICT(singleton) DO UPDATE SET capacity=1');
-  const port=nativeWorkerPort(worker);
-  // The first legacy preparation enables native input after its INSERT. Use
-  // the existing explicit Owner retry to create the actual frozen task while
-  // enabled, rather than fabricating native fields in a historical snapshot.
-  const warmup=(await port.rpc('claim_next_worker_task',{p_task_id:planned.taskId,p_worker_capacity:1}) as any[])[0];expect((await runWorkspaceDeliveryProcess(f,warmup,{mountPath:volume.mountPath,visualCommand:[process.execPath,'-e','process.exit(1)']})).status).toBe('failed');await f.c.query("UPDATE public.tasks SET status='failed' WHERE id=$1 AND status IN ('ready','failed')",[planned.taskId]);
-  planned=await request('retryWorkspacePlanning',{expectedScriptRevisionId:script,taskId:planned.taskId});
-  const taskId=planned.taskId,first=(await port.rpc('claim_next_worker_task',{p_task_id:taskId,p_worker_capacity:1}) as any[])[0];expect(first.task_id).toBe(taskId);
-  expect((await runWorkspaceDeliveryProcess(f,first,{mountPath:volume.mountPath,visualCommand:[process.execPath,'-e','process.exit(1)']})).status).toBe('failed');
-  // Controlled scheduling pause only. The first attempt genuinely ran and
-  // failed; its original snapshot, max attempts, fees and result stay intact.
-  await f.c.query("UPDATE public.tasks SET status='failed' WHERE id=$1 AND status IN ('ready','failed')",[taskId]);
-  const original=(await f.c.query('SELECT to_jsonb(t) value FROM public.tasks t WHERE id=$1',[taskId])).rows[0].value,run=(await f.c.query('SELECT to_jsonb(r) value FROM public.task_runs r WHERE task_id=$1 ORDER BY attempt',[taskId])).rows;
-  expect(original.status).toBe('failed');expect(original.input_snapshot.native_episode_directory_identity.inodeId).toBe(String(directory.ino));
-  await request('saveWorkspacePlanningSelection',{expectedSelectionRevision:1,selection:{...selection,model:'gpt-5.6-codex',budgetCents:60}});
-  const {a,b,adoption}=await prepareCollectionTargets(f);await rename(join(f.assetRoot,'episodes'),join(f.assetRoot,'retained-offline'));let prefix=adoption.episodes[0].targetPrefix;const moves=[];
-  for(const seriesId of [a.series_id,b.series_id,null,a.series_id,b.series_id]){const move=await moveCollection(f,account,seriesId);moves.push(move);await rename(join(f.assetRoot,prefix),join(f.assetRoot,prefix+'.offline'));prefix=move.episodes[0].targetPrefix;await f.restart();}
-  expect((await f.c.query('SELECT to_jsonb(t) value FROM public.tasks t WHERE id=$1',[taskId])).rows[0].value).toEqual(original);
-  const command=join(f.root,'controlled-t14-planner.mjs'),invocations=join(f.root,'planner-invocations.jsonl');await writeFile(command,`import{readFileSync,writeFileSync,mkdirSync,appendFileSync}from'node:fs';import{join,dirname}from'node:path';import{createHash}from'node:crypto';let text='';for await(const b of process.stdin)text+=b;const p=JSON.parse(text);appendFileSync(${JSON.stringify(invocations)},JSON.stringify({task:p.task.id,model:p.model,output:p.output.relativePath})+'\\n');const main=p.assets.inputs.find(x=>x.artifactType==='main_script'),board={version:'storyboard/v1',shots:[{id:'frozen-old-1',scriptSegment:readFileSync(join(p.assets.allowedRoot,main.relativePath),'utf8').trim(),durationSeconds:3,shotType:'a_roll',productionMethod:'使用Owner原始素材',targetSpec:'9:16',inputBasis:p.assets.inputs.map(x=>({relativePath:x.relativePath,sha256:x.sha256}))}],audioCues:[]},bytes=Buffer.from(JSON.stringify(board)),path=join(p.assets.allowedRoot,p.output.relativePath);mkdirSync(dirname(path),{recursive:true});writeFileSync(path,bytes);console.log(JSON.stringify({version:'worker-result/v1',taskId:p.task.id,status:'completed',artifacts:[{artifactType:'storyboard',relativePath:p.output.relativePath,sha256:createHash('sha256').update(bytes).digest('hex'),fileSize:bytes.length}],storyboard:board,validation:{passed:true,checks:[{name:'frozen_inputs',passed:true,detail:'Original old-coordinate script and materials were actually read.'}]},actualCostCents:0,retry:{shouldRetry:false,reason:'Controlled local Adapter completed.'},blockers:[],nextStep:'Owner confirms preparation.'}));`);
-  await f.c.query("UPDATE public.tasks SET status='ready',available_at=clock_timestamp() WHERE id=$1 AND status='failed'",[taskId]);const retry=(await port.rpc('claim_next_worker_task',{p_task_id:taskId,p_worker_capacity:1}) as any[])[0];expect(retry.task_id).toBe(first.task_id);expect(retry.attempt).toBe(first.attempt+1);expect(retry.input_snapshot).toEqual(first.input_snapshot);expect(retry.model).toBe(first.model);expect(retry.budget_limit_cents).toBe(first.budget_limit_cents);
-  const result=await runWorkspaceDeliveryProcess(f,retry,{mountPath:volume.mountPath,visualCommand:[process.execPath,command]});expect(result.status,JSON.stringify((await f.c.query('SELECT last_result FROM public.tasks WHERE id=$1',[taskId])).rows[0])).toBe('completed');
-  const current=(await f.c.query('SELECT to_jsonb(t) value FROM public.tasks t WHERE id=$1',[taskId])).rows[0].value;expect(current.input_snapshot).toEqual(original.input_snapshot);expect(current.model).toBe(original.model);expect(current.budget_limit_cents).toBe(original.budget_limit_cents);expect((await f.c.query('SELECT to_jsonb(r) value FROM public.task_runs r WHERE task_id=$1 AND attempt=$2',[taskId,first.attempt])).rows).toEqual(run);
-  expect(Number((await f.c.query('SELECT count(*) n FROM public.paid_generation_reservations WHERE task_id=$1',[taskId])).rows[0].n)).toBe(0);expect((await readFile(invocations,'utf8')).trim().split('\n')).toHaveLength(1);await expect(lstat(join(f.assetRoot,'episodes'))).rejects.toMatchObject({code:'ENOENT'});
-  const artifact=current.last_result.artifacts[0],response=await fetch(f.origin+'/_local-artifact?episode='+f.episode+'&path='+encodeURIComponent(artifact.relativePath)+'&sha256='+artifact.sha256,{headers:{Cookie:'loop_owner_session='+f.token}});expect(response.status).toBe(200);expect(createHash('sha256').update(Buffer.from(await response.arrayBuffer())).digest('hex')).toBe(artifact.sha256);
-  const evidence='/private/tmp/loop-control-178-20261031/T14/worker-evidence';await mkdir(evidence,{recursive:true});await writeFile(join(evidence,'compiled-original-task-retry.json'),JSON.stringify({first,retry,original,current,run,result,adoption,moves,localSubmissions:1,paidProviderSubmissions:0,remoteRequestIds:[],sourceOffline:true,oldPhysicalPrefixRecreated:false},null,2),{mode:0o600});
- }finally{await worker.end();await f.close();await volume.close();}
-},180000);
+
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('real ready/running and unknown paid submissions block collection moves without changing source, current location or paid evidence',async()=>{
  const f=await narrationFixture(undefined,undefined,false,false,['db/local/120-native-workspace-storage-locations.sql','db/local/121-restored-media-deployment.sql']),worker=f.workerPool();

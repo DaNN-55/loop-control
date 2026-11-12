@@ -47,11 +47,11 @@ it('combines capability and verification filters without inventing model values'
  fireEvent.click(screen.getByRole('button',{name:'清空筛选'}));expect(within(table).getByText(a.name)).toBeTruthy();expect(within(table).getByText(b.name)).toBeTruthy();
 });
 it('keeps legacy adapters attached to their real provider when opening credential settings',()=>{
- const legacy={...row('legacy','Legacy Cloudflare'),provider:'cloudflare',adapter:'workers_ai_images'};
- render(<ConnectionWorkspace connections={[legacy]} verificationByProvider={{cloudflare:{available:false,detail:'Cloudflare 在线验证未启用。'},pexels:{available:true,detail:'Pexels 可测试。'}}} onCreateConnection={vi.fn()} onTestConnection={vi.fn()}/>);
+ const legacy={...row('legacy','Historical service'),provider:'historical_example',adapter:'historical_example_adapter'};
+ render(<ConnectionWorkspace connections={[legacy]} verificationByProvider={{historical_example:{available:false,detail:'历史服务不支持在线验证。'},pexels:{available:true,detail:'Pexels 可测试。'}}} onCreateConnection={vi.fn()} onTestConnection={vi.fn()}/>);
  edit(legacy.name);
- expect((screen.getByLabelText('连接类型')as HTMLSelectElement).value).toBe('workers_ai_images');
- expect(screen.getByText(/Cloudflare 在线验证未启用/)).toBeTruthy();
+ expect((screen.getByLabelText('连接类型')as HTMLSelectElement).value).toBe('historical_example_adapter');
+ expect(screen.getByText(/历史服务不支持在线验证/)).toBeTruthy();
  expect((screen.getByRole('button',{name:'保存更新'})as HTMLButtonElement).disabled).toBe(true);
 });
 it('locks direct table verification until its callback finishes',async()=>{

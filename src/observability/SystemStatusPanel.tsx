@@ -14,19 +14,7 @@ export interface LocalSystemStatusReport {
   operations?: OperationsEvidence;
   dependencies: Array<{ detail: string; name: string; state: SystemState }>;
   mediaLibrary: { detail: string; state: SystemState };
-  n8n: {
-    detail: string;
-    lastDispatchAt?: string | null;
-    lastEventAt?: string | null;
-    lastHealthCheckAt: string | null;
-    lastNotification?: { at: string; state: "failure" | "success"; workflowName: string } | null;
-    lastRunAt?: string | null;
-    lastScheduleCheckAt?: string | null;
-    lastWorkerDispatchAt?: string | null;
-    state: SystemState;
-  };
   observedAt: string;
-  viewTransport?: { detail: string; state: SystemState };
 }
 
 export interface GoldenProductionTestReport {
@@ -105,41 +93,10 @@ function workerStatus(currentTasks: Task[], latest: Task | null, blockedCount: n
   return "unknown";
 }
 
-function n8nStatus(report: LocalSystemStatusReport | null): { detail: string; state: SystemState } {
-  if (!report) return { detail: uiText("尚未读取本地 n8n 状态。"), state: "unknown" };
-  if (report.n8n.state !== "offline" && report.n8n.lastNotification?.state === "failure") {
-    return { detail: report.n8n.detail, state: "attention" };
-  }
-  return { detail: report.n8n.detail, state: report.n8n.state };
-}
-
-function statusDependency(report: LocalSystemStatusReport | null, name: string): { detail: string; name: string; state: SystemState } | null {
-  return report?.dependencies.find((dependency) => dependency.name === name) ?? null;
-}
-
 function combinedState(states: SystemState[]): SystemState {
   if (states.some((state) => state === "attention" || state === "offline")) return "attention";
   if (states.some((state) => state === "unknown")) return "unknown";
   return "healthy";
-}
-
-function migrationDisplayDetail(detail: string): string {
-  if (/failed to connect|connection (?:refused|terminated)|initialising login role/i.test(detail)) {
-    return uiText("远程数据库连接失败，暂时无法确认本地迁移是否已同步。请稍后刷新重试。");
-  }
-  return detail;
-}
-
-function dependencyVersion(detail: string | undefined): string | null {
-  return detail?.match(/\b\d+(?:\.\d+)+\b/)?.[0] ?? null;
-}
-
-function n8nEvidence(report: LocalSystemStatusReport): { notification: { at: string; state: "failure" | "success"; workflowName: string } | null; scheduleCheckAt: string | null; workerDispatchAt: string | null } {
-  return {
-    notification: report.n8n.lastNotification ?? null,
-    scheduleCheckAt: report.n8n.lastScheduleCheckAt ?? report.n8n.lastEventAt ?? null,
-    workerDispatchAt: report.n8n.lastWorkerDispatchAt ?? report.n8n.lastDispatchAt ?? report.n8n.lastRunAt ?? null,
-  };
 }
 
 export function SystemStatusPanel({ workerSummary, episodes, isRefreshing = false, onRefresh = async () => {}, onRunGoldenTest, report, tasks }: { workerSummary?: WorkerSummary; episodes: Episode[]; isRefreshing?: boolean; onRefresh?: () => Promise<void>; onRunGoldenTest?: () => Promise<GoldenProductionTestReport>; report: LocalSystemStatusReport | null; tasks: Task[] }) {
@@ -156,33 +113,18 @@ export function SystemStatusPanel({ workerSummary, episodes, isRefreshing = fals
   const failedCount = workerSummary?.failed ?? actionableTasks.filter((task) => task.status === "failed").length;
   const latest = latestTask(currentTasks);
   const latestWorkerLabel = workerSummary ? workerSummary.latest ? `${workerSummary.latest.task_type} · ${formatDate(workerSummary.latest.at)}` : uiText("暂无任务记录") : latest ? `${latest.task_type} · ${formatDate(latest.completed_at ?? latest.claimed_at ?? latest.created_at)}` : uiText("暂无任务记录");
-  const n8n = n8nStatus(report);
-  const n8nTimeline = report ? n8nEvidence(report) : null;
   const runningCount = workerSummary?.running ?? actionableTasks.filter((task) => task.status === "running").length;
   const latestCompleted = workerSummary?.latestCompleted ?? latest?.status === "completed";
   const taskExecution = workerSummary ? blockedCount || failedCount ? "attention" : runningCount || latestCompleted ? "healthy" : "unknown" : workerStatus(actionableTasks, latest, blockedCount, failedCount);
   const items = useMemo<StatusItem[]>(() => {
-    const migration = statusDependency(report, "Supabase 迁移");
-    const codexModelDependencies = report?.dependencies.filter((dependency) => dependency.name === "Codex 模型" || dependency.name.startsWith("Codex 模型 · ")) ?? [];
-    const codexCli = statusDependency(report, "Codex CLI");
-    const otherDependencies = report?.dependencies.filter((dependency) => dependency.name !== "Supabase 迁移" && dependency.name !== "Codex CLI" && !codexModelDependencies.includes(dependency)) ?? [];
-    const viewTransport = report?.viewTransport ?? { detail: uiText("状态报告未提供 Supabase 控制数据读取证据。"), state: "unknown" as const };
-    const migrationStatus = migration ?? { detail: uiText("尚未读取 Supabase 迁移状态。"), state: "unknown" as const };
-    const codexState = combinedState([codexCli?.state ?? "unknown", ...codexModelDependencies.map((dependency) => dependency.state)]);
-    const codexCliVersion = dependencyVersion(codexCli?.detail);
-    const workerRuntime = report ? combinedState([report.mediaLibrary.state, ...report.dependencies.filter((dependency) => dependency.name !== "Supabase 迁移").map((dependency) => dependency.state)]) : "unknown";
+    const otherDependencies = report?.dependencies.filter((dependency) => dependency.name !== "Codex CLI" && !dependency.name.startsWith("Codex 模型")) ?? [];
+    const workerRuntime = report ? combinedState([report.mediaLibrary.state, ...otherDependencies.map((dependency) => dependency.state)]) : "unknown";
     return [
-    { id: "supabase", label: "Supabase", state: combinedState([viewTransport.state, migrationStatus.state]), detail: "", detailRows: [
-      { label: uiText("控制数据"), state: viewTransport.state, value: viewTransport.detail },
-      { label: uiText("迁移"), state: migrationStatus.state, value: migrationDisplayDetail(migrationStatus.detail) },
-    ] },
-    { id: "production-pipeline", label: uiText("生产执行链"), state: combinedState([n8n.state, workerRuntime]), detail: uiText("n8n 负责编排与派发，Worker 环境负责实际执行。"), detailRows: [
+    { id: "production-pipeline", label: uiText("生产执行链"), state: workerRuntime, detail: uiText("本机调度负责派发，Worker 负责实际执行。"), detailRows: [
       { label: uiText("Worker 环境"), state: workerRuntime, value: report ? uiText("执行依赖与媒体库已纳入检查；正常不代表当前有任务运行。") : uiText("尚未读取 Worker 执行环境。") },
-      { label: uiText("n8n 编排"), state: n8n.state, value: n8n.detail },
     ] },
     { id: "task-execution", label: uiText("任务执行"), state: taskExecution, detail: uiText("{value0} 执行中 · {value1} 阻塞 · {value2} 失败{value3}。",{value0:runningCount,value1:blockedCount,value2:failedCount,value3:latestCompleted ? uiText(" · 最近任务已完成") : ""}) },
     { id: "media", label: uiText("媒体库"), state: report?.mediaLibrary.state ?? "unknown", detail: report?.mediaLibrary.detail ?? uiText("尚未读取媒体库挂载状态。") },
-    { id: "codex-cli", label: uiText("依赖 · Codex CLI{value0}",{value0:codexCliVersion ? ` · ${codexCliVersion}` : ""}), state: codexState, detail: codexCliVersion ? "" : codexCli?.detail ?? uiText("尚未读取 Codex CLI 状态。"), detailRows: codexModelDependencies.map((dependency) => ({ label: uiText("模型"), state: dependency.state, value: dependency.name.replace(/^Codex 模型(?: · )?/, "") || uiText("未配置") })) },
     ...(report?.operations ? (["schedule","notification","health","backup","snapshot"] as const).map(operation => {
       const evidence=report.operations?.[operation];
       return ({
@@ -196,7 +138,7 @@ export function SystemStatusPanel({ workerSummary, episodes, isRefreshing = fals
     }); }) : []),
     ...otherDependencies.map((dependency, index) => ({ id: `dependency-${index}`, label: uiText("依赖 · {value0}",{value0:dependency.name}), state: dependency.state, detail: dependency.detail })),
     ];
-  }, [runningCount, latestCompleted, blockedCount, failedCount, n8n, report, taskExecution,locale]);
+  }, [runningCount, latestCompleted, blockedCount, failedCount, report, taskExecution,locale]);
   const overallState = items.some((item) => item.state === "attention" || item.state === "offline") ? "attention" : items.some((item) => item.state === "unknown") ? "unknown" : "healthy";
   const summary = items.map((item) => `${item.label}：${stateLabel(item.state)}`).join(" · ");
 
@@ -210,7 +152,6 @@ export function SystemStatusPanel({ workerSummary, episodes, isRefreshing = fals
 
   return <SystemStatusSurface items={items} overallState={overallState} summary={summary}
     description={uiText("生产执行链展示服务是否可用；任务执行展示当前是否正在工作。")}
-    renderDetails={(item) => <>{item.id === "production-pipeline" && report && n8nTimeline ? <dl><div><dt>{uiText("最近调度检查")}</dt><dd>{formatDate(n8nTimeline.scheduleCheckAt)}</dd></div><div><dt>{uiText("最近 Worker 派发")}</dt><dd>{formatDate(n8nTimeline.workerDispatchAt)}</dd></div><div><dt>{uiText("最近通知执行")}</dt><dd>{n8nTimeline.notification ? <><span className="system-status-notification-result">{formatDate(n8nTimeline.notification.at)} {uiText("· 通知")}{n8nTimeline.notification.state === "failure" ? uiText("失败") : uiText("成功")}</span><span className="system-status-notification-workflow">{n8nTimeline.notification.workflowName}</span></> : uiText("暂无记录")}</dd></div><div><dt>{uiText("最近健康检查")}</dt><dd>{formatDate(report.n8n.lastHealthCheckAt)}</dd></div></dl> : null}</>}
     footer={<><span>{uiText("最近读取 ")}{report ? formatDate(report.observedAt) : uiText("暂无")}</span><div><button className="button button-secondary" disabled={isTesting || !onRunGoldenTest} onClick={() => void runGoldenTest()} type="button">{isTesting ? uiText("测试中…") : uiText("一键测试")}</button><button className="button button-secondary" disabled={isRefreshing} onClick={() => void onRefresh()} type="button">{isRefreshing ? uiText("读取中…") : uiText("刷新系统状态")}</button></div></>}>
     <article className="system-status-evidence"><strong>{uiText("Worker 最近任务")}</strong><span>{latestWorkerLabel}</span><strong>{uiText("阻塞摘要")}</strong><span>{blockedCount ? uiText("{value0} 个阻塞任务需要处理。",{value0:blockedCount}) : uiText("当前没有阻塞任务。")}</span></article>{testReport || testError ? <article aria-live="polite" className={`golden-test-result ${testReport?.passed ? "is-passed" : "is-failed"}`}><strong>{testReport?.passed ? uiText("黄金生产链测试通过") : uiText("黄金生产链测试未通过")}</strong>{testReport?.checks.map((check) => <span key={check.name}>{check.name}：{check.detail}</span>)}{testError ? <span>{testError}</span> : null}</article> : null}
   </SystemStatusSurface>;

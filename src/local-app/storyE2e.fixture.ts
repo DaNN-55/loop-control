@@ -112,7 +112,7 @@ export async function createNarrationPorts(){return{mode:'controlled',store:{mod
   const send=async(command:string,data:Record<string,unknown>={},key?:string)=>{const result=await request(command,{...(w?{workspaceId:w.id,expectedRevision:w.revision}:{}),...data},key);if(result.status===200&&result.body?.id===w?.id)w=result.body;return result;};
   const execute=async(taskId:string)=>{
    const task=(await nativeWorkerPort(worker).rpc('claim_next_worker_task',{p_task_id:taskId,p_worker_capacity:1}) as any[])[0];assert.ok(task,'Real Worker must claim the submitted story task');
-   const result=await runWorkspaceDeliveryProcess(f,task,{mountPath:volume.mountPath,visualCommand:[process.execPath,'--version'],narration:{mode:'controlled',modulePath},media:{mode:'controlled',modulePath}});
+   const result=await runWorkspaceDeliveryProcess(f,task,{mountPath:volume.mountPath,narration:{mode:'controlled',modulePath},media:{mode:'controlled',modulePath}});
    if(process.env.LOOP_STORY_EVIDENCE)await writeFile(join(process.env.LOOP_STORY_EVIDENCE,taskId+'-worker.json'),JSON.stringify(result,null,2));
    return result;
   };

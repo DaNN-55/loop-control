@@ -1,4 +1,3 @@
-import {isRetiredProvider,retiredProviderMessage} from '../worker/providerLifecycle.js';
 import {isVideoProvider,videoProviders} from "../worker/videoProviderCatalog.js";
 import {videoAuthorization,videoEndpoint} from "../worker/officialVideoProvider.js";
 import{bailianCredential}from'../worker/wanVideoProvider.js';
@@ -10,7 +9,7 @@ const adapters:Partial<Record<OnlineProvider,[string,string]>>={volcengine:['see
 export function createProviderProbe(config:ProviderNetworkConfiguration,transport?:MediaFetcher,readOnly?:Partial<Record<OnlineProvider,ProviderNetworkConfiguration>>,options:{manualVerification?:boolean;workspaceGenerationFromConnections?:boolean;workspaceSpeechFromConnections?:boolean}={}):ConnectionProbe{
  const policyFor=(provider:string)=>readOnly?.[provider as OnlineProvider]??config;
  const manualVerification=(provider:string)=>options.manualVerification||(options.workspaceGenerationFromConnections&&isWorkspaceGenerationProvider(provider));
- const statusFor=(provider:string)=>isRetiredProvider(provider)?{available:false,code:'provider_retired',detail:retiredProviderMessage}:!adapters[provider as OnlineProvider]?{available:false,code:'provider_not_registered',detail:'未登记的连接服务。'}:manualVerification(provider)?{available:true,code:'available',detail:'可手动测试连接。'}:providerNetworkStatus(policyFor(provider),provider);
+ const statusFor=(provider:string)=>!Object.hasOwn(adapters,provider)?{available:false,code:'provider_not_registered',detail:'未登记的连接服务。'}:manualVerification(provider)?{available:true,code:'available',detail:'可手动测试连接。'}:providerNetworkStatus(policyFor(provider),provider);
  async function test(input:Parameters<ConnectionProbe['verify']>[0]):Promise<ProbeResult>{
   const status=statusFor(input.provider);if(!status.available)return{outcome:'retryable',attempted:false,code:status.code,detail:status.detail};
   let httpStatus:number|undefined,attempted=false;const observing:MediaFetcher=async(url,init)=>{attempted=true;const response=await (transport??fetch)(url,init);httpStatus=response.status;return response;};

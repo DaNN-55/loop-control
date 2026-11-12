@@ -1,3 +1,4 @@
+// 历史模块名；当前承载媒体 Worker 的通用验证、进度和产物回写。
 import {NativePublicationUnknownError} from '../orchestration/workerOutcome.js';
 import type {FrozenVideoVisualInput} from '../videoVisualInputs.js';
 import {applyScriptRenderSettings} from './scriptRenderSettings.js';
@@ -34,7 +35,7 @@ export interface ClaimedWorkerTask {
   attempt: number;
   budgetLimitCents: number;
   maxAttempts: number;
-  provider: "codex" | "google_tts" | "volcengine_tts" | "pexels" | "ffmpeg" | "freesound" | "openchatcut" | "openai" | "cloudflare" | "whisperx" | "bailian" | "volcengine" | "minimax" | "kling";
+  provider: "codex" | "volcengine_tts" | "pexels" | "ffmpeg" | "freesound" | "openchatcut" | "openai" | "whisperx" | "bailian" | "volcengine" | "minimax" | "kling";
   model: string;
   promptVersion: string;
   episodeId: string;
@@ -508,7 +509,7 @@ function media(snapshot: Record<string, unknown>): WorkerTaskPackageInput["media
     if(!isRecord(image))throw Error('图片生成输入无效。');
     return {adapter:'openai_images',staticVisual:{prompt:requiredString(image.prompt,'缺少图片提示词。'),settings:image.settings as import('../imageGeneration.js').ImageGenerationSettings,references:image.references as Array<ArtifactManifest&{mimeType:string}>}};
   }
-  if (value.adapter === "google_tts" || value.adapter === "volcengine_tts") {
+  if (value.adapter === "volcengine_tts") {
     const narration = value.narration;
     if (!isRecord(narration) || !isRecord(narration.voice)) throw new Error("旁白任务冻结配置无效。");
     return {
@@ -881,31 +882,17 @@ function executionPreflightCheck(taskPackage: WorkerTaskPackage, error: unknown)
   if(error instanceof ProviderOutcomeUnknownError||error instanceof VideoGenerationError&&error.outcome==='unknown')return {capability:taskPackage.capability,check:"provider_result_unknown",phase:"execution",status:"blocked",reason:detail,action:"contact_environment_admin",scope:"worker"};
   const imageGeneration = taskPackage.visualAssetPreparation?.imageGeneration;
   const isOpenAiStaticVisual = (taskPackage.provider === "openai" && taskPackage.media?.adapter === "openai_images") || (imageGeneration?.provider === "openai" && imageGeneration.adapter === "openai_images");
-  const isCloudflareStaticVisual = (taskPackage.provider === "cloudflare" && taskPackage.media?.adapter === "workers_ai_images") || (imageGeneration?.provider === "cloudflare" && imageGeneration.adapter === "workers_ai_images");
   const managedAdapter = taskPackage.media?.adapter ?? taskPackage.aRoll?.adapter;
   const adapterResolution = registeredAdapters.resolve({ capability: taskPackage.capability, provider: taskPackage.provider, adapter: managedAdapter });
-  const isManagedConnection = isOpenAiStaticVisual || isCloudflareStaticVisual || (adapterResolution.kind === "registered" && adapterResolution.choice.connection.kind === "owner_managed");
-  const capability = isOpenAiStaticVisual || isCloudflareStaticVisual ? "static_visual_generation" : taskPackage.capability;
+  const isManagedConnection = isOpenAiStaticVisual || (adapterResolution.kind === "registered" && adapterResolution.choice.connection.kind === "owner_managed");
+  const capability = isOpenAiStaticVisual ? "static_visual_generation" : taskPackage.capability;
   if (isOpenAiStaticVisual && /HTTP (400|404)/i.test(detail)) {
-    return { capability, check: "model_permission", phase: "execution", status: "unavailable", reason: detail, action: "edit_blueprint", scope: "blueprint" };
-  }
-  if (isCloudflareStaticVisual && /HTTP (400|404)|model.+(not found|unsupported)|模型.+(不存在|不支持)/i.test(detail)) {
     return { capability, check: "model_permission", phase: "execution", status: "unavailable", reason: detail, action: "edit_blueprint", scope: "blueprint" };
   }
   if (isOpenAiStaticVisual && /HTTP (401|403)|api[ _-]?key|credential|token|凭据|密钥|令牌/i.test(detail)) {
     return { capability, check: "credential_validity", phase: "execution", status: "unavailable", reason: detail, action: "manage_connection", scope: "connection" };
   }
-  if (taskPackage.provider === "codex" && /model|permission|access denied|does not have access|not allowed|not supported|unauthorized|forbidden|模型|权限|无权|未授权|不支持/i.test(detail)) {
-    return {
-      capability: taskPackage.capability,
-      check: "model_permission",
-      phase: "execution",
-      status: "unavailable",
-      reason: detail,
-      action: "contact_environment_admin",
-      scope: "worker",
-    };
-  }
+
   if (isManagedConnection && /api[ _-]?key|credential|token|401|403|凭据|密钥|令牌/i.test(detail)) {
     return {
       capability: taskPackage.capability,

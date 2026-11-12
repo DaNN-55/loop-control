@@ -1,17 +1,17 @@
 import { describe, expect, it } from "vitest";
-import { createWorkerTaskPackage, validateWorkerResult } from "./contracts";
+import { createWorkerTaskPackage, validateWorkerResult, validateStoryboardManifest } from "./contracts";
 import type { WorkerTaskPackageInput } from "./contracts";
 
 const packageInput: WorkerTaskPackageInput = {
   task: {
     id: "task-1",
-    type: "draft_brief",
+    type: "generate_static_visual",
     attempt: 0,
     budgetLimitCents: 0,
     maxAttempts: 2,
-    provider: "codex",
-    model: "gpt-5.6-codex",
-    promptVersion: "brief-v1",
+    provider: "openai",
+    model: "gpt-image-2",
+    promptVersion: "static-visual-v1",
   },
   episode: {
     id: "episode-1",
@@ -19,10 +19,12 @@ const packageInput: WorkerTaskPackageInput = {
     blueprintVersionId: "blueprint-3",
     title: "一个可验证的选题",
   },
-  capability: "visual_planning",
+  capability: "static_visual_generation",
+  credentialRef: "11111111-1111-4111-8111-111111111111",
+  media: {adapter:'openai_images',staticVisual:{prompt:'一张可验证的参考图片。'}},
   allowedTools: ["read", "write"],
   allowedAssetRoot: "/Volumes/Media/loop-control/account-1",
-  output: { requiredArtifactTypes: ["brief"], contentType: "text/markdown", relativePath: "episodes/episode-1/brief.md", reviewStage: "visual_review" },
+  output: { requiredArtifactTypes: ["static_visual"], contentType: "image/png", relativePath: "episodes/episode-1/image.png", reviewStage: "visual_review" },
   inputArtifacts: [
     {
       artifactType: "research_notes",
@@ -32,20 +34,19 @@ const packageInput: WorkerTaskPackageInput = {
     },
   ],
 };
-const storyboardHarness = { id: "harness-storyboard-1", version: 1, content: "根据已审核输入生成可执行分镜。", contentHash: "d".repeat(64), adapter: "codex" as const, model: "gpt-5.6-codex", promptVersion: "storyboard-planning-v1" };
 
 describe("Worker 契约", () => {
   it("构建包含固定账号、蓝图、预算和禁止事项的任务包", () => {
     expect(createWorkerTaskPackage(packageInput)).toMatchObject({
       version: "worker-task/v1",
-      provider: "codex",
-      capability: "visual_planning",
+      provider: "openai",
+      capability: "static_visual_generation",
       allowedTools: ["read", "write"],
       accountId: "account-1",
       episode: { id: "episode-1", blueprintVersionId: "blueprint-3" },
       budget: { limitCents: 0, maxAttempts: 2, attempt: 0 },
       assets: { allowedRoot: "/Volumes/Media/loop-control/account-1" },
-      output: { requiredArtifactTypes: ["brief"], contentType: "text/markdown", relativePath: "episodes/episode-1/brief.md", reviewStage: "visual_review" },
+      output: { requiredArtifactTypes: ["static_visual"], contentType: "image/png", relativePath: "episodes/episode-1/image.png", reviewStage: "visual_review" },
       forbiddenActions: ["approve", "publish", "change_blueprint", "change_episode_stage"],
     });
   });
@@ -87,6 +88,7 @@ describe("Worker 契约", () => {
       ...packageInput,
       task: { ...packageInput.task, type: "align_shot_captions", provider: "whisperx", model: "large-v3", promptVersion: "whisperx-alignment-v1" },
       capability: "acoustic_alignment",
+      media: undefined,
       acousticAlignment: { confirmedText: "Owner 正文", textFingerprint: "b".repeat(64), audioRelativePath: "episodes/episode-1/audio/shot-1.mp3", audioSha256: "c".repeat(64), inputVersion: "d".repeat(64), speakingRate: 1, strategy: "local", voice: "voice-a" },
       output: { requiredArtifactTypes: ["acoustic_alignment_evidence"], contentType: "application/json", relativePath: "episodes/episode-1/alignment/shot-1.json", reviewStage: "production_ready" },
       inputArtifacts: [{ artifactType: "audio_track", relativePath: "episodes/episode-1/audio/shot-1.mp3", sha256: "c".repeat(64), fileSize: 4096 }],
@@ -174,7 +176,7 @@ describe("Worker 契约", () => {
     });
   });
 
-  it("没有导入视觉素材且没有已登记图片 Adapter 时阻塞视觉资产准备", () => {
+  it("当前图片任务拒绝旧视觉资产准备字段", () => {
     expect(() => createWorkerTaskPackage({
       ...packageInput,
       visualAssetPreparation: { externalInputs: [] },
@@ -212,11 +214,11 @@ describe("Worker 契约", () => {
       version: "worker-result/v1",
       taskId: "task-1",
       status: "completed",
-      artifacts: [{ artifactType: "brief", relativePath: "episodes/episode-1/brief.md", sha256: "b".repeat(64), fileSize: 256 }],
+      artifacts: [{ artifactType: "static_visual", relativePath: "episodes/episode-1/image.png", sha256: "b".repeat(64), fileSize: 256 }],
       validation: { passed: true, checks: [{ name: "schema", passed: true, detail: "brief fields are present" }] },
       preflight: {
         version: "worker-preflight/v1",
-        checks: [{ capability: "visual_planning", check: "capability_registration", phase: "preflight", status: "passed", reason: "Worker 已通过执行路径校验。", action: "none", scope: "worker" }],
+        checks: [{ capability: "static_visual_generation", check: "capability_registration", phase: "preflight", status: "passed", reason: "Worker 已通过执行路径校验。", action: "none", scope: "worker" }],
       },
       actualCostCents: 1,
       blockers: [],
@@ -229,9 +231,9 @@ describe("Worker 契约", () => {
       version: "worker-result/v1",
       taskId: "task-1",
       status: "completed",
-      artifacts: [{ artifactType: "brief", relativePath: "episodes/episode-1/brief.md", sha256: "b".repeat(64), fileSize: 256 }],
+      artifacts: [{ artifactType: "static_visual", relativePath: "episodes/episode-1/image.png", sha256: "b".repeat(64), fileSize: 256 }],
       validation: { passed: true, checks: [{ name: "schema", passed: true, detail: "brief fields are present" }] },
-      preflight: { version: "worker-preflight/v1", checks: [{ capability: "visual_planning", check: "network", phase: "preflight", status: "retryable", reason: "暂时失败。", action: "not_a_real_action", scope: "worker" }] },
+      preflight: { version: "worker-preflight/v1", checks: [{ capability: "static_visual_generation", check: "network", phase: "preflight", status: "retryable", reason: "暂时失败。", action: "not_a_real_action", scope: "worker" }] },
       actualCostCents: 0,
       blockers: [],
       retry: { shouldRetry: false, reason: "Completed successfully." },
@@ -291,28 +293,8 @@ describe("Worker 契约", () => {
     }, createWorkerTaskPackage({ ...packageInput, task: { ...packageInput.task, attempt: 1 } }))).toThrow("重试");
   });
 
-  it("允许分镜任务在阻塞时返回空分镜内容", () => {
-    const taskPackage = createWorkerTaskPackage({
-      ...packageInput,
-      capability: "storyboard_planning",
-      promptHarness: storyboardHarness,
-      output: { requiredArtifactTypes: ["storyboard"], contentType: "application/json", relativePath: "episodes/episode-1/storyboard-v1.json", reviewStage: "storyboard_review" },
-    });
-    const blockedResult = {
-      version: "worker-result/v1",
-      taskId: "task-1",
-      status: "blocked",
-      artifacts: [],
-      storyboard: null,
-      validation: { passed: false, checks: [] },
-      actualCostCents: 0,
-      blockers: [{ code: "missing_input", detail: "Approved visual input is missing." }],
-      retry: { shouldRetry: false, reason: "Owner action is required." },
-      nextStep: "Provide the approved visual input.",
-    };
-
-    expect(validateWorkerResult(blockedResult, taskPackage)).toMatchObject({ status: "blocked" });
-    expect(() => validateWorkerResult({ ...blockedResult, storyboard: undefined }, taskPackage)).toThrow("空分镜内容");
+  it.each(['script_writing','visual_planning','storyboard_planning'])('拒绝创建已退役的 %s 执行任务',capability=>{
+    expect(()=>createWorkerTaskPackage({...packageInput,capability})).toThrow('退役');
   });
 
   it("要求结果匹配任务输出类型，并使用资产根目录下的相对路径", () => {
@@ -334,7 +316,7 @@ describe("Worker 契约", () => {
       version: "worker-result/v1",
       taskId: "task-1",
       status: "completed",
-      artifacts: [{ artifactType: "brief", relativePath: "../outside.md", sha256: "c".repeat(64), fileSize: 256 }],
+      artifacts: [{ artifactType: "static_visual", relativePath: "../outside.md", sha256: "c".repeat(64), fileSize: 256 }],
       validation: { passed: true, checks: [{ name: "schema", passed: true, detail: "valid" }] },
       actualCostCents: 0,
       blockers: [],
@@ -346,7 +328,7 @@ describe("Worker 契约", () => {
       version: "worker-result/v1",
       taskId: "another-task",
       status: "completed",
-      artifacts: [{ artifactType: "brief", relativePath: "episodes/episode-1/brief.md", sha256: "c".repeat(64), fileSize: 256 }],
+      artifacts: [{ artifactType: "static_visual", relativePath: "episodes/episode-1/image.png", sha256: "c".repeat(64), fileSize: 256 }],
       validation: { passed: true, checks: [{ name: "schema", passed: true, detail: "valid" }] },
       actualCostCents: 0,
       blockers: [],
@@ -358,7 +340,7 @@ describe("Worker 契约", () => {
       version: "worker-result/v1",
       taskId: "task-1",
       status: "completed",
-      artifacts: [{ artifactType: "brief", relativePath: "episodes/episode-1/brief-v2.md", sha256: "c".repeat(64), fileSize: 256 }],
+      artifacts: [{ artifactType: "static_visual", relativePath: "episodes/episode-1/image-v2.png", sha256: "c".repeat(64), fileSize: 256 }],
       validation: { passed: true, checks: [{ name: "schema", passed: true, detail: "valid" }] },
       actualCostCents: 0,
       blockers: [],
@@ -406,17 +388,11 @@ describe("Worker 契约", () => {
     }, taskPackage)).toThrow("SVG");
   });
 
-  it("只接受可追溯到冻结脚本和视觉依据的唯一分镜镜头", () => {
-    const taskPackage = createWorkerTaskPackage({
-      ...packageInput,
-      capability: "storyboard_planning",
-      promptHarness: storyboardHarness,
-      output: { requiredArtifactTypes: ["storyboard"], contentType: "application/json", relativePath: "episodes/episode-1/storyboard-v1.json", reviewStage: "storyboard_review" },
-      inputArtifacts: [
-        { artifactType: "main_script", relativePath: "episodes/episode-1/main-script.md", sha256: "a".repeat(64), fileSize: 128 },
-        { artifactType: "visual_brief", relativePath: "episodes/episode-1/visual-brief-v1.md", sha256: "b".repeat(64), fileSize: 128 },
-      ],
-    });
+  it("历史分镜格式仍验证冻结脚本、视觉依据和镜头唯一性", () => {
+    const frozenInputs = [
+      { artifactType:'main_script', relativePath:'episodes/episode-1/main-script.md', sha256:'a'.repeat(64), fileSize:128 },
+      { artifactType:'visual_brief', relativePath:'episodes/episode-1/visual-brief-v1.md', sha256:'b'.repeat(64), fileSize:128 },
+    ];
     const result = {
       version: "worker-result/v1",
       taskId: "task-1",
@@ -444,9 +420,9 @@ describe("Worker 契约", () => {
       nextStep: "Submit storyboard for review.",
     };
 
-    expect(validateWorkerResult(result, taskPackage)).toMatchObject({ storyboard: result.storyboard });
-    expect(() => validateWorkerResult({ ...result, storyboard: { ...result.storyboard, shots: [{ ...result.storyboard.shots[0], inputBasis: [{ relativePath: "episodes/episode-1/visual-brief-v1.md", sha256: "b".repeat(64) }] }] } }, taskPackage)).toThrow("主脚本");
-    expect(() => validateWorkerResult({ ...result, storyboard: { ...result.storyboard, shots: [result.storyboard.shots[0], result.storyboard.shots[0]] } }, taskPackage)).toThrow("不能重复");
+    expect(validateStoryboardManifest(result.storyboard, frozenInputs)).toMatchObject(result.storyboard);
+    expect(() => validateStoryboardManifest({ ...result.storyboard, shots: [{ ...result.storyboard.shots[0], inputBasis: [{ relativePath: "episodes/episode-1/visual-brief-v1.md", sha256: "b".repeat(64) }] }] }, frozenInputs)).toThrow("主脚本");
+    expect(() => validateStoryboardManifest({ ...result.storyboard, shots: [result.storyboard.shots[0], result.storyboard.shots[0]] }, frozenInputs)).toThrow("不能重复");
   });
 });
 
@@ -455,7 +431,7 @@ it('最终工程校验统一审核入口别名，同时拒绝不同冻结文件�
  const sourceProject={artifactType:'review_render_project',relativePath:'episodes/e/review-render/v1/project.json',sha256:'c'.repeat(64),fileSize:100};
  const sourceRuntime={artifactType:'review_render_runtime',relativePath:'episodes/e/review-render/v1/runtime.json',sha256:'d'.repeat(64),fileSize:50};
  const sourceQcReport={artifactType:'review_qc_report',relativePath:'episodes/e/review-render/v1/qc.json',sha256:'e'.repeat(64),fileSize:100};
- const input:WorkerTaskPackageInput={...packageInput,episode:{...packageInput.episode,id:'e'},task:{...packageInput.task,type:'generate_final_render',provider:'openchatcut',model:'openchatcut@0.2.14'},capability:'final_rendering',inputArtifacts:[...render.members.map(m=>({artifactType:m.memberKind,relativePath:m.relativePath,sha256:m.sha256,fileSize:1})),sourceProject,sourceRuntime,sourceQcReport],output:{requiredArtifactTypes:['final_render','final_render_project','final_qc_report'],relativePath:'episodes/e/final-render/task/final.mp4',contentType:'video/mp4',reviewStage:'qc_passed'},finalRender:{sourceReviewPackageId:'qc',sourceProject,sourceRuntime,sourceQcReport,projectRelativePath:'episodes/e/final-render/task/index.html',projectRevision:render.projectRevision,reviewRender:render}};
+ const input:WorkerTaskPackageInput={...packageInput,episode:{...packageInput.episode,id:'e'},task:{...packageInput.task,type:'generate_final_render',provider:'openchatcut',model:'openchatcut@0.2.14'},capability:'final_rendering',media:undefined,inputArtifacts:[...render.members.map(m=>({artifactType:m.memberKind,relativePath:m.relativePath,sha256:m.sha256,fileSize:1})),sourceProject,sourceRuntime,sourceQcReport],output:{requiredArtifactTypes:['final_render','final_render_project','final_qc_report'],relativePath:'episodes/e/final-render/task/final.mp4',contentType:'video/mp4',reviewStage:'qc_passed'},finalRender:{sourceReviewPackageId:'qc',sourceProject,sourceRuntime,sourceQcReport,projectRelativePath:'episodes/e/final-render/task/index.html',projectRevision:render.projectRevision,reviewRender:render}};
  expect(()=>createWorkerTaskPackage(input)).not.toThrow();
  const canonical=structuredClone(input);canonical.finalRender!.reviewRender.projectRelativePath=sourceProject.relativePath;expect(()=>createWorkerTaskPackage(canonical)).not.toThrow();
  const other=structuredClone(input);other.finalRender!.sourceProject.relativePath='episodes/e/other/project.json';other.inputArtifacts.push(other.finalRender!.sourceProject);expect(()=>createWorkerTaskPackage(other)).toThrow('最终渲染冻结工程不一致');

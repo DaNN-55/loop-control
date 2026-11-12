@@ -34,7 +34,7 @@ const events: AuditEvent[] = [
   },
 ];
 
-describe("n8n 通知策略", () => {
+describe("本机通知策略", () => {
   it("首次建立游标时不回放历史审计事件", () => {
     expect(collectNotifications(events, null)).toEqual({
       approvalStages: [],

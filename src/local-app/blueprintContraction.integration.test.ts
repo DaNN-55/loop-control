@@ -1,6 +1,5 @@
 // @vitest-environment node
 import {it,expect} from 'vitest';
-import {seedLegacyPlanning} from './legacyPlanning.fixture';
 import {randomUUID} from 'node:crypto';
 import {csrfFor} from './sessions';
 import {productionWorkspaceFixture} from './productionWorkspace.fixture';
@@ -20,26 +19,30 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner saves creative-onl
  }finally{await f.close();}
 },120000);
 
-it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('ordinary planning drafts persist before workspace creation and failed retries retain their frozen selection',async()=>{
+it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('retired planning settings and retries retain exact historical selections and tasks',async()=>{
  const {formalWorkflowFixture}=await import('./formalWorkflow.fixture');const f=await formalWorkflowFixture({configurePlanning:false,scriptText:'# 普通脚本\n\n## 正文\n原画面中的事实'});try{
- const harnesses=(await f.c.query("SELECT id FROM public.prompt_versions WHERE account_id=(SELECT account_id FROM public.episodes WHERE id=$1) AND capability='storyboard_planning' AND is_active ORDER BY version DESC",[f.newEpisode])).rows;
- const selection={provider:'codex',adapter:'codex',model:'gpt-5.6-luna',harnessId:harnesses[0].id,budgetCents:37,allowedTools:['read','write']};
- const saved=await f.send('saveWorkspacePlanningSelection',{selection,expectedSelectionRevision:0});expect(saved.status,JSON.stringify(saved.body)).toBe(200);
- const read=await fetch(`${f.origin}/api/local/episodes/${f.newEpisode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}});expect((await read.json()).planningSelection.selection).toEqual(selection);
- await f.send('importMaterial',{sourceKind:'file',sourcePath:'ref.mp4',materialType:'video',materialPurpose:'visual_reference',mimeType:'video/mp4',isMainScript:false,contentBase64:(await (await import('node:fs/promises')).readFile(f.assetRoot+'/'+f.videoPath)).toString('base64')});
- expect((await f.send('start')).status).toBe(200);const first=await seedLegacyPlanning(f,f.newEpisode,f.main);
- const original=(await f.c.query('SELECT input_snapshot,model,budget_limit_cents FROM public.tasks WHERE id=$1',[first.taskId])).rows[0];expect(original.model).toBe(selection.model);expect(original.budget_limit_cents).toBe(37);expect(original.input_snapshot.harness.id).toBe(selection.harnessId);
- expect((await f.send('saveWorkspacePlanningSelection',{selection:{...selection,model:'gpt-5.6-codex',budgetCents:83},expectedSelectionRevision:1})).status).toBe(200);
- await f.c.query("UPDATE public.tasks SET status='failed' WHERE id=$1",[first.taskId]);const retry=await f.send('retryWorkspacePlanning',{expectedScriptRevisionId:f.main,taskId:first.taskId});expect(retry.status,JSON.stringify(retry.body)).toBe(200);
- const frozen=(await f.c.query('SELECT input_snapshot,model,budget_limit_cents FROM public.tasks WHERE id=$1',[retry.body.taskId])).rows[0];expect(frozen.model).toBe(selection.model);expect(frozen.budget_limit_cents).toBe(37);expect(frozen.input_snapshot.harness).toEqual(original.input_snapshot.harness);expect(frozen.input_snapshot.allowed_tools).toEqual(original.input_snapshot.allowed_tools);
- await f.c.query("UPDATE public.tasks SET status='failed' WHERE id=$1",[retry.body.taskId]);const replanned=await f.send('replanWorkspace',{expectedScriptRevisionId:f.main,planningTaskId:retry.body.taskId});expect(replanned.status,JSON.stringify(replanned.body)).toBe(200);expect((await f.c.query('SELECT model,budget_limit_cents FROM public.tasks WHERE id=$1',[replanned.body.taskId])).rows[0]).toEqual({model:'gpt-5.6-codex',budget_limit_cents:83});
- await f.c.query('UPDATE public.episodes SET archived_at=clock_timestamp() WHERE id=$1',[f.newEpisode]);expect((await f.send('saveWorkspacePlanningSelection',{selection,expectedSelectionRevision:2})).status).toBe(409);
+ const harness=(await f.c.query("SELECT id FROM public.prompt_versions WHERE account_id=(SELECT account_id FROM public.episodes WHERE id=$1) AND capability='storyboard_planning' AND is_active ORDER BY version DESC",[f.newEpisode])).rows[0];
+ const selection={provider:'codex',adapter:'codex',model:'historical-model',harnessId:harness.id,budgetCents:37,allowedTools:['read','write']},taskId=randomUUID();
+ // Seed records that predate retirement; no new production request is submitted.
+ await f.c.query('INSERT INTO local_identity.episode_planning_selections(episode_id,selection,revision) VALUES($1,$2,3) ON CONFLICT(episode_id) DO UPDATE SET selection=excluded.selection,revision=excluded.revision',[f.newEpisode,selection]);
+ await f.c.query("INSERT INTO public.tasks(id,episode_id,task_type,status,input_snapshot,provider,model,prompt_version,budget_limit_cents) VALUES($1,$2,'draft_storyboard','failed',$3,'codex','historical-model','historical-planning-v1',37)",[taskId,f.newEpisode,{capability:'storyboard_planning',harness:selection,script_revision_id:f.main}]);
+ const historical=async()=>({selection:(await f.c.query('SELECT to_jsonb(s) record FROM local_identity.episode_planning_selections s WHERE episode_id=$1',[f.newEpisode])).rows[0].record,task:(await f.c.query('SELECT to_jsonb(t) record FROM public.tasks t WHERE id=$1',[taskId])).rows[0].record,taskCount:(await f.c.query('SELECT count(*)::int n FROM public.tasks WHERE episode_id=$1',[f.newEpisode])).rows[0].n});
+ const before=await historical();
+ for(const [command,data]of[
+  ['saveWorkspacePlanningSelection',{selection:{...selection,model:'new-model'},expectedSelectionRevision:3}],
+  ['retryWorkspacePlanning',{expectedScriptRevisionId:f.main,taskId}],
+  ['replanWorkspace',{expectedScriptRevisionId:f.main,planningTaskId:taskId}],
+ ]as const){const r=await f.send(command,data);expect(r.status,JSON.stringify(r.body)).toBe(410);expect(r.body.error).toContain('已退役');}
+ expect(await historical()).toEqual(before);
+ const read=await fetch(`${f.origin}/api/local/episodes/${f.newEpisode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(read.status).toBe(200);const body=await read.json();expect(body).not.toHaveProperty('planningSelection');expect(body).not.toHaveProperty('globalPlanningConfigured');
  }finally{await f.close();}
 },120000);
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('v2 direct preparation needs no planner and new media requests require explicit service selection',async()=>{
  const {formalWorkflowFixture}=await import('./formalWorkflow.fixture');const f=await formalWorkflowFixture();try{
- expect((await f.send('start')).status).toBe(200);const prepared=await f.send('prepareWorkspace',{expectedScriptRevisionId:f.main});expect(prepared.status,JSON.stringify(prepared.body)).toBe(200);const w=prepared.body;expect(w.id).toBeTruthy();expect((await f.c.query('SELECT selection FROM local_identity.episode_planning_selections WHERE episode_id=$1',[f.newEpisode])).rows[0].selection).toBeNull();
+ const started=await f.send('start');expect(started.status,JSON.stringify(started.body)).toBe(200);expect(started.body.stage).toBe('script_approved');
+ expect((await f.c.query("SELECT count(*)::int n FROM public.tasks WHERE episode_id=$1 AND (provider='codex' OR task_type IN('prepare_visual_brief','draft_storyboard','draft_storyboard_revision'))",[f.newEpisode])).rows[0].n).toBe(0);
+ const prepared=await f.send('prepareWorkspace',{expectedScriptRevisionId:f.main});expect(prepared.status,JSON.stringify(prepared.body)).toBe(200);const w=prepared.body;expect(w.id).toBeTruthy();expect((await f.c.query('SELECT selection FROM local_identity.episode_planning_selections WHERE episode_id=$1',[f.newEpisode])).rows.every((row:{selection:unknown})=>row.selection===null)).toBe(true);
  const base={workspaceId:w.id,expectedRevision:w.revision},clip=w.clips[0];
  for(const [command,data]of[
  ['requestWorkspaceImageCandidates',{...base,targetItemId:clip.itemId,prompt:'保留主体',settings:{size:'864x1536',quality:'auto',count:1},referenceMaterialRevisionIds:[],reservationCents:10}],

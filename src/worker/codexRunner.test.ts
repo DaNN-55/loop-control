@@ -1,4 +1,3 @@
-import {buildCodexPrompt} from './codexPrompt';
 import { describe, expect, it, vi } from "vitest";
 import { runCodexWorker, shotPreparationContractFromSnapshot } from "./codexRunner";
 import {VideoGenerationError} from './videoGenerationError';
@@ -6,27 +5,29 @@ import {ProviderOutcomeUnknownError} from "./providerOutcome";
 
 const claimedTask = {
   taskId: "task-1",
-  taskType: "draft_brief",
+  taskType: "generate_static_visual",
   attempt: 0,
   budgetLimitCents: 0,
   maxAttempts: 2,
-  provider: "codex" as const,
-  model: "gpt-5.6-codex",
-  promptVersion: "brief-v1",
+  provider: "openai" as const,
+  model: "gpt-image-2",
+  promptVersion: "static-visual-v1",
   episodeId: "episode-1",
   accountId: "account-1",
   blueprintVersionId: "blueprint-1",
   title: "一个可验证的选题",
   allowedAssetRoot: "/Volumes/Media/loop-control/account-1",
   inputSnapshot: {
-    capability: "visual_planning",
+    capability: "static_visual_generation",
+    credential_ref: "11111111-1111-4111-8111-111111111111",
+    media: {adapter:'openai_images',static_visual:{prompt:'一张可验证的参考图片。'}},
     allowed_tools: ["read", "write"],
-    output: { required_artifact_types: ["brief"], content_type: "text/markdown", relative_path: "episodes/episode-1/brief.md", review_stage: "visual_review" },
+    output: { required_artifact_types: ["static_visual"], content_type: "image/png", relative_path: "episodes/episode-1/image.png", review_stage: "visual_review" },
     input_artifacts: [],
   },
 };
 
-describe("本地 Codex Worker runner", () => {
+describe("本地媒体 Worker runner", () => {
   it("接受 PostgreSQL JSONB 重排后的有效镜头混音契约", () => {
     expect(() => shotPreparationContractFromSnapshot({
       version: "shot-preparation/v1",
@@ -49,7 +50,7 @@ describe("本地 Codex Worker runner", () => {
     const reportProgress = vi.fn().mockResolvedValue(undefined);
     const execute = vi.fn().mockResolvedValue(JSON.stringify({
       version: "worker-result/v1", taskId: "task-1", status: "completed",
-      artifacts: [{ artifactType: "brief", relativePath: "episodes/episode-1/brief.md", sha256: "a".repeat(64), fileSize: 128 }],
+      artifacts: [{ artifactType: "static_visual", relativePath: "episodes/episode-1/image.png", sha256: "a".repeat(64), fileSize: 128 }],
       validation: { passed: true, checks: [] }, actualCostCents: 0, blockers: [],
       retry: { shouldRetry: false, reason: "Completed successfully." }, nextStep: "Done.",
     }));
@@ -60,7 +61,7 @@ describe("本地 Codex Worker runner", () => {
     expect(reportProgress.mock.calls.every((call) => call[2].version === "worker-progress/v1" && call[2].detail)).toBe(true);
   });
 
-  it("没有 ready 任务时保持空闲，不调用 Codex", async () => {
+  it("没有 ready 任务时保持空闲，不调用执行器", async () => {
     const execute = vi.fn();
     const reportResult = vi.fn();
 
@@ -164,17 +165,17 @@ describe("本地 Codex Worker runner", () => {
     expect(execute).toHaveBeenCalledWith(expect.objectContaining({ media: { adapter: "ffmpeg_trim_video", videoClips: { sourceRelativePath: "episodes/episode-1/materials/source.mp4", segments: [{ startSeconds: 1, endSeconds: 2 }, { startSeconds: 4, endSeconds: 6 }], targetDurationSeconds: 3 } } }));
   });
 
-  it("将通过校验的 Codex 结果回写给同一个任务", async () => {
+  it("将通过校验的媒体结果回写给同一个任务", async () => {
     const reportResult = vi.fn().mockResolvedValue(undefined);
     const preflight = vi.fn().mockResolvedValue({
       version: "worker-preflight/v1",
-      checks: [{ capability: "visual_planning", check: "capability_registration", phase: "preflight", status: "passed", reason: "Worker 已注册 codex 执行路径。", action: "none", scope: "worker" }],
+      checks: [{ capability: "static_visual_generation", check: "capability_registration", phase: "preflight", status: "passed", reason: "Worker 已注册 openai/openai_images 执行路径。", action: "none", scope: "worker" }],
     });
     const execute = vi.fn().mockResolvedValue(JSON.stringify({
       version: "worker-result/v1",
       taskId: "task-1",
       status: "completed",
-      artifacts: [{ artifactType: "brief", relativePath: "episodes/episode-1/brief.md", sha256: "a".repeat(64), fileSize: 128 }],
+      artifacts: [{ artifactType: "static_visual", relativePath: "episodes/episode-1/image.png", sha256: "a".repeat(64), fileSize: 128 }],
       validation: { passed: true, checks: [{ name: "schema", passed: true, detail: "brief is complete" }] },
       actualCostCents: 999,
       blockers: [],
@@ -187,46 +188,10 @@ describe("本地 Codex Worker runner", () => {
     expect(execute).toHaveBeenCalledWith(expect.objectContaining({ accountId: "account-1", episode: expect.objectContaining({ blueprintVersionId: "blueprint-1" }) }));
   });
 
-  it("把已冻结的脚本委托内容原样交给 Worker", async () => {
-    const execute = vi.fn().mockResolvedValue(JSON.stringify({
-      version: "worker-result/v1",
-      taskId: "task-1",
-      status: "completed",
-      artifacts: [{ artifactType: "script", relativePath: "episodes/episode-1/generated-script-v1.md", sha256: "a".repeat(64), fileSize: 128 }],
-      validation: { passed: true, checks: [{ name: "schema", passed: true, detail: "script is complete" }] },
-      actualCostCents: 0,
-      blockers: [],
-      retry: { shouldRetry: false, reason: "Completed successfully." },
-      nextStep: "Submit the script for Owner review.",
-    }));
-    const reportResult = vi.fn().mockResolvedValue(undefined);
-
-    await runCodexWorker({
-      claimNextTask: async () => ({
-        ...claimedTask,
-        taskType: "draft_script",
-        inputSnapshot: {
-          capability: "script_writing",
-          commission: { creative_direction: "雨夜民俗悬疑", core_content: "仪式感与人物抉择" },
-          harness: { id: "harness-1", version: 2, content: "开头三秒提出冲突。", content_hash: "a".repeat(64), adapter: "codex", model: "gpt-5.6-codex", prompt_version: "script-writing-v2" },
-          review_feedback: { review_package_id: "review-1", reason: "补充人物动机", actor_id: "owner-1" },
-          allowed_tools: ["read", "write"],
-          output: { required_artifact_types: ["script"], content_type: "text/markdown", relative_path: "episodes/episode-1/generated-script-v1.md", review_stage: "script_review" },
-          input_artifacts: [],
-        },
-      }),
-      reportResult,
-      execute,
-      verifyAssetRoot: async () => undefined,
-      verifyArtifacts: async () => undefined,
-      actualCostCents: 0,
-    });
-
-    expect(execute).toHaveBeenCalledWith(expect.objectContaining({
-      commission: { creativeDirection: "雨夜民俗悬疑", coreContent: "仪式感与人物抉择" },
-      promptHarness: { id: "harness-1", version: 2, content: "开头三秒提出冲突。", contentHash: "a".repeat(64), adapter: "codex", model: "gpt-5.6-codex", promptVersion: "script-writing-v2" },
-      reviewFeedback: { reviewPackageId: "review-1", reason: "补充人物动机" },
-    }));
+  it("把已冻结的创作委托和审核反馈原样交给媒体 Worker",async()=>{
+    const execute=vi.fn().mockRejectedValue(Error('stop after package validation'));
+    await runCodexWorker({claimNextTask:async()=>({...claimedTask,inputSnapshot:{...claimedTask.inputSnapshot,commission:{creative_direction:'雨夜民俗悬疑',core_content:'仪式感与人物抉择'},review_feedback:{review_package_id:'review-1',reason:'补充人物动机'}}}),execute,reportResult:vi.fn(),verifyAssetRoot:async()=>{},verifyArtifacts:async()=>{},actualCostCents:0});
+    expect(execute).toHaveBeenCalledWith(expect.objectContaining({commission:{creativeDirection:'雨夜民俗悬疑',coreContent:'仪式感与人物抉择'},reviewFeedback:{reviewPackageId:'review-1',reason:'补充人物动机'}}));
   });
 
   it("把已冻结的系列基准原样交给视觉 Worker", async () => {
@@ -234,7 +199,7 @@ describe("本地 Codex Worker runner", () => {
       version: "worker-result/v1",
       taskId: "task-1",
       status: "completed",
-      artifacts: [{ artifactType: "visual_brief", relativePath: "episodes/episode-1/brief.md", sha256: "a".repeat(64), fileSize: 128 }],
+      artifacts: [{ artifactType: "static_visual", relativePath: "episodes/episode-1/image.png", sha256: "a".repeat(64), fileSize: 128 }],
       validation: { passed: true, checks: [{ name: "schema", passed: true, detail: "visual brief is complete" }] },
       actualCostCents: 0,
       blockers: [],
@@ -281,49 +246,9 @@ describe("本地 Codex Worker runner", () => {
     expect(execute.mock.calls[0]?.[0]).not.toHaveProperty("seriesBaseline");
   });
 
-  it("把冻结的外部视觉输入交给视觉资产准备，不调用 SVG 占位路径", async () => {
-    const execute = vi.fn().mockResolvedValue(JSON.stringify({
-      version: "worker-result/v1",
-      taskId: "task-1",
-      status: "completed",
-      artifacts: [{ artifactType: "visual_asset_manifest", relativePath: "episodes/episode-1/visual-assets-v1.md", sha256: "a".repeat(64), fileSize: 128 }],
-      validation: { passed: true, checks: [{ name: "manifest", passed: true, detail: "外部视觉素材与缺失项已列出。" }] },
-      actualCostCents: 0,
-      blockers: [],
-      retry: { shouldRetry: false, reason: "Completed successfully." },
-      nextStep: "Submit the visual asset manifest for Owner review.",
-    }));
-    const externalInput = { artifactType: "external_visual_input", relativePath: "episodes/episode-1/materials/character.png", sha256: "b".repeat(64), fileSize: 128 };
 
-    await runCodexWorker({
-      claimNextTask: async () => ({
-        ...claimedTask,
-        taskType: "prepare_visual_brief",
-        inputSnapshot: {
-          capability: "visual_planning",
-          visual_assets: { external_inputs: [externalInput] },
-          allowed_tools: ["read", "write"],
-          output: { required_artifact_types: ["visual_asset_manifest"], content_type: "text/markdown", relative_path: "episodes/episode-1/visual-assets-v1.md", review_stage: "visual_review" },
-          input_artifacts: [
-            { artifactType: "main_script", relativePath: "episodes/episode-1/main-script.md", sha256: "c".repeat(64), fileSize: 128 },
-            externalInput,
-          ],
-        },
-      }),
-      reportResult: vi.fn().mockResolvedValue(undefined),
-      execute,
-      verifyAssetRoot: async () => undefined,
-      verifyArtifacts: async () => undefined,
-      actualCostCents: 0,
-    });
 
-    expect(execute).toHaveBeenCalledWith(expect.objectContaining({
-      visualAssetPreparation: { externalInputs: [externalInput] },
-      output: expect.objectContaining({ requiredArtifactTypes: ["visual_asset_manifest"] }),
-    }));
-  });
-
-  it("把冻结的分层 Prompt 上下文传给 Codex Worker", async () => {
+  it("把冻结的分层 Prompt 上下文传给媒体 Worker", async () => {
     const execute = vi.fn().mockResolvedValue(JSON.stringify({
       version: "worker-result/v1",
       taskId: "task-1",
@@ -346,100 +271,14 @@ describe("本地 Codex Worker runner", () => {
     });
 
     expect(execute).toHaveBeenCalledWith(expect.objectContaining({ promptContext: expect.objectContaining({ version: "prompt-context/v1", blueprintVersionId: "blueprint-1", seriesVersionId: "series-version-3", hash: "context-hash-1" }) }));
-    const prompt=buildCodexPrompt({...execute.mock.calls[0][0],capability:'storyboard_planning'});
-    const {promptContext}=JSON.parse(prompt.split("Task package:\n\n")[1]);
-    expect(promptContext.accountDefaults).toEqual({positioning:"民俗短视频"});
-    expect(promptContext.accountHardConstraints.restrictions).toEqual(["不得承诺医疗效果"]);
-    expect(promptContext.seriesBaseline.rules).toEqual({visual_style:"写实雨夜",restrictions:"不得展示身份信息"});
     expect(execute.mock.calls[0][0].promptContext.accountDefaults.visual_style).toBe("账号旧风格");
+    expect(execute.mock.calls[0][0].promptContext.accountHardConstraints.restrictions).toEqual(["不得承诺医疗效果"]);
+    expect(execute.mock.calls[0][0].promptContext.seriesBaseline.rules).toEqual({visual_style:"写实雨夜",restrictions:"不得展示身份信息"});
   });
 
-  it("把逐镜头批注和已批准视觉依据冻结给分镜 Worker", async () => {
-    const verifyArtifacts = vi.fn().mockResolvedValue(undefined);
-    const execute = vi.fn().mockResolvedValue(JSON.stringify({
-      version: "worker-result/v1",
-      taskId: "task-1",
-      status: "completed",
-      artifacts: [{ artifactType: "storyboard", relativePath: "episodes/episode-1/storyboard-v2.json", sha256: "a".repeat(64), fileSize: 128 }],
-      storyboard: {
-        version: "storyboard/v1",
-        shots: [{
-          id: "shot-02",
-          scriptSegment: "铜铃声切入。",
-          durationSeconds: 4,
-          shotType: "b_roll",
-          productionMethod: "素材库特写",
-          inputBasis: [
-            { relativePath: "episodes/episode-1/main-script.md", sha256: "c".repeat(64) },
-            { relativePath: "episodes/episode-1/visual-brief-v1.md", sha256: "b".repeat(64) },
-          ],
-          targetSpec: "9:16，1080×1920，24fps",
-        }],
-      },
-      validation: { passed: true, checks: [{ name: "schema", passed: true, detail: "storyboard is complete" }] },
-      actualCostCents: 0,
-      blockers: [],
-      retry: { shouldRetry: false, reason: "Completed successfully." },
-      nextStep: "Submit the storyboard for Owner review.",
-    }));
 
-    await runCodexWorker({
-      claimNextTask: async () => ({
-        ...claimedTask,
-        taskType: "draft_storyboard",
-        inputSnapshot: {
-          capability: "storyboard_planning",
-          harness: { id: "harness-storyboard-1", version: 3, content: "先确定镜头叙事目的，再编排可执行声画。", content_hash: "d".repeat(64), adapter: "codex", model: "gpt-5.6-luna", prompt_version: "storyboard-planning-v3" },
-          review_annotations: [{ shot_id: "shot-02", reason: "铜铃特写需要延长。" }],
-          allowed_tools: ["read", "write"],
-          output: { required_artifact_types: ["storyboard"], content_type: "application/json", relative_path: "episodes/episode-1/storyboard-v2.json", review_stage: "storyboard_review" },
-          input_artifacts: [
-            { artifactType: "main_script", relativePath: "episodes/episode-1/main-script.md", sha256: "c".repeat(64), fileSize: 128 },
-            { artifactType: "visual_brief", relativePath: "episodes/episode-1/visual-brief-v1.md", sha256: "b".repeat(64), fileSize: 128 },
-          ],
-        },
-      }),
-      reportResult: vi.fn().mockResolvedValue(undefined),
-      execute,
-      verifyAssetRoot: async () => undefined,
-      verifyArtifacts,
-      actualCostCents: 0,
-    });
 
-    expect(execute).toHaveBeenCalledWith(expect.objectContaining({
-      promptHarness: { id: "harness-storyboard-1", version: 3, content: "先确定镜头叙事目的，再编排可执行声画。", contentHash: "d".repeat(64), adapter: "codex", model: "gpt-5.6-luna", promptVersion: "storyboard-planning-v3" },
-      reviewAnnotations: [{ shotId: "shot-02", reason: "铜铃特写需要延长。" }],
-      output: expect.objectContaining({ reviewStage: "storyboard_review" }),
-      assets: expect.objectContaining({ inputs: [expect.objectContaining({ artifactType: "main_script" }), expect.objectContaining({ artifactType: "visual_brief" })] }),
-    }));
-    expect(verifyArtifacts).toHaveBeenLastCalledWith(expect.any(Object), [expect.objectContaining({ artifactType: "storyboard" })], expect.objectContaining({ version: "storyboard/v1", shots: [expect.objectContaining({ id: "shot-02" })] }));
-  });
 
-  it("阻塞未冻结 Adapter 与 Prompt Harness 的分镜任务，且不调用 Codex", async () => {
-    const execute = vi.fn();
-    const reportResult = vi.fn().mockResolvedValue(undefined);
-
-    await expect(runCodexWorker({
-      claimNextTask: async () => ({
-        ...claimedTask,
-        taskType: "draft_storyboard",
-        inputSnapshot: {
-          capability: "storyboard_planning",
-          allowed_tools: ["read", "write"],
-          output: { required_artifact_types: ["storyboard"], content_type: "application/json", relative_path: "episodes/episode-1/storyboard-v1.json", review_stage: "storyboard_review" },
-          input_artifacts: [],
-        },
-      }),
-      execute,
-      reportResult,
-      verifyAssetRoot: async () => undefined,
-      verifyArtifacts: async () => undefined,
-      actualCostCents: 0,
-    })).resolves.toEqual({ status: "blocked", taskId: "task-1" });
-
-    expect(execute).not.toHaveBeenCalled();
-    expect(reportResult).toHaveBeenCalledWith("task-1", 0, expect.objectContaining({ blockers: [expect.objectContaining({ detail: expect.stringContaining("Prompt Harness") })] }));
-  });
 
   it("把冻结的 A-roll 镜头、适配器与输入交给 Worker", async () => {
     const execute = vi.fn().mockResolvedValue(JSON.stringify({
@@ -458,9 +297,10 @@ describe("本地 Codex Worker runner", () => {
       claimNextTask: async () => ({
         ...claimedTask,
         taskType: "generate_a_roll",
+        provider: "openchatcut",model: "openchatcut@0.2.14",
         inputSnapshot: {
           capability: "a_roll_generation",
-          executor: { adapter: "codex", model: "gpt-5.6-luna", prompt_version: "a-roll-v1", provider: "codex" },
+          executor: { adapter: "openchatcut_card_video", model: "openchatcut@0.2.14", prompt_version: "card-video-v1", provider: "openchatcut" },
           allowed_tools: ["read", "write"],
           shot: {
             id: "shot-01",
@@ -489,12 +329,12 @@ describe("本地 Codex Worker runner", () => {
     });
 
     expect(execute).toHaveBeenCalledWith(expect.objectContaining({
-      aRoll: expect.objectContaining({ adapter: "codex", shot: expect.objectContaining({ id: "shot-01", shotType: "a_roll" }) }),
+      aRoll: expect.objectContaining({ adapter: "openchatcut_card_video", shot: expect.objectContaining({ id: "shot-01", shotType: "a_roll" }) }),
       assets: expect.objectContaining({ inputs: [expect.objectContaining({ artifactType: "main_script" }), expect.objectContaining({ artifactType: "visual_brief" })] }),
     }));
   });
 
-  it("缺少资产根目录时写入 blocked，不调用 Codex", async () => {
+  it("缺少资产根目录时写入 blocked，不调用执行器", async () => {
     const execute = vi.fn();
     const reportResult = vi.fn().mockResolvedValue(undefined);
 
@@ -503,38 +343,9 @@ describe("本地 Codex Worker runner", () => {
     expect(reportResult).toHaveBeenCalledWith("task-1", 0, expect.objectContaining({ status: "blocked", blockers: expect.any(Array) }));
   });
 
-  it("没有视觉输入且图片 Adapter 未注册时回写 Worker 能力阻塞", async () => {
-    const execute = vi.fn();
-    const reportResult = vi.fn().mockResolvedValue(undefined);
 
-    await expect(runCodexWorker({
-      claimNextTask: async () => ({
-        ...claimedTask,
-        taskType: "prepare_visual_brief",
-        inputSnapshot: {
-          capability: "visual_planning",
-          visual_assets: { external_inputs: [] },
-          allowed_tools: ["read", "write"],
-          output: { required_artifact_types: ["visual_asset_manifest"], content_type: "text/markdown", relative_path: "episodes/episode-1/visual-assets-v1.md", review_stage: "visual_review" },
-          input_artifacts: [{ artifactType: "main_script", relativePath: "episodes/episode-1/main-script.md", sha256: "a".repeat(64), fileSize: 128 }],
-        },
-      }),
-      reportResult,
-      execute,
-      verifyAssetRoot: async () => undefined,
-      verifyArtifacts: async () => undefined,
-      actualCostCents: 0,
-    })).resolves.toEqual({ status: "blocked", taskId: "task-1" });
 
-    expect(execute).not.toHaveBeenCalled();
-    expect(reportResult).toHaveBeenCalledWith("task-1", 0, expect.objectContaining({
-      status: "blocked",
-      preflight: expect.objectContaining({ checks: [expect.objectContaining({ capability: "static_visual_generation", check: "capability_registration", action: "contact_environment_admin", scope: "worker" })] }),
-      blockers: [expect.objectContaining({ code: "capability_registration", check: "capability_registration", action: "contact_environment_admin", scope: "worker" })],
-    }));
-  });
-
-  it("资产根目录不可访问时写入 blocked，不调用 Codex", async () => {
+  it("资产根目录不可访问时写入 blocked，不调用执行器", async () => {
     const execute = vi.fn();
     const reportResult = vi.fn().mockResolvedValue(undefined);
 
@@ -573,7 +384,7 @@ describe("本地 Codex Worker runner", () => {
 
     await expect(runCodexWorker({ claimNextTask: async () => claimedTask, reportResult, execute, preflight, verifyAssetRoot: async () => undefined, verifyArtifacts: async () => undefined, actualCostCents: 0 })).resolves.toEqual({ status: "blocked", taskId: "task-1" });
 
-    expect(preflight).toHaveBeenCalledWith(expect.objectContaining({ capability: "visual_planning" }));
+    expect(preflight).toHaveBeenCalledWith(expect.objectContaining({ capability: "static_visual_generation" }));
     expect(execute).not.toHaveBeenCalled();
     expect(reportResult).toHaveBeenCalledWith("task-1", 0, expect.objectContaining({
       status: "blocked",
@@ -629,7 +440,7 @@ describe("本地 Codex Worker runner", () => {
       execute,
       preflight: async () => ({
         version: "worker-preflight/v1",
-        checks: [{ capability: "visual_planning", check: "network_request", phase: "preflight", status: "retryable", reason: "供应商连接暂时失败。", action: "retry", scope: "worker" }],
+        checks: [{ capability: "static_visual_generation", check: "network_request", phase: "preflight", status: "retryable", reason: "供应商连接暂时失败。", action: "retry", scope: "worker" }],
       }),
       verifyAssetRoot: async () => undefined,
       verifyArtifacts: async () => undefined,
@@ -644,7 +455,7 @@ describe("本地 Codex Worker runner", () => {
     }));
   });
 
-  it("输入产物校验失败时写入 blocked，不调用 Codex", async () => {
+  it("输入产物校验失败时写入 blocked，不调用执行器", async () => {
     const execute = vi.fn();
     const reportResult = vi.fn().mockResolvedValue(undefined);
 
@@ -678,7 +489,7 @@ describe("本地 Codex Worker runner", () => {
       version: "worker-result/v1",
       taskId: "task-1",
       status: "completed",
-      artifacts: [{ artifactType: "brief", relativePath: "episodes/episode-1/brief.md", sha256: "a".repeat(64), fileSize: 128 }],
+      artifacts: [{ artifactType: "static_visual", relativePath: "episodes/episode-1/image.png", sha256: "a".repeat(64), fileSize: 128 }],
       validation: { passed: true, checks: [{ name: "schema", passed: true, detail: "brief is complete" }] },
       actualCostCents: 0,
       blockers: [],
@@ -700,7 +511,7 @@ describe("本地 Codex Worker runner", () => {
     expect(reportResult).toHaveBeenCalledWith("task-1", 0, expect.objectContaining({ status: "failed" }));
   });
 
-  it("Codex 执行失败时按任务重试上限回写 failed", async () => {
+  it("媒体执行失败时按任务重试上限回写 failed", async () => {
     const reportResult = vi.fn().mockResolvedValue(undefined);
 
     await expect(runCodexWorker({ claimNextTask: async () => claimedTask, reportResult, execute: async () => { throw new Error("temporary provider failure"); }, verifyAssetRoot: async () => undefined, verifyArtifacts: async () => undefined, actualCostCents: 0 })).resolves.toEqual({ status: "failed", taskId: "task-1" });
@@ -719,21 +530,11 @@ describe("本地 Codex Worker runner", () => {
     }));
   });
 
-  it("真实模型权限失败回写 execution 阶段模型权限检查", async () => {
-    const reportResult = vi.fn().mockResolvedValue(undefined);
 
-    await expect(runCodexWorker({ claimNextTask: async () => claimedTask, reportResult, execute: async () => { throw new Error("模型没有权限访问当前模型"); }, verifyAssetRoot: async () => undefined, verifyArtifacts: async () => undefined, actualCostCents: 0 })).resolves.toEqual({ status: "failed", taskId: "task-1" });
-
-    expect(reportResult).toHaveBeenCalledWith("task-1", 0, expect.objectContaining({
-      status: "failed",
-      preflight: expect.objectContaining({ checks: [expect.objectContaining({ check: "model_permission", phase: "execution", status: "unavailable", action: "contact_environment_admin" })] }),
-      blockers: [expect.objectContaining({ check: "model_permission", status: "unavailable", action: "contact_environment_admin" })],
-    }));
-  });
 
   it("OpenAI Images 模型拒绝要求修改蓝图，认证拒绝要求管理连接", async () => {
     const reportResult = vi.fn().mockResolvedValue(undefined);
-    const imageTask = { ...claimedTask, inputSnapshot: { capability: "visual_planning", allowed_tools: ["read", "write"], output: { required_artifact_types: ["brief"], content_type: "text/markdown", relative_path: "episodes/episode-1/brief.md", review_stage: "visual_review" }, input_artifacts: [], visual_assets: { external_inputs: [], image_generation: { provider: "openai", adapter: "openai_images", model: "bad-model", credential_ref: "11111111-1111-4111-8111-111111111111" } } } };
+    const imageTask = claimedTask;
 
     await runCodexWorker({ claimNextTask: async () => imageTask, reportResult, execute: async () => { throw new Error("OpenAI Images HTTP 400: model unsupported"); }, verifyAssetRoot: async () => undefined, verifyArtifacts: async () => undefined, actualCostCents: 0 });
     expect(reportResult).toHaveBeenCalledWith("task-1", 0, expect.objectContaining({ blockers: [expect.objectContaining({ capability: "static_visual_generation", check: "model_permission", action: "edit_blueprint", scope: "blueprint" })] }));

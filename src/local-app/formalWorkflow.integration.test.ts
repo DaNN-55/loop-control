@@ -2,16 +2,19 @@
 import {formalWorkflowFixture} from './formalWorkflow.fixture';
 import {freshProductionFixture} from './freshProduction.fixture';
 import {it,expect} from 'vitest';
-import {seedLegacyPlanning} from './legacyPlanning.fixture';
 import {randomUUID} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
 import {productionWorkspaceFixture} from './productionWorkspace.fixture';
 import {workspaceTestMedia} from './workspaceTestMedia.fixture';
 const fresh=()=>freshProductionFixture();
-it.skipIf(process.env.LOOP_FORMAL_ACCEPTANCE!=='1')('Owner confirms a fresh script before visual materials exist',async()=>{const f=await fresh();try{const started=await f.send('start');expect(started.status,JSON.stringify(started.body)).toBe(200);expect(started.body.stage).toBe('script_approved');}finally{await f.close();}},120000);
+async function confirmScriptWithoutPlanner(f:Awaited<ReturnType<typeof fresh>>|Awaited<ReturnType<typeof formalWorkflowFixture>>){
+ const started=await f.send('start');expect(started.status,JSON.stringify(started.body)).toBe(200);expect(started.body.stage).toBe('script_approved');
+ expect((await f.c.query("SELECT count(*)::int n FROM public.tasks WHERE episode_id=$1 AND (provider='codex' OR task_type IN('prepare_visual_brief','draft_storyboard','draft_storyboard_revision'))",[f.newEpisode])).rows[0].n).toBe(0);
+}
+it.skipIf(process.env.LOOP_FORMAL_ACCEPTANCE!=='1')('Owner prepares a confirmed fresh script before visual materials exist without a planner',async()=>{const f=await fresh();try{await confirmScriptWithoutPlanner(f);const prepared=await f.send('prepareWorkspace',{expectedScriptRevisionId:f.main});expect(prepared.status,JSON.stringify(prepared.body)).toBe(200);expect(prepared.body.scriptRevisionId).toBe(f.main);expect(prepared.body.preparation.origin).toBe('script-segment');expect(prepared.body.readiness.placeholders.length).toBeGreaterThan(0);}finally{await f.close();}},120000);
 it.skipIf(process.env.LOOP_FORMAL_ACCEPTANCE!=='1')('Owner builds a formal incomplete draft without old storyboard approvals',async()=>{const f=await fresh();try{
  const imported=await f.send('importMaterial',{sourceKind:'file',sourcePath:'still.png',materialType:'image',materialPurpose:'visual_reference',mimeType:'image/png',isMainScript:false,contentBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64')});expect(imported.status).toBe(200);
- const started=await f.send('start');expect(started.status,JSON.stringify(started.body)).toBe(200);
+ await confirmScriptWithoutPlanner(f);
  const prepared=await f.send('prepareWorkspace',{expectedScriptRevisionId:f.main});expect(prepared.status,JSON.stringify(prepared.body)).toBe(200);expect(prepared.body.readiness.placeholders.length).toBeGreaterThan(0);
  const get=await fetch(`${f.origin}/api/local/episodes/${f.newEpisode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(get.status).toBe(200);expect((await get.json()).workspace.id).toBe(prepared.body.id);
  let w=prepared.body;
@@ -55,7 +58,8 @@ it.skipIf(process.env.LOOP_FORMAL_ACCEPTANCE!=='1')('late legacy render reports 
 },120000);
 it.skipIf(process.env.LOOP_FORMAL_ACCEPTANCE!=='1')('fresh formal and added shots generate through the real controlled Provider Worker without legacy approval',async()=>{
  const f=await formalWorkflowFixture({controlled:true});try{
- expect((await f.send('start')).status).toBe(200);let r=await f.send('prepareWorkspace',{expectedScriptRevisionId:f.main});expect(r.status,JSON.stringify(r.body)).toBe(200);let w=r.body;
+ await confirmScriptWithoutPlanner(f);
+ let r=await f.send('prepareWorkspace',{expectedScriptRevisionId:f.main});expect(r.status,JSON.stringify(r.body)).toBe(200);let w=r.body;
  const send=async(name:string,extra={})=>{const result=await f.send(name,{workspaceId:w.id,expectedRevision:w.revision,...extra});expect(result.status,JSON.stringify(result.body)).toBe(200);w=result.body;return result.body;};
  const speechVersion=(await f.c.query("SELECT id FROM public.external_connection_versions WHERE adapter='volcengine_tts'")).rows[0].id,videoVersion=(await f.c.query("SELECT id FROM public.external_connection_versions WHERE adapter='seedance_video'")).rows[0].id;
 
@@ -76,19 +80,18 @@ it.skipIf(process.env.LOOP_FORMAL_ACCEPTANCE!=='1')('fresh formal and added shot
  const got=await fetch(`${f.origin}/api/local/episodes/${f.newEpisode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}});w=(await got.json()).workspace;expect(w.visualCandidates.find((v:any)=>v.shotId===local.shotId)?.status).toBe('available');
  }finally{await f.close();}
 },180000);
-it.skipIf(process.env.LOOP_FORMAL_ACCEPTANCE!=='1')('historical planner retries retain frozen configuration and verified artifacts',async()=>{
- const f=await formalWorkflowFixture({freshAccount:true,scriptText:'# 普通脚本\n\n## 正文\n普通脚本原文：今天展示上传画面。'});const worker=f.workerPool();try{
- const fs=await import('node:fs/promises'),path=await import('node:path');await f.send('importMaterial',{sourceKind:'file',sourcePath:'ordinary.png',materialType:'image',materialPurpose:'visual_reference',mimeType:'image/png',isMainScript:false,contentBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64')});
- expect((await f.send('start')).status).toBe(200);const first=await seedLegacyPlanning(f,f.newEpisode,f.main);
- const selectionA=(await f.c.query('SELECT selection FROM local_identity.episode_planning_selections WHERE episode_id=$1',[f.newEpisode])).rows[0].selection;expect((await f.send('saveWorkspacePlanningSelection',{expectedSelectionRevision:1,selection:{...selectionA,model:'gpt-5.6-codex',budgetCents:60}})).status).toBe(200);
- const {nativeWorkerPort}=await import('./workerDatabase'),{runWorkspaceDeliveryProcess}=await import('./workspaceDelivery.fixture');let task=(await nativeWorkerPort(worker).rpc('claim_next_worker_task',{p_task_id:first.taskId,p_worker_capacity:1}) as any[])[0];expect(task).toBeTruthy();
- const failed=await runWorkspaceDeliveryProcess(f,task,{mountPath:f.mountPath,visualCommand:[process.execPath,'-e','process.exit(1)']});expect(failed.status).toBe('failed');
- let second:any;for(let attempt=0;attempt<200&&!second;attempt++){second=(await nativeWorkerPort(worker).rpc('claim_next_worker_task',{p_task_id:first.taskId,p_worker_capacity:1}) as any[])[0];if(!second)await new Promise(done=>setTimeout(done,50));}expect(second?.attempt).toBe(Number(task.attempt)+1);expect((await runWorkspaceDeliveryProcess(f,second,{mountPath:f.mountPath,visualCommand:[process.execPath,'-e','process.exit(1)']})).status).toBe('failed');
- const foreign=await f.send('retryWorkspacePlanning',{expectedScriptRevisionId:f.main,taskId:randomUUID()});expect(foreign.status).toBe(409);
- const retried=await f.send('retryWorkspacePlanning',{expectedScriptRevisionId:f.main,taskId:first.taskId});expect(retried.status,JSON.stringify(retried.body)).toBe(200);expect(retried.body.taskId).not.toBe(first.taskId);task=(await nativeWorkerPort(worker).rpc('claim_next_worker_task',{p_task_id:retried.body.taskId,p_worker_capacity:1}) as any[])[0];expect(task).toBeTruthy();expect(task.model).toBe(selectionA.model);expect(task.input_snapshot.harness.model).toBe(selectionA.model);expect(task.budget_limit_cents).toBe(0);
-
- const command=path.join(f.root,'controlled-ordinary-planner.mjs');await fs.writeFile(command,`import{readFileSync,writeFileSync,mkdirSync}from'node:fs';import{join,dirname}from'node:path';import{createHash}from'node:crypto';let text='';for await(const b of process.stdin)text+=b;const p=JSON.parse(text),main=p.assets.inputs.find(x=>x.artifactType==='main_script'),board={version:'storyboard/v1',shots:[{id:'ordinary-1',scriptSegment:readFileSync(join(p.assets.allowedRoot,main.relativePath),'utf8').trim(),durationSeconds:3,shotType:'a_roll',productionMethod:'展示Owner上传的原画面',targetSpec:'9:16',inputBasis:p.assets.inputs.map(x=>({relativePath:x.relativePath,sha256:x.sha256}))}],audioCues:[]},bytes=Buffer.from(JSON.stringify(board));const output=join(p.assets.allowedRoot,p.output.relativePath);mkdirSync(dirname(output),{recursive:true});writeFileSync(output,bytes);console.log(JSON.stringify({version:'worker-result/v1',taskId:p.task.id,status:'completed',artifacts:[{artifactType:'storyboard',relativePath:p.output.relativePath,sha256:createHash('sha256').update(bytes).digest('hex'),fileSize:bytes.length}],storyboard:board,validation:{passed:true,checks:[{name:'controlled_planner',passed:true,detail:'Original plain script and uploaded visual are frozen inputs.'}]},actualCostCents:0,retry:{shouldRetry:false,reason:'Controlled Adapter completed.'},blockers:[],nextStep:'Owner confirms preparation matching.'}));`);
- const result=await runWorkspaceDeliveryProcess(f,task,{mountPath:f.mountPath,visualCommand:[process.execPath,command]});expect(result.status,JSON.stringify(result)).toBe('completed');
- const packageId=(await f.c.query('SELECT id FROM public.review_packages WHERE task_id=$1',[retried.body.taskId])).rows[0].id;const prepared=await f.send('prepareWorkspace',{expectedScriptRevisionId:f.main,reviewPackageId:packageId});expect(prepared.status,JSON.stringify(prepared.body)).toBe(200);expect(prepared.body.preparation.origin).toBe('planner');expect(prepared.body.clips[0].text).toBe('# 普通脚本\n\n## 正文\n普通脚本原文：今天展示上传画面。');expect((await f.c.query('SELECT count(*)::int n FROM public.approvals WHERE episode_id=$1',[f.newEpisode])).rows[0].n).toBe(0);
- }finally{await worker.end();await f.close();}
-},180000);
+it.skipIf(process.env.LOOP_FORMAL_ACCEPTANCE!=='1')('retired planner retries cannot alter historical tasks or the confirmed script',async()=>{
+ const f=await formalWorkflowFixture({freshAccount:true,scriptText:'# 普通脚本\n\n## 正文\n普通脚本原文：今天展示上传画面。'});try{
+ const taskId=randomUUID(),snapshot={capability:'storyboard_planning',script_revision_id:f.main,harness:{id:randomUUID(),model:'historical-model',content:'Owner确认的旧规划输入'},allowed_tools:['read','write']};
+ // This is immutable historical fixture data, not a new request through a retired API.
+ await f.c.query("INSERT INTO public.tasks(id,episode_id,task_type,status,input_snapshot,provider,model,prompt_version,budget_limit_cents) VALUES($1,$2,'draft_storyboard','failed',$3,'codex','historical-model','historical-planning-v1',37)",[taskId,f.newEpisode,snapshot]);
+ const historical=async()=>({task:(await f.c.query('SELECT to_jsonb(t) record FROM public.tasks t WHERE id=$1',[taskId])).rows[0].record,script:(await f.c.query('SELECT to_jsonb(r) record FROM public.production_material_revisions r WHERE id=$1',[f.main])).rows[0].record,taskCount:(await f.c.query('SELECT count(*)::int n FROM public.tasks WHERE episode_id=$1',[f.newEpisode])).rows[0].n});
+ const before=await historical();
+ for(const [command,data]of[
+  ['retryWorkspacePlanning',{expectedScriptRevisionId:f.main,taskId}],
+  ['replanWorkspace',{expectedScriptRevisionId:f.main,planningTaskId:taskId}],
+  ['requestStructureRevision',{reviewPackageId:randomUUID(),reason:'旧规划修订'}],
+ ]as const){const r=await f.send(command,data);expect(r.status,JSON.stringify(r.body)).toBe(410);expect(r.body.error).toContain('已退役');}
+ expect(await historical()).toEqual(before);
+ }finally{await f.close();}
+},120000);

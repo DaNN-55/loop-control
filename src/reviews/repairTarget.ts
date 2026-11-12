@@ -6,6 +6,7 @@ export type RepairTarget =
   | { kind: "executor"; key: "script_writing" | "storyboard_planning" };
 
 export function repairTargetForBlocker(blocker: Pick<WorkerBlocker, "action" | "capability" | "code" | "detail" | "taskType">): RepairTarget | null {
+  if (["script_writing","visual_planning","storyboard_planning"].includes(blocker.capability??"") || ["draft_script","prepare_visual_brief","draft_storyboard","draft_storyboard_revision"].includes(blocker.taskType??"")) return null;
   if (blocker.action) return structuredRepairTarget(blocker);
   return legacyRepairTarget(blocker);
 }
@@ -14,7 +15,7 @@ function structuredRepairTarget(blocker: Pick<WorkerBlocker, "action" | "capabil
   if (blocker.action !== "edit_blueprint") return null;
   const mediaKey = blocker.capability ? mediaCapabilityKeyForCapability(blocker.capability) : undefined;
   if (mediaKey) return { kind: "media", key: mediaKey };
-  return blocker.capability === "storyboard_planning" ? { kind: "executor", key: "storyboard_planning" } : null;
+  return null;
 }
 
 function legacyRepairTarget(blocker: Pick<WorkerBlocker, "code" | "detail" | "taskType">): RepairTarget | null {
@@ -24,7 +25,5 @@ function legacyRepairTarget(blocker: Pick<WorkerBlocker, "code" | "detail" | "ta
   if (/b[_-]?roll/.test(source)) return { kind: "media", key: "b_roll" };
   if (/narration|旁白/.test(source)) return { kind: "media", key: "narration" };
   if (/soundtrack|sound.?effect|配乐|音效/.test(source)) return { kind: "media", key: "soundtrack" };
-  if (blocker.taskType === "draft_script") return { kind: "executor", key: "script_writing" };
-  if (blocker.taskType === "prepare_visual_brief" || blocker.taskType === "draft_storyboard") return { kind: "executor", key: "storyboard_planning" };
   return null;
 }

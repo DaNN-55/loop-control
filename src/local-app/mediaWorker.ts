@@ -13,7 +13,6 @@ import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
 import {executeControlledMediaTask} from '../worker/controlledMediaExecutor.js';
 import {executeOpenChatCutRender} from '../worker/openchatcutRenderer.js';
-import {generateVisualAssets} from '../worker/visualAssetExecutor.js';
 import {runtimeCommandInvocation} from '../worker/runtimeEvidence.js';
 import {MediaArtifactValidationError,extractMp3Artifact,trimMp3Artifact,trimMp4Artifact,trimMp4SegmentsArtifact,probeMp3Artifact,validateMp4Artifact,inspectMp4Artifact} from '../worker/mediaTools.js';
 import type {WorkerTaskPackage} from '../worker/contracts.js';
@@ -33,13 +32,12 @@ export function nativeMediaTask(type:string,provider:string){return (['search_sh
 // A frozen reference may come from the Episode blueprint even for a local clip.
 // Only the registered executor determines whether execution needs credentials.
 export function nativeMediaRequiresExternal(p:WorkerTaskPackage){
- if(p.visualAssetPreparation?.imageGeneration)return true;
  const adapter=p.aRoll?.adapter??p.media?.adapter??(p.provider==='openchatcut'?'openchatcut':undefined);
  const resolved=registeredAdapters.resolve({capability:p.capability,provider:p.provider,adapter});
  if(resolved.kind!=='registered')throw Error('本地媒体任务执行器未注册。');
  return resolved.choice.connection.kind==='owner_managed';
 }
-export async function executeNativeMedia(pool:Pool,config:NativeMediaConfiguration|undefined,p:WorkerTaskPackage,fence:{p_task_id:string;p_attempt:number;p_lease_token:string},visualOutput?:string){
+export async function executeNativeMedia(pool:Pool,config:NativeMediaConfiguration|undefined,p:WorkerTaskPackage,fence:{p_task_id:string;p_attempt:number;p_lease_token:string}){
  if(p.task.type==='generate_soundtrack'||p.task.type==='extract_embedded_audio'){const current=(await pool.query('SELECT local_identity.workspace_audio_task_current($1,$2,$3) current',[fence.p_task_id,fence.p_attempt,fence.p_lease_token])).rows[0]?.current;if(!current)throw Error('音频准备输入或制作授权已变化。');}
  const external=nativeMediaRequiresExternal(p);
  await assertMediaReady(config,{},process.env,external);
@@ -51,8 +49,7 @@ export async function executeNativeMedia(pool:Pool,config:NativeMediaConfigurati
  };
  try{
   let output:string;
-  if(visualOutput!==undefined){if(!ports)throw new SecretStoreError('unavailable');output=await generateVisualAssets(p,visualOutput,resolve,ports.fetcher,`${p.assets.episodeRelativePath??`episodes/${p.episode.id}`}/native-tasks/${p.task.id}/visuals`);}
-  else if(p.provider==='openchatcut'){
+  if(p.provider==='openchatcut'){
    if(!['generate_shot_sync_preview','generate_review_render','generate_final_render'].includes(p.task.type)&&p.aRoll?.adapter!=='openchatcut_card_video'&&p.media?.adapter!=='openchatcut_card_video')throw Error();
    output=await executeOpenChatCutRender({taskPackage:p,...(p.finalRender?{getApprovedReuseSource:async()=>{const result=(await pool.query('SELECT local_identity.input_final_reuse_source($1,$2,$3) result',[fence.p_task_id,fence.p_attempt,fence.p_lease_token])).rows[0]?.result;if(!result)throw Error('Final approval or lease unavailable');return result;}}:{}),validateMp4:validateMp4Artifact,inspectMp4:inspectMp4Artifact,async run(command,args){const invocation=runtimeCommandInvocation(command,args);await promisify(execFile)(invocation.command,invocation.argumentsList,{timeout:300000,maxBuffer:4*1024*1024});}});
   }else{
@@ -92,7 +89,7 @@ export async function executeNativeMedia(pool:Pool,config:NativeMediaConfigurati
     });
    }else{
     try{output=await executeControlledMediaTask({
-     taskPackage:p,fetcher:observeVideo,pexelsApiKey:p.provider==='pexels'?secret:undefined,googleTtsApiKey:undefined,
+     taskPackage:p,fetcher:observeVideo,pexelsApiKey:p.provider==='pexels'?secret:undefined,
      bailianCredentials:p.provider==='bailian'?secret:undefined,officialVideoCredentials:isVideoProvider(p.provider)?secret:undefined,
      reserveWan:videoProvider?async()=>{
       const isCurrentWorkspaceRequest=await assertWorkspaceVisualExecution(pool,fence);

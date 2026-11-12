@@ -39,20 +39,12 @@ async function sources(root: string) {
       if (path.startsWith("src/")) paths.add(path);
     }
   }
-  try{await lstat(join(root,"scripts/runtime/codex.mjs"));paths.add("scripts/runtime/codex.mjs");}catch(error){if((error as NodeJS.ErrnoException).code!=="ENOENT")throw error;}
   return fingerprints(root, [...paths]);
 }
 
 async function outputs(root: string) {
   const paths = [...await files(root, "dist/worker"), ...await files(root, "dist/local-app")];
   if (requiredOutputs.some(path => !paths.includes(path))) throw Error("Missing runtime entrypoint");
-  try{
-    await lstat(join(root,"scripts/runtime/codex.mjs"));
-    for(const module of ["codexPrompt","workerResultSchema"]){
-      if(!paths.includes(`dist/worker/worker/${module}.js`))throw Error(`Missing Codex executor module: ${module}`);
-    }
-    paths.push("scripts/runtime/codex.mjs");
-  }catch(error){if((error as NodeJS.ErrnoException).code!=="ENOENT")throw error;}
   return fingerprints(root, paths);
 }
 
@@ -92,7 +84,6 @@ export async function prepareRuntime(root:string,build:()=>Promise<void>):Promis
    try{await lstat(release.root);throw new RuntimePreparationError('runtime_release_invalid');}catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;}
    staging=release.root+'.preparing';await mkdir(join(staging,'dist'),{recursive:true,mode:0o700});
    for(const name of ['worker','local-app'])await cp(join(root,'dist',name),join(staging,'dist',name),{recursive:true});
-   if(base.outputs['scripts/runtime/codex.mjs']){await mkdir(join(staging,'scripts/runtime'),{recursive:true});await cp(join(root,'scripts/runtime/codex.mjs'),join(staging,'scripts/runtime/codex.mjs'));}
    await writeFile(join(staging,'package.json'),JSON.stringify({type:'module'})+'\n');
    await writeFile(join(staging,manifestName),JSON.stringify(manifest)+'\n');
    if(JSON.stringify(base.outputs)!==JSON.stringify(await outputs(staging)))throw new RuntimePreparationError('runtime_source_changed');

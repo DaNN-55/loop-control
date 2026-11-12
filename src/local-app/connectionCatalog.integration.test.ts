@@ -8,7 +8,7 @@ it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('exposes registered service gro
   const empty=await f.request();expect(empty.status).toBe(200);
   expect(empty.body.serviceCatalog.groups.map((g:{capability:string})=>g.capability)).toEqual(['image','video','speech','music_sound']);
   const image=()=>f.request().then(r=>r.body.serviceCatalog.groups.find((g:{capability:string})=>g.capability==='image').services);
-  expect((await image())[0]).toMatchObject({provider:'openai',adapter:'openai_images',models:['gpt-image-2','gpt-image-2.5-sunburst','gpt-image-2.5-flare','gpt-image-2.5-sunburst-2026-09-08','gpt-image-2.5-flare-2026-09-08','gpt-image-2.6-sunburst','gpt-image-2.6-flare'],inputModes:['text','reference_images'],executable:false,unavailableReason:'尚未添加连接。'});
+  expect((await image())[0]).toMatchObject({provider:'openai',adapter:'openai_images',models:expect.arrayContaining(['gpt-image-2']),inputModes:['text','reference_images'],executable:false,unavailableReason:'尚未添加连接。'});
   const created=await f.command('create',{name:'Studio images',provider:'openai',adapter:'openai_images',secret:'synthetic-openai-key'});expect(created.status).toBe(200);
   const connection=created.body.connection;const before=await f.request();
   expect((await image())[0]).toMatchObject({connectionId:connection.id,connectionName:'Studio images',connectionVersionId:connection.current_version_id,executable:false});

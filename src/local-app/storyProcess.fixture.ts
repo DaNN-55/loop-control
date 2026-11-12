@@ -17,7 +17,7 @@ export async function storyProcess(f:Awaited<ReturnType<typeof storyE2eFixture>>
   const configFile=join(runtimeRoot,'deployment.json');
   const settings={storageOwnerId:f.owner,runtimeRoot,projectRoot:process.cwd(),home:process.env.HOME,stateDirectory,mediaRoot:f.root,backupRoot:join(runtimeRoot,'backups'),automaticBackups:false,controlledNotifications:true,
    database:{...transport.database,user:'loop_app'},workerDatabase:transport.database,openChatCut:{root:process.env.LOOP_TEST_OPENCHATCUT_ROOT},
-   worker:{mountPath:f.volume.mountPath,minimumFreeBytes:0,visualCommand:[process.execPath,'--version'],alignment:{python:'/usr/bin/true',cacheDirectory,runnerSha256:createHash('sha256').update(await readFile('scripts/whisperx-align.py')).digest('hex')},concurrency:1,actualCostCents:0}};
+   worker:{mountPath:f.volume.mountPath,minimumFreeBytes:0,alignment:{python:'/usr/bin/true',cacheDirectory,runnerSha256:createHash('sha256').update(await readFile('scripts/whisperx-align.py')).digest('hex')},concurrency:1,actualCostCents:0}};
   await writeFile(configFile,JSON.stringify(settings),{mode:0o600});
   const launch=async(fault:'none'|'copy-published'|'create-mkdir'='none')=>{
    await stop();

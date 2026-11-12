@@ -86,10 +86,11 @@ describe("外部连接工作区", () => {
     expect((screen.getByLabelText(/^新的 API Key/) as HTMLInputElement).value).toBe("");
   });
 
-  it("不再提供 Google TTS 或 Cloudflare 新连接", () => {
+  it("新连接仅提供当前登记的服务", () => {
     render(<ConnectionWorkspace connections={[]} onCreateConnection={vi.fn()} onTestConnection={vi.fn()}/>);
     fireEvent.click(screen.getByRole("button", {name:"新建连接"}));
-    expect(screen.queryByRole('option',{name:/Google TTS|Cloudflare/})).toBeNull();
+    const select=screen.getByRole('combobox',{name:'连接类型'}) as HTMLSelectElement;
+    expect([...select.options].map(option=>option.value)).toEqual(['seedance_video','minimax_video','kling_video','wan_video','openai_images','pexels_video','volcengine_tts','freesound_preview']);
   });
 
   it("可预先登记火山语音 Adapter 凭据", async () => {
@@ -154,9 +155,9 @@ describe("外部连接工作区", () => {
 
     await user.click(screen.getByText("更新连接"));
     await user.clear(screen.getByLabelText("编辑连接名称"));
-    await user.type(screen.getByLabelText("编辑连接名称"), "Cloudflare 图片");
+    await user.type(screen.getByLabelText("编辑连接名称"), "日常图片连接");
     await user.click(screen.getByRole("button", { name: "保存连接更新" }));
-    expect(onUpdateConnection).toHaveBeenCalledWith({ connectionId: "connection-1", description: "", name: "Cloudflare 图片" });
+    expect(onUpdateConnection).toHaveBeenCalledWith({ connectionId: "connection-1", description: "", name: "日常图片连接" });
     expect(onRotateConnection).not.toHaveBeenCalled();
 
     await user.click(screen.getByRole("button", {name:"更新连接"}));

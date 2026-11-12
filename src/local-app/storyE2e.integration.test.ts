@@ -80,14 +80,13 @@ it.skipIf(!enabled)('story 4 browser: confirms the actual subtitles, retries a l
   await f.fill();await f.ok(f.send('exportWorkspace'));expect(f.workspace.exports![0].status).toBe('ready');
   browser=await storyBrowser(f,'delivery-story');
   browser.dropNextResponse('confirmWorkspaceExport');await browser.click('确认成片与字幕');
-  await browser.cli('wait','--text','服务端结果回执未能送达');
-  await browser.click('确认成片与字幕');await browser.cli('wait','--text','已确认这份最终文件');
+  // A committed command is recovered through its receipt when the response is lost.
+  await browser.cli('wait','--text','已确认这份最终文件');
   await browser.cli('upload','input[aria-label="封面"]',f.files.first);
   await browser.fill('标题','末班车前的一把伞');await browser.fill('简介',storyLines.join(''));await browser.fill('标签','城市善意,黄伞');
   browser.dropNextResponse('prepareWorkspaceDelivery');await browser.doubleClick('生成并验证交付包');
-  await browser.cli('wait','--text','服务端结果回执未能送达');
+  await browser.cli('wait','--text','交付已排队');
   await f.read();expect(f.workspace.deliveries).toHaveLength(1);
-  await browser.click('生成并验证交付包');await browser.cli('wait','--text','交付已排队');
   await f.read();expect(f.workspace.deliveries).toHaveLength(1);const job=f.workspace.deliveries![0];
   await f.restart();const result=await f.execute(job.taskId);expect(result.status,JSON.stringify(result)).toBe('completed');
   await browser.cli('reload');await browser.cli('wait','--text','交付已完成');
@@ -131,8 +130,7 @@ it.skipIf(!enabled)('story 2 browser: a lost committed generation response and r
   await browser.doubleClick('生成视频');await browser.cli('wait','--text','确认本次视频生成');
   browser.dropNextResponse('confirmWorkspaceCall');await browser.doubleClick('确认并提交本次调用');
   await expect.poll(()=>browser!.traffic.filter(t=>t.command==='confirmWorkspaceCall').length,{timeout:15000}).toBe(1);
-  await browser.cli('wait','--text','服务端结果回执未能送达');
-  await browser.click('取消');await showVideoPreparation();await browser.cli('wait','--text','排队中');
+  await browser.cli('wait','--text','排队中');
   await f.read();expect(f.workspace.visualTasks).toHaveLength(1);const job=f.workspace.visualTasks![0];
   const result=await f.execute(job.taskId);expect(result.status,JSON.stringify(result)).toBe('completed');
   const beforeOpen=await f.read();
@@ -147,17 +145,7 @@ it.skipIf(!enabled)('story 2 browser: a lost committed generation response and r
   await browser.click('定位镜头 shot-02');
   await browser.wait("document.querySelector('button[aria-label=\"定位镜头 shot-02\"]')?.getAttribute('aria-pressed')==='true'");
   expect(await browser.evaluate("!Array.from(document.querySelectorAll('.embedded-studio header button')).some(button=>button.textContent==='补充工具')")).toBe(true);
-  const clickNative=async(name:string)=>{
-   const line=(await browser!.snapshot()).split('\n').find(line=>line.includes('- button '+JSON.stringify(name)+' '));
-   const ref=line?.match(/ref=(e\d+)/)?.[1];
-   if(!ref)throw Error('原生编辑器按钮未出现：'+name);
-   await browser!.cli('focus','@'+ref);
-   await browser!.cli('press','Enter');
-  };
-  await clickNative('字幕');
-  await clickNative('字幕对齐');
-  await browser.wait("!!document.querySelector('.embedded-studio-caption-panel:not([hidden]) [aria-label=工作台字幕]')");
-  await browser.click('关闭字幕对齐');
+  expect(await browser.evaluate("document.querySelector('.embedded-studio-caption-panel')===null&&!Array.from(document.querySelectorAll('.embedded-studio header button')).some(b=>b.textContent==='自动校准字幕时间')")).toBe(true);
   await browser.click('保存并返回分镜台');
   await browser.wait("document.querySelector('button[aria-label=\"选择镜头 02\"]')?.getAttribute('aria-pressed')==='true'");
   const afterSave=await f.read();
@@ -165,7 +153,7 @@ it.skipIf(!enabled)('story 2 browser: a lost committed generation response and r
   expect(afterSave.visualCandidates?.[0].status).toBe('available');
   await browser.cli('find','role','tab','click','--name','视频','--exact');
   await browser.click('预览视频候选 01');
-  await browser.click('采用到当前镜头');
+  await browser.click('采用视频到当前镜头');
   await browser.click('确认采用');
   await expect.poll(async()=>(await f.read()).visualCandidates![0].status,{timeout:15000}).toBe('adopted');
   const project=JSON.parse(await readFile(join(f.assetRoot,f.workspace.project.relativePath),'utf8'));
@@ -445,10 +433,11 @@ it.skipIf(!enabled)('script-only recovery: local preparation supersedes an unfin
  try{
   const script=(await f.ok(f.request('importMaterial',{sourceKind:'file',sourcePath:'普通脚本.md',materialType:'script',materialPurpose:'main_script',mimeType:'text/markdown',isMainScript:true,contentBase64:Buffer.from('# 普通脚本\n\n## 正文\n\n保留已经确认的原文。').toString('base64')}))).id;
   await f.ok(f.request('start'));
-  const harness=await f.ok(f.post('configuration','createPromptVersion',{accountId:f.account.id,capability:'storyboard_planning',name:'旧分镜',summary:'恢复测试',instructions:'保留原文。'}));
-  await f.ok(f.request('saveWorkspacePlanningSelection',{expectedSelectionRevision:0,selection:{provider:'codex',adapter:'codex',model:'gpt-5.6-codex',harnessId:harness.id,budgetCents:0,allowedTools:['read','write']}}));
-  const {seedLegacyPlanning}=await import('./legacyPlanning.fixture');
-  const old=await seedLegacyPlanning(f,f.episode,script);
+  const old={taskId:randomUUID()};
+  // Import the frozen historical row directly; retired APIs cannot create new plans.
+  await f.c.query("INSERT INTO public.tasks(id,episode_id,task_type,status,input_snapshot,provider,model,prompt_version,max_attempts) VALUES($1,$2,'draft_storyboard','ready',$3,'codex','historical-model','historical-v1',3)",[old.taskId,f.episode,{capability:'storyboard_planning',workspace_preparation:{scriptRevisionId:script},harness:{id:randomUUID(),version:1,adapter:'codex',model:'historical-model',prompt_version:'historical-v1',content:'保留原文。',content_hash:'a'.repeat(64)},output:{relative_path:`episodes/${f.episode}/historical/board.json`,required_artifact_types:['storyboard'],content_type:'application/json',review_stage:'storyboard_review'},allowed_tools:['read','write']}]);
+  // Reconstruct the old in-progress stage, then exercise the real current recovery command.
+  await f.c.query("UPDATE public.episodes SET stage='storyboard_draft' WHERE id=$1",[f.episode]);
   const prepared=await f.ok(f.request('prepareWorkspace',{expectedScriptRevisionId:script}));
   expect(prepared.clips.map((clip:{text:string})=>clip.text)).toEqual(['保留已经确认的原文。']);
   const tasks=(await f.c.query("SELECT id,invalidated_at FROM public.tasks WHERE episode_id=$1 AND task_type='draft_storyboard'",[f.episode])).rows;

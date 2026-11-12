@@ -1,7 +1,7 @@
 import {queryPexelsVideos,downloadPexelsVideo} from './pexelsVideos.js';
 import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
-import {isRetiredProvider,retiredProviderMessage} from './providerLifecycle.js';
+import {registeredAdapters} from './registeredAdapters.js';
 import {generateOfficialVideo} from "./officialVideoProvider.js";
 import {isVideoProvider} from "./videoProviderCatalog.js";
 import { createHash } from "node:crypto";
@@ -19,7 +19,6 @@ export async function executeControlledMediaTask(input: {
   taskPackage: WorkerTaskPackage;
   fetcher: MediaFetcher;
   pexelsApiKey: string | undefined;
-  googleTtsApiKey: string | undefined;
   volcengineTtsApiKey?: string;
   bailianCredentials?: string;
   officialVideoCredentials?: string;
@@ -28,7 +27,6 @@ export async function executeControlledMediaTask(input: {
   recordVideoProgress?: (phase:VideoGenerationPhase)=>Promise<void>;
   freesoundApiKey?: string;
   openaiApiKey?: string;
-  cloudflareWorkersAiCredentials?: string;
   validateMp4: (path: string, minimumDurationSeconds: number) => Promise<void>;
   probeMp3: (path: string) => Promise<number>;
   extractMp3: (sourcePath: string, minimumDurationSeconds: number, startSeconds?:number) => Promise<Uint8Array>;
@@ -38,7 +36,7 @@ export async function executeControlledMediaTask(input: {
   whisperXCacheDirectory?: string;
   executeWhisperX?: (input: { audioPath: string; cacheDirectory: string; model: string }) => Promise<WhisperXExecution>;
 }): Promise<string> {
-  if(isRetiredProvider(input.taskPackage.provider))throw new Error(retiredProviderMessage);
+  if(!registeredAdapters.isRegisteredProvider(input.taskPackage.provider))throw new Error('未登记的媒体服务。');
   const search=input.taskPackage.media?.adapter==='pexels_video'&&input.taskPackage.media.bRoll.request?.operation==='search';
   const media:{bytes:Uint8Array;source?:FreesoundPreview} = search ? {bytes:Buffer.from(JSON.stringify(await queryPexelsVideos({apiKey:input.pexelsApiKey??'',fetcher:input.fetcher,query:input.taskPackage.media!.adapter==='pexels_video'?input.taskPackage.media!.bRoll.query:'',parameters:input.taskPackage.media!.adapter==='pexels_video'?input.taskPackage.media!.bRoll.request!.parameters:undefined!})))} : await mediaBytes(input);
   const audioDurationSeconds = search?undefined:await validateTemporaryMedia(input, media.bytes);
@@ -66,7 +64,6 @@ async function mediaBytes(input: {
   taskPackage: WorkerTaskPackage;
   fetcher: MediaFetcher;
   pexelsApiKey: string | undefined;
-  googleTtsApiKey: string | undefined;
   volcengineTtsApiKey?: string;
   bailianCredentials?: string;
   officialVideoCredentials?: string;
@@ -75,7 +72,6 @@ async function mediaBytes(input: {
   recordVideoProgress?: (phase:VideoGenerationPhase)=>Promise<void>;
   freesoundApiKey?: string;
   openaiApiKey?: string;
-  cloudflareWorkersAiCredentials?: string;
   validateMp4: (path: string, minimumDurationSeconds: number) => Promise<void>;
   probeMp3: (path: string) => Promise<number>;
   extractMp3: (sourcePath: string, minimumDurationSeconds: number, startSeconds?:number) => Promise<Uint8Array>;
@@ -242,7 +238,7 @@ async function validateTemporaryMedia(input: Parameters<typeof executeControlled
       await input.validateMp4(path, (input.taskPackage.media.videoClips ?? input.taskPackage.media.videoClip)!.targetDurationSeconds);
       return undefined;
     }
-    if (input.taskPackage.provider === "google_tts" || input.taskPackage.provider === "volcengine_tts" || input.taskPackage.provider === "ffmpeg" || input.taskPackage.provider === "freesound") return await input.probeMp3(path);
+    if (input.taskPackage.provider === "volcengine_tts" || input.taskPackage.provider === "ffmpeg" || input.taskPackage.provider === "freesound") return await input.probeMp3(path);
     return undefined;
   } finally {
     await rm(directory, { recursive: true, force: true });

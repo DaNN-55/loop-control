@@ -70,6 +70,7 @@ export async function executeConfiguration(pool:Pool,session:OwnerSession,body:R
  const result=await ownerTransaction(pool,session.id,false,async client=>{
   const valid=await client.query('SELECT token_hash FROM local_identity.sessions WHERE token_hash=$1 AND owner_id=$2 AND revoked_at IS NULL AND expires_at>clock_timestamp() FOR SHARE',[tokenHash(session.token),session.id]);
   if(!valid.rowCount)throw new ConfigurationError(401,'会话已失效。');
+  if(command==='createPromptVersion'&&['script_writing','visual_planning','storyboard_planning'].includes(String(data.capability)))throw new ConfigurationError(410,'旧规划 Prompt 配置已退役；历史版本保留。');
   await client.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[session.id+':'+body.idempotencyKey]);
   const receipt=await client.query('SELECT payload_hash,result FROM local_identity.command_receipts WHERE owner_id=$1 AND idempotency_key=$2',[session.id,body.idempotencyKey]);
   if(receipt.rowCount){if(receipt.rows[0].payload_hash!==hash)throw new ConfigurationError(409,'同一操作标识不能用于不同内容。');return receipt.rows[0].result;}

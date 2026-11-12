@@ -28,7 +28,7 @@ export function nextScriptProductionAction(state:ContinuationSnapshot):Productio
  if(!record.enabled)return{wait:'自动继续已暂停'};
  if(plan.issues.length)return{wait:plan.issues.join('；')};
  if(e.stage==='waiting_input')return{wait:'等待确认主脚本并开始制作'};
- if(e.stage==='visual_approved')return action('planStoryboard',{episodeId:e.id});
+ if(['visual_draft','visual_review','visual_approved','storyboard_draft','storyboard_review'].includes(e.stage))return{wait:'旧视觉与分镜规划已退役，请使用当前四步制作工作台'};
  if(e.stage==='qc_review')return{wait:'等待整片 QC 审核'};
  if(e.stage==='qc_passed'){
   const final=tasks.find(t=>t.task_type==='generate_final_render'&&!t.invalidated_at);

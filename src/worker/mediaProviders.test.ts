@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { generateCloudflareWorkersAiImage, generateOpenAiImage,generateOpenAiImages, searchFreesoundPreview, searchPexelsVideo, synthesizeGoogleTts, synthesizeVolcengineTts } from "./mediaProviders";
+import { generateOpenAiImage,generateOpenAiImages, searchFreesoundPreview, searchPexelsVideo, synthesizeVolcengineTts } from "./mediaProviders";
 
 describe("受控媒体供应商", () => {
   it("使用 OpenAI Images 的 base64 PNG 响应", async () => {
@@ -15,12 +15,6 @@ describe("受控媒体供应商", () => {
     [{ data: [{ b64_json: Buffer.from("not a PNG").toString("base64") }] }, "不是 PNG"],
   ])("拒绝无效图片响应，不将其登记为 PNG", async (payload, message) => {
     await expect(generateOpenAiImage({ apiKey: "synthetic", model: "gpt-image-2", prompt: "test", fetcher: async () => Response.json(payload) })).rejects.toThrow(message);
-  });
-  it("停用 Cloudflare 和 Google TTS 的旧执行入口，且不发出网络请求", async () => {
-    const fetcher=vi.fn();
-    await expect(generateCloudflareWorkersAiImage({credentials:'synthetic',fetcher,model:'legacy',prompt:'test'})).rejects.toThrow('已停用');
-    await expect(synthesizeGoogleTts({apiKey:'synthetic',fetcher,text:'test',voice:{languageCode:'zh-CN',name:'legacy',speakingRate:1}})).rejects.toThrow('已停用');
-    expect(fetcher).not.toHaveBeenCalled();
   });
 
   it("使用豆包语音 V3 SSE 合并 MP3 音频分片", async () => {
@@ -80,8 +74,7 @@ describe("受控媒体供应商", () => {
     expect(fetcher.mock.calls[0][0]).toContain("sort=duration_asc");
   });
 
-  it("拒绝停用的音频 Provider 和无法使用的 Pexels 视频", async () => {
-    await expect(synthesizeGoogleTts({ apiKey: "google-key", fetcher: vi.fn().mockResolvedValue(new Response("{}", { status: 200 })), text: "旁白", voice: { languageCode: "cmn-CN", name: "cmn-CN-Standard-A", speakingRate: 1 } })).rejects.toThrow("已停用");
+  it("拒绝无法使用的 Pexels 视频", async () => {
     await expect(searchPexelsVideo({ apiKey: "pexels-key", fetcher: vi.fn().mockResolvedValue(new Response(JSON.stringify({ videos: [] }), { status: 200 })), query: "雨夜", targetDurationSeconds: 5 })).rejects.toThrow("竖屏视频");
     await expect(searchPexelsVideo({ apiKey: "pexels-key", fetcher: vi.fn(), query: "雨".repeat(101), targetDurationSeconds: 5 })).rejects.toThrow("100");
   });

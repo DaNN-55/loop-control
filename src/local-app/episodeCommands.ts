@@ -32,8 +32,8 @@ import {dirname} from 'node:path';
 import {blueprintSelectionErrors} from '../worker/runtimePreflight.js';
 import {mediaCapabilityKeys} from '../worker/productionCapabilities.js';
 import {workerPreflightVersion,type WorkerPreflightCheck} from '../worker/contracts.js';
-import {verifyReportedStoryboardArtifact} from '../worker/storyboardArtifact.js';
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+const retiredPlanningCommands=new Set(['review','annotateStoryboard','planStoryboard','requestStructureRevision','requestStudioStoryboardRevision','saveWorkspacePlanningSelection','retryWorkspacePlanning']);
 export interface InputRuntime {openDirectory?(path:string):Promise<void>;deliveryReady?():Promise<void>;studioRuntime?():Promise<OpenChatCutRuntimeConfig>;ready():Promise<void>;narrationReady?():Promise<void>;mediaReady?(policy:Record<string,unknown>):Promise<void>;localClipReady?():Promise<void>;postReady?(kind:'source'|'alignment'|'preview'):Promise<void>;wake(episodeId:string):void;mountPath:string;minimumFreeBytes:number;checkReferences(client:PoolClient,refs:string[],options?:{purpose?:'workspace-generation'}):Promise<void>}
 export class LocalEpisodeCommands {
  private workspace=new ProductionWorkspaceCommands();
@@ -48,7 +48,8 @@ export class LocalEpisodeCommands {
  constructor(private pool:Pool,private mediaRoot:string,private runtime:InputRuntime){this.scriptStore=new ScriptProductionStore(mediaRoot);}
  async execute(session:OwnerSession,body:Record<string,unknown>){return this.executeCommand(session,body,run=>sessionTransaction(this.pool,session,run),false);}
  private async executeAutomatic(scope:ProductionScope,body:Record<string,unknown>){
-  const allowed=['planStoryboard','applyScriptSettings','generateTts','generateWan','generateOfficialVideo','bindScriptVideo','generateClip','generateSourceAudio','requestAlignment','generateSyncPreview','renderScriptReview','prepareScriptPublish'];
+  const allowed=['applyScriptSettings','generateTts','generateWan','generateOfficialVideo','bindScriptVideo','generateClip','generateSourceAudio','requestAlignment','generateSyncPreview','renderScriptReview','prepareScriptPublish'];
+  if(retiredPlanningCommands.has(String(body.command)))throw new ConfigurationError(410,'旧视觉与分镜规划已退役，请使用当前制作流程。');
   if(!allowed.includes(String(body.command))||(body.data as {episodeId?:string})?.episodeId!==scope.episode_id)throw new ConfigurationError(403,'自动继续不能执行此动作。');
   return this.executeCommand({id:scope.owner_id},body,run=>ownerTransaction(this.pool,scope.owner_id,false,async c=>{
    if(!(await c.query('SELECT local_identity.lock_owned_input_episode($1) owned',[scope.episode_id])).rows[0]?.owned)throw new ConfigurationError(409,'本期自动继续授权已变化。');
@@ -67,23 +68,29 @@ export class LocalEpisodeCommands {
   }),true);
  }
  private async executeCommand(session:{id:string},body:Record<string,unknown>,transaction:<T>(run:(c:PoolClient)=>Promise<T>)=>Promise<T>,automatic:boolean){
-  if(typeof body.command!=='string'||!Object.hasOwn(productionWorkspaceFields,body.command)&&!['prepareScriptPublish','configureScriptProduction','pauseScriptProduction','applyScriptSettings','bindScriptVideo','renderScriptReview','generateOfficialVideo','generateWan','resumeWan','annotateAudio','requestQcMemberRevision','repairConnection','repairConfiguration','create','reconfirmScript','importMaterial','start','review','openDirectory','openStandaloneStudio','planStoryboard','annotateStoryboard','requestStructureRevision','saveTtsSettings','saveTtsDraft','generateTts','registerManualMedia','saveAudioSelection','planMedia','retryMedia','saveMediaDraft','generateClip','setAudioSourceMode','generateSourceAudio','requestAlignment','saveManualAlignment','confirmCaptionText','generateSyncPreview','confirmSyncPreview','openStudio','saveStudio','generateReviewVideo','submitStudioRevision','requestStudioCompositionRevision','requestStudioStoryboardRevision','createQcIssue','resolveQcIssue','approveQc','retryFinalRender','preparePublishPackage'].includes(body.command)||typeof body.idempotencyKey!=='string'||!/^[0-9a-f-]{36}$/.test(body.idempotencyKey)||!body.data||typeof body.data!=='object'||Array.isArray(body.data)||Object.keys(body).some(k=>!['command','idempotencyKey','data'].includes(k)))throw new ConfigurationError(400,'Episode命令无效。');
+  if(typeof body.command!=='string'||!retiredPlanningCommands.has(body.command)&&!Object.hasOwn(productionWorkspaceFields,body.command)&&!['prepareScriptPublish','configureScriptProduction','pauseScriptProduction','applyScriptSettings','bindScriptVideo','renderScriptReview','generateOfficialVideo','generateWan','resumeWan','annotateAudio','requestQcMemberRevision','repairConnection','repairConfiguration','create','start','reconfirmScript','importMaterial','openDirectory','openStandaloneStudio','saveTtsSettings','saveTtsDraft','generateTts','registerManualMedia','saveAudioSelection','planMedia','retryMedia','saveMediaDraft','generateClip','setAudioSourceMode','generateSourceAudio','requestAlignment','saveManualAlignment','confirmCaptionText','generateSyncPreview','confirmSyncPreview','openStudio','saveStudio','generateReviewVideo','submitStudioRevision','requestStudioCompositionRevision','createQcIssue','resolveQcIssue','approveQc','retryFinalRender','preparePublishPackage'].includes(body.command)||typeof body.idempotencyKey!=='string'||!/^[0-9a-f-]{36}$/.test(body.idempotencyKey)||!body.data||typeof body.data!=='object'||Array.isArray(body.data)||Object.keys(body).some(k=>!['command','idempotencyKey','data'].includes(k)))throw new ConfigurationError(400,'Episode命令无效。');
   const data=body.data as Record<string,unknown>,hash=canonicalFingerprint(body);
-  const allowed:Record<string,string[]>={create:['accountId','title','seriesVersionId','isTest'],importMaterial:['episodeId','sourceKind','sourcePath','logicalName','materialType','materialPurpose','mimeType','isMainScript','contentBase64','deferRefresh'],start:['episodeId'],review:['episodeId','toStage','reason','reviewPackageId'],openDirectory:['episodeId']};
+  const retiredPlanning=retiredPlanningCommands.has(body.command)||body.command==='replanWorkspace'&&Object.hasOwn(data,'planningTaskId');
+  const allowed:Record<string,string[]>={create:['accountId','title','seriesVersionId','isTest'],importMaterial:['episodeId','sourceKind','sourcePath','logicalName','materialType','materialPurpose','mimeType','isMainScript','contentBase64','deferRefresh'],openDirectory:['episodeId']};
+  allowed.start=['episodeId'];
   allowed.reconfirmScript=['episodeId','expectedScriptRevisionId','text','reason'];
-  allowed.planStoryboard=['episodeId'];allowed.annotateStoryboard=['episodeId','reviewPackageId','shotId','reason'];allowed.requestStructureRevision=['episodeId','reviewPackageId','operation','reason'];
   allowed.saveTtsSettings=['episodeId','languageCode','voice','speakingRate'];allowed.saveTtsDraft=['episodeId','reviewPackageId','shotId','audioMode','subtitleText','subtitlesEnabled','ttsText','ttsVoice','ttsSpeakingRate','ttsOverride','captionContract','bgmDuckingLevel','transitionMode'];allowed.generateTts=['episodeId','reviewPackageId','shotId','retry'];
   allowed.setAudioSourceMode=['episodeId','audioSourceMode'];allowed.registerManualMedia=['episodeId','materialRevisionId','targetId','storyboardReviewPackageId','kind','clipStartSeconds','clipEndSeconds','replace'];allowed.saveAudioSelection=['episodeId','reviewPackageId','targetKind','targetId','audioKind','cueId','materialRevisionId'];allowed.planMedia=['episodeId','reviewPackageId'];allowed.retryMedia=['episodeId','reviewPackageId','taskId'];allowed.generateClip=['episodeId','reviewPackageId','shotId','retry'];allowed.saveMediaDraft=['episodeId','reviewPackageId','shotId','materialRevisionId','clipSegments','composition','sourceVideoDurationSeconds','audioMode','subtitleText','subtitlesEnabled','ttsText','ttsVoice','ttsSpeakingRate','ttsOverride','captionContract','bgmDuckingLevel','transitionMode'];
   allowed.generateSourceAudio=['episodeId','reviewPackageId','shotId','retry'];allowed.requestAlignment=['episodeId','reviewPackageId','shotId','localOnly'];allowed.saveManualAlignment=['episodeId','reviewPackageId','shotId','cues'];allowed.confirmCaptionText=['episodeId','reviewPackageId','shotId','audioTrackId','audioSha256','textFingerprint','alignmentInputVersion'];allowed.generateSyncPreview=['episodeId','reviewPackageId','shotId'];allowed.confirmSyncPreview=['episodeId','reviewPackageId','shotId','deviationResolution'];
-  allowed.saveStudio=['episodeId','sourceProjectRelativePath','workspaceRelativePath','projectId','expectedWorkspaceSha256'];allowed.openStandaloneStudio=[];allowed.openStudio=['episodeId','projectRelativePath','replaceWorkspace'];allowed.generateReviewVideo=['episodeId','reviewPackageId','sourceProjectRelativePath','workspaceRelativePath','acceptDurationRisk','riskReason'];allowed.submitStudioRevision=['episodeId','reviewPackageId','sourceProjectRelativePath','workspaceRelativePath','reason'];allowed.requestStudioCompositionRevision=['episodeId','reviewPackageId','reason'];allowed.requestStudioStoryboardRevision=['episodeId','reviewPackageId','reason'];
+  allowed.saveStudio=['episodeId','sourceProjectRelativePath','workspaceRelativePath','projectId','expectedWorkspaceSha256'];allowed.openStandaloneStudio=[];allowed.openStudio=['episodeId','projectRelativePath','replaceWorkspace'];allowed.generateReviewVideo=['episodeId','reviewPackageId','sourceProjectRelativePath','workspaceRelativePath','acceptDurationRisk','riskReason'];allowed.submitStudioRevision=['episodeId','reviewPackageId','sourceProjectRelativePath','workspaceRelativePath','reason'];allowed.requestStudioCompositionRevision=['episodeId','reviewPackageId','reason'];
   allowed.createQcIssue=['episodeId','reviewPackageId','memberKey','atSeconds','severity','reason'];allowed.resolveQcIssue=['episodeId','reviewPackageId','issueId','status'];allowed.approveQc=['episodeId','reviewPackageId','reason'];allowed.retryFinalRender=['episodeId','reviewPackageId','reason'];allowed.preparePublishPackage=['episodeId','title','description','tags','coverBase64'];
   allowed.generateOfficialVideo=['episodeId','reviewPackageId','shotId','firstFrameId','prompt','durationSeconds','reservationCents'];allowed.generateWan=['episodeId','reviewPackageId','shotId','firstFrameId','prompt','durationSeconds'];allowed.resumeWan=['episodeId','taskId'];
   allowed.annotateAudio=['episodeId','audioTrackId','atSeconds','reason'];allowed.requestQcMemberRevision=['episodeId','issueId'];allowed.repairConnection=['episodeId','versionId','blockerCode','blockerDetail'];allowed.repairConfiguration=['episodeId','policy','blockerCode','blockerDetail'];
   allowed.prepareScriptPublish=['episodeId'];allowed.configureScriptProduction=['episodeId','enabled','choices'];allowed.pauseScriptProduction=['episodeId'];allowed.applyScriptSettings=['episodeId','reviewPackageId'];allowed.bindScriptVideo=['episodeId','reviewPackageId','shotId','materialRevisionId'];allowed.renderScriptReview=['episodeId','reviewPackageId','projectRelativePath'];
   Object.assign(allowed,productionWorkspaceFields);
-  if(Object.keys(data).some(k=>!allowed[body.command as string].includes(k)))throw new ConfigurationError(400,'Episode字段无效。');
+  if(!retiredPlanning&&Object.keys(data).some(k=>!allowed[body.command as string].includes(k)))throw new ConfigurationError(400,'Episode字段无效。');
   if(body.command==='create')return createEpisodeDirectory(this.pool,session as OwnerSession,body.idempotencyKey,hash,data,this.mediaRoot,(c,account,policy)=>this.preflight(c,account,policy,false,'input'));
   const result=await transaction(async c=>{
+   if(retiredPlanning){
+    if(typeof data.episodeId!=='string'||!uuid.test(data.episodeId))throw new ConfigurationError(400,'生产单标识无效。');
+    if(!(await c.query("SELECT 1 FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id WHERE e.id=$1 AND m.user_id=$2 AND m.role='owner'",[data.episodeId,session.id])).rowCount)throw new ConfigurationError(404,'本地生产单不可见。');
+    throw new ConfigurationError(410,'旧视觉与分镜规划已退役，请使用当前制作流程。');
+   }
    await c.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[session.id+':'+body.idempotencyKey]);
    const old=(await c.query('SELECT payload_hash,result FROM local_identity.command_receipts WHERE owner_id=$1 AND idempotency_key=$2',[session.id,body.idempotencyKey])).rows[0];
    if(old){if(old.payload_hash!==hash)throw new ConfigurationError(409,'同一操作标识不能用于不同内容。');if(!['openDirectory','openStudio','openStandaloneStudio','openWorkspaceStudio'].includes(body.command as string))return old.result;}
@@ -107,7 +114,7 @@ export class LocalEpisodeCommands {
    }else{
     // Older owned orders predate native execution registration. Enrol only at
     // an explicit four-step entry; failed commands roll this back with the rest.
-    if(['adoptLegacyWorkspace','prepareWorkspace','reconfirmScript','importMaterial','start'].includes(String(body.command))&&!(await c.query('SELECT 1 FROM local_identity.input_episodes WHERE episode_id=$1',[data.episodeId])).rowCount){
+    if(['adoptLegacyWorkspace','prepareWorkspace','reconfirmScript','importMaterial'].includes(String(body.command))&&!(await c.query('SELECT 1 FROM local_identity.input_episodes WHERE episode_id=$1',[data.episodeId])).rowCount){
      if(!(await c.query('SELECT local_identity.lock_owned_episode_cleanup($1) owned',[data.episodeId])).rows[0].owned)throw new ConfigurationError(404,'本地生产单不可见。');
      const legacy=(await c.query('SELECT stage,archived_at FROM public.episodes WHERE id=$1',[data.episodeId])).rows[0];
      if(legacy.archived_at||legacy.stage==='production_completed')throw new ConfigurationError(409,'历史或已完成生产单只读。');
@@ -116,7 +123,7 @@ export class LocalEpisodeCommands {
     if(!(await c.query('SELECT local_identity.lock_owned_input_episode($1) owned',[data.episodeId])).rows[0].owned)throw new ConfigurationError(404,'本地生产单不可见。');
     const e=(await c.query('SELECT e.*,b.policy,i.storyboard_enabled,i.script_template_version FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id JOIN local_identity.input_episodes i ON i.episode_id=e.id WHERE e.id=$1 AND m.user_id=$2 AND m.role=\'owner\' AND i.owner_id=$2',[data.episodeId,session.id])).rows[0];
     if(!e)throw new ConfigurationError(404,'本地生产单不可见。');
-    const inputIo=['importMaterial','reconfirmScript','start','configureScriptProduction','prepareWorkspace'].includes(String(body.command)),location=inputIo?await resolveEpisodeStorageLocation(c,this.mediaRoot,e.id):null;
+    const inputIo=['importMaterial','reconfirmScript','configureScriptProduction','prepareWorkspace'].includes(String(body.command)),location=inputIo?await resolveEpisodeStorageLocation(c,this.mediaRoot,e.id):null;
     if(location)await requireEpisodeStorageDirectory(c,location);
     const root=location?.assetRoot??await resolveEpisodeAssetRoot(c,this.mediaRoot,e.id);
     if(body.command!=='openDirectory'){
@@ -124,8 +131,8 @@ export class LocalEpisodeCommands {
      else{const legacy=location??await resolveEpisodeStorageLocation(c,this.mediaRoot,e.id);if(legacy.layoutVersion!==1)throw new ConfigurationError(409,'账号目录未登记，请先恢复存储位置。');await requireEpisodeStorageDirectory(c,legacy);if((await c.query("SELECT 1 FROM local_identity.account_directory_migrations WHERE account_id=$1 AND status='copying'",[e.account_id])).rowCount)throw new ConfigurationError(409,'账号正在纳管，请先恢复或回滚原操作。');}
     }
     const inputPolicy=e.script_template_version===2?{...e.policy,asset_root:root,static_visual:{execution_path:'manual'},soundtrack:{execution_path:'manual'}}:{...e.policy,asset_root:root};
-    if(['reconfirmScript','requestStructureRevision'].includes(String(body.command))&&this.workspace.isOpen(e.id))throw new ConfigurationError(409,'请先保存并返回，再修订脚本或分镜。');
-    if(['review','approveQc','retryFinalRender','preparePublishPackage','renderScriptReview','generateReviewVideo','submitStudioRevision','planStoryboard','confirmSyncPreview'].includes(String(body.command))&&(await c.query('SELECT 1 FROM local_identity.production_workspaces WHERE episode_id=$1',[e.id])).rowCount)throw new ConfigurationError(409,'此生产单使用四步制作，请在当前工程检查与交付。');
+    if(body.command==='reconfirmScript'&&this.workspace.isOpen(e.id))throw new ConfigurationError(409,'请先保存并返回，再修订脚本或分镜。');
+    if(['approveQc','retryFinalRender','preparePublishPackage','renderScriptReview','generateReviewVideo','submitStudioRevision','confirmSyncPreview'].includes(String(body.command))&&(await c.query('SELECT 1 FROM local_identity.production_workspaces WHERE episode_id=$1',[e.id])).rowCount)throw new ConfigurationError(409,'此生产单使用四步制作，请在当前工程检查与交付。');
     if(Object.hasOwn(productionWorkspaceFields,String(body.command))){value=await this.workspace.execute(c,e,root,this.runtime,String(body.command),data);
     }else if(body.command==='configureScriptProduction'){
      if(typeof data.enabled!=='boolean'||data.choices!==undefined&&(!data.choices||typeof data.choices!=='object'||Array.isArray(data.choices)||Object.values(data.choices).some(x=>typeof x!=='string'||!uuid.test(x))))throw new ConfigurationError(400,'制作计划设置无效。');
@@ -158,7 +165,7 @@ export class LocalEpisodeCommands {
      }
     }else if(['generateOfficialVideo','generateWan','resumeWan'].includes(String(body.command))){value=await executeWanCommand(c,e,root,this.runtime,String(body.command),data,body.idempotencyKey as string);
     }else if(['createQcIssue','resolveQcIssue','approveQc','retryFinalRender','preparePublishPackage'].includes(String(body.command))){value=await this.delivery.execute(c,e,root,this.runtime,String(body.command),data);
-    }else if(['openStudio','saveStudio','generateReviewVideo','submitStudioRevision','requestStudioCompositionRevision','requestStudioStoryboardRevision'].includes(String(body.command))){
+    }else if(['openStudio','saveStudio','generateReviewVideo','submitStudioRevision','requestStudioCompositionRevision'].includes(String(body.command))){
      if(['openStudio','generateReviewVideo'].includes(String(body.command))){const drafts=(await c.query("SELECT d.* FROM public.shot_preparation_drafts d WHERE d.episode_id=$1 AND d.review_package_id=(SELECT id FROM public.review_packages WHERE episode_id=$1 AND stage='storyboard_review' AND invalidated_at IS NULL ORDER BY revision_number DESC LIMIT 1)",[e.id])).rows;for(const draft of drafts)await this.requireCaptionTextReview(c,draft);}
      try{value=await this.studios.execute(c,e,root,this.runtime,String(body.command),data);}catch(error){if(error instanceof ConfigurationError||error&&typeof error==='object'&&'code'in error)throw error;throw new ConfigurationError(409,'Studio 工作版本或编辑器会话不可用，请重新打开当前工程后重试。');}
     }else if(['annotateAudio','requestQcMemberRevision','repairConnection','repairConfiguration'].includes(String(body.command))){
@@ -308,37 +315,12 @@ export class LocalEpisodeCommands {
        if(value.status==='completed'){const files=(await c.query('SELECT * FROM public.artifacts WHERE episode_id=$1 AND producer_task_id=$2',[e.id,value.id])).rows;try{if(!files.length)throw Error();for(const f of files)await verifyEpisodeFile(c,root,e.id,f.relative_path,f.sha256,Number(f.file_size));}catch{throw new ConfigurationError(409,'复用音轨文件缺失或指纹不一致。');}}
       }
      }
-    }else if(body.command==='planStoryboard'){
-     if(e.stage!=='visual_approved')throw new ConfigurationError(409,'请先批准视觉清单。');
-     await this.preflight(c,e.account_id,inputPolicy,true);
-     const budget=e.policy.budgets?.storyboard_planning_cents;
-     if(!Number.isSafeInteger(budget)||budget<0)throw new ConfigurationError(409,'蓝图分镜预算无效。');
-     await c.query('UPDATE local_identity.input_episodes SET storyboard_enabled=true WHERE episode_id=$1',[e.id]);value={id:e.id,queued:true};
-    }else{
-     if(typeof data.reason!=='string'||!data.reason.trim()||data.reason.length>5000)throw new ConfigurationError(400,'审核内容无效。');
-     const storyboard=body.command!=='review'||String(data.toStage).startsWith('storyboard_');
-     const stage=storyboard?'storyboard_review':'visual_review';
-     const p=(await c.query('SELECT * FROM public.review_packages WHERE episode_id=$1 AND stage=$2 AND invalidated_at IS NULL ORDER BY revision_number DESC LIMIT 1',[e.id,stage])).rows[0];
-     if(!p||p.id!==data.reviewPackageId||storyboard&&!e.storyboard_enabled||(body.command==='requestStructureRevision'?!['storyboard_approved','production_ready','render_ready','qc_review'].includes(e.stage):e.stage!==stage))throw new ConfigurationError(409,'审核包已变化，请刷新后重新审核。');
-     const files=(await c.query('SELECT * FROM public.artifacts WHERE episode_id=$1 AND id=$2',[e.id,p.artifact_id])).rows;
-     if(!files.length)throw new ConfigurationError(409,'审核产物缺失。');for(const f of files)await verifyEpisodeFile(c,root,e.id,f.relative_path,f.sha256,Number(f.file_size));
-     if(storyboard)try{await verifyReportedStoryboardArtifact({storage:await episodeFileIO(c,root,e.id),assetRoot:root,relativePath:files[0].relative_path,frozenInputs:p.context_snapshot.input_artifacts??[],storyboard:p.context_snapshot.worker_result?.storyboard});}catch{throw new ConfigurationError(409,'分镜产物与冻结审核依据不一致。');}
-     if(body.command==='annotateStoryboard'){
-      if(typeof data.shotId!=='string'||!data.shotId.trim())throw new ConfigurationError(400,'镜头标识无效。');
-      value=(await c.query('SELECT to_jsonb(public.create_storyboard_annotation($1,$2,$3)) result',[p.id,data.shotId,data.reason.trim()])).rows[0].result;
-     }else if(body.command==='requestStructureRevision'){
-      await this.preflight(c,e.account_id,inputPolicy,true);
-      value=(await c.query('SELECT to_jsonb(local_identity.request_shot_revision($1,$2,$3,$4)) result',[e.id,p.id,data.operation,data.reason.trim()])).rows[0].result;
-     }else{
-      if(!['visual_approved','visual_draft','storyboard_approved','storyboard_draft'].includes(String(data.toStage)))throw new ConfigurationError(400,'审核目标无效。');
-      value=(await c.query('SELECT to_jsonb(public.transition_episode($1,$2,$3)) result',[e.id,data.toStage,data.reason.trim()])).rows[0].result;
-     }
-    }
+    }else throw new ConfigurationError(400,'不支持的制作操作。');
    }
    if(!automatic&&['saveMediaDraft','saveTtsDraft'].includes(String(body.command)))await c.query("UPDATE local_identity.script_productions SET progress=progress||jsonb_build_object($2::text,true) WHERE episode_id=$1",[data.episodeId,'manual:'+data.reviewPackageId+':'+data.shotId]);
    await c.query('INSERT INTO local_identity.command_receipts(owner_id,idempotency_key,payload_hash,result) VALUES($1,$2,$3,$4) ON CONFLICT(owner_id,idempotency_key) DO NOTHING',[session.id,body.idempotencyKey,hash,value]);return value;
   });
-  if(body.command==='replanWorkspace'&&data.planningTaskId||['retryWorkspacePlanning','requestWorkspaceVisualCandidate','requestWorkspaceImageCandidates','retryWorkspaceVisualCandidate','prepareWorkspaceAudio','prepareWorkspaceDelivery','retryWorkspaceDelivery','requestWorkspaceCaptionAlignment','generateWorkspaceNarration','generateWorkspaceImage','configureScriptProduction','applyScriptSettings','bindScriptVideo','renderScriptReview','generateOfficialVideo','generateWan','resumeWan','requestQcMemberRevision','repairConnection','repairConfiguration','approveQc','retryFinalRender','generateReviewVideo','submitStudioRevision','requestStudioCompositionRevision','requestStudioStoryboardRevision','generateSourceAudio','requestAlignment','generateSyncPreview','start','planStoryboard','requestStructureRevision','review','generateTts','registerManualMedia','saveAudioSelection','planMedia','retryMedia','saveMediaDraft','generateClip'].includes(body.command))this.runtime.wake(String(data.episodeId??result.id));if(body.command!=='openDirectory')void this.continuation?.wake();return result;
+  if(['requestWorkspaceVisualCandidate','requestWorkspaceImageCandidates','retryWorkspaceVisualCandidate','prepareWorkspaceAudio','prepareWorkspaceDelivery','retryWorkspaceDelivery','requestWorkspaceCaptionAlignment','generateWorkspaceNarration','generateWorkspaceImage','configureScriptProduction','applyScriptSettings','bindScriptVideo','renderScriptReview','generateOfficialVideo','generateWan','resumeWan','requestQcMemberRevision','repairConnection','repairConfiguration','approveQc','retryFinalRender','generateReviewVideo','submitStudioRevision','requestStudioCompositionRevision','generateSourceAudio','requestAlignment','generateSyncPreview','generateTts','registerManualMedia','saveAudioSelection','planMedia','retryMedia','saveMediaDraft','generateClip'].includes(body.command))this.runtime.wake(String(data.episodeId??result.id));if(body.command!=='openDirectory')void this.continuation?.wake();return result;
  }
  private async requireCaptionTextReview(c:PoolClient,draft:{id:string;subtitles_enabled:boolean;audio_mode:string}){
   if(draft.subtitles_enabled&&draft.audio_mode!=='none'&&!(await c.query('SELECT local_identity.caption_text_is_confirmed($1) confirmed',[draft.id])).rows[0]?.confirmed)throw new ConfigurationError(409,'请先核对当前音频正文并保存确认。');
@@ -346,7 +328,7 @@ export class LocalEpisodeCommands {
  private async requirePost(kind:'source'|'alignment'|'preview'){try{if(!this.runtime.postReady)throw Error();await this.runtime.postReady(kind);}catch(error){if(error instanceof RuntimePreparationError)throw error;throw new ConfigurationError(503,'本地音频、对齐或同步预览执行环境尚未就绪。',{version:workerPreflightVersion,checks:[{capability:kind==='alignment'?'acoustic_alignment':kind==='preview'?'review_rendering':'embedded_audio_extraction',check:'command_availability',phase:'preflight',status:'unavailable',reason:'请检查本机执行配置、工具与缓存；不会下载模型或调用在线 Provider。',scope:'worker',action:'contact_environment_admin'}]});}}
  private async requireMedia(policy:Record<string,unknown>){try{if(!this.runtime.mediaReady)throw Error();await this.runtime.mediaReady(policy);}catch(error){if(error instanceof RuntimePreparationError)throw error;throw new ConfigurationError(503,'本地媒体执行器尚未就绪。',{version:workerPreflightVersion,checks:[{capability:'worker_runtime',check:'local_adapter_readiness',phase:'preflight',status:'unavailable',reason:'媒体工具、连接密钥存储或本地Adapter未准备。',scope:'worker',action:'contact_environment_admin'}]});}}
  private async requireNarration(){try{if(!this.runtime.narrationReady)throw Error();await this.runtime.narrationReady();}catch(error){if(error instanceof RuntimePreparationError)throw error;throw new ConfigurationError(503,'本地口播执行器、密钥存储或音频探测工具尚未就绪。',{version:workerPreflightVersion,checks:[{capability:'narration_generation',check:'command_availability',phase:'preflight',status:'unavailable',reason:'口播执行环境未准备。',scope:'worker',action:'contact_environment_admin'}]});}}
- private async preflight(c:PoolClient,accountId:string,policy:Record<string,unknown>,existing:boolean,scope:'blueprint'|'local_clip'|'input'='blueprint'){
+ private async preflight(c:PoolClient,_accountId:string,policy:Record<string,unknown>,existing:boolean,scope:'blueprint'|'local_clip'|'input'='blueprint'){
   const failure=(reason:string,check:string,scope:WorkerPreflightCheck['scope'],action:WorkerPreflightCheck['action'],status=409)=>new ConfigurationError(status,reason,{version:workerPreflightVersion,checks:[{capability:'worker_runtime',check,phase:'preflight',status:scope==='worker'?'unavailable':'blocked',reason,action,scope}]});
   try{if(scope!=='input')await this.runtime.ready();}catch(e){if(e instanceof RuntimePreparationError)throw e;throw failure(e instanceof Error?e.message:'本地Worker未准备。','command_availability','worker','contact_environment_admin',503);}
   let root:string;
@@ -355,8 +337,6 @@ export class LocalEpisodeCommands {
   const refs=validateConfigurationPolicy(policy,true);
   if(scope==='blueprint'&&refs.length)try{await this.runtime.checkReferences(c,refs);}catch(error){if(error instanceof ConfigurationError&&error.preflight)throw error;throw failure('连接版本未就绪，请检查本机绑定与验证资格。','credential_presence','connection','manage_connection');}
   const errors=blueprintSelectionErrors(policy);if(errors.length)throw failure(errors.join(' '),'blueprint_configuration','blueprint','edit_blueprint');
-  const planner=(policy.executors as {storyboard_planning:{harness_id:string}}).storyboard_planning;
-  if(!(await c.query("SELECT 1 FROM public.prompt_versions WHERE id=$1 AND account_id=$2 AND capability='storyboard_planning' AND is_active",[planner.harness_id,accountId])).rowCount)throw failure('分镜Prompt Harness未登记或不可用。','blueprint_configuration','blueprint','edit_blueprint');
   // Later production abilities are never declared ready by this input-only runtime.
   if(scope==='blueprint')for(const key of mediaCapabilityKeys){const config=policy[key] as {execution_path?:string;executor?:unknown;credential_ref?:unknown}|null|undefined;if(config&&Object.keys(config).length){if(key==='narration'&&config.execution_path==='external'){await this.requireNarration();continue;}if(key!=='narration'&&['external','local'].includes(String(config.execution_path))){await this.requireMedia(policy);continue;}if(config.execution_path!=='manual')throw failure(`${key}执行路径尚未由本地Worker接管验收。`,'local_adapter_readiness','worker','contact_environment_admin');if(config.executor||config.credential_ref)throw failure('人工素材路径不能同时声明生成执行器或连接。','blueprint_configuration','blueprint','edit_blueprint');}}
  }

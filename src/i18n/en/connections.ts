@@ -118,7 +118,6 @@ export const connectionsMessages:Record<string,string>={
   "只改名称不会创建新版本；填写新的 API Key 才会创建新版本并测试。": "Changing only the name does not create a new version. A new API key creates a new version and runs a test.",
   "保存中…": "Saving…",
   "保存连接更新": "Save connection update",
-  "填写 Cloudflare Account ID:Workers AI API Token；验证通过后会直接用于此能力。": "Enter Cloudflare Account ID:Workers AI API Token. Once verified, it will be used directly for this capability.",
   "填写新版豆包语音控制台生成的 API Key；测试与正式合成使用同一 V3 接口。": "Enter the API key from the new Doubao Speech console. Tests and production synthesis use the same V3 API.",
   "创建并测试一条当前连接；验证通过后会直接用于此能力。": "Create and test a current connection. Once verified, it will be used directly for this capability.",
   "连接名称（自定义填写）": "Connection name (custom)",

@@ -124,7 +124,7 @@ it.skipIf(!enabled)('48 per-shot input changes remain drafts until a new local p
   expect((await f.request('openStudio',{projectRelativePath:f.boardPath})).status).toBe(409);
   const queued=await f.request('generateSyncPreview',{reviewPackageId:f.board,shotId:'shot-1'});expect(queued.status,JSON.stringify(queued.body)).toBe(200);
   const claim=(await nativeWorkerPort(worker).rpc('claim_next_worker_task',{p_task_id:queued.body.id,p_worker_capacity:1}) as any[])[0];expect(claim?.task_id).toBe(queued.body.id);
-  const result=await runWorkspaceDeliveryProcess(f,claim,{mountPath:dirname(f.root),media:{mode:'local'},shotPreview:true,visualCommand:[process.execPath,'--version']});expect(result.status,JSON.stringify((await f.c.query('SELECT last_result FROM public.tasks WHERE id=$1',[queued.body.id])).rows[0])).toBe('completed');
+  const result=await runWorkspaceDeliveryProcess(f,claim,{mountPath:dirname(f.root),media:{mode:'local'},shotPreview:true,});expect(result.status,JSON.stringify((await f.c.query('SELECT last_result FROM public.tasks WHERE id=$1',[queued.body.id])).rows[0])).toBe('completed');
   const confirmed=await f.request('confirmSyncPreview',{reviewPackageId:f.board,shotId:'shot-1',deviationResolution:'none'});expect(confirmed.status,JSON.stringify(confirmed.body)).toBe(200);
   const opened=await f.request('openStudio',{projectRelativePath:f.boardPath});expect(opened.status,JSON.stringify(opened.body)).toBe(200);
   const reviewed=await f.request('generateReviewVideo',{reviewPackageId:f.board,sourceProjectRelativePath:f.boardPath,workspaceRelativePath:opened.body.workspace.relativePath});

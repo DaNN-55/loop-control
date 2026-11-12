@@ -8,7 +8,7 @@ import {SystemStatusDrawer} from './SystemStatusDrawer';
 import type {RuntimeStatus} from '../observability/runtimeStatus';
 interface Report {
  observedAt:string;runtime?:RuntimeStatus|null;maintenanceAvailable?:boolean;
- automation:{stopped:boolean;lastError:string|null;lastScanAt:string|null;timezone:string;hour:number;n8nRequired:boolean;backupsEnabled?:boolean;intervalMs?:number};
+ automation:{stopped:boolean;lastError:string|null;lastScanAt:string|null;timezone:string;hour:number;backupsEnabled?:boolean;intervalMs?:number};
  plans:{kind:string;next_due_at:string}[];
  jobs:{id:string;kind:string;due_at:string;status:string;attempt:number;detail:string|null}[];
  operations:OperationsEvidence;

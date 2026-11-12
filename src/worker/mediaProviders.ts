@@ -1,9 +1,8 @@
 import {ProviderRequestRejectedError} from './providerOutcome.js';
-import {retiredProviderMessage} from './providerLifecycle.js';
 import { randomUUID } from "node:crypto";
 import {isImageGenerationSettings,openAiImageModels,openAiImageQualities, type ImageGenerationSettings} from '../imageGeneration.js';
-import type {GoogleTtsVoice} from './contracts.js';
-export type {GoogleTtsVoice} from './contracts.js';
+import type {TtsVoice} from './contracts.js';
+export type {TtsVoice} from './contracts.js';
 
 export interface MediaFetcher {
   (input: string | URL, init?: RequestInit): Promise<Response>;
@@ -56,15 +55,7 @@ export async function generateOpenAiImages(input: { apiKey: string; fetcher: Med
   });
 }
 
-export async function generateCloudflareWorkersAiImage(_input: { credentials: string; fetcher: MediaFetcher; model: string; prompt: string }): Promise<Uint8Array> {
-  throw new Error(retiredProviderMessage);
-}
-
-export async function synthesizeGoogleTts(_input: { apiKey: string; fetcher: MediaFetcher; text: string; voice: GoogleTtsVoice }): Promise<Uint8Array> {
-  throw new Error(retiredProviderMessage);
-}
-
-export async function synthesizeVolcengineTts(input: { apiKey: string; fetcher: MediaFetcher; model: string; text: string; voice: GoogleTtsVoice }): Promise<Uint8Array> {
+export async function synthesizeVolcengineTts(input: { apiKey: string; fetcher: MediaFetcher; model: string; text: string; voice: TtsVoice }): Promise<Uint8Array> {
   if (!input.apiKey.trim() || !input.model.trim() || !input.text.trim() || !input.voice.name.trim() || !Number.isFinite(input.voice.speakingRate) || input.voice.speakingRate < 0.5 || input.voice.speakingRate > 2) throw new Error("豆包语音 V3 配置或旁白文本无效。");
   const resourceId = /_(?:mars|moon)_bigtts$/.test(input.voice.name) ? "seed-tts-1.0" : /_(?:uranus|saturn)_bigtts$/.test(input.voice.name) ? "seed-tts-2.0" : input.model.trim();
   const response = await input.fetcher("https://openspeech.bytedance.com/api/v3/tts/unidirectional/sse", {

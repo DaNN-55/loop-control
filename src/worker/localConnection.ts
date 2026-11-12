@@ -1,4 +1,4 @@
-import {isRetiredProvider} from './providerLifecycle.js';
+import {registeredAdapters} from './registeredAdapters.js';
 // Server/controlled-Worker interface. Never export resolved material to HTTP.
 import type {PoolClient} from 'pg';
 import {SecretStoreError,type SecretStore,type ConnectionProbe,type ProbeOutcome} from '../local-app/connectionPorts.js';
@@ -7,7 +7,7 @@ export async function ownedConnectionVersion(client:PoolClient,id:string):Promis
  return (await client.query('SELECT * FROM local_identity.connection_version($1)',[id])).rows[0]??null;
 }
 export async function verifyLocalConnection(client:PoolClient,store:SecretStore,probe:ConnectionProbe,version:OwnedConnectionVersion){
- if(isRetiredProvider(version.provider))throw new SecretStoreError('disabled');
+ if(!registeredAdapters.isRegisteredProvider(version.provider))throw new SecretStoreError('disabled');
  if(probe.mode==='disabled'||store.mode==='disabled')throw new SecretStoreError('disabled');
  if(version.revoked_at||!version.is_current||!version.secret_ref)throw new SecretStoreError('missing');
  if(version.store_mode!==store.mode||probe.mode==='live'&&store.mode!=='keychain')throw new SecretStoreError('unavailable');

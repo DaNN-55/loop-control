@@ -1,7 +1,6 @@
 import {VideoGenerationError} from '../worker/videoGenerationError.js';
 import {isWanVideoRequest} from '../wanVideoModels.js';
 import {imageSizes,openAiImageModels,openAiImageQualities} from '../imageGeneration.js';
-import {isRetiredProvider} from '../worker/providerLifecycle.js';
 import {isVideoProvider,type VideoProvider} from "../worker/videoProviderCatalog.js";
 import {officialVideoOperation} from "./officialVideoNetwork.js";
 import{openSync,closeSync,readFileSync,writeFileSync,renameSync,unlinkSync,lstatSync,realpathSync,fsyncSync}from'node:fs';
@@ -10,18 +9,18 @@ import{request as httpsRequest}from'node:https';
 import{Readable}from'node:stream';
 import type{MediaFetcher}from'../worker/mediaProviders.js';
 import{ProviderRequestNotSentError,isDefiniteProviderRejection,ProviderOutcomeUnknownError}from'../worker/providerOutcome.js';
-export type OnlineProvider='openai'|'cloudflare'|'pexels'|'freesound'|'google_tts'|'volcengine_tts'|'bailian'|'volcengine'|'minimax'|'kling';
+export type OnlineProvider='openai'|'pexels'|'freesound'|'volcengine_tts'|'bailian'|'volcengine'|'minimax'|'kling';
 type WorkspaceGenerationProvider='openai'|'bailian'|VideoProvider;
 export function isWorkspaceGenerationProvider(provider:string):provider is WorkspaceGenerationProvider{
  return provider==='openai'||provider==='bailian'||isVideoProvider(provider);
 }
 export interface ProviderNetworkConfiguration{directory:string;policySha256:string}
-interface TtsLimit{maxCharacters:number;voices:string[];languageCodes?:string[];resourceIds?:string[]}
+interface TtsLimit{maxCharacters:number;voices:string[];resourceIds?:string[]}
 interface Limit{maxRequests:number;maxBytes:number;timeoutMs:number;costMicrounits:number;tts?:TtsLimit}
 interface Policy{purpose?:'connection-verification';issuedAt?:string;version:number;runId:string;enabled:boolean;expiresAt:string;maxRequests:number;currency:string;maxCostMicrounits:number;priceEvidenceSha256?:string;approvalSha256?:string;providers:OnlineProvider[];operations:Record<string,Limit>}
 interface Event{operation:string;outcome:'reserved'|'completed'|'failed'|'unknown';status?:number;bytes?:number;timeoutMs?:number}
 interface State{version:number;policySha256:string;used:number;costMicrounits:number;byOperation:Record<string,number>;halted:boolean;events:Event[]}
-const providers=['openai','cloudflare','pexels','freesound','google_tts','volcengine_tts','bailian','volcengine','minimax','kling'];
+const providers=['openai','pexels','freesound','volcengine_tts','bailian','volcengine','minimax','kling'];
 const denied=()=>new Error('Provider request denied by private authorization or budget');
 function integer(n:unknown,max:number){return Number.isSafeInteger(n)&&Number(n)>=0&&Number(n)<=max;}
 function stringChoices(value:unknown):value is string[]{return Array.isArray(value)&&value.length>0&&value.length<=64&&value.every(v=>typeof v==='string'&&v.trim().length>0&&v.length<=200);}
@@ -33,12 +32,11 @@ function read(c:ProviderNetworkConfiguration){
  const requestCeiling=Array.isArray(p.providers)&&p.providers.some(v=>v==='bailian'||isVideoProvider(v))?1000:20;
  if(p.version!==1||typeof p.runId!=='string'||!p.runId||typeof p.enabled!=='boolean'||!Number.isFinite(Date.parse(p.expiresAt))||!integer(p.maxRequests,requestCeiling)||!integer(p.maxCostMicrounits,1e12)||!Array.isArray(p.providers)||p.providers.some(x=>!providers.includes(x))||!p.operations||typeof p.operations!=='object')throw denied();
  for(const[k,v]of Object.entries(p.operations)){
-  if(!(/^(openai|cloudflare|pexels|freesound|google_tts|volcengine_tts)\.(verify|generate|search|download)$/.test(k)||/^(bailian|volcengine|minimax|kling)\.(verify|generate|poll|download)$/.test(k))||!integer(v.maxRequests,requestCeiling)||!integer(v.maxBytes,(['bailian','volcengine','minimax','kling'].includes(k.split('.')[0])?100:20)*1024*1024)||!v.maxBytes||!integer(v.timeoutMs,60000)||(v.timeoutMs===0&&k!=='openai.generate')||!integer(v.costMicrounits,1e12))throw denied();
+  if(!(/^(openai|pexels|freesound|volcengine_tts)\.(verify|generate|search|download)$/.test(k)||/^(bailian|volcengine|minimax|kling)\.(verify|generate|poll|download)$/.test(k))||!integer(v.maxRequests,requestCeiling)||!integer(v.maxBytes,(['bailian','volcengine','minimax','kling'].includes(k.split('.')[0])?100:20)*1024*1024)||!v.maxBytes||!integer(v.timeoutMs,60000)||(v.timeoutMs===0&&k!=='openai.generate')||!integer(v.costMicrounits,1e12))throw denied();
   if(v.tts!==undefined){
    const t=v.tts;
-   if(!t||typeof t!=='object'||Array.isArray(t)||Object.keys(t).some(key=>!['maxCharacters','voices','languageCodes','resourceIds'].includes(key))||!integer(t.maxCharacters,5000)||!t.maxCharacters||!stringChoices(t.voices))throw denied();
-   if(k==='google_tts.generate'){if(!stringChoices(t.languageCodes)||t.resourceIds!==undefined)throw denied();}
-   else if(k==='volcengine_tts.generate'){if(!stringChoices(t.resourceIds)||t.languageCodes!==undefined)throw denied();}
+   if(!t||typeof t!=='object'||Array.isArray(t)||Object.keys(t).some(key=>!['maxCharacters','voices','resourceIds'].includes(key))||!integer(t.maxCharacters,5000)||!t.maxCharacters||!stringChoices(t.voices))throw denied();
+   if(k==='volcengine_tts.generate'){if(!stringChoices(t.resourceIds))throw denied();}
    else throw denied();
   }
  }
@@ -100,7 +98,7 @@ export function openAiImageAuthorizationIssue(c:ProviderNetworkConfiguration){
  }catch{return '无法读取本机图片生成授权，请检查授权后刷新重试。';}
 }
 function requestOperation(provider:OnlineProvider,phase:'verify'|'execute',input:string|URL,init:RequestInit){
- if(isRetiredProvider(provider))throw denied();
+ if(!providers.includes(provider))throw denied();
  const u=new URL(input),method=(init.method??'GET').toUpperCase();if(u.protocol!=='https:'||u.port||u.username||u.password||u.hash)throw denied();
  if(isVideoProvider(provider))return provider+'.'+officialVideoOperation(provider,phase,u,init);
  let op='';const api=(host:string,path:string)=>u.hostname===host&&u.pathname===path;
@@ -114,14 +112,6 @@ function requestOperation(provider:OnlineProvider,phase:'verify'|'execute',input
  }else if(provider==='openai'){
   if(phase==='verify'&&method==='GET'&&api('api.openai.com','/v1/models/gpt-image-2'))op='verify';
   if(phase==='execute'&&method==='POST'&&(api('api.openai.com','/v1/images/generations')||api('api.openai.com','/v1/images/edits')))op='generate';
- }else if(provider==='cloudflare'){
-  if(u.hostname==='api.cloudflare.com'&&/^\/client\/v4\/accounts\/[a-f0-9]{32}\/ai\//.test(u.pathname)){
-   if(phase==='verify'&&method==='GET'&&u.pathname.endsWith('/ai/models/search')&&u.searchParams.get('search')==='@cf/black-forest-labs/flux-1-schnell')op='verify';
-   if(phase==='execute'&&method==='POST'&&u.pathname.endsWith('/ai/run/@cf/black-forest-labs/flux-1-schnell'))op='generate';
-  }
- }else if(provider==='google_tts'){
-  if(phase==='verify'&&method==='GET'&&api('texttospeech.googleapis.com','/v1/voices'))op='verify';
-  if(phase==='execute'&&method==='POST'&&api('texttospeech.googleapis.com','/v1/text:synthesize'))op='generate';
  }else if(provider==='bailian'){
   const apiHost=u.hostname==='dashscope.aliyuncs.com'||/^ws-[a-z0-9]{8,64}\.cn-beijing\.maas\.aliyuncs\.com$/.test(u.hostname);
   if(apiHost&&method==='GET'&&phase==='verify'&&u.pathname==='/api/v1/models'&&u.searchParams.get('model')==='wan2.6-i2v-flash'&&[...u.searchParams.keys()].every(k=>['model','page_no','page_size'].includes(k)))op='verify';
@@ -134,19 +124,17 @@ function requestOperation(provider:OnlineProvider,phase:'verify'|'execute',input
   if(typeof init.body!=='string'||Buffer.byteLength(init.body)>(provider==='bailian'?28*1024*1024:provider==='openai'?64*1024*1024:16384))throw denied();const b=JSON.parse(init.body);
   if(provider==='bailian'&&!isWanVideoRequest(b))throw denied();
   if(provider==='openai'&&(!openAiImageModels.includes(b.model)||!imageSizes.includes(b.size)||b.output_format!=='png'||b.n!==undefined&&![1,2,4].includes(b.n)||typeof b.prompt!=='string'||b.prompt.length>1200||b.quality!==undefined&&!openAiImageQualities(b.model).includes(b.quality)||b.images!==undefined&&(!Array.isArray(b.images)||!b.images.length||b.images.length>16||b.images.some((r:{image_url?:unknown})=>typeof r.image_url!=='string'||!/^data:image\/(png|jpeg|webp);base64,/.test(r.image_url)))))throw denied();
-  if(provider==='cloudflare'&&(b.steps!==4||typeof b.prompt!=='string'||b.prompt.length>1200))throw denied();
-  if(provider==='google_tts'&&(typeof b.input?.text!=='string'||!b.input.text.trim()||b.audioConfig?.audioEncoding!=='MP3'))throw denied();
   if(provider==='volcengine_tts'&&(typeof b.req_params?.text!=='string'||!b.req_params.text.trim()))throw denied();
  }
  return provider+'.'+op;
 }
 function assertTtsRequest(provider:OnlineProvider,init:RequestInit,limit:Limit){
- if(provider!=='google_tts'&&provider!=='volcengine_tts'||(init.method??'GET').toUpperCase()!=='POST')return;
- const b=JSON.parse(String(init.body)),google=provider==='google_tts',text=google?b.input.text:b.req_params.text,voice=google?b.voice?.name:b.req_params.speaker;
+ if(provider!=='volcengine_tts'||(init.method??'GET').toUpperCase()!=='POST')return;
+ const b=JSON.parse(String(init.body)),text=b.req_params.text,voice=b.req_params.speaker;
  // Existing signed acceptance policies keep their original envelope. Ordinary
  // production can opt into explicit limits without rewriting old ledgers.
- const rules=limit.tts??(google?{maxCharacters:10,voices:['cmn-CN-Standard-A'],languageCodes:['zh-CN']}:{maxCharacters:10,voices:['zh_female_vv_uranus_bigtts'],resourceIds:['seed-tts-2.0']});
- if(Array.from(text).length>rules.maxCharacters||!rules.voices.includes(voice)||(google?!rules.languageCodes?.includes(b.voice?.languageCode):!rules.resourceIds?.includes(new Headers(init.headers).get('X-Api-Resource-Id')??'')))throw denied();
+ const rules=limit.tts??{maxCharacters:10,voices:['zh_female_vv_uranus_bigtts'],resourceIds:['seed-tts-2.0']};
+ if(Array.from(text).length>rules.maxCharacters||!rules.voices.includes(voice)||!rules.resourceIds?.includes(new Headers(init.headers).get('X-Api-Resource-Id')??''))throw denied();
 }
 // Native fetch has HTTP header/body timeouts even without an AbortSignal deadline.
 export const waitForImageResponse:MediaFetcher=(url,init)=>new Promise((resolve,reject)=>{

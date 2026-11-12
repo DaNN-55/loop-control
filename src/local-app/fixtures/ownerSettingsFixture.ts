@@ -43,7 +43,7 @@ export function ownerSettingsFixture(){
   if(path==='log-storage'){if(body?.command==='choose')return Response.json({path:'/tmp/settings-fixture/new-logs'});if(body?.command==='save')Object.assign(storage,{configuredDirectory:body.path,pending:body.path!==storage.activeDirectory});return Response.json(storage);}
   if(path==='media-root')return Response.json({path:'/Volumes/示例素材盘/Media',canInitialize:false,status:'ready',migration:null});
   if(path==='password')return Response.json({ok:true});
-  if(path==='system-status')return Response.json({observedAt:at,automation:{stopped:false,lastError:null,lastScanAt:at,timezone:'Asia/Shanghai',hour:9,n8nRequired:false,backupsEnabled:false},operations:{},plans:[],jobs:[],runtime:null});
+  if(path==='system-status')return Response.json({observedAt:at,automation:{stopped:false,lastError:null,lastScanAt:at,timezone:'Asia/Shanghai',hour:9,backupsEnabled:false},operations:{},plans:[],jobs:[],runtime:null});
   return Response.json({});
  };
  return {request,writes,catalog,connection,versions,get preferences(){return preferences;}};

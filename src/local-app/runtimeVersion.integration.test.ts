@@ -16,7 +16,7 @@ it.skipIf(process.env.LOOP_RUNTIME_VERSION_ACCEPTANCE!=='1'||!readPreparedRuntim
  const f=await workspaceAudioFixture();let ui:import('vite').ViteDevServer|undefined;
  try{await f.authorize();await withWorkspaceWorkerDatabase(f,async database=>{
   const projectRoot=process.cwd(),runtimeRelease=await readPreparedRuntimeRelease!(projectRoot);
-  const config={projectRoot,runtimeRelease,database,applicationDatabase:database,mediaRoot:f.root,mountPath:f.root,minimumFreeBytes:0,visualCommand:[process.execPath,'--version'],actualCostCents:0,concurrency:1,environment:{...process.env,NODE_OPTIONS:'',LOOP_STATE_DIR:join(f.root,'version-worker-state')}};
+  const config={projectRoot,runtimeRelease,database,applicationDatabase:database,mediaRoot:f.root,mountPath:f.root,minimumFreeBytes:0,actualCostCents:0,concurrency:1,environment:{...process.env,NODE_OPTIONS:'',LOOP_STATE_DIR:join(f.root,'version-worker-state')}};
   const service=await startNativeWorkerService(config);
   let handler:ReturnType<typeof createLocalHandler>;
   const server=createServer((q,r)=>handler(q,r));server.listen(0,'127.0.0.1');await once(server,'listening');const origin=`http://127.0.0.1:${(server.address() as {port:number}).port}`;

@@ -375,7 +375,7 @@ describe("账号配置工作区", () => {
   });
 
   it("从生产单进入时只显示定向修复表单", () => {
-    renderWorkspace({ blueprintRepairContext: { blocker: { code: "b_roll_executor_unavailable", detail: "B-roll 缺少适配器", taskType: "prepare_visual_brief" }, blueprintVersionId: blueprint.id, episodeId: "episode-1" } });
+    renderWorkspace({ blueprintRepairContext: { blocker: { code: "b_roll_executor_unavailable", detail: "B-roll 缺少适配器", taskType: "generate_b_roll" }, blueprintVersionId: blueprint.id, episodeId: "episode-1" } });
     expect(screen.getByRole("heading", { name: "修复当前生产单的 B-roll" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "保存并继续当前生产单" })).toBeTruthy();
     expect(screen.queryByRole("complementary", { name: "账号默认配置检查" })).toBeNull();
@@ -387,15 +387,13 @@ describe("账号配置工作区", () => {
     expect(screen.getByRole("heading", { name: "修复当前生产单的 B-roll" })).toBeTruthy();
   });
 
-  it("修复视觉或分镜阻塞时冻结同一个已登记 Harness", async () => {
-    const user = userEvent.setup();
-    const onApplyEpisodeRepair = vi.fn().mockResolvedValue(true);
-    renderWorkspace({ blueprintRepairContext: { blocker: { code: "storyboard_executor_invalid", detail: "分镜规划缺少 Harness", taskType: "prepare_visual_brief" }, blueprintVersionId: blueprint.id, episodeId: "episode-1" }, onApplyEpisodeRepair });
-
-    expect((screen.getByLabelText("Prompt Harness") as HTMLSelectElement).value).toBe(storyboardHarness.id);
-    await user.click(screen.getByRole("button", { name: "保存并继续当前生产单" }));
-
-    await waitFor(() => expect(onApplyEpisodeRepair).toHaveBeenCalledWith(expect.objectContaining({ policy: expect.objectContaining({ executors: expect.objectContaining({ storyboard_planning: expect.objectContaining({ harness_id: storyboardHarness.id }) }) }) })));
+  it("旧规划阻塞只读保留，不再打开Harness修复入口", () => {
+    const onApplyEpisodeRepair=vi.fn();
+    renderWorkspace({blueprintRepairContext:{blocker:{code:"storyboard_executor_invalid",detail:"历史规划阻塞",taskType:"prepare_visual_brief"},blueprintVersionId:blueprint.id,episodeId:"episode-1"},onApplyEpisodeRepair});
+    expect(screen.queryByLabelText("Prompt Harness")).toBeNull();
+    expect(screen.queryByRole("button",{name:"保存并继续当前生产单"})).toBeNull();
+    expect(screen.getByRole("button",{name:"返回生产单"})).toBeTruthy();
+    expect(onApplyEpisodeRepair).not.toHaveBeenCalled();
   });
 });
 

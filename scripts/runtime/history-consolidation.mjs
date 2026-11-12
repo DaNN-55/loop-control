@@ -3,12 +3,12 @@ import{runtimeContext,projectRoot,root}from'./environment.mjs';
 import{keychainState,runtimeSecret}from'./keychain.mjs';import{putNamedSecret}from'./secrets.mjs';
 import{archiveCopies}from'../storage/native-backup-format.mjs';
 import{readFileSync,writeFileSync,readdirSync,lstatSync,existsSync,mkdirSync,copyFileSync,constants}from'node:fs';
-import{join,dirname,relative,isAbsolute}from'node:path';import{createHash}from'node:crypto';import{DatabaseSync}from'node:sqlite';
-const hash=b=>createHash('sha256').update(b).digest('hex'),lit=s=>"'"+String(s).replaceAll("'","''")+"'",ident=s=>'"'+s.replaceAll('"','""')+'"';
+import{join,dirname,relative,isAbsolute}from'node:path';import{createHash}from'node:crypto';
+const hash=b=>createHash('sha256').update(b).digest('hex'),lit=s=>"'"+String(s).replaceAll("'","''")+"'";
 export const parseHistoryJson=text=>JSON.parse(text,(_key,value,context)=>typeof value==='number'?JSON.rawJSON(context.source):value);
 const canonical=v=>JSON.isRawJSON(v)?v:Array.isArray(v)?v.map(canonical):v&&typeof v==='object'?Object.fromEntries(Object.keys(v).sort().map(k=>[k,canonical(v[k])])):v;
 const json=v=>JSON.stringify(canonical(v));
-const secretKey=/^(?!.*(?:hash|digest|reference|secret_ref|credential_ref|lease_token)$)(?:.*password|.*secret|.*api_?key|access_token|refresh_token|id_token|encryption_?key|SUPABASE_SERVICE_ROLE_KEY|N8N_ENCRYPTION_KEY|OPENAI_API_KEY|authorization|cookie)$/i;
+const secretKey=/^(?!.*(?:hash|digest|reference|secret_ref|credential_ref|lease_token)$)(?:.*password|.*secret|.*api_?key|access_token|refresh_token|id_token|.*encryption_?key|.*service_role_?key|authorization|cookie)$/i;
 function rememberSecret(name,value,changes){const reference=putNamedSecret(name,value);changes?.push({secret:value,reference});return reference;}
 export function protectHistory(value,name,changes){
  if(JSON.isRawJSON(value))return value;
@@ -29,7 +29,7 @@ export function protectedText(bytes,name,replacements=[]){
   return Buffer.from(next);
  }catch(error){if(!(error instanceof SyntaxError))throw error;}
  function replaceSecret(secret,key){const reference=putNamedSecret('history/'+name+'/'+key,secret),marker='keychain:'+reference;if(text.includes(marker))throw Error('Secret marker collision');replacements.push({marker,reference,encoding:'raw'});return marker;}
- let next=text.replace(/^([ \t]*(?:export[ \t]+)?([A-Z][A-Z0-9_]*(?:KEY|SECRET|TOKEN|PASSWORD))[ \t]*=[ \t]*)([^\r\n]+)$/gm,(all,prefix,key,value)=>{const v=value.trim().replace(/^(["'])(.*)\1$/,'$2');if(['<Supabase publishable key>','<仅限本机的 service role key>'].includes(v)||!v||v.startsWith('${')||v.startsWith('keychain:')||/^(example|your_|replace_|changeme)/i.test(v))return all;return prefix+value.replace(v,replaceSecret(v,key));});
+ let next=text.replace(/^([ \t]*(?:export[ \t]+)?([A-Z][A-Z0-9_]*(?:KEY|SECRET|TOKEN|PASSWORD))[ \t]*=[ \t]*)([^\r\n]+)$/gm,(all,prefix,key,value)=>{const v=value.trim().replace(/^(["'])(.*)\1$/,'$2');if(/^<[^<>]+(?:publishable|service role) key>$/.test(v)||!v||v.startsWith('${')||v.startsWith('keychain:')||/^(example|your_|replace_|changeme)/i.test(v))return all;return prefix+value.replace(v,replaceSecret(v,key));});
  next=next.replace(/\beyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\b|\bsk-[A-Za-z0-9_-]{20,}\b/g,value=>replaceSecret(value,'embedded-'+hash(value).slice(0,12)));return Buffer.from(next);
 }
 function walk(base,{skip=[]}={}){const files=[];function visit(p){for(const n of readdirSync(p)){const f=join(p,n),s=lstatSync(f);if(s.isSymbolicLink())continue;if(s.isDirectory()){if(!skip.includes(n))visit(f);}else if(s.isFile())files.push(f);}}visit(base);return files;}
@@ -53,9 +53,8 @@ export async function consolidateHistory(options={}){
  if(options.cloud===true)throw Error('云端迁移已完成并停用，当前整合只读取本地历史来源。');
  const seen=new Set();for(const path of all.filter(p=>p.endsWith('.dump'))){const data=readFileSync(path),id=hash(data);source(id,'postgres',relative(projectRoot,path),{lastKnownPath:relative(projectRoot,path)});if(seen.has(id))continue;seen.add(id);try{const text=c.docker(['exec','-i',c.container,'pg_restore','--data-only','--file','-'],data),tables={};for(const copy of archiveCopies(text))tables[copy.table]=decodeCopy(copy,schema[copy.table]);ingest(id,tables);}catch(error){report.errors.push({path:relative(projectRoot,path),reason:'Unsupported/corrupt historical archive; not executed'});} }
  for(const path of all.filter(p=>p.includes('/backups/')&&p.endsWith('.json'))){let m;try{m=parseHistoryJson(readFileSync(path,'utf8'));}catch{continue;}
-  if(m.tables&&Object.values(m.tables).every(Array.isArray)){const id=hash(readFileSync(path));source(id,'n8n-snapshot',relative(projectRoot,path),{createdAt:m.snapshotStartedAt});ingest(id,Object.fromEntries(Object.entries(m.tables).map(([k,v])=>['public.'+k,v])));}
+  if(m.tables&&Object.values(m.tables).every(Array.isArray)){const id=hash(readFileSync(path));source(id,'table-snapshot',relative(projectRoot,path),{createdAt:m.snapshotStartedAt});ingest(id,Object.fromEntries(Object.entries(m.tables).map(([k,v])=>['public.'+k,v])));}
  }
- const sqlite=join(projectRoot,'.loop-control/retired/n8n/runtime/.n8n/database.sqlite');if(!options.filesOnly&&existsSync(sqlite)){const id=hash(readFileSync(sqlite));source(id,'n8n-runtime','n8n 原执行记录');const db=new DatabaseSync(sqlite,{readOnly:true}),tables={};for(const t of db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'").all()){const rows=db.prepare('SELECT * FROM '+ident(t.name)).all();tables['n8n.'+t.name]=rows.map(r=>Object.fromEntries(Object.entries(r).map(([k,v])=>[k,v instanceof Uint8Array?{$binaryBase64:Buffer.from(v).toString('base64')}:typeof v==='bigint'?v.toString():v])));}tables['n8n.schema']=db.prepare("SELECT type,name,tbl_name,sql FROM sqlite_master ORDER BY type,name").all();if(db.prepare("SELECT count(*) n FROM sqlite_master WHERE name='sqlite_sequence'").get().n)tables['n8n.sequence']=db.prepare('SELECT * FROM sqlite_sequence').all();db.close();ingest(id,tables);}
  // Content store is part of the current project, indexed by DB and independent of sources.
  const content=join(root,'history/content');mkdirSync(content,{recursive:true,mode:0o700});const verifiedContent=new Set(),fileRows=[],protections=new Map(JSON.parse(c.sql("SELECT coalesce(jsonb_agg(to_jsonb(p)),'[]') FROM local_identity.history_file_protections p")).map(p=>[p.original_sha256,p]));
  function flushFiles(){if(!fileRows.length)return;c.sql(`BEGIN;CREATE TEMP TABLE history_file_stage(source_id text,logical_path text,sha256 text,bytes bigint,kind text,metadata jsonb)ON COMMIT DROP;COPY history_file_stage FROM stdin;\n${fileRows.splice(0).join('\n')}\n\\.\nINSERT INTO local_identity.history_files SELECT DISTINCT * FROM history_file_stage ON CONFLICT(source_id,logical_path,sha256)DO UPDATE SET metadata=local_identity.history_files.metadata||excluded.metadata;COMMIT;`);}
@@ -76,8 +75,6 @@ export async function consolidateHistory(options={}){
  for(const name of options.filesOnly||!existsSync(join(projectRoot,'.loop-control/archives/worktrees'))?[]:readdirSync(join(projectRoot,'.loop-control/archives/worktrees'))){const archive=join(projectRoot,'.loop-control/archives/worktrees',name);if(!lstatSync(archive).isDirectory())continue;const id=hash('source-tree:'+name);source(id,'source-tree',name);
   for(const p of walk(archive,{skip:['node_modules','.git','.loop-control','dist','.venv-whisperx','.cache']})){const logical=relative(archive,p),current=join(projectRoot,logical);if(existsSync(current)&&lstatSync(current).isFile()&&hash(readFileSync(p))===hash(readFileSync(current)))continue;addFile(id,p,logical,'source-difference',{currentPath:logical});}
  }
- // Retired n8n non-cache files (except the parsed SQLite and existing backups) stay inspectable.
- const retired=join(projectRoot,'.loop-control/retired/n8n');if(!options.filesOnly&&existsSync(retired)){const id=hash('retired-n8n-files');source(id,'retired-files','n8n 独有文件');for(const p of walk(retired,{skip:['backups','.cache']})){if(p===sqlite||p.endsWith('-wal')||p.endsWith('-shm'))continue;addFile(id,p,relative(retired,p),'retired-file');}}
  for(const batch of options.supplemental??[]){source(batch.id,batch.kind,batch.label,batch.metadata??{});for(const f of batch.files){const added=addFile(batch.id,f.path,f.logicalPath,f.kind??'historical-evidence',f.metadata??{});report.files.push({source:batch.id,path:f.logicalPath,sha256:added.sha,state:'history-integrated'});}}
  flushFiles();
  c.sql(`UPDATE local_identity.import_record SET media_source_roots=ARRAY(SELECT DISTINCT unnest(media_source_roots||ARRAY[${[...report.mediaRoots].map(lit).join(',')}]::text[]))`);

@@ -14,3 +14,5 @@ describe("可修复目标", () => {
     expect(repairTargetForBlocker({ code: "legacy", detail: "旁白适配器未配置。" })).toEqual({ kind: "media", key: "narration" });
   });
 });
+
+it("旧规划阻塞不会重新打开执行器修复入口",()=>{expect(repairTargetForBlocker({action:"edit_blueprint",capability:"storyboard_planning",taskType:"draft_storyboard",code:"configuration",detail:"旧分镜"})).toBeNull();});

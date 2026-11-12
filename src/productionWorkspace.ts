@@ -22,7 +22,6 @@ export interface ProductionWorkspace {
 export const productionWorkspaceFields:Record<string,string[]>={
  prepareWorkspaceCall:['episodeId','workspaceId','expectedRevision','callCommand','callData'],
  confirmWorkspaceCall:['episodeId','workspaceId','expectedRevision','confirmationId','reservationCents'],
- saveWorkspacePlanningSelection:['episodeId','selection','expectedSelectionRevision'],
  resumeWorkspaceEditing:['episodeId','workspaceId','expectedRevision','expectedScriptRevisionId','expectedProjectSha256'],
  adoptLegacyWorkspace:['episodeId','artifactId','savedProjectSha256','expectedSourceSha256','expectedScriptRevisionId','reviewPackageId'],
  authorizeWorkspacePreparation:['episodeId','workspaceId','expectedRevision','enabled'],
@@ -48,8 +47,7 @@ export const productionWorkspaceFields:Record<string,string[]>={
  generateWorkspaceImage:['selection','videoSettings','firstFrameFit','episodeId','workspaceId','expectedRevision','clipId','materialRevisionId','prompt','durationSeconds','reservationCents'],
  fillWorkspaceImageResult:['episodeId','workspaceId','expectedRevision','taskId'],
  matchWorkspaceImage:['episodeId','workspaceId','expectedRevision','clipId','materialRevisionId','usage','durationSeconds','fit','focusX','focusY'],
- replanWorkspace:['planningTaskId','episodeId','workspaceId','expectedRevision','reviewPackageId','expectedScriptRevisionId','reason','legacyDecision'],
- retryWorkspacePlanning:['episodeId','expectedScriptRevisionId','taskId'],
+ replanWorkspace:['episodeId','workspaceId','expectedRevision','reviewPackageId','expectedScriptRevisionId','reason','legacyDecision'],
  prepareWorkspace:['episodeId','reviewPackageId','expectedScriptRevisionId','legacyDecision'],
  matchWorkspaceMaterial:['episodeId','workspaceId','expectedRevision','clipId','materialRevisionId'],
  openWorkspaceStudio:['episodeId','workspaceId','expectedRevision'],

@@ -15,7 +15,7 @@ afterEach(async () => {
 });
 
 describe("本地服务安全停止", () => {
-  it("npm stop 只停止记录的原生应用，旧 n8n 停止入口已退役", () => {
+  it("npm stop 只停止记录的原生应用，不调用已退役服务入口", () => {
     const { scripts } = JSON.parse(readFileSync(join(projectRoot, "package.json"), "utf8"));
     expect(scripts.stop).toBe("node scripts/stop.mjs");
     expect(scripts["legacy:stop"]).toBeUndefined();
@@ -25,15 +25,15 @@ describe("本地服务安全停止", () => {
   it("只复用记录中身份匹配的服务，并在部分服务退出时保留其余记录", () => {
     const directory = mkdtempSync(join(tmpdir(), "loop-control-record-merge-"));
     const recordPath = join(directory, "services.json");
-    const n8n = { name: "n8n", pid: 11111, port: "5678", commandIdentity: "n8n/bin/n8n" };
+    const worker = { name: "worker", pid: 11111, port: "5678", commandIdentity: "worker/bin/worker" };
     const consoleService = { name: "控制台", pid: 22222, port: "5173", commandIdentity: "node_modules/vite/bin/vite.js" };
-    writeServiceRecord([n8n, consoleService], recordPath);
+    writeServiceRecord([worker, consoleService], recordPath);
 
-    expect(verifiedRecordedService({ name: "n8n", port: "5678", commandIdentity: "n8n/bin/n8n" }, recordPath, () => ({ valid: true }))).toEqual(n8n);
-    expect(verifiedRecordedService({ name: "n8n", port: "5678", commandIdentity: "foreign" }, recordPath, () => ({ valid: true }))).toBeNull();
+    expect(verifiedRecordedService({ name: "worker", port: "5678", commandIdentity: "worker/bin/worker" }, recordPath, () => ({ valid: true }))).toEqual(worker);
+    expect(verifiedRecordedService({ name: "worker", port: "5678", commandIdentity: "foreign" }, recordPath, () => ({ valid: true }))).toBeNull();
 
     removeServiceRecordIfOwned([consoleService.pid], recordPath);
-    expect(readServiceRecord(recordPath)?.services).toEqual([n8n]);
+    expect(readServiceRecord(recordPath)?.services).toEqual([worker]);
     rmSync(directory, { recursive: true, force: true });
   });
 
@@ -73,7 +73,7 @@ describe("本地服务安全停止", () => {
     const identity = "loop-control-orphan-fixture";
     const { child, port } = await startListeningProcess(projectRoot, identity);
     const discover = () => discoverProjectServices({
-      definitions: [{ commandIdentity: identity, name: "n8n" }],
+      definitions: [{ commandIdentity: identity, name: "worker" }],
       listeningPortsForPid: () => [port],
       processes: [{ command: `${process.execPath} fixture ${identity}`, pid: child.pid }],
       workingDirectoryForPid: () => projectRoot,
@@ -81,7 +81,7 @@ describe("本地服务安全停止", () => {
 
     const result = await stopRecordedServices({ discover, recordPath });
 
-    expect(result.stopped).toEqual([expect.objectContaining({ name: "n8n", pid: child.pid, port, reason: "discovered-project-process" })]);
+    expect(result.stopped).toEqual([expect.objectContaining({ name: "worker", pid: child.pid, port, reason: "discovered-project-process" })]);
     await waitForExit(child);
     expect(processIsAlive(child.pid)).toBe(false);
     rmSync(directory, { recursive: true, force: true });

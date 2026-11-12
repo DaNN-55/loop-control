@@ -59,7 +59,7 @@ describe("受控媒体执行器", () => {
       expect(await realProbeMp3(outputPath)).toBeGreaterThanOrEqual(minimumDurationSeconds);
       return new Uint8Array(await readFile(outputPath));
     };
-    const common = { fetcher: vi.fn(), googleTtsApiKey: undefined, pexelsApiKey: undefined, validateMp4: realValidateMp4, probeMp3: realProbeMp3, extractMp3: realExtractMp3, trimMp3: vi.fn(), trimMp4: realTrimMp4 };
+    const common = { fetcher: vi.fn(), pexelsApiKey: undefined, validateMp4: realValidateMp4, probeMp3: realProbeMp3, extractMp3: realExtractMp3, trimMp3: vi.fn(), trimMp4: realTrimMp4 };
     const sourceArtifact = { artifactType: "source_video", relativePath: "..alpha series/episode-1/materials/source.mp4", sha256: "a".repeat(64), fileSize: 1 };
     const clipPackage = await packageFor({
       task: { id: "task-real-clip", type: "generate_a_roll", attempt: 0, budgetLimitCents: 0, maxAttempts: 1, provider: "ffmpeg", model: "ffmpeg", promptVersion: "shot-clip-v1" },
@@ -86,7 +86,7 @@ describe("受控媒体执行器", () => {
   it("只用冻结的火山旁白配置写入冻结输出路径", async () => {
     const taskPackage = await packageFor({});
     const fetcher = vi.fn().mockResolvedValue(new Response("data: "+JSON.stringify({code:0,data:Buffer.from("mp3-data").toString("base64")})+"\n", {status:200}));
-    const result = JSON.parse(await executeControlledMediaTask({ taskPackage, fetcher, googleTtsApiKey: undefined, volcengineTtsApiKey: "synthetic-active-key", pexelsApiKey: undefined, validateMp4: vi.fn(), probeMp3: vi.fn().mockResolvedValue(2), extractMp3: vi.fn(), trimMp3: vi.fn() }));
+    const result = JSON.parse(await executeControlledMediaTask({ taskPackage, fetcher, volcengineTtsApiKey: "synthetic-active-key", pexelsApiKey: undefined, validateMp4: vi.fn(), probeMp3: vi.fn().mockResolvedValue(2), extractMp3: vi.fn(), trimMp3: vi.fn() }));
     expect(result.status).toBe("completed");
     await expect(readFile(join(taskPackage.assets.allowedRoot, taskPackage.output.relativePath), "utf8")).resolves.toBe("mp3-data");
   });
@@ -97,7 +97,7 @@ describe("受控媒体执行器", () => {
     const taskPackage = await packageFor({ acousticAlignment: { confirmedText, textFingerprint: createHash("sha256").update(confirmedText).digest("hex") } });
     const fetcher = vi.fn().mockResolvedValue(new Response("data: "+JSON.stringify({code:0,data:fixedAudioSample.toString("base64")})+"\n", {status:200}));
     const executeWhisperX = vi.fn().mockRejectedValue(new Error("口播任务不应执行声学对齐"));
-    const result = JSON.parse(await executeControlledMediaTask({ taskPackage, fetcher, googleTtsApiKey: undefined, volcengineTtsApiKey: "synthetic-active-key", pexelsApiKey: undefined, validateMp4: vi.fn(), probeMp3: vi.fn().mockResolvedValue(2), extractMp3: vi.fn(), trimMp3: vi.fn(), executeWhisperX }));
+    const result = JSON.parse(await executeControlledMediaTask({ taskPackage, fetcher, volcengineTtsApiKey: "synthetic-active-key", pexelsApiKey: undefined, validateMp4: vi.fn(), probeMp3: vi.fn().mockResolvedValue(2), extractMp3: vi.fn(), trimMp3: vi.fn(), executeWhisperX }));
     expect(result).not.toHaveProperty("acousticAlignment");
     expect(validateWorkerResult(result, taskPackage).status).toBe("completed");
     expect(executeWhisperX).not.toHaveBeenCalled();
@@ -106,7 +106,7 @@ describe("受控媒体执行器", () => {
   it("火山语音产物无法探测为音频时不上报成功", async () => {
     const taskPackage = await packageFor({});
     const fetcher = vi.fn().mockResolvedValue(new Response("data: "+JSON.stringify({code:0,data:Buffer.from("not-an-mp3").toString("base64")})+"\n", {status:200}));
-    await expect(executeControlledMediaTask({ taskPackage, fetcher, googleTtsApiKey: undefined, volcengineTtsApiKey: "synthetic-active-key", pexelsApiKey: undefined, validateMp4: vi.fn(), probeMp3: async () => { throw new Error("无法播放"); }, extractMp3: vi.fn(), trimMp3: vi.fn() })).rejects.toThrow("无法播放");
+    await expect(executeControlledMediaTask({ taskPackage, fetcher, volcengineTtsApiKey: "synthetic-active-key", pexelsApiKey: undefined, validateMp4: vi.fn(), probeMp3: async () => { throw new Error("无法播放"); }, extractMp3: vi.fn(), trimMp3: vi.fn() })).rejects.toThrow("无法播放");
   });
 
   it("拒绝通过输出目录符号链接写出资产根目录", async () => {
@@ -115,7 +115,7 @@ describe("受控媒体执行器", () => {
     directories.push(outside);
     await symlink(outside, join(taskPackage.assets.allowedRoot, "episodes"));
     const fetcher = vi.fn().mockResolvedValue(new Response("data: "+JSON.stringify({code:0,data:Buffer.from("mp3-data").toString("base64")})+"\n", {status:200}));
-    await expect(executeControlledMediaTask({ taskPackage, fetcher, googleTtsApiKey: undefined, volcengineTtsApiKey: "synthetic-active-key", pexelsApiKey: undefined, validateMp4: vi.fn(), probeMp3: vi.fn().mockResolvedValue(2), extractMp3: vi.fn(), trimMp3: vi.fn() })).rejects.toThrow("符号链接");
+    await expect(executeControlledMediaTask({ taskPackage, fetcher, volcengineTtsApiKey: "synthetic-active-key", pexelsApiKey: undefined, validateMp4: vi.fn(), probeMp3: vi.fn().mockResolvedValue(2), extractMp3: vi.fn(), trimMp3: vi.fn() })).rejects.toThrow("符号链接");
   });
 
   it("拒绝将非 MP4 的 Pexels 下载伪装成视频产物", async () => {
@@ -128,7 +128,7 @@ describe("受控媒体执行器", () => {
     const fetcher = vi.fn()
       .mockResolvedValueOnce(new Response(JSON.stringify({ videos: [{ id: 1, duration: 3, video_files: [{ link: "https://cdn.test/video.mp4", width: 1080, height: 1920, file_type: "video/mp4" }] }] }), { status: 200 }))
       .mockResolvedValueOnce(new Response("not-video", { status: 200, headers: { "content-type": "text/plain" } }));
-    await expect(executeControlledMediaTask({ taskPackage: rootPackage, fetcher, googleTtsApiKey: undefined, pexelsApiKey: "pexels-key", validateMp4: vi.fn(), probeMp3: vi.fn(), extractMp3: vi.fn(), trimMp3: vi.fn() })).rejects.toThrow("不是 MP4");
+    await expect(executeControlledMediaTask({ taskPackage: rootPackage, fetcher, pexelsApiKey: "pexels-key", validateMp4: vi.fn(), probeMp3: vi.fn(), extractMp3: vi.fn(), trimMp3: vi.fn() })).rejects.toThrow("不是 MP4");
   });
 
   it("返回的 MP4 无法播放时不上报成功", async () => {
@@ -141,7 +141,7 @@ describe("受控媒体执行器", () => {
     const fetcher = vi.fn()
       .mockResolvedValueOnce(new Response(JSON.stringify({ videos: [{ id: 1, duration: 3, video_files: [{ link: "https://cdn.test/video.mp4", width: 1080, height: 1920, file_type: "video/mp4" }] }] }), { status: 200 }))
       .mockResolvedValueOnce(new Response("not-playable", { status: 200, headers: { "content-type": "video/mp4" } }));
-    await expect(executeControlledMediaTask({ taskPackage, fetcher, googleTtsApiKey: undefined, pexelsApiKey: "pexels-key", validateMp4: async () => { throw new Error("无法播放"); }, probeMp3: vi.fn(), extractMp3: vi.fn(), trimMp3: vi.fn() })).rejects.toThrow("无法播放");
+    await expect(executeControlledMediaTask({ taskPackage, fetcher, pexelsApiKey: "pexels-key", validateMp4: async () => { throw new Error("无法播放"); }, probeMp3: vi.fn(), extractMp3: vi.fn(), trimMp3: vi.fn() })).rejects.toThrow("无法播放");
   });
 
   it("按冻结入点和出点执行视频裁剪，并校验 MP4 产物", async () => {
@@ -155,7 +155,7 @@ describe("受控媒体执行器", () => {
     const trimMp4 = vi.fn().mockResolvedValue(new Uint8Array(Buffer.from("trimmed-mp4")));
     const validateMp4 = vi.fn().mockResolvedValue(undefined);
 
-    const result = JSON.parse(await executeControlledMediaTask({ taskPackage, fetcher: vi.fn(), googleTtsApiKey: undefined, pexelsApiKey: undefined, validateMp4, probeMp3: vi.fn(), extractMp3: vi.fn(), trimMp3: vi.fn(), trimMp4 }));
+    const result = JSON.parse(await executeControlledMediaTask({ taskPackage, fetcher: vi.fn(), pexelsApiKey: undefined, validateMp4, probeMp3: vi.fn(), extractMp3: vi.fn(), trimMp3: vi.fn(), trimMp4 }));
 
     expect(result).toMatchObject({ status: "completed", artifacts: [{ artifactType: "a_roll_video", fileSize: 11 }] });
     expect(trimMp4).toHaveBeenCalledWith(join(taskPackage.assets.allowedRoot, "episodes/episode-1/materials/source.mp4"), 1.25, 4.25);
@@ -175,7 +175,7 @@ describe("受控媒体执行器", () => {
     const trimMp4Segments = vi.fn().mockResolvedValue(new Uint8Array(Buffer.from("combined-mp4")));
     const validateMp4 = vi.fn().mockResolvedValue(undefined);
 
-    const result = JSON.parse(await executeControlledMediaTask({ taskPackage, fetcher: vi.fn(), googleTtsApiKey: undefined, pexelsApiKey: undefined, validateMp4, probeMp3: vi.fn(), extractMp3: vi.fn(), trimMp3: vi.fn(), trimMp4Segments }));
+    const result = JSON.parse(await executeControlledMediaTask({ taskPackage, fetcher: vi.fn(), pexelsApiKey: undefined, validateMp4, probeMp3: vi.fn(), extractMp3: vi.fn(), trimMp3: vi.fn(), trimMp4Segments }));
 
     expect(result.status).toBe("completed");
     expect(trimMp4Segments).toHaveBeenCalledWith(join(taskPackage.assets.allowedRoot, "episodes/episode-1/materials/source.mp4"), segments);
@@ -195,7 +195,7 @@ describe("受控媒体执行器", () => {
       .mockResolvedValueOnce(new Response("mp4-data", { status: 200, headers: { "content-type": "video/mp4" } }));
     const validateMp4 = vi.fn().mockResolvedValue(undefined);
 
-    const result = JSON.parse(await executeControlledMediaTask({ taskPackage, fetcher, googleTtsApiKey: undefined, pexelsApiKey: "pexels-key", validateMp4, probeMp3: vi.fn(), extractMp3: vi.fn(), trimMp3: vi.fn() }));
+    const result = JSON.parse(await executeControlledMediaTask({ taskPackage, fetcher, pexelsApiKey: "pexels-key", validateMp4, probeMp3: vi.fn(), extractMp3: vi.fn(), trimMp3: vi.fn() }));
 
     expect(result).toMatchObject({ status: "completed", artifacts: [{ artifactType: "b_roll_asset", relativePath: taskPackage.output.relativePath, fileSize: 8 }] });
     expect(validateMp4).toHaveBeenCalledWith(expect.any(String), 2);
@@ -211,7 +211,7 @@ describe("受控媒体执行器", () => {
       media: { adapter: "ffmpeg_extract_audio", embeddedAudio: { sourceRelativePath: "episodes/episode-1/a-roll/source.mp4", durationSeconds: 4 } },
     });
     const extractMp3 = vi.fn().mockResolvedValue(new Uint8Array(Buffer.from("mp3-data")));
-    const result = JSON.parse(await executeControlledMediaTask({ taskPackage, fetcher: vi.fn(), googleTtsApiKey: undefined, pexelsApiKey: undefined, validateMp4: vi.fn(), probeMp3: vi.fn().mockResolvedValue(4), extractMp3, trimMp3: vi.fn() }));
+    const result = JSON.parse(await executeControlledMediaTask({ taskPackage, fetcher: vi.fn(), pexelsApiKey: undefined, validateMp4: vi.fn(), probeMp3: vi.fn().mockResolvedValue(4), extractMp3, trimMp3: vi.fn() }));
     expect(result.status).toBe("completed");
     expect(extractMp3).toHaveBeenCalledWith(join(taskPackage.assets.allowedRoot, "episodes/episode-1/a-roll/source.mp4"), 4);
     await expect(readFile(join(taskPackage.assets.allowedRoot, taskPackage.output.relativePath), "utf8")).resolves.toBe("mp3-data");
@@ -229,7 +229,7 @@ describe("受控媒体执行器", () => {
       .mockResolvedValueOnce(new Response("mp3-data", { status: 200, headers: { "content-type": "audio/mpeg" } }));
 
     const trimMp3 = vi.fn().mockResolvedValue(new Uint8Array(Buffer.from("trimmed-mp3")));
-    const result = JSON.parse(await executeControlledMediaTask({ taskPackage, fetcher, googleTtsApiKey: undefined, pexelsApiKey: undefined, freesoundApiKey: "freesound-key", validateMp4: vi.fn(), probeMp3: vi.fn().mockResolvedValue(4), extractMp3: vi.fn(), trimMp3 }));
+    const result = JSON.parse(await executeControlledMediaTask({ taskPackage, fetcher, pexelsApiKey: undefined, freesoundApiKey: "freesound-key", validateMp4: vi.fn(), probeMp3: vi.fn().mockResolvedValue(4), extractMp3: vi.fn(), trimMp3 }));
     expect(result).toMatchObject({ status: "completed", audioDurationSeconds: 4, mediaSource: { provider: "freesound", sourceId: 9, creator: "creator", license: "Creative Commons 0" } });
     expect(trimMp3).toHaveBeenCalledWith(new Uint8Array(Buffer.from("mp3-data")), 4);
     await expect(readFile(join(taskPackage.assets.allowedRoot, taskPackage.output.relativePath), "utf8")).resolves.toBe("trimmed-mp3");
@@ -252,6 +252,6 @@ it('reads a fingerprinted first frame from a legal ..alpha series before generat
  });
  await mkdir(join(taskPackage.assets.allowedRoot,'..alpha series/episode-1'),{recursive:true});await writeFile(join(taskPackage.assets.allowedRoot,frame.relativePath),image);
  const fetcher=vi.fn().mockResolvedValueOnce(new Response(JSON.stringify({output:{task_id:'controlled-task'}}))).mockResolvedValueOnce(new Response(JSON.stringify({output:{task_status:'SUCCEEDED',video_url:'https://dashscope-result-bj.oss-cn-beijing.aliyuncs.com/video.mp4'}}))).mockResolvedValueOnce(new Response('controlled-video',{headers:{'Content-Type':'video/mp4'}}));
- const result=JSON.parse(await executeControlledMediaTask({taskPackage,fetcher,bailianCredentials:'test-only-key',reserveWan:async()=>({new:true}),recordWanSubmission:async()=>{},googleTtsApiKey:undefined,pexelsApiKey:undefined,validateMp4:async()=>{},probeMp3:vi.fn(),extractMp3:vi.fn(),trimMp3:vi.fn()}));
+ const result=JSON.parse(await executeControlledMediaTask({taskPackage,fetcher,bailianCredentials:'test-only-key',reserveWan:async()=>({new:true}),recordWanSubmission:async()=>{},pexelsApiKey:undefined,validateMp4:async()=>{},probeMp3:vi.fn(),extractMp3:vi.fn(),trimMp3:vi.fn()}));
  expect(result.status).toBe('completed');expect(await readFile(join(taskPackage.assets.allowedRoot,taskPackage.output.relativePath),'utf8')).toBe('controlled-video');
 });

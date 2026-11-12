@@ -1,4 +1,3 @@
-import {parseProductionScript} from '../reviews/productionScript';
 import {randomUUID,createHash} from 'node:crypto';
 import assert from 'node:assert/strict';
 import {csrfFor} from './sessions';
@@ -22,7 +21,6 @@ export async function formalWorkflowFixture(options:{origin?:string;controlled?:
  const episodeId=created.body.id;
  const send=(command:string,data:Record<string,unknown>={})=>f.request(command,{episodeId,...data});
  const chosenSend=(command:string,data:Record<string,unknown>={})=>options.controlled?(base as Awaited<ReturnType<typeof narrationFixture>>).chosenRequest(command,{episodeId,...data}):send(command,data);
- if(options.configurePlanning!==false&&options.scriptText&&!parseProductionScript(options.scriptText)){const selected=await send('saveWorkspacePlanningSelection',{expectedSelectionRevision:0,selection:{provider:'codex',adapter:'codex',model:'gpt-5.6-luna',harnessId:harness,budgetCents:0,allowedTools:['read','write']}});assert.equal(selected.status,200,JSON.stringify(selected.body));}
  if(options.blank)return{...f,assetRoot,controlled:options.controlled&&'execute'in base?base as Awaited<ReturnType<typeof narrationFixture>>:null,mountPath:volume.mountPath,send,chosenSend,newEpisode:episodeId,main:null};
  const imported=await send('importMaterial',{sourceKind:'file',sourcePath:'formal.md',materialType:'script',materialPurpose:'main_script',mimeType:'text/markdown',isMainScript:true,contentBase64:Buffer.from(options.scriptText??productionScriptTemplate).toString('base64')});assert.equal(imported.status,200,JSON.stringify(imported.body));
  return{...f,assetRoot,controlled:options.controlled&&'execute'in base?base as Awaited<ReturnType<typeof narrationFixture>>:null,mountPath:volume.mountPath,send,chosenSend,newEpisode:episodeId,main:imported.body.id};

@@ -1,4 +1,3 @@
-import {isRetiredProvider,retiredProviderMessage} from './providerLifecycle.js';
 import {wanReferenceModel,wanReferenceMode,wanVideoModel,wanVideoModels} from '../wanVideoModels.js';
 import {imageSizes,openAiImageModels,openAiEnhancedImageModels,openAiImageQualities} from '../imageGeneration.js';
 import type {VideoGenerationMode} from '../videoVisualInputs.js';
@@ -87,7 +86,7 @@ export interface RegisteredAdapterCapability {
 export interface RegisteredAdapterChoice extends RegisteredAdapterCapability {
   adapter: string;
   connection: { kind: "none" } | { kind: "owner_managed"; type: string; endpoint?: string };
-  execution: { kind: "codex" | "controlled_media" | "ffmpeg" | "openchatcut" | "whisperx"; safetyLimit: number };
+  execution: { kind: "controlled_media" | "ffmpeg" | "openchatcut" | "whisperx"; safetyLimit: number };
   executionPath: RegisteredExecutionPath;
   identityKey: string;
   provider: string;
@@ -161,11 +160,6 @@ const legacyManifest: readonly RegisteredAdapterDefinition[] = [
   { production: [{capability: 'video', label: '百炼万相视频', mode: 'generation', inputModes: ['text', 'first_frame'], constraints: {prompt: {maxLength: 1500}, durationSeconds: {min: 2, max: 15, integer: true}, firstFrame: {required: true, maxBytes: 20*1024*1024, mimeTypes: ['image/png', 'image/jpeg', 'image/webp', 'image/bmp']}, resolutions: ['720P','1080P'], aspectRatios: ['adaptive']}}], provider: "bailian", adapter: "wan_video", executionPath: "external", connection: { kind: "owner_managed", type: "bailian_video_api", endpoint: "https://dashscope.aliyuncs.com" }, execution: { kind: "controlled_media", safetyLimit: 1 }, capabilities: [
     { capability: "a_roll_generation", configurationFields: ["credential_ref", "max_attempts"], modelCatalog: Object.keys(wanVideoModels), presetCatalog: ["wan-video-v1"] },
     { capability: "b_roll_generation", configurationFields: ["credential_ref", "max_attempts"], modelCatalog: Object.keys(wanVideoModels), presetCatalog: ["wan-video-v1"] },
-  ] },
-  { provider: "codex", adapter: "codex", executionPath: "internal", connection: { kind: "none" }, execution: { kind: "codex", safetyLimit: 1 }, capabilities: [
-    { capability: "script_writing", configurationFields: ["model"], modelCatalog: [], presetCatalog: [] },
-    { capability: "visual_planning", configurationFields: ["model"], modelCatalog: [], presetCatalog: [] },
-    { capability: "storyboard_planning", configurationFields: ["model", "prompt_harness"], modelCatalog: [], presetCatalog: [] },
   ] },
   { production: [{capability: 'image', label: 'OpenAI Images', mode: 'generation', modelConstraints: Object.fromEntries(openAiEnhancedImageModels.map(model=>[model,{qualities:openAiImageQualities(model)}])), inputModes: ['text', 'reference_images'], constraints: {sizes: imageSizes, qualities: ['auto','low','medium','high'], counts: [1,2,4], referenceImages: {max: 16, maxBytes: 20*1024*1024, mimeTypes: ['image/png','image/jpeg','image/webp']}}}], provider: "openai", adapter: "openai_images", executionPath: "external", connection: { kind: "owner_managed", type: "openai_api", endpoint: "https://api.openai.com/v1" }, execution: { kind: "controlled_media", safetyLimit: 1 }, capabilities: [
     { capability: "static_visual_generation", configurationFields: ["model", "credential_ref", "max_attempts"], modelCatalog: openAiImageModels, presetCatalog: ["static-visual-v1"] },
@@ -243,7 +237,6 @@ function resolve(selection: AdapterSelection): AdapterResolution {
   const provider = selection.provider?.trim() ?? "";
   let adapter = selection.adapter?.trim() ?? "";
   if (!adapter && provider === "openchatcut" && (selection.capability === "review_rendering" || selection.capability === "final_rendering")) adapter = "openchatcut";
-  if(isRetiredProvider(provider))return{kind:"invalid",code:"adapter_unregistered",detail:retiredProviderMessage};
   if (!provider || !adapter) return { kind: "invalid", code: "adapter_missing", detail: `能力 ${selection.capability} 缺少 Provider 或 Adapter。` };
   const definition = manifest.find((candidate) => candidate.provider === provider && candidate.adapter === adapter);
   if (!definition) return { kind: "invalid", code: "adapter_unregistered", detail: `未注册 Adapter ${provider}/${adapter}。` };
@@ -270,4 +263,4 @@ function productionChoices(): readonly RegisteredProductionChoice[] {
     return {...production, ...(videoGenerationModes?{videoGenerationModes}:{}), provider: definition.provider, adapter: definition.adapter, identityKey: identityKey(definition.provider, definition.adapter), executionPath: definition.executionPath, connection: definition.connection, legacyCapabilities: declarations.map(declaration => declaration.capability), models, presets: [...new Set(declarations.flatMap(declaration => declaration.presetCatalog))], ...(declarations[0]?.voiceCatalog ? {voiceCatalog: declarations[0].voiceCatalog} : {})};
   }));
 }
-export const registeredAdapters = Object.freeze({ choicesFor, resolve, productionChoices });
+export const registeredAdapters = Object.freeze({ choicesFor, resolve, productionChoices, isRegisteredProvider: (provider: string) => manifest.some(definition => definition.provider === provider) });

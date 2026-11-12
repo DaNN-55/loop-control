@@ -14,8 +14,8 @@ describe("registered adapters", () => {
     expect(bRoll[0].identityKey).toBe(aRoll[0].identityKey);
   });
 
-  it("Codex 的稳定身份覆盖三项内部生产能力", () => {
-    expect(["script_writing", "visual_planning", "storyboard_planning"].map((capability) => registeredAdapters.resolve({ capability, provider: "codex", adapter: "codex" }).kind)).toEqual(["registered", "registered", "registered"]);
+  it("Codex 三项旧能力均已退役", () => {
+    expect(["script_writing", "visual_planning", "storyboard_planning"].map((capability) => registeredAdapters.resolve({ capability, provider: "codex", adapter: "codex" }).kind)).toEqual(["invalid", "invalid", "invalid"]);
   });
 
   it("返回执行选择所需的连接、目录、执行种类与安全上限", () => {
@@ -24,7 +24,7 @@ describe("registered adapters", () => {
   });
 
   it("不猜测未注册身份或不匹配的能力", () => {
-    expect(registeredAdapters.resolve({ capability: "a_roll_generation", executionPath: "local", provider: "codex", adapter: "codex" })).toMatchObject({ kind: "invalid", code: "capability_unsupported" });
+    expect(registeredAdapters.resolve({ capability: "a_roll_generation", executionPath: "local", provider: "codex", adapter: "codex" })).toMatchObject({ kind: "invalid", code: "adapter_unregistered" });
     expect(registeredAdapters.resolve({ capability: "b_roll_generation", executionPath: "external", provider: "hyperframes", adapter: "default" })).toMatchObject({ kind: "invalid", code: "adapter_unregistered" });
   });
 

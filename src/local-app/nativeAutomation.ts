@@ -122,7 +122,7 @@ export async function startNativeAutomation(options:NativeAutomationOptions){
    const rows=results.filter(r=>r.kind===kind).map(r=>({passed:r.passed,detail:r.detail,checks:readHealthChecks(r.checks),at:r.completed_at.toISOString()})).sort((a,b)=>Date.parse(b.at)-Date.parse(a.at)||Number(a.passed)-Number(b.passed));
    if(rows.length)operations[kind]={latest:rows[0],lastSuccess:rows.find(r=>r.passed)??null,lastFailure:rows.find(r=>!r.passed)??null};
   }
-  return{observedAt:observedAt.toISOString(),automation:{stopped,lastScanAt,lastError,timezone:'Asia/Shanghai',hour:9,intervalMs:interval,n8nRequired:false,backupsEnabled:options.backupsEnabled!==false},
+  return{observedAt:observedAt.toISOString(),automation:{stopped,lastScanAt,lastError,timezone:'Asia/Shanghai',hour:9,intervalMs:interval,backupsEnabled:options.backupsEnabled!==false},
    plans:(await pool.query('SELECT kind,timezone,next_due_at FROM local_identity.automation_plans WHERE kind=ANY($1::text[]) ORDER BY kind',[kinds])).rows,
    jobs:(await pool.query('SELECT id,kind,due_at,status,attempt,completed_at,passed,detail FROM local_identity.automation_jobs WHERE due_at<=$1 ORDER BY due_at DESC,kind LIMIT 50',[observedAt])).rows,operations};
  },async stop(){stopped=true;clearInterval(timer);controller.abort();await pump;}};
