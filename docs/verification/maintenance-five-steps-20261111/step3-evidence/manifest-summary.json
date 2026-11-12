@@ -1,0 +1,181 @@
+{
+  "manifests": [
+    "package-lock.json",
+    "package.json"
+  ],
+  "workspaceConfiguration": null,
+  "directRuntime": 8,
+  "directDevelopment": 16,
+  "sourceFileCount": 1093,
+  "lockPackageEntries": 306,
+  "dependencies": [
+    {
+      "name": "@untitledui/icons",
+      "declaredVersion": "0.0.23",
+      "category": "runtime",
+      "lockedVersion": "0.0.23",
+      "referenceCount": 11
+    },
+    {
+      "name": "@videojs/react",
+      "declaredVersion": "10.2.0",
+      "category": "runtime",
+      "lockedVersion": "10.2.0",
+      "referenceCount": 7
+    },
+    {
+      "name": "lucide-react",
+      "declaredVersion": "^1.31.0",
+      "category": "runtime",
+      "lockedVersion": "1.31.0",
+      "referenceCount": 68
+    },
+    {
+      "name": "pg",
+      "declaredVersion": "8.23.1",
+      "category": "runtime",
+      "lockedVersion": "8.23.1",
+      "referenceCount": 133
+    },
+    {
+      "name": "react",
+      "declaredVersion": "^19.1.1",
+      "category": "runtime",
+      "lockedVersion": "19.2.8",
+      "referenceCount": 183
+    },
+    {
+      "name": "react-aria-components",
+      "declaredVersion": "1.21.1",
+      "category": "runtime",
+      "lockedVersion": "1.21.1",
+      "referenceCount": 40
+    },
+    {
+      "name": "react-dom",
+      "declaredVersion": "^19.1.1",
+      "category": "runtime",
+      "lockedVersion": "19.2.8",
+      "referenceCount": 28
+    },
+    {
+      "name": "tailwind-merge",
+      "declaredVersion": "3.7.0",
+      "category": "runtime",
+      "lockedVersion": "3.7.0",
+      "referenceCount": 1
+    },
+    {
+      "name": "@tailwindcss/cli",
+      "declaredVersion": "4.3.3",
+      "category": "development",
+      "lockedVersion": "4.3.3",
+      "referenceCount": 1
+    },
+    {
+      "name": "@testing-library/react",
+      "declaredVersion": "^16.3.0",
+      "category": "development",
+      "lockedVersion": "16.3.2",
+      "referenceCount": 147
+    },
+    {
+      "name": "@testing-library/user-event",
+      "declaredVersion": "^14.6.1",
+      "category": "development",
+      "lockedVersion": "14.6.4",
+      "referenceCount": 54
+    },
+    {
+      "name": "@types/node",
+      "declaredVersion": "^24.3.0",
+      "category": "development",
+      "lockedVersion": "24.13.3",
+      "referenceCount": 0
+    },
+    {
+      "name": "@types/pg",
+      "declaredVersion": "8.23.1",
+      "category": "development",
+      "lockedVersion": "8.23.1",
+      "referenceCount": 0
+    },
+    {
+      "name": "@types/react",
+      "declaredVersion": "^19.1.12",
+      "category": "development",
+      "lockedVersion": "19.2.18",
+      "referenceCount": 0
+    },
+    {
+      "name": "@types/react-dom",
+      "declaredVersion": "^19.1.9",
+      "category": "development",
+      "lockedVersion": "19.2.4",
+      "referenceCount": 0
+    },
+    {
+      "name": "@vitejs/plugin-react",
+      "declaredVersion": "^5.0.2",
+      "category": "development",
+      "lockedVersion": "5.2.0",
+      "referenceCount": 46
+    },
+    {
+      "name": "jsdom",
+      "declaredVersion": "^26.1.0",
+      "category": "development",
+      "lockedVersion": "26.1.0",
+      "referenceCount": 8
+    },
+    {
+      "name": "postcss",
+      "declaredVersion": "8.5.32",
+      "category": "development",
+      "lockedVersion": "8.5.32",
+      "referenceCount": 1
+    },
+    {
+      "name": "tailwindcss",
+      "declaredVersion": "4.3.3",
+      "category": "development",
+      "lockedVersion": "4.3.3",
+      "referenceCount": 1
+    },
+    {
+      "name": "tailwindcss-animate",
+      "declaredVersion": "1.0.7",
+      "category": "development",
+      "lockedVersion": "1.0.7",
+      "referenceCount": 1
+    },
+    {
+      "name": "tailwindcss-react-aria-components",
+      "declaredVersion": "2.2.0",
+      "category": "development",
+      "lockedVersion": "2.2.0",
+      "referenceCount": 1
+    },
+    {
+      "name": "typescript",
+      "declaredVersion": "^5.9.2",
+      "category": "development",
+      "lockedVersion": "5.9.3",
+      "referenceCount": 4
+    },
+    {
+      "name": "vite",
+      "declaredVersion": "^7.1.7",
+      "category": "development",
+      "lockedVersion": "7.3.6",
+      "referenceCount": 211
+    },
+    {
+      "name": "vitest",
+      "declaredVersion": "^3.2.4",
+      "category": "development",
+      "lockedVersion": "3.2.7",
+      "referenceCount": 798
+    }
+  ]
+}

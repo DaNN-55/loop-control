@@ -1,0 +1,14 @@
+npm notice run loop-control@0.1.0 test
+npm notice run vitest run --exclude '**/*.integration.test.ts' src/local-app/mediaPaths.test.ts scripts/storage/backup-overlap.test.mjs scripts/storage/reference-integrity.test.mjs
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/maintenance-20261111/loop-control
+
+ ✓ scripts/storage/reference-integrity.test.mjs (10 tests) 2ms
+ ✓ src/local-app/mediaPaths.test.ts (3 tests) 2ms
+ ✓ scripts/storage/backup-overlap.test.mjs (5 tests) 3ms
+
+ Test Files  3 passed (3)
+      Tests  18 passed (18)
+   Start at  23:33:25
+   Duration  392ms (transform 105ms, setup 14ms, collect 152ms, tests 7ms, environment 270ms, prepare 88ms)
+

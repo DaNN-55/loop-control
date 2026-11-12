@@ -1,0 +1,13 @@
+{
+  "name": "/loop-control-local-postgres",
+  "ports": {
+    "5432/tcp": [
+      {
+        "HostIp": "127.0.0.1",
+        "HostPort": "54329"
+      }
+    ]
+  },
+  "running": true,
+  "startedAt": "2026-11-10T09:12:42.323819628Z"
+}

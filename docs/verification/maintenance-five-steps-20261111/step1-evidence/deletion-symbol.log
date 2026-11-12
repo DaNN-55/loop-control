@@ -1,0 +1,4 @@
+$ rg -n DeletionCleanupDialog src scripts index.html package.json tsconfig.app.json tsconfig.local-app.json tsconfig.worker.json
+src/local-app/LocalDeletionRecovery.tsx:58:export function DeletionCleanupDialog({onClose,returnFocusRef,embedded=false,...props}:RecoveryProps&{onClose:()=>void;returnFocusRef:RefObject<HTMLElement|null>;embedded?:boolean}){
+
+exit=0

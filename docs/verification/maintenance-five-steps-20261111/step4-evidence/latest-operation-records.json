@@ -1,0 +1,30 @@
+[
+  {
+    "file": "schedule-result.json",
+    "at": "2026-11-11T15:14:31.231Z",
+    "passed": true,
+    "idle": true,
+    "bytes": 135
+  },
+  {
+    "file": "notification-last-success.json",
+    "at": "2026-11-11T15:14:31.198Z",
+    "passed": true,
+    "idle": true,
+    "bytes": 117
+  },
+  {
+    "file": "notification-result.json",
+    "at": "2026-11-11T15:14:31.198Z",
+    "passed": true,
+    "idle": true,
+    "bytes": 117
+  },
+  {
+    "file": "schedule-last-success.json",
+    "at": "2026-11-11T15:14:31.231Z",
+    "passed": true,
+    "idle": true,
+    "bytes": 135
+  }
+]

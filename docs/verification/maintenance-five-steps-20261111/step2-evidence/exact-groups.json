@@ -1,0 +1,3184 @@
+[
+  [
+    {
+      "file": "src/worker/contracts.ts",
+      "name": "isConnectionId",
+      "line": 899,
+      "endLine": 901,
+      "length": 109,
+      "tokens": 78,
+      "key": "a2ef54fc16e682866a27497cb8eb4127d97c0f180232b8ef9efee7effd108a27",
+      "body": "{\n  return Boolean(value && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value));\n}"
+    },
+    {
+      "file": "src/worker/runtimeEvidence.ts",
+      "name": "isConnectionId",
+      "line": 24,
+      "endLine": 26,
+      "length": 109,
+      "tokens": 78,
+      "key": "a2ef54fc16e682866a27497cb8eb4127d97c0f180232b8ef9efee7effd108a27",
+      "body": "{\n  return Boolean(value && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value));\n}"
+    },
+    {
+      "file": "src/worker/runtimePreflight.ts",
+      "name": "isConnectionId",
+      "line": 429,
+      "endLine": 429,
+      "length": 107,
+      "tokens": 78,
+      "key": "a2ef54fc16e682866a27497cb8eb4127d97c0f180232b8ef9efee7effd108a27",
+      "body": "{ return Boolean(value && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)); }"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/WorkspaceCaptionsPanel.tsx",
+      "name": "anonymous",
+      "line": 39,
+      "endLine": 39,
+      "length": 74,
+      "tokens": 39,
+      "key": "836158cc5112080359e701d38ecc9bee60ef00daaf20bc71952b7d9210a3632b",
+      "body": "<option key={c.id} value={c.id}>{c.shotId} · {c.text.slice(0,18)}</option>"
+    },
+    {
+      "file": "src/local-app/WorkspaceCaptionsPanel.tsx",
+      "name": "anonymous",
+      "line": 53,
+      "endLine": 53,
+      "length": 74,
+      "tokens": 39,
+      "key": "836158cc5112080359e701d38ecc9bee60ef00daaf20bc71952b7d9210a3632b",
+      "body": "<option key={c.id} value={c.id}>{c.shotId} · {c.text.slice(0,18)}</option>"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/historyEpisodeDeletion.ts",
+      "name": "hashFile",
+      "line": 26,
+      "endLine": 26,
+      "length": 127,
+      "tokens": 36,
+      "key": "ad10808c694d410650adcbcab2182bc139b428952ba99b5b4f53be938d2616e3",
+      "body": "{const hash=createHash('sha256');for await(const chunk of createReadStream(path))hash.update(chunk);return hash.digest('hex');}"
+    },
+    {
+      "file": "src/worker/openchatcutStudio.ts",
+      "name": "fileSha256",
+      "line": 404,
+      "endLine": 408,
+      "length": 137,
+      "tokens": 36,
+      "key": "ad10808c694d410650adcbcab2182bc139b428952ba99b5b4f53be938d2616e3",
+      "body": "{\n  const hash=createHash('sha256');\n  for await(const chunk of createReadStream(path))hash.update(chunk);\n  return hash.digest('hex');\n}"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/localWorkerService.ts",
+      "name": "kill",
+      "line": 48,
+      "endLine": 48,
+      "length": 109,
+      "tokens": 36,
+      "key": "c417e367c7a1ca791261c720658162b6452376183b5e541a6689706ebbca12e4",
+      "body": "{if(child.pid)try{process.kill(process.platform==='win32'?child.pid:-child.pid,signal);}catch{/* Exited. */}}"
+    },
+    {
+      "file": "src/local-app/nativeBackup.ts",
+      "name": "kill",
+      "line": 6,
+      "endLine": 6,
+      "length": 109,
+      "tokens": 36,
+      "key": "c417e367c7a1ca791261c720658162b6452376183b5e541a6689706ebbca12e4",
+      "body": "{if(child.pid)try{process.kill(process.platform==='win32'?child.pid:-child.pid,signal);}catch{/* Exited. */}}"
+    }
+  ],
+  [
+    {
+      "file": "src/platform/ConfigurationForms.tsx",
+      "name": "anonymous",
+      "line": 135,
+      "endLine": 135,
+      "length": 125,
+      "tokens": 32,
+      "key": "4f8d66da3be311068148f1b74372f71deb42039105969aae0d2a284602ff8150",
+      "body": "<option key={registration.identityKey} value={registration.adapter}>{registration.provider} · {registration.adapter}</option>"
+    },
+    {
+      "file": "src/platform/ConfigurationForms.tsx",
+      "name": "anonymous",
+      "line": 138,
+      "endLine": 138,
+      "length": 125,
+      "tokens": 32,
+      "key": "4f8d66da3be311068148f1b74372f71deb42039105969aae0d2a284602ff8150",
+      "body": "<option key={registration.identityKey} value={registration.adapter}>{registration.provider} · {registration.adapter}</option>"
+    }
+  ],
+  [
+    {
+      "file": "src/worker/openchatcutStudio.ts",
+      "name": "anonymous",
+      "line": 301,
+      "endLine": 301,
+      "length": 77,
+      "tokens": 32,
+      "key": "b8ae32930e85106a36d521ca8ddf8ec88469bc5361696118e8081eff936a54ea",
+      "body": "{ logs.push(String(chunk).slice(-4000)); if (logs.length > 8) logs.shift(); }"
+    },
+    {
+      "file": "src/worker/openchatcutStudio.ts",
+      "name": "anonymous",
+      "line": 302,
+      "endLine": 302,
+      "length": 77,
+      "tokens": 32,
+      "key": "b8ae32930e85106a36d521ca8ddf8ec88469bc5361696118e8081eff936a54ea",
+      "body": "{ logs.push(String(chunk).slice(-4000)); if (logs.length > 8) logs.shift(); }"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/nativeAutomation.ts",
+      "name": "anonymous",
+      "line": 122,
+      "endLine": 122,
+      "length": 68,
+      "tokens": 31,
+      "key": "689adc6ef2036df89662095df891ba7f740d1eba11e1778e43047f4608b3cd19",
+      "body": "Date.parse(b.at)-Date.parse(a.at)||Number(a.passed)-Number(b.passed)"
+    },
+    {
+      "file": "src/orchestration/operationsEvidence.ts",
+      "name": "anonymous",
+      "line": 33,
+      "endLine": 33,
+      "length": 68,
+      "tokens": 31,
+      "key": "689adc6ef2036df89662095df891ba7f740d1eba11e1778e43047f4608b3cd19",
+      "body": "Date.parse(b.at)-Date.parse(a.at)||Number(a.passed)-Number(b.passed)"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/WorkspaceGenerationComposer.tsx",
+      "name": "anonymous",
+      "line": 25,
+      "endLine": 25,
+      "length": 111,
+      "tokens": 30,
+      "key": "24737b8255db7cc9e4b8a7c81d6e3bdd914fafd2c3269b6561d938ee0ade257c",
+      "body": "{if(!(event.relatedTarget instanceof Node)||!event.currentTarget.contains(event.relatedTarget))setOver(false);}"
+    },
+    {
+      "file": "src/local-app/WorkspaceMaterialDrop.tsx",
+      "name": "anonymous",
+      "line": 54,
+      "endLine": 54,
+      "length": 111,
+      "tokens": 30,
+      "key": "24737b8255db7cc9e4b8a7c81d6e3bdd914fafd2c3269b6561d938ee0ade257c",
+      "body": "{if(!(event.relatedTarget instanceof Node)||!event.currentTarget.contains(event.relatedTarget))setOver(false);}"
+    }
+  ],
+  [
+    {
+      "file": "src/worker/manualMaterialChecklist.ts",
+      "name": "record",
+      "line": 57,
+      "endLine": 59,
+      "length": 113,
+      "tokens": 30,
+      "key": "26c58ffbcc65da3a3d43358fd000914deace5a0e32e9eae7d5e54be129c77fd1",
+      "body": "{\n  return value && typeof value === \"object\" && !Array.isArray(value) ? value as Record<string, unknown> : {};\n}"
+    },
+    {
+      "file": "src/worker/runtimePreflight.ts",
+      "name": "record",
+      "line": 426,
+      "endLine": 426,
+      "length": 111,
+      "tokens": 30,
+      "key": "26c58ffbcc65da3a3d43358fd000914deace5a0e32e9eae7d5e54be129c77fd1",
+      "body": "{ return value && typeof value === \"object\" && !Array.isArray(value) ? value as Record<string, unknown> : {}; }"
+    }
+  ],
+  [
+    {
+      "file": "src/connections/ConnectionWorkspace.tsx",
+      "name": "connectionBaseline",
+      "line": 222,
+      "endLine": 222,
+      "length": 122,
+      "tokens": 29,
+      "key": "0b6967cbae352cf5ecd9c869dc3e1b3faf42e252995cee46dd0dd59c0f190866",
+      "body": "JSON.stringify(connection?[connection.name,connection.description??'',connection.current_version_id,connection.region]:[])"
+    },
+    {
+      "file": "src/local-app/CompactConnectionWorkspace.tsx",
+      "name": "signature",
+      "line": 29,
+      "endLine": 29,
+      "length": 77,
+      "tokens": 29,
+      "key": "0b6967cbae352cf5ecd9c869dc3e1b3faf42e252995cee46dd0dd59c0f190866",
+      "body": "JSON.stringify(c?[c.name,c.description??'',c.current_version_id,c.region]:[])"
+    }
+  ],
+  [
+    {
+      "file": "src/operations/OperationsWorkspace.tsx",
+      "name": "anonymous",
+      "line": 166,
+      "endLine": 166,
+      "length": 100,
+      "tokens": 29,
+      "key": "e54f412e1285d61d311df5f56415479408ab4d303b2d822882d3558ce3a242b2",
+      "body": "{event.preventDefault();const query=search.trim();setSearch(query);catalogControls.onSearch(query);}"
+    },
+    {
+      "file": "src/workspace/WorkspaceViews.tsx",
+      "name": "anonymous",
+      "line": 222,
+      "endLine": 222,
+      "length": 100,
+      "tokens": 29,
+      "key": "e54f412e1285d61d311df5f56415479408ab4d303b2d822882d3558ce3a242b2",
+      "body": "{event.preventDefault();const query=search.trim();setSearch(query);catalogControls.onSearch(query);}"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/localRoute.ts",
+      "name": "anonymous",
+      "line": 155,
+      "endLine": 155,
+      "length": 146,
+      "tokens": 28,
+      "key": "5e593bb851a4c167d7149e0f5ca93a53e793472690f91d7d566a3bba35b2e600",
+      "body": "(await c.query('SELECT 1 FROM local_identity.episode_recycle_bin WHERE episode_id=$1',[(body.data as Record<string,unknown>).episodeId])).rowCount"
+    },
+    {
+      "file": "src/local-app/localRoute.ts",
+      "name": "anonymous",
+      "line": 170,
+      "endLine": 170,
+      "length": 146,
+      "tokens": 28,
+      "key": "5e593bb851a4c167d7149e0f5ca93a53e793472690f91d7d566a3bba35b2e600",
+      "body": "(await c.query('SELECT 1 FROM local_identity.episode_recycle_bin WHERE episode_id=$1',[(body.data as Record<string,unknown>).episodeId])).rowCount"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/WorkspaceAudioPanel.tsx",
+      "name": "anonymous",
+      "line": 180,
+      "endLine": 180,
+      "length": 54,
+      "tokens": 27,
+      "key": "04b535faeb952d3db177f48c23b47c41a0164b63ca01f5cd89934e79728860e5",
+      "body": "[id,w.clips.filter(c=>c.shotId===id).map(c=>c.itemId)]"
+    },
+    {
+      "file": "src/local-app/WorkspaceSoundRecords.tsx",
+      "name": "anonymous",
+      "line": 20,
+      "endLine": 20,
+      "length": 54,
+      "tokens": 27,
+      "key": "04b535faeb952d3db177f48c23b47c41a0164b63ca01f5cd89934e79728860e5",
+      "body": "[id,w.clips.filter(c=>c.shotId===id).map(c=>c.itemId)]"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/LocalDeletionRecovery.tsx",
+      "name": "anonymous",
+      "line": 12,
+      "endLine": 12,
+      "length": 79,
+      "tokens": 26,
+      "key": "0863a597f59d00d01236e5067b2dfca60f57a77d510a8db48d98384448f181c2",
+      "body": "{mounted.current=true;return()=>{mounted.current=false;generation.current++;};}"
+    },
+    {
+      "file": "src/local-app/RecycleBinPanel.tsx",
+      "name": "anonymous",
+      "line": 26,
+      "endLine": 26,
+      "length": 79,
+      "tokens": 26,
+      "key": "0863a597f59d00d01236e5067b2dfca60f57a77d510a8db48d98384448f181c2",
+      "body": "{mounted.current=true;return()=>{mounted.current=false;generation.current++;};}"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/LocalCatalogApp.tsx",
+      "name": "anonymous",
+      "line": 239,
+      "endLine": 239,
+      "length": 73,
+      "tokens": 25,
+      "key": "921288331c10d38872399126864b847f68db4f7883360d0bdc0f874721ef1e94",
+      "body": "void refresh().catch(e=>setError(e instanceof Error?e.message:String(e)))"
+    },
+    {
+      "file": "src/local-app/LocalCatalogApp.tsx",
+      "name": "anonymous",
+      "line": 276,
+      "endLine": 276,
+      "length": 73,
+      "tokens": 25,
+      "key": "921288331c10d38872399126864b847f68db4f7883360d0bdc0f874721ef1e94",
+      "body": "void refresh().catch(e=>setError(e instanceof Error?e.message:String(e)))"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/LocalCatalogApp.tsx",
+      "name": "anonymous",
+      "line": 270,
+      "endLine": 270,
+      "length": 73,
+      "tokens": 25,
+      "key": "aaf2cb902749b25f7f79e85d230496194e24bf8daa43d1e48516969c112aacf8",
+      "body": "{navigate('accounts',()=>{setSelectedId(id);setRepair(context??null);});}"
+    },
+    {
+      "file": "src/local-app/LocalCatalogApp.tsx",
+      "name": "anonymous",
+      "line": 273,
+      "endLine": 273,
+      "length": 73,
+      "tokens": 25,
+      "key": "aaf2cb902749b25f7f79e85d230496194e24bf8daa43d1e48516969c112aacf8",
+      "body": "{navigate('accounts',()=>{setSelectedId(id);setRepair(context??null);});}"
+    }
+  ],
+  [
+    {
+      "file": "src/i18n/ui.ts",
+      "name": "subscribe",
+      "line": 9,
+      "endLine": 9,
+      "length": 66,
+      "tokens": 23,
+      "key": "e09c607efc532c8c8e32c8f54b7a0f5d8a53125d3c162bc653a8dec8b22332ef",
+      "body": "{listeners.add(listener);return()=>{listeners.delete(listener);};}"
+    },
+    {
+      "file": "src/local-app/workspaceManualNarration.ts",
+      "name": "subscribe",
+      "line": 8,
+      "endLine": 8,
+      "length": 66,
+      "tokens": 23,
+      "key": "e09c607efc532c8c8e32c8f54b7a0f5d8a53125d3c162bc653a8dec8b22332ef",
+      "body": "{listeners.add(listener);return()=>{listeners.delete(listener);};}"
+    },
+    {
+      "file": "src/local-app/workspaceUploads.ts",
+      "name": "subscribe",
+      "line": 41,
+      "endLine": 41,
+      "length": 66,
+      "tokens": 23,
+      "key": "e09c607efc532c8c8e32c8f54b7a0f5d8a53125d3c162bc653a8dec8b22332ef",
+      "body": "{listeners.add(listener);return()=>{listeners.delete(listener);};}"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/WorkspaceAudioPanel.tsx",
+      "name": "anonymous",
+      "line": 63,
+      "endLine": 63,
+      "length": 120,
+      "tokens": 23,
+      "key": "9f2954e31735a34c14aa19994dfff16a4fecd152dd147a70262a92de2bd7992a",
+      "body": "s.connectionVersionId===selection?.connectionVersionId&&s.provider===selection?.provider&&s.adapter===selection?.adapter"
+    },
+    {
+      "file": "src/local-app/WorkspaceNarrationToolbar.tsx",
+      "name": "anonymous",
+      "line": 22,
+      "endLine": 22,
+      "length": 120,
+      "tokens": 23,
+      "key": "9f2954e31735a34c14aa19994dfff16a4fecd152dd147a70262a92de2bd7992a",
+      "body": "s.connectionVersionId===selection?.connectionVersionId&&s.provider===selection?.provider&&s.adapter===selection?.adapter"
+    }
+  ],
+  [
+    {
+      "file": "scripts/openchatcut-embedded.mjs",
+      "name": "anonymous",
+      "line": 41,
+      "endLine": 41,
+      "length": 73,
+      "tokens": 22,
+      "key": "082fae9fd727f4b4b5c8223b509e2a7ac028911967757aabb5e097e3db733f73",
+      "body": "{await server.close();await pruneOpenChatCutCache(root);process.exit(0);}"
+    },
+    {
+      "file": "scripts/openchatcut-standalone.mjs",
+      "name": "anonymous",
+      "line": 26,
+      "endLine": 26,
+      "length": 77,
+      "tokens": 22,
+      "key": "082fae9fd727f4b4b5c8223b509e2a7ac028911967757aabb5e097e3db733f73",
+      "body": "{ await server.close(); await pruneOpenChatCutCache(root); process.exit(0); }"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/episodeLifecycle.ts",
+      "name": "fingerprint",
+      "line": 17,
+      "endLine": 17,
+      "length": 71,
+      "tokens": 22,
+      "key": "4fdd94b29bc98ec2eac0fc8710b82c305faabfb178640b224062024c7895225d",
+      "body": "createHash('sha256').update(JSON.stringify(canonical(v))).digest('hex')"
+    },
+    {
+      "file": "src/local-app/recycleBin.ts",
+      "name": "digest",
+      "line": 15,
+      "endLine": 15,
+      "length": 75,
+      "tokens": 22,
+      "key": "4fdd94b29bc98ec2eac0fc8710b82c305faabfb178640b224062024c7895225d",
+      "body": "createHash('sha256').update(JSON.stringify(canonical(value))).digest('hex')"
+    },
+    {
+      "file": "src/local-app/scriptProductionStore.ts",
+      "name": "productionHash",
+      "line": 15,
+      "endLine": 15,
+      "length": 75,
+      "tokens": 22,
+      "key": "4fdd94b29bc98ec2eac0fc8710b82c305faabfb178640b224062024c7895225d",
+      "body": "createHash('sha256').update(JSON.stringify(canonical(value))).digest('hex')"
+    },
+    {
+      "file": "src/local-app/workspaceVisualCandidates.ts",
+      "name": "hash",
+      "line": 28,
+      "endLine": 28,
+      "length": 75,
+      "tokens": 22,
+      "key": "4fdd94b29bc98ec2eac0fc8710b82c305faabfb178640b224062024c7895225d",
+      "body": "createHash('sha256').update(JSON.stringify(canonical(value))).digest('hex')"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/localFiles.ts",
+      "name": "anonymous",
+      "line": 106,
+      "endLine": 106,
+      "length": 78,
+      "tokens": 22,
+      "key": "4a40c8ac29a1a53c0b56939bb6971067592c27311bae4c6eb3dc7647e239992d",
+      "body": "{if((error as NodeJS.ErrnoException).code==='ENOENT')return null;throw error;}"
+    },
+    {
+      "file": "src/local-app/localFiles.ts",
+      "name": "anonymous",
+      "line": 112,
+      "endLine": 112,
+      "length": 78,
+      "tokens": 22,
+      "key": "4a40c8ac29a1a53c0b56939bb6971067592c27311bae4c6eb3dc7647e239992d",
+      "body": "{if((error as NodeJS.ErrnoException).code==='ENOENT')return null;throw error;}"
+    }
+  ],
+  [
+    {
+      "file": "src/connections/ConnectionBillingDialog.tsx",
+      "name": "anonymous",
+      "line": 20,
+      "endLine": 20,
+      "length": 54,
+      "tokens": 21,
+      "key": "c723aee016a927b7cf1383119cc9e51679f11f748586f682d97f688c26b5f7d0",
+      "body": "()=>{stateChange.current?.({busy:false,dirty:false});}"
+    },
+    {
+      "file": "src/connections/ConnectionModelsDialog.tsx",
+      "name": "anonymous",
+      "line": 30,
+      "endLine": 30,
+      "length": 54,
+      "tokens": 21,
+      "key": "c723aee016a927b7cf1383119cc9e51679f11f748586f682d97f688c26b5f7d0",
+      "body": "()=>{stateChange.current?.({busy:false,dirty:false});}"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/CompactConnectionWorkspace.tsx",
+      "name": "anonymous",
+      "line": 96,
+      "endLine": 96,
+      "length": 65,
+      "tokens": 21,
+      "key": "150c56b4961fa533d7452f3887a4fc6eb7783ad47451276121e412502f18432c",
+      "body": "{listPosition.current=listRef.current?.scrollTop??0;enter(c.id);}"
+    },
+    {
+      "file": "src/local-app/CompactConnectionWorkspace.tsx",
+      "name": "anonymous",
+      "line": 96,
+      "endLine": 96,
+      "length": 65,
+      "tokens": 21,
+      "key": "150c56b4961fa533d7452f3887a4fc6eb7783ad47451276121e412502f18432c",
+      "body": "{listPosition.current=listRef.current?.scrollTop??0;enter(c.id);}"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/GlobalPlanningSettings.tsx",
+      "name": "anonymous",
+      "line": 29,
+      "endLine": 29,
+      "length": 56,
+      "tokens": 21,
+      "key": "c5199f2deeddee8cb2245db584736a356a070bdce788150f3bcb5078e33b9667",
+      "body": "{active.current=true;return()=>{active.current=false;};}"
+    },
+    {
+      "file": "src/local-app/WorkspacePlanningSelection.tsx",
+      "name": "anonymous",
+      "line": 20,
+      "endLine": 20,
+      "length": 56,
+      "tokens": 21,
+      "key": "c5199f2deeddee8cb2245db584736a356a070bdce788150f3bcb5078e33b9667",
+      "body": "{active.current=true;return()=>{active.current=false;};}"
+    },
+    {
+      "file": "src/local-app/WorkspacePlanningSelection.tsx",
+      "name": "anonymous",
+      "line": 50,
+      "endLine": 50,
+      "length": 56,
+      "tokens": 21,
+      "key": "c5199f2deeddee8cb2245db584736a356a070bdce788150f3bcb5078e33b9667",
+      "body": "{active.current=true;return()=>{active.current=false;};}"
+    },
+    {
+      "file": "src/local-app/WorkspaceScriptPanel.tsx",
+      "name": "anonymous",
+      "line": 37,
+      "endLine": 37,
+      "length": 56,
+      "tokens": 21,
+      "key": "c5199f2deeddee8cb2245db584736a356a070bdce788150f3bcb5078e33b9667",
+      "body": "{active.current=true;return()=>{active.current=false;};}"
+    },
+    {
+      "file": "src/platform/ConfigurationForms.tsx",
+      "name": "anonymous",
+      "line": 58,
+      "endLine": 58,
+      "length": 56,
+      "tokens": 21,
+      "key": "c5199f2deeddee8cb2245db584736a356a070bdce788150f3bcb5078e33b9667",
+      "body": "{active.current=true;return()=>{active.current=false;};}"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/SystemStatusDrawer.tsx",
+      "name": "reduce",
+      "line": 56,
+      "endLine": 56,
+      "length": 72,
+      "tokens": 21,
+      "key": "24e75294f87905061afcb1de57bb2ed592f5f74f9c41d72519fcfc871879bfd1",
+      "body": "{if(preference?.matches)running.forEach(animation=>animation.finish());}"
+    },
+    {
+      "file": "src/ui/SurfacePresence.tsx",
+      "name": "reduce",
+      "line": 32,
+      "endLine": 32,
+      "length": 72,
+      "tokens": 21,
+      "key": "24e75294f87905061afcb1de57bb2ed592f5f74f9c41d72519fcfc871879bfd1",
+      "body": "{if(preference?.matches)running.forEach(animation=>animation.finish());}"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/nativeAttemptOutput.ts",
+      "name": "anonymous",
+      "line": 126,
+      "endLine": 126,
+      "length": 45,
+      "tokens": 21,
+      "key": "0501c99f160c1dfbfc18bc411abc9c9249f5a256a4cf71fb78e9ba2e1d3a44b4",
+      "body": "rm(file.temporary,{force:true}).catch(()=>{})"
+    },
+    {
+      "file": "src/local-app/nativeAttemptOutput.ts",
+      "name": "anonymous",
+      "line": 245,
+      "endLine": 245,
+      "length": 45,
+      "tokens": 21,
+      "key": "0501c99f160c1dfbfc18bc411abc9c9249f5a256a4cf71fb78e9ba2e1d3a44b4",
+      "body": "rm(file.temporary,{force:true}).catch(()=>{})"
+    }
+  ],
+  [
+    {
+      "file": "src/shotAudioMix.ts",
+      "name": "isRecord",
+      "line": 107,
+      "endLine": 109,
+      "length": 82,
+      "tokens": 21,
+      "key": "6d36b5c57cb0d859254c6f4563c938e94fd5212a0ee537d0d07ff47c0bab06d4",
+      "body": "{\n  return Boolean(value) && typeof value === \"object\" && !Array.isArray(value);\n}"
+    },
+    {
+      "file": "src/shotCaptions.ts",
+      "name": "isRecord",
+      "line": 211,
+      "endLine": 213,
+      "length": 82,
+      "tokens": 21,
+      "key": "6d36b5c57cb0d859254c6f4563c938e94fd5212a0ee537d0d07ff47c0bab06d4",
+      "body": "{\n  return Boolean(value) && typeof value === \"object\" && !Array.isArray(value);\n}"
+    },
+    {
+      "file": "src/shotComposition.ts",
+      "name": "isRecord",
+      "line": 182,
+      "endLine": 184,
+      "length": 82,
+      "tokens": 21,
+      "key": "6d36b5c57cb0d859254c6f4563c938e94fd5212a0ee537d0d07ff47c0bab06d4",
+      "body": "{\n  return Boolean(value) && typeof value === \"object\" && !Array.isArray(value);\n}"
+    }
+  ],
+  [
+    {
+      "file": "src/ui/media/AudioPreview.tsx",
+      "name": "anonymous",
+      "line": 29,
+      "endLine": 29,
+      "length": 58,
+      "tokens": 21,
+      "key": "e7d581cd7c764cc2c56b854d0a00c5c7e7aa804dd61b7ed1c24b3809e539ff71",
+      "body": "{setFailed(false);setLoading(true);retry(value=>value+1);}"
+    },
+    {
+      "file": "src/ui/media/VideoPreview.tsx",
+      "name": "anonymous",
+      "line": 62,
+      "endLine": 62,
+      "length": 58,
+      "tokens": 21,
+      "key": "e7d581cd7c764cc2c56b854d0a00c5c7e7aa804dd61b7ed1c24b3809e539ff71",
+      "body": "{setFailed(false);setLoading(true);retry(value=>value+1);}"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/ProductionWorkspacePanel.tsx",
+      "name": "anonymous",
+      "line": 235,
+      "endLine": 235,
+      "length": 69,
+      "tokens": 20,
+      "key": "d417948c74ae71cd0510c6766e31afdcefbb6038195c553af9789fc49c0a96bc",
+      "body": "void prepare(undefined,scriptRevisionId,undefined,true).catch(()=>{})"
+    },
+    {
+      "file": "src/local-app/ProductionWorkspacePanel.tsx",
+      "name": "anonymous",
+      "line": 236,
+      "endLine": 236,
+      "length": 69,
+      "tokens": 20,
+      "key": "d417948c74ae71cd0510c6766e31afdcefbb6038195c553af9789fc49c0a96bc",
+      "body": "void prepare(undefined,scriptRevisionId,undefined,true).catch(()=>{})"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/workspaceCandidates.ts",
+      "name": "anonymous",
+      "line": 16,
+      "endLine": 16,
+      "length": 38,
+      "tokens": 20,
+      "key": "883d77aa27018b9cbdae6794ff173a9aebae613fa8a73c73af308bb59197853e",
+      "body": "t.items.some(i=>ids.has(String(i.id)))"
+    },
+    {
+      "file": "src/local-app/workspaceNarration.ts",
+      "name": "anonymous",
+      "line": 190,
+      "endLine": 190,
+      "length": 38,
+      "tokens": 20,
+      "key": "883d77aa27018b9cbdae6794ff173a9aebae613fa8a73c73af308bb59197853e",
+      "body": "t.items.some(i=>ids.has(String(i.id)))"
+    },
+    {
+      "file": "src/workspaceAudio.ts",
+      "name": "anonymous",
+      "line": 50,
+      "endLine": 50,
+      "length": 38,
+      "tokens": 20,
+      "key": "883d77aa27018b9cbdae6794ff173a9aebae613fa8a73c73af308bb59197853e",
+      "body": "t.items.some(i=>ids.has(String(i.id)))"
+    },
+    {
+      "file": "src/workspaceCandidates.ts",
+      "name": "anonymous",
+      "line": 33,
+      "endLine": 33,
+      "length": 38,
+      "tokens": 20,
+      "key": "883d77aa27018b9cbdae6794ff173a9aebae613fa8a73c73af308bb59197853e",
+      "body": "t.items.some(i=>ids.has(String(i.id)))"
+    }
+  ],
+  [
+    {
+      "file": "src/orchestration/notificationPolicy.ts",
+      "name": "isRecord",
+      "line": 85,
+      "endLine": 87,
+      "length": 82,
+      "tokens": 20,
+      "key": "4b78fcd7a94b5b54994cee7d3510ba840bd8643a407ac7d923ea9328c1e5cb4b",
+      "body": "{\n  return typeof value === \"object\" && value !== null && !Array.isArray(value);\n}"
+    },
+    {
+      "file": "src/publishing/publishPackage.ts",
+      "name": "isRecord",
+      "line": 127,
+      "endLine": 129,
+      "length": 82,
+      "tokens": 20,
+      "key": "4b78fcd7a94b5b54994cee7d3510ba840bd8643a407ac7d923ea9328c1e5cb4b",
+      "body": "{\n  return typeof value === \"object\" && value !== null && !Array.isArray(value);\n}"
+    },
+    {
+      "file": "src/worker/acousticAlignmentContract.ts",
+      "name": "isRecord",
+      "line": 64,
+      "endLine": 66,
+      "length": 82,
+      "tokens": 20,
+      "key": "4b78fcd7a94b5b54994cee7d3510ba840bd8643a407ac7d923ea9328c1e5cb4b",
+      "body": "{\n  return typeof value === \"object\" && value !== null && !Array.isArray(value);\n}"
+    },
+    {
+      "file": "src/worker/codexRunner.ts",
+      "name": "isRecord",
+      "line": 945,
+      "endLine": 947,
+      "length": 82,
+      "tokens": 20,
+      "key": "4b78fcd7a94b5b54994cee7d3510ba840bd8643a407ac7d923ea9328c1e5cb4b",
+      "body": "{\n  return typeof value === \"object\" && value !== null && !Array.isArray(value);\n}"
+    },
+    {
+      "file": "src/worker/contracts.ts",
+      "name": "isRecord",
+      "line": 891,
+      "endLine": 893,
+      "length": 82,
+      "tokens": 20,
+      "key": "4b78fcd7a94b5b54994cee7d3510ba840bd8643a407ac7d923ea9328c1e5cb4b",
+      "body": "{\n  return typeof value === \"object\" && value !== null && !Array.isArray(value);\n}"
+    },
+    {
+      "file": "src/worker/mediaProviders.ts",
+      "name": "isRecord",
+      "line": 157,
+      "endLine": 159,
+      "length": 82,
+      "tokens": 20,
+      "key": "4b78fcd7a94b5b54994cee7d3510ba840bd8643a407ac7d923ea9328c1e5cb4b",
+      "body": "{\n  return typeof value === \"object\" && value !== null && !Array.isArray(value);\n}"
+    }
+  ],
+  [
+    {
+      "file": "src/platform/ConfigurationForms.tsx",
+      "name": "anonymous",
+      "line": 143,
+      "endLine": 143,
+      "length": 50,
+      "tokens": 20,
+      "key": "7349ff892b927c8e2fd1d8bb981b48596a19adaaa7d87c13d70591133f868166",
+      "body": "<option key={model} value={model}>{model}</option>"
+    },
+    {
+      "file": "src/platform/ConfigurationForms.tsx",
+      "name": "anonymous",
+      "line": 144,
+      "endLine": 144,
+      "length": 53,
+      "tokens": 20,
+      "key": "7349ff892b927c8e2fd1d8bb981b48596a19adaaa7d87c13d70591133f868166",
+      "body": "<option key={preset} value={preset}>{preset}</option>"
+    }
+  ],
+  [
+    {
+      "file": "src/worker/openchatcutStudio.ts",
+      "name": "anonymous",
+      "line": 81,
+      "endLine": 81,
+      "length": 88,
+      "tokens": 20,
+      "key": "99153c1780c4ec7ffb359a58c30fa40ebcd5e8e6259469a65fe5ed899263115a",
+      "body": "{ if (standaloneSessions.get(dataDir) === opening) standaloneSessions.delete(dataDir); }"
+    },
+    {
+      "file": "src/worker/openchatcutStudio.ts",
+      "name": "anonymous",
+      "line": 82,
+      "endLine": 82,
+      "length": 88,
+      "tokens": 20,
+      "key": "99153c1780c4ec7ffb359a58c30fa40ebcd5e8e6259469a65fe5ed899263115a",
+      "body": "{ if (standaloneSessions.get(dataDir) === opening) standaloneSessions.delete(dataDir); }"
+    }
+  ],
+  [
+    {
+      "file": "scripts/openchatcut-render.mjs",
+      "name": "anonymous",
+      "line": 203,
+      "endLine": 203,
+      "length": 63,
+      "tokens": 19,
+      "key": "008c318b0f1c789504ca6625ad4256685416f48a6472c34de2138122b30a9294",
+      "body": "server.close((error) => error ? reject(error) : resolveClose())"
+    },
+    {
+      "file": "src/worker/openchatcutStudio.ts",
+      "name": "anonymous",
+      "line": 526,
+      "endLine": 526,
+      "length": 63,
+      "tokens": 19,
+      "key": "008c318b0f1c789504ca6625ad4256685416f48a6472c34de2138122b30a9294",
+      "body": "server.close((error) => error ? reject(error) : resolveClose())"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/OwnerPreferencesDialog.tsx",
+      "name": "anonymous",
+      "line": 57,
+      "endLine": 57,
+      "length": 62,
+      "tokens": 19,
+      "key": "b3250c168918ce558fa5147384e1f4b231a4fd999747583efe255d41c552f99a",
+      "body": "update({notifications:{...draft.notifications,[key]:enabled}})"
+    },
+    {
+      "file": "src/local-app/OwnerPreferencesDialog.tsx",
+      "name": "anonymous",
+      "line": 58,
+      "endLine": 58,
+      "length": 62,
+      "tokens": 19,
+      "key": "b3250c168918ce558fa5147384e1f4b231a4fd999747583efe255d41c552f99a",
+      "body": "update({notifications:{...draft.notifications,[key]:enabled}})"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/WorkspaceAudioPanel.tsx",
+      "name": "anonymous",
+      "line": 114,
+      "endLine": 114,
+      "length": 60,
+      "tokens": 19,
+      "key": "148ff4507841a6157847a91615268811e71164d1c249b914ef5dded3cd14a51b",
+      "body": "['video','image','text','sequence'].includes(String(i.kind))"
+    },
+    {
+      "file": "src/local-app/workspaceAudio.ts",
+      "name": "anonymous",
+      "line": 133,
+      "endLine": 133,
+      "length": 60,
+      "tokens": 19,
+      "key": "148ff4507841a6157847a91615268811e71164d1c249b914ef5dded3cd14a51b",
+      "body": "['video','image','text','sequence'].includes(String(i.kind))"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/studioCommands.ts",
+      "name": "identity",
+      "line": 22,
+      "endLine": 22,
+      "length": 64,
+      "tokens": 19,
+      "key": "59c391cd5792248b274a4ca132e89aae2c21c1886f27a67ce2bdc6c170554af8",
+      "body": "createHash('sha256').update(JSON.stringify(value)).digest('hex')"
+    },
+    {
+      "file": "src/local-app/workspaceAudio.ts",
+      "name": "hash",
+      "line": 19,
+      "endLine": 19,
+      "length": 60,
+      "tokens": 19,
+      "key": "59c391cd5792248b274a4ca132e89aae2c21c1886f27a67ce2bdc6c170554af8",
+      "body": "createHash('sha256').update(JSON.stringify(v)).digest('hex')"
+    },
+    {
+      "file": "src/local-app/workspaceCaptionsCommands.ts",
+      "name": "fingerprint",
+      "line": 17,
+      "endLine": 17,
+      "length": 60,
+      "tokens": 19,
+      "key": "59c391cd5792248b274a4ca132e89aae2c21c1886f27a67ce2bdc6c170554af8",
+      "body": "createHash('sha256').update(JSON.stringify(v)).digest('hex')"
+    },
+    {
+      "file": "src/local-app/workspaceNarration.ts",
+      "name": "fingerprint",
+      "line": 28,
+      "endLine": 28,
+      "length": 64,
+      "tokens": 19,
+      "key": "59c391cd5792248b274a4ca132e89aae2c21c1886f27a67ce2bdc6c170554af8",
+      "body": "createHash('sha256').update(JSON.stringify(value)).digest('hex')"
+    }
+  ],
+  [
+    {
+      "file": "src/worker/contracts.ts",
+      "name": "isPositiveFiniteNumber",
+      "line": 929,
+      "endLine": 931,
+      "length": 78,
+      "tokens": 19,
+      "key": "28692db409d9a6942625e4c939270cc7b93c7aff7800ffdc392966e74c8706c7",
+      "body": "{\n  return typeof value === \"number\" && Number.isFinite(value) && value > 0;\n}"
+    },
+    {
+      "file": "src/worker/durationDecision.ts",
+      "name": "validDuration",
+      "line": 123,
+      "endLine": 125,
+      "length": 78,
+      "tokens": 19,
+      "key": "28692db409d9a6942625e4c939270cc7b93c7aff7800ffdc392966e74c8706c7",
+      "body": "{\n  return typeof value === \"number\" && Number.isFinite(value) && value > 0;\n}"
+    }
+  ],
+  [
+    {
+      "file": "src/connections/ConnectionBillingDialog.tsx",
+      "name": "anonymous",
+      "line": 20,
+      "endLine": 20,
+      "length": 50,
+      "tokens": 18,
+      "key": "d4baba385906025271b2b8a78bb7073de1efb8d23a51da65fa144bb706064535",
+      "body": "{stateChange.current?.({busy:false,dirty:false});}"
+    },
+    {
+      "file": "src/connections/ConnectionModelsDialog.tsx",
+      "name": "anonymous",
+      "line": 30,
+      "endLine": 30,
+      "length": 50,
+      "tokens": 18,
+      "key": "d4baba385906025271b2b8a78bb7073de1efb8d23a51da65fa144bb706064535",
+      "body": "{stateChange.current?.({busy:false,dirty:false});}"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/LogStorageSettings.tsx",
+      "name": "anonymous",
+      "line": 16,
+      "endLine": 16,
+      "length": 52,
+      "tokens": 18,
+      "key": "38744591bb61b13e70e0f568b03edc6f29681f766ff09af1ff249c9d86a11f93",
+      "body": "()=>stateChanged.current?.({busy:false,dirty:false})"
+    },
+    {
+      "file": "src/local-app/MediaRootSettingsDialog.tsx",
+      "name": "anonymous",
+      "line": 22,
+      "endLine": 22,
+      "length": 52,
+      "tokens": 18,
+      "key": "38744591bb61b13e70e0f568b03edc6f29681f766ff09af1ff249c9d86a11f93",
+      "body": "()=>stateChanged.current?.({busy:false,dirty:false})"
+    },
+    {
+      "file": "src/local-app/OwnerPreferencesDialog.tsx",
+      "name": "anonymous",
+      "line": 30,
+      "endLine": 30,
+      "length": 52,
+      "tokens": 18,
+      "key": "38744591bb61b13e70e0f568b03edc6f29681f766ff09af1ff249c9d86a11f93",
+      "body": "()=>stateChanged.current?.({busy:false,dirty:false})"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/MediaRootSettingsDialog.tsx",
+      "name": "anonymous",
+      "line": 86,
+      "endLine": 86,
+      "length": 38,
+      "tokens": 18,
+      "key": "ef12dc03408ecbf936bc9d94252630cb7eb07fbdd951b6919a17fa5d629ec586",
+      "body": "<li key={reason}>{uiText(reason)}</li>"
+    },
+    {
+      "file": "src/local-app/WorkspaceVisualPreparation.tsx",
+      "name": "anonymous",
+      "line": 458,
+      "endLine": 458,
+      "length": 40,
+      "tokens": 18,
+      "key": "ef12dc03408ecbf936bc9d94252630cb7eb07fbdd951b6919a17fa5d629ec586",
+      "body": "<li key={problem}>{uiText(problem)}</li>"
+    },
+    {
+      "file": "src/reviews/WorkerBlockerCard.tsx",
+      "name": "anonymous",
+      "line": 23,
+      "endLine": 23,
+      "length": 34,
+      "tokens": 18,
+      "key": "ef12dc03408ecbf936bc9d94252630cb7eb07fbdd951b6919a17fa5d629ec586",
+      "body": "<li key={step}>{uiText(step)}</li>"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/ProductionWorkspacePanel.tsx",
+      "name": "anonymous",
+      "line": 240,
+      "endLine": 240,
+      "length": 55,
+      "tokens": 18,
+      "key": "d9035c7709ea90ec3ec9f2921851435ad0ef994d12108bd897147a19e5bedf41",
+      "body": "value.notice?.id===id?{...value,notice:undefined}:value"
+    },
+    {
+      "file": "src/local-app/WorkspaceVisualPreparation.tsx",
+      "name": "anonymous",
+      "line": 374,
+      "endLine": 374,
+      "length": 55,
+      "tokens": 18,
+      "key": "d9035c7709ea90ec3ec9f2921851435ad0ef994d12108bd897147a19e5bedf41",
+      "body": "value.notice?.id===id?{...value,notice:undefined}:value"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/RuntimeLogsDialog.tsx",
+      "name": "anonymous",
+      "line": 21,
+      "endLine": 21,
+      "length": 50,
+      "tokens": 18,
+      "key": "f04c852beec0dc43c2c05e709f109c11b7b7b872efe15dd355b27ddaae6dc76d",
+      "body": "value.entries.some(e=>e.id===current)?current:null"
+    },
+    {
+      "file": "src/local-app/RuntimeLogsDialog.tsx",
+      "name": "anonymous",
+      "line": 21,
+      "endLine": 21,
+      "length": 50,
+      "tokens": 18,
+      "key": "f04c852beec0dc43c2c05e709f109c11b7b7b872efe15dd355b27ddaae6dc76d",
+      "body": "value.entries.some(e=>e.id===current)?current:null"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/WorkspaceAudioPanel.tsx",
+      "name": "anonymous",
+      "line": 130,
+      "endLine": 130,
+      "length": 45,
+      "tokens": 18,
+      "key": "70bdc98143f2e802ffbdbe9983133334156a6e4acf7028fc50aaaf226cffaf81",
+      "body": "shotIds[p.shotId??'']?.includes(String(i.id))"
+    },
+    {
+      "file": "src/local-app/WorkspaceAudioPanel.tsx",
+      "name": "anonymous",
+      "line": 130,
+      "endLine": 130,
+      "length": 45,
+      "tokens": 18,
+      "key": "70bdc98143f2e802ffbdbe9983133334156a6e4acf7028fc50aaaf226cffaf81",
+      "body": "shotIds[p.shotId??'']?.includes(String(i.id))"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/accountDirectoryMigration.ts",
+      "name": "anonymous",
+      "line": 41,
+      "endLine": 41,
+      "length": 58,
+      "tokens": 18,
+      "key": "3d9beb56de58633cd0f4a5485c898eb0105c6ecd223f765c5db2b794d96246c9",
+      "body": "f.relativePath.endsWith('.json')&&f.fileSize<=32*1024*1024"
+    },
+    {
+      "file": "src/local-app/accountDirectoryMigration.ts",
+      "name": "anonymous",
+      "line": 194,
+      "endLine": 194,
+      "length": 58,
+      "tokens": 18,
+      "key": "3d9beb56de58633cd0f4a5485c898eb0105c6ecd223f765c5db2b794d96246c9",
+      "body": "f.relativePath.endsWith('.json')&&f.fileSize<=32*1024*1024"
+    },
+    {
+      "file": "src/local-app/mediaRootMigration.ts",
+      "name": "anonymous",
+      "line": 85,
+      "endLine": 85,
+      "length": 58,
+      "tokens": 18,
+      "key": "3d9beb56de58633cd0f4a5485c898eb0105c6ecd223f765c5db2b794d96246c9",
+      "body": "f.relativePath.endsWith('.json')&&f.fileSize<=32*1024*1024"
+    }
+  ],
+  [
+    {
+      "file": "scripts/storage/backup.mjs",
+      "name": "overlap",
+      "line": 22,
+      "endLine": 22,
+      "length": 49,
+      "tokens": 17,
+      "key": "fb396df46905514e01342c47ce14dd9316592ac6d74f31904bb72e3d97b014fd",
+      "body": "a===b||assetPathWithin(a,b)||assetPathWithin(b,a)"
+    },
+    {
+      "file": "src/local-app/accountAssetRoots.ts",
+      "name": "accountAssetRootsOverlap",
+      "line": 9,
+      "endLine": 9,
+      "length": 49,
+      "tokens": 17,
+      "key": "fb396df46905514e01342c47ce14dd9316592ac6d74f31904bb72e3d97b014fd",
+      "body": "a===b||assetPathWithin(a,b)||assetPathWithin(b,a)"
+    },
+    {
+      "file": "src/local-app/mediaRootMigration.ts",
+      "name": "overlap",
+      "line": 17,
+      "endLine": 17,
+      "length": 49,
+      "tokens": 17,
+      "key": "fb396df46905514e01342c47ce14dd9316592ac6d74f31904bb72e3d97b014fd",
+      "body": "a===b||assetPathWithin(a,b)||assetPathWithin(b,a)"
+    },
+    {
+      "file": "src/local-app/mediaRootSettings.ts",
+      "name": "overlap",
+      "line": 22,
+      "endLine": 22,
+      "length": 49,
+      "tokens": 17,
+      "key": "fb396df46905514e01342c47ce14dd9316592ac6d74f31904bb72e3d97b014fd",
+      "body": "a===b||assetPathWithin(a,b)||assetPathWithin(b,a)"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/WorkspaceAudioPanel.tsx",
+      "name": "anonymous",
+      "line": 104,
+      "endLine": 104,
+      "length": 44,
+      "tokens": 17,
+      "key": "8db557891f983c343e3abba651161a52f4676073d7a39194c343d69a3851e9a8",
+      "body": "resolve(String(reader.result).split(',')[1])"
+    },
+    {
+      "file": "src/local-app/workspaceUploads.ts",
+      "name": "anonymous",
+      "line": 88,
+      "endLine": 88,
+      "length": 44,
+      "tokens": 17,
+      "key": "8db557891f983c343e3abba651161a52f4676073d7a39194c343d69a3851e9a8",
+      "body": "resolve(String(reader.result).split(',')[1])"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/WorkspacePlanningSelection.tsx",
+      "name": "anonymous",
+      "line": 25,
+      "endLine": 25,
+      "length": 40,
+      "tokens": 17,
+      "key": "39a2d41d5c2233f8e055d8b6276c684d799e55cc309a542b625840af00e4ba6d",
+      "body": "setSelection(s=>({...s,harnessId:h.id}))"
+    },
+    {
+      "file": "src/local-app/WorkspacePlanningSelection.tsx",
+      "name": "anonymous",
+      "line": 31,
+      "endLine": 31,
+      "length": 40,
+      "tokens": 17,
+      "key": "39a2d41d5c2233f8e055d8b6276c684d799e55cc309a542b625840af00e4ba6d",
+      "body": "setSelection(s=>({...s,harnessId:h.id}))"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/WorkspaceVisualPreparation.tsx",
+      "name": "anonymous",
+      "line": 234,
+      "endLine": 234,
+      "length": 87,
+      "tokens": 17,
+      "key": "a51d0649a6941de6f890ae85a152b9f38c17044fb3339b5efd98b5787a74fbc9",
+      "body": "c.targetItemId===targetItemId&&c.materialRevisionId===materialId&&c.status!=='rejected'"
+    },
+    {
+      "file": "src/local-app/WorkspaceVisualPreparation.tsx",
+      "name": "anonymous",
+      "line": 234,
+      "endLine": 234,
+      "length": 87,
+      "tokens": 17,
+      "key": "a51d0649a6941de6f890ae85a152b9f38c17044fb3339b5efd98b5787a74fbc9",
+      "body": "c.targetItemId===targetItemId&&c.materialRevisionId===materialId&&c.status!=='rejected'"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/catalog.ts",
+      "name": "anonymous",
+      "line": 23,
+      "endLine": 23,
+      "length": 57,
+      "tokens": 17,
+      "key": "92f1a34fe445af39716f6648150f325f650ceb7b808fc5e837728e3501c90b1a",
+      "body": "!['host','port','user','database','password'].includes(k)"
+    },
+    {
+      "file": "src/local-app/workerDatabase.ts",
+      "name": "anonymous",
+      "line": 7,
+      "endLine": 7,
+      "length": 57,
+      "tokens": 17,
+      "key": "92f1a34fe445af39716f6648150f325f650ceb7b808fc5e837728e3501c90b1a",
+      "body": "!['host','port','user','database','password'].includes(k)"
+    }
+  ],
+  [
+    {
+      "file": "src/connections/ConnectionWorkspace.tsx",
+      "name": "anonymous",
+      "line": 263,
+      "endLine": 263,
+      "length": 66,
+      "tokens": 16,
+      "key": "be25669a561492cebe8195cc06ed7a5a760ecf8bb17dda5aeedbee6426fdb073",
+      "body": "group.services.some(service=>service.connectionId===connection.id)"
+    },
+    {
+      "file": "src/connections/ConnectionWorkspace.tsx",
+      "name": "anonymous",
+      "line": 267,
+      "endLine": 267,
+      "length": 66,
+      "tokens": 16,
+      "key": "be25669a561492cebe8195cc06ed7a5a760ecf8bb17dda5aeedbee6426fdb073",
+      "body": "group.services.some(service=>service.connectionId===connection.id)"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/ProductionWorkspacePanel.tsx",
+      "name": "anonymous",
+      "line": 204,
+      "endLine": 204,
+      "length": 48,
+      "tokens": 16,
+      "key": "72688c245ec5ccf219dca0a4d730e4ee125284cdb946ec57745263f05e0f1403",
+      "body": "all.findIndex(c=>c.shotId===clip.shotId)===index"
+    },
+    {
+      "file": "src/local-app/ProductionWorkspacePanel.tsx",
+      "name": "anonymous",
+      "line": 237,
+      "endLine": 237,
+      "length": 48,
+      "tokens": 16,
+      "key": "72688c245ec5ccf219dca0a4d730e4ee125284cdb946ec57745263f05e0f1403",
+      "body": "all.findIndex(c=>c.shotId===clip.shotId)===index"
+    },
+    {
+      "file": "src/local-app/WorkspaceShotTable.tsx",
+      "name": "anonymous",
+      "line": 19,
+      "endLine": 19,
+      "length": 48,
+      "tokens": 16,
+      "key": "72688c245ec5ccf219dca0a4d730e4ee125284cdb946ec57745263f05e0f1403",
+      "body": "all.findIndex(c=>c.shotId===clip.shotId)===index"
+    },
+    {
+      "file": "src/local-app/workspaceNarration.ts",
+      "name": "anonymous",
+      "line": 33,
+      "endLine": 33,
+      "length": 50,
+      "tokens": 16,
+      "key": "72688c245ec5ccf219dca0a4d730e4ee125284cdb946ec57745263f05e0f1403",
+      "body": "clips.findIndex(c=>c.shotId===clip.shotId)===index"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/ProductionWorkspacePanel.tsx",
+      "name": "anonymous",
+      "line": 215,
+      "endLine": 215,
+      "length": 41,
+      "tokens": 16,
+      "key": "b524abc092fd3fda3bcdfdcfb38419d62768ede26405edb335ae7eb9cc45b09d",
+      "body": "all.findIndex(v=>v.shotId===c.shotId)===i"
+    },
+    {
+      "file": "src/local-app/WorkspaceCaptionsPanel.tsx",
+      "name": "anonymous",
+      "line": 39,
+      "endLine": 39,
+      "length": 41,
+      "tokens": 16,
+      "key": "b524abc092fd3fda3bcdfdcfb38419d62768ede26405edb335ae7eb9cc45b09d",
+      "body": "all.findIndex(v=>v.shotId===c.shotId)===i"
+    },
+    {
+      "file": "src/local-app/WorkspaceCaptionsPanel.tsx",
+      "name": "anonymous",
+      "line": 53,
+      "endLine": 53,
+      "length": 41,
+      "tokens": 16,
+      "key": "b524abc092fd3fda3bcdfdcfb38419d62768ede26405edb335ae7eb9cc45b09d",
+      "body": "all.findIndex(v=>v.shotId===c.shotId)===i"
+    },
+    {
+      "file": "src/local-app/WorkspaceCompletedShots.tsx",
+      "name": "anonymous",
+      "line": 25,
+      "endLine": 25,
+      "length": 39,
+      "tokens": 16,
+      "key": "b524abc092fd3fda3bcdfdcfb38419d62768ede26405edb335ae7eb9cc45b09d",
+      "body": "a.findIndex(v=>v.shotId===c.shotId)===i"
+    },
+    {
+      "file": "src/local-app/workspaceCandidates.ts",
+      "name": "anonymous",
+      "line": 53,
+      "endLine": 53,
+      "length": 45,
+      "tokens": 16,
+      "key": "b524abc092fd3fda3bcdfdcfb38419d62768ede26405edb335ae7eb9cc45b09d",
+      "body": "all.findIndex(v=>v.shotId===b.shotId)===index"
+    },
+    {
+      "file": "src/local-app/workspaceDeliveryCommands.ts",
+      "name": "anonymous",
+      "line": 45,
+      "endLine": 45,
+      "length": 41,
+      "tokens": 16,
+      "key": "b524abc092fd3fda3bcdfdcfb38419d62768ede26405edb335ae7eb9cc45b09d",
+      "body": "all.findIndex(v=>v.shotId===x.shotId)===i"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/WorkspaceShotPreview.tsx",
+      "name": "anonymous",
+      "line": 21,
+      "endLine": 21,
+      "length": 35,
+      "tokens": 16,
+      "key": "b4161b797184f9f15290d12c8f30295d415d17e0ba51bd3a4b950656967f88c5",
+      "body": "t.items.some(i=>i.id===clip.itemId)"
+    },
+    {
+      "file": "src/local-app/productionWorkspaceCommands.ts",
+      "name": "anonymous",
+      "line": 249,
+      "endLine": 249,
+      "length": 35,
+      "tokens": 16,
+      "key": "b4161b797184f9f15290d12c8f30295d415d17e0ba51bd3a4b950656967f88c5",
+      "body": "t.items.some(i=>i.id===clip.itemId)"
+    },
+    {
+      "file": "src/local-app/workspaceCaptionsCommands.ts",
+      "name": "anonymous",
+      "line": 39,
+      "endLine": 39,
+      "length": 35,
+      "tokens": 16,
+      "key": "b4161b797184f9f15290d12c8f30295d415d17e0ba51bd3a4b950656967f88c5",
+      "body": "t.items.some(i=>i.id===clip.itemId)"
+    },
+    {
+      "file": "src/local-app/workspaceCaptionsCommands.ts",
+      "name": "anonymous",
+      "line": 73,
+      "endLine": 73,
+      "length": 35,
+      "tokens": 16,
+      "key": "b4161b797184f9f15290d12c8f30295d415d17e0ba51bd3a4b950656967f88c5",
+      "body": "t.items.some(i=>i.id===clip.itemId)"
+    },
+    {
+      "file": "src/local-app/workspaceImages.ts",
+      "name": "anonymous",
+      "line": 26,
+      "endLine": 26,
+      "length": 35,
+      "tokens": 16,
+      "key": "b4161b797184f9f15290d12c8f30295d415d17e0ba51bd3a4b950656967f88c5",
+      "body": "t.items.some(i=>i.id===clip.itemId)"
+    },
+    {
+      "file": "src/local-app/workspaceImages.ts",
+      "name": "anonymous",
+      "line": 59,
+      "endLine": 59,
+      "length": 35,
+      "tokens": 16,
+      "key": "b4161b797184f9f15290d12c8f30295d415d17e0ba51bd3a4b950656967f88c5",
+      "body": "t.items.some(i=>i.id===clip.itemId)"
+    },
+    {
+      "file": "src/local-app/workspaceNarration.ts",
+      "name": "anonymous",
+      "line": 46,
+      "endLine": 46,
+      "length": 35,
+      "tokens": 16,
+      "key": "b4161b797184f9f15290d12c8f30295d415d17e0ba51bd3a4b950656967f88c5",
+      "body": "t.items.some(i=>i.id===clip.itemId)"
+    },
+    {
+      "file": "src/local-app/workspaceVisualCandidates.ts",
+      "name": "anonymous",
+      "line": 248,
+      "endLine": 248,
+      "length": 35,
+      "tokens": 16,
+      "key": "b4161b797184f9f15290d12c8f30295d415d17e0ba51bd3a4b950656967f88c5",
+      "body": "t.items.some(i=>i.id===clip.itemId)"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/nativeAttemptOutput.ts",
+      "name": "anonymous",
+      "line": 136,
+      "endLine": 136,
+      "length": 51,
+      "tokens": 16,
+      "key": "85e00de14708f4659159ebbd234061eb0da2eaeb2c8f3e677b829c27a8f41d72",
+      "body": "{if(error.code!=='ENOENT')throw error;return null;}"
+    },
+    {
+      "file": "src/local-app/nativeAttemptOutput.ts",
+      "name": "anonymous",
+      "line": 210,
+      "endLine": 210,
+      "length": 51,
+      "tokens": 16,
+      "key": "85e00de14708f4659159ebbd234061eb0da2eaeb2c8f3e677b829c27a8f41d72",
+      "body": "{if(error.code!=='ENOENT')throw error;return null;}"
+    }
+  ],
+  [
+    {
+      "file": "src/workspaceCandidates.ts",
+      "name": "anonymous",
+      "line": 33,
+      "endLine": 33,
+      "length": 40,
+      "tokens": 16,
+      "key": "e030524fa6e3199a577e16b97e57c5fc6a1ee6513c175957bbc578c0b54ef5fe",
+      "body": "String(a.id).localeCompare(String(b.id))"
+    },
+    {
+      "file": "src/workspaceCandidates.ts",
+      "name": "anonymous",
+      "line": 33,
+      "endLine": 33,
+      "length": 40,
+      "tokens": 16,
+      "key": "e030524fa6e3199a577e16b97e57c5fc6a1ee6513c175957bbc578c0b54ef5fe",
+      "body": "String(a.id).localeCompare(String(b.id))"
+    }
+  ],
+  [
+    {
+      "file": "scripts/runtime/history-consolidation.mjs",
+      "name": "lit",
+      "line": 7,
+      "endLine": 7,
+      "length": 38,
+      "tokens": 15,
+      "key": "06ed414ee781c5b27ae18a0b754bc1a2924a42fee9293195a783cabc310fa7a3",
+      "body": "\"'\"+String(s).replaceAll(\"'\",\"''\")+\"'\""
+    },
+    {
+      "file": "scripts/storage/location-lineage.mjs",
+      "name": "quote",
+      "line": 4,
+      "endLine": 4,
+      "length": 42,
+      "tokens": 15,
+      "key": "06ed414ee781c5b27ae18a0b754bc1a2924a42fee9293195a783cabc310fa7a3",
+      "body": "\"'\"+String(value).replaceAll(\"'\",\"''\")+\"'\""
+    },
+    {
+      "file": "scripts/storage/media-references.mjs",
+      "name": "quote",
+      "line": 4,
+      "endLine": 4,
+      "length": 42,
+      "tokens": 15,
+      "key": "06ed414ee781c5b27ae18a0b754bc1a2924a42fee9293195a783cabc310fa7a3",
+      "body": "\"'\"+String(value).replaceAll(\"'\",\"''\")+\"'\""
+    }
+  ],
+  [
+    {
+      "file": "src/connections/ConnectionWorkspace.tsx",
+      "name": "anonymous",
+      "line": 143,
+      "endLine": 143,
+      "length": 36,
+      "tokens": 15,
+      "key": "0fa04e74c532977452a36c82b02bbd67b34c360d62f4e8dad80e6d48b5a03893",
+      "body": "({...item,label:uiText(item.label)})"
+    },
+    {
+      "file": "src/connections/ConnectionWorkspace.tsx",
+      "name": "anonymous",
+      "line": 472,
+      "endLine": 472,
+      "length": 36,
+      "tokens": 15,
+      "key": "0fa04e74c532977452a36c82b02bbd67b34c360d62f4e8dad80e6d48b5a03893",
+      "body": "({...item,label:uiText(item.label)})"
+    }
+  ],
+  [
+    {
+      "file": "src/connections/ConnectionWorkspace.tsx",
+      "name": "anonymous",
+      "line": 424,
+      "endLine": 424,
+      "length": 82,
+      "tokens": 15,
+      "key": "fa808179f5fc04bcf2ca2cc6a92ba8084b805cc75e5c408c644760fc12f1c7ef",
+      "body": "editor.current?.querySelector<HTMLInputElement>('input[type=\"password\"]')?.focus()"
+    },
+    {
+      "file": "src/connections/ConnectionWorkspace.tsx",
+      "name": "anonymous",
+      "line": 464,
+      "endLine": 464,
+      "length": 82,
+      "tokens": 15,
+      "key": "fa808179f5fc04bcf2ca2cc6a92ba8084b805cc75e5c408c644760fc12f1c7ef",
+      "body": "editor.current?.querySelector<HTMLInputElement>('input[type=\"password\"]')?.focus()"
+    }
+  ],
+  [
+    {
+      "file": "src/connections/ConnectionWorkspace.tsx",
+      "name": "anonymous",
+      "line": 427,
+      "endLine": 427,
+      "length": 28,
+      "tokens": 15,
+      "key": "0e01e8eefcc24d91906c57b6a717e73e896e75cbac97cce806c0aebef184c1fc",
+      "body": "<li key={model}>{model}</li>"
+    },
+    {
+      "file": "src/local-app/EpisodeCollectionDialog.tsx",
+      "name": "anonymous",
+      "line": 27,
+      "endLine": 27,
+      "length": 34,
+      "tokens": 15,
+      "key": "0e01e8eefcc24d91906c57b6a717e73e896e75cbac97cce806c0aebef184c1fc",
+      "body": "<li key={conflict}>{conflict}</li>"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/LocalCatalogApp.tsx",
+      "name": "anonymous",
+      "line": 165,
+      "endLine": 165,
+      "length": 48,
+      "tokens": 15,
+      "key": "e2f56e2d75a720f1f290695580e6024c766f9c05d95d14f3bafacd2f617f5756",
+      "body": "setError(e instanceof Error?e.message:String(e))"
+    },
+    {
+      "file": "src/local-app/LocalCatalogApp.tsx",
+      "name": "anonymous",
+      "line": 166,
+      "endLine": 166,
+      "length": 48,
+      "tokens": 15,
+      "key": "e2f56e2d75a720f1f290695580e6024c766f9c05d95d14f3bafacd2f617f5756",
+      "body": "setError(e instanceof Error?e.message:String(e))"
+    },
+    {
+      "file": "src/local-app/LocalCatalogApp.tsx",
+      "name": "anonymous",
+      "line": 174,
+      "endLine": 174,
+      "length": 48,
+      "tokens": 15,
+      "key": "e2f56e2d75a720f1f290695580e6024c766f9c05d95d14f3bafacd2f617f5756",
+      "body": "setError(e instanceof Error?e.message:String(e))"
+    },
+    {
+      "file": "src/local-app/LocalCatalogApp.tsx",
+      "name": "anonymous",
+      "line": 239,
+      "endLine": 239,
+      "length": 48,
+      "tokens": 15,
+      "key": "e2f56e2d75a720f1f290695580e6024c766f9c05d95d14f3bafacd2f617f5756",
+      "body": "setError(e instanceof Error?e.message:String(e))"
+    },
+    {
+      "file": "src/local-app/LocalCatalogApp.tsx",
+      "name": "anonymous",
+      "line": 252,
+      "endLine": 252,
+      "length": 48,
+      "tokens": 15,
+      "key": "e2f56e2d75a720f1f290695580e6024c766f9c05d95d14f3bafacd2f617f5756",
+      "body": "setError(e instanceof Error?e.message:String(e))"
+    },
+    {
+      "file": "src/local-app/LocalCatalogApp.tsx",
+      "name": "anonymous",
+      "line": 256,
+      "endLine": 256,
+      "length": 48,
+      "tokens": 15,
+      "key": "e2f56e2d75a720f1f290695580e6024c766f9c05d95d14f3bafacd2f617f5756",
+      "body": "setError(e instanceof Error?e.message:String(e))"
+    },
+    {
+      "file": "src/local-app/LocalCatalogApp.tsx",
+      "name": "anonymous",
+      "line": 276,
+      "endLine": 276,
+      "length": 48,
+      "tokens": 15,
+      "key": "e2f56e2d75a720f1f290695580e6024c766f9c05d95d14f3bafacd2f617f5756",
+      "body": "setError(e instanceof Error?e.message:String(e))"
+    },
+    {
+      "file": "src/local-app/LocalEpisodeDetail.tsx",
+      "name": "anonymous",
+      "line": 72,
+      "endLine": 72,
+      "length": 48,
+      "tokens": 15,
+      "key": "e2f56e2d75a720f1f290695580e6024c766f9c05d95d14f3bafacd2f617f5756",
+      "body": "setError(e instanceof Error?e.message:String(e))"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/LocalDeletionRecovery.tsx",
+      "name": "anonymous",
+      "line": 50,
+      "endLine": 50,
+      "length": 30,
+      "tokens": 15,
+      "key": "be7c2bfc4061ee5a554e1a29afc68dbe898f9840166e05978b47b51ef26db63b",
+      "body": "<code key={path}>{path}</code>"
+    },
+    {
+      "file": "src/local-app/LocalDeletionRecovery.tsx",
+      "name": "anonymous",
+      "line": 50,
+      "endLine": 50,
+      "length": 30,
+      "tokens": 15,
+      "key": "be7c2bfc4061ee5a554e1a29afc68dbe898f9840166e05978b47b51ef26db63b",
+      "body": "<code key={path}>{path}</code>"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/LogStorageSettings.tsx",
+      "name": "anonymous",
+      "line": 16,
+      "endLine": 16,
+      "length": 48,
+      "tokens": 15,
+      "key": "d0f4e3311a62c90feffd297ddcff33becc604327dd87c492784b237f4fd7cec1",
+      "body": "stateChanged.current?.({busy:false,dirty:false})"
+    },
+    {
+      "file": "src/local-app/MediaRootSettingsDialog.tsx",
+      "name": "anonymous",
+      "line": 22,
+      "endLine": 22,
+      "length": 48,
+      "tokens": 15,
+      "key": "d0f4e3311a62c90feffd297ddcff33becc604327dd87c492784b237f4fd7cec1",
+      "body": "stateChanged.current?.({busy:false,dirty:false})"
+    },
+    {
+      "file": "src/local-app/OwnerPreferencesDialog.tsx",
+      "name": "anonymous",
+      "line": 30,
+      "endLine": 30,
+      "length": 48,
+      "tokens": 15,
+      "key": "d0f4e3311a62c90feffd297ddcff33becc604327dd87c492784b237f4fd7cec1",
+      "body": "stateChanged.current?.({busy:false,dirty:false})"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/SystemStatusDrawer.tsx",
+      "name": "anonymous",
+      "line": 59,
+      "endLine": 59,
+      "length": 64,
+      "tokens": 15,
+      "key": "318a57a3c7bd8d15ef826bde41d7458052f742435252a62774fef727db4e59cd",
+      "body": "{active=false;preference?.removeEventListener('change',reduce);}"
+    },
+    {
+      "file": "src/ui/SurfacePresence.tsx",
+      "name": "anonymous",
+      "line": 35,
+      "endLine": 35,
+      "length": 64,
+      "tokens": 15,
+      "key": "318a57a3c7bd8d15ef826bde41d7458052f742435252a62774fef727db4e59cd",
+      "body": "{active=false;preference?.removeEventListener('change',reduce);}"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/WorkspaceDeliveryPanel.tsx",
+      "name": "setTitle",
+      "line": 17,
+      "endLine": 17,
+      "length": 41,
+      "tokens": 15,
+      "key": "b1556a4ece07b948c5f5a41e77bcef83710aedc58b7190ea82a3c9ebc4120ab8",
+      "body": "draft.setValue(value=>({...value,title}))"
+    },
+    {
+      "file": "src/local-app/WorkspaceDeliveryPanel.tsx",
+      "name": "setDescription",
+      "line": 17,
+      "endLine": 17,
+      "length": 47,
+      "tokens": 15,
+      "key": "b1556a4ece07b948c5f5a41e77bcef83710aedc58b7190ea82a3c9ebc4120ab8",
+      "body": "draft.setValue(value=>({...value,description}))"
+    },
+    {
+      "file": "src/local-app/WorkspaceDeliveryPanel.tsx",
+      "name": "setTags",
+      "line": 17,
+      "endLine": 17,
+      "length": 40,
+      "tokens": 15,
+      "key": "b1556a4ece07b948c5f5a41e77bcef83710aedc58b7190ea82a3c9ebc4120ab8",
+      "body": "draft.setValue(value=>({...value,tags}))"
+    },
+    {
+      "file": "src/local-app/WorkspaceScriptPanel.tsx",
+      "name": "setText",
+      "line": 32,
+      "endLine": 32,
+      "length": 40,
+      "tokens": 15,
+      "key": "b1556a4ece07b948c5f5a41e77bcef83710aedc58b7190ea82a3c9ebc4120ab8",
+      "body": "draft.setValue(value=>({...value,text}))"
+    },
+    {
+      "file": "src/local-app/WorkspaceScriptPanel.tsx",
+      "name": "setReason",
+      "line": 32,
+      "endLine": 32,
+      "length": 42,
+      "tokens": 15,
+      "key": "b1556a4ece07b948c5f5a41e77bcef83710aedc58b7190ea82a3c9ebc4120ab8",
+      "body": "draft.setValue(value=>({...value,reason}))"
+    },
+    {
+      "file": "src/local-app/WorkspaceScriptPanel.tsx",
+      "name": "setFilename",
+      "line": 32,
+      "endLine": 32,
+      "length": 44,
+      "tokens": 15,
+      "key": "b1556a4ece07b948c5f5a41e77bcef83710aedc58b7190ea82a3c9ebc4120ab8",
+      "body": "draft.setValue(value=>({...value,filename}))"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/accountDirectoryMigration.ts",
+      "name": "anonymous",
+      "line": 135,
+      "endLine": 135,
+      "length": 38,
+      "tokens": 15,
+      "key": "7b9f0427439a05f01678a0dede49db3780e056b78100c68e393005060337963e",
+      "body": "alias.replace(/\\/+$/,'')===logicalRoot"
+    },
+    {
+      "file": "src/local-app/episodeStorageLocation.ts",
+      "name": "anonymous",
+      "line": 20,
+      "endLine": 20,
+      "length": 38,
+      "tokens": 15,
+      "key": "7b9f0427439a05f01678a0dede49db3780e056b78100c68e393005060337963e",
+      "body": "alias.replace(/\\/+$/,'')===logicalRoot"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/legacyWorkspaceMetadata.ts",
+      "name": "anonymous",
+      "line": 22,
+      "endLine": 22,
+      "length": 34,
+      "tokens": 15,
+      "key": "d6ff5c3c670fd60a598be38ba193f74a9c294a31acf740dd00d139a4ec4ba276",
+      "body": "timeline.items.find(i=>i.id===id)!"
+    },
+    {
+      "file": "src/workspaceShots.ts",
+      "name": "anonymous",
+      "line": 56,
+      "endLine": 56,
+      "length": 34,
+      "tokens": 15,
+      "key": "d6ff5c3c670fd60a598be38ba193f74a9c294a31acf740dd00d139a4ec4ba276",
+      "body": "timeline.items.find(i=>i.id===id)!"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/mediaWorker.ts",
+      "name": "anonymous",
+      "line": 89,
+      "endLine": 89,
+      "length": 57,
+      "tokens": 15,
+      "key": "acedbaf6d820ef9da9184316c4fbdf6e5b7e594ffd5183c54bb6f3b9be648eef",
+      "body": "{await dispatch();return waitForImageResponse(url,init);}"
+    },
+    {
+      "file": "src/local-app/mediaWorker.ts",
+      "name": "anonymous",
+      "line": 90,
+      "endLine": 90,
+      "length": 57,
+      "tokens": 15,
+      "key": "acedbaf6d820ef9da9184316c4fbdf6e5b7e594ffd5183c54bb6f3b9be648eef",
+      "body": "{await dispatch();return waitForImageResponse(url,init);}"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/productionWorkspaceCommands.ts",
+      "name": "anonymous",
+      "line": 110,
+      "endLine": 110,
+      "length": 62,
+      "tokens": 15,
+      "key": "8c0e1f9f7b92d9ce97f2722713eb0539232a59c7adc07b42576175f4513e9564",
+      "body": "f.relativePath===member.relativePath&&f.sha256===member.sha256"
+    },
+    {
+      "file": "src/worker/contracts.ts",
+      "name": "anonymous",
+      "line": 542,
+      "endLine": 542,
+      "length": 82,
+      "tokens": 15,
+      "key": "8c0e1f9f7b92d9ce97f2722713eb0539232a59c7adc07b42576175f4513e9564",
+      "body": "artifact.relativePath === member.relativePath && artifact.sha256 === member.sha256"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/useWorkspaceCaptionOperation.ts",
+      "name": "anonymous",
+      "line": 57,
+      "endLine": 57,
+      "length": 52,
+      "tokens": 15,
+      "key": "0efc343733202617830dbd93907b1180c232b4e13d554a07c7c0db84adbb6454",
+      "body": "c.clipId===options.clipId||c.itemId===options.itemId"
+    },
+    {
+      "file": "src/local-app/useWorkspaceCaptionOperation.ts",
+      "name": "anonymous",
+      "line": 82,
+      "endLine": 82,
+      "length": 52,
+      "tokens": 15,
+      "key": "0efc343733202617830dbd93907b1180c232b4e13d554a07c7c0db84adbb6454",
+      "body": "c.clipId===options.clipId||c.itemId===options.itemId"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/workspaceCallConfirmation.ts",
+      "name": "anonymous",
+      "line": 24,
+      "endLine": 24,
+      "length": 54,
+      "tokens": 15,
+      "key": "1dc5fa00c21b87db17271baf6ab1a138466b7f451c5dab16108b8ee95358d97d",
+      "body": "b.itemId===payload.targetItemId||b.id===payload.clipId"
+    },
+    {
+      "file": "src/local-app/workspaceCallConfirmation.ts",
+      "name": "anonymous",
+      "line": 54,
+      "endLine": 54,
+      "length": 54,
+      "tokens": 15,
+      "key": "1dc5fa00c21b87db17271baf6ab1a138466b7f451c5dab16108b8ee95358d97d",
+      "body": "b.itemId===payload.targetItemId||b.id===payload.clipId"
+    }
+  ],
+  [
+    {
+      "file": "src/operations/OperationsWorkspace.tsx",
+      "name": "anonymous",
+      "line": 167,
+      "endLine": 167,
+      "length": 39,
+      "tokens": 15,
+      "key": "8c4d8930ad3c59aa7f006086b804803cba2208428f95e64ee25086cf4dbe98df",
+      "body": "({value:account.id,label:account.name})"
+    },
+    {
+      "file": "src/workspace/WorkspaceViews.tsx",
+      "name": "anonymous",
+      "line": 223,
+      "endLine": 223,
+      "length": 39,
+      "tokens": 15,
+      "key": "8c4d8930ad3c59aa7f006086b804803cba2208428f95e64ee25086cf4dbe98df",
+      "body": "({value:account.id,label:account.name})"
+    },
+    {
+      "file": "src/workspace/WorkspaceViews.tsx",
+      "name": "anonymous",
+      "line": 224,
+      "endLine": 224,
+      "length": 43,
+      "tokens": 15,
+      "key": "8c4d8930ad3c59aa7f006086b804803cba2208428f95e64ee25086cf4dbe98df",
+      "body": "({value:candidate.id,label:candidate.name})"
+    }
+  ],
+  [
+    {
+      "file": "src/worker/contracts.ts",
+      "name": "anonymous",
+      "line": 742,
+      "endLine": 742,
+      "length": 80,
+      "tokens": 15,
+      "key": "b2a176ec0dbc823aa78ae740ebbc46141362499744cf18369709448ca227c396",
+      "body": "artifact.relativePath === input.relativePath && artifact.sha256 === input.sha256"
+    },
+    {
+      "file": "src/worker/contracts.ts",
+      "name": "anonymous",
+      "line": 761,
+      "endLine": 761,
+      "length": 80,
+      "tokens": 15,
+      "key": "b2a176ec0dbc823aa78ae740ebbc46141362499744cf18369709448ca227c396",
+      "body": "artifact.relativePath === input.relativePath && artifact.sha256 === input.sha256"
+    },
+    {
+      "file": "src/worker/storyboardRevision.ts",
+      "name": "anonymous",
+      "line": 51,
+      "endLine": 51,
+      "length": 82,
+      "tokens": 15,
+      "key": "b2a176ec0dbc823aa78ae740ebbc46141362499744cf18369709448ca227c396",
+      "body": "candidate.relativePath === input.relativePath && candidate.sha256 === input.sha256"
+    }
+  ],
+  [
+    {
+      "file": "scripts/e2e/run.mjs",
+      "name": "anonymous",
+      "line": 25,
+      "endLine": 25,
+      "length": 28,
+      "tokens": 14,
+      "key": "8f8006adc1a173f9ed1a16be8864f13143ead56bdde0cd07feeb1de1a11fb30d",
+      "body": "/^tsconfig.*\\.json$/.test(n)"
+    },
+    {
+      "file": "scripts/e2e/run.mjs",
+      "name": "anonymous",
+      "line": 32,
+      "endLine": 32,
+      "length": 28,
+      "tokens": 14,
+      "key": "8f8006adc1a173f9ed1a16be8864f13143ead56bdde0cd07feeb1de1a11fb30d",
+      "body": "/^tsconfig.*\\.json$/.test(n)"
+    }
+  ],
+  [
+    {
+      "file": "scripts/runtime/history-consolidation.mjs",
+      "name": "hash",
+      "line": 7,
+      "endLine": 7,
+      "length": 44,
+      "tokens": 14,
+      "key": "60c56b33a48f20f2b3f3b38492874c3f5bc4153221ae05161d20a8d6a13d9aac",
+      "body": "createHash('sha256').update(b).digest('hex')"
+    },
+    {
+      "file": "scripts/runtime/keychain.mjs",
+      "name": "hash",
+      "line": 18,
+      "endLine": 18,
+      "length": 48,
+      "tokens": 14,
+      "key": "60c56b33a48f20f2b3f3b38492874c3f5bc4153221ae05161d20a8d6a13d9aac",
+      "body": "createHash('sha256').update(value).digest('hex')"
+    },
+    {
+      "file": "scripts/runtime/migrate.mjs",
+      "name": "sha",
+      "line": 4,
+      "endLine": 4,
+      "length": 44,
+      "tokens": 14,
+      "key": "60c56b33a48f20f2b3f3b38492874c3f5bc4153221ae05161d20a8d6a13d9aac",
+      "body": "createHash('sha256').update(b).digest('hex')"
+    },
+    {
+      "file": "scripts/storage/backup.mjs",
+      "name": "hash",
+      "line": 14,
+      "endLine": 14,
+      "length": 44,
+      "tokens": 14,
+      "key": "60c56b33a48f20f2b3f3b38492874c3f5bc4153221ae05161d20a8d6a13d9aac",
+      "body": "createHash('sha256').update(b).digest('hex')"
+    },
+    {
+      "file": "scripts/storage/native-backup-format.mjs",
+      "name": "digest",
+      "line": 3,
+      "endLine": 3,
+      "length": 44,
+      "tokens": 14,
+      "key": "60c56b33a48f20f2b3f3b38492874c3f5bc4153221ae05161d20a8d6a13d9aac",
+      "body": "createHash('sha256').update(b).digest('hex')"
+    },
+    {
+      "file": "src/local-app/deliveryCommands.ts",
+      "name": "digest",
+      "line": 14,
+      "endLine": 14,
+      "length": 44,
+      "tokens": 14,
+      "key": "60c56b33a48f20f2b3f3b38492874c3f5bc4153221ae05161d20a8d6a13d9aac",
+      "body": "createHash('sha256').update(b).digest('hex')"
+    },
+    {
+      "file": "src/local-app/productionWorkspaceCommands.ts",
+      "name": "hash",
+      "line": 51,
+      "endLine": 51,
+      "length": 48,
+      "tokens": 14,
+      "key": "60c56b33a48f20f2b3f3b38492874c3f5bc4153221ae05161d20a8d6a13d9aac",
+      "body": "createHash('sha256').update(bytes).digest('hex')"
+    },
+    {
+      "file": "src/local-app/providerBilling.ts",
+      "name": "sha",
+      "line": 17,
+      "endLine": 17,
+      "length": 44,
+      "tokens": 14,
+      "key": "60c56b33a48f20f2b3f3b38492874c3f5bc4153221ae05161d20a8d6a13d9aac",
+      "body": "createHash('sha256').update(s).digest('hex')"
+    },
+    {
+      "file": "src/local-app/sessions.ts",
+      "name": "tokenHash",
+      "line": 7,
+      "endLine": 7,
+      "length": 48,
+      "tokens": 14,
+      "key": "60c56b33a48f20f2b3f3b38492874c3f5bc4153221ae05161d20a8d6a13d9aac",
+      "body": "createHash('sha256').update(token).digest('hex')"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/LocalCatalogApp.tsx",
+      "name": "anonymous",
+      "line": 270,
+      "endLine": 270,
+      "length": 45,
+      "tokens": 14,
+      "key": "b81a59e141997af54247a6552936cb688653f4f106fb286abcef6dc3efec8d2a",
+      "body": "{setSelectedId(id);setRepair(context??null);}"
+    },
+    {
+      "file": "src/local-app/LocalCatalogApp.tsx",
+      "name": "anonymous",
+      "line": 273,
+      "endLine": 273,
+      "length": 45,
+      "tokens": 14,
+      "key": "b81a59e141997af54247a6552936cb688653f4f106fb286abcef6dc3efec8d2a",
+      "body": "{setSelectedId(id);setRepair(context??null);}"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/LocalSystemStatus.tsx",
+      "name": "anonymous",
+      "line": 38,
+      "endLine": 38,
+      "length": 37,
+      "tokens": 14,
+      "key": "48465ae58a1dac4d136bdad32dedb68fc8f16f23b768fc818d9fdc49977cec16",
+      "body": "{if(!document.hidden)void refresh();}"
+    },
+    {
+      "file": "src/local-app/LocalSystemStatus.tsx",
+      "name": "visible",
+      "line": 39,
+      "endLine": 39,
+      "length": 37,
+      "tokens": 14,
+      "key": "48465ae58a1dac4d136bdad32dedb68fc8f16f23b768fc818d9fdc49977cec16",
+      "body": "{if(!document.hidden)void refresh();}"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/WorkspaceMaterialShelf.tsx",
+      "name": "anonymous",
+      "line": 131,
+      "endLine": 131,
+      "length": 49,
+      "tokens": 14,
+      "key": "1d7d7158904920aba890af0c1b82b64d408e2fb0816131a7fb29f0018e62c0f0",
+      "body": "{setPreviewId(material.id);setShowPreview(true);}"
+    },
+    {
+      "file": "src/local-app/WorkspaceMaterialShelf.tsx",
+      "name": "anonymous",
+      "line": 134,
+      "endLine": 134,
+      "length": 49,
+      "tokens": 14,
+      "key": "1d7d7158904920aba890af0c1b82b64d408e2fb0816131a7fb29f0018e62c0f0",
+      "body": "{setPreviewId(material.id);setShowPreview(true);}"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/nativeAttemptOutput.ts",
+      "name": "anonymous",
+      "line": 61,
+      "endLine": 61,
+      "length": 62,
+      "tokens": 14,
+      "key": "32a23b95ca2cdd172492a6eb4584fd80b9107369fcc6da22c514d43bc1871356",
+      "body": "inputs.some(input=>input.relativePath===artifact.relativePath)"
+    },
+    {
+      "file": "src/local-app/nativeAttemptOutput.ts",
+      "name": "anonymous",
+      "line": 94,
+      "endLine": 94,
+      "length": 62,
+      "tokens": 14,
+      "key": "32a23b95ca2cdd172492a6eb4584fd80b9107369fcc6da22c514d43bc1871356",
+      "body": "inputs.some(input=>input.relativePath===artifact.relativePath)"
+    }
+  ],
+  [
+    {
+      "file": "src/operations/OperationsWorkspace.tsx",
+      "name": "clearSearch",
+      "line": 138,
+      "endLine": 141,
+      "length": 59,
+      "tokens": 14,
+      "key": "a1a4eb2529c95c764c1755e40feccd7950332d48da845a97e4fbc70a76ef36a6",
+      "body": "{\n    setSearch('');\n    catalogControls?.onSearch('');\n  }"
+    },
+    {
+      "file": "src/workspace/WorkspaceViews.tsx",
+      "name": "clearSearch",
+      "line": 197,
+      "endLine": 199,
+      "length": 54,
+      "tokens": 14,
+      "key": "a1a4eb2529c95c764c1755e40feccd7950332d48da845a97e4fbc70a76ef36a6",
+      "body": "{\n    setSearch('');catalogControls?.onSearch('');\n  }"
+    }
+  ],
+  [
+    {
+      "file": "src/platform/ConfigurationForms.tsx",
+      "name": "anonymous",
+      "line": 174,
+      "endLine": 174,
+      "length": 45,
+      "tokens": 14,
+      "key": "c1a2ac7c04b8284380c254bfbf950569949f9556ee1f40c89d01ab623f186f46",
+      "body": "({...current,positioning:event.target.value})"
+    },
+    {
+      "file": "src/platform/ConfigurationForms.tsx",
+      "name": "anonymous",
+      "line": 336,
+      "endLine": 336,
+      "length": 49,
+      "tokens": 14,
+      "key": "c1a2ac7c04b8284380c254bfbf950569949f9556ee1f40c89d01ab623f186f46",
+      "body": "({ ...current, positioning: event.target.value })"
+    }
+  ],
+  [
+    {
+      "file": "src/worker/storyboardRevision.ts",
+      "name": "anonymous",
+      "line": 39,
+      "endLine": 39,
+      "length": 40,
+      "tokens": 14,
+      "key": "c814174285230488661a6024b1c74d4fb2d5dc593fb854bf0e5e425b91d51c84",
+      "body": "shots.find((shot) => shot.id === shotId)"
+    },
+    {
+      "file": "src/worker/storyboardRevision.ts",
+      "name": "anonymous",
+      "line": 54,
+      "endLine": 54,
+      "length": 40,
+      "tokens": 14,
+      "key": "c814174285230488661a6024b1c74d4fb2d5dc593fb854bf0e5e425b91d51c84",
+      "body": "shots.find((shot) => shot.id === shotId)"
+    }
+  ],
+  [
+    {
+      "file": "scripts/openchatcut-embed-client.mjs",
+      "name": "anonymous",
+      "line": 50,
+      "endLine": 50,
+      "length": 30,
+      "tokens": 13,
+      "key": "7a3440681b8409a73cbdfe1d6c5c3afcbc7ff358d5c93b36ae73605a6d0b0f15",
+      "body": "b.toString(16).padStart(2,'0')"
+    },
+    {
+      "file": "src/local-app/client.ts",
+      "name": "anonymous",
+      "line": 20,
+      "endLine": 20,
+      "length": 30,
+      "tokens": 13,
+      "key": "7a3440681b8409a73cbdfe1d6c5c3afcbc7ff358d5c93b36ae73605a6d0b0f15",
+      "body": "x.toString(16).padStart(2,'0')"
+    },
+    {
+      "file": "src/local-app/client.ts",
+      "name": "anonymous",
+      "line": 50,
+      "endLine": 50,
+      "length": 30,
+      "tokens": 13,
+      "key": "7a3440681b8409a73cbdfe1d6c5c3afcbc7ff358d5c93b36ae73605a6d0b0f15",
+      "body": "x.toString(16).padStart(2,'0')"
+    }
+  ],
+  [
+    {
+      "file": "scripts/runtime/application.mjs",
+      "name": "anonymous",
+      "line": 39,
+      "endLine": 39,
+      "length": 31,
+      "tokens": 13,
+      "key": "9a1747faf616f21cc0ab53b913ea7cae0ed8bbe5ad0f2d5905e6c606b153a2b9",
+      "body": "{if(e.code!=='ENOENT')throw e;}"
+    },
+    {
+      "file": "scripts/runtime/media-root.mjs",
+      "name": "anonymous",
+      "line": 98,
+      "endLine": 98,
+      "length": 39,
+      "tokens": 13,
+      "key": "9a1747faf616f21cc0ab53b913ea7cae0ed8bbe5ad0f2d5905e6c606b153a2b9",
+      "body": "{if(error.code!=='ENOENT')throw error;}"
+    },
+    {
+      "file": "scripts/runtime/media-root.mjs",
+      "name": "anonymous",
+      "line": 98,
+      "endLine": 98,
+      "length": 39,
+      "tokens": 13,
+      "key": "9a1747faf616f21cc0ab53b913ea7cae0ed8bbe5ad0f2d5905e6c606b153a2b9",
+      "body": "{if(error.code!=='ENOENT')throw error;}"
+    },
+    {
+      "file": "scripts/runtime/media-root.mjs",
+      "name": "anonymous",
+      "line": 101,
+      "endLine": 101,
+      "length": 39,
+      "tokens": 13,
+      "key": "9a1747faf616f21cc0ab53b913ea7cae0ed8bbe5ad0f2d5905e6c606b153a2b9",
+      "body": "{if(error.code!=='ENOENT')throw error;}"
+    }
+  ],
+  [
+    {
+      "file": "scripts/runtime/secrets.mjs",
+      "name": "hash",
+      "line": 6,
+      "endLine": 6,
+      "length": 39,
+      "tokens": 13,
+      "key": "610a619bcbae8a48d5550d2ac5592261a7d39c38f7ab2a6e19ed85ab9822f085",
+      "body": "createHash('sha256').update(s).digest()"
+    },
+    {
+      "file": "src/local-app/keychainStore.ts",
+      "name": "hash",
+      "line": 49,
+      "endLine": 49,
+      "length": 43,
+      "tokens": 13,
+      "key": "610a619bcbae8a48d5550d2ac5592261a7d39c38f7ab2a6e19ed85ab9822f085",
+      "body": "createHash('sha256').update(value).digest()"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/CompactConnectionWorkspace.tsx",
+      "name": "anonymous",
+      "line": 68,
+      "endLine": 68,
+      "length": 41,
+      "tokens": 13,
+      "key": "ed0c3c6542fd7e0d23bd32fcf59029e586c5328b903c88cb36d2f69031fb52d4",
+      "body": "onStateChange?.({busy:false,dirty:false})"
+    },
+    {
+      "file": "src/local-app/LocalDeletionRecovery.tsx",
+      "name": "anonymous",
+      "line": 10,
+      "endLine": 10,
+      "length": 41,
+      "tokens": 13,
+      "key": "ed0c3c6542fd7e0d23bd32fcf59029e586c5328b903c88cb36d2f69031fb52d4",
+      "body": "onStateChange?.({busy:false,dirty:false})"
+    },
+    {
+      "file": "src/local-app/RecycleBinPanel.tsx",
+      "name": "anonymous",
+      "line": 27,
+      "endLine": 27,
+      "length": 41,
+      "tokens": 13,
+      "key": "ed0c3c6542fd7e0d23bd32fcf59029e586c5328b903c88cb36d2f69031fb52d4",
+      "body": "onStateChange?.({busy:false,dirty:false})"
+    },
+    {
+      "file": "src/workspace/WorkspaceViews.tsx",
+      "name": "anonymous",
+      "line": 285,
+      "endLine": 285,
+      "length": 41,
+      "tokens": 13,
+      "key": "ed0c3c6542fd7e0d23bd32fcf59029e586c5328b903c88cb36d2f69031fb52d4",
+      "body": "onStateChange?.({busy:false,dirty:false})"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/CompactConnectionWorkspace.tsx",
+      "name": "anonymous",
+      "line": 98,
+      "endLine": 98,
+      "length": 33,
+      "tokens": 13,
+      "key": "e3e779c202d306275ad0e11ea629cadb8c1a7188daf0c3da983027724684bdf4",
+      "body": "{e.preventDefault();void save();}"
+    },
+    {
+      "file": "src/local-app/OwnerPreferencesDialog.tsx",
+      "name": "anonymous",
+      "line": 64,
+      "endLine": 64,
+      "length": 37,
+      "tokens": 13,
+      "key": "e3e779c202d306275ad0e11ea629cadb8c1a7188daf0c3da983027724684bdf4",
+      "body": "{event.preventDefault();void save();}"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/GlobalPlanningSettings.tsx",
+      "name": "anonymous",
+      "line": 57,
+      "endLine": 57,
+      "length": 36,
+      "tokens": 13,
+      "key": "d0cb879dd9e139763c13fcfcb3c2422fb46a399e8ab5fbaae4734ba4bf10da07",
+      "body": "{if(active)setError(cause.message);}"
+    },
+    {
+      "file": "src/local-app/RecycleBinPanel.tsx",
+      "name": "anonymous",
+      "line": 59,
+      "endLine": 59,
+      "length": 32,
+      "tokens": 13,
+      "key": "d0cb879dd9e139763c13fcfcb3c2422fb46a399e8ab5fbaae4734ba4bf10da07",
+      "body": "{if(active)setError(e.message);}"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/LocalConnectionsPanel.tsx",
+      "name": "anonymous",
+      "line": 49,
+      "endLine": 49,
+      "length": 28,
+      "tokens": 13,
+      "key": "1f2594881d8ed8890f74170fe77b4301998e3b749d74066b3ea14fcf9ea3b072",
+      "body": "void refresh().catch(()=>{})"
+    },
+    {
+      "file": "src/local-app/LocalConnectionsPanel.tsx",
+      "name": "anonymous",
+      "line": 49,
+      "endLine": 49,
+      "length": 28,
+      "tokens": 13,
+      "key": "1f2594881d8ed8890f74170fe77b4301998e3b749d74066b3ea14fcf9ea3b072",
+      "body": "void refresh().catch(()=>{})"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/LocalDeletionRecovery.tsx",
+      "name": "anonymous",
+      "line": 12,
+      "endLine": 12,
+      "length": 45,
+      "tokens": 13,
+      "key": "0443b2f0575f0bc17478f36bce4e50fec4e5b0a82f542a541bf237184459ce5c",
+      "body": "{mounted.current=false;generation.current++;}"
+    },
+    {
+      "file": "src/local-app/RecycleBinPanel.tsx",
+      "name": "anonymous",
+      "line": 26,
+      "endLine": 26,
+      "length": 45,
+      "tokens": 13,
+      "key": "0443b2f0575f0bc17478f36bce4e50fec4e5b0a82f542a541bf237184459ce5c",
+      "body": "{mounted.current=false;generation.current++;}"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/ProductionWorkspacePanel.tsx",
+      "name": "anonymous",
+      "line": 191,
+      "endLine": 191,
+      "length": 46,
+      "tokens": 13,
+      "key": "67fb31f00cb46c9353221aa6d050c39ff288967fa86fe3a9e331c66cf45b6176",
+      "body": "[...values,{...material,is_main_script:false}]"
+    },
+    {
+      "file": "src/local-app/ProductionWorkspacePanel.tsx",
+      "name": "anonymous",
+      "line": 241,
+      "endLine": 241,
+      "length": 44,
+      "tokens": 13,
+      "key": "67fb31f00cb46c9353221aa6d050c39ff288967fa86fe3a9e331c66cf45b6176",
+      "body": "[...rows,{...material,is_main_script:false}]"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/ProductionWorkspacePanel.tsx",
+      "name": "anonymous",
+      "line": 239,
+      "endLine": 239,
+      "length": 31,
+      "tokens": 13,
+      "key": "c7d57ed23b020c40ca606cb71e670958e27f8d9ec574debee03f3be1a1b56720",
+      "body": "void openEditor().catch(()=>{})"
+    },
+    {
+      "file": "src/local-app/ProductionWorkspacePanel.tsx",
+      "name": "anonymous",
+      "line": 241,
+      "endLine": 241,
+      "length": 31,
+      "tokens": 13,
+      "key": "c7d57ed23b020c40ca606cb71e670958e27f8d9ec574debee03f3be1a1b56720",
+      "body": "void openEditor().catch(()=>{})"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/WorkspaceAudioPanel.tsx",
+      "name": "anonymous",
+      "line": 72,
+      "endLine": 72,
+      "length": 36,
+      "tokens": 13,
+      "key": "a70165398c5d3360e5bfe33a2c3f214f474a917a6c519a60bfda3eceacb4f891",
+      "body": "{if(active)setLive(value.document);}"
+    },
+    {
+      "file": "src/local-app/WorkspaceAudioPanel.tsx",
+      "name": "anonymous",
+      "line": 179,
+      "endLine": 179,
+      "length": 32,
+      "tokens": 13,
+      "key": "a70165398c5d3360e5bfe33a2c3f214f474a917a6c519a60bfda3eceacb4f891",
+      "body": "{if(active)setLive(v.document);}"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/WorkspaceDraft.tsx",
+      "name": "anonymous",
+      "line": 35,
+      "endLine": 35,
+      "length": 44,
+      "tokens": 13,
+      "key": "c083a20ac8b6df970c8e55e6c33fc22cb8d5a4807ba4666898ec6b598c3cc90b",
+      "body": "{destination.current=null;setPrompt(false);}"
+    },
+    {
+      "file": "src/local-app/WorkspaceDraft.tsx",
+      "name": "anonymous",
+      "line": 35,
+      "endLine": 35,
+      "length": 44,
+      "tokens": 13,
+      "key": "c083a20ac8b6df970c8e55e6c33fc22cb8d5a4807ba4666898ec6b598c3cc90b",
+      "body": "{destination.current=null;setPrompt(false);}"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/WorkspacePreparationLayout.tsx",
+      "name": "anonymous",
+      "line": 18,
+      "endLine": 18,
+      "length": 42,
+      "tokens": 13,
+      "key": "f206c0758be5247f8ac6572c43ade99d52f72e07cb602500be6163e315ce6609",
+      "body": "{pointer.current=null;setDragging(false);}"
+    },
+    {
+      "file": "src/local-app/WorkspacePreparationLayout.tsx",
+      "name": "anonymous",
+      "line": 19,
+      "endLine": 19,
+      "length": 42,
+      "tokens": 13,
+      "key": "f206c0758be5247f8ac6572c43ade99d52f72e07cb602500be6163e315ce6609",
+      "body": "{pointer.current=null;setDragging(false);}"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/accountCommands.ts",
+      "name": "anonymous",
+      "line": 38,
+      "endLine": 38,
+      "length": 48,
+      "tokens": 13,
+      "key": "c0ae42dda0abf8c8f3badcd5a50879d3ecccf194a094c9f44aa3b18bb382f902",
+      "body": "!['command','data','idempotencyKey'].includes(k)"
+    },
+    {
+      "file": "src/local-app/connectionBilling.ts",
+      "name": "anonymous",
+      "line": 37,
+      "endLine": 37,
+      "length": 48,
+      "tokens": 13,
+      "key": "c0ae42dda0abf8c8f3badcd5a50879d3ecccf194a094c9f44aa3b18bb382f902",
+      "body": "!['command','data','idempotencyKey'].includes(k)"
+    },
+    {
+      "file": "src/local-app/connectionModels.ts",
+      "name": "anonymous",
+      "line": 33,
+      "endLine": 33,
+      "length": 48,
+      "tokens": 13,
+      "key": "c0ae42dda0abf8c8f3badcd5a50879d3ecccf194a094c9f44aa3b18bb382f902",
+      "body": "!['command','data','idempotencyKey'].includes(k)"
+    },
+    {
+      "file": "src/local-app/connections.ts",
+      "name": "anonymous",
+      "line": 32,
+      "endLine": 32,
+      "length": 48,
+      "tokens": 13,
+      "key": "c0ae42dda0abf8c8f3badcd5a50879d3ecccf194a094c9f44aa3b18bb382f902",
+      "body": "!['command','data','idempotencyKey'].includes(k)"
+    },
+    {
+      "file": "src/local-app/localRoute.ts",
+      "name": "anonymous",
+      "line": 102,
+      "endLine": 102,
+      "length": 50,
+      "tokens": 13,
+      "key": "c0ae42dda0abf8c8f3badcd5a50879d3ecccf194a094c9f44aa3b18bb382f902",
+      "body": "!['command','data','idempotencyKey'].includes(key)"
+    },
+    {
+      "file": "src/local-app/recycleBin.ts",
+      "name": "anonymous",
+      "line": 71,
+      "endLine": 71,
+      "length": 48,
+      "tokens": 13,
+      "key": "c0ae42dda0abf8c8f3badcd5a50879d3ecccf194a094c9f44aa3b18bb382f902",
+      "body": "!['command','data','idempotencyKey'].includes(k)"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/episodeCommands.ts",
+      "name": "anonymous",
+      "line": 70,
+      "endLine": 70,
+      "length": 48,
+      "tokens": 13,
+      "key": "7a167e963328e735e76170f0d5bb8521f30a81ead35df91c2c0632d63ebd1133",
+      "body": "!['command','idempotencyKey','data'].includes(k)"
+    },
+    {
+      "file": "src/local-app/episodeLifecycle.ts",
+      "name": "anonymous",
+      "line": 101,
+      "endLine": 101,
+      "length": 48,
+      "tokens": 13,
+      "key": "7a167e963328e735e76170f0d5bb8521f30a81ead35df91c2c0632d63ebd1133",
+      "body": "!['command','idempotencyKey','data'].includes(k)"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/localFiles.ts",
+      "name": "anonymous",
+      "line": 20,
+      "endLine": 20,
+      "length": 31,
+      "tokens": 13,
+      "key": "953f9241a9bc917e3fcbe6ad501999c5853643edb6685deae719da7a964a2f1e",
+      "body": "{if(e.code!=='EEXIST')throw e;}"
+    },
+    {
+      "file": "src/local-app/storageInventory.ts",
+      "name": "anonymous",
+      "line": 80,
+      "endLine": 80,
+      "length": 31,
+      "tokens": 13,
+      "key": "953f9241a9bc917e3fcbe6ad501999c5853643edb6685deae719da7a964a2f1e",
+      "body": "{if(e.code!=='EEXIST')throw e;}"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/mediaRootExecution.ts",
+      "name": "anonymous",
+      "line": 34,
+      "endLine": 34,
+      "length": 49,
+      "tokens": 13,
+      "key": "46bc10da0bc2317063818fb0f0b4d0912db31d5fa26c9ba7fe7d45918d6285e8",
+      "body": "d.episodeId===ep.id&&d.kind==='episode-directory'"
+    },
+    {
+      "file": "src/local-app/mediaRootMigration.ts",
+      "name": "anonymous",
+      "line": 108,
+      "endLine": 108,
+      "length": 49,
+      "tokens": 13,
+      "key": "46bc10da0bc2317063818fb0f0b4d0912db31d5fa26c9ba7fe7d45918d6285e8",
+      "body": "d.episodeId===ep.id&&d.kind==='episode-directory'"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/workspaceAudio.ts",
+      "name": "anonymous",
+      "line": 133,
+      "endLine": 133,
+      "length": 47,
+      "tokens": 13,
+      "key": "8f7bc559c14d6fd3206644a372ec80e55fd7ee037eb22d47de7f85102ed7e393",
+      "body": "Number(i.startFrame)+Number(i.durationInFrames)"
+    },
+    {
+      "file": "src/local-app/workspaceCandidateAdoption.ts",
+      "name": "anonymous",
+      "line": 35,
+      "endLine": 35,
+      "length": 47,
+      "tokens": 13,
+      "key": "8f7bc559c14d6fd3206644a372ec80e55fd7ee037eb22d47de7f85102ed7e393",
+      "body": "Number(v.startFrame)+Number(v.durationInFrames)"
+    },
+    {
+      "file": "src/local-app/workspaceCandidates.ts",
+      "name": "anonymous",
+      "line": 17,
+      "endLine": 17,
+      "length": 47,
+      "tokens": 13,
+      "key": "8f7bc559c14d6fd3206644a372ec80e55fd7ee037eb22d47de7f85102ed7e393",
+      "body": "Number(i.startFrame)+Number(i.durationInFrames)"
+    },
+    {
+      "file": "src/local-app/workspaceExportCommands.ts",
+      "name": "anonymous",
+      "line": 49,
+      "endLine": 49,
+      "length": 47,
+      "tokens": 13,
+      "key": "8f7bc559c14d6fd3206644a372ec80e55fd7ee037eb22d47de7f85102ed7e393",
+      "body": "Number(i.startFrame)+Number(i.durationInFrames)"
+    },
+    {
+      "file": "src/local-app/workspaceExportCommands.ts",
+      "name": "anonymous",
+      "line": 99,
+      "endLine": 99,
+      "length": 47,
+      "tokens": 13,
+      "key": "8f7bc559c14d6fd3206644a372ec80e55fd7ee037eb22d47de7f85102ed7e393",
+      "body": "Number(i.startFrame)+Number(i.durationInFrames)"
+    },
+    {
+      "file": "src/local-app/workspaceNarration.ts",
+      "name": "anonymous",
+      "line": 193,
+      "endLine": 193,
+      "length": 47,
+      "tokens": 13,
+      "key": "8f7bc559c14d6fd3206644a372ec80e55fd7ee037eb22d47de7f85102ed7e393",
+      "body": "Number(i.startFrame)+Number(i.durationInFrames)"
+    },
+    {
+      "file": "src/local-app/workspaceVideo.ts",
+      "name": "anonymous",
+      "line": 27,
+      "endLine": 27,
+      "length": 47,
+      "tokens": 13,
+      "key": "8f7bc559c14d6fd3206644a372ec80e55fd7ee037eb22d47de7f85102ed7e393",
+      "body": "Number(i.startFrame)+Number(i.durationInFrames)"
+    },
+    {
+      "file": "src/workspaceAudio.ts",
+      "name": "anonymous",
+      "line": 55,
+      "endLine": 55,
+      "length": 47,
+      "tokens": 13,
+      "key": "8f7bc559c14d6fd3206644a372ec80e55fd7ee037eb22d47de7f85102ed7e393",
+      "body": "Number(i.startFrame)+Number(i.durationInFrames)"
+    },
+    {
+      "file": "src/workspaceAudio.ts",
+      "name": "anonymous",
+      "line": 98,
+      "endLine": 98,
+      "length": 47,
+      "tokens": 13,
+      "key": "8f7bc559c14d6fd3206644a372ec80e55fd7ee037eb22d47de7f85102ed7e393",
+      "body": "Number(i.startFrame)+Number(i.durationInFrames)"
+    },
+    {
+      "file": "src/workspaceShots.ts",
+      "name": "anonymous",
+      "line": 35,
+      "endLine": 35,
+      "length": 47,
+      "tokens": 13,
+      "key": "8f7bc559c14d6fd3206644a372ec80e55fd7ee037eb22d47de7f85102ed7e393",
+      "body": "Number(i.startFrame)+Number(i.durationInFrames)"
+    }
+  ],
+  [
+    {
+      "file": "scripts/storage/backup.mjs",
+      "name": "quote",
+      "line": 14,
+      "endLine": 14,
+      "length": 30,
+      "tokens": 12,
+      "key": "85c3714143c1ff09b81cd9338e0b810e7b41eb85bd00fea02a33df2795b904d6",
+      "body": "\"'\"+s.replaceAll(\"'\",\"''\")+\"'\""
+    },
+    {
+      "file": "scripts/storage/occupied.mjs",
+      "name": "quote",
+      "line": 5,
+      "endLine": 5,
+      "length": 34,
+      "tokens": 12,
+      "key": "85c3714143c1ff09b81cd9338e0b810e7b41eb85bd00fea02a33df2795b904d6",
+      "body": "\"'\"+value.replaceAll(\"'\",\"''\")+\"'\""
+    },
+    {
+      "file": "scripts/storage/restore.mjs",
+      "name": "quote",
+      "line": 12,
+      "endLine": 12,
+      "length": 30,
+      "tokens": 12,
+      "key": "85c3714143c1ff09b81cd9338e0b810e7b41eb85bd00fea02a33df2795b904d6",
+      "body": "\"'\"+s.replaceAll(\"'\",\"''\")+\"'\""
+    }
+  ],
+  [
+    {
+      "file": "src/accounts/AccountSidebar.tsx",
+      "name": "anonymous",
+      "line": 37,
+      "endLine": 37,
+      "length": 49,
+      "tokens": 12,
+      "key": "5d89eb7d2fa2ee486e15d373260a04e85141c81dec547d101c8ac880ca1c8ebf",
+      "body": "account.name.toLocaleLowerCase().includes(search)"
+    },
+    {
+      "file": "src/accounts/AccountWorkspace.tsx",
+      "name": "anonymous",
+      "line": 180,
+      "endLine": 180,
+      "length": 51,
+      "tokens": 12,
+      "key": "5d89eb7d2fa2ee486e15d373260a04e85141c81dec547d101c8ac880ca1c8ebf",
+      "body": "candidate.name.toLocaleLowerCase().includes(search)"
+    }
+  ],
+  [
+    {
+      "file": "src/connections/ConnectionWorkspace.tsx",
+      "name": "anonymous",
+      "line": 375,
+      "endLine": 375,
+      "length": 29,
+      "tokens": 12,
+      "key": "006a077f564d71197e093d27b4705519483c9e485c6f0ab68ccf278fdaa7cb6e",
+      "body": "({value,label:uiText(label)})"
+    },
+    {
+      "file": "src/local-app/CompactConnectionWorkspace.tsx",
+      "name": "anonymous",
+      "line": 96,
+      "endLine": 96,
+      "length": 29,
+      "tokens": 12,
+      "key": "006a077f564d71197e093d27b4705519483c9e485c6f0ab68ccf278fdaa7cb6e",
+      "body": "({value,label:uiText(label)})"
+    },
+    {
+      "file": "src/local-app/CompactConnectionWorkspace.tsx",
+      "name": "anonymous",
+      "line": 96,
+      "endLine": 96,
+      "length": 29,
+      "tokens": 12,
+      "key": "006a077f564d71197e093d27b4705519483c9e485c6f0ab68ccf278fdaa7cb6e",
+      "body": "({value,label:uiText(label)})"
+    },
+    {
+      "file": "src/local-app/LocalSecretAdministration.tsx",
+      "name": "anonymous",
+      "line": 54,
+      "endLine": 54,
+      "length": 29,
+      "tokens": 12,
+      "key": "006a077f564d71197e093d27b4705519483c9e485c6f0ab68ccf278fdaa7cb6e",
+      "body": "({value,label:uiText(label)})"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/LocalSecretAdministration.tsx",
+      "name": "anonymous",
+      "line": 29,
+      "endLine": 29,
+      "length": 58,
+      "tokens": 12,
+      "key": "20cb18cd5d1ce2c452bb2bf8fb5e8861ed1b7ba28b41db0fef6e62219edbfb44",
+      "body": "!group.connectionId||use.connectionId===group.connectionId"
+    },
+    {
+      "file": "src/local-app/LocalSecretAdministration.tsx",
+      "name": "anonymous",
+      "line": 60,
+      "endLine": 60,
+      "length": 58,
+      "tokens": 12,
+      "key": "20cb18cd5d1ce2c452bb2bf8fb5e8861ed1b7ba28b41db0fef6e62219edbfb44",
+      "body": "!group.connectionId||use.connectionId===group.connectionId"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/WorkspacePlanningSelection.tsx",
+      "name": "anonymous",
+      "line": 25,
+      "endLine": 25,
+      "length": 23,
+      "tokens": 12,
+      "key": "69508326c7911e1d28f334dd2352308c8ab8f234cd8cc7724e75c57ecec1d245",
+      "body": "({...s,harnessId:h.id})"
+    },
+    {
+      "file": "src/local-app/WorkspacePlanningSelection.tsx",
+      "name": "anonymous",
+      "line": 31,
+      "endLine": 31,
+      "length": 23,
+      "tokens": 12,
+      "key": "69508326c7911e1d28f334dd2352308c8ab8f234cd8cc7724e75c57ecec1d245",
+      "body": "({...s,harnessId:h.id})"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/WorkspaceVisualPreparation.tsx",
+      "name": "anonymous",
+      "line": 130,
+      "endLine": 130,
+      "length": 30,
+      "tokens": 12,
+      "key": "456edd89580e017c21d2bc705210b281ce9a7c62f83160f04e4006f0334690c0",
+      "body": "row.material?[row.material]:[]"
+    },
+    {
+      "file": "src/local-app/workspaceUploads.ts",
+      "name": "anonymous",
+      "line": 47,
+      "endLine": 47,
+      "length": 30,
+      "tokens": 12,
+      "key": "456edd89580e017c21d2bc705210b281ce9a7c62f83160f04e4006f0334690c0",
+      "body": "row.material?[row.material]:[]"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/accountCommands.ts",
+      "name": "anonymous",
+      "line": 65,
+      "endLine": 65,
+      "length": 38,
+      "tokens": 12,
+      "key": "ff63512d7e885393fc5e39b6d31ec22e293a1a33e9be70050d5116ff900353a2",
+      "body": "this.account(c,session,data.accountId)"
+    },
+    {
+      "file": "src/local-app/accountCommands.ts",
+      "name": "anonymous",
+      "line": 78,
+      "endLine": 78,
+      "length": 38,
+      "tokens": 12,
+      "key": "ff63512d7e885393fc5e39b6d31ec22e293a1a33e9be70050d5116ff900353a2",
+      "body": "this.account(c,session,data.accountId)"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/catalog.ts",
+      "name": "anonymous",
+      "line": 28,
+      "endLine": 28,
+      "length": 25,
+      "tokens": 12,
+      "key": "31cf1c1036a81c419606aabcbbd356818aa9b83418f4995193e7a5a97f868951",
+      "body": "client.on('error',()=>{})"
+    },
+    {
+      "file": "src/local-app/workerDatabase.ts",
+      "name": "anonymous",
+      "line": 11,
+      "endLine": 11,
+      "length": 25,
+      "tokens": 12,
+      "key": "31cf1c1036a81c419606aabcbbd356818aa9b83418f4995193e7a5a97f868951",
+      "body": "client.on('error',()=>{})"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/pexelsLiveProbe.ts",
+      "name": "anonymous",
+      "line": 34,
+      "endLine": 34,
+      "length": 50,
+      "tokens": 12,
+      "key": "8a756365b9413627414025ceafb89fee3ccee6dd62fc0cbae83855bb9e052b12",
+      "body": "done({code:'transport_error',outcome:'retryable'})"
+    },
+    {
+      "file": "src/local-app/pexelsLiveProbe.ts",
+      "name": "anonymous",
+      "line": 41,
+      "endLine": 41,
+      "length": 50,
+      "tokens": 12,
+      "key": "8a756365b9413627414025ceafb89fee3ccee6dd62fc0cbae83855bb9e052b12",
+      "body": "done({code:'transport_error',outcome:'retryable'})"
+    }
+  ],
+  [
+    {
+      "file": "src/local-app/useWorkspaceCallConfirmation.tsx",
+      "name": "transition",
+      "line": 28,
+      "endLine": 28,
+      "length": 29,
+      "tokens": 12,
+      "key": "1d71835e5ff7d716520668f5200a91e2f9675a012d5c131a7545e8aeea0dae64",
+      "body": "{owner.state=state;render();}"
+    },
+    {
+      "file": "src/local-app/useWorkspaceOperations.ts",
+      "name": "transition",
+      "line": 31,
+      "endLine": 31,
+      "length": 29,
+      "tokens": 12,
+      "key": "1d71835e5ff7d716520668f5200a91e2f9675a012d5c131a7545e8aeea0dae64",
+      "body": "{owner.state=state;render();}"
+    }
+  ],
+  [
+    {
+      "file": "src/operations/OperationsWorkspace.tsx",
+      "name": "anonymous",
+      "line": 170,
+      "endLine": 170,
+      "length": 57,
+      "tokens": 12,
+      "key": "76e7a0f60174324d550975cd2de062a01191eebd26d83ff7e6447af99cf77d25",
+      "body": "catalogControls.onSort(event.target.value as CatalogSort)"
+    },
+    {
+      "file": "src/workspace/WorkspaceViews.tsx",
+      "name": "anonymous",
+      "line": 226,
+      "endLine": 226,
+      "length": 57,
+      "tokens": 12,
+      "key": "76e7a0f60174324d550975cd2de062a01191eebd26d83ff7e6447af99cf77d25",
+      "body": "catalogControls.onSort(event.target.value as CatalogSort)"
+    }
+  ]
+]

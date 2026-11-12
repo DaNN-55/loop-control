@@ -1,0 +1,13 @@
+npm notice run loop-control@0.1.0 test
+npm notice run vitest run --exclude '**/*.integration.test.ts' src/worker/fileSha256.test.ts src/local-app/historyEpisodeDeletion.test.ts
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/maintenance-20261111/loop-control
+
+ ✓ src/worker/fileSha256.test.ts (1 test) 6ms
+ ✓ src/local-app/historyEpisodeDeletion.test.ts (2 tests) 7ms
+
+ Test Files  2 passed (2)
+      Tests  3 passed (3)
+   Start at  23:35:16
+   Duration  296ms (transform 131ms, setup 17ms, collect 176ms, tests 12ms, environment 0ms, prepare 53ms)
+

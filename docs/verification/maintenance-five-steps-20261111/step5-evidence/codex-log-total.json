@@ -1,0 +1,21 @@
+{
+  "at": "2026-11-12T00:19:25.692398+08:00",
+  "roots": [
+    "/Users/dan/.codex/sessions",
+    "/Users/dan/.codex/archived_sessions",
+    "/Users/dan/.codex/log",
+    "/Users/dan/.codex/history.jsonl"
+  ],
+  "scope": "combined log/session metadata only; no per-project/month/title/file-content inspection",
+  "measurement": {
+    "files": 2101,
+    "directories": 86,
+    "entries": 2187,
+    "symlinksSkipped": 0,
+    "hardlinksDeduplicated": 0,
+    "logicalFileBytes": 3127718530,
+    "allocatedBytes": 3137400832,
+    "errors": []
+  },
+  "inodeDeDuplication": "one common dev/inode set across all roots; no symlinks followed"
+}

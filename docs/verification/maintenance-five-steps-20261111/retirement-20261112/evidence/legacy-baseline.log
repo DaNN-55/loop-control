@@ -1,0 +1,15 @@
+npm notice run loop-control@0.1.0 test
+npm notice run vitest run --exclude '**/*.integration.test.ts' src/clipTiming.test.ts src/shotAcceptance.test.ts src/reviews/materialImport.test.ts src/worker/manualMaterialChecklist.test.ts
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/maintenance-20261111/loop-control
+
+ ✓ src/shotAcceptance.test.ts (3 tests) 1ms
+ ✓ src/clipTiming.test.ts (3 tests) 1ms
+ ✓ src/worker/manualMaterialChecklist.test.ts (1 test) 2ms
+ ✓ src/reviews/materialImport.test.ts (3 tests) 2ms
+
+ Test Files  4 passed (4)
+      Tests  10 passed (10)
+   Start at  08:33:34
+   Duration  455ms (transform 50ms, setup 32ms, collect 62ms, tests 7ms, environment 1.14s, prepare 173ms)
+

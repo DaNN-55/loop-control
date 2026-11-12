@@ -1,0 +1,402 @@
+{
+  "at": "2026-11-12T00:18:50.516694+08:00",
+  "worktrees": [
+    {
+      "path": "/Users/dan/Programs/loop-control",
+      "branch": "main",
+      "head": "aa404667e949225c8fad1dae2e2aed56887cb357",
+      "upstream": {
+        "argv": [
+          "git",
+          "rev-parse",
+          "--abbrev-ref",
+          "--symbolic-full-name",
+          "@{upstream}"
+        ],
+        "exitCode": 0,
+        "stdout": "origin/main\n",
+        "stderr": ""
+      },
+      "vsOriginMain": {
+        "argv": [
+          "git",
+          "rev-list",
+          "--left-right",
+          "--count",
+          "HEAD...refs/remotes/origin/main"
+        ],
+        "exitCode": 0,
+        "stdout": "0\t0\n",
+        "stderr": ""
+      },
+      "headAncestorOfOriginMain": true,
+      "status": {
+        "argv": [
+          "git",
+          "status",
+          "--porcelain=v1",
+          "--untracked-files=all"
+        ],
+        "exitCode": 0,
+        "stdout": " M src/local-app/SystemStatusDrawer.css\n M src/styles.css\n M src/ui/impeccable/maintenance.css\n",
+        "stderr": ""
+      },
+      "measurementExcludes": [
+        ".git",
+        ".loop-control"
+      ],
+      "measurement": {
+        "entries": 45526,
+        "files": 42312,
+        "directories": 3214,
+        "symlinksSkipped": 21,
+        "logicalFileBytes": 680447340,
+        "allocatedBytes": 801370112,
+        "errors": [],
+        "topLevel": {
+          "": {
+            "logicalFileBytes": 0,
+            "allocatedBytes": 0,
+            "files": 0
+          },
+          "src": {
+            "logicalFileBytes": 9045596,
+            "allocatedBytes": 11255808,
+            "files": 1027
+          },
+          "tsconfig.worker.json": {
+            "logicalFileBytes": 433,
+            "allocatedBytes": 4096,
+            "files": 1
+          },
+          "tsconfig.local-app.json": {
+            "logicalFileBytes": 706,
+            "allocatedBytes": 4096,
+            "files": 1
+          },
+          ".impeccable": {
+            "logicalFileBytes": 133915,
+            "allocatedBytes": 163840,
+            "files": 12
+          },
+          "assets": {
+            "logicalFileBytes": 1074188,
+            "allocatedBytes": 1077248,
+            "files": 1
+          },
+          "vite.config.ts": {
+            "logicalFileBytes": 1275,
+            "allocatedBytes": 4096,
+            "files": 1
+          },
+          "AGENTS.md": {
+            "logicalFileBytes": 360,
+            "allocatedBytes": 4096,
+            "files": 1
+          },
+          "DESIGN.md": {
+            "logicalFileBytes": 29936,
+            "allocatedBytes": 32768,
+            "files": 1
+          },
+          ".scratch": {
+            "logicalFileBytes": 0,
+            "allocatedBytes": 0,
+            "files": 0
+          },
+          "tsconfig.json": {
+            "logicalFileBytes": 119,
+            "allocatedBytes": 4096,
+            "files": 1
+          },
+          "PLAN.md": {
+            "logicalFileBytes": 253606,
+            "allocatedBytes": 253952,
+            "files": 1
+          },
+          "db": {
+            "logicalFileBytes": 1680325,
+            "allocatedBytes": 2080768,
+            "files": 164
+          },
+          "scripts": {
+            "logicalFileBytes": 367402,
+            "allocatedBytes": 552960,
+            "files": 77
+          },
+          ".nvmrc": {
+            "logicalFileBytes": 3,
+            "allocatedBytes": 4096,
+            "files": 1
+          },
+          "package.json": {
+            "logicalFileBytes": 2003,
+            "allocatedBytes": 4096,
+            "files": 1
+          },
+          "package-lock.json": {
+            "logicalFileBytes": 155920,
+            "allocatedBytes": 159744,
+            "files": 1
+          },
+          ".gitignore": {
+            "logicalFileBytes": 587,
+            "allocatedBytes": 4096,
+            "files": 1
+          },
+          "public": {
+            "logicalFileBytes": 86377,
+            "allocatedBytes": 131072,
+            "files": 16
+          },
+          "README.md": {
+            "logicalFileBytes": 4066,
+            "allocatedBytes": 4096,
+            "files": 1
+          },
+          "docs": {
+            "logicalFileBytes": 445464757,
+            "allocatedBytes": 471027712,
+            "files": 9865
+          },
+          "node_modules": {
+            "logicalFileBytes": 216085441,
+            "allocatedBytes": 307675136,
+            "files": 30745
+          },
+          "dist": {
+            "logicalFileBytes": 6015552,
+            "allocatedBytes": 6860800,
+            "files": 384
+          },
+          "CONTEXT.md": {
+            "logicalFileBytes": 15939,
+            "allocatedBytes": 16384,
+            "files": 1
+          },
+          "tsconfig.app.json": {
+            "logicalFileBytes": 632,
+            "allocatedBytes": 4096,
+            "files": 1
+          },
+          "native": {
+            "logicalFileBytes": 23137,
+            "allocatedBytes": 28672,
+            "files": 4
+          },
+          "index.html": {
+            "logicalFileBytes": 776,
+            "allocatedBytes": 4096,
+            "files": 1
+          },
+          "tsconfig.node.json": {
+            "logicalFileBytes": 413,
+            "allocatedBytes": 4096,
+            "files": 1
+          },
+          "PRODUCT.md": {
+            "logicalFileBytes": 3876,
+            "allocatedBytes": 4096,
+            "files": 1
+          }
+        }
+      }
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/maintenance-20261111/loop-control",
+      "branch": "codex/maintenance-five-steps-20261111",
+      "head": "aa404667e949225c8fad1dae2e2aed56887cb357",
+      "upstream": {
+        "argv": [
+          "git",
+          "rev-parse",
+          "--abbrev-ref",
+          "--symbolic-full-name",
+          "@{upstream}"
+        ],
+        "exitCode": 128,
+        "stdout": "",
+        "stderr": "fatal: no upstream configured for branch 'codex/maintenance-five-steps-20261111'\n"
+      },
+      "vsOriginMain": {
+        "argv": [
+          "git",
+          "rev-list",
+          "--left-right",
+          "--count",
+          "HEAD...refs/remotes/origin/main"
+        ],
+        "exitCode": 0,
+        "stdout": "0\t0\n",
+        "stderr": ""
+      },
+      "headAncestorOfOriginMain": true,
+      "status": {
+        "argv": [
+          "git",
+          "status",
+          "--porcelain=v1",
+          "--untracked-files=all"
+        ],
+        "exitCode": 0,
+        "stdout": " M PLAN.md\n M scripts/storage/backup.mjs\n M src/connections/ConnectionDraftSession.tsx\n M src/connections/ConnectionWorkspace.tsx\n M src/local-app/CompactConnectionWorkspace.tsx\n M src/local-app/LocalDeletionRecovery.tsx\n M src/local-app/accountAssetRoots.ts\n M src/local-app/accountCommands.ts\n M src/local-app/commandReceipt.ts\n M src/local-app/configurationCommands.test.ts\n M src/local-app/configurationCommands.ts\n M src/local-app/episodeCollection.ts\n M src/local-app/episodeCommands.ts\n M src/local-app/episodeLifecycle.ts\n M src/local-app/historyEpisodeDeletion.test.ts\n M src/local-app/historyEpisodeDeletion.ts\n M src/local-app/mediaPaths.ts\n M src/local-app/mediaRootMigration.ts\n M src/local-app/mediaRootSettings.ts\n M src/local-app/recycleBin.ts\n M src/local-app/scriptProductionStore.ts\n M src/local-app/studioCommands.ts\n M src/local-app/workspaceAudio.ts\n M src/local-app/workspaceCaptionsCommands.ts\n M src/local-app/workspaceNarration.ts\n M src/local-app/workspaceVisualCandidates.ts\n M src/worker/contracts.ts\n M src/worker/openchatcutStudio.ts\n M src/worker/runtimeEvidence.ts\n M src/worker/runtimePreflight.ts\n M src/workspace/WorkspaceViews.tsx\n?? docs/verification/maintenance-five-steps-20261111/REPORT.md\n?? docs/verification/maintenance-five-steps-20261111/parent-acceptance.json\n?? docs/verification/maintenance-five-steps-20261111/step1-dead-code.md\n?? docs/verification/maintenance-five-steps-20261111/step1-evidence/additional-scan.json\n?? docs/verification/maintenance-five-steps-20261111/step1-evidence/additional-scan.mjs\n?? docs/verification/maintenance-five-steps-20261111/step1-evidence/baseline-build.log\n?? docs/verification/maintenance-five-steps-20261111/step1-evidence/baseline-check.log\n?? docs/verification/maintenance-five-steps-20261111/step1-evidence/baseline-prepare.log\n?? docs/verification/maintenance-five-steps-20261111/step1-evidence/baseline-test.log\n?? docs/verification/maintenance-five-steps-20261111/step1-evidence/batch1-application-recheck.log\n?? docs/verification/maintenance-five-steps-20261111/step1-evidence/batch1-build.log\n?? docs/verification/maintenance-five-steps-20261111/step1-evidence/batch1-check.log\n?? docs/verification/maintenance-five-steps-20261111/step1-evidence/batch1-prepare.log\n?? docs/verification/maintenance-five-steps-20261111/step1-evidence/batch1-test.log\n?? docs/verification/maintenance-five-steps-20261111/step1-evidence/batch1.diff\n?? docs/verification/maintenance-five-steps-20261111/step1-evidence/build-comparison.json\n?? docs/verification/maintenance-five-steps-20261111/step1-evidence/coverage-inventory.json\n?? docs/verification/maintenance-five-steps-20261111/step1-evidence/deletion-consumers.log\n?? docs/verification/maintenance-five-steps-20261111/step1-evidence/deletion-symbol.log\n?? docs/verification/maintenance-five-steps-20261111/step1-evidence/dynamic-preserved.log\n?? docs/verification/maintenance-five-steps-20261111/step1-evidence/history-deletion.log\n?? docs/verification/maintenance-five-steps-20261111/step1-evidence/navigation-consumers.log\n?? docs/verification/maintenance-five-steps-20261111/step1-evidence/npm-ci.log\n?? docs/verification/maintenance-five-steps-20261111/step1-evidence/reachability.json\n?? docs/verification/maintenance-five-steps-20261111/step1-evidence/reachability.mjs\n?? docs/verification/maintenance-five-steps-20261111/step1-evidence/scan-summary.json\n?? docs/verification/maintenance-five-steps-20261111/step1-evidence/scan.mjs\n?? docs/verification/maintenance-five-steps-20261111/step1-evidence/symbol-scan-after.json\n?? docs/verification/maintenance-five-steps-20261111/step1-evidence/symbol-scan-before.json\n?? docs/verification/maintenance-five-steps-20261111/step1-evidence/symbol-scan.mjs\n?? docs/verification/maintenance-five-steps-20261111/step2-duplicates.md\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/accountCommands-after-expanded.ts\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/accountCommands-before-expanded.ts\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/build.log\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/candidate-index.json\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/canonical-compatibility-vectors.json\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/canonical-equivalence.json\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/check-fixed.log\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/check.log\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/commandReceipt-after-expanded.ts\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/commandReceipt-before-expanded.ts\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/configurationCommands-after-expanded.ts\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/configurationCommands-before-expanded.ts\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/consumer-migration.log\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/default-tests.log\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/duplicates.mjs\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/environment/cleanup.mjs\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/environment/run.json\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/environment/setup.mjs\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/episodeCollection-after-expanded.ts\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/episodeCollection-before-expanded.ts\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/episodeCommands-after-expanded.ts\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/episodeCommands-before-expanded.ts\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/exact-groups.json\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/group1-tests.log\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/group2-tests.log\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/group3-tests.log\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/group4-tests.log\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/group5-tests.log\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/group6-build.log\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/group6-check.log\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/group6-environment/cleanup.mjs\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/group6-environment/run.json\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/group6-environment/setup.mjs\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/group6-equivalence.log\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/group6-http-integration.log\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/group6-integration-cleanup.log\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/group6-integration-setup.log\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/group6-integration-stopped.json\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/group6-metadata-reference-check.log\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/group6-prepare.log\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/group6-vectors-tests.log\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/integration-cleanup.log\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/integration-setup.log\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/integration-stopped.json\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/inventory.json\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/line-metrics.json\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/metadata-reference-check.log\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/near-duplicates.mjs\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/near-groups.json\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/prepare.log\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/raw-json-compatibility-vectors.json\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/raw-json-equivalence.json\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/receipt-integration.log\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/step2.diff\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/verify-canonical-equivalence.mjs\n?? docs/verification/maintenance-five-steps-20261111/step2-evidence/verify-raw-json-equivalence.mjs\n?? docs/verification/maintenance-five-steps-20261111/step3-dependencies.md\n?? docs/verification/maintenance-five-steps-20261111/step3-evidence/candidate-package-sizes.txt\n?? docs/verification/maintenance-five-steps-20261111/step3-evidence/dependency-references.json\n?? docs/verification/maintenance-five-steps-20261111/step3-evidence/du-after.txt\n?? docs/verification/maintenance-five-steps-20261111/step3-evidence/du-before.txt\n?? docs/verification/maintenance-five-steps-20261111/step3-evidence/final-protection-and-links.json\n?? docs/verification/maintenance-five-steps-20261111/step3-evidence/install-after.json\n?? docs/verification/maintenance-five-steps-20261111/step3-evidence/install-before.json\n?? docs/verification/maintenance-five-steps-20261111/step3-evidence/install-comparison.json\n?? docs/verification/maintenance-five-steps-20261111/step3-evidence/manifest-summary.json\n?? docs/verification/maintenance-five-steps-20261111/step3-evidence/npm-ls-after.json\n?? docs/verification/maintenance-five-steps-20261111/step3-evidence/npm-ls-before.json\n?? docs/verification/maintenance-five-steps-20261111/step3-evidence/protection-check.json\n?? docs/verification/maintenance-five-steps-20261111/step3-evidence/type-and-install-inventory.mjs\n?? docs/verification/maintenance-five-steps-20261111/step3-evidence/type-resolution.json\n?? docs/verification/maintenance-five-steps-20261111/step4-evidence/backup-output-index.json\n?? docs/verification/maintenance-five-steps-20261111/step4-evidence/codex-automation-index.json\n?? docs/verification/maintenance-five-steps-20261111/step4-evidence/consumer-schema-readonly.json\n?? docs/verification/maintenance-five-steps-20261111/step4-evidence/coverage.json\n?? docs/verification/maintenance-five-steps-20261111/step4-evidence/cron.json\n?? docs/verification/maintenance-five-steps-20261111/step4-evidence/current-ledger-scope.json\n?? docs/verification/maintenance-five-steps-20261111/step4-evidence/database-identity.json\n?? docs/verification/maintenance-five-steps-20261111/step4-evidence/database-port-binding.json\n?? docs/verification/maintenance-five-steps-20261111/step4-evidence/database-visibility-check.json\n?? docs/verification/maintenance-five-steps-20261111/step4-evidence/deployment-record-binding.json\n?? docs/verification/maintenance-five-steps-20261111/step4-evidence/deployment-safe.json\n?? docs/verification/maintenance-five-steps-20261111/step4-evidence/github-workflows.json\n?? docs/verification/maintenance-five-steps-20261111/step4-evidence/latest-operation-records.json\n?? docs/verification/maintenance-five-steps-20261111/step4-evidence/launchd.json\n?? docs/verification/maintenance-five-steps-20261111/step4-evidence/monthly-audit.json\n?? docs/verification/maintenance-five-steps-20261111/step4-evidence/monthly-audit.sql\n?? docs/verification/maintenance-five-steps-20261111/step4-evidence/monthly-readonly-exit.json\n?? docs/verification/maintenance-five-steps-20261111/step4-evidence/nativeAutomation-running-release.json\n?? docs/verification/maintenance-five-steps-20261111/step4-evidence/process-identity.json\n?? docs/verification/maintenance-five-steps-20261111/step4-evidence/protection-check.json\n?? docs/verification/maintenance-five-steps-20261111/step4-evidence/schema-readonly.json\n?? docs/verification/maintenance-five-steps-20261111/step4-evidence/source-review-index.json\n?? docs/verification/maintenance-five-steps-20261111/step4-evidence/timer-locations.txt\n?? docs/verification/maintenance-five-steps-20261111/step4-evidence/worker-schema-readonly.json\n?? docs/verification/maintenance-five-steps-20261111/step4-evidence/workerScheduler-running-release.json\n?? docs/verification/maintenance-five-steps-20261111/step4-schedules.md\n?? scripts/storage/backup-overlap.test.mjs\n?? src/worker/fileSha256.test.ts\n?? src/worker/fileSha256.ts\n",
+        "stderr": ""
+      },
+      "measurementExcludes": [
+        ".git",
+        ".loop-control"
+      ],
+      "measurement": {
+        "entries": 45376,
+        "files": 42183,
+        "directories": 3193,
+        "symlinksSkipped": 21,
+        "logicalFileBytes": 643945486,
+        "allocatedBytes": 769671168,
+        "errors": [],
+        "topLevel": {
+          "": {
+            "logicalFileBytes": 0,
+            "allocatedBytes": 0,
+            "files": 0
+          },
+          "src": {
+            "logicalFileBytes": 9047085,
+            "allocatedBytes": 11268096,
+            "files": 1029
+          },
+          "tsconfig.worker.json": {
+            "logicalFileBytes": 433,
+            "allocatedBytes": 4096,
+            "files": 1
+          },
+          "tsconfig.local-app.json": {
+            "logicalFileBytes": 706,
+            "allocatedBytes": 4096,
+            "files": 1
+          },
+          ".impeccable": {
+            "logicalFileBytes": 108989,
+            "allocatedBytes": 131072,
+            "files": 9
+          },
+          "assets": {
+            "logicalFileBytes": 1074188,
+            "allocatedBytes": 1077248,
+            "files": 1
+          },
+          "vite.config.ts": {
+            "logicalFileBytes": 1275,
+            "allocatedBytes": 4096,
+            "files": 1
+          },
+          "AGENTS.md": {
+            "logicalFileBytes": 360,
+            "allocatedBytes": 4096,
+            "files": 1
+          },
+          "DESIGN.md": {
+            "logicalFileBytes": 29936,
+            "allocatedBytes": 32768,
+            "files": 1
+          },
+          "tsconfig.json": {
+            "logicalFileBytes": 119,
+            "allocatedBytes": 4096,
+            "files": 1
+          },
+          "PLAN.md": {
+            "logicalFileBytes": 255958,
+            "allocatedBytes": 258048,
+            "files": 1
+          },
+          "db": {
+            "logicalFileBytes": 1680325,
+            "allocatedBytes": 2080768,
+            "files": 164
+          },
+          "scripts": {
+            "logicalFileBytes": 368675,
+            "allocatedBytes": 557056,
+            "files": 78
+          },
+          ".nvmrc": {
+            "logicalFileBytes": 3,
+            "allocatedBytes": 4096,
+            "files": 1
+          },
+          "package.json": {
+            "logicalFileBytes": 2003,
+            "allocatedBytes": 4096,
+            "files": 1
+          },
+          "package-lock.json": {
+            "logicalFileBytes": 155920,
+            "allocatedBytes": 159744,
+            "files": 1
+          },
+          ".gitignore": {
+            "logicalFileBytes": 587,
+            "allocatedBytes": 4096,
+            "files": 1
+          },
+          "public": {
+            "logicalFileBytes": 86377,
+            "allocatedBytes": 131072,
+            "files": 16
+          },
+          "README.md": {
+            "logicalFileBytes": 4066,
+            "allocatedBytes": 4096,
+            "files": 1
+          },
+          "docs": {
+            "logicalFileBytes": 441868128,
+            "allocatedBytes": 467681280,
+            "files": 9957
+          },
+          "node_modules": {
+            "logicalFileBytes": 183200237,
+            "allocatedBytes": 279326720,
+            "files": 30522
+          },
+          "dist": {
+            "logicalFileBytes": 6015343,
+            "allocatedBytes": 6868992,
+            "files": 386
+          },
+          "CONTEXT.md": {
+            "logicalFileBytes": 15939,
+            "allocatedBytes": 16384,
+            "files": 1
+          },
+          "tsconfig.app.json": {
+            "logicalFileBytes": 632,
+            "allocatedBytes": 4096,
+            "files": 1
+          },
+          "native": {
+            "logicalFileBytes": 23137,
+            "allocatedBytes": 28672,
+            "files": 4
+          },
+          "index.html": {
+            "logicalFileBytes": 776,
+            "allocatedBytes": 4096,
+            "files": 1
+          },
+          "tsconfig.node.json": {
+            "logicalFileBytes": 413,
+            "allocatedBytes": 4096,
+            "files": 1
+          },
+          "PRODUCT.md": {
+            "logicalFileBytes": 3876,
+            "allocatedBytes": 4096,
+            "files": 1
+          }
+        }
+      }
+    }
+  ]
+}

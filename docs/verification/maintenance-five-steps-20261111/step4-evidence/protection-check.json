@@ -1,0 +1,15 @@
+{
+  "trackedProtectedCount": 11144,
+  "changedProtectedFilesExcludingParentPlan": [],
+  "originalWorktreeStatus": " M src/local-app/SystemStatusDrawer.css\n M src/styles.css\n M src/ui/impeccable/maintenance.css\n",
+  "mutationsExecuted": [
+    "write task-owned report/evidence only"
+  ],
+  "taskSettingsMutated": false,
+  "jobsExecuted": false,
+  "serviceSignalsSent": false,
+  "databaseTransactions": "BEGIN ... READ ONLY; only SELECT; ROLLBACK",
+  "noKeychainHydration": true,
+  "priorStageSourceAndPackageHashesCompared": 35,
+  "changedPriorStageSourceAndPackages": []
+}

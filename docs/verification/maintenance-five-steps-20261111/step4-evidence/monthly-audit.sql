@@ -1,0 +1,17 @@
+BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY;
+WITH bounds AS (SELECT transaction_timestamp() at,transaction_timestamp()-interval '1 month' since)
+SELECT json_build_object(
+ 'database',current_database(),'transactionReadOnly',current_setting('transaction_read_only'),
+ 'window',(SELECT json_build_object('since',since,'until',at,'sinceShanghai',since AT TIME ZONE 'Asia/Shanghai','untilShanghai',at AT TIME ZONE 'Asia/Shanghai','definition','rolling one calendar month; [since, until)') FROM bounds),
+ 'plans',(SELECT coalesce(json_agg(p),'[]'::json) FROM (SELECT kind,timezone,next_due_at FROM local_identity.automation_plans ORDER BY kind)p),
+ 'jobsInWindow',(SELECT coalesce(json_agg(p),'[]'::json) FROM (SELECT kind,count(*) total,count(*) FILTER(WHERE status='ready') ready,count(*) FILTER(WHERE status='running') running,count(*) FILTER(WHERE status='completed') completed,count(*) FILTER(WHERE status='failed') failed,min(due_at) first_due,max(due_at) last_due FROM local_identity.automation_jobs,bounds WHERE due_at>=since AND due_at<at GROUP BY kind ORDER BY kind)p),
+ 'attemptsInWindow',(SELECT coalesce(json_agg(p),'[]'::json) FROM (SELECT j.kind,count(*) started,count(*) FILTER(WHERE a.status='completed') completed,count(*) FILTER(WHERE a.status='failed') failed,count(*) FILTER(WHERE a.status='interrupted') interrupted,count(*) FILTER(WHERE a.status='running') running,count(*) FILTER(WHERE a.passed IS TRUE) passed,min(a.started_at) first_started,max(a.started_at) last_started FROM local_identity.automation_attempts a JOIN local_identity.automation_jobs j ON j.id=a.job_id CROSS JOIN bounds WHERE a.started_at>=since AND a.started_at<at GROUP BY j.kind ORDER BY j.kind)p),
+ 'allTimeCurrentAutomation',(SELECT json_build_object('jobs',count(*),'firstDue',min(due_at),'lastDue',max(due_at)) FROM local_identity.automation_jobs),
+ 'latestCompletedAttempts',(SELECT coalesce(json_agg(p),'[]'::json) FROM (SELECT DISTINCT ON(j.kind) j.kind,a.attempt,a.started_at,a.completed_at,a.status,a.passed FROM local_identity.automation_attempts a JOIN local_identity.automation_jobs j ON j.id=a.job_id WHERE a.completed_at IS NOT NULL ORDER BY j.kind,a.completed_at DESC)p),
+ 'historicalAutomationExcluded',(SELECT json_build_object('jobs',count(*),'firstDue',min(due_at),'lastDue',max(due_at)) FROM local_identity.historical_automation_jobs),
+ 'notificationsInWindow',(SELECT coalesce(json_agg(p),'[]'::json) FROM (SELECT d.outcome,count(*) count,min(d.reserved_at) first_reserved,max(d.reserved_at) last_reserved FROM public.notification_delivery_events d CROSS JOIN bounds WHERE d.reserved_at>=since AND d.reserved_at<at AND NOT EXISTS(SELECT 1 FROM local_identity.historical_audit_events h WHERE h.event_id=d.event_id) GROUP BY d.outcome ORDER BY d.outcome)p),
+ 'workerRunsInWindow',(SELECT coalesce(json_agg(p),'[]'::json) FROM (SELECT r.status::text status,count(*) count,min(r.started_at) first_started,max(r.started_at) last_started FROM public.task_runs r CROSS JOIN bounds WHERE r.started_at>=since AND r.started_at<at GROUP BY r.status ORDER BY r.status)p),
+ 'workerTasksCurrent',(SELECT coalesce(json_agg(p),'[]'::json) FROM (SELECT status::text status,count(*) count FROM public.tasks GROUP BY status ORDER BY status)p),
+ 'currentNotificationsOutstanding',(SELECT count(*) FROM public.notification_delivery_events d WHERE d.outcome IN ('reserved','uncertain') AND NOT EXISTS(SELECT 1 FROM local_identity.historical_audit_events h WHERE h.event_id=d.event_id))
+);
+ROLLBACK;

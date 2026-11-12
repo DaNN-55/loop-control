@@ -1,0 +1,13 @@
+{
+  "currentUser": 501,
+  "exitCode": 1,
+  "status": "crontab: no crontab for dan",
+  "nonCommentEntryCount": 0,
+  "relatedLines": [],
+  "/etc/crontab": {
+    "exists": false
+  },
+  "/etc/anacrontab": {
+    "exists": false
+  }
+}

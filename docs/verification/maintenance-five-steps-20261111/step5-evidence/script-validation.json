@@ -1,0 +1,8 @@
+{
+  "bashSyntax": "passed: bash -n",
+  "embeddedPythonSyntax": "passed: ast.parse only",
+  "scriptBodyExecuted": false,
+  "dryRunExecuted": false,
+  "deletionsExecuted": 0,
+  "generatorInitialFailure": "First generator had nested triple-quote SyntaxError before executing any statements; corrected generator wrote this task-owned script only."
+}

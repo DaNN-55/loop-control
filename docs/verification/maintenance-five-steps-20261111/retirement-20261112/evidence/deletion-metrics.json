@@ -1,0 +1,47 @@
+{
+  "files": [
+    {
+      "path": "src/clipTiming.ts",
+      "deletedLines": 39,
+      "kind": "production"
+    },
+    {
+      "path": "src/clipTiming.test.ts",
+      "deletedLines": 20,
+      "kind": "test"
+    },
+    {
+      "path": "src/shotAcceptance.ts",
+      "deletedLines": 6,
+      "kind": "production"
+    },
+    {
+      "path": "src/shotAcceptance.test.ts",
+      "deletedLines": 16,
+      "kind": "test"
+    },
+    {
+      "path": "src/reviews/materialImport.ts",
+      "deletedLines": 86,
+      "kind": "production"
+    },
+    {
+      "path": "src/reviews/materialImport.test.ts",
+      "deletedLines": 33,
+      "kind": "test"
+    },
+    {
+      "path": "src/worker/manualMaterialChecklist.ts",
+      "deletedLines": 59,
+      "kind": "production"
+    },
+    {
+      "path": "src/worker/manualMaterialChecklist.test.ts",
+      "deletedLines": 36,
+      "kind": "test"
+    }
+  ],
+  "productionLines": 190,
+  "testLines": 105,
+  "retiredTestCases": 10
+}

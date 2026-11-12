@@ -1,0 +1,38 @@
+{
+  "method": "Current first-party named function bodies >=40 tokens; identifiers abstracted, string literal values preserved. Free names/closures must still be compared manually.",
+  "namedFunctions": 2184,
+  "groups": [
+    [
+      {
+        "file": "src/platform/ConfigurationForms.tsx",
+        "name": "updateMediaAdapter",
+        "line": 190,
+        "tokens": 52,
+        "body": "{\n    if (!adapterKey) return;\n    setForm((current) => ({ ...current, mediaAdapters: { ...current.mediaAdapters, [adapterKey]: { ...current.mediaAdapters[adapterKey], [field]: value } } }));\n  }"
+      },
+      {
+        "file": "src/platform/ConfigurationForms.tsx",
+        "name": "updateExecutor",
+        "line": 195,
+        "tokens": 52,
+        "body": "{\n    if (!executorKey) return;\n    setForm((current) => ({ ...current, executors: { ...current.executors, [executorKey]: { ...current.executors[executorKey], [field]: value } } }));\n  }"
+      }
+    ],
+    [
+      {
+        "file": "src/worker/openchatcutStudio.ts",
+        "name": "readWorkspaceMetadata",
+        "line": 429,
+        "tokens": 49,
+        "body": "{\n  try { return JSON.parse(await readFile(path, \"utf8\")) as WorkspaceMetadata; }\n  catch (error) { if (error instanceof Error && \"code\" in error && error.code === \"ENOENT\") return null; throw error; }\n}"
+      },
+      {
+        "file": "src/worker/openchatcutStudio.ts",
+        "name": "readProject",
+        "line": 493,
+        "tokens": 49,
+        "body": "{\n  try { return JSON.parse(await readFile(path, \"utf8\")) as OpenChatCutProject; }\n  catch (error) { if (error instanceof Error && \"code\" in error && error.code === \"ENOENT\") return null; throw error; }\n}"
+      }
+    ]
+  ]
+}

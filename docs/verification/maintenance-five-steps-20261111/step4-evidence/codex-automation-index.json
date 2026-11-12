@@ -1,0 +1,7 @@
+{
+  "exists": true,
+  "configCount": 0,
+  "matching": [],
+  "errors": [],
+  "method": "Read only automation index keys; no prompt bodies or session files."
+}

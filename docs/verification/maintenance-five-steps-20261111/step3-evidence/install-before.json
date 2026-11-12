@@ -1,0 +1,1577 @@
+{
+  "node": "v24.20.0",
+  "rootManifestSha256": "5b55b46759e687dce9731d853b89892f466ad0d60e13ea0e7585263b9f406179",
+  "lockSha256": "57c7f1092fc25a68ebfa1c55a01ab5607a6e7c8414df2ff79833580ce224c876",
+  "directCount": 24,
+  "lockPackageEntries": 306,
+  "installedLockPackages": 223,
+  "installed": [
+    {
+      "path": "node_modules/@asamuzakjp/css-color",
+      "name": "@asamuzakjp/css-color",
+      "version": "3.2.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@asamuzakjp/css-color/node_modules/lru-cache",
+      "name": "lru-cache",
+      "version": "10.4.3",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@babel/code-frame",
+      "name": "@babel/code-frame",
+      "version": "7.29.7",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@babel/compat-data",
+      "name": "@babel/compat-data",
+      "version": "7.29.7",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@babel/core",
+      "name": "@babel/core",
+      "version": "7.29.7",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@babel/generator",
+      "name": "@babel/generator",
+      "version": "7.29.8",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@babel/helper-compilation-targets",
+      "name": "@babel/helper-compilation-targets",
+      "version": "7.29.7",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@babel/helper-globals",
+      "name": "@babel/helper-globals",
+      "version": "7.29.7",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@babel/helper-module-imports",
+      "name": "@babel/helper-module-imports",
+      "version": "7.29.7",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@babel/helper-module-transforms",
+      "name": "@babel/helper-module-transforms",
+      "version": "7.29.7",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@babel/helper-plugin-utils",
+      "name": "@babel/helper-plugin-utils",
+      "version": "7.29.7",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@babel/helper-string-parser",
+      "name": "@babel/helper-string-parser",
+      "version": "7.29.7",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@babel/helper-validator-identifier",
+      "name": "@babel/helper-validator-identifier",
+      "version": "7.29.7",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@babel/helper-validator-option",
+      "name": "@babel/helper-validator-option",
+      "version": "7.29.7",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@babel/helpers",
+      "name": "@babel/helpers",
+      "version": "7.29.7",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@babel/parser",
+      "name": "@babel/parser",
+      "version": "7.29.8",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@babel/plugin-transform-react-jsx-self",
+      "name": "@babel/plugin-transform-react-jsx-self",
+      "version": "7.29.7",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@babel/plugin-transform-react-jsx-source",
+      "name": "@babel/plugin-transform-react-jsx-source",
+      "version": "7.29.7",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@babel/runtime",
+      "name": "@babel/runtime",
+      "version": "7.29.7",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@babel/template",
+      "name": "@babel/template",
+      "version": "7.29.7",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@babel/traverse",
+      "name": "@babel/traverse",
+      "version": "7.29.8",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@babel/types",
+      "name": "@babel/types",
+      "version": "7.29.8",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@csstools/color-helpers",
+      "name": "@csstools/color-helpers",
+      "version": "5.1.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@csstools/css-calc",
+      "name": "@csstools/css-calc",
+      "version": "2.1.4",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@csstools/css-color-parser",
+      "name": "@csstools/css-color-parser",
+      "version": "3.1.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@csstools/css-parser-algorithms",
+      "name": "@csstools/css-parser-algorithms",
+      "version": "3.0.5",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@csstools/css-tokenizer",
+      "name": "@csstools/css-tokenizer",
+      "version": "3.0.4",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@esbuild/darwin-arm64",
+      "name": "@esbuild/darwin-arm64",
+      "version": "0.28.2",
+      "optional": true,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@internationalized/date",
+      "name": "@internationalized/date",
+      "version": "3.12.4",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/@internationalized/number",
+      "name": "@internationalized/number",
+      "version": "3.6.9",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/@internationalized/string",
+      "name": "@internationalized/string",
+      "version": "3.2.10",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/@jridgewell/gen-mapping",
+      "name": "@jridgewell/gen-mapping",
+      "version": "0.3.13",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@jridgewell/remapping",
+      "name": "@jridgewell/remapping",
+      "version": "2.3.5",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@jridgewell/resolve-uri",
+      "name": "@jridgewell/resolve-uri",
+      "version": "3.1.2",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@jridgewell/sourcemap-codec",
+      "name": "@jridgewell/sourcemap-codec",
+      "version": "1.5.5",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@jridgewell/trace-mapping",
+      "name": "@jridgewell/trace-mapping",
+      "version": "0.3.31",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@parcel/watcher",
+      "name": "@parcel/watcher",
+      "version": "2.5.1",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@parcel/watcher-darwin-arm64",
+      "name": "@parcel/watcher-darwin-arm64",
+      "version": "2.5.1",
+      "optional": true,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@react-types/shared",
+      "name": "@react-types/shared",
+      "version": "3.37.0",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/@rolldown/pluginutils",
+      "name": "@rolldown/pluginutils",
+      "version": "1.0.0-rc.3",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@rollup/rollup-darwin-arm64",
+      "name": "@rollup/rollup-darwin-arm64",
+      "version": "4.62.4",
+      "optional": true,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@swc/helpers",
+      "name": "@swc/helpers",
+      "version": "0.5.23",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/@tailwindcss/cli",
+      "name": "@tailwindcss/cli",
+      "version": "4.3.3",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@tailwindcss/node",
+      "name": "@tailwindcss/node",
+      "version": "4.3.3",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@tailwindcss/oxide",
+      "name": "@tailwindcss/oxide",
+      "version": "4.3.3",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@tailwindcss/oxide-darwin-arm64",
+      "name": "@tailwindcss/oxide-darwin-arm64",
+      "version": "4.3.3",
+      "optional": true,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@testing-library/dom",
+      "name": "@testing-library/dom",
+      "version": "10.4.1",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@testing-library/react",
+      "name": "@testing-library/react",
+      "version": "16.3.2",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@testing-library/user-event",
+      "name": "@testing-library/user-event",
+      "version": "14.6.4",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@types/aria-query",
+      "name": "@types/aria-query",
+      "version": "5.0.4",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@types/babel__core",
+      "name": "@types/babel__core",
+      "version": "7.20.5",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@types/babel__generator",
+      "name": "@types/babel__generator",
+      "version": "7.27.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@types/babel__template",
+      "name": "@types/babel__template",
+      "version": "7.4.4",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@types/babel__traverse",
+      "name": "@types/babel__traverse",
+      "version": "7.28.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@types/chai",
+      "name": "@types/chai",
+      "version": "5.2.3",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@types/deep-eql",
+      "name": "@types/deep-eql",
+      "version": "4.0.2",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@types/estree",
+      "name": "@types/estree",
+      "version": "1.0.9",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@types/node",
+      "name": "@types/node",
+      "version": "24.13.3",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@types/pg",
+      "name": "@types/pg",
+      "version": "8.23.1",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@types/react",
+      "name": "@types/react",
+      "version": "19.2.18",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@types/react-dom",
+      "name": "@types/react-dom",
+      "version": "19.2.4",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@untitledui/icons",
+      "name": "@untitledui/icons",
+      "version": "0.0.23",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/@videojs/core",
+      "name": "@videojs/core",
+      "version": "10.2.0",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/@videojs/media",
+      "name": "@videojs/media",
+      "version": "10.2.0",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/@videojs/native-hls-video",
+      "name": "@videojs/native-hls-video",
+      "version": "10.2.0",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/@videojs/react",
+      "name": "@videojs/react",
+      "version": "10.2.0",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/@videojs/spf",
+      "name": "@videojs/spf",
+      "version": "10.2.0",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/@videojs/store",
+      "name": "@videojs/store",
+      "version": "10.2.0",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/@videojs/utils",
+      "name": "@videojs/utils",
+      "version": "10.2.0",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/@vitejs/plugin-react",
+      "name": "@vitejs/plugin-react",
+      "version": "5.2.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@vitest/expect",
+      "name": "@vitest/expect",
+      "version": "3.2.7",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@vitest/mocker",
+      "name": "@vitest/mocker",
+      "version": "3.2.7",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@vitest/pretty-format",
+      "name": "@vitest/pretty-format",
+      "version": "3.2.7",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@vitest/runner",
+      "name": "@vitest/runner",
+      "version": "3.2.7",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@vitest/snapshot",
+      "name": "@vitest/snapshot",
+      "version": "3.2.7",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@vitest/spy",
+      "name": "@vitest/spy",
+      "version": "3.2.7",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/@vitest/utils",
+      "name": "@vitest/utils",
+      "version": "3.2.7",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/agent-base",
+      "name": "agent-base",
+      "version": "7.1.4",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/ansi-regex",
+      "name": "ansi-regex",
+      "version": "5.0.1",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/ansi-styles",
+      "name": "ansi-styles",
+      "version": "5.2.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/aria-hidden",
+      "name": "aria-hidden",
+      "version": "1.2.6",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/aria-query",
+      "name": "aria-query",
+      "version": "5.3.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/assertion-error",
+      "name": "assertion-error",
+      "version": "2.0.1",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/baseline-browser-mapping",
+      "name": "baseline-browser-mapping",
+      "version": "2.11.13",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/braces",
+      "name": "braces",
+      "version": "3.0.3",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/browserslist",
+      "name": "browserslist",
+      "version": "4.28.8",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/cac",
+      "name": "cac",
+      "version": "6.7.14",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/caniuse-lite",
+      "name": "caniuse-lite",
+      "version": "1.0.30001809",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/chai",
+      "name": "chai",
+      "version": "5.3.3",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/check-error",
+      "name": "check-error",
+      "version": "2.1.3",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/client-only",
+      "name": "client-only",
+      "version": "0.0.1",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/clsx",
+      "name": "clsx",
+      "version": "2.1.1",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/convert-source-map",
+      "name": "convert-source-map",
+      "version": "2.0.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/cssstyle",
+      "name": "cssstyle",
+      "version": "4.6.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/csstype",
+      "name": "csstype",
+      "version": "3.2.3",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/data-urls",
+      "name": "data-urls",
+      "version": "5.0.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/debug",
+      "name": "debug",
+      "version": "4.4.3",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/decimal.js",
+      "name": "decimal.js",
+      "version": "10.6.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/deep-eql",
+      "name": "deep-eql",
+      "version": "5.0.2",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/dequal",
+      "name": "dequal",
+      "version": "2.0.3",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/detect-libc",
+      "name": "detect-libc",
+      "version": "1.0.3",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/dom-accessibility-api",
+      "name": "dom-accessibility-api",
+      "version": "0.5.16",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/electron-to-chromium",
+      "name": "electron-to-chromium",
+      "version": "1.5.405",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/enhanced-resolve",
+      "name": "enhanced-resolve",
+      "version": "5.26.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/entities",
+      "name": "entities",
+      "version": "6.0.1",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/es-module-lexer",
+      "name": "es-module-lexer",
+      "version": "1.7.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/esbuild",
+      "name": "esbuild",
+      "version": "0.28.2",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/escalade",
+      "name": "escalade",
+      "version": "3.2.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/estree-walker",
+      "name": "estree-walker",
+      "version": "3.0.3",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/expect-type",
+      "name": "expect-type",
+      "version": "1.4.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/fdir",
+      "name": "fdir",
+      "version": "6.5.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/fill-range",
+      "name": "fill-range",
+      "version": "7.1.1",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/fsevents",
+      "name": "fsevents",
+      "version": "2.3.3",
+      "optional": true,
+      "dev": true
+    },
+    {
+      "path": "node_modules/gensync",
+      "name": "gensync",
+      "version": "1.0.0-beta.2",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/graceful-fs",
+      "name": "graceful-fs",
+      "version": "4.2.11",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/html-encoding-sniffer",
+      "name": "html-encoding-sniffer",
+      "version": "4.0.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/http-proxy-agent",
+      "name": "http-proxy-agent",
+      "version": "7.0.2",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/https-proxy-agent",
+      "name": "https-proxy-agent",
+      "version": "7.0.6",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/iconv-lite",
+      "name": "iconv-lite",
+      "version": "0.6.3",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/is-extglob",
+      "name": "is-extglob",
+      "version": "2.1.1",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/is-glob",
+      "name": "is-glob",
+      "version": "4.0.3",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/is-number",
+      "name": "is-number",
+      "version": "7.0.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/is-potential-custom-element-name",
+      "name": "is-potential-custom-element-name",
+      "version": "1.0.1",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/jiti",
+      "name": "jiti",
+      "version": "2.7.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/js-tokens",
+      "name": "js-tokens",
+      "version": "4.0.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/jsdom",
+      "name": "jsdom",
+      "version": "26.1.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/jsesc",
+      "name": "jsesc",
+      "version": "3.1.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/json5",
+      "name": "json5",
+      "version": "2.2.3",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/lightningcss",
+      "name": "lightningcss",
+      "version": "1.32.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/lightningcss-darwin-arm64",
+      "name": "lightningcss-darwin-arm64",
+      "version": "1.32.0",
+      "optional": true,
+      "dev": true
+    },
+    {
+      "path": "node_modules/lightningcss/node_modules/detect-libc",
+      "name": "detect-libc",
+      "version": "2.1.2",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/loupe",
+      "name": "loupe",
+      "version": "3.2.1",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/lru-cache",
+      "name": "lru-cache",
+      "version": "5.1.1",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/lucide-react",
+      "name": "lucide-react",
+      "version": "1.31.0",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/lz-string",
+      "name": "lz-string",
+      "version": "1.5.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/magic-string",
+      "name": "magic-string",
+      "version": "0.30.21",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/micromatch",
+      "name": "micromatch",
+      "version": "4.0.8",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/micromatch/node_modules/picomatch",
+      "name": "picomatch",
+      "version": "2.3.2",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/mri",
+      "name": "mri",
+      "version": "1.2.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/ms",
+      "name": "ms",
+      "version": "2.1.3",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/nanoid",
+      "name": "nanoid",
+      "version": "3.3.20",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/node-addon-api",
+      "name": "node-addon-api",
+      "version": "7.1.1",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/node-releases",
+      "name": "node-releases",
+      "version": "2.0.53",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/nwsapi",
+      "name": "nwsapi",
+      "version": "2.2.24",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/parse5",
+      "name": "parse5",
+      "version": "7.3.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/pathe",
+      "name": "pathe",
+      "version": "2.0.3",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/pathval",
+      "name": "pathval",
+      "version": "2.0.1",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/pg",
+      "name": "pg",
+      "version": "8.23.1",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/pg-cloudflare",
+      "name": "pg-cloudflare",
+      "version": "1.4.1",
+      "optional": true,
+      "dev": false
+    },
+    {
+      "path": "node_modules/pg-connection-string",
+      "name": "pg-connection-string",
+      "version": "2.14.1",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/pg-int8",
+      "name": "pg-int8",
+      "version": "1.0.1",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/pg-pool",
+      "name": "pg-pool",
+      "version": "3.14.0",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/pg-protocol",
+      "name": "pg-protocol",
+      "version": "1.16.1",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/pg-types",
+      "name": "pg-types",
+      "version": "2.2.0",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/pgpass",
+      "name": "pgpass",
+      "version": "1.0.5",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/picocolors",
+      "name": "picocolors",
+      "version": "1.1.1",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/picomatch",
+      "name": "picomatch",
+      "version": "4.0.5",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/postcss",
+      "name": "postcss",
+      "version": "8.5.32",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/postgres-array",
+      "name": "postgres-array",
+      "version": "2.0.0",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/postgres-bytea",
+      "name": "postgres-bytea",
+      "version": "1.0.1",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/postgres-date",
+      "name": "postgres-date",
+      "version": "1.0.7",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/postgres-interval",
+      "name": "postgres-interval",
+      "version": "1.2.0",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/pretty-format",
+      "name": "pretty-format",
+      "version": "27.5.1",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/punycode",
+      "name": "punycode",
+      "version": "2.3.1",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/react",
+      "name": "react",
+      "version": "19.2.8",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/react-aria",
+      "name": "react-aria",
+      "version": "3.52.1",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/react-aria-components",
+      "name": "react-aria-components",
+      "version": "1.21.1",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/react-compiler-runtime",
+      "name": "react-compiler-runtime",
+      "version": "1.0.0",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/react-dom",
+      "name": "react-dom",
+      "version": "19.2.8",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/react-is",
+      "name": "react-is",
+      "version": "17.0.2",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/react-refresh",
+      "name": "react-refresh",
+      "version": "0.18.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/react-stately",
+      "name": "react-stately",
+      "version": "3.50.0",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/rollup",
+      "name": "rollup",
+      "version": "4.62.4",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/rrweb-cssom",
+      "name": "rrweb-cssom",
+      "version": "0.8.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/safer-buffer",
+      "name": "safer-buffer",
+      "version": "2.1.2",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/saxes",
+      "name": "saxes",
+      "version": "6.0.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/scheduler",
+      "name": "scheduler",
+      "version": "0.27.0",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/semver",
+      "name": "semver",
+      "version": "6.3.1",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/siginfo",
+      "name": "siginfo",
+      "version": "2.0.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/signal-polyfill",
+      "name": "signal-polyfill",
+      "version": "0.2.2",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/source-map-js",
+      "name": "source-map-js",
+      "version": "1.2.2",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/split2",
+      "name": "split2",
+      "version": "4.2.0",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/stackback",
+      "name": "stackback",
+      "version": "0.0.2",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/std-env",
+      "name": "std-env",
+      "version": "3.10.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/strip-literal",
+      "name": "strip-literal",
+      "version": "3.1.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/strip-literal/node_modules/js-tokens",
+      "name": "js-tokens",
+      "version": "9.0.1",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/symbol-tree",
+      "name": "symbol-tree",
+      "version": "3.2.4",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/tailwind-merge",
+      "name": "tailwind-merge",
+      "version": "3.7.0",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/tailwindcss",
+      "name": "tailwindcss",
+      "version": "4.3.3",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/tailwindcss-animate",
+      "name": "tailwindcss-animate",
+      "version": "1.0.7",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/tailwindcss-react-aria-components",
+      "name": "tailwindcss-react-aria-components",
+      "version": "2.2.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/tapable",
+      "name": "tapable",
+      "version": "2.3.3",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/tinybench",
+      "name": "tinybench",
+      "version": "2.9.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/tinyexec",
+      "name": "tinyexec",
+      "version": "0.3.2",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/tinyglobby",
+      "name": "tinyglobby",
+      "version": "0.2.17",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/tinypool",
+      "name": "tinypool",
+      "version": "1.1.1",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/tinyrainbow",
+      "name": "tinyrainbow",
+      "version": "2.0.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/tinyspy",
+      "name": "tinyspy",
+      "version": "4.0.4",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/tldts",
+      "name": "tldts",
+      "version": "6.1.86",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/tldts-core",
+      "name": "tldts-core",
+      "version": "6.1.86",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/to-regex-range",
+      "name": "to-regex-range",
+      "version": "5.0.1",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/tough-cookie",
+      "name": "tough-cookie",
+      "version": "5.1.2",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/tr46",
+      "name": "tr46",
+      "version": "5.1.1",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/tslib",
+      "name": "tslib",
+      "version": "2.8.1",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/typescript",
+      "name": "typescript",
+      "version": "5.9.3",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/undici-types",
+      "name": "undici-types",
+      "version": "7.18.2",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/update-browserslist-db",
+      "name": "update-browserslist-db",
+      "version": "1.3.1",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/use-sync-external-store",
+      "name": "use-sync-external-store",
+      "version": "1.7.0",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/video.js",
+      "name": "video.js",
+      "version": "10.2.0",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/vite",
+      "name": "vite",
+      "version": "7.3.6",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/vite-node",
+      "name": "vite-node",
+      "version": "3.2.4",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/vitest",
+      "name": "vitest",
+      "version": "3.2.7",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/w3c-xmlserializer",
+      "name": "w3c-xmlserializer",
+      "version": "5.0.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/webidl-conversions",
+      "name": "webidl-conversions",
+      "version": "7.0.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/whatwg-encoding",
+      "name": "whatwg-encoding",
+      "version": "3.1.1",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/whatwg-mimetype",
+      "name": "whatwg-mimetype",
+      "version": "4.0.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/whatwg-url",
+      "name": "whatwg-url",
+      "version": "14.2.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/why-is-node-running",
+      "name": "why-is-node-running",
+      "version": "2.3.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/ws",
+      "name": "ws",
+      "version": "8.21.3",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/xml-name-validator",
+      "name": "xml-name-validator",
+      "version": "5.0.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/xmlchars",
+      "name": "xmlchars",
+      "version": "2.2.0",
+      "optional": false,
+      "dev": true
+    },
+    {
+      "path": "node_modules/xtend",
+      "name": "xtend",
+      "version": "4.0.2",
+      "optional": false,
+      "dev": false
+    },
+    {
+      "path": "node_modules/yallist",
+      "name": "yallist",
+      "version": "3.1.1",
+      "optional": false,
+      "dev": true
+    }
+  ],
+  "measurement": {
+    "entries": 32882,
+    "uniqueInodes": 32882,
+    "regularFileLogicalBytes": 183200237,
+    "allocatedBytesFromStatBlocks": 279494656
+  }
+}

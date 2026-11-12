@@ -1,0 +1,4054 @@
+{
+  "files": [
+    {
+      "file": "scripts/build-dan-ui.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/e2e/run.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/inspect-openchatcut-project.ts",
+      "excluded": false
+    },
+    {
+      "file": "scripts/local-service-record.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/local-service-record.test.mjs",
+      "excluded": true
+    },
+    {
+      "file": "scripts/openchatcut-accessibility.browser.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "scripts/openchatcut-accessibility.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/openchatcut-accessibility.test.mjs",
+      "excluded": true
+    },
+    {
+      "file": "scripts/openchatcut-bridge-retry.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "scripts/openchatcut-bridge-retry.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/openchatcut-bridge-retry.test.mjs",
+      "excluded": true
+    },
+    {
+      "file": "scripts/openchatcut-bundled-sounds.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/openchatcut-cache.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/openchatcut-cache.test.mjs",
+      "excluded": true
+    },
+    {
+      "file": "scripts/openchatcut-caption-drag.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/openchatcut-caption-drag.test.mjs",
+      "excluded": true
+    },
+    {
+      "file": "scripts/openchatcut-caption-identity.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "scripts/openchatcut-caption-identity.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/openchatcut-caption-layout.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "scripts/openchatcut-caption-layout.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/openchatcut-embed-client.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/openchatcut-embed-client.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "scripts/openchatcut-embedded.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/openchatcut-host-modules.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/openchatcut-host-modules.test.mjs",
+      "excluded": true
+    },
+    {
+      "file": "scripts/openchatcut-media-imports.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "scripts/openchatcut-media-imports.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/openchatcut-media-imports.test.mjs",
+      "excluded": true
+    },
+    {
+      "file": "scripts/openchatcut-readability.browser.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "scripts/openchatcut-readability.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/openchatcut-render.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/openchatcut-render.test.mjs",
+      "excluded": true
+    },
+    {
+      "file": "scripts/openchatcut-standalone.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/prepare-runtime.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/run-prepared.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/runtime/application.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/runtime/application.test.mjs",
+      "excluded": true
+    },
+    {
+      "file": "scripts/runtime/backup.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/runtime/codex.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/runtime/environment.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/runtime/environment.test.mjs",
+      "excluded": true
+    },
+    {
+      "file": "scripts/runtime/history-consolidation.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/runtime/history-consolidation.test.mjs",
+      "excluded": true
+    },
+    {
+      "file": "scripts/runtime/keychain.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/runtime/keychain.test.mjs",
+      "excluded": true
+    },
+    {
+      "file": "scripts/runtime/keychainReadiness.test.mjs",
+      "excluded": true
+    },
+    {
+      "file": "scripts/runtime/log-storage.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/runtime/media-root.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/runtime/media-root.test.mjs",
+      "excluded": true
+    },
+    {
+      "file": "scripts/runtime/migrate.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/runtime/offline-guard.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/runtime/project-history.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/runtime/recover-native-output.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/runtime/secrets.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/runtime/secrets.test.mjs",
+      "excluded": true
+    },
+    {
+      "file": "scripts/runtime/services.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/runtime/services.test.mjs",
+      "excluded": true
+    },
+    {
+      "file": "scripts/runtime/start.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/runtime/start.test.mjs",
+      "excluded": true
+    },
+    {
+      "file": "scripts/runtime/stop.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/runtime/vite.config.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/start.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/stop.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/storage/backup.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/storage/file-io.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/storage/location-lineage.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/storage/media-references.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/storage/native-backup-format.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/storage/occupied.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/storage/reference-integrity.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/storage/reference-integrity.test.mjs",
+      "excluded": true
+    },
+    {
+      "file": "scripts/storage/restore.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/storage/schema-import.mjs",
+      "excluded": false
+    },
+    {
+      "file": "scripts/storage/schema-import.test.mjs",
+      "excluded": true
+    },
+    {
+      "file": "scripts/storage/security-inventory.mjs",
+      "excluded": false
+    },
+    {
+      "file": "src/accounts/AccountDirectoryPanel.recovery.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/accounts/AccountDirectoryPanel.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/accounts/AccountDirectoryPanel.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/accounts/AccountForm.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/accounts/AccountForm.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/accounts/AccountGeneralSettings.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/accounts/AccountRules.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/accounts/AccountSidebar.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/accounts/AccountWorkspace.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/accounts/AccountWorkspace.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/accounts/SeriesDirectoryPanel.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/accounts/accountDeletionStatus.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/clipTiming.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/clipTiming.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/connections/ConnectionBillingDialog.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/connections/ConnectionBillingDialog.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/connections/ConnectionDanUi.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/connections/ConnectionDraftLeaveDialog.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/connections/ConnectionDraftSession.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/connections/ConnectionDrafts.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/connections/ConnectionFeedback.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/connections/ConnectionLocale.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/connections/ConnectionModelsDialog.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/connections/ConnectionModelsDialog.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/connections/ConnectionOrganization.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/connections/ConnectionReadStatus.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/connections/ConnectionServiceCatalog.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/connections/ConnectionTestButton.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/connections/ConnectionWorkspace.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/connections/ConnectionWorkspace.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/connections/connectionBilling.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/connections/connectionModels.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/connections/connectionUsage.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/connections/serviceCatalog.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/creativeAccountRules.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/episodes/EpisodeDetailDrawer.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/episodes/EpisodeDetailDrawer.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/episodes/EpisodeForm.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/episodes/EpisodeForm.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/episodes/episodeCatalog.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/episodes/episodeCatalogChanged.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/episodes/episodeCatalogChanges.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/episodes/episodeCatalogTypes.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/episodes/episodeReadService.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/episodes/episodeReadService.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/episodes/episodeSnapshot.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/fileSize.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/i18n/accounts.locale.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/i18n/en/accounts.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/i18n/en/compactConnections.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/i18n/en/compactSecrets.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/i18n/en/connections.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/i18n/en/dynamic.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/i18n/en/index.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/i18n/en/logs.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/i18n/en/navigation.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/i18n/en/navigationExtra.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/i18n/en/observability.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/i18n/en/preferences.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/i18n/en/production.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/i18n/en/productionExtra.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/i18n/en/receipts.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/i18n/en/recycle.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/i18n/en/systemStatus.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/i18n/en/visual.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/i18n/en/visualExtra.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/i18n/en/visualHelpers.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/i18n/en/workflow.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/i18n/types.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/i18n/ui.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/i18n/ui.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/i18n/ui.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/imageGeneration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/imageGeneration.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/lib/backend.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/lib/backend.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/lib/database.types.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/lib/viewTransport.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/lib/viewTransport.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/CompactConnectionWorkspace.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/CompactConnectionWorkspace.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/ConnectionPlanning.prototype.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/ConnectionsSettingsDialog.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/EmbeddedStudioHost.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/EmbeddedStudioHost.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/EpisodeCollectionDialog.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/GlobalPlanningSettings.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/GlobalPlanningSettings.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/ImpeccableNavigation.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/LegacyProductionSteps.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/LocalCatalogApp.account.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/LocalCatalogApp.connectionDrafts.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/LocalCatalogApp.drafts.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/LocalCatalogApp.episode-dialog.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/LocalCatalogApp.folder.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/LocalCatalogApp.language.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/LocalCatalogApp.list-refresh.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/LocalCatalogApp.logs.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/LocalCatalogApp.navigation.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/LocalCatalogApp.ownerSettings.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/LocalCatalogApp.password-dialog.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/LocalCatalogApp.receipts.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/LocalCatalogApp.search.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/LocalCatalogApp.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/LocalCatalogApp.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/LocalCatalogApp.workspace.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/LocalConnectionsPanel.reading.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/LocalConnectionsPanel.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/LocalConnectionsPanel.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/LocalDeletionRecovery.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/LocalDeletionRecovery.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/LocalEpisodeDetail.polling.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/LocalEpisodeDetail.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/LocalEpisodeDetail.upload.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/LocalSecretAdministration.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/LocalSecretAdministration.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/LocalSystemStatus.embedded.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/LocalSystemStatus.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/LocalSystemStatus.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/LogStorageSettings.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/LoopControlMark.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/MediaRootSettingsDialog.recovery.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/MediaRootSettingsDialog.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/MediaRootSettingsDialog.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/OwnerPreferencesDialog.comments.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/OwnerPreferencesDialog.embedded.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/OwnerPreferencesDialog.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/OwnerPreferencesDialog.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/OwnerSettingsDialog.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/OwnerSettingsDialog.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/ProductionCatalogInputs.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/ProductionCatalogSession.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/ProductionWorkspaceManualUpload.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/ProductionWorkspacePanel.legacy.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/ProductionWorkspacePanel.navigation.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/ProductionWorkspacePanel.operations.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/ProductionWorkspacePanel.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/ProductionWorkspacePanel.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/ProductionWorkspaceReading.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/ProductionWorkspaceUploadRecovery.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/RecycleBinPanel.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/RecycleBinPanel.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/RuntimeLogsDialog.language.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/RuntimeLogsDialog.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/RuntimeLogsDialog.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/SecretDetailPane.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/SecretDetailPane.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/SystemStatusDrawer.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/SystemStatusMotion.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/SystemStatusResources.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/SystemStatusVersion.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceAudioAudition.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceAudioAudition.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceAudioInstanceSettings.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceAudioPanel.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceAudioPanel.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceAudioSourceOptions.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceAudioSourceOptions.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceCandidateImpact.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceCandidateReviewInputs.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceCandidateReviewLifecycle.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceCaptionsPanel.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceCaptionsPanel.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceCaptionsRecovery.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceCompletedShots.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceCompletedShots.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceConfigBinding.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceDeliveryPanel.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceDeliveryPanel.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceDraft.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceExportPanel.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceExportPanel.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceFirstBatch.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceGenerationActivity.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceGenerationChoices.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceGenerationChoices.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceGenerationComposer.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceGenerationLocale.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceGenerationModel.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceGenerationModel.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceImageOptions.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceImageSettings.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceMaterialDrop.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceMaterialShelf.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceMaterialShelf.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceModelLogo.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceModelPicker.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceNarrationCaptions.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceNarrationPanel.manual.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceNarrationPanel.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceNarrationPanel.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceNarrationToolbar.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceNativeControls.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceNativeControls.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspacePexelsSearch.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspacePexelsSearch.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspacePlanningSelection.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspacePlanningSelection.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspacePreparationLayout.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspacePreparationLayout.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspacePromptField.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspacePromptField.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceReferencePicker.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceReferencePicker.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceScriptPanel.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceScriptPanel.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceSearchPanel.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceSecondBatch.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceShotPreview.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceShotPreview.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceShotRail.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceShotTable.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceShotTable.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceSoundIntent.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceSoundRecords.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceSoundRecords.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceSpeechReading.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceSpeechSample.lifecycle.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceSpeechSample.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceSpeechSample.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceTopbar.account-safety.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceTopbar.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceTopbar.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceUploadFeedback.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceUploadFeedback.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceVideoInputs.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceVisualAdoption.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceVisualCandidatesPanel.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceVisualFeedback.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceVisualPreparation.activity.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceVisualPreparation.form.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceVisualPreparation.readonly.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceVisualPreparation.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceVisualPreparation.upload.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceVisualReading.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceVisualRecord.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceVisualTaskStatus.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceVisualTaskStatus.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/WorkspaceVoicePicker.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/WorkspaceVoicePicker.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/accountAssetRoots.browser.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/accountAssetRoots.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/accountAssetRoots.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/accountAssetRootsStorage.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/accountCommands.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/accountCreation.browser.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/accountCreation.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/accountCreation.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/accountDeletion.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/accountDeletion.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/accountDeletionStatus.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/accountDeletionStorage.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/accountDirectoryCleanup.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/accountDirectoryCleanup.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/accountDirectoryMigration.browser.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/accountDirectoryMigration.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/accountDirectoryMigration.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/accountDirectoryMigrationStorage.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/accountDirectoryMigrationSubmissions.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/accountGenerationBudgets.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/accountUnassignedCounts.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/accountWorkspace.browser.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/alignmentWorker.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/artifactRoute.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/artifactRoute.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/automationHistory.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/avatarUpload.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/avatarUpload.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/bailianModels.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/blueprintContraction.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/blueprintReviewRetirement.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/captionTextConfirmationRoute.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/catalog.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/catalogContract.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/catalogFilters.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/catalogNavigation.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/catalogNavigation.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/catalogQuery.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/catalogQuery.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/catalogSeriesOptions.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/catalogWorkspaceUsage.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/cleanupRecovery.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/cleanupRecoveryProcess.fixture.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/client.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/clientBilling.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/clientCommandReceipt.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/clientCsrfRecovery.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/clipPreflight.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/commandReceipt.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/commandReceipt.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/configurationCommands.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/configurationCommands.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/connection-detail-v4.prototype.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/connectionBilling.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/connectionBilling.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/connectionCatalog.fixture.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/connectionCatalog.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/connectionImpact.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/connectionLifecycle.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/connectionModels.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/connectionModels.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/connectionPorts.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/connectionUsage.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/connections.prototype.config.mjs",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/connections.prototype.data.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/connections.prototype.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/connections.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/connections.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/creationIdentity.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/creativeStorageCompatibility.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/currentShotSemantics.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/databaseConfig.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/databaseDisconnect.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/databaseDisconnect.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/deletionBackupRestore.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/deletionFingerprint.fixture.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/deliveryArchive.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/deliveryArchive.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/deliveryCommands.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/embeddedStudio.fixture.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/embeddedStudio.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/episodeArchive.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/episodeCollection.browser.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/episodeCollection.fixture.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/episodeCollection.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/episodeCollectionFaults.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/episodeCollectionMove.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/episodeCollectionNative.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/episodeCollectionProcess.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/episodeCollectionWorker.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/episodeCommands.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/episodeCreation.browser.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/episodeCreation.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/episodeCreation.native.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/episodeCreation.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/episodeCreationFaults.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/episodeCreationRestore.fixture.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/episodeDeletion.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/episodeDeletionNative.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/episodeDeletionProcess.config.mjs",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/episodeDeletionProcess.fixture.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/episodeDeletionRetainedSources.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/episodeDeletionStorage.browser.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/episodeDeletionStorage.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/episodeDeletionTargets.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/episodeDeletionTargets.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/episodeFiles.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/episodeLifecycle.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/episodeMetrics.browser.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/episodeMetrics.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/episodeMetrics.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/episodeMetrics.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/episodeReads.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/episodeStorageLocation.browser.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/episodeStorageLocation.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/episodeStorageLocation.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/firstBatchAcceptance.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/firstBatchBrowser.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/fixtureResources.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/fixtureResources.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/fixtureSchema.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/fixtureSchema.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/fixtures/ownerSettingsFixture.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/fixtures/workspaceDraftFixture.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/formalWorkflow.delivery.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/formalWorkflow.fixture.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/formalWorkflow.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/freshProduction.fixture.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/freshProductionFixture.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/frontendBoundary.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/globalPlanningStore.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/gptImage25.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/gptImage26.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/historicalBlueprint.fixture.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/historyEpisodeDeletion.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/historyEpisodeDeletion.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/inputPreflight.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/inputPublicationOwnership.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/inputStorageLocation.browser.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/inputStorageLocation.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/inputStorageMigration.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/keychainStore.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/keychainStore.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/legacyAdoption.browser.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/legacyAdoption.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/legacyAdoptionNative.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/legacyAdoptionProcess.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/legacyAdoptionVolumes.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/legacyAdoptionWorker.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/legacyHtmlWorkspace.fixture.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/legacyHtmlWorkspace.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/legacyHtmlWorkspace.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/legacyHtmlWorkspace.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/legacyPlanning.fixture.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/legacyReceivedRetry.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/legacyStudioProject.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/legacyStudioProject.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/legacyVideoCompatibility.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/legacyWorkspaceEditing.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/legacyWorkspaceEntry.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/legacyWorkspaceMetadata.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/legacyWorkspaceMetadata.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/localFiles.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/localFiles.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/localRoute.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/localRoute.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/localWorkerCli.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/localWorkerService.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/logs.prototype.config.mjs",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/logs.prototype.data.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/logs.prototype.history.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/logs.prototype.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/main.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/managedMediaRestore.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/manualVerification.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/materialAcceptance.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/materialAcceptance.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/mediaDeployment.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/mediaPaths.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/mediaPaths.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/mediaRootDirectoryReceipt.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/mediaRootExecution.browser.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/mediaRootExecution.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/mediaRootExecution.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/mediaRootExecutionFaults.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/mediaRootExecutionNative.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/mediaRootExecutionProcess.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/mediaRootExecutionWorker.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/mediaRootFeedback.browser.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/mediaRootMigration.browser.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/mediaRootMigration.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/mediaRootMigration.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/mediaRootMigrationBlockers.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/mediaRootMigrationNative.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/mediaRootMigrationProcess.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/mediaRootPublication.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/mediaRootRecovery13.browser.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/mediaRootRuntime.fixture.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/mediaRootSettings.browser.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/mediaRootSettings.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/mediaRootSettings.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/mediaWorker.reference.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/mediaWorker.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/mediaWorker.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/minimaxFailure.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/minimaxRegion.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/minimaxVariants.live.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/modelSettings.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/narrationReceiptBoundary.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/narrationWorker.network.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/narrationWorker.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/nativeAttemptOutput.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/nativeAttemptOutput.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/nativeAutomation.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/nativeBackup.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/nativeHealth.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/nativeRestoreBrowser.fixture.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/nativeStorage.fixture.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/nativeStorage.fixture.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/nativeStorageSql.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/nativeStudioPrimary.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/nativeTtsOptIn.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/nativeWan.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/nativeWorkspace.fixture.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/notificationStatus.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/officialVideo.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/officialVideoNetwork.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/owner-settings.prototype.config.mjs",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/owner-settings.prototype.credentials.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/owner-settings.prototype.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/ownerPasswordRoute.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/ownerPreferences.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/ownerPreferences.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/ownerRls.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/ownerTransaction.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/password.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/password.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/pexelsLiveProbe.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/pexelsLiveProbe.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/planningSelectionStore.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/productionCatalogReading.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/productionModelSelection.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/productionRevisions.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/productionSelection.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/productionSelection.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/productionWorkspace.fixture.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/productionWorkspace.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/productionWorkspaceCommands.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/programLoading.browser.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/promptReferenceModels.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/promptReferences.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/providerBilling.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/providerBilling.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/providerDispatch.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/providerDispatch.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/providerModels.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/providerModels.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/providerNetwork.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/providerNetwork.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/providerProbe.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/providerProbe.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/providerRetirement.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/providerUsage.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/providerUsage.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/readOnlyVerification.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/receiptRules.browser.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/receiptRules.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/recycleBin.independent.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/recycleBin.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/recycleBin.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/resolveWorkspaceVideoInputs.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/restorePublication.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/restoredFolderOpen.fixture.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/retiredHistory.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/retirementAcceptance.fixture.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/runtimeLogs.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/runtimeLogs.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/runtimeRelease.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/runtimeRequestLog.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/runtimeRequestLog.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/runtimeResources.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/runtimeStatus.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/runtimeStatus.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/runtimeStatus.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/runtimeVersion.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/runtimeVersion.legacy.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/runtimeVersion.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/runtimeVersion.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/scriptProduction.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/scriptProductionContinuation.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/scriptProductionContinuation.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/scriptProductionRunner.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/scriptProductionStore.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/scriptRevisionCommands.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/secondBatchAcceptance.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/secondBatchBrowser.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/secondBatchWorkspace.fixture.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/secretAdministration.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/secretAdministration.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/secretAdministrationTypes.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/secretInventory.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/secretInventory.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/seriesDirectories.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/seriesDirectories.native.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/seriesDirectories.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/seriesDirectoryFaults.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/sessions.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/settings-review-v2.prototype.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/shotVideoProtocol.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/shotVideoProtocolUpgrade.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/speechSampleCache.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/speechSampleCache.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/speechSelection.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/standaloneStudioRoute.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/storageInventory.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/storageInventory.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/storyBrowser.fixture.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/storyE2e.fixture.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/storyE2e.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/storyProcess.fixture.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/studioCommands.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/studioDocument.fixture.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/useConnectionActions.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/useProductionServiceCatalog.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/useProductionServiceCatalog.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/useWorkspaceCallConfirmation.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/useWorkspaceCallConfirmation.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/useWorkspaceCandidateReview.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/useWorkspaceCandidateReview.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/useWorkspaceCanvas.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/useWorkspaceCanvas.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/useWorkspaceCaptionOperation.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/useWorkspaceOperations.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/useWorkspaceReading.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/videoTaskExecution.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/videoTaskNetwork.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/wanCommands.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/workerDatabase.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workerDatabase.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/workerOutcomes.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workflowLegacyRules.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workflowQueueStop.independent.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workflowRetryRules.independent.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workflowRules.browser.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workflowRules.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceAudio.fixture.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceAudio.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceAudio.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/workspaceAudio.ui.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceAudioDefaults.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceAudioMaterial.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/workspaceAudioMedia.fixture.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceAudioProjection.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceAudioSelection.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceAudioStorage.browser.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceAudioStorage.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceAudioVolume.fixture.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceBundledSounds.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceCallConfirmation.browser.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceCallConfirmation.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceCallConfirmation.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/workspaceCallEstimate.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceCallEstimate.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/workspaceCandidateAdoption.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/workspaceCandidateImpact.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceCandidates.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceCandidates.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/workspaceCaptions.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceCaptionsCommands.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/workspaceCatalog.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceCostEstimate.browser.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceDelivery.fixture.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceDelivery.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceDeliveryCommands.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/workspaceDeliveryInputs.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceDisplayNumber.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/workspaceExport.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceExportCommands.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/workspaceExportCoverage.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceFirstVideo.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceFirstVideo.source.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceGenerationComposer.browser.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceGenerationState.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceGenerationTasks.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/workspaceImageGeneration.fixture.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceImageGeneration.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceImageGeneration.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/workspaceImageGenerationWorker.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/workspaceImageInputEstimate.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceImages.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceImages.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/workspaceImportedSoundRetention.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceManualNarration.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceManualNarration.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/workspaceNarration.fixture.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceNarration.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceNarration.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/workspaceNarration.ui.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceNarrationTabs.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceNativeSave.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceNativeStorage.browser.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceNativeStorage.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceOutputReconciliation.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/workspaceOutputReconciliationClient.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/workspacePexels.fixture.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspacePexels.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspacePexels.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/workspacePreparation.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/workspacePriceSelection.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceReadback.fixture.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceReadback.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceReadonlyRecords.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceRecovery56.browser.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceRecoveryFences.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceReviewFixes.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceScriptInput.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/workspaceScriptResume.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceScriptResume.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/workspaceSearch.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceSearch.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceSearch.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/workspaceSearchTypes.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/workspaceSettingsDraft.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/workspaceShots.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceSoundCandidates.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceSoundIntent.browser.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceSoundIntent.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceSoundSwitches.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceSources.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/workspaceSpeechReading.browser.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceTaskRetry.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceTaskRetry.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/workspaceTestMedia.fixture.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceUploads.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/workspaceVideo.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceVideo.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/workspaceVideoSelection.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceVideoSound.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/workspaceVisualAdoption.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceVisualBrowser.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceVisualCandidates.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceVisualCandidates.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/workspaceVisualCoverage.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/workspaceVisualMedia.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/workspaceVisualRequest.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/local-app/workspaceVisualStorage.browser.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceVisualStorage.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceVisualTrim.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/local-app/workspaceVisualWorker.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/observability/SystemStatusPanel.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/observability/SystemStatusPanel.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/observability/SystemStatusSurface.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/observability/TaskProgressPanel.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/observability/TaskProgressPanel.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/observability/healthChecks.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/observability/logTypes.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/observability/runtimeStatus.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/openchatcutBundledSounds.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/operations/OperationsWorkspace.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/operations/OperationsWorkspace.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/operations/WorkbenchVideoPlayer.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/operations/workbenchPreview.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/operations/workbenchPreview.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/orchestration/notificationConsumer.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/orchestration/notificationConsumer.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/orchestration/notificationPolicy.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/orchestration/notificationPolicy.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/orchestration/operationsEvidence.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/orchestration/operationsEvidence.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/orchestration/runtimeBuild.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/orchestration/runtimeBuild.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/orchestration/runtimeRelease.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/orchestration/workerDispatch.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/orchestration/workerOutcome.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/orchestration/workerOutcome.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/orchestration/workerScheduler.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/orchestration/workerScheduler.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/planningSelection.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/platform/ConfigurationForms.local.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/platform/ConfigurationForms.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/platform/CreativeRuleFields.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/platform/SeriesConfigurationForm.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/platform/blueprintPolicy.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/platform/configurationFormValues.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/platform/configurationForms.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/platform/types.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/preferences/preferences.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/preferences/preferences.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/productionSelection.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/productionWorkspace.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/promptReferences.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/promptReferences.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/publishing/coverImage.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/publishing/deliveryMetadata.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/publishing/publishPackage.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/publishing/publishPackage.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/publishing/workspacePublishPackage.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/reviews/WorkerBlockerCard.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/reviews/WorkerBlockerCard.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/reviews/blockerGuidance.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/reviews/blockerGuidance.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/reviews/localArtifactPreview.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/reviews/localArtifactPreview.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/reviews/mainScript.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/reviews/mainScript.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/reviews/materialImport.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/reviews/materialImport.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/reviews/productionPlan.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/reviews/productionScript.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/reviews/productionScript.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/reviews/repairTarget.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/reviews/repairTarget.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/reviews/reviewComposition.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/reviews/reviewRevision.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/reviews/reviewRevision.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/reviews/reviewSelectors.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/reviews/reviewSelectors.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/reviews/workerBlocker.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/sharedViews.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/shotAcceptance.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/shotAcceptance.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/shotAudioMix.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/shotCaptions.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/shotCaptions.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/shotComposition.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/shotComposition.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/soundIntent.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/soundIntent.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/speechSample.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/ui/ConfirmationModal.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/ui/DanUiInteractionGuards.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/HelpTip.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/ui/IconComboBox.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/MarkdownPreview.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/MarkdownPreview.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/ui/PaginationControls.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/PaginationControls.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/ui/PcVisualFixes.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/PopulatedFilterSelect.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/PopulatedFilterSelect.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/ui/SelectMenuInteraction.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/SurfacePresence.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/SurfacePresence.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/ui/dan-ui/components/application/modals/modal.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/dan-ui/components/application/tabs/tabs.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/dan-ui/components/base/avatar/avatar.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/dan-ui/components/base/avatar/base-components/avatar-add-button.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/dan-ui/components/base/avatar/base-components/avatar-company-icon.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/dan-ui/components/base/avatar/base-components/avatar-count.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/dan-ui/components/base/avatar/base-components/avatar-online-indicator.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/dan-ui/components/base/avatar/base-components/index.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/dan-ui/components/base/avatar/base-components/verified-tick.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/dan-ui/components/base/badges/badge-types.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/dan-ui/components/base/badges/badges.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/dan-ui/components/base/buttons/button.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/dan-ui/components/base/checkbox/checkbox.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/dan-ui/components/base/disclosure/disclosure.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/dan-ui/components/base/dropdown/dropdown.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/dan-ui/components/base/input/hint-text.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/dan-ui/components/base/input/input.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/dan-ui/components/base/input/label.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/dan-ui/components/base/radio-buttons/radio-buttons.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/dan-ui/components/base/select/icon-combobox.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/dan-ui/components/base/select/select-native.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/dan-ui/components/base/textarea/textarea.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/dan-ui/components/base/toggle/toggle.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/dan-ui/components/base/tooltip/tooltip.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/dan-ui/components/foundations/dot-icon.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/dan-ui/test-setup.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/dan-ui/utils/cx.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/dan-ui/utils/is-react-component.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/media/AudioPreview.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/media/AudioPreview.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/ui/media/ImagePreview.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/ui/media/VideoPreview.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/media/VideoPreview.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/ui/media/useMediaLifecycle.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/ui/useDialogFocus.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/ui/useDialogFocus.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/videoGenerationSettings.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/videoVisualInputs.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/vite-env.d.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/wanVideoModels.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/wanVideoModels.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/acousticAlignment.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/acousticAlignment.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/acousticAlignmentContract.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/assetRoot.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/codexPrompt.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/codexRunner.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/codexRunner.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/contracts.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/contracts.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/controlledMediaExecutor.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/controlledMediaExecutor.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/durationDecision.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/durationDecision.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/episodeDeletion.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/episodeDeletion.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/legacyPexelsReference.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/localConnection.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/manualMaterialChecklist.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/manualMaterialChecklist.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/mediaLibrary.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/mediaLibrary.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/mediaProviders.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/mediaProviders.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/mediaTools.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/mediaToolsContract.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/minimaxVariants.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/modelSettingsBoundary.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/officialVideoErrors.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/officialVideoProvider.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/officialVideoProvider.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/openchatcutBundledSounds.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/openchatcutPaths.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/openchatcutProject.fixture.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/openchatcutProject.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/openchatcutProject.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/openchatcutProject.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/openchatcutProjectReader.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/openchatcutRenderer.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/openchatcutRenderer.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/openchatcutStudio.media-cache.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/openchatcutStudio.modules.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/openchatcutStudio.storage.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/openchatcutStudio.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/openchatcutStudio.validation.integration.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/pexelsVideos.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/pexelsVideos.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/productionCapabilities.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/productionCapabilities.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/providerLifecycle.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/providerOutcome.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/registeredAdapters.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/registeredAdapters.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/renderReuse.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/renderReuse.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/runtimeConstraints.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/runtimeConstraints.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/runtimeEvidence.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/runtimePreflight.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/runtimePreflight.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/scriptPlanning.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/scriptPlanning.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/scriptRenderSettings.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/scriptRenderSettings.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/shotWorkbenchStudio.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/shotWorkbenchStudio.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/storyboardArtifact.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/storyboardArtifact.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/storyboardRevision.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/storyboardRevision.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/storyboardRevisionExecutor.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/videoGenerationError.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/videoProviderCatalog.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/videoTaskExecution.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/videoTaskExecution.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/visualAssetExecutor.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/visualAssetExecutor.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/wanTaskContract.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/wanVideoProvider.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/wanVideoProvider.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/whisperxAlignment.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/worker/whisperxAlignment.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/workerResultSchema.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/worker/workspaceDeliveryWorker.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/workspace/AppliedFilters.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/workspace/EpisodeDeletionScope.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/workspace/EpisodeDeletionScope.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/workspace/EpisodeMetricsCells.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/workspace/EpisodeMetricsCells.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/workspace/EpisodeWorkspace.filters.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/workspace/PasswordForm.test.tsx",
+      "excluded": true
+    },
+    {
+      "file": "src/workspace/WorkspaceViews.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/workspace/episodePresentation.tsx",
+      "excluded": false
+    },
+    {
+      "file": "src/workspaceAudio.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/workspaceAudio.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/workspaceCall.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/workspaceCandidates.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/workspaceCaptionValidation.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/workspaceCaptions.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/workspaceCaptions.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/workspaceDelivery.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/workspaceExecution.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/workspaceExecution.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/workspaceExport.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/workspaceExportDelivery.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/workspaceExportDelivery.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/workspaceNarrationToggle.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/workspacePexels.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/workspaceShots.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/workspaceTaskPresentation.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/workspaceVideo.test.ts",
+      "excluded": true
+    },
+    {
+      "file": "src/workspaceVideo.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/workspaceVideoSound.ts",
+      "excluded": false
+    },
+    {
+      "file": "src/workspaceVisualCandidates.ts",
+      "excluded": false
+    }
+  ],
+  "scanned": 430,
+  "functionCount": 4571
+}

@@ -1,0 +1,9 @@
+{
+  "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/2557fbeb5f3e846ff4b521f91d365ceb532c50d491fbcb36eb2b9f76c24698a2/dist/local-app/orchestration/workerScheduler.js",
+  "lines": [
+    {
+      "line": 95,
+      "text": "const timer = setInterval(() => { lastHeartbeatAt = new Date().toISOString(); wake(); }, 4000);"
+    }
+  ]
+}

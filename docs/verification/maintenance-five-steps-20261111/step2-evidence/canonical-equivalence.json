@@ -1,0 +1,294 @@
+{
+  "method": "Remove imports/export aliases and deduplicated leaf declarations; inline the unchanged canonical SHA-256 expression at each exact alias/helper call; print remaining statements and compare non-trivia token streams including literal values; template nodes are synthetic to avoid source-offset reuse. Import bindings and the removed leaf bodies are reviewed separately.",
+  "results": [
+    {
+      "file": "src/local-app/configurationCommands.ts",
+      "equal": true,
+      "oldExpandedCalls": [],
+      "newExpandedCalls": [
+        {
+          "name": "canonicalFingerprint",
+          "line": 55,
+          "argument": "body"
+        }
+      ],
+      "expandedSha256": [
+        "4fdd072223a511ec8043990071be7e4cd40b076d5e9360af9a1875b53a77805c",
+        "4fdd072223a511ec8043990071be7e4cd40b076d5e9360af9a1875b53a77805c"
+      ]
+    },
+    {
+      "file": "src/local-app/episodeLifecycle.ts",
+      "equal": true,
+      "oldExpandedCalls": [
+        {
+          "name": "fingerprint",
+          "line": 52,
+          "argument": "{id:e.id,title:e.title,archivedAt:e.archived_at?new Date(e.archived_at).toISOString():null,updatedAt:new Date(e.updated_at).toISOString(),stage:e.stage,targets}"
+        },
+        {
+          "name": "fingerprint",
+          "line": 103,
+          "argument": "{endpoint:'episode-lifecycle',...body}"
+        }
+      ],
+      "newExpandedCalls": [
+        {
+          "name": "fingerprint",
+          "line": 50,
+          "argument": "{id:e.id,title:e.title,archivedAt:e.archived_at?new Date(e.archived_at).toISOString():null,updatedAt:new Date(e.updated_at).toISOString(),stage:e.stage,targets}"
+        },
+        {
+          "name": "fingerprint",
+          "line": 101,
+          "argument": "{endpoint:'episode-lifecycle',...body}"
+        }
+      ],
+      "expandedSha256": [
+        "4359b188d70b8e91cc50c305b1649f22086df4c361b0da5cfa1e2631ce69fcfd",
+        "4359b188d70b8e91cc50c305b1649f22086df4c361b0da5cfa1e2631ce69fcfd"
+      ]
+    },
+    {
+      "file": "src/local-app/recycleBin.ts",
+      "equal": true,
+      "oldExpandedCalls": [
+        {
+          "name": "digest",
+          "line": 66,
+          "argument": "logical(current)"
+        },
+        {
+          "name": "digest",
+          "line": 66,
+          "argument": "logical(entry.inventory)"
+        },
+        {
+          "name": "digest",
+          "line": 73,
+          "argument": "{endpoint:'recycle-bin',...body}"
+        }
+      ],
+      "newExpandedCalls": [
+        {
+          "name": "digest",
+          "line": 65,
+          "argument": "logical(current)"
+        },
+        {
+          "name": "digest",
+          "line": 65,
+          "argument": "logical(entry.inventory)"
+        },
+        {
+          "name": "digest",
+          "line": 72,
+          "argument": "{endpoint:'recycle-bin',...body}"
+        }
+      ],
+      "expandedSha256": [
+        "875d552f7b091cd5f3c11ee9eb84183d4c6d618b770be9346eb8477f4a2fa962",
+        "875d552f7b091cd5f3c11ee9eb84183d4c6d618b770be9346eb8477f4a2fa962"
+      ]
+    },
+    {
+      "file": "src/local-app/scriptProductionStore.ts",
+      "equal": true,
+      "oldExpandedCalls": [
+        {
+          "name": "productionHash",
+          "line": 48,
+          "argument": "e.policy"
+        },
+        {
+          "name": "productionHash",
+          "line": 79,
+          "argument": "{script:inspected.script.sha256,execution:plan.executionFingerprint,settings:plan.settings,segments:plan.segments.map(s=>({...s,firstFrame:{...s.firstFrame,candidates:[]},sfx:{...s.sfx,candidates:[]}})),bgm:{...plan.bgm,candidates:[]},cover:{...plan.cover,candidates:[]}}"
+        }
+      ],
+      "newExpandedCalls": [
+        {
+          "name": "productionHash",
+          "line": 47,
+          "argument": "e.policy"
+        },
+        {
+          "name": "productionHash",
+          "line": 78,
+          "argument": "{script:inspected.script.sha256,execution:plan.executionFingerprint,settings:plan.settings,segments:plan.segments.map(s=>({...s,firstFrame:{...s.firstFrame,candidates:[]},sfx:{...s.sfx,candidates:[]}})),bgm:{...plan.bgm,candidates:[]},cover:{...plan.cover,candidates:[]}}"
+        }
+      ],
+      "expandedSha256": [
+        "e04145d94626a028c76f6c2c2a80b99e7f822c2febd74c0e4a496c36c3ed2717",
+        "e04145d94626a028c76f6c2c2a80b99e7f822c2febd74c0e4a496c36c3ed2717"
+      ]
+    },
+    {
+      "file": "src/local-app/workspaceVisualCandidates.ts",
+      "equal": true,
+      "oldExpandedCalls": [
+        {
+          "name": "hash",
+          "line": 46,
+          "argument": "workspaceCandidateTarget(current.item)"
+        },
+        {
+          "name": "hash",
+          "line": 46,
+          "argument": "workspaceCandidateTarget(r.target_snapshot)"
+        },
+        {
+          "name": "hash",
+          "line": 68,
+          "argument": "{expected,snapshot}"
+        },
+        {
+          "name": "hash",
+          "line": 107,
+          "argument": "{expected,materialId:m.id,sha256:m.sha256,snapshot}"
+        },
+        {
+          "name": "hash",
+          "line": 156,
+          "argument": "{expected,sourcePath,sha256:source.sha256,snapshot}"
+        },
+        {
+          "name": "hash",
+          "line": 217,
+          "argument": "current?.policy.static_visual"
+        },
+        {
+          "name": "hash",
+          "line": 217,
+          "argument": "record.request_snapshot.execution"
+        },
+        {
+          "name": "hash",
+          "line": 221,
+          "argument": "e.policy[legacy.shotType]"
+        },
+        {
+          "name": "hash",
+          "line": 221,
+          "argument": "record.request_snapshot.execution"
+        }
+      ],
+      "newExpandedCalls": [
+        {
+          "name": "hash",
+          "line": 45,
+          "argument": "workspaceCandidateTarget(current.item)"
+        },
+        {
+          "name": "hash",
+          "line": 45,
+          "argument": "workspaceCandidateTarget(r.target_snapshot)"
+        },
+        {
+          "name": "hash",
+          "line": 67,
+          "argument": "{expected,snapshot}"
+        },
+        {
+          "name": "hash",
+          "line": 106,
+          "argument": "{expected,materialId:m.id,sha256:m.sha256,snapshot}"
+        },
+        {
+          "name": "hash",
+          "line": 155,
+          "argument": "{expected,sourcePath,sha256:source.sha256,snapshot}"
+        },
+        {
+          "name": "hash",
+          "line": 216,
+          "argument": "current?.policy.static_visual"
+        },
+        {
+          "name": "hash",
+          "line": 216,
+          "argument": "record.request_snapshot.execution"
+        },
+        {
+          "name": "hash",
+          "line": 220,
+          "argument": "e.policy[legacy.shotType]"
+        },
+        {
+          "name": "hash",
+          "line": 220,
+          "argument": "record.request_snapshot.execution"
+        }
+      ],
+      "expandedSha256": [
+        "90e675ee0ba9c6e302c5814a5614e86611f31276c2cb482fc8b018d2a155b808",
+        "90e675ee0ba9c6e302c5814a5614e86611f31276c2cb482fc8b018d2a155b808"
+      ]
+    },
+    {
+      "file": "src/local-app/episodeCommands.ts",
+      "equal": true,
+      "oldExpandedCalls": [],
+      "newExpandedCalls": [
+        {
+          "name": "canonicalFingerprint",
+          "line": 71,
+          "argument": "body"
+        }
+      ],
+      "expandedSha256": [
+        "0e8ab024f7fdb7d859956a40c17bdf74f3b53f3e599f643c89e3a5ee17310a21",
+        "0e8ab024f7fdb7d859956a40c17bdf74f3b53f3e599f643c89e3a5ee17310a21"
+      ]
+    },
+    {
+      "file": "src/local-app/accountCommands.ts",
+      "equal": true,
+      "oldExpandedCalls": [],
+      "newExpandedCalls": [
+        {
+          "name": "canonicalFingerprint",
+          "line": 54,
+          "argument": "body"
+        }
+      ],
+      "expandedSha256": [
+        "5689b8a7669df267bc3d1d8874f71ca2014908681cd4c465c5709e6c1ab966b0",
+        "5689b8a7669df267bc3d1d8874f71ca2014908681cd4c465c5709e6c1ab966b0"
+      ]
+    },
+    {
+      "file": "src/local-app/episodeCollection.ts",
+      "equal": true,
+      "oldExpandedCalls": [],
+      "newExpandedCalls": [
+        {
+          "name": "canonicalFingerprint",
+          "line": 25,
+          "argument": "body"
+        }
+      ],
+      "expandedSha256": [
+        "b65f2d02d20d713e3233eb3e380b8dc530b7fc48e2562bbb3f09450c80c8eb83",
+        "b65f2d02d20d713e3233eb3e380b8dc530b7fc48e2562bbb3f09450c80c8eb83"
+      ]
+    },
+    {
+      "file": "src/local-app/commandReceipt.ts",
+      "equal": true,
+      "oldExpandedCalls": [],
+      "newExpandedCalls": [
+        {
+          "name": "canonicalFingerprint",
+          "line": 13,
+          "argument": "['episode-lifecycle','recycle-bin'].includes(endpoint)?{endpoint,...intent}:intent"
+        }
+      ],
+      "expandedSha256": [
+        "f32625b9bbb0340f4b9fa69b716fc99a022ed927686bf2555eb4b53ea4f06dda",
+        "f32625b9bbb0340f4b9fa69b716fc99a022ed927686bf2555eb4b53ea4f06dda"
+      ]
+    }
+  ],
+  "allEqual": true
+}

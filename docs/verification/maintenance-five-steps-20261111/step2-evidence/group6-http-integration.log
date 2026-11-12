@@ -1,0 +1,36 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/maintenance-20261111/loop-control
+
+ ✓ src/local-app/workspaceAudio.integration.test.ts > Owner prepares manual episode music, adopts actual audio and persists native independent mix 2224ms
+ ↓ src/local-app/workspaceAudio.integration.test.ts > Freesound preparation traverses actual Worker lease and result, records attribution, retries failed work and restores after restart
+ ↓ src/local-app/workspaceAudio.integration.test.ts > source mode uses real native source extraction task without fabricating a legacy video-ready draft
+ ↓ src/local-app/workspaceAudio.integration.test.ts > actual native audio renders source, speech, ambience, music ducking and positioned sound without multiplying speech in parallel slots
+ ↓ src/local-app/workspaceAudio.integration.test.ts > real loop_worker planning never queues legacy soundtrack cues for an editable native workspace
+ ↓ src/local-app/workspaceAudio.integration.test.ts > real loop_worker planning retains the legacy soundtrack path outside native workspaces
+ ↓ src/local-app/workspaceAudio.integration.test.ts > nonzero source extraction freezes the selected native window and partial coverage cannot align an entire shot
+ ↓ src/local-app/workspaceAudio.integration.test.ts > explicit narration adoption advances the shared edit fence and late first results remain candidates
+ ✓ src/local-app/workspaceNarration.integration.test.ts > Owner can prepare disabled narration before editing without queuing external tasks 1361ms
+ ↓ src/local-app/workspaceNarration.integration.test.ts > confirmed narration uses the real Worker, survives restart and assembles actual duration without duplicate submissions
+ ↓ src/local-app/workspaceNarration.integration.test.ts > unknown paid submissions stay blocked across restart and input changes; definite rejection allows one explicit retry
+ ↓ src/local-app/workspaceNarration.integration.test.ts > both first narration tracks assemble and crop an available source without invalidating the other shot
+ ↓ src/local-app/workspaceNarration.integration.test.ts > a running task may register its immutable output but late speech cannot replace changed input or advance delivery
+ ↓ src/local-app/workspaceNarration.integration.test.ts > manual narration and disabled modes never enqueue TTS, while short pictures preserve a recoverable conflict
+ ↓ src/local-app/workspaceNarration.integration.test.ts > actual narration drives the paid video window and freezes speech provenance (changed=false)
+ ↓ src/local-app/workspaceNarration.integration.test.ts > actual narration drives the paid video window and freezes speech provenance (changed=true)
+ ↓ src/local-app/workspaceNarration.integration.test.ts > first speech remains a candidate after a real native save and never overwrites the edited project
+ ↓ src/local-app/workspaceNarration.integration.test.ts > speech beyond the Provider maximum blocks a video submission without cutting words
+ ↓ src/local-app/workspaceNarration.integration.test.ts > legacy narration already running before workspace activation cannot promote the new draft or delivery
+ ↓ src/local-app/workspaceNarration.integration.test.ts > one shot with two visual ranges keeps one voice and its original task after deleting the first range
+ ↓ src/local-app/workspaceNarration.integration.test.ts > registered completed task media resolve directly without a fake material and reject changed bytes
+ ↓ src/local-app/workspaceCaptions.integration.test.ts > Owner edits only the chosen native caption lane and persists manual timing without shot approval
+ ↓ src/local-app/workspaceCaptions.integration.test.ts > current native caption evidence follows the real alignment queue and rejects a late Worker result after a text edit
+ ↓ src/local-app/workspaceCaptions.integration.test.ts > real landscape and portrait Remotion frames contain caption pixels inside the chosen safe area
+ ✓ src/local-app/workspaceCaptions.integration.test.ts > Owner caption errors identify the field and current shot window without changing the saved native captions 1390ms
+ ↓ src/local-app/workspaceCaptions.integration.test.ts > percentage margins and second timings survive Owner save, native dragging, save and reopen
+ ↓ src/local-app/workspaceCaptions.integration.test.ts > browser edits and reopens percentage margins and second timing through the actual Owner HTTP boundary
+
+ Test Files  3 passed (3)
+      Tests  3 passed | 24 skipped (27)
+   Start at  23:51:55
+   Duration  6.04s (transform 443ms, setup 9ms, collect 782ms, tests 4.98s, environment 0ms, prepare 61ms)
+

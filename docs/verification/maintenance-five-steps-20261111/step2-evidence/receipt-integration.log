@@ -1,0 +1,11 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/maintenance-20261111/loop-control
+
+ ✓ src/local-app/commandReceipt.integration.test.ts > 5 real HTTP receipt recovery binds Owner, full payload, session and CSRF without repeating mutation 916ms
+ ✓ src/local-app/commandReceipt.integration.test.ts > 5 lifecycle receipt readback never exposes a private deletion inventory or executes cleanup 867ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  23:42:39
+   Duration  2.44s (transform 397ms, setup 7ms, collect 549ms, tests 1.78s, environment 0ms, prepare 23ms)
+

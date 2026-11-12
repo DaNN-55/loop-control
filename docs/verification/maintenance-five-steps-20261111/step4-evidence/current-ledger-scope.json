@@ -1,0 +1,15 @@
+{
+  "database": "loop_control",
+  "user": "postgres",
+  "sessionUser": "postgres",
+  "readOnly": "on",
+  "serverStartedAt": "2026-11-10T09:12:42.490256+00:00",
+  "accounts": 0,
+  "episodes": 0,
+  "tasks": 0,
+  "taskRuns": 0,
+  "migrationCount": 160,
+  "latestMigration": "163-legacy-received-explicit-retry.sql",
+  "oldestAuditEvent": null,
+  "newestAuditEvent": null
+}

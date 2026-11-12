@@ -1,0 +1,33 @@
+{
+  "removedDirectDependencies": [],
+  "addedDirectDependencies": [],
+  "replacementImplementations": [],
+  "directCountBefore": 24,
+  "directCountAfter": 24,
+  "installedLockPackagesBefore": 223,
+  "installedLockPackagesAfter": 223,
+  "lockPackageEntriesBefore": 306,
+  "lockPackageEntriesAfter": 306,
+  "measurementsEqual": true,
+  "before": {
+    "entries": 32882,
+    "uniqueInodes": 32882,
+    "regularFileLogicalBytes": 183200237,
+    "allocatedBytesFromStatBlocks": 279494656
+  },
+  "after": {
+    "entries": 32882,
+    "uniqueInodes": 32882,
+    "regularFileLogicalBytes": 183200237,
+    "allocatedBytesFromStatBlocks": 279494656
+  },
+  "regularFileLogicalBytesReduction": 0,
+  "allocatedBytesReduction": 0,
+  "npmTreeEqual": true,
+  "manifestUnchanged": true,
+  "lockUnchanged": true,
+  "notes": [
+    "306 lock entries include optional packages for other platforms; 223 package paths are installed on this host.",
+    "Allocated bytes use unique stat_blocks * 512 and are comparable to du -sk. Candidate package directory sizes do not imply removable savings."
+  ]
+}

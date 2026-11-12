@@ -1,0 +1,8 @@
+{
+  "deploymentPath": "/Users/dan/Programs/loop-control/.loop-control/local/deployment.json",
+  "recordDeploymentPath": "/Users/dan/Programs/loop-control/.loop-control/local/deployment.json",
+  "matches": true,
+  "deploymentMtimeUtc": "2026-11-04T01:37:31.537239+00:00",
+  "appRecordMtimeUtc": "2026-11-11T15:14:31.229167+00:00",
+  "runtimeNonce": "not part of this daily service record format; identity uses PID, command, cwd and listener ownership"
+}

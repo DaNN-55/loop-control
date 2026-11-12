@@ -1,0 +1,8 @@
+worktree /Users/dan/Programs/loop-control
+HEAD aa404667e949225c8fad1dae2e2aed56887cb357
+branch refs/heads/main
+
+worktree /Users/dan/.codex/worktrees/maintenance-20261111/loop-control
+HEAD aa404667e949225c8fad1dae2e2aed56887cb357
+branch refs/heads/codex/maintenance-five-steps-20261111
+

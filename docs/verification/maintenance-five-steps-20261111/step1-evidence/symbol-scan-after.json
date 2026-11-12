@@ -1,0 +1,145 @@
+[
+  {
+    "file": "src/workspaceCandidates.ts",
+    "name": "isWorkspaceCandidateEdit",
+    "line": 25,
+    "kind": "FunctionDeclaration",
+    "count": 1,
+    "uses": [
+      {
+        "file": "src/workspaceCandidates.ts",
+        "line": 25
+      }
+    ]
+  },
+  {
+    "file": "src/workspaceCandidates.ts",
+    "name": "addWorkspaceRegisteredSource",
+    "line": 79,
+    "kind": "FunctionDeclaration",
+    "count": 1,
+    "uses": [
+      {
+        "file": "src/workspaceCandidates.ts",
+        "line": 79
+      }
+    ]
+  },
+  {
+    "file": "scripts/openchatcut-caption-layout.mjs",
+    "name": "captionSlotLayoutPatch",
+    "line": 7,
+    "kind": "FunctionDeclaration",
+    "count": 1,
+    "uses": [
+      {
+        "file": "scripts/openchatcut-caption-layout.mjs",
+        "line": 7
+      }
+    ]
+  },
+  {
+    "file": "scripts/openchatcut-embed-client.mjs",
+    "name": "redirectLoopControlImport",
+    "line": 15,
+    "kind": "FunctionDeclaration",
+    "count": 1,
+    "uses": [
+      {
+        "file": "scripts/openchatcut-embed-client.mjs",
+        "line": 15
+      }
+    ]
+  },
+  {
+    "file": "scripts/openchatcut-embed-client.mjs",
+    "name": "LoopControlCaptionAlignment",
+    "line": 21,
+    "kind": "FunctionDeclaration",
+    "count": 1,
+    "uses": [
+      {
+        "file": "scripts/openchatcut-embed-client.mjs",
+        "line": 21
+      }
+    ]
+  },
+  {
+    "file": "scripts/openchatcut-embed-client.mjs",
+    "name": "useLoopControlHost",
+    "line": 30,
+    "kind": "FunctionDeclaration",
+    "count": 1,
+    "uses": [
+      {
+        "file": "scripts/openchatcut-embed-client.mjs",
+        "line": 30
+      }
+    ]
+  },
+  {
+    "file": "scripts/storage/restore.mjs",
+    "name": "restoreNativeBackup",
+    "line": 22,
+    "kind": "FunctionDeclaration",
+    "count": 1,
+    "uses": [
+      {
+        "file": "scripts/storage/restore.mjs",
+        "line": 22
+      }
+    ]
+  },
+  {
+    "file": "scripts/storage/restore.mjs",
+    "name": "resumeNativeRestorePublication",
+    "line": 109,
+    "kind": "FunctionDeclaration",
+    "count": 1,
+    "uses": [
+      {
+        "file": "scripts/storage/restore.mjs",
+        "line": 109
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/restoredFolderOpen.fixture.ts",
+    "name": "verifyRestoredFolderOpen",
+    "line": 7,
+    "kind": "FunctionDeclaration",
+    "count": 1,
+    "uses": [
+      {
+        "file": "src/local-app/restoredFolderOpen.fixture.ts",
+        "line": 7
+      }
+    ]
+  },
+  {
+    "file": "src/local-app/nativeBackup.ts",
+    "name": "nativeBackup",
+    "line": 3,
+    "kind": "FunctionDeclaration",
+    "count": 1,
+    "uses": [
+      {
+        "file": "src/local-app/nativeBackup.ts",
+        "line": 3
+      }
+    ]
+  },
+  {
+    "file": "src/worker/workerResultSchema.ts",
+    "name": "workerResultJsonSchema",
+    "line": 109,
+    "kind": "FunctionDeclaration",
+    "count": 1,
+    "uses": [
+      {
+        "file": "src/worker/workerResultSchema.ts",
+        "line": 109
+      }
+    ]
+  }
+]

@@ -1,0 +1,16 @@
+{
+  "expectedRemovedFiles": [
+    "src/clipTiming.test.ts",
+    "src/clipTiming.ts",
+    "src/reviews/materialImport.test.ts",
+    "src/reviews/materialImport.ts",
+    "src/shotAcceptance.test.ts",
+    "src/shotAcceptance.ts",
+    "src/worker/manualMaterialChecklist.test.ts",
+    "src/worker/manualMaterialChecklist.ts"
+  ],
+  "unexpectedChangedProtectedFiles": [],
+  "parallelCssHashChanges": [],
+  "protectedUnchanged": 1141,
+  "indexesBeforeCommit": []
+}

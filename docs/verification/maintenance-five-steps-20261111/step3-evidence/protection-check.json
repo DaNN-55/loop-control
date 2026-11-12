@@ -1,0 +1,14 @@
+{
+  "protectedFileCount": 4498,
+  "changedProtectedFiles": [],
+  "preexistingGitStatusPreserved": true,
+  "manifestSha256": {
+    "package.json": "5b55b46759e687dce9731d853b89892f466ad0d60e13ea0e7585263b9f406179",
+    "package-lock.json": "57c7f1092fc25a68ebfa1c55a01ab5607a6e7c8414df2ff79833580ce224c876"
+  },
+  "workspaceManifests": [
+    "package-lock.json",
+    "package.json"
+  ],
+  "sourceOrDependencyMutations": false
+}

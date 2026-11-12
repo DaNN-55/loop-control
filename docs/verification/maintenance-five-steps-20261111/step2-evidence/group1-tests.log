@@ -1,0 +1,14 @@
+npm notice run loop-control@0.1.0 test
+npm notice run vitest run --exclude '**/*.integration.test.ts' src/worker/contracts.test.ts src/worker/runtimePreflight.test.ts src/worker/legacyPexelsReference.test.ts
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/maintenance-20261111/loop-control
+
+ ✓ src/worker/runtimePreflight.test.ts (4 tests) 4ms
+ ✓ src/worker/contracts.test.ts (18 tests) 9ms
+ ✓ src/worker/legacyPexelsReference.test.ts (2 tests) 2ms
+
+ Test Files  3 passed (3)
+      Tests  24 passed (24)
+   Start at  23:32:15
+   Duration  472ms (transform 114ms, setup 25ms, collect 221ms, tests 16ms, environment 742ms, prepare 113ms)
+

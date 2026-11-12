@@ -1,0 +1,17 @@
+{
+  "at": "2026-11-12T00:27:11.468801+08:00",
+  "argv": [
+    "git",
+    "--no-optional-locks",
+    "-C",
+    "/Users/dan/Programs/loop-control",
+    "ls-remote",
+    "origin",
+    "refs/heads/main",
+    "refs/heads/codex/maintenance-five-steps-20261111"
+  ],
+  "exitCode": 0,
+  "stdout": "aa404667e949225c8fad1dae2e2aed56887cb357\trefs/heads/main\n",
+  "stderr": "",
+  "fetchExecuted": false
+}

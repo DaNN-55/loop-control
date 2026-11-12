@@ -1,0 +1,6 @@
+19292	node_modules/@untitledui/icons
+40836	node_modules/lucide-react
+14316	node_modules/@videojs/react
+10104	node_modules/react-aria-components
+1108	node_modules/tailwind-merge
+344	node_modules/postcss

@@ -1,0 +1,13 @@
+scripts/openchatcut-bridge-retry.mjs:9: const signature='): Promise<void> {';
+scripts/openchatcut-bridge-retry.mjs:16: if(![signature,ownership,install,failure,cleanup].every(anchor=>attempt.includes(anchor))||!code.includes(loop))throw Error('当前 Studio 缺少编辑连接重试接点。');
+scripts/openchatcut-bridge-retry.mjs:17: attempt=attempt.replace(signature,'): Promise<boolean> {')
+scripts/storage/schema-import.mjs:7: sql=sql.replace(/CREATE FUNCTION ([\s\S]*?)\n\s+AS (\$[^$]*\$)([\s\S]*?)\2;/g,(whole,signature,delimiter,body)=>{
+scripts/storage/schema-import.mjs:9:  if(!/LANGUAGE plpgsql/.test(signature))throw Error('Unknown Vault function language');
+scripts/storage/schema-import.mjs:10:  dependencies.vaultDisabled.push(signature.split('\n')[0]);
+scripts/storage/schema-import.mjs:11:  return `CREATE FUNCTION ${signature}\n    AS ${delimiter}begin raise exception 'local connection secrets are not migrated' using errcode='0A000'; end;${delimiter};`;
+src/worker/wanVideoProvider.test.ts:15:    const fetcher = vi.fn().mockResolvedValueOnce(output({ task_id: "wan-task-1", task_status: "PENDING" })).mockResolvedValueOnce(output({ task_status: "RUNNING" })).mockResolvedValueOnce(output({ task_status: "SUCCEEDED", video_url: "https://dashscope-result-bj.oss-cn-beijing.aliyuncs.com/video.mp4?signature=x" })).mockResolvedValueOnce(new Response(new Uint8Array([4, 5]), { headers: { "Content-Type": "video/mp4" } }));
+src/worker/wanVideoProvider.test.ts:42:    const fetcher = vi.fn().mockResolvedValueOnce(output({ task_status: "SUCCEEDED", video_url: "https://dashscope-a717.oss-accelerate.aliyuncs.com/result.mp4?signature=test" })).mockResolvedValueOnce(new Response(new Uint8Array([4, 5]), { headers: { "Content-Type": "video/mp4" } }));
+src/local-app/runtimeLogs.test.ts:20:  expect(redactRuntimeLog('Error: Authorization: Bearer abcdefg token=private-token https://user:private-pass@example.invalid/output?signature=private-signature')).not.toMatch(/abcdefg|private-token|private-pass|private-signature/);
+src/local-app/accountGenerationBudgets.integration.test.ts:15:  const changedFunctions=(await f.c.query("SELECT p.oid::regprocedure::text signature FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname IN('public','local_identity') AND p.prokind='f' AND p.prosrc ILIKE '%generation_account_budgets%' AND p.proname<>'set_generation_budget'")).rows;
+src/local-app/providerBilling.ts:23: const signature=createHmac('sha1',credential.accessKeySecret+'&').update('POST&%2F&'+enc(canonical)).digest('base64');
+src/local-app/providerBilling.ts:24: return {url:'https://business.aliyuncs.com/',init:{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:canonical+'&Signature='+enc(signature)} as RequestInit};

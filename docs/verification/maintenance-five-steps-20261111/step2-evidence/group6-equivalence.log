@@ -1,0 +1,32 @@
+[
+  {
+    file: 'src/local-app/configurationCommands.ts',
+    equal: true,
+    oldCalls: 0,
+    newCalls: 0
+  },
+  {
+    file: 'src/local-app/studioCommands.ts',
+    equal: true,
+    oldCalls: 2,
+    newCalls: 2
+  },
+  {
+    file: 'src/local-app/workspaceAudio.ts',
+    equal: true,
+    oldCalls: 1,
+    newCalls: 1
+  },
+  {
+    file: 'src/local-app/workspaceCaptionsCommands.ts',
+    equal: true,
+    oldCalls: 2,
+    newCalls: 2
+  },
+  {
+    file: 'src/local-app/workspaceNarration.ts',
+    equal: true,
+    oldCalls: 2,
+    newCalls: 2
+  }
+]

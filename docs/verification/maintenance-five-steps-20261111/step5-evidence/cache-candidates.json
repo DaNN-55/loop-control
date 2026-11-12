@@ -1,0 +1,337 @@
+{
+  "at": "2026-11-12T00:21:08.407826+08:00",
+  "candidates": [
+    {
+      "worktree": "/Users/dan/Programs/loop-control",
+      "relative": "dist",
+      "path": "/Users/dan/Programs/loop-control/dist",
+      "rootStat": {
+        "device": 16777232,
+        "inode": 94019611,
+        "mode": 16877,
+        "size": 320,
+        "mtimeNs": 1794407133078260869
+      },
+      "symlink": false,
+      "measurement": {
+        "files": 384,
+        "directories": 25,
+        "symlinks": 0,
+        "logicalFileBytes": 6015552,
+        "allocatedBytes": 6860800
+      },
+      "openFileProbe": {
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "worktree": "/Users/dan/Programs/loop-control",
+      "relative": "node_modules/.tmp",
+      "path": "/Users/dan/Programs/loop-control/node_modules/.tmp",
+      "rootStat": {
+        "device": 16777232,
+        "inode": 101673520,
+        "mode": 16877,
+        "size": 128,
+        "mtimeNs": 1793017298231932705
+      },
+      "symlink": false,
+      "measurement": {
+        "files": 2,
+        "directories": 1,
+        "symlinks": 0,
+        "logicalFileBytes": 46852,
+        "allocatedBytes": 53248
+      },
+      "entries": [
+        {
+          "relative": ".",
+          "device": 16777232,
+          "inode": 101673520,
+          "mode": 16877,
+          "size": 128,
+          "mtimeNs": 1793017298231932705
+        },
+        {
+          "relative": "tsconfig.node.tsbuildinfo",
+          "device": 16777232,
+          "inode": 101673522,
+          "mode": 33188,
+          "size": 51,
+          "mtimeNs": 1794408134375910303
+        },
+        {
+          "relative": "tsconfig.app.tsbuildinfo",
+          "device": 16777232,
+          "inode": 101673521,
+          "mode": 33188,
+          "size": 46801,
+          "mtimeNs": 1794408134323109754
+        }
+      ],
+      "openFileProbe": {
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "worktree": "/Users/dan/Programs/loop-control",
+      "relative": "node_modules/.vite",
+      "path": "/Users/dan/Programs/loop-control/node_modules/.vite",
+      "rootStat": {
+        "device": 16777232,
+        "inode": 107263305,
+        "mode": 16877,
+        "size": 128,
+        "mtimeNs": 1794294639076065357
+      },
+      "symlink": false,
+      "measurement": {
+        "files": 27,
+        "directories": 4,
+        "symlinks": 0,
+        "logicalFileBytes": 16364111,
+        "allocatedBytes": 16437248
+      },
+      "openFileProbe": {
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "worktree": "/Users/dan/Programs/loop-control",
+      "relative": "node_modules/.vite-temp",
+      "path": "/Users/dan/Programs/loop-control/node_modules/.vite-temp",
+      "rootStat": {
+        "device": 16777232,
+        "inode": 101673282,
+        "mode": 16877,
+        "size": 64,
+        "mtimeNs": 1794410936600401309
+      },
+      "symlink": false,
+      "measurement": {
+        "files": 0,
+        "directories": 1,
+        "symlinks": 0,
+        "logicalFileBytes": 0,
+        "allocatedBytes": 0
+      },
+      "openFileProbe": {
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "worktree": "/Users/dan/Programs/loop-control",
+      "relative": ".scratch",
+      "path": "/Users/dan/Programs/loop-control/.scratch",
+      "rootStat": {
+        "device": 16777232,
+        "inode": 111742793,
+        "mode": 16877,
+        "size": 64,
+        "mtimeNs": 1794410059660620006
+      },
+      "symlink": false,
+      "measurement": {
+        "files": 0,
+        "directories": 1,
+        "symlinks": 0,
+        "logicalFileBytes": 0,
+        "allocatedBytes": 0
+      },
+      "openFileProbe": {
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "worktree": "/Users/dan/Programs/loop-control",
+      "relative": ".loop-control/local/state/vite-cache",
+      "path": "/Users/dan/Programs/loop-control/.loop-control/local/state/vite-cache",
+      "rootStat": {
+        "device": 16777232,
+        "inode": 112515317,
+        "mode": 16877,
+        "size": 96,
+        "mtimeNs": 1794410072331408416
+      },
+      "symlink": false,
+      "measurement": {
+        "files": 156,
+        "directories": 2,
+        "symlinks": 0,
+        "logicalFileBytes": 20061030,
+        "allocatedBytes": 20443136
+      },
+      "openFileProbe": {
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "worktree": "/Users/dan/Programs/loop-control",
+      "relative": ".loop-control/runtime-releases",
+      "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases",
+      "rootStat": {
+        "device": 16777232,
+        "inode": 107613715,
+        "mode": 16832,
+        "size": 512,
+        "mtimeNs": 1794407133071236617
+      },
+      "symlink": false,
+      "scope": "root metadata and immediate directory names only; release payloads not scanned",
+      "immediateDirectoryCount": 14
+    },
+    {
+      "worktree": "/Users/dan/.codex/worktrees/maintenance-20261111/loop-control",
+      "relative": "dist",
+      "path": "/Users/dan/.codex/worktrees/maintenance-20261111/loop-control/dist",
+      "rootStat": {
+        "device": 16777232,
+        "inode": 112562578,
+        "mode": 16877,
+        "size": 320,
+        "mtimeNs": 1794412285560223425
+      },
+      "symlink": false,
+      "measurement": {
+        "files": 386,
+        "directories": 25,
+        "symlinks": 0,
+        "logicalFileBytes": 6015343,
+        "allocatedBytes": 6868992
+      },
+      "openFileProbe": {
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "worktree": "/Users/dan/.codex/worktrees/maintenance-20261111/loop-control",
+      "relative": "node_modules/.tmp",
+      "path": "/Users/dan/.codex/worktrees/maintenance-20261111/loop-control/node_modules/.tmp",
+      "rootStat": {
+        "device": 16777232,
+        "inode": 112562563,
+        "mode": 16877,
+        "size": 128,
+        "mtimeNs": 1794410454876763583
+      },
+      "symlink": false,
+      "measurement": {
+        "files": 2,
+        "directories": 1,
+        "symlinks": 0,
+        "logicalFileBytes": 46923,
+        "allocatedBytes": 53248
+      },
+      "entries": [
+        {
+          "relative": ".",
+          "device": 16777232,
+          "inode": 112562563,
+          "mode": 16877,
+          "size": 128,
+          "mtimeNs": 1794410454876763583
+        },
+        {
+          "relative": "tsconfig.node.tsbuildinfo",
+          "device": 16777232,
+          "inode": 112562565,
+          "mode": 33188,
+          "size": 51,
+          "mtimeNs": 1794412279237426448
+        },
+        {
+          "relative": "tsconfig.app.tsbuildinfo",
+          "device": 16777232,
+          "inode": 112562564,
+          "mode": 33188,
+          "size": 46872,
+          "mtimeNs": 1794412279200698983
+        }
+      ],
+      "openFileProbe": {
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "worktree": "/Users/dan/.codex/worktrees/maintenance-20261111/loop-control",
+      "relative": "node_modules/.vite",
+      "path": "/Users/dan/.codex/worktrees/maintenance-20261111/loop-control/node_modules/.vite",
+      "rootStat": {
+        "device": 16777232,
+        "inode": 112566927,
+        "mode": 16877,
+        "size": 96,
+        "mtimeNs": 1794410530663724612
+      },
+      "symlink": false,
+      "measurement": {
+        "files": 1,
+        "directories": 3,
+        "symlinks": 0,
+        "logicalFileBytes": 27156,
+        "allocatedBytes": 28672
+      },
+      "openFileProbe": {
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "worktree": "/Users/dan/.codex/worktrees/maintenance-20261111/loop-control",
+      "relative": "node_modules/.vite-temp",
+      "path": "/Users/dan/.codex/worktrees/maintenance-20261111/loop-control/node_modules/.vite-temp",
+      "rootStat": {
+        "device": 16777232,
+        "inode": 112562576,
+        "mode": 16877,
+        "size": 64,
+        "mtimeNs": 1794412315091176320
+      },
+      "symlink": false,
+      "measurement": {
+        "files": 0,
+        "directories": 1,
+        "symlinks": 0,
+        "logicalFileBytes": 0,
+        "allocatedBytes": 0
+      },
+      "openFileProbe": {
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "worktree": "/Users/dan/.codex/worktrees/maintenance-20261111/loop-control",
+      "relative": ".loop-control/runtime-releases",
+      "path": "/Users/dan/.codex/worktrees/maintenance-20261111/loop-control/.loop-control/runtime-releases",
+      "rootStat": {
+        "device": 16777232,
+        "inode": 112563155,
+        "mode": 16832,
+        "size": 192,
+        "mtimeNs": 1794412285552711457
+      },
+      "symlink": false,
+      "scope": "root metadata and immediate directory names only; release payloads not scanned",
+      "immediateDirectoryCount": 4
+    }
+  ]
+}

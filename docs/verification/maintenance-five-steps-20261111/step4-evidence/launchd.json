@@ -1,0 +1,24 @@
+{
+  "directories": [
+    {
+      "path": "/Users/dan/Library/LaunchAgents",
+      "plistCount": 9,
+      "exists": true
+    },
+    {
+      "path": "/Library/LaunchAgents",
+      "plistCount": 2,
+      "exists": true
+    },
+    {
+      "path": "/Library/LaunchDaemons",
+      "plistCount": 9,
+      "exists": true
+    }
+  ],
+  "related": [],
+  "errors": [],
+  "launchctlExitCode": 0,
+  "loadedRelated": [],
+  "launchctlError": ""
+}

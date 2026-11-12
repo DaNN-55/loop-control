@@ -1,0 +1,52 @@
+[
+  {
+    "label": "ordered command body",
+    "input": {
+      "idempotencyKey": "aaaa",
+      "data": {
+        "z": 2,
+        "a": 1
+      },
+      "command": "rename"
+    },
+    "expected": "e8146c726f66d508c58209b3fb4e42a6cff6a22f39532b8bb18bee0e599bbe40"
+  },
+  {
+    "label": "nested Unicode and arrays",
+    "input": {
+      "z": [
+        {
+          "b": "界",
+          "a": null
+        },
+        3
+      ],
+      "A": {
+        "b": false,
+        "a": 0
+      }
+    },
+    "expected": "9c953bcc0080454a449943a28ced7adf6881cd9c6516e4188402829dd76c2afe"
+  },
+  {
+    "label": "case-sensitive and numeric keys",
+    "input": {
+      "2": 2,
+      "10": 10,
+      "z": 0,
+      "a": 1,
+      "A": 2
+    },
+    "expected": "29f83d5ef3e709688738ff6ba08a1aa61d4bd78c0f66ca1ce54caba3022e205f"
+  },
+  {
+    "label": "null payload",
+    "input": null,
+    "expected": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+  },
+  {
+    "label": "empty array",
+    "input": [],
+    "expected": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  }
+]

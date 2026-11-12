@@ -1,0 +1,6 @@
+{
+  "container": "loop-maint2g6-0dfc63d2c05d",
+  "inspectExitCode": 1,
+  "removed": true,
+  "stderr": "error: no such object: loop-maint2g6-0dfc63d2c05d"
+}

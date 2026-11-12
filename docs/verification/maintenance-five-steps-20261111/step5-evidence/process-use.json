@@ -1,0 +1,37 @@
+{
+  "at": "2026-11-12T00:21:52.049347+08:00",
+  "method": "ps pid/comm only; lsof cwd for Node/npm/TypeScript/Vite/Vitest/tsx executables; persist only Loop-Control matches",
+  "relatedProcesses": [
+    {
+      "pid": 35276,
+      "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node",
+      "cwd": "/Users/dan/Programs/loop-control",
+      "worktree": "/Users/dan/Programs/loop-control"
+    },
+    {
+      "pid": 35277,
+      "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node",
+      "cwd": "/Users/dan/Programs/loop-control",
+      "worktree": "/Users/dan/Programs/loop-control"
+    },
+    {
+      "pid": 77310,
+      "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node",
+      "cwd": "/Users/dan/Programs/loop-control",
+      "worktree": "/Users/dan/Programs/loop-control"
+    },
+    {
+      "pid": 77311,
+      "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node",
+      "cwd": "/Users/dan/Programs/loop-control",
+      "worktree": "/Users/dan/Programs/loop-control"
+    },
+    {
+      "pid": 81218,
+      "executable": "/opt/homebrew/Cellar/node@24/24.20.0/bin/node",
+      "cwd": "/Users/dan/Programs/loop-control",
+      "worktree": "/Users/dan/Programs/loop-control"
+    }
+  ],
+  "errors": []
+}

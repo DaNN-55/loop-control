@@ -1,0 +1,734 @@
+--- /dev/null
++++ b/scripts/storage/backup-overlap.test.mjs
+@@ -0,0 +1,19 @@
++import {expect,it,vi} from 'vitest';
++import {createNativeBackup} from './backup.mjs';
++
++const backupRoot='/fixture/backups/fixture';
++function fixture(mediaRoot){
++ const input={projectRoot:'/fixture/program',database:'fixture',mediaRoot,backupRoot,jobId:'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'};
++ const ensurePrivateDirectory=vi.fn(()=>{throw Error('Reached independent backup directory');});
++ return{input,ensurePrivateDirectory,runtime:{root:'/fixture',projectRoot:input.projectRoot,database:input.database,mediaRoot,dailyRuntime:true,assertDatabase:vi.fn(),ensurePrivateDirectory}};
++}
++it.each([backupRoot,'/fixture/backups',backupRoot+'/nested'])('rejects overlapping daily backup roots before any filesystem write: %s',async mediaRoot=>{
++ const f=fixture(mediaRoot);
++ await expect(createNativeBackup(f.input,undefined,f.runtime)).rejects.toThrow('Backup and media roots must not overlap');
++ expect(f.ensurePrivateDirectory).not.toHaveBeenCalled();
++});
++it.each([backupRoot+'-sibling','/separate/media'])('allows a distinct root through the overlap guard: %s',async mediaRoot=>{
++ const f=fixture(mediaRoot);
++ await expect(createNativeBackup(f.input,undefined,f.runtime)).rejects.toThrow('Reached independent backup directory');
++ expect(f.ensurePrivateDirectory).toHaveBeenCalledExactlyOnceWith(backupRoot);
++});
+--- a/scripts/storage/backup.mjs
++++ b/scripts/storage/backup.mjs
+@@ -6,7 +6,7 @@
+ // Shared native backup implementation with an explicit deployment context. No n8n/Supabase client, credentials or Keychain export.
+ import{securityInventorySql}from'./security-inventory.mjs';
+ import{archiveCopies,archiveSequences,readNativeBackup}from'../storage/native-backup-format.mjs';
+-import{assetPathWithin,mappedAssetPath}from'../../src/local-app/mediaPaths.ts';
++import{assetPathWithin,assetPathsOverlap,mappedAssetPath}from'../../src/local-app/mediaPaths.ts';
+ import{spawn,execFileSync}from'node:child_process';import{once}from'node:events';import{createInterface}from'node:readline';
+ import{readFileSync,writeFileSync,readdirSync,lstatSync,realpathSync,mkdirSync,existsSync,renameSync,unlinkSync,rmdirSync,openSync,closeSync}from'node:fs';
+ import{join,resolve,relative,isAbsolute}from'node:path';import{createHash,randomUUID}from'node:crypto';
+@@ -19,7 +19,7 @@
+  const{root,projectRoot,container,assertDatabase,env,docker,ensurePrivateDirectory}=runtime;
+  assertDatabase();if(runtime.dailyRuntime){if(input.database!==runtime.database||input.mediaRoot!==runtime.mediaRoot||input.projectRoot!==projectRoot||input.backupRoot!==join(root,'backups',input.database)||!/^[0-9a-f-]{36}$/.test(input.jobId))throw Error('Unapproved daily backup target');}
+  else if(!(['loop_imported','loop_t23','loop_t24_source','loop_t25'].includes(input.database)||/^loop_t24_restore[a-z0-9_]*$/.test(input.database))||!/^[0-9a-f-]{36}$/.test(input.jobId)||input.projectRoot!==projectRoot||!(input.mediaRoot===join(root,'media')||(input.database.startsWith('loop_t24_')||input.database==='loop_t25')&&input.mediaRoot.startsWith(join(root,'state')+'/'))||input.backupRoot!==join(root,'backups',input.database))throw Error('Unapproved native backup target');
+- const mediaRoot=input.mediaRoot,backupRoot=input.backupRoot,overlap=(a,b)=>a===b||assetPathWithin(a,b)||assetPathWithin(b,a);if(resolve(mediaRoot)!==mediaRoot||resolve(backupRoot)!==backupRoot||overlap(mediaRoot,backupRoot))throw Error('Backup and media roots must not overlap');
++ const mediaRoot=input.mediaRoot,backupRoot=input.backupRoot;if(resolve(mediaRoot)!==mediaRoot||resolve(backupRoot)!==backupRoot||assetPathsOverlap(mediaRoot,backupRoot))throw Error('Backup and media roots must not overlap');
+  const deployment=runtime.deployment,retainedRoots=[deployment?.runtimeRoot,deployment?.stateDirectory,deployment?.backupRoot,deployment?.openChatCut?.root,deployment?.worker?.alignment?.cacheDirectory,deployment?.historyRoot].filter(path=>typeof path==='string');
+  if(retainedRoots.includes(mediaRoot))throw Error('Production media cannot equal a retained platform root');const excluded=new Set(retainedRoots.filter(path=>assetPathWithin(mediaRoot,path)));
+  ensurePrivateDirectory(backupRoot);if(realpathSync(backupRoot)!==backupRoot||realpathSync(mediaRoot)!==mediaRoot)throw Error('Unsafe backup root');
+--- a/src/connections/ConnectionDraftSession.tsx
++++ b/src/connections/ConnectionDraftSession.tsx
+@@ -1,8 +1,9 @@
+ import {createContext,useContext,useEffect,useRef,type ReactNode} from 'react';
+-import type {ExternalConnectionInput} from './ConnectionWorkspace';
++import type {ExternalConnection,ExternalConnectionInput} from './ConnectionWorkspace';
+ import type {ConnectionModelDraft} from './ConnectionModelsDialog';
+ import type {MiniMaxRegion} from '../worker/videoProviderCatalog';
+ export type ConnectionEditDraft={baseline:string;name:string;description:string;adapter:ExternalConnectionInput['adapter'];workspaceId:string;region:MiniMaxRegion};
++export const connectionDraftBaseline=(connection?:ExternalConnection)=>JSON.stringify(connection?[connection.name,connection.description??'',connection.current_version_id,connection.region]:[]);
+ function createDrafts(){return {connections:new Map<string,ConnectionEditDraft>(),models:new Map<string,ConnectionModelDraft>()};}
+ const Context=createContext<ReturnType<typeof createDrafts>|null>(null);
+ /** Ephemeral, non-secret editing choices survive workspace navigation, never a reload or identity change. */
+--- a/src/connections/ConnectionWorkspace.tsx
++++ b/src/connections/ConnectionWorkspace.tsx
+@@ -1,6 +1,6 @@
+ import {uiText,getUiLocale} from '../i18n/ui';
+ import {useWorkspaceLeaveEntry} from '../local-app/WorkspaceDraft';
+-import {useConnectionDrafts} from './ConnectionDraftSession';
++import {connectionDraftBaseline,useConnectionDrafts} from './ConnectionDraftSession';
+ import {ConnectionDraftLeaveDialog} from './ConnectionDraftLeaveDialog';
+ import type {PanelNavigation} from '../local-app/catalogNavigation';
+ import {PopulatedFilterSelect} from '../ui/PopulatedFilterSelect';
+@@ -219,7 +219,6 @@
+   // Session-local non-secret drafts. Never copy credential input into these snapshots.
+   const drafts={current:sessionDrafts.connections};
+   const editingBaseline=useRef('');
+-  const connectionBaseline=(connection?:ExternalConnection)=>JSON.stringify(connection?[connection.name,connection.description??'',connection.current_version_id,connection.region]:[]);
+   function closeDialog(){setSecret('');setRebindSecrets({});setCredentialFieldRevision(value=>value+1);setLeavePrompt(false);setDialog('');}
+   function requestClose(){if(busy)return;if(nonSecretChanged||secret||Object.values(rebindSecrets).some(Boolean))setLeavePrompt(true);else closeDialog();}
+   function keepDraft(){drafts.current.set(selectedId||'__new',{baseline:editingBaseline.current,name,description,adapter,workspaceId,region:minimaxRegion});return true;}
+@@ -272,15 +271,15 @@
+   function choose(id:string){
+     if(busy)return;
+     const connection=connections.find(item=>item.id===id);
+-    editingBaseline.current=connectionBaseline(connection);
++    editingBaseline.current=connectionDraftBaseline(connection);
+     setCredentialFieldRevision(value=>value+1);
+     setSelectedId(id);setName(connection?.name??'');setDescription(connection?.description??'');
+     setAdapter('pexels_video');setWorkspaceId('');
+     setMinimaxRegion(connection?.region??(connection?'international':'cn'));
+     const draft=drafts.current.get(id||'__new');
+-    if(draft&&draft.baseline===connectionBaseline(connection)){setName(draft.name);setDescription(draft.description);setAdapter(draft.adapter);setWorkspaceId(draft.workspaceId);setMinimaxRegion(draft.region);}else if(draft)drafts.current.delete(id||'__new');
++    if(draft&&draft.baseline===connectionDraftBaseline(connection)){setName(draft.name);setDescription(draft.description);setAdapter(draft.adapter);setWorkspaceId(draft.workspaceId);setMinimaxRegion(draft.region);}else if(draft)drafts.current.delete(id||'__new');
+     setSecret('');setRebindSecrets({});setError('');setNotice('');setResultTitle('');setResultName('');setResultConnectionId('');
+-    if(draft&&draft.baseline!==connectionBaseline(connection)){setNotice(uiText("保留的修改所依据的连接已变化，已读取当前资料。"));setResultTitle(uiText("已读取当前连接"));}
++    if(draft&&draft.baseline!==connectionDraftBaseline(connection)){setNotice(uiText("保留的修改所依据的连接已变化，已读取当前资料。"));setResultTitle(uiText("已读取当前连接"));}
+   }
+   function openConnection(id:string,mode:'edit'|'detail',versionsOpen=false){if(busy)return;choose(id);setShowVersions(versionsOpen);setDialog(mode);if(mode==='detail'){viewedConnection.current=id;navigation?.change({connection:id});}}
+   function createConnection(){if(busy)return;choose('');setShowVersions(false);setDialog('new');}
+--- a/src/local-app/CompactConnectionWorkspace.tsx
++++ b/src/local-app/CompactConnectionWorkspace.tsx
+@@ -5,7 +5,7 @@
+ import {ConnectionModelsDialog} from '../connections/ConnectionModelsDialog';
+ import {ConnectionBillingDialog} from '../connections/ConnectionBillingDialog';
+ import {ConnectionDraftLeaveDialog} from '../connections/ConnectionDraftLeaveDialog';
+-import {useConnectionDrafts} from '../connections/ConnectionDraftSession';
++import {connectionDraftBaseline,useConnectionDrafts} from '../connections/ConnectionDraftSession';
+ import {billingProvider} from '../connections/connectionBilling';
+ import {buildProductionServiceCatalog,providerDisplayNames} from '../connections/serviceCatalog';
+ import {registeredAdapters,productionCapabilityLabels} from '../worker/registeredAdapters';
+@@ -26,7 +26,6 @@
+ const tabs:readonly[Tab,string][]=[['connection','连接'],['models','模型'],['billing','用量与计费'],['history','记录']];
+ const types=[...new Map(registeredAdapters.productionChoices().filter(c=>c.connection.kind==='owner_managed').map(c=>[c.identityKey,c])).values()];
+ const statusLabels={unverified:'未测试',verified:'已验证',invalid:'认证失败',retryable:'暂时失败',revoked:'已撤销'};
+-const signature=(c?:ExternalConnection)=>JSON.stringify(c?[c.name,c.description??'',c.current_version_id,c.region]:[]);
+ function IconAction({label,icon,onPress,disabled=false}:{label:string;icon:ComponentProps<typeof Button>['iconLeading'];onPress:()=>void;disabled?:boolean}){return <Tooltip title={uiText(label)} className="dan-ui dan-ui-tooltip"><Button size="sm" color="tertiary" iconLeading={icon} aria-label={uiText(label)} isDisabled={disabled} onPress={onPress}/></Tooltip>;}
+ function Field({label,children}: {label:string;children:ReactNode}){return <div className="compact-connection-field"><span className="compact-connection-label">{uiText(label)}</span><div>{children}</div></div>;}
+ 
+@@ -55,7 +54,7 @@
+  const canTest=!!selected&&(p.verificationByProvider?.[selected.provider]?.available??p.verificationEnabled??true);
+  const filtered=connections.filter(c=>(!status||c.status===status)&&(capability==='all'||capability==='unsupported'&&!catalog.groups.some(g=>g.services.some(s=>s.connectionId===c.id))||catalog.groups.some(g=>g.capability===capability&&g.services.some(s=>s.connectionId===c.id)))&&[c.name,c.provider,c.adapter,c.description,...services(c.id).flatMap(s=>s.models)].join(' ').toLowerCase().includes(query.trim().toLowerCase()));
+  function clear(){setSecret('');setWorkspace('');setEditingKey(false);setRebindKey('');setSecretView(null);setError('');setNotice('');}
+- function fill(c?:ExternalConnection){setName(c?.name??'');setDescription(c?.description??'');setAdapter(c?.adapter??types[0]?.adapter??'pexels_video');setRegion(c?.region??(c?'international':'cn'));baseline.current=signature(c);const saved=drafts.connections.get(c?.id??'__new');if(saved&&saved.baseline===signature(c)){setName(saved.name);setDescription(saved.description);setAdapter(saved.adapter);setWorkspace(saved.workspaceId);setRegion(saved.region);}else if(saved){drafts.connections.delete(c?.id??'__new');setNotice(uiText('保留的修改所依据的连接已变化，已读取当前资料。'));}}
++ function fill(c?:ExternalConnection){setName(c?.name??'');setDescription(c?.description??'');setAdapter(c?.adapter??types[0]?.adapter??'pexels_video');setRegion(c?.region??(c?'international':'cn'));baseline.current=connectionDraftBaseline(c);const saved=drafts.connections.get(c?.id??'__new');if(saved&&saved.baseline===connectionDraftBaseline(c)){setName(saved.name);setDescription(saved.description);setAdapter(saved.adapter);setWorkspace(saved.workspaceId);setRegion(saved.region);}else if(saved){drafts.connections.delete(c?.id??'__new');setNotice(uiText('保留的修改所依据的连接已变化，已读取当前资料。'));}}
+  function enter(id:string){visit.current.generation++;clear();setSelectedId(id);setCreating(false);setTab('connection');setVisited({models:false,billing:false});setModelState({busy:false,dirty:false});setBillingState({busy:false,dirty:false});setVersionId('');fill(connections.find(c=>c.id===id));navigation?.change({connection:id});requestAnimationFrame(()=>nameInput.current?.focus());}
+  function remember(){if(connectionDirty)drafts.connections.set(selectedId||'__new',{baseline:baseline.current,name,description,adapter:adapter as ExternalConnectionInput['adapter'],workspaceId:workspace,region});}
+  function navigate(next:()=>void){if(busy)return;if(dirty){setLeaveScope('all');setLeave(()=>next);return;}clear();next();}
+@@ -75,10 +74,10 @@
+  async function run<T>(kind:string,action:()=>Promise<T>,done?:(value:T)=>void){if(lock.current||busy)return;lock.current=true;setOperation(kind);setError('');setNotice('');const generation=visit.current.generation;try{const value=await action();if(visit.current.active&&generation===visit.current.generation)done?.(value);}catch(e){if(visit.current.active&&generation===visit.current.generation)setError(e instanceof Error?e.message:uiText('操作未完成，请重试。'));}finally{lock.current=false;if(visit.current.active&&generation===visit.current.generation)setOperation('');}}
+  async function save(){
+   if(!name.trim()||creating&&!secret.trim()||!connectionDirty)return;
+-  if(selected&&baseline.current!==signature(selected)){setError(uiText('连接资料已变化，请重新打开核对；本次修改保留。'));return;}
++  if(selected&&baseline.current!==connectionDraftBaseline(selected)){setError(uiText('连接资料已变化，请重新打开核对；本次修改保留。'));return;}
+   const credentialProvider=selected?.provider??type.provider;
+   const credential=credentialProvider==='bailian'?JSON.stringify({apiKey:secret.trim(),workspaceId:workspace.trim()}):credentialProvider==='minimax'?JSON.stringify({apiKey:secret.trim(),region}):secret;
+-  await run('saving',async()=>{let saved=selected;if(saved){if(metadataChanged){if(!p.onUpdateConnection)throw Error(uiText('此连接资料暂不可修改。'));await p.onUpdateConnection({connectionId:saved.id,name:name.trim(),description});saved={...saved,name:name.trim(),description};baseline.current=signature(saved);}if(secret.trim()){if(!p.onRotateConnection)throw Error(uiText('此连接暂不可更换密钥。'));saved=await p.onRotateConnection({connectionId:saved.id,provider:saved.provider as ExternalConnectionInput['provider'],adapter:saved.adapter as ExternalConnectionInput['adapter'],secret:credential})??undefined;}else if(regionChanged&&saved.current_version_id){saved=await p.onChangeRegion?.({connectionId:saved.id,versionId:saved.current_version_id,region})??undefined;}}else saved=await p.onCreateConnection({name:name.trim(),provider:type.provider as ExternalConnectionInput['provider'],adapter:type.adapter as ExternalConnectionInput['adapter'],secret:credential})??undefined;if(!saved)throw Error(uiText('连接保存未确认完成，请检查提示后重试。'));return saved;},saved=>{drafts.connections.delete(selectedId||'__new');setSelectedId(saved.id);setCreating(false);setName(saved.name);setDescription(saved.description??'');baseline.current=signature(saved);lastSelection.current=saved.id;setRegion(saved.region??region);setSecret('');setWorkspace('');setEditingKey(false);navigation?.change({connection:saved.id});setNotice(uiText('已保存；测试连接需单独执行。'));});
++  await run('saving',async()=>{let saved=selected;if(saved){if(metadataChanged){if(!p.onUpdateConnection)throw Error(uiText('此连接资料暂不可修改。'));await p.onUpdateConnection({connectionId:saved.id,name:name.trim(),description});saved={...saved,name:name.trim(),description};baseline.current=connectionDraftBaseline(saved);}if(secret.trim()){if(!p.onRotateConnection)throw Error(uiText('此连接暂不可更换密钥。'));saved=await p.onRotateConnection({connectionId:saved.id,provider:saved.provider as ExternalConnectionInput['provider'],adapter:saved.adapter as ExternalConnectionInput['adapter'],secret:credential})??undefined;}else if(regionChanged&&saved.current_version_id){saved=await p.onChangeRegion?.({connectionId:saved.id,versionId:saved.current_version_id,region})??undefined;}}else saved=await p.onCreateConnection({name:name.trim(),provider:type.provider as ExternalConnectionInput['provider'],adapter:type.adapter as ExternalConnectionInput['adapter'],secret:credential})??undefined;if(!saved)throw Error(uiText('连接保存未确认完成，请检查提示后重试。'));return saved;},saved=>{drafts.connections.delete(selectedId||'__new');setSelectedId(saved.id);setCreating(false);setName(saved.name);setDescription(saved.description??'');baseline.current=connectionDraftBaseline(saved);lastSelection.current=saved.id;setRegion(saved.region??region);setSecret('');setWorkspace('');setEditingKey(false);navigation?.change({connection:saved.id});setNotice(uiText('已保存；测试连接需单独执行。'));});
+  }
+  function changeTab(next:Tab){
+   if(busy||secretView||next===tab)return;
+--- a/src/local-app/accountAssetRoots.ts
++++ b/src/local-app/accountAssetRoots.ts
+@@ -3,10 +3,10 @@
+ import {constants} from 'node:fs';
+ import {isAbsolute,relative,resolve} from 'node:path';
+ import {ConfigurationError} from './configurationCommands.js';
+-import {mappedAssetPath,assetPathWithin} from './mediaPaths.js';
++import {mappedAssetPath,assetPathWithin,assetPathsOverlap as accountAssetRootsOverlap} from './mediaPaths.js';
+ import {readMediaDeployment,resolveLocalAssetRoot} from './mediaDeployment.js';
+ import {resolveEpisodeStorageLocation} from './episodeStorageLocation.js';
+-export const accountAssetRootsOverlap=(a:string,b:string)=>a===b||assetPathWithin(a,b)||assetPathWithin(b,a);
++export {accountAssetRootsOverlap};
+ export async function validateAccountAssetLocation(c:Pick<PoolClient,'query'>,mediaRoot:string,path:unknown){
+  if(typeof path!=='string'||!path.trim()||path.length>4096||!isAbsolute(path)||resolve(path)!==path)throw new ConfigurationError(400,'请填写已授权范围内的实际目录。');
+  const rel=relative(mediaRoot,path);
+--- a/src/local-app/accountCommands.ts
++++ b/src/local-app/accountCommands.ts
+@@ -1,6 +1,5 @@
+ import {readEpisodeCollection,planEpisodeCollectionCommand} from './episodeCollection.js';
+ import {createStorageContainer,ownedContainerAccount,readStorageContainer,resolveStorageContainer,requireStorageContainer} from './seriesDirectories.js';
+-import {createHash} from 'node:crypto';
+ import {planLegacyStorageAdoption,planAccountDirectoryMigration,readAccountDirectoryMigrations,executeAccountDirectoryMigration} from './accountDirectoryMigration.js';
+ import {readAccountAssetDirectory,setAccountAssetDirectory,requireAccountAssetRoot} from './accountAssetRoots.js';
+ import type {Pool,PoolClient} from 'pg';
+@@ -9,7 +8,7 @@
+ import {isAbsolute,resolve} from 'node:path';
+ import type {OwnerSession} from './sessions.js';
+ import {sessionTransaction} from './ownerTransaction.js';
+-import {canonical,ConfigurationError} from './configurationCommands.js';
++import {canonicalFingerprint,ConfigurationError} from './configurationCommands.js';
+ import {resolveLocalAssetRoot} from './mediaDeployment.js';
+ import type {LocalEpisodeCommands} from './episodeCommands.js';
+ const exec=promisify(execFile),uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+@@ -52,7 +51,7 @@
+   if(['readSeriesDirectory','openSeriesDirectory','readUnassignedDirectory','openUnassignedDirectory','createUnassignedDirectory'].includes(String(body.command))){
+    const series=String(body.command).includes('Series'),field=series?'seriesId':'accountId';
+    if(typeof data[field]!=='string'||!uuid.test(String(data[field]))||Object.keys(data).some(k=>k!==field))throw new ConfigurationError(400,'系列目录参数无效。');
+-   if(body.command==='createUnassignedDirectory')return createStorageContainer(this.pool,session,body.idempotencyKey,createHash('sha256').update(JSON.stringify(canonical(body))).digest('hex'),data,this.mediaRoot,'unassigned');
++   if(body.command==='createUnassignedDirectory')return createStorageContainer(this.pool,session,body.idempotencyKey,canonicalFingerprint(body),data,this.mediaRoot,'unassigned');
+    return sessionTransaction(this.pool,session,async c=>{const accountId=await ownedContainerAccount(c,series?String(data.seriesId):null,series?undefined:String(data.accountId));
+     if(String(body.command).startsWith('read'))return readStorageContainer(c,this.mediaRoot,accountId,series?String(data.seriesId):null);
+     const location=await resolveStorageContainer(c,this.mediaRoot,accountId,series?String(data.seriesId):null);await this.directories.open(await requireStorageContainer(c,this.mediaRoot,location));return{opened:true};
+--- a/src/local-app/commandReceipt.ts
++++ b/src/local-app/commandReceipt.ts
+@@ -1,7 +1,6 @@
+ import {publicDeletionResult} from './episodeLifecycle.js';
+-import {createHash} from 'node:crypto';
+ import type {Pool} from 'pg';
+-import {canonical,ConfigurationError} from './configurationCommands.js';
++import {canonicalFingerprint,ConfigurationError} from './configurationCommands.js';
+ import {sessionTransaction} from './ownerTransaction.js';
+ import type {OwnerSession} from './sessions.js';
+ 
+@@ -11,7 +10,7 @@
+  if(typeof endpoint!=='string'||!['configuration','episode-commands','episode-lifecycle','recycle-bin'].includes(endpoint)||!operation||typeof operation!=='object'||Array.isArray(operation)||Object.keys(body).some(k=>!['endpoint','operation'].includes(k)))throw new ConfigurationError(400,'回执查询格式无效。');
+  const intent=operation as Record<string,unknown>;
+  if(typeof intent.idempotencyKey!=='string'||!/^[0-9a-f-]{36}$/i.test(intent.idempotencyKey)||typeof intent.command!=='string'||!intent.data||typeof intent.data!=='object')throw new ConfigurationError(400,'操作标识无效。');
+- const hash=createHash('sha256').update(JSON.stringify(canonical(['episode-lifecycle','recycle-bin'].includes(endpoint)?{endpoint,...intent}:intent))).digest('hex');
++ const hash=canonicalFingerprint(['episode-lifecycle','recycle-bin'].includes(endpoint)?{endpoint,...intent}:intent);
+  return sessionTransaction(pool,session,async c=>{
+   const row=(await c.query('SELECT payload_hash,result FROM local_identity.command_receipts WHERE owner_id=$1 AND idempotency_key=$2',[session.id,intent.idempotencyKey])).rows[0];
+   if(!row)return{status:'unknown' as const};
+--- a/src/local-app/configurationCommands.test.ts
++++ b/src/local-app/configurationCommands.test.ts
+@@ -1,9 +1,75 @@
+ // @vitest-environment node
+ import {it,expect} from 'vitest';
+-import {validateConfigurationPolicy} from './configurationCommands';
++import {canonicalFingerprint,jsonFingerprint,validateConfigurationPolicy} from './configurationCommands';
+ it('blocks unavailable connections and secret fields in nonsecret blueprint configuration',()=>{
+  expect(()=>validateConfigurationPolicy({narration:{execution_path:'external'}})).toThrow();
+  expect(()=>validateConfigurationPolicy({narration:{credential_ref:'synthetic-version'}})).toThrow();
+  expect(()=>validateConfigurationPolicy({api_key:'synthetic'})).toThrow();
+  expect(()=>validateConfigurationPolicy({positioning:'local',approval_gates:[]})).not.toThrow();
+ });
++
++it.each([
++ {
++  "label": "ordered command body",
++  "input": {
++   "idempotencyKey": "aaaa",
++   "data": {
++    "z": 2,
++    "a": 1
++   },
++   "command": "rename"
++  },
++  "expected": "e8146c726f66d508c58209b3fb4e42a6cff6a22f39532b8bb18bee0e599bbe40"
++ },
++ {
++  "label": "nested Unicode and arrays",
++  "input": {
++   "z": [
++    {
++     "b": "界",
++     "a": null
++    },
++    3
++   ],
++   "A": {
++    "b": false,
++    "a": 0
++   }
++  },
++  "expected": "9c953bcc0080454a449943a28ced7adf6881cd9c6516e4188402829dd76c2afe"
++ },
++ {
++  "label": "case-sensitive and numeric keys",
++  "input": {
++   "2": 2,
++   "10": 10,
++   "z": 0,
++   "a": 1,
++   "A": 2
++  },
++  "expected": "29f83d5ef3e709688738ff6ba08a1aa61d4bd78c0f66ca1ce54caba3022e205f"
++ },
++ {
++  "label": "null payload",
++  "input": null,
++  "expected": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
++ },
++ {
++  "label": "empty array",
++  "input": [],
++  "expected": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
++ }
++])('preserves the existing frozen fingerprint bytes: $label',({input,expected})=>{expect(canonicalFingerprint(input)).toBe(expected);});
++
++it.each([
++ {"label":"raw insertion order b,a","input":{"b":2,"a":1},"expected":"3fb75453225c732a76b7899ea2096dda1455189c89817239732182f73fe5a09f"},
++ {"label":"raw insertion order a,b","input":{"a":1,"b":2},"expected":"43258cff783fe7036d8a43033f830adfc60ec037382473548ac742b888292777"},
++ {"label":"nested array and Unicode","input":["镜头",{"z":2,"a":1},null,true],"expected":"fc3b308d15d72ead2a7c648823aa3f18dfd72fa34689cb95469b27cfda15b025"},
++ {"label":"null payload","input":null,"expected":"74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"},
++ {"label":"empty array","input":[],"expected":"4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"}
++])('preserves raw JSON fingerprint bytes without sorting: $label',({input,expected})=>{expect(jsonFingerprint(input)).toBe(expected);});
++
++it('retains raw JSON serialization failures instead of normalizing unsupported inputs',()=>{
++ expect(()=>jsonFingerprint(undefined)).toThrow(TypeError);
++ expect(()=>jsonFingerprint(1n)).toThrow(TypeError);
++});
+--- a/src/local-app/configurationCommands.ts
++++ b/src/local-app/configurationCommands.ts
+@@ -31,6 +31,8 @@
+  visit(value);
+ }
+ export function canonical(value:unknown):unknown{return Array.isArray(value)?value.map(canonical):value&&typeof value==='object'?Object.fromEntries(Object.entries(value).sort().map(([k,v])=>[k,canonical(v)])):value;}
++export function jsonFingerprint(value:unknown):string{return createHash('sha256').update(JSON.stringify(value)).digest('hex');}
++export function canonicalFingerprint(value:unknown):string{return createHash('sha256').update(JSON.stringify(canonical(value))).digest('hex');}
+ const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+ const commands={
+  createAccount:{sql:'select to_jsonb(public.create_account($1,$2,$3,$4)) result',fields:['name','slug','timezone','policy']},
+@@ -51,7 +53,7 @@
+  if(typeof body.idempotencyKey!=='string'||!uuid.test(body.idempotencyKey))throw new ConfigurationError(400,'缺少操作标识。');
+  if(!body.data||typeof body.data!=='object'||Array.isArray(body.data))throw new ConfigurationError(400,'配置内容无效。');
+  const data=body.data as Record<string,unknown>,command=body.command as keyof typeof commands,definition=commands[command];
+- const hash=createHash('sha256').update(JSON.stringify(canonical(body))).digest('hex');
++ const hash=canonicalFingerprint(body);
+  for(const field of definition.fields){
+   const value=data[field];
+   if(field.endsWith('Id')||field==='accountId'){if(typeof value!=='string'||!uuid.test(value))throw new ConfigurationError(400,'引用无效。');}
+--- a/src/local-app/episodeCollection.ts
++++ b/src/local-app/episodeCollection.ts
+@@ -2,7 +2,7 @@
+ import {createHash} from 'node:crypto';
+ import type {OwnerSession} from './sessions.js';
+ import {sessionTransaction} from './ownerTransaction.js';
+-import {canonical,ConfigurationError} from './configurationCommands.js';
++import {canonicalFingerprint,ConfigurationError} from './configurationCommands.js';
+ import {resolveEpisodeStorageLocation,resolveEpisodeStorageCollection,requireEpisodeStorageDirectory} from './episodeStorageLocation.js';
+ import {planEpisodeCollectionMove} from './accountDirectoryMigration.js';
+ import {createStorageContainer} from './seriesDirectories.js';
+@@ -22,7 +22,7 @@
+ /** Plan replay and optional unassigned-container creation share the established
+  * Owner receipt boundary. The actual move remains the existing coordinator. */
+ export async function planEpisodeCollectionCommand(pool:Pool,session:OwnerSession,mediaRoot:string,body:Record<string,unknown>,episodeId:string,seriesId:string|null){
+- const key=String(body.idempotencyKey),hash=createHash('sha256').update(JSON.stringify(canonical(body))).digest('hex');
++ const key=String(body.idempotencyKey),hash=canonicalFingerprint(body);
+  const receipt=async(c:Pick<PoolClient,'query'>)=>{const row=(await c.query('SELECT payload_hash,result FROM local_identity.command_receipts WHERE owner_id=$1 AND idempotency_key=$2',[session.id,key])).rows[0];if(row&&row.payload_hash!==hash)throw new ConfigurationError(409,'同一操作标识不能用于不同内容。');return row;};
+  const prepared=await sessionTransaction(pool,session,async c=>{const previous=await receipt(c);if(previous)return{previous};const state=await readEpisodeCollection(c,mediaRoot,episodeId);if(state.collection.status!=='registered'||state.collection.reason)throw new ConfigurationError(409,state.collection.reason??'请先在账号中盘点旧资料纳管，再调整系列。');return{accountId:state.accountId,prepare:seriesId===null&&!state.targets.find(target=>target.seriesId===null)?.containerId};});
+  if(!('previous'in prepared)&&prepared.prepare){const bytes=createHash('sha256').update(session.id+':collection-unassigned:'+key).digest('hex').slice(0,32),containerKey=`${bytes.slice(0,8)}-${bytes.slice(8,12)}-${bytes.slice(12,16)}-${bytes.slice(16,20)}-${bytes.slice(20)}`;await createStorageContainer(pool,session,containerKey,hash,{accountId:prepared.accountId},mediaRoot,'unassigned');}
+--- a/src/local-app/episodeCommands.ts
++++ b/src/local-app/episodeCommands.ts
+@@ -23,7 +23,7 @@
+ import type {Pool,PoolClient} from 'pg';
+ import type {OwnerSession} from './sessions.js';
+ import {sessionTransaction,ownerTransaction} from './ownerTransaction.js';
+-import {ConfigurationError,validateConfigurationPolicy,canonical} from './configurationCommands.js';
++import {ConfigurationError,validateConfigurationPolicy,canonicalFingerprint} from './configurationCommands.js';
+ import {snapshotInput} from './localFiles.js';
+ import {verifyMediaLibrary} from '../worker/mediaLibrary.js';
+ import {execFile} from 'node:child_process';
+@@ -68,7 +68,7 @@
+  }
+  private async executeCommand(session:{id:string},body:Record<string,unknown>,transaction:<T>(run:(c:PoolClient)=>Promise<T>)=>Promise<T>,automatic:boolean){
+   if(typeof body.command!=='string'||!Object.hasOwn(productionWorkspaceFields,body.command)&&!['prepareScriptPublish','configureScriptProduction','pauseScriptProduction','applyScriptSettings','bindScriptVideo','renderScriptReview','generateOfficialVideo','generateWan','resumeWan','annotateAudio','requestQcMemberRevision','repairConnection','repairConfiguration','create','reconfirmScript','importMaterial','start','review','openDirectory','openStandaloneStudio','planStoryboard','annotateStoryboard','requestStructureRevision','saveTtsSettings','saveTtsDraft','generateTts','registerManualMedia','saveAudioSelection','planMedia','retryMedia','saveMediaDraft','generateClip','setAudioSourceMode','generateSourceAudio','requestAlignment','saveManualAlignment','confirmCaptionText','generateSyncPreview','confirmSyncPreview','openStudio','saveStudio','generateReviewVideo','submitStudioRevision','requestStudioCompositionRevision','requestStudioStoryboardRevision','createQcIssue','resolveQcIssue','approveQc','retryFinalRender','preparePublishPackage'].includes(body.command)||typeof body.idempotencyKey!=='string'||!/^[0-9a-f-]{36}$/.test(body.idempotencyKey)||!body.data||typeof body.data!=='object'||Array.isArray(body.data)||Object.keys(body).some(k=>!['command','idempotencyKey','data'].includes(k)))throw new ConfigurationError(400,'Episode命令无效。');
+-  const data=body.data as Record<string,unknown>,hash=createHash('sha256').update(JSON.stringify(canonical(body))).digest('hex');
++  const data=body.data as Record<string,unknown>,hash=canonicalFingerprint(body);
+   const allowed:Record<string,string[]>={create:['accountId','title','seriesVersionId','isTest'],importMaterial:['episodeId','sourceKind','sourcePath','logicalName','materialType','materialPurpose','mimeType','isMainScript','contentBase64','deferRefresh'],start:['episodeId'],review:['episodeId','toStage','reason','reviewPackageId'],openDirectory:['episodeId']};
+   allowed.reconfirmScript=['episodeId','expectedScriptRevisionId','text','reason'];
+   allowed.planStoryboard=['episodeId'];allowed.annotateStoryboard=['episodeId','reviewPackageId','shotId','reason'];allowed.requestStructureRevision=['episodeId','reviewPackageId','operation','reason'];
+--- a/src/local-app/episodeLifecycle.ts
++++ b/src/local-app/episodeLifecycle.ts
+@@ -1,7 +1,6 @@
+ import {resolveEpisodeAssetRoot,requireAccountAssetRoot} from './accountAssetRoots.js';
+-import{createHash}from'node:crypto';
+ import type{Pool,PoolClient}from'pg';
+-import{canonical,ConfigurationError}from'./configurationCommands.js';
++import{canonicalFingerprint as fingerprint,ConfigurationError}from'./configurationCommands.js';
+ import {historyBlobTargets,finishHistoryBlob,type HistoryBlobTarget} from './historyEpisodeDeletion.js';
+ import {tokenHash} from './sessions.js';
+ import{ownerTransaction,sessionTransaction}from'./ownerTransaction.js';
+@@ -14,7 +13,6 @@
+ import {relative} from 'node:path';
+ import {stageConfirmedEpisodeFiles,restoreConfirmedEpisodeFiles,finalizeConfirmedEpisodeFiles} from '../worker/episodeDeletion.js';
+ const uuid=/^[0-9a-f-]{36}$/;
+-const fingerprint=(v:unknown)=>createHash('sha256').update(JSON.stringify(canonical(v))).digest('hex');
+ interface DeletionResult{recycleInventory?:unknown;episodeId:string;title:string;path:string;stagingPath:string;cleanupKey:string;cleanupPending:boolean;localRemoved?:boolean;summary:unknown;cleanupRoot:string;paths?:string[];stagingPaths?:string[];cleanupTargets?:EpisodeDeletionTarget[];historyCleanupTargets?:HistoryBlobTarget[];historyScanRoots?:string[];historyRemovedPaths?:string[];message?:string;}
+ export function publicDeletionResult(result:DeletionResult){const{recycleInventory:_inventory,cleanupRoot:_root,cleanupTargets:_targets,historyCleanupTargets:_history,historyScanRoots:_scan,historyRemovedPaths:_removed,message,...visible}=result;return{...visible,...(result.cleanupPending&&message?{message}:{}),...(result.cleanupPending&&(!result.cleanupTargets||result.cleanupTargets.some(target=>!target.files))?{message:'旧回执没有可验证的精确文件清单；暂存与未知文件保留。'}:{})};}
+ export class LocalEpisodeLifecycle{
+--- a/src/local-app/historyEpisodeDeletion.test.ts
++++ b/src/local-app/historyEpisodeDeletion.test.ts
+@@ -14,3 +14,12 @@
+   await expect(historyBlobTargets(history,inventory,[media],[path])).rejects.toThrow('其他留存文件仍引用');
+  }finally{rmSync(root,{recursive:true,force:true});}
+ });
++
++it('verifies real history blob bytes and rejects a same-size content change',async()=>{
++ const root=realpathSync(mkdtempSync(join(tmpdir(),'history-blob-digest-'))),sha='ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad',path=join(root,sha);
++ const inventory:HistoryDeleteInventory={episodeId:'10000000-0000-4000-8000-000000000001',title:'Fixture',revision:'',live:null,records:[],files:[],blobs:[{sha256:sha,bytes:3}]};
++ try{
++  writeFileSync(path,'abc');expect((await historyBlobTargets(root,inventory,[],[])).targets).toMatchObject([{sha,path,bytes:3}]);
++  writeFileSync(path,'abd');await expect(historyBlobTargets(root,inventory,[],[])).rejects.toThrow('历史文件已变化');
++ }finally{rmSync(root,{recursive:true,force:true});}
++});
+--- a/src/local-app/historyEpisodeDeletion.ts
++++ b/src/local-app/historyEpisodeDeletion.ts
+@@ -1,5 +1,5 @@
+ // Compatibility for already committed deletion receipts; no new history deletion entry.
+-import {createHash} from 'node:crypto';
++import {fileSha256} from '../worker/fileSha256.js';
+ import {createReadStream} from 'node:fs';
+ import {lstat,realpath,readdir,unlink} from 'node:fs/promises';
+ import {join,resolve,sep} from 'node:path';
+@@ -23,7 +23,6 @@
+   ||bytes.toString('ascii',4,8)==='ftyp'&&bytes.readUInt32BE(0)>=8&&bytes.readUInt32BE(0)<=bytes.length
+   ||['OggS','fLaC'].includes(bytes.toString('ascii',0,4)));
+ }
+-async function hashFile(path:string){const hash=createHash('sha256');for await(const chunk of createReadStream(path))hash.update(chunk);return hash.digest('hex');}
+ // Stream preserved files for indirect content-address references; no whole media file is buffered.
+ export async function historyBlobTargets(root:string|undefined,inventory:HistoryDeleteInventory,mediaRoots:string[],removedPaths:string[]){
+  if(!root){if(inventory.blobs.length||removedPaths.length)throw new ConfigurationError(503,'历史文件库尚未配置，不能确认永久删除范围。');return{targets:[],retainedShas:[] as string[]};}
+@@ -34,7 +33,7 @@
+   if(!/^[a-f0-9]{64}$/.test(item.sha256))throw new ConfigurationError(409,'历史文件摘要无效。');
+   const path=join(canonicalRoot,item.sha256);let stat;
+   try{stat=await lstat(path,{bigint:true});}catch(error){if((error as NodeJS.ErrnoException).code==='ENOENT')continue;throw error;}
+-  if(!stat.isFile()||stat.isSymbolicLink()||await realpath(path)!==path||Number(stat.size)!==Number(item.bytes)||await hashFile(path)!==item.sha256)throw new ConfigurationError(409,'历史文件已变化，请重新检查删除范围。');
++  if(!stat.isFile()||stat.isSymbolicLink()||await realpath(path)!==path||Number(stat.size)!==Number(item.bytes)||await fileSha256(path)!==item.sha256)throw new ConfigurationError(409,'历史文件已变化，请重新检查删除范围。');
+   targets.push({sha:item.sha256,path,root:canonicalRoot,rootIdentity:nodeIdentity(rootStat),identity:identity(stat),bytes:Number(stat.size)});
+  }
+  if(!targets.length&&!removedPaths.length)return{targets,retainedShas:[] as string[]};
+@@ -66,6 +65,6 @@
+  const referenced=(await c.query('SELECT local_identity.history_cleanup_blob_referenced($1,$2) referenced',[target.sha,tokenHash(session.token)])).rows[0].referenced;
+  if(referenced)return false;
+  let stat;try{stat=await lstat(target.path,{bigint:true});}catch(error){if((error as NodeJS.ErrnoException).code==='ENOENT')return true;throw error;}
+- if(!stat.isFile()||stat.isSymbolicLink()||identity(stat)!==target.identity||await hashFile(target.path)!==target.sha)throw Error('待清理历史文件已变化。');
++ if(!stat.isFile()||stat.isSymbolicLink()||identity(stat)!==target.identity||await fileSha256(target.path)!==target.sha)throw Error('待清理历史文件已变化。');
+  await unlink(target.path);return true;
+ }
+--- a/src/local-app/mediaPaths.ts
++++ b/src/local-app/mediaPaths.ts
+@@ -1,5 +1,6 @@
+ import{resolve,relative,isAbsolute}from'node:path';
+ export function assetPathWithin(parent:string,child:string){const path=relative(parent,child);return path!==''&&path!=='..'&&!path.startsWith('../')&&!isAbsolute(path);}
++export const assetPathsOverlap=(a:string,b:string)=>a===b||assetPathWithin(a,b)||assetPathWithin(b,a);
+ // Trusted deployment aliases resolve logical, frozen roots at the I/O boundary.
+ export function mappedAssetPath(mediaRoot:string,value:unknown,sourceRoots:readonly string[]=[]):string{
+  if(typeof value==='string'&&value!=='/'&&value.endsWith('/'))value=value.replace(/\/+$/,'');
+--- a/src/local-app/mediaRootMigration.ts
++++ b/src/local-app/mediaRootMigration.ts
+@@ -6,7 +6,7 @@
+ import type {OwnerSession} from './sessions.js';
+ import {ConfigurationError} from './configurationCommands.js';
+ import {inspectMediaRoot,verifyMediaRootBinding,type MediaRootBinding,type MediaRootRuntime} from './mediaRootSettings.js';
+-import {assetPathWithin} from './mediaPaths.js';
++import {assetPathWithin,assetPathsOverlap} from './mediaPaths.js';
+ import {resolveEpisodeStorageLocation,requireEpisodeStorageDirectory,resolveEpisodeStorageCollection} from './episodeStorageLocation.js';
+ import {episodeFileIO} from './episodeFiles.js';
+ import {hasActiveNativeStudio} from '../worker/openchatcutStudio.js';
+@@ -14,7 +14,6 @@
+ 
+ export interface StorageResource{kind:'program'|'runtime'|'state'|'model-cache'|'history'|'backup'|'secrets';path?:string}
+ interface PlanFile extends File{accountId:string;episodeId:string;targetRelativePath:string}
+-const overlap=(a:string,b:string)=>a===b||assetPathWithin(a,b)||assetPathWithin(b,a);
+ const rowPlan=(r:Record<string,unknown>)=>({id:r.id,status:r.status,manifest:r.manifest,manifestSha256:r.manifest_sha256,createdAt:r.created_at,progress:r.progress,error:r.error,updatedAt:r.updated_at});
+ export async function readMediaRootMigration(c:Pick<PoolClient,'query'>){
+  if(!(await c.query("SELECT to_regclass('local_identity.media_root_migrations') IS NOT NULL present")).rows[0].present)return null;
+@@ -42,7 +41,7 @@
+    const source=(await c.query('SELECT local_identity.media_root_binding() binding')).rows[0].binding as MediaRootBinding;
+    if(!source||source.path!==mediaRoot)throw new ConfigurationError(409,'服务媒体根与登记位置不一致，请重启服务。');
+    await verifyMediaRootBinding(source);
+-   const conflictingRoots=[source.path,...(runtime?.protectedRoots??[]),'/System','/Library','/usr','/bin','/sbin','/etc','/dev','/proc'].filter(p=>overlap(p,target.path));
++   const conflictingRoots=[source.path,...(runtime?.protectedRoots??[]),'/System','/Library','/usr','/bin','/sbin','/etc','/dev','/proc'].filter(p=>assetPathsOverlap(p,target.path));
+    if(conflictingRoots.length)throw new ConfigurationError(400,'目标不能与源位置、平台运行目录、历史库或备份重叠。冲突路径：'+[...new Set(conflictingRoots)].map(p=>`${p}（${p===target.path?'与目标相同':assetPathWithin(target.path,p)?'位于目标目录内':'包含目标目录'}）`).join('；')+'。');
+    const conflicts:string[]=[],blockers=(await c.query('SELECT local_identity.media_root_pending_operations() reasons')).rows[0].reasons as {kind:string;object_id:string;reason:string}[];
+    for(const pending of await runtime?.pendingOperations?.()??[])blockers.push({...pending,object_id:'deployment'});
+@@ -67,7 +66,7 @@
+     }
+     for(const episode of (await c.query('SELECT id,title FROM public.episodes WHERE account_id=$1 ORDER BY id',[account.id])).rows){
+      const location=await resolveEpisodeStorageLocation(c,mediaRoot,episode.id);await requireEpisodeStorageDirectory(c,location);await addDirectory(account.id,'episode',location.directoryPath,{episodeId:episode.id});
+-     if(sourceResources.some(r=>r.path&&overlap(r.path,location.directoryPath)))throw new ConfigurationError(409,'生产目录与独立平台资源重叠，请先核对配置。');
++     if(sourceResources.some(r=>r.path&&assetPathsOverlap(r.path,location.directoryPath)))throw new ConfigurationError(409,'生产目录与独立平台资源重叠，请先核对配置。');
+      if(await hasActiveNativeStudio(location.assetRoot,episode.id,location.relativePath))blockers.push({kind:'studio',object_id:episode.id,reason:'Studio 正在编辑，请先保存并返回。'});
+      episodes.push({id:episode.id,accountId:account.id,title:episode.title,location,collection:await resolveEpisodeStorageCollection(c,location),lineage:(await c.query('SELECT * FROM local_identity.episode_completed_storage_lineage($1)',[episode.id])).rows});
+      for(const task of (data['public.tasks']??[]) as {id:string;episode_id:string;input_snapshot:{native_episode_relative_path?:string;native_episode_directory_identity?:{deviceId:string|null;inodeId:string|null}}}[]){
+@@ -90,8 +89,8 @@
+      if(matches.length!==1||ref.sha256&&matches[0]?.sha256!==ref.sha256||ref.fileSize!==undefined&&matches[0]?.fileSize!==ref.fileSize)conflicts.push('文件引用缺失、指纹变化或归属不明：'+ref.relativePath);else refs.push(matches[0]);
+     }
+    }
+-   for(const [index,ep] of episodes.entries())if(episodes.slice(index+1).some(other=>overlap(ep.location.directoryPath,other.location.directoryPath)))conflicts.push('不同生产单的实际目录重叠，无法安全区分范围。');
+-   const accountDirectories=directories.filter(d=>d.kind==='account');for(const [index,d] of accountDirectories.entries())if(accountDirectories.slice(index+1).some(other=>overlap(d.source.path,other.source.path)))conflicts.push('账号实际目录重叠，请先核对账号隔离。');
++   for(const [index,ep] of episodes.entries())if(episodes.slice(index+1).some(other=>assetPathsOverlap(ep.location.directoryPath,other.location.directoryPath)))conflicts.push('不同生产单的实际目录重叠，无法安全区分范围。');
++   const accountDirectories=directories.filter(d=>d.kind==='account');for(const [index,d] of accountDirectories.entries())if(accountDirectories.slice(index+1).some(other=>assetPathsOverlap(d.source.path,other.source.path)))conflicts.push('账号实际目录重叠，请先核对账号隔离。');
+    // Inspect only unclaimed entries; never recurse a shared global legacy root.
+    const known=new Set(directories.map(d=>d.source.path));
+    for(const parent of [mediaRoot,...directories.filter(d=>['account','series','unassigned'].includes(d.kind)).map(d=>d.source.path)])for(const name of await readdir(parent)){
+--- a/src/local-app/mediaRootSettings.ts
++++ b/src/local-app/mediaRootSettings.ts
+@@ -9,7 +9,7 @@
+ import {ConfigurationError} from './configurationCommands.js';
+ import {sessionTransaction} from './ownerTransaction.js';
+ import type {OwnerSession} from './sessions.js';
+-import {assetPathWithin} from './mediaPaths.js';
++import {assetPathsOverlap} from './mediaPaths.js';
+ const exec=promisify(execFile);
+ export interface MediaRootBinding {path:string;deviceId:string;inodeId:string;mountPath:string}
+ export interface MediaRootRuntime {
+@@ -19,7 +19,6 @@
+  persist:(binding:MediaRootBinding,publication?:{operation:'migration';planId:string;manifestSha256:string;storageOwnerId:string})=>Promise<(()=>Promise<void>) & {commit?:()=>Promise<void>}>;
+  activate:(binding:MediaRootBinding,migration?:{planId:string;manifestSha256:string})=>Promise<void>;
+ }
+-const overlap=(a:string,b:string)=>a===b||assetPathWithin(a,b)||assetPathWithin(b,a);
+ export async function inspectMediaRoot(path:unknown,minimumFreeBytes=0):Promise<MediaRootBinding>{
+  if(typeof path!=='string'||path.length>4096||!isAbsolute(path)||resolve(path)!==path||path==='/')throw new ConfigurationError(400,'请选择实际本地文件夹。');
+  try{
+@@ -73,7 +72,7 @@
+    const binding=await inspectMediaRoot(body.path,this.runtime.minimumFreeBytes);
+    if(binding.path===state.path)return state;
+    const protectedRoots=[...this.runtime.protectedRoots,state.path,'/System','/Library','/usr','/bin','/sbin','/etc','/dev','/proc'];
+-   if(protectedRoots.some(p=>overlap(binding.path,p)))throw new ConfigurationError(400,'媒体根不能与源位置、平台运行目录、备份或独立历史库重叠。');
++   if(protectedRoots.some(p=>assetPathsOverlap(binding.path,p)))throw new ConfigurationError(400,'媒体根不能与源位置、平台运行目录、备份或独立历史库重叠。');
+    const retained=this.runtime.retainedRoots??[];for(const root of retained)await inspectMediaRoot(root);
+    if((await readdir(state.path)).some(name=>!retained.includes(join(state.path,name)))||(await readdir(binding.path)).length)throw new ConfigurationError(409,'初始化仅适用于空工作区与空目标文件夹；已有文件需要受控迁移。');
+    let undo:((()=>Promise<void>) & {commit?:()=>Promise<void>})|undefined;let previous:MediaRootBinding|null=null;
+--- a/src/local-app/recycleBin.ts
++++ b/src/local-app/recycleBin.ts
+@@ -2,7 +2,7 @@
+ import {lstat,readdir,readlink} from 'node:fs/promises';
+ import {join,relative} from 'node:path';
+ import type {Pool,PoolClient} from 'pg';
+-import {canonical,ConfigurationError} from './configurationCommands.js';
++import {canonicalFingerprint as digest,ConfigurationError} from './configurationCommands.js';
+ import {ownerTransaction,sessionTransaction} from './ownerTransaction.js';
+ import type {OwnerSession} from './sessions.js';
+ import {LocalEpisodeLifecycle} from './episodeLifecycle.js';
+@@ -12,7 +12,6 @@
+ interface Inventory{files:FootprintFile[];links:{path:string;value:string}[];targets:EpisodeDeletionTarget[];protected:boolean;}
+ interface Entry{episode_id:string;revision:string;title:string;account_name:string;archived_before:string|null;recycled_at:string;size_bytes:string;inventory:Inventory;last_error:string|null;}
+ const uuid=/^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i;
+-const digest=(value:unknown)=>createHash('sha256').update(JSON.stringify(canonical(value))).digest('hex');
+ const fields:Record<string,string[]>={recycleEpisode:['episodeId'],restoreRecycledEpisode:['episodeId','revision'],saveRecycleLimit:['limitBytes','expectedRevision'],planRecyclePurge:['episodeId','revision'],purgeRecycledEpisode:['episodeId','revision','confirmation','expectedPath','expectedPaths','expectedRevision']};
+ 
+ /** Membership is reversible; only the existing exact-deletion pipeline removes bytes. */
+--- a/src/local-app/scriptProductionStore.ts
++++ b/src/local-app/scriptProductionStore.ts
+@@ -1,18 +1,17 @@
+ import {verifyEpisodeFile,resolveEpisodeFileReference} from './episodeFiles.js';
+ import {resolveEpisodeStorageLocation,requireEpisodeStorageDirectory} from './episodeStorageLocation.js';
+ import type {PoolClient} from 'pg';
+-import {createHash} from 'node:crypto';
+ import {basename} from 'node:path';
+ import {parseProductionScript,validateProductionDefaults} from '../reviews/productionScript.js';
+ import {resolveProductionPlan,type ResolvedProductionPlan,type ProductionMaterial} from '../reviews/productionPlan.js';
+ import {defaultShotCaptionContract,shotCaptionContractToDatabase,type ShotCaptionAnchor} from '../shotCaptions.js';
+ import {snapshotInput} from './localFiles.js';
+-import {ConfigurationError,canonical} from './configurationCommands.js';
++import {ConfigurationError,canonicalFingerprint as productionHash} from './configurationCommands.js';
+ import {probeMp3Artifact} from '../worker/mediaTools.js';
+ 
+ export interface ScriptEpisode {id:string;account_id:string;series_id?:string;series_version_id:string|null;main_script_revision_id:string|null;stage:string;policy:Record<string,unknown>;tts_voice?:string;tts_language_code?:string;tts_speaking_rate?:number}
+ export interface ScriptProductionRecord {episode_id:string;owner_id:string;script_sha256:string;script_revision_id:string;authorization_hash:string;enabled:boolean;plan:ResolvedProductionPlan;progress:Record<string,unknown>;last_status:string}
+-export const productionHash=(value:unknown)=>createHash('sha256').update(JSON.stringify(canonical(value))).digest('hex');
++export {productionHash};
+ export class ScriptProductionStore {
+  constructor(private mediaRoot:string){}
+  async read(c:PoolClient,episodeId:string){
+--- a/src/local-app/studioCommands.ts
++++ b/src/local-app/studioCommands.ts
+@@ -1,9 +1,8 @@
+ import {applyScriptRenderSettings,scriptRenderHint} from '../worker/scriptRenderSettings.js';
+ import type {ResolvedProductionPlan} from '../reviews/productionPlan.js';
+ import {defaultReviewRenderComposition,reviewRenderCompositionFromJson,reviewRenderCompositionToJson} from '../reviews/reviewComposition.js';
+-import {createHash} from 'node:crypto';
+ import type {PoolClient} from 'pg';
+-import {ConfigurationError} from './configurationCommands.js';
++import {ConfigurationError,jsonFingerprint as identity} from './configurationCommands.js';
+ import {verifyEpisodeFile,episodeFileIO} from './episodeFiles.js';
+ import {closeOpenChatCutStudio,openOpenChatCutStudio,snapshotOpenChatCutStudio,freezeOpenChatCutStudio,type OpenChatCutRuntimeConfig} from '../worker/openchatcutStudio.js';
+ import {shotPreparationContractFromSnapshot,reviewRenderFromSnapshot} from '../worker/codexRunner.js';
+@@ -19,7 +18,6 @@
+ interface Basis {hash:string;render:Render;mode:'workbench'|'shot'|'qc';reviewPackageId:string;sourcePath:string}
+ interface Binding {basis:Basis;workspaceRelativePath:string}
+ const editableStages=['storyboard_approved','production_ready','render_ready','qc_review'];
+-const identity=(value:unknown)=>createHash('sha256').update(JSON.stringify(value)).digest('hex');
+ 
+ export class NativeStudioCommands {
+  private bindings=new Map<string,Binding>();
+--- a/src/local-app/workspaceAudio.ts
++++ b/src/local-app/workspaceAudio.ts
+@@ -4,11 +4,11 @@
+ import {currentWorkspaceCallAuthorization} from './workspaceCallConfirmation.js';
+ import {episodeStorageLocationAtRoot,requireWritableEpisodeStorage} from './episodeStorageLocation.js';
+ import {creativeAccountRules} from '../creativeAccountRules.js';
+-import {createHash,randomUUID} from 'node:crypto';
++import {randomUUID} from 'node:crypto';
+ import type {PoolClient} from 'pg';
+ import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
+ import {applyWorkspaceAudioMix,readWorkspaceAudioMix,readWorkspaceSoundEnabled,setWorkspaceSoundEnabled,type WorkspaceAudioEdit} from '../workspaceAudio.js';
+-import {ConfigurationError} from './configurationCommands.js';
++import {ConfigurationError,jsonFingerprint as hash} from './configurationCommands.js';
+ import {verifyEpisodeFile,resolveEpisodeFileReference} from './episodeFiles.js';
+ import {resolveWorkspaceSource} from './workspaceSources.js';
+ import {probeMp3Artifact,inspectMp4Artifact} from '../worker/mediaTools.js';
+@@ -16,7 +16,6 @@
+ import {persistWorkspaceRevision,type ProductionWorkspaceRecord} from './productionWorkspaceCommands.js';
+ import {resolveProductionSelection} from './productionSelection.js';
+ import type {InputRuntime} from './episodeCommands.js';
+-const hash=(v:unknown)=>createHash('sha256').update(JSON.stringify(v)).digest('hex');
+ export function workspaceAudioShotIds(row:ProductionWorkspaceRecord){return Object.fromEntries([...new Set(row.bindings.map(b=>b.shotId))].map(id=>[id,row.bindings.filter(b=>b.shotId===id).map(b=>b.itemId)]));}
+ function preparationCurrent(row:ProductionWorkspaceRecord,project:OpenChatCutProject,p:Record<string,any>){
+  if(p.shot_id&&!row.bindings.some(b=>b.shotId===p.shot_id))return false;
+--- a/src/local-app/workspaceCaptionsCommands.ts
++++ b/src/local-app/workspaceCaptionsCommands.ts
+@@ -12,9 +12,8 @@
+ import {isOpenChatCutStudio} from '../worker/openchatcutStudio.js';
+ import {probeMp3Artifact} from '../worker/mediaTools.js';
+ import {verifyEpisodeFile,resolveEpisodeFileReference} from './episodeFiles.js';
+-import {ConfigurationError} from './configurationCommands.js';
++import {ConfigurationError,jsonFingerprint as fingerprint} from './configurationCommands.js';
+ import {readProductionWorkspace,updateWorkspaceProject,type ProductionWorkspaceRecord} from './productionWorkspaceCommands.js';
+-const fingerprint=(v:unknown)=>createHash('sha256').update(JSON.stringify(v)).digest('hex');
+ const comparable=(v:string)=>v.replace(/\s/gu,'');
+ async function captionContext(c:PoolClient,root:string,row:Pick<ProductionWorkspaceRecord,'id'|'episode_id'|'storyboard_package_id'|'bindings'>,project:OpenChatCutProject,clipId:unknown){
+  await requireEpisodeStorageDirectory(c,await episodeStorageLocationAtRoot(c,root,row.episode_id));
+--- a/src/local-app/workspaceNarration.ts
++++ b/src/local-app/workspaceNarration.ts
+@@ -12,20 +12,18 @@
+ import {resolveWorkspaceShotLineage} from './workspacePreparation.js';
+ import {applyWorkspaceAudioMix,resolveWorkspaceMainVoice} from '../workspaceAudio.js';
+ import {isVideoProvider,videoProviders} from '../worker/videoProviderCatalog.js';
+-import {createHash} from 'node:crypto';
+ import type {PoolClient} from 'pg';
+ import type {WorkspaceCandidate} from '../workspaceCandidates.js';
+ import type {WorkspaceNarration} from '../productionWorkspace.js';
+ import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
+ import type {InputRuntime} from './episodeCommands.js';
+-import {ConfigurationError} from './configurationCommands.js';
++import {ConfigurationError,jsonFingerprint as fingerprint} from './configurationCommands.js';
+ import {verifyEpisodeFile,resolveEpisodeFileReference} from './episodeFiles.js';
+ import {resolveWorkspaceSource} from './workspaceSources.js';
+ import {inspectMp4Artifact} from '../worker/mediaTools.js';
+ import {probeMp3Artifact} from '../worker/mediaTools.js';
+ import {isOpenChatCutStudio} from '../worker/openchatcutStudio.js';
+ import {type ProductionWorkspaceRecord,persistWorkspaceRevision} from './productionWorkspaceCommands.js';
+-const fingerprint=(value:unknown)=>createHash('sha256').update(JSON.stringify(value)).digest('hex');
+ export const workspaceNarrationItemId=(shotId:string)=>`workspace-narration-shot-${shotId}`;
+ async function inputs(c:PoolClient,row:ProductionWorkspaceRecord){
+  const selections=(await c.query('SELECT shot_id,selection FROM local_identity.workspace_narrations WHERE workspace_id=$1',[row.id])).rows;
+--- a/src/local-app/workspaceVisualCandidates.ts
++++ b/src/local-app/workspaceVisualCandidates.ts
+@@ -15,17 +15,16 @@
+ import {isVideoProvider,klingOmniModel,videoProviders} from '../worker/videoProviderCatalog.js';
+ import type {InputRuntime} from './episodeCommands.js';
+ import {isOpenChatCutStudio,registerOpenChatCutStudioSource} from '../worker/openchatcutStudio.js';
+-import {createHash,randomUUID} from 'node:crypto';
++import {randomUUID} from 'node:crypto';
+ import type {PoolClient} from 'pg';
+ import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
+ import type {WorkspaceVisualCandidate} from '../workspaceVisualCandidates.js';
+ import {workspaceCandidateTarget,workspaceCandidateAppearance} from '../workspaceCandidates.js';
+ import {inspectWorkspaceVisualFile,requireVisualStorageLocation} from './workspaceVisualMedia.js';
+-import {ConfigurationError,canonical} from './configurationCommands.js';
++import {ConfigurationError,canonicalFingerprint as hash} from './configurationCommands.js';
+ import {resolveWorkspaceSource} from './workspaceSources.js';
+ import {readProductionWorkspace,persistWorkspaceRevision,updateWorkspaceProject,type ProductionWorkspaceRecord} from './productionWorkspaceCommands.js';
+ import {prepareRegisteredWorkspaceCandidate,finishRegisteredWorkspaceCandidate} from './workspaceCandidateAdoption.js';
+-const hash=(value:unknown)=>createHash('sha256').update(JSON.stringify(canonical(value))).digest('hex');
+ const uuid=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/;
+ function target(row:ProductionWorkspaceRecord,project:OpenChatCutProject,id:unknown){
+  const clip=row.bindings.find(b=>b.itemId===id),matches=project.timelines.flatMap(t=>t.items.filter(i=>i.id===id).map(item=>({item,timeline:t})));
+--- a/src/worker/contracts.ts
++++ b/src/worker/contracts.ts
+@@ -1,3 +1,4 @@
++import {isConnectionId} from "./runtimeEvidence.js";
+ import {shotCompositionLayouts,type ShotCompositionLayout} from '../shotComposition.js';
+ import type {FrozenVideoVisualInput} from '../videoVisualInputs.js';
+ import {wanVideoModel,wanVideoParameters,defaultWanModelSettings} from '../wanVideoModels.js';
+@@ -896,10 +897,6 @@
+   return typeof value === "string" && value.trim().length > 0;
+ }
+ 
+-function isConnectionId(value: string | undefined): boolean {
+-  return Boolean(value && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value));
+-}
+-
+ function isSha256(value: unknown): value is string {
+   return typeof value === "string" && /^[0-9a-f]{64}$/.test(value);
+ }
+--- /dev/null
++++ b/src/worker/fileSha256.test.ts
+@@ -0,0 +1,19 @@
++// @vitest-environment node
++import {expect,it} from 'vitest';
++import {mkdtemp,writeFile,rm} from 'node:fs/promises';
++import {tmpdir} from 'node:os';
++import {join} from 'node:path';
++import {fileSha256} from './fileSha256';
++
++it('hashes real files against standard SHA-256 vectors across multiple stream chunks',async()=>{
++ const root=await mkdtemp(join(tmpdir(),'loop-file-sha-'));
++ try{
++  const file=join(root,'input');
++  for(const [bytes,expected] of [
++   [Buffer.alloc(0),'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'],
++   [Buffer.from('abc'),'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad'],
++   [Buffer.alloc(1_000_000,97),'cdc76e5c9914fb9281a1c7e284d73e67f1809a48a497200e046d39ccc7112cd0'],
++  ] as const){await writeFile(file,bytes);expect(await fileSha256(file)).toBe(expected);}
++  await expect(fileSha256(join(root,'missing'))).rejects.toMatchObject({code:'ENOENT'});
++ }finally{await rm(root,{recursive:true,force:true});}
++});
+--- /dev/null
++++ b/src/worker/fileSha256.ts
+@@ -0,0 +1,8 @@
++import {createHash} from 'node:crypto';
++import {createReadStream} from 'node:fs';
++
++export async function fileSha256(path:string):Promise<string>{
++ const hash=createHash('sha256');
++ for await(const chunk of createReadStream(path))hash.update(chunk);
++ return hash.digest('hex');
++}
+--- a/src/worker/openchatcutStudio.ts
++++ b/src/worker/openchatcutStudio.ts
+@@ -4,7 +4,7 @@
+ import {safeAssetOutputPath} from "./controlledMediaExecutor.js";
+ import { createHash, randomUUID } from "node:crypto";
+ import {tmpdir} from "node:os";
+-import { createReadStream } from "node:fs";
++import {fileSha256} from "./fileSha256.js";
+ import { copyFile, mkdir, mkdtemp, rm, readFile, writeFile, lstat, realpath, rename, unlink } from "node:fs/promises";
+ import { spawn, spawnSync, type ChildProcess } from "node:child_process";
+ import { createServer as createTcpServer, type Server } from "node:net";
+@@ -401,12 +401,6 @@
+ 
+ function projectSha256(project: OpenChatCutProject): string { return createHash("sha256").update(JSON.stringify(project)).digest("hex"); }
+ 
+-async function fileSha256(path:string):Promise<string>{
+-  const hash=createHash('sha256');
+-  for await(const chunk of createReadStream(path))hash.update(chunk);
+-  return hash.digest('hex');
+-}
+-
+ async function currentSessionProject(session: Session): Promise<OpenChatCutProject> {
+   const response = await fetch(`${session.baseUrl}/api/project-store/entry?key=${encodeURIComponent(`project:${session.projectId}`)}`, { headers: { "Sec-Fetch-Site": "none" } });
+   if (!response.ok) throw new Error(`无法读取 OpenChatCut 项目（HTTP ${response.status}）。`);
+--- a/src/worker/runtimeEvidence.ts
++++ b/src/worker/runtimeEvidence.ts
+@@ -21,6 +21,6 @@
+   return { command, argumentsList };
+ }
+ 
+-function isConnectionId(value: string | undefined): boolean {
++export function isConnectionId(value: string | undefined): boolean {
+   return Boolean(value && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value));
+ }
+--- a/src/worker/runtimePreflight.ts
++++ b/src/worker/runtimePreflight.ts
+@@ -9,7 +9,7 @@
+   type WorkerPreflightStatus,
+   type WorkerTaskPackage,
+ } from "./contracts.js";
+-import { credentialEnvironmentForReference, type RuntimeDependencyStatus } from "./runtimeEvidence.js";
++import { credentialEnvironmentForReference, isConnectionId, type RuntimeDependencyStatus } from "./runtimeEvidence.js";
+ import { mediaCapabilityForCapability, mediaCapabilityForKey, mediaCapabilityKeys } from "./productionCapabilities.js";
+ import { registeredAdapters, type ExecutionPath, type RegisteredAdapterChoice } from "./registeredAdapters.js";
+ import { workerRequiredTools } from "./runtimeConstraints.js";
+@@ -426,4 +426,3 @@
+ function record(value: unknown): Record<string, unknown> { return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : {}; }
+ function stringArray(value: unknown): string[] { return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string" && item.trim().length > 0) : []; }
+ function stringValue(value: unknown): string { return typeof value === "string" ? value.trim() : ""; }
+-function isConnectionId(value: string | undefined): boolean { return Boolean(value && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)); }

@@ -1,0 +1,566 @@
+{
+  "fileCount": 1012,
+  "lowReferences": [
+    {
+      "file": "scripts/openchatcut-accessibility.mjs",
+      "name": "nativeAccessibilityRuntime",
+      "kind": "VariableDeclaration",
+      "line": 56,
+      "identifierCount": 2
+    },
+    {
+      "file": "scripts/openchatcut-caption-layout.mjs",
+      "name": "captionSlotLayoutPatch",
+      "kind": "FunctionDeclaration",
+      "line": 7,
+      "identifierCount": 1
+    },
+    {
+      "file": "scripts/openchatcut-embed-client.mjs",
+      "name": "redirectLoopControlImport",
+      "kind": "FunctionDeclaration",
+      "line": 15,
+      "identifierCount": 1
+    },
+    {
+      "file": "scripts/openchatcut-embed-client.mjs",
+      "name": "LoopControlCaptionAlignment",
+      "kind": "FunctionDeclaration",
+      "line": 21,
+      "identifierCount": 1
+    },
+    {
+      "file": "scripts/openchatcut-embed-client.mjs",
+      "name": "useLoopControlHost",
+      "kind": "FunctionDeclaration",
+      "line": 30,
+      "identifierCount": 1
+    },
+    {
+      "file": "scripts/openchatcut-readability.mjs",
+      "name": "nativeReadabilityRuntime",
+      "kind": "VariableDeclaration",
+      "line": 6,
+      "identifierCount": 2
+    },
+    {
+      "file": "scripts/openchatcut-readability.mjs",
+      "name": "nativeReadabilityCss",
+      "kind": "VariableDeclaration",
+      "line": 29,
+      "identifierCount": 2
+    },
+    {
+      "file": "scripts/runtime/history-consolidation.mjs",
+      "name": "consolidateHistory",
+      "kind": "FunctionDeclaration",
+      "line": 44,
+      "identifierCount": 2
+    },
+    {
+      "file": "scripts/runtime/keychain.mjs",
+      "name": "requireUnlockedKeychain",
+      "kind": "FunctionDeclaration",
+      "line": 4,
+      "identifierCount": 2
+    },
+    {
+      "file": "scripts/runtime/keychain.mjs",
+      "name": "bootstrapKeychain",
+      "kind": "FunctionDeclaration",
+      "line": 6,
+      "identifierCount": 2
+    },
+    {
+      "file": "scripts/runtime/project-history.mjs",
+      "name": "projectHistory",
+      "kind": "FunctionDeclaration",
+      "line": 3,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/accounts/AccountForm.tsx",
+      "name": "timezoneOptions",
+      "kind": "VariableDeclaration",
+      "line": 11,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/connections/ConnectionDraftSession.tsx",
+      "name": "ConnectionEditDraft",
+      "kind": "TypeAliasDeclaration",
+      "line": 5,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/creativeAccountRules.ts",
+      "name": "blueprintTechnicalKeys",
+      "kind": "VariableDeclaration",
+      "line": 2,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/episodes/episodeCatalogTypes.ts",
+      "name": "CatalogActionStatus",
+      "kind": "TypeAliasDeclaration",
+      "line": 18,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/episodes/episodeReadService.ts",
+      "name": "EpisodeReadChanges",
+      "kind": "InterfaceDeclaration",
+      "line": 1,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/imageGeneration.ts",
+      "name": "openAiImage25Models",
+      "kind": "VariableDeclaration",
+      "line": 10,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/imageGeneration.ts",
+      "name": "openAiImage26Models",
+      "kind": "VariableDeclaration",
+      "line": 11,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/lib/backend.ts",
+      "name": "Backend",
+      "kind": "TypeAliasDeclaration",
+      "line": 1,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/lib/viewTransport.ts",
+      "name": "ViewTransport",
+      "kind": "InterfaceDeclaration",
+      "line": 24,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/local-app/LocalDeletionRecovery.tsx",
+      "name": "DeletionCleanupDialog",
+      "kind": "FunctionDeclaration",
+      "line": 58,
+      "identifierCount": 1
+    },
+    {
+      "file": "src/local-app/SecretDetailPane.tsx",
+      "name": "SecretDetailPaneProps",
+      "kind": "InterfaceDeclaration",
+      "line": 10,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/local-app/WorkspaceModelPicker.tsx",
+      "name": "WorkspaceModelOption",
+      "kind": "InterfaceDeclaration",
+      "line": 9,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/local-app/WorkspaceTopbar.tsx",
+      "name": "WorkspaceTopbarProps",
+      "kind": "InterfaceDeclaration",
+      "line": 13,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/local-app/connectionPorts.ts",
+      "name": "SecretStoreMode",
+      "kind": "TypeAliasDeclaration",
+      "line": 1,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/local-app/connections.ts",
+      "name": "parseConnectionCommand",
+      "kind": "FunctionDeclaration",
+      "line": 29,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/local-app/fixtureSchema.ts",
+      "name": "planFixtureMigrations",
+      "kind": "FunctionDeclaration",
+      "line": 12,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/local-app/fixtures/workspaceDraftFixture.ts",
+      "name": "draftOtherEpisode",
+      "kind": "VariableDeclaration",
+      "line": 2,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/local-app/localFiles.ts",
+      "name": "ensureInputDirectories",
+      "kind": "FunctionDeclaration",
+      "line": 15,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/local-app/nativeAutomation.ts",
+      "name": "desktopNotification",
+      "kind": "FunctionDeclaration",
+      "line": 40,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/local-app/runtimeStatus.ts",
+      "name": "runtimeQueueSql",
+      "kind": "VariableDeclaration",
+      "line": 20,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/local-app/secretAdministration.ts",
+      "name": "SecretAdministrationConfiguration",
+      "kind": "InterfaceDeclaration",
+      "line": 9,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/local-app/secretAdministrationTypes.ts",
+      "name": "SecretConnectionUse",
+      "kind": "InterfaceDeclaration",
+      "line": 2,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/local-app/storyE2e.fixture.ts",
+      "name": "storyTitle",
+      "kind": "VariableDeclaration",
+      "line": 22,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/local-app/studioCommands.ts",
+      "name": "StudioRuntime",
+      "kind": "InterfaceDeclaration",
+      "line": 18,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/local-app/workspaceSearch.ts",
+      "name": "workspaceSearchSql",
+      "kind": "VariableDeclaration",
+      "line": 24,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/observability/runtimeStatus.ts",
+      "name": "RuntimeTask",
+      "kind": "InterfaceDeclaration",
+      "line": 10,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/orchestration/notificationConsumer.ts",
+      "name": "NotificationDelivery",
+      "kind": "InterfaceDeclaration",
+      "line": 4,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/orchestration/notificationPolicy.ts",
+      "name": "NotificationSelection",
+      "kind": "InterfaceDeclaration",
+      "line": 13,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/orchestration/operationsEvidence.ts",
+      "name": "OperationEvidence",
+      "kind": "InterfaceDeclaration",
+      "line": 7,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/platform/configurationFormValues.ts",
+      "name": "defaultMediaAdapterForm",
+      "kind": "FunctionDeclaration",
+      "line": 158,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/platform/types.ts",
+      "name": "episodeStages",
+      "kind": "VariableDeclaration",
+      "line": 1,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/preferences/preferences.ts",
+      "name": "NotificationKind",
+      "kind": "TypeAliasDeclaration",
+      "line": 2,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/productionWorkspace.ts",
+      "name": "WorkspaceSource",
+      "kind": "InterfaceDeclaration",
+      "line": 8,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/reviews/materialImport.ts",
+      "name": "MaterialPurposeOption",
+      "kind": "InterfaceDeclaration",
+      "line": 15,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/reviews/reviewRevision.ts",
+      "name": "ReviewRevisionRequest",
+      "kind": "TypeAliasDeclaration",
+      "line": 22,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/reviews/reviewRevision.ts",
+      "name": "StudioReviewRevisionRequest",
+      "kind": "TypeAliasDeclaration",
+      "line": 30,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/reviews/reviewRevision.ts",
+      "name": "studioWorkspaceFromPayload",
+      "kind": "FunctionDeclaration",
+      "line": 95,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/reviews/reviewSelectors.ts",
+      "name": "latestWorkerTasksByScope",
+      "kind": "FunctionDeclaration",
+      "line": 60,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/shotAudioMix.ts",
+      "name": "bgmDuckingDepthDb",
+      "kind": "VariableDeclaration",
+      "line": 32,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/shotComposition.ts",
+      "name": "ShotCompositionFit",
+      "kind": "TypeAliasDeclaration",
+      "line": 5,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/shotComposition.ts",
+      "name": "ShotCompositionTiming",
+      "kind": "InterfaceDeclaration",
+      "line": 28,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/videoVisualInputs.ts",
+      "name": "isVideoReferenceSource",
+      "kind": "FunctionDeclaration",
+      "line": 51,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/worker/codexRunner.ts",
+      "name": "WorkerProgress",
+      "kind": "InterfaceDeclaration",
+      "line": 61,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/worker/codexRunner.ts",
+      "name": "CodexWorkerRunResult",
+      "kind": "TypeAliasDeclaration",
+      "line": 68,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/worker/contracts.ts",
+      "name": "WorkerPreflightVersion",
+      "kind": "TypeAliasDeclaration",
+      "line": 18,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/worker/manualMaterialChecklist.ts",
+      "name": "MaterialAvailability",
+      "kind": "TypeAliasDeclaration",
+      "line": 12,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/worker/manualMaterialChecklist.ts",
+      "name": "boundManualMaterialRevisionId",
+      "kind": "FunctionDeclaration",
+      "line": 28,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/worker/mediaLibrary.ts",
+      "name": "MediaLibraryCheckInput",
+      "kind": "InterfaceDeclaration",
+      "line": 9,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/worker/mediaLibrary.ts",
+      "name": "MediaLibraryStatus",
+      "kind": "InterfaceDeclaration",
+      "line": 19,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/worker/mediaLibrary.ts",
+      "name": "ArtifactIndexCheckInput",
+      "kind": "InterfaceDeclaration",
+      "line": 25,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/worker/openchatcutProjectReader.ts",
+      "name": "assertShotPreviewFingerprint",
+      "kind": "FunctionDeclaration",
+      "line": 115,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/worker/productionCapabilities.ts",
+      "name": "MediaCapabilityConfigurationField",
+      "kind": "TypeAliasDeclaration",
+      "line": 5,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/worker/registeredAdapters.ts",
+      "name": "ProductionInputMode",
+      "kind": "TypeAliasDeclaration",
+      "line": 27,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/worker/registeredAdapters.ts",
+      "name": "AdapterSelection",
+      "kind": "TypeAliasDeclaration",
+      "line": 96,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/worker/registeredAdapters.ts",
+      "name": "AdapterResolution",
+      "kind": "TypeAliasDeclaration",
+      "line": 105,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/worker/runtimeConstraints.ts",
+      "name": "WorkerRuntimeConstraints",
+      "kind": "InterfaceDeclaration",
+      "line": 5,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/worker/runtimePreflight.ts",
+      "name": "RuntimePreflight",
+      "kind": "InterfaceDeclaration",
+      "line": 78,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/worker/shotWorkbenchStudio.ts",
+      "name": "ShotWorkbenchStudioInput",
+      "kind": "InterfaceDeclaration",
+      "line": 4,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/worker/whisperxAlignment.ts",
+      "name": "WhisperXAlignmentInput",
+      "kind": "InterfaceDeclaration",
+      "line": 19,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/worker/whisperxAlignment.ts",
+      "name": "normalizeWhisperXTokens",
+      "kind": "FunctionDeclaration",
+      "line": 59,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/workspace/WorkspaceViews.tsx",
+      "name": "stageLabels",
+      "kind": "VariableDeclaration",
+      "line": 41,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/workspaceAudio.ts",
+      "name": "WorkspaceVoiceEdit",
+      "kind": "InterfaceDeclaration",
+      "line": 3,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/workspaceAudio.ts",
+      "name": "WorkspaceSoundEdit",
+      "kind": "InterfaceDeclaration",
+      "line": 4,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/workspaceCandidates.ts",
+      "name": "WorkspaceCandidateMainVoice",
+      "kind": "InterfaceDeclaration",
+      "line": 22,
+      "identifierCount": 2
+    },
+    {
+      "file": "src/workspaceVideo.ts",
+      "name": "WorkspaceVideoRange",
+      "kind": "InterfaceDeclaration",
+      "line": 2,
+      "identifierCount": 2
+    }
+  ],
+  "orphan": [
+    "scripts/build-dan-ui.mjs",
+    "scripts/e2e/run.mjs",
+    "scripts/inspect-openchatcut-project.ts",
+    "scripts/openchatcut-embed-client.mjs",
+    "scripts/openchatcut-embedded.mjs",
+    "scripts/openchatcut-standalone.mjs",
+    "scripts/prepare-runtime.mjs",
+    "scripts/run-prepared.mjs",
+    "scripts/runtime/backup.mjs",
+    "scripts/runtime/codex.mjs",
+    "scripts/runtime/migrate.mjs",
+    "scripts/runtime/offline-guard.mjs",
+    "scripts/runtime/project-history.mjs",
+    "scripts/runtime/recover-native-output.mjs",
+    "scripts/runtime/vite.config.mjs",
+    "scripts/start.mjs",
+    "scripts/stop.mjs",
+    "scripts/storage/restore.mjs",
+    "src/local-app/episodeDeletionProcess.config.mjs",
+    "src/local-app/episodeDeletionProcess.fixture.ts",
+    "src/local-app/localWorkerCli.ts",
+    "src/local-app/main.tsx",
+    "src/local-app/nativeBackup.ts",
+    "src/vite-env.d.ts",
+    "src/worker/workerResultSchema.ts"
+  ],
+  "constantBranches": [],
+  "commentBlocks": []
+}

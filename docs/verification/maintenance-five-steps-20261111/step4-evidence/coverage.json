@@ -1,0 +1,44 @@
+[
+  {
+    "entry": "current user crontab; /etc/crontab; /etc/anacrontab",
+    "result": "no user crontab; system files absent",
+    "evidence": "cron.json",
+    "limit": "No elevated access to other users crontabs; indirect unrelated generic wrappers not recursively opened"
+  },
+  {
+    "entry": "~/Library/LaunchAgents; /Library/LaunchAgents; /Library/LaunchDaemons; launchctl list",
+    "result": "20 readable third-party plist index records; no related ownership/program/path or loaded label",
+    "evidence": "launchd.json",
+    "limit": "Apple system services and other users GUI domains not enumerated as project jobs"
+  },
+  {
+    "entry": "GitHub Actions workflows API DaNN-55/loop-control",
+    "result": "total_count 0",
+    "evidence": "github-workflows.json",
+    "limit": "Current repository only; not organization-wide or arbitrary cloud schedulers"
+  },
+  {
+    "entry": "Codex automation_update discovered; ~/.codex/automations/*/automation.toml index",
+    "result": "local configCount 0; no matching ID to view",
+    "evidence": "codex-automation-index.json",
+    "limit": "No global enumeration of cloud automations or arbitrary thread heartbeats; no all-account-zero claim"
+  },
+  {
+    "entry": "running app PID81218 listener/cwd/db connections and fixed runtime release",
+    "result": "current service linked to validated loop-control-local-postgres 127.0.0.1:54329 loop_control",
+    "evidence": "process-identity.json",
+    "limit": "No login, secret hydration or mutable readDeployment calls"
+  },
+  {
+    "entry": "automation_plans/jobs/attempts, task_runs, notification ledger; related source and runtime compiled cadence",
+    "result": "strict read-only repeatable snapshot and selected metadata; no job RPCs invoked",
+    "evidence": "monthly-audit.json",
+    "limit": "Retained ledger counts are not completeness proof for the whole past month; scan counts not durably cumulative"
+  },
+  {
+    "entry": "src/scripts timer search excluding tests, fixtures, preserved demos and upstream components",
+    "result": "service scheduling families + conditional UI polling + lease/deadline lifecycle reviewed",
+    "evidence": "timer-locations.txt",
+    "limit": "Source conditions do not prove every UI timer currently mounted; unrelated personal files not traversed"
+  }
+]

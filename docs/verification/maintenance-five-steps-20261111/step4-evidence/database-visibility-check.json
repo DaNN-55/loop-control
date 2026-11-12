@@ -1,0 +1,46 @@
+{
+  "database": "loop_control",
+  "user": "postgres",
+  "sessionUser": "postgres",
+  "superuser": true,
+  "rowSecurity": "on",
+  "readOnly": "on",
+  "connections": [
+    {
+      "usename": "loop_app",
+      "datname": "loop_control",
+      "application_name": "",
+      "backend_type": "client backend",
+      "state": "idle",
+      "count": 2
+    },
+    {
+      "usename": "loop_worker",
+      "datname": "loop_control",
+      "application_name": "",
+      "backend_type": "client backend",
+      "state": "idle",
+      "count": 2
+    },
+    {
+      "usename": "postgres",
+      "datname": "loop_control",
+      "application_name": "psql",
+      "backend_type": "client backend",
+      "state": "active",
+      "count": 1
+    }
+  ],
+  "scriptProductionEnabled": 0,
+  "publicTableCounts": {
+    "accounts": 0,
+    "episodes": 0,
+    "tasks": 0,
+    "task_runs": 0
+  },
+  "automationAllTime": {
+    "plans": 1,
+    "jobs": 0,
+    "attempts": 0
+  }
+}

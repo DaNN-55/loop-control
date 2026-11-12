@@ -1,0 +1,11 @@
+{
+  "method": "lstat metadata only: dev/inode/mode/size/mtime; no target contents or hashes read",
+  "trackedPathCount": 22288,
+  "changedMetadata": [],
+  "onlyTaskOwnedReportEvidenceAndScriptWritten": true,
+  "targetsDeleted": 0,
+  "servicesStopped": 0,
+  "worktreesRemoved": 0,
+  "branchesDeleted": 0,
+  "logsOpened": 0
+}

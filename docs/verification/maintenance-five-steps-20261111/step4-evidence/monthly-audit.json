@@ -1,0 +1,35 @@
+{
+  "database": "loop_control",
+  "transactionReadOnly": "on",
+  "window": {
+    "since": "2026-10-11T16:07:36.180286+00:00",
+    "until": "2026-11-11T16:07:36.180286+00:00",
+    "sinceShanghai": "2026-10-12T00:07:36.180286",
+    "untilShanghai": "2026-11-12T00:07:36.180286",
+    "definition": "rolling one calendar month; [since, until)"
+  },
+  "plans": [
+    {
+      "kind": "health",
+      "timezone": "Asia/Shanghai",
+      "next_due_at": "2026-11-12T01:00:00+00:00"
+    }
+  ],
+  "jobsInWindow": [],
+  "attemptsInWindow": [],
+  "allTimeCurrentAutomation": {
+    "jobs": 0,
+    "firstDue": null,
+    "lastDue": null
+  },
+  "latestCompletedAttempts": [],
+  "historicalAutomationExcluded": {
+    "jobs": 0,
+    "firstDue": null,
+    "lastDue": null
+  },
+  "notificationsInWindow": [],
+  "workerRunsInWindow": [],
+  "workerTasksCurrent": [],
+  "currentNotificationsOutstanding": 0
+}

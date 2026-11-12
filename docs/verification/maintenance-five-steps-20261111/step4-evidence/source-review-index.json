@@ -1,0 +1,51 @@
+{
+  "nativeAutomation": [
+    "src/local-app/nativeAutomation.ts",
+    "scripts/runtime/application.mjs",
+    "db/local/036-native-automation.sql",
+    "db/local/037-automation-attempts.sql",
+    "db/local/062-isolate-historical-automation.sql"
+  ],
+  "worker": [
+    "src/orchestration/workerScheduler.ts",
+    "src/orchestration/workerDispatch.ts",
+    "src/local-app/localWorkerService.ts",
+    "src/local-app/localWorkerCli.ts"
+  ],
+  "continuation": [
+    "src/local-app/scriptProductionRunner.ts",
+    "src/local-app/episodeCommands.ts"
+  ],
+  "consumers": [
+    "src/local-app/LocalSystemStatus.tsx",
+    "src/local-app/runtimeStatus.ts",
+    "src/orchestration/operationsEvidence.ts",
+    "src/orchestration/notificationConsumer.ts",
+    "src/local-app/OwnerPreferencesDialog.tsx",
+    "db/local/138-owner-notification-channels.sql",
+    "scripts/storage/restore.mjs",
+    "scripts/storage/native-backup-format.mjs"
+  ],
+  "uiPolling": [
+    "src/local-app/LocalCatalogApp.tsx",
+    "src/local-app/LocalEpisodeDetail.tsx",
+    "src/local-app/useWorkspaceReading.ts",
+    "src/local-app/ProductionWorkspacePanel.tsx",
+    "src/local-app/WorkspaceVisualPreparation.tsx",
+    "src/local-app/WorkspacePexelsSearch.tsx",
+    "src/local-app/WorkspaceAudioPanel.tsx",
+    "src/local-app/WorkspaceDeliveryPanel.tsx",
+    "src/local-app/MediaRootSettingsDialog.tsx",
+    "scripts/openchatcut-embed-client.mjs"
+  ],
+  "lifecycle": [
+    "src/local-app/SecretDetailPane.tsx",
+    "src/local-app/EmbeddedStudioHost.tsx",
+    "src/local-app/providerNetwork.ts",
+    "src/worker/videoTaskExecution.ts",
+    "src/worker/whisperxAlignment.ts",
+    "scripts/runtime/codex.mjs",
+    "scripts/runtime/start.mjs",
+    "scripts/runtime/stop.mjs"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "directCount": 24,
+  "lockPackageEntries": 306,
+  "installedLockPackages": 223,
+  "manifestSha256": "5b55b46759e687dce9731d853b89892f466ad0d60e13ea0e7585263b9f406179",
+  "lockSha256": "57c7f1092fc25a68ebfa1c55a01ab5607a6e7c8414df2ff79833580ce224c876",
+  "measurement": {
+    "entries": 32882,
+    "uniqueInodes": 32882,
+    "regularFileLogicalBytes": 183200237,
+    "allocatedBytesFromStatBlocks": 279494656
+  }
+}

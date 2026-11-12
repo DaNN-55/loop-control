@@ -1,0 +1,188 @@
+{
+  "baseline": "aa404667e949225c8fad1dae2e2aed56887cb357",
+  "step1": {
+    "accepted": true,
+    "review": [
+      "完整源码差异",
+      "回收站实际消费者与ADR0042",
+      "当前导航与符号消费者",
+      "AST/可达性扫描证据与覆盖矩阵",
+      "基线及修改后失败/补验日志",
+      "独立71文件SHA256前后比较",
+      "14删1增/0完整文件删除",
+      "4项保留冲突与建议/实际影响"
+    ],
+    "sourceHashes": {
+      "src/local-app/LocalDeletionRecovery.tsx": "1493c1e99a310194f46730815346f6399340d98e72a2888ee7d4ee3f850955dd",
+      "src/workspace/WorkspaceViews.tsx": "afd48d8c72878f6f7ad0b3ade25bb5eeb01de4f80e8287d284c8f4f3328cf5e9"
+    }
+  },
+  "step2": {
+    "accepted": true,
+    "groups": 6,
+    "productionNetLines": -16,
+    "testNetLines": 113,
+    "review": [
+      "27产品源完整差异及4测试文件",
+      "逐组24/26/18/3/24与最终12项日志",
+      "前五组默认292文件2116通过",
+      "真实回执HTTP/PG2条及最终音频字幕HTTP/PG/files3条",
+      "canonical9模块21调用与raw5模块7调用旧新展开证明",
+      "固定旧字节向量及异常保护",
+      "111组分类与2组近似候选",
+      "主审要求补齐无真实冲突的raw组，已实施",
+      "两个隔离容器0测试库0连接后退出回执"
+    ],
+    "verificationLimit": "最终第六组后未重跑无关默认全量，最终定向集成24条未选中，未声称当前一次全量全通过",
+    "sourceHashes": {
+      "scripts/storage/backup-overlap.test.mjs": "0981d424f913f733bd175b9557759d52df99832580703f3922b5101f6378b81d",
+      "scripts/storage/backup.mjs": "f8051075ce6c014ecf030aa005db7895f1b6f95a268b0df8a643f300d261810d",
+      "src/connections/ConnectionDraftSession.tsx": "b36fbc94cf3f9dce120bb166cd0e497221ffd526aca41e046acc4e23c437db53",
+      "src/connections/ConnectionWorkspace.tsx": "3249ae7b7ce7f89e3855aa0ca6632c14ee75b2b87ee3dbf8e99c3df144cdbec2",
+      "src/local-app/CompactConnectionWorkspace.tsx": "c3d5c40c606336342902bbda8e689fd4511ef26f417b92c273f3ced1a311f97f",
+      "src/local-app/LocalDeletionRecovery.tsx": "1493c1e99a310194f46730815346f6399340d98e72a2888ee7d4ee3f850955dd",
+      "src/local-app/accountAssetRoots.ts": "e85f74db48c6b32aaac246b6bd4d67dc310117d8a98530c22dec717a9e721db8",
+      "src/local-app/accountCommands.ts": "135010c7993fbf5eb8e90460eac487f524e8ed7ae5069f8c999abc0ea54ae0e1",
+      "src/local-app/commandReceipt.ts": "2d96ad7d1f6f7410bd55c217080c9384b1971cc5be7e587d566cef7d3aa835f1",
+      "src/local-app/configurationCommands.test.ts": "35fd96e8ce19e5d3babdffc5a464bfba8448bc1956db0cbaac0fc52efb33bdc1",
+      "src/local-app/configurationCommands.ts": "8ed8218e17230e9c416ff8b19941297c1c377eee4d15152681e33d758855c225",
+      "src/local-app/episodeCollection.ts": "5cc659ec1f2194c4ccd8ce6e18a0b1472b1341027548fb3a7b439e00bcfb4f64",
+      "src/local-app/episodeCommands.ts": "c1e07028df9a1e26cb2a747114798b0d2cea3c8d1ed7f436928bbd47804561d5",
+      "src/local-app/episodeLifecycle.ts": "26cbb247d482b53d77ecf1efb884de38783730bc628205b3e29a90b9e1da49b3",
+      "src/local-app/historyEpisodeDeletion.test.ts": "d36dfdbf9a12224d121d873e348784776ecff3ae6c71401473be4ac13930763e",
+      "src/local-app/historyEpisodeDeletion.ts": "a24c78babafe5ca0e14e5765d720bb5c888e369abe4db20ee0ace952639e4cbb",
+      "src/local-app/mediaPaths.ts": "6c8815f6606865d7d4a8d4a92fe3be84213f4f7cdfbe48c157c620eb7dd43ea7",
+      "src/local-app/mediaRootMigration.ts": "69863b38e09e2d8b0d0a44c3fdf2663d37f695299f4d0b665cd55fa92e649275",
+      "src/local-app/mediaRootSettings.ts": "3e3890b47b8391e2810dd3938f8c2b52418a62b59a9721cfc274bbb61c5436f0",
+      "src/local-app/recycleBin.ts": "05ba0f698688c7bdecfc44e94cd634467c6e6c1e572d84a64e9a3d165f4c1b30",
+      "src/local-app/scriptProductionStore.ts": "8a1e6011ebc607383305b66f220901e606e946c6424fb82ffd09c97fcf70a177",
+      "src/local-app/studioCommands.ts": "5a6fb1dd9396917cbedd481298ccbc035d57561dd7bebe20654e8d3becd629b0",
+      "src/local-app/workspaceAudio.ts": "6fe05c4359852483f52b7618373af12e443ed4c25fb9cd3140c5f5c86ca46bb7",
+      "src/local-app/workspaceCaptionsCommands.ts": "ea5197f6eee86fca542aa8329533108a0adb009ec1fba3c9405ae60ee6a87d7b",
+      "src/local-app/workspaceNarration.ts": "cbdd449c97751b5a310c2d08a81b4b161f18606509bea9b3426f1f2e7eaf9304",
+      "src/local-app/workspaceVisualCandidates.ts": "426039344cd3953562b44a362db6730d6eb3bcba878d0cf39b159b404440cc49",
+      "src/worker/contracts.ts": "2fe3906fc76f3b93bbcc9f7bb9bb5fa6ea928ac7fe04b138ede46815eec06d83",
+      "src/worker/fileSha256.test.ts": "1298c8880b6186f570301684b16d8d1b316555881826d582c4a6ad751426599a",
+      "src/worker/fileSha256.ts": "96bcbba344b071d64a9c2b307880b66ad05c53db8bea9db8f95e3ce8c8cf53aa",
+      "src/worker/openchatcutStudio.ts": "4dfed2be8c93abef4060bf9069192452e4c4b19b493ba7db09232aa4b57ae906",
+      "src/worker/runtimeEvidence.ts": "31d5d1a3f2b42f13e9bfbb7ab19e06e4bf3458c2a0b3306edb7c5b0b7c392e82",
+      "src/worker/runtimePreflight.ts": "40dab6226260164ca411714bccf92e2effee642c10c8221f6082aefcb77f1841",
+      "src/workspace/WorkspaceViews.tsx": "afd48d8c72878f6f7ad0b3ade25bb5eeb01de4f80e8287d284c8f4f3328cf5e9"
+    },
+    "packageHashes": {
+      "package.json": "5b55b46759e687dce9731d853b89892f466ad0d60e13ea0e7585263b9f406179",
+      "package-lock.json": "57c7f1092fc25a68ebfa1c55a01ab5607a6e7c8414df2ff79833580ce224c876"
+    }
+  },
+  "step3": {
+    "accepted": true,
+    "directDependencies": 24,
+    "removed": 0,
+    "replacementLines": 0,
+    "bytesSaved": 0,
+    "review": [
+      "逐包24项消费者表与源码/CLI/CSS/类型入口",
+      "实际安装223与锁条目306的区分",
+      "前后npm图/清单/锁/逻辑及分配字节相同",
+      "独立核对前项33源码测试文件和清单锁SHA保持",
+      "4项替代冲突与建议/实际影响",
+      "无修改未重复测试的验证边界"
+    ]
+  },
+  "step4": {
+    "accepted": true,
+    "serviceResponsibilities": 6,
+    "disabledOrRetimed": 0,
+    "review": [
+      "6类任务用途/频率/消费者/关闭方法及连带影响",
+      "cron/20可读非Appleplist/GitHub API0/本地Codex0范围边界",
+      "主Agent独立lsof/ps核对81218进程与5174端口",
+      "主Agent独立REPEATABLE READ READ ONLY查询：loop_control/postgres/superuser/on/jobs0/attempts0/health Nov12 09上海",
+      "月窗口/计划与尝试区分/当前保留记录0不外推完整历史",
+      "自动备份false和无归档的实际影响",
+      "无写库/启停/作业执行/秘密读取，原有35源码与清单指纹保持"
+    ],
+    "parallelOriginalChanges": [
+      "src/local-app/SystemStatusDrawer.css",
+      "src/styles.css",
+      "src/ui/impeccable/maintenance.css"
+    ]
+  },
+  "step5": {
+    "accepted": true,
+    "safeEstimatedAllocatedBytes": 81920,
+    "safeLogicalBytes": 74079,
+    "actualDeletedBytes": 0,
+    "scriptExecuted": false,
+    "dryRunExecuted": false,
+    "review": [
+      "2工作树分支/upstream/未提交/远端基线与当前活动状态",
+      "日志整体元数据/硬链接去重/不按项目或月拆分",
+      "主树活动缓存/构建/运行包review-first",
+      "2固定隔离缓存再生/元数据/无相关工具与打开句柄证据",
+      "完整脚本静态审查：固定allowlist、身份/源码路径集合/快照/进程/符号链接检查",
+      "主Agent独立bash-n和嵌入Python AST语法，静态解析FROZEN换行/路径/本机fd-rmtree支持",
+      "22288跟踪路径元数据不变/不读取盘点正文",
+      "脚本实际删除与资源竞态未E2E验证，当前任务明确不执行"
+    ]
+  },
+  "approvedFollowup20261112": {
+    "acceptedItems": [
+      1,
+      2,
+      3,
+      4,
+      14
+    ],
+    "deferredItems": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      15
+    ],
+    "retirementOrder": [
+      "src/clipTiming.ts",
+      "src/shotAcceptance.ts",
+      "src/reviews/materialImport.ts",
+      "src/worker/manualMaterialChecklist.ts"
+    ],
+    "perItemCurrentTestsPassed": [
+      4,
+      12,
+      16,
+      23
+    ],
+    "eachItemBuildPassed": true,
+    "protectedOtherFilesUnchanged": 1141,
+    "parallelCssUnchanged": true,
+    "deletedFiles": 8,
+    "deletedProductionLines": 190,
+    "deletedTestLines": 105,
+    "retiredPassingTests": 10,
+    "finalDefault": {
+      "files": 288,
+      "tests": 2112,
+      "failed": 0,
+      "skipped": 0
+    },
+    "sourceCommitIds": [
+      "3c1028b6fdbd9ef71ad202c98de2202a4f48610e",
+      "e7021967364b84617a1c25b5472062ece6529697",
+      "d95ee735c9135ae0025f3534532e40fb56df5c74",
+      "fad2671754ff2bbc7f6f3dc95d57227a6e4b816c",
+      "bc15f72e07aeae1a4aa0b0f1fcb56f05581d1a48",
+      "991ab681790f7f275dd45cb066a6c6e6e54ba8bf"
+    ],
+    "documentationCommit": "本文件所属后续文档提交",
+    "merged": false,
+    "pushed": false,
+    "cleanupScriptExecuted": false,
+    "note": "本对象是用户新授权后的补充，前面的五项验收数据保留原时间点"
+  }
+}

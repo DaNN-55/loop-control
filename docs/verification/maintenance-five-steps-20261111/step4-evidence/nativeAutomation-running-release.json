@@ -1,0 +1,29 @@
+{
+  "path": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/2557fbeb5f3e846ff4b521f91d365ceb532c50d491fbcb36eb2b9f76c24698a2/dist/local-app/local-app/nativeAutomation.js",
+  "lines": [
+    {
+      "line": 36,
+      "text": "const kinds = options.backupsEnabled === false ? ['health'] : ['health', 'backup'];"
+    },
+    {
+      "line": 54,
+      "text": "await c.query(\"INSERT INTO local_identity.automation_plans(kind,next_due_at) SELECT kind,(date_trunc('day',$1::timestamptz AT TIME ZONE 'Asia/Shanghai')+interval '9 hours') AT TIME ZONE 'Asia/Shanghai' FROM unnest($2::text[]) kind ON CONFLICT DO NOTHING\", [at, kinds]);"
+    },
+    {
+      "line": 60,
+      "text": "due = new Date(due.getTime() + 86400000);"
+    },
+    {
+      "line": 98,
+      "text": "leaseLost(); }).catch(() => { leaseLost(); }).finally(() => { renewing = undefined; }); }, 5000);"
+    },
+    {
+      "line": 160,
+      "text": "const interval = options.intervalMs ?? 4000;"
+    },
+    {
+      "line": 182,
+      "text": "return { observedAt: observedAt.toISOString(), automation: { stopped, lastScanAt, lastError, timezone: 'Asia/Shanghai', hour: 9, intervalMs: interval, n8nRequired: false, backupsEnabled: options.backupsEnabled !== false },"
+    }
+  ]
+}

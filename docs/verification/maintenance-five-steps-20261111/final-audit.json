@@ -1,0 +1,101 @@
+{
+  "atShanghai": "2026-11-12T00:32:53.732456+08:00",
+  "allFiveStagesAccepted": true,
+  "requirements": [
+    {
+      "requirement": "按1至5严格串行派发；每项主Agent验收后继续",
+      "result": "proved",
+      "evidence": "parent-acceptance.json及PLAN顶部已完成清单"
+    },
+    {
+      "requirement": "以上传完成版本为固定基线，在隔离共同新分支累积，不覆盖主树",
+      "result": "proved",
+      "evidence": "本地/远端aa404667；隔离codex/maintenance-five-steps-20261111；主树仅3并行CSS"
+    },
+    {
+      "requirement": "死代码消费者/入口/测试/动态例外/分批验证和删除计量",
+      "result": "proved",
+      "evidence": "step1-dead-code.md及step1-evidence；2声明/0完整文件/净减13行；准备遗漏失败与补验均留存"
+    },
+    {
+      "requirement": "等价重复实现逐组归并、完整调用迁移和每组测试",
+      "result": "proved",
+      "evidence": "step2-duplicates.md及111候选索引；主审补齐第6组；canonical/raw旧新展开、逐组及真实集成"
+    },
+    {
+      "requirement": "全部直接依赖及CLI/CSS/类型入口、替代和安装体积前后",
+      "result": "proved",
+      "evidence": "step3-dependencies.md；24项全部有用，0移除/0自写/0收益，npm树和字节数一致"
+    },
+    {
+      "requirement": "项目定时任务用途/频率/月度运行失败/消费者/重叠/分类/关闭方法",
+      "result": "completed_with_authorized_skips",
+      "evidence": "step4-schedules.md；6职责；只读当前保留台账0，完整月历史与累计扫描未知已附建议/影响；其他用户/任意云入口边界明确"
+    },
+    {
+      "requirement": "只读空间元数据；仅整体Codex日志；工作树未提交/未推送保护；候选分类与待审脚本",
+      "result": "proved",
+      "evidence": "step5-storage.md；2工作树review-first；日志只总体；2缓存估计81920分配字节，脚本静态检查"
+    },
+    {
+      "requirement": "冲突逐项附建议与实际影响并跳过，不代替用户选择",
+      "result": "proved",
+      "evidence": "5份阶段报告问题表及REPORT待决定汇总"
+    },
+    {
+      "requirement": "不提交/推送/合并，不修改调度、不删除日志缓存或工作树、不执行脚本",
+      "result": "proved",
+      "evidence": "两树暂存空/HEAD不变/远端任务分支不存在；各阶段执行记录、只读事务/0执行/0删除；脚本仅bash-n与AST"
+    },
+    {
+      "requirement": "逐要求完成审计与报告路径核对",
+      "result": "proved",
+      "evidence": "本文件、总报告、分阶段验收及下列本地链接检查"
+    }
+  ],
+  "repository": {
+    "baseline": "aa404667e949225c8fad1dae2e2aed56887cb357",
+    "originalBranch": "main",
+    "isolatedBranch": "codex/maintenance-five-steps-20261111",
+    "originalAndIsolatedHeadUnchanged": true,
+    "bothIndexesEmpty": true,
+    "remoteMainUnchanged": true,
+    "remoteTaskBranchAbsent": true,
+    "originalParallelChanges": [
+      "src/local-app/SystemStatusDrawer.css",
+      "src/styles.css",
+      "src/ui/impeccable/maintenance.css"
+    ],
+    "trackedSourceTestPathsChanged": 30,
+    "newSourceTestPaths": [
+      "scripts/storage/backup-overlap.test.mjs",
+      "src/worker/fileSha256.test.ts",
+      "src/worker/fileSha256.ts"
+    ],
+    "sourceWhitespaceCheckExit": 0,
+    "historicalPlanByteIdentical": true
+  },
+  "productNetLines": -29,
+  "cleanupScript": {
+    "mode": "0600",
+    "bashSyntax": "passed",
+    "embeddedPythonSyntax": "passed",
+    "fullStaticReview": "passed",
+    "bodyExecuted": false,
+    "dryRunExecuted": false,
+    "actualDeletedBytes": 0,
+    "e2eDeletionAndConcurrencyValidated": false
+  },
+  "importantLimits": [
+    "2116默认全量是第2项前五组的时间点，最终第6组12项与3条选定真实集成另列，24条未选中",
+    "完整历史/SDK/所有故障组合不是本次验证范围",
+    "月度完整保留连续性及累计扫描次数未知，不把台账0当整月0次",
+    "空间估计不是保证回收；未执行待审脚本；日志和工作树保留"
+  ],
+  "documentChecks": {
+    "reportsChecked": 6,
+    "missingLocalLinks": [],
+    "allFivePlanStepsChecked": true,
+    "finalAuditOwnFilePresent": true
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "flags": [
+    {
+      "file": "src/local-app/mediaRootRuntime.fixture.ts",
+      "line": 30,
+      "text": "loseCommitEnabled=false"
+    }
+  ],
+  "constantTests": []
+}

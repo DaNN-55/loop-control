@@ -1,0 +1,6 @@
+{
+  "container": "loop-maint2-c010e10acd42",
+  "inspectExitCode": 1,
+  "removed": true,
+  "stderr": "error: no such object: loop-maint2-c010e10acd42"
+}

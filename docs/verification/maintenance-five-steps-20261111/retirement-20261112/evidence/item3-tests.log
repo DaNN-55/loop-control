@@ -1,0 +1,14 @@
+npm notice run loop-control@0.1.0 test
+npm notice run vitest run --exclude '**/*.integration.test.ts' src/local-app/WorkspaceMaterialShelf.test.tsx src/local-app/ProductionWorkspaceManualUpload.test.tsx src/local-app/WorkspaceVisualPreparation.upload.test.tsx
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/maintenance-20261111/loop-control
+
+ ✓ src/local-app/WorkspaceMaterialShelf.test.tsx (4 tests) 179ms
+ ✓ src/local-app/ProductionWorkspaceManualUpload.test.tsx (1 test) 169ms
+ ✓ src/local-app/WorkspaceVisualPreparation.upload.test.tsx (11 tests) 544ms
+
+ Test Files  3 passed (3)
+      Tests  16 passed (16)
+   Start at  08:37:16
+   Duration  1.67s (transform 474ms, setup 22ms, collect 2.26s, tests 892ms, environment 416ms, prepare 88ms)
+

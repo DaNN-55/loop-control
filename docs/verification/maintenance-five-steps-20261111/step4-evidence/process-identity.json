@@ -1,0 +1,52 @@
+[
+  {
+    "command": [
+      "lsof",
+      "-nP",
+      "-iTCP:5174",
+      "-sTCP:LISTEN"
+    ],
+    "exitCode": 0,
+    "stdout": "COMMAND   PID USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME\nnode    81218  dan   29u  IPv4 0x57f4268320b1f335      0t0  TCP 127.0.0.1:5174 (LISTEN)\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "lsof",
+      "-a",
+      "-p",
+      "81218",
+      "-d",
+      "cwd",
+      "-Fn"
+    ],
+    "exitCode": 0,
+    "stdout": "p81218\nfcwd\nn/Users/dan/Programs/loop-control\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "lsof",
+      "-a",
+      "-p",
+      "81218",
+      "-iTCP",
+      "-nP"
+    ],
+    "exitCode": 0,
+    "stdout": "COMMAND   PID USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME\nnode    81218  dan   26u  IPv4 0x39b2a660b2508983      0t0  TCP 127.0.0.1:52471->127.0.0.1:54329 (ESTABLISHED)\nnode    81218  dan   27u  IPv4 0xd1fafe953312807e      0t0  TCP 127.0.0.1:52473->127.0.0.1:54329 (ESTABLISHED)\nnode    81218  dan   29u  IPv4 0x57f4268320b1f335      0t0  TCP 127.0.0.1:5174 (LISTEN)\nnode    81218  dan   30u  IPv4 0x3a4fbb87de9f9ee9      0t0  TCP 127.0.0.1:54103->127.0.0.1:54329 (ESTABLISHED)\nnode    81218  dan   31u  IPv4 0xb2eb1caf715e13ef      0t0  TCP 127.0.0.1:53858->127.0.0.1:54329 (ESTABLISHED)\nnode    81218  dan   34u  IPv4 0xe86c599a495c94b8      0t0  TCP 127.0.0.1:5174->127.0.0.1:53134 (ESTABLISHED)\nnode    81218  dan   35u  IPv4 0xd267423aa8c47c0e      0t0  TCP 127.0.0.1:5174->127.0.0.1:52497 (ESTABLISHED)\nnode    81218  dan   37u  IPv4 0x131cace2e13a8e56      0t0  TCP 127.0.0.1:5174->127.0.0.1:52508 (ESTABLISHED)\nnode    81218  dan   39u  IPv4 0x82398f8fdba5921c      0t0  TCP 127.0.0.1:5174->127.0.0.1:52509 (ESTABLISHED)\nnode    81218  dan   40u  IPv4 0x1dc2062efeb5132c      0t0  TCP 127.0.0.1:5174->127.0.0.1:52525 (ESTABLISHED)\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "ps",
+      "-p",
+      "81218",
+      "-o",
+      "pid=,ppid=,comm=,lstart=,args="
+    ],
+    "exitCode": 0,
+    "stdout": "81218     1 /opt/homebrew/Ce Wed Nov 11 23:14:30 2026     /opt/homebrew/Cellar/node@24/24.20.0/bin/node /Users/dan/Programs/loop-control/node_modules/vite/bin/vite.js --config scripts/runtime/vite.config.mjs\n",
+    "stderr": ""
+  }
+]

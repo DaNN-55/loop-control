@@ -1,0 +1,266 @@
+{
+  "files": [
+    {
+      "file": "scripts/storage/backup-overlap.test.mjs",
+      "kind": "test",
+      "added": 19,
+      "removed": 0,
+      "net": 19,
+      "new": true
+    },
+    {
+      "file": "scripts/storage/backup.mjs",
+      "kind": "production",
+      "added": 2,
+      "removed": 2,
+      "net": 0,
+      "new": false
+    },
+    {
+      "file": "src/connections/ConnectionDraftSession.tsx",
+      "kind": "production",
+      "added": 2,
+      "removed": 1,
+      "net": 1,
+      "new": false
+    },
+    {
+      "file": "src/connections/ConnectionWorkspace.tsx",
+      "kind": "production",
+      "added": 4,
+      "removed": 5,
+      "net": -1,
+      "new": false
+    },
+    {
+      "file": "src/local-app/CompactConnectionWorkspace.tsx",
+      "kind": "production",
+      "added": 4,
+      "removed": 5,
+      "net": -1,
+      "new": false
+    },
+    {
+      "file": "src/local-app/accountAssetRoots.ts",
+      "kind": "production",
+      "added": 2,
+      "removed": 2,
+      "net": 0,
+      "new": false
+    },
+    {
+      "file": "src/local-app/accountCommands.ts",
+      "kind": "production",
+      "added": 2,
+      "removed": 3,
+      "net": -1,
+      "new": false
+    },
+    {
+      "file": "src/local-app/commandReceipt.ts",
+      "kind": "production",
+      "added": 2,
+      "removed": 3,
+      "net": -1,
+      "new": false
+    },
+    {
+      "file": "src/local-app/configurationCommands.test.ts",
+      "kind": "test",
+      "added": 67,
+      "removed": 1,
+      "net": 66,
+      "new": false
+    },
+    {
+      "file": "src/local-app/configurationCommands.ts",
+      "kind": "production",
+      "added": 3,
+      "removed": 1,
+      "net": 2,
+      "new": false
+    },
+    {
+      "file": "src/local-app/episodeCollection.ts",
+      "kind": "production",
+      "added": 2,
+      "removed": 2,
+      "net": 0,
+      "new": false
+    },
+    {
+      "file": "src/local-app/episodeCommands.ts",
+      "kind": "production",
+      "added": 2,
+      "removed": 2,
+      "net": 0,
+      "new": false
+    },
+    {
+      "file": "src/local-app/episodeLifecycle.ts",
+      "kind": "production",
+      "added": 1,
+      "removed": 3,
+      "net": -2,
+      "new": false
+    },
+    {
+      "file": "src/local-app/historyEpisodeDeletion.test.ts",
+      "kind": "test",
+      "added": 9,
+      "removed": 0,
+      "net": 9,
+      "new": false
+    },
+    {
+      "file": "src/local-app/historyEpisodeDeletion.ts",
+      "kind": "production",
+      "added": 3,
+      "removed": 4,
+      "net": -1,
+      "new": false
+    },
+    {
+      "file": "src/local-app/mediaPaths.ts",
+      "kind": "production",
+      "added": 1,
+      "removed": 0,
+      "net": 1,
+      "new": false
+    },
+    {
+      "file": "src/local-app/mediaRootMigration.ts",
+      "kind": "production",
+      "added": 5,
+      "removed": 6,
+      "net": -1,
+      "new": false
+    },
+    {
+      "file": "src/local-app/mediaRootSettings.ts",
+      "kind": "production",
+      "added": 2,
+      "removed": 3,
+      "net": -1,
+      "new": false
+    },
+    {
+      "file": "src/local-app/recycleBin.ts",
+      "kind": "production",
+      "added": 1,
+      "removed": 2,
+      "net": -1,
+      "new": false
+    },
+    {
+      "file": "src/local-app/scriptProductionStore.ts",
+      "kind": "production",
+      "added": 2,
+      "removed": 3,
+      "net": -1,
+      "new": false
+    },
+    {
+      "file": "src/local-app/studioCommands.ts",
+      "kind": "production",
+      "added": 1,
+      "removed": 3,
+      "net": -2,
+      "new": false
+    },
+    {
+      "file": "src/local-app/workspaceAudio.ts",
+      "kind": "production",
+      "added": 2,
+      "removed": 3,
+      "net": -1,
+      "new": false
+    },
+    {
+      "file": "src/local-app/workspaceCaptionsCommands.ts",
+      "kind": "production",
+      "added": 1,
+      "removed": 2,
+      "net": -1,
+      "new": false
+    },
+    {
+      "file": "src/local-app/workspaceNarration.ts",
+      "kind": "production",
+      "added": 1,
+      "removed": 3,
+      "net": -2,
+      "new": false
+    },
+    {
+      "file": "src/local-app/workspaceVisualCandidates.ts",
+      "kind": "production",
+      "added": 2,
+      "removed": 3,
+      "net": -1,
+      "new": false
+    },
+    {
+      "file": "src/worker/contracts.ts",
+      "kind": "production",
+      "added": 1,
+      "removed": 4,
+      "net": -3,
+      "new": false
+    },
+    {
+      "file": "src/worker/fileSha256.test.ts",
+      "kind": "test",
+      "added": 19,
+      "removed": 0,
+      "net": 19,
+      "new": true
+    },
+    {
+      "file": "src/worker/fileSha256.ts",
+      "kind": "production",
+      "added": 8,
+      "removed": 0,
+      "net": 8,
+      "new": true
+    },
+    {
+      "file": "src/worker/openchatcutStudio.ts",
+      "kind": "production",
+      "added": 1,
+      "removed": 7,
+      "net": -6,
+      "new": false
+    },
+    {
+      "file": "src/worker/runtimeEvidence.ts",
+      "kind": "production",
+      "added": 1,
+      "removed": 1,
+      "net": 0,
+      "new": false
+    },
+    {
+      "file": "src/worker/runtimePreflight.ts",
+      "kind": "production",
+      "added": 1,
+      "removed": 2,
+      "net": -1,
+      "new": false
+    }
+  ],
+  "summary": {
+    "production": {
+      "files": 27,
+      "added": 59,
+      "removed": 75,
+      "net": -16
+    },
+    "test": {
+      "files": 4,
+      "added": 114,
+      "removed": 1,
+      "net": 113
+    }
+  }
+}

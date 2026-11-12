@@ -1,0 +1,2794 @@
+{
+  "scope": "初始精确 token 组；字符串引号未统一，参数标识符归一化会制造 shorthand 假阳性。扫描结果不是等价证明。",
+  "groupCount": 111,
+  "categories": {
+    "merged": 6,
+    "inline-callback-or-closure": 91,
+    "inline-process-closure": 1,
+    "historical-contract": 1,
+    "closure-state": 4,
+    "host-boundary": 1,
+    "domain-boundary": 1,
+    "dependency-cycle": 1,
+    "bootstrap-boundary": 3,
+    "scanner-shorthand-false-positive": 1,
+    "input-and-bootstrap-contract": 1
+  },
+  "groups": [
+    {
+      "id": 0,
+      "tokens": 78,
+      "locations": [
+        {
+          "file": "src/worker/contracts.ts",
+          "name": "isConnectionId",
+          "line": 899,
+          "endLine": 901
+        },
+        {
+          "file": "src/worker/runtimeEvidence.ts",
+          "name": "isConnectionId",
+          "line": 24,
+          "endLine": 26
+        },
+        {
+          "file": "src/worker/runtimePreflight.ts",
+          "name": "isConnectionId",
+          "line": 429,
+          "endLine": 429
+        }
+      ],
+      "category": "merged",
+      "conclusion": "S2-M01：Worker 连接版本 ID 校验，共用 runtimeEvidence.isConnectionId。",
+      "issue": null
+    },
+    {
+      "id": 1,
+      "tokens": 39,
+      "locations": [
+        {
+          "file": "src/local-app/WorkspaceCaptionsPanel.tsx",
+          "name": "anonymous",
+          "line": 39,
+          "endLine": 39
+        },
+        {
+          "file": "src/local-app/WorkspaceCaptionsPanel.tsx",
+          "name": "anonymous",
+          "line": 53,
+          "endLine": 53
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 2,
+      "tokens": 36,
+      "locations": [
+        {
+          "file": "src/local-app/historyEpisodeDeletion.ts",
+          "name": "hashFile",
+          "line": 26,
+          "endLine": 26
+        },
+        {
+          "file": "src/worker/openchatcutStudio.ts",
+          "name": "fileSha256",
+          "line": 404,
+          "endLine": 408
+        }
+      ],
+      "category": "merged",
+      "conclusion": "S2-M04：流式文件 SHA-256，共用 worker/fileSha256。",
+      "issue": null
+    },
+    {
+      "id": 3,
+      "tokens": 36,
+      "locations": [
+        {
+          "file": "src/local-app/localWorkerService.ts",
+          "name": "kill",
+          "line": 48,
+          "endLine": 48
+        },
+        {
+          "file": "src/local-app/nativeBackup.ts",
+          "name": "kill",
+          "line": 6,
+          "endLine": 6
+        }
+      ],
+      "category": "inline-process-closure",
+      "conclusion": "kill 捕获各自 child。终止/升级定时器、abort监听和结果收集属于不同生命周期；两个简单局部闭包沿用单次使用内联规则，未提取通用进程管理层。",
+      "issue": "S2-R01"
+    },
+    {
+      "id": 4,
+      "tokens": 32,
+      "locations": [
+        {
+          "file": "src/platform/ConfigurationForms.tsx",
+          "name": "anonymous",
+          "line": 135,
+          "endLine": 135
+        },
+        {
+          "file": "src/platform/ConfigurationForms.tsx",
+          "name": "anonymous",
+          "line": 138,
+          "endLine": 138
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 5,
+      "tokens": 32,
+      "locations": [
+        {
+          "file": "src/worker/openchatcutStudio.ts",
+          "name": "anonymous",
+          "line": 301,
+          "endLine": 301
+        },
+        {
+          "file": "src/worker/openchatcutStudio.ts",
+          "name": "anonymous",
+          "line": 302,
+          "endLine": 302
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 6,
+      "tokens": 31,
+      "locations": [
+        {
+          "file": "src/local-app/nativeAutomation.ts",
+          "name": "anonymous",
+          "line": 122,
+          "endLine": 122
+        },
+        {
+          "file": "src/orchestration/operationsEvidence.ts",
+          "name": "anonymous",
+          "line": 33,
+          "endLine": 33
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 7,
+      "tokens": 30,
+      "locations": [
+        {
+          "file": "src/local-app/WorkspaceGenerationComposer.tsx",
+          "name": "anonymous",
+          "line": 25,
+          "endLine": 25
+        },
+        {
+          "file": "src/local-app/WorkspaceMaterialDrop.tsx",
+          "name": "anonymous",
+          "line": 54,
+          "endLine": 54
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 8,
+      "tokens": 30,
+      "locations": [
+        {
+          "file": "src/worker/manualMaterialChecklist.ts",
+          "name": "record",
+          "line": 57,
+          "endLine": 59
+        },
+        {
+          "file": "src/worker/runtimePreflight.ts",
+          "name": "record",
+          "line": 426,
+          "endLine": 426
+        }
+      ],
+      "category": "historical-contract",
+      "conclusion": "manualMaterialChecklist 仅测试消费，已列第1项待决定；不把其历史读取契约与当前 preflight 绑成新的共享层。",
+      "issue": "S2-R02"
+    },
+    {
+      "id": 9,
+      "tokens": 29,
+      "locations": [
+        {
+          "file": "src/connections/ConnectionWorkspace.tsx",
+          "name": "connectionBaseline",
+          "line": 222,
+          "endLine": 222
+        },
+        {
+          "file": "src/local-app/CompactConnectionWorkspace.tsx",
+          "name": "signature",
+          "line": 29,
+          "endLine": 29
+        }
+      ],
+      "category": "merged",
+      "conclusion": "S2-M02：连接草稿基线，共用 ConnectionDraftSession.connectionDraftBaseline。",
+      "issue": null
+    },
+    {
+      "id": 10,
+      "tokens": 29,
+      "locations": [
+        {
+          "file": "src/operations/OperationsWorkspace.tsx",
+          "name": "anonymous",
+          "line": 166,
+          "endLine": 166
+        },
+        {
+          "file": "src/workspace/WorkspaceViews.tsx",
+          "name": "anonymous",
+          "line": 222,
+          "endLine": 222
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 11,
+      "tokens": 28,
+      "locations": [
+        {
+          "file": "src/local-app/localRoute.ts",
+          "name": "anonymous",
+          "line": 155,
+          "endLine": 155
+        },
+        {
+          "file": "src/local-app/localRoute.ts",
+          "name": "anonymous",
+          "line": 170,
+          "endLine": 170
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 12,
+      "tokens": 27,
+      "locations": [
+        {
+          "file": "src/local-app/WorkspaceAudioPanel.tsx",
+          "name": "anonymous",
+          "line": 180,
+          "endLine": 180
+        },
+        {
+          "file": "src/local-app/WorkspaceSoundRecords.tsx",
+          "name": "anonymous",
+          "line": 20,
+          "endLine": 20
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 13,
+      "tokens": 26,
+      "locations": [
+        {
+          "file": "src/local-app/LocalDeletionRecovery.tsx",
+          "name": "anonymous",
+          "line": 12,
+          "endLine": 12
+        },
+        {
+          "file": "src/local-app/RecycleBinPanel.tsx",
+          "name": "anonymous",
+          "line": 26,
+          "endLine": 26
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 14,
+      "tokens": 25,
+      "locations": [
+        {
+          "file": "src/local-app/LocalCatalogApp.tsx",
+          "name": "anonymous",
+          "line": 239,
+          "endLine": 239
+        },
+        {
+          "file": "src/local-app/LocalCatalogApp.tsx",
+          "name": "anonymous",
+          "line": 276,
+          "endLine": 276
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 15,
+      "tokens": 25,
+      "locations": [
+        {
+          "file": "src/local-app/LocalCatalogApp.tsx",
+          "name": "anonymous",
+          "line": 270,
+          "endLine": 270
+        },
+        {
+          "file": "src/local-app/LocalCatalogApp.tsx",
+          "name": "anonymous",
+          "line": 273,
+          "endLine": 273
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 16,
+      "tokens": 23,
+      "locations": [
+        {
+          "file": "src/i18n/ui.ts",
+          "name": "subscribe",
+          "line": 9,
+          "endLine": 9
+        },
+        {
+          "file": "src/local-app/workspaceManualNarration.ts",
+          "name": "subscribe",
+          "line": 8,
+          "endLine": 8
+        },
+        {
+          "file": "src/local-app/workspaceUploads.ts",
+          "name": "subscribe",
+          "line": 41,
+          "endLine": 41
+        }
+      ],
+      "category": "closure-state",
+      "conclusion": "subscribe 分别捕获 locale、人工口播和上传队列的独立 listeners 集合；合并函数体不能合并状态归属。",
+      "issue": "S2-R03"
+    },
+    {
+      "id": 17,
+      "tokens": 23,
+      "locations": [
+        {
+          "file": "src/local-app/WorkspaceAudioPanel.tsx",
+          "name": "anonymous",
+          "line": 63,
+          "endLine": 63
+        },
+        {
+          "file": "src/local-app/WorkspaceNarrationToolbar.tsx",
+          "name": "anonymous",
+          "line": 22,
+          "endLine": 22
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 18,
+      "tokens": 22,
+      "locations": [
+        {
+          "file": "scripts/openchatcut-embedded.mjs",
+          "name": "anonymous",
+          "line": 41,
+          "endLine": 41
+        },
+        {
+          "file": "scripts/openchatcut-standalone.mjs",
+          "name": "anonymous",
+          "line": 26,
+          "endLine": 26
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 19,
+      "tokens": 22,
+      "locations": [
+        {
+          "file": "src/local-app/episodeLifecycle.ts",
+          "name": "fingerprint",
+          "line": 17,
+          "endLine": 17
+        },
+        {
+          "file": "src/local-app/recycleBin.ts",
+          "name": "digest",
+          "line": 15,
+          "endLine": 15
+        },
+        {
+          "file": "src/local-app/scriptProductionStore.ts",
+          "name": "productionHash",
+          "line": 15,
+          "endLine": 15
+        },
+        {
+          "file": "src/local-app/workspaceVisualCandidates.ts",
+          "name": "hash",
+          "line": 28,
+          "endLine": 28
+        }
+      ],
+      "category": "merged",
+      "conclusion": "S2-M05：同一 canonical 排序的 JSON 摘要，共用 configurationCommands.canonicalFingerprint。",
+      "issue": null
+    },
+    {
+      "id": 20,
+      "tokens": 22,
+      "locations": [
+        {
+          "file": "src/local-app/localFiles.ts",
+          "name": "anonymous",
+          "line": 106,
+          "endLine": 106
+        },
+        {
+          "file": "src/local-app/localFiles.ts",
+          "name": "anonymous",
+          "line": 112,
+          "endLine": 112
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 21,
+      "tokens": 21,
+      "locations": [
+        {
+          "file": "src/connections/ConnectionBillingDialog.tsx",
+          "name": "anonymous",
+          "line": 20,
+          "endLine": 20
+        },
+        {
+          "file": "src/connections/ConnectionModelsDialog.tsx",
+          "name": "anonymous",
+          "line": 30,
+          "endLine": 30
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 22,
+      "tokens": 21,
+      "locations": [
+        {
+          "file": "src/local-app/CompactConnectionWorkspace.tsx",
+          "name": "anonymous",
+          "line": 96,
+          "endLine": 96
+        },
+        {
+          "file": "src/local-app/CompactConnectionWorkspace.tsx",
+          "name": "anonymous",
+          "line": 96,
+          "endLine": 96
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 23,
+      "tokens": 21,
+      "locations": [
+        {
+          "file": "src/local-app/GlobalPlanningSettings.tsx",
+          "name": "anonymous",
+          "line": 29,
+          "endLine": 29
+        },
+        {
+          "file": "src/local-app/WorkspacePlanningSelection.tsx",
+          "name": "anonymous",
+          "line": 20,
+          "endLine": 20
+        },
+        {
+          "file": "src/local-app/WorkspacePlanningSelection.tsx",
+          "name": "anonymous",
+          "line": 50,
+          "endLine": 50
+        },
+        {
+          "file": "src/local-app/WorkspaceScriptPanel.tsx",
+          "name": "anonymous",
+          "line": 37,
+          "endLine": 37
+        },
+        {
+          "file": "src/platform/ConfigurationForms.tsx",
+          "name": "anonymous",
+          "line": 58,
+          "endLine": 58
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 24,
+      "tokens": 21,
+      "locations": [
+        {
+          "file": "src/local-app/SystemStatusDrawer.tsx",
+          "name": "reduce",
+          "line": 56,
+          "endLine": 56
+        },
+        {
+          "file": "src/ui/SurfacePresence.tsx",
+          "name": "reduce",
+          "line": 32,
+          "endLine": 32
+        }
+      ],
+      "category": "closure-state",
+      "conclusion": "reduce 捕获各自 preference/running 动画集合；两个组件生命周期、取消和关闭意图不同。",
+      "issue": "S2-R04"
+    },
+    {
+      "id": 25,
+      "tokens": 21,
+      "locations": [
+        {
+          "file": "src/local-app/nativeAttemptOutput.ts",
+          "name": "anonymous",
+          "line": 126,
+          "endLine": 126
+        },
+        {
+          "file": "src/local-app/nativeAttemptOutput.ts",
+          "name": "anonymous",
+          "line": 245,
+          "endLine": 245
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 26,
+      "tokens": 21,
+      "locations": [
+        {
+          "file": "src/shotAudioMix.ts",
+          "name": "isRecord",
+          "line": 107,
+          "endLine": 109
+        },
+        {
+          "file": "src/shotCaptions.ts",
+          "name": "isRecord",
+          "line": 211,
+          "endLine": 213
+        },
+        {
+          "file": "src/shotComposition.ts",
+          "name": "isRecord",
+          "line": 182,
+          "endLine": 184
+        }
+      ],
+      "category": "host-boundary",
+      "conclusion": "3 个 shot 合同模块的短对象判定需要跨原生宿主登记共享模块；本次保留明确宿主依赖图，未把叶级类型守卫提升为跨运行时基础层。",
+      "issue": "S2-R05"
+    },
+    {
+      "id": 27,
+      "tokens": 21,
+      "locations": [
+        {
+          "file": "src/ui/media/AudioPreview.tsx",
+          "name": "anonymous",
+          "line": 29,
+          "endLine": 29
+        },
+        {
+          "file": "src/ui/media/VideoPreview.tsx",
+          "name": "anonymous",
+          "line": 62,
+          "endLine": 62
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 28,
+      "tokens": 20,
+      "locations": [
+        {
+          "file": "src/local-app/ProductionWorkspacePanel.tsx",
+          "name": "anonymous",
+          "line": 235,
+          "endLine": 235
+        },
+        {
+          "file": "src/local-app/ProductionWorkspacePanel.tsx",
+          "name": "anonymous",
+          "line": 236,
+          "endLine": 236
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 29,
+      "tokens": 20,
+      "locations": [
+        {
+          "file": "src/local-app/workspaceCandidates.ts",
+          "name": "anonymous",
+          "line": 16,
+          "endLine": 16
+        },
+        {
+          "file": "src/local-app/workspaceNarration.ts",
+          "name": "anonymous",
+          "line": 190,
+          "endLine": 190
+        },
+        {
+          "file": "src/workspaceAudio.ts",
+          "name": "anonymous",
+          "line": 50,
+          "endLine": 50
+        },
+        {
+          "file": "src/workspaceCandidates.ts",
+          "name": "anonymous",
+          "line": 33,
+          "endLine": 33
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 30,
+      "tokens": 20,
+      "locations": [
+        {
+          "file": "src/orchestration/notificationPolicy.ts",
+          "name": "isRecord",
+          "line": 85,
+          "endLine": 87
+        },
+        {
+          "file": "src/publishing/publishPackage.ts",
+          "name": "isRecord",
+          "line": 127,
+          "endLine": 129
+        },
+        {
+          "file": "src/worker/acousticAlignmentContract.ts",
+          "name": "isRecord",
+          "line": 64,
+          "endLine": 66
+        },
+        {
+          "file": "src/worker/codexRunner.ts",
+          "name": "isRecord",
+          "line": 945,
+          "endLine": 947
+        },
+        {
+          "file": "src/worker/contracts.ts",
+          "name": "isRecord",
+          "line": 891,
+          "endLine": 893
+        },
+        {
+          "file": "src/worker/mediaProviders.ts",
+          "name": "isRecord",
+          "line": 157,
+          "endLine": 159
+        }
+      ],
+      "category": "domain-boundary",
+      "conclusion": "6 个不同合同/供应商/发布/通知解析器的短对象守卫虽相同，但不存在既有无依赖公共守卫模块；抽取需新增跨业务基础层，保留并记录候选。",
+      "issue": "S2-R05"
+    },
+    {
+      "id": 31,
+      "tokens": 20,
+      "locations": [
+        {
+          "file": "src/platform/ConfigurationForms.tsx",
+          "name": "anonymous",
+          "line": 143,
+          "endLine": 143
+        },
+        {
+          "file": "src/platform/ConfigurationForms.tsx",
+          "name": "anonymous",
+          "line": 144,
+          "endLine": 144
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 32,
+      "tokens": 20,
+      "locations": [
+        {
+          "file": "src/worker/openchatcutStudio.ts",
+          "name": "anonymous",
+          "line": 81,
+          "endLine": 81
+        },
+        {
+          "file": "src/worker/openchatcutStudio.ts",
+          "name": "anonymous",
+          "line": 82,
+          "endLine": 82
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 33,
+      "tokens": 19,
+      "locations": [
+        {
+          "file": "scripts/openchatcut-render.mjs",
+          "name": "anonymous",
+          "line": 203,
+          "endLine": 203
+        },
+        {
+          "file": "src/worker/openchatcutStudio.ts",
+          "name": "anonymous",
+          "line": 526,
+          "endLine": 526
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 34,
+      "tokens": 19,
+      "locations": [
+        {
+          "file": "src/local-app/OwnerPreferencesDialog.tsx",
+          "name": "anonymous",
+          "line": 57,
+          "endLine": 57
+        },
+        {
+          "file": "src/local-app/OwnerPreferencesDialog.tsx",
+          "name": "anonymous",
+          "line": 58,
+          "endLine": 58
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 35,
+      "tokens": 19,
+      "locations": [
+        {
+          "file": "src/local-app/WorkspaceAudioPanel.tsx",
+          "name": "anonymous",
+          "line": 114,
+          "endLine": 114
+        },
+        {
+          "file": "src/local-app/workspaceAudio.ts",
+          "name": "anonymous",
+          "line": 133,
+          "endLine": 133
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 36,
+      "tokens": 19,
+      "locations": [
+        {
+          "file": "src/local-app/studioCommands.ts",
+          "name": "identity",
+          "line": 22,
+          "endLine": 22
+        },
+        {
+          "file": "src/local-app/workspaceAudio.ts",
+          "name": "hash",
+          "line": 19,
+          "endLine": 19
+        },
+        {
+          "file": "src/local-app/workspaceCaptionsCommands.ts",
+          "name": "fingerprint",
+          "line": 17,
+          "endLine": 17
+        },
+        {
+          "file": "src/local-app/workspaceNarration.ts",
+          "name": "fingerprint",
+          "line": 28,
+          "endLine": 28
+        }
+      ],
+      "category": "merged",
+      "conclusion": "S2-M06：4 个同域 raw JSON 摘要接受 unknown，原本均依赖 configurationCommands；复核无冲突后复用不排序的 jsonFingerprint，7处调用原样保留。",
+      "issue": null
+    },
+    {
+      "id": 37,
+      "tokens": 19,
+      "locations": [
+        {
+          "file": "src/worker/contracts.ts",
+          "name": "isPositiveFiniteNumber",
+          "line": 929,
+          "endLine": 931
+        },
+        {
+          "file": "src/worker/durationDecision.ts",
+          "name": "validDuration",
+          "line": 123,
+          "endLine": 125
+        }
+      ],
+      "category": "dependency-cycle",
+      "conclusion": "contracts 已依赖 durationDecision；反向复用 contracts 的正数守卫会产生运行时循环，新增公共基础模块的收益仅替代两个三行判定。保留。",
+      "issue": "S2-R05"
+    },
+    {
+      "id": 38,
+      "tokens": 18,
+      "locations": [
+        {
+          "file": "src/connections/ConnectionBillingDialog.tsx",
+          "name": "anonymous",
+          "line": 20,
+          "endLine": 20
+        },
+        {
+          "file": "src/connections/ConnectionModelsDialog.tsx",
+          "name": "anonymous",
+          "line": 30,
+          "endLine": 30
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 39,
+      "tokens": 18,
+      "locations": [
+        {
+          "file": "src/local-app/LogStorageSettings.tsx",
+          "name": "anonymous",
+          "line": 16,
+          "endLine": 16
+        },
+        {
+          "file": "src/local-app/MediaRootSettingsDialog.tsx",
+          "name": "anonymous",
+          "line": 22,
+          "endLine": 22
+        },
+        {
+          "file": "src/local-app/OwnerPreferencesDialog.tsx",
+          "name": "anonymous",
+          "line": 30,
+          "endLine": 30
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 40,
+      "tokens": 18,
+      "locations": [
+        {
+          "file": "src/local-app/MediaRootSettingsDialog.tsx",
+          "name": "anonymous",
+          "line": 86,
+          "endLine": 86
+        },
+        {
+          "file": "src/local-app/WorkspaceVisualPreparation.tsx",
+          "name": "anonymous",
+          "line": 458,
+          "endLine": 458
+        },
+        {
+          "file": "src/reviews/WorkerBlockerCard.tsx",
+          "name": "anonymous",
+          "line": 23,
+          "endLine": 23
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 41,
+      "tokens": 18,
+      "locations": [
+        {
+          "file": "src/local-app/ProductionWorkspacePanel.tsx",
+          "name": "anonymous",
+          "line": 240,
+          "endLine": 240
+        },
+        {
+          "file": "src/local-app/WorkspaceVisualPreparation.tsx",
+          "name": "anonymous",
+          "line": 374,
+          "endLine": 374
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 42,
+      "tokens": 18,
+      "locations": [
+        {
+          "file": "src/local-app/RuntimeLogsDialog.tsx",
+          "name": "anonymous",
+          "line": 21,
+          "endLine": 21
+        },
+        {
+          "file": "src/local-app/RuntimeLogsDialog.tsx",
+          "name": "anonymous",
+          "line": 21,
+          "endLine": 21
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 43,
+      "tokens": 18,
+      "locations": [
+        {
+          "file": "src/local-app/WorkspaceAudioPanel.tsx",
+          "name": "anonymous",
+          "line": 130,
+          "endLine": 130
+        },
+        {
+          "file": "src/local-app/WorkspaceAudioPanel.tsx",
+          "name": "anonymous",
+          "line": 130,
+          "endLine": 130
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 44,
+      "tokens": 18,
+      "locations": [
+        {
+          "file": "src/local-app/accountDirectoryMigration.ts",
+          "name": "anonymous",
+          "line": 41,
+          "endLine": 41
+        },
+        {
+          "file": "src/local-app/accountDirectoryMigration.ts",
+          "name": "anonymous",
+          "line": 194,
+          "endLine": 194
+        },
+        {
+          "file": "src/local-app/mediaRootMigration.ts",
+          "name": "anonymous",
+          "line": 85,
+          "endLine": 85
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 45,
+      "tokens": 17,
+      "locations": [
+        {
+          "file": "scripts/storage/backup.mjs",
+          "name": "overlap",
+          "line": 22,
+          "endLine": 22
+        },
+        {
+          "file": "src/local-app/accountAssetRoots.ts",
+          "name": "accountAssetRootsOverlap",
+          "line": 9,
+          "endLine": 9
+        },
+        {
+          "file": "src/local-app/mediaRootMigration.ts",
+          "name": "overlap",
+          "line": 17,
+          "endLine": 17
+        },
+        {
+          "file": "src/local-app/mediaRootSettings.ts",
+          "name": "overlap",
+          "line": 22,
+          "endLine": 22
+        }
+      ],
+      "category": "merged",
+      "conclusion": "S2-M03：路径重叠，共用 mediaPaths.assetPathsOverlap；公开账号别名保留。",
+      "issue": null
+    },
+    {
+      "id": 46,
+      "tokens": 17,
+      "locations": [
+        {
+          "file": "src/local-app/WorkspaceAudioPanel.tsx",
+          "name": "anonymous",
+          "line": 104,
+          "endLine": 104
+        },
+        {
+          "file": "src/local-app/workspaceUploads.ts",
+          "name": "anonymous",
+          "line": 88,
+          "endLine": 88
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 47,
+      "tokens": 17,
+      "locations": [
+        {
+          "file": "src/local-app/WorkspacePlanningSelection.tsx",
+          "name": "anonymous",
+          "line": 25,
+          "endLine": 25
+        },
+        {
+          "file": "src/local-app/WorkspacePlanningSelection.tsx",
+          "name": "anonymous",
+          "line": 31,
+          "endLine": 31
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 48,
+      "tokens": 17,
+      "locations": [
+        {
+          "file": "src/local-app/WorkspaceVisualPreparation.tsx",
+          "name": "anonymous",
+          "line": 234,
+          "endLine": 234
+        },
+        {
+          "file": "src/local-app/WorkspaceVisualPreparation.tsx",
+          "name": "anonymous",
+          "line": 234,
+          "endLine": 234
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 49,
+      "tokens": 17,
+      "locations": [
+        {
+          "file": "src/local-app/catalog.ts",
+          "name": "anonymous",
+          "line": 23,
+          "endLine": 23
+        },
+        {
+          "file": "src/local-app/workerDatabase.ts",
+          "name": "anonymous",
+          "line": 7,
+          "endLine": 7
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 50,
+      "tokens": 16,
+      "locations": [
+        {
+          "file": "src/connections/ConnectionWorkspace.tsx",
+          "name": "anonymous",
+          "line": 263,
+          "endLine": 263
+        },
+        {
+          "file": "src/connections/ConnectionWorkspace.tsx",
+          "name": "anonymous",
+          "line": 267,
+          "endLine": 267
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 51,
+      "tokens": 16,
+      "locations": [
+        {
+          "file": "src/local-app/ProductionWorkspacePanel.tsx",
+          "name": "anonymous",
+          "line": 204,
+          "endLine": 204
+        },
+        {
+          "file": "src/local-app/ProductionWorkspacePanel.tsx",
+          "name": "anonymous",
+          "line": 237,
+          "endLine": 237
+        },
+        {
+          "file": "src/local-app/WorkspaceShotTable.tsx",
+          "name": "anonymous",
+          "line": 19,
+          "endLine": 19
+        },
+        {
+          "file": "src/local-app/workspaceNarration.ts",
+          "name": "anonymous",
+          "line": 33,
+          "endLine": 33
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 52,
+      "tokens": 16,
+      "locations": [
+        {
+          "file": "src/local-app/ProductionWorkspacePanel.tsx",
+          "name": "anonymous",
+          "line": 215,
+          "endLine": 215
+        },
+        {
+          "file": "src/local-app/WorkspaceCaptionsPanel.tsx",
+          "name": "anonymous",
+          "line": 39,
+          "endLine": 39
+        },
+        {
+          "file": "src/local-app/WorkspaceCaptionsPanel.tsx",
+          "name": "anonymous",
+          "line": 53,
+          "endLine": 53
+        },
+        {
+          "file": "src/local-app/WorkspaceCompletedShots.tsx",
+          "name": "anonymous",
+          "line": 25,
+          "endLine": 25
+        },
+        {
+          "file": "src/local-app/workspaceCandidates.ts",
+          "name": "anonymous",
+          "line": 53,
+          "endLine": 53
+        },
+        {
+          "file": "src/local-app/workspaceDeliveryCommands.ts",
+          "name": "anonymous",
+          "line": 45,
+          "endLine": 45
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 53,
+      "tokens": 16,
+      "locations": [
+        {
+          "file": "src/local-app/WorkspaceShotPreview.tsx",
+          "name": "anonymous",
+          "line": 21,
+          "endLine": 21
+        },
+        {
+          "file": "src/local-app/productionWorkspaceCommands.ts",
+          "name": "anonymous",
+          "line": 249,
+          "endLine": 249
+        },
+        {
+          "file": "src/local-app/workspaceCaptionsCommands.ts",
+          "name": "anonymous",
+          "line": 39,
+          "endLine": 39
+        },
+        {
+          "file": "src/local-app/workspaceCaptionsCommands.ts",
+          "name": "anonymous",
+          "line": 73,
+          "endLine": 73
+        },
+        {
+          "file": "src/local-app/workspaceImages.ts",
+          "name": "anonymous",
+          "line": 26,
+          "endLine": 26
+        },
+        {
+          "file": "src/local-app/workspaceImages.ts",
+          "name": "anonymous",
+          "line": 59,
+          "endLine": 59
+        },
+        {
+          "file": "src/local-app/workspaceNarration.ts",
+          "name": "anonymous",
+          "line": 46,
+          "endLine": 46
+        },
+        {
+          "file": "src/local-app/workspaceVisualCandidates.ts",
+          "name": "anonymous",
+          "line": 248,
+          "endLine": 248
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 54,
+      "tokens": 16,
+      "locations": [
+        {
+          "file": "src/local-app/nativeAttemptOutput.ts",
+          "name": "anonymous",
+          "line": 136,
+          "endLine": 136
+        },
+        {
+          "file": "src/local-app/nativeAttemptOutput.ts",
+          "name": "anonymous",
+          "line": 210,
+          "endLine": 210
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 55,
+      "tokens": 16,
+      "locations": [
+        {
+          "file": "src/workspaceCandidates.ts",
+          "name": "anonymous",
+          "line": 33,
+          "endLine": 33
+        },
+        {
+          "file": "src/workspaceCandidates.ts",
+          "name": "anonymous",
+          "line": 33,
+          "endLine": 33
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 56,
+      "tokens": 15,
+      "locations": [
+        {
+          "file": "scripts/runtime/history-consolidation.mjs",
+          "name": "lit",
+          "line": 7,
+          "endLine": 7
+        },
+        {
+          "file": "scripts/storage/location-lineage.mjs",
+          "name": "quote",
+          "line": 4,
+          "endLine": 4
+        },
+        {
+          "file": "scripts/storage/media-references.mjs",
+          "name": "quote",
+          "line": 4,
+          "endLine": 4
+        }
+      ],
+      "category": "bootstrap-boundary",
+      "conclusion": "SQL 字面量 quote 虽同体，history-consolidation 与 storage 具有独立离线引导范围；不建立无现有归属的跨引导工具模块。",
+      "issue": "S2-R07"
+    },
+    {
+      "id": 57,
+      "tokens": 15,
+      "locations": [
+        {
+          "file": "src/connections/ConnectionWorkspace.tsx",
+          "name": "anonymous",
+          "line": 143,
+          "endLine": 143
+        },
+        {
+          "file": "src/connections/ConnectionWorkspace.tsx",
+          "name": "anonymous",
+          "line": 472,
+          "endLine": 472
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 58,
+      "tokens": 15,
+      "locations": [
+        {
+          "file": "src/connections/ConnectionWorkspace.tsx",
+          "name": "anonymous",
+          "line": 424,
+          "endLine": 424
+        },
+        {
+          "file": "src/connections/ConnectionWorkspace.tsx",
+          "name": "anonymous",
+          "line": 464,
+          "endLine": 464
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 59,
+      "tokens": 15,
+      "locations": [
+        {
+          "file": "src/connections/ConnectionWorkspace.tsx",
+          "name": "anonymous",
+          "line": 427,
+          "endLine": 427
+        },
+        {
+          "file": "src/local-app/EpisodeCollectionDialog.tsx",
+          "name": "anonymous",
+          "line": 27,
+          "endLine": 27
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 60,
+      "tokens": 15,
+      "locations": [
+        {
+          "file": "src/local-app/LocalCatalogApp.tsx",
+          "name": "anonymous",
+          "line": 165,
+          "endLine": 165
+        },
+        {
+          "file": "src/local-app/LocalCatalogApp.tsx",
+          "name": "anonymous",
+          "line": 166,
+          "endLine": 166
+        },
+        {
+          "file": "src/local-app/LocalCatalogApp.tsx",
+          "name": "anonymous",
+          "line": 174,
+          "endLine": 174
+        },
+        {
+          "file": "src/local-app/LocalCatalogApp.tsx",
+          "name": "anonymous",
+          "line": 239,
+          "endLine": 239
+        },
+        {
+          "file": "src/local-app/LocalCatalogApp.tsx",
+          "name": "anonymous",
+          "line": 252,
+          "endLine": 252
+        },
+        {
+          "file": "src/local-app/LocalCatalogApp.tsx",
+          "name": "anonymous",
+          "line": 256,
+          "endLine": 256
+        },
+        {
+          "file": "src/local-app/LocalCatalogApp.tsx",
+          "name": "anonymous",
+          "line": 276,
+          "endLine": 276
+        },
+        {
+          "file": "src/local-app/LocalEpisodeDetail.tsx",
+          "name": "anonymous",
+          "line": 72,
+          "endLine": 72
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 61,
+      "tokens": 15,
+      "locations": [
+        {
+          "file": "src/local-app/LocalDeletionRecovery.tsx",
+          "name": "anonymous",
+          "line": 50,
+          "endLine": 50
+        },
+        {
+          "file": "src/local-app/LocalDeletionRecovery.tsx",
+          "name": "anonymous",
+          "line": 50,
+          "endLine": 50
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 62,
+      "tokens": 15,
+      "locations": [
+        {
+          "file": "src/local-app/LogStorageSettings.tsx",
+          "name": "anonymous",
+          "line": 16,
+          "endLine": 16
+        },
+        {
+          "file": "src/local-app/MediaRootSettingsDialog.tsx",
+          "name": "anonymous",
+          "line": 22,
+          "endLine": 22
+        },
+        {
+          "file": "src/local-app/OwnerPreferencesDialog.tsx",
+          "name": "anonymous",
+          "line": 30,
+          "endLine": 30
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 63,
+      "tokens": 15,
+      "locations": [
+        {
+          "file": "src/local-app/SystemStatusDrawer.tsx",
+          "name": "anonymous",
+          "line": 59,
+          "endLine": 59
+        },
+        {
+          "file": "src/ui/SurfacePresence.tsx",
+          "name": "anonymous",
+          "line": 35,
+          "endLine": 35
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 64,
+      "tokens": 15,
+      "locations": [
+        {
+          "file": "src/local-app/WorkspaceDeliveryPanel.tsx",
+          "name": "setTitle",
+          "line": 17,
+          "endLine": 17
+        },
+        {
+          "file": "src/local-app/WorkspaceDeliveryPanel.tsx",
+          "name": "setDescription",
+          "line": 17,
+          "endLine": 17
+        },
+        {
+          "file": "src/local-app/WorkspaceDeliveryPanel.tsx",
+          "name": "setTags",
+          "line": 17,
+          "endLine": 17
+        },
+        {
+          "file": "src/local-app/WorkspaceScriptPanel.tsx",
+          "name": "setText",
+          "line": 32,
+          "endLine": 32
+        },
+        {
+          "file": "src/local-app/WorkspaceScriptPanel.tsx",
+          "name": "setReason",
+          "line": 32,
+          "endLine": 32
+        },
+        {
+          "file": "src/local-app/WorkspaceScriptPanel.tsx",
+          "name": "setFilename",
+          "line": 32,
+          "endLine": 32
+        }
+      ],
+      "category": "scanner-shorthand-false-positive",
+      "conclusion": "参数归一化也改写对象 shorthand 的属性名；title/description/tags 与 text/reason/filename 的实际字段不同，属于扫描假阳性。",
+      "issue": null
+    },
+    {
+      "id": 65,
+      "tokens": 15,
+      "locations": [
+        {
+          "file": "src/local-app/accountDirectoryMigration.ts",
+          "name": "anonymous",
+          "line": 135,
+          "endLine": 135
+        },
+        {
+          "file": "src/local-app/episodeStorageLocation.ts",
+          "name": "anonymous",
+          "line": 20,
+          "endLine": 20
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 66,
+      "tokens": 15,
+      "locations": [
+        {
+          "file": "src/local-app/legacyWorkspaceMetadata.ts",
+          "name": "anonymous",
+          "line": 22,
+          "endLine": 22
+        },
+        {
+          "file": "src/workspaceShots.ts",
+          "name": "anonymous",
+          "line": 56,
+          "endLine": 56
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 67,
+      "tokens": 15,
+      "locations": [
+        {
+          "file": "src/local-app/mediaWorker.ts",
+          "name": "anonymous",
+          "line": 89,
+          "endLine": 89
+        },
+        {
+          "file": "src/local-app/mediaWorker.ts",
+          "name": "anonymous",
+          "line": 90,
+          "endLine": 90
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 68,
+      "tokens": 15,
+      "locations": [
+        {
+          "file": "src/local-app/productionWorkspaceCommands.ts",
+          "name": "anonymous",
+          "line": 110,
+          "endLine": 110
+        },
+        {
+          "file": "src/worker/contracts.ts",
+          "name": "anonymous",
+          "line": 542,
+          "endLine": 542
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 69,
+      "tokens": 15,
+      "locations": [
+        {
+          "file": "src/local-app/useWorkspaceCaptionOperation.ts",
+          "name": "anonymous",
+          "line": 57,
+          "endLine": 57
+        },
+        {
+          "file": "src/local-app/useWorkspaceCaptionOperation.ts",
+          "name": "anonymous",
+          "line": 82,
+          "endLine": 82
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 70,
+      "tokens": 15,
+      "locations": [
+        {
+          "file": "src/local-app/workspaceCallConfirmation.ts",
+          "name": "anonymous",
+          "line": 24,
+          "endLine": 24
+        },
+        {
+          "file": "src/local-app/workspaceCallConfirmation.ts",
+          "name": "anonymous",
+          "line": 54,
+          "endLine": 54
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 71,
+      "tokens": 15,
+      "locations": [
+        {
+          "file": "src/operations/OperationsWorkspace.tsx",
+          "name": "anonymous",
+          "line": 167,
+          "endLine": 167
+        },
+        {
+          "file": "src/workspace/WorkspaceViews.tsx",
+          "name": "anonymous",
+          "line": 223,
+          "endLine": 223
+        },
+        {
+          "file": "src/workspace/WorkspaceViews.tsx",
+          "name": "anonymous",
+          "line": 224,
+          "endLine": 224
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 72,
+      "tokens": 15,
+      "locations": [
+        {
+          "file": "src/worker/contracts.ts",
+          "name": "anonymous",
+          "line": 742,
+          "endLine": 742
+        },
+        {
+          "file": "src/worker/contracts.ts",
+          "name": "anonymous",
+          "line": 761,
+          "endLine": 761
+        },
+        {
+          "file": "src/worker/storyboardRevision.ts",
+          "name": "anonymous",
+          "line": 51,
+          "endLine": 51
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 73,
+      "tokens": 14,
+      "locations": [
+        {
+          "file": "scripts/e2e/run.mjs",
+          "name": "anonymous",
+          "line": 25,
+          "endLine": 25
+        },
+        {
+          "file": "scripts/e2e/run.mjs",
+          "name": "anonymous",
+          "line": 32,
+          "endLine": 32
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 74,
+      "tokens": 14,
+      "locations": [
+        {
+          "file": "scripts/runtime/history-consolidation.mjs",
+          "name": "hash",
+          "line": 7,
+          "endLine": 7
+        },
+        {
+          "file": "scripts/runtime/keychain.mjs",
+          "name": "hash",
+          "line": 18,
+          "endLine": 18
+        },
+        {
+          "file": "scripts/runtime/migrate.mjs",
+          "name": "sha",
+          "line": 4,
+          "endLine": 4
+        },
+        {
+          "file": "scripts/storage/backup.mjs",
+          "name": "hash",
+          "line": 14,
+          "endLine": 14
+        },
+        {
+          "file": "scripts/storage/native-backup-format.mjs",
+          "name": "digest",
+          "line": 3,
+          "endLine": 3
+        },
+        {
+          "file": "src/local-app/deliveryCommands.ts",
+          "name": "digest",
+          "line": 14,
+          "endLine": 14
+        },
+        {
+          "file": "src/local-app/productionWorkspaceCommands.ts",
+          "name": "hash",
+          "line": 51,
+          "endLine": 51
+        },
+        {
+          "file": "src/local-app/providerBilling.ts",
+          "name": "sha",
+          "line": 17,
+          "endLine": 17
+        },
+        {
+          "file": "src/local-app/sessions.ts",
+          "name": "tokenHash",
+          "line": 7,
+          "endLine": 7
+        }
+      ],
+      "category": "input-and-bootstrap-contract",
+      "conclusion": "单行 SHA primitive 同形但涵盖字符串令牌、Buffer、供应商签名和离线归档，不同参数类型和引导边界；不共用 sessions.tokenHash 或把认证模块拉入备份/账务。",
+      "issue": "S2-R06"
+    },
+    {
+      "id": 75,
+      "tokens": 14,
+      "locations": [
+        {
+          "file": "src/local-app/LocalCatalogApp.tsx",
+          "name": "anonymous",
+          "line": 270,
+          "endLine": 270
+        },
+        {
+          "file": "src/local-app/LocalCatalogApp.tsx",
+          "name": "anonymous",
+          "line": 273,
+          "endLine": 273
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 76,
+      "tokens": 14,
+      "locations": [
+        {
+          "file": "src/local-app/LocalSystemStatus.tsx",
+          "name": "anonymous",
+          "line": 38,
+          "endLine": 38
+        },
+        {
+          "file": "src/local-app/LocalSystemStatus.tsx",
+          "name": "visible",
+          "line": 39,
+          "endLine": 39
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 77,
+      "tokens": 14,
+      "locations": [
+        {
+          "file": "src/local-app/WorkspaceMaterialShelf.tsx",
+          "name": "anonymous",
+          "line": 131,
+          "endLine": 131
+        },
+        {
+          "file": "src/local-app/WorkspaceMaterialShelf.tsx",
+          "name": "anonymous",
+          "line": 134,
+          "endLine": 134
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 78,
+      "tokens": 14,
+      "locations": [
+        {
+          "file": "src/local-app/nativeAttemptOutput.ts",
+          "name": "anonymous",
+          "line": 61,
+          "endLine": 61
+        },
+        {
+          "file": "src/local-app/nativeAttemptOutput.ts",
+          "name": "anonymous",
+          "line": 94,
+          "endLine": 94
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 79,
+      "tokens": 14,
+      "locations": [
+        {
+          "file": "src/operations/OperationsWorkspace.tsx",
+          "name": "clearSearch",
+          "line": 138,
+          "endLine": 141
+        },
+        {
+          "file": "src/workspace/WorkspaceViews.tsx",
+          "name": "clearSearch",
+          "line": 197,
+          "endLine": 199
+        }
+      ],
+      "category": "closure-state",
+      "conclusion": "clearSearch 捕获两套列表各自 setSearch/catalogControls，列表筛选/分页与导航不同，保持简单局部事件处理。",
+      "issue": "S2-R03"
+    },
+    {
+      "id": 80,
+      "tokens": 14,
+      "locations": [
+        {
+          "file": "src/platform/ConfigurationForms.tsx",
+          "name": "anonymous",
+          "line": 174,
+          "endLine": 174
+        },
+        {
+          "file": "src/platform/ConfigurationForms.tsx",
+          "name": "anonymous",
+          "line": 336,
+          "endLine": 336
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 81,
+      "tokens": 14,
+      "locations": [
+        {
+          "file": "src/worker/storyboardRevision.ts",
+          "name": "anonymous",
+          "line": 39,
+          "endLine": 39
+        },
+        {
+          "file": "src/worker/storyboardRevision.ts",
+          "name": "anonymous",
+          "line": 54,
+          "endLine": 54
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 82,
+      "tokens": 13,
+      "locations": [
+        {
+          "file": "scripts/openchatcut-embed-client.mjs",
+          "name": "anonymous",
+          "line": 50,
+          "endLine": 50
+        },
+        {
+          "file": "src/local-app/client.ts",
+          "name": "anonymous",
+          "line": 20,
+          "endLine": 20
+        },
+        {
+          "file": "src/local-app/client.ts",
+          "name": "anonymous",
+          "line": 50,
+          "endLine": 50
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 83,
+      "tokens": 13,
+      "locations": [
+        {
+          "file": "scripts/runtime/application.mjs",
+          "name": "anonymous",
+          "line": 39,
+          "endLine": 39
+        },
+        {
+          "file": "scripts/runtime/media-root.mjs",
+          "name": "anonymous",
+          "line": 98,
+          "endLine": 98
+        },
+        {
+          "file": "scripts/runtime/media-root.mjs",
+          "name": "anonymous",
+          "line": 98,
+          "endLine": 98
+        },
+        {
+          "file": "scripts/runtime/media-root.mjs",
+          "name": "anonymous",
+          "line": 101,
+          "endLine": 101
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 84,
+      "tokens": 13,
+      "locations": [
+        {
+          "file": "scripts/runtime/secrets.mjs",
+          "name": "hash",
+          "line": 6,
+          "endLine": 6
+        },
+        {
+          "file": "src/local-app/keychainStore.ts",
+          "name": "hash",
+          "line": 49,
+          "endLine": 49
+        }
+      ],
+      "category": "bootstrap-boundary",
+      "conclusion": "secret CLI 的引导与 keychainStore 的在线存取不同；Buffer digest 不与 hex 摘要共用，不新增引导到服务模块的耦合。",
+      "issue": "S2-R07"
+    },
+    {
+      "id": 85,
+      "tokens": 13,
+      "locations": [
+        {
+          "file": "src/local-app/CompactConnectionWorkspace.tsx",
+          "name": "anonymous",
+          "line": 68,
+          "endLine": 68
+        },
+        {
+          "file": "src/local-app/LocalDeletionRecovery.tsx",
+          "name": "anonymous",
+          "line": 10,
+          "endLine": 10
+        },
+        {
+          "file": "src/local-app/RecycleBinPanel.tsx",
+          "name": "anonymous",
+          "line": 27,
+          "endLine": 27
+        },
+        {
+          "file": "src/workspace/WorkspaceViews.tsx",
+          "name": "anonymous",
+          "line": 285,
+          "endLine": 285
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 86,
+      "tokens": 13,
+      "locations": [
+        {
+          "file": "src/local-app/CompactConnectionWorkspace.tsx",
+          "name": "anonymous",
+          "line": 98,
+          "endLine": 98
+        },
+        {
+          "file": "src/local-app/OwnerPreferencesDialog.tsx",
+          "name": "anonymous",
+          "line": 64,
+          "endLine": 64
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 87,
+      "tokens": 13,
+      "locations": [
+        {
+          "file": "src/local-app/GlobalPlanningSettings.tsx",
+          "name": "anonymous",
+          "line": 57,
+          "endLine": 57
+        },
+        {
+          "file": "src/local-app/RecycleBinPanel.tsx",
+          "name": "anonymous",
+          "line": 59,
+          "endLine": 59
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 88,
+      "tokens": 13,
+      "locations": [
+        {
+          "file": "src/local-app/LocalConnectionsPanel.tsx",
+          "name": "anonymous",
+          "line": 49,
+          "endLine": 49
+        },
+        {
+          "file": "src/local-app/LocalConnectionsPanel.tsx",
+          "name": "anonymous",
+          "line": 49,
+          "endLine": 49
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 89,
+      "tokens": 13,
+      "locations": [
+        {
+          "file": "src/local-app/LocalDeletionRecovery.tsx",
+          "name": "anonymous",
+          "line": 12,
+          "endLine": 12
+        },
+        {
+          "file": "src/local-app/RecycleBinPanel.tsx",
+          "name": "anonymous",
+          "line": 26,
+          "endLine": 26
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 90,
+      "tokens": 13,
+      "locations": [
+        {
+          "file": "src/local-app/ProductionWorkspacePanel.tsx",
+          "name": "anonymous",
+          "line": 191,
+          "endLine": 191
+        },
+        {
+          "file": "src/local-app/ProductionWorkspacePanel.tsx",
+          "name": "anonymous",
+          "line": 241,
+          "endLine": 241
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 91,
+      "tokens": 13,
+      "locations": [
+        {
+          "file": "src/local-app/ProductionWorkspacePanel.tsx",
+          "name": "anonymous",
+          "line": 239,
+          "endLine": 239
+        },
+        {
+          "file": "src/local-app/ProductionWorkspacePanel.tsx",
+          "name": "anonymous",
+          "line": 241,
+          "endLine": 241
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 92,
+      "tokens": 13,
+      "locations": [
+        {
+          "file": "src/local-app/WorkspaceAudioPanel.tsx",
+          "name": "anonymous",
+          "line": 72,
+          "endLine": 72
+        },
+        {
+          "file": "src/local-app/WorkspaceAudioPanel.tsx",
+          "name": "anonymous",
+          "line": 179,
+          "endLine": 179
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 93,
+      "tokens": 13,
+      "locations": [
+        {
+          "file": "src/local-app/WorkspaceDraft.tsx",
+          "name": "anonymous",
+          "line": 35,
+          "endLine": 35
+        },
+        {
+          "file": "src/local-app/WorkspaceDraft.tsx",
+          "name": "anonymous",
+          "line": 35,
+          "endLine": 35
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 94,
+      "tokens": 13,
+      "locations": [
+        {
+          "file": "src/local-app/WorkspacePreparationLayout.tsx",
+          "name": "anonymous",
+          "line": 18,
+          "endLine": 18
+        },
+        {
+          "file": "src/local-app/WorkspacePreparationLayout.tsx",
+          "name": "anonymous",
+          "line": 19,
+          "endLine": 19
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 95,
+      "tokens": 13,
+      "locations": [
+        {
+          "file": "src/local-app/accountCommands.ts",
+          "name": "anonymous",
+          "line": 38,
+          "endLine": 38
+        },
+        {
+          "file": "src/local-app/connectionBilling.ts",
+          "name": "anonymous",
+          "line": 37,
+          "endLine": 37
+        },
+        {
+          "file": "src/local-app/connectionModels.ts",
+          "name": "anonymous",
+          "line": 33,
+          "endLine": 33
+        },
+        {
+          "file": "src/local-app/connections.ts",
+          "name": "anonymous",
+          "line": 32,
+          "endLine": 32
+        },
+        {
+          "file": "src/local-app/localRoute.ts",
+          "name": "anonymous",
+          "line": 102,
+          "endLine": 102
+        },
+        {
+          "file": "src/local-app/recycleBin.ts",
+          "name": "anonymous",
+          "line": 71,
+          "endLine": 71
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 96,
+      "tokens": 13,
+      "locations": [
+        {
+          "file": "src/local-app/episodeCommands.ts",
+          "name": "anonymous",
+          "line": 70,
+          "endLine": 70
+        },
+        {
+          "file": "src/local-app/episodeLifecycle.ts",
+          "name": "anonymous",
+          "line": 101,
+          "endLine": 101
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 97,
+      "tokens": 13,
+      "locations": [
+        {
+          "file": "src/local-app/localFiles.ts",
+          "name": "anonymous",
+          "line": 20,
+          "endLine": 20
+        },
+        {
+          "file": "src/local-app/storageInventory.ts",
+          "name": "anonymous",
+          "line": 80,
+          "endLine": 80
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 98,
+      "tokens": 13,
+      "locations": [
+        {
+          "file": "src/local-app/mediaRootExecution.ts",
+          "name": "anonymous",
+          "line": 34,
+          "endLine": 34
+        },
+        {
+          "file": "src/local-app/mediaRootMigration.ts",
+          "name": "anonymous",
+          "line": 108,
+          "endLine": 108
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 99,
+      "tokens": 13,
+      "locations": [
+        {
+          "file": "src/local-app/workspaceAudio.ts",
+          "name": "anonymous",
+          "line": 133,
+          "endLine": 133
+        },
+        {
+          "file": "src/local-app/workspaceCandidateAdoption.ts",
+          "name": "anonymous",
+          "line": 35,
+          "endLine": 35
+        },
+        {
+          "file": "src/local-app/workspaceCandidates.ts",
+          "name": "anonymous",
+          "line": 17,
+          "endLine": 17
+        },
+        {
+          "file": "src/local-app/workspaceExportCommands.ts",
+          "name": "anonymous",
+          "line": 49,
+          "endLine": 49
+        },
+        {
+          "file": "src/local-app/workspaceExportCommands.ts",
+          "name": "anonymous",
+          "line": 99,
+          "endLine": 99
+        },
+        {
+          "file": "src/local-app/workspaceNarration.ts",
+          "name": "anonymous",
+          "line": 193,
+          "endLine": 193
+        },
+        {
+          "file": "src/local-app/workspaceVideo.ts",
+          "name": "anonymous",
+          "line": 27,
+          "endLine": 27
+        },
+        {
+          "file": "src/workspaceAudio.ts",
+          "name": "anonymous",
+          "line": 55,
+          "endLine": 55
+        },
+        {
+          "file": "src/workspaceAudio.ts",
+          "name": "anonymous",
+          "line": 98,
+          "endLine": 98
+        },
+        {
+          "file": "src/workspaceShots.ts",
+          "name": "anonymous",
+          "line": 35,
+          "endLine": 35
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 100,
+      "tokens": 12,
+      "locations": [
+        {
+          "file": "scripts/storage/backup.mjs",
+          "name": "quote",
+          "line": 14,
+          "endLine": 14
+        },
+        {
+          "file": "scripts/storage/occupied.mjs",
+          "name": "quote",
+          "line": 5,
+          "endLine": 5
+        },
+        {
+          "file": "scripts/storage/restore.mjs",
+          "name": "quote",
+          "line": 12,
+          "endLine": 12
+        }
+      ],
+      "category": "bootstrap-boundary",
+      "conclusion": "backup/restore/occupied 的 quote 返回 SQL 字面量，字符串输入与 String() 强转组不同；引导脚本短原语保持内联，不混入在线 SQL 边界。",
+      "issue": "S2-R07"
+    },
+    {
+      "id": 101,
+      "tokens": 12,
+      "locations": [
+        {
+          "file": "src/accounts/AccountSidebar.tsx",
+          "name": "anonymous",
+          "line": 37,
+          "endLine": 37
+        },
+        {
+          "file": "src/accounts/AccountWorkspace.tsx",
+          "name": "anonymous",
+          "line": 180,
+          "endLine": 180
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 102,
+      "tokens": 12,
+      "locations": [
+        {
+          "file": "src/connections/ConnectionWorkspace.tsx",
+          "name": "anonymous",
+          "line": 375,
+          "endLine": 375
+        },
+        {
+          "file": "src/local-app/CompactConnectionWorkspace.tsx",
+          "name": "anonymous",
+          "line": 96,
+          "endLine": 96
+        },
+        {
+          "file": "src/local-app/CompactConnectionWorkspace.tsx",
+          "name": "anonymous",
+          "line": 96,
+          "endLine": 96
+        },
+        {
+          "file": "src/local-app/LocalSecretAdministration.tsx",
+          "name": "anonymous",
+          "line": 54,
+          "endLine": 54
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 103,
+      "tokens": 12,
+      "locations": [
+        {
+          "file": "src/local-app/LocalSecretAdministration.tsx",
+          "name": "anonymous",
+          "line": 29,
+          "endLine": 29
+        },
+        {
+          "file": "src/local-app/LocalSecretAdministration.tsx",
+          "name": "anonymous",
+          "line": 60,
+          "endLine": 60
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 104,
+      "tokens": 12,
+      "locations": [
+        {
+          "file": "src/local-app/WorkspacePlanningSelection.tsx",
+          "name": "anonymous",
+          "line": 25,
+          "endLine": 25
+        },
+        {
+          "file": "src/local-app/WorkspacePlanningSelection.tsx",
+          "name": "anonymous",
+          "line": 31,
+          "endLine": 31
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 105,
+      "tokens": 12,
+      "locations": [
+        {
+          "file": "src/local-app/WorkspaceVisualPreparation.tsx",
+          "name": "anonymous",
+          "line": 130,
+          "endLine": 130
+        },
+        {
+          "file": "src/local-app/workspaceUploads.ts",
+          "name": "anonymous",
+          "line": 47,
+          "endLine": 47
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 106,
+      "tokens": 12,
+      "locations": [
+        {
+          "file": "src/local-app/accountCommands.ts",
+          "name": "anonymous",
+          "line": 65,
+          "endLine": 65
+        },
+        {
+          "file": "src/local-app/accountCommands.ts",
+          "name": "anonymous",
+          "line": 78,
+          "endLine": 78
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 107,
+      "tokens": 12,
+      "locations": [
+        {
+          "file": "src/local-app/catalog.ts",
+          "name": "anonymous",
+          "line": 28,
+          "endLine": 28
+        },
+        {
+          "file": "src/local-app/workerDatabase.ts",
+          "name": "anonymous",
+          "line": 11,
+          "endLine": 11
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 108,
+      "tokens": 12,
+      "locations": [
+        {
+          "file": "src/local-app/pexelsLiveProbe.ts",
+          "name": "anonymous",
+          "line": 34,
+          "endLine": 34
+        },
+        {
+          "file": "src/local-app/pexelsLiveProbe.ts",
+          "name": "anonymous",
+          "line": 41,
+          "endLine": 41
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    },
+    {
+      "id": 109,
+      "tokens": 12,
+      "locations": [
+        {
+          "file": "src/local-app/useWorkspaceCallConfirmation.tsx",
+          "name": "transition",
+          "line": 28,
+          "endLine": 28
+        },
+        {
+          "file": "src/local-app/useWorkspaceOperations.ts",
+          "name": "transition",
+          "line": 31,
+          "endLine": 31
+        }
+      ],
+      "category": "closure-state",
+      "conclusion": "transition 捕获不同 owner.state 和 render，确认生命周期与工作区操作状态机不同；合并会要求新增状态抽象，非等价去重。",
+      "issue": "S2-R03"
+    },
+    {
+      "id": 110,
+      "tokens": 12,
+      "locations": [
+        {
+          "file": "src/operations/OperationsWorkspace.tsx",
+          "name": "anonymous",
+          "line": 170,
+          "endLine": 170
+        },
+        {
+          "file": "src/workspace/WorkspaceViews.tsx",
+          "name": "anonymous",
+          "line": 226,
+          "endLine": 226
+        }
+      ],
+      "category": "inline-callback-or-closure",
+      "conclusion": "短内联片段（JSX映射、谓词、算术、catch、事件或状态回调），而非独立重复实现；部分捕获不同状态，部分是刻意就地表达的相同一行逻辑。按单次简单逻辑内联规则保留，不以 token 相同引入微型包装函数。",
+      "issue": null
+    }
+  ]
+}

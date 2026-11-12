@@ -1,0 +1,14 @@
+npm notice run loop-control@0.1.0 test
+npm notice run vitest run --exclude '**/*.integration.test.ts' src/local-app/configurationCommands.test.ts src/local-app/commandClient.test.ts src/local-app/scriptProductionStore.test.ts src/local-app/scriptProductionContinuation.test.ts src/local-app/episodeLifecycle.test.ts src/local-app/RecycleBinPanel.test.tsx
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/maintenance-20261111/loop-control
+
+ ✓ src/local-app/scriptProductionContinuation.test.ts (13 tests) 5ms
+ ✓ src/local-app/configurationCommands.test.ts (6 tests) 2ms
+ ✓ src/local-app/RecycleBinPanel.test.tsx (5 tests) 185ms
+
+ Test Files  3 passed (3)
+      Tests  24 passed (24)
+   Start at  23:37:13
+   Duration  932ms (transform 283ms, setup 15ms, collect 756ms, tests 192ms, environment 295ms, prepare 80ms)
+

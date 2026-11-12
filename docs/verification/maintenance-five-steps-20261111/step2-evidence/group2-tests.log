@@ -1,0 +1,16 @@
+npm notice run loop-control@0.1.0 test
+npm notice run vitest run --exclude '**/*.integration.test.ts' src/connections/ConnectionDrafts.test.tsx src/local-app/CompactConnectionWorkspace.test.tsx src/local-app/LocalCatalogApp.connectionDrafts.test.tsx
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/maintenance-20261111/loop-control
+
+ ✓ src/local-app/CompactConnectionWorkspace.test.tsx (16 tests) 1278ms
+ ✓ src/connections/ConnectionDrafts.test.tsx (7 tests) 1299ms
+   ✓ protects a changed connection on Escape and keeps only non-secret input when reopened  391ms
+ ✓ src/local-app/LocalCatalogApp.connectionDrafts.test.tsx (3 tests) 994ms
+   ✓ guards actual App Back, continues in place, and keeps only non-secret edits across leaving and returning  507ms
+
+ Test Files  3 passed (3)
+      Tests  26 passed (26)
+   Start at  23:32:37
+   Duration  3.17s (transform 917ms, setup 21ms, collect 3.49s, tests 3.57s, environment 416ms, prepare 85ms)
+

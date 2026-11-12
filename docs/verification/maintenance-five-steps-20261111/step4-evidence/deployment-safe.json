@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "purpose": "local-daily",
+  "projectRoot": "/Users/dan/Programs/loop-control",
+  "runtimeRoot": "/Users/dan/Programs/loop-control/.loop-control/local",
+  "stateDirectory": "/Users/dan/Programs/loop-control/.loop-control/local/state",
+  "backupRoot": "/Users/dan/Programs/loop-control/.loop-control/local/backups/loop_control",
+  "mediaRoot": "/Volumes/Ebuget 1T/Media",
+  "port": 5174,
+  "automaticBackups": false,
+  "notifications": "desktop",
+  "postgres": {
+    "profile": "loop-control",
+    "container": "loop-control-local-postgres",
+    "volume": "loop-control-local-data",
+    "image": "sha256:00bc86618629af00d2937fdc5a5d63db3ff8450acf52f0636ec813c7f4902929"
+  },
+  "database": {
+    "database": "loop_control",
+    "host": "127.0.0.1",
+    "port": 54329,
+    "user": "loop_app"
+  },
+  "worker": {
+    "concurrency": 1,
+    "mode": null
+  },
+  "appRecord": {
+    "pid": 81218,
+    "port": 5174,
+    "projectRoot": "/Users/dan/Programs/loop-control",
+    "runtimeRelease": {
+      "id": "2557fbeb5f3e846ff4b521f91d365ceb532c50d491fbcb36eb2b9f76c24698a2",
+      "root": "/Users/dan/Programs/loop-control/.loop-control/runtime-releases/2557fbeb5f3e846ff4b521f91d365ceb532c50d491fbcb36eb2b9f76c24698a2"
+    }
+  },
+  "processAlive": true
+}

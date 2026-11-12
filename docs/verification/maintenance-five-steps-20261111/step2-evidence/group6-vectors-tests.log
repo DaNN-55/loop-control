@@ -1,0 +1,12 @@
+npm notice run loop-control@0.1.0 test
+npm notice run vitest run --exclude '**/*.integration.test.ts' src/local-app/configurationCommands.test.ts
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/maintenance-20261111/loop-control
+
+ ✓ src/local-app/configurationCommands.test.ts (12 tests) 2ms
+
+ Test Files  1 passed (1)
+      Tests  12 passed (12)
+   Start at  23:50:21
+   Duration  273ms (transform 116ms, setup 7ms, collect 149ms, tests 2ms, environment 0ms, prepare 26ms)
+

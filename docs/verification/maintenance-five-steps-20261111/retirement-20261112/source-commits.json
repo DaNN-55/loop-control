@@ -1,0 +1,97 @@
+[
+  {
+    "id": "01",
+    "message": "refactor: remove unused cleanup dialog and navigation declarations",
+    "paths": [
+      "src/local-app/LocalDeletionRecovery.tsx",
+      "src/workspace/WorkspaceViews.tsx"
+    ],
+    "commit": "3c1028b6fdbd9ef71ad202c98de2202a4f48610e",
+    "stagedBlobsMatchedVerifiedSource": true,
+    "stagedWhitespaceCheck": "passed"
+  },
+  {
+    "id": "02",
+    "message": "refactor: consolidate equivalent runtime and workspace helpers",
+    "paths": [
+      "scripts/storage/backup-overlap.test.mjs",
+      "scripts/storage/backup.mjs",
+      "src/connections/ConnectionDraftSession.tsx",
+      "src/connections/ConnectionWorkspace.tsx",
+      "src/local-app/CompactConnectionWorkspace.tsx",
+      "src/local-app/accountAssetRoots.ts",
+      "src/local-app/accountCommands.ts",
+      "src/local-app/commandReceipt.ts",
+      "src/local-app/configurationCommands.test.ts",
+      "src/local-app/configurationCommands.ts",
+      "src/local-app/episodeCollection.ts",
+      "src/local-app/episodeCommands.ts",
+      "src/local-app/episodeLifecycle.ts",
+      "src/local-app/historyEpisodeDeletion.test.ts",
+      "src/local-app/historyEpisodeDeletion.ts",
+      "src/local-app/mediaPaths.ts",
+      "src/local-app/mediaRootMigration.ts",
+      "src/local-app/mediaRootSettings.ts",
+      "src/local-app/recycleBin.ts",
+      "src/local-app/scriptProductionStore.ts",
+      "src/local-app/studioCommands.ts",
+      "src/local-app/workspaceAudio.ts",
+      "src/local-app/workspaceCaptionsCommands.ts",
+      "src/local-app/workspaceNarration.ts",
+      "src/local-app/workspaceVisualCandidates.ts",
+      "src/worker/contracts.ts",
+      "src/worker/fileSha256.test.ts",
+      "src/worker/fileSha256.ts",
+      "src/worker/openchatcutStudio.ts",
+      "src/worker/runtimeEvidence.ts",
+      "src/worker/runtimePreflight.ts"
+    ],
+    "commit": "e7021967364b84617a1c25b5472062ece6529697",
+    "stagedBlobsMatchedVerifiedSource": true,
+    "stagedWhitespaceCheck": "passed"
+  },
+  {
+    "id": "03",
+    "message": "refactor: retire legacy clip timing contract",
+    "paths": [
+      "src/clipTiming.ts",
+      "src/clipTiming.test.ts"
+    ],
+    "commit": "d95ee735c9135ae0025f3534532e40fb56df5c74",
+    "stagedBlobsMatchedVerifiedSource": true,
+    "stagedWhitespaceCheck": "passed"
+  },
+  {
+    "id": "04",
+    "message": "refactor: retire legacy shot acceptance contract",
+    "paths": [
+      "src/shotAcceptance.ts",
+      "src/shotAcceptance.test.ts"
+    ],
+    "commit": "fad2671754ff2bbc7f6f3dc95d57227a6e4b816c",
+    "stagedBlobsMatchedVerifiedSource": true,
+    "stagedWhitespaceCheck": "passed"
+  },
+  {
+    "id": "05",
+    "message": "refactor: retire legacy material import contract",
+    "paths": [
+      "src/reviews/materialImport.ts",
+      "src/reviews/materialImport.test.ts"
+    ],
+    "commit": "bc15f72e07aeae1a4aa0b0f1fcb56f05581d1a48",
+    "stagedBlobsMatchedVerifiedSource": true,
+    "stagedWhitespaceCheck": "passed"
+  },
+  {
+    "id": "06",
+    "message": "refactor: retire legacy manual checklist contract",
+    "paths": [
+      "src/worker/manualMaterialChecklist.ts",
+      "src/worker/manualMaterialChecklist.test.ts"
+    ],
+    "commit": "991ab681790f7f275dd45cb066a6c6e6e54ba8bf",
+    "stagedBlobsMatchedVerifiedSource": true,
+    "stagedWhitespaceCheck": "passed"
+  }
+]

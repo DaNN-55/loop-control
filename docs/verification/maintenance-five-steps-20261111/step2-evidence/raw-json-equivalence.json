@@ -1,0 +1,134 @@
+{
+  "method": "Remove imports/export aliases and deduplicated leaf declarations; inline the unchanged raw JSON SHA-256 expression at each exact alias/helper call; print remaining statements and compare non-trivia token streams including literal values; template nodes are synthetic to avoid source-offset reuse. Import bindings and the removed leaf bodies are reviewed separately.",
+  "results": [
+    {
+      "file": "src/local-app/configurationCommands.ts",
+      "equal": true,
+      "oldExpandedCalls": [],
+      "newExpandedCalls": [],
+      "expandedSha256": [
+        "d24f813f85940da6a40c795b6039d5c2bd9e331a44a8646f9f70857642de68a9",
+        "d24f813f85940da6a40c795b6039d5c2bd9e331a44a8646f9f70857642de68a9"
+      ]
+    },
+    {
+      "file": "src/local-app/studioCommands.ts",
+      "equal": true,
+      "oldExpandedCalls": [
+        {
+          "name": "identity",
+          "line": 76,
+          "argument": "{command,basis:basis.hash,workspace:workspace.sha256,reason,acceptDurationRisk:data.acceptDurationRisk??false,riskReason:data.riskReason??null}"
+        },
+        {
+          "name": "identity",
+          "line": 151,
+          "argument": "{...basis,sourceId}"
+        }
+      ],
+      "newExpandedCalls": [
+        {
+          "name": "identity",
+          "line": 74,
+          "argument": "{command,basis:basis.hash,workspace:workspace.sha256,reason,acceptDurationRisk:data.acceptDurationRisk??false,riskReason:data.riskReason??null}"
+        },
+        {
+          "name": "identity",
+          "line": 149,
+          "argument": "{...basis,sourceId}"
+        }
+      ],
+      "expandedSha256": [
+        "9b69254befa1b94f6f1b43da3be0a55a6a36937dc61988797973ba8b32495037",
+        "9b69254befa1b94f6f1b43da3be0a55a6a36937dc61988797973ba8b32495037"
+      ]
+    },
+    {
+      "file": "src/local-app/workspaceAudio.ts",
+      "equal": true,
+      "oldExpandedCalls": [
+        {
+          "name": "hash",
+          "line": 96,
+          "argument": "[row.id,row.script_revision_id,data.kind,description,query,duration,anchor,offset,shotId,sourceItemId,sourceSha,source?.startSeconds??null,source?.playbackRate??null,materialId,snapshot]"
+        }
+      ],
+      "newExpandedCalls": [
+        {
+          "name": "hash",
+          "line": 95,
+          "argument": "[row.id,row.script_revision_id,data.kind,description,query,duration,anchor,offset,shotId,sourceItemId,sourceSha,source?.startSeconds??null,source?.playbackRate??null,materialId,snapshot]"
+        }
+      ],
+      "expandedSha256": [
+        "0c9c6a47c18aba8db22da9260920fb50b14296e084008fc897c6af2b6d929bd5",
+        "0c9c6a47c18aba8db22da9260920fb50b14296e084008fc897c6af2b6d929bd5"
+      ]
+    },
+    {
+      "file": "src/local-app/workspaceCaptionsCommands.ts",
+      "equal": true,
+      "oldExpandedCalls": [
+        {
+          "name": "fingerprint",
+          "line": 32,
+          "argument": "{version:'workspace-caption-input/v1',workspaceId:row.id,shotId:clip.shotId,text:contract.text,followText:contract.contentMode==='follow_tts'?followText:null,audioTrackId:audio?.id??null,audioSha256:audio?.sha256??null,startFrame:item.startFrame,durationInFrames:item.durationInFrames,fps:timeline.fps,voiceItems}"
+        },
+        {
+          "name": "fingerprint",
+          "line": 33,
+          "argument": "lane?.words??[]"
+        }
+      ],
+      "newExpandedCalls": [
+        {
+          "name": "fingerprint",
+          "line": 31,
+          "argument": "{version:'workspace-caption-input/v1',workspaceId:row.id,shotId:clip.shotId,text:contract.text,followText:contract.contentMode==='follow_tts'?followText:null,audioTrackId:audio?.id??null,audioSha256:audio?.sha256??null,startFrame:item.startFrame,durationInFrames:item.durationInFrames,fps:timeline.fps,voiceItems}"
+        },
+        {
+          "name": "fingerprint",
+          "line": 32,
+          "argument": "lane?.words??[]"
+        }
+      ],
+      "expandedSha256": [
+        "ee11963bca36cf8e67b840a7455319aec58f695a3c6f80fbdb4d5a2e7f97c481",
+        "ee11963bca36cf8e67b840a7455319aec58f695a3c6f80fbdb4d5a2e7f97c481"
+      ]
+    },
+    {
+      "file": "src/local-app/workspaceNarration.ts",
+      "equal": true,
+      "oldExpandedCalls": [
+        {
+          "name": "fingerprint",
+          "line": 33,
+          "argument": "[row.script_revision_id,row.storyboard_package_id,clip.shotId,d?.audio_mode,d?.tts_text,...(d?.audio_mode==='source'?[d?.current_audio_track_id]:[d?.tts_voice,d?.tts_speaking_rate,d?.tts_language_code,...(selections.find(s=>s.shot_id===clip.shotId)?.selection?[selections.find(s=>s.shot_id===clip.shotId).selection]:[])])]"
+        },
+        {
+          "name": "fingerprint",
+          "line": 137,
+          "argument": "clip.source"
+        }
+      ],
+      "newExpandedCalls": [
+        {
+          "name": "fingerprint",
+          "line": 31,
+          "argument": "[row.script_revision_id,row.storyboard_package_id,clip.shotId,d?.audio_mode,d?.tts_text,...(d?.audio_mode==='source'?[d?.current_audio_track_id]:[d?.tts_voice,d?.tts_speaking_rate,d?.tts_language_code,...(selections.find(s=>s.shot_id===clip.shotId)?.selection?[selections.find(s=>s.shot_id===clip.shotId).selection]:[])])]"
+        },
+        {
+          "name": "fingerprint",
+          "line": 135,
+          "argument": "clip.source"
+        }
+      ],
+      "expandedSha256": [
+        "f6b9c87a003a4f0fe4068206ac743cfd959a195b6f70f35fa8fff634bb870f0d",
+        "f6b9c87a003a4f0fe4068206ac743cfd959a195b6f70f35fa8fff634bb870f0d"
+      ]
+    }
+  ],
+  "allEqual": true
+}
