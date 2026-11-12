@@ -9,7 +9,7 @@ import {
   type WorkerPreflightStatus,
   type WorkerTaskPackage,
 } from "./contracts.js";
-import { credentialEnvironmentForReference, type RuntimeDependencyStatus } from "./runtimeEvidence.js";
+import { credentialEnvironmentForReference, isConnectionId, type RuntimeDependencyStatus } from "./runtimeEvidence.js";
 import { mediaCapabilityForCapability, mediaCapabilityForKey, mediaCapabilityKeys } from "./productionCapabilities.js";
 import { registeredAdapters, type ExecutionPath, type RegisteredAdapterChoice } from "./registeredAdapters.js";
 import { workerRequiredTools } from "./runtimeConstraints.js";
@@ -426,4 +426,3 @@ function requiredTools(): readonly string[] { return workerRequiredTools; }
 function record(value: unknown): Record<string, unknown> { return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : {}; }
 function stringArray(value: unknown): string[] { return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string" && item.trim().length > 0) : []; }
 function stringValue(value: unknown): string { return typeof value === "string" ? value.trim() : ""; }
-function isConnectionId(value: string | undefined): boolean { return Boolean(value && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)); }

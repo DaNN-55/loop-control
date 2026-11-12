@@ -14,3 +14,12 @@ it('checks runtime path dependencies even with no blob candidates, without treat
   await expect(historyBlobTargets(history,inventory,[media],[path])).rejects.toThrow('其他留存文件仍引用');
  }finally{rmSync(root,{recursive:true,force:true});}
 });
+
+it('verifies real history blob bytes and rejects a same-size content change',async()=>{
+ const root=realpathSync(mkdtempSync(join(tmpdir(),'history-blob-digest-'))),sha='ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad',path=join(root,sha);
+ const inventory:HistoryDeleteInventory={episodeId:'10000000-0000-4000-8000-000000000001',title:'Fixture',revision:'',live:null,records:[],files:[],blobs:[{sha256:sha,bytes:3}]};
+ try{
+  writeFileSync(path,'abc');expect((await historyBlobTargets(root,inventory,[],[])).targets).toMatchObject([{sha,path,bytes:3}]);
+  writeFileSync(path,'abd');await expect(historyBlobTargets(root,inventory,[],[])).rejects.toThrow('历史文件已变化');
+ }finally{rmSync(root,{recursive:true,force:true});}
+});

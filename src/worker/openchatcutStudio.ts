@@ -4,7 +4,7 @@ import type {EpisodeFileIO} from '../local-app/episodeFiles.js';
 import {safeAssetOutputPath} from "./controlledMediaExecutor.js";
 import { createHash, randomUUID } from "node:crypto";
 import {tmpdir} from "node:os";
-import { createReadStream } from "node:fs";
+import {fileSha256} from "./fileSha256.js";
 import { copyFile, mkdir, mkdtemp, rm, readFile, writeFile, lstat, realpath, rename, unlink } from "node:fs/promises";
 import { spawn, spawnSync, type ChildProcess } from "node:child_process";
 import { createServer as createTcpServer, type Server } from "node:net";
@@ -400,12 +400,6 @@ function reviewRenderInputFingerprint(render: ReviewRender, project: OpenChatCut
 }
 
 function projectSha256(project: OpenChatCutProject): string { return createHash("sha256").update(JSON.stringify(project)).digest("hex"); }
-
-async function fileSha256(path:string):Promise<string>{
-  const hash=createHash('sha256');
-  for await(const chunk of createReadStream(path))hash.update(chunk);
-  return hash.digest('hex');
-}
 
 async function currentSessionProject(session: Session): Promise<OpenChatCutProject> {
   const response = await fetch(`${session.baseUrl}/api/project-store/entry?key=${encodeURIComponent(`project:${session.projectId}`)}`, { headers: { "Sec-Fetch-Site": "none" } });

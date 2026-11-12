@@ -6,7 +6,7 @@ import{assertReferenceIntegrity}from'./reference-integrity.mjs';
 // Shared native backup implementation with an explicit deployment context. No n8n/Supabase client, credentials or Keychain export.
 import{securityInventorySql}from'./security-inventory.mjs';
 import{archiveCopies,archiveSequences,readNativeBackup}from'../storage/native-backup-format.mjs';
-import{assetPathWithin,mappedAssetPath}from'../../src/local-app/mediaPaths.ts';
+import{assetPathWithin,assetPathsOverlap,mappedAssetPath}from'../../src/local-app/mediaPaths.ts';
 import{spawn,execFileSync}from'node:child_process';import{once}from'node:events';import{createInterface}from'node:readline';
 import{readFileSync,writeFileSync,readdirSync,lstatSync,realpathSync,mkdirSync,existsSync,renameSync,unlinkSync,rmdirSync,openSync,closeSync}from'node:fs';
 import{join,resolve,relative,isAbsolute}from'node:path';import{createHash,randomUUID}from'node:crypto';
@@ -19,7 +19,7 @@ export async function createNativeBackup(input,afterSnapshot,runtime){
  const{root,projectRoot,container,assertDatabase,env,docker,ensurePrivateDirectory}=runtime;
  assertDatabase();if(runtime.dailyRuntime){if(input.database!==runtime.database||input.mediaRoot!==runtime.mediaRoot||input.projectRoot!==projectRoot||input.backupRoot!==join(root,'backups',input.database)||!/^[0-9a-f-]{36}$/.test(input.jobId))throw Error('Unapproved daily backup target');}
  else if(!(['loop_imported','loop_t23','loop_t24_source','loop_t25'].includes(input.database)||/^loop_t24_restore[a-z0-9_]*$/.test(input.database))||!/^[0-9a-f-]{36}$/.test(input.jobId)||input.projectRoot!==projectRoot||!(input.mediaRoot===join(root,'media')||(input.database.startsWith('loop_t24_')||input.database==='loop_t25')&&input.mediaRoot.startsWith(join(root,'state')+'/'))||input.backupRoot!==join(root,'backups',input.database))throw Error('Unapproved native backup target');
- const mediaRoot=input.mediaRoot,backupRoot=input.backupRoot,overlap=(a,b)=>a===b||assetPathWithin(a,b)||assetPathWithin(b,a);if(resolve(mediaRoot)!==mediaRoot||resolve(backupRoot)!==backupRoot||overlap(mediaRoot,backupRoot))throw Error('Backup and media roots must not overlap');
+ const mediaRoot=input.mediaRoot,backupRoot=input.backupRoot;if(resolve(mediaRoot)!==mediaRoot||resolve(backupRoot)!==backupRoot||assetPathsOverlap(mediaRoot,backupRoot))throw Error('Backup and media roots must not overlap');
  const deployment=runtime.deployment,retainedRoots=[deployment?.runtimeRoot,deployment?.stateDirectory,deployment?.backupRoot,deployment?.openChatCut?.root,deployment?.worker?.alignment?.cacheDirectory,deployment?.historyRoot].filter(path=>typeof path==='string');
  if(retainedRoots.includes(mediaRoot))throw Error('Production media cannot equal a retained platform root');const excluded=new Set(retainedRoots.filter(path=>assetPathWithin(mediaRoot,path)));
  ensurePrivateDirectory(backupRoot);if(realpathSync(backupRoot)!==backupRoot||realpathSync(mediaRoot)!==mediaRoot)throw Error('Unsafe backup root');

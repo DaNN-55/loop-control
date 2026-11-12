@@ -23,7 +23,7 @@ import {createHash} from 'node:crypto';
 import type {Pool,PoolClient} from 'pg';
 import type {OwnerSession} from './sessions.js';
 import {sessionTransaction,ownerTransaction} from './ownerTransaction.js';
-import {ConfigurationError,validateConfigurationPolicy,canonical} from './configurationCommands.js';
+import {ConfigurationError,validateConfigurationPolicy,canonicalFingerprint} from './configurationCommands.js';
 import {snapshotInput} from './localFiles.js';
 import {verifyMediaLibrary} from '../worker/mediaLibrary.js';
 import {execFile} from 'node:child_process';
@@ -68,7 +68,7 @@ export class LocalEpisodeCommands {
  }
  private async executeCommand(session:{id:string},body:Record<string,unknown>,transaction:<T>(run:(c:PoolClient)=>Promise<T>)=>Promise<T>,automatic:boolean){
   if(typeof body.command!=='string'||!Object.hasOwn(productionWorkspaceFields,body.command)&&!['prepareScriptPublish','configureScriptProduction','pauseScriptProduction','applyScriptSettings','bindScriptVideo','renderScriptReview','generateOfficialVideo','generateWan','resumeWan','annotateAudio','requestQcMemberRevision','repairConnection','repairConfiguration','create','reconfirmScript','importMaterial','start','review','openDirectory','openStandaloneStudio','planStoryboard','annotateStoryboard','requestStructureRevision','saveTtsSettings','saveTtsDraft','generateTts','registerManualMedia','saveAudioSelection','planMedia','retryMedia','saveMediaDraft','generateClip','setAudioSourceMode','generateSourceAudio','requestAlignment','saveManualAlignment','confirmCaptionText','generateSyncPreview','confirmSyncPreview','openStudio','saveStudio','generateReviewVideo','submitStudioRevision','requestStudioCompositionRevision','requestStudioStoryboardRevision','createQcIssue','resolveQcIssue','approveQc','retryFinalRender','preparePublishPackage'].includes(body.command)||typeof body.idempotencyKey!=='string'||!/^[0-9a-f-]{36}$/.test(body.idempotencyKey)||!body.data||typeof body.data!=='object'||Array.isArray(body.data)||Object.keys(body).some(k=>!['command','idempotencyKey','data'].includes(k)))throw new ConfigurationError(400,'Episode命令无效。');
-  const data=body.data as Record<string,unknown>,hash=createHash('sha256').update(JSON.stringify(canonical(body))).digest('hex');
+  const data=body.data as Record<string,unknown>,hash=canonicalFingerprint(body);
   const allowed:Record<string,string[]>={create:['accountId','title','seriesVersionId','isTest'],importMaterial:['episodeId','sourceKind','sourcePath','logicalName','materialType','materialPurpose','mimeType','isMainScript','contentBase64','deferRefresh'],start:['episodeId'],review:['episodeId','toStage','reason','reviewPackageId'],openDirectory:['episodeId']};
   allowed.reconfirmScript=['episodeId','expectedScriptRevisionId','text','reason'];
   allowed.planStoryboard=['episodeId'];allowed.annotateStoryboard=['episodeId','reviewPackageId','shotId','reason'];allowed.requestStructureRevision=['episodeId','reviewPackageId','operation','reason'];

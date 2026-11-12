@@ -1,7 +1,6 @@
 import {resolveEpisodeAssetRoot,requireAccountAssetRoot} from './accountAssetRoots.js';
-import{createHash}from'node:crypto';
 import type{Pool,PoolClient}from'pg';
-import{canonical,ConfigurationError}from'./configurationCommands.js';
+import{canonicalFingerprint as fingerprint,ConfigurationError}from'./configurationCommands.js';
 import {historyBlobTargets,finishHistoryBlob,type HistoryBlobTarget} from './historyEpisodeDeletion.js';
 import {tokenHash} from './sessions.js';
 import{ownerTransaction,sessionTransaction}from'./ownerTransaction.js';
@@ -14,7 +13,6 @@ import {hasActiveNativeStudio} from '../worker/openchatcutStudio.js';
 import {relative} from 'node:path';
 import {stageConfirmedEpisodeFiles,restoreConfirmedEpisodeFiles,finalizeConfirmedEpisodeFiles} from '../worker/episodeDeletion.js';
 const uuid=/^[0-9a-f-]{36}$/;
-const fingerprint=(v:unknown)=>createHash('sha256').update(JSON.stringify(canonical(v))).digest('hex');
 interface DeletionResult{recycleInventory?:unknown;episodeId:string;title:string;path:string;stagingPath:string;cleanupKey:string;cleanupPending:boolean;localRemoved?:boolean;summary:unknown;cleanupRoot:string;paths?:string[];stagingPaths?:string[];cleanupTargets?:EpisodeDeletionTarget[];historyCleanupTargets?:HistoryBlobTarget[];historyScanRoots?:string[];historyRemovedPaths?:string[];message?:string;}
 export function publicDeletionResult(result:DeletionResult){const{recycleInventory:_inventory,cleanupRoot:_root,cleanupTargets:_targets,historyCleanupTargets:_history,historyScanRoots:_scan,historyRemovedPaths:_removed,message,...visible}=result;return{...visible,...(result.cleanupPending&&message?{message}:{}),...(result.cleanupPending&&(!result.cleanupTargets||result.cleanupTargets.some(target=>!target.files))?{message:'旧回执没有可验证的精确文件清单；暂存与未知文件保留。'}:{})};}
 export class LocalEpisodeLifecycle{

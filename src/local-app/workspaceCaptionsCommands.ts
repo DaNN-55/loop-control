@@ -12,9 +12,8 @@ import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
 import {isOpenChatCutStudio} from '../worker/openchatcutStudio.js';
 import {probeMp3Artifact} from '../worker/mediaTools.js';
 import {verifyEpisodeFile,resolveEpisodeFileReference} from './episodeFiles.js';
-import {ConfigurationError} from './configurationCommands.js';
+import {ConfigurationError,jsonFingerprint as fingerprint} from './configurationCommands.js';
 import {readProductionWorkspace,updateWorkspaceProject,type ProductionWorkspaceRecord} from './productionWorkspaceCommands.js';
-const fingerprint=(v:unknown)=>createHash('sha256').update(JSON.stringify(v)).digest('hex');
 const comparable=(v:string)=>v.replace(/\s/gu,'');
 async function captionContext(c:PoolClient,root:string,row:Pick<ProductionWorkspaceRecord,'id'|'episode_id'|'storyboard_package_id'|'bindings'>,project:OpenChatCutProject,clipId:unknown){
  await requireEpisodeStorageDirectory(c,await episodeStorageLocationAtRoot(c,root,row.episode_id));

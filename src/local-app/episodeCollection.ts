@@ -2,7 +2,7 @@ import type {Pool,PoolClient} from 'pg';
 import {createHash} from 'node:crypto';
 import type {OwnerSession} from './sessions.js';
 import {sessionTransaction} from './ownerTransaction.js';
-import {canonical,ConfigurationError} from './configurationCommands.js';
+import {canonicalFingerprint,ConfigurationError} from './configurationCommands.js';
 import {resolveEpisodeStorageLocation,resolveEpisodeStorageCollection,requireEpisodeStorageDirectory} from './episodeStorageLocation.js';
 import {planEpisodeCollectionMove} from './accountDirectoryMigration.js';
 import {createStorageContainer} from './seriesDirectories.js';
@@ -22,7 +22,7 @@ export async function readEpisodeCollection(c:Pick<PoolClient,'query'>,mediaRoot
 /** Plan replay and optional unassigned-container creation share the established
  * Owner receipt boundary. The actual move remains the existing coordinator. */
 export async function planEpisodeCollectionCommand(pool:Pool,session:OwnerSession,mediaRoot:string,body:Record<string,unknown>,episodeId:string,seriesId:string|null){
- const key=String(body.idempotencyKey),hash=createHash('sha256').update(JSON.stringify(canonical(body))).digest('hex');
+ const key=String(body.idempotencyKey),hash=canonicalFingerprint(body);
  const receipt=async(c:Pick<PoolClient,'query'>)=>{const row=(await c.query('SELECT payload_hash,result FROM local_identity.command_receipts WHERE owner_id=$1 AND idempotency_key=$2',[session.id,key])).rows[0];if(row&&row.payload_hash!==hash)throw new ConfigurationError(409,'同一操作标识不能用于不同内容。');return row;};
  const prepared=await sessionTransaction(pool,session,async c=>{const previous=await receipt(c);if(previous)return{previous};const state=await readEpisodeCollection(c,mediaRoot,episodeId);if(state.collection.status!=='registered'||state.collection.reason)throw new ConfigurationError(409,state.collection.reason??'请先在账号中盘点旧资料纳管，再调整系列。');return{accountId:state.accountId,prepare:seriesId===null&&!state.targets.find(target=>target.seriesId===null)?.containerId};});
  if(!('previous'in prepared)&&prepared.prepare){const bytes=createHash('sha256').update(session.id+':collection-unassigned:'+key).digest('hex').slice(0,32),containerKey=`${bytes.slice(0,8)}-${bytes.slice(8,12)}-${bytes.slice(12,16)}-${bytes.slice(16,20)}-${bytes.slice(20)}`;await createStorageContainer(pool,session,containerKey,hash,{accountId:prepared.accountId},mediaRoot,'unassigned');}

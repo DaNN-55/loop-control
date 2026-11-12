@@ -1,6 +1,6 @@
 import {uiText,getUiLocale} from '../i18n/ui';
 import {useWorkspaceLeaveEntry} from '../local-app/WorkspaceDraft';
-import {useConnectionDrafts} from './ConnectionDraftSession';
+import {connectionDraftBaseline,useConnectionDrafts} from './ConnectionDraftSession';
 import {ConnectionDraftLeaveDialog} from './ConnectionDraftLeaveDialog';
 import type {PanelNavigation} from '../local-app/catalogNavigation';
 import {PopulatedFilterSelect} from '../ui/PopulatedFilterSelect';
@@ -219,7 +219,6 @@ export function ConnectionWorkspace({ inlineBilling=false,settingsLayout=false,i
   // Session-local non-secret drafts. Never copy credential input into these snapshots.
   const drafts={current:sessionDrafts.connections};
   const editingBaseline=useRef('');
-  const connectionBaseline=(connection?:ExternalConnection)=>JSON.stringify(connection?[connection.name,connection.description??'',connection.current_version_id,connection.region]:[]);
   function closeDialog(){setSecret('');setRebindSecrets({});setCredentialFieldRevision(value=>value+1);setLeavePrompt(false);setDialog('');}
   function requestClose(){if(busy)return;if(nonSecretChanged||secret||Object.values(rebindSecrets).some(Boolean))setLeavePrompt(true);else closeDialog();}
   function keepDraft(){drafts.current.set(selectedId||'__new',{baseline:editingBaseline.current,name,description,adapter,workspaceId,region:minimaxRegion});return true;}
@@ -272,15 +271,15 @@ export function ConnectionWorkspace({ inlineBilling=false,settingsLayout=false,i
   function choose(id:string){
     if(busy)return;
     const connection=connections.find(item=>item.id===id);
-    editingBaseline.current=connectionBaseline(connection);
+    editingBaseline.current=connectionDraftBaseline(connection);
     setCredentialFieldRevision(value=>value+1);
     setSelectedId(id);setName(connection?.name??'');setDescription(connection?.description??'');
     setAdapter('pexels_video');setWorkspaceId('');
     setMinimaxRegion(connection?.region??(connection?'international':'cn'));
     const draft=drafts.current.get(id||'__new');
-    if(draft&&draft.baseline===connectionBaseline(connection)){setName(draft.name);setDescription(draft.description);setAdapter(draft.adapter);setWorkspaceId(draft.workspaceId);setMinimaxRegion(draft.region);}else if(draft)drafts.current.delete(id||'__new');
+    if(draft&&draft.baseline===connectionDraftBaseline(connection)){setName(draft.name);setDescription(draft.description);setAdapter(draft.adapter);setWorkspaceId(draft.workspaceId);setMinimaxRegion(draft.region);}else if(draft)drafts.current.delete(id||'__new');
     setSecret('');setRebindSecrets({});setError('');setNotice('');setResultTitle('');setResultName('');setResultConnectionId('');
-    if(draft&&draft.baseline!==connectionBaseline(connection)){setNotice(uiText("保留的修改所依据的连接已变化，已读取当前资料。"));setResultTitle(uiText("已读取当前连接"));}
+    if(draft&&draft.baseline!==connectionDraftBaseline(connection)){setNotice(uiText("保留的修改所依据的连接已变化，已读取当前资料。"));setResultTitle(uiText("已读取当前连接"));}
   }
   function openConnection(id:string,mode:'edit'|'detail',versionsOpen=false){if(busy)return;choose(id);setShowVersions(versionsOpen);setDialog(mode);if(mode==='detail'){viewedConnection.current=id;navigation?.change({connection:id});}}
   function createConnection(){if(busy)return;choose('');setShowVersions(false);setDialog('new');}

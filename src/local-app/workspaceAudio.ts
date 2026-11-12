@@ -4,11 +4,11 @@ import {soundIntentQuery} from '../soundIntent.js';
 import {currentWorkspaceCallAuthorization} from './workspaceCallConfirmation.js';
 import {episodeStorageLocationAtRoot,requireWritableEpisodeStorage} from './episodeStorageLocation.js';
 import {creativeAccountRules} from '../creativeAccountRules.js';
-import {createHash,randomUUID} from 'node:crypto';
+import {randomUUID} from 'node:crypto';
 import type {PoolClient} from 'pg';
 import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
 import {applyWorkspaceAudioMix,readWorkspaceAudioMix,readWorkspaceSoundEnabled,setWorkspaceSoundEnabled,type WorkspaceAudioEdit} from '../workspaceAudio.js';
-import {ConfigurationError} from './configurationCommands.js';
+import {ConfigurationError,jsonFingerprint as hash} from './configurationCommands.js';
 import {verifyEpisodeFile,resolveEpisodeFileReference} from './episodeFiles.js';
 import {resolveWorkspaceSource} from './workspaceSources.js';
 import {probeMp3Artifact,inspectMp4Artifact} from '../worker/mediaTools.js';
@@ -16,7 +16,6 @@ import {isOpenChatCutStudio} from '../worker/openchatcutStudio.js';
 import {persistWorkspaceRevision,type ProductionWorkspaceRecord} from './productionWorkspaceCommands.js';
 import {resolveProductionSelection} from './productionSelection.js';
 import type {InputRuntime} from './episodeCommands.js';
-const hash=(v:unknown)=>createHash('sha256').update(JSON.stringify(v)).digest('hex');
 export function workspaceAudioShotIds(row:ProductionWorkspaceRecord){return Object.fromEntries([...new Set(row.bindings.map(b=>b.shotId))].map(id=>[id,row.bindings.filter(b=>b.shotId===id).map(b=>b.itemId)]));}
 function preparationCurrent(row:ProductionWorkspaceRecord,project:OpenChatCutProject,p:Record<string,any>){
  if(p.shot_id&&!row.bindings.some(b=>b.shotId===p.shot_id))return false;

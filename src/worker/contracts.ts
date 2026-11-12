@@ -1,3 +1,4 @@
+import {isConnectionId} from "./runtimeEvidence.js";
 import {shotCompositionLayouts,type ShotCompositionLayout} from '../shotComposition.js';
 import type {FrozenVideoVisualInput} from '../videoVisualInputs.js';
 import {wanVideoModel,wanVideoParameters,defaultWanModelSettings} from '../wanVideoModels.js';
@@ -894,10 +895,6 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function isNonEmptyString(value: unknown): value is string {
   return typeof value === "string" && value.trim().length > 0;
-}
-
-function isConnectionId(value: string | undefined): boolean {
-  return Boolean(value && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value));
 }
 
 function isSha256(value: unknown): value is string {

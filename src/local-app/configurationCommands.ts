@@ -31,6 +31,8 @@ function validatePolicySecrets(value:unknown):void{
  visit(value);
 }
 export function canonical(value:unknown):unknown{return Array.isArray(value)?value.map(canonical):value&&typeof value==='object'?Object.fromEntries(Object.entries(value).sort().map(([k,v])=>[k,canonical(v)])):value;}
+export function jsonFingerprint(value:unknown):string{return createHash('sha256').update(JSON.stringify(value)).digest('hex');}
+export function canonicalFingerprint(value:unknown):string{return createHash('sha256').update(JSON.stringify(canonical(value))).digest('hex');}
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const commands={
  createAccount:{sql:'select to_jsonb(public.create_account($1,$2,$3,$4)) result',fields:['name','slug','timezone','policy']},
@@ -51,7 +53,7 @@ export async function executeConfiguration(pool:Pool,session:OwnerSession,body:R
  if(typeof body.idempotencyKey!=='string'||!uuid.test(body.idempotencyKey))throw new ConfigurationError(400,'缺少操作标识。');
  if(!body.data||typeof body.data!=='object'||Array.isArray(body.data))throw new ConfigurationError(400,'配置内容无效。');
  const data=body.data as Record<string,unknown>,command=body.command as keyof typeof commands,definition=commands[command];
- const hash=createHash('sha256').update(JSON.stringify(canonical(body))).digest('hex');
+ const hash=canonicalFingerprint(body);
  for(const field of definition.fields){
   const value=data[field];
   if(field.endsWith('Id')||field==='accountId'){if(typeof value!=='string'||!uuid.test(value))throw new ConfigurationError(400,'引用无效。');}

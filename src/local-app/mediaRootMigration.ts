@@ -6,7 +6,7 @@ import {sessionTransaction} from './ownerTransaction.js';
 import type {OwnerSession} from './sessions.js';
 import {ConfigurationError} from './configurationCommands.js';
 import {inspectMediaRoot,verifyMediaRootBinding,type MediaRootBinding,type MediaRootRuntime} from './mediaRootSettings.js';
-import {assetPathWithin} from './mediaPaths.js';
+import {assetPathWithin,assetPathsOverlap} from './mediaPaths.js';
 import {resolveEpisodeStorageLocation,requireEpisodeStorageDirectory,resolveEpisodeStorageCollection} from './episodeStorageLocation.js';
 import {episodeFileIO} from './episodeFiles.js';
 import {hasActiveNativeStudio} from '../worker/openchatcutStudio.js';
@@ -14,7 +14,6 @@ import {inventory,identity,references,fingerprint,type File,type Root} from './s
 
 export interface StorageResource{kind:'program'|'runtime'|'state'|'model-cache'|'history'|'backup'|'secrets';path?:string}
 interface PlanFile extends File{accountId:string;episodeId:string;targetRelativePath:string}
-const overlap=(a:string,b:string)=>a===b||assetPathWithin(a,b)||assetPathWithin(b,a);
 const rowPlan=(r:Record<string,unknown>)=>({id:r.id,status:r.status,manifest:r.manifest,manifestSha256:r.manifest_sha256,createdAt:r.created_at,progress:r.progress,error:r.error,updatedAt:r.updated_at});
 export async function readMediaRootMigration(c:Pick<PoolClient,'query'>){
  if(!(await c.query("SELECT to_regclass('local_identity.media_root_migrations') IS NOT NULL present")).rows[0].present)return null;
@@ -42,7 +41,7 @@ export async function planMediaRootMigration(pool:Pool,session:OwnerSession,medi
    const source=(await c.query('SELECT local_identity.media_root_binding() binding')).rows[0].binding as MediaRootBinding;
    if(!source||source.path!==mediaRoot)throw new ConfigurationError(409,'服务媒体根与登记位置不一致，请重启服务。');
    await verifyMediaRootBinding(source);
-   const conflictingRoots=[source.path,...(runtime?.protectedRoots??[]),'/System','/Library','/usr','/bin','/sbin','/etc','/dev','/proc'].filter(p=>overlap(p,target.path));
+   const conflictingRoots=[source.path,...(runtime?.protectedRoots??[]),'/System','/Library','/usr','/bin','/sbin','/etc','/dev','/proc'].filter(p=>assetPathsOverlap(p,target.path));
    if(conflictingRoots.length)throw new ConfigurationError(400,'目标不能与源位置、平台运行目录、历史库或备份重叠。冲突路径：'+[...new Set(conflictingRoots)].map(p=>`${p}（${p===target.path?'与目标相同':assetPathWithin(target.path,p)?'位于目标目录内':'包含目标目录'}）`).join('；')+'。');
    const conflicts:string[]=[],blockers=(await c.query('SELECT local_identity.media_root_pending_operations() reasons')).rows[0].reasons as {kind:string;object_id:string;reason:string}[];
    for(const pending of await runtime?.pendingOperations?.()??[])blockers.push({...pending,object_id:'deployment'});
@@ -67,7 +66,7 @@ export async function planMediaRootMigration(pool:Pool,session:OwnerSession,medi
     }
     for(const episode of (await c.query('SELECT id,title FROM public.episodes WHERE account_id=$1 ORDER BY id',[account.id])).rows){
      const location=await resolveEpisodeStorageLocation(c,mediaRoot,episode.id);await requireEpisodeStorageDirectory(c,location);await addDirectory(account.id,'episode',location.directoryPath,{episodeId:episode.id});
-     if(sourceResources.some(r=>r.path&&overlap(r.path,location.directoryPath)))throw new ConfigurationError(409,'生产目录与独立平台资源重叠，请先核对配置。');
+     if(sourceResources.some(r=>r.path&&assetPathsOverlap(r.path,location.directoryPath)))throw new ConfigurationError(409,'生产目录与独立平台资源重叠，请先核对配置。');
      if(await hasActiveNativeStudio(location.assetRoot,episode.id,location.relativePath))blockers.push({kind:'studio',object_id:episode.id,reason:'Studio 正在编辑，请先保存并返回。'});
      episodes.push({id:episode.id,accountId:account.id,title:episode.title,location,collection:await resolveEpisodeStorageCollection(c,location),lineage:(await c.query('SELECT * FROM local_identity.episode_completed_storage_lineage($1)',[episode.id])).rows});
      for(const task of (data['public.tasks']??[]) as {id:string;episode_id:string;input_snapshot:{native_episode_relative_path?:string;native_episode_directory_identity?:{deviceId:string|null;inodeId:string|null}}}[]){
@@ -90,8 +89,8 @@ export async function planMediaRootMigration(pool:Pool,session:OwnerSession,medi
      if(matches.length!==1||ref.sha256&&matches[0]?.sha256!==ref.sha256||ref.fileSize!==undefined&&matches[0]?.fileSize!==ref.fileSize)conflicts.push('文件引用缺失、指纹变化或归属不明：'+ref.relativePath);else refs.push(matches[0]);
     }
    }
-   for(const [index,ep] of episodes.entries())if(episodes.slice(index+1).some(other=>overlap(ep.location.directoryPath,other.location.directoryPath)))conflicts.push('不同生产单的实际目录重叠，无法安全区分范围。');
-   const accountDirectories=directories.filter(d=>d.kind==='account');for(const [index,d] of accountDirectories.entries())if(accountDirectories.slice(index+1).some(other=>overlap(d.source.path,other.source.path)))conflicts.push('账号实际目录重叠，请先核对账号隔离。');
+   for(const [index,ep] of episodes.entries())if(episodes.slice(index+1).some(other=>assetPathsOverlap(ep.location.directoryPath,other.location.directoryPath)))conflicts.push('不同生产单的实际目录重叠，无法安全区分范围。');
+   const accountDirectories=directories.filter(d=>d.kind==='account');for(const [index,d] of accountDirectories.entries())if(accountDirectories.slice(index+1).some(other=>assetPathsOverlap(d.source.path,other.source.path)))conflicts.push('账号实际目录重叠，请先核对账号隔离。');
    // Inspect only unclaimed entries; never recurse a shared global legacy root.
    const known=new Set(directories.map(d=>d.source.path));
    for(const parent of [mediaRoot,...directories.filter(d=>['account','series','unassigned'].includes(d.kind)).map(d=>d.source.path)])for(const name of await readdir(parent)){

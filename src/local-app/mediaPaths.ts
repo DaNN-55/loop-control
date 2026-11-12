@@ -1,5 +1,6 @@
 import{resolve,relative,isAbsolute}from'node:path';
 export function assetPathWithin(parent:string,child:string){const path=relative(parent,child);return path!==''&&path!=='..'&&!path.startsWith('../')&&!isAbsolute(path);}
+export const assetPathsOverlap=(a:string,b:string)=>a===b||assetPathWithin(a,b)||assetPathWithin(b,a);
 // Trusted deployment aliases resolve logical, frozen roots at the I/O boundary.
 export function mappedAssetPath(mediaRoot:string,value:unknown,sourceRoots:readonly string[]=[]):string{
  if(typeof value==='string'&&value!=='/'&&value.endsWith('/'))value=value.replace(/\/+$/,'');

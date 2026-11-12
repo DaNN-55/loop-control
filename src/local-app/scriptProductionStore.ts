@@ -1,18 +1,17 @@
 import {verifyEpisodeFile,resolveEpisodeFileReference} from './episodeFiles.js';
 import {resolveEpisodeStorageLocation,requireEpisodeStorageDirectory} from './episodeStorageLocation.js';
 import type {PoolClient} from 'pg';
-import {createHash} from 'node:crypto';
 import {basename} from 'node:path';
 import {parseProductionScript,validateProductionDefaults} from '../reviews/productionScript.js';
 import {resolveProductionPlan,type ResolvedProductionPlan,type ProductionMaterial} from '../reviews/productionPlan.js';
 import {defaultShotCaptionContract,shotCaptionContractToDatabase,type ShotCaptionAnchor} from '../shotCaptions.js';
 import {snapshotInput} from './localFiles.js';
-import {ConfigurationError,canonical} from './configurationCommands.js';
+import {ConfigurationError,canonicalFingerprint as productionHash} from './configurationCommands.js';
 import {probeMp3Artifact} from '../worker/mediaTools.js';
 
 export interface ScriptEpisode {id:string;account_id:string;series_id?:string;series_version_id:string|null;main_script_revision_id:string|null;stage:string;policy:Record<string,unknown>;tts_voice?:string;tts_language_code?:string;tts_speaking_rate?:number}
 export interface ScriptProductionRecord {episode_id:string;owner_id:string;script_sha256:string;script_revision_id:string;authorization_hash:string;enabled:boolean;plan:ResolvedProductionPlan;progress:Record<string,unknown>;last_status:string}
-export const productionHash=(value:unknown)=>createHash('sha256').update(JSON.stringify(canonical(value))).digest('hex');
+export {productionHash};
 export class ScriptProductionStore {
  constructor(private mediaRoot:string){}
  async read(c:PoolClient,episodeId:string){

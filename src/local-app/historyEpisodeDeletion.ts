@@ -1,5 +1,5 @@
 // Compatibility for already committed deletion receipts; no new history deletion entry.
-import {createHash} from 'node:crypto';
+import {fileSha256} from '../worker/fileSha256.js';
 import {createReadStream} from 'node:fs';
 import {lstat,realpath,readdir,unlink} from 'node:fs/promises';
 import {join,resolve,sep} from 'node:path';
@@ -23,7 +23,6 @@ function standaloneMedia(bytes:Buffer){
   ||bytes.toString('ascii',4,8)==='ftyp'&&bytes.readUInt32BE(0)>=8&&bytes.readUInt32BE(0)<=bytes.length
   ||['OggS','fLaC'].includes(bytes.toString('ascii',0,4)));
 }
-async function hashFile(path:string){const hash=createHash('sha256');for await(const chunk of createReadStream(path))hash.update(chunk);return hash.digest('hex');}
 // Stream preserved files for indirect content-address references; no whole media file is buffered.
 export async function historyBlobTargets(root:string|undefined,inventory:HistoryDeleteInventory,mediaRoots:string[],removedPaths:string[]){
  if(!root){if(inventory.blobs.length||removedPaths.length)throw new ConfigurationError(503,'历史文件库尚未配置，不能确认永久删除范围。');return{targets:[],retainedShas:[] as string[]};}
@@ -34,7 +33,7 @@ export async function historyBlobTargets(root:string|undefined,inventory:History
   if(!/^[a-f0-9]{64}$/.test(item.sha256))throw new ConfigurationError(409,'历史文件摘要无效。');
   const path=join(canonicalRoot,item.sha256);let stat;
   try{stat=await lstat(path,{bigint:true});}catch(error){if((error as NodeJS.ErrnoException).code==='ENOENT')continue;throw error;}
-  if(!stat.isFile()||stat.isSymbolicLink()||await realpath(path)!==path||Number(stat.size)!==Number(item.bytes)||await hashFile(path)!==item.sha256)throw new ConfigurationError(409,'历史文件已变化，请重新检查删除范围。');
+  if(!stat.isFile()||stat.isSymbolicLink()||await realpath(path)!==path||Number(stat.size)!==Number(item.bytes)||await fileSha256(path)!==item.sha256)throw new ConfigurationError(409,'历史文件已变化，请重新检查删除范围。');
   targets.push({sha:item.sha256,path,root:canonicalRoot,rootIdentity:nodeIdentity(rootStat),identity:identity(stat),bytes:Number(stat.size)});
  }
  if(!targets.length&&!removedPaths.length)return{targets,retainedShas:[] as string[]};
@@ -66,6 +65,6 @@ export async function finishHistoryBlob(c:PoolClient,target:HistoryBlobTarget,se
  const referenced=(await c.query('SELECT local_identity.history_cleanup_blob_referenced($1,$2) referenced',[target.sha,tokenHash(session.token)])).rows[0].referenced;
  if(referenced)return false;
  let stat;try{stat=await lstat(target.path,{bigint:true});}catch(error){if((error as NodeJS.ErrnoException).code==='ENOENT')return true;throw error;}
- if(!stat.isFile()||stat.isSymbolicLink()||identity(stat)!==target.identity||await hashFile(target.path)!==target.sha)throw Error('待清理历史文件已变化。');
+ if(!stat.isFile()||stat.isSymbolicLink()||identity(stat)!==target.identity||await fileSha256(target.path)!==target.sha)throw Error('待清理历史文件已变化。');
  await unlink(target.path);return true;
 }

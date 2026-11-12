@@ -21,6 +21,6 @@ export function runtimeCommandInvocation(command: string, argumentsList: string[
   return { command, argumentsList };
 }
 
-function isConnectionId(value: string | undefined): boolean {
+export function isConnectionId(value: string | undefined): boolean {
   return Boolean(value && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value));
 }

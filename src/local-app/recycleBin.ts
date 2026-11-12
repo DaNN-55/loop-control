@@ -2,7 +2,7 @@ import {createHash,randomUUID} from 'node:crypto';
 import {lstat,readdir,readlink} from 'node:fs/promises';
 import {join,relative} from 'node:path';
 import type {Pool,PoolClient} from 'pg';
-import {canonical,ConfigurationError} from './configurationCommands.js';
+import {canonicalFingerprint as digest,ConfigurationError} from './configurationCommands.js';
 import {ownerTransaction,sessionTransaction} from './ownerTransaction.js';
 import type {OwnerSession} from './sessions.js';
 import {LocalEpisodeLifecycle} from './episodeLifecycle.js';
@@ -12,7 +12,6 @@ interface FootprintFile{key:string;path:string;bytes:number;sha256:string;}
 interface Inventory{files:FootprintFile[];links:{path:string;value:string}[];targets:EpisodeDeletionTarget[];protected:boolean;}
 interface Entry{episode_id:string;revision:string;title:string;account_name:string;archived_before:string|null;recycled_at:string;size_bytes:string;inventory:Inventory;last_error:string|null;}
 const uuid=/^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i;
-const digest=(value:unknown)=>createHash('sha256').update(JSON.stringify(canonical(value))).digest('hex');
 const fields:Record<string,string[]>={recycleEpisode:['episodeId'],restoreRecycledEpisode:['episodeId','revision'],saveRecycleLimit:['limitBytes','expectedRevision'],planRecyclePurge:['episodeId','revision'],purgeRecycledEpisode:['episodeId','revision','confirmation','expectedPath','expectedPaths','expectedRevision']};
 
 /** Membership is reversible; only the existing exact-deletion pipeline removes bytes. */

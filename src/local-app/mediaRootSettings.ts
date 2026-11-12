@@ -9,7 +9,7 @@ import {promisify} from 'node:util';
 import {ConfigurationError} from './configurationCommands.js';
 import {sessionTransaction} from './ownerTransaction.js';
 import type {OwnerSession} from './sessions.js';
-import {assetPathWithin} from './mediaPaths.js';
+import {assetPathsOverlap} from './mediaPaths.js';
 const exec=promisify(execFile);
 export interface MediaRootBinding {path:string;deviceId:string;inodeId:string;mountPath:string}
 export interface MediaRootRuntime {
@@ -19,7 +19,6 @@ export interface MediaRootRuntime {
  persist:(binding:MediaRootBinding,publication?:{operation:'migration';planId:string;manifestSha256:string;storageOwnerId:string})=>Promise<(()=>Promise<void>) & {commit?:()=>Promise<void>}>;
  activate:(binding:MediaRootBinding,migration?:{planId:string;manifestSha256:string})=>Promise<void>;
 }
-const overlap=(a:string,b:string)=>a===b||assetPathWithin(a,b)||assetPathWithin(b,a);
 export async function inspectMediaRoot(path:unknown,minimumFreeBytes=0):Promise<MediaRootBinding>{
  if(typeof path!=='string'||path.length>4096||!isAbsolute(path)||resolve(path)!==path||path==='/')throw new ConfigurationError(400,'请选择实际本地文件夹。');
  try{
@@ -73,7 +72,7 @@ export class LocalMediaRootSettings{
    const binding=await inspectMediaRoot(body.path,this.runtime.minimumFreeBytes);
    if(binding.path===state.path)return state;
    const protectedRoots=[...this.runtime.protectedRoots,state.path,'/System','/Library','/usr','/bin','/sbin','/etc','/dev','/proc'];
-   if(protectedRoots.some(p=>overlap(binding.path,p)))throw new ConfigurationError(400,'媒体根不能与源位置、平台运行目录、备份或独立历史库重叠。');
+   if(protectedRoots.some(p=>assetPathsOverlap(binding.path,p)))throw new ConfigurationError(400,'媒体根不能与源位置、平台运行目录、备份或独立历史库重叠。');
    const retained=this.runtime.retainedRoots??[];for(const root of retained)await inspectMediaRoot(root);
    if((await readdir(state.path)).some(name=>!retained.includes(join(state.path,name)))||(await readdir(binding.path)).length)throw new ConfigurationError(409,'初始化仅适用于空工作区与空目标文件夹；已有文件需要受控迁移。');
    let undo:((()=>Promise<void>) & {commit?:()=>Promise<void>})|undefined;let previous:MediaRootBinding|null=null;

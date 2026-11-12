@@ -1,6 +1,5 @@
 import {readEpisodeCollection,planEpisodeCollectionCommand} from './episodeCollection.js';
 import {createStorageContainer,ownedContainerAccount,readStorageContainer,resolveStorageContainer,requireStorageContainer} from './seriesDirectories.js';
-import {createHash} from 'node:crypto';
 import {planLegacyStorageAdoption,planAccountDirectoryMigration,readAccountDirectoryMigrations,executeAccountDirectoryMigration} from './accountDirectoryMigration.js';
 import {readAccountAssetDirectory,setAccountAssetDirectory,requireAccountAssetRoot} from './accountAssetRoots.js';
 import type {Pool,PoolClient} from 'pg';
@@ -9,7 +8,7 @@ import {promisify} from 'node:util';
 import {isAbsolute,resolve} from 'node:path';
 import type {OwnerSession} from './sessions.js';
 import {sessionTransaction} from './ownerTransaction.js';
-import {canonical,ConfigurationError} from './configurationCommands.js';
+import {canonicalFingerprint,ConfigurationError} from './configurationCommands.js';
 import {resolveLocalAssetRoot} from './mediaDeployment.js';
 import type {LocalEpisodeCommands} from './episodeCommands.js';
 const exec=promisify(execFile),uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -52,7 +51,7 @@ export class LocalAccountCommands{
   if(['readSeriesDirectory','openSeriesDirectory','readUnassignedDirectory','openUnassignedDirectory','createUnassignedDirectory'].includes(String(body.command))){
    const series=String(body.command).includes('Series'),field=series?'seriesId':'accountId';
    if(typeof data[field]!=='string'||!uuid.test(String(data[field]))||Object.keys(data).some(k=>k!==field))throw new ConfigurationError(400,'系列目录参数无效。');
-   if(body.command==='createUnassignedDirectory')return createStorageContainer(this.pool,session,body.idempotencyKey,createHash('sha256').update(JSON.stringify(canonical(body))).digest('hex'),data,this.mediaRoot,'unassigned');
+   if(body.command==='createUnassignedDirectory')return createStorageContainer(this.pool,session,body.idempotencyKey,canonicalFingerprint(body),data,this.mediaRoot,'unassigned');
    return sessionTransaction(this.pool,session,async c=>{const accountId=await ownedContainerAccount(c,series?String(data.seriesId):null,series?undefined:String(data.accountId));
     if(String(body.command).startsWith('read'))return readStorageContainer(c,this.mediaRoot,accountId,series?String(data.seriesId):null);
     const location=await resolveStorageContainer(c,this.mediaRoot,accountId,series?String(data.seriesId):null);await this.directories.open(await requireStorageContainer(c,this.mediaRoot,location));return{opened:true};

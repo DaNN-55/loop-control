@@ -1,9 +1,8 @@
 import {applyScriptRenderSettings,scriptRenderHint} from '../worker/scriptRenderSettings.js';
 import type {ResolvedProductionPlan} from '../reviews/productionPlan.js';
 import {defaultReviewRenderComposition,reviewRenderCompositionFromJson,reviewRenderCompositionToJson} from '../reviews/reviewComposition.js';
-import {createHash} from 'node:crypto';
 import type {PoolClient} from 'pg';
-import {ConfigurationError} from './configurationCommands.js';
+import {ConfigurationError,jsonFingerprint as identity} from './configurationCommands.js';
 import {verifyEpisodeFile,episodeFileIO} from './episodeFiles.js';
 import {closeOpenChatCutStudio,openOpenChatCutStudio,snapshotOpenChatCutStudio,freezeOpenChatCutStudio,type OpenChatCutRuntimeConfig} from '../worker/openchatcutStudio.js';
 import {shotPreparationContractFromSnapshot,reviewRenderFromSnapshot} from '../worker/codexRunner.js';
@@ -19,7 +18,6 @@ export interface StudioRuntime {studioRuntime?():Promise<OpenChatCutRuntimeConfi
 interface Basis {hash:string;render:Render;mode:'workbench'|'shot'|'qc';reviewPackageId:string;sourcePath:string}
 interface Binding {basis:Basis;workspaceRelativePath:string}
 const editableStages=['storyboard_approved','production_ready','render_ready','qc_review'];
-const identity=(value:unknown)=>createHash('sha256').update(JSON.stringify(value)).digest('hex');
 
 export class NativeStudioCommands {
  private bindings=new Map<string,Binding>();
