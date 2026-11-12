@@ -1,0 +1,52 @@
+{
+  "started": "2026-11-12T11:52:51.358Z",
+  "ended": "2026-11-12T11:54:04.527Z",
+  "taskId": "edf51fe3-00f5-4f82-b314-44f59b223b2d",
+  "assetRoot": "/private/tmp/loop-t06-volume-vUNTdG/mounted/loop-153-InvCJl/雨后小故事--542596d4-696a-436f-aa5b-cdea3f1327c9",
+  "artifact": {
+    "sha256": "ad9eac34d14cee9c725512e8aeef6d81afc6c2504d2771cb635659a950d231b9",
+    "fileSize": 1111,
+    "artifactType": "acoustic_alignment_evidence",
+    "relativePath": "城市善意--1ec686b6-8f42-4d7e-80f6-0fb87f835c4d/末班车前的一把伞--e2677236-6cd2-4682-9836-657f933daf1b/native-tasks/edf51fe3-00f5-4f82-b314-44f59b223b2d/shot-01-aeb34cc1b58d6bfe6a70caf0fc96a86441f97896595e5c3296aadec7786dfc81.json"
+  },
+  "alignment": {
+    "cues": [
+      {
+        "id": "phrase-1",
+        "text": "雨停了，",
+        "endMs": 866,
+        "startMs": 20,
+        "confidence": 0.9630000000000001
+      },
+      {
+        "id": "phrase-2",
+        "text": "她把伞留在长椅上。",
+        "endMs": 2960,
+        "startMs": 966,
+        "confidence": 0.94625
+      }
+    ],
+    "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+    "detail": "本地 WhisperX 对齐已完成。",
+    "method": "local_whisperx",
+    "status": "completed",
+    "version": "acoustic-alignment/v1",
+    "attempts": [
+      {
+        "detail": "本地 WhisperX 已生成短语 cues。",
+        "method": "local_whisperx",
+        "status": "completed"
+      }
+    ],
+    "provider": "whisperx",
+    "wordCount": 2,
+    "audioSha256": "306f2fa486ff54a9c64c3722ed11262078c49fbf41465001c2b2d03d71905bce",
+    "generatedAt": "2026-11-12T11:53:01.771Z",
+    "granularity": "phrase",
+    "inputVersion": "aeb34cc1b58d6bfe6a70caf0fc96a86441f97896595e5c3296aadec7786dfc81",
+    "reviewIssues": [],
+    "textFingerprint": "9df0193d6ab2d6ffdabd31c853b046ab35165b48cf007ec893870103ec3b5a4e",
+    "connectionVersionId": null
+  },
+  "paidCalls": 0
+}

@@ -1,0 +1,73 @@
+{
+  "date": "2026-11-12",
+  "head": "6719e676aeb1a5c6eb6e56d385abc9a4a51b373e",
+  "committed": false,
+  "pushed": false,
+  "protectedCss": {
+    "src/local-app/SystemStatusDrawer.css": "0a33031f6aab2863ffb55e643e1568e86ad3ac1eb6701ecda196cb422f2a6778",
+    "src/styles.css": "1bcd3bccc84c82dab1e038b9ae73c9d5d1afd96bb5a388aad3ebe95cad3d76d0",
+    "src/ui/impeccable/maintenance.css": "42b2e6d7ea75ba22164b31fa0c82dbb540016d4c6aece44755f05f100214db41"
+  },
+  "cssPatchUnchanged": true,
+  "indexEmpty": true,
+  "historicalSqlUnchanged": true,
+  "deploymentSha256": "a138eef569b40d64907555c95deaa113388f17eea0b821ae35294df74f889422",
+  "deploymentUnchanged": true,
+  "tests": {
+    "default": {
+      "filesPassed": 288,
+      "testsPassed": 2104
+    },
+    "icons": {
+      "filesPassed": 8,
+      "testsPassed": 47
+    },
+    "cleanup": {
+      "filesPassed": 14,
+      "testsPassed": 230
+    },
+    "isolatedOwnerHttp": {
+      "passed": 1,
+      "storyCasesSkipped": 24,
+      "containers": [
+        {
+          "name": "loop-story-e2e-6ba32a6ef64c",
+          "removed": true,
+          "passed": false
+        },
+        {
+          "name": "loop-story-e2e-749e12537f2e",
+          "removed": true,
+          "passed": false
+        },
+        {
+          "name": "loop-story-e2e-6c08bff28b65",
+          "removed": true,
+          "passed": true
+        }
+      ]
+    },
+    "check": "passed",
+    "build": "passed",
+    "runtimePrepare": "passed",
+    "offlineGuardSelfChecksPassed": 4
+  },
+  "review": "no blocking findings, including isolated fixture followup",
+  "browser": {
+    "realComponents": true,
+    "syntheticData": true,
+    "desktopWidth": 1440,
+    "narrowWidth": 390,
+    "dark": true,
+    "pageErrors": 0,
+    "closed": true,
+    "previewPort": 5297,
+    "previewStopped": true
+  },
+  "dailyServiceStartedOrStopped": false,
+  "appRecordExists": false,
+  "paidProviderCalls": 0,
+  "backupEnabled": false,
+  "workerConcurrencyChanged": false,
+  "fullLogsAndRecovery": "/tmp/loop-lucide-unification-20261112"
+}

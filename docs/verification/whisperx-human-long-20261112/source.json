@@ -1,0 +1,18 @@
+{
+  "recordingPage": "https://librivox.org/call-to-arms-by-xun-lu/",
+  "archivePage": "https://archive.org/details/call_to_arms_jl_librivox",
+  "recordingUrl": "https://archive.org/download/call_to_arms_jl_librivox/calltoarms_09_lu.mp3",
+  "reader": "Jing Li",
+  "work": "鲁迅《故乡》",
+  "recordingType": "human volunteer reading, published in 2012",
+  "sourceSha256": "e797289ab9aa1872382e3322c2ba16a3030c4f918ac659ebe0089cf93e4176e1",
+  "sampleSourceRangeSeconds": [
+    0,
+    71
+  ],
+  "sampleSha256": "20f8490cbfa9e4a3acfb01473fe2afdd5bd065054cea196a50ef91035d638f6f",
+  "sampleDurationSeconds": 71,
+  "processing": "continuous first 71 seconds, mono 48 kHz MP3; no concatenation, speed change, TTS, or inserted pauses",
+  "textReference": "https://zh.wikisource.org/zh-hans/故乡",
+  "textNote": "简体字及同音书写统一；保留正文标点。非人工逐字听辨的专业金标。"
+}

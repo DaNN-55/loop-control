@@ -71,4 +71,8 @@
 
 - [ADR-0043：发送阶段与原操作回执恢复](0043-request-outcomes-and-receipt-recovery.md)
 
+- [ADR-0044：退役CLI视觉与分镜规划](0044-retire-cli-planning.md)
+
+- [ADR-0045：日常数据库使用项目专用原生 PostgreSQL](0045-native-postgresql-runtime.md)
+
 - [ADR-0046：备份保留已失效终态任务的未知历史](0046-backup-retains-invalidated-task-history.md)

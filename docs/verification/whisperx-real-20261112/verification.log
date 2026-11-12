@@ -1,0 +1,22 @@
+
+ RUN  v3.2.7 /tmp/loop-whisperx-real-20261112
+
+stdout | driver.test.ts > runs real offline Chinese WhisperX in the existing isolated preview
+REAL_WHISPERX_COMPLETED completed
+
+stdout | driver.test.ts > runs real offline Chinese WhisperX in the existing isolated preview
+VERIFIED_ADOPTED
+
+stdout | driver.test.ts > runs real offline Chinese WhisperX in the existing isolated preview
+VERIFIED_SAVED
+
+stdout | driver.test.ts > runs real offline Chinese WhisperX in the existing isolated preview
+VERIFIED_REOPENED
+
+ ✓ driver.test.ts (1 test) 238393ms
+   ✓ runs real offline Chinese WhisperX in the existing isolated preview  238392ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  19:54:04
+   Duration  238.51s (transform 17ms, setup 0ms, collect 19ms, tests 238.39s, environment 0ms, prepare 23ms)

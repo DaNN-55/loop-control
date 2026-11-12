@@ -1,0 +1,20 @@
+E2E evidence: /private/tmp/loop-story-e2e-Pzuwo8/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-Pzuwo8/source
+
+ ✓ src/local-app/storyE2e.integration.test.ts (24 tests | 23 skipped) 3003ms
+   ✓ script-only recovery: local preparation supersedes an unfinished legacy model task  3002ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 23 skipped (24)
+   Start at  18:20:02
+   Duration  3.76s (transform 426ms, setup 7ms, collect 633ms, tests 3.00s, environment 0ms, prepare 29ms)
+
+JSON report written to /private/tmp/loop-story-e2e-Pzuwo8/evidence/vitest.json

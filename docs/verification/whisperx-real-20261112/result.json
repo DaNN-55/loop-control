@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "episode": "e2677236-6cd2-4682-9836-657f933daf1b",
+  "taskId": "edf51fe3-00f5-4f82-b314-44f59b223b2d",
+  "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+  "alignmentStatus": "completed",
+  "reviewIssues": [],
+  "modelExecuted": true,
+  "paidCalls": 0,
+  "savedSha256": "5b020f6ff648e9d465bd0100776236398de3a5f490d2c752797b8c01abdfe5b4",
+  "reopenedSha256": "5b020f6ff648e9d465bd0100776236398de3a5f490d2c752797b8c01abdfe5b4",
+  "cues": [
+    {
+      "id": "phrase-1~0",
+      "text": "雨停了，",
+      "startMs": 20,
+      "endMs": 866
+    },
+    {
+      "id": "phrase-2~0",
+      "text": "她把伞留在长椅上。",
+      "startMs": 966,
+      "endMs": 2960
+    }
+  ]
+}

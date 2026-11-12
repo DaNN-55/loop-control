@@ -1,0 +1,29 @@
+{
+  "migration": "164-retired-planning-claim-fence.sql",
+  "sha256": "4a2a46af6ab5a87455ecca9e85440612a69ccaea145a6fef1ec9f0f0a16c0a44",
+  "appliedNow": true,
+  "oldWorkerProcesses": 0,
+  "dailyServiceRunning": false,
+  "before": {
+    "runs": "d751713988987e9331980363e24189ce",
+    "audit": "d751713988987e9331980363e24189ce",
+    "tasks": "d751713988987e9331980363e24189ce",
+    "episodes": "d751713988987e9331980363e24189ce",
+    "blueprints": "d751713988987e9331980363e24189ce",
+    "connections": "791853e34dde9eaa7b2a6abda3b1eaf3"
+  },
+  "after": {
+    "runs": "d751713988987e9331980363e24189ce",
+    "audit": "d751713988987e9331980363e24189ce",
+    "tasks": "d751713988987e9331980363e24189ce",
+    "episodes": "d751713988987e9331980363e24189ce",
+    "blueprints": "d751713988987e9331980363e24189ce",
+    "connections": "791853e34dde9eaa7b2a6abda3b1eaf3"
+  },
+  "businessRowsUnchanged": true,
+  "privileges": {
+    "migrationSha256": "4a2a46af6ab5a87455ecca9e85440612a69ccaea145a6fef1ec9f0f0a16c0a44",
+    "predicateExecute": true,
+    "workerCanReadTasks": false
+  }
+}

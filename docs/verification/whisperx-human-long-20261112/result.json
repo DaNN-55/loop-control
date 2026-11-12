@@ -1,0 +1,482 @@
+{
+  "persistencePassed": true,
+  "episode": "e2677236-6cd2-4682-9836-657f933daf1b",
+  "clipId": "10c5a639-8ead-4721-b571-12c28c8bcd71",
+  "shotId": "added-10c5a639-8ead-4721-b571-12c28c8bcd71",
+  "taskId": "07a3a78e-7344-491d-8460-99263c1a8324",
+  "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+  "alignmentStatus": "needs_review",
+  "reviewIssues": [
+    {
+      "id": "low-confidence-1",
+      "kind": "low_confidence",
+      "text": "我冒了严寒，",
+      "cueIds": [
+        "phrase-1"
+      ],
+      "detail": "平均置信度 0.45，低于 0.72。"
+    },
+    {
+      "id": "low-confidence-2",
+      "kind": "low_confidence",
+      "text": "回到相隔二千余里，",
+      "cueIds": [
+        "phrase-2"
+      ],
+      "detail": "平均置信度 0.35，低于 0.72。"
+    },
+    {
+      "id": "low-confidence-3",
+      "kind": "low_confidence",
+      "text": "别了二十余年的故乡去。",
+      "cueIds": [
+        "phrase-3"
+      ],
+      "detail": "平均置信度 0.27，低于 0.72。"
+    },
+    {
+      "id": "low-confidence-4",
+      "kind": "low_confidence",
+      "text": "时候既然是深冬；",
+      "cueIds": [
+        "phrase-4"
+      ],
+      "detail": "平均置信度 0.00，低于 0.72。"
+    },
+    {
+      "id": "low-confidence-5",
+      "kind": "low_confidence",
+      "text": "渐近故乡时，",
+      "cueIds": [
+        "phrase-5"
+      ],
+      "detail": "平均置信度 0.00，低于 0.72。"
+    },
+    {
+      "id": "low-confidence-6",
+      "kind": "low_confidence",
+      "text": "天气又阴晦了，",
+      "cueIds": [
+        "phrase-6"
+      ],
+      "detail": "平均置信度 0.44，低于 0.72。"
+    },
+    {
+      "id": "low-confidence-7",
+      "kind": "low_confidence",
+      "text": "冷风吹进船舱中，",
+      "cueIds": [
+        "phrase-7"
+      ],
+      "detail": "平均置信度 0.20，低于 0.72。"
+    },
+    {
+      "id": "low-confidence-8",
+      "kind": "low_confidence",
+      "text": "呜呜的响，",
+      "cueIds": [
+        "phrase-8"
+      ],
+      "detail": "平均置信度 0.50，低于 0.72。"
+    },
+    {
+      "id": "low-confidence-9",
+      "kind": "low_confidence",
+      "text": "从篷隙向外一望，",
+      "cueIds": [
+        "phrase-9"
+      ],
+      "detail": "平均置信度 0.13，低于 0.72。"
+    },
+    {
+      "id": "low-confidence-10",
+      "kind": "low_confidence",
+      "text": "苍黄的天底下，",
+      "cueIds": [
+        "phrase-10"
+      ],
+      "detail": "平均置信度 0.26，低于 0.72。"
+    },
+    {
+      "id": "low-confidence-11",
+      "kind": "low_confidence",
+      "text": "远近横着几个萧索的荒村，",
+      "cueIds": [
+        "phrase-11"
+      ],
+      "detail": "平均置信度 0.33，低于 0.72。"
+    },
+    {
+      "id": "low-confidence-12",
+      "kind": "low_confidence",
+      "text": "没有一些活气。",
+      "cueIds": [
+        "phrase-12"
+      ],
+      "detail": "平均置信度 0.45，低于 0.72。"
+    },
+    {
+      "id": "low-confidence-13",
+      "kind": "low_confidence",
+      "text": "我的心禁不住悲凉起来了。",
+      "cueIds": [
+        "phrase-13"
+      ],
+      "detail": "平均置信度 0.20，低于 0.72。"
+    },
+    {
+      "id": "low-confidence-14",
+      "kind": "low_confidence",
+      "text": "啊！",
+      "cueIds": [
+        "phrase-14"
+      ],
+      "detail": "平均置信度 0.00，低于 0.72。"
+    },
+    {
+      "id": "low-confidence-15",
+      "kind": "low_confidence",
+      "text": "这不是我二十年来时时记得的故乡？",
+      "cueIds": [
+        "phrase-15"
+      ],
+      "detail": "平均置信度 0.00，低于 0.72。"
+    },
+    {
+      "id": "low-confidence-16",
+      "kind": "low_confidence",
+      "text": "我所记得的故乡全不如此。",
+      "cueIds": [
+        "phrase-16"
+      ],
+      "detail": "平均置信度 0.00，低于 0.72。"
+    },
+    {
+      "id": "low-confidence-17",
+      "kind": "low_confidence",
+      "text": "我的故乡好得多了。",
+      "cueIds": [
+        "phrase-17"
+      ],
+      "detail": "平均置信度 0.23，低于 0.72。"
+    },
+    {
+      "id": "low-confidence-18",
+      "kind": "low_confidence",
+      "text": "但要我记起它的美丽，",
+      "cueIds": [
+        "phrase-18"
+      ],
+      "detail": "平均置信度 0.14，低于 0.72。"
+    },
+    {
+      "id": "low-confidence-19",
+      "kind": "low_confidence",
+      "text": "说出它的佳处来，",
+      "cueIds": [
+        "phrase-19"
+      ],
+      "detail": "平均置信度 0.13，低于 0.72。"
+    },
+    {
+      "id": "low-confidence-20",
+      "kind": "low_confidence",
+      "text": "却又没有影像，",
+      "cueIds": [
+        "phrase-20"
+      ],
+      "detail": "平均置信度 0.42，低于 0.72。"
+    },
+    {
+      "id": "low-confidence-21",
+      "kind": "low_confidence",
+      "text": "没有言辞了。",
+      "cueIds": [
+        "phrase-21"
+      ],
+      "detail": "平均置信度 0.13，低于 0.72。"
+    },
+    {
+      "id": "low-confidence-22",
+      "kind": "low_confidence",
+      "text": "仿佛也就如此。",
+      "cueIds": [
+        "phrase-22"
+      ],
+      "detail": "平均置信度 0.13，低于 0.72。"
+    },
+    {
+      "id": "low-confidence-23",
+      "kind": "low_confidence",
+      "text": "于是我自己解释说：",
+      "cueIds": [
+        "phrase-23"
+      ],
+      "detail": "平均置信度 0.09，低于 0.72。"
+    },
+    {
+      "id": "low-confidence-24",
+      "kind": "low_confidence",
+      "text": "故乡本也如此，",
+      "cueIds": [
+        "phrase-24"
+      ],
+      "detail": "平均置信度 0.00，低于 0.72。"
+    },
+    {
+      "id": "low-confidence-25",
+      "kind": "low_confidence",
+      "text": "——虽然没有进步，",
+      "cueIds": [
+        "phrase-25"
+      ],
+      "detail": "平均置信度 0.14，低于 0.72。"
+    },
+    {
+      "id": "low-confidence-26",
+      "kind": "low_confidence",
+      "text": "也未必有如我所感的悲凉，",
+      "cueIds": [
+        "phrase-26"
+      ],
+      "detail": "平均置信度 0.14，低于 0.72。"
+    },
+    {
+      "id": "low-confidence-27",
+      "kind": "low_confidence",
+      "text": "这只是我自己心情的改变罢了，",
+      "cueIds": [
+        "phrase-27"
+      ],
+      "detail": "平均置信度 0.12，低于 0.72。"
+    },
+    {
+      "id": "low-confidence-28",
+      "kind": "low_confidence",
+      "text": "因为我这次回乡，",
+      "cueIds": [
+        "phrase-28"
+      ],
+      "detail": "平均置信度 0.22，低于 0.72。"
+    },
+    {
+      "id": "low-confidence-29",
+      "kind": "low_confidence",
+      "text": "本没有什么好心绪。",
+      "cueIds": [
+        "phrase-29"
+      ],
+      "detail": "平均置信度 0.28，低于 0.72。"
+    }
+  ],
+  "modelExecuted": true,
+  "paidCalls": 0,
+  "savedSha256": "cebb7339423d0659f3b2dc65a567c4db4c1969fa8d4ef43a026d25fff082f1ad",
+  "reopenedSha256": "cebb7339423d0659f3b2dc65a567c4db4c1969fa8d4ef43a026d25fff082f1ad",
+  "cues": [
+    {
+      "id": "phrase-1",
+      "text": "我冒了严寒，",
+      "endMs": 580,
+      "startMs": 160,
+      "confidence": 0.4468
+    },
+    {
+      "id": "phrase-2",
+      "text": "回到相隔二千余里，",
+      "endMs": 1320,
+      "startMs": 600,
+      "confidence": 0.3455
+    },
+    {
+      "id": "phrase-3",
+      "text": "别了二十余年的故乡去。",
+      "endMs": 2201,
+      "startMs": 1340,
+      "confidence": 0.2666
+    },
+    {
+      "id": "phrase-4",
+      "text": "时候既然是深冬；",
+      "endMs": 2361,
+      "startMs": 2221,
+      "confidence": 0
+    },
+    {
+      "id": "phrase-5",
+      "text": "渐近故乡时，",
+      "endMs": 2481,
+      "startMs": 2381,
+      "confidence": 0
+    },
+    {
+      "id": "phrase-6",
+      "text": "天气又阴晦了，",
+      "endMs": 3001,
+      "startMs": 2501,
+      "confidence": 0.43766666666666665
+    },
+    {
+      "id": "phrase-7",
+      "text": "冷风吹进船舱中，",
+      "endMs": 3361,
+      "startMs": 3021,
+      "confidence": 0.19985714285714287
+    },
+    {
+      "id": "phrase-8",
+      "text": "呜呜的响，",
+      "endMs": 3481,
+      "startMs": 3401,
+      "confidence": 0.49924999999999997
+    },
+    {
+      "id": "phrase-9",
+      "text": "从篷隙向外一望，",
+      "endMs": 4161,
+      "startMs": 3501,
+      "confidence": 0.12528571428571428
+    },
+    {
+      "id": "phrase-10",
+      "text": "苍黄的天底下，",
+      "endMs": 4441,
+      "startMs": 4221,
+      "confidence": 0.26216666666666666
+    },
+    {
+      "id": "phrase-11",
+      "text": "远近横着几个萧索的荒村，",
+      "endMs": 5261,
+      "startMs": 4581,
+      "confidence": 0.32618181818181813
+    },
+    {
+      "id": "phrase-12",
+      "text": "没有一些活气。",
+      "endMs": 5882,
+      "startMs": 5301,
+      "confidence": 0.4486666666666667
+    },
+    {
+      "id": "phrase-13",
+      "text": "我的心禁不住悲凉起来了。",
+      "endMs": 6422,
+      "startMs": 5982,
+      "confidence": 0.1970909090909091
+    },
+    {
+      "id": "phrase-14",
+      "text": "啊！",
+      "endMs": 6462,
+      "startMs": 6442,
+      "confidence": 0
+    },
+    {
+      "id": "phrase-15",
+      "text": "这不是我二十年来时时记得的故乡？",
+      "endMs": 6782,
+      "startMs": 6482,
+      "confidence": 0
+    },
+    {
+      "id": "phrase-16",
+      "text": "我所记得的故乡全不如此。",
+      "endMs": 7022,
+      "startMs": 6802,
+      "confidence": 0
+    },
+    {
+      "id": "phrase-17",
+      "text": "我的故乡好得多了。",
+      "endMs": 7842,
+      "startMs": 7482,
+      "confidence": 0.23049999999999998
+    },
+    {
+      "id": "phrase-18",
+      "text": "但要我记起它的美丽，",
+      "endMs": 8142,
+      "startMs": 7862,
+      "confidence": 0.1443333333333333
+    },
+    {
+      "id": "phrase-19",
+      "text": "说出它的佳处来，",
+      "endMs": 8522,
+      "startMs": 8222,
+      "confidence": 0.127
+    },
+    {
+      "id": "phrase-20",
+      "text": "却又没有影像，",
+      "endMs": 8963,
+      "startMs": 8542,
+      "confidence": 0.41933333333333334
+    },
+    {
+      "id": "phrase-21",
+      "text": "没有言辞了。",
+      "endMs": 9123,
+      "startMs": 8983,
+      "confidence": 0.1332
+    },
+    {
+      "id": "phrase-22",
+      "text": "仿佛也就如此。",
+      "endMs": 9343,
+      "startMs": 9143,
+      "confidence": 0.12616666666666668
+    },
+    {
+      "id": "phrase-23",
+      "text": "于是我自己解释说：",
+      "endMs": 9583,
+      "startMs": 9363,
+      "confidence": 0.09375
+    },
+    {
+      "id": "phrase-24",
+      "text": "故乡本也如此，",
+      "endMs": 9743,
+      "startMs": 9623,
+      "confidence": 0
+    },
+    {
+      "id": "phrase-25",
+      "text": "——虽然没有进步，",
+      "endMs": 10023,
+      "startMs": 9803,
+      "confidence": 0.13883333333333334
+    },
+    {
+      "id": "phrase-26",
+      "text": "也未必有如我所感的悲凉，",
+      "endMs": 10463,
+      "startMs": 10043,
+      "confidence": 0.14236363636363636
+    },
+    {
+      "id": "phrase-27",
+      "text": "这只是我自己心情的改变罢了，",
+      "endMs": 10863,
+      "startMs": 10483,
+      "confidence": 0.11546153846153848
+    },
+    {
+      "id": "phrase-28",
+      "text": "因为我这次回乡，",
+      "endMs": 11203,
+      "startMs": 10923,
+      "confidence": 0.21942857142857145
+    },
+    {
+      "id": "phrase-29",
+      "text": "本没有什么好心绪。",
+      "endMs": 11523,
+      "startMs": 11223,
+      "confidence": 0.281875
+    }
+  ],
+  "adopted": false
+}

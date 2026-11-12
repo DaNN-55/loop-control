@@ -1,0 +1,163 @@
+[
+  {
+    "path": "db/local/009-episode-input.sql",
+    "terms": {
+      "cloudflare": [
+        70
+      ],
+      "google_tts": [
+        70
+      ]
+    }
+  },
+  {
+    "path": "db/local/010-input-scheduler-turn.sql",
+    "terms": {
+      "cloudflare": [
+        35
+      ],
+      "google_tts": [
+        35
+      ]
+    }
+  },
+  {
+    "path": "db/local/013-storyboard.sql",
+    "terms": {
+      "cloudflare": [
+        64
+      ],
+      "google_tts": [
+        64
+      ]
+    }
+  },
+  {
+    "path": "db/local/014-narration.sql",
+    "terms": {
+      "google_tts": [
+        14
+      ]
+    }
+  },
+  {
+    "path": "db/local/015-narration-retry.sql",
+    "terms": {
+      "google_tts": [
+        65
+      ]
+    }
+  },
+  {
+    "path": "db/local/016-media.sql",
+    "terms": {
+      "cloudflare": [
+        18
+      ]
+    }
+  },
+  {
+    "path": "db/local/017-media-fences.sql",
+    "terms": {
+      "cloudflare": [
+        15
+      ]
+    }
+  },
+  {
+    "path": "db/local/050-historical-connection-metadata.sql",
+    "terms": {
+      "cloudflare": [
+        3
+      ],
+      "google_tts": [
+        3
+      ]
+    }
+  },
+  {
+    "path": "db/local/052-native-wan.sql",
+    "terms": {
+      "cloudflare": [
+        4,
+        12,
+        30,
+        178,
+        188
+      ],
+      "google_tts": [
+        4,
+        13,
+        29,
+        123
+      ]
+    }
+  },
+  {
+    "path": "db/local/063-official-video-providers.sql",
+    "terms": {
+      "cloudflare": [
+        5,
+        16,
+        34,
+        107
+      ],
+      "google_tts": [
+        5,
+        17,
+        33
+      ]
+    }
+  },
+  {
+    "path": "db/local/066-retire-cloudflare-google-tts.sql",
+    "terms": {
+      "cloudflare": [
+        18,
+        31
+      ],
+      "google_tts": [
+        18,
+        31
+      ]
+    }
+  },
+  {
+    "path": "db/local/c-baseline.sql",
+    "terms": {
+      "cloudflare": [
+        1661,
+        1704,
+        2636,
+        6560,
+        6584,
+        12304,
+        12401
+      ],
+      "google_tts": [
+        1661,
+        1704,
+        2636,
+        5022,
+        5873,
+        6560,
+        6585,
+        7331,
+        7339,
+        7411,
+        12307,
+        12401,
+        12425,
+        12435
+      ],
+      "supabase": [
+        43,
+        46,
+        12784,
+        12787,
+        13275,
+        13278
+      ]
+    }
+  }
+]

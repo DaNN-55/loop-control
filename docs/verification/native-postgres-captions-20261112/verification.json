@@ -1,0 +1,154 @@
+{
+  "at": "2026-11-12T10:53:38.086Z",
+  "head": "6719e676aeb1a5c6eb6e56d385abc9a4a51b373e",
+  "headUnchanged": true,
+  "indexEmpty": true,
+  "preserved": {
+    "src/styles.css": true,
+    "src/local-app/SystemStatusDrawer.css": true,
+    "src/ui/impeccable/maintenance.css": true,
+    "package.json": true,
+    "package-lock.json": true
+  },
+  "changedDeploymentKeys": [
+    "database",
+    "workerDatabase",
+    "postgres"
+  ],
+  "globalConcurrency": 2,
+  "databaseCapacity": 2,
+  "heavyLimits": {
+    "ffmpeg": [
+      {
+        "key": "adapter:ffmpeg:ffmpeg",
+        "limit": 1
+      },
+      {
+        "key": "connection:ffmpeg:ffmpeg:shared",
+        "limit": 1
+      },
+      {
+        "key": "host:cpu",
+        "limit": 1
+      },
+      {
+        "key": "host:render",
+        "limit": 1
+      },
+      {
+        "key": "provider:ffmpeg",
+        "limit": 1
+      }
+    ],
+    "whisperx": [
+      {
+        "key": "adapter:whisperx:whisperx",
+        "limit": 1
+      },
+      {
+        "key": "connection:whisperx:whisperx:shared",
+        "limit": 1
+      },
+      {
+        "key": "host:cpu",
+        "limit": 1
+      },
+      {
+        "key": "provider:whisperx",
+        "limit": 1
+      }
+    ],
+    "openchatcut": [
+      {
+        "key": "adapter:openchatcut:openchatcut",
+        "limit": 1
+      },
+      {
+        "key": "connection:openchatcut:openchatcut:shared",
+        "limit": 1
+      },
+      {
+        "key": "host:cpu",
+        "limit": 1
+      },
+      {
+        "key": "host:render",
+        "limit": 1
+      },
+      {
+        "key": "provider:openchatcut",
+        "limit": 1
+      }
+    ]
+  },
+  "automaticBackups": false,
+  "postgres": {
+    "kind": "native",
+    "binDirectory": "/opt/homebrew/Cellar/postgresql@17/17.11_1/bin",
+    "dataDirectory": "/Users/dan/Programs/loop-control/.loop-control/local/postgres/data",
+    "socketDirectory": "/Users/dan/Programs/loop-control/.loop-control/local/postgres/socket",
+    "systemIdentifier": "7707232825850817127",
+    "majorVersion": 17,
+    "port": 54330,
+    "adminUser": "postgres"
+  },
+  "defaultTests": {
+    "files": 288,
+    "passed": 2118
+  },
+  "isolatedBusinessCases": {
+    "container": 6,
+    "native": 6
+  },
+  "captionBrowser": {
+    "passed": true,
+    "modelExecuted": false,
+    "paidCalls": 0
+  },
+  "migration": {
+    "at": "2026-11-12T10:42:52.280Z",
+    "passed": true,
+    "mismatches": [],
+    "tables": 121,
+    "rows": 362,
+    "normalized": [
+      "sequence WAL log_cnt excluded",
+      "ACL null uses PostgreSQL acldefault",
+      "constraint pretty SQL uses precedence and records validation and deferral"
+    ]
+  },
+  "postStart": {
+    "at": "2026-11-12T10:51:37.464Z",
+    "passed": true,
+    "unchangedTables": 120,
+    "expectedChanges": {
+      "local_identity.media_root_binding": {
+        "unchangedFields": [
+          "singleton",
+          "owner_id",
+          "path",
+          "device_id",
+          "inode_id",
+          "mount_path"
+        ],
+        "changedFields": [
+          "updated_at"
+        ],
+        "reason": "createNativeApplication reasserts existing binding at startup"
+      }
+    },
+    "allSchemaRolesSequencesUnchanged": true,
+    "temporarySessionRemoved": true
+  },
+  "finalRuntimeRelease": "0860328d270e8c72853748f5656557011e28eb25657ad74015c04d5a6fdf8153",
+  "cleanup": {
+    "at": "2026-11-12T10:55:33.382Z",
+    "removed": [
+      "/private/tmp/loop-native-validation-jqEGz5",
+      "/private/tmp/loop-native-validation-Yiamxl"
+    ],
+    "retained": [],
+    "evidenceRetained": true,
+    "parallelContainersUntouched": true
+  }
+}

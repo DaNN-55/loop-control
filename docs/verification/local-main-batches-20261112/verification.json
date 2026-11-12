@@ -1,0 +1,92 @@
+{
+  "date": "2026-11-12",
+  "baselineHead": "abd0505747502e075d4c9f6f077c885abcf6b6ff",
+  "codeCommits": [
+    {
+      "batch": "1-retire",
+      "sha": "cfb4c7b1414b79c7659c3fdc2275836341bd2577",
+      "tests": {
+        "files": 16,
+        "passed": 220
+      },
+      "types": "passed"
+    },
+    {
+      "batch": "2-icons",
+      "sha": "ee0fed81de217c8ff9389a39584a1d0209ebd1fa",
+      "tests": {
+        "files": 6,
+        "passed": 52
+      },
+      "types": "passed"
+    },
+    {
+      "batch": "3-postgres",
+      "sha": "5ce8e79b490c469cdedf9c62eeeae85c8c8beca7",
+      "tests": {
+        "files": 7,
+        "passed": 42
+      },
+      "types": "passed",
+      "backendTypes": "passed"
+    },
+    {
+      "batch": "4-captions",
+      "sha": "b97a6d5653dc25100908c87254a1d5bb4bb74078",
+      "validation": "Final code default suite 287 files/2114 tests plus 2 files/12 tests rechecked after private compiled runtime preparation; build and backend/worker checks passed"
+    }
+  ],
+  "documentCommit": "This receipt is part of the fifth local documentation commit; inspect git log for its SHA.",
+  "localBranch": "main",
+  "pushed": false,
+  "dailyRestarted": false,
+  "protectedCss": {
+    "src/styles.css": {
+      "sha256": "1bcd3bccc84c82dab1e038b9ae73c9d5d1afd96bb5a388aad3ebe95cad3d76d0",
+      "unchanged": true
+    },
+    "src/local-app/SystemStatusDrawer.css": {
+      "sha256": "0a33031f6aab2863ffb55e643e1568e86ad3ac1eb6701ecda196cb422f2a6778",
+      "unchanged": true
+    },
+    "src/ui/impeccable/maintenance.css": {
+      "sha256": "42b2e6d7ea75ba22164b31fa0c82dbb540016d4c6aece44755f05f100214db41",
+      "unchanged": true
+    }
+  },
+  "dailyDeploymentUnchanged": true,
+  "defaultTests": {
+    "uniqueFilesPassed": 289,
+    "uniqueTestsPassed": 2126,
+    "firstRun": {
+      "passedFiles": 287,
+      "passedTests": 2114,
+      "failedFiles": 2,
+      "failedTests": 7,
+      "failedSuiteCollection": 1,
+      "reason": "fresh prefix did not yet contain compiled backend output"
+    },
+    "recheck": {
+      "passedFiles": 2,
+      "passedTests": 12,
+      "sourceChanged": false
+    },
+    "singleAllGreenRun": false
+  },
+  "build": "passed",
+  "backendTypes": "passed",
+  "workerBuild": "passed",
+  "privateRuntimePrepare": "passed",
+  "gitDiffCheck": "passed",
+  "knownDeferred": {
+    "WhisperXLongHumanAlignment": "needs_review; 29/29 low-confidence cues; candidate adoption rejected; deferred by user"
+  },
+  "nextStage": "C clean SQL baseline isolated assessment and validation only; no daily database cutover",
+  "privateRecovery": "/tmp/loop-local-main-batches-20261112",
+  "whitespaceNormalizedFiles": [
+    "docs/verification/whisperx-human-long-20261112/silence.log",
+    "docs/verification/whisperx-human-long-20261112/verification.log",
+    "docs/verification/whisperx-real-20261112/verification.log",
+    "docs/verification/worker-concurrency-and-audit-20261112/worker-tests.log"
+  ]
+}

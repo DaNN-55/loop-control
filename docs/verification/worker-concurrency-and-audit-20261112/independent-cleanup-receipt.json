@@ -1,0 +1,25 @@
+{
+  "path": "/Users/dan/Programs/OpenChatCut",
+  "lowercaseAlias": "/Users/dan/Programs/openchatcut",
+  "inode": 85562821,
+  "head": "cbe20ddda5b5be1c6decd72cef5eedf3627681b1",
+  "tree": "0d429df95f46d1ce0d92fc3bcca175c63b57cf6f",
+  "origin": "https://github.com/0xsline/OpenChatCut.git",
+  "status": "",
+  "ignored": [
+    ".DS_Store",
+    "node_modules/"
+  ],
+  "worktrees": "worktree /Users/dan/Programs/OpenChatCut\nHEAD cbe20ddda5b5be1c6decd72cef5eedf3627681b1\nbranch refs/heads/main",
+  "aheadBehind": "0\t0",
+  "bundle": "/tmp/loop-worker2-audit-20261112/OpenChatCut-cbe20dd.bundle",
+  "bundleSha256": "11e7b56a06da585b3d87c3ebf6c962ea2b6fb4ff3e6b47a8d7939f51bcdd2613",
+  "bundleVerified": true,
+  "openFiles": 0,
+  "allocatedKiB": 2456236,
+  "removed": true,
+  "internalPreserved": true,
+  "internalHead": "72ddb3300cda4ed31cbd0bccbfc94fb29b8cffca",
+  "dailyServicesStopped": false,
+  "recovery": "git clone /tmp/loop-worker2-audit-20261112/OpenChatCut-cbe20dd.bundle /Users/dan/Programs/OpenChatCut; restore origin to recorded URL; npm ci from retained lockfile"
+}
