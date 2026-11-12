@@ -26,12 +26,6 @@ type Account=Row<'accounts'>;type Episode=Row<'episodes'>;type Blueprint=Row<'ac
 export type NavigationItem='accounts'|'episodes'|'operations'|'reviews';
 type EpisodeVisibility='active'|'archived'|'all';type EpisodeAction='rename'|'archive'|null;type EpisodeWithArchive=Episode&{archived_at?:string|null};
 export interface EpisodeDeletionPlan extends DeletionFileScope {path:string;paths?:string[];revision:string;confirmation:string}
-export const navigation: Array<{ id: NavigationItem; label: string }> = [
-  { id: "operations", get label(){return uiText("系列运营");} },
-  { id: "episodes", get label(){return uiText("生产单");} },
-  { id: "accounts", get label(){return uiText("账号");} },
-];
-
 export function OwnerMenu({ onOpenSettings, onOpenLogs, onOpenCleanup, onOpenSecrets, onOpenPreferences, onOpenNotifications, onOpenConnections, displayName, avatar, email, onSignOut, onBeforeOpen, isActive=false }: { displayName?: string; avatar?: string | null; email?: string; onOpenPreferences?: () => void; onOpenNotifications?: () => void; onOpenConnections?: () => void; isActive?: boolean; onBeforeOpen?: (trigger: HTMLButtonElement | null) => void; onOpenSettings: () => void; onOpenLogs?: () => void;   onOpenCleanup?: () => void; onOpenSecrets?: () => void; onSignOut: () => void }) {
   const trigger = useRef<HTMLButtonElement>(null);
   const select = (action: () => void) => {onBeforeOpen?.(trigger.current); trigger.current?.focus(); action();};

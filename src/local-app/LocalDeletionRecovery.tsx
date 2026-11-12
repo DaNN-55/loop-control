@@ -1,8 +1,6 @@
 import {uiText} from '../i18n/ui';
-import {useState,useEffect,useRef,useCallback,type RefObject} from 'react';
-import {X} from 'lucide-react';
+import {useState,useEffect,useRef,useCallback} from 'react';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
-import {useDialogFocus} from '../ui/useDialogFocus';
 import {localCommand,localRequest} from './client';
 import './deletion-cleanup.css';
 interface PendingCleanup{cleanupKey:string;title:string;path:string;paths?:string[];stagingPath?:string;stagingPaths?:string[];phase?:string;message?:string;}
@@ -54,9 +52,4 @@ export function LocalDeletionRecovery({revision,targetKey='',onResolved,onChange
   })}</div>
   <div className="deletion-cleanup-toolbar"><Button size="sm" color="tertiary" aria-label={uiText("刷新清理任务")} isDisabled={loading||!!pending} onPress={()=>void refresh()}>{uiText("刷新")}</Button></div>
  </section>;
-}
-export function DeletionCleanupDialog({onClose,returnFocusRef,embedded=false,...props}:RecoveryProps&{onClose:()=>void;returnFocusRef:RefObject<HTMLElement|null>;embedded?:boolean}){
- const ref=useDialogFocus<HTMLElement>(!embedded,onClose,returnFocusRef);
- const content=<section ref={embedded?undefined:ref} role={embedded?undefined:"dialog"} aria-modal={embedded?undefined:true} aria-label={embedded?undefined:uiText("文件清理")} className={`modal-card deletion-cleanup-dialog${embedded?" owner-settings-pane":""}`}><header><h2>{uiText("文件清理")}</h2><Button size="sm" color="tertiary" aria-label={uiText("关闭文件清理")} data-dialog-initial-focus iconLeading={X} onPress={onClose}/></header><div className="deletion-cleanup-body"><LocalDeletionRecovery {...props}/></div></section>;
- return embedded?content:<div className="modal-backdrop" role="presentation">{content}</div>;
 }
