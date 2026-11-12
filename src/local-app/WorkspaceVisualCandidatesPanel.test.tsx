@@ -19,6 +19,16 @@ async function chooseModel(kind:'图片'|'视频',model:string,connection?:strin
 async function chooseVideo(){await chooseModel('视频','doubao-seedance-2-0-260128');}
 afterEach(()=>{cleanup();sessionStorage.clear();vi.unstubAllGlobals();});
 
+it.each(['image','video'] as const)('invalidated queued %s is historical and cannot keep the generation form busy',kind=>{
+ const w={...workspace,clips:[workspace.clips[0]],visualCandidates:[],visualTasks:[{id:'expired',taskId:'expired-task',shotId:'S1',targetItemId:'visual-1',kind,status:'ready',invalidated:true,submissionUnknown:false,publicationAttempt:null}]} as unknown as ProductionWorkspace;
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json(videoCatalog)));
+ render(<WorkspaceVisualPreparation workspace={w} command={vi.fn()} onChange={vi.fn()} materials={[]}/>);
+ if(kind==='video')fireEvent.click(screen.getByRole('tab',{name:'视频'}));
+ fireEvent.click(screen.getByRole('button',{name:'AI 生成'}));
+ expect(screen.queryByText('正在生成，请等待结果。')).toBeNull();
+ expect(screen.getByRole('button',{name:kind==='image'?'生成图片':'生成视频'})).toBeTruthy();
+});
+
 it('starts both tabs with placeholders and keeps API fields out of the upload flow',()=>{
  const w={...workspace,clips:[workspace.clips[0]],visualCandidates:[]};render(<WorkspaceVisualPreparation workspace={w} command={vi.fn()} onChange={vi.fn()} materials={[]}/>);
  expect(screen.getByText('尚未添加图片')).toBeTruthy();expect(screen.queryByRole('textbox',{name:'图片提示词'})).toBeNull();

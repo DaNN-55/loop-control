@@ -181,7 +181,11 @@ export class LocalEpisodeCommands {
      if(typeof data.sourceKind!=='string'||typeof data.sourcePath!=='string'||data.logicalName!==undefined&&typeof data.logicalName!=='string')throw new ConfigurationError(400,'材料路径无效。');
      let mimeType=data.mimeType;
      const snapshot=await snapshotInput(root,e.id,data as never,location!.relativePath,async bytes=>{mimeType=await validateImportedMaterial(bytes,data as never);});
-     value=(await c.query('SELECT to_jsonb(public.import_production_material($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)) result',[e.id,data.materialType,data.sourceKind,snapshot.sourcePath,snapshot.storagePath,mimeType,snapshot.sha256,snapshot.fileSize,data.isMainScript,data.materialPurpose])).rows[0].result;
+     const previous=!data.isMainScript?(await c.query('SELECT * FROM public.production_material_revisions WHERE episode_id=$1 AND material_type=$2 AND source_path=$3 ORDER BY revision_number DESC LIMIT 1',[e.id,data.materialType.trim(),snapshot.sourcePath.trim()])).rows[0]:undefined;
+     // Reusing the same validated bytes is not a source revision. In particular,
+     // another shot uploading the same reference must not invalidate paid work.
+     const unchanged=previous&&!previous.is_main_script&&previous.source_kind===data.sourceKind&&previous.material_purpose===data.materialPurpose&&previous.mime_type===mimeType&&previous.sha256===snapshot.sha256&&Number(previous.file_size)===snapshot.fileSize&&previous.storage_path===snapshot.storagePath;
+     value=unchanged?previous:(await c.query('SELECT to_jsonb(public.import_production_material($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)) result',[e.id,data.materialType,data.sourceKind,snapshot.sourcePath,snapshot.storagePath,mimeType,snapshot.sha256,snapshot.fileSize,data.isMainScript,data.materialPurpose])).rows[0].result;
      if(data.isMainScript)await c.query('UPDATE local_identity.input_episodes SET script_template_version=$2 WHERE episode_id=$1',[e.id,parseStoryboardScript((await verifyEpisodeFile(c,root,e.id,snapshot.storagePath,snapshot.sha256,snapshot.fileSize)).toString('utf8'))?2:null]);
      if(!data.isMainScript)await this.scriptStore.alias(c,session.id,value.id,String(data.sourcePath));
     }else if(body.command==='setAudioSourceMode'){

@@ -94,7 +94,7 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
  const [draft,setDraft]=useState<Draft>(()=>{try{const saved=JSON.parse(sessionStorage.getItem(storageKey)??'null');if(saved?.settings&&['image','video'].includes(saved.tab))return {...initialDraft(props,targetItemId),...saved};}catch{/* A missing browser draft is an empty form. */}return initialDraft(props,targetItemId);});
  const [catalogReload,setCatalogReload]=useState(0);
  const tab=draft.tab,kindName=tab==='image'?'图片':'视频',origin=shelf&&(tab==='image'||draft.origin[tab]==='material')?'generate':draft.origin[tab];
- const tasks=(workspace.visualTasks??[]).filter(t=>!t.shotId||options.some(c=>c.shotId===t.shotId)),pending=tasks.filter(t=>['ready','running'].includes(t.status)&&t.publicationAttempt==null),taskKey=pending.map(t=>t.taskId).join(':');
+ const tasks=(workspace.visualTasks??[]).filter(t=>!t.shotId||options.some(c=>c.shotId===t.shotId)),pending=tasks.filter(t=>workspaceTaskPresentation(t).active&&!workspaceTaskPresentation(t).hidden),taskKey=pending.map(t=>t.taskId).join(':');
  const catalogReading=useProductionServiceCatalog({scope:JSON.stringify([workspace.episodeId,workspace.id]),active:origin!=='material',refreshKey:JSON.stringify([tab,origin,catalogReload,taskKey])});
  const imageServices=catalogReading.catalog?.groups.find(g=>g.capability==='image')?.services??[];
  const videoServices=catalogReading.catalog?.groups.find(g=>g.capability==='video')?.services.filter(s=>s.mode==='generation'||s.mode==='search'&&s.provider==='pexels'&&s.adapter==='pexels_video')??[];
