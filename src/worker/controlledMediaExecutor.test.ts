@@ -237,7 +237,7 @@ describe("受控媒体执行器", () => {
   it('a Freesound preview timeout reports the recoverable download failure without leaking transport details',async()=>{
     const taskPackage=await packageFor({task:{id:'sound-timeout',type:'generate_soundtrack',attempt:0,budgetLimitCents:0,maxAttempts:1,provider:'freesound',model:'freesound-preview-v1',promptVersion:'soundtrack-v1'},capability:'soundtrack_generation',output:{requiredArtifactTypes:['soundtrack_audio'],contentType:'audio/mpeg',relativePath:'episodes/episode-1/audio/sound.mp3',reviewStage:'production_ready'},media:{adapter:'freesound_preview',soundtrack:{query:'stream',targetDurationSeconds:1,cue:{id:'stream',kind:'sfx',description:'stream',searchQuery:'stream',startSeconds:0,durationSeconds:1}}}});
     const fetcher=vi.fn().mockResolvedValueOnce(Response.json({results:[{id:833140,name:'brook',username:'creator',license:'CC0',duration:300,url:'https://freesound.org/s/833140/',previews:{'preview-hq-mp3':'https://cdn.freesound.org/previews/833/833140.mp3'}}]})).mockRejectedValueOnce(new DOMException('private transport diagnostic','TimeoutError'));
-    await expect(executeControlledMediaTask({taskPackage,fetcher,pexelsApiKey:undefined,googleTtsApiKey:undefined,freesoundApiKey:'synthetic',validateMp4:vi.fn(),probeMp3:vi.fn(),extractMp3:vi.fn(),trimMp3:vi.fn()})).rejects.toMatchObject({name:'Error',message:'Freesound 预览下载超时，请重试原音频准备或选择其他结果。'});
+    await expect(executeControlledMediaTask({taskPackage,fetcher,pexelsApiKey:undefined,freesoundApiKey:'synthetic',validateMp4:vi.fn(),probeMp3:vi.fn(),extractMp3:vi.fn(),trimMp3:vi.fn()})).rejects.toMatchObject({name:'Error',message:'Freesound 预览下载超时，请重试原音频准备或选择其他结果。'});
     expect(fetcher).toHaveBeenCalledTimes(2);
   });
 });

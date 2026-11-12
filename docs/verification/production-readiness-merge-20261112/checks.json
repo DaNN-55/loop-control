@@ -1,0 +1,37 @@
+{
+  "date": "2026-11-12",
+  "mainBefore": "6719e676aeb1a5c6eb6e56d385abc9a4a51b373e",
+  "mergedSource": "2a14e320e23596514eb30528bef9cfcb623a7883",
+  "merge": "fast-forward",
+  "originalLocalPathsProtected": 209,
+  "originalEditsCommitted": false,
+  "testDataImported": false,
+  "dailyRestarted": false,
+  "dailyMigrated": false,
+  "pushed": false,
+  "dailyTableFingerprintsUnchanged": 121,
+  "dailyMediaUnchanged": true,
+  "dailyDeploymentConfigUnchanged": true,
+  "postMergeChecks": {
+    "typecheck": "passed",
+    "frontendBuild": "passed",
+    "backendCompile": "passed",
+    "defaultSuite": {
+      "files": 289,
+      "passed": 2125,
+      "failed": 0,
+      "skipped": 0
+    },
+    "isolatedIntegration": {
+      "files": 8,
+      "uniquePassed": 12,
+      "detail": "11 passed in the main run; backup history passed in the final dedicated rerun after backend compilation"
+    },
+    "laterTargeted": {
+      "files": 4,
+      "passed": 56
+    }
+  },
+  "schemaMigrationPendingOnDaily": "165-invalidated-unsent-video-requests.sql",
+  "scope": "main plus preserved pre-existing uncommitted changes; these changes were not included in the delivery commit"
+}
