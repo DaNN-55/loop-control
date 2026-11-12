@@ -8,7 +8,7 @@ import {prepareCollectionTargets,moveCollection} from './episodeCollection.fixtu
 import {csrfFor} from './sessions';
 const enabled=process.env.LOOP_WORKSPACE_ACCEPTANCE==='1';
 it.skipIf(!enabled)('a real SQLite project and original frozen references are inventoried through adoption and move lineage while an open Studio is a blocker',async()=>{
- const f=await productionWorkspaceFixture({migrations:['db/local/120-native-workspace-storage-locations.sql','db/local/125-global-media-root-plans.sql']}),target=await realpath(await mkdtemp('/private/tmp/loop-root-native-'));
+ const f=await productionWorkspaceFixture({migrations:['db/archive/legacy-v1/120-native-workspace-storage-locations.sql','db/archive/legacy-v1/125-global-media-root-plans.sql']}),target=await realpath(await mkdtemp('/private/tmp/loop-root-native-'));
  try{
   let w=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;w=await f.fillVisuals(w);
   const send=async(command:string,data:Record<string,unknown>={})=>{const r=await f.request(command,{workspaceId:w.id,expectedRevision:w.revision,...data});expect(r.status,command+JSON.stringify(r.body)).toBe(200);w=r.body.productionWorkspace??r.body;return r.body;};

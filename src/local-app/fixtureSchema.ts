@@ -1,8 +1,6 @@
-import {createHash} from 'node:crypto';
+import {loadSchemaCatalog} from './schemaMigrations.js';
 import {spawn} from 'node:child_process';
 import {Duplex} from 'node:stream';
-import {readFile,readdir} from 'node:fs/promises';
-import {join} from 'node:path';
 import {Pool} from 'pg';
 export interface FixtureSchemaContext {database:string;container:string;env:NodeJS.ProcessEnv;docker(args:string[],input?:string):string;sql(text:string,database?:string):string;nativeConnection?:{host:string;port:number};execTool?:(tool:string,args:string[],input?:string)=>string}
 interface Migration {version:string;body:string;sha256:string}
@@ -11,9 +9,9 @@ const migrationName=/^[0-9]{3}-[a-z0-9-]+\.sql$/;
 /** Validates the entire applied ledger before selecting requested forwards. */
 export function planFixtureMigrations(applied:Record<string,string>,available:Migration[],requested:string[]):Migration[]{
  const files=new Map(available.map(file=>[file.version,file]));
- for(const[version,sha256]of Object.entries(applied))if(!migrationName.test(version)||!files.has(version)||files.get(version)!.sha256!==sha256)throw Error('Applied fixture migration changed: '+version);
- const names=[...new Set(requested.map(path=>{if(!/^db\/local\/[0-9]{3}-[a-z0-9-]+\.sql$/.test(path))throw Error('Invalid fixture migration path');return path.slice('db/local/'.length);} ))].sort();
- return names.flatMap(version=>{const file=files.get(version);if(!file)throw Error('Missing fixture migration: '+version);return Object.hasOwn(applied,version)?[]:[file];});
+ for(const[version,sha256]of Object.entries(applied))if(!(migrationName.test(version)||version==='clean-v2.sql')||!files.has(version)||files.get(version)!.sha256!==sha256)throw Error('Applied fixture migration changed: '+version);
+ const names=[...new Set(requested.map(path=>{if(!/^db\/(?:local|archive\/legacy-v1)\/[0-9]{3}-[a-z0-9-]+\.sql$/.test(path))throw Error('Invalid fixture migration path');return path.slice(path.lastIndexOf('/')+1);} ))].sort();
+ return names.flatMap(version=>{const file=files.get(version);if(!file)throw Error('Missing fixture migration: '+version);return Object.hasOwn(applied,version)||(Object.hasOwn(applied,'clean-v2.sql')&&available.findIndex(f=>f.version===version)<available.findIndex(f=>f.version==='clean-v2.sql'))?[]:[file];});
 }
 
 /** Schema and the technical ledger share one exported read-only snapshot. No business data are copied. */
@@ -21,7 +19,7 @@ export async function copyFixtureSchema(context:FixtureSchemaContext,targetDatab
  if(targetDatabase===context.database||!/^loop_[a-z0-9_]+_[a-f0-9]{12}(?:_[a-z]+)?$/.test(targetDatabase))throw Error('Fixture target must be a new random database');
  const occupied=context.sql("SELECT count(*) FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname NOT IN ('pg_catalog','information_schema') AND n.nspname !~ '^pg_'",targetDatabase);
  if(occupied!=='0')throw Error('Fixture target is not empty');
- const available=await Promise.all((await readdir(join(projectRoot,'db/local'))).filter(name=>migrationName.test(name)).map(async version=>{const body=await readFile(join(projectRoot,'db/local',version),'utf8');return{version,body,sha256:createHash('sha256').update(body).digest('hex')};}));
+ const catalog=loadSchemaCatalog(projectRoot),available=[...catalog.legacy,catalog.baseline,...catalog.current];
  const bridge=context.nativeConnection?undefined:spawn('docker',['exec','-i',context.container,'perl','-MIO::Socket::UNIX','-MIO::Select','-MSocket=SOCK_STREAM','-e',"my $s=IO::Socket::UNIX->new(Type=>SOCK_STREAM,Peer=>'/var/run/postgresql/.s.PGSQL.5432') or die;my $sel=IO::Select->new(\\*STDIN,$s);while(1){for my $f($sel->can_read){my $n=sysread($f,my $b,65536);exit unless $n;my $o=fileno($f)==0?$s:\\*STDOUT;while(length $b){my $w=syswrite($o,$b);die unless $w;substr($b,0,$w,'');}}}"],{env:context.env,stdio:['pipe','pipe','pipe']});
  const socket=bridge?Duplex.from({readable:bridge.stdout!,writable:bridge.stdin!}):undefined;
  const pool=new Pool({database:context.database,user:'postgres',max:1,connectionTimeoutMillis:5000,...(context.nativeConnection??{stream:()=>Object.assign(socket!,{connect(){queueMicrotask(()=>socket!.emit('connect'));return socket;},setNoDelay(){return socket;},setKeepAlive(){return socket;}})})} as ConstructorParameters<typeof Pool>[0]);

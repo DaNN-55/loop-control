@@ -8,7 +8,7 @@ import {productionWorkspaceFixture} from './productionWorkspace.fixture';
 import {narrationFixture,adoptInitialNarration} from './workspaceNarration.fixture';
 import {readWorkspaceNarrationTarget} from './workspaceNarration';
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner can prepare disabled narration before editing without queuing external tasks',async()=>{
- const f=await productionWorkspaceFixture({migrations:['db/local/087-workspace-narration.sql']});
+ const f=await productionWorkspaceFixture({migrations:['db/archive/legacy-v1/087-workspace-narration.sql']});
  try{
   await f.c.query("INSERT INTO public.approvals(episode_id,review_package_id,stage,decision,reason,actor_id) VALUES($1,$2,'storyboard_approved','approved','Controlled fixture',$3)",[f.episode,f.board,f.owner]);
   const made=await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script});
@@ -21,7 +21,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner can prepare disabl
 },120_000);
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('confirmed narration uses the real Worker, survives restart and assembles actual duration without duplicate submissions',async()=>{
- const f=await narrationFixture(undefined,undefined,false,false,['db/local/145-workspace-confirmed-narration.sql']);try{
+ const f=await narrationFixture(undefined,undefined,false,false,['db/archive/legacy-v1/145-workspace-confirmed-narration.sql']);try{
   const w=f.made,base={workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[0].id};
   const captionBefore=w.captions[0].contract;
   const save=await f.request('saveWorkspaceNarration',{...base,mode:'tts',...f.narrationSettings,text:'完整口播不能删词。'});expect(save.status,JSON.stringify(save.body)).toBe(200);
@@ -144,21 +144,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('speech beyond the Provid
  }finally{await f.close();}
 },120_000);
 
-it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('legacy narration already running before workspace activation cannot promote the new draft or delivery',async()=>{
- const f=await narrationFixture(undefined,undefined,false,true);try{
-  // Seed the pre-108 frozen configuration only for this actual in-flight legacy task.
-  const legacyPolicy={asset_root:f.assetRoot,narration:{execution_path:'external',credential_ref:f.narrationSettings.selection.connectionVersionId,executor:{provider:'volcengine_tts',adapter:'volcengine_tts',model:'seed-tts-2.0',prompt_version:'narration-v1'},budget_cents:100,max_attempts:1}};await f.c.query('BEGIN');await f.c.query('ALTER TABLE public.account_blueprint_versions DISABLE TRIGGER a_blueprint_creative_write');await f.c.query('ALTER TABLE public.account_blueprint_versions DISABLE TRIGGER validate_blueprint_external_connections_before_write');await f.c.query('UPDATE public.account_blueprint_versions SET policy=$2 WHERE id=(SELECT blueprint_version_id FROM public.episodes WHERE id=$1)',[f.episode,legacyPolicy]);await f.c.query('ALTER TABLE public.account_blueprint_versions ENABLE TRIGGER a_blueprint_creative_write');await f.c.query('ALTER TABLE public.account_blueprint_versions ENABLE TRIGGER validate_blueprint_external_connections_before_write');await f.c.query('COMMIT');
-  const saved=await f.request('saveTtsDraft',{reviewPackageId:f.board,shotId:'shot-1',audioMode:'tts',subtitleText:'旧流程正在运行。',subtitlesEnabled:false,ttsText:'旧流程正在运行。'});expect(saved.status,JSON.stringify(saved.body)).toBe(200);
-  // Arrange an already-created legacy task through its real Owner RPC. The legacy
-  // HTTP mount preflight is outside this delayed-completion scenario.
-  await f.c.query('BEGIN');await f.c.query('SET SESSION AUTHORIZATION loop_app');await f.c.query("SELECT set_config('loop.owner_id',$1,true)",[f.owner]);await f.c.query('UPDATE local_identity.input_episodes SET narration_enabled=true WHERE episode_id=$1',[f.episode]);
-  const queued=(await f.c.query('SELECT to_jsonb(local_identity.generate_input_shot_tts($1,$2,$3,false)) task',[f.episode,f.board,'shot-1'])).rows[0].task;await f.c.query('SET SESSION AUTHORIZATION DEFAULT');await f.c.query('COMMIT');
-  await writeFile(f.responseMode,'delay');const running=f.execute(queued.id);
-  for(let i=0;i<50;i++){if(await readFile(f.submissions,'utf8').catch(()=>''))break;await new Promise(resolve=>setTimeout(resolve,10));}
-  const prepared=await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script});expect(prepared.status).toBe(200);expect((await running)?.status).toBe('completed');
-  const w=prepared.body,refreshed=await f.request('refreshWorkspaceNarration',{workspaceId:w.id,expectedRevision:w.revision});expect(refreshed.status).toBe(200);expect(refreshed.body.project.sha256).toBe(w.project.sha256);expect(refreshed.body.narration[0].adoptedAudioTrackId).toBeNull();expect(refreshed.body.readiness.deliverable).toBe(false);expect((await f.c.query('SELECT stage FROM public.episodes WHERE id=$1',[f.episode])).rows[0].stage).toBe('storyboard_approved');
- }finally{await f.close();}
-},120_000);
+
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('one shot with two visual ranges keeps one voice and its original task after deleting the first range',async()=>{
  const f=await narrationFixture();try{
   await f.authorize();let w=f.made;const first=w.clips[0],base={workspaceId:w.id,expectedRevision:w.revision,clipId:first.id};await f.request('saveWorkspaceNarration',{...base,mode:'tts',...f.narrationSettings,text:'镜头主声不绑定可删除的画面引用。'});await f.request('confirmWorkspaceNarration',base);const queued=await f.request('generateWorkspaceNarration',{...base,reservationCents:100});await f.execute(queued.body.narration[0].taskId);w=(await f.request('refreshWorkspaceNarration',{workspaceId:w.id,expectedRevision:w.revision})).body;

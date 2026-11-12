@@ -15,7 +15,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('a genuine new workspace 
  const storage=await mkdtemp('/private/tmp/loop-t11-storage-'),source='loop_t24_restore_'+randomBytes(6).toString('hex'),target='loop_t24_restore_'+randomBytes(6).toString('hex');
  await mkdir(join(storage,'state'));
  const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MODULE!);const context=nativeStorageContext(runtimeContext(),storage,source,target);
- const f=await embeddedStudioFixture({importRecord:false,databaseName:source,testRootParent:join(storage,'state'),migrations:['db/local/120-native-workspace-storage-locations.sql']});
+ const f=await embeddedStudioFixture({importRecord:false,databaseName:source,testRootParent:join(storage,'state'),migrations:['db/archive/legacy-v1/120-native-workspace-storage-locations.sql']});
  let pool:Pool|undefined,server:ReturnType<typeof createServer>|undefined,transport:Awaited<ReturnType<typeof mediaRootDatabaseTransport>>|undefined;
  try{
   expect(context.sql('SELECT count(*) FROM local_identity.import_record')).toBe('0');
@@ -44,7 +44,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('a genuine new workspace 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('restored registered episode and empty series containers use target identities and completed creation replays with the source offline',async()=>{
  const storage=await mkdtemp('/private/tmp/loop-t11-storage-'),source='loop_t24_restore_'+randomBytes(6).toString('hex'),target='loop_t24_restore_'+randomBytes(6).toString('hex');await mkdir(join(storage,'state'));
  const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MODULE!);const context=nativeStorageContext(runtimeContext(),storage,source,target);
- const f=await embeddedStudioFixture({databaseName:source,testRootParent:join(storage,'state'),episodeRelativePath:id=>`系列 空格_100%#?/生产单_${id}`,migrations:['db/local/120-native-workspace-storage-locations.sql']});
+ const f=await embeddedStudioFixture({databaseName:source,testRootParent:join(storage,'state'),episodeRelativePath:id=>`系列 空格_100%#?/生产单_${id}`,migrations:['db/archive/legacy-v1/120-native-workspace-storage-locations.sql']});
  let pool:Pool|undefined,server:ReturnType<typeof createServer>|undefined,transport:Awaited<ReturnType<typeof mediaRootDatabaseTransport>>|undefined,offline=false;
  const {rename}=await import('node:fs/promises'),{csrfFor}=await import('./sessions');
  try{
@@ -112,7 +112,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each(['legacy','registere
  const {workspaceAudioVolume}=await import('./workspaceAudioVolume.fixture'),{productionWorkspaceFixture}=await import('./productionWorkspace.fixture'),{editStudioDocument}=await import('./studioDocument.fixture'),{spawn}=await import('node:child_process'),{writeFile,rename}=await import('node:fs/promises');
  const volume=await workspaceAudioVolume(),storage=join(volume.mountPath,'t11-storage');await mkdir(join(storage,'state'),{recursive:true});
  const source='loop_t24_restore_'+randomBytes(6).toString('hex'),target='loop_t24_restore_'+randomBytes(6).toString('hex'),{runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MODULE!),context=nativeStorageContext(runtimeContext(),storage,source,target);
- const f=await productionWorkspaceFixture({databaseName:source,testRootParent:join(storage,'state'),episodeRelativePath:layout==='registered'?id=>`系列 原生_100%#?/生产单_${id}`:undefined,migrations:['db/local/120-native-workspace-storage-locations.sql'],runtime:{mountPath:volume.mountPath}});
+ const f=await productionWorkspaceFixture({databaseName:source,testRootParent:join(storage,'state'),episodeRelativePath:layout==='registered'?id=>`系列 原生_100%#?/生产单_${id}`:undefined,migrations:['db/archive/legacy-v1/120-native-workspace-storage-locations.sql'],runtime:{mountPath:volume.mountPath}});
  let transport:Awaited<ReturnType<typeof mediaRootDatabaseTransport>>|undefined,child:ReturnType<typeof spawn>|undefined,offline=false;
  const stop=async()=>{if(child&&child.exitCode===null){const done=new Promise<void>(resolve=>child!.once('exit',()=>resolve()));child.kill();await done;}child=undefined;};
  try{

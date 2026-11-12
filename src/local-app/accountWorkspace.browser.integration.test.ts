@@ -13,7 +13,7 @@ import type {LocalCatalog} from './catalog';
 const exec=promisify(execFile);
 
 it.skipIf(process.env.LOOP_ACCOUNT_WORKSPACE_BROWSER!=='1')('edits account and series independently through the formal page and isolated Owner HTTP',async()=>{
- const f=await embeddedStudioFixture({migrations:['db/local/112-series-extension-rules.sql']});let vite:ViteDevServer|undefined;
+ const f=await embeddedStudioFixture({migrations:['db/archive/legacy-v1/112-series-extension-rules.sql']});let vite:ViteDevServer|undefined;
  const session='account-workspace-'+randomUUID();
  const browser=async(...args:string[])=>(await exec('agent-browser',['--session',session,'--headed',...args],{timeout:40000,maxBuffer:2_000_000})).stdout;
  const replaceName=async(selector:string,value:string)=>{await browser('focus',selector);const selected=JSON.parse(await browser('eval',`(()=>{const e=document.querySelector(${JSON.stringify(selector)});e.select();return{value:e.value,start:e.selectionStart,end:e.selectionEnd};})()`));expect(selected.end-selected.start).toBe(selected.value.length);await browser('press','Backspace');expect(JSON.parse(await browser('eval',`document.querySelector(${JSON.stringify(selector)}).value`))).toBe('');await browser('keyboard','inserttext',value);const actual=JSON.parse(await browser('eval',`document.querySelector(${JSON.stringify(selector)}).value`));await writeFile(join(output,'field-replacement-'+(selector.includes('账号')?'account':'series')+'.json'),JSON.stringify({selected,actual,expected:value}));expect(actual).toBe(value);};

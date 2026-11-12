@@ -9,7 +9,7 @@ import {LocalEpisodeCommands} from './episodeCommands';
 import {csrfFor} from './sessions';
 import {productionWorkspaceFields} from '../productionWorkspace';
 
-it('retires planning behind Owner and CSRF boundaries without reading receipts or writing legacy records',async()=>{
+it('retires legacy execution behind Owner and CSRF boundaries without reading receipts or writing legacy records',async()=>{
  const owner=randomUUID(),episode=randomUUID(),otherEpisode=randomUUID(),token='a'.repeat(64),queries:string[]=[];
  const query=async(sql:string,args?:unknown[])=>{
   queries.push(sql);
@@ -38,8 +38,8 @@ it('retires planning behind Owner and CSRF boundaries without reading receipts o
   expect((await request('/api/local/configuration',prompt,true,false)).status).toBe(403);
   expect((await request('/api/local/configuration',prompt)).status).toBe(410);
   const key=randomUUID();
-  for(const command of ['review','annotateStoryboard','planStoryboard','requestStructureRevision','requestStudioStoryboardRevision','saveWorkspacePlanningSelection','retryWorkspacePlanning','replanWorkspace']){
-   const body={command,idempotencyKey:key,data:{episodeId:episode,...(command==='replanWorkspace'?{planningTaskId:randomUUID()}:{} )}};
+  for(const command of ['review','annotateStoryboard','planStoryboard','requestStructureRevision','requestStudioStoryboardRevision','saveWorkspacePlanningSelection','retryWorkspacePlanning','replanWorkspace','repairConfiguration','repairConnection','configureScriptProduction']){
+   const body={command,idempotencyKey:key,data:{episodeId:episode,...(command==='replanWorkspace'?{planningTaskId:randomUUID()}:{} ),...(command==='configureScriptProduction'?{enabled:true}:{})}};
    expect((await request('/api/local/episode-commands',body,false)).status).toBe(401);
    expect((await request('/api/local/episode-commands',body,true,false)).status).toBe(403);
    const result=await request('/api/local/episode-commands',body);expect(result.status,command+"\n"+queries.join("\n")).toBe(410);expect((await result.json()).error).toContain('已退役');

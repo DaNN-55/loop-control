@@ -21,3 +21,4 @@ it('uses durable action identities across restart and changes them for changed i
 it('uses a changed prompt only from the current approved storyboard',()=>{const s=fixture();s.drafts[0].selected_material_revision_id=null;s.review!.shots=[{id:'shot-01',productionMethod:'Owner 已审核的本期提示词'}];expect(nextScriptProductionAction(s)).toHaveProperty('action.data.prompt','Owner 已审核的本期提示词');});
 
 it('leaves legacy authorization intact but schedules no legacy actions after workspace adoption',()=>{const s=fixture();s.episode.workspace_enabled=true;const before=structuredClone(s.record);expect(nextScriptProductionAction(s)).toEqual({wait:'使用四步制作工作台继续'});expect(s.record).toEqual(before);});
+it('keeps an unfinished legacy voice intact and requires a current workspace selection',()=>{const s=fixture();s.drafts[0].audio_status='pending';const before=structuredClone(s);expect(command(s)).toContain('旧口播生成已退役');expect(s).toEqual(before);});

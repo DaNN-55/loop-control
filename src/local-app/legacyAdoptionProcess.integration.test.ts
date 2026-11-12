@@ -9,7 +9,7 @@ import {csrfFor} from './sessions';
 import {deletionFixtureFingerprint} from './deletionFingerprint.fixture';
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('a paused native copy reserves an unregistered shared legacy source against archive and exact deletion',async()=>{
- const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/local/123-legacy-storage-adoption.sql']}),{f}=fixture;let pending:Promise<any>|undefined;
+ const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/archive/legacy-v1/123-legacy-storage-adoption.sql']}),{f}=fixture;let pending:Promise<any>|undefined;
  try{
   const account=(await f.c.query('SELECT account_id FROM public.episodes WHERE id=$1',[f.episode])).rows[0].account_id;
   await mkdir(join(f.root,'episodes'));await rename(join(f.assetRoot,'episodes',f.episode),join(f.root,'episodes',f.episode));await f.c.query('DELETE FROM local_identity.account_asset_directories WHERE account_id=$1',[account]);await f.c.query('UPDATE local_identity.episode_asset_locations SET asset_root=$2 WHERE episode_id=$1',[f.episode,f.root]);
@@ -31,7 +31,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('a paused native copy res
 },180000);
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each([['resume','adoption-copy-write'],['rollback','adoption-copy-write'],['resume','adoption-copy-published'],['rollback','adoption-copy-published']] as const)('SIGKILL permits %s after %s using the same adoption plan in a fresh process',async(action,crashAt)=>{
- const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/local/123-legacy-storage-adoption.sql']}),{f}=fixture;
+ const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/archive/legacy-v1/123-legacy-storage-adoption.sql']}),{f}=fixture;
  try{
   let runtime=await fixture.launch();const account=(await f.c.query('SELECT account_id FROM public.episodes WHERE id=$1',[f.episode])).rows[0].account_id;
   const post=async(command:string,data:Record<string,unknown>)=>{const r=await fetch(runtime.origin+'/api/local/account-commands',{method:'POST',headers:{Origin:runtime.origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+f.token,'X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command,idempotencyKey:randomUUID(),data:{accountId:account,...data}})});return{status:r.status,body:await r.json()};};
@@ -47,7 +47,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each([['resume','adoption
 
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('a real application preserves its old readable location and unknown target data when controlled capacity is exhausted',async()=>{
- const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/local/123-legacy-storage-adoption.sql']}),{f}=fixture;
+ const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/archive/legacy-v1/123-legacy-storage-adoption.sql']}),{f}=fixture;
  try{let runtime=await fixture.launch();const account=(await f.c.query('SELECT account_id FROM public.episodes WHERE id=$1',[f.episode])).rows[0].account_id;
   const post=async(command:string,data:Record<string,unknown>={})=>{const r=await fetch(runtime.origin+'/api/local/account-commands',{method:'POST',headers:{Origin:runtime.origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+f.token,'X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command,idempotencyKey:randomUUID(),data:{accountId:account,...data}})});return{status:r.status,body:await r.json()};};
   const source=await deletionFixtureFingerprint(join(f.assetRoot,'episodes')),plan=await post('planLegacyStorageAdoption');expect(plan.status).toBe(200);await fixture.stop();runtime=await fixture.launch('adoption-space');const result=await post('executeAssetDirectoryMigration',{migrationId:plan.body.id});expect(result.status,JSON.stringify(result.body)).toBe(409);expect((await f.c.query('SELECT error FROM local_identity.account_directory_migrations WHERE id=$1',[plan.body.id])).rows[0].error).toContain('空间不足');

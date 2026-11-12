@@ -10,7 +10,7 @@ import react from '@vitejs/plugin-react';
 import {nativeMediaRootFixture} from './mediaRootRuntime.fixture';
 const exec=promisify(execFile);
 it.skipIf(process.env.LOOP_T15_BROWSER!=='1')('formal Owner storage settings persist a root plan, show conflicts and recover the same plan after a real process restart',async()=>{
- const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/local/125-global-media-root-plans.sql']}),{f,source,target,configFile}=fixture;
+ const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/archive/legacy-v1/125-global-media-root-plans.sql']}),{f,source,target,configFile}=fixture;
  let vite:ViteDevServer|undefined,runtime=await fixture.launch();const session='lc178-t15-'+randomUUID(),output=process.env.LOOP_T15_EVIDENCE!;
  const browser=async(...args:string[])=>(await exec('agent-browser',['--session',session,...args],{timeout:20000,maxBuffer:2_000_000})).stdout;
  try{

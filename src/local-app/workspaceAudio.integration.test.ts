@@ -7,7 +7,7 @@ import {join} from 'node:path';
 import {workspaceAudioMedia} from './workspaceAudioMedia.fixture';
 import {productionWorkspaceFixture} from './productionWorkspace.fixture';
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner prepares manual episode music, adopts actual audio and persists native independent mix',async()=>{
- const f=await productionWorkspaceFixture({migrations:['db/local/088-workspace-audio.sql'],runtime:{wake(){}}});try{
+ const f=await productionWorkspaceFixture({migrations:['db/archive/legacy-v1/088-workspace-audio.sql'],runtime:{wake(){}}});try{
  const media=await workspaceAudioMedia(f.root);let w=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;
  const send=(name:string,data={})=>f.request(name,{workspaceId:w.id,expectedRevision:w.revision,...data});
  const captions=defaultShotCaptionContract(w.clips[0].text,'independent');captions.cues=[{id:'caption',text:w.clips[0].text,startMs:0,endMs:1000}];let saved=await send('saveWorkspaceCaptions',{clipId:w.clips[0].id,captionContract:captions});expect(saved.status,JSON.stringify(saved.body)).toBe(200);w=saved.body;saved=await send('confirmWorkspaceCaptionText',{clipId:w.clips[0].id,expectedInputFingerprint:w.captions[0].inputFingerprint});expect(saved.status,JSON.stringify(saved.body)).toBe(200);w=saved.body;const captionFingerprint=w.captions[0].inputFingerprint;

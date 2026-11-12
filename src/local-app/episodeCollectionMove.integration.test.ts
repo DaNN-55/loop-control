@@ -12,7 +12,7 @@ import {episodeFileIO} from './episodeFiles';
 
 const enabled=process.env.LOOP_WORKSPACE_ACCEPTANCE==='1';
 it.skipIf(!enabled)('Owner moves an order from A to B without changing its frozen creative series or original material reference',async()=>{
- const volume=await workspaceAudioVolume(),f=await embeddedStudioFixture({testRootParent:volume.mountPath,runtime:{mountPath:volume.mountPath},migrations:['db/local/123-legacy-storage-adoption.sql','db/local/124-episode-collection-moves.sql']});
+ const volume=await workspaceAudioVolume(),f=await embeddedStudioFixture({testRootParent:volume.mountPath,runtime:{mountPath:volume.mountPath},migrations:['db/archive/legacy-v1/123-legacy-storage-adoption.sql','db/archive/legacy-v1/124-episode-collection-moves.sql']});
  try{
   const post=async(route:string,command:string,data:Record<string,unknown>)=>{const response=await fetch(f.origin+'/api/local/'+route,{method:'POST',headers:{Cookie:'loop_owner_session='+f.token,Origin:f.origin,'Content-Type':'application/json','X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command,idempotencyKey:randomUUID(),data})});return{status:response.status,body:await response.json()};};
   const account=(await f.c.query('SELECT account_id FROM public.episodes WHERE id=$1',[f.episode])).rows[0].account_id;

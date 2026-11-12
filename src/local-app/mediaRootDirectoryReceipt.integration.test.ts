@@ -7,7 +7,7 @@ import {nativeMediaRootFixture} from './mediaRootRuntime.fixture';
 import {csrfFor} from './sessions';
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each(['empty-directory','unknown-content'] as const)('a crash before the directory receipt commits preserves %s and permits guarded manual continuation',async scenario=>{
- const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/local/125-global-media-root-plans.sql','db/local/126-global-media-root-execution.sql']}),{f,target,source,configFile}=fixture;let pending:Promise<unknown>|undefined;
+ const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/archive/legacy-v1/125-global-media-root-plans.sql','db/archive/legacy-v1/126-global-media-root-execution.sql']}),{f,target,source,configFile}=fixture;let pending:Promise<unknown>|undefined;
  try{
   const config=JSON.parse(await readFile(configFile,'utf8'));config.projectRoot=process.env.LOOP_TEST_RUNTIME_ROOT??process.cwd();await writeFile(configFile,JSON.stringify(config),{mode:0o600});
   let runtime=await fixture.launch();

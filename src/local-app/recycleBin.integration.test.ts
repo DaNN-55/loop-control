@@ -127,7 +127,7 @@ it.skipIf(!enabled)('recycle schema applies forward without rewriting existing m
   const rows=(await f.c.query('SELECT version,sha256 FROM local_identity.schema_migrations ORDER BY version')).rows;
   const after=Object.fromEntries(rows.map(row=>[row.version,row.sha256]));
   for(const [version,sha] of Object.entries(before))expect(after[version]).toBe(sha);
-  expect(after[migration]).toBe(createHash('sha256').update(await readFile('db/local/'+migration)).digest('hex'));
+  expect(after[migration]).toBe(createHash('sha256').update(await readFile('db/archive/legacy-v1/'+migration)).digest('hex'));
   expect((await f.c.query("SELECT count(*)::int count FROM local_identity.episode_recycle_bin")).rows[0].count).toBe(0);
   expect((await f.c.query("SELECT local_identity.is_recycled_episode($1) recycled",[f.episode])).rows[0].recycled).toBe(false);
   const policies=(await f.c.query("SELECT policyname FROM pg_policies WHERE schemaname='local_identity' AND tablename IN ('episode_recycle_bin','recycle_bin_settings')")).rows;

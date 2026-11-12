@@ -29,10 +29,10 @@ it.skipIf(process.env.LOOP_AUTOMATION_HISTORY_ACCEPTANCE!=='1')('isolates origin
   const archived=(await c.query("SELECT to_regclass('local_identity.historical_automation_jobs') present")).rows[0].present;
   if(!archived){
    const original=await hashes(tables.map(t=>'local_identity.'+t));
-   await c.query(readFileSync(join(root,'db/local/062-isolate-historical-automation.sql'),'utf8'));
+   await c.query(readFileSync(join(root,'db/archive/legacy-v1/062-isolate-historical-automation.sql'),'utf8'));
    expect(await hashes(tables.map(t=>'local_identity.historical_'+t))).toEqual(original);
   }
-  if(!(await c.query("SELECT 1 FROM information_schema.columns WHERE table_schema='local_identity' AND table_name='automation_attempts' AND column_name='checks'")).rowCount)await c.query(readFileSync(join(root,'db/local/081-health-check-details.sql'),'utf8'));
+  if(!(await c.query("SELECT 1 FROM information_schema.columns WHERE table_schema='local_identity' AND table_name='automation_attempts' AND column_name='checks'")).rowCount)await c.query(readFileSync(join(root,'db/archive/legacy-v1/081-health-check-details.sql'),'utf8'));
   const historical=await hashes(tables.map(t=>'local_identity.historical_'+t));
   const business=await hashes(['public.tasks','public.notification_delivery_events','public.episodes','public.accounts']);
   // Rollback-only fixtures, never touch the original historical rows.

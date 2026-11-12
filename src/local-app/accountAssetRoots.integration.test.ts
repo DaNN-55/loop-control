@@ -8,7 +8,7 @@ import {workspaceAudioVolume} from './workspaceAudioVolume.fixture';
 import {csrfFor} from './sessions';
 import {insertHistoricalBlueprint} from './historicalBlueprint.fixture';
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner owns actual account directories independently of blueprint versions, and files remain isolated after restart',async()=>{
- const f=await embeddedStudioFixture({migrations:['db/local/105-account-asset-directories.sql']});
+ const f=await embeddedStudioFixture({migrations:['db/archive/legacy-v1/105-account-asset-directories.sql']});
  try{
  const call=async(command:string,data:Record<string,unknown>)=>{const r=await fetch(f.origin+'/api/local/account-commands',{method:'POST',headers:{Origin:f.origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+f.token,'X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command,data,idempotencyKey:randomUUID()})});return{status:r.status,body:await r.json()};};
  const configure=async(command:string,data:Record<string,unknown>)=>{const r=await fetch(f.origin+'/api/local/configuration',{method:'POST',headers:{Origin:f.origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+f.token,'X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command,data,idempotencyKey:randomUUID()})});return{status:r.status,body:await r.json()};};

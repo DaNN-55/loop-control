@@ -76,3 +76,8 @@
 - [ADR-0045：日常数据库使用项目专用原生 PostgreSQL](0045-native-postgresql-runtime.md)
 
 - [ADR-0046：备份保留已失效终态任务的未知历史](0046-backup-retains-invalidated-task-history.md)
+
+- [ADR-0047：当前 SQL 基线与不可变历史迁移分代](0047-clean-sql-baseline-generations.md)
+
+- [ADR-0048：旧规划写入退役与只读配置归档](0048-retire-legacy-sql-production-writes.md)
+- [0049：退役旧任务修复、派单和自动续跑](0049-retire-legacy-dispatch-repair-and-continuation.md)

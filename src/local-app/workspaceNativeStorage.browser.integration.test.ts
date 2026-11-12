@@ -13,7 +13,7 @@ it.skipIf(process.env.LOOP_T09_BROWSER!=='1').each(['registered','legacy'] as co
  const evidenceRoot=process.env.LOOP_T09_BROWSER_EVIDENCE,session=process.env.LOOP_T09_BROWSER_SESSION;
  if(!evidenceRoot||!session)throw Error('Explicit isolated browser evidence/session required');
  const evidence=join(evidenceRoot,layout);await mkdir(evidence,{recursive:true});
- const f=await productionWorkspaceFixture({episodeRelativePath:layout==='registered'?()=> '浏览器 [T09]_100%_%20_#?/本单 空间':undefined,migrations:['db/local/118-visual-storage-locations.sql','db/local/119-audio-caption-storage-locations.sql','db/local/120-native-workspace-storage-locations.sql'],runtime:{wake(){}}});
+ const f=await productionWorkspaceFixture({episodeRelativePath:layout==='registered'?()=> '浏览器 [T09]_100%_%20_#?/本单 空间':undefined,migrations:['db/archive/legacy-v1/118-visual-storage-locations.sql','db/archive/legacy-v1/119-audio-caption-storage-locations.sql','db/archive/legacy-v1/120-native-workspace-storage-locations.sql'],runtime:{wake(){}}});
  let vite:import('vite').ViteDevServer|undefined;const worker=f.workerPool();
  try{
   let w=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;w=await f.fillVisuals(w);

@@ -1,4 +1,4 @@
-// Forward adaptation of the frozen C business schema retained in db/local/c-baseline.sql.
+// Forward adaptation of the frozen C business schema retained in db/archive/legacy-v1/c-baseline.sql.
 // Current local databases have no hosted identity or remote secret-store schema.
 import {createHash} from 'node:crypto';
 export function adaptBusinessSchema(source) {

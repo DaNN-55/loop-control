@@ -7,7 +7,7 @@ import {LocalConnections} from './connections';
 import {createLocalHandler} from './localRoute';
 import {workspaceAudioFixture} from './workspaceAudio.fixture';
 it.skipIf(process.env.LOOP_CALL_CONFIRMATION_BROWSER!=='1')('per-call confirmation cancels without queueing and submits exactly one controlled speech call through Owner HTTP',async()=>{
- const f=await workspaceAudioFixture({migrations:['db/local/110-episode-storage-locations.sql','db/local/118-visual-storage-locations.sql','db/local/119-audio-caption-storage-locations.sql']});let vite:import('vite').ViteDevServer|undefined;
+ const f=await workspaceAudioFixture({migrations:['db/archive/legacy-v1/110-episode-storage-locations.sql','db/archive/legacy-v1/118-visual-storage-locations.sql','db/archive/legacy-v1/119-audio-caption-storage-locations.sql']});let vite:import('vite').ViteDevServer|undefined;
  const evidence=process.env.LOOP_CALL_CONFIRMATION_EVIDENCE!;if(!evidence)throw Error('Explicit isolated evidence directory required');
  try{
 

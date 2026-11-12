@@ -5,7 +5,7 @@ import {readFile,lstat} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {productionWorkspaceFixture} from './productionWorkspace.fixture';
 it.skipIf(process.env.LOOP_LEGACY_WORKSPACE_ACCEPTANCE!=='1').each(['legacy','registered'] as const)('Owner reads and downloads the exact saved legacy edit without adopting or rewriting it (%s)',async layout=>{
- const f=await productionWorkspaceFixture({episodeRelativePath:layout==='registered'?()=> '旧工程 [T09]_%/本期':undefined,migrations:['db/local/120-native-workspace-storage-locations.sql']});
+ const f=await productionWorkspaceFixture({episodeRelativePath:layout==='registered'?()=> '旧工程 [T09]_%/本期':undefined,migrations:['db/archive/legacy-v1/120-native-workspace-storage-locations.sql']});
  try{
   const get=async(suffix='',token=f.token)=>fetch(`${f.origin}/api/local/episodes/${f.episode}/legacy-project${suffix}`,{headers:{Cookie:'loop_owner_session='+token}});
   const missing=await get();expect(missing.status).toBe(200);expect(await missing.json()).toEqual({project:null});await expect(lstat(`${f.assetRoot}/${f.episodeRelativePath}/openchatcut-work`)).rejects.toMatchObject({code:'ENOENT'});

@@ -7,7 +7,7 @@ import {nativeMediaRootFixture} from './mediaRootRuntime.fixture';
 import {csrfFor} from './sessions';
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner executes the saved global plan and a fresh native process reads every original artifact from the new root',async()=>{
- const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/local/121-restored-media-deployment.sql','db/local/125-global-media-root-plans.sql','db/local/126-global-media-root-execution.sql']}),{f,source,target,configFile}=fixture;
+ const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/archive/legacy-v1/121-restored-media-deployment.sql','db/archive/legacy-v1/125-global-media-root-plans.sql','db/archive/legacy-v1/126-global-media-root-execution.sql']}),{f,source,target,configFile}=fixture;
  try{
   let runtime=await fixture.launch();const firstPid=runtime.pid;
   const call=async(command?:string,data:Record<string,unknown>={})=>{const r=await fetch(runtime.origin+'/api/local/media-root',{method:command?'POST':'GET',headers:{Cookie:'loop_owner_session='+f.token,Origin:runtime.origin,'Content-Type':'application/json','X-CSRF-Token':csrfFor(f.token)},...(command?{body:JSON.stringify({command,idempotencyKey:randomUUID(),...data})}:{})});return{status:r.status,body:await r.json()};};
@@ -24,7 +24,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner executes the saved
 },180000);
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('completed root publication permits a later legitimate collection move and fresh native startup',async()=>{
- const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/local/121-restored-media-deployment.sql','db/local/125-global-media-root-plans.sql','db/local/126-global-media-root-execution.sql']}),{f,target}=fixture;
+ const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/archive/legacy-v1/121-restored-media-deployment.sql','db/archive/legacy-v1/125-global-media-root-plans.sql','db/archive/legacy-v1/126-global-media-root-execution.sql']}),{f,target}=fixture;
  try{
   const {prepareCollectionTargets,collectionOwnerPost}=await import('./episodeCollection.fixture');const {account,a}=await prepareCollectionTargets(f);
   let runtime=await fixture.launch();const call=async(command:string,data:Record<string,unknown>)=>{const r=await fetch(runtime.origin+'/api/local/media-root',{method:'POST',headers:{Cookie:'loop_owner_session='+f.token,Origin:runtime.origin,'Content-Type':'application/json','X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command,idempotencyKey:randomUUID(),...data})});return{status:r.status,body:await r.json()};};

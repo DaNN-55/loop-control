@@ -15,7 +15,7 @@ it.skipIf(process.env.LOOP_STORAGE_FEEDBACK_ACCEPTANCE!=='1')('storage feedback 
  if(!process.env.LOOP_TEST_CONTEXT_MODULE||!process.env.LOOP_STORAGE_FEEDBACK_EVIDENCE)throw Error('Explicit isolated context and evidence required');
  const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MODULE),context=runtimeContext();context.assertDatabase();if(context.dailyRuntime!==false)throw Error('Daily runtime forbidden');
  const output=process.env.LOOP_STORAGE_FEEDBACK_EVIDENCE;await mkdir(output,{recursive:true});
- const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/local/121-restored-media-deployment.sql','db/local/125-global-media-root-plans.sql','db/local/126-global-media-root-execution.sql']}),{f,source,target,runtimeRoot}=fixture;
+ const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/archive/legacy-v1/121-restored-media-deployment.sql','db/archive/legacy-v1/125-global-media-root-plans.sql','db/archive/legacy-v1/126-global-media-root-execution.sql']}),{f,source,target,runtimeRoot}=fixture;
  let vite:ViteDevServer|undefined;const session='loop-ticket27-'+randomUUID();
  const browser=async(...args:string[])=>(await exec('agent-browser',['--session',session,...args],{timeout:25000,maxBuffer:4*1024*1024})).stdout;
  const click=(name:string)=>browser('find','role','button','click','--name',name,'--exact'),text=(value:string)=>browser('wait','--text',value);

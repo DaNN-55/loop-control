@@ -8,13 +8,13 @@ import {csrfFor} from './sessions';
 
 const enabled=process.env.LOOP_WORKSPACE_ACCEPTANCE==='1';
 it.skipIf(!enabled)('an unreadable production file returns a recoverable storage reason and leaves its original bytes untouched',async()=>{
- const f=await embeddedStudioFixture({migrations:['db/local/125-global-media-root-plans.sql']}),target=await realpath(await mkdtemp('/private/tmp/loop-root-permissions-')),path=join(f.assetRoot,f.videoPath),before=await readFile(path);
+ const f=await embeddedStudioFixture({migrations:['db/archive/legacy-v1/125-global-media-root-plans.sql']}),target=await realpath(await mkdtemp('/private/tmp/loop-root-permissions-')),path=join(f.assetRoot,f.videoPath),before=await readFile(path);
  try{
   await chmod(path,0);const response=await fetch(f.origin+'/api/local/media-root',{method:'POST',headers:{Cookie:'loop_owner_session='+f.token,Origin:f.origin,'Content-Type':'application/json','X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command:'planMigration',path:target,idempotencyKey:randomUUID()})}),body=await response.json();expect(response.status,JSON.stringify(body)).toBe(409);expect(body.error).toContain('权限');expect(await readdir(target)).toEqual([]);
  }finally{await chmod(path,0o600);expect(await readFile(path)).toEqual(before);await f.close();await rm(target,{recursive:true});}
 },60000);
 it.skipIf(!enabled)('Owner persists a whole-workspace plan outside the old parent without changing active storage or source bytes',async()=>{
- const f=await embeddedStudioFixture({migrations:['db/local/125-global-media-root-plans.sql']}),target=await realpath(await mkdtemp('/private/tmp/loop-root-target-'));
+ const f=await embeddedStudioFixture({migrations:['db/archive/legacy-v1/125-global-media-root-plans.sql']}),target=await realpath(await mkdtemp('/private/tmp/loop-root-target-'));
  try{
   const binding=(await f.c.query('SELECT local_identity.media_root_binding() binding')).rows[0].binding;
   const original=await readFile(join(f.assetRoot,f.videoPath)),key=randomUUID();
@@ -30,7 +30,7 @@ it.skipIf(!enabled)('Owner persists a whole-workspace plan outside the old paren
 },60000);
 
 it.skipIf(!enabled)('bounded scanning rejects excessive directory depth without touching either tree',async()=>{
- const f=await embeddedStudioFixture({migrations:['db/local/125-global-media-root-plans.sql']}),target=await realpath(await mkdtemp('/private/tmp/loop-root-bounds-'));
+ const f=await embeddedStudioFixture({migrations:['db/archive/legacy-v1/125-global-media-root-plans.sql']}),target=await realpath(await mkdtemp('/private/tmp/loop-root-bounds-'));
  try{
   await mkdir(join(f.assetRoot,f.episodeRelativePath,...Array(130).fill('nested')),{recursive:true});
   const response=await fetch(f.origin+'/api/local/media-root',{method:'POST',headers:{Cookie:'loop_owner_session='+f.token,Origin:f.origin,'Content-Type':'application/json','X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command:'planMigration',path:target,idempotencyKey:randomUUID()})});expect(response.status).toBe(409);expect((await response.json()).error).toContain('128');expect(await readdir(target)).toEqual([]);
@@ -38,7 +38,7 @@ it.skipIf(!enabled)('bounded scanning rejects excessive directory depth without 
 },60000);
 
 it.skipIf(!enabled)('durable creation, deletion and partial-copy records are inventoried as blockers while completed history stays inactive',async()=>{
- const f=await embeddedStudioFixture({migrations:['db/local/125-global-media-root-plans.sql']}),target=await realpath(await mkdtemp('/private/tmp/loop-root-pending-'));
+ const f=await embeddedStudioFixture({migrations:['db/archive/legacy-v1/125-global-media-root-plans.sql']}),target=await realpath(await mkdtemp('/private/tmp/loop-root-pending-'));
  try{
   const account=(await f.c.query('SELECT account_id FROM public.episodes WHERE id=$1',[f.episode])).rows[0].account_id,binding=(await f.c.query('SELECT local_identity.media_root_binding() binding')).rows[0].binding,root=await lstat(f.assetRoot,{bigint:true}),container=randomUUID(),episode=randomUUID(),migration=randomUUID();
   // Controlled durable-state injection at the real DB boundary; no operation is
@@ -57,7 +57,7 @@ it.skipIf(!enabled)('durable creation, deletion and partial-copy records are inv
 },60000);
 
 it.skipIf(!enabled)('a historical frozen native identity without a complete bridge is a plan conflict and its original snapshot stays unchanged',async()=>{
- const f=await embeddedStudioFixture({migrations:['db/local/125-global-media-root-plans.sql']}),target=await realpath(await mkdtemp('/private/tmp/loop-root-proof-'));
+ const f=await embeddedStudioFixture({migrations:['db/archive/legacy-v1/125-global-media-root-plans.sql']}),target=await realpath(await mkdtemp('/private/tmp/loop-root-proof-'));
  try{
   const task=randomUUID(),snapshot={native_output_namespace:task,native_episode_relative_path:f.episodeRelativePath,native_episode_directory_identity:{deviceId:'1',inodeId:'1'}};
   // Historical completed rows are preserved by namespace_native_task_output;
@@ -69,7 +69,7 @@ it.skipIf(!enabled)('a historical frozen native identity without a complete brid
 },60000);
 
 it.skipIf(!enabled)('concurrent Owner retries preserve one plan and report target contents plus actual task blockers',async()=>{
- const f=await embeddedStudioFixture({migrations:['db/local/125-global-media-root-plans.sql']}),target=await realpath(await mkdtemp('/private/tmp/loop-root-target-'));
+ const f=await embeddedStudioFixture({migrations:['db/archive/legacy-v1/125-global-media-root-plans.sql']}),target=await realpath(await mkdtemp('/private/tmp/loop-root-target-'));
  try{
   await writeFile(join(target,'keep.txt'),'Keep these 16B!!');
   await f.c.query("UPDATE public.tasks SET status='ready' WHERE id=$1",[f.task]);

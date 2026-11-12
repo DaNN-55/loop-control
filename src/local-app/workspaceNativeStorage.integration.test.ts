@@ -9,7 +9,7 @@ import {readFile,rename,mkdir,readdir,writeFile,lstat} from 'node:fs/promises';
 import {join} from 'node:path';
 import {productionWorkspaceFixture} from './productionWorkspace.fixture';
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each(['legacy','registered'] as const)('Owner edits, restarts, exports and delivers the sole native workspace (%s)',async layout=>{
- const f=await productionWorkspaceFixture({episodeRelativePath:layout==='registered'?()=> '系列 [T09]_百分%/生产单 空间':undefined,runtime:{wake(){}},migrations:['db/local/118-visual-storage-locations.sql','db/local/119-audio-caption-storage-locations.sql','db/local/120-native-workspace-storage-locations.sql']});
+ const f=await productionWorkspaceFixture({episodeRelativePath:layout==='registered'?()=> '系列 [T09]_百分%/生产单 空间':undefined,runtime:{wake(){}},migrations:['db/archive/legacy-v1/118-visual-storage-locations.sql','db/archive/legacy-v1/119-audio-caption-storage-locations.sql','db/archive/legacy-v1/120-native-workspace-storage-locations.sql']});
  try{
   const prepared=await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script});expect(prepared.status,JSON.stringify(prepared.body)).toBe(200);let w=prepared.body;
   expect(w.project.relativePath).toBe(`${f.episodeRelativePath}/production-workspace/versions/${w.project.sha256}.json`);
@@ -44,7 +44,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each(['legacy','registere
 },120000);
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('an owned native child crash removes its private compiler cache and preserves the SQLite workspace',async()=>{
- const f=await productionWorkspaceFixture({episodeRelativePath:()=> '崩溃缓存_[T09]/本单',migrations:['db/local/120-native-workspace-storage-locations.sql']});
+ const f=await productionWorkspaceFixture({episodeRelativePath:()=> '崩溃缓存_[T09]/本单',migrations:['db/archive/legacy-v1/120-native-workspace-storage-locations.sql']});
  try{
   let w=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;w=await f.fillVisuals(w);
   const send=(command:string)=>f.request(command,{workspaceId:w.id,expectedRevision:w.revision}),opened=await send('openWorkspaceStudio');expect(opened.status,JSON.stringify(opened.body)).toBe(200);w=opened.body.productionWorkspace;

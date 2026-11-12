@@ -12,7 +12,7 @@ import {prepareCollectionTargets} from './episodeCollection.fixture';
 const exec=promisify(execFile),sha=(bytes:Uint8Array)=>createHash('sha256').update(bytes).digest('hex');
 it.skipIf(process.env.LOOP_STATE13_ACCEPTANCE!=='1')('real Owner storage UI reopens a copying plan, retries disconnected reads, resumes a failed cutover and serves the same media after restart',async()=>{
  const output=process.env.LOOP_STATE13_EVIDENCE;if(!output)throw Error('An explicit owned evidence directory is required');await mkdir(output,{recursive:true});
- const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/local/120-native-workspace-storage-locations.sql','db/local/121-restored-media-deployment.sql','db/local/125-global-media-root-plans.sql','db/local/126-global-media-root-execution.sql']});
+ const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/archive/legacy-v1/120-native-workspace-storage-locations.sql','db/archive/legacy-v1/121-restored-media-deployment.sql','db/archive/legacy-v1/125-global-media-root-plans.sql','db/archive/legacy-v1/126-global-media-root-execution.sql']});
  const {f,target,runtimeRoot}=fixture,session='state13-'+randomUUID();let vite:ViteDevServer|undefined,disconnected=false;
  const browser=async(...args:string[])=>(await exec('agent-browser',['--session',session,...args],{timeout:30000,maxBuffer:4*1024*1024})).stdout;
  const click=(name:string)=>browser('find','role','button','click','--name',name,'--exact');

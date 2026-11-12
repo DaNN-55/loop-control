@@ -13,7 +13,7 @@ import {executeNativeNarration} from './narrationWorker';
 import {verifyArtifactIndex} from '../worker/mediaLibrary';
 const enabled=process.env.LOOP_WORKSPACE_ACCEPTANCE==='1';
 it.skipIf(!enabled)('real queue claims and one unknown controlled Provider submission remain blockers without rewriting the task or fee',async()=>{
- const f=await narrationFixture(undefined,undefined,false,false,['db/local/120-native-workspace-storage-locations.sql','db/local/125-global-media-root-plans.sql']),worker=f.workerPool(),target=await realpath(await mkdtemp('/private/tmp/loop-root-blockers-'));
+ const f=await narrationFixture(undefined,undefined,false,false,['db/archive/legacy-v1/120-native-workspace-storage-locations.sql','db/archive/legacy-v1/125-global-media-root-plans.sql']),worker=f.workerPool(),target=await realpath(await mkdtemp('/private/tmp/loop-root-blockers-'));
  try{
   await f.authorize();let w=await f.read();
   const send=async(command:string,data:Record<string,unknown>={})=>{const r=await f.request(command,{workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[0].id,...data});expect(r.status,JSON.stringify(r.body)).toBe(200);if(r.body.id===w.id)w=r.body;return r.body;};

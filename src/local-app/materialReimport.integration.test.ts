@@ -29,7 +29,7 @@ it.skipIf(!enabled)('identical reference upload keeps the original revision and 
 },120000);
 
 it.skipIf(!enabled)('an invalidated unsent video does not prevent a new explicit request for the updated reference',async()=>{
- const f=await narrationFixture(undefined,undefined,true,false,['db/local/165-invalidated-unsent-video-requests.sql']);
+ const f=await narrationFixture(undefined,undefined,true,false,['db/archive/legacy-v1/165-invalidated-unsent-video-requests.sql']);
  try{
   await f.authorize();const w=f.made;
   const data={materialType:'image',sourceKind:'file',sourcePath:'changed-product.png',mimeType:'image/png',contentBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64'),isMainScript:false,materialPurpose:'visual_reference'};

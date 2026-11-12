@@ -8,7 +8,7 @@ import {collectionOwnerPost} from './episodeCollection.fixture';
 import {csrfFor} from './sessions';
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner creative extensions remain creative data while actual indexed file dependencies still block a root plan',async()=>{
- const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/local/121-restored-media-deployment.sql','db/local/125-global-media-root-plans.sql','db/local/126-global-media-root-execution.sql']}),{f,target}=fixture;
+ const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/archive/legacy-v1/121-restored-media-deployment.sql','db/archive/legacy-v1/125-global-media-root-plans.sql','db/archive/legacy-v1/126-global-media-root-execution.sql']}),{f,target}=fixture;
  try{
   const runtime=await fixture.launch(),post=collectionOwnerPost({...f,origin:runtime.origin}),policy={positioning:'保留创作扩展',restrictions:'不得虚构事实',extension:{relativePath:'叙事/转折',src:'第一人称视角'}};
   const account=await post('configuration','createAccount',{name:'扩展规则账号',slug:'extension-'+randomUUID(),timezone:'Asia/Shanghai',policy});expect(account.status,JSON.stringify(account.body)).toBe(200);

@@ -5,7 +5,7 @@ import {join} from 'node:path';
 import {workspaceAudioFixture} from './workspaceAudio.fixture';
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('freezes distinct sound candidates, requires manual adoption, and keeps music settings on the production order',async()=>{
- const f=await workspaceAudioFixture({migrations:['db/local/151-workspace-sound-candidates.sql']});
+ const f=await workspaceAudioFixture({migrations:['db/archive/legacy-v1/151-workspace-sound-candidates.sql']});
  try{
   await f.authorize();let w=f.made;
   const selection={capability:'music_sound',provider:'freesound',adapter:'freesound_preview',connectionVersionId:(await f.c.query("SELECT id FROM public.external_connection_versions WHERE adapter='freesound_preview'")).rows[0].id};

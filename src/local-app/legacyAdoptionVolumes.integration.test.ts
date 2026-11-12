@@ -9,7 +9,7 @@ import {csrfFor} from './sessions';
 import {deletionFixtureFingerprint} from './deletionFingerprint.fixture';
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('multiple owned legacy roots copy across an actual volume while mixed registered accounts, unknown files and frozen series remain intact',async()=>{
- const f=await embeddedStudioFixture({migrations:['db/local/123-legacy-storage-adoption.sql']});let volume:Awaited<ReturnType<typeof workspaceAudioVolume>>|undefined;
+ const f=await embeddedStudioFixture({migrations:['db/archive/legacy-v1/123-legacy-storage-adoption.sql']});let volume:Awaited<ReturnType<typeof workspaceAudioVolume>>|undefined;
  try{
   volume=await workspaceAudioVolume({mountPath:join(f.root,'legacy-mounted-volume')});
   const sourceRoot=volume.mountPath,account=(await f.c.query('SELECT account_id FROM public.episodes WHERE id=$1',[f.episode])).rows[0].account_id;

@@ -9,7 +9,7 @@ import {it,expect} from 'vitest';
 import {defaultShotCaptionContract} from '../shotCaptions';
 import {productionWorkspaceFixture} from './productionWorkspace.fixture';
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner checks actual used content before exporting and confirms exact final bytes',async()=>{
- const f=await productionWorkspaceFixture({migrations:['db/local/093-workspace-export.sql']});
+ const f=await productionWorkspaceFixture({migrations:['db/archive/legacy-v1/093-workspace-export.sql']});
  try{
   let w=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;
   const send=(name:string,extra={})=>f.request(name,{workspaceId:w.id,expectedRevision:w.revision,...extra});

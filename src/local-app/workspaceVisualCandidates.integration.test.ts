@@ -6,7 +6,7 @@ import {readFile} from 'node:fs/promises';
 import {join} from 'node:path';
 import {productionWorkspaceFixture} from './productionWorkspace.fixture';
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner registers a local visual candidate and replaces only one source instance',async()=>{
- const f=await productionWorkspaceFixture({migrations:['db/local/091-workspace-visual-candidates.sql']});try{
+ const f=await productionWorkspaceFixture({migrations:['db/archive/legacy-v1/091-workspace-visual-candidates.sql']});try{
   let w=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;
   for(const clip of w.clips){const r=await f.request('matchWorkspaceMaterial',{workspaceId:w.id,expectedRevision:w.revision,clipId:clip.id,materialRevisionId:f.material});expect(r.status).toBe(200);w=r.body;}
   const beforeSha=w.project.sha256;const before=JSON.parse(await readFile(join(f.assetRoot,w.project.relativePath),'utf8')),target=w.clips[0];

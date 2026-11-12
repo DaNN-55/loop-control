@@ -36,6 +36,7 @@ export async function assertNarrationReady(config?:NativeNarrationConfiguration)
 }
 export async function executeNativeNarration(pool:Pool,config:NativeNarrationConfiguration|undefined,p:WorkerTaskPackage,fence:{p_task_id:string;p_attempt:number;p_lease_token:string}){
  if(!registeredAdapters.isRegisteredProvider(p.provider))throw new SecretStoreError('disabled');
+ if(p.promptVersion!=='production-request-v1')throw new ProviderRequestNotSentError('input_changed');
  const speech=config?.workspaceSpeechFromConnections&&p.provider==='volcengine_tts'&&p.media?.adapter==='volcengine_tts'&&p.promptVersion==='production-request-v1'?p.media.narration:undefined;
  const ports=await narrationPorts(config,!!speech);
  let secret:string;

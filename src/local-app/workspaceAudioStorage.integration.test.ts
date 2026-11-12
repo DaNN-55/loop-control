@@ -3,7 +3,7 @@ import {it,expect} from 'vitest';
 import {mkdir,readFile,rename} from 'node:fs/promises';
 import {join} from 'node:path';
 import {narrationFixture} from './workspaceNarration.fixture';
-const migrations=['db/local/110-episode-storage-locations.sql','db/local/118-visual-storage-locations.sql','db/local/119-audio-caption-storage-locations.sql'];
+const migrations=['db/archive/legacy-v1/110-episode-storage-locations.sql','db/archive/legacy-v1/118-visual-storage-locations.sql','db/archive/legacy-v1/119-audio-caption-storage-locations.sql'];
 const registeredOptions={migrations,episodeRelativePath:()=>'系列 audio/本期 audio'};
 const locationOf=(f:Awaited<ReturnType<typeof narrationFixture>>)=>({path:join(f.assetRoot,f.episodeRelativePath),prefix:f.episodeRelativePath});
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('replaced production directory blocks speech submission before reserving fees or contacting the Provider',async()=>{

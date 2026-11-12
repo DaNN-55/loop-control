@@ -12,7 +12,7 @@ import {createLocalHandler} from './localRoute';
 
 it.skipIf(process.env.LOOP_COMPOSER_BROWSER!=='1')('formal composer and sound controls preserve drafts and require explicit adoption through Owner HTTP',async()=>{
  const evidence=process.env.LOOP_COMPOSER_EVIDENCE!;if(!evidence)throw Error('Isolated evidence directory required');
- const f=await workspaceAudioFixture({videoConfiguration:true,migrations:['db/local/151-workspace-sound-candidates.sql']});let app:ViteDevServer|undefined;
+ const f=await workspaceAudioFixture({videoConfiguration:true,migrations:['db/archive/legacy-v1/151-workspace-sound-candidates.sql']});let app:ViteDevServer|undefined;
  const entry=join(process.cwd(),'src/local-app/__generationComposerBrowser.tsx');
  try{
   await mkdir(evidence,{recursive:true});await rm(join(evidence,'browser-done.json'),{force:true});await f.authorize();

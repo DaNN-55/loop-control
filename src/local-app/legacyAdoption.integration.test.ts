@@ -7,7 +7,7 @@ import {embeddedStudioFixture} from './embeddedStudio.fixture';
 import {csrfFor} from './sessions';
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each(['exact','trailing-slash'] as const)('legacy global-root production stays readable and does not prevent a new isolated account (%s)',async variant=>{
- const f=await embeddedStudioFixture({migrations:['db/local/123-legacy-storage-adoption.sql']});
+ const f=await embeddedStudioFixture({migrations:['db/archive/legacy-v1/123-legacy-storage-adoption.sql']});
  try{
   const file=f.files[0],url=f.origin+`/_local-artifact?episode=${f.episode}&path=${encodeURIComponent(file.relativePath)}&sha256=${file.sha256}`,headers={Cookie:'loop_owner_session='+f.token};
   expect((await fetch(url,{headers})).status).toBe(200);
@@ -29,7 +29,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each(['exact','trailing-s
 },120000);
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner explicitly adopts only owned legacy episode scopes and preserves frozen references when the old source is offline',async()=>{
- const f=await embeddedStudioFixture({migrations:['db/local/123-legacy-storage-adoption.sql']});
+ const f=await embeddedStudioFixture({migrations:['db/archive/legacy-v1/123-legacy-storage-adoption.sql']});
  try{
   const account=(await f.c.query('SELECT account_id FROM public.episodes WHERE id=$1',[f.episode])).rows[0].account_id;
   const headers={Cookie:'loop_owner_session='+f.token,Origin:f.origin,'Content-Type':'application/json','X-CSRF-Token':csrfFor(f.token)};
@@ -58,7 +58,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner explicitly adopts 
 },120000);
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each(['episode','container','account','file'] as const)('a %s replacement while final SQL is paused rolls back the entire current switch and retains both generations',async phase=>{
- const f=await embeddedStudioFixture({migrations:['db/local/123-legacy-storage-adoption.sql']});let pending:Promise<{status:number;body:any}>|undefined;
+ const f=await embeddedStudioFixture({migrations:['db/archive/legacy-v1/123-legacy-storage-adoption.sql']});let pending:Promise<{status:number;body:any}>|undefined;
  try{
   const {lstat}=await import('node:fs/promises'),{setTimeout:pause}=await import('node:timers/promises');
   const account=(await f.c.query('SELECT account_id FROM public.episodes WHERE id=$1',[f.episode])).rows[0].account_id;
@@ -81,7 +81,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each(['episode','containe
 },120000);
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('adoption history and retained sources survive current-only episode cleanup and deletion of the empty account',async()=>{
- const f=await embeddedStudioFixture({migrations:['db/local/123-legacy-storage-adoption.sql']});
+ const f=await embeddedStudioFixture({migrations:['db/archive/legacy-v1/123-legacy-storage-adoption.sql']});
  try{
   const {deletionFixtureFingerprint}=await import('./deletionFingerprint.fixture');
   const account=(await f.c.query('SELECT account_id FROM public.episodes WHERE id=$1',[f.episode])).rows[0].account_id;

@@ -20,7 +20,7 @@ const sha=(bytes:Uint8Array)=>createHash('sha256').update(bytes).digest('hex');
 async function legacyFixture(){
  const volume=await workspaceAudioVolume();let f:Awaited<ReturnType<typeof embeddedStudioFixture>>|undefined;
  try{
-  f=await embeddedStudioFixture({testRootParent:volume.mountPath,migrations:['db/local/158-workspace-unused-queued-tasks.sql','db/local/159-owned-studio-freeze-registration.sql'],runtime:{mountPath:volume.mountPath,postReady:async()=>{},localClipReady:async()=>{},mediaReady:async()=>{},wake(){}}});
+  f=await embeddedStudioFixture({testRootParent:volume.mountPath,migrations:['db/archive/legacy-v1/158-workspace-unused-queued-tasks.sql','db/archive/legacy-v1/159-owned-studio-freeze-registration.sql'],runtime:{mountPath:volume.mountPath,postReady:async()=>{},localClipReady:async()=>{},mediaReady:async()=>{},wake(){}}});
   const base=f,pre=randomUUID(),material=randomUUID();
   const qc=(await base.c.query("SELECT id FROM public.review_packages WHERE episode_id=$1 AND stage='qc_review'",[base.episode])).rows[0].id;
   const snapshot=(await base.c.query('SELECT input_snapshot FROM public.tasks WHERE id=$1',[base.task])).rows[0].input_snapshot;

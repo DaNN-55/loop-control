@@ -8,7 +8,7 @@ import {embeddedStudioFixture} from './embeddedStudio.fixture';
 import {csrfFor} from './sessions';
 import {inspectMediaRoot} from './mediaRootSettings';
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('first account on a native workspace without import history owns one persisted real directory and survives replay and rename',async()=>{
- const f=await embeddedStudioFixture({migrations:['db/local/111-global-media-root.sql','db/local/112-series-extension-rules.sql']});
+ const f=await embeddedStudioFixture({migrations:['db/archive/legacy-v1/111-global-media-root.sql','db/archive/legacy-v1/112-series-extension-rules.sql']});
  try{
  await f.c.query('TRUNCATE public.accounts CASCADE');await f.c.query('DELETE FROM local_identity.import_record');
  const root=await inspectMediaRoot(f.root);await f.c.query('SELECT local_identity.bind_media_root($1,$2,$3,$4,false,$5)',[root.path,root.deviceId,root.inodeId,root.mountPath,f.owner]);

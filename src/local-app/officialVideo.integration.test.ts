@@ -48,7 +48,7 @@ it.skipIf(process.env.LOOP_OFFICIAL_VIDEO_ACCEPTANCE!=='1').each(Object.entries(
  const server=createServer((q,r)=>handler(q,r));
  try{
   await c.query('BEGIN');
-  if(!(await c.query("SELECT 1 FROM local_identity.schema_migrations WHERE version='063-official-video-providers.sql'")).rowCount)await c.query(readFileSync(join(root,'db/local/063-official-video-providers.sql'),'utf8'));
+  if(!(await c.query("SELECT 1 FROM local_identity.schema_migrations WHERE version='063-official-video-providers.sql'")).rowCount)await c.query(readFileSync(join(root,'db/archive/legacy-v1/063-official-video-providers.sql'),'utf8'));
   await c.query('INSERT INTO local_identity.owners(id,email) VALUES($1,$2),($3,$4)',[owner,email,other,`wan-${other}@example.invalid`]);
   await c.query('INSERT INTO local_identity.credentials(owner_id,password_digest) VALUES($1,$2)',[owner,await hashPassword(password)]);
   await c.query("INSERT INTO public.accounts(id,slug,name,timezone) VALUES($1,$2,'Native Wan acceptance','Asia/Shanghai')",[account,'wan-'+account]);

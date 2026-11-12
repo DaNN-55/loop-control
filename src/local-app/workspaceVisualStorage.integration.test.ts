@@ -3,7 +3,7 @@ import {it,expect} from 'vitest';
 import {mkdir,readFile} from 'node:fs/promises';
 import {join} from 'node:path';
 import {workspaceImageGenerationFixture} from './workspaceImageGeneration.fixture';
-const migrations=['db/local/110-episode-storage-locations.sql','db/local/118-visual-storage-locations.sql'];
+const migrations=['db/archive/legacy-v1/110-episode-storage-locations.sql','db/archive/legacy-v1/118-visual-storage-locations.sql'];
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each(['legacy','registered'])('%s production location owns image generation after rename/restart while request, fees and explicit adoption stay frozen',async layout=>{
  const {f,ref,submissions}=await workspaceImageGenerationFixture(migrations,layout==='registered'?()=>'系列 stable/本期 stable':undefined);try{
  const prefix=f.episodeRelativePath;

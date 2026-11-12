@@ -35,7 +35,7 @@ it.skipIf(process.env.LOOP_SECRET_ACCEPTANCE!=='1')('admin secret boundaries, me
  let handler:ReturnType<typeof createLocalHandler>;const server=createServer((q,r)=>handler(q,r));
  try{
   await c.query('BEGIN');
-  if(!(await c.query("SELECT to_regclass('local_identity.secret_access_audit') present")).rows[0].present)await c.query(readFileSync('db/local/064-secret-administration.sql','utf8'));
+  if(!(await c.query("SELECT to_regclass('local_identity.secret_access_audit') present")).rows[0].present)await c.query(readFileSync('db/archive/legacy-v1/064-secret-administration.sql','utf8'));
   await c.query('INSERT INTO local_identity.owners(id,email) VALUES($1,$2),($3,$4)',[owner,`secret-${owner}@example.invalid`,other,`secret-${other}@example.invalid`]);
   await c.query('INSERT INTO local_identity.credentials(owner_id,password_digest) VALUES($1,$2),($3,$2)',[owner,await hashPassword(password),other]);
   await c.query("INSERT INTO local_identity.sessions(token_hash,owner_id,created_at,expires_at) VALUES($1,$2,now()-interval '2 hours',now()+interval '1 hour'),($3,$4,now()-interval '2 hours',now()+interval '1 hour'),($5,$2,now()-interval '2 hours',now()-interval '1 second')",[tokenHash(token),owner,tokenHash(otherToken),other,tokenHash(expired)]);

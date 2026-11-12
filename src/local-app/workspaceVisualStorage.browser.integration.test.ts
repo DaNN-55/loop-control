@@ -7,7 +7,7 @@ import {LocalConnections} from './connections';
 import {createLocalHandler} from './localRoute';
 import {workspaceImageGenerationFixture} from './workspaceImageGeneration.fixture';
 it.skipIf(process.env.LOOP_T07_BROWSER!=='1')('formal visual page generates and adopts actual registered-location image candidates through Owner HTTP',async()=>{
- const {f,ref,submissions}=await workspaceImageGenerationFixture(['db/local/110-episode-storage-locations.sql','db/local/118-visual-storage-locations.sql']);let vite:import('vite').ViteDevServer|undefined;
+ const {f,ref,submissions}=await workspaceImageGenerationFixture(['db/archive/legacy-v1/110-episode-storage-locations.sql','db/archive/legacy-v1/118-visual-storage-locations.sql']);let vite:import('vite').ViteDevServer|undefined;
  const evidence=process.env.LOOP_T07_BROWSER_EVIDENCE!;if(!evidence)throw Error('Explicit isolated evidence directory required');
  try{
  const prefix='系列 browser/生产单 browser',directory=join(f.assetRoot,prefix);await mkdir(directory,{recursive:true});const identity=await lstat(directory,{bigint:true});await f.c.query('UPDATE local_identity.episode_asset_locations SET directory_relative_path=$2,directory_device_id=$3,directory_inode_id=$4,layout_version=2 WHERE episode_id=$1',[f.episode,prefix,String(identity.dev),String(identity.ino)]);

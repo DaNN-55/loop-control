@@ -11,7 +11,7 @@ const enabled=process.env.LOOP_WORKSPACE_ACCEPTANCE==='1';
 const delay=(ms:number)=>new Promise(r=>setTimeout(r,ms));
 it.skipIf(!enabled)('retained platform state inside a mounted media root never rebuilds its host tree after detach',async()=>{
  const evidence=process.env.LOOP_T15_EVIDENCE;if(!evidence)throw Error('Explicit LOOP_T15_EVIDENCE is required');
- const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/local/125-global-media-root-plans.sql']});
+ const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/archive/legacy-v1/125-global-media-root-plans.sql']});
  const exec=promisify(execFile);await mkdir(evidence,{recursive:true});
  try{
   const config=JSON.parse(await readFile(fixture.configFile,'utf8'));config.mountTraceArmed=join(evidence,'mounted-state-armed');config.mountTraceOutput=join(evidence,'mounted-state-mkdir.jsonl');await writeFile(fixture.configFile,JSON.stringify(config),{mode:0o600});
@@ -26,7 +26,7 @@ it.skipIf(!enabled)('retained platform state inside a mounted media root never r
  }finally{await fixture.volume.remount();await fixture.close();}
 },90000);
 it.skipIf(!enabled)('a real detached source volume rejects planning without recreating the missing media tree',async()=>{
- const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/local/125-global-media-root-plans.sql']}),holder=await realpath(await mkdtemp('/private/tmp/loop-root-detached-')),target=join(holder,'chosen-root');
+ const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/archive/legacy-v1/125-global-media-root-plans.sql']}),holder=await realpath(await mkdtemp('/private/tmp/loop-root-detached-')),target=join(holder,'chosen-root');
  try{
   const config=JSON.parse(await readFile(fixture.configFile,'utf8'));config.runtimeRoot=join(holder,'runtime');config.stateDirectory=join(config.runtimeRoot,'state');config.backupRoot=join(config.runtimeRoot,'backups');await mkdir(config.stateDirectory,{recursive:true,mode:0o700});await mkdir(target);await writeFile(fixture.configFile,JSON.stringify(config),{mode:0o600});
   const runtime=await fixture.launch(),before=await readFile(join(fixture.f.assetRoot,fixture.f.videoPath)),binding=(await fixture.f.c.query('SELECT local_identity.media_root_binding() binding')).rows[0].binding;
@@ -36,7 +36,7 @@ it.skipIf(!enabled)('a real detached source volume rejects planning without recr
  }finally{await fixture.volume.remount();await fixture.close();await rm(holder,{recursive:true});}
 },90000);
 it.skipIf(!enabled)('a special filesystem entry fails promptly instead of blocking inventory or acquiring its ownership',async()=>{
- const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/local/125-global-media-root-plans.sql']});
+ const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/archive/legacy-v1/125-global-media-root-plans.sql']});
  try{
   const fifo=join(fixture.f.assetRoot,fixture.f.episodeRelativePath,'keep.pipe');await promisify(execFile)('/usr/bin/mkfifo',[fifo]);const runtime=await fixture.launch();
   const request=fetch(runtime.origin+'/api/local/media-root',{method:'POST',headers:{Cookie:'loop_owner_session='+fixture.f.token,Origin:runtime.origin,'Content-Type':'application/json','X-CSRF-Token':csrfFor(fixture.f.token)},body:JSON.stringify({command:'planMigration',path:fixture.target,idempotencyKey:randomUUID()})}).then(async r=>({status:r.status,body:await r.json()})).catch(()=>({status:0,body:{}}));
@@ -45,7 +45,7 @@ it.skipIf(!enabled)('a special filesystem entry fails promptly instead of blocki
  }finally{await fixture.close();}
 },60000);
 it.skipIf(!enabled).each(['insert','rewrite'])('owned source %s at the final binding boundary invalidates a plan without any database change',async mode=>{
- const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/local/125-global-media-root-plans.sql']});
+ const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/archive/legacy-v1/125-global-media-root-plans.sql']});
  try{
   const config=JSON.parse(await readFile(fixture.configFile,'utf8'));config.planFaultTarget=fixture.target;config.planFaultFile=join(fixture.f.assetRoot,mode==='insert'?fixture.f.episodeRelativePath+'/late-source.txt':fixture.f.videoPath);await writeFile(fixture.configFile,JSON.stringify(config),{mode:0o600});
   const runtime=await fixture.launch('plan-source-change');const frozen=(await fixture.f.c.query('SELECT to_jsonb(t) value FROM public.tasks t ORDER BY id')).rows;
@@ -54,7 +54,7 @@ it.skipIf(!enabled).each(['insert','rewrite'])('owned source %s at the final bin
  }finally{await fixture.close();}
 },60000);
 it.skipIf(!enabled)('a real first-account reservation before mkdir blocks empty initialization and resumes the original request',async()=>{
- const fixture=await nativeMediaRootFixture({newInstall:true,migrations:['db/local/125-global-media-root-plans.sql']}),{f,source,target,configFile,runtimeRoot}=fixture;
+ const fixture=await nativeMediaRootFixture({newInstall:true,migrations:['db/archive/legacy-v1/125-global-media-root-plans.sql']}),{f,source,target,configFile,runtimeRoot}=fixture;
  let create:Promise<{status:number;body:any}>|undefined;
  try{
   const runtime=await fixture.launch('account-before-mkdir'),before=await readFile(configFile,'utf8');
@@ -73,7 +73,7 @@ it.skipIf(!enabled)('a real first-account reservation before mkdir blocks empty 
 },60000);
 
 it.skipIf(!enabled)('a target file inserted after the initial inventory is preserved and invalidates the saved plan',async()=>{
- const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/local/125-global-media-root-plans.sql']});
+ const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/archive/legacy-v1/125-global-media-root-plans.sql']});
  try{
   const config=JSON.parse(await readFile(fixture.configFile,'utf8'));config.planFaultTarget=fixture.target;await writeFile(fixture.configFile,JSON.stringify(config),{mode:0o600});const runtime=await fixture.launch('plan-target-change');
   const r=await fetch(runtime.origin+'/api/local/media-root',{method:'POST',headers:{Cookie:'loop_owner_session='+fixture.f.token,Origin:runtime.origin,'Content-Type':'application/json','X-CSRF-Token':csrfFor(fixture.f.token)},body:JSON.stringify({command:'planMigration',path:fixture.target,idempotencyKey:randomUUID()})}),plan=await r.json();
@@ -82,7 +82,7 @@ it.skipIf(!enabled)('a target file inserted after the initial inventory is prese
 },60000);
 
 it.skipIf(!enabled)('large media hashing uses streams while an actual capacity boundary produces a readable reserve-space conflict',async()=>{
- const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/local/125-global-media-root-plans.sql']});
+ const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/archive/legacy-v1/125-global-media-root-plans.sql']});
  try{
   const large=await open(join(fixture.f.assetRoot,fixture.f.episodeRelativePath,'large.mp4'),'wx');await large.truncate(32*1024*1024);await large.close();
   let runtime=await fixture.launch('plan-stream-only');
@@ -93,7 +93,7 @@ it.skipIf(!enabled)('large media hashing uses streams while an actual capacity b
 },90000);
 
 it.skipIf(!enabled)('native settings persist mixed accounts, empty series, unassigned and legacy scope with retained platform resources across a new process',async()=>{
- const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/local/125-global-media-root-plans.sql']}),{f,target,configFile}=fixture;
+ const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/archive/legacy-v1/125-global-media-root-plans.sql']}),{f,target,configFile}=fixture;
  try{
   let runtime=await fixture.launch();
   const post=async(route:string,command:string,data:Record<string,unknown>)=>{const r=await fetch(runtime.origin+'/api/local/'+route,{method:'POST',headers:{Cookie:'loop_owner_session='+f.token,Origin:runtime.origin,'Content-Type':'application/json','X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command,idempotencyKey:randomUUID(),data})});return{status:r.status,body:await r.json()};};
@@ -114,7 +114,7 @@ it.skipIf(!enabled)('native settings persist mixed accounts, empty series, unass
 },120000);
 
 it.skipIf(!enabled)('existing authorized media remains a production carve-out inside an ancestor runtime resource',async()=>{
- const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/local/125-global-media-root-plans.sql']}),target=await realpath(await mkdtemp('/private/tmp/loop-root-carveout-'));
+ const fixture=await nativeMediaRootFixture({existingData:true,migrations:['db/archive/legacy-v1/125-global-media-root-plans.sql']}),target=await realpath(await mkdtemp('/private/tmp/loop-root-carveout-'));
  try{
   const config=JSON.parse(await readFile(fixture.configFile,'utf8'));config.runtimeRoot=fixture.volume.mountPath;await writeFile(fixture.configFile,JSON.stringify(config),{mode:0o600});
   await writeFile(join(fixture.f.root,'manual-retained.txt'),'Keep source manual bytes');

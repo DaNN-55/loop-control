@@ -14,7 +14,7 @@ const enabled=process.env.LOOP_WORKSPACE_ACCEPTANCE==='1';
 it.skipIf(!enabled)('all historical native coordinates remain usable after A→B→unassigned→A→B and a real database/media restore with original sources offline',async()=>{
  const storage=await mkdtemp('/private/tmp/loop-t14-restore-');await mkdir(join(storage,'state'));
  const source='loop_t24_restore_'+randomBytes(6).toString('hex'),target='loop_t24_restore_'+randomBytes(6).toString('hex'),{runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MODULE!);const context=nativeStorageContext(runtimeContext(),storage,source,target);
- const f=await productionWorkspaceFixture({databaseName:source,testRootParent:join(storage,'state'),runtime:{wake(){}},migrations:['db/local/120-native-workspace-storage-locations.sql','db/local/121-restored-media-deployment.sql']});
+ const f=await productionWorkspaceFixture({databaseName:source,testRootParent:join(storage,'state'),runtime:{wake(){}},migrations:['db/archive/legacy-v1/120-native-workspace-storage-locations.sql','db/archive/legacy-v1/121-restored-media-deployment.sql']});
  try{
   let w=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;w=await f.fillVisuals(w);
   const send=async(command:string,data:Record<string,unknown>={})=>{const r=await f.request(command,{workspaceId:w.id,expectedRevision:w.revision,...data});expect(r.status,command+': '+JSON.stringify(r.body)).toBe(200);w=r.body.productionWorkspace??r.body;return r.body;};

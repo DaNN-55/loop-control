@@ -8,7 +8,7 @@ import {confirmedTtsRender} from '../worker/openchatcutProject.fixture';
 import {legacyHtmlFixture} from './legacyHtmlWorkspace.fixture';
 const hash=(v:Buffer|string)=>createHash('sha256').update(v).digest('hex');
 it.skipIf(process.env.LOOP_LEGACY_EDIT_ACCEPTANCE!=='1').each(['legacy','registered'] as const)('adopts frozen HTML over real HTTP/PG/SDK, permits per-shot replacement, saves and reopens without touching original records (%s)',async layout=>{
- const f=await productionWorkspaceFixture({episodeRelativePath:layout==='registered'?()=> 'HTML恢复 [T09]_%/本单':undefined,migrations:['db/local/120-native-workspace-storage-locations.sql']});
+ const f=await productionWorkspaceFixture({episodeRelativePath:layout==='registered'?()=> 'HTML恢复 [T09]_%/本单':undefined,migrations:['db/archive/legacy-v1/120-native-workspace-storage-locations.sql']});
  try{
   const render=confirmedTtsRender(),audio=randomUUID(),artifact=randomUUID(),path=`${f.episodeRelativePath}/original.html`;
   render.preRenderReviewPackageId=f.board;render.members[0].relativePath=f.videoPath;render.members[1].relativePath=`${f.episodeRelativePath}/voice.mp3`;render.members[0].sha256=f.files[0].sha256;render.members[1].sha256=f.files[1].sha256;render.members[1].audioTrackId=audio;render.confirmedShots[0].audioTrackId=audio;

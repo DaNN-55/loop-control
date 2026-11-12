@@ -153,17 +153,7 @@ export async function executeWorkspaceNarration(c:PoolClient,root:string,row:Pro
   const t=(await c.query('SELECT to_jsonb(local_identity.queue_selected_workspace_narration($1,$2,$3,$4)) result',[row.id,clip.shotId,JSON.stringify(snapshot),data.retryOfTaskId?true:data.retry??false])).rows[0].result;
   await c.query('UPDATE local_identity.workspace_narrations SET task_id=$3,requested_project_sha256=$4,requested_native_edit_revision=$5 WHERE workspace_id=$1 AND shot_id=$2',[row.id,clip.shotId,t.id,row.project_sha256,Number(row.native_edit_revision??0)]);return;
  }
- if(data.retry!==true||!n.taskId||!(await c.query('SELECT 1 FROM local_identity.workspace_narration_requests WHERE task_id=$1 AND workspace_id=$2 AND input_fingerprint=$3',[n.taskId,row.id,n.inputFingerprint])).rowCount)throw new ConfigurationError(400,'请选择本次制作服务。');
- const e=(await c.query('SELECT b.policy FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE e.id=$1',[row.episode_id])).rows[0];
- const config=e.policy.narration;
- if(config?.execution_path!=='external'||config?.executor?.provider!=='volcengine_tts'||config.executor.adapter!=='volcengine_tts')throw new ConfigurationError(409,'当前口播能力为人工、关闭或不可执行。');
- const unresolved=await c.query(`SELECT 1 FROM local_identity.workspace_narration_requests r JOIN local_identity.workspace_narration_submissions s ON s.task_id=r.task_id JOIN public.tasks t ON t.id=r.task_id WHERE r.workspace_id=$1 AND r.shot_id=$2 AND s.outcome IN ('started','received') AND t.status<>'completed'`,[row.id,clip.shotId]);
- if(unresolved.rowCount)throw new ConfigurationError(409,'上次口播提交结果未核清，不会重复发送；请核对供应商记录。');
- if(!runtime.narrationReady)throw new ConfigurationError(503,'本地口播执行器未就绪。');await runtime.narrationReady();await runtime.checkReferences(c,[config.credential_ref]);
- await c.query('UPDATE local_identity.input_episodes SET narration_enabled=true WHERE episode_id=$1',[row.episode_id]);
- const t=(await c.query('SELECT to_jsonb(local_identity.generate_input_shot_tts($1,$2,$3,$4)) result',[row.episode_id,row.storyboard_package_id,clip.shotId,data.retry??false])).rows[0].result;
- await c.query('INSERT INTO local_identity.workspace_narration_requests(task_id,workspace_id,episode_id,clip_id,shot_id,input_fingerprint,authorization_hash) VALUES($1,$2,$3,$4,$5,$6,$7) ON CONFLICT DO NOTHING',[t.id,row.id,row.episode_id,clip.id,clip.shotId,n.inputFingerprint,authorized.authorization_hash]);
- await c.query('UPDATE local_identity.workspace_narrations SET task_id=$3,requested_project_sha256=$4,requested_native_edit_revision=$5 WHERE workspace_id=$1 AND shot_id=$2',[row.id,clip.shotId,t.id,row.project_sha256,Number(row.native_edit_revision??0)]);
+ throw new ConfigurationError(data.retry===true?409:400,data.retry===true?'旧口播生成入口已退役；请选择本次制作服务并重新确认。':'请选择本次制作服务。');
 }
 /** Only the first ready voice of an untouched draft may be assembled automatically. */
 export async function adoptFirstWorkspaceNarration(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,shotId?:string){

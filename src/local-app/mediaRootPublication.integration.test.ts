@@ -6,7 +6,7 @@ import {join} from 'node:path';
 import {readFileSync} from 'node:fs';
 import {nativeMediaRootFixture} from './mediaRootRuntime.fixture';
 import {csrfFor} from './sessions';
-const migrations=['db/local/121-restored-media-deployment.sql','db/local/125-global-media-root-plans.sql','db/local/126-global-media-root-execution.sql'];
+const migrations=['db/archive/legacy-v1/121-restored-media-deployment.sql','db/archive/legacy-v1/125-global-media-root-plans.sql','db/archive/legacy-v1/126-global-media-root-execution.sql'];
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('SIGKILL after private config publication but before database COMMIT restores source metadata and resumes the original plan',async()=>{
  const fixture=await nativeMediaRootFixture({existingData:true,migrations}),{f,source,target,configFile,runtimeRoot}=fixture;
  try{

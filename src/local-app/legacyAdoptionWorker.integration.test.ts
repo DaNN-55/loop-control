@@ -14,7 +14,7 @@ import {verifyArtifactIndex} from '../worker/mediaLibrary';
 import {csrfFor} from './sessions';
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('a committed native attempt keeps its frozen inode, task, fee and Provider submission while adoption relocates publication recovery',async()=>{
- const f=await narrationFixture(undefined,undefined,false,false,['db/local/120-native-workspace-storage-locations.sql','db/local/121-restored-media-deployment.sql','db/local/123-legacy-storage-adoption.sql']),worker=f.workerPool();
+ const f=await narrationFixture(undefined,undefined,false,false,['db/archive/legacy-v1/120-native-workspace-storage-locations.sql','db/archive/legacy-v1/121-restored-media-deployment.sql','db/archive/legacy-v1/123-legacy-storage-adoption.sql']),worker=f.workerPool();
  try{
   const oldDirectory=await lstat(join(f.assetRoot,f.episodeRelativePath),{bigint:true});await f.c.query('UPDATE local_identity.episode_asset_locations SET directory_relative_path=$2,directory_device_id=$3,directory_inode_id=$4 WHERE episode_id=$1',[f.episode,f.episodeRelativePath,String(oldDirectory.dev),String(oldDirectory.ino)]);
   let w=await f.fillVisuals(f.made);await f.authorize();
@@ -49,7 +49,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('a committed native attem
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('the compiled delivery Worker consumes the original queued manifest and publishes unchanged logical references after adoption and source offline',async()=>{
  const {productionWorkspaceFixture}=await import('./productionWorkspace.fixture'),{runWorkspaceDeliveryProcess}=await import('./workspaceDelivery.fixture'),{workspaceTestMedia}=await import('./workspaceTestMedia.fixture'),{defaultShotCaptionContract}=await import('../shotCaptions');
- const f=await productionWorkspaceFixture({runtime:{wake(){}},migrations:['db/local/120-native-workspace-storage-locations.sql','db/local/121-restored-media-deployment.sql','db/local/123-legacy-storage-adoption.sql']}),worker=f.workerPool();
+ const f=await productionWorkspaceFixture({runtime:{wake(){}},migrations:['db/archive/legacy-v1/120-native-workspace-storage-locations.sql','db/archive/legacy-v1/121-restored-media-deployment.sql','db/archive/legacy-v1/123-legacy-storage-adoption.sql']}),worker=f.workerPool();
  try{
   await f.c.query('INSERT INTO public.worker_scheduler_settings(singleton,capacity) VALUES(true,1) ON CONFLICT(singleton) DO UPDATE SET capacity=1');let w=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;w=await f.fillVisuals(w);
   const send=async(command:string,data:Record<string,unknown>={})=>{const r=await f.request(command,{workspaceId:w.id,expectedRevision:w.revision,...data});expect(r.status,command+': '+JSON.stringify(r.body)).toBe(200);w=r.body;return w;};

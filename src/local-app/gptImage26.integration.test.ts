@@ -4,7 +4,7 @@ import {readFile} from 'node:fs/promises';
 import {workspaceImageGenerationFixture} from './workspaceImageGeneration.fixture';
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('freezes and executes both GPT Image 2.6 identities through Owner HTTP, queue and Worker',async()=>{
- const {f,ref,submissions}=await workspaceImageGenerationFixture(['db/local/152-gpt-image-25-models.sql','db/local/153-gpt-image-26-models.sql']);
+ const {f,ref,submissions}=await workspaceImageGenerationFixture(['db/archive/legacy-v1/152-gpt-image-25-models.sql','db/archive/legacy-v1/153-gpt-image-26-models.sql']);
  try{
   let w=await f.read();const project=w.project.sha256;
   const version=(await f.c.query("SELECT id FROM public.external_connection_versions WHERE adapter='openai_images'")).rows[0].id;

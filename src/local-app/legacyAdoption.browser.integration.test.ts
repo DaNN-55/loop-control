@@ -12,7 +12,7 @@ import {deletionFixtureFingerprint} from './deletionFingerprint.fixture';
 
 it.skipIf(process.env.LOOP_T13_BROWSER!=='1')('the formal maintenance page plans and recovers legacy adoption before actual native edit, restart, play, export and exact folder open',async()=>{
  const evidence=process.env.LOOP_T13_EVIDENCE,session=process.env.LOOP_T13_SESSION;if(!evidence||!session)throw Error('Explicit own evidence/session required');await mkdir(evidence,{recursive:true});
- const f=await productionWorkspaceFixture({runtime:{wake(){}},migrations:['db/local/120-native-workspace-storage-locations.sql','db/local/121-restored-media-deployment.sql','db/local/123-legacy-storage-adoption.sql']});let vite:import('vite').ViteDevServer|undefined;
+ const f=await productionWorkspaceFixture({runtime:{wake(){}},migrations:['db/archive/legacy-v1/120-native-workspace-storage-locations.sql','db/archive/legacy-v1/121-restored-media-deployment.sql','db/archive/legacy-v1/123-legacy-storage-adoption.sql']});let vite:import('vite').ViteDevServer|undefined;
  const wait=async(name:string)=>{for(let i=0;i<600;i++){try{const error=JSON.parse(await readFile(join(evidence,'browser-failed.json'),'utf8'));throw Error(error.error);}catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;}try{return JSON.parse(await readFile(join(evidence,name),'utf8'));}catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;}await pause(500);}throw Error('Missing browser milestone '+name);};
  try{
   for(const name of ['execute-failed.json','fault-cleared.json','adopted.json','ready-native.json','restart-request.json','restarted.json','browser-done.json','browser-failed.json'])await rm(join(evidence,name),{force:true});

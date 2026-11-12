@@ -9,7 +9,7 @@ import {productionScriptTemplate} from '../reviews/productionScript';
 const legacyLayout=process.env.LOOP_T06_INPUT_LAYOUT==='legacy';
 it.skipIf(process.env.LOOP_T06_INPUT_BROWSER!=='1')(`formal page imports, previews and confirms ${legacyLayout?'legacy':'registered-location'} script bytes after original upload moves and server restarts`,async()=>{
  const evidence=process.env.LOOP_T06_INPUT_EVIDENCE;if(!evidence)throw Error('Explicit evidence directory required');await mkdir(evidence,{recursive:true});
- const volume=await workspaceAudioVolume();const f=await embeddedStudioFixture({testRootParent:volume.mountPath,runtime:{mountPath:volume.mountPath,wake(){}},migrations:['db/local/117-input-storage-locations.sql']});let vite:import('vite').ViteDevServer|undefined;
+ const volume=await workspaceAudioVolume();const f=await embeddedStudioFixture({testRootParent:volume.mountPath,runtime:{mountPath:volume.mountPath,wake(){}},migrations:['db/archive/legacy-v1/117-input-storage-locations.sql']});let vite:import('vite').ViteDevServer|undefined;
  try{
   const prefix=legacyLayout?`episodes/${f.episode}`:'验收系列 stable/脚本输入 stable',directory=join(f.assetRoot,prefix);await mkdir(directory,{recursive:true});const stat=await lstat(directory,{bigint:true});
   if(!legacyLayout)await f.c.query('UPDATE local_identity.episode_asset_locations SET directory_relative_path=$2,directory_device_id=$3,directory_inode_id=$4,layout_version=2 WHERE episode_id=$1',[f.episode,prefix,String(stat.dev),String(stat.ino)]);await f.c.query("UPDATE public.episodes SET stage='waiting_input',title='T06 正式输入验收' WHERE id=$1",[f.episode]);

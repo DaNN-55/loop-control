@@ -22,7 +22,7 @@ it.skipIf(process.env.LOOP_ACCOUNT_DELETION_ACCEPTANCE!=='1').each(['empty','non
  const database='loop_account_delete_test_'+randomBytes(6).toString('hex');
  context.sql('CREATE DATABASE '+database+' TEMPLATE template0','postgres');
  try{
-  await copyFixtureSchema(context,database,['db/local/110-episode-storage-locations.sql','db/local/111-global-media-root.sql','db/local/112-series-extension-rules.sql','db/local/113-automatic-account-directories.sql','db/local/114-series-storage-containers.sql','db/local/115-exact-episode-deletion-intents.sql','db/local/117-input-storage-locations.sql','db/local/118-visual-storage-locations.sql','db/local/119-audio-caption-storage-locations.sql','db/local/122-automatic-episode-directories.sql']);
+  await copyFixtureSchema(context,database,['db/archive/legacy-v1/110-episode-storage-locations.sql','db/archive/legacy-v1/111-global-media-root.sql','db/archive/legacy-v1/112-series-extension-rules.sql','db/archive/legacy-v1/113-automatic-account-directories.sql','db/archive/legacy-v1/114-series-storage-containers.sql','db/archive/legacy-v1/115-exact-episode-deletion-intents.sql','db/archive/legacy-v1/117-input-storage-locations.sql','db/archive/legacy-v1/118-visual-storage-locations.sql','db/archive/legacy-v1/119-audio-caption-storage-locations.sql','db/archive/legacy-v1/122-automatic-episode-directories.sql']);
  }catch(error){context.sql('DROP DATABASE '+database+' WITH (FORCE)','postgres');throw error;}
  const bridge=spawn('docker',['exec','-i',context.container,'perl','-MIO::Socket::UNIX','-MIO::Select','-MSocket=SOCK_STREAM','-e',"my $s=IO::Socket::UNIX->new(Type=>SOCK_STREAM,Peer=>'/var/run/postgresql/.s.PGSQL.5432') or die 'socket'; my $sel=IO::Select->new(\\*STDIN,$s); while(1){for my $f($sel->can_read){my $n=sysread($f,my $b,65536);exit unless $n;my $o=fileno($f)==0?$s:\\*STDOUT;while(length $b){my $w=syswrite($o,$b);die 'write' unless $w;substr($b,0,$w,'');}}}"],{env:context.env,stdio:['pipe','pipe','pipe']});
  const stream=Duplex.from({readable:bridge.stdout!,writable:bridge.stdin!});
@@ -44,8 +44,8 @@ it.skipIf(process.env.LOOP_ACCOUNT_DELETION_ACCEPTANCE!=='1').each(['empty','non
  const server=createServer((request,response)=>handler(request,response));
  try{
   await client.query('BEGIN');
-  await client.query(readFileSync('db/local/065-account-audit-deletion.sql','utf8'));
-  await client.query(readFileSync('db/local/073-empty-account-directory-cleanup.sql','utf8'));
+  await client.query(readFileSync('db/archive/legacy-v1/065-account-audit-deletion.sql','utf8'));
+  await client.query(readFileSync('db/archive/legacy-v1/073-empty-account-directory-cleanup.sql','utf8'));
   await client.query('INSERT INTO local_identity.owners(id,email) VALUES($1,$2),($3,$4)',[owner,`delete-${owner}@example.invalid`,other,`delete-${other}@example.invalid`]);
   await client.query('INSERT INTO local_identity.credentials(owner_id,password_digest) VALUES($1,$2)',[owner,await hashPassword(password)]);
   await client.query("INSERT INTO local_identity.sessions(token_hash,owner_id,expires_at) VALUES($1,$2,now()+interval '1 hour')",[tokenHash(token),owner]);

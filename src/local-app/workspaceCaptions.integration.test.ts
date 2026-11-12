@@ -6,7 +6,7 @@ import {join} from 'node:path';
 import {productionWorkspaceFixture} from './productionWorkspace.fixture';
 import {defaultShotCaptionContract,isValidShotCaptionContract} from '../shotCaptions';
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner edits only the chosen native caption lane and persists manual timing without shot approval',async()=>{
- const f=await productionWorkspaceFixture({migrations:['db/local/089-workspace-captions.sql']});try{
+ const f=await productionWorkspaceFixture({migrations:['db/archive/legacy-v1/089-workspace-captions.sql']});try{
   const made=await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script});expect(made.status,JSON.stringify(made.body)).toBe(200);let w=made.body;
   const contract=defaultShotCaptionContract('第一句字幕正文','independent');contract.cues=[{id:'one',text:contract.text,startMs:0,endMs:900}];contract.spatial.maxCharactersPerLine=4;
   const save=()=>f.request('saveWorkspaceCaptions',{workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[0].id,captionContract:contract});
@@ -27,7 +27,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner edits only the cho
 },180_000);
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('current native caption evidence follows the real alignment queue and rejects a late Worker result after a text edit',async()=>{
  const {randomUUID,createHash}=await import('node:crypto'),{writeFile,mkdir}=await import('node:fs/promises'),{dirname}=await import('node:path'),{nativeWorkerPort}=await import('./workerDatabase');
- const f=await productionWorkspaceFixture({migrations:['db/local/089-workspace-captions.sql'],runtime:{postReady:async()=>{},wake(){}}}),worker=f.workerPool(),measure=observeWorkspaceReadback(f.pool);
+ const f=await productionWorkspaceFixture({migrations:['db/archive/legacy-v1/089-workspace-captions.sql'],runtime:{postReady:async()=>{},wake(){}}}),worker=f.workerPool(),measure=observeWorkspaceReadback(f.pool);
  try{
   await f.c.query('INSERT INTO public.worker_scheduler_settings(singleton,capacity) VALUES(true,1) ON CONFLICT(singleton) DO NOTHING');await f.c.query('UPDATE local_identity.input_episodes SET enabled=true WHERE episode_id=$1',[f.episode]);
   let w=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;
@@ -54,7 +54,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('current native caption e
 },180_000);
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('real landscape and portrait Remotion frames contain caption pixels inside the chosen safe area',async()=>{
  const {writeFile,mkdir}=await import('node:fs/promises'),{applyWorkspaceCaptionEdit}=await import('../workspaceCaptions'),{shotCaptionSafeAreaInsets}=await import('../shotCaptions');
- const f=await productionWorkspaceFixture({migrations:['db/local/089-workspace-captions.sql']});
+ const f=await productionWorkspaceFixture({migrations:['db/archive/legacy-v1/089-workspace-captions.sql']});
  try{
   let w=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;
   const contract=defaultShotCaptionContract('一二三四五六七八九十','independent');contract.spatial.maxCharactersPerLine=3;contract.spatial.maxLines=2;contract.cues=[{id:'visible',text:contract.text,startMs:0,endMs:1000}];

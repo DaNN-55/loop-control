@@ -44,11 +44,7 @@ export function nextScriptProductionAction(state:ContinuationSnapshot):Productio
   const d=drafts.find(d=>d.shot_id===segment.id);if(!d)return{wait:segment.id+'：等待本期镜头设置'};
   const data={...base,shotId:segment.id};
   if(d.audio_mode==='tts'&&d.audio_status!=='ready'){
-   if(d.audio_status==='failed')return{wait:segment.id+'：配音失败，请核对原任务'};
-   const tts=tasks.find(t=>t.task_type==='generate_narration'&&!t.invalidated_at&&(t.input_snapshot.shot_preparation as {shot_id?:string})?.shot_id===segment.id);
-   if(tts&&['failed','blocked'].includes(tts.status))return{wait:segment.id+'：配音失败，请核对原任务'};
-   if(tts&&['ready','running'].includes(tts.status))continue;
-   return action('generateTts',data,{...data,text:d.tts_text,voice:d.tts_voice,rate:d.tts_speaking_rate});
+   return{wait:segment.id+'：旧口播生成已退役，请在分镜台选择本次制作服务'};
   }
   if(segment.sfx.status==='bound'&&d.audio_mode==='tts'&&(segment.settings.sfxStart??0)+(segment.settings.sfxDuration??1)>Number(d.tts_actual_duration_seconds)+0.05)return{wait:segment.id+'：音效区间超出实际口播，请修改镜头设置后确认'};
   const cfg=e.policy[segment.shotType??'b_roll'] as {executor?:{provider?:string};budget_cents?:number};

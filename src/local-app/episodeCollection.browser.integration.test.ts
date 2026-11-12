@@ -12,7 +12,7 @@ import {deletionFixtureFingerprint} from './deletionFingerprint.fixture';
 
 it.skipIf(process.env.LOOP_T14_BROWSER!=='1')('formal collection actions recover a failed switch, round-trip all containers and reopen the actual native editor with original references',async()=>{
  const evidence=process.env.LOOP_T14_EVIDENCE,session=process.env.LOOP_T14_SESSION;if(!evidence||!session)throw Error('Explicit own evidence and browser session required');await mkdir(evidence,{recursive:true});
- const f=await productionWorkspaceFixture({runtime:{wake(){}},migrations:['db/local/120-native-workspace-storage-locations.sql','db/local/121-restored-media-deployment.sql']});let vite:import('vite').ViteDevServer|undefined;
+ const f=await productionWorkspaceFixture({runtime:{wake(){}},migrations:['db/archive/legacy-v1/120-native-workspace-storage-locations.sql','db/archive/legacy-v1/121-restored-media-deployment.sql']});let vite:import('vite').ViteDevServer|undefined;
  const wait=async(name:string)=>{for(let i=0;i<600;i++){try{throw Error(JSON.parse(await readFile(join(evidence,'browser-failed.json'),'utf8')).error);}catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;}try{return JSON.parse(await readFile(join(evidence,name),'utf8'));}catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;}await pause(500);}throw Error('Missing browser milestone '+name);};
  try{
   let w=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;w=await f.fillVisuals(w);

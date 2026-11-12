@@ -6,7 +6,7 @@ import {productionWorkspaceFixture} from './productionWorkspace.fixture';
 import {ownerTransaction} from './ownerTransaction';
 
 const enabled=process.env.LOOP_RECYCLE_ACCEPTANCE==='1';
-const fixture=()=>productionWorkspaceFixture({migrations:['db/local/160-episode-recycle-bin.sql']});
+const fixture=()=>productionWorkspaceFixture({migrations:['db/archive/legacy-v1/160-episode-recycle-bin.sql']});
 
 it.skipIf(!enabled)('independent recycle: foreign Owner, CSRF and Origin cannot recycle or restore; membership preserves the original graph',async()=>{
  const f=await fixture();

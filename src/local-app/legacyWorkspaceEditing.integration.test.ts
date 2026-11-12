@@ -12,7 +12,7 @@ import {buildOpenChatCutProject} from '../worker/openchatcutProject';
 import {confirmedTtsRender} from '../worker/openchatcutProject.fixture';
 const hash=(s:Buffer|string)=>createHash('sha256').update(s).digest('hex');
 it.skipIf(process.env.LOOP_LEGACY_EDIT_ACCEPTANCE!=='1').each(['legacy','registered'] as const)('continues the exact original native project, saves a new immutable version and restores it after restart without generation (%s)',async layout=>{
- const f=await productionWorkspaceFixture({episodeRelativePath:layout==='registered'?()=> '恢复 [T09]_%/本单':undefined,migrations:['db/local/120-native-workspace-storage-locations.sql']});
+ const f=await productionWorkspaceFixture({episodeRelativePath:layout==='registered'?()=> '恢复 [T09]_%/本单':undefined,migrations:['db/archive/legacy-v1/120-native-workspace-storage-locations.sql']});
  const unrelated=createServer((_q,s)=>s.end('<title>Other local app</title>'));unrelated.listen(0,'127.0.0.1');await once(unrelated,'listening');
  const occupiedPort=(unrelated.address() as {port:number}).port;(f.runtime as OpenChatCutRuntimeConfig).port=occupiedPort;
  try{
@@ -48,7 +48,7 @@ it.skipIf(process.env.LOOP_LEGACY_EDIT_ACCEPTANCE!=='1').each(['legacy','registe
 },120000);
 
 it.skipIf(process.env.LOOP_LEGACY_EDIT_ACCEPTANCE!=='1').each(['legacy','registered'] as const)('prefers the most recently saved native edit and archives it before creating the working copy (%s)',async layout=>{
- const f=await productionWorkspaceFixture({episodeRelativePath:layout==='registered'?()=> '恢复 [T09]_%/本单':undefined,migrations:['db/local/120-native-workspace-storage-locations.sql']});
+ const f=await productionWorkspaceFixture({episodeRelativePath:layout==='registered'?()=> '恢复 [T09]_%/本单':undefined,migrations:['db/archive/legacy-v1/120-native-workspace-storage-locations.sql']});
  try{
   await f.c.query("UPDATE public.episodes SET stage='qc_review' WHERE id=$1",[f.episode]);
   const opened=await f.request('openStudio',{projectRelativePath:f.boardPath});expect(opened.status,JSON.stringify(opened.body)).toBe(200);

@@ -8,7 +8,7 @@ import {randomUUID} from 'node:crypto';
 import {productionWorkspaceFixture} from './productionWorkspace.fixture';
 const exec=promisify(execFile);
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner uploads and persists a native still image with duration and composition',async()=>{
- const f=await productionWorkspaceFixture({migrations:['db/local/086-workspace-images.sql']});
+ const f=await productionWorkspaceFixture({migrations:['db/archive/legacy-v1/086-workspace-images.sql']});
  try{
   const path=join(f.root,'input.png');await exec('ffmpeg',['-nostdin','-v','error','-f','lavfi','-i','testsrc2=size=640x360','-frames:v','1',path]);
   const uploaded=await f.request('importMaterial',{materialType:'image',sourceKind:'file',sourcePath:'input.png',mimeType:'image/png',contentBase64:(await readFile(path)).toString('base64'),isMainScript:false,materialPurpose:'visual_reference'});expect(uploaded.status,JSON.stringify(uploaded.body)).toBe(200);
@@ -23,7 +23,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner uploads and persis
  }finally{await f.close();}
 },180000);
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each([false,true])('Owner renders static and pan/zoom native images without external generation (landscape=%s)',async landscape=>{
- const f=await productionWorkspaceFixture({landscape,migrations:['db/local/086-workspace-images.sql']});
+ const f=await productionWorkspaceFixture({landscape,migrations:['db/archive/legacy-v1/086-workspace-images.sql']});
  try{
   const path=join(f.root,'input.png');await exec('ffmpeg',['-nostdin','-v','error','-f','lavfi','-i',`testsrc2=size=${landscape?'640x360':'360x640'}`,'-frames:v','1',path]);
   const uploaded=await f.request('importMaterial',{materialType:'image',sourceKind:'file',sourcePath:'input.png',mimeType:'image/png',contentBase64:(await readFile(path)).toString('base64'),isMainScript:false,materialPurpose:'visual_reference'});
@@ -45,7 +45,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each([false,true])('Owner
  }finally{await f.close();}
 },180000);
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner sees missing and changed image blockers without a replacement task or source',async()=>{
- const f=await productionWorkspaceFixture({migrations:['db/local/086-workspace-images.sql']});
+ const f=await productionWorkspaceFixture({migrations:['db/archive/legacy-v1/086-workspace-images.sql']});
  try{
   const path=join(f.root,'input.png');await exec('ffmpeg',['-nostdin','-v','error','-f','lavfi','-i','testsrc2=size=360x640','-frames:v','1',path]);
   const uploaded=await f.request('importMaterial',{materialType:'image',sourceKind:'file',sourcePath:'input.png',mimeType:'image/png',contentBase64:(await readFile(path)).toString('base64'),isMainScript:false,materialPurpose:'visual_reference'});
@@ -60,7 +60,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner sees missing and c
  }finally{await f.close();}
 },180000);
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('AI image generation retains the selected execution path and blocks when no registered connection exists',async()=>{
- const f=await productionWorkspaceFixture({migrations:['db/local/086-workspace-images.sql']});try{
+ const f=await productionWorkspaceFixture({migrations:['db/archive/legacy-v1/086-workspace-images.sql']});try{
   const selection={capability:'video',provider:'volcengine',adapter:'seedance_video',model:'doubao-seedance-2-0-260128',connectionVersionId:randomUUID()};
   const made=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;
   const result=await f.request('generateWorkspaceImage',{selection,workspaceId:made.id,expectedRevision:made.revision,clipId:made.clips[0].id,materialRevisionId:f.material,prompt:'镜头缓慢推进',durationSeconds:4,reservationCents:50});expect(result.status).toBe(409);expect(result.body.error).toContain('图片');
@@ -72,7 +72,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('AI image generation reta
 },180000);
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each([false,true])('Owner first image videos preserve completed outputs and manual edit boundary (edited=%s)',async edited=>{
  let checks=0,wakes=0;
- const f=await productionWorkspaceFixture({migrations:['db/local/086-workspace-images.sql'],runtime:{checkReferences:async()=>{checks++;},mediaReady:async()=>{},wake:()=>{wakes++;}}});const worker=f.workerPool();
+ const f=await productionWorkspaceFixture({migrations:['db/archive/legacy-v1/086-workspace-images.sql'],runtime:{checkReferences:async()=>{checks++;},mediaReady:async()=>{},wake:()=>{wakes++;}}});const worker=f.workerPool();
  try{
   await f.c.query('INSERT INTO public.worker_scheduler_settings(singleton,capacity) VALUES(true,2)');
   const {randomUUID}=await import('node:crypto'),connection=randomUUID(),version=randomUUID(),secret=randomUUID();

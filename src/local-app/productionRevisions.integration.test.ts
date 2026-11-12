@@ -29,9 +29,9 @@ it.skipIf(process.env.LOOP_REVISION_ACCEPTANCE!=='1')('immutable script reconfir
  let handler:ReturnType<typeof createLocalHandler>;const server=createServer((q,r)=>handler(q,r));
  try{
   await c.query('BEGIN');
-  if(!(await c.query("SELECT to_regprocedure('local_identity.reconfirm_episode_script(uuid,uuid,text,text,text,bigint,text)') present")).rows[0].present)await c.query(readFileSync('db/local/082-production-revisions.sql','utf8'));
+  if(!(await c.query("SELECT to_regprocedure('local_identity.reconfirm_episode_script(uuid,uuid,text,text,text,bigint,text)') present")).rows[0].present)await c.query(readFileSync('db/archive/legacy-v1/082-production-revisions.sql','utf8'));
   if(!(await c.query("SELECT to_regprocedure('local_identity.reconfirm_episode_script(uuid,uuid,text,text,text,bigint,text)') present")).rows[0].present)throw Error('Missing revision migration');
-  await c.query(readFileSync('db/local/083-pending-structure-revision-fence.sql','utf8'));
+  await c.query(readFileSync('db/archive/legacy-v1/083-pending-structure-revision-fence.sql','utf8'));
   await c.query('INSERT INTO local_identity.owners(id,email) VALUES($1,$2),($3,$4)',[owner,owner+'@example.invalid',other,other+'@example.invalid']);
   await c.query('INSERT INTO local_identity.credentials(owner_id,password_digest) VALUES($1,$2),($3,$2)',[owner,await hashPassword('fixture-'+randomUUID()),other]);
   await c.query("INSERT INTO local_identity.sessions(token_hash,owner_id,expires_at) VALUES($1,$2,now()+interval '1 hour'),($3,$4,now()+interval '1 hour')",[tokenHash(token),owner,tokenHash(otherToken),other]);

@@ -14,7 +14,7 @@ const publicationFault=vi.hoisted(()=>({directory:'',once:false,triggered:false}
 // Controlled fault at the system filesystem boundary; DB, HTTP and file bytes stay real.
 vi.mock('node:fs/promises',async importOriginal=>{const actual=await importOriginal<typeof import('node:fs/promises')>();return{...actual,unlink:async(path:Parameters<typeof actual.unlink>[0])=>{if(publicationFault.once&&String(path).startsWith(publicationFault.directory+'/.input-')&&/\.input-[0-9a-f-]{36}(?:\.part)?$/.test(String(path))){publicationFault.once=false;publicationFault.triggered=true;throw Object.assign(Error('controlled disk interruption after link'),{code:'EIO'});}return actual.unlink(path);}};});
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner imports and confirms managed script bytes at the registered production location, retaining legacy previews after restart',async()=>{
- const volume=await workspaceAudioVolume();const f=await embeddedStudioFixture({testRootParent:volume.mountPath,runtime:{mountPath:volume.mountPath,wake(){}},migrations:['db/local/117-input-storage-locations.sql']});
+ const volume=await workspaceAudioVolume();const f=await embeddedStudioFixture({testRootParent:volume.mountPath,runtime:{mountPath:volume.mountPath,wake(){}},migrations:['db/archive/legacy-v1/117-input-storage-locations.sql']});
  try{
   const {account,a}=await prepareCollectionTargets(f,{a:'系列 stable',b:'预留'}),moved=await moveCollection(f,account,a.series_id),prefix=moved.episodes.find((episode:{id:string})=>episode.id===f.episode)!.targetPrefix,directory=join(f.assetRoot,prefix);
   await f.c.query("UPDATE public.episodes SET stage='waiting_input' WHERE id=$1",[f.episode]);
@@ -42,7 +42,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner imports and confir
  }finally{await f.close();await volume.close();}
 },300000);
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner reuses an approved series input as a self-contained managed copy with original source approval evidence',async()=>{
- const volume=await workspaceAudioVolume();const f=await embeddedStudioFixture({testRootParent:volume.mountPath,runtime:{mountPath:volume.mountPath,wake(){}},migrations:['db/local/117-input-storage-locations.sql']});
+ const volume=await workspaceAudioVolume();const f=await embeddedStudioFixture({testRootParent:volume.mountPath,runtime:{mountPath:volume.mountPath,wake(){}},migrations:['db/archive/legacy-v1/117-input-storage-locations.sql']});
  try{
   const account=(await f.c.query('SELECT account_id FROM public.episodes WHERE id=$1',[f.episode])).rows[0].account_id,post=collectionOwnerPost(f),series=await post('configuration','createSeries',{accountId:account,name:'Input reuse',rules:{}});expect(series.status,JSON.stringify(series.body)).toBe(200);
   const sourceEpisode=await f.request('create',{episodeId:undefined,accountId:account,seriesVersionId:series.body.id,title:'复用来源'});expect(sourceEpisode.status,JSON.stringify(sourceEpisode.body)).toBe(200);const sourceId=sourceEpisode.body.id;

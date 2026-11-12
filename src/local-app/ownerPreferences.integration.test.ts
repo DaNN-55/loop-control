@@ -26,8 +26,8 @@ it.skipIf(process.env.LOOP_PREFERENCES_ACCEPTANCE!=='1')('persists Owner prefere
  const server=createServer();
  try{
   await c.query('BEGIN');
-  if(!(await c.query("SELECT to_regclass('local_identity.owner_preferences') present")).rows[0].present)await c.query(readFileSync('db/local/079-owner-preferences.sql','utf8'));
-  if(!(await c.query("SELECT to_regprocedure('local_identity.audit_production_task_failure()') present")).rows[0].present)await c.query(readFileSync('db/local/080-owner-task-failure-notifications.sql','utf8'));
+  if(!(await c.query("SELECT to_regclass('local_identity.owner_preferences') present")).rows[0].present)await c.query(readFileSync('db/archive/legacy-v1/079-owner-preferences.sql','utf8'));
+  if(!(await c.query("SELECT to_regprocedure('local_identity.audit_production_task_failure()') present")).rows[0].present)await c.query(readFileSync('db/archive/legacy-v1/080-owner-task-failure-notifications.sql','utf8'));
   await c.query("INSERT INTO local_identity.owners(id,email)VALUES($1,'preferences-a@example.invalid'),($2,'preferences-b@example.invalid')",[owner,other]);
   for(const [id,user]of [[account,owner],[otherAccount,other]]){
    await c.query("INSERT INTO public.accounts(id,slug,name,timezone)VALUES($1,$2,'Preferences rollback fixture','UTC')",[id,'fixture-'+id]);

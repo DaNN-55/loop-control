@@ -3,8 +3,8 @@ import {spawn,execFileSync} from 'node:child_process';
 import {mkdtemp,mkdir,cp,symlink,readFile,readdir,writeFile,realpath} from 'node:fs/promises';
 import {join,dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {randomBytes,createHash} from 'node:crypto';
-import {adaptBusinessSchema} from '../storage/schema-import.mjs';
+import {randomBytes} from 'node:crypto';
+import {loadSchemaCatalog,freshSchemaTransaction} from '../../src/local-app/schemaMigrations.ts';
 
 const project=await realpath(fileURLToPath(new URL('../../',import.meta.url)));
 const root=await mkdtemp('/private/tmp/loop-story-e2e-'),source=join(root,'source'),evidence=join(root,'evidence');
@@ -43,12 +43,7 @@ try{
  if(!ready)throw Error('Isolated PostgreSQL did not become ready');
  const sql=(q,db='loop_story_baseline')=>docker(['exec','-i',container,'psql','-XqAt','-U','postgres','-d',db,'-v','ON_ERROR_STOP=1'],q);
  sql('CREATE ROLE loop_app LOGIN; CREATE ROLE loop_worker LOGIN; CREATE ROLE loop_owner; CREATE ROLE loop_anonymous; CREATE DATABASE loop_story_baseline TEMPLATE template0;','postgres');
- const identity=await readFile(join(source,'db/local/identity.sql'),'utf8');
- const baseline=adaptBusinessSchema(await readFile(join(source,'db/local/c-baseline.sql'),'utf8')).sql;
- const access=await readFile(join(source,'db/local/read-access.sql'),'utf8');
- sql('BEGIN;\n'+identity+'\n'+baseline+'\nSET search_path=public;\n'+access+'\nCREATE TABLE local_identity.schema_migrations(version text PRIMARY KEY,sha256 text NOT NULL);\nCOMMIT;');
- const migrations=(await readdir(join(source,'db/local'))).filter(n=>/^\d{3}-[a-z0-9-]+\.sql$/.test(n)).sort();
- for(const name of migrations){const body=await readFile(join(source,'db/local',name),'utf8');sql(`BEGIN;\n${body}\nINSERT INTO local_identity.schema_migrations VALUES('${name}','${createHash('sha256').update(body).digest('hex')}');COMMIT;`);}
+ sql(freshSchemaTransaction(loadSchemaCatalog(source)));
  const context=join(root,'runtime-context.mjs');
  await writeFile(context,`import{execFileSync}from'node:child_process';
 const container=${JSON.stringify(container)},image=${JSON.stringify(image)},label=${JSON.stringify('story-e2e-'+runId)},env=${JSON.stringify(env)};
