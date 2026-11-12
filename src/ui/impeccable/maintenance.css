@@ -117,7 +117,8 @@ html[data-interface="impeccable"] .product-ui .system-status-panel .system-statu
 html[data-interface="impeccable"] .product-ui .system-status-panel .system-status-item-attention > div > span {color:var(--lc-warning)}
 html[data-interface="impeccable"] .product-ui .system-status-panel .system-status-item-offline > div > span {color:var(--lc-danger)}
 html[data-interface="impeccable"] .product-ui .system-status-healthy i {background:var(--lc-success)}
-html[data-interface="impeccable"] .product-ui :is(.system-status-attention,.system-status-offline,.system-status-unknown) i {background:var(--lc-danger)}
+html[data-interface="impeccable"] .product-ui :is(.system-status-attention,.system-status-offline) i {background:var(--lc-danger)}
+html[data-interface="impeccable"] .product-ui .system-status-unknown i {background:var(--lc-muted)}
 
 /* Five content rows must size to content rather than stretching the intro and empty notices. */
 html[data-interface="impeccable"] .product-ui .secret-modal {padding:24px;gap:16px}
