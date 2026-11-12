@@ -2,7 +2,7 @@ import type { WorkerBlocker } from "./reviewSelectors";
 import { repairTargetForBlocker, type RepairTarget } from "./repairTarget";
 
 export interface WorkerBlockerGuidance {
-  primaryAction?: "blueprint" | "connection";
+  primaryAction?: "connection";
   location: string;
   locationNote: string;
   title: string;
@@ -13,29 +13,16 @@ export interface WorkerBlockerGuidance {
 }
 
 function specializedMediaBlueprintGuidance(blocker: Pick<WorkerBlocker, "detail">): WorkerBlockerGuidance {
-  return {
-    primaryAction: "blueprint",
-    title: "媒体适配器配置不完整",
-    summary: "这个媒体任务缺少 Provider、Adapter、预算或其他必填字段，需要补齐当前生产单的冻结配置。",
-    resolution: [
-      "点击“修改配置并继续当前生产单”，在“媒体适配器”中找到对应的图片生成、A-roll、B-roll、旁白或配乐 / 音效卡片。",
-      "按卡片提示补齐 Provider、Adapter、模型、Prompt 版本，以及该能力要求的预算、并发或声音参数。",
-      "如果当前系列有同名媒体规则，先在“系列”页修正它；否则直接应用到当前生产单。已完成的工作和审核记录保留，只重建受阻任务，也不会新建蓝图版本。",
-    ],
-    retryLabel: "修改配置并继续当前生产单",
-    location: "当前生产单 → 专用媒体配置",
-    locationNote: "只修改当前生产单冻结的专用执行器声明；同名系列规则存在时，系列规则优先。",
-    technicalDetail: blocker.detail,
-  };
+ return {title:"旧任务配置已退役",summary:"旧任务保留为历史记录，请通过当前分镜台重新制作。",resolution:["先核对原任务和供应商结果，避免重复提交。","在分镜台选择本次服务、模型和参数，再明确提交新请求。"],retryLabel:"前往分镜台",location:"生产单 → 分镜台",locationNote:"新请求不会改写旧任务、已有音频或历史记录。",technicalDetail:blocker.detail};
 }
 
 function specializedMediaUnavailableGuidance(blocker: Pick<WorkerBlocker, "detail">): WorkerBlockerGuidance {
   return {
     title: "当前媒体能力暂不可用",
-    summary: "蓝图可以声明这个适配器，但当前 Worker 尚未注册可用的媒体适配器，不是继续填写字段即可解决。",
+    summary: "当前 Worker 尚未注册可用的媒体适配器，需要先检查运行环境。",
     resolution: [
       "确认运行 Worker 的版本是否已接入对应媒体适配器，以及供应商凭据和网络是否可用。",
-      "如果尚未接入，需要先完成 Worker 能力接入；仅修改蓝图字段不能替代适配器实现。",
+      "如果尚未接入，需要先更新并配置对应 Worker 适配器。",
       "适配器可用后，在当前生产单中重新排队受阻任务；已完成工作不会重复执行。",
     ],
     retryLabel: "适配器恢复后继续当前生产单",
@@ -46,7 +33,7 @@ function specializedMediaUnavailableGuidance(blocker: Pick<WorkerBlocker, "detai
 }
 
 function structuredPreflightGuidance(blocker: Pick<WorkerBlocker, "detail" | "action" | "check" | "status">, repairTarget: RepairTarget | null): WorkerBlockerGuidance | undefined {
-  if(blocker.action==='select_production')return{title:'本次制作选择需要调整',summary:'请在分镜台中检查当前模型与参数，再明确提交新的请求。',resolution:['在生产单的分镜台中选择可用模型、Harness 或媒体服务。','检查外部连接的验证状态；已提交任务保留原选择。'],retryLabel:'前往分镜台',location:'生产单 → 分镜台',locationNote:'改选不会改变已有任务、候选或已采用素材。',technicalDetail:blocker.detail};
+  if(blocker.action==='select_production')return{title:'本次制作选择需要调整',summary:'请在分镜台中检查当前模型与参数，再明确提交新的请求。',resolution:['在生产单的分镜台中选择可用服务、模型和参数。','检查外部连接的验证状态；已提交任务保留原选择。'],retryLabel:'前往分镜台',location:'生产单 → 分镜台',locationNote:'改选不会改变已有任务、候选或已采用素材。',technicalDetail:blocker.detail};
   if(blocker.action==='manage_account_directory')return{title:'账号目录需要处理',summary:'请检查账号专属目录的实际位置与访问权限。',resolution:['打开账号配置中的专属目录，检查位置、挂载与读写权限。'],retryLabel:'检查账号目录',location:'账号配置 → 专属目录',locationNote:'已有文件须通过目录迁移更换位置。',technicalDetail:blocker.detail};
   if (blocker.check === "provider_network_policy") {
     return {
@@ -67,14 +54,14 @@ function structuredPreflightGuidance(blocker: Pick<WorkerBlocker, "detail" | "ac
       resolution: ["打开外部连接管理，重新提交对应 Provider 的认证材料。", "点击测试连接，确认供应商接受新的认证材料。", "连接恢复后重新执行当前任务。"],
       retryLabel: "管理连接并重试当前任务",
       location: "外部连接管理 → 对应 Provider",
-      locationNote: "连接密钥不会写入蓝图、Episode、任务或普通日志。",
+      locationNote: "连接密钥不会写入创作规则、生产单、任务或普通日志。",
       technicalDetail: blocker.detail,
     };
   }
   if (blocker.check === "capability_registration") {
     return {
       title: "Worker 能力未注册",
-      summary: "当前 Worker 没有注册这个能力的执行器，蓝图字段不能替代 Worker 接入。",
+      summary: "当前 Worker 没有注册这个能力的执行器，请先检查版本和适配器。",
       resolution: ["确认 Worker 版本已安装并注册当前 Provider / Adapter。", "确认 Worker 使用的是当前运行环境，而不是另一台未更新的机器。", "能力注册完成后，重新执行当前任务。"],
       retryLabel: "能力注册后重试当前任务",
       location: "系统能力 / Worker 适配器",
@@ -85,11 +72,11 @@ function structuredPreflightGuidance(blocker: Pick<WorkerBlocker, "detail" | "ac
   if (blocker.check === "credential_presence") {
     return {
       title: "Worker 凭据缺失",
-      summary: "Worker 环境没有发现当前 Provider 所需的凭据，蓝图不会保存或显示密钥。",
-      resolution: ["在运行 Worker 的机器上配置对应 Provider 的凭据环境变量。", "重启或刷新 Worker，使它重新读取环境变量。", "凭据出现后，重新执行当前任务。"],
+      summary: "当前任务的连接凭据不可用，请检查对应外部连接。",
+      resolution: ["在外部连接管理中检查对应连接的本机密钥绑定。", "如需更换密钥，创建新连接版本并显式测试。", "凭据出现后，重新执行当前任务。"],
       retryLabel: "配置凭据后重试当前任务",
-      location: "Worker 运行环境 / Provider 凭据",
-      locationNote: "当前页面没有可修改的凭据入口。",
+      location: "外部连接管理 → 对应连接",
+      locationNote: "密钥由本机受保护存储管理，任务仅保留连接版本引用。",
       technicalDetail: blocker.detail,
     };
   }
@@ -97,10 +84,10 @@ function structuredPreflightGuidance(blocker: Pick<WorkerBlocker, "detail" | "ac
     return {
       title: "Worker 凭据无效",
       summary: "Provider 已收到 Worker 请求，但拒绝了当前凭据。",
-      resolution: ["在 Worker 环境中更新或更换对应 Provider 凭据。", "确认凭据属于正确的供应商账户，并具备当前能力权限。", "更新后重新执行当前任务。"],
+      resolution: ["在外部连接管理中更新或更换对应连接凭据。", "确认凭据属于正确的供应商账户，并具备当前能力权限。", "更新后重新执行当前任务。"],
       retryLabel: "更新凭据后重试当前任务",
-      location: "Worker 运行环境 / Provider 凭据",
-      locationNote: "当前页面不会展示或编辑密钥。",
+      location: "外部连接管理 → 对应连接",
+      locationNote: "普通页面不会回显现有密钥。",
       technicalDetail: blocker.detail,
     };
   }
@@ -153,31 +140,30 @@ function structuredPreflightGuidance(blocker: Pick<WorkerBlocker, "detail" | "ac
   if (blocker.action === "retry") {
     return {
       title: "Worker 外部依赖暂时失败",
-      summary: "这是临时运行故障，不是蓝图配置缺失。",
+      summary: "这是临时运行故障，请先核对网络、服务和任务结果。",
       resolution: ["确认网络或供应商服务恢复。", "等待 Worker 依赖恢复后重新执行当前任务。", "如果连续失败，打开技术详情检查返回原因。"],
       retryLabel: "重试当前任务",
       location: "Worker 运行环境",
-      locationNote: "无需修改蓝图配置。",
+      locationNote: "结果未确认时，先核对原请求，避免重复提交。",
       technicalDetail: blocker.detail,
     };
   }
   if (blocker.action === "edit_blueprint") {
     if (repairTarget?.kind === "media") return specializedMediaBlueprintGuidance(blocker);
     return {
-      primaryAction: "blueprint",
-      title: "蓝图能力配置需要修复",
-      summary: "Worker 已识别到当前蓝图声明缺失或无效。",
-      resolution: ["打开蓝图配置，修正当前能力的 Provider、Adapter、模型或工具声明。", "保存配置后修复当前受阻生产单。", "已完成工作和审核记录会保留。"],
-      retryLabel: "修改配置并继续当前生产单",
-      location: "账号蓝图 → 能力配置",
-      locationNote: "只修复当前能力的声明，不修改 Worker 密钥。",
+      title: "任务制作配置需要核对",
+      summary: "旧任务的制作配置缺失或无效，请按当前制作流程核对。",
+      resolution: ["在分镜台检查本次制作服务、模型和参数。", "明确提交新请求前，先核对旧任务是否已经发送。", "已完成工作和审核记录会保留。"],
+      retryLabel: "前往分镜台",
+      location: "生产单 → 分镜台",
+      locationNote: "更改当前选择不会改写旧任务的冻结输入。",
       technicalDetail: blocker.detail,
     };
   }
   if (blocker.action === "contact_environment_admin") {
     return {
       title: "Worker 运行环境暂不可用",
-      summary: "问题位于 Worker 注册、凭据、权限、网络或挂载环境，不是蓝图创作字段。",
+      summary: "请核对 Worker 注册、连接、权限、网络和媒体目录。",
       resolution: ["确认 Worker 已注册当前能力并加载对应适配器。", "确认本机凭据、模型权限、工具权限和媒体库挂载状态。", "环境恢复后重新执行当前任务。"],
       retryLabel: "环境恢复后重试当前任务",
       location: "Worker 运行环境",
@@ -219,7 +205,7 @@ export function workerBlockerGuidance(blocker: Pick<WorkerBlocker, "capability" 
   if (isSpecializedMedia && /retries_exhausted|重试耗尽|model.*not supported|模型.*不支持/.test(normalized)) {
     return {
       title: "媒体任务执行已重试耗尽",
-      summary: "任务已按冻结配置重试到上限，通常是模型、账户权限或运行环境不支持，继续修改蓝图字段不会解决。",
+      summary: "任务已按冻结配置重试到上限，请先核对模型、账户权限和运行环境。",
       resolution: [
         "打开技术详情，确认 Worker 返回的模型、账户权限或运行环境错误。",
         "修复对应 Worker 或供应商账户后，再创建新的任务配置。",
@@ -246,13 +232,13 @@ export function workerBlockerGuidance(blocker: Pick<WorkerBlocker, "capability" 
       title: "资产目录权限或路径配置有问题",
       summary: "Worker 无法在账号资产目录中创建必需产物，通常是允许工具或本地资产路径与任务要求不匹配。",
       resolution: [
-        "在账号蓝图的“本地资产与审批”中确认资产目录和 read、write 工具。",
+        "在账号专属目录中检查实际位置和读写权限；read/write 工具权限由 Worker 管理。",
         "确认 asset_root 位于已挂载的媒体库内，并且 Worker 使用同一台机器和同一目录。",
         "修正本机目录后创建新的任务配置；旧任务会保留为历史记录。",
       ],
       retryLabel: "修正本机目录后重建任务",
-      location: "账号蓝图 → 本地资产与审批",
-      locationNote: "点击按钮后，进入对应账号蓝图的编辑入口。",
+      location: "账号配置 → 专属目录",
+      locationNote: "已有文件更换位置须通过目录迁移，不能直接改写旧路径。",
       technicalDetail: blocker.detail,
     };
   }
@@ -262,13 +248,13 @@ export function workerBlockerGuidance(blocker: Pick<WorkerBlocker, "capability" 
       title: "媒体供应商暂不可用",
       summary: "Worker 无法调用当前媒体供应商，通常是供应商适配器、凭据或网络状态问题。",
       resolution: [
-        "确认本机 Worker 环境中的 API key 已填写、未过期且没有为空。",
-        "确认运行 Worker 的电脑可以访问对应供应商；这不是账号蓝图里的创作字段。",
+        "检查外部连接的密钥绑定与验证结果。",
+        "确认运行 Worker 的电脑可以访问对应供应商。",
         "供应商恢复后，用新的冻结配置重新创建任务；旧任务不会自动更新。",
       ],
       retryLabel: "供应商恢复后重建任务",
       location: "Worker 运行环境 / 供应商凭据",
-      locationNote: "当前页面没有可修改的凭据入口，由本机 Worker 配置维护。",
+      locationNote: "连接凭据在外部连接管理中维护；普通页面不回显密钥。",
       technicalDetail: blocker.detail,
     };
   }
@@ -276,32 +262,31 @@ export function workerBlockerGuidance(blocker: Pick<WorkerBlocker, "capability" 
   if (/budget|预算/.test(normalized)) {
     return {
       title: "任务预算不足或配置无效",
-      summary: "当前任务的单项预算、总预算或剩余预算无法满足执行要求。",
+      summary: "当前任务的费用预留或费用依据需要核对。",
       resolution: [
-        "在账号蓝图的“阶段预算”中检查对应阶段的预算上限。",
-        "确认已失败或被替换的任务没有继续占用旧预算。",
-        "修正后创建新的任务配置；系统会释放旧预算并保留历史记录。",
+        "在本次制作确认中检查服务参数和预计费用。",
+        "核对旧任务的发送、结算和费用预留状态。",
+        "结果未知的请求先核对，不自动释放费用预留或重复发送。",
       ],
       retryLabel: "调整预算后重建任务",
-      location: "账号蓝图 → 阶段预算",
-      locationNote: "需要实际计费的任务不能使用 0 分预算。",
+      location: "分镜台 → 本次制作确认",
+      locationNote: "费用预留、预计费用和供应商实付金额分别保留。",
       technicalDetail: blocker.detail,
     };
   }
 
   if (/executor|adapter/.test(normalized)) {
     return {
-      primaryAction: "blueprint",
       title: "Worker 执行器配置不完整",
       summary: "任务没有可用的通用执行器，Worker 不会自行替换供应商继续执行。",
       resolution: [
-        "点击“修改配置并继续当前生产单”，检查当前任务的 Provider、模型和 Prompt 版本。",
+        "在分镜台检查本次选择的服务、模型和参数。",
         "只有系统已登记或支持的执行器才能使用；不要随意填写未知 adapter。",
-        "直接应用到当前生产单；已完成任务不会重跑，也不会新建蓝图版本。",
+        "明确提交新请求后才会使用新选择，旧任务和产物保持。",
       ],
       retryLabel: "修正执行器并继续当前生产单",
-      location: "当前生产单 → 执行器配置",
-      locationNote: "这里只修改当前生产单的通用脚本、视觉或分镜执行器。",
+      location: "生产单 → 分镜台",
+      locationNote: "普通正文在本地拆分镜头，不再配置脚本或分镜规划执行器。",
       technicalDetail: blocker.detail,
     };
   }
@@ -349,7 +334,7 @@ export function workerBlockerGuidance(blocker: Pick<WorkerBlocker, "capability" 
       ],
       retryLabel: "确认 Worker 恢复后可以重试",
       location: "Worker 运行状态",
-      locationNote: "这类问题通常不需要修改蓝图。",
+      locationNote: "保留当前输入，先确认 Worker 状态和原任务结果。",
       technicalDetail: blocker.detail,
     };
   }
@@ -359,7 +344,7 @@ export function workerBlockerGuidance(blocker: Pick<WorkerBlocker, "capability" 
     summary: "Worker 无法继续执行当前冻结任务，必须先确认配置、输入或外部依赖。",
     resolution: [
       "打开技术详情，确认任务类型、执行器、输入产物和错误原因。",
-      "根据原因修正账号蓝图、系列规则、本地素材或外部服务配置。",
+      "根据原因检查本次制作选择、账号目录、本地素材或外部连接。",
       "修正后创建新的任务配置，不要在原因未解决时重复点击重试。",
     ],
     retryLabel: "先修正原因，再继续当前生产单",

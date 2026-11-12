@@ -4,34 +4,21 @@ import {CreativeRuleFields} from './CreativeRuleFields';
 import {Disclosure} from '../ui/dan-ui/components/base/disclosure/disclosure';
 import {TextAreaBase} from '../ui/dan-ui/components/base/textarea/textarea';
 import {InputBase} from '../ui/dan-ui/components/base/input/input';
-import {NativeSelect} from '../ui/dan-ui/components/base/select/select-native';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
-import {videoProviders,isVideoProvider} from "../worker/videoProviderCatalog";
 import { useEffect, useRef, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import type { Database, Json } from "../lib/database.types";
 import { HelpTip } from "../ui/HelpTip";
 import {ConfirmationModal,ConfirmationModalPresence} from "../ui/ConfirmationModal";
 import type { LocalSystemStatusReport } from "../observability/SystemStatusPanel";
-import { registeredAdapters, type LocalAdapterReadiness } from "../worker/registeredAdapters";
-import { ExternalConnectionPicker, type ExternalConnectionInput, type ExternalConnectionVersion } from "../connections/ConnectionWorkspace";
-import { repairTargetForBlocker } from "../reviews/repairTarget";
-import type { WorkerBlocker } from "../reviews/reviewSelectors";
+import type { LocalAdapterReadiness } from "../worker/registeredAdapters";
+import type { ExternalConnectionInput, ExternalConnectionVersion } from "../connections/ConnectionWorkspace";
 import {
   blueprintFormToPolicy,
-  legacyBlueprintFormToPolicy,
   blueprintPolicyToForm,
-  configurableMediaAdapterKeys,
-  mediaAdapterConfiguration,
   seriesFormToRules,
   seriesRulesToForm,
-  mediaAdapterStatus,
-  validateMediaAdapter,
   validateSeriesRules,
-  type BlueprintFormValues,
-  type ConfigurableMediaAdapterKey,
-  type MediaAdapterForm,
-  type MediaAdapterKey,
   type SeriesFormValues,
 } from "./configurationFormValues";
 
@@ -41,59 +28,6 @@ type ExternalConnection = Database["public"]["Tables"]["external_connections"]["
 
 function FieldLabel({ children, help }: { children: ReactNode; help?: ReactNode }) {
   return <span className="field-label">{children}{help ? <HelpTip label={typeof children === "string" ? children : uiText("字段")}>{help}</HelpTip> : null}</span>;
-}
-
-function MediaAdapterCard({ adapterKey, connectionVersions = [], externalConnections = [], form, localAdapterReadiness = {}, onChange, onCreateConnection, onRotateConnection, onTestConnection, onUpdateConnection, readOnly = false }: { adapterKey: MediaAdapterKey; connectionVersions?: ExternalConnectionVersion[]; externalConnections?: ExternalConnection[]; form: MediaAdapterForm; localAdapterReadiness?: LocalAdapterReadiness; onChange: (field: keyof MediaAdapterForm, value: string) => void; onCreateConnection?: (input: ExternalConnectionInput) => Promise<ExternalConnection | null>; onRotateConnection?: (input: { connectionId: string; provider: ExternalConnectionInput["provider"]; adapter: ExternalConnectionInput["adapter"]; secret: string }) => Promise<ExternalConnection | null>; onTestConnection?: (connectionId: string) => Promise<unknown>; onUpdateConnection?: (input: { connectionId: string; name: string; description: string }) => Promise<void>; readOnly?: boolean }) {
-  const definition = mediaAdapterConfiguration(adapterKey);
-  const label = uiText(mediaConfigurationLabel(adapterKey));
-  const hasConfigurationField = (field: typeof definition.configurationFields[number]) => definition.configurationFields.includes(field);
-  const status = mediaAdapterStatus(adapterKey, form);
-  const statusClass = status === "已配置" ? "is-configured" : status === "待补齐" ? "is-incomplete" : "is-empty";
-  const numberField = (field: keyof MediaAdapterForm, title: string, help: string, min = 1) => <label><FieldLabel help={help}>{title}</FieldLabel><InputBase size="sm" aria-label={title} min={min} onChange={(event) => onChange(field, event.target.value)} readOnly={readOnly} step={min < 1 ? "0.1" : "1"} type="number" value={form[field]} /></label>;
-  const selectedPath = form.executionPath ?? "";
-  const externalAdapters = registeredAdapters.choicesFor({ capability: definition.capability, executionPath: "external" });
-  const localAdapters = registeredAdapters.choicesFor({ capability: definition.capability, executionPath: "local" }).filter((registration) => localAdapterReadiness[registration.identityKey] === true);
-  const availablePaths = [...(externalAdapters.length ? ["external" as const] : []), ...(localAdapters.length ? ["local" as const] : []), "manual" as const];
-  const selectedResolution = registeredAdapters.resolve({ capability: definition.capability, executionPath: selectedPath, provider: form.provider, adapter: form.adapter });
-  const selectedRegisteredAdapter = selectedResolution.kind === "registered" ? selectedResolution.choice : undefined;
-  const selectedCatalog = selectedPath === "local" ? localAdapters.find((candidate) => candidate.provider === form.provider && candidate.adapter === form.adapter) : selectedRegisteredAdapter;
-  const ownerManagedConnection = selectedRegisteredAdapter?.connection.kind === "owner_managed";
-  const connectionOptions: Array<{ credentialRef: string; label: string }> = [];
-  const modelCatalog = selectedCatalog?.modelCatalog ?? [];
-  const presetCatalog = selectedCatalog?.presetCatalog ?? [];
-  const presetLabel = adapterKey === "a_roll" && form.provider === "openchatcut" ? uiText("卡片预设") : uiText("执行预设");
-
-  return <article className={`media-adapter-card ${statusClass}`}>
-    <header><div><h4>{label}</h4><p>{uiText(definition.description)}</p></div><span className="media-adapter-status">{uiText(status)}</span></header><div className="media-adapter-controls">
-    <section className="media-adapter-group"><h5>{uiText("执行方式")}</h5><div className="media-adapter-field-grid">
-      <label><FieldLabel help={uiText("首次启用不会自动选择路径；人工素材不会创建 Worker 或外部任务。")}>{uiText("执行路径")}</FieldLabel><NativeSelect size="sm" aria-label={uiText("{value1} 执行路径",{value1:label})} disabled={readOnly} onChange={(event) => onChange("executionPath", event.target.value)} value={selectedPath}><option value="">{uiText("请选择执行路径")}</option>{availablePaths.includes("external") ? <option value="external">{uiText("外部")}</option> : null}<option disabled={!availablePaths.includes("local")} value="local">{uiText("本地")}{availablePaths.includes("local") ? "" : uiText("（未部署）")}</option><option value="manual">{uiText("人工素材")}</option></NativeSelect></label>
-      {selectedPath === "manual" ? <p className="field-hint">{uiText("Episode 会按镜头与音频 cue 生成待补齐素材清单，不创建 Worker 或外部任务。")}</p> : null}
-      {selectedPath === "local" && localAdapters.length === 0 ? <p className="field-hint">{uiText("当前 Worker 没有已部署的本地")}{label} {uiText("Adapter；请联系环境管理员。")}</p> : null}
-      {selectedPath === "local" && localAdapters.length ? <label><FieldLabel help={uiText("只能选择 Worker 已部署的本地 Adapter。")}>Adapter</FieldLabel><NativeSelect size="sm" aria-label={uiText("{value1} 本地 Adapter",{value1:label})} disabled={readOnly} onChange={(event) => { const registration = localAdapters.find((candidate) => candidate.adapter === event.target.value); if (!registration) return; onChange("provider", registration.provider); onChange("adapter", registration.adapter); onChange("credentialRef", ""); onChange("model", ""); onChange("promptVersion", ""); onChange("allowedTools", "read, write"); onChange("voiceLanguageCode", ""); onChange("voiceName", ""); }} value={selectedCatalog?.adapter ?? ""}><option value="">{uiText("请选择 Adapter")}</option>{localAdapters.map((registration) => <option key={registration.identityKey} value={registration.adapter}>{registration.provider} · {registration.adapter}</option>)}</NativeSelect></label> : null}
-      {selectedPath === "external" ? <>
-        <label><FieldLabel help={uiText("Provider 由已注册 Adapter 声明，不能自由填写。")}>Provider</FieldLabel><InputBase size="sm" aria-label="Provider" readOnly value={externalConnectionProviderLabel(selectedRegisteredAdapter?.provider ?? form.provider)} /></label>
-        <label><FieldLabel help={uiText("只能选择 Worker 已注册的外部 Adapter。")}>Adapter</FieldLabel><NativeSelect size="sm" aria-label={`${label} Adapter`} disabled={readOnly} onChange={(event) => { const registration = externalAdapters.find((candidate) => candidate.adapter === event.target.value); if (!registration) return; onChange("provider", registration.provider); onChange("adapter", registration.adapter); onChange("credentialRef", ""); onChange("model", ""); onChange("promptVersion", ""); onChange("allowedTools", "read, write"); onChange("voiceLanguageCode", ""); onChange("voiceName", ""); }} value={selectedRegisteredAdapter?.adapter ?? "__unregistered__"}><option value="__unregistered__">{uiText("请选择 Adapter")}</option>{externalAdapters.map((registration) => <option key={registration.identityKey} value={registration.adapter}>{registration.provider} · {registration.adapter}</option>)}</NativeSelect></label>
-      </> : null}
-    </div></section>
-
-    {selectedPath === "external" || selectedPath === "local" ? <section className="media-adapter-group"><h5>{uiText("输出设置")}</h5><div className="media-adapter-field-grid">
-        <label><FieldLabel help={uiText("只能从当前 Adapter 声明的模型目录选择。")}>{uiText("模型")}</FieldLabel><NativeSelect size="sm" aria-label={uiText("{value1} 模型",{value1:label})} disabled={readOnly || !selectedCatalog} onChange={(event) => onChange("model", event.target.value)} value={modelCatalog.includes(form.model) ? form.model : ""}><option value="">{uiText("请选择模型")}</option>{form.model && !modelCatalog.includes(form.model) ? <option value={form.model}>{form.model}{uiText("（已冻结但不在当前目录）")}</option> : null}{modelCatalog.map((model) => <option key={model} value={model}>{model}</option>)}</NativeSelect></label>
-        <label><FieldLabel help={uiText("固定该 Adapter 的执行规则版本。")}>{presetLabel}</FieldLabel><NativeSelect size="sm" aria-label={`${label} ${presetLabel}`} disabled={readOnly || !selectedCatalog} onChange={(event) => onChange("promptVersion", event.target.value)} value={presetCatalog.includes(form.promptVersion) ? form.promptVersion : ""}><option value="">{uiText("请选择预设")}</option>{form.promptVersion && !presetCatalog.includes(form.promptVersion) ? <option value={form.promptVersion}>{form.promptVersion}{uiText("（已冻结但不在当前目录）")}</option> : null}{presetCatalog.map((preset) => <option key={preset} value={preset}>{preset}</option>)}</NativeSelect></label>
-      {definition.configurationFields.length ? <>{hasConfigurationField("max_attempts") ? numberField("maxAttempts", uiText("最大尝试次数"), uiText("媒体任务失败后的最大执行尝试次数。")) : null}</> : null}
-    </div></section> : null}
-    {selectedPath === "external" && (connectionOptions.length || ownerManagedConnection) ? <section className="media-adapter-group media-adapter-connection-group"><h5>{uiText("外部连接")}</h5>{connectionOptions.length&&!ownerManagedConnection ? <label><FieldLabel help={uiText("蓝图只保存已验证连接版本 ID，不保存 API Key。")}>{uiText("外部连接")}</FieldLabel><NativeSelect size="sm" aria-label={uiText("{value1} 外部连接",{value1:label})} disabled={readOnly || !selectedRegisteredAdapter} onChange={(event) => onChange("credentialRef", event.target.value)} value={connectionOptions.some((connection) => connection.credentialRef === form.credentialRef) ? form.credentialRef : ""}><option value="">{uiText("请选择已验证连接")}</option>{connectionOptions.map((connection) => <option key={connection.credentialRef} value={connection.credentialRef}>{connection.label}</option>)}</NativeSelect></label> : null}{ownerManagedConnection ? <ExternalConnectionPicker adapter={selectedRegisteredAdapter!.adapter as ExternalConnectionInput["adapter"]} connections={externalConnections} isPending={readOnly} label={label} officialEndpoint={selectedRegisteredAdapter?.connection.kind === "owner_managed" ? selectedRegisteredAdapter.connection.endpoint : undefined} onCreateConnection={onCreateConnection} onRotateConnection={onRotateConnection} onSelectVersion={(versionId) => onChange("credentialRef", versionId)} onTestConnection={onTestConnection} onUpdateConnection={onUpdateConnection} provider={selectedRegisteredAdapter!.provider as ExternalConnectionInput["provider"]} selectedVersionId={form.credentialRef} versions={connectionVersions} /> : null}</section> : null}
-    {selectedPath === "" ? <p className="field-hint">{uiText("请先选择执行路径。未选择前不会自动绑定连接、模型或预设。")}</p> : null}
-    </div>
-  </article>;
-}
-
-function mediaConfigurationLabel(key: MediaAdapterKey): string {
-  return key === "static_visual" ? uiText("图片生成") : mediaAdapterConfiguration(key).label;
-}
-
-function externalConnectionProviderLabel(provider:string):string {
- if(isVideoProvider(provider))return videoProviders[provider].label;
- return ({openai:'OpenAI Images',volcengine_tts:uiText("火山语音"),pexels:'Pexels',freesound:'Freesound'} as Record<string,string>)[provider]??provider;
 }
 
 export function BlueprintConfigurationForm({ accountLayout = false, footerStatus, saveState, initialPolicy, isPending, onCancel, onDirtyChange, onSave, readOnly = false }: { accountId?: string; accountLayout?: boolean; footerStatus?: ReactNode; saveState?: ReactNode; connectionVersions?: ExternalConnectionVersion[]; externalConnections?: ExternalConnection[]; initialAssetRoot: string; initialPolicy: Json; isEpisodeRepair?: boolean; isPending: boolean; localAdapterReadiness?: LocalAdapterReadiness; onCancel: () => void; onCreateConnection?: (input: ExternalConnectionInput) => Promise<ExternalConnection | null>; onCreatePromptVersion?: (input: { capability: PromptCapability; name: string; summary: string; instructions: string }) => Promise<PromptVersion | null>; onDirtyChange?: (dirty: boolean) => void; onRotateConnection?: (input: { connectionId: string; provider: ExternalConnectionInput["provider"]; adapter: ExternalConnectionInput["adapter"]; secret: string }) => Promise<ExternalConnection | null>; onSave: (policy: Json, activate: boolean) => Promise<void>; onTestConnection?: (connectionId: string) => Promise<unknown>; onUpdateConnection?: (input: { connectionId: string; name: string; description: string }) => Promise<void>; promptVersions?: PromptVersion[]; readOnly?: boolean; systemStatus?: LocalSystemStatusReport | null; technicalOnly?: boolean }) {
@@ -114,37 +48,6 @@ export function BlueprintConfigurationForm({ accountLayout = false, footerStatus
   {!readOnly?<div className={accountLayout?'account-blueprint-footer':undefined}>{footerStatus}<div className="configuration-actions">{locked?<><Button size="sm" color="secondary" isDisabled={busy} onPress={()=>setEditing(true)}>{uiText("修改")}</Button></>:<>{saveState}<Button size="sm" color="secondary" isDisabled={busy} onPress={reset}>{accountLayout?(dirty?uiText("放弃修改"):uiText("取消编辑")):uiText("撤销修改")}</Button><Button size="sm" color="primary" isDisabled={busy} onPress={()=>{try{blueprintFormToPolicy(form);setError('');setConfirming(true);}catch(cause){setError(cause instanceof Error?cause.message:uiText("创作规则无效。"));}}}>{busy?uiText("保存中…"):accountLayout?uiText("保存通用规则"):uiText("保存蓝图")}</Button></>}</div></div>:null}
   <ConfirmationModalPresence>{confirming?<ConfirmationModal title={accountLayout ? uiText("确认保存通用规则") : uiText("确认保存蓝图")} confirmLabel={accountLayout ? uiText("确认保存通用规则") : uiText("确认保存蓝图")} isPending={busy} onCancel={()=>setConfirming(false)} onConfirm={save}><p>{uiText("创作规则应用于之后新建的生产单；已有生产单保留原规则。")}</p>{error?<p role="alert" className="form-error">{uiText(error)}</p>:null}</ConfirmationModal>:null}</ConfirmationModalPresence>
  </section>;
-}
-
-export function EpisodeConfigurationRepairForm({ blocker, initialPolicy, isPending, onCancel, onSave }: { blocker: Pick<WorkerBlocker, "action" | "capability" | "code" | "detail" | "taskType">; initialPolicy: Json; isPending: boolean; onCancel: () => void; onSave: (policy: Json) => Promise<void>; promptVersions?: PromptVersion[] }) {
-  const repairTarget = repairTargetForBlocker(blocker);
-  const adapterKey = repairTarget?.kind === "media" ? repairTarget.key : null;
-  const [form, setForm] = useState<BlueprintFormValues>(() => blueprintPolicyToForm(initialPolicy));
-  const [error, setError] = useState("");
-  useEffect(() => setForm(blueprintPolicyToForm(initialPolicy)), [initialPolicy]);
-  function updateMediaAdapter(field: keyof MediaAdapterForm, value: string) {
-    if (!adapterKey) return;
-    setForm(current => ({...current,mediaAdapters:{...current.mediaAdapters,[adapterKey]:{...current.mediaAdapters[adapterKey],[field]:value}}}));
-  }
-  async function submit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!adapterKey) return;
-    try {
-      setError("");
-      const adapter=form.mediaAdapters[adapterKey];
-      const repairForm=adapter.allowedTools.trim()?adapter:{...adapter,allowedTools:"read, write"};
-      validateMediaAdapter(adapterKey,repairForm);
-      const enabledMediaAdapters=configurableMediaAdapterKeys.includes(adapterKey as ConfigurableMediaAdapterKey)?[...new Set([...(form.enabledMediaAdapters??[]),adapterKey as ConfigurableMediaAdapterKey])]:form.enabledMediaAdapters;
-      await onSave(legacyBlueprintFormToPolicy({...form,enabledMediaAdapters,mediaAdapters:{...form.mediaAdapters,[adapterKey]:repairForm}}));
-    } catch(cause) {setError(cause instanceof Error?cause.message:uiText("无法保存当前生产单修复。"));}
-  }
-  if (!adapterKey) return <section className="configuration-form"><p className="form-error">{uiText("当前阻塞项不能通过配置修复，请按阻塞卡片提示处理。")}</p><Button size="sm" color="secondary" className="button button-secondary" onClick={onCancel} type="button">{uiText("返回生产单")}</Button></section>;
-  return <form className="configuration-form blueprint-configuration-form" onSubmit={event=>void submit(event)}>
-    <header><h2>{uiText("修复当前生产单的")} {uiText(mediaAdapterConfiguration(adapterKey).label)}</h2><p className="blueprint-editor-note">{uiText("只修改这类受阻任务的冻结配置。不会创建或修改账号蓝图，也不会影响之后的新生产单。")}</p></header>
-    <fieldset><legend>{uiText("需要补齐的媒体配置")}</legend><MediaAdapterCard adapterKey={adapterKey} form={form.mediaAdapters[adapterKey]} onChange={updateMediaAdapter}/></fieldset>
-    {error?<p className="form-error">{uiText(error)}</p>:null}
-    <div className="configuration-actions"><Button size="sm" color="secondary" className="button button-secondary" isDisabled={isPending} onClick={onCancel} type="button">{uiText("取消")}</Button><Button size="sm" color="primary" className="button button-primary" isDisabled={isPending} type="submit">{isPending?uiText("正在保存…"):uiText("保存并继续当前生产单")}</Button></div>
-  </form>;
 }
 
 export function SeriesConfigurationForm({ headingContent, onCreateEpisode, onRename, accountPolicy, currentVersion = 0, initialName, initialRules, isEditing, isPending, onCancel, onDirtyChange, onSave }: { headingContent?: ReactNode; onCreateEpisode?: () => void; onRename?: (name: string) => Promise<boolean | void>; accountPolicy?: Json; currentVersion?: number; initialName: string; initialRules: Json; isEditing: boolean; isPending: boolean; onCancel: () => void; onDirtyChange?: (dirty: boolean) => void; onSave: (name: string, rules: Json) => Promise<void> }) {

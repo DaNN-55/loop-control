@@ -17,7 +17,7 @@ describe("Worker 阻塞项指导", () => {
     ]));
     expect(guidance.retryLabel).toBe("修正本机目录后重建任务");
     expect(guidance.primaryAction).toBeUndefined();
-    expect(guidance.location).toBe("账号蓝图 → 本地资产与审批");
+    expect(guidance.location).toBe("账号配置 → 专属目录");
   });
 
   it("把媒体供应商不可用说明为凭据或网络问题", () => {
@@ -33,16 +33,16 @@ describe("Worker 阻塞项指导", () => {
   it("把可通过蓝图修正的专用媒体配置指向媒体适配器区域", () => {
     const guidance = workerBlockerGuidance({ code: "a_roll_executor_invalid", detail: "A-roll 配置缺少 adapter。" });
 
-    expect(guidance.title).toBe("媒体适配器配置不完整");
-    expect(guidance.primaryAction).toBe("blueprint");
-    expect(guidance.location).toBe("当前生产单 → 专用媒体配置");
+    expect(guidance.title).toBe("旧任务配置已退役");
+    expect(guidance.primaryAction).toBeUndefined();
+    expect(guidance.location).toBe("生产单 → 分镜台");
   });
 
   it("按结构化可修复目标指向媒体配置，不读取错误文案", () => {
     const guidance = workerBlockerGuidance({ action: "edit_blueprint", capability: "b_roll_generation", code: "blueprint_configuration", detail: "需要更新配置。" });
 
-    expect(guidance.title).toBe("媒体适配器配置不完整");
-    expect(guidance.primaryAction).toBe("blueprint");
+    expect(guidance.title).toBe("旧任务配置已退役");
+    expect(guidance.primaryAction).toBeUndefined();
   });
 
   it("不会把执行重试耗尽误导为配置修复", () => {
@@ -71,9 +71,9 @@ describe("Worker 阻塞项指导", () => {
   it("把 B-roll 供应商配置不匹配指向蓝图媒体适配器", () => {
     const guidance = workerBlockerGuidance({ code: "b_roll_executor_unavailable", detail: "当前仅注册 Pexels 视频适配器；配置必须精确声明 pexels/pexels_video/pexels-video-v1。" });
 
-    expect(guidance.title).toBe("媒体适配器配置不完整");
-    expect(guidance.primaryAction).toBe("blueprint");
-    expect(guidance.location).toBe("当前生产单 → 专用媒体配置");
+    expect(guidance.title).toBe("旧任务配置已退役");
+    expect(guidance.primaryAction).toBeUndefined();
+    expect(guidance.location).toBe("生产单 → 分镜台");
   });
 
   it("将部署策略关闭与真实网络失败分开", () => {

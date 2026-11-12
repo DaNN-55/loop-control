@@ -26,3 +26,14 @@ describe("WorkerBlockerCard", () => {
     window.removeEventListener("open-external-connections", onOpenConnections);
   });
 });
+
+it('keeps the original legacy error readable without a task repair action',async()=>{
+ const user=userEvent.setup(),onOpenBlueprint=vi.fn(),blocker={action:'edit_blueprint' as const,capability:'narration_generation',code:'narration_executor_invalid',detail:'原任务保留的诊断原因',taskId:'legacy-task'};
+ render(<WorkerBlockerCard blocker={blocker} onOpenBlueprint={onOpenBlueprint}/>);
+ expect(screen.queryByRole('button',{name:'修复旧任务配置'})).toBeNull();expect(onOpenBlueprint).not.toHaveBeenCalled();expect(screen.getByText('生产单 → 分镜台')).toBeTruthy();
+ await user.click(screen.getByText('技术详情').closest('summary')!);expect(screen.getByText(blocker.detail).closest('details')?.open).toBe(true);
+});
+it('does not show an unusable blueprint button for a retired generic planning configuration',()=>{
+ render(<WorkerBlockerCard blocker={{action:'edit_blueprint',capability:'storyboard_planning',code:'blueprint_configuration',detail:'旧规划配置'}} onOpenBlueprint={vi.fn()}/>);
+ expect(screen.queryByRole('button',{name:/蓝图|修复旧任务配置/})).toBeNull();expect(screen.getByText('生产单 → 分镜台')).toBeTruthy();
+});

@@ -13,11 +13,10 @@ import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react"
 import type { FormEvent, ReactNode } from "react";
 import type { Database, Json } from "../lib/database.types";
 import { blueprintAssetRoot, defaultBlueprintPolicy } from "../platform/blueprintPolicy";
-import { BlueprintConfigurationForm, EpisodeConfigurationRepairForm, SeriesConfigurationForm } from "../platform/ConfigurationForms";
+import { BlueprintConfigurationForm, SeriesConfigurationForm } from "../platform/ConfigurationForms";
 import {ConfirmationModal,ConfirmationModalPresence} from "../ui/ConfirmationModal";
 import type { ExternalConnectionInput, ExternalConnectionVersion } from "../connections/ConnectionWorkspace";
 import type { LocalSystemStatusReport } from "../observability/SystemStatusPanel";
-import type { WorkerBlocker } from "../reviews/reviewSelectors";
 
 type Account = Database["public"]["Tables"]["accounts"]["Row"];
 type Blueprint = Database["public"]["Tables"]["account_blueprint_versions"]["Row"];
@@ -25,12 +24,6 @@ type Series = Database["public"]["Tables"]["series"]["Row"];
 type SeriesVersion = Database["public"]["Tables"]["series_versions"]["Row"];
 type PromptVersion = Database["public"]["Tables"]["prompt_versions"]["Row"];
 type ExternalConnection = Database["public"]["Tables"]["external_connections"]["Row"];
-
-interface BlueprintRepairContext {
-  blocker: WorkerBlocker;
-  blueprintVersionId: string;
-  episodeId: string;
-}
 
 interface AccountWorkspaceProps {
   navigation?:PanelNavigation<'rules'>;
@@ -42,9 +35,7 @@ interface AccountWorkspaceProps {
   blueprints: Blueprint[];
   externalConnections?: ExternalConnection[];
   connectionVersions?: ExternalConnectionVersion[];
-  blueprintRepairContext?: BlueprintRepairContext | null;
   isPending: string;
-  onApplyEpisodeRepair?: (input: { context: BlueprintRepairContext; policy: Json }) => Promise<boolean>;
   onCreatePromptVersion?: (input: { capability: PromptVersion["capability"]; name: string; summary: string; instructions: string }) => Promise<PromptVersion | null>;
   onCreateConnection?: (input: ExternalConnectionInput) => Promise<ExternalConnection | null>;
   onCreateEpisode?: () => void;
@@ -52,7 +43,6 @@ interface AccountWorkspaceProps {
   onRenameSeries?: (id: string, name: string) => Promise<boolean | void>;
   onCreateSeriesVersion?: (input: { seriesId: string; rules: Json }) => Promise<void>;
   onDeleteAccount?: (id: string, confirmation: string) => Promise<boolean | void>;
-  onDismissBlueprintRepair?: () => void;
   onDirtyChange?: (dirty: boolean) => void;
   onRefresh?: () => Promise<void>;
   onRenameAccount?: (id: string, name: string) => Promise<boolean | void>;
@@ -69,7 +59,7 @@ interface AccountWorkspaceProps {
 
 const emptySeriesRules: Json = {};
 
-export function AccountWorkspace({ navigation, account, accountEpisodeCount = 0, readDeletionStatus, onViewAccountEpisodes, onViewDeletionCleanup, blueprints, blueprintRepairContext = null, connectionVersions = [], externalConnections = [], isPending, onApplyEpisodeRepair, onCreateConnection, onCreatePromptVersion, onCreateEpisode, onCreateSeries = async () => {}, onCreateSeriesVersion = async () => {}, onRenameSeries = async () => {}, onDeleteAccount = async () => {}, onDismissBlueprintRepair, onDirtyChange, onRefresh, onRenameAccount = async () => {}, onRotateConnection, onSetAccountArchived = async () => {}, onTestConnection, onUpdateBlueprint, onUpdateConnection, promptVersions = [], series = [], seriesVersions = [], systemStatus = null }: AccountWorkspaceProps) {
+export function AccountWorkspace({ navigation, account, accountEpisodeCount = 0, readDeletionStatus, onViewAccountEpisodes, onViewDeletionCleanup, blueprints, connectionVersions = [], externalConnections = [], isPending, onCreateConnection, onCreatePromptVersion, onCreateEpisode, onCreateSeries = async () => {}, onCreateSeriesVersion = async () => {}, onRenameSeries = async () => {}, onDeleteAccount = async () => {}, onDirtyChange, onRefresh, onRenameAccount = async () => {}, onRotateConnection, onSetAccountArchived = async () => {}, onTestConnection, onUpdateBlueprint, onUpdateConnection, promptVersions = [], series = [], seriesVersions = [], systemStatus = null }: AccountWorkspaceProps) {
   const [configurationDirty, setConfigurationDirtyState] = useState(false);
   const dirty = configurationDirty;
   useEffect(() => onDirtyChange?.(dirty), [dirty, onDirtyChange]);
@@ -83,7 +73,7 @@ export function AccountWorkspace({ navigation, account, accountEpisodeCount = 0,
   }, []);
   const currentBlueprint = blueprints.find((blueprint) => blueprint.id === account?.current_blueprint_version_id) ?? blueprints.filter((blueprint) => blueprint.account_id === account?.id && !blueprint.is_snapshot).sort((left, right) => right.version - left.version)[0] ?? null;
 
-  useEffect(() => { setConfigurationDirty(false); setRenameOpen(false); setDeleteOpen(false); setArchiveOpen(false); setAccountSettingsOpen(false); }, [account?.id, blueprintRepairContext?.episodeId, setConfigurationDirty]);
+  useEffect(() => { setConfigurationDirty(false); setRenameOpen(false); setDeleteOpen(false); setArchiveOpen(false); setAccountSettingsOpen(false); }, [account?.id, setConfigurationDirty]);
   useEffect(() => {
     if (!dirty) return;
     const guard = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = ""; };
@@ -108,7 +98,7 @@ export function AccountWorkspace({ navigation, account, accountEpisodeCount = 0,
         aria-haspopup="dialog" onClick={() => setAccountSettingsOpen(true)}>{uiText("账号设置")}</Button>
     </header>
     {account.archived_at ? <p className="account-archived-note" role="status">{uiText("此账号已归档，不会出现在新建生产单的账号列表中；恢复后可继续生产。")}</p> : null}
-    {!currentBlueprint ? <div className="empty-state">{uiText("该账号没有可读取的蓝图配置。")}</div> : blueprintRepairContext ? <EpisodeConfigurationRepairForm blocker={blueprintRepairContext.blocker} initialPolicy={policy} isPending={isPending === `apply-episode-repair-${blueprintRepairContext.episodeId}`} onCancel={() => onDismissBlueprintRepair?.()} onSave={async (nextPolicy) => { if (onApplyEpisodeRepair) await onApplyEpisodeRepair({ context: blueprintRepairContext, policy: nextPolicy }); }} promptVersions={promptVersions} /> : <SeriesSettings onCreateEpisode={onCreateEpisode} navigation={navigation} key={account.id} accountId={account.id} onRename={onRenameSeries} commonEditor={<>
+    {!currentBlueprint ? <div className="empty-state">{uiText("该账号没有可读取的蓝图配置。")}</div> : <SeriesSettings onCreateEpisode={onCreateEpisode} navigation={navigation} key={account.id} accountId={account.id} onRename={onRenameSeries} commonEditor={<>
       <header className="account-editor-heading">
         <div><h2>{uiText("通用规则")}</h2><p className="account-rule-scope">{uiText("作为此账号下各系列的默认规则。")}</p></div>
         <span className="account-save-state" role="status">{uiText("已应用 · v")}{currentBlueprint.version}</span>
