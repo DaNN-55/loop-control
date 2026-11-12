@@ -1,0 +1,19 @@
+{
+  "crashAt": "2026-11-12T08:57:06.139Z",
+  "kind": "Actual SIGKILL of isolated application then its detached Worker group during real MiniMax processing; no simulated Provider",
+  "task": {
+    "phase": "processing",
+    "status": "running",
+    "taskId": "5609b9bb-a23e-4d2f-9418-b8b07c323fc7",
+    "attempt": 1,
+    "claimedAt": "2026-11-12T08:56:13.727994+00:00",
+    "episodeId": "7183b781-808b-4f47-a01b-7f2af6c62f26",
+    "requestState": "submitted",
+    "providerTaskId": "462524086223092",
+    "inputSha256": "e6d7a508d9d47ca782df412d2ab36728fa8a58fe7f7ef6368238bdefd39f5ef3"
+  },
+  "parentPid": 96591,
+  "workerPid": 96776,
+  "postCountBeforeCrash": 1,
+  "naturalLeaseExpiry": true
+}

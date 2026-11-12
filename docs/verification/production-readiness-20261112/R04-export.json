@@ -1,0 +1,196 @@
+{
+  "id": "6b2294de-3ed1-49de-80ab-ef0335401ae5",
+  "checks": [
+    {
+      "name": "used_content",
+      "detail": "已核对 7 个实际来源。",
+      "passed": true,
+      "sources": [
+        {
+          "sha256": "5054b5d12559cc8049ed071507012102fc681bf80f91e9544963461669bc771b",
+          "fileSize": 963438,
+          "relativePath": "未分系列--e2f22d5e-63bc-49a8-917f-e8a84cb5c7a2/R04-常用修改与连续短单--d2c07aa0-3ca6-4cac-acf0-320bb2ec5a00/native-tasks/1743561b-341c-473a-95cf-9fdd28814b5f/1743561b-341c-473a-95cf-9fdd28814b5f.mp4"
+        },
+        {
+          "sha256": "e846cca04ff0b886731fa214c66dd5f6c8d41bddb614a41c2e94c4dc5cae2f07",
+          "fileSize": 1013540,
+          "relativePath": "未分系列--e2f22d5e-63bc-49a8-917f-e8a84cb5c7a2/R04-常用修改与连续短单--d2c07aa0-3ca6-4cac-acf0-320bb2ec5a00/native-tasks/38b7027d-7619-411e-b117-598796bbbed0/38b7027d-7619-411e-b117-598796bbbed0.mp4"
+        },
+        {
+          "sha256": "4c02b23e9471a85b15732a1e3e174c42c99afd3a64e624254fe70879625337c5",
+          "fileSize": 34221,
+          "relativePath": "未分系列--e2f22d5e-63bc-49a8-917f-e8a84cb5c7a2/R04-常用修改与连续短单--d2c07aa0-3ca6-4cac-acf0-320bb2ec5a00/native-tasks/0295943d-5a7d-42da-9ae6-0dfeec807201/shot-narration-shot-01-0d65326e-7b00-4d3c-9aba-1f11465cfc3e.mp3"
+        },
+        {
+          "sha256": "2b0b09bd4cbf6a3b3f8091c6ec3bd9030a489957b48bce6ab4ef506c6f55ebe8",
+          "fileSize": 32877,
+          "relativePath": "未分系列--e2f22d5e-63bc-49a8-917f-e8a84cb5c7a2/R04-常用修改与连续短单--d2c07aa0-3ca6-4cac-acf0-320bb2ec5a00/native-tasks/4e5d7b48-17ef-4714-a38b-55fb500d8108/shot-narration-shot-02-53e1fd43-cd32-443d-b888-e2d8ba9bf64a.mp3"
+        },
+        {
+          "sha256": "0a287cbfa64c1280719ef113b2f2d5cb3ca133c486a95b1251c3548dc8ddf69b",
+          "fileSize": 82952,
+          "relativePath": "未分系列--e2f22d5e-63bc-49a8-917f-e8a84cb5c7a2/R04-常用修改与连续短单--d2c07aa0-3ca6-4cac-acf0-320bb2ec5a00/materials/0a287cbfa64c1280719ef113b2f2d5cb3ca133c486a95b1251c3548dc8ddf69b-视频原声-dbe80dfec90eeeea1ba19d2adf5e50670684674eecfd9cfa0e5a45d2b34423fb.mp3"
+        },
+        {
+          "sha256": "4bf9a7700fb52a24d7024fc9126000fd8104e8f2bf0ef7caa52467b20347655f",
+          "fileSize": 80108,
+          "relativePath": "未分系列--e2f22d5e-63bc-49a8-917f-e8a84cb5c7a2/R04-常用修改与连续短单--d2c07aa0-3ca6-4cac-acf0-320bb2ec5a00/materials/4bf9a7700fb52a24d7024fc9126000fd8104e8f2bf0ef7caa52467b20347655f-视频原声-fa37afb4a43f00bc72a8715903a373466e0ffaf2a2c0be9ac74dd63b870619ac.mp3"
+        },
+        {
+          "sha256": "a542fdf5590851d3de34fdd4c9bfd7be78de13ebfecb298fc2e08e7be7d7c775",
+          "fileSize": 14464,
+          "relativePath": "未分系列--e2f22d5e-63bc-49a8-917f-e8a84cb5c7a2/R04-常用修改与连续短单--d2c07aa0-3ca6-4cac-acf0-320bb2ec5a00/native-tasks/624bd78c-8526-4e26-a9fb-aa992ebbc4e4/626d576f-0220-4871-8540-e187304a42e4.mp3"
+        }
+      ]
+    },
+    {
+      "gaps": [],
+      "name": "visual_coverage",
+      "detail": "整期画面连续，无未填充空档。",
+      "passed": true
+    },
+    {
+      "name": "captions",
+      "detail": "已核对 2 组字幕时序，正文随最终文件一次确认。",
+      "passed": true,
+      "evidence": [
+        {
+          "clipId": "f204a5e5-aa83-472b-8311-ee2dabe19128",
+          "detail": null,
+          "itemId": "shot-shot-01-f204a5e5-aa83-472b-8311-ee2dabe19128",
+          "shotId": "shot-01",
+          "taskId": "a0bda35f-fd8e-4c39-adc9-7355db20c522",
+          "timing": "current",
+          "contract": {
+            "cues": [
+              {
+                "id": "phrase-1~0",
+                "text": "金色朝阳照着山峰，",
+                "endMs": 2066,
+                "startMs": 80
+              },
+              {
+                "id": "phrase-2~0",
+                "text": "给新的一天添个好彩头。",
+                "endMs": 4232,
+                "startMs": 2086
+              }
+            ],
+            "text": "金色朝阳照着山峰，给新的一天添个好彩头。",
+            "enabled": true,
+            "spatial": {
+              "anchor": "bottom-center",
+              "insets": {
+                "top": 0.08,
+                "left": 0.08,
+                "right": 0.08,
+                "bottom": 0.18
+              },
+              "version": "shot-caption-space/v2",
+              "maxLines": 2,
+              "safeArea": "title-safe",
+              "aspectRatio": "9:16",
+              "maxCharactersPerLine": 16
+            },
+            "version": "shot-captions/v1",
+            "contentMode": "follow_tts"
+          },
+          "durationMs": 4300,
+          "audioTrackId": "a43e5e1b-a2a9-4646-8023-a74e89d037fd",
+          "narrationText": "金色朝阳照着山峰，给新的一天添个好彩头。",
+          "textConfirmed": true,
+          "inputFingerprint": "2296d8686545311593de578dfcb0c28d43db3e894d084de3b9d51de33b82c9a0",
+          "alignmentInputVersion": "a448d0c1ea6499322021a5f169fff49859885d48df251e3e09750bd658de49a9"
+        },
+        {
+          "clipId": "98d170cd-78ac-400b-bf0a-d24a029d951b",
+          "detail": null,
+          "itemId": "shot-shot-02-98d170cd-78ac-400b-bf0a-d24a029d951b",
+          "shotId": "shot-02",
+          "taskId": "9594bd1e-f207-4f70-874a-1ba3213a94cf",
+          "timing": "current",
+          "contract": {
+            "cues": [
+              {
+                "id": "phrase-1~0",
+                "text": "山下流水绵延，",
+                "endMs": 1851,
+                "startMs": 181
+              },
+              {
+                "id": "phrase-2~0",
+                "text": "给生活添一份好盼头。",
+                "endMs": 4064,
+                "startMs": 2193
+              }
+            ],
+            "text": "山下流水绵延，给生活添一份好盼头。",
+            "enabled": true,
+            "spatial": {
+              "anchor": "bottom-center",
+              "insets": {
+                "top": 0.08,
+                "left": 0.08,
+                "right": 0.08,
+                "bottom": 0.18
+              },
+              "version": "shot-caption-space/v2",
+              "maxLines": 2,
+              "safeArea": "title-safe",
+              "aspectRatio": "9:16",
+              "maxCharactersPerLine": 16
+            },
+            "version": "shot-captions/v1",
+            "contentMode": "follow_tts"
+          },
+          "durationMs": 4133,
+          "audioTrackId": "c28fcdfc-5c66-444d-ac88-a8b7d1d2054e",
+          "narrationText": "山下流水绵延，给生活添一份好盼头。",
+          "textConfirmed": false,
+          "inputFingerprint": "ae3e6bac426093d2bce5cccd2fb36391c71f0832b38c2e35138746d14c23aa32",
+          "alignmentInputVersion": "0f3f9af82b9d77ed24311ab869e9579cc50633c66625a431934e580ef24609bd"
+        }
+      ]
+    },
+    {
+      "name": "technical",
+      "detail": "实际 MP4 时长、画幅、音频及黑帧检查通过。",
+      "passed": true,
+      "inspection": {
+        "width": 1080,
+        "height": 1920,
+        "hasAudio": true,
+        "blackFrameCount": 0,
+        "durationSeconds": 8.490667
+      },
+      "videoFrames": 253,
+      "audioExpected": true,
+      "videoDurationSeconds": 8.433333,
+      "expectedDurationSeconds": 8.433333333333334,
+      "containerDurationSeconds": 8.490667
+    },
+    {
+      "name": "representative_frame",
+      "detail": "已实际解码代表帧。",
+      "passed": true,
+      "artifact": {
+        "sha256": "59d1b7f35e7c55074adde319103239c2d45dbc2b06519f97783501198a76aebd",
+        "fileSize": 100425,
+        "relativePath": "未分系列--e2f22d5e-63bc-49a8-917f-e8a84cb5c7a2/R04-常用修改与连续短单--d2c07aa0-3ca6-4cac-acf0-320bb2ec5a00/workspace-exports/6b2294de-3ed1-49de-80ab-ef0335401ae5/representative.jpg"
+      }
+    },
+    {
+      "name": "export_file",
+      "detail": "最终文件已按字节 SHA-256 与大小不可变登记。",
+      "passed": true
+    }
+  ],
+  "status": "ready",
+  "version": 16,
+  "artifact": {
+    "sha256": "9cce13a500bc05112bf921fcc600958511094b56499cb5b70514d12d60ed4569",
+    "fileSize": 11605281,
+    "relativePath": "未分系列--e2f22d5e-63bc-49a8-917f-e8a84cb5c7a2/R04-常用修改与连续短单--d2c07aa0-3ca6-4cac-acf0-320bb2ec5a00/workspace-exports/6b2294de-3ed1-49de-80ab-ef0335401ae5/9cce13a500bc05112bf921fcc600958511094b56499cb5b70514d12d60ed4569.mp4"
+  },
+  "confirmedAt": "2026-11-12T09:53:28.599829+00:00"
+}

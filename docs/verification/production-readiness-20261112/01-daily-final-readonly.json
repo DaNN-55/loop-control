@@ -1,0 +1,12 @@
+{
+  "checkedAt": "2026-11-12T09:55:59.377Z",
+  "facts": {
+    "owner": "644f8c5a-b668-48a3-8a25-94c4e502fa04",
+    "episodes": 0,
+    "artifacts": 0,
+    "materials": 0,
+    "migration": "163-legacy-received-explicit-retry.sql"
+  },
+  "sameAsBackupSource": true,
+  "scope": "Read-only counts and schema; unrelated parallel source edits are outside this branch"
+}

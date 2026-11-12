@@ -1,0 +1,76 @@
+跳到主要内容
+Loop Control
+工作台
+生产单
+1
+账号
+OpenChatCut
+系统状态
+收起侧栏
+返回工作区
+生产单
+⌘ K
+R04-常用修改与连续短单
+脚本确认
+已确认
+2
+分镜台
+0 项待准备
+3
+剪辑工作台
+字幕待校时
+4
+检查与交付
+待确认
+分镜台
+2 / 2 画面就绪
+进入剪辑工作台
+镜头 拖动行调整顺序，或按 Alt + ↑/↓
+镜头	脚本与素材	时长	画面	口播	操作
+
+镜头 01
+
+金色朝阳照着山峰，给新的一天添个好彩头。
+wan-shot-01.mp4
+	4.3 s	已匹配	已采用
+
+
+镜头 02
+
+山下流水绵延，愿生活多一份好盼头。
+wan-shot-02.mp4
+	4.3 s	已匹配	已采用
+
+
+shot-02 顺序已更新。
+2 个镜头
+本期素材 · 6
+画面
+字幕与口播
+配乐与声音
+音效
+整期配乐
+
+已开启
+
+shot-02 · 本镜头音效
+3 条
+Running Stream with rocks splashing, rubbing, gravel, walking.m4a
++0.00 秒 · 已加入 · 1.00 秒 · -24 dB
+EverydayEldritch
+许可
+设置
+撤回
+Gentle Snowy Babbling Brook
++0.00 秒 · 可用 · 1.00 秒
+gregwht
+许可
+加入镜头
+Trickling Stream.wav
++0.00 秒 · 可用 · 1.00 秒
+mike_stranks
+许可
+加入镜头
+音效意图或检索词
+Freesound
+找音效

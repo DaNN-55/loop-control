@@ -1,0 +1,66 @@
+[
+  {
+    "order": "R02",
+    "zipBytes": 39808544,
+    "zipSha256": "409dae571b9598e683a3406f6c476407ded6f581f749567402d31b8e56d0b7d3",
+    "entries": [
+      "cover.png",
+      "metadata.json",
+      "checks.json",
+      "manifest.json",
+      "final-video.mp4",
+      "editable-project.json"
+    ],
+    "finalVideoSha256": "94feb015b7eb78219c37612d3f3912de64e2cc9700b7be830dd4009a73e9a6e4",
+    "allEntriesCrcValid": true,
+    "finalVideoMatchesConfirmedExport": true
+  },
+  {
+    "order": "R03",
+    "zipBytes": 7224707,
+    "zipSha256": "4dcd3d28f9120f50882c2c6fe5c0ef2b8de768c01433d74a801f5c1fadcbdc5d",
+    "entries": [
+      "cover.png",
+      "metadata.json",
+      "checks.json",
+      "manifest.json",
+      "final-video.mp4",
+      "editable-project.json"
+    ],
+    "finalVideoSha256": "61c3825f0b4978bdd3bb002ff183dfddea14b79075b51a4a784bba4edbce37b6",
+    "allEntriesCrcValid": true,
+    "finalVideoMatchesConfirmedExport": true
+  },
+  {
+    "order": "R04",
+    "zipBytes": 13101197,
+    "zipSha256": "3033bd75c618a9dd31d863fa4acc2cbe5ab10bd2c478b5f41b0347b2a25309b1",
+    "entries": [
+      "cover.png",
+      "metadata.json",
+      "checks.json",
+      "manifest.json",
+      "final-video.mp4",
+      "editable-project.json"
+    ],
+    "finalVideoSha256": "9cce13a500bc05112bf921fcc600958511094b56499cb5b70514d12d60ed4569",
+    "allEntriesCrcValid": true,
+    "finalVideoMatchesConfirmedExport": true
+  },
+  {
+    "order": "R05",
+    "zipBytes": 6295287,
+    "zipSha256": "9cc251a6a59e1ee9b239f036b132170f4146bb765076846bdde5a680e7070075",
+    "entries": [
+      "cover.png",
+      "metadata.json",
+      "checks.json",
+      "manifest.json",
+      "final-video.mp4",
+      "editable-project.json"
+    ],
+    "finalVideoSha256": "dfc5e995c7034161b884c10e29e56a4faa3aca85e0b704152bef0afb5249c557",
+    "allEntriesCrcValid": true,
+    "finalVideoMatchesConfirmedExport": true
+  }
+]

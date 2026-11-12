@@ -1,0 +1,6 @@
+// Test-only passive observer. Preserve requests/responses; never log headers,
+// credentials, request bodies, arbitrary query parameters or response payloads.
+import{appendFileSync}from'node:fs';import{join}from'node:path';
+const path=join(process.cwd(),'.scratch/production-readiness/03-real-minimax-network.jsonl'),fetchOriginal=globalThis.fetch;
+const record=value=>appendFileSync(path,JSON.stringify({at:new Date().toISOString(),pid:process.pid,...value})+'\n',{mode:0o600});
+globalThis.fetch=async(input,init)=>{const u=new URL(typeof input==='string'||input instanceof URL?input:input.url),method=init?.method??(input instanceof Request?input.method:'GET'),observed=['api.minimax.cn','api.minimax.io'].includes(u.hostname),event={method,host:u.hostname,path:u.pathname,...(u.searchParams.has('task_id')?{providerTaskId:u.searchParams.get('task_id')}:{} )};if(observed)record({...event,phase:'dispatch'});const response=await fetchOriginal(input,init);if(observed){let providerTaskId;if(method==='POST'&&/^\/v[12]\/video_generation$/.test(u.pathname)){try{providerTaskId=(await response.clone().json()).task_id;}catch{}}record({...event,phase:'response',status:response.status,...(typeof providerTaskId==='string'?{providerTaskId}:{})});}return response;};

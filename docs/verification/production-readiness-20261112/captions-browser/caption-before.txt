@@ -1,0 +1,81 @@
+- generic [ref=e1] clickable [onclick]
+  - main
+    - region "工作台字幕" [ref=e2]
+      - sectionheader
+        - heading "字幕" [level=3, ref=e3]
+        - status
+          - StaticText "时序有效"
+      - LabelText
+        - StaticText "字幕片段"
+        - generic
+          - combobox "字幕片段" [expanded=false, ref=e14]: shot-1 · 第一镜
+            - MenuListPopup
+              - option "shot-1 · 第一镜" [selected, ref=e18]
+              - option "shot-2 · 缺少素材的第二镜。" [ref=e19]
+      - LabelText
+        - StaticText "字幕模式"
+        - generic
+          - combobox "字幕模式" [expanded=false, ref=e15]: 独立字幕
+            - MenuListPopup
+              - option "跟随口播" [disabled, ref=e20]
+              - option "独立字幕" [selected, ref=e21]
+              - option "关闭字幕" [ref=e22]
+      - LabelText
+        - StaticText "字幕正文"
+        - textbox "字幕正文" [ref=e4]: 浏览器字幕
+          - StaticText "浏览器字幕"
+      - LabelText
+        - StaticText "字幕位置"
+        - generic
+          - combobox "字幕位置" [expanded=false, ref=e16]: 下方
+            - MenuListPopup
+              - option "左上" [ref=e23]
+              - option "上方" [ref=e24]
+              - option "右上" [ref=e25]
+              - option "左侧" [ref=e26]
+              - option "中央" [ref=e27]
+              - option "右侧" [ref=e28]
+              - option "左下" [ref=e29]
+              - option "下方" [selected, ref=e30]
+              - option "右下" [ref=e31]
+      - LabelText
+        - StaticText "字幕安全区"
+        - generic
+          - combobox "字幕安全区" [expanded=false, ref=e17]: 自定义安全区
+            - MenuListPopup
+              - option "标题安全区" [ref=e32]
+              - option "动作安全区" [ref=e33]
+              - option "自定义安全区" [selected, ref=e34]
+      - LabelText
+        - StaticText "行数"
+        - spinbutton "字幕行数" [ref=e5]: 2
+          - StaticText "2"
+      - LabelText
+        - StaticText "每行字数"
+        - spinbutton "字幕每行字数" [ref=e6]: 16
+          - StaticText "16"
+      - LabelText
+        - StaticText "上边距（%）"
+        - spinbutton "字幕上边距（%）" [ref=e7]: 8
+          - StaticText "8"
+      - LabelText
+        - StaticText "右边距（%）"
+        - spinbutton "字幕右边距（%）" [ref=e8]: 8
+          - StaticText "8"
+      - LabelText
+        - StaticText "下边距（%）"
+        - spinbutton "字幕下边距（%）" [ref=e9]: 18
+          - StaticText "18"
+      - LabelText
+        - StaticText "左边距（%）"
+        - spinbutton "字幕左边距（%）" [ref=e10]: 8
+          - StaticText "8"
+      - group
+        - DisclosureTriangle "手工校时" [expanded=false]
+      - sectionfooter
+        - button "保存字幕" [ref=e11]
+          - StaticText "保存字幕"
+        - button "声学对齐" [disabled, ref=e12]
+          - StaticText "声学对齐"
+        - button "正文已核对" [ref=e13]
+          - StaticText "正文已核对"

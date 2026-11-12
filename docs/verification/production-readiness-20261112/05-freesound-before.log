@@ -1,0 +1,136 @@
+{
+  candidateIndex: 0,
+  stage: 'search',
+  host: 'freesound.org',
+  started: true
+}
+{
+  candidateIndex: 0,
+  stage: 'search',
+  headersAfterMs: 3641,
+  httpStatus: 200,
+  contentLength: '28188',
+  contentType: 'application/json'
+}
+{
+  candidateIndex: 0,
+  id: 341606,
+  title: 'Trickling Stream.wav',
+  sourceUrl: 'https://freesound.org/people/mike_stranks/sounds/341606/'
+}
+{
+  candidateIndex: 0,
+  stage: 'download',
+  host: 'cdn.freesound.org',
+  started: true
+}
+{
+  candidateIndex: 0,
+  stage: 'download',
+  headersAfterMs: 5212,
+  httpStatus: 200,
+  contentLength: '777277',
+  contentType: 'audio/mpeg'
+}
+{
+  candidateIndex: 0,
+  id: 341606,
+  title: 'Trickling Stream.wav',
+  sourceUrl: 'https://freesound.org/people/mike_stranks/sounds/341606/',
+  httpStatus: 200,
+  contentType: 'audio/mpeg',
+  byteLength: 777277,
+  trimmedBytes: 25195
+}
+{
+  candidateIndex: 1,
+  stage: 'search',
+  host: 'freesound.org',
+  started: true
+}
+{
+  candidateIndex: 1,
+  stage: 'search',
+  headersAfterMs: 1661,
+  httpStatus: 200,
+  contentLength: '28188',
+  contentType: 'application/json'
+}
+{
+  candidateIndex: 1,
+  id: 833140,
+  title: 'Gentle Snowy Babbling Brook',
+  sourceUrl: 'https://freesound.org/people/gregwht/sounds/833140/'
+}
+{
+  candidateIndex: 1,
+  stage: 'download',
+  host: 'cdn.freesound.org',
+  started: true
+}
+{
+  candidateIndex: 1,
+  stage: 'download',
+  headersAfterMs: 2188,
+  httpStatus: 200,
+  contentLength: '9029602',
+  contentType: 'audio/mpeg'
+}
+{
+  candidateIndex: 1,
+  id: 833140,
+  title: 'Gentle Snowy Babbling Brook',
+  sourceUrl: 'https://freesound.org/people/gregwht/sounds/833140/',
+  failure: {
+    stage: 'download',
+    name: 'TimeoutError',
+    code: 23,
+    elapsedMs: 31864
+  }
+}
+{
+  candidateIndex: 2,
+  stage: 'search',
+  host: 'freesound.org',
+  started: true
+}
+{
+  candidateIndex: 2,
+  stage: 'search',
+  headersAfterMs: 1585,
+  httpStatus: 200,
+  contentLength: '28188',
+  contentType: 'application/json'
+}
+{
+  candidateIndex: 2,
+  id: 610726,
+  title: 'Running Stream with rocks splashing, rubbing, gravel, walking.m4a',
+  sourceUrl: 'https://freesound.org/people/EverydayEldritch/sounds/610726/'
+}
+{
+  candidateIndex: 2,
+  stage: 'download',
+  host: 'cdn.freesound.org',
+  started: true
+}
+{
+  candidateIndex: 2,
+  stage: 'download',
+  headersAfterMs: 3216,
+  httpStatus: 200,
+  contentLength: '7527205',
+  contentType: 'audio/mpeg'
+}
+{
+  candidateIndex: 2,
+  id: 610726,
+  title: 'Running Stream with rocks splashing, rubbing, gravel, walking.m4a',
+  sourceUrl: 'https://freesound.org/people/EverydayEldritch/sounds/610726/',
+  failure: {
+    stage: 'download',
+    name: 'TimeoutError',
+    code: 23,
+    elapsedMs: 31792
+  }
+}

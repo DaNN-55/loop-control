@@ -1,0 +1,35 @@
+{
+  "method": "Independent greedy CTC decode of complete exported mixed audio; not forced alignment; no network",
+  "segments": [
+    {
+      "start": 0,
+      "end": 4.467,
+      "transcript": "最近作事总觉的差一点机会不房现给自己天的好彩陶"
+    },
+    {
+      "start": 4.467,
+      "end": 9.967,
+      "transcript": "拟看这服日照金山叙日照着精色山峰山下流水绵炎"
+    },
+    {
+      "start": 9.967,
+      "end": 15.833,
+      "transcript": "画上写着被靠金山刘水升金与以招才纳服才原广境"
+    },
+    {
+      "start": 15.833,
+      "end": 18.9,
+      "transcript": "挂在客厅每天台头就是一服好紧"
+    },
+    {
+      "start": 18.9,
+      "end": 25.767,
+      "transcript": "挂在电铺也寄拖着生益希望的好判头新的一天就从这轮金色张羊开始"
+    },
+    {
+      "start": 25.767,
+      "end": 29.8,
+      "transcript": "典击视品左下脚练接把这服日照金山请回家"
+    }
+  ]
+}
