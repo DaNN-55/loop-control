@@ -5,7 +5,7 @@ import {applyWorkspaceAudioMix} from 'virtual:loop-control-audio';
 import {applyWorkspaceShotOperation,isWorkspaceShotOperation,readWorkspaceShots} from 'virtual:loop-control-structure';
 import {applyWorkspaceCaptionEdit,isWorkspaceCaptionContract,migrateWorkspaceCaptionLanes} from 'virtual:loop-control-captions';
 // Loaded by the Loop Control Vite adapter inside the real editor, never a second store.
-import {createElement,useEffect,useRef} from 'react';
+import {useEffect,useRef} from 'react';
 const query=new URLSearchParams(location.search);
 const channel=query.get('lcChannel'),expectedProject=query.get('lcProject');
 const parentValue=query.get('lcParent');
@@ -17,15 +17,6 @@ export function redirectLoopControlImport(kind){
  if(!browserProjectOwnership(expectedProject))throw Error('编辑器写连接尚未就绪，请稍后重试。');
  parent.postMessage({type:'loop-control:import-requested',channel,projectId:expectedProject,kind:kind==='audio'||String(kind).startsWith('audio/')?'audio':'visual'},parentOrigin);
  throw Error('请返回分镜台，从「本期素材」导入文件。');
-}
-export function LoopControlCaptionAlignment(){
- const embedded=parentOrigin&&parent!==window&&channel&&expectedProject&&location.hash===`#/editor/${expectedProject}`;
- function send(type){parent.postMessage({type,channel,projectId:expectedProject},parentOrigin);}
- useEffect(()=>{if(embedded)return()=>send('loop-control:caption-library-closed');},[embedded]);
- return embedded?createElement('button',{
-  type:'button',className:'cc-main-tab',style:{alignSelf:'flex-start',margin:'6px 10px'},
-  onClick:()=>send('loop-control:caption-alignment-requested'),
- },'字幕对齐'):null;
 }
 export function useLoopControlHost(projectId,base,agent,panels){
   const live=useRef({base,agent});live.current={base,agent};
@@ -50,9 +41,7 @@ export function useLoopControlHost(projectId,base,agent,panels){
       const digest=async doc=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify(doc))))).map(b=>b.toString(16).padStart(2,'0')).join('');
       try{
         if(['select','flush','apply-captions','apply-workspace-edit','apply-candidate','apply-audio-mix','add-registered-source'].includes(msg.action)&&!browserProjectOwnership(projectId)){result(false,'编辑器写连接尚未就绪或已变化，请保留当前编辑并重试。');return;}
-        if(msg.action==='host-panel'){
-          if(typeof msg.open!=='boolean'){result(false,'面板状态无效。');return;}document.documentElement.dataset.lcHostTools=msg.open?'open':'closed';await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));result(true);
-        }else if(msg.action==='inspect'){
+        if(msg.action==='inspect'){
           const document=structuredClone(live.current.base.doc);result(true,undefined,{revision:revision.current,documentFingerprint:await digest(document),document});
         }else if(msg.action==='apply-captions'||msg.action==='apply-workspace-edit'||msg.action==='apply-candidate'||msg.action==='apply-audio-mix'||msg.action==='add-registered-source'){
           const doc=live.current.base.doc,observedRevision=revision.current;
@@ -79,7 +68,7 @@ export function useLoopControlHost(projectId,base,agent,panels){
       }catch(cause){result(false,cause instanceof Error?cause.message:'编辑器操作未完成，当前修改仍保留。');}
     }
     window.addEventListener('message',message);
-    return()=>{hostStyle.remove();delete document.documentElement.dataset.lcHostTools;window.removeEventListener('message',message);emit('loop-control:closed');};
+    return()=>{hostStyle.remove();window.removeEventListener('message',message);emit('loop-control:closed');};
   },[projectId,active]);
   function reportState(){
     if(!active)return;const base=live.current.base;reportedWritable.current=!!browserProjectOwnership(projectId);

@@ -1,7 +1,7 @@
 import {readWorkspaceShotWindow,readWorkspaceShots,workspaceShotIdentity} from './workspaceShots.js';
 import {isValidShotCaptionContract,normalizeShotCaptionContract} from './shotCaptions.js';
 import type {ShotCaptionContract} from './shotCaptions.js';
-export interface WorkspaceCaptionState {clipId:string;itemId:string;shotId:string;durationMs:number;contract:ShotCaptionContract;inputFingerprint:string;timing:'missing'|'current'|'stale'|'waiting'|'failed';textConfirmed:boolean;audioTrackId:string|null;narrationText:string|null;taskId:string|null;alignmentInputVersion:string|null;detail:string|null}
+export interface WorkspaceCaptionState {clipId:string;itemId:string;shotId:string;durationMs:number;contract:ShotCaptionContract;inputFingerprint:string;timing:'missing'|'current'|'stale'|'waiting'|'failed';textConfirmed:boolean;audioTrackId:string|null;narrationText:string|null;taskId:string|null;alignmentStatus?:'ready'|'running'|'completed'|'failed'|'blocked'|'superseded'|null;alignmentInputVersion:string|null;detail:string|null}
 export const isWorkspaceCaptionContract=isValidShotCaptionContract;
 export const workspaceCaptionFields:Record<string,string[]>={
  setWorkspaceCaptionsEnabled:['episodeId','workspaceId','expectedRevision','clipId','enabled'],

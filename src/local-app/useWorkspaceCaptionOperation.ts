@@ -13,7 +13,7 @@ interface Attempt {
 }
 interface Options {
  workspace:ProductionWorkspace;clipId:string;itemId?:string;inputFingerprint?:string;contract:ShotCaptionContract;
- bridge?:EmbeddedStudioBridge;readOnly:boolean;
+ bridge?:EmbeddedStudioBridge;readOnly:boolean;disabled?:boolean;
  command:(name:string,data:unknown)=>Promise<unknown>;onChange:(workspace:ProductionWorkspace)=>void;
  onSaved:(submitted:ShotCaptionContract)=>void;
 }
@@ -32,7 +32,7 @@ export function useWorkspaceCaptionOperation(options:Options){
  function reset(){if(owner.busy)return;owner.attempt=null;owner.error='';owner.progress='';render();}
  async function execute(attempt:Attempt,resuming=false){
   const current=latest.current;
-  if(owner.busy||current.readOnly||current.workspace.stale||current.bridge&&!current.bridge.connected)return;
+  if(owner.busy||current.readOnly||current.disabled||current.workspace.stale||current.bridge&&!current.bridge.connected)return;
   if(resuming&&JSON.stringify(current.contract)!==JSON.stringify(attempt.requested)){reset();owner.error='字幕输入已变化，请核对后重新操作。';render();return;}
   const generation=owner.generation;
   const owns=()=>active.current===owner&&owner.generation===generation;

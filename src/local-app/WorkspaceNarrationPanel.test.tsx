@@ -7,12 +7,23 @@ import {WorkspaceNarrationPanel} from './WorkspaceNarrationPanel';
 import {WorkspaceMaterialSelectionProvider,workspaceMaterialDragType} from './WorkspaceMaterialDrop';
 import {registeredAdapters} from '../worker/registeredAdapters';
 import type {ProductionWorkspace} from '../productionWorkspace';
+import {defaultShotCaptionContract} from '../shotCaptions';
 afterEach(()=>{cleanup();vi.unstubAllGlobals();sessionStorage.clear();});
 const plan={adoptionId:'adoption',candidateId:'candidate',projectSha256:'saved-sha',edit:{source:{kind:'audio'}},impact:{currentSeconds:2.4,sourceSeconds:4,appliedSeconds:4,deltaSeconds:1.6,affectedFragments:[{itemId:'later',label:'下一镜头',kind:'video',startSeconds:2.4,endSeconds:6,changedStartSeconds:2.4,changedEndSeconds:4}]}};
 const selection={capability:'speech' as const,provider:'volcengine_tts',adapter:'volcengine_tts',model:'seed-tts-2.0',connectionVersionId:'a'};
 function setup(candidates:unknown[]=[]){const choice=registeredAdapters.productionChoices().find(c=>c.capability==='speech')!;const services=['a','b'].map(id=>({...choice,id,connectionVersionId:id,connectionName:id.toUpperCase(),connectionVersion:1,executable:true}));vi.stubGlobal('fetch',vi.fn(async(path:string)=>({ok:true,json:async()=>path.endsWith('/workspace')?{workspace}:{serviceCatalog:{groups:[{capability:'speech',services}]}}})));
- const workspace={id:'w',episodeId:'e',revision:1,stale:false,project:{sha256:'saved-sha'},candidates,narration:[{clipId:'c',shotId:'S01',mode:'tts',text:'完整口播',voice:'zh_female_vv_uranus_bigtts',speakingRate:1,languageCode:'zh-CN',selection,inputFingerprint:'f',status:'pending',defaults:{selection,voice:'zh_female_vv_uranus_bigtts',speakingRate:1,languageCode:'zh-CN'}}]} as unknown as ProductionWorkspace;const command=vi.fn(async(_name:string,_data?:unknown)=>workspace);render(<WorkspaceNarrationPanel episodeId="e" workspace={workspace} selectedShotId="S01" pending={false} command={command} onChanged={vi.fn()}/>);return{workspace,command};}
+ const workspace={id:'w',episodeId:'e',revision:1,stale:false,project:{sha256:'saved-sha'},clips:[{id:'c',itemId:'native',shotId:'S01',text:'完整口播'}],candidates,narration:[{clipId:'c',shotId:'S01',mode:'tts',text:'完整口播',voice:'zh_female_vv_uranus_bigtts',speakingRate:1,languageCode:'zh-CN',selection,inputFingerprint:'f',status:'pending',defaults:{selection,voice:'zh_female_vv_uranus_bigtts',speakingRate:1,languageCode:'zh-CN'}}]} as unknown as ProductionWorkspace;const command=vi.fn(async(_name:string,_data?:unknown)=>workspace);render(<WorkspaceNarrationPanel episodeId="e" workspace={workspace} selectedShotId="S01" pending={false} command={command} onChanged={vi.fn()}/>);return{workspace,command};}
 async function sourceReady(){await waitFor(()=>expect(screen.getByRole('button',{name:'口播来源'}).textContent).toContain('seed-tts-2.0'));}
+it('places timing under the selected shot captions and blocks it until the subtitle draft is saved',async()=>{
+ const {workspace}=setup();cleanup();const contract=defaultShotCaptionContract('已有字幕','independent');
+ const current={...workspace,captions:[{clipId:'c',itemId:'native',shotId:'S01',contract,inputFingerprint:'caption-input',timing:'current',audioTrackId:'audio',taskId:null}]} as ProductionWorkspace;
+ const command=vi.fn(async()=>current);
+ render(<WorkspaceNarrationPanel episodeId="e" workspace={current} selectedShotId="S01" pending={false} command={command} onChanged={vi.fn()}/>);
+ fireEvent.click(screen.getByRole('tab',{name:'字幕'}));expect(screen.getByRole('button',{name:'声学对齐'})).toHaveProperty('disabled',false);expect(screen.queryByRole('combobox',{name:'字幕片段'})).toBeNull();
+ fireEvent.change(screen.getByRole('textbox',{name:'字幕内容'}),{target:{value:'未保存的字幕'}});expect(screen.getByRole('button',{name:'声学对齐'})).toHaveProperty('disabled',true);expect(command).not.toHaveBeenCalled();
+ fireEvent.change(screen.getByRole('textbox',{name:'字幕内容'}),{target:{value:'已有字幕'}});fireEvent.click(screen.getByRole('button',{name:'声学对齐'}));
+ await waitFor(()=>expect(command).toHaveBeenCalledWith('requestWorkspaceCaptionAlignment',expect.objectContaining({clipId:'c',localOnly:true})));
+});
 it('uses the saved episode voice even when the shot has an older voice and rate',async()=>{
  const {workspace,command}=setup();cleanup();
  const shot=workspace.narration![0],defaults={...shot.defaults!,speakingRate:.85};

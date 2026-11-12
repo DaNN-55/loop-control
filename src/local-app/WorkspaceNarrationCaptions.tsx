@@ -1,10 +1,10 @@
 import {uiText} from '../i18n/ui';
-import {useEffect,useId,useState} from 'react';
+import {useEffect,useId,useState,type ReactNode} from 'react';
 import {Link} from 'lucide-react';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {Badge} from '../ui/dan-ui/components/base/badges/badges';
 import type {ShotCaptionContract} from '../shotCaptions';
-export function WorkspaceNarrationCaptions({storageKey,contract,followText,disabled,onSave}:{storageKey:string;contract?:ShotCaptionContract;followText:string;disabled:boolean;onSave:(mode:'follow_tts'|'independent',text?:string)=>Promise<void>}){
+export function WorkspaceNarrationCaptions({storageKey,contract,followText,disabled,onSave,renderTiming}:{storageKey:string;contract?:ShotCaptionContract;followText:string;disabled:boolean;onSave:(mode:'follow_tts'|'independent',text?:string)=>Promise<void>;renderTiming?:(dirty:boolean)=>ReactNode}){
  const heading=useId(),hint=useId(),[draft,setDraft]=useState<string|null>(()=>{try{return sessionStorage.getItem(storageKey);}catch{return null;}}),[notice,setNotice]=useState('');
  const following=contract?.contentMode!=='independent',saved=following?followText:contract?.text??followText,text=draft??saved,dirty=draft!==null&&draft!==saved;
  useEffect(()=>{try{if(draft===null)sessionStorage.removeItem(storageKey);else sessionStorage.setItem(storageKey,draft);}catch{/* Browser drafts are optional. */}},[storageKey,draft]);
@@ -23,5 +23,6 @@ export function WorkspaceNarrationCaptions({storageKey,contract,followText,disab
   </div>
   {!following&&<p className="workspace-caption-reference" title={followText}>{uiText("口播原文 ")}<span>{followText}</span></p>}
   {notice&&<p className="workspace-caption-feedback" role="status">{notice}</p>}
+  {renderTiming?.(dirty)}
  </section>;
 }

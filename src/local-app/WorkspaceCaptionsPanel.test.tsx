@@ -13,11 +13,27 @@ it('keeps timing explicit when text changes and sends saved native cues through 
  fireEvent.click(screen.getByRole('button',{name:'保存字幕'}));await waitFor(()=>expect(command).toHaveBeenCalledWith('saveWorkspaceCaptions',expect.objectContaining({clipId:'c',captionContract:expect.objectContaining({text:'新的正文',cues:[expect.objectContaining({text:'新的正文'})]})})));
 });
 
-it('keeps only alignment actions in Studio without duplicate text, style or approval inputs',()=>{
+it('keeps timing actions separate from text, style and approval inputs',()=>{
  const contract=defaultShotCaptionContract('原生字幕','independent');
  const workspace={id:'w',episodeId:'e',revision:2,clips:[{id:'c',itemId:'native',shotId:'S1',text:'口播'}],captions:[{clipId:'c',itemId:'native',shotId:'S1',contract,inputFingerprint:'a',timing:'current',textConfirmed:false,audioTrackId:'voice',taskId:null}]} as unknown as ProductionWorkspace;
  render(<WorkspaceCaptionsPanel workspace={workspace} alignmentOnly command={vi.fn()} onChange={()=>{}}/>);
  expect(screen.getByRole('button',{name:'声学对齐'})).toBeTruthy();expect(screen.queryByLabelText('字幕正文')).toBeNull();expect(screen.queryByLabelText('字幕位置')).toBeNull();expect(screen.queryByRole('button',{name:'正文已核对'})).toBeNull();expect(screen.queryByRole('button',{name:'保存字幕'})).toBeNull();
+});
+
+it('targets the selected shot without a second selector and distinguishes queued, completed and failed alignment',async()=>{
+ const contract=defaultShotCaptionContract('字幕','independent');
+ const caption={clipId:'c1',itemId:'v1',shotId:'S1',contract,inputFingerprint:'input1',timing:'waiting',alignmentStatus:'running',audioTrackId:'a1',taskId:'t1'};
+ const workspace={id:'w',episodeId:'e',revision:2,clips:[{id:'c1',itemId:'v1',shotId:'S1',text:'第一镜'},{id:'c2',itemId:'v2',shotId:'S2',text:'第二镜'}],captions:[caption,{...caption,clipId:'c2',itemId:'v2',shotId:'S2',inputFingerprint:'input2',timing:'current',audioTrackId:'a2',taskId:null}]} as unknown as ProductionWorkspace;
+ const command=vi.fn(async()=>workspace),props={command,onChange:vi.fn(),alignmentOnly:true};
+ const view=render(<WorkspaceCaptionsPanel {...props} workspace={workspace} selectedShotId="S1"/>);
+ expect(screen.queryByRole('combobox',{name:'字幕片段'})).toBeNull();expect(screen.getByRole('button',{name:'采用对齐'})).toHaveProperty('disabled',true);
+ const completed={...workspace,captions:[{...caption,alignmentStatus:'completed'},workspace.captions![1]]} as ProductionWorkspace;
+ view.rerender(<WorkspaceCaptionsPanel {...props} workspace={completed} selectedShotId="S1"/>);
+ expect(screen.getByText('对齐完成，待采用')).toBeTruthy();expect(screen.getByRole('button',{name:'采用对齐'})).toHaveProperty('disabled',false);
+ view.rerender(<WorkspaceCaptionsPanel {...props} workspace={workspace} selectedShotId="S2"/>);fireEvent.click(screen.getByRole('button',{name:'声学对齐'}));
+ await waitFor(()=>expect(command).toHaveBeenCalledWith('requestWorkspaceCaptionAlignment',expect.objectContaining({clipId:'c2',localOnly:true})));
+ const failed={...workspace,captions:[{...caption,timing:'failed',alignmentStatus:'failed'},workspace.captions![1]]} as ProductionWorkspace;
+ view.rerender(<WorkspaceCaptionsPanel {...props} workspace={failed} selectedShotId="S1"/>);expect(screen.getByRole('button',{name:'重试校时'})).toHaveProperty('disabled',false);
 });
 
 it('lets completed-project readers switch saved captions without exposing editing actions',()=>{

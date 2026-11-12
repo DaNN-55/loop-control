@@ -22,14 +22,6 @@ const bridge={name:'loop-control-embedded-editor',enforce:'pre',config(config){c
   if(path.endsWith('/src/media/mobileImport.ts')){importAnchor='  if (isHeic(record)) {';importGuard='  redirectLoopControlImport(record.mime ?? "visual");\n';}
   if(importAnchor){if(!code.includes(importAnchor))throw Error('当前Studio缺少受控素材导入接点。');return{code:"import {redirectLoopControlImport} from 'virtual:loop-control-embed';\n"+code.replace(importAnchor,importGuard+importAnchor),map:null};}
   if(path.endsWith('/src/media/DirectoryImportActions.tsx')){const anchor='onClick={() => props.run(pickFolder)}';if(!code.includes(anchor))throw Error('当前Studio缺少受控文件夹导入接点。');return{code:"import {redirectLoopControlImport} from 'virtual:loop-control-embed';\n"+code.replace(anchor,"onClick={() => {redirectLoopControlImport('visual');props.run(pickFolder);}}"),map:null};}
-  if(path.endsWith('/src/library/LibraryPanel.tsx')){
-   const start='        <CaptionsPanel playerRef=';
-   const end='onUpdateCaptions={onUpdateCaptions} />';
-   if(!code.includes(start)||!code.includes(end))throw Error('当前 Studio 缺少字幕库接点。');
-   return {code:"import {LoopControlCaptionAlignment} from 'virtual:loop-control-embed';\n"+code
-    .replace(start,'        <><LoopControlCaptionAlignment /><CaptionsPanel playerRef=')
-    .replace(end,end+'</>'),map:null};
-  }
   if(!path.endsWith('/src/editor/useEditorController.tsx'))return;
   const anchor='  return buildEditorWorkspaceViewProps(props, base, environment, ui);';
   if(!code.includes(anchor))throw Error('当前 Studio 版本缺少已验证的编辑器宿主接入点。');

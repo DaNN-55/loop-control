@@ -1,4 +1,5 @@
 import {uiText} from '../i18n/ui';
+import {WorkspaceCaptionsPanel} from './WorkspaceCaptionsPanel';
 import './workspace-feature-switch.css';
 import {canUseWorkspaceAudioMaterial} from './workspaceAudioMaterial';
 import {WorkspaceMaterialDrop} from './WorkspaceMaterialDrop';
@@ -244,7 +245,8 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
    <Toggle className="workspace-feature-switch" label={(tab==='voice'?voiceEnabled:captionEnabled)?uiText("已开启"):uiText("已关闭")} size="sm" aria-label={tab==='voice'?uiText("启用口播"):uiText("启用字幕")} isSelected={tab==='voice'?voiceEnabled:captionEnabled} isDisabled={disabled} onChange={enabled=>void toggleEnabled(enabled)}/>
   </header>
   <div id={`${tabId}-captions-panel`} role="tabpanel" aria-labelledby={`${tabId}-captions`} hidden={tab!=='captions'}>
-   <div hidden={!captionEnabled}><WorkspaceNarrationCaptions storageKey={`${key}:caption-text`} contract={savedCaption} followText={followText} disabled={disabled} onSave={saveCaptions}/></div>
+   <div hidden={!captionEnabled}><WorkspaceNarrationCaptions storageKey={`${key}:caption-text`} contract={savedCaption} followText={followText} disabled={disabled} onSave={saveCaptions}
+    renderTiming={expanded&&captionEnabled?dirty=><WorkspaceCaptionsPanel workspace={workspace} selectedShotId={n.shotId} command={command} onChange={onChanged} alignmentOnly isDisabled={disabled||dirty}/>:undefined}/></div>
   </div>
   <div id={`${tabId}-voice-panel`} role="tabpanel" aria-labelledby={`${tabId}-voice`} hidden={tab!=='voice'}>
   <div className="workspace-narration-voice-content" hidden={!voiceEnabled}>
